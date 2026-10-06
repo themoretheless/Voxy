@@ -149,9 +149,19 @@ impl TissueDemo {
                 .body()
                 .stationary_embedded_contact()
                 .ok_or("missing installed skin contact")?;
+            let reference_nodes = binding.posed_reference(palette, Some(surface.positions()))?;
+            if binding.source_reference_nodes.is_some() {
+                // The same native source pose drives pins and the skin reference.
+                // Bone-blended positions are supplied by the existing provider.
+                for target in &mut targets {
+                    target.position_m = *reference_nodes
+                        .get(target.node)
+                        .ok_or("source reference support index changed")?;
+                }
+            }
             Some(
                 current.with_pose(
-                    binding.posed_reference(palette)?,
+                    reference_nodes,
                     surface.positions().to_vec(),
                     Arc::new(
                         current
@@ -319,11 +329,12 @@ mod tests {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub(super) struct GlobalSkinBinding {
     embedding: Arc<EmbeddedSurface>,
     owners: Vec<Option<usize>>,
     skin_reference: Vec<[f64; 3]>,
+    source_reference_nodes: Option<Vec<Vec<usize>>>,
     rest: Vec<[f64; 3]>,
     cells: Vec<[usize; 4]>,
     node_ranges: Vec<Range<usize>>,
@@ -380,6 +391,7 @@ impl TissueDemo {
             embedding: Arc::new(EmbeddedSurface::bind_relative(rest, cells, skin, &owned)?),
             owners,
             skin_reference: skin.to_vec(),
+            source_reference_nodes: None,
             rest: rest.to_vec(),
             cells: cells.clone(),
             node_ranges: layout.node_ranges.clone(),
@@ -396,6 +408,45 @@ impl TissueDemo {
             vertex_count: skin.len(),
             global: Some(Arc::new(global)),
         })
+    }
+    /// Use the existing source skin provider for each volume reference node.
+    /// Exact coincident source vertices remain distinct and must stay coincident
+    /// in every supplied pose. No nearest-node fallback or skinning copy is used.
+    /// Interior nodes without a matching source require a different authored map.
+    pub(crate) fn bind_skin_source_reference(
+        &self,
+        skin: &[[f64; 3]],
+    ) -> Result<TissueSkinBinding, &'static str> {
+        if self
+            .attachments
+            .iter()
+            .any(|attachment| !attachment.overrides.is_empty())
+        {
+            return Err("source node supports cannot combine authored joint overrides");
+        }
+        let mut binding = self.bind_skin(skin)?;
+        let global = binding
+            .global
+            .as_mut()
+            .ok_or("source reference requires assembled tissue")?;
+        let global = Arc::make_mut(global);
+        let key = |p: [f64; 3]| p.map(|v| if v == 0. { 0 } else { v.to_bits() });
+        let mut aliases = BTreeMap::<[u64; 3], Vec<usize>>::new();
+        for (i, &p) in skin.iter().enumerate() {
+            aliases.entry(key(p)).or_default().push(i);
+        }
+        let nodes = global
+            .rest
+            .iter()
+            .map(|&p| {
+                aliases
+                    .get(&key(p))
+                    .cloned()
+                    .ok_or("volume reference node missing from source skin")
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        global.source_reference_nodes = Some(nodes);
+        Ok(binding)
     }
     pub(super) fn deform_assembled_skin(
         &self,
@@ -428,7 +479,7 @@ impl TissueDemo {
         if skin.len() != binding.vertex_count {
             return Err("invalid posed skin");
         }
-        let reference = binding.posed_reference(palette)?;
+        let reference = binding.posed_reference(palette, Some(skin))?;
         let mut output = vec![[0.; 3]; skin.len()];
         binding.embedding.deform_relative_into(
             &reference,
@@ -462,6 +513,195 @@ mod skin_tests {
         solid.restore_diagnostic_positions(positions).unwrap();
         *dynamics =
             InertialBody::new(solid, &vec![1000.; count], vec![[0.; 3]; positions.len()]).unwrap();
+    }
+    #[test]
+    fn source_reference_nodes_transfer_nonrigid_pose_and_reject_alias_separation() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
+        let mut demo = TissueDemo::body_from_region_specs(vec![TissueRegionSpec::illustrative(
+            mesh.clone(),
+            vec![],
+            0,
+        )])
+        .unwrap();
+        demo.assemble_regions().unwrap();
+        let mut skin = mesh.points.clone();
+        skin.push(skin[0]);
+        let binding = demo.bind_skin_source_reference(&skin).unwrap();
+        let palette = [DMat4::IDENTITY];
+        // Affine shear is not the region's identity bone transform.
+        let mut posed: Vec<_> = skin
+            .iter()
+            .map(|p| [p[0] + 0.2 * (p[1] - 0.8), p[1], p[2]])
+            .collect();
+        let reference = binding.posed_reference_nodes(&palette, &posed).unwrap();
+        assert_eq!(reference, posed[..mesh.points.len()]);
+        let mut moved = reference;
+        for p in &mut moved {
+            p[2] += 0.001;
+        }
+        let DemoTissue::Continuum { dynamics, .. } = &mut demo.bodies[0] else {
+            panic!()
+        };
+        held_pose(dynamics, &moved);
+        let actual = demo.deform_skin(&binding, &palette, &posed).unwrap();
+        for (p, q) in actual.iter().zip(&posed) {
+            assert!((p[0] - q[0]).abs() < 1e-15 && (p[1] - q[1]).abs() < 1e-15);
+            assert!((p[2] - q[2] - 0.001).abs() < 1e-15);
+        }
+        let snapshot = format!("{demo:?}");
+        posed.last_mut().unwrap()[0] += 1e-9;
+        assert_eq!(
+            demo.deform_skin(&binding, &palette, &posed),
+            Err("source reference aliases separated")
+        );
+        assert_eq!(snapshot, format!("{demo:?}"));
+        assert!(binding.posed_reference_nodes(&[], &skin).is_err());
+        assert!(
+            binding
+                .posed_reference_nodes(&[DMat4::ZERO], &skin)
+                .is_err()
+        );
+        assert!(
+            binding
+                .posed_reference_nodes(&palette, &skin[..skin.len() - 1])
+                .is_err()
+        );
+        let mut invalid = skin.clone();
+        invalid[0][0] = f64::NAN;
+        assert!(binding.posed_reference_nodes(&palette, &invalid).is_err());
+        let mut missing = mesh.points.clone();
+        missing[0][0] += 1e-9;
+        assert_eq!(
+            demo.bind_skin_source_reference(&missing).unwrap_err(),
+            "volume reference node missing from source skin"
+        );
+        assert_eq!(snapshot, format!("{demo:?}"));
+    }
+    #[test]
+    fn source_reference_supports_follow_native_nonrigid_pose_and_book_work() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
+        let pins: Vec<_> = mesh
+            .points
+            .iter()
+            .enumerate()
+            .filter_map(|(i, p)| (p[1] == 0.8).then_some(i))
+            .collect();
+        let native = Arc::new(
+            PrescribedTriangleSurface::new(
+                mesh.points.clone(),
+                mesh.boundary.clone(),
+                0.0001,
+                0.003,
+                100.,
+            )
+            .unwrap()
+            .with_body_contact_domains(vec![(
+                mesh.boundary.clone(),
+                vec![false; mesh.boundary.len()],
+            )])
+            .unwrap(),
+        );
+        let mut demo = TissueDemo::body_from_region_specs(vec![TissueRegionSpec::illustrative(
+            mesh.clone(),
+            pins.clone(),
+            0,
+        )])
+        .unwrap();
+        demo.bind_contact_surface(native.clone()).unwrap();
+        demo.assemble_regions().unwrap();
+        let binding = demo.bind_skin_source_reference(&mesh.points).unwrap();
+        demo.bind_skin_contact(&binding).unwrap();
+        let before = demo.body_energy_receipts().unwrap()[0];
+        let posed: Vec<_> = mesh
+            .points
+            .iter()
+            .map(|p| [p[0] + 0.0002 * p[2], p[1], p[2]])
+            .collect();
+        let palette = [DMat4::IDENTITY];
+        let staged = Arc::new(native.with_positions(posed.clone()).unwrap());
+        demo.step_body_with_contact64_workers(&palette, 0.5, Some(vec![staged]), 1)
+            .unwrap();
+        let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+            panic!()
+        };
+        assert!(pins.iter().any(|&i| posed[i] != mesh.points[i]));
+        for &node in &pins {
+            assert_eq!(dynamics.body().positions()[node], posed[node]);
+        }
+        let visible = demo.deform_skin(&binding, &palette, &posed).unwrap();
+        for &node in &pins {
+            for axis in 0..3 {
+                assert!((visible[node][axis] - posed[node][axis]).abs() < 1e-14);
+            }
+        }
+        let after = demo.body_energy_receipts().unwrap()[0];
+        let independent = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+        assert!(independent.abs() < 1e-10);
+        assert!((after[1] - before[1]).abs() > 0.);
+        eprintln!(
+            "SOURCE_SUPPORT_WORK pins={} independent_balance_j={independent:.17e} support_work_j={:.17e}",
+            pins.len(),
+            after[1] - before[1]
+        );
+        let snapshot = format!("{demo:?}");
+        let mut invalid = posed;
+        invalid[0][0] = f64::NAN;
+        assert!(native.with_positions(invalid).is_err());
+        assert_eq!(snapshot, format!("{demo:?}"));
+        let mut spec = TissueRegionSpec::illustrative(mesh.clone(), pins, 0);
+        spec.support_joint_overrides = vec![(spec.supports[0], 1)];
+        let mut conflicting = TissueDemo::body_from_region_specs(vec![spec]).unwrap();
+        conflicting.assemble_regions().unwrap();
+        let before = format!("{conflicting:?}");
+        assert_eq!(
+            conflicting
+                .bind_skin_source_reference(&mesh.points)
+                .unwrap_err(),
+            "source node supports cannot combine authored joint overrides"
+        );
+        assert_eq!(before, format!("{conflicting:?}"));
+    }
+    #[test]
+    fn source_reference_contact_rejects_separated_aliases_before_commit() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
+        let mut skin = mesh.points.clone();
+        skin.push(skin[0]);
+        let native = Arc::new(
+            PrescribedTriangleSurface::new(
+                skin.clone(),
+                mesh.boundary.clone(),
+                0.0001,
+                0.003,
+                100.,
+            )
+            .unwrap()
+            .with_body_contact_domains(vec![(
+                mesh.boundary.clone(),
+                vec![false; mesh.boundary.len()],
+            )])
+            .unwrap(),
+        );
+        let mut demo = TissueDemo::body_from_region_specs(vec![TissueRegionSpec::illustrative(
+            mesh,
+            vec![],
+            0,
+        )])
+        .unwrap();
+        demo.bind_contact_surface(native.clone()).unwrap();
+        demo.assemble_regions().unwrap();
+        let binding = demo.bind_skin_source_reference(&skin).unwrap();
+        assert_eq!(demo.bind_skin_contact(&binding).unwrap(), 12);
+        let snapshot = format!("{demo:?}");
+        skin.last_mut().unwrap()[0] += 1e-9;
+        let staged = Arc::new(native.with_positions(skin).unwrap());
+        assert_eq!(
+            demo.step_body_with_contact64_workers(&[DMat4::IDENTITY], 0.5, Some(vec![staged]), 1,),
+            Err("source reference aliases separated")
+        );
+        assert_eq!(snapshot, format!("{demo:?}"));
     }
     #[test]
     fn assembled_skin_uses_each_joint_once_and_transfers_all_regional_displacements() {
@@ -525,7 +765,36 @@ mod skin_tests {
 }
 
 impl GlobalSkinBinding {
-    fn posed_reference(&self, palette: &[DMat4]) -> Result<Vec<[f64; 3]>, &'static str> {
+    pub(super) fn posed_reference(
+        &self,
+        palette: &[DMat4],
+        source_skin: Option<&[[f64; 3]]>,
+    ) -> Result<Vec<[f64; 3]>, &'static str> {
+        if let Some(nodes) = &self.source_reference_nodes {
+            for &joint in &self.joints {
+                let matrix = palette.get(joint).ok_or("missing skin attachment joint")?;
+                if TissueDemo::validate_attachment_matrix(matrix).is_err()
+                    || !matrix.determinant().is_finite()
+                    || matrix.determinant() == 0.
+                {
+                    return Err("invalid skin attachment matrix");
+                }
+            }
+            let skin = source_skin.ok_or("missing posed source reference")?;
+            if skin.len() != self.vertex_count || skin.iter().flatten().any(|x| !x.is_finite()) {
+                return Err("invalid posed source reference");
+            }
+            return nodes
+                .iter()
+                .map(|aliases| {
+                    let first = skin[aliases[0]];
+                    if aliases.iter().any(|&i| skin[i] != first) {
+                        return Err("source reference aliases separated");
+                    }
+                    Ok(first)
+                })
+                .collect();
+        }
         let mut reference = self.rest.clone();
         for (range, joint) in self.node_ranges.iter().zip(&self.joints) {
             let matrix = palette.get(*joint).ok_or("missing skin attachment joint")?;

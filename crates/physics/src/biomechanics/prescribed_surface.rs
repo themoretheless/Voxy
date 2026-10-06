@@ -10,12 +10,18 @@ use crate::triangle_index::{TriangleBounds, TriangleIndex};
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
+#[derive(Debug)]
+struct BodyContactDomain {
+    enabled: Arc<[bool]>,
+    has_enabled: bool,
+}
+
 #[derive(Clone, Debug)]
 pub struct PrescribedTriangleSurface {
     positions: Arc<[Vec3]>,
     faces: Arc<[[usize; 3]]>,
     contact_faces: Arc<[bool]>,
-    body_contact_domains: Arc<BTreeMap<[usize; 3], Arc<[bool]>>>,
+    body_contact_domains: Arc<BTreeMap<[usize; 3], Arc<BodyContactDomain>>>,
     minimum: f64,
     activation: f64,
     stiffness: f64,
@@ -622,7 +628,10 @@ impl PrescribedTriangleSurface {
             if faces.is_empty() || enabled.len() != self.faces.len() {
                 return Err("invalid prescribed body contact domain");
             }
-            let mask: Arc<[bool]> = enabled.into();
+            let mask = Arc::new(BodyContactDomain {
+                has_enabled: enabled.iter().any(|&v| v),
+                enabled: enabled.into(),
+            });
             for mut face in faces {
                 face.sort_unstable();
                 if face[2] >= 65536
@@ -642,7 +651,17 @@ impl PrescribedTriangleSurface {
     #[must_use]
     pub fn body_contact_faces(&self, mut face: [usize; 3]) -> Option<&[bool]> {
         face.sort_unstable();
-        self.body_contact_domains.get(&face).map(AsRef::as_ref)
+        self.body_contact_domains
+            .get(&face)
+            .map(|domain| domain.enabled.as_ref())
+    }
+    // The cached predicate is conservative: a nonempty mask still uses ordinary
+    // global/domain pair admission. An empty mask cannot enable any pair.
+    fn body_face_may_contact(&self, mut face: [usize; 3]) -> bool {
+        face.sort_unstable();
+        self.body_contact_domains
+            .get(&face)
+            .is_none_or(|domain| domain.has_enabled)
     }
     fn pair_enabled(&self, face: &[usize; 3], obstacle: usize) -> bool {
         self.contact_faces[obstacle]
@@ -797,6 +816,9 @@ impl PrescribedTriangleSurface {
         validate_faces(body, faces)?;
         let mut stencils = Vec::new();
         for &face in faces {
+            if !self.body_face_may_contact(face) {
+                continue;
+            }
             let triangle = face.map(|node| body[node]);
             let prepared = PreparedTriangle::new(triangle);
             let mut candidates = Vec::new();
@@ -866,6 +888,9 @@ impl PrescribedTriangleSurface {
         validate_faces(body, faces)?;
         let mut bundles = Vec::new();
         for &face in faces {
+            if !self.body_face_may_contact(face) {
+                continue;
+            }
             let triangle = face.map(|i| body[i]);
             let mut indices = Vec::new();
             self.index.query_conservative(
@@ -937,6 +962,9 @@ impl PrescribedTriangleSurface {
         validate_faces(body, faces)?;
         let mut nearest: Option<PrescribedContactFeature> = None;
         for &face in faces {
+            if !self.body_face_may_contact(face) {
+                continue;
+            }
             let triangle = face.map(|node| body[node]);
             let mut candidates = Vec::new();
             self.index.query_conservative(
@@ -1064,6 +1092,9 @@ impl PrescribedTriangleSurface {
             obstacle_gradient_n: vec![[0.; 3]; self.positions.len()],
         };
         for face in faces {
+            if !self.body_face_may_contact(*face) {
+                continue;
+            }
             let triangle = face.map(|node| body[node]);
             let prepared = PreparedTriangle::new(triangle);
             let mut candidates = Vec::new();
@@ -1191,6 +1222,9 @@ impl PrescribedTriangleSurface {
         validate_faces(body_start, faces)?;
         validate_faces(body_end, faces)?;
         for face in faces {
+            if !self.body_face_may_contact(*face) {
+                continue;
+            }
             let mut candidates = Vec::new();
             index.query_conservative(
                 TriangleBounds::swept(
@@ -2237,6 +2271,104 @@ mod instantaneous_pose_tests {
         assert_eq!(
             source.with_positions(invalid.clone()).unwrap_err(),
             source.stage_positions::<false>(invalid).unwrap_err()
+        );
+    }
+}
+
+#[cfg(test)]
+mod inactive_domain_tests {
+    use super::*;
+    fn fixture(count: usize) -> (PrescribedTriangleSurface, Vec<Vec3>, Vec<[usize; 3]>) {
+        let mut points = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..count {
+            let x = (i % 32) as f64 * 0.002;
+            let y = (i / 32) as f64 * 0.002;
+            let base = points.len();
+            points.extend([[x, y, 0.], [x + 0.001, y, 0.], [x, y + 0.001, 0.]]);
+            faces.push([base, base + 1, base + 2]);
+        }
+        let body = points.iter().map(|p| [p[0], p[1], 0.015]).collect();
+        let surface = PrescribedTriangleSurface::new(points, faces.clone(), 0.001, 0.03, 100.)
+            .unwrap()
+            .with_body_contact_domains(vec![(faces.clone(), vec![false; count])])
+            .unwrap();
+        (surface, body, faces)
+    }
+    #[test]
+    fn inactive_masks_preserve_geometry_admission_and_unlisted_face_contacts() {
+        let (surface, mut body, faces) = fixture(2);
+        let zero = surface.response(&body, &faces).unwrap();
+        assert_eq!(zero.potential_j, 0.);
+        assert!(
+            zero.body_gradient_n
+                .iter()
+                .chain(&zero.obstacle_gradient_n)
+                .flatten()
+                .all(|&x| x == 0.)
+        );
+        assert!(surface.normal_stencils(&body, &faces).unwrap().is_empty());
+        assert!(
+            surface
+                .nearest_active_contact(&body, &faces)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            surface
+                .path_is_open(&surface, &body, &body, &faces)
+                .unwrap()
+        );
+        assert!(surface.response(&body, &[[0, 0, 1]]).is_err());
+        body[0][0] = f64::NAN;
+        assert!(surface.response(&body, &faces).is_err());
+        let (surface, body, faces) = fixture(2);
+        let mixed = surface
+            .with_body_contact_domains(vec![(vec![faces[0]], vec![false; 2])])
+            .unwrap();
+        assert_eq!(mixed.response(&body, &faces[..1]).unwrap().potential_j, 0.);
+        assert!(mixed.response(&body, &faces[1..]).unwrap().potential_j > 0.);
+        let enabled = surface
+            .with_body_contact_domains(vec![(faces.clone(), vec![true; 2])])
+            .unwrap();
+        assert!(enabled.response(&body, &faces).unwrap().potential_j > 0.);
+        assert!(surface.same_owner(&enabled).is_err());
+        let moved = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], p[2] + 0.001])
+                    .collect(),
+            )
+            .unwrap();
+        surface.same_owner(&moved).unwrap();
+        assert_eq!(moved.response(&body, &faces).unwrap().potential_j, 0.);
+    }
+    #[test]
+    #[ignore = "manual inactive-domain comparison; no timing threshold"]
+    fn inactive_domain_benchmark() {
+        let (surface, body, faces) = fixture(512);
+        let start = std::time::Instant::now();
+        let mut potential = 0.;
+        for _ in 0..200 {
+            let r = surface
+                .response(std::hint::black_box(&body), &faces)
+                .unwrap();
+            assert!(
+                r.body_gradient_n
+                    .iter()
+                    .chain(&r.obstacle_gradient_n)
+                    .flatten()
+                    .all(|&x| x == 0.)
+            );
+            potential += r.potential_j;
+            std::hint::black_box(r);
+        }
+        assert_eq!(potential, 0.);
+        println!(
+            "INACTIVE_DOMAIN_BENCH elapsed_s={:.17e} steps=200 faces=512 potential_j={potential:.17e}",
+            start.elapsed().as_secs_f64()
         );
     }
 }

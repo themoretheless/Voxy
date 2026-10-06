@@ -1,0 +1,195 @@
+6 10 12 2 9 5 16 13 0 14 4 1 19 8 18 11 3 17 15 7 
+[2026-10-07 02:33:35.508] [geogram] [info] Loading file artifacts/general-tissue-mesher-2026-10-07/character-input.obj...
+[2026-10-07 02:33:35.509] [geogram] [info] (FP64) nb_v:2338 nb_e:0 nb_f:4672 nb_b:0 tri:1 dim:3
+[2026-10-07 02:33:35.509] [geogram] [info] Attributes on vertices: point[3]
+bbox_diag_length = 1.7844
+ideal_edge_length = 0.06
+stage = 1
+eps_input = 1.7844e-06
+eps = 1.7844e-06
+eps_simplification = 1.42752e-06
+eps_coplanar = 3.5688e-07
+dd = 1.1896e-06
+dd_simplification = 9.51679e-07
+[2026-10-07 02:33:35.512] [float-tetwild] [info] remove duplicates: 
+[2026-10-07 02:33:35.512] [float-tetwild] [info] #v: 2338 -> 2338
+[2026-10-07 02:33:35.512] [float-tetwild] [info] #f: 4672 -> 4672
+#boundary_e1 = 0
+#boundary_e2 = 0
+[2026-10-07 02:33:35.513] [float-tetwild] [info] preprocessing 0.0022506666666666673s
+[2026-10-07 02:33:35.513] [float-tetwild] [info] 
+[2026-10-07 02:33:35.525] [float-tetwild] [info] #v = 3094
+[2026-10-07 02:33:35.525] [float-tetwild] [info] #t = 16805
+[2026-10-07 02:33:35.525] [float-tetwild] [info] tetrahedralizing 0.011973541666666669s
+[2026-10-07 02:33:35.525] [float-tetwild] [info] 
+[2026-10-07 02:33:35.525] [float-tetwild] [info] triangle insertion start, #f = 4672, #v = 3094, #t = 16805
+[2026-10-07 02:33:35.528] [float-tetwild] [info] matched #f = 3792, uninserted #f = 880
+[2026-10-07 02:33:35.633] [float-tetwild] [info] insert_one_triangle * n done, #v = 5975, #t = 31813
+[2026-10-07 02:33:35.633] [float-tetwild] [info] uninserted #f = 0/880
+[2026-10-07 02:33:35.633] [float-tetwild] [info] total timing: 0s
+[2026-10-07 02:33:35.641] [float-tetwild] [info] pair_track_surface_fs done
+#boundary_e1 = 0
+#boundary_e2 = 0
+[2026-10-07 02:33:35.643] [float-tetwild] [info] find_boundary_edges done
+[2026-10-07 02:33:35.644] [float-tetwild] [info] time1 = 0.0009381250000000002
+[2026-10-07 02:33:35.644] [float-tetwild] [info] uninsert boundary #e = 0/0
+[2026-10-07 02:33:35.644] [float-tetwild] [info] time2 = 0
+[2026-10-07 02:33:35.644] [float-tetwild] [info] time3 = 0
+[2026-10-07 02:33:35.644] [float-tetwild] [info] time4 = 0
+[2026-10-07 02:33:35.644] [float-tetwild] [info] time5 = 0
+[2026-10-07 02:33:35.644] [float-tetwild] [info] time6 = 0
+[2026-10-07 02:33:35.644] [float-tetwild] [info] uninserted #f = 0/880
+known_surface_fs.size = 0
+known_not_surface_fs.size = 0
+[2026-10-07 02:33:35.928] [float-tetwild] [info] mark_surface_fs done
+[2026-10-07 02:33:35.929] [float-tetwild] [info] #b_edge1 = 0, #b_edges2 = 0
+[2026-10-07 02:33:35.929] [float-tetwild] [info] cutting 0.40385995833333344s
+[2026-10-07 02:33:35.929] [float-tetwild] [info] 
+initializing...
+#v = 5885
+#t = 31377
+max_energy = 1.64679e+10
+avg_energy = 791154
+edge collapsing...
+fixed 0 tangled element
+success(env) = 1533
+success = 2735(28341)
+success(env) = 103
+success = 142(14135)
+success(env) = 19
+success = 22(3663)
+success(env) = 3
+success = 3(933)
+success(env) = 0
+success = 1(168)
+success(env) = 0
+success = 0(76)
+edge collapsing done!
+time = 7.50819s
+#v = 2982
+#t = 16581
+max_energy = 65421.6
+avg_energy = 42.8462
+//////////////// pass 0 ////////////////
+edge splitting...
+fixed 0 tangled element
+success = 24656(24656)
+edge splitting done!
+time = 0.0449128s
+#v = 27638
+#t = 132621
+max_energy = 65421.6
+avg_energy = 10.29
+edge collapsing...
+fixed 0 tangled element
+success(env) = 88
+success = 14995(67756)
+success(env) = 20
+success = 447(30758)
+success(env) = 2
+success = 45(8327)
+success(env) = 0
+success = 11(1257)
+success(env) = 1
+success = 4(283)
+success(env) = 2
+success = 3(107)
+success(env) = 0
+success = 0(40)
+edge collapsing done!
+time = 1.99461s
+#v = 12133
+#t = 62337
+max_energy = 65421.6
+avg_energy = 13.3638
+edge swapping...
+fixed 0 tangled element
+success3 = 1812
+success4 = 3468
+success5 = 370
+success = 5650(44783)
+edge swapping done!
+time = 0.170413s
+#v = 12133
+#t = 60895
+max_energy = 53192.5
+avg_energy = 6.66621
+vertex smoothing...
+success = 5583(9032)
+vertex smoothing done!
+time = 2.38154s
+#v = 12133
+#t = 60895
+max_energy = 18474.2
+avg_energy = 5.03358
+//////////////// pass 1 ////////////////
+edge splitting...
+fixed 0 tangled element
+success = 2072(2072)
+edge splitting done!
+time = 0.0219421s
+#v = 14205
+#t = 70289
+max_energy = 18474.2
+avg_energy = 4.9297
+edge collapsing...
+fixed 0 tangled element
+success(env) = 124
+success = 1963(45737)
+success(env) = 9
+success = 103(14794)
+success(env) = 0
+success = 14(2136)
+success(env) = 0
+success = 0(238)
+edge collapsing done!
+time = 1.27477s
+#v = 12125
+#t = 61385
+max_energy = 1157.9
+avg_energy = 4.29968
+edge swapping...
+fixed 0 tangled element
+success3 = 209
+success4 = 1218
+success5 = 101
+success = 1528(35458)
+edge swapping done!
+time = 0.119017s
+#v = 12125
+#t = 61277
+max_energy = 1157.9
+avg_energy = 4.1931
+vertex smoothing...
+success = 7023(9166)
+vertex smoothing done!
+time = 3.40361s
+#v = 12125
+#t = 61277
+max_energy = 1157.9
+avg_energy = 4.13239
+//////////////// postprocessing ////////////////
+edge collapsing...
+fixed 0 tangled element
+success(env) = 18
+success = 305(37449)
+success(env) = 2
+success = 9(2986)
+success(env) = 0
+success = 0(242)
+edge collapsing done!
+time = 0.499155s
+#v = 11811
+#t = 60274
+max_energy = 1157.9
+avg_energy = 4.13632
+[2026-10-07 02:33:53.362] [float-tetwild] [info] mesh optimization 17.43221929166667s
+[2026-10-07 02:33:53.362] [float-tetwild] [info] 
+[2026-10-07 02:33:53.368] [float-tetwild] [info] correct_tracked_surface_orientation done
+[2026-10-07 02:33:53.398] [float-tetwild] [info] after winding number
+[2026-10-07 02:33:53.398] [float-tetwild] [info] #v = 2471
+[2026-10-07 02:33:53.398] [float-tetwild] [info] #t = 7288
+[2026-10-07 02:33:53.398] [float-tetwild] [info] winding number 0.03568845833333334s
+[2026-10-07 02:33:53.398] [float-tetwild] [info] 
+[2026-10-07 02:33:53.398] [float-tetwild] [info] Writing mesh to artifacts/character-volume-filtering-2026-10-07/general-winding-volume.mesh...
+[2026-10-07 02:33:53.414] [float-tetwild] [info]  took 0.01589258333333334s

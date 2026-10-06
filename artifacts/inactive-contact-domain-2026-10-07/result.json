@@ -1,0 +1,105 @@
+{
+  "status": "paired inactive-domain optimization and full selected contact suites passed; full-volume runs still live",
+  "benchmark": {
+    "order": "ABBA x3",
+    "samples": [
+      {
+        "variant": "before",
+        "seconds": 23.448167167,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "after",
+        "seconds": 0.485731959,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "after",
+        "seconds": 0.21047725,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "before",
+        "seconds": 21.631975292,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "before",
+        "seconds": 25.525538792,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "after",
+        "seconds": 0.195428042,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "after",
+        "seconds": 0.197450375,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "before",
+        "seconds": 23.526996875000002,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "before",
+        "seconds": 18.589688708,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "after",
+        "seconds": 0.185435334,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "after",
+        "seconds": 0.188807166,
+        "potential_j": 0.0
+      },
+      {
+        "variant": "before",
+        "seconds": 17.942154709,
+        "potential_j": 0.0
+      }
+    ],
+    "medians_s": {
+      "before": 22.5400712295,
+      "after": 0.19643920850000002
+    },
+    "ratio_after_before": 0.00871511036943416,
+    "scope": "200 masked-domain responses with 512 body/obstacle faces; no full-engine speed claim",
+    "outputs_match": "all potentials and all body/obstacle gradients exactly zero; geometry rejection and owner behavior passed before/after"
+  },
+  "regression": {
+    "before_after_equivalent_cases": true,
+    "physics_lib_passed": 113,
+    "physics_lib_ignored": 8,
+    "embedded_contact_suite_session": 13734,
+    "embedded_contact_suite_terminal_exit_code": 0,
+    "full_volume_runtime_session": 57222,
+    "full_volume_runtime_pid": 35083,
+    "full_volume_runtime_terminal_exit_code": null,
+    "prescribed_contact_integration_passed": 34,
+    "prescribed_contact_integration_terminal_exit_code": 0,
+    "confirmed_tests_passed": 180,
+    "last_observed_utc": "2026-10-06T22:57:23.413621+00:00",
+    "embedded_contact_integration_passed": 33
+  },
+  "implementation_scope": "derived immutable empty-mask flag; skip broad phase only after unchanged face validation; active and unlisted pairs use original law",
+  "full_engine_speed_or_dynamics_claim": false,
+  "cached_full_volume_runtime": {
+    "session": 15657,
+    "pid": 53608,
+    "confirmed_live": true,
+    "terminal_exit_code": null,
+    "zero_checkpoint_equal_original": true,
+    "completed_checkpoint_times_s": [
+      0.0
+    ],
+    "same_manifest_and_capture_schedule": true,
+    "full_runtime_timing_comparison_qualified": false,
+    "observed_utc": "2026-10-06T23:03:27.982519+00:00"
+  }
+}

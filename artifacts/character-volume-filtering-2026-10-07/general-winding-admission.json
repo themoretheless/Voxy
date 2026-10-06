@@ -1,0 +1,8 @@
+{
+  "admission_error": "nonmanifold tetrahedral boundary vertex",
+  "complete_skin_binding": false,
+  "scope": "native phase-zero volume admission and full source skin membership; not animation dynamics",
+  "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+  "volume_admitted": false,
+  "volume_blake3": "af1656207cc1413e4e7d038883f50a9392e7778d78b9f4249758f8ca38446461"
+}

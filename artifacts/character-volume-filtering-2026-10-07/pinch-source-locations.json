@@ -1,0 +1,52 @@
+{
+  "input": "artifacts/general-tissue-mesher-2026-10-07/character-volume-bounded.mesh",
+  "vertices": 2477,
+  "tetrahedra": 7322,
+  "boundary_faces": 4400,
+  "face_connected_volume_component_sizes": [
+    7322
+  ],
+  "nonmanifold_faces": 0,
+  "bad_boundary_vertices": [
+    {
+      "vertex": 705,
+      "position_m": [
+        -0.1077616103837414,
+        0.9919670085888735,
+        0.03645238022423836
+      ],
+      "link_component_sizes": [
+        4,
+        3
+      ],
+      "link_degrees": {
+        "2": 7
+      },
+      "nearest_source_vertices": [
+        1244
+      ],
+      "nearest_source_distance_m": 1.3877787807814457e-17
+    },
+    {
+      "vertex": 1690,
+      "position_m": [
+        0.07176664257927934,
+        1.047227886820805,
+        -0.04135278475226985
+      ],
+      "link_component_sizes": [
+        3,
+        4
+      ],
+      "link_degrees": {
+        "2": 7
+      },
+      "nearest_source_vertices": [
+        628,
+        2360
+      ],
+      "nearest_source_distance_m": 0.0
+    }
+  ],
+  "scope": "independent topology audit only; not geometric validity or full source skin admission"
+}

@@ -1,0 +1,27 @@
+{
+  "status": "source-reference support targets integrated; full-character driven dynamics not yet qualified",
+  "tests": {
+    "skin_transfer_and_support_tests": 4,
+    "all_passed": true,
+    "independent_energy_balance_j": -1.076276483982897e-11,
+    "support_work_j": 1.6241246908889054e-10,
+    "absolute_balance_gate_j": 1e-10,
+    "control_supports": 4
+  },
+  "semantics": "same reference_nodes vector drives support targets and embedded skin pose; source joint blending comes from existing native skin provider; joint overrides rejected in this policy",
+  "remaining": [
+    "Author and qualify actual full-character bone attachments",
+    "Admit startup from bind pose into initial clip without support teleport",
+    "Dynamic self-contact",
+    "Material calibration and runtime performance"
+  ],
+  "live_jobs": {
+    "original_full_volume_session": 57222,
+    "original_pid": 35083,
+    "cached_full_volume_session": 15657,
+    "embedded_integration_session": 13734,
+    "cached_full_volume_pid": 53608,
+    "cached_zero_checkpoint_identical_original": true
+  },
+  "production_goal_complete": false
+}

@@ -1,0 +1,23 @@
+   Compiling glam v0.33.6
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_animation/src/lib.rs:4126:19
+     |
+4126 |             Mat4::perspective_rh(1., 1., 0.1, 100.),
+     |                   ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_animation` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.88s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/voxy_animation-88e9daec251bcb5a)
+
+running 5 tests
+test precision::tests::cubic_vector_keeps_analytic_fraction_and_step_remains_authored ... ok
+test precision::tests::wide_blend_retains_clock_endpoints_and_rejects_singular_or_foreign_poses ... ok
+test precision::tests::wide_time_uses_seconds_and_preserves_loop_seam ... ok
+test precision::tests::sub_f32_clock_steps_survive_translation_rotation_and_hierarchy ... ok
+test precision::tests::wide_pose_rejects_foreign_rig_invalid_phase_and_global_overflow ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 229 filtered out; finished in 0.01s
+

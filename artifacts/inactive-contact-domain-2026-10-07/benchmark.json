@@ -1,0 +1,72 @@
+{
+  "order": "ABBA x3",
+  "samples": [
+    {
+      "variant": "before",
+      "seconds": 23.448167167,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "after",
+      "seconds": 0.485731959,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "after",
+      "seconds": 0.21047725,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "before",
+      "seconds": 21.631975292,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "before",
+      "seconds": 25.525538792,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "after",
+      "seconds": 0.195428042,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "after",
+      "seconds": 0.197450375,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "before",
+      "seconds": 23.526996875000002,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "before",
+      "seconds": 18.589688708,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "after",
+      "seconds": 0.185435334,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "after",
+      "seconds": 0.188807166,
+      "potential_j": 0.0
+    },
+    {
+      "variant": "before",
+      "seconds": 17.942154709,
+      "potential_j": 0.0
+    }
+  ],
+  "medians_s": {
+    "before": 22.5400712295,
+    "after": 0.19643920850000002
+  },
+  "ratio_after_before": 0.00871511036943416,
+  "scope": "200 masked-domain responses with 512 body/obstacle faces; no full-engine speed claim",
+  "outputs_match": "all potentials and all body/obstacle gradients exactly zero; geometry rejection and owner behavior passed before/after"
+}

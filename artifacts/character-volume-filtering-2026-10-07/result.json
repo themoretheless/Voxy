@@ -1,0 +1,190 @@
+{
+  "status": "full-character volume rejected; local source self-intersections proved",
+  "previous_goal_turn": "progress: imports and evidence delivered to main",
+  "variants": {
+    "input-winding": {
+      "mesher_terminal_exit_code": 0,
+      "native_gate_exit_code": 1,
+      "admission": {
+        "admission_error": "nonmanifold tetrahedral boundary vertex",
+        "complete_skin_binding": false,
+        "scope": "native phase-zero volume admission and full source skin membership; not animation dynamics",
+        "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+        "volume_admitted": false,
+        "volume_blake3": "b759895d0b4828cdcf66bcd0f271ac07d9bf78ac2e187df496cf5789b417c1b2"
+      },
+      "topology": {
+        "input": "artifacts/character-volume-filtering-2026-10-07/input-winding-volume.mesh",
+        "vertices": 2472,
+        "tetrahedra": 7219,
+        "boundary_faces": 4414,
+        "face_connected_volume_component_sizes": [
+          7219
+        ],
+        "nonmanifold_faces": 0,
+        "bad_boundary_vertices": [
+          {
+            "vertex": 1686,
+            "position_m": [
+              0.07176664257927934,
+              1.047227886820805,
+              -0.04135278475226985
+            ],
+            "link_component_sizes": [
+              4,
+              3
+            ],
+            "link_degrees": {
+              "2": 7
+            }
+          },
+          {
+            "vertex": 699,
+            "position_m": [
+              -0.1077616103837414,
+              0.9919670085888735,
+              0.03645238022423836
+            ],
+            "link_component_sizes": [
+              4,
+              3
+            ],
+            "link_degrees": {
+              "2": 7
+            }
+          }
+        ],
+        "scope": "independent topology audit only; not geometric validity or full source skin admission"
+      }
+    },
+    "manifold": {
+      "mesher_terminal_exit_code": 0,
+      "native_gate_exit_code": 1,
+      "admission": {
+        "admission_error": "nonmanifold tetrahedral boundary vertex",
+        "complete_skin_binding": false,
+        "scope": "native phase-zero volume admission and full source skin membership; not animation dynamics",
+        "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+        "volume_admitted": false,
+        "volume_blake3": "79f6183d43b745b5c66e68f000b66ecfc3390fdd2561d8e0b8aca1cf052cf274"
+      },
+      "topology": {
+        "input": "artifacts/character-volume-filtering-2026-10-07/manifold-volume.mesh",
+        "vertices": 2449,
+        "tetrahedra": 7171,
+        "boundary_faces": 4378,
+        "face_connected_volume_component_sizes": [
+          7171
+        ],
+        "nonmanifold_faces": 0,
+        "bad_boundary_vertices": [
+          {
+            "vertex": 1691,
+            "position_m": [
+              0.07176664257927934,
+              1.047227886820805,
+              -0.04135278475226985
+            ],
+            "link_component_sizes": [
+              4,
+              3
+            ],
+            "link_degrees": {
+              "2": 7
+            }
+          },
+          {
+            "vertex": 700,
+            "position_m": [
+              -0.1077616103837414,
+              0.9919670085888735,
+              0.03645238022423836
+            ],
+            "link_component_sizes": [
+              4,
+              3
+            ],
+            "link_degrees": {
+              "2": 7
+            }
+          }
+        ],
+        "scope": "independent topology audit only; not geometric validity or full source skin admission"
+      }
+    },
+    "general-winding": {
+      "mesher_terminal_exit_code": 0,
+      "native_gate_exit_code": 1,
+      "admission": {
+        "admission_error": "nonmanifold tetrahedral boundary vertex",
+        "complete_skin_binding": false,
+        "scope": "native phase-zero volume admission and full source skin membership; not animation dynamics",
+        "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+        "volume_admitted": false,
+        "volume_blake3": "af1656207cc1413e4e7d038883f50a9392e7778d78b9f4249758f8ca38446461"
+      },
+      "topology": {
+        "input": "artifacts/character-volume-filtering-2026-10-07/general-winding-volume.mesh",
+        "vertices": 2471,
+        "tetrahedra": 7288,
+        "boundary_faces": 4384,
+        "face_connected_volume_component_sizes": [
+          7288
+        ],
+        "nonmanifold_faces": 0,
+        "bad_boundary_vertices": [
+          {
+            "vertex": 1693,
+            "position_m": [
+              0.07176664257927934,
+              1.047227886820805,
+              -0.04135278475226985
+            ],
+            "link_component_sizes": [
+              4,
+              3
+            ],
+            "link_degrees": {
+              "2": 7
+            }
+          },
+          {
+            "vertex": 703,
+            "position_m": [
+              -0.1077616103837414,
+              0.9919670085888735,
+              0.03645238022423836
+            ],
+            "link_component_sizes": [
+              3,
+              4
+            ],
+            "link_degrees": {
+              "2": 7
+            }
+          }
+        ],
+        "scope": "independent topology audit only; not geometric validity or full source skin admission"
+      }
+    }
+  },
+  "local_exact_intersections": {
+    "candidate_pairs": 167,
+    "strict_transverse_hits": 12,
+    "local_source_vertices": [
+      604,
+      1184
+    ],
+    "certificate": "local-intersections.json",
+    "qualification": "rational segment crosses strict triangle interior with strict segment parameter; local noncoplanar witnesses only"
+  },
+  "production_volume_qualified": false,
+  "next_requirement": "qualify an authored non-self-intersecting physical surface against source skin, preserving render identity and explicit skin transfer; no admission weakening",
+  "original_sampled_mesher": {
+    "session": 60651,
+    "pid": 98952,
+    "terminal_exit_code": 130,
+    "intentionally_stopped": true,
+    "reason": "exact local self-intersection witnesses in source geometry; existing tested full-volume candidates rejected; preserve evidence before physical contour repair"
+  }
+}

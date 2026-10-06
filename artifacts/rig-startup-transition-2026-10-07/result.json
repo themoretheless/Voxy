@@ -1,0 +1,19 @@
+{
+  "status": "double-precision startup transition implemented and sampled native rig qualified; full driven dynamics pending",
+  "animation_tests_passed": 235,
+  "native_imported_startup_test_passed": 1,
+  "manifest_startup_test_passed": 1,
+  "startup_seconds": 0.5,
+  "phase_samples": 481,
+  "source_skin_vertices": 3273,
+  "exact_bind_start": true,
+  "same_native_skin_and_contact_pose": true,
+  "source_aliases_remain_exactly_coincident": true,
+  "after_startup_exact_original_clip_sample": true,
+  "first_step_max_component_change_m": 0.00011530112516376645,
+  "clock_policy": "same authored clip phase; smoothstep fades bind contribution; no phase reset or separate player",
+  "manifest": "../character-bind-pose-2026-10-07/startup-regions.json",
+  "old_manifests_default_startup_seconds": 0.0,
+  "full_mechanical_startup_qualified": false,
+  "hardware_claim": "none; this qualifies CPU kinematics and entrypoint integration"
+}

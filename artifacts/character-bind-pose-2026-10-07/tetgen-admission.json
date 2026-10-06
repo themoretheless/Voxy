@@ -1,0 +1,15 @@
+{
+  "bound_vertices": 3273,
+  "complete_skin_binding": true,
+  "exterior_source_vertices": [],
+  "maximum_rest_component_error_m": 1.1102230246251565e-15,
+  "reference_pose": "skeleton-bind-pose",
+  "scope": "native reference-pose volume admission and full source skin membership; not animation dynamics",
+  "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+  "source_vertices": 3273,
+  "volume_admitted": true,
+  "volume_blake3": "3860e2a7726cfae6c431009d3dde70bb24ecc9fe6168fb1109ba64ab61c8b925",
+  "volume_boundary_triangles": 4672,
+  "volume_cells": 6845,
+  "volume_nodes": 2338
+}
