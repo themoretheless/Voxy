@@ -1,6 +1,6 @@
 {
   "tests_passed": 25,
-  "full_character_status": "running after correcting warm-start coarsening",
+  "full_character_status": "intentionally interrupted, exit 130; coupled material search candidate replaces expensive diagonal run",
   "full_character_session": 10542,
   "initial_run_status": "intentionally interrupted, exit 130; no full qualification",
   "per_frame_position_difference_budget_m": 1e-07,

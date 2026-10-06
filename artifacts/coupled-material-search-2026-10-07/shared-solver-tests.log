@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 3 tests
+test biomechanics::inertia::implicit::tests::rest_material_metric_matches_affine_energy_and_solves_coupled_system ... ok
+test biomechanics::inertia::implicit::tests::coupled_direction_matches_rank_one_inverse_and_holds_pins ... ok
+test plasticity::mesh::quadratic::plane::coulomb::acceleration_tests::accelerated_dual_recovers_coupled_analytic_stick_slide_solution ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 116 filtered out; finished in 0.00s
+

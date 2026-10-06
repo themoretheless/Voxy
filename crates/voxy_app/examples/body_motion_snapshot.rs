@@ -6,6 +6,7 @@ mod tissue_demo;
 #[path = "body_motion_snapshot/tissue_regions.rs"]
 mod tissue_regions;
 use glam::{DMat4, Mat4, Vec3};
+use std::io::Write;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 use voxy_render::{ModelAsset, ModelLimits, SceneMesh};
 fn displayed_meshes(
@@ -838,6 +839,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut frames = Vec::new();
     let capture_node_state = std::env::var_os("VOXY_CAPTURE_NODE_STATE").is_some();
     let mut node_states = Vec::new();
+    // Publish each committed checkpoint independently, including when a later
+    // interval fails. The aggregate JSON still appears only on full completion.
+    let mut node_stream = capture_node_state
+        .then(|| std::fs::File::create(std::path::Path::new(&path).with_extension("nodes.jsonl")))
+        .transpose()?;
     let mut motion = String::from(
         "time_s,sample,offset_x_m,offset_y_m,offset_z_m,volume_m3,mechanical_change_j,support_work_j,viscous_heat_j,numerical_defect_j\n",
     );
@@ -883,7 +889,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let volumes = demo.body_volumes_m3();
         let energy = demo.body_energy_receipts()?;
         if capture_node_state {
-            node_states.push(serde_json::json!({"time_s":step as f64 / 240., "nodes":demo.continuum_node_state()?, "energy_receipts":energy}));
+            let checkpoint = serde_json::json!({"time_s":step as f64 / 240., "nodes":demo.continuum_node_state()?, "energy_receipts":energy});
+            if let Some(stream) = &mut node_stream {
+                serde_json::to_writer(&mut *stream, &checkpoint)?;
+                stream.write_all(b"\n")?;
+                stream.flush()?;
+            }
+            node_states.push(checkpoint);
         }
         let offsets = if let Some(domains) = &contact_reference {
             let (palette, _) = imported_contact_sample64(

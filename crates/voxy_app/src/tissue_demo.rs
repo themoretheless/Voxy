@@ -1389,6 +1389,10 @@ impl TissueDemo {
                 Ok((position, velocity))
             })
             .transpose()?;
+        let explicit_accuracy = std::env::var_os("VOXY_EXPLICIT_SUPPORT_ACCURACY").is_some();
+        if explicit_accuracy && motion_budgets.is_none() {
+            return Err("explicit support accuracy requires motion budgets");
+        }
         let trace_motion =
             motion_budgets.is_some() && std::env::var_os("VOXY_SUPPORT_ACCURACY_TRACE").is_some();
         let conductivity = vec![conductivity_w_m_k; cells.len()];
@@ -1414,7 +1418,7 @@ impl TissueDemo {
             })
             .transpose()?
             .unwrap_or(0);
-        if minimum_depth > 8 {
+        if minimum_depth > 10 {
             return Err("invalid minimum support depth");
         }
         let initial_depth = (*preferred_depth).max(minimum_depth);
@@ -1465,7 +1469,13 @@ impl TissueDemo {
                 .transpose()?;
             let dt = 1. / (240. * f64::from(subdivisions));
             if let Some((position, velocity)) = motion_budgets {
-                let receipt = dynamics.step_viscoelastic_implicit_with_support_accuracy(
+                let advance = if explicit_accuracy {
+                    InertialBody::step_viscoelastic_with_support_accuracy
+                } else {
+                    InertialBody::step_viscoelastic_implicit_with_support_accuracy
+                };
+                let receipt = advance(
+                    dynamics,
                     Some(&segment),
                     dt,
                     1e-5 * dt * 240.,

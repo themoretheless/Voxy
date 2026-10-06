@@ -1,0 +1,40 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running tests/biomechanics.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/biomechanics-bfaf43c2ce995ed8)
+
+running 9 tests
+test matrix_small_strain_shear_is_physical_and_fibers_are_directional ... ok
+test near_rest_energy_retains_tiny_shear_instead_of_cancelling_to_zero ... ok
+test calibration_recovers_material_and_detects_held_out_error ... ok
+test analytic_stress_matches_energy_gradient_and_rigid_rotation ... ok
+test rejects_inversion_open_pressure_and_invalid_load_atomically ... ok
+test affine_patch_energy_is_exact_and_cavity_geometry_refines ... ok
+test assembled_pressure_energy_gradient_and_force_balance ... ok
+test specimens_have_noninverted_connected_volume_and_bonded_layers ... ok
+test pressure_expands_and_muscle_activation_contracts ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.11s
+
+     Running tests/myocardium.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/myocardium-ab5e21272e8b35b2)
+
+running 8 tests
+test invalid_frames_inversion_and_overflow_rejected ... ok
+test near_rest_myocardium_preserves_quadratic_shear_energy ... ok
+test reference_rotation_and_orthotropy ... ok
+test batch_material_field_matches_individual_assignments_and_is_atomic ... ok
+test cardiac_field_preserves_neighboring_viscoelastic_memory ... ok
+test cardiac_fem_gradient_and_spatial_stress_use_assigned_law ... ok
+test orthotropic_energy_derivative_including_activation_and_shear ... ok
+test cardiac_activation_contracts_a_loaded_fem_element_at_equilibrium ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

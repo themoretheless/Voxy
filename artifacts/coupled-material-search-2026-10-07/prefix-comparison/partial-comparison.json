@@ -1,0 +1,35 @@
+{
+  "scope": "available streamed checkpoints only; candidate prefix/full runs still live",
+  "comparison": [
+    {
+      "time_s": 0.0,
+      "candidate_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "default_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      }
+    },
+    {
+      "time_s": 0.03333333333333333,
+      "candidate_vs_depth8": {
+        "position_m": 1.278651659546991e-07,
+        "velocity_m_s": 0.00023196873318696073
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 2.628569598608118e-10,
+        "velocity_m_s": 4.715556841654225e-07
+      },
+      "default_vs_depth8": {
+        "position_m": 2.687568720715588e-06,
+        "velocity_m_s": 0.002579880660649394
+      }
+    }
+  ]
+}

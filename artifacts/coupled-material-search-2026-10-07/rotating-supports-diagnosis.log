@@ -1,0 +1,40 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.54s
+     Running tests/viscoelastic_inertia.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/viscoelastic_inertia-27d63fc016ce9f42)
+
+running 1 test
+TEMP_ACCURACY count=1 error=implicit support motion difference exceeded p=0.00008224137983844366 v=0.0019906794363809283
+TEMP_ACCURACY count=2 error=implicit support motion difference exceeded p=0.000011974137635147385 v=0.0000861149531144591
+TEMP_ACCURACY count=4 error=implicit support motion difference exceeded p=0.0000015508947236383495 v=0.0000012001687480863873
+TEMP_ACCURACY count=8 error=implicit support motion difference exceeded p=0.00000019533111273107406 v=0.0000009263412784461738
+TEMP_ACCURACY count=16 error=implicit support motion difference exceeded p=0.000000024445928399958065 v=0.00000016475140402787035
+TEMP_ACCURACY count=32 error=implicit support motion difference exceeded p=0.0000000030556216472589418 v=0.000000023658912634958604
+TEMP_ACCURACY count=64 error=implicit support motion difference exceeded p=0.000000000381883681283383 v=0.0000000031489562433763218
+TEMP_ACCURACY count=128 error=implicit support motion difference exceeded p=0.00000000014313367584027846 v=0.0000000011808632454487048
+TEMP_ACCURACY count=256 error=implicit support motion difference exceeded p=0.00000000010125288351253455 v=0.0000000007727801925666739
+TEMP_ACCURACY count=512 error=implicit support motion difference exceeded p=0.00000000010044808515060224 v=0.0000000012384476494208926
+TEMP_ACCURACY count=1024 error=implicit support motion difference exceeded p=0.000000000055066981818514544 v=0.000000010001855379369071
+TEMP_ACCURACY count=2048 error=implicit support motion difference exceeded p=0.0000000000031570732495408185 v=0.000000010005440268882083
+
+thread 'support_accuracy_rotating_supports_match_refined_verlet_and_rollback' (86524) panicked at crates/physics/tests/viscoelastic_inertia.rs:717:10:
+called `Result::unwrap()` on an `Err` value: "implicit support accuracy subdivision limit"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test support_accuracy_rotating_supports_match_refined_verlet_and_rollback ... FAILED
+
+failures:
+
+failures:
+    support_accuracy_rotating_supports_match_refined_verlet_and_rollback
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.56s
+
+error: test failed, to rerun pass `-p physics --test viscoelastic_inertia`

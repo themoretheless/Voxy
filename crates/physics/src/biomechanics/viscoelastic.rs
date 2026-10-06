@@ -29,7 +29,14 @@ fn deviator(mut m: Matrix) -> Matrix {
     }
     m
 }
-fn strain(f: Matrix) -> Result<(Matrix, Matrix, f64), &'static str> {
+#[derive(Clone, Copy)]
+struct StrainState {
+    metric: Matrix,
+    deviator: Matrix,
+    volume_ratio: f64,
+    isochoric_scale: f64,
+}
+fn strain(f: Matrix) -> Result<StrainState, &'static str> {
     let j = det(f);
     if !j.is_finite() || j <= 0. || f.iter().flatten().any(|v| !v.is_finite()) {
         return Err("invalid viscoelastic deformation");
@@ -40,7 +47,12 @@ fn strain(f: Matrix) -> Result<(Matrix, Matrix, f64), &'static str> {
     if c.iter().flatten().any(|v| !v.is_finite()) {
         return Err("viscoelastic metric overflow");
     }
-    Ok((c, e, j))
+    Ok(StrainState {
+        metric: c,
+        deviator: e,
+        volume_ratio: j,
+        isochoric_scale: q,
+    })
 }
 // Symmetric eigendecomposition. The complete tensor power is independent of the
 // basis chosen in repeated eigenspaces. No eigenvector derivatives are needed.
@@ -162,6 +174,13 @@ impl ViscoelasticOgden {
         material.response(IDENTITY, 0.)?;
         Ok(material)
     }
+    pub(super) fn rest_moduli(&self) -> (f64, f64) {
+        (
+            self.terms.iter().map(|t| t.shear_pa).sum::<f64>()
+                + self.branches.iter().map(|b| b.shear_pa).sum::<f64>(),
+            self.bulk_pa,
+        )
+    }
     pub(super) fn stiffness(&self) -> f64 {
         self.bulk_pa
             + self.terms.iter().map(|t| t.shear_pa).sum::<f64>()
@@ -176,7 +195,22 @@ impl ViscoelasticOgden {
         if !dt.is_finite() || dt < 0. {
             return Err("invalid constitutive timestep");
         }
-        let (c, e, j) = strain(f)?;
+        self.response_at_strain(f, dt, strain(f)?)
+    }
+    // The same admitted deformation can drive response validation and history
+    // update. Keep this internal: callers cannot supply stale material metrics.
+    fn response_at_strain(
+        &self,
+        f: Matrix,
+        dt: f64,
+        state: StrainState,
+    ) -> Result<Response, &'static str> {
+        let StrainState {
+            metric: c,
+            deviator: e,
+            volume_ratio: j,
+            isochoric_scale: q,
+        } = state;
         // The exponent-two Ogden term is exactly isochoric neo-Hooke.
         // Reuse its stable invariant instead of decomposing a symmetric tensor
         // for every force/energy evaluation. Other exponents keep the spectral law.
@@ -188,11 +222,11 @@ impl ViscoelasticOgden {
         let inv_t = transpose(inverse(f)?);
         let mut energy = 0.5 * self.bulk_pa * (j - 1.).powi(2);
         let mut p = inv_t.map(|r| r.map(|v| self.bulk_pa * (j - 1.) * j * v));
-        let q = j.powf(-2. / 3.);
         let trace = c[0][0] + c[1][1] + c[2][2];
         for term in &self.terms {
             if term.exponent == 2. {
-                energy += 0.5 * term.shear_pa * super::invariants::isochoric_excess(f, q, trace);
+                energy +=
+                    0.5 * term.shear_pa * super::invariants::isochoric_metric_excess(c, trace);
                 for i in 0..3 {
                     for k in 0..3 {
                         p[i][k] += term.shear_pa * (q * f[i][k] - trace / 3. * inv_t[i][k]);
@@ -269,8 +303,9 @@ impl ViscoelasticOgden {
         if dt <= 0. || !dt.is_finite() {
             return Err("invalid relaxation timestep");
         }
-        self.response(f, dt)?;
-        let (_, e, _) = strain(f)?;
+        let state = strain(f)?;
+        self.response_at_strain(f, dt, state)?;
+        let e = state.deviator;
         let mut next = self.memory.clone();
         let mut dissipation = 0.;
         for ((branch, old), new) in self.branches.iter().zip(&self.memory).zip(&mut next) {
@@ -296,7 +331,7 @@ impl ViscoelasticOgden {
     /// # Errors
     /// Invalid deformation or overflowing branch energy.
     pub fn maxwell_energy_density(&self, f: Matrix) -> Result<f64, &'static str> {
-        let (_, strain, _) = strain(f)?;
+        let strain = strain(f)?.deviator;
         let energy = self
             .branches
             .iter()
@@ -327,8 +362,9 @@ impl ViscoelasticOgden {
         if !dt.is_finite() || dt <= 0. {
             return Err("invalid exact relaxation timestep");
         }
-        self.response(f, 0.)?;
-        let (_, e, _) = strain(f)?;
+        let state = strain(f)?;
+        self.response_at_strain(f, 0., state)?;
+        let e = state.deviator;
         let mut next = self.memory.clone();
         let mut released = 0.;
         for ((branch, old), new) in self.branches.iter().zip(&self.memory).zip(&mut next) {

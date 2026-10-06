@@ -1,0 +1,9 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.46s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 1 test
+test biomechanics::inertia::implicit::tests::rest_material_metric_matches_affine_energy_and_solves_coupled_system ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 118 filtered out; finished in 0.00s
+

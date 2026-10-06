@@ -1,0 +1,93 @@
+{
+  "old_run_terminal_exit": 130,
+  "old_run_stop_reason": "replace diagonal search metric with coupled element metric; no full qualification",
+  "committed_intervals": 4090,
+  "committed_dt_sum_s": 0.077783203125,
+  "max_position_budget_fraction": 0.9927346076639307,
+  "max_velocity_budget_fraction": 0.996589059533212,
+  "candidate_unit_tests_passed": 1,
+  "candidate_inertia_tests_passed": 14,
+  "full_candidate_status": "completed exit 0; comparison and limitations recorded in full-comparison.json",
+  "full_candidate_session": 2243,
+  "contact_regression_tests_passed": 1,
+  "candidate_observation_utc": "2026-10-06T20:59:51.290646+00:00",
+  "candidate_partial": {
+    "intervals": 1480,
+    "committed_dt_sum_s": 0.06725260416666666,
+    "max_position_budget_fraction": 0.991375646752247,
+    "max_velocity_budget_fraction": 0.9965131996976576
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "91ee203d7b9bff98cc20bf8b3fd85811812ec73274cded9b81aba0ce45141a57",
+    "crates/physics/src/biomechanics/viscoelastic.rs": "15a3acfa97cdae1ede8685e316abce45c957ef439d4788967e4330da01433f9a"
+  },
+  "stack_sample": {
+    "owned_pid": 70977,
+    "duration_s": 2,
+    "main_thread_samples": 1640,
+    "path_material_samples": 1537,
+    "caveat": "single short stack sample; does not establish whole-run stage timings or speedup"
+  },
+  "expanded_validation": {
+    "physics_lib_passed": 112,
+    "physics_lib_ignored": 7,
+    "viscoelastic_material_passed": 10,
+    "viscoelastic_inertia_passed": 14,
+    "exit_code": 0
+  },
+  "missing_observation_utc": "2026-10-06T21:12:29.339377+00:00",
+  "prefix_candidate_session": 94511,
+  "explicit_prefix_references": {
+    "default_exit": 0,
+    "depth7_exit": 0,
+    "depth8_exit": 0
+  },
+  "prefix_candidate_status": "completed exit 0, 0.1 s, 4 checkpoints; before diagnostic-velocity exclusion",
+  "prefix_wall_seconds": 211.704291375,
+  "rotating_support_fix": {
+    "inertia_tests_passed": 15,
+    "initial_failure": "strict rotating support accuracy exhausted refinement; prescribed-node finite-difference velocity rounding accumulated",
+    "change": "estimate velocity differences only for integrated free nodes; preserve all-node position indicator, exact support targets, energy and heat admission",
+    "source_sha256": {
+      "crates/physics/src/biomechanics/inertia/viscous.rs": "f2bd00ef29290a58a0753cedd386164ddb55c5db1cc43156f35445af28af9837",
+      "crates/physics/tests/viscoelastic_inertia.rs": "1bd829eee754ff728e70ccec7da75e5dc3ea07149ebf589e0c34aa62bf8c5528"
+    },
+    "full_current_source_qualification": "pending; live session 28155 predates estimator fix"
+  },
+  "previous_full_stop": {
+    "session": 28155,
+    "exit_code": 130,
+    "reason": "replace expensive search cancellation policy after matching-tolerance prefix qualification"
+  },
+  "current_inertia_tests_passed": 15,
+  "full_explicit_references": {
+    "depth7": {
+      "session": 98584,
+      "exit_code": 0,
+      "wall_s": 23.393557458,
+      "accepted_substeps": 271960,
+      "rejected_substeps": 26200
+    },
+    "depth8": {
+      "session": 37834,
+      "exit_code": 0,
+      "wall_s": 39.343547583,
+      "accepted_substeps": 491520,
+      "rejected_substeps": 0
+    }
+  },
+  "full_candidate_wall_s": 117.109676291,
+  "shared_accuracy_tests_passed": 15,
+  "explicit_accuracy_prefix": {
+    "exit_code": 0,
+    "wall_s": 8.161380708,
+    "accepted_substeps": 7628,
+    "max_final_position_difference_m": 4.728982396167896e-08,
+    "max_final_velocity_difference_m_s": 3.5544111616365765e-05,
+    "interpretation": "more accurate prefix than implicit at same raw indicator budgets, slower observed run; not a full or generic performance claim"
+  },
+  "explicit_full_status": "completed exit 0; final depth9 comparison recorded",
+  "explicit_full_session": 28074,
+  "reference_depth9_status": "completed exit 0",
+  "reference_depth9_session": 14299
+}

@@ -1,0 +1,20 @@
+{
+  "scope": "available checkpoints only; full outcome pending",
+  "rows": [
+    {
+      "time_s": 0.0,
+      "position_difference_m": 0.0,
+      "velocity_difference_m_s": 0.0
+    },
+    {
+      "time_s": 0.5,
+      "position_difference_m": 2.109135636652835e-07,
+      "velocity_difference_m_s": 0.0001791344867764574
+    },
+    {
+      "time_s": 1.0,
+      "position_difference_m": 2.658003244947241e-07,
+      "velocity_difference_m_s": 0.00047571251354431443
+    }
+  ]
+}

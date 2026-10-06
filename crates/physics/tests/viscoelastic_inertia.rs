@@ -687,3 +687,113 @@ fn support_accuracy_driven_path_matches_independent_prescribed_verlet() {
     assert!(receipt.step.support.support_work_j > 0.);
     assert!(receipt.step.viscous_heat_j >= 0.);
 }
+
+#[test]
+fn support_accuracy_rotating_supports_match_refined_verlet_and_rollback() {
+    let initial = moving_free_node_specimen();
+    let (sin, cos) = 0.005_f64.sin_cos();
+    let endpoints: Vec<_> = initial.body().positions()[..3]
+        .iter()
+        .enumerate()
+        .map(|(node, p)| SupportTarget {
+            node,
+            position_m: [
+                p[0] + 0.0003,
+                cos * p[1] - sin * p[2],
+                sin * p[1] + cos * p[2],
+            ],
+        })
+        .collect();
+    let mut explicit = initial.clone();
+    let explicit_receipt = explicit
+        .step_viscoelastic_with_support_accuracy(Some(&endpoints), 0.01, 1e-6, 1e-10, 1e-8, 4096)
+        .unwrap();
+    assert!(explicit_receipt.position_difference_sum_m <= 1e-10);
+    assert!(explicit_receipt.velocity_difference_sum_m_s <= 1e-8);
+    let mut adaptive = initial.clone();
+    let receipt = adaptive
+        .step_viscoelastic_implicit_with_support_accuracy(
+            Some(&endpoints),
+            0.01,
+            1e-6,
+            1e-10,
+            1e-8,
+            4096,
+        )
+        .unwrap();
+    // The owner receives a linear trajectory between pose endpoints. The
+    // independent integrator uses the identical path, not a different arc.
+    let reference = |steps: u32| {
+        let mut body = initial.clone();
+        for step in 1..=steps {
+            let targets: Vec<_> = initial.body().positions()[..3]
+                .iter()
+                .enumerate()
+                .map(|(node, p)| SupportTarget {
+                    node,
+                    position_m: if step == steps {
+                        endpoints[node].position_m
+                    } else {
+                        std::array::from_fn(|a| {
+                            p[a] + f64::from(step) / f64::from(steps)
+                                * (endpoints[node].position_m[a] - p[a])
+                        })
+                    },
+                })
+                .collect();
+            body.step_viscoelastic(Some(&targets), 0.01 / f64::from(steps), 1e-8)
+                .unwrap();
+        }
+        body
+    };
+    let coarse = reference(2048);
+    let fine = reference(4096);
+    let norm = |a: [f64; 3], b: [f64; 3]| (a[0] - b[0]).hypot(a[1] - b[1]).hypot(a[2] - b[2]);
+    assert!(norm(coarse.body().positions()[3], fine.body().positions()[3]) < 1e-9);
+    assert!(norm(coarse.velocities()[3], fine.velocities()[3]) < 1e-7);
+    assert!(norm(adaptive.body().positions()[3], fine.body().positions()[3]) < 1e-8);
+    assert!(norm(adaptive.velocities()[3], fine.velocities()[3]) < 1e-6);
+    assert!(norm(explicit.body().positions()[3], fine.body().positions()[3]) < 1e-8);
+    assert!(norm(explicit.velocities()[3], fine.velocities()[3]) < 1e-6);
+    for target in &endpoints {
+        assert_eq!(adaptive.body().positions()[target.node], target.position_m);
+    }
+    assert!(receipt.step.viscous_heat_j >= 0.);
+    let before = initial.diagnostics().unwrap();
+    let after = adaptive.diagnostics().unwrap();
+    assert!(
+        (after.kinetic_j + after.potential_j - before.kinetic_j - before.potential_j
+            + receipt.step.viscous_heat_j
+            - receipt.step.support.support_work_j)
+            .abs()
+            < 1e-6
+    );
+    for target in &endpoints {
+        assert_eq!(explicit.body().positions()[target.node], target.position_m);
+    }
+    let mut explicit_failed = initial.clone();
+    let saved_explicit = format!("{explicit_failed:?}");
+    assert_eq!(
+        explicit_failed
+            .step_viscoelastic_with_support_accuracy(Some(&endpoints), 0.01, 1e-6, 1e-30, 1e-30, 2)
+            .unwrap_err(),
+        "explicit support accuracy subdivision limit"
+    );
+    assert_eq!(format!("{explicit_failed:?}"), saved_explicit);
+    let mut failed = initial.clone();
+    let saved = format!("{failed:?}");
+    assert_eq!(
+        failed
+            .step_viscoelastic_implicit_with_support_accuracy(
+                Some(&endpoints),
+                0.01,
+                1e-6,
+                1e-30,
+                1e-30,
+                2
+            )
+            .unwrap_err(),
+        "implicit support accuracy subdivision limit"
+    );
+    assert_eq!(format!("{failed:?}"), saved);
+}

@@ -1,0 +1,52 @@
+{
+  "scope": "0.1 second prefix, 4 checkpoints, all 76 nodes; not full fixture qualification",
+  "candidate_exit_code": 0,
+  "candidate_wall_seconds": 211.704291375,
+  "candidate_source": "coupled material metric before prescribed diagnostic velocity exclusion",
+  "rows": [
+    {
+      "time_s": 0.0,
+      "candidate_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      }
+    },
+    {
+      "time_s": 0.03333333333333333,
+      "candidate_vs_depth8": {
+        "position_m": 1.278651659546991e-07,
+        "velocity_m_s": 0.00023196873318696073
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 2.628569598608118e-10,
+        "velocity_m_s": 4.715556841654225e-07
+      }
+    },
+    {
+      "time_s": 0.06666666666666667,
+      "candidate_vs_depth8": {
+        "position_m": 1.9405925015426848e-07,
+        "velocity_m_s": 0.0002766627997333013
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 1.5401860100696008e-08,
+        "velocity_m_s": 9.847324486616444e-06
+      }
+    },
+    {
+      "time_s": 0.1,
+      "candidate_vs_depth8": {
+        "position_m": 2.0014903119048004e-07,
+        "velocity_m_s": 0.0002304134084898288
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 3.590215652908454e-08,
+        "velocity_m_s": 1.748545221398975e-05
+      }
+    }
+  ]
+}

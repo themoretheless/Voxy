@@ -1,0 +1,74 @@
+{
+  "scope": "complete 2 s CesiumMan capture at original 240 Hz pose clock; all 76 continuum nodes at 4 checkpoints",
+  "exit_code": 0,
+  "wall_seconds": 117.109676291,
+  "stage_simulation_seconds": 117.070124417,
+  "fine_substeps": 207320,
+  "trial_calls": 455028,
+  "intervals": 55588,
+  "maximum_depth": 7,
+  "max_position_indicator_budget_fraction": 0.9999807280661708,
+  "max_velocity_indicator_budget_fraction": 0.999866983372919,
+  "rows": [
+    {
+      "time_s": 0.0,
+      "candidate_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "candidate_energy_closure_error_j": 6.726232628759122e-44
+    },
+    {
+      "time_s": 0.5,
+      "candidate_vs_depth8": {
+        "position_m": 2.1068582097671857e-06,
+        "velocity_m_s": 0.0021858118095994224
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 2.1207317666671665e-07,
+        "velocity_m_s": 0.0002089472382749427
+      },
+      "candidate_energy_closure_error_j": 5.403849540635989e-14
+    },
+    {
+      "time_s": 1.0,
+      "candidate_vs_depth8": {
+        "position_m": 2.5236141248596375e-06,
+        "velocity_m_s": 0.0049380496028146315
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 3.6905433910692706e-07,
+        "velocity_m_s": 0.0005848605039959032
+      },
+      "candidate_energy_closure_error_j": 5.433996650250719e-14
+    },
+    {
+      "time_s": 2.0,
+      "candidate_vs_depth8": {
+        "position_m": 7.950583048099286e-05,
+        "velocity_m_s": 0.023256453627126916
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 1.0806504317994608e-05,
+        "velocity_m_s": 0.003360383675582553
+      },
+      "candidate_energy_closure_error_j": 1.6093769014050894e-14
+    }
+  ],
+  "limitations": [
+    "offline runtime; not real-time",
+    "checkpoint comparison is not continuous trajectory certificate",
+    "local indicator budgets do not certify global errors",
+    "illustrative tissue binding covers 16 of 3273 skin vertices"
+  ],
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "7a53e677a0d9967da97420f2b83549bda6cb75f2f39078e1e52fa91f91a54eb3",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "f2bd00ef29290a58a0753cedd386164ddb55c5db1cc43156f35445af28af9837",
+    "crates/physics/src/biomechanics/viscoelastic.rs": "15a3acfa97cdae1ede8685e316abce45c957ef439d4788967e4330da01433f9a",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "872fead37e0a3de4b0dfb56a810be4cbb71b0a70311757101fa4cc0bb213ccd1"
+  }
+}

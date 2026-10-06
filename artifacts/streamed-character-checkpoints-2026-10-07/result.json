@@ -1,0 +1,8 @@
+{
+  "exit_code": 0,
+  "checkpoints": 4,
+  "nodes_per_checkpoint": 76,
+  "stream_matches_final_json_exactly": true,
+  "scope": "short 3-step existing CesiumMan GPU capture; stream verification only, not full motion accuracy or realtime qualification",
+  "source_sha256": "872fead37e0a3de4b0dfb56a810be4cbb71b0a70311757101fa4cc0bb213ccd1"
+}

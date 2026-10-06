@@ -1,0 +1,38 @@
+{
+  "scope": "shared streamed checkpoints only; runtime outcomes pending",
+  "rows": [
+    {
+      "time_s": 0.0,
+      "candidate_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      }
+    },
+    {
+      "time_s": 0.5,
+      "candidate_vs_depth8": {
+        "position_m": 2.1068582097671857e-06,
+        "velocity_m_s": 0.0021858118095994224
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 2.1207317666671665e-07,
+        "velocity_m_s": 0.0002089472382749427
+      }
+    },
+    {
+      "time_s": 1.0,
+      "candidate_vs_depth8": {
+        "position_m": 2.5236141248596375e-06,
+        "velocity_m_s": 0.0049380496028146315
+      },
+      "reference_depth7_vs_depth8": {
+        "position_m": 3.6905433910692706e-07,
+        "velocity_m_s": 0.0005848605039959032
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.93s
+     Running `/tmp/voxy-contact-derivatives-20261006/release/examples/viscoelastic_step_bench`
+repeat=0 seconds=0.022468459 position=[0.0015930481232990356, -0.15318599629027518, -0.030560555519509397] velocity=[-0.015892804094995338, -0.3265921041877559, -0.37304679229915294] potential=-54.11133523936599943 kinetic=18.51008591768680134 heat=35.62407350473853285 work=0.02285090443857238 defect=-0.00002672137942359
+repeat=1 seconds=0.022390334 position=[0.0015930481232990356, -0.15318599629027518, -0.030560555519509397] velocity=[-0.015892804094995338, -0.3265921041877559, -0.37304679229915294] potential=-54.11133523936599943 kinetic=18.51008591768680134 heat=35.62407350473853285 work=0.02285090443857238 defect=-0.00002672137942359
+repeat=2 seconds=0.023663542 position=[0.0015930481232990356, -0.15318599629027518, -0.030560555519509397] velocity=[-0.015892804094995338, -0.3265921041877559, -0.37304679229915294] potential=-54.11133523936599943 kinetic=18.51008591768680134 heat=35.62407350473853285 work=0.02285090443857238 defect=-0.00002672137942359

@@ -1,0 +1,74 @@
+{
+  "scope": "completed 2 s clips, four shared checkpoints, 76 nodes; depth8/depth9 numerical convergence rather than certified global bound",
+  "reference_depth9_exit": 0,
+  "reference_depth9_wall_s": 123.75086425,
+  "reference_depth9_substeps": 983040,
+  "rows": [
+    {
+      "time_s": 0.0,
+      "full-reference-depth8": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "full-explicit-accuracy": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      },
+      "full-cancellation-fixed": {
+        "position_m": 0.0,
+        "velocity_m_s": 0.0
+      }
+    },
+    {
+      "time_s": 0.5,
+      "full-reference-depth8": {
+        "position_m": 5.30245634109376e-08,
+        "velocity_m_s": 5.2234245701983216e-05
+      },
+      "full-explicit-accuracy": {
+        "position_m": 2.6393478898734534e-07,
+        "velocity_m_s": 0.0002312508699187146
+      },
+      "full-cancellation-fixed": {
+        "position_m": 2.053836833697733e-06,
+        "velocity_m_s": 0.0021335885974262656
+      }
+    },
+    {
+      "time_s": 1.0,
+      "full-reference-depth8": {
+        "position_m": 9.224285778692233e-08,
+        "velocity_m_s": 0.00014618366802383742
+      },
+      "full-explicit-accuracy": {
+        "position_m": 3.5221511144260395e-07,
+        "velocity_m_s": 0.0006216812997431321
+      },
+      "full-cancellation-fixed": {
+        "position_m": 2.4371351060053715e-06,
+        "velocity_m_s": 0.004791970584175653
+      }
+    },
+    {
+      "time_s": 2.0,
+      "full-reference-depth8": {
+        "position_m": 2.79423641945123e-06,
+        "velocity_m_s": 0.0009108757550130546
+      },
+      "full-explicit-accuracy": {
+        "position_m": 1.0892910622442865e-05,
+        "velocity_m_s": 0.0030211570389216745
+      },
+      "full-cancellation-fixed": {
+        "position_m": 7.671713980281915e-05,
+        "velocity_m_s": 0.02235791782324781
+      }
+    }
+  ],
+  "limitations": [
+    "not real-time",
+    "no continuous global error certificate",
+    "source rig pose sampling remains 240 Hz",
+    "illustrative 16/3273 vertex binding"
+  ]
+}

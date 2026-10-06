@@ -1,0 +1,32 @@
+{
+  "scope": "same-budget 0.1 s diagnostic only; full alternate-integrator runtime not qualified",
+  "exit_code": 0,
+  "wall_seconds": 8.161380708,
+  "accepted_substeps": 7628,
+  "rows": [
+    {
+      "time_s": 0.0,
+      "position_difference_m": 0.0,
+      "velocity_difference_m_s": 0.0,
+      "energy_closure_error_j": 6.726232628759122e-44
+    },
+    {
+      "time_s": 0.03333333333333333,
+      "position_difference_m": 2.0336112132712133e-08,
+      "velocity_difference_m_s": 3.782654334183861e-05,
+      "energy_closure_error_j": 2.11210841771412e-17
+    },
+    {
+      "time_s": 0.06666666666666667,
+      "position_difference_m": 3.889987303950705e-08,
+      "velocity_difference_m_s": 4.673970594573295e-05,
+      "energy_closure_error_j": 8.494258735638089e-15
+    },
+    {
+      "time_s": 0.1,
+      "position_difference_m": 4.728982396167896e-08,
+      "velocity_difference_m_s": 3.5544111616365765e-05,
+      "energy_closure_error_j": 1.0725489526010199e-14
+    }
+  ]
+}

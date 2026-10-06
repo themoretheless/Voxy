@@ -1,0 +1,40 @@
+{
+  "scope": "four checkpoints of first 0.1 s; no full or realtime qualification",
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "7a53e677a0d9967da97420f2b83549bda6cb75f2f39078e1e52fa91f91a54eb3",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "f2bd00ef29290a58a0753cedd386164ddb55c5db1cc43156f35445af28af9837"
+  },
+  "rows": [
+    {
+      "time_s": 0.0,
+      "max_position_difference_m": 0.0,
+      "max_velocity_difference_m_s": 0.0,
+      "max_energy_closure_error_j": 6.726232628759122e-44
+    },
+    {
+      "time_s": 0.03333333333333333,
+      "max_position_difference_m": 1.278651659546991e-07,
+      "max_velocity_difference_m_s": 0.00023196873318696073,
+      "max_energy_closure_error_j": 3.416129669996968e-16
+    },
+    {
+      "time_s": 0.06666666666666667,
+      "max_position_difference_m": 3.0692038399646153e-07,
+      "max_velocity_difference_m_s": 0.00023413917229251192,
+      "max_energy_closure_error_j": 8.211040125720282e-15
+    },
+    {
+      "time_s": 0.1,
+      "max_position_difference_m": 4.970551019252834e-07,
+      "max_velocity_difference_m_s": 0.00022099885479687494,
+      "max_energy_closure_error_j": 9.391558838154547e-15
+    }
+  ],
+  "old_coupled_prefix_wall_s": 211.704291375,
+  "cancellation_prefix_wall_s": [
+    2.180956625,
+    2.271928041
+  ],
+  "final_prefix_identical_to_initial_candidate": true,
+  "final_accepted_substeps": 4202
+}

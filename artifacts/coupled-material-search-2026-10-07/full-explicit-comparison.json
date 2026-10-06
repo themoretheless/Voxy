@@ -1,0 +1,50 @@
+{
+  "scope": "complete 2 s capture at original 240 Hz rig clock; four checkpoints, all 76 nodes",
+  "exit_code": 0,
+  "wall_seconds": 145.018263333,
+  "fine_substeps": 428986,
+  "trial_calls": 718069,
+  "committed_dt_sum_s": 2.0,
+  "maximum_depth": 9,
+  "max_position_budget_fraction": 0.9998343365165251,
+  "max_velocity_budget_fraction": 0.9722219087443188,
+  "comparison_vs_depth8": [
+    {
+      "time_s": 0.0,
+      "position_difference_m": 0.0,
+      "velocity_difference_m_s": 0.0,
+      "energy_closure_error_j": 6.726232628759122e-44
+    },
+    {
+      "time_s": 0.5,
+      "position_difference_m": 2.109135636652835e-07,
+      "velocity_difference_m_s": 0.0001791344867764574,
+      "energy_closure_error_j": 1.8736585898397417e-14
+    },
+    {
+      "time_s": 1.0,
+      "position_difference_m": 2.658003244947241e-07,
+      "velocity_difference_m_s": 0.00047571251354431443,
+      "energy_closure_error_j": 1.650446307645273e-13
+    },
+    {
+      "time_s": 2.0,
+      "position_difference_m": 8.104994504926326e-06,
+      "velocity_difference_m_s": 0.002135356400654915,
+      "energy_closure_error_j": 2.4275931339902423e-13
+    }
+  ],
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "7a53e677a0d9967da97420f2b83549bda6cb75f2f39078e1e52fa91f91a54eb3",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "a1141b76c6beec5f23f745ffe0900b711f40a79c05b6f1cb60dfa7d7fd7e0710",
+    "crates/voxy_app/src/tissue_demo.rs": "6137a3c349ee55a53a25af6c92d65f1f807732dac7946dcde15b92396182cc98",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "872fead37e0a3de4b0dfb56a810be4cbb71b0a70311757101fa4cc0bb213ccd1"
+  },
+  "limitations": [
+    "offline; not real-time",
+    "depth 9 reference still live; further reference qualification pending",
+    "local indicators are not global certificates",
+    "four checkpoints are not a continuous trajectory verification",
+    "tissue attachment remains illustrative: 16/3273 skin vertices"
+  ]
+}
