@@ -1783,3 +1783,53 @@ fn regional_exclusions_are_shared_by_ccd_forces_and_diagnostics() {
     }
     assert_eq!(saved, format!("{source:?}"));
 }
+
+#[test]
+fn admitted_pose_geometry_keeps_late_invalid_vertices_atomic_and_topology_strict() {
+    let positions = vec![
+        [0., 0., 0.],
+        [1., 0., 0.],
+        [0., 1., 0.],
+        [2., 0., 0.],
+        [3., 0., 0.],
+        [2., 1., 0.],
+        [9., 9., 9.],
+    ];
+    let faces = vec![[0, 1, 2], [3, 4, 5]];
+    let source =
+        PrescribedTriangleSurface::new(positions.clone(), faces.clone(), 0.001, 0.03, 100.)
+            .unwrap();
+    for kind in 0..4 {
+        let mut changed = positions.clone();
+        match kind {
+            0 => changed[6][2] = f64::NAN, // unused vertices are still validated
+            1 => changed[5] = changed[4],  // late collapsed face
+            2 => changed[5][2] = f64::INFINITY,
+            _ => changed[4][0] = f64::MAX, // overflowing area
+        }
+        let staged = source.with_positions(changed.clone()).unwrap_err();
+        let rebuilt =
+            PrescribedTriangleSurface::new(changed, faces.clone(), 0.001, 0.03, 100.).unwrap_err();
+        assert_eq!(staged, rebuilt);
+        assert_eq!(source.positions(), positions);
+    }
+    assert!(source.with_positions(positions[..6].to_vec()).is_err());
+    let moved: Vec<_> = positions
+        .iter()
+        .map(|p| [p[0] + 0.1, p[1] - 0.2, p[2] + 0.3])
+        .collect();
+    let staged = source.with_positions(moved.clone()).unwrap();
+    let rebuilt = PrescribedTriangleSurface::new(moved, faces.clone(), 0.001, 0.03, 100.).unwrap();
+    let query = body();
+    assert_eq!(
+        format!("{:?}", staged.response(&query, &[[0, 1, 2]])),
+        format!("{:?}", rebuilt.response(&query, &[[0, 1, 2]]))
+    );
+    // Arbitrary caller faces still cross the full topology admission boundary.
+    assert!(source.response(&query, &[[0, 1, 2], [2, 1, 0]]).is_err());
+    assert!(source.response(&query, &[[0, 1, 99]]).is_err());
+    assert!(
+        PrescribedTriangleSurface::new(positions, vec![[0, 1, 2], [2, 1, 0]], 0.001, 0.03, 100.)
+            .is_err()
+    );
+}

@@ -1,0 +1,18 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.48s
+     Running tests/moisture_vapor.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_vapor-bfc6ef23a8ef9fd8)
+
+running 1 test
+THERMAL_VAPOR_RECEIPT ThermalVaporStep { transfer: VaporTransfer { material_water_change_kg: [-0.0004827449385131667], vapor_water_change_kg: 0.00048274493851326554, latent_exchange_j: 1158.5878524318373, mass_defect_kg: 9.882502802205373e-17, energy_defect_j: 8.731149137020111e-10 }, elapsed_s: 0.5, attempts: 1025, accepted_intervals: 1020, rejected_attempts: 5, minimum_interval_s: 0.00014986339070671706 }
+test adaptive_receipt_reports_complete_time_and_temperature_floor_rejects_atomically ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s

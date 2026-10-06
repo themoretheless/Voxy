@@ -1,0 +1,14 @@
+BODY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+CONTACT imported mesh: 3273 vertices, 4672 triangles
+IMPORTED support centers: [[-0.0990283414721489, 0.7890225052833557, 0.1306656002998352], [0.06097165495157242, 0.7890225052833557, 0.1306656002998352], [-0.08844652771949768, 0.4791085422039032, -0.05612833797931671], [0.047629572451114655, 0.4791243374347687, -0.056171491742134094]]
+CONTACT region 0: 4672 enabled, 0 excluded source triangles
+TISSUE assembled regional dynamics into one global owner
+TISSUE_COVERAGE {"bound_vertices":1,"contract_supplied":true,"regions":[{"boundary_triangles":28,"cells":18,"density_kg_m3":1200.0,"joint":12,"nodes":16,"specific_heat_j_kg_k":2000.0,"support_joint_overrides":[],"support_joint_weights":[],"supports":6,"temperature_kelvin":295.0}],"scope":"reference-space skin membership; not dynamic collision qualification","source_vertices":3273,"tissue_owned_vertices":[666]}
+SKIN bound=1 total=3273
+SKIN physical contact: 6 responsive triangles; native FEM envelope disabled
+CAPTURE final_step=48 simulated_s=0.200000000 limited=true
+frame t=0.00
+frame t=0.07
+frame t=0.13
+frame t=0.20
+snapshot simulation + render seconds=49.593209167; step receipts=[(192, 0, 0)]

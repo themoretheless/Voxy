@@ -1,0 +1,14 @@
+{
+  "physics": {
+    "passed": 1477,
+    "failed": 0,
+    "ignored": 10
+  },
+  "animation_example": {
+    "passed": 55,
+    "failed": 0,
+    "ignored": 3
+  },
+  "all_targets_check": "passed after adding missing shared module declarations to three examples",
+  "native_lod": "previous run failed: zero presented frames; logs preserved"
+}

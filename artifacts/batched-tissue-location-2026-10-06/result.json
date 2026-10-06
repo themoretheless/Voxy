@@ -1,0 +1,24 @@
+{
+  "physics_tests": 18,
+  "app_tests": 55,
+  "app_ignored": 3,
+  "runtime": {
+    "exit": 0,
+    "backend": "Metal rendering; CPU physics",
+    "steps": 48,
+    "accepted_substeps": 192,
+    "simulated_seconds": 0.2,
+    "simulation_and_render_seconds": 50.90666775,
+    "owned_source_vertices": 1,
+    "source_vertices": 3273,
+    "responsive_skin_triangles": 6,
+    "image_visually_inspected": true
+  },
+  "scope": "Batched reusable point location and authored nonconvex import; no complete source coverage, full clip or realtime qualification",
+  "sha256": {
+    "crates/physics/src/tissue_surface/search.rs": "205772292df5038451bb57f57ca88f0fcf7fad06a01e4ab880800b1a49b2159b",
+    "crates/physics/tests/tissue_surface.rs": "28d96f58b3fe02345dfb30550c7430f52582d6fd6e9cfe695e5d8243ea0eb432",
+    "crates/voxy_app/src/tissue_demo.rs": "cb7e4d227a2b901aeae56ee24f61caffb956200bdafcea83b289ee73be7d688a",
+    "crates/voxy_app/src/tissue_demo/assembly.rs": "19fdad7fb5020938458de5c9cfff7d12295d2c6de58f8237d8765a3fbef7a378"
+  }
+}

@@ -410,3 +410,104 @@ fn indexed_embedding_preserves_boundary_tolerance_and_original_cell_ties() {
     }
     assert_eq!(binding.deform(&rest).unwrap(), vec![[1.25, 0.25, 0.25]]);
 }
+
+#[test]
+#[ignore = "controlled point-location preparation comparison; no timing threshold"]
+fn repeated_binding_vs_reused_point_location() {
+    use physics::tissue_surface::TetrahedralEmbedding;
+    use std::time::Instant;
+    let mut rest = Vec::new();
+    let mut cells = Vec::new();
+    let mut queries = Vec::new();
+    for i in 0..256 {
+        let start = rest.len();
+        let offset = 2. * i as f64;
+        rest.extend(REST.map(|p| [p[0] + offset, p[1], p[2]]));
+        cells.push([start, start + 1, start + 2, start + 3]);
+        queries.push([offset + 0.25, 0.25, 0.25]);
+        queries.push([offset + 1.5, 0.25, 0.25]);
+    }
+    let begin = Instant::now();
+    let repeated: Vec<bool> = queries
+        .iter()
+        .map(|p| match EmbeddedSurface::bind(&rest, &cells, &[*p]) {
+            Ok(_) => true,
+            Err("surface vertex outside tetrahedral mesh") => false,
+            Err(e) => panic!("{e}"),
+        })
+        .collect();
+    let repeated_time = begin.elapsed();
+    let begin = Instant::now();
+    let search = TetrahedralEmbedding::new(&rest, &cells).unwrap();
+    let reused: Vec<bool> = queries
+        .iter()
+        .map(|p| search.contains(*p).unwrap())
+        .collect();
+    let reused_time = begin.elapsed();
+    assert_eq!(repeated, reused);
+    assert_eq!(reused.iter().filter(|&&v| v).count(), 256);
+    let binding = search.bind_relative(&queries, &reused).unwrap();
+    let mut output = vec![[0.; 3]; queries.len()];
+    binding
+        .deform_relative_into(&rest, &rest, &queries, &mut output)
+        .unwrap();
+    assert_eq!(output, queries);
+    println!(
+        "cells={} queries={} owned=256 repeated_prepare_and_bind_us={} reused_prepare_and_query_us={}",
+        cells.len(),
+        queries.len(),
+        repeated_time.as_micros(),
+        reused_time.as_micros()
+    );
+}
+
+#[test]
+fn batch_location_matches_nonconvex_authored_volume_and_affine_displacement() {
+    use physics::biomechanics::TetraMesh;
+    use physics::tissue_surface::TetrahedralEmbedding;
+    let mesh =
+        TetraMesh::from_lattice_cells([0.; 3], [1.; 3], &[[0; 3], [1, 0, 0], [0, 1, 0]]).unwrap();
+    let search = TetrahedralEmbedding::new(&mesh.points, &mesh.cells).unwrap();
+    let points = [
+        [0.25; 3],
+        [1.5, 0.5, 0.5],
+        [0.5, 1.5, 0.5],
+        [1.5, 1.5, 0.5],
+        [0.; 3],
+        [2., 0.5, 0.5],
+    ];
+    let owned = search.contains_points(&points).unwrap();
+    assert_eq!(owned, vec![true, true, true, false, true, true]);
+    assert_eq!(
+        owned,
+        points
+            .iter()
+            .map(|&p| search.contains(p).unwrap())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(search.contains_points(&[]).unwrap(), Vec::<bool>::new());
+    let mut invalid = points;
+    invalid[5][2] = f64::INFINITY;
+    assert!(search.contains_points(&invalid).is_err());
+    assert_eq!(search.contains_points(&points).unwrap(), owned);
+    let binding = search.bind_relative(&points, &owned).unwrap();
+    let displacement = |p: [f64; 3]| [0.1 + 0.2 * p[1], -0.3 * p[0], 0.05 * p[2]];
+    let moved: Vec<_> = mesh
+        .points
+        .iter()
+        .map(|&p| {
+            let d = displacement(p);
+            std::array::from_fn(|i| p[i] + d[i])
+        })
+        .collect();
+    let mut output = vec![[0.; 3]; points.len()];
+    binding
+        .deform_relative_into(&mesh.points, &moved, &points, &mut output)
+        .unwrap();
+    for ((p, result), owned) in points.iter().zip(output).zip(owned) {
+        let d = if owned { displacement(*p) } else { [0.; 3] };
+        for i in 0..3 {
+            assert!((result[i] - p[i] - d[i]).abs() < 1e-12);
+        }
+    }
+}

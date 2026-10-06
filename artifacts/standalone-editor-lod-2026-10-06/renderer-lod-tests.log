@@ -1,0 +1,126 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:197:19
+    |
+194 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+197 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+227 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+243 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+278 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+300 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+328 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+636 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+759 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+989 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 4 warnings
+    Finished `release` profile [optimized] target(s) in 13.28s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_render-4937a88d07a24db1)
+
+running 40 tests
+test lod::projection_tests::projection_accounts_for_off_axis_depth_and_near_plane ... ok
+test lod::tests::invalid_inputs_never_produce_a_draw_index ... ok
+test lod::tests::transitions_have_a_dead_band ... ok
+test camera_lod::tests::lod_bounds_transform_covers_shear_and_rejects_projective_models ... ok
+test lod::tests::screen_error_and_scale_control_quality ... ok
+test lod::index_set_tests::invalid_variant_cannot_enter_the_shared_vertex_domain ... ok
+test camera::tests::lod_camera_scale_accounts_for_aspect_and_near_plane ... ok
+test lod_certificate::tests::identical_and_translated_surfaces ... ok
+test lod_certificate::tests::fractional_witness_and_extreme_finite_coordinates ... ok
+test lod::index_set_tests::counts_come_from_indices_and_selected_variants_share_vertex_domain ... ok
+test certified_lod::tests::derives_bound_and_binds_exact_source_bits ... ok
+test certified_lod::tests::rejects_unverified_artifacts_and_invalid_base ... ok
+test lod_certificate::tests::rejects_untrusted_or_incomplete_witnesses ... ok
+test lod_archive::tests::roundtrip_reverifies_and_preserves_source_bits ... ok
+test lod_archive::tests::encoder_and_decoder_enforce_exact_cumulative_limits ... ok
+test lod_archive::tests::rejects_semantic_corruption_and_cumulative_budget_overruns ... ok
+test lod_certificate::tests::reverse_direction_detects_removed_island ... ok
+test lod_archive::tests::rejects_truncation_trailing_version_and_forged_counts ... ok
+test lod_certificate::tests::square_to_triangle_bounds_removed_interior ... ok
+test lod_search::tests::indexed_search_keeps_removed_island_error ... ok
+test lod_subdivision::tests::canonical_subdivision_covers_the_whole_triangle ... ok
+test lod_subdivision::tests::rejects_holes_extra_cells_and_excessive_depth ... ok
+test lod_subdivision::tests::subdivision_still_detects_removed_islands ... ok
+test lod_witness::tests::exact_identity_degenerate_and_removed_island ... ok
+test lod_witness::tests::finds_square_triangle_bound_with_exact_work_limit ... ok
+test lod_witness::tests::thin_and_extreme_candidates_still_pass_the_verifier ... ok
+test lod_subdivision::tests::subdivision_removes_flat_retriangulation_overestimate ... ok
+test skinned_lod::tests::subdivision_archive_binds_exact_source_and_recertifies_deformation ... ok
+test skinned_lod::tests::invalid_pose_or_witness_never_changes_last_good_snapshot ... ok
+test skinned_lod::tests::deformation_recertifies_error_and_two_views_select_independently ... ok
+test lod_search::tests::indexed_search_prunes_without_changing_flat_geometry_bound ... ok
+test scene::lod_geometry::tests::lod_history_replacement_failure_and_resource_lifetime ... ok
+test scene::lod_geometry::tests::certified_upload_rejects_changed_positions_and_preserves_last_good ... ok
+test scene::lod_geometry::tests::lod_upload_rejects_foreign_device_and_vertex_domain_before_allocation ... ok
+test scene::lod_geometry::tests::lod_camera_selection_falls_back_and_validates_history ... ok
+test skinned_lod::tests::skeletal_gpu_lod_budget_shared_streams_and_topology_history ... ok
+test scene::lod_geometry::tests::streamed_indices_obey_budget_share_streams_and_recover_after_eviction ... ok
+test scene::skinning::tests::gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission ... ok
+test scene::lod_geometry::tests::gpu_lod_upload_shares_streams_and_counts_all_index_buffers ... ok
+test renderer::skinned_lod::tests::gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams ... ok
+
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 122 filtered out; finished in 0.17s

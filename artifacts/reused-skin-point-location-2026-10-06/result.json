@@ -1,0 +1,20 @@
+{
+  "scope": "Reuse point-location preparation in both app skin ownership paths; shared regional binding geometry",
+  "physics_passed": 13,
+  "example_passed": 55,
+  "example_ignored": 3,
+  "comparison": {
+    "cells": 256,
+    "queries": 512,
+    "owned": 256,
+    "repeated_prepare_bind_us": 8573,
+    "reused_prepare_query_us": 45,
+    "scope": "Single local release run; preparation reuse, not isolated BVH or end-to-end performance"
+  },
+  "source_sha256": {
+    "crates/physics/tests/tissue_surface.rs": "c893234b83fb092a67c27ab5b6a57a7a4ee922b89b066592e9e6f3e3e1ad43e4",
+    "crates/voxy_app/src/tissue_demo.rs": "3df8ee8a44045406400e3a85d99ab2a60767159ba53aa1f8ba851efe37fa1328",
+    "crates/voxy_app/src/tissue_demo/assembly.rs": "c8c8584ca3add3428f2ba3eb3262d6146d6738c44242245117f335675a04a1b6"
+  },
+  "unfinished": "Full physical-skin clip and overall engine goal"
+}

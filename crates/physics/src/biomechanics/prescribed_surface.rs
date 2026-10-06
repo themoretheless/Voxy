@@ -433,6 +433,33 @@ pub(super) fn validate_faces(positions: &[Vec3], faces: &[[usize; 3]]) -> Result
     }
     Ok(())
 }
+// For immutable faces already admitted by validate_faces. Vertex counts are
+// checked by the owning surface; index checks remain defensive here.
+pub(super) fn validate_admitted_face_geometry(
+    positions: &[Vec3],
+    faces: &[[usize; 3]],
+) -> Result<(), &'static str> {
+    if positions.is_empty()
+        || positions.len() > 65536
+        || faces.is_empty()
+        || faces.len() > 131072
+        || positions.iter().flatten().any(|v| !v.is_finite())
+    {
+        return Err("invalid prescribed surface geometry budget");
+    }
+    for face in faces {
+        let [Some(a), Some(b), Some(c)] = face.map(|node| positions.get(node).copied()) else {
+            return Err("invalid or duplicate prescribed surface triangle");
+        };
+        let normal = cross(sub(b, a), sub(c, a));
+        let area = dot(normal, normal);
+        if !area.is_finite() || area <= 1e-30 {
+            return Err("degenerate contact triangle");
+        }
+    }
+    Ok(())
+}
+
 impl PrescribedTriangleSurface {
     fn evaluated_gap(
         &self,
@@ -511,7 +538,7 @@ impl PrescribedTriangleSurface {
         if positions.len() != self.positions.len() {
             return Err("prescribed surface vertex count changed");
         }
-        validate_faces(&positions, &self.faces)?;
+        validate_admitted_face_geometry(&positions, &self.faces)?;
         let triangles: Vec<_> = self
             .faces
             .iter()

@@ -1,0 +1,111 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 11.55s
+     Running tests/mixed_darcy.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/mixed_darcy-8ce3c46ab89999f9)
+
+running 27 tests
+test implicit_boundary_protein_accounts_for_inflow_and_outflow ... ok
+test finite_reservoir_multiport_conserves_combined_storage_and_energy ... ok
+test flux_and_dissipation_rotate_objectively ... ok
+test implicit_storage_matches_two_cell_backward_euler_and_energy_balance ... ok
+test mixed_coupling_errors_roll_back_and_bad_flux_callback_is_rejected ... ok
+test implicit_reservoir_exchange_matches_compliance_and_boundary_energy_work ... ok
+test inertial_lymph_rt0_fem_commits_matching_pressure_geometry_and_momentum ... ok
+test oblique_anisotropic_linear_pressure_patch_has_exact_constant_flux ... ok
+test permeability_viscosity_scaling_and_bad_inputs ... ok
+adaptive inertial FEM accepted=2 rejected=0 maxerror=0.03456389097883794
+adaptive radial FEM accepted=2 rejected=0 max_error=0.034563890992867004
+test mixed_pore_flow_preserves_additional_capillary_exchange_and_conservation ... ok
+test mixed_flux_deforms_oblique_tissue_and_commits_actual_flow_diagnostics ... ok
+test implicit_protein_preserves_uniform_concentration_and_large_step_positivity ... ok
+test persistent_reservoir_steps_conserve_absolute_inventories_and_roll_back ... ok
+test sealed_faces_conserve_volume_and_pressure_work_matches_dissipation ... ok
+test selective_membrane_advection_and_diffusion_match_discrete_mass_ledger ... ok
+test adaptive_inertial_tissue_preserves_joint_state_and_rolls_back_budget_failure ... ok
+test radial_profiles_couple_to_actual_fem_pressure_and_preserve_atomic_state ... ok
+test finite_reservoir_protein_mixes_bidirectional_ports_and_conserves_mass ... ok
+test hydraulic_boundary_resistance_matches_series_flow_and_implicit_storage ... ok
+test manufactured_quadratic_pressure_refines_on_nonorthogonal_tetrahedra ... ok
+test current_radius_resistance_couples_to_tissue_and_lymph_ledgers ... ok
+isolated velocity tolerance=0.00000001 accepted=2 rejected=0
+test nonlinear_capillary_and_lymph_loop_couples_to_deforming_rt0_tissue ... ok
+test attached_lymphatic_wall_uses_current_interstitial_pressure_and_rejects_bad_links ... ok
+adaptive tissue relative=0.001 position_tolerance_m=0.00000001 accepted=3 rejected=1 position_error_m=2.729324186795e-9
+adaptive tissue relative=0.001 position_tolerance_m=0.0000000001 accepted=6 rejected=1 position_error_m=3.247726514805e-10
+test adaptive_deforming_tissue_lymph_controls_geometry_and_rolls_back ... ok
+test thousands_of_cells_preserve_patch_accuracy_with_linear_operator_storage ... ok
+isolated velocity tolerance=0.000000000001 accepted=339 rejected=8
+test adaptive_radial_tissue_controls_full_profiles_and_rolls_back ... ok
+test thousands_of_fluid_nodes_and_faces_couple_without_old_network_limits ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/moisture.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture-894a0e973d5ba074)
+
+running 3 tests
+test invalid_and_overflowing_updates_preserve_inventory ... ok
+test closed_heterogeneous_cells_conserve_water_and_approach_common_saturation ... ok
+test bath_uptake_and_drying_are_bounded_accounted_and_time_refine ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moisture_partition.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_partition-f156cd63c695b2f6)
+
+running 2 tests
+test geometry_must_explicitly_disconnect_exhausted_material ... ok
+test exhausted_cells_are_removed_and_changed_graph_conserves_retained_water ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moisture_sparse.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_sparse-ca7340aab71c4c21)
+
+running 2 tests
+test sparse_heterogeneous_bath_matches_direct_solution_and_overflow_is_atomic ... ok
+SPARSE_MOISTURE cells=1024 max_saturation_error=8.104628079763643e-15 elapsed_us=2348
+test large_closed_chain_matches_exact_discrete_diffusion_mode ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moisture_supply.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_supply-fafcb312c9566dd7)
+
+running 3 tests
+test parallel_pools_and_invalid_updates_are_atomic ... ok
+test capped_source_and_uncapped_source_couple_through_the_same_network ... ok
+test finite_pool_exhaustion_limits_uptake_and_preserves_combined_water ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moisture_vapor.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_vapor-bfc6ef23a8ef9fd8)
+
+running 13 tests
+test heat_deposition_is_bounded_atomic_and_energy_accounted ... ok
+test insufficient_heat_and_invalid_links_leave_both_owners_unchanged ... ok
+test closed_drying_and_condensation_match_two_capacity_implicit_solution ... ok
+test opposing_water_fluxes_transport_sensible_heat_even_with_zero_net_mass ... ok
+test effective_thermal_capacity_cannot_hide_negative_dry_capacity ... ok
+test material_vapor_conduction_matches_exact_two_store_solution ... ok
+test thermal_exchange_cools_or_heats_and_domain_failure_is_atomic ... ok
+test closed_enthalpy_transfer_changes_heat_capacities_and_preserves_energy ... ok
+ADAPTIVE_MOISTURE initial_material=0.01 tolerance=1e-7 mass_error=7.86614941754543e-7
+ADAPTIVE_MOISTURE initial_material=0.01 tolerance=1e-9 mass_error=7.959485775143292e-8
+PREPARED_MULTICELL max_mass_error_kg=2.229189069447024e-9 attempts=282 accepted=278
+test prepared_multicell_thermal_network_matches_independent_ode_with_opposing_fluxes ... ok
+test long_closed_exchange_equilibrates_without_losing_water_or_latent_energy ... ok
+test heated_mass_exchange_conserves_long_run_and_refines_in_time ... ok
+ADAPTIVE_MOISTURE initial_material=0.01 tolerance=1e-11 mass_error=7.964822640240277e-9
+ADAPTIVE_MOISTURE initial_material=0 tolerance=1e-7 mass_error=3.2200024996896504e-7
+ADAPTIVE_MOISTURE initial_material=0 tolerance=1e-9 mass_error=3.159138178918802e-8
+ADAPTIVE_MOISTURE initial_material=0 tolerance=1e-11 mass_error=3.1718436271574446e-9
+test adaptive_thermal_drying_converges_to_independent_closed_reservoir_ode_and_rolls_back ... ok
+THERMAL_VAPOR_RECEIPT ThermalVaporStep { transfer: VaporTransfer { material_water_change_kg: [-0.0004827449385131667], vapor_water_change_kg: 0.00048274493851326554, latent_exchange_j: 1158.5878524318373, mass_defect_kg: 9.882502802205373e-17, energy_defect_j: 8.731149137020111e-10 }, elapsed_s: 0.5, attempts: 1025, accepted_intervals: 1020, rejected_attempts: 5, minimum_interval_s: 0.00014986339070671706 }
+test adaptive_receipt_reports_complete_time_and_temperature_floor_rejects_atomically ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

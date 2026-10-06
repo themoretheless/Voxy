@@ -1,0 +1,30 @@
+{
+  "tests_passed": 31,
+  "tests_failed": 0,
+  "oracle": "Independent RK4, 4096 steps of continuous activity/latent ODE; initial wet drying and initial dry condensation",
+  "drying_mass_errors_kg": [
+    7.86614941754543e-07,
+    7.959485775143292e-08,
+    7.964822640240277e-09
+  ],
+  "condensation_mass_errors_kg": [
+    3.2200024996896504e-07,
+    3.159138178918802e-08,
+    3.1718436271574446e-09
+  ],
+  "local_mass_tolerances_kg": [
+    1e-07,
+    1e-09,
+    1e-11
+  ],
+  "atomic_rejections": [
+    "attempt exhaustion",
+    "duplicate links"
+  ],
+  "scope": "Adaptive numerical admission for existing lumped thermal moisture law; not full fluid/material/rendering qualification",
+  "sha256": {
+    "crates/physics/src/liquid/evaporation.rs": "4636ece7d936fed821256b032acf1779a5a0e5a96197762bd4eaccd5e47c968b",
+    "crates/physics/src/moisture/vapor/adaptive.rs": "c71c76594d7055883dea035df04de857a19c0678ce0d40a7eaf458b2070554d8",
+    "crates/physics/tests/moisture_vapor.rs": "9e6abe76f193e3872834a8f2ba9121713b638395d9dcd24d670d9b7d73277281"
+  }
+}

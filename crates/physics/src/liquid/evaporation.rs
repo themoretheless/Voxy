@@ -386,27 +386,65 @@ pub(crate) fn advance(
 /// the particle/film owner. The model supplies a midpoint trial and normalized
 /// local error (acceptance <= 1), including its caloric domain admission.
 pub(crate) fn adaptive_midpoint<S: Copy>(
-    mut state: S,
+    state: S,
     dt: f64,
     max_attempts: usize,
     trial: impl Fn(S, f64) -> Result<S, Error>,
     error: impl Fn(S, S, S) -> Result<f64, Error>,
 ) -> Result<S, Error> {
-    if !positive(dt) || max_attempts == 0 {
+    adaptive_step_doubling(state, dt, max_attempts, 3., trial, |a, b, c| {
+        error(*a, *b, *c)
+    })
+}
+/// Shared controller for staged state owners; order is the local error power.
+pub(crate) fn adaptive_step_doubling<S: Clone>(
+    state: S,
+    dt: f64,
+    max_attempts: usize,
+    local_error_order: f64,
+    trial: impl Fn(S, f64) -> Result<S, Error>,
+    error: impl Fn(&S, &S, &S) -> Result<f64, Error>,
+) -> Result<S, Error> {
+    adaptive_step_doubling_with_receipt(state, dt, max_attempts, local_error_order, trial, error)
+        .map(|(state, _)| state)
+}
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct AdaptiveStepReceipt {
+    pub attempts: usize,
+    pub accepted_intervals: usize,
+    pub rejected_attempts: usize,
+    pub minimum_interval_s: f64,
+}
+pub(crate) fn adaptive_step_doubling_with_receipt<S: Clone>(
+    mut state: S,
+    dt: f64,
+    max_attempts: usize,
+    local_error_order: f64,
+    trial: impl Fn(S, f64) -> Result<S, Error>,
+    error: impl Fn(&S, &S, &S) -> Result<f64, Error>,
+) -> Result<(S, AdaptiveStepReceipt), Error> {
+    if !positive(dt) || max_attempts == 0 || !positive(local_error_order) {
         return Err(Error::InvalidTransport);
     }
+    let mut receipt = AdaptiveStepReceipt {
+        attempts: 0,
+        accepted_intervals: 0,
+        rejected_attempts: 0,
+        minimum_interval_s: f64::INFINITY,
+    };
     let mut elapsed = 0.0;
     let mut step = dt;
     for _ in 0..max_attempts {
+        receipt.attempts += 1;
         let remaining = dt - elapsed;
         step = step.min(remaining);
         if step <= 0.0 || elapsed + step <= elapsed {
             return Err(Error::NumericalFailure);
         }
-        let attempts = trial(state, step).and_then(|coarse| {
-            let half = trial(state, 0.5 * step)?;
+        let attempts = trial(state.clone(), step).and_then(|coarse| {
+            let half = trial(state.clone(), 0.5 * step)?;
             let fine = trial(half, 0.5 * step)?;
-            let estimate = error(state, coarse, fine)?;
+            let estimate = error(&state, &coarse, &fine)?;
             if !estimate.is_finite() || estimate < 0. {
                 return Err(Error::NumericalFailure);
             }
@@ -416,19 +454,27 @@ pub(crate) fn adaptive_midpoint<S: Copy>(
             Ok((fine, estimate)) => {
                 if estimate <= 1.0 {
                     state = fine;
+                    receipt.accepted_intervals += 1;
+                    receipt.minimum_interval_s = receipt.minimum_interval_s.min(step);
                     if step >= remaining {
-                        return Ok(state);
+                        return Ok((state, receipt));
                     }
                     elapsed += step;
+                }
+                if estimate > 1.0 {
+                    receipt.rejected_attempts += 1;
                 }
                 let factor = if estimate == 0.0 {
                     2.0
                 } else {
-                    (0.9 * estimate.powf(-1.0 / 3.0)).clamp(0.2, 2.0)
+                    (0.9 * estimate.powf(-1.0 / local_error_order)).clamp(0.2, 2.0)
                 };
                 step *= factor;
             }
-            Err(_) => step *= 0.5,
+            Err(_) => {
+                receipt.rejected_attempts += 1;
+                step *= 0.5;
+            }
         }
     }
     Err(Error::NumericalFailure)

@@ -1,0 +1,9 @@
+{
+  "reproduction": "before.log: stiff disconnected pair did not converge",
+  "verification": "tests.log: 25 passed, zero failed",
+  "source_sha256": {
+    "crates/physics/src/moisture/transport.rs": "e251568e496a9e07284e296c683a72d787bf811503981280b59bd10424f823d6",
+    "crates/physics/tests/moisture_sparse.rs": "2258a27e23309b1510325942ebe6884f1cad860e0cfa32ab752b96a32d84f0a5"
+  },
+  "limitation": "Large connected stiff components retain the sparse iteration budget"
+}

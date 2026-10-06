@@ -82,14 +82,27 @@ impl TetrahedralEmbedding {
         if point.iter().any(|x| !x.is_finite()) {
             return Err("invalid embedding positions");
         }
-        Ok(self.find(point).is_some())
+        Ok(self.find(point, &mut Vec::new()).is_some())
     }
-    fn find(&self, point: Point) -> Option<Binding> {
+    /// Batch point membership, reusing query storage across the entire batch.
+    /// # Errors
+    /// Any nonfinite query rejects the whole batch.
+    pub fn contains_points(&self, points: &[Point]) -> Result<Vec<bool>, &'static str> {
+        if points.iter().flatten().any(|x| !x.is_finite()) {
+            return Err("invalid embedding positions");
+        }
         let mut candidates = Vec::new();
-        self.bounds.query_point(point, &mut candidates);
+        Ok(points
+            .iter()
+            .map(|&point| self.find(point, &mut candidates).is_some())
+            .collect())
+    }
+    fn find(&self, point: Point, candidates: &mut Vec<usize>) -> Option<Binding> {
+        candidates.clear();
+        self.bounds.query_point(point, candidates);
         candidates.sort_unstable();
         let mut found = None;
-        for cell in candidates {
+        for &cell in candidates.iter() {
             let (indices, a, b, c, det) = self.prepared[cell];
             let q = sub(point, self.rest[indices[0]]);
             let mut weights = [
@@ -131,10 +144,11 @@ impl TetrahedralEmbedding {
             return Err("invalid embedding positions");
         }
         let mut bindings = Vec::with_capacity(surface.len());
+        let mut candidates = Vec::new();
         for (&point, &owned) in surface.iter().zip(tissue_owned) {
             bindings.push(if owned {
                 Some(
-                    self.find(point)
+                    self.find(point, &mut candidates)
                         .ok_or("surface vertex outside tetrahedral mesh")?,
                 )
             } else {

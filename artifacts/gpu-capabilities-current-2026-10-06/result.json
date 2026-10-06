@@ -1,0 +1,17 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "supported_experimental_ray_query": true,
+  "default_device_optional_features": "empty",
+  "adapter_probe_exit": 0,
+  "compute_probe_exit": 0,
+  "compute_exact_results": 1042,
+  "compute_scope": "integer WGSL compute, partial workgroups, independent jobs, readback, cancellation, validation, shared budgets",
+  "dx12_probe_exit": 1,
+  "dx12_scope": "unavailable backend rejected without Metal fallback",
+  "scope": "Actual local Metal capability and compute evidence; no CUDA, other devices/backends or full physics/rendering qualification",
+  "sha256": {
+    "crates/voxy_render/src/backend.rs": "493256750a14142fff0cef2149912725b3b32c7fe6d10eb9af82ac0a9ebf2c6d",
+    "crates/voxy_render/examples/gpu_probe.rs": "58489a19170120e5b81a2fb86f52b5d0de7f991b88fb4b6beceafdcfcbd00204"
+  }
+}

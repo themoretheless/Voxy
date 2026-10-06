@@ -1,0 +1,37 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+error[E0425]: cannot find type `Node` in this scope
+   --> crates/physics/src/triangle_index.rs:300:30
+    |
+300 |     fn original_query(node: &Node, bounds: TriangleBounds, gap: f64, out: &mut Vec<usize>) {
+    |                              ^^^^ not found in this scope
+    |
+note: these structs exist but are inaccessible
+   --> crates/physics/src/liquid/body_contacts.rs:29:1
+    |
+ 29 | struct Node {
+    | ^^^^^^^^^^^ `crate::liquid::body_contacts::Node`: not accessible
+    |
+   ::: crates/physics/src/hair/contact.rs:29:1
+    |
+ 29 | struct Node {
+    | ^^^^^^^^^^^ `crate::hair::contact::Node`: not accessible
+
+error[E0609]: no field `tree` on type `triangle_index::TriangleIndex`
+   --> crates/physics/src/triangle_index.rs:344:43
+    |
+344 |                     original_query(&index.tree, bounds, gap, &mut expected);
+    |                                           ^^^^ unknown field
+    |
+    = note: available fields are: `topology`, `ids`, `nodes`
+
+error[E0609]: no field `tree` on type `triangle_index::TriangleIndex`
+   --> crates/physics/src/triangle_index.rs:373:47
+    |
+373 |                         original_query(&index.tree, bounds, 0.002, &mut out);
+    |                                               ^^^^ unknown field
+    |
+    = note: available fields are: `topology`, `ids`, `nodes`
+
+Some errors have detailed explanations: E0425, E0609.
+For more information about an error, try `rustc --explain E0425`.
+error: could not compile `physics` (lib test) due to 3 previous errors

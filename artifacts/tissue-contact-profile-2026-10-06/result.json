@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/tmp/voxy-moving-supports-final-20261005/release/examples/body_motion_snapshot",
+    "artifacts/tissue-contact-profile-2026-10-06/poses.png",
+    "--cesium",
+    "--contact",
+    "--capture-steps=48",
+    "--tissue-regions=artifacts/nonconvex-tissue-import-2026-10-06/fixture/regions.json"
+  ],
+  "runtime_exit": 0,
+  "sample_exit": 0,
+  "wall_seconds": 49.65566599997692,
+  "comparison": {
+    "baseline_simulation_render_s": 49.593209167,
+    "flat_simulation_render_s": 47.787272583,
+    "scope": "One sequential sampled run each; timing variation not qualified",
+    "baseline_substeps": 192,
+    "flat_substeps": 192,
+    "png_byte_equal": true,
+    "baseline_png_sha256": "0fda5863ca7bae46c723cd6820d4784c5df0fcf690854f2e6ce8ac7c05b5757e",
+    "flat_png_sha256": "0fda5863ca7bae46c723cd6820d4784c5df0fcf690854f2e6ce8ac7c05b5757e"
+  },
+  "tests": {
+    "library_passed": 106,
+    "library_ignored": 6,
+    "integration_passed": 77
+  },
+  "source_sha256": "c3bcdc05d935b082d5292ac3d23d84b4a4e50ac9791142bf4b41a8e4f26db92d"
+}

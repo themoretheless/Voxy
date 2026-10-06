@@ -1,0 +1,30 @@
+{
+  "change": "Expose existing LodSmoke and AnimationSmoke in standalone editor CLI",
+  "renderer_lod_tests": {
+    "passed": 40,
+    "failed": 0,
+    "ignored": 0,
+    "real_gpu_tests": 3
+  },
+  "native": {
+    "attempts": 2,
+    "exit_codes": [
+      1,
+      1
+    ],
+    "presented_frames": 0,
+    "surface": "SkippedOccluded",
+    "verdict": "not verified; native frame presentation blocked this session"
+  },
+  "checks": {
+    "release_build": "passed",
+    "format": "passed",
+    "diff_check": "passed"
+  },
+  "sources": {
+    "crates/voxy_editor/src/main.rs": "7659977e57e5ba7168c7bdbd2c406d5fc804c6d37e7997d20259e53b0381620a",
+    "README.md": "f030d99a3ace9f074f3532b2e7dae28848f15a31e2fc298e216162046c86925f"
+  },
+  "binary_sha256": "331aa7abd3359292eb616134684e17611863ba11d2bcc131bbbb4e48a0b8f89a",
+  "scope": "Current real-GPU offscreen LOD acceptance and standalone CLI integration; no current native window, broad production rig, all-hardware or full goal qualification"
+}

@@ -1,0 +1,25 @@
+{
+  "ordinary_tests_passed": 21,
+  "manual_comparison_passed": 1,
+  "multicell": {
+    "material_cells": 4,
+    "oracle": "Independent continuous network/latent-energy ODE integrated with RK4, 4096 steps",
+    "max_mass_error_kg": 2.229189069447024e-09,
+    "attempts": 282,
+    "accepted_intervals": 278
+  },
+  "comparison": {
+    "material_cells": 32,
+    "steps": 100,
+    "reconstruct_ns": 787458,
+    "prepared_ns": 590708,
+    "final_state_debug_exact": true,
+    "scope": "Single local release microbenchmark, not scene-level or broad scaling proof"
+  },
+  "sha256": {
+    "crates/physics/src/moisture.rs": "878af2e81c3133ff23b31e13f541617ed4e7f14e237f5a70f5335b30ae911993",
+    "crates/physics/src/moisture/vapor.rs": "970ade8680eea40e59244aa94c6b7ebede79901b2206bc7815c16cadc36cb2ce",
+    "crates/physics/src/moisture/vapor/adaptive.rs": "4cf0fe9d60e5eafbbcad30721c172b80f3643820b4879867f952d147b5a27921",
+    "crates/physics/tests/moisture_vapor.rs": "931c1db73069285be5263633daefe4abaa84176856ea73a156d03966a81c3639"
+  }
+}

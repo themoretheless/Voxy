@@ -23,9 +23,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("{:#?}", GraphicsCapabilities::discover(&adapter));
     let (device, queue) =
         pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))?;
-    queue.submit([device
+    println!("Enabled device features: {:?}", device.features());
+    println!("Enabled device limits: {:#?}", device.limits());
+    let submission = queue.submit([device
         .create_command_encoder(&wgpu::CommandEncoderDescriptor::default())
         .finish()]);
-    println!("GPU device and command submission succeeded");
+    device.poll(wgpu::PollType::Wait {
+        submission_index: Some(submission),
+        timeout: Some(std::time::Duration::from_secs(10)),
+    })?;
+    println!("GPU device and empty command submission completed; no shader workload executed");
     Ok(())
 }

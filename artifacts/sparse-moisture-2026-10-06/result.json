@@ -1,0 +1,30 @@
+{
+  "unique_tests_passed": 51,
+  "limits": {
+    "cells": 16384,
+    "links": 262144,
+    "direct_solve_cell_threshold": 128,
+    "sparse_iteration_budget": 20000
+  },
+  "closed_chain": {
+    "cells": 1024,
+    "oracle": "Discrete Neumann cosine eigenmode, implicit Euler analytic attenuation",
+    "max_saturation_error": 8.104628079763643e-15,
+    "elapsed_us": 2373
+  },
+  "checks": [
+    "closed mass conservation",
+    "heterogeneous open-bath equivalence to direct solver",
+    "zero-inventory operator overflow rejects atomically",
+    "adaptive thermal sparse/direct equivalence",
+    "Darcy protein kernel extraction regression"
+  ],
+  "scope": "Bounded CPU moisture diffusion and thermal-reservoir coupling; not large-world realtime, fluid dynamics, rendering or all hardware",
+  "sha256": {
+    "crates/physics/src/moisture.rs": "e2c99289af09451879da6abeac5ab8305f936bc7bc32b4ecd2618f3d9a6d8dbf",
+    "crates/physics/src/moisture/transport.rs": "a8aa5c2966a8f57265cca678a189bdc2838019ddc9042fed88c3d957c8fd7d48",
+    "crates/physics/src/positive_transport.rs": "1ddf80cc34c7d8059a38ad9d42f28a605f743c39e9b25fa2061f7aa7c53b24cd",
+    "crates/physics/src/biomechanics/mixed_darcy.rs": "6e6f5ad503d8e2ceef8ce52b7a9c1137b44a1ee2f962fb23ec443dd33b6469b6",
+    "crates/physics/tests/moisture_sparse.rs": "6bfb550ddf12befce245670f068eb8aa959cf60dd1a6fdd32dfd8971091b4fd5"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "regressions_passed": 31,
+  "new_receipt_test_passed": 1,
+  "trajectory": {
+    "elapsed_s": 0.5,
+    "attempts": 1025,
+    "accepted_intervals": 1020,
+    "rejected_attempts": 5,
+    "minimum_interval_s": 0.00014986339070671706,
+    "mass_defect_kg": 9.882502802205373e-17,
+    "energy_defect_j": 8.731149137020111e-10
+  },
+  "checks": [
+    "transfer API state/receipt equivalence",
+    "temperature-domain full-trajectory rejection is atomic",
+    "zero-flux complete interval has no invented work"
+  ],
+  "scope": "Numerical diagnostic receipts for lumped thermal moisture, not a production complete fluid or calibrated material qualification",
+  "sha256": {
+    "crates/physics/src/liquid/evaporation.rs": "f6d055fb5abe83fd1d7ebaf24d52c3f06951e94d3433e15dcceed0c19dd0ca6e",
+    "crates/physics/src/moisture/vapor/adaptive.rs": "067ad73469a3a858168a38a9f9271358571011e07b427dde51a3eb7079e0ba73",
+    "crates/physics/tests/moisture_vapor.rs": "fb57da214ad5a0806bbe678bf3b7921d422fded9799e93d6f977113014a3d3dc"
+  }
+}

@@ -68,6 +68,9 @@ impl GraphicsOptions {
 #[derive(Clone, Debug)]
 pub struct GraphicsCapabilities {
     pub adapter: wgpu::AdapterInfo,
+    /// Supported optional features, not features enabled on any created device.
+    pub supported_features: wgpu::Features,
+    pub downlevel: wgpu::DownlevelCapabilities,
     pub compute_shaders: bool,
     pub experimental_ray_query: bool,
     pub limits: wgpu::Limits,
@@ -78,6 +81,8 @@ impl GraphicsCapabilities {
     pub fn discover(adapter: &wgpu::Adapter) -> Self {
         Self {
             adapter: adapter.get_info(),
+            supported_features: adapter.features(),
+            downlevel: adapter.get_downlevel_capabilities(),
             compute_shaders: adapter
                 .get_downlevel_capabilities()
                 .flags

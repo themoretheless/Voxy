@@ -1,0 +1,11 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 11.04s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/physics-b8ab5053a74b0b10)
+
+running 4 tests
+test triangle_index::cached_scale_tests::benchmark_cached_conservative_padding ... ignored, manual microbenchmark; candidate equivalence has a separate test
+test triangle_index::tests::localized_query_prunes_large_mesh_and_sweep_keeps_crossing ... ok
+test triangle_index::cached_scale_tests::cached_padding_preserves_original_candidate_order_after_refit ... ok
+test triangle_index::tests::static_and_swept_refits_never_drop_brute_force_candidates ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 107 filtered out; finished in 0.01s

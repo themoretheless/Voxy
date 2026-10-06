@@ -365,17 +365,14 @@ impl TissueDemo {
             let local = cells
                 .get(range.clone())
                 .ok_or("assembled skin cells changed")?;
-            for (i, point) in skin.iter().enumerate() {
-                match EmbeddedSurface::bind(rest, local, &[*point]) {
-                    Ok(_) => {
-                        if owned[i] {
-                            return Err("overlapping skin tissue ownership");
-                        }
-                        owned[i] = true;
-                        owners[i] = Some(region);
+            let search = TetrahedralEmbedding::new(rest, local)?;
+            for (i, contained) in search.contains_points(skin)?.into_iter().enumerate() {
+                if contained {
+                    if owned[i] {
+                        return Err("overlapping skin tissue ownership");
                     }
-                    Err("surface vertex outside tetrahedral mesh") => {}
-                    Err(error) => return Err(error),
+                    owned[i] = true;
+                    owners[i] = Some(region);
                 }
             }
         }

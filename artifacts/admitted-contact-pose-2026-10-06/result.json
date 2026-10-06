@@ -1,0 +1,16 @@
+{
+  "physics_passed": 173,
+  "ignored": 6,
+  "runtime_exit": 0,
+  "runtime_steps": 48,
+  "accepted_substeps": 192,
+  "simulated_seconds": 0.2,
+  "simulation_render_seconds": 43.637101959,
+  "image_byte_equal_to_prior_flat_index_run": true,
+  "scope": "Immutable contact topology checked once, staged geometry checked every pose; one source vertex of 3273, not full coverage or realtime qualification",
+  "sha256": {
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "05e944b470af029d5ab5756985026394466b66fb03b82c4965c92e53bd1ac274",
+    "crates/physics/src/biomechanics/embedded_contact.rs": "6ee54073d3c4532766a35f375214b342114ae8068134e76d7056bcdecaadf4dd",
+    "crates/physics/tests/prescribed_surface_contact.rs": "0d992351cfdcada7e749df1d809f3eec4a4415de5afa7fe4d53bb48715f18a08"
+  }
+}
