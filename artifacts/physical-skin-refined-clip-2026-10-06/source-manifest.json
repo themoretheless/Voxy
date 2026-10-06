@@ -1,0 +1,6 @@
+{
+  "crates/physics/src/biomechanics/inertia/viscous.rs": "dc0719b886f9b19eaa9cb387167c342487a2bd4547d6b3d311a145a57002ad5d",
+  "crates/physics/src/biomechanics/inertia/implicit.rs": "9d3b0f55ff314aee57e9cbf92db27fd0c9161ea71a8873fa4c668e28afbb226c",
+  "crates/physics/src/biomechanics/embedded_contact.rs": "01989c3ae63a22bf6d83b25d7a1dc5a55003ac99bbc2ee48cafe6aa36d18a3c0",
+  "crates/voxy_app/examples/body_motion_snapshot.rs": "208db54024316dec2f628b94da96d3271ee055f05ee091e14b1708540af3174c"
+}

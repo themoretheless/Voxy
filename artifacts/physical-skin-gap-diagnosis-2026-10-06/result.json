@@ -1,0 +1,31 @@
+{
+  "status": "failed",
+  "rejected_step": 279,
+  "stage": "world averaged material path",
+  "initial_gap_m": 4.748623391903852e-05,
+  "trial_gap_m": -6.625914843330427e-05,
+  "body_face": [
+    651,
+    666,
+    2591
+  ],
+  "obstacle_face_index": 1341,
+  "iteration": 0,
+  "dt_s": 0.0010416666666666667,
+  "interpretation": "admitted initial state; closed stationary trial and inadmissible velocity predictor",
+  "body_face_dynamic_vertices": [
+    666
+  ],
+  "body_face_prescribed_vertices": [
+    651,
+    2591
+  ],
+  "nearest_body_weights": [
+    0.0,
+    0.0,
+    1.0
+  ],
+  "nearest_vertex": 2591,
+  "nearest_vertex_owner": "prescribed skeletal",
+  "conclusion": "fixed skeletal vertex closes gap; changing FEM nodes cannot move that vertex"
+}

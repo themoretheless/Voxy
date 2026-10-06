@@ -1,0 +1,9 @@
+{
+  "crates/voxy_app/examples/body_motion_snapshot.rs": "208db54024316dec2f628b94da96d3271ee055f05ee091e14b1708540af3174c",
+  "crates/voxy_app/src/tissue_demo.rs": "ee6cbb2418226e911b305d049a1161d7e55ece14a56451a3e54f7a145e2ad000",
+  "crates/voxy_app/src/tissue_demo/assembly.rs": "b4b4b19f019e48b14af288b67104ba13000166bdef82d15b452e83f969d09013",
+  "crates/physics/src/biomechanics/inertia/implicit.rs": "bf759baabbce2e768410f79117ff72d1027a65e317132a1f0f93896ad8b8f549",
+  "crates/physics/src/biomechanics/inertia/viscous.rs": "a433a0b17a14edc779e0c8e86d780d7c0b261f531e963a0354a706cf86a3558f",
+  "crates/physics/src/biomechanics/embedded_contact.rs": "8cd2d28d28248b2415939f317002dbec9a3e6adc680ba7309cd2bf4c5efe344a",
+  "crates/physics/src/tissue_surface.rs": "2fb0712c2c8f3d909e852c65d04b7659b951227e1572dc761e6e6a10617339dc"
+}

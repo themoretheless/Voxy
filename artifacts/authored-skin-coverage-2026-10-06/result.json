@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "example_tests_passed": 45,
+  "example_tests_ignored": 3,
+  "additional_source_identity_test_passed": true,
+  "full_coverage_request_rejected_before_gpu": true,
+  "missing_required_vertices": [
+    651,
+    2591
+  ],
+  "valid_gpu_steps": 3,
+  "skin_coverage_expanded": false,
+  "step279_fixed": false
+}

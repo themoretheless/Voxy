@@ -84,6 +84,7 @@ enum DemoTissue {
         initial_energy_j: f64,
         dynamics: InertialBody,
         thermal_binding: Arc<SolidFilmBinding>,
+        boundary_faces: Arc<[[usize; 3]]>,
         cells: Vec<[usize; 4]>,
     },
 }
@@ -107,11 +108,11 @@ impl DemoTissue {
         }
     }
     fn smooth_boundary_normals(&self) -> Result<Vec<[f64; 3]>, &'static str> {
-        let Self::Continuum { cells, .. } = self else {
+        let Self::Continuum { boundary_faces, .. } = self else {
             return Err("continuum normals require boundary topology");
         };
         let mut normals = vec![glam::DVec3::ZERO; self.positions().len()];
-        for &[_, a, b, c] in cells {
+        for &[a, b, c] in boundary_faces.iter() {
             let p = |node| glam::DVec3::from_array(self.positions()[node]);
             let normal = (p(b) - p(a)).cross(p(c) - p(a));
             if !normal.is_finite() {
@@ -151,6 +152,22 @@ pub(crate) struct TissueSkinBinding {
     global: Option<Arc<assembly::GlobalSkinBinding>>,
 }
 impl TissueSkinBinding {
+    pub(crate) fn tissue_owned_vertices(&self) -> Vec<usize> {
+        if let Some(global) = &self.global {
+            return global.tissue_owned_vertices();
+        }
+        let mut owned = vec![false; self.vertex_count];
+        for region in &self.regions {
+            for &vertex in &region.vertices {
+                owned[vertex] = true;
+            }
+        }
+        owned
+            .iter()
+            .enumerate()
+            .filter_map(|(vertex, &bound)| bound.then_some(vertex))
+            .collect()
+    }
     pub(crate) fn bound_vertex_count(&self) -> usize {
         if let Some(global) = &self.global {
             return global.bound_count;
@@ -158,11 +175,48 @@ impl TissueSkinBinding {
         self.regions.iter().map(|r| r.vertices.len()).sum()
     }
 }
+#[derive(Clone, Debug)]
+pub(crate) struct TissueRegionSpec {
+    pub mesh: physics::biomechanics::TetraMesh,
+    pub supports: Vec<usize>,
+    pub joint: usize,
+    pub ogden_terms: Vec<OgdenTerm>,
+    pub bulk_pa: f64,
+    pub maxwell_branches: Vec<MaxwellBranch>,
+    pub density_kg_m3: f64,
+    pub specific_heat_j_kg_k: f64,
+    pub temperature_kelvin: f64,
+}
+impl TissueRegionSpec {
+    pub(crate) fn illustrative(
+        mesh: physics::biomechanics::TetraMesh,
+        supports: Vec<usize>,
+        joint: usize,
+    ) -> Self {
+        Self {
+            mesh,
+            supports,
+            joint,
+            ogden_terms: vec![OgdenTerm {
+                shear_pa: 5000.,
+                exponent: 2.,
+            }],
+            bulk_pa: 1e6,
+            maxwell_branches: vec![MaxwellBranch {
+                shear_pa: 10000.,
+                relaxation_seconds: 0.2,
+            }],
+            density_kg_m3: 1000.,
+            specific_heat_j_kg_k: 3500.,
+            temperature_kelvin: 310.15,
+        }
+    }
+}
 #[derive(Debug)]
 pub(crate) struct TissueDemo {
     bodies: Vec<DemoTissue>,
     surfaces: Vec<EmbeddedSurface>,
-    attachments: Vec<(usize, [(usize, [f64; 3]); 3])>,
+    attachments: Vec<(usize, Vec<(usize, [f64; 3])>)>,
     assembled_regions: Option<Arc<assembly::AssembledRegions>>,
     skin_contact_binding: Option<Arc<assembly::GlobalSkinBinding>>,
     body_rig: Option<Arc<Skeleton>>,
@@ -215,12 +269,7 @@ impl TissueDemo {
         Self::body_at_centers(std::array::from_fn(Self::center), [0, 0, 3, 7])
     }
     pub(crate) fn body_at_centers(centers: [[f64; 3]; 4], joints: [usize; 4]) -> Self {
-        let mut demo = Self::new();
-        demo.body_mode = true;
-        demo.body_rig = Some(Arc::new(Self::body_skeleton()));
-        // Explicit SI geometry for this neutral mannequin, independent of the
-        // abstract tissue sample gallery. These are illustrative, not measured anatomy.
-        demo.bodies = [
+        let regions = [
             [0.08, 0.065, 0.05],
             [0.08, 0.065, 0.05],
             [0.09, 0.09, 0.065],
@@ -229,106 +278,112 @@ impl TissueDemo {
         .into_iter()
         .enumerate()
         .map(|(i, radii)| {
-            let mesh = physics::biomechanics::TetraMesh::ellipsoid(centers[i], radii, 1)
-                .expect("valid rounded continuum mesh");
-            let mut body = Body::new(
-                mesh.points.clone(),
-                (0..mesh.points.len())
-                    .map(|node| node == 3 || node == 4 || node == 6)
-                    .collect(),
-                mesh.cells
-                    .iter()
-                    .map(|&cell| {
-                        (
-                            cell,
-                            Material {
-                                shear_pa: 5000.,
-                                bulk_pa: 1e6,
-                                fibers: vec![],
-                            },
-                        )
-                    })
-                    .collect(),
+            (
+                physics::biomechanics::TetraMesh::ellipsoid(centers[i], radii, 1)
+                    .expect("valid rounded continuum mesh"),
+                [3, 4, 6],
+                joints[i],
             )
-            .expect("valid continuum body");
-            // Illustrative material parameters, not anatomical calibration.
-            let law = ViscoelasticOgden::new(
-                vec![OgdenTerm {
-                    shear_pa: 5000.,
-                    exponent: 2.,
-                }],
-                1e6,
-                vec![MaxwellBranch {
-                    shear_pa: 10000.,
-                    relaxation_seconds: 0.2,
-                }],
-            )
-            .expect("valid Maxwell material");
+        })
+        .collect();
+        Self::body_from_regions(regions).expect("valid illustrative continuum regions")
+    }
+    /// Authored volumes use the same controller, thermal storage and assembly as
+    /// the neutral mannequin. Mesh topology and explicit three-node supports are
+    /// admitted before publication. Material constants remain illustrative.
+    pub(crate) fn body_from_regions(
+        regions: Vec<(physics::biomechanics::TetraMesh, [usize; 3], usize)>,
+    ) -> Result<Self, &'static str> {
+        Self::body_from_region_specs(
+            regions
+                .into_iter()
+                .map(|(mesh, pins, joint)| {
+                    TissueRegionSpec::illustrative(mesh, pins.to_vec(), joint)
+                })
+                .collect(),
+        )
+    }
+    /// Caller-authored SI parameters are validated by the shared material and
+    /// inertia owners; no anatomical calibration or support placement is inferred.
+    pub(crate) fn body_from_region_specs(
+        regions: Vec<TissueRegionSpec>,
+    ) -> Result<Self, &'static str> {
+        if regions.is_empty() || regions.len() > 64 {
+            return Err("invalid authored tissue region count");
+        }
+        let mut demo = Self::new();
+        demo.body_mode = true;
+        demo.body_rig = Some(Arc::new(Self::body_skeleton()));
+        demo.bodies.clear();
+        for spec in regions {
+            let TissueRegionSpec {
+                mesh,
+                supports: pins,
+                joint,
+                ogden_terms,
+                bulk_pa,
+                maxwell_branches,
+                density_kg_m3,
+                specific_heat_j_kg_k,
+                temperature_kelvin,
+            } = spec;
+            let mut pinned = vec![false; mesh.points.len()];
+            for &node in &pins {
+                let flag = pinned
+                    .get_mut(node)
+                    .ok_or("invalid authored tissue supports")?;
+                if *flag {
+                    return Err("invalid authored tissue supports");
+                }
+                *flag = true;
+            }
+            let shear_pa = ogden_terms.iter().map(|t| t.shear_pa).sum();
+            let law = ViscoelasticOgden::new(ogden_terms, bulk_pa, maxwell_branches)?;
+            let material = Material {
+                shear_pa,
+                bulk_pa,
+                fibers: vec![],
+            };
+            let mut body = mesh.clone().into_body(pinned, &material)?;
             body.set_viscoelastic_ogden_batch(
                 &(0..mesh.cells.len())
                     .map(|cell| (cell, law.clone()))
                     .collect::<Vec<_>>(),
-            )
-            .expect("valid continuum history");
+            )?;
             let mut dynamics = InertialBody::new_viscoelastic_with_supports(
                 body,
-                &vec![1000.; mesh.cells.len()],
+                &vec![density_kg_m3; mesh.cells.len()],
                 vec![[0.; 3]; mesh.points.len()],
-            )
-            .expect("valid continuum inertia");
-            dynamics
-                .set_uniform_acceleration([0., -9.81, 0.])
-                .expect("valid gravity");
-            dynamics
-                .enable_maxwell_thermal(
-                    &vec![3500.; mesh.cells.len()],
-                    &vec![310.15; mesh.cells.len()],
-                )
-                .expect("valid illustrative thermal material");
-            let energy = dynamics.diagnostics().expect("valid initial energy");
-            DemoTissue::Continuum {
-                thermal_binding: Arc::new(
-                    SolidFilmBinding::new(&dynamics).expect("valid tissue topology"),
-                ),
+            )?;
+            dynamics.set_uniform_acceleration([0., -9.81, 0.])?;
+            dynamics.enable_maxwell_thermal(
+                &vec![specific_heat_j_kg_k; mesh.cells.len()],
+                &vec![temperature_kelvin; mesh.cells.len()],
+            )?;
+            let energy = dynamics.diagnostics()?;
+            let surface = Self::boundary_surface(dynamics.body().positions(), &mesh.boundary);
+            demo.surfaces.push(EmbeddedSurface::bind(
+                dynamics.body().positions(),
+                &mesh.cells,
+                &surface,
+            )?);
+            demo.attachments.push((
+                joint,
+                pins.into_iter()
+                    .map(|node| (node, mesh.points[node]))
+                    .collect(),
+            ));
+            demo.bodies.push(DemoTissue::Continuum {
+                boundary_faces: dynamics.body().surface().into(),
+                thermal_binding: Arc::new(SolidFilmBinding::new(&dynamics)?),
                 initial_energy_j: energy.kinetic_j + energy.potential_j,
                 ledger: EnergyLedger::default(),
                 preferred_depth: 0,
                 dynamics,
                 cells: mesh.cells,
-            }
-        })
-        .collect();
-        demo.attachments = demo
-            .bodies
-            .iter()
-            .enumerate()
-            .map(|(i, body)| {
-                let joint = joints[i];
-                (
-                    joint,
-                    [
-                        (3, body.positions()[3]),
-                        (4, body.positions()[4]),
-                        (6, body.positions()[6]),
-                    ],
-                )
-            })
-            .collect();
-        demo.surfaces = demo
-            .bodies
-            .iter()
-            .map(|body| {
-                let p = body.positions();
-                let DemoTissue::Continuum { cells, .. } = body else {
-                    unreachable!("body mode owns continuum tissue")
-                };
-                let boundary: Vec<_> = cells.iter().map(|&[_, b, c, d]| [b, c, d]).collect();
-                let surface = Self::boundary_surface(p, &boundary);
-                EmbeddedSurface::bind(p, cells, &surface)
-                    .expect("boundary lies in tetrahedral mesh")
-            })
-            .collect();
-        demo
+            });
+        }
+        Ok(demo)
     }
     /// Linear refinement follows the physical boundary without shrinking it.
     fn boundary_surface(rest: &[[f64; 3]], boundary: &[[usize; 3]]) -> Vec<[f64; 3]> {
@@ -1029,7 +1084,7 @@ impl TissueDemo {
     }
     fn step_contact_region(
         body: &mut DemoTissue,
-        attachment: &(usize, [(usize, [f64; 3]); 3]),
+        attachment: &(usize, Vec<(usize, [f64; 3])>),
         palette: &[DMat4],
         conductivity_w_m_k: f64,
         next_surface: Option<&Arc<PrescribedTriangleSurface>>,
@@ -2267,6 +2322,7 @@ mod tests {
             )
             .unwrap();
             let moved = DemoTissue::Continuum {
+                boundary_faces: dynamics.body().surface().into(),
                 thermal_binding: Arc::new(SolidFilmBinding::new(&dynamics).unwrap()),
                 dynamics,
                 cells: cells.clone(),

@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "tests": 19,
+  "new_constructor_tests": 3,
+  "scope": "closed convex authored tissue surfaces only",
+  "source_vertex_order_preserved": true,
+  "complete_skin_embedding_tested": true,
+  "analytic_cube_mass_kg": 1000,
+  "analytic_sheared_cube_mass_kg": 24000,
+  "refinement_preserves_mass": true,
+  "imported_character_coverage_changed": false,
+  "whole_character_clip_repaired": false
+}

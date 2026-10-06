@@ -1,0 +1,14 @@
+{
+  "status": "expected rejection confirmed; clip remains incomplete",
+  "rejected_step": 279,
+  "reason": "prescribed skin obstacle gap is closed",
+  "body_face": [
+    651,
+    666,
+    2591
+  ],
+  "obstacle_face_index": 1341,
+  "initial_positive_gap_m": 4.748623391903852e-05,
+  "prescribed_point_trial_gap_m": -6.625914843330427e-05,
+  "tests_passed": 44
+}

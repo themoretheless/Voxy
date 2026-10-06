@@ -1,0 +1,9 @@
+{
+  "bound_vertices": 1,
+  "contract_supplied": true,
+  "scope": "reference-space skin membership; not dynamic collision qualification",
+  "source_vertices": 3273,
+  "tissue_owned_vertices": [
+    666
+  ]
+}

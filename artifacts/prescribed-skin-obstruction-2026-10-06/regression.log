@@ -1,0 +1,70 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.53s
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/embedded_skin_contact-ec5ff303cc9ec7d6)
+
+running 33 tests
+test embedded_ccd_rejects_crossing_even_with_open_endpoints ... ok
+test embedded_normal_metric_is_symmetric_positive_and_preserves_tangent_nullspace ... ok
+test embedded_contact_requires_actual_material_cell_membership ... ok
+test embedded_nearest_pair_reports_closed_gap_without_changing_contact ... ok
+test existing_step_books_moving_skin_rig_and_obstacle_work ... ok
+test invalid_embedded_contact_topology_never_enters_evaluation ... ok
+test existing_inertial_step_responds_to_embedded_contact_and_books_parameter_work_once ... ok
+test existing_inertial_step_rejects_embedded_tunnelling_without_mutating_state ... ok
+test actual_contact_potential_matches_all_tissue_rig_and_obstacle_forces ... ok
+test existing_implicit_solver_includes_stationary_embedded_contact_in_averaged_material_path ... ok
+test mixed_triangle_contact_preserves_force_chain_rule_and_prescribed_ccd ... ok
+test moving_skin_crossing_and_work_failure_preserve_complete_state ... ok
+test moving_skin_energy_discrepancy_converges_under_time_refinement ... ok
+test moving_skin_failure_rolls_back_maxwell_history_and_thermal_storage ... ok
+test moving_skin_maxwell_transaction_balances_mechanics_heat_and_actuator_work ... ok
+test implicit_moving_skin_admits_independent_energy_and_commits_pose_atomically ... ok
+test mixed_skin_uses_existing_implicit_motion_work_and_atomic_rollback ... ok
+test adaptive_closed_trial_exhaustion_preserves_maxwell_thermal_state ... ok
+test implicit_maxwell_moving_skin_and_native_contact_balance_heat_and_both_actuators ... ok
+test same_pose_native_branch_bundles_preserve_selected_response_and_force_balance ... ok
+test simultaneous_comotion_uses_moving_ccd_instead_of_old_stationary_skin_guard ... ok
+test prescribed_vertex_obstruction_is_distinct_from_a_movable_closed_trial ... ok
+test simultaneous_tissue_rig_and_obstacle_motion_passes_work_budget ... ok
+test staged_skin_motion_uses_actual_nodes_instead_of_rest_pose_for_admission ... ok
+test wrong_rest_contact_owner_is_rejected_atomically ... ok
+test shared_skin_triangle_couples_two_dynamic_fem_regions_in_existing_solver ... ok
+test parallel_native_terminal_feature_kink_has_distinct_one_sided_derivatives ... ok
+test adaptive_implicit_maxwell_admits_full_parallel_contact_interval_and_rolls_back_limit ... ok
+test implicit_maxwell_parallel_native_feature_quadrature_closes_full_step ... ok
+test implicit_moving_skin_stiffness_sweep_and_work_rejection_are_transactional ... ok
+test fixed_implicit_parallel_contact_trajectory_records_refinement_limit ... ok
+test fixed_parallel_contact_stricter_budget_comparison ... ok
+test adaptive_implicit_parallel_contact_trajectory_refines_with_contact_quadrature ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.42s
+
+     Running tests/tissue_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_surface-15e19bd39e3e9703)
+
+running 11 tests
+test affine_deformation_and_boundary_vertices ... ok
+test local_vertex_displacement_uses_barycentric_weight ... ok
+test force_accumulation_preserves_existing_loads_and_is_atomic_on_late_overflow ... ok
+test mixed_surface_preserves_prescribed_vertices_and_virtual_work ... ok
+test moving_skin_reference_work_closes_independent_spring_energy_and_moment ... ok
+test rejects_bad_topology_outside_and_nonfinite_updates ... ok
+test relative_embedding_failure_does_not_publish_partial_skin ... ok
+test relative_embedding_preserves_posed_skin_and_adds_only_physical_displacement ... ok
+test reusable_buffer_is_atomic_and_matches_allocating_api ... ok
+test relative_skin_force_matches_independent_potential_derivative ... ok
+test embedded_force_transfer_preserves_virtual_work_resultant_and_moment ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

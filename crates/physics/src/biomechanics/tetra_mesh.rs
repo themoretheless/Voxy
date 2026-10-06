@@ -1,6 +1,7 @@
 //! Audited anatomical tetrahedral mesh interchange, VXTM version 1, metres.
 use super::{Body, Material, Vec3, columns, cross, det, dot, sub};
 use std::collections::BTreeMap;
+mod convex_surface;
 mod ellipsoid;
 #[derive(Clone, Debug)]
 pub struct TetraMesh {
@@ -294,6 +295,40 @@ impl TetraMesh {
         mesh.validate_topology()?;
         Ok(mesh)
     }
+    /// Serialize an admitted mesh to the existing VXTM v1 interchange format.
+    /// # Errors
+    /// Invalid topology, nonfinite points or existing interchange resource limits.
+    pub fn to_bytes(&self) -> Result<Vec<u8>, &'static str> {
+        let (np, nc, nf) = (self.points.len(), self.cells.len(), self.boundary.len());
+        if !(4..=1_000_000).contains(&np) || !(1..=250_000).contains(&nc) || nf > 4 * nc {
+            return Err("tetrahedral resource limit");
+        }
+        if self.points.iter().flatten().any(|v| !v.is_finite()) {
+            return Err("nonfinite tetrahedral point");
+        }
+        self.validate_topology()?;
+        let mut bytes = Vec::with_capacity(20 + 24 * np + 16 * nc + 12 * nf);
+        bytes.extend_from_slice(b"VXTM");
+        for value in [1, np, nc, nf] {
+            bytes.extend_from_slice(&(value as u32).to_le_bytes());
+        }
+        for &point in &self.points {
+            for value in point {
+                bytes.extend_from_slice(&value.to_le_bytes());
+            }
+        }
+        for cell in &self.cells {
+            for &index in cell {
+                bytes.extend_from_slice(&(index as u32).to_le_bytes());
+            }
+        }
+        for face in &self.boundary {
+            for &index in face {
+                bytes.extend_from_slice(&(index as u32).to_le_bytes());
+            }
+        }
+        Ok(bytes)
+    }
     pub(super) fn validate_topology(&self) -> Result<(), &'static str> {
         let points = &self.points;
         let cells = &self.cells;
@@ -350,6 +385,7 @@ impl TetraMesh {
     /// # Errors
     /// Rejects invalid material, pin count or mechanically invalid mesh.
     pub fn into_body(self, pinned: Vec<bool>, material: &Material) -> Result<Body, &'static str> {
+        self.validate_topology()?;
         Body::new(
             self.points,
             pinned,

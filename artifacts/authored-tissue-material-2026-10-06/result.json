@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "example_tests_passed": 45,
+  "example_tests_ignored": 3,
+  "main_application_compiles": true,
+  "main_application_library_owner_test_passed": 1,
+  "authored_support_count": 4,
+  "authored_density_kg_m3": 1200,
+  "analytic_mass_kg": 0.012800000000000002,
+  "authored_specific_heat_j_kg_k": 2000,
+  "thermal_fixture_kelvin": 299,
+  "released_heat_j": 3.5862832374756004e-09,
+  "heat_from_kelvin_j": 3.5863195080310113e-09,
+  "kelvin_rounding_allowance_j": 6.79847289575264e-12,
+  "independent_frame_balance_j": 9.731604347708848e-08,
+  "gpu_v2_committed_steps": 3,
+  "gpu_controller_substeps": 12,
+  "source_bound_vertices": 1,
+  "step279_fixed": false,
+  "material_parameters_independently_anatomically_calibrated": false
+}

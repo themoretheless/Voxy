@@ -568,6 +568,18 @@ impl InertialBody {
                     }
                 }
             }
+            if evaluation.is_err() && std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
+                if let Some((next_skin, _)) = skin_motion {
+                    let endpoint = world_endpoint(&mid);
+                    let current_skin = self.body.stationary_embedded_contact().unwrap();
+                    eprintln!(
+                        "IMPLICIT_SKIN_REJECTED_GUESS dt={dt:.17e} iteration={iteration} initial={:?} fixed_nodes_next_pose={:?} trial_endpoint={:?}",
+                        current_skin.nearest_active_contact(&self.body.positions),
+                        next_skin.nearest_active_contact(&self.body.positions),
+                        next_skin.nearest_active_contact(&endpoint),
+                    );
+                }
+            }
             let evaluation = evaluation?;
             if !initial_feasible {
                 if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {

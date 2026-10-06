@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "requested_steps": 480,
+  "rejected_step": 279,
+  "reason": "closed surface contact gap",
+  "max_allowed_substeps": 256,
+  "retry_closed_trial": true,
+  "budget_relaxed": false,
+  "ccd_disabled": false
+}

@@ -64,6 +64,7 @@ impl TissueDemo {
                 .collect(),
         };
         let global = DemoTissue::Continuum {
+            boundary_faces: assembled.body.body().surface().into(),
             dynamics: assembled.body,
             thermal_binding: binding,
             cells,
@@ -340,6 +341,15 @@ pub(super) struct GlobalSkinBinding {
     vertex_count: usize,
     pub(super) bound_count: usize,
 }
+impl GlobalSkinBinding {
+    pub(super) fn tissue_owned_vertices(&self) -> Vec<usize> {
+        self.owners
+            .iter()
+            .enumerate()
+            .filter_map(|(vertex, owner)| owner.map(|_| vertex))
+            .collect()
+    }
+}
 impl TissueDemo {
     pub(super) fn bind_assembled_skin(
         &self,
@@ -578,6 +588,15 @@ impl TissueDemo {
         if faces.is_empty() {
             return Err("no tissue-owned skin contact triangles");
         }
+        if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
+            let owned: Vec<_> = global
+                .owners
+                .iter()
+                .enumerate()
+                .filter_map(|(vertex, owner)| owner.map(|region| (vertex, region)))
+                .collect();
+            eprintln!("PHYSICAL_SKIN_VERTEX_OWNERS {owned:?}");
+        }
         let key = |p: [f64; 3]| p.map(|v| if v == 0. { 0 } else { v.to_bits() });
         let mut aliases = BTreeMap::<[u64; 3], Vec<usize>>::new();
         for (i, &p) in global.skin_reference.iter().enumerate() {
@@ -772,5 +791,255 @@ mod contact_tests {
             "PHYSICAL_SKIN_CONTROLLER independent_defect_j={independent:.17e} surface_work_j={:.17e}",
             surface_work_j
         );
+    }
+    #[test]
+    fn authored_convex_volume_uses_complete_physical_skin_and_existing_controller() {
+        use physics::biomechanics::TetraMesh;
+        let points = vec![
+            [-0.01, 0.8, -0.01],
+            [0.01, 0.8, -0.01],
+            [0.01, 0.82, -0.01],
+            [-0.01, 0.82, -0.01],
+            [-0.01, 0.8, 0.01],
+            [0.01, 0.8, 0.01],
+            [0.01, 0.82, 0.01],
+            [-0.01, 0.82, 0.01],
+        ];
+        let faces = vec![
+            [0, 2, 1],
+            [0, 3, 2],
+            [4, 5, 6],
+            [4, 6, 7],
+            [0, 1, 5],
+            [0, 5, 4],
+            [1, 2, 6],
+            [1, 6, 5],
+            [2, 3, 7],
+            [2, 7, 6],
+            [3, 0, 4],
+            [3, 4, 7],
+        ];
+        let mesh =
+            TetraMesh::from_convex_surface(points.clone(), faces.clone(), [0., 0.81, 0.]).unwrap();
+        assert!(TissueDemo::body_from_regions(vec![(mesh.clone(), [0, 0, 1], 0)]).is_err());
+        assert!(TissueDemo::body_from_regions(vec![(mesh.clone(), [0, 1, 99], 0)]).is_err());
+        let mut malformed = mesh.clone();
+        malformed.boundary.pop();
+        assert!(TissueDemo::body_from_regions(vec![(malformed, [0, 1, 3], 0)]).is_err());
+        let mut demo = TissueDemo::body_from_regions(vec![(mesh, [0, 1, 3], 0)]).unwrap();
+        let mut model_points = points;
+        model_points.extend([[-0.4, 0.7985, -0.4], [0.4, 0.7985, -0.4], [0., 0.7985, 0.4]]);
+        let mut model_faces = faces;
+        model_faces.push([8, 9, 10]);
+        let mut domain = vec![false; model_faces.len()];
+        *domain.last_mut().unwrap() = true;
+        let source = Arc::new(
+            PrescribedTriangleSurface::new(model_points.clone(), model_faces, 0.0001, 0.003, 100.)
+                .unwrap()
+                .with_contact_faces(domain)
+                .unwrap(),
+        );
+        demo.bind_contact_surfaces(&[source.clone()]).unwrap();
+        demo.assemble_regions().unwrap();
+        let binding = demo.bind_skin(&model_points).unwrap();
+        assert_eq!(binding.bound_vertex_count(), 8);
+        assert_eq!(demo.bind_skin_contact(&binding).unwrap(), 12);
+        let before = demo.body_energy_receipts().unwrap()[0];
+        let mut moved = model_points.clone();
+        for point in &mut moved[8..] {
+            point[1] -= 1e-5;
+        }
+        let next = Arc::new(source.with_positions(moved.clone()).unwrap());
+        demo.step_body_with_contact64_workers(&[DMat4::IDENTITY], 0.5, Some(vec![next]), 1)
+            .unwrap();
+        let after = demo.body_energy_receipts().unwrap()[0];
+        let independent = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+        assert!(
+            independent.abs() < 1e-5,
+            "independent frame balance={independent:.17e}"
+        );
+        let visible = demo
+            .deform_skin(&binding, &[DMat4::IDENTITY], &moved)
+            .unwrap();
+        assert_eq!(&visible[8..], &moved[8..]);
+        assert!(visible[..8].iter().zip(&moved[..8]).any(|(a, b)| a != b));
+        eprintln!(
+            "AUTHORED_CONVEX_CONTROLLER bound_vertices=8 responsive_triangles=12 independent_frame_balance_j={independent:.17e}"
+        );
+    }
+    #[test]
+    fn authored_material_and_variable_supports_drive_shared_mechanical_thermal_owner() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
+        let mut spec = TissueRegionSpec::illustrative(mesh.clone(), vec![1, 2, 3, 4], 0);
+        spec.density_kg_m3 = 1200.;
+        spec.specific_heat_j_kg_k = 2000.;
+        spec.temperature_kelvin = 299.;
+        spec.ogden_terms[0].shear_pa = 15000.;
+        spec.bulk_pa = 2e6;
+        spec.maxwell_branches[0].shear_pa = 20000.;
+        spec.maxwell_branches[0].relaxation_seconds = 0.5;
+        let mut demo = TissueDemo::body_from_region_specs(vec![spec.clone()]).unwrap();
+        assert_eq!(demo.attachments[0].1.len(), 4);
+        let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+            panic!()
+        };
+        // Inscribed octahedron volume = 4/3 * radius^3, independently of mesh internals.
+        let expected_mass = 1200. * 4. / 3. * 0.02_f64.powi(3);
+        assert!((dynamics.masses().iter().sum::<f64>() - expected_mass).abs() < 1e-14);
+        assert_eq!(
+            dynamics.maxwell_temperatures_kelvin().unwrap(),
+            vec![299.; mesh.cells.len()]
+        );
+        demo.assemble_regions().unwrap();
+        let before = demo.body_energy_receipts().unwrap()[0];
+        let palette = [DMat4::from_translation(DVec3::new(1e-6, 0., 0.))];
+        demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
+            .unwrap();
+        let after = demo.body_energy_receipts().unwrap()[0];
+        let independent = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+        assert!(independent.abs() < 1e-5);
+        let DemoTissue::Continuum {
+            dynamics, ledger, ..
+        } = &demo.bodies[0]
+        else {
+            panic!()
+        };
+        for &node in &spec.supports {
+            assert_eq!(
+                dynamics.body().positions()[node],
+                palette[0]
+                    .transform_point3(DVec3::from_array(mesh.points[node]))
+                    .to_array()
+            );
+        }
+        assert!(
+            (dynamics
+                .maxwell_sensible_energy_j()
+                .unwrap()
+                .iter()
+                .sum::<f64>()
+                - ledger.heat_j)
+                .abs()
+                < 1e-12
+        );
+        assert!(ledger.heat_j > 0.);
+        let temperature_energy: f64 = dynamics
+            .maxwell_temperatures_kelvin()
+            .unwrap()
+            .iter()
+            .map(|&temperature| {
+                expected_mass / mesh.cells.len() as f64 * 2000. * (temperature - 299.)
+            })
+            .sum();
+        let kelvin_rounding_j = 4. * f64::EPSILON * 299. * expected_mass * 2000.;
+        assert!(
+            ledger.heat_j > 100. * kelvin_rounding_j,
+            "insufficient heat to discriminate authored capacity"
+        );
+        assert!((temperature_energy - ledger.heat_j).abs() <= kelvin_rounding_j);
+        eprintln!(
+            "AUTHORED_HEAT released_j={:.17e} from_temperatures_j={temperature_energy:.17e} rounding_j={kelvin_rounding_j:.17e}",
+            ledger.heat_j
+        );
+        eprintln!(
+            "AUTHORED_MATERIAL mass_kg={expected_mass:.17e} supports=4 independent_frame_balance_j={independent:.17e} cells={}",
+            mesh.cells.len()
+        );
+        for variant in 0..7 {
+            let mut invalid = spec.clone();
+            match variant {
+                0 => invalid.density_kg_m3 = 0.,
+                1 => invalid.specific_heat_j_kg_k = 0.,
+                2 => invalid.temperature_kelvin = 0.,
+                3 => invalid.bulk_pa = -1.,
+                4 => invalid.ogden_terms[0].exponent = 0.,
+                5 => invalid.maxwell_branches[0].relaxation_seconds = 0.,
+                _ => invalid.supports = vec![1, 1],
+            }
+            assert!(TissueDemo::body_from_region_specs(vec![invalid]).is_err());
+        }
+    }
+    #[test]
+    fn nonradial_volume_boundary_normals_ignore_internal_faces_and_cell_order() {
+        use physics::biomechanics::TetraMesh;
+        let points = vec![
+            [0., 0., 0.],
+            [1., 0., 0.],
+            [0., 1., 0.],
+            [0., 0., 1.],
+            [0., 0., -1.],
+        ];
+        let cells = vec![[0, 1, 2, 3], [0, 2, 1, 4]];
+        let body = Body::new(
+            points.clone(),
+            vec![false; 5],
+            cells
+                .iter()
+                .map(|&c| {
+                    (
+                        c,
+                        Material {
+                            shear_pa: 100.,
+                            bulk_pa: 1000.,
+                            fibers: vec![],
+                        },
+                    )
+                })
+                .collect(),
+        )
+        .unwrap();
+        let boundary = body.surface();
+        assert_eq!(boundary.len(), 6);
+        let mesh = TetraMesh {
+            points: points.clone(),
+            cells: cells.clone(),
+            boundary: boundary.clone(),
+        };
+        let mut demo = TissueDemo::body_from_regions(vec![(mesh.clone(), [0, 1, 2], 0)]).unwrap();
+        let normals = demo.bodies[0].smooth_boundary_normals().unwrap();
+        let diagonal = -std::f64::consts::FRAC_1_SQRT_2;
+        assert!((normals[0][0] - diagonal).abs() < 1e-14);
+        assert!((normals[0][1] - diagonal).abs() < 1e-14);
+        assert_eq!(normals[0][2], 0.);
+        assert_eq!(demo.tissue_mesh().unwrap().vertices().len(), 6 * 16 * 3);
+        let alternate_cells = vec![[1, 2, 0, 3], [2, 1, 0, 4]];
+        let alternate = TissueDemo::body_from_regions(vec![(
+            TetraMesh {
+                points,
+                cells: alternate_cells,
+                boundary,
+            },
+            [0, 1, 2],
+            0,
+        )])
+        .unwrap();
+        let alternate_normals = alternate.bodies[0].smooth_boundary_normals().unwrap();
+        for (a, b) in normals
+            .iter()
+            .flatten()
+            .zip(alternate_normals.iter().flatten())
+        {
+            assert!((a - b).abs() < 1e-14);
+        }
+        let refined = mesh.refined_once().unwrap().refined_once().unwrap();
+        let interior = refined
+            .points
+            .iter()
+            .position(|p| p.iter().all(|&v| (v - 0.25).abs() < 1e-14))
+            .unwrap();
+        let refined_faces = refined.boundary.len();
+        let refined_demo = TissueDemo::body_from_regions(vec![(refined, [0, 1, 2], 0)]).unwrap();
+        assert_eq!(
+            refined_demo.bodies[0].smooth_boundary_normals().unwrap()[interior],
+            [0.; 3]
+        );
+        assert_eq!(
+            refined_demo.tissue_mesh().unwrap().vertices().len(),
+            refined_faces * 16 * 3
+        );
+        demo.assemble_regions().unwrap();
+        assert_eq!(demo.bodies[0].smooth_boundary_normals().unwrap(), normals);
+        assert_eq!(demo.tissue_mesh().unwrap().vertices().len(), 6 * 16 * 3);
     }
 }

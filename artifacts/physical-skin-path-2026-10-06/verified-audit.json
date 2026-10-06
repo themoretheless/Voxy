@@ -1,0 +1,15 @@
+{
+  "scope": "published aggregate audit validation",
+  "steps": 72,
+  "bodies": [
+    {
+      "body": 0,
+      "absolute_frame_error_j": 1.1161051388532443e-07,
+      "requested_budget_j": 0.00072,
+      "rounding_allowance_j": 1.179537840437382e-11,
+      "final_unadjusted_balance_j": -9.045972595989049e-08,
+      "reported_ledger_residual_j": -3.653163011612923e-15
+    }
+  ],
+  "independent_frame_reported_defect_subtracted": false
+}

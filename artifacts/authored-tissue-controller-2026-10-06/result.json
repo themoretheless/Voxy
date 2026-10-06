@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "app_suite_passed": 42,
+  "app_suite_ignored": 3,
+  "additional_authored_volume_fixture_passed": 1,
+  "physics_regression_passed": 8,
+  "source_skin_vertices_bound": 8,
+  "source_skin_vertices_total": 8,
+  "responsive_triangles": 12,
+  "independent_frame_balance_j": -4.026893394772522e-07,
+  "unchanged_frame_budget_j": 1e-05,
+  "imported_character_coverage_changed": false,
+  "cesium_clip_step279_repaired": false
+}

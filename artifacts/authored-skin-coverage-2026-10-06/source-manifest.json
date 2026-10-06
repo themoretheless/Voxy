@@ -1,0 +1,6 @@
+{
+  "crates/voxy_app/examples/body_motion_snapshot.rs": "faa880edcf95261fa0a3127958894ec5da2b4b6cd523793281f12c1537524e28",
+  "crates/voxy_app/examples/body_motion_snapshot/tissue_regions.rs": "2ea8f68d1396ef2c64c056225c14ce92ab7c0b18e655e2a38743e30e9008c2e8",
+  "crates/voxy_app/src/tissue_demo.rs": "c5177e5aa10eed7c3d0c59c177df33f54a625c4b39a75e2e7d01898ba3ad7c4e",
+  "crates/voxy_app/src/tissue_demo/assembly.rs": "45bc81eaa2adb02049593f9fcfb290c83a6dbf56b791ecea1a6575dbc7a60a30"
+}

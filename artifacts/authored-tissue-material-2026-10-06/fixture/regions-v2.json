@@ -1,0 +1,71 @@
+{
+  "coordinate_space": "scene_phase_0_metres",
+  "material_profile": "authored-ogden-maxwell-v1",
+  "regions": [
+    {
+      "excluded_obstacle_faces": [
+        328,
+        329,
+        336,
+        337,
+        912,
+        913,
+        920,
+        921,
+        1502,
+        1503,
+        1504,
+        1505,
+        2086,
+        2087,
+        2088,
+        2089,
+        2664,
+        2665,
+        2672,
+        2673,
+        3248,
+        3249,
+        3256,
+        3257,
+        3838,
+        3839,
+        3840,
+        3841,
+        4422,
+        4423,
+        4424,
+        4425
+      ],
+      "joint": "Skeleton_torso_joint_2",
+      "material": {
+        "bulk_pa": 2000000.0,
+        "density_kg_m3": 1200.0,
+        "maxwell_branches": [
+          {
+            "relaxation_seconds": 0.5,
+            "shear_pa": 20000.0
+          }
+        ],
+        "ogden_terms": [
+          {
+            "exponent": 2.0,
+            "shear_pa": 15000.0
+          }
+        ],
+        "specific_heat_j_kg_k": 2000.0,
+        "temperature_kelvin": 295.0
+      },
+      "mesh": "pad.vxtm",
+      "mesh_blake3": "117d4c2f3c5bfd0ef74e6faf34d2da9ce1545d54a649533c9ad76c5395a869d6",
+      "supports": [
+        2,
+        3,
+        5,
+        0
+      ]
+    }
+  ],
+  "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+  "version": 2
+}

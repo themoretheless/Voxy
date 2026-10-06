@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "app_tests_passed": 44,
+  "app_tests_ignored": 3,
+  "mesh_tests_passed": 6,
+  "authored_import_fixture_steps": 8,
+  "gpu": "Metal Apple M4 Max",
+  "gpu_committed_steps": 3,
+  "gpu_simulated_seconds": 0.0125,
+  "gpu_controller_substeps": 12,
+  "fixture_bound_vertices": 1,
+  "fixture_source_vertices": 3273,
+  "fixture_responsive_triangles": 6,
+  "fixture_scope": "single illustrative convex pad; asset/controller plumbing qualification",
+  "default_imported_coverage_changed": false,
+  "step279_fixed": false,
+  "snapshot_sha256": "62a9c32e1492aace6f4c8d65b5d0266832816a7d48fa2a590caecceab6a55033"
+}

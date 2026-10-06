@@ -1,0 +1,38 @@
+    Blocking waiting for file lock on build directory
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 6.68s
+     Running tests/anatomy_tet.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/anatomy_tet-9d740ac0e9be1dad)
+
+running 2 tests
+test malformed_mesh_payload_geometry_and_boundary_are_rejected ... ok
+test real_reference_anatomy_imports_into_fem_with_expected_volume ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s
+
+     Running tests/convex_tissue_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/convex_tissue_surface-963aedaa4290be94)
+
+running 3 tests
+test rejects_open_inward_nonconvex_and_unusable_source_geometry ... ok
+test complete_source_skin_embeds_and_affine_motion_preserves_exact_cube_mass ... ok
+test sheared_source_boundary_refines_conformingly_without_losing_volume ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tissue_continuum_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_continuum_geometry-29087454a20ee656)
+
+running 3 tests
+test rounded_mesh_has_oriented_boundary_accepted_by_existing_refinement ... ok
+test rounded_fem_energy_and_virtual_work_match_uniform_shear ... ok
+test continuum_and_compliant_owners_share_geometry_and_lumped_mass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

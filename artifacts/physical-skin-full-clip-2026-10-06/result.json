@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "requested_steps": 480,
+  "rejected_step": 279,
+  "reason": "closed surface contact gap",
+  "last_committed_step": 278,
+  "contact_boundary": "assembled physical render skin",
+  "budget_relaxed": false,
+  "ccd_disabled": false
+}
