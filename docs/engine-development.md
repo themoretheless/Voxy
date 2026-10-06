@@ -8039,3 +8039,108 @@ Metal capabilities/device limits and source digest:
 Adapter features remain distinct from enabled device features. This result does
 not qualify native presented frames, NVIDIA CUDA/RTX, DirectX12/other devices,
 all lighting/material/scene combinations, or complete graphics parity.
+
+### Inverse bind validation (2026-10-06)
+
+Skeleton construction now rejects finite but projective or singular inverse
+bind matrices before a skin palette can be published. The homogeneous row
+must encode an affine map `(0, 0, 0, h)` with finite nonzero h; all columns are
+divided by h before storage, giving canonical `(0, 0, 0, 1)`. The canonical
+linear determinant must be nonzero.
+The determinant uses f64 for the f32 input coefficients, avoiding determinant
+underflow for uniformly small valid bind scales. Reflections remain valid.
+
+All 226 animation tests passed, including rejected zero-scale/perspective
+matrices and admitted scales from 1e-20 to 1e20 and reflected transforms.
+This does not qualify every ill-conditioned matrix, external skeletal importer
+or GPU/editor runtime behavior.
+
+Final qualification: 718 animation/application/gameplay tests passed in total;
+28 application tests were ignored. The editor all-target release check and
+formatting/diff checks passed. Evidence and source hash are saved in
+`artifacts/rig-inverse-bind-validation-2026-10-06/`. Ignored tests do not count
+as proof of hardware or runtime coverage.
+
+### Computed homogeneous inverse-bind compatibility (2026-10-06)
+
+A 256-transform regression exposed that a normal TRS matrix inverse can have
+homogeneous w=0.99999994 after floating-point inversion. Requiring the input w
+to equal one rejected that otherwise affine bind. Skeleton construction now
+canonicalizes every affine homogeneous inverse bind by dividing all columns
+by its finite nonzero w, preserving the homogeneous map. Source perspective
+components are checked before division, so underflow cannot hide perspective.
+Unrepresentable canonical matrices and singular linear maps still reject.
+
+Tests cover computed TRS inverses, positive and negative homogeneous scale,
+point-map equivalence with homogeneous projection, hidden perspective and
+canonicalization overflow. Existing unit-w binds retain their representation.
+
+Final qualification of homogeneous compatibility: all 720 animation,
+application and gameplay tests passed; 28 application tests were ignored.
+Editor all-target release, formatting and diff checks passed. The initial
+reproduction log and repaired-state evidence/source hash are saved in
+`artifacts/rig-homogeneous-bind-compatibility-2026-10-06/`. External rig import
+and visual/GPU runtime qualification remain separate unfinished work.
+
+### Bind-pose hierarchy preflight (2026-10-06)
+
+Skeleton construction now evaluates its bind pose using the existing shared
+double-precision skin-matrix evaluator. Finite local transforms can overflow
+through a parent chain or when combined with inverse binds; these initial
+failures now return `InvalidJointTransform` for the offending joint before
+the skeleton is published. No duplicate hierarchy evaluator was introduced.
+
+Double precision is intentional: rigs whose global matrices exceed f32 but
+remain finite in f64 still support wide kinematics. Narrow skin-palette
+publication keeps its separate range gate. Regression tests cover global and
+palette overflow, valid wide rigs and runtime overflow from a later pose on
+an otherwise valid skeleton.
+
+All 229 animation tests and 220 gameplay tests passed; application/editor
+all-target release checks and formatting/diff checks passed. Evidence and
+source hashes are in `artifacts/rig-bind-pose-preflight-2026-10-06/`. External
+import and visual/GPU runtime qualification remain unfinished.
+
+### Palette underflow and scale-independent rank checks (2026-10-06)
+
+Bind validation, narrow skin-palette evaluation and double-precision global/
+palette evaluation now share a column-scaled linear rank check. Each column
+is divided componentwise by its maximum absolute entry solely for validation;
+stored transforms are not altered. This avoids overflowing/underflowing the
+determinant of an otherwise representable uniformly scaled matrix. Zero or
+linearly dependent columns reject. Componentwise division preserves nonzero
+subnormal columns without forming an overflowing reciprocal.
+
+A ten-joint chain with scales 1e-30 produces a representable wide matrix near
+1e-300 and remains valid; its narrow palette rejects. An eleven-joint chain
+underflows to zero and rejects during skeleton construction at joint 10. A
+1e-320 subnormal matrix also passes the scaled check. No epsilon scale clamp
+or replacement transform is introduced. Arbitrary ill-conditioned matrices
+are not certified by this floating determinant check.
+
+All 230 animation tests and 220 gameplay tests passed; application/editor
+all-target release checks and formatting/diff checks passed. Evidence and
+source hashes are saved in `artifacts/rig-palette-underflow-2026-10-06/`.
+
+### Exact rank predicate for stored rig matrices (2026-10-06)
+
+A regression showed that independently dividing columns can change exact
+dependency through rounding: integer columns `(1,2,3)`, `(4,5,6)`, `(5,7,9)`
+were wrongly accepted although the third is the sum of the first two. The
+previous normalized-column rank test is therefore replaced by `linear_rank`.
+
+Well-separated finite normal triple products use a conservative floating
+filter. Remaining cases decompose stored f64 coefficients into exact signed
+dyadic mantissas/exponents and add all six triple products in fixed 100-limb
+positive/negative sums. This covers the complete finite f64 coefficient range
+without underflow, overflow, division or alteration of the matrix. The result
+classifies exact zero for stored coefficients, not conditioning or authored
+mathematical intent before rounding.
+
+Tests qualify the dependent-column reproduction, one-ULP near dependency at
+unit/large/small scales, extreme/subnormal entries and 2048 independent integer
+determinants. All 233 animation tests and 220 gameplay tests passed, as did
+application/editor all-target release and formatting/diff checks. Reproduction
+and final qualification evidence/source hashes are in
+`artifacts/rig-exact-linear-rank-2026-10-06/`. GPU/editor visual and external
+import qualification remain unfinished.

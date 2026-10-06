@@ -297,10 +297,26 @@ pub struct RigidWorldReactionRates {
     pub environment_force_rate: [f64; 3],
 }
 impl Liquid {
+    /// Read-only coupled reactions and rates for body-local material-point
+    /// forces at the supplied snapshot. Recipes have this snapshot as time zero.
+    /// This does not certify their finite supported trajectory.
+    pub fn rigid_world_point_reaction_rates(
+        &self,
+        bodies: &[ContactBody],
+        world: &impl LiquidBodyWorld,
+        additional: &[ContactWrench],
+        additional_rate: &[ContactWrench],
+        points: &[Vec<crate::rigid_motion::MaterialPointForce>],
+        limits: DynamicWorldConfig,
+        config: crate::contact::ReactionRateConfig,
+    ) -> Result<RigidWorldReactionRates, Error> {
+        let (loads, rates) = material_point_wrenches(bodies, additional, additional_rate, points)?;
+        self.rigid_world_reaction_rates(bodies, world, &loads, &rates, limits, config)
+    }
     /// Use the same snapshot geometry, owner indices and coupled baseline solve.
     /// Common point motion is supplied by geometry; the compatibility default
-    /// follows first COM. Supported stepping retains its frozen-arm convention.
-    /// Edge Rate branches need a geometry second derivative and reject here.
+    /// follows first COM. Finite stepping separately admits moving point models.
+    /// Edge Rate branches require a geometry-owned normal second derivative.
     pub fn rigid_world_reaction_rates(
         &self,
         bodies: &[ContactBody],
@@ -379,4 +395,78 @@ impl Liquid {
             environment_force_rate,
         })
     }
+}
+
+/// Snapshot resultants shared by read-only queries and supported stepping.
+pub(super) fn material_point_wrenches(
+    bodies: &[ContactBody],
+    additional: &[ContactWrench],
+    additional_rate: &[ContactWrench],
+    points: &[Vec<crate::rigid_motion::MaterialPointForce>],
+) -> Result<(Vec<ContactWrench>, Vec<ContactWrench>), Error> {
+    use crate::rigid_motion::{MaterialForceMoment, MotionLoad};
+    let load_error = |error| match error {
+        crate::rigid_motion::Error::InvalidInput => Error::InvalidCollision,
+        _ => Error::NumericalFailure,
+    };
+    let spin_error = |error| match error {
+        crate::astrophysics::Error::InvalidInput => Error::InvalidCollision,
+        _ => Error::NumericalFailure,
+    };
+    if points.len() != bodies.len()
+        || additional.len() != bodies.len()
+        || additional_rate.len() != bodies.len()
+    {
+        return Err(Error::InvalidCollision);
+    }
+    let mut loads = Vec::with_capacity(bodies.len());
+    let mut rates = Vec::with_capacity(bodies.len());
+    for (((body, points), load), rate) in bodies
+        .iter()
+        .zip(points)
+        .zip(additional)
+        .zip(additional_rate)
+    {
+        if body.spin.is_none() && points.iter().any(|p| p.local != [0.; 3]) {
+            return Err(Error::InvalidCollision);
+        }
+        let moment = MaterialForceMoment::aggregate(points.iter().copied()).map_err(load_error)?;
+        let orientation = body.spin.map_or([0., 0., 0., 1.], |s| s.orientation);
+        let omega = body
+            .spin
+            .map_or(Ok([0.; 3]), |s| s.angular_velocity())
+            .map_err(spin_error)?;
+        let total = MotionLoad::aggregate([
+            MotionLoad {
+                force: load.force,
+                force_rate: rate.force,
+                torque: crate::astrophysics_spin::TorquePolynomial {
+                    value: load.torque,
+                    rate: rate.torque,
+                    ..crate::astrophysics_spin::TorquePolynomial::constant([0.; 3])
+                },
+            },
+            MotionLoad {
+                force: moment.force,
+                force_rate: moment.force_rate,
+                torque: crate::astrophysics_spin::TorquePolynomial {
+                    value: moment.torque_at(orientation, 0.).map_err(load_error)?,
+                    rate: moment
+                        .torque_rate_at(orientation, omega, 0.)
+                        .map_err(load_error)?,
+                    ..crate::astrophysics_spin::TorquePolynomial::constant([0.; 3])
+                },
+            },
+        ])
+        .map_err(load_error)?;
+        loads.push(ContactWrench {
+            force: total.force,
+            torque: total.torque.value,
+        });
+        rates.push(ContactWrench {
+            force: total.force_rate,
+            torque: total.torque.rate,
+        });
+    }
+    Ok((loads, rates))
 }

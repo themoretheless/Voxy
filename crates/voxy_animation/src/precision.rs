@@ -53,7 +53,7 @@ impl Pose64 {
                 Some(parent) => global[usize::from(parent)] * local.matrix(),
                 None => local.matrix(),
             };
-            if !matrix.is_finite() {
+            if !usable_linear(matrix) {
                 return Err(AnimationError::InvalidPose(i));
             }
             global.push(matrix);
@@ -68,7 +68,7 @@ impl Pose64 {
             .map(|(i, (global, joint))| {
                 let matrix = global
                     * DMat4::from_cols_array(&joint.inverse_bind.to_cols_array().map(f64::from));
-                if matrix.is_finite() {
+                if usable_linear(matrix) {
                     Ok(matrix)
                 } else {
                     Err(AnimationError::InvalidPose(i))
@@ -476,17 +476,18 @@ mod tests {
                 .map(|i| Joint {
                     name: format!("j{i}").into(),
                     parent: if i == 0 { None } else { Some(i - 1) },
-                    bind_local: Transform {
-                        scale: Vec3::splat(3e38),
-                        ..Transform::IDENTITY
-                    },
+                    bind_local: Transform::IDENTITY,
                     inverse_bind: Mat4::IDENTITY,
                 })
                 .collect(),
         )
         .unwrap();
+        let mut overflowing_pose = huge.bind_pose64();
+        for local in &mut overflowing_pose.local {
+            local.scale = DVec3::splat(3e38);
+        }
         assert!(matches!(
-            huge.bind_pose64().skin_matrices(&huge),
+            overflowing_pose.skin_matrices(&huge),
             Err(AnimationError::InvalidPose(_))
         ));
     }

@@ -229,6 +229,32 @@ impl MaterialForceMoment {
         }
         Ok(sum.finish()?[0])
     }
+    /// Instantaneous intrinsic torque derivative for a moving body frame.
+    /// Includes arm rotation as well as the affine world-force derivative.
+    /// The orientation and angular velocity refer to the same instant.
+    pub fn torque_rate_at(
+        self,
+        orientation: [f64; 4],
+        omega: [f64; 3],
+        time: f64,
+    ) -> Result<[f64; 3], Error> {
+        self.torque_at(orientation, time)?;
+        if omega.iter().any(|v| !v.is_finite()) {
+            return Err(Error::InvalidInput);
+        }
+        let mut sum = CoefficientSum::<1>::new();
+        for j in 0..3 {
+            let mut basis = [0.; 3];
+            basis[j] = 1.;
+            let arm = crate::astrophysics_spin::rotate(orientation, basis);
+            let moving_arm = crate::astrophysics_spin::cross(omega, arm);
+            let force =
+                std::array::from_fn(|k| self.rate_columns[j][k].mul_add(time, self.columns[j][k]));
+            sum.add([crate::astrophysics_spin::cross(moving_arm, force)])?;
+            sum.add([crate::astrophysics_spin::cross(arm, self.rate_columns[j])])?;
+        }
+        Ok(sum.finish()?[0])
+    }
     /// Intrinsic world torque about COM at a supplied unit body orientation.
     pub fn torque_at(self, orientation: [f64; 4], time: f64) -> Result<[f64; 3], Error> {
         let norm = orientation.iter().map(|x| x * x).sum::<f64>();
