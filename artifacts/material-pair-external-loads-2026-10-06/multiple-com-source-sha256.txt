@@ -1,0 +1,2 @@
+7deb4f3285f78d34eb24c83a7b2433385f9134012b23c072ab54c8d0bc93bed3  crates/physics/src/rigid_motion.rs
+57ef453e2eb31fd1ce58c67379e3b3829b0b4f94205581679d3f679527756a08  crates/physics/tests/rigid_motion.rs

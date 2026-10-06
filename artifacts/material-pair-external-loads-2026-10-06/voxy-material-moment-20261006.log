@@ -1,0 +1,26 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 1.02s
+     Running tests/material_pair.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/material_pair-2b3b7980eb292ce4)
+
+running 9 tests
+test aggregated_com_loads_preserve_cancellation_and_all_torque_orders ... ok
+test multiple_material_point_moment_preserves_force_couple_under_rotation ... ok
+test pair_rejects_invalid_inputs_and_preserves_bodies_on_second_preparation_failure ... ok
+test external_polynomial_torques_integrate_independently_of_mutual_force ... ok
+test loaded_pair_gravity_preserves_relative_rotation_and_world_momentum_balance ... ok
+test loaded_impact_rebases_all_force_and_torque_components_and_closes_ledger ... ok
+test pair_impact_rebuilds_both_forces_from_the_new_common_material_point ... ok
+test pair_force_and_moment_are_covariant_under_world_frame_rotation_and_origin_shift ... ok
+test whole_pair_bounds_cover_independent_joint_rk4_with_anisotropic_and_light_receivers ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+

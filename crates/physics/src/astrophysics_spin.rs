@@ -101,15 +101,23 @@ pub(crate) struct RotatingArmForce {
     pub rate: Vector,
 }
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub(crate) struct RotatingMaterialMoment {
+    pub moment: crate::rigid_motion::MaterialForceMoment,
+    pub orientation: [f64; 4],
+    pub omega: Vector,
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct ArcTorque {
     pub polynomial: TorquePolynomial,
     pub rotating: Option<RotatingArmForce>,
+    pub material: Option<RotatingMaterialMoment>,
 }
 impl ArcTorque {
     pub fn polynomial(law: TorquePolynomial) -> Self {
         Self {
             polynomial: law,
             rotating: None,
+            material: None,
         }
     }
     pub fn validate(self) -> Result<(), Error> {
@@ -123,6 +131,14 @@ impl ArcTorque {
                 .any(|x| !x.is_finite())
         }) {
             return Err(Error::InvalidInput);
+        }
+        if let Some(m) = self.material {
+            m.moment
+                .torque_at(m.orientation, 0.)
+                .map_err(|_| Error::InvalidInput)?;
+            if m.omega.iter().any(|v| !v.is_finite()) {
+                return Err(Error::InvalidInput);
+            }
         }
         Ok(())
     }
@@ -140,9 +156,31 @@ impl ArcTorque {
                 })
             })
             .transpose()?;
+        let material = self
+            .material
+            .map(|m| {
+                let moment = crate::rigid_motion::MaterialForceMoment {
+                    force: std::array::from_fn(|k| {
+                        m.moment.force_rate[k].mul_add(time, m.moment.force[k])
+                    }),
+                    columns: std::array::from_fn(|j| {
+                        std::array::from_fn(|k| {
+                            m.moment.rate_columns[j][k].mul_add(time, m.moment.columns[j][k])
+                        })
+                    }),
+                    ..m.moment
+                };
+                Ok(RotatingMaterialMoment {
+                    moment,
+                    orientation: advance(m.orientation, m.omega, time)?,
+                    ..m
+                })
+            })
+            .transpose()?;
         let result = Self {
             polynomial,
             rotating,
+            material,
         };
         result.validate().map_err(|_| Error::NumericalOverflow)?;
         Ok(result)
@@ -175,6 +213,15 @@ impl ArcTorque {
                 result[k] += zero[k] + first[k];
             }
         }
+        if let Some(m) = self.material {
+            let impulse = m
+                .moment
+                .angular_impulse(m.orientation, m.omega, time)
+                .map_err(|_| Error::NumericalOverflow)?;
+            for k in 0..3 {
+                result[k] += impulse[k];
+            }
+        }
         if result.iter().any(|x| !x.is_finite()) {
             return Err(Error::NumericalOverflow);
         }
@@ -192,6 +239,16 @@ impl ArcTorque {
                 result[k] += moment[k];
             }
         }
+        if let Some(m) = self.material {
+            let orientation = advance(m.orientation, m.omega, time)?;
+            let value = m
+                .moment
+                .torque_at(orientation, time)
+                .map_err(|_| Error::NumericalOverflow)?;
+            for k in 0..3 {
+                result[k] += value[k];
+            }
+        }
         if result.iter().any(|x| !x.is_finite()) {
             return Err(Error::NumericalOverflow);
         }
@@ -206,6 +263,14 @@ impl ArcTorque {
             maximum += radius * (norm(r.force) + norm(r.rate) * duration);
             integral +=
                 radius * (norm(r.force) * duration + (norm(r.rate) * (duration * 0.5)) * duration);
+        }
+        if let Some(m) = self.material {
+            let norm = |v: Vector| v[0].hypot(v[1]).hypot(v[2]);
+            for j in 0..3 {
+                maximum += norm(m.moment.columns[j]) + norm(m.moment.rate_columns[j]) * duration;
+                integral += norm(m.moment.columns[j]) * duration
+                    + norm(m.moment.rate_columns[j]) * duration * duration * 0.5;
+            }
         }
         if !maximum.is_finite() || !integral.is_finite() {
             return Err(Error::NumericalOverflow);
@@ -545,9 +610,14 @@ impl Spin {
         }
         let update = |mut law: ArcTorque, omega: Vector| -> Result<ArcTorque, Error> {
             if let Some(local) = local {
-                let force = law.rotating.as_mut().ok_or(Error::InvalidInput)?;
-                force.arm = rotate(self.orientation, local);
-                force.omega = omega;
+                if let Some(moment) = law.material.as_mut() {
+                    moment.orientation = self.orientation;
+                    moment.omega = omega;
+                } else {
+                    let force = law.rotating.as_mut().ok_or(Error::InvalidInput)?;
+                    force.arm = rotate(self.orientation, local);
+                    force.omega = omega;
+                }
             }
             Ok(law)
         };
@@ -637,9 +707,7 @@ impl SpinArc {
     /// The complete torque law when it is polynomial. A rotating-arm force
     /// returns None; torque_at/angular_impulse evaluate either complete law.
     pub fn torque_polynomial(self) -> Option<TorquePolynomial> {
-        self.torque
-            .rotating
-            .is_none()
+        (self.torque.rotating.is_none() && self.torque.material.is_none())
             .then_some(self.torque.polynomial)
     }
     pub fn torque_at(self, time: f64) -> Result<Vector, Error> {
@@ -679,5 +747,49 @@ impl SpinArc {
         };
         state.validate()?;
         Ok(state)
+    }
+}
+
+#[cfg(test)]
+mod material_moment_arc_tests {
+    use super::*;
+    #[test]
+    fn tensor_arc_rebasing_preserves_analytic_force_couple_phase_and_impulse() {
+        use crate::rigid_motion::{MaterialForceMoment, MaterialPointForce};
+        let moment = MaterialForceMoment::aggregate([
+            MaterialPointForce {
+                local: [1., 0., 0.],
+                force: [0., 2., 0.],
+                force_rate: [0., 0.3, 0.],
+            },
+            MaterialPointForce {
+                local: [-1., 0., 0.],
+                force: [0., -2., 0.],
+                force_rate: [0., -0.3, 0.],
+            },
+        ])
+        .unwrap();
+        let law = ArcTorque {
+            polynomial: TorquePolynomial::constant([0.; 3]),
+            rotating: None,
+            material: Some(RotatingMaterialMoment {
+                moment,
+                orientation: [0., 0., 0., 1.],
+                omega: [0., 0., 2.],
+            }),
+        };
+        let shifted = law.shifted(0.1).unwrap().shifted(0.2).unwrap();
+        for t in [0_f64, 0.1, 0.4] {
+            let x = t + 0.3;
+            let expected = (4. + 0.6 * x) * (2. * x).cos();
+            assert!((shifted.value_at(t).unwrap()[2] - expected).abs() < 1e-12);
+            let integral = |x: f64| {
+                2. * (2. * x).sin() + 0.6 * (x * (2. * x).sin() / 2. + ((2. * x).cos() - 1.) / 4.)
+            };
+            assert!((shifted.impulse(t).unwrap()[2] - (integral(x) - integral(0.3))).abs() < 1e-12);
+            let (maximum, bound) = shifted.envelopes(t).unwrap();
+            assert!(shifted.value_at(t).unwrap()[2].abs() <= maximum + 1e-12);
+            assert!(shifted.impulse(t).unwrap()[2].abs() <= bound + 1e-12);
+        }
     }
 }

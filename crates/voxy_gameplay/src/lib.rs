@@ -5,6 +5,8 @@
 //! rotation/scale must be identity. Static boxes support affine transforms.
 mod rigid_frame;
 pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
+mod point_loads;
+pub use point_loads::{RigidPointForce, RigidPointLoads};
 mod liquid_body;
 pub use liquid_body::{LiquidBody, LiquidMassDistribution, LiquidMassPart};
 mod liquid_runtime;
@@ -176,6 +178,7 @@ impl std::error::Error for PhysicsError {}
 /// # Errors
 /// Rejects duplicate schema names/types.
 pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
+    registry.register::<RigidPointLoads>("game.rigid-point-loads.v1")?;
     registry.register::<LiquidBody>("game.liquid-body.v1")?;
     registry.register::<LiquidMassDistribution>("game.liquid-mass.v1")?;
     registry.register::<LiquidSource>("game.liquid-source.v1")?;
@@ -194,6 +197,9 @@ pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), Docum
 /// # Errors
 /// Rejects invalid descriptor values or extraction budgets without changing scene.
 pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), String> {
+    if scene.components::<RigidPointLoads>().next().is_some() {
+        return Err("rigid point loads require a point-load contact runtime".into());
+    }
     for (_, source) in scene.components::<LiquidSource>() {
         source
             .prepare([0.; 3], 0)

@@ -1,0 +1,35 @@
+{
+  "pair_tests_passed": 8,
+  "scope": [
+    "uniform gravity",
+    "polynomial external torque",
+    "loaded impact phase",
+    "external angular impulse ledger",
+    "independent simultaneous loaded two-body RK4: anisotropic and light receivers",
+    "compensated external COM load aggregation",
+    "existing world retains external and support COM load recipes separately",
+    "multiple local point affine force tensor and pure couple",
+    "fixed-size compensated streaming sum",
+    "analytic affine force-couple arc impulse"
+  ],
+  "remaining": [
+    "geometry-owned moving common-point velocity",
+    "supported advancement with rotating point loads",
+    "coupled multi-body material force graph"
+  ],
+  "app_editor_all_target_check": "passed",
+  "world_load_regressions_passed": 46,
+  "full_release_tests": {
+    "passed": 1965,
+    "failed": 0,
+    "ignored": 24
+  },
+  "material_moment_tests_passed": 9,
+  "streaming_moment_focused_tests_passed": 39,
+  "scene_material_load_full_release_tests": {
+    "passed": 1974,
+    "failed": 0,
+    "ignored": 24
+  },
+  "scene_material_load_app_editor_all_target_check": "passed"
+}

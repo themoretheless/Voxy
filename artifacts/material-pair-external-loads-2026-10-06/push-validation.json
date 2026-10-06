@@ -1,0 +1,11 @@
+{
+  "release_tests": {
+    "passed": 1975,
+    "failed": 0,
+    "ignored": 24
+  },
+  "consumer_check": "passed",
+  "format_check": "passed",
+  "diff_check": "passed",
+  "geometry_velocity_independent_tests": "pending"
+}

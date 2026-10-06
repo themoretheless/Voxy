@@ -6508,7 +6508,209 @@ forces, affine COM forces, and polynomial world torques. Loaded own-point and
 prescribed-source preparation rebases these components independently after an
 impact. Existing zero-external-load APIs remain compatibility wrappers.
 
-This is an intermediate implementation: `MaterialForcePair` still accepts only
-its mutual point force. Loaded pair preparation, dedicated external-load
-regressions, and scene/contact integration remain unfinished. Compatibility
-tests do not establish these new external-load behaviors.
+The saved intermediate implementation was extended with
+`MaterialForcePair::prepare_loaded`: each body owns independent external COM
+loads while sharing equal and opposite material-point forces. Receiver moment
+envelopes use total relative COM acceleration and jerk, point-force lever arms,
+and its external torque. Impact re-preparation independently rebases the point
+force and both external load recipes.
+
+Analytic regression tests cover uniform-gravity trajectory shifts and total
+world momentum balance, independent quartic torque impulses, and malformed
+external loads. Multi-body aggregation, pressure solving, and scene/contact integration remain
+unfinished. Loaded-impact regression now checks force and quartic torque phases,
+instantaneous internal impulse closure, subsequent external linear and angular
+impulse closure, and immutability of the original pair.
+`external_angular_impulse` includes orbital moments along accepted COM paths.
+
+Loaded coupled-motion qualification uses an independent simultaneous RK4
+reference for both attitudes and angular momenta, analytic COM trajectories,
+and directly evaluated external torque coefficients. The reference uses its
+own first-body attitude for both common-point moments. It covers anisotropic
+and light receivers with independent affine COM loads and quartic external
+torque, checks sampled errors against both published model bounds, and checks
+external world momentum closure. This does not establish arbitrary multi-body
+force-graph admission or scene behavior.
+
+`MotionLoad::aggregate` combines independent world COM loads with a shared
+time origin using compensated sums for all seven vector coefficient groups.
+It validates each input and rejects non-representable sums. This reduces loss
+of small loads during large-coefficient cancellation. Original load recipes
+must be retained and independently shifted before re-aggregation at an event;
+an aggregated descriptor does not retain those recipes. Tests cover all torque
+orders, cancellation, rebasing, empty input, malformed input and overflow.
+Scene integration and coupled multi-body material-point forcing are still open.
+
+`ContactBody::prepare_load_motion` now retains independent COM load recipes
+in the existing `RigidMotion` owner. Impact re-preparation shifts each recipe
+independently and uses compensated re-aggregation, preserving all torque
+orders. The regression checks large opposing loads plus a small contribution,
+full post-impact path equivalence to independently shifted recipes, invalid
+inputs, and original-path immutability. This API covers COM forces and torques;
+it does not aggregate coupled material-point interactions or connect scene loads.
+
+The shared liquid/rigid multi-body world now prepares trajectories through
+`prepare_load_motion`, retaining external COM wrenches separately from affine
+support reactions and their moving-arm torque polynomials. Existing contact
+detection, reaction assembly, rotation integration, publication and work
+ledgers retain ownership. This connects COM load recipes to the existing world
+path; it does not integrate `MaterialForcePair` or solve rotating support arms.
+
+External load/world integration qualification: 1965 release physics, gameplay
+and editor tests passed, 24 ignored. App/editor all-target release checks
+also passed. Logs and source identities are in
+`artifacts/material-pair-external-loads-2026-10-06`. This validates the current
+load recipe and world integration changes, not full engine feature parity.
+
+`MaterialForceMoment` represents sums of affine forces at different local
+points using three world-force columns for each force/rate tensor. It retains
+force couples even when the resultant COM force is zero, and evaluates torque
+from a supplied unit orientation. Input, orientation and overflow admission
+are explicit. The descriptor has no fixed point-count cap. Independent direct
+point-sum tests cover rotations, affine time variation, a pure force couple,
+100 points, malformed orientation and coefficient overflow. This is a load
+representation only: adaptive joint integration and multi-body graph ownership
+are still unimplemented.
+
+Material-force coefficient aggregation now streams through one compensated
+fixed-size accumulator shared with COM load aggregation, without per-point
+intermediate vectors. Torque evaluation also avoids allocation.
+`MaterialForceMoment::angular_impulse` integrates the affine torque tensor on
+a prescribed constant-world-angular-velocity arc using the existing rotating
+arm integral implementation. An analytic rotating affine force-couple test
+covers zero, positive and negative angular velocity and invalid input.
+This is exact nominal arc integration, not a self-consistent adaptive trajectory
+for multiple moving application points; coupling to the adaptive owner remains open.
+
+The existing internal `ArcTorque` forcing law now supports a rotating
+`MaterialForceMoment` alongside polynomial and single-arm forcing. Validation,
+value evaluation, exact nominal impulse, repeated time rebasing and moment
+envelopes include the tensor contribution. `SpinArc::torque_polynomial` returns
+None when that contribution is present, so callers cannot mistake a partial
+polynomial for the complete law. The analytic force-couple test verifies phase
+and impulse after two successive rebases. This extends the shared arc forcing
+representation; self-driven multi-point midpoint feedback and public adaptive
+path preparation remain unimplemented. Qualification: 157 unit/focused tests
+passed, 7 ignored.
+
+`Spin::prepare_material_moment_path` now drives joint attitude/angular-momentum
+feedback from the multi-point torque tensor using the existing implicit
+midpoint and adaptive admission owner. Every fixed-point iteration updates
+tensor orientation and angular velocity, including the final accepted arc.
+The joint error majorant uses the sum of force/rate column norms as the
+orientation-dependent torque strength. Independent scalar RK4 checks a
+self-driven affine force couple at sampled times against the published angle
+and momentum bounds. Qualification: 50 focused tests passed. General
+anisotropic multi-point oracle coverage, COM trajectory/impact ownership for
+this tensor path, and multi-body graph integration remain open.
+
+`ContactBody::prepare_material_load_motion` now combines multiple own-body
+material-point forces with independent external COM loads in one `RigidMotion`
+trajectory. The existing adaptive tensor rotation path shares exact affine COM
+motion. Raw point and external recipes are retained; impact re-preparation
+shifts them independently, re-aggregates the tensor, and uses the post-impact
+orientation and momentum. Regression coverage checks COM velocity/position,
+sum of actual-path point-force and external work, post-impact recipe phase,
+and torque evaluated directly from each rotating point. Qualification: 41
+focused tests passed. General anisotropic tensor oracle coverage, coupled
+multi-body force graph integration and scene-authored multi-point loads remain
+open.
+
+The independent quaternion/angular-momentum RK4 regression now also covers
+three own-body material points with affine forces, an independent affine COM
+load and quartic external torque, a nonidentity initial attitude, and unequal
+physically admissible principal inertias. The oracle directly rotates world
+momentum into body axes, divides by principal inertia and rotates angular
+velocity back; it does not call production angular-velocity or tensor methods.
+Both 4096 and 8192 reference steps are checked at sampled times against the
+published angular and momentum bounds. Focused qualification: 51 tests passed.
+An exploratory fixture with impossible principal inertias was correctly
+rejected and corrected; its failed log is preserved. Multi-body force-graph
+integration and scene-authored multi-point loads remain open.
+
+`RigidBodyFrame::prepare_point_force` converts an authored root-local point
+to principal COM coordinates, including authored scale and the root-to-
+principal rotation, while retaining force/rate in world axes. Admission rejects
+nonfinite coordinates/forces and unrepresentable scaled points. The new
+gameplay regression checks a shifted COM, nonuniform reflected scale and
+rotated root: the physical point matches the scene transform and its intrinsic
+moment matches direct world-arm cross force. This provides scene-coordinate
+conversion; persistent authored load components and runtime force-graph
+consumption are not implemented by this helper.
+
+Authored `RigidPointLoads` / `RigidPointForce` are registered under
+`game.rigid-point-loads.v1`. Serialization retains root-local application
+points and world force/rate coefficients; unknown fields are rejected and no
+runtime momentum or clock is serialized. `prepare` converts with the owning
+`RigidBodyFrame`, independently shifts recipes at explicit elapsed time and
+admits a caller point budget. Scene load/capture/reload tests preserve payload
+and stable object identity; frame tests check time phase and limits.
+Gameplay preflight and liquid binding validation explicitly reject this
+component until the point-load contact loop consumes it, preventing silent
+force omission. This is durable authoring/preparation support, not playable
+scene-force integration. Qualification: 47 integration tests and 5 frame tests
+passed.
+
+`Liquid::step_with_rigid_body_point_forces` now passes independently authored
+own-body material forces through the existing transactional rigid/liquid
+contact event loop. Point force phases include fluid substep elapsed time and
+post-contact interval offsets; every trajectory uses the common multi-point
+COM/rotation owner. External work includes each point-force probe on that
+actual path, and the integration residual subtracts the same work. Existing
+entry points preserve their behavior. New regression coverage compares a free
+force couple's endpoint/work to independently prepared motion and checks
+malformed-load rollback. This entry point does not solve supported pressure
+under rotating point loads, nor bind the durable scene component yet.
+
+The scene liquid owner now binds durable point-load descriptors to finite
+rigid mass frames and consumes them in the shared point-force contact loop.
+Each body owns a runtime-only load clock: successful active ticks advance it,
+inactive bodies pause it, and failed preparation/publication restores it with
+the complete candidate state. Descriptor additions/removals/edits require
+rebind. Scene-owned point loads pass attached-runtime preflight; detached
+preflight still rejects them. Supported-pressure stepping and reaction queries
+explicitly reject active rotating point loads until that coupled admission is
+implemented. Regression coverage compares two consecutive scene ticks with
+independently shifted raw recipes, publication, inactivity, descriptor edits,
+and late angular-budget rollback of state/clock/pose.
+
+Scene `support_reactions` now includes current authored point loads: each
+recipe is shifted to its body's load clock, converted through the principal
+COM frame, and combined with caller COM loads using compensated sums. The
+instantaneous resultant torque is evaluated at the current body attitude.
+Configured gravity remains applied once by the shared reaction assembler.
+A corner-support query with affine point force at elapsed 0.4 s matches the
+manual world-force/COM-torque equivalent, including an additional caller
+torque, and preserves runtime state. This admits a read-only instantaneous
+query; supported time advancement under rotating point loads remains open.
+
+Scene material-load integration qualification: 1974 release physics, gameplay
+and editor tests passed, 24 ignored. App/editor all-target release checks
+passed. Logs and tested source identities are stored in
+`artifacts/material-pair-external-loads-2026-10-06`.
+
+Follow-up contract finding: `SupportMotion::point_velocity` is geometry-owned
+common application-point velocity, not necessarily the first material-point
+velocity. The current world adapter supplies first COM velocity, matching its
+frozen-arm convention. Extending moving-support admission requires explicit
+geometry ownership of this derivative; blindly substituting omega cross arm
+is not correct for every selected contact feature. Rotating point-load
+supported advancement remains rejected pending that integration.
+
+`LiquidBodyWorld::rigid_support_point_velocity` now supplies the geometry-owned
+common-point velocity to `rigid_world_reaction_rates`. Its compatibility default
+retains first COM velocity; geometry with moving application-point ownership
+can override it. The supported advancement path is not changed by this query
+extension. Regression coverage uses a rotating body with moving COM and a
+stationary material support point, compares the adapter result with the direct
+reaction-rate kernel, and confirms substituting COM velocity gives a different
+force derivative. Query state remains immutable. Qualification: 14 focused
+world/reaction-rate tests passed. Scene feature velocity derivation and moving
+application-arm supported advancement remain open.
+
+The scene adapter now derives instantaneous clipped-vertex velocity from the
+active affine-box slab constraints. Incompatible coincident constraints and
+underconstrained points are rejected. This latest helper compiles and existing
+support tests pass, but dedicated independent geometry-velocity qualification
+remains pending; finite supported advancement still uses frozen application
+arms and does not admit authored rotating point loads.

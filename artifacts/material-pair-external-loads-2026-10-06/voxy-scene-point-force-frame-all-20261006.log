@@ -1,0 +1,63 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 4 warnings
+    Finished `release` profile [optimized] target(s) in 0.09s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 5 tests
+test rigid_frame::tests::quarter_turn_moves_pivot_around_fixed_com_and_converts_pivot_velocity ... ok
+test rigid_frame::tests::stored_scaled_affine_points_obey_publication_residual_gate ... ok
+test rigid_frame::tests::shared_off_center_impulse_spin_and_scene_publication_keep_physical_com ... ok
+test rigid_frame::tests::late_publication_overflow_duplicate_and_parented_owner_preserve_all_poses ... ok
+test rigid_frame::material_force_frame_tests::authored_point_force_matches_scaled_scene_point_and_physical_moment ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 142 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/integration-a1054ba31f60c3c9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 0.00s
+

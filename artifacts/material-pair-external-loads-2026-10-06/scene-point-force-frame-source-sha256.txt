@@ -1,0 +1,1 @@
+44b114ac3333a28ca353cc94f607e982e86b9f97f041cc258c2c7b5196f2396f  crates/voxy_gameplay/src/rigid_frame.rs
