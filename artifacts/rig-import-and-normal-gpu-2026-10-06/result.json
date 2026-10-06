@@ -1,0 +1,10 @@
+{
+  "model_tests_passed": 11,
+  "gpu_tests_passed": 1,
+  "gpu_adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "cases": 12,
+  "max_error": 8.5600654e-08,
+  "model_source_sha256": "ffef2221903010b0754ae434afd79d02839b4d395f4d75104a55aae85a25e72a",
+  "scope": "Importer fixtures and production normal shader readback; no editor visual or other hardware qualification"
+}
