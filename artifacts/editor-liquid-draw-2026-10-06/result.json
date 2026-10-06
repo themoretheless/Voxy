@@ -1,0 +1,21 @@
+{
+  "editor_tests": 170,
+  "ignored": 13,
+  "failed": 0,
+  "gpu": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "blue_pixels": [
+      0,
+      364,
+      0
+    ],
+    "validation": "clean",
+    "scope": "offscreen accepted-emission mesh with editor shader"
+  },
+  "scope_limit": "opaque particles; optical surfaces, film integration and presented editor proof pending",
+  "source_sha256": {
+    "crates/voxy_editor/src/liquid_draw.rs": "775b41a10d51a7b5e8ca11d4b871414dd2112a9a02da6679faf553e1b7c1d2b7",
+    "crates/voxy_editor/src/lib.rs": "005b056b71f1d8aee2b7b7b2c017c5e9840b4f67feb9068cbe2ff6e22b392ea3"
+  }
+}

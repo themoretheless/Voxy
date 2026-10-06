@@ -1,0 +1,14 @@
+{
+  "renderer_tests": 164,
+  "editor_tests": 171,
+  "editor_ignored": 13,
+  "failed": 0,
+  "gpu_adapter": "Apple M4 Max / Metal",
+  "logical_bytes": 111648,
+  "resize_candidate_bytes": 443424,
+  "scope": "logical requested GPU resources; driver allocation padding excluded",
+  "source_sha256": {
+    "crates/voxy_render/src/fluid_screen.rs": "76e3863da8ab101f830034c5f89ace4cc2e1862604f958ed82b3eae0d31578d3",
+    "crates/voxy_editor/src/lib.rs": "6670bc81a59767a51a970f07b4ac4b967848cbc6cb83a8b01942924d3a1e7d17"
+  }
+}

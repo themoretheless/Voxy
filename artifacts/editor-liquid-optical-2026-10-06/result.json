@@ -1,0 +1,19 @@
+{
+  "editor_tests": 171,
+  "failed": 0,
+  "ignored": 13,
+  "gpu": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "optical_changed_pixels": 408,
+    "empty_restores_baseline": true,
+    "validation": "clean",
+    "scope": "offscreen existing optical pipeline from accepted scene emission"
+  },
+  "scope_limit": "single perspective without MSAA; other modes diagnostic; native presentation and optical residency accounting pending",
+  "source_sha256": {
+    "crates/voxy_editor/src/liquid_draw.rs": "da634a191e7c5b6c1dc6f64357b021d33d894fab25210bd432d01744d61a715c",
+    "crates/voxy_editor/src/lib.rs": "9590a234691211ed30b2ca35282a6e6801de0081badbc0688945e5e7684681fe",
+    "crates/voxy_editor/src/prefab_authoring.rs": "e4f151b0226ef812906b6ae52f536745e7a3364e2f4d3aee6e4be8be96d74686"
+  }
+}

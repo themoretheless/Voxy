@@ -1282,3 +1282,13 @@ pub use splash_onset::{DryWallSplashOnset, ImpactNumbers};
 
 #[path = "liquid/droplet_population.rs"]
 mod droplet_population;
+
+#[path = "liquid/geometry.rs"]
+mod geometry;
+pub use geometry::{GeometryHit, LiquidGeometry};
+
+pub use dynamic_world::{DynamicEnvironmentReport, DynamicLiquidEnvironment};
+
+#[path = "liquid/multi_body.rs"]
+mod multi_body;
+pub use multi_body::LiquidBodyWorld;

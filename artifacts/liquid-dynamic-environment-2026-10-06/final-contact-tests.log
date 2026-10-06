@@ -1,0 +1,71 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.65s
+     Running tests/liquid_collision.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_collision-58fbd938609e4aa5)
+
+running 40 tests
+test backend_failure_after_successful_substep_is_atomic ... ok
+test finite_body_conduction_matches_two_capacity_solution_and_preserves_motion ... ok
+test finite_mass_moving_template_transfers_momentum_and_reports_friction_loss ... ok
+test elastic_moving_wall_work_matches_the_laboratory_kinetic_energy_gain ... ok
+test contact_limit_counts_impacts_and_exhaustion_is_atomic ... ok
+test finite_mass_template_elastic_contact_conserves_momentum_and_energy ... ok
+test finite_mass_template_query_failure_rolls_back_after_contact ... ok
+test coupled_mode_without_samples_matches_dynamic_collision_mode ... ok
+test coupled_boundary_collision_failure_rolls_back_samples_heat_and_body ... ok
+test bounce_uses_remaining_time_and_friction_changes_only_tangent_speed ... ok
+test fast_particle_cannot_cross_a_thin_internal_wall ... ok
+test finite_body_conduction_accounts_for_latent_heat_and_rolls_back_invalid_properties ... ok
+test combined_body_fluid_thermal_overflow_is_atomic ... ok
+test inelastic_moving_wall_reports_drive_work_including_contact_loss ... ok
+test exact_finite_body_heat_crosses_latent_boundaries_independently_of_partition ... ok
+test moving_world_transfer_excludes_gravity_when_no_geometry_is_hit ... ok
+test overflow_in_moving_world_work_rolls_back_completed_contacts ... ok
+test overlap_and_candidate_failures_preserve_state ... ok
+test plane_thermal_stencil_clips_footprints_and_rejects_disconnected_cells ... ok
+test plane_thermal_stencil_tiles_area_and_is_translation_invariant ... ok
+test moving_thermal_plane_rebuilds_links_and_preserves_energy ... ok
+test sampled_pressure_and_swept_contacts_share_momentum_and_energy_balance ... ok
+test symmetric_body_heat_second_half_failure_rolls_back_first_half ... ok
+test coupled_body_conduction_and_recoil_count_each_heat_transfer_once ... ok
+test symmetric_body_and_fluid_rollback_on_impact_heating_domain_failure ... ok
+test symmetric_collision_backend_failure_after_drift_rolls_back_heat_and_motion ... ok
+test symmetric_empty_fluid_body_follows_exact_constant_gravity ... ok
+test impact_heat_enters_latent_plateau_and_property_failure_rolls_back ... ok
+test translating_sph_boundaries_and_viscous_heat_match_the_comoving_solution ... ok
+test translating_world_failure_restores_particles_and_boundary_geometry ... ok
+test translating_thin_wall_sweeps_and_pushes_a_stationary_particle ... ok
+test unified_boundary_world_applies_gravity_once_to_each_mass ... ok
+test translating_world_preserves_galilean_motion_without_contacts ... ok
+test translating_elastic_wall_can_supply_lab_energy_without_negative_heat ... ok
+test thermal_body_overflow_after_recoil_rolls_back_both_complete_states ... ok
+test finite_thermal_body_temperature_and_coupled_energy_balance ... ok
+test symmetric_ccd_stops_or_bounces_and_preserves_free_flight ... ok
+test symmetric_finite_body_recoil_heat_and_total_momentum_balance ... ok
+test translating_symmetric_impact_heat_is_galilean_invariant_and_work_balances ... ok
+test symmetric_impact_heat_partition_and_fixture_impulse_balance ... ok
+
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_geometry-b7b8b4221a159400)
+
+running 8 tests
+test empty_fluid_still_sweeps_body_against_environment ... ok
+test malformed_contact_after_advection_rolls_back_entire_fluid ... ok
+test finite_oblique_body_malformed_hit_and_global_budget_roll_back_both_owners ... ok
+test finite_body_then_static_wall_share_event_time_and_external_impulse ... ok
+test static_particle_event_precedes_body_event_and_late_backend_failure_rolls_back ... ok
+test irrelevant_large_coordinate_does_not_inflate_oblique_contact_separation ... ok
+test oblique_restitution_preserves_tangent_and_expected_kinetic_loss ... ok
+test finite_oblique_body_conserves_impulse_and_accounts_contact_loss ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

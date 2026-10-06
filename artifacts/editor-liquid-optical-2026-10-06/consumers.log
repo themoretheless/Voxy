@@ -1,0 +1,104 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+error[E0308]: mismatched types
+    --> crates/voxy_editor/src/lib.rs:1098:58
+     |
+1098 | ...                   .map_or((None, Vec::new()), |(runtime, optics)| {
+     |                                                    ^^^^^^^^^^^^^^^^^
+     |                                                    |
+     |                                                    expected `SceneLiquidRuntime`, found `(_, _)`
+     |                                                    expected due to this
+     |
+     = note: expected struct `SceneLiquidRuntime`
+                 found tuple `(_, _)`
+
+error[E0609]: no field `projection` on type `std::option::Option<SceneCamera>`
+    --> crates/voxy_editor/src/lib.rs:1458:28
+     |
+1458 |                 views[0].3.projection,
+     |                            ^^^^^^^^^^ unknown field
+     |
+help: one of the expressions' fields has a field of the same name
+     |
+1458 |                 views[0].3.unwrap().projection,
+     |                            +++++++++
+
+error[E0308]: mismatched types
+    --> crates/voxy_editor/src/lib.rs:1520:21
+     |
+1518 |                 graphics.optical_liquid.as_mut().unwrap().update(
+     |                                                           ------ arguments to this method are incorrect
+1519 |                     graphics.host.queue(),
+1520 |                     views[0].3,
+     |                     ^^^^^^^^^^ expected `SceneCamera`, found `Option<SceneCamera>`
+     |
+     = note: expected struct `SceneCamera`
+                  found enum `std::option::Option<SceneCamera>`
+note: method defined here
+    --> crates/voxy_render/src/fluid_screen.rs:679:12
+     |
+ 679 |     pub fn update(
+     |            ^^^^^^
+help: consider using `Option::expect` to unwrap the `std::option::Option<SceneCamera>` value, panicking if the value is an `Option::None`
+     |
+1520 |                     views[0].3.expect("REASON"),
+     |                               +++++++++++++++++
+
+error[E0308]: mismatched types
+    --> crates/voxy_editor/src/lib.rs:2598:17
+     |
+2595 |             voxy_gameplay::validate_game_descriptors_with_liquid_runtime(
+     |             ------------------------------------------------------------ arguments to this function are incorrect
+...
+2598 |                 &runtime,
+     |                 ^^^^^^^^ expected `&SceneLiquidRuntime`, found `&(SceneLiquidRuntime, Vec<...>)`
+     |
+     = note: expected reference `&SceneLiquidRuntime`
+                found reference `&(SceneLiquidRuntime, Vec<std::option::Option<[f32; 4]>>)`
+note: function defined here
+    --> crates/voxy_gameplay/src/lib.rs:202:8
+     |
+ 202 | pub fn validate_game_descriptors_with_liquid_runtime(
+     |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0308]: mismatched types
+    --> crates/voxy_editor/src/lib.rs:3982:21
+     |
+3979 |                 voxy_gameplay::validate_game_descriptors_with_liquid_runtime(
+     |                 ------------------------------------------------------------ arguments to this function are incorrect
+...
+3982 |                     &runtime,
+     |                     ^^^^^^^^ expected `&SceneLiquidRuntime`, found `&(SceneLiquidRuntime, Vec<...>)`
+     |
+     = note: expected reference `&SceneLiquidRuntime`
+                found reference `&(SceneLiquidRuntime, Vec<std::option::Option<[f32; 4]>>)`
+note: function defined here
+    --> crates/voxy_gameplay/src/lib.rs:202:8
+     |
+ 202 | pub fn validate_game_descriptors_with_liquid_runtime(
+     |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0308]: mismatched types
+    --> crates/voxy_editor/src/lib.rs:4014:32
+     |
+4014 |             self.play.liquid = liquid;
+     |             ----------------   ^^^^^^ expected `Option<SceneLiquidRuntime>`, found `Option<(SceneLiquidRuntime, Vec<...>)>`
+     |             |
+     |             expected due to the type of this binding
+     |
+     = note: expected enum `std::option::Option<SceneLiquidRuntime>`
+                found enum `std::option::Option<(SceneLiquidRuntime, Vec<std::option::Option<[f32; 4]>>)>`
+
+Some errors have detailed explanations: E0308, E0609.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `voxy_editor` (lib) due to 6 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 6 previous errors

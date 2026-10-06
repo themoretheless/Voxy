@@ -4670,3 +4670,283 @@ is still missing: shared authoring/play preflight returns an explicit attachment
 error for this component instead of silently running a scene without its source.
 This is a preparatory authoring contract, not completed editor/game fluid
 integration. Evidence: `artifacts/liquid-source-authoring-2026-10-06/`.
+
+### Scene liquid owner (2026-10-06)
+
+`voxy_gameplay::SceneLiquidRuntime` binds `game.liquid-source.v1` material names
+against an explicit resolved material catalog and owns one shared existing
+`physics::liquid::Liquid`. Hosts supply fixed intervals and an optional static
+container. Sources emit in deterministic NodeId order, follow world origins,
+and add measured nozzle displacement / interval to relative exhaust velocity.
+Inactive sources pause pulse clocks while previously emitted fluid keeps moving.
+The whole world, source positions and clocks commit together after successful
+emission and simulation; a late source budget failure or invalid container rolls
+back every owner. Descriptor edits, source addition/removal and foreign scenes
+require explicit rebind rather than resetting inventories silently.
+
+`validate_game_descriptors_with_liquid_runtime` admits a scene only with matching
+runtime bindings. The ordinary preflight still rejects liquid descriptors:
+editor PlaySession attachment, liquid rendering, finite-body recoil, thermal and
+species configurations are not yet connected through this authored scene path.
+Existing standalone demos continue to own those richer coupled configurations.
+
+Validation: 74 gameplay library tests passed, including shared-world mass and
+trajectory, inactive clock/continued motion, moving-nozzle velocity, late emission
+and physics rollback, foreign-scene/edit/material/budget rejection. App/editor
+all-target release checks passed. Logs: `artifacts/scene-liquid-runtime-2026-10-06`.
+
+### Editor liquid PlaySession attachment (2026-10-06)
+
+Editor document preflight and Play now resolve each liquid material through
+`AuthoringProject` using the existing project manifest/path resolver and bounded,
+revalidated `ImportInputs`. Material JSON has exactly `rest_density`,
+`sound_speed` and `viscosity`; missing/malformed inputs and invalid physics
+materials reject admission. Material inputs are pinned for the session, with no
+live material reload yet. All resolved sources bind again after detaching the
+runtime scene, so editor handles never leak into the playing world.
+
+PlaySession owns the liquid runtime and clears it on Stop. The character-step
+schedule declares write access to `liquid.world`; a staged liquid tick observes
+world transforms before character motion, then publishes only after that
+character/animation step succeeds. This is a source-world transaction, not a
+claim of whole-frame rollback across all scheduled scene systems. Sources use
+externally powered emission, default fluid configuration/gravity and no authored
+container in this editor path. Rendering fluid particles/films in the editor,
+solid-fluid collisions/recoil and authored thermal/species settings remain open.
+
+The actual headless editor Play path was tested with a persisted source and
+on-disk material: one 1/60-second tick emits 1/60 kg, Stop restores the document,
+restart clears particles, and missing material prevents Play without altering
+the authoring document. Full editor library regression: 169 passed, 12 ignored;
+app/editor all-target release checks passed. These results do not prove a
+presented GPU fluid view. Evidence: `artifacts/editor-liquid-play-2026-10-06`.
+
+### Scene liquid affine static collision (2026-10-06)
+
+The scene owner now extracts active `BoxCollider` geometry each fixed tick and
+uses exact existing affine-box SAT sweeps, including rotated/scaled/sheared
+hierarchies. `physics::liquid::LiquidGeometry` accepts arbitrary unit contact
+normals without changing the legacy axis-normal `CollisionWorld` contract.
+`Liquid::step_with_geometry` shares the existing adaptive SPH integration,
+validates backend normals/fractions, responds in normal/tangent coordinates,
+and rolls back all fluid state on overlap, malformed hits or budgets. Scene
+source clocks and emitted particles participate in that same outer transaction.
+Particle collision support remains an axis-aligned box of configured radius.
+
+Current scene settings use zero restitution/friction. Geometry is frozen during
+each tick: moving collider velocity, two-way body recoil, SPH wall-pressure
+samples and contact-loss heat deposition are not included. Dissipated normal
+kinetic energy is not claimed as conserved thermal energy. Existing dedicated
+thermal/dynamic-world physics paths remain separate until authored integration.
+
+Evidence: a 45-degree thin wall deflects a 2 m/s stream to (1,-1,0) m/s with
+unchanged mass, without the false initial overlap its broad AABB would create.
+Increasing the wall to engulf the stream rejects and restores all runtime state.
+Independent oblique restitution tests check expected kinetic loss for e=0,0.5,1;
+malformed backend contact after prior advection restores the original fluid.
+75 gameplay tests and the editor Play lifecycle test passed; legacy collision
+compatibility and app/editor all-target release checks passed. Logs live in
+`artifacts/scene-liquid-collision-2026-10-06`. No GPU fluid view is proven here.
+
+### Editor accepted-liquid draw bridge (2026-10-06)
+
+Editor world views and standalone views now draw the accepted PlaySession liquid
+state through the existing SceneRenderer and editor material shader. Particle
+meshes use octahedra with volume 4r^3/3 = mass / effective rest density; their
+centroids track the solver positions. Material slots have diagnostic colors.
+This is opaque particle geometry, not the existing standalone optical surface
+pipeline, and does not claim refraction, connected fluid surfaces or films.
+
+The bridge is bounded to 16384 particles and uploads only when scene identity or
+accepted simulation tick changes. GPU geometry accounting includes fluid and
+checks the existing geometry budget including old/new transient storage before
+publication. Per-view transforms use each editor view projection; empty or
+stopped runtimes clear the draw. No physical state is changed by rendering.
+
+Tests independently check mesh volume/centroid and run actual Metal GPU readback
+with the editor shader from a scene emitter's accepted 100 kg emission: 364 blue
+pixels, with zero before/after the draw. GPU validation scope is clean. This is
+an offscreen GPU qualification, not a presented native editor-window recording.
+170 editor library tests passed, 13 ignored; the new GPU test was separately run
+successfully. Editor all-target release check passed. Evidence and PNG:
+`artifacts/editor-liquid-draw-2026-10-06`. Initial output-path failure is retained.
+
+### Editor optical liquid composition (2026-10-06)
+
+Liquid material JSON now accepts optional `optics: [absorption_r, absorption_g,
+absorption_b, ior]`, with absorption per metre and finite nonnegative channels,
+finite IOR >= 1. Physical and optical values are admitted from the same bounded,
+revalidated project input snapshot. PlaySession retains the resolved slot-order
+optics and clears them on Stop. Missing optics selects diagnostic particles;
+there is no implicit water IOR assigned to arbitrary materials.
+
+For a single perspective view without MSAA, the editor now uploads equivalent
+sphere radii derived from accepted mass / effective density and composes the
+existing ScreenSpaceFluidRenderer through SceneSurface::render_custom, including
+world background and UI. Targets recreate on resize; split views, orthographic
+views and MSAA retain particle geometry. This is an integration increment:
+multiview optical composition, optical targets in residency eviction accounting,
+authored film cells, material live reload and presented native-window acceptance
+remain open. Optical updates are read-only with respect to physics.
+
+Independent CPU checks verify represented sphere volume, explicit material
+identity and rejection of negative absorption. The editor Play lifecycle test
+now persists optical metadata. Actual M4 Max/Metal readback compares the same
+checker background with and without a scene emitter's accepted particles: 408
+pixels differ; removing optical particles restores the baseline. Validation
+scope is clean. Full editor regression: 171 passed, 13 ignored; separate physical
+GPU test and editor all-target release check passed. Evidence:
+`artifacts/editor-liquid-optical-2026-10-06`; early API compile mismatch and
+black-background fixture threshold failure are retained. No native presentation
+or cross-hardware optical support is claimed by this fixture.
+
+### Optical liquid logical GPU residency (2026-10-06)
+
+`ScreenSpaceFluidRenderer::required_allocation_bytes` now computes checked logical
+storage before creation: nine single-sample targets (output format texel bytes +
+50 intermediate bytes per pixel), both particle/film vertex buffers and camera
+uniform. `allocation_bytes` records this exact requested storage. It excludes
+driver padding, opaque pipeline/bind-group storage and compositor/surface buffers;
+it is not a hardware VRAM measurement. Invalid dimensions/formats and overflow
+are rejected. Existing device/adapter capability admission remains in force.
+
+`new_with_adapter_budget` admits other live resources plus the candidate before
+any fluid resource creation. Editor geometry residency now includes optical
+resources so model, animation and fluid admission share its existing budget.
+Replacement admission includes old plus new targets; rejection preserves the old
+renderer. Resize failure is reported to the caller, not claimed as successful
+low-resolution rendering. Global image-cache budget remains separately owned.
+
+Actual Metal tests compare the estimator against every created target and buffer:
+64x32 capacity 8 consumes 111648 logical bytes. Exactly sufficient budget admits;
+one byte less rejects. A 128x64 candidate needs 443424 bytes; old+new minus one
+rejects without replacing the old size. Integer overflow also rejects and the
+GPU validation scope remains clean. Full renderer library qualification,
+including physical GPU tests: 164 passed, zero ignored. Editor regression: 171
+passed, 13 ignored. Editor/render all-target release checks passed. Evidence:
+`artifacts/liquid-gpu-residency-2026-10-06`. Multiview optics, dynamic-body coupling
+and full hardware qualification remain open.
+
+### Disjoint editor optical view composition (2026-10-06)
+
+`ScreenSpaceFluidRenderer::encode_viewport` composes into a checked subregion of
+an existing target, loading its prior contents and restricting viewport/scissor.
+Optical reconstruction now derives local pixel coordinates from interpolated UV,
+so output offsets do not change rays or sample another view's textures. Bad
+sizes, bounds and integer overflow reject before encoding. Per-view overlays
+use the full-window depth attachment with the same region; global UI follows
+all optical views.
+
+`SceneSurface::render_scene_views_with_fluids` uses one acquisition/submission,
+ordinary scene views first, then independent fluid composition and UI. Duplicate
+fluid indices and mismatched sizes reject; MSAA is still unsupported in this
+path. Editor owns one budgeted optical renderer per perspective view and prunes
+unused views, with transient replacement bytes included in residency. Split
+orthographic views retain volume-preserving diagnostic particles. All views
+observe one accepted fluid state; rendering does not advance simulation.
+
+Actual M4 Max/Metal GPU readback places optical fluid in the right 64x64 region
+of a 128x64 target: 408 pixels differ from the same background without fluid;
+all 4096 left-region pixels remain exactly unchanged. An out-of-bounds region
+is rejected before the valid render, and GPU validation remains clean. The
+existing whole-frame optical baseline/clear tests also pass. Full renderer
+qualification: 164 passed, no ignored tests; editor: 171 passed, 13 ignored.
+Editor/render all-target release checks passed. Snapshot/logs:
+`artifacts/liquid-optical-viewport-2026-10-06`. Native split-window presentation,
+orthographic optical reconstruction, MSAA fluid resolve and moving-body coupling
+remain unproven/open; these results cover offscreen composition and compiled
+editor attachment.
+
+### Finite translating geometry with oblique liquid contact (2026-10-06)
+
+`Liquid::step_with_dynamic_geometry` now accepts the arbitrary-unit-normal
+`LiquidGeometry` contract for one finite-mass translating collision template.
+Particle sweeps are evaluated in the body's instantaneous translating frame.
+The existing event loop chooses the earliest particle/body contact, advances
+all participants to that time, applies equal opposite normal/tangent impulses,
+and re-queries after body recoil. Rotation remains constrained. The axis-world
+and thermal impact paths share this event loop; there is no parallel contact
+engine. Global event/query budgets still bound work.
+
+Contact loss is computed in relative normal/tangent coordinates with reduced
+mass, restitution and tangential damping. It is reported separately, not
+silently converted into heat. Fluid and finite-body state are staged together,
+including empty-fluid gravity/drift. Invalid hits, overlaps, backend errors and
+exhausted budgets restore both owners.
+
+Tests cover 18 restitution/friction/Galilean-boost combinations with independent
+momentum and energy-plus-loss balances. A real scene affine-box template at
+45 degrees receives a 1 kg particle moving at (2,0,0) m/s: a 3 kg finite body
+recoils to approximately (0.25,0.25,0), particle velocity becomes
+(1.25,-0.75,0), reported loss is 0.75 J. Both body axes translate; the immutable
+scene template remains unchanged. This proves the geometry bridge and physical
+recoil, not authored PlaySession dynamic-body ownership/publication. Multiple
+independent bodies, rotational inertia, combined static/dynamic environment
+contacts and their scene/editor attachment remain required work.
+
+Evidence: `artifacts/finite-affine-liquid-contact-2026-10-06`, including legacy
+axis/thermal contact compatibility, analytic oblique contact and full regressions.
+
+Final finite-contact qualification after the separation correction: 1490 physics
+tests passed, 11 ignored; 76 gameplay tests passed. The corrected separation
+scale weights only coordinates participating in the contact normal. An independent
+1e12-metre orthogonal translation fixture preserves both transverse trajectories
+and all velocities exactly. App/editor all-target release checks, formatting and
+diff checks passed. `result.json` pins the final source hashes.
+
+### Authored liquid body and static surroundings (2026-10-06)
+
+`DynamicLiquidEnvironment` supplies read-only particle/static and exact
+body-template/static sweeps. The existing earliest-event contact loop now chooses
+between fluid/body, fluid/static and body/static hits on one timeline, re-querying
+all participants after recoil. `DynamicEnvironmentReport` separately records the
+impulse received by fixed surroundings, so the moving-system momentum balance
+includes its external boundary. All contact kinetic losses remain reported,
+without implicit thermal deposition. Empty fluid still advances and sweeps the
+body. Late backend failure restores fluid and body together.
+
+Authored `game.liquid-body.v1` contains `mass_kg` and
+`initial_velocity_m_s`. SceneLiquidRuntime owns its mechanical state. Current
+admission is one root body with one BoxCollider; parented/compound bodies,
+multiple bodies and competing CharacterBody/AngularMotion transform owners
+reject explicitly. Authored rotation and scale remain fixed. Active static
+scene colliders are the environment, and affine SAT sweeps preserve oblique
+normals. Initial body/environment overlap rejects preflight. Inactive body state
+pauses, and removed/edited ownership requires explicit rebind.
+
+`tick_and_publish` stages source clocks, fluid/body state and representable scene
+pose before committing. Editor prepares the candidate at character.step and
+publishes the body pose after successful character/animation preparation. Stop
+restores the authoring document and clears runtime state; restart uses authored
+initial velocity. The body uses f64 mechanical translation and separately records
+its published f32 pose, preserving the physical template independent of narrowing.
+An unrepresentable publication rejects without changing scene or runtime.
+Body-only worlds carry an unused reference fluid material; it emits no particles
+and does not supply body mass or density.
+
+Tests prove a finite body striking a fixed wall after fluid impact, reversed event
+ordering where a particle/static hit happens first, empty-fluid body/static
+collision, late backend rollback and an inelastic body pressed against a wall.
+Momentum includes external impulse and kinetic energy includes reported losses.
+The actual headless editor Play path runs a persisted source/body, receives recoil,
+publishes translation while retaining rotation, restores both descriptors on Stop
+and resets velocity on restart. No native/GPU body presentation is claimed here.
+
+Qualification: 1493 full physics tests passed (11 ignored); the subsequently added
+resting-wall check also passed, with all 9 focused geometry tests passing.
+78 gameplay and 172 editor tests passed (13 editor tests ignored). App/editor
+all-target release checks passed. Evidence and final source hashes:
+`artifacts/liquid-dynamic-environment-2026-10-06`. Multiple bodies, rotational
+inertia, compound templates, deformation, authored heat exchange, contact with
+characters and moving kinematic environment velocity remain required work.
+
+### Shared multiple-body contact kernel (2026-10-06)
+
+`LiquidBodyWorld` and `Liquid::step_with_body_world` advance a bounded slice of
+finite translating bodies together with fluid and static surroundings. Particle/body,
+body/body and static contacts share one earliest-event timeline; the single-body
+API delegates to this kernel. Admission or late geometry failure restores all
+owners. Three focused tests cover an empty-fluid three-body impulse chain,
+fluid recoil followed by a body pair and wall impact, and transactional rollback.
+The authored scene runtime still admits only one body; multiple authored bodies,
+rotation and compound colliders remain unfinished.

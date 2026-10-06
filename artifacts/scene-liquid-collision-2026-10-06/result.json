@@ -1,0 +1,32 @@
+{
+  "scope": "exact affine static scene collisions; renderer and moving-body coupling pending",
+  "physics": [
+    [
+      "2",
+      "0"
+    ]
+  ],
+  "gameplay": [
+    [
+      "75",
+      "0"
+    ]
+  ],
+  "editor": [
+    [
+      "1",
+      "0"
+    ]
+  ],
+  "collision-compatibility": [
+    [
+      "40",
+      "0"
+    ]
+  ],
+  "consumers": "passed",
+  "source_sha256": {
+    "crates/physics/src/liquid/geometry.rs": "1fa2a44dc83319a018f52786581dba3e86ce36f5cd9ca1b4e839abd56a8873b4",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "70779cdd0b27d55b3805e9bc0df3992345d71ad4f4471061eda38a3360e1f21f"
+  }
+}

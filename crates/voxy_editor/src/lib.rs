@@ -9,6 +9,7 @@ mod camera;
 mod component_collections;
 mod component_fields;
 mod frame_styles;
+mod liquid_draw;
 mod lod_smoke;
 mod packaged_game;
 mod play_session;
@@ -125,6 +126,10 @@ struct Graphics {
     animated_models: animated_models::AnimatedModels,
     residency_cache: gpu_model::ResidencyCache,
     residency_errors: BTreeMap<AssetId, gpu_model::DeferredUpload>,
+    optical_liquids: BTreeMap<u8, voxy_render::ScreenSpaceFluidRenderer>,
+    liquid_revision: Option<(voxy_scene::SceneId, u64)>,
+    liquid_geometry: Option<SceneGeometry>,
+    liquid_transforms: BTreeMap<u8, SceneTransform>,
     gizmo_geometry: SceneGeometry,
     gizmo_transforms: BTreeMap<u8, SceneTransform>,
     texture: SceneTexture,
@@ -148,6 +153,15 @@ impl Graphics {
             .sum::<u64>()
             + self.animated_models.allocation_bytes()
             + self.gizmo_geometry.allocation_bytes()
+            + self
+                .optical_liquids
+                .values()
+                .map(voxy_render::ScreenSpaceFluidRenderer::allocation_bytes)
+                .sum::<u64>()
+            + self
+                .liquid_geometry
+                .as_ref()
+                .map_or(0, SceneGeometry::allocation_bytes)
             + self
                 .panel_geometry
                 .as_ref()
@@ -455,6 +469,8 @@ impl App {
                 animations: Default::default(),
                 simulation_ticks: 0,
                 physics: None,
+                liquid: None,
+                liquid_optics: Vec::new(),
                 player_input: voxy_gameplay::player_input()?,
                 ui_actions: None,
             },
@@ -590,6 +606,10 @@ impl App {
                     .map_or(Ok(256 * 1024 * 1024), |value| value.parse::<u64>())?,
             ),
             residency_errors: BTreeMap::new(),
+            optical_liquids: BTreeMap::new(),
+            liquid_revision: None,
+            liquid_geometry: None,
+            liquid_transforms: BTreeMap::new(),
             gizmo_geometry,
             gizmo_transforms: BTreeMap::from([(0, gizmo_transform)]),
             texture,
@@ -1006,6 +1026,21 @@ impl App {
                                 .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
                         }
                     } else if system == "character.step" {
+                        access.require_write("liquid.world").map_err(|e| {
+                            voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                        })?;
+                        let mut liquid = self.play.liquid.clone();
+                        if let Some(runtime) = &mut liquid {
+                            runtime
+                                .tick(
+                                    access.read().map_err(|e| {
+                                        voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                    })?,
+                                    dt,
+                                    None,
+                                )
+                                .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                        }
                         access
                             .require_write("animation.playback")
                             .map_err(|error| {
@@ -1063,7 +1098,15 @@ impl App {
                             self.play.player_input.finish_frame();
                             candidate
                         };
+                        if let Some(runtime) = &mut liquid {
+                            runtime
+                                .publish_body_pose(access.write().map_err(|e| {
+                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                })?)
+                                .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                        }
                         self.play.animations = candidate;
+                        self.play.liquid = liquid;
                     } else if let Some(physics) = &mut self.play.physics {
                         physics
                             .run_scoped_system(system, access, &mut self.play.player_input, dt)
@@ -1416,7 +1459,85 @@ impl App {
         } else {
             Vec::new()
         };
+        let optical_particles = if !self.msaa4 && views.iter().any(|v| v.3.is_some()) {
+            self.play
+                .liquid
+                .as_ref()
+                .map(|runtime| {
+                    liquid_draw::optical_particles(runtime.liquid(), &self.play.liquid_optics)
+                })
+                .transpose()?
+                .flatten()
+        } else {
+            None
+        };
         if let Some(graphics) = &mut self.graphics {
+            let liquid_revision = self
+                .play
+                .liquid
+                .as_ref()
+                .map(|_| (self.scene.identity(), self.play.simulation_ticks));
+            if graphics.liquid_revision != liquid_revision {
+                let mesh = self
+                    .play
+                    .liquid
+                    .as_ref()
+                    .map(|r| liquid_draw::mesh(r.liquid()))
+                    .transpose()?
+                    .flatten();
+                if let Some(mesh) = &mesh {
+                    let bytes = (mesh.vertices().len()
+                        * std::mem::size_of::<voxy_render::SceneVertex>()
+                        + mesh.indices().len() * 4) as u64;
+                    if graphics.geometry_bytes().saturating_add(bytes)
+                        > graphics.residency_cache.geometry_budget
+                    {
+                        return Err("liquid GPU geometry budget exceeded".into());
+                    }
+                }
+                graphics.liquid_geometry = mesh
+                    .as_ref()
+                    .map(|mesh| graphics.renderer.upload_mesh(graphics.host.device(), mesh))
+                    .transpose()?;
+                graphics.liquid_revision = liquid_revision;
+            }
+            if let Some(particles) = &optical_particles {
+                graphics
+                    .optical_liquids
+                    .retain(|id, _| views.iter().any(|v| v.0 == *id && v.3.is_some()));
+                for &(id, region, _, camera) in &views {
+                    let Some(camera) = camera else {
+                        continue;
+                    };
+                    if graphics
+                        .optical_liquids
+                        .get(&id)
+                        .is_none_or(|r| r.size() != region[2..])
+                    {
+                        let candidate =
+                            voxy_render::ScreenSpaceFluidRenderer::new_with_adapter_budget(
+                                graphics.host.device(),
+                                graphics.host.adapter(),
+                                graphics.host.color_format(),
+                                region[2],
+                                region[3],
+                                16384,
+                                graphics.geometry_bytes(),
+                                graphics.residency_cache.geometry_budget,
+                            )?;
+                        graphics.optical_liquids.insert(id, candidate);
+                    }
+                    graphics.optical_liquids.get_mut(&id).unwrap().update(
+                        graphics.host.queue(),
+                        camera,
+                        particles,
+                        1.,
+                        voxy_render::FluidDepthFilter::default(),
+                    )?;
+                }
+            } else {
+                graphics.optical_liquids.clear();
+            }
             let animation_start = profile_start.map(|_| Instant::now());
             let other_live = graphics
                 .geometry_bytes()
@@ -1488,6 +1609,17 @@ impl App {
             let lod_us = lod_start.map_or(0., |start| start.elapsed().as_secs_f64() * 1e6);
             let mut requirements = Vec::new();
             for &(view, region, view_projection, lod_camera) in &views {
+                if graphics.liquid_geometry.is_some() {
+                    let transform = match graphics.liquid_transforms.entry(view) {
+                        std::collections::btree_map::Entry::Occupied(e) => e.into_mut(),
+                        std::collections::btree_map::Entry::Vacant(e) => e.insert(
+                            graphics
+                                .renderer
+                                .create_transform(graphics.host.device(), Mat4::IDENTITY)?,
+                        ),
+                    };
+                    transform.update(graphics.host.queue(), view_projection)?;
+                }
                 for instance in self.extraction.instances() {
                     let key = (view, instance.owner);
                     let transform = match graphics.transforms.entry(key) {
@@ -1680,6 +1812,16 @@ impl App {
                         overlay: true,
                     });
                 }
+                if !graphics.optical_liquids.contains_key(&view)
+                    && let Some(geometry) = &graphics.liquid_geometry
+                {
+                    draws.push(SceneDraw {
+                        geometry,
+                        texture: &graphics.texture,
+                        transform: &graphics.liquid_transforms[&view],
+                        overlay: false,
+                    });
+                }
                 view_draws.push(draws);
             }
             let mut overlays = Vec::new();
@@ -1708,7 +1850,20 @@ impl App {
             let outcome = if !split || views.len() == 1 {
                 let mut draws = view_draws.pop().ok_or("missing view draws")?;
                 draws.extend(overlays);
-                graphics.host.render_scene(&graphics.renderer, &draws)?
+                if let Some(fluid) = graphics.optical_liquids.get(&views[0].0) {
+                    graphics.host.render_custom(|encoder, output| {
+                        fluid.encode(
+                            &graphics.renderer,
+                            encoder,
+                            output,
+                            wgpu::Color::BLACK,
+                            &draws,
+                        );
+                        Ok::<_, voxy_render::RendererError>(())
+                    })?
+                } else {
+                    graphics.host.render_scene(&graphics.renderer, &draws)?
+                }
             } else {
                 let scene_views: Vec<_> = views
                     .iter()
@@ -1718,9 +1873,25 @@ impl App {
                         draws,
                     })
                     .collect();
-                graphics
-                    .host
-                    .render_scene_views(&graphics.renderer, &scene_views, &overlays)?
+                if graphics.optical_liquids.is_empty() {
+                    graphics
+                        .host
+                        .render_scene_views(&graphics.renderer, &scene_views, &overlays)?
+                } else {
+                    let fluids: Vec<_> = views
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(index, view)| {
+                            graphics.optical_liquids.get(&view.0).map(|f| (index, f))
+                        })
+                        .collect();
+                    graphics.host.render_scene_views_with_fluids(
+                        &graphics.renderer,
+                        &scene_views,
+                        &fluids,
+                        &overlays,
+                    )?
+                }
             };
             if let Some(start) = profile_start {
                 println!(
@@ -2445,7 +2616,19 @@ impl App {
             &self.authoring.authoring_project.registry,
             scene_limits::OBJECTS,
         )?;
-        voxy_gameplay::validate_game_descriptors(&loaded.graph, 128)?;
+        if let Some(runtime) = self
+            .authoring
+            .authoring_project
+            .liquid_runtime(&loaded.graph)?
+        {
+            voxy_gameplay::validate_game_descriptors_with_liquid_runtime(
+                &loaded.graph,
+                128,
+                &runtime.0,
+            )?;
+        } else {
+            voxy_gameplay::validate_game_descriptors(&loaded.graph, 128)?;
+        }
         for object in &document.objects {
             loaded
                 .graph
@@ -3817,7 +4000,19 @@ impl App {
             CharacterPhysics::new(&self.scene, 128, 128)
                 .with_depenetration(true)
                 .validate_start(&self.scene)?;
-            voxy_gameplay::validate_game_descriptors(&self.scene, 128)?;
+            if let Some(runtime) = self
+                .authoring
+                .authoring_project
+                .liquid_runtime(&self.scene)?
+            {
+                voxy_gameplay::validate_game_descriptors_with_liquid_runtime(
+                    &self.scene,
+                    128,
+                    &runtime.0,
+                )?;
+            } else {
+                voxy_gameplay::validate_game_descriptors(&self.scene, 128)?;
+            }
             let audio = match self.audio.prepare_start(
                 &self.scene,
                 &self.authoring.authoring_project,
@@ -3832,6 +4027,10 @@ impl App {
             self.play.player_input = voxy_gameplay::player_input()?;
             let authoring_before_play = self.authoring_document()?;
             self.restore_authoring()?; // Detached runtime graph, fresh generational handles.
+            let liquid = self
+                .authoring
+                .authoring_project
+                .liquid_runtime(&self.scene)?;
             let mut actions = voxy_gameplay::UiActionHandlers::new(&self.scene, 128, 128, 128);
             actions.register("voxy.ui.hide".into(), |_, event, commands| {
                 commands
@@ -3841,6 +4040,11 @@ impl App {
             if let Some(setup) = &mut self.ui_action_setup {
                 setup.configure(&mut actions)?;
             }
+            let (liquid, optics) = liquid.map_or((None, Vec::new()), |(runtime, optics)| {
+                (Some(runtime), optics)
+            });
+            self.play.liquid_optics = optics;
+            self.play.liquid = liquid;
             self.play.playing = Some(authoring_before_play);
             self.authoring.animation_preview = None;
             self.play.ui_actions = Some(actions);
@@ -5506,6 +5710,172 @@ mod tests {
                 .contains_key("game.angular-motion.v1")
         );
         app.stop_workers().unwrap();
+    }
+
+    #[test]
+    fn authored_liquid_body_moves_in_play_and_stop_restores_both_descriptors() {
+        let root =
+            std::env::temp_dir().join(format!("voxy-liquid-body-play-{}", std::process::id()));
+        std::fs::create_dir_all(&root).unwrap();
+        std::fs::write(
+            root.join("quad.obj"),
+            "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n",
+        )
+        .unwrap();
+        std::fs::write(
+            root.join("water.json"),
+            r#"{"rest_density":1000,"sound_speed":20,"viscosity":0.001}"#,
+        )
+        .unwrap();
+        let mut app = App::new(&root.join("quad.obj"), false).unwrap();
+        let mut document = app.authoring_document().unwrap();
+        let body = &mut document.objects[0];
+        body.translation = [0.; 3];
+        body.scale = [1.; 3];
+        body.rotation = glam::Quat::from_rotation_z(std::f32::consts::FRAC_PI_4).to_array();
+        body.components.insert(
+            "game.box.v1".into(),
+            serde_json::to_value(BoxCollider {
+                half_extents: [0.01, 2., 2.],
+            })
+            .unwrap(),
+        );
+        body.components.insert(
+            "game.liquid-body.v1".into(),
+            serde_json::to_value(voxy_gameplay::LiquidBody {
+                mass_kg: 3.,
+                initial_velocity_m_s: [0.; 3],
+            })
+            .unwrap(),
+        );
+        let mut jet = body.clone();
+        jet.id = ObjectId("jet-1".into());
+        jet.name = "jet".into();
+        jet.translation = [-0.1, 0., 0.];
+        jet.rotation = [0., 0., 0., 1.];
+        jet.components.clear();
+        jet.components.insert(
+            "game.liquid-source.v1".into(),
+            serde_json::to_value(voxy_gameplay::LiquidSource {
+                pulses: vec![voxy_gameplay::LiquidPulse {
+                    start_s: 0.,
+                    duration_s: 1. / 60.,
+                    volume_m3: 0.001,
+                    speed_m_s: 2.,
+                }],
+                density_kg_m3: 1000.,
+                particle_volume_m3: 0.001,
+                nozzle_radius_m: 0.,
+                direction: [1., 0., 0.],
+                material_asset: "water.json".into(),
+            })
+            .unwrap(),
+        );
+        document.objects.push(jet);
+        app.authoring
+            .history
+            .as_mut()
+            .unwrap()
+            .commit(document.clone(), &app.authoring.authoring_project.registry)
+            .unwrap();
+        app.restore_authoring().unwrap();
+        app.toggle_play().unwrap();
+        app.advance_game(1. / 60.).unwrap();
+        app.advance_game(1. / 60.).unwrap();
+        let runtime = app.play.liquid.as_ref().unwrap();
+        let (owner, state) = runtime.body_state().unwrap();
+        assert!(state.velocity[0] > 0.);
+        assert!(app.scene.local(owner).unwrap().translation.x > 0.);
+        assert_eq!(
+            app.scene.local(owner).unwrap().rotation.to_array(),
+            document.objects[0].rotation
+        );
+        assert!((runtime.liquid().mass() - 1.).abs() < 1e-12);
+        runtime.validate_bindings(&app.scene).unwrap();
+        app.toggle_play().unwrap();
+        assert!(app.play.liquid.is_none());
+        assert_eq!(app.authoring_document().unwrap(), document);
+        app.toggle_play().unwrap();
+        assert_eq!(
+            app.play
+                .liquid
+                .as_ref()
+                .unwrap()
+                .body_state()
+                .unwrap()
+                .1
+                .velocity,
+            [0.; 3]
+        );
+        app.toggle_play().unwrap();
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn authored_liquid_play_steps_and_stop_restores_document() {
+        let root = std::env::temp_dir().join(format!("voxy-liquid-play-{}", std::process::id()));
+        std::fs::create_dir_all(&root).unwrap();
+        std::fs::write(
+            root.join("quad.obj"),
+            "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n",
+        )
+        .unwrap();
+        std::fs::write(
+            root.join("water.json"),
+            r#"{"rest_density":1000,"sound_speed":20,"viscosity":0.001,"optics":[0.2,0.1,0.05,1.333]}"#,
+        )
+        .unwrap();
+        let mut app = App::new(&root.join("quad.obj"), false).unwrap();
+        let mut document = app.authoring_document().unwrap();
+        document.objects[0].components.insert(
+            "game.liquid-source.v1".into(),
+            serde_json::to_value(voxy_gameplay::LiquidSource {
+                pulses: vec![voxy_gameplay::LiquidPulse {
+                    start_s: 0.,
+                    duration_s: 1.,
+                    volume_m3: 0.001,
+                    speed_m_s: 2.,
+                }],
+                density_kg_m3: 1000.,
+                particle_volume_m3: 0.001,
+                nozzle_radius_m: 0.,
+                direction: [1., 0., 0.],
+                material_asset: "water.json".into(),
+            })
+            .unwrap(),
+        );
+        app.authoring
+            .history
+            .as_mut()
+            .unwrap()
+            .commit(document.clone(), &app.authoring.authoring_project.registry)
+            .unwrap();
+        app.restore_authoring().unwrap();
+        app.toggle_play().unwrap();
+        assert!(app.play.liquid.is_some());
+        assert_eq!(app.play.liquid_optics, vec![Some([0.2, 0.1, 0.05, 1.333])]);
+        app.advance_game(1. / 60.).unwrap();
+        let runtime = app.play.liquid.as_ref().unwrap();
+        assert!((runtime.liquid().mass() - 1. / 60.).abs() < 1e-12);
+        assert_eq!(runtime.liquid().particles().len(), 1);
+        app.toggle_play().unwrap();
+        assert!(app.play.liquid.is_none());
+        assert!(app.play.liquid_optics.is_empty());
+        assert_eq!(app.authoring_document().unwrap(), document);
+        std::fs::remove_file(root.join("water.json")).unwrap();
+        assert!(app.toggle_play().is_err());
+        assert!(app.play.playing.is_none());
+        assert!(app.play.liquid.is_none());
+        assert_eq!(app.authoring_document().unwrap(), document);
+        std::fs::write(
+            root.join("water.json"),
+            r#"{"rest_density":1000,"sound_speed":20,"viscosity":0.001,"optics":[0.2,0.1,0.05,1.333]}"#,
+        )
+        .unwrap();
+        app.toggle_play().unwrap();
+        assert_eq!(app.play.liquid.as_ref().unwrap().liquid().mass(), 0.);
+        app.toggle_play().unwrap();
+        std::fs::remove_dir_all(root).unwrap();
     }
 
     #[test]

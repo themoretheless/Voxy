@@ -1,0 +1,22 @@
+{
+  "renderer_tests": 164,
+  "editor_tests": 171,
+  "editor_ignored": 13,
+  "failed": 0,
+  "gpu": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "optical_changed_pixels": 408,
+    "unchanged_neighbor_pixels": 4096,
+    "out_of_bounds_rejected": true,
+    "validation": "clean"
+  },
+  "scope": "disjoint perspective fluid composition and editor split-view attachment; native window proof and MSAA/orthographic optics pending",
+  "source_sha256": {
+    "crates/voxy_render/src/fluid_screen.rs": "8c4d73b64d08d62f4ea2855fee85d0b4013f85226435ddb09cd2c02d5f67b914",
+    "crates/voxy_render/src/fluid_composite.wgsl": "fab7db7089cc42b5a338fdc8957fab99f526920f9851d0813df97004932cb6c9",
+    "crates/voxy_render/src/surface.rs": "4e6f63ab50a161695bc7f7a9329b877b98a44740160ed53b6c0a5d250b03d7c2",
+    "crates/voxy_render/src/scene.rs": "36356e67349f870021c7e371c741c65fc6f741e5aa2bf016146a20d90b213b66",
+    "crates/voxy_editor/src/lib.rs": "87f5e26c70052d81fc01c8d4a4c4339fcc7369f557fcf906f73fba0285a1faf6"
+  }
+}

@@ -69,6 +69,34 @@ pub struct DynamicImpactReport {
     /// Heat assigned to the body; thermal-body stepping also updates its temperature.
     pub body_heat: f64,
 }
+/// Read-only static surroundings for a finite translating geometry template.
+/// The backend owns the body's collision shape and sweeps it exactly.
+pub trait DynamicLiquidEnvironment {
+    /// # Errors
+    /// Invalid geometry or exhausted query budgets.
+    fn sweep_particle(
+        &self,
+        center: [f64; 3],
+        radius: f64,
+        displacement: [f64; 3],
+        max_candidates: usize,
+    ) -> Result<super::GeometryHit, Error>;
+    /// # Errors
+    /// Invalid geometry or exhausted query budgets.
+    fn sweep_body(
+        &self,
+        body: &TranslatingBody,
+        displacement: [f64; 3],
+        max_candidates: usize,
+    ) -> Result<super::GeometryHit, Error>;
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DynamicEnvironmentReport {
+    pub dynamics: DynamicWorldReport,
+    /// Impulse received by the static surroundings (opposite moving participants).
+    pub environment_impulse: [f64; 3],
+}
+
 impl Liquid {
     /// Advances finite-body collisions and stores the body share of impact heat
     /// in its uniform temperature. Specific heat is constant; no body phase change,
@@ -204,6 +232,132 @@ impl Liquid {
             body_heat,
         })
     }
+    /// Finite-mass translational recoil against arbitrary unit-normal geometry.
+    /// Geometry is a body-local collision template; body.position translates it.
+    /// # Errors
+    /// Invalid body/settings, overlap, geometry failure or event budgets roll back
+    /// both entire fluid and body. Rotation and sampled boundary recoil are absent.
+    pub fn step_with_dynamic_geometry(
+        &mut self,
+        dt: f64,
+        body: &mut TranslatingBody,
+        geometry: &impl super::LiquidGeometry,
+        config: DynamicWorldConfig,
+    ) -> Result<DynamicWorldReport, Error> {
+        self.step_dynamic_geometry(dt, body, geometry, config, None)
+            .map(|r| r.dynamics)
+    }
+
+    /// Finite-body and static-environment contacts on one earliest-event timeline.
+    /// # Errors
+    /// Any geometry, event or numerical failure restores fluid and body together.
+    pub fn step_with_dynamic_geometry_and_environment(
+        &mut self,
+        dt: f64,
+        body: &mut TranslatingBody,
+        geometry: &impl super::LiquidGeometry,
+        environment: &impl DynamicLiquidEnvironment,
+        config: DynamicWorldConfig,
+    ) -> Result<DynamicEnvironmentReport, Error> {
+        self.step_dynamic_geometry(dt, body, geometry, config, Some(environment))
+    }
+
+    fn step_dynamic_geometry(
+        &mut self,
+        dt: f64,
+        body: &mut TranslatingBody,
+        geometry: &impl super::LiquidGeometry,
+        config: DynamicWorldConfig,
+        environment: Option<&dyn DynamicLiquidEnvironment>,
+    ) -> Result<DynamicEnvironmentReport, Error> {
+        config.contact.validate()?;
+        if !finite(body.position)
+            || !finite(body.velocity)
+            || !positive(body.mass)
+            || config.max_contacts == 0
+            || config.max_queries == 0
+        {
+            return Err(Error::InvalidCollision);
+        }
+        let mut fluid_candidate = self.clone();
+        let mut candidate = *body;
+        let mut ledger = ContactLedger::default();
+        let radius = self.config.particle_radius;
+        let gravity = self.config.gravity;
+        let empty = self.particles.is_empty();
+        let fluid = fluid_candidate.advance(dt, None, |particles, time| {
+            for axis in 0..3 {
+                candidate.velocity[axis] += gravity[axis] * time;
+            }
+            sweep_particles_query(
+                particles,
+                &mut candidate,
+                time,
+                radius,
+                config,
+                &mut ledger,
+                |p, body, remaining| {
+                    let center = std::array::from_fn(|a| p.position[a] - body.position[a]);
+                    let displacement =
+                        std::array::from_fn(|a| (p.velocity[a] - body.velocity[a]) * remaining);
+                    if !finite(center) || !finite(displacement) {
+                        return Err(Error::NumericalFailure);
+                    }
+                    match geometry
+                        .sweep(center, radius, displacement, config.contact.max_candidates)
+                        .map_err(|_| Error::CollisionBackend)?
+                    {
+                        super::GeometryHit::Clear => Ok(None),
+                        super::GeometryHit::Overlap => Err(Error::InitialOverlap),
+                        super::GeometryHit::Contact { fraction, normal } => {
+                            let length2: f64 = normal.iter().map(|v| v * v).sum();
+                            let speed: f64 = (0..3)
+                                .map(|a| (p.velocity[a] - body.velocity[a]) * normal[a])
+                                .sum();
+                            if !fraction.is_finite()
+                                || !(0. ..=1.).contains(&fraction)
+                                || !length2.is_finite()
+                                || (length2 - 1.).abs() > 1e-10
+                                || !speed.is_finite()
+                                || speed >= 0.
+                            {
+                                return Err(Error::InvalidCollision);
+                            }
+                            Ok(Some((fraction, normal)))
+                        }
+                    }
+                },
+                environment,
+            )
+        })?;
+        if empty {
+            for axis in 0..3 {
+                candidate.velocity[axis] += gravity[axis] * dt;
+            }
+            sweep_particles_query(
+                &mut [],
+                &mut candidate,
+                dt,
+                radius,
+                config,
+                &mut ledger,
+                |_, _, _| Ok(None),
+                environment,
+            )?;
+        }
+        *self = fluid_candidate;
+        *body = candidate;
+        Ok(DynamicEnvironmentReport {
+            dynamics: DynamicWorldReport {
+                fluid,
+                contacts: ledger.contacts,
+                queries: ledger.queries,
+                dissipated_energy: ledger.loss,
+            },
+            environment_impulse: ledger.environment_impulse,
+        })
+    }
+
     /// Swept two-way collisions against one translating finite-mass collision template.
     /// The backend stays in template coordinates; `body.position` supplies its translation.
     /// SPH boundary samples remain independent environment samples, not body-owned samples.
@@ -287,7 +441,7 @@ fn query(
     remaining: f64,
     world: &impl crate::CollisionWorld,
     budget: usize,
-) -> Result<Option<(f64, usize, f64)>, Error> {
+) -> Result<Option<(f64, [f64; 3])>, Error> {
     let center: [f64; 3] = std::array::from_fn(|a| p.position[a] - body.position[a]);
     let displacement = std::array::from_fn(|a| (p.velocity[a] - body.velocity[a]) * remaining);
     if !finite(center) || !finite(displacement) {
@@ -329,7 +483,7 @@ fn query(
     if (p.velocity[axis] - body.velocity[axis]) * normal >= 0.0 {
         return Err(Error::InvalidCollision);
     }
-    Ok(Some((hit.fraction, axis, normal)))
+    Ok(Some((hit.fraction, hit.normal.map(f64::from))))
 }
 
 #[derive(Default)]
@@ -338,6 +492,7 @@ pub(super) struct ContactLedger {
     pub queries: usize,
     pub loss: f64,
     pub particle_loss: Vec<f64>,
+    pub(super) environment_impulse: [f64; 3],
 }
 pub(super) fn sweep_particles(
     particles: &mut [Particle],
@@ -348,71 +503,108 @@ pub(super) fn sweep_particles(
     config: DynamicWorldConfig,
     ledger: &mut ContactLedger,
 ) -> Result<(), Error> {
-    let mut remaining = time;
-    while remaining > 0.0 {
-        let mut earliest = None;
-        for (index, p) in particles.iter().enumerate() {
-            if ledger.queries == config.max_queries {
-                return Err(Error::CollisionBudget);
-            }
-            ledger.queries += 1;
-            let Some((fraction, axis, normal)) = query(
+    sweep_particles_query(
+        particles,
+        body,
+        time,
+        radius,
+        config,
+        ledger,
+        |p, body, remaining| {
+            query(
                 p,
                 body,
                 radius,
                 remaining,
                 world,
                 config.contact.max_candidates,
-            )?
-            else {
-                continue;
-            };
-            if earliest.is_none_or(|(_, previous, _, _)| fraction < previous) {
-                earliest = Some((index, fraction, axis, normal));
-            }
-        }
-        let fraction = earliest.map_or(1.0, |(_, f, _, _)| f);
-        drift(particles, body, remaining * fraction)?;
-        let Some((index, _, axis, normal)) = earliest else {
-            break;
-        };
-        if ledger.contacts == config.max_contacts {
-            return Err(Error::CollisionBudget);
-        }
-        ledger.contacts += 1;
-        let p = &mut particles[index];
-        let reduced = 1.0 / (1.0 / p.mass + 1.0 / body.mass);
-        for a in 0..3 {
-            let relative = p.velocity[a] - body.velocity[a];
-            let factor = if a == axis {
-                1.0 + config.contact.restitution
-            } else {
-                config.contact.friction
-            };
-            let impulse = -reduced * relative * factor;
-            let loss = 0.5 * reduced * relative.powi(2) * factor * (2.0 - factor);
-            ledger.loss += loss;
-            if let Some(total) = ledger.particle_loss.get_mut(index) {
-                *total += loss;
-            }
-            p.velocity[a] += impulse / p.mass;
-            body.velocity[a] -= impulse / body.mass;
-        }
-        p.position[axis] += normal
-            * 64.0
-            * f64::EPSILON
-            * p.position[axis]
-                .abs()
-                .max(body.position[axis].abs())
-                .max(1.0);
-        if !finite(p.velocity)
-            || !finite(body.velocity)
-            || !finite(p.position)
-            || !ledger.loss.is_finite()
-        {
-            return Err(Error::NumericalFailure);
-        }
-        remaining *= 1.0 - fraction;
+            )
+        },
+        None,
+    )
+}
+fn sweep_particles_query(
+    particles: &mut [Particle],
+    body: &mut TranslatingBody,
+    time: f64,
+    radius: f64,
+    config: DynamicWorldConfig,
+    ledger: &mut ContactLedger,
+    query: impl FnMut(&Particle, &TranslatingBody, f64) -> Result<Option<(f64, [f64; 3])>, Error>,
+    environment: Option<&dyn DynamicLiquidEnvironment>,
+) -> Result<(), Error> {
+    use std::cell::RefCell;
+    struct Single<'a, F> {
+        query: RefCell<F>,
+        environment: Option<&'a dyn DynamicLiquidEnvironment>,
     }
-    Ok(())
+    impl<F: FnMut(&Particle, &TranslatingBody, f64) -> Result<Option<(f64, [f64; 3])>, Error>>
+        super::LiquidBodyWorld for Single<'_, F>
+    {
+        fn sweep_particle_body(
+            &self,
+            p: &Particle,
+            _: f64,
+            _: usize,
+            b: &TranslatingBody,
+            dt: f64,
+            _: usize,
+        ) -> Result<super::GeometryHit, Error> {
+            Ok(self.query.borrow_mut()(p, b, dt)?
+                .map_or(super::GeometryHit::Clear, |(fraction, normal)| {
+                    super::GeometryHit::Contact { fraction, normal }
+                }))
+        }
+        fn sweep_body_pair(
+            &self,
+            _: usize,
+            _: &TranslatingBody,
+            _: usize,
+            _: &TranslatingBody,
+            _: f64,
+            _: usize,
+        ) -> Result<super::GeometryHit, Error> {
+            Ok(super::GeometryHit::Clear)
+        }
+        fn sweep_particle_environment(
+            &self,
+            p: &Particle,
+            radius: f64,
+            dt: f64,
+            budget: usize,
+        ) -> Result<super::GeometryHit, Error> {
+            self.environment.unwrap().sweep_particle(
+                p.position,
+                radius,
+                p.velocity.map(|v| v * dt),
+                budget,
+            )
+        }
+        fn sweep_body_environment(
+            &self,
+            _: usize,
+            b: &TranslatingBody,
+            dt: f64,
+            budget: usize,
+        ) -> Result<super::GeometryHit, Error> {
+            self.environment
+                .unwrap()
+                .sweep_body(b, b.velocity.map(|v| v * dt), budget)
+        }
+        fn has_environment(&self) -> bool {
+            self.environment.is_some()
+        }
+    }
+    super::multi_body::solve(
+        particles,
+        std::slice::from_mut(body),
+        radius,
+        time,
+        config,
+        ledger,
+        &Single {
+            query: RefCell::new(query),
+            environment,
+        },
+    )
 }

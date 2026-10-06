@@ -1,0 +1,10 @@
+{
+  "gameplay_tests": 74,
+  "failed": 0,
+  "consumers": "app/editor all-target release passed",
+  "scope": "shared scene liquid owner and capability-aware preflight; editor attachment/render bridge still pending",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "5f052f483140a4aa36e2e3a218541dfab21bf4824afda9ad773ec8847d5eab3b",
+    "crates/voxy_gameplay/src/lib.rs": "2f2b292088fa5b524a6ffb6d81ffc8b85ef953cf442b4f978736077698311723"
+  }
+}

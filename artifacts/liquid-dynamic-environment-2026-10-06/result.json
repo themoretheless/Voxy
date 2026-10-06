@@ -1,0 +1,36 @@
+{
+  "physics-regression": {
+    "passed": 1493,
+    "failed": 0,
+    "ignored": 11
+  },
+  "final-gameplay": {
+    "passed": 78,
+    "failed": 0,
+    "ignored": 0
+  },
+  "editor-regression": {
+    "passed": 172,
+    "failed": 0,
+    "ignored": 13
+  },
+  "resting-wall": {
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0
+  },
+  "final-contact-tests": {
+    "passed": 48,
+    "failed": 0,
+    "ignored": 0
+  },
+  "consumers": "app/editor all-target release passed",
+  "scope": "one root translating LiquidBody, fluid/static/body events and scene publication; rotation, multiple bodies and compound colliders pending",
+  "source_sha256": {
+    "crates/physics/src/liquid/dynamic_world.rs": "2af214601228268ad107ccb2eaa0717fb407b6d4cd3a8e6b5146161e4c8834a9",
+    "crates/voxy_gameplay/src/liquid_body.rs": "bd99af5f0d75b2864752e56f4e87c35bdbe6b56643d541fb2aa1b0b53dfac5af",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "cc80d30e63c13dd38da12a8b3a53535ee61ccd13764e313932c3e619376790d1",
+    "crates/voxy_editor/src/lib.rs": "77cc7257a756737eb593454907c7926d29022d2cb89b531566d3d1711682a3d3",
+    "crates/voxy_editor/src/prefab_authoring.rs": "d9b425edd6b6509222a06443ec32bbeb4d9ec0d4f5646d059050f8c87e48bad7"
+  }
+}

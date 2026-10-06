@@ -1,0 +1,13 @@
+{
+  "editor_tests": 169,
+  "failed": 0,
+  "ignored": 12,
+  "consumers": "app/editor all-target release passed",
+  "native_gpu_view": "not exercised; fluid renderer bridge pending",
+  "source_sha256": {
+    "crates/voxy_editor/src/lib.rs": "756adb9be989d5d4cf07295c07441a9605741ee4c98664bd4dac6193b9255715",
+    "crates/voxy_editor/src/play_session.rs": "6a79505d1c24958653046677a4ed35dff61fc1ff2198cd2e08fdd1808e6be53a",
+    "crates/voxy_editor/src/prefab_authoring.rs": "ed19a32ae3cc7e95b20e015e06b4a89bab6c9937b8e8fa8ef9a9a0340fd9a66a",
+    "crates/voxy_editor/src/animation_runtime.rs": "6efe57881388e1ca284153a923b09831861d6d1ef9412f2fc9e7371d6766f07e"
+  }
+}

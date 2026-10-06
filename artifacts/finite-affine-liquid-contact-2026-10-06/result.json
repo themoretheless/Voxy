@@ -1,0 +1,24 @@
+{
+  "final-physics-regression": {
+    "passed": 1490,
+    "failed": 0,
+    "ignored": 11
+  },
+  "final-gameplay": {
+    "passed": 76,
+    "failed": 0,
+    "ignored": 0
+  },
+  "final-contact-regression": {
+    "passed": 45,
+    "failed": 0,
+    "ignored": 0
+  },
+  "consumers": "app/editor all-target release passed",
+  "scope": "one finite translating collision template; authored body publication, multiple bodies and rotation pending",
+  "source_sha256": {
+    "crates/physics/src/liquid/dynamic_world.rs": "ed662f46ac2ed61921dcb8a04492a5d97faf96fe8d52c79a283060d47128a739",
+    "crates/physics/tests/liquid_geometry.rs": "378506558bc975f1af6f0973eb762bd70d0c3310fdd85754e0a0a25d05c1cc78",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "e311a3097c18a4b9ffa0d9e3eea37d3bf75fd441997816d4e60f1da8305d92f0"
+  }
+}

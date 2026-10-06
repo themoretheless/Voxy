@@ -1758,6 +1758,29 @@ impl SceneRenderer {
         depth: &wgpu::TextureView,
         draws: &[SceneDraw<'_>],
     ) {
+        self.encode_overlays_region(encoder, target, depth, draws, None);
+    }
+
+    /// Draw per-view overlays after composition into a full-sized depth/color target.
+    pub fn encode_overlays_viewport(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        target: &wgpu::TextureView,
+        depth: &wgpu::TextureView,
+        draws: &[SceneDraw<'_>],
+        viewport: [u32; 4],
+    ) {
+        self.encode_overlays_region(encoder, target, depth, draws, Some(viewport));
+    }
+
+    fn encode_overlays_region(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        target: &wgpu::TextureView,
+        depth: &wgpu::TextureView,
+        draws: &[SceneDraw<'_>],
+        viewport: Option<[u32; 4]>,
+    ) {
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("scene overlays after composition"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -1779,6 +1802,10 @@ impl SceneRenderer {
             }),
             ..Default::default()
         });
+        if let Some([x, y, w, h]) = viewport {
+            pass.set_viewport(x as f32, y as f32, w as f32, h as f32, 0., 1.);
+            pass.set_scissor_rect(x, y, w, h);
+        }
         pass.set_pipeline(&self.overlay_pipeline);
         for draw in draws.iter().filter(|draw| draw.overlay) {
             if let Some(shadow) = &self.shadow {

@@ -853,6 +853,78 @@ impl SceneSurface {
         })
     }
 
+    /// Compose disjoint optical fluid views after the ordinary scene and before UI.
+    /// # Errors
+    /// MSAA, duplicate indices, mismatched view sizes and normal scene/surface failures.
+    pub fn render_scene_views_with_fluids(
+        &mut self,
+        scene: &SceneRenderer,
+        views: &[crate::SceneView<'_>],
+        fluids: &[(usize, &crate::ScreenSpaceFluidRenderer)],
+        overlays: &[SceneDraw<'_>],
+    ) -> Result<RenderOutcome, RendererError> {
+        if self.msaa.is_some()
+            || fluids.iter().enumerate().any(|(i, (index, fluid))| {
+                views
+                    .get(*index)
+                    .is_none_or(|v| v.viewport[2..] != fluid.size())
+                    || fluids[..i].iter().any(|(other, _)| other == index)
+            })
+        {
+            return Err(RendererError::Scene(crate::SceneError::InvalidGeometry));
+        }
+        if overlays.iter().any(|draw| !draw.overlay) {
+            return Err(RendererError::Scene(crate::SceneError::InvalidGeometry));
+        }
+        let has_xray = views
+            .iter()
+            .flat_map(|view| view.draws)
+            .any(|draw| !draw.overlay && draw.geometry.depth_mode() == crate::SceneDepthMode::Xray);
+        if has_xray && self.xray_depth_view.is_none() {
+            self.xray_depth_view = Some(
+                create_depth(&self.device, self.config.width, self.config.height)
+                    .create_view(&Default::default()),
+            );
+        }
+        let xray = self.xray_depth_view.clone();
+        let depth = self.depth_view.clone();
+        let size = [self.config.width, self.config.height];
+        self.render_custom(|encoder, output| {
+            scene
+                .encode_view_frame_targets(
+                    encoder,
+                    crate::SceneViewTargets {
+                        color: output,
+                        depth: &depth,
+                        xray_depth: xray.as_ref(),
+                        resolve: None,
+                        overlay_depth: &depth,
+                    },
+                    wgpu::Color::BLACK,
+                    views,
+                    &[],
+                )
+                .map_err(RendererError::Scene)?;
+            for (index, fluid) in fluids {
+                let view = &views[*index];
+                fluid
+                    .encode_viewport(
+                        scene,
+                        encoder,
+                        output,
+                        &depth,
+                        size,
+                        view.viewport,
+                        wgpu::Color::BLACK,
+                        view.draws,
+                    )
+                    .map_err(|_| RendererError::Scene(crate::SceneError::InvalidGeometry))?;
+            }
+            scene.encode_overlays(encoder, output, &depth, overlays);
+            Ok(())
+        })
+    }
+
     /// Presents caller-encoded GPU work on this surface's device and queue.
     /// Acquisition happens before the callback, so skipped frames encode no physics.
     /// Custom frames invalidate scene temporal history; they do not supply motion inputs.
