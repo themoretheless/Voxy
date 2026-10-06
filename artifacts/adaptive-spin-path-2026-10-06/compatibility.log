@@ -1,0 +1,24 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0614]: type `Spin` cannot be dereferenced
+   --> crates/physics/src/astrophysics_spin.rs:155:24
+    |
+155 |         let mut half = *self;
+    |                        ^^^^^ can't be dereferenced
+
+error[E0614]: type `Spin` cannot be dereferenced
+   --> crates/physics/src/astrophysics_spin.rs:177:15
+    |
+177 |             ..*self
+    |               ^^^^^ can't be dereferenced
+
+For more information about this error, try `rustc --explain E0614`.
+warning: `physics` (lib) generated 1 warning
+error: could not compile `physics` (lib) due to 2 previous errors; 1 warning emitted

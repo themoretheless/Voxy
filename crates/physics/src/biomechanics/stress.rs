@@ -43,41 +43,11 @@ impl Stress {
             row[i] -= mean;
         }
         let norm2: f64 = dev.iter().flatten().map(|v| v * v).sum();
-        // Cyclic Jacobi avoids acos cancellation at repeated eigenvalues.
-        let mut eigen = a;
-        let mut directions = super::IDENTITY;
-        for _ in 0..16 {
-            for (i, j) in [(0, 1), (0, 2), (1, 2)] {
-                if eigen[i][j].abs() <= 1e-16 {
-                    continue;
-                }
-                let angle = 0.5 * (2. * eigen[i][j]).atan2(eigen[j][j] - eigen[i][i]);
-                let (sin, cos) = angle.sin_cos();
-                let (ii, jj, ij) = (eigen[i][i], eigen[j][j], eigen[i][j]);
-                eigen[i][i] = cos * cos * ii - 2. * sin * cos * ij + sin * sin * jj;
-                eigen[j][j] = sin * sin * ii + 2. * sin * cos * ij + cos * cos * jj;
-                eigen[i][j] = 0.;
-                eigen[j][i] = 0.;
-                let k = 3 - i - j;
-                let (ik, jk) = (eigen[i][k], eigen[j][k]);
-                eigen[i][k] = cos * ik - sin * jk;
-                eigen[k][i] = eigen[i][k];
-                eigen[j][k] = sin * ik + cos * jk;
-                eigen[k][j] = eigen[j][k];
-                for row in &mut directions {
-                    let (vi, vj) = (row[i], row[j]);
-                    row[i] = cos * vi - sin * vj;
-                    row[j] = sin * vi + cos * vj;
-                }
-            }
-        }
-        let mut order = [0, 1, 2];
-        order.sort_by(|&i, &j| eigen[j][j].total_cmp(&eigen[i][i]));
-        let principal = order.map(|i| eigen[i][i]);
+        let (principal, directions) = crate::symmetric_eigen::normalized(a)?;
         let result = Self {
             cauchy_pa: a.map(|row| row.map(|v| v * scale)),
             principal_pa: principal.map(|v| v * scale),
-            principal_directions: directions.map(|row| order.map(|i| row[i])),
+            principal_directions: directions,
             pressure_pa: -mean * scale,
             von_mises_pa: (1.5 * norm2).sqrt() * scale,
             max_shear_pa: (principal[0] - principal[2]) / 2. * scale,

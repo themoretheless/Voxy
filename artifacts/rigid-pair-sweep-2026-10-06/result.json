@@ -1,0 +1,31 @@
+{
+  "scope": "two translating constant-world-axis angular arcs on existing advancement kernel",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/angular_sweep.rs": "8dd0aa98f68f0772820d0e642323d3ad044911efce52318f2bfcc8b413e871b0",
+    "crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs": "aefa27f8aa8a3c70f58efa25f50f6e166378ad5256e91787f3958946d8034cfd",
+    "crates/voxy_gameplay/src/convex.rs": "73d52c37b1e141df243d193f9d012c5bfd5648ae7e87a54f267855d11b1e8e4d",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "f27c354cb0157cebef31a876e7f42e8b133cd77c606ecbb93125e48d10dec4df"
+  },
+  "qualification": {
+    "gameplay_unit": 94,
+    "gameplay_integration": 46,
+    "editor_unit": 173,
+    "editor_ignored": 13,
+    "app_editor_all_targets": "passed",
+    "fmt_diff_check": "passed"
+  },
+  "proven": [
+    "transient collision with clear endpoints",
+    "two rotating frames with world witness transport",
+    "frame covariance",
+    "translation fast path equivalence",
+    "explicit budget and invalid-motion outcomes"
+  ],
+  "unfinished": [
+    "variable-axis free Spin trajectory admission and enclosures",
+    "scene COM and physical mass distribution",
+    "angular Play state and publication",
+    "persistent multi-point contact constraints",
+    "original engine and hardware requirements"
+  ]
+}

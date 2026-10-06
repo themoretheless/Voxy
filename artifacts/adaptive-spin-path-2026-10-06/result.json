@@ -1,0 +1,45 @@
+{
+  "scope": "adaptive constant-world-torque Spin paths over the existing midpoint integrator and model-envelope static sweep bridge",
+  "source_sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "f0e918eb74df047423a0626d618e8fa66deab123d2412e9566790a3cc1c1c5ea",
+    "crates/physics/src/spin_path.rs": "0809a6acc647f595be5ffdc3cfe76c8db2091d93c5bda2f8617e338199e67920",
+    "crates/physics/tests/spin_path.rs": "2edbc04cfe1c798c50ac77e43d02a12c23b67df7551ea0965a8050bb6ab59f79",
+    "crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs": "c7106a065047de392b315c5ab5fbf5c77c090e007b3594d65308b77bd0b3c55f"
+  },
+  "qualification": {
+    "spin_path_tests": 5,
+    "existing_spin_contact_compatibility": 14,
+    "gameplay_unit": 96,
+    "gameplay_integration": 46,
+    "editor_unit": 173,
+    "editor_ignored": 13,
+    "app_editor_all_target_release": "passed",
+    "fmt_diff_check": "passed"
+  },
+  "measurements": {
+    "short": {
+      "duration_s": 0.1,
+      "arcs": 31,
+      "trials": 65,
+      "measured_max_rad": 4.605711075859615e-07,
+      "model_bound_rad": 9.720832630325042e-05
+    },
+    "long": {
+      "duration_s": 2.6,
+      "arcs": 2427,
+      "measured_max_rad": 2.09871794637442e-08,
+      "model_bound_rad": 0.0019988598827537234
+    },
+    "geometry_possible_contact": {
+      "time_s": 1.2094303270132576,
+      "model_error_m": 0.0009218217101396937
+    }
+  },
+  "limitations": [
+    "floating evaluated model residual bound is not interval-certified",
+    "geometry bridge is headless-qualified and not enabled in Play",
+    "possible contact is not a physical impact witness",
+    "COM pivot publication and reciprocal rotating contact remain unfinished",
+    "all original engine and hardware requirements remain active"
+  ]
+}

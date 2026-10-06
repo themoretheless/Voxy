@@ -50,6 +50,16 @@ struct Node {
     mass: f64,
 }
 impl Node {
+    fn contact(self) -> crate::contact::ContactBody {
+        crate::contact::ContactBody {
+            motion: crate::gravity::Body {
+                mass: self.mass,
+                position: self.position,
+                velocity: self.velocity,
+            },
+            spin: None,
+        }
+    }
     fn body(self) -> TranslatingBody {
         TranslatingBody {
             position: self.position,
@@ -207,12 +217,22 @@ pub(super) fn solve(
         }
         let speed: f64 = (0..3).map(|a| relative[a] * normal[a]).sum();
         let tangent: [f64; 3] = std::array::from_fn(|a| relative[a] - speed * normal[a]);
-        let loss = 0.5
-            * reduced
-            * (speed * speed * (1. - config.contact.restitution.powi(2))
-                + tangent.iter().map(|v| v * v).sum::<f64>()
-                    * config.contact.friction
-                    * (2. - config.contact.friction));
+        let first_contact = nodes[first].contact();
+        let second_contact = second.map(|s| nodes[s].contact());
+        let normal_response = crate::contact::normal_impulse(
+            &first_contact,
+            second_contact.as_ref(),
+            nodes[first].position,
+            normal,
+            config.contact.restitution,
+        )
+        .map_err(|_| Error::NumericalFailure)?;
+        let loss = normal_response.dissipated_energy
+            + 0.5
+                * reduced
+                * tangent.iter().map(|v| v * v).sum::<f64>()
+                * config.contact.friction
+                * (2. - config.contact.friction);
         ledger.loss += loss;
         if let Some(total) = ledger.particle_loss.get_mut(first) {
             *total += loss;
@@ -224,9 +244,8 @@ pub(super) fn solve(
                 .map(|a| normal[a].abs() * nodes[first].position[a].abs().max(reference[a].abs()))
                 .fold(1., f64::max);
         for a in 0..3 {
-            let impulse = -reduced
-                * ((1. + config.contact.restitution) * speed * normal[a]
-                    + config.contact.friction * tangent[a]);
+            let impulse =
+                normal_response.impulse[a] - reduced * config.contact.friction * tangent[a];
             nodes[first].velocity[a] += impulse / nodes[first].mass;
             if let Some(second) = second {
                 nodes[second].velocity[a] -= impulse / nodes[second].mass;

@@ -1,0 +1,35 @@
+{
+  "scope": "translation affine contact witness admission in scene liquid and compound sweeps",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/convex.rs": "7ab8efc08117060222a127a960a6b533d0e6919e7c2d94d5d3365ed8c444c48c",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "c82483d35be6ddbdab9d4105c443e9c6d7d6246c71aa8fca30408f434d9d9d6a",
+    "crates/voxy_gameplay/src/lib.rs": "c8f1f4b1dac78fda593f42a45f4b0242b8d0faf494cd887a0657269b566d6132"
+  },
+  "qualification": {
+    "gameplay_unit_passed": 91,
+    "gameplay_integration_passed": 46,
+    "editor_unit_passed": 173,
+    "editor_ignored": 13,
+    "app_editor_all_targets": "passed",
+    "fmt_diff_check": "passed"
+  },
+  "geometric_fixtures": {
+    "rotated_sheared_pairs": 32,
+    "uniform_scales": [
+      0.001,
+      1,
+      1000
+    ],
+    "world_translation_m": 100000,
+    "partial_face": "passed",
+    "geometry_to_off_center_impulse": "passed"
+  },
+  "remaining": [
+    "continuous rotating-shape queries",
+    "world transport of relative-frame contact witness in angular solver",
+    "scene COM and mass distribution",
+    "multi-point contact constraints",
+    "angular Play publication",
+    "other original engine and hardware goal requirements"
+  ]
+}

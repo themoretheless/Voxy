@@ -16,13 +16,17 @@ pub mod astrophysics_spin;
 pub mod astrophysics_star;
 pub mod astrophysics_thermal;
 mod character;
+pub mod contact;
 pub mod gravity;
 pub mod gravity_character;
 pub mod gravity_field;
 pub mod gravity_spheres;
+pub mod mass_properties;
 pub mod moisture;
 pub mod planar;
+pub mod spin_path;
 pub mod strand;
+mod symmetric_eigen;
 pub mod wear;
 pub use character::*;
 

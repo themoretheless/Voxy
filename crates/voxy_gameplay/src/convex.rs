@@ -68,7 +68,186 @@ pub(crate) struct AffineBox {
     pub center: DVec3,
     pub edges: [DVec3; 3],
 }
+/// One geometric point of the touching polytope, with a world-distance error bound.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct AffineContact {
+    pub fraction: f64,
+    pub normal: DVec3,
+    pub point: DVec3,
+    pub tolerance: f64,
+}
+
 impl AffineBox {
+    /// Translation sweep plus a point on both admitted contact surfaces.
+    /// The obstacle is stationary; relative-frame callers must transport the point
+    /// by the obstacle's actual motion at the returned fraction.
+    pub(crate) fn sweep_affine_contact(
+        &self,
+        center: DVec3,
+        edges: [DVec3; 3],
+        displacement: DVec3,
+    ) -> Result<Option<AffineContact>, super::PhysicsError> {
+        let relative = center - self.center;
+        if !self.center.is_finite()
+            || !relative.is_finite()
+            || !displacement.is_finite()
+            || !glam::DMat3::from_cols(self.edges[0], self.edges[1], self.edges[2])
+                .inverse()
+                .is_finite()
+            || !glam::DMat3::from_cols(edges[0], edges[1], edges[2])
+                .inverse()
+                .is_finite()
+        {
+            return Err(super::PhysicsError::ContactWitness);
+        }
+        if self.penetration_affine(center, edges).is_some() {
+            return Err(super::PhysicsError::InitialOverlap);
+        }
+        let Some((fraction, normal)) = self.sweep_affine(center, edges, displacement) else {
+            return Ok(None);
+        };
+        let moved = AffineBox {
+            center: (center - self.center) + displacement * fraction,
+            edges,
+        };
+        let (point, tolerance) = self.contact_point_relative(&moved, normal)?;
+        Ok(Some(AffineContact {
+            fraction,
+            normal,
+            point,
+            tolerance,
+        }))
+    }
+
+    pub(crate) fn contact_point_relative(
+        &self,
+        other: &AffineBox,
+        normal: DVec3,
+    ) -> Result<(DVec3, f64), super::PhysicsError> {
+        use super::PhysicsError;
+        // All clipping happens in the obstacle-relative frame, not huge world coordinates.
+        let a = AffineBox {
+            center: DVec3::ZERO,
+            edges: self.edges,
+        };
+        let b = AffineBox {
+            center: other.center,
+            edges: other.edges,
+        };
+        let scale = a
+            .edges
+            .iter()
+            .chain(&b.edges)
+            .map(|e| e.abs().max_element())
+            .fold(b.center.abs().max_element().max(1.), f64::max);
+        let tolerance = 256. * f64::EPSILON * scale;
+        fn slabs(shape: &AffineBox) -> Result<[(DVec3, f64); 3], PhysicsError> {
+            let inverse =
+                glam::DMat3::from_cols(shape.edges[0], shape.edges[1], shape.edges[2]).inverse();
+            if !inverse.is_finite() {
+                return Err(PhysicsError::ContactWitness);
+            }
+            let rows = inverse.transpose().to_cols_array_2d();
+            let mut result = [(DVec3::ZERO, 0.); 3];
+            for (slot, row) in result.iter_mut().zip(rows) {
+                let row = DVec3::from_array(row);
+                let length = row.x.hypot(row.y).hypot(row.z);
+                if !length.is_finite() || length == 0. {
+                    return Err(PhysicsError::ContactWitness);
+                }
+                *slot = (row / length, 1. / length);
+            }
+            Ok(result)
+        }
+        let planes_a = slabs(&a)?;
+        let planes_b = slabs(&b)?;
+        fn vertices(shape: &AffineBox) -> [DVec3; 8] {
+            std::array::from_fn(|bits| {
+                shape.center
+                    + (0..3)
+                        .map(|k| shape.edges[k] * if bits & (1 << k) == 0 { -1. } else { 1. })
+                        .sum::<DVec3>()
+            })
+        }
+        let va = vertices(&a);
+        let vb = vertices(&b);
+        let contains = |point: DVec3, shape: &AffineBox, planes: &[(DVec3, f64); 3]| {
+            planes
+                .iter()
+                .all(|(axis, half)| axis.dot(point - shape.center).abs() <= half + tolerance)
+        };
+        let plane = a.radius(normal);
+        let other_plane = normal.dot(b.center) - b.radius(normal);
+        if !plane.is_finite() || (other_plane - plane).abs() > tolerance {
+            return Err(PhysicsError::ContactWitness);
+        }
+        let mut points = Vec::with_capacity(160);
+        let mut admit = |point: DVec3| {
+            if point.is_finite()
+                && (normal.dot(point) - plane).abs() <= tolerance
+                && (normal.dot(point) - other_plane).abs() <= tolerance
+                && contains(point, &a, &planes_a)
+                && contains(point, &b, &planes_b)
+            {
+                if !points
+                    .iter()
+                    .any(|old: &DVec3| (*old - point).abs().max_element() <= tolerance)
+                {
+                    points.push(point);
+                }
+            }
+        };
+        for point in va.into_iter().chain(vb) {
+            admit(point);
+        }
+        for (vertices, obstacle, planes) in [(va, &b, planes_b), (vb, &a, planes_a)] {
+            for bits in 0..8 {
+                for k in 0..3 {
+                    if bits & (1 << k) != 0 {
+                        continue;
+                    }
+                    let start = vertices[bits];
+                    let delta = vertices[bits | (1 << k)] - start;
+                    for (axis, half) in planes {
+                        let speed = axis.dot(delta);
+                        if speed == 0. {
+                            continue;
+                        }
+                        for sign in [-1., 1.] {
+                            let fraction =
+                                (sign * half - axis.dot(start - obstacle.center)) / speed;
+                            if fraction.is_finite() && (0. ..=1.).contains(&fraction) {
+                                admit(start + delta * fraction);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if points.is_empty() {
+            return Err(PhysicsError::ContactWitness);
+        }
+        // A convex combination stays inside both shapes; it is not an area-weighted
+        // pressure center or a complete contact manifold.
+        let count = points.len() as f64;
+        let relative: DVec3 = points.into_iter().map(|p| p / count).sum();
+        if !contains(relative, &a, &planes_a)
+            || !contains(relative, &b, &planes_b)
+            || (normal.dot(relative) - plane).abs() > tolerance
+            || (normal.dot(relative) - other_plane).abs() > tolerance
+        {
+            return Err(PhysicsError::ContactWitness);
+        }
+        let point = self.center + relative;
+        if !point.is_finite() {
+            return Err(PhysicsError::ContactWitness);
+        }
+        Ok((
+            point,
+            tolerance + 8. * f64::EPSILON * self.center.abs().max_element(),
+        ))
+    }
+
     pub(crate) fn axes_for(&self, body: [DVec3; 3]) -> impl Iterator<Item = DVec3> {
         // Normalize directions before crossing: tiny/large extents must not
         // remove separating axes or overflow their cross products.
@@ -417,5 +596,216 @@ mod coordinate_mapping_tests {
         }
         let changed = glam::DQuat::from_xyzw(0.2_f64.next_up(), 0.2, 0.3, 0.3).normalize();
         assert_eq!(rotation_coordinate_preimage(changed, 1), None);
+    }
+}
+
+#[cfg(test)]
+mod contact_witness_tests {
+    use super::*;
+    fn box_shape(center: DVec3, half: DVec3) -> AffineBox {
+        AffineBox {
+            center,
+            edges: [DVec3::X * half.x, DVec3::Y * half.y, DVec3::Z * half.z],
+        }
+    }
+    fn on_shapes(a: AffineBox, b: AffineBox, hit: AffineContact) {
+        for shape in [a, b] {
+            let inverse =
+                glam::DMat3::from_cols(shape.edges[0], shape.edges[1], shape.edges[2]).inverse();
+            let local = inverse * (hit.point - shape.center);
+            for k in 0..3 {
+                let row_length = inverse.transpose().col(k).length();
+                assert!(
+                    local[k].abs() <= 1. + hit.tolerance * row_length * 2.,
+                    "point={:?} local={local:?} bound={}",
+                    hit.point,
+                    hit.tolerance
+                );
+            }
+        }
+        assert!((hit.normal.length() - 1.).abs() < 1e-12);
+        assert!(
+            (hit.normal.dot(hit.point - b.center) + b.radius(hit.normal)).abs()
+                <= hit.tolerance * 2.
+        );
+        assert!(
+            (hit.normal.dot(hit.point - a.center) - a.radius(hit.normal)).abs()
+                <= hit.tolerance * 2.
+        );
+    }
+    #[test]
+    fn clipped_partial_face_witness_is_not_midpoint_of_support_centers() {
+        let a = box_shape(DVec3::ZERO, DVec3::ONE);
+        let b = box_shape(DVec3::new(-3., 1.3, 0.), DVec3::splat(0.5));
+        let displacement = DVec3::X * 3.;
+        let hit = a
+            .sweep_affine_contact(b.center, b.edges, displacement)
+            .unwrap()
+            .unwrap();
+        assert!((hit.fraction - 0.5).abs() < 1e-12);
+        assert!((hit.point - DVec3::new(-1., 0.9, 0.)).length() < 1e-12);
+        on_shapes(
+            a,
+            AffineBox {
+                center: b.center + displacement * hit.fraction,
+                ..b
+            },
+            hit,
+        );
+        // The support-center midpoint at y=0.65 would be outside b's contact face.
+        assert!(hit.point.y > 0.8);
+    }
+    #[test]
+    fn rotated_sheared_and_edge_contacts_have_points_in_both_shapes() {
+        for i in 0..32 {
+            let angle = f64::from(i) * 0.137;
+            let qa = glam::DQuat::from_euler(glam::EulerRot::XYZ, angle, 0.3, 0.2);
+            let qb = glam::DQuat::from_euler(glam::EulerRot::XYZ, -0.4, angle + 0.2, -angle);
+            let a = AffineBox {
+                center: DVec3::ZERO,
+                edges: [
+                    qa * DVec3::X * 0.7,
+                    qa * DVec3::new(0.3, 0.8, 0.),
+                    qa * DVec3::Z * 0.9,
+                ],
+            };
+            let b = AffineBox {
+                center: DVec3::new(-5., 0.1, 0.2),
+                edges: [
+                    qb * DVec3::X * 0.4,
+                    qb * DVec3::Y * 0.5,
+                    qb * DVec3::new(0.1, 0., 0.3),
+                ],
+            };
+            let displacement = DVec3::X * 10.;
+            let hit = a
+                .sweep_affine_contact(b.center, b.edges, displacement)
+                .unwrap()
+                .unwrap();
+            let original = a.sweep_affine(b.center, b.edges, displacement).unwrap();
+            assert_eq!(hit.fraction, original.0);
+            assert_eq!(hit.normal, original.1);
+            on_shapes(
+                a,
+                AffineBox {
+                    center: b.center + displacement * hit.fraction,
+                    ..b
+                },
+                hit,
+            );
+        }
+    }
+    #[test]
+    fn geometric_witness_drives_shared_point_impulse_with_off_center_torque() {
+        use physics::{
+            astrophysics_spin::Spin,
+            contact::{ContactBody, resolve_normal_impact},
+            gravity::Body,
+        };
+        let a = box_shape(DVec3::ZERO, DVec3::ONE);
+        let b = box_shape(DVec3::new(-3., 0.5, 0.), DVec3::splat(0.5));
+        let hit = a
+            .sweep_affine_contact(b.center, b.edges, DVec3::X * 3.)
+            .unwrap()
+            .unwrap();
+        let spin = Spin {
+            orientation: [0., 0., 0., 1.],
+            angular_momentum: [0.; 3],
+            inertia: [1.; 3],
+        };
+        let mut first = ContactBody {
+            motion: Body {
+                mass: 1.,
+                position: (b.center + DVec3::X * 3. * hit.fraction).to_array(),
+                velocity: [3., 0., 0.],
+            },
+            spin: Some(spin),
+        };
+        let mut second = ContactBody {
+            motion: Body {
+                mass: 1.,
+                position: [0.; 3],
+                velocity: [0.; 3],
+            },
+            spin: Some(spin),
+        };
+        let report = resolve_normal_impact(
+            &mut first,
+            Some(&mut second),
+            hit.point.to_array(),
+            hit.normal.to_array(),
+            0.,
+        )
+        .unwrap();
+        assert!((report.inverse_effective_mass - 2.25).abs() < 1e-12);
+        assert!((second.motion.velocity[0] - 4. / 3.).abs() < 1e-12);
+        assert!((second.spin.unwrap().angular_momentum[2] + 2. / 3.).abs() < 1e-12);
+        assert!(
+            (first.energy().unwrap() + second.energy().unwrap() + report.dissipated_energy - 4.5)
+                .abs()
+                < 1e-12
+        );
+    }
+    #[test]
+    fn witness_is_stable_under_uniform_scale_and_large_translation() {
+        for scale in [0.001, 1., 1000.] {
+            for origin in [DVec3::ZERO, DVec3::splat(100_000.)] {
+                let a = box_shape(origin, DVec3::splat(scale));
+                let b = box_shape(
+                    origin + DVec3::new(-3., 1.3, 0.) * scale,
+                    DVec3::splat(0.5 * scale),
+                );
+                let displacement = DVec3::X * 3. * scale;
+                let hit = a
+                    .sweep_affine_contact(b.center, b.edges, displacement)
+                    .unwrap()
+                    .unwrap();
+                on_shapes(
+                    a,
+                    AffineBox {
+                        center: b.center + displacement * hit.fraction,
+                        ..b
+                    },
+                    hit,
+                );
+            }
+        }
+    }
+    #[test]
+    fn clear_separating_overlap_and_degenerate_inputs_are_explicit() {
+        let a = box_shape(DVec3::ZERO, DVec3::ONE);
+        let b = box_shape(DVec3::new(-3., 5., 0.), DVec3::splat(0.5));
+        assert!(
+            a.sweep_affine_contact(b.center, b.edges, DVec3::X * 3.)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            a.sweep_affine_contact(DVec3::new(-1.5, 0., 0.), b.edges, -DVec3::X)
+                .unwrap()
+                .is_none()
+        );
+        assert_eq!(
+            a.sweep_affine_contact(DVec3::ZERO, b.edges, DVec3::X)
+                .unwrap_err(),
+            crate::PhysicsError::InitialOverlap
+        );
+        assert!(
+            a.sweep_affine_contact(b.center, b.edges, DVec3::splat(f64::NAN))
+                .is_err()
+        );
+        assert!(
+            a.sweep_affine_contact(DVec3::splat(f64::INFINITY), b.edges, DVec3::X)
+                .is_err()
+        );
+        let invalid = AffineBox {
+            center: DVec3::ZERO,
+            edges: [DVec3::ZERO; 3],
+        };
+        assert!(
+            invalid
+                .sweep_affine_contact(DVec3::new(-3., 0., 0.), b.edges, DVec3::X * 3.)
+                .is_err()
+        );
     }
 }

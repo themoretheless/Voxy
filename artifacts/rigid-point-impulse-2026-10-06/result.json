@@ -1,0 +1,31 @@
+{
+  "scope": "shared frictionless point-contact angular impulse mechanics, reused by translation contact timeline",
+  "source_sha256": {
+    "crates/physics/src/contact.rs": "5ce9d60cea8f5fee97cea96ffe1c6698a748281034aee5c70397eb7ca71ac495",
+    "crates/physics/src/astrophysics_spin.rs": "d3326e5814707340e198b546ceb261f607d7c1797573aff539d22cd340bfc173",
+    "crates/physics/src/liquid/multi_body.rs": "c8fc7936223a9a3f0d83d4f5d0240f27b20f02f8b0a942278a29a462b8489dad",
+    "crates/physics/tests/rigid_point_impulse.rs": "14120806977e89ac8d313b0a51bdf97fc858a17e8f11d0b33be0c129545d4d28"
+  },
+  "regression": {
+    "passed": 1807,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "verified": [
+    "off-center fluid-point / rigid impulse momentum and energy",
+    "rigid/rigid impulse",
+    "static boundary recoil and torque",
+    "anisotropic rotated inertia",
+    "existing spin integration",
+    "atomic two-owner failure",
+    "representable tiny-mass high-speed energy"
+  ],
+  "remaining": [
+    "rotating compound continuous collision backend and contact points",
+    "scene COM and inertia admission",
+    "angular state and pose publication",
+    "angular friction",
+    "all original engine parity and hardware requirements"
+  ]
+}

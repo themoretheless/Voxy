@@ -1,0 +1,39 @@
+{
+  "scope": "explicit compound homogeneous affine mass distribution admission, independent of collision proxies",
+  "source_sha256": {
+    "crates/physics/src/mass_properties.rs": "6d0fa60ddf0cad55695165e6ba5e023267fb4a36c1e7014d27fc2c2e9024770b",
+    "crates/physics/src/symmetric_eigen.rs": "5b0f40cf99b5f22a2ca427cd437b166521ad18e98bccfe96a36c2028da79fe92",
+    "crates/physics/src/biomechanics/stress.rs": "68e183315a934e1f231dde20402d448b3646565a74560eda93d9e21ec8eea410",
+    "crates/physics/tests/mass_properties.rs": "5b8b89ca4eaf16f6e389beda6a910a819f2119d7f2d5072c378882d69d174f33",
+    "crates/voxy_gameplay/src/liquid_body.rs": "ce3132e13fca64a0c6edbe66c651a2f363f96d043cf692a874b5d3188ee49c79",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "c2c1aac2ce7e5caa959cf2b043d9fec4ebde55c522d3ff92016554e82c130803",
+    "crates/voxy_editor/src/lib.rs": "795a8f2825476189f5aba21e1f6f50214ff3201b07ca8e26e778a373e94980b6"
+  },
+  "qualification": {
+    "mass_properties_tests": 5,
+    "stress_compatibility_tests": 7,
+    "gameplay_unit": 95,
+    "gameplay_integration": 46,
+    "editor_unit": 173,
+    "editor_ignored": 13,
+    "updated_collider_independence_test": "passed",
+    "app_editor_all_target_release": "passed",
+    "fmt_diff_check": "passed"
+  },
+  "verified": [
+    "analytic uniform cuboid",
+    "parallel-axis unequal constituent COM",
+    "full sheared tensor and proper principal frame",
+    "representable extreme scales",
+    "duplicate collider mass independence",
+    "ownership and mass edit rollback",
+    "persisted Play Stop restart mass metadata"
+  ],
+  "unfinished": [
+    "physical Spin path enclosures",
+    "COM-based angular ownership and pivot publication",
+    "persistent rigid multi-point constraints",
+    "native angular Play and visual proof",
+    "all original engine and hardware requirements"
+  ]
+}

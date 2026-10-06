@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "physics-regression.log": {
+      "passed": 1512,
+      "failed": 0,
+      "ignored": 11
+    },
+    "final-affine-regression.log": {
+      "passed": 319,
+      "failed": 0,
+      "ignored": 13
+    }
+  },
+  "consumer_check": "passed",
+  "scope": "COM frame conversion and atomic CPU stored-affine pose publication; angular Play runtime remains unfinished",
+  "sha256": {
+    "crates/voxy_gameplay/src/rigid_frame.rs": "dcc34d82eb264eac9b370c996aa8bdac1988bcd890809a07e1618a0212b4c110",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "f62554896625edb5b4e6c863729e95ab3c799ef0b1b2b47657556b5fb28ab3a7",
+    "crates/voxy_gameplay/src/lib.rs": "60009c9fac3576c562c2654e7723747e707b9a462a81f52333e661384a5cafbc",
+    "crates/voxy_editor/src/lib.rs": "68be35f8e8b2b18d150c86fbd954c2e872fe3af5ea95782ae3f6070299277baa"
+  }
+}

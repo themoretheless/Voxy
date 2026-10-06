@@ -1,0 +1,32 @@
+{
+  "scope": "compound finite translating scene bodies and persisted headless Play lifecycle",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "6d5ebe5ff571e48dd8a3c75fc73dd12ff0f7a497fcd97426dc11db06a6e2aea0",
+    "crates/voxy_editor/src/lib.rs": "d29f86936cdd815a24c1b5d63a2addb204a7c4e99ccb2b73dc855b4fb0b1c233"
+  },
+  "checks": {
+    "full_gameplay_unit_before_final_added_test": 85,
+    "gameplay_integration": 46,
+    "final_added_liquid_recoil_test": 1,
+    "editor_unit": 173,
+    "editor_ignored": 13,
+    "app_editor_release_all_targets": "passed",
+    "fmt_diff_check": "passed"
+  },
+  "proven": [
+    "child-only body pair recoil",
+    "compound-static external momentum and energy",
+    "fluid-compound equal opposite recoil",
+    "rotated scaled compound gap",
+    "root-relative offset at 100 km",
+    "shape edit atomic rollback",
+    "shape-pair candidate budget",
+    "persisted Play Stop restart"
+  ],
+  "unfinished": [
+    "angular momentum and contact torque",
+    "inertia from authored mass distribution",
+    "native GPU body visual proof",
+    "general engine parity and other goal requirements"
+  ]
+}

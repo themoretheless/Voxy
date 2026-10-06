@@ -4950,3 +4950,280 @@ owners. Three focused tests cover an empty-fluid three-body impulse chain,
 fluid recoil followed by a body pair and wall impact, and transactional rollback.
 The authored scene runtime still admits only one body; multiple authored bodies,
 rotation and compound colliders remain unfinished.
+
+### Multiple authored bodies in scenes and Play (2026-10-06)
+
+The single-body scene admission limit above is superseded: SceneLiquidRuntime
+now owns up to 128 root BoxCollider bodies and invokes LiquidBodyWorld for all
+active owners. Their exact affine templates are removed from static surroundings;
+particle/body, body/body and body/static sweeps use relative velocities and
+accepted physical translations on one shared timeline. Inactive bodies retain
+position and velocity, with no time advance. All pose matrices are admitted before
+one SceneGraph::set_locals publication; failure in a later body publishes none.
+The legacy body_state getter returns the first owner, and body_states enumerates
+all admitted owners. Compound colliders, parent transforms and angular dynamics
+remain explicitly unsupported.
+
+Gameplay tests demonstrate finite equal-mass recoil and contact energy balance,
+three-owner admission with the inactive third paused, continued stepping after
+publication, and rollback of every pose on second-body overflow. A headless
+editor test loads two authored body descriptors, verifies collision and both
+published poses in Play, restores the document on Stop and restores both authored
+velocities on restart. Native window/GPU body presentation was not exercised.
+Evidence is saved in artifacts/scene-multiple-bodies-2026-10-06.
+
+### Compound translating scene bodies (2026-10-06)
+
+The preceding single-BoxCollider restriction is superseded. Each root
+`game.liquid-body.v1` now owns 1..128 BoxColliders on itself or descendant nodes;
+a root without its own collider is supported. Descendant local transform paths
+and descriptors bind once, and edits, reparenting or competing mechanical
+transform owners require rebind. Inactive collider branches are omitted from
+contact queries. Overlap between shapes belonging to the same body is allowed.
+Shapes belonging to other bodies or static surroundings still reject initial
+penetration.
+
+Particle/body queries visit each owned shape, body pairs visit the Cartesian
+shape pairs, and body/static queries visit each owned shape against surroundings.
+The earliest exact affine SAT hit enters the existing shared event solver;
+compound gaps are not replaced with a bounding box. Candidate budgets cover the
+actual shape pair count, with checked multiplication before enumeration.
+Root-relative templates compose authored transforms in f64 without world-space
+f32 translation cancellation. Root translation is published atomically, while
+child local transforms remain authored and inherit its movement.
+
+Tests cover child-only finite recoil, static wall impulse and contact energy,
+rotated/scaled compound gaps, changed-child rollback, invalid extents, candidate
+limits and preservation of a 0.03-metre offset at a 100-kilometre root coordinate.
+The actual headless editor Play test uses a persisted child-only collider,
+checks both body poses, restores the complete document on Stop and resets both
+velocities on restart. Logs are in artifacts/scene-compound-bodies-2026-10-06.
+
+These bodies still have fixed authored orientation. Mass is owned by the root,
+not inferred from collider union volume; angular momentum, inertia and contact
+points are not implemented by this translation-only solver. Native visual
+presentation and full compound angular mechanics remain unverified/unfinished.
+
+Additional liquid recoil qualification runs an actual SPH particle against a
+child-only compound: equal unit masses share 3 m/s incident momentum as 1.5 m/s
+each, report 2.25 J contact loss and zero static-boundary impulse. The child local
+pose remains unchanged. This is finite translation recoil, not angular response.
+
+### Shared point-contact angular impulse mechanics (2026-10-06)
+
+`physics::contact` provides contact-time snapshots combining the existing
+`gravity::Body` linear state with optional existing `astrophysics_spin::Spin`.
+Snapshots do not introduce another world, event loop or owner. A point particle
+has no intrinsic spin; finite rigid inertia is defined by positive physical
+principal moments about the center of mass and a body-to-world orientation.
+`Spin::inverse_inertia` now serves both angular velocity and contact response.
+
+At a caller-certified world contact point, normal response uses material-point
+velocity `v + omega cross r` and inverse effective mass
+`1/m + (r cross n) dot I_world_inverse (r cross n)` from each participant.
+`normal_impulse` computes frictionless restitution response and its exact normal
+kinetic loss. `resolve_normal_impact` stages both participants, applies opposite
+point impulses, updates spin by `r cross J`, then commits both together. A fixed
+boundary is the missing second participant; its external linear impulse is `-J`
+and its angular impulse about any chosen origin is `contact_point cross -J`.
+Separating contacts receive no impulse. Geometry and contact timing are not
+inferred by this primitive, and energy loss is not silently converted to heat.
+
+The existing fluid/multiple-body timeline delegates its normal impulse/loss to
+this same primitive, retaining its translation-only tangential damping contract.
+Tests independently close linear/angular momentum and energy for off-center
+particle impacts at restitution 0, 0.4 and 1, finite rigid/rigid exchange and a
+static boundary. Rotated anisotropic inertia changes effective mass as expected;
+the existing Spin integrator then advances orientation with fixed world angular
+momentum. Late second-owner energy overflow and invalid normals preserve both
+snapshots. A very small mass at very large speed checks representable kinetic
+energy without overflowing the intermediate squared velocity.
+
+This is the angular response foundation, not completed rotating scene contact.
+SceneLiquidRuntime still constrains authored orientation. A backend-certified
+contact point, continuous collision queries for rotating compounds, physical
+center-of-mass/mass distribution admission, angular pose publication and angular
+friction remain required before enabling rigid angular response in Play.
+Evidence: artifacts/rigid-point-impulse-2026-10-06.
+
+Final qualification of the point-impulse change: 1807 physics/gameplay/editor
+tests passed, 24 ignored, zero failures. App/editor release all-target checks,
+formatting and source/doc diff checks passed. result.json pins source hashes and
+retains the unfinished rotating-scene requirements. No renderer or GPU proof is
+claimed for this point-impulse milestone.
+
+### Affine contact point admission (2026-10-06)
+
+The scene affine SAT backend now has `sweep_affine_contact`: it retains the same
+translation TOI/normal and constructs a shared point of the touching polytopes.
+It clips both sets of box vertices and edge/face intersections, admits points
+inside both shapes and on both opposing support planes, then checks their convex
+combination again. It rejects failed witnesses, invalid geometry/nonfinite
+queries and initial penetration explicitly. Scene liquid/static and finite
+compound queries now require this witness before admitting their GeometryHit;
+late failures remain part of the existing whole-world transaction.
+
+Clipping takes place in the obstacle-relative f64 frame. The returned admission
+tolerance includes world-point addition roundoff; it is a floating-point residual
+tolerance, not an interval-arithmetic certificate. The finite candidate list is
+bounded by two sets of eight vertices and 144 edge/face intersections. A point is
+in the contact patch, but is not an area-weighted pressure centroid or a complete
+multi-point contact manifold. Relative-motion callers must add the obstacle's
+actual displacement at TOI before using the witness as a world-space lever arm.
+
+Tests independently transform the point into each shape's local coordinates.
+They cover a partially overlapping face where averaging support-face centers
+would place the point outside one body; 32 rotated/sheared configurations; uniform
+scales 0.001, 1 and 1000; and roots translated 100 kilometres. The computed point
+also drives physics::contact directly, verifying the expected off-center angular
+impulse, effective mass and kinetic energy balance. Clear/separating queries,
+initial overlap, degenerate shapes and nonfinite inputs have explicit outcomes.
+
+This validates contact points for translation sweeps. Continuous rotating-shape
+queries, scene center-of-mass/inertia admission, multi-point rigid constraints
+and angular publication in Play remain unfinished. Logs are saved in
+artifacts/affine-contact-witness-2026-10-06.
+
+### Two-body angular sweep geometry (2026-10-06)
+
+`RigidBoxMotion` describes one fixed affine shape on a translating frame with a
+constant world-axis angular arc over the normalized interval. `sweep_rigid_pair`
+handles two such moving frames on the existing angular advancement kernel.
+In the second frame, its local shape stays stationary; the first shape is sampled
+through the relative rotations/translations. Its speed bound includes relative
+translation, first-body rotation around its frame origin and rotation of that
+relative geometry into the second frame. Directed projection gaps and advancement
+reuse the existing gap module. Step/query exhaustion returns an explicit error.
+
+The new tighter contact mode leaves the existing character/path stop tolerance
+unchanged. A returned rotating pair candidate must pass the same two-shape
+contact point admission as translation hits. Its normal and point are then
+transported by the second frame's actual orientation and translation at TOI.
+Zero angular arcs use the exact translating affine sweep, including world-point
+transport for a moving second shape. Scene compound and particle/body affine
+queries invoke this shared entrypoint with their currently constrained zero arcs.
+
+Tests demonstrate a rotating thin body hitting a wall while both endpoint poses
+are free; free pose immediately before and penetration immediately after the
+reported contact; a pair with both angular arcs and common translation;
+world rotation/translation covariance of time, normal and witness; exact
+zero-arc equivalence; and explicit budget/nonfinite failures. A geometric initial
+contact is not automatically an approaching impact; persistent contact policy
+and the point velocity test belong to the mechanical caller.
+
+These are nominal constant-axis rigid trajectories, not the variable angular
+velocity of an arbitrary torque-free anisotropic Spin. The residual point
+tolerance is not an interval certificate of the evaluated angular trajectory.
+Physical free-spin trajectory/enclosure admission, scene mass distribution and
+COM, persistent multi-point constraints and angular publication in Play remain
+unfinished. Evidence: artifacts/rigid-pair-sweep-2026-10-06.
+
+### Explicit compound mass and principal inertia (2026-10-06)
+
+`physics::mass_properties::from_boxes` integrates explicitly supplied homogeneous
+affine mass volumes, independently of contact colliders. It computes total mass,
+center of mass, full centroidal inertia, descending principal moments and a
+right-handed principal frame. Intrinsic covariance uses each half-edge outer
+product divided by three; parallel-axis terms shift each constituent to the
+combined center. Origin-relative accumulation preserves small offsets at large
+coordinates, and square-root mass scaling avoids intermediate squared-length
+overflow for representable inertia. A shared cyclic Jacobi helper now serves
+both inertia and the existing stress diagnostics; reconstruction, orthogonality,
+positive moments and physical triangle inequalities gate admission.
+
+Authored `game.liquid-mass.v1` supplies `parts`, each with `mass_kg`, `center_m`
+and three `half_edges_m` in the root local frame. Root rotation/scale transform
+these volumes in f64; declared physical mass is not rescaled by visual volume.
+One to 128 parts are admitted. Their sum must match `game.liquid-body.v1.mass_kg`
+to relative 1e-12. Overlapping mass constituents are explicitly additive;
+overlapping/duplicate collision proxies never infer additional mass. A mass
+component without a liquid-body owner rejects. Descriptor edits/removal/addition
+require runtime rebind and preserve the staged scene on error.
+
+`body_mass_properties` exposes the admitted tensor and COM offset relative to the
+root origin in the initial world-oriented frame. Translation leaves these
+relative quantities unchanged. Existing descriptors without explicit mass
+volumes remain supported and return None, with no guessed inertia. The existing
+translation-only mechanics still stores the scene pivot, not a newly substituted
+COM; conversion to COM-based angular ownership remains part of angular integration.
+
+Tests cover analytic cuboid inertia; unequal constituents and parallel-axis
+transport; translation by 1e15 metres in the pure mass kernel; sheared full tensors;
+proper principal reconstruction; explicitly additive overlapping constituents;
+tiny mass/huge dimensions with representable inertia; invalid/degenerate/overflow
+and budget rejection; root-scale admission, duplicate collider independence,
+changed-mass rollback and orphan ownership rejection. The persisted headless
+editor Play/Stop/restart fixture now carries both body mass distributions and
+checks admitted positive principal moments before restoring the document.
+
+Stress compatibility, gameplay/editor regressions and logs are saved in
+artifacts/explicit-body-inertia-2026-10-06. Physical Spin trajectory admission,
+COM-to-pivot angular publication and persistent rigid contact constraints remain
+unfinished; this milestone does not enable angular Play behavior.
+
+### Adaptive physical Spin path preparation (2026-10-06)
+
+`Spin::prepare_arc` exposes the existing bounded implicit-midpoint step as an
+immutable sampleable arc; `Spin::step` delegates to the same preparation and
+retains the same accepted endpoint. Samples preserve admitted endpoints exactly,
+use the arc's constant world angular velocity for orientation and its declared
+constant world torque for angular momentum. This numerical arc is not substituted
+for an exact anisotropic free-spin orbit.
+
+`Spin::prepare_path` composes these arcs adaptively without changing the caller.
+Explicit angular-error, minimum-step, arc-count and trial-count budgets gate the
+complete path. Its model residual bound uses inertia inverse spectral spread,
+a bound on world angular momentum, the midpoint velocity defect and variation
+across each arc. Gronwall propagation carries prior angular error through the
+remaining motion. Admission reserves error capacity for future amplification;
+a merely linear time allocation was found to strand long precession paths and
+was corrected. Sampling at segment joins returns the exact cached endpoint.
+
+The reported model angular bound includes a numerical guard. It is an analytically
+motivated residual bound evaluated in floating point, not an interval certificate
+of quaternion/transcendental evaluation or a proved true-trajectory enclosure on
+all hardware. Constant-torque momentum accumulation also uses floating-point
+arithmetic. Exhausted budgets and unresolved bounds reject the full preparation.
+
+`sweep_spin_path_static` feeds admitted principal-frame arcs into the existing
+angular sweep with a shape-radius times angular-error envelope. It returns a
+possible-contact prefix under that model envelope, not an invented physical
+point/impact. A far obstacle is clear under the same envelope. This bridge is
+currently qualified by a headless test and is not enabled in the Play owner.
+COM-to-pivot transformation remains an explicit integration responsibility.
+
+Independent RK4 qualification sampled anisotropic free spin at 129 points per
+fixture. The 0.1-second fixture used 31 arcs/65 trials, with measured maximum
+angular discrepancy 4.605711075859615e-7 rad versus model bound
+9.720832630325042e-5 rad. The 2.6-second precession fixture used 2427 arcs,
+measured maximum discrepancy 2.09871794637442e-8 rad versus model bound
+0.0019988598827537234 rad. These are finite-fixture measurements, not universal
+accuracy or throughput claims. Analytic spherical rotation/torque, tighter-budget
+refinement, exact endpoints, failed-path rollback and invalid samples also pass.
+The geometry bridge reports possible contact at 1.2094303270132576 seconds with
+0.0009218217101396937 metres of model envelope in its specific thin-body fixture.
+
+Logs: artifacts/adaptive-spin-path-2026-10-06. Formal evaluated-trajectory
+certification, reciprocal rotating-fluid contact events, persistent rigid
+constraints and angular scene publication remain unfinished.
+
+### Rigid center-of-mass frame publication (2026-10-06)
+
+`RigidBodyFrame` binds explicit mass properties to the authored root pivot and
+principal inertia frame. Preparing a contact body converts pivot velocity to COM
+velocity using omega cross offset. Preparing a scene pose preserves COM while
+recovering the pivot from the current principal orientation. The stored f32 pose
+is admitted against an explicit point-error budget, including the original raw
+authored quaternion affine matrix and its transported geometry. This bounds CPU
+stored affine formation; it is not a GPU arithmetic or interval certificate.
+
+`publish_rigid_poses` stages every root pose before one atomic scene update.
+Duplicate nodes, parented targets, changed scale and late coordinate overflow
+reject the complete batch. Four focused tests cover quarter-turn COM invariance,
+point-impulse rotation, scaled affine vertex auditing and late failure rollback.
+Editor Play tests verify frame metadata survives authored body binding and restart.
+
+The runtime exposes immutable frame metadata but still advances translating
+bodies. Persistent angular state, reciprocal rotating contact events and angular
+Play presentation remain unfinished. Logs are retained in
+`artifacts/rigid-com-publication-2026-10-06`, including earlier failed trials.

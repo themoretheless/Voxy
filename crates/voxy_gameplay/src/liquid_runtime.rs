@@ -19,7 +19,106 @@ struct BodyOwner {
     descriptor: crate::LiquidBody,
     state: physics::liquid::TranslatingBody,
     published: voxy_scene::Transform,
+    colliders: Vec<ColliderOwner>,
+    mass_descriptor: Option<crate::LiquidMassDistribution>,
+    mass_properties: Option<physics::mass_properties::MassProperties>,
+    rigid_frame: Option<crate::RigidBodyFrame>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+struct ColliderOwner {
+    node: NodeId,
     collider: crate::BoxCollider,
+    path: Vec<(NodeId, voxy_scene::Transform)>,
+}
+fn body_colliders(scene: &SceneGraph, root: NodeId) -> Result<Vec<ColliderOwner>, String> {
+    let mut result = Vec::new();
+    for (node, collider) in scene.components::<crate::BoxCollider>() {
+        let mut current = Some(node);
+        let mut path = Vec::new();
+        while let Some(id) = current {
+            if id == root {
+                for (child, _) in &path {
+                    if scene
+                        .component::<crate::LiquidBody>(*child)
+                        .map_err(|e| format!("collider owner: {e:?}"))?
+                        .is_some()
+                        || scene
+                            .component::<crate::CharacterBody>(*child)
+                            .map_err(|e| format!("collider owner: {e:?}"))?
+                            .is_some()
+                        || scene
+                            .component::<crate::AngularMotion>(*child)
+                            .map_err(|e| format!("collider owner: {e:?}"))?
+                            .is_some()
+                    {
+                        return Err("compound collider has another transform owner".into());
+                    }
+                }
+                crate::validate_extents(collider.half_extents)
+                    .map_err(|e| format!("compound extents: {e:?}"))?;
+                crate::affine_box(scene, node, collider.half_extents)
+                    .map_err(|e| format!("compound geometry: {e:?}"))?;
+                result.push(ColliderOwner {
+                    node,
+                    collider: *collider,
+                    path,
+                });
+                break;
+            }
+            path.push((
+                id,
+                scene
+                    .local(id)
+                    .map_err(|e| format!("collider pose: {e:?}"))?,
+            ));
+            current = scene
+                .parent(id)
+                .map_err(|e| format!("collider parent: {e:?}"))?;
+        }
+    }
+    if result.is_empty() || result.len() > 128 {
+        return Err("liquid body requires 1..128 owned BoxColliders".into());
+    }
+    Ok(result)
+}
+
+fn collider_template(
+    body: &BodyOwner,
+    collider: &ColliderOwner,
+) -> Result<crate::convex::AffineBox, String> {
+    fn matrix(pose: voxy_scene::Transform, translation: glam::DVec3) -> glam::DMat4 {
+        glam::DMat4::from_scale_rotation_translation(
+            pose.scale.as_dvec3(),
+            pose.rotation.as_dquat(),
+            translation,
+        )
+    }
+    // Compose in root-relative f64 coordinates: published root translation must
+    // never round a child's physical offset through a world-space f32 matrix.
+    let mut transform = matrix(body.published, glam::DVec3::ZERO);
+    for (_, pose) in collider.path.iter().rev() {
+        transform *= matrix(*pose, pose.translation.as_dvec3());
+    }
+    let half = collider.collider.half_extents.map(f64::from);
+    let shape = crate::convex::AffineBox {
+        center: transform.transform_point3(glam::DVec3::ZERO),
+        edges: [
+            transform.transform_vector3(glam::DVec3::X * half[0]),
+            transform.transform_vector3(glam::DVec3::Y * half[1]),
+            transform.transform_vector3(glam::DVec3::Z * half[2]),
+        ],
+    };
+    if !transform.inverse().is_finite()
+        || !shape.center.is_finite()
+        || shape
+            .edges
+            .iter()
+            .any(|edge| !edge.is_finite() || edge.length_squared() < 1e-20)
+    {
+        return Err("nonfinite compound template".into());
+    }
+    Ok(shape)
 }
 
 /// One fluid world shared by all admitted scene sources.
@@ -29,7 +128,7 @@ pub struct SceneLiquidRuntime {
     scene: SceneId,
     sources: BTreeMap<NodeId, Source>,
     liquid: Liquid,
-    body: Option<BodyOwner>,
+    body: Vec<BodyOwner>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -77,9 +176,13 @@ impl physics::liquid::LiquidGeometry for SceneGeometry {
             if obstacle.shape.penetration_affine(center, edges).is_some() {
                 return Ok(GeometryHit::Overlap);
             }
-            if let Some((fraction, normal)) =
-                obstacle.shape.sweep_affine(center, edges, displacement)
+            if let Some(contact) = obstacle
+                .shape
+                .sweep_affine_contact(center, edges, displacement)
+                .map_err(|e| format!("liquid contact witness: {e:?}"))?
             {
+                let fraction = contact.fraction;
+                let normal = contact.normal;
                 if fraction < earliest {
                     earliest = fraction;
                     result = GeometryHit::Contact {
@@ -93,64 +196,169 @@ impl physics::liquid::LiquidGeometry for SceneGeometry {
     }
 }
 
-struct BodyEnvironment<'a> {
-    environment: &'a SceneGeometry,
-    template: crate::convex::AffineBox,
+struct SceneBodyWorld {
+    environment: SceneGeometry,
+    templates: Vec<Vec<crate::convex::AffineBox>>,
 }
-impl physics::liquid::DynamicLiquidEnvironment for BodyEnvironment<'_> {
-    fn sweep_particle(
+
+fn affine_hit(
+    shape: crate::convex::AffineBox,
+    center: glam::DVec3,
+    edges: [glam::DVec3; 3],
+    displacement: glam::DVec3,
+) -> Result<physics::liquid::GeometryHit, physics::liquid::Error> {
+    use physics::liquid::GeometryHit;
+    if shape.penetration_affine(center, edges).is_some() {
+        return Ok(GeometryHit::Overlap);
+    }
+    use crate::angular_sweep::{RigidBoxMotion, sweep_rigid_pair};
+    let motion = |origin, edges, displacement| RigidBoxMotion {
+        origin,
+        displacement,
+        orientation: glam::DQuat::IDENTITY,
+        angular: glam::DVec3::ZERO,
+        shape: crate::convex::AffineBox {
+            center: glam::DVec3::ZERO,
+            edges,
+        },
+    };
+    let contact = sweep_rigid_pair(
+        motion(center, edges, displacement),
+        motion(shape.center, shape.edges, glam::DVec3::ZERO),
+        &mut 1,
+        &mut 1,
+    )
+    .map_err(|_| physics::liquid::Error::CollisionBackend)?;
+    Ok(contact.map_or(GeometryHit::Clear, |contact| {
+        // Witness validation is part of admission even while angular motion is constrained.
+        debug_assert!(contact.point.is_finite() && contact.tolerance.is_finite());
+        GeometryHit::Contact {
+            fraction: contact.fraction,
+            normal: contact.normal.to_array(),
+        }
+    }))
+}
+fn nearest_hits(
+    hits: impl Iterator<Item = Result<physics::liquid::GeometryHit, physics::liquid::Error>>,
+) -> Result<physics::liquid::GeometryHit, physics::liquid::Error> {
+    use physics::liquid::GeometryHit;
+    let mut result = GeometryHit::Clear;
+    let mut earliest = f64::INFINITY;
+    for hit in hits {
+        let hit = hit?;
+        match hit {
+            GeometryHit::Overlap => return Ok(hit),
+            GeometryHit::Contact { fraction, .. } if fraction < earliest => {
+                earliest = fraction;
+                result = hit;
+            }
+            _ => {}
+        }
+    }
+    Ok(result)
+}
+impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
+    fn sweep_particle_body(
         &self,
-        center: [f64; 3],
+        p: &physics::liquid::Particle,
         radius: f64,
-        displacement: [f64; 3],
+        index: usize,
+        body: &physics::liquid::TranslatingBody,
+        dt: f64,
+        budget: usize,
+    ) -> Result<physics::liquid::GeometryHit, physics::liquid::Error> {
+        if self.templates[index].len() > budget {
+            return Err(physics::liquid::Error::CollisionBudget);
+        }
+        nearest_hits(self.templates[index].iter().map(|template| {
+            let mut shape = *template;
+            shape.center += glam::DVec3::from_array(body.position);
+            affine_hit(
+                shape,
+                glam::DVec3::from_array(p.position),
+                [
+                    glam::DVec3::X * radius,
+                    glam::DVec3::Y * radius,
+                    glam::DVec3::Z * radius,
+                ],
+                (glam::DVec3::from_array(p.velocity) - glam::DVec3::from_array(body.velocity)) * dt,
+            )
+        }))
+    }
+    fn sweep_body_pair(
+        &self,
+        first_index: usize,
+        first: &physics::liquid::TranslatingBody,
+        second_index: usize,
+        second: &physics::liquid::TranslatingBody,
+        dt: f64,
+        budget: usize,
+    ) -> Result<physics::liquid::GeometryHit, physics::liquid::Error> {
+        if self.templates[first_index]
+            .len()
+            .checked_mul(self.templates[second_index].len())
+            .is_none_or(|n| n > budget)
+        {
+            return Err(physics::liquid::Error::CollisionBudget);
+        }
+        nearest_hits(self.templates[first_index].iter().flat_map(|template| {
+            self.templates[second_index].iter().map(move |obstacle| {
+                let mut shape = *obstacle;
+                shape.center += glam::DVec3::from_array(second.position);
+                affine_hit(
+                    shape,
+                    template.center + glam::DVec3::from_array(first.position),
+                    template.edges,
+                    (glam::DVec3::from_array(first.velocity)
+                        - glam::DVec3::from_array(second.velocity))
+                        * dt,
+                )
+            })
+        }))
+    }
+    fn sweep_particle_environment(
+        &self,
+        p: &physics::liquid::Particle,
+        radius: f64,
+        dt: f64,
         budget: usize,
     ) -> Result<physics::liquid::GeometryHit, physics::liquid::Error> {
         physics::liquid::LiquidGeometry::sweep(
-            self.environment,
-            center,
+            &self.environment,
+            p.position,
             radius,
-            displacement,
+            p.velocity.map(|v| v * dt),
             budget,
         )
         .map_err(|_| physics::liquid::Error::CollisionBackend)
     }
-    fn sweep_body(
+    fn sweep_body_environment(
         &self,
+        index: usize,
         body: &physics::liquid::TranslatingBody,
-        displacement: [f64; 3],
+        dt: f64,
         budget: usize,
     ) -> Result<physics::liquid::GeometryHit, physics::liquid::Error> {
-        use physics::liquid::{Error, GeometryHit};
-        if self.environment.0.0.len() > budget {
-            return Err(Error::CollisionBudget);
+        if self.templates[index]
+            .len()
+            .checked_mul(self.environment.0.0.len())
+            .is_none_or(|n| n > budget)
+        {
+            return Err(physics::liquid::Error::CollisionBudget);
         }
-        let center = self.template.center + glam::DVec3::from_array(body.position);
-        let displacement = glam::DVec3::from_array(displacement);
-        let mut earliest = 1.;
-        let mut result = GeometryHit::Clear;
-        for obstacle in &self.environment.0.0 {
-            if obstacle
-                .shape
-                .penetration_affine(center, self.template.edges)
-                .is_some()
-            {
-                return Ok(GeometryHit::Overlap);
-            }
-            if let Some((fraction, normal)) =
-                obstacle
-                    .shape
-                    .sweep_affine(center, self.template.edges, displacement)
-            {
-                if matches!(result, GeometryHit::Clear) || fraction < earliest {
-                    earliest = fraction;
-                    result = GeometryHit::Contact {
-                        fraction,
-                        normal: normal.to_array(),
-                    };
-                }
-            }
-        }
-        Ok(result)
+        nearest_hits(self.templates[index].iter().flat_map(|template| {
+            self.environment.0.0.iter().map(move |obstacle| {
+                affine_hit(
+                    obstacle.shape,
+                    template.center + glam::DVec3::from_array(body.position),
+                    template.edges,
+                    glam::DVec3::from_array(body.velocity) * dt,
+                )
+            })
+        }))
+    }
+    fn has_environment(&self) -> bool {
+        !self.environment.0.0.is_empty()
     }
 }
 
@@ -170,12 +378,21 @@ impl SceneLiquidRuntime {
                 return Err("duplicate or empty liquid material identity".into());
             }
         }
+        for (node, _) in scene.components::<crate::LiquidMassDistribution>() {
+            if scene
+                .component::<crate::LiquidBody>(node)
+                .map_err(|e| format!("mass owner: {e:?}"))?
+                .is_none()
+            {
+                return Err("mass distribution requires a liquid body owner".into());
+            }
+        }
         let owners: Vec<_> = scene.components::<crate::LiquidBody>().collect();
-        if owners.len() > 1 {
-            return Err("scene liquid translating-body budget is currently one".into());
+        if owners.len() > 128 {
+            return Err("scene liquid translating-body budget exceeded (128)".into());
         }
         let body = owners
-            .first()
+            .iter()
             .map(|(node, descriptor)| {
                 if !descriptor.mass_kg.is_finite()
                     || descriptor.mass_kg <= 0.
@@ -201,39 +418,18 @@ impl SceneLiquidRuntime {
                 {
                     return Err("liquid body requires an exclusively owned root transform".into());
                 }
-                for (other, _) in scene.components::<crate::BoxCollider>() {
-                    let mut parent = scene
-                        .parent(other)
-                        .map_err(|e| format!("liquid collider parent: {e:?}"))?;
-                    while let Some(p) = parent {
-                        if p == *node {
-                            return Err(
-                                "compound liquid body colliders are not admitted yet".into()
-                            );
-                        }
-                        parent = scene
-                            .parent(p)
-                            .map_err(|e| format!("liquid collider parent: {e:?}"))?;
-                    }
-                }
-                let collider = *scene
-                    .component::<crate::BoxCollider>(*node)
-                    .map_err(|e| format!("liquid body collider: {e:?}"))?
-                    .ok_or("liquid body requires BoxCollider")?;
-                crate::affine_box(scene, *node, collider.half_extents)
-                    .map_err(|e| format!("liquid body geometry: {e:?}"))?;
-                if scene
-                    .active_in_hierarchy(*node)
-                    .map_err(|e| format!("liquid body activity: {e:?}"))?
+                let colliders = body_colliders(scene, *node)?;
+                let world =
+                    crate::static_world(scene).map_err(|e| format!("liquid environment: {e:?}"))?;
+                for own in world
+                    .0
+                    .iter()
+                    .filter(|b| colliders.iter().any(|c| c.node == b.owner))
                 {
-                    let shape = crate::affine_box(scene, *node, collider.half_extents)
-                        .map_err(|e| format!("liquid body geometry: {e:?}"))?;
-                    let world = crate::static_world(scene)
-                        .map_err(|e| format!("liquid environment: {e:?}"))?;
                     if world.0.iter().any(|b| {
-                        b.owner != *node
+                        !colliders.iter().any(|c| c.node == b.owner)
                             && b.shape
-                                .penetration_affine(shape.center, shape.edges)
+                                .penetration_affine(own.shape.center, own.shape.edges)
                                 .is_some()
                     }) {
                         return Err("liquid body initially overlaps scene geometry".into());
@@ -242,6 +438,18 @@ impl SceneLiquidRuntime {
                 let published = scene
                     .local(*node)
                     .map_err(|e| format!("liquid body pose: {e:?}"))?;
+                let mass_descriptor = scene
+                    .component::<crate::LiquidMassDistribution>(*node)
+                    .map_err(|e| format!("mass descriptor: {e:?}"))?
+                    .cloned();
+                let mass_properties = mass_descriptor
+                    .as_ref()
+                    .map(|d| d.prepare(descriptor.mass_kg, published))
+                    .transpose()?;
+                let rigid_frame = mass_properties
+                    .map(|p| crate::RigidBodyFrame::new(published, p))
+                    .transpose()
+                    .map_err(|e| format!("mass principal frame: {e:?}"))?;
                 Ok(BodyOwner {
                     node: *node,
                     descriptor: **descriptor,
@@ -251,10 +459,13 @@ impl SceneLiquidRuntime {
                         mass: descriptor.mass_kg,
                     },
                     published,
-                    collider,
+                    colliders,
+                    mass_descriptor,
+                    mass_properties,
+                    rigid_frame,
                 })
             })
-            .transpose()?;
+            .collect::<Result<Vec<_>, String>>()?;
         let liquid = Liquid::new(
             Vec::new(),
             materials.into_iter().map(|(_, m)| m).collect(),
@@ -317,10 +528,26 @@ impl SceneLiquidRuntime {
             return Err("liquid source ownership or descriptor changed; rebind runtime".into());
         }
         let bodies: Vec<_> = scene.components::<crate::LiquidBody>().collect();
-        if bodies.len() != usize::from(self.body.is_some()) {
+        if bodies.len() != self.body.len() {
             return Err("liquid body ownership changed; rebind runtime".into());
         }
-        if let Some(body) = &self.body {
+        if scene.components::<crate::LiquidMassDistribution>().count()
+            != self
+                .body
+                .iter()
+                .filter(|b| b.mass_descriptor.is_some())
+                .count()
+        {
+            return Err("mass distribution ownership changed; rebind runtime".into());
+        }
+        for body in &self.body {
+            if scene
+                .component::<crate::LiquidMassDistribution>(body.node)
+                .map_err(|e| format!("mass binding: {e:?}"))?
+                != body.mass_descriptor.as_ref()
+            {
+                return Err("mass distribution changed; rebind runtime".into());
+            }
             if scene
                 .component::<crate::CharacterBody>(body.node)
                 .map_err(|e| format!("liquid body ownership: {e:?}"))?
@@ -332,29 +559,16 @@ impl SceneLiquidRuntime {
             {
                 return Err("liquid body has another transform owner".into());
             }
-            for (other, _) in scene.components::<crate::BoxCollider>() {
-                let mut parent = scene
-                    .parent(other)
-                    .map_err(|e| format!("liquid collider parent: {e:?}"))?;
-                while let Some(p) = parent {
-                    if p == body.node {
-                        return Err("compound liquid body colliders are not admitted yet".into());
-                    }
-                    parent = scene
-                        .parent(p)
-                        .map_err(|e| format!("liquid collider parent: {e:?}"))?;
-                }
+            if body_colliders(scene, body.node)? != body.colliders {
+                return Err("compound collider bindings changed; rebind runtime".into());
             }
-            if bodies[0].0 != body.node
-                || *bodies[0].1 != body.descriptor
+            if !bodies
+                .iter()
+                .any(|(node, descriptor)| *node == body.node && **descriptor == body.descriptor)
                 || scene
                     .local(body.node)
                     .map_err(|e| format!("liquid body pose: {e:?}"))?
                     != body.published
-                || scene
-                    .component::<crate::BoxCollider>(body.node)
-                    .map_err(|e| format!("liquid body collider: {e:?}"))?
-                    != Some(&body.collider)
                 || scene
                     .parent(body.node)
                     .map_err(|e| format!("liquid body parent: {e:?}"))?
@@ -387,21 +601,51 @@ impl SceneLiquidRuntime {
     /// Foreign/edited scene bindings or unrepresentable pose reject before mutation.
     pub fn publish_body_pose(&mut self, scene: &mut SceneGraph) -> Result<(), String> {
         self.validate_bindings(scene)?;
-        if let Some(body) = &mut self.body {
-            let mut pose = body.published;
-            pose.translation = glam::DVec3::from_array(body.state.position).as_vec3();
-            pose.matrix()
-                .map_err(|e| format!("liquid body publication: {e:?}"))?;
-            scene
-                .set_local(body.node, pose)
-                .map_err(|e| format!("liquid body publication: {e:?}"))?;
+        let poses = self
+            .body
+            .iter()
+            .map(|body| {
+                let mut pose = body.published;
+                pose.translation = glam::DVec3::from_array(body.state.position).as_vec3();
+                pose.matrix()
+                    .map_err(|e| format!("liquid body publication: {e:?}"))?;
+                Ok((body.node, pose))
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        scene
+            .set_locals(&poses)
+            .map_err(|e| format!("liquid body publication: {e:?}"))?;
+        for (body, (_, pose)) in self.body.iter_mut().zip(poses) {
             body.published = pose;
         }
         Ok(())
     }
+    /// First admitted body for compatibility; use body_states for the entire world.
     #[must_use]
     pub fn body_state(&self) -> Option<(NodeId, physics::liquid::TranslatingBody)> {
-        self.body.as_ref().map(|b| (b.node, b.state))
+        self.body.first().map(|b| (b.node, b.state))
+    }
+
+    /// All admitted bodies, including paused inactive bodies, in stable owner order.
+    pub fn body_states(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, physics::liquid::TranslatingBody)> + '_ {
+        self.body.iter().map(|b| (b.node, b.state))
+    }
+
+    /// Admitted mass tensor and COM offset in the root-relative world-oriented frame.
+    /// Legacy bodies without an explicit distribution have no inferred inertia.
+    pub fn body_mass_properties(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, Option<physics::mass_properties::MassProperties>)> + '_ {
+        self.body.iter().map(|b| (b.node, b.mass_properties))
+    }
+
+    /// Admitted COM/principal adapters; persistent angular state is not activated here.
+    pub fn body_rigid_frames(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, Option<crate::RigidBodyFrame>)> + '_ {
+        self.body.iter().map(|b| (b.node, b.rigid_frame))
     }
 
     /// Emit then simulate on an explicitly supplied fixed interval. No caller state changes.
@@ -442,51 +686,33 @@ impl SceneLiquidRuntime {
                 emissions.push((*node, exchange));
             }
         }
-        let (physics, dynamics) = if let Some(body) = &mut candidate.body {
-            if container.is_some() {
-                return Err(
-                    "authored liquid bodies use scene colliders, not an extra container".into(),
-                );
-            }
-            if scene
+        if !candidate.body.is_empty() && container.is_some() {
+            return Err(
+                "authored liquid bodies use scene colliders, not an extra container".into(),
+            );
+        }
+        let mut active = Vec::new();
+        let mut templates = Vec::new();
+        let mut states = Vec::new();
+        for (owner, body) in candidate.body.iter().enumerate() {
+            if !scene
                 .active_in_hierarchy(body.node)
                 .map_err(|e| format!("liquid body activity: {e:?}"))?
             {
-                let index = geometry
-                    .0
-                    .0
-                    .iter()
-                    .position(|b| b.owner == body.node)
-                    .ok_or("missing active liquid body collider")?;
-                let mut obstacle = geometry.0.0.remove(index);
-                obstacle.shape.center -= glam::DVec3::from_array(position(scene, body.node)?);
-                let template = obstacle.shape;
-                let dynamic = SceneGeometry(crate::StaticWorld(vec![obstacle], scene.identity()));
-                let environment = BodyEnvironment {
-                    environment: &geometry,
-                    template,
-                };
-                let report = candidate
-                    .liquid
-                    .step_with_dynamic_geometry_and_environment(
-                        dt,
-                        &mut body.state,
-                        &dynamic,
-                        &environment,
-                        Default::default(),
-                    )
-                    .map_err(|e| format!("scene liquid body step: {e:?}"))?;
-                (report.dynamics.fluid, Some(report))
-            } else {
-                (
-                    candidate
-                        .liquid
-                        .step_with_geometry(dt, None, &geometry, Default::default())
-                        .map_err(|e| format!("scene liquid step: {e:?}"))?,
-                    None,
-                )
+                continue;
             }
-        } else {
+            let mut shapes = Vec::new();
+            for collider in &body.colliders {
+                if let Some(index) = geometry.0.0.iter().position(|b| b.owner == collider.node) {
+                    geometry.0.0.remove(index);
+                    shapes.push(collider_template(body, collider)?);
+                }
+            }
+            active.push(owner);
+            templates.push(shapes);
+            states.push(body.state);
+        }
+        let (physics, dynamics) = if states.is_empty() {
             (
                 candidate
                     .liquid
@@ -494,6 +720,19 @@ impl SceneLiquidRuntime {
                     .map_err(|e| format!("scene liquid step: {e:?}"))?,
                 None,
             )
+        } else {
+            let world = SceneBodyWorld {
+                environment: geometry,
+                templates,
+            };
+            let report = candidate
+                .liquid
+                .step_with_body_world(dt, &mut states, &world, Default::default(), 128)
+                .map_err(|e| format!("scene liquid body step: {e:?}"))?;
+            for (owner, state) in active.into_iter().zip(states) {
+                candidate.body[owner].state = state;
+            }
+            (report.dynamics.fluid, Some(report))
         };
         *self = candidate;
         Ok(SceneLiquidStep {
@@ -878,5 +1117,474 @@ mod tests {
             )
             .is_err()
         );
+    }
+    fn body_pair_fixture() -> (SceneGraph, Vec<NodeId>, SceneLiquidRuntime) {
+        let mut scene = SceneGraph::new(8);
+        let mut nodes = Vec::new();
+        for (x, velocity) in [(-0.2, 3.), (0., 0.), (2., 7.)] {
+            let node = scene
+                .spawn(
+                    None,
+                    Transform {
+                        translation: glam::Vec3::new(x, 0., 0.),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            scene
+                .insert_component(
+                    node,
+                    crate::BoxCollider {
+                        half_extents: [0.05; 3],
+                    },
+                )
+                .unwrap();
+            scene
+                .insert_component(
+                    node,
+                    crate::LiquidBody {
+                        mass_kg: 1.,
+                        initial_velocity_m_s: [velocity, 0., 0.],
+                    },
+                )
+                .unwrap();
+            nodes.push(node);
+        }
+        scene.set_active(nodes[2], false).unwrap();
+        let runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        (scene, nodes, runtime)
+    }
+
+    #[test]
+    fn multiple_scene_bodies_exchange_impulse_publish_and_pause_inactive_owner() {
+        let (mut scene, nodes, mut runtime) = body_pair_fixture();
+        let paused = scene.local(nodes[2]).unwrap();
+        let report = runtime
+            .tick_and_publish(&mut scene, 0.1, None)
+            .unwrap()
+            .dynamics
+            .unwrap();
+        assert_eq!(report.dynamics.contacts, 1);
+        let states: Vec<_> = runtime.body_states().collect();
+        assert_eq!(states.len(), 3);
+        for (_, state) in &states[..2] {
+            assert!((state.velocity[0] - 1.5).abs() < 1e-12);
+        }
+        assert!((report.dynamics.dissipated_energy - 2.25).abs() < 1e-12);
+        assert_eq!(states[2].1.position, [2., 0., 0.]);
+        assert_eq!(states[2].1.velocity, [7., 0., 0.]);
+        assert_eq!(scene.local(nodes[2]).unwrap(), paused);
+        for (node, state) in &states[..2] {
+            assert_eq!(
+                scene.local(*node).unwrap().translation,
+                glam::DVec3::from_array(state.position).as_vec3()
+            );
+        }
+        runtime.validate_bindings(&scene).unwrap();
+        runtime.tick_and_publish(&mut scene, 0.01, None).unwrap();
+    }
+
+    #[test]
+    fn later_body_publication_failure_preserves_all_scene_poses() {
+        let (mut scene, nodes, mut runtime) = body_pair_fixture();
+        let poses: Vec<_> = nodes.iter().map(|n| scene.local(*n).unwrap()).collect();
+        runtime.body[0].state.position[0] += 1.;
+        runtime.body[1].state.position[0] = 1e100;
+        let before = runtime.clone();
+        assert!(runtime.publish_body_pose(&mut scene).is_err());
+        assert_eq!(runtime, before);
+        for (node, pose) in nodes.iter().zip(poses) {
+            assert_eq!(scene.local(*node).unwrap(), pose);
+        }
+    }
+    #[test]
+    fn child_only_compound_hits_another_body_and_shape_edits_reject_atomically() {
+        let (mut scene, nodes, _) = body_pair_fixture();
+        scene
+            .remove_component::<crate::BoxCollider>(nodes[0])
+            .unwrap();
+        let child = scene
+            .spawn(
+                Some(nodes[0]),
+                Transform {
+                    translation: glam::Vec3::new(0.1, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                child,
+                crate::BoxCollider {
+                    half_extents: [0.02; 3],
+                },
+            )
+            .unwrap();
+        let mut runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        let report = runtime
+            .tick_and_publish(&mut scene, 0.1, None)
+            .unwrap()
+            .dynamics
+            .unwrap();
+        assert_eq!(report.dynamics.contacts, 1);
+        let states: Vec<_> = runtime.body_states().collect();
+        assert!((states[0].1.velocity[0] - 1.5).abs() < 1e-12);
+        assert!((states[1].1.velocity[0] - 1.5).abs() < 1e-12);
+        assert_eq!(scene.local(child).unwrap().translation.x, 0.1);
+        runtime.validate_bindings(&scene).unwrap();
+        let before = runtime.clone();
+        let poses: Vec<_> = nodes.iter().map(|n| scene.local(*n).unwrap()).collect();
+        scene
+            .set_local(
+                child,
+                Transform {
+                    translation: glam::Vec3::new(0.2, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert!(runtime.tick_and_publish(&mut scene, 0.01, None).is_err());
+        assert_eq!(runtime, before);
+        for (node, pose) in nodes.iter().zip(poses) {
+            assert_eq!(scene.local(*node).unwrap(), pose);
+        }
+    }
+
+    #[test]
+    fn compound_gap_is_not_filled_by_a_bounding_box() {
+        let (mut scene, nodes, _) = body_pair_fixture();
+        scene
+            .remove_component::<crate::BoxCollider>(nodes[0])
+            .unwrap();
+        for y in [-1., 1.] {
+            let child = scene
+                .spawn(
+                    Some(nodes[0]),
+                    Transform {
+                        translation: glam::Vec3::new(0., y, 0.),
+                        rotation: glam::Quat::from_rotation_z(0.4),
+                        scale: glam::Vec3::new(1., 2., 1.),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            scene
+                .insert_component(
+                    child,
+                    crate::BoxCollider {
+                        half_extents: [0.05; 3],
+                    },
+                )
+                .unwrap();
+        }
+        let mut runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        let report = runtime
+            .tick_and_publish(&mut scene, 0.1, None)
+            .unwrap()
+            .dynamics
+            .unwrap();
+        assert_eq!(report.dynamics.contacts, 0);
+        let states: Vec<_> = runtime.body_states().collect();
+        assert_eq!(states[0].1.velocity, [3., 0., 0.]);
+        assert_eq!(states[1].1.velocity, [0.; 3]);
+        assert!((states[0].1.position[0] - 0.1).abs() < 1e-7);
+    }
+    #[test]
+    fn compound_child_strikes_static_wall_and_balances_external_impulse() {
+        let (mut scene, nodes, _) = body_pair_fixture();
+        scene.set_active(nodes[1], false).unwrap();
+        scene
+            .remove_component::<crate::BoxCollider>(nodes[0])
+            .unwrap();
+        let child = scene
+            .spawn(
+                Some(nodes[0]),
+                Transform {
+                    translation: glam::Vec3::new(0.1, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                child,
+                crate::BoxCollider {
+                    half_extents: [0.02; 3],
+                },
+            )
+            .unwrap();
+        let wall = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: glam::Vec3::new(0.2, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                wall,
+                crate::BoxCollider {
+                    half_extents: [0.02; 3],
+                },
+            )
+            .unwrap();
+        let mut runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        let report = runtime
+            .tick_and_publish(&mut scene, 0.1, None)
+            .unwrap()
+            .dynamics
+            .unwrap();
+        assert_eq!(report.dynamics.contacts, 1);
+        assert_eq!(runtime.body_state().unwrap().1.velocity, [0.; 3]);
+        assert!((report.environment_impulse[0] - 3.).abs() < 1e-12);
+        assert!((report.dynamics.dissipated_energy - 4.5).abs() < 1e-12);
+        runtime.tick_and_publish(&mut scene, 0.01, None).unwrap();
+    }
+
+    #[test]
+    fn root_relative_compound_template_preserves_small_offsets_far_from_origin() {
+        let (mut scene, nodes, _) = body_pair_fixture();
+        scene
+            .set_local(
+                nodes[0],
+                Transform {
+                    translation: glam::Vec3::new(1e5, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        let child = scene
+            .spawn(
+                Some(nodes[0]),
+                Transform {
+                    translation: glam::Vec3::new(0.03, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                child,
+                crate::BoxCollider {
+                    half_extents: [0.01; 3],
+                },
+            )
+            .unwrap();
+        let runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config::default(),
+            0,
+        )
+        .unwrap();
+        let body = &runtime.body[0];
+        let collider = body.colliders.iter().find(|c| c.node == child).unwrap();
+        let template = collider_template(body, collider).unwrap();
+        assert_eq!(template.center.x, f64::from(0.03_f32));
+    }
+    #[test]
+    fn compound_candidates_are_bounded_and_invalid_extents_reject() {
+        use physics::liquid::LiquidBodyWorld;
+        let (mut scene, nodes, runtime) = body_pair_fixture();
+        let template = collider_template(&runtime.body[0], &runtime.body[0].colliders[0]).unwrap();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![template; 2], vec![template; 2]],
+        };
+        assert_eq!(
+            world.sweep_body_pair(0, &runtime.body[0].state, 1, &runtime.body[1].state, 0.1, 3),
+            Err(physics::liquid::Error::CollisionBudget)
+        );
+        assert_eq!(
+            world.sweep_body_environment(0, &runtime.body[0].state, 0.1, 1),
+            Err(physics::liquid::Error::CollisionBudget)
+        );
+        scene
+            .component_mut::<crate::BoxCollider>(nodes[0])
+            .unwrap()
+            .unwrap()
+            .half_extents = [-0.05; 3];
+        assert!(
+            SceneLiquidRuntime::new(
+                &scene,
+                vec![("unused".into(), Material::WATER)],
+                Config::default(),
+                0
+            )
+            .is_err()
+        );
+    }
+    #[test]
+    fn liquid_impulse_recoils_child_only_compound_owner() {
+        let mut scene = SceneGraph::new(2);
+        let root = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                root,
+                crate::LiquidBody {
+                    mass_kg: 1.,
+                    initial_velocity_m_s: [0.; 3],
+                },
+            )
+            .unwrap();
+        let child = scene
+            .spawn(
+                Some(root),
+                Transform {
+                    translation: glam::Vec3::new(0.1, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                child,
+                crate::BoxCollider {
+                    half_extents: [0.02; 3],
+                },
+            )
+            .unwrap();
+        let config = Config {
+            gravity: [0.; 3],
+            particle_radius: 0.01,
+            ..Default::default()
+        };
+        let mut runtime =
+            SceneLiquidRuntime::new(&scene, vec![("water".into(), Material::WATER)], config, 0)
+                .unwrap();
+        runtime.liquid = Liquid::new(
+            vec![physics::liquid::Particle {
+                position: [0.; 3],
+                velocity: [3., 0., 0.],
+                mass: 1.,
+                material: 0,
+            }],
+            vec![Material::WATER],
+            config,
+        )
+        .unwrap();
+        let report = runtime
+            .tick_and_publish(&mut scene, 0.05, None)
+            .unwrap()
+            .dynamics
+            .unwrap();
+        assert_eq!(report.dynamics.contacts, 1);
+        let body = runtime.body_state().unwrap().1;
+        let particle = &runtime.liquid.particles()[0];
+        assert!((particle.velocity[0] - 1.5).abs() < 1e-12);
+        assert!((body.velocity[0] - 1.5).abs() < 1e-12);
+        assert!((report.dynamics.dissipated_energy - 2.25).abs() < 1e-12);
+        assert_eq!(report.environment_impulse, [0.; 3]);
+        assert_eq!(scene.local(child).unwrap().translation.x, 0.1);
+    }
+    #[test]
+    fn explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback() {
+        let (mut scene, nodes, _) = body_pair_fixture();
+        let distribution = crate::LiquidMassDistribution {
+            parts: vec![crate::LiquidMassPart {
+                mass_kg: 1.,
+                center_m: [0.25, 0., 0.],
+                half_edges_m: [[0.1, 0., 0.], [0., 0.2, 0.], [0., 0., 0.3]],
+            }],
+        };
+        scene
+            .insert_component(nodes[0], distribution.clone())
+            .unwrap();
+        let mut pose = scene.local(nodes[0]).unwrap();
+        pose.scale = glam::Vec3::new(2., 1., 1.);
+        scene.set_local(nodes[0], pose).unwrap();
+        // Duplicate collision proxies do not duplicate explicitly authored mass.
+        let duplicate = scene
+            .spawn(Some(nodes[0]), voxy_scene::Transform::default())
+            .unwrap();
+        scene
+            .insert_component(duplicate, crate::BoxCollider::default())
+            .unwrap();
+        let mut runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        let properties = runtime.body_mass_properties().next().unwrap().1.unwrap();
+        assert_eq!(properties.center, [0.5, 0., 0.]);
+        assert!((properties.inertia[0][0] - (0.04 + 0.09) / 3.).abs() < 1e-12);
+        assert!((properties.inertia[1][1] - (0.04 + 0.09) / 3.).abs() < 1e-12);
+        assert!(runtime.body_mass_properties().nth(1).unwrap().1.is_none());
+        runtime.tick_and_publish(&mut scene, 0.001, None).unwrap();
+        let before = runtime.clone();
+        let poses: Vec<_> = nodes.iter().map(|n| scene.local(*n).unwrap()).collect();
+        scene
+            .component_mut::<crate::LiquidMassDistribution>(nodes[0])
+            .unwrap()
+            .unwrap()
+            .parts[0]
+            .mass_kg = 2.;
+        assert!(runtime.tick_and_publish(&mut scene, 0.001, None).is_err());
+        assert_eq!(runtime, before);
+        for (node, pose) in nodes.iter().zip(poses) {
+            assert_eq!(scene.local(*node).unwrap(), pose);
+        }
+        assert!(
+            SceneLiquidRuntime::new(
+                &scene,
+                vec![("unused".into(), Material::WATER)],
+                Config::default(),
+                0
+            )
+            .is_err()
+        );
+        let orphan = scene.spawn(None, voxy_scene::Transform::default()).unwrap();
+        scene.insert_component(orphan, distribution).unwrap();
+        let error = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config::default(),
+            0,
+        )
+        .unwrap_err();
+        assert!(error.contains("requires a liquid body owner"));
     }
 }

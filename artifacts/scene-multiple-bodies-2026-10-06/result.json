@@ -1,0 +1,18 @@
+{
+  "scope": "multiple authored finite translating bodies in shared scene and headless editor Play lifecycle",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "6de8639945dafd1a0a750954526a7920ad12695a2005f63fbae4c219ce5873f9",
+    "crates/voxy_editor/src/lib.rs": "da66f395cd4a89014963469e826b12d85a49870795b6fc3310cabd7845874fb7"
+  },
+  "limits": [
+    "128 root single BoxCollider bodies",
+    "no angular or compound dynamics",
+    "native GPU presentation unverified"
+  ],
+  "checks": {
+    "gameplay_unit_passed": 80,
+    "gameplay_integration_passed": 46,
+    "editor_new_play_test": "passed",
+    "app_editor_release_all_targets": "passed"
+  }
+}

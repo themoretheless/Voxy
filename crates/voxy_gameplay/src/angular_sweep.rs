@@ -5,6 +5,8 @@ use super::{
 };
 use glam::{DQuat, DVec3};
 mod exact_gap;
+mod rigid_pair;
+pub(crate) use rigid_pair::{RigidBoxMotion, sweep_rigid_pair};
 mod gap;
 type PointBoxes = [[[f64; 2]; 3]; 8];
 
@@ -194,6 +196,7 @@ fn advance_with_clearance(
         steps,
         queries,
         None,
+        None,
     )
 }
 
@@ -209,8 +212,10 @@ fn advance_with_enclosures(
     steps: &mut usize,
     queries: &mut usize,
     point_sample: Option<&dyn Fn(f64) -> Result<PointBoxes, PhysicsError>>,
+    contact_tolerance: Option<f64>,
 ) -> Result<Hit, PhysicsError> {
-    if !clearance.is_finite()
+    if contact_tolerance.is_some_and(|v| !v.is_finite() || v < 0.)
+        || !clearance.is_finite()
         || clearance < 0.
         || !contact_reserve.is_finite()
         || contact_reserve < 0.
@@ -239,7 +244,7 @@ fn advance_with_enclosures(
             for axis in obstacle.axes_for(current) {
                 let gap = if let Some(points) = &enclosed_points {
                     gap::lower_points(points, obstacle, axis, clearance)?
-                } else if clearance > 0. {
+                } else if clearance > 0. || contact_tolerance.is_some() {
                     gap::lower(center, current, obstacle, axis, clearance)?
                 } else {
                     relative.dot(axis).abs()
@@ -254,14 +259,15 @@ fn advance_with_enclosures(
             if separation < distance {
                 distance = separation;
                 contact = normal;
-                tolerance = 128.
-                    * f64::EPSILON
-                    * (1.
-                        + center.abs().max_element()
-                        + obstacle.center.abs().max_element()
-                        + radius)
-                    + 1e-8 * rotation_radius
-                    + contact_reserve;
+                tolerance = contact_tolerance.unwrap_or(
+                    128. * f64::EPSILON
+                        * (1.
+                            + center.abs().max_element()
+                            + obstacle.center.abs().max_element()
+                            + radius)
+                        + 1e-8 * rotation_radius
+                        + contact_reserve,
+                );
             }
         }
         if distance <= tolerance {
@@ -278,7 +284,7 @@ fn advance_with_enclosures(
         }
         // A projection gap is a lower bound on Euclidean separation. Every body
         // point travels at most speed_bound over the normalized unit interval.
-        let next = if clearance > 0. || point_sample.is_some() {
+        let next = if clearance > 0. || point_sample.is_some() || contact_tolerance.is_some() {
             gap::advance_time(time, (distance - contact_reserve).max(0.), speed_bound)?
         } else {
             (time + 0.8 * (distance - contact_reserve).max(0.) / speed_bound).min(1.)
@@ -1211,6 +1217,7 @@ fn sweep_rigid_path_with_bounds(
             } else {
                 None
             },
+            None,
         )?;
         if hit.fraction < 1. {
             return Ok(PathHit {
@@ -1377,6 +1384,7 @@ fn sweep_rigid_path_with_bounds(
             } else {
                 None
             },
+            None,
         )?;
         if hit.fraction < 1. {
             let accepted = evaluated_motion(index, hit.fraction)?;
