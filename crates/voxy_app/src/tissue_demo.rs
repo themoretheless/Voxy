@@ -99,6 +99,7 @@ enum DemoTissue {
     Continuum {
         ledger: EnergyLedger,
         preferred_depth: usize,
+        energy_budget_rate_j_s: f64,
         initial_energy_j: f64,
         dynamics: InertialBody,
         thermal_binding: Arc<SolidFilmBinding>,
@@ -485,6 +486,7 @@ impl TissueDemo {
                 initial_energy_j: energy.kinetic_j + energy.potential_j,
                 ledger: EnergyLedger::default(),
                 preferred_depth: 0,
+                energy_budget_rate_j_s: 240. * 1e-5,
                 dynamics,
                 cells: mesh.cells,
             });
@@ -518,6 +520,33 @@ impl TissueDemo {
             .iter()
             .map(|body| body.volumes().iter().map(|v| v.abs()).sum())
             .collect()
+    }
+    /// Numerical energy admission per simulated second, shared by all owned
+    /// continuum regions. This is a solver policy, not a material property.
+    /// Setting it validates the complete owner set before changing any state.
+    pub(crate) fn set_energy_budget_rate(&mut self, rate_j_s: f64) -> Result<(), &'static str> {
+        if !rate_j_s.is_finite()
+            || rate_j_s <= 0.
+            || !self.body_mode
+            || self.bodies.is_empty()
+            || self
+                .bodies
+                .iter()
+                .any(|b| !matches!(b, DemoTissue::Continuum { .. }))
+        {
+            return Err("invalid continuum energy budget rate");
+        }
+        for body in &mut self.bodies {
+            let DemoTissue::Continuum {
+                energy_budget_rate_j_s,
+                ..
+            } = body
+            else {
+                unreachable!()
+            };
+            *energy_budget_rate_j_s = rate_j_s;
+        }
+        Ok(())
     }
     /// Change in total mechanical energy, support work, released heat and
     /// independently accumulated numerical defect, all in joules.
@@ -1364,6 +1393,7 @@ impl TissueDemo {
             dynamics,
             ledger,
             preferred_depth,
+            energy_budget_rate_j_s,
             thermal_binding,
             cells,
             ..
@@ -1489,7 +1519,7 @@ impl TissueDemo {
                     dynamics,
                     Some(&segment),
                     dt,
-                    1e-5 * dt * 240.,
+                    *energy_budget_rate_j_s * dt,
                     position / f64::from(subdivisions),
                     velocity / f64::from(subdivisions),
                     1_usize << (12 - initial_depth),
@@ -1531,7 +1561,7 @@ impl TissueDemo {
                         segment_surface.ok_or("skin motion requires native integration pose")?,
                         skin,
                         dt,
-                        1e-5 * dt * 240.,
+                        *energy_budget_rate_j_s * dt,
                         256,
                     )?;
                 frame_receipt.add(EnergyLedger {
@@ -1545,12 +1575,13 @@ impl TissueDemo {
                     max_refinement_depth: initial_depth + receipt.substeps.ilog2() as usize,
                 });
             } else {
-                frame_receipt.add(Self::advance_continuum_contact(
+                frame_receipt.add(Self::advance_continuum_contact_budget(
                     dynamics,
                     &segment,
                     segment_surface,
                     dt,
                     initial_depth,
+                    *energy_budget_rate_j_s,
                 )?);
             }
         }
@@ -1580,6 +1611,16 @@ impl TissueDemo {
         dt: f64,
         depth: usize,
     ) -> Result<EnergyLedger, &'static str> {
+        Self::advance_continuum_contact_budget(body, targets, next_surface, dt, depth, 240. * 1e-5)
+    }
+    fn advance_continuum_contact_budget(
+        body: &mut InertialBody,
+        targets: &[SupportTarget],
+        next_surface: Option<Arc<PrescribedTriangleSurface>>,
+        dt: f64,
+        depth: usize,
+        energy_budget_rate_j_s: f64,
+    ) -> Result<EnergyLedger, &'static str> {
         // Retry a rejected mechanical step with a finer temporal partition.
         // The surrounding frame candidate owns all successful subdivisions.
         // The solver itself is atomic. A successful leaf needs no extra clone.
@@ -1588,12 +1629,15 @@ impl TissueDemo {
                 Some(targets),
                 surface.clone(),
                 dt,
-                1e-5 * dt * 240.,
+                energy_budget_rate_j_s * dt,
             ),
-            None if std::env::var_os("VOXY_IMPLICIT_SUPPORTS").is_some() => {
-                body.step_viscoelastic_implicit_with_supports(Some(targets), dt, 1e-5 * dt * 240.)
-            }
-            None => body.step_viscoelastic(Some(targets), dt, 1e-5 * dt * 240.),
+            None if std::env::var_os("VOXY_IMPLICIT_SUPPORTS").is_some() => body
+                .step_viscoelastic_implicit_with_supports(
+                    Some(targets),
+                    dt,
+                    energy_budget_rate_j_s * dt,
+                ),
+            None => body.step_viscoelastic(Some(targets), dt, energy_budget_rate_j_s * dt),
         };
         if let Err(error) = &result {
             record_refinement_rejection(error, depth);
@@ -1677,7 +1721,7 @@ impl TissueDemo {
                         };
                         eprintln!(
                             "CONTACT_REJECTION dt={dt:.17e} depth={depth} budget_j={:.17e} error={error} before={:?} diagnostic_trial={trial:?} after={:?}",
-                            1e-5 * dt * 240.,
+                            energy_budget_rate_j_s * dt,
                             body.diagnostics(),
                             diagnostic.diagnostics()
                         );
@@ -1848,7 +1892,7 @@ impl TissueDemo {
                             }
                             eprintln!(
                                 "CONTACT_CONVERGENCE subdivisions={count} total_defect_j={total_defect:.17e} maximum_leaf_defect_j={maximum_defect:.17e} mechanical_leaf_budget_j={:.17e}",
-                                0.5 * 1e-5 * dt * 240. / count as f64
+                                0.5 * energy_budget_rate_j_s * dt / count as f64
                             );
                         }
                         Ok(())
@@ -1891,19 +1935,21 @@ impl TissueDemo {
                         current.with_positions(positions).map(Arc::new)
                     })
                     .transpose()?;
-                let mut receipt = Self::advance_continuum_contact(
+                let mut receipt = Self::advance_continuum_contact_budget(
                     &mut candidate,
                     &middle,
                     middle_surface,
                     dt * 0.5,
                     depth + 1,
+                    energy_budget_rate_j_s,
                 )?;
-                receipt.add(Self::advance_continuum_contact(
+                receipt.add(Self::advance_continuum_contact_budget(
                     &mut candidate,
                     targets,
                     next_surface,
                     dt * 0.5,
                     depth + 1,
+                    energy_budget_rate_j_s,
                 )?);
                 receipt.rejected_steps += 1;
                 *body = candidate;
@@ -2656,6 +2702,7 @@ mod tests {
                 cells: cells.clone(),
                 ledger: EnergyLedger::default(),
                 preferred_depth: 0,
+                energy_budget_rate_j_s: 240. * 1e-5,
                 initial_energy_j: 0.,
             };
             for (original, actual) in normals.iter().zip(moved.smooth_boundary_normals().unwrap()) {

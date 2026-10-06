@@ -1148,6 +1148,181 @@ mod collision_tests {
         assert_eq!(capture_schedule(true, true, None).unwrap().1.len(), 41);
     }
     #[test]
+    #[ignore = "manual full-volume runtime checkpoint audit; requires VOXY_RIG_SUPPORTED_CAPTURE"]
+    fn audits_completed_full_rig_supported_capture_against_native_clip() {
+        let path = std::env::var("VOXY_RIG_SUPPORTED_CAPTURE")
+            .expect("completed runtime checkpoint path required");
+        let rows: Vec<serde_json::Value> = std::fs::read_to_string(path)
+            .unwrap()
+            .lines()
+            .map(|l| serde_json::from_str(l).unwrap())
+            .collect();
+        let model = ModelAsset::parse(
+            include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let volume = physics::biomechanics::TetraMesh::from_medit_volume(include_str!(
+            "../../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
+        ))
+        .unwrap();
+        let (bind, _) =
+            contact_positions_from_pose64(&model, &model.skeleton.bind_pose64()).unwrap();
+        let pins = [1282, 167, 1856];
+        let sources = pins.map(|n| bind.iter().position(|p| *p == volume.points[n]).unwrap());
+        let end: usize = std::env::var("VOXY_RIG_SUPPORTED_CAPTURE_STEPS")
+            .unwrap_or_else(|_| "3".into())
+            .parse()
+            .unwrap();
+        let (_, expected_steps) = capture_schedule(true, end > 3, Some(end)).unwrap();
+        assert_eq!(rows.len(), expected_steps.len());
+        let mut maximum_pin_error = 0_f64;
+        let mut maximum_balance = 0_f64;
+        let mut maximum_free_motion = 0_f64;
+        for (step, row) in rows.iter().enumerate() {
+            let time = row["time_s"].as_f64().unwrap();
+            assert!((time - expected_steps[step] as f64 / 240.).abs() < 1e-14);
+            let nodes: Vec<[[f64; 3]; 2]> = serde_json::from_value(row["nodes"].clone()).unwrap();
+            assert_eq!(nodes.len(), 2338);
+            assert!(nodes.iter().flatten().flatten().all(|v| v.is_finite()));
+            let pose = imported_pose64(&model, time / 2., 0.5).unwrap();
+            let (source, _) = contact_positions_from_pose64(&model, &pose).unwrap();
+            for (pin, source_id) in pins.iter().zip(sources) {
+                for axis in 0..3 {
+                    maximum_pin_error = maximum_pin_error
+                        .max((nodes[*pin][0][axis] - source[source_id][axis]).abs());
+                }
+            }
+            for (node, state) in nodes.iter().enumerate() {
+                if !pins.contains(&node) {
+                    for axis in 0..3 {
+                        maximum_free_motion = maximum_free_motion
+                            .max((state[0][axis] - volume.points[node][axis]).abs());
+                    }
+                }
+            }
+            let receipts: Vec<[f64; 4]> =
+                serde_json::from_value(row["energy_receipts"].clone()).unwrap();
+            assert_eq!(receipts.len(), 1);
+            assert!(receipts[0].iter().all(|v| v.is_finite()));
+            let independent = receipts[0][0] - receipts[0][1] + receipts[0][2];
+            maximum_balance = maximum_balance.max(independent.abs());
+            assert!(independent.abs() < 1e-9);
+            if step + 1 == rows.len() {
+                assert!(receipts[0][1].abs() > 1e-6);
+            }
+        }
+        assert!(maximum_pin_error < 1e-13);
+        assert!(maximum_free_motion > 1e-6);
+        eprintln!(
+            "FULL_RIG_SUPPORTED_AUDIT checkpoints={} nodes=2338 cells=6845 pins=3 final_time_s={} maximum_pin_error_m={maximum_pin_error:.17e} maximum_independent_balance_j={maximum_balance:.17e} maximum_free_motion_m={maximum_free_motion:.17e}",
+            rows.len(),
+            end as f64 / 240.
+        );
+    }
+    #[test]
+    fn imported_startup_drives_native_tetra_supports_with_independent_energy_balance() {
+        use physics::biomechanics::{PrescribedTriangleSurface, TetraMesh};
+        use std::sync::Arc;
+        let model = ModelAsset::parse(
+            include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let volume = TetraMesh::from_medit_volume(include_str!(
+            "../../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
+        ))
+        .unwrap();
+        let cell = volume
+            .cells
+            .iter()
+            .max_by(|a, b| {
+                let measure = |c: &&[usize; 4]| {
+                    let p = c.map(|i| glam::DVec3::from_array(volume.points[i]));
+                    (p[1] - p[0]).dot((p[2] - p[0]).cross(p[3] - p[0])).abs()
+                };
+                measure(a).total_cmp(&measure(b))
+            })
+            .unwrap();
+        let points: Vec<_> = cell.iter().map(|&i| volume.points[i]).collect();
+        let mesh = TetraMesh::from_tetrahedra(points.clone(), vec![[0, 1, 2, 3]]).unwrap();
+        let reference = model
+            .skeleton
+            .bind_pose64()
+            .skin_matrices(&model.skeleton)
+            .unwrap();
+        let (skin, _) =
+            contact_positions_from_pose64(&model, &model.skeleton.bind_pose64()).unwrap();
+        let ids: Vec<_> = points
+            .iter()
+            .map(|p| skin.iter().position(|q| p == q).unwrap())
+            .collect();
+        let native = Arc::new(
+            PrescribedTriangleSurface::new(
+                points.clone(),
+                mesh.boundary.clone(),
+                0.0001,
+                0.003,
+                100.,
+            )
+            .unwrap()
+            .with_body_contact_domains(vec![(
+                mesh.boundary.clone(),
+                vec![false; mesh.boundary.len()],
+            )])
+            .unwrap(),
+        );
+        let mut demo = tissue_demo::TissueDemo::body_from_region_specs(vec![
+            tissue_demo::TissueRegionSpec::illustrative(mesh, vec![0, 1, 2], 0),
+        ])
+        .unwrap();
+        demo.bind_contact_surface(native.clone()).unwrap();
+        demo.assemble_regions().unwrap();
+        let binding = demo.bind_skin_source_reference(&points).unwrap();
+        demo.bind_skin_contact(&binding).unwrap();
+        let mut maximum_balance = 0_f64;
+        let mut maximum_pin_motion = 0_f64;
+        let mut maximum_free_offset = 0_f64;
+        for step in 1..=3 {
+            let pose = imported_pose64(&model, step as f64 / 480., 0.5).unwrap();
+            let (source, _) = contact_positions_from_pose64(&model, &pose).unwrap();
+            let source: Vec<_> = ids.iter().map(|&i| source[i]).collect();
+            let current = pose.skin_matrices(&model.skeleton).unwrap();
+            let palette: Vec<_> = current
+                .iter()
+                .zip(&reference)
+                .map(|(a, b)| *a * b.inverse())
+                .collect();
+            let before = demo.body_energy_receipts().unwrap()[0];
+            let staged = Arc::new(native.with_positions(source.clone()).unwrap());
+            demo.step_body_with_contact64_workers(&palette, 0.5, Some(vec![staged]), 1)
+                .unwrap();
+            let visible = demo.deform_skin(&binding, &palette, &source).unwrap();
+            for node in 0..3 {
+                for axis in 0..3 {
+                    assert!((visible[node][axis] - source[node][axis]).abs() < 1e-13);
+                    maximum_pin_motion =
+                        maximum_pin_motion.max((source[node][axis] - points[node][axis]).abs());
+                }
+            }
+            for axis in 0..3 {
+                maximum_free_offset =
+                    maximum_free_offset.max((visible[3][axis] - source[3][axis]).abs());
+            }
+            let after = demo.body_energy_receipts().unwrap()[0];
+            let balance = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+            maximum_balance = maximum_balance.max(balance.abs());
+            assert!(balance.abs() < 1e-9, "step={step} balance_j={balance}");
+        }
+        assert!(maximum_pin_motion > 0.);
+        assert!(maximum_free_offset > 1e-10);
+        eprintln!(
+            "IMPORTED_STARTUP_MECHANICS steps=3 original_volume_nodes={cell:?} source_vertices={ids:?} maximum_balance_j={maximum_balance:.17e} maximum_pin_motion_m={maximum_pin_motion:.17e} maximum_free_offset_m={maximum_free_offset:.17e}"
+        );
+    }
+    #[test]
     fn imported_startup_pose_matches_skin_contact_clock_and_preserves_aliases() {
         let model = ModelAsset::parse(
             include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),

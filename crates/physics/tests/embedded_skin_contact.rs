@@ -184,6 +184,20 @@ fn simultaneous_tissue_rig_and_obstacle_motion_passes_work_budget() {
 }
 #[test]
 fn invalid_embedded_contact_topology_never_enters_evaluation() {
+    // Binding-time topology admission does not authorize collapsed or nonfinite
+    // later coordinates, even on the optimized fixed-topology response path.
+    assert!(
+        contact()
+            .response(pose(&REST, &REST, &[[0.; 3]; 3]), &obstacle())
+            .is_err()
+    );
+    let mut invalid = SKIN;
+    invalid[0][0] = f64::NAN;
+    assert!(
+        contact()
+            .response(pose(&REST, &REST, &invalid), &obstacle())
+            .is_err()
+    );
     assert!(EmbeddedTriangleContact::new(&REST, &[[0, 1, 2, 3]], &SKIN, vec![[0, 1, 3]]).is_err());
     assert!(
         EmbeddedTriangleContact::new(&REST, &[[0, 1, 2, 3]], &SKIN, vec![[0, 1, 2], [2, 1, 0]])

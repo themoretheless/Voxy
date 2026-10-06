@@ -109,7 +109,7 @@ impl EmbeddedTriangleContact {
         obstacle: &PrescribedTriangleSurface,
     ) -> Result<EmbeddedContactResponse, &'static str> {
         let skin = self.positions(pose)?;
-        let response = obstacle.response(&skin, &self.faces)?;
+        let response = obstacle.response_admitted_skin(&skin, &self.faces)?;
         let force: Vec<_> = response
             .body_gradient_n
             .into_iter()
@@ -198,7 +198,9 @@ impl EmbeddedTriangleContact {
             return Err("embedded contact path crossing");
         }
         let potential_change_j = next.response(&x1, &self.faces)?.potential_j
-            - obstacle.response(&x0, &self.faces)?.potential_j;
+            - obstacle
+                .response_admitted_skin(&x0, &self.faces)?
+                .potential_j;
         let node_delta: Vec<_> = end
             .nodes
             .iter()
@@ -283,6 +285,10 @@ pub struct EmbeddedSkinWork {
     pub obstacle_work_j: f64,
 }
 impl StationaryEmbeddedContact {
+    pub(super) fn may_have_contact_pairs(&self) -> bool {
+        self.obstacle.may_contact_faces(&self.contact.faces)
+    }
+
     /// # Errors
     /// Invalid reference/base geometry. Contact admission uses actual body positions.
     pub fn new(
@@ -602,5 +608,69 @@ impl Body {
                 .path_is_open(c.pose(start), c.pose(end), &c.obstacle, &c.obstacle)
                 .is_ok_and(|open| open)
         })
+    }
+}
+
+#[cfg(test)]
+mod response_profile {
+    use super::*;
+    #[test]
+    #[ignore = "manual native embedded response timing; not a realtime engine claim"]
+    fn inactive_embedded_response_profile() {
+        let cells: Vec<_> = (0..8)
+            .flat_map(|x| (0..8).flat_map(move |y| (0..8).map(move |z| [x, y, z])))
+            .collect();
+        let mesh = super::super::TetraMesh::from_lattice_cells([0.; 3], [0.01; 3], &cells).unwrap();
+        let contact = EmbeddedTriangleContact::new(
+            &mesh.points,
+            &mesh.cells,
+            &mesh.points,
+            mesh.boundary.clone(),
+        )
+        .unwrap();
+        let obstacle = PrescribedTriangleSurface::new(
+            mesh.points.clone(),
+            mesh.boundary.clone(),
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap()
+        .with_body_contact_domains(vec![(
+            mesh.boundary.clone(),
+            vec![false; mesh.boundary.len()],
+        )])
+        .unwrap();
+        let pose = RelativeSkinPose {
+            nodes: &mesh.points,
+            reference: &mesh.points,
+            base: &mesh.points,
+        };
+        let start = std::time::Instant::now();
+        for _ in 0..200 {
+            let response = std::hint::black_box(contact.response(pose, &obstacle).unwrap());
+            assert_eq!(response.potential_j, 0.);
+            assert!(
+                response
+                    .skin_loads
+                    .nodal_forces_n()
+                    .iter()
+                    .flatten()
+                    .all(|v| *v == 0.)
+            );
+            assert!(
+                response
+                    .obstacle_forces_n
+                    .iter()
+                    .flatten()
+                    .all(|v| *v == 0.)
+            );
+        }
+        eprintln!(
+            "EMBEDDED_RESPONSE_PROFILE vertices={} faces={} iterations=200 elapsed_s={:.9}",
+            mesh.points.len(),
+            mesh.boundary.len(),
+            start.elapsed().as_secs_f64()
+        );
     }
 }

@@ -657,6 +657,11 @@ impl PrescribedTriangleSurface {
     }
     // The cached predicate is conservative: a nonempty mask still uses ordinary
     // global/domain pair admission. An empty mask cannot enable any pair.
+    // Conservative domain-only eligibility; this does not admit geometry or
+    // certify separation. Unlisted triangles remain potential contacts.
+    pub(super) fn may_contact_faces(&self, faces: &[[usize; 3]]) -> bool {
+        faces.iter().any(|&face| self.body_face_may_contact(face))
+    }
     fn body_face_may_contact(&self, mut face: [usize; 3]) -> bool {
         face.sort_unstable();
         self.body_contact_domains
@@ -1086,6 +1091,24 @@ impl PrescribedTriangleSurface {
         coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
     ) -> Result<PrescribedSurfaceResponse, &'static str> {
         validate_faces(body, faces)?;
+        self.response_for_validated_geometry::<INDEXED>(body, faces, coordinates)
+    }
+    // Only immutable faces admitted by their embedded-skin owner may use this
+    // path. Coordinates and triangle areas are still checked on every response.
+    pub(super) fn response_admitted_skin(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        validate_admitted_face_geometry(body, faces)?;
+        self.response_for_validated_geometry::<true>(body, faces, None)
+    }
+    fn response_for_validated_geometry<const INDEXED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
         let mut response = PrescribedSurfaceResponse {
             potential_j: 0.,
             body_gradient_n: vec![[0.; 3]; body.len()],
@@ -2298,6 +2321,7 @@ mod inactive_domain_tests {
     #[test]
     fn inactive_masks_preserve_geometry_admission_and_unlisted_face_contacts() {
         let (surface, mut body, faces) = fixture(2);
+        assert!(!surface.may_contact_faces(&faces));
         let zero = surface.response(&body, &faces).unwrap();
         assert_eq!(zero.potential_j, 0.);
         assert!(
@@ -2326,11 +2350,15 @@ mod inactive_domain_tests {
         let mixed = surface
             .with_body_contact_domains(vec![(vec![faces[0]], vec![false; 2])])
             .unwrap();
+        assert!(!mixed.may_contact_faces(&faces[..1]));
+        assert!(mixed.may_contact_faces(&faces[1..]));
+        assert!(mixed.may_contact_faces(&faces));
         assert_eq!(mixed.response(&body, &faces[..1]).unwrap().potential_j, 0.);
         assert!(mixed.response(&body, &faces[1..]).unwrap().potential_j > 0.);
         let enabled = surface
             .with_body_contact_domains(vec![(faces.clone(), vec![true; 2])])
             .unwrap();
+        assert!(enabled.may_contact_faces(&faces));
         assert!(enabled.response(&body, &faces).unwrap().potential_j > 0.);
         assert!(surface.same_owner(&enabled).is_err());
         let moved = surface

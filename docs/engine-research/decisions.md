@@ -283,3 +283,7 @@ queue admission from execution transactions. The useful storage-lifecycle proper
 was adapted as safe Vec draining in Voxy; no packed unsafe code or parallel execution
 was copied, and no speedup is claimed. This does not change corpus classification
 or establish a whole-engine architecture review.
+
+## Stride animation and skeleton publication
+
+The [pinned animation source review](mechanisms/stride-animation/review.md) examines render-hook clip advancement, instance evaluation scratch, mutable hierarchical world updates, and mesh-specific blend-matrix publication. Adapt explicit ordering and scratch ownership; retain Voxy fixed physical time, immutable checked rig identity, and one staged source pose for skin/contact/supports. These source paths do not establish physics/render clock equality, callback failure rollback, or GPU publication atomicity. Three source files plus MIT license are pinned and digest-verified; no code or secondary evaluator was imported.

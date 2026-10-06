@@ -17,6 +17,7 @@ pub(super) struct Regions {
     pub(super) reference: VolumeReference,
     source_node_reference: bool,
     pub(super) startup_seconds: f64,
+    energy_budget_rate_j_s: Option<f64>,
     pub(super) coverage_report: Value,
 }
 impl Regions {
@@ -32,7 +33,11 @@ impl Regions {
         }
     }
     pub(super) fn instantiate(&self) -> Result<TissueDemo, &'static str> {
-        TissueDemo::body_from_region_specs(self.volumes.clone())
+        let mut demo = TissueDemo::body_from_region_specs(self.volumes.clone())?;
+        if let Some(rate) = self.energy_budget_rate_j_s {
+            demo.set_energy_budget_rate(rate)?;
+        }
+        Ok(demo)
     }
     pub(super) fn validate_skin_coverage(&self, binding: &TissueSkinBinding) -> Result<(), Error> {
         if let Some((minimum, required)) = &self.coverage {
@@ -302,6 +307,7 @@ pub(super) fn load(
             "coordinate_space",
             "kinematic_reference",
             "startup_seconds",
+            "energy_budget_rate_j_s",
             "material_profile",
             "source_model_blake3",
             "regions",
@@ -324,6 +330,16 @@ pub(super) fn load(
     if !illustrative && !explicit {
         return Err("unsupported tissue manifest version, coordinates or material profile".into());
     }
+    let energy_budget_rate_j_s = match root.get("energy_budget_rate_j_s") {
+        None => None,
+        Some(value) if explicit => Some(
+            value
+                .as_f64()
+                .filter(|rate| rate.is_finite() && *rate > 0.)
+                .ok_or("invalid authored energy budget rate")?,
+        ),
+        _ => return Err("energy budget rate requires explicit material manifest".into()),
+    };
     let source_node_reference = match root.get("kinematic_reference") {
         None => false,
         Some(Value::String(mode)) if explicit && mode == "region-joints" => false,
@@ -528,6 +544,7 @@ pub(super) fn load(
         reference,
         source_node_reference,
         startup_seconds,
+        energy_budget_rate_j_s,
         coverage_report: Value::Null,
     };
     if reference == VolumeReference::BindPose
@@ -549,6 +566,7 @@ pub(super) fn load(
         "scope":"reference-space skin membership; not dynamic collision qualification",
         "reference_pose":regions.reference.label(),
         "startup_seconds":regions.startup_seconds,
+        "energy_budget_rate_j_s":regions.energy_budget_rate_j_s.unwrap_or(240. * 1e-5),
         "kinematic_reference":if regions.source_node_reference {"source-skin-nodes"} else {"region-joints"},
         "source_vertices":source_positions.len(), "bound_vertices":binding.bound_vertex_count(),
         "tissue_owned_vertices":binding.tissue_owned_vertices(), "contract_supplied":regions.coverage.is_some(),
@@ -767,6 +785,32 @@ mod tests {
             std::fs::write(&manifest, serde_json::to_vec(&startup_manifest).unwrap()).unwrap();
             assert!(load(&manifest, &model, MODEL).is_err());
         }
+        let mut energy_manifest = bind_manifest.clone();
+        energy_manifest["energy_budget_rate_j_s"] = 5e-10.into();
+        std::fs::write(&manifest, serde_json::to_vec(&energy_manifest).unwrap()).unwrap();
+        let energy_import = load(&manifest, &model, MODEL).unwrap();
+        assert_eq!(energy_import.value().energy_budget_rate_j_s, Some(5e-10));
+        assert_eq!(
+            energy_import.value().coverage_report["energy_budget_rate_j_s"],
+            5e-10
+        );
+        for value in [
+            Value::Null,
+            serde_json::json!(false),
+            serde_json::json!(0.),
+            serde_json::json!(-1.),
+            serde_json::json!("5e-10"),
+        ] {
+            energy_manifest["energy_budget_rate_j_s"] = value;
+            std::fs::write(&manifest, serde_json::to_vec(&energy_manifest).unwrap()).unwrap();
+            assert!(
+                load(&manifest, &model, MODEL)
+                    .err()
+                    .unwrap()
+                    .to_string()
+                    .contains("energy budget rate")
+            );
+        }
         let mut phase_startup = medit_manifest.clone();
         phase_startup["startup_seconds"] = 0.5.into();
         std::fs::write(&manifest, serde_json::to_vec(&phase_startup).unwrap()).unwrap();
@@ -943,6 +987,57 @@ mod tests {
             )
             .unwrap();
         }
+        std::fs::remove_dir_all(directory).unwrap();
+    }
+    #[test]
+    fn full_character_source_pins_require_startup_and_reject_competing_joint_drivers() {
+        let model = ModelAsset::parse(MODEL, &[], ModelLimits::default()).unwrap();
+        let fixture = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../artifacts/character-bind-pose-2026-10-07");
+        let directory = std::env::temp_dir().join(format!(
+            "voxy-source-pin-startup-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&directory).unwrap();
+        std::fs::copy(
+            fixture.join("tetgen-volume.mesh"),
+            directory.join("tetgen-volume.mesh"),
+        )
+        .unwrap();
+        let mut manifest: Value =
+            serde_json::from_slice(&std::fs::read(fixture.join("bind-regions.json")).unwrap())
+                .unwrap();
+        manifest["regions"][0]["supports"] = serde_json::json!([0]);
+        let path = directory.join("regions.json");
+        let write = |v: &Value| std::fs::write(&path, serde_json::to_vec(v).unwrap()).unwrap();
+        write(&manifest);
+        assert!(
+            load(&path, &model, MODEL)
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("require an explicit startup duration")
+        );
+        manifest["startup_seconds"] = 0.5.into();
+        write(&manifest);
+        let admitted = load(&path, &model, MODEL).unwrap();
+        assert_eq!(admitted.value().volumes[0].supports, vec![0]);
+        assert_eq!(admitted.value().coverage_report["bound_vertices"], 3273);
+        assert_eq!(admitted.value().coverage_report["startup_seconds"], 0.5);
+        manifest["regions"][0]["support_joint_overrides"] =
+            serde_json::json!([{"node":0,"joint":"leg_joint_R_1"}]);
+        write(&manifest);
+        assert!(
+            load(&path, &model, MODEL)
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("cannot combine authored joint overrides")
+        );
         std::fs::remove_dir_all(directory).unwrap();
     }
     #[test]

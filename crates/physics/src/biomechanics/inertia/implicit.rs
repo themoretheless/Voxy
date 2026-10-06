@@ -341,6 +341,11 @@ impl InertialBody {
                 contact_origin,
             )
         };
+        let contact_free = !next.may_contact_faces(&faces)
+            && self
+                .body
+                .stationary_embedded_contact()
+                .is_none_or(|skin| !skin.may_have_contact_pairs());
         let prepared_motion = current.prepare_motion(&next)?;
         let world_endpoint = |points: &[Vec3]| -> Vec<Vec3> {
             points
@@ -633,7 +638,17 @@ impl InertialBody {
                     .collect();
                 push_secant(&mut history, delta, change, 12);
             }
-            let mut diagonal: Vec<Vec3> = weight.iter().map(|&v| [v; 3]).collect();
+            // Active contact retains its qualified search metric. The rest
+            // material metric is admitted only when authored domains exclude
+            // every outer and embedded contact pair, not merely when a sampled
+            // pose appears separated. Geometry/work/convergence gates stay real.
+            let mut diagonal: Vec<Vec3> = weight
+                .iter()
+                .zip(&self.body.diagonal)
+                .map(|(&inertia, &stiffness)| {
+                    [inertia + if contact_free { stiffness } else { 0. }; 3]
+                })
+                .collect();
             let endpoint = local_endpoint(&mid);
             let blocks = observe_contact_stage(
                 "local normal blocks",
@@ -657,7 +672,14 @@ impl InertialBody {
                 return Err("implicit search metric overflow");
             }
             let base_direction = |r: &[Vec3]| {
-                coupled_contact_direction(&weight, &diagonal, &blocks, &self.body.pinned, r)
+                coupled_contact_direction_with_material(
+                    &weight,
+                    &diagonal,
+                    &blocks,
+                    &self.body.pinned,
+                    r,
+                    contact_free.then_some(&self.body),
+                )
             };
             let mut direction = secant_direction(&history, &free_residual, |q| {
                 base_direction(q).iter().map(|d| d.map(|v| -v)).collect()
@@ -1536,12 +1558,24 @@ fn relative_midpoint_endpoint(
 // Solve the positive inertia + frozen-feature normal operator, retaining
 // coupling between vertices and axes. This is a search metric, not the full
 // material/geometric Hessian; nonlinear admission still checks the real model.
+#[cfg(test)]
 fn coupled_contact_direction(
     weight: &[f64],
     diagonal: &[Vec3],
     blocks: &[super::super::PrescribedContactStencil],
     pinned: &[bool],
     residual: &[Vec3],
+) -> Vec<Vec3> {
+    coupled_contact_direction_with_material(weight, diagonal, blocks, pinned, residual, None)
+}
+
+fn coupled_contact_direction_with_material(
+    weight: &[f64],
+    diagonal: &[Vec3],
+    blocks: &[super::super::PrescribedContactStencil],
+    pinned: &[bool],
+    residual: &[Vec3],
+    body: Option<&super::super::Body>,
 ) -> Vec<Vec3> {
     let apply = |v: &[Vec3]| {
         let mut result: Vec<Vec3> = v
@@ -1556,6 +1590,9 @@ fn coupled_contact_direction(
                 }
             })
             .collect();
+        if let Some(body) = body {
+            result = rest_material_action(body, weight, v);
+        }
         for block in blocks {
             let body = block
                 .body_face
@@ -2036,6 +2073,78 @@ mod tests {
                 .is_err()
         );
         assert_eq!(before, format!("{dynamics:?}"));
+    }
+    #[test]
+    fn material_contact_search_recovers_affine_motion_and_keeps_pins() {
+        use super::super::super::{Body, Material, PrescribedContactStencil};
+        let body = Body::new(
+            vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            vec![true, false, false, false],
+            vec![(
+                [0, 1, 2, 3],
+                Material {
+                    shear_pa: 3.,
+                    bulk_pa: 11.,
+                    fibers: vec![],
+                },
+            )],
+        )
+        .unwrap();
+        let weight = [2.; 4];
+        let expected = vec![[0.; 3], [0.2, 0., 0.], [0.4, -0.1, 0.], [0., 0., 0.3]];
+        let block = PrescribedContactStencil {
+            body_face: [0, 1, 2],
+            obstacle_face_index: 0,
+            obstacle_face: [0, 1, 2],
+            body_weights: [0.2, 0.3, 0.5],
+            obstacle_weights: [1., 0., 0.],
+            normal: [0.6, 0.8, 0.],
+            normal_curvature_n_m: 1000.,
+        };
+        // Independent affine stress (mu=3, bulk=11, volume=1/6).
+        let trace = 0.4;
+        let stress = [
+            [6. * (0.2 - trace / 3.) + 11. * trace, 1.2, 0.],
+            [1.2, 6. * (-0.1 - trace / 3.) + 11. * trace, 0.],
+            [0., 0., 6. * (0.3 - trace / 3.) + 11. * trace],
+        ];
+        let gradients = [[-1.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
+        let projection: f64 = (0..3)
+            .map(|n| block.body_weights[n] * dot(block.normal, expected[n]))
+            .sum();
+        let mut residual = vec![[0.; 3]; 4];
+        let mut diagonal: Vec<_> = weight
+            .iter()
+            .zip(&body.diagonal)
+            .map(|(w, k)| [w + k; 3])
+            .collect();
+        for node in 1..4 {
+            for axis in 0..3 {
+                residual[node][axis] =
+                    -(2. * expected[node][axis] + dot(stress[axis], gradients[node]) / 6.);
+                if node < 3 {
+                    residual[node][axis] -=
+                        1000. * projection * block.body_weights[node] * block.normal[axis];
+                    diagonal[node][axis] +=
+                        1000. * (block.body_weights[node] * block.normal[axis]).powi(2);
+                }
+            }
+        }
+        residual[0] = [99.; 3];
+        let actual = coupled_contact_direction_with_material(
+            &weight,
+            &diagonal,
+            &[block],
+            &body.pinned,
+            &residual,
+            Some(&body),
+        );
+        assert_eq!(actual[0], [0.; 3]);
+        for node in 1..4 {
+            for axis in 0..3 {
+                assert!((actual[node][axis] - expected[node][axis]).abs() < 1e-9);
+            }
+        }
     }
     #[test]
     fn coupled_direction_matches_rank_one_inverse_and_holds_pins() {

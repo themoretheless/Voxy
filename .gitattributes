@@ -10,3 +10,6 @@ artifacts/character-bind-pose-2026-10-07/*.edge -whitespace
 artifacts/character-bind-pose-2026-10-07/*.ele -whitespace
 artifacts/character-bind-pose-2026-10-07/*.face -whitespace
 artifacts/character-bind-pose-2026-10-07/*.node -whitespace
+
+# Pinned upstream license evidence retains original Markdown whitespace.
+docs/engine-research/mechanisms/stride-animation/LICENSE.md -whitespace

@@ -1,0 +1,30 @@
+{
+  "repository": "stride3d/stride",
+  "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+  "sources": [
+    {
+      "path": "sources/engine/Stride.Engine/Animations/AnimationProcessor.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Engine/Animations/AnimationProcessor.cs",
+      "file": "sources__engine__Stride.Engine__Animations__AnimationProcessor.cs",
+      "sha256": "0ae15ec40b4af9b9e3b1f1a97811d2ecc85c352adb41ced1a24266f30d22344b"
+    },
+    {
+      "path": "sources/engine/Stride.Engine/Rendering/ModelRenderProcessor.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Engine/Rendering/ModelRenderProcessor.cs",
+      "file": "sources__engine__Stride.Engine__Rendering__ModelRenderProcessor.cs",
+      "sha256": "737d38fe375409270f4969caa3c1700de74094ad3d055ccce4d676c2142530f0"
+    },
+    {
+      "path": "sources/engine/Stride.Rendering/Rendering/SkeletonUpdater.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Rendering/Rendering/SkeletonUpdater.cs",
+      "file": "sources__engine__Stride.Rendering__Rendering__SkeletonUpdater.cs",
+      "sha256": "cae28e7bb12e0ce9414b6999e7e09864da5b2a2ef316f3531dbb3fd11cbe94bc"
+    },
+    {
+      "path": "LICENSE.md",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/LICENSE.md",
+      "file": "LICENSE.md",
+      "sha256": "46d821d4ede6fab226ec02b0392f8c2633ad3d9d2cc2cbd709e54a7a8b0a79f1"
+    }
+  ]
+}
