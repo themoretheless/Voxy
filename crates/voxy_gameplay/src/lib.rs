@@ -3,8 +3,10 @@
 //! Characters collide with active static boxes, not with each other. Physics owns
 //! translations during ticks. A character may rotate; its scale and ancestor
 //! rotation/scale must be identity. Static boxes support affine transforms.
+mod rigid_frame;
+pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
 mod liquid_body;
-pub use liquid_body::LiquidBody;
+pub use liquid_body::{LiquidBody, LiquidMassDistribution, LiquidMassPart};
 mod liquid_runtime;
 pub use liquid_runtime::{SceneLiquidRuntime, SceneLiquidStep};
 mod liquid_source;
@@ -152,6 +154,7 @@ pub enum PhysicsError {
     InvalidStep,
     InvalidMotion,
     SweepBudget,
+    ContactWitness,
     Solver,
     UnknownSystem,
     AccessDenied,
@@ -172,6 +175,7 @@ impl std::error::Error for PhysicsError {}
 /// Rejects duplicate schema names/types.
 pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
     registry.register::<LiquidBody>("game.liquid-body.v1")?;
+    registry.register::<LiquidMassDistribution>("game.liquid-mass.v1")?;
     registry.register::<LiquidSource>("game.liquid-source.v1")?;
     registry.register::<CharacterBody>("game.character.v1")?;
     registry.register::<BoxCollider>("game.box.v1")?;
@@ -195,6 +199,10 @@ pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<
     }
     if scene.components::<LiquidSource>().next().is_some()
         || scene.components::<LiquidBody>().next().is_some()
+        || scene
+            .components::<LiquidMassDistribution>()
+            .next()
+            .is_some()
     {
         return Err("game.liquid-source.v1 requires an attached scene liquid runtime".into());
     }

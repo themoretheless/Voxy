@@ -5713,6 +5713,129 @@ mod tests {
     }
 
     #[test]
+    fn multiple_authored_bodies_collide_in_play_and_restart_from_document() {
+        let root =
+            std::env::temp_dir().join(format!("voxy-multiple-bodies-play-{}", std::process::id()));
+        std::fs::create_dir_all(&root).unwrap();
+        std::fs::write(
+            root.join("quad.obj"),
+            "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n",
+        )
+        .unwrap();
+        let mut app = App::new(&root.join("quad.obj"), false).unwrap();
+        let mut document = app.authoring_document().unwrap();
+        document.objects.truncate(1);
+        let body = &mut document.objects[0];
+        body.translation = [0.; 3];
+        body.scale = [1.; 3];
+        body.rotation = [0., 0., 0., 1.];
+        body.components.clear();
+        body.components.insert(
+            "game.box.v1".into(),
+            serde_json::to_value(BoxCollider {
+                half_extents: [0.01; 3],
+            })
+            .unwrap(),
+        );
+        body.components.insert(
+            "game.liquid-body.v1".into(),
+            serde_json::to_value(voxy_gameplay::LiquidBody {
+                mass_kg: 1.,
+                initial_velocity_m_s: [3., 0., 0.],
+            })
+            .unwrap(),
+        );
+        body.components.insert(
+            "game.liquid-mass.v1".into(),
+            serde_json::to_value(voxy_gameplay::LiquidMassDistribution {
+                parts: vec![voxy_gameplay::LiquidMassPart {
+                    mass_kg: 1.,
+                    center_m: [0.02, 0., 0.],
+                    half_edges_m: [[0.01, 0., 0.], [0., 0.01, 0.], [0., 0., 0.01]],
+                }],
+            })
+            .unwrap(),
+        );
+        let mut second = body.clone();
+        second.id = ObjectId("second-body".into());
+        second.translation = [0.08, 0., 0.];
+        second.components.insert(
+            "game.liquid-body.v1".into(),
+            serde_json::to_value(voxy_gameplay::LiquidBody {
+                mass_kg: 1.,
+                initial_velocity_m_s: [0.; 3],
+            })
+            .unwrap(),
+        );
+        // First owner's geometry lives solely on its child, exercising persisted compounds.
+        let mut child = document.objects[0].clone();
+        child.id = ObjectId("body-shape".into());
+        child.parent = Some(document.objects[0].id.clone());
+        child.translation = [0.; 3];
+        child.components.remove("game.liquid-body.v1");
+        child.components.remove("game.liquid-mass.v1");
+        document.objects[0].components.remove("game.box.v1");
+        document.objects.push(second);
+        document.objects.push(child);
+        app.authoring
+            .history
+            .as_mut()
+            .unwrap()
+            .commit(document.clone(), &app.authoring.authoring_project.registry)
+            .unwrap();
+        app.restore_authoring().unwrap();
+        app.toggle_play().unwrap();
+        app.advance_game(1. / 60.).unwrap();
+        app.advance_game(1. / 60.).unwrap();
+        let runtime = app.play.liquid.as_ref().unwrap();
+        for (_, properties) in runtime.body_mass_properties() {
+            let properties = properties.unwrap();
+            assert_eq!(properties.mass, 1.);
+            assert_eq!(properties.center, [0.02, 0., 0.]);
+            assert!(properties.principal_moments.iter().all(|m| *m > 0.));
+        }
+        for ((node, frame), (owner, state)) in
+            runtime.body_rigid_frames().zip(runtime.body_states())
+        {
+            assert_eq!(node, owner);
+            let frame = frame.unwrap();
+            let rigid = frame
+                .prepare_body(state.position, state.velocity, [0.; 3])
+                .unwrap();
+            let prepared = frame.prepare_pose(rigid, 1., 1e-5).unwrap();
+            assert_eq!(
+                prepared.pose.translation,
+                app.scene.local(node).unwrap().translation
+            );
+            assert_eq!(prepared.pose.scale, app.scene.local(node).unwrap().scale);
+        }
+        let states: Vec<_> = runtime.body_states().collect();
+        assert_eq!(states.len(), 2);
+        for (node, state) in states {
+            assert!((state.velocity[0] - 1.5).abs() < 1e-10);
+            assert_eq!(
+                app.scene.local(node).unwrap().translation,
+                glam::DVec3::from_array(state.position).as_vec3()
+            );
+        }
+        runtime.validate_bindings(&app.scene).unwrap();
+        app.toggle_play().unwrap();
+        assert_eq!(app.authoring_document().unwrap(), document);
+        app.toggle_play().unwrap();
+        let velocities: Vec<_> = app
+            .play
+            .liquid
+            .as_ref()
+            .unwrap()
+            .body_states()
+            .map(|(_, state)| state.velocity[0])
+            .collect();
+        assert_eq!(velocities, vec![3., 0.]);
+        app.toggle_play().unwrap();
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
     fn authored_liquid_body_moves_in_play_and_stop_restores_both_descriptors() {
         let root =
             std::env::temp_dir().join(format!("voxy-liquid-body-play-{}", std::process::id()));

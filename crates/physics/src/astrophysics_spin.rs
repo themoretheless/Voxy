@@ -79,14 +79,7 @@ impl Spin {
     /// # Errors
     /// Invalid state or overflow in the inertia transform.
     pub fn angular_velocity(self) -> Result<Vector, Error> {
-        self.validate()?;
-        let q = self.orientation;
-        let local = rotate([-q[0], -q[1], -q[2], q[3]], self.angular_momentum);
-        let omega = rotate(q, std::array::from_fn(|k| local[k] / self.inertia[k]));
-        if omega.iter().any(|v| !v.is_finite()) {
-            return Err(Error::NumericalOverflow);
-        }
-        Ok(omega)
+        self.inverse_inertia(self.angular_momentum)
     }
     /// # Errors
     /// Invalid state or unrepresentable kinetic energy.
@@ -104,6 +97,23 @@ impl Spin {
         }
         Ok(energy)
     }
+    /// Apply inverse world inertia to a world-frame angular impulse or torque.
+    /// # Errors
+    /// Invalid inertia/orientation or an unrepresentable transformed vector.
+    pub fn inverse_inertia(self, vector: Vector) -> Result<Vector, Error> {
+        self.validate()?;
+        if vector.iter().any(|v| !v.is_finite()) {
+            return Err(Error::InvalidInput);
+        }
+        let q = self.orientation;
+        let local = rotate([-q[0], -q[1], -q[2], q[3]], vector);
+        let result = rotate(q, std::array::from_fn(|k| local[k] / self.inertia[k]));
+        if result.iter().any(|v| !v.is_finite()) {
+            return Err(Error::NumericalOverflow);
+        }
+        Ok(result)
+    }
+
     /// World-frame inertia, for gravity-gradient torque.
     /// # Errors
     /// Invalid state or numerical overflow.
@@ -128,6 +138,13 @@ impl Spin {
     /// # Errors
     /// Invalid input, overflow or failed convergence leave state unchanged.
     pub fn step(&mut self, torque: Vector, dt: f64) -> Result<(), Error> {
+        *self = self.prepare_arc(torque, dt)?.end;
+        Ok(())
+    }
+
+    /// Prepare the same implicit midpoint step as a sampleable constant-axis arc.
+    /// This arc is the numerical path, not an exact anisotropic free-spin orbit.
+    pub fn prepare_arc(self, torque: Vector, dt: f64) -> Result<SpinArc, Error> {
         self.validate()?;
         if !dt.is_finite() || dt <= 0.0 || torque.iter().any(|v| !v.is_finite()) {
             return Err(Error::InvalidInput);
@@ -135,7 +152,7 @@ impl Spin {
         let midpoint_momentum =
             std::array::from_fn(|k| self.angular_momentum[k] + torque[k] * dt * 0.5);
         let end_momentum = std::array::from_fn(|k| self.angular_momentum[k] + torque[k] * dt);
-        let mut half = *self;
+        let mut half = self;
         half.angular_momentum = midpoint_momentum;
         let mut converged = false;
         for _ in 0..32 {
@@ -157,10 +174,63 @@ impl Spin {
         let next = Self {
             orientation: advance(self.orientation, half.angular_velocity()?, dt)?,
             angular_momentum: end_momentum,
-            ..*self
+            ..self
         };
         next.validate()?;
-        *self = next;
-        Ok(())
+        Ok(SpinArc {
+            start: self,
+            end: next,
+            torque,
+            duration: dt,
+            angular_velocity: half.angular_velocity()?,
+        })
+    }
+}
+
+/// Immutable implicit-midpoint arc, with its exact accepted endpoints.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SpinArc {
+    start: Spin,
+    end: Spin,
+    torque: Vector,
+    duration: f64,
+    angular_velocity: Vector,
+}
+impl SpinArc {
+    pub fn start(self) -> Spin {
+        self.start
+    }
+    pub fn end(self) -> Spin {
+        self.end
+    }
+    pub fn duration(self) -> f64 {
+        self.duration
+    }
+    pub fn angular_velocity(self) -> Vector {
+        self.angular_velocity
+    }
+    pub fn torque(self) -> Vector {
+        self.torque
+    }
+    /// Sample the admitted arc; preserve accepted endpoints exactly.
+    pub fn sample(self, time: f64) -> Result<Spin, Error> {
+        if !time.is_finite() || !(0. ..=self.duration).contains(&time) {
+            return Err(Error::InvalidInput);
+        }
+        if time == 0. {
+            return Ok(self.start);
+        }
+        if time == self.duration {
+            return Ok(self.end);
+        }
+        let state = Spin {
+            orientation: advance(self.start.orientation, self.angular_velocity, time)?,
+            angular_momentum: std::array::from_fn(|k| {
+                self.start.angular_momentum[k] + self.torque[k] * time
+            }),
+            ..self.start
+        };
+        state.validate()?;
+        Ok(state)
     }
 }
