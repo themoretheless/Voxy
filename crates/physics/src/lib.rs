@@ -157,3 +157,5 @@ mod triangle_index;
 pub mod suspension;
 
 mod heat_exchange;
+
+mod spatial_bounds;

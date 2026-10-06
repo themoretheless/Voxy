@@ -1,7 +1,9 @@
 //! Barycentric embedding of a render mesh in a coarse tetrahedral simulation.
-//! Binding is O(surface vertices * tetrahedra); deformation is O(surface vertices).
+//! Binding reuses a rest-space bounds index; deformation is O(surface vertices).
 type Point = [f64; 3];
 use std::sync::Arc;
+mod search;
+pub use search::TetrahedralEmbedding;
 fn sub(a: Point, b: Point) -> Point {
     std::array::from_fn(|i| a[i] - b[i])
 }
@@ -156,68 +158,7 @@ impl EmbeddedSurface {
         {
             return Err("invalid embedding positions");
         }
-        let mut prepared = Vec::with_capacity(cells.len());
-        for &ids in cells {
-            if ids.iter().any(|&i| i >= rest.len()) {
-                return Err("invalid embedding index");
-            }
-            let a = sub(rest[ids[1]], rest[ids[0]]);
-            let b = sub(rest[ids[2]], rest[ids[0]]);
-            let c = sub(rest[ids[3]], rest[ids[0]]);
-            let det = determinant(a, b, c);
-            let scale = a
-                .iter()
-                .chain(&b)
-                .chain(&c)
-                .fold(0.0_f64, |s, x| s.max(x.abs()));
-            if !det.is_finite() || scale == 0.0 || det.abs() <= 1e-12 * scale.powi(3) {
-                return Err("degenerate embedding cell");
-            }
-            prepared.push((ids, a, b, c, det));
-        }
-        let mut bindings = Vec::with_capacity(surface.len());
-        for (&point, &owned) in surface.iter().zip(tissue_owned) {
-            if !owned {
-                bindings.push(None);
-                continue;
-            }
-            let mut found = None;
-            for &(indices, a, b, c, det) in &prepared {
-                let q = sub(point, rest[indices[0]]);
-                let mut weights = [
-                    0.0,
-                    determinant(q, b, c) / det,
-                    determinant(a, q, c) / det,
-                    determinant(a, b, q) / det,
-                ];
-                weights[0] = 1.0 - weights[1] - weights[2] - weights[3];
-                if weights
-                    .iter()
-                    .all(|&w| w.is_finite() && (-1e-10..=1.0 + 1e-10).contains(&w))
-                {
-                    // Remove boundary roundoff without permitting visible extrapolation.
-                    for w in &mut weights {
-                        *w = w.clamp(0.0, 1.0);
-                    }
-                    let sum: f64 = weights.iter().sum();
-                    for w in &mut weights {
-                        *w /= sum;
-                    }
-                    found = Some(Binding { indices, weights });
-                    break;
-                }
-            }
-            bindings.push(Some(
-                found.ok_or("surface vertex outside tetrahedral mesh")?,
-            ));
-        }
-        Ok(Self {
-            bindings,
-            vertex_count: rest.len(),
-            rest: rest.into(),
-            cells: cells.into(),
-            surface: surface.into(),
-        })
+        TetrahedralEmbedding::new(rest, cells)?.bind_relative(surface, tissue_owned)
     }
     pub(crate) fn tissue_owned_vertex(&self, vertex: usize) -> bool {
         self.bindings[vertex].is_some()

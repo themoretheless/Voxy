@@ -8,7 +8,7 @@ use physics::biomechanics::{
 use physics::tissue::ellipsoid;
 use physics::tissue::{Tissue, TissueKind, sample};
 use physics::tissue_surface::EmbeddedSurface;
-use std::sync::Arc;
+use std::{collections::BTreeMap, sync::Arc};
 use voxy_animation::{Joint, Skeleton, Transform};
 use voxy_render::{SceneMesh, SceneVertex};
 #[path = "tissue_demo/assembly.rs"]
@@ -180,6 +180,8 @@ pub(crate) struct TissueRegionSpec {
     pub mesh: physics::biomechanics::TetraMesh,
     pub supports: Vec<usize>,
     pub joint: usize,
+    pub support_joint_overrides: Vec<(usize, usize)>,
+    pub support_joint_weights: Vec<(usize, Vec<(usize, f64)>)>,
     pub ogden_terms: Vec<OgdenTerm>,
     pub bulk_pa: f64,
     pub maxwell_branches: Vec<MaxwellBranch>,
@@ -197,6 +199,8 @@ impl TissueRegionSpec {
             mesh,
             supports,
             joint,
+            support_joint_overrides: Vec::new(),
+            support_joint_weights: Vec::new(),
             ogden_terms: vec![OgdenTerm {
                 shear_pa: 5000.,
                 exponent: 2.,
@@ -212,11 +216,17 @@ impl TissueRegionSpec {
         }
     }
 }
+#[derive(Clone, Debug)]
+struct TissueAttachment {
+    joint: usize,
+    pins: Vec<(usize, [f64; 3])>,
+    overrides: BTreeMap<usize, Vec<(usize, f64)>>,
+}
 #[derive(Debug)]
 pub(crate) struct TissueDemo {
     bodies: Vec<DemoTissue>,
     surfaces: Vec<EmbeddedSurface>,
-    attachments: Vec<(usize, Vec<(usize, [f64; 3])>)>,
+    attachments: Vec<TissueAttachment>,
     assembled_regions: Option<Arc<assembly::AssembledRegions>>,
     skin_contact_binding: Option<Arc<assembly::GlobalSkinBinding>>,
     body_rig: Option<Arc<Skeleton>>,
@@ -294,13 +304,14 @@ impl TissueDemo {
     pub(crate) fn body_from_regions(
         regions: Vec<(physics::biomechanics::TetraMesh, [usize; 3], usize)>,
     ) -> Result<Self, &'static str> {
-        Self::body_from_region_specs(
+        Self::build_region_specs(
             regions
                 .into_iter()
                 .map(|(mesh, pins, joint)| {
                     TissueRegionSpec::illustrative(mesh, pins.to_vec(), joint)
                 })
                 .collect(),
+            false,
         )
     }
     /// Caller-authored SI parameters are validated by the shared material and
@@ -308,8 +319,44 @@ impl TissueDemo {
     pub(crate) fn body_from_region_specs(
         regions: Vec<TissueRegionSpec>,
     ) -> Result<Self, &'static str> {
+        Self::build_region_specs(regions, true)
+    }
+    // The legacy illustrative pads can overlap and are not admitted anatomy.
+    // Explicit authored specifications always require disjoint physical volumes.
+    fn build_region_specs(
+        regions: Vec<TissueRegionSpec>,
+        require_disjoint_volumes: bool,
+    ) -> Result<Self, &'static str> {
         if regions.is_empty() || regions.len() > 64 {
             return Err("invalid authored tissue region count");
+        }
+        for spec in &regions {
+            spec.mesh.validate()?;
+        }
+        // Validate the union before any regional dynamics are published. Skin
+        // samples cannot establish that the intervening physical volumes are disjoint.
+        if require_disjoint_volumes && regions.len() > 1 {
+            let point_count = regions.iter().map(|r| r.mesh.points.len()).sum::<usize>();
+            let cell_count = regions.iter().map(|r| r.mesh.cells.len()).sum::<usize>();
+            if point_count > 1_000_000 || cell_count > 250_000 {
+                return Err("tetrahedral resource limit");
+            }
+            let mut union = physics::biomechanics::TetraMesh {
+                points: Vec::with_capacity(point_count),
+                cells: Vec::with_capacity(cell_count),
+                boundary: Vec::new(),
+            };
+            for spec in &regions {
+                let offset = union.points.len();
+                union.points.extend_from_slice(&spec.mesh.points);
+                union
+                    .cells
+                    .extend(spec.mesh.cells.iter().map(|c| c.map(|i| i + offset)));
+                union
+                    .boundary
+                    .extend(spec.mesh.boundary.iter().map(|f| f.map(|i| i + offset)));
+            }
+            union.validate()?;
         }
         let mut demo = Self::new();
         demo.body_mode = true;
@@ -320,6 +367,8 @@ impl TissueDemo {
                 mesh,
                 supports: pins,
                 joint,
+                support_joint_overrides,
+                support_joint_weights,
                 ogden_terms,
                 bulk_pa,
                 maxwell_branches,
@@ -336,6 +385,32 @@ impl TissueDemo {
                     return Err("invalid authored tissue supports");
                 }
                 *flag = true;
+            }
+            let mut overrides = BTreeMap::new();
+            for (node, bone) in support_joint_overrides {
+                if pinned.get(node) != Some(&true)
+                    || overrides.insert(node, vec![(bone, 1.)]).is_some()
+                {
+                    return Err("invalid authored support joint override");
+                }
+            }
+            for (node, mut influences) in support_joint_weights {
+                if pinned.get(node) != Some(&true)
+                    || overrides.contains_key(&node)
+                    || influences.is_empty()
+                    || influences.len() > 8
+                {
+                    return Err("invalid authored support joint weights");
+                }
+                influences.sort_unstable_by_key(|&(bone, _)| bone);
+                if influences.iter().any(|&(_, w)| !w.is_finite() || w <= 0.)
+                    || influences.windows(2).any(|pair| pair[0].0 == pair[1].0)
+                    || (influences.iter().map(|&(_, w)| w).sum::<f64>() - 1.).abs()
+                        > 64. * f64::EPSILON * influences.len() as f64
+                {
+                    return Err("invalid authored support joint weights");
+                }
+                overrides.insert(node, influences);
             }
             let shear_pa = ogden_terms.iter().map(|t| t.shear_pa).sum();
             let law = ViscoelasticOgden::new(ogden_terms, bulk_pa, maxwell_branches)?;
@@ -367,12 +442,14 @@ impl TissueDemo {
                 &mesh.cells,
                 &surface,
             )?);
-            demo.attachments.push((
+            demo.attachments.push(TissueAttachment {
                 joint,
-                pins.into_iter()
+                pins: pins
+                    .into_iter()
                     .map(|node| (node, mesh.points[node]))
                     .collect(),
-            ));
+                overrides,
+            });
             demo.bodies.push(DemoTissue::Continuum {
                 boundary_faces: dynamics.body().surface().into(),
                 thermal_binding: Arc::new(SolidFilmBinding::new(&dynamics)?),
@@ -482,47 +559,84 @@ impl TissueDemo {
             })
             .collect()
     }
-    /// Free-center offset from a purely rigid bone transform, in world metres.
-    pub(crate) fn body_secondary_offsets(&self) -> Vec<[f64; 3]> {
+    /// Mass-weighted displacement from regional rigid references, in world metres.
+    pub(crate) fn body_secondary_offsets(&self) -> Result<Vec<[f64; 3]>, &'static str> {
         self.secondary_offsets_for_palette(&self.body_palette())
     }
-    pub(crate) fn secondary_offsets_for_palette(&self, palette: &[Mat4]) -> Vec<[f64; 3]> {
-        if let Some(layout) = &self.assembled_regions {
-            if let Some(DemoTissue::Continuum { dynamics, .. }) = self.bodies.first() {
-                let mut offset = [0.; 3];
-                let mut mass = 0.;
-                for ((joint, _), range) in self.attachments.iter().zip(&layout.node_ranges) {
-                    let matrix =
-                        DMat4::from_cols_array(&palette[*joint].to_cols_array().map(f64::from));
-                    for node in range.clone() {
-                        let reference = matrix
-                            .transform_point3(DVec3::from_array(
-                                dynamics.body().rest_positions()[node],
-                            ))
-                            .to_array();
-                        let weight = dynamics.masses()[node];
-                        for axis in 0..3 {
-                            offset[axis] += weight
-                                * (dynamics.body().positions()[node][axis] - reference[axis]);
-                        }
-                        mass += weight;
-                    }
-                }
-                return vec![offset.map(|v| v / mass)];
+    pub(crate) fn secondary_offsets_for_palette(
+        &self,
+        palette: &[Mat4],
+    ) -> Result<Vec<[f64; 3]>, &'static str> {
+        let wide = Self::widen_attachment_palette(palette)?;
+        self.secondary_offsets_for_palette64(&wide)
+    }
+    pub(crate) fn secondary_offsets_for_palette64(
+        &self,
+        palette: &[DMat4],
+    ) -> Result<Vec<[f64; 3]>, &'static str> {
+        let mut weighted = Vec::new();
+        let ranges: Vec<_> = if let Some(layout) = &self.assembled_regions {
+            if self.bodies.len() != 1 || layout.node_ranges.len() != self.attachments.len() {
+                return Err("assembled tissue topology changed");
             }
+            layout.node_ranges.clone()
+        } else {
+            if self.bodies.len() != self.attachments.len() {
+                return Err("tissue attachment owner count changed");
+            }
+            self.bodies
+                .iter()
+                .map(|body| 0..body.positions().len())
+                .collect()
+        };
+        for (region, (attachment, range)) in self.attachments.iter().zip(ranges).enumerate() {
+            let matrix = palette
+                .get(attachment.joint)
+                .ok_or("missing tissue attachment bone")?;
+            Self::validate_attachment_matrix(matrix)?;
+            let body = &self.bodies[if self.assembled_regions.is_some() {
+                0
+            } else {
+                region
+            }];
+            let DemoTissue::Continuum { dynamics, .. } = body else {
+                return Err("offset diagnostics require continuum body");
+            };
+            let mut offset = [0.; 3];
+            let mut mass = 0.;
+            for node in range {
+                let rest = dynamics
+                    .body()
+                    .rest_positions()
+                    .get(node)
+                    .ok_or("tissue diagnostic topology changed")?;
+                let reference = matrix.transform_point3(DVec3::from_array(*rest)).to_array();
+                let weight = dynamics.masses()[node];
+                for axis in 0..3 {
+                    offset[axis] +=
+                        weight * (dynamics.body().positions()[node][axis] - reference[axis]);
+                }
+                mass += weight;
+            }
+            if !mass.is_finite() || mass <= 0. || offset.iter().any(|v| !v.is_finite()) {
+                return Err("nonfinite tissue offset diagnostics");
+            }
+            weighted.push((offset, mass));
         }
-        self.bodies
-            .iter()
-            .zip(&self.attachments)
-            .map(|(body, (joint, pins))| {
-                // The midpoint of the opposing +/-Y pins is the reference center.
-                let center = std::array::from_fn(|axis| (pins[0].1[axis] + pins[1].1[axis]) * 0.5);
-                let rigid = DMat4::from_cols_array(&palette[*joint].to_cols_array().map(f64::from))
-                    .transform_point3(DVec3::from_array(center))
-                    .to_array();
-                std::array::from_fn(|k| body.positions()[0][k] - rigid[k])
-            })
-            .collect()
+        if self.assembled_regions.is_some() {
+            let mass: f64 = weighted.iter().map(|(_, m)| m).sum();
+            let sum: [f64; 3] =
+                std::array::from_fn(|axis| weighted.iter().map(|(v, _)| v[axis]).sum());
+            if !mass.is_finite() || mass <= 0. || sum.iter().any(|v| !v.is_finite()) {
+                return Err("nonfinite tissue offset diagnostics");
+            }
+            Ok(vec![sum.map(|v| v / mass)])
+        } else {
+            Ok(weighted
+                .into_iter()
+                .map(|(v, m)| v.map(|x| x / m))
+                .collect())
+        }
     }
     pub(crate) fn body_motion_title(&self) -> Option<String> {
         if !self.body_mode {
@@ -533,8 +647,11 @@ impl TissueDemo {
             t if t < 8. => "jump",
             _ => "settle",
         };
-        let displacement_mm = self
-            .body_secondary_offsets()
+        let offsets = match self.body_secondary_offsets() {
+            Ok(offsets) => offsets,
+            Err(error) => return Some(format!("Voxy tissue diagnostics: {error}")),
+        };
+        let displacement_mm = offsets
             .iter()
             .map(|v| v[0].hypot(v[1]).hypot(v[2]) * 1000.)
             .fold(0_f64, f64::max);
@@ -699,7 +816,7 @@ impl TissueDemo {
                     .attachments
                     .get(body)
                     .ok_or("missing skin attachment")?
-                    .0,
+                    .joint,
                 vertices,
                 embedding: EmbeddedSurface::bind(rest, cells, &points)?,
                 rest: rest.to_vec(),
@@ -744,13 +861,16 @@ impl TissueDemo {
                 .attachments
                 .get(region.body)
                 .ok_or("skin attachment disappeared")?
-                .0;
+                .joint;
             if joint != region.joint {
                 return Err("skin attachment changed");
             }
             let matrix = palette.get(joint).ok_or("missing skin attachment joint")?;
             let determinant = matrix.determinant();
-            if !matrix.is_finite() || !determinant.is_finite() || determinant == 0. {
+            if Self::validate_attachment_matrix(matrix).is_err()
+                || !determinant.is_finite()
+                || determinant == 0.
+            {
                 return Err("invalid skin attachment matrix");
             }
             let reference: Vec<_> = region
@@ -972,10 +1092,7 @@ impl TissueDemo {
         conductivity_w_m_k: f64,
         next_surfaces: Option<Vec<Arc<PrescribedTriangleSurface>>>,
     ) -> Result<(), &'static str> {
-        let palette64: Vec<_> = palette
-            .iter()
-            .map(|matrix| DMat4::from_cols_array(&matrix.to_cols_array().map(f64::from)))
-            .collect();
+        let palette64 = Self::widen_attachment_palette(palette)?;
         self.step_body_with_contact64(&palette64, conductivity_w_m_k, next_surfaces)
     }
     fn step_body_with_contact64(
@@ -1009,8 +1126,11 @@ impl TissueDemo {
         {
             return Err("tissue contact region count mismatch");
         }
+        if self.bodies.len() != self.attachments.len() {
+            return Err("tissue attachment owner count changed");
+        }
         let mut candidate = self.bodies.clone();
-        let count = candidate.len().min(self.attachments.len());
+        let count = candidate.len();
         let workers = max_workers.max(1).min(count.max(1)).min(4);
         #[cfg(target_arch = "wasm32")]
         let workers = {
@@ -1082,34 +1202,96 @@ impl TissueDemo {
         self.bodies = candidate;
         Ok(())
     }
+    fn widen_attachment_palette(palette: &[Mat4]) -> Result<Vec<DMat4>, &'static str> {
+        palette
+            .iter()
+            .map(|matrix| {
+                let mut wide = DMat4::from_cols_array(&matrix.to_cols_array().map(f64::from));
+                Self::validate_attachment_matrix_with_tolerance(
+                    &wide,
+                    8. * f64::from(f32::EPSILON),
+                )?;
+                // transform_point3 uses affine positions; canonicalize only the unit
+                // metadata after validating it at the source scalar's precision.
+                wide.w_axis.w = 1.;
+                Ok(wide)
+            })
+            .collect()
+    }
+    fn validate_attachment_matrix(matrix: &DMat4) -> Result<(), &'static str> {
+        Self::validate_attachment_matrix_with_tolerance(matrix, 8. * f64::EPSILON)
+    }
+    fn validate_attachment_matrix_with_tolerance(
+        matrix: &DMat4,
+        unit_tolerance: f64,
+    ) -> Result<(), &'static str> {
+        if !matrix.is_finite() {
+            return Err("nonfinite tissue attachment");
+        }
+        if matrix.x_axis.w != 0.
+            || matrix.y_axis.w != 0.
+            || matrix.z_axis.w != 0.
+            // General matrix inversion can round the homogeneous unit entry.
+            || (matrix.w_axis.w - 1.).abs() > unit_tolerance
+        {
+            return Err("nonaffine tissue attachment");
+        }
+        Ok(())
+    }
+    fn attachment_targets(
+        attachment: &TissueAttachment,
+        palette: &[DMat4],
+    ) -> Result<Vec<SupportTarget>, &'static str> {
+        let TissueAttachment {
+            joint,
+            pins,
+            overrides,
+        } = attachment;
+        let default = palette
+            .get(*joint)
+            .ok_or("missing tissue attachment bone")?;
+        Self::validate_attachment_matrix(default)?;
+        pins.iter()
+            .map(|(node, rest)| {
+                let transform = |bone: usize| -> Result<[f64; 3], &'static str> {
+                    let matrix = palette.get(bone).ok_or("missing tissue attachment bone")?;
+                    Self::validate_attachment_matrix(matrix)?;
+                    Ok(matrix.transform_point3(DVec3::from_array(*rest)).to_array())
+                };
+                let position_m = if let Some(influences) = overrides.get(node) {
+                    if influences.len() == 1 && influences[0].1 == 1. {
+                        transform(influences[0].0)?
+                    } else {
+                        let mut result = [0.; 3];
+                        for &(bone, weight) in influences {
+                            let transformed = transform(bone)?;
+                            for axis in 0..3 {
+                                result[axis] += weight * transformed[axis];
+                            }
+                        }
+                        result
+                    }
+                } else {
+                    transform(*joint)?
+                };
+                if position_m.iter().any(|v| !v.is_finite()) {
+                    return Err("nonfinite tissue attachment");
+                }
+                Ok(SupportTarget {
+                    node: *node,
+                    position_m,
+                })
+            })
+            .collect()
+    }
     fn step_contact_region(
         body: &mut DemoTissue,
-        attachment: &(usize, Vec<(usize, [f64; 3])>),
+        attachment: &TissueAttachment,
         palette: &[DMat4],
         conductivity_w_m_k: f64,
         next_surface: Option<&Arc<PrescribedTriangleSurface>>,
     ) -> Result<(), &'static str> {
-        let (joint, pins) = attachment;
-        let matrix = palette
-            .get(*joint)
-            .ok_or("missing tissue attachment bone")?;
-        let support_matrix = *matrix;
-        let targets: Vec<_> = pins
-            .iter()
-            .map(|(node, rest)| SupportTarget {
-                node: *node,
-                position_m: support_matrix
-                    .transform_point3(DVec3::from_array(*rest))
-                    .to_array(),
-            })
-            .collect();
-        if targets
-            .iter()
-            .flat_map(|p| p.position_m)
-            .any(|v| !v.is_finite())
-        {
-            return Err("nonfinite tissue attachment");
-        }
+        let targets = Self::attachment_targets(attachment, palette)?;
         Self::step_continuum_targets(body, &targets, conductivity_w_m_k, next_surface)
     }
     fn step_continuum_targets(
@@ -1798,8 +1980,9 @@ mod tests {
 
     #[test]
     fn skin_binding_rejects_overlap_reassigned_joint_and_singular_pose() {
-        let overlap = super::TissueDemo::body_at_centers([[0.; 3]; 4], [0, 0, 3, 7]);
-        assert!(overlap.bind_skin(&[[0.; 3]]).is_err());
+        let mesh = physics::biomechanics::TetraMesh::ellipsoid([0.; 3], [0.05; 3], 0).unwrap();
+        let spec = super::TissueRegionSpec::illustrative(mesh, vec![1, 2, 3], 0);
+        assert!(super::TissueDemo::body_from_region_specs(vec![spec.clone(), spec]).is_err());
         let mut demo = super::TissueDemo::body();
         let skin = [demo.bodies[0].positions()[1]];
         let binding = demo.bind_skin(&skin).unwrap();
@@ -1807,7 +1990,7 @@ mod tests {
         palette[0] = glam::DMat4::ZERO;
         assert!(demo.deform_skin(&binding, &palette, &skin).is_err());
         palette[0] = glam::DMat4::IDENTITY;
-        demo.attachments[0].0 = 1;
+        demo.attachments[0].joint = 1;
         assert!(demo.deform_skin(&binding, &palette, &skin).is_err());
     }
     #[test]
@@ -1828,7 +2011,10 @@ mod tests {
         assert_ne!(result[0], skin[0]);
         assert!(demo.deform_skin(&binding, &palette[..1], &skin).is_err());
         assert!(demo.deform_skin(&binding, &palette, &skin[..1]).is_err());
-        let other = super::TissueDemo::body_at_centers([[20.; 3]; 4], [0, 0, 3, 7]);
+        let other = super::TissueDemo::body_at_centers(
+            std::array::from_fn(|i| super::TissueDemo::center(i).map(|v| v + 20.)),
+            [0, 0, 3, 7],
+        );
         assert!(other.deform_skin(&binding, &palette, &skin).is_err());
     }
 
@@ -1946,7 +2132,7 @@ mod tests {
         assert_eq!(scale as f32, 1.);
         let palette = vec![DMat4::from_scale(DVec3::splat(scale)); 9];
         demo.step_body_with_contact64(&palette, 0.5, None).unwrap();
-        for (body, (_, pins)) in demo.bodies.iter().zip(&demo.attachments) {
+        for (body, TissueAttachment { pins, .. }) in demo.bodies.iter().zip(&demo.attachments) {
             for (node, rest) in pins {
                 let actual = body.positions()[*node];
                 for axis in 0..3 {
@@ -2413,7 +2599,7 @@ mod tests {
         });
         let mut demo = TissueDemo::body_at_centers(centers, [0, 0, 3, 7]);
         let identity = vec![Mat4::IDENTITY; 9];
-        for offset in demo.secondary_offsets_for_palette(&identity) {
+        for offset in demo.secondary_offsets_for_palette(&identity).unwrap() {
             assert!(offset.iter().all(|value| value.abs() < 1e-15));
         }
         let before = format!("{demo:?}");
@@ -2442,7 +2628,7 @@ mod tests {
         let mut demo = TissueDemo::body();
         let palette = vec![Mat4::IDENTITY; 9];
         demo.step_body(&palette).unwrap();
-        for (body, (_, pins)) in demo.bodies.iter().zip(&demo.attachments) {
+        for (body, TissueAttachment { pins, .. }) in demo.bodies.iter().zip(&demo.attachments) {
             for (node, rest) in pins {
                 assert_eq!(body.positions()[*node], *rest);
             }
@@ -2450,7 +2636,7 @@ mod tests {
         assert!(
             demo.attachments
                 .iter()
-                .flat_map(|(_, pins)| pins)
+                .flat_map(|attachment| &attachment.pins)
                 .any(|(_, rest)| rest.iter().any(|value| f64::from(*value as f32) != *value))
         );
     }
@@ -2469,7 +2655,7 @@ mod tests {
             "leg_joint_R_1",
             "leg_joint_L_1",
         ];
-        for ((joint, _), name) in demo.attachments.iter_mut().zip(names) {
+        for (TissueAttachment { joint, .. }, name) in demo.attachments.iter_mut().zip(names) {
             *joint = usize::from(model.resolve_joint_name(name).unwrap());
         }
         let reference = model
@@ -2495,7 +2681,9 @@ mod tests {
                 .collect();
             demo.step_body(&palette)
                 .unwrap_or_else(|error| panic!("imported rig step {step}: {error}"));
-            for (body, (joint, pins)) in demo.bodies.iter().zip(&demo.attachments) {
+            for (body, TissueAttachment { joint, pins, .. }) in
+                demo.bodies.iter().zip(&demo.attachments)
+            {
                 for (node, rest) in pins {
                     let expected =
                         DMat4::from_cols_array(&palette[*joint].to_cols_array().map(f64::from))
@@ -2615,7 +2803,7 @@ mod tests {
         let mut demo = TissueDemo::body();
         let mut control = TissueDemo::body();
         let sampler = TissueDemo::body();
-        let last_joint = demo.attachments.last().unwrap().0;
+        let last_joint = demo.attachments.last().unwrap().joint;
         let surface = Arc::new(
             PrescribedTriangleSurface::new(
                 vec![[-10., -10., -10.], [10., -10., -10.], [0., 10., -10.]],
@@ -2700,7 +2888,7 @@ mod tests {
             .collect();
         let before = format!("{parallel:?}");
         let mut invalid = palette.clone();
-        let first_joint = parallel.attachments[0].0;
+        let first_joint = parallel.attachments[0].joint;
         invalid[first_joint] = DMat4::from_cols_array(&[f64::NAN; 16]);
         invalid.truncate(first_joint + 1);
         assert_eq!(
@@ -2709,7 +2897,7 @@ mod tests {
         );
         assert_eq!(format!("{parallel:?}"), before);
         let mut invalid = palette.clone();
-        let last_joint = parallel.attachments.last().unwrap().0;
+        let last_joint = parallel.attachments.last().unwrap().joint;
         invalid[last_joint] = DMat4::from_cols_array(&[f64::NAN; 16]);
         assert!(
             parallel
@@ -2737,7 +2925,9 @@ mod tests {
             let root_only =
                 vec![Mat4::from_translation(Vec3::Y * TissueDemo::lift(time) as f32); 9];
             translated.step_body(&root_only).unwrap();
-            for (body, (joint, pins)) in driven.bodies.iter().zip(&driven.attachments) {
+            for (body, TissueAttachment { joint, pins, .. }) in
+                driven.bodies.iter().zip(&driven.attachments)
+            {
                 for (index, rest) in pins {
                     let expected =
                         DMat4::from_cols_array(&palette[*joint].to_cols_array().map(f64::from))

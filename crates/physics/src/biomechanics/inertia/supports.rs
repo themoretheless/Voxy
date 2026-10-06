@@ -246,7 +246,7 @@ impl InertialBody {
         }
         let prescribed = if let Some(targets) = targets {
             let count = self.body.pinned.iter().filter(|&&pin| pin).count();
-            if count == 0 || targets.len() != count {
+            if targets.len() != count {
                 return Err("incomplete prescribed support targets");
             }
             let mut positions = vec![None; self.body.positions.len()];

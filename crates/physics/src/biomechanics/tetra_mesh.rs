@@ -3,6 +3,9 @@ use super::{Body, Material, Vec3, columns, cross, det, dot, sub};
 use std::collections::BTreeMap;
 mod convex_surface;
 mod ellipsoid;
+mod lattice;
+mod manifold;
+mod overlap;
 #[derive(Clone, Debug)]
 pub struct TetraMesh {
     pub points: Vec<Vec3>,
@@ -135,7 +138,7 @@ impl TetraMesh {
     /// boundary triangles. Units m²; force_i = weight_i * traction (Pa).
     /// Preserves the resultant and first moment of the continuous patch load.
     pub fn reference_patch_weights(&self, faces: &[usize]) -> Result<Vec<f64>, &'static str> {
-        self.validate_topology()?;
+        self.validate()?;
         if faces.is_empty() {
             return Err("empty surface load patch");
         }
@@ -169,7 +172,7 @@ impl TetraMesh {
     /// Parent vertices for exact linear field prolongation: each new node is
     /// their midpoint; retained vertices have two identical parent indices.
     pub fn refined_once_with_parents(&self) -> Result<(Self, Vec<[usize; 2]>), &'static str> {
-        self.validate_topology()?;
+        self.validate()?;
         if self.cells.len() > 250_000 / 8 {
             return Err("refined tetrahedral resource limit");
         }
@@ -292,13 +295,13 @@ impl TetraMesh {
             cells,
             boundary,
         };
-        mesh.validate_topology()?;
+        mesh.validate()?;
         Ok(mesh)
     }
-    /// Serialize an admitted mesh to the existing VXTM v1 interchange format.
+    /// Validate resource bounds, finite coordinates, topology and cell overlap.
     /// # Errors
-    /// Invalid topology, nonfinite points or existing interchange resource limits.
-    pub fn to_bytes(&self) -> Result<Vec<u8>, &'static str> {
+    /// Invalid geometry or existing VXTM resource limits.
+    pub fn validate(&self) -> Result<(), &'static str> {
         let (np, nc, nf) = (self.points.len(), self.cells.len(), self.boundary.len());
         if !(4..=1_000_000).contains(&np) || !(1..=250_000).contains(&nc) || nf > 4 * nc {
             return Err("tetrahedral resource limit");
@@ -307,6 +310,15 @@ impl TetraMesh {
             return Err("nonfinite tetrahedral point");
         }
         self.validate_topology()?;
+        self.validate_boundary_manifold()?;
+        self.reject_overlapping_cells()
+    }
+    /// Serialize an admitted mesh to the existing VXTM v1 interchange format.
+    /// # Errors
+    /// Invalid topology, nonfinite points or existing interchange resource limits.
+    pub fn to_bytes(&self) -> Result<Vec<u8>, &'static str> {
+        self.validate()?;
+        let (np, nc, nf) = (self.points.len(), self.cells.len(), self.boundary.len());
         let mut bytes = Vec::with_capacity(20 + 24 * np + 16 * nc + 12 * nf);
         bytes.extend_from_slice(b"VXTM");
         for value in [1, np, nc, nf] {
@@ -385,7 +397,7 @@ impl TetraMesh {
     /// # Errors
     /// Rejects invalid material, pin count or mechanically invalid mesh.
     pub fn into_body(self, pinned: Vec<bool>, material: &Material) -> Result<Body, &'static str> {
-        self.validate_topology()?;
+        self.validate()?;
         Body::new(
             self.points,
             pinned,

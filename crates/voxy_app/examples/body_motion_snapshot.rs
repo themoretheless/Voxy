@@ -518,7 +518,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if trace_path.is_some() && step % 12 == 0 {
                 use std::fmt::Write;
                 let volumes = demo.body_volumes_m3();
-                for (sample, offset) in demo.body_secondary_offsets().iter().enumerate() {
+                for (sample, offset) in demo.body_secondary_offsets()?.iter().enumerate() {
                     writeln!(
                         trace,
                         "{:.6},{sample},{:.12},{:.12},{:.12},{:.12}",
@@ -547,7 +547,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "thermal cells (min K, max K, stored J): {:?}",
             demo.body_thermal_diagnostics()?
         );
-        println!("secondary offsets: {:?}", demo.body_secondary_offsets());
+        println!("secondary offsets: {:?}", demo.body_secondary_offsets()?);
         return Ok(());
     }
     let remaining: Vec<_> = std::env::args().skip(2).collect();
@@ -872,10 +872,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         let volumes = demo.body_volumes_m3();
         let energy = demo.body_energy_receipts()?;
-        let offsets = if cesium {
-            demo.secondary_offsets_for_palette(&palette_at(step as f64 / 240.)?)
+        let offsets = if let Some(domains) = &contact_reference {
+            let (palette, _) = imported_contact_sample64(
+                imported.as_ref().ok_or("missing imported character")?,
+                reference64
+                    .as_ref()
+                    .ok_or("missing imported physical reference")?,
+                domains,
+                (step as f64 / 240. / duration).min(1.),
+            )?;
+            demo.secondary_offsets_for_palette64(&palette)?
+        } else if cesium {
+            demo.secondary_offsets_for_palette(&palette_at(step as f64 / 240.)?)?
         } else {
-            demo.body_secondary_offsets()
+            demo.body_secondary_offsets()?
         };
         for (sample, offset) in offsets.iter().enumerate() {
             use std::fmt::Write;
