@@ -13,6 +13,24 @@ use voxy_animation::{Joint, Skeleton, Transform};
 use voxy_render::{SceneMesh, SceneVertex};
 #[path = "tissue_demo/assembly.rs"]
 mod assembly;
+// Opt-in aggregate diagnostics belong to the calling simulation thread.
+thread_local! {
+    static REFINEMENT_REJECTIONS: std::cell::RefCell<Option<BTreeMap<(&'static str, usize), u64>>> =
+        const { std::cell::RefCell::new(None) };
+}
+pub(crate) fn start_refinement_diagnostics() {
+    REFINEMENT_REJECTIONS.with(|counts| *counts.borrow_mut() = Some(BTreeMap::new()));
+}
+pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+    REFINEMENT_REJECTIONS.with(|counts| counts.borrow_mut().take().unwrap_or_default())
+}
+fn record_refinement_rejection(error: &'static str, depth: usize) {
+    REFINEMENT_REJECTIONS.with(|counts| {
+        if let Some(counts) = counts.borrow_mut().as_mut() {
+            *counts.entry((error, depth)).or_default() += 1;
+        }
+    });
+}
 /// Test-harness fixture for external CCD replay. Constitutive Debug data is
 /// evidence only; this is deliberately not a persistent physics checkpoint.
 #[cfg(test)]
@@ -514,6 +532,24 @@ impl TissueDemo {
                 ])
             })
             .collect()
+    }
+    /// Complete continuum state for independent trajectory comparisons.
+    pub(crate) fn continuum_node_state(&self) -> Result<Vec<([f64; 3], [f64; 3])>, &'static str> {
+        let mut nodes = Vec::new();
+        for body in &self.bodies {
+            let DemoTissue::Continuum { dynamics, .. } = body else {
+                return Err("node trace requires continuum tissue");
+            };
+            nodes.extend(
+                dynamics
+                    .body()
+                    .positions()
+                    .iter()
+                    .copied()
+                    .zip(dynamics.velocities().iter().copied()),
+            );
+        }
+        Ok(nodes)
     }
     /// Committed accepted/rejected trial counts and deepest temporal refinement.
     pub(crate) fn body_step_counts(&self) -> Vec<(u64, u64, usize)> {
@@ -1328,6 +1364,33 @@ impl TissueDemo {
         // The outer frame candidate stages both thermal half-steps and all
         // mechanical trials. Pure conduction does not alter mechanical work.
         let binding = thermal_binding;
+        let motion_budgets = std::env::var_os("VOXY_SUPPORT_MOTION_BUDGETS")
+            .map(|value| {
+                let text = value.to_str().ok_or("invalid support motion budgets")?;
+                let (p, v) = text
+                    .split_once(',')
+                    .ok_or("invalid support motion budgets")?;
+                let position = p
+                    .parse::<f64>()
+                    .map_err(|_| "invalid support motion budgets")?;
+                let velocity = v
+                    .parse::<f64>()
+                    .map_err(|_| "invalid support motion budgets")?;
+                if !position.is_finite()
+                    || position <= 0.
+                    || !velocity.is_finite()
+                    || velocity <= 0.
+                {
+                    return Err("invalid support motion budgets");
+                }
+                if next_surface.is_some() || next_skin.is_some() {
+                    return Err("support motion accuracy requires support-only path");
+                }
+                Ok((position, velocity))
+            })
+            .transpose()?;
+        let trace_motion =
+            motion_budgets.is_some() && std::env::var_os("VOXY_SUPPORT_ACCURACY_TRACE").is_some();
         let conductivity = vec![conductivity_w_m_k; cells.len()];
         let links = binding.internal_heat_contacts(dynamics, &conductivity)?;
         let first_conduction_defect = dynamics.conduct_maxwell_heat(&links, 1. / 480., 1e-10)?;
@@ -1342,7 +1405,22 @@ impl TissueDemo {
         if next_surface.is_some() && start_surface.is_none() {
             return Err("surface motion requires installed contact");
         }
-        let initial_depth = *preferred_depth;
+        let minimum_depth = std::env::var("VOXY_SUPPORT_MIN_DEPTH")
+            .ok()
+            .map(|value| {
+                value
+                    .parse::<usize>()
+                    .map_err(|_| "invalid minimum support depth")
+            })
+            .transpose()?
+            .unwrap_or(0);
+        if minimum_depth > 8 {
+            return Err("invalid minimum support depth");
+        }
+        let initial_depth = (*preferred_depth).max(minimum_depth);
+        if motion_budgets.is_some() && initial_depth >= 12 {
+            return Err("support accuracy refinement depth limit");
+        }
         let subdivisions = 4_u32 << initial_depth;
         let mut frame_receipt = EnergyLedger::default();
         for substep in 1..=subdivisions {
@@ -1386,6 +1464,41 @@ impl TissueDemo {
                 })
                 .transpose()?;
             let dt = 1. / (240. * f64::from(subdivisions));
+            if let Some((position, velocity)) = motion_budgets {
+                let receipt = dynamics.step_viscoelastic_implicit_with_support_accuracy(
+                    Some(&segment),
+                    dt,
+                    1e-5 * dt * 240.,
+                    position / f64::from(subdivisions),
+                    velocity / f64::from(subdivisions),
+                    1_usize << (12 - initial_depth),
+                )?;
+                if trace_motion {
+                    println!(
+                        "SUPPORT_ACCURACY_INTERVAL dt_s={:.17e} substeps={} trials={} position_difference_m={:.17e} velocity_difference_m_s={:.17e} position_budget_m={:.17e} velocity_budget_m_s={:.17e}",
+                        dt,
+                        receipt.substeps,
+                        receipt.trial_steps,
+                        receipt.position_difference_sum_m,
+                        receipt.velocity_difference_sum_m_s,
+                        position / f64::from(subdivisions),
+                        velocity / f64::from(subdivisions)
+                    );
+                }
+                frame_receipt.add(EnergyLedger {
+                    support_work_j: receipt.step.support.support_work_j,
+                    surface_work_j: receipt.step.support.surface_work_j,
+                    heat_j: receipt.step.viscous_heat_j,
+                    defect_j: receipt.step.total_energy_defect_j,
+                    conduction_defect_j: 0.,
+                    accepted_steps: receipt.substeps as u64,
+                    // Coarse/fine evaluations are estimator work, not admitted steps.
+                    // trial_steps are separately exposed by the opt-in trace above.
+                    rejected_steps: 0,
+                    max_refinement_depth: initial_depth + receipt.substeps.ilog2() as usize,
+                });
+                continue;
+            }
             if let Some(next_skin) = next_skin {
                 let skin = start_skin
                     .as_ref()
@@ -1423,7 +1536,11 @@ impl TissueDemo {
         let links = binding.internal_heat_contacts(dynamics, &conductivity)?;
         frame_receipt.conduction_defect_j =
             first_conduction_defect + dynamics.conduct_maxwell_heat(&links, 1. / 480., 1e-10)?;
-        *preferred_depth = frame_receipt.max_refinement_depth.saturating_sub(1);
+        // Accuracy admission publishes two half-steps, so start two levels
+        // below its finest depth to actually try one coarser physical step.
+        *preferred_depth = frame_receipt
+            .max_refinement_depth
+            .saturating_sub(if motion_budgets.is_some() { 2 } else { 1 });
         ledger.add(frame_receipt);
         Ok(())
     }
@@ -1452,8 +1569,14 @@ impl TissueDemo {
                 dt,
                 1e-5 * dt * 240.,
             ),
+            None if std::env::var_os("VOXY_IMPLICIT_SUPPORTS").is_some() => {
+                body.step_viscoelastic_implicit_with_supports(Some(targets), dt, 1e-5 * dt * 240.)
+            }
             None => body.step_viscoelastic(Some(targets), dt, 1e-5 * dt * 240.),
         };
+        if let Err(error) = &result {
+            record_refinement_rejection(error, depth);
+        }
         match result {
             Ok(receipt) => Ok(EnergyLedger {
                 support_work_j: receipt.support.support_work_j,

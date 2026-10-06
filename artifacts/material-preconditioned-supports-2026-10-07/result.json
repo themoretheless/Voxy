@@ -1,0 +1,26 @@
+{
+  "tests_passed": 21,
+  "simulation_steps": 480,
+  "accepted_substeps": 1934,
+  "rejected_substeps": 10,
+  "max_depth": 2,
+  "elapsed_seconds": 23.685676458,
+  "previous_implicit_elapsed_seconds": 210.253948625,
+  "previous_implicit_rejected_substeps": 147,
+  "rejections": {
+    "line_search_failed_depth_0": 1,
+    "nonconvergence_depth_0": 8,
+    "nonconvergence_depth_1": 1
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "5d3b22898dbed9f30ada8c98be2926db23ba1073dae8471ed4598ae51106d7ea",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "e82f46c5507a30b95f908b938a81ae0384d44fda5704c5d6199781702fffee45",
+    "crates/physics/tests/viscoelastic_inertia.rs": "7dc69164ed5a43ba207d84cce9d7323d5fa506c6c40450abac86e0ef8c882f3a"
+  },
+  "limitations": [
+    "One full fixture run on shared host, not broad benchmark",
+    "Still slower than realtime",
+    "Demo defaults remain unchanged",
+    "Trajectory differs from earlier numerical integrator; temporal convergence tests passed"
+  ]
+}

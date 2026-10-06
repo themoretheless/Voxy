@@ -10,7 +10,9 @@ mod thermal;
 pub use film_binding::SolidFilmBinding;
 mod viscous;
 pub use supports::{DrivenSupportStep, SupportTarget};
-pub use viscous::{ViscoelasticAdaptiveStep, ViscoelasticDynamicStep};
+pub use viscous::{
+    ViscoelasticAdaptiveStep, ViscoelasticDynamicStep, ViscoelasticSupportAccuracyStep,
+};
 #[derive(Clone, Debug)]
 pub struct InertialBody {
     body: Body,

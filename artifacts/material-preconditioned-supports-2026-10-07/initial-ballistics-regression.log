@@ -1,0 +1,57 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 16.76s
+     Running tests/viscoelastic.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/viscoelastic-d6ea7cb1fbaf782e)
+
+running 10 tests
+test ogden_spectral_energy_matches_exact_incompressible_uniaxial_expression ... ok
+test populated_reference_memory_rotates_objectively ... ok
+test input_validation_inversion_and_history_update_are_atomic ... ok
+test rigid_motion_objectivity_and_neo_hookean_limit ... ok
+test spectral_energy_does_not_lose_small_shear_near_repeated_eigenvalues ... ok
+test prescribed_strain_relaxes_with_discrete_maxwell_time_and_dissipates ... ok
+test spectral_ogden_and_incremental_maxwell_forces_match_energy_derivatives ... ok
+test batch_assignment_matches_single_and_rejects_invalid_profile_atomically ... ok
+test lbfgs_physical_steps_match_cg_memory_and_failed_step_is_atomic ... ok
+test coupled_fem_creeps_under_constant_load_and_failed_step_is_atomic ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/viscoelastic_inertia.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/viscoelastic_inertia-53ebd10798e46967)
+
+running 11 tests
+test exact_relaxation_matches_analytic_energy_and_subdivision ... ok
+test hgo_stress_memory_is_not_admitted_as_passive_maxwell_dynamics ... ok
+test free_node_moves_and_failed_driving_preserves_material_history ... ok
+test late_temperature_overflow_rolls_back_mechanics_memory_and_heat ... ok
+test unrelated_large_gravity_potential_cannot_hide_or_block_maxwell_heat ... ok
+test implicit_support_free_body_preserves_analytic_ballistics ... FAILED
+test implicit_driven_supports_with_free_node_close_work_heat_and_rollback ... ok
+test maxwell_heat_updates_cell_temperature_and_failures_preserve_both_owners ... ok
+test driven_shear_then_hold_balances_work_heat_and_rollback ... ok
+test unforced_viscoelastic_motion_converges_under_time_refinement ... ok
+test implicit_viscoelastic_motion_converges_under_time_refinement ... ok
+
+failures:
+
+---- implicit_support_free_body_preserves_analytic_ballistics stdout ----
+
+thread 'implicit_support_free_body_preserves_analytic_ballistics' (5855929) panicked at crates/physics/tests/viscoelastic_inertia.rs:469:9:
+assertion failed: (p[0] - old[0] - 0.002).abs() < 1e-10
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    implicit_support_free_body_preserves_analytic_ballistics
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test viscoelastic_inertia`

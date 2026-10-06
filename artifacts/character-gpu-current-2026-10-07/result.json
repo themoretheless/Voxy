@@ -1,0 +1,16 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "frames": 41,
+  "simulation_seconds": 2,
+  "simulation_step_seconds": 0.004166666666666667,
+  "elapsed_seconds": 37.361641542,
+  "skin_vertices": 3273,
+  "soft_tissue_bound_vertices": 16,
+  "limitations": [
+    "CPU skinned mesh uploaded to GPU rasterizer",
+    "Illustrative attachment coverage only",
+    "Offline run does not establish real-time performance",
+    "No editor UI qualification or CUDA test"
+  ]
+}

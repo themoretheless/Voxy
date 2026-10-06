@@ -1,0 +1,8 @@
+{
+  "frames": 240,
+  "wall_step_seconds": 0.016666666666666666,
+  "rejected_publications": 8,
+  "independent_paused_owner": true,
+  "source_sha256": "4970f822b3dd757adbff947cc8d762955f81c97e2ef27accf651612a8e084a57",
+  "limitations": "CPU deformation through owner playback; no editor visual or GPU scene qualification"
+}

@@ -1,0 +1,12 @@
+{
+  "simulation_steps": 480,
+  "captures": 4,
+  "simulation_seconds": 46.063372791,
+  "receipts_seconds": 0.000130917,
+  "mesh_deformation_seconds": 0.006581708,
+  "upload_encode_gpu_readback_seconds": 0.050648625,
+  "capture_io_seconds": 0.000403708,
+  "total_seconds": 46.121587208,
+  "source_sha256": "c1e2f7dbf2e2b860c98ba2a48bc9589b519dea4914667a753eddff231867d590",
+  "limitations": "Wall time on current host; combined GPU upload/encode/readback is not a GPU timestamp; no speedup claim"
+}

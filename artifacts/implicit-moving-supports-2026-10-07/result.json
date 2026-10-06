@@ -1,0 +1,19 @@
+{
+  "material_and_inertia_tests_passed": 21,
+  "full_character_status": "completed",
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "0f3b8621f157995684508409e9e91db953570241daa6f18ef299dff4b4617124",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "e82f46c5507a30b95f908b938a81ae0384d44fda5704c5d6199781702fffee45",
+    "crates/physics/tests/viscoelastic_inertia.rs": "7dc69164ed5a43ba207d84cce9d7323d5fa506c6c40450abac86e0ef8c882f3a"
+  },
+  "limitations": "Much fewer substeps but slower than prior explicit runs; default integration unchanged",
+  "simulation_steps": 480,
+  "elapsed_seconds": 210.253948625,
+  "accepted_steps": 2067,
+  "rejected_steps": 147,
+  "max_depth": 1,
+  "rejection_reasons": {
+    "implicit support line search failed": 24,
+    "implicit support nonlinear nonconvergence": 123
+  }
+}

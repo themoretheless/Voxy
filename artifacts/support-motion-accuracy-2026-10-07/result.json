@@ -1,0 +1,22 @@
+{
+  "tests_passed": 25,
+  "full_character_status": "running after correcting warm-start coarsening",
+  "full_character_session": 10542,
+  "initial_run_status": "intentionally interrupted, exit 130; no full qualification",
+  "per_frame_position_difference_budget_m": 1e-07,
+  "per_frame_velocity_difference_budget_m_s": 0.0001,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "3e3158f62146e29e29a4f6a837c915909ed4f936ab170193699b331d45ee04b5",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "9aab27c191abeeb822a36d079419777e82759427dbf80dfc320afcdaf4f6d6a4",
+    "crates/physics/src/biomechanics/inertia.rs": "15a53c3891e5af00bfcfe05b8abf4f005804dfb86090f290813f982f6084a442",
+    "crates/physics/src/biomechanics/mod.rs": "30603912d4485d9d11c2fa9523d3e15f3effa65219170f495ca319612c0e12d9",
+    "crates/physics/tests/viscoelastic_inertia.rs": "04e109ff40e977b2a3a78f60eea363071facf4303e7b58ba754be585c06f91a1",
+    "crates/voxy_app/src/tissue_demo.rs": "b7df30c755dfe435fe7a15d2f107aff8cf283d09081ef8065214af89c47c4cb2"
+  },
+  "limitations": [
+    "Summed raw step-doubling differences are indicators, not certified global error bounds",
+    "Accuracy controller is support-only; contact mode retains previous solver",
+    "Full character result and independent comparison pending",
+    "Default demo unchanged"
+  ]
+}

@@ -1,0 +1,11 @@
+BODY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+IMPORTED support centers: [[-0.0990283414721489, 0.7890225052833557, 0.1306656002998352], [0.06097165495157242, 0.7890225052833557, 0.1306656002998352], [-0.08844652771949768, 0.4791085422039032, -0.05612833797931671], [0.047629572451114655, 0.4791243374347687, -0.056171491742134094]]
+TISSUE assembled regional dynamics into one global owner
+SKIN bound=16 total=3273
+CAPTURE final_step=480 simulated_s=2.000000000 limited=false
+frame t=0.00
+frame t=0.50
+frame t=1.00
+frame t=2.00
+snapshot simulation + render seconds=4.088710333; step receipts=[(15360, 0, 3)]
+STAGE_SECONDS simulation=4.064327625 receipts=0.000141166 mesh_deformation=0.0013277089999999998 upload_encode_gpu_readback=0.022317041000000003 capture_io=0.000201207

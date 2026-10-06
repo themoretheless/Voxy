@@ -1,0 +1,66 @@
+diff --git a/crates/physics/src/biomechanics/viscoelastic.rs b/crates/physics/src/biomechanics/viscoelastic.rs
+index 83735c2e..06ddae03 100644
+--- a/crates/physics/src/biomechanics/viscoelastic.rs
++++ b/crates/physics/src/biomechanics/viscoelastic.rs
+@@ -29,7 +29,7 @@ fn deviator(mut m: Matrix) -> Matrix {
+     }
+     m
+ }
+-fn strain(f: Matrix) -> Result<(Matrix, Matrix, f64), &'static str> {
++fn strain(f: Matrix) -> Result<(Matrix, Matrix, f64, f64), &'static str> {
+     let j = det(f);
+     if !j.is_finite() || j <= 0. || f.iter().flatten().any(|v| !v.is_finite()) {
+         return Err("invalid viscoelastic deformation");
+@@ -40,7 +40,7 @@ fn strain(f: Matrix) -> Result<(Matrix, Matrix, f64), &'static str> {
+     if c.iter().flatten().any(|v| !v.is_finite()) {
+         return Err("viscoelastic metric overflow");
+     }
+-    Ok((c, e, j))
++    Ok((c, e, j, q))
+ }
+ // Symmetric eigendecomposition. The complete tensor power is independent of the
+ // basis chosen in repeated eigenspaces. No eigenvector derivatives are needed.
+@@ -176,7 +176,7 @@ impl ViscoelasticOgden {
+         if !dt.is_finite() || dt < 0. {
+             return Err("invalid constitutive timestep");
+         }
+-        let (c, e, j) = strain(f)?;
++        let (c, e, j, q) = strain(f)?;
+         // The exponent-two Ogden term is exactly isochoric neo-Hooke.
+         // Reuse its stable invariant instead of decomposing a symmetric tensor
+         // for every force/energy evaluation. Other exponents keep the spectral law.
+@@ -188,7 +188,6 @@ impl ViscoelasticOgden {
+         let inv_t = transpose(inverse(f)?);
+         let mut energy = 0.5 * self.bulk_pa * (j - 1.).powi(2);
+         let mut p = inv_t.map(|r| r.map(|v| self.bulk_pa * (j - 1.) * j * v));
+-        let q = j.powf(-2. / 3.);
+         let trace = c[0][0] + c[1][1] + c[2][2];
+         for term in &self.terms {
+             if term.exponent == 2. {
+@@ -270,7 +269,7 @@ impl ViscoelasticOgden {
+             return Err("invalid relaxation timestep");
+         }
+         self.response(f, dt)?;
+-        let (_, e, _) = strain(f)?;
++        let (_, e, _, _) = strain(f)?;
+         let mut next = self.memory.clone();
+         let mut dissipation = 0.;
+         for ((branch, old), new) in self.branches.iter().zip(&self.memory).zip(&mut next) {
+@@ -296,7 +295,7 @@ impl ViscoelasticOgden {
+     /// # Errors
+     /// Invalid deformation or overflowing branch energy.
+     pub fn maxwell_energy_density(&self, f: Matrix) -> Result<f64, &'static str> {
+-        let (_, strain, _) = strain(f)?;
++        let (_, strain, _, _) = strain(f)?;
+         let energy = self
+             .branches
+             .iter()
+@@ -328,7 +327,7 @@ impl ViscoelasticOgden {
+             return Err("invalid exact relaxation timestep");
+         }
+         self.response(f, 0.)?;
+-        let (_, e, _) = strain(f)?;
++        let (_, e, _, _) = strain(f)?;
+         let mut next = self.memory.clone();
+         let mut released = 0.;
+         for ((branch, old), new) in self.branches.iter().zip(&self.memory).zip(&mut next) {

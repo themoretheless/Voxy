@@ -1,0 +1,244 @@
+{
+  "scope": "Complete 76-node continuum state at 0, 0.5, 1, 2 seconds of full CesiumMan clip; original pose sampling fixed at 240 Hz",
+  "runs": {
+    "depth-0": {
+      "elapsed_seconds": 8.484317,
+      "step_receipts": [
+        1934,
+        10,
+        2
+      ],
+      "max_energy_receipt_closure_error_j": 6.019221793376563e-15
+    },
+    "depth-1": {
+      "elapsed_seconds": 113.788842208,
+      "step_receipts": [
+        4076,
+        188,
+        3
+      ],
+      "max_energy_receipt_closure_error_j": 1.492254746759459e-14
+    },
+    "depth-2": {
+      "elapsed_seconds": 14.759658959,
+      "step_receipts": [
+        7701,
+        21,
+        3
+      ],
+      "max_energy_receipt_closure_error_j": 4.531273753873683e-14
+    },
+    "depth-3": {
+      "elapsed_seconds": 4.088710333,
+      "step_receipts": [
+        15360,
+        0,
+        3
+      ],
+      "max_energy_receipt_closure_error_j": 7.363698092607332e-15
+    },
+    "depth-4": {
+      "elapsed_seconds": 7.570662542,
+      "step_receipts": [
+        30720,
+        0,
+        4
+      ],
+      "max_energy_receipt_closure_error_j": 2.024954441605324e-14
+    },
+    "depth-5": {
+      "elapsed_seconds": 17.662516375,
+      "step_receipts": [
+        61440,
+        0,
+        5
+      ],
+      "max_energy_receipt_closure_error_j": 1.6870930332600196e-14
+    },
+    "depth-6": {
+      "elapsed_seconds": 29.724654583,
+      "step_receipts": [
+        122880,
+        0,
+        6
+      ],
+      "max_energy_receipt_closure_error_j": 7.011335549688205e-14
+    },
+    "explicit": {
+      "elapsed_seconds": 29.767419458,
+      "step_receipts": [
+        208168,
+        58416,
+        8
+      ],
+      "max_energy_receipt_closure_error_j": 6.576307432439748e-14
+    }
+  },
+  "adjacent_refinements": {
+    "0-1": [
+      {
+        "time_s": 0.0,
+        "max_position_difference_m": 0.0,
+        "max_velocity_difference_m_s": 0.0
+      },
+      {
+        "time_s": 0.5,
+        "max_position_difference_m": 0.001495539599555507,
+        "max_velocity_difference_m_s": 0.4723449433257407
+      },
+      {
+        "time_s": 1.0,
+        "max_position_difference_m": 0.0014350008593507337,
+        "max_velocity_difference_m_s": 2.003392072786229
+      },
+      {
+        "time_s": 2.0,
+        "max_position_difference_m": 0.0032994959986982113,
+        "max_velocity_difference_m_s": 1.2924584660661578
+      }
+    ],
+    "1-2": [
+      {
+        "time_s": 0.0,
+        "max_position_difference_m": 0.0,
+        "max_velocity_difference_m_s": 0.0
+      },
+      {
+        "time_s": 0.5,
+        "max_position_difference_m": 0.0024353781986374418,
+        "max_velocity_difference_m_s": 1.0576684463374355
+      },
+      {
+        "time_s": 1.0,
+        "max_position_difference_m": 0.002578308935012873,
+        "max_velocity_difference_m_s": 0.7646363041618726
+      },
+      {
+        "time_s": 2.0,
+        "max_position_difference_m": 0.0028428457635993583,
+        "max_velocity_difference_m_s": 1.2935590305284042
+      }
+    ],
+    "2-3": [
+      {
+        "time_s": 0.0,
+        "max_position_difference_m": 0.0,
+        "max_velocity_difference_m_s": 0.0
+      },
+      {
+        "time_s": 0.5,
+        "max_position_difference_m": 0.00047633660272641245,
+        "max_velocity_difference_m_s": 0.4370042070746634
+      },
+      {
+        "time_s": 1.0,
+        "max_position_difference_m": 0.0014077463288810876,
+        "max_velocity_difference_m_s": 0.7444068456338931
+      },
+      {
+        "time_s": 2.0,
+        "max_position_difference_m": 0.0014942292499321018,
+        "max_velocity_difference_m_s": 3.5570360846207807
+      }
+    ],
+    "3-4": [
+      {
+        "time_s": 0.0,
+        "max_position_difference_m": 0.0,
+        "max_velocity_difference_m_s": 0.0
+      },
+      {
+        "time_s": 0.5,
+        "max_position_difference_m": 0.00011683132953570166,
+        "max_velocity_difference_m_s": 0.10549232275281474
+      },
+      {
+        "time_s": 1.0,
+        "max_position_difference_m": 0.00021555112465427033,
+        "max_velocity_difference_m_s": 0.2723300662533164
+      },
+      {
+        "time_s": 2.0,
+        "max_position_difference_m": 0.0026160419330052056,
+        "max_velocity_difference_m_s": 2.393828861702022
+      }
+    ],
+    "4-5": [
+      {
+        "time_s": 0.0,
+        "max_position_difference_m": 0.0,
+        "max_velocity_difference_m_s": 0.0
+      },
+      {
+        "time_s": 0.5,
+        "max_position_difference_m": 2.786290295137626e-05,
+        "max_velocity_difference_m_s": 0.02674265572752616
+      },
+      {
+        "time_s": 1.0,
+        "max_position_difference_m": 4.607133057892182e-05,
+        "max_velocity_difference_m_s": 0.07161756725374883
+      },
+      {
+        "time_s": 2.0,
+        "max_position_difference_m": 0.0010914633990386177,
+        "max_velocity_difference_m_s": 0.6964113111615778
+      }
+    ],
+    "5-6": [
+      {
+        "time_s": 0.0,
+        "max_position_difference_m": 0.0,
+        "max_velocity_difference_m_s": 0.0
+      },
+      {
+        "time_s": 0.5,
+        "max_position_difference_m": 6.856153280783517e-06,
+        "max_velocity_difference_m_s": 0.006720832782673351
+      },
+      {
+        "time_s": 1.0,
+        "max_position_difference_m": 1.178358193561284e-05,
+        "max_velocity_difference_m_s": 0.01858989309116729
+      },
+      {
+        "time_s": 2.0,
+        "max_position_difference_m": 0.00034635932042440063,
+        "max_velocity_difference_m_s": 0.13327368863997033
+      }
+    ]
+  },
+  "finest_implicit_vs_explicit": [
+    {
+      "time_s": 0.0,
+      "max_position_difference_m": 0.0,
+      "max_velocity_difference_m_s": 0.0
+    },
+    {
+      "time_s": 0.5,
+      "max_position_difference_m": 8.464016917434004e-06,
+      "max_velocity_difference_m_s": 0.007031739791707572
+    },
+    {
+      "time_s": 1.0,
+      "max_position_difference_m": 7.112845773140429e-06,
+      "max_velocity_difference_m_s": 0.018644313580725998
+    },
+    {
+      "time_s": 2.0,
+      "max_position_difference_m": 0.00027864934039586623,
+      "max_velocity_difference_m_s": 0.07874058823575075
+    }
+  ],
+  "motion_accuracy_qualified": false,
+  "limitations": [
+    "Checkpoint comparisons do not bound continuous trajectory error",
+    "No application position/velocity tolerance established",
+    "Energy admission alone does not qualify coarse-step trajectory accuracy",
+    "Individual shared-host timings are not a broad benchmark"
+  ],
+  "current_source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "73127febd85bce19270aaaac9595d2a3372da0da3a4d3ba81ad469f0b1f08e8f",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "831ff4cea727d8545a038f41dc7147f4685d836afa65f7321ec681d8cd1f3b12"
+  }
+}

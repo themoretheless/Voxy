@@ -801,6 +801,58 @@ mod tests {
         assert_eq!(other.advance_with(0.5, take).unwrap(), paused);
     }
     #[test]
+    fn pinned_character_owner_playback_deforms_and_retries_without_clock_drift() {
+        let asset = Arc::new(
+            ModelAsset::parse(
+                include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+                &[],
+                voxy_render::ModelLimits::default(),
+            )
+            .unwrap(),
+        );
+        let mut playing = ModelPlayback::new(asset.clone(), ModelAnimation::default()).unwrap();
+        let mut paused = ModelPlayback::new(
+            asset.clone(),
+            ModelAnimation {
+                speed: 0.,
+                ..ModelAnimation::default()
+            },
+        )
+        .unwrap();
+        let positions = |model: &ModelAsset, frame: &AnimatorFrame| {
+            assert_eq!(frame.skin_matrices.len(), model.skeleton.joints().len());
+            assert!(frame.skin_matrices.iter().all(|matrix| matrix.is_finite()));
+            let meshes = model.scene_meshes(&frame.pose).map_err(|e| e.to_string())?;
+            let vertices: Vec<_> = meshes
+                .iter()
+                .flat_map(|mesh| mesh.vertices().iter().map(|vertex| vertex.position))
+                .collect();
+            assert!(vertices.len() > 1000);
+            assert!(vertices.iter().flatten().all(|value| value.is_finite()));
+            Ok(vertices)
+        };
+        let rest = paused.advance_with(0., positions).unwrap();
+        let mut changed = false;
+        for tick in 0..240 {
+            if tick % 31 == 0 {
+                let mut control = playing.clone();
+                assert!(
+                    playing
+                        .advance_with(1. / 60., |_, _| Err::<(), _>("publication rejected".into()))
+                        .is_err()
+                );
+                let expected = control.advance_with(1. / 60., positions).unwrap();
+                let actual = playing.advance_with(1. / 60., positions).unwrap();
+                assert_eq!(actual, expected, "clock drift after rejected tick {tick}");
+                changed |= actual != rest;
+            } else {
+                changed |= playing.advance_with(1. / 60., positions).unwrap() != rest;
+            }
+            assert_eq!(paused.advance_with(1. / 60., positions).unwrap(), rest);
+        }
+        assert!(changed, "complete character mesh must animate");
+    }
+    #[test]
     fn foreign_clip_is_rejected_before_owner_creation_or_publication() {
         let mut asset = model();
         let mut joints = asset.skeleton.joints().to_vec();

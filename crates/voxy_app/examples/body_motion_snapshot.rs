@@ -836,6 +836,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         mapped_at_creation: false,
     });
     let mut frames = Vec::new();
+    let capture_node_state = std::env::var_os("VOXY_CAPTURE_NODE_STATE").is_some();
+    let mut node_states = Vec::new();
     let mut motion = String::from(
         "time_s,sample,offset_x_m,offset_y_m,offset_z_m,volume_m3,mechanical_change_j,support_work_j,viscous_heat_j,numerical_defect_j\n",
     );
@@ -847,8 +849,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         *steps.last().unwrap() as f64 / 240.,
         capture_limit.is_some()
     );
+    let diagnose_refinement = std::env::var_os("VOXY_REFINEMENT_DIAGNOSTICS").is_some();
+    if diagnose_refinement {
+        tissue_demo::start_refinement_diagnostics();
+    }
     let render_start = std::time::Instant::now();
+    let mut stage_seconds = [0.0_f64; 5];
     for (capture_index, step) in steps.into_iter().enumerate() {
+        let stage_start = std::time::Instant::now();
         while elapsed < step {
             if cesium {
                 if let Some(reference) = &contact_reference {
@@ -870,8 +878,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             elapsed += 1;
         }
+        stage_seconds[0] += stage_start.elapsed().as_secs_f64();
+        let stage_start = std::time::Instant::now();
         let volumes = demo.body_volumes_m3();
         let energy = demo.body_energy_receipts()?;
+        if capture_node_state {
+            node_states.push(serde_json::json!({"time_s":step as f64 / 240., "nodes":demo.continuum_node_state()?, "energy_receipts":energy}));
+        }
         let offsets = if let Some(domains) = &contact_reference {
             let (palette, _) = imported_contact_sample64(
                 imported.as_ref().ok_or("missing imported character")?,
@@ -903,12 +916,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 energy[sample][3]
             )?;
         }
+        stage_seconds[1] += stage_start.elapsed().as_secs_f64();
+        let stage_start = std::time::Instant::now();
         let meshes = displayed_meshes(
             &demo,
             imported.as_ref(),
             (step as f64 / (240. * duration)).min(1.),
             skin,
         )?;
+        stage_seconds[2] += stage_start.elapsed().as_secs_f64();
+        let stage_start = std::time::Instant::now();
         if meshes.len() != geometries.len() {
             return Err("display primitive count changed".into());
         }
@@ -962,6 +979,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         device.poll(wgpu::PollType::wait_indefinitely())?;
         rx.recv()??;
         let pixels = readback.slice(..).get_mapped_range()?;
+        stage_seconds[3] += stage_start.elapsed().as_secs_f64();
+        let stage_start = std::time::Instant::now();
         if let Some(directory) = &frame_directory {
             image::save_buffer(
                 directory.join(format!("frame-{capture_index:04}.png")),
@@ -976,6 +995,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         drop(pixels);
         readback.unmap();
+        stage_seconds[4] += stage_start.elapsed().as_secs_f64();
         if snapshots.contains(&step) {
             println!("frame t={:.2}", step as f64 / 240.);
         }
@@ -985,6 +1005,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         render_start.elapsed().as_secs_f64(),
         demo.body_step_counts()
     );
+    println!(
+        "STAGE_SECONDS simulation={} receipts={} mesh_deformation={} upload_encode_gpu_readback={} capture_io={}",
+        stage_seconds[0], stage_seconds[1], stage_seconds[2], stage_seconds[3], stage_seconds[4]
+    );
+    if diagnose_refinement {
+        for ((reason, depth), count) in tissue_demo::take_refinement_diagnostics() {
+            println!("REFINEMENT_REJECTION depth={depth} count={count} reason={reason}");
+        }
+    }
     if frames.windows(2).any(|pair| pair[0] == pair[1]) {
         return Err("body frames did not change".into());
     }
@@ -997,7 +1026,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             strip.extend_from_slice(&frame[row * 2048..(row + 1) * 2048]);
         }
     }
-    image::save_buffer(path, &strip, 2048, 512, image::ColorType::Rgba8)?;
+    image::save_buffer(&path, &strip, 2048, 512, image::ColorType::Rgba8)?;
+    std::fs::write(std::path::Path::new(&path).with_extension("csv"), &motion)?;
+    if capture_node_state {
+        std::fs::write(
+            std::path::Path::new(&path).with_extension("nodes.json"),
+            serde_json::to_vec_pretty(&node_states)?,
+        )?;
+    }
     if let Some(directory) = &frame_directory {
         std::fs::write(directory.join("secondary-motion.csv"), motion)?;
     }

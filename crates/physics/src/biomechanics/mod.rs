@@ -23,7 +23,7 @@ mod inertia;
 pub use inertia::{
     DrivenMuscleStep, DrivenSupportStep, InertialAssembly, InertialBody, InertialDiagnostics,
     MuscleDynamicStep, PlaneContact, SolidFilmBinding, SupportTarget, ViscoelasticAdaptiveStep,
-    ViscoelasticDynamicStep,
+    ViscoelasticDynamicStep, ViscoelasticSupportAccuracyStep,
 };
 mod invariants;
 mod myocardium;

@@ -1,0 +1,13 @@
+{
+  "candidate_retained": false,
+  "tests_passed": 18,
+  "before_seconds": 58.230919125,
+  "candidate_seconds": 72.21153925,
+  "identical_control_image_sha256": "e07d5f9bcf013239ea3e98420e437d87a47243504a7603632419d969cf693150",
+  "step_receipts_unchanged": [
+    208168,
+    58416,
+    8
+  ],
+  "limitations": "Sequential single trials on shared loaded host do not establish causal regression or speedup; candidate reverted"
+}

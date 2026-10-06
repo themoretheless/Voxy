@@ -1,0 +1,48 @@
+{
+  "rejections": [
+    {
+      "depth": 0,
+      "count": 25,
+      "reason": "finite-deformation inertial support work defect"
+    },
+    {
+      "depth": 1,
+      "count": 13,
+      "reason": "finite-deformation inertial support work defect"
+    },
+    {
+      "depth": 2,
+      "count": 16,
+      "reason": "finite-deformation inertial support work defect"
+    },
+    {
+      "depth": 3,
+      "count": 31,
+      "reason": "finite-deformation inertial support work defect"
+    },
+    {
+      "depth": 4,
+      "count": 208,
+      "reason": "finite-deformation inertial support work defect"
+    },
+    {
+      "depth": 5,
+      "count": 8702,
+      "reason": "finite-deformation inertial support work defect"
+    },
+    {
+      "depth": 6,
+      "count": 23250,
+      "reason": "finite-deformation inertial support work defect"
+    },
+    {
+      "depth": 7,
+      "count": 26171,
+      "reason": "finite-deformation inertial support work defect"
+    }
+  ],
+  "accepted_steps": 208168,
+  "rejected_steps": 58416,
+  "image_sha256": "e07d5f9bcf013239ea3e98420e437d87a47243504a7603632419d969cf693150",
+  "scope": "Opt-in calling-thread aggregate of actual explicit continuum rejections on full CesiumMan clip; not all solver paths"
+}
