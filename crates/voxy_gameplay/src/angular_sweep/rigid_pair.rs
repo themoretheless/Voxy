@@ -784,7 +784,8 @@ pub(crate) fn sweep_nominal_rigid_contact(
             qb.conjugate() * normal,
             hit.nominal_tolerance_m,
         )?;
-        let point = DVec3::from_array(b.motion.position) + qb * (second_shape.center + point);
+        // The clipping kernel already restores the template center.
+        let point = DVec3::from_array(b.motion.position) + qb * point;
         let tolerance_m = tolerance + 16. * f64::EPSILON * (point.abs().max_element() + 1.);
         if !point.is_finite() || !tolerance_m.is_finite() {
             return Err(PhysicsError::ContactWitness);

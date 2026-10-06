@@ -5971,9 +5971,10 @@ must first require `has_constant_acceleration()`.
 Independent three-node Gaussian integration checks force power and quartic
 orbital moment through all tested prefixes; analytic COM, momentum, energy,
 impact remainder and rollback fixtures also qualify the changing-force model.
-Current SceneBodyWorld, nominal angular sweeps and support interval admission
-explicitly reject cubic force paths, including zero initial acceleration. No
-legacy linear/parabolic shortcut may silently report a clear trajectory for one.
+At this milestone SceneBodyWorld and support interval admission rejected cubic
+force paths, including zero initial acceleration. Ordinary collision queries
+now support these paths as described below; supported interval admission still
+rejects them. Linear/parabolic shortcuts require constant acceleration.
 
 The reaction-rate solve is not yet wired into finite scene evolution. That needs
 cubic COM geometry bounds, pressure-zero transitions and the common-point
@@ -5985,3 +5986,31 @@ App/editor all-target release checks and format/diff checks passed. Raw logs
 retain the initial scene test trait-import compile error and the passing rerun.
 Logs and current source hashes: artifacts/affine-force-rigid-trajectories-2026-10-06.
 Changes are local.
+
+
+### Cubic COM collision queries (2026-10-06)
+
+Ordinary SceneBodyWorld environment, particle and finite-body pair queries now
+use the prepared cubic COM trajectory. Quadratic Bernstein velocity controls
+bound speed across each complete interval, including an interior speed peak
+with zero endpoint velocities. Paired paths use aligned relative controls;
+separating-prefix bounds evaluate affine acceleration over the interval.
+These remain nominal floating bounds, not directed real-arithmetic certificates.
+
+Nominal contact queries pass their own floating gap allowance to the shared
+clipping kernel. The allowance is distinct from rotational orbit model error.
+The kernel already restores the obstacle template center; the caller transforms
+that returned point once into world coordinates. Neither body pose is snapped.
+
+Regression fixtures independently bisect analytic cubic crossings with both
+endpoints clear, cover zero initial acceleration without spin, retain world
+feature identity, enforce query budgets and unchanged input paths, and check a
+shifted compound part's contact time and world witness. Supported intervals
+still reject cubic COM paths, and reaction force rates are not yet connected
+to finite scene stepping. Sustained sliding and general rotating support
+remain unfinished.
+
+Qualification: 1934 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks and format/diff checks passed. Raw logs,
+including the failing compound witness regression before correction, and source
+hashes are retained in artifacts/cubic-rigid-collision-2026-10-06.
