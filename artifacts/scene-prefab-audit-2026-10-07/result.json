@@ -1,0 +1,34 @@
+{
+  "status": "scene core and editor prefab integration regressions passed",
+  "scene_tests_passed": 100,
+  "scene_tests_failed": 0,
+  "tested_features": [
+    "scene document load and durable object identity",
+    "native nested prefab expansion",
+    "durable identified collection patches",
+    "source updates and reference remapping",
+    "structural overrides, deletion tombstones, reparenting",
+    "component override capture and reset compatibility",
+    "history/transaction rejection and capacity",
+    "bounded atomic scene file replacement"
+  ],
+  "editor_prefab_tests_terminal": true,
+  "interactive_editor_ui_qualified": false,
+  "rag_context": [
+    {
+      "document_id": "b8cc7f31-f4ef-45a1-9ea8-83eaead6189f",
+      "slug": "voxy-engine-roadmap",
+      "body_date": "2026-09-05",
+      "authority": "historical context only; actual current source and tests are authoritative"
+    }
+  ],
+  "rag_wiki_search": "Voxy prefab lex request exceeded server candidate retrieval timeout; exact catalog query worked",
+  "editor_prefab_tests_passed": 5,
+  "editor_prefab_tests_failed": 0,
+  "editor_behaviors_tested": [
+    "nested prefab edit/save/reload",
+    "member override inheritance from changed source",
+    "undo and dependency failure retains live scene",
+    "identified collection reset preserves topology and sibling values"
+  ]
+}

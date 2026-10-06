@@ -1,0 +1,13 @@
+{
+  "status": "fixture and manifest qualified; strict full-volume runtime not yet qualified",
+  "legacy_rate_j_s": 0.0024000000000000002,
+  "authored_strict_rate_j_s": 5e-10,
+  "frame_budget_j": 2.0833333333333334e-12,
+  "moving_support_independent_balance_j": -1.5883013446439873e-14,
+  "app_tests_passed": 247,
+  "app_tests_ignored": 28,
+  "policy_atomicity_and_assembly_test_passed": true,
+  "manifest_test_passed": true,
+  "runtime_release_build_passed": true,
+  "limits": "Mechanical numerical admission only. Old full clip exceeded 1e-9 J manual gate; no strict full-volume or full-clip completion claim."
+}

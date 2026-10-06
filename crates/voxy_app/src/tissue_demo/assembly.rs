@@ -26,6 +26,7 @@ impl TissueDemo {
         let mut ledger = EnergyLedger::default();
         let mut initial_energy_j = 0.;
         let mut preferred_depth = 0;
+        let mut energy_budget_rate_j_s = f64::INFINITY;
         let mut node_offset = 0;
         for (i, part) in self.bodies.iter().enumerate() {
             let DemoTissue::Continuum {
@@ -33,6 +34,7 @@ impl TissueDemo {
                 ledger: receipt,
                 initial_energy_j: initial,
                 preferred_depth: depth,
+                energy_budget_rate_j_s: rate,
                 cells: local_cells,
                 ..
             } = part
@@ -49,6 +51,7 @@ impl TissueDemo {
             ledger.add(*receipt);
             initial_energy_j += initial;
             preferred_depth = preferred_depth.max(*depth);
+            energy_budget_rate_j_s = energy_budget_rate_j_s.min(*rate);
             parts.push(dynamics.clone());
         }
         let assembled = InertialBody::assemble_tissues(&parts)?;
@@ -71,6 +74,7 @@ impl TissueDemo {
             ledger,
             initial_energy_j,
             preferred_depth,
+            energy_budget_rate_j_s,
         };
         self.bodies = vec![global];
         self.surfaces = vec![render];
@@ -199,6 +203,51 @@ mod tests {
             )
             .unwrap(),
         )
+    }
+    #[test]
+    fn energy_budget_policy_is_atomic_and_survives_global_assembly() {
+        let mut demo = TissueDemo::body();
+        for rate in [0., -1., f64::NAN, f64::INFINITY] {
+            let before = format!("{demo:?}");
+            assert!(demo.set_energy_budget_rate(rate).is_err());
+            assert_eq!(before, format!("{demo:?}"));
+        }
+        demo.set_energy_budget_rate(5e-10).unwrap();
+        for body in &demo.bodies {
+            let DemoTissue::Continuum {
+                energy_budget_rate_j_s,
+                ..
+            } = body
+            else {
+                panic!()
+            };
+            assert_eq!(*energy_budget_rate_j_s, 5e-10);
+        }
+        let DemoTissue::Continuum {
+            energy_budget_rate_j_s,
+            ..
+        } = &mut demo.bodies[0]
+        else {
+            panic!()
+        };
+        *energy_budget_rate_j_s = 2e-10;
+        demo.assemble_regions().unwrap();
+        let DemoTissue::Continuum {
+            energy_budget_rate_j_s,
+            ..
+        } = &demo.bodies[0]
+        else {
+            panic!()
+        };
+        assert_eq!(*energy_budget_rate_j_s, 2e-10);
+        demo.set_energy_budget_rate(f64::from_bits(1)).unwrap();
+        let before = format!("{demo:?}");
+        let palette = vec![DMat4::IDENTITY; 8];
+        assert!(
+            demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
+                .is_err()
+        );
+        assert_eq!(before, format!("{demo:?}"));
     }
     #[test]
     fn assembled_controller_drives_all_regional_supports_in_one_owner() {
@@ -579,6 +628,76 @@ mod skin_tests {
         assert_eq!(snapshot, format!("{demo:?}"));
     }
     #[test]
+    fn strict_energy_budget_bounds_a_moving_source_support_frame() {
+        let mesh = physics::biomechanics::TetraMesh::from_lattice_cells(
+            [0., 0.8, 0.],
+            [0.01; 3],
+            &[[0, 0, 0]],
+        )
+        .unwrap();
+        let pins: Vec<_> = mesh
+            .points
+            .iter()
+            .enumerate()
+            .filter_map(|(i, p)| (p[1] == 0.8).then_some(i))
+            .collect();
+        let native = Arc::new(
+            PrescribedTriangleSurface::new(
+                mesh.points.clone(),
+                mesh.boundary.clone(),
+                0.0001,
+                0.003,
+                100.,
+            )
+            .unwrap()
+            .with_body_contact_domains(vec![(
+                mesh.boundary.clone(),
+                vec![false; mesh.boundary.len()],
+            )])
+            .unwrap(),
+        );
+        let mut demo = TissueDemo::body_from_region_specs(vec![TissueRegionSpec::illustrative(
+            mesh.clone(),
+            pins.clone(),
+            0,
+        )])
+        .unwrap();
+        demo.set_energy_budget_rate(5e-10).unwrap();
+        demo.bind_contact_surface(native.clone()).unwrap();
+        demo.assemble_regions().unwrap();
+        let binding = demo.bind_skin_source_reference(&mesh.points).unwrap();
+        demo.bind_skin_contact(&binding).unwrap();
+        let source: Vec<_> = mesh
+            .points
+            .iter()
+            .map(|p| [p[0] + 0.0002 * p[2], p[1], p[2]])
+            .collect();
+        let before = demo.body_energy_receipts().unwrap()[0];
+        demo.step_body_with_contact64_workers(
+            &[DMat4::IDENTITY],
+            0.5,
+            Some(vec![Arc::new(
+                native.with_positions(source.clone()).unwrap(),
+            )]),
+            1,
+        )
+        .unwrap();
+        let after = demo.body_energy_receipts().unwrap()[0];
+        let balance = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+        assert!(balance.abs() <= 5e-10 / 240., "balance={balance}");
+        let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+            panic!()
+        };
+        for &pin in &pins {
+            assert_eq!(dynamics.body().positions()[pin], source[pin]);
+        }
+        assert!((after[1] - before[1]).abs() > 0.);
+        eprintln!(
+            "STRICT_ENERGY_POLICY rate_j_s=5e-10 frame_budget_j={:.17e} independent_balance_j={balance:.17e}",
+            5e-10 / 240.
+        );
+    }
+    #[test]
     fn source_reference_supports_follow_native_nonrigid_pose_and_book_work() {
         use physics::biomechanics::TetraMesh;
         let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
@@ -644,6 +763,47 @@ mod skin_tests {
             "SOURCE_SUPPORT_WORK pins={} independent_balance_j={independent:.17e} support_work_j={:.17e}",
             pins.len(),
             after[1] - before[1]
+        );
+        // Exercise reversals on the same dynamic owner; free nodes must remain
+        // physical degrees of freedom rather than receiving the prescribed skin.
+        let mut maximum_balance = independent.abs();
+        let mut maximum_free_offset = 0_f64;
+        for shear in [0.0001, 0., -0.0001, -0.0002, 0., 0.0002] {
+            let source: Vec<_> = mesh
+                .points
+                .iter()
+                .map(|p| [p[0] + shear * p[2], p[1], p[2]])
+                .collect();
+            let before = demo.body_energy_receipts().unwrap()[0];
+            let staged = Arc::new(native.with_positions(source.clone()).unwrap());
+            assert!(native.same_contact_owner(&staged));
+            demo.step_body_with_contact64_workers(&palette, 0.5, Some(vec![staged]), 1)
+                .unwrap();
+            let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+                panic!()
+            };
+            let actual = dynamics.body().positions();
+            let visible = demo.deform_skin(&binding, &palette, &source).unwrap();
+            for &node in &pins {
+                assert_eq!(actual[node], source[node]);
+            }
+            for node in 0..source.len() {
+                for axis in 0..3 {
+                    assert!((visible[node][axis] - actual[node][axis]).abs() < 1e-14);
+                    if !pins.contains(&node) {
+                        maximum_free_offset = maximum_free_offset
+                            .max((actual[node][axis] - source[node][axis]).abs());
+                    }
+                }
+            }
+            let after = demo.body_energy_receipts().unwrap()[0];
+            let balance = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+            maximum_balance = maximum_balance.max(balance.abs());
+            assert!(balance.abs() < 1e-10, "shear={shear} balance={balance}");
+        }
+        assert!(maximum_free_offset > 1e-10);
+        eprintln!(
+            "SOURCE_SUPPORT_REVERSALS steps=7 maximum_balance_j={maximum_balance:.17e} maximum_free_offset_m={maximum_free_offset:.17e}"
         );
         let snapshot = format!("{demo:?}");
         let mut invalid = posed;

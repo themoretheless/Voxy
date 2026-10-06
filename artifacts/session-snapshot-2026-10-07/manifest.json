@@ -1,0 +1,150 @@
+{
+  "created_at_utc": "2026-10-06T23:43:18.305753+00:00",
+  "scope": "Point-in-time byte snapshots of live capture outputs; not terminal results. Source processes preserved. JSONL may end with a partial record.",
+  "processes": [
+    35083,
+    53608,
+    80334,
+    88501
+  ],
+  "files": [
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/capture.log",
+      "bytes": 12926403,
+      "sha256": "126d54362ee125f7e233e8cf1863c1c7eb001e9019aea2dd3ef18d360d0c3b56"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/result.json",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/result.json",
+      "bytes": 967,
+      "sha256": "225fe12dde43b78c029c2c4118fd94c8c9824835a01073a98d03fbdd170fc0a8"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/checkpoint-auditor-regression.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/checkpoint-auditor-regression.log",
+      "bytes": 17142,
+      "sha256": "7eefd06876be8957a6b12ae7d206e77925348dc4377f67d7fbdfdd865411e010"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/capture.nodes.jsonl",
+      "bytes": 1975769,
+      "sha256": "ddc2777282ea61c75d96b9fc11804d4c6fdb29b568a1f2d5ef7e7f1131c203a5"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/observed-energy-audit.json",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/observed-energy-audit.json",
+      "bytes": 549,
+      "sha256": "477cf427b8808f57eb840b1413b101f81f011207c7ea226e312f824092805cc8"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0003.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/frames/frame-0003.png",
+      "bytes": 33579,
+      "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0002.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/frames/frame-0002.png",
+      "bytes": 33109,
+      "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0000.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/frames/frame-0000.png",
+      "bytes": 32366,
+      "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0001.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/frames/frame-0001.png",
+      "bytes": 32572,
+      "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0005.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/frames/frame-0005.png",
+      "bytes": 33902,
+      "sha256": "6c602823499494e85e34bc5339bc742313b1963b403ee62d4ce753a77200d54a"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0004.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/frames/frame-0004.png",
+      "bytes": 34076,
+      "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9"
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0006.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-rig-clip-2026-10-07/frames/frame-0006.png",
+      "bytes": 33785,
+      "sha256": "4b9541c2118cef4aaee12c60e277688e1ca48aaf8dae408e0947726c1e9c79f6"
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/debug-profile.txt",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-volume-release-2026-10-07/debug-profile.txt",
+      "bytes": 866758,
+      "sha256": "fc4edd76474354ca6f3ed1609009b9cd5a24498bee3dae25a912992f090ec5f1"
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-volume-release-2026-10-07/capture.log",
+      "bytes": 3723426,
+      "sha256": "9b4e938cee17346721949f722248ebfd7902591c4264d37d3d8cb4bbc213208b"
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-volume-release-2026-10-07/capture.nodes.jsonl",
+      "bytes": 182441,
+      "sha256": "54551c8135b9abc03e8ca6a80837709a848d3e0f945fb83cbe972ec21b2f3e6b"
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/release-profile.txt",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-volume-release-2026-10-07/release-profile.txt",
+      "bytes": 180041,
+      "sha256": "19d9eb350970e3c59ec990552c24abce4b920f578e6e39c2d3f2ea03f892472f"
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/debug-profile.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-volume-release-2026-10-07/debug-profile.log",
+      "bytes": 218,
+      "sha256": "3bcbc9f5d1962ef3e98f6831dafe5a191cb3d2225c48f96bf049bd0c44bf952c"
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/release-build.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-volume-release-2026-10-07/release-build.log",
+      "bytes": 19629,
+      "sha256": "0b930135546eb2fafa4edf814d497c39c37bf3725993262e6bd3e9e6ef4508bf"
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/release-profile.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/full-volume-release-2026-10-07/release-profile.log",
+      "bytes": 236,
+      "sha256": "d14a5e766e34a13d734d8729fec153ed4afeb5625ffcc0ad73cac7d7b0bbfca8"
+    },
+    {
+      "source": "artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/inactive-contact-domain-2026-10-07/full-volume-cached-capture.log",
+      "bytes": 16683,
+      "sha256": "0152e0cea3cdb3336ba3bdce4fdb1f14e51a800c3d9643228b514f9971d499ef"
+    },
+    {
+      "source": "artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/inactive-contact-domain-2026-10-07/full-volume-cached-capture.nodes.jsonl",
+      "bytes": 182441,
+      "sha256": "54551c8135b9abc03e8ca6a80837709a848d3e0f945fb83cbe972ec21b2f3e6b"
+    },
+    {
+      "source": "artifacts/source-node-reference-2026-10-07/full-volume-capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/source-node-reference-2026-10-07/full-volume-capture.log",
+      "bytes": 16683,
+      "sha256": "0152e0cea3cdb3336ba3bdce4fdb1f14e51a800c3d9643228b514f9971d499ef"
+    },
+    {
+      "source": "artifacts/source-node-reference-2026-10-07/full-volume-capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07/source-node-reference-2026-10-07/full-volume-capture.nodes.jsonl",
+      "bytes": 182441,
+      "sha256": "54551c8135b9abc03e8ca6a80837709a848d3e0f945fb83cbe972ec21b2f3e6b"
+    }
+  ]
+}

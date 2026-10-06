@@ -1,0 +1,51 @@
+{
+  "status": "fixed topology response optimization measured; all selected release contact suites pass",
+  "scope": "only private embedded immutable admitted faces; public arbitrary topology response unchanged",
+  "per_response_geometry_validation_retained": true,
+  "paired_benchmark": {
+    "scope": "native inactive embedded response only; 729 vertices, 768 faces, 200 responses; no full-engine speed claim",
+    "runs": [
+      {
+        "variant": "before",
+        "elapsed_s": 0.483727709
+      },
+      {
+        "variant": "after",
+        "elapsed_s": 0.358648166
+      },
+      {
+        "variant": "after",
+        "elapsed_s": 0.360991125
+      },
+      {
+        "variant": "before",
+        "elapsed_s": 0.480758333
+      },
+      {
+        "variant": "before",
+        "elapsed_s": 0.479164042
+      },
+      {
+        "variant": "after",
+        "elapsed_s": 0.35576525
+      },
+      {
+        "variant": "after",
+        "elapsed_s": 0.35223025
+      },
+      {
+        "variant": "before",
+        "elapsed_s": 0.522252875
+      }
+    ],
+    "medians_s": {
+      "before": 0.482243021,
+      "after": 0.357206708
+    },
+    "after_over_before": 0.740719289745823
+  },
+  "full_engine_speedup_qualified": false,
+  "full_clip_runtime_qualification_pending": true,
+  "domain_eligibility_test_passed": true,
+  "nonfinite_and_collapsed_dynamic_skin_rejections_passed": true
+}

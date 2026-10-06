@@ -1,0 +1,56 @@
+[
+  {
+    "time_s": 0.004166666666666667,
+    "nodes": 2338,
+    "mean_displacement_m": [
+      2.0293073515439914e-14,
+      -8.515624968785463e-05,
+      -8.415595792596667e-14
+    ],
+    "maximum_translation_scatter_m": 1.8069862631921204e-11,
+    "maximum_analytic_position_error_m": 1.798570667399524e-11,
+    "maximum_analytic_velocity_error_m_s": 3.342962863691183e-07,
+    "energy_receipt": [
+      1.439820485058301e-14,
+      0.0,
+      3.7638151071699824e-19,
+      1.445805281050421e-14
+    ]
+  },
+  {
+    "time_s": 0.008333333333333333,
+    "nodes": 2338,
+    "mean_displacement_m": [
+      7.075363783475333e-14,
+      -0.00034062499965843875,
+      -1.7577692496988245e-13
+    ],
+    "maximum_translation_scatter_m": 1.26496221402012e-11,
+    "maximum_analytic_position_error_m": 1.2578868502366447e-11,
+    "maximum_analytic_velocity_error_m_s": 4.982857798080585e-07,
+    "energy_receipt": [
+      2.503552920527279e-14,
+      0.0,
+      8.284762206269147e-19,
+      2.4956599287115846e-14
+    ]
+  },
+  {
+    "time_s": 0.0125,
+    "nodes": 2338,
+    "mean_displacement_m": [
+      4.953911203487243e-14,
+      -0.0007664062499387795,
+      -3.196720562764001e-13
+    ],
+    "maximum_translation_scatter_m": 2.1130711080113517e-11,
+    "maximum_analytic_position_error_m": 2.1450383136389917e-11,
+    "maximum_analytic_velocity_error_m_s": 8.640035651236166e-07,
+    "energy_receipt": [
+      1.0125233984578979e-13,
+      0.0,
+      1.285613572569903e-18,
+      1.0053503168847338e-13
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "status": "full clip live; observed cumulative energy exceeds manual full-clip audit gate by 0.3 s; investigate without relaxing gate",
+  "process_id": 88501,
+  "exec_session_id": 75968,
+  "requested_steps": 480,
+  "requested_final_time_s": 2.0,
+  "observed_last_checkpoint_time_s": 0.3,
+  "observed_checkpoints": 7,
+  "physical_nodes": 2338,
+  "tetrahedra": 6845,
+  "supports": [
+    1282,
+    167,
+    1856
+  ],
+  "support_selection": "illustrative source-node pins, not anatomical calibration",
+  "startup_seconds": 0.5,
+  "full_clip_complete": false,
+  "contact_regressions_exec_session_id": 66190,
+  "contact_regressions_terminal": false,
+  "checkpoint_auditor_control_passed": true,
+  "limits": "No active self-contact pairs; no material or anatomical attachment calibration; no real-time claim.",
+  "observed_maximum_energy_balance_j": 4.8762149873482485e-09,
+  "manual_cumulative_energy_gate_j": 1e-09,
+  "observed_cumulative_energy_gate_passed": false
+}

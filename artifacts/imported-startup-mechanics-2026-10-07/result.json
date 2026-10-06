@@ -1,0 +1,33 @@
+{
+  "status": "native imported rig startup mechanical subset qualified",
+  "steps": 3,
+  "startup_seconds": 0.5,
+  "clip_phase_steps": [
+    0.0020833333333333333,
+    0.004166666666666667,
+    0.00625
+  ],
+  "original_volume_nodes": [
+    1282,
+    167,
+    1856,
+    488
+  ],
+  "source_vertices": [
+    1383,
+    167,
+    2284,
+    494
+  ],
+  "pinned_local_nodes": [
+    0,
+    1,
+    2
+  ],
+  "maximum_independent_energy_balance_j": 1.0368839231002485e-10,
+  "energy_gate_j": 1e-09,
+  "maximum_pin_component_motion_m": 0.00014435575102536569,
+  "maximum_free_component_offset_m": 0.0002701777110183379,
+  "full_character_dynamics_qualified": false,
+  "material_calibrated": false
+}

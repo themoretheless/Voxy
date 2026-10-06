@@ -1,0 +1,12 @@
+{
+  "status": "native source support reversals qualified on illustrative single-cell tissue",
+  "steps": 7,
+  "supports": 4,
+  "maximum_independent_energy_balance_j": 3.741679923535623e-11,
+  "maximum_free_node_offset_from_prescribed_skin_m": 1.3397196529596478e-05,
+  "pin_positions_exact": true,
+  "render_matches_physical_nodes": true,
+  "contact_owner_preserved": true,
+  "full_character_dynamics_qualified": false,
+  "material_calibrated": false
+}
