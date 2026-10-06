@@ -447,9 +447,6 @@ fn supported_shape_events(
     budget: usize,
     fixed: bool,
 ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
-    if !first.has_constant_acceleration() || !second.has_constant_acceleration() {
-        return Err(physics::liquid::Error::CollisionBackend);
-    }
     use physics::liquid::Error;
     if budget == 0
         || supports.is_empty()
@@ -714,6 +711,53 @@ fn contact_patch_points_with_error(
     }
 }
 impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
+    fn rigid_support_normal_acceleration(
+        &self,
+        bodies: &[physics::contact::ContactBody],
+        loads: &[physics::contact::ContactWrench],
+        support: physics::contact::NetworkSupport,
+        geometry: physics::liquid::RigidSupportPoint,
+    ) -> Result<Option<[f64; 3]>, physics::liquid::Error> {
+        let physics::contact::SupportPlane::Rate { normal_rate } = support.support.plane else {
+            return Ok(None);
+        };
+        let key = FeatureKey::decode(
+            geometry
+                .feature
+                .ok_or(physics::liquid::Error::CollisionBackend)?,
+        )?;
+        let first_shape = *self
+            .templates
+            .get(support.first)
+            .and_then(|shapes| shapes.get(key.first))
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let second_shape = if let Some(j) = support.second {
+            *self
+                .templates
+                .get(j)
+                .and_then(|shapes| shapes.get(key.second))
+                .ok_or(physics::liquid::Error::InvalidCollision)?
+        } else {
+            self.environment
+                .0
+                .0
+                .get(key.second)
+                .ok_or(physics::liquid::Error::InvalidCollision)?
+                .shape
+        };
+        rigid_support::edge_normal_acceleration(
+            bodies[support.first],
+            first_shape,
+            support.second.map(|j| bodies[j]),
+            second_shape,
+            key.axis,
+            support.support.contact.normal,
+            normal_rate,
+            loads[support.first],
+            support.second.map_or(Default::default(), |j| loads[j]),
+        )
+        .map(Some)
+    }
     fn rigid_pair_support_contacts(
         &self,
         i: usize,
@@ -876,9 +920,6 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         supports: &[physics::liquid::RigidSupportPoint],
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
-        if !first.has_constant_acceleration() || !second.has_constant_acceleration() {
-            return Err(physics::liquid::Error::CollisionBackend);
-        }
         supported_shape_events(
             first,
             &self.templates[i],
@@ -896,9 +937,6 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         supports: &[physics::liquid::RigidSupportPoint],
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
-        if !body.has_constant_acceleration() {
-            return Err(physics::liquid::Error::CollisionBackend);
-        }
         let fixed = sampling_frame([0.; 3], body.duration())?;
         let walls: Vec<_> = self.environment.0.0.iter().map(|w| w.shape).collect();
         supported_shape_events(
@@ -2243,6 +2281,72 @@ mod tests {
         assert_eq!(liquid, fluid_before);
     }
     #[test]
+    fn supported_vertex_spin_keeps_real_yaw_over_one_second() {
+        use physics::contact::ContactWrench;
+        let scene = support_floor();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![support_box([0.125; 3])]],
+        };
+        let mut liquid = Liquid::new(
+            Vec::new(),
+            vec![Material::WATER],
+            Config {
+                gravity: [0., -10., 0.],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let q =
+            glam::DQuat::from_rotation_arc(glam::DVec3::splat(-1.).normalize(), -glam::DVec3::Y);
+        let height = 3_f64.sqrt() * 0.125;
+        let mut bodies = [rigid_body([0., height, 0.], [0.; 3], 0.)];
+        let spin = bodies[0].spin.as_mut().unwrap();
+        spin.orientation = q.to_array();
+        spin.angular_momentum = [0., 1., 0.];
+        let before = bodies[0];
+        let mut impulse = 0.;
+        let mut intervals = 0;
+        for _ in 0..10 {
+            let report = liquid
+                .step_with_supported_rigid_body_forces(
+                    0.1,
+                    &mut bodies,
+                    &world,
+                    Default::default(),
+                    1,
+                    rigid_config(),
+                    &[ContactWrench::default()],
+                    physics::liquid::SupportedWorldConfig {
+                        reaction_jerk_tolerance: Some(1e-10),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            impulse += report.environment_reaction_impulse[1];
+            intervals += report.supported_intervals;
+            assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+        }
+        let expected = glam::DQuat::from_rotation_y(1.) * q;
+        let actual = glam::DQuat::from_array(bodies[0].spin.unwrap().orientation);
+        assert!(
+            actual
+                .to_array()
+                .iter()
+                .zip(expected.to_array())
+                .all(|(a, b)| (a - b).abs() < 1e-9)
+        );
+        assert!((bodies[0].motion.position[1] - height).abs() < 1e-10);
+        assert!((bodies[0].spin.unwrap().angular_momentum[1] - 1.).abs() < 1e-10);
+        assert!((impulse + 10.).abs() < 1e-9);
+        assert!(intervals >= 100);
+        assert_ne!(
+            bodies[0].spin.unwrap().orientation,
+            before.spin.unwrap().orientation
+        );
+    }
+
+    #[test]
     fn supported_motion_keeps_real_tangential_acceleration_and_separates_work() {
         use physics::contact::ContactWrench;
         let scene = support_floor();
@@ -2413,6 +2517,58 @@ mod tests {
     }
 
     #[test]
+    fn cubic_supported_interval_admits_release_and_rejects_hidden_penetration() {
+        use physics::{
+            astrophysics_spin::TorquePolynomial,
+            liquid::{GeometryHit, LiquidBodyWorld},
+        };
+        let scene = support_floor();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![support_box([0.125; 3])]],
+        };
+        let initial = rigid_body([0., 0.125, 0.], [0.; 3], 0.);
+        let supports = world
+            .rigid_environment_support_contacts(0, &initial, 256)
+            .unwrap();
+        assert!(!supports.is_empty());
+        let zero = TorquePolynomial::constant([0.; 3]);
+        let release = initial
+            .prepare_affine_motion([0.; 3], [0., 6., 0.], zero, 1., rigid_config())
+            .unwrap();
+        let result = world
+            .sweep_supported_rigid_environment_event(0, &release, &supports, 256)
+            .unwrap();
+        assert!(matches!(result.event.contact.geometry, GeometryHit::Clear));
+        // Loaded points must remain on the plane, rather than silently release.
+        let loaded: Vec<_> = supports
+            .iter()
+            .map(|point| physics::liquid::RigidSupportPoint {
+                carrying_reaction: true,
+                ..*point
+            })
+            .collect();
+        assert!(
+            world
+                .sweep_supported_rigid_environment_event(0, &release, &loaded, 256)
+                .is_err()
+        );
+        assert_eq!(release.initial(), initial);
+        let mut incoming = initial;
+        incoming.motion.velocity[1] = 1.;
+        // y displacement t - 3t² + 2t³ returns to zero but penetrates the floor.
+        let crossing = incoming
+            .prepare_affine_motion([0., -6., 0.], [0., 12., 0.], zero, 1., rigid_config())
+            .unwrap();
+        assert!((crossing.end().motion.position[1] - initial.motion.position[1]).abs() < 1e-12);
+        assert!(
+            world
+                .sweep_supported_rigid_environment_event(0, &crossing, &supports, 256)
+                .is_err()
+        );
+    }
+
+    #[test]
     fn supported_motion_finite_sliding_transmits_moving_arm_torque_without_internal_couple() {
         use physics::contact::ContactWrench;
         let scene = support_floor();
@@ -2481,6 +2637,35 @@ mod tests {
         assert_eq!(bodies, before_query);
         assert_eq!(liquid, before_liquid);
         let dt = 1e-4;
+        let mut affine_liquid = liquid.clone();
+        let mut affine_bodies = bodies;
+        let affine_report = affine_liquid
+            .step_with_supported_rigid_body_forces(
+                dt,
+                &mut affine_bodies,
+                &world,
+                Default::default(),
+                2,
+                rigid_config(),
+                &[ContactWrench::default(); 2],
+                physics::liquid::SupportedWorldConfig {
+                    reaction_jerk_tolerance: Some(1e-10),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert!((affine_bodies[0].motion.position[0] - dt).abs() < 1e-12);
+        // Changing pressure cancels the moving-arm torque at the floor.
+        assert!(affine_bodies[1].spin.unwrap().angular_momentum[2].abs() < 1e-12);
+        assert!(
+            affine_report
+                .reaction_angular_balance_residual
+                .iter()
+                .all(|x| x.abs() < 1e-12)
+        );
+        assert!((affine_report.environment_reaction_impulse[1] + 50. * dt).abs() < 1e-12);
+        assert!(affine_report.reaction_work.abs() < 1e-12);
+        assert_eq!(affine_report.rigid.world.dynamics.dissipated_energy, 0.);
         let admission = physics::liquid::SupportedWorldConfig::default();
         let report = liquid
             .step_with_supported_rigid_body_forces(
@@ -2508,33 +2693,137 @@ mod tests {
         assert!(report.max_support_error_m <= admission.max_geometry_error_m);
     }
     #[test]
-    fn supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping() {
+    fn affine_supported_sliding_reassembles_pressure_and_closes_long_interval_moments() {
         use physics::contact::ContactWrench;
         let scene = support_floor();
         let world = SceneBodyWorld {
             environment: SceneGeometry(crate::static_world(&scene).unwrap()),
-            templates: vec![vec![support_box([0.03125; 3])]; 3],
+            templates: vec![
+                vec![support_box([0.125; 3])],
+                vec![support_box([1., 0.125, 1.])],
+            ],
         };
-        let mut liquid = Liquid::new(
-            Vec::new(),
-            vec![Material::WATER],
-            Config {
-                gravity: [0., -10., 0.],
+        for interval in [0.01, 0.005] {
+            let mut liquid = Liquid::new(
+                Vec::new(),
+                vec![Material::WATER],
+                Config {
+                    gravity: [0., -10., 0.],
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            let mut bodies = [
+                rigid_body([0., 0.375, 0.], [1., 0., 0.], 0.),
+                rigid_body([0., 0.125, 0.], [0.; 3], 0.),
+            ];
+            bodies[0].motion.mass = 2.;
+            bodies[1].motion.mass = 3.;
+            let mut angular = 0.;
+            let mut impulse = 0.;
+            let mut supported = 0;
+            for _ in 0..10 {
+                let report = liquid
+                    .step_with_supported_rigid_body_forces(
+                        0.02,
+                        &mut bodies,
+                        &world,
+                        Default::default(),
+                        2,
+                        rigid_config(),
+                        &[ContactWrench::default(); 2],
+                        physics::liquid::SupportedWorldConfig {
+                            reaction_jerk_tolerance: Some(1e-10),
+                            max_interval_s: interval,
+                            ..Default::default()
+                        },
+                    )
+                    .unwrap();
+                angular += report.environment_reaction_angular_impulse[2];
+                impulse += report.environment_reaction_impulse[1];
+                supported += report.supported_intervals;
+                assert!(
+                    report
+                        .reaction_angular_balance_residual
+                        .iter()
+                        .all(|x| x.abs() < 1e-10)
+                );
+                assert!(report.reaction_work.abs() < 1e-10);
+                assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+            }
+            assert!(supported >= 20);
+            assert!((bodies[0].motion.position[0] - 0.2).abs() < 1e-10);
+            assert!((bodies[0].motion.position[1] - 0.375).abs() < 1e-10);
+            assert!((bodies[0].motion.velocity[0] - 1.).abs() < 1e-10);
+            assert!(
+                bodies[1]
+                    .spin
+                    .unwrap()
+                    .angular_momentum
+                    .iter()
+                    .all(|x| x.abs() < 1e-10)
+            );
+            assert!((impulse + 10.).abs() < 1e-9);
+            // Opposite floor moment balances gravity on the moving 2 kg top body:
+            // integral -m*g*x(t) dt = -20*(0.2²/2).
+            assert!((angular + 0.4).abs() < 1e-9);
+        }
+    }
+
+    #[test]
+    fn supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping() {
+        use physics::contact::ContactWrench;
+        for rate in [None, Some(1e-10)] {
+            let admission = physics::liquid::SupportedWorldConfig {
+                reaction_jerk_tolerance: rate,
                 ..Default::default()
-            },
-        )
-        .unwrap();
-        let mut bodies: Vec<_> = [(2., 0.15625), (3., 0.09375), (5., 0.03125)]
-            .into_iter()
-            .map(|(m, y)| {
-                let mut b = rigid_body([0., y, 0.], [0.; 3], 0.);
-                b.motion.mass = m;
-                b
-            })
-            .collect();
-        let before = bodies.clone();
-        let mut impulse = 0.;
-        for _ in 0..10 {
+            };
+            let scene = support_floor();
+            let world = SceneBodyWorld {
+                environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+                templates: vec![vec![support_box([0.03125; 3])]; 3],
+            };
+            let mut liquid = Liquid::new(
+                Vec::new(),
+                vec![Material::WATER],
+                Config {
+                    gravity: [0., -10., 0.],
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            let mut bodies: Vec<_> = [(2., 0.15625), (3., 0.09375), (5., 0.03125)]
+                .into_iter()
+                .map(|(m, y)| {
+                    let mut b = rigid_body([0., y, 0.], [0.; 3], 0.);
+                    b.motion.mass = m;
+                    b
+                })
+                .collect();
+            let before = bodies.clone();
+            let mut impulse = 0.;
+            for _ in 0..10 {
+                let report = liquid
+                    .step_with_supported_rigid_body_forces(
+                        0.1,
+                        &mut bodies,
+                        &world,
+                        Default::default(),
+                        3,
+                        rigid_config(),
+                        &[ContactWrench::default(); 3],
+                        admission,
+                    )
+                    .unwrap();
+                impulse += report.environment_reaction_impulse[1];
+                assert_eq!(report.rigid.world.dynamics.contacts, 0);
+                assert!(report.reaction_work.abs() < 1e-10);
+            }
+            assert!((impulse + 100.).abs() < 1e-9);
+            for (a, b) in bodies.iter().zip(before) {
+                assert!((a.motion.position[1] - b.motion.position[1]).abs() < 1e-11);
+                assert!(glam::DVec3::from_array(a.motion.velocity).length() < 1e-10);
+            }
             let report = liquid
                 .step_with_supported_rigid_body_forces(
                     0.1,
@@ -2543,41 +2832,21 @@ mod tests {
                     Default::default(),
                     3,
                     rigid_config(),
-                    &[ContactWrench::default(); 3],
-                    Default::default(),
+                    &[
+                        ContactWrench {
+                            force: [0., 40., 0.],
+                            torque: [0.; 3],
+                        },
+                        ContactWrench::default(),
+                        ContactWrench::default(),
+                    ],
+                    admission,
                 )
                 .unwrap();
-            impulse += report.environment_reaction_impulse[1];
-            assert_eq!(report.rigid.world.dynamics.contacts, 0);
-            assert!(report.reaction_work.abs() < 1e-10);
+            assert!((bodies[0].motion.position[1] - 0.20625).abs() < 1e-10);
+            assert!((bodies[0].motion.velocity[1] - 1.).abs() < 1e-10);
+            assert!((report.environment_reaction_impulse[1] + 8.).abs() < 1e-9);
         }
-        assert!((impulse + 100.).abs() < 1e-9);
-        for (a, b) in bodies.iter().zip(before) {
-            assert!((a.motion.position[1] - b.motion.position[1]).abs() < 1e-11);
-            assert!(glam::DVec3::from_array(a.motion.velocity).length() < 1e-10);
-        }
-        let report = liquid
-            .step_with_supported_rigid_body_forces(
-                0.1,
-                &mut bodies,
-                &world,
-                Default::default(),
-                3,
-                rigid_config(),
-                &[
-                    ContactWrench {
-                        force: [0., 40., 0.],
-                        torque: [0.; 3],
-                    },
-                    ContactWrench::default(),
-                    ContactWrench::default(),
-                ],
-                Default::default(),
-            )
-            .unwrap();
-        assert!((bodies[0].motion.position[1] - 0.20625).abs() < 1e-10);
-        assert!((bodies[0].motion.velocity[1] - 1.).abs() < 1e-10);
-        assert!((report.environment_reaction_impulse[1] + 8.).abs() < 1e-9);
     }
     #[test]
     fn supported_motion_searches_other_walls_and_rolls_back_late_interval_budget() {

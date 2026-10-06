@@ -27,6 +27,73 @@ pub struct RigidMotion {
     end: ContactBody,
 }
 
+/// Kinematics of a body-local material point on the prepared nominal path.
+/// Derivatives are one-sided at spin-arc knots: right-sided internally and
+/// left-sided at the final endpoint. They need not be continuous across arcs.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct MaterialPointMotion {
+    pub position: [f64; 3],
+    pub velocity: [f64; 3],
+    pub acceleration: [f64; 3],
+    pub jerk: [f64; 3],
+    pub arc_interval_s: Option<[f64; 2]>,
+}
+
+/// Integral of an affine world force applied at a body-local material point.
+/// This probes the existing nominal path; it does not drive a new trajectory.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct MaterialPointWork {
+    pub com_force_work: f64,
+    pub torque_work: f64,
+    pub total_work: f64,
+    pub angular_impulse: [f64; 3],
+}
+
+/// Zeroth and first time moments of a rotating arm on one constant-axis arc.
+fn rotating_arm_integrals(
+    arm: [f64; 3],
+    omega: [f64; 3],
+    dt: f64,
+) -> Result<([f64; 3], [f64; 3]), Error> {
+    use crate::astrophysics_spin::cross;
+    let speed = omega[0].hypot(omega[1]).hypot(omega[2]);
+    if speed == 0. {
+        return Ok((arm.map(|r| r * dt), arm.map(|r| (r * (dt * 0.5)) * dt)));
+    }
+    let x = speed * dt;
+    if !x.is_finite() {
+        return Err(Error::NumericalFailure);
+    }
+    let (c0, s0, c1, s1) = if x.abs() < 1e-3 {
+        let z = x * x;
+        (
+            1. + z * (-1. / 6. + z * (1. / 120. - z / 5040.)),
+            x * (0.5 + z * (-1. / 24. + z * (1. / 720. - z / 40320.))),
+            0.5 + z * (-1. / 8. + z * (1. / 144. - z / 5760.)),
+            x * (1. / 3. + z * (-1. / 30. + z * (1. / 840. - z / 45360.))),
+        )
+    } else {
+        let (sin, cos) = x.sin_cos();
+        let half = (x * 0.5).sin() / (x * 0.5);
+        (
+            sin / x,
+            2. * (x * 0.5).sin().powi(2) / x,
+            sin / x - 0.5 * half * half,
+            (sin / x - cos) / x,
+        )
+    };
+    let axis = omega.map(|w| w / speed);
+    let projection: f64 = (0..3).map(|k| axis[k] * arm[k]).sum();
+    let parallel = axis.map(|n| n * projection);
+    let tangent = cross(axis, arm);
+    let zero =
+        std::array::from_fn(|k| dt * (parallel[k] + (arm[k] - parallel[k]) * c0 + tangent[k] * s0));
+    let first = std::array::from_fn(|k| {
+        dt * (dt * (parallel[k] * 0.5 + (arm[k] - parallel[k]) * c1 + tangent[k] * s1))
+    });
+    Ok((zero, first))
+}
+
 /// Work on the represented prepared trajectory. Torque work integrates the
 /// nominal constant-axis arcs; its energy discrepancy is diagnostic, not heat.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -83,6 +150,8 @@ impl ContactBody {
                 .chain(&torque.value)
                 .chain(&torque.rate)
                 .chain(&torque.acceleration)
+                .chain(&torque.jerk)
+                .chain(&torque.snap)
                 .any(|v| !v.is_finite())
             || (self.spin.is_none() && torque != TorquePolynomial::constant([0.; 3]))
         {
@@ -306,6 +375,8 @@ impl RigidMotion {
             .iter()
             .chain(&torque.rate)
             .chain(&torque.acceleration)
+            .chain(&torque.jerk)
+            .chain(&torque.snap)
             .all(|x| x.is_finite())
         {
             return Err(Error::InvalidInput);
@@ -386,6 +457,8 @@ impl RigidMotion {
             .chain(&torque.value)
             .chain(&torque.rate)
             .chain(&torque.acceleration)
+            .chain(&torque.jerk)
+            .chain(&torque.snap)
             .all(|x| x.is_finite())
             || (self.initial.spin.is_none() && torque != TorquePolynomial::constant([0.; 3]))
         {
@@ -439,6 +512,163 @@ impl RigidMotion {
             return Err(Error::NumericalFailure);
         }
         Ok((work, tw))
+    }
+
+    /// Work and world-origin moment of F(t)=force+force_rate*t at a material point.
+    /// Rodrigues time moments integrate the same nominal rotation arcs, with
+    /// stable small-angle series. No polynomial approximation of the arm is used.
+    pub fn material_point_force_work(
+        &self,
+        time: f64,
+        local: [f64; 3],
+        force: [f64; 3],
+        force_rate: [f64; 3],
+    ) -> Result<MaterialPointWork, Error> {
+        self.moving_material_point_force_work(time, self, local, force, force_rate)
+    }
+
+    fn nominal_arc(&self, time: f64) -> Option<&crate::spin_path::Segment> {
+        self.rotation.as_ref().map(|rotation| {
+            let segments = rotation.segments();
+            let index = segments
+                .partition_point(|s| s.end_s <= time)
+                .min(segments.len() - 1);
+            &segments[index]
+        })
+    }
+
+    /// Work on this receiver of an affine force applied at a source material point.
+    /// Source and receiver share a time origin; both paths must cover the prefix.
+    /// Opposite forces at the same source point have reciprocal world moments.
+    pub fn moving_material_point_force_work(
+        &self,
+        time: f64,
+        source: &RigidMotion,
+        local: [f64; 3],
+        force: [f64; 3],
+        force_rate: [f64; 3],
+    ) -> Result<MaterialPointWork, Error> {
+        use crate::astrophysics_spin::{cross, rotate};
+        if local.iter().any(|x| !x.is_finite())
+            || (source.initial.spin.is_none() && local != [0.; 3])
+            || (self.initial.spin.is_none() && (self != source || local != [0.; 3]))
+        {
+            return Err(Error::InvalidInput);
+        }
+        source.sample(time)?;
+        let zero = TorquePolynomial::constant([0.; 3]);
+        let (com_force_work, _) = self.affine_wrench_work(time, force, force_rate, zero)?;
+        if force
+            .iter()
+            .zip(force_rate)
+            .any(|(f, r)| !r.mul_add(time, *f).is_finite())
+        {
+            return Err(Error::NumericalFailure);
+        }
+        let mut angular_impulse =
+            self.affine_wrench_angular_impulse(time, force, force_rate, zero)?;
+        let mut torque_work = 0.;
+        let mut knots = vec![0., time];
+        for path in [source, self] {
+            if let Some(rotation) = &path.rotation {
+                knots.extend(
+                    rotation
+                        .segments()
+                        .iter()
+                        .filter(|s| s.end_s < time)
+                        .map(|s| s.end_s),
+                );
+            }
+        }
+        knots.sort_by(f64::total_cmp);
+        knots.dedup();
+        for interval in knots.windows(2) {
+            let start = interval[0];
+            let dt = interval[1] - start;
+            let a = source.sample(start)?;
+            let b = self.sample(start)?;
+            let arm = a.spin.map_or(local, |s| rotate(s.orientation, local));
+            let source_omega = source
+                .nominal_arc(start)
+                .map_or([0.; 3], |s| s.arc.angular_velocity());
+            let omega = self
+                .nominal_arc(start)
+                .map_or([0.; 3], |s| s.arc.angular_velocity());
+            let (mut a0, mut a1) = rotating_arm_integrals(arm, source_omega, dt)?;
+            let aa = source.acceleration_at(start)?;
+            let ab = self.acceleration_at(start)?;
+            for k in 0..3 {
+                let r = a.motion.position[k] - b.motion.position[k];
+                let v = a.motion.velocity[k] - b.motion.velocity[k];
+                let acceleration = aa[k] - ab[k];
+                let jerk = source.jerk[k] - self.jerk[k];
+                a0[k] += dt * (r + dt * (v / 2. + dt * (acceleration / 6. + dt * jerk / 24.)));
+                a1[k] += dt
+                    * (dt * (r / 2. + dt * (v / 3. + dt * (acceleration / 8. + dt * jerk / 30.))));
+            }
+            let current = std::array::from_fn(|k| force_rate[k].mul_add(start, force[k]));
+            let constant = cross(a0, current);
+            let changing = cross(a1, force_rate);
+            for k in 0..3 {
+                let moment = constant[k] + changing[k];
+                angular_impulse[k] += moment;
+                torque_work += omega[k] * moment;
+            }
+        }
+        let total_work = com_force_work + torque_work;
+        if !total_work.is_finite()
+            || !torque_work.is_finite()
+            || angular_impulse.iter().any(|x| !x.is_finite())
+        {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(MaterialPointWork {
+            com_force_work,
+            torque_work,
+            total_work,
+            angular_impulse,
+        })
+    }
+
+    /// Follow a material point using this path's existing COM and rotation owners.
+    /// Arc derivatives use the represented constant angular velocity, rather
+    /// than substituting physical endpoint angular velocity from momentum.
+    pub fn sample_material_point(
+        &self,
+        time: f64,
+        local: [f64; 3],
+    ) -> Result<MaterialPointMotion, Error> {
+        use crate::astrophysics_spin::{cross, rotate};
+        if local.iter().any(|x| !x.is_finite()) {
+            return Err(Error::InvalidInput);
+        }
+        let body = self.sample(time)?;
+        let arm = body.spin.map_or(local, |s| rotate(s.orientation, local));
+        let (omega, arc_interval_s) = self.nominal_arc(time).map_or(([0.; 3], None), |s| {
+            (s.arc.angular_velocity(), Some([s.start_s, s.end_s]))
+        });
+        let velocity = cross(omega, arm);
+        let acceleration = cross(omega, velocity);
+        let jerk = cross(omega, acceleration);
+        let com_acceleration = self.acceleration_at(time)?;
+        let result = MaterialPointMotion {
+            position: std::array::from_fn(|k| body.motion.position[k] + arm[k]),
+            velocity: std::array::from_fn(|k| body.motion.velocity[k] + velocity[k]),
+            acceleration: std::array::from_fn(|k| com_acceleration[k] + acceleration[k]),
+            jerk: std::array::from_fn(|k| self.jerk[k] + jerk[k]),
+            arc_interval_s,
+        };
+        if result
+            .position
+            .iter()
+            .chain(&result.velocity)
+            .chain(&result.acceleration)
+            .chain(&result.jerk)
+            .any(|x| !x.is_finite())
+        {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(result)
     }
 
     /// Sample the same prepared trajectory used for the accepted endpoint.

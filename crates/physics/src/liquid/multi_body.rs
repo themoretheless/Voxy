@@ -325,6 +325,25 @@ pub trait LiquidBodyWorld {
     ) -> Result<Vec<crate::contact::NormalContact>, Error> {
         self.rigid_environment_patch(index, body, witness, normal, budget)
     }
+    /// Geometry-owned second derivative for the exact emitted normal branch.
+    /// Non-edge owners are derived by the shared contact kernel.
+    fn rigid_support_normal_acceleration(
+        &self,
+        _bodies: &[crate::contact::ContactBody],
+        _loads: &[crate::contact::ContactWrench],
+        support: crate::contact::NetworkSupport,
+        _geometry: RigidSupportPoint,
+    ) -> Result<Option<[f64; 3]>, Error> {
+        if matches!(
+            support.support.plane,
+            crate::contact::SupportPlane::Rate { .. }
+        ) {
+            Err(Error::CollisionBackend)
+        } else {
+            Ok(None)
+        }
+    }
+
     /// Supporting branches require explicit geometry provenance; legacy callbacks
     /// cannot infer a rotating normal owner from a world normal alone.
     fn rigid_pair_supports(
@@ -801,9 +820,70 @@ fn solve_contact(
                 }
             }
         }
-        // Every reciprocal force uses the same world application point, which
-        // follows first COM with its initial world arm. The second COM arm
-        // evolves with relative translation; its torque must evolve too.
+        let support_rate = if let (Some(tolerance), Some(report)) = (
+            supported.and_then(|c| c.reaction_jerk_tolerance),
+            support_report.as_ref(),
+        ) {
+            if let Some(baseline) = &report.reaction {
+                let motion = report
+                    .supports
+                    .iter()
+                    .zip(&report.geometry)
+                    .map(|(s, geometry)| {
+                        Ok(crate::contact::SupportMotion {
+                            point_velocity: states[s.first].motion.velocity,
+                            normal_acceleration: world.rigid_support_normal_acceleration(
+                                &states, &effective, *s, *geometry,
+                            )?,
+                        })
+                    })
+                    .collect::<Result<Vec<_>, Error>>()?;
+                let rate = match crate::contact::resolve_rate_from_baseline_interval(
+                    &states,
+                    &report.supports,
+                    forces,
+                    &vec![crate::contact::ContactWrench::default(); states.len()],
+                    &motion,
+                    crate::contact::ReactionRateConfig {
+                        reaction: supported.unwrap().reaction,
+                        jerk_tolerance: tolerance,
+                    },
+                    baseline.clone(),
+                    Some(horizon),
+                ) {
+                    Ok(rate) => rate,
+                    Err(crate::contact::Error::Budget)
+                        if horizon * 0.5 >= supported.unwrap().min_interval_s =>
+                    {
+                        horizon *= 0.5;
+                        continue 'intervals;
+                    }
+                    Err(crate::contact::Error::Budget) => return Err(Error::CollisionBudget),
+                    Err(crate::contact::Error::InvalidInput) => {
+                        return Err(Error::InvalidCollision);
+                    }
+                    Err(_) => return Err(Error::NumericalFailure),
+                };
+                // A representable final time remainder may be below min_interval_s.
+                // Only a pressure branch limit that truncates the interval uses
+                // the minimum subdivision budget; integrate the remainder itself.
+                if rate.positive_until_s < horizon
+                    && rate.positive_until_s < supported.unwrap().min_interval_s
+                {
+                    return Err(Error::CollisionBudget);
+                }
+                horizon = horizon.min(rate.positive_until_s);
+                Some(rate)
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+        let force_rates: Vec<_> = support_rate.as_ref().map_or_else(
+            || vec![[0.; 3]; states.len()],
+            |rate| rate.wrenches_rate.iter().map(|w| w.force).collect(),
+        );
         let mut reaction_torques: Vec<_> = support_report
             .as_ref()
             .and_then(|r| r.reaction.as_ref())
@@ -823,28 +903,46 @@ fn solve_contact(
             );
         if let Some(report) = &support_report {
             if let Some(reaction) = &report.reaction {
-                for (support, force) in report.supports.iter().zip(&reaction.forces) {
-                    let Some(second) = support.second else {
-                        continue;
-                    };
-                    let first = support.first;
-                    let velocity = std::array::from_fn(|k| {
-                        states[first].motion.velocity[k] - states[second].motion.velocity[k]
-                    });
-                    let acceleration = std::array::from_fn(|k| {
-                        effective[first].force[k] / states[first].motion.mass
-                            - effective[second].force[k] / states[second].motion.mass
-                    });
-                    let moving = crate::astrophysics_spin::TorquePolynomial::moving_arm(
-                        [0.; 3],
-                        velocity,
-                        acceleration,
-                        force.map(|f| -f),
-                    )
-                    .map_err(|_| Error::NumericalFailure)?;
-                    for k in 0..3 {
-                        reaction_torques[second].rate[k] += moving.rate[k];
-                        reaction_torques[second].acceleration[k] += moving.acceleration[k];
+                for (index, (support, force)) in
+                    report.supports.iter().zip(&reaction.forces).enumerate()
+                {
+                    let force_rate = support_rate
+                        .as_ref()
+                        .map_or([0.; 3], |r| r.forces_rate[index]);
+                    for (owner, sign) in [(Some(support.first), 1.), (support.second, -1.)] {
+                        let Some(owner) = owner else {
+                            continue;
+                        };
+                        let arm = std::array::from_fn(|k| {
+                            support.support.contact.point[k] - states[owner].motion.position[k]
+                        });
+                        let velocity = std::array::from_fn(|k| {
+                            states[support.first].motion.velocity[k]
+                                - states[owner].motion.velocity[k]
+                        });
+                        let acceleration = std::array::from_fn(|k| {
+                            effective[support.first].force[k] / states[support.first].motion.mass
+                                - effective[owner].force[k] / states[owner].motion.mass
+                        });
+                        let jerk = std::array::from_fn(|k| {
+                            force_rates[support.first][k] / states[support.first].motion.mass
+                                - force_rates[owner][k] / states[owner].motion.mass
+                        });
+                        let law = crate::astrophysics_spin::TorquePolynomial::moving_affine_arm(
+                            arm,
+                            velocity,
+                            acceleration,
+                            jerk,
+                            force.map(|f| sign * f),
+                            force_rate.map(|f| sign * f),
+                        )
+                        .map_err(|_| Error::NumericalFailure)?;
+                        for k in 0..3 {
+                            reaction_torques[owner].rate[k] += law.rate[k];
+                            reaction_torques[owner].acceleration[k] += law.acceleration[k];
+                            reaction_torques[owner].jerk[k] += law.jerk[k];
+                            reaction_torques[owner].snap[k] += law.snap[k];
+                        }
                     }
                 }
             }
@@ -861,10 +959,14 @@ fn solve_contact(
                 .iter()
                 .zip(&report.geometry)
                 .zip(&reaction.forces)
-                .filter(|((s, _), _)| s.first == i && s.second == j)
-                .map(|((_, geometry), force)| {
+                .enumerate()
+                .filter(|(_, ((s, _), _))| s.first == i && s.second == j)
+                .map(|(index, ((_, geometry), force))| {
                     let mut point = *geometry;
-                    point.carrying_reaction = *force != [0.; 3];
+                    point.carrying_reaction = *force != [0.; 3]
+                        || support_rate
+                            .as_ref()
+                            .is_some_and(|r| r.forces_rate[index] != [0.; 3]);
                     point
                 })
                 .collect()
@@ -887,9 +989,21 @@ fn solve_contact(
                 if index >= count {
                     torque.rate = reaction_torques[index - count].rate;
                     torque.acceleration = reaction_torques[index - count].acceleration;
+                    torque.jerk = reaction_torques[index - count].jerk;
+                    torque.snap = reaction_torques[index - count].snap;
                 }
                 n.contact()
-                    .prepare_motion_with_torque(wrench.force, torque, horizon, rotation)
+                    .prepare_affine_motion(
+                        wrench.force,
+                        if index < count {
+                            [0.; 3]
+                        } else {
+                            force_rates[index - count]
+                        },
+                        torque,
+                        horizon,
+                        rotation,
+                    )
                     .map_err(|_| Error::NumericalFailure)
             })
             .collect::<Result<_, _>>()?;
@@ -1091,12 +1205,18 @@ fn solve_contact(
                         r.wrenches[index - count]
                     });
                 let (rf, rt) = paths[index]
-                    .polynomial_wrench_work(time, reaction.force, reaction_torques[index - count])
-                    .map_err(|_| Error::NumericalFailure)?;
-                let angular = paths[index]
-                    .polynomial_wrench_angular_impulse(
+                    .affine_wrench_work(
                         time,
                         reaction.force,
+                        force_rates[index - count],
+                        reaction_torques[index - count],
+                    )
+                    .map_err(|_| Error::NumericalFailure)?;
+                let angular = paths[index]
+                    .affine_wrench_angular_impulse(
+                        time,
+                        reaction.force,
+                        force_rates[index - count],
                         reaction_torques[index - count],
                     )
                     .map_err(|_| Error::NumericalFailure)?;
@@ -1135,7 +1255,9 @@ fn solve_contact(
             }
             work.max_support_error_m = work.max_support_error_m.max(support_error);
             if let Some(reaction) = &report.reaction {
-                for (support, force) in report.supports.iter().zip(&reaction.forces) {
+                for (index, (support, force)) in
+                    report.supports.iter().zip(&reaction.forces).enumerate()
+                {
                     if support.second.is_some() {
                         continue;
                     }
@@ -1143,14 +1265,20 @@ fn solve_contact(
                     let center = path.initial().motion.position;
                     let point = support.support.contact.point;
                     let opposite_force = force.map(|f| -f);
-                    let torque = std::array::from_fn(|k| {
-                        let i = (k + 1) % 3;
-                        let j = (k + 2) % 3;
-                        (point[i] - center[i]) * opposite_force[j]
-                            - (point[j] - center[j]) * opposite_force[i]
-                    });
+                    let opposite_rate = support_rate
+                        .as_ref()
+                        .map_or([0.; 3], |r| r.forces_rate[index].map(|f| -f));
+                    let law = crate::astrophysics_spin::TorquePolynomial::moving_affine_arm(
+                        std::array::from_fn(|k| point[k] - center[k]),
+                        [0.; 3],
+                        [0.; 3],
+                        [0.; 3],
+                        opposite_force,
+                        opposite_rate,
+                    )
+                    .map_err(|_| Error::NumericalFailure)?;
                     let angular = path
-                        .wrench_angular_impulse(time, opposite_force, torque)
+                        .affine_wrench_angular_impulse(time, opposite_force, opposite_rate, law)
                         .map_err(|_| Error::NumericalFailure)?;
                     for k in 0..3 {
                         work.environment_reaction_angular_impulse[k] += angular[k];
@@ -1158,7 +1286,16 @@ fn solve_contact(
                 }
             }
             for k in 0..3 {
-                let impulse = report.environment_force[k] * time;
+                let environment_rate: f64 = support_rate.as_ref().map_or(0., |rate| {
+                    report
+                        .supports
+                        .iter()
+                        .zip(&rate.forces_rate)
+                        .filter(|(s, _)| s.second.is_none())
+                        .map(|(_, f)| -f[k])
+                        .sum()
+                });
+                let impulse = (environment_rate * time * 0.5 + report.environment_force[k]) * time;
                 work.environment_reaction_impulse[k] += impulse;
                 ledger.environment_impulse[k] += impulse;
             }
