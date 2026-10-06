@@ -1,0 +1,11 @@
+{
+  "all_source_points_retained_exactly": true,
+  "maximum_source_coordinate_error_m": 0.0,
+  "all_source_facets_retained": true,
+  "boundary_facets": 4672,
+  "source_facets": 4672,
+  "tetrahedral_volume_m3": 0.05371328527883002,
+  "source_signed_surface_volume_m3": 0.053713285278830014,
+  "volume_difference_m3": 6.938893903907228e-18,
+  "scope": "independent rest geometry preservation and ordinary floating volume sum; no anatomical calibration or dynamics"
+}

@@ -1,0 +1,12 @@
+{
+  "input": "artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh",
+  "vertices": 2338,
+  "tetrahedra": 6845,
+  "boundary_faces": 4672,
+  "face_connected_volume_component_sizes": [
+    6845
+  ],
+  "nonmanifold_faces": 0,
+  "bad_boundary_vertices": [],
+  "scope": "independent topology audit only; not geometric validity or full source skin admission"
+}

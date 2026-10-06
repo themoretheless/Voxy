@@ -33,6 +33,56 @@ pub struct Pose64 {
     local: Vec<Transform64>,
 }
 impl Pose64 {
+    /// Blend immutable local poses on their original rig using a double-precision
+    /// weight and shortest-path quaternion interpolation. Finite weights clamp
+    /// to [0,1]; endpoint poses retain their exact authored bits.
+    /// # Errors
+    /// Different rig/count, nonfinite weight, invalid input/result TRS.
+    pub fn blend(a: &Self, b: &Self, weight: f64) -> Result<Self, AnimationError> {
+        if a.local.len() != b.local.len() {
+            return Err(AnimationError::PoseCountMismatch);
+        }
+        if !rigs_match(&a.rig, &b.rig) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        if !weight.is_finite() {
+            return Err(AnimationError::InvalidBlendWeight);
+        }
+        for (i, (a, b)) in a.local.iter().zip(&b.local).enumerate() {
+            if !a.valid() || !b.valid() {
+                return Err(AnimationError::InvalidPose(i));
+            }
+        }
+        let weight = weight.clamp(0., 1.);
+        if weight == 0. {
+            return Ok(a.clone());
+        }
+        if weight == 1. {
+            return Ok(b.clone());
+        }
+        let local = a
+            .local
+            .iter()
+            .zip(&b.local)
+            .enumerate()
+            .map(|(i, (a, b))| {
+                let result = Transform64 {
+                    translation: a.translation * (1. - weight) + b.translation * weight,
+                    rotation: a.rotation.slerp(b.rotation, weight).normalize(),
+                    scale: a.scale * (1. - weight) + b.scale * weight,
+                };
+                if result.valid() {
+                    Ok(result)
+                } else {
+                    Err(AnimationError::InvalidPose(i))
+                }
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        Ok(Self {
+            rig: a.rig.clone(),
+            local,
+        })
+    }
     pub fn local(&self) -> &[Transform64] {
         &self.local
     }
@@ -90,6 +140,31 @@ impl Skeleton {
     }
 }
 impl AnimationClip {
+    /// Start on the bind pose and smoothly join the authored clip on the same
+    /// phase clock. A cubic smoothstep fades the bind contribution to zero;
+    /// after startup the ordinary sample is returned exactly.
+    /// # Errors
+    /// Invalid startup duration, phase, rig or sampled/blended transforms.
+    pub fn try_sample_phase64_with_startup(
+        &self,
+        skeleton: &Skeleton,
+        phase: f64,
+        startup_seconds: f64,
+    ) -> Result<Pose64, AnimationError> {
+        if !startup_seconds.is_finite()
+            || startup_seconds < 0.
+            || startup_seconds > f64::from(self.duration)
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let target = self.try_sample_phase64(skeleton, phase)?;
+        let elapsed = phase * f64::from(self.duration);
+        if startup_seconds == 0. || elapsed >= startup_seconds {
+            return Ok(target);
+        }
+        let u = elapsed / startup_seconds;
+        Pose64::blend(&skeleton.bind_pose64(), &target, u * u * (3. - 2. * u))
+    }
     /// Stateless authored phase in f64, including the final pose of loop clips.
     /// This samples existing keys; it does not retarget or emit events.
     pub fn try_sample_phase64(
@@ -310,6 +385,122 @@ mod tests {
             },
         ])
         .unwrap()
+    }
+    #[test]
+    fn wide_blend_retains_clock_endpoints_and_rejects_singular_or_foreign_poses() {
+        let rig = rig();
+        let a = rig.bind_pose64();
+        let mut b = a.clone();
+        b.local[0].translation = DVec3::new(3., 0., 0.);
+        b.local[0].rotation = DQuat::from_rotation_z(std::f64::consts::FRAC_PI_2);
+        let weight = 0.5 + 1e-9;
+        let blend = Pose64::blend(&a, &b, weight).unwrap();
+        assert!((blend.local[0].translation.x - (1. + 2. * weight)).abs() < 1e-15);
+        assert_ne!(blend.local[0].translation.x, 2.);
+        let point = blend.global_matrices(&rig).unwrap()[1].transform_point3(DVec3::ZERO);
+        let angle = std::f64::consts::FRAC_PI_2 * weight;
+        assert!((point.x - (1. + 2. * weight + angle.cos())).abs() < 2e-15);
+        assert!((point.y - angle.sin()).abs() < 2e-15);
+        assert_eq!(Pose64::blend(&a, &b, 0.).unwrap(), a);
+        assert_eq!(Pose64::blend(&a, &b, 1.).unwrap(), b);
+        assert_eq!(Pose64::blend(&a, &b, -10.).unwrap(), a);
+        assert_eq!(Pose64::blend(&a, &b, 10.).unwrap(), b);
+        let mut antipodal = b.clone();
+        antipodal.local[0].rotation = -b.local[0].rotation;
+        let q = Pose64::blend(&b, &antipodal, 0.5).unwrap().local[0].rotation;
+        assert!(q.dot(b.local[0].rotation).abs() > 1. - 1e-14);
+        let mut foreign = rig.joints().to_vec();
+        foreign[0].name = "foreign".into();
+        let foreign = Skeleton::new(foreign).unwrap().bind_pose64();
+        assert_eq!(
+            Pose64::blend(&a, &foreign, 0.).unwrap_err(),
+            AnimationError::SkeletonMismatch
+        );
+        for weight in [f64::NAN, f64::INFINITY] {
+            assert_eq!(
+                Pose64::blend(&a, &b, weight).unwrap_err(),
+                AnimationError::InvalidBlendWeight
+            );
+        }
+        let mut invalid = b.clone();
+        invalid.local[0].translation.x = f64::NAN;
+        assert_eq!(
+            Pose64::blend(&a, &invalid, 0.).unwrap_err(),
+            AnimationError::InvalidPose(0)
+        );
+        let mut reflected = b.clone();
+        reflected.local[0].scale = -DVec3::ONE;
+        assert_eq!(
+            Pose64::blend(&a, &reflected, 0.5).unwrap_err(),
+            AnimationError::InvalidPose(0)
+        );
+    }
+    #[test]
+    fn startup_joins_the_same_authored_clock_with_exact_endpoints() {
+        let rig = rig();
+        let clip = AnimationClip::new(
+            "startup",
+            1.,
+            Playback::Clamp,
+            vec![
+                JointTrack {
+                    translations: vec![
+                        Vec3Key {
+                            time: 0.,
+                            value: Vec3::X * 3.,
+                        },
+                        Vec3Key {
+                            time: 1.,
+                            value: Vec3::X * 4.,
+                        },
+                    ],
+                    ..JointTrack::default()
+                },
+                JointTrack::default(),
+            ],
+            &rig,
+        )
+        .unwrap();
+        assert_eq!(
+            clip.try_sample_phase64_with_startup(&rig, 0., 0.5).unwrap(),
+            rig.bind_pose64()
+        );
+        for phase in [0., 0.25, 0.5, 1.] {
+            assert_eq!(
+                clip.try_sample_phase64_with_startup(&rig, phase, 0.)
+                    .unwrap(),
+                clip.try_sample_phase64(&rig, phase).unwrap()
+            );
+        }
+        for phase in [0.5, 0.75, 1.] {
+            assert_eq!(
+                clip.try_sample_phase64_with_startup(&rig, phase, 0.5)
+                    .unwrap(),
+                clip.try_sample_phase64(&rig, phase).unwrap()
+            );
+        }
+        let mid = clip
+            .try_sample_phase64_with_startup(&rig, 0.25, 0.5)
+            .unwrap();
+        assert!((mid.local[0].translation.x - 2.125).abs() < 1e-15);
+        let h = 1e-6;
+        let first = clip.try_sample_phase64_with_startup(&rig, h, 0.5).unwrap();
+        assert!((first.local[0].translation.x - 1.) / h < 1e-4);
+        let below = clip
+            .try_sample_phase64_with_startup(&rig, 0.5 - h, 0.5)
+            .unwrap();
+        let authored = clip.try_sample_phase64(&rig, 0.5 - h).unwrap();
+        assert!((below.local[0].translation.x - authored.local[0].translation.x).abs() / h < 1e-4);
+        for duration in [f64::NAN, -1., 1.1, f64::INFINITY] {
+            assert!(
+                clip.try_sample_phase64_with_startup(&rig, 0., duration)
+                    .is_err()
+            );
+        }
+        assert!(
+            clip.try_sample_phase64_with_startup(&rig, f64::NAN, 0.5)
+                .is_err()
+        );
     }
     #[test]
     fn sub_f32_clock_steps_survive_translation_rotation_and_hierarchy() {

@@ -1,0 +1,46 @@
+TetGen 1.6.1, July 2026.
+Opening artifacts/character-bind-pose-2026-10-07/bind-pose.smesh.
+Delaunizing vertices...
+Delaunay seconds:  0.006016
+Creating surface mesh ...
+Surface mesh seconds:  0.000787
+Recovering boundaries...
+Boundary recovery seconds:  0.002872
+Removing exterior tetrahedra ...
+Exterior tets removal seconds:  0.000972
+Recovering Delaunayness...
+Delaunay recovery seconds:  0.001454
+Improving mesh...
+Mesh improvement seconds:  0.000696
+
+Writing artifacts/character-bind-pose-2026-10-07/bind-pose.1.node.
+Writing artifacts/character-bind-pose-2026-10-07/bind-pose.1.ele.
+Writing artifacts/character-bind-pose-2026-10-07/bind-pose.1.face.
+Writing artifacts/character-bind-pose-2026-10-07/bind-pose.1.edge.
+
+Output seconds:  0.005746
+Total running seconds:  0.018614
+  Checking consistency of mesh...
+  In my studied opinion, the mesh appears to be consistent.
+  Checking consistency of the mesh boundary...
+  Mesh boundaries connected correctly.
+  Checking tet->seg connections...
+  Checking seg->tet connections...
+  Checking seg->seg connections...
+  Segments are connected properly.
+
+Statistics:
+
+  Input points: 2338
+  Input facets: 4672
+  Input segments: 7008
+  Input holes: 0
+  Input regions: 0
+
+  Mesh points: 2338
+  Mesh tetrahedra: 6845
+  Mesh faces: 16026
+  Mesh faces on exterior boundary: 4672
+  Mesh faces on input facets: 4672
+  Mesh edges on input segments: 7008
+

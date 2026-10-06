@@ -15,12 +15,21 @@ fn displayed_meshes(
     phase: f64,
     skin: Option<(&tissue_demo::TissueSkinBinding, &[DMat4])>,
 ) -> Result<Vec<SceneMesh>, Box<dyn std::error::Error>> {
+    displayed_meshes_startup(demo, model, phase, skin, 0.)
+}
+fn displayed_meshes_startup(
+    demo: &tissue_demo::TissueDemo,
+    model: Option<&ModelAsset>,
+    phase: f64,
+    skin: Option<(&tissue_demo::TissueSkinBinding, &[DMat4])>,
+    startup_seconds: f64,
+) -> Result<Vec<SceneMesh>, Box<dyn std::error::Error>> {
     let Some(model) = model else {
         return Ok(vec![demo.mesh()?]);
     };
     let pose = model.sample_pose_phase(Some(0), phase)?;
     let deformed_skin = if let Some((binding, reference)) = skin {
-        let pose64 = model.sample_pose_phase64(Some(0), phase)?;
+        let pose64 = imported_pose64(model, phase, startup_seconds)?;
         let current = pose64.skin_matrices(&model.skeleton)?;
         if current.len() != reference.len() {
             return Err("skin palette size changed".into());
@@ -146,6 +155,21 @@ fn contact_positions_from_pose64(
     Ok((positions, faces))
 }
 /// Both moving boundaries derive from one pose; used by runtime and tests.
+fn imported_pose64(
+    model: &ModelAsset,
+    phase: f64,
+    startup_seconds: f64,
+) -> Result<voxy_animation::Pose64, voxy_render::ModelError> {
+    if startup_seconds == 0. {
+        return model.sample_pose_phase64(Some(0), phase);
+    }
+    model
+        .animations
+        .first()
+        .ok_or_else(|| voxy_render::ModelError("missing imported clip".into()))?
+        .try_sample_phase64_with_startup(&model.skeleton, phase, startup_seconds)
+        .map_err(|e| voxy_render::ModelError(e.to_string()))
+}
 fn imported_contact_sample64(
     model: &ModelAsset,
     reference: &[DMat4],
@@ -158,8 +182,22 @@ fn imported_contact_sample64(
     ),
     &'static str,
 > {
-    let pose = model
-        .sample_pose_phase64(Some(0), phase)
+    imported_contact_startup64(model, reference, domains, phase, 0.)
+}
+fn imported_contact_startup64(
+    model: &ModelAsset,
+    reference: &[DMat4],
+    domains: &[std::sync::Arc<physics::biomechanics::PrescribedTriangleSurface>],
+    phase: f64,
+    startup_seconds: f64,
+) -> Result<
+    (
+        Vec<DMat4>,
+        Vec<std::sync::Arc<physics::biomechanics::PrescribedTriangleSurface>>,
+    ),
+    &'static str,
+> {
+    let pose = imported_pose64(model, phase, startup_seconds)
         .map_err(|_| "imported physical pose sampling failed")?;
     let current = pose
         .skin_matrices(&model.skeleton)
@@ -436,7 +474,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)
         .ok_or("usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY]")?;
-    if path == "--check-volume-json" {
+    if path == "--check-volume-json" || path == "--check-bind-volume-json" {
         let input = std::env::args()
             .nth(2)
             .ok_or("--check-volume-json requires a volume path")?;
@@ -445,7 +483,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         const MODEL: &[u8] = include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb");
         let model = ModelAsset::parse(MODEL, &[], ModelLimits::default())?;
-        let report = tissue_regions::check_volume(std::path::Path::new(&input), &model, MODEL)?;
+        let report = if path == "--check-bind-volume-json" {
+            tissue_regions::check_volume_reference(
+                std::path::Path::new(&input),
+                &model,
+                MODEL,
+                tissue_regions::VolumeReference::BindPose,
+            )?
+        } else {
+            tissue_regions::check_volume(std::path::Path::new(&input), &model, MODEL)?
+        };
         println!("{}", serde_json::to_string_pretty(report.value())?);
         if report.value()["complete_skin_binding"] != true {
             return Err("volume does not admit complete source skin binding".into());
@@ -590,11 +637,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let duration = imported
         .as_ref()
         .map_or(12., |model| f64::from(model.animations[0].duration()));
+    let tissue_paths: Vec<_> = remaining
+        .iter()
+        .filter_map(|arg| arg.strip_prefix("--tissue-regions="))
+        .collect();
+    if tissue_paths.len() > 1 {
+        return Err("tissue regions specified more than once".into());
+    }
+    if !tissue_paths.is_empty() && (!cesium || !contact) {
+        return Err("--tissue-regions requires --cesium --contact".into());
+    }
+    let authored = tissue_paths
+        .first()
+        .map(|path| {
+            tissue_regions::load(
+                std::path::Path::new(path),
+                imported.as_ref().unwrap(),
+                include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            )
+        })
+        .transpose()?;
+    let startup_seconds = authored.as_ref().map_or(0., |a| a.value().startup_seconds);
+    let reference_clip = authored
+        .as_ref()
+        .map(|a| a.value().reference.clip())
+        .unwrap_or(Some(0));
     let reference = imported
         .as_ref()
         .map(|model| {
             model
-                .sample_pose_phase(Some(0), 0.)?
+                .sample_pose_phase(reference_clip, 0.)?
                 .skin_matrices(&model.skeleton)
                 .map_err(|error| voxy_render::ModelError(error.to_string()))
         })
@@ -616,29 +688,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .as_ref()
         .map(|model| {
             model
-                .sample_pose_phase64(Some(0), 0.)?
+                .sample_pose_phase64(reference_clip, 0.)?
                 .skin_matrices(&model.skeleton)
                 .map_err(|error| voxy_render::ModelError(error.to_string()))
-        })
-        .transpose()?;
-    let tissue_paths: Vec<_> = remaining
-        .iter()
-        .filter_map(|arg| arg.strip_prefix("--tissue-regions="))
-        .collect();
-    if tissue_paths.len() > 1 {
-        return Err("tissue regions specified more than once".into());
-    }
-    if !tissue_paths.is_empty() && (!cesium || !contact) {
-        return Err("--tissue-regions requires --cesium --contact".into());
-    }
-    let authored = tissue_paths
-        .first()
-        .map(|path| {
-            tissue_regions::load(
-                std::path::Path::new(path),
-                imported.as_ref().unwrap(),
-                include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
-            )
         })
         .transpose()?;
     let limits: Vec<_> = remaining
@@ -689,9 +741,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         tissue_demo::TissueDemo::body()
     };
     let contact_reference = if contact {
-        let sample = contact_positions64;
-        let (positions, faces) =
-            sample(imported.as_ref().ok_or("missing imported character")?, 0.)?;
+        let model = imported.as_ref().ok_or("missing imported character")?;
+        let pose = model.sample_pose_phase64(reference_clip, 0.)?;
+        let (positions, faces) = contact_positions_from_pose64(model, &pose)?;
         println!(
             "CONTACT imported mesh: {} vertices, {} triangles",
             positions.len(),
@@ -724,13 +776,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("TISSUE assembled regional dynamics into one global owner");
     }
     let skin_binding = if let Some(model) = &imported {
-        let pose = model.sample_pose_phase64(Some(0), 0.)?;
+        let pose = model.sample_pose_phase64(reference_clip, 0.)?;
         let points: Vec<_> = model
             .scene_surfaces64(&pose)?
             .into_iter()
             .flat_map(|s| s.positions)
             .collect();
-        let binding = demo.bind_skin(&points)?;
+        let binding = if let Some(authored) = &authored {
+            authored.value().bind_skin(&demo, &points)?
+        } else {
+            demo.bind_skin(&points)?
+        };
         if let Some(authored) = &authored {
             authored.value().validate_skin_coverage(&binding)?;
             println!("TISSUE_COVERAGE {}", authored.value().coverage_report);
@@ -755,7 +811,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
     }
     let skin = skin_binding.as_ref().zip(reference64.as_deref());
-    let meshes = displayed_meshes(&demo, imported.as_ref(), 0., skin)?;
+    let meshes = displayed_meshes_startup(&demo, imported.as_ref(), 0., skin, startup_seconds)?;
     let mut geometries = meshes
         .iter()
         .map(|mesh| renderer.reserve_geometry(&device, mesh.vertices().len(), mesh.indices().len()))
@@ -883,11 +939,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if cesium {
                 if let Some(reference) = &contact_reference {
                     demo.advance_with_palette64_and_surfaces(1. / 240., |time| {
-                        imported_contact_sample64(
+                        imported_contact_startup64(
                             imported.as_ref().ok_or("missing imported character")?,
                             reference64.as_ref().ok_or("missing imported physical reference")?,
                             reference,
-                            (time / duration).min(1.),
+                            (time / duration).min(1.),startup_seconds,
                         )
                     }).map_err(|error| {
                         format!("{error}; rejected frame step={} time_s={:.9}; last committed energy receipts={:?}; last committed refinement={:?}", elapsed + 1, (elapsed + 1) as f64 / 240., demo.body_energy_receipts(), demo.body_step_counts())
@@ -914,13 +970,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             node_states.push(checkpoint);
         }
         let offsets = if let Some(domains) = &contact_reference {
-            let (palette, _) = imported_contact_sample64(
+            let (palette, _) = imported_contact_startup64(
                 imported.as_ref().ok_or("missing imported character")?,
                 reference64
                     .as_ref()
                     .ok_or("missing imported physical reference")?,
                 domains,
                 (step as f64 / 240. / duration).min(1.),
+                startup_seconds,
             )?;
             demo.secondary_offsets_for_palette64(&palette)?
         } else if cesium {
@@ -946,11 +1003,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         stage_seconds[1] += stage_start.elapsed().as_secs_f64();
         let stage_start = std::time::Instant::now();
-        let meshes = displayed_meshes(
+        let meshes = displayed_meshes_startup(
             &demo,
             imported.as_ref(),
             (step as f64 / (240. * duration)).min(1.),
             skin,
+            startup_seconds,
         )?;
         stage_seconds[2] += stage_start.elapsed().as_secs_f64();
         let stage_start = std::time::Instant::now();
@@ -1090,6 +1148,69 @@ mod collision_tests {
         assert_eq!(capture_schedule(true, true, None).unwrap().1.len(), 41);
     }
     #[test]
+    fn imported_startup_pose_matches_skin_contact_clock_and_preserves_aliases() {
+        let model = ModelAsset::parse(
+            include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let bind = model.skeleton.bind_pose64();
+        let (points, faces) = contact_positions_from_pose64(&model, &bind).unwrap();
+        let reference = bind.skin_matrices(&model.skeleton).unwrap();
+        let domain = std::sync::Arc::new(
+            physics::biomechanics::PrescribedTriangleSurface::new(
+                points.clone(),
+                faces,
+                0.0001,
+                0.003,
+                100.,
+            )
+            .unwrap(),
+        );
+        let mut aliases = std::collections::BTreeMap::<[u64; 3], Vec<usize>>::new();
+        for (i, p) in points.iter().enumerate() {
+            aliases
+                .entry(p.map(|x| if x == 0. { 0 } else { x.to_bits() }))
+                .or_default()
+                .push(i);
+        }
+        let mut first_step_change = 0_f64;
+        for step in 0..=480 {
+            let phase = step as f64 / 480.;
+            let (_, staged) =
+                imported_contact_startup64(&model, &reference, &[domain.clone()], phase, 0.5)
+                    .unwrap();
+            let posed = imported_pose64(&model, phase, 0.5).unwrap();
+            let (expected, _) = contact_positions_from_pose64(&model, &posed).unwrap();
+            assert_eq!(staged[0].positions(), expected);
+            assert!(domain.same_contact_owner(&staged[0]));
+            for group in aliases.values() {
+                for &i in group {
+                    assert_eq!(expected[i], expected[group[0]]);
+                }
+            }
+            if step == 0 {
+                assert_eq!(expected, points);
+            }
+            if step == 1 {
+                first_step_change = expected
+                    .iter()
+                    .flatten()
+                    .zip(points.iter().flatten())
+                    .map(|(a, b)| (a - b).abs())
+                    .fold(0_f64, f64::max);
+            }
+            if phase >= 0.25 {
+                assert_eq!(posed, model.sample_pose_phase64(Some(0), phase).unwrap());
+            }
+        }
+        assert!(first_step_change > 0. && first_step_change < 0.001);
+        eprintln!(
+            "RIG_STARTUP_AUDIT phases=481 source_vertices=3273 startup_s=0.5 first_step_max_component_change_m={first_step_change:.17e}"
+        );
+    }
+    #[test]
     fn imported_skin_binding_reports_actual_contained_vertices() {
         let model = ModelAsset::parse(
             include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
@@ -1114,6 +1235,20 @@ mod collision_tests {
                 serde_json::to_vec_pretty(
                     &serde_json::json!({"points":points,"boundary":boundary}),
                 )
+                .unwrap(),
+            )
+            .unwrap();
+            let bind_pose = model.skeleton.bind_pose64();
+            let (bind_points, bind_boundary) =
+                contact_positions_from_pose64(&model, &bind_pose).unwrap();
+            assert_eq!(bind_boundary, boundary);
+            assert_eq!(bind_points.len(), skin.len());
+            std::fs::write(
+                directory.join("bind-pose-surface.json"),
+                serde_json::to_vec_pretty(&serde_json::json!({
+                    "points":bind_points,"boundary":bind_boundary,
+                    "reference":"native skeleton bind_pose64; unchanged source topology"
+                }))
                 .unwrap(),
             )
             .unwrap();

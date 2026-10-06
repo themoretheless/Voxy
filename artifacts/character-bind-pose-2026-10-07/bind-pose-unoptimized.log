@@ -1,0 +1,87 @@
+6 10 12 2 9 5 16 13 0 14 4 1 19 8 18 11 3 17 15 7 
+[2026-10-07 02:37:02.550] [geogram] [info] Loading file artifacts/character-bind-pose-2026-10-07/bind-pose-input.obj...
+[2026-10-07 02:37:02.552] [geogram] [info] (FP64) nb_v:2338 nb_e:0 nb_f:4672 nb_b:0 tri:1 dim:3
+[2026-10-07 02:37:02.552] [geogram] [info] Attributes on vertices: point[3]
+bbox_diag_length = 1.91381
+ideal_edge_length = 0.06
+stage = 1
+eps_input = 1.91381e-06
+eps = 1.91381e-06
+eps_simplification = 1.53105e-06
+eps_coplanar = 3.82762e-07
+dd = 1.27587e-06
+dd_simplification = 1.0207e-06
+[2026-10-07 02:37:02.554] [float-tetwild] [info] remove duplicates: 
+[2026-10-07 02:37:02.554] [float-tetwild] [info] #v: 2338 -> 2338
+[2026-10-07 02:37:02.554] [float-tetwild] [info] #f: 4672 -> 4672
+#boundary_e1 = 0
+#boundary_e2 = 0
+[2026-10-07 02:37:02.556] [float-tetwild] [info] preprocessing 0.0022940833333333337s
+[2026-10-07 02:37:02.556] [float-tetwild] [info] 
+[2026-10-07 02:37:02.565] [float-tetwild] [info] #v = 2858
+[2026-10-07 02:37:02.565] [float-tetwild] [info] #t = 15591
+[2026-10-07 02:37:02.565] [float-tetwild] [info] tetrahedralizing 0.009365041666666669s
+[2026-10-07 02:37:02.565] [float-tetwild] [info] 
+[2026-10-07 02:37:02.565] [float-tetwild] [info] triangle insertion start, #f = 4672, #v = 2858, #t = 15591
+[2026-10-07 02:37:02.568] [float-tetwild] [info] matched #f = 4348, uninserted #f = 324
+[2026-10-07 02:37:02.607] [float-tetwild] [info] insert_one_triangle * n done, #v = 3706, #t = 19984
+[2026-10-07 02:37:02.607] [float-tetwild] [info] uninserted #f = 0/324
+[2026-10-07 02:37:02.607] [float-tetwild] [info] total timing: 0s
+[2026-10-07 02:37:02.611] [float-tetwild] [info] pair_track_surface_fs done
+#boundary_e1 = 0
+#boundary_e2 = 0
+[2026-10-07 02:37:02.612] [float-tetwild] [info] find_boundary_edges done
+[2026-10-07 02:37:02.612] [float-tetwild] [info] time1 = 0.0004042083333333334
+[2026-10-07 02:37:02.612] [float-tetwild] [info] uninsert boundary #e = 0/0
+[2026-10-07 02:37:02.612] [float-tetwild] [info] time2 = 0
+[2026-10-07 02:37:02.612] [float-tetwild] [info] time3 = 0
+[2026-10-07 02:37:02.612] [float-tetwild] [info] time4 = 0
+[2026-10-07 02:37:02.612] [float-tetwild] [info] time5 = 0
+[2026-10-07 02:37:02.612] [float-tetwild] [info] time6 = 0
+[2026-10-07 02:37:02.613] [float-tetwild] [info] uninserted #f = 0/324
+known_surface_fs.size = 0
+known_not_surface_fs.size = 0
+[2026-10-07 02:37:02.789] [float-tetwild] [info] mark_surface_fs done
+[2026-10-07 02:37:02.790] [float-tetwild] [info] #b_edge1 = 0, #b_edges2 = 0
+[2026-10-07 02:37:02.790] [float-tetwild] [info] cutting 0.22447429166666671s
+[2026-10-07 02:37:02.790] [float-tetwild] [info] 
+initializing...
+#v = 3681
+#t = 19867
+max_energy = 7.56317e+06
+avg_energy = 1582.76
+edge collapsing...
+fixed 0 tangled element
+success(env) = 950
+success = 1314(16958)
+success(env) = 35
+success = 41(8618)
+success(env) = 0
+success = 0(1536)
+edge collapsing done!
+time = 8.3941s
+#v = 2326
+#t = 12837
+max_energy = 584571
+avg_energy = 282.897
+//////////////// postprocessing ////////////////
+edge collapsing...
+fixed 0 tangled element
+success(env) = 0
+success = 0(12968)
+edge collapsing done!
+time = 0.990077s
+#v = 2326
+#t = 12837
+max_energy = 584571
+avg_energy = 282.897
+[2026-10-07 02:37:12.181] [float-tetwild] [info] mesh optimization 9.391033583333336s
+[2026-10-07 02:37:12.181] [float-tetwild] [info] 
+[2026-10-07 02:37:12.185] [float-tetwild] [info] correct_tracked_surface_orientation done
+[2026-10-07 02:37:12.197] [float-tetwild] [info] after winding number
+[2026-10-07 02:37:12.197] [float-tetwild] [info] #v = 1836
+[2026-10-07 02:37:12.197] [float-tetwild] [info] #t = 5121
+[2026-10-07 02:37:12.197] [float-tetwild] [info] winding number 0.015931625000000005s
+[2026-10-07 02:37:12.197] [float-tetwild] [info] 
+[2026-10-07 02:37:12.197] [float-tetwild] [info] Writing mesh to artifacts/character-bind-pose-2026-10-07/bind-pose-unoptimized.mesh...
+[2026-10-07 02:37:12.210] [float-tetwild] [info]  took 0.01283841666666667s

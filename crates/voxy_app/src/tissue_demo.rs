@@ -170,6 +170,17 @@ pub(crate) struct TissueSkinBinding {
     global: Option<Arc<assembly::GlobalSkinBinding>>,
 }
 impl TissueSkinBinding {
+    /// Immutable posed reference nodes; the same map is used by render and contact.
+    pub(crate) fn posed_reference_nodes(
+        &self,
+        palette: &[DMat4],
+        source_skin: &[[f64; 3]],
+    ) -> Result<Vec<[f64; 3]>, &'static str> {
+        self.global
+            .as_ref()
+            .ok_or("source reference requires assembled tissue")?
+            .posed_reference(palette, Some(source_skin))
+    }
     pub(crate) fn tissue_owned_vertices(&self) -> Vec<usize> {
         if let Some(global) = &self.global {
             return global.tissue_owned_vertices();

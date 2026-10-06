@@ -14,9 +14,23 @@ pub(super) struct Regions {
     volumes: Vec<TissueRegionSpec>,
     exclusions: Vec<Vec<usize>>,
     coverage: Option<(usize, Vec<usize>)>,
+    pub(super) reference: VolumeReference,
+    source_node_reference: bool,
+    pub(super) startup_seconds: f64,
     pub(super) coverage_report: Value,
 }
 impl Regions {
+    pub(super) fn bind_skin(
+        &self,
+        demo: &TissueDemo,
+        skin: &[[f64; 3]],
+    ) -> Result<TissueSkinBinding, &'static str> {
+        if self.source_node_reference {
+            demo.bind_skin_source_reference(skin)
+        } else {
+            demo.bind_skin(skin)
+        }
+    }
     pub(super) fn instantiate(&self) -> Result<TissueDemo, &'static str> {
         TissueDemo::body_from_region_specs(self.volumes.clone())
     }
@@ -83,6 +97,33 @@ pub(super) fn check_volume(
     model: &ModelAsset,
     model_bytes: &'static [u8],
 ) -> Result<ImportedAsset<Value>, Error> {
+    check_volume_reference(path, model, model_bytes, VolumeReference::PhaseZero)
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum VolumeReference {
+    PhaseZero,
+    BindPose,
+}
+impl VolumeReference {
+    pub(super) fn clip(self) -> Option<usize> {
+        match self {
+            Self::PhaseZero => Some(0),
+            Self::BindPose => None,
+        }
+    }
+    fn label(self) -> &'static str {
+        match self {
+            Self::PhaseZero => "animation-phase-zero",
+            Self::BindPose => "skeleton-bind-pose",
+        }
+    }
+}
+pub(super) fn check_volume_reference(
+    path: &Path,
+    model: &ModelAsset,
+    model_bytes: &'static [u8],
+    reference: VolumeReference,
+) -> Result<ImportedAsset<Value>, Error> {
     let path = path.canonicalize()?;
     let files = FileInputs::new(path.parent().ok_or("missing volume directory")?)?;
     let id = AssetId(
@@ -107,7 +148,8 @@ pub(super) fn check_volume(
         })
         .map_err(|e| format!("model observation: {e:?}"))?;
     let mut report = serde_json::json!({
-        "scope":"native phase-zero volume admission and full source skin membership; not animation dynamics",
+        "scope":"native reference-pose volume admission and full source skin membership; not animation dynamics",
+        "reference_pose":reference.label(),
         "volume_blake3":digest_hex(snapshot.digest), "source_model_blake3":digest_hex(source.digest),
         "volume_admitted":false, "complete_skin_binding":false,
     });
@@ -117,7 +159,8 @@ pub(super) fn check_volume(
         report["volume_nodes"] = mesh.points.len().into();
         report["volume_cells"] = mesh.cells.len().into();
         report["volume_boundary_triangles"] = mesh.boundary.len().into();
-        let (skin, _) = super::contact_positions64(model, 0.)?;
+        let pose = model.sample_pose_phase64(reference.clip(), 0.)?;
+        let (skin, _) = super::contact_positions_from_pose64(model, &pose)?;
         report["source_vertices"] = skin.len().into();
         let search = physics::tissue_surface::TetrahedralEmbedding::new(&mesh.points, &mesh.cells)?;
         let contained = search.contains_points(&skin)?;
@@ -257,6 +300,8 @@ pub(super) fn load(
         &[
             "version",
             "coordinate_space",
+            "kinematic_reference",
+            "startup_seconds",
             "material_profile",
             "source_model_blake3",
             "regions",
@@ -267,9 +312,39 @@ pub(super) fn load(
         && root["material_profile"] == "illustrative-manikin-v1";
     let explicit = root["version"].as_u64() == Some(2)
         && root["material_profile"] == "authored-ogden-maxwell-v1";
-    if (!illustrative && !explicit) || root["coordinate_space"] != "scene_phase_0_metres" {
+    let reference = match root["coordinate_space"].as_str() {
+        Some("scene_phase_0_metres") => VolumeReference::PhaseZero,
+        Some("scene_bind_pose_metres") if explicit => VolumeReference::BindPose,
+        _ => {
+            return Err(
+                "unsupported tissue manifest version, coordinates or material profile".into(),
+            );
+        }
+    };
+    if !illustrative && !explicit {
         return Err("unsupported tissue manifest version, coordinates or material profile".into());
     }
+    let source_node_reference = match root.get("kinematic_reference") {
+        None => false,
+        Some(Value::String(mode)) if explicit && mode == "region-joints" => false,
+        Some(Value::String(mode)) if explicit && mode == "source-skin-nodes" => true,
+        _ => return Err("unsupported authored kinematic reference".into()),
+    };
+    let startup_seconds = match root.get("startup_seconds") {
+        None => 0.,
+        Some(value) if explicit && reference == VolumeReference::BindPose => value
+            .as_f64()
+            .filter(|s| {
+                s.is_finite()
+                    && *s >= 0.
+                    && model
+                        .animations
+                        .first()
+                        .is_some_and(|clip| *s <= f64::from(clip.duration()))
+            })
+            .ok_or("invalid authored startup duration")?,
+        _ => return Err("startup duration requires an explicit bind-pose manifest".into()),
+    };
     let source = inputs
         .read(AssetId(MODEL_ID.into()), |_, limit| {
             if model_bytes.len() > limit {
@@ -287,7 +362,8 @@ pub(super) fn load(
     if records.is_empty() || records.len() > 64 {
         return Err("invalid authored tissue region count".into());
     }
-    let (source_positions, source_faces) = super::contact_positions64(model, 0.)?;
+    let pose = model.sample_pose_phase64(reference.clip(), 0.)?;
+    let (source_positions, source_faces) = super::contact_positions_from_pose64(model, &pose)?;
     let coverage = if let Some(value) = root.get("coverage") {
         fields(value, &["minimum_bound_vertices", "required_vertices"])?;
         let minimum = value["minimum_bound_vertices"]
@@ -449,15 +525,31 @@ pub(super) fn load(
         volumes,
         exclusions,
         coverage,
+        reference,
+        source_node_reference,
+        startup_seconds,
         coverage_report: Value::Null,
     };
+    if reference == VolumeReference::BindPose
+        && source_node_reference
+        && startup_seconds == 0.
+        && regions
+            .volumes
+            .iter()
+            .any(|volume| !volume.supports.is_empty())
+    {
+        return Err("bind-pose source supports require an explicit startup duration".into());
+    }
     // Geometry and requested source membership are admitted before publication.
     let mut demo = regions.instantiate()?;
     demo.assemble_regions()?;
-    let binding = demo.bind_skin(&source_positions)?;
+    let binding = regions.bind_skin(&demo, &source_positions)?;
     regions.validate_skin_coverage(&binding)?;
     regions.coverage_report = serde_json::json!({
         "scope":"reference-space skin membership; not dynamic collision qualification",
+        "reference_pose":regions.reference.label(),
+        "startup_seconds":regions.startup_seconds,
+        "kinematic_reference":if regions.source_node_reference {"source-skin-nodes"} else {"region-joints"},
         "source_vertices":source_positions.len(), "bound_vertices":binding.bound_vertex_count(),
         "tissue_owned_vertices":binding.tissue_owned_vertices(), "contract_supplied":regions.coverage.is_some(),
         "regions": regions.volumes.iter().zip(mesh_formats).map(|(spec, format)| serde_json::json!({
@@ -606,6 +698,19 @@ mod tests {
                 .len(),
             3272
         );
+        assert_eq!(audit.value()["reference_pose"], "animation-phase-zero");
+        let bind_audit = check_volume_reference(
+            &directory.join("volume.mesh"),
+            &model,
+            MODEL,
+            VolumeReference::BindPose,
+        )
+        .unwrap();
+        assert_eq!(bind_audit.inputs().observations().len(), 2);
+        assert_eq!(bind_audit.value()["reference_pose"], "skeleton-bind-pose");
+        assert_eq!(bind_audit.value()["volume_admitted"], true);
+        assert_eq!(bind_audit.value()["bound_vertices"], 0);
+        assert_eq!(bind_audit.value()["complete_skin_binding"], false);
         std::fs::write(directory.join("invalid.mesh"), b"invalid volume").unwrap();
         let rejected = check_volume(&directory.join("invalid.mesh"), &model, MODEL).unwrap();
         assert_eq!(rejected.value()["volume_admitted"], false);
@@ -613,6 +718,94 @@ mod tests {
         assert_eq!(
             rejected.value()["admission_error"],
             "unsupported Medit tissue volume profile"
+        );
+        let mut bind_manifest = medit_manifest.clone();
+        bind_manifest["coordinate_space"] = "scene_bind_pose_metres".into();
+        std::fs::write(&manifest, serde_json::to_vec(&bind_manifest).unwrap()).unwrap();
+        assert!(
+            load(&manifest, &model, MODEL)
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("coverage mismatch")
+        );
+        bind_manifest["coverage"] =
+            serde_json::json!({"minimum_bound_vertices":0,"required_vertices":[]});
+        std::fs::write(&manifest, serde_json::to_vec(&bind_manifest).unwrap()).unwrap();
+        let bind_import = load(&manifest, &model, MODEL).unwrap();
+        assert_eq!(bind_import.value().reference, VolumeReference::BindPose);
+        assert_eq!(bind_import.value().coverage_report["bound_vertices"], 0);
+        assert_eq!(imported_medit.value().reference, VolumeReference::PhaseZero);
+        assert_eq!(imported_medit.value().reference.clip(), Some(0));
+        for coordinate in [
+            serde_json::json!("scene_bind_pose"),
+            Value::Null,
+            serde_json::json!(false),
+        ] {
+            let mut invalid = bind_manifest.clone();
+            invalid["coordinate_space"] = coordinate;
+            std::fs::write(&manifest, serde_json::to_vec(&invalid).unwrap()).unwrap();
+            assert!(load(&manifest, &model, MODEL).is_err());
+        }
+        let mut startup_manifest = bind_manifest.clone();
+        startup_manifest["startup_seconds"] = 0.5.into();
+        std::fs::write(&manifest, serde_json::to_vec(&startup_manifest).unwrap()).unwrap();
+        assert_eq!(
+            load(&manifest, &model, MODEL)
+                .unwrap()
+                .value()
+                .startup_seconds,
+            0.5
+        );
+        for value in [
+            Value::Null,
+            serde_json::json!(false),
+            serde_json::json!(-1.),
+            serde_json::json!(100.),
+        ] {
+            startup_manifest["startup_seconds"] = value;
+            std::fs::write(&manifest, serde_json::to_vec(&startup_manifest).unwrap()).unwrap();
+            assert!(load(&manifest, &model, MODEL).is_err());
+        }
+        let mut phase_startup = medit_manifest.clone();
+        phase_startup["startup_seconds"] = 0.5.into();
+        std::fs::write(&manifest, serde_json::to_vec(&phase_startup).unwrap()).unwrap();
+        assert!(
+            load(&manifest, &model, MODEL)
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("bind-pose manifest")
+        );
+        for mode in [
+            Value::Null,
+            serde_json::json!(false),
+            serde_json::json!("nearest-node"),
+        ] {
+            let mut invalid = bind_manifest.clone();
+            invalid["kinematic_reference"] = mode;
+            std::fs::write(&manifest, serde_json::to_vec(&invalid).unwrap()).unwrap();
+            assert!(
+                load(&manifest, &model, MODEL)
+                    .err()
+                    .unwrap()
+                    .to_string()
+                    .contains("kinematic reference")
+            );
+        }
+        let mut unsupported_source_map = medit_manifest.clone();
+        unsupported_source_map["kinematic_reference"] = "source-skin-nodes".into();
+        std::fs::write(
+            &manifest,
+            serde_json::to_vec(&unsupported_source_map).unwrap(),
+        )
+        .unwrap();
+        assert!(
+            load(&manifest, &model, MODEL)
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("reference node missing")
         );
         // Import the very same nonconvex source boundary directly, without a
         // convex hull or a manually precomputed tetrahedral intermediate.
@@ -751,6 +944,108 @@ mod tests {
             .unwrap();
         }
         std::fs::remove_dir_all(directory).unwrap();
+    }
+    #[test]
+    fn full_character_bind_volume_admits_every_source_vertex_in_its_reference_pose() {
+        const MODEL: &[u8] =
+            include_bytes!("../../../../assets/animation/cesium-man/CesiumMan.glb");
+        let model = ModelAsset::parse(MODEL, &[], ModelLimits::default()).unwrap();
+        let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh");
+        let report =
+            check_volume_reference(&path, &model, MODEL, VolumeReference::BindPose).unwrap();
+        assert_eq!(report.inputs().observations().len(), 2);
+        assert_eq!(report.value()["volume_admitted"], true);
+        assert_eq!(report.value()["complete_skin_binding"], true);
+        assert_eq!(report.value()["reference_pose"], "skeleton-bind-pose");
+        assert_eq!(report.value()["bound_vertices"], 3273);
+        assert_eq!(
+            report.value()["exterior_source_vertices"],
+            serde_json::json!([])
+        );
+        assert!(
+            report.value()["maximum_rest_component_error_m"]
+                .as_f64()
+                .unwrap()
+                < 2e-15
+        );
+        // A reference pose is part of the contract. The running animation starts
+        // with a different, locally intersecting skin and cannot be substituted.
+        let phase_zero = check_volume(&path, &model, MODEL).unwrap();
+        assert_eq!(phase_zero.value()["volume_admitted"], true);
+        assert_eq!(phase_zero.value()["complete_skin_binding"], false);
+        assert_eq!(phase_zero.value()["reference_pose"], "animation-phase-zero");
+        let authored = load(&path.with_file_name("bind-regions.json"), &model, MODEL).unwrap();
+        assert_eq!(authored.inputs().observations().len(), 3);
+        assert_eq!(authored.value().reference, VolumeReference::BindPose);
+        assert_eq!(authored.value().reference.clip(), None);
+        assert_eq!(authored.value().coverage_report["bound_vertices"], 3273);
+        let mut demo = authored.value().instantiate().unwrap();
+        demo.assemble_regions().unwrap();
+        let (skin, _) =
+            super::super::contact_positions_from_pose64(&model, &model.skeleton.bind_pose64())
+                .unwrap();
+        let binding = authored.value().bind_skin(&demo, &skin).unwrap();
+        authored.value().validate_skin_coverage(&binding).unwrap();
+        // Identity skeletal motion composes with physical displacement once.
+        let palette = vec![glam::DMat4::IDENTITY; model.skeleton.joints().len()];
+        let visible = demo.deform_skin(&binding, &palette, &skin).unwrap();
+        let error = visible
+            .iter()
+            .flatten()
+            .zip(skin.iter().flatten())
+            .map(|(a, b)| (a - b).abs())
+            .fold(0_f64, f64::max);
+        assert!(error < 2e-15);
+        let mapping: Value = serde_json::from_str(
+            &std::fs::read_to_string(path.with_file_name("result.json")).unwrap(),
+        )
+        .unwrap();
+        let mapping: Vec<usize> =
+            serde_json::from_value(mapping["source_to_geometry"].clone()).unwrap();
+        let reference_palette = model
+            .skeleton
+            .bind_pose64()
+            .skin_matrices(&model.skeleton)
+            .unwrap();
+        let mut maximum_cancellation_error = 0_f64;
+        let mut maximum_pose_change = 0_f64;
+        for step in 0..=480 {
+            let pose = model
+                .sample_pose_phase64(Some(0), step as f64 / 480.)
+                .unwrap();
+            let (posed, _) = super::super::contact_positions_from_pose64(&model, &pose).unwrap();
+            let current = pose.skin_matrices(&model.skeleton).unwrap();
+            let palette: Vec<_> = current
+                .iter()
+                .zip(&reference_palette)
+                .map(|(a, b)| *a * b.inverse())
+                .collect();
+            let nodes = binding.posed_reference_nodes(&palette, &posed).unwrap();
+            for (source, &node) in mapping.iter().enumerate() {
+                assert_eq!(nodes[node], posed[source]);
+            }
+            // With physical nodes held in the reference state, skeletal reference
+            // motion cancels once. It must not drive this independent body twice.
+            let visible = demo.deform_skin(&binding, &palette, &posed).unwrap();
+            maximum_cancellation_error = visible
+                .iter()
+                .flatten()
+                .zip(skin.iter().flatten())
+                .map(|(a, b)| (a - b).abs())
+                .fold(maximum_cancellation_error, f64::max);
+            maximum_pose_change = posed
+                .iter()
+                .flatten()
+                .zip(skin.iter().flatten())
+                .map(|(a, b)| (a - b).abs())
+                .fold(maximum_pose_change, f64::max);
+        }
+        assert!(maximum_pose_change > 0.1);
+        assert!(maximum_cancellation_error < 1e-13);
+        eprintln!(
+            "SOURCE_NODE_REFERENCE phases=481 nodes=2338 source_vertices=3273 max_cancellation_error_m={maximum_cancellation_error:.17e} max_pose_change_m={maximum_pose_change:.17e}"
+        );
     }
     #[test]
     fn observed_authored_volumes_resolve_joints_and_reject_incompatible_inputs() {

@@ -1,0 +1,24 @@
+{
+  "arithmetic": "exact rationals of binary-f64 OBJ coordinates",
+  "local_vertices": [
+    1808,
+    2578
+  ],
+  "local_faces": [
+    318,
+    732,
+    902,
+    903,
+    1316,
+    1317,
+    2486,
+    2488,
+    3072,
+    3073,
+    4238,
+    4239
+  ],
+  "bbox_candidate_pairs": 122,
+  "strict_transverse_intersections": [],
+  "scope": "local noncoplanar test; absence does not prove global nonintersection"
+}

@@ -1,0 +1,189 @@
+6 10 12 2 9 5 16 13 0 14 4 1 19 8 18 11 3 17 15 7 
+[2026-10-07 02:35:54.931] [geogram] [info] Loading file artifacts/character-bind-pose-2026-10-07/bind-pose-input.obj...
+[2026-10-07 02:35:54.933] [geogram] [info] (FP64) nb_v:2338 nb_e:0 nb_f:4672 nb_b:0 tri:1 dim:3
+[2026-10-07 02:35:54.933] [geogram] [info] Attributes on vertices: point[3]
+bbox_diag_length = 1.91381
+ideal_edge_length = 0.06
+stage = 1
+eps_input = 1.91381e-06
+eps = 1.91381e-06
+eps_simplification = 1.53105e-06
+eps_coplanar = 3.82762e-07
+dd = 1.27587e-06
+dd_simplification = 1.0207e-06
+[2026-10-07 02:35:54.935] [float-tetwild] [info] remove duplicates: 
+[2026-10-07 02:35:54.935] [float-tetwild] [info] #v: 2338 -> 2338
+[2026-10-07 02:35:54.935] [float-tetwild] [info] #f: 4672 -> 4672
+#boundary_e1 = 0
+#boundary_e2 = 0
+[2026-10-07 02:35:54.937] [float-tetwild] [info] preprocessing 0.0022771666666666674s
+[2026-10-07 02:35:54.937] [float-tetwild] [info] 
+[2026-10-07 02:35:54.946] [float-tetwild] [info] #v = 2858
+[2026-10-07 02:35:54.946] [float-tetwild] [info] #t = 15591
+[2026-10-07 02:35:54.946] [float-tetwild] [info] tetrahedralizing 0.009227166666666668s
+[2026-10-07 02:35:54.946] [float-tetwild] [info] 
+[2026-10-07 02:35:54.946] [float-tetwild] [info] triangle insertion start, #f = 4672, #v = 2858, #t = 15591
+[2026-10-07 02:35:54.949] [float-tetwild] [info] matched #f = 4348, uninserted #f = 324
+[2026-10-07 02:35:54.986] [float-tetwild] [info] insert_one_triangle * n done, #v = 3571, #t = 19293
+[2026-10-07 02:35:54.986] [float-tetwild] [info] uninserted #f = 0/324
+[2026-10-07 02:35:54.986] [float-tetwild] [info] total timing: 0s
+[2026-10-07 02:35:54.990] [float-tetwild] [info] pair_track_surface_fs done
+#boundary_e1 = 0
+#boundary_e2 = 0
+[2026-10-07 02:35:54.991] [float-tetwild] [info] find_boundary_edges done
+[2026-10-07 02:35:54.992] [float-tetwild] [info] time1 = 0.00040037500000000007
+[2026-10-07 02:35:54.992] [float-tetwild] [info] uninsert boundary #e = 0/0
+[2026-10-07 02:35:54.992] [float-tetwild] [info] time2 = 0
+[2026-10-07 02:35:54.992] [float-tetwild] [info] time3 = 0
+[2026-10-07 02:35:54.992] [float-tetwild] [info] time4 = 0
+[2026-10-07 02:35:54.992] [float-tetwild] [info] time5 = 0
+[2026-10-07 02:35:54.992] [float-tetwild] [info] time6 = 0
+[2026-10-07 02:35:54.992] [float-tetwild] [info] uninserted #f = 0/324
+known_surface_fs.size = 0
+known_not_surface_fs.size = 0
+[2026-10-07 02:35:55.171] [float-tetwild] [info] mark_surface_fs done
+[2026-10-07 02:35:55.171] [float-tetwild] [info] #b_edge1 = 0, #b_edges2 = 0
+[2026-10-07 02:35:55.171] [float-tetwild] [info] cutting 0.2251163333333334s
+[2026-10-07 02:35:55.171] [float-tetwild] [info] 
+initializing...
+#v = 3552
+#t = 19203
+max_energy = 5.14308e+08
+avg_energy = 29264.6
+edge collapsing...
+fixed 0 tangled element
+success(env) = 870
+success = 1191(16762)
+success(env) = 39
+success = 48(8414)
+success(env) = 0
+success = 0(1607)
+edge collapsing done!
+time = 8.05888s
+#v = 2313
+#t = 12776
+max_energy = 584571
+avg_energy = 284.448
+//////////////// pass 0 ////////////////
+edge splitting...
+fixed 0 tangled element
+success = 18418(18418)
+edge splitting done!
+time = 0.0329355s
+#v = 20731
+#t = 100574
+max_energy = 442153
+avg_energy = 175.771
+edge collapsing...
+fixed 0 tangled element
+success(env) = 88
+success = 11001(45156)
+success(env) = 12
+success = 461(21534)
+success(env) = 3
+success = 77(7090)
+success(env) = 1
+success = 16(1668)
+success(env) = 0
+success = 2(276)
+success(env) = 0
+success = 0(12)
+edge collapsing done!
+time = 3.44552s
+#v = 9174
+#t = 45752
+max_energy = 335160
+avg_energy = 30.435
+edge swapping...
+fixed 0 tangled element
+success3 = 1456
+success4 = 2867
+success5 = 325
+success = 4648(34902)
+edge swapping done!
+time = 0.437181s
+#v = 9174
+#t = 44621
+max_energy = 6595.55
+avg_energy = 4.83733
+vertex smoothing...
+success = 3863(6436)
+vertex smoothing done!
+time = 4.12381s
+#v = 9174
+#t = 44621
+max_energy = 6595.55
+avg_energy = 4.55553
+//////////////// pass 1 ////////////////
+edge splitting...
+fixed 0 tangled element
+success = 2023(2023)
+edge splitting done!
+time = 0.030587s
+#v = 11197
+#t = 54651
+max_energy = 6595.55
+avg_energy = 4.50591
+edge collapsing...
+fixed 0 tangled element
+success(env) = 106
+success = 1683(30228)
+success(env) = 0
+success = 85(12612)
+success(env) = 1
+success = 6(1764)
+success(env) = 0
+success = 2(185)
+success(env) = 0
+success = 0(19)
+edge collapsing done!
+time = 1.51415s
+#v = 9421
+#t = 46043
+max_energy = 6595.55
+avg_energy = 4.45341
+edge swapping...
+fixed 0 tangled element
+success3 = 195
+success4 = 1116
+success5 = 117
+success = 1428(28086)
+edge swapping done!
+time = 0.191675s
+#v = 9421
+#t = 45965
+max_energy = 3512.5
+avg_energy = 4.10931
+vertex smoothing...
+success = 4887(6683)
+vertex smoothing done!
+time = 3.78372s
+#v = 9421
+#t = 45965
+max_energy = 3512.5
+avg_energy = 4.03803
+//////////////// postprocessing ////////////////
+edge collapsing...
+fixed 0 tangled element
+success(env) = 18
+success = 121(24087)
+success(env) = 0
+success = 7(2413)
+success(env) = 0
+success = 0(92)
+edge collapsing done!
+time = 0.648156s
+#v = 9293
+#t = 45291
+max_energy = 3512.5
+avg_energy = 4.0384
+[2026-10-07 02:36:17.449] [float-tetwild] [info] mesh optimization 22.276764958333338s
+[2026-10-07 02:36:17.449] [float-tetwild] [info] 
+[2026-10-07 02:36:17.453] [float-tetwild] [info] correct_tracked_surface_orientation done
+[2026-10-07 02:36:17.506] [float-tetwild] [info] after winding number
+[2026-10-07 02:36:17.506] [float-tetwild] [info] #v = 2103
+[2026-10-07 02:36:17.506] [float-tetwild] [info] #t = 6154
+[2026-10-07 02:36:17.506] [float-tetwild] [info] winding number 0.05727516666666668s
+[2026-10-07 02:36:17.506] [float-tetwild] [info] 
+[2026-10-07 02:36:17.506] [float-tetwild] [info] Writing mesh to artifacts/character-bind-pose-2026-10-07/bind-pose-volume.mesh...
+[2026-10-07 02:36:17.522] [float-tetwild] [info]  took 0.01573804166666667s

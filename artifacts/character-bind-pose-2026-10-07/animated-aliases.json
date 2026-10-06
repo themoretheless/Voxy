@@ -1,0 +1,7 @@
+{
+  "duplicate_coordinate_groups": 654,
+  "limits": "Sampled trajectory check; not a continuous seam equivalence certificate. No source vertices welded.",
+  "maximum_scatter_m": 0.0,
+  "scope": "native imported phase preview, 481 evenly spaced phases including endpoints",
+  "worst_phase_and_vertex_pair": null
+}
