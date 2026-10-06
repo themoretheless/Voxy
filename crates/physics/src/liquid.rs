@@ -1297,4 +1297,7 @@ pub use multi_body::{
 };
 #[path = "liquid/support_world.rs"]
 mod support_world;
-pub use support_world::{RigidWorldReactions, SupportedWorldConfig, resolve_rigid_world_reactions};
+pub use support_world::{
+    RigidWorldReactionRates, RigidWorldReactions, SupportedWorldConfig,
+    resolve_rigid_world_reactions,
+};

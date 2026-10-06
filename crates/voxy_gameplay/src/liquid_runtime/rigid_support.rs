@@ -203,6 +203,9 @@ fn polynomial_range(v: f64, a: f64, duration: f64) -> Result<(f64, f64), Error> 
     Ok((lo, hi))
 }
 fn angular_excursion(path: &physics::rigid_motion::RigidMotion, radius: f64) -> Result<f64, Error> {
+    if !path.has_constant_acceleration() {
+        return Err(Error::CollisionBackend);
+    }
     let angle = path.rotation().map_or(0., |rotation| {
         rotation
             .segments()
@@ -217,10 +220,11 @@ fn angular_excursion(path: &physics::rigid_motion::RigidMotion, radius: f64) -> 
     Ok(result)
 }
 
-/// Admit a constant world-arm reaction model against actual nominal motion.
+/// Admit a common moving-point reaction model against actual nominal motion.
 /// The whole parabolic COM interval and every spin arc are bounded, not just
-/// endpoints. Significant evolving rotations or finite-body sliding require a
-/// moving-wrench/branch model and reject; small numerical rotation is retained.
+/// endpoints. Reciprocal COM torque follows the same moving world point.
+/// Significant evolving rotations still require a changing branch/reaction
+/// model and reject; small numerical rotation is retained.
 /// Acceptance uses the emitting geometry witness plus floating pose evaluation
 /// allowance, never a user-chosen rest speed, position snap or force clamp.
 pub(super) fn admit_motion(
@@ -231,6 +235,9 @@ pub(super) fn admit_motion(
     fixed: bool,
     points: &[physics::liquid::RigidSupportPoint],
 ) -> Result<f64, Error> {
+    if !first.has_constant_acceleration() || !second.has_constant_acceleration() {
+        return Err(Error::CollisionBackend);
+    }
     if first.duration() != second.duration() || points.is_empty() {
         return Err(Error::InvalidCollision);
     }
@@ -301,19 +308,9 @@ pub(super) fn admit_motion(
         if !point.carrying_reaction {
             continue;
         }
-        // A finite reciprocal pair must retain coincident application points.
-        // Otherwise frozen COM arms would introduce an unowned couple.
-        if !fixed {
-            let mut bound = DVec3::ZERO;
-            for k in 0..3 {
-                let (lo, hi) = polynomial_range(velocity[k], acceleration[k], duration)?;
-                bound[k] = lo.abs().max(hi.abs());
-            }
-            if bound.length() + angular > tolerance {
-                return Err(Error::CollisionBudget);
-            }
-            max_error = max_error.max(bound.length() + angular);
-        }
+        // Core now evolves the reciprocal COM torque at this same moving
+        // world point. Tangential translation is admitted through ownership,
+        // not rejected merely because the two COM application arms differ.
         // Model application points follow first COM with a fixed world arm.
         // Verify ownership on both complete affine volumes over the interval.
         for (owner, v, acc) in [(sa, DVec3::ZERO, DVec3::ZERO), (sb, velocity, acceleration)] {

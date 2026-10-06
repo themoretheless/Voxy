@@ -1,0 +1,6 @@
+{
+  "crates/physics/src/liquid/multi_body.rs": "f8f59b525338656b833c49b17c5f890ee7cb964a0bf4251bfb600f39364ec728",
+  "crates/physics/src/rigid_motion.rs": "d8f44f01ecd78ff31e25119d220ea9ed9f5f9b2d5584ca5ac938b77d8e570f73",
+  "crates/physics/tests/rigid_motion.rs": "2d20ed86341ab134398b1636c9f5007fdccb340c549ef3c23333d42ef43f3d5a",
+  "crates/voxy_gameplay/src/liquid_runtime.rs": "3921825cd9d1555708ea3a72230d4f62391d042cec50cef885fadd7b9fddaaad"
+}

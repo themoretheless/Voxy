@@ -1,0 +1,32 @@
+{
+  "full_release_regression": {
+    "passed": 1923,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "format_and_diff_check": "passed",
+  "final_default_budget_focused_run": "6 passed",
+  "source_sha256": {
+    "crates/physics/src/liquid/multi_body.rs": "4be024c6e25105b5ed62d9b49cb8f85d768bae83c3b56531fd66f8dc376f4052",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "88ea6d694cd62753556b89544c02e7b1b436ea57d868bc0afc8b87eace7b0c05",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "51a7120b03d69988037f1d14faed076b07e0ac924f4916d38bbf9c539dee7d8a"
+  },
+  "verification_order": "Full regression covers final production behavior; subsequent focused run tightens only new test admission budget from 1e-8 m to default 1e-10 m. Production behavior unchanged between runs.",
+  "qualification": {
+    "duration_s": 0.0001,
+    "upper_mass_kg": 2,
+    "lower_mass_kg": 3,
+    "upper_slide_m": 0.0001,
+    "lower_angular_momentum_z_kg_m2_per_s": -1e-07,
+    "environment_impulse_y_N_s": -0.005,
+    "geometry_budget_m": 1e-10
+  },
+  "limitations": [
+    "Constant reaction magnitudes per interval; evolving loads remain needed",
+    "Common point follows first COM with initial world arm",
+    "Large rotations, sustained sliding and patch-edge transitions unqualified",
+    "Nominal geometry and rotation bounds are not real arithmetic certificates"
+  ],
+  "pushed": false
+}

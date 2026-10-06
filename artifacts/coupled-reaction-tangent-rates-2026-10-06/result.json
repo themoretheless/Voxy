@@ -1,0 +1,43 @@
+{
+  "full_release_regression": {
+    "passed": 1929,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "format_and_diff_check": "passed",
+  "source_sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "ef58e07981bb1311bdc82571834106b35fc7c3b07b99853c35c6d037d5405668",
+    "crates/physics/src/contact.rs": "34423548cadd11bc290a06a5c210e775136b68dabb848489cc7dbb4d9e60a5f9",
+    "crates/physics/src/contact/reaction.rs": "e109950b53c3db98e3966c075bbe67bfbce53344de9083fcee2382d1bf2865ae",
+    "crates/physics/src/liquid.rs": "f64afc68a8bc1411ee484f3760ee1a2a1c99fdfccde60a17637a162c7ded1a69",
+    "crates/physics/src/liquid/multi_body.rs": "4be024c6e25105b5ed62d9b49cb8f85d768bae83c3b56531fd66f8dc376f4052",
+    "crates/physics/src/liquid/support_world.rs": "1c05d03c47a1a4d135e7b726950bf4d2fa4a9b9803de60ca5275c327215c66d9",
+    "crates/physics/src/rigid_motion.rs": "4a97c64b7e2111bc8b611ac7f01288acdb8002614f9aad8136151f61cd0bb83d",
+    "crates/physics/src/spin_path.rs": "07b199ca1c2f9053385d2dcae8d8f991ed61bffaadc1075efc9109d4ca257cc4",
+    "crates/physics/tests/rigid_motion.rs": "02f3f53a1aa66ffb8dc4adf8efdcdb5d272d5e96f0b928b4839decbb45153822",
+    "crates/physics/tests/spin_path.rs": "14745876944937783957053715da259f3b31a8b9dd8cf73eab1a4e924fefd353",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "1c401398324511c14f930e6374a30849f851c584274eeda3edc8bd90ba013ded",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "88ea6d694cd62753556b89544c02e7b1b436ea57d868bc0afc8b87eace7b0c05",
+    "crates/physics/src/contact/reaction_rate.rs": "a524df4b4d1c6450fa0c75f4239686a40dcaa6c07c8bbb3f588dfc7c76c39131",
+    "crates/physics/tests/reaction_rates.rs": "2dcf7c4acbab4357938083535b52996fc02342d740f4d29a80243bfcd391e558"
+  },
+  "qualification": [
+    "Signed pressure tangent rates and unilateral zero-pressure births",
+    "Moving stack floor redistribution -10/+10 N per second",
+    "Analytic jerk versus independent anisotropic rotating directional difference",
+    "Proper world-frame rotation and body reorder",
+    "Outgoing support stays unloaded under negative acceleration and jerk",
+    "Geometry-owned normal acceleration validation",
+    "Reciprocal owner with omitted zero second load",
+    "Real affine scene query and read-only +20 N m per second floor moment compensation"
+  ],
+  "retained_initial_compile_failure": "Scene test supplied rotation configuration where dynamic limits were required; corrected without changing physical fixture.",
+  "limitations": [
+    "Local tangent calculation only; finite stepping still holds force magnitudes per interval",
+    "Linear pressure zero limit does not certify full geometry or nonlinear evolution",
+    "World adapter rejects edge Rate branches without geometric second derivative",
+    "Sustained sliding and general rotating supports remain unfinished"
+  ],
+  "pushed": false
+}

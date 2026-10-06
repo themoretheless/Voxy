@@ -1,0 +1,34 @@
+{
+  "full_release_regression": {
+    "passed": 1922,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "format_and_diff_check": "passed",
+  "focused_tests": {
+    "rigid_motion": 12,
+    "spin_path": 7
+  },
+  "source_sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "ef58e07981bb1311bdc82571834106b35fc7c3b07b99853c35c6d037d5405668",
+    "crates/physics/src/spin_path.rs": "07b199ca1c2f9053385d2dcae8d8f991ed61bffaadc1075efc9109d4ca257cc4",
+    "crates/physics/src/rigid_motion.rs": "4a97c64b7e2111bc8b611ac7f01288acdb8002614f9aad8136151f61cd0bb83d",
+    "crates/physics/tests/rigid_motion.rs": "02f3f53a1aa66ffb8dc4adf8efdcdb5d272d5e96f0b928b4839decbb45153822",
+    "crates/physics/tests/spin_path.rs": "14745876944937783957053715da259f3b31a8b9dd8cf73eab1a4e924fefd353"
+  },
+  "qualification": [
+    "Polynomial momentum at arbitrary prefixes with analytic spherical attitude",
+    "Independent time-dependent anisotropic RK4 attitude and refinement",
+    "Moving reciprocal arm cancels frozen-arm couple",
+    "Same-path polynomial work and signed integration residual",
+    "Impact remainder law rebased to actual event time",
+    "Constant-torque API compatibility and adaptive budget rejection"
+  ],
+  "limitations": [
+    "Scene support integration still uses frozen wrenches",
+    "Moving support requires evolving coupled reaction forces and geometry ownership",
+    "Model rotational bounds are not directed arithmetic certificates"
+  ],
+  "pushed": false
+}

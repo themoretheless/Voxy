@@ -1,0 +1,18 @@
+{
+  "full_release_regression": {
+    "passed": 1918,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "format_and_diff_check": "passed",
+  "primitive_tests": "10 passed",
+  "supported_scene_tests": "5 passed",
+  "initial_test_compile_error": "retained; removed unavailable test-only vector dependency",
+  "limitations": [
+    "Continuous support reaction angular impulse only; impacts excluded",
+    "Frozen-arm balance residual is diagnostic, not an integration admission certificate",
+    "Finite-body sliding and significant rotating supports remain restricted"
+  ],
+  "pushed": false
+}

@@ -427,3 +427,12 @@ fn add_wrench(a: ContactWrench, b: ContactWrench) -> ContactWrench {
         torque: add(a.torque, b.torque),
     }
 }
+
+#[path = "reaction_rate.rs"]
+mod rate;
+pub use rate::{
+    NetworkReactionRate, ReactionRateConfig, SupportMotion, normal_gap_jerk,
+    resolve_normal_reaction_rate_network,
+};
+
+pub(crate) use rate::resolve_rate_from_baseline;

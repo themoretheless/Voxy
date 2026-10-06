@@ -4,9 +4,10 @@ use crate::{astrophysics_spin::Spin, gravity::Body};
 type Vector = [f64; 3];
 mod reaction;
 pub use reaction::{
-    ContactWrench, NetworkReaction, NetworkSupport, NormalReaction, NormalSupport, ReactionConfig,
-    SupportPlane, normal_gap_acceleration, resolve_normal_reaction_network,
-    resolve_normal_reactions,
+    ContactWrench, NetworkReaction, NetworkReactionRate, NetworkSupport, NormalReaction,
+    NormalSupport, ReactionConfig, ReactionRateConfig, SupportMotion, SupportPlane,
+    normal_gap_acceleration, normal_gap_jerk, resolve_normal_reaction_network,
+    resolve_normal_reaction_rate_network, resolve_normal_reactions,
 };
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
@@ -306,6 +307,33 @@ fn solve_normal_network_constraints(
     biases: &[f64],
     enforce_energy: bool,
 ) -> Result<ManifoldImpulse, Error> {
+    solve_normal_network_constraints_with_bounds(
+        bodies,
+        contacts,
+        config,
+        biases,
+        enforce_energy,
+        None,
+    )
+}
+
+/// Same indexed mass/inertia operator for nonnegative reactions and their
+/// signed tangent rates. A finite lower bound marks a unilateral rate branch;
+/// negative infinity marks an already loaded branch with a signed derivative.
+fn solve_normal_network_constraints_with_bounds(
+    bodies: &mut [ContactBody],
+    contacts: &[NetworkContact],
+    config: ManifoldConfig,
+    biases: &[f64],
+    enforce_energy: bool,
+    lower_bounds: Option<&[f64]>,
+) -> Result<ManifoldImpulse, Error> {
+    if lower_bounds.is_some_and(|bounds| {
+        bounds.len() != contacts.len() || bounds.iter().any(|x| *x != 0. && *x != f64::NEG_INFINITY)
+    }) {
+        return Err(Error::InvalidInput);
+    }
+    let lower = |i: usize| lower_bounds.map_or(0., |bounds| bounds[i]);
     if bodies.is_empty()
         || bodies.len() > 128
         || biases.len() != contacts.len()
@@ -442,8 +470,8 @@ fn solve_normal_network_constraints(
     let mut strengths = vec![0.; points.len()];
     for sweep in 1..=config.max_sweeps {
         for (index, contact) in points.iter().copied().enumerate() {
-            let next =
-                (strengths[index] - speed(&staged, contact, index)? / inverse[index]).max(0.);
+            let next = (strengths[index] - speed(&staged, contact, index)? / inverse[index])
+                .max(lower(index));
             if !next.is_finite() {
                 return Err(Error::NumericalFailure);
             }
@@ -474,16 +502,37 @@ fn solve_normal_network_constraints(
                 let cost = |u: f64, v: f64| {
                     0.5 * u * u + 0.5 * v * v + correlation * u * v - ri * u - rj * v
                 };
-                let mut best = (0., 0., 0.);
-                for (x, y) in [
-                    (ri.max(0.), 0.),
-                    (0., rj.max(0.)),
+                let mut best = if lower_bounds.is_none() {
+                    (0., 0., 0.)
+                } else {
+                    (0., 0., f64::INFINITY)
+                };
+                let candidates = [
+                    (
+                        ri.max(lower(i) * si),
+                        if lower(j).is_finite() {
+                            lower(j) * sj
+                        } else {
+                            f64::NAN
+                        },
+                    ),
+                    (
+                        if lower(i).is_finite() {
+                            lower(i) * si
+                        } else {
+                            f64::NAN
+                        },
+                        rj.max(lower(j) * sj),
+                    ),
                     (
                         (ri - correlation * rj) / determinant,
                         (rj - correlation * ri) / determinant,
                     ),
-                ] {
-                    if x >= 0. && y >= 0. && x.is_finite() && y.is_finite() {
+                ];
+                // Finite bounds here are zero; these edge candidates preserve
+                // the old unilateral block solve exactly when no rates are used.
+                for (x, y) in candidates {
+                    if x >= lower(i) * si && y >= lower(j) * sj && x.is_finite() && y.is_finite() {
                         let value = cost(x, y);
                         if value.is_finite() && value < best.2 {
                             best = (x, y, value);
@@ -503,7 +552,7 @@ fn solve_normal_network_constraints(
         let mut residual = 0_f64;
         for (index, contact) in points.iter().copied().enumerate() {
             let velocity = speed(&staged, contact, index)?;
-            residual = residual.max(if strengths[index] > 0. {
+            residual = residual.max(if strengths[index] > lower(index) {
                 velocity.abs()
             } else {
                 (-velocity).max(0.)
@@ -540,3 +589,5 @@ fn solve_normal_network_constraints(
     }
     Err(Error::Budget)
 }
+
+pub(crate) use reaction::resolve_rate_from_baseline;

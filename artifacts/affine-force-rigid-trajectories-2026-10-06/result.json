@@ -1,0 +1,42 @@
+{
+  "full_release_regression": {
+    "passed": 1932,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "format_and_diff_check": "passed",
+  "source_sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "ef58e07981bb1311bdc82571834106b35fc7c3b07b99853c35c6d037d5405668",
+    "crates/physics/src/contact.rs": "34423548cadd11bc290a06a5c210e775136b68dabb848489cc7dbb4d9e60a5f9",
+    "crates/physics/src/contact/reaction.rs": "e109950b53c3db98e3966c075bbe67bfbce53344de9083fcee2382d1bf2865ae",
+    "crates/physics/src/liquid.rs": "f64afc68a8bc1411ee484f3760ee1a2a1c99fdfccde60a17637a162c7ded1a69",
+    "crates/physics/src/liquid/multi_body.rs": "0c305ca9d545d10e7a605ab02f93b475f4b93dbe4480707b5b799c665f4719a5",
+    "crates/physics/src/liquid/support_world.rs": "1c05d03c47a1a4d135e7b726950bf4d2fa4a9b9803de60ca5275c327215c66d9",
+    "crates/physics/src/rigid_motion.rs": "b5922a801344157b7d3f2cec56dd891ea2ba469c925f23501f94ba930860d7a8",
+    "crates/physics/src/spin_path.rs": "07b199ca1c2f9053385d2dcae8d8f991ed61bffaadc1075efc9109d4ca257cc4",
+    "crates/physics/tests/rigid_motion.rs": "313971a428cf6cecb36f63f107ce678929aec229784079bab151dd733d030db8",
+    "crates/physics/tests/spin_path.rs": "14745876944937783957053715da259f3b31a8b9dd8cf73eab1a4e924fefd353",
+    "crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs": "8a238f1bb5d256579d9b6b8f68d7be5ea5c3744c2123f0de03310daa39d8304d",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "748152d3c38b332e91844a85ab55a094d814f7feb9441211ab8e92a62551c860",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "e8afe7120ccb848b537c293735c9f7bcfd0fd8b8872a0fc404cd7058f3f899dc",
+    "crates/physics/src/contact/reaction_rate.rs": "a524df4b4d1c6450fa0c75f4239686a40dcaa6c07c8bbb3f588dfc7c76c39131",
+    "crates/physics/tests/reaction_rates.rs": "2dcf7c4acbab4357938083535b52996fc02342d740f4d29a80243bfcd391e558"
+  },
+  "qualification": [
+    "Cubic COM and quadratic velocity under affine force",
+    "Independent Gaussian power and orbital angular impulse on arbitrary prefixes",
+    "Momentum and signed energy residual on same prepared path",
+    "Force/torque law rebasing at impact with immutable originals",
+    "Invalid force law and interior energy overflow rejection",
+    "Scene backend refuses unsupported cubic paths with zero initial acceleration"
+  ],
+  "retained_initial_compile_failure": "Scene test missed LiquidBodyWorld trait import; fixed without changing physical assertions.",
+  "limitations": [
+    "No real-arithmetic interval certificate",
+    "Current geometry backends explicitly reject cubic force paths",
+    "Reaction pressure derivatives not yet integrated into finite scene stepping",
+    "Sustained sliding and general rotating supports remain unfinished"
+  ],
+  "pushed": false
+}

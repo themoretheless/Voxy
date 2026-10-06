@@ -290,6 +290,9 @@ pub(crate) struct SpinPathHit {
     pub time_s: f64,
     pub normal: Option<DVec3>,
     pub model_error_m: f64,
+    /// Floating nominal gap budget emitted by this exact advancement query.
+    /// Separate from the true-orbit model error.
+    pub nominal_tolerance_m: f64,
 }
 /// Shape is attached to the principal Spin frame around the center of mass.
 /// Translation is constant velocity here; no implicit COM/pivot substitution.
@@ -351,6 +354,7 @@ pub(crate) fn sweep_spin_path_static(
                 time_s: segment.start_s + duration * hit.fraction,
                 normal: Some(normal),
                 model_error_m: error,
+                nominal_tolerance_m: 0.,
             });
         }
     }
@@ -359,10 +363,11 @@ pub(crate) fn sweep_spin_path_static(
         time_s: path.duration(),
         normal: None,
         model_error_m: error,
+        nominal_tolerance_m: 0.,
     })
 }
 
-/// Sweep the admitted COM parabola and SpinPath together. A returned normal
+/// Sweep the admitted cubic COM path and SpinPath together. A returned normal
 /// still means possible contact under a floating model envelope, not an impact.
 pub(crate) fn sweep_rigid_motion_static(
     path: &physics::rigid_motion::RigidMotion,
@@ -414,11 +419,12 @@ pub(crate) fn sweep_rigid_motion_static(
             .map_err(|_| PhysicsError::InvalidMotion)?;
         let last = path.sample(end).map_err(|_| PhysicsError::InvalidMotion)?;
         let duration = end - start;
-        // The norm of affine velocity is convex: endpoint maxima bound the
-        // whole interval, including a translation reversal inside an arc.
-        let linear_speed = DVec3::from_array(first.motion.velocity)
-            .length()
-            .max(DVec3::from_array(last.motion.velocity).length());
+        let linear_speed = path
+            .velocity_controls(start, end)
+            .map_err(|_| PhysicsError::InvalidMotion)?
+            .into_iter()
+            .map(|v| DVec3::from_array(v).length())
+            .fold(0., f64::max);
         let speed = (linear_speed + angular_speed * radius) * duration;
         let coordinate_scale = DVec3::from_array(first.motion.position)
             .abs()
@@ -465,6 +471,7 @@ pub(crate) fn sweep_rigid_motion_static(
                 time_s: duration.mul_add(hit.fraction, start),
                 normal: Some(normal),
                 model_error_m: error,
+                nominal_tolerance_m: 0.,
             });
         }
     }
@@ -473,6 +480,7 @@ pub(crate) fn sweep_rigid_motion_static(
         time_s: path.duration(),
         normal: None,
         model_error_m: error,
+        nominal_tolerance_m: 0.,
     })
 }
 
@@ -578,10 +586,17 @@ fn sweep_rigid_motions_impl(
         let ae = sample(first, end)?;
         let be = sample(second, end)?;
         let relative = DVec3::from_array(a.motion.position) - DVec3::from_array(b.motion.position);
-        let velocity = |a: physics::contact::ContactBody, b: physics::contact::ContactBody| {
-            DVec3::from_array(a.motion.velocity) - DVec3::from_array(b.motion.velocity)
-        };
-        let linear = velocity(a, b).length().max(velocity(ae, be).length());
+        let controls_a = first
+            .velocity_controls(start, end)
+            .map_err(|_| PhysicsError::InvalidMotion)?;
+        let controls_b = second
+            .velocity_controls(start, end)
+            .map_err(|_| PhysicsError::InvalidMotion)?;
+        let linear = controls_a
+            .iter()
+            .zip(&controls_b)
+            .map(|(a, b)| (DVec3::from_array(*a) - DVec3::from_array(*b)).length())
+            .fold(0., f64::max);
         let (wa, ea) = angular(first, start);
         let (wb, eb) = angular(second, start);
         let separation = relative.length() + linear * dt + ra;
@@ -595,9 +610,10 @@ fn sweep_rigid_motions_impl(
         if !speed.is_finite() || !error.is_finite() {
             return Err(PhysicsError::InvalidMotion);
         }
-        let absolute_motion = [a, b, ae, be]
+        let absolute_motion = controls_a
             .iter()
-            .map(|body| DVec3::from_array(body.motion.velocity).length())
+            .chain(&controls_b)
+            .map(|v| DVec3::from_array(*v).length())
             .fold(0., f64::max)
             * dt;
         // A fixed world-axis gap can cover an entire nominal arc even when
@@ -639,6 +655,11 @@ fn sweep_rigid_motions_impl(
                 continue;
             }
         }
+        let nominal_tolerance = if nominal_contact {
+            32. * f64::EPSILON * (separation + rb + 1.)
+        } else {
+            0.
+        };
         let hit = advance_with_enclosures(
             &[&second_shape],
             |fraction| {
@@ -672,7 +693,7 @@ fn sweep_rigid_motions_impl(
             queries,
             None,
             if nominal_contact {
-                Some(32. * f64::EPSILON * (separation + rb + 1.))
+                Some(nominal_tolerance)
             } else {
                 None
             },
@@ -688,6 +709,7 @@ fn sweep_rigid_motions_impl(
                 time_s: time,
                 normal: Some(qb * normal),
                 model_error_m: error,
+                nominal_tolerance_m: nominal_tolerance,
             });
         }
     }
@@ -696,6 +718,7 @@ fn sweep_rigid_motions_impl(
         time_s: first.duration(),
         normal: None,
         model_error_m: error,
+        nominal_tolerance_m: 0.,
     })
 }
 
@@ -756,9 +779,12 @@ pub(crate) fn sweep_nominal_rigid_contact(
             center: relative,
             edges: first_shape.edges.map(|e| qb.conjugate() * (qa * e)),
         };
-        let (point, tolerance) =
-            second_shape.contact_point_relative(&local, qb.conjugate() * normal)?;
-        let point = DVec3::from_array(b.motion.position) + qb * point;
+        let (point, tolerance) = second_shape.contact_point_relative_with_error(
+            &local,
+            qb.conjugate() * normal,
+            hit.nominal_tolerance_m,
+        )?;
+        let point = DVec3::from_array(b.motion.position) + qb * (second_shape.center + point);
         let tolerance_m = tolerance + 16. * f64::EPSILON * (point.abs().max_element() + 1.);
         if !point.is_finite() || !tolerance_m.is_finite() {
             return Err(PhysicsError::ContactWitness);
@@ -838,12 +864,37 @@ fn separating_prefix(
     }
     let relative = DVec3::from_array(a.motion.position) - DVec3::from_array(b.motion.position);
     let velocity = DVec3::from_array(a.motion.velocity) - DVec3::from_array(b.motion.velocity);
-    let acceleration =
-        DVec3::from_array(first.acceleration()) - DVec3::from_array(second.acceleration());
+    let acceleration = DVec3::from_array(
+        first
+            .acceleration_at(time)
+            .map_err(|_| PhysicsError::InvalidMotion)?,
+    ) - DVec3::from_array(
+        second
+            .acceleration_at(time)
+            .map_err(|_| PhysicsError::InvalidMotion)?,
+    );
+    let acceleration_end = DVec3::from_array(
+        first
+            .acceleration_at(end)
+            .map_err(|_| PhysicsError::InvalidMotion)?,
+    ) - DVec3::from_array(
+        second
+            .acceleration_at(end)
+            .map_err(|_| PhysicsError::InvalidMotion)?,
+    );
+    let controls_a = first
+        .velocity_controls(time, end)
+        .map_err(|_| PhysicsError::InvalidMotion)?;
+    let controls_b = second
+        .velocity_controls(time, end)
+        .map_err(|_| PhysicsError::InvalidMotion)?;
+    let relative_controls = std::array::from_fn::<_, 3, _>(|k| {
+        DVec3::from_array(controls_a[k]) - DVec3::from_array(controls_b[k])
+    });
     if wa == DVec3::ZERO && wb == DVec3::ZERO {
         // A fixed supporting plane remains nonpenetrating under nonclosing
         // linear/quadratic normal motion, even while the patch slides sideways.
-        if velocity.dot(normal) >= 0. && acceleration.dot(normal) >= 0. {
+        if relative_controls.iter().all(|v| v.dot(normal) >= 0.) {
             return Ok(end);
         }
     }
@@ -855,11 +906,12 @@ fn separating_prefix(
             .map(|e| normal.dot((wa - wb).cross(*e)).abs())
             .sum::<f64>();
     let radius = shape.center.length() + shape.edges.iter().map(|e| e.length()).sum::<f64>();
-    let velocity_max = velocity
-        .length()
-        .max((velocity + acceleration * horizon).length());
+    let velocity_max = relative_controls
+        .iter()
+        .map(|v| v.length())
+        .fold(0., f64::max);
     let separation = relative.length() + velocity_max * horizon;
-    let curvature = acceleration.length()
+    let curvature = acceleration.length().max(acceleration_end.length())
         + 2. * wb.length() * velocity_max
         + wb.length_squared() * separation
         + (wa.length() + wb.length()).powi(2) * radius;

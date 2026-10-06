@@ -447,6 +447,9 @@ fn supported_shape_events(
     budget: usize,
     fixed: bool,
 ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
+    if !first.has_constant_acceleration() || !second.has_constant_acceleration() {
+        return Err(physics::liquid::Error::CollisionBackend);
+    }
     use physics::liquid::Error;
     if budget == 0
         || supports.is_empty()
@@ -873,6 +876,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         supports: &[physics::liquid::RigidSupportPoint],
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
+        if !first.has_constant_acceleration() || !second.has_constant_acceleration() {
+            return Err(physics::liquid::Error::CollisionBackend);
+        }
         supported_shape_events(
             first,
             &self.templates[i],
@@ -890,6 +896,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         supports: &[physics::liquid::RigidSupportPoint],
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
+        if !body.has_constant_acceleration() {
+            return Err(physics::liquid::Error::CollisionBackend);
+        }
         let fixed = sampling_frame([0.; 3], body.duration())?;
         let walls: Vec<_> = self.environment.0.0.iter().map(|w| w.shape).collect();
         supported_shape_events(
@@ -1138,7 +1147,11 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         if particle.initial().spin.is_some() || particle.duration() != body.duration() {
             return Err(physics::liquid::Error::InvalidCollision);
         }
-        if body.initial().spin.is_none() && particle.acceleration() == body.acceleration() {
+        if body.has_constant_acceleration()
+            && particle.has_constant_acceleration()
+            && body.initial().spin.is_none()
+            && particle.acceleration() == body.acceleration()
+        {
             let state = body.initial().motion;
             let hit = self.sweep_particle_body_contact(
                 p,
@@ -1175,7 +1188,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         if particle.initial().spin.is_some() {
             return Err(physics::liquid::Error::InvalidCollision);
         }
-        if particle.acceleration() == [0.; 3] {
+        if particle.has_constant_acceleration() && particle.acceleration() == [0.; 3] {
             return self
                 .sweep_particle_environment_contact(p, radius, particle.duration(), budget)
                 .map(Into::into);
@@ -1198,7 +1211,10 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         body: &physics::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, physics::liquid::Error> {
-        if body.initial().spin.is_none() && body.acceleration() == [0.; 3] {
+        if body.has_constant_acceleration()
+            && body.initial().spin.is_none()
+            && body.acceleration() == [0.; 3]
+        {
             let b = body.initial().motion;
             return self
                 .sweep_particle_body_contact(
@@ -1253,7 +1269,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         second: &physics::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, physics::liquid::Error> {
-        if first.initial().spin.is_none()
+        if first.has_constant_acceleration()
+            && second.has_constant_acceleration()
+            && first.initial().spin.is_none()
             && second.initial().spin.is_none()
             && first.acceleration() == [0.; 3]
             && second.acceleration() == [0.; 3]
@@ -1293,7 +1311,10 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         body: &physics::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, physics::liquid::Error> {
-        if body.initial().spin.is_none() && body.acceleration() == [0.; 3] {
+        if body.has_constant_acceleration()
+            && body.initial().spin.is_none()
+            && body.acceleration() == [0.; 3]
+        {
             let b = body.initial().motion;
             return self
                 .sweep_body_environment_contact(
@@ -2263,6 +2284,18 @@ mod tests {
         assert!(report.reaction_work.abs() < 1e-11);
         assert!(report.rigid.integration_energy_residual.abs() < 1e-11);
         assert!((report.environment_reaction_impulse[1] + 2.).abs() < 1e-11);
+        // Floor force is 20 N and x(t)=t+t². Its opposite angular impulse
+        // about the world origin integrates the moving application point.
+        let expected_moment = 20. * (0.1_f64.powi(2) / 2. + 0.1_f64.powi(3) / 3.);
+        assert!((report.reaction_angular_impulse[2] - expected_moment).abs() < 1e-11);
+        assert!((report.environment_reaction_angular_impulse[2] + expected_moment).abs() < 1e-11);
+        assert!(
+            report
+                .reaction_angular_balance_residual
+                .iter()
+                .all(|x| x.abs() < 1e-11)
+        );
+
         assert_eq!(
             report.environment_reaction_impulse,
             report.rigid.world.environment_impulse
@@ -2271,6 +2304,208 @@ mod tests {
         assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
         assert!(report.supported_intervals > 0);
         assert!(report.max_support_error_m < 1e-11);
+    }
+    #[test]
+    fn cubic_collision_detects_inside_step_motion_and_preserves_world_feature() {
+        use physics::{
+            astrophysics_spin::TorquePolynomial,
+            liquid::{GeometryHit, LiquidBodyWorld},
+        };
+        let mut scene = SceneGraph::new(2);
+        let node = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                node,
+                crate::BoxCollider {
+                    half_extents: [0.125, 1., 1.],
+                },
+            )
+            .unwrap();
+        let shape = support_box([0.125; 3]);
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![shape], vec![shape]],
+        };
+        let zero = TorquePolynomial::constant([0.; 3]);
+        for (a, j, spin) in [(36., -72., true), (0., 36., false)] {
+            let mut initial = rigid_body([-3., 0., 0.], [0.; 3], 0.);
+            if !spin {
+                initial.spin = None;
+            }
+            let path = initial
+                .prepare_affine_motion([a, 0., 0.], [j, 0., 0.], zero, 1., rigid_config())
+                .unwrap();
+            let end = path.end();
+            assert!((end.motion.position[0] - 3.).abs() < 1e-12);
+            let original = path.clone();
+            // Both endpoint poses are separated, yet the cubic path crosses the wall.
+            let event = world.sweep_rigid_environment_event(0, &path, 256).unwrap();
+            let GeometryHit::Contact { fraction, normal } = event.contact.geometry else {
+                panic!("missed cubic crossing: {event:?}");
+            };
+            let mut lo = 0.;
+            let mut hi = 1.;
+            for _ in 0..64 {
+                let mid = (lo + hi) * 0.5;
+                if -3. + a * mid * mid / 2. + j * mid * mid * mid / 6. < -0.25 {
+                    lo = mid;
+                } else {
+                    hi = mid;
+                }
+            }
+            assert!((fraction - (lo + hi) * 0.5).abs() < 1e-8);
+            assert_eq!(normal, [-1., 0., 0.]);
+            assert!((event.contact.witness.unwrap().point[0] + 0.125).abs() < 1e-8);
+            assert_eq!(
+                FeatureKey::decode(event.feature.unwrap()).unwrap().second,
+                0
+            );
+            assert!(world.sweep_rigid_environment_event(0, &path, 0).is_err());
+            assert_eq!(path, original);
+            let fixed = rigid_body([0.; 3], [0.; 3], 0.)
+                .prepare_motion([0.; 3], [0.; 3], 1., rigid_config())
+                .unwrap();
+            let pair = world
+                .sweep_rigid_pair_event(0, &path, 1, &fixed, 256)
+                .unwrap();
+            let GeometryHit::Contact {
+                fraction: pair_fraction,
+                normal: pair_normal,
+            } = pair.contact.geometry
+            else {
+                panic!("missed cubic pair");
+            };
+            assert!((pair_fraction - fraction).abs() < 1e-8);
+            assert_eq!(pair_normal, normal);
+            let compound = SceneBodyWorld {
+                environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+                templates: vec![
+                    vec![shape],
+                    vec![crate::convex::AffineBox {
+                        center: glam::DVec3::X * 0.5,
+                        ..shape
+                    }],
+                ],
+            };
+            let shifted = compound
+                .sweep_rigid_pair_event(0, &path, 1, &fixed, 256)
+                .unwrap();
+            let GeometryHit::Contact {
+                fraction: shifted_fraction,
+                ..
+            } = shifted.contact.geometry
+            else {
+                panic!("missed compound cubic pair");
+            };
+            let mut lo = 0.;
+            let mut hi = 1.;
+            for _ in 0..64 {
+                let mid = (lo + hi) * 0.5;
+                if -3. + a * mid * mid / 2. + j * mid * mid * mid / 6. < 0.25 {
+                    lo = mid;
+                } else {
+                    hi = mid;
+                }
+            }
+            assert!((shifted_fraction - (lo + hi) * 0.5).abs() < 1e-8);
+            assert!((shifted.contact.witness.unwrap().point[0] - 0.375).abs() < 1e-8);
+        }
+    }
+
+    #[test]
+    fn supported_motion_finite_sliding_transmits_moving_arm_torque_without_internal_couple() {
+        use physics::contact::ContactWrench;
+        let scene = support_floor();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![
+                vec![support_box([0.125; 3])],
+                vec![support_box([1., 0.125, 1.])],
+            ],
+        };
+        let mut liquid = Liquid::new(
+            Vec::new(),
+            vec![Material::WATER],
+            Config {
+                gravity: [0., -10., 0.],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let mut bodies = [
+            rigid_body([0., 0.375, 0.], [1., 0., 0.], 0.),
+            rigid_body([0., 0.125, 0.], [0.; 3], 0.),
+        ];
+        bodies[0].motion.mass = 2.;
+        bodies[1].motion.mass = 3.;
+        let before_query = bodies;
+        let before_liquid = liquid.clone();
+        let rate_report = liquid
+            .rigid_world_reaction_rates(
+                &bodies,
+                &world,
+                &[ContactWrench::default(); 2],
+                &[ContactWrench::default(); 2],
+                Default::default(),
+                physics::contact::ReactionRateConfig {
+                    reaction: physics::liquid::SupportedWorldConfig::default().reaction,
+                    jerk_tolerance: 1e-10,
+                },
+            )
+            .unwrap();
+        let rates = rate_report.rate.as_ref().unwrap();
+        for wrench in &rates.wrenches_rate {
+            assert!(
+                wrench
+                    .force
+                    .iter()
+                    .chain(&wrench.torque)
+                    .all(|x| x.abs() < 1e-9)
+            );
+        }
+        let floor_moment_rate: f64 = rate_report
+            .reactions
+            .supports
+            .iter()
+            .zip(&rates.forces_rate)
+            .filter(|(s, _)| s.second.is_none())
+            .map(|(s, f)| s.support.contact.point[0] * f[1] - s.support.contact.point[1] * f[0])
+            .sum();
+        assert!((floor_moment_rate - 20.).abs() < 1e-9);
+        assert!(
+            rate_report
+                .environment_force_rate
+                .iter()
+                .all(|x| x.abs() < 1e-9)
+        );
+        assert_eq!(bodies, before_query);
+        assert_eq!(liquid, before_liquid);
+        let dt = 1e-4;
+        let admission = physics::liquid::SupportedWorldConfig::default();
+        let report = liquid
+            .step_with_supported_rigid_body_forces(
+                dt,
+                &mut bodies,
+                &world,
+                Default::default(),
+                2,
+                rigid_config(),
+                &[ContactWrench::default(); 2],
+                admission,
+            )
+            .unwrap();
+        assert!((bodies[0].motion.position[0] - dt).abs() < 1e-12);
+        // Moving top application point imposes -20t torque on the lower body.
+        assert!((bodies[1].spin.unwrap().angular_momentum[2] + 10. * dt * dt).abs() < 1e-12);
+        assert!(
+            report
+                .reaction_angular_balance_residual
+                .iter()
+                .all(|x| x.abs() < 1e-12)
+        );
+        assert!((report.environment_reaction_impulse[1] + 50. * dt).abs() < 1e-12);
+        assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+        assert!(report.max_support_error_m <= admission.max_geometry_error_m);
     }
     #[test]
     fn supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping() {
