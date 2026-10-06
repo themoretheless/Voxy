@@ -515,3 +515,253 @@ fn inelastic_patch_impulses_use_shared_event_ledger_and_malformed_patch_rolls_ba
     );
     assert_eq!((liquid, bodies), (original, initial));
 }
+
+struct ClearPointWorld;
+impl LiquidBodyWorld for ClearPointWorld {
+    fn sweep_particle_body(
+        &self,
+        _: &Particle,
+        _: f64,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_body_pair(
+        &self,
+        _: usize,
+        _: &TranslatingBody,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_particle_environment(
+        &self,
+        _: &Particle,
+        _: f64,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_body_environment(
+        &self,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_rigid_environment_contact(
+        &self,
+        _: usize,
+        _: &physics::rigid_motion::RigidMotion,
+        _: usize,
+    ) -> Result<BodyGeometryHit, Error> {
+        Ok(GeometryHit::Clear.into())
+    }
+}
+#[test]
+fn point_load_world_matches_prepared_motion_and_work_and_rejects_atomically() {
+    use physics::rigid_motion::{MaterialPointForce, MotionLoad};
+    let initial = body([0.; 3], [0.; 3], 0.3);
+    let points = vec![
+        MaterialPointForce {
+            local: [1., 0., 0.],
+            force: [0., 2., 0.],
+            force_rate: [0., 0.3, 0.],
+        },
+        MaterialPointForce {
+            local: [-1., 0., 0.],
+            force: [0., -2., 0.],
+            force_rate: [0., -0.3, 0.],
+        },
+    ];
+    let dt = 0.04;
+    let reference = initial
+        .prepare_material_load_motion(points.iter().copied(), [MotionLoad::zero()], dt, rotation())
+        .unwrap();
+    let mut liquid = fluid(Vec::new());
+    let mut bodies = [initial];
+    let report = liquid
+        .step_with_rigid_body_point_forces(
+            dt,
+            &mut bodies,
+            &ClearPointWorld,
+            config(),
+            1,
+            rotation(),
+            &[Default::default()],
+            &[points.clone()],
+        )
+        .unwrap();
+    assert_eq!(bodies[0], reference.end());
+    let work = reference.work(dt).unwrap();
+    assert!((report.external_work - work.force_work - work.torque_work).abs() < 1e-12);
+    assert!((report.integration_energy_residual - work.energy_residual).abs() < 1e-12);
+    let saved = (liquid.clone(), bodies);
+    let mut invalid = points;
+    invalid[0].force[0] = f64::NAN;
+    assert!(
+        liquid
+            .step_with_rigid_body_point_forces(
+                dt,
+                &mut bodies,
+                &ClearPointWorld,
+                config(),
+                1,
+                rotation(),
+                &[Default::default()],
+                &[invalid]
+            )
+            .is_err()
+    );
+    assert_eq!((liquid, bodies), saved);
+}
+
+struct MovingSupportWorld;
+impl LiquidBodyWorld for MovingSupportWorld {
+    fn sweep_particle_body(
+        &self,
+        _: &Particle,
+        _: f64,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_body_pair(
+        &self,
+        _: usize,
+        _: &TranslatingBody,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_particle_environment(
+        &self,
+        _: &Particle,
+        _: f64,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_body_environment(
+        &self,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_rigid_environment_contact(
+        &self,
+        _: usize,
+        _: &physics::rigid_motion::RigidMotion,
+        _: usize,
+    ) -> Result<BodyGeometryHit, Error> {
+        Ok(GeometryHit::Clear.into())
+    }
+    fn rigid_environment_support_contacts(
+        &self,
+        _: usize,
+        _: &ContactBody,
+        _: usize,
+    ) -> Result<Vec<physics::liquid::RigidSupportPoint>, Error> {
+        Ok(vec![physics::liquid::RigidSupportPoint {
+            support: physics::contact::NormalSupport {
+                contact: physics::contact::NormalContact {
+                    point: [1., 0., 0.],
+                    normal: [0., 1., 0.],
+                },
+                plane: physics::contact::SupportPlane::World,
+            },
+            feature: Some(1),
+            tolerance_m: 1e-12,
+            admission_error_m: 0.,
+            carrying_reaction: false,
+        }])
+    }
+    fn rigid_support_point_velocity(
+        &self,
+        bodies: &[ContactBody],
+        support: physics::contact::NetworkSupport,
+        _: physics::liquid::RigidSupportPoint,
+    ) -> Result<[f64; 3], Error> {
+        bodies[support.first]
+            .point_velocity(support.support.contact.point)
+            .map_err(|_| Error::InvalidCollision)
+    }
+}
+#[test]
+fn reaction_rate_query_uses_geometry_owned_common_point_velocity() {
+    use physics::contact::{
+        ContactWrench, ReactionConfig, ReactionRateConfig, SupportMotion,
+        resolve_normal_reaction_rate_network,
+    };
+    let liquid = fluid(Vec::new());
+    let state = body([0.; 3], [0., -0.2, 0.], 0.2);
+    let load = ContactWrench {
+        force: [0., -9.81, 0.],
+        torque: [0.; 3],
+    };
+    let rate = ReactionRateConfig {
+        reaction: ReactionConfig {
+            max_sweeps: 8192,
+            acceleration_tolerance: 1e-11,
+            normal_velocity_tolerance: 1e-10,
+        },
+        jerk_tolerance: 1e-10,
+    };
+    let saved = liquid.clone();
+    let report = liquid
+        .rigid_world_reaction_rates(
+            &[state],
+            &MovingSupportWorld,
+            &[load],
+            &[ContactWrench::default()],
+            config(),
+            rate,
+        )
+        .unwrap();
+    let expected = resolve_normal_reaction_rate_network(
+        &[state],
+        &report.reactions.supports,
+        &[load],
+        &[ContactWrench::default()],
+        &[SupportMotion {
+            point_velocity: [0.; 3],
+            normal_acceleration: None,
+        }],
+        rate,
+    )
+    .unwrap();
+    let frozen = resolve_normal_reaction_rate_network(
+        &[state],
+        &report.reactions.supports,
+        &[load],
+        &[ContactWrench::default()],
+        &[SupportMotion {
+            point_velocity: state.motion.velocity,
+            normal_acceleration: None,
+        }],
+        rate,
+    )
+    .unwrap();
+    assert!((expected.forces_rate[0][1] - frozen.forces_rate[0][1]).abs() > 1e-6);
+    assert_eq!(report.rate.as_ref().unwrap(), &expected);
+    assert_eq!(liquid, saved);
+}

@@ -298,7 +298,8 @@ pub struct RigidWorldReactionRates {
 }
 impl Liquid {
     /// Use the same snapshot geometry, owner indices and coupled baseline solve.
-    /// Common point motion follows first COM, matching supported stepping.
+    /// Common point motion is supplied by geometry; the compatibility default
+    /// follows first COM. Supported stepping retains its frozen-arm convention.
     /// Edge Rate branches need a geometry second derivative and reject here.
     pub fn rigid_world_reaction_rates(
         &self,
@@ -337,7 +338,8 @@ impl Liquid {
                 .zip(&reactions.geometry)
                 .map(|(s, geometry)| {
                     Ok(crate::contact::SupportMotion {
-                        point_velocity: bodies[s.first].motion.velocity,
+                        point_velocity: world
+                            .rigid_support_point_velocity(bodies, *s, *geometry)?,
                         normal_acceleration: world
                             .rigid_support_normal_acceleration(bodies, &total, *s, *geometry)?,
                     })

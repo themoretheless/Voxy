@@ -325,6 +325,22 @@ pub trait LiquidBodyWorld {
     ) -> Result<Vec<crate::contact::NormalContact>, Error> {
         self.rigid_environment_patch(index, body, witness, normal, budget)
     }
+    /// World velocity of the geometry-owned common application point.
+    /// The compatibility default freezes its world arm relative to first COM.
+    /// Moving feature owners must override this; the first material point is
+    /// not automatically the owner of a clipped/common contact point.
+    fn rigid_support_point_velocity(
+        &self,
+        bodies: &[crate::contact::ContactBody],
+        support: crate::contact::NetworkSupport,
+        _geometry: RigidSupportPoint,
+    ) -> Result<[f64; 3], Error> {
+        bodies
+            .get(support.first)
+            .map(|body| body.motion.velocity)
+            .ok_or(Error::InvalidCollision)
+    }
+
     /// Geometry-owned second derivative for the exact emitted normal branch.
     /// Non-edge owners are derived by the shared contact kernel.
     fn rigid_support_normal_acceleration(
@@ -730,6 +746,8 @@ pub(super) fn solve(
         [0.; 3],
         &mut work,
         None,
+        None,
+        0.,
     )?;
     for (body, state) in bodies.iter_mut().zip(rigid) {
         body.position = state.motion.position;
@@ -751,6 +769,8 @@ fn solve_contact(
     particle_acceleration: [f64; 3],
     work: &mut RigidWork,
     supported: Option<super::SupportedWorldConfig>,
+    point_loads: Option<&[Vec<crate::rigid_motion::MaterialPointForce>]>,
+    load_offset: f64,
 ) -> Result<(), Error> {
     if forces.len() != bodies.len() {
         return Err(Error::InvalidCollision);
@@ -976,35 +996,51 @@ fn solve_contact(
             .iter()
             .enumerate()
             .map(|(index, n)| {
-                let wrench = if index < count {
-                    crate::contact::ContactWrench {
-                        force: particle_acceleration.map(|a| a * n.mass),
-                        torque: [0.; 3],
-                    }
-                } else {
-                    effective[index - count]
-                };
-                let mut torque =
-                    crate::astrophysics_spin::TorquePolynomial::constant(wrench.torque);
-                if index >= count {
-                    torque.rate = reaction_torques[index - count].rate;
-                    torque.acceleration = reaction_torques[index - count].acceleration;
-                    torque.jerk = reaction_torques[index - count].jerk;
-                    torque.snap = reaction_torques[index - count].snap;
-                }
-                n.contact()
-                    .prepare_affine_motion(
-                        wrench.force,
-                        if index < count {
-                            [0.; 3]
-                        } else {
-                            force_rates[index - count]
+                use crate::rigid_motion::MotionLoad;
+                let loads = if index < count {
+                    [
+                        MotionLoad {
+                            force: particle_acceleration.map(|a| a * n.mass),
+                            ..MotionLoad::zero()
                         },
-                        torque,
-                        horizon,
-                        rotation,
-                    )
-                    .map_err(|_| Error::NumericalFailure)
+                        MotionLoad::zero(),
+                    ]
+                } else {
+                    let owner = index - count;
+                    let external = forces[owner];
+                    let reaction = support_report
+                        .as_ref()
+                        .and_then(|r| r.reaction.as_ref())
+                        .map_or(crate::contact::ContactWrench::default(), |r| {
+                            r.wrenches[owner]
+                        });
+                    [
+                        MotionLoad {
+                            force: external.force,
+                            torque: crate::astrophysics_spin::TorquePolynomial::constant(
+                                external.torque,
+                            ),
+                            ..MotionLoad::zero()
+                        },
+                        MotionLoad {
+                            force: reaction.force,
+                            force_rate: force_rates[owner],
+                            torque: reaction_torques[owner],
+                        },
+                    ]
+                };
+                let prepared = if index >= count && point_loads.is_some() {
+                    let points = point_loads.unwrap()[index - count]
+                        .iter()
+                        .map(|point| point.shifted(load_offset + dt - remaining))
+                        .collect::<Result<Vec<_>, _>>()
+                        .map_err(|_| Error::NumericalFailure)?;
+                    n.contact()
+                        .prepare_material_load_motion(points, loads, horizon, rotation)
+                } else {
+                    n.contact().prepare_load_motion(loads, horizon, rotation)
+                };
+                prepared.map_err(|_| Error::NumericalFailure)
             })
             .collect::<Result<_, _>>()?;
         let interval_duration = horizon;
@@ -1223,9 +1259,27 @@ fn solve_contact(
                 for k in 0..3 {
                     work.reaction_angular_impulse[k] += angular[k];
                 }
-                work.external += force + torque;
+                let mut point_work = 0.;
+                if let Some(loads) = point_loads {
+                    for point in &loads[index - count] {
+                        let point = point
+                            .shifted(load_offset + dt - remaining)
+                            .map_err(|_| Error::NumericalFailure)?;
+                        point_work += paths[index]
+                            .material_point_force_work(
+                                time,
+                                point.local,
+                                point.force,
+                                point.force_rate,
+                            )
+                            .map_err(|_| Error::NumericalFailure)?
+                            .total_work;
+                    }
+                }
+                work.external += force + torque + point_work;
                 work.reaction += rf + rt;
-                work.residual += change.kinetic_energy_change - force - torque - rf - rt;
+                work.residual +=
+                    change.kinetic_energy_change - force - torque - point_work - rf - rt;
             }
             if index >= count || particle_acceleration != [0.; 3] {
                 n.update(
@@ -1562,7 +1616,7 @@ impl Liquid {
         additional: &[crate::contact::ContactWrench],
     ) -> Result<RigidWorldReport, Error> {
         self.step_rigid_forces(
-            dt, bodies, world, config, max_bodies, rotation, additional, None,
+            dt, bodies, world, config, max_bodies, rotation, additional, None, None,
         )
         .map(|report| report.rigid)
     }
@@ -1591,7 +1645,36 @@ impl Liquid {
             rotation,
             additional,
             Some(supported),
+            None,
         )
+    }
+
+    /// Own-body material-point forces in the shared transactional contact loop.
+    /// Input recipes start at this tick's origin; supported pressure coupling
+    /// is not included by this entry point.
+    pub fn step_with_rigid_body_point_forces(
+        &mut self,
+        dt: f64,
+        bodies: &mut [crate::contact::ContactBody],
+        world: &impl LiquidBodyWorld,
+        config: DynamicWorldConfig,
+        max_bodies: usize,
+        rotation: crate::spin_path::Config,
+        additional: &[crate::contact::ContactWrench],
+        points: &[Vec<crate::rigid_motion::MaterialPointForce>],
+    ) -> Result<RigidWorldReport, Error> {
+        self.step_rigid_forces(
+            dt,
+            bodies,
+            world,
+            config,
+            max_bodies,
+            rotation,
+            additional,
+            None,
+            Some(points),
+        )
+        .map(|report| report.rigid)
     }
 
     fn step_rigid_forces(
@@ -1604,7 +1687,21 @@ impl Liquid {
         rotation: crate::spin_path::Config,
         additional: &[crate::contact::ContactWrench],
         supported: Option<super::SupportedWorldConfig>,
+        point_loads: Option<&[Vec<crate::rigid_motion::MaterialPointForce>]>,
     ) -> Result<SupportedWorldReport, Error> {
+        if let Some(loads) = point_loads {
+            if loads.len() != bodies.len() || supported.is_some() {
+                return Err(Error::InvalidCollision);
+            }
+            for (points, body) in loads.iter().zip(bodies.iter()) {
+                for point in points {
+                    point.shifted(dt).map_err(|_| Error::InvalidCollision)?;
+                    if body.spin.is_none() && point.local != [0.; 3] {
+                        return Err(Error::InvalidCollision);
+                    }
+                }
+            }
+        }
         config.contact.validate()?;
         if additional.len() != bodies.len()
             || additional.iter().zip(bodies.iter()).any(|(w, b)| {
@@ -1628,6 +1725,7 @@ impl Liquid {
         let forces = super::support_world::world_wrenches(bodies, additional, gravity)?;
         let mut work = RigidWork::default();
         let empty = self.particles.is_empty();
+        let mut load_elapsed = 0.;
         let fluid = candidate.advance(dt, None, |particles, time| {
             // SPH has already kicked pressure, viscosity and gravity. Retain
             // the first two operators, but put uniform gravity on the same
@@ -1651,7 +1749,11 @@ impl Liquid {
                 gravity,
                 &mut work,
                 supported,
-            )
+                point_loads,
+                load_elapsed,
+            )?;
+            load_elapsed += time;
+            Ok(())
         })?;
         if empty {
             solve_contact(
@@ -1667,6 +1769,8 @@ impl Liquid {
                 gravity,
                 &mut work,
                 supported,
+                point_loads,
+                0.,
             )?;
         }
         *self = candidate;

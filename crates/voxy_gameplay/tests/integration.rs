@@ -3152,3 +3152,48 @@ fn rigid_path_publication_reserve_keeps_rounded_pose_outside_wall_without_callba
     assert!(published > before.translation.x);
     assert!(!input.state("jump").unwrap().pressed);
 }
+
+#[test]
+fn durable_point_loads_reload_without_runtime_state_and_reject_silent_play() {
+    let mut registry = ComponentRegistry::default();
+    voxy_gameplay::register_components(&mut registry).unwrap();
+    let payload = serde_json::json!({"points":[{"root_point_m":[0.3,-0.4,0.2],"world_force_n":[1.,2.,3.],"world_force_rate_n_s":[0.1,-0.2,0.3]}]});
+    let document = SceneDocument {
+        version: 1,
+        objects: vec![SceneObject {
+            id: ObjectId("loaded-body".into()),
+            parent: None,
+            name: "Loaded body".into(),
+            active: true,
+            translation: [0.; 3],
+            rotation: [0., 0., 0., 1.],
+            scale: [1.; 3],
+            components: std::collections::BTreeMap::from([(
+                "game.rigid-point-loads.v1".into(),
+                payload.clone(),
+            )]),
+        }],
+    };
+    let loaded = document.load(&registry, 4).unwrap();
+    let captured = loaded.capture(&registry).unwrap();
+    assert_eq!(
+        captured.objects[0].components["game.rigid-point-loads.v1"],
+        payload
+    );
+    let restored = captured.load(&registry, 4).unwrap();
+    let owner = restored.resolve(&ObjectId("loaded-body".into())).unwrap();
+    let loads = restored
+        .graph
+        .component::<voxy_gameplay::RigidPointLoads>(owner)
+        .unwrap()
+        .unwrap();
+    assert_eq!(loads.points.len(), 1);
+    assert!(
+        voxy_gameplay::validate_game_descriptors(&restored.graph, 4)
+            .unwrap_err()
+            .contains("point-load")
+    );
+    let mut malformed = payload;
+    malformed["runtime_velocity"] = serde_json::json!([1., 2., 3.]);
+    assert!(serde_json::from_value::<voxy_gameplay::RigidPointLoads>(malformed).is_err());
+}

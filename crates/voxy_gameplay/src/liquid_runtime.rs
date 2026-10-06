@@ -27,6 +27,8 @@ struct BodyOwner {
     mass_descriptor: Option<crate::LiquidMassDistribution>,
     mass_properties: Option<physics::mass_properties::MassProperties>,
     rigid_frame: Option<crate::RigidBodyFrame>,
+    point_loads: Option<crate::RigidPointLoads>,
+    point_elapsed_s: f64,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -711,6 +713,50 @@ fn contact_patch_points_with_error(
     }
 }
 impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
+    fn rigid_support_point_velocity(
+        &self,
+        bodies: &[physics::contact::ContactBody],
+        support: physics::contact::NetworkSupport,
+        geometry: physics::liquid::RigidSupportPoint,
+    ) -> Result<[f64; 3], physics::liquid::Error> {
+        use physics::liquid::Error;
+        let key = FeatureKey::decode(geometry.feature.ok_or(Error::CollisionBackend)?)?;
+        let first = *bodies.get(support.first).ok_or(Error::InvalidCollision)?;
+        let shape = *self
+            .templates
+            .get(support.first)
+            .and_then(|shapes| shapes.get(key.first))
+            .ok_or(Error::InvalidCollision)?;
+        let (second, obstacle) = if let Some(index) = support.second {
+            (
+                Some(*bodies.get(index).ok_or(Error::InvalidCollision)?),
+                *self
+                    .templates
+                    .get(index)
+                    .and_then(|shapes| shapes.get(key.second))
+                    .ok_or(Error::InvalidCollision)?,
+            )
+        } else {
+            (
+                None,
+                self.environment
+                    .0
+                    .0
+                    .get(key.second)
+                    .ok_or(Error::InvalidCollision)?
+                    .shape,
+            )
+        };
+        rigid_support::point_velocity(
+            first,
+            shape,
+            second,
+            obstacle,
+            support.support.contact.point,
+            geometry.tolerance_m + geometry.admission_error_m,
+        )
+    }
+
     fn rigid_support_normal_acceleration(
         &self,
         bodies: &[physics::contact::ContactBody],
@@ -1552,6 +1598,15 @@ impl SceneLiquidRuntime {
                 return Err("mass distribution requires a liquid body owner".into());
             }
         }
+        for (node, _) in scene.components::<crate::RigidPointLoads>() {
+            if scene
+                .component::<crate::LiquidBody>(node)
+                .map_err(|e| format!("point load owner: {e:?}"))?
+                .is_none()
+            {
+                return Err("point loads require a liquid body owner".into());
+            }
+        }
         let owners: Vec<_> = scene.components::<crate::LiquidBody>().collect();
         if owners.len() > 128 {
             return Err("scene liquid translating-body budget exceeded (128)".into());
@@ -1630,6 +1685,17 @@ impl SceneLiquidRuntime {
                         spin: None,
                     }
                 };
+                let point_loads = scene
+                    .component::<crate::RigidPointLoads>(*node)
+                    .map_err(|e| format!("point load descriptor: {e:?}"))?
+                    .cloned();
+                if let Some(loads) = &point_loads {
+                    loads.prepare(
+                        rigid_frame.ok_or("point loads require an explicit rigid mass frame")?,
+                        0.,
+                        128,
+                    )?;
+                }
                 let mut owner = BodyOwner {
                     node: *node,
                     descriptor: **descriptor,
@@ -1640,6 +1706,8 @@ impl SceneLiquidRuntime {
                     mass_descriptor,
                     mass_properties,
                     rigid_frame,
+                    point_loads,
+                    point_elapsed_s: 0.,
                 };
                 if let (Some(properties), Some(spin)) = (owner.mass_properties, owner.state.spin) {
                     let inverse = glam::DQuat::from_array(spin.orientation).conjugate();
@@ -1722,6 +1790,20 @@ impl SceneLiquidRuntime {
             })
         {
             return Err("liquid source ownership or descriptor changed; rebind runtime".into());
+        }
+        let point_descriptors: BTreeMap<_, _> =
+            scene.components::<crate::RigidPointLoads>().collect();
+        if point_descriptors.len()
+            != self
+                .body
+                .iter()
+                .filter(|body| body.point_loads.is_some())
+                .count()
+            || self.body.iter().any(|body| {
+                point_descriptors.get(&body.node).map(|v| &**v) != body.point_loads.as_ref()
+            })
+        {
+            return Err("point load ownership or descriptor changed; rebind runtime".into());
         }
         let bodies: Vec<_> = scene.components::<crate::LiquidBody>().collect();
         if bodies.len() != self.body.len() {
@@ -1978,6 +2060,43 @@ impl SceneLiquidRuntime {
             used.push(index);
             wrenches[index] = *wrench;
         }
+        for (index, owner_index) in active.iter().enumerate() {
+            let owner = &self.body[*owner_index];
+            if let Some(loads) = &owner.point_loads {
+                let points = loads.prepare(
+                    owner.rigid_frame.ok_or("point load mass frame missing")?,
+                    owner.point_elapsed_s,
+                    128,
+                )?;
+                let moment = physics::rigid_motion::MaterialForceMoment::aggregate(points)
+                    .map_err(|e| format!("point load resultant: {e:?}"))?;
+                let orientation = states[index]
+                    .spin
+                    .ok_or("point loads require intrinsic rotation")?
+                    .orientation;
+                let torque = moment
+                    .torque_at(orientation, 0.)
+                    .map_err(|e| format!("point load moment: {e:?}"))?;
+                let old = wrenches[index];
+                let total = physics::rigid_motion::MotionLoad::aggregate([
+                    physics::rigid_motion::MotionLoad {
+                        force: old.force,
+                        torque: physics::astrophysics_spin::TorquePolynomial::constant(old.torque),
+                        ..physics::rigid_motion::MotionLoad::zero()
+                    },
+                    physics::rigid_motion::MotionLoad {
+                        force: moment.force,
+                        torque: physics::astrophysics_spin::TorquePolynomial::constant(torque),
+                        ..physics::rigid_motion::MotionLoad::zero()
+                    },
+                ])
+                .map_err(|e| format!("support load aggregation: {e:?}"))?;
+                wrenches[index] = physics::contact::ContactWrench {
+                    force: total.force,
+                    torque: total.torque.value,
+                };
+            }
+        }
         let reactions = self
             .liquid
             .rigid_world_reactions(&states, &world, &wrenches, limits, config)
@@ -2084,6 +2203,23 @@ impl SceneLiquidRuntime {
             );
         }
         let (world, active, mut states) = candidate.mechanical_world(scene)?;
+        let point_loads = active
+            .iter()
+            .map(|index| {
+                let owner = &candidate.body[*index];
+                owner.point_loads.as_ref().map_or(Ok(Vec::new()), |loads| {
+                    loads.prepare(
+                        owner.rigid_frame.ok_or("point load mass frame missing")?,
+                        owner.point_elapsed_s,
+                        128,
+                    )
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        let has_points = point_loads.iter().any(|points| !points.is_empty());
+        if has_points && supports.is_some() {
+            return Err("supported pressure under rotating point loads is not yet admitted".into());
+        }
         let mut support_report = None;
         let (physics, dynamics) = if states.is_empty() {
             (
@@ -2111,6 +2247,22 @@ impl SceneLiquidRuntime {
                     .map_err(|e| format!("scene supported liquid body step: {e:?}"))?;
                 support_report = Some(report);
                 report.rigid.world
+            } else if has_points {
+                let additional = vec![physics::contact::ContactWrench::default(); states.len()];
+                candidate
+                    .liquid
+                    .step_with_rigid_body_point_forces(
+                        dt,
+                        &mut states,
+                        &world,
+                        dynamics,
+                        128,
+                        rotation,
+                        &additional,
+                        &point_loads,
+                    )
+                    .map_err(|e| format!("scene point load step: {e:?}"))?
+                    .world
             } else {
                 candidate
                     .liquid
@@ -2119,6 +2271,12 @@ impl SceneLiquidRuntime {
             };
             for (owner, state) in active.into_iter().zip(states) {
                 candidate.body[owner].state = state;
+                if candidate.body[owner].point_loads.is_some() {
+                    candidate.body[owner].point_elapsed_s += dt;
+                    if !candidate.body[owner].point_elapsed_s.is_finite() {
+                        return Err("point load clock overflow".into());
+                    }
+                }
             }
             (report.dynamics.fluid, Some(report))
         };
@@ -3040,6 +3198,57 @@ mod tests {
                 Default::default(),
                 support_query_config(),
             )
+            .unwrap();
+        let equivalent = runtime
+            .support_reactions(
+                &scene,
+                &[(
+                    body,
+                    ContactWrench {
+                        force: [2.4, -3.8, 0.],
+                        torque: [0., 0., 10. - 0.86],
+                    },
+                )],
+                Default::default(),
+                support_query_config(),
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                body,
+                crate::RigidPointLoads {
+                    points: vec![crate::RigidPointForce {
+                        root_point_m: [0.1, 0.2, 0.],
+                        world_force_n: [2., -3., 0.],
+                        world_force_rate_n_s: [1., -2., 0.],
+                    }],
+                },
+            )
+            .unwrap();
+        let mut loaded_runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [-10., -15., 0.],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        loaded_runtime.body[0].point_elapsed_s = 0.4;
+        let loaded_before = loaded_runtime.clone();
+        let loaded_report = loaded_runtime
+            .support_reactions(
+                &scene,
+                &[(body, torque)],
+                Default::default(),
+                support_query_config(),
+            )
+            .unwrap();
+        assert_eq!(loaded_report, equivalent);
+        assert_eq!(loaded_runtime, loaded_before);
+        scene
+            .remove_component::<crate::RigidPointLoads>(body)
             .unwrap();
         assert_eq!(report.owners, vec![body]);
         assert_eq!(report.reactions.supports.len(), 4);
@@ -5415,5 +5624,131 @@ mod tests {
         )
         .unwrap_err();
         assert!(error.contains("requires a liquid body owner"));
+    }
+    #[test]
+    fn authored_point_loads_tick_publish_pause_and_rollback_with_original_phase() {
+        use voxy_scene::Transform;
+        let mut scene = SceneGraph::new(4);
+        let node = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                node,
+                crate::BoxCollider {
+                    half_extents: [0.1; 3],
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                node,
+                crate::LiquidBody {
+                    mass_kg: 1.,
+                    initial_velocity_m_s: [0.; 3],
+                },
+            )
+            .unwrap();
+        let h = 1.5_f64.sqrt();
+        scene
+            .insert_component(
+                node,
+                crate::LiquidMassDistribution {
+                    parts: vec![crate::LiquidMassPart {
+                        mass_kg: 1.,
+                        center_m: [0.; 3],
+                        half_edges_m: [[h, 0., 0.], [0., h, 0.], [0., 0., h]],
+                    }],
+                },
+            )
+            .unwrap();
+        let loads = crate::RigidPointLoads {
+            points: vec![crate::RigidPointForce {
+                root_point_m: [1., 0., 0.],
+                world_force_n: [0., 0.3, 0.],
+                world_force_rate_n_s: [0., 0.2, 0.],
+            }],
+        };
+        scene.insert_component(node, loads.clone()).unwrap();
+        let mut runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        crate::validate_game_descriptors_with_liquid_runtime(&scene, 4, &runtime).unwrap();
+        for _ in 0..2 {
+            let owner = &runtime.body[0];
+            let frame = owner.rigid_frame.unwrap();
+            let expected = owner
+                .state
+                .prepare_material_load_motion(
+                    loads.prepare(frame, owner.point_elapsed_s, 128).unwrap(),
+                    [],
+                    0.02,
+                    rigid_config(),
+                )
+                .unwrap()
+                .end();
+            runtime
+                .tick_and_publish_with_dynamics(
+                    &mut scene,
+                    0.02,
+                    None,
+                    elastic_rigid(),
+                    rigid_config(),
+                )
+                .unwrap();
+            assert_eq!(runtime.body[0].state, expected);
+        }
+        assert!((runtime.body[0].point_elapsed_s - 0.04).abs() < 1e-14);
+        scene.set_active(node, false).unwrap();
+        runtime
+            .tick_and_publish_with_dynamics(&mut scene, 0.02, None, elastic_rigid(), rigid_config())
+            .unwrap();
+        assert!((runtime.body[0].point_elapsed_s - 0.04).abs() < 1e-14);
+        scene.set_active(node, true).unwrap();
+        let before_failure = runtime.clone();
+        let pose_before = scene.local(node).unwrap();
+        assert!(
+            runtime
+                .tick_and_publish_with_dynamics(
+                    &mut scene,
+                    0.02,
+                    None,
+                    elastic_rigid(),
+                    physics::spin_path::Config {
+                        max_arcs: 1,
+                        max_trials: 1,
+                        max_angular_error_rad: 1e-15,
+                        ..rigid_config()
+                    }
+                )
+                .is_err()
+        );
+        assert_eq!(runtime, before_failure);
+        assert_eq!(scene.local(node).unwrap(), pose_before);
+        let saved = runtime.clone();
+        scene
+            .component_mut::<crate::RigidPointLoads>(node)
+            .unwrap()
+            .unwrap()
+            .points[0]
+            .world_force_n[0] = 1.;
+        assert!(
+            runtime
+                .tick_and_publish_with_dynamics(
+                    &mut scene,
+                    0.02,
+                    None,
+                    elastic_rigid(),
+                    rigid_config()
+                )
+                .unwrap_err()
+                .contains("rebind")
+        );
+        assert_eq!(runtime, saved);
     }
 }

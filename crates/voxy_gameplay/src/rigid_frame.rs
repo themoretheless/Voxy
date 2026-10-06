@@ -103,6 +103,34 @@ impl RigidBodyFrame {
             inertia: properties.principal_moments,
         })
     }
+    /// Convert an authored root-local application point to the body's
+    /// principal COM frame. Force and rate remain in world axes.
+    pub fn prepare_point_force(
+        self,
+        root_point: [f64; 3],
+        force: [f64; 3],
+        force_rate: [f64; 3],
+    ) -> Result<physics::rigid_motion::MaterialPointForce, PhysicsError> {
+        if root_point
+            .iter()
+            .chain(&force)
+            .chain(&force_rate)
+            .any(|v| !v.is_finite())
+        {
+            return Err(PhysicsError::InvalidBody);
+        }
+        let scaled = DVec3::from_array(root_point) * self.scale.as_dvec3();
+        let local = self.principal_to_root.conjugate() * (scaled - self.center_root);
+        if !local.is_finite() {
+            return Err(PhysicsError::InvalidBody);
+        }
+        Ok(physics::rigid_motion::MaterialPointForce {
+            local: local.to_array(),
+            force,
+            force_rate,
+        })
+    }
+
     /// Seed from a root pivot's world position/velocity and declared world angular
     /// momentum. Convert velocity to COM using omega cross (COM - pivot).
     pub fn prepare_body(
@@ -403,5 +431,83 @@ mod tests {
         let mut too_far = good;
         too_far.body.motion.position = [100_000.003, 0., 0.];
         assert!(frame.prepare_pose(too_far.body, 1., 1e-6).is_err());
+    }
+}
+
+#[cfg(test)]
+mod material_force_frame_tests {
+    use super::*;
+    #[test]
+    fn authored_point_force_matches_scaled_scene_point_and_physical_moment() {
+        let pose = Transform {
+            translation: Vec3::new(2., -1., 3.),
+            rotation: glam::Quat::from_rotation_y(0.7),
+            scale: Vec3::new(-2., 1.5, 0.75),
+        };
+        let descriptor = crate::LiquidMassDistribution {
+            parts: vec![crate::LiquidMassPart {
+                mass_kg: 1.,
+                center_m: [0.5, 0., 0.],
+                half_edges_m: [[0.1, 0., 0.], [0., 0.1, 0.], [0., 0., 0.1]],
+            }],
+        };
+        let frame = RigidBodyFrame::new(pose, descriptor.prepare(1., pose).unwrap()).unwrap();
+        let body = frame
+            .prepare_body(pose.translation.as_dvec3().to_array(), [0.; 3], [0.; 3])
+            .unwrap();
+        let root = [0.3, -0.4, 0.2];
+        let force = [0.7, 0.2, -0.3];
+        let authored = crate::RigidPointLoads {
+            points: vec![crate::RigidPointForce {
+                root_point_m: root,
+                world_force_n: force,
+                world_force_rate_n_s: [0.1, 0., 0.2],
+            }],
+        };
+        let point = authored.prepare(frame, 0., 1).unwrap()[0];
+        assert_eq!(
+            authored.prepare(frame, 0.4, 1).unwrap()[0],
+            point.shifted(0.4).unwrap()
+        );
+        assert!(authored.prepare(frame, 0., 0).is_err());
+        assert!(authored.prepare(frame, -0.1, 1).is_err());
+        let path = body
+            .prepare_material_load_motion(
+                [point],
+                [],
+                0.01,
+                physics::spin_path::Config {
+                    max_angular_error_rad: 1e-5,
+                    min_step_s: 1e-9,
+                    max_arcs: 10000,
+                    max_trials: 30000,
+                },
+            )
+            .unwrap();
+        let actual = DVec3::from_array(
+            path.sample_material_point(0., point.local)
+                .unwrap()
+                .position,
+        );
+        let expected = pose
+            .matrix()
+            .unwrap()
+            .transform_point3(Vec3::from_array(root.map(|x| x as f32)))
+            .as_dvec3();
+        assert!((actual - expected).length() < 2e-6);
+        let expected_moment =
+            (actual - DVec3::from_array(body.motion.position)).cross(DVec3::from_array(force));
+        let actual_moment = DVec3::from_array(path.rotation().unwrap().segments()[0].arc.torque());
+        assert!((expected_moment - actual_moment).length() < 1e-12);
+        assert!(
+            frame
+                .prepare_point_force([f64::NAN; 3], force, [0.; 3])
+                .is_err()
+        );
+        assert!(
+            frame
+                .prepare_point_force([f64::MAX; 3], force, [0.; 3])
+                .is_err()
+        );
     }
 }

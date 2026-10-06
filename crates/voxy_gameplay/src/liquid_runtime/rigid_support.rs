@@ -702,3 +702,83 @@ mod projected_rotation_tests {
         assert!(admit_motion(&yaw, cube, &fixed, floor, true, &[point]).unwrap() <= 1e-10);
     }
 }
+
+/// Differentiate the active slab constraints defining a clipped patch vertex.
+/// Coincident constraints must agree; topology kinks are not assigned an
+/// arbitrary material owner. Shapes are principal-body templates, except fixed
+/// environment geometry, whose coordinates are already world-oriented.
+pub(super) fn point_velocity(
+    first: ContactBody,
+    first_shape: AffineBox,
+    second: Option<ContactBody>,
+    second_shape: AffineBox,
+    point: [f64; 3],
+    tolerance_m: f64,
+) -> Result<[f64; 3], Error> {
+    let point = DVec3::from_array(point);
+    if !point.is_finite() || !tolerance_m.is_finite() || tolerance_m < 0. {
+        return Err(Error::InvalidCollision);
+    }
+    let mut constraints = Vec::with_capacity(6);
+    for (body, shape) in [(Some(first), first_shape), (second, second_shape)] {
+        let q = body
+            .and_then(|b| b.spin)
+            .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
+        let center = body.map_or(shape.center, |b| {
+            DVec3::from_array(b.motion.position) + rotate_vector(q, shape.center)
+        });
+        let edges = if body.is_some() {
+            shape.edges.map(|edge| rotate_vector(q, edge))
+        } else {
+            shape.edges
+        };
+        let inverse = glam::DMat3::from_cols(edges[0], edges[1], edges[2]).inverse();
+        if !inverse.is_finite() {
+            return Err(Error::InvalidCollision);
+        }
+        let coordinates = inverse * (point - center);
+        let rows = inverse.transpose().to_cols_array();
+        let velocity = body
+            .map_or(Ok([0.; 3]), |b| b.point_velocity(point.to_array()))
+            .map_err(|_| Error::InvalidCollision)?;
+        let velocity = DVec3::from_array(velocity);
+        for k in 0..3 {
+            let row = DVec3::new(rows[k * 3], rows[k * 3 + 1], rows[k * 3 + 2]);
+            let length = row.length();
+            let gap = (coordinates[k].abs() - 1.) / length;
+            let guard = tolerance_m
+                + 1024. * f64::EPSILON * (1. + edges[k].length() + (point - center).length());
+            if !gap.is_finite() || gap > guard {
+                return Err(Error::InvalidCollision);
+            }
+            if gap.abs() <= guard {
+                let normal = row / length;
+                constraints.push((normal, normal.dot(velocity)));
+            }
+        }
+    }
+    for i in 0..constraints.len() {
+        for j in i + 1..constraints.len() {
+            for k in j + 1..constraints.len() {
+                let matrix =
+                    glam::DMat3::from_cols(constraints[i].0, constraints[j].0, constraints[k].0)
+                        .transpose();
+                let determinant = matrix.determinant().abs();
+                if determinant < 1e-10 {
+                    continue;
+                }
+                let velocity = matrix.inverse()
+                    * DVec3::new(constraints[i].1, constraints[j].1, constraints[k].1);
+                let guard = 4096. * f64::EPSILON * (1. + velocity.length()) / determinant;
+                if velocity.is_finite()
+                    && constraints
+                        .iter()
+                        .all(|(normal, rate)| (normal.dot(velocity) - rate).abs() <= guard)
+                {
+                    return Ok(velocity.to_array());
+                }
+            }
+        }
+    }
+    Err(Error::CollisionBackend)
+}

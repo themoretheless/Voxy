@@ -160,6 +160,7 @@ impl Spin {
             return Err(PathError::InvalidInput);
         }
         let law = ArcTorque {
+            material: None,
             polynomial: torque,
             rotating: Some(RotatingArmForce {
                 arm: rotate(self.orientation, local),
@@ -184,12 +185,74 @@ impl Spin {
             |time| {
                 Ok((
                     ArcTorque {
+                        material: None,
                         polynomial: torque.shifted(time).map_err(PathError::Integrator)?,
                         rotating: Some(RotatingArmForce {
                             arm: [0.; 3],
                             omega: [0.; 3],
                             force: std::array::from_fn(|k| rate[k].mul_add(time, force[k])),
                             rate,
+                        }),
+                    },
+                    duration,
+                ))
+            },
+        )
+    }
+
+    /// Joint attitude/momentum feedback from affine forces at multiple local
+    /// points, using the same midpoint and adaptive admission owner.
+    pub fn prepare_material_moment_path(
+        self,
+        moment: crate::rigid_motion::MaterialForceMoment,
+        torque: TorquePolynomial,
+        duration: f64,
+        config: Config,
+    ) -> Result<SpinPath, PathError> {
+        if !duration.is_finite() || duration <= 0. {
+            return Err(PathError::InvalidInput);
+        }
+        moment
+            .torque_at(self.orientation, 0.)
+            .map_err(|_| PathError::InvalidInput)?;
+        torque.validate().map_err(|_| PathError::InvalidInput)?;
+        let material = crate::astrophysics_spin::RotatingMaterialMoment {
+            moment,
+            orientation: self.orientation,
+            omega: [0.; 3],
+        };
+        let law = ArcTorque {
+            polynomial: torque,
+            rotating: None,
+            material: Some(material),
+        };
+        let (_, impulse_bound) = law.envelopes(duration).map_err(PathError::Integrator)?;
+        let feedback = (0..3)
+            .map(|j| norm(moment.columns[j]) + norm(moment.rate_columns[j]) * duration)
+            .sum();
+        // The rotating tensor discriminates this own-body plan; the local
+        // argument is used only by legacy single-arm plans in the shared arc.
+        self.prepare_forcing_path_impl(
+            duration,
+            config,
+            impulse_bound,
+            Some(([0.; 3], feedback)),
+            |time| {
+                let moment = crate::rigid_motion::MaterialForceMoment {
+                    columns: std::array::from_fn(|j| {
+                        std::array::from_fn(|k| {
+                            moment.rate_columns[j][k].mul_add(time, moment.columns[j][k])
+                        })
+                    }),
+                    ..moment
+                };
+                Ok((
+                    ArcTorque {
+                        polynomial: torque.shifted(time).map_err(PathError::Integrator)?,
+                        rotating: None,
+                        material: Some(crate::astrophysics_spin::RotatingMaterialMoment {
+                            moment,
+                            ..material
                         }),
                     },
                     duration,

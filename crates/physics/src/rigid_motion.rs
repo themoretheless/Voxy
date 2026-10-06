@@ -7,7 +7,7 @@ use crate::{
 };
 
 mod loads;
-pub use loads::{MaterialPointForce, MotionLoad};
+pub use loads::{MaterialForceMoment, MaterialPointForce, MotionLoad};
 mod material_pair;
 pub use material_pair::{MaterialForcePair, MaterialPairImpact};
 
@@ -29,6 +29,8 @@ pub struct RigidMotion {
     /// Retained only to reprepare polynomial forcing after a point impact.
     torque: Option<TorquePolynomial>,
     point_force: Option<PointForcePlan>,
+    com_loads: Option<Vec<MotionLoad>>,
+    material_loads: Option<(Vec<MaterialPointForce>, Vec<MotionLoad>)>,
     duration: f64,
     rotation: Option<SpinPath>,
     end: ContactBody,
@@ -47,6 +49,10 @@ enum PointForcePlan {
 }
 #[derive(Clone, Copy)]
 enum MotionForcing<'a> {
+    Moment {
+        moment: MaterialForceMoment,
+        external: MotionLoad,
+    },
     Own {
         material: MaterialPointForce,
         external: MotionLoad,
@@ -119,6 +125,75 @@ impl ContactBody {
         config: Config,
     ) -> Result<RigidMotion, Error> {
         self.prepare_affine_motion(force, [0.; 3], torque, duration, config)
+    }
+
+    /// Aggregate independent COM loads while retaining each original recipe
+    /// for event re-preparation. All loads share world axes and interval origin.
+    pub fn prepare_load_motion(
+        self,
+        loads: impl IntoIterator<Item = MotionLoad>,
+        duration: f64,
+        config: Config,
+    ) -> Result<RigidMotion, Error> {
+        let loads: Vec<_> = loads.into_iter().collect();
+        for load in &loads {
+            load.shifted(duration)?;
+        }
+        let total = MotionLoad::aggregate(loads.iter().copied())?;
+        let mut path = self.prepare_affine_motion(
+            total.force,
+            total.force_rate,
+            total.torque,
+            duration,
+            config,
+        )?;
+        path.com_loads = Some(loads);
+        Ok(path)
+    }
+
+    /// Multiple own-body material-point forces and independent COM loads,
+    /// sharing one trajectory and retaining recipes across contact events.
+    pub fn prepare_material_load_motion(
+        self,
+        points: impl IntoIterator<Item = MaterialPointForce>,
+        external: impl IntoIterator<Item = MotionLoad>,
+        duration: f64,
+        config: Config,
+    ) -> Result<RigidMotion, Error> {
+        let points: Vec<_> = points.into_iter().collect();
+        let external: Vec<_> = external.into_iter().collect();
+        for point in &points {
+            point.shifted(duration)?;
+            if self.spin.is_none() && point.local != [0.; 3] {
+                return Err(Error::InvalidInput);
+            }
+        }
+        for load in &external {
+            load.shifted(duration)?;
+        }
+        let moment = MaterialForceMoment::aggregate(points.iter().copied())?;
+        let load = MotionLoad::aggregate(external.iter().copied())?;
+        let total = MotionLoad::aggregate([
+            load,
+            MotionLoad {
+                force: moment.force,
+                force_rate: moment.force_rate,
+                ..MotionLoad::zero()
+            },
+        ])?;
+        let mut path = self.prepare_affine_motion_impl(
+            total.force,
+            total.force_rate,
+            load.torque,
+            duration,
+            config,
+            Some(MotionForcing::Moment {
+                moment,
+                external: load,
+            }),
+        )?;
+        path.material_loads = Some((points, external));
+        Ok(path)
     }
 
     /// Exact nominal cubic COM motion under F(t)=force+force_rate*t, sharing
@@ -315,6 +390,7 @@ impl ContactBody {
                         .spin
                         .map_or(local, |s| rotate(s.orientation, local));
                     let envelope = ArcTorque {
+                        material: None,
                         polynomial: relative,
                         rotating: Some(RotatingArmForce {
                             arm: initial_arm,
@@ -334,6 +410,7 @@ impl ContactBody {
                             .spin
                             .map_or(local, |s| rotate(s.orientation, local));
                         let forcing = ArcTorque {
+                            material: None,
                             polynomial: relative.shifted(time).map_err(PathError::Integrator)?,
                             rotating: Some(RotatingArmForce {
                                 arm,
@@ -418,6 +495,8 @@ impl ContactBody {
                         duration,
                         config,
                     )
+                } else if let Some(MotionForcing::Moment { moment, external }) = material {
+                    spin.prepare_material_moment_path(moment, external.torque, duration, config)
                 } else {
                     spin.prepare_polynomial_path(torque, duration, config)
                 }
@@ -431,6 +510,8 @@ impl ContactBody {
             jerk,
             force,
             torque: material.is_none().then_some(torque),
+            com_loads: None,
+            material_loads: None,
             point_force: match material {
                 Some(MotionForcing::Own { material, external }) => {
                     Some(PointForcePlan::Own { material, external })
@@ -443,7 +524,7 @@ impl ContactBody {
                         material, external, ..
                     },
                 ) => Some(PointForcePlan::Source { material, external }),
-                None => None,
+                None | Some(MotionForcing::Moment { .. }) => None,
             },
             duration,
             rotation,
@@ -532,6 +613,24 @@ impl RigidMotion {
     ) -> Result<RigidMotion, Error> {
         let force = std::array::from_fn(|k| self.force_rate[k].mul_add(time, self.force[k]));
         let duration = self.duration - time;
+        if let Some((points, loads)) = &self.material_loads {
+            let points = points
+                .iter()
+                .map(|point| point.shifted(time))
+                .collect::<Result<Vec<_>, _>>()?;
+            let loads = loads
+                .iter()
+                .map(|load| load.shifted(time))
+                .collect::<Result<Vec<_>, _>>()?;
+            return initial.prepare_material_load_motion(points, loads, duration, config);
+        }
+        if let Some(loads) = &self.com_loads {
+            let shifted = loads
+                .iter()
+                .map(|load| load.shifted(time))
+                .collect::<Result<Vec<_>, _>>()?;
+            return initial.prepare_load_motion(shifted, duration, config);
+        }
         if let Some(plan) = self.point_force {
             match plan {
                 PointForcePlan::Own { material, external } => initial
