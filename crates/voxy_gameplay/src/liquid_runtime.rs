@@ -1,9 +1,11 @@
 //! Scene-owned liquid world. Authored names bind once; particles and clocks live here.
 use crate::LiquidSource;
-use physics::liquid::{BodyGeometryHit, ContactWitness};
+use physics::liquid::{BodyGeometryHit, ContactWitness, RigidGeometryHit};
+mod rigid_support;
 use physics::liquid::{
     Config, Container, Liquid, Material, ParticleExchange, PulsedEmitter, StepStats,
 };
+use rigid_support::FeatureKey;
 use std::collections::BTreeMap;
 use voxy_scene::{NodeId, SceneGraph, SceneId};
 
@@ -18,7 +20,8 @@ struct Source {
 struct BodyOwner {
     node: NodeId,
     descriptor: crate::LiquidBody,
-    state: physics::liquid::TranslatingBody,
+    state: physics::contact::ContactBody,
+    principal_templates: Option<Vec<crate::convex::AffineBox>>,
     published: voxy_scene::Transform,
     colliders: Vec<ColliderOwner>,
     mass_descriptor: Option<crate::LiquidMassDistribution>,
@@ -251,18 +254,18 @@ fn sampling_frame(
     .map_err(|_| physics::liquid::Error::CollisionBackend)
 }
 
-fn trajectory_hits(
+fn trajectory_events(
     first: &physics::rigid_motion::RigidMotion,
     shapes: &[crate::convex::AffineBox],
     second: &physics::rigid_motion::RigidMotion,
     obstacles: &[crate::convex::AffineBox],
     budget: usize,
-) -> Result<BodyGeometryHit, physics::liquid::Error> {
+) -> Result<RigidGeometryHit, physics::liquid::Error> {
     let mut steps = budget
         .checked_mul(64)
         .ok_or(physics::liquid::Error::CollisionBudget)?;
     let mut queries = steps;
-    trajectory_hits_counted(
+    trajectory_events_counted(
         first,
         shapes,
         second,
@@ -272,7 +275,7 @@ fn trajectory_hits(
         &mut queries,
     )
 }
-fn trajectory_hits_counted(
+fn trajectory_events_counted(
     first: &physics::rigid_motion::RigidMotion,
     shapes: &[crate::convex::AffineBox],
     second: &physics::rigid_motion::RigidMotion,
@@ -280,7 +283,7 @@ fn trajectory_hits_counted(
     budget: usize,
     steps: &mut usize,
     queries: &mut usize,
-) -> Result<BodyGeometryHit, physics::liquid::Error> {
+) -> Result<RigidGeometryHit, physics::liquid::Error> {
     use physics::liquid::{Error, GeometryHit};
     if budget == 0
         || shapes
@@ -290,30 +293,42 @@ fn trajectory_hits_counted(
     {
         return Err(Error::CollisionBudget);
     }
-    let mut result = BodyGeometryHit::from(GeometryHit::Clear);
+    let mut result = RigidGeometryHit::from(BodyGeometryHit::from(GeometryHit::Clear));
     let mut earliest = f64::INFINITY;
-    for shape in shapes {
-        for obstacle in obstacles {
+    for (first_index, shape) in shapes.iter().enumerate() {
+        for (second_index, obstacle) in obstacles.iter().enumerate() {
             let contact = crate::angular_sweep::sweep_nominal_rigid_contact(
                 first, *shape, second, *obstacle, steps, queries,
             );
             let hit = match contact {
-                Ok(None) => BodyGeometryHit::from(GeometryHit::Clear),
-                Ok(Some(contact)) => BodyGeometryHit {
-                    geometry: GeometryHit::Contact {
-                        fraction: contact.time_s / first.duration(),
-                        normal: contact.normal.to_array(),
+                Ok(None) => RigidGeometryHit::from(BodyGeometryHit::from(GeometryHit::Clear)),
+                Ok(Some(contact)) => RigidGeometryHit {
+                    feature: Some(
+                        FeatureKey {
+                            first: first_index,
+                            second: second_index,
+                            axis: contact.feature,
+                        }
+                        .encode()?,
+                    ),
+                    contact: BodyGeometryHit {
+                        geometry: GeometryHit::Contact {
+                            fraction: contact.time_s / first.duration(),
+                            normal: contact.normal.to_array(),
+                        },
+                        witness: Some(ContactWitness {
+                            point: contact.point.to_array(),
+                            tolerance_m: contact.tolerance_m,
+                        }),
                     },
-                    witness: Some(ContactWitness {
-                        point: contact.point.to_array(),
-                        tolerance_m: contact.tolerance_m,
-                    }),
                 },
-                Err(crate::PhysicsError::InitialOverlap) => return Ok(GeometryHit::Overlap.into()),
+                Err(crate::PhysicsError::InitialOverlap) => {
+                    return Ok(BodyGeometryHit::from(GeometryHit::Overlap).into());
+                }
                 Err(crate::PhysicsError::SweepBudget) => return Err(Error::CollisionBudget),
                 Err(_) => return Err(Error::CollisionBackend),
             };
-            if let GeometryHit::Contact { fraction, .. } = hit.geometry {
+            if let GeometryHit::Contact { fraction, .. } = hit.contact.geometry {
                 if fraction < earliest {
                     earliest = fraction;
                     result = hit;
@@ -367,6 +382,25 @@ fn affine_hit(
         }
     }))
 }
+fn nearest_events(
+    events: impl Iterator<Item = Result<RigidGeometryHit, physics::liquid::Error>>,
+) -> Result<RigidGeometryHit, physics::liquid::Error> {
+    use physics::liquid::GeometryHit;
+    let mut selected = RigidGeometryHit::from(BodyGeometryHit::from(GeometryHit::Clear));
+    let mut earliest = f64::INFINITY;
+    for event in events {
+        let event = event?;
+        match event.contact.geometry {
+            GeometryHit::Overlap => return Ok(event),
+            GeometryHit::Contact { fraction, .. } if fraction < earliest => {
+                earliest = fraction;
+                selected = event;
+            }
+            _ => {}
+        }
+    }
+    Ok(selected)
+}
 fn nearest_hits(
     hits: impl Iterator<Item = Result<BodyGeometryHit, physics::liquid::Error>>,
 ) -> Result<BodyGeometryHit, physics::liquid::Error> {
@@ -404,29 +438,352 @@ fn transport_contact(
     }
     Ok(hit)
 }
+fn contact_patch_points(
+    first: &[crate::convex::AffineBox],
+    a: &physics::contact::ContactBody,
+    second: &[crate::convex::AffineBox],
+    b: &physics::contact::ContactBody,
+    witness: ContactWitness,
+    normal: [f64; 3],
+    budget: usize,
+) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+    use glam::{DQuat, DVec3};
+    use physics::liquid::Error;
+    if budget == 0
+        || first
+            .len()
+            .checked_mul(second.len())
+            .is_none_or(|n| n > budget)
+    {
+        return Err(Error::CollisionBudget);
+    }
+    let qa = a
+        .spin
+        .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
+    let qb = b
+        .spin
+        .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
+    let ca = DVec3::from_array(a.motion.position);
+    let cb = DVec3::from_array(b.motion.position);
+    let n = DVec3::from_array(normal);
+    let mut contacts = Vec::new();
+    for first in first {
+        for second in second {
+            let center = cb + qb * second.center;
+            let obstacle = crate::convex::AffineBox {
+                center,
+                edges: second.edges.map(|e| qb * e),
+            };
+            let relative = crate::convex::AffineBox {
+                center: ca - cb + qa * first.center - qb * second.center,
+                edges: first.edges.map(|e| qa * e),
+            };
+            let w = DVec3::from_array(witness.point) - center;
+            let scale = relative.center.length()
+                + relative
+                    .edges
+                    .iter()
+                    .chain(&obstacle.edges)
+                    .map(|e| e.length())
+                    .sum::<f64>();
+            let tolerance = witness.tolerance_m
+                + 256. * f64::EPSILON * (1. + scale + center.abs().max_element());
+            let contains = |point: DVec3, shape: crate::convex::AffineBox| {
+                let rows = glam::DMat3::from_cols(shape.edges[0], shape.edges[1], shape.edges[2])
+                    .inverse();
+                let local = rows * (point - shape.center);
+                rows.is_finite()
+                    && (0..3).all(|k| {
+                        local[k].abs() <= 1. + tolerance * rows.transpose().col(k).length()
+                    })
+            };
+            let local_obstacle = crate::convex::AffineBox {
+                center: DVec3::ZERO,
+                ..obstacle
+            };
+            if !contains(w, local_obstacle)
+                || !contains(w, relative)
+                || (n.dot(w) - obstacle.radius(n)).abs() > tolerance
+                || (n.dot(w - relative.center) + relative.radius(n)).abs() > tolerance
+            {
+                continue;
+            }
+            let Ok((points, _)) = obstacle.contact_patch_relative(&relative, n) else {
+                continue;
+            };
+            for point in points {
+                if !contacts
+                    .iter()
+                    .any(|old: &physics::contact::NormalContact| {
+                        (DVec3::from_array(old.point) - point).length() <= tolerance
+                    })
+                {
+                    if contacts.len() >= 128 {
+                        return Err(Error::CollisionBudget);
+                    }
+                    contacts.push(physics::contact::NormalContact {
+                        point: point.to_array(),
+                        normal,
+                    });
+                }
+            }
+        }
+    }
+    if contacts.is_empty() {
+        Err(Error::InvalidCollision)
+    } else {
+        Ok(contacts)
+    }
+}
 impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
+    fn rigid_pair_patch_for_feature(
+        &self,
+        i: usize,
+        first: &physics::contact::ContactBody,
+        j: usize,
+        second: &physics::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        feature: Option<u64>,
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+        let Some(token) = feature else {
+            return self.rigid_pair_patch(i, first, j, second, witness, normal, budget);
+        };
+        let key = FeatureKey::decode(token)?;
+        let a = self
+            .templates
+            .get(i)
+            .and_then(|s| s.get(key.first))
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let b = self
+            .templates
+            .get(j)
+            .and_then(|s| s.get(key.second))
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        contact_patch_points(&[*a], first, &[*b], second, witness, normal, budget)
+    }
+    fn rigid_environment_patch_for_feature(
+        &self,
+        index: usize,
+        body: &physics::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        feature: Option<u64>,
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+        let Some(token) = feature else {
+            return self.rigid_environment_patch(index, body, witness, normal, budget);
+        };
+        let key = FeatureKey::decode(token)?;
+        let shape = self
+            .templates
+            .get(index)
+            .and_then(|s| s.get(key.first))
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let wall = self
+            .environment
+            .0
+            .0
+            .get(key.second)
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let fixed = physics::contact::ContactBody {
+            motion: physics::gravity::Body {
+                mass: 1.,
+                position: [0.; 3],
+                velocity: [0.; 3],
+            },
+            spin: None,
+        };
+        contact_patch_points(
+            &[*shape],
+            body,
+            &[wall.shape],
+            &fixed,
+            witness,
+            normal,
+            budget,
+        )
+    }
+    fn rigid_pair_supports(
+        &self,
+        i: usize,
+        first: &physics::contact::ContactBody,
+        j: usize,
+        second: &physics::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        feature: u64,
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalSupport>, physics::liquid::Error> {
+        let key = FeatureKey::decode(feature)?;
+        let a = self
+            .templates
+            .get(i)
+            .and_then(|s| s.get(key.first))
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let b = self
+            .templates
+            .get(j)
+            .and_then(|s| s.get(key.second))
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let contacts = self.rigid_pair_patch_for_feature(
+            i,
+            first,
+            j,
+            second,
+            witness,
+            normal,
+            Some(feature),
+            budget,
+        )?;
+        let plane = rigid_support::plane(*first, *a, Some(*second), *b, key.axis, normal)?;
+        Ok(rigid_support::attach(contacts, plane))
+    }
+    fn rigid_environment_supports(
+        &self,
+        index: usize,
+        body: &physics::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        feature: u64,
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalSupport>, physics::liquid::Error> {
+        let key = FeatureKey::decode(feature)?;
+        let a = self
+            .templates
+            .get(index)
+            .and_then(|s| s.get(key.first))
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let wall = self
+            .environment
+            .0
+            .0
+            .get(key.second)
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let contacts = self.rigid_environment_patch_for_feature(
+            index,
+            body,
+            witness,
+            normal,
+            Some(feature),
+            budget,
+        )?;
+        let plane = rigid_support::plane(*body, *a, None, wall.shape, key.axis, normal)?;
+        Ok(rigid_support::attach(contacts, plane))
+    }
+
+    fn rigid_pair_patch(
+        &self,
+        i: usize,
+        first: &physics::contact::ContactBody,
+        j: usize,
+        second: &physics::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+        contact_patch_points(
+            &self.templates[i],
+            first,
+            &self.templates[j],
+            second,
+            witness,
+            normal,
+            budget,
+        )
+    }
+    fn rigid_environment_patch(
+        &self,
+        index: usize,
+        body: &physics::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+        if budget == 0
+            || self.templates[index]
+                .len()
+                .checked_mul(self.environment.0.0.len())
+                .is_none_or(|n| n > budget)
+        {
+            return Err(physics::liquid::Error::CollisionBudget);
+        }
+        let obstacles: Vec<_> = self.environment.0.0.iter().map(|b| b.shape).collect();
+        let fixed = physics::contact::ContactBody {
+            motion: physics::gravity::Body {
+                mass: 1.,
+                position: [0.; 3],
+                velocity: [0.; 3],
+            },
+            spin: None,
+        };
+        contact_patch_points(
+            &self.templates[index],
+            body,
+            &obstacles,
+            &fixed,
+            witness,
+            normal,
+            budget,
+        )
+    }
+
     fn sweep_particle_rigid_contact(
+        &self,
+        p: &physics::liquid::Particle,
+        r: f64,
+        i: usize,
+        path: &physics::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+        self.sweep_particle_rigid_event(p, r, i, path, budget)
+            .map(|event| event.contact)
+    }
+    fn sweep_rigid_pair_contact(
+        &self,
+        i: usize,
+        a: &physics::rigid_motion::RigidMotion,
+        j: usize,
+        b: &physics::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+        self.sweep_rigid_pair_event(i, a, j, b, budget)
+            .map(|event| event.contact)
+    }
+    fn sweep_rigid_environment_contact(
+        &self,
+        i: usize,
+        path: &physics::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+        self.sweep_rigid_environment_event(i, path, budget)
+            .map(|event| event.contact)
+    }
+    fn sweep_particle_rigid_event(
         &self,
         p: &physics::liquid::Particle,
         radius: f64,
         index: usize,
         body: &physics::rigid_motion::RigidMotion,
         budget: usize,
-    ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+    ) -> Result<RigidGeometryHit, physics::liquid::Error> {
         if body.initial().spin.is_none() {
             let b = body.initial().motion;
-            return self.sweep_particle_body_contact(
-                p,
-                radius,
-                index,
-                &physics::liquid::TranslatingBody {
-                    mass: b.mass,
-                    position: b.position,
-                    velocity: b.velocity,
-                },
-                body.duration(),
-                budget,
-            );
+            return self
+                .sweep_particle_body_contact(
+                    p,
+                    radius,
+                    index,
+                    &physics::liquid::TranslatingBody {
+                        mass: b.mass,
+                        position: b.position,
+                        velocity: b.velocity,
+                    },
+                    body.duration(),
+                    budget,
+                )
+                .map(Into::into);
         }
         let particle = physics::contact::ContactBody {
             motion: physics::gravity::Body {
@@ -456,37 +813,39 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
                 glam::DVec3::Z * radius,
             ],
         };
-        trajectory_hits(&particle, &[shape], body, &self.templates[index], budget)
+        trajectory_events(&particle, &[shape], body, &self.templates[index], budget)
     }
-    fn sweep_rigid_pair_contact(
+    fn sweep_rigid_pair_event(
         &self,
         i: usize,
         first: &physics::rigid_motion::RigidMotion,
         j: usize,
         second: &physics::rigid_motion::RigidMotion,
         budget: usize,
-    ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+    ) -> Result<RigidGeometryHit, physics::liquid::Error> {
         if first.initial().spin.is_none() && second.initial().spin.is_none() {
             let a = first.initial().motion;
             let b = second.initial().motion;
-            return self.sweep_body_pair_contact(
-                i,
-                &physics::liquid::TranslatingBody {
-                    mass: a.mass,
-                    position: a.position,
-                    velocity: a.velocity,
-                },
-                j,
-                &physics::liquid::TranslatingBody {
-                    mass: b.mass,
-                    position: b.position,
-                    velocity: b.velocity,
-                },
-                first.duration(),
-                budget,
-            );
+            return self
+                .sweep_body_pair_contact(
+                    i,
+                    &physics::liquid::TranslatingBody {
+                        mass: a.mass,
+                        position: a.position,
+                        velocity: a.velocity,
+                    },
+                    j,
+                    &physics::liquid::TranslatingBody {
+                        mass: b.mass,
+                        position: b.position,
+                        velocity: b.velocity,
+                    },
+                    first.duration(),
+                    budget,
+                )
+                .map(Into::into);
         }
-        trajectory_hits(
+        trajectory_events(
             first,
             &self.templates[i],
             second,
@@ -494,24 +853,26 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             budget,
         )
     }
-    fn sweep_rigid_environment_contact(
+    fn sweep_rigid_environment_event(
         &self,
         index: usize,
         body: &physics::rigid_motion::RigidMotion,
         budget: usize,
-    ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+    ) -> Result<RigidGeometryHit, physics::liquid::Error> {
         if body.initial().spin.is_none() {
             let b = body.initial().motion;
-            return self.sweep_body_environment_contact(
-                index,
-                &physics::liquid::TranslatingBody {
-                    mass: b.mass,
-                    position: b.position,
-                    velocity: b.velocity,
-                },
-                body.duration(),
-                budget,
-            );
+            return self
+                .sweep_body_environment_contact(
+                    index,
+                    &physics::liquid::TranslatingBody {
+                        mass: b.mass,
+                        position: b.position,
+                        velocity: b.velocity,
+                    },
+                    body.duration(),
+                    budget,
+                )
+                .map(Into::into);
         }
         if self.templates[index]
             .len()
@@ -524,22 +885,35 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             .checked_mul(64)
             .ok_or(physics::liquid::Error::CollisionBudget)?;
         let mut queries = steps;
-        nearest_hits(self.environment.0.0.iter().map(|obstacle| {
-            let frame = sampling_frame(obstacle.shape.center.to_array(), body.duration())?;
-            let shape = crate::convex::AffineBox {
-                center: glam::DVec3::ZERO,
-                edges: obstacle.shape.edges,
-            };
-            trajectory_hits_counted(
-                body,
-                &self.templates[index],
-                &frame,
-                &[shape],
-                budget,
-                &mut steps,
-                &mut queries,
-            )
-        }))
+        nearest_events(
+            self.environment
+                .0
+                .0
+                .iter()
+                .enumerate()
+                .map(|(wall, obstacle)| {
+                    let frame = sampling_frame(obstacle.shape.center.to_array(), body.duration())?;
+                    let shape = crate::convex::AffineBox {
+                        center: glam::DVec3::ZERO,
+                        edges: obstacle.shape.edges,
+                    };
+                    let mut event = trajectory_events_counted(
+                        body,
+                        &self.templates[index],
+                        &frame,
+                        &[shape],
+                        budget,
+                        &mut steps,
+                        &mut queries,
+                    )?;
+                    if let Some(token) = event.feature {
+                        let mut key = FeatureKey::decode(token)?;
+                        key.second = wall;
+                        event.feature = Some(key.encode()?);
+                    }
+                    Ok(event)
+                }),
+        )
     }
     fn sweep_particle_body(
         &self,
@@ -689,6 +1063,15 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
     }
 }
 
+fn scene_rotation_config() -> physics::spin_path::Config {
+    physics::spin_path::Config {
+        max_angular_error_rad: 1e-5,
+        min_step_s: 1e-9,
+        max_arcs: 10000,
+        max_trials: 30000,
+    }
+}
+
 impl SceneLiquidRuntime {
     /// Resolve durable material names once and admit every source, including inactive ones.
     /// # Errors
@@ -777,20 +1160,51 @@ impl SceneLiquidRuntime {
                     .map(|p| crate::RigidBodyFrame::new(published, p))
                     .transpose()
                     .map_err(|e| format!("mass principal frame: {e:?}"))?;
-                Ok(BodyOwner {
+                let pivot = position(scene, *node)?;
+                let state = if let Some(frame) = rigid_frame {
+                    frame
+                        .prepare_body(pivot, descriptor.initial_velocity_m_s, [0.; 3])
+                        .map_err(|e| format!("rigid body seed: {e:?}"))?
+                } else {
+                    physics::contact::ContactBody {
+                        motion: physics::gravity::Body {
+                            position: pivot,
+                            velocity: descriptor.initial_velocity_m_s,
+                            mass: descriptor.mass_kg,
+                        },
+                        spin: None,
+                    }
+                };
+                let mut owner = BodyOwner {
                     node: *node,
                     descriptor: **descriptor,
-                    state: physics::liquid::TranslatingBody {
-                        position: position(scene, *node)?,
-                        velocity: descriptor.initial_velocity_m_s,
-                        mass: descriptor.mass_kg,
-                    },
+                    state,
+                    principal_templates: None,
                     published,
                     colliders,
                     mass_descriptor,
                     mass_properties,
                     rigid_frame,
-                })
+                };
+                if let (Some(properties), Some(spin)) = (owner.mass_properties, owner.state.spin) {
+                    let inverse = glam::DQuat::from_array(spin.orientation).conjugate();
+                    owner.principal_templates = Some(
+                        owner
+                            .colliders
+                            .iter()
+                            .map(|collider| {
+                                let shape = collider_template(&owner, collider)?;
+                                Ok(crate::convex::AffineBox {
+                                    center: inverse
+                                        * (shape.center
+                                            - glam::DVec3::from_array(properties.center)),
+                                    edges: shape.edges.map(|edge| inverse * edge),
+                                })
+                            })
+                            .collect::<Result<Vec<_>, String>>()?,
+                    );
+                }
+                Ok(owner)
             })
             .collect::<Result<Vec<_>, String>>()?;
         let liquid = Liquid::new(
@@ -916,8 +1330,29 @@ impl SceneLiquidRuntime {
         dt: f64,
         container: Option<Container>,
     ) -> Result<SceneLiquidStep, String> {
+        self.tick_and_publish_with_dynamics(
+            scene,
+            dt,
+            container,
+            Default::default(),
+            scene_rotation_config(),
+        )
+    }
+
+    /// Prepare and atomically publish with explicit restitution/contact and angular budgets.
+    /// The normal angular solver currently requires zero tangential friction.
+    /// # Errors
+    /// Invalid settings, unresolved contacts or publication errors preserve both owners and scene.
+    pub fn tick_and_publish_with_dynamics(
+        &mut self,
+        scene: &mut SceneGraph,
+        dt: f64,
+        container: Option<Container>,
+        dynamics: physics::liquid::DynamicWorldConfig,
+        rotation: physics::spin_path::Config,
+    ) -> Result<SceneLiquidStep, String> {
         let mut candidate = self.clone();
-        let report = candidate.tick(scene, dt, container)?;
+        let report = candidate.tick_with_dynamics(scene, dt, container, dynamics, rotation)?;
         candidate.publish_body_pose(scene)?;
         *self = candidate;
         Ok(report)
@@ -933,7 +1368,24 @@ impl SceneLiquidRuntime {
             .iter()
             .map(|body| {
                 let mut pose = body.published;
-                pose.translation = glam::DVec3::from_array(body.state.position).as_vec3();
+                if let Some(frame) = body.rigid_frame {
+                    let radius = body
+                        .principal_templates
+                        .as_ref()
+                        .unwrap()
+                        .iter()
+                        .map(|s| {
+                            s.center.length() + s.edges.iter().map(|e| e.length()).sum::<f64>()
+                        })
+                        .fold(0., f64::max);
+                    pose = frame
+                        .prepare_pose(body.state, radius, 1e-5)
+                        .map_err(|e| format!("rigid pose publication: {e:?}"))?
+                        .pose;
+                } else {
+                    pose.translation =
+                        glam::DVec3::from_array(body.state.motion.position).as_vec3();
+                }
                 pose.matrix()
                     .map_err(|e| format!("liquid body publication: {e:?}"))?;
                 Ok((body.node, pose))
@@ -950,14 +1402,24 @@ impl SceneLiquidRuntime {
     /// First admitted body for compatibility; use body_states for the entire world.
     #[must_use]
     pub fn body_state(&self) -> Option<(NodeId, physics::liquid::TranslatingBody)> {
-        self.body.first().map(|b| (b.node, b.state))
+        self.body_states().next()
     }
 
-    /// All admitted bodies, including paused inactive bodies, in stable owner order.
+    /// All admitted COM states (legacy bodies use the root pivot), including paused
+    /// inactive bodies, in stable owner order. Rotation is exposed by body_rigid_states.
     pub fn body_states(
         &self,
     ) -> impl Iterator<Item = (NodeId, physics::liquid::TranslatingBody)> + '_ {
-        self.body.iter().map(|b| (b.node, b.state))
+        self.body.iter().map(|b| {
+            (
+                b.node,
+                physics::liquid::TranslatingBody {
+                    position: b.state.motion.position,
+                    velocity: b.state.motion.velocity,
+                    mass: b.state.motion.mass,
+                },
+            )
+        })
     }
 
     /// Admitted mass tensor and COM offset in the root-relative world-oriented frame.
@@ -968,7 +1430,14 @@ impl SceneLiquidRuntime {
         self.body.iter().map(|b| (b.node, b.mass_properties))
     }
 
-    /// Admitted COM/principal adapters; persistent angular state is not activated here.
+    /// Persistent mechanical COM states, including intrinsic rotation when mass is authored.
+    pub fn body_rigid_states(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, physics::contact::ContactBody)> + '_ {
+        self.body.iter().map(|b| (b.node, b.state))
+    }
+
+    /// Admitted COM/principal adapters.
     pub fn body_rigid_frames(
         &self,
     ) -> impl Iterator<Item = (NodeId, Option<crate::RigidBodyFrame>)> + '_ {
@@ -986,6 +1455,26 @@ impl SceneLiquidRuntime {
         scene: &SceneGraph,
         dt: f64,
         container: Option<Container>,
+    ) -> Result<SceneLiquidStep, String> {
+        self.tick_with_dynamics(
+            scene,
+            dt,
+            container,
+            Default::default(),
+            scene_rotation_config(),
+        )
+    }
+
+    /// Simulate using caller-specified mechanical response and angular admission budgets.
+    /// # Errors
+    /// Same transactional binding, emission and geometry guarantees as tick.
+    pub fn tick_with_dynamics(
+        &mut self,
+        scene: &SceneGraph,
+        dt: f64,
+        container: Option<Container>,
+        dynamics: physics::liquid::DynamicWorldConfig,
+        rotation: physics::spin_path::Config,
     ) -> Result<SceneLiquidStep, String> {
         self.validate_bindings(scene)?;
         if !dt.is_finite() || dt <= 0. {
@@ -1029,10 +1518,14 @@ impl SceneLiquidRuntime {
                 continue;
             }
             let mut shapes = Vec::new();
-            for collider in &body.colliders {
+            for (slot, collider) in body.colliders.iter().enumerate() {
                 if let Some(index) = geometry.0.0.iter().position(|b| b.owner == collider.node) {
                     geometry.0.0.remove(index);
-                    shapes.push(collider_template(body, collider)?);
+                    shapes.push(if let Some(principal) = &body.principal_templates {
+                        principal[slot]
+                    } else {
+                        collider_template(body, collider)?
+                    });
                 }
             }
             active.push(owner);
@@ -1043,7 +1536,7 @@ impl SceneLiquidRuntime {
             (
                 candidate
                     .liquid
-                    .step_with_geometry(dt, container, &geometry, Default::default())
+                    .step_with_geometry(dt, container, &geometry, dynamics.contact)
                     .map_err(|e| format!("scene liquid step: {e:?}"))?,
                 None,
             )
@@ -1054,7 +1547,7 @@ impl SceneLiquidRuntime {
             };
             let report = candidate
                 .liquid
-                .step_with_body_world(dt, &mut states, &world, Default::default(), 128)
+                .step_with_rigid_body_world(dt, &mut states, &world, dynamics, 128, rotation)
                 .map_err(|e| format!("scene liquid body step: {e:?}"))?;
             for (owner, state) in active.into_iter().zip(states) {
                 candidate.body[owner].state = state;
@@ -1760,8 +2253,8 @@ mod tests {
     fn later_body_publication_failure_preserves_all_scene_poses() {
         let (mut scene, nodes, mut runtime) = body_pair_fixture();
         let poses: Vec<_> = nodes.iter().map(|n| scene.local(*n).unwrap()).collect();
-        runtime.body[0].state.position[0] += 1.;
-        runtime.body[1].state.position[0] = 1e100;
+        runtime.body[0].state.motion.position[0] += 1.;
+        runtime.body[1].state.motion.position[0] = 1e100;
         let before = runtime.clone();
         assert!(runtime.publish_body_pose(&mut scene).is_err());
         assert_eq!(runtime, before);
@@ -1993,11 +2486,18 @@ mod tests {
             templates: vec![vec![template; 2], vec![template; 2]],
         };
         assert_eq!(
-            world.sweep_body_pair(0, &runtime.body[0].state, 1, &runtime.body[1].state, 0.1, 3),
+            world.sweep_body_pair(
+                0,
+                &runtime.body_states().next().unwrap().1,
+                1,
+                &runtime.body_states().nth(1).unwrap().1,
+                0.1,
+                3
+            ),
             Err(physics::liquid::Error::CollisionBudget)
         );
         assert_eq!(
-            world.sweep_body_environment(0, &runtime.body[0].state, 0.1, 1),
+            world.sweep_body_environment(0, &runtime.body_states().next().unwrap().1, 0.1, 1),
             Err(physics::liquid::Error::CollisionBudget)
         );
         scene
@@ -2078,6 +2578,519 @@ mod tests {
         assert_eq!(report.environment_impulse, [0.; 3]);
         assert_eq!(scene.local(child).unwrap().translation.x, 0.1);
     }
+    #[test]
+    fn compound_event_key_preserves_exact_shape_pair_and_support_source() {
+        use physics::liquid::LiquidBodyWorld;
+        let scene = SceneGraph::new(1);
+        let shapes = rigid_shapes();
+        let first_far = crate::convex::AffineBox {
+            center: glam::DVec3::new(5., 10., 0.),
+            ..shapes[0]
+        };
+        let second_far = crate::convex::AffineBox {
+            center: glam::DVec3::new(10., -10., 0.),
+            ..shapes[1]
+        };
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![first_far, shapes[0]], vec![second_far, shapes[1]]],
+        };
+        let a = rigid_body([-0.1, 1., 0.], [3., 0., 0.], 0.)
+            .prepare_motion([0.; 3], [0.; 3], 0.03, rigid_config())
+            .unwrap();
+        let b = rigid_body([0.; 3], [0.; 3], 0.)
+            .prepare_motion([0.; 3], [0.; 3], 0.03, rigid_config())
+            .unwrap();
+        let event = world.sweep_rigid_pair_event(0, &a, 1, &b, 16).unwrap();
+        assert_eq!(
+            event.contact,
+            world.sweep_rigid_pair_contact(0, &a, 1, &b, 16).unwrap()
+        );
+        let key = FeatureKey::decode(event.feature.unwrap()).unwrap();
+        assert_eq!(
+            (key.first, key.second, key.axis),
+            (1, 1, crate::convex::AxisFeature::BodyFace(0))
+        );
+        let physics::liquid::GeometryHit::Contact { fraction, normal } = event.contact.geometry
+        else {
+            panic!("contact required")
+        };
+        let mut sa = a.sample(fraction * a.duration()).unwrap();
+        let mut sb = b.sample(fraction * b.duration()).unwrap();
+        sa.spin.as_mut().unwrap().angular_momentum = [0., 0., 0.25];
+        sb.spin.as_mut().unwrap().angular_momentum = [0., 0., -0.6];
+        let points = world
+            .rigid_pair_supports(
+                0,
+                &sa,
+                1,
+                &sb,
+                event.contact.witness.unwrap(),
+                normal,
+                event.feature.unwrap(),
+                1,
+            )
+            .unwrap();
+        assert_eq!(points.len(), 4);
+        assert!(
+            points
+                .iter()
+                .all(|s| s.plane == physics::contact::SupportPlane::First)
+        );
+        let bad = FeatureKey { first: 99, ..key }.encode().unwrap();
+        assert_eq!(
+            world.rigid_pair_supports(
+                0,
+                &sa,
+                1,
+                &sb,
+                event.contact.witness.unwrap(),
+                normal,
+                bad,
+                1
+            ),
+            Err(physics::liquid::Error::InvalidCollision)
+        );
+        assert_eq!(
+            world.rigid_pair_supports(
+                0,
+                &sa,
+                1,
+                &sb,
+                event.contact.witness.unwrap(),
+                normal,
+                255,
+                1
+            ),
+            Err(physics::liquid::Error::InvalidCollision)
+        );
+        assert_eq!(
+            world.rigid_pair_supports(
+                0,
+                &sa,
+                1,
+                &sb,
+                event.contact.witness.unwrap(),
+                normal,
+                event.feature.unwrap(),
+                0
+            ),
+            Err(physics::liquid::Error::CollisionBudget)
+        );
+    }
+
+    #[test]
+    fn edge_event_source_rebuilds_normal_rate_from_post_impact_spin() {
+        use glam::{DQuat, DVec3};
+        use physics::liquid::LiquidBodyWorld;
+        let h = 0.02;
+        let (s, c) = 0.35_f64.sin_cos();
+        let (t, d) = 0.45_f64.sin_cos();
+        let first_shape = crate::convex::AffineBox {
+            center: DVec3::ZERO,
+            edges: [
+                DVec3::Y,
+                DVec3::new(c, 0., -s) * h,
+                DVec3::new(s, 0., c) * h,
+            ],
+        };
+        let second_shape = crate::convex::AffineBox {
+            center: DVec3::ZERO,
+            edges: [
+                DVec3::Z,
+                DVec3::new(d, t, 0.) * h,
+                DVec3::new(-t, d, 0.) * h,
+            ],
+        };
+        let separation = first_shape.radius(DVec3::X) + second_shape.radius(DVec3::X);
+        let scene = SceneGraph::new(1);
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![first_shape], vec![second_shape]],
+        };
+        let a = rigid_body([-separation - 0.03, 0., 0.], [3., 0., 0.], 0.4)
+            .prepare_motion([0.; 3], [0.; 3], 0.02, rigid_config())
+            .unwrap();
+        let mut initial_b = rigid_body([0.; 3], [0.; 3], 0.);
+        initial_b.spin.as_mut().unwrap().angular_momentum = [-0.6, 0., 0.];
+        let b = initial_b
+            .prepare_motion([0.; 3], [0.; 3], 0.02, rigid_config())
+            .unwrap();
+        let event = world.sweep_rigid_pair_event(0, &a, 1, &b, 64).unwrap();
+        let key = FeatureKey::decode(event.feature.unwrap()).unwrap();
+        assert_eq!(key.axis, crate::convex::AxisFeature::Edges(0, 0));
+        let physics::liquid::GeometryHit::Contact { fraction, normal } = event.contact.geometry
+        else {
+            panic!("contact required")
+        };
+        let mut sa = a.sample(fraction * a.duration()).unwrap();
+        let mut sb = b.sample(fraction * b.duration()).unwrap();
+        let previous = world
+            .rigid_pair_supports(
+                0,
+                &sa,
+                1,
+                &sb,
+                event.contact.witness.unwrap(),
+                normal,
+                event.feature.unwrap(),
+                1,
+            )
+            .unwrap();
+        assert_eq!(previous.len(), 1);
+        sa.spin.as_mut().unwrap().angular_momentum = [0., 0., 0.8];
+        sb.spin.as_mut().unwrap().angular_momentum = [-0.2, 0., 0.];
+        let updated = world
+            .rigid_pair_supports(
+                0,
+                &sa,
+                1,
+                &sb,
+                event.contact.witness.unwrap(),
+                normal,
+                event.feature.unwrap(),
+                1,
+            )
+            .unwrap();
+        let physics::contact::SupportPlane::Rate { normal_rate } = updated[0].plane else {
+            panic!("edge normal rate required")
+        };
+        assert_ne!(updated[0].plane, previous[0].plane);
+        let ea = DQuat::from_array(sa.spin.unwrap().orientation) * first_shape.edges[0];
+        let eb = DQuat::from_array(sb.spin.unwrap().orientation) * second_shape.edges[0];
+        let wa = DVec3::from_array(sa.spin.unwrap().angular_velocity().unwrap());
+        let wb = DVec3::from_array(sb.spin.unwrap().angular_velocity().unwrap());
+        let sign = if ea.cross(eb).dot(DVec3::from_array(normal)) < 0. {
+            -1.
+        } else {
+            1.
+        };
+        let rotate = |edge: DVec3, omega: DVec3, time: f64| {
+            let speed = omega.length();
+            let axis = omega / speed;
+            let (s, c) = (speed * time).sin_cos();
+            edge * c + axis.cross(edge) * s + axis * axis.dot(edge) * (1. - c)
+        };
+        let n = |time| rotate(ea, wa, time).cross(rotate(eb, wb, time)).normalize() * sign;
+        let delta = 1e-5;
+        let numeric = (n(delta) - n(-delta)) / (2. * delta);
+        assert!((numeric - DVec3::from_array(normal_rate)).length() < 1e-8);
+        assert!(
+            DVec3::from_array(normal)
+                .dot(DVec3::from_array(normal_rate))
+                .abs()
+                < 1e-12
+        );
+    }
+
+    #[test]
+    fn authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger() {
+        let mut scene = SceneGraph::new(2);
+        let wall = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: glam::Vec3::new(0.04, 0., 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                wall,
+                crate::BoxCollider {
+                    half_extents: [0.04, 2., 0.02],
+                },
+            )
+            .unwrap();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![rigid_shapes()[0]]],
+        };
+        let mut liquid = rigid_liquid(Vec::new());
+        let mut bodies = [rigid_body([-0.1, 0., 0.], [3., 0., 0.], 0.)];
+        let energy = bodies[0].energy().unwrap();
+        let report = liquid
+            .step_with_rigid_body_world(
+                0.03,
+                &mut bodies,
+                &world,
+                Default::default(),
+                1,
+                rigid_config(),
+            )
+            .unwrap();
+        assert_eq!(report.dynamics.contacts, 1);
+        assert!(bodies[0].motion.velocity.iter().all(|v| v.abs() < 1e-11));
+        assert!(
+            bodies[0]
+                .spin
+                .unwrap()
+                .angular_momentum
+                .iter()
+                .all(|v| v.abs() < 1e-11)
+        );
+        assert!((report.environment_impulse[0] - 3.).abs() < 1e-11);
+        assert!(
+            (bodies[0].energy().unwrap() + report.dynamics.dissipated_energy - energy).abs()
+                < 1e-11
+        );
+        let before = (liquid.clone(), bodies);
+        let next = liquid
+            .step_with_rigid_body_world(
+                0.001,
+                &mut bodies,
+                &world,
+                Default::default(),
+                1,
+                rigid_config(),
+            )
+            .unwrap();
+        assert_eq!(next.dynamics.contacts, 0);
+        assert_eq!(bodies[0].motion.velocity, before.1[0].motion.velocity);
+        assert_eq!(
+            bodies[0].spin.unwrap().angular_momentum,
+            before.1[0].spin.unwrap().angular_momentum
+        );
+        assert!(
+            (glam::DVec3::from_array(bodies[0].motion.position)
+                - glam::DVec3::from_array(before.1[0].motion.position))
+            .length()
+                < 1e-14
+        );
+        assert!(
+            bodies[0].spin.unwrap().orientation[..3]
+                .iter()
+                .all(|v| v.abs() < 1e-15)
+        );
+    }
+
+    #[test]
+    fn scene_patch_solves_contact_velocities_but_free_rotation_requires_sustained_constraint() {
+        use physics::liquid::LiquidBodyWorld;
+        let scene = SceneGraph::new(1);
+        let shapes = rigid_shapes();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: shapes.map(|s| vec![s]).to_vec(),
+        };
+        let mut a = rigid_body([-0.04, 1., 0.], [3., 0., 0.], 0.);
+        let mut b = rigid_body([0.; 3], [0.; 3], 0.);
+        let contacts = world
+            .rigid_pair_patch(
+                0,
+                &a,
+                1,
+                &b,
+                ContactWitness {
+                    point: [0., 1., 0.],
+                    tolerance_m: 1e-13,
+                },
+                [-1., 0., 0.],
+                4,
+            )
+            .unwrap();
+        assert_eq!(contacts.len(), 4);
+        let report = physics::contact::resolve_normal_manifold(
+            &mut a,
+            Some(&mut b),
+            &contacts,
+            physics::contact::ManifoldConfig {
+                max_sweeps: 100,
+                velocity_tolerance: 1e-11,
+            },
+        )
+        .unwrap();
+        assert!(report.velocity_residual <= 1e-11);
+        for c in contacts {
+            assert!(
+                -(a.point_velocity(c.point).unwrap()[0] - b.point_velocity(c.point).unwrap()[0])
+                    >= -1e-11
+            );
+        }
+        let dt = 0.001;
+        let a = a
+            .prepare_motion([0.; 3], [0.; 3], dt, rigid_config())
+            .unwrap()
+            .end();
+        let b = b
+            .prepare_motion([0.; 3], [0.; 3], dt, rigid_config())
+            .unwrap()
+            .end();
+        let qa = glam::DQuat::from_array(a.spin.unwrap().orientation);
+        let qb = glam::DQuat::from_array(b.spin.unwrap().orientation);
+        let obstacle = crate::convex::AffineBox {
+            center: glam::DVec3::from_array(b.motion.position) + qb * shapes[1].center,
+            edges: shapes[1].edges.map(|e| qb * e),
+        };
+        assert!(
+            obstacle
+                .penetration_affine(
+                    glam::DVec3::from_array(a.motion.position) + qa * shapes[0].center,
+                    shapes[0].edges.map(|e| qa * e)
+                )
+                .is_some(),
+            "a zero normal velocity at impact does not imply a clear free-rotation remainder"
+        );
+        assert_eq!(
+            world.rigid_pair_patch(
+                0,
+                &a,
+                1,
+                &b,
+                ContactWitness {
+                    point: [0., 1., 0.],
+                    tolerance_m: 1e-13
+                },
+                [-1., 0., 0.],
+                0
+            ),
+            Err(physics::liquid::Error::CollisionBudget)
+        );
+    }
+
+    #[test]
+    fn authored_rigid_owners_rotate_publish_persist_pause_and_rollback() {
+        let mut scene = SceneGraph::new(8);
+        let mut nodes = Vec::new();
+        for (position, velocity, center, half) in [
+            ([-0.1, 1., 0.], [3., 0., 0.], 0., [0.04, 0.02, 0.02]),
+            ([0.; 3], [0.; 3], 0.04, [0.04, 2., 0.02]),
+        ] {
+            let root = scene
+                .spawn(
+                    None,
+                    Transform {
+                        translation: glam::Vec3::from_array(position),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            let child = scene
+                .spawn(
+                    Some(root),
+                    Transform {
+                        translation: glam::Vec3::new(center, 0., 0.),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            scene
+                .insert_component(child, crate::BoxCollider { half_extents: half })
+                .unwrap();
+            scene
+                .insert_component(
+                    root,
+                    crate::LiquidBody {
+                        mass_kg: 1.,
+                        initial_velocity_m_s: velocity,
+                    },
+                )
+                .unwrap();
+            // Mass distribution is explicit and independent of collision proxies.
+            let h = 1.5_f64.sqrt();
+            scene
+                .insert_component(
+                    root,
+                    crate::LiquidMassDistribution {
+                        parts: vec![crate::LiquidMassPart {
+                            mass_kg: 1.,
+                            center_m: [0.; 3],
+                            half_edges_m: [[h, 0., 0.], [0., h, 0.], [0., 0., h]],
+                        }],
+                    },
+                )
+                .unwrap();
+            nodes.push(root);
+        }
+        let mut runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        let energy: f64 = runtime
+            .body_rigid_states()
+            .map(|(_, s)| s.energy().unwrap())
+            .sum();
+        let before = runtime.clone();
+        let poses_before: Vec<_> = nodes.iter().map(|n| scene.local(*n).unwrap()).collect();
+        assert!(
+            runtime
+                .tick_and_publish(&mut scene, 0.03, None)
+                .unwrap_err()
+                .contains("CollisionBudget")
+        );
+        assert_eq!(runtime, before);
+        assert_eq!(
+            nodes
+                .iter()
+                .map(|n| scene.local(*n).unwrap())
+                .collect::<Vec<_>>(),
+            poses_before
+        );
+        let report = runtime
+            .tick_and_publish_with_dynamics(&mut scene, 0.03, None, elastic_rigid(), rigid_config())
+            .unwrap()
+            .dynamics
+            .unwrap();
+        assert_eq!(report.dynamics.contacts, 1);
+        let states: Vec<_> = runtime.body_rigid_states().collect();
+        assert!((states[0].1.motion.velocity[0] - 1.).abs() < 1e-7);
+        assert!((states[1].1.motion.velocity[0] - 2.).abs() < 1e-7);
+        assert!((states[1].1.spin.unwrap().angular_momentum[2] + 2.).abs() < 1e-7);
+        let after: f64 = states.iter().map(|(_, s)| s.energy().unwrap()).sum();
+        assert!((after + report.dynamics.dissipated_energy - energy).abs() < 1e-11);
+        // Published child geometry follows the persistent principal template,
+        // within the same admitted root-pose point error used by publication.
+        for owner in &runtime.body {
+            let spin = owner.state.spin.unwrap();
+            let q = glam::DQuat::from_array(spin.orientation);
+            let com = glam::DVec3::from_array(owner.state.motion.position);
+            for (collider, shape) in owner
+                .colliders
+                .iter()
+                .zip(owner.principal_templates.as_ref().unwrap())
+            {
+                let actual =
+                    crate::affine_box(&scene, collider.node, collider.collider.half_extents)
+                        .unwrap();
+                assert!((actual.center - (com + q * shape.center)).length() < 1e-5);
+                for k in 0..3 {
+                    assert!((actual.edges[k] - q * shape.edges[k]).length() < 1e-5);
+                }
+            }
+        }
+        let rotation = scene.local(nodes[1]).unwrap().rotation;
+        assert!(rotation.z.abs() > 0.001);
+        runtime.validate_bindings(&scene).unwrap();
+        runtime.tick_and_publish(&mut scene, 0.001, None).unwrap();
+        assert_ne!(scene.local(nodes[1]).unwrap().rotation, rotation);
+        for node in &nodes {
+            scene.set_active(*node, false).unwrap();
+        }
+        let states: Vec<_> = runtime.body_rigid_states().collect();
+        runtime.tick_and_publish(&mut scene, 0.001, None).unwrap();
+        assert_eq!(runtime.body_rigid_states().collect::<Vec<_>>(), states);
+        let poses: Vec<_> = nodes.iter().map(|n| scene.local(*n).unwrap()).collect();
+        runtime.body[0].state.motion.position[0] += 1.;
+        runtime.body[1].state.motion.position[0] = 1e100;
+        let before = runtime.clone();
+        assert!(runtime.publish_body_pose(&mut scene).is_err());
+        assert_eq!(runtime, before);
+        assert_eq!(
+            nodes
+                .iter()
+                .map(|n| scene.local(*n).unwrap())
+                .collect::<Vec<_>>(),
+            poses
+        );
+    }
+
     #[test]
     fn explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback() {
         let (mut scene, nodes, _) = body_pair_fixture();

@@ -22,6 +22,7 @@ pub(crate) fn certify_published_pose(
 
 #[derive(Debug)]
 pub(crate) struct Hit {
+    pub feature: Option<super::convex::AxisFeature>,
     pub fraction: f64,
     pub normal: Option<DVec3>,
 }
@@ -96,6 +97,7 @@ pub(crate) fn sweep(
     let angle = angular.length();
     if angle == 0. || boxes.is_empty() {
         return Ok(Hit {
+            feature: None,
             fraction: 1.,
             normal: None,
         });
@@ -224,6 +226,7 @@ fn advance_with_enclosures(
     }
     if candidates.is_empty() || (speed_bound == 0. && clearance == 0. && point_sample.is_none()) {
         return Ok(Hit {
+            feature: None,
             fraction: 1.,
             normal: None,
         });
@@ -235,13 +238,16 @@ fn advance_with_enclosures(
         let enclosed_points = point_sample.map(|sample| sample(time)).transpose()?;
         let mut distance = f64::INFINITY;
         let mut contact = DVec3::ZERO;
+        let mut contact_feature = None;
         let mut tolerance = 0.;
         for obstacle in candidates {
             query(queries)?;
             let relative = center - obstacle.center;
             let mut separation = f64::NEG_INFINITY;
             let mut normal = DVec3::ZERO;
-            for axis in obstacle.axes_for(current) {
+            let mut feature = None;
+            for source in obstacle.support_axes(current) {
+                let axis = source.direction;
                 let gap = if let Some(points) = &enclosed_points {
                     gap::lower_points(points, obstacle, axis, clearance)?
                 } else if clearance > 0. || contact_tolerance.is_some() {
@@ -253,12 +259,14 @@ fn advance_with_enclosures(
                 };
                 if gap > separation {
                     separation = gap;
+                    feature = Some(source.feature);
                     normal = axis * if relative.dot(axis) < 0. { -1. } else { 1. };
                 }
             }
             if separation < distance {
                 distance = separation;
                 contact = normal;
+                contact_feature = feature;
                 tolerance = contact_tolerance.unwrap_or(
                     128. * f64::EPSILON
                         * (1.
@@ -272,12 +280,14 @@ fn advance_with_enclosures(
         }
         if distance <= tolerance {
             return Ok(Hit {
+                feature: contact_feature,
                 fraction: time,
                 normal: Some(contact),
             });
         }
         if speed_bound == 0. {
             return Ok(Hit {
+                feature: None,
                 fraction: 1.,
                 normal: None,
             });
@@ -291,6 +301,7 @@ fn advance_with_enclosures(
         };
         if next >= 1. {
             return Ok(Hit {
+                feature: None,
                 fraction: 1.,
                 normal: None,
             });

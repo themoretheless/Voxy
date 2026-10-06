@@ -63,7 +63,44 @@ pub(crate) fn reframe_rotation(basis: glam::DQuat, rotation: glam::DQuat) -> gla
     glam::DQuat::from_xyzw(vector.x, vector.y, vector.z, rotation.w).normalize()
 }
 
+/// Provenance of one affine-box separating axis, before orienting its sign.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum AxisFeature {
+    BodyFace(u8),
+    ObstacleFace(u8),
+    Edges(u8, u8),
+}
+impl AxisFeature {
+    pub(crate) fn code(self) -> u8 {
+        match self {
+            Self::BodyFace(k) => k,
+            Self::ObstacleFace(k) => 3 + k,
+            Self::Edges(i, j) => 6 + 3 * i + j,
+        }
+    }
+    pub(crate) fn from_code(code: u8) -> Option<Self> {
+        match code {
+            0..=2 => Some(Self::BodyFace(code)),
+            3..=5 => Some(Self::ObstacleFace(code - 3)),
+            6..=14 => Some(Self::Edges((code - 6) / 3, (code - 6) % 3)),
+            _ => None,
+        }
+    }
+}
 #[derive(Clone, Copy, Debug)]
+pub(crate) struct SupportAxis {
+    pub direction: DVec3,
+    pub feature: AxisFeature,
+}
+pub(crate) fn axis_direction(vector: DVec3) -> DVec3 {
+    let scale = vector.abs().max_element();
+    if scale == 0. {
+        DVec3::ZERO
+    } else {
+        (vector / scale).normalize()
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct AffineBox {
     pub center: DVec3,
     pub edges: [DVec3; 3],
@@ -273,33 +310,44 @@ impl AffineBox {
     }
 
     pub(crate) fn axes_for(&self, body: [DVec3; 3]) -> impl Iterator<Item = DVec3> {
-        // Normalize directions before crossing: tiny/large extents must not
-        // remove separating axes or overflow their cross products.
-        fn direction(vector: DVec3) -> DVec3 {
-            let scale = vector.abs().max_element();
-            if scale == 0. {
-                DVec3::ZERO
-            } else {
-                (vector / scale).normalize()
-            }
-        }
-        let body = body.map(direction);
-        let obstacle = self.edges.map(direction);
-        let mut axes = [DVec3::ZERO; 15];
+        self.support_axes(body).map(|axis| axis.direction)
+    }
+    pub(crate) fn support_axes(&self, body: [DVec3; 3]) -> impl Iterator<Item = SupportAxis> {
+        // Keep the previous axis order and floating operations exactly. Source
+        // labels travel alongside axes rather than being inferred from a normal.
+        let body = body.map(axis_direction);
+        let obstacle = self.edges.map(axis_direction);
+        let mut axes = [SupportAxis {
+            direction: DVec3::ZERO,
+            feature: AxisFeature::BodyFace(0),
+        }; 15];
         for (index, (a, b)) in [(1, 2), (2, 0), (0, 1)].into_iter().enumerate() {
-            axes[index] = body[a].cross(body[b]);
+            axes[index] = SupportAxis {
+                direction: body[a].cross(body[b]),
+                feature: AxisFeature::BodyFace(index as u8),
+            };
         }
         for (index, (a, b)) in [(0, 1), (1, 2), (2, 0)].into_iter().enumerate() {
-            axes[index + 3] = obstacle[a].cross(obstacle[b]);
+            // Legacy obstacle order was Z, X, Y.
+            axes[index + 3] = SupportAxis {
+                direction: obstacle[a].cross(obstacle[b]),
+                feature: AxisFeature::ObstacleFace(((index + 2) % 3) as u8),
+            };
         }
         for (i, first) in body.into_iter().enumerate() {
             for (j, second) in obstacle.into_iter().enumerate() {
-                axes[6 + i * 3 + j] = first.cross(second);
+                axes[6 + 3 * i + j] = SupportAxis {
+                    direction: first.cross(second),
+                    feature: AxisFeature::Edges(i as u8, j as u8),
+                };
             }
         }
         axes.into_iter()
-            .filter(|axis| *axis != DVec3::ZERO)
-            .map(direction)
+            .filter(|axis| axis.direction != DVec3::ZERO)
+            .map(|axis| SupportAxis {
+                direction: axis_direction(axis.direction),
+                ..axis
+            })
     }
     pub(crate) fn radius(&self, axis: DVec3) -> f64 {
         self.edges.iter().map(|edge| edge.dot(axis).abs()).sum()

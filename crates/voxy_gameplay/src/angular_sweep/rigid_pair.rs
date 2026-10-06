@@ -286,6 +286,7 @@ mod tests {
 /// Some(normal) denotes possible contact, not a point-witnessed physical impact.
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct SpinPathHit {
+    pub feature: Option<crate::convex::AxisFeature>,
     pub time_s: f64,
     pub normal: Option<DVec3>,
     pub model_error_m: f64,
@@ -346,6 +347,7 @@ pub(crate) fn sweep_spin_path_static(
         )?;
         if let Some(normal) = hit.normal {
             return Ok(SpinPathHit {
+                feature: hit.feature,
                 time_s: segment.start_s + duration * hit.fraction,
                 normal: Some(normal),
                 model_error_m: error,
@@ -353,6 +355,7 @@ pub(crate) fn sweep_spin_path_static(
         }
     }
     Ok(SpinPathHit {
+        feature: None,
         time_s: path.duration(),
         normal: None,
         model_error_m: error,
@@ -458,6 +461,7 @@ pub(crate) fn sweep_rigid_motion_static(
         )?;
         if let Some(normal) = hit.normal {
             return Ok(SpinPathHit {
+                feature: hit.feature,
                 time_s: duration.mul_add(hit.fraction, start),
                 normal: Some(normal),
                 model_error_m: error,
@@ -465,6 +469,7 @@ pub(crate) fn sweep_rigid_motion_static(
         }
     }
     Ok(SpinPathHit {
+        feature: None,
         time_s: path.duration(),
         normal: None,
         model_error_m: error,
@@ -635,6 +640,7 @@ fn sweep_rigid_motions_impl(
                 .spin
                 .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
             return Ok(SpinPathHit {
+                feature: hit.feature,
                 time_s: time,
                 normal: Some(qb * normal),
                 model_error_m: error,
@@ -642,6 +648,7 @@ fn sweep_rigid_motions_impl(
         }
     }
     Ok(SpinPathHit {
+        feature: None,
         time_s: first.duration(),
         normal: None,
         model_error_m: error,
@@ -652,6 +659,7 @@ fn sweep_rigid_motions_impl(
 /// remains explicit; this is not a certified contact on the exact physical orbit.
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct RigidTrajectoryContact {
+    pub feature: crate::convex::AxisFeature,
     pub time_s: f64,
     pub point: DVec3,
     pub normal: DVec3,
@@ -730,6 +738,7 @@ pub(crate) fn sweep_nominal_rigid_contact(
             continue;
         }
         return Ok(Some(RigidTrajectoryContact {
+            feature: hit.feature.ok_or(PhysicsError::ContactWitness)?,
             time_s: hit.time_s,
             point,
             normal,
