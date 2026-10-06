@@ -4,8 +4,9 @@ use crate::{astrophysics_spin::Spin, gravity::Body};
 type Vector = [f64; 3];
 mod reaction;
 pub use reaction::{
-    ContactWrench, NormalReaction, NormalSupport, ReactionConfig, SupportPlane,
-    normal_gap_acceleration, resolve_normal_reactions,
+    ContactWrench, NetworkReaction, NetworkSupport, NormalReaction, NormalSupport, ReactionConfig,
+    SupportPlane, normal_gap_acceleration, resolve_normal_reaction_network,
+    resolve_normal_reactions,
 };
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
@@ -243,6 +244,32 @@ pub fn resolve_normal_manifold(
     )
 }
 
+/// One geometry-admitted contact in a caller-owned body snapshot array.
+/// A missing second body denotes a fixed world boundary.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct NetworkContact {
+    pub first: usize,
+    pub second: Option<usize>,
+    pub contact: NormalContact,
+}
+
+/// Resolve simultaneous frictionless inelastic contacts sharing arbitrary bodies.
+/// All state changes are staged; any failed admission or convergence preserves
+/// the complete body array. Geometry and contact identities remain caller-owned.
+pub fn resolve_normal_contact_network(
+    bodies: &mut [ContactBody],
+    contacts: &[NetworkContact],
+    config: ManifoldConfig,
+) -> Result<ManifoldImpulse, Error> {
+    solve_normal_network_constraints(
+        bodies,
+        contacts,
+        config,
+        &[0.; 128][..contacts.len().min(128)],
+        true,
+    )
+}
+
 fn solve_normal_constraints(
     first: &mut ContactBody,
     second: Option<&mut ContactBody>,
@@ -251,7 +278,37 @@ fn solve_normal_constraints(
     biases: &[f64],
     enforce_energy: bool,
 ) -> Result<ManifoldImpulse, Error> {
-    if biases.len() != contacts.len()
+    let mut bodies = vec![*first];
+    if let Some(body) = second.as_deref() {
+        bodies.push(*body);
+    }
+    let indexed: Vec<_> = contacts
+        .iter()
+        .map(|contact| NetworkContact {
+            first: 0,
+            second: (bodies.len() == 2).then_some(1),
+            contact: *contact,
+        })
+        .collect();
+    let report =
+        solve_normal_network_constraints(&mut bodies, &indexed, config, biases, enforce_energy)?;
+    *first = bodies[0];
+    if let Some(body) = second {
+        *body = bodies[1];
+    }
+    Ok(report)
+}
+
+fn solve_normal_network_constraints(
+    bodies: &mut [ContactBody],
+    contacts: &[NetworkContact],
+    config: ManifoldConfig,
+    biases: &[f64],
+    enforce_energy: bool,
+) -> Result<ManifoldImpulse, Error> {
+    if bodies.is_empty()
+        || bodies.len() > 128
+        || biases.len() != contacts.len()
         || biases.iter().any(|v| !v.is_finite())
         || contacts.is_empty()
         || contacts.len() > 128
@@ -261,40 +318,87 @@ fn solve_normal_constraints(
     {
         return Err(Error::InvalidInput);
     }
-    let mut a = *first;
-    let mut b = second.as_deref().copied();
-    let before = a.energy()? + b.map_or(Ok(0.), ContactBody::energy)?;
-    if !before.is_finite() {
-        return Err(Error::NumericalFailure);
-    }
+    let mut staged = bodies.to_vec();
+    let mut components: Vec<_> = (0..bodies.len()).collect();
+    let root = |parents: &[usize], mut k: usize| {
+        while parents[k] != k {
+            k = parents[k];
+        }
+        k
+    };
     let mut points = Vec::with_capacity(contacts.len());
     let mut inverse = Vec::with_capacity(contacts.len());
-    for contact in contacts {
-        let report = normal_impulse(&a, b.as_ref(), contact.point, contact.normal, 0.)?;
+    for indexed in contacts {
+        if indexed.first >= staged.len()
+            || indexed
+                .second
+                .is_some_and(|j| j >= staged.len() || j == indexed.first)
+        {
+            return Err(Error::InvalidInput);
+        }
+        if let Some(second) = indexed.second {
+            let first_root = root(&components, indexed.first);
+            let second_root = root(&components, second);
+            components[second_root] = first_root;
+        }
+        let contact = indexed.contact;
+        let report = normal_impulse(
+            &staged[indexed.first],
+            indexed.second.map(|j| &staged[j]),
+            contact.point,
+            contact.normal,
+            0.,
+        )?;
         let norm = contact.normal[0]
             .hypot(contact.normal[1])
             .hypot(contact.normal[2]);
-        points.push(NormalContact {
-            point: contact.point,
-            normal: contact.normal.map(|v| v / norm),
+        points.push(NetworkContact {
+            contact: NormalContact {
+                point: contact.point,
+                normal: contact.normal.map(|v| v / norm),
+            },
+            ..*indexed
         });
         inverse.push(report.inverse_effective_mass);
     }
-    let speed = |a: ContactBody,
-                 b: Option<ContactBody>,
-                 contact: NormalContact,
-                 index: usize|
-     -> Result<f64, Error> {
-        let relative = sub(
-            a.point_velocity(contact.point)?,
-            b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
-        );
-        let value = dot(relative, contact.normal) + biases[index];
-        if !value.is_finite() {
-            return Err(Error::NumericalFailure);
+    // Disconnected components retain independent energy guards and loss.
+    // An unrelated high-energy body must not hide a small collision's loss.
+    let energy = |states: &[ContactBody]| -> Result<Vec<f64>, Error> {
+        let mut sums = vec![0.; states.len()];
+        for (k, body) in states.iter().enumerate() {
+            let group = root(&components, k);
+            sums[group] += body.energy()?;
+            if !sums[group].is_finite() {
+                return Err(Error::NumericalFailure);
+            }
         }
-        Ok(value)
+        Ok(sums)
     };
+    let before = energy(&staged)?;
+    let speed =
+        |states: &[ContactBody], indexed: NetworkContact, index: usize| -> Result<f64, Error> {
+            let contact = indexed.contact;
+            let relative = sub(
+                states[indexed.first].point_velocity(contact.point)?,
+                indexed
+                    .second
+                    .map_or(Ok([0.; 3]), |j| states[j].point_velocity(contact.point))?,
+            );
+            let value = dot(relative, contact.normal) + biases[index];
+            if !value.is_finite() {
+                return Err(Error::NumericalFailure);
+            }
+            Ok(value)
+        };
+    let apply =
+        |states: &mut [ContactBody], indexed: NetworkContact, delta: f64| -> Result<(), Error> {
+            let impulse = indexed.contact.normal.map(|n| n * delta);
+            states[indexed.first].apply_point_impulse(indexed.contact.point, impulse)?;
+            if let Some(j) = indexed.second {
+                states[j].apply_point_impulse(indexed.contact.point, impulse.map(|v| -v))?;
+            }
+            Ok(())
+        };
     // Pair block minimization resolves strongly coupled face points without
     // the slow alternating scalar impulses of a nearly singular contact patch.
     // Diagonal/duplicate singular blocks retain scalar coordinate updates.
@@ -317,24 +421,34 @@ fn solve_normal_constraints(
     let mut cross_mass = vec![vec![0.; points.len()]; points.len()];
     for i in 0..points.len() {
         for j in (i + 1)..points.len() {
-            let value = coupling(a, points[i], points[j])?
-                + b.map_or(Ok(0.), |body| coupling(body, points[i], points[j]))?;
+            let participants =
+                |point: NetworkContact| [Some((point.first, 1.)), point.second.map(|j| (j, -1.))];
+            let mut value = 0.;
+            for (body, sign_i) in participants(points[i]).into_iter().flatten() {
+                for (other, sign_j) in participants(points[j]).into_iter().flatten() {
+                    if body == other {
+                        value += sign_i
+                            * sign_j
+                            * coupling(staged[body], points[i].contact, points[j].contact)?;
+                    }
+                }
+            }
+            if !value.is_finite() {
+                return Err(Error::NumericalFailure);
+            }
             cross_mass[i][j] = value;
         }
     }
     let mut strengths = vec![0.; points.len()];
     for sweep in 1..=config.max_sweeps {
         for (index, contact) in points.iter().copied().enumerate() {
-            let next = (strengths[index] - speed(a, b, contact, index)? / inverse[index]).max(0.);
+            let next =
+                (strengths[index] - speed(&staged, contact, index)? / inverse[index]).max(0.);
             if !next.is_finite() {
                 return Err(Error::NumericalFailure);
             }
             let delta = next - strengths[index];
-            let impulse = contact.normal.map(|n| n * delta);
-            a.apply_point_impulse(contact.point, impulse)?;
-            if let Some(body) = &mut b {
-                body.apply_point_impulse(contact.point, impulse.map(|v| -v))?;
-            }
+            apply(&mut staged, contact, delta)?;
             strengths[index] = next;
         }
         for i in 0..points.len() {
@@ -352,8 +466,8 @@ fn solve_normal_constraints(
                 }
                 let u = strengths[i] * si;
                 let v = strengths[j] * sj;
-                let ri = u + correlation * v - speed(a, b, points[i], i)? / si;
-                let rj = v + correlation * u - speed(a, b, points[j], j)? / sj;
+                let ri = u + correlation * v - speed(&staged, points[i], i)? / si;
+                let rj = v + correlation * u - speed(&staged, points[j], j)? / sj;
                 if !ri.is_finite() || !rj.is_finite() {
                     return Err(Error::NumericalFailure);
                 }
@@ -381,18 +495,14 @@ fn solve_normal_constraints(
                         return Err(Error::NumericalFailure);
                     }
                     let delta = next - strengths[index];
-                    let impulse = points[index].normal.map(|n| n * delta);
-                    a.apply_point_impulse(points[index].point, impulse)?;
-                    if let Some(body) = &mut b {
-                        body.apply_point_impulse(points[index].point, impulse.map(|v| -v))?;
-                    }
+                    apply(&mut staged, points[index], delta)?;
                     strengths[index] = next;
                 }
             }
         }
         let mut residual = 0_f64;
         for (index, contact) in points.iter().copied().enumerate() {
-            let velocity = speed(a, b, contact, index)?;
+            let velocity = speed(&staged, contact, index)?;
             residual = residual.max(if strengths[index] > 0. {
                 velocity.abs()
             } else {
@@ -400,27 +510,31 @@ fn solve_normal_constraints(
             });
         }
         if residual <= config.velocity_tolerance {
-            let after = a.energy()? + b.map_or(Ok(0.), ContactBody::energy)?;
-            let change = after - before;
-            if !change.is_finite()
-                || (enforce_energy && change > 128. * f64::EPSILON * (1. + before))
-            {
+            let after = energy(&staged)?;
+            let mut change = 0.;
+            for (old, new) in before.iter().zip(after) {
+                let delta = new - old;
+                if !delta.is_finite()
+                    || (enforce_energy && delta > 128. * f64::EPSILON * (1. + old))
+                {
+                    return Err(Error::NumericalFailure);
+                }
+                change += delta;
+            }
+            if !change.is_finite() {
                 return Err(Error::NumericalFailure);
             }
             let report = ManifoldImpulse {
                 impulses: points
                     .iter()
                     .zip(strengths.iter())
-                    .map(|(contact, strength)| contact.normal.map(|n| n * strength))
+                    .map(|(contact, strength)| contact.contact.normal.map(|n| n * strength))
                     .collect(),
                 sweeps: sweep,
                 velocity_residual: residual,
                 kinetic_energy_change: change,
             };
-            *first = a;
-            if let Some(second) = second {
-                *second = b.expect("second staged");
-            }
+            bodies.copy_from_slice(&staged);
             return Ok(report);
         }
     }

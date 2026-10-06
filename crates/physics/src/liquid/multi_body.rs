@@ -119,7 +119,7 @@ pub trait LiquidBodyWorld {
         self.sweep_body_environment(body_index, body, dt, max_candidates)
             .map(Into::into)
     }
-    /// Prepared angular trajectory; legacy backends reject intrinsic spin.
+    /// Prepared angular/accelerated trajectory; legacy backends reject both.
     fn sweep_particle_rigid_contact(
         &self,
         p: &Particle,
@@ -129,7 +129,7 @@ pub trait LiquidBodyWorld {
         budget: usize,
     ) -> Result<BodyGeometryHit, Error> {
         let body = path.initial();
-        if body.spin.is_some() {
+        if body.spin.is_some() || path.acceleration() != [0.; 3] {
             return Err(Error::CollisionBackend);
         }
         self.sweep_particle_body_contact(
@@ -155,7 +155,11 @@ pub trait LiquidBodyWorld {
     ) -> Result<BodyGeometryHit, Error> {
         let a = first.initial();
         let b = second.initial();
-        if a.spin.is_some() || b.spin.is_some() {
+        if a.spin.is_some()
+            || b.spin.is_some()
+            || first.acceleration() != [0.; 3]
+            || second.acceleration() != [0.; 3]
+        {
             return Err(Error::CollisionBackend);
         }
         self.sweep_body_pair_contact(
@@ -182,7 +186,7 @@ pub trait LiquidBodyWorld {
         budget: usize,
     ) -> Result<BodyGeometryHit, Error> {
         let body = path.initial();
-        if body.spin.is_some() {
+        if body.spin.is_some() || path.acceleration() != [0.; 3] {
             return Err(Error::CollisionBackend);
         }
         self.sweep_body_environment_contact(
@@ -195,6 +199,35 @@ pub trait LiquidBodyWorld {
             path.duration(),
             budget,
         )
+    }
+    /// Particle metadata plus the prepared drift trajectory. Linear-only
+    /// adapters reject accelerated particles instead of replacing them by chords.
+    fn sweep_particle_motion_body_event(
+        &self,
+        p: &Particle,
+        radius: f64,
+        particle: &crate::rigid_motion::RigidMotion,
+        index: usize,
+        body: &crate::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        if particle.acceleration() != [0.; 3] || particle.initial().spin.is_some() {
+            return Err(Error::CollisionBackend);
+        }
+        self.sweep_particle_rigid_event(p, radius, index, body, budget)
+    }
+    fn sweep_particle_motion_environment_event(
+        &self,
+        p: &Particle,
+        radius: f64,
+        particle: &crate::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        if particle.acceleration() != [0.; 3] || particle.initial().spin.is_some() {
+            return Err(Error::CollisionBackend);
+        }
+        self.sweep_particle_environment_contact(p, radius, particle.duration(), budget)
+            .map(Into::into)
     }
     fn sweep_particle_rigid_event(
         &self,
@@ -337,6 +370,161 @@ impl Node {
     }
 }
 
+/// Body work accompanies the existing environment report without changing its
+/// legacy DTO. Includes configured gravity and additional world COM wrenches.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RigidWorldReport {
+    pub world: DynamicEnvironmentReport,
+    pub external_work: f64,
+    /// Nominal rotation integration and floating work discrepancy, not heat.
+    pub integration_energy_residual: f64,
+}
+#[derive(Default)]
+struct RigidWork {
+    external: f64,
+    residual: f64,
+}
+
+type CollisionEvent = (
+    usize,
+    Option<usize>,
+    f64,
+    [f64; 3],
+    Option<ContactWitness>,
+    Option<u64>,
+);
+
+/// Resolve an exactly simultaneous, frictionless inelastic rigid event group.
+/// Tokens and witnesses retain each emitting backend query's shape provenance.
+fn resolve_rigid_events(
+    nodes: &mut [Node],
+    particle_count: usize,
+    events: &[CollisionEvent],
+    world: &impl LiquidBodyWorld,
+    config: DynamicWorldConfig,
+    ledger: &mut ContactLedger,
+) -> Result<(), Error> {
+    let total = ledger
+        .contacts
+        .checked_add(events.len())
+        .ok_or(Error::CollisionBudget)?;
+    if total > config.max_contacts {
+        return Err(Error::CollisionBudget);
+    }
+    let mut owners = Vec::new();
+    for &(first, second, _, _, _, _) in events {
+        for index in std::iter::once(first).chain(second) {
+            if index < particle_count {
+                return Err(Error::InvalidCollision);
+            }
+            if !owners.contains(&index) {
+                if owners.len() >= 128 {
+                    return Err(Error::CollisionBudget);
+                }
+                owners.push(index);
+            }
+        }
+    }
+    let mut states: Vec<_> = owners.iter().map(|index| nodes[*index].contact()).collect();
+    let mut contacts = Vec::new();
+    let mut scale = 1_f64;
+    for &(first, second, _, normal, witness, feature) in events {
+        let a = nodes[first].contact();
+        let b = second.map(|j| nodes[j].contact());
+        let patch = if a.spin.is_some() || b.is_some_and(|body| body.spin.is_some()) {
+            let witness = witness.ok_or(Error::InvalidCollision)?;
+            charge(ledger, config)?;
+            if let Some(index) = second {
+                world.rigid_pair_patch_for_feature(
+                    first - particle_count,
+                    &a,
+                    index - particle_count,
+                    b.as_ref().ok_or(Error::InvalidCollision)?,
+                    witness,
+                    normal,
+                    feature,
+                    config.contact.max_candidates,
+                )?
+            } else {
+                world.rigid_environment_patch_for_feature(
+                    first - particle_count,
+                    &a,
+                    witness,
+                    normal,
+                    feature,
+                    config.contact.max_candidates,
+                )?
+            }
+        } else {
+            vec![crate::contact::NormalContact {
+                point: witness.map_or(a.motion.position, |w| w.point),
+                normal,
+            }]
+        };
+        if patch.is_empty() {
+            return Err(Error::InvalidCollision);
+        }
+        if contacts.len() + patch.len() > 128 {
+            return Err(Error::CollisionBudget);
+        }
+        let first_local = owners
+            .iter()
+            .position(|j| *j == first)
+            .ok_or(Error::InvalidCollision)?;
+        let second_local = second
+            .map(|index| {
+                owners
+                    .iter()
+                    .position(|j| *j == index)
+                    .ok_or(Error::InvalidCollision)
+            })
+            .transpose()?;
+        for contact in patch {
+            for velocity in [
+                a.point_velocity(contact.point),
+                b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point)),
+            ] {
+                let velocity = velocity.map_err(|_| Error::InvalidCollision)?;
+                scale = velocity.iter().map(|v| v.abs()).fold(scale, f64::max);
+            }
+            contacts.push(crate::contact::NetworkContact {
+                first: first_local,
+                second: second_local,
+                contact,
+            });
+        }
+    }
+    let report = crate::contact::resolve_normal_contact_network(
+        &mut states,
+        &contacts,
+        crate::contact::ManifoldConfig {
+            max_sweeps: 10000,
+            velocity_tolerance: 128. * f64::EPSILON * scale,
+        },
+    )
+    .map_err(|e| match e {
+        crate::contact::Error::Budget => Error::CollisionBudget,
+        crate::contact::Error::InvalidInput => Error::InvalidCollision,
+        crate::contact::Error::NumericalFailure => Error::NumericalFailure,
+    })?;
+    ledger.contacts = total;
+    ledger.loss += (-report.kinetic_energy_change).max(0.);
+    for (contact, impulse) in contacts.iter().zip(report.impulses) {
+        if contact.second.is_none() {
+            for k in 0..3 {
+                ledger.environment_impulse[k] -= impulse[k];
+            }
+        }
+    }
+    if !ledger.loss.is_finite() || !finite(ledger.environment_impulse) {
+        return Err(Error::NumericalFailure);
+    }
+    for (index, state) in owners.into_iter().zip(states) {
+        nodes[index].update(state);
+    }
+    Ok(())
+}
+
 fn default_rotation() -> crate::spin_path::Config {
     crate::spin_path::Config {
         max_angular_error_rad: 1e-5,
@@ -365,6 +553,8 @@ pub(super) fn solve(
             spin: None,
         })
         .collect();
+    let forces = vec![crate::contact::ContactWrench::default(); rigid.len()];
+    let mut work = RigidWork::default();
     solve_contact(
         particles,
         &mut rigid,
@@ -374,6 +564,9 @@ pub(super) fn solve(
         ledger,
         world,
         default_rotation(),
+        &forces,
+        [0.; 3],
+        &mut work,
     )?;
     for (body, state) in bodies.iter_mut().zip(rigid) {
         body.position = state.motion.position;
@@ -391,7 +584,13 @@ fn solve_contact(
     ledger: &mut ContactLedger,
     world: &impl LiquidBodyWorld,
     rotation: crate::spin_path::Config,
+    forces: &[crate::contact::ContactWrench],
+    particle_acceleration: [f64; 3],
+    work: &mut RigidWork,
 ) -> Result<(), Error> {
+    if forces.len() != bodies.len() {
+        return Err(Error::InvalidCollision);
+    }
     let count = particles.len();
     let mut nodes: Vec<_> = particles
         .iter()
@@ -413,80 +612,89 @@ fn solve_contact(
     while remaining > 0. {
         let paths: Vec<_> = nodes
             .iter()
-            .map(|n| {
+            .enumerate()
+            .map(|(index, n)| {
+                let wrench = if index < count {
+                    crate::contact::ContactWrench {
+                        force: particle_acceleration.map(|a| a * n.mass),
+                        torque: [0.; 3],
+                    }
+                } else {
+                    forces[index - count]
+                };
                 n.contact()
-                    .prepare_motion([0.; 3], [0.; 3], remaining, rotation)
+                    .prepare_motion(wrench.force, wrench.torque, remaining, rotation)
                     .map_err(|_| Error::NumericalFailure)
             })
             .collect::<Result<_, _>>()?;
-        let mut earliest: Option<(
-            usize,
-            Option<usize>,
-            f64,
-            [f64; 3],
-            Option<ContactWitness>,
-            Option<u64>,
-        )> = None;
-        let mut admit =
-            |first: usize, second: Option<usize>, event: RigidGeometryHit| -> Result<(), Error> {
-                let hit = event.contact;
-                if event.feature.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
-                    return Err(Error::InvalidCollision);
-                }
-                if hit.witness.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
-                    return Err(Error::InvalidCollision);
-                }
-                let GeometryHit::Contact { fraction, normal } = hit.geometry else {
-                    return if matches!(hit.geometry, GeometryHit::Overlap) {
-                        Err(Error::InitialOverlap)
-                    } else {
-                        Ok(())
-                    };
-                };
-                if hit.witness.is_some_and(|w| {
-                    !finite(w.point) || !w.tolerance_m.is_finite() || w.tolerance_m < 0.
-                }) {
-                    return Err(Error::InvalidCollision);
-                }
-                if require_witness && hit.witness.is_none() {
-                    return Err(Error::InvalidCollision);
-                }
-                let norm = normal[0].hypot(normal[1]).hypot(normal[2]);
-                if !fraction.is_finite()
-                    || !(0. ..=1.).contains(&fraction)
-                    || !norm.is_finite()
-                    || (norm - 1.).abs() > 5e-11
-                {
-                    return Err(Error::InvalidCollision);
-                }
-                let normal = normal.map(|n| n / norm);
-                let time = remaining * fraction;
-                let point = hit.witness.map_or(nodes[first].position, |w| w.point);
-                let a = paths[first]
-                    .sample(time)
-                    .map_err(|_| Error::NumericalFailure)?;
-                let va = a
-                    .point_velocity(point)
-                    .map_err(|_| Error::NumericalFailure)?;
-                let vb = if let Some(index) = second {
-                    paths[index]
-                        .sample(time)
-                        .map_err(|_| Error::NumericalFailure)?
-                        .point_velocity(point)
-                        .map_err(|_| Error::NumericalFailure)?
+        let mut earliest: Option<CollisionEvent> = None;
+        let mut simultaneous = Vec::new();
+        let mut admit = |first: usize,
+                         second: Option<usize>,
+                         event: RigidGeometryHit|
+         -> Result<(), Error> {
+            let hit = event.contact;
+            if event.feature.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
+                return Err(Error::InvalidCollision);
+            }
+            if hit.witness.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
+                return Err(Error::InvalidCollision);
+            }
+            let GeometryHit::Contact { fraction, normal } = hit.geometry else {
+                return if matches!(hit.geometry, GeometryHit::Overlap) {
+                    Err(Error::InitialOverlap)
                 } else {
-                    [0.; 3]
+                    Ok(())
                 };
-                let relative: [f64; 3] = std::array::from_fn(|k| va[k] - vb[k]);
-                let speed: f64 = (0..3).map(|a| relative[a] * normal[a]).sum();
-                if !speed.is_finite() || speed >= 0. {
-                    return Err(Error::InvalidCollision);
-                }
-                if earliest.is_none_or(|(_, _, old, _, _, _)| fraction < old) {
-                    earliest = Some((first, second, fraction, normal, hit.witness, event.feature));
-                }
-                Ok(())
             };
+            if hit.witness.is_some_and(|w| {
+                !finite(w.point) || !w.tolerance_m.is_finite() || w.tolerance_m < 0.
+            }) {
+                return Err(Error::InvalidCollision);
+            }
+            if require_witness && hit.witness.is_none() {
+                return Err(Error::InvalidCollision);
+            }
+            let norm = normal[0].hypot(normal[1]).hypot(normal[2]);
+            if !fraction.is_finite()
+                || !(0. ..=1.).contains(&fraction)
+                || !norm.is_finite()
+                || (norm - 1.).abs() > 5e-11
+            {
+                return Err(Error::InvalidCollision);
+            }
+            let normal = normal.map(|n| n / norm);
+            let time = remaining * fraction;
+            let point = hit.witness.map_or(nodes[first].position, |w| w.point);
+            let a = paths[first]
+                .sample(time)
+                .map_err(|_| Error::NumericalFailure)?;
+            let va = a
+                .point_velocity(point)
+                .map_err(|_| Error::NumericalFailure)?;
+            let vb = if let Some(index) = second {
+                paths[index]
+                    .sample(time)
+                    .map_err(|_| Error::NumericalFailure)?
+                    .point_velocity(point)
+                    .map_err(|_| Error::NumericalFailure)?
+            } else {
+                [0.; 3]
+            };
+            let relative: [f64; 3] = std::array::from_fn(|k| va[k] - vb[k]);
+            let speed: f64 = (0..3).map(|a| relative[a] * normal[a]).sum();
+            if !speed.is_finite() || speed >= 0. {
+                return Err(Error::InvalidCollision);
+            }
+            if earliest.is_none_or(|(_, _, old, _, _, _)| fraction < old) {
+                earliest = Some((first, second, fraction, normal, hit.witness, event.feature));
+                simultaneous.clear();
+            }
+            if earliest.is_some_and(|(_, _, old, _, _, _)| fraction == old) {
+                simultaneous.push((first, second, fraction, normal, hit.witness, event.feature));
+            }
+            Ok(())
+        };
         for (index, original) in particles.iter().enumerate() {
             let p = Particle {
                 position: nodes[index].position,
@@ -498,9 +706,10 @@ fn solve_contact(
                 admit(
                     index,
                     Some(count + body_index),
-                    world.sweep_particle_rigid_event(
+                    world.sweep_particle_motion_body_event(
                         &p,
                         radius,
+                        &paths[index],
                         body_index,
                         &paths[count + body_index],
                         config.contact.max_candidates,
@@ -512,14 +721,12 @@ fn solve_contact(
                 admit(
                     index,
                     None,
-                    world
-                        .sweep_particle_environment_contact(
-                            &p,
-                            radius,
-                            remaining,
-                            config.contact.max_candidates,
-                        )?
-                        .into(),
+                    world.sweep_particle_motion_environment_event(
+                        &p,
+                        radius,
+                        &paths[index],
+                        config.contact.max_candidates,
+                    )?,
                 )?;
             }
         }
@@ -553,22 +760,43 @@ fn solve_contact(
         }
         let fraction = earliest.map_or(1., |(_, _, f, _, _, _)| f);
         for (index, n) in nodes.iter_mut().enumerate() {
-            if n.spin.is_some() {
-                n.spin = paths[index]
-                    .sample(remaining * fraction)
-                    .map_err(|_| Error::NumericalFailure)?
-                    .spin;
+            let time = remaining * fraction;
+            if index >= count {
+                let change = paths[index]
+                    .work(time)
+                    .map_err(|_| Error::NumericalFailure)?;
+                work.external += change.force_work + change.torque_work;
+                work.residual += change.energy_residual;
             }
-            for a in 0..3 {
-                n.position[a] += n.velocity[a] * remaining * fraction;
+            if index >= count || particle_acceleration != [0.; 3] {
+                n.update(
+                    paths[index]
+                        .sample(time)
+                        .map_err(|_| Error::NumericalFailure)?,
+                );
+            } else {
+                for k in 0..3 {
+                    n.position[k] += n.velocity[k] * time;
+                }
             }
-            if !finite(n.position) {
+            if !finite(n.position) || !work.external.is_finite() || !work.residual.is_finite() {
                 return Err(Error::NumericalFailure);
             }
         }
         let Some((first, second, _, normal, witness, feature)) = earliest else {
             break;
         };
+        if simultaneous.len() > 1
+            && config.contact.restitution == 0.
+            && config.contact.friction == 0.
+            && simultaneous
+                .iter()
+                .all(|(first, second, ..)| *first >= count && second.is_none_or(|j| j >= count))
+        {
+            resolve_rigid_events(&mut nodes, count, &simultaneous, world, config, ledger)?;
+            remaining *= 1. - fraction;
+            continue;
+        }
         if ledger.contacts >= config.max_contacts {
             return Err(Error::CollisionBudget);
         }
@@ -774,8 +1002,31 @@ impl Liquid {
         max_bodies: usize,
         rotation: crate::spin_path::Config,
     ) -> Result<DynamicEnvironmentReport, Error> {
+        let forces = vec![crate::contact::ContactWrench::default(); bodies.len()];
+        self.step_with_rigid_body_forces(dt, bodies, world, config, max_bodies, rotation, &forces)
+            .map(|report| report.world)
+    }
+
+    /// Same transactional event loop with additional constant world COM forces
+    /// and torques for each body. Configured body gravity is applied continuously
+    /// once, in addition to these wrenches. Accelerated geometry must be supported
+    /// by the backend; linear-only defaults reject rather than sweep a chord.
+    pub fn step_with_rigid_body_forces(
+        &mut self,
+        dt: f64,
+        bodies: &mut [crate::contact::ContactBody],
+        world: &impl LiquidBodyWorld,
+        config: DynamicWorldConfig,
+        max_bodies: usize,
+        rotation: crate::spin_path::Config,
+        additional: &[crate::contact::ContactWrench],
+    ) -> Result<RigidWorldReport, Error> {
         config.contact.validate()?;
-        if bodies.len() > max_bodies
+        if additional.len() != bodies.len()
+            || additional.iter().zip(bodies.iter()).any(|(w, b)| {
+                !finite(w.force) || !finite(w.torque) || (b.spin.is_none() && w.torque != [0.; 3])
+            })
+            || bodies.len() > max_bodies
             || max_bodies == 0
             || config.max_contacts == 0
             || config.max_queries == 0
@@ -790,11 +1041,27 @@ impl Liquid {
         let mut ledger = ContactLedger::default();
         let radius = self.config.particle_radius;
         let gravity = self.config.gravity;
+        let forces: Vec<_> = bodies
+            .iter()
+            .zip(additional)
+            .map(|(body, wrench)| crate::contact::ContactWrench {
+                force: std::array::from_fn(|k| wrench.force[k] + body.motion.mass * gravity[k]),
+                torque: wrench.torque,
+            })
+            .collect();
+        if forces.iter().any(|w| !finite(w.force)) {
+            return Err(Error::NumericalFailure);
+        }
+        let mut work = RigidWork::default();
         let empty = self.particles.is_empty();
         let fluid = candidate.advance(dt, None, |particles, time| {
-            for body in &mut bodies_candidate {
-                for a in 0..3 {
-                    body.motion.velocity[a] += gravity[a] * time;
+            // SPH has already kicked pressure, viscosity and gravity. Retain
+            // the first two operators, but put uniform gravity on the same
+            // continuous drift paths as the bodies to avoid artificial relative
+            // acceleration at a resting fluid/body contact.
+            for particle in particles.iter_mut() {
+                for k in 0..3 {
+                    particle.velocity[k] -= gravity[k] * time;
                 }
             }
             solve_contact(
@@ -806,14 +1073,12 @@ impl Liquid {
                 &mut ledger,
                 world,
                 rotation,
+                &forces,
+                gravity,
+                &mut work,
             )
         })?;
         if empty {
-            for body in &mut bodies_candidate {
-                for a in 0..3 {
-                    body.motion.velocity[a] += gravity[a] * dt;
-                }
-            }
             solve_contact(
                 &mut [],
                 &mut bodies_candidate,
@@ -823,18 +1088,25 @@ impl Liquid {
                 &mut ledger,
                 world,
                 rotation,
+                &forces,
+                gravity,
+                &mut work,
             )?;
         }
         *self = candidate;
         bodies.copy_from_slice(&bodies_candidate);
-        Ok(DynamicEnvironmentReport {
-            dynamics: DynamicWorldReport {
-                fluid,
-                contacts: ledger.contacts,
-                queries: ledger.queries,
-                dissipated_energy: ledger.loss,
+        Ok(RigidWorldReport {
+            external_work: work.external,
+            integration_energy_residual: work.residual,
+            world: DynamicEnvironmentReport {
+                dynamics: DynamicWorldReport {
+                    fluid,
+                    contacts: ledger.contacts,
+                    queries: ledger.queries,
+                    dissipated_energy: ledger.loss,
+                },
+                environment_impulse: ledger.environment_impulse,
             },
-            environment_impulse: ledger.environment_impulse,
         })
     }
 }

@@ -1,0 +1,12 @@
+{
+  "passed": 1900,
+  "failed": 0,
+  "ignored": 24,
+  "consumer_all_target_check": "passed",
+  "limitations": [
+    "Persistent resting support reaction trajectories remain unfinished",
+    "External work ledger covers bodies only",
+    "Pressure and viscosity retain operator splitting",
+    "Torque work follows nominal spin segments"
+  ]
+}

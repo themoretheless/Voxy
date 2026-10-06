@@ -1,0 +1,53 @@
+{
+  "scope": "shared simultaneous frictionless inelastic impulse and instantaneous normal reaction networks",
+  "source_sha256": {
+    "crates/physics/src/contact.rs": "aaf3d5c89630c167436c8e9ab3583df4d9cb068c821b2ae5f1af9b0ad58050c0",
+    "crates/physics/src/contact/reaction.rs": "65c308d64ef195510b7c67cdc958a4dd8a2b8050eb574b88b3ddeb60b22352a8",
+    "crates/physics/tests/contact_network.rs": "efdeb2e97ac00baeffa9b4bca7c48fecfa6b5bcac9dd41a5716fd35d80e355bc",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "8e8fd90940c84b184b24a5c4e3074a3894095794a4dde09f81374168df3b1c73"
+  },
+  "full_regression": {
+    "packages": [
+      "physics",
+      "voxy_gameplay",
+      "voxy_editor"
+    ],
+    "suites": 216,
+    "passed": 1886,
+    "ignored": 24,
+    "exit_code": 0
+  },
+  "focused_network_tests": 8,
+  "consumer_check": {
+    "packages": [
+      "voxy_app",
+      "voxy_editor"
+    ],
+    "all_targets": true,
+    "exit_code": 0
+  },
+  "qualified": [
+    "shared signed translational and world-inertia coupling across bodies",
+    "stack support loads 20/50/100 N",
+    "eccentric beam support loads 13/7/43/57 N",
+    "reciprocal wrench balance and COM torque",
+    "body and contact permutations and proper world rotation",
+    "atomic impact and read-only force solves",
+    "explicit bounds and invalid-index rejection",
+    "outgoing contacts and duplicate constraints",
+    "late solve failure preserves complete network",
+    "disconnected-component physical energy guard and loss"
+  ],
+  "not_qualified": [
+    "scene simultaneous support assembly",
+    "finite-interval force evolution",
+    "geometry branch persistence",
+    "finite reaction work",
+    "live scene sustained-contact preview"
+  ],
+  "retained_initial_failures": [
+    "inadmissible triangle-inequality inertia in first beam fixture, corrected to physical principal inertia",
+    "disconnected global energy subtraction erased -2.25 J collision loss; fixed with component-local guard and accounting"
+  ],
+  "validation_sequence": "Full regression ran seven network tests; afterward the final eight-test focused network run added explicit limit/duplicate admission and the rotated-frame assertions. Physics mechanics sources remained unchanged between these runs."
+}

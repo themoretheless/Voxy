@@ -1,0 +1,55 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 11.81s
+     Running tests/liquid_multi_body_world.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_multi_body_world-b1d584cf90387ba0)
+
+running 4 tests
+test witnessed_body_contact_matches_legacy_and_malformed_witness_rolls_back ... ok
+test three_body_impulse_chain_uses_one_event_timeline_without_fluid ... ok
+test late_second_body_failure_and_admission_budget_restore_all_owners ... ok
+test fluid_recoil_body_pair_and_static_wall_preserve_boundary_balance ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_rigid_body_world.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_rigid_body_world-ab4549bc636e607e)
+
+running 6 tests
+test legacy_geometry_cannot_silently_accept_intrinsic_spin ... ok
+test coupled_body_impact_retains_spin_and_advances_the_post_impact_orientation ... ok
+test free_spin_persists_between_ticks_and_legacy_tangential_damping_is_rejected ... ok
+test late_backend_failure_missing_witness_and_invalid_rotation_restore_all_states ... ok
+test inelastic_patch_impulses_use_shared_event_ledger_and_malformed_patch_rolls_back ... ok
+test liquid_particle_recoil_spins_body_on_the_same_event_timeline ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/rigid_motion.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/rigid_motion-94c4116e568b448a)
+
+running 7 tests
+test endpoint_event_remainder_below_subdivision_floor_is_admitted_with_same_error_gate ... ok
+test impact_restarts_both_paths_and_continues_original_wrenches ... ok
+test late_second_remainder_failure_preserves_paths_and_endpoint_impact_needs_no_zero_step ... ok
+test off_center_impact_then_free_motion_preserves_total_angular_momentum ... ok
+test preparation_rejects_budget_invalid_torque_and_interior_overflow_without_mutation ... ok
+test subnormal_acceleration_survives_long_duration_without_time_squared_overflow ... ok
+test constant_wrench_closes_momentum_work_and_analytic_spherical_rotation ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/simultaneous_rigid_events.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/simultaneous_rigid_events-bc89381152676e1e)
+
+running 3 tests
+test late_patch_failure_and_complete_group_contact_budget_restore_every_body ... ok
+test shared_event_loop_keeps_both_feature_tokens_and_couples_three_bodies ... ok
+test simultaneous_body_and_wall_impulses_close_the_boundary_energy_ledger ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

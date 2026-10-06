@@ -1,0 +1,39 @@
+{
+  "scope": "shared world integration of exactly simultaneous closing frictionless inelastic rigid impacts",
+  "source_sha256": {
+    "crates/physics/src/liquid/multi_body.rs": "2540feee371d71c57396b4b048bea08e2ad433cda58348e888e687d69e171514",
+    "crates/physics/tests/simultaneous_rigid_events.rs": "d4022b8b2f6095c431de54c590f9a5bb605d1ff8fc8b2fe31253e6da3a964e95",
+    "crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs": "0a1a27d8ab1ed9c53cbdd03225046f0f517433c0ddea6b9741d09ea5a1016469",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "453828414f0bf89136318703049f123d7d257fd4dd996b2167508bdd30f925bd"
+  },
+  "regression": {
+    "passed": 376,
+    "ignored": 13,
+    "physics_exit_code": 0,
+    "scene_exit_code": 0,
+    "consumer_all_targets_exit_code": 0
+  },
+  "qualified": [
+    "actual scene-geometry three-body simultaneous face impact and reordered body array",
+    "individual backend feature tokens retained for every patch",
+    "coupled impulse solve and physical energy loss of 9 J",
+    "mixed body/wall impulse 9 N s and energy loss 22.5 J in controlled mechanics fixture",
+    "complete group contact and query budgets",
+    "late second patch error preserves all states",
+    "nominal fixed-axis excursion coverage retains small spin and velocity",
+    "small motion with positive gap clears; genuine closing motion and unresolved rotating touch remain admitted or rejected correctly"
+  ],
+  "limits": [
+    "exact reported fraction equality only, no grouping based on arbitrary time tolerance",
+    "body-only inelastic frictionless groups; mixed particle events retain previous sequential path",
+    "at most 128 participating bodies and 128 clipped points per network",
+    "fixed-axis coverage is for nominal constant-axis trajectory with floating pose guard, not an interval transcendental or true torque-driven orbit certificate",
+    "finite-interval normal reaction evolution and persistent support islands are not integrated",
+    "live editor preview not qualified"
+  ],
+  "retained_initial_failures": [
+    "real scene failed after successful group impulse because residual spin entered near-touch separating-prefix rejection",
+    "including SpinPath model residual in nominal clearance mismatched the existing nominal query contract",
+    "wall angular residual assertion exceeded what a point-speed tolerance can establish for a narrow patch; final check derives angular bound from lever arm and independently checks each normal point speed"
+  ]
+}

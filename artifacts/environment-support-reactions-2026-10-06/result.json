@@ -1,0 +1,25 @@
+{
+  "scope": "real scene fixed-wall SAT event -> patch -> inelastic impulse -> instantaneous normal reaction",
+  "source": "crates/voxy_gameplay/src/liquid_runtime.rs",
+  "sha256": "8e8fd90940c84b184b24a5c4e3074a3894095794a4dde09f81374168df3b1c73",
+  "tests_passed": 337,
+  "tests_ignored": 13,
+  "qualified": [
+    "selected wall identity across two walls",
+    "world-owned face normal with moving body",
+    "invalid wall index and zero query budget rejection",
+    "post-impact supports rebuilt from geometry",
+    "reaction away from wall",
+    "read-only reaction inputs",
+    "normal acceleration complementarity residual",
+    "independent spherical-inertia material-point acceleration",
+    "instantaneous power"
+  ],
+  "not_qualified": [
+    "finite-interval sustained contact",
+    "support branch persistence",
+    "multi-body simultaneous reactions",
+    "finite reaction work ledger",
+    "live editor preview"
+  ]
+}

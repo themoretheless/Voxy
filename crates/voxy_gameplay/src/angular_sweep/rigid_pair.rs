@@ -595,6 +595,50 @@ fn sweep_rigid_motions_impl(
         if !speed.is_finite() || !error.is_finite() {
             return Err(PhysicsError::InvalidMotion);
         }
+        let absolute_motion = [a, b, ae, be]
+            .iter()
+            .map(|body| DVec3::from_array(body.motion.velocity).length())
+            .fold(0., f64::max)
+            * dt;
+        // A fixed world-axis gap can cover an entire nominal arc even when
+        // its initial gap is below the advancement contact tolerance. Retain
+        // small physical velocities/spins; never clamp them to rest.
+        // Match this query's nominal-trajectory contract: model residuals
+        // stay in model_error_m, separate from nominal pose evaluation.
+        let excursion = ((linear + wa * ra + wb * rb) * (1. + 512. * f64::EPSILON) * dt
+            + 64. * f64::EPSILON * (coordinates + absolute_motion + relative.length() + ra + rb))
+            .next_up();
+        if nominal_contact && excursion.is_finite() {
+            let qa = a
+                .spin
+                .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
+            let qb = b
+                .spin
+                .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
+            let dilation = (excursion
+                + 2. * ra * (qa.length_squared() - 1.).abs()
+                + 2. * rb * (qb.length_squared() - 1.).abs())
+            .next_up();
+            let moving = AffineBox {
+                center: DVec3::from_array(a.motion.position) + qa * first_shape.center,
+                edges: first_shape.edges.map(|edge| qa * edge),
+            };
+            let obstacle = AffineBox {
+                center: DVec3::from_array(b.motion.position) + qb * second_shape.center,
+                edges: second_shape.edges.map(|edge| qb * edge),
+            };
+            let mut covered = false;
+            super::query(queries)?;
+            for axis in [DVec3::X, DVec3::Y, DVec3::Z] {
+                if super::gap::lower(moving.center, moving.edges, &obstacle, axis, dilation)? > 0. {
+                    covered = true;
+                    break;
+                }
+            }
+            if covered {
+                continue;
+            }
+        }
         let hit = advance_with_enclosures(
             &[&second_shape],
             |fraction| {
@@ -839,6 +883,62 @@ fn separating_prefix(
 mod spin_bridge_tests {
     use super::*;
     use physics::{astrophysics_spin::Spin, spin_path::Config};
+    #[test]
+    fn nominal_fixed_axis_gap_covers_small_motion_but_not_a_closing_interval() {
+        let config = Config {
+            max_angular_error_rad: 1e-5,
+            min_step_s: 1e-9,
+            max_arcs: 10000,
+            max_trials: 30000,
+        };
+        let shape = AffineBox {
+            center: DVec3::ZERO,
+            edges: [DVec3::X * 0.04, DVec3::Y * 0.02, DVec3::Z * 0.02],
+        };
+        let body = |x, velocity, spin| physics::contact::ContactBody {
+            motion: physics::gravity::Body {
+                mass: 1.,
+                position: [x, 0., 0.],
+                velocity: [velocity, 0., 0.],
+            },
+            spin: Some(physics::astrophysics_spin::Spin {
+                orientation: [0., 0., 0., 1.],
+                angular_momentum: [0., spin, 0.],
+                inertia: [1.; 3],
+            }),
+        };
+        let wall = body(0., 0., 0.)
+            .prepare_motion([0.; 3], [0.; 3], 0.02, config)
+            .unwrap();
+        let start = body(-0.080000000000006, 0., 1e-13);
+        let small = start
+            .prepare_motion([0.; 3], [0.; 3], 0.02, config)
+            .unwrap();
+        assert!(
+            sweep_nominal_rigid_contact(&small, shape, &wall, shape, &mut 10000, &mut 10000)
+                .unwrap()
+                .is_none()
+        );
+        assert_eq!(small.initial(), start);
+        assert_ne!(
+            small.end().spin.unwrap().orientation,
+            start.spin.unwrap().orientation
+        );
+        let mut approaching = start;
+        approaching.motion.velocity[0] = 1e-10;
+        let closing = approaching
+            .prepare_motion([0.; 3], [0.; 3], 0.02, config)
+            .unwrap();
+        let hit =
+            sweep_nominal_rigid_contact(&closing, shape, &wall, shape, &mut 10000, &mut 10000)
+                .unwrap()
+                .unwrap();
+        assert_eq!(hit.normal, -DVec3::X);
+        assert!(hit.time_s < 1e-4);
+        // The represented nominal arc is the contract here, not the true
+        // torque-driven orbit or an interval transcendental evaluation proof.
+    }
+
     #[test]
     fn separating_touch_is_not_an_impact_and_does_not_hide_accelerated_return() {
         let config = Config {
