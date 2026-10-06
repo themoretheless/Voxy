@@ -2013,3 +2013,329 @@ assembly preserves the result. After two refinements an interior node has zero
 boundary normal. The example suite passes 46 tests (3 ignored); the matching
 production library regression also passes. This fix does not increase character
 skin coverage or resolve the physical-skin clip obstruction at frame 279.
+
+## Free authored tissue admission (2026-10-06)
+
+Authored volumes with zero fixed supports can now advance through the existing
+prescribed-support integrator: an empty target set is complete when the pinned
+node count is zero. Pinned bodies still reject missing targets, including an
+empty set. No support is inferred or silently inserted.
+
+The regional controller now rejects nonfinite joint matrices before evaluating
+support positions, matching the assembled controller even when no supports are
+present. The regression verifies NaN and both infinities reject atomically in
+both owners, preserving positions, temperatures and energy receipts; the same
+free volume then advances under gravity with a valid palette. The focused app
+regression and 19 existing support/inertia/viscoelastic tests pass. This does not
+resolve the frame-279 prescribed skin obstruction or extend source skin coverage.
+
+Free-flight qualification additionally follows an unpinned unit tetrahedron for
+100 steps of 1 ms. Both the ordinary inertial API and the explicit empty-target
+API produce identical coordinates and velocities. Independent analytic checks
+use x=x0+a*t*t/2, v=a*t and mass=1/6 kg to verify the trajectory and kinetic
+energy. All support, plane and surface work components remain exactly zero.
+Energy-defect accumulation differs by floating-point rounding, bounded separately
+at 1e-15 J; no reported defect is subtracted from the ballistic oracle. The
+updated moving-support suite passes eight tests.
+
+## Geometric tetrahedral overlap admission (2026-10-06)
+
+VXTM import, export and conversion into a physical body now reject resolvable
+positive-volume intersections between cells, including coincident disconnected
+cells, partial intersections and containment. Positive individual cell volumes
+and valid face orientation alone did not previously detect these cases.
+
+A median-split bounding-box hierarchy selects nearby pairs before a tetrahedral
+separating-axis check (face normals and edge cross products). Valid opposite
+shared interfaces are retained; touching and separated cells remain admissible.
+The guard limits nearby candidate pairs to four million. A first linear sweep
+limit rejected existing anatomy and was replaced; its failure log is retained.
+
+This is floating-point admission, not exact geometric certification. Projections
+are evaluated relative to one cell origin, with a 64-epsilon relative roundoff
+band; intersections below that band can remain unresolved. Tests cover untrusted
+VXTM payloads, direct conversion, containment, rotations, translations, scales,
+touching and shared interfaces. The three new tests, two existing anatomy tests
+and four convex-volume tests pass, including the real liver mesh with 162807
+cells. No character coverage or frame-279 completion claim follows from this.
+
+## Anisotropic overlap projection rounding (2026-10-06)
+
+A regression exposed a false negative in the first overlap admission predicate:
+the roundoff band used the largest coordinate extent for every axis. A tetrahedron
+with unit lateral dimensions and height 1e-14 m has admitted volume above 1e-15 m3,
+but its positive overlap along the thin direction was erased by unrelated lateral
+width. The preserved initial failure demonstrates the previous acceptance.
+
+The band now uses the absolute dot-product terms actually projected on each
+normalized separating axis. Tests detect overlaps at heights 1e-14, 1e-12 and
+1e-6 m while accepting genuinely separated cells with overlapping boxes at the
+same heights. Four overlap tests, two real anatomy tests and four convex-volume
+tests pass. This improves anisotropic admission but remains a floating-point
+predicate, with unresolved near-roundoff geometry and no exact-predicate claim.
+
+## Disjoint authored region union (2026-10-06)
+
+The explicit authored-region constructor now validates every source mesh and
+its combined, reindexed VXTM geometry before creating dynamics. Overlap between
+regions is rejected even when no sampled skin vertex lies in that overlap. The
+shared public `TetraMesh::validate()` owns finite-coordinate, resource, topology
+and overlap checks without generating an unused serialized payload.
+
+The regression rejects coincident and partially overlapping octahedral regions
+without skin samples. Two separated volumes assemble with analytic summed mass
+and an unrelated exterior skin vertex remains unowned. The existing reassigned
+geometry fixture now translates distinct regions instead of accidentally putting
+all four regions at the same point.
+
+The broad regression revealed that legacy illustrative CesiumMan leg pads
+overlap: their centers are about 0.136 m apart with lateral radii 0.09 m. The
+legacy three-pin illustrative constructor retains its historical behavior via
+the shared builder; it does not receive disjoint anatomical admission. Explicit
+`TissueRegionSpec` construction, including file-backed v1/v2 imports, always
+requires disjoint physical volumes. This distinction is compatibility scope, not
+a claim that the legacy demo is geometrically production-ready. Its failed
+strict-union run is retained as evidence. Source coverage and the frame-279
+prescribed skin obstruction remain unresolved.
+
+The broad gate also exposed an ownership boundary mistake in the preceding
+overlap change: `validate_topology()` is used by solid-film binding and had
+received geometric union rejection. Geometry admission now lives in the public
+`validate()` method, called by VXTM reading/writing, physical-body conversion,
+load-patch admission and refinement input. The internal topology method retains
+its original orientation/interface/boundary contract, so a topology consumer does
+not silently impose anatomical volume-union admission. The coupling failure log
+is preserved alongside the earlier illustrative-overlap failures.
+
+Final regional admission gate: 48 example tests passed (3 ignored), 10 mesh
+geometry tests passed, and 5 solid-film binding tests passed.
+
+## Authored nonconvex lattice volume (2026-10-06)
+
+`TetraMesh::from_lattice_cells(origin, spacing, occupied)` builds the explicitly
+authored union of axis-aligned cells in metres, using six conforming tetrahedra
+per cell. Canonical cell ordering and shared lattice-node indices make output
+deterministic and preserve common face diagonals. Exterior faces are extracted
+from tetrahedral incidence and the result uses the shared VXTM geometry admission.
+No anatomical segmentation, smoothing, material or support placement is inferred.
+Point/edge contacts share lattice nodes; authors remain responsible for choosing
+an appropriate cell-union topology. This is a staircase boundary representation,
+not a conforming reconstruction of an arbitrary imported character surface.
+
+An L-shaped three-cell union has 16 nodes, 18 tetrahedra, 28 exterior triangles
+and analytic volume 3 cubic metres at unit spacing. The unoccupied notch rejects
+embedding; refinement preserves volume and quadruples boundary triangles. Export
+round-trips VXTM byte-exactly, and reversing authored cell order retains identical
+bytes. An anisotropic shifted two-cell fixture has volume 0.012 cubic metres.
+Duplicate/empty cells, integer overflow, invalid spacing and collapsed geometry
+are rejected.
+
+The existing assembled tissue controller also runs the L-shaped volume at 1 cm
+spacing. Its 16 reference vertices bind to FEM, while a vertex in the notch stays
+unowned. Moving supports deform the physical skin with independently computed
+frame balance 1.73044088071261357e-7 J within the original 1e-5 J guard. This is
+controller/embedding qualification, not a skin-contact or CesiumMan full-clip
+qualification. The frame-279 obstacle and source coverage remain open.
+
+## Boundary manifold admission for authored volumes (2026-10-06)
+
+Full VXTM geometry admission now checks closed oriented boundary edges and
+single-cycle boundary vertex links. Face incidence alone did not reject two
+lattice cubes welded solely along an edge or a point; such shared nodes can
+create an unintended mechanical connection. An initial failing regression is
+preserved. Edge incidence must be exactly two with opposing orientation, and
+each boundary vertex link must have degree two and a single connected component.
+This is exact index-topology validation, distinct from the floating-point overlap
+predicate. The generic internal topology consumer remains unchanged.
+
+The lattice writer rejects edge-only and point-only welds. Two spatially separate
+components remain admitted. A 3x3x3 shell with its central cell omitted has
+analytic volume 26 cubic metres and 120 boundary triangles, including the cavity;
+embedding in the cavity rejects. Existing real anatomical meshes, convex volumes,
+overlap fixtures and nonconvex volume tests pass. Distinct source indices at
+coincident coordinates are not silently welded; contact between separate bodies
+remains a collision-solver responsibility.
+
+Final gate: 14 physics tests and the existing nonconvex tissue controller test
+pass; formatting and source whitespace checks pass.
+
+## Nonconvex volume through observed file import (2026-10-06)
+
+The version-2 file import gate now has a nonconvex VXTM fixture positioned around
+actual CesiumMan source vertex 666. The same observed-input provider verifies
+model, manifest and mesh bytes before publication. The fixture retains 16 nodes,
+18 tetrahedra, 28 boundary triangles, six explicitly authored supports, joint 12,
+density 1200 kg/m3, capacity 2000 J/(kg K), and initial temperature 295 K. The
+reference membership gate binds exactly source vertex 666 out of 3273.
+
+The runtime coverage report now includes per-region node/cell/boundary/support
+counts, resolved joint and authored density/capacity/temperature, making file
+settings directly inspectable without reconstructing them from the simulation.
+The nonconvex fixture and existing observed-import regression pass. Saved
+`volume.vxtm`, `regions.json` and `coverage.json` are import/membership evidence;
+they do not establish full source coverage, anatomical calibration or full-clip
+collision feasibility. No obstacle exclusion is supplied in this fixture.
+
+The actual snapshot runtime also completes this file-backed nonconvex fixture
+on Metal: three nominal steps (0.0125 simulated seconds), 12 accepted substeps,
+one bound source vertex and six responsive skin triangles, with the native FEM
+envelope disabled once physical skin contact is installed. The rendered sheet
+is saved as `artifacts/nonconvex-tissue-import-2026-10-06/poses.png`. This short
+window does not qualify animation quality, real-time performance or long-clip
+feasibility. The original default fixture's frame-279 obstruction remains open.
+
+## Per-support joint assignment for authored tissue (2026-10-06)
+
+An authored continuum volume can now attach different pinned nodes to different
+bones. `TissueRegionSpec::support_joint_overrides` explicitly maps a support node
+to a joint index; unlisted supports retain the region joint. Version-2 manifests
+accept `support_joint_overrides: [{"node": N, "joint": "model-joint-name"}]`,
+resolve names through the imported skeleton, and report the resolved assignments
+in per-region coverage diagnostics. Version-1 manifests keep their previous schema.
+Free, nonexistent or duplicate support assignments reject before publication.
+
+Regional and assembled controllers share the same support-target builder. Joint
+matrices and transformed coordinates are checked before stepping; missing or
+nonfinite overridden bones leave the full frame unchanged. Assembly applies
+regional node offsets exactly once, and frame checkpoints copy override ownership.
+The constitutive solver still has one mechanical/thermal owner, independently
+accounting work of all prescribed support motions. No force or heat is added
+merely by changing which bone supplies a target.
+
+The fixture drives four supports with two opposing bone translations and checks
+each resulting position against its assigned matrix. Regional and assembled
+independent frame balance is 3.28949760046075277e-7 J within the original 1e-5 J
+guard. Serial and two-worker regional execution are compared with complete state,
+and missing-bone rejection is transactional. File import tests resolve an actual
+CesiumMan leg bone and reject missing names, invalid nodes and duplicate mappings.
+These are rigid per-node support assignments; blended bone weights, anatomical
+calibration, full character volume coverage and full-clip qualification remain open.
+
+Final gate: the example suite passes 51 tests (3 ignored); the extended parallel
+regression and its production-library counterpart each pass. Both file-import
+regressions pass. Formatting and source whitespace checks pass.
+
+## Attachment metadata ownership (2026-10-06)
+
+`TissueAttachment` now owns the region's default joint, pinned reference nodes
+and per-node joint overrides as one cloned record. The previous parallel override
+vector and its length-synchronization checks are removed. Regional workers and
+the assembled owner receive the same attachment record; frame checkpointing
+copies all attachment metadata together. Skin identity checks read the named
+joint field rather than tuple positions. The common target builder remains the
+sole implementation of bone-to-support coordinate conversion.
+
+Regional stepping now rejects a body/attachment owner-count mismatch instead of
+using the smaller count and silently leaving unmatched bodies unstepped. The
+regression removes one attachment and verifies the complete state remains
+unchanged on rejection. This change addresses metadata ownership and partial
+update admission, not blended bone weights, source volume reconstruction or the
+full-clip contact obstruction.
+
+Final gate: 52 example tests passed (3 ignored), and the production library
+owner-mismatch regression passed. Formatting and source whitespace checks passed.
+
+## Blended bone weights for prescribed tissue supports (2026-10-06)
+
+Authored supports now accept up to eight positive bone influences per pinned
+node through `support_joint_weights`. Version-2 manifests use records of the form
+`{"node":N,"influences":[{"joint":"name","weight":W},...]}`. Names resolve
+through the imported skeleton. Weights must sum to one within 64 floating-point
+epsilons per influence; they are not silently normalized or clamped. Duplicate
+bones, invalid weights, free/unknown nodes and conflicting rigid overrides reject
+before publication. Canonical joint ordering makes author influence order inert.
+
+The unified attachment owner stores rigid overrides as a one-influence list and
+blends as a multi-influence list. The common support-target builder computes
+linear blends of transformed reference positions. Existing rigid single-bone
+transforms retain their direct path. Missing/nonfinite matrices or nonfinite
+results reject transactionally. These are prescribed kinematic targets, so their
+aggregate reaction work is booked by the existing support-work integrator; this
+does not provide separately distributed per-bone force/torque receipts.
+
+A 25%/75% fixture with opposing bone translations matches the independent
+analytic target and gives regional/assembled frame balance
+3.28959264425438318e-7 J under the unchanged 1e-5 J guard. It verifies canonical
+influence order and full-state rollback for a missing bone. The file importer
+resolves blended torso/leg influences and rejects an invalid sum. This is linear
+blend support kinematics, not dual-quaternion interpolation, full character
+volume reconstruction or full-clip collision qualification.
+
+An additional 90-degree rotation oracle verifies the weighted target against
+analytic coordinates; it qualifies target construction rather than admitting that
+large rotation as a dynamic step. Final gate: 53 example tests passed (3 ignored),
+the production-library blended-support regression passed, and the extended
+rotation regression passed. Formatting and source whitespace checks passed.
+
+## Mass-based offset diagnostics for arbitrary regions (2026-10-06)
+
+Secondary displacement diagnostics previously assumed two opposite supports
+whose midpoint was the center, and used node zero as the physical center. A
+free volume could panic; a nonradial imported volume could report an offset even
+at its unchanged reference geometry. Both regional and assembled diagnostics now
+measure mass-weighted displacement of all nodes from each region's declared
+rigid reference. The assembled result weights regions by their actual masses.
+This metric includes displacement due to differently driven support bones; it
+is not an isolation of free-node secondary motion.
+
+The diagnostic API returns explicit errors for missing/nonfinite palette data,
+invalid owner counts, topology and nonfinite accumulators. The editor title
+reports an unavailable diagnostic instead of indexing an invalid palette. A
+wide-palette API preserves the physical clock's f64 transforms, and contact
+snapshot CSV generation uses the same imported-pose provider as the solver.
+Legacy f32 callers use the checked conversion wrapper.
+
+The regression covers an L-shaped noncentral-node volume with zero, one and two
+supports in regional and assembled ownership. Unchanged reference geometry has
+zero offset; free fall follows the analytic center-of-mass displacement. Two
+regions at densities 1000 and 2000 kg/m3 aggregate with the independently expected
+1:2 mass ratio. The existing shifted-reference regression also passes. This
+changes the meaning of earlier regional CSV offsets from the old free-center
+metric to the explicit mass-based metric; old artifacts retain their old scope.
+
+Final gate: 54 example tests passed (3 ignored), and the production-library
+arbitrary-volume diagnostic regression passed. A Metal capture of the file-backed
+nonconvex fixture completes three nominal steps and 12 accepted substeps; all four
+CSV samples are finite. Formatting and source whitespace checks passed. The
+original long-clip obstruction remains unresolved.
+
+## Affine palette admission for physical attachments (2026-10-06)
+
+The shared attachment target builder now rejects finite projective matrices,
+which `transform_point3` previously treated as if affine. Diagnostic references
+and regional/global physical-skin references use the same matrix-class check.
+Nonfinite errors retain their previous contract; nonaffine support input returns
+`nonaffine tissue attachment` before publication. Scale and shear remain allowed
+reference transforms; the physical solver still independently admits their
+resulting trajectory, material response and work budget.
+
+The homogeneous x/y/z row entries must be exactly zero. The unit entry permits
+eight source-scalar epsilons to accommodate matrix-inverse rounding. The first
+exact-unit implementation rejected six existing imported-rig regressions; that
+failed gate is retained. Native f64 input keeps its values and uses the f64
+allowance. f32 entrypoints validate with f32 precision before widening and
+canonicalize only the homogeneous unit metadata; all other matrix components
+remain bit-exact after conversion. No projective components, NaN or infinity are
+clamped or replaced.
+
+Tests cover each homogeneous component, both state owners, rigid/blended/free
+supports, diagnostics and skin output with full-state rollback. Even a 1e-20
+projective component rejects. Finite affine scale/shear, inverses of nonuniform
+scales and inverse/reference products remain admitted. The f32 conversion oracle
+checks its unchanged first fifteen components and exact unit metadata. This is
+transform admission, not a new full-character geometry or long-clip certificate.
+
+Final gate: 55 example tests passed (3 ignored), and the production-library
+affine/projective regression passed. Formatting and source whitespace checks
+passed. The original full-clip skin obstruction remains unresolved.
+
+### Indexed embedding delivery (2026-10-06)
+
+`TetrahedralEmbedding` prepares immutable geometry and a bounds hierarchy once,
+shares geometry with published bindings, and offers reusable point membership.
+The overlap admission broad phase uses the same crate-private bounds index.
+Barycentric tolerances and original-cell ownership ties remain unchanged; the
+regression covers tolerated boundary roundoff and observable duplicate-cell ties.
+App membership loops still construct individual bindings; migration to the reusable
+API and a controlled performance comparison remain unfinished. No loading speed
+or complete physical-skin animation qualification is claimed by this delivery.

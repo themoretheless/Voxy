@@ -91,25 +91,13 @@ impl TissueDemo {
             return Err("assembled tissue topology changed");
         }
         let mut targets = Vec::new();
-        for ((joint, pins), range) in self.attachments.iter().zip(&layout.node_ranges) {
-            let matrix = palette
-                .get(*joint)
-                .ok_or("missing tissue attachment bone")?;
-            if !matrix.is_finite() {
-                return Err("nonfinite tissue attachment");
-            }
-            for (node, rest) in pins {
-                if *node >= range.len() {
+        for (attachment, range) in self.attachments.iter().zip(&layout.node_ranges) {
+            for mut target in Self::attachment_targets(attachment, palette)? {
+                if target.node >= range.len() {
                     return Err("assembled attachment index changed");
                 }
-                let position_m = matrix.transform_point3(DVec3::from_array(*rest)).to_array();
-                if position_m.iter().any(|v| !v.is_finite()) {
-                    return Err("nonfinite tissue attachment");
-                }
-                targets.push(SupportTarget {
-                    node: range.start + node,
-                    position_m,
-                });
+                target.node += range.start;
+                targets.push(target);
             }
         }
         let mut candidate = self.bodies[0].clone();
@@ -146,7 +134,7 @@ impl TissueDemo {
             if self
                 .attachments
                 .iter()
-                .map(|(joint, _)| *joint)
+                .map(|attachment| attachment.joint)
                 .collect::<Vec<_>>()
                 != binding.joints
                 || layout.node_ranges != binding.node_ranges
@@ -257,7 +245,9 @@ mod tests {
             panic!()
         };
         let after = dynamics.diagnostics().unwrap();
-        for ((joint, pins), range) in demo.attachments.iter().zip(&layout.node_ranges) {
+        for (TissueAttachment { joint, pins, .. }, range) in
+            demo.attachments.iter().zip(&layout.node_ranges)
+        {
             for (node, rest) in pins {
                 assert_eq!(
                     dynamics.body().positions()[range.start + node],
@@ -396,7 +386,11 @@ impl TissueDemo {
             rest: rest.to_vec(),
             cells: cells.clone(),
             node_ranges: layout.node_ranges.clone(),
-            joints: self.attachments.iter().map(|(joint, _)| *joint).collect(),
+            joints: self
+                .attachments
+                .iter()
+                .map(|attachment| attachment.joint)
+                .collect(),
             vertex_count: skin.len(),
             bound_count: owned.iter().filter(|&&v| v).count(),
         };
@@ -425,7 +419,12 @@ impl TissueDemo {
         if dynamics.body().rest_positions() != binding.rest
             || cells != &binding.cells
             || layout.node_ranges != binding.node_ranges
-            || self.attachments.iter().map(|(j, _)| *j).collect::<Vec<_>>() != binding.joints
+            || self
+                .attachments
+                .iter()
+                .map(|attachment| attachment.joint)
+                .collect::<Vec<_>>()
+                != binding.joints
         {
             return Err("assembled skin owner or topology changed");
         }
@@ -483,7 +482,7 @@ mod skin_tests {
         let posed: Vec<_> = skin[..4]
             .iter()
             .zip(&demo.attachments)
-            .map(|(p, (joint, _))| {
+            .map(|(p, TissueAttachment { joint, .. })| {
                 palette[*joint]
                     .transform_point3(DVec3::from_array(*p))
                     .to_array()
@@ -494,7 +493,9 @@ mod skin_tests {
             panic!()
         };
         let mut nodes = dynamics.body().rest_positions().to_vec();
-        for ((joint, _), range) in demo.attachments.iter().zip(&layout.node_ranges) {
+        for (TissueAttachment { joint, .. }, range) in
+            demo.attachments.iter().zip(&layout.node_ranges)
+        {
             for n in range.clone() {
                 nodes[n] = palette[*joint]
                     .transform_point3(DVec3::from_array(nodes[n]))
@@ -521,7 +522,7 @@ mod skin_tests {
         palette[7] = DMat4::ZERO;
         assert!(demo.deform_skin(&binding, &palette, &posed).is_err());
         palette[7] = DMat4::IDENTITY;
-        demo.attachments[3].0 = 6;
+        demo.attachments[3].joint = 6;
         assert!(demo.deform_skin(&binding, &palette, &posed).is_err());
     }
 }
@@ -532,7 +533,10 @@ impl GlobalSkinBinding {
         for (range, joint) in self.node_ranges.iter().zip(&self.joints) {
             let matrix = palette.get(*joint).ok_or("missing skin attachment joint")?;
             let determinant = matrix.determinant();
-            if !matrix.is_finite() || !determinant.is_finite() || determinant == 0. {
+            if TissueDemo::validate_attachment_matrix(matrix).is_err()
+                || !determinant.is_finite()
+                || determinant == 0.
+            {
                 return Err("invalid skin attachment matrix");
             }
             for node in range.clone() {
@@ -880,7 +884,7 @@ mod contact_tests {
         spec.maxwell_branches[0].shear_pa = 20000.;
         spec.maxwell_branches[0].relaxation_seconds = 0.5;
         let mut demo = TissueDemo::body_from_region_specs(vec![spec.clone()]).unwrap();
-        assert_eq!(demo.attachments[0].1.len(), 4);
+        assert_eq!(demo.attachments[0].pins.len(), 4);
         let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
             panic!()
         };
@@ -958,6 +962,454 @@ mod contact_tests {
                 _ => invalid.supports = vec![1, 1],
             }
             assert!(TissueDemo::body_from_region_specs(vec![invalid]).is_err());
+        }
+    }
+    #[test]
+    fn projective_support_palettes_reject_atomically_for_rigid_blended_and_free_volumes() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
+        for supports in [vec![], vec![1, 2, 3, 4]] {
+            for blended in [false, true] {
+                let mut spec = TissueRegionSpec::illustrative(mesh.clone(), supports.clone(), 0);
+                if blended && !supports.is_empty() {
+                    spec.support_joint_weights = vec![(4, vec![(0, 0.25), (1, 0.75)])];
+                }
+                for assembled in [false, true] {
+                    let mut demo = TissueDemo::body_from_region_specs(vec![spec.clone()]).unwrap();
+                    if assembled {
+                        demo.assemble_regions().unwrap();
+                    }
+                    let skin = demo.bind_skin(&mesh.points).unwrap();
+                    let before = format!("{demo:?}");
+                    for component in [3, 7, 11, 15] {
+                        let mut values = DMat4::IDENTITY.to_cols_array();
+                        values[component] = if component == 15 { 2. } else { 0.1 };
+                        let projective = DMat4::from_cols_array(&values);
+                        let invalid = [projective, DMat4::IDENTITY];
+                        assert_eq!(
+                            demo.step_body_with_contact64_workers(&invalid, 0.5, None, 1),
+                            Err("nonaffine tissue attachment")
+                        );
+                        assert_eq!(format!("{demo:?}"), before);
+                        assert_eq!(
+                            demo.secondary_offsets_for_palette64(&invalid).unwrap_err(),
+                            "nonaffine tissue attachment"
+                        );
+                        assert!(demo.deform_skin(&skin, &invalid, &mesh.points).is_err());
+                        if blended && !supports.is_empty() {
+                            assert_eq!(
+                                demo.step_body_with_contact64_workers(
+                                    &[DMat4::IDENTITY, projective],
+                                    0.5,
+                                    None,
+                                    1
+                                ),
+                                Err("nonaffine tissue attachment")
+                            );
+                            assert_eq!(format!("{demo:?}"), before);
+                        }
+                    }
+                }
+            }
+        }
+        // Finite affine shears/scales are valid reference transforms; the physical
+        // solver independently admits or rejects the resulting trajectory.
+        let affine = DMat4::from_cols_array(&[
+            2., 0., 0., 0., 0.25, 1., 0., 0., 0., 0., 0.5, 0., 1., 2., 3., 1.,
+        ]);
+        TissueDemo::validate_attachment_matrix(&affine).unwrap();
+        for scale in [0.3, 0.7, 1.1, 1.3, 2.1] {
+            let reference = DMat4::from_scale(DVec3::new(scale, scale + 0.31, scale * 0.91));
+            TissueDemo::validate_attachment_matrix(&reference.inverse()).unwrap();
+            TissueDemo::validate_attachment_matrix(&(reference * reference.inverse())).unwrap();
+        }
+        for scale in [0.3_f32, 0.7, 1.1, 1.3, 2.1] {
+            let reference = Mat4::from_scale(Vec3::new(scale, scale + 0.31, scale * 0.91));
+            let source = reference.inverse();
+            let wide = TissueDemo::widen_attachment_palette(&[source]).unwrap()[0];
+            assert_eq!(wide.w_axis.w, 1.);
+            let original = source.to_cols_array().map(f64::from);
+            let converted = wide.to_cols_array();
+            assert_eq!(&converted[..15], &original[..15]);
+        }
+        let mut projective32 = Mat4::IDENTITY.to_cols_array();
+        projective32[3] = 0.1;
+        assert_eq!(
+            TissueDemo::widen_attachment_palette(&[Mat4::from_cols_array(&projective32)])
+                .unwrap_err(),
+            "nonaffine tissue attachment"
+        );
+        let mut tiny_projective = DMat4::IDENTITY.to_cols_array();
+        tiny_projective[3] = 1e-20;
+        assert_eq!(
+            TissueDemo::validate_attachment_matrix(&DMat4::from_cols_array(&tiny_projective)),
+            Err("nonaffine tissue attachment")
+        );
+    }
+    #[test]
+    fn arbitrary_volume_offset_diagnostics_use_mass_without_assuming_supports_or_center() {
+        use physics::biomechanics::TetraMesh;
+        let mesh =
+            TetraMesh::from_lattice_cells([0., 1., 0.], [0.01; 3], &[[0; 3], [1, 0, 0], [0, 1, 0]])
+                .unwrap();
+        for supports in [vec![], vec![0], vec![0, 1]] {
+            for assembled in [false, true] {
+                let mut demo =
+                    TissueDemo::body_from_region_specs(vec![TissueRegionSpec::illustrative(
+                        mesh.clone(),
+                        supports.clone(),
+                        0,
+                    )])
+                    .unwrap();
+                if assembled {
+                    demo.assemble_regions().unwrap();
+                }
+                assert_eq!(
+                    demo.secondary_offsets_for_palette64(&[DMat4::IDENTITY])
+                        .unwrap(),
+                    vec![[0.; 3]]
+                );
+                assert_eq!(
+                    demo.secondary_offsets_for_palette64(&[]).unwrap_err(),
+                    "missing tissue attachment bone"
+                );
+                assert_eq!(
+                    demo.secondary_offsets_for_palette64(&[DMat4::from_cols_array(
+                        &[f64::NAN; 16]
+                    )])
+                    .unwrap_err(),
+                    "nonfinite tissue attachment"
+                );
+                if supports.is_empty() {
+                    demo.step_body_with_contact64_workers(&[DMat4::IDENTITY], 0.5, None, 1)
+                        .unwrap();
+                    let offset = demo
+                        .secondary_offsets_for_palette64(&[DMat4::IDENTITY])
+                        .unwrap()[0];
+                    let expected = -0.5 * 9.81 * (1. / 240_f64).powi(2);
+                    assert!((offset[1] - expected).abs() < 1e-10);
+                }
+            }
+        }
+        let mut first = TissueRegionSpec::illustrative(mesh.clone(), vec![0, 1], 0);
+        first.density_kg_m3 = 1000.;
+        let mut second = TissueRegionSpec::illustrative(mesh, vec![0, 1], 1);
+        for point in &mut second.mesh.points {
+            point[0] += 0.1;
+        }
+        second.density_kg_m3 = 2000.;
+        let mut demo = TissueDemo::body_from_region_specs(vec![first, second]).unwrap();
+        let palette = [
+            DMat4::from_translation(DVec3::new(0.001, 0., 0.)),
+            DMat4::from_translation(DVec3::new(0.003, 0., 0.)),
+        ];
+        let regional = demo.secondary_offsets_for_palette64(&palette).unwrap();
+        assert!((regional[0][0] + 0.001).abs() < 1e-15);
+        assert!((regional[1][0] + 0.003).abs() < 1e-15);
+        demo.assemble_regions().unwrap();
+        let global = demo.secondary_offsets_for_palette64(&palette).unwrap()[0];
+        assert!((global[0] - (regional[0][0] + 2. * regional[1][0]) / 3.).abs() < 1e-15);
+    }
+    #[test]
+    fn blended_support_weights_drive_prescribed_motion_and_keep_energy_and_rollback() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
+        let mut spec = TissueRegionSpec::illustrative(mesh.clone(), vec![1, 2, 3, 4], 0);
+        spec.support_joint_weights = vec![(4, vec![(1, 0.75), (0, 0.25)])];
+        for assembled in [false, true] {
+            let mut demo = TissueDemo::body_from_region_specs(vec![spec.clone()]).unwrap();
+            if assembled {
+                demo.assemble_regions().unwrap();
+            }
+            let before = demo.body_energy_receipts().unwrap()[0];
+            let palette = [
+                DMat4::from_translation(DVec3::new(-1e-6, 0., 0.)),
+                DMat4::from_translation(DVec3::new(1e-6, 0., 0.)),
+            ];
+            demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
+                .unwrap();
+            let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+                panic!()
+            };
+            let expected: [f64; 3] = std::array::from_fn(|axis| {
+                let displacement = if axis == 0 { 0.5e-6 } else { 0. };
+                mesh.points[4][axis] + displacement
+            });
+            for axis in 0..3 {
+                assert!((dynamics.body().positions()[4][axis] - expected[axis]).abs() < 1e-15);
+            }
+            let after = demo.body_energy_receipts().unwrap()[0];
+            let balance = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+            assert!(balance.abs() < 1e-5);
+            let snapshot = format!("{demo:?}");
+            assert_eq!(
+                demo.step_body_with_contact64_workers(&palette[..1], 0.5, None, 1),
+                Err("missing tissue attachment bone")
+            );
+            assert_eq!(format!("{demo:?}"), snapshot);
+            eprintln!(
+                "BLENDED_SUPPORTS assembled={assembled} independent_balance_j={balance:.17e}"
+            );
+        }
+        let a = TissueDemo::body_from_region_specs(vec![spec.clone()]).unwrap();
+        let rotating = [
+            DMat4::IDENTITY,
+            DMat4::from_rotation_z(std::f64::consts::FRAC_PI_2),
+        ];
+        let targets = TissueDemo::attachment_targets(&a.attachments[0], &rotating).unwrap();
+        let target = targets.iter().find(|target| target.node == 4).unwrap();
+        let y = mesh.points[4][1];
+        assert!((target.position_m[0] + 0.75 * y).abs() < 1e-15);
+        assert!((target.position_m[1] - 0.25 * y).abs() < 1e-15);
+        assert_eq!(target.position_m[2], 0.);
+        let mut permuted = spec.clone();
+        permuted.support_joint_weights[0].1.reverse();
+        let b = TissueDemo::body_from_region_specs(vec![permuted]).unwrap();
+        assert_eq!(format!("{a:?}"), format!("{b:?}"));
+        for influences in [
+            vec![],
+            vec![(0, -0.25), (1, 1.25)],
+            vec![(0, 0.), (1, 1.)],
+            vec![(0, 0.25), (1, 0.25)],
+            vec![(0, 0.5), (0, 0.5)],
+            vec![(0, f64::NAN), (1, 1.)],
+        ] {
+            let mut invalid = spec.clone();
+            invalid.support_joint_weights = vec![(4, influences)];
+            assert_eq!(
+                TissueDemo::body_from_region_specs(vec![invalid]).unwrap_err(),
+                "invalid authored support joint weights"
+            );
+        }
+        let mut ambiguous = spec;
+        ambiguous.support_joint_overrides = vec![(4, 1)];
+        assert_eq!(
+            TissueDemo::body_from_region_specs(vec![ambiguous]).unwrap_err(),
+            "invalid authored support joint weights"
+        );
+    }
+    #[test]
+    fn missing_region_attachment_rejects_complete_frame_without_partial_update() {
+        let mut demo = TissueDemo::body();
+        demo.attachments.pop();
+        let before = format!("{demo:?}");
+        assert_eq!(
+            demo.step_body_with_contact64_workers(&[DMat4::IDENTITY; 8], 0.5, None, 2),
+            Err("tissue attachment owner count changed")
+        );
+        assert_eq!(format!("{demo:?}"), before);
+    }
+    #[test]
+    fn multi_bone_supports_drive_one_continuum_and_reject_bad_palettes_atomically() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
+        let mut spec = TissueRegionSpec::illustrative(mesh.clone(), vec![1, 2, 3, 4], 0);
+        spec.support_joint_overrides = vec![(4, 1)];
+        for assembled in [false, true] {
+            let mut demo = TissueDemo::body_from_region_specs(vec![spec.clone()]).unwrap();
+            if assembled {
+                demo.assemble_regions().unwrap();
+            }
+            let before = demo.body_energy_receipts().unwrap()[0];
+            let palette = [
+                DMat4::from_translation(DVec3::new(1e-6, 0., 0.)),
+                DMat4::from_translation(DVec3::new(-1e-6, 0., 0.)),
+            ];
+            demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
+                .unwrap();
+            let after = demo.body_energy_receipts().unwrap()[0];
+            let balance = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+            assert!(balance.abs() < 1e-5);
+            let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+                panic!()
+            };
+            for &node in &spec.supports {
+                let joint = if node == 4 { 1 } else { 0 };
+                assert_eq!(
+                    dynamics.body().positions()[node],
+                    palette[joint]
+                        .transform_point3(DVec3::from_array(mesh.points[node]))
+                        .to_array()
+                );
+            }
+            let snapshot = format!("{demo:?}");
+            assert_eq!(
+                demo.step_body_with_contact64_workers(&palette[..1], 0.5, None, 1),
+                Err("missing tissue attachment bone")
+            );
+            assert_eq!(format!("{demo:?}"), snapshot);
+            let mut invalid = palette;
+            invalid[1] = DMat4::from_cols_array(&[f64::NAN; 16]);
+            assert_eq!(
+                demo.step_body_with_contact64_workers(&invalid, 0.5, None, 1),
+                Err("nonfinite tissue attachment")
+            );
+            assert_eq!(format!("{demo:?}"), snapshot);
+            eprintln!(
+                "MULTI_BONE_SUPPORTS assembled={assembled} independent_balance_j={balance:.17e}"
+            );
+        }
+        let mut second = spec.clone();
+        second.mesh = TetraMesh::ellipsoid([0.1, 1., 0.], [0.02; 3], 0).unwrap();
+        let mut serial =
+            TissueDemo::body_from_region_specs(vec![spec.clone(), second.clone()]).unwrap();
+        let mut parallel = TissueDemo::body_from_region_specs(vec![spec.clone(), second]).unwrap();
+        let palette = [
+            DMat4::from_translation(DVec3::new(1e-6, 0., 0.)),
+            DMat4::from_translation(DVec3::new(-1e-6, 0., 0.)),
+        ];
+        serial
+            .step_body_with_contact64_workers(&palette, 0.5, None, 1)
+            .unwrap();
+        parallel
+            .step_body_with_contact64_workers(&palette, 0.5, None, 2)
+            .unwrap();
+        assert_eq!(format!("{serial:?}"), format!("{parallel:?}"));
+        let snapshot = format!("{parallel:?}");
+        assert_eq!(
+            parallel.step_body_with_contact64_workers(&palette[..1], 0.5, None, 2),
+            Err("missing tissue attachment bone")
+        );
+        assert_eq!(format!("{parallel:?}"), snapshot);
+        for overrides in [vec![(0, 1)], vec![(4, 1), (4, 2)], vec![(99, 1)]] {
+            let mut invalid = spec.clone();
+            invalid.support_joint_overrides = overrides;
+            assert_eq!(
+                TissueDemo::body_from_region_specs(vec![invalid]).unwrap_err(),
+                "invalid authored support joint override"
+            );
+        }
+    }
+    #[test]
+    fn nonconvex_lattice_volume_drives_existing_skin_and_energy_owner() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::from_lattice_cells(
+            [0., 0.8, 0.],
+            [0.01; 3],
+            &[[0, 0, 0], [1, 0, 0], [0, 1, 0]],
+        )
+        .unwrap();
+        let supports = mesh
+            .points
+            .iter()
+            .enumerate()
+            .filter_map(|(i, p)| (p[2] == 0.).then_some(i))
+            .collect();
+        let spec = TissueRegionSpec::illustrative(mesh.clone(), supports, 0);
+        let mut demo = TissueDemo::body_from_region_specs(vec![spec]).unwrap();
+        demo.assemble_regions().unwrap();
+        let mut skin = mesh.points.clone();
+        skin.push([0.015, 0.815, 0.005]); // Unoccupied notch, not tissue.
+        let binding = demo.bind_skin(&skin).unwrap();
+        assert_eq!(binding.bound_vertex_count(), mesh.points.len());
+        let before = demo.body_energy_receipts().unwrap()[0];
+        let palette = [DMat4::from_translation(DVec3::new(1e-6, 0., 0.))];
+        demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
+            .unwrap();
+        let after = demo.body_energy_receipts().unwrap()[0];
+        let balance = (after[0] - before[0]) - (after[1] - before[1]) + (after[2] - before[2]);
+        assert!(balance.abs() < 1e-5);
+        let result = demo.deform_skin(&binding, &palette, &skin).unwrap();
+        assert_eq!(result.last(), skin.last());
+        assert!(
+            result[..mesh.points.len()]
+                .iter()
+                .zip(&skin)
+                .any(|(a, b)| a != b)
+        );
+        eprintln!(
+            "NONCONVEX_LATTICE_CONTROLLER nodes={} cells={} boundary={} independent_balance_j={balance:.17e}",
+            mesh.points.len(),
+            mesh.cells.len(),
+            mesh.boundary.len()
+        );
+    }
+    #[test]
+    fn authored_region_union_rejects_overlap_without_relying_on_skin_samples() {
+        use physics::biomechanics::TetraMesh;
+        let first = TissueRegionSpec::illustrative(
+            TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap(),
+            vec![1, 2, 3],
+            0,
+        );
+        for shift in [0., 0.01] {
+            let second = TissueRegionSpec::illustrative(
+                TetraMesh::ellipsoid([shift, 1., 0.], [0.02; 3], 0).unwrap(),
+                vec![1, 2, 3],
+                1,
+            );
+            assert_eq!(
+                TissueDemo::body_from_region_specs(vec![first.clone(), second]).unwrap_err(),
+                "overlapping tetrahedral cells"
+            );
+        }
+        let second = TissueRegionSpec::illustrative(
+            TetraMesh::ellipsoid([0.1, 1., 0.], [0.02; 3], 0).unwrap(),
+            vec![1, 2, 3],
+            1,
+        );
+        let mut demo = TissueDemo::body_from_region_specs(vec![first, second]).unwrap();
+        demo.assemble_regions().unwrap();
+        let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+            panic!()
+        };
+        let expected = 2. * 1000. * 4. / 3. * 0.02_f64.powi(3);
+        assert!((dynamics.masses().iter().sum::<f64>() - expected).abs() < 1e-14);
+        let binding = demo.bind_skin(&[[10., 10., 10.]]).unwrap();
+        assert!(binding.tissue_owned_vertices().is_empty());
+    }
+    #[test]
+    fn unsupported_authored_volume_rejects_nonfinite_joint_atomically_in_both_owners() {
+        use physics::biomechanics::TetraMesh;
+        let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
+        let spec = TissueRegionSpec::illustrative(mesh, vec![], 0);
+        for assembled in [false, true] {
+            let mut demo = TissueDemo::body_from_region_specs(vec![spec.clone()]).unwrap();
+            if assembled {
+                demo.assemble_regions().unwrap();
+            }
+            let before = demo.body_energy_receipts().unwrap();
+            let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+                panic!()
+            };
+            let positions = dynamics.body().positions().to_vec();
+            let temperatures = dynamics.maxwell_temperatures_kelvin().unwrap();
+            for invalid in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+                let mut values = DMat4::IDENTITY.to_cols_array();
+                values[0] = invalid;
+                assert_eq!(
+                    demo.step_body_with_contact64_workers(
+                        &[DMat4::from_cols_array(&values)],
+                        0.5,
+                        None,
+                        1
+                    ),
+                    Err("nonfinite tissue attachment")
+                );
+                assert_eq!(demo.body_energy_receipts().unwrap(), before);
+                let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+                    panic!()
+                };
+                assert_eq!(dynamics.body().positions(), positions);
+                assert_eq!(
+                    dynamics.maxwell_temperatures_kelvin().unwrap(),
+                    temperatures
+                );
+            }
+            // A free volume with a valid palette still advances under gravity.
+            demo.step_body_with_contact64_workers(&[DMat4::IDENTITY], 0.5, None, 1)
+                .unwrap();
+            let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {
+                panic!()
+            };
+            assert!(
+                dynamics
+                    .body()
+                    .positions()
+                    .iter()
+                    .zip(&positions)
+                    .any(|(a, b)| a[1] < b[1])
+            );
         }
     }
     #[test]

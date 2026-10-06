@@ -1,0 +1,40 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.44s
+     Running tests/moving_fem_supports.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moving_fem_supports-3fec59876be184a1)
+
+running 8 tests
+test huge_pin_kinetic_energy_cannot_erase_reaction_work_and_pass_the_guard ... ok
+test free_nodes_retain_inertia_and_support_work_defect_converges ... ok
+test prescribed_translation_books_gravity_and_pin_acceleration_work ... ok
+test prescribed_shear_books_analytic_elastic_work_and_explicit_stopping ... ok
+test prescribed_trial_positions_drive_plane_contact_and_reaction_work ... ok
+test positive_endpoint_rotation_cannot_hide_mid_segment_collapse ... ok
+test invalid_targets_inversion_and_strict_work_guard_roll_back_all_state ... ok
+test empty_support_targets_match_analytic_free_fall_without_actuator_work ... FAILED
+
+failures:
+
+---- empty_support_targets_match_analytic_free_fall_without_actuator_work stdout ----
+
+thread 'empty_support_targets_match_analytic_free_fall_without_actuator_work' (43386133) panicked at crates/physics/tests/moving_fem_supports.rs:46:9:
+assertion `left == right` failed
+  left: -2.1602728286773676e-17
+ right: -2.1589175759617607e-17
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    empty_support_targets_match_analytic_free_fall_without_actuator_work
+
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test moving_fem_supports`

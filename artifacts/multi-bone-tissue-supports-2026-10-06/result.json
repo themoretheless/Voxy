@@ -1,0 +1,9 @@
+{
+  "example_suite_passed": 51,
+  "example_suite_ignored": 3,
+  "extended_parallel_regression_passed": 1,
+  "production_library_regression_passed": 1,
+  "import_regressions_passed": 2,
+  "independent_frame_balance_j": 3.289497600460753e-07,
+  "scope": "Explicit rigid joint assignment per pinned node; shared continuum mechanics, thermal state and support work. No blended support weights or full-clip completion claim."
+}

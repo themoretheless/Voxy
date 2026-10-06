@@ -1,0 +1,25 @@
+{
+  "physics": {
+    "passed": 67,
+    "failed": 0
+  },
+  "app_library": {
+    "passed": 241,
+    "ignored": 28,
+    "failed": 0
+  },
+  "animation_example": {
+    "passed": 55,
+    "ignored": 3,
+    "failed": 0
+  },
+  "format": "passed",
+  "diff_check": "passed",
+  "scope": "Save all local tissue-volume, support, import, diagnostics and indexed embedding work. Reusable app membership migration, performance measurement and full physical-skin clip remain unfinished.",
+  "inventory": {
+    "branch": "main",
+    "worktrees": 1,
+    "stashes": 0,
+    "deleted": []
+  }
+}

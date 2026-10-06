@@ -1,0 +1,21 @@
+{
+  "bound_vertices": 1,
+  "contract_supplied": true,
+  "regions": [
+    {
+      "boundary_triangles": 28,
+      "cells": 18,
+      "density_kg_m3": 1200.0,
+      "joint": 12,
+      "nodes": 16,
+      "specific_heat_j_kg_k": 2000.0,
+      "supports": 6,
+      "temperature_kelvin": 295.0
+    }
+  ],
+  "scope": "reference-space skin membership; not dynamic collision qualification",
+  "source_vertices": 3273,
+  "tissue_owned_vertices": [
+    666
+  ]
+}

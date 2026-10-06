@@ -1,0 +1,20 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running tests/tetrahedral_overlap.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tetrahedral_overlap-8d75dbe9807f7d94)
+
+running 4 tests
+test overlap_detection_survives_rotation_translation_and_uniform_scale ... ok
+test thin_positive_volume_overlap_is_not_hidden_by_unrelated_wide_axes ... ok
+test separated_and_touching_cells_remain_admissible ... ok
+test overlapping_disconnected_cells_are_rejected_before_mass_or_embedding ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

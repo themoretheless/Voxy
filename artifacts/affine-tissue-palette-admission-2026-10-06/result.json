@@ -1,0 +1,10 @@
+{
+  "example_tests_passed": 55,
+  "example_tests_ignored": 3,
+  "production_library_regression_passed": 1,
+  "projective_xyz_tolerance": 0,
+  "unit_tolerance_source_epsilons": 8,
+  "f32_canonicalized_component": 15,
+  "preserved_initial_exact_unit_failure": true,
+  "scope": "Affine palette admission with source-scalar inverse-roundoff handling; no full character or hardware qualification"
+}

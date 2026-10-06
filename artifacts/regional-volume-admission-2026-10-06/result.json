@@ -1,0 +1,15 @@
+{
+  "app-tests.log": {
+    "passed": 48,
+    "ignored": 3
+  },
+  "physics-tests.log": {
+    "passed": 10,
+    "ignored": 0
+  },
+  "solid-film-tests.log": {
+    "passed": 5,
+    "ignored": 0
+  },
+  "scope": "Authored regions reject intersecting physical volumes before publication; legacy illustrative union remains unqualified."
+}

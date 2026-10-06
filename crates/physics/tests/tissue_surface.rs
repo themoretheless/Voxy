@@ -392,3 +392,21 @@ fn mixed_surface_preserves_prescribed_vertices_and_virtual_work() {
     );
     assert_eq!(output, saved);
 }
+
+#[test]
+fn indexed_embedding_preserves_boundary_tolerance_and_original_cell_ties() {
+    use physics::tissue_surface::TetrahedralEmbedding;
+    let mut rest = REST.to_vec();
+    rest.extend(REST);
+    // Duplicate geometry with separate nodes makes owner choice observable.
+    let cells = [[0, 1, 2, 3], [4, 5, 6, 7]];
+    let index = TetrahedralEmbedding::new(&rest, &cells).unwrap();
+    assert!(index.contains([-5e-11, 0.2, 0.2]).unwrap());
+    assert!(!index.contains([-2e-10, 0.2, 0.2]).unwrap());
+    assert!(index.contains([f64::NAN, 0., 0.]).is_err());
+    let binding = index.bind_relative(&[[0.25; 3]], &[true]).unwrap();
+    for p in &mut rest[..4] {
+        p[0] += 1.;
+    }
+    assert_eq!(binding.deform(&rest).unwrap(), vec![[1.25, 0.25, 0.25]]);
+}

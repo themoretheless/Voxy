@@ -32,6 +32,47 @@ fn targets(
 }
 
 #[test]
+fn empty_support_targets_match_analytic_free_fall_without_actuator_work() {
+    let mut ordinary = specimen(vec![false; 4]);
+    ordinary.set_uniform_acceleration([0., -9.81, 0.]).unwrap();
+    let mut driven = ordinary.clone();
+    let rest = ordinary.body().positions().to_vec();
+    let dt = 0.001;
+    for frame in 1..=100 {
+        let ordinary_defect = ordinary.step(dt, 1e-10).unwrap();
+        let report = driven.step_with_support_targets(&[], dt, 1e-10).unwrap();
+        assert_eq!(driven.body().positions(), ordinary.body().positions());
+        assert_eq!(driven.velocities(), ordinary.velocities());
+        assert!((report.energy_defect_j - ordinary_defect).abs() < 1e-15);
+        assert_eq!(report.support_work_j, 0.);
+        assert_eq!(report.reaction_work_j, 0.);
+        assert_eq!(report.pin_kinetic_work_j, 0.);
+        assert_eq!(report.plane_work_j, 0.);
+        assert_eq!(report.surface_work_j, 0.);
+        let time = f64::from(frame) * dt;
+        let diagnostic = driven.diagnostics().unwrap();
+        // Unit right tetrahedron at density 1: analytic mass is 1/6 kg.
+        assert!((diagnostic.mass_kg - 1. / 6.).abs() < 1e-15);
+        let expected_kinetic = 0.5 / 6. * (9.81 * time).powi(2);
+        assert!((diagnostic.kinetic_j - expected_kinetic).abs() < 1e-12);
+        for ((position, velocity), initial) in driven
+            .body()
+            .positions()
+            .iter()
+            .zip(driven.velocities())
+            .zip(&rest)
+        {
+            for axis in 0..3 {
+                let acceleration = if axis == 1 { -9.81 } else { 0. };
+                let expected = initial[axis] + 0.5 * acceleration * time * time;
+                assert!((position[axis] - expected).abs() < 1e-12);
+                assert!((velocity[axis] - acceleration * time).abs() < 1e-11);
+            }
+        }
+    }
+}
+
+#[test]
 fn prescribed_translation_books_gravity_and_pin_acceleration_work() {
     for gravity_m_s2 in [0., 9.81] {
         let mut body = specimen(vec![true; 4]);
@@ -96,7 +137,7 @@ fn invalid_targets_inversion_and_strict_work_guard_roll_back_all_state() {
     free[1].node = 3;
     let mut nonfinite = valid.clone();
     nonfinite[1].position_m[0] = f64::NAN;
-    for invalid in [valid[..2].to_vec(), duplicate, free, nonfinite] {
+    for invalid in [vec![], valid[..2].to_vec(), duplicate, free, nonfinite] {
         assert!(
             body.step_with_support_targets(&invalid, 0.01, 1e-6)
                 .is_err()

@@ -1,0 +1,31 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.30s
+     Running tests/lattice_tissue_volume.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/lattice_tissue_volume-8d8076b1a7460d4a)
+
+running 1 test
+test edge_and_point_welds_are_rejected_but_separate_components_and_cavities_are_valid ... FAILED
+
+failures:
+
+---- edge_and_point_welds_are_rejected_but_separate_components_and_cavities_are_valid stdout ----
+
+thread 'edge_and_point_welds_are_rejected_but_separate_components_and_cavities_are_valid' (43613507) panicked at crates/physics/tests/lattice_tissue_volume.rs:63:80:
+called `Result::unwrap_err()` on an `Ok` value: TetraMesh { points: [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0], [1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [2.0, 1.0, 0.0], [2.0, 2.0, 0.0], [2.0, 2.0, 1.0], [2.0, 1.0, 1.0], [1.0, 2.0, 0.0], [1.0, 2.0, 1.0]], cells: [[0, 1, 2, 3], [0, 4, 1, 3], [0, 2, 5, 3], [0, 5, 6, 3], [0, 7, 4, 3], [0, 6, 7, 3], [2, 8, 9, 10], [2, 11, 8, 10], [2, 9, 12, 10], [2, 12, 13, 10], [2, 3, 11, 10], [2, 13, 3, 10]], boundary: [[0, 2, 1], [0, 1, 4], [0, 5, 2], [0, 4, 7], [0, 6, 5], [0, 7, 6], [1, 2, 3], [4, 1, 3], [2, 5, 3], [2, 11, 3], [2, 3, 13], [2, 9, 8], [2, 8, 11], [2, 12, 9], [2, 13, 12], [7, 4, 3], [5, 6, 3], [6, 7, 3], [3, 11, 10], [13, 3, 10], [8, 9, 10], [11, 8, 10], [9, 12, 10], [12, 13, 10]] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    edge_and_point_welds_are_rejected_but_separate_components_and_cavities_are_valid
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test lattice_tissue_volume`

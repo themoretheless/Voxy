@@ -1,0 +1,9 @@
+{
+  "example_tests_passed": 54,
+  "example_tests_ignored": 3,
+  "production_library_regression_passed": 1,
+  "metal_capture_steps": 3,
+  "accepted_substeps": 12,
+  "csv_rows_finite": 4,
+  "scope": "General mass-weighted region offsets and checked palette diagnostics; short imported runtime proof, no full character or full-clip qualification"
+}

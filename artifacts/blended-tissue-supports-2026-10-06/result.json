@@ -1,0 +1,8 @@
+{
+  "example_tests_passed": 53,
+  "example_tests_ignored": 3,
+  "production_library_regression_passed": 1,
+  "extended_rotation_regression_passed": 1,
+  "independent_frame_balance_j": 3.289592644254383e-07,
+  "scope": "Linear blended pinned-node kinematics and aggregate support work; no separate per-bone reaction receipts or full character qualification"
+}

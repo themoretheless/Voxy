@@ -1,0 +1,6 @@
+{
+  "initial_invalid_weld_acceptance_reproduced": true,
+  "physics_tests_passed": 14,
+  "controller_tests_passed": 1,
+  "scope": "Closed oriented edge incidence and connected vertex links; floating-point geometric predicates remain separately limited."
+}

@@ -1,0 +1,5 @@
+{
+  "crates/voxy_app/examples/body_motion_snapshot/tissue_regions.rs": "a741b059b4ffaef100ed003f7cb7aba838ac483bc12da479ec6c18562ae7ccad",
+  "crates/physics/src/biomechanics/tetra_mesh/lattice.rs": "4ed15c4cf5c20eccc3636949c1de2c2c8281708d4e04f25ad97b4f6d1d0c800b",
+  "crates/physics/src/biomechanics/tetra_mesh/manifold.rs": "3612e469b955cc7ce53a4b77d9f554a828415dd1ab447308774a086348189c52"
+}

@@ -1,0 +1,12 @@
+{
+  "import_tests_passed": 2,
+  "runtime_exit_code": 0,
+  "capture_steps": 3,
+  "simulated_seconds": 0.0125,
+  "accepted_substeps": 12,
+  "bound_vertices": 1,
+  "source_vertices": 3273,
+  "responsive_triangles": 6,
+  "fixture_obstacle_exclusions": 0,
+  "scope": "Observed nonconvex VXTM import plus short actual Metal physical-skin run; no full-clip or complete-coverage qualification"
+}

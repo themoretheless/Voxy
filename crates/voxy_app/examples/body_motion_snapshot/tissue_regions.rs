@@ -132,6 +132,8 @@ fn explicit_material(
         mesh,
         supports,
         joint,
+        support_joint_overrides: Vec::new(),
+        support_joint_weights: Vec::new(),
         ogden_terms,
         maxwell_branches,
         bulk_pa: number(value, "bulk_pa")?,
@@ -229,7 +231,11 @@ pub(super) fn load(
             "excluded_obstacle_faces",
         ];
         if explicit {
-            allowed.push("material");
+            allowed.extend([
+                "material",
+                "support_joint_overrides",
+                "support_joint_weights",
+            ]);
         }
         fields(record, &allowed)?;
         let mesh_id = record["mesh"]
@@ -268,11 +274,68 @@ pub(super) fn load(
         {
             return Err("invalid or duplicate authored obstacle exclusion".into());
         }
-        let spec = if illustrative {
+        let mut spec = if illustrative {
             TissueRegionSpec::illustrative(mesh, supports, joint)
         } else {
             explicit_material(mesh, supports, joint, &record["material"])?
         };
+        if let Some(overrides) = record.get("support_joint_overrides") {
+            let overrides = overrides
+                .as_array()
+                .ok_or("invalid support joint overrides")?;
+            if overrides.len() > spec.supports.len() {
+                return Err("invalid support joint overrides".into());
+            }
+            for entry in overrides {
+                fields(entry, &["node", "joint"])?;
+                let node =
+                    usize::try_from(entry["node"].as_u64().ok_or("invalid support joint node")?)?;
+                let bone = usize::from(
+                    model.resolve_joint_name(
+                        entry["joint"]
+                            .as_str()
+                            .ok_or("invalid support joint name")?,
+                    )?,
+                );
+                spec.support_joint_overrides.push((node, bone));
+            }
+        }
+        if let Some(weights) = record.get("support_joint_weights") {
+            let weights = weights.as_array().ok_or("invalid support joint weights")?;
+            if weights.len() > spec.supports.len() {
+                return Err("invalid support joint weights".into());
+            }
+            for entry in weights {
+                fields(entry, &["node", "influences"])?;
+                let node =
+                    usize::try_from(entry["node"].as_u64().ok_or("invalid support joint node")?)?;
+                let influences = entry["influences"]
+                    .as_array()
+                    .ok_or("invalid support influences")?;
+                if influences.is_empty() || influences.len() > 8 {
+                    return Err("invalid support influences".into());
+                }
+                let mut resolved = Vec::new();
+                for influence in influences {
+                    fields(influence, &["joint", "weight"])?;
+                    let bone = usize::from(
+                        model.resolve_joint_name(
+                            influence["joint"]
+                                .as_str()
+                                .ok_or("invalid support joint name")?,
+                        )?,
+                    );
+                    resolved.push((
+                        bone,
+                        influence["weight"]
+                            .as_f64()
+                            .filter(|w| w.is_finite())
+                            .ok_or("invalid support weight")?,
+                    ));
+                }
+                spec.support_joint_weights.push((node, resolved));
+            }
+        }
         volumes.push(spec);
         exclusions.push(excluded);
     }
@@ -291,6 +354,15 @@ pub(super) fn load(
         "scope":"reference-space skin membership; not dynamic collision qualification",
         "source_vertices":source_positions.len(), "bound_vertices":binding.bound_vertex_count(),
         "tissue_owned_vertices":binding.tissue_owned_vertices(), "contract_supplied":regions.coverage.is_some(),
+        "regions": regions.volumes.iter().map(|spec| serde_json::json!({
+            "nodes":spec.mesh.points.len(), "cells":spec.mesh.cells.len(),
+            "boundary_triangles":spec.mesh.boundary.len(), "supports":spec.supports.len(),
+            "joint":spec.joint, "support_joint_overrides":spec.support_joint_overrides,
+            "support_joint_weights":spec.support_joint_weights,
+            "density_kg_m3":spec.density_kg_m3,
+            "specific_heat_j_kg_k":spec.specific_heat_j_kg_k,
+            "temperature_kelvin":spec.temperature_kelvin,
+        })).collect::<Vec<_>>(),
     });
     inputs
         .finish_observed(regions, |id, limit| {
@@ -319,6 +391,113 @@ mod tests {
                 .unwrap()
                 .digest,
         )
+    }
+    #[test]
+    fn nonconvex_vxtm_import_preserves_source_membership_and_authored_settings() {
+        let directory = std::env::temp_dir().join(format!(
+            "voxy-nonconvex-import-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&directory).unwrap();
+        let model = ModelAsset::parse(MODEL, &[], ModelLimits::default()).unwrap();
+        let (positions, _) = super::super::contact_positions64(&model, 0.).unwrap();
+        let origin = positions[666].map(|v| v - 0.005);
+        let mesh =
+            TetraMesh::from_lattice_cells(origin, [0.01; 3], &[[0; 3], [1, 0, 0], [0, 1, 0]])
+                .unwrap();
+        let supports: Vec<_> = mesh
+            .points
+            .iter()
+            .enumerate()
+            .filter_map(|(i, p)| (p[1] == origin[1]).then_some(i))
+            .collect();
+        let bytes = mesh.to_bytes().unwrap();
+        std::fs::write(directory.join("volume.vxtm"), &bytes).unwrap();
+        let value = serde_json::json!({
+            "version":2, "coordinate_space":"scene_phase_0_metres",
+            "material_profile":"authored-ogden-maxwell-v1", "source_model_blake3":hash(MODEL),
+            "coverage":{"minimum_bound_vertices":1,"required_vertices":[666]},
+            "regions":[{"mesh":"volume.vxtm","mesh_blake3":hash(&bytes),
+                "joint":"Skeleton_torso_joint_2","supports":supports,"excluded_obstacle_faces":[],
+                "material":{"density_kg_m3":1200.,"specific_heat_j_kg_k":2000.,"temperature_kelvin":295.,"bulk_pa":2e6,
+                    "ogden_terms":[{"shear_pa":15000.,"exponent":2.}],
+                    "maxwell_branches":[{"shear_pa":20000.,"relaxation_seconds":0.5}]} }]
+        });
+        let manifest = directory.join("regions.json");
+        std::fs::write(&manifest, serde_json::to_vec_pretty(&value).unwrap()).unwrap();
+        let imported = load(&manifest, &model, MODEL).unwrap();
+        assert_eq!(imported.inputs().observations().len(), 3);
+        let region = &imported.value().coverage_report["regions"][0];
+        assert_eq!(region["nodes"], 16);
+        assert_eq!(region["cells"], 18);
+        assert_eq!(region["boundary_triangles"], 28);
+        assert_eq!(region["supports"], supports.len());
+        assert_eq!(region["density_kg_m3"], 1200.);
+        let mut demo = imported.value().instantiate().unwrap();
+        assert_eq!(
+            demo.body_thermal_diagnostics().unwrap()[0],
+            (295., 295., 0.)
+        );
+        demo.assemble_regions().unwrap();
+        let binding = demo.bind_skin(&positions).unwrap();
+        assert!(binding.tissue_owned_vertices().contains(&666));
+        eprintln!("NONCONVEX_IMPORT {}", imported.value().coverage_report);
+        let mut multi_bone = value.clone();
+        multi_bone["regions"][0]["support_joint_overrides"] = serde_json::json!([
+            {"node":supports[0],"joint":"leg_joint_R_1"}
+        ]);
+        std::fs::write(&manifest, serde_json::to_vec(&multi_bone).unwrap()).unwrap();
+        let multi = load(&manifest, &model, MODEL).unwrap();
+        let expected_joint = usize::from(model.resolve_joint_name("leg_joint_R_1").unwrap());
+        assert_eq!(
+            multi.value().volumes[0].support_joint_overrides,
+            vec![(supports[0], expected_joint)]
+        );
+        for overrides in [
+            serde_json::json!([{"node":supports[0],"joint":"missing"}]),
+            serde_json::json!([{"node":99999,"joint":"leg_joint_R_1"}]),
+            serde_json::json!([{"node":supports[0],"joint":"leg_joint_R_1"},{"node":supports[0],"joint":"leg_joint_R_1"}]),
+        ] {
+            let mut invalid = multi_bone.clone();
+            invalid["regions"][0]["support_joint_overrides"] = overrides;
+            std::fs::write(&manifest, serde_json::to_vec(&invalid).unwrap()).unwrap();
+            assert!(load(&manifest, &model, MODEL).is_err());
+        }
+        let mut weighted = value.clone();
+        weighted["regions"][0]["support_joint_weights"] = serde_json::json!([
+            {"node":supports[0],"influences":[{"joint":"Skeleton_torso_joint_2","weight":0.25},{"joint":"leg_joint_R_1","weight":0.75}]}
+        ]);
+        std::fs::write(&manifest, serde_json::to_vec(&weighted).unwrap()).unwrap();
+        let blended = load(&manifest, &model, MODEL).unwrap();
+        assert_eq!(
+            blended.value().volumes[0].support_joint_weights[0].1.len(),
+            2
+        );
+        weighted["regions"][0]["support_joint_weights"][0]["influences"][1]["weight"] = 0.5.into();
+        std::fs::write(&manifest, serde_json::to_vec(&weighted).unwrap()).unwrap();
+        assert!(load(&manifest, &model, MODEL).is_err());
+        // Import/membership evidence only; collision admission is deliberately
+        // exercised separately by the physical-skin controller gates.
+        if let Some(output) = std::env::var_os("VOXY_NONCONVEX_IMPORT_FIXTURE_DIR") {
+            let output = std::path::PathBuf::from(output);
+            std::fs::create_dir_all(&output).unwrap();
+            std::fs::write(output.join("volume.vxtm"), &bytes).unwrap();
+            std::fs::write(
+                output.join("regions.json"),
+                serde_json::to_vec_pretty(&value).unwrap(),
+            )
+            .unwrap();
+            std::fs::write(
+                output.join("coverage.json"),
+                serde_json::to_vec_pretty(&imported.value().coverage_report).unwrap(),
+            )
+            .unwrap();
+        }
+        std::fs::remove_dir_all(directory).unwrap();
     }
     #[test]
     fn observed_authored_volumes_resolve_joints_and_reject_incompatible_inputs() {

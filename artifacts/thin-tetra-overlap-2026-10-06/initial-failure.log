@@ -1,0 +1,31 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.34s
+     Running tests/tetrahedral_overlap.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tetrahedral_overlap-8d75dbe9807f7d94)
+
+running 1 test
+test thin_positive_volume_overlap_is_not_hidden_by_unrelated_wide_axes ... FAILED
+
+failures:
+
+---- thin_positive_volume_overlap_is_not_hidden_by_unrelated_wide_axes stdout ----
+
+thread 'thin_positive_volume_overlap_is_not_hidden_by_unrelated_wide_axes' (43465723) panicked at crates/physics/tests/tetrahedral_overlap.rs:112:36:
+called `Result::unwrap_err()` on an `Ok` value: [86, 88, 84, 77, 1, 0, 0, 0, 8, 0, 0, 0, 2, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 155, 43, 161, 134, 155, 132, 6, 61, 154, 153, 153, 153, 153, 153, 185, 63, 154, 153, 153, 153, 153, 153, 185, 63, 22, 86, 231, 158, 175, 3, 210, 60, 154, 153, 153, 153, 153, 153, 241, 63, 154, 153, 153, 153, 153, 153, 185, 63, 22, 86, 231, 158, 175, 3, 210, 60, 154, 153, 153, 153, 153, 153, 185, 63, 154, 153, 153, 153, 153, 153, 241, 63, 22, 86, 231, 158, 175, 3, 210, 60, 154, 153, 153, 153, 153, 153, 185, 63, 154, 153, 153, 153, 153, 153, 185, 63, 94, 22, 126, 122, 17, 197, 8, 61, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 6, 0, 0, 0, 7, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 6, 0, 0, 0, 7, 0, 0, 0, 4, 0, 0, 0, 7, 0, 0, 0, 6, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 7, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0, 5, 0, 0, 0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    thin_positive_volume_overlap_is_not_hidden_by_unrelated_wide_axes
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test tetrahedral_overlap`

@@ -1,0 +1,5 @@
+{
+  "crates/voxy_app/src/tissue_demo.rs": "3c0904eef3a0394d0d51a2dadfc09d30c3c4c909598a26c58a26d71015de5844",
+  "crates/voxy_app/src/tissue_demo/assembly.rs": "d25e0941d05f2656095cb8466b393da5b97db081919c2f94fdd8180d3d2fe11c",
+  "crates/voxy_app/examples/body_motion_snapshot.rs": "842528c4ad0f95d1c15ea105de07f65d2b65bd7b74a868b2b8a962f3b0b96190"
+}
