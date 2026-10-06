@@ -1748,3 +1748,268 @@ qualification, not proof of real-time performance or a full 480-step skin clip.
 Earlier native-only full-clip results retain their original scope.
 Evidence: `artifacts/physical-skin-gpu-48-2026-10-06/` and
 `artifacts/physical-skin-controller-2026-10-06/`.
+
+
+### Per-frame imported physical-skin qualification
+
+The imported qualification helper now runs either the original regional FEM
+boundary or the assembled render-skin boundary, recording the selected mode in
+the audit. A new normal regression covers 72 steps at 240 Hz, including the
+previously problematic initial trajectory interval. It asserts the actual
+16 tissue-bound vertices, 56 responsive triangles and one assembled energy owner.
+Every frame independently checks delta stored energy minus actuator work plus
+released heat against the unchanged 1e-5 J frame budget; reported numerical
+defect is never subtracted. The sum of absolute frame errors was 1.11610514e-7 J
+over 72 steps (requested aggregate budget 7.2e-4 J). The final reported-ledger
+closure was -3.65e-15 J. This is actual per-frame evidence, unlike sparse GPU CSV.
+
+Evidence: `artifacts/physical-skin-path-2026-10-06/`. A separate ignored test
+qualifies all 480 steps; its existence alone is not completion evidence.
+
+The full physical-skin test was executed and **failed at step 279** with
+`closed surface contact gap`, after 278 committed frames. No completed full-clip
+audit was emitted. The source manifest remained unchanged during both runs.
+This contradicts full-clip readiness of the new boundary; earlier native-only
+480-step success does not qualify this mode. CCD and energy tolerances remain
+unchanged. Evidence: `artifacts/physical-skin-full-clip-2026-10-06/`.
+The next diagnosis must identify the enabled skin/obstacle pair and whether the
+closure originates in prescribed motion, FEM response or path interpolation.
+
+
+### Closed initial trial and adaptive retry
+
+A read-only query on `StationaryEmbeddedContact` now reports the nearest enabled
+physical-skin pair, including closed gaps, using the exact force embedding/domain.
+Its regression verifies source identities, known open/closed distances, unchanged
+contact state and agreement with force rejection. All 31 embedded tests passed.
+
+Trace of the step-279 rejection identifies iteration zero in the averaged material
+path: skin face [651, 666, 2591], obstacle triangle 1341. The admitted initial
+gap was +4.7486234e-5 m; the stationary trial in the next prescribed pose had
+gap -6.6259148e-5 m. The velocity predictor was also inadmissible. This is not
+evidence that the committed state crossed. The adaptive Maxwell wrapper now
+retries a closed trial gap with smaller substeps, after validating initial
+diagnostics. Accepted substeps still require the original CCD and proportional
+energy budget; exhausted trials preserve the original interval state.
+Evidence: `artifacts/physical-skin-gap-diagnosis-2026-10-06/`. The changed full
+clip is running separately in `artifacts/physical-skin-refined-clip-2026-10-06/`;
+no successful result is claimed until that process terminates and its audit passes.
+
+A focused exhausted-trial regression additionally stages a closed skin pose over
+a physically tiny interval. With one and two allowed subdivisions it must reject
+and preserve the complete Maxwell/thermal/contact state. This passed after the
+retry change; the 31-test embedded suite also passed. These rollback results do
+not by themselves establish full-clip success.
+
+The refined full clip terminated with the same `closed surface contact gap` at
+step 279 (121.57 s in this run). Allowing trial-gap retries up to 256 substeps
+therefore does not establish clip readiness. The failed result is preserved;
+the next diagnostic examines whether the nearest feature is dynamically owned.
+
+The source-vertex owner trace confirms only vertex 666 of face [651, 666, 2591]
+is tissue-owned. The rejected nearest feature has weights [0, 0, 1], so it lies
+at prescribed skeletal vertex 2591. That vertex cannot be displaced by FEM forces;
+a triangle containing it cannot be separated from an obstacle closer than the
+minimum allowed distance to that vertex. Refinement alone cannot fix this source
+constraint. Physical coverage currently binds only 16/3273 vertices. A production
+solution needs physically covered skin patches or collision-aware rig motion;
+excluding the offending pair would merely hide the prescribed intersection.
+
+
+### Prescribed-point obstruction witness
+
+`StationaryEmbeddedContact::prescribed_contact_obstruction` inspects the nearest
+enabled physical-skin feature with the same geometry/domain query as contact.
+It returns a sufficient obstruction witness only for a closed gap whose exact
+barycentric weights vanish on every tissue-owned vertex. Its remaining point
+is prescribed and stays on the triangle under all nodal deformation, so FEM
+forces cannot separate this pair. No epsilon mobility classification, pair
+exclusion or new contact force law is introduced. None is not a general proof
+of feasibility, and this is not an exact-arithmetic geometric certificate.
+
+The adaptive Maxwell step checks this witness after admitted initial diagnostics
+and returns `prescribed skin obstacle gap is closed` before subdivision. The
+regression distinguishes a fixed mixed-edge closure from a fully dynamic closed
+trial, checks invariance under large tissue translations, rejects a changed
+domain owner and preserves the complete Maxwell/thermal state. All 33 embedded
+contact and 11 surface tests passed. This admission/diagnostic improvement does
+not repair the imported rig trajectory or expand the current tissue coverage.
+Evidence: `artifacts/prescribed-skin-obstruction-2026-10-06/`.
+
+The imported obstruction replay completed: it now returns the explicit
+`prescribed skin obstacle gap is closed` at step 279 with the original source
+face identities. This confirms admission classification, not clip readiness.
+
+### Authored convex skin to conforming tissue volume
+
+`TetraMesh::from_convex_surface` constructs one radial tetrahedron per explicitly
+authored outward boundary triangle around a strictly interior point. Original
+skin vertices/indices are preserved and the interior node is appended, so the
+complete source boundary can use the existing embedding and force transpose.
+Admission checks finite unique/used points, closed opposite-edge topology, sphere
+Euler characteristic, connectedness, convex half-spaces and the existing positive
+volume/interface/boundary validation. Validation work is bounded at 16 million
+point/face checks. No hull, welding, exterior extrapolation or anatomical fit is
+inferred. Floating checks are conservative without an added geometry epsilon;
+this is not exact-arithmetic certification or a general nonconvex body mesher.
+
+Tests verify all eight source cube vertices embed, affine skin motion agrees with
+its nodal motion, boundary loads transfer once and a 1 m3 cube at 1000 kg/m3 has
+1000 kg total nodal mass. A sheared/scaled cube has analytic volume 24 m3 and
+24000 kg mass both before and after conforming refinement. Open/inward/nonconvex
+surfaces, invalid indices, duplicate/unused points and noninterior centers reject.
+All 19 checks across authored-volume, anatomical interchange, continuum geometry
+and surface embedding suites passed. Evidence:
+`artifacts/convex-tissue-surface-2026-10-06/`. This provides volume authoring for
+complete convex tissue patches; the imported character still has its original
+16/3273 bound vertices until correctly authored patches/decomposition are integrated.
+
+
+### Authored volumes use the existing animation controller
+
+`TissueDemo::body_from_regions` admits supplied tetrahedral regions, explicit
+three-node supports and joint identities. The neutral mannequin's ellipsoids
+now delegate to this same construction path; there is no separate authored-volume
+solver. Topology, node indices and duplicate supports reject before publication.
+`TetraMesh::into_body` now validates its boundary/interface topology as well as
+Body's mechanical geometry, including for manually constructed public mesh data.
+The demo retains its illustrative material/density/thermal constants. This is
+not anatomical material calibration, arbitrary support-count authoring or rig fitting.
+
+An end-to-end convex-volume fixture binds every one of eight skin vertices,
+assembles the single physical owner, enables all 12 skin triangles and advances
+the existing controller against a moving prescribed plate. The independent
+frame balance is -4.0268934e-7 J within the unchanged 1e-5 J budget, without
+subtracting reported solver defect. Render skin moves with the solved tissue;
+the three prescribed obstacle vertices retain their supplied pose. Missing mesh
+boundaries and invalid supports reject. The prior full app suite passed 42 tests
+(three manual qualifications ignored), followed by the new authored-volume
+fixture; eight anatomical/convex/continuum regressions also passed. Formatting
+and source whitespace checks passed. Evidence:
+`artifacts/authored-tissue-controller-2026-10-06/`. Imported Cesium skin coverage
+is unchanged until suitable volumes/skin ownership are authored and integrated.
+
+
+### Observed file-backed tissue volume authoring
+
+The existing imported snapshot accepts `--tissue-regions=MANIFEST.json` with
+`--cesium --contact`. Its version-1 manifest declares `scene_phase_0_metres`,
+`illustrative-manikin-v1`, the exact source-model BLAKE3 digest, and a list of
+VXTM meshes with BLAKE3 digests, joint names, three support-node indices and
+explicit source obstacle-face exclusions. Unknown settings, incompatible
+coordinates/profiles/hashes/joints/supports and invalid/duplicate exclusions reject.
+
+The importer reuses `voxy_assets::FileInputs` and `ImportInputs` rather than a
+parallel file/cache system. Mesh paths are normal paths relative to the manifest
+root, existing provider symlink/root restrictions apply, observations retain
+model/manifest/mesh hashes, and all inputs are reread before publication. Reads
+are bounded at 1 MiB per manifest, 32 MiB per mesh and 64 MiB total. Native
+contact begins as an inactive integration owner; after assembly, the shared
+physical-skin contact is installed before stepping. No runtime exclusions are
+computed from animated intersections. The current preset remains illustrative.
+
+`TetraMesh::to_bytes` exports validated authored volumes through existing VXTM v1.
+Tests verify exact geometry/cell/boundary round trips and reject invalid exports.
+A real file-backed convex pad attached to CesiumMan's torso passes eight headless
+physical steps, with independent per-frame balances checked against 1e-5 J.
+The complete example suite passed 44 tests (three manual tests ignored), and six
+mesh/interchange tests passed. A fresh Metal invocation loaded the saved manifest,
+completed three physical steps/12 controller substeps and produced four frames.
+The pad binds only one of 3273 model vertices and six contact triangles: this
+qualifies asset/controller plumbing, not increased full-character coverage or
+repair of the step-279 intersection. Frames cover only 0.0125 s.
+
+Evidence and a runnable illustrative manifest are in
+`artifacts/authored-tissue-import-2026-10-06/`. Reproduction:
+
+```sh
+cargo run -p voxy_app --release --example body_motion_snapshot -- \
+  /tmp/authored-poses.png /tmp/authored-frames --cesium --contact --capture-steps=3 \
+  --tissue-regions=artifacts/authored-tissue-import-2026-10-06/fixture/regions.json
+```
+
+
+### Explicit material profiles and arbitrary support-node lists
+
+`TissueRegionSpec` now owns geometry, support nodes, joint identity and explicit
+SI density, Ogden terms/bulk modulus, Maxwell spectrum, specific heat and initial
+Kelvin temperature. The controller's support metadata uses vectors; no fixed
+three-pin storage remains. Duplicate/out-of-range supports reject using one
+linear pinned mask. The illustrative constructor delegates to this same owner
+with its previous constants and three supports, preserving existing defaults.
+
+Manifest version 1 remains compatible. Version 2 selects
+`authored-ogden-maxwell-v1`; every region requires a `material` object with
+`density_kg_m3`, `specific_heat_j_kg_k`, `temperature_kelvin`, `bulk_pa`,
+`ogden_terms` (each `shear_pa`, `exponent`) and `maxwell_branches` (each
+`shear_pa`, `relaxation_seconds`). Its `supports` is a variable-length list.
+All physical parameters are required: missing parameters do not fall back to
+demonstration values. Shared Ogden/inertia/thermal validation rejects inadmissible
+parameters and spectra; unknown fields also reject. These are caller-supplied
+parameters, not a claim of independently measured anatomical calibration.
+
+A four-support fixture verifies all requested nodes follow the rig, checks
+1200 kg/m3 density against an independent octahedron-volume mass of 0.0128 kg,
+and initializes cells at 299 K with 2000 J/(kg K) specific heat. Released heat
+was 3.58628324e-9 J; temperature changes independently imply 3.58631951e-9 J,
+within the 6.80e-12 J rounding allowance. The heat magnitude is over 100 times
+that allowance, so the capacity check distinguishes configured values from a
+hidden default. Independent mechanical frame defect was 9.73160435e-8 J within
+the unchanged 1e-5 J budget. Invalid density/capacity/temperature/moduli/spectra
+and supports reject.
+
+Both manifest versions are tested through observed file input and the shared
+controller. A v2 manifest initializes 295 K, four supports and explicit constitutive
+parameters, then advances the imported physical-skin path. The example suite
+passed 45 tests (three manual qualifications ignored), and a fresh Metal v2
+invocation completed three physical steps/12 controller substeps. The main
+application executable also compiles; its filtered run contained zero matching
+tests and is compilation evidence only. Evidence:
+`artifacts/authored-tissue-material-2026-10-06/`. The fixture remains one
+illustrative pad with 1/3273 source vertices bound; default full-character coverage
+and the step-279 rig obstruction remain unchanged.
+
+The production application library's matching controller-owner test also passed
+(with the same independent mass/heat/frame-balance values). This verifies the
+shared app module, in addition to the snapshot example and executable compilation.
+
+
+### Source-index skin coverage admission
+
+Both tissue manifest versions can declare a `coverage` object containing
+`minimum_bound_vertices` and `required_vertices` (original concatenated scene
+vertex indices at phase zero). Counts/indices must be valid and required indices
+unique. Immutable skin bindings now expose their sorted tissue-owned source IDs.
+The file importer instantiates and assembles candidate volumes, evaluates their
+actual reference-space membership, checks the contract, and only then publishes
+the observed asset. This happens before GPU creation in the snapshot entrypoint.
+The runtime repeats the same contract against its final shared binding and prints
+a `TISSUE_COVERAGE` receipt including actual source/bound counts and source IDs.
+Omitting the contract retains legacy compatibility; the report explicitly records
+whether a contract was supplied. This is membership admission, not a guarantee
+of contact mobility, rig feasibility, calibrated anatomy or collision convergence.
+
+The fixture's one bound vertex is exactly source 666; this explicit requirement
+passes. Requests for a higher minimum, source 2591, duplicate/out-of-range IDs
+and impossible counts reject. A full-coverage request for 3273 vertices and
+[651,666,2591] reports missing [651,2591]. The actual CLI rejected it without
+GPU initialization or an output image. A valid contracted Metal invocation
+completed three physical steps and emitted the expected membership receipt.
+The 45-test example suite passed, followed by a source-identity check confirming
+the same bound vertex IDs before and after region assembly. No source geometry
+was expanded and the original step-279 obstruction remains unresolved.
+Evidence: `artifacts/authored-skin-coverage-2026-10-06/`.
+
+## Nonradial imported volume boundary normals (2026-10-06)
+
+The debug continuum renderer now caches exterior faces from the canonical
+`Body::surface()` topology instead of treating the last three nodes of every
+tetrahedron as an exterior face. The previous radial-mesh assumption omitted
+exterior faces and included internal interfaces for general VXTM volumes.
+
+The regression uses two tetrahedra sharing a face, checks all six exterior
+triangles and the normal at the origin, permutes cell node order, and verifies
+assembly preserves the result. After two refinements an interior node has zero
+boundary normal. The example suite passes 46 tests (3 ignored); the matching
+production library regression also passes. This fix does not increase character
+skin coverage or resolve the physical-skin clip obstruction at frame 279.

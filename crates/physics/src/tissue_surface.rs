@@ -219,6 +219,9 @@ impl EmbeddedSurface {
             surface: surface.into(),
         })
     }
+    pub(crate) fn tissue_owned_vertex(&self, vertex: usize) -> bool {
+        self.bindings[vertex].is_some()
+    }
     pub(crate) fn reference_geometry(&self) -> (&[Point], &[[usize; 4]], &[Point]) {
         (&self.rest, &self.cells, &self.surface)
     }

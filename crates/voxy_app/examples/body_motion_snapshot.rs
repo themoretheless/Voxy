@@ -3,6 +3,8 @@
 mod biomechanics_demo;
 #[path = "../src/tissue_demo.rs"]
 mod tissue_demo;
+#[path = "body_motion_snapshot/tissue_regions.rs"]
+mod tissue_regions;
 use glam::{DMat4, Mat4, Vec3};
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 use voxy_render::{ModelAsset, ModelLimits, SceneMesh};
@@ -602,6 +604,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .map_err(|error| voxy_render::ModelError(error.to_string()))
         })
         .transpose()?;
+    let tissue_paths: Vec<_> = remaining
+        .iter()
+        .filter_map(|arg| arg.strip_prefix("--tissue-regions="))
+        .collect();
+    if tissue_paths.len() > 1 {
+        return Err("tissue regions specified more than once".into());
+    }
+    if !tissue_paths.is_empty() && (!cesium || !contact) {
+        return Err("--tissue-regions requires --cesium --contact".into());
+    }
+    let authored = tissue_paths
+        .first()
+        .map(|path| {
+            tissue_regions::load(
+                std::path::Path::new(path),
+                imported.as_ref().unwrap(),
+                include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            )
+        })
+        .transpose()?;
     let limits: Vec<_> = remaining
         .iter()
         .filter_map(|a| a.strip_prefix("--capture-steps="))
@@ -618,9 +640,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             && arg != "--contact"
             && arg != "--wide-contact"
             && !arg.starts_with("--capture-steps=")
+            && !arg.starts_with("--tissue-regions=")
     }) {
         return Err(
-            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact] [--capture-steps=N]"
+            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact] [--capture-steps=N] [--tissue-regions=MANIFEST.json]"
                 .into(),
         );
     }
@@ -641,7 +664,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default()))?;
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-    let mut demo = if let Some(model) = &imported {
+    let mut demo = if let Some(authored) = &authored {
+        authored.value().instantiate()?
+    } else if let Some(model) = &imported {
         imported_tissues(model, reference.as_ref().unwrap())?
     } else {
         tissue_demo::TissueDemo::body()
@@ -660,7 +685,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?);
         let (centers, _) =
             imported_attachments(imported.as_ref().unwrap(), reference.as_ref().unwrap())?;
-        let domains = attachment_domains(&surface, centers)?;
+        let domains = if let Some(authored) = &authored {
+            authored.value().domains(&surface)?
+        } else {
+            attachment_domains(&surface, centers)?
+        };
         for (region, domain) in domains.iter().enumerate() {
             println!(
                 "CONTACT region {region}: {} enabled, {} excluded source triangles",
@@ -685,6 +714,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .flat_map(|s| s.positions)
             .collect();
         let binding = demo.bind_skin(&points)?;
+        if let Some(authored) = &authored {
+            authored.value().validate_skin_coverage(&binding)?;
+            println!("TISSUE_COVERAGE {}", authored.value().coverage_report);
+        }
         println!(
             "SKIN bound={} total={}",
             binding.bound_vertex_count(),
@@ -1004,6 +1037,9 @@ mod collision_tests {
             .unwrap();
         let mut demo = imported_tissues(&model, &reference).unwrap();
         let binding = demo.bind_skin(&skin).unwrap();
+        let owned_vertices = binding.tissue_owned_vertices();
+        assert_eq!(owned_vertices.len(), binding.bound_vertex_count());
+        assert!(owned_vertices.windows(2).all(|p| p[0] < p[1]));
         eprintln!(
             "IMPORTED_SKIN_BOUND vertices={} total={}",
             binding.bound_vertex_count(),
@@ -1029,6 +1065,7 @@ mod collision_tests {
         let physical_skin = demo.deform_skin(&binding, &palette, &skin).unwrap();
         demo.assemble_regions().unwrap();
         let global_binding = demo.bind_skin(&skin).unwrap();
+        assert_eq!(global_binding.tissue_owned_vertices(), owned_vertices);
         assert_eq!(global_binding.bound_vertex_count(), 16);
         assert_eq!(
             demo.deform_skin(&global_binding, &palette, &skin).unwrap(),
@@ -1254,7 +1291,19 @@ mod collision_tests {
     fn wide_imported_contact_commits_initial_motion() {
         check_wide_imported_contact(8);
     }
+    #[test]
+    fn physical_render_skin_preserves_imported_path_and_energy() {
+        check_imported_contact(72, true);
+    }
+    #[test]
+    #[ignore = "manual full physical render-skin clip qualification"]
+    fn physical_render_skin_completes_full_clip() {
+        check_imported_contact(480, true);
+    }
     fn check_wide_imported_contact(steps: usize) {
+        check_imported_contact(steps, false);
+    }
+    fn check_imported_contact(steps: usize, physical_skin: bool) {
         let model = ModelAsset::parse(
             include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
             &[],
@@ -1280,6 +1329,13 @@ mod collision_tests {
         let (centers, _) = imported_attachments(&model, &reference).unwrap();
         let domains = attachment_domains(&surface, centers).unwrap();
         demo.bind_contact_surfaces(&domains).unwrap();
+        if physical_skin {
+            demo.assemble_regions().unwrap();
+            let binding = demo.bind_skin(surface.positions()).unwrap();
+            assert_eq!(binding.bound_vertex_count(), 16);
+            assert_eq!(demo.bind_skin_contact(&binding).unwrap(), 56);
+            assert_eq!(demo.body_energy_receipts().unwrap().len(), 1);
+        }
         let mut previous = demo.body_energy_receipts().unwrap();
         let mut absolute_frame_error_j = vec![0.; previous.len()];
         let mut rounding_allowance_j = vec![0.; previous.len()];
@@ -1321,7 +1377,7 @@ mod collision_tests {
         for (index, &error) in absolute_frame_error_j.iter().enumerate() {
             assert!(error <= total_requested_budget_j + rounding_allowance_j[index]);
         }
-        let audit = serde_json::json!({"scope":"independent nominal-frame mechanical energy audit","steps":steps,"absolute_frame_error_j":absolute_frame_error_j,"requested_budget_per_body_j":total_requested_budget_j,"rounding_allowance_j":rounding_allowance_j,"final_energy_receipts":previous,"reported_defect_subtracted":false});
+        let audit = serde_json::json!({"scope":"independent nominal-frame mechanical energy audit","contact_boundary":if physical_skin { "assembled physical render skin" } else { "regional native FEM envelope" },"steps":steps,"absolute_frame_error_j":absolute_frame_error_j,"requested_budget_per_body_j":total_requested_budget_j,"rounding_allowance_j":rounding_allowance_j,"final_energy_receipts":previous,"reported_defect_subtracted":false});
         eprintln!("WIDE_IMPORTED_ENERGY_AUDIT {audit}");
         if let Some(path) = std::env::var_os("VOXY_ENERGY_AUDIT_FILE") {
             std::fs::write(path, serde_json::to_vec_pretty(&audit).unwrap()).unwrap();

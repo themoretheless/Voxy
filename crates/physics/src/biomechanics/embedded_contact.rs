@@ -497,6 +497,42 @@ impl StationaryEmbeddedContact {
             base: &self.base,
         }
     }
+    /// Inspect the closest enabled skin/obstacle pair, including closed gaps.
+    /// This read-only diagnostic uses the same embedding and pair domains as forces.
+    /// # Errors
+    /// Invalid body geometry, skin topology or closest-feature geometry.
+    pub fn nearest_active_contact(
+        &self,
+        nodes: &[Vec3],
+    ) -> Result<Option<super::PrescribedContactFeature>, &'static str> {
+        let skin = self.contact.positions(self.pose(nodes))?;
+        self.obstacle
+            .nearest_active_contact(&skin, &self.contact.faces)
+    }
+    /// Sufficient geometric witness of a closed gap that FEM displacement cannot open.
+    /// Only exact zero weights on every tissue-owned vertex qualify. The remaining
+    /// barycentric point lies in the triangle for every possible nodal deformation,
+    /// because its vertices and the obstacle are prescribed. No force threshold or
+    /// pair exclusion is introduced. None does not certify general feasibility.
+    /// # Errors
+    /// Invalid body/skin geometry or closest-feature query.
+    pub fn prescribed_contact_obstruction(
+        &self,
+        nodes: &[Vec3],
+    ) -> Result<Option<super::PrescribedContactFeature>, &'static str> {
+        let Some(feature) = self.nearest_active_contact(nodes)? else {
+            return Ok(None);
+        };
+        let fixed_point =
+            feature
+                .body_face
+                .iter()
+                .zip(feature.body_weights)
+                .all(|(&vertex, weight)| {
+                    weight == 0. || !self.contact.embedding.tissue_owned_vertex(vertex)
+                });
+        Ok((feature.gap_m <= 0. && fixed_point).then_some(feature))
+    }
     /// Physical tissue, rig and obstacle loads at the specified body geometry.
     /// # Errors
     /// Invalid geometry or closed contact gap.

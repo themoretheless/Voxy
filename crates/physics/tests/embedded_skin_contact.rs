@@ -1924,3 +1924,180 @@ fn shared_skin_triangle_couples_two_dynamic_fem_regions_in_existing_solver() {
             .fold(0.0_f64, |m, x| m.max(x.abs()))
     );
 }
+
+#[test]
+fn embedded_nearest_pair_reports_closed_gap_without_changing_contact() {
+    use physics::biomechanics::StationaryEmbeddedContact;
+    use std::sync::Arc;
+    let contact = StationaryEmbeddedContact::new(
+        Arc::new(contact()),
+        REST.to_vec(),
+        SKIN.to_vec(),
+        Arc::new(obstacle()),
+    )
+    .unwrap();
+    let initial = contact.nearest_active_contact(&REST).unwrap().unwrap();
+    assert_eq!(initial.body_face, [0, 1, 2]);
+    assert_eq!(initial.obstacle_face_index, 0);
+    assert!((initial.distance_m - 0.015).abs() < 1e-12);
+    let mut nodes = REST;
+    for node in &mut nodes {
+        node[2] -= 0.0145;
+    }
+    let before = format!("{contact:?}");
+    let closed = contact.nearest_active_contact(&nodes).unwrap().unwrap();
+    assert!(closed.gap_m < 0.);
+    assert!((closed.distance_m - 0.0005).abs() < 1e-12);
+    assert_eq!(
+        contact.response(&nodes).unwrap_err(),
+        "closed surface contact gap"
+    );
+    assert_eq!(before, format!("{contact:?}"));
+    assert_eq!(
+        contact
+            .nearest_active_contact(&REST)
+            .unwrap()
+            .unwrap()
+            .gap_m
+            .to_bits(),
+        initial.gap_m.to_bits()
+    );
+}
+
+#[test]
+fn adaptive_closed_trial_exhaustion_preserves_maxwell_thermal_state() {
+    use std::sync::Arc;
+    let mut body = maxwell_skin();
+    let native = Arc::new(
+        obstacle()
+            .with_positions(
+                obstacle()
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], p[2] - 10.])
+                    .collect(),
+            )
+            .unwrap(),
+    );
+    body.set_prescribed_surface(Some(native.clone())).unwrap();
+    let start = body.body().stationary_embedded_contact().unwrap().clone();
+    let next = start
+        .with_pose(
+            REST.to_vec(),
+            SKIN.map(|p| [p[0], p[1], p[2] - 0.0145]).to_vec(),
+            Arc::new(start.obstacle().clone()),
+        )
+        .unwrap();
+    assert!(
+        start
+            .nearest_active_contact(body.body().positions())
+            .unwrap()
+            .unwrap()
+            .gap_m
+            > 0.
+    );
+    assert!(
+        next.nearest_active_contact(body.body().positions())
+            .unwrap()
+            .unwrap()
+            .gap_m
+            < 0.
+    );
+    let before = format!("{body:?}");
+    for max_substeps in [1, 2] {
+        assert!(
+            body.step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
+                None,
+                native.clone(),
+                next.clone(),
+                1e-8,
+                1e-6,
+                max_substeps,
+            )
+            .is_err()
+        );
+        assert_eq!(before, format!("{body:?}"));
+    }
+}
+
+#[test]
+fn prescribed_vertex_obstruction_is_distinct_from_a_movable_closed_trial() {
+    use physics::biomechanics::StationaryEmbeddedContact;
+    use std::sync::Arc;
+    let skin = [SKIN[1], [-0.2, 0.1, 0.015], [0.1, -0.2, 0.015]];
+    let start = StationaryEmbeddedContact::new(
+        Arc::new(
+            EmbeddedTriangleContact::new_mixed(
+                &REST,
+                &[[0, 1, 2, 3]],
+                &skin,
+                vec![[0, 1, 2]],
+                &[true, false, false],
+            )
+            .unwrap(),
+        ),
+        REST.to_vec(),
+        skin.to_vec(),
+        Arc::new(obstacle()),
+    )
+    .unwrap();
+    let next = start
+        .with_pose(
+            REST.to_vec(),
+            skin.map(|p| [p[0], p[1], p[2] - 0.0145]).to_vec(),
+            Arc::new(start.obstacle().clone()),
+        )
+        .unwrap();
+    let obstruction = next.prescribed_contact_obstruction(&REST).unwrap().unwrap();
+    assert_eq!(obstruction.body_weights[0], 0.);
+    assert!(obstruction.gap_m < 0.);
+    // Arbitrary tissue translations cannot move either prescribed edge vertex.
+    for offset in [0.01, 1., 100.] {
+        let nodes = REST.map(|p| [p[0], p[1], p[2] + offset]);
+        assert!(next.response(&nodes).is_err());
+    }
+    let excluded = next.with_pose(
+        REST.to_vec(),
+        skin.map(|p| [p[0], p[1], p[2] - 0.0145]).to_vec(),
+        Arc::new(
+            start
+                .obstacle()
+                .with_body_contact_domains(vec![(vec![[0, 1, 2]], vec![false])])
+                .unwrap(),
+        ),
+    );
+    assert!(excluded.is_err()); // Domain changes cannot be smuggled through a pose.
+    let fully_dynamic = stationary();
+    let nodes = REST.map(|p| [p[0], p[1], p[2] - 0.0145]);
+    assert!(fully_dynamic.response(&nodes).is_err());
+    assert!(
+        fully_dynamic
+            .prescribed_contact_obstruction(&nodes)
+            .unwrap()
+            .is_none()
+    );
+
+    let mut body = maxwell_skin();
+    body.set_stationary_embedded_contact(Some(start)).unwrap();
+    let native = Arc::new(
+        obstacle()
+            .with_positions(
+                obstacle()
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], p[2] - 10.])
+                    .collect(),
+            )
+            .unwrap(),
+    );
+    body.set_prescribed_surface(Some(native.clone())).unwrap();
+    let before = format!("{body:?}");
+    assert_eq!(
+        body.step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
+            None, native, next, 1e-3, 1e-6, 256,
+        )
+        .unwrap_err(),
+        "prescribed skin obstacle gap is closed"
+    );
+    assert_eq!(before, format!("{body:?}"));
+}

@@ -242,6 +242,12 @@ impl InertialBody {
             }
         }
         let initial = self.diagnostics()?;
+        if let Some(witness) = next_skin.prescribed_contact_obstruction(self.body.positions())? {
+            if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
+                eprintln!("PRESCRIBED_SKIN_OBSTRUCTION {witness:?}");
+            }
+            return Err("prescribed skin obstacle gap is closed");
+        }
         let mut count = 1;
         loop {
             let mut candidate = self.clone();
@@ -324,7 +330,11 @@ impl InertialBody {
             }
             if let Some(error) = rejection {
                 match error {
-                    "implicit contact nonlinear nonconvergence"
+                    // Initial diagnostics above admit the committed state. A closed
+                    // barrier in a trial pose can therefore be retried at smaller dt;
+                    // every accepted substep still requires the original CCD and budget.
+                    "closed surface contact gap"
+                    | "implicit contact nonlinear nonconvergence"
                     | "implicit contact line search failed"
                     | "implicit contact quadrature nonconvergence"
                     | "implicit midpoint work defect"
