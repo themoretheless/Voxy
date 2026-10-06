@@ -1032,3 +1032,54 @@ fn adaptive_multiple_point_feedback_covers_independent_force_couple_motion() {
         }
     }
 }
+
+#[test]
+fn material_moment_rate_matches_independent_moving_point_difference() {
+    use physics::rigid_motion::{MaterialForceMoment, MaterialPointForce};
+    let points = [
+        MaterialPointForce {
+            local: [0.3, -0.5, 0.7],
+            force: [2., -3., 5.],
+            force_rate: [-0.4, 0.8, 0.2],
+        },
+        MaterialPointForce {
+            local: [-0.2, 0.9, 0.4],
+            force: [-1., 4., 2.],
+            force_rate: [0.5, -0.1, 0.6],
+        },
+    ];
+    let moment = MaterialForceMoment::aggregate(points).unwrap();
+    let time = 0.4;
+    let omega = 0.7;
+    let angle: f64 = 0.3;
+    let orientation = [0., 0., (angle / 2.).sin(), (angle / 2.).cos()];
+    let derivative = moment
+        .torque_rate_at(orientation, [0., 0., omega], time)
+        .unwrap();
+    let oracle = |offset: f64| {
+        let (sin, cos) = (angle + omega * offset).sin_cos();
+        let mut torque = [0.; 3];
+        for point in points {
+            let [x, y, z] = point.local;
+            let r = [cos * x - sin * y, sin * x + cos * y, z];
+            let f: [f64; 3] =
+                std::array::from_fn(|k| point.force[k] + point.force_rate[k] * (time + offset));
+            torque[0] += r[1] * f[2] - r[2] * f[1];
+            torque[1] += r[2] * f[0] - r[0] * f[2];
+            torque[2] += r[0] * f[1] - r[1] * f[0];
+        }
+        torque
+    };
+    let h = 1e-5;
+    let before = oracle(-h);
+    let after = oracle(h);
+    for k in 0..3 {
+        assert!((derivative[k] - (after[k] - before[k]) / (2. * h)).abs() < 1e-9);
+    }
+    assert!(
+        moment
+            .torque_rate_at(orientation, [f64::NAN, 0., 0.], time)
+            .is_err()
+    );
+    assert!(moment.torque_rate_at([0.; 4], [0.; 3], time).is_err());
+}

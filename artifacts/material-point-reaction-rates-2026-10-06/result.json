@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "focused_physics_tests": 39,
+  "consumer_all_targets_release_check": "passed",
+  "scope": "Read-only support reactions and first derivatives under material-point forces",
+  "finite_supported_material_point_stepping": "still unavailable",
+  "source_sha256": {
+    "crates/physics/src/rigid_motion/loads.rs": "f7790018d6289386bd54aadbfc0e4efdcee5651f7de2bdfedaab45f68cc7cf40",
+    "crates/physics/src/liquid/support_world.rs": "7e2483d0851dfd4967bef418a72e14adb5f729b6aa01a8de4c5b45173c380a55",
+    "crates/physics/tests/material_pair.rs": "20900d06f8065af3e8b3feb3e082d8dbb780e31d31002d4f98ad07af08414fd6",
+    "crates/physics/tests/liquid_rigid_body_world.rs": "2ddfbed927193f6cfe6b99f26bdfcadce81e20ad796e3d041dc23edf248cc60f"
+  }
+}

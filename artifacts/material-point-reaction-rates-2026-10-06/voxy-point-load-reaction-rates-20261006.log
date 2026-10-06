@@ -1,0 +1,46 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 18.17s
+     Running tests/liquid_rigid_body_world.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/liquid_rigid_body_world-ab4549bc636e607e)
+
+running 11 tests
+test coupled_body_impact_retains_spin_and_advances_the_post_impact_orientation ... ok
+test late_backend_failure_missing_witness_and_invalid_rotation_restore_all_states ... ok
+test material_point_reaction_rates_include_rotating_arm_and_preserve_snapshot ... ok
+test legacy_geometry_cannot_silently_accept_intrinsic_spin ... ok
+test finite_support_uses_one_cubic_point_for_torque_work_and_geometry_admission ... ok
+test inelastic_patch_impulses_use_shared_event_ledger_and_malformed_patch_rolls_back ... ok
+test free_spin_persists_between_ticks_and_legacy_tangential_damping_is_rejected ... ok
+test liquid_particle_recoil_spins_body_on_the_same_event_timeline ... ok
+test custom_point_motion_requires_admission_and_rejects_invalid_models_atomically ... ok
+test reaction_rate_query_uses_geometry_owned_common_point_velocity ... ok
+test point_load_world_matches_prepared_motion_and_work_and_rejects_atomically ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/material_pair.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/material_pair-2b3b7980eb292ce4)
+
+running 12 tests
+test material_moment_rate_matches_independent_moving_point_difference ... ok
+test aggregated_com_loads_preserve_cancellation_and_all_torque_orders ... ok
+test multiple_material_point_moment_preserves_force_couple_under_rotation ... ok
+test multiple_point_arc_impulse_matches_analytic_rotating_affine_force_couple ... ok
+test pair_rejects_invalid_inputs_and_preserves_bodies_on_second_preparation_failure ... ok
+test external_polynomial_torques_integrate_independently_of_mutual_force ... ok
+test loaded_pair_gravity_preserves_relative_rotation_and_world_momentum_balance ... ok
+test loaded_impact_rebases_all_force_and_torque_components_and_closes_ledger ... ok
+test pair_impact_rebuilds_both_forces_from_the_new_common_material_point ... ok
+test pair_force_and_moment_are_covariant_under_world_frame_rotation_and_origin_shift ... ok
+test adaptive_multiple_point_feedback_covers_independent_force_couple_motion ... ok
+test whole_pair_bounds_cover_independent_joint_rk4_with_anisotropic_and_light_receivers ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+

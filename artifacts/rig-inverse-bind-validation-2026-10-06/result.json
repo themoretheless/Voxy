@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "tests": {
+    "passed": 718,
+    "failed": 0,
+    "ignored": 28
+  },
+  "animation_tests": 226,
+  "editor_all_targets_release_check": "passed",
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "90ba81f7382c024edd7bc0ea70a47c04a3d2d9575639b5dfbf1785ca203debef"
+  },
+  "limits": [
+    "Ignored tests are not qualification evidence",
+    "No new visual/GPU execution proof",
+    "Arbitrary ill-conditioned binds and external skeletal importers remain unqualified",
+    "Full engine goal incomplete"
+  ]
+}

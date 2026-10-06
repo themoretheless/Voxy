@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "animation_tests": 233,
+  "gameplay_tests": 220,
+  "consumer_all_targets_release_check": "passed",
+  "independent_integer_matrices": 2048,
+  "scope": [
+    "Exact determinant zero predicate for stored finite f64 coefficients",
+    "Floating filter only for well-separated normal products",
+    "Fixed 100-limb dyadic sums cover six triple products across the f64 exponent range",
+    "Dependent integer columns reject without column normalization",
+    "Near-dependent nonzero determinant preserved at unit, large and small scales"
+  ],
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "be8b5fedde23c416aac6f414da91685a629b0f2b36245b413162b7b81e4d3667",
+    "crates/voxy_animation/src/linear_rank.rs": "07298e3075cffe34e286deb9f91df8a2d5313c7f04d91601a282e528419ceea6"
+  },
+  "limits": [
+    "Exact rank does not certify conditioning or physical suitability",
+    "No performance/GPU/editor visual proof",
+    "Full engine objective incomplete"
+  ]
+}

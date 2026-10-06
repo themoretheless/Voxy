@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "animation_tests": 229,
+  "gameplay_tests": 220,
+  "consumer_all_targets_release_check": "passed",
+  "scope": [
+    "Shared double-precision bind-pose preflight at skeleton construction",
+    "Global hierarchy overflow reports joint index",
+    "Inverse-bind palette overflow reports joint index",
+    "Wide rigs exceeding f32 palette range remain valid in f64",
+    "Runtime pose overflow remains tested"
+  ],
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "523e601d5dc44145010cd191fee5fdbc0b29956de0df0778c83888b468cb6c3c",
+    "crates/voxy_animation/src/precision.rs": "76e31091c648dfb34d59e732ab6ff105d389cafa01049bb27dbb0b0053dadbc8"
+  },
+  "limits": [
+    "No visual/GPU or external import proof",
+    "Full engine goal incomplete"
+  ]
+}

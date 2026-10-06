@@ -1,0 +1,79 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: variable does not need to be mutable
+    --> crates/voxy_gameplay/src/liquid_runtime.rs:3673:13
+     |
+3673 |         let mut liquid = Liquid::new(
+     |             ----^^^^^^
+     |             |
+     |             help: remove this `mut`
+     |
+     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: `voxy_gameplay` (lib test) generated 1 warning (run `cargo fix --lib -p voxy_gameplay --tests` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 4.85s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 1 test
+point-loaded stack: order=[0, 1, 2] intervals=50 impulse=DVec3(-1.7688727296870348e-18, -50.35000000000145, 2.319797261875466e-18) angular_impulse=DVec3(-1.8118809646896665e-11, -1.2777093722827578e-19, -0.003499999997680597)
+point-loaded stack: order=[2, 0, 1] intervals=50 impulse=DVec3(1.0614869067098701e-19, -50.35000000000103, 8.361851612778855e-18) angular_impulse=DVec3(-9.28287637702812e-12, -2.5799071631504894e-19, -0.003499999993987072)
+test liquid_runtime::tests::off_center_material_load_transmits_force_and_moment_through_unequal_stack ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 7.38s
+
+     Running tests/integration.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/integration-a1054ba31f60c3c9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 47 filtered out; finished in 0.00s
+

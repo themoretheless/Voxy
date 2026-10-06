@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "animation_tests": 230,
+  "gameplay_tests": 220,
+  "consumer_all_targets_release_check": "passed",
+  "scope": [
+    "Column-scaled linear rank gate shared across bind/narrow/wide evaluation",
+    "Collapsed f64 bind chain rejects at joint 10",
+    "Representable 1e-300 wide palette accepted",
+    "Nonzero 1e-320 subnormal columns accepted",
+    "Unrepresentable narrow palette rejects"
+  ],
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "0c375cdd5dc40da425bad591b2acd852f6e0fcb9651ddcf14ad627fa6b6d558f",
+    "crates/voxy_animation/src/precision.rs": "8ced5933417c75cf233e7785f91c8a37785d7f4845ed8665cc0652379a6def33"
+  },
+  "limits": [
+    "Floating rank checks do not certify arbitrary ill-conditioned matrices",
+    "GPU/editor visual and external import proof absent",
+    "Full engine goal incomplete"
+  ]
+}

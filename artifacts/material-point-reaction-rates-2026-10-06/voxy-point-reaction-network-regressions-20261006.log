@@ -1,0 +1,39 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.49s
+     Running tests/normal_reactions.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/normal_reactions-9b9fa0c858fb1268)
+
+running 10 tests
+test geometry_owned_edge_normal_rate_matches_independent_cross_product_motion ... ok
+test outgoing_points_are_inactive_and_approaching_points_require_impact ... ok
+test a_body_owned_plane_against_a_fixed_vertex_matches_reversed_kinematics ... ok
+test gap_acceleration_matches_independent_accelerated_rotating_plane_difference ... ok
+test anisotropic_gyroscopic_acceleration_is_not_dropped ... ok
+test late_budget_invalid_geometry_and_bad_settings_preserve_inputs ... ok
+test point_body_accepts_central_force_and_rejects_unowned_intrinsic_torque ... ok
+test supported_weight_balances_force_and_torque_without_mutating_state ... ok
+test rotating_patch_reaction_closes_analytic_curvature_and_reciprocal_wrenches ... ok
+test supporting_plane_owner_and_reciprocal_swap_are_explicit ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reaction_rates.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/reaction_rates-b3efa75ff892eeae)
+
+running 6 tests
+test outgoing_support_remains_unloaded_even_with_negative_acceleration_and_jerk ... ok
+test invalid_geometry_normal_acceleration_and_rate_config_preserve_inputs ... ok
+test rotating_anisotropic_gap_jerk_matches_independent_directional_difference ... ok
+test zero_pressure_tangent_cone_allows_birth_and_release_without_negative_pressure ... ok
+test reciprocal_plane_owner_preserves_jerk_with_omitted_zero_second_load ... ok
+test moving_stack_redistributes_floor_pressure_and_cancels_moving_arm_jerk ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

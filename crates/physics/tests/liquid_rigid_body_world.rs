@@ -967,3 +967,181 @@ fn custom_point_motion_requires_admission_and_rejects_invalid_models_atomically(
         assert_eq!(liquid, saved);
     }
 }
+
+#[test]
+fn material_point_reaction_rates_include_rotating_arm_and_preserve_snapshot() {
+    use physics::contact::{ContactWrench, ReactionConfig, ReactionRateConfig};
+    use physics::rigid_motion::MaterialPointForce;
+    let liquid = fluid(Vec::new());
+    let state = body([0.; 3], [0., -0.2, 0.], 0.2);
+    let saved = liquid.clone();
+    let config_rate = ReactionRateConfig {
+        reaction: ReactionConfig {
+            max_sweeps: 8192,
+            acceleration_tolerance: 1e-11,
+            normal_velocity_tolerance: 1e-10,
+        },
+        jerk_tolerance: 1e-10,
+    };
+    let report = liquid
+        .rigid_world_point_reaction_rates(
+            &[state],
+            &MovingSupportWorld,
+            &[ContactWrench {
+                force: [-2., 0., 0.],
+                torque: [0., 0., 9.81],
+            }],
+            &[ContactWrench::default()],
+            &[vec![MaterialPointForce {
+                local: [1., 0., 0.],
+                force: [2., -9.81, 0.],
+                force_rate: [1., -0.3, 0.],
+            }]],
+            config(),
+            config_rate,
+        )
+        .unwrap();
+    // d(r cross F)/dt = (omega cross r) cross F + r cross F'.
+    // Rotating arm contributes -0.4 Z; affine force contributes -0.3 Z.
+    let expected = liquid
+        .rigid_world_reaction_rates(
+            &[state],
+            &MovingSupportWorld,
+            &[ContactWrench {
+                force: [0., -9.81, 0.],
+                torque: [0.; 3],
+            }],
+            &[ContactWrench {
+                force: [1., -0.3, 0.],
+                torque: [0., 0., -0.7],
+            }],
+            config(),
+            config_rate,
+        )
+        .unwrap();
+    assert_eq!(report, expected);
+    assert_eq!(liquid, saved);
+    assert_eq!(state, body([0.; 3], [0., -0.2, 0.], 0.2));
+    assert_eq!(
+        liquid.rigid_world_point_reaction_rates(
+            &[state],
+            &MovingSupportWorld,
+            &[ContactWrench::default()],
+            &[ContactWrench::default()],
+            &[],
+            config(),
+            config_rate,
+        ),
+        Err(Error::InvalidCollision)
+    );
+}
+
+#[test]
+fn supported_point_load_overflow_is_distinct_from_invalid_input_and_rolls_back() {
+    use physics::{
+        contact::{ContactWrench, ReactionRateConfig},
+        liquid::SupportedWorldConfig,
+        rigid_motion::MaterialPointForce,
+    };
+    let mut liquid = fluid(Vec::new());
+    let saved = liquid.clone();
+    let original = [body([0.; 3], [0.; 3], 0.)];
+    let mut bodies = original;
+    let config_rate = ReactionRateConfig {
+        reaction: SupportedWorldConfig::default().reaction,
+        jerk_tolerance: 1e-10,
+    };
+    for (force, count, expected) in [
+        (f64::MAX, 2, Error::NumericalFailure),
+        (f64::NAN, 1, Error::InvalidCollision),
+    ] {
+        let points = [vec![
+            MaterialPointForce {
+                local: [0.; 3],
+                force: [0., force, 0.],
+                force_rate: [0.; 3],
+            };
+            count
+        ]];
+        assert_eq!(
+            liquid.rigid_world_point_reaction_rates(
+                &bodies,
+                &MovingSupportWorld,
+                &[ContactWrench::default()],
+                &[ContactWrench::default()],
+                &points,
+                config(),
+                config_rate,
+            ),
+            Err(expected)
+        );
+        assert_eq!(
+            liquid.step_with_supported_rigid_body_point_forces(
+                0.01,
+                &mut bodies,
+                &MovingSupportWorld,
+                config(),
+                1,
+                rotation(),
+                &[ContactWrench::default()],
+                &points,
+                SupportedWorldConfig::default(),
+            ),
+            Err(expected)
+        );
+        assert_eq!(liquid, saved);
+        assert_eq!(bodies, original);
+    }
+    let mut rotating = original;
+    rotating[0].spin.as_mut().unwrap().angular_momentum = [0., 0., 2.];
+    let points = [vec![MaterialPointForce {
+        local: [1., 0., 0.],
+        force: [f64::MAX, 0., 0.],
+        force_rate: [0.; 3],
+    }]];
+    // The force and snapshot torque are finite, but rotating-arm torque rate overflows.
+    assert_eq!(
+        liquid.rigid_world_point_reaction_rates(
+            &rotating,
+            &MovingSupportWorld,
+            &[ContactWrench::default()],
+            &[ContactWrench::default()],
+            &points,
+            config(),
+            config_rate,
+        ),
+        Err(Error::NumericalFailure)
+    );
+    let saved_rotating = rotating;
+    assert_eq!(
+        liquid.step_with_supported_rigid_body_point_forces(
+            0.01,
+            &mut rotating,
+            &MovingSupportWorld,
+            config(),
+            1,
+            rotation(),
+            &[ContactWrench::default()],
+            &points,
+            SupportedWorldConfig::default(),
+        ),
+        Err(Error::NumericalFailure)
+    );
+    assert_eq!(rotating, saved_rotating);
+    assert_eq!(liquid, saved);
+    let mut unrepresentable = original;
+    unrepresentable[0].spin.as_mut().unwrap().angular_momentum = [f64::MAX, 0., 0.];
+    unrepresentable[0].spin.as_mut().unwrap().inertia = [f64::MIN_POSITIVE; 3];
+    assert_eq!(
+        liquid.rigid_world_point_reaction_rates(
+            &unrepresentable,
+            &MovingSupportWorld,
+            &[ContactWrench::default()],
+            &[ContactWrench::default()],
+            &[vec![]],
+            config(),
+            config_rate,
+        ),
+        Err(Error::NumericalFailure)
+    );
+}

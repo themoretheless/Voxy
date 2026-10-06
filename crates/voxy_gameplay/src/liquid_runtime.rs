@@ -2353,9 +2353,6 @@ impl SceneLiquidRuntime {
             })
             .collect::<Result<Vec<_>, String>>()?;
         let has_points = point_loads.iter().any(|points| !points.is_empty());
-        if has_points && supports.is_some() {
-            return Err("supported pressure under rotating point loads is not yet admitted".into());
-        }
         let mut support_report = None;
         let (physics, dynamics) = if states.is_empty() {
             (
@@ -2370,7 +2367,7 @@ impl SceneLiquidRuntime {
                 let loads = vec![physics::contact::ContactWrench::default(); states.len()];
                 let report = candidate
                     .liquid
-                    .step_with_supported_rigid_body_forces(
+                    .step_with_supported_rigid_body_point_forces(
                         dt,
                         &mut states,
                         &world,
@@ -2378,6 +2375,7 @@ impl SceneLiquidRuntime {
                         128,
                         rotation,
                         &loads,
+                        &point_loads,
                         config,
                     )
                     .map_err(|e| format!("scene supported liquid body step: {e:?}"))?;
@@ -2433,6 +2431,117 @@ mod tests {
     use super::*;
     use crate::LiquidPulse;
     use voxy_scene::Transform;
+    #[test]
+    fn authored_supported_point_load_advances_phase_and_rolls_back_publication() {
+        let mut scene = support_floor();
+        let node = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: glam::Vec3::new(0., 0.125, 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                node,
+                crate::BoxCollider {
+                    half_extents: [0.125; 3],
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                node,
+                crate::LiquidBody {
+                    mass_kg: 2.,
+                    initial_velocity_m_s: [0.; 3],
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                node,
+                crate::LiquidMassDistribution {
+                    parts: vec![crate::LiquidMassPart {
+                        mass_kg: 2.,
+                        center_m: [0.; 3],
+                        half_edges_m: [[0.125, 0., 0.], [0., 0.125, 0.], [0., 0., 0.125]],
+                    }],
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                node,
+                crate::RigidPointLoads {
+                    points: vec![crate::RigidPointForce {
+                        root_point_m: [0.025, 0., 0.],
+                        world_force_n: [2., -1., 0.],
+                        world_force_rate_n_s: [0., -0.4, 0.],
+                    }],
+                },
+            )
+            .unwrap();
+        let mut runtime = SceneLiquidRuntime::new(
+            &scene,
+            vec![("unused".into(), Material::WATER)],
+            Config {
+                gravity: [0., -10., 0.],
+                ..Default::default()
+            },
+            0,
+        )
+        .unwrap();
+        let admission = physics::liquid::SupportedWorldConfig {
+            max_interval_s: 0.0005,
+            reaction_jerk_tolerance: Some(1e-10),
+            ..Default::default()
+        };
+        for tick in 0..2 {
+            let report = runtime
+                .tick_and_publish_with_supported_dynamics(
+                    &mut scene,
+                    0.001,
+                    None,
+                    Default::default(),
+                    rigid_config(),
+                    admission,
+                )
+                .unwrap();
+            let start = tick as f64 * 0.001;
+            let expected_impulse = -(21. + 0.4 * start) * 0.001 - 0.2 * 0.001_f64.powi(2);
+            let mechanical = report.support.unwrap();
+            assert!((mechanical.environment_reaction_impulse[1] - expected_impulse).abs() < 1e-10);
+            let expected_work = 2. * start * 0.001 + 0.001_f64.powi(2);
+            assert!((mechanical.rigid.external_work - expected_work).abs() < 1e-10);
+            assert!(mechanical.reaction_work.abs() < 1e-10);
+            assert!(mechanical.rigid.integration_energy_residual.abs() < 1e-10);
+            assert!((runtime.body[0].state.motion.velocity[0] - start - 0.001).abs() < 1e-10);
+            assert!((runtime.body[0].point_elapsed_s - (start + 0.001)).abs() < 1e-14);
+            assert!((scene.local(node).unwrap().translation.y - 0.125).abs() < 1e-7);
+        }
+        let saved = runtime.clone();
+        let pose = scene.local(node).unwrap();
+        assert!(
+            runtime
+                .tick_and_publish_with_supported_dynamics(
+                    &mut scene,
+                    0.01,
+                    None,
+                    Default::default(),
+                    rigid_config(),
+                    physics::liquid::SupportedWorldConfig {
+                        max_intervals: 1,
+                        ..admission
+                    },
+                )
+                .is_err()
+        );
+        assert_eq!(runtime, saved);
+        assert_eq!(scene.local(node).unwrap(), pose);
+    }
     #[test]
     fn supported_motion_scene_owner_publishes_and_restores_after_late_failure() {
         let mut scene = support_floor();
@@ -2664,6 +2773,123 @@ mod tests {
     }
 
     #[test]
+    fn material_point_loads_advance_a_rotating_face_pair_without_internal_couple() {
+        use physics::contact::ContactWrench;
+        use physics::liquid::LiquidBodyWorld;
+        let scene = voxy_scene::SceneGraph::new(16);
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![support_box([0.125; 3])]; 2],
+        };
+        let mut liquid = Liquid::new(
+            Vec::new(),
+            vec![Material::WATER],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let mut bodies = [
+            rigid_body([0., 0.125, 0.], [-0.125, 0., 0.], 1.),
+            rigid_body([0., -0.125, 0.], [0.125, 0., 0.], 1.),
+        ];
+        let loads = [
+            ContactWrench {
+                force: [0., -0.5, 0.],
+                torque: [0.; 3],
+            },
+            ContactWrench {
+                force: [0., 0.5, 0.],
+                torque: [0.; 3],
+            },
+        ];
+        let supports = world
+            .rigid_pair_support_contacts_with_error(0, &bodies[0], 1, &bodies[1], 128, 1e-10)
+            .unwrap();
+        assert!(!supports.is_empty());
+        assert!(supports.iter().any(|point| matches!(
+            point.support.plane,
+            physics::contact::SupportPlane::First | physics::contact::SupportPlane::Second
+        )));
+        let points = [
+            vec![physics::rigid_motion::MaterialPointForce {
+                local: [0.025, -0.125, 0.],
+                force: [0., -0.3, 0.],
+                force_rate: [0.; 3],
+            }],
+            vec![physics::rigid_motion::MaterialPointForce {
+                local: [0.025, 0.125, 0.],
+                force: [0., 0.3, 0.],
+                force_rate: [0.; 3],
+            }],
+        ];
+        let dt: f64 = 1e-4;
+        let report = liquid
+            .step_with_supported_rigid_body_point_forces(
+                dt,
+                &mut bodies,
+                &world,
+                Default::default(),
+                2,
+                rigid_config(),
+                &loads,
+                &points,
+                physics::liquid::SupportedWorldConfig {
+                    reaction_jerk_tolerance: Some(1e-10),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        let expected = glam::DQuat::from_rotation_z(dt);
+        for body in bodies {
+            let actual = glam::DQuat::from_array(body.spin.unwrap().orientation);
+            assert!(
+                actual
+                    .to_array()
+                    .iter()
+                    .zip(expected.to_array())
+                    .all(|(a, b)| (a - b).abs() < 1e-10)
+            );
+            // Individual spin momenta can change: the pressure normal rotates.
+            // Conservation is checked below using spin plus orbital momentum.
+        }
+        let total_momentum = bodies
+            .iter()
+            .map(|body| {
+                glam::DVec3::from_array(body.spin.unwrap().angular_momentum)
+                    + glam::DVec3::from_array(body.motion.position)
+                        .cross(glam::DVec3::from_array(body.motion.velocity) * body.motion.mass)
+            })
+            .sum::<glam::DVec3>();
+        // Initial total Lz is 2 spins plus 2*(0.125²) orbital terms.
+        // Constant COM loads give sum(v cross F) = 0.125 along Z.
+        // Opposite point forces at the common initial world point cancel
+        // through acceleration order; remaining integral terms are O(dt³).
+        let expected_lz = 2. + 2. * 0.125_f64.powi(2) + 0.125 * dt.powi(2) / 2.;
+        assert!(
+            (total_momentum.z - expected_lz).abs() < 1e-12,
+            "total={total_momentum:?}, expected Lz={expected_lz}"
+        );
+        assert!(total_momentum.x.abs().max(total_momentum.y.abs()) < 1e-12);
+        assert!((bodies[0].motion.position[1] - (0.125 - 0.125 * dt * dt / 2.)).abs() < 1e-12);
+        assert!((bodies[1].motion.position[1] - (-0.125 + 0.125 * dt * dt / 2.)).abs() < 1e-12);
+        assert!(
+            report
+                .reaction_angular_balance_residual
+                .iter()
+                .all(|x| x.abs() < 1e-12)
+        );
+        assert!((bodies[0].motion.velocity[0] + bodies[1].motion.velocity[0]).abs() < 1e-12);
+        assert!((bodies[0].motion.velocity[1] + bodies[1].motion.velocity[1]).abs() < 1e-12);
+        assert!(report.reaction_work.abs() < 1e-10);
+        assert!(report.rigid.integration_energy_residual.abs() < 1e-10);
+        assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+        assert_eq!(report.supported_intervals, 1);
+        assert!(report.max_support_error_m <= 1e-10);
+    }
+
+    #[test]
     fn rotating_face_normal_advances_a_pressed_pair_without_freezing_spin() {
         use physics::contact::ContactWrench;
         use physics::liquid::LiquidBodyWorld;
@@ -2744,6 +2970,244 @@ mod tests {
         assert!(report.max_support_error_m <= 1e-10);
     }
 
+    #[test]
+    fn supported_material_point_yaw_is_sustained_over_one_second() {
+        use physics::contact::ContactWrench;
+        use physics::rigid_motion::MaterialPointForce;
+        let scene = support_floor();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![support_box([0.125; 3])]],
+        };
+        let mut liquid = Liquid::new(
+            Vec::new(),
+            vec![Material::WATER],
+            Config {
+                gravity: [0., -10., 0.],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let mut bodies = [rigid_body([0., 0.125, 0.], [0.; 3], 0.)];
+        bodies[0].spin.as_mut().unwrap().angular_momentum = [0., 1., 0.];
+        let points = [vec![MaterialPointForce {
+            local: [0.05, 0., 0.],
+            force: [0., -0.3, 0.],
+            force_rate: [0., -0.2, 0.],
+        }]];
+        let dt = 0.01;
+        let mut impulse = 0.;
+        let mut external_work = 0.;
+        let mut reaction_work = 0.;
+        let mut residual = 0.;
+        let mut intervals = 0;
+        let mut max_error = 0_f64;
+        let mut max_balance = 0_f64;
+        for tick in 0..100 {
+            let start = tick as f64 * dt;
+            let shifted = [vec![points[0][0].shifted(start).unwrap()]];
+            let report = liquid
+                .step_with_supported_rigid_body_point_forces(
+                    dt,
+                    &mut bodies,
+                    &world,
+                    Default::default(),
+                    1,
+                    rigid_config(),
+                    &[ContactWrench::default()],
+                    &shifted,
+                    physics::liquid::SupportedWorldConfig {
+                        reaction_jerk_tolerance: Some(1e-10),
+                        ..Default::default()
+                    },
+                )
+                .unwrap_or_else(|error| panic!("tick={tick} error={error:?}"));
+            impulse += report.environment_reaction_impulse[1];
+            external_work += report.rigid.external_work;
+            reaction_work += report.reaction_work;
+            residual += report.rigid.integration_energy_residual;
+            intervals += report.supported_intervals;
+            max_error = max_error.max(report.max_support_error_m);
+            max_balance = max_balance.max(
+                report
+                    .reaction_angular_balance_residual
+                    .iter()
+                    .map(|x| x.abs())
+                    .fold(0_f64, f64::max),
+            );
+            assert!((bodies[0].motion.position[1] - 0.125).abs() < 1e-10);
+            assert!(report.max_support_error_m <= 1e-10);
+            assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+        }
+        let expected = glam::DQuat::from_rotation_y(1.);
+        let actual = glam::DQuat::from_array(bodies[0].spin.unwrap().orientation);
+        assert!(
+            actual
+                .to_array()
+                .iter()
+                .zip(expected.to_array())
+                .all(|(a, b)| (a - b).abs() < 1e-8)
+        );
+        assert!((impulse + 10.4).abs() < 1e-8);
+        let momentum = glam::DVec3::from_array(bodies[0].spin.unwrap().angular_momentum);
+        assert!((momentum - glam::DVec3::Y).length() < 1e-8);
+        assert!(external_work.abs() < 1e-9);
+        assert!(reaction_work.abs() < 1e-9);
+        assert!(residual.abs() < 1e-9);
+        assert!(max_balance < 1e-12);
+        eprintln!(
+            "sustained point yaw: intervals={intervals} max_gap={max_error:e} max_angular_balance={max_balance:e} external_work={external_work:e} reaction_work={reaction_work:e} energy_residual={residual:e} momentum_error={:e}",
+            (momentum - glam::DVec3::Y).length()
+        );
+    }
+    #[test]
+    fn affine_material_point_pressure_releases_at_zero_force() {
+        use physics::contact::ContactWrench;
+        use physics::rigid_motion::MaterialPointForce;
+        let scene = support_floor();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![support_box([0.125; 3])]],
+        };
+        let mut liquid = Liquid::new(
+            Vec::new(),
+            vec![Material::WATER],
+            Config {
+                gravity: [0.; 3],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let mut bodies = [rigid_body([0., 0.125, 0.], [0.; 3], 0.)];
+        bodies[0].spin.as_mut().unwrap().angular_momentum = [0., 1., 0.];
+        let points = [vec![MaterialPointForce {
+            local: [0.; 3],
+            force: [0., -0.1, 0.],
+            force_rate: [0., 2., 0.],
+        }]];
+        let report = liquid
+            .step_with_supported_rigid_body_point_forces(
+                0.1,
+                &mut bodies,
+                &world,
+                Default::default(),
+                1,
+                rigid_config(),
+                &[ContactWrench::default()],
+                &points,
+                physics::liquid::SupportedWorldConfig {
+                    reaction_jerk_tolerance: Some(1e-10),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        // Pressure integral from zero to 0.05: integral(-0.1 + 2t) dt = -0.0025.
+        // After release, a=2(t-0.05): v=0.0025, displacement=1/24000.
+        assert!((report.environment_reaction_impulse[1] + 0.0025).abs() < 1e-9);
+        assert!((bodies[0].motion.velocity[1] - 0.0025).abs() < 1e-9);
+        assert!((bodies[0].motion.position[1] - 0.125 - 1. / 24000.).abs() < 1e-9);
+        assert!((report.rigid.external_work - 0.0025_f64.powi(2) / 2.).abs() < 1e-9);
+        assert!(report.reaction_work.abs() < 1e-9);
+        assert!(report.rigid.integration_energy_residual.abs() < 1e-9);
+        assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+        let actual = glam::DQuat::from_array(bodies[0].spin.unwrap().orientation);
+        assert!(
+            actual
+                .to_array()
+                .iter()
+                .zip(glam::DQuat::from_rotation_y(0.1).to_array())
+                .all(|(a, b)| (a - b).abs() < 1e-8)
+        );
+    }
+    #[test]
+    fn supported_material_point_load_keeps_yaw_and_balances_pressure_work() {
+        use physics::contact::ContactWrench;
+        use physics::rigid_motion::MaterialPointForce;
+        let scene = support_floor();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![support_box([0.125; 3])]],
+        };
+        let mut liquid = Liquid::new(
+            Vec::new(),
+            vec![Material::WATER],
+            Config {
+                gravity: [0., -10., 0.],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let mut bodies = [rigid_body([0., 0.125, 0.], [0.; 3], 0.)];
+        bodies[0].spin.as_mut().unwrap().angular_momentum = [0., 1., 0.];
+        let points = [vec![MaterialPointForce {
+            local: [0.05, 0., 0.],
+            force: [0., -0.3, 0.],
+            force_rate: [0., -0.2, 0.],
+        }]];
+        let dt = 1e-4;
+        let report = liquid
+            .step_with_supported_rigid_body_point_forces(
+                dt,
+                &mut bodies,
+                &world,
+                Default::default(),
+                1,
+                rigid_config(),
+                &[ContactWrench::default()],
+                &points,
+                physics::liquid::SupportedWorldConfig {
+                    reaction_jerk_tolerance: Some(1e-10),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        let expected = glam::DQuat::from_rotation_y(dt);
+        let actual = glam::DQuat::from_array(bodies[0].spin.unwrap().orientation);
+        assert!(
+            actual
+                .to_array()
+                .iter()
+                .zip(expected.to_array())
+                .all(|(a, b)| (a - b).abs() < 1e-8)
+        );
+        assert!((bodies[0].motion.position[1] - 0.125).abs() < 1e-10);
+        assert!((report.environment_reaction_impulse[1] + 10.3 * dt + 0.1 * dt * dt).abs() < 1e-10);
+        assert!(report.rigid.external_work.abs() < 1e-10);
+        assert!(report.reaction_work.abs() < 1e-10);
+        assert!(
+            report
+                .reaction_angular_balance_residual
+                .iter()
+                .all(|v| v.abs() < 1e-12)
+        );
+        assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+        assert!(report.max_support_error_m <= 1e-10);
+        // A later interval-budget failure preserves the complete pre-tick state.
+        let saved = liquid.clone();
+        let original = bodies;
+        assert!(
+            liquid
+                .step_with_supported_rigid_body_point_forces(
+                    0.01,
+                    &mut bodies,
+                    &world,
+                    Default::default(),
+                    1,
+                    rigid_config(),
+                    &[ContactWrench::default()],
+                    &points,
+                    physics::liquid::SupportedWorldConfig {
+                        max_interval_s: 0.001,
+                        max_intervals: 1,
+                        reaction_jerk_tolerance: Some(1e-10),
+                        ..Default::default()
+                    },
+                )
+                .is_err()
+        );
+        assert_eq!(liquid, saved);
+        assert_eq!(bodies, original);
+    }
     #[test]
     fn supported_face_yaw_uses_cubic_corner_motion_without_freezing_spin() {
         use physics::contact::ContactWrench;
@@ -3314,6 +3778,100 @@ mod tests {
         }
     }
 
+    #[test]
+    fn off_center_material_load_transmits_force_and_moment_through_unequal_stack() {
+        use physics::contact::ContactWrench;
+        use physics::rigid_motion::MaterialPointForce;
+        let scene = support_floor();
+        let world = SceneBodyWorld {
+            environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+            templates: vec![vec![support_box([0.03125; 3])]; 3],
+        };
+        let liquid = Liquid::new(
+            Vec::new(),
+            vec![Material::WATER],
+            Config {
+                gravity: [0., -10., 0.],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        for order in [[0, 1, 2], [2, 0, 1]] {
+            let mut liquid = liquid.clone();
+            let originals = [(2., 0.15625), (3., 0.09375), (5., 0.03125)];
+            let top = order.iter().position(|i| *i == 0).unwrap();
+            let mut bodies: Vec<_> = order
+                .map(|i| originals[i])
+                .into_iter()
+                .map(|(mass, y)| {
+                    let mut b = rigid_body([0., y, 0.], [0.; 3], 0.);
+                    b.motion.mass = mass;
+                    b
+                })
+                .collect();
+            let before = bodies.clone();
+            let recipe = MaterialPointForce {
+                local: [0.01, 0., 0.],
+                force: [0., -0.6, 0.],
+                force_rate: [0., -0.4, 0.],
+            };
+            let dt = 0.05;
+            let mut impulse = glam::DVec3::ZERO;
+            let mut angular = glam::DVec3::ZERO;
+            let mut intervals = 0;
+            for tick in 0..10 {
+                let mut points = [vec![], vec![], vec![]];
+                points[top].push(recipe.shifted(tick as f64 * dt).unwrap());
+                let report = liquid
+                    .step_with_supported_rigid_body_point_forces(
+                        dt,
+                        &mut bodies,
+                        &world,
+                        Default::default(),
+                        3,
+                        rigid_config(),
+                        &[ContactWrench::default(); 3],
+                        &points,
+                        physics::liquid::SupportedWorldConfig {
+                            reaction_jerk_tolerance: Some(1e-10),
+                            ..Default::default()
+                        },
+                    )
+                    .unwrap_or_else(|e| panic!("tick={tick}: {e:?}"));
+                impulse += glam::DVec3::from_array(report.environment_reaction_impulse);
+                angular += glam::DVec3::from_array(report.environment_reaction_angular_impulse);
+                intervals += report.supported_intervals;
+                assert!(
+                    report
+                        .reaction_angular_balance_residual
+                        .iter()
+                        .all(|x| x.abs() < 1e-12)
+                );
+                assert!(report.reaction_work.abs() < 1e-10);
+                assert!(report.rigid.external_work.abs() < 1e-10);
+                assert!(report.rigid.integration_energy_residual.abs() < 1e-10);
+                assert_eq!(report.rigid.world.dynamics.dissipated_energy, 0.);
+                assert!(report.max_support_error_m <= 1e-10);
+            }
+            // Independent load integral: 100 N gravity + (0.6 + 0.4t) N.
+            // The only external load with a world moment has a 0.01 m X arm.
+            assert!((impulse - glam::DVec3::new(0., -50.35, 0.)).length() < 1e-9);
+            assert!((angular - glam::DVec3::new(0., 0., -0.0035)).length() < 1e-9);
+            for (a, b) in bodies.iter().zip(&before) {
+                assert!(
+                    (glam::DVec3::from_array(a.motion.position)
+                        - glam::DVec3::from_array(b.motion.position))
+                    .length()
+                        < 1e-10
+                );
+                assert!(glam::DVec3::from_array(a.motion.velocity).length() < 1e-10);
+                assert!(glam::DVec3::from_array(a.spin.unwrap().angular_momentum).length() < 1e-10);
+            }
+            eprintln!(
+                "point-loaded stack: order={order:?} intervals={intervals} impulse={impulse:?} angular_impulse={angular:?}"
+            );
+        }
+    }
     #[test]
     fn supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping() {
         use physics::contact::ContactWrench;

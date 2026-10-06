@@ -1,0 +1,16 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 7.22s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 8 tests
+test astrophysics_spin::scalar_inertia_tests::scalar_transform_handles_large_vectors_and_retains_validation ... ok
+test astrophysics_spin::scalar_inertia_tests::scalar_inertia_is_exactly_independent_of_orientation ... ok
+test biomechanics::inertia::implicit::tests::generalized_branch_projection_preserves_convexity_and_inertia_metric ... ok
+test biomechanics::inertia::thermal::assembly_tests::thermal_assembly_preserves_compensation_below_the_main_inventory_ulp ... ok
+test biomechanics::inertia::thermal::tests::thermal_inventory_retains_sub_ulp_heat_and_rejects_complete_loss ... ok
+test biomechanics::inertia::implicit::tests::coupled_direction_matches_rank_one_inverse_and_holds_pins ... ok
+test biomechanics::inertia::implicit::tests::averaged_material_search_gradient_matches_energy_differences ... ok
+test biomechanics::inertia::implicit::tests::moving_skin_shared_quadrature_matches_derivative_and_independent_work ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 110 filtered out; finished in 0.01s
+

@@ -83,6 +83,11 @@ pub struct Joint {
     pub inverse_bind: Mat4,
 }
 
+mod linear_rank;
+fn usable_linear(matrix: glam::DMat4) -> bool {
+    linear_rank::usable(matrix)
+}
+
 // Shared immutable layout is the fast path; exact structural equality also
 // permits independently reconstructed copies without hashes or process IDs.
 fn rigs_match(a: &Arc<[Joint]>, b: &Arc<[Joint]>) -> bool {
@@ -96,16 +101,19 @@ pub struct Skeleton {
 
 impl Skeleton {
     /// Creates a parent-before-child skeleton suitable for linear pose evaluation.
+    /// Affine inverse binds are stored in canonical homogeneous form (w=1).
     ///
     /// # Errors
     ///
     /// Rejects empty/oversized skeletons, duplicate/empty names, invalid transforms, non-finite
-    /// inverse bind matrices, and parents that do not precede their child.
-    pub fn new(joints: Vec<Joint>) -> Result<Self, AnimationError> {
+    /// inverse bind matrices, non-affine/singular inverse binds, and parents that
+    /// do not precede their child.
+    pub fn new(mut joints: Vec<Joint>) -> Result<Self, AnimationError> {
         if joints.is_empty() || joints.len() > MAX_JOINTS {
             return Err(AnimationError::InvalidJointCount(joints.len()));
         }
-        for (index, joint) in joints.iter().enumerate() {
+        for index in 0..joints.len() {
+            let joint = &joints[index];
             if joint.name.is_empty()
                 || joints[..index]
                     .iter()
@@ -113,7 +121,27 @@ impl Skeleton {
             {
                 return Err(AnimationError::InvalidJointName(index));
             }
-            if !joint.bind_local.is_valid() || !joint.inverse_bind.is_finite() {
+            let inverse = joint.inverse_bind;
+            if !joint.bind_local.is_valid()
+                || !inverse.is_finite()
+                || inverse.x_axis.w != 0.
+                || inverse.y_axis.w != 0.
+                || inverse.z_axis.w != 0.
+                || inverse.w_axis.w == 0.
+            {
+                return Err(AnimationError::InvalidJointTransform(index));
+            }
+            // An affine homogeneous map may have row (0,0,0,h). Canonicalize
+            // by dividing every column by h, preserving the represented map.
+            // Check the source row first so division cannot erase perspective.
+            let h = inverse.w_axis.w;
+            let inverse = Mat4::from_cols(
+                inverse.x_axis / h,
+                inverse.y_axis / h,
+                inverse.z_axis / h,
+                inverse.w_axis / h,
+            );
+            if !usable_linear(inverse.as_dmat4()) {
                 return Err(AnimationError::InvalidJointTransform(index));
             }
             if let Some(parent) = joint.parent
@@ -124,10 +152,21 @@ impl Skeleton {
                     parent,
                 });
             }
+            joints[index].inverse_bind = inverse;
         }
-        Ok(Self {
+        let skeleton = Self {
             joints: joints.into(),
-        })
+        };
+        // Use the same evaluator as runtime: finite local transforms can still
+        // overflow along a hierarchy or when multiplied by inverse binds.
+        skeleton
+            .bind_pose64()
+            .skin_matrices(&skeleton)
+            .map_err(|error| match error {
+                AnimationError::InvalidPose(index) => AnimationError::InvalidJointTransform(index),
+                other => other,
+            })?;
+        Ok(skeleton)
     }
 
     #[must_use]
@@ -906,7 +945,7 @@ impl Pose {
                 |parent| global[usize::from(parent)] * local.matrix(),
             );
             let palette = matrix * joint.inverse_bind;
-            if !matrix.is_finite() || !palette.is_finite() {
+            if !usable_linear(matrix.as_dmat4()) || !usable_linear(palette.as_dmat4()) {
                 return Err(AnimationError::InvalidPose(index));
             }
             global.push(matrix);
@@ -3947,5 +3986,164 @@ mod authored_phase_preview_tests {
             );
         }
         assert_eq!(animator.phase_interval_wall(0.).unwrap(), phase);
+    }
+}
+
+#[cfg(test)]
+mod inverse_bind_validation_tests {
+    use super::*;
+    fn rig(matrix: Mat4) -> Result<Skeleton, AnimationError> {
+        Skeleton::new(vec![Joint {
+            name: "root".into(),
+            parent: None,
+            bind_local: Transform::IDENTITY,
+            inverse_bind: matrix,
+        }])
+    }
+    #[test]
+    fn bind_preflight_rejects_double_overflow_and_preserves_wide_rigs() {
+        let joints = |count: usize| {
+            (0..count)
+                .map(|i| Joint {
+                    name: format!("j{i}").into(),
+                    parent: (i > 0).then(|| (i - 1) as u16),
+                    bind_local: Transform {
+                        scale: Vec3::splat(1e38),
+                        ..Transform::IDENTITY
+                    },
+                    inverse_bind: Mat4::IDENTITY,
+                })
+                .collect::<Vec<_>>()
+        };
+        assert!(matches!(
+            Skeleton::new(joints(9)),
+            Err(AnimationError::InvalidJointTransform(8))
+        ));
+        let mut palette_overflow = joints(8);
+        palette_overflow[7].inverse_bind = Mat4::from_scale(Vec3::splat(1e38));
+        assert!(matches!(
+            Skeleton::new(palette_overflow),
+            Err(AnimationError::InvalidJointTransform(7))
+        ));
+        let wide = Skeleton::new(joints(2)).unwrap();
+        assert!(wide.bind_pose64().skin_matrices(&wide).is_ok());
+        assert!(wide.bind_pose().skin_matrices(&wide).is_err());
+    }
+    #[test]
+    fn underflowed_bind_chain_rejects_but_tiny_wide_palette_remains_valid() {
+        let joints = |count: usize| {
+            (0..count)
+                .map(|i| Joint {
+                    name: format!("j{i}").into(),
+                    parent: (i > 0).then(|| (i - 1) as u16),
+                    bind_local: Transform {
+                        scale: Vec3::splat(1e-30),
+                        ..Transform::IDENTITY
+                    },
+                    inverse_bind: Mat4::IDENTITY,
+                })
+                .collect::<Vec<_>>()
+        };
+        let wide = Skeleton::new(joints(10)).unwrap();
+        let palette = wide.bind_pose64().skin_matrices(&wide).unwrap();
+        assert!(palette[9].x_axis.x > 0. && palette[9].x_axis.x < 1e-299);
+        assert!(wide.bind_pose().skin_matrices(&wide).is_err());
+        assert!(matches!(
+            Skeleton::new(joints(11)),
+            Err(AnimationError::InvalidJointTransform(10))
+        ));
+        // Nonzero subnormal columns are still representable; no reciprocal overflow.
+        assert!(usable_linear(glam::DMat4::from_scale(glam::DVec3::splat(
+            1e-320
+        ))));
+    }
+    #[test]
+    fn dependent_integer_columns_remain_singular_after_validation() {
+        let matrix = glam::DMat4::from_cols(
+            glam::DVec4::new(1., 2., 3., 0.),
+            glam::DVec4::new(4., 5., 6., 0.),
+            glam::DVec4::new(5., 7., 9., 0.),
+            glam::DVec4::W,
+        );
+        assert!(!usable_linear(matrix));
+    }
+    #[test]
+    fn computed_affine_inverse_binds_are_accepted() {
+        for i in 1..=256 {
+            let t = i as f32 / 37.;
+            let matrix = Mat4::from_scale_rotation_translation(
+                Vec3::new(0.3 + t, 1.2, -0.7),
+                Quat::from_euler(glam::EulerRot::XYZ, t, t * 0.7, -t * 0.3),
+                Vec3::new(t, -2. * t, 0.4),
+            )
+            .inverse();
+            assert!(
+                rig(matrix).is_ok(),
+                "sample={i} homogeneous_w={}",
+                matrix.w_axis.w
+            );
+        }
+    }
+    #[test]
+    fn homogeneous_scale_preserves_the_represented_affine_map() {
+        let affine = Mat4::from_scale_rotation_translation(
+            Vec3::new(-2., 3., 0.5),
+            Quat::from_rotation_y(0.4),
+            Vec3::new(1., 2., 3.),
+        );
+        for h in [0.5, 2., -2.] {
+            let encoded = Mat4::from_cols(
+                affine.x_axis * h,
+                affine.y_axis * h,
+                affine.z_axis * h,
+                affine.w_axis * h,
+            );
+            let skeleton = rig(encoded).unwrap();
+            assert_eq!(skeleton.joints()[0].inverse_bind, affine);
+            for point in [Vec3::ZERO, Vec3::new(2., -1., 0.3)] {
+                assert!(
+                    skeleton.joints()[0]
+                        .inverse_bind
+                        .transform_point3(point)
+                        .abs_diff_eq(encoded.project_point3(point), 1e-6)
+                );
+            }
+        }
+        let mut hidden_perspective = Mat4::IDENTITY;
+        hidden_perspective.x_axis.w = f32::MIN_POSITIVE;
+        hidden_perspective.w_axis.w = f32::MAX;
+        assert!(rig(hidden_perspective).is_err());
+        let mut overflow = Mat4::IDENTITY;
+        overflow.x_axis.x = f32::MAX;
+        overflow.w_axis.w = f32::MIN_POSITIVE;
+        assert!(rig(overflow).is_err());
+    }
+    #[test]
+    fn invalid_inverse_bind_is_rejected_before_palette_publication() {
+        for matrix in [
+            Mat4::ZERO,
+            Mat4::from_scale(Vec3::new(1., 0., 1.)),
+            Mat4::perspective_rh(1., 1., 0.1, 100.),
+        ] {
+            assert!(matches!(
+                rig(matrix),
+                Err(AnimationError::InvalidJointTransform(0))
+            ));
+        }
+    }
+    #[test]
+    fn small_large_and_reflected_affine_inverse_binds_remain_valid() {
+        for scale in [
+            Vec3::splat(1e-20),
+            Vec3::splat(1e20),
+            Vec3::new(-2., 3., 0.5),
+        ] {
+            let matrix = Mat4::from_scale(scale);
+            let skeleton = rig(matrix).unwrap();
+            assert_eq!(
+                skeleton.bind_pose().skin_matrices(&skeleton).unwrap()[0],
+                matrix
+            );
+        }
     }
 }

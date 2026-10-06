@@ -6876,3 +6876,182 @@ changes are saved as unfinished work; delivery is withheld until the regression
 is resolved. Earlier qualification counts above apply to earlier source states.
 Logs and current source hashes are in
 `artifacts/rotating-edge-normal-2026-10-06/`.
+
+### Near-stationary edge directions and strict interval budgets (2026-10-06)
+
+The edge-normal interval now intersects its raw-gap/magnitude enclosure with
+a second enclosure around the snapshot direction. The latter bounds the
+perpendicular cross component through fourth derivatives and an analytic fifth
+derivative remainder. A positive axial projection is required throughout the
+interval; the existing nonzero-magnitude proof still runs first. The resulting
+normal deviation multiplies a bound on COM separation, affine centers and all
+edge lengths. This preserves projection cancellation when magnitude changes
+and direction barely moves, without setting a small angular velocity to zero.
+
+Normalized gap and cubic slab bounds already include rounding guards and now
+use the authored admission budget directly. Legacy ownership excursion also
+respects a positive authored budget; the existing zero-budget snapshot rounding
+policy is retained. The previous yaw regression reached the rounding allowance
+above the requested budget after the directional bound was added, so this
+budget check is part of the repair.
+
+An independent Rodrigues oracle samples a nearly parallel edge pair with a
+small nonzero spin tilt; all samples lie inside a gap enclosure below 1e-10 m.
+The one-second scene yaw regression now passes again. This remains a mechanical
+qualification, not proof of full engine parity or a GPU/editor demonstration.
+
+Qualification of the repaired state: all 214 gameplay tests passed (167 library
+and 47 integration); application/editor all-target release checks, formatting
+and diff checks passed. The full library run took 128.02 seconds; this is not
+a controlled performance comparison. Logs and source SHA-256 are saved in
+`artifacts/edge-normal-cancellation-repair-2026-10-06/`. The earlier failed-run
+artifact is retained as regression evidence. Supported authored material-point
+loads and the wider engine objective remain open.
+
+### Material-point support reaction derivatives (2026-10-06)
+
+`MaterialForceMoment::torque_rate_at` evaluates the instantaneous intrinsic
+world torque derivative using both rotating body-local arms and affine force
+rates: `(omega cross r) cross F + r cross F_rate`. It uses compensated sums
+for all moment columns and validates orientation, time and angular velocity.
+
+`Liquid::rigid_world_point_reaction_rates` adds these moment derivatives and
+point-force resultants to additional COM loads, then uses the existing coupled
+snapshot geometry and normal-reaction rate solve. Recipes start at the supplied
+snapshot time zero. The query does not mutate liquid or bodies and rejects
+owner-count mismatch and off-center points without intrinsic rotation.
+
+An independent moving-point central difference validates torque derivatives
+at a nonzero affine-force phase. A coupled support fixture independently
+assembles the resultant wrench and its rate, including the rotating-arm term,
+and confirms read-only behavior. All 39 related physics tests and the
+application/editor all-target release checks passed; formatting and diff checks
+passed. Evidence is in `artifacts/material-point-reaction-rates-2026-10-06/`.
+This query is a prerequisite, not finite-trajectory admission: supported
+authored material-point stepping remains explicitly unavailable.
+
+### Finite supported material-point loads (2026-10-06)
+
+`Liquid::step_with_supported_rigid_body_point_forces` combines original material
+force recipes with the existing coupled support/contact event loop. Before
+every interval or retry, recipes are shifted from the original tick origin
+to the actual elapsed phase. Resultant loads and torque derivatives are then
+assembled at the current body orientations by the same helper as read-only
+queries. Baseline reactions, their rates and geometry point derivatives receive
+these external loads. Moving contact torque arms receive total translational
+jerk, including external material force rates.
+
+Trajectory preparation and external-work accounting continue to use original
+COM loads plus original material-point recipes, so snapshot resultants are not
+applied a second time. Reaction force/torque laws remain separate. The existing
+scene tick/publication path now supports authored point loads under pressure;
+the previous blanket rejection was removed. Geometry or interval-budget
+failures still roll back all body/liquid/source clocks and scene publication.
+
+A rotating cube under an off-center affine normal load retains yaw, balances
+pressure impulse and internal reaction angular impulse, and produces no heat.
+A real authored scene load also drives horizontal acceleration while pressure
+compensates its normal component and moment. Two ticks spanning multiple
+intervals verify affine-load phase, analytic pressure impulse, nonzero external
+work, negligible reaction work and energy-ledger residual. A later interval
+budget failure preserves the runtime, force clock and published pose.
+
+Qualification: all 216 gameplay tests and 39 related physics tests passed;
+application/editor all-target release checks passed. The authored work test was
+strengthened after the full run and passed separately; production code did not
+change after the full run. Formatting/diff checks passed. Evidence is saved in
+`artifacts/supported-material-point-loads-2026-10-06/`. This replaces the earlier
+blanket unsupported-load limitation for geometry-admitted intervals. It does
+not qualify every evolving contact, long-duration rotating pressure network,
+GPU execution or editor visuals, and does not complete the wider engine goal.
+
+### Sustained point-load pressure and continuous release (2026-10-06)
+
+A real affine scene cube now has a one-second qualification under an off-center
+material-point normal force whose magnitude changes with time. One hundred
+10 ms ticks use original force phase; 309 geometry-admitted support intervals
+retain yaw, height and the full angular-momentum vector. The measured maximum
+geometry error is 9.9001e-11 m, angular-momentum error 7.0642e-14 and internal
+angular-balance residual 2.6563e-18. Accumulated external/reaction work stays
+within 4.61e-14 J and integration energy residual is 1.0962e-16 J; no dissipated
+heat is reported. This qualifies this fixture, not arbitrary long contacts.
+
+A second real scene test crosses zero pressure inside one 100 ms tick. A COM
+material force `-0.1 + 2t` N releases at 50 ms. The independent analytic oracle
+checks environment impulse -0.0025 N s, final upward velocity 0.0025 m/s, rise
+1/24000 m and external work 0.0025²/2 J. Spin continues through release without
+clamping, reaction work and integration residual remain below 1e-9 J and no
+heat is produced. The initial one-second single-tick fixture was corrected
+to respect the existing 100 ms public timestep limit; that limit was unchanged.
+
+Qualification: all 218 gameplay tests passed (171 library and 47 integration),
+along with application/editor all-target release checks and formatting/diff
+checks. Evidence and source hash are saved in
+`artifacts/sustained-point-load-contact-2026-10-06/`. Hardware support, editor
+visual proof, arbitrary evolving support networks and the wider engine goal
+remain unqualified by these tests.
+
+### Off-center material load through a support network (2026-10-06)
+
+A three-body affine scene stack with masses 2, 3 and 5 kg is qualified for
+500 ms under gravity and an off-center material force on the top body. The
+force is `-0.6 - 0.4t` N along Y, applied at local X=0.01 m. An independent
+load integral predicts environment impulse `(0, -50.35, 0)` N s and angular
+impulse `(0, 0, -0.0035)` N m s. Both match within 1e-9 in two different owner
+orders, with 50 supported intervals per order. The point recipe follows its
+physical owner when indices change.
+
+Every interval checks internal angular balance below 1e-12, negligible
+external/reaction work and integration energy residual, geometry error below
+1e-10 m and zero dissipated heat. All bodies retain their position, velocity
+and angular momentum within 1e-10. This proves this static network and load
+transmission case; it does not qualify arbitrary rotating/changing networks.
+
+All 219 gameplay tests and application/editor all-target release checks passed;
+formatting and diff checks passed. Evidence and current source hashes are in
+`artifacts/point-loaded-support-network-2026-10-06/`.
+
+### Scalar inertia and loaded rotating face pair (2026-10-06)
+
+Exactly equal principal moments now use the scalar inverse `vector / I` and
+world tensor `I * identity`, without redundant body/world transforms. Angular
+acceleration and jerk use `torque / I` and `torque_rate / I`, preserving the
+exact spherical Euler limit. The shared isotropy predicate uses exact equality;
+no near-isotropic inertia is rounded or clamped. State/orientation/finite-input
+validation and unrepresentable-result errors remain in force. Large finite
+inputs avoid unnecessary intermediate rotation overflow.
+
+Tests qualify orientation independence by exact equality, large finite vectors,
+invalid orientation/torque, genuine output overflow and one-ULP anisotropy.
+An actual rotating two-body face contact now also advances under opposite
+body-local point forces. The fixture checks real spin, translation, internal
+reaction angular balance and energy residual. Individual spin momentum can
+change under the rotating pressure geometry; the independent balance compares
+spin plus orbital momentum with the leading external load integral through
+a 100 microsecond step. This is short-step qualification, not a long-duration
+rotating-network result.
+
+Qualification: all 1614 physics tests passed, with 11 ignored; all 220 gameplay
+tests passed. Application/editor all-target release checks and formatting/diff
+checks passed. Evidence and current source hashes are saved in
+`artifacts/scalar-inertia-and-point-face-pair-2026-10-06/`. No performance,
+hardware execution, editor visual demonstration or complete engine-parity
+claim follows from these checks.
+
+### Point-load numerical failure classification (2026-10-06)
+
+The shared snapshot material-load assembler now preserves the difference
+between malformed input (`InvalidCollision`) and arithmetic failure
+(`NumericalFailure`). This applies to force/moment aggregation, rotating-arm
+torque derivatives and snapshot angular-velocity evaluation. Previously every
+error from those operations was reported as invalid collision data.
+
+Regression fixtures distinguish NaN input from overflow caused by two finite
+forces, a finite force with an overflowing rotating-arm torque derivative, and
+unrepresentable angular velocity. Read-only queries return the appropriate
+class; failed supported ticks retain complete liquid/body state.
+
+All 40 related physics tests and 220 gameplay tests passed, together with
+application/editor all-target release checks and formatting/diff checks. Logs
+and source hashes are saved in
+`artifacts/point-load-error-classification-2026-10-06/`.

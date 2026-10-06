@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "physics": {
+    "passed": 1614,
+    "failed": 0,
+    "ignored": 11
+  },
+  "gameplay": {
+    "passed": 220,
+    "failed": 0,
+    "ignored": 0
+  },
+  "consumer_all_targets_release_check": "passed",
+  "scope": [
+    "Exact scalar inverse/world inertia and Euler derivatives",
+    "One-ULP anisotropy remains on general path",
+    "Large finite inverse transform retains validation and overflow rejection",
+    "Short rotating face pair with opposite material-point loads and orbital-plus-spin angular balance"
+  ],
+  "source_sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "ce5056101693ad231a5332fdb1f847364f5b1dc89442e979aa6dcd1e464551ad",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "795e8beb64d36607104306a4d859cb070822f15bd4cb2c76f6a7a13f222c4e54"
+  },
+  "limits": [
+    "Rotating pair fixture is a 100 microsecond step, not sustained arbitrary-network proof",
+    "No measured performance or GPU/editor visual claim",
+    "Full engine objective incomplete"
+  ]
+}

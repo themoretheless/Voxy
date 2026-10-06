@@ -1,0 +1,31 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_animation/src/lib.rs:4140:19
+     |
+4140 |             Mat4::perspective_rh(1., 1., 0.1, 100.),
+     |                   ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_animation` (lib test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 13.57s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/voxy_animation-4e00dad44bfd0683)
+
+running 1 test
+test inverse_bind_validation_tests::dependent_integer_columns_remain_singular_after_validation ... FAILED
+
+failures:
+
+---- inverse_bind_validation_tests::dependent_integer_columns_remain_singular_after_validation stdout ----
+
+thread 'inverse_bind_validation_tests::dependent_integer_columns_remain_singular_after_validation' (4505171) panicked at crates/voxy_animation/src/lib.rs:4082:9:
+assertion failed: !usable_linear(matrix)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    inverse_bind_validation_tests::dependent_integer_columns_remain_singular_after_validation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 230 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_animation --lib`

@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "gameplay_tests": 218,
+  "focused_tests": 3,
+  "consumer_all_targets_release_check": "passed",
+  "sustained_yaw": {
+    "duration_s": 1,
+    "ticks": 100,
+    "supported_intervals": 309,
+    "max_geometry_error_m": 9.900097542412761e-11,
+    "max_angular_balance_residual": 2.656295322589486e-18,
+    "external_work_j": -4.6094551498359775e-14,
+    "reaction_work_j": 4.598493261331073e-14,
+    "integration_energy_residual_j": 1.0961888504905279e-16,
+    "momentum_error": 7.064206173017472e-14
+  },
+  "release_case": {
+    "duration_s": 0.1,
+    "release_time_s": 0.05,
+    "expected_environment_impulse_y": -0.0025,
+    "expected_velocity_y": 0.0025,
+    "expected_displacement_y": 4.1666666666666665e-05,
+    "expected_external_work_j": 3.125e-06
+  },
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "e0465c1994e6c3e8a7d7bcf416f74a29a329f573ebddc8a27a68685698d9a4c2"
+  },
+  "limitations": [
+    "One yaw geometry fixture; arbitrary evolving networks remain unqualified",
+    "No GPU/editor runtime demonstration",
+    "Full engine objective incomplete"
+  ]
+}

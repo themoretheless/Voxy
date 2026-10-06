@@ -1,0 +1,31 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_animation/src/lib.rs:4002:19
+     |
+4002 |             Mat4::perspective_rh(1., 1., 0.1, 100.),
+     |                   ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_animation` (lib test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 4.06s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/voxy_animation-4e00dad44bfd0683)
+
+running 1 test
+test inverse_bind_validation_tests::computed_affine_inverse_binds_are_accepted ... FAILED
+
+failures:
+
+---- inverse_bind_validation_tests::computed_affine_inverse_binds_are_accepted stdout ----
+
+thread 'inverse_bind_validation_tests::computed_affine_inverse_binds_are_accepted' (4294654) panicked at crates/voxy_animation/src/lib.rs:3990:13:
+sample=8 homogeneous_w=0.99999994
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    inverse_bind_validation_tests::computed_affine_inverse_binds_are_accepted
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 226 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_animation --lib`

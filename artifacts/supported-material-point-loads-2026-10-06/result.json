@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "full_gameplay_tests": 216,
+  "related_physics_tests": 39,
+  "final_strengthened_work_test": 1,
+  "consumer_all_targets_release_check": "passed",
+  "qualification_order": "Full gameplay and consumer check preceded final test-only strengthening; strengthened test passed afterward; production implementation unchanged",
+  "source_sha256": {
+    "crates/physics/src/liquid/multi_body.rs": "8f38994b67bf4a688ff2704b9b2d79446d73362ff224be716024ccff9be5e56a",
+    "crates/physics/src/liquid/support_world.rs": "90b15e39952c98685d3ebecc12817c5cbaeeeb1af61634e0a5869ac4009603bb",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "809fc4897e6d2c7ecc6215665832996ef8cc1aa5ef3d8384c1c0e79394126a70"
+  },
+  "limitations": [
+    "All changing pressure/geometry branches are not qualified",
+    "GPU/editor visual proof absent",
+    "Full engine goal remains incomplete"
+  ]
+}

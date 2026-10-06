@@ -1115,6 +1115,60 @@ mod tests {
     }
 
     #[test]
+    fn imported_inverse_binds_are_canonical_and_invalid_binds_reject() {
+        let (json, source) = fixture();
+        let mut document: serde_json::Value = serde_json::from_str(&json).unwrap();
+        document["buffers"][0]["byteLength"] = 240.into();
+        document["bufferViews"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({
+                "buffer":0,"byteOffset":176,"byteLength":64
+            }));
+        document["accessors"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({
+                "bufferView":6,"componentType":5126,"count":1,"type":"MAT4"
+            }));
+        document["skins"][0]["inverseBindMatrices"] = 6.into();
+        let json = serde_json::to_vec(&document).unwrap();
+        let parse = |matrix: Mat4| {
+            let mut bytes = source.clone();
+            for value in matrix.to_cols_array() {
+                bytes.extend(value.to_le_bytes());
+            }
+            ModelAsset::parse(&json, &[&bytes], ModelLimits::default())
+        };
+        let encoded = Mat4::from_cols(
+            glam::Vec4::X * 2.,
+            glam::Vec4::Y * 2.,
+            glam::Vec4::Z * 2.,
+            glam::Vec4::W * 2.,
+        );
+        let model = parse(encoded).unwrap();
+        assert_eq!(model.skeleton.joints()[0].inverse_bind, Mat4::IDENTITY);
+        let pose = model.sample_pose_phase(Some(0), 0.5).unwrap();
+        let meshes = model.scene_meshes(&pose).unwrap();
+        assert!(Vec3::from_array(meshes[0].vertices()[0].position).abs_diff_eq(Vec3::X, 1e-6));
+        for matrix in [
+            Mat4::ZERO,
+            Mat4::perspective_rh(1., 1., 0.1, 100.),
+            Mat4::from_cols(
+                glam::Vec4::new(1., 2., 3., 0.),
+                glam::Vec4::new(4., 5., 6., 0.),
+                glam::Vec4::new(5., 7., 9., 0.),
+                glam::Vec4::W,
+            ),
+        ] {
+            let error = parse(matrix).unwrap_err().to_string();
+            assert!(
+                error.contains("InvalidJointTransform"),
+                "unexpected import error: {error}"
+            );
+        }
+    }
+    #[test]
     fn imports_skin_and_animation_and_deforms_vertex() {
         let (json, bytes) = fixture();
         let asset = ModelAsset::parse(json.as_bytes(), &[&bytes], ModelLimits::default()).unwrap();

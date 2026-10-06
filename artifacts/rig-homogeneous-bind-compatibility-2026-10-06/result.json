@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "tests": {
+    "passed": 720,
+    "failed": 0,
+    "ignored": 28
+  },
+  "computed_affine_inverse_samples": 256,
+  "editor_all_targets_release_check": "passed",
+  "reproduction": {
+    "previous_strict_validator_rejected_sample": 8,
+    "homogeneous_w": 0.99999994
+  },
+  "scope": [
+    "Affine homogeneous canonicalization preserves represented point map",
+    "Nonzero source perspective cannot disappear through division underflow",
+    "Canonicalization overflow rejects",
+    "Negative homogeneous scales accepted"
+  ],
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "ad288412fb1fb5036278f73e87a3697896132c9c599b87e26102a10f3b396a77"
+  },
+  "limits": [
+    "No external importer or visual/GPU proof",
+    "Ignored tests not qualification evidence",
+    "Full engine goal remains incomplete"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "physics_tests": 40,
+  "gameplay_tests": 220,
+  "consumer_all_targets_release_check": "passed",
+  "scope": [
+    "Invalid input versus force/moment/derivative arithmetic overflow",
+    "Read-only query and supported-tick rollback"
+  ],
+  "source_sha256": {
+    "crates/physics/src/liquid/support_world.rs": "fa808cb7b5141ade656b53e1e5137ead3713bb7d9f8e8332195299eca5a5a34b",
+    "crates/physics/tests/liquid_rigid_body_world.rs": "ad8283d0c59f59e2b1cdb13405f4c90626d1c28cb82a641fc1f339f87b73f2dc"
+  },
+  "full_engine_goal": "incomplete"
+}

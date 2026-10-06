@@ -471,6 +471,9 @@ pub struct Spin {
     pub inertia: Vector,
 }
 impl Spin {
+    fn isotropic(self) -> bool {
+        self.inertia[0] == self.inertia[1] && self.inertia[1] == self.inertia[2]
+    }
     fn validate(self) -> Result<(), Error> {
         let norm = self.orientation[0]
             .hypot(self.orientation[1])
@@ -520,9 +523,15 @@ impl Spin {
         if vector.iter().any(|v| !v.is_finite()) {
             return Err(Error::InvalidInput);
         }
-        let q = self.orientation;
-        let local = rotate([-q[0], -q[1], -q[2], q[3]], vector);
-        let result = rotate(q, std::array::from_fn(|k| local[k] / self.inertia[k]));
+        let result = if self.isotropic() {
+            // Scalar inertia commutes with every world rotation. Avoid two
+            // unnecessary frame transforms and their roundoff/overflow.
+            vector.map(|value| value / self.inertia[0])
+        } else {
+            let q = self.orientation;
+            let local = rotate([-q[0], -q[1], -q[2], q[3]], vector);
+            rotate(q, std::array::from_fn(|k| local[k] / self.inertia[k]))
+        };
         if result.iter().any(|v| !v.is_finite()) {
             return Err(Error::NumericalOverflow);
         }
@@ -531,6 +540,9 @@ impl Spin {
 
     /// Instantaneous world angular acceleration under a COM torque.
     pub fn angular_acceleration(self, torque: Vector) -> Result<Vector, Error> {
+        if self.isotropic() {
+            return self.inverse_inertia(torque);
+        }
         let omega = self.angular_velocity()?;
         let gyro = cross(omega, self.angular_momentum);
         self.inverse_inertia(std::array::from_fn(|k| torque[k] - gyro[k]))
@@ -541,6 +553,9 @@ impl Spin {
     pub fn angular_jerk(self, torque: Vector, torque_rate: Vector) -> Result<Vector, Error> {
         if torque.iter().chain(&torque_rate).any(|v| !v.is_finite()) {
             return Err(Error::InvalidInput);
+        }
+        if self.isotropic() {
+            return self.inverse_inertia(torque_rate);
         }
         let omega = self.angular_velocity()?;
         let alpha = self.angular_acceleration(torque)?;
@@ -564,6 +579,11 @@ impl Spin {
     /// Invalid state or numerical overflow.
     pub fn world_inertia(self) -> Result<[[f64; 3]; 3], Error> {
         self.validate()?;
+        if self.isotropic() {
+            return Ok(std::array::from_fn(|i| {
+                std::array::from_fn(|j| if i == j { self.inertia[0] } else { 0. })
+            }));
+        }
         let axes = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
             .map(|v| rotate(self.orientation, v));
         let tensor: [[f64; 3]; 3] = std::array::from_fn(|i| {
@@ -859,5 +879,80 @@ mod angular_jerk_tests {
             assert!((actual[k] - rate[k] / 2.).abs() < 1e-13);
         }
         assert!(state.angular_jerk(torque, [f64::NAN, 0., 0.]).is_err());
+    }
+}
+
+#[cfg(test)]
+mod scalar_inertia_tests {
+    use super::*;
+    #[test]
+    fn scalar_inertia_is_exactly_independent_of_orientation() {
+        let momentum = [0.4, -0.7, 0.9];
+        let torque = [0.2, 0.3, -0.1];
+        let rate = [-0.4, 0.1, 0.2];
+        for angular in [[0.3, -0.2, 0.5], [3., 1., -2.], [0., 1., 0.]] {
+            let state = Spin {
+                orientation: advance([0., 0., 0., 1.], angular, 0.7).unwrap(),
+                angular_momentum: momentum,
+                inertia: [2.; 3],
+            };
+            assert_eq!(state.angular_velocity().unwrap(), momentum.map(|x| x / 2.));
+            assert_eq!(
+                state.angular_acceleration(torque).unwrap(),
+                torque.map(|x| x / 2.)
+            );
+            assert_eq!(
+                state.angular_jerk(torque, rate).unwrap(),
+                rate.map(|x| x / 2.)
+            );
+            assert_eq!(
+                state.world_inertia().unwrap(),
+                [[2., 0., 0.], [0., 2., 0.], [0., 0., 2.]]
+            );
+        }
+    }
+    #[test]
+    fn scalar_transform_handles_large_vectors_and_retains_validation() {
+        let state = Spin {
+            orientation: advance([0., 0., 0., 1.], [1., 2., 3.], 0.4).unwrap(),
+            angular_momentum: [0.; 3],
+            inertia: [4.; 3],
+        };
+        let vector = [f64::MAX, -f64::MAX, f64::MAX];
+        assert_eq!(
+            state.inverse_inertia(vector).unwrap(),
+            vector.map(|x| x / 4.)
+        );
+        assert_eq!(
+            Spin {
+                orientation: [0.; 4],
+                ..state
+            }
+            .inverse_inertia(vector),
+            Err(Error::InvalidInput)
+        );
+        assert_eq!(
+            state.angular_jerk([f64::NAN, 0., 0.], [0.; 3]),
+            Err(Error::InvalidInput)
+        );
+        assert_eq!(
+            Spin {
+                inertia: [f64::MIN_POSITIVE; 3],
+                ..state
+            }
+            .inverse_inertia(vector),
+            Err(Error::NumericalOverflow)
+        );
+        // Even one ULP of anisotropy must keep the principal-axis response.
+        let unequal = Spin {
+            orientation: [0., 0., 0., 1.],
+            inertia: [2., 2_f64.next_up(), 2.],
+            angular_momentum: [0., 1., 0.],
+        };
+        assert_eq!(
+            unequal.angular_velocity().unwrap(),
+            [0., 1. / 2_f64.next_up(), 0.]
+        );
+        assert_ne!(unequal.angular_velocity().unwrap(), [0., 0.5, 0.]);
     }
 }

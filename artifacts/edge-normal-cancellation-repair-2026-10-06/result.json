@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "gameplay_tests": 214,
+  "gameplay_library_tests": 167,
+  "gameplay_integration_tests": 47,
+  "gameplay_library_wall_seconds": 128.02,
+  "consumer_all_targets_release_check": "passed",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "bf93aa1399dde682932751a49da504be96b9c7dec83919c70c5944c43bf17c0e"
+  },
+  "limitations": [
+    "Runtime/GPU/editor visuals not qualified",
+    "No controlled performance comparison",
+    "Full engine objective remains incomplete",
+    "Supported authored material-point loads remain open"
+  ]
+}

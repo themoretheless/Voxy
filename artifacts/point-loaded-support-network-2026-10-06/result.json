@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "gameplay_tests": 219,
+  "consumer_all_targets_release_check": "passed",
+  "network_fixture": {
+    "masses_kg": [
+      2,
+      3,
+      5
+    ],
+    "duration_s": 0.5,
+    "owner_orders": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        2,
+        0,
+        1
+      ]
+    ],
+    "supported_intervals_each": 50,
+    "point_arm_m": [
+      0.01,
+      0,
+      0
+    ],
+    "point_force_y_n": -0.6,
+    "point_force_rate_y_n_s": -0.4,
+    "expected_environment_impulse": [
+      0,
+      -50.35,
+      0
+    ],
+    "expected_environment_angular_impulse": [
+      0,
+      0,
+      -0.0035
+    ],
+    "impulse_tolerance": 1e-09,
+    "angular_impulse_tolerance": 1e-09,
+    "body_motion_tolerance": 1e-10,
+    "internal_angular_balance_tolerance": 1e-12
+  },
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "7824b70a2fb386daa07e778dcdac9c3e468b7eeb1ece192c26d3b8c8c3c5f989",
+    "crates/physics/src/liquid/support_world.rs": "3e932f14c393ebf02c0a69afc864045b09465d754d289fb7271c22863f184956"
+  },
+  "limitations": [
+    "Static unequal-mass stack only; arbitrary evolving networks not qualified",
+    "Full engine goal and GPU/editor demonstration remain incomplete"
+  ]
+}

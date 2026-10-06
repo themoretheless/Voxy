@@ -699,8 +699,80 @@ fn edge_gap_range(
         // Divide only after proving the denominator strictly positive over
         // the whole interval; all four interval corners cover either sign.
         let values = [lo / mag_lo, lo / mag_hi, hi / mag_lo, hi / mag_hi];
-        lower = lower.min(values.iter().copied().fold(f64::INFINITY, f64::min));
-        upper = upper.max(values.iter().copied().fold(f64::NEG_INFINITY, f64::max));
+        let mut interval_lo = values.iter().copied().fold(f64::INFINITY, f64::min);
+        let mut interval_hi = values.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+        // A second enclosure preserves cancellation when the cross magnitude
+        // changes but its direction barely moves. Bound the perpendicular
+        // component before normalization, never declare a small spin zero.
+        let c = cross_derivatives(a, wa, b, wb).map(|c| c * sign);
+        let perpendicular = |c: DVec3| normal.cross(c);
+        let remainder =
+            (wa.length() + wb.length()).powi(4) * a.length() * b.length() * h.powi(4) / 24.;
+        let displacement = c[1].length() * h
+            + c[2].length() * h.powi(2) / 2.
+            + c[3].length() * h.powi(3) / 6.
+            + remainder;
+        if c[0].dot(normal) > displacement {
+            let transverse = perpendicular(c[0]).length()
+                + perpendicular(c[1]).length() * h
+                + perpendicular(c[2]).length() * h.powi(2) / 2.
+                + perpendicular(c[3]).length() * h.powi(3) / 6.
+                + perpendicular(c[4]).length() * h.powi(4) / 24.
+                + (wa.length() + wb.length()).powi(5) * a.length() * b.length() * h.powi(5) / 120.;
+            let roundoff = 2048. * f64::EPSILON * (c[0].length() + displacement);
+            let direction_error = 2. * (transverse + roundoff) / mag_lo;
+            let rr = r.length()
+                + v.length() * h
+                + acc.length() * h.powi(2) / 2.
+                + jerk.length() * h.powi(3) / 6.;
+            let radius = shape
+                .edges
+                .iter()
+                .chain(&obstacle.edges)
+                .map(|edge| edge.length())
+                .sum::<f64>();
+            let gap_error =
+                direction_error * (rr + shape.center.length() + obstacle.center.length() + radius);
+            let (mut rl, mut rh) =
+                rotating_cubic_dot_range(normal, DVec3::ZERO, r, v, acc, jerk, h)?;
+            for (rotation, omega, template, owner_sign) in
+                [(qa, wa, shape, 1.), (qb, wb, obstacle, -1.)]
+            {
+                let (cl, ch) = rotating_pair_dot_range(
+                    normal,
+                    DVec3::ZERO,
+                    rotate_vector(rotation, template.center),
+                    omega,
+                    h,
+                )?;
+                if owner_sign > 0. {
+                    rl += cl;
+                    rh += ch;
+                } else {
+                    rl -= ch;
+                    rh -= cl;
+                }
+                for edge in template.edges {
+                    let (el, eh) = rotating_pair_dot_range(
+                        normal,
+                        DVec3::ZERO,
+                        rotate_vector(rotation, edge),
+                        omega,
+                        h,
+                    )?;
+                    rl -= el.abs().max(eh.abs());
+                    rh -= if el <= 0. && eh >= 0. {
+                        0.
+                    } else {
+                        el.abs().min(eh.abs())
+                    };
+                }
+            }
+            interval_lo = interval_lo.max(rl - gap_error);
+            interval_hi = interval_hi.min(rh + gap_error);
+        }
+        lower = lower.min(interval_lo);
+        upper = upper.max(interval_hi);
     }
     if !lower.is_finite() || !upper.is_finite() {
         return Err(Error::NumericalFailure);
@@ -712,8 +784,8 @@ fn edge_gap_range(
     }
 }
 
-/// Whole-interval SAT gap on the rotating face owner, with both arc timelines
-/// merged. Edge-cross normal ownership still requires its own normalized bound.
+/// Whole-interval SAT gap on a face-owned or normalized edge-cross direction,
+/// with both spin-arc timelines merged.
 fn face_gap_range(
     first: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,
@@ -903,11 +975,17 @@ pub(super) fn admit_point_motion(
         let error = if let Some((lo, hi)) =
             face_gap_range(first, first_shape, second, second_shape, token.axis, normal)?
         {
-            if point.carrying_reaction {
+            let bounded_error = if point.carrying_reaction {
                 lo.abs().max(hi.abs())
             } else {
                 (-lo).max(0.)
+            };
+            // These interval enclosures already include floating-point guards.
+            // Do not spend an additional snapshot-rounding allowance on them.
+            if bounded_error > point.admission_error_m {
+                return Err(Error::CollisionBudget);
             }
+            bounded_error
         } else {
             let angular = angular_normal_excursion(first, ra, normal)?
                 + angular_normal_excursion(second, rb, normal)?;
@@ -970,7 +1048,7 @@ pub(super) fn admit_point_motion(
                         excursion = excursion.max((lo - plane).abs().max((hi - plane).abs()));
                     }
                     max_error = max_error.max(excursion);
-                    if excursion > tolerance {
+                    if excursion > point.admission_error_m {
                         return Err(Error::CollisionBudget);
                     }
                 }
@@ -1007,7 +1085,11 @@ pub(super) fn admit_point_motion(
                 )?;
                 let (lo, hi) = polynomial_range(row.dot(v), row.dot(acc), row.dot(j), duration)?;
                 let extent = (initial[k] + lo).abs().max((initial[k] + hi).abs());
-                max_error = max_error.max(((extent - 1.) / row.length() + angular).max(0.));
+                let ownership_error = ((extent - 1.) / row.length() + angular).max(0.);
+                max_error = max_error.max(ownership_error);
+                if point.admission_error_m > 0. && ownership_error > point.admission_error_m {
+                    return Err(Error::CollisionBudget);
+                }
                 if extent + row.length() * angular > 1. + row.length() * tolerance {
                     return Err(Error::CollisionBudget);
                 }
@@ -2365,6 +2447,71 @@ mod moving_edge_gap_tests {
             },
         )
         .unwrap()
+    }
+    #[test]
+    fn almost_stationary_edge_direction_keeps_gap_cancellation() {
+        let axis = DVec3::new(1e-17, 1., -7e-18).normalize();
+        let qa = DQuat::from_axis_angle(axis, 0.005);
+        let dt = 0.001;
+        let first = ContactBody {
+            motion: physics::gravity::Body {
+                position: [0., 0.25, 0.],
+                velocity: [0.; 3],
+                mass: 1.,
+            },
+            spin: Some(physics::astrophysics_spin::Spin {
+                orientation: qa.to_array(),
+                angular_momentum: axis.to_array(),
+                inertia: [1.; 3],
+            }),
+        }
+        .prepare_affine_motion(
+            [0.; 3],
+            [0.; 3],
+            physics::astrophysics_spin::TorquePolynomial::constant([0.; 3]),
+            dt,
+            physics::spin_path::Config {
+                max_angular_error_rad: 1e-6,
+                min_step_s: 1e-9,
+                max_arcs: 10000,
+                max_trials: 30000,
+            },
+        )
+        .unwrap();
+        let second = path(
+            DVec3::ZERO,
+            DVec3::ZERO,
+            DVec3::ZERO,
+            DVec3::ZERO,
+            DVec3::ZERO,
+            DVec3::ZERO,
+            dt,
+        );
+        let shape = cube();
+        let normal = -(qa * DVec3::X).cross(DVec3::X).normalize();
+        let (lo, hi) = edge_gap_range(
+            &first,
+            shape,
+            &second,
+            shape,
+            AxisFeature::Edges(0, 0),
+            normal,
+        )
+        .unwrap()
+        .unwrap();
+        assert!(lo.abs().max(hi.abs()) <= 1e-10, "{lo}..{hi}");
+        for i in 0..=256 {
+            let rotation = DQuat::from_axis_angle(axis, dt * i as f64 / 256.) * qa;
+            let n = -(rotation * DVec3::X).cross(DVec3::X).normalize();
+            let actual = n.dot(DVec3::Y * 0.25)
+                - shape
+                    .edges
+                    .iter()
+                    .map(|e| n.dot(rotation * *e).abs())
+                    .sum::<f64>()
+                - shape.edges.iter().map(|e| n.dot(*e).abs()).sum::<f64>();
+            assert!(lo <= actual && actual <= hi, "{actual} outside {lo}..{hi}");
+        }
     }
     #[test]
     fn normalized_edge_gap_covers_independent_samples_on_both_arc_timelines() {

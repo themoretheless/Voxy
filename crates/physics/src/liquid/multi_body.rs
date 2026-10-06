@@ -863,6 +863,31 @@ fn solve_contact(
     let require_witness = bodies.iter().any(|body| body.spin.is_some());
     'intervals: while remaining > 0. {
         let states: Vec<_> = nodes[count..].iter().map(|n| n.contact()).collect();
+        let zero_rates = vec![crate::contact::ContactWrench::default(); states.len()];
+        let (external_snapshot, external_rates) = if supported.is_some() {
+            if let Some(recipes) = point_loads {
+                let points = recipes
+                    .iter()
+                    .map(|points| {
+                        points
+                            .iter()
+                            .map(|p| p.shifted(load_offset + dt - remaining))
+                            .collect::<Result<Vec<_>, _>>()
+                    })
+                    .collect::<Result<Vec<_>, _>>()
+                    .map_err(|_| Error::NumericalFailure)?;
+                super::support_world::material_point_wrenches(
+                    &states,
+                    forces,
+                    &zero_rates,
+                    &points,
+                )?
+            } else {
+                (forces.to_vec(), zero_rates.clone())
+            }
+        } else {
+            (forces.to_vec(), zero_rates.clone())
+        };
         let support_report = if let Some(c) = supported {
             if states.is_empty() {
                 None
@@ -877,7 +902,7 @@ fn solve_contact(
                 let report = super::support_world::assemble_reactions(
                     &states,
                     world,
-                    forces,
+                    &external_snapshot,
                     limits,
                     c.reaction,
                     true,
@@ -898,7 +923,7 @@ fn solve_contact(
         if active && work.supported_intervals >= supported.unwrap().max_intervals {
             return Err(Error::CollisionBudget);
         }
-        let mut effective = forces.to_vec();
+        let mut effective = external_snapshot.clone();
         if let Some(reaction) = support_report.as_ref().and_then(|r| r.reaction.as_ref()) {
             for (w, r) in effective.iter_mut().zip(&reaction.wrenches) {
                 for k in 0..3 {
@@ -907,7 +932,6 @@ fn solve_contact(
                 }
             }
         }
-        let zero_rates = vec![crate::contact::ContactWrench::default(); states.len()];
         let initial_point_motion = if let Some(report) = &support_report {
             report
                 .supports
@@ -918,7 +942,7 @@ fn solve_contact(
                         .rigid_support_point_motion(
                             &states,
                             &effective,
-                            &zero_rates,
+                            &external_rates,
                             *support,
                             *geometry,
                         )?
@@ -952,8 +976,8 @@ fn solve_contact(
                 let rate = match crate::contact::resolve_rate_from_baseline_interval(
                     &states,
                     &report.supports,
-                    forces,
-                    &vec![crate::contact::ContactWrench::default(); states.len()],
+                    &external_snapshot,
+                    &external_rates,
                     &motion,
                     crate::contact::ReactionRateConfig {
                         reaction: supported.unwrap().reaction,
@@ -995,9 +1019,15 @@ fn solve_contact(
             || vec![[0.; 3]; states.len()],
             |rate| rate.wrenches_rate.iter().map(|w| w.force).collect(),
         );
-        let final_rates = support_rate
-            .as_ref()
-            .map_or_else(|| zero_rates.clone(), |rate| rate.wrenches_rate.clone());
+        let mut final_rates = external_rates.clone();
+        if let Some(rate) = &support_rate {
+            for (total, reaction) in final_rates.iter_mut().zip(&rate.wrenches_rate) {
+                for k in 0..3 {
+                    total.force[k] += reaction.force[k];
+                    total.torque[k] += reaction.torque[k];
+                }
+            }
+        }
         let point_motion = if let Some(report) = &support_report {
             report
                 .supports
@@ -1073,9 +1103,10 @@ fn solve_contact(
                         });
                         let jerk = std::array::from_fn(|k| {
                             point_motion[index].map_or(
-                                force_rates[support.first][k] / states[support.first].motion.mass,
+                                final_rates[support.first].force[k]
+                                    / states[support.first].motion.mass,
                                 |m| m.jerk[k],
-                            ) - force_rates[owner][k] / states[owner].motion.mass
+                            ) - final_rates[owner].force[k] / states[owner].motion.mass
                         });
                         let law = crate::astrophysics_spin::TorquePolynomial::moving_affine_arm(
                             arm,
@@ -1791,6 +1822,35 @@ impl Liquid {
         )
     }
 
+    /// Material-point forces with coupled, geometry-admitted support reactions.
+    /// Point recipes begin at this tick's origin and are rebased after every
+    /// interval and impact. Unresolved contact evolution rolls back the whole tick.
+    pub fn step_with_supported_rigid_body_point_forces(
+        &mut self,
+        dt: f64,
+        bodies: &mut [crate::contact::ContactBody],
+        world: &impl LiquidBodyWorld,
+        config: DynamicWorldConfig,
+        max_bodies: usize,
+        rotation: crate::spin_path::Config,
+        additional: &[crate::contact::ContactWrench],
+        points: &[Vec<crate::rigid_motion::MaterialPointForce>],
+        supported: super::SupportedWorldConfig,
+    ) -> Result<SupportedWorldReport, Error> {
+        supported.validate()?;
+        self.step_rigid_forces(
+            dt,
+            bodies,
+            world,
+            config,
+            max_bodies,
+            rotation,
+            additional,
+            Some(supported),
+            Some(points),
+        )
+    }
+
     /// Own-body material-point forces in the shared transactional contact loop.
     /// Input recipes start at this tick's origin; supported pressure coupling
     /// is not included by this entry point.
@@ -1832,7 +1892,7 @@ impl Liquid {
         point_loads: Option<&[Vec<crate::rigid_motion::MaterialPointForce>]>,
     ) -> Result<SupportedWorldReport, Error> {
         if let Some(loads) = point_loads {
-            if loads.len() != bodies.len() || supported.is_some() {
+            if loads.len() != bodies.len() {
                 return Err(Error::InvalidCollision);
             }
             for (points, body) in loads.iter().zip(bodies.iter()) {
