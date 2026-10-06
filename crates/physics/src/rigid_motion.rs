@@ -1,10 +1,15 @@
-//! Prepared COM motion with affine world force and polynomial world torque.
+//! Prepared COM motion and shared rotation under affine point forces or polynomial torque.
 //! Collision geometry and event response remain with the owning world.
 use crate::{
     astrophysics_spin::TorquePolynomial,
     contact::ContactBody,
     spin_path::{Config, PathError, SpinPath},
 };
+
+mod loads;
+pub use loads::{MaterialPointForce, MotionLoad};
+mod material_pair;
+pub use material_pair::{MaterialForcePair, MaterialPairImpact};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
@@ -21,10 +26,42 @@ pub struct RigidMotion {
     force_rate: [f64; 3],
     jerk: [f64; 3],
     force: [f64; 3],
-    torque: TorquePolynomial,
+    /// Retained only to reprepare polynomial forcing after a point impact.
+    torque: Option<TorquePolynomial>,
+    point_force: Option<PointForcePlan>,
     duration: f64,
     rotation: Option<SpinPath>,
     end: ContactBody,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum PointForcePlan {
+    Own {
+        material: MaterialPointForce,
+        external: MotionLoad,
+    },
+    Source {
+        material: MaterialPointForce,
+        external: MotionLoad,
+    },
+}
+#[derive(Clone, Copy)]
+enum MotionForcing<'a> {
+    Own {
+        material: MaterialPointForce,
+        external: MotionLoad,
+    },
+    Source {
+        path: &'a RigidMotion,
+        material: MaterialPointForce,
+        external: MotionLoad,
+    },
+    Remainder {
+        path: &'a RigidMotion,
+        time: f64,
+        material: MaterialPointForce,
+        external: MotionLoad,
+    },
 }
 
 /// Kinematics of a body-local material point on the prepared nominal path.
@@ -47,51 +84,6 @@ pub struct MaterialPointWork {
     pub torque_work: f64,
     pub total_work: f64,
     pub angular_impulse: [f64; 3],
-}
-
-/// Zeroth and first time moments of a rotating arm on one constant-axis arc.
-fn rotating_arm_integrals(
-    arm: [f64; 3],
-    omega: [f64; 3],
-    dt: f64,
-) -> Result<([f64; 3], [f64; 3]), Error> {
-    use crate::astrophysics_spin::cross;
-    let speed = omega[0].hypot(omega[1]).hypot(omega[2]);
-    if speed == 0. {
-        return Ok((arm.map(|r| r * dt), arm.map(|r| (r * (dt * 0.5)) * dt)));
-    }
-    let x = speed * dt;
-    if !x.is_finite() {
-        return Err(Error::NumericalFailure);
-    }
-    let (c0, s0, c1, s1) = if x.abs() < 1e-3 {
-        let z = x * x;
-        (
-            1. + z * (-1. / 6. + z * (1. / 120. - z / 5040.)),
-            x * (0.5 + z * (-1. / 24. + z * (1. / 720. - z / 40320.))),
-            0.5 + z * (-1. / 8. + z * (1. / 144. - z / 5760.)),
-            x * (1. / 3. + z * (-1. / 30. + z * (1. / 840. - z / 45360.))),
-        )
-    } else {
-        let (sin, cos) = x.sin_cos();
-        let half = (x * 0.5).sin() / (x * 0.5);
-        (
-            sin / x,
-            2. * (x * 0.5).sin().powi(2) / x,
-            sin / x - 0.5 * half * half,
-            (sin / x - cos) / x,
-        )
-    };
-    let axis = omega.map(|w| w / speed);
-    let projection: f64 = (0..3).map(|k| axis[k] * arm[k]).sum();
-    let parallel = axis.map(|n| n * projection);
-    let tangent = cross(axis, arm);
-    let zero =
-        std::array::from_fn(|k| dt * (parallel[k] + (arm[k] - parallel[k]) * c0 + tangent[k] * s0));
-    let first = std::array::from_fn(|k| {
-        dt * (dt * (parallel[k] * 0.5 + (arm[k] - parallel[k]) * c1 + tangent[k] * s1))
-    });
-    Ok((zero, first))
 }
 
 /// Work on the represented prepared trajectory. Torque work integrates the
@@ -139,6 +131,123 @@ impl ContactBody {
         duration: f64,
         config: Config,
     ) -> Result<RigidMotion, Error> {
+        self.prepare_affine_motion_impl(force, force_rate, torque, duration, config, None)
+    }
+
+    /// Drive this body with an affine force at a material point on a prescribed
+    /// source path. The source is immutable and does not receive reaction force.
+    /// Both paths share a time origin; this is not a coupled contact solve.
+    pub fn prepare_material_point_force_motion(
+        self,
+        source: &RigidMotion,
+        local: [f64; 3],
+        force: [f64; 3],
+        force_rate: [f64; 3],
+        duration: f64,
+        config: Config,
+    ) -> Result<RigidMotion, Error> {
+        self.prepare_material_point_loaded_motion(
+            source,
+            MaterialPointForce {
+                local,
+                force,
+                force_rate,
+            },
+            MotionLoad::zero(),
+            duration,
+            config,
+        )
+    }
+
+    /// Additional COM loads do not acquire the material point's lever arm.
+    pub fn prepare_material_point_loaded_motion(
+        self,
+        source: &RigidMotion,
+        material: MaterialPointForce,
+        external: MotionLoad,
+        duration: f64,
+        config: Config,
+    ) -> Result<RigidMotion, Error> {
+        material.validate()?;
+        external.validate()?;
+        if self.spin.is_none() || (source.initial.spin.is_none() && material.local != [0.; 3]) {
+            return Err(Error::InvalidInput);
+        }
+        source.sample(duration)?;
+        material.shifted(duration)?;
+        external.shifted(duration)?;
+        let (force, rate) = external.combined_force(material)?;
+        self.prepare_affine_motion_impl(
+            force,
+            rate,
+            external.torque,
+            duration,
+            config,
+            Some(MotionForcing::Source {
+                path: source,
+                material,
+                external,
+            }),
+        )
+    }
+
+    /// Drive this body's own rotating point through the same midpoint owner.
+    pub fn prepare_own_material_point_force_motion(
+        self,
+        local: [f64; 3],
+        force: [f64; 3],
+        force_rate: [f64; 3],
+        duration: f64,
+        config: Config,
+    ) -> Result<RigidMotion, Error> {
+        self.prepare_own_material_point_loaded_motion(
+            MaterialPointForce {
+                local,
+                force,
+                force_rate,
+            },
+            MotionLoad::zero(),
+            duration,
+            config,
+        )
+    }
+
+    /// Compose an own-point force with affine COM force and polynomial COM torque.
+    /// The original contributions are retained independently for event rebasing.
+    pub fn prepare_own_material_point_loaded_motion(
+        self,
+        material: MaterialPointForce,
+        external: MotionLoad,
+        duration: f64,
+        config: Config,
+    ) -> Result<RigidMotion, Error> {
+        material.validate()?;
+        external.validate()?;
+        if self.spin.is_none() && material.local != [0.; 3] {
+            return Err(Error::InvalidInput);
+        }
+        material.shifted(duration)?;
+        external.shifted(duration)?;
+        let (force, rate) = external.combined_force(material)?;
+        self.prepare_affine_motion_impl(
+            force,
+            rate,
+            external.torque,
+            duration,
+            config,
+            Some(MotionForcing::Own { material, external }),
+        )
+    }
+
+    fn prepare_affine_motion_impl(
+        self,
+        force: [f64; 3],
+        force_rate: [f64; 3],
+        torque: TorquePolynomial,
+        duration: f64,
+        config: Config,
+        material: Option<MotionForcing<'_>>,
+    ) -> Result<RigidMotion, Error> {
         self.energy().map_err(|_| Error::InvalidInput)?;
         if force_rate.iter().any(|x| !x.is_finite()) {
             return Err(Error::InvalidInput);
@@ -174,7 +283,145 @@ impl ContactBody {
         }
         let rotation = self
             .spin
-            .map(|spin| spin.prepare_polynomial_path(torque, duration, config))
+            .map(|spin| {
+                if let Some(MotionForcing::Source {
+                    path: source,
+                    material: point,
+                    external,
+                }) = material
+                {
+                    use crate::astrophysics_spin::{ArcTorque, RotatingArmForce, rotate};
+                    let relative = TorquePolynomial::moving_affine_arm(
+                        std::array::from_fn(|k| {
+                            source.initial.motion.position[k] - self.motion.position[k]
+                        }),
+                        std::array::from_fn(|k| {
+                            source.initial.motion.velocity[k] - self.motion.velocity[k]
+                        }),
+                        std::array::from_fn(|k| source.acceleration[k] - acceleration[k]),
+                        std::array::from_fn(|k| source.jerk[k] - jerk[k]),
+                        point.force,
+                        point.force_rate,
+                    )
+                    .and_then(|law| {
+                        ArcTorque::polynomial(law)
+                            .add_polynomial(external.torque)
+                            .map(|law| law.polynomial)
+                    })
+                    .map_err(PathError::Integrator)?;
+                    let local = point.local;
+                    let initial_arm = source
+                        .initial
+                        .spin
+                        .map_or(local, |s| rotate(s.orientation, local));
+                    let envelope = ArcTorque {
+                        polynomial: relative,
+                        rotating: Some(RotatingArmForce {
+                            arm: initial_arm,
+                            omega: [0.; 3],
+                            force: point.force,
+                            rate: point.force_rate,
+                        }),
+                    };
+                    let (_, impulse_bound) = envelope
+                        .envelopes(duration)
+                        .map_err(PathError::Integrator)?;
+                    spin.prepare_forcing_path(duration, config, impulse_bound, |time| {
+                        let source_body =
+                            source.sample(time).map_err(|_| PathError::NumericalBound)?;
+                        let source_arc = source.nominal_arc(time);
+                        let arm = source_body
+                            .spin
+                            .map_or(local, |s| rotate(s.orientation, local));
+                        let forcing = ArcTorque {
+                            polynomial: relative.shifted(time).map_err(PathError::Integrator)?,
+                            rotating: Some(RotatingArmForce {
+                                arm,
+                                omega: source_arc.map_or([0.; 3], |s| s.arc.angular_velocity()),
+                                force: std::array::from_fn(|k| {
+                                    point.force_rate[k].mul_add(time, point.force[k])
+                                }),
+                                rate: point.force_rate,
+                            }),
+                        };
+                        Ok((
+                            forcing,
+                            source_arc.map_or(duration, |s| s.end_s.min(duration)),
+                        ))
+                    })
+                } else if let Some(MotionForcing::Remainder {
+                    path: old,
+                    time: offset,
+                    material: point,
+                    external: _,
+                }) = material
+                {
+                    let previous = old.sample(offset).map_err(|_| PathError::InvalidInput)?;
+                    let previous_acceleration = old
+                        .acceleration_at(offset)
+                        .map_err(|_| PathError::InvalidInput)?;
+                    let correction = TorquePolynomial::moving_affine_arm(
+                        std::array::from_fn(|k| {
+                            previous.motion.position[k] - self.motion.position[k]
+                        }),
+                        std::array::from_fn(|k| {
+                            previous.motion.velocity[k] - self.motion.velocity[k]
+                        }),
+                        std::array::from_fn(|k| previous_acceleration[k] - acceleration[k]),
+                        std::array::from_fn(|k| old.jerk[k] - jerk[k]),
+                        point.force,
+                        point.force_rate,
+                    )
+                    .map_err(PathError::Integrator)?;
+                    let segments = old
+                        .rotation
+                        .as_ref()
+                        .ok_or(PathError::InvalidInput)?
+                        .segments();
+                    let mut impulse_bound = correction
+                        .envelopes(duration)
+                        .map_err(PathError::Integrator)?
+                        .1;
+                    for segment in segments.iter().filter(|s| s.end_s > offset) {
+                        let start = offset.max(segment.start_s);
+                        let (_, bound) = segment
+                            .arc
+                            .forcing()
+                            .shifted(start - segment.start_s)
+                            .and_then(|law| law.envelopes(segment.end_s - start))
+                            .map_err(PathError::Integrator)?;
+                        impulse_bound += bound;
+                    }
+                    spin.prepare_forcing_path(duration, config, impulse_bound, |time| {
+                        let index = segments
+                            .partition_point(|s| s.end_s - offset <= time)
+                            .min(segments.len() - 1);
+                        let segment = segments[index];
+                        let forcing = segment
+                            .arc
+                            .forcing()
+                            .shifted((offset - segment.start_s) + time)
+                            .and_then(|law| law.add_polynomial(correction.shifted(time)?))
+                            .map_err(PathError::Integrator)?;
+                        Ok((forcing, (segment.end_s - offset).min(duration)))
+                    })
+                } else if let Some(MotionForcing::Own {
+                    material: point,
+                    external,
+                }) = material
+                {
+                    spin.prepare_material_force_path_with_torque(
+                        point.local,
+                        point.force,
+                        point.force_rate,
+                        external.torque,
+                        duration,
+                        config,
+                    )
+                } else {
+                    spin.prepare_polynomial_path(torque, duration, config)
+                }
+            })
             .transpose()
             .map_err(Error::Rotation)?;
         let mut path = RigidMotion {
@@ -183,13 +430,27 @@ impl ContactBody {
             force_rate,
             jerk,
             force,
-            torque,
+            torque: material.is_none().then_some(torque),
+            point_force: match material {
+                Some(MotionForcing::Own { material, external }) => {
+                    Some(PointForcePlan::Own { material, external })
+                }
+                Some(
+                    MotionForcing::Source {
+                        material, external, ..
+                    }
+                    | MotionForcing::Remainder {
+                        material, external, ..
+                    },
+                ) => Some(PointForcePlan::Source { material, external }),
+                None => None,
+            },
             duration,
             rotation,
             end: self,
         };
         path.end = path.evaluate(duration)?;
-        if force_rate != [0.; 3] {
+        if force_rate != [0.; 3] || material.is_some() {
             let velocity_max: [f64; 3] = std::array::from_fn(|k| {
                 let middle = acceleration[k].mul_add(duration * 0.5, self.motion.velocity[k]);
                 self.motion.velocity[k]
@@ -201,9 +462,22 @@ impl ContactBody {
             let scaled = velocity_max.map(|v| v * scale);
             let bound = scaled[0].hypot(scaled[1]).hypot(scaled[2]);
             let rotational_bound = if let Some(spin) = self.spin {
-                let (_, impulse) = torque
-                    .envelopes(duration)
-                    .map_err(|_| Error::NumericalFailure)?;
+                let impulse = if material.is_some() {
+                    path.rotation
+                        .as_ref()
+                        .unwrap()
+                        .segments()
+                        .iter()
+                        .try_fold(0., |sum, segment| {
+                            segment.arc.torque_envelopes().map(|(_, bound)| sum + bound)
+                        })
+                        .map_err(|_| Error::NumericalFailure)?
+                } else {
+                    torque
+                        .envelopes(duration)
+                        .map_err(|_| Error::NumericalFailure)?
+                        .1
+                };
                 let momentum = spin.angular_momentum[0]
                     .hypot(spin.angular_momentum[1])
                     .hypot(spin.angular_momentum[2])
@@ -250,6 +524,54 @@ impl ContactBody {
 }
 
 impl RigidMotion {
+    fn prepare_remainder(
+        &self,
+        initial: ContactBody,
+        time: f64,
+        config: Config,
+    ) -> Result<RigidMotion, Error> {
+        let force = std::array::from_fn(|k| self.force_rate[k].mul_add(time, self.force[k]));
+        let duration = self.duration - time;
+        if let Some(plan) = self.point_force {
+            match plan {
+                PointForcePlan::Own { material, external } => initial
+                    .prepare_own_material_point_loaded_motion(
+                        material.shifted(time)?,
+                        external.shifted(time)?,
+                        duration,
+                        config,
+                    ),
+                PointForcePlan::Source { material, external } => {
+                    let material = material.shifted(time)?;
+                    let external = external.shifted(time)?;
+                    let (force, rate) = external.combined_force(material)?;
+                    initial.prepare_affine_motion_impl(
+                        force,
+                        rate,
+                        external.torque,
+                        duration,
+                        config,
+                        Some(MotionForcing::Remainder {
+                            path: self,
+                            time,
+                            material,
+                            external,
+                        }),
+                    )
+                }
+            }
+        } else if let Some(torque) = self.torque {
+            initial.prepare_affine_motion(
+                force,
+                self.force_rate,
+                torque.shifted(time).map_err(|_| Error::NumericalFailure)?,
+                duration,
+                config,
+            )
+        } else {
+            Err(Error::InvalidInput)
+        }
+    }
     pub fn duration(&self) -> f64 {
         self.duration
     }
@@ -329,8 +651,27 @@ impl RigidMotion {
     /// retains integrator/rounding discrepancy and is never dissipated energy.
     pub fn work(&self, time: f64) -> Result<MotionWork, Error> {
         let endpoint = self.sample(time)?;
-        let (force_work, torque_work) =
-            self.affine_wrench_work(time, self.force, self.force_rate, self.torque)?;
+        let (force_work, _) = self.affine_wrench_work(
+            time,
+            self.force,
+            self.force_rate,
+            TorquePolynomial::constant([0.; 3]),
+        )?;
+        let mut torque_work = 0.;
+        if let Some(rotation) = &self.rotation {
+            for segment in rotation.segments() {
+                let dt = (time.min(segment.end_s) - segment.start_s).max(0.);
+                if dt == 0. {
+                    break;
+                }
+                let impulse = segment
+                    .arc
+                    .angular_impulse(dt)
+                    .map_err(|_| Error::NumericalFailure)?;
+                let omega = segment.arc.angular_velocity();
+                torque_work += (0..3).map(|k| impulse[k] * omega[k]).sum::<f64>();
+            }
+        }
         let kinetic_energy_change = endpoint.energy().map_err(Error::Contact)?
             - self.initial.energy().map_err(Error::Contact)?;
         let energy_residual = kinetic_energy_change - force_work - torque_work;
@@ -548,7 +889,7 @@ impl RigidMotion {
         force: [f64; 3],
         force_rate: [f64; 3],
     ) -> Result<MaterialPointWork, Error> {
-        use crate::astrophysics_spin::{cross, rotate};
+        use crate::astrophysics_spin::{cross, rotate, rotating_arm_integrals};
         if local.iter().any(|x| !x.is_finite())
             || (source.initial.spin.is_none() && local != [0.; 3])
             || (self.initial.spin.is_none() && (self != source || local != [0.; 3]))
@@ -594,7 +935,8 @@ impl RigidMotion {
             let omega = self
                 .nominal_arc(start)
                 .map_or([0.; 3], |s| s.arc.angular_velocity());
-            let (mut a0, mut a1) = rotating_arm_integrals(arm, source_omega, dt)?;
+            let (mut a0, mut a1) = rotating_arm_integrals(arm, source_omega, dt)
+                .map_err(|_| Error::NumericalFailure)?;
             let aa = source.acceleration_at(start)?;
             let ab = self.acceleration_at(start)?;
             for k in 0..3 {
@@ -740,34 +1082,12 @@ pub fn prepare_impact(
     let first_remainder = if remaining == 0. {
         None
     } else {
-        Some(
-            a.prepare_affine_motion(
-                std::array::from_fn(|k| first.force_rate[k].mul_add(time_s, first.force[k])),
-                first.force_rate,
-                first
-                    .torque
-                    .shifted(time_s)
-                    .map_err(|_| Error::NumericalFailure)?,
-                remaining,
-                config,
-            )?,
-        )
+        Some(first.prepare_remainder(a, time_s, config)?)
     };
     let second_remainder = if remaining == 0. {
         None
     } else {
-        Some(
-            b.prepare_affine_motion(
-                std::array::from_fn(|k| second.force_rate[k].mul_add(time_s, second.force[k])),
-                second.force_rate,
-                second
-                    .torque
-                    .shifted(time_s)
-                    .map_err(|_| Error::NumericalFailure)?,
-                remaining,
-                config,
-            )?,
-        )
+        Some(second.prepare_remainder(b, time_s, config)?)
     };
     Ok(ImpactMotion {
         time_s,

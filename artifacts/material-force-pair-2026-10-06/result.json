@@ -1,0 +1,23 @@
+{
+  "release_tests": {
+    "passed": 1960,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "fmt": "passed",
+  "diff_check": "passed",
+  "whole_pair_model_bounds": "shared source momentum error propagated to receiver attitude",
+  "independent_oracle": "simultaneous two-body quaternion/momentum RK4 with its own source attitude",
+  "stress_case": "much lighter spherical receiver",
+  "sequential_pair_impacts": "passed",
+  "frame_covariance": "passed",
+  "origin_shift_world_moment": "passed",
+  "second_preparation_failure": "transactional",
+  "force_strengths": "explicit affine forces only",
+  "bounds": "guarded model bounds; not directed floating-point certificates",
+  "general_multi_body_force_graph": false,
+  "contact_pressure_solver_integration": false,
+  "rolling_scene_integration": false,
+  "changes": "local"
+}

@@ -1,0 +1,23 @@
+{
+  "release_tests": {
+    "passed": 1956,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "fmt": "passed",
+  "diff_check": "passed",
+  "own_material_force": "shared implicit midpoint arc with coupled attitude/momentum feedback",
+  "model_error": "weighted joint majorant; not directed floating-point certificate",
+  "independent_oracles": [
+    "planar physical RK4",
+    "anisotropic quaternion/momentum RK4",
+    "constant-force geometric work identity"
+  ],
+  "two_body_nominal_momentum_balance": "passed",
+  "own_force_impact_continuation": "passed",
+  "whole_pair_physical_error_bound": "not propagated",
+  "contact_pressure_feedback": "not implemented",
+  "rolling_scene_integration": "not implemented",
+  "changes": "local"
+}

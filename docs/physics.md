@@ -6315,3 +6315,200 @@ persistent rolling contact remain incomplete.
 Delivery qualification: 1947 passed, 0 failed, 24 ignored.
 App/editor all-target release checks passed.
 Raw logs and source hashes: artifacts/push-or-clear-material-delivery-2026-10-06.
+
+### Higher-order torque attitude admission (2026-10-06)
+
+Adaptive spin preparation now reuses the torque law's complete validation,
+including jerk and snap. Previously malformed higher coefficients were rejected
+later by envelope evaluation with a different error category. All five
+coefficients and three axes now reject NaN and either infinity as invalid input
+before adaptive trials; caller state remains unchanged.
+
+Independent spherical-body solutions integrate pure cubic, pure quartic and
+mixed signed torque twice to obtain attitude. At 257 prefixes, prepared paths
+remain within their reported model angular-error bounds and preserve analytic
+momentum. A tenfold tighter error budget refines the path and reduces endpoint
+attitude error. This covers higher-order attitude, beyond the existing direct
+force/arm-product and impulse tests. It does not prove general contact coupling.
+
+Qualification: 31 release spin-path/rigid-motion tests passed; formatting and
+diff checks passed. Logs and source hashes: artifacts/quartic-attitude-admission-2026-10-06.
+Changes remain local. Self-consistent moving-point force/rotation preparation
+and persistent rolling contact still require implementation.
+
+### Driving forces at prescribed moving material points (2026-10-06)
+
+`ContactBody::prepare_material_point_force_motion` now prepares actual receiver
+motion under an affine force applied at a body-local point on an immutable
+source trajectory. Both paths share a time origin. The receiver COM follows the
+existing cubic affine-force path. Its torque combines the exact relative-COM
+polynomial moment with the source point's rotating-arm moment on each source
+arc. This is a prescribed source, not a mutually coupled reaction solve.
+
+The rotating-arm time integrals are shared by force probes and the native
+`SpinArc` owner. Arcs integrate complete angular impulse at every prefix, retain
+accepted endpoints and use the existing implicit midpoint attitude solve.
+`SpinPath` retains its adaptive model-error admission, now clipping trials at
+forcing boundaries. Its torque envelopes include the rotating arm's full
+radius and affine force. An accepted boundary remainder preserves the proposed
+adaptive scale for the next interval, avoiding false minimum-step failures from
+floating-point fragments. Physical error tolerances were not relaxed.
+
+`RigidMotion::work` reads the actual arc forcing, so a moving-arm force cannot
+silently disappear from rotational work. `SpinArc::torque_at` and
+`angular_impulse` evaluate complete forcing. `torque_polynomial` now returns
+`Option<TorquePolynomial>`: it returns None for rotating-arm forcing, rather
+than pretending the complete law is polynomial. This accessor has no remaining
+repository consumers that assume an unconditional polynomial.
+
+Point impacts preserve the original force phase and rotating arm during
+remainder preparation. Old forcing arcs are rebased and receive a polynomial
+COM-arm correction for the post-impact position/velocity/acceleration/jerk.
+The correction includes the affine force's higher-order moments. No source
+trajectory clone or recursive source ownership is needed in the receiver.
+Original paths stay immutable on late preparation failure.
+
+Independent spherical formulas check driven momentum and attitude, stricter
+error budgets refine attitude and reduce energy residual. Gaussian quadrature
+checks anisotropic torque impulse and point-velocity work across both paths'
+knots; direct world angular-momentum change matches the applied moment. An
+independent coupled quaternion/momentum RK4 solution checks anisotropic attitude
+against the reported bound. An actual point impact checks continued force,
+rotating phase, changed COM arm, work, momentum and transactional budget failure.
+
+Model angular-error bounds are conditional on the prescribed nominal source
+path, not certificates for a physically exact or mutually coupled source orbit.
+Signed work residual remains diagnostic and is not heat. Receiver rotation is
+required; a source without rotation admits only its central point. No geometry
+or contact-pressure admission is supplied by this force preparation API.
+Supported-world stepping still uses frozen world arms. Mutual source/receiver
+forcing, persistent rolling contact and its scene/editor integration remain
+unfinished.
+
+Qualification: 1952 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed.
+Raw initial failures, boundary-budget diagnostic, successful regressions and
+current source hashes: artifacts/prescribed-material-force-motion-2026-10-06.
+Changes remain local.
+
+### Force feedback at a body's own material point (2026-10-06)
+
+`ContactBody::prepare_own_material_point_force_motion` drives an affine world
+force at a point fixed in that body's local frame. `Spin::prepare_material_force_path`
+uses the same adaptive path and midpoint arc owners. Each midpoint solve updates
+both attitude and the moment impulse from the rotating arm. The final torque
+law stores exactly the accepted arc angular velocity, so point kinematics,
+angular impulse and work share one represented rotation. The remaining
+midpoint defect is still measured by adaptive admission.
+
+An own-point force is orientation dependent; the prescribed-torque attitude
+bound alone is insufficient. Let e_theta be angular attitude error, e_L be
+momentum error, b the maximum inverse principal inertia, a the existing
+anisotropic attitude Lipschitz bound and c = local_radius * maximum_force.
+The model satisfies e_theta' <= a*e_theta + b*e_L + defect and e_L' <= c*e_theta.
+For s = sqrt(c/b), the weighted majorant E = e_theta + e_L/s grows at most at
+rate a + sqrt(b*c). Admission uses this joint majorant, with the same requested
+angular tolerance. `SpinPath::model_angular_momentum_error` returns E*s.
+For zero feedback, momentum has no model error. These remain guarded nominal
+model bounds, not directed floating-point interval certificates.
+
+The physical local radius also contributes to the global moment envelope,
+covering later normalized attitudes when the initial quaternion is slightly
+off unit norm. Impact remainder preparation retains the own local point and
+resolves its torque using the changed body rotation, rather than replaying an
+old prescribed world-point phase. A point body admits only a central force.
+Invalid coordinates and failed preparation budgets leave inputs unchanged.
+
+Independent planar RK4 equations check own-point feedback under constant and
+ramped force; a constant-force geometric work identity checks rotating-arm
+work. Tighter admission reduces attitude error and energy residual. Independent
+quaternion/momentum RK4 checks anisotropic feedback against both model bounds.
+A two-body fixture drives the first at its own point and the second with the
+opposite force at that same point: actual sampled total linear and world
+angular momentum stay constant, without endpoint correction. An actual impact
+checks that the own-point torque follows the new body rotation.
+
+The second body's prescribed-source bounds are still conditional on the first
+nominal trajectory; a whole-pair physical error bound has not been propagated.
+Forces in these fixtures are explicitly supplied, not solved contact pressure.
+A shared pair force/impact owner, pressure feedback, moving-point geometry
+admission and persistent rolling integration into the scene/editor remain
+unfinished. Signed numerical work residual is not generated heat.
+
+Qualification: 1956 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed.
+Logs and current source hashes: artifacts/own-material-force-feedback-2026-10-06.
+Changes remain local.
+
+### Shared material-force pair and physical source-error propagation (2026-10-06)
+
+`rigid_motion::MaterialForcePair` owns two prepared trajectories and one affine
+force plan, with the common point attached to the first body's local frame.
+The first receives F(t) and the second receives -F(t). The pair's only continuous
+forces are these supplied forces. It stages sampling, point kinematics, work
+and impacts through the existing rigid/rotation owners. No alternate rotation
+integrator or source trajectory clone is introduced.
+
+For the ideal COM force model, both physical and represented paths have the
+same orbital momentum terms. Equal/opposite forces at one point therefore give
+opposite intrinsic momentum errors: delta_L_second = -delta_L_first. The
+first path's joint attitude/momentum majorant supplies a physical momentum
+bound E_L. The second path now accounts for this shared source uncertainty,
+not merely an exact prescribed nominal source. With b = maximum inverse
+receiver inertia and a its global anisotropic attitude Lipschitz bound, the
+additional attitude error through t is bounded by b*E_L*t*exp(a*t). Its reported
+momentum error includes E_L; every segment's angular bound includes the source
+contribution for all prefixes through that segment.
+
+Preparation reserves one half of the requested angular tolerance for the
+receiver's conditional solve. The source budget is one quarter of that
+requested tolerance divided by max(1, amplification), where amplification
+maps its joint majorant into receiver attitude error over the full horizon.
+This reserves another quarter for source uncertainty. The receiver global
+moment envelope includes relative cubic COM motion and the complete physical
+local-arm radius under the affine force. Unrepresentable bounds or exhausted
+preparation budgets reject before the pair is published.
+
+`MaterialForcePair::prepare_impact` stages the reciprocal impulse and then
+rebuilds BOTH remainder trajectories with the rebased force and updated first
+material point. It never continues the second body against an obsolete source
+path. Its returned `MaterialPairImpact` owns an optional complete pair remainder;
+an endpoint impact needs no zero-duration trajectory. Subsequent impacts repeat
+this shared preparation. Remainder model bounds are conditional on admitted
+post-impact states; uncertain event times and incoming impact-state errors are
+not propagated through a geometric collision certificate here.
+
+Independent simultaneous quaternion/momentum RK4 uses its own first attitude
+for both physical torques. Anisotropic and much lighter spherical receivers
+remain within both reported model bounds, and source admission tightens when
+receiver amplification is large. Direct sampled total momentum checks require
+no endpoint correction. Two sequential impacts check common-point replacement,
+force-phase rebasing, work/moment ownership and immutable originals. Frame
+rotation and origin translation checks preserve the world-moment transform.
+Late second-body preparation failure, invalid inputs and a central particle
+source are also covered.
+
+These are guarded mathematical model bounds, not directed floating-point
+certificates. Forces remain explicitly supplied: contact pressure, geometry
+admission, general external loads and multi-body contact networks are not
+solved by this isolated pair API. Overlapping pairs must not become duplicate
+trajectories for the same body; scene integration requires one aggregate force
+plan per body. Persistent rolling, automatic contact pressure and editor/runtime
+integration remain unfinished. Signed work residual is diagnostic, not heat.
+
+Qualification: 1960 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed.
+Raw logs and current source hashes: artifacts/material-force-pair-2026-10-06.
+Changes remain local.
+
+### External loads: saved intermediate implementation (2026-10-06)
+
+`MaterialPointForce` and `MotionLoad` retain separate affine material-point
+forces, affine COM forces, and polynomial world torques. Loaded own-point and
+prescribed-source preparation rebases these components independently after an
+impact. Existing zero-external-load APIs remain compatibility wrappers.
+
+This is an intermediate implementation: `MaterialForcePair` still accepts only
+its mutual point force. Loaded pair preparation, dedicated external-load
+regressions, and scene/contact integration remain unfinished. Compatibility
+tests do not establish these new external-load behaviors.

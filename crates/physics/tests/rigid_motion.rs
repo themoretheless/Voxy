@@ -1091,3 +1091,902 @@ fn reciprocal_material_point_forces_close_world_moments_on_different_spin_paths(
     }
     assert_eq!((a, b), originals);
 }
+
+#[test]
+fn prescribed_rotating_point_force_drives_analytic_spherical_momentum_and_attitude() {
+    let force = [0., 3., 0.];
+    let rate = [0., -2., 0.];
+    let duration = 0.2;
+    let source = body()
+        .prepare_affine_motion(
+            force,
+            rate,
+            physics::astrophysics_spin::TorquePolynomial::constant([0.; 3]),
+            duration,
+            config(),
+        )
+        .unwrap();
+    let saved_source = source.clone();
+    let initial = ContactBody {
+        spin: Some(Spin {
+            inertia: [2.; 3],
+            angular_momentum: [0., 0., 0.7],
+            ..body().spin.unwrap()
+        }),
+        ..body()
+    };
+    let saved = initial;
+    let local = [0.4, 0., 0.];
+    let coarse = initial
+        .prepare_material_point_force_motion(&source, local, force, rate, duration, config())
+        .unwrap();
+    let fine = initial
+        .prepare_material_point_force_motion(
+            &source,
+            local,
+            force,
+            rate,
+            duration,
+            Config {
+                max_angular_error_rad: 1e-5,
+                ..config()
+            },
+        )
+        .unwrap();
+    let exact = |t: f64| {
+        let x = 2. * t;
+        let impulse = 0.4 * (3. * x.sin() / 2. - 2. * (t * x.sin() / 2. + (x.cos() - 1.) / 4.));
+        let double =
+            0.4 * (3. * (1. - x.cos()) / 4. - 2. * (2. * x.sin() / 8. - t * (1. + x.cos()) / 4.));
+        let angle = (0.7 * t + double) / 2.;
+        (
+            0.7 + impulse,
+            [0., 0., (angle / 2.).sin(), (angle / 2.).cos()],
+        )
+    };
+    let distance = |a: [f64; 4], b: [f64; 4]| {
+        let direct = (0..4).map(|k| (a[k] - b[k]).powi(2)).sum::<f64>().sqrt();
+        let opposite = (0..4).map(|k| (a[k] + b[k]).powi(2)).sum::<f64>().sqrt();
+        4. * (direct.min(opposite) * 0.5).clamp(0., 1.).asin()
+    };
+    for path in [&coarse, &fine] {
+        assert_eq!(path.sample(0.).unwrap(), initial);
+        assert_eq!(path.sample(duration).unwrap(), path.end());
+        for t in [1e-9, 0.03, 0.11, duration] {
+            let state = path.sample(t).unwrap();
+            assert_eq!(state.motion, source.sample(t).unwrap().motion);
+            let actual = state.spin.unwrap();
+            let (momentum, attitude) = exact(t);
+            assert!((actual.angular_momentum[2] - momentum).abs() < 1e-12);
+            assert!(
+                distance(actual.orientation, attitude)
+                    <= path.rotation().unwrap().model_angular_error_rad() + 1e-12
+            );
+            let work = path.work(t).unwrap();
+            let probe = path
+                .moving_material_point_force_work(t, &source, local, force, rate)
+                .unwrap();
+            assert!((work.force_work + work.torque_work - probe.total_work).abs() < 1e-12);
+        }
+        for segment in path.rotation().unwrap().segments() {
+            assert!(segment.arc.torque_polynomial().is_none());
+            for dt in [0., segment.arc.duration() * 0.5, segment.arc.duration()] {
+                let t = segment.start_s + dt;
+                let actual = segment.arc.torque_at(dt).unwrap();
+                let expected = 0.4 * (2. * t).cos() * (3. - 2. * t);
+                assert!(actual[0].abs() < 1e-13 && actual[1].abs() < 1e-13);
+                assert!((actual[2] - expected).abs() < 1e-12);
+            }
+        }
+    }
+    assert!(
+        fine.rotation().unwrap().segments().len() > coarse.rotation().unwrap().segments().len()
+    );
+    assert!(
+        distance(fine.end().spin.unwrap().orientation, exact(duration).1)
+            < distance(coarse.end().spin.unwrap().orientation, exact(duration).1)
+    );
+    assert!(
+        fine.work(duration).unwrap().energy_residual.abs()
+            < coarse.work(duration).unwrap().energy_residual.abs()
+    );
+    assert_eq!(initial, saved);
+    assert_eq!(source, saved_source);
+    assert!(
+        initial
+            .prepare_material_point_force_motion(
+                &source,
+                [f64::NAN, 0., 0.],
+                force,
+                rate,
+                duration,
+                config()
+            )
+            .is_err()
+    );
+    assert!(
+        initial
+            .prepare_material_point_force_motion(
+                &source,
+                local,
+                force,
+                rate,
+                duration * 2.,
+                config()
+            )
+            .is_err()
+    );
+    assert!(
+        initial
+            .prepare_material_point_force_motion(
+                &source,
+                local,
+                force,
+                rate,
+                duration,
+                Config {
+                    max_arcs: 1,
+                    max_trials: 1,
+                    ..config()
+                }
+            )
+            .is_err()
+    );
+    assert_eq!(initial, saved);
+    assert_eq!(source, saved_source);
+}
+
+#[test]
+fn prescribed_material_force_rebases_source_knots_and_closes_independent_moment_and_work() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let source = body()
+        .prepare_affine_motion(
+            [4., -2., 6.],
+            [-3., 5., 2.],
+            TorquePolynomial {
+                rate: [0., 0., 3.],
+                ..TorquePolynomial::constant([0., 0., 4.])
+            },
+            0.2,
+            config(),
+        )
+        .unwrap();
+    let initial = ContactBody {
+        motion: Body {
+            position: [-2., 1., 0.5],
+            velocity: [-1., 2., 0.3],
+            ..body().motion
+        },
+        spin: Some(Spin {
+            inertia: [1., 2., 3.],
+            angular_momentum: [0.3, 0.5, 0.7],
+            ..body().spin.unwrap()
+        }),
+    };
+    let local = [0.2, -0.1, 0.3];
+    let force = [1., 3., -2.];
+    let rate = [-4., 2., 1.];
+    let path = initial
+        .prepare_material_point_force_motion(&source, local, force, rate, 0.2, config())
+        .unwrap();
+    let saved = source.clone();
+    let cross = |a: [f64; 3], b: [f64; 3]| {
+        std::array::from_fn::<_, 3, _>(|k| {
+            a[(k + 1) % 3] * b[(k + 2) % 3] - a[(k + 2) % 3] * b[(k + 1) % 3]
+        })
+    };
+    for segment in source.rotation().unwrap().segments() {
+        assert!(
+            path.rotation()
+                .unwrap()
+                .segments()
+                .iter()
+                .any(|r| r.end_s == segment.end_s)
+        );
+    }
+    for time in [1e-9, 0.03, 0.2] {
+        let mut knots = vec![0., time];
+        for rotation in [source.rotation().unwrap(), path.rotation().unwrap()] {
+            knots.extend(
+                rotation
+                    .segments()
+                    .iter()
+                    .filter(|s| s.end_s < time)
+                    .map(|s| s.end_s),
+            );
+        }
+        knots.sort_by(f64::total_cmp);
+        knots.dedup();
+        let mut impulse = [0.; 3];
+        let mut work = 0.;
+        let root = (3_f64 / 5.).sqrt();
+        for interval in knots.windows(2) {
+            for cell in 0..8 {
+                let lo = interval[0] + (interval[1] - interval[0]) * cell as f64 / 8.;
+                let hi = interval[0] + (interval[1] - interval[0]) * (cell + 1) as f64 / 8.;
+                for (node, weight) in [(-root, 5. / 9.), (0., 8. / 9.), (root, 5. / 9.)] {
+                    let t = (lo + hi) * 0.5 + (hi - lo) * 0.5 * node;
+                    let factor = weight * (hi - lo) * 0.5;
+                    let point = source.sample_material_point(t, local).unwrap().position;
+                    let receiver = path.sample(t).unwrap();
+                    let arm = std::array::from_fn(|k| point[k] - receiver.motion.position[k]);
+                    let f = std::array::from_fn(|k| force[k] + rate[k] * t);
+                    let torque = cross(arm, f);
+                    let segment = path
+                        .rotation()
+                        .unwrap()
+                        .segments()
+                        .iter()
+                        .find(|s| s.end_s > t)
+                        .unwrap();
+                    let rotational_velocity = cross(segment.arc.angular_velocity(), arm);
+                    for k in 0..3 {
+                        impulse[k] += torque[k] * factor;
+                        work +=
+                            f[k] * (receiver.motion.velocity[k] + rotational_velocity[k]) * factor;
+                    }
+                    let actual_torque = segment.arc.torque_at(t - segment.start_s).unwrap();
+                    for k in 0..3 {
+                        assert!((actual_torque[k] - torque[k]).abs() < 1e-10);
+                    }
+                }
+            }
+        }
+        let state = path.sample(time).unwrap();
+        for k in 0..3 {
+            assert!(
+                (state.spin.unwrap().angular_momentum[k]
+                    - initial.spin.unwrap().angular_momentum[k]
+                    - impulse[k])
+                    .abs()
+                    < 1e-10
+            );
+        }
+        let actual = path.work(time).unwrap();
+        assert!((actual.force_work + actual.torque_work - work).abs() < 1e-10);
+        let reaction = source
+            .material_point_force_work(time, local, force.map(|x| -x), rate.map(|x| -x))
+            .unwrap();
+        let driving = path
+            .moving_material_point_force_work(time, &source, local, force, rate)
+            .unwrap();
+        let before_orbital = cross(
+            initial.motion.position,
+            initial.motion.velocity.map(|v| v * initial.motion.mass),
+        );
+        let after_orbital = cross(
+            state.motion.position,
+            state.motion.velocity.map(|v| v * state.motion.mass),
+        );
+        for k in 0..3 {
+            let actual_world_impulse = after_orbital[k] - before_orbital[k]
+                + state.spin.unwrap().angular_momentum[k]
+                - initial.spin.unwrap().angular_momentum[k];
+            assert!((actual_world_impulse - driving.angular_impulse[k]).abs() < 1e-10);
+        }
+        for k in 0..3 {
+            assert!((reaction.angular_impulse[k] + driving.angular_impulse[k]).abs() < 1e-10);
+        }
+    }
+    // Independent coupled (q,L) RK4 integrates the known world-point torque;
+    // it never uses the receiver's SpinArc impulse or attitude integration.
+    let derivative = |t: f64, q: [f64; 4], momentum: [f64; 3]| {
+        let length = q.iter().map(|v| v * v).sum::<f64>().sqrt();
+        let q = q.map(|v| v / length);
+        let w = Spin {
+            orientation: q,
+            angular_momentum: momentum,
+            ..initial.spin.unwrap()
+        }
+        .angular_velocity()
+        .unwrap();
+        let qdot = [
+            0.5 * (w[0] * q[3] + w[1] * q[2] - w[2] * q[1]),
+            0.5 * (-w[0] * q[2] + w[1] * q[3] + w[2] * q[0]),
+            0.5 * (w[0] * q[1] - w[1] * q[0] + w[2] * q[3]),
+            -0.5 * (w[0] * q[0] + w[1] * q[1] + w[2] * q[2]),
+        ];
+        let center: [f64; 3] = std::array::from_fn(|k| {
+            initial.motion.position[k]
+                + initial.motion.velocity[k] * t
+                + force[k] * t * t / (2. * initial.motion.mass)
+                + rate[k] * t * t * t / (6. * initial.motion.mass)
+        });
+        let point = source.sample_material_point(t, local).unwrap().position;
+        let arm = std::array::from_fn(|k| point[k] - center[k]);
+        let force = std::array::from_fn(|k| force[k] + rate[k] * t);
+        (qdot, cross(arm, force))
+    };
+    let mut oracle = initial.spin.unwrap();
+    for source_segment in source.rotation().unwrap().segments() {
+        for cell in 0..64 {
+            let t = source_segment.start_s
+                + (source_segment.end_s - source_segment.start_s) * cell as f64 / 64.;
+            let end = if cell == 63 {
+                source_segment.end_s
+            } else {
+                source_segment.start_s
+                    + (source_segment.end_s - source_segment.start_s) * (cell + 1) as f64 / 64.
+            };
+            let h = end - t;
+            let q = oracle.orientation;
+            let l = oracle.angular_momentum;
+            let (q1, l1) = derivative(t, q, l);
+            let (q2, l2) = derivative(
+                t + h / 2.,
+                std::array::from_fn(|k| q[k] + h * q1[k] / 2.),
+                std::array::from_fn(|k| l[k] + h * l1[k] / 2.),
+            );
+            let (q3, l3) = derivative(
+                t + h / 2.,
+                std::array::from_fn(|k| q[k] + h * q2[k] / 2.),
+                std::array::from_fn(|k| l[k] + h * l2[k] / 2.),
+            );
+            let (q4, l4) = derivative(
+                end,
+                std::array::from_fn(|k| q[k] + h * q3[k]),
+                std::array::from_fn(|k| l[k] + h * l3[k]),
+            );
+            let next: [f64; 4] =
+                std::array::from_fn(|k| q[k] + h * (q1[k] + 2. * q2[k] + 2. * q3[k] + q4[k]) / 6.);
+            let length = next.iter().map(|v| v * v).sum::<f64>().sqrt();
+            oracle.orientation = next.map(|v| v / length);
+            oracle.angular_momentum =
+                std::array::from_fn(|k| l[k] + h * (l1[k] + 2. * l2[k] + 2. * l3[k] + l4[k]) / 6.);
+        }
+        let actual = path.sample(source_segment.end_s).unwrap().spin.unwrap();
+        let direct = (0..4)
+            .map(|k| (actual.orientation[k] - oracle.orientation[k]).powi(2))
+            .sum::<f64>()
+            .sqrt();
+        let opposite = (0..4)
+            .map(|k| (actual.orientation[k] + oracle.orientation[k]).powi(2))
+            .sum::<f64>()
+            .sqrt();
+        let error = 4. * (direct.min(opposite) * 0.5).clamp(0., 1.).asin();
+        assert!(error <= path.rotation().unwrap().model_angular_error_rad() + 1e-10);
+        for k in 0..3 {
+            assert!((actual.angular_momentum[k] - oracle.angular_momentum[k]).abs() < 1e-10);
+        }
+    }
+    assert_eq!(source, saved);
+}
+
+#[test]
+fn point_impact_continues_prescribed_material_force_phase_and_recomputes_com_arm() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let force = [0., 3., 0.];
+    let rate = [0., -2., 0.];
+    let local = [0.4, 0., 0.];
+    let duration = 0.2;
+    let source = body()
+        .prepare_affine_motion(
+            force,
+            rate,
+            TorquePolynomial::constant([0.; 3]),
+            duration,
+            config(),
+        )
+        .unwrap();
+    let driven = body()
+        .prepare_material_point_force_motion(&source, local, force, rate, duration, config())
+        .unwrap();
+    let event_time = 0.07;
+    let before = driven.sample(event_time).unwrap();
+    let point = [
+        before.motion.position[0],
+        before.motion.position[1] + 0.3,
+        before.motion.position[2],
+    ];
+    let target = ContactBody {
+        motion: Body {
+            position: point,
+            velocity: [0.; 3],
+            ..body().motion
+        },
+        spin: None,
+    }
+    .prepare_motion([0.; 3], [0.; 3], duration, config())
+    .unwrap();
+    let saved_driven = driven.clone();
+    let saved_source = source.clone();
+    let event = physics::rigid_motion::prepare_impact(
+        &driven,
+        &target,
+        event_time,
+        point,
+        [-1., 0., 0.],
+        0.4,
+        config(),
+    )
+    .unwrap();
+    let remainder = event.first_remainder.as_ref().unwrap();
+    assert_eq!(remainder.initial(), event.first);
+    assert!((event.first.motion.velocity[0] - before.motion.velocity[0]).abs() > 0.1);
+    assert!(
+        (event.first.spin.unwrap().angular_momentum[2] - before.spin.unwrap().angular_momentum[2])
+            .abs()
+            > 0.1
+    );
+    let cross = |a: [f64; 3], b: [f64; 3]| {
+        std::array::from_fn::<_, 3, _>(|k| {
+            a[(k + 1) % 3] * b[(k + 2) % 3] - a[(k + 2) % 3] * b[(k + 1) % 3]
+        })
+    };
+    for time in [1e-9, 0.02, remainder.duration()] {
+        let mut knots = vec![0., time];
+        knots.extend(
+            source
+                .rotation()
+                .unwrap()
+                .segments()
+                .iter()
+                .map(|s| s.end_s - event_time)
+                .filter(|t| *t > 0. && *t < time),
+        );
+        knots.extend(
+            remainder
+                .rotation()
+                .unwrap()
+                .segments()
+                .iter()
+                .filter(|s| s.end_s < time)
+                .map(|s| s.end_s),
+        );
+        knots.sort_by(f64::total_cmp);
+        knots.dedup();
+        let mut impulse = [0.; 3];
+        let mut work = 0.;
+        let root = (3_f64 / 5.).sqrt();
+        for interval in knots.windows(2) {
+            for cell in 0..8 {
+                let lo = interval[0] + (interval[1] - interval[0]) * cell as f64 / 8.;
+                let hi = interval[0] + (interval[1] - interval[0]) * (cell + 1) as f64 / 8.;
+                for (node, weight) in [(-root, 5. / 9.), (0., 8. / 9.), (root, 5. / 9.)] {
+                    let t = (lo + hi) * 0.5 + (hi - lo) * 0.5 * node;
+                    let factor = weight * (hi - lo) * 0.5;
+                    let world_time = event_time + t;
+                    let point = source
+                        .sample_material_point(world_time, local)
+                        .unwrap()
+                        .position;
+                    let receiver = remainder.sample(t).unwrap();
+                    let arm = std::array::from_fn(|k| point[k] - receiver.motion.position[k]);
+                    let f = std::array::from_fn(|k| force[k] + rate[k] * world_time);
+                    let torque = cross(arm, f);
+                    let segment = remainder
+                        .rotation()
+                        .unwrap()
+                        .segments()
+                        .iter()
+                        .find(|s| s.end_s > t)
+                        .unwrap();
+                    let rotation_velocity = cross(segment.arc.angular_velocity(), arm);
+                    let actual_torque = segment.arc.torque_at(t - segment.start_s).unwrap();
+                    for k in 0..3 {
+                        assert!((actual_torque[k] - torque[k]).abs() < 1e-10);
+                        impulse[k] += torque[k] * factor;
+                        work +=
+                            f[k] * (receiver.motion.velocity[k] + rotation_velocity[k]) * factor;
+                    }
+                }
+            }
+        }
+        let after = remainder.sample(time).unwrap();
+        for k in 0..3 {
+            assert!(
+                (after.spin.unwrap().angular_momentum[k]
+                    - event.first.spin.unwrap().angular_momentum[k]
+                    - impulse[k])
+                    .abs()
+                    < 1e-10
+            );
+        }
+        let actual = remainder.work(time).unwrap();
+        assert!((actual.force_work + actual.torque_work - work).abs() < 1e-10);
+        assert!(
+            (after.motion.velocity[1]
+                - event.first.motion.velocity[1]
+                - ((force[1] + rate[1] * event_time) * time + rate[1] * time * time / 2.)
+                    / event.first.motion.mass)
+                .abs()
+                < 1e-12
+        );
+    }
+    assert!(
+        physics::rigid_motion::prepare_impact(
+            &driven,
+            &target,
+            event_time,
+            point,
+            [-1., 0., 0.],
+            0.4,
+            Config {
+                max_arcs: 1,
+                max_trials: 1,
+                ..config()
+            }
+        )
+        .is_err()
+    );
+    assert_eq!(driven, saved_driven);
+    assert_eq!(source, saved_source);
+}
+
+#[test]
+fn own_material_force_feedback_matches_independent_scalar_motion_and_work() {
+    let angle: f64 = 0.2;
+    let initial = ContactBody {
+        spin: Some(Spin {
+            orientation: [0., 0., (angle / 2.).sin(), (angle / 2.).cos()],
+            angular_momentum: [0., 0., 0.5],
+            inertia: [1.; 3],
+        }),
+        ..body()
+    };
+    let saved = initial;
+    let local = [0.4, 0., 0.];
+    let force = [0., 5., 0.];
+    let duration = 0.2;
+    for ramp in [0., -2.] {
+        let rate = [0., ramp, 0.];
+        let coarse = initial
+            .prepare_own_material_point_force_motion(local, force, rate, duration, config())
+            .unwrap();
+        let fine = initial
+            .prepare_own_material_point_force_motion(
+                local,
+                force,
+                rate,
+                duration,
+                Config {
+                    max_angular_error_rad: 1e-5,
+                    max_arcs: 40000,
+                    max_trials: 120000,
+                    ..config()
+                },
+            )
+            .unwrap();
+        let mut theta = angle;
+        let mut omega = 0.5;
+        let h = duration / 8192.;
+        for i in 0..=8192 {
+            let time = duration * i as f64 / 8192.;
+            if i % 128 == 0 {
+                for path in [&coarse, &fine] {
+                    let state = path.sample(time).unwrap().spin.unwrap();
+                    let actual = 2. * state.orientation[2].atan2(state.orientation[3]);
+                    assert!(
+                        (actual - theta).abs()
+                            <= path.rotation().unwrap().model_angular_error_rad() + 1e-11
+                    );
+                    assert!(
+                        (state.angular_momentum[2] - omega).abs()
+                            <= path.rotation().unwrap().model_angular_momentum_error() + 1e-11
+                    );
+                    let work = path.work(time).unwrap();
+                    let probe = path
+                        .material_point_force_work(time, local, force, rate)
+                        .unwrap();
+                    assert!((work.force_work + work.torque_work - probe.total_work).abs() < 1e-11);
+                    if ramp == 0. {
+                        let arm_y = path.sample_material_point(time, local).unwrap().position[1]
+                            - path.sample(time).unwrap().motion.position[1];
+                        assert!(
+                            (work.torque_work - 5. * (arm_y - local[0] * angle.sin())).abs()
+                                < 1e-11
+                        );
+                    }
+                }
+            }
+            if i < 8192 {
+                // Independent planar physical equations: theta' = omega,
+                // omega' = radius * force(t) * cos(theta) / inertia.
+                let evaluate =
+                    |t: f64, theta: f64, omega: f64| (omega, 0.4 * (5. + ramp * t) * theta.cos());
+                let (a1, b1) = evaluate(time, theta, omega);
+                let (a2, b2) = evaluate(time + h / 2., theta + h * a1 / 2., omega + h * b1 / 2.);
+                let (a3, b3) = evaluate(time + h / 2., theta + h * a2 / 2., omega + h * b2 / 2.);
+                let (a4, b4) = evaluate(time + h, theta + h * a3, omega + h * b3);
+                theta += h * (a1 + 2. * a2 + 2. * a3 + a4) / 6.;
+                omega += h * (b1 + 2. * b2 + 2. * b3 + b4) / 6.;
+            }
+        }
+        let error = |path: &physics::rigid_motion::RigidMotion| {
+            let state = path.end().spin.unwrap();
+            (2. * state.orientation[2].atan2(state.orientation[3]) - theta).abs()
+        };
+        assert!(error(&fine) < error(&coarse));
+        assert!(
+            fine.work(duration).unwrap().energy_residual.abs()
+                < coarse.work(duration).unwrap().energy_residual.abs()
+        );
+        assert!(coarse.rotation().unwrap().model_angular_momentum_error() > 0.);
+        for segment in coarse.rotation().unwrap().segments() {
+            for dt in [0., segment.arc.duration() * 0.5, segment.arc.duration()] {
+                let t = segment.start_s + dt;
+                let state = coarse.sample(t).unwrap().spin.unwrap();
+                let theta = 2. * state.orientation[2].atan2(state.orientation[3]);
+                let torque = segment.arc.torque_at(dt).unwrap();
+                assert!((torque[2] - 0.4 * (5. + ramp * t) * theta.cos()).abs() < 1e-12);
+            }
+        }
+    }
+    assert_eq!(initial, saved);
+    assert!(
+        initial
+            .prepare_own_material_point_force_motion(
+                local,
+                force,
+                [0.; 3],
+                duration,
+                Config {
+                    max_arcs: 1,
+                    max_trials: 1,
+                    ..config()
+                }
+            )
+            .is_err()
+    );
+    assert!(
+        initial
+            .prepare_own_material_point_force_motion(
+                [f64::NAN, 0., 0.],
+                force,
+                [0.; 3],
+                duration,
+                config()
+            )
+            .is_err()
+    );
+    let particle = ContactBody {
+        spin: None,
+        ..initial
+    };
+    assert!(
+        particle
+            .prepare_own_material_point_force_motion(local, force, [0.; 3], duration, config())
+            .is_err()
+    );
+    let central = particle
+        .prepare_own_material_point_force_motion([0.; 3], force, [0., -2., 0.], duration, config())
+        .unwrap();
+    assert!(central.end().spin.is_none());
+    assert_eq!(initial, saved);
+}
+
+#[test]
+fn own_material_force_anisotropic_feedback_bound_covers_independent_quaternion_momentum_rk4() {
+    let initial = ContactBody {
+        spin: Some(Spin {
+            inertia: [1., 2., 3.],
+            angular_momentum: [0.3, 0.5, 0.7],
+            ..body().spin.unwrap()
+        }),
+        ..body()
+    };
+    let local = [0.2, -0.1, 0.3];
+    let force = [1., 3., -2.];
+    let rate = [-4., 2., 1.];
+    let duration = 0.08;
+    let path = initial
+        .prepare_own_material_point_force_motion(local, force, rate, duration, config())
+        .unwrap();
+    let cross = |a: [f64; 3], b: [f64; 3]| {
+        std::array::from_fn::<_, 3, _>(|k| {
+            a[(k + 1) % 3] * b[(k + 2) % 3] - a[(k + 2) % 3] * b[(k + 1) % 3]
+        })
+    };
+    let derivative = |t: f64, q: [f64; 4], l: [f64; 3]| {
+        let length = q.iter().map(|v| v * v).sum::<f64>().sqrt();
+        let q = q.map(|v| v / length);
+        let omega = Spin {
+            orientation: q,
+            angular_momentum: l,
+            ..initial.spin.unwrap()
+        }
+        .angular_velocity()
+        .unwrap();
+        let qdot = [
+            0.5 * (omega[0] * q[3] + omega[1] * q[2] - omega[2] * q[1]),
+            0.5 * (-omega[0] * q[2] + omega[1] * q[3] + omega[2] * q[0]),
+            0.5 * (omega[0] * q[1] - omega[1] * q[0] + omega[2] * q[3]),
+            -0.5 * (omega[0] * q[0] + omega[1] * q[1] + omega[2] * q[2]),
+        ];
+        let axis = [q[0], q[1], q[2]];
+        let first = cross(axis, local);
+        let second = cross(axis, first);
+        let arm = std::array::from_fn(|k| local[k] + 2. * (q[3] * first[k] + second[k]));
+        let force = std::array::from_fn(|k| force[k] + rate[k] * t);
+        (qdot, cross(arm, force))
+    };
+    let mut oracle = initial.spin.unwrap();
+    let h = duration / 4096.;
+    for i in 0..=4096 {
+        let t = duration * i as f64 / 4096.;
+        if i % 64 == 0 {
+            let actual = path.sample(t).unwrap().spin.unwrap();
+            let direct = (0..4)
+                .map(|k| (actual.orientation[k] - oracle.orientation[k]).powi(2))
+                .sum::<f64>()
+                .sqrt();
+            let opposite = (0..4)
+                .map(|k| (actual.orientation[k] + oracle.orientation[k]).powi(2))
+                .sum::<f64>()
+                .sqrt();
+            let error = 4. * (direct.min(opposite) * 0.5).clamp(0., 1.).asin();
+            assert!(error <= path.rotation().unwrap().model_angular_error_rad() + 1e-11);
+            let delta: [f64; 3] =
+                std::array::from_fn(|k| actual.angular_momentum[k] - oracle.angular_momentum[k]);
+            assert!(
+                delta[0].hypot(delta[1]).hypot(delta[2])
+                    <= path.rotation().unwrap().model_angular_momentum_error() + 1e-11
+            );
+        }
+        if i < 4096 {
+            let q = oracle.orientation;
+            let l = oracle.angular_momentum;
+            let (q1, l1) = derivative(t, q, l);
+            let (q2, l2) = derivative(
+                t + h / 2.,
+                std::array::from_fn(|k| q[k] + h * q1[k] / 2.),
+                std::array::from_fn(|k| l[k] + h * l1[k] / 2.),
+            );
+            let (q3, l3) = derivative(
+                t + h / 2.,
+                std::array::from_fn(|k| q[k] + h * q2[k] / 2.),
+                std::array::from_fn(|k| l[k] + h * l2[k] / 2.),
+            );
+            let (q4, l4) = derivative(
+                t + h,
+                std::array::from_fn(|k| q[k] + h * q3[k]),
+                std::array::from_fn(|k| l[k] + h * l3[k]),
+            );
+            let next: [f64; 4] =
+                std::array::from_fn(|k| q[k] + h * (q1[k] + 2. * q2[k] + 2. * q3[k] + q4[k]) / 6.);
+            let norm = next.iter().map(|v| v * v).sum::<f64>().sqrt();
+            oracle.orientation = next.map(|v| v / norm);
+            oracle.angular_momentum =
+                std::array::from_fn(|k| l[k] + h * (l1[k] + 2. * l2[k] + 2. * l3[k] + l4[k]) / 6.);
+        }
+    }
+}
+
+#[test]
+fn opposite_forces_at_a_self_driven_material_point_conserve_actual_world_momentum() {
+    let first = body();
+    let second = ContactBody {
+        motion: Body {
+            position: [-2., 1., 0.5],
+            velocity: [-1., 2., 0.3],
+            ..body().motion
+        },
+        spin: Some(Spin {
+            inertia: [1., 2., 3.],
+            angular_momentum: [0.3, 0.5, 0.7],
+            ..body().spin.unwrap()
+        }),
+    };
+    let local = [0.2, -0.1, 0.3];
+    let force = [1., 3., -2.];
+    let rate = [-4., 2., 1.];
+    let duration = 0.08;
+    let a = first
+        .prepare_own_material_point_force_motion(local, force, rate, duration, config())
+        .unwrap();
+    let b = second
+        .prepare_material_point_force_motion(
+            &a,
+            local,
+            force.map(|x| -x),
+            rate.map(|x| -x),
+            duration,
+            config(),
+        )
+        .unwrap();
+    let cross = |a: [f64; 3], b: [f64; 3]| {
+        std::array::from_fn::<_, 3, _>(|k| {
+            a[(k + 1) % 3] * b[(k + 2) % 3] - a[(k + 2) % 3] * b[(k + 1) % 3]
+        })
+    };
+    let total = |a: ContactBody, b: ContactBody| {
+        let pa = a.motion.velocity.map(|v| v * a.motion.mass);
+        let pb = b.motion.velocity.map(|v| v * b.motion.mass);
+        let ha = cross(a.motion.position, pa);
+        let hb = cross(b.motion.position, pb);
+        (
+            std::array::from_fn::<_, 3, _>(|k| pa[k] + pb[k]),
+            std::array::from_fn::<_, 3, _>(|k| {
+                ha[k]
+                    + hb[k]
+                    + a.spin.unwrap().angular_momentum[k]
+                    + b.spin.unwrap().angular_momentum[k]
+            }),
+        )
+    };
+    let (momentum, angular) = total(first, second);
+    for time in [1e-9, 0.01, 0.04, duration] {
+        let (actual_p, actual_h) = total(a.sample(time).unwrap(), b.sample(time).unwrap());
+        for k in 0..3 {
+            assert!((actual_p[k] - momentum[k]).abs() < 1e-12);
+            assert!((actual_h[k] - angular[k]).abs() < 1e-10);
+        }
+        let wa = a.work(time).unwrap();
+        let wb = b.work(time).unwrap();
+        let pa = a
+            .material_point_force_work(time, local, force, rate)
+            .unwrap();
+        let pb = b
+            .moving_material_point_force_work(time, &a, local, force.map(|x| -x), rate.map(|x| -x))
+            .unwrap();
+        assert!(
+            (wa.force_work + wa.torque_work + wb.force_work + wb.torque_work
+                - pa.total_work
+                - pb.total_work)
+                .abs()
+                < 1e-10
+        );
+    }
+}
+
+#[test]
+fn impact_reprepares_own_material_force_with_the_changed_body_rotation() {
+    let local = [0.4, 0., 0.];
+    let force = [0., 3., 0.];
+    let rate = [0., -2., 0.];
+    let duration = 0.2;
+    let driven = body()
+        .prepare_own_material_point_force_motion(local, force, rate, duration, config())
+        .unwrap();
+    let saved = driven.clone();
+    let event_time = 0.07;
+    let before = driven.sample(event_time).unwrap();
+    let point = [
+        before.motion.position[0],
+        before.motion.position[1] + 0.3,
+        before.motion.position[2],
+    ];
+    let target = ContactBody {
+        motion: Body {
+            position: point,
+            velocity: [0.; 3],
+            ..body().motion
+        },
+        spin: None,
+    }
+    .prepare_motion([0.; 3], [0.; 3], duration, config())
+    .unwrap();
+    let impact = physics::rigid_motion::prepare_impact(
+        &driven,
+        &target,
+        event_time,
+        point,
+        [-1., 0., 0.],
+        0.4,
+        config(),
+    )
+    .unwrap();
+    let remainder = impact.first_remainder.as_ref().unwrap();
+    assert_eq!(remainder.initial(), impact.first);
+    assert!(
+        (impact.first.spin.unwrap().angular_momentum[2] - before.spin.unwrap().angular_momentum[2])
+            .abs()
+            > 0.1
+    );
+    for segment in remainder.rotation().unwrap().segments() {
+        for dt in [0., segment.arc.duration() * 0.5, segment.arc.duration()] {
+            let t = segment.start_s + dt;
+            let state = remainder.sample(t).unwrap().spin.unwrap();
+            let theta = 2. * state.orientation[2].atan2(state.orientation[3]);
+            let expected = 0.4 * theta.cos() * (3. - 2. * (event_time + t));
+            assert!((segment.arc.torque_at(dt).unwrap()[2] - expected).abs() < 1e-12);
+        }
+    }
+    let work = remainder.work(remainder.duration()).unwrap();
+    let rebased = [0., 3. - 2. * event_time, 0.];
+    let probe = remainder
+        .material_point_force_work(remainder.duration(), local, rebased, rate)
+        .unwrap();
+    assert!((work.force_work + work.torque_work - probe.total_work).abs() < 1e-11);
+    assert_eq!(driven, saved);
+}

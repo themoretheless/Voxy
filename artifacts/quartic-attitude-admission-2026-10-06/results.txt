@@ -1,0 +1,2 @@
+31 release spin-path/rigid-motion tests passed. Formatting and diff checks passed.
+One failed invocation selected a nonexistent test target; corrected invocation passed.

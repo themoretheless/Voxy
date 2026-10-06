@@ -1,0 +1,17 @@
+{
+  "base_commit": "aa7066a9197e346c556f982deda7a3c5cfec7556",
+  "release_tests": {
+    "passed": 1952,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "fmt": "passed",
+  "diff_check": "passed",
+  "prescribed_source_receiver_dynamics": true,
+  "impact_force_continuation": true,
+  "independent_attitude_oracle": "analytic sphere and coupled quaternion/momentum RK4",
+  "mutual_contact_dynamics": false,
+  "supported_world_material_arm_integration": false,
+  "changes": "local"
+}

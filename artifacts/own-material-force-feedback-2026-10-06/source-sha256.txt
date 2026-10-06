@@ -1,0 +1,4 @@
+984fec305232963cdd1d2a416fc2b45a98cf6bc7dc3d5e897542b4ff4e794936  crates/physics/src/astrophysics_spin.rs
+370fb901be2fee46d2c0dfe4728c1883b375e51eeff77a2037264168a817201a  crates/physics/src/spin_path.rs
+c9d28b921585ee5bf29c029b294d43d7bd669f6b5010d89be9c6dcd4a59bf7ce  crates/physics/src/rigid_motion.rs
+7433031f2c86afb13f8b1b4aeae0653e8061b355237daa2430cd71ad158277b5  crates/physics/tests/rigid_motion.rs

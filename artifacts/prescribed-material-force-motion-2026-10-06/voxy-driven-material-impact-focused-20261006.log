@@ -1,0 +1,57 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 1.37s
+     Running tests/rigid_motion.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/rigid_motion-94c4116e568b448a)
+
+running 24 tests
+test affine_force_admission_rejects_nonfinite_laws_and_interior_energy_overflow ... ok
+test affine_force_impact_remainder_rebases_load_and_preserves_paths_on_failure ... ok
+test frozen_reciprocal_arms_expose_sliding_couple_instead_of_hiding_it ... ok
+test affine_force_closes_cubic_com_work_momentum_and_independent_prefix_integrals ... ok
+test cubic_velocity_hull_covers_hidden_speed_peak_and_clipped_intervals ... ok
+test endpoint_event_remainder_below_subdivision_floor_is_admitted_with_same_error_gate ... ok
+test impact_restarts_both_paths_and_continues_original_wrenches ... ok
+test late_second_remainder_failure_preserves_paths_and_endpoint_impact_needs_no_zero_step ... ok
+test material_point_kinematics_follow_cubic_com_and_analytic_spin_without_mutation ... ok
+test off_center_impact_then_free_motion_preserves_total_angular_momentum ... ok
+test preparation_rejects_budget_invalid_torque_and_interior_overflow_without_mutation ... ok
+test impact_remainder_rebases_polynomial_torque_at_actual_event_time ... ok
+test constant_wrench_closes_momentum_work_and_analytic_spherical_rotation ... ok
+test material_point_work_and_moment_match_independent_power_quadrature ... ok
+test decomposed_wrenches_use_one_actual_path_and_preserve_signed_work ... ok
+test subnormal_acceleration_survives_long_duration_without_time_squared_overflow ... ok
+test moving_reciprocal_application_preserves_angular_balance_and_uses_same_path_work ... ok
+test material_point_derivatives_use_nominal_arc_velocity_and_report_knot_sides ... ok
+test angular_impulse_integrates_orbital_motion_and_preserves_frame_and_wrench_balance ... ok
+test point_impact_continues_prescribed_material_force_phase_and_recomputes_com_arm ... ok
+test prescribed_rotating_point_force_drives_analytic_spherical_momentum_and_attitude ... ok
+test material_point_work_splits_changing_spin_arcs_and_keeps_stationary_arm_moment ... ok
+test reciprocal_material_point_forces_close_world_moments_on_different_spin_paths ... ok
+test prescribed_material_force_rebases_source_knots_and_closes_independent_moment_and_work ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+     Running tests/spin_path.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/spin_path-dc4569f6970d6e6a)
+
+running 10 tests
+test constant_torque_arc_prefix_error_is_bounded_against_analytic_sphere ... ok
+test cubic_arm_affine_force_quartic_torque_matches_direct_product_and_gaussian_impulse ... ok
+test late_path_budget_failure_preserves_caller_and_sampling_admission_is_explicit ... ok
+test isotropic_path_matches_analytic_rotation_and_retains_exact_step_endpoint ... ok
+test every_torque_coefficient_rejects_nonfinite_before_adaptive_preparation ... ok
+test higher_order_torque_attitude_bound_covers_independent_spherical_solution ... ok
+test polynomial_torque_spherical_prefixes_match_integrated_momentum_and_analytic_attitude ... ok
+test anisotropic_free_spin_refines_and_model_bound_covers_independent_rk4_samples ... ok
+test polynomial_torque_anisotropic_model_bound_covers_independent_time_dependent_rk4 ... ok
+test long_precession_reserves_future_error_amplification_and_matches_rk4 ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
