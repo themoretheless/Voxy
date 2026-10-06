@@ -2,8 +2,8 @@
 //! Geometry supplies the admitted point and normal; interval evolution stays with
 //! the caller. No position correction, guessed stiffness or heat is introduced.
 use super::{
-    ContactBody, Error, ManifoldConfig, NormalContact, Vector, cross, dot, finite,
-    solve_normal_constraints, sub,
+    ContactBody, Error, ManifoldConfig, NetworkContact, NormalContact, Vector, cross, dot, finite,
+    solve_normal_network_constraints, sub,
 };
 
 /// Explicit owner of the supporting normal. Geometry, not the contact solver,
@@ -196,25 +196,99 @@ pub fn resolve_normal_reactions(
     second_external: Option<ContactWrench>,
     config: ReactionConfig,
 ) -> Result<NormalReaction, Error> {
-    if contacts.is_empty()
+    if second.is_none() && second_external.is_some() {
+        return Err(Error::InvalidInput);
+    }
+    let mut bodies = vec![*first];
+    let mut external = vec![first_external];
+    if let Some(body) = second {
+        bodies.push(*body);
+        external.push(second_external.unwrap_or_default());
+    }
+    let indexed: Vec<_> = contacts
+        .iter()
+        .map(|support| NetworkSupport {
+            first: 0,
+            second: second.map(|_| 1),
+            support: *support,
+        })
+        .collect();
+    let result = resolve_normal_reaction_network(&bodies, &indexed, &external, config)?;
+    Ok(NormalReaction {
+        forces: result.forces,
+        first_wrench: result.wrenches[0],
+        second_wrench: second.map(|_| result.wrenches[1]),
+        normal_accelerations: result.normal_accelerations,
+        sweeps: result.sweeps,
+        acceleration_residual: result.acceleration_residual,
+        instantaneous_power: result.instantaneous_power,
+    })
+}
+
+/// Geometry-admitted support between indexed caller-owned bodies, or the world.
+/// Plane ownership is relative to this support's first and second body.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct NetworkSupport {
+    pub first: usize,
+    pub second: Option<usize>,
+    pub support: NormalSupport,
+}
+#[derive(Clone, Debug, PartialEq)]
+pub struct NetworkReaction {
+    /// World forces on the first participant of each input support.
+    pub forces: Vec<Vector>,
+    /// Total reciprocal reaction force and COM torque for each input body.
+    pub wrenches: Vec<ContactWrench>,
+    pub normal_accelerations: Vec<f64>,
+    pub sweeps: usize,
+    pub acceleration_residual: f64,
+    /// Instantaneous sum of force times relative point velocity, in watts.
+    pub instantaneous_power: f64,
+}
+
+/// Solve simultaneous nonnegative reactions for a complete admitted support
+/// network. Shared bodies couple every incident constraint through their mass
+/// and world inertia. Inputs are read-only; no pairwise force superposition or
+/// physical-state replacement is performed. This remains an instantaneous solve,
+/// not a geometry branch or finite-interval trajectory certificate.
+pub fn resolve_normal_reaction_network(
+    bodies: &[ContactBody],
+    contacts: &[NetworkSupport],
+    external: &[ContactWrench],
+    config: ReactionConfig,
+) -> Result<NetworkReaction, Error> {
+    if bodies.is_empty()
+        || bodies.len() > 128
+        || external.len() != bodies.len()
+        || contacts.is_empty()
         || contacts.len() > 128
         || config.max_sweeps == 0
         || !config.acceleration_tolerance.is_finite()
         || config.acceleration_tolerance <= 0.
         || !config.normal_velocity_tolerance.is_finite()
         || config.normal_velocity_tolerance <= 0.
-        || (second.is_none() && second_external.is_some())
     {
         return Err(Error::InvalidInput);
     }
-    let mut a = virtual_rates(*first, first_external)?;
-    let mut b = second
-        .map(|body| virtual_rates(*body, second_external.unwrap_or_default()))
-        .transpose()?;
+    let mut rates = bodies
+        .iter()
+        .zip(external)
+        .map(|(body, wrench)| virtual_rates(*body, *wrench))
+        .collect::<Result<Vec<_>, _>>()?;
     let mut active = Vec::new();
     let mut indices = Vec::new();
     let mut biases = Vec::new();
-    for (index, support) in contacts.iter().enumerate() {
+    for (index, entry) in contacts.iter().enumerate() {
+        if entry.first >= bodies.len()
+            || entry
+                .second
+                .is_some_and(|j| j >= bodies.len() || j == entry.first)
+        {
+            return Err(Error::InvalidInput);
+        }
+        let first = &bodies[entry.first];
+        let second = entry.second.map(|j| &bodies[j]);
+        let support = entry.support;
         let normal = unit_normal(support.contact.normal)?;
         let contact = NormalContact {
             normal,
@@ -238,8 +312,8 @@ pub fn resolve_normal_reactions(
                 contact,
                 plane: support.plane,
             },
-            first_external,
-            second_external,
+            external[entry.first],
+            entry.second.map(|j| external[j]),
         )?;
         if speed > config.normal_velocity_tolerance {
             continue;
@@ -247,15 +321,21 @@ pub fn resolve_normal_reactions(
         let linear = dot(
             normal,
             sub(
-                a.point_velocity(contact.point)?,
-                b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+                rates[entry.first].point_velocity(contact.point)?,
+                entry
+                    .second
+                    .map_or(Ok([0.; 3]), |j| rates[j].point_velocity(contact.point))?,
             ),
         );
         let bias = acceleration - linear;
         if !bias.is_finite() {
             return Err(Error::NumericalFailure);
         }
-        active.push(contact);
+        active.push(NetworkContact {
+            first: entry.first,
+            second: entry.second,
+            contact,
+        });
         indices.push(index);
         biases.push(bias);
     }
@@ -263,9 +343,8 @@ pub fn resolve_normal_reactions(
     let (sweeps, residual) = if active.is_empty() {
         (0, 0.)
     } else {
-        let report = solve_normal_constraints(
-            &mut a,
-            b.as_mut(),
+        let report = solve_normal_network_constraints(
+            &mut rates,
             &active,
             ManifoldConfig {
                 max_sweeps: config.max_sweeps,
@@ -279,32 +358,41 @@ pub fn resolve_normal_reactions(
         }
         (report.sweeps, report.velocity_residual)
     };
-    let mut first_wrench = ContactWrench::default();
-    let mut second_wrench = second.map(|_| ContactWrench::default());
+    let mut wrenches = vec![ContactWrench::default(); bodies.len()];
     let mut power = 0.;
-    for (support, force) in contacts.iter().zip(&forces) {
-        let contact = support.contact;
-        accumulate(&mut first_wrench, *first, contact.point, *force)?;
-        if let (Some(body), Some(wrench)) = (second, second_wrench.as_mut()) {
-            accumulate(wrench, *body, contact.point, force.map(|f| -f))?;
+    for (entry, force) in contacts.iter().zip(&forces) {
+        let contact = entry.support.contact;
+        accumulate(
+            &mut wrenches[entry.first],
+            bodies[entry.first],
+            contact.point,
+            *force,
+        )?;
+        if let Some(j) = entry.second {
+            accumulate(
+                &mut wrenches[j],
+                bodies[j],
+                contact.point,
+                force.map(|f| -f),
+            )?;
         }
         let relative = sub(
-            first.point_velocity(contact.point)?,
-            second.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+            bodies[entry.first].point_velocity(contact.point)?,
+            entry
+                .second
+                .map_or(Ok([0.; 3]), |j| bodies[j].point_velocity(contact.point))?,
         );
         power += dot(*force, relative);
     }
     let normal_accelerations = contacts
         .iter()
-        .map(|contact| {
+        .map(|entry| {
             normal_gap_acceleration(
-                first,
-                second,
-                *contact,
-                add_wrench(first_external, first_wrench),
-                second.map(|_| {
-                    add_wrench(second_external.unwrap_or_default(), second_wrench.unwrap())
-                }),
+                &bodies[entry.first],
+                entry.second.map(|j| &bodies[j]),
+                entry.support,
+                add_wrench(external[entry.first], wrenches[entry.first]),
+                entry.second.map(|j| add_wrench(external[j], wrenches[j])),
             )
         })
         .collect::<Result<Vec<_>, _>>()?;
@@ -324,10 +412,9 @@ pub fn resolve_normal_reactions(
     if checked_residual > config.acceleration_tolerance {
         return Err(Error::Budget);
     }
-    Ok(NormalReaction {
+    Ok(NetworkReaction {
         forces,
-        first_wrench,
-        second_wrench,
+        wrenches,
         normal_accelerations,
         sweeps,
         acceleration_residual: checked_residual,

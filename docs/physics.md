@@ -5594,3 +5594,151 @@ supports. Invalid indices, source codes, degenerate geometry and exhausted query
 budgets fail explicitly. Compound-pair and independent moving-edge derivative
 fixtures pass. This metadata does not certify branch persistence or integrate
 normal reactions into finite-interval scene evolution.
+
+
+### Fixed-wall scene reaction bridge qualification (2026-10-06)
+
+A real scene with two fixed BoxColliders and a rotated affine moving body now
+qualifies selected-wall event identity, obstacle-face SAT ownership, feature-aware
+clipping and the post-impact support callback. The selected wall stays a World
+normal even when the moving body's momentum changes. Bad wall indices and zero
+query budgets reject explicitly. The admitted patch runs through the existing
+inelastic impulse solver, then supports are rebuilt before the instantaneous
+normal reaction solve. Under a COM load toward the wall, reactions point away
+from it, preserve input snapshots and satisfy the normal acceleration residual
+and instantaneous-power gates. An independent spherical-inertia material-point
+calculation agrees with returned accelerations. Gameplay/editor regression:
+337 passed, 13 ignored. Logs: artifacts/environment-support-reactions-2026-10-06.
+
+This is a bridge qualification, not sustained-contact evolution. Inspection of
+step_with_rigid_body_world confirms gravity currently kicks body velocity before
+solve_contact; subsequent prepared trajectories use zero force and torque. The
+next integration must carry external and reaction wrenches through interval
+trajectories and account for gravity once, validate geometry branches throughout
+the accepted interval, and solve simultaneous support networks together. Pair
+reactions applied independently cannot qualify a body supported by multiple
+bodies. No finite reaction work, branch-persistence or editor-preview claim is
+made by this fixture.
+
+
+### Simultaneous contact and reaction networks (2026-10-06)
+
+The normal contact solver now admits indexed contacts over caller-owned arrays
+of at most 128 ContactBody snapshots and 128 contacts. NetworkContact identifies
+its first body and optional second body; None denotes a fixed world boundary.
+The existing scalar and two-variable block complementarity algorithm now uses
+signed coupling contributions from every shared finite participant. Pair
+manifold and reaction APIs route through the same network kernel, retaining
+physical world inertia and staging all snapshots before committing an impact.
+NetworkSupport additionally names the supporting normal owner relative to its
+participants. resolve_normal_reaction_network returns per-support forces,
+per-body reciprocal COM wrenches, physical gap accelerations, convergence residual
+and instantaneous constraint power without changing any physical input snapshot.
+Geometry admission, object ownership and normal-branch persistence stay outside
+this mechanics API. Invalid indices, self contacts, malformed inputs, limits,
+incoming support speed and exhausted solve budgets reject explicitly.
+
+Physical energy guards and impact loss are evaluated per connected finite-body
+contact component. An unrelated high-energy body cannot relax another collision's
+energy guard or erase its small measured loss in a global subtraction. Reaction
+rate snapshots still use their acceleration objective rather than interpreting
+virtual kinetic energy as physical heat.
+
+Analytic network fixtures qualify a three-body stack with masses 2, 3 and 5 kg
+under 10 m/s^2 gravity: support forces are 20, 50 and 100 N. Isolated pair solves
+cannot transmit that floor load. An anisotropic rigid beam under a 20 N load and
+6 Nm torque, on finite supports weighing 30 and 50 N, resolves upper forces 13
+and 7 N and floor forces 43 and 57 N. Body/contact reordering, reciprocal
+participant swapping, a proper cyclic world rotation, outgoing contact removal,
+full 128-body/contact admission, duplicate constraints and late failure are
+covered. A simultaneous three-body inelastic impact conserves momentum and
+reports its measured energy loss; a disconnected body with 5e199 J does not
+change a separate collision's -2.25 J energy report.
+
+This adds the shared mechanics needed by interval evolution. The scene event
+loop now jointly resolves exactly simultaneous closing frictionless inelastic
+rigid events, as qualified below. It has not yet assembled persistent support
+islands or integrated reaction wrenches over accepted trajectories. Sustained-contact geometry, branch transitions and finite reaction
+work remain unqualified. Qualification logs: artifacts/contact-network-2026-10-06.
+
+Full physics/gameplay/editor regression passed 1886 tests with 24 ignored.
+The final focused network run passed all eight fixtures, including the additional
+limit/duplicate and rotated-frame checks. App/editor all-target release checks,
+formatting and diff checks passed. These local changes have not been pushed.
+
+
+### Simultaneous rigid events in the shared world loop (2026-10-06)
+
+The existing earliest-event loop now retains all admitted closing events whose
+reported fractions exactly equal the minimum. Frictionless inelastic body-only
+groups with multiple events are resolved jointly through the shared indexed
+normal solver. Each geometry witness and opaque feature token stays attached to
+its originating pair/boundary query when building clipped patches. Participating
+body indices map into one staged network; fixed walls have no finite mass entry.
+Group events consume the full contact budget, angular patches consume query
+budget, and the network caps participating bodies and clipped points at 128.
+A failed second patch, query charge or group admission preserves the complete
+public fluid/body state. Other contact modes retain their previous response.
+Unequal reported fractions are not merged by an arbitrary temporal tolerance;
+physically coincident impacts with different query uncertainty remain an open
+admission/interval-timing problem.
+
+A real SceneBodyWorld geometry fixture qualifies two simultaneous face impacts
+among three bodies under both original and permuted body order. It advances the
+post-impact remainder, conserves momentum and reports 9 J kinetic loss. A separate
+controlled body/wall fixture qualifies boundary ledger wiring: two finite bodies
+transmit 9 N s to the fixed world and dissipate 22.5 J. Its residual angular bound
+is derived from normal point-speed tolerance and the 0.02 m patch lever arm, and
+all four points are checked independently. Controlled callbacks in that fixture
+are not evidence of scene interval geometry clearance.
+
+The real fixture initially rejected the post-impact remainder despite a positive
+represented gap: small retained residual velocities/spin fell inside the contact
+search's initial tolerance. Nominal rigid queries now test whether a directed
+fixed-world-axis gap covers the complete constant-axis arc excursion, including
+relative COM motion, rotations and floating pose allowances (with absolute COM
+motion included in the evaluation scale). They retain physical velocity/momentum
+and add no position correction in the group branch. This matches the preexisting
+nominal-trajectory query contract: SpinPath model residual is recorded separately,
+not used as nominal pose evaluation error. It is not a proof of the true driven
+orbit or an interval transcendental evaluation certificate. A targeted fixture
+qualifies small-motion clearance and retained orientation change, while genuinely
+closing and unresolved rotating-touch fixtures prevent an unconditional near-rest
+clear result.
+
+Focused physics plus complete gameplay/editor regression passed 376 tests with
+13 ignored. App/editor all-target release checks, formatting and diff checks
+passed. Logs: artifacts/simultaneous-rigid-events-2026-10-06. These changes remain
+local. Persistent support assembly, reaction-driven constrained trajectories,
+finite work accounting and the previously unresolved off-center inelastic scene
+step remain unfinished.
+
+
+### Continuous world wrenches and shared gravity (2026-10-06)
+
+`step_with_rigid_body_forces` accepts additional per-body COM forces and torques
+and combines them with configured gravity across substeps and impact remainders.
+The existing rigid-world entrypoint forwards zero additional wrenches. Prepared
+trajectories update COM, velocity and Spin together at accepted event times.
+`RigidMotion::work` reports force displacement work, nominal angular segment
+torque work and signed kinetic integration residual; residual is not heat.
+`RigidWorldReport.external_work` covers body work only.
+
+The SPH mover removes its prior uniform gravity velocity kick and uses the same
+continuous gravity trajectory for particles and bodies. Pressure and viscosity
+retain their existing operator split. Equal-acceleration particle/body queries
+reduce to relative linear motion and transport witnesses by half acceleration
+times elapsed time squared. Other accelerated paths use trajectory queries;
+legacy linear-only callbacks reject unsupported accelerated queries.
+
+Analytic force/torque, split-step, real parabolic wall impact, common gravity,
+quadratic witness transport and complete rollback fixtures qualify this change.
+The existing authored liquid/editor play-stop fixture passes after correcting
+the particle/body gravity mismatch. A resting gravity support still rejects with
+CollisionBudget and rolls back: persistent support assembly and constrained
+reaction trajectory evolution remain unfinished. Raw qualification logs are
+retained in artifacts/rigid-world-forces-2026-10-06.
+
+Final release regression passed 1900 tests with 24 ignored; app/editor
+all-target release checks and formatting/diff checks passed. This milestone and
+the preceding local contact milestones are included in the delivery commit.

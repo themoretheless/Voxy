@@ -56,6 +56,10 @@ fn constant_wrench_closes_momentum_work_and_analytic_spherical_rotation() {
         let momentum_roundoff =
             8. * f64::EPSILON * (path.rotation().unwrap().segments().len() + 1) as f64 * (2. + t);
         assert!((spin.angular_momentum[2] - (2. + t)).abs() <= momentum_roundoff);
+        let evaluated = path.work(t).unwrap();
+        assert_eq!(evaluated.force_work, 4. * (state.motion.position[0] - 1.));
+        assert!((evaluated.torque_work - angle).abs() <= model_bound + 1e-12);
+        assert!(evaluated.energy_residual.abs() <= model_bound + 4. * momentum_roundoff + 1e-12);
         let work = 4. * (state.motion.position[0] - 1.) + angle;
         assert!(
             (state.energy().unwrap() - initial.energy().unwrap() - work).abs()

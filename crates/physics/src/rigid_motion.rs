@@ -24,6 +24,16 @@ pub struct RigidMotion {
     end: ContactBody,
 }
 
+/// Work on the represented prepared trajectory. Torque work integrates the
+/// nominal constant-axis arcs; its energy discrepancy is diagnostic, not heat.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct MotionWork {
+    pub force_work: f64,
+    pub torque_work: f64,
+    pub kinetic_energy_change: f64,
+    pub energy_residual: f64,
+}
+
 impl ContactBody {
     /// Prepare without mutation. Force acts at COM; torque is about COM.
     /// A particle cannot receive intrinsic torque. Rotation reuses SpinPath.
@@ -109,6 +119,50 @@ impl RigidMotion {
             .map_err(Error::Rotation)?;
         body.energy().map_err(|_| Error::NumericalFailure)?;
         Ok(body)
+    }
+
+    /// Evaluate external work through the same trajectory prefix as sampling.
+    /// Force work is F dot COM displacement; torque work is the sum of torque
+    /// dot nominal arc angular velocity times its clipped duration. The residual
+    /// retains integrator/rounding discrepancy and is never dissipated energy.
+    pub fn work(&self, time: f64) -> Result<MotionWork, Error> {
+        let endpoint = self.sample(time)?;
+        let force_work: f64 = (0..3)
+            .map(|k| {
+                self.force[k] * (endpoint.motion.position[k] - self.initial.motion.position[k])
+            })
+            .sum();
+        let mut torque_work = 0.;
+        if let Some(rotation) = &self.rotation {
+            for segment in rotation.segments() {
+                let duration = (time.min(segment.end_s) - segment.start_s).max(0.);
+                if duration == 0. {
+                    break;
+                }
+                let omega = segment.arc.angular_velocity();
+                torque_work += (0..3).map(|k| self.torque[k] * omega[k]).sum::<f64>() * duration;
+            }
+        }
+        let kinetic_energy_change = endpoint.energy().map_err(Error::Contact)?
+            - self.initial.energy().map_err(Error::Contact)?;
+        let energy_residual = kinetic_energy_change - force_work - torque_work;
+        if [
+            force_work,
+            torque_work,
+            kinetic_energy_change,
+            energy_residual,
+        ]
+        .iter()
+        .any(|v| !v.is_finite())
+        {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(MotionWork {
+            force_work,
+            torque_work,
+            kinetic_energy_change,
+            energy_residual,
+        })
     }
 
     /// Sample the same prepared trajectory used for the accepted endpoint.
