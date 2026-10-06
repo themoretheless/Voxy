@@ -1,0 +1,93 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+error[E0369]: binary operation `==` cannot be applied to type `std::option::Option<Vec<convex::AffineBox>>`
+  --> crates/voxy_gameplay/src/liquid_runtime.rs:22:5
+   |
+17 | #[derive(Clone, Debug, PartialEq)]
+   |                        --------- in this derive macro expansion
+...
+22 |     principal_templates: Option<Vec<crate::convex::AffineBox>>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: an implementation of `PartialEq` might be missing for `convex::AffineBox`
+  --> crates/voxy_gameplay/src/convex.rs:67:1
+   |
+67 | pub(crate) struct AffineBox {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^ must implement `PartialEq`
+help: consider annotating `convex::AffineBox` with `#[derive(PartialEq)]`
+  --> crates/voxy_gameplay/src/convex.rs:67:1
+   |
+67 + #[derive(PartialEq)]
+68 | pub(crate) struct AffineBox {
+   |
+
+error[E0609]: no field `position` on type `ContactBody`
+    --> crates/voxy_gameplay/src/liquid_runtime.rs:1845:31
+     |
+1845 |         runtime.body[0].state.position[0] += 1.;
+     |                               ^^^^^^^^ unknown field
+     |
+help: one of the expressions' fields has a field of the same name
+     |
+1845 |         runtime.body[0].state.motion.position[0] += 1.;
+     |                               +++++++
+
+error[E0609]: no field `position` on type `ContactBody`
+    --> crates/voxy_gameplay/src/liquid_runtime.rs:1846:31
+     |
+1846 |         runtime.body[1].state.position[0] = 1e100;
+     |                               ^^^^^^^^ unknown field
+     |
+help: one of the expressions' fields has a field of the same name
+     |
+1846 |         runtime.body[1].state.motion.position[0] = 1e100;
+     |                               +++++++
+
+error[E0308]: arguments to this method are incorrect
+    --> crates/voxy_gameplay/src/liquid_runtime.rs:2078:19
+     |
+2078 |             world.sweep_body_pair(0, &runtime.body[0].state, 1, &runtime.body[1].state, 0.1, 3),
+     |                   ^^^^^^^^^^^^^^^    ----------------------     ---------------------- expected `&TranslatingBody`, found `&ContactBody`
+     |                                      |
+     |                                      expected `&TranslatingBody`, found `&ContactBody`
+     |
+     = note: expected reference `&TranslatingBody`
+                found reference `&ContactBody`
+     = note: expected reference `&TranslatingBody`
+                found reference `&ContactBody`
+note: method defined here
+    --> crates/physics/src/liquid/multi_body.rs:40:8
+     |
+  40 |     fn sweep_body_pair(
+     |        ^^^^^^^^^^^^^^^
+
+error[E0308]: mismatched types
+    --> crates/voxy_gameplay/src/liquid_runtime.rs:2082:45
+     |
+2082 |             world.sweep_body_environment(0, &runtime.body[0].state, 0.1, 1),
+     |                   ----------------------    ^^^^^^^^^^^^^^^^^^^^^^ expected `&TranslatingBody`, found `&ContactBody`
+     |                   |
+     |                   arguments to this method are incorrect
+     |
+     = note: expected reference `&TranslatingBody`
+                found reference `&ContactBody`
+note: method defined here
+    --> crates/physics/src/liquid/multi_body.rs:56:8
+     |
+  56 |     fn sweep_body_environment(
+     |        ^^^^^^^^^^^^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0369`.
+error: could not compile `voxy_gameplay` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+Some errors have detailed explanations: E0308, E0369, E0609.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `voxy_gameplay` (lib test) due to 5 previous errors

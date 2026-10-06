@@ -1,0 +1,69 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:295:15
+    |
+295 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:364:15
+    |
+364 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:476:15
+    |
+476 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:659:9
+    |
+654 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+659 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+660 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+661 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 4 warnings
+    Finished `release` profile [optimized] target(s) in 5.29s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 1 test
+test liquid_runtime::tests::authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger ... FAILED
+
+failures:
+
+---- liquid_runtime::tests::authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger stdout ----
+
+thread 'liquid_runtime::tests::authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger' (46632629) panicked at crates/voxy_gameplay/src/liquid_runtime.rs:2424:9:
+assertion `left == right` failed
+  left: [ContactBody { motion: Body { mass: 1.0, position: [-0.04000000000002939, 0.0, 0.0], velocity: [6.520478601501623e-14, 0.0, 0.0] }, spin: Some(Spin { orientation: [6.681911775230489e-52, 2.4300870936797842e-17, -1.7115269874392005e-18, 1.0], angular_momentum: [0.0, 4.418340170324754e-15, -3.1118672498879584e-16], inertia: [1.0, 1.0, 1.0] }) }]
+ right: [ContactBody { motion: Body { mass: 1.0, position: [-0.04000000000002945, 0.0, 0.0], velocity: [6.520478601501623e-14, 0.0, 0.0] }, spin: Some(Spin { orientation: [0.0, 2.2091700851635465e-17, -1.5559336249448026e-18, 1.0], angular_momentum: [0.0, 4.418340170324754e-15, -3.1118672498879584e-16], inertia: [1.0, 1.0, 1.0] }) }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    liquid_runtime::tests::authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 114 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_gameplay --lib`

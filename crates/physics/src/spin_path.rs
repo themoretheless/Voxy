@@ -6,6 +6,8 @@ use crate::{
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Config {
     pub max_angular_error_rad: f64,
+    /// Adaptive subdivision floor. A terminal interval clipped by an event or
+    /// the requested horizon may be shorter, but must pass the same error bound.
     pub min_step_s: f64,
     pub max_arcs: usize,
     pub max_trials: usize,
@@ -127,7 +129,7 @@ impl Spin {
                 time + step
             };
             step = end - time;
-            if end <= time || step < config.min_step_s {
+            if end <= time || (step < config.min_step_s && end != duration) {
                 return Err(PathError::Budget);
             }
             path.trials += 1;

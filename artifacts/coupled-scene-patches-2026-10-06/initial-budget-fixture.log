@@ -1,0 +1,38 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 17.68s
+     Running tests/normal_manifold.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/normal_manifold-37e1ea3107e57907)
+
+running 6 tests
+test closely_coupled_face_patch_releases_inactive_points_and_closes_analytic_impulse ... ok
+test contact_order_and_proper_coordinate_permutation_preserve_the_solution ... ok
+test duplicate_points_match_single_inelastic_impact_and_separating_points_are_inactive ... ok
+test late_nonconvergence_and_invalid_points_preserve_both_bodies ... FAILED
+test reciprocal_manifold_closes_world_momenta_and_energy_ledger ... ok
+test two_face_points_stop_translation_and_spin_without_energy_gain ... ok
+
+failures:
+
+---- late_nonconvergence_and_invalid_points_preserve_both_bodies stdout ----
+
+thread 'late_nonconvergence_and_invalid_points_preserve_both_bodies' (46605875) panicked at crates/physics/tests/normal_manifold.rs:98:5:
+assertion `left == right` failed
+  left: Ok(ManifoldImpulse { impulses: [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.5, 0.0, 0.0]], sweeps: 1, velocity_residual: 0.0, kinetic_energy_change: -1.0625 })
+ right: Err(Budget)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    late_nonconvergence_and_invalid_points_preserve_both_bodies
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test normal_manifold`

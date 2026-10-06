@@ -1,0 +1,42 @@
+{
+  "status": "qualified_with_explicit_limitations",
+  "tests": {
+    "physics-tests.log": {
+      "passed": 21,
+      "failed": 0,
+      "ignored": 0
+    },
+    "scene-regression.log": {
+      "passed": 332,
+      "failed": 0,
+      "ignored": 13
+    }
+  },
+  "consumer_all_targets": "passed",
+  "format": "passed",
+  "source_sha256": {
+    "crates/physics/src/spin_path.rs": "3543154a07164475e688e31dab892cfb36bcef867dcee253939872028a438f98",
+    "crates/physics/tests/rigid_motion.rs": "3597a27e3d8b0f4852877bf2f01cac72a3e7f703d7691dfa1f99e3bb7522f0ee",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "d8e1e626092258425390a1f9520ca59b40d0cff1a017a5cecda3ad19da9f5895",
+    "crates/voxy_gameplay/src/convex.rs": "d54df360c154e3cbe78353c66690e9d4da11812583bdc5936ef43f791c8743df",
+    "crates/voxy_editor/src/lib.rs": "32a531f6c2228594a6d84111bd6b665df595023282a0e5dfab9ef2feefb12a54",
+    "docs/physics.md": "7f7e164694866331cdf61885bef808b9e0960274656895a103ca7d495c613093"
+  },
+  "verified": [
+    "persistent scene COM/Spin with authored mass",
+    "elastic off-center scene-owner impact",
+    "continued spin across ticks",
+    "published geometry within 1e-5 m gate",
+    "inactive pause",
+    "late publication rollback",
+    "default inelastic unresolved-contact full rollback",
+    "tiny terminal spin interval retains error gate",
+    "editor Play COM-offset publication and Stop/restart regression"
+  ],
+  "limitations": [
+    "off-center inelastic rotating sustained contact returns CollisionBudget; coupled patch/resting solve remains unfinished",
+    "angular friction unsupported",
+    "initial angular momentum and torque authoring unfinished",
+    "no fresh live editor rotation preview"
+  ]
+}

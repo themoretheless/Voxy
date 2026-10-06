@@ -5453,3 +5453,144 @@ check separation, static rest, accelerated return and unresolved rotating edges.
 Logs: artifacts/scene-rigid-geometry-2026-10-06. SceneLiquidRuntime still uses the
 translating adapter; persistent angular scene ownership and Play publication are
 not enabled by this change. Angular friction and resting manifolds remain open.
+
+### Persistent scene COM/Spin owners and atomic angular publication (2026-10-06)
+
+SceneLiquidRuntime now stores ContactBody in the existing body owners. Explicit
+LiquidMassDistribution seeds COM, principal inertia and zero angular momentum;
+impact can subsequently change intrinsic Spin. Bodies without authored mass
+retain the legacy no-Spin motion. Collision templates for angular owners are
+bound once in the initial principal COM frame, preserving the admitted affine
+geometry instead of reconstructing physical shapes from each rounded scene pose.
+Active owners use the shared rigid liquid/body event loop. Inactive owners pause.
+
+Publication prepares all angular root transforms through RigidBodyFrame with a
+physical shape radius and a 1e-5 m point-error gate, then uses one atomic set_locals
+batch for both angular and legacy owners. Mechanical state, liquid, source clocks
+and published bindings commit only after preparation and publication succeed.
+body_rigid_states exposes persistent intrinsic Spin; body_states exposes COM
+position/velocity for authored mass and the legacy pivot for no-Spin bodies.
+The editor Play host uses this same runtime and still restores authored state on
+Stop/restart. Its mass fixture checks COM offsets and the persistent frame directly.
+
+Caller-facing tick_with_dynamics and tick_and_publish_with_dynamics allow explicit
+normal restitution and angular budgets. Defaults remain zero restitution/friction,
+angular model allowance 1e-5 rad, subdivision floor 1e-9 s, 10000 arcs and 30000
+trials. Intrinsic angular friction is still rejected. A terminal SpinPath interval
+clipped by a contact or horizon may be below the subdivision floor; it must pass
+the unchanged angular error gate. Failed adaptive subdivisions below the floor
+still reject, as do invalid configs and impossible angular allowances.
+
+The off-center scene-owner fixture checks an explicitly elastic impact, angular
+momentum, energy/loss, published child geometry within the pose gate, continued
+rotation on another tick, inactive pause and late publication rollback. The same
+fixture records an unresolved default inelastic contact as CollisionBudget and
+requires complete runtime/scene rollback. This remains a real limitation: tangent
+or sustained rotating contact needs a coupled patch/resting solve; angular scene
+ownership does not make that collision class production-ready. Initial angular
+momentum/torque authoring and a live editor rotation preview are also unqualified.
+Logs: artifacts/persistent-scene-spin-2026-10-06, including initial compilation,
+fixture-capacity and unresolved inelastic failures retained for diagnosis.
+
+### Coupled normal patches on the shared rigid event timeline (2026-10-06)
+
+LiquidBodyWorld exposes contact-time rigid_pair_patch and
+rigid_environment_patch callbacks, with singleton defaults for existing geometry.
+For a zero-restitution angular body event the existing solver now asks geometry
+for the admitted patch, charges the global query budget, and sends its points to
+the shared inelastic normal manifold. SceneBodyWorld clips the actual posed affine
+shapes, matches the event witness to both supports, bounds candidate pairs and
+patch size, and returns at most 128 world points. Static-wall sampling metadata
+never becomes a finite mass in the physical solver: wall response uses no second
+ContactBody. Impulses sum into the existing boundary ledger and actual kinetic
+energy change into the existing dissipated-energy ledger. Invalid patch points,
+patch budgets and solve failure retain whole-step rollback.
+
+The manifold now combines projected scalar updates with nonnegative two-variable
+block minimization. The blocks use reciprocal contact mass including both world
+inertia operators; singular/duplicate blocks retain scalar updates. This avoids
+slow alternating impulses for a narrowly spaced face patch. Sweep budgets still
+bound iteration; normalized coupling, finite states, velocity complementarity and
+energy admission still guard commit. The analytic narrow-patch fixture checks
+inactive-point release, impulse 3/(2+0.02^2+0.98^2), linear/angular momentum and
+energy. A nonparallel three-normal fixture checks late nonconvergence rollback;
+two-point fixtures now converge in one block sweep rather than requiring multiple
+scalar sweeps. Existing order/frame and duplicate-point tests remain qualified.
+
+A real authored wall fixture checks inelastic stopping, negligible floating spin,
+boundary impulse, loss balance and a subsequent clear resting tick. A controlled
+body-pair callback separately checks shared event/ledger wiring, malformed patch
+rollback and global query charging; its declared clear remainder is not a proof
+of scene geometry. The real scene patch fixture proves that all initial normal
+velocities can satisfy complementarity and still produce penetration after 0.001 s
+of free rotation. The full off-center scene-owner step therefore still rejects
+with CollisionBudget and rolls back. The scalar solver's original 10000-sweep
+failure is recorded separately from that remaining geometric/temporal failure.
+
+Sustained rotating contact needs acceleration/constraint evolution through the
+interval. Patch impulses alone do not close that requirement, and no free drift
+is accepted in place of its solution. Restitution greater than zero retains the
+existing point-impact path; angular friction and persistent contact caches remain
+unfinished. Logs: artifacts/coupled-scene-patches-2026-10-06, including raw initial
+budget, diagnostic and test-expectation failures.
+
+### Instantaneous supporting-contact reactions (2026-10-06)
+
+The shared contact module now exposes normal_gap_acceleration and
+resolve_normal_reactions. Geometry supplies a NormalSupport containing the
+admitted coincident material point, normal and explicit supporting-plane branch:
+First, Second, World, or a geometry-owned unit-normal Rate for edge/edge features.
+Body-owned normals use omega cross n; a supplied normal rate must be finite and
+orthogonal to the unit normal within a floating guard. The solver never guesses
+the plane owner from a normal vector. A Second branch requires a second body.
+
+For a material point with COM arm r, the free acceleration is
+F/m + alpha cross r + omega cross (omega cross r), with
+alpha = I_world^-1 (torque - omega cross angular_momentum). At a coincident
+contact the normal gap acceleration is n dot (a_point_first-a_point_second)
++ 2 n_rate dot (v_point_first-v_point_second). This retains gyroscopic,
+centrifugal and moving-normal terms without adding a new inertia implementation.
+The n_second_derivative dot gap term vanishes at that admitted coincident point;
+geometry tolerances and feature changes still need finite-interval admission.
+
+Resting points within the caller's normal-speed tolerance participate in the
+nonnegative force complementarity solve. Outgoing points receive zero reaction;
+faster approaching points require an impact solve first. The existing contact
+mass and pair-block solver operates on private rate snapshots with curvature
+biases. Physical snapshots remain immutable. Results contain per-point newton
+forces, reciprocal COM force/torque, recomputed normal accelerations, an
+acceleration residual and instantaneous constraint power in watts. Its rate
+objective is not interpreted as physical kinetic energy or heat. A no-Spin point
+body accepts a central force and rejects an unowned intrinsic torque. All body,
+point, wrench, normal-rate, iteration and residual failures preserve inputs.
+
+Ten reaction fixtures qualify supported weight, outgoing/incoming admission,
+central point forces, torque ownership, Euler gyroscopic acceleration, analytic
+narrow-patch curvature/reaction, reciprocal force/torque and instantaneous power,
+plane ownership, body swapping, contact order, proper coordinate permutation and
+late nonconvergence. Independent central differences of closed-form accelerated
+sphere poses and a normalized moving edge cross product refine toward the gap
+acceleration formula. Existing normal impulses and liquid/body events retain
+their previous energy guard and regression coverage.
+
+These are instantaneous reactions. The scene event loop still has no sustained
+constraint evolution over a complete interval, reaction work ledger or accepted
+constrained trajectory. The previously recorded
+off-center inelastic scene step therefore remains unresolved with full rollback.
+Next integration must evolve forces/normal branches and qualify the complete
+trajectory; holding an instantaneous reaction alone does not prove clearance.
+Logs: artifacts/normal-support-reactions-2026-10-06.
+
+
+### SAT support feature transport (2026-10-06)
+
+Angular scene queries now retain the selected SAT source (first face, second
+face or crossed edges) together with exact compound shape indices. An opaque
+query-local event token survives earliest-event selection and identifies the
+same shape pair for clipped patch construction. Legacy geometry callbacks retain
+compatible default methods. Scene support callbacks rebuild plane ownership and
+crossed-edge normal rates from current post-impact spin; fixed walls remain world
+supports. Invalid indices, source codes, degenerate geometry and exhausted query
+budgets fail explicitly. Compound-pair and independent moving-edge derivative
+fixtures pass. This metadata does not certify branch persistence or integrate
+normal reactions into finite-interval scene evolution.

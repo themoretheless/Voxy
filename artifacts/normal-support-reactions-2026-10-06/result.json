@@ -1,0 +1,48 @@
+{
+  "status": "instantaneous_reactions_qualified_interval_constraints_unfinished",
+  "tests": {
+    "physics-regression.log": {
+      "passed": 38,
+      "failed": 0,
+      "ignored": 0
+    },
+    "scene-regression.log": {
+      "passed": 334,
+      "failed": 0,
+      "ignored": 13
+    }
+  },
+  "passed_total": 372,
+  "consumer_all_targets": "passed",
+  "format": "passed",
+  "source_sha256": {
+    "crates/physics/src/contact.rs": "4e3520c9318691a1d51a5fb84912ec2521e003104e3854707c18e1fec535b327",
+    "crates/physics/src/contact/reaction.rs": "c4e6a572608b37cdd2c47a991684d7286a1e40d7cd86b3751a21950e177e5b7d",
+    "crates/physics/tests/normal_reactions.rs": "63070262ef6536ec3d84823a817f38586809951e5662e58a2099c2bbc23f45da",
+    "docs/physics.md": "5d9b91b579be3f3767ff978179db02e9786fa862194980c769986f0361c5752d"
+  },
+  "analytic_narrow_patch_reference": {
+    "gap_acceleration_before_m_s2": -0.001593367968127676,
+    "normal_reaction_total_n": 0.0005381545420587936
+  },
+  "verified": [
+    "supported weight and reaction torque balance",
+    "gyroscopic acceleration",
+    "rotating support normal and geometry-owned cross-edge normal rate",
+    "independent closed-form central-difference refinement",
+    "analytic narrow-patch reaction",
+    "reciprocal forces and world torque",
+    "power reported separately from finite-interval work",
+    "plane ownership, body swapping, order and proper coordinate permutation",
+    "central point forces and rejection of unowned intrinsic torque",
+    "invalid inputs and late nonconvergence preserve physical states",
+    "unchanged physical impulse energy guard"
+  ],
+  "remaining": [
+    "scene geometry support-branch binding",
+    "sustained constraint evolution and coupled multi-body reactions",
+    "finite-interval constrained trajectory admission and reaction work ledger",
+    "off-center inelastic scene step remains unresolved with rollback",
+    "angular friction and persistent contact cache"
+  ]
+}

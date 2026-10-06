@@ -1291,4 +1291,4 @@ pub use dynamic_world::{DynamicEnvironmentReport, DynamicLiquidEnvironment};
 
 #[path = "liquid/multi_body.rs"]
 mod multi_body;
-pub use multi_body::{BodyGeometryHit, ContactWitness, LiquidBodyWorld};
+pub use multi_body::{BodyGeometryHit, ContactWitness, LiquidBodyWorld, RigidGeometryHit};

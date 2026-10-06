@@ -1,0 +1,47 @@
+{
+  "status": "patch_impulses_qualified_sustained_contact_unfinished",
+  "tests": {
+    "physics-regression.log": {
+      "passed": 28,
+      "failed": 0,
+      "ignored": 0
+    },
+    "scene-regression.log": {
+      "passed": 333,
+      "failed": 0,
+      "ignored": 13
+    },
+    "wall-tests.log": {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "passed_total": 362,
+  "consumer_all_targets": "passed",
+  "format": "passed",
+  "source_sha256": {
+    "crates/physics/src/contact.rs": "dc675b03070055b4849eef589d3fd26440c4bd071d462ccc5d061bd60d7b269a",
+    "crates/physics/src/liquid/multi_body.rs": "3fa15e571aa497787c71abe30529239524a9c53ec8dcacd45d76a6db1ff48ee0",
+    "crates/physics/tests/normal_manifold.rs": "ac1c5fe6a6dda02b287b5b0d059d6cdb73618ab877b324c14462a3a4e048a765",
+    "crates/physics/tests/liquid_rigid_body_world.rs": "1639f546b54377f480674389840665a7a9b28f29bf973e6286592c267db7cf99",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "fd00444e6399d6b36282e0bdf474697a91766130f29e296a66fd2205197ee048",
+    "docs/physics.md": "3c9873620e8f912a19e940ae6f22740053fae2c85dc280c794ca74444ac465ef"
+  },
+  "verified": [
+    "geometry-owned rigid pair and wall patches on shared event solver",
+    "bounded candidate pairs and 128 contact points",
+    "two-variable nonnegative block minimization",
+    "analytic narrow face patch impulse and inactive release",
+    "reciprocal momentum and energy ledger",
+    "malformed-patch and query-budget rollback",
+    "authored inelastic wall stopping and subsequent resting tick",
+    "real scene patch normal complementarity followed by independently detected free-drift penetration"
+  ],
+  "remaining": [
+    "off-center inelastic rotating scene contact still returns CollisionBudget with full rollback",
+    "sustained-contact acceleration/constraint evolution not implemented",
+    "elastic multipoint restitution remains point response",
+    "angular friction and persistent contact caches unfinished"
+  ]
+}

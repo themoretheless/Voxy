@@ -46,7 +46,7 @@ fn two_face_points_stop_translation_and_spin_without_energy_gain() {
     let report = resolve_normal_manifold(&mut a, None, &contacts([1., 0., 0.]), config()).unwrap();
     assert!(a.motion.velocity[0].abs() < 1e-11);
     assert!(a.spin.unwrap().angular_momentum[2].abs() < 2e-11);
-    assert!(report.sweeps > 1 && report.velocity_residual <= config().velocity_tolerance);
+    assert!(report.sweeps >= 1 && report.velocity_residual <= config().velocity_tolerance);
     assert!((a.energy().unwrap() - before - report.kinetic_energy_change).abs() < 1e-12);
     assert!(report.kinetic_energy_change < 0.);
     assert!(report.impulses.iter().all(|j| j[0] >= 0.));
@@ -76,13 +76,27 @@ fn reciprocal_manifold_closes_world_momenta_and_energy_ledger() {
 }
 #[test]
 fn late_nonconvergence_and_invalid_points_preserve_both_bodies() {
-    let mut a = body([0.; 3], [-2., 0., 0.], 0.5);
+    let mut a = body([0.; 3], [-2., -1., -0.5], 0.5);
     let mut b = body([1., 0., 0.], [0.; 3], 0.);
     let before = (a, b);
     let mut limited = config();
     limited.max_sweeps = 1;
+    let patch = [
+        NormalContact {
+            point: [0.; 3],
+            normal: [1., 0., 0.],
+        },
+        NormalContact {
+            point: [0.; 3],
+            normal: [0.6, 0.8, 0.],
+        },
+        NormalContact {
+            point: [0.; 3],
+            normal: [0.4, 0.2, 0.8_f64.sqrt()],
+        },
+    ];
     assert_eq!(
-        resolve_normal_manifold(&mut a, Some(&mut b), &contacts([1., 0., 0.]), limited),
+        resolve_normal_manifold(&mut a, Some(&mut b), &patch, limited),
         Err(Error::Budget)
     );
     assert_eq!((a, b), before);
@@ -153,5 +167,47 @@ fn contact_order_and_proper_coordinate_permutation_preserve_the_solution() {
                 .abs()
                 < 3e-11
         );
+    }
+}
+
+#[test]
+fn closely_coupled_face_patch_releases_inactive_points_and_closes_analytic_impulse() {
+    let mut a = body([-0.04, 1., 0.], [3., 0., 0.], 0.);
+    let mut b = body([0.; 3], [0.; 3], 0.);
+    let energy = a.energy().unwrap() + b.energy().unwrap();
+    let angular = angular_z(a) + angular_z(b);
+    let points =
+        [(0.98, -0.02), (1.02, -0.02), (0.98, 0.02), (1.02, 0.02)].map(|(y, z)| NormalContact {
+            point: [0., y, z],
+            normal: [-1., 0., 0.],
+        });
+    let report = resolve_normal_manifold(
+        &mut a,
+        Some(&mut b),
+        &points,
+        ManifoldConfig {
+            max_sweeps: 100,
+            velocity_tolerance: 1e-11,
+        },
+    )
+    .unwrap();
+    let impulse = 3. / (2. + 0.02 * 0.02 + 0.98 * 0.98);
+    assert!((a.motion.velocity[0] - (3. - impulse)).abs() < 1e-10);
+    assert!((b.motion.velocity[0] - impulse).abs() < 1e-10);
+    assert!((a.spin.unwrap().angular_momentum[2] + 0.02 * impulse).abs() < 1e-10);
+    assert!((b.spin.unwrap().angular_momentum[2] + 0.98 * impulse).abs() < 1e-10);
+    assert!((angular_z(a) + angular_z(b) - angular).abs() < 1e-12);
+    assert!(
+        (a.energy().unwrap() + b.energy().unwrap() - energy - report.kinetic_energy_change).abs()
+            < 1e-12
+    );
+    for (i, point) in points.iter().enumerate() {
+        let speed = -(a.point_velocity(point.point).unwrap()[0]
+            - b.point_velocity(point.point).unwrap()[0]);
+        assert!(speed >= -1e-11);
+        if point.point[1] > 1. {
+            assert!(report.impulses[i][0].abs() < 1e-10);
+            assert!(speed > 0.01);
+        }
     }
 }

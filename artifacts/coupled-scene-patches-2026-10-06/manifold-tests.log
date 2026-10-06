@@ -1,0 +1,23 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.44s
+     Running tests/normal_manifold.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/normal_manifold-37e1ea3107e57907)
+
+running 6 tests
+test closely_coupled_face_patch_releases_inactive_points_and_closes_analytic_impulse ... ok
+test duplicate_points_match_single_inelastic_impact_and_separating_points_are_inactive ... ok
+test contact_order_and_proper_coordinate_permutation_preserve_the_solution ... ok
+test late_nonconvergence_and_invalid_points_preserve_both_bodies ... ok
+test two_face_points_stop_translation_and_spin_without_energy_gain ... ok
+test reciprocal_manifold_closes_world_momenta_and_energy_ledger ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

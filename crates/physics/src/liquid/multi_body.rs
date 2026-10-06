@@ -26,6 +26,21 @@ impl From<GeometryHit> for BodyGeometryHit {
     }
 }
 
+/// Query-local geometry-owned feature token. Existing contact callbacks can omit
+/// it; feature-aware callbacks must validate it against the same geometry world.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RigidGeometryHit {
+    pub contact: BodyGeometryHit,
+    pub feature: Option<u64>,
+}
+impl From<BodyGeometryHit> for RigidGeometryHit {
+    fn from(contact: BodyGeometryHit) -> Self {
+        Self {
+            contact,
+            feature: None,
+        }
+    }
+}
 /// Geometry ownership stays with the backend; all fractions refer to this interval.
 pub trait LiquidBodyWorld {
     fn sweep_particle_body(
@@ -181,6 +196,118 @@ pub trait LiquidBodyWorld {
             budget,
         )
     }
+    fn sweep_particle_rigid_event(
+        &self,
+        p: &Particle,
+        radius: f64,
+        index: usize,
+        path: &crate::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        self.sweep_particle_rigid_contact(p, radius, index, path, budget)
+            .map(Into::into)
+    }
+    fn sweep_rigid_pair_event(
+        &self,
+        i: usize,
+        first: &crate::rigid_motion::RigidMotion,
+        j: usize,
+        second: &crate::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        self.sweep_rigid_pair_contact(i, first, j, second, budget)
+            .map(Into::into)
+    }
+    fn sweep_rigid_environment_event(
+        &self,
+        index: usize,
+        path: &crate::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        self.sweep_rigid_environment_contact(index, path, budget)
+            .map(Into::into)
+    }
+    fn rigid_pair_patch_for_feature(
+        &self,
+        i: usize,
+        first: &crate::contact::ContactBody,
+        j: usize,
+        second: &crate::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        _feature: Option<u64>,
+        budget: usize,
+    ) -> Result<Vec<crate::contact::NormalContact>, Error> {
+        self.rigid_pair_patch(i, first, j, second, witness, normal, budget)
+    }
+    fn rigid_environment_patch_for_feature(
+        &self,
+        index: usize,
+        body: &crate::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        _feature: Option<u64>,
+        budget: usize,
+    ) -> Result<Vec<crate::contact::NormalContact>, Error> {
+        self.rigid_environment_patch(index, body, witness, normal, budget)
+    }
+    /// Supporting branches require explicit geometry provenance; legacy callbacks
+    /// cannot infer a rotating normal owner from a world normal alone.
+    fn rigid_pair_supports(
+        &self,
+        _i: usize,
+        _first: &crate::contact::ContactBody,
+        _j: usize,
+        _second: &crate::contact::ContactBody,
+        _witness: ContactWitness,
+        _normal: [f64; 3],
+        _feature: u64,
+        _budget: usize,
+    ) -> Result<Vec<crate::contact::NormalSupport>, Error> {
+        Err(Error::CollisionBackend)
+    }
+    fn rigid_environment_supports(
+        &self,
+        _index: usize,
+        _body: &crate::contact::ContactBody,
+        _witness: ContactWitness,
+        _normal: [f64; 3],
+        _feature: u64,
+        _budget: usize,
+    ) -> Result<Vec<crate::contact::NormalSupport>, Error> {
+        Err(Error::CollisionBackend)
+    }
+    /// Contact-time geometry-owned normal patch for an inelastic rigid pair.
+    /// Defaults preserve point-only backends; geometry can return up to 128 points.
+    fn rigid_pair_patch(
+        &self,
+        _first_index: usize,
+        _first: &crate::contact::ContactBody,
+        _second_index: usize,
+        _second: &crate::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        _max_candidates: usize,
+    ) -> Result<Vec<crate::contact::NormalContact>, Error> {
+        Ok(vec![crate::contact::NormalContact {
+            point: witness.point,
+            normal,
+        }])
+    }
+    /// Contact-time geometry-owned patch against a fixed environment.
+    fn rigid_environment_patch(
+        &self,
+        _index: usize,
+        _body: &crate::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        _max_candidates: usize,
+    ) -> Result<Vec<crate::contact::NormalContact>, Error> {
+        Ok(vec![crate::contact::NormalContact {
+            point: witness.point,
+            normal,
+        }])
+    }
     fn has_environment(&self) -> bool {
         true
     }
@@ -292,10 +419,20 @@ fn solve_contact(
                     .map_err(|_| Error::NumericalFailure)
             })
             .collect::<Result<_, _>>()?;
-        let mut earliest: Option<(usize, Option<usize>, f64, [f64; 3], Option<ContactWitness>)> =
-            None;
+        let mut earliest: Option<(
+            usize,
+            Option<usize>,
+            f64,
+            [f64; 3],
+            Option<ContactWitness>,
+            Option<u64>,
+        )> = None;
         let mut admit =
-            |first: usize, second: Option<usize>, hit: BodyGeometryHit| -> Result<(), Error> {
+            |first: usize, second: Option<usize>, event: RigidGeometryHit| -> Result<(), Error> {
+                let hit = event.contact;
+                if event.feature.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
+                    return Err(Error::InvalidCollision);
+                }
                 if hit.witness.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
                     return Err(Error::InvalidCollision);
                 }
@@ -345,8 +482,8 @@ fn solve_contact(
                 if !speed.is_finite() || speed >= 0. {
                     return Err(Error::InvalidCollision);
                 }
-                if earliest.is_none_or(|(_, _, old, _, _)| fraction < old) {
-                    earliest = Some((first, second, fraction, normal, hit.witness));
+                if earliest.is_none_or(|(_, _, old, _, _, _)| fraction < old) {
+                    earliest = Some((first, second, fraction, normal, hit.witness, event.feature));
                 }
                 Ok(())
             };
@@ -361,7 +498,7 @@ fn solve_contact(
                 admit(
                     index,
                     Some(count + body_index),
-                    world.sweep_particle_rigid_contact(
+                    world.sweep_particle_rigid_event(
                         &p,
                         radius,
                         body_index,
@@ -375,12 +512,14 @@ fn solve_contact(
                 admit(
                     index,
                     None,
-                    world.sweep_particle_environment_contact(
-                        &p,
-                        radius,
-                        remaining,
-                        config.contact.max_candidates,
-                    )?,
+                    world
+                        .sweep_particle_environment_contact(
+                            &p,
+                            radius,
+                            remaining,
+                            config.contact.max_candidates,
+                        )?
+                        .into(),
                 )?;
             }
         }
@@ -390,7 +529,7 @@ fn solve_contact(
                 admit(
                     count + first,
                     Some(count + second),
-                    world.sweep_rigid_pair_contact(
+                    world.sweep_rigid_pair_event(
                         first,
                         &paths[count + first],
                         second,
@@ -404,7 +543,7 @@ fn solve_contact(
                 admit(
                     count + first,
                     None,
-                    world.sweep_rigid_environment_contact(
+                    world.sweep_rigid_environment_event(
                         first,
                         &paths[count + first],
                         config.contact.max_candidates,
@@ -412,7 +551,7 @@ fn solve_contact(
                 )?;
             }
         }
-        let fraction = earliest.map_or(1., |(_, _, f, _, _)| f);
+        let fraction = earliest.map_or(1., |(_, _, f, _, _, _)| f);
         for (index, n) in nodes.iter_mut().enumerate() {
             if n.spin.is_some() {
                 n.spin = paths[index]
@@ -427,7 +566,7 @@ fn solve_contact(
                 return Err(Error::NumericalFailure);
             }
         }
-        let Some((first, second, _, normal, witness)) = earliest else {
+        let Some((first, second, _, normal, witness, feature)) = earliest else {
             break;
         };
         if ledger.contacts >= config.max_contacts {
@@ -447,23 +586,94 @@ fn solve_contact(
         let tangent: [f64; 3] = std::array::from_fn(|a| relative[a] - speed * normal[a]);
         let first_contact = nodes[first].contact();
         let second_contact = second.map(|s| nodes[s].contact());
-        let normal_response = crate::contact::normal_impulse(
-            &first_contact,
-            second_contact.as_ref(),
-            witness.map_or(nodes[first].position, |w| w.point),
-            normal,
-            config.contact.restitution,
-        )
-        .map_err(|_| Error::NumericalFailure)?;
-        let loss = normal_response.dissipated_energy
-            + if config.contact.friction == 0. {
-                0.
+        let point = witness.map_or(nodes[first].position, |w| w.point);
+        let mut a = first_contact;
+        let mut b = second_contact;
+        let angular_patch = first >= count
+            && config.contact.restitution == 0.
+            && (a.spin.is_some() || b.is_some_and(|body| body.spin.is_some()));
+        let (impulse, loss) = if angular_patch {
+            let witness = witness.ok_or(Error::InvalidCollision)?;
+            charge(ledger, config)?;
+            let contacts = if let Some(index) = second {
+                world.rigid_pair_patch_for_feature(
+                    first - count,
+                    &a,
+                    index - count,
+                    b.as_ref().ok_or(Error::InvalidCollision)?,
+                    witness,
+                    normal,
+                    feature,
+                    config.contact.max_candidates,
+                )?
             } else {
-                0.5 * reduced
-                    * tangent.iter().map(|v| v * v).sum::<f64>()
-                    * config.contact.friction
-                    * (2. - config.contact.friction)
+                world.rigid_environment_patch_for_feature(
+                    first - count,
+                    &a,
+                    witness,
+                    normal,
+                    feature,
+                    config.contact.max_candidates,
+                )?
             };
+            if contacts.len() > 128 {
+                return Err(Error::CollisionBudget);
+            }
+            let mut scale = relative.iter().map(|v| v.abs()).fold(1., f64::max);
+            for contact in &contacts {
+                for velocity in [
+                    a.point_velocity(contact.point),
+                    b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point)),
+                ] {
+                    let velocity = velocity.map_err(|_| Error::InvalidCollision)?;
+                    scale = velocity.iter().map(|v| v.abs()).fold(scale, f64::max);
+                }
+            }
+            let report = crate::contact::resolve_normal_manifold(
+                &mut a,
+                b.as_mut(),
+                &contacts,
+                crate::contact::ManifoldConfig {
+                    max_sweeps: 10000,
+                    velocity_tolerance: 128. * f64::EPSILON * scale,
+                },
+            )
+            .map_err(|e| match e {
+                crate::contact::Error::Budget => Error::CollisionBudget,
+                crate::contact::Error::InvalidInput => Error::InvalidCollision,
+                crate::contact::Error::NumericalFailure => Error::NumericalFailure,
+            })?;
+            let total = std::array::from_fn(|k| report.impulses.iter().map(|j| j[k]).sum());
+            (total, (-report.kinetic_energy_change).max(0.))
+        } else {
+            let response = crate::contact::normal_impulse(
+                &a,
+                b.as_ref(),
+                point,
+                normal,
+                config.contact.restitution,
+            )
+            .map_err(|_| Error::NumericalFailure)?;
+            let loss = response.dissipated_energy
+                + if config.contact.friction == 0. {
+                    0.
+                } else {
+                    0.5 * reduced
+                        * tangent.iter().map(|v| v * v).sum::<f64>()
+                        * config.contact.friction
+                        * (2. - config.contact.friction)
+                };
+            let impulse: [f64; 3] = std::array::from_fn(|k| {
+                response.impulse[k] - reduced * config.contact.friction * tangent[k]
+            });
+            a.apply_point_impulse(point, impulse)
+                .map_err(|_| Error::NumericalFailure)?;
+            if let Some(body) = &mut b {
+                body.apply_point_impulse(point, impulse.map(|j| -j))
+                    .map_err(|_| Error::NumericalFailure)?;
+            }
+            (impulse, loss)
+        };
         ledger.loss += loss;
         if let Some(total) = ledger.particle_loss.get_mut(first) {
             *total += loss;
@@ -472,21 +682,11 @@ fn solve_contact(
         let epsilon = 64.
             * f64::EPSILON
             * (0..3)
-                .map(|a| normal[a].abs() * nodes[first].position[a].abs().max(reference[a].abs()))
+                .map(|k| normal[k].abs() * nodes[first].position[k].abs().max(reference[k].abs()))
                 .fold(1., f64::max);
-        let impulse: [f64; 3] = std::array::from_fn(|k| {
-            normal_response.impulse[k] - reduced * config.contact.friction * tangent[k]
-        });
-        let point = witness.map_or(nodes[first].position, |w| w.point);
-        let mut a = nodes[first].contact();
-        a.apply_point_impulse(point, impulse)
-            .map_err(|_| Error::NumericalFailure)?;
         nodes[first].update(a);
         if let Some(index) = second {
-            let mut b = nodes[index].contact();
-            b.apply_point_impulse(point, impulse.map(|j| -j))
-                .map_err(|_| Error::NumericalFailure)?;
-            nodes[index].update(b);
+            nodes[index].update(b.ok_or(Error::InvalidCollision)?);
         } else {
             for k in 0..3 {
                 ledger.environment_impulse[k] -= impulse[k];

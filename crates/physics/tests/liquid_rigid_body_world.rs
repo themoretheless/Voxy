@@ -166,6 +166,59 @@ impl LiquidBodyWorld for Faces {
             b.initial().spin,
         )
     }
+    fn rigid_pair_patch(
+        &self,
+        _: usize,
+        _: &ContactBody,
+        _: usize,
+        _: &ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        _: usize,
+    ) -> Result<Vec<physics::contact::NormalContact>, Error> {
+        if self.late_failure {
+            return Ok(vec![physics::contact::NormalContact {
+                point: [f64::NAN, 0., 0.],
+                normal,
+            }]);
+        }
+        Ok([(-0.02, -0.02), (0.02, -0.02), (-0.02, 0.02), (0.02, 0.02)]
+            .map(|(y, z)| physics::contact::NormalContact {
+                point: [witness.point[0], witness.point[1] + y, witness.point[2] + z],
+                normal,
+            })
+            .to_vec())
+    }
+    fn sweep_rigid_pair_event(
+        &self,
+        i: usize,
+        a: &physics::rigid_motion::RigidMotion,
+        j: usize,
+        b: &physics::rigid_motion::RigidMotion,
+        budget: usize,
+    ) -> Result<physics::liquid::RigidGeometryHit, Error> {
+        let contact = self.sweep_rigid_pair_contact(i, a, j, b, budget)?;
+        let feature = matches!(contact.geometry, GeometryHit::Contact { .. }).then_some(99);
+        Ok(physics::liquid::RigidGeometryHit { contact, feature })
+    }
+    fn rigid_pair_patch_for_feature(
+        &self,
+        i: usize,
+        a: &ContactBody,
+        j: usize,
+        b: &ContactBody,
+        w: ContactWitness,
+        n: [f64; 3],
+        feature: Option<u64>,
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalContact>, Error> {
+        assert_eq!(
+            feature,
+            Some(99),
+            "earliest event must retain its geometry-owned key"
+        );
+        self.rigid_pair_patch(i, a, j, b, w, n, budget)
+    }
     fn has_environment(&self) -> bool {
         false
     }
@@ -387,4 +440,78 @@ fn legacy_geometry_cannot_silently_accept_intrinsic_spin() {
         Err(Error::CollisionBackend)
     );
     assert_eq!((liquid, bodies), before);
+}
+
+#[test]
+fn inelastic_patch_impulses_use_shared_event_ledger_and_malformed_patch_rolls_back() {
+    // Controlled callback qualifies event/ledger wiring only. Real geometry
+    // separately proves this freely rotating remainder requires sustained contact.
+    let initial = [
+        body([-0.1, 1., 0.], [3., 0., 0.], 0.),
+        body([0.; 3], [0.; 3], 0.),
+    ];
+    let mut liquid = fluid(Vec::new());
+    let original = liquid.clone();
+    let mut bodies = initial;
+    let mut settings = config();
+    settings.contact.restitution = 0.;
+    let energy: f64 = initial.iter().map(|b| b.energy().unwrap()).sum();
+    let report = liquid
+        .step_with_rigid_body_world(
+            0.03,
+            &mut bodies,
+            &Faces {
+                late_failure: false,
+                missing_witness: false,
+            },
+            settings,
+            2,
+            rotation(),
+        )
+        .unwrap();
+    let impulse = 3. / (2. + 0.02 * 0.02 + 0.98 * 0.98);
+    assert_eq!(report.dynamics.contacts, 1);
+    assert!((bodies[0].motion.velocity[0] - (3. - impulse)).abs() < 1e-10);
+    assert!((bodies[1].motion.velocity[0] - impulse).abs() < 1e-10);
+    assert!(
+        (bodies.iter().map(|b| b.energy().unwrap()).sum::<f64>()
+            + report.dynamics.dissipated_energy
+            - energy)
+            .abs()
+            < 1e-12
+    );
+    assert_eq!(report.environment_impulse, [0.; 3]);
+    liquid = original.clone();
+    bodies = initial;
+    assert_eq!(
+        liquid.step_with_rigid_body_world(
+            0.03,
+            &mut bodies,
+            &Faces {
+                late_failure: true,
+                missing_witness: false
+            },
+            settings,
+            2,
+            rotation()
+        ),
+        Err(Error::InvalidCollision)
+    );
+    assert_eq!((liquid.clone(), bodies), (original.clone(), initial));
+    settings.max_queries = 1;
+    assert_eq!(
+        liquid.step_with_rigid_body_world(
+            0.03,
+            &mut bodies,
+            &Faces {
+                late_failure: false,
+                missing_witness: false
+            },
+            settings,
+            2,
+            rotation()
+        ),
+        Err(Error::CollisionBudget)
+    );
+    assert_eq!((liquid, bodies), (original, initial));
 }

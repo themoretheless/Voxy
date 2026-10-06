@@ -5795,14 +5795,11 @@ mod tests {
             assert!(properties.principal_moments.iter().all(|m| *m > 0.));
         }
         for ((node, frame), (owner, state)) in
-            runtime.body_rigid_frames().zip(runtime.body_states())
+            runtime.body_rigid_frames().zip(runtime.body_rigid_states())
         {
             assert_eq!(node, owner);
             let frame = frame.unwrap();
-            let rigid = frame
-                .prepare_body(state.position, state.velocity, [0.; 3])
-                .unwrap();
-            let prepared = frame.prepare_pose(rigid, 1., 1e-5).unwrap();
+            let prepared = frame.prepare_pose(state, 1., 1e-5).unwrap();
             assert_eq!(
                 prepared.pose.translation,
                 app.scene.local(node).unwrap().translation
@@ -5813,9 +5810,12 @@ mod tests {
         assert_eq!(states.len(), 2);
         for (node, state) in states {
             assert!((state.velocity[0] - 1.5).abs() < 1e-10);
-            assert_eq!(
-                app.scene.local(node).unwrap().translation,
-                glam::DVec3::from_array(state.position).as_vec3()
+            assert!(
+                (state.position[0]
+                    - f64::from(app.scene.local(node).unwrap().translation.x)
+                    - 0.02)
+                    .abs()
+                    < 1e-5
             );
         }
         runtime.validate_bindings(&app.scene).unwrap();

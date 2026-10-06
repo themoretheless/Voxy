@@ -2,6 +2,11 @@
 //! Geometry, event timing and persistent ownership remain with their callers.
 use crate::{astrophysics_spin::Spin, gravity::Body};
 type Vector = [f64; 3];
+mod reaction;
+pub use reaction::{
+    ContactWrench, NormalReaction, NormalSupport, ReactionConfig, SupportPlane,
+    normal_gap_acceleration, resolve_normal_reactions,
+};
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
     InvalidInput,
@@ -225,7 +230,30 @@ pub fn resolve_normal_manifold(
     contacts: &[NormalContact],
     config: ManifoldConfig,
 ) -> Result<ManifoldImpulse, Error> {
-    if contacts.is_empty()
+    if contacts.len() > 128 {
+        return Err(Error::InvalidInput);
+    }
+    solve_normal_constraints(
+        first,
+        second,
+        contacts,
+        config,
+        &[0.; 128][..contacts.len()],
+        true,
+    )
+}
+
+fn solve_normal_constraints(
+    first: &mut ContactBody,
+    second: Option<&mut ContactBody>,
+    contacts: &[NormalContact],
+    config: ManifoldConfig,
+    biases: &[f64],
+    enforce_energy: bool,
+) -> Result<ManifoldImpulse, Error> {
+    if biases.len() != contacts.len()
+        || biases.iter().any(|v| !v.is_finite())
+        || contacts.is_empty()
         || contacts.len() > 128
         || config.max_sweeps == 0
         || !config.velocity_tolerance.is_finite()
@@ -252,22 +280,52 @@ pub fn resolve_normal_manifold(
         });
         inverse.push(report.inverse_effective_mass);
     }
-    let speed =
-        |a: ContactBody, b: Option<ContactBody>, contact: NormalContact| -> Result<f64, Error> {
-            let relative = sub(
-                a.point_velocity(contact.point)?,
-                b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+    let speed = |a: ContactBody,
+                 b: Option<ContactBody>,
+                 contact: NormalContact,
+                 index: usize|
+     -> Result<f64, Error> {
+        let relative = sub(
+            a.point_velocity(contact.point)?,
+            b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+        );
+        let value = dot(relative, contact.normal) + biases[index];
+        if !value.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(value)
+    };
+    // Pair block minimization resolves strongly coupled face points without
+    // the slow alternating scalar impulses of a nearly singular contact patch.
+    // Diagonal/duplicate singular blocks retain scalar coordinate updates.
+    let coupling = |body: ContactBody, i: NormalContact, j: NormalContact| -> Result<f64, Error> {
+        let mut value = dot(i.normal, j.normal) / body.motion.mass;
+        if let Some(spin) = body.spin {
+            let ri = cross(sub(i.point, body.motion.position), i.normal);
+            let rj = cross(sub(j.point, body.motion.position), j.normal);
+            value += dot(
+                ri,
+                spin.inverse_inertia(rj)
+                    .map_err(|_| Error::NumericalFailure)?,
             );
-            let value = dot(relative, contact.normal);
-            if !value.is_finite() {
-                return Err(Error::NumericalFailure);
-            }
-            Ok(value)
-        };
+        }
+        if !value.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(value)
+    };
+    let mut cross_mass = vec![vec![0.; points.len()]; points.len()];
+    for i in 0..points.len() {
+        for j in (i + 1)..points.len() {
+            let value = coupling(a, points[i], points[j])?
+                + b.map_or(Ok(0.), |body| coupling(body, points[i], points[j]))?;
+            cross_mass[i][j] = value;
+        }
+    }
     let mut strengths = vec![0.; points.len()];
     for sweep in 1..=config.max_sweeps {
         for (index, contact) in points.iter().copied().enumerate() {
-            let next = (strengths[index] - speed(a, b, contact)? / inverse[index]).max(0.);
+            let next = (strengths[index] - speed(a, b, contact, index)? / inverse[index]).max(0.);
             if !next.is_finite() {
                 return Err(Error::NumericalFailure);
             }
@@ -279,9 +337,62 @@ pub fn resolve_normal_manifold(
             }
             strengths[index] = next;
         }
+        for i in 0..points.len() {
+            for j in (i + 1)..points.len() {
+                let si = inverse[i].sqrt();
+                let sj = inverse[j].sqrt();
+                let correlation = (cross_mass[i][j] / si) / sj;
+                if !correlation.is_finite() || correlation.abs() > 1. + 256. * f64::EPSILON {
+                    return Err(Error::NumericalFailure);
+                }
+                let correlation = correlation.clamp(-1., 1.);
+                let determinant = 1. - correlation * correlation;
+                if determinant <= 256. * f64::EPSILON {
+                    continue;
+                }
+                let u = strengths[i] * si;
+                let v = strengths[j] * sj;
+                let ri = u + correlation * v - speed(a, b, points[i], i)? / si;
+                let rj = v + correlation * u - speed(a, b, points[j], j)? / sj;
+                if !ri.is_finite() || !rj.is_finite() {
+                    return Err(Error::NumericalFailure);
+                }
+                let cost = |u: f64, v: f64| {
+                    0.5 * u * u + 0.5 * v * v + correlation * u * v - ri * u - rj * v
+                };
+                let mut best = (0., 0., 0.);
+                for (x, y) in [
+                    (ri.max(0.), 0.),
+                    (0., rj.max(0.)),
+                    (
+                        (ri - correlation * rj) / determinant,
+                        (rj - correlation * ri) / determinant,
+                    ),
+                ] {
+                    if x >= 0. && y >= 0. && x.is_finite() && y.is_finite() {
+                        let value = cost(x, y);
+                        if value.is_finite() && value < best.2 {
+                            best = (x, y, value);
+                        }
+                    }
+                }
+                for (index, next) in [(i, best.0 / si), (j, best.1 / sj)] {
+                    if !next.is_finite() {
+                        return Err(Error::NumericalFailure);
+                    }
+                    let delta = next - strengths[index];
+                    let impulse = points[index].normal.map(|n| n * delta);
+                    a.apply_point_impulse(points[index].point, impulse)?;
+                    if let Some(body) = &mut b {
+                        body.apply_point_impulse(points[index].point, impulse.map(|v| -v))?;
+                    }
+                    strengths[index] = next;
+                }
+            }
+        }
         let mut residual = 0_f64;
         for (index, contact) in points.iter().copied().enumerate() {
-            let velocity = speed(a, b, contact)?;
+            let velocity = speed(a, b, contact, index)?;
             residual = residual.max(if strengths[index] > 0. {
                 velocity.abs()
             } else {
@@ -291,7 +402,9 @@ pub fn resolve_normal_manifold(
         if residual <= config.velocity_tolerance {
             let after = a.energy()? + b.map_or(Ok(0.), ContactBody::energy)?;
             let change = after - before;
-            if !change.is_finite() || change > 128. * f64::EPSILON * (1. + before) {
+            if !change.is_finite()
+                || (enforce_energy && change > 128. * f64::EPSILON * (1. + before))
+            {
                 return Err(Error::NumericalFailure);
             }
             let report = ManifoldImpulse {

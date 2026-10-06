@@ -273,3 +273,38 @@ fn late_second_remainder_failure_preserves_paths_and_endpoint_impact_needs_no_ze
         .is_err()
     );
 }
+
+#[test]
+fn endpoint_event_remainder_below_subdivision_floor_is_admitted_with_same_error_gate() {
+    let mut a = body();
+    a.motion.velocity = [3., 0., 0.];
+    let mut b = body();
+    b.motion.velocity = [0.; 3];
+    let pa = a.prepare_motion([0.; 3], [0.; 3], 0.1, config()).unwrap();
+    let pb = b.prepare_motion([0.; 3], [0.; 3], 0.1, config()).unwrap();
+    let time = 0.1 - 1e-14;
+    let point = pa.sample(time).unwrap().motion.position;
+    let event =
+        physics::rigid_motion::prepare_impact(&pa, &pb, time, point, [-1., 0., 0.], 0., config())
+            .unwrap();
+    let remainder = event.second_remainder.unwrap();
+    assert!(remainder.duration() < config().min_step_s);
+    assert!(
+        remainder
+            .rotation()
+            .unwrap()
+            .segments()
+            .last()
+            .unwrap()
+            .model_angular_error_rad
+            <= config().max_angular_error_rad
+    );
+    assert!(remainder.end().energy().unwrap().is_finite());
+    let mut invalid = config();
+    invalid.min_step_s = f64::NAN;
+    assert!(a.prepare_motion([0.; 3], [0.; 3], 1e-14, invalid).is_err());
+    // A clipped interval still cannot bypass an impossible error allowance.
+    let mut strict = config();
+    strict.max_angular_error_rad = f64::MIN_POSITIVE;
+    assert!(a.prepare_motion([0.; 3], [0.; 3], 1e-14, strict).is_err());
+}

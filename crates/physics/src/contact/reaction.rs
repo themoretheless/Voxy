@@ -1,0 +1,342 @@
+//! Instantaneous normal reactions for a material point against a rotating plane.
+//! Geometry supplies the admitted point and normal; interval evolution stays with
+//! the caller. No position correction, guessed stiffness or heat is introduced.
+use super::{
+    ContactBody, Error, ManifoldConfig, NormalContact, Vector, cross, dot, finite,
+    solve_normal_constraints, sub,
+};
+
+/// Explicit owner of the supporting normal. Geometry, not the contact solver,
+/// chooses the face/feature branch and its owner.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum SupportPlane {
+    First,
+    Second,
+    World,
+    /// Geometry-owned derivative of the unit normal, in inverse seconds.
+    /// Supports edge/edge features whose normal belongs to neither body alone.
+    Rate {
+        normal_rate: Vector,
+    },
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct NormalSupport {
+    pub contact: NormalContact,
+    pub plane: SupportPlane,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct ContactWrench {
+    /// World force at COM, in newtons.
+    pub force: Vector,
+    /// World torque about COM, in newton metres.
+    pub torque: Vector,
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ReactionConfig {
+    pub max_sweeps: usize,
+    /// Complementarity tolerance in metres per second squared.
+    pub acceleration_tolerance: f64,
+    /// Only contacts within this normal-speed tolerance can carry a reaction.
+    /// A faster approaching point requires an impact solve first.
+    pub normal_velocity_tolerance: f64,
+}
+#[derive(Clone, Debug, PartialEq)]
+pub struct NormalReaction {
+    /// World force on the first body at each input contact; inactive points are zero.
+    pub forces: Vec<Vector>,
+    pub first_wrench: ContactWrench,
+    pub second_wrench: Option<ContactWrench>,
+    /// Supporting-plane gap accelerations after reactions, in input order.
+    pub normal_accelerations: Vec<f64>,
+    pub sweeps: usize,
+    pub acceleration_residual: f64,
+    /// Sum f dot (v_first(point)-v_second(point)), in watts. This is
+    /// instantaneous constraint power, not integrated work or dissipated heat.
+    pub instantaneous_power: f64,
+}
+fn add(a: Vector, b: Vector) -> Vector {
+    std::array::from_fn(|k| a[k] + b[k])
+}
+fn free_rates(body: ContactBody, wrench: ContactWrench) -> Result<(Vector, Vector, Vector), Error> {
+    body.validate()?;
+    if !finite(wrench.force)
+        || !finite(wrench.torque)
+        || (body.spin.is_none() && wrench.torque != [0.; 3])
+    {
+        return Err(Error::InvalidInput);
+    }
+    let acceleration = wrench.force.map(|f| f / body.motion.mass);
+    let (omega, alpha) = if let Some(spin) = body.spin {
+        let omega = spin
+            .angular_velocity()
+            .map_err(|_| Error::NumericalFailure)?;
+        let alpha = spin
+            .inverse_inertia(sub(wrench.torque, cross(omega, spin.angular_momentum)))
+            .map_err(|_| Error::NumericalFailure)?;
+        (omega, alpha)
+    } else {
+        ([0.; 3], [0.; 3])
+    };
+    if !finite(acceleration) || !finite(omega) || !finite(alpha) {
+        return Err(Error::NumericalFailure);
+    }
+    Ok((acceleration, omega, alpha))
+}
+fn unit_normal(normal: Vector) -> Result<Vector, Error> {
+    let norm = normal[0].hypot(normal[1]).hypot(normal[2]);
+    if !finite(normal) || !norm.is_finite() || norm <= 0. {
+        return Err(Error::InvalidInput);
+    }
+    Ok(normal.map(|n| n / norm))
+}
+/// Second derivative of the normal gap on the supplied supporting-plane branch.
+/// Body-owned planes rotate with their explicit owner; World holds the normal
+/// fixed and follows both material points. A Second plane requires a second body.
+/// Includes gyroscopic acceleration, centrifugal and rotating-plane Coriolis terms.
+/// # Errors
+/// Invalid snapshots, points, normals, external wrenches or nonfinite arithmetic.
+pub fn normal_gap_acceleration(
+    first: &ContactBody,
+    second: Option<&ContactBody>,
+    support: NormalSupport,
+    first_external: ContactWrench,
+    second_external: Option<ContactWrench>,
+) -> Result<f64, Error> {
+    let contact = support.contact;
+    if !finite(contact.point) || (second.is_none() && second_external.is_some()) {
+        return Err(Error::InvalidInput);
+    }
+    let n = unit_normal(contact.normal)?;
+    let first_rates = free_rates(*first, first_external)?;
+    let second_rates = second
+        .map(|body| free_rates(*body, second_external.unwrap_or_default()))
+        .transpose()?;
+    let rate = match support.plane {
+        SupportPlane::First => cross(first_rates.1, n),
+        SupportPlane::Second => cross(second_rates.ok_or(Error::InvalidInput)?.1, n),
+        SupportPlane::World => [0.; 3],
+        SupportPlane::Rate { normal_rate } => {
+            let tangent = dot(n, normal_rate);
+            let scale = normal_rate.iter().map(|v| v.abs()).fold(1., f64::max);
+            if !finite(normal_rate)
+                || !tangent.is_finite()
+                || tangent.abs() > 128. * f64::EPSILON * scale
+            {
+                return Err(Error::InvalidInput);
+            }
+            normal_rate
+        }
+    };
+    let material = |body: ContactBody, rates: (Vector, Vector, Vector)| {
+        let (acceleration, omega, alpha) = rates;
+        let arm = sub(contact.point, body.motion.position);
+        add(
+            add(acceleration, cross(alpha, arm)),
+            cross(omega, cross(omega, arm)),
+        )
+    };
+    let acceleration = sub(
+        material(*first, first_rates),
+        second.map_or([0.; 3], |body| material(*body, second_rates.unwrap())),
+    );
+    let relative = sub(
+        first.point_velocity(contact.point)?,
+        second.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+    );
+    // Both material points coincide at the admitted contact. The n'' dot gap
+    // term is zero, leaving material accelerations and 2 n' dot relative velocity.
+    let result = dot(n, acceleration) + 2. * dot(rate, relative);
+    if !finite(acceleration) || !finite(rate) || !result.is_finite() {
+        return Err(Error::NumericalFailure);
+    }
+    Ok(result)
+}
+fn virtual_rates(body: ContactBody, wrench: ContactWrench) -> Result<ContactBody, Error> {
+    let (linear, omega, _) = free_rates(body, wrench)?;
+    let mut result = body;
+    result.motion.velocity = linear;
+    if let Some(spin) = &mut result.spin {
+        // This represents angular acceleration through the existing inverse
+        // inertia operator. These rate snapshots never replace physical states.
+        spin.angular_momentum = sub(wrench.torque, cross(omega, spin.angular_momentum));
+    }
+    Ok(result)
+}
+fn accumulate(
+    wrench: &mut ContactWrench,
+    body: ContactBody,
+    point: Vector,
+    force: Vector,
+) -> Result<(), Error> {
+    wrench.force = add(wrench.force, force);
+    wrench.torque = add(
+        wrench.torque,
+        cross(sub(point, body.motion.position), force),
+    );
+    if !finite(wrench.force) || !finite(wrench.torque) {
+        return Err(Error::NumericalFailure);
+    }
+    if body.spin.is_none() && wrench.torque != [0.; 3] {
+        return Err(Error::InvalidInput);
+    }
+    Ok(())
+}
+/// Solve nonnegative normal reactions at an admitted resting patch. Geometry
+/// must explicitly identify the supporting plane owner for each normal.
+/// Outgoing points carry zero reaction; approaching points must be resolved first.
+/// Reuses the same contact-mass/block complementarity solver as normal impacts.
+/// Inputs stay immutable, including on late solve failure. This is an instantaneous
+/// acceleration solve, not an accepted constrained trajectory over a finite step.
+/// A no-Spin point body cannot absorb an off-center intrinsic reaction torque.
+pub fn resolve_normal_reactions(
+    first: &ContactBody,
+    second: Option<&ContactBody>,
+    contacts: &[NormalSupport],
+    first_external: ContactWrench,
+    second_external: Option<ContactWrench>,
+    config: ReactionConfig,
+) -> Result<NormalReaction, Error> {
+    if contacts.is_empty()
+        || contacts.len() > 128
+        || config.max_sweeps == 0
+        || !config.acceleration_tolerance.is_finite()
+        || config.acceleration_tolerance <= 0.
+        || !config.normal_velocity_tolerance.is_finite()
+        || config.normal_velocity_tolerance <= 0.
+        || (second.is_none() && second_external.is_some())
+    {
+        return Err(Error::InvalidInput);
+    }
+    let mut a = virtual_rates(*first, first_external)?;
+    let mut b = second
+        .map(|body| virtual_rates(*body, second_external.unwrap_or_default()))
+        .transpose()?;
+    let mut active = Vec::new();
+    let mut indices = Vec::new();
+    let mut biases = Vec::new();
+    for (index, support) in contacts.iter().enumerate() {
+        let normal = unit_normal(support.contact.normal)?;
+        let contact = NormalContact {
+            normal,
+            ..support.contact
+        };
+        let relative = sub(
+            first.point_velocity(contact.point)?,
+            second.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+        );
+        let speed = dot(normal, relative);
+        if !speed.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        if speed < -config.normal_velocity_tolerance {
+            return Err(Error::InvalidInput);
+        }
+        let acceleration = normal_gap_acceleration(
+            first,
+            second,
+            NormalSupport {
+                contact,
+                plane: support.plane,
+            },
+            first_external,
+            second_external,
+        )?;
+        if speed > config.normal_velocity_tolerance {
+            continue;
+        }
+        let linear = dot(
+            normal,
+            sub(
+                a.point_velocity(contact.point)?,
+                b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+            ),
+        );
+        let bias = acceleration - linear;
+        if !bias.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        active.push(contact);
+        indices.push(index);
+        biases.push(bias);
+    }
+    let mut forces = vec![[0.; 3]; contacts.len()];
+    let (sweeps, residual) = if active.is_empty() {
+        (0, 0.)
+    } else {
+        let report = solve_normal_constraints(
+            &mut a,
+            b.as_mut(),
+            &active,
+            ManifoldConfig {
+                max_sweeps: config.max_sweeps,
+                velocity_tolerance: config.acceleration_tolerance,
+            },
+            &biases,
+            false,
+        )?;
+        for (index, force) in indices.iter().zip(report.impulses) {
+            forces[*index] = force;
+        }
+        (report.sweeps, report.velocity_residual)
+    };
+    let mut first_wrench = ContactWrench::default();
+    let mut second_wrench = second.map(|_| ContactWrench::default());
+    let mut power = 0.;
+    for (support, force) in contacts.iter().zip(&forces) {
+        let contact = support.contact;
+        accumulate(&mut first_wrench, *first, contact.point, *force)?;
+        if let (Some(body), Some(wrench)) = (second, second_wrench.as_mut()) {
+            accumulate(wrench, *body, contact.point, force.map(|f| -f))?;
+        }
+        let relative = sub(
+            first.point_velocity(contact.point)?,
+            second.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+        );
+        power += dot(*force, relative);
+    }
+    let normal_accelerations = contacts
+        .iter()
+        .map(|contact| {
+            normal_gap_acceleration(
+                first,
+                second,
+                *contact,
+                add_wrench(first_external, first_wrench),
+                second.map(|_| {
+                    add_wrench(second_external.unwrap_or_default(), second_wrench.unwrap())
+                }),
+            )
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if !power.is_finite() {
+        return Err(Error::NumericalFailure);
+    }
+    let mut checked_residual = residual;
+    for index in indices {
+        let force = forces[index];
+        let strength = force[0].hypot(force[1]).hypot(force[2]);
+        checked_residual = checked_residual.max(if strength > 0. {
+            normal_accelerations[index].abs()
+        } else {
+            (-normal_accelerations[index]).max(0.)
+        });
+    }
+    if checked_residual > config.acceleration_tolerance {
+        return Err(Error::Budget);
+    }
+    Ok(NormalReaction {
+        forces,
+        first_wrench,
+        second_wrench,
+        normal_accelerations,
+        sweeps,
+        acceleration_residual: checked_residual,
+        instantaneous_power: power,
+    })
+}
+fn add_wrench(a: ContactWrench, b: ContactWrench) -> ContactWrench {
+    ContactWrench {
+        force: add(a.force, b.force),
+        torque: add(a.torque, b.torque),
+    }
+}
