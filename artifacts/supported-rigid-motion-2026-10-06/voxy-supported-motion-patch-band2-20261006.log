@@ -1,0 +1,91 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+warning: function `snapshot` is never used
+  --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:10:15
+   |
+10 | pub(super) fn snapshot(
+   |               ^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:296:15
+    |
+296 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:367:15
+    |
+367 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:481:15
+    |
+481 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:711:9
+    |
+705 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+711 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+712 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+713 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: methods `support_contacts` and `contact_patch_relative` are never used
+   --> crates/voxy_gameplay/src/convex.rs:121:19
+    |
+117 | impl AffineBox {
+    | -------------- methods in this implementation
+...
+121 |     pub(crate) fn support_contacts(
+    |                   ^^^^^^^^^^^^^^^^
+...
+251 |     pub(crate) fn contact_patch_relative(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_gameplay` (lib) generated 6 warnings
+warning: `voxy_gameplay` (lib test) generated 1 warning (1 duplicate)
+    Finished `release` profile [optimized] target(s) in 4.13s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 3 tests
+held tick=0 bodies=[ContactBody { motion: Body { mass: 2.0, position: [0.0, 0.15625, 0.0], velocity: [0.0, 0.0, 0.0] }, spin: Some(Spin { orientation: [0.0, 0.0, 0.0, 1.0], angular_momentum: [0.0, 0.0, 0.0], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [0.0, 0.09375, 0.0], velocity: [0.0, 0.0, 0.0] }, spin: Some(Spin { orientation: [0.0, 0.0, 0.0, 1.0], angular_momentum: [0.0, 0.0, 0.0], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [0.0, 0.03125, 0.0], velocity: [0.0, 0.0, 0.0] }, spin: Some(Spin { orientation: [0.0, 0.0, 0.0, 1.0], angular_momentum: [0.0, 0.0, 0.0], inertia: [1.0, 1.0, 1.0] }) }]
+test liquid_runtime::tests::supported_motion_keeps_real_tangential_acceleration_and_separates_work ... ok
+test liquid_runtime::tests::supported_motion_searches_other_walls_and_rolls_back_late_interval_budget ... ok
+held tick=1 bodies=[ContactBody { motion: Body { mass: 2.0, position: [4.281276204035145e-17, 0.15625000000000439, 4.724052345089955e-16], velocity: [1.6446161249862296e-15, 8.814282637104045e-14, 1.9809204347863597e-14] }, spin: Some(Spin { orientation: [6.568550031362793e-14, -1.05629157851919e-18, -5.148702875454312e-15, 1.0], angular_momentum: [2.6411595529919165e-12, -7.98708413133218e-17, -1.8963494160152836e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-2.802345291130464e-17, 0.09375000000000219, -3.1375939230904976e-16], velocity: [-1.0767608472843907e-15, 4.4029964859267545e-14, -1.316140366226343e-14] }, spin: Some(Spin { orientation: [3.296180511289148e-14, 1.0438595543399054e-18, -2.3764452851995608e-15, 1.0], angular_momentum: [1.32587487240406e-12, 7.877151235947173e-17, -8.689938756100726e-14], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-3.1062743393891176e-19, 0.03124999999999997, -7.057958943496831e-19], velocity: [-1.1774220006742283e-17, -2.41584530158434e-16, -2.6815074087689188e-17] }, spin: Some(Spin { orientation: [2.521927335203973e-17, 1.2411954804671379e-20, -1.5972469454375067e-17, 1.0], angular_momentum: [3.364760455936561e-16, 1.0979623784476743e-18, -1.879652846131092e-16], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=2 bodies=[ContactBody { motion: Body { mass: 2.0, position: [6.27172295997558e-16, 0.15625000000001754, 8.441162083979614e-15], velocity: [1.228089942721438e-14, 1.7365664461976855e-13, 1.7325279073292674e-13] }, spin: Some(Spin { orientation: [2.6263367208995923e-13, -1.5906585827400176e-17, -1.9486174578509544e-14, 1.0], angular_momentum: [5.190415634592034e-12, -6.456129904721717e-16, -3.857084628411036e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-4.1207815423322254e-16, 0.09375000000000877, -5.613057639761497e-15], velocity: [-8.092739523388021e-15, 8.69822732359656e-14, -1.1526470736397025e-13] }, spin: Some(Spin { orientation: [1.3189245697930578e-13, 1.5661786848881395e-17, -8.914606883288367e-15, 1.0], angular_momentum: [2.608572704360362e-12, 6.354270550371466e-16, -1.7569698232649918e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-3.6174781047512505e-18, 0.031249999999999944, -8.623806433171281e-18], velocity: [-5.664898365586e-17, -1.1368683772161588e-16, -1.4220589021407612e-16] }, spin: Some(Spin { orientation: [1.3595824769827023e-17, 2.4465088895260386e-19, -1.799953246075637e-17, 1.0], angular_momentum: [-5.979960450430697e-16, 1.0182980532319343e-17, 1.0957665439077772e-16], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=3 bodies=[ContactBody { motion: Body { mass: 2.0, position: [3.154751347113182e-15, 0.156250000000039, 4.439425531780075e-14], velocity: [4.3087466315415795e-14, 2.574829238710664e-13, 6.02432023224793e-13] }, spin: Some(Spin { orientation: [5.78144484782147e-13, -9.019156495165552e-17, -4.972297656431838e-14, 1.0], angular_momentum: [7.489100415842553e-12, -2.6733205821515196e-15, -7.949579879913835e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-2.0839614860022657e-15, 0.0937500000000195, -2.954566184287277e-14], velocity: [-2.855356390873912e-14, 1.285371808990021e-13, -4.0112243915880904e-13] }, spin: Some(Spin { orientation: [2.90458125353475e-13, 8.893016967569668e-17, -2.2333344706934155e-14, 1.0], angular_momentum: [3.764190693628274e-12, 2.640085199463765e-15, -3.4884063750150787e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-1.1510272382667103e-17, 0.031249999999999944, -3.028953264331502e-17], velocity: [-1.027409803435949e-16, -8.526512829121188e-17, -2.9926372059146723e-16] }, spin: Some(Spin { orientation: [-1.9113092795193678e-17, 1.2612301250660995e-18, -1.670709604733105e-17, 1.0], angular_momentum: [-4.3982599138257786e-16, 3.3239308709423343e-17, -6.06315670413637e-17], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=4 bodies=[ContactBody { motion: Body { mass: 2.0, position: [1.0446538367438962e-14, 0.15625000000006897, 1.4160050285761827e-13], velocity: [1.0995040375470571e-13, 3.360689504461335e-13, 1.4196964073696684e-12] }, spin: Some(Spin { orientation: [1.0158340363349105e-12, -2.9030513422498283e-16, -9.545161555553291e-14, 1.0], angular_momentum: [9.939857247926179e-12, -5.74208476886542e-15, -1.0474137484607112e-12], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-6.922802020519222e-15, 0.09375000000003447, -9.428008371865827e-14], velocity: [-7.302077498737999e-14, 1.6841047075407306e-13, -9.455472405668898e-13] }, spin: Some(Spin { orientation: [5.104303434305562e-13, 2.863610813438849e-16, -4.2036806499888456e-14, 1.0], angular_momentum: [4.98574649124432e-12, 5.665199115593204e-15, -4.036173755769834e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-2.4907735550922518e-17, 0.031249999999999944, -7.213020872613635e-17], velocity: [-1.675441559841285e-16, -1.4210854715201856e-17, -5.502040433950864e-16] }, spin: Some(Spin { orientation: [-4.2314362327629567e-17, 3.944497871434087e-18, -1.2677708817639142e-17, 1.0], angular_momentum: [-4.522291287105404e-16, 7.690718282168895e-17, 5.8121774537331365e-16], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=5 bodies=[ContactBody { motion: Body { mass: 2.0, position: [2.6690571063680556e-14, 0.15625000000010683, 3.4603654325381854e-13], velocity: [2.242066745631173e-13, 4.1477932199995863e-13, 2.776431125570007e-12] }, spin: Some(Spin { orientation: [1.5759106557261597e-12, -6.988360836222568e-16, -1.5337130875011445e-13, 1.0], angular_momentum: [1.2429831722633753e-11, -1.1540670425945883e-14, -1.265843017002611e-12], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-1.771897336066865e-14, 0.09375000000005342, -2.304447385128313e-13], velocity: [-1.490907900991548e-13, 2.1062855163715235e-13, -1.8492974408690056e-12] }, spin: Some(Spin { orientation: [7.91427830967206e-13, 6.892545773465377e-16, -6.470507977464252e-14, 1.0], angular_momentum: [6.238415661622914e-12, 1.1386490558108367e-14, -5.016975850313213e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-4.4802010968594645e-17, 0.031249999999999944, -1.4775775531372088e-16], velocity: [-2.2803615693303995e-16, 1.136868377216162e-16, -9.940946035496764e-16] }, spin: Some(Spin { orientation: [-6.87812565962949e-17, 9.583534354384706e-18, 7.168803379154098e-18, 1.0], angular_momentum: [-9.07126750018111e-16, 1.5422182185289292e-16, 3.9351266928160106e-16], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=6 bodies=[ContactBody { motion: Body { mass: 2.0, position: [5.704604435003614e-14, 0.1562500000001525, 7.185965666005914e-13], velocity: [3.9023169518764517e-13, 4.983746748621344e-13, 4.776229659048872e-12] }, spin: Some(Spin { orientation: [2.2638321580668435e-12, -1.4770736926727125e-15, -2.169912676608883e-13, 1.0], angular_momentum: [1.500662848982695e-11, -1.8774504386202313e-14, -1.376344625002103e-12], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-3.7914226549176547e-14, 0.09375000000007662, -4.786024839626706e-13], velocity: [-2.59707577413266e-13, 2.530479529620303e-13, -3.1813832729686898e-12] }, spin: Some(Spin { orientation: [1.1368341928655282e-12, 1.4570961615548242e-15, -9.021421702317954e-14, 1.0], angular_momentum: [7.538552280188679e-12, 1.8500696082943752e-14, -5.598042400234848e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-6.982559953665034e-17, 0.031249999999999944, -2.77140585422079e-16], velocity: [-2.6803228414496887e-16, 1.705302565824243e-16, -1.6622340910344799e-15] }, spin: Some(Spin { orientation: [-1.166750327401917e-16, 1.9982260310837257e-17, 3.9601343580254744e-17, 1.0], angular_momentum: [-9.493573733133227e-16, 2.7387605255295677e-16, 4.3711589252717916e-16], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=7 bodies=[ContactBody { motion: Body { mass: 2.0, position: [1.0711953064124863e-13, 0.15625000000020672, 1.3316834379986124e-12], velocity: [6.200893852153633e-13, 5.860911755917186e-13, 7.609345127577646e-12] }, spin: Some(Spin { orientation: [3.0809853823698763e-12, -2.7514333186806905e-15, -2.8997143928959743e-13, 1.0], angular_momentum: [1.7645274813213953e-11, -3.146525501352503e-14, -1.5622037409895706e-12], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-7.125132187319667e-14, 0.09375000000010414, -8.869853388137314e-13], velocity: [-4.1293543366292083e-13, 2.9717265685273255e-13, -5.068716966967989e-12] }, spin: Some(Spin { orientation: [1.5472830154655768e-12, 2.7140813832829195e-15, -1.2007326911374922e-13, 1.0], angular_momentum: [8.864633861428985e-12, 3.103122866787393e-14, -6.441484346565878e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-9.695899692691504e-17, 0.03124999999999996, -4.822249795794888e-16], velocity: [-2.7452879881260594e-16, 2.4158453015843433e-16, -2.5085459518293468e-15] }, spin: Some(Spin { orientation: [-1.7771946532409061e-16, 3.736077946937974e-17, 6.07747674478661e-17, 1.0], angular_momentum: [-1.071156374319801e-15, 4.341263754812595e-16, 1.3262408207238846e-16], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=8 bodies=[ContactBody { motion: Body { mass: 2.0, position: [1.8353701043051296e-13, 0.15625000000026942, 2.2733361435599707e-12], velocity: [9.2352568014407e-13, 6.673417374258861e-13, 1.1417820638197976e-11] }, spin: Some(Spin { orientation: [4.024583955354767e-12, -4.733857131812623e-15, -3.7272671709862523e-13, 1.0], angular_momentum: [2.01153520483276e-11, -5.029315595289413e-14, -1.733380108815387e-12], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-1.221495808954326e-13, 0.0937500000001359, -1.514249817393057e-12], velocity: [-6.152048655133864e-13, 3.3826571173752495e-13, -7.605957632273679e-12] }, spin: Some(Spin { orientation: [2.0213135243964037e-12, 4.6697825053516555e-15, -1.543612562130425e-13, 1.0], angular_momentum: [1.0103577132457089e-11, 4.965368754963324e-14, -7.200661959105054e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-1.2500635841961847e-16, 0.031249999999999993, -7.847085825092535e-16], velocity: [-2.87536656112283e-16, 2.984279490192424e-16, -3.554787420434096e-15] }, spin: Some(Spin { orientation: [-2.348502516319027e-16, 6.408953827681175e-17, 6.9705755111147e-17, 1.0], angular_momentum: [-9.833171603357286e-16, 6.39613340578548e-16, 2.432122970900951e-16], inertia: [1.0, 1.0, 1.0] }) }]
+held tick=9 bodies=[ContactBody { motion: Body { mass: 2.0, position: [2.945577167768233e-13, 0.15625000000034053, 3.652007834915606e-12], velocity: [1.314063642501918e-12, 7.541167690305885e-13, 1.638124181424884e-11] }, spin: Some(Spin { orientation: [5.0974445952174634e-12, -7.876336489299686e-15, -4.633541264572127e-13, 1.0], angular_momentum: [2.2754666055813544e-11, -7.85129926904838e-14, -1.8791700925655757e-12], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 3.0, position: [-1.9611323586220133e-13, 0.09375000000017195, -2.4326653697563726e-12], velocity: [-8.755104848206261e-13, 3.8160881861889107e-13, -1.0912728675235579e-11] }, spin: Some(Spin { orientation: [2.5601598963888754e-12, 7.773995049526857e-15, -1.921439599348707e-13, 1.0], angular_momentum: [1.1427271873575888e-11, 7.761575815305604e-14, -7.849116189756255e-13], inertia: [1.0, 1.0, 1.0] }) }, ContactBody { motion: Body { mass: 5.0, position: [-1.5512341887949795e-16, 0.031250000000000035, -1.204193841553493e-15], velocity: [-3.195245247745437e-16, 3.9790393202565646e-16, -4.861206680049166e-15] }, spin: Some(Spin { orientation: [-2.842964514656155e-16, 1.02365151068851e-16, 6.58783025689596e-17, 1.0], angular_momentum: [-7.516105522253213e-16, 8.974419914891894e-16, -5.039260566989947e-16], inertia: [1.0, 1.0, 1.0] }) }]
+test liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 132 filtered out; finished in 5.21s
+
+     Running tests/integration.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/integration-a1054ba31f60c3c9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 0.00s
+

@@ -1,0 +1,18 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 11s
+     Running unittests src/lib.rs (target/debug/deps/voxy_gameplay-0c1006d36aee166a)
+
+running 10 tests
+test support::tests::nearest_contact_and_equal_distance_ties_use_stable_owner_identity ... ok
+test support::tests::shared_collision_snapshot_keeps_geometry_extents_and_scene_identity_from_one_revision ... ok
+test support::tests::unwalkable_first_hit_occludes_lower_ground_and_inside_origins_do_not_plant ... ok
+test support::tests::touching_faces_endpoint_hits_parallel_misses_and_corner_normal_ties_are_defined ... ok
+test support::tests::sheared_reflected_support_normals_and_local_anchors_follow_parent_transforms ... ok
+test support::tests::a_one_ulp_thickness_change_on_a_wide_platform_releases_the_old_face_anchor ... ok
+test support::tests::extreme_finite_inverse_face_vectors_keep_unit_normals_instead_of_zero_or_nan ... ok
+test support::tests::removal_generation_reuse_activity_dimensions_and_foreign_scenes_release_or_reject_anchors ... ok
+test support::tests::invalid_input_capacity_and_budget_failures_do_not_return_partial_ground ... ok
+test support::tests::support_queries_reuse_character_physics_dynamic_parent_restrictions ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.00s
+

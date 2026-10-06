@@ -1,0 +1,134 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling libc v0.2.189
+   Compiling glob v0.3.4
+   Compiling cfg-if v1.0.4
+   Compiling memchr v2.8.3
+   Compiling minimal-lexical v0.2.1
+   Compiling regex-syntax v0.8.11
+   Compiling either v1.18.0
+   Compiling bindgen v0.72.1
+   Compiling bitflags v2.13.1
+   Compiling shlex v1.3.0
+   Compiling rustc-hash v2.1.3
+   Compiling libm v0.2.16
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling itoa v1.0.18
+   Compiling libloading v0.8.9
+   Compiling itertools v0.13.0
+   Compiling equivalent v1.0.2
+   Compiling allocator-api2 v0.2.21
+   Compiling foldhash v0.1.5
+   Compiling arrayvec v0.7.8
+   Compiling bytemuck v1.25.2
+   Compiling clang-sys v1.9.1
+   Compiling nom v7.1.3
+   Compiling unicode-script v0.5.8
+   Compiling glam v0.33.6
+   Compiling unicode-ccc v0.4.0
+   Compiling core-foundation-sys v0.8.7
+   Compiling cpal v0.15.3
+   Compiling hashbrown v0.15.5
+   Compiling smallvec v1.16.0
+   Compiling unicode-bidi-mirroring v0.4.0
+   Compiling log v0.4.34
+   Compiling core_maths v0.1.1
+   Compiling bitflags v1.3.2
+   Compiling unicode-properties v0.1.4
+   Compiling ttf-parser v0.25.1
+   Compiling constant_time_eq v0.4.2
+   Compiling regex-automata v0.4.18
+   Compiling blake3 v1.8.7
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_audio)
+   Compiling voxy_time v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_time)
+   Compiling dasp_sample v0.11.0
+   Compiling voxy_input v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_input)
+   Compiling quote v1.0.47
+   Compiling cexpr v0.6.0
+   Compiling voxy_ui v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_ui)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+   Compiling syn v2.0.119
+   Compiling syn v3.0.4
+   Compiling serde_json v1.0.151
+   Compiling mach2 v0.4.3
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling regex v1.13.1
+   Compiling rustybuzz v0.20.1
+   Compiling fontdue v0.9.4
+   Compiling serde_derive v1.0.229
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_text)
+   Compiling serde v1.0.229
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_assets)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_scene)
+   Compiling coreaudio-sys v0.2.18
+   Compiling coreaudio-rs v0.11.3
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_audio_device)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:296:15
+    |
+296 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:367:15
+    |
+367 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:481:15
+    |
+481 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:711:9
+    |
+705 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+711 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+712 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+713 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 4 warnings
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 17.09s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 3 tests
+test liquid_runtime::tests::supported_motion_keeps_real_tangential_acceleration_and_separates_work ... ok
+test liquid_runtime::tests::supported_motion_searches_other_walls_and_rolls_back_late_interval_budget ... ok
+test liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping ... FAILED
+
+failures:
+
+---- liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping stdout ----
+
+thread 'liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping' (131017) panicked at crates/voxy_gameplay/src/liquid_runtime.rs:2016:18:
+called `Result::unwrap()` on an `Err` value: InitialOverlap
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 132 filtered out; finished in 3.38s
+
+error: test failed, to rerun pass `-p voxy_gameplay --lib`

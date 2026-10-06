@@ -5742,3 +5742,86 @@ retained in artifacts/rigid-world-forces-2026-10-06.
 Final release regression passed 1900 tests with 24 ignored; app/editor
 all-target release checks and formatting/diff checks passed. This milestone and
 the preceding local contact milestones are included in the delivery commit.
+
+
+### Scene support-network assembly (2026-10-06)
+
+`resolve_rigid_world_reactions` now gathers every rigid pair and fixed-world
+patch at the supplied snapshots, then invokes the existing indexed reaction
+solver once. `Liquid::rigid_world_reactions` adds the world's configured gravity
+through the same COM-wrench composition used by dynamic stepping. The report
+contains indexed supporting branches, per-point forces, per-body COM wrenches,
+normal acceleration residuals and the opposite fixed-environment force in
+newtons. That force is not an integrated impulse or a heat/work ledger.
+
+The SceneBodyWorld adapter performs pose-only affine SAT queries, independently
+of velocity or future TOI. Every distinct touching SAT normal is retained,
+including independent corner planes. Only exactly equal represented normal
+vectors are deduplicated; near-parallel directions are not merged by a chosen
+angle. Equal face branches prefer obstacle provenance. Query-local shape and
+axis keys flow through the existing feature-aware clip/plane callbacks, so walls
+retain actual indices and finite supports retain their real mass and inertia.
+The snapshot query uses floating geometry guards and admitted contact witnesses;
+it is not a certified real-arithmetic contact or future branch interval proof.
+
+`SceneLiquidRuntime::support_reactions` exposes this read-only assembly for the
+current active owners under gravity and optional owner-keyed additional loads.
+Duplicate, inactive, foreign and edited bindings reject. Query and dynamics
+share one active mechanical-world extraction; there is no second scene owner or
+replacement integrator. The returned owner list defines report indices.
+
+Global callback budgets, per-callback shape candidate limits and the shared
+128-body/128-clipped-point limit reject complete results rather than drop
+constraints. Event-only adapters reject support queries by default, rather than
+pretend an empty support network. Overlaps and approaching support points reject;
+outgoing points remain visible to geometry and receive zero reaction.
+
+Real scene geometry qualifies a 2/3/5 kg stack under 10 m/s²: upper and lower
+inter-body loads are 20 and 50 N, and the floor receives 100 N. Body ordering and
+a proper cyclic world-frame permutation are exercised. A beam supported by two
+finite bodies balances force and COM torque and passes the independently summed
+world moment to the floor. An authored mass-distribution scene with a corner
+contact preserves both independent normal branches and balances configured
+gravity plus intrinsic torque without changing scene poses or runtime state.
+Scale, shear, reciprocal normals, separation, overlap and late budget rejection
+have focused fixtures. The initial beam fixture had the wrong expected sign for
+world-transmitted moment; its raw failed log is retained alongside the correction.
+
+This completes snapshot support discovery and coupled load assembly, not
+persistent constrained evolution. The existing resting-gravity dynamic-step
+fixture still rejects and rolls back. Interval branch tracking, changing
+reactions, support release/impact transitions, integration error admission and
+finite constraint work remain required before that step can advance.
+Qualification logs: artifacts/scene-support-assembly-2026-10-06. Changes are local.
+
+Final full release physics/gameplay/editor regression passed 1909 tests with
+24 ignored. App/editor all-target release checks, formatting and diff checks
+passed. The initial frame fixture compile error and beam expectation failure
+remain in the qualification archive; final runs passed.
+
+### Opt-in finite supported rigid motion (2026-10-06)
+
+`step_with_supported_rigid_body_forces` and the scene owner's
+`tick_and_publish_with_supported_dynamics` reuse the existing event loop and
+atomic publication. Each accepted interval assembles coupled normal reactions
+and admits the nominal prepared trajectory against the supporting geometry.
+Closing shape pairs remain in impact search; other walls remain searchable.
+Budgets reject the complete step without partial runtime or scene publication.
+
+Discovery, clipping and interval admission share an explicit geometry error
+budget. This preserves near-coplanar face footprints under retained numerical
+spin without snapping positions, velocities or angular momentum. External and
+reaction work are evaluated separately on the same actual prepared path; signed
+reaction work is not heat. Fixed-environment reaction impulse contributes to the
+total environment impulse ledger.
+
+Fixtures qualify a 2/3/5 kg stack over one second, release under changed load,
+tangential acceleration on a fixed plane, collision with another wall, retained
+small spin, and scene publication with rollback after a late budget failure.
+General rotating supports, changing world application arms and finite-body
+tangential sliding remain unfinished and reject when admission cannot succeed.
+The API is opt-in; the editor's default simulation path remains unchanged.
+Nominal geometry bounds are not certified bounds on the exact rotational orbit.
+
+Full release physics/gameplay/editor regression: 1916 passed, 24 ignored.
+Qualification logs and source hashes: artifacts/supported-rigid-motion-2026-10-06.

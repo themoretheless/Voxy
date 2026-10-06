@@ -115,6 +115,88 @@ pub(crate) struct AffineContact {
 }
 
 impl AffineBox {
+    /// Snapshot SAT query for all distinct touching branches. Unlike a sweep,
+    /// this includes stationary/outgoing pairs and independent corner normals.
+    /// Sources belong to this pose; this is not a future branch proof.
+    pub(crate) fn support_contacts(
+        &self,
+        other: &AffineBox,
+    ) -> Result<Vec<(AffineContact, AxisFeature)>, super::PhysicsError> {
+        self.support_contacts_with_error(other, 0.)
+    }
+    pub(crate) fn support_contacts_with_error(
+        &self,
+        other: &AffineBox,
+        error_m: f64,
+    ) -> Result<Vec<(AffineContact, AxisFeature)>, super::PhysicsError> {
+        if !error_m.is_finite() || error_m < 0. {
+            return Err(super::PhysicsError::ContactWitness);
+        }
+        let relative = other.center - self.center;
+        if !self.center.is_finite()
+            || !relative.is_finite()
+            || [self, other].iter().any(|shape| {
+                !glam::DMat3::from_cols(shape.edges[0], shape.edges[1], shape.edges[2])
+                    .inverse()
+                    .is_finite()
+            })
+        {
+            return Err(super::PhysicsError::ContactWitness);
+        }
+        let mut axes: Vec<_> = self.support_axes(other.edges).collect();
+        // Equal face normals retain obstacle provenance. Distinct normals are
+        // never merged using an angular tolerance, including near-parallel edges.
+        axes.sort_by_key(|axis| match axis.feature {
+            AxisFeature::ObstacleFace(_) => 0,
+            AxisFeature::BodyFace(_) => 1,
+            AxisFeature::Edges(_, _) => 2,
+        });
+        let mut branches = Vec::new();
+        for axis in axes {
+            let distance = relative.dot(axis.direction);
+            let radius = self.radius(axis.direction) + other.radius(axis.direction);
+            let gap = distance.abs() - radius;
+            let guard = error_m + 64. * f64::EPSILON * (1. + relative.abs().max_element() + radius);
+            if !gap.is_finite() || !guard.is_finite() {
+                return Err(super::PhysicsError::ContactWitness);
+            }
+            if gap > guard {
+                return Ok(Vec::new());
+            }
+            let normal = axis.direction * if distance < 0. { -1. } else { 1. };
+            if gap >= -guard && !branches.iter().any(|(n, _, _)| *n == normal) {
+                branches.push((normal, axis.feature, gap));
+            }
+        }
+        if branches.is_empty() {
+            return Err(super::PhysicsError::InitialOverlap);
+        }
+        let moved = AffineBox {
+            center: relative,
+            edges: other.edges,
+        };
+        branches
+            .into_iter()
+            .map(|(normal, feature, gap)| {
+                let projected = AffineBox {
+                    center: moved.center - normal * gap,
+                    ..moved
+                };
+                let (point, _, tolerance) =
+                    self.contact_patch_and_center_relative_with_error(&projected, normal, error_m)?;
+                let tolerance = tolerance + gap.abs();
+                Ok((
+                    AffineContact {
+                        fraction: 0.,
+                        normal,
+                        point,
+                        tolerance,
+                    },
+                    feature,
+                ))
+            })
+            .collect()
+    }
     /// Translation sweep plus a point on both admitted contact surfaces.
     /// The obstacle is stationary; relative-frame callers must transport the point
     /// by the obstacle's actual motion at the returned fraction.
@@ -180,6 +262,26 @@ impl AffineBox {
         other: &AffineBox,
         normal: DVec3,
     ) -> Result<(DVec3, Vec<DVec3>, f64), super::PhysicsError> {
+        self.contact_patch_and_center_relative_with_error(other, normal, 0.)
+    }
+    pub(crate) fn contact_patch_relative_with_error(
+        &self,
+        other: &AffineBox,
+        normal: DVec3,
+        error_m: f64,
+    ) -> Result<(Vec<DVec3>, f64), super::PhysicsError> {
+        self.contact_patch_and_center_relative_with_error(other, normal, error_m)
+            .map(|(_, points, tolerance)| (points, tolerance))
+    }
+    fn contact_patch_and_center_relative_with_error(
+        &self,
+        other: &AffineBox,
+        normal: DVec3,
+        error_m: f64,
+    ) -> Result<(DVec3, Vec<DVec3>, f64), super::PhysicsError> {
+        if !error_m.is_finite() || error_m < 0. {
+            return Err(super::PhysicsError::ContactWitness);
+        }
         use super::PhysicsError;
         // All clipping happens in the obstacle-relative frame, not huge world coordinates.
         let a = AffineBox {
@@ -196,7 +298,7 @@ impl AffineBox {
             .chain(&b.edges)
             .map(|e| e.abs().max_element())
             .fold(b.center.abs().max_element().max(1.), f64::max);
-        let tolerance = 256. * f64::EPSILON * scale;
+        let tolerance = error_m + 256. * f64::EPSILON * scale;
         fn slabs(shape: &AffineBox) -> Result<[(DVec3, f64); 3], PhysicsError> {
             let inverse =
                 glam::DMat3::from_cols(shape.edges[0], shape.edges[1], shape.edges[2]).inverse();
@@ -536,6 +638,127 @@ pub(crate) fn move_body_affine_carrying_velocity(
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn explicit_geometry_budget_preserves_near_face_patch_and_rejects_larger_errors() {
+        let wall = AffineBox {
+            center: DVec3::ZERO,
+            edges: aligned_edges(DVec3::ONE),
+        };
+        let q = glam::DQuat::from_rotation_z(1e-12);
+        let body = AffineBox {
+            center: DVec3::X * 2.,
+            edges: wall.edges.map(|e| q * e),
+        };
+        let contacts = wall.support_contacts_with_error(&body, 1e-10).unwrap();
+        let (hit, _) = contacts
+            .iter()
+            .find(|(hit, _)| hit.normal == DVec3::X)
+            .unwrap();
+        let relative = AffineBox {
+            center: body.center - wall.center,
+            edges: body.edges,
+        };
+        let gap =
+            relative.center.dot(hit.normal) - wall.radius(hit.normal) - relative.radius(hit.normal);
+        let projected = AffineBox {
+            center: relative.center - hit.normal * gap,
+            ..relative
+        };
+        let (points, _) = wall
+            .contact_patch_relative_with_error(&projected, hit.normal, 1e-10)
+            .unwrap();
+        assert!(points.iter().map(|p| p.y).fold(f64::NEG_INFINITY, f64::max) > 0.99);
+        assert!(points.iter().map(|p| p.y).fold(f64::INFINITY, f64::min) < -0.99);
+        let deep = AffineBox {
+            center: body.center - DVec3::X * 1e-6,
+            ..body
+        };
+        assert!(matches!(
+            wall.support_contacts_with_error(&deep, 1e-10),
+            Err(super::super::PhysicsError::InitialOverlap)
+        ));
+        let separated = AffineBox {
+            center: body.center + DVec3::X * 1e-6,
+            ..body
+        };
+        assert!(
+            wall.support_contacts_with_error(&separated, 1e-10)
+                .unwrap()
+                .is_empty()
+        );
+    }
+    #[test]
+    fn snapshot_support_reports_independent_corner_planes_without_duplicate_axes() {
+        let wall = AffineBox {
+            center: DVec3::ZERO,
+            edges: aligned_edges(DVec3::ONE),
+        };
+        let body = AffineBox {
+            center: DVec3::new(2., 2., 0.),
+            ..wall
+        };
+        let contacts = wall.support_contacts(&body).unwrap();
+        assert_eq!(contacts.len(), 2);
+        assert_eq!(contacts[0].1, AxisFeature::ObstacleFace(0));
+        assert_eq!(contacts[1].1, AxisFeature::ObstacleFace(1));
+        assert_eq!(contacts[0].0.normal, DVec3::X);
+        assert_eq!(contacts[1].0.normal, DVec3::Y);
+    }
+    #[test]
+    fn snapshot_support_retains_source_and_distinguishes_gap_from_overlap_across_scales() {
+        for scale in [2f64.powi(-20), 1., 2f64.powi(20)] {
+            let wall = AffineBox {
+                center: DVec3::new(16., -8., 4.) * scale,
+                edges: aligned_edges(DVec3::splat(scale)),
+            };
+            let body = AffineBox {
+                center: wall.center + DVec3::X * (2. * scale),
+                ..wall
+            };
+            let (hit, feature) = wall.support_contacts(&body).unwrap()[0];
+            assert_eq!(feature, AxisFeature::ObstacleFace(0));
+            assert_eq!(hit.normal, DVec3::X);
+            assert!((hit.point.x - wall.center.x - scale).abs() <= hit.tolerance);
+            let (reciprocal, _) = body.support_contacts(&wall).unwrap()[0];
+            assert_eq!(reciprocal.normal, -DVec3::X);
+            assert!(
+                (reciprocal.point - hit.point).length() <= hit.tolerance + reciprocal.tolerance
+            );
+            let mut moved = body;
+            moved.center.x += 0.001 * scale;
+            assert!(wall.support_contacts(&moved).unwrap().is_empty());
+            moved.center.x = body.center.x - 0.001 * scale;
+            assert!(matches!(
+                wall.support_contacts(&moved),
+                Err(super::super::PhysicsError::InitialOverlap)
+            ));
+        }
+    }
+    #[test]
+    fn snapshot_support_handles_sheared_face_and_invalid_shape() {
+        let wall = AffineBox {
+            center: DVec3::ZERO,
+            edges: [DVec3::X, DVec3::new(0.5, 1., 0.), DVec3::Z * 0.5],
+        };
+        let body = AffineBox {
+            center: DVec3::X * 2.,
+            ..wall
+        };
+        let (hit, feature) = wall.support_contacts(&body).unwrap()[0];
+        assert_eq!(feature, AxisFeature::ObstacleFace(0));
+        assert!((hit.normal - DVec3::new(1., -0.5, 0.).normalize()).length() < 1e-14);
+        for shape in [wall, body] {
+            let local = glam::DMat3::from_cols(shape.edges[0], shape.edges[1], shape.edges[2])
+                .inverse()
+                * (hit.point - shape.center);
+            assert!(local.abs().max_element() <= 1. + 1e-12);
+        }
+        let bad = AffineBox {
+            edges: [DVec3::ZERO; 3],
+            ..body
+        };
+        assert!(wall.support_contacts(&bad).is_err());
+    }
     use super::*;
     #[test]
     fn oriented_face_contact_is_analytic_and_invariant_to_extent_scale() {

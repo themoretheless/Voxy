@@ -1,0 +1,34 @@
+{
+  "full_release_regression": {
+    "passed": 1909,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "format_and_diff_check": "passed",
+  "source_sha256": {
+    "crates/physics/src/liquid.rs": "7a71524eb2e9393049d4277030ba7c14c30f3160445a7f4674571bfc7e38ac87",
+    "crates/physics/src/liquid/multi_body.rs": "eb49f01cc7821f80d0b151d7f5fdff663d74b7ab50aedfcaaac544bd6ab85cb4",
+    "crates/physics/src/liquid/support_world.rs": "de2bfca018bdddc0f7b0b5ae4f0755ffc39adbcc2ef855e9dfde9a09a14ea05a",
+    "crates/physics/tests/rigid_world_forces.rs": "91dd28de4e907e35edb0cc41a4f2252a63f5b8454bfdbcc636f06035b4331571",
+    "crates/voxy_gameplay/src/convex.rs": "18f6ed20a528fb3d85e0c96eb282baa573d8afb634adb062127eb63e8042cb05",
+    "crates/voxy_gameplay/src/lib.rs": "1b57897d4ba633485931d9e726d2ecb04d63e1d1cb6ec18b8fa82e2c4abf06ed",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "bbe90fb7fa96f6c1940902233a76cfa9bc1401857ed65ec6318473149245a552",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "5ac8ded80d5d22e008efd9be6c067d5871a61bc9e91c4acfff524c43802b8c95"
+  },
+  "qualification": [
+    "All affine support branches at current poses including two independent corner normals",
+    "Coupled stack load transmission and aggregate balance under body reorder",
+    "Coupled beam force and torque with independent world moment balance",
+    "Proper cyclic world frame covariance",
+    "Authored runtime owner binding, gravity composition, intrinsic torque and no state mutation",
+    "Unsupported backend, overlap, outgoing supports and complete late budget rejection"
+  ],
+  "limitations": [
+    "Snapshot support assembly only; persistent constrained trajectory integration remains unfinished",
+    "Normal reactions only; no tangential friction reaction solve",
+    "Snapshot floating guards are not real arithmetic or future branch interval certificates",
+    "Fixed environment report is force in newtons, not finite impulse/work/heat"
+  ],
+  "pushed": false
+}

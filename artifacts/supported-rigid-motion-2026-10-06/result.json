@@ -1,0 +1,35 @@
+{
+  "full_release_regression": {
+    "passed": 1916,
+    "failed": 0,
+    "ignored": 24
+  },
+  "app_editor_all_target_release_check": "passed",
+  "format_and_diff_check": "passed",
+  "source_sha256": {
+    "crates/physics/src/liquid.rs": "20b91a3690e8ab4cd33f7f400361a409d66c8c14e37c7c4d924e830159e74b9d",
+    "crates/physics/src/liquid/multi_body.rs": "f7a0b2ed656ebf9612a370dc4ec23be9a7e8842e769d1deec1a2b280e30b673c",
+    "crates/physics/src/rigid_motion.rs": "aa3b071293b2105e44b9a883a5c615929cf45356f6be89aa6da370f48fbbc639",
+    "crates/physics/tests/rigid_motion.rs": "a5f47534714687158f2bb1ce4b2a754ba6ef55910c97728673ee95868053e37a",
+    "crates/physics/tests/rigid_world_forces.rs": "91dd28de4e907e35edb0cc41a4f2252a63f5b8454bfdbcc636f06035b4331571",
+    "crates/voxy_gameplay/src/convex.rs": "abc9b6e216e258ad3c1afaeb802a752ed60e4f8030fda1db9a0fad7607836cbb",
+    "crates/voxy_gameplay/src/lib.rs": "e3469e7b8cee793432cbe686f63987f3335f03423fb3cf721d048474bab35bf5",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "fcb110f8b1160aa9829fbfaafbee63ffce52b49f4747e5404f64feb4633bdb29",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "8f6dbf591d49d6bd4fccf467b0d53e5729cb82ea39107ea028ca2ac14270ef72",
+    "docs/physics.md": "55e91d7f875e97b3e2a316c657d4523cb6b191d19197d2b5ae8317df06248e5c",
+    "crates/physics/src/liquid/support_world.rs": "73d6264a5dba1c42428390fc0218b0e33af8a67c7299fca369ee2f5d6f82e29a"
+  },
+  "qualification": [
+    "One-second coupled stack and changed-load release",
+    "Tangential acceleration and same-path signed wrench work",
+    "Other-wall impact search and atomic late-budget rollback",
+    "Authored scene owner publication",
+    "Retained small spin and rejection of unresolved rotation"
+  ],
+  "limitations": [
+    "Opt-in API; default editor stepping unchanged",
+    "General rotating supports and moving application arms unfinished",
+    "Nominal geometric bounds do not certify exact rotational orbit"
+  ],
+  "raw_failed_runs_retained": true
+}

@@ -138,6 +138,49 @@ fn rotation() -> spin_path::Config {
         max_trials: 30000,
     }
 }
+#[test]
+fn support_assembly_rejects_event_only_backends_and_invalid_empty_network_inputs() {
+    use physics::contact::ReactionConfig;
+    use physics::liquid::resolve_rigid_world_reactions;
+    let bodies = [rigid()];
+    let before = bodies;
+    let config = ReactionConfig {
+        max_sweeps: 64,
+        acceleration_tolerance: 1e-9,
+        normal_velocity_tolerance: 1e-10,
+    };
+    let loads = [ContactWrench::default()];
+    assert_eq!(
+        resolve_rigid_world_reactions(&bodies, &Linear, &loads, Default::default(), config),
+        Err(Error::CollisionBackend)
+    );
+    assert_eq!(bodies, before);
+    for bad_loads in [
+        vec![],
+        vec![ContactWrench {
+            force: [f64::NAN, 0., 0.],
+            torque: [0.; 3],
+        }],
+    ] {
+        assert_eq!(
+            resolve_rigid_world_reactions(&bodies, &Linear, &bad_loads, Default::default(), config),
+            Err(Error::InvalidCollision)
+        );
+    }
+    assert_eq!(
+        resolve_rigid_world_reactions(
+            &bodies,
+            &Linear,
+            &loads,
+            Default::default(),
+            ReactionConfig {
+                max_sweeps: 0,
+                ..config
+            }
+        ),
+        Err(Error::InvalidCollision)
+    );
+}
 fn fluid(gravity: [f64; 3]) -> Liquid {
     Liquid::new(
         Vec::new(),
