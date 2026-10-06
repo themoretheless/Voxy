@@ -15,11 +15,11 @@ fn eye_position(pixel: vec2f, device_depth: f32) -> vec3f {
 }
 fn ray(pixel: vec2f) -> vec3f { return normalize(eye_position(pixel, 1.0)); }
 fn pixel_index(pixel: vec2f) -> vec2i { return clamp(vec2i(pixel), vec2i(0), vec2i(camera.viewport.xy) - 1); }
-struct FullInput { @builtin(position) position: vec4f }
+struct FullInput { @builtin(position) position: vec4f, @location(0) uv: vec2f }
 @vertex
 fn vs_fullscreen(@builtin(vertex_index) index: u32) -> FullInput {
     let corners = array<vec2f, 3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
-    var out: FullInput; out.position = vec4f(corners[index], 0, 1); return out;
+    var out: FullInput; out.position = vec4f(corners[index], 0, 1); out.uv = vec2f(corners[index].x * 0.5 + 0.5, 0.5 - corners[index].y * 0.5); return out;
 }
 
 @group(0) @binding(1) var depth_radius: texture_2d<f32>;
@@ -42,7 +42,7 @@ fn tangent(pixel: vec2f, axis: vec2f, centre: vec2f) -> vec3f {
     return position_at(pixel+axis, centre.x)-origin;
 }
 @fragment fn fs_composite(input: FullInput) -> @location(0) vec4f {
-    let pixel = input.position.xy; let index = pixel_index(pixel);
+    let pixel = input.uv * camera.viewport.xy; let index = pixel_index(pixel);
     let base = textureLoad(background,index,0);
     let surface = textureLoad(depth_radius,index,0).xy;
     let world_depth = -eye_position(pixel,scene_depth_at(pixel)).z;

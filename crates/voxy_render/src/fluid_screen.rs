@@ -100,6 +100,7 @@ struct Target {
 #[derive(Debug)]
 pub struct ScreenSpaceFluidRenderer {
     size: [u32; 2],
+    allocation_bytes: u64,
     capacity: usize,
     count: u32,
     camera: wgpu::Buffer,
@@ -239,6 +240,80 @@ fn validate_formats(
 }
 
 impl ScreenSpaceFluidRenderer {
+    /// Logical texture texels and buffer bytes, excluding driver allocation padding
+    /// and opaque pipeline/bind-group storage. No GPU resources are created.
+    /// # Errors
+    /// Empty targets/capacity, compressed/non-color formats or integer overflow.
+    pub fn required_allocation_bytes(
+        format: wgpu::TextureFormat,
+        width: u32,
+        height: u32,
+        capacity: usize,
+    ) -> Result<u64, &'static str> {
+        if width == 0
+            || height == 0
+            || capacity == 0
+            || format.block_dimensions() != (1, 1)
+            || !matches!(
+                format.sample_type(None, None),
+                Some(wgpu::TextureSampleType::Float { .. })
+            )
+        {
+            return Err("invalid fluid allocation estimate");
+        }
+        let color = u64::from(
+            format
+                .block_copy_size(None)
+                .ok_or("unsupported fluid color byte size")?,
+        );
+        let pixels = u64::from(width)
+            .checked_mul(u64::from(height))
+            .ok_or("fluid texture size overflow")?;
+        let targets = pixels
+            .checked_mul(color.checked_add(50).ok_or("fluid byte overflow")?)
+            .ok_or("fluid texture byte overflow")?;
+        let buffers = u64::try_from(capacity)
+            .map_err(|_| "fluid capacity overflow")?
+            .checked_mul(
+                (size_of::<FluidRenderParticle>() + size_of::<FluidRenderFilmTriangle>()) as u64,
+            )
+            .ok_or("fluid buffer byte overflow")?;
+        targets
+            .checked_add(buffers)
+            .and_then(|n| n.checked_add(size_of::<CameraUniform>() as u64))
+            .ok_or("fluid total byte overflow")
+    }
+
+    #[must_use]
+    pub fn allocation_bytes(&self) -> u64 {
+        self.allocation_bytes
+    }
+
+    /// Admit old and new resources together before creating a replacement.
+    /// `other_live_bytes` must include any renderer retained during replacement.
+    /// # Errors
+    /// Budget overflow, unsupported adapter formats or device limits.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_with_adapter_budget(
+        device: &wgpu::Device,
+        adapter: &wgpu::Adapter,
+        format: wgpu::TextureFormat,
+        width: u32,
+        height: u32,
+        capacity: usize,
+        other_live_bytes: u64,
+        budget: u64,
+    ) -> Result<Self, &'static str> {
+        let required = Self::required_allocation_bytes(format, width, height, capacity)?;
+        if other_live_bytes
+            .checked_add(required)
+            .is_none_or(|n| n > budget)
+        {
+            return Err("fluid GPU resource budget exceeded");
+        }
+        Self::new_with_adapter(device, adapter, format, width, height, capacity)
+    }
+
     /// Checks actual format capabilities before creating GPU resources.
     /// Pass the adapter which created this device. Metadata mismatch is rejected;
     /// equal metadata alone is not proof of physical adapter identity.
@@ -274,6 +349,7 @@ impl ScreenSpaceFluidRenderer {
         capacity: usize,
     ) -> Result<Self, &'static str> {
         validate_float_output(device.features(), format)?;
+        let allocation_bytes = Self::required_allocation_bytes(format, width, height, capacity)?;
         let (bytes, film_bytes) =
             validate_device_limits(&device.limits(), width, height, capacity)?;
         let make_target = |label, format, extra| {
@@ -639,6 +715,7 @@ impl ScreenSpaceFluidRenderer {
         });
         Ok(Self {
             size: [width, height],
+            allocation_bytes,
             capacity,
             count: 0,
             camera,
@@ -776,6 +853,52 @@ impl ScreenSpaceFluidRenderer {
         clear: wgpu::Color,
         draws: &[crate::SceneDraw<'_>],
     ) {
+        self.encode_region(renderer, encoder, output, clear, draws, None);
+    }
+
+    /// Compose this view into an existing full-window target without clearing neighbours.
+    /// Local overlays use the caller's full-window depth attachment.
+    /// # Errors
+    /// Empty/overflowing/out-of-bounds regions or size mismatch; rejected before encoding.
+    #[allow(clippy::too_many_arguments)]
+    pub fn encode_viewport(
+        &self,
+        renderer: &crate::SceneRenderer,
+        encoder: &mut wgpu::CommandEncoder,
+        output: &wgpu::TextureView,
+        depth: &wgpu::TextureView,
+        target_size: [u32; 2],
+        viewport: [u32; 4],
+        clear: wgpu::Color,
+        draws: &[crate::SceneDraw<'_>],
+    ) -> Result<(), &'static str> {
+        if viewport[2..] != self.size
+            || viewport[2] == 0
+            || viewport[3] == 0
+            || viewport[0]
+                .checked_add(viewport[2])
+                .is_none_or(|v| v > target_size[0])
+            || viewport[1]
+                .checked_add(viewport[3])
+                .is_none_or(|v| v > target_size[1])
+        {
+            return Err("invalid fluid composition viewport");
+        }
+        self.encode_region(renderer, encoder, output, clear, draws, Some(viewport));
+        renderer.encode_overlays_viewport(encoder, output, depth, draws, viewport);
+        Ok(())
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn encode_region(
+        &self,
+        renderer: &crate::SceneRenderer,
+        encoder: &mut wgpu::CommandEncoder,
+        output: &wgpu::TextureView,
+        clear: wgpu::Color,
+        draws: &[crate::SceneDraw<'_>],
+        viewport: Option<[u32; 4]>,
+    ) {
         let world: Vec<_> = draws
             .iter()
             .filter(|d| !d.overlay)
@@ -865,15 +988,35 @@ impl ScreenSpaceFluidRenderer {
                 1,
             );
         }
-        self.draw_pass(
-            encoder,
-            output,
-            &self.composite_pipeline,
-            &self.composite_group,
-            3,
-            1,
-        );
-        renderer.encode_overlays(encoder, output, &self.scene_depth.view, draws);
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("fluid viewport composition"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: output,
+                    resolve_target: None,
+                    depth_slice: None,
+                    ops: wgpu::Operations {
+                        load: if viewport.is_some() {
+                            wgpu::LoadOp::Load
+                        } else {
+                            wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT)
+                        },
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                ..Default::default()
+            });
+            if let Some([x, y, w, h]) = viewport {
+                pass.set_viewport(x as f32, y as f32, w as f32, h as f32, 0., 1.);
+                pass.set_scissor_rect(x, y, w, h);
+            }
+            pass.set_pipeline(&self.composite_pipeline);
+            pass.set_bind_group(0, &self.composite_group, &[]);
+            pass.draw(0..3, 0..1);
+        }
+        if viewport.is_none() {
+            renderer.encode_overlays(encoder, output, &self.scene_depth.view, draws);
+        }
     }
 
     fn draw_pass(
@@ -1460,5 +1603,148 @@ mod shader_portability_tests {
             }
         }
         assert_eq!(translated, 14);
+    }
+}
+
+#[cfg(test)]
+mod allocation_tests {
+    use super::*;
+    #[test]
+    fn footprint_counts_nine_targets_both_geometry_buffers_and_uniform() {
+        let expected = 64 * 32 * 54
+            + 8 * (size_of::<FluidRenderParticle>() + size_of::<FluidRenderFilmTriangle>()) as u64
+            + size_of::<CameraUniform>() as u64;
+        assert_eq!(
+            ScreenSpaceFluidRenderer::required_allocation_bytes(
+                wgpu::TextureFormat::Rgba8Unorm,
+                64,
+                32,
+                8
+            )
+            .unwrap(),
+            expected
+        );
+        assert_eq!(
+            ScreenSpaceFluidRenderer::required_allocation_bytes(
+                wgpu::TextureFormat::Rgba16Float,
+                64,
+                32,
+                8
+            )
+            .unwrap(),
+            expected + 64 * 32 * 4
+        );
+        assert!(
+            ScreenSpaceFluidRenderer::required_allocation_bytes(
+                wgpu::TextureFormat::Rgba8Unorm,
+                0,
+                32,
+                8
+            )
+            .is_err()
+        );
+        assert!(
+            ScreenSpaceFluidRenderer::required_allocation_bytes(
+                wgpu::TextureFormat::Bc1RgbaUnorm,
+                64,
+                32,
+                8
+            )
+            .is_err()
+        );
+        assert!(
+            ScreenSpaceFluidRenderer::required_allocation_bytes(
+                wgpu::TextureFormat::Rgba8Unorm,
+                u32::MAX,
+                u32::MAX,
+                usize::MAX
+            )
+            .is_err()
+        );
+    }
+    #[test]
+    #[ignore = "requires a physical GPU adapter"]
+    fn gpu_budget_boundary_and_rejected_resize_preserve_previous_resources() {
+        let instance = crate::GraphicsOptions::default().create_instance();
+        let adapter =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+                .unwrap();
+        println!("FLUID RESIDENCY GPU {:?}", adapter.get_info());
+        let (device, _) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())).unwrap();
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let format = wgpu::TextureFormat::Rgba8Unorm;
+        let required =
+            ScreenSpaceFluidRenderer::required_allocation_bytes(format, 64, 32, 8).unwrap();
+        assert!(
+            ScreenSpaceFluidRenderer::new_with_adapter_budget(
+                &device,
+                &adapter,
+                format,
+                64,
+                32,
+                8,
+                0,
+                required - 1
+            )
+            .is_err()
+        );
+        let old = ScreenSpaceFluidRenderer::new_with_adapter_budget(
+            &device, &adapter, format, 64, 32, 8, 0, required,
+        )
+        .unwrap();
+        let texture_bytes = [
+            &old.background,
+            &old.scene_depth,
+            &old.particle_depth,
+            &old.raw_depth,
+            &old.ping_depth,
+            &old.smooth_depth,
+            &old.material,
+            &old.thickness,
+            &old.optical_depth,
+        ]
+        .iter()
+        .map(|t| {
+            u64::from(t.texture.width())
+                * u64::from(t.texture.height())
+                * u64::from(t.texture.format().block_copy_size(None).unwrap())
+        })
+        .sum::<u64>();
+        let actual = texture_bytes + old.camera.size() + old.particles.size() + old.films.size();
+        assert_eq!(actual, required);
+        assert_eq!(old.allocation_bytes(), actual);
+        let resized =
+            ScreenSpaceFluidRenderer::required_allocation_bytes(format, 128, 64, 8).unwrap();
+        assert!(
+            ScreenSpaceFluidRenderer::new_with_adapter_budget(
+                &device,
+                &adapter,
+                format,
+                128,
+                64,
+                8,
+                old.allocation_bytes(),
+                required + resized - 1
+            )
+            .is_err()
+        );
+        assert_eq!(old.size(), [64, 32]);
+        assert_eq!(old.allocation_bytes(), required);
+        assert!(
+            ScreenSpaceFluidRenderer::new_with_adapter_budget(
+                &device,
+                &adapter,
+                format,
+                128,
+                64,
+                8,
+                u64::MAX,
+                u64::MAX
+            )
+            .is_err()
+        );
+        assert!(pollster::block_on(scope.pop()).is_none());
+        println!("logical_live_bytes={actual} rejected_resize_bytes={resized}");
     }
 }

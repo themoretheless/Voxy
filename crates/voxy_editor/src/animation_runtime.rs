@@ -16,13 +16,21 @@ pub(super) fn schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_scene
     static PLAN: std::sync::OnceLock<Result<voxy_scene::SchedulePlan, voxy_scene::ScheduleError>> =
         std::sync::OnceLock::new();
     PLAN.get_or_init(|| {
-        voxy_gameplay::gameplay_schedule()?.with_resource_access(
-            "character.step",
-            voxy_scene::SystemAccess {
-                resource: "animation.playback".into(),
-                write: true,
-            },
-        )
+        voxy_gameplay::gameplay_schedule()?
+            .with_resource_access(
+                "character.step",
+                voxy_scene::SystemAccess {
+                    resource: "animation.playback".into(),
+                    write: true,
+                },
+            )?
+            .with_resource_access(
+                "character.step",
+                voxy_scene::SystemAccess {
+                    resource: "liquid.world".into(),
+                    write: true,
+                },
+            )
     })
     .as_ref()
     .map_err(Clone::clone)

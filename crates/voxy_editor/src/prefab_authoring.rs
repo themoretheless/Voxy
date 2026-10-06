@@ -52,6 +52,86 @@ impl AuthoringProject {
             },
         })
     }
+    pub(super) fn liquid_runtime(
+        &self,
+        scene: &voxy_scene::SceneGraph,
+    ) -> Result<Option<(voxy_gameplay::SceneLiquidRuntime, Vec<Option<[f32; 4]>>)>, String> {
+        #[derive(serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct MaterialFile {
+            rest_density: f64,
+            sound_speed: f64,
+            viscosity: f64,
+            #[serde(default)]
+            optics: Option<[f32; 4]>,
+        }
+        let names: std::collections::BTreeSet<_> = scene
+            .components::<voxy_gameplay::LiquidSource>()
+            .map(|(_, s)| s.material_asset.clone())
+            .collect();
+        if names.is_empty()
+            && scene
+                .components::<voxy_gameplay::LiquidBody>()
+                .next()
+                .is_none()
+        {
+            return Ok(None);
+        }
+        if names.len() > 128 {
+            return Err("liquid material budget exceeded".into());
+        }
+        let mut inputs = ImportInputs::new(129, 128 * 65536 + 65536);
+        let locations = self.project_locations(&mut inputs)?;
+        let mut materials = Vec::new();
+        let mut optics = Vec::new();
+        for name in names {
+            let source = Self::resolve_project_input(&name, locations.as_ref())?;
+            let bytes = inputs
+                .read(source.observation_id(), |id, limit| {
+                    self.provider.read(id, limit.min(65536))
+                })
+                .map_err(|e| format!("liquid material input: {e:?}"))?;
+            let m: MaterialFile = serde_json::from_slice(&bytes.bytes)
+                .map_err(|e| format!("liquid material {name}: {e}"))?;
+            if let Some(value) = m.optics {
+                if value.iter().any(|v| !v.is_finite())
+                    || value[..3].iter().any(|v| *v < 0.)
+                    || value[3] < 1.
+                {
+                    return Err(format!("invalid liquid optics: {name}"));
+                }
+            }
+            optics.push(m.optics);
+            materials.push((
+                name,
+                physics::liquid::Material {
+                    rest_density: m.rest_density,
+                    sound_speed: m.sound_speed,
+                    viscosity: m.viscosity,
+                },
+            ));
+        }
+        if materials.is_empty() {
+            materials.push((
+                "__empty-fluid-reference".into(),
+                physics::liquid::Material::WATER,
+            ));
+            optics.push(None);
+        }
+        let admitted = inputs
+            .finish((materials, optics), |id, limit| {
+                self.provider.read(id, limit)
+            })
+            .map_err(|e| format!("liquid material changed: {e:?}"))?;
+        voxy_gameplay::SceneLiquidRuntime::new(
+            scene,
+            admitted.value().0.clone(),
+            physics::liquid::Config::default(),
+            128,
+        )
+        .map(|runtime| Some((runtime, admitted.value().1.clone())))
+    }
+
     pub(super) fn worker_project(&self) -> Result<Self, String> {
         Ok(Self {
             registry: self.registry.clone(),

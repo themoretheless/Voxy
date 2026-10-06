@@ -3,6 +3,10 @@
 //! Characters collide with active static boxes, not with each other. Physics owns
 //! translations during ticks. A character may rotate; its scale and ancestor
 //! rotation/scale must be identity. Static boxes support affine transforms.
+mod liquid_body;
+pub use liquid_body::LiquidBody;
+mod liquid_runtime;
+pub use liquid_runtime::{SceneLiquidRuntime, SceneLiquidStep};
 mod liquid_source;
 pub use liquid_source::{LiquidPulse, LiquidSource};
 mod angular_sweep;
@@ -167,6 +171,7 @@ impl std::error::Error for PhysicsError {}
 /// # Errors
 /// Rejects duplicate schema names/types.
 pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
+    registry.register::<LiquidBody>("game.liquid-body.v1")?;
     registry.register::<LiquidSource>("game.liquid-source.v1")?;
     registry.register::<CharacterBody>("game.character.v1")?;
     registry.register::<BoxCollider>("game.box.v1")?;
@@ -188,9 +193,27 @@ pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<
             .prepare([0.; 3], 0)
             .map_err(|e| format!("invalid game.liquid-source.v1: {e:?}"))?;
     }
-    if scene.components::<LiquidSource>().next().is_some() {
+    if scene.components::<LiquidSource>().next().is_some()
+        || scene.components::<LiquidBody>().next().is_some()
+    {
         return Err("game.liquid-source.v1 requires an attached scene liquid runtime".into());
     }
+    validate_common_game_descriptors(scene, capacity)
+}
+
+/// Preflight for hosts that attach and tick the admitted liquid owner.
+/// # Errors
+/// Invalid shared descriptors, foreign runtime or changed liquid source bindings.
+pub fn validate_game_descriptors_with_liquid_runtime(
+    scene: &SceneGraph,
+    capacity: usize,
+    runtime: &SceneLiquidRuntime,
+) -> Result<(), String> {
+    runtime.validate_bindings(scene)?;
+    validate_common_game_descriptors(scene, capacity)
+}
+
+fn validate_common_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), String> {
     validate_behavior_descriptors(scene)?;
     extract_scene_audio(scene, capacity)?;
     extract_scene_ui(scene, [1.0, 1.0], capacity)?;
