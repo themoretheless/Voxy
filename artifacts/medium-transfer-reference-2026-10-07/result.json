@@ -1,0 +1,20 @@
+{
+  "renderer_library_passed": 158,
+  "new_reference_tests_passed": 3,
+  "cases": [
+    "vacuum",
+    "emission with zero extinction",
+    "segment partition invariance",
+    "order-dependent slabs",
+    "overlap coefficient summation with independent numeric values",
+    "thin optical-depth underflow",
+    "dense optical-depth overflow with finite source",
+    "radiance overflow rejects",
+    "invalid inputs reject",
+    "alpha preservation"
+  ],
+  "cpu_reference_implemented": true,
+  "gpu_transport_implemented": false,
+  "windowed_joint_fog_liquid_implemented": false,
+  "source_sha256": "1950a3a6979d21241ca59206a09ee13b610da5d6b07cf8cc865e8e1551aa1b58"
+}

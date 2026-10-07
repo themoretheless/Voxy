@@ -1,0 +1,85 @@
+{
+  "scope": "Four-node tetrahedron, moving embedded triangle and obstacle, 20 quadrature nodes; release build; not full-rig or realtime proof",
+  "batches": [
+    {
+      "batch": 0,
+      "iterations": 100,
+      "shared_s": 0.004124,
+      "separate_s": 0.005618208
+    },
+    {
+      "batch": 1,
+      "iterations": 100,
+      "shared_s": 0.002055916,
+      "separate_s": 0.00362
+    },
+    {
+      "batch": 2,
+      "iterations": 100,
+      "shared_s": 0.002052375,
+      "separate_s": 0.003619958
+    },
+    {
+      "batch": 3,
+      "iterations": 100,
+      "shared_s": 0.002049708,
+      "separate_s": 0.003615
+    },
+    {
+      "batch": 4,
+      "iterations": 100,
+      "shared_s": 0.002053417,
+      "separate_s": 0.003615834
+    },
+    {
+      "batch": 5,
+      "iterations": 100,
+      "shared_s": 0.002055792,
+      "separate_s": 0.003609833
+    },
+    {
+      "batch": 6,
+      "iterations": 100,
+      "shared_s": 0.002057625,
+      "separate_s": 0.003607083
+    },
+    {
+      "batch": 7,
+      "iterations": 100,
+      "shared_s": 0.002058417,
+      "separate_s": 0.00360425
+    },
+    {
+      "batch": 8,
+      "iterations": 100,
+      "shared_s": 0.0021785,
+      "separate_s": 0.003852708
+    }
+  ],
+  "median_shared_s": 0.002055916,
+  "median_separate_s": 0.003615834,
+  "median_paired_speed_ratio": 1.7607723272740714,
+  "all_nine_shared_faster": true,
+  "parity_trial_scales": [
+    -8,
+    -4,
+    -1,
+    0,
+    0.25,
+    1,
+    4,
+    8
+  ],
+  "checks": [
+    "all potential/gradient/work fields bit equal",
+    "independent finite differences",
+    "independent energy/work balance",
+    "foreign owner rejects",
+    "invalid gradient preserves destination"
+  ],
+  "background": "Eight original rig processes remain running; alternating order and all batches retained",
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "3f4f52c4f694d013ab594cc02757ecd6b261474002496a38f7af62e1a165734f",
+    "crates/physics/src/biomechanics/embedded_contact.rs": "056b8401e029d94dbecea235a15b169bdf3b9cea907d71e93a3916f99c566dba"
+  }
+}

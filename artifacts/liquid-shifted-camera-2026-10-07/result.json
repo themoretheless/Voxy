@@ -1,0 +1,20 @@
+{
+  "gpu_test_passed": true,
+  "camera_cases": [
+    "perspective centered",
+    "orthographic centered",
+    "orthographic translated rolled 90 degrees asymmetric frustum",
+    "perspective translated rolled 90 degrees"
+  ],
+  "filters": [
+    "none",
+    "bilateral"
+  ],
+  "analytic_thickness_checks": 216,
+  "rgb_absorption_checks": 648,
+  "oracle": "World-space inverse-camera rays; triangle membership computed geometrically; sphere chord measured from per-pixel origin; analytic clipping and SI path length. No authored inside/outside pixel labels.",
+  "source_sha256": "8a425d91cf45287f8b8493e4acb9cbd6f14a84762eaf4cab0d0c356e16b173f7",
+  "native_editor_visual_verified": false,
+  "general_refraction_quality_verified": false,
+  "joint_fog_liquid_transport_complete": false
+}

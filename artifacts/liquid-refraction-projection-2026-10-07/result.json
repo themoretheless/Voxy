@@ -1,0 +1,31 @@
+{
+  "projection_gpu_scalar_checks": 36,
+  "fovs_radians": [
+    0.4,
+    0.8,
+    1.4
+  ],
+  "depths_world_units": [
+    0.1,
+    1,
+    9
+  ],
+  "viewport": [
+    128,
+    64
+  ],
+  "projections": [
+    "perspective aspect 2",
+    "orthographic asymmetric bounds"
+  ],
+  "oracle": "Actual production shader helper runs on GPU; CPU independently projects two displaced points and measures their pixel difference.",
+  "render_library_passed": 155,
+  "fluid_optics_integration_passed": 1,
+  "physical_gpu_thickness_checks": 216,
+  "physical_gpu_rgb_absorption_checks": 648,
+  "scope": "Projection-aware screen-space transverse refraction displacement; existing approximate optical model, near-depth clamp and environment fallback retained. No complete Snell ray transport, general refractive image quality or fog/liquid composition qualification.",
+  "source_sha256": {
+    "crates/voxy_render/src/fluid_composite.wgsl": "921491a448c3a106290ae5653a4aca70219ed10c5e9ae69a39090ecd02915647",
+    "crates/voxy_render/src/fluid_screen.rs": "ef6fa304cd9c2460c04fc529b548d10c18a6f153ed523208e1f6ee738610b3ce"
+  }
+}

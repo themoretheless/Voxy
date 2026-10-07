@@ -27,7 +27,8 @@ fn vs_particle(@builtin(vertex_index) vertex: u32, p: Particle) -> SphereInput {
     let distance = -centre.z;
     var out: SphereInput;
     // Conservative perspective bounds. Near-camera spheres use the full screen.
-    let expansion = max(1.0, (distance + length(centre.xy)) / max(distance - radius, 0.00001));
+    var expansion = max(1.0, (distance + length(centre.xy)) / max(distance - radius, 0.00001));
+    if orthographic() { expansion = 1.0; }
     var clip = camera.projection * vec4f(centre + vec3f(corners[vertex] * radius * expansion, 0), 1);
     if (distance - radius <= camera.controls.x) {
         clip = vec4f(corners[vertex], 0.0, 1.0);
@@ -43,18 +44,27 @@ fn eye_position(pixel: vec2f, device_depth: f32) -> vec3f {
     let p = camera.inverse_projection * vec4f(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, device_depth, 1.0);
     return p.xyz / p.w;
 }
-fn ray(pixel: vec2f) -> vec3f { return normalize(eye_position(pixel, 1.0)); }
+fn orthographic() -> bool { return camera.viewport.w >= 2.0; }
+fn ray_origin(pixel: vec2f) -> vec3f {
+    if orthographic() { return vec3f(eye_position(pixel, 0.0).xy, 0.0); }
+    return vec3f(0.0);
+}
+fn ray(pixel: vec2f) -> vec3f {
+    if orthographic() { return normalize(eye_position(pixel, 1.0)-eye_position(pixel, 0.0)); }
+    return normalize(eye_position(pixel, 1.0));
+}
 fn pixel_index(pixel: vec2f) -> vec2i { return clamp(vec2i(pixel), vec2i(0), vec2i(camera.viewport.xy) - 1); }
 fn sphere_interval(input: SphereInput) -> vec2f {
     let direction = ray(input.position.xy);
-    let b = dot(direction, input.centre);
-    let discriminant = b*b - dot(input.centre, input.centre) + input.radius*input.radius;
+    let relative = input.centre-ray_origin(input.position.xy);
+    let b = dot(direction, relative);
+    let discriminant = b*b - dot(relative, relative) + input.radius*input.radius;
     if (discriminant <= 0) { discard; }
     let root = sqrt(discriminant);
     let near_t = camera.controls.x / -direction.z;
     let far_t = camera.controls.y / -direction.z;
     let scene_z = scene_depth_at(input.position.xy);
-    let scene_t = dot(eye_position(input.position.xy, scene_z), direction);
+    let scene_t = dot(eye_position(input.position.xy, scene_z)-ray_origin(input.position.xy), direction);
     let start = max(b-root, near_t);
     let end = min(min(b+root, scene_t), far_t);
     if (end <= start) { discard; }
@@ -68,7 +78,7 @@ struct DepthOutput {
 @fragment
 fn fs_depth(input: SphereInput) -> DepthOutput {
     let interval = sphere_interval(input);
-    let position = ray(input.position.xy) * interval.x;
+    let position = ray_origin(input.position.xy)+ray(input.position.xy) * interval.x;
     let clip = camera.projection * vec4f(position, 1);
     var out: DepthOutput;
     out.depth_radius = vec2f(-position.z, input.radius);
@@ -137,9 +147,9 @@ fn vs_film(@builtin(vertex_index) vertex: u32, f: Film) -> FilmInput {
     return out;
 }
 // Outward plane: dot(normal, x - point) <= 0 is inside.
-fn clip_film_plane(interval: vec2f, direction: vec3f, normal: vec3f, point: vec3f) -> vec2f {
+fn clip_film_plane(interval: vec2f, direction: vec3f, origin: vec3f, normal: vec3f, point: vec3f) -> vec2f {
     let denominator = dot(normal, direction);
-    let bound = dot(normal, point);
+    let bound = dot(normal, point-origin);
     if (denominator == 0.0) {
         if (bound < 0.0) { discard; }
         return interval;
@@ -155,20 +165,20 @@ fn film_interval(input: FilmInput) -> vec2f {
     let n = normalize(cross(b-a,c-a));
     let direction = ray(input.position.xy);
     let scene_z = scene_depth_at(input.position.xy);
-    let scene_t = dot(eye_position(input.position.xy, scene_z), direction);
+    let scene_t = dot(eye_position(input.position.xy, scene_z)-ray_origin(input.position.xy), direction);
     var interval = vec2f(camera.controls.x / -direction.z, min(camera.controls.y / -direction.z, scene_t));
-    interval = clip_film_plane(interval,direction,-n,a);
-    interval = clip_film_plane(interval,direction,n,a+n*input.a_thickness.w);
-    interval = clip_film_plane(interval,direction,cross(b-a,n),a);
-    interval = clip_film_plane(interval,direction,cross(c-b,n),b);
-    interval = clip_film_plane(interval,direction,cross(a-c,n),c);
+    interval = clip_film_plane(interval,direction,ray_origin(input.position.xy),-n,a);
+    interval = clip_film_plane(interval,direction,ray_origin(input.position.xy),n,a+n*input.a_thickness.w);
+    interval = clip_film_plane(interval,direction,ray_origin(input.position.xy),cross(b-a,n),a);
+    interval = clip_film_plane(interval,direction,ray_origin(input.position.xy),cross(c-b,n),b);
+    interval = clip_film_plane(interval,direction,ray_origin(input.position.xy),cross(a-c,n),c);
     if (interval.y <= interval.x) { discard; }
     return interval;
 }
 @fragment
 fn fs_film_depth(input: FilmInput) -> DepthOutput {
     let interval = film_interval(input);
-    let position = ray(input.position.xy) * interval.x;
+    let position = ray_origin(input.position.xy)+ray(input.position.xy) * interval.x;
     let clip = camera.projection * vec4f(position,1);
     var out: DepthOutput;
     out.depth_radius = vec2f(-position.z, input.a_thickness.w);

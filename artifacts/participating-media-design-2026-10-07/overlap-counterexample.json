@@ -1,0 +1,41 @@
+{
+  "units": "length m; extinction m^-1; radiance source per m in a fixed linear radiance convention",
+  "length_m": 1,
+  "medium_a": {
+    "extinction": 1,
+    "source_rgb_per_m": [
+      3,
+      0,
+      0
+    ]
+  },
+  "medium_b": {
+    "extinction": 1,
+    "source_rgb_per_m": [
+      0,
+      0,
+      2
+    ]
+  },
+  "mixed_medium_transfer": {
+    "transmittance": 0.1353352832366127,
+    "radiance_rgb": [
+      1.296997075145081,
+      0,
+      0.8646647167633873
+    ]
+  },
+  "sequential_a_then_b_rgb": [
+    1.896361676485673,
+    0.0,
+    0.46508831586965926
+  ],
+  "sequential_b_then_a_rgb": [
+    0.6976324738044889,
+    0.0,
+    1.2642411176571153
+  ],
+  "homogeneous_solution": "L=q/sigma_t*(1-exp(-sigma_t*l)); overlapping constituent coefficients sum before integration",
+  "sequential_compositing_is_not_overlap_integration": true,
+  "scope": "Analytic model for constant source terms; directional illumination generally varies spatially and requires its own segment transmittance. Not a completed renderer."
+}

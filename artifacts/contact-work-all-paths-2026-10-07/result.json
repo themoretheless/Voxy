@@ -1,0 +1,13 @@
+{
+  "physics_library_passed": 125,
+  "embedded_contact_integration_passed": 33,
+  "surface_integration_passed": 13,
+  "path_response_temporary_delta_arrays_before": 3,
+  "path_response_temporary_delta_arrays_after": 0,
+  "endpoint_work_temporary_delta_arrays_before": 2,
+  "endpoint_work_temporary_delta_arrays_after": 0,
+  "checks": "Independent energy and forces, stiffness sweeps, moving CCD, Maxwell mechanical/thermal work, time refinement and complete-state rollback.",
+  "performance_speedup_measured": false,
+  "full_rig_production_qualified": false,
+  "source_sha256": "179f6af91b35862a41636c8b807abc2351cf13acb6ac250a18652358593a927c"
+}

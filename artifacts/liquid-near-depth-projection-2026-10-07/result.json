@@ -1,0 +1,28 @@
+{
+  "projection_scalar_checks": 60,
+  "depths_world_units": [
+    0.001,
+    0.005,
+    0.1,
+    1,
+    9
+  ],
+  "camera_near_world_units": 0.0001,
+  "artificial_depth_floor_removed": 0.01,
+  "surface_precondition": "Composite rejects nonpositive depth before invoking projection scale",
+  "fovs_radians": [
+    0.4,
+    0.8,
+    1.4
+  ],
+  "physical_thickness_checks": 270,
+  "rgb_absorption_checks": 810,
+  "render_library_passed": 155,
+  "fluid_integration_passed": 1,
+  "full_snell_transport_complete": false,
+  "joint_fog_liquid_transport_complete": false,
+  "source_sha256": {
+    "crates/voxy_render/src/fluid_composite.wgsl": "054c5bce1e0eaf0dc77e8bcb2a01ba3e73cf06662cb9fad3d667eff57e56dc96",
+    "crates/voxy_render/src/fluid_screen.rs": "6bfa7bba72c2e6cbb77bb12368ecf4e5634e99e6cdf27e10d98501aaed71757a"
+  }
+}

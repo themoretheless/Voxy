@@ -78,6 +78,46 @@ impl RelativeSurfaceLoads {
         }
         Ok(work)
     }
+    /// Actuator work between prescribed poses, without allocating displacement arrays.
+    /// As with `actuator_work_j`, finite motion requires path-averaged loads.
+    /// # Errors
+    /// Rejects mismatched poses, nonfinite displacements and overflowing work.
+    pub fn actuator_work_between_j(
+        &self,
+        reference_start: &[Point],
+        reference_end: &[Point],
+        base_start: &[Point],
+        base_end: &[Point],
+    ) -> Result<f64, &'static str> {
+        if reference_start.len() != self.reference.len()
+            || reference_end.len() != self.reference.len()
+            || base_start.len() != self.base.len()
+            || base_end.len() != self.base.len()
+        {
+            return Err("invalid prescribed skin displacement");
+        }
+        let deltas = || {
+            reference_start
+                .iter()
+                .zip(reference_end)
+                .chain(base_start.iter().zip(base_end))
+                .map(|(&a, &b)| sub(b, a))
+        };
+        if deltas().flatten().any(|x| !x.is_finite()) {
+            return Err("invalid prescribed skin displacement");
+        }
+        let work: f64 = self
+            .reference
+            .iter()
+            .chain(&self.base)
+            .zip(deltas())
+            .flat_map(|(f, d)| (0..3).map(move |i| -f[i] * d[i]))
+            .sum();
+        if !work.is_finite() {
+            return Err("prescribed skin work overflow");
+        }
+        Ok(work)
+    }
     /// Physical load on the prescribed rig, as resultant N and moment N m.
     /// Reference/base coordinates must correspond to this force evaluation.
     /// # Errors

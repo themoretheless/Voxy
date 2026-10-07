@@ -1,0 +1,23 @@
+{
+  "projections": [
+    "perspective",
+    "orthographic"
+  ],
+  "filters": [
+    "none",
+    "bilateral"
+  ],
+  "analytic_pixel_cases": 108,
+  "rgb_optical_depth_checks": 324,
+  "cases_per_camera_filter": 9,
+  "gpu_test_passed": true,
+  "native_editor_visual_verified": false,
+  "fog_liquid_joint_transport_complete": false,
+  "scope": "Single-sample spheres and triangular-prism films; near plane, opaque occlusion, overlapping optical materials, SI scale, rejected-update retention and IOR=1 final absorption color. Orthographic refractive displacement is implemented, but its full image quality is not independently qualified.",
+  "source_sha256": {
+    "crates/voxy_render/src/fluid_screen.rs": "3c2761f73015921a41a921938c3f11a08d256e178c112d820a8330a485005a5c",
+    "crates/voxy_render/src/fluid_screen.wgsl": "773a3078fd7628443adffa6c128e45baa0d6f832a81585a747e3686f264b919c",
+    "crates/voxy_render/src/fluid_filter.wgsl": "4e1cea3845c665df9dbf7a4470acd06ca502099b3800be0d652b788c6d654b64",
+    "crates/voxy_render/src/fluid_composite.wgsl": "5c7986eba832691c737ecac0e92a2f2293752f0224ccfb52460f1c76fab7cadc"
+  }
+}

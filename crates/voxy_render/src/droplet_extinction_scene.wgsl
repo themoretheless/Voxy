@@ -35,18 +35,15 @@ fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
     words[base+6u]=bitcast<u32>(tau);words[base+7u]=bitcast<u32>(transmission);
     let color=textureLoad(scene_color,vec2<i32>(pixel),0);
     let scattered=directional_scattering(start,endpoint,metadata);
-    for (var channel=0u;channel<3u;channel+=1u) {words[output+channel]=bitcast<u32>(color[channel]*transmission+scattered[channel]);}
+    let composed=medium_apply(MediumTransfer(vec3f(transmission),scattered),color.rgb);
+    for (var channel=0u;channel<3u;channel+=1u) {words[output+channel]=bitcast<u32>(composed[channel]);}
     words[output+3u]=bitcast<u32>(color.a);
 }
 
 
 // Stable absorption weight for optically thin subsegments.
-fn extinction_weight(tau:f32)->f32 {
-    if tau<0.01 {
-        return tau*(1.0+tau*(-0.5+tau*(1.0/6.0+tau*(-1.0/24.0+tau/120.0))));
-    }
-    return 1.0-exp(-tau);
-}
+fn extinction_weight(tau:f32)->f32 { return medium_extinction_weight(tau); }
+
 fn directional_scattering(start:vec3<f32>,end:vec3<f32>,metadata:u32)->vec3<f32> {
     if words[5]==0u {return vec3<f32>(0.0);}
     let light=metadata+22u;

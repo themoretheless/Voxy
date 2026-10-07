@@ -520,6 +520,7 @@ impl DropletExtinctionSceneInput {
     }
 }
 pub const DROPLET_EXTINCTION_SCENE_SHADER: &str = concat!(
+    include_str!("medium_transport.wgsl"),
     include_str!("droplet_extinction_common.wgsl"),
     include_str!("droplet_extinction_scene.wgsl")
 );

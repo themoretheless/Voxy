@@ -1,0 +1,21 @@
+{
+  "gpu_backend": "Apple M4 Max / Metal",
+  "cpu_gpu_probes": 32,
+  "scalar_parity_checks": 512,
+  "tolerance": {
+    "absolute": 1e-06,
+    "relative": 2e-05
+  },
+  "dense_finite_source_regression": "sigma=1e38 with source=1e38; ordinary ratio produced zero on GPU; frexp/ldexp ratio preserves finite radiance",
+  "alpha_bit_preservation": true,
+  "ordinary_render_tests_passed": 159,
+  "editor_fog_gpu_tests_passed": 3,
+  "gles300_translation_without_storage": "passed; compilation only, not GLES device execution",
+  "production_integration": "Existing droplet scene output and extinction weight use shared transfer functions; interface tracing and joint liquid/fog still incomplete",
+  "source_sha256": {
+    "crates/voxy_render/src/medium_transport.wgsl": "ef30e2f95e7c3a1dbcac97c593521d029f9ff8bd7bd9ba6a08b302643e4c4ed3",
+    "crates/voxy_render/src/medium_transport.rs": "362b769a5d0f7c75bef809f4b0e30a15c773a3b8302be25010282f942fc419f4",
+    "crates/voxy_render/src/droplet_extinction_scene.wgsl": "901195a41177193214561e6f05050ebbade46fd2033cb115d75f365e86de57dc",
+    "crates/voxy_render/src/droplet_extinction.rs": "4c9b2bb7260bb6eba3863c613b1aeb8d2a346e3f2a5ec933bdb0416b523e1f59"
+  }
+}

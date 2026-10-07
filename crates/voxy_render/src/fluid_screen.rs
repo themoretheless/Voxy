@@ -1,6 +1,6 @@
 //! Screen-space optical reconstruction of liquid spheres and owned film prisms.
 //! Simulation remains owned by the caller. Optical thickness is a ray integral,
-//! not another liquid mass reservoir. Single-sample perspective rendering only.
+//! not another liquid mass reservoir. Single-sample perspective and orthographic rendering.
 use wgpu::util::DeviceExt;
 
 /// World-space centre/radius and SI absorption coefficients with dielectric IOR.
@@ -82,7 +82,7 @@ struct CameraUniform {
     projection: [[f32; 4]; 4],
     inverse_projection: [[f32; 4]; 4],
     inverse_view: [[f32; 4]; 4],
-    // width, height, world units per metre, filter mode
+    // width, height, world units per metre, flags: filter bit 0 / orthographic bit 1
     viewport: [f32; 4],
     // near, far, filter max pixels, radius-relative range
     controls: [f32; 4],
@@ -752,7 +752,7 @@ impl ScreenSpaceFluidRenderer {
     /// Updates a snapshot without changing caller simulation or particle data.
     /// All validation precedes GPU writes; a rejected update preserves the prior snapshot.
     /// # Errors
-    /// Rejects non-perspective views, invalid SI materials/particles and capacity overflow.
+    /// Rejects invalid views, SI materials/particles and capacity overflow.
     pub fn update(
         &mut self,
         queue: &wgpu::Queue,
@@ -792,8 +792,9 @@ impl ScreenSpaceFluidRenderer {
         {
             return Err("invalid fluid film cells or capacity");
         }
-        let crate::SceneProjection::Perspective { near, far, .. } = camera.projection else {
-            return Err("fluid renderer requires perspective camera");
+        let (near, far) = match camera.projection {
+            crate::SceneProjection::Perspective { near, far, .. }
+            | crate::SceneProjection::Orthographic { near, far, .. } => (near, far),
         };
         let vp = camera
             .view_projection()
@@ -827,6 +828,13 @@ impl ScreenSpaceFluidRenderer {
                 match filter {
                     FluidDepthFilter::None => 0.0,
                     FluidDepthFilter::Bilateral => 1.0,
+                } + if matches!(
+                    camera.projection,
+                    crate::SceneProjection::Orthographic { .. }
+                ) {
+                    2.0
+                } else {
+                    0.0
                 },
             ],
             controls: [near, far, 8.0, 1.5],
@@ -1209,6 +1217,146 @@ mod film_gpu_tests {
 
     #[test]
     #[ignore = "requires a physical GPU adapter"]
+    fn refraction_pixel_scale_matches_projected_displacement() {
+        let instance = crate::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let source = format!(
+            "{}\n{}",
+            include_str!("fluid_composite.wgsl"),
+            r"
+@group(1) @binding(0) var<storage,read_write> result:array<vec2f>;
+@compute @workgroup_size(1) fn check(@builtin(global_invocation_id) id:vec3u) {
+    let depths=array<f32,5>(0.001,0.005,0.1,1.0,9.0);
+    result[id.x]=pixels_per_unit(depths[id.x])*vec2f(0.02,0.01);
+}"
+        );
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("actual fluid composite projection helper"),
+            source: wgpu::ShaderSource::Wgsl(source.into()),
+        });
+        let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: None,
+            module: &shader,
+            entry_point: Some("check"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let output = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 40,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 40,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let result_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &pipeline.get_bind_group_layout(1),
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: output.as_entire_binding(),
+            }],
+        });
+        let mut checks = 0;
+        for fov in [0.4, 0.8, 1.4] {
+            for orthographic in [false, true] {
+                let camera = crate::SceneCamera {
+                    eye: glam::Vec3::ZERO,
+                    target: -glam::Vec3::Z,
+                    up: glam::Vec3::Y,
+                    projection: if orthographic {
+                        crate::SceneProjection::Orthographic {
+                            left: -1.,
+                            right: 3.,
+                            bottom: -0.5,
+                            top: 1.,
+                            near: 0.0001,
+                            far: 10.,
+                        }
+                    } else {
+                        crate::SceneProjection::Perspective {
+                            vertical_fov: fov,
+                            aspect: 2.,
+                            near: 0.0001,
+                            far: 10.,
+                        }
+                    },
+                };
+                let projection = camera.view_projection().unwrap();
+                let uniform = CameraUniform {
+                    view: glam::Mat4::IDENTITY.to_cols_array_2d(),
+                    projection: projection.to_cols_array_2d(),
+                    inverse_projection: projection.inverse().to_cols_array_2d(),
+                    inverse_view: glam::Mat4::IDENTITY.to_cols_array_2d(),
+                    viewport: [128., 64., 1., if orthographic { 2. } else { 0. }],
+                    controls: [0.0001, 10., 8., 1.5],
+                };
+                let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label: None,
+                    contents: bytemuck::bytes_of(&uniform),
+                    usage: wgpu::BufferUsages::UNIFORM,
+                });
+                let camera_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: None,
+                    layout: &pipeline.get_bind_group_layout(0),
+                    entries: &[wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: buffer.as_entire_binding(),
+                    }],
+                });
+                let mut encoder = device.create_command_encoder(&Default::default());
+                {
+                    let mut pass = encoder.begin_compute_pass(&Default::default());
+                    pass.set_pipeline(&pipeline);
+                    pass.set_bind_group(0, &camera_group, &[]);
+                    pass.set_bind_group(1, &result_group, &[]);
+                    pass.dispatch_workgroups(5, 1, 1);
+                }
+                encoder.copy_buffer_to_buffer(&output, 0, &readback, 0, 40);
+                queue.submit([encoder.finish()]);
+                let (tx, rx) = std::sync::mpsc::channel();
+                readback
+                    .slice(..)
+                    .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+                device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+                rx.recv().unwrap().unwrap();
+                let bytes = readback.slice(..).get_mapped_range().unwrap();
+                let values: &[[f32; 2]] = bytemuck::cast_slice(&bytes);
+                for (i, depth) in [0.001, 0.005, 0.1, 1., 9.].into_iter().enumerate() {
+                    let point = glam::Vec3::new(0.3, -0.2, -depth);
+                    let a = projection.project_point3(point);
+                    let b = projection.project_point3(point + glam::Vec3::new(0.02, -0.01, 0.));
+                    let expected = [(b.x - a.x) * 64., -(b.y - a.y) * 32.];
+                    for axis in 0..2 {
+                        assert!(
+                            (values[i][axis] - expected[axis]).abs()
+                                < 2e-4 + expected[axis].abs() * 1e-5,
+                            "fov={fov} ortho={orthographic} depth={depth} actual={:?} expected={expected:?}",
+                            values[i]
+                        );
+                        checks += 1;
+                    }
+                }
+                drop(bytes);
+                readback.unmap();
+            }
+        }
+        assert!(pollster::block_on(scope.pop()).is_none());
+        println!(
+            "FLUID REFRACTION PROJECTION PASS scalar_checks={checks} fovs=3 depths=5 projections=2 asymmetric_ortho=true viewport=128x64"
+        );
+    }
+
+    #[test]
+    #[ignore = "requires a physical GPU adapter"]
     fn film_gpu_integrates_prism_thickness_and_near_clipping() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter =
@@ -1298,245 +1446,292 @@ mod film_gpu_tests {
         let texture = renderer
             .upload_texture(&device, &queue, 1, 1, &[255; 4])
             .unwrap();
-        for (count, near, occluder_z, expected_axial, with_particle) in [
-            (1, 0.1, None, 0.02, false),
-            (2, 0.1, None, 0.04, false),
-            (1, 1.98, None, 0.01, false),
-            (0, 0.1, None, 0., false),
-            (1, 0.1, Some(0.1), 0., false),
-            (1, 0.1, Some(0.02), 0.01, false),
-            (1, 0.1, Some(-0.1), 0.02, false),
-            (1, 0.1, None, 0.02, true),
-            (0, 0.1, None, 0., true),
-        ] {
-            let camera = crate::SceneCamera {
-                eye: glam::Vec3::new(0., 0., 2.),
-                target: glam::Vec3::ZERO,
-                up: glam::Vec3::Y,
-                projection: crate::SceneProjection::Perspective {
-                    vertical_fov: 0.8,
-                    aspect: 1.,
-                    near,
-                    far: 10.,
-                },
-            };
-            let mut cells = vec![cell; count];
-            if count == 2 {
-                cells[1].absorption_ior = [2., 3., 4., 1.47];
-            }
-
-            let particles = if with_particle {
-                vec![FluidRenderParticle {
-                    position_radius: [0., 0., -0.3, 0.1],
-                    absorption_ior: [1., 5., 10., 1.],
-                }]
-            } else {
-                vec![]
-            };
-            fluid
-                .update_with_film(
-                    &queue,
-                    camera,
-                    &particles,
-                    &cells,
-                    2.,
-                    FluidDepthFilter::None,
-                )
-                .unwrap();
-            // Rejected uploads must not clear the accepted film snapshot.
-            assert!(
-                fluid
-                    .update_with_film(&queue, camera, &[], &[], f32::NAN, FluidDepthFilter::None)
-                    .is_err()
-            );
-            let transform = renderer
-                .create_transform(
-                    &device,
-                    camera.view_projection().unwrap()
-                        * glam::Mat4::from_translation(glam::Vec3::new(
-                            0.,
-                            0.,
-                            occluder_z.unwrap_or(0.),
-                        )),
-                )
-                .unwrap();
-            let draws = if occluder_z.is_some() {
-                vec![crate::SceneDraw {
-                    geometry: &geometry,
-                    texture: &texture,
-                    transform: &transform,
-                    overlay: false,
-                }]
-            } else {
-                vec![]
-            };
-            let mut encoder = device.create_command_encoder(&Default::default());
-            fluid.encode(
-                &renderer,
-                &mut encoder,
-                &output.create_view(&Default::default()),
-                wgpu::Color::WHITE,
-                &draws,
-            );
-            encoder.copy_texture_to_buffer(
-                wgpu::TexelCopyTextureInfo {
-                    texture: fluid.thickness_texture(),
-                    mip_level: 0,
-                    origin: wgpu::Origin3d::ZERO,
-                    aspect: wgpu::TextureAspect::All,
-                },
-                wgpu::TexelCopyBufferInfo {
-                    buffer: &readback,
-                    layout: wgpu::TexelCopyBufferLayout {
-                        offset: 0,
-                        bytes_per_row: Some(256),
-                        rows_per_image: Some(32),
-                    },
-                },
-                wgpu::Extent3d {
-                    width: 32,
-                    height: 32,
-                    depth_or_array_layers: 1,
-                },
-            );
-            encoder.copy_texture_to_buffer(
-                wgpu::TexelCopyTextureInfo {
-                    texture: fluid.optical_depth_texture(),
-                    mip_level: 0,
-                    origin: wgpu::Origin3d::ZERO,
-                    aspect: wgpu::TextureAspect::All,
-                },
-                wgpu::TexelCopyBufferInfo {
-                    buffer: &optical_readback,
-                    layout: wgpu::TexelCopyBufferLayout {
-                        offset: 0,
-                        bytes_per_row: Some(256),
-                        rows_per_image: Some(32),
-                    },
-                },
-                wgpu::Extent3d {
-                    width: 32,
-                    height: 32,
-                    depth_or_array_layers: 1,
-                },
-            );
-            encoder.copy_texture_to_buffer(
-                wgpu::TexelCopyTextureInfo {
-                    texture: &output,
-                    mip_level: 0,
-                    origin: wgpu::Origin3d::ZERO,
-                    aspect: wgpu::TextureAspect::All,
-                },
-                wgpu::TexelCopyBufferInfo {
-                    buffer: &color_readback,
-                    layout: wgpu::TexelCopyBufferLayout {
-                        offset: 0,
-                        bytes_per_row: Some(256),
-                        rows_per_image: Some(32),
-                    },
-                },
-                wgpu::Extent3d {
-                    width: 32,
-                    height: 32,
-                    depth_or_array_layers: 1,
-                },
-            );
-            queue.submit([encoder.finish()]);
-            let (tx, rx) = std::sync::mpsc::channel();
-            readback
-                .slice(..)
-                .map_async(wgpu::MapMode::Read, move |result| {
-                    tx.send(result).unwrap();
-                });
-            let (optical_tx, optical_rx) = std::sync::mpsc::channel();
-            optical_readback
-                .slice(..)
-                .map_async(wgpu::MapMode::Read, move |result| {
-                    optical_tx.send(result).unwrap();
-                });
-            let (color_tx, color_rx) = std::sync::mpsc::channel();
-            color_readback
-                .slice(..)
-                .map_async(wgpu::MapMode::Read, move |result| {
-                    color_tx.send(result).unwrap();
-                });
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-            rx.recv().unwrap().unwrap();
-            optical_rx.recv().unwrap().unwrap();
-            color_rx.recv().unwrap().unwrap();
-            let color_bytes = color_readback.slice(..).get_mapped_range().unwrap();
-            let optical_bytes = optical_readback.slice(..).get_mapped_range().unwrap();
-            let bytes = readback.slice(..).get_mapped_range().unwrap();
-            for (px, py, inside) in [(16, 16, true), (24, 16, true), (0, 0, false)] {
-                let offset = py * 256 + px * 2;
-                let actual =
-                    half::f16::from_bits(u16::from_le_bytes([bytes[offset], bytes[offset + 1]]))
-                        .to_f32();
-                let inverse = camera.view_projection().unwrap().inverse();
-                let x = ((px as f32 + 0.5) / 32.) * 2. - 1.;
-                let y = 1. - ((py as f32 + 0.5) / 32.) * 2.;
-                let start = inverse.project_point3(glam::Vec3::new(x, y, 0.));
-                let end = inverse.project_point3(glam::Vec3::new(x, y, 1.));
-                let direction = (end - start).normalize();
-                let film_path = if inside {
-                    expected_axial / direction.z.abs()
-                } else {
-                    0.
-                };
-                let centre = glam::Vec3::new(0., 0., -2.3);
-                let b = direction.dot(centre);
-                let discriminant = b * b - centre.length_squared() + 0.1_f32.powi(2);
-                let sphere_path = if with_particle && discriminant > 0. {
-                    discriminant.sqrt()
-                } else {
-                    0.
-                };
-                // World-space chord 2*sqrt(discriminant), divided by 2 units/m.
-                let expected = film_path + sphere_path;
-                eprintln!(
-                    "FILM count={count} near={near} occluder={occluder_z:?} pixel={px},{py} actual_m={actual} expected_m={expected}"
-                );
-                assert!((actual - expected).abs() <= expected.abs() * 0.003 + 0.000002);
-                for channel in 0..3 {
-                    let optical_offset = py * 256 + px * 8 + channel * 2;
-                    let tau = half::f16::from_bits(u16::from_le_bytes([
-                        optical_bytes[optical_offset],
-                        optical_bytes[optical_offset + 1],
-                    ]))
-                    .to_f32();
-                    let coefficient_sum: f32 =
-                        cells.iter().map(|c| c.absorption_ior[channel]).sum();
-                    let expected_tau = if count > 0 {
-                        film_path / count as f32 * coefficient_sum
-                    } else {
-                        0.
-                    } + [1., 5., 10.][channel] * sphere_path;
-                    eprintln!("ABSORPTION channel={channel} actual={tau} expected={expected_tau}");
-                    assert!((tau - expected_tau).abs() <= expected_tau.abs() * 0.004 + 0.000002);
-                    if inside && count > 0 && occluder_z.is_none() && !with_particle {
-                        // IOR=1 for the nearest planar layer eliminates interface
-                        // reflection/refraction; white background reveals exp(-tau).
-                        let linear = (-expected_tau).exp();
-                        let srgb = if linear <= 0.0031308 {
-                            12.92 * linear
+        for filter in [FluidDepthFilter::None, FluidDepthFilter::Bilateral] {
+            for camera_case in 0..5 {
+                let orthographic = camera_case == 1 || camera_case == 2 || camera_case == 4;
+                let shifted = camera_case >= 2;
+                for (count, near, occluder_z, expected_axial, with_particle) in [
+                    (1, 0.1, None, 0.02, false),
+                    (2, 0.1, None, 0.04, false),
+                    (1, 1.98, None, 0.01, false),
+                    (0, 0.1, None, 0., false),
+                    (1, 0.1, Some(0.1), 0., false),
+                    (1, 0.1, Some(0.02), 0.01, false),
+                    (1, 0.1, Some(-0.1), 0.02, false),
+                    (1, 0.1, None, 0.02, true),
+                    (0, 0.1, None, 0., true),
+                ] {
+                    let camera = crate::SceneCamera {
+                        eye: if shifted {
+                            glam::Vec3::new(-0.1, 0.05, 2.)
                         } else {
-                            1.055 * linear.powf(1. / 2.4) - 0.055
-                        };
-                        let actual_color =
-                            f32::from(color_bytes[py * 256 + px * 4 + channel]) / 255.;
-                        assert!(
-                            (actual_color - srgb).abs() < 0.012,
-                            "absorption composition actual={actual_color} expected={srgb}"
-                        );
+                            glam::Vec3::new(0., 0., 2.)
+                        },
+                        target: if shifted {
+                            glam::Vec3::new(-0.1, 0.05, 0.)
+                        } else {
+                            glam::Vec3::ZERO
+                        },
+                        up: if shifted {
+                            glam::Vec3::X
+                        } else {
+                            glam::Vec3::Y
+                        },
+                        projection: if orthographic {
+                            crate::SceneProjection::Orthographic {
+                                left: if shifted { -0.6 } else { -0.8 },
+                                right: if shifted { 1.0 } else { 0.8 },
+                                bottom: if shifted { -0.9 } else { -0.8 },
+                                top: if shifted { 0.7 } else { 0.8 },
+                                near: if camera_case == 4 && near == 0.1 {
+                                    0.
+                                } else {
+                                    near
+                                },
+                                far: 10.,
+                            }
+                        } else {
+                            crate::SceneProjection::Perspective {
+                                vertical_fov: 0.8,
+                                aspect: 1.,
+                                near,
+                                far: 10.,
+                            }
+                        },
+                    };
+                    let mut cells = vec![cell; count];
+                    if count == 2 {
+                        cells[1].absorption_ior = [2., 3., 4., 1.47];
                     }
+
+                    let particles = if with_particle {
+                        vec![FluidRenderParticle {
+                            position_radius: [0., 0., -0.3, 0.1],
+                            absorption_ior: [1., 5., 10., 1.],
+                        }]
+                    } else {
+                        vec![]
+                    };
+                    fluid
+                        .update_with_film(&queue, camera, &particles, &cells, 2., filter)
+                        .unwrap();
+                    // Rejected uploads must not clear the accepted film snapshot.
+                    assert!(
+                        fluid
+                            .update_with_film(
+                                &queue,
+                                camera,
+                                &[],
+                                &[],
+                                f32::NAN,
+                                FluidDepthFilter::None
+                            )
+                            .is_err()
+                    );
+                    let transform = renderer
+                        .create_transform(
+                            &device,
+                            camera.view_projection().unwrap()
+                                * glam::Mat4::from_translation(glam::Vec3::new(
+                                    0.,
+                                    0.,
+                                    occluder_z.unwrap_or(0.),
+                                )),
+                        )
+                        .unwrap();
+                    let draws = if occluder_z.is_some() {
+                        vec![crate::SceneDraw {
+                            geometry: &geometry,
+                            texture: &texture,
+                            transform: &transform,
+                            overlay: false,
+                        }]
+                    } else {
+                        vec![]
+                    };
+                    let mut encoder = device.create_command_encoder(&Default::default());
+                    fluid.encode(
+                        &renderer,
+                        &mut encoder,
+                        &output.create_view(&Default::default()),
+                        wgpu::Color::WHITE,
+                        &draws,
+                    );
+                    encoder.copy_texture_to_buffer(
+                        wgpu::TexelCopyTextureInfo {
+                            texture: fluid.thickness_texture(),
+                            mip_level: 0,
+                            origin: wgpu::Origin3d::ZERO,
+                            aspect: wgpu::TextureAspect::All,
+                        },
+                        wgpu::TexelCopyBufferInfo {
+                            buffer: &readback,
+                            layout: wgpu::TexelCopyBufferLayout {
+                                offset: 0,
+                                bytes_per_row: Some(256),
+                                rows_per_image: Some(32),
+                            },
+                        },
+                        wgpu::Extent3d {
+                            width: 32,
+                            height: 32,
+                            depth_or_array_layers: 1,
+                        },
+                    );
+                    encoder.copy_texture_to_buffer(
+                        wgpu::TexelCopyTextureInfo {
+                            texture: fluid.optical_depth_texture(),
+                            mip_level: 0,
+                            origin: wgpu::Origin3d::ZERO,
+                            aspect: wgpu::TextureAspect::All,
+                        },
+                        wgpu::TexelCopyBufferInfo {
+                            buffer: &optical_readback,
+                            layout: wgpu::TexelCopyBufferLayout {
+                                offset: 0,
+                                bytes_per_row: Some(256),
+                                rows_per_image: Some(32),
+                            },
+                        },
+                        wgpu::Extent3d {
+                            width: 32,
+                            height: 32,
+                            depth_or_array_layers: 1,
+                        },
+                    );
+                    encoder.copy_texture_to_buffer(
+                        wgpu::TexelCopyTextureInfo {
+                            texture: &output,
+                            mip_level: 0,
+                            origin: wgpu::Origin3d::ZERO,
+                            aspect: wgpu::TextureAspect::All,
+                        },
+                        wgpu::TexelCopyBufferInfo {
+                            buffer: &color_readback,
+                            layout: wgpu::TexelCopyBufferLayout {
+                                offset: 0,
+                                bytes_per_row: Some(256),
+                                rows_per_image: Some(32),
+                            },
+                        },
+                        wgpu::Extent3d {
+                            width: 32,
+                            height: 32,
+                            depth_or_array_layers: 1,
+                        },
+                    );
+                    queue.submit([encoder.finish()]);
+                    let (tx, rx) = std::sync::mpsc::channel();
+                    readback
+                        .slice(..)
+                        .map_async(wgpu::MapMode::Read, move |result| {
+                            tx.send(result).unwrap();
+                        });
+                    let (optical_tx, optical_rx) = std::sync::mpsc::channel();
+                    optical_readback
+                        .slice(..)
+                        .map_async(wgpu::MapMode::Read, move |result| {
+                            optical_tx.send(result).unwrap();
+                        });
+                    let (color_tx, color_rx) = std::sync::mpsc::channel();
+                    color_readback
+                        .slice(..)
+                        .map_async(wgpu::MapMode::Read, move |result| {
+                            color_tx.send(result).unwrap();
+                        });
+                    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+                    rx.recv().unwrap().unwrap();
+                    optical_rx.recv().unwrap().unwrap();
+                    color_rx.recv().unwrap().unwrap();
+                    let color_bytes = color_readback.slice(..).get_mapped_range().unwrap();
+                    let optical_bytes = optical_readback.slice(..).get_mapped_range().unwrap();
+                    let bytes = readback.slice(..).get_mapped_range().unwrap();
+                    for (px, py) in [(16, 16), (24, 16), (0, 0)] {
+                        let offset = py * 256 + px * 2;
+                        let actual = half::f16::from_bits(u16::from_le_bytes([
+                            bytes[offset],
+                            bytes[offset + 1],
+                        ]))
+                        .to_f32();
+                        let inverse = camera.view_projection().unwrap().inverse();
+                        let x = ((px as f32 + 0.5) / 32.) * 2. - 1.;
+                        let y = 1. - ((py as f32 + 0.5) / 32.) * 2.;
+                        let start = inverse.project_point3(glam::Vec3::new(x, y, 0.));
+                        let end = inverse.project_point3(glam::Vec3::new(x, y, 1.));
+                        let direction = (end - start).normalize();
+                        // Independent world-space triangle membership, not authored pixel labels.
+                        let hit = start + direction * ((0.02 - start.z) / direction.z);
+                        let inside = hit.y > -1. && hit.y < 1. && hit.x.abs() < (1. - hit.y) * 0.5;
+                        let film_path = if inside {
+                            expected_axial / direction.z.abs()
+                        } else {
+                            0.
+                        };
+                        let origin = if orthographic {
+                            glam::Vec3::new(start.x, start.y, camera.eye.z)
+                        } else {
+                            camera.eye
+                        };
+                        let centre = glam::Vec3::new(0., 0., -0.3) - origin;
+                        let b = direction.dot(centre);
+                        let discriminant = b * b - centre.length_squared() + 0.1_f32.powi(2);
+                        let sphere_path = if with_particle && discriminant > 0. {
+                            discriminant.sqrt()
+                        } else {
+                            0.
+                        };
+                        // World-space chord 2*sqrt(discriminant), divided by 2 units/m.
+                        let expected = film_path + sphere_path;
+                        eprintln!(
+                            "FILM camera_case={camera_case} filter={filter:?} orthographic={orthographic} count={count} near={near} occluder={occluder_z:?} pixel={px},{py} actual_m={actual} expected_m={expected}"
+                        );
+                        assert!((actual - expected).abs() <= expected.abs() * 0.003 + 0.000002);
+                        for channel in 0..3 {
+                            let optical_offset = py * 256 + px * 8 + channel * 2;
+                            let tau = half::f16::from_bits(u16::from_le_bytes([
+                                optical_bytes[optical_offset],
+                                optical_bytes[optical_offset + 1],
+                            ]))
+                            .to_f32();
+                            let coefficient_sum: f32 =
+                                cells.iter().map(|c| c.absorption_ior[channel]).sum();
+                            let expected_tau = if count > 0 {
+                                film_path / count as f32 * coefficient_sum
+                            } else {
+                                0.
+                            } + [1., 5., 10.][channel] * sphere_path;
+                            eprintln!(
+                                "ABSORPTION channel={channel} actual={tau} expected={expected_tau}"
+                            );
+                            assert!(
+                                (tau - expected_tau).abs() <= expected_tau.abs() * 0.004 + 0.000002
+                            );
+                            if inside && count > 0 && occluder_z.is_none() && !with_particle {
+                                // IOR=1 for the nearest planar layer eliminates interface
+                                // reflection/refraction; white background reveals exp(-tau).
+                                let linear = (-expected_tau).exp();
+                                let srgb = if linear <= 0.0031308 {
+                                    12.92 * linear
+                                } else {
+                                    1.055 * linear.powf(1. / 2.4) - 0.055
+                                };
+                                let actual_color =
+                                    f32::from(color_bytes[py * 256 + px * 4 + channel]) / 255.;
+                                assert!(
+                                    (actual_color - srgb).abs() < 0.012,
+                                    "absorption composition actual={actual_color} expected={srgb}"
+                                );
+                            }
+                        }
+                    }
+                    drop(bytes);
+                    readback.unmap();
+                    drop(optical_bytes);
+                    optical_readback.unmap();
+                    drop(color_bytes);
+                    color_readback.unmap();
                 }
             }
-            drop(bytes);
-            readback.unmap();
-            drop(optical_bytes);
-            optical_readback.unmap();
-            drop(color_bytes);
-            color_readback.unmap();
         }
         assert!(pollster::block_on(scope.pop()).is_none());
     }

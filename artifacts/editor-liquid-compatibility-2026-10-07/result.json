@@ -1,0 +1,15 @@
+{
+  "editor_all_targets_check": "passed",
+  "camera_case_count": 5,
+  "analytic_thickness_checks": 270,
+  "rgb_absorption_checks": 810,
+  "editor_near_zero_case": 4,
+  "zero_near_protocols": "Case 4 replaces protocol near=0.1 with 0; its near-clipping protocol still uses 1.98. Log near field records the protocol input.",
+  "filters": [
+    "none",
+    "bilateral"
+  ],
+  "broad_rig_example_suite": "still running, session 34380, PID 99913 observed live; no complete-suite success claimed",
+  "full_rig_capture": "PID 90673 remains live; unqualified",
+  "source_sha256": "53f045b139c32ec9c0e67267f7c92abc0904ae8ecd78182b7b2f9f2f7ad7b89b"
+}

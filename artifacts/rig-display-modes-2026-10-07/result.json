@@ -1,0 +1,14 @@
+{
+  "native_gpu_captures_completed": 2,
+  "capture_steps": 3,
+  "fixture": "Default imported Cesium demo; short preview, not full authored rig",
+  "diagnostic_switch": "--show-tissue",
+  "physics_csv_byte_identical": true,
+  "physics_csv_sha256": "967522e50773329518d71e7a23732e3a59e5083ee8110a7cb2b4b826a769512a",
+  "skin_primitives_and_vertices_match_diagnostic_mode": true,
+  "targeted_binding_test_passed": true,
+  "broad_example_tests_status": "Running; tool session 34380, process 99913 observed live",
+  "full_rig_process": 90673,
+  "full_rig_complete": false,
+  "source_sha256": "d909076be084cb1394f263b52907446c0310611b9b14dabfb2165c793683dd3b"
+}

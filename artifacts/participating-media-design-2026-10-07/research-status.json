@@ -1,0 +1,12 @@
+{
+  "rag_index_query": "participating media refraction",
+  "rag_index_matches": 0,
+  "rag_wiki_search": "pending; exec handle 2058 re-polled and still running; not restarted",
+  "primary_sources": [
+    "https://www.pbr-book.org/4ed/Volume_Scattering/Transmittance",
+    "https://pbr-book.org/4ed/Volume_Scattering/Media",
+    "https://www.pbr-book.org/4ed/Reflection_Models/Dielectric_BSDF"
+  ],
+  "adr_status": "proposed, implementation and acceptance incomplete",
+  "native_joint_transport_complete": false
+}
