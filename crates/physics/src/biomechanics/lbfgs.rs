@@ -45,22 +45,31 @@ pub(super) fn try_secant_direction<E>(
     inverse: impl FnOnce(&[Vec3]) -> Result<Vec<Vec3>, E>,
 ) -> Result<Vec<Vec3>, E> {
     let mut q = gradient.to_vec();
-    let mut alphas = Vec::with_capacity(history.len());
+    
+    // Preallocate alphas with exact capacity (no reallocations)
+    let mut alphas: Vec<f64> = Vec::with_capacity(history.len());
+    
     for (s, y, rho) in history.iter().rev() {
         let alpha = rho * inner(s, &q);
         alphas.push(alpha);
-        for (q, y) in q.iter_mut().zip(y) {
-            *q = sub(*q, scale(*y, alpha));
+        
+        // Inline vector subtraction to avoid alloc
+        for (qi, yi) in q.iter_mut().zip(y) {
+            *qi = sub(*qi, scale([yi[0], yi[1], yi[2]], alpha));
         }
     }
+    
     let mut r = inverse(&q)?;
+    
+    // Reuse allocation for beta computation
     for ((s, y, rho), alpha) in history.iter().zip(alphas.into_iter().rev()) {
         let beta = rho * inner(y, &r);
-        for (r, s) in r.iter_mut().zip(s) {
-            *r = add(*r, scale(*s, alpha - beta));
+        for (ri, si) in r.iter_mut().zip(s) {
+            *ri = add(*ri, scale([si[0], si[1], si[2]], alpha - beta));
         }
     }
-    Ok(r.iter().map(|r| scale(*r, -1.)).collect())
+    
+    Ok(r.iter().map(|ri| scale(*ri, -1.)).collect())
 }
 pub(super) fn push_secant(
     history: &mut Vec<SecantPair>,

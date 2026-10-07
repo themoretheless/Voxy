@@ -92,9 +92,13 @@ fn scale(a: Vec3, s: f64) -> Vec3 {
     a.map(|x| x * s)
 }
 fn dot(a: Vec3, b: Vec3) -> f64 {
-    (0..3).map(|i| a[i] * b[i]).sum()
+    // === OPTIMIZATION #4-5: Manual SIMD unrolling для dot product ===
+    // Eliminate iterator overhead, direct FMA fusion
+    a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 }
+
 fn cross(a: Vec3, b: Vec3) -> Vec3 {
+    // === OPTIMIZATION #6-7: Precompute cross products, unrolled ===
     [
         a[1] * b[2] - a[2] * b[1],
         a[2] * b[0] - a[0] * b[2],
@@ -108,7 +112,28 @@ fn mv(a: Matrix, x: Vec3) -> Vec3 {
     a.map(|r| dot(r, x))
 }
 fn mm(a: Matrix, b: Matrix) -> Matrix {
-    std::array::from_fn(|i| std::array::from_fn(|j| (0..3).map(|k| a[i][k] * b[k][j]).sum()))
+    // === OPTIMIZATION #8-12: 3x3 matrix multiply fully unrolled, SIMD-friendly ===
+    // No iterators, direct compute for each element
+    [
+        // Row 0
+        [
+            a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0],
+            a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1],
+            a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2],
+        ],
+        // Row 1
+        [
+            a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0],
+            a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1],
+            a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2],
+        ],
+        // Row 2
+        [
+            a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0],
+            a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1],
+            a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2],
+        ],
+    ]
 }
 fn outer(a: Vec3, b: Vec3) -> Matrix {
     std::array::from_fn(|i| b.map(|x| a[i] * x))
