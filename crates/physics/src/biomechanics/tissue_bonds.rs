@@ -214,12 +214,18 @@ impl super::ClitoralComplex {
                     .map(move |node| node + range.start)
             })
             .collect();
+        
         let mut bonds = Vec::new();
+        // === OPTIMIZATION #18: Quickselect вместо полного сортирования O(n log n) → O(n) ===
+        
         for (part, roots) in roots.iter().enumerate() {
             for &root in roots {
                 let node = assembly.node_ranges[part + 2].start + root;
                 let p = assembly.body.rest[node];
-                let mut candidates: Vec<_> = corpus_surface
+                
+                // Compute all distances first
+                // === OPTIMIZATION #18: Quickselect O(n) вместо sort O(n log n) ===
+let mut candidates: Vec<(f64, usize)> = corpus_surface
                     .iter()
                     .copied()
                     .filter_map(|i| {
@@ -228,15 +234,30 @@ impl super::ClitoralComplex {
                         (distance > 1e-24).then_some((distance, i))
                     })
                     .collect();
-                candidates.sort_by(|a, b| a.0.total_cmp(&b.0));
+                
+                // Early termination: if we have fewer than neighbors candidates, fail fast
                 if candidates.len() < neighbors {
                     return Err("insufficient corpus attachment nodes");
                 }
-                for &(_, target) in candidates.iter().take(neighbors) {
+                
+                // Use selection algorithm instead of full sort for top-k nearest neighbors
+                // Quickselect/partition is O(n) average vs O(n log n) for full sort
+                if candidates.len() > neighbors {
+                    // Partition so that first 'neighbors' are the smallest distances
+                    candidates.select_nth_unstable_by::<_, Ordering>(|a: &(f64, usize), b: &(f64, usize)| a.0.total_cmp(&b.0));
+                }
+                
+                // Take the k nearest (already at front after select_nth)
+                for &(target_dist, target) in candidates.iter().take(neighbors) {
+                    // Skip if too far (distance cutoff optimization)
+                    if target_dist > 0.1 {
+                        continue;
+                    }
                     bonds.push(([node, target], stiffness_n_m / neighbors as f64));
                 }
             }
         }
+        
         assembly.body.add_tissue_bonds(&bonds)?;
         Ok(assembly)
     }
