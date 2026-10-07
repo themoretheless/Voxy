@@ -49,6 +49,14 @@ impl ShadowBindings {
         map: &ShadowMap,
         settings: ShadowSettings,
     ) -> Result<Self, SceneError> {
+        Self::with_visibility(device, map, settings, wgpu::ShaderStages::FRAGMENT)
+    }
+    pub(crate) fn with_visibility(
+        device: &wgpu::Device,
+        map: &ShadowMap,
+        settings: ShadowSettings,
+        visibility: wgpu::ShaderStages,
+    ) -> Result<Self, SceneError> {
         if !map.belongs_to(device) {
             return Err(SceneError::DeviceMismatch);
         }
@@ -58,7 +66,7 @@ impl ShadowBindings {
             entries: &[
                 wgpu::BindGroupLayoutEntry {
                     binding: 0,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    visibility,
                     ty: wgpu::BindingType::Texture {
                         sample_type: wgpu::TextureSampleType::Depth,
                         view_dimension: wgpu::TextureViewDimension::D2,
@@ -68,7 +76,7 @@ impl ShadowBindings {
                 },
                 wgpu::BindGroupLayoutEntry {
                     binding: 1,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    visibility,
                     ty: wgpu::BindingType::Buffer {
                         ty: wgpu::BufferBindingType::Uniform,
                         has_dynamic_offset: false,
@@ -119,7 +127,7 @@ pub(crate) fn shader() -> String {
     );
     format!("{lit}\n{SHADOW}")
 }
-const SHADOW: &str = r"
+pub(crate) const SHADOW: &str = r"
 struct ShadowSettings { light_from_world: mat4x4<f32>, options: vec4<f32> }
 @group(2) @binding(0) var shadow_depth: texture_depth_2d;
 @group(2) @binding(1) var<uniform> shadow: ShadowSettings;

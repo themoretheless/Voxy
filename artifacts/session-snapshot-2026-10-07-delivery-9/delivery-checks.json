@@ -1,0 +1,13 @@
+{
+  "editor_passed": 177,
+  "render_passed": 155,
+  "scene_passed": 71,
+  "metal_gpu_passed": 1,
+  "checked_pixels": 2560,
+  "format_check": "passed",
+  "diff_check": "passed",
+  "native_editor_prior_acceptance_frames": 19,
+  "original_processes": "preserved",
+  "full_rig_480_steps": "unqualified",
+  "nonblocking_fog_retirement": "not implemented"
+}

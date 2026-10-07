@@ -380,3 +380,43 @@ fn camera_and_light_without_model_round_trip_and_unknown_assets_reject() {
     app.stop_workers().unwrap();
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn geometry_picking_skips_fog_only_objects_and_preserves_their_document() {
+    let root = fixture();
+    let mut app =
+        App::from_manifest(&root.join("assets.json"), AssetId("assembly".into()), false).unwrap();
+    ready(&mut app);
+    app.expand_model().unwrap();
+    let fog = app.scene.spawn(None, Transform::default()).unwrap();
+    app.scene.set_name(fog, "Fog").unwrap();
+    app.scene
+        .insert_component(fog, voxy_scene::FogVolume::default())
+        .unwrap();
+    app.instances.push(fog);
+    app.object_ids.push(voxy_scene::ObjectId("fog-only".into()));
+    app.commit_authoring().unwrap();
+    app.camera.orbit(Vec2::new(25., 15.));
+    let size = Vec2::new(800., 600.);
+    for perspective in [true, false] {
+        app.camera.perspective = perspective;
+        let point = app
+            .scene
+            .world_matrix(app.instances[2])
+            .unwrap()
+            .w_axis
+            .truncate();
+        let projected = app.camera.matrix(size).unwrap().project_point3(point);
+        let cursor = Vec2::new(projected.x + 1., 1. - projected.y) * size * 0.5;
+        assert!(app.pick_model(cursor, size).unwrap());
+        assert_eq!(app.selected, 2);
+    }
+    let document = app.authoring_document().unwrap();
+    assert!(
+        document
+            .objects
+            .iter()
+            .any(|o| o.id.0 == "fog-only" && o.components.contains_key("scene.fog.v1"))
+    );
+    assert!(app.scene.component::<ModelInstance>(fog).unwrap().is_none());
+}

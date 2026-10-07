@@ -1,0 +1,33 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "editor_fog_presented_frames": 19,
+  "window_physical_size": [
+    1280,
+    1360
+  ],
+  "native_scene3d_acceptance": "passed",
+  "play_ticks": 26,
+  "editor_library_passed": 177,
+  "editor_library_ignored": 14,
+  "explicit_gpu_test_passed": 1,
+  "gpu_checked_pixels": 2560,
+  "gpu_views": 2,
+  "gpu_global_ui_pixels": 512,
+  "gpu_local_overlay_pixels": 128,
+  "per_view_hdr_scene_transport_display": true,
+  "same_world_pose_resolver_as_models": true,
+  "frame_retirement": "waits for device completion; performance unqualified",
+  "fog_resource_bytes_in_scene_budget": true,
+  "initial_fixed_64mb_failure_preserved": true,
+  "meshless_picking_failure_preserved_and_corrected": true,
+  "documents_startup_pid": 68705,
+  "documents_startup_last_observation": "live waiting in filesystem open; no window or presentation qualified there",
+  "fixture_native_execution": "temporary copied project",
+  "multiple_volumes": "rejected, unimplemented",
+  "msaa": "rejected, unimplemented",
+  "fog_optical_liquid_composition": "rejected pending merged optical depth",
+  "editor_solid_object_fog_shadows": "unimplemented",
+  "nvidia": "unqualified",
+  "executable_sha256": "ee2222c4055a8ecf57e721ae97f815250137191bb9394df7368f83215002793b"
+}

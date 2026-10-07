@@ -8,6 +8,7 @@ mod authoring_session;
 mod camera;
 mod component_collections;
 mod component_fields;
+mod fog_draw;
 mod frame_styles;
 mod liquid_draw;
 mod lod_smoke;
@@ -114,6 +115,7 @@ fn model_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
     registry.register::<ModelRetarget>("editor.model-retarget.v1")?;
     registry.register::<SceneMaterial>("editor.material.v1")?;
     registry.register::<DirectionalLight>("editor.light.v1")?;
+    registry.register::<voxy_scene::FogVolume>("scene.fog.v1")?;
     registry.register::<EditorCamera>("editor.camera.v1")?;
     voxy_gameplay::register_components(&mut registry)?;
     Ok(registry)
@@ -121,6 +123,7 @@ fn model_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
 #[derive(Debug)]
 struct Graphics {
     host: SceneSurface,
+    fog: Option<fog_draw::FogDraw>,
     renderer: SceneRenderer,
     models: BTreeMap<AssetId, ModelGraphics>,
     animated_models: animated_models::AnimatedModels,
@@ -152,6 +155,10 @@ impl Graphics {
             .map(ModelGraphics::geometry_bytes)
             .sum::<u64>()
             + self.animated_models.allocation_bytes()
+            + self
+                .fog
+                .as_ref()
+                .map_or(0, fog_draw::FogDraw::allocation_bytes)
             + self.gizmo_geometry.allocation_bytes()
             + self
                 .optical_liquids
@@ -599,6 +606,7 @@ impl App {
         self.graphics = Some(Graphics {
             animated_models,
             host,
+            fog: None,
             renderer,
             models: BTreeMap::new(),
             residency_cache: gpu_model::ResidencyCache::with_budget(
@@ -1190,24 +1198,26 @@ impl App {
         self.advance_game(elapsed)?;
         voxy_scene::extraction_schedule()?
             .run_scene(&mut self.scene, |_, access| {
-                let styles = frame_styles::FrameStyles::prepare(
+                let render_world = |scene: &voxy_scene::SceneGraph, owner| {
+                    if let Some(simulation) = &self.play.simulation {
+                        simulation
+                            .render_world(scene, owner)
+                            .map_err(|error| match error {
+                                voxy_scene::SimulationError::Scene(error) => error,
+                                _ => voxy_scene::SceneGraphError::InvalidNode,
+                            })
+                    } else {
+                        scene.world_matrix(owner)
+                    }
+                };
+                let styles = frame_styles::FrameStyles::prepare_with_world(
                     &access,
                     &self.camera,
                     scene_limits::OBJECTS,
+                    &render_world,
                 )?;
                 self.extraction
-                    .refresh_scoped_with(access, |scene, owner| {
-                        if let Some(simulation) = &self.play.simulation {
-                            simulation
-                                .render_world(scene, owner)
-                                .map_err(|error| match error {
-                                    voxy_scene::SimulationError::Scene(error) => error,
-                                    _ => voxy_scene::SceneGraphError::InvalidNode,
-                                })
-                        } else {
-                            scene.world_matrix(owner)
-                        }
-                    })
+                    .refresh_scoped_with(access, render_world)
                     .map_err(|error| error.to_string())?;
                 self.frame_styles = Some(styles);
                 Ok::<(), String>(())
@@ -1847,7 +1857,59 @@ impl App {
             }
             let draw_count = view_draws.iter().map(Vec::len).sum::<usize>() + overlays.len();
             let present_start = profile_start.map(|_| Instant::now());
-            let outcome = if !split || views.len() == 1 {
+            if styles.fog.is_empty() {
+                if let Some(fog) = &mut graphics.fog {
+                    fog.retire(graphics.host.device())?;
+                }
+                graphics.fog = None;
+            }
+            let outcome = if let Some((_, volume, bounds)) = styles.fog.first() {
+                if styles.fog.len() != 1 {
+                    return Err("multiple overlapping fog volumes are not yet composed".into());
+                }
+                if self.msaa4 {
+                    return Err("editor fog requires single-sample scene inputs".into());
+                }
+                if !graphics.optical_liquids.is_empty() {
+                    return Err("fog/liquid merged optical depth is not yet available".into());
+                }
+                if graphics.fog.is_none() {
+                    graphics.fog = Some(pollster::block_on(fog_draw::FogDraw::new(
+                        graphics.host.device(),
+                        graphics.host.color_format(),
+                    ))?);
+                }
+                let window = self
+                    .window
+                    .as_ref()
+                    .ok_or("missing fog window")?
+                    .inner_size();
+                let device = graphics.host.device().clone();
+                let other = graphics
+                    .geometry_bytes()
+                    .saturating_sub(graphics.fog.as_ref().unwrap().allocation_bytes());
+                let budget = graphics
+                    .residency_cache
+                    .geometry_budget
+                    .checked_sub(other)
+                    .ok_or("fog scene memory budget exceeded")?;
+                let fog = graphics.fog.as_mut().unwrap();
+                fog.prepare_targets(&device, [window.width, window.height], &views, budget)?;
+                graphics.host.render_custom(|encoder, output| {
+                    fog.encode(
+                        &device,
+                        encoder,
+                        output,
+                        &graphics.renderer,
+                        &views,
+                        &view_draws,
+                        &overlays,
+                        *volume,
+                        *bounds,
+                        styles.light,
+                    )
+                })?
+            } else if !split || views.len() == 1 {
                 let mut draws = view_draws.pop().ok_or("missing view draws")?;
                 draws.extend(overlays);
                 if let Some(fluid) = graphics.optical_liquids.get(&views[0].0) {
@@ -1922,6 +1984,14 @@ impl App {
                 panels.frame_outcome(outcome);
             }
             if outcome == RenderOutcome::Presented {
+                if !styles.fog.is_empty() && self.trace.enabled {
+                    println!(
+                        "EDITOR FOG PRESENT frame={} views={} owner={:?}",
+                        self.frames + 1,
+                        views.len(),
+                        styles.fog[0].0
+                    );
+                }
                 self.ui_live.frame_presented();
                 graphics.ui_presented |= self.ui_live.ready();
                 self.trace.pending = false;
@@ -2034,10 +2104,9 @@ impl App {
     fn pick_model(&mut self, cursor: Vec2, size: Vec2) -> Result<bool, Box<dyn std::error::Error>> {
         let mut nearest = None;
         for (index, node) in self.instances.iter().enumerate() {
-            let model = self
-                .scene
-                .component::<ModelInstance>(*node)?
-                .ok_or("missing model reference")?;
+            let Some(model) = self.scene.component::<ModelInstance>(*node)? else {
+                continue;
+            };
             let Some(asset) = self.catalog.snapshot(&model.asset) else {
                 continue;
             };
@@ -2402,6 +2471,13 @@ impl App {
         {
             return Err(voxy_scene::SceneGraphError::InvalidTransform);
         }
+        if self
+            .scene
+            .components::<voxy_scene::FogVolume>()
+            .any(|(_, fog)| fog.validate().is_err())
+        {
+            return Err(voxy_scene::SceneGraphError::InvalidTransform);
+        }
         let registry = &self.authoring.authoring_project.registry;
         let objects = self
             .instances
@@ -2658,6 +2734,13 @@ impl App {
             }
         }
         CharacterPhysics::new(&loaded.graph, 128, 128).validate(&loaded.graph)?;
+        if loaded
+            .graph
+            .components::<voxy_scene::FogVolume>()
+            .any(|(_, fog)| fog.validate().is_err())
+        {
+            return Err("invalid authored fog calibration".into());
+        }
         if loaded
             .graph
             .components::<SceneMaterial>()

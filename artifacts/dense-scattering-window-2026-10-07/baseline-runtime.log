@@ -1,0 +1,24 @@
+Temporal hooks on AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HDR scene/layer geometry readback matches [17408, 15360, 0, 15360]
+Opaque depth byte=128 and stationary motion preserved despite moving world layer
+WINDOW OPTICAL CENTER sigma=0.5 channel=0 actual=2.505859375 expected=2.506606817
+WINDOW OPTICAL CENTER sigma=0.5 channel=1 actual=0.646484375 expected=0.646772742
+WINDOW OPTICAL CENTER sigma=0.5 channel=2 actual=0.020111084 expected=0.020121023
+WINDOW OPTICAL CENTER sigma=0.5 channel=3 actual=1.000000000 expected=1.000000000
+EXTINCTION WINDOW FRAME id=1 size=320x240 bytes=4300976 cpu_scene_upload=false
+WINDOW OPTICAL CENTER sigma=0.5 channel=0 actual=2.505859375 expected=2.506606817
+WINDOW OPTICAL CENTER sigma=0.5 channel=1 actual=0.646484375 expected=0.646772742
+WINDOW OPTICAL CENTER sigma=0.5 channel=2 actual=0.020111084 expected=0.020121023
+WINDOW OPTICAL CENTER sigma=0.5 channel=3 actual=1.000000000 expected=1.000000000
+EXTINCTION WINDOW FRAME id=2 size=320x240 bytes=4300976 cpu_scene_upload=false
+WINDOW OPTICAL CENTER sigma=0.5 channel=0 actual=2.505859375 expected=2.506606817
+WINDOW OPTICAL CENTER sigma=0.5 channel=1 actual=0.646484375 expected=0.646772742
+WINDOW OPTICAL CENTER sigma=0.5 channel=2 actual=0.020111084 expected=0.020121023
+WINDOW OPTICAL CENTER sigma=0.5 channel=3 actual=1.000000000 expected=1.000000000
+EXTINCTION WINDOW FRAME id=3 size=320x240 bytes=4300976 cpu_scene_upload=false
+WINDOW OPTICAL CENTER sigma=0.5 channel=0 actual=2.505859375 expected=2.506606817
+WINDOW OPTICAL CENTER sigma=0.5 channel=1 actual=0.646484375 expected=0.646772742
+WINDOW OPTICAL CENTER sigma=0.5 channel=2 actual=0.020111084 expected=0.020121023
+WINDOW OPTICAL CENTER sigma=0.5 channel=3 actual=1.000000000 expected=1.000000000
+EXTINCTION WINDOW FRAME id=4 size=321x241 bytes=4332392 cpu_scene_upload=false
+Temporal prepare/submit/publish and consumer-failure/resize reset passed

@@ -456,6 +456,44 @@ impl TextureBlit {
         source: &wgpu::TextureView,
         target: &wgpu::TextureView,
     ) -> Result<(), crate::SceneError> {
+        self.encode_region(device, encoder, source, target, None)
+    }
+    /// Compose into an initialized base-level target region, preserving all
+    /// pixels outside it. The whole source maps to this viewport. No clear or
+    /// alpha blending is performed; draw scene/UI overlays afterward.
+    /// # Errors
+    /// Rejects a foreign device or empty/overflowing/out-of-bounds viewport
+    /// before allocating bindings or recording commands.
+    pub fn encode_viewport(
+        &self,
+        device: &wgpu::Device,
+        encoder: &mut wgpu::CommandEncoder,
+        source: &wgpu::TextureView,
+        target: &wgpu::TextureView,
+        viewport: [u32; 4],
+    ) -> Result<(), crate::SceneError> {
+        let [x, y, width, height] = viewport;
+        if width == 0
+            || height == 0
+            || target.texture().sample_count() != 1
+            || target.texture().dimension() != wgpu::TextureDimension::D2
+            || x.checked_add(width)
+                .is_none_or(|v| v > target.texture().width())
+            || y.checked_add(height)
+                .is_none_or(|v| v > target.texture().height())
+        {
+            return Err(crate::SceneError::InvalidGeometry);
+        }
+        self.encode_region(device, encoder, source, target, Some(viewport))
+    }
+    fn encode_region(
+        &self,
+        device: &wgpu::Device,
+        encoder: &mut wgpu::CommandEncoder,
+        source: &wgpu::TextureView,
+        target: &wgpu::TextureView,
+        viewport: Option<[u32; 4]>,
+    ) -> Result<(), crate::SceneError> {
         if &self.device != device {
             return Err(crate::SceneError::DeviceMismatch);
         }
@@ -493,12 +531,20 @@ impl TextureBlit {
                 depth_slice: None,
                 resolve_target: None,
                 ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                    load: if viewport.is_some() {
+                        wgpu::LoadOp::Load
+                    } else {
+                        wgpu::LoadOp::Clear(wgpu::Color::BLACK)
+                    },
                     store: wgpu::StoreOp::Store,
                 },
             })],
             ..Default::default()
         });
+        if let Some([x, y, width, height]) = viewport {
+            pass.set_viewport(x as f32, y as f32, width as f32, height as f32, 0., 1.);
+            pass.set_scissor_rect(x, y, width, height);
+        }
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &group, &[]);
         pass.draw(0..3, 0..1);

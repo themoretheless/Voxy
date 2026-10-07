@@ -1,0 +1,1201 @@
+{
+  "base_snapshot": "artifacts/session-snapshot-2026-10-07-delivery-8",
+  "atomic_cross_file_snapshot": false,
+  "original_processes_preserved": true,
+  "files": [
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 28692,
+      "base_prefix_bytes": 26356,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-admitted-topology-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 2336,
+          "sha256": "12ecb62ffd9416fe6d32fb8dcd031658b8ff785d51c5f43719b005dfa62acd1b"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/capture.log",
+      "bytes_at_start": 16751,
+      "base_prefix_bytes": 16751,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 5550785,
+      "base_prefix_bytes": 4955245,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-admitted-topology-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 595540,
+          "sha256": "634b5fca626179adb2765399b66477626d873c5f14e13c4403325ae842187932"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 32366,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 32572,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 33109,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 33579,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34074,
+      "base_prefix_bytes": 34074,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0005.png",
+      "bytes_at_start": 34452,
+      "base_prefix_bytes": 34452,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0006.png",
+      "bytes_at_start": 33311,
+      "base_prefix_bytes": 33311,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0007.png",
+      "bytes_at_start": 33250,
+      "base_prefix_bytes": 33250,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0008.png",
+      "bytes_at_start": 32469,
+      "base_prefix_bytes": 32469,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0009.png",
+      "bytes_at_start": 32401,
+      "base_prefix_bytes": 32401,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0010.png",
+      "bytes_at_start": 32800,
+      "base_prefix_bytes": 32800,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0011.png",
+      "bytes_at_start": 32395,
+      "base_prefix_bytes": 32395,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0012.png",
+      "bytes_at_start": 32660,
+      "base_prefix_bytes": 32660,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0013.png",
+      "bytes_at_start": 32443,
+      "base_prefix_bytes": 32443,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0014.png",
+      "bytes_at_start": 32563,
+      "base_prefix_bytes": 32563,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0015.png",
+      "bytes_at_start": 32769,
+      "base_prefix_bytes": 32769,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0016.png",
+      "bytes_at_start": 32537,
+      "base_prefix_bytes": 32537,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0017.png",
+      "bytes_at_start": 33022,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0017.png.part0",
+          "bytes": 33022,
+          "sha256": "8a7c83928d02d96275fffd8c95be88f1b537b1a2bccff2103c89c6a530763406"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0018.png",
+      "bytes_at_start": 32711,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-admitted-topology-2026-10-07/frames/frame-0018.png.part0",
+          "bytes": 32711,
+          "sha256": "2eec27e3f77b0c61f5224d0ca6d98653e9b28578ae7828089d8cf65fe8b43c1e"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/capture.log",
+      "bytes_at_start": 118863155,
+      "base_prefix_bytes": 113351106,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-clip-2026-10-07/capture.log.part0",
+          "bytes": 5512049,
+          "sha256": "08d10e03dfc2634b27ca9095b604f44f71b4fc0bba953fbb47a1246c14f9559d"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 2569086,
+      "base_prefix_bytes": 2569086,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 32366,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 32572,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 33109,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 33579,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34076,
+      "base_prefix_bytes": 34076,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0005.png",
+      "bytes_at_start": 33902,
+      "base_prefix_bytes": 33902,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0006.png",
+      "bytes_at_start": 33785,
+      "base_prefix_bytes": 33785,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0007.png",
+      "bytes_at_start": 33326,
+      "base_prefix_bytes": 33326,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0008.png",
+      "bytes_at_start": 32604,
+      "base_prefix_bytes": 32604,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 7686,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 7686,
+          "sha256": "5a2ee5922549fb90214048e06f1b0afd91adb84a4a9181fc194b185d5de5b49c"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/capture.log",
+      "bytes_at_start": 103234,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/capture.log.part0",
+          "bytes": 103234,
+          "sha256": "3b2c72d1ff168ae6692834b5626774214316769f5688bf11fba459bc97e2c1ec"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 1379909,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 1379909,
+          "sha256": "1fc50d3662f7363356dce0d6d979b86393679f0f6d6e78f7ef5507785bfb1fd1"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0000.png.part0",
+          "bytes": 32366,
+          "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0001.png.part0",
+          "bytes": 32572,
+          "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0002.png.part0",
+          "bytes": 33109,
+          "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0003.png.part0",
+          "bytes": 33579,
+          "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34076,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-gravity-2026-10-07/frames/frame-0004.png.part0",
+          "bytes": 34076,
+          "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 29257,
+      "base_prefix_bytes": 27039,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-material-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 2218,
+          "sha256": "d54f225afe0285c5dd493c3b15d0533f8ec927e984e9cc4138b1d64baf0798ba"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/capture.log",
+      "bytes_at_start": 16751,
+      "base_prefix_bytes": 16751,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 5550787,
+      "base_prefix_bytes": 5253245,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-material-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 297542,
+          "sha256": "9bbb3e74e420a8cb89c73151b94a274da1ec08d1db891e90c8fa102066a3eeb3"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 32366,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 32572,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 33109,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 33579,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34074,
+      "base_prefix_bytes": 34074,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0005.png",
+      "bytes_at_start": 34452,
+      "base_prefix_bytes": 34452,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0006.png",
+      "bytes_at_start": 33311,
+      "base_prefix_bytes": 33311,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0007.png",
+      "bytes_at_start": 33250,
+      "base_prefix_bytes": 33250,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0008.png",
+      "bytes_at_start": 32469,
+      "base_prefix_bytes": 32469,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0009.png",
+      "bytes_at_start": 32401,
+      "base_prefix_bytes": 32401,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0010.png",
+      "bytes_at_start": 32800,
+      "base_prefix_bytes": 32800,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0011.png",
+      "bytes_at_start": 32395,
+      "base_prefix_bytes": 32395,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0012.png",
+      "bytes_at_start": 32660,
+      "base_prefix_bytes": 32660,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0013.png",
+      "bytes_at_start": 32443,
+      "base_prefix_bytes": 32443,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0014.png",
+      "bytes_at_start": 32563,
+      "base_prefix_bytes": 32563,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0015.png",
+      "bytes_at_start": 32769,
+      "base_prefix_bytes": 32769,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0016.png",
+      "bytes_at_start": 32537,
+      "base_prefix_bytes": 32537,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0017.png",
+      "bytes_at_start": 33022,
+      "base_prefix_bytes": 33022,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0018.png",
+      "bytes_at_start": 32711,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-compensated-material-2026-10-07/frames/frame-0018.png.part0",
+          "bytes": 32711,
+          "sha256": "2eec27e3f77b0c61f5224d0ca6d98653e9b28578ae7828089d8cf65fe8b43c1e"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 28009,
+      "base_prefix_bytes": 25531,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-current-allocation-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 2478,
+          "sha256": "655d755efb385ed1e8ce95e0ebb7125d40b0af84effbdec2868f7d3a9fdf68d5"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/capture.log",
+      "bytes_at_start": 16751,
+      "base_prefix_bytes": 16751,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 5253243,
+      "base_prefix_bytes": 4955245,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-current-allocation-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 297998,
+          "sha256": "3b7d21e4373205db267bb92af3b30a9a7a7ecea06d29e9b860b50cc4cc2ab19e"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 32366,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 32572,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 33109,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 33579,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34074,
+      "base_prefix_bytes": 34074,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0005.png",
+      "bytes_at_start": 34452,
+      "base_prefix_bytes": 34452,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0006.png",
+      "bytes_at_start": 33311,
+      "base_prefix_bytes": 33311,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0007.png",
+      "bytes_at_start": 33250,
+      "base_prefix_bytes": 33250,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0008.png",
+      "bytes_at_start": 32469,
+      "base_prefix_bytes": 32469,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0009.png",
+      "bytes_at_start": 32401,
+      "base_prefix_bytes": 32401,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0010.png",
+      "bytes_at_start": 32800,
+      "base_prefix_bytes": 32800,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0011.png",
+      "bytes_at_start": 32395,
+      "base_prefix_bytes": 32395,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0012.png",
+      "bytes_at_start": 32660,
+      "base_prefix_bytes": 32660,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0013.png",
+      "bytes_at_start": 32443,
+      "base_prefix_bytes": 32443,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0014.png",
+      "bytes_at_start": 32563,
+      "base_prefix_bytes": 32563,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0015.png",
+      "bytes_at_start": 32769,
+      "base_prefix_bytes": 32769,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0016.png",
+      "bytes_at_start": 32537,
+      "base_prefix_bytes": 32537,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0017.png",
+      "bytes_at_start": 33022,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-current-allocation-2026-10-07/frames/frame-0017.png.part0",
+          "bytes": 33022,
+          "sha256": "8a7c83928d02d96275fffd8c95be88f1b537b1a2bccff2103c89c6a530763406"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 25387,
+      "base_prefix_bytes": 22766,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-endpoint-admission-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 2621,
+          "sha256": "74dc5b83969903c7cf56b610b0f095ed6b9fa1f3afa37dd9af8b9762336da88c"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/capture.log",
+      "bytes_at_start": 16751,
+      "base_prefix_bytes": 16751,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 4955245,
+      "base_prefix_bytes": 4358183,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-endpoint-admission-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 597062,
+          "sha256": "ee9c3ac1526eea31a494a0e26b5ad046cec6195890d12f4379000065bb5c6ff5"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 32366,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 32572,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 33109,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 33579,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34074,
+      "base_prefix_bytes": 34074,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0005.png",
+      "bytes_at_start": 34452,
+      "base_prefix_bytes": 34452,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0006.png",
+      "bytes_at_start": 33311,
+      "base_prefix_bytes": 33311,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0007.png",
+      "bytes_at_start": 33250,
+      "base_prefix_bytes": 33250,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0008.png",
+      "bytes_at_start": 32469,
+      "base_prefix_bytes": 32469,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0009.png",
+      "bytes_at_start": 32401,
+      "base_prefix_bytes": 32401,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0010.png",
+      "bytes_at_start": 32800,
+      "base_prefix_bytes": 32800,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0011.png",
+      "bytes_at_start": 32395,
+      "base_prefix_bytes": 32395,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0012.png",
+      "bytes_at_start": 32660,
+      "base_prefix_bytes": 32660,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0013.png",
+      "bytes_at_start": 32443,
+      "base_prefix_bytes": 32443,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0014.png",
+      "bytes_at_start": 32563,
+      "base_prefix_bytes": 32563,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0015.png",
+      "bytes_at_start": 32769,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0015.png.part0",
+          "bytes": 32769,
+          "sha256": "1e9ee7fc3cbeefed7a75359234f882ef175fae3ac8af85de02b1f256a53c05ca"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0016.png",
+      "bytes_at_start": 32537,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-endpoint-admission-2026-10-07/frames/frame-0016.png.part0",
+          "bytes": 32537,
+          "sha256": "265c896a0fa56a7ae3564aa7f606212e55693f3d5b32792f0a00a58166dace09"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 7686,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 7686,
+          "sha256": "debd7b4ee7d66b669e6d551ec75d555074ed5dd3d8a4725f95ae76ca1698d079"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/capture.log",
+      "bytes_at_start": 16982,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/capture.log.part0",
+          "bytes": 16982,
+          "sha256": "5cf118d16267fe630a824a3a813443e16d8d0de68d0b82fc0f9fd72a5341562c"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 1379908,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 1379908,
+          "sha256": "d224c40fbecf0d9fcc850190e3ddec1c28b1d32ab65983f5bed2b2da5f56a7db"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0000.png.part0",
+          "bytes": 32366,
+          "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0001.png.part0",
+          "bytes": 32572,
+          "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0002.png.part0",
+          "bytes": 33109,
+          "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0003.png.part0",
+          "bytes": 33579,
+          "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34076,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-evaluation-reuse-2026-10-07/frames/frame-0004.png.part0",
+          "bytes": 34076,
+          "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/capture.log",
+      "bytes_at_start": 50310073,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-strict-energy-2026-10-07/capture.log.part0",
+          "bytes": 50310073,
+          "sha256": "9bf02989d6e83f23aa315a35565771f8e26b9bb3879161cca5b0289afebb15e7"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 1379908,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-strict-energy-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 1379908,
+          "sha256": "d224c40fbecf0d9fcc850190e3ddec1c28b1d32ab65983f5bed2b2da5f56a7db"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0000.png.part0",
+          "bytes": 32366,
+          "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0001.png.part0",
+          "bytes": 32572,
+          "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0002.png.part0",
+          "bytes": 33109,
+          "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0003.png.part0",
+          "bytes": 33579,
+          "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34076,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0004.png.part0",
+          "bytes": 34076,
+          "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 7686,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 7686,
+          "sha256": "debd7b4ee7d66b669e6d551ec75d555074ed5dd3d8a4725f95ae76ca1698d079"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/capture.log",
+      "bytes_at_start": 16982,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/capture.log.part0",
+          "bytes": 16982,
+          "sha256": "5cf118d16267fe630a824a3a813443e16d8d0de68d0b82fc0f9fd72a5341562c"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 1379908,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 1379908,
+          "sha256": "d224c40fbecf0d9fcc850190e3ddec1c28b1d32ab65983f5bed2b2da5f56a7db"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0000.png.part0",
+          "bytes": 32366,
+          "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0001.png.part0",
+          "bytes": 32572,
+          "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0002.png.part0",
+          "bytes": 33109,
+          "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0003.png.part0",
+          "bytes": 33579,
+          "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 34076,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-temporal-retry-2026-10-07/frames/frame-0004.png.part0",
+          "bytes": 34076,
+          "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/capture.energy.jsonl",
+      "bytes_at_start": 7686,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/capture.energy.jsonl.part0",
+          "bytes": 7686,
+          "sha256": "debd7b4ee7d66b669e6d551ec75d555074ed5dd3d8a4725f95ae76ca1698d079"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/capture.log",
+      "bytes_at_start": 86491,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/capture.log.part0",
+          "bytes": 86491,
+          "sha256": "2ef92ec7b5ce98a5c9c5ddee60e8351d9811066b8313663d49884b6ec3403850"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 1679638,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 1679638,
+          "sha256": "865edfbc07f100fe117cd47f422d9fcd3a7146fa2ff972bab0df46288bc277e5"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0000.png",
+      "bytes_at_start": 32366,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0000.png.part0",
+          "bytes": 32366,
+          "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0001.png",
+      "bytes_at_start": 32572,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0001.png.part0",
+          "bytes": 32572,
+          "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0002.png",
+      "bytes_at_start": 33704,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0002.png.part0",
+          "bytes": 33704,
+          "sha256": "49cd50b03c106aecce57f49bac37fc5af343b7a2d88cbb233f1b6ed8bffda878"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0003.png",
+      "bytes_at_start": 33109,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0003.png.part0",
+          "bytes": 33109,
+          "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0004.png",
+      "bytes_at_start": 33579,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0004.png.part0",
+          "bytes": 33579,
+          "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0005.png",
+      "bytes_at_start": 34076,
+      "base_prefix_bytes": 0,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-rig-work-arithmetic-2026-10-07/frames/frame-0005.png.part0",
+          "bytes": 34076,
+          "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/capture.log",
+      "bytes_at_start": 33097743,
+      "base_prefix_bytes": 28812616,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-volume-release-2026-10-07/capture.log.part0",
+          "bytes": 4285127,
+          "sha256": "15101616a8cb45a656a708b1a8c269db823b7e3d3926005a40de34f0bb901364"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/capture.nodes.jsonl",
+      "bytes_at_start": 491249,
+      "base_prefix_bytes": 182441,
+      "chunks": [
+        {
+          "path": "live/artifacts/full-volume-release-2026-10-07/capture.nodes.jsonl.part0",
+          "bytes": 308808,
+          "sha256": "59d1c80e02d5e184c0406883f6bd19fd40544a072c4c6750465428924dfbcf72"
+        }
+      ]
+    },
+    {
+      "source": "artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.log",
+      "bytes_at_start": 16683,
+      "base_prefix_bytes": 16683,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.nodes.jsonl",
+      "bytes_at_start": 182441,
+      "base_prefix_bytes": 182441,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/source-node-reference-2026-10-07/full-volume-capture.log",
+      "bytes_at_start": 16683,
+      "base_prefix_bytes": 16683,
+      "chunks": []
+    },
+    {
+      "source": "artifacts/source-node-reference-2026-10-07/full-volume-capture.nodes.jsonl",
+      "bytes_at_start": 182441,
+      "base_prefix_bytes": 182441,
+      "chunks": []
+    }
+  ]
+}

@@ -9,6 +9,7 @@ pub(super) struct FrameStyles {
     pub materials: HashMap<NodeId, SceneMaterial>,
     pub parts: HashMap<NodeId, u32>,
     pub ui_owners: HashSet<NodeId>,
+    pub fog: Vec<(NodeId, voxy_scene::FogVolume, voxy_scene::FogBounds)>,
 }
 impl FrameStyles {
     pub fn prepare(
@@ -16,6 +17,19 @@ impl FrameStyles {
         camera: &EditorCamera,
         capacity: usize,
     ) -> Result<Self, String> {
+        Self::prepare_with_world(access, camera, capacity, |scene, owner| {
+            scene.world_matrix(owner)
+        })
+    }
+    pub fn prepare_with_world<F>(
+        access: &SceneSystemAccess<'_>,
+        camera: &EditorCamera,
+        capacity: usize,
+        world: F,
+    ) -> Result<Self, String>
+    where
+        F: Fn(&voxy_scene::SceneGraph, NodeId) -> Result<glam::Mat4, voxy_scene::SceneGraphError>,
+    {
         access
             .require_write("render.extraction")
             .map_err(|e| e.to_string())?;
@@ -29,6 +43,20 @@ impl FrameStyles {
             .map(|(_, light)| *light);
         if light.is_some_and(|light| !light.valid()) {
             return Err("invalid presentation light".into());
+        }
+        let mut fog = Vec::new();
+        for (owner, volume) in scene.active_components::<voxy_scene::FogVolume>() {
+            volume.validate().map_err(|e| e.to_string())?;
+            if !volume.enabled {
+                continue;
+            }
+            if fog.len() >= capacity {
+                return Err("presentation fog capacity exceeded".into());
+            }
+            let bounds = volume
+                .world_bounds(world(scene, owner).map_err(|e| e.to_string())?)
+                .map_err(|e| e.to_string())?;
+            fog.push((owner, *volume, bounds));
         }
         let mut materials = HashMap::new();
         let mut parts = HashMap::new();
@@ -65,6 +93,7 @@ impl FrameStyles {
             materials,
             parts,
             ui_owners,
+            fog,
         })
     }
 }
@@ -201,5 +230,150 @@ mod tests {
                 .is_err()
         );
         assert_eq!(first.materials[&model].tint, [0.2, 0.3, 0.4, 1.]);
+    }
+    #[test]
+    fn fog_snapshots_follow_hierarchy_and_preserve_prior_values() {
+        use voxy_scene::FogVolume;
+        let mut scene = SceneGraph::new(3);
+        let root = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: glam::Vec3::new(3., 4., 5.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        let owner = scene
+            .spawn(
+                Some(root),
+                Transform {
+                    scale: glam::Vec3::new(2., 1., 1.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene.insert_component(owner, FogVolume::default()).unwrap();
+        let capture = |scene: &mut SceneGraph, capacity| {
+            let mut result = None;
+            extraction_schedule()
+                .unwrap()
+                .run_scene(scene, |_, access| {
+                    result = Some(FrameStyles::prepare(
+                        &access,
+                        &EditorCamera::default(),
+                        capacity,
+                    )?);
+                    Ok::<(), String>(())
+                })
+                .map_err(|e| format!("{e:?}"))?;
+            Ok::<_, String>(result.unwrap())
+        };
+        let first = capture(&mut scene, 1).unwrap();
+        assert_eq!(first.fog[0].0, owner);
+        assert_eq!(first.fog[0].2.origin, [3., 4., 5.]);
+        assert_eq!(first.fog[0].2.extent, [2., 1., 1.]);
+        extraction_schedule()
+            .unwrap()
+            .run_scene(&mut scene, |_, access| {
+                let resolved = FrameStyles::prepare_with_world(
+                    &access,
+                    &EditorCamera::default(),
+                    1,
+                    |scene, owner| {
+                        Ok(glam::Mat4::from_translation(glam::Vec3::new(10., 0., 0.))
+                            * scene.world_matrix(owner)?)
+                    },
+                )?;
+                assert_eq!(resolved.fog[0].2.origin, [13., 4., 5.]);
+                Ok::<(), String>(())
+            })
+            .unwrap();
+        assert!(capture(&mut scene, 0).is_err());
+        scene
+            .component_mut::<FogVolume>(owner)
+            .unwrap()
+            .unwrap()
+            .extinction_m_inverse = 2.;
+        assert_eq!(
+            capture(&mut scene, 1).unwrap().fog[0]
+                .1
+                .extinction_m_inverse,
+            2.
+        );
+        assert_eq!(first.fog[0].1.extinction_m_inverse, 0.5);
+        scene.set_active(root, false).unwrap();
+        assert!(capture(&mut scene, 1).unwrap().fog.is_empty());
+        scene.set_active(root, true).unwrap();
+        scene
+            .component_mut::<FogVolume>(owner)
+            .unwrap()
+            .unwrap()
+            .enabled = false;
+        assert!(capture(&mut scene, 1).unwrap().fog.is_empty());
+        scene
+            .component_mut::<FogVolume>(owner)
+            .unwrap()
+            .unwrap()
+            .enabled = true;
+        scene
+            .component_mut::<FogVolume>(owner)
+            .unwrap()
+            .unwrap()
+            .samples = 0;
+        assert!(capture(&mut scene, 1).is_err());
+        scene
+            .component_mut::<FogVolume>(owner)
+            .unwrap()
+            .unwrap()
+            .samples = 32;
+        scene
+            .set_local(
+                owner,
+                Transform {
+                    rotation: glam::Quat::from_rotation_y(0.3),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert!(capture(&mut scene, 1).is_err());
+        scene.remove_component::<FogVolume>(owner).unwrap();
+        assert!(capture(&mut scene, 1).unwrap().fog.is_empty());
+    }
+    #[test]
+    fn built_in_registry_admits_fog_and_rejects_invalid_calibration() {
+        let registry = crate::editor_component_registry().unwrap();
+        let mut document=voxy_scene::SceneDocument::from_json(r#"{"version":1,"objects":[{"id":"fog","parent":null,"name":"Fog","active":true,"translation":[0,0,0],"rotation":[0,0,0,1],"scale":[1,1,1],"components":{"scene.fog.v1":{"enabled":true,"size":[1,2,3],"extinction_m_inverse":0.5,"single_scattering_albedo":0.8,"asymmetry":0,"samples":32}}}]}"#).unwrap();
+        let loaded = document.load(&registry, 2).unwrap();
+        let captured = loaded.capture(&registry).unwrap();
+        let original_fog: voxy_scene::FogVolume =
+            serde_json::from_value(document.objects[0].components["scene.fog.v1"].clone()).unwrap();
+        let captured_fog: voxy_scene::FogVolume =
+            serde_json::from_value(captured.objects[0].components["scene.fog.v1"].clone()).unwrap();
+        assert_eq!(captured_fog, original_fog);
+        assert_eq!(
+            captured
+                .load(&registry, 2)
+                .unwrap()
+                .capture(&registry)
+                .unwrap(),
+            captured
+        );
+        let mut canonical = document.clone();
+        canonical.objects[0].components.insert(
+            "scene.fog.v1".into(),
+            serde_json::to_value(original_fog).unwrap(),
+        );
+        assert_eq!(captured, canonical);
+        document.objects[0]
+            .components
+            .get_mut("scene.fog.v1")
+            .unwrap()["extinction_m_inverse"] = serde_json::json!(1e-100);
+        assert!(document.load(&registry, 2).is_err());
+        document.objects[0]
+            .components
+            .get_mut("scene.fog.v1")
+            .unwrap()["extinction_m_inverse"] = serde_json::json!(-0.5);
+        assert!(document.load(&registry, 2).is_err());
     }
 }

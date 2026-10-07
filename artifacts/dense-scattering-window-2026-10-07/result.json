@@ -1,0 +1,57 @@
+{
+  "dense": {
+    "sigma_m_inverse": 10000,
+    "presented_frames": [
+      [
+        "1",
+        "320x240"
+      ],
+      [
+        "2",
+        "320x240"
+      ],
+      [
+        "3",
+        "320x240"
+      ],
+      [
+        "4",
+        "321x241"
+      ]
+    ],
+    "exit": 0,
+    "center_validation": "exact nearest RGBA16F analytic result"
+  },
+  "baseline": {
+    "sigma_m_inverse": 0.5,
+    "presented_frames": [
+      [
+        "1",
+        "320x240"
+      ],
+      [
+        "2",
+        "320x240"
+      ],
+      [
+        "3",
+        "320x240"
+      ],
+      [
+        "4",
+        "321x241"
+      ]
+    ],
+    "exit": 0,
+    "center_validation": "original 0.002 absolute tolerance"
+  },
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "executable_sha256": "e626ac4ba3a044f875c1892ca4175f98b6b43c6bf92be2d7d86d60f4d568d9c4",
+  "cpu_scene_color_depth_upload": false,
+  "whole_scene_performance": "unqualified",
+  "nvidia": "unqualified",
+  "editor_component": "unimplemented",
+  "multiple_scattering": "unimplemented",
+  "strict_baseline_failure_preserved": true
+}

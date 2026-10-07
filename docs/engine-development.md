@@ -8897,3 +8897,192 @@ Initial failure and corrected results are retained in
 preceding implementation; the endpoint revision has offscreen Metal evidence.
 Multiple scattering, solid-object incident shadows, calibrated water/oil,
 editor integration, high-resolution performance and NVIDIA remain unqualified.
+
+
+### Endpoint transport in a native window (2026-10-07)
+
+The current endpoint-integrating shader is now qualified through the existing
+native temporal surface hook. `VOXY_TEMPORAL_EXTINCTION_SIGMA` selects a finite
+coefficient in [0, 10000] for the qualification slab; malformed values are
+rejected. The sigma=10000 case completed four presented frames, resizing from
+320×240 to 321×241, with exact nearest-RGBA16F agreement with the saturated
+analytic center RGB [0.127323955, 0.063661978, 0.031830989] and alpha 1.
+Consumer failure still discards the submission, invalidates history and leaves
+the presented identifier unconsumed. No CPU scene color/depth upload is used.
+
+The same final executable also passes the sigma=0.5 baseline with its original
+0.002 absolute center tolerance. An attempted exact-half assertion failed that
+baseline by one half step; the failed log is preserved. Exact agreement is only
+asserted for the saturated fixture, whose transport result is insensitive to
+small surface-path differences. The finite-depth discrepancy has not been
+causally qualified. Logs, executable hash and result metadata are in
+`artifacts/dense-scattering-window-2026-10-07/`. This is a native window fixture,
+not editor authoring integration, general error certification or NVIDIA proof.
+
+
+### Opaque object shadows in directional fog (2026-10-07)
+
+`DropletExtinctionPass::with_directional_shadow` now reuses `ShadowMap` and
+`ShadowSettings` from surface lighting. The shadow depth and uniform bindings
+are explicitly exposed to compute through a retained additional bind-group
+layout; shader reload retains that ABI. The pass retains a settings snapshot
+and the frame retains its shadow bindings through completion. Rasterize the
+opaque map before fog on the same queue. Scattering calibration and the map's
+light direction must match; this remains the caller's responsibility. Shadowed
+passes reject inputs without directional scattering before output allocation.
+
+Both paths share the exact depth comparison, bias, outside-projection lit
+policy and Hard/PCF3×3/PCF5×5 filter implementation. Medium shadow optical depth
+is still endpoint-integrated; opaque visibility is sampled at the primary
+subsegment midpoint. Therefore arbitrary shadow discontinuities along a ray
+remain approximate and need refinement, not a general error guarantee. The
+DDA work budget excludes PCF texture-tap cost; overall GPU time is unqualified.
+
+Metal passes twelve raster cases: empty, full, half and disabled shadows for
+each filter. Actual opaque geometry generates the shadow texture and actual
+scene attachments feed fog. Interior HDR pixels agree with independently
+predicted blocked/unblocked slab radiance within 1e-4, with alpha preserved;
+the two split boundary columns are excluded from analytic classification.
+No CPU shadow-depth or scene color/depth pixels are uploaded. Existing 20 slab
+cases, 16,384-pixel scene comparison and 155 library tests still pass (22 ignored).
+Evidence is in `artifacts/solid-shadow-scattering-2026-10-07/`.
+Transparent casters, directional-map/source consistency validation, moving
+shadow snapshots, cascade coverage, along-ray discontinuity certification,
+window/editor shadow integration, multiple scattering and NVIDIA remain open.
+
+
+### Moving opaque fog shadows and source admission (2026-10-07)
+
+A cached shadow-enabled fog pass now has Metal evidence across repeated
+empty/full/split/moved/cleared maps. The half-width caster moves by 0.5 world
+metres without recompiling the fog pipeline. Twenty-four rendered cases
+(eight sequential states per Hard/PCF3×3/PCF5×5 filter) match analytic interior
+blocked/unblocked slab radiance. Twenty-one subsequent map updates preserve
+all RGBA16F bits of the previous completed output attachment. This is completed
+output preservation: a prepared frame samples the live map at execution time;
+it does not freeze the map's texels. Encode map writes before its consumers
+and subsequent updates afterward on the same queue.
+
+Source consistency is now admitted explicitly. A directional shadow projection
+must be finite, invertible and affine with positive homogeneous W; perspective
+and singular projections are rejected. Inverse clip Z identifies photon
+travel in world space, including affine shear. An enabled pass rejects a
+scattering direction whose dot product with the direction toward that light
+is below 1-1e-5 before output allocation. Three filters exercise the reversed
+source and two invalid projections (nine rejected cases total). This replaces
+the previous caller-only direction-consistency boundary. Bias and enabled
+settings remain validated by the shared surface-shadow bindings.
+
+Evidence is in `artifacts/moving-shadow-scattering-2026-10-07/`. Moving light
+transforms, map-generation identity, window/editor shadow integration, PCF
+boundary error, along-ray shadow discontinuity certification, transparent
+casters, cascades, multiple scattering and NVIDIA remain unqualified.
+
+
+### Durable fog authoring and frame extraction (2026-10-07)
+
+`voxy_scene::FogVolume` is a renderer-independent authored uniform medium in
+its owner's local [0,size] box. `scene.fog.v1` is registered in the editor's
+existing component registry, so documents and generic inspector/history
+codecs retain it. Calibration supplies extinction per world metre, albedo,
+HG asymmetry and sample count; light remains a separate input. GPU handles,
+physical state and optical density inferred from arbitrary liquid radii are
+not stored in the component. Deserialization rejects invalid calibration and
+unknown fields. Editor save/load validation also checks mutated live data.
+
+FrameStyles now owns active/enabled fog snapshots with world bounds under its
+existing extraction schedule. Capacity and calibration errors abort snapshot
+preparation. Exact axis-aligned signed scales and axis permutations preserve
+the local box; arbitrary rotation/shear is explicitly rejected instead of
+inflating the medium into an incorrect AABB. GPU-unrepresentable bounds and
+positive extinction that underflows to zero in f32 are rejected. Extinction
+per metre is unchanged by owner scale, while the path length changes naturally.
+
+The scene library passes 71 tests, and the editor passes 176 (13 ignored).
+New evidence covers typed document round-trip, stable canonical repeated
+capture, undo/redo and rejected-edit preservation, inherited activity,
+disabling/removing fog, capacity, prior snapshot independence and unsupported
+transforms. Raw decimal JSON is normalized to the declared component numeric
+types; the initial equality-test failure and corrected checks are retained in
+`artifacts/fog-authoring-2026-10-07/`.
+
+This completes durable data and extraction only. The ordinary editor's SDR,
+multiple viewport, UI-overlay and optical-liquid compositor still needs to
+consume these snapshots through the HDR fog pass. No editor fog pixels are
+claimed. Interpolated physics poses, rotated media, multiple-volume transport,
+light/shadow authoring and editor GPU acceptance remain open.
+
+
+### HDR composition into editor view regions (2026-10-07)
+
+`TextureBlit::encode_viewport` maps a whole processed source into a specified
+base-level target region, loading the initialized attachment and scissoring
+writes instead of clearing neighbouring views. The original full-target
+composition path retains its clear. Existing identity, exposure and tone-map
+pipelines share the region encoder; global/per-view overlays can follow it.
+Empty, overflowing and out-of-bounds regions are rejected before binding
+allocation or command recording. Callers retain texture/encoder device and
+base-level view ownership contracts.
+
+Metal qualification composes a synthetic GPU RGBA16F storage-produced 13×3
+source twice into an initialized 37×11 HDR target at distinct offsets. All
+78 destination pixels are checked: identity RGBA bits are exact, tone-mapped
+RGB differs by at most one half ULP, and alpha is preserved. All 329 outside
+pixels remain bit-identical; four invalid viewport admissions are rejected.
+The existing 16,384-pixel native scene, 20 slab and 24 moving-shadow cases
+still pass, as do 155 render library tests (22 ignored). Evidence is in
+`artifacts/fog-viewport-composition-2026-10-07/`.
+
+This is the compositor prerequisite, not completed editor fog presentation.
+Actual UI overlays, HDR scene draw pipelines, compatible optical-fluid output
+and merged optical depth, multiple-volume transport, per-view allocation and
+editor acquisition/lifetime acceptance still need to be connected and verified.
+
+
+### Editor fog consumer and native acceptance (2026-10-07)
+
+The existing editor draw loop now consumes active `scene.fog.v1` snapshots in
+its ordinary and Play presentation path. FogDraw owns a cached HDR scene
+renderer using the editor's material shader, the existing optical compute
+pass, display pass and view-sized color/ordinary/X-ray depth targets. Each
+view rasterizes world geometry into RGBA16F, transports radiance through the
+medium, tone maps into its window region, then draws local controls and global
+UI with the ordinary display renderer. Scene pixels/depth are not uploaded
+from CPU. Existing DirectionalLight supplies the separate incident-light input
+in scene intensity units; real photometric calibration is not asserted.
+
+Models and fog now share the same render-world resolver, including simulation
+interpolation. Completed optical frames are retired only after device
+completion; disabling fog releases its graphics owner. This first lifetime
+implementation waits on the device, so frame-time/performance is unqualified.
+Fog image/storage bytes participate in the scene resource accounting. Resize
+checks planned/peak bytes and GPU storage binding limits before target
+allocation. The first DPI=2 native run exposed an inappropriate fixed 64 MiB
+input cap; input admission now derives from device binding capacity under the
+already-admitted scene budget. Failure evidence is preserved.
+
+A real opaque/fog two-view GPU test checks all 2560 output pixels, including
+128 local overlay pixels and 512 global UI pixels, against slab/tone-map or
+untouched-overlay expectations. The second camera misses the medium and is
+not attenuated. The editor library passes 177 tests (14 ignored), and this
+physical Metal test passes explicitly. Native Scene3D acceptance on a temporary
+project copy completed 19 presented fog frames at physical window size
+1280×1360, including selection, edits, 26 Play ticks, Stop and reload, exit zero.
+The additional fog-only node exposed model picking's assumption that every
+object had geometry; picking now skips meshless objects, with a regression test.
+
+The initial launch against the Documents project remains observed in a
+filesystem-open wait before UI creation (PID 68705). Its timeout is not treated
+as completion or a dead process. Native acceptance uses copied synthetic
+fixture assets in /tmp; no OS permission setting was changed. Evidence,
+initial failures, scene snapshots and executable hash are in
+`artifacts/editor-fog-presentation-2026-10-07/`.
+
+This initial consumer supports one axis-aligned uniform fog volume and a
+single-sample scene camera. Multiple media, MSAA and simultaneous screen-space
+optical liquids are explicitly rejected until their physical composition is
+implemented. The editor's fog does not yet consume opaque scene shadow maps;
+those have separate renderer-level evidence. Rotated volumes, editor light
+shadow authoring, fog/liquid merged optical depth, asynchronous retirement,
+high-resolution performance, spectral calibration, multiple scattering and
+NVIDIA execution remain open. The full engine objective is still unfinished.

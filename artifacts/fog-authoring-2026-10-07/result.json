@@ -1,0 +1,28 @@
+{
+  "schema": "scene.fog.v1",
+  "component_owner": "voxy_scene",
+  "gpu_handles_in_component": false,
+  "scene_tests_passed": 71,
+  "editor_tests_passed": 176,
+  "editor_tests_ignored": 13,
+  "qualified": [
+    "typed serialization",
+    "canonical repeat-save stability",
+    "history undo redo",
+    "invalid history rollback",
+    "editor registry admission",
+    "active hierarchy extraction",
+    "disabled volume removal",
+    "immutable prior frame values",
+    "axis aligned signed scale and permutation",
+    "unsupported rotation rejection",
+    "unrepresentable GPU bounds rejection"
+  ],
+  "initial_failure": "overly strict raw JSON equality; corrected to typed/canonical value checks",
+  "physical_density_units": "per world metre; not rescaled by owner scale",
+  "rendering_connected_in_editor": false,
+  "interpolated_physics_pose_extraction": "unqualified",
+  "multiple_volume_composition": "unimplemented",
+  "arbitrary_rotation": "unsupported",
+  "native_editor_fog_frame": "not qualified"
+}

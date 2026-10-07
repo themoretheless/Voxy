@@ -531,11 +531,79 @@ pub struct DropletExtinctionPass {
     device: wgpu::Device,
     compute: crate::ComputeProgram,
     blit: std::sync::Arc<crate::StorageColorBlit>,
+    shadow: Option<crate::shadow_visibility::ShadowBindings>,
+    shadow_direction: Option<[f32; 3]>,
 }
 impl DropletExtinctionPass {
+    /// Retain an immutable light-transform/settings snapshot and the existing
+    /// opaque raster shadow map. Encode that map before fog on the same queue.
+    /// Requires an invertible affine projection with conventional depth. Prepare
+    /// rejects scattering directions inconsistent with its light rays.
+    /// Outside the shadow projection remains lit, matching surface lighting.
+    pub async fn with_directional_shadow(
+        device: &wgpu::Device,
+        map: &crate::ShadowMap,
+        settings: crate::ShadowSettings,
+    ) -> Result<Self, ComputeError> {
+        // Conventional orthographic depth increases along photon travel.
+        // Inverse clip Z gives the world ray direction, including affine shear.
+        let matrix = settings.light_from_world;
+        if !matrix.is_finite()
+            || matrix.x_axis.w != 0.
+            || matrix.y_axis.w != 0.
+            || matrix.z_axis.w != 0.
+            || matrix.w_axis.w <= 0.
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let determinant = matrix.determinant();
+        if !determinant.is_finite() || determinant == 0. {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let inverse = matrix.inverse();
+        let travel = inverse.z_axis.truncate();
+        let scale = travel.abs().max_element();
+        let scaled = travel / scale;
+        let length = scaled.x.hypot(scaled.y).hypot(scaled.z);
+        if !inverse.is_finite() || !length.is_finite() || length == 0. {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let shadow_direction = settings.enabled.then_some((-scaled / length).to_array());
+        let shadow = crate::shadow_visibility::ShadowBindings::with_visibility(
+            device,
+            map,
+            settings,
+            wgpu::ShaderStages::COMPUTE,
+        )
+        .map_err(|e| ComputeError::Validation(e.to_string()))?;
+        let source = format!(
+            "{}\n{}",
+            DROPLET_EXTINCTION_SCENE_SHADER.replace(
+                "fn solid_visibility(world:vec3<f32>)->f32 {return 1.0;}",
+                "fn solid_visibility(world:vec3<f32>)->f32 {return shadow_visibility(world);}"
+            ),
+            crate::shadow_visibility::SHADOW.replace("@group(2)", "@group(1)")
+        );
+        Ok(Self {
+            device: device.clone(),
+            compute: crate::ComputeProgram::with_scene_binding_layout(
+                device,
+                &source,
+                &shadow.layout,
+            )
+            .await?,
+            blit: std::sync::Arc::new(
+                crate::StorageColorBlit::new(device, wgpu::TextureFormat::Rgba16Float).await?,
+            ),
+            shadow: Some(shadow),
+            shadow_direction,
+        })
+    }
     pub async fn new(device: &wgpu::Device) -> Result<Self, ComputeError> {
         Ok(Self {
             device: device.clone(),
+            shadow: None,
+            shadow_direction: None,
             compute: crate::ComputeProgram::with_scene_textures(
                 device,
                 DROPLET_EXTINCTION_SCENE_SHADER,
@@ -556,6 +624,18 @@ impl DropletExtinctionPass {
         depth: &wgpu::Texture,
         max_output_bytes: u64,
     ) -> Result<DropletExtinctionFrame, ComputeError> {
+        if self.shadow.is_some() && input.words[5] != 1 {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        if let Some(expected) = self.shadow_direction {
+            let lighting = input.words.len() - 9;
+            let cosine: f32 = (0..3)
+                .map(|k| expected[k] * f32::from_bits(input.words[lighting + k]))
+                .sum();
+            if cosine < 1. - 1e-5 {
+                return Err(ComputeError::InvalidBuffer);
+            }
+        }
         let width = input.size[0];
         let height = input.size[1];
         let output_bytes = u64::from(width)
@@ -600,6 +680,7 @@ impl DropletExtinctionPass {
             device: self.device.clone(),
             job,
             output,
+            shadow: self.shadow.as_ref().map(|s| s.group.clone()),
             blit: self.blit.clone(),
             size: [width, height],
             offset_words: input.color_offset as u32,
@@ -613,6 +694,7 @@ impl DropletExtinctionPass {
 pub struct DropletExtinctionFrame {
     device: wgpu::Device,
     job: crate::ComputeJob,
+    shadow: Option<wgpu::BindGroup>,
     output: crate::ProcessedColorTarget,
     blit: std::sync::Arc<crate::StorageColorBlit>,
     size: [u32; 2],
@@ -621,7 +703,8 @@ pub struct DropletExtinctionFrame {
 }
 impl DropletExtinctionFrame {
     pub async fn encode(&self, encoder: &mut wgpu::CommandEncoder) -> Result<(), ComputeError> {
-        self.job.encode_step(encoder, self.workgroups)?;
+        self.job
+            .encode_step_with_binding(encoder, self.workgroups, self.shadow.as_ref())?;
         self.blit
             .encode_checked(
                 &self.device,

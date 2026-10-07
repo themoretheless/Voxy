@@ -1,0 +1,35 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "solid_shadow_cases": 12,
+  "filters": [
+    "Hard",
+    "Pcf3x3",
+    "Pcf5x5"
+  ],
+  "raster_cases": [
+    "empty",
+    "full",
+    "half",
+    "disabled"
+  ],
+  "split_boundary_columns_excluded": true,
+  "absolute_hdr_rgb_tolerance": 0.0001,
+  "alpha_checked": true,
+  "scene_color_depth_cpu_upload": false,
+  "shadow_depth_cpu_upload": false,
+  "render_tests_passed": 155,
+  "render_tests_ignored": 22,
+  "unshadowed_slab_cases_passed": 20,
+  "existing_native_scene_pixels": 16384,
+  "window_shadow_integration": "unqualified",
+  "shadow_discontinuity_along_ray_error": "unqualified",
+  "shadow_light_direction_consistency": "caller responsibility",
+  "nvidia": "unqualified",
+  "multiple_scattering": "unimplemented",
+  "executable_sha256": "cf84fed1bccbb4b85b41815549dca7f337685b08ebaacdd0eab9b685ec274e76",
+  "checked_pixels_per_case": {
+    "empty_full_disabled": 144,
+    "half": 120
+  }
+}

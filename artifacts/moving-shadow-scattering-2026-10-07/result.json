@@ -1,0 +1,36 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "rendered_shadow_cases": 24,
+  "states_per_filter": [
+    0,
+    1,
+    2,
+    4,
+    0,
+    1,
+    0,
+    3
+  ],
+  "filter_count": 3,
+  "cached_program_reused": true,
+  "caster_translation_world_m": [
+    0.5,
+    0,
+    0
+  ],
+  "prior_completed_output_comparisons": 21,
+  "previous_output_rgba16f_bits": "exact match all 256 pixels",
+  "reversed_direction_rejections": 3,
+  "singular_projection_rejections": 3,
+  "perspective_projection_rejections": 3,
+  "render_library_passed": 155,
+  "render_library_ignored": 22,
+  "unshadowed_slab_cases": 20,
+  "source_direction_dot_minimum": 0.99999,
+  "prepared_map_texel_snapshot": false,
+  "moving_light_transform": "unqualified",
+  "editor_shadow_integration": "unqualified",
+  "nvidia": "unqualified",
+  "executable_sha256": "b0a12db5fd4d82a016ec8e417189fa91fb37991e9642e40433c6a26475e5d9e0"
+}

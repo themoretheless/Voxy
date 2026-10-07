@@ -1,0 +1,44 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "source": "GPU RGBA16F generated from synthetic storage fixture",
+  "source_size": [
+    13,
+    3
+  ],
+  "target_size": [
+    37,
+    11
+  ],
+  "viewports": [
+    [
+      3,
+      2,
+      13,
+      3
+    ],
+    [
+      20,
+      6,
+      13,
+      3
+    ]
+  ],
+  "composed_pixels": 78,
+  "untouched_pixels": 329,
+  "untouched_rgba16f_bits": "exact",
+  "identity_rgba16f_bits": "exact",
+  "tone_mapping_max_half_ulp": 1,
+  "alpha": "preserved",
+  "rejected_viewports": 4,
+  "render_library_passed": 155,
+  "render_library_ignored": 22,
+  "scene_regression_pixels": 16384,
+  "slab_cases": 20,
+  "moving_shadow_cases": 24,
+  "editor_consumer": "not connected",
+  "real_editor_ui_draws": "not qualified",
+  "fluid_fog_composition": "not qualified",
+  "nvidia": "not qualified",
+  "executable_sha256": "022c74017d1e63ad306040ab94bdb80ab199c4a429979950291b1d2e39d44e48"
+}

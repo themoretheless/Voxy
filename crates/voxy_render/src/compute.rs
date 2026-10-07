@@ -39,6 +39,7 @@ pub struct ComputeProgram {
     entry_point: std::sync::Arc<str>,
     revision: u64,
     scene_inputs: bool,
+    additional_layout: Option<wgpu::BindGroupLayout>,
 }
 
 impl ComputeProgram {
@@ -57,20 +58,28 @@ impl ComputeProgram {
         source: &str,
         entry_point: &str,
     ) -> Result<Self, ComputeError> {
-        Self::with_layout(device, source, entry_point, false).await
+        Self::with_layout(device, source, entry_point, false, None).await
     }
     /// Compute storage plus read-only 2D scene color/depth texture inputs.
     pub async fn with_scene_textures(
         device: &wgpu::Device,
         source: &str,
     ) -> Result<Self, ComputeError> {
-        Self::with_layout(device, source, "cs_main", true).await
+        Self::with_layout(device, source, "cs_main", true, None).await
+    }
+    pub(crate) async fn with_scene_binding_layout(
+        device: &wgpu::Device,
+        source: &str,
+        additional: &wgpu::BindGroupLayout,
+    ) -> Result<Self, ComputeError> {
+        Self::with_layout(device, source, "cs_main", true, Some(additional)).await
     }
     async fn with_layout(
         device: &wgpu::Device,
         source: &str,
         entry_point: &str,
         scene_inputs: bool,
+        additional_layout: Option<&wgpu::BindGroupLayout>,
     ) -> Result<Self, ComputeError> {
         let limits = device.limits();
         if limits.max_compute_workgroups_per_dimension == 0
@@ -118,9 +127,13 @@ impl ComputeProgram {
             label: Some("compute storage ABI"),
             entries: &entries,
         });
+        let mut layouts = vec![Some(&layout)];
+        if let Some(additional) = additional_layout {
+            layouts.push(Some(additional));
+        }
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("compute pipeline layout"),
-            bind_group_layouts: &[Some(&layout)],
+            bind_group_layouts: &layouts,
             immediate_size: 0,
         });
         let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
@@ -145,6 +158,7 @@ impl ComputeProgram {
             entry_point: entry_point.into(),
             revision: 0,
             scene_inputs,
+            additional_layout: additional_layout.cloned(),
         })
     }
 
@@ -171,8 +185,14 @@ impl ComputeProgram {
         if self.source == source && self.entry_point.as_ref() == entry_point {
             return Ok(false);
         }
-        let mut candidate =
-            Self::with_layout(&self.device, source, entry_point, self.scene_inputs).await?;
+        let mut candidate = Self::with_layout(
+            &self.device,
+            source,
+            entry_point,
+            self.scene_inputs,
+            self.additional_layout.as_ref(),
+        )
+        .await?;
         candidate.revision = self.revision.saturating_add(1);
         *self = candidate;
         Ok(true)
@@ -267,6 +287,7 @@ impl ComputeProgram {
             max_workgroups: self.max_workgroups,
             entry_point: self.entry_point.clone(),
             revision: self.revision,
+            requires_additional_binding: self.additional_layout.is_some(),
         })
     }
 }
@@ -282,6 +303,7 @@ pub struct ComputeJob {
     max_workgroups: u32,
     entry_point: std::sync::Arc<str>,
     revision: u64,
+    requires_additional_binding: bool,
 }
 impl ComputeJob {
     /// Selected entry point retained when this job was created.
@@ -313,6 +335,17 @@ impl ComputeJob {
         encoder: &mut wgpu::CommandEncoder,
         workgroups: [u32; 3],
     ) -> Result<(), ComputeError> {
+        self.encode_step_with_binding(encoder, workgroups, None)
+    }
+    pub(crate) fn encode_step_with_binding(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        workgroups: [u32; 3],
+        additional: Option<&wgpu::BindGroup>,
+    ) -> Result<(), ComputeError> {
+        if additional.is_some() != self.requires_additional_binding {
+            return Err(ComputeError::InvalidBuffer);
+        }
         if workgroups
             .into_iter()
             .any(|n| n == 0 || n > self.max_workgroups)
@@ -323,6 +356,9 @@ impl ComputeJob {
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             pass.set_pipeline(&self.pipeline);
             pass.set_bind_group(0, &self.bind_group, &[]);
+            if let Some(group) = additional {
+                pass.set_bind_group(1, group, &[]);
+            }
             pass.dispatch_workgroups(workgroups[0], workgroups[1], workgroups[2]);
         }
         Ok(())
