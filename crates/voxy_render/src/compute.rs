@@ -10,6 +10,7 @@ pub enum ComputeError {
     InvalidBuffer,
     ReadbackBudget,
     MemoryBudget,
+    WorkBudget,
     InvalidDispatch,
     DeviceMismatch,
     Validation(String),

@@ -1,12 +1,9 @@
 @group(0) @binding(0) var<storage, read_write> words: array<u32>;
 fn value(i: u32) -> f32 { return bitcast<f32>(words[i]); }
-fn optical_depth(ray: u32) -> f32 {
+fn optical_depth_segment(start: vec3<f32>, end: vec3<f32>) -> f32 {
     let shape=vec3<u32>(words[0],words[1],words[2]);
     let origin=vec3<f32>(value(6u),value(7u),value(8u));
     let spacing=vec3<f32>(value(9u),value(10u),value(11u));
-    let base=12u+words[3]+8u*ray;
-    let start=vec3<f32>(value(base),value(base+1u),value(base+2u));
-    let end=vec3<f32>(value(base+3u),value(base+4u),value(base+5u));
     let delta=end-start;
     let distance=length(delta);
     var lo=0.0; var hi=1.0;
@@ -54,4 +51,10 @@ fn optical_depth(ray: u32) -> f32 {
         }
     }
     return tau;
+}
+
+fn optical_depth(ray: u32) -> f32 {
+    let base=12u+words[3]+8u*ray;
+    return optical_depth_segment(vec3<f32>(value(base),value(base+1u),value(base+2u)),
+        vec3<f32>(value(base+3u),value(base+4u),value(base+5u)));
 }

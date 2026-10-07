@@ -27,12 +27,14 @@ struct Smoke {
     graphics: Option<(SceneSurface, SceneRenderer, TextureBlit)>,
     attempt: usize,
     skipped: usize,
+    next_redraw: Option<std::time::Instant>,
     hdr: bool,
     exposure: Option<ExposureState>,
     retained: Option<(voxy_render::TemporalResolve, voxy_render::TemporalHistory)>,
     layer: Option<(SceneGeometry, SceneTransform)>,
     geometry: Option<(SceneGeometry, SceneTexture, SceneTransform)>,
     failure: Option<String>,
+    extinction: Option<voxy_render::DropletExtinctionPass>,
     integrated: Option<(
         voxy_render::ComputeProgram,
         voxy_render::HdrHalfResolvePipeline,
@@ -126,10 +128,14 @@ impl Smoke {
                 .map_err(|error| error.to_string())?;
             }
         }
-        let draws = probe_draws(
+        let mut draws = probe_draws(
             self.geometry.as_ref().ok_or("missing scene geometry")?,
             self.layer.as_ref(),
         );
+        if self.extinction.is_some() {
+            draws.retain(|draw| !draw.overlay);
+        }
+        let extinction = self.extinction.as_ref();
         let attempt = self.attempt;
         let hdr = self.hdr;
         let integrated = self.integrated.as_ref();
@@ -178,7 +184,7 @@ impl Smoke {
                 if hdr && attempt == 0 {
                     validate_hdr_center(input.color, device, queue)
                         .map_err(RendererError::TemporalConsumer)?;
-                    validate_opaque_inputs(input, device, queue)
+                    validate_opaque_inputs(input, device, queue, if extinction.is_some() { 128 } else { 0 })
                         .map_err(RendererError::TemporalConsumer)?;
                 }
                 let mut encoder =
@@ -249,6 +255,28 @@ impl Smoke {
                 } else {
                     (None, None)
                 };
+                let extinction_frame = if let Some(pass) = extinction {
+                    let mut input_storage = voxy_render::DropletExtinctionSceneInput::new(
+                        voxy_render::ExtinctionGridView {
+                            origin: [-1., -1., 0.], spacing: [2., 2., 1.], shape: [1, 1, 1], extinction_m_inverse: &[0.5],
+                        }, extinction_camera(), input.color.width(), input.color.height(), 16_000_000,
+                    ).map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
+                    if std::env::var("VOXY_TEMPORAL_SCATTERING").as_deref() == Ok("1") {
+                        input_storage = input_storage.with_directional_scattering(
+                            voxy_render::DirectionalScatteringOptions {
+                                direction_to_light:[0.,0.,1.],irradiance_rgb:[4.,2.,1.],albedo:0.8,asymmetry:0.,samples:32,
+                            },16_000_000,64_000_000,
+                        ).map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
+                    }
+                    if pollster::block_on(pass.prepare(&input_storage, input.color, input.depth, 0)).is_ok() {
+                        return Err(RendererError::TemporalConsumer("zero extinction output budget admitted".into()));
+                    }
+                    let frame = pollster::block_on(pass.prepare(&input_storage, input.color, input.depth, 2_000_000))
+                        .map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
+                    pollster::block_on(frame.encode(&mut encoder))
+                        .map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
+                    Some(frame)
+                } else { None };
                 let display = prepare_display_exposure(
                     exposure.as_deref(),
                     input,
@@ -259,9 +287,9 @@ impl Smoke {
                 display.as_ref().unwrap_or(blit).encode(
                     device,
                     &mut encoder,
-                    &resolved
-                        .as_ref()
-                        .map_or(input.color, voxy_render::HdrHalfResolveJob::output)
+                    &extinction_frame.as_ref().map_or_else(
+                        || resolved.as_ref().map_or(input.color, voxy_render::HdrHalfResolveJob::output),
+                        voxy_render::DropletExtinctionFrame::output)
                         .create_view(&wgpu::TextureViewDescriptor::default()),
                     target,
                 );
@@ -269,6 +297,11 @@ impl Smoke {
                     Err(RendererError::TemporalConsumer("injected".into()))
                 } else {
                     queue.submit([encoder.finish()]);
+                    if let Some(frame) = &extinction_frame {
+                        validate_extinction_center(frame.output(), device, queue)
+                            .map_err(RendererError::TemporalConsumer)?;
+                        println!("EXTINCTION WINDOW FRAME id={} size={}x{} bytes={} cpu_scene_upload=false", input.presentation_id, input.color.width(), input.color.height(), frame.allocation_bytes());
+                    }
                     if let Some(compute) = compute {
                         let mut read = compute.begin_read();
                         device
@@ -307,7 +340,7 @@ impl Smoke {
             )
         {
             self.skipped += 1;
-            if self.skipped > 200 {
+            if self.skipped > 3000 {
                 return Err(format!("surface did not become ready: {outcome:?}"));
             }
             return Ok(false);
@@ -385,7 +418,15 @@ impl ApplicationHandler for Smoke {
             .map_err(|error| error.to_string())?;
             let auto_exposure = std::env::var("VOXY_TEMPORAL_AUTO_EXPOSURE").as_deref() == Ok("1");
             let integrated = std::env::var("VOXY_TEMPORAL_INTEGRATED").as_deref() == Ok("1");
+            let extinction = std::env::var("VOXY_TEMPORAL_EXTINCTION").as_deref() == Ok("1");
+            if !extinction && std::env::var("VOXY_TEMPORAL_SCATTERING").as_deref() == Ok("1") {
+                return Err("scattering window qualification requires extinction mode".into());
+            }
+            if extinction && (integrated || auto_exposure || output != SurfaceOutput::Sdr) {
+                return Err("extinction window qualification requires standalone SDR tone-mapped HDR inputs".into());
+            }
             let hdr = integrated
+                || extinction
                 || auto_exposure
                 || std::env::var("VOXY_TEMPORAL_HDR").as_deref() == Ok("1");
             self.hdr = hdr || output != SurfaceOutput::Sdr;
@@ -402,6 +443,12 @@ impl ApplicationHandler for Smoke {
             }
             println!("Temporal hooks on {:?}", host.adapter_info());
             let scene = host.create_scene_renderer();
+            if extinction {
+                self.extinction = Some(
+                    pollster::block_on(voxy_render::DropletExtinctionPass::new(host.device()))
+                        .map_err(|e| e.to_string())?,
+                );
+            }
             if integrated {
                 let program =
                     pollster::block_on(host.create_compute_program(FRAME_COMPUTE, "frame_step"))
@@ -419,7 +466,16 @@ impl ApplicationHandler for Smoke {
                 .upload_texture(host.device(), host.queue(), 1, 1, &[255; 4])
                 .map_err(|error| error.to_string())?;
             let transform = scene
-                .create_transform(host.device(), glam::Mat4::IDENTITY)
+                .create_transform(
+                    host.device(),
+                    if extinction {
+                        extinction_camera()
+                            .view_projection()
+                            .map_err(|e| e.to_string())?
+                    } else {
+                        glam::Mat4::IDENTITY
+                    },
+                )
                 .map_err(|error| error.to_string())?;
             self.layer = layer_geometry(&scene, host.device(), host.queue())?;
             self.geometry = Some((geometry, texture, transform));
@@ -455,6 +511,19 @@ impl ApplicationHandler for Smoke {
             event_loop.exit();
         }
     }
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        if let Some(deadline) = self.next_redraw {
+            if std::time::Instant::now() >= deadline {
+                self.next_redraw = None;
+                if let Some(window) = &self.window {
+                    window.request_redraw();
+                }
+                event_loop.set_control_flow(winit::event_loop::ControlFlow::Wait);
+            } else {
+                event_loop.set_control_flow(winit::event_loop::ControlFlow::WaitUntil(deadline));
+            }
+        }
+    }
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if self.failure.is_some()
             || self.graphics.is_none()
@@ -473,9 +542,8 @@ impl ApplicationHandler for Smoke {
                 event_loop.exit();
             }
             Ok(false) => {
-                if let Some(window) = &self.window {
-                    window.request_redraw();
-                }
+                self.next_redraw =
+                    Some(std::time::Instant::now() + std::time::Duration::from_millis(16));
             }
             Err(error) => {
                 self.failure = Some(error);
@@ -670,6 +738,7 @@ fn validate_opaque_inputs(
     input: &voxy_render::TemporalFrame<'_>,
     device: &wgpu::Device,
     queue: &wgpu::Queue,
+    expected_depth: u8,
 ) -> Result<(), String> {
     let converted = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("portable depth readback"),
@@ -692,7 +761,7 @@ fn validate_opaque_inputs(
     );
     queue.submit([encoder.finish()]);
     let depth = read_temporal_center(&converted, device, queue, 4, wgpu::TextureAspect::All)?;
-    if depth != [0, 0, 0, 255] {
+    if depth[..3].iter().any(|v| v.abs_diff(expected_depth) > 1) || depth[3] != 255 {
         return Err(format!("opaque depth contaminated: {depth:?}"));
     }
     let rg = input.motion.format() == wgpu::TextureFormat::Rg16Float;
@@ -711,7 +780,9 @@ fn validate_opaque_inputs(
     {
         return Err(format!("opaque motion contaminated: {motion:?}"));
     }
-    println!("Opaque depth=0 and stationary motion preserved despite moving world layer");
+    println!(
+        "Opaque depth byte={expected_depth} and stationary motion preserved despite moving world layer"
+    );
     Ok(())
 }
 fn read_temporal_center(
@@ -844,4 +915,102 @@ fn verify_callbacks(
         }
     }
     Ok(expected)
+}
+
+fn extinction_camera() -> voxy_render::SceneCamera {
+    voxy_render::SceneCamera {
+        eye: glam::Vec3::Z,
+        target: glam::Vec3::ZERO,
+        up: glam::Vec3::Y,
+        projection: voxy_render::SceneProjection::Orthographic {
+            left: -1.,
+            right: 1.,
+            bottom: -1.,
+            top: 1.,
+            near: 0.,
+            far: 2.,
+        },
+    }
+}
+fn validate_extinction_center(
+    texture: &wgpu::Texture,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+) -> Result<(), String> {
+    let staging = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("window extinction center qualification"),
+        size: 256,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    let mut encoder = device.create_command_encoder(&Default::default());
+    encoder.copy_texture_to_buffer(
+        wgpu::TexelCopyTextureInfo {
+            texture,
+            mip_level: 0,
+            origin: wgpu::Origin3d {
+                x: texture.width() / 2,
+                y: texture.height() / 2,
+                z: 0,
+            },
+            aspect: wgpu::TextureAspect::All,
+        },
+        wgpu::TexelCopyBufferInfo {
+            buffer: &staging,
+            layout: wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(256),
+                rows_per_image: Some(1),
+            },
+        },
+        wgpu::Extent3d {
+            width: 1,
+            height: 1,
+            depth_or_array_layers: 1,
+        },
+    );
+    queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    staging
+        .slice(..)
+        .map_async(wgpu::MapMode::Read, move |result| {
+            let _ = tx.send(result);
+        });
+    device
+        .poll(wgpu::PollType::wait_indefinitely())
+        .map_err(|e| e.to_string())?;
+    rx.recv()
+        .map_err(|e| e.to_string())?
+        .map_err(|e| e.to_string())?;
+    let mapped = staging
+        .slice(..)
+        .get_mapped_range()
+        .map_err(|e| e.to_string())?;
+    let scattered = if std::env::var("VOXY_TEMPORAL_SCATTERING").as_deref() == Ok("1") {
+        0.8 * (1. - (-1_f32).exp()) / (8. * std::f32::consts::PI)
+    } else {
+        0.
+    };
+    for (k, expected) in [
+        4. * ((-0.5_f32).exp() + scattered),
+        (-0.5_f32).exp() + 2. * scattered,
+        scattered,
+        1.,
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let actual = half::f16::from_bits(u16::from_le_bytes(
+            mapped[k * 2..k * 2 + 2].try_into().unwrap(),
+        ))
+        .to_f32();
+        if (actual - expected).abs() > 0.002 {
+            return Err(format!(
+                "window extinction center channel={k} actual={actual} expected={expected}"
+            ));
+        }
+    }
+    drop(mapped);
+    staging.unmap();
+    Ok(())
 }

@@ -99,7 +99,7 @@ mod surface_reflection;
 mod xr;
 
 pub use backend::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
-pub use blit::{ProcessedColorTarget, TextureBlit};
+pub use blit::{ProcessedColorTarget, StorageColorBlit, StorageColorView, TextureBlit};
 pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
 pub use model::{
     ModelAsset, ModelError, ModelGeometry, ModelLimits, ModelPrimitive, ModelSurface64,
@@ -238,4 +238,7 @@ pub use droplet_extinction::{
     extinction_segments_from_depth,
 };
 
-pub use droplet_extinction::{DROPLET_EXTINCTION_SCENE_SHADER, DropletExtinctionSceneInput};
+pub use droplet_extinction::{
+    DROPLET_EXTINCTION_SCENE_SHADER, DirectionalScatteringOptions, DropletExtinctionFrame,
+    DropletExtinctionPass, DropletExtinctionSceneInput,
+};

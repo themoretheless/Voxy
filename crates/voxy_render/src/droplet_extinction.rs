@@ -59,7 +59,9 @@ impl DropletExtinctionComputeInput {
             .ok_or(ComputeError::InvalidBuffer)?;
         if rays.is_empty()
             || words > u32::MAX as usize
-            || words.checked_mul(4).is_none_or(|n| n > max_bytes)
+            || words
+                .checked_mul(4)
+                .is_none_or(|n| n > max_bytes || n / 4 > u32::MAX as usize)
         {
             return Err(ComputeError::InvalidBuffer);
         }
@@ -332,6 +334,7 @@ pub struct DropletExtinctionSceneInput {
     words: Vec<u32>,
     pixels: usize,
     color_offset: usize,
+    size: [u32; 2],
 }
 impl DropletExtinctionSceneInput {
     pub fn new(
@@ -383,17 +386,102 @@ impl DropletExtinctionSceneInput {
             words,
             pixels: count,
             color_offset,
+            size: [width, height],
         })
+    }
+    /// Optional single scattering; scalar calibration remains explicit. The
+    /// budget bounds DDA cell visits across every pixel, not measured GPU time.
+    pub fn with_directional_scattering(
+        mut self,
+        lighting: DirectionalScatteringOptions,
+        max_bytes: usize,
+        max_cell_visits: u64,
+    ) -> Result<Self, ComputeError> {
+        if self.words[5] != 0
+            || self
+                .bytes()
+                .len()
+                .checked_add(36)
+                .is_none_or(|n| n > max_bytes)
+            || lighting.samples == 0
+            || lighting.samples > 128
+            || !lighting.albedo.is_finite()
+            || !(0. ..=1.).contains(&lighting.albedo)
+            || !lighting.asymmetry.is_finite()
+            || lighting.asymmetry.abs() >= 1.
+            || lighting
+                .irradiance_rgb
+                .iter()
+                .any(|v| !v.is_finite() || *v < 0.)
+            || lighting.direction_to_light.iter().any(|v| !v.is_finite())
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let scale = lighting
+            .direction_to_light
+            .iter()
+            .map(|v| v.abs())
+            .fold(0_f32, f32::max);
+        let scaled = lighting.direction_to_light.map(|v| v / scale);
+        let length = scaled.iter().fold(0_f32, |a, &v| a.hypot(v));
+        if !length.is_finite() || length == 0. {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let direction = scaled.map(|v| v / length);
+        let g = lighting.asymmetry.abs();
+        let maximum_phase = (1. + g) / (4. * std::f32::consts::PI * (1. - g).powi(2));
+        if lighting
+            .irradiance_rgb
+            .iter()
+            .any(|v| !(v * (lighting.albedo * maximum_phase)).is_finite())
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let extent = std::array::from_fn::<_, 3, _>(|k| {
+            f32::from_bits(self.words[9 + k]) * self.words[k] as f32
+        });
+        let shadow_length = 2. * extent.iter().fold(0_f32, |a, &v| a.hypot(v));
+        if !shadow_length.is_finite()
+            || !(shadow_length * shadow_length).is_finite()
+            || (0..3)
+                .any(|k| !(f32::from_bits(self.words[6 + k]).abs() + shadow_length).is_finite())
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let bound =
+            u64::from(self.words[0]) + u64::from(self.words[1]) + u64::from(self.words[2]) + 3;
+        let visits = (self.pixels as u64)
+            .checked_mul(3 * u64::from(lighting.samples) + 1)
+            .and_then(|v| v.checked_mul(bound))
+            .ok_or(ComputeError::InvalidBuffer)?;
+        if visits > max_cell_visits {
+            return Err(ComputeError::WorkBudget);
+        }
+        self.words[5] = 1;
+        self.words.extend(direction.map(f32::to_bits));
+        self.words.extend(lighting.irradiance_rgb.map(f32::to_bits));
+        self.words.extend([
+            lighting.albedo.to_bits(),
+            lighting.asymmetry.to_bits(),
+            lighting.samples,
+        ]);
+        Ok(self)
     }
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
     pub fn workgroups(&self) -> [u32; 3] {
-        [
-            self.words[self.words.len() - 2].div_ceil(8),
-            self.words[self.words.len() - 1].div_ceil(8),
-            1,
-        ]
+        [self.size[0].div_ceil(8), self.size[1].div_ceil(8), 1]
+    }
+    /// Borrow the compute job's output for direct linear-color composition.
+    /// The job must have completed its scene dispatch before the graphics pass.
+    pub fn color_output<'a>(&self, buffer: &'a wgpu::Buffer) -> crate::StorageColorView<'a> {
+        crate::StorageColorView {
+            buffer,
+            width: self.size[0],
+            height: self.size[1],
+            offset_words: self.color_offset as u32,
+        }
     }
     pub fn decode(&self, bytes: &[u8]) -> Result<Vec<[f32; 4]>, ComputeError> {
         if bytes.len() != self.words.len() * 4 {
@@ -435,3 +523,135 @@ pub const DROPLET_EXTINCTION_SCENE_SHADER: &str = concat!(
     include_str!("droplet_extinction_common.wgsl"),
     include_str!("droplet_extinction_scene.wgsl")
 );
+
+/// Reusable scene-texture extinction pipeline, independent of physical state owners.
+/// Produces linear HDR color for the existing exposure/tone-mapping display passes.
+#[derive(Debug)]
+pub struct DropletExtinctionPass {
+    device: wgpu::Device,
+    compute: crate::ComputeProgram,
+    blit: std::sync::Arc<crate::StorageColorBlit>,
+}
+impl DropletExtinctionPass {
+    pub async fn new(device: &wgpu::Device) -> Result<Self, ComputeError> {
+        Ok(Self {
+            device: device.clone(),
+            compute: crate::ComputeProgram::with_scene_textures(
+                device,
+                DROPLET_EXTINCTION_SCENE_SHADER,
+            )
+            .await?,
+            blit: std::sync::Arc::new(
+                crate::StorageColorBlit::new(device, wgpu::TextureFormat::Rgba16Float).await?,
+            ),
+        })
+    }
+    /// Prepare only after surface acquisition. Input texture owners stay external;
+    /// the frame owns its bounded compute storage and HDR output. Keep the frame
+    /// alive through GPU completion. No CPU scene pixels enter this operation.
+    pub async fn prepare(
+        &self,
+        input: &DropletExtinctionSceneInput,
+        color: &wgpu::Texture,
+        depth: &wgpu::Texture,
+        max_output_bytes: u64,
+    ) -> Result<DropletExtinctionFrame, ComputeError> {
+        let width = input.size[0];
+        let height = input.size[1];
+        let output_bytes = u64::from(width)
+            .checked_mul(u64::from(height))
+            .and_then(|n| n.checked_mul(8))
+            .ok_or(ComputeError::InvalidBuffer)?;
+        if output_bytes > max_output_bytes {
+            return Err(ComputeError::MemoryBudget);
+        }
+        if [color, depth].iter().any(|t| {
+            t.width() != width
+                || t.height() != height
+                || t.sample_count() != 1
+                || t.dimension() != wgpu::TextureDimension::D2
+                || !t.usage().contains(wgpu::TextureUsages::TEXTURE_BINDING)
+        }) {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        if input.words[5] == 1 {
+            let lighting = input.words.len() - 9;
+            let albedo = f32::from_bits(input.words[lighting + 6]);
+            let g = f32::from_bits(input.words[lighting + 7]).abs();
+            let maximum_phase = (1. + g) / (4. * std::f32::consts::PI * (1. - g).powi(2));
+            if (0..3).any(|k| {
+                f32::from_bits(input.words[lighting + 3 + k]) * (albedo * maximum_phase) > 65504.
+            }) {
+                return Err(ComputeError::Unsupported);
+            }
+        }
+        let job = self
+            .compute
+            .create_scene_job(
+                &self.device,
+                input.bytes(),
+                &color.create_view(&Default::default()),
+                &depth.create_view(&Default::default()),
+            )
+            .await?;
+        let output = crate::ProcessedColorTarget::new(&self.device, width, height, true)
+            .map_err(|e| ComputeError::Validation(e.to_string()))?;
+        Ok(DropletExtinctionFrame {
+            device: self.device.clone(),
+            job,
+            output,
+            blit: self.blit.clone(),
+            size: [width, height],
+            offset_words: input.color_offset as u32,
+            workgroups: input.workgroups(),
+        })
+    }
+}
+
+/// Pending GPU extinction frame. Encode after scene production and before display.
+#[derive(Debug)]
+pub struct DropletExtinctionFrame {
+    device: wgpu::Device,
+    job: crate::ComputeJob,
+    output: crate::ProcessedColorTarget,
+    blit: std::sync::Arc<crate::StorageColorBlit>,
+    size: [u32; 2],
+    offset_words: u32,
+    workgroups: [u32; 3],
+}
+impl DropletExtinctionFrame {
+    pub async fn encode(&self, encoder: &mut wgpu::CommandEncoder) -> Result<(), ComputeError> {
+        self.job.encode_step(encoder, self.workgroups)?;
+        self.blit
+            .encode_checked(
+                &self.device,
+                encoder,
+                crate::StorageColorView {
+                    buffer: self.job.buffer(),
+                    width: self.size[0],
+                    height: self.size[1],
+                    offset_words: self.offset_words,
+                },
+                self.output.view(),
+            )
+            .await
+    }
+    pub fn output(&self) -> &wgpu::Texture {
+        self.output.texture()
+    }
+    pub fn allocation_bytes(&self) -> u64 {
+        self.job.buffer().size() + u64::from(self.size[0]) * u64::from(self.size[1]) * 8
+    }
+}
+
+/// Optical transport inputs for one distant directional source. Irradiance is
+/// incident RGB power per area on a plane normal to the beam outside the medium,
+/// in units compatible with scene radiance. HG uses photon travel angles.
+#[derive(Clone, Copy, Debug)]
+pub struct DirectionalScatteringOptions {
+    pub direction_to_light: [f32; 3],
+    pub irradiance_rgb: [f32; 3],
+    pub albedo: f32,
+    pub asymmetry: f32,
+    pub samples: u32,
+}

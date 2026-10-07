@@ -8750,3 +8750,150 @@ The existing droplet_extinction_smoke now renders foreground/background opaque m
 ComputeProgram::with_scene_textures extends the existing storage ownership with read-only 2D color/depth bindings. create_scene_job validates bind resources asynchronously; incompatible texture types reject, ordinary create_job rejects a missing scene ABI, shader reload retains the selected ABI and existing jobs retain their pipeline. DropletExtinctionSceneInput packs field/camera/layout, while the shader loads actual opaque textures, reconstructs rays and performs direct transmission entirely on GPU using 8x8 pixel dispatch. Malformed dimensions/depth/unprojection and uncomputed or nonfinite readback reject.
 
 Apple M4 Max/Metal qualifies 16384 rendered pixels before any CPU scene readback; maximum difference from the independent CPU-upload control path is 1.78814e-7. Foreground/occlusion checks and prior 1158 traversal rays pass. Default compute smoke also passes 1042 exact GPU results and shared budget/readback cancellation/retirement gates. Evidence: artifacts/droplet-extinction-resident-scene-2026-10-07. Final result is read back only for qualification; direct presentation, editor attachment, 4K memory qualification, in-scattering and NVIDIA are still open.
+
+### Resident extinction output to graphics (2026-10-07)
+
+`StorageColorBlit` reads row-major linear RGBA f32 words directly from resident
+storage in the fragment stage. It records a fullscreen render pass after the
+producing compute pass; no staging allocation, CPU pixel mapping, or CPU pixel
+upload is required for composition. `DropletExtinctionSceneInput::color_output`
+provides the bounded output range. The producer's allocation owner must remain
+alive through submission/completion. Storage range, usage, attachment dimensions,
+sample count, and supplied pipeline device are admitted before recording the
+pass; backend validation scopes report resource/pipeline incompatibilities.
+The attachment must be a base-level single-sample 2D view on that device.
+
+The existing `droplet_extinction_smoke` now executes rendered opaque scene →
+scene-texture compute → storage-to-color render pass on Metal. Qualification
+CPU mappings occur after composition and never feed the display pass. For all
+16,384 pixels, linear RGBA8 and sRGB outputs match independent quantization and
+sRGB encoding within one byte. Foreground/depth and CPU reference comparisons
+remain intact. A separate 13×3 fixture with a five-word prefix checks every
+RGBA16F bit against independently converted values, including RGB above one
+and varying alpha. The captured comparison PNG now contains the actual color
+attachment bytes, rather than a host reconstruction of the compute output.
+
+Evidence: `artifacts/droplet-extinction-presentation-2026-10-07/`.
+This proves offscreen GPU composition on Apple M4 Max/Metal. It does not prove
+window/editor presentation, frame-time performance, NVIDIA execution, or
+scattered light. HDR can feed the existing `ProcessedColorTarget`/tone-mapping
+pipeline; its end-to-end window integration is still outstanding.
+
+### Extinction pipeline in native surface submission (2026-10-07)
+
+`DropletExtinctionPass` caches the scene-texture compute pipeline and HDR storage
+composition pipeline. `prepare` admits texture dimensions/usages/sample count,
+output bytes against an explicit limit, and compute storage against the shared
+device budget. `DropletExtinctionFrame` owns the job and RGBA16F target; callers
+encode it after opaque scene production and use its linear output with the
+existing exposure/tone-mapping passes. Physics owners and input textures remain
+external. Preparation failures return before presentation. Frame owners must
+remain alive through completion; output limits are per frame, not a global
+texture-residency accounting claim.
+
+The existing `temporal_surface_smoke` accepts `VOXY_TEMPORAL_EXTINCTION=1` and
+uses `SceneSurface::render_scene_with_temporal_hooks`. The fixture's orthographic
+camera matches its geometry transform; a one-metre segment through sigma=0.5/m
+must produce linear center RGBA `[4*exp(-0.5), exp(-0.5), 0, 1]`. Center readback
+is qualification only and is not uploaded into the compute/display path. The
+same lifecycle test injects a discarded consumer frame, verifies that its
+presentation ID is not consumed and temporal history is invalidated, and
+changes the window/attachment dimensions.
+The fixture renders world draws only and does not qualify editor UI ordering.
+
+Direct background launch returned only `SkippedOccluded`. Launching the same
+locally built executable as a macOS application produced four presentations:
+three at 320×240 and one at 321×241. Each admitted frame checks a rejected zero
+output budget and the analytic HDR center. No occluded acquisition is counted
+as a presented frame. Retry redraws now use 16ms event-loop deadlines rather
+than rapidly exhausting the attempt counter. Evidence is preserved in
+`artifacts/droplet-extinction-window-2026-10-07/`.
+
+This qualifies the native surface hook, not an authoring fog component or an
+editor play scene. Camera changes, UI ordering, optical fluid composition,
+scattered illumination, whole-scene resource budgets, and NVIDIA runtime
+qualification remain outstanding.
+
+The unchanged ordinary temporal-window path also completed with exit code zero
+using the same final executable; the render library passed 155 tests with 22
+explicitly ignored cases.
+
+### Directional single scattering (2026-10-07)
+
+Extinction now optionally adds radiance from one infinitely distant directional
+source through the same scene-texture compute and storage composition path.
+`DirectionalScatteringOptions` supplies irradiance (on a plane normal to the
+beam outside the medium), scalar single-scattering albedo, HG asymmetry, and
+sample count. Directions are normalized with scaling to avoid overflow or
+subnormal normalization errors. Optical calibration is explicit; water/oil
+spectral coefficients, particle-size-dependent Mie phase fits, and scene
+photometric units are not inferred.
+
+For each clipped primary subsegment, the shader integrates its extinction
+exactly, then weights the incident source at its midpoint by a medium shadow
+ray and the preceding camera-path transmission. The normalized HG function
+uses photon travel directions: positive g favors forward scattering. A stable
+polynomial evaluates `1-exp(-tau)` for thin subsegments. The GPU input admits
+1–128 samples and checks a caller-supplied total DDA visit budget; failure is
+`ComputeError::WorkBudget`, distinct from byte capacity. The HDR frame facade
+rejects source bounds above RGBA16F range. These are admission limits, not a
+frame-time or general quadrature-error guarantee.
+
+Reference foundations: [beam transmittance](https://www.pbr-book.org/4ed/Volume_Scattering/Transmittance)
+and [phase functions](https://www.pbr-book.org/4ed/Volume_Scattering/Phase_Functions).
+The native f64 reference uses independent all-cell line integration, leaves
+physical owners unchanged, and supports refinement through 4096 samples under
+an explicit cell-test budget. Uniform-slab tests compare both light directions
+against closed integrals; refinement decreases error approximately fourfold.
+Numerical HG integration independently checks normalization and mean cosine.
+Validation also covers zero/missing segments, zero albedo, invalid calibration,
+scale-invariant directions, and transparent fields under intense illumination.
+
+Metal qualification retains the existing depth/transmission/HDR regressions.
+Eight slab cases test isotropic and forward scattering in both light directions
+at optical thickness 0.5 and 1e-6. Maximum closed-solution RGB error is
+8.32e-7; thin-medium scattering remains nonzero. A rendered 128×128 scene checks
+all 16,384 pixels against the native reference: 1,792 receive scattered light,
+maximum native RGB difference is below 8.1e-7, foreground is unchanged, and
+alpha is preserved. The comparison PNG contains actual GPU attachment bytes.
+
+`VOXY_TEMPORAL_EXTINCTION=1 VOXY_TEMPORAL_SCATTERING=1` in the existing native
+surface test checks the analytically predicted scatter contribution through
+RGBA16F and tone mapping. A macOS application launch completed four presented
+frames (320×240, then 321×241), including consumer-error/history invalidation
+and resize recovery; its exit status is zero. The render library passed 155
+tests (22 ignored) and optical physics passed four tests. Evidence is in
+`artifacts/droplet-single-scattering-2026-10-07/`.
+
+This remains deterministic single-scattering quadrature. Multiple scattering,
+solid-object shadows on incident light, optically thick accuracy, adaptive
+quadrature, spectral calibration, dynamic optical/thermal coupling, editor
+component authoring/UI ordering, high-resolution performance and NVIDIA
+execution remain unqualified. The analytic fixtures prescribe optical
+coefficients; they do not qualify a calibrated real water/oil cloud.
+
+
+### Dense directional transport qualification (2026-10-07)
+
+The current CPU and WGSL paths replace midpoint source sampling with analytic
+integration of linearly interpolated shadow optical depth on each primary
+subsegment. Optical depth is accumulated rather than multiplying prefix
+transmissions. The shader snaps clipped entry/exit coordinates to the exact
+intersected grid plane; this corrects a measured Metal error at optical
+thickness 10,000 without relaxing the observable-value tolerance. Work admission
+now bounds primary and two shadow traversals: pixels × (3 × samples + 1) ×
+(nx + ny + nz + 3). General heterogeneous shadow paths remain approximate.
+
+Five optical physics tests pass. Uniform slabs match closed solutions through
+optical thickness 20,000 in f64. A heterogeneous shadow fixture refines from
+2.264e-4 error at four samples to 2.239e-7 at 128 samples against a 4096-sample
+reference. Metal passes 20 directional slab cases (sigma 1e-6 through 10,000,
+two light directions, two asymmetries), with maximum absolute RGB error
+5.332e-7. Highly attenuated values below the GPU normal range may flush to zero;
+the fixture explicitly allows a 1e-37 absolute floor. The 16,384-pixel native
+scene comparison has maximum RGB error 3.297e-7 and preserves foreground/alpha.
+Initial failure and corrected results are retained in
+`artifacts/dense-scattering-2026-10-07/`. Earlier window evidence qualifies the
+preceding implementation; the endpoint revision has offscreen Metal evidence.
+Multiple scattering, solid-object incident shadows, calibrated water/oil,
+editor integration, high-resolution performance and NVIDIA remain unqualified.
