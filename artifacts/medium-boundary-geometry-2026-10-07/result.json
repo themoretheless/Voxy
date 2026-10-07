@@ -1,0 +1,37 @@
+{
+  "geometry_reference": "Immutable closed indexed SceneMesh derivative in metres",
+  "ordinary_renderer_tests_passed": 167,
+  "boundary_tests_passed": 3,
+  "entry_exit_angles_degrees": [
+    0,
+    10,
+    15,
+    30,
+    45,
+    60
+  ],
+  "checks": [
+    "Actual entry and exit positions and lengths",
+    "Snell directions through both boundaries",
+    "Fog/liquid/fog direct transmitted branch RGB attenuation",
+    "Explicit SI scale and distance interval",
+    "Camera inside liquid total internal reflection",
+    "Open and inconsistent topology rejection",
+    "Triangle budget before allocation",
+    "Inward disconnected component rejection despite positive total volume",
+    "Nonmanifold edge rejection",
+    "Ambiguous crease hit rejection"
+  ],
+  "failure_fixed": "Rounding ray origin+t*direction left a hit slightly outside an axis-aligned entry plane, yielding a false second entry; reconstruct dominant coordinate from face plane",
+  "limits": [
+    "CPU linear triangle scan, not production GPU tracing",
+    "Source owner must exclude self intersections and component overlap",
+    "Shared topological indices required; UV-seam render meshes are not silently welded",
+    "Direct transmitted branch fixture does not sum reflected paths",
+    "Not a watertight floating-point intersection proof for arbitrary meshes"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/medium_geometry.rs": "5d4c6afc1b34939867dfcb80771783a389e72d56528f706f82b7c17aebb3abb5",
+    "crates/voxy_render/src/lib.rs": "e0dd93f648b360b2efa5387fdc9ca57fbd2fe66dab0de83033849f11c0a860a5"
+  }
+}

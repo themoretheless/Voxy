@@ -1,0 +1,46 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "storage_buffers_per_shader_stage": 1,
+  "ray_query_feature_required": false,
+  "compute_owner": "Existing ComputeProgram and shared readback/memory owners",
+  "geometry_triangles": 14,
+  "rays_in_parity_batch": 67,
+  "workgroups": [
+    2,
+    1,
+    1
+  ],
+  "conservative_triangle_tests": 938,
+  "scalar_checks": 449,
+  "ordinary_renderer_tests_passed": 177,
+  "ordinary_renderer_tests_ignored": 26,
+  "tests": [
+    "Closest medium and opaque hits against CPU",
+    "Entering/exiting medium IDs",
+    "u64::MAX medium identity preserved through dense GPU mapping",
+    "Explicit minimum and maximum ray range",
+    "Misses and dispatch tail guard",
+    "Nearest crease ambiguity rejection",
+    "Near opaque surface masks farther ambiguous crease",
+    "Opaque/interface coincidence rejection",
+    "Memory/work admission",
+    "Invalid output prefix rejection",
+    "f32 normal orientation drift rejection",
+    "Actual GLES 310 translation with one storage binding"
+  ],
+  "limits": [
+    "GPU geometry query only, not full GPU optical branch integration",
+    "Unaccelerated linear triangle scan",
+    "f32 geometry query is not watertight proof for arbitrary meshes",
+    "Only Metal hardware tested; GLES translation is not hardware execution",
+    "No native joint fog/liquid presentation yet"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/medium_geometry_compute.rs": "0ecc3f91ffbb29055ec9899672879f1c73a51219b6cfcd067eee4ebde67687c5",
+    "crates/voxy_render/src/medium_geometry_compute.wgsl": "2a3e2508f2ffed43934485052b6dc364b218aab7bc4ee9589e1e1ebec6d48967",
+    "crates/voxy_render/src/medium_geometry.rs": "a43c34f03443f8f22df5f8c6818d84719f1ed765bfeba6ebc53cff29d2263c0f",
+    "crates/voxy_render/src/medium_path.rs": "80a77d65b417bf200b1f251f195e3fd73c0cc5b6fc4b5ae991cc53836f4afc79",
+    "crates/voxy_render/src/lib.rs": "d72a9e4b978df07f028df927ea9dbaa439a820bf14032f7c0b6b47332853d140"
+  }
+}

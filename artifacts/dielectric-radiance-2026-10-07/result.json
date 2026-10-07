@@ -1,0 +1,24 @@
+{
+  "gpu_backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "gpu_probes": 177,
+  "gpu_scalar_checks": 2655,
+  "absolute_tolerance": 2e-05,
+  "relative_tolerance": 2e-05,
+  "ordinary_renderer_tests": 164,
+  "physical_fluid_gpu_tests": 2,
+  "analytical_checks": [
+    "Refractive equilibrium L/n^2",
+    "Plane-parallel transparent slab infinite internal reflections",
+    "Index ratio cancels on entering and exiting slab",
+    "Explicit transmitted branch required except TIR",
+    "High-contrast finite multiplier without squaring eta first",
+    "Nonfinite and overflowing radiance rejection"
+  ],
+  "fixed_regression": "Rotated exactly normal incidence magnified rounded tangent residual at ni/nt=1e6",
+  "integration": "CPU/GPU boundary transport operations; screen-fluid already uses exact Fresnel fractions, but camera radiance weights await geometry-aware branch tracing",
+  "source_sha256": {
+    "crates/voxy_render/src/dielectric_boundary.rs": "c855632509b850ced0c0d3d593d543e7d4c730f2922d855ef06d28183a174055",
+    "crates/voxy_render/src/dielectric_boundary.wgsl": "6a5fe868fbbbc8cdd597556a6218efaf9a5b37b35e9745f823ae13616fc47f97"
+  }
+}

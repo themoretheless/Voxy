@@ -9511,3 +9511,225 @@ multiplier. All 162 ordinary renderer tests pass (24 ignored).
 Delivery evidence: `artifacts/push-medium-contact-delivery-2026-10-07/`.
 The broad body-motion example suite and original full-rig computations remain
 running at delivery; their completion is not claimed.
+
+### Exact dielectric interface fractions on GPU
+
+The binding-free `dielectric_boundary.wgsl` mirrors the CPU convention: the
+normal points into the explicitly supplied incident medium. It returns Snell
+directions, exact unpolarized Fresnel power fractions and an explicit
+transmission flag for total internal reflection. It owns no simulation data or
+scene traversal. Source equations: https://www.pbr-book.org/4ed/Reflection_Models/Specular_Reflection_and_Transmission .
+
+The production screen-fluid composite now uses these exact fractions instead
+of Schlick's approximation and shares the reflected direction. Its surface
+still represents entry from air, and its screen refraction displacement remains
+approximate; this does not implement inside-camera tracing or radiance-mode
+interface scaling. The helper's exiting-medium behavior is independently tested.
+
+Apple M4 Max / Metal passed 152 probes and 1368 scalar comparisons against the
+f64 CPU reference at 2e-5 absolute plus 2e-5 relative tolerance. Probes include
+rotated normals, entering/exiting media, grazing incidence, index identity,
+high contrast and points on either side of the critical angle. All 162 ordinary
+renderer tests pass (25 ignored), including actual GLSL ES 300 translation of
+the composite; this is not GLES hardware execution. Both physical fluid GPU
+tests pass, preserving the existing 270 thickness, 810 absorption/color and 60
+projection checks. Evidence: `artifacts/dielectric-gpu-boundary-2026-10-07/`.
+
+### Camera-branch radiance transport at dielectric interfaces
+
+The immutable CPU boundary sample retains its admitted incident/transmitted
+index ratio. `camera_radiance_weights` distinguishes Fresnel power fractions
+from deterministic camera-branch radiance weights: reflected R, transmitted
+T*(n_incident/n_transmitted)^2. `camera_radiance` validates explicit branch
+presence, finite nonnegative RGB and arithmetic overflow. These are not BSDF
+densities, light-path importance weights or sampling/PDF corrections. Equations
+and camera transport convention: https://www.pbr-book.org/4ed/Reflection_Models/Dielectric_BSDF .
+
+The binding-free WGSL boundary retains the same sampled ratio and provides
+matching weights and radiance summation. The screen-fluid composite does not
+apply this entry-only scale: correct scene integration must trace the exit
+boundary as well. Transparent parallel-slab tests sum all internal reflection
+orders, check energy conservation and cancellation of the two index scales.
+Separate tests verify refractive equilibrium L/n^2, total internal reflection,
+missing branch rejection and finite multipliers at contrast 1e200.
+
+Adding rotated normal incidence at contrast 1e6 exposed an actual GPU error:
+rounded dot(n,n) left a small tangential residual, amplified by the index ratio.
+CPU and GPU now explicitly recognize exactly opposite admitted vectors as zero
+tangent without clamping oblique rays. The original failure is retained.
+Metal passed 177 probes / 2655 scalar comparisons, including camera radiance
+summation, at 2e-5 absolute plus 2e-5 relative tolerance. All 164 ordinary renderer
+tests and both physical fluid GPU tests pass. Evidence:
+`artifacts/dielectric-radiance-2026-10-07/`. Joint geometry-aware medium traversal,
+interior-camera production rendering and other GPU hardware remain unqualified.
+
+### Actual closed-mesh medium crossings: CPU geometry reference
+
+`MediumBoundaryMesh` is an immutable metric geometry derivative of `SceneMesh`.
+It admits a triangle budget before allocation, closed indexed edge topology,
+consistent winding and positive outward volume per connected component. Stable
+snapshot-local inside/outside identities belong to the caller's registry. It
+does not own simulation mass or silently weld split UV-seam geometry. The source
+owner must exclude self-intersection and overlap between disconnected components.
+
+`first_hit` queries the actual indexed triangles in an explicit distance interval
+(min,max], returns metric hit position and distance, medium transition and a
+normal pointing into the incident medium. There is no hidden origin bias.
+Ambiguous equal-distance crease normals reject rather than selecting an
+arbitrary optical interface. A regression initially found false second entry
+after rounding origin+t*direction. Reconstructing the dominant coordinate from
+the face plane fixes that tested case; the initial failure is retained. This is
+not a watertight floating-point intersection proof for all arbitrary meshes.
+
+Six oblique/normal angles through a closed box independently verify entry and
+exit positions, Snell directions and physical path length. Fog/liquid/fog RGB
+attenuation uses the existing optical transfer and camera-interface operations;
+that fixture explicitly tests the direct transmitted branch with black reflected
+branch radiance, not a complete multiple-reflection solution. Camera-inside total
+internal reflection, metric scale/ranges, invalid topology, inward disconnected
+components and nonmanifold edges are covered. All three boundary tests and all
+167 ordinary renderer tests pass (25 ignored). Evidence:
+`artifacts/medium-boundary-geometry-2026-10-07/`.
+
+This O(triangles) CPU oracle prepares a common transport contract; the existing
+hardware RayScene remains opaque-only. GPU interface traversal, acceleration,
+complete branch integration and native joint fog/liquid presentation remain
+unfinished. The editor's explicit joint-medium rejection remains in place.
+
+### Bounded all-branch CPU medium transport
+
+`CpuMediumTransportScene` borrows immutable admitted geometry and homogeneous
+optical coefficients; it creates no second owner of simulation inventory. It
+traces both Fresnel reflection and transmission at actual medium crossings,
+integrates local absorption/emission on each geometric segment and checks the
+authored current-medium identity at each interface. Directions are normalized
+before continuation. Nested boundaries explicitly replace exterior medium
+occupancy rather than adding exterior fog inside liquid.
+
+The six faces of a finite authored metric domain are explicit emissive terminal
+boundaries, expressed in reduced radiance L/n^2. This is not a screen-space
+missing-hit fallback. In reduced radiance, dielectric response uses R and T,
+with R+T=1. A coefficient-based source bound max(q/(sigma*n^2), environment)
+bounds each subtree. The result reports unprocessed branch radiance per channel
+and is accepted only when it fits the requested absolute tolerance. The bound
+excludes floating-point roundoff, geometry intersection uncertainty and source
+modelling error; it is not a universal numerical certificate. Nonzero source
+with zero extinction is rejected when this coefficient-based bound is unavailable.
+
+Ray and conservatively charged triangle-test limits reject before accepting a
+partial estimate. Largest unresolved weights are processed first; pending branch
+storage is bounded by the processed-ray limit. A lossless trapped total-internal-
+reflection path fails explicitly if its residual cannot be bounded within the
+budget. An absorbing/emitting trapped path converges to its stationary radiance.
+
+An independent infinite-reflection slab formula, including exterior fog and
+interior emission/absorption, matches all-branch transport at tolerances 1e-3,
+1e-7 and 1e-11. Those cases process 6/10/14 rays and charge 72/120/168 triangle
+tests. Refractive equilibrium, camera inside liquid, nested species, budget
+failure/unchanged scene and identity admission pass. All 172 ordinary renderer
+tests pass (25 ignored). Evidence: `artifacts/medium-all-branches-2026-10-07/`.
+
+This is a CPU reference for homogeneous fixed source terms, not coupled
+directional scattering or complete production medium rendering. Opaque surface
+termination, accelerated/GPU traversal and native joint presentation remain
+unfinished. Source equations:
+https://www.pbr-book.org/4ed/Light_Transport_II_Volume_Rendering/The_Equation_of_Transfer
+and https://www.pbr-book.org/4ed/Reflection_Models/Dielectric_BSDF . The local RAG
+index returned no match for the focused topic; the earlier wiki-search handle
+finished with a tool timeout. No RAG result is claimed as implementation evidence.
+
+### Opaque termination in the all-branch CPU reference
+
+`OpaqueRadianceMesh` derives open or closed triangles from the existing
+`SceneMesh`, validates metric scale/triangle budget and finite nonnegative
+prescribed outgoing RGB radiance. Both sides terminate rays. Medium boundaries
+and opaque surfaces now share triangle admission and intersection routines;
+closed-medium topology/orientation admission remains separate. This introduces
+no second simulation owner or alternate application runner.
+
+`CpuMediumTransportScene::with_opaque` borrows those immutable derivatives.
+Opaque radiance contributes to the reduced-radiance subtree bound using every
+admitted medium index; its actual terminal contribution uses the current medium.
+Opacity is queried first to bound subsequent medium crossings. A nearer opaque
+hit masks invalid/ambiguous geometry farther along that ray. Medium absorption
+and local source integration stop at the visible surface. Exact coincident
+opaque/interface hits reject instead of guessing material/medium ordering.
+Opaque triangles participate in the existing conservative per-ray work charge.
+
+Independent analytic fixtures cover a surface before, inside and behind water,
+including all internal reflection orders, physical radiance conversion, exterior
+fog and absorption. Those cases process 1/3/16 rays, charging 14/42/224 triangle
+tests at a 1e-11 unresolved-tail tolerance. Additional cases verify source
+integration stops at the hit, back-side opacity, a hidden ambiguous water crease,
+coincident-interface rejection, invalid radiance/domain and recovery after a
+budget failure. All three opaque transport tests and all 175 ordinary renderer
+tests pass (25 ignored); 12 shared geometry/medium regression tests pass.
+Evidence: `artifacts/medium-opaque-termination-2026-10-07/`.
+
+Outgoing surface radiance is explicitly prescribed, not computed by a material
+lighting solver. This extends the CPU transport reference; GPU interface and
+opaque traversal integration, coupled directional medium lighting and native
+joint fog/liquid rendering remain unfinished. Inherited geometry uncertainty
+and floating-point exclusions still apply to the unresolved-tail bound.
+
+### GPU geometry crossings through the existing compute owner
+
+`MediumGeometryComputeInput` packs one immutable borrowed CPU scene's medium
+boundaries and opaque surfaces into the existing `ComputeProgram` storage ABI.
+It admits packed storage/output bytes and triangle-times-ray work before upload,
+maps original u64 medium IDs to dense per-snapshot GPU indices and restores the
+original identities when decoding. f32 derivatives reject nonfinite/underflowed
+coordinates, degenerate faces and substantial changes to the source face normal.
+Existing device ownership, storage admission and shared readback pools remain
+the compute owners; there is no new GPU submission or application subsystem.
+
+The actual WGSL pass uses one storage binding and no hardware ray-query feature.
+It scans admitted triangles, reconstructs metric hit coordinates on the face
+plane and returns closest crossing identity/normal or opaque outgoing radiance.
+Nearest ambiguous medium creases and coincident interface/opaque surfaces report
+errors. A nearer opaque hit masks a farther ambiguous crease. Decode validates
+preserved input bytes, record identity, finite geometry and range before exposing
+the whole batch. This is basic output admission, not an intersection certificate.
+
+Apple M4 Max / Metal passed 67 rays and 449 scalar comparisons against the CPU
+geometry reference, with exact medium/object identity checks including a
+u64::MAX medium ID. The two-workgroup batch exercises dispatch-tail guards;
+938 triangle checks are conservatively admitted. Entering/exiting, opacity,
+explicit ray limits, misses and ambiguous-hit rejection pass. Actual shader
+translation to GLES 310 uses one storage binding; no GLES hardware execution is
+claimed. All 177 ordinary renderer tests pass (26 ignored). Evidence:
+`artifacts/medium-geometry-gpu-2026-10-07/`.
+
+This adds usable GPU geometry queries, not full GPU all-branch radiance transport.
+The triangle scan is unaccelerated; arbitrary-mesh watertightness, additional
+hardware backends and native joint medium presentation remain unqualified.
+
+### Completed body-motion example regression run
+
+The existing long-running example test handle 34380 completed with exit code 0:
+69 passed, 6 ignored in 4456.19 seconds. The example source hash exactly matches
+the earlier display-mode evidence (d909076be084cb1394f263b52907446c0310611b9b14dabfb2165c793683dd3b).
+Evidence: `artifacts/body-motion-suite-complete-2026-10-07/`. The binary predates
+the later medium-reference additions; the app source is unchanged. Ignored tests
+include manual full-clip qualification. Original full-rig process 90673 remains
+live; neither full 480-step completion nor realtime full-volume tissue is proved.
+
+### GPU all-branch homogeneous medium transport
+
+The new medium path compute kernel reuses the existing compute submission and
+readback owner with one storage binding. It shares triangle intersections,
+Snell/Fresnel boundary sampling and homogeneous segment integration with the
+qualified components. Reflected and transmitted branches run until their
+remaining radiance bound meets the requested tolerance; work, frontier and
+occupancy failures reject the whole decoded candidate batch. This does not yet
+qualify native whole-frame acceptance or presentation.
+
+On Apple M4 Max / Metal, eight scene profiles and 25 camera rays passed: 72 RGB
+comparisons against the CPU reference, 72 tail admission checks, and three
+analytic trapped-ray source checks. Opaque surfaces before, within and behind
+water, total internal reflection and explicit budget rejection are covered.
+The shared regression passed 21 tests, including 67 geometry rays / 449 scalar
+checks and 32 homogeneous-transfer probes / 512 scalar checks. Evidence:
+`artifacts/medium-path-gpu-2026-10-07/`. Geometry remains a linear scan; native
+presentation, material lighting, heterogeneous directional scattering and
+additional hardware backends remain unqualified.

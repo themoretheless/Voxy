@@ -1,0 +1,1237 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 6 warnings
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/model.rs:1156:19
+     |
+1156 |             Mat4::perspective_rh(1., 1., 0.1, 100.),
+     |                   ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_render` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/voxy_render-978b62ea53e389cd)
+
+running 2 tests
+FILM GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FLUID REFRACTION PROJECTION PASS scalar_checks=60 fovs=3 depths=5 projections=2 asymmetric_ortho=true viewport=128x64
+test fluid_screen::film_gpu_tests::refraction_pixel_scale_matches_projected_displacement ... ok
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04000698
+ABSORPTION channel=0 actual=0.041992188 expected=0.042007327
+ABSORPTION channel=1 actual=0.060791016 expected=0.06081061
+ABSORPTION channel=2 actual=0.0803833 expected=0.08041403
+FILM camera_case=0 filter=None orthographic=false count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.040985107 expected_m=0.04099997
+ABSORPTION channel=0 actual=0.043029785 expected=0.04304997
+ABSORPTION channel=1 actual=0.062316895 expected=0.062319957
+ABSORPTION channel=2 actual=0.08239746 expected=0.08240994
+FILM camera_case=0 filter=None orthographic=false count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.010001744
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001744
+ABSORPTION channel=1 actual=0.00040006638 expected=0.00040006975
+ABSORPTION channel=2 actual=0.00020003319 expected=0.00020003488
+FILM camera_case=0 filter=None orthographic=false count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=0 filter=None orthographic=false count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.010001745
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001746
+ABSORPTION channel=1 actual=0.00039982796 expected=0.00040006978
+ABSORPTION channel=2 actual=0.00019991398 expected=0.00020003489
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.11022949 expected_m=0.11029862
+ABSORPTION channel=0 actual=0.09222412 expected=0.092295475
+ABSORPTION channel=1 actual=0.45214844 expected=0.45227578
+ABSORPTION channel=2 actual=0.90283203 expected=0.90335137
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=0 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0.090270996 expected_m=0.09029513
+ABSORPTION channel=0 actual=0.090270996 expected=0.09029513
+ABSORPTION channel=1 actual=0.45141602 expected=0.45147565
+ABSORPTION channel=2 actual=0.90283203 expected=0.9029513
+FILM camera_case=0 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=1 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=1 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.113464355 expected_m=0.11354256
+ABSORPTION channel=0 actual=0.095458984 expected=0.09554256
+ABSORPTION channel=1 actual=0.46826172 expected=0.46851283
+ABSORPTION channel=2 actual=0.9350586 expected=0.93582565
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0.09350586 expected_m=0.09354256
+ABSORPTION channel=0 actual=0.09350586 expected=0.09354256
+ABSORPTION channel=1 actual=0.4675293 expected=0.46771282
+ABSORPTION channel=2 actual=0.9350586 expected=0.93542564
+FILM camera_case=1 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=2 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=2 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04000698
+ABSORPTION channel=0 actual=0.041992188 expected=0.042007327
+ABSORPTION channel=1 actual=0.060791016 expected=0.06081061
+ABSORPTION channel=2 actual=0.0803833 expected=0.08041403
+FILM camera_case=3 filter=None orthographic=false count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.040985107 expected_m=0.04099997
+ABSORPTION channel=0 actual=0.043029785 expected=0.04304997
+ABSORPTION channel=1 actual=0.062316895 expected=0.062319957
+ABSORPTION channel=2 actual=0.08239746 expected=0.08240994
+FILM camera_case=3 filter=None orthographic=false count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.010001744
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001744
+ABSORPTION channel=1 actual=0.00040006638 expected=0.00040006975
+ABSORPTION channel=2 actual=0.00020003319 expected=0.00020003488
+FILM camera_case=3 filter=None orthographic=false count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=3 filter=None orthographic=false count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.010001745
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001746
+ABSORPTION channel=1 actual=0.00039982796 expected=0.00040006978
+ABSORPTION channel=2 actual=0.00019991398 expected=0.00020003489
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=3 filter=None orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=None orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=4 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=4 filter=None orthographic=true count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=None orthographic=true count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=None orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=None orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04000698
+ABSORPTION channel=0 actual=0.041992188 expected=0.042007327
+ABSORPTION channel=1 actual=0.060791016 expected=0.06081061
+ABSORPTION channel=2 actual=0.0803833 expected=0.08041403
+FILM camera_case=0 filter=Bilateral orthographic=false count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.040985107 expected_m=0.04099997
+ABSORPTION channel=0 actual=0.043029785 expected=0.04304997
+ABSORPTION channel=1 actual=0.062316895 expected=0.062319957
+ABSORPTION channel=2 actual=0.08239746 expected=0.08240994
+FILM camera_case=0 filter=Bilateral orthographic=false count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.010001744
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001744
+ABSORPTION channel=1 actual=0.00040006638 expected=0.00040006975
+ABSORPTION channel=2 actual=0.00020003319 expected=0.00020003488
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.010001745
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001746
+ABSORPTION channel=1 actual=0.00039982796 expected=0.00040006978
+ABSORPTION channel=2 actual=0.00019991398 expected=0.00020003489
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.11022949 expected_m=0.11029862
+ABSORPTION channel=0 actual=0.09222412 expected=0.092295475
+ABSORPTION channel=1 actual=0.45214844 expected=0.45227578
+ABSORPTION channel=2 actual=0.90283203 expected=0.90335137
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=0 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0.090270996 expected_m=0.09029513
+ABSORPTION channel=0 actual=0.090270996 expected=0.09029513
+ABSORPTION channel=1 actual=0.45141602 expected=0.45147565
+ABSORPTION channel=2 actual=0.90283203 expected=0.9029513
+FILM camera_case=0 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=0 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=1 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=1 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.113464355 expected_m=0.11354256
+ABSORPTION channel=0 actual=0.095458984 expected=0.09554256
+ABSORPTION channel=1 actual=0.46826172 expected=0.46851283
+ABSORPTION channel=2 actual=0.9350586 expected=0.93582565
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=1 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0.09350586 expected_m=0.09354256
+ABSORPTION channel=0 actual=0.09350586 expected=0.09354256
+ABSORPTION channel=1 actual=0.4675293 expected=0.46771282
+ABSORPTION channel=2 actual=0.9350586 expected=0.93542564
+FILM camera_case=1 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=1 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=2 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=2 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=2 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=2 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04000698
+ABSORPTION channel=0 actual=0.041992188 expected=0.042007327
+ABSORPTION channel=1 actual=0.060791016 expected=0.06081061
+ABSORPTION channel=2 actual=0.0803833 expected=0.08041403
+FILM camera_case=3 filter=Bilateral orthographic=false count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.040985107 expected_m=0.04099997
+ABSORPTION channel=0 actual=0.043029785 expected=0.04304997
+ABSORPTION channel=1 actual=0.062316895 expected=0.062319957
+ABSORPTION channel=2 actual=0.08239746 expected=0.08240994
+FILM camera_case=3 filter=Bilateral orthographic=false count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.010001744
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001744
+ABSORPTION channel=1 actual=0.00040006638 expected=0.00040006975
+ABSORPTION channel=2 actual=0.00020003319 expected=0.00020003488
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.010001745
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001746
+ABSORPTION channel=1 actual=0.00039982796 expected=0.00040006978
+ABSORPTION channel=2 actual=0.00019991398 expected=0.00020003489
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM camera_case=3 filter=Bilateral orthographic=false count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=3 filter=Bilateral orthographic=false count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=4 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.039978027 expected_m=0.04
+ABSORPTION channel=0 actual=0.041992188 expected=0.041999996
+ABSORPTION channel=1 actual=0.060791016 expected=0.060799997
+ABSORPTION channel=2 actual=0.0803833 expected=0.0804
+FILM camera_case=4 filter=Bilateral orthographic=true count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.009994507 expected_m=0.01
+ABSORPTION channel=0 actual=0.0009994507 expected=0.001
+ABSORPTION channel=1 actual=0.00039982796 expected=0.0004
+ABSORPTION channel=2 actual=0.00019991398 expected=0.0002
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.019989014 expected_m=0.02
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002
+ABSORPTION channel=1 actual=0.0007996559 expected=0.0008
+ABSORPTION channel=2 actual=0.00039982796 expected=0.0004
+FILM camera_case=4 filter=Bilateral orthographic=true count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM camera_case=4 filter=Bilateral orthographic=true count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+test fluid_screen::film_gpu_tests::film_gpu_integrates_prism_thickness_and_near_clipping ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 185 filtered out; finished in 1.46s
+

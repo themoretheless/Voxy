@@ -1,0 +1,26 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "probes": 152,
+  "scalar_checks": 1368,
+  "comparison": "f64 CPU reference using normalized uploaded f32 vectors",
+  "absolute_tolerance": 2e-05,
+  "relative_tolerance": 2e-05,
+  "ordinary_renderer_tests_passed": 162,
+  "ordinary_tests_ignored": 25,
+  "actual_fluid_gpu_tests_passed": 2,
+  "production_change": "Exact unpolarized Fresnel power fractions and reflected direction for current air-to-liquid screen surface",
+  "limits": [
+    "Screen refraction displacement remains approximate",
+    "No joint fog/liquid geometry traversal",
+    "No interior-camera production interface traversal",
+    "Power fractions are not radiance transport weights",
+    "Other GPU hardware unqualified"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/dielectric_boundary.rs": "ec96b9074e031c3d125cd6f449a0c295e07bbc0ebaab6e995d7a4e844ad6a210",
+    "crates/voxy_render/src/dielectric_boundary.wgsl": "6a0c2811f9c17972687eacdb55cf666d765b5b9a82c486482db7c660b83dcf0f",
+    "crates/voxy_render/src/fluid_composite.wgsl": "d61da6852c8a294bfb7fc7d5e9d9d7402323d5c93eec9d6d654456b99ca71bef",
+    "crates/voxy_render/src/fluid_screen.rs": "f14888677fad6800f461e82b9493b8d3e8b1ab375b5b632f96d05bb57ac306f0"
+  }
+}

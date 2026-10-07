@@ -1,0 +1,23 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "profiles": 8,
+  "camera_rays": 25,
+  "cpu_rgb_comparisons": 72,
+  "tail_admission_checks": 72,
+  "analytic_trapped_ray_checks": 3,
+  "shared_tests_passed": 21,
+  "work_frontier_occupancy_failure_rejected": true,
+  "storage_bindings": 1,
+  "requested_tail_rgb": 1e-05,
+  "limitations": [
+    "Native frame presentation remains unqualified",
+    "Linear triangle scan",
+    "Homogeneous media with supplied sources and opaque radiance"
+  ],
+  "sha256": {
+    "medium_path_compute.rs": "7ee4999489e96b1a67e823bca308f15e1c6581bb499da118985625e97a58fe64",
+    "medium_path_compute.wgsl": "650c1d2c2ed88b2507433741c95baf28ca213d850e7b2c2ff4e3b9a7f5699457",
+    "medium_geometry_common.wgsl": "a485312223fcc8ed973a7c7af41ae96ff4e341fa6ce7baf005fd17f3e07daecd"
+  }
+}

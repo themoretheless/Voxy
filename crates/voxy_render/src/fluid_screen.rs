@@ -553,7 +553,11 @@ impl ScreenSpaceFluidRenderer {
             label: Some("fluid composition"),
             source: wgpu::ShaderSource::Wgsl(crate::depth_sample::shader(
                 device,
-                include_str!("fluid_composite.wgsl"),
+                concat!(
+                    include_str!("dielectric_boundary.wgsl"),
+                    "\n",
+                    include_str!("fluid_composite.wgsl")
+                ),
             )),
         });
         let particle_attributes = wgpu::vertex_attr_array![0 => Float32x4, 1 => Float32x4];
@@ -1225,7 +1229,11 @@ mod film_gpu_tests {
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
         let source = format!(
             "{}\n{}",
-            include_str!("fluid_composite.wgsl"),
+            concat!(
+                include_str!("dielectric_boundary.wgsl"),
+                "\n",
+                include_str!("fluid_composite.wgsl")
+            ),
             r"
 @group(1) @binding(0) var<storage,read_write> result:array<vec2f>;
 @compute @workgroup_size(1) fn check(@builtin(global_invocation_id) id:vec3u) {
@@ -1745,7 +1753,14 @@ mod shader_portability_tests {
         let modules = [
             ("geometry", include_str!("fluid_screen.wgsl")),
             ("filter", include_str!("fluid_filter.wgsl")),
-            ("composite", include_str!("fluid_composite.wgsl")),
+            (
+                "composite",
+                concat!(
+                    include_str!("dielectric_boundary.wgsl"),
+                    "\n",
+                    include_str!("fluid_composite.wgsl")
+                ),
+            ),
         ];
         let mut translated = 0;
         for (name, source) in modules {

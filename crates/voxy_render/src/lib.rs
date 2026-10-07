@@ -230,6 +230,27 @@ pub use planar_temporal::{PlanarTemporalError, PlanarTemporalFrame, PlanarTempor
 mod dielectric_boundary;
 pub use dielectric_boundary::{DielectricBoundarySample, dielectric_boundary_sample};
 
+mod medium_geometry;
+pub use medium_geometry::{
+    MediumBoundaryHit, MediumBoundaryMesh, OpaqueRadianceMesh, OpticalMediumId,
+};
+
+mod medium_geometry_compute;
+mod medium_path;
+mod medium_path_compute;
+pub use medium_geometry_compute::{
+    MEDIUM_GEOMETRY_SHADER, MediumGeometryComputeInput, MediumGeometryGpuHit,
+    MediumGeometryHitKind, MediumGeometryRay,
+};
+pub use medium_path::{
+    CpuMediumTransportScene, HomogeneousOpticalMedium, MediumTransportBudget,
+    MediumTransportEstimate,
+};
+pub use medium_path_compute::{
+    GpuMediumTransportBudget, GpuMediumTransportEstimate, MEDIUM_PATH_SHADER,
+    MediumPathComputeInput, MediumTransportCameraRay,
+};
+
 mod medium_transport;
 pub use medium_transport::OpticalSegment;
 

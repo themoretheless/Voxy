@@ -1,0 +1,18 @@
+{
+  "command": "cargo test -p voxy_app --example body_motion_snapshot",
+  "session": 34380,
+  "exit_code": 0,
+  "tests_passed": 69,
+  "tests_failed": 0,
+  "tests_ignored": 6,
+  "test_runtime_seconds": 4456.19,
+  "app_source_sha256": "d909076be084cb1394f263b52907446c0310611b9b14dabfb2165c793683dd3b",
+  "app_source_matches_original_display_modes_evidence": true,
+  "full_rig_runtime_process": 90673,
+  "full_rig_completed": false,
+  "limits": [
+    "Ignored tests include manual full-clip qualification gates",
+    "Does not prove realtime full-volume tissue or full 480-step rig completion",
+    "Test binary predates subsequent medium reference additions; app source remains unchanged"
+  ]
+}

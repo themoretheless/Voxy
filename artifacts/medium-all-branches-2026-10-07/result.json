@@ -1,0 +1,55 @@
+{
+  "backend": "CPU f64",
+  "ordinary_renderer_tests_passed": 172,
+  "transport_tests_passed": 5,
+  "reference": "Infinite series of all internal reflection orders in an absorbing/emitting water slab with exterior fog and finite emissive domain faces",
+  "independent_expected_rgb": [
+    0.564943747592863,
+    0.24425012829828494,
+    0.18312217182023569
+  ],
+  "tested_tolerances": [
+    0.001,
+    1e-07,
+    1e-11
+  ],
+  "traced_rays_at_tolerances": [
+    6,
+    10,
+    14
+  ],
+  "conservatively_charged_triangle_tests": [
+    72,
+    120,
+    168
+  ],
+  "checks": [
+    "Both Fresnel branches",
+    "Reduced radiance L/n^2 and refractive equilibrium",
+    "Trapped TIR ray with absorption and emission converges",
+    "Lossless trapped ray budget fails explicitly",
+    "Ray/triangle budget failure does not publish partial result",
+    "Nested liquid species replace exterior occupancy",
+    "Camera inside inner liquid",
+    "Duplicate/missing medium identities and unknown camera medium rejection"
+  ],
+  "rag_lookup": {
+    "index_query": "dielectric medium transport",
+    "matches": 0,
+    "previous_search_wiki_handle_2058": "terminal tool timeout after 300s; no relevant result claimed"
+  },
+  "limits": [
+    "Homogeneous fixed local source terms, not coupled directional volume scattering",
+    "Finite axis-aligned emissive terminal domain explicitly authored",
+    "No opaque surfaces or GPU integration yet",
+    "Tail bound excludes floating-point roundoff and geometry intersection uncertainty",
+    "Source q>0 with sigma=0 lacks coefficient-based bound and is rejected",
+    "Unaccelerated CPU geometry",
+    "Source owner excludes invalid boundary overlap/self-intersection"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/medium_path.rs": "a5a300129a23f9d8fba9980727c7d728fbb8907c0c19bb822679caeafa15438e",
+    "crates/voxy_render/src/medium_geometry.rs": "9186dd50c7ad8228cefd8c33376f31a4647c10edc41841bcee66c2a04149fb00",
+    "crates/voxy_render/src/lib.rs": "71f26780a3aeb54497cc56708ebb2402478e12a0b90cbf2794dd0df3a3ad3990"
+  }
+}
