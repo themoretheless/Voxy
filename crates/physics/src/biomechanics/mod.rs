@@ -48,6 +48,7 @@ mod surface_contact;
 pub use contact_mollifier::edge_contact_mollifier;
 mod contact_precision;
 mod embedded_contact;
+mod energy_sum;
 mod prescribed_surface;
 pub use embedded_contact::{
     EmbeddedContactPathResponse, EmbeddedContactResponse, EmbeddedSkinWork,
@@ -591,7 +592,8 @@ impl Body {
         {
             return Err("invalid evaluation");
         }
-        let (pore_pressure, mut energy) = self.pore_fields_at(positions)?;
+        let (pore_pressure, pore_energy) = self.pore_fields_at(positions)?;
+        let mut energy = energy_sum::EnergySum::new(pore_energy);
         let mut g = vec![[0.; 3]; positions.len()];
         for (index, e) in self.elements.iter().enumerate() {
             let [a, b, c, d] = e.nodes.map(|i| positions[i]);
@@ -603,25 +605,26 @@ impl Body {
                     *value += correction;
                 }
             }
-            energy += e.volume * r.energy_density;
+            energy.add(e.volume * r.energy_density);
             for k in 0..4 {
                 let i = e.nodes[k];
                 g[i] = add(g[i], scale(mv(r.first_piola, e.gradients[k]), e.volume));
             }
         }
-        energy += self.bond_energy_gradient(positions, &mut g)?;
-        energy += self.gap_energy_gradient(positions, &mut g)?;
-        energy += self.surface_energy_gradient(positions, &mut g)?;
+        energy.add(self.bond_energy_gradient(positions, &mut g)?);
+        energy.add(self.gap_energy_gradient(positions, &mut g)?);
+        energy.add(self.surface_energy_gradient(positions, &mut g)?);
         let embedded_contact_j =
             Self::embedded_contact_energy_gradient(contact, positions, &mut g)?;
-        energy += embedded_contact_j;
+        energy.add(embedded_contact_j);
         for cavity in &self.cavities {
             if !cavity.pressure_pa.is_finite() {
                 return Err("invalid pressure");
             }
             for &[a, b, c] in &cavity.faces {
-                energy -=
-                    cavity.pressure_pa * dot(positions[a], cross(positions[b], positions[c])) / 6.;
+                energy.add(
+                    -cavity.pressure_pa * dot(positions[a], cross(positions[b], positions[c])) / 6.,
+                );
                 let s = -cavity.pressure_pa / 6.;
                 for (i, v) in [
                     (a, cross(positions[b], positions[c])),
@@ -633,9 +636,10 @@ impl Body {
             }
         }
         for i in 0..positions.len() {
-            energy -= dot(self.forces[i], sub(positions[i], self.rest[i]));
+            energy.add(-dot(self.forces[i], sub(positions[i], self.rest[i])));
             g[i] = sub(g[i], self.forces[i]);
         }
+        let energy = energy.finish();
         if !energy.is_finite() || g.iter().flatten().any(|x| !x.is_finite()) {
             return Err("load overflow");
         }

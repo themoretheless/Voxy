@@ -1040,14 +1040,7 @@ impl InertialBody {
             &end,
             &velocity,
         )?;
-        let free_kinetic_change: f64 = (0..n)
-            .filter(|&node| !self.body.pinned[node])
-            .map(|node| {
-                0.5 * self.masses[node]
-                    * (dot(velocity[node], velocity[node])
-                        - dot(self.velocities[node], self.velocities[node]))
-            })
-            .sum();
+        let free_kinetic_change = self.free_kinetic_change(&velocity);
         let defect =
             free_kinetic_change + after.potential_j - before.potential_j - reaction - surface_work;
         if [defect, reaction, pin_work, surface_work]
@@ -1063,10 +1056,11 @@ impl InertialBody {
                 // energies in the diagnostic alternative, while evaluating raw
                 // material/contact endpoint energies independently of force work.
                 let arithmetic = (|| -> Result<[f64; 5], &'static str> {
-                    let old = self.evaluate_at_contacts(
+                    let old = self.evaluate_at_contacts_and_skin(
                         &self.body.positions,
                         self.plane,
                         Some(&current),
+                        self.body.stationary_embedded_contact(),
                     )?;
                     let mut kinetic = 0.;
                     let mut gravity = 0.;
@@ -1201,7 +1195,12 @@ impl InertialBody {
                         .flat_map(|(a, b)| (0..3).map(move |axis| (a[axis] - b[axis]).abs()))
                         .fold(0.0_f64, f64::max);
                     let energy_change = self
-                        .evaluate_at_contacts(&impulse_end, self.plane, Some(&next))
+                        .evaluate_at_contacts_and_skin(
+                            &impulse_end,
+                            self.plane,
+                            Some(&next),
+                            next_skin.or(self.body.stationary_embedded_contact()),
+                        )
                         .and_then(|evaluation| {
                             self.diagnostics_at(
                                 evaluation.potential_j,
@@ -1582,13 +1581,7 @@ impl InertialBody {
             &end,
             &velocity,
         )?;
-        let kinetic_change: f64 = (0..n)
-            .filter(|&i| !self.body.pinned[i])
-            .map(|i| {
-                0.5 * self.masses[i]
-                    * (dot(velocity[i], velocity[i]) - dot(self.velocities[i], self.velocities[i]))
-            })
-            .sum();
+        let kinetic_change = self.free_kinetic_change(&velocity);
         let defect = kinetic_change + after.potential_j - before.potential_j - reaction;
         let support_work = reaction + pin_work;
         let lost_work = if reaction != 0. && support_work == pin_work {

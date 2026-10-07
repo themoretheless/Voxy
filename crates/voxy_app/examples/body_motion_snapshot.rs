@@ -1226,6 +1226,14 @@ mod collision_tests {
     #[test]
     #[ignore = "manual full-volume runtime checkpoint audit; requires VOXY_RIG_SUPPORTED_CAPTURE"]
     fn audits_completed_full_rig_supported_capture_against_native_clip() {
+        audit_supported_rig_capture(false);
+    }
+    #[test]
+    #[ignore = "manual immutable live node/energy prefix; never full-clip qualification"]
+    fn audits_committed_full_rig_nodes_and_energy_prefix() {
+        audit_supported_rig_capture(true);
+    }
+    fn audit_supported_rig_capture(prefix: bool) {
         let path = std::env::var("VOXY_RIG_SUPPORTED_CAPTURE")
             .expect("completed runtime checkpoint path required");
         let rows: Vec<serde_json::Value> = std::fs::read_to_string(path)
@@ -1251,8 +1259,26 @@ mod collision_tests {
             .unwrap_or_else(|_| "3".into())
             .parse()
             .unwrap();
-        let (_, expected_steps) = capture_schedule(true, end > 3, Some(end)).unwrap();
-        assert_eq!(rows.len(), expected_steps.len());
+        let committed_end = if prefix {
+            let committed: usize = std::env::var("VOXY_RIG_PREFIX_COMMITTED_STEPS")
+                .expect("explicit committed prefix endpoint required")
+                .parse()
+                .unwrap();
+            assert!(
+                committed > 0 && committed < end,
+                "prefix must be strictly incomplete; use completed audit for whole clip"
+            );
+            committed
+        } else {
+            end
+        };
+        let (_, mut expected_steps) = capture_schedule(true, end > 3, Some(end)).unwrap();
+        expected_steps.retain(|&step| step <= committed_end);
+        assert_eq!(
+            rows.len(),
+            expected_steps.len(),
+            "missing or extra scheduled node checkpoint"
+        );
         let energy_rate = std::env::var("VOXY_RIG_SUPPORTED_ENERGY_RATE_J_S")
             .ok()
             .map(|v| v.parse::<f64>().expect("finite positive energy rate"));
@@ -1269,8 +1295,18 @@ mod collision_tests {
                         .map(|line| serde_json::from_str(line).unwrap())
                         .collect()
                 });
+        if prefix {
+            assert!(
+                energy_frames.is_some(),
+                "prefix node audit requires every committed energy frame"
+            );
+        }
         if let Some(frames) = &energy_frames {
-            assert_eq!(frames.len(), end + 1, "incomplete per-frame energy capture");
+            assert_eq!(
+                frames.len(),
+                committed_end + 1,
+                "incomplete per-frame energy capture"
+            );
             let rate = energy_rate.expect("per-frame audit requires authored energy rate");
             let (maximum_frame_balance, _) = audit_committed_energy_frames(frames, rate);
             for (index, row) in rows.iter().enumerate() {
@@ -1280,8 +1316,10 @@ mod collision_tests {
                 );
             }
             eprintln!(
-                "FULL_RIG_PER_FRAME_ENERGY_AUDIT frames={} maximum_frame_balance_j={maximum_frame_balance:.17e}",
-                frames.len()
+                "RIG_PER_FRAME_ENERGY_AUDIT frames={} maximum_frame_balance_j={maximum_frame_balance:.17e} prefix={prefix} requested_steps={end} requested_capture_complete={} full_clip_qualified={}",
+                frames.len(),
+                !prefix,
+                !prefix && end == 480
             );
         }
         let mut previous_balance = 0.;
@@ -1342,9 +1380,12 @@ mod collision_tests {
         assert!(maximum_pin_error < 1e-13);
         assert!(maximum_free_motion > 1e-6);
         eprintln!(
-            "FULL_RIG_SUPPORTED_AUDIT checkpoints={} nodes=2338 cells=6845 pins=3 final_time_s={} maximum_pin_error_m={maximum_pin_error:.17e} maximum_independent_balance_j={maximum_balance:.17e} maximum_free_motion_m={maximum_free_motion:.17e} maximum_interval_balance_j={maximum_interval_balance:.17e} authored_rate_j_s={energy_rate:?}",
+            "RIG_SUPPORTED_AUDIT checkpoints={} nodes=2338 cells=6845 pins=3 committed_time_s={} last_node_time_s={} maximum_pin_error_m={maximum_pin_error:.17e} maximum_independent_balance_j={maximum_balance:.17e} maximum_free_motion_m={maximum_free_motion:.17e} maximum_interval_balance_j={maximum_interval_balance:.17e} authored_rate_j_s={energy_rate:?} prefix={prefix} requested_steps={end} requested_capture_complete={} full_clip_qualified={}",
             rows.len(),
-            end as f64 / 240.
+            committed_end as f64 / 240.,
+            expected_steps.last().unwrap().to_owned() as f64 / 240.,
+            !prefix,
+            !prefix && end == 480
         );
     }
     #[test]
