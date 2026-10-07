@@ -40,7 +40,9 @@ mod material;
 mod scene3d_smoke;
 #[cfg(test)]
 mod scene3d_tests;
+mod shadow_authoring;
 pub use material::{DirectionalLight, SceneMaterial};
+pub use shadow_authoring::{DirectionalShadow, DirectionalShadowFilter, OpaqueShadowCaster};
 mod game_ui_input;
 mod panel_focus;
 mod panels;
@@ -115,6 +117,8 @@ fn model_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
     registry.register::<ModelRetarget>("editor.model-retarget.v1")?;
     registry.register::<SceneMaterial>("editor.material.v1")?;
     registry.register::<DirectionalLight>("editor.light.v1")?;
+    registry.register::<DirectionalShadow>("editor.directional-shadow.v1")?;
+    registry.register::<OpaqueShadowCaster>("editor.opaque-shadow-caster.v1")?;
     registry.register::<voxy_scene::FogVolume>("scene.fog.v1")?;
     registry.register::<EditorCamera>("editor.camera.v1")?;
     voxy_gameplay::register_components(&mut registry)?;
@@ -1716,18 +1720,36 @@ impl App {
             graphics.lod_pending = pending;
             graphics.residency_cache.geometry_live = live;
             let mut view_draws = Vec::new();
+            let mut view_casters = Vec::new();
+            let mut gpu_caster_draws = 0;
+            let mut gpu_caster_owners = Vec::new();
             for &(view, region, _, lod_camera) in &views {
                 let mut draws = Vec::with_capacity(self.extraction.instances().len() + 2);
+                let mut casters = Vec::new();
                 for instance in self.extraction.instances() {
                     if let Some(geometries) = graphics
                         .animated_models
-                        .geometries_for_view(instance.owner, view)
+                        .geometry_inputs_for_view(instance.owner, view)
                     {
-                        for (primitive, geometry) in geometries.enumerate() {
+                        for (primitive, posed) in geometries.enumerate() {
+                            let geometry = posed.geometry;
                             let texture = graphics
                                 .animated_models
                                 .texture(instance.owner, primitive)
                                 .unwrap_or(&graphics.texture);
+                            if styles.casters.contains(&instance.owner) {
+                                gpu_caster_draws += usize::from(posed.gpu_deformed);
+                                if self.trace.enabled
+                                    && posed.gpu_deformed
+                                    && !gpu_caster_owners.contains(&instance.owner)
+                                {
+                                    gpu_caster_owners.push(instance.owner);
+                                }
+                                casters.push(fog_draw::OpaqueCaster {
+                                    geometry,
+                                    world: instance.world,
+                                });
+                            }
                             draws.push(SceneDraw {
                                 geometry,
                                 texture,
@@ -1742,6 +1764,12 @@ impl App {
                         && !model.animated_preview.is_empty()
                     {
                         for (primitive, geometry) in model.animated_preview.iter().enumerate() {
+                            if styles.casters.contains(&instance.owner) {
+                                casters.push(fog_draw::OpaqueCaster {
+                                    geometry,
+                                    world: instance.world,
+                                });
+                            }
                             draws.push(SceneDraw {
                                 geometry,
                                 texture: model.animated_textures[primitive]
@@ -1784,6 +1812,12 @@ impl App {
                         } else {
                             geometry
                         };
+                        if styles.casters.contains(&instance.owner) {
+                            casters.push(fog_draw::OpaqueCaster {
+                                geometry,
+                                world: instance.world,
+                            });
+                        }
                         draws.push(SceneDraw {
                             geometry,
                             texture: texture.unwrap_or(&graphics.texture),
@@ -1833,6 +1867,7 @@ impl App {
                     });
                 }
                 view_draws.push(draws);
+                view_casters.push(casters);
             }
             let mut overlays = Vec::new();
             for ui in graphics.ui_draws.iter().chain(graphics.ui_focus.iter()) {
@@ -1858,10 +1893,11 @@ impl App {
             let draw_count = view_draws.iter().map(Vec::len).sum::<usize>() + overlays.len();
             let present_start = profile_start.map(|_| Instant::now());
             if styles.fog.is_empty() {
-                if let Some(fog) = &mut graphics.fog {
-                    fog.retire(graphics.host.device())?;
+                if let Some(fog) = &mut graphics.fog
+                    && fog.deactivate(graphics.host.device())?
+                {
+                    graphics.fog = None;
                 }
-                graphics.fog = None;
             }
             let outcome = if let Some((_, volume, bounds)) = styles.fog.first() {
                 if styles.fog.len() != 1 {
@@ -1894,8 +1930,15 @@ impl App {
                     .checked_sub(other)
                     .ok_or("fog scene memory budget exceeded")?;
                 let fog = graphics.fog.as_mut().unwrap();
-                fog.prepare_targets(&device, [window.width, window.height], &views, budget)?;
-                graphics.host.render_custom(|encoder, output| {
+                fog.prepare_targets_with_shadow(
+                    &device,
+                    [window.width, window.height],
+                    &views,
+                    styles.shadow,
+                    view_casters.iter().map(Vec::len).sum(),
+                    budget,
+                )?;
+                let result = graphics.host.render_custom(|encoder, output| {
                     fog.encode(
                         &device,
                         encoder,
@@ -1907,8 +1950,17 @@ impl App {
                         *volume,
                         *bounds,
                         styles.light,
+                        &view_casters,
+                        styles.shadow.map(|(_, settings)| settings),
                     )
-                })?
+                });
+                if matches!(&result, Ok(voxy_render::RenderOutcome::Presented)) {
+                    fog.submitted(graphics.host.queue());
+                } else {
+                    // render_custom has already discarded any failed encoder.
+                    fog.discard_unsubmitted();
+                }
+                result?
             } else if !split || views.len() == 1 {
                 let mut draws = view_draws.pop().ok_or("missing view draws")?;
                 draws.extend(overlays);
@@ -1986,11 +2038,24 @@ impl App {
             if outcome == RenderOutcome::Presented {
                 if !styles.fog.is_empty() && self.trace.enabled {
                     println!(
-                        "EDITOR FOG PRESENT frame={} views={} owner={:?}",
+                        "EDITOR FOG PRESENT frame={} views={} owner={:?} shadow={} casters={} gpu_casters={}",
                         self.frames + 1,
                         views.len(),
-                        styles.fog[0].0
+                        styles.fog[0].0,
+                        styles.shadow.is_some(),
+                        view_casters.iter().map(Vec::len).sum::<usize>(),
+                        gpu_caster_draws
                     );
+                    for owner in &gpu_caster_owners {
+                        if let Some((ticks, palette)) =
+                            graphics.animated_models.pose_evidence(*owner)
+                        {
+                            println!(
+                                "EDITOR FOG GPU POSE frame={} owner={owner:?} ticks={ticks} palette={palette}",
+                                self.frames + 1
+                            );
+                        }
+                    }
                 }
                 self.ui_live.frame_presented();
                 graphics.ui_presented |= self.ui_live.ready();
@@ -2478,6 +2543,8 @@ impl App {
         {
             return Err(voxy_scene::SceneGraphError::InvalidTransform);
         }
+        shadow_authoring::validate_scene(&self.scene)
+            .map_err(|_| voxy_scene::SceneGraphError::InvalidTransform)?;
         let registry = &self.authoring.authoring_project.registry;
         let objects = self
             .instances
@@ -2734,6 +2801,7 @@ impl App {
             }
         }
         CharacterPhysics::new(&loaded.graph, 128, 128).validate(&loaded.graph)?;
+        shadow_authoring::validate_scene(&loaded.graph)?;
         if loaded
             .graph
             .components::<voxy_scene::FogVolume>()

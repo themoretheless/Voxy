@@ -1469,8 +1469,294 @@ fn verify_solid_shadow_scattering(
             cases += 1;
         }
     }
+    verify_shadow_setting_updates(
+        device,
+        queue,
+        camera,
+        light_matrix,
+        &renderer,
+        &back,
+        &full,
+        &half,
+        &white,
+        &transform,
+        &color,
+        &depth,
+        &input,
+        lit,
+    )?;
     println!(
         "SOLID SHADOW SCATTERING PASS cases={cases} empty_full_half_moved_disabled=true cached_pass=true prior_output_preserved=true filters=hard_pcf3_pcf5 raster_shadow_cpu_upload=false"
     );
     Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn verify_shadow_setting_updates(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    camera: voxy_render::SceneCamera,
+    light_matrix: glam::Mat4,
+    renderer: &voxy_render::SceneRenderer,
+    back: &voxy_render::SceneGeometry,
+    full: &voxy_render::SceneGeometry,
+    half: &voxy_render::SceneGeometry,
+    white: &voxy_render::SceneTexture,
+    transform: &voxy_render::SceneTransform,
+    color: &wgpu::Texture,
+    depth: &wgpu::Texture,
+    input: &voxy_render::DropletExtinctionSceneInput,
+    lit: f32,
+) -> Result<(), Box<dyn std::error::Error>> {
+    use voxy_render::{DropletExtinctionPass, ShadowFilter, ShadowMap, ShadowSettings};
+    let size = 16;
+    let map_a = ShadowMap::new(device, 64, 64)?;
+    let map_b = ShadowMap::new(device, 32, 32)?;
+    let foreign_instance = GraphicsOptions::default().create_instance();
+    let foreign_adapter = pollster::block_on(
+        foreign_instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+    )?;
+    let (foreign_device, _) =
+        pollster::block_on(foreign_adapter.request_device(&wgpu::DeviceDescriptor::default()))?;
+    let foreign_map = ShadowMap::new(&foreign_device, 8, 8)?;
+    let reverse_camera = voxy_render::SceneCamera {
+        eye: glam::Vec3::new(0.5, 0.5, 1.5),
+        target: glam::Vec3::new(0.5, 0.5, 1.),
+        ..camera
+    };
+    let reverse_matrix = reverse_camera.view_projection()?;
+    let reverse_input = voxy_render::DropletExtinctionSceneInput::new(
+        ExtinctionGridView {
+            origin: [0.; 3],
+            spacing: [1.; 3],
+            shape: [1; 3],
+            extinction_m_inverse: &[0.5],
+        },
+        camera,
+        size,
+        size,
+        100_000,
+    )?
+    .with_directional_scattering(
+        voxy_render::DirectionalScatteringOptions {
+            direction_to_light: [0., 0., 1.],
+            irradiance_rgb: [4., 2., 1.],
+            albedo: 0.8,
+            asymmetry: 0.,
+            samples: 32,
+        },
+        100_000,
+        200_000,
+    )?;
+    let reverse_lit = 4. * 0.8 * (-0.5_f32).exp() / (8. * std::f32::consts::PI);
+    let filters = [
+        ShadowFilter::Hard,
+        ShadowFilter::Pcf3x3,
+        ShadowFilter::Pcf5x5,
+    ];
+    let settings = |filter| ShadowSettings {
+        light_from_world: light_matrix,
+        bias: 0.,
+        enabled: true,
+        filter,
+    };
+    let mut ordinary = pollster::block_on(DropletExtinctionPass::new(device))?;
+    assert!(matches!(
+        ordinary.update_directional_shadow(&map_a, settings(filters[0])),
+        Err(voxy_render::ComputeError::Unsupported)
+    ));
+    let mut cases = 0;
+    for (i, filter) in filters.into_iter().enumerate() {
+        let original = settings(filter);
+        let mut cached = pollster::block_on(DropletExtinctionPass::with_directional_shadow(
+            device, &map_a, original,
+        ))?;
+        for mode in 0..7 {
+            cached.update_directional_shadow(&map_a, original)?;
+            for bad in [
+                ShadowSettings {
+                    light_from_world: glam::Mat4::ZERO,
+                    ..original
+                },
+                ShadowSettings {
+                    light_from_world: glam::Mat4::perspective_rh(1., 1., 0.1, 10.),
+                    ..original
+                },
+                ShadowSettings {
+                    bias: f32::NAN,
+                    ..original
+                },
+                ShadowSettings {
+                    light_from_world: reverse_matrix,
+                    bias: f32::NAN,
+                    ..original
+                },
+                ShadowSettings {
+                    bias: -0.1,
+                    ..original
+                },
+                ShadowSettings {
+                    bias: 1.1,
+                    ..original
+                },
+            ] {
+                assert!(cached.update_directional_shadow(&map_b, bad).is_err());
+            }
+            assert!(matches!(
+                cached.update_directional_shadow(&foreign_map, original),
+                Err(voxy_render::ComputeError::DeviceMismatch)
+            ));
+            // Prepare before updating, but execute both frames after updating.
+            // In-place uniform writes or map rebinding would corrupt old_frame.
+            let old_frame = pollster::block_on(cached.prepare(input, color, depth, 4096))?;
+            assert_eq!(
+                old_frame.allocation_bytes(),
+                input.bytes().len() as u64 + 16 * 16 * 8 + 80
+            );
+            let mut next = original;
+            next.filter = filters[(i + 1) % 3];
+            let next_map = if matches!(mode, 0 | 4 | 5 | 6) {
+                &map_b
+            } else {
+                &map_a
+            };
+            if matches!(mode, 1 | 5) {
+                next.enabled = false;
+            }
+            if mode == 2 {
+                next.bias = 1.;
+            }
+            if mode == 3 {
+                next.light_from_world =
+                    glam::Mat4::from_translation(glam::Vec3::new(4., 0., 0.)) * light_matrix;
+            }
+            if matches!(mode, 4 | 5) {
+                next.light_from_world = reverse_matrix;
+            }
+            cached.update_directional_shadow(next_map, next)?;
+            if mode == 4 {
+                assert!(matches!(
+                    pollster::block_on(cached.prepare(input, color, depth, 4096)),
+                    Err(voxy_render::ComputeError::InvalidBuffer)
+                ));
+            }
+            let next_input = if matches!(mode, 4 | 5) {
+                &reverse_input
+            } else {
+                input
+            };
+            let new_frame = pollster::block_on(cached.prepare(next_input, color, depth, 4096))?;
+            let mut encoder = device.create_command_encoder(&Default::default());
+            renderer.encode(
+                &mut encoder,
+                &color.create_view(&Default::default()),
+                &depth.create_view(&Default::default()),
+                wgpu::Color::BLACK,
+                &[voxy_render::SceneDraw {
+                    geometry: back,
+                    texture: white,
+                    transform,
+                    overlay: false,
+                }],
+            );
+            map_a.encode(&mut encoder, &[map_a.prepare(full, light_matrix)?])?;
+            let new_caster = match mode {
+                4 | 5 => Some(map_b.prepare(
+                    full,
+                    reverse_matrix * glam::Mat4::from_translation(glam::Vec3::new(0., 0., 1.5)),
+                )?),
+                6 => Some(map_b.prepare(half, light_matrix)?),
+                _ => None,
+            };
+            map_b.encode(&mut encoder, &new_caster.into_iter().collect::<Vec<_>>())?;
+            pollster::block_on(old_frame.encode(&mut encoder))?;
+            pollster::block_on(new_frame.encode(&mut encoder))?;
+            queue.submit([encoder.finish()]);
+            for (old, frame) in [(true, &old_frame), (false, &new_frame)] {
+                let pixels = read_shadow_hdr(device, queue, frame.output())?;
+                for y in 2..14 {
+                    for x in 2..14 {
+                        if !old && mode == 6 && (7..=8).contains(&x) {
+                            continue;
+                        }
+                        let expected = if old || mode == 4 || (mode == 6 && x >= 8) {
+                            0.
+                        } else if mode == 5 {
+                            reverse_lit
+                        } else {
+                            lit
+                        };
+                        for (k, scale) in [1., 0.5, 0.25, 0.].into_iter().enumerate() {
+                            let target = if k == 3 { 1. } else { expected * scale };
+                            assert!(
+                                (pixels[y * 16 + x][k] - target).abs() < 0.0001,
+                                "updated shadow mode={mode} filter={filter:?} old={old} x={x} y={y} channel={k} actual={} expected={target}",
+                                pixels[y * 16 + x][k]
+                            );
+                        }
+                    }
+                }
+            }
+            cases += 1;
+        }
+    }
+    println!(
+        "SHADOW SETTINGS UPDATE PASS cases={cases} prepared_frames=42 old_snapshot_survives_update=true maps_64_to_32=true reversed_direction=true bias_filter_enable_projection_updates=true invalid_update_rollback=true foreign_device_rejected=true shadow_snapshot_bytes=80 cached_pipeline=true"
+    );
+    Ok(())
+}
+
+fn read_shadow_hdr(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    texture: &wgpu::Texture,
+) -> Result<Vec<[f32; 4]>, Box<dyn std::error::Error>> {
+    let staging = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("immutable shadow snapshot readback"),
+        size: 4096,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    let mut encoder = device.create_command_encoder(&Default::default());
+    encoder.copy_texture_to_buffer(
+        wgpu::TexelCopyTextureInfo {
+            texture,
+            mip_level: 0,
+            origin: wgpu::Origin3d::ZERO,
+            aspect: wgpu::TextureAspect::All,
+        },
+        wgpu::TexelCopyBufferInfo {
+            buffer: &staging,
+            layout: wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(256),
+                rows_per_image: Some(16),
+            },
+        },
+        texture.size(),
+    );
+    queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    staging.slice(..).map_async(wgpu::MapMode::Read, move |r| {
+        let _ = tx.send(r);
+    });
+    device.poll(wgpu::PollType::wait_indefinitely())?;
+    rx.recv()??;
+    let bytes = staging.slice(..).get_mapped_range()?;
+    let mut pixels = Vec::with_capacity(256);
+    for y in 0..16 {
+        for x in 0..16 {
+            let mut rgba = [0.; 4];
+            for (k, channel) in rgba.iter_mut().enumerate() {
+                let offset = y * 256 + x * 8 + k * 2;
+                *channel =
+                    half::f16::from_bits(u16::from_le_bytes(bytes[offset..offset + 2].try_into()?))
+                        .to_f32();
+            }
+            pixels.push(rgba);
+        }
+    }
+    drop(bytes);
+    staging.unmap();
+    Ok(pixels)
 }

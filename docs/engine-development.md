@@ -9086,3 +9086,196 @@ those have separate renderer-level evidence. Rotated volumes, editor light
 shadow authoring, fog/liquid merged optical depth, asynchronous retirement,
 high-resolution performance, spectral calibration, multiple scattering and
 NVIDIA execution remain open. The full engine objective is still unfinished.
+
+
+### Nonblocking editor fog retirement (2026-10-07)
+
+The editor now polls completion without a device-wide wait before each fog
+frame. After `render_custom` reports Presented, FogDraw attaches a queue
+completion notification to the submitted frames. Each notification retains
+its optical storage/output, HDR scene/depth/X-ray targets and UI depth until
+completion is observed. Shared source targets are counted once across ordered
+submissions. Replacement targets remain charged while their old users are
+pending. A disconnected callback is not treated as proof of completion.
+
+Admission includes retained submission bytes, upcoming frame storage and new
+source targets before allocation. A budget rejection preserves the current
+sources. Discarding a failed encoder releases only its unsubmitted frames.
+Disabling fog drops current source ownership but retains pending submissions
+and their charges until notifications arrive. This supersedes the initial
+consumer's blocking retirement limitation; it does not establish a measured
+performance improvement or complete the remaining optical composition work.
+
+The Metal regression verifies 2560 scene/UI pixels, a deliberately delayed
+completion observation, replacement/removal of sources on resize, rejection
+without mutation, disable while pending, late encode failure, and exact
+logical byte release after notification. The updated native fixture presented
+21 frames, exercised Play/Stop/save/reload, and exited with status 0. All 177
+editor library tests passed (14 physical-GPU tests ignored in that suite; the
+fog test was run explicitly). Evidence and the executable hash are in
+`artifacts/fog-nonblocking-retirement-2026-10-07/`. NVIDIA, high-resolution
+performance, multiple/rotated media, editor opaque fog shadows and combined
+fog/liquid optical transport remain unqualified or incomplete.
+
+
+### Cached directional shadow settings for fog (2026-10-07)
+
+`DropletExtinctionPass::update_directional_shadow` now changes the shadow map,
+projection, comparison bias, enable flag and PCF kernel using a fresh uniform
+and binding snapshot on the original cached layout. Shader/pipeline compilation
+is absent from this operation. Already prepared frames keep their old bindings,
+map and direction admission. Invalid projection/settings or a foreign device's
+map preserve the old state. A pass created without a shadow binding returns
+Unsupported. Per-frame logical allocation includes 80 bytes of shadow settings;
+shared settings may be conservatively charged more than once. Shadow-map
+texture storage stays owned and budgeted by the external map owner.
+
+Map texels remain live at execution, not frozen at prepare. Raster map updates
+must precede their consumers and subsequent updates must follow prior consumers
+on the owning queue. This API does not snapshot or synchronize map contents.
+
+The Metal smoke checks 21 update cases / 42 prepared HDR frames, executing both
+old and new frames after each update. Cases cover replacing 64-square maps by
+32-square maps, opposite light directions, disable/re-enable, projection,
+bias and all three kernels, invalid-update rollback including direction changes
+with invalid bias, foreign-device rejection and the 80-byte frame charge.
+Interior RGB/alpha agree with analytic expectations to absolute 1e-4; two
+columns touching the half-caster filter transition are excluded. Existing
+24 moving-caster cases, 20 dense-scattering slab cases and 16K scene checks also
+pass, along with 155 renderer and 177 editor library tests. Evidence is in
+`artifacts/fog-shadow-settings-update-2026-10-07/`.
+
+This removes the fixed-light/settings lifetime constraint at renderer level.
+Editor shadow authoring, explicit opaque caster selection and wiring the map
+into FogDraw remain to be implemented. Transparent/alpha-tested shadows,
+volumetric self-shadow convergence, multiple scattering and full hardware
+qualification are not established by these fixtures. No performance speedup
+has been measured.
+
+
+### Durable editor opaque fog shadows (2026-10-07)
+
+The editor now consumes opaque shadow depths during fog scattering. Author
+`editor.directional-shadow.v1` on the same owner as the selected directional
+light. Its world-space center, extent (light-image X/Y and photon-travel Z),
+up vector, resolution, conventional depth bias and Hard/PCF3/PCF5 filter are
+validated, serialized and exposed through the existing data-only inspector.
+The light vector points toward the source. Invalid/parallel up vectors and
+unrepresentable camera projections are rejected; camera coverage outside the
+box remains lit, matching the renderer-level contract.
+
+`editor.opaque-shadow-caster.v1` explicitly opts model owners into opaque
+triangle shadowing. It follows hierarchy activity and its enabled flag.
+Textures' alpha/transmission are ignored by this opaque pass. Ownership is
+validated in loaded documents and live authoring scenes; settings survive
+capture, undo/redo and reload. Existing scenes opt in only when these components
+are present, preserving their previous appearance.
+
+Per-view caster geometry is borrowed from the same selected static LOD,
+animated resident geometry or animated preview used for the visible frame.
+Caster world matrices are the same extraction snapshots, including the Play
+pose resolver. Gizmos, outlines, UI and optical liquids are excluded. For each
+view, its shadow raster precedes its HDR scene/fog consumer on the same encoder;
+the shared map is then updated for the next view. Cached fog shadow settings
+change without recompiling the pipeline on ordinary frame updates.
+
+Budget admission includes current and pending map textures, per-caster 64-byte
+transform uniforms, 80-byte fog shadow snapshots and cached settings, together
+with HDR/depth/storage/output. Shared maps are charged once; replaced maps
+remain owned by pending submissions until queue completion is observed.
+Command buffers retain raster bindings while their byte charges stay pending.
+Disable and resize remain nonblocking, and rejected budgets preserve the old
+map. Settings are conservatively charged when several views share one snapshot.
+
+Metal tests verify all 512 pixels in two views with opposite caster poses,
+analytic scattered radiance, per-view map ordering, pending map replacement,
+budget rollback and completion release. The existing 2560-pixel scene/UI and
+retirement test also passes. There are 180 passing editor library tests and
+15 ignored GPU tests in the ordinary suite; both fog GPU tests were run
+explicitly. Native acceptance presented 21 frames with shadows enabled and
+four caster draws per view, exercised 25 Play ticks, Stop and reload, and
+exited with code 0. Its saved scene retained one shadow-light component and
+six model caster components. Evidence, scenes, failures corrected during test
+development and the executable hash are in
+`artifacts/editor-fog-shadows-2026-10-07/`.
+
+Native skeletal shadow deformation is not established by this rigid-transform
+fixture. Editor surface-material shadows, alpha-tested/translucent casters,
+multiple/rotated fog volumes, merged fog/liquid optical transport, multiple
+scattering, performance scaling and NVIDIA execution remain open. The full
+engine objective is still incomplete.
+
+
+### GPU skeletal shadow consumption and native clip playback (2026-10-07)
+
+AnimatedModels now returns each selected posed geometry together with its
+actual deformation backend. The information follows the same selected LOD:
+GPU skinned streams, GPU LOD sharing those streams, CPU LOD and baked geometry
+are distinguished without changing the selected geometry or object identity.
+Opt-in fog diagnostics count GPU caster draws and publish accepted-palette
+hashes/ticks only after successful presentation; hashing is not part of normal
+rendering when tracing is disabled.
+
+The editor shadow pixel fixture now also runs with two independently posed
+GPU skin instances sharing one immutable four-vertex/two-joint source. Both
+instances start in bind pose; compute changes their upper joint by opposite
+translations before the same encoder's shadow raster and HDR scene/fog passes.
+The resulting slanted silhouettes differ from the initial CPU bind preview.
+An independent analytic polygon/radiance oracle checks 448 pixels in two views
+with RGB tolerance one display byte and exact opaque alpha. The 64 pixels
+within two shadow texels of a silhouette edge are excluded, rather than
+relaxing the RGB tolerance. Pending shadow-map retention/budget/completion
+checks remain enabled for both static and GPU-skinned fixture modes.
+
+Native Scene3D acceptance imports the repository's one-joint animated triangle
+as the player while retaining the authored fog, shadow light and opaque caster
+components. It presented 21 shadow-enabled frames and completed 26 Play ticks,
+Stop/save/reload with exit code 0. Frames 8–18 each had one actual GPU caster;
+11 distinct accepted palettes were observed over ticks 2–26. These counts are
+from the geometry backend actually selected for shadow/visible draws, not the
+presence of an animation component. Native logs do not provide a per-pixel
+oracle for that GLB; the two-joint pixel fixture supplies separate GPU output
+evidence. Neither fixture establishes production character shadow quality.
+
+The 180-test editor suite passes (16 GPU tests ordinarily ignored). Five GPU
+tests ran explicitly: scene/UI retirement, static shadows, two-joint skeletal
+shadows, GPU/CPU LOD camera/budget selection, and GPU playback/failed-revision
+retention. LOD backend metadata matches the existing selected geometry for
+both near/far views and CPU fallback. Scenes, logs, fixture asset and hashes
+are in `artifacts/editor-skeletal-fog-shadows-2026-10-07/`.
+
+The large production rig, all-animation silhouette quality, full 480-step
+tissue capture, performance scaling and NVIDIA execution remain unqualified.
+Surface shadows and combined fog/liquid optical transport remain incomplete.
+
+
+### Full-rig immutable prefix through step 204 (2026-10-07)
+
+Endpoint-admission runtime PID 90673 remains live. Its frozen prefix through
+step 204 (0.85 s of the requested 2 s / 480 steps) passes the independent native
+node/energy audit. There are 205 per-step energy rows and 19 scheduled node
+checkpoints; the checkpoint at step 160 is additional to the 12-step sequence
+because it is a requested montage frame. Both node and energy snapshots exactly
+match the allocation-only runtime's prefix through the same step.
+
+The fixture has 2338 nodes, 6845 tetrahedral cells and three source pins.
+Maximum pin error is 6.661338147750939e-16 m; maximum per-step energy balance
+error is 7.183142969324763e-14 J; maximum independent cumulative balance is
+6.270539643082884e-13 J. Maximum free-node movement is 0.4457806403830662 m.
+The authored interval energy rate remains 5e-10 J/s; no tolerance was relaxed.
+The first audit invocation used crate-relative paths and failed to open the
+snapshot; the successful invocation uses absolute paths. Originals and running
+calculations were preserved.
+
+A one-second native sample of the same live process captures implicit material
+quadrature and embedded contact response on the main thread. This is a profile
+of its older mapped executable, not a current-build benchmark or causal speedup
+measurement. Current source inspection also finds separate response evaluation
+for sampled actuator work and contact energy/gradient; safely sharing that
+response is a candidate for a subsequent measured change. Source hashes at
+runtime launch and current observation are recorded to expose version drift.
+
+Evidence is in `artifacts/endpoint-rig-prefix204-2026-10-07/`. Full capture,
+all-contact/self-contact behavior, current-build runtime parity, real-time
+performance and NVIDIA/CUDA execution remain unqualified. The overall engine
+objective remains active and unfinished.

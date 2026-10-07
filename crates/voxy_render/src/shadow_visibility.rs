@@ -60,7 +60,6 @@ impl ShadowBindings {
         if !map.belongs_to(device) {
             return Err(SceneError::DeviceMismatch);
         }
-        let values = settings.values()?;
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("scene shadow visibility"),
             entries: &[
@@ -86,6 +85,27 @@ impl ShadowBindings {
                 },
             ],
         });
+        Self::with_layout(device, map, settings, layout)
+    }
+    /// New immutable settings/map snapshot with the exact cached pipeline ABI.
+    pub(crate) fn snapshot(
+        &self,
+        device: &wgpu::Device,
+        map: &ShadowMap,
+        settings: ShadowSettings,
+    ) -> Result<Self, SceneError> {
+        Self::with_layout(device, map, settings, self.layout.clone())
+    }
+    fn with_layout(
+        device: &wgpu::Device,
+        map: &ShadowMap,
+        settings: ShadowSettings,
+        layout: wgpu::BindGroupLayout,
+    ) -> Result<Self, SceneError> {
+        if !map.belongs_to(device) {
+            return Err(SceneError::DeviceMismatch);
+        }
+        let values = settings.values()?;
         let uniform = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("scene shadow settings"),
             contents: bytemuck::cast_slice(&values),

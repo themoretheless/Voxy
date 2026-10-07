@@ -545,30 +545,7 @@ impl DropletExtinctionPass {
         map: &crate::ShadowMap,
         settings: crate::ShadowSettings,
     ) -> Result<Self, ComputeError> {
-        // Conventional orthographic depth increases along photon travel.
-        // Inverse clip Z gives the world ray direction, including affine shear.
-        let matrix = settings.light_from_world;
-        if !matrix.is_finite()
-            || matrix.x_axis.w != 0.
-            || matrix.y_axis.w != 0.
-            || matrix.z_axis.w != 0.
-            || matrix.w_axis.w <= 0.
-        {
-            return Err(ComputeError::InvalidBuffer);
-        }
-        let determinant = matrix.determinant();
-        if !determinant.is_finite() || determinant == 0. {
-            return Err(ComputeError::InvalidBuffer);
-        }
-        let inverse = matrix.inverse();
-        let travel = inverse.z_axis.truncate();
-        let scale = travel.abs().max_element();
-        let scaled = travel / scale;
-        let length = scaled.x.hypot(scaled.y).hypot(scaled.z);
-        if !inverse.is_finite() || !length.is_finite() || length == 0. {
-            return Err(ComputeError::InvalidBuffer);
-        }
-        let shadow_direction = settings.enabled.then_some((-scaled / length).to_array());
+        let shadow_direction = directional_shadow_direction(settings)?;
         let shadow = crate::shadow_visibility::ShadowBindings::with_visibility(
             device,
             map,
@@ -598,6 +575,29 @@ impl DropletExtinctionPass {
             shadow: Some(shadow),
             shadow_direction,
         })
+    }
+    /// Replace the map/projection/bias/filter snapshot without recompiling the
+    /// cached shader. Already prepared frames retain their prior bindings and
+    /// direction. Map texels themselves are sampled at execution: order map
+    /// writes, consumers, and subsequent map updates on the owning queue.
+    /// Errors preserve the old snapshot. Requires a shadow-enabled pass and a
+    /// map from this device; unsupported affine projections are rejected.
+    pub fn update_directional_shadow(
+        &mut self,
+        map: &crate::ShadowMap,
+        settings: crate::ShadowSettings,
+    ) -> Result<(), ComputeError> {
+        let current = self.shadow.as_ref().ok_or(ComputeError::Unsupported)?;
+        if !map.belongs_to(&self.device) {
+            return Err(ComputeError::DeviceMismatch);
+        }
+        let direction = directional_shadow_direction(settings)?;
+        let snapshot = current
+            .snapshot(&self.device, map, settings)
+            .map_err(|e| ComputeError::Validation(e.to_string()))?;
+        self.shadow = Some(snapshot);
+        self.shadow_direction = direction;
+        Ok(())
     }
     pub async fn new(device: &wgpu::Device) -> Result<Self, ComputeError> {
         Ok(Self {
@@ -689,6 +689,35 @@ impl DropletExtinctionPass {
     }
 }
 
+fn directional_shadow_direction(
+    settings: crate::ShadowSettings,
+) -> Result<Option<[f32; 3]>, ComputeError> {
+    // Conventional orthographic depth increases along photon travel.
+    // Inverse clip Z gives the world ray direction, including affine shear.
+    let matrix = settings.light_from_world;
+    if !matrix.is_finite()
+        || matrix.x_axis.w != 0.
+        || matrix.y_axis.w != 0.
+        || matrix.z_axis.w != 0.
+        || matrix.w_axis.w <= 0.
+    {
+        return Err(ComputeError::InvalidBuffer);
+    }
+    let determinant = matrix.determinant();
+    if !determinant.is_finite() || determinant == 0. {
+        return Err(ComputeError::InvalidBuffer);
+    }
+    let inverse = matrix.inverse();
+    let travel = inverse.z_axis.truncate();
+    let scale = travel.abs().max_element();
+    let scaled = travel / scale;
+    let length = scaled.x.hypot(scaled.y).hypot(scaled.z);
+    if !inverse.is_finite() || !length.is_finite() || length == 0. {
+        return Err(ComputeError::InvalidBuffer);
+    }
+    Ok(settings.enabled.then_some((-scaled / length).to_array()))
+}
+
 /// Pending GPU extinction frame. Encode after scene production and before display.
 #[derive(Debug)]
 pub struct DropletExtinctionFrame {
@@ -723,7 +752,9 @@ impl DropletExtinctionFrame {
         self.output.texture()
     }
     pub fn allocation_bytes(&self) -> u64 {
-        self.job.buffer().size() + u64::from(self.size[0]) * u64::from(self.size[1]) * 8
+        self.job.buffer().size()
+            + u64::from(self.size[0]) * u64::from(self.size[1]) * 8
+            + if self.shadow.is_some() { 80 } else { 0 }
     }
 }
 

@@ -373,48 +373,29 @@ impl StationaryEmbeddedContact {
             ))?),
         )
     }
+    #[cfg(test)]
     pub(super) fn sampled_motion_work(
         &self,
         start: &Self,
         end: &Self,
         nodes: &[Vec3],
     ) -> Result<EmbeddedSkinWork, &'static str> {
+        self.prepare_sampled_response(start, end, nodes)?
+            .motion_work()
+    }
+    pub(super) fn prepare_sampled_response<'a>(
+        &'a self,
+        start: &'a Self,
+        end: &'a Self,
+        nodes: &'a [Vec3],
+    ) -> Result<SampledEmbeddedResponse<'a>, &'static str> {
         self.same_owner(start)?;
         self.same_owner(end)?;
-        let response = self.response(nodes)?;
-        let reference_delta: Vec<_> = start
-            .reference
-            .iter()
-            .zip(end.reference.iter())
-            .map(|(&a, &b)| sub(b, a))
-            .collect();
-        let base_delta: Vec<_> = start
-            .base
-            .iter()
-            .zip(end.base.iter())
-            .map(|(&a, &b)| sub(b, a))
-            .collect();
-        let rig = response
-            .skin_loads
-            .actuator_work_j(&reference_delta, &base_delta)?;
-        let obstacle: f64 = response
-            .obstacle_forces_n
-            .iter()
-            .zip(
-                start
-                    .obstacle
-                    .positions()
-                    .iter()
-                    .zip(end.obstacle.positions()),
-            )
-            .map(|(&f, (&a, &b))| -dot(f, sub(b, a)))
-            .sum();
-        if !obstacle.is_finite() {
-            return Err("embedded obstacle sampled work overflow");
-        }
-        Ok(EmbeddedSkinWork {
-            rig_work_j: rig,
-            obstacle_work_j: obstacle,
+        Ok(SampledEmbeddedResponse {
+            nodes,
+            start,
+            end,
+            response: self.response(nodes)?,
         })
     }
     pub(super) fn same_owner(&self, next: &Self) -> Result<(), &'static str> {
@@ -607,6 +588,75 @@ impl Body {
             c.contact
                 .path_is_open(c.pose(start), c.pose(end), &c.obstacle, &c.obstacle)
                 .is_ok_and(|open| open)
+        })
+    }
+}
+
+/// A response bound to immutable trial coordinates and admitted motion owners.
+/// No external response, coordinates or owner can be substituted after preparation.
+pub(super) struct SampledEmbeddedResponse<'a> {
+    nodes: &'a [Vec3],
+    start: &'a StationaryEmbeddedContact,
+    end: &'a StationaryEmbeddedContact,
+    response: EmbeddedContactResponse,
+}
+impl SampledEmbeddedResponse<'_> {
+    pub(super) fn positions(&self) -> &[Vec3] {
+        self.nodes
+    }
+    pub(super) fn energy_gradient(&self, gradient: &mut [Vec3]) -> Result<f64, &'static str> {
+        if gradient.len() != self.nodes.len()
+            || self.response.skin_loads.nodal_forces_n().len() != gradient.len()
+        {
+            return Err("embedded sampled response gradient size changed");
+        }
+        for (g, f) in gradient
+            .iter_mut()
+            .zip(self.response.skin_loads.nodal_forces_n())
+        {
+            for axis in 0..3 {
+                g[axis] -= f[axis];
+            }
+        }
+        Ok(self.response.potential_j)
+    }
+    pub(super) fn motion_work(&self) -> Result<EmbeddedSkinWork, &'static str> {
+        let start = self.start;
+        let end = self.end;
+        let response = &self.response;
+        let reference_delta: Vec<_> = start
+            .reference
+            .iter()
+            .zip(end.reference.iter())
+            .map(|(&a, &b)| sub(b, a))
+            .collect();
+        let base_delta: Vec<_> = start
+            .base
+            .iter()
+            .zip(end.base.iter())
+            .map(|(&a, &b)| sub(b, a))
+            .collect();
+        let rig = response
+            .skin_loads
+            .actuator_work_j(&reference_delta, &base_delta)?;
+        let obstacle: f64 = response
+            .obstacle_forces_n
+            .iter()
+            .zip(
+                start
+                    .obstacle
+                    .positions()
+                    .iter()
+                    .zip(end.obstacle.positions()),
+            )
+            .map(|(&f, (&a, &b))| -dot(f, sub(b, a)))
+            .sum();
+        if !obstacle.is_finite() {
+            return Err("embedded obstacle sampled work overflow");
+        }
+        Ok(EmbeddedSkinWork {
+            rig_work_j: rig,
+            obstacle_work_j: obstacle,
         })
     }
 }

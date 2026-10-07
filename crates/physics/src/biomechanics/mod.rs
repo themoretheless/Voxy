@@ -590,6 +590,15 @@ impl Body {
         positions: &[Vec3],
         contact: Option<&StationaryEmbeddedContact>,
     ) -> Result<(f64, Vec<Vec3>, f64), &'static str> {
+        self.evaluate_with_embedded_contact_gradient(positions, |gradient| {
+            Self::embedded_contact_energy_gradient(contact, positions, gradient)
+        })
+    }
+    fn evaluate_with_embedded_contact_gradient(
+        &self,
+        positions: &[Vec3],
+        embedded: impl FnOnce(&mut [Vec3]) -> Result<f64, &'static str>,
+    ) -> Result<(f64, Vec<Vec3>, f64), &'static str> {
         if positions.len() != self.positions.len()
             || positions.iter().flatten().any(|x| !x.is_finite())
             || self.forces.iter().flatten().any(|x| !x.is_finite())
@@ -618,8 +627,7 @@ impl Body {
         energy.add(self.bond_energy_gradient(positions, &mut g)?);
         energy.add(self.gap_energy_gradient(positions, &mut g)?);
         energy.add(self.surface_energy_gradient(positions, &mut g)?);
-        let embedded_contact_j =
-            Self::embedded_contact_energy_gradient(contact, positions, &mut g)?;
+        let embedded_contact_j = embedded(&mut g)?;
         energy.add(embedded_contact_j);
         for cavity in &self.cavities {
             if !cavity.pressure_pa.is_finite() {
