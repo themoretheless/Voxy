@@ -1894,6 +1894,24 @@ fn preconditioned_direction(
     apply: impl Fn(&[Vec3]) -> Vec<Vec3>,
     precondition: impl Fn(&[Vec3]) -> Vec<Vec3>,
 ) -> Vec<Vec3> {
+    if let Ok(value) = std::env::var("VOXY_TEST_SEARCH_ACTION_LIMIT") {
+        let limit: usize = value.parse().unwrap();
+        assert!((1..=4096).contains(&limit));
+        let report = try_preconditioned_direction_report_with_limit::<std::convert::Infallible>(
+            pinned,
+            residual,
+            |v| Ok(apply(v)),
+            precondition,
+            limit,
+        )
+        .unwrap();
+        let ratio = true_search_residual_ratio(pinned, residual, &apply(&report.direction));
+        eprintln!(
+            "TEST_SEARCH_BUDGET limit={limit} actions={} stop={:?} squared_l2_residual_ratio={ratio:?}",
+            report.actions, report.stop
+        );
+        return report.direction;
+    }
     try_preconditioned_direction::<std::convert::Infallible>(
         pinned,
         residual,
@@ -1905,12 +1923,128 @@ fn preconditioned_direction(
 
 // Backend errors propagate immediately; only an accepted numerical metric retains
 // the existing diagonal direction fallback. Physical owners decide transaction commit.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum SearchDirectionStop {
+    RecursiveTolerance,
+    IterationLimit,
+    NonpositiveRecursiveResidual,
+    InvalidCurvature,
+    InvalidDirection,
+    ZeroResidual,
+}
+struct SearchDirectionReport {
+    direction: Vec<Vec3>,
+    actions: usize,
+    stop: SearchDirectionStop,
+    initial_rz: f64,
+    final_rz: f64,
+    used_fallback: bool,
+}
 fn try_preconditioned_direction<E>(
     pinned: &[bool],
     residual: &[Vec3],
     apply: impl Fn(&[Vec3]) -> Result<Vec<Vec3>, E>,
     precondition: impl Fn(&[Vec3]) -> Vec<Vec3>,
 ) -> Result<Vec<Vec3>, E> {
+    let report = try_preconditioned_direction_report(pinned, residual, &apply, precondition)?;
+    if std::env::var_os("VOXY_CONTACT_SEARCH_VERIFY").is_some() {
+        // Optional diagnostic action; never changes the accepted direction or policy.
+        let diagnostic_action = apply(&report.direction);
+        let action_succeeded = diagnostic_action.is_ok();
+        let ratio = diagnostic_action
+            .ok()
+            .and_then(|action| true_search_residual_ratio(pinned, residual, &action));
+        eprintln!(
+            "TISSUE_SEARCH_EQUATION nodes={} diagnostic_actions=1 operator_action_succeeded={action_succeeded} squared_l2_residual_ratio={ratio:?} diagnostic_only=true",
+            residual.len()
+        );
+    }
+    if std::env::var_os("VOXY_CONTACT_SEARCH_TRACE").is_some() {
+        let ratio = (report.initial_rz > 0. && report.initial_rz.is_finite())
+            .then(|| report.final_rz / report.initial_rz);
+        eprintln!(
+            "TISSUE_SEARCH nodes={} actions={} stop={:?} used_fallback={} recursive_squared_residual_ratio={ratio:?} true_equation_residual_verified=false",
+            residual.len(),
+            report.actions,
+            report.stop,
+            report.used_fallback
+        );
+    }
+    Ok(report.direction)
+}
+fn true_search_residual_ratio(pinned: &[bool], residual: &[Vec3], action: &[Vec3]) -> Option<f64> {
+    if pinned.len() != residual.len() || action.len() != residual.len() {
+        return None;
+    }
+    let mut original = 0.;
+    let mut remaining = 0.;
+    for node in 0..residual.len() {
+        if pinned[node] {
+            continue;
+        }
+        for axis in 0..3 {
+            let r = residual[node][axis];
+            let a = action[node][axis];
+            if !r.is_finite() || !a.is_finite() {
+                return None;
+            }
+            original += r * r;
+            remaining += (r + a).powi(2);
+        }
+    }
+    if !original.is_finite() || !remaining.is_finite() {
+        return None;
+    }
+    if original == 0. {
+        return (remaining == 0.).then_some(0.);
+    }
+    let ratio = remaining / original;
+    ratio.is_finite().then_some(ratio)
+}
+#[cfg(test)]
+mod true_search_residual_tests {
+    use super::*;
+    #[test]
+    fn equation_residual_uses_returned_direction_and_free_nodes() {
+        let r = [[2., -4., 6.], [9.; 3]];
+        assert_eq!(
+            true_search_residual_ratio(&[false, true], &r, &[[-2., 4., -6.], [0.; 3]]),
+            Some(0.)
+        );
+        assert_eq!(
+            true_search_residual_ratio(&[false, true], &r, &[[0.; 3]; 2]),
+            Some(1.)
+        );
+        assert_eq!(
+            true_search_residual_ratio(&[false, true], &r, &[[-1., 2., -3.], [0.; 3]]),
+            Some(0.25)
+        );
+        assert_eq!(true_search_residual_ratio(&[false], &r, &[]), None);
+        assert_eq!(
+            true_search_residual_ratio(&[false], &[[0.; 3]], &[[1.; 3]]),
+            None
+        );
+        assert_eq!(
+            true_search_residual_ratio(&[false], &[[f64::MAX; 3]], &[[0.; 3]]),
+            None
+        );
+    }
+}
+fn try_preconditioned_direction_report<E>(
+    pinned: &[bool],
+    residual: &[Vec3],
+    apply: impl Fn(&[Vec3]) -> Result<Vec<Vec3>, E>,
+    precondition: impl Fn(&[Vec3]) -> Vec<Vec3>,
+) -> Result<SearchDirectionReport, E> {
+    try_preconditioned_direction_report_with_limit(pinned, residual, apply, precondition, 64)
+}
+fn try_preconditioned_direction_report_with_limit<E>(
+    pinned: &[bool],
+    residual: &[Vec3],
+    apply: impl Fn(&[Vec3]) -> Result<Vec<Vec3>, E>,
+    precondition: impl Fn(&[Vec3]) -> Vec<Vec3>,
+    action_limit: usize,
+) -> Result<SearchDirectionReport, E> {
     let n = residual.len();
     let inner = |a: &[Vec3], b: &[Vec3]| -> f64 { a.iter().zip(b).map(|(a, b)| dot(*a, *b)).sum() };
     let mut r: Vec<Vec3> = residual
@@ -1924,14 +2058,29 @@ fn try_preconditioned_direction<E>(
     let mut direction = vec![[0.; 3]; n];
     let initial = inner(&r, &z);
     let mut rz = initial;
-    for _ in 0..64 {
+    let mut actions = 0;
+    let mut stop = SearchDirectionStop::IterationLimit;
+    for _ in 0..action_limit {
         if rz <= initial * 1e-12 || rz <= 0. {
+            stop = if rz < 0. {
+                SearchDirectionStop::NonpositiveRecursiveResidual
+            } else {
+                SearchDirectionStop::RecursiveTolerance
+            };
             break;
         }
         let action = apply(&search)?;
+        actions += 1;
         let curvature = inner(&search, &action);
         if !curvature.is_finite() || curvature <= 0. {
-            return Ok(fallback);
+            return Ok(SearchDirectionReport {
+                direction: fallback,
+                actions,
+                stop: SearchDirectionStop::InvalidCurvature,
+                initial_rz: initial,
+                final_rz: rz,
+                used_fallback: true,
+            });
         }
         let alpha = rz / curvature;
         for node in 0..n {
@@ -1951,15 +2100,85 @@ fn try_preconditioned_direction<E>(
         rz = next;
     }
     if direction.iter().flatten().all(|v| v.is_finite()) && inner(residual, &direction) < 0. {
-        Ok(direction)
+        if matches!(stop, SearchDirectionStop::IterationLimit) && rz <= initial * 1e-12 {
+            stop = SearchDirectionStop::RecursiveTolerance;
+        }
+        Ok(SearchDirectionReport {
+            direction,
+            actions,
+            stop,
+            initial_rz: initial,
+            final_rz: rz,
+            used_fallback: false,
+        })
     } else {
-        Ok(fallback)
+        Ok(SearchDirectionReport {
+            direction: fallback,
+            actions,
+            stop: if initial == 0. && actions == 0 {
+                SearchDirectionStop::ZeroResidual
+            } else {
+                SearchDirectionStop::InvalidDirection
+            },
+            initial_rz: initial,
+            final_rz: rz,
+            used_fallback: true,
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn search_report_distinguishes_exact_inverse_budget_exhaustion_and_bad_metric() {
+        let exact = try_preconditioned_direction_report::<std::convert::Infallible>(
+            &[false],
+            &[[2., -4., 6.]],
+            |v| Ok(v.iter().map(|r| r.map(|x| 2. * x)).collect()),
+            |r| r.to_vec(),
+        )
+        .unwrap();
+        assert_eq!(exact.direction, vec![[-1., 2., -3.]]);
+        assert_eq!(exact.actions, 1);
+        assert_eq!(exact.stop, SearchDirectionStop::RecursiveTolerance);
+        assert!(!exact.used_fallback);
+        let bad = try_preconditioned_direction_report::<std::convert::Infallible>(
+            &[false],
+            &[[2., -4., 6.]],
+            |v| Ok(v.iter().map(|r| r.map(|x| -x)).collect()),
+            |r| r.to_vec(),
+        )
+        .unwrap();
+        assert_eq!(bad.stop, SearchDirectionStop::InvalidCurvature);
+        assert!(bad.used_fallback);
+        assert_eq!(bad.actions, 1);
+        let zero = try_preconditioned_direction_report::<std::convert::Infallible>(
+            &[false],
+            &[[0.; 3]],
+            |v| Ok(v.to_vec()),
+            |r| r.to_vec(),
+        )
+        .unwrap();
+        assert_eq!(zero.stop, SearchDirectionStop::ZeroResidual);
+        assert_eq!(zero.actions, 0);
+        let weights: Vec<_> = (0..96).map(|i| 10_f64.powf(i as f64 / 12.)).collect();
+        let limited = try_preconditioned_direction_report::<std::convert::Infallible>(
+            &vec![false; 96],
+            &vec![[1.; 3]; 96],
+            |v| {
+                Ok(v.iter()
+                    .zip(&weights)
+                    .map(|(r, w)| r.map(|x| x * w))
+                    .collect())
+            },
+            |r| r.to_vec(),
+        )
+        .unwrap();
+        assert_eq!(limited.actions, 64);
+        assert_eq!(limited.stop, SearchDirectionStop::IterationLimit);
+        assert!(limited.direction.iter().flatten().all(|v| v.is_finite()));
+    }
     #[test]
     fn fallible_search_stops_on_backend_error_without_diagonal_fallback() {
         let calls = std::cell::Cell::new(0);
@@ -2990,3 +3209,7 @@ mod backend_transaction_tests {
         assert!(InertialBody::assemble_tissues(&[owner, specimen()]).is_err());
     }
 }
+
+#[cfg(test)]
+#[path = "implicit/assembled_metric_profile.rs"]
+mod assembled_metric_profile;

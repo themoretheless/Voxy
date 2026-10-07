@@ -6399,6 +6399,73 @@ mod tests {
         app.stop_workers().unwrap();
     }
     #[test]
+    fn standalone_playable_fixture_quick_jump_lands_without_losing_actor() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/game");
+        let mut app = configured_app(
+            &ModelSource::Manifest {
+                path: root.join("assets.json"),
+                asset: AssetId("player".into()),
+            },
+            Some(&root.join("game.scene.json")),
+            false,
+        )
+        .unwrap();
+        app.start_standalone().unwrap();
+        let actor = app.scene.components::<CharacterBody>().next().unwrap().0;
+        for _ in 0..60 {
+            app.advance_game(1. / 60.).unwrap();
+        }
+        let before = app.scene.local(actor).unwrap().translation;
+        assert!(
+            app.play
+                .physics
+                .as_ref()
+                .unwrap()
+                .state(&app.scene, actor)
+                .unwrap()
+                .unwrap()
+                .grounded
+        );
+        app.game_key(KeyCode::Space, ElementState::Pressed).unwrap();
+        app.game_key(KeyCode::Space, ElementState::Released)
+            .unwrap();
+        let mut peak = before.y;
+        for _ in 0..180 {
+            app.advance_game(1. / 60.).unwrap();
+            let position = app.scene.local(actor).unwrap().translation;
+            assert!(position.is_finite());
+            peak = peak.max(position.y);
+            assert!(app.scene.active_in_hierarchy(actor).unwrap());
+            assert!(
+                app.scene
+                    .component::<ModelInstance>(actor)
+                    .unwrap()
+                    .is_some()
+            );
+        }
+        let after = app.scene.local(actor).unwrap().translation;
+        assert!(peak > before.y + 0.1, "quick tap must jump");
+        assert!(
+            (after.y - before.y).abs() < 1e-5,
+            "must land at starting height"
+        );
+        assert!(
+            app.play
+                .physics
+                .as_ref()
+                .unwrap()
+                .state(&app.scene, actor)
+                .unwrap()
+                .unwrap()
+                .grounded
+        );
+        eprintln!(
+            "STANDALONE_JUMP before={before:?} peak_y={peak} after={after:?} ticks={}",
+            app.play.simulation_ticks
+        );
+        app.stop_workers().unwrap();
+    }
+    #[test]
     fn standalone_uses_fixed_loop_without_preview_spin_or_authoring_controls() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/quad.obj");

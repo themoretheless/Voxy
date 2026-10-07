@@ -379,11 +379,17 @@ mod tests {
 }
 
 #[derive(Clone, Debug)]
+struct SourceReferenceNodes {
+    aliases: Vec<Option<Vec<usize>>>,
+    interior: Option<physics::biomechanics::HarmonicReference>,
+}
+
+#[derive(Clone, Debug)]
 pub(super) struct GlobalSkinBinding {
     embedding: Arc<EmbeddedSurface>,
     owners: Vec<Option<usize>>,
     skin_reference: Vec<[f64; 3]>,
-    source_reference_nodes: Option<Vec<Vec<usize>>>,
+    source_reference_nodes: Option<SourceReferenceNodes>,
     rest: Vec<[f64; 3]>,
     cells: Vec<[usize; 4]>,
     node_ranges: Vec<Range<usize>>,
@@ -484,17 +490,30 @@ impl TissueDemo {
         for (i, &p) in skin.iter().enumerate() {
             aliases.entry(key(p)).or_default().push(i);
         }
-        let nodes = global
+        let nodes: Vec<_> = global
             .rest
             .iter()
-            .map(|&p| {
-                aliases
-                    .get(&key(p))
-                    .cloned()
-                    .ok_or("volume reference node missing from source skin")
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-        global.source_reference_nodes = Some(nodes);
+            .map(|&p| aliases.get(&key(p)).cloned())
+            .collect();
+        let interior = if nodes.iter().any(Option::is_none) {
+            let mesh = physics::biomechanics::TetraMesh::from_tetrahedra(
+                global.rest.clone(),
+                global.cells.clone(),
+            )?;
+            if mesh.boundary.iter().flatten().any(|&i| nodes[i].is_none()) {
+                return Err("volume reference node missing from source skin");
+            }
+            Some(physics::biomechanics::HarmonicReference::new(
+                &mesh,
+                nodes.iter().map(Option::is_some).collect(),
+            )?)
+        } else {
+            None
+        };
+        global.source_reference_nodes = Some(SourceReferenceNodes {
+            aliases: nodes,
+            interior,
+        });
         Ok(binding)
     }
     pub(super) fn deform_assembled_skin(
@@ -562,6 +581,41 @@ mod skin_tests {
         solid.restore_diagnostic_positions(positions).unwrap();
         *dynamics =
             InertialBody::new(solid, &vec![1000.; count], vec![[0.; 3]; positions.len()]).unwrap();
+    }
+    #[test]
+    fn source_reference_extends_affine_skin_to_free_interior_nodes() {
+        let mesh = physics::biomechanics::TetraMesh::from_tetrahedra(
+            vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.], [0.25; 3]],
+            vec![[0, 1, 2, 4], [0, 1, 4, 3], [0, 4, 2, 3], [4, 1, 2, 3]],
+        )
+        .unwrap();
+        let mut demo = TissueDemo::body_from_region_specs(vec![TissueRegionSpec::illustrative(
+            mesh.clone(),
+            vec![],
+            0,
+        )])
+        .unwrap();
+        demo.assemble_regions().unwrap();
+        let mut skin = mesh.points[..4].to_vec();
+        skin.push(skin[0]);
+        let binding = demo.bind_skin_source_reference(&skin).unwrap();
+        let transform = |p: [f64; 3]| [0.3 + p[0] + 0.2 * p[1], p[1] - 0.4, p[2] + 0.1];
+        let mut posed: Vec<_> = skin.iter().copied().map(transform).collect();
+        let reference = binding
+            .posed_reference_nodes(&[DMat4::IDENTITY], &posed)
+            .unwrap();
+        for (i, p) in reference.iter().enumerate() {
+            let expected = transform(mesh.points[i]);
+            for axis in 0..3 {
+                assert!((p[axis] - expected[axis]).abs() < 1e-13);
+            }
+        }
+        posed[4][0] += 1e-9;
+        assert!(
+            binding
+                .posed_reference_nodes(&[DMat4::IDENTITY], &posed)
+                .is_err()
+        );
     }
     #[test]
     fn source_reference_nodes_transfer_nonrigid_pose_and_reject_alias_separation() {
@@ -944,16 +998,26 @@ impl GlobalSkinBinding {
             if skin.len() != self.vertex_count || skin.iter().flatten().any(|x| !x.is_finite()) {
                 return Err("invalid posed source reference");
             }
-            return nodes
+            let reference = nodes
+                .aliases
                 .iter()
-                .map(|aliases| {
+                .enumerate()
+                .map(|(i, aliases)| {
+                    let Some(aliases) = aliases else {
+                        return Ok(self.rest[i]);
+                    };
                     let first = skin[aliases[0]];
                     if aliases.iter().any(|&i| skin[i] != first) {
                         return Err("source reference aliases separated");
                     }
                     Ok(first)
                 })
-                .collect();
+                .collect::<Result<Vec<_>, _>>()?;
+            return if let Some(interior) = &nodes.interior {
+                interior.extend(&reference, 1e-12, self.rest.len().saturating_mul(4))
+            } else {
+                Ok(reference)
+            };
         }
         let mut reference = self.rest.clone();
         for (range, joint) in self.node_ranges.iter().zip(&self.joints) {

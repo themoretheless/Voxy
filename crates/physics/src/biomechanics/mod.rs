@@ -10,7 +10,9 @@ pub use vascular_pore::{
 };
 mod mixed_darcy;
 pub(crate) use mixed_darcy::solve_protein;
+mod harmonic_reference;
 mod tetra_mesh;
+pub use harmonic_reference::HarmonicReference;
 pub use mixed_darcy::{
     DarcyFace, DarcyResponse, DarcySolve, MixedDarcy, PoreReservoir, ProteinMembrane,
 };
