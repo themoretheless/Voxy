@@ -1,0 +1,12 @@
+{
+  "format_and_diff_check": "passed",
+  "physics_tests_passed": 181,
+  "physics_tests_ignored": 9,
+  "moisture_tests_passed": 31,
+  "liquid_tests_passed": 6,
+  "liquid_tests_ignored": 1,
+  "wet_example_tests_passed": 1,
+  "immutable_energy_prefix_audit": "passed",
+  "full_clip_qualified": false,
+  "live_calculations_preserved": true
+}

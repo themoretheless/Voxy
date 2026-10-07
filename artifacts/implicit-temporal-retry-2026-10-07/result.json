@@ -1,0 +1,14 @@
+{
+  "status": "release contact suites and strict full-volume short runtime/audit passed; full clip candidate live",
+  "physics_tests_passed": 181,
+  "physics_tests_ignored": 9,
+  "short_runtime_exit_code": 0,
+  "short_native_audit_passed": true,
+  "short_checkpoints_exactly_equal_baseline": true,
+  "scope": "Only adaptive callers with authored domains excluding every outer/embedded contact pair use the bounded nonlinear quadrature rescue before temporal refinement. Fixed-step and eligible-contact rescue policy remain unchanged. Physical force/work/CCD/nonlinear gates unchanged.",
+  "baseline_pid": 5623,
+  "candidate_pid": 14525,
+  "candidate_exec_session": 49153,
+  "full_clip_complete": false,
+  "speedup_measured": false
+}

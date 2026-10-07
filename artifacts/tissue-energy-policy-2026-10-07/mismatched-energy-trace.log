@@ -1,0 +1,17 @@
+
+running 1 test
+test collision_tests::audits_completed_full_rig_supported_capture_against_native_clip ... FAILED
+
+failures:
+
+failures:
+    collision_tests::audits_completed_full_rig_supported_capture_against_native_clip
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 67 filtered out; finished in 0.09s
+
+
+thread 'collision_tests::audits_completed_full_rig_supported_capture_against_native_clip' (2231796) panicked at crates/voxy_app/examples/body_motion_snapshot.rs:1250:17:
+assertion `left == right` failed: energy trace differs from node checkpoint
+  left: Array [Array [Number(-0.00006721196987532346), Number(-0.00006651510995442456), Number(6.968599202835663e-7), Number(-5.820857098953721e-16)]]
+ right: Array [Array [Number(-0.00006721196987432346), Number(-0.00006651510995442456), Number(6.968599202835663e-7), Number(-5.820857098953721e-16)]]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

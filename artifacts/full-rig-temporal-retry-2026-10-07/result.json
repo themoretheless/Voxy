@@ -1,0 +1,17 @@
+{
+  "status": "live; full clip unqualified",
+  "pid": 14525,
+  "exec_session": 49153,
+  "requested_steps": 480,
+  "requested_time_s": 2.0,
+  "energy_rate_j_s": 5e-10,
+  "per_frame_energy_trace": true,
+  "full_clip_complete": false,
+  "native_prefix_audit_passed": true,
+  "observed_committed_frames": 35,
+  "observed_time_s": 0.14583333333333334,
+  "maximum_frame_energy_defect_j": 1.053046538856961e-13,
+  "frame_energy_budget_j": 2.0833333333333334e-12,
+  "final_cumulative_energy_defect_j": 2.1316282072803006e-14,
+  "shared_completed_audit_regression_passed": true
+}

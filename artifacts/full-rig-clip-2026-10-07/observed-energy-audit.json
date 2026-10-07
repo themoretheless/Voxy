@@ -1,0 +1,30 @@
+[
+  {
+    "time_s": 0.0,
+    "independent_balance_j": 0.0
+  },
+  {
+    "time_s": 0.05,
+    "independent_balance_j": -1.9991601082902655e-10
+  },
+  {
+    "time_s": 0.1,
+    "independent_balance_j": -2.963084222429302e-10
+  },
+  {
+    "time_s": 0.15,
+    "independent_balance_j": 1.2151257777759383e-10
+  },
+  {
+    "time_s": 0.2,
+    "independent_balance_j": -1.2854473041556957e-10
+  },
+  {
+    "time_s": 0.25,
+    "independent_balance_j": 1.4014789329053201e-09
+  },
+  {
+    "time_s": 0.3,
+    "independent_balance_j": 4.8762149873482485e-09
+  }
+]

@@ -470,6 +470,22 @@ fn capture_schedule(
     };
     Ok((snapshots, steps))
 }
+fn write_energy_frame(
+    stream: &mut impl std::io::Write,
+    step: usize,
+    receipts: &[[f64; 4]],
+) -> Result<(), Box<dyn std::error::Error>> {
+    serde_json::to_writer(
+        &mut *stream,
+        &serde_json::json!({
+            "step":step,"time_s":step as f64 / 240.,"energy_receipts":receipts
+        }),
+    )?;
+    stream.write_all(b"\n")?;
+    stream.flush()?;
+    Ok(())
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)
@@ -916,6 +932,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut node_stream = capture_node_state
         .then(|| std::fs::File::create(std::path::Path::new(&path).with_extension("nodes.jsonl")))
         .transpose()?;
+    // Energy receipts are small enough to retain every committed physical frame,
+    // even when expensive node/render checkpoints are sampled less frequently.
+    let mut energy_stream = capture_node_state
+        .then(|| std::fs::File::create(std::path::Path::new(&path).with_extension("energy.jsonl")))
+        .transpose()?;
+    if let Some(stream) = &mut energy_stream {
+        write_energy_frame(stream, 0, &demo.body_energy_receipts()?)?;
+    }
     let mut motion = String::from(
         "time_s,sample,offset_x_m,offset_y_m,offset_z_m,volume_m3,mechanical_change_j,support_work_j,viscous_heat_j,numerical_defect_j\n",
     );
@@ -955,6 +979,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 demo.advance(1. / 240.)?;
             }
             elapsed += 1;
+            if let Some(stream) = &mut energy_stream {
+                write_energy_frame(stream, elapsed, &demo.body_energy_receipts()?)?;
+            }
         }
         stage_seconds[0] += stage_start.elapsed().as_secs_f64();
         let stage_start = std::time::Instant::now();
@@ -1147,6 +1174,55 @@ mod collision_tests {
         }
         assert_eq!(capture_schedule(true, true, None).unwrap().1.len(), 41);
     }
+    fn audit_committed_energy_frames(frames: &[serde_json::Value], rate: f64) -> (f64, f64) {
+        assert!(!frames.is_empty());
+        assert!(rate.is_finite() && rate > 0.);
+        let mut previous = 0.;
+        let mut maximum_frame_balance = 0_f64;
+        for (step, frame) in frames.iter().enumerate() {
+            assert_eq!(frame["step"].as_u64().unwrap(), step as u64);
+            assert_eq!(frame["time_s"].as_f64().unwrap(), step as f64 / 240.);
+            let receipts: Vec<[f64; 4]> =
+                serde_json::from_value(frame["energy_receipts"].clone()).unwrap();
+            assert_eq!(receipts.len(), 1);
+            assert!(receipts[0].iter().all(|v| v.is_finite()));
+            let balance = receipts[0][0] - receipts[0][1] + receipts[0][2];
+            if step == 0 {
+                assert_eq!(balance, 0.);
+            } else {
+                let defect = (balance - previous).abs();
+                maximum_frame_balance = maximum_frame_balance.max(defect);
+                assert!(defect <= rate / 240., "per-frame energy budget exceeded");
+                assert!(
+                    balance.abs() <= rate * step as f64 / 240.,
+                    "per-frame cumulative energy budget exceeded"
+                );
+            }
+            previous = balance;
+        }
+        (maximum_frame_balance, previous.abs())
+    }
+    #[test]
+    #[ignore = "manual immutable live-prefix observation; not full-clip qualification"]
+    fn audits_committed_rig_energy_prefix() {
+        let path = std::env::var("VOXY_RIG_SUPPORTED_ENERGY_CAPTURE").unwrap();
+        let frames: Vec<serde_json::Value> = std::fs::read_to_string(path)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert!(frames.len() > 1);
+        let rate: f64 = std::env::var("VOXY_RIG_SUPPORTED_ENERGY_RATE_J_S")
+            .unwrap()
+            .parse()
+            .unwrap();
+        let (frame, cumulative) = audit_committed_energy_frames(&frames, rate);
+        eprintln!(
+            "LIVE_PREFIX_ENERGY_AUDIT committed_frames={} last_time_s={} maximum_frame_defect_j={frame:.17e} final_cumulative_defect_j={cumulative:.17e} full_clip_qualified=false",
+            frames.len() - 1,
+            frames.last().unwrap()["time_s"]
+        );
+    }
     #[test]
     #[ignore = "manual full-volume runtime checkpoint audit; requires VOXY_RIG_SUPPORTED_CAPTURE"]
     fn audits_completed_full_rig_supported_capture_against_native_clip() {
@@ -1177,6 +1253,40 @@ mod collision_tests {
             .unwrap();
         let (_, expected_steps) = capture_schedule(true, end > 3, Some(end)).unwrap();
         assert_eq!(rows.len(), expected_steps.len());
+        let energy_rate = std::env::var("VOXY_RIG_SUPPORTED_ENERGY_RATE_J_S")
+            .ok()
+            .map(|v| v.parse::<f64>().expect("finite positive energy rate"));
+        if let Some(rate) = energy_rate {
+            assert!(rate.is_finite() && rate > 0.);
+        }
+        let energy_frames: Option<Vec<serde_json::Value>> =
+            std::env::var("VOXY_RIG_SUPPORTED_ENERGY_CAPTURE")
+                .ok()
+                .map(|path| {
+                    std::fs::read_to_string(path)
+                        .unwrap()
+                        .lines()
+                        .map(|line| serde_json::from_str(line).unwrap())
+                        .collect()
+                });
+        if let Some(frames) = &energy_frames {
+            assert_eq!(frames.len(), end + 1, "incomplete per-frame energy capture");
+            let rate = energy_rate.expect("per-frame audit requires authored energy rate");
+            let (maximum_frame_balance, _) = audit_committed_energy_frames(frames, rate);
+            for (index, row) in rows.iter().enumerate() {
+                assert_eq!(
+                    row["energy_receipts"], frames[expected_steps[index]]["energy_receipts"],
+                    "energy trace differs from node checkpoint"
+                );
+            }
+            eprintln!(
+                "FULL_RIG_PER_FRAME_ENERGY_AUDIT frames={} maximum_frame_balance_j={maximum_frame_balance:.17e}",
+                frames.len()
+            );
+        }
+        let mut previous_balance = 0.;
+        let mut previous_time = 0.;
+        let mut maximum_interval_balance = 0_f64;
         let mut maximum_pin_error = 0_f64;
         let mut maximum_balance = 0_f64;
         let mut maximum_free_motion = 0_f64;
@@ -1209,6 +1319,22 @@ mod collision_tests {
             let independent = receipts[0][0] - receipts[0][1] + receipts[0][2];
             maximum_balance = maximum_balance.max(independent.abs());
             assert!(independent.abs() < 1e-9);
+            if step > 0 {
+                let interval_balance = (independent - previous_balance).abs();
+                maximum_interval_balance = maximum_interval_balance.max(interval_balance);
+                if let Some(rate) = energy_rate {
+                    assert!(
+                        interval_balance <= rate * (time - previous_time),
+                        "independent interval energy budget exceeded: {interval_balance:.17e}"
+                    );
+                    assert!(
+                        independent.abs() <= rate * time,
+                        "independent cumulative energy budget exceeded: {independent:.17e}"
+                    );
+                }
+            }
+            previous_balance = independent;
+            previous_time = time;
             if step + 1 == rows.len() {
                 assert!(receipts[0][1].abs() > 1e-6);
             }
@@ -1216,7 +1342,7 @@ mod collision_tests {
         assert!(maximum_pin_error < 1e-13);
         assert!(maximum_free_motion > 1e-6);
         eprintln!(
-            "FULL_RIG_SUPPORTED_AUDIT checkpoints={} nodes=2338 cells=6845 pins=3 final_time_s={} maximum_pin_error_m={maximum_pin_error:.17e} maximum_independent_balance_j={maximum_balance:.17e} maximum_free_motion_m={maximum_free_motion:.17e}",
+            "FULL_RIG_SUPPORTED_AUDIT checkpoints={} nodes=2338 cells=6845 pins=3 final_time_s={} maximum_pin_error_m={maximum_pin_error:.17e} maximum_independent_balance_j={maximum_balance:.17e} maximum_free_motion_m={maximum_free_motion:.17e} maximum_interval_balance_j={maximum_interval_balance:.17e} authored_rate_j_s={energy_rate:?}",
             rows.len(),
             end as f64 / 240.
         );

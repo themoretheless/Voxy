@@ -1,0 +1,26 @@
+{
+  "frames": [
+    {
+      "frame": 0,
+      "left_changed_pixels": 0,
+      "right_changed_pixels": 0
+    },
+    {
+      "frame": 1,
+      "left_changed_pixels": 0,
+      "right_changed_pixels": 5076
+    },
+    {
+      "frame": 2,
+      "left_changed_pixels": 0,
+      "right_changed_pixels": 8777
+    },
+    {
+      "frame": 3,
+      "left_changed_pixels": 11469,
+      "right_changed_pixels": 12501
+    }
+  ],
+  "rgb_difference_threshold": 2,
+  "scope": "same-frame GPU background differential; paired fixture halves, not calibrated optics"
+}

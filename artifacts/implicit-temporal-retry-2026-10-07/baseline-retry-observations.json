@@ -1,0 +1,18 @@
+{
+  "scope": "Observed live baseline nonlinear retry diagnostics; not terminal failure or speed comparison",
+  "baseline_process_id": 5623,
+  "recent_diagnostics": [
+    "IMPLICIT_NONLINEAR_LIMIT dt=1.04166666666666665e-3 weighted_residual_j=8.79224108212502440e-17 residual_budget_j=2.60416666666666687e-17 residual_impulse_work_j=1.22002440159045062e-13 impulse_work_budget_j=3.25520833333333345e-14 maximum_residual_n=3.12672795191228786e-7 maximum_direction_m=3.63484562022662170e-12 maximum_diagonal_n_m=7.51954271552075259e6 minimum_inertia_n_m=2.64832454079234537e2",
+    "IMPLICIT_NONLINEAR_QUADRATURE_RETRY attempt=0 panels=2 reason=\"implicit contact nonlinear nonconvergence\"",
+    "IMPLICIT_NONLINEAR_LIMIT dt=1.04166666666666665e-3 weighted_residual_j=3.56871849987707778e-17 residual_budget_j=2.60416666666666687e-17 residual_impulse_work_j=-7.44610871219936259e-13 impulse_work_budget_j=3.25520833333333345e-14 maximum_residual_n=2.52141363357716308e-7 maximum_direction_m=1.97923312845159450e-12 maximum_diagonal_n_m=7.51954271552075259e6 minimum_inertia_n_m=2.64832454079234537e2",
+    "IMPLICIT_NONLINEAR_QUADRATURE_RETRY attempt=0 panels=2 reason=\"implicit contact nonlinear nonconvergence\"",
+    "IMPLICIT_NONLINEAR_LIMIT dt=1.04166666666666665e-3 weighted_residual_j=1.09283473954778813e-16 residual_budget_j=2.60416666666666687e-17 residual_impulse_work_j=-1.20026081167021106e-12 impulse_work_budget_j=3.25520833333333345e-14 maximum_residual_n=3.50512545765901962e-7 maximum_direction_m=1.57774736468315653e-12 maximum_diagonal_n_m=7.51954271552075259e6 minimum_inertia_n_m=2.64832454079234537e2",
+    "IMPLICIT_NONLINEAR_QUADRATURE_RETRY attempt=0 panels=2 reason=\"implicit contact nonlinear nonconvergence\"",
+    "IMPLICIT_NONLINEAR_LIMIT dt=1.04166666666666665e-3 weighted_residual_j=8.12642176341265931e-15 residual_budget_j=2.60416666666666687e-17 residual_impulse_work_j=-6.61253466704915204e-13 impulse_work_budget_j=3.25520833333333345e-14 maximum_residual_n=2.22199374570741792e-6 maximum_direction_m=3.89001294198425635e-12 maximum_diagonal_n_m=7.51954271552075259e6 minimum_inertia_n_m=2.64832454079234537e2",
+    "IMPLICIT_NONLINEAR_QUADRATURE_RETRY attempt=1 panels=4 reason=\"implicit contact nonlinear nonconvergence\"",
+    "IMPLICIT_NONLINEAR_LIMIT dt=1.04166666666666665e-3 weighted_residual_j=2.00663799609161271e-17 residual_budget_j=2.60416666666666687e-17 residual_impulse_work_j=3.09455764233978574e-13 impulse_work_budget_j=3.25520833333333345e-14 maximum_residual_n=1.53919778313974659e-7 maximum_direction_m=1.18561986604106879e-12 maximum_diagonal_n_m=7.51954271552075259e6 minimum_inertia_n_m=2.64832454079234537e2",
+    "IMPLICIT_NONLINEAR_QUADRATURE_RETRY attempt=2 panels=8 reason=\"implicit contact nonlinear nonconvergence\"",
+    "IMPLICIT_NONLINEAR_LIMIT dt=1.04166666666666665e-3 weighted_residual_j=2.01800524655720861e-16 residual_budget_j=2.60416666666666687e-17 residual_impulse_work_j=-4.15483255712473182e-13 impulse_work_budget_j=3.25520833333333345e-14 maximum_residual_n=5.28557004886298643e-7 maximum_direction_m=6.47986717924575968e-12 maximum_diagonal_n_m=7.51954271552075259e6 minimum_inertia_n_m=2.64832454079234537e2",
+    "IMPLICIT_NONLINEAR_QUADRATURE_RETRY attempt=3 panels=16 reason=\"implicit contact nonlinear nonconvergence\""
+  ]
+}

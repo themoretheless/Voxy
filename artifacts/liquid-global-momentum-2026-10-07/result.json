@@ -1,0 +1,25 @@
+{
+  "status": "native liquid regressions and existing finite-source Metal snapshot runtime passed",
+  "release_tests_passed": 6,
+  "release_tests_ignored": 1,
+  "physical_steps": 120,
+  "maximum_global_momentum_balance_kg_m_s": 1.865174681370263e-14,
+  "admission_tolerance_kg_m_s": 1e-09,
+  "balance_components": [
+    "living liquid particles",
+    "finite gas cells",
+    "captured and rebound impulse to stationary substrate",
+    "gas wall impulses",
+    "carrier gravity impulse",
+    "droplet flight impulse",
+    "emission source momentum"
+  ],
+  "corrupted_impulse_frame_atomic_rejection_passed": true,
+  "finite_source_regression_passed": true,
+  "scope": "Existing native water/oil SPH carrier and explicitly marked droplets, prescribed stationary film, finite gas and optional translating finite source. Not calibrated splash onset, moving deformable substrate, or a full fluid continuum qualification.",
+  "gpu_runtime_exit_code": 0,
+  "gpu_adapter": "Apple M4 Max",
+  "gpu_backend": "Metal",
+  "rendered_film_cells_final": 205,
+  "visual_inspection": "Four-phase water/oil paired composite exists; water highlights are small and pixel classifier reported zero water pixels. Runtime completion is not universal optical appearance qualification."
+}

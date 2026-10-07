@@ -1,0 +1,95 @@
+{
+  "status": "three native Metal runtime optical-presence checks and analytic GPU regression passed",
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "cases": [
+    {
+      "case": "finite-impacts",
+      "runtime_exit_code": 0,
+      "audit": {
+        "frames": [
+          {
+            "frame": 0,
+            "left_changed_pixels": 0,
+            "right_changed_pixels": 0
+          },
+          {
+            "frame": 1,
+            "left_changed_pixels": 544,
+            "right_changed_pixels": 1362
+          },
+          {
+            "frame": 2,
+            "left_changed_pixels": 1293,
+            "right_changed_pixels": 1989
+          },
+          {
+            "frame": 3,
+            "left_changed_pixels": 3607,
+            "right_changed_pixels": 4778
+          }
+        ],
+        "rgb_difference_threshold": 2,
+        "scope": "same-frame GPU background differential; paired fixture halves, not calibrated optics"
+      }
+    },
+    {
+      "case": "reservoirs",
+      "runtime_exit_code": 0,
+      "audit": {
+        "frames": [
+          {
+            "frame": 0,
+            "left_changed_pixels": 8744,
+            "right_changed_pixels": 12320
+          },
+          {
+            "frame": 1,
+            "left_changed_pixels": 8265,
+            "right_changed_pixels": 11749
+          },
+          {
+            "frame": 2,
+            "left_changed_pixels": 10211,
+            "right_changed_pixels": 13115
+          }
+        ],
+        "rgb_difference_threshold": 2,
+        "scope": "same-frame GPU background differential; paired fixture halves, not calibrated optics"
+      }
+    },
+    {
+      "case": "water-close",
+      "runtime_exit_code": 0,
+      "audit": {
+        "frames": [
+          {
+            "frame": 0,
+            "left_changed_pixels": 0,
+            "right_changed_pixels": 0
+          },
+          {
+            "frame": 1,
+            "left_changed_pixels": 0,
+            "right_changed_pixels": 5076
+          },
+          {
+            "frame": 2,
+            "left_changed_pixels": 0,
+            "right_changed_pixels": 8777
+          },
+          {
+            "frame": 3,
+            "left_changed_pixels": 11469,
+            "right_changed_pixels": 12501
+          }
+        ],
+        "rgb_difference_threshold": 2,
+        "scope": "same-frame GPU background differential; paired fixture halves, not calibrated optics"
+      }
+    }
+  ],
+  "scope": "Actual paired fixture rendered contribution relative to same-frame opaque background. Not color classification, calibrated refractive error, universal camera/material appearance, or non-Metal hardware qualification.",
+  "analytic_gpu_tests_passed": 1,
+  "analytic_gpu_test": "sphere_path_scale_additivity_and_opaque_occlusion"
+}

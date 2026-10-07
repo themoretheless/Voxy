@@ -1,8 +1,10 @@
 //! Finite-capacity linear moisture diffusion network with open-boundary accounting.
 mod cohesive;
 pub use cohesive::{CohesiveCalibration, CohesiveProperties};
+mod film;
 mod material;
 mod supply;
+pub use film::FilmSupply;
 pub use material::{Calibration, Properties};
 pub use supply::{SupplyTransfer, WaterSupply};
 #[derive(Clone, Copy, Debug)]

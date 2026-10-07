@@ -1,0 +1,29 @@
+{
+  "scope": "Completed saved checkpoints only; no full-clip claim or per-unsaved-frame audit",
+  "observations": [
+    {
+      "time_s": 0.0,
+      "nodes": 2338,
+      "independent_balance_j": 0.0,
+      "cumulative_budget_j": 0.0,
+      "cumulative_gate_passed": true,
+      "saved_interval_gate_passed": true
+    },
+    {
+      "time_s": 0.05,
+      "nodes": 2338,
+      "independent_balance_j": 1.0853470899796491e-13,
+      "cumulative_budget_j": 2.5000000000000004e-11,
+      "cumulative_gate_passed": true,
+      "saved_interval_gate_passed": true
+    },
+    {
+      "time_s": 0.1,
+      "nodes": 2338,
+      "independent_balance_j": 1.6658896484500474e-13,
+      "cumulative_budget_j": 5.000000000000001e-11,
+      "cumulative_gate_passed": true,
+      "saved_interval_gate_passed": true
+    }
+  ]
+}

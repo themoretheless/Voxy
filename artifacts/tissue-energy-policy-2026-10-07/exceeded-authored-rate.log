@@ -1,0 +1,15 @@
+
+running 1 test
+test collision_tests::audits_completed_full_rig_supported_capture_against_native_clip ... FAILED
+
+failures:
+
+failures:
+    collision_tests::audits_completed_full_rig_supported_capture_against_native_clip
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 67 filtered out; finished in 0.09s
+
+
+thread 'collision_tests::audits_completed_full_rig_supported_capture_against_native_clip' (2224449) panicked at crates/voxy_app/examples/body_motion_snapshot.rs:1225:21:
+independent interval energy budget exceeded: 9.99993846592645737e-11
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

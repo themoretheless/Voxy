@@ -1,0 +1,74 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.55s
+     Running tests/moisture_film.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/moisture_film-b08b1475ebe7fd76)
+
+running 3 tests
+test unrepresentable_film_drain_rejects_the_completed_material_candidate ... ok
+test film_uptake_matches_capped_network_and_drying_closes_water_and_latent_energy ... ok
+test invalid_or_duplicate_ownership_preserves_both_inventories ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moisture_supply.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/moisture_supply-fafcb312c9566dd7)
+
+running 3 tests
+test finite_pool_exhaustion_limits_uptake_and_preserves_combined_water ... ok
+test capped_source_and_uncapped_source_couple_through_the_same_network ... ok
+test parallel_pools_and_invalid_updates_are_atomic ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moisture_vapor.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/moisture_vapor-bfc6ef23a8ef9fd8)
+
+running 13 tests
+test heat_deposition_is_bounded_atomic_and_energy_accounted ... ok
+test closed_drying_and_condensation_match_two_capacity_implicit_solution ... ok
+test effective_thermal_capacity_cannot_hide_negative_dry_capacity ... ok
+test material_vapor_conduction_matches_exact_two_store_solution ... ok
+test closed_enthalpy_transfer_changes_heat_capacities_and_preserves_energy ... ok
+test opposing_water_fluxes_transport_sensible_heat_even_with_zero_net_mass ... ok
+test thermal_exchange_cools_or_heats_and_domain_failure_is_atomic ... ok
+test insufficient_heat_and_invalid_links_leave_both_owners_unchanged ... ok
+ADAPTIVE_MOISTURE initial_material=0.01 tolerance=1e-7 mass_error=7.86614941754543e-7
+ADAPTIVE_MOISTURE initial_material=0.01 tolerance=1e-9 mass_error=7.959485775143292e-8
+test long_closed_exchange_equilibrates_without_losing_water_or_latent_energy ... ok
+PREPARED_MULTICELL max_mass_error_kg=2.229189069447024e-9 attempts=282 accepted=278
+test prepared_multicell_thermal_network_matches_independent_ode_with_opposing_fluxes ... ok
+test heated_mass_exchange_conserves_long_run_and_refines_in_time ... ok
+ADAPTIVE_MOISTURE initial_material=0.01 tolerance=1e-11 mass_error=7.964822640240277e-9
+ADAPTIVE_MOISTURE initial_material=0 tolerance=1e-7 mass_error=3.2200024996896504e-7
+ADAPTIVE_MOISTURE initial_material=0 tolerance=1e-9 mass_error=3.159138178918802e-8
+THERMAL_VAPOR_RECEIPT ThermalVaporStep { transfer: VaporTransfer { material_water_change_kg: [-0.0004827449385131667], vapor_water_change_kg: 0.00048274493851326554, latent_exchange_j: 1158.5878524318373, mass_defect_kg: 9.882502802205373e-17, energy_defect_j: 8.731149137020111e-10 }, elapsed_s: 0.5, attempts: 1025, accepted_intervals: 1020, rejected_attempts: 5, minimum_interval_s: 0.00014986339070671706 }
+test adaptive_receipt_reports_complete_time_and_temperature_floor_rejects_atomically ... ok
+ADAPTIVE_MOISTURE initial_material=0 tolerance=1e-11 mass_error=3.1718436271574446e-9
+test adaptive_thermal_drying_converges_to_independent_closed_reservoir_ode_and_rolls_back ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_withdrawal.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/surface_film_withdrawal-1b2a480374dbaa1e)
+
+running 12 tests
+test canonical_mass_survives_inexact_volume_projection_and_complete_removal ... ok
+test mass_depletion_does_not_overdraw_when_volume_roundtrip_rounds_up ... ok
+test kilogram_deposit_rejects_species_growth_below_bulk_resolution ... ok
+test kilogram_withdrawals_deplete_exactly_and_reject_late_overdraw_atomically ... ok
+test late_invalid_requests_and_repeated_overdraw_preserve_complete_state ... ok
+test selective_removal_preserves_residue_and_bulk_species_ledger ... ok
+test signed_zero_withdrawal_preserves_zero_inventory_representation ... ok
+test kilogram_deposits_balance_species_and_bulk_across_repeated_cells ... ok
+test unrepresentable_incoming_mass_does_not_create_volume ... ok
+test kilogram_deposit_late_failure_and_unresolved_flux_preserve_inventory ... ok
+test species_change_below_bulk_resolution_is_rejected_without_ghost_parcel ... ok
+test zero_and_sub_ulp_flux_do_not_credit_phantom_mass ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

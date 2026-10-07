@@ -1,0 +1,20 @@
+[
+  {
+    "case": "missing-energy-frame",
+    "expected_rejection": "incomplete per-frame energy capture",
+    "exit_code": 101,
+    "passed": true
+  },
+  {
+    "case": "compensated-energy-error",
+    "expected_rejection": "per-frame energy budget exceeded",
+    "exit_code": 101,
+    "passed": true
+  },
+  {
+    "case": "mismatched-energy-trace",
+    "expected_rejection": "energy trace differs from node checkpoint",
+    "exit_code": 101,
+    "passed": true
+  }
+]

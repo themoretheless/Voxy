@@ -1,0 +1,29 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 12.55s
+     Running tests/moisture_film.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/moisture_film-b08b1475ebe7fd76)
+
+running 2 tests
+
+thread 'film_uptake_matches_capped_network_and_drying_closes_water_and_latent_energy' (2271267) panicked at crates/physics/tests/moisture_film.rs:62:10:
+called `Result::unwrap()` on an `Err` value: "film uptake decrement differs from supplied water"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test invalid_or_duplicate_ownership_preserves_both_inventories ... ok
+test film_uptake_matches_capped_network_and_drying_closes_water_and_latent_energy ... FAILED
+
+failures:
+
+failures:
+    film_uptake_matches_capped_network_and_drying_closes_water_and_latent_energy
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test moisture_film`

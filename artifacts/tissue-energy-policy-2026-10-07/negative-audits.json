@@ -1,0 +1,23 @@
+{
+  "scope": "Native checkpoint auditor rejection of incomplete captures, energy gate violation, and incorrect imported source pins",
+  "cases": [
+    {
+      "case": "incomplete-full-clip",
+      "exit_code": 101,
+      "expected_rejection": "assertion `left == right` failed",
+      "passed": true
+    },
+    {
+      "case": "exceeded-authored-rate",
+      "exit_code": 101,
+      "expected_rejection": "independent interval energy budget exceeded",
+      "passed": true
+    },
+    {
+      "case": "displaced-source-pin",
+      "exit_code": 101,
+      "expected_rejection": "maximum_pin_error < 1e-13",
+      "passed": true
+    }
+  ]
+}

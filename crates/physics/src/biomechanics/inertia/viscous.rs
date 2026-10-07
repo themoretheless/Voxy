@@ -383,7 +383,7 @@ impl InertialBody {
                     let mut coarse = fine.clone();
                     let endpoint = interpolate(index, count);
                     trial_steps += 1;
-                    coarse.step_viscoelastic_contacts_controlled::<IMPLICIT>(
+                    coarse.step_viscoelastic_contacts_controlled::<IMPLICIT, false>(
                         endpoint.as_deref(),
                         None,
                         None,
@@ -398,18 +398,19 @@ impl InertialBody {
                     for half_index in [2 * index - 1, 2 * index] {
                         let endpoint = interpolate(half_index, 2 * count);
                         trial_steps += 1;
-                        let (report, _) = fine.step_viscoelastic_contacts_controlled::<IMPLICIT>(
-                            endpoint.as_deref(),
-                            None,
-                            None,
-                            dt / (2 * count) as f64,
-                            energy_tolerance_j / (2 * count) as f64,
-                            None,
-                            Some((
-                                position_difference_budget_m / (32 * count) as f64,
-                                velocity_difference_budget_m_s / (32 * count) as f64,
-                            )),
-                        )?;
+                        let (report, _) = fine
+                            .step_viscoelastic_contacts_controlled::<IMPLICIT, false>(
+                                endpoint.as_deref(),
+                                None,
+                                None,
+                                dt / (2 * count) as f64,
+                                energy_tolerance_j / (2 * count) as f64,
+                                None,
+                                Some((
+                                    position_difference_budget_m / (32 * count) as f64,
+                                    velocity_difference_budget_m_s / (32 * count) as f64,
+                                )),
+                            )?;
                         if let Some(sum) = sum.as_mut() {
                             sum.add(report);
                         } else {
@@ -619,12 +620,14 @@ impl InertialBody {
                         })
                         .collect::<Vec<_>>()
                 });
-                match candidate.step_viscoelastic_implicit_with_surface_and_skin_motion(
+                match candidate.step_viscoelastic_contacts_controlled::<true, true>(
                     staged_targets.as_deref(),
-                    surface,
-                    skin,
+                    None,
+                    Some(surface),
                     dt / count as f64,
                     tolerance_j / count as f64,
+                    Some(skin),
+                    None,
                 ) {
                     Ok((report, skin_work)) => {
                         absolute += report.absolute_energy_defect_j;
@@ -656,6 +659,12 @@ impl InertialBody {
                     | "viscoelastic inertial work heat defect" => {
                         if count == max_substeps {
                             return Err(error);
+                        }
+                        if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
+                            eprintln!(
+                                "IMPLICIT_TIME_REFINEMENT previous_substeps={count} next_substeps={} reason={error:?}",
+                                count * 2
+                            );
                         }
                         count *= 2;
                         continue;
@@ -716,7 +725,7 @@ impl InertialBody {
         energy_tolerance_j: f64,
         next_skin: Option<super::super::StationaryEmbeddedContact>,
     ) -> Result<(ViscoelasticDynamicStep, super::super::EmbeddedSkinWork), &'static str> {
-        self.step_viscoelastic_contacts_controlled::<IMPLICIT>(
+        self.step_viscoelastic_contacts_controlled::<IMPLICIT, false>(
             targets,
             next_plane,
             next_surface,
@@ -726,7 +735,10 @@ impl InertialBody {
             None,
         )
     }
-    fn step_viscoelastic_contacts_controlled<const IMPLICIT: bool>(
+    fn step_viscoelastic_contacts_controlled<
+        const IMPLICIT: bool,
+        const TEMPORAL_REFINEMENT: bool,
+    >(
         &mut self,
         targets: Option<&[SupportTarget]>,
         next_plane: Option<PlaneContact>,
@@ -763,12 +775,13 @@ impl InertialBody {
         }
         let (support, skin_work) = if IMPLICIT {
             if let Some(surface) = next_surface {
-                candidate.advance_implicit_surface_and_skin(
+                candidate.advance_implicit_surface_and_skin_retry_policy(
                     targets,
                     surface,
                     next_skin,
                     dt,
                     0.5 * energy_tolerance_j,
+                    TEMPORAL_REFINEMENT,
                 )?
             } else {
                 if next_skin.is_some() {

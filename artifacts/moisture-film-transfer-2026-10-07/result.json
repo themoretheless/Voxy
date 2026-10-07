@@ -1,0 +1,23 @@
+{
+  "status": "film uptake, drying, wet mechanical transaction and Metal fragment rendering passed",
+  "native_tests_passed": 31,
+  "wet_example_tests_passed": 1,
+  "wet_runtime_exit_code": 0,
+  "gpu_backend": "Metal",
+  "gpu_adapter": "Apple M4 Max",
+  "initial_film_water_kg": 0.2,
+  "retained_material_water_kg": 0.1998001998001998,
+  "remaining_film_water_kg": 0.0001998001998069765,
+  "fragments_before": 1,
+  "fragments_after": 2,
+  "faces_before": 6,
+  "faces_after": 8,
+  "motion_interval_s": 0.25,
+  "motion_energy_defect_j": 6.118473783178757e-12,
+  "rollback_checks": [
+    "invalid/duplicate film supply ownership",
+    "unrepresentable canonical drain",
+    "late wet mechanical topology rejection"
+  ],
+  "limits": "Authored one-to-one film-cell ownership and existing isothermal unit-liquid-activity uptake law. Drying tested separately with existing finite latent-energy vapor reservoir. No automatic contact detection, solution-activity calibration, heat/momentum transfer from film, swelling, moving film coupling or universal moisture/material calibration."
+}

@@ -1,0 +1,16 @@
+{
+  "status": "live; full clip not qualified",
+  "process_id": 5623,
+  "exec_session_id": 45883,
+  "steps_requested": 480,
+  "final_time_requested_s": 2.0,
+  "energy_budget_rate_j_s": 5e-10,
+  "manual_cumulative_energy_gate_j": 1e-09,
+  "observed_checkpoints": 5,
+  "observed_time_s": 0.2,
+  "full_clip_complete": false,
+  "limits": "Illustrative three-pin uncalibrated volume; zero eligible contact pairs.",
+  "observed_maximum_balance_j": 1.9806378759312793e-13,
+  "observed_energy_gates_passed": true,
+  "per_frame_trace_available": false
+}

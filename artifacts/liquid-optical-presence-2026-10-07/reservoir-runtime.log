@@ -1,0 +1,11 @@
+LIQUID GPU adapter=Apple M4 Max backend=Metal device_type=IntegratedGpu
+OPTICAL FILM frame=0 cells=0
+OPTICAL_EFFECT frame=0 left_pixels=8744 right_pixels=12320
+frame=0: blue_pixels=0, gold_pixels=3265
+OPTICAL FILM frame=1 cells=0
+OPTICAL_EFFECT frame=1 left_pixels=8265 right_pixels=11749
+frame=1: blue_pixels=0, gold_pixels=940
+OPTICAL FILM frame=2 cells=0
+OPTICAL_EFFECT frame=2 left_pixels=10211 right_pixels=13115
+frame=2: blue_pixels=0, gold_pixels=203
+LIQUID SNAPSHOT PASS: artifacts/liquid-optical-presence-2026-10-07/reservoirs.png
