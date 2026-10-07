@@ -1,0 +1,12 @@
+{
+  "backend": "Metal Apple M4 Max",
+  "source": "actual acquired surface texture after rendering and overlays, before present",
+  "fixture": "packaged standalone gameplay fixture",
+  "sample": "physical center x, 0.775 height: stable floor in identity camera fixture",
+  "frames": [29, 888],
+  "rgba_storage": [1.0, 1.0, 1.0, 1.0],
+  "input": "Space press and release recorded for each sampled frame",
+  "screenshot_observation": "First post-input screenshot visible; second black including static floor despite white GPU sample in first submitted post-input frame.",
+  "issue_fixed": false,
+  "limits": "One pixel in first post-input frames, not full image or simultaneous screenshot-frame identity; later GPU frames still require auditing. Adding COPY_SRC can change surface allocation and is diagnostic only."
+}

@@ -1,0 +1,5 @@
+FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":35.933459,"gpu_compute_ms":3.004166,"iterations":16,"max_absolute_error":0.45205980630965115,"method":"Chebyshev","minimum_irradiance":-0.05683019757270813,"qualified":false,"squared_l2_equation_residual_ratio":0.0000612774233565927}
+
+thread 'main' (6811377) panicked at crates/voxy_render/examples/surface_light_diffusion.rs:191:13:
+attempt to subtract with overflow
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

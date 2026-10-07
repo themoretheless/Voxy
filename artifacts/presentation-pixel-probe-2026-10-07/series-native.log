@@ -1,0 +1,51 @@
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
+METAL WINDOW number=5440 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=SkippedOccluded positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.48499998, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+METAL WINDOW number=5440 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=27 ticks=294 key=Space state=Pressed
+GAME KEY frames=27 ticks=294 key=Space state=Released
+EDITOR PRESENT frames=27 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.4625299, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=28 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=61 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=121 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=181 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=241 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=301 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=361 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=421 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=481 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=541 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=601 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=661 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=721 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=781 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=841 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=892 ticks=1248 key=Space state=Pressed
+GAME KEY frames=892 ticks=1248 key=Space state=Released
+EDITOR PRESENT frames=892 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.47098267, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=893 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=901 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=961 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1021 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1081 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1141 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1201 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1261 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1321 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1381 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1441 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1501 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1561 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1621 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])

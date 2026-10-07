@@ -1,7 +1,12 @@
 //! Limited-memory energy minimization for stiff, nonlinear elastic/contact states.
 use super::{Body, Equilibrium, Vec3, add, columns, det, dot, mm, scale, sub};
+#[inline]
 fn inner(a: &[Vec3], b: &[Vec3]) -> f64 {
-    a.iter().zip(b).map(|(a, b)| dot(*a, *b)).sum()
+    let mut sum = 0.0;
+    for (va, vb) in a.iter().zip(b) {
+        sum += va[0] * vb[0] + va[1] * vb[1] + va[2] * vb[2];
+    }
+    sum
 }
 // Shared secant algebra; owners keep their own objective, constraints and admission.
 pub(super) type SecantPair = (Vec<Vec3>, Vec<Vec3>, f64);
@@ -53,23 +58,33 @@ pub(super) fn try_secant_direction<E>(
         let alpha = rho * inner(s, &q);
         alphas.push(alpha);
         
-        // Inline vector subtraction to avoid alloc
+        // In-place vector subtraction (daxpy) avoiding intermediate arrays
         for (qi, yi) in q.iter_mut().zip(y) {
-            *qi = sub(*qi, scale([yi[0], yi[1], yi[2]], alpha));
+            qi[0] -= yi[0] * alpha;
+            qi[1] -= yi[1] * alpha;
+            qi[2] -= yi[2] * alpha;
         }
     }
     
     let mut r = inverse(&q)?;
     
-    // Reuse allocation for beta computation
+    // Reuse allocation for beta computation with in-place FMA
     for ((s, y, rho), alpha) in history.iter().zip(alphas.into_iter().rev()) {
         let beta = rho * inner(y, &r);
+        let gamma = alpha - beta;
         for (ri, si) in r.iter_mut().zip(s) {
-            *ri = add(*ri, scale([si[0], si[1], si[2]], alpha - beta));
+            ri[0] += si[0] * gamma;
+            ri[1] += si[1] * gamma;
+            ri[2] += si[2] * gamma;
         }
     }
     
-    Ok(r.iter().map(|ri| scale(*ri, -1.)).collect())
+    for ri in &mut r {
+        ri[0] = -ri[0];
+        ri[1] = -ri[1];
+        ri[2] = -ri[2];
+    }
+    Ok(r)
 }
 pub(super) fn push_secant(
     history: &mut Vec<SecantPair>,

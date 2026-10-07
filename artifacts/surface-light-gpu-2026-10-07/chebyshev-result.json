@@ -1,0 +1,70 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "native_character_integrated": false,
+  "reports": [
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 32.609249999999996,
+      "gpu_compute_ms": 0.640084,
+      "iterations": 16,
+      "max_absolute_error": 0.45205980630965115,
+      "method": "Chebyshev",
+      "minimum_irradiance": -0.05683019757270813,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 0.0000612774233565927
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 23.197583,
+      "gpu_compute_ms": null,
+      "iterations": 32,
+      "max_absolute_error": 0.44504139936936404,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.06901436299085617,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 0.000043619331109766745
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 47.774291000000005,
+      "gpu_compute_ms": null,
+      "iterations": 64,
+      "max_absolute_error": 0.27452859557663545,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.06696398556232452,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 0.00002504350123166452
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 56.1515,
+      "gpu_compute_ms": null,
+      "iterations": 128,
+      "max_absolute_error": 0.08680084108036101,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.1827346682548523,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 2.4413559914245894e-6
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 92.83383400000001,
+      "gpu_compute_ms": 14.559125,
+      "iterations": 256,
+      "max_absolute_error": 0.00874705349417726,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.19849134981632233,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 1.7479433582717894e-8
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 138.279042,
+      "gpu_compute_ms": null,
+      "iterations": 512,
+      "max_absolute_error": 0.00008462656634444787,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.19999152421951294,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 3.1984351300486576e-12
+    }
+  ],
+  "scope": "Static original body against CPU f64 reference; wall times include CPU encoding, readback and equation audit, not GPU timestamps.",
+  "target_120fps_achieved": false,
+  "undirected_edges": 127020,
+  "vertices": 42342
+}

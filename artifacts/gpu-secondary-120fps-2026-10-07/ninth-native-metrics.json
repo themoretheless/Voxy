@@ -1,0 +1,19 @@
+{
+  "samples": 3000,
+  "frame_range": [
+    100,
+    3099
+  ],
+  "warmup_frames": 100,
+  "resolution": [
+    1280,
+    900
+  ],
+  "mean_ms": 6.0613345,
+  "mean_fps": 164.98017062084264,
+  "p95_ms": 14.136916,
+  "p99_ms": 15.833125,
+  "max_ms": 21.493083,
+  "fraction_under_8_333ms": 0.705,
+  "scope": "GPU secondary-motion preview, neutral face, initial irradiance, MSAA off, static hair LOD, Immediate presentation; presentation cadence rather than GPU completion or display scan-out"
+}

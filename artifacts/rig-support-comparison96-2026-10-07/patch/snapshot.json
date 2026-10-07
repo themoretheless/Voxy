@@ -1,0 +1,8 @@
+{
+  "committed_steps": 96,
+  "source": "full-rig-support-patch-2026-10-07",
+  "sha256": {
+    "capture.nodes.jsonl": "77b801489ba7c357143a6e1bca482fac0d93739b32a9c88b36468fc78a793f5a",
+    "capture.energy.jsonl": "983249ae0980f8e5c1eeacb7d7e9ae62613de9fd887440a0c1cf8d96311dfbf3"
+  }
+}

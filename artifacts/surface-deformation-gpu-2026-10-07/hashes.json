@@ -1,0 +1,9 @@
+{
+  "crates/voxy_render/src/surface_deformation.rs": "fb6047fce35014113832d07472f5501324a0c82107582afd44962908d1a7ac19",
+  "crates/voxy_render/src/surface_deformation.wgsl": "4970d8c8f2580791ffaf88713c8c519d3080b217aefcda56c82b8a9b457a8c6e",
+  "crates/voxy_render/src/surface_normal_transport.rs": "2bee9ab926e9594a6a2abfcc576ed45dc301c91f59df530ff644386422dccae5",
+  "crates/voxy_render/src/surface_normal_transport.wgsl": "9aec5b11621c64271acebf8bcc1b6a714c1efb0db4a57115b0efbac48e4e19ed",
+  "crates/voxy_render/examples/surface_deformation.rs": "57c0f7d924953c4d302f62062cf05b1759e648330fc1dfa374ed1e705c9d624b",
+  "assets/characters/blender-female/prepared/body-forehead-refined.obj": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+  "assets/characters/blender-female/prepared/body-forehead-refined-skin.json": "1d85b9280105ff4e6bb36ed92ce5af62bda2a8fbed05657eba7428460d825ab8"
+}

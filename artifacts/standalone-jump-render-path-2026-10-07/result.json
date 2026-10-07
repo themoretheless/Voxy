@@ -1,0 +1,12 @@
+{
+  "fixture": "crates/voxy_editor/examples/game",
+  "regression_passed": true,
+  "checks": ["actor remains active", "model component retained", "interpolated render extraction contains actor", "fixture geometry within camera clip volume throughout jump", "actor lands at starting height"],
+  "native_observation": "Before input player, floor and step visible. Following window activation and Space, screenshot black including floor and step.",
+  "native_issue_fixed": false,
+  "diagnostic_change": "VOXY_EDITOR_TRACE_INPUT now records gameplay press/release and forces the subsequent presentation outcome to be logged; previously standalone input bypassed authoring trace arming.",
+  "diagnostic_native_execution_verified": true,
+  "native_evidence": "native-input.log records Space press/release, actor vertical motion, three draws and Presented after input in the rebuilt standalone app.",
+  "native_capture_after_input": "Black screenshot including static floor and step despite successful presentation status; cause unresolved.",
+  "next_investigation": "Readback of GPU render targets to distinguish missing pixels from window presentation/capture; Presented alone does not prove visible pixels."
+}

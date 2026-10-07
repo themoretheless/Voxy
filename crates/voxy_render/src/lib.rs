@@ -270,3 +270,11 @@ pub use droplet_extinction::{
     DROPLET_EXTINCTION_SCENE_SHADER, DirectionalScatteringOptions, DropletExtinctionFrame,
     DropletExtinctionPass, DropletExtinctionSceneInput,
 };
+
+mod surface_light_diffusion;
+pub use surface_light_diffusion::{SurfaceLightDiffusion, SurfaceLightEdge};
+
+mod surface_deformation;
+pub use surface_deformation::{SurfaceDeformation, SurfaceDeformationWeight};
+
+mod surface_normal_transport;

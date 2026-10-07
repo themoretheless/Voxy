@@ -1,0 +1,4 @@
+FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":55.191667,"iterations":64,"max_absolute_error":0.12880920160906906,"qualified":false,"squared_l2_equation_residual_ratio":2.9618005262012476e-8}
+FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":119.656583,"iterations":256,"max_absolute_error":0.0050744890083610494,"qualified":false,"squared_l2_equation_residual_ratio":2.8144629574710264e-12}
+FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":333.916542,"iterations":1024,"max_absolute_error":2.014528685756467e-6,"qualified":true,"squared_l2_equation_residual_ratio":3.1964610838048103e-15}
+Error: BufferAsyncError

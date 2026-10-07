@@ -1,0 +1,19 @@
+{
+  "frames": 1000,
+  "frame_range": [
+    100,
+    1099
+  ],
+  "render_fps": 164.73068982582487,
+  "p95_ms": 14.036958,
+  "max_ms": 37.878584,
+  "quality": "full model, 1800x1300, MSAA4",
+  "physics_prepare_latest_ms": [
+    1265.94,
+    1269.487,
+    1303.241,
+    1298.088,
+    1239.153
+  ],
+  "limitation": "Presentation cadence is not physics or display refresh rate. Full real-time animation remains incomplete."
+}

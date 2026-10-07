@@ -1,0 +1,25 @@
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
+METAL WINDOW number=5400 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=SkippedOccluded positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.48499998, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(false)
+METAL WINDOW number=5400 occlusion=8194 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+METAL WINDOW number=5400 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+GAME KEY frames=28 ticks=376 key=Space state=Pressed
+GAME KEY frames=28 ticks=376 key=Space state=Released
+EDITOR PRESENT frames=28 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.20000002, -0.47530806, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=29 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=887 ticks=1289 key=Space state=Pressed
+GAME KEY frames=887 ticks=1289 key=Space state=Released
+EDITOR PRESENT frames=887 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.47218126, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=888 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])

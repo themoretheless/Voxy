@@ -1,0 +1,29 @@
+{
+  "method": "1000 consecutive successful presentation intervals, frames 100..1099; this is render submission cadence, not physics or display refresh",
+  "samples": [
+    {
+      "variant": "hair-cache",
+      "frames": 1000,
+      "first_frame": 100,
+      "render_fps": 154.46838715807402,
+      "p95_ms": 16.434292,
+      "max_ms": 64.103583
+    },
+    {
+      "variant": "uniform-cache",
+      "frames": 1000,
+      "first_frame": 100,
+      "render_fps": 185.77447009537352,
+      "p95_ms": 9.356416,
+      "max_ms": 63.359584
+    },
+    {
+      "variant": "phase",
+      "frames": 1000,
+      "first_frame": 100,
+      "render_fps": 146.35478259939714,
+      "p95_ms": 17.865083,
+      "max_ms": 64.22425
+    }
+  ]
+}

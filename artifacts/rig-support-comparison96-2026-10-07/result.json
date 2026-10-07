@@ -1,0 +1,28 @@
+{
+  "committed_steps": 96,
+  "simulated_s": 0.4,
+  "requested_steps": 480,
+  "full_clip_qualified": false,
+  "realistic_compressibility_qualified": false,
+  "continuous_geometry_qualified": false,
+  "self_contact_qualified": false,
+  "variants": {
+    "three": {
+      "support_count": 3,
+      "minimum_signed_volume_ratio": 0.6446987924076949,
+      "maximum_signed_volume_ratio": 1.5446250619176654,
+      "energy_frames": 97,
+      "node_checkpoints": 9,
+      "audit_passed": true
+    },
+    "patch": {
+      "support_count": 19,
+      "minimum_signed_volume_ratio": 0.8082239791777546,
+      "maximum_signed_volume_ratio": 1.2259505216107005,
+      "energy_frames": 97,
+      "node_checkpoints": 9,
+      "audit_passed": true
+    }
+  },
+  "comparison_scope": "Same immutable runtime binary, mesh and material; changed explicit supports. Frozen committed prefixes only."
+}

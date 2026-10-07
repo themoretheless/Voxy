@@ -1,0 +1,16 @@
+{
+  "source": "full-rig-support-patch-2026-10-07",
+  "support_count": 19,
+  "frame_count": 9,
+  "simulated_interval_s": [
+    0,
+    0.4
+  ],
+  "native_sample_rate_hz": 20,
+  "playback_rate_hz": 5,
+  "slowdown": 4,
+  "loop_seam": "animation returns to first frame; not physical reverse dynamics",
+  "audit": "../rig-support-comparison96-2026-10-07/result.json",
+  "full_clip_complete": false,
+  "realistic_material_calibrated": false
+}

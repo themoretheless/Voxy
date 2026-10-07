@@ -1,0 +1,749 @@
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 203 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+SCENE GPU: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FACE FRAME 0 begin
+FRAME CADENCE frame=0 elapsed_ms=11.138 paused=false
+FACE FRAME 0 animation_ready_ms=0.447
+FACE FRAME 0 mesh_ready_ms=149.838
+FACE FRAME 0 outcome=SkippedOccluded elapsed_ms=150.025
+FACE FRAME 0 begin
+FRAME CADENCE frame=0 elapsed_ms=62.980 paused=false
+FACE FRAME 0 animation_ready_ms=1.357
+FACE FRAME 0 mesh_ready_ms=148.980
+FACE FRAME 0 outcome=Presented elapsed_ms=151.754
+FACE FRAME 1 begin
+FRAME CADENCE frame=1 elapsed_ms=173.586 paused=false
+FACE FRAME 1 animation_ready_ms=1.323
+FACE FRAME 1 mesh_ready_ms=147.565
+FACE FRAME 1 outcome=Presented elapsed_ms=148.252
+FACE FRAME 2 begin
+FRAME CADENCE frame=2 elapsed_ms=155.667 paused=false
+FACE FRAME 2 animation_ready_ms=1.346
+FACE FRAME 2 mesh_ready_ms=150.202
+FACE FRAME 2 outcome=Presented elapsed_ms=150.492
+FACE FRAME 3 begin
+FRAME CADENCE frame=3 elapsed_ms=152.742 paused=false
+FACE FRAME 3 animation_ready_ms=1.399
+FACE FRAME 3 mesh_ready_ms=156.546
+FACE FRAME 3 outcome=Presented elapsed_ms=156.794
+FACE FRAME 4 begin
+FRAME CADENCE frame=4 elapsed_ms=158.727 paused=false
+FACE FRAME 4 animation_ready_ms=1.366
+FACE FRAME 4 mesh_ready_ms=150.122
+FACE FRAME 4 outcome=Presented elapsed_ms=150.397
+FACE FRAME 5 begin
+FRAME CADENCE frame=5 elapsed_ms=151.878 paused=false
+FACE FRAME 5 animation_ready_ms=1.348
+FACE FRAME 5 mesh_ready_ms=153.788
+FACE FRAME 5 outcome=Presented elapsed_ms=156.729
+FACE FRAME 6 begin
+FRAME CADENCE frame=6 elapsed_ms=163.089 paused=false
+FACE FRAME 6 animation_ready_ms=3.792
+FACE FRAME 6 mesh_ready_ms=159.029
+FACE FRAME 6 outcome=Presented elapsed_ms=161.177
+FACE FRAME 7 begin
+FRAME CADENCE frame=7 elapsed_ms=166.812 paused=false
+FACE FRAME 7 animation_ready_ms=4.708
+FACE FRAME 7 mesh_ready_ms=166.749
+FACE FRAME 7 outcome=Presented elapsed_ms=168.860
+FACE FRAME 8 begin
+FRAME CADENCE frame=8 elapsed_ms=166.829 paused=false
+FACE FRAME 8 animation_ready_ms=1.565
+FACE FRAME 8 mesh_ready_ms=161.776
+FACE FRAME 8 outcome=Presented elapsed_ms=162.401
+FACE FRAME 9 begin
+FRAME CADENCE frame=9 elapsed_ms=167.233 paused=false
+FACE FRAME 9 animation_ready_ms=4.452
+FACE FRAME 9 mesh_ready_ms=169.034
+FACE FRAME 9 outcome=Presented elapsed_ms=169.905
+FACE FRAME 10 begin
+FRAME CADENCE frame=10 elapsed_ms=171.057 paused=false
+FACE FRAME 10 animation_ready_ms=4.350
+FACE FRAME 10 mesh_ready_ms=166.772
+FACE FRAME 10 outcome=Presented elapsed_ms=167.498
+FACE FRAME 11 begin
+FRAME CADENCE frame=11 elapsed_ms=173.482 paused=false
+FACE FRAME 11 animation_ready_ms=7.821
+FACE FRAME 11 mesh_ready_ms=176.290
+FACE FRAME 11 outcome=Presented elapsed_ms=176.617
+FACE FRAME 12 begin
+FRAME CADENCE frame=12 elapsed_ms=171.581 paused=false
+FACE FRAME 12 animation_ready_ms=1.469
+FACE FRAME 12 mesh_ready_ms=221.864
+FACE FRAME 12 outcome=Presented elapsed_ms=224.957
+FACE FRAME 13 begin
+FRAME CADENCE frame=13 elapsed_ms=230.573 paused=false
+FACE FRAME 13 animation_ready_ms=4.653
+FACE FRAME 13 mesh_ready_ms=173.432
+FACE FRAME 13 outcome=Presented elapsed_ms=174.141
+FACE FRAME 14 begin
+FRAME CADENCE frame=14 elapsed_ms=173.098 paused=false
+FACE FRAME 14 animation_ready_ms=1.632
+FACE FRAME 14 mesh_ready_ms=224.753
+FACE FRAME 14 outcome=Presented elapsed_ms=225.685
+FACE FRAME 15 begin
+FRAME CADENCE frame=15 elapsed_ms=230.912 paused=false
+FACE FRAME 15 animation_ready_ms=4.335
+FACE FRAME 15 mesh_ready_ms=168.277
+FACE FRAME 15 outcome=Presented elapsed_ms=194.578
+FACE FRAME 16 begin
+FRAME CADENCE frame=16 elapsed_ms=201.776 paused=false
+FACE FRAME 16 animation_ready_ms=7.957
+FACE FRAME 16 mesh_ready_ms=181.670
+FACE FRAME 16 outcome=Presented elapsed_ms=189.893
+FACE FRAME 17 begin
+FRAME CADENCE frame=17 elapsed_ms=189.662 paused=false
+FACE FRAME 17 animation_ready_ms=5.943
+FACE FRAME 17 mesh_ready_ms=178.817
+FACE FRAME 17 outcome=Presented elapsed_ms=184.647
+FACE FRAME 18 begin
+FRAME CADENCE frame=18 elapsed_ms=188.216 paused=false
+FACE FRAME 18 animation_ready_ms=1.442
+FACE FRAME 18 mesh_ready_ms=165.605
+FACE FRAME 18 outcome=Presented elapsed_ms=165.938
+FACE FRAME 19 begin
+FRAME CADENCE frame=19 elapsed_ms=166.376 paused=false
+FACE FRAME 19 animation_ready_ms=1.756
+FACE FRAME 19 mesh_ready_ms=172.836
+FACE FRAME 19 outcome=Presented elapsed_ms=178.804
+FACE FRAME 20 begin
+FRAME CADENCE frame=20 elapsed_ms=179.583 paused=false
+FACE FRAME 20 animation_ready_ms=6.001
+FACE FRAME 20 mesh_ready_ms=176.761
+FACE FRAME 20 outcome=Presented elapsed_ms=177.069
+FACE FRAME 21 begin
+FRAME CADENCE frame=21 elapsed_ms=183.075 paused=false
+FACE FRAME 21 animation_ready_ms=3.334
+FACE FRAME 21 mesh_ready_ms=171.587
+FACE FRAME 21 outcome=Presented elapsed_ms=177.410
+FACE FRAME 22 begin
+FRAME CADENCE frame=22 elapsed_ms=178.918 paused=false
+FACE FRAME 22 animation_ready_ms=2.334
+FACE FRAME 22 mesh_ready_ms=206.792
+FACE FRAME 22 outcome=Presented elapsed_ms=221.056
+FACE FRAME 23 begin
+FRAME CADENCE frame=23 elapsed_ms=226.663 paused=false
+FACE FRAME 23 animation_ready_ms=5.636
+FACE FRAME 23 mesh_ready_ms=176.502
+FACE FRAME 23 outcome=Presented elapsed_ms=176.803
+FACE FRAME 24 begin
+FRAME CADENCE frame=24 elapsed_ms=176.365 paused=false
+FACE FRAME 24 animation_ready_ms=3.125
+FACE FRAME 24 mesh_ready_ms=173.058
+FACE FRAME 24 outcome=Presented elapsed_ms=175.917
+FACE FRAME 25 begin
+FRAME CADENCE frame=25 elapsed_ms=178.322 paused=false
+FACE FRAME 25 animation_ready_ms=4.705
+FACE FRAME 25 mesh_ready_ms=178.404
+FACE FRAME 25 outcome=Presented elapsed_ms=182.794
+FACE FRAME 26 begin
+FRAME CADENCE frame=26 elapsed_ms=188.163 paused=false
+FACE FRAME 26 animation_ready_ms=4.485
+FACE FRAME 26 mesh_ready_ms=180.763
+FACE FRAME 26 outcome=Presented elapsed_ms=181.009
+FACE FRAME 27 begin
+FRAME CADENCE frame=27 elapsed_ms=181.016 paused=false
+FACE FRAME 27 animation_ready_ms=1.524
+FACE FRAME 27 mesh_ready_ms=202.789
+FACE FRAME 27 outcome=Presented elapsed_ms=212.250
+FACE FRAME 28 begin
+FRAME CADENCE frame=28 elapsed_ms=224.852 paused=false
+FACE FRAME 28 animation_ready_ms=7.778
+FACE FRAME 28 mesh_ready_ms=185.265
+FACE FRAME 28 outcome=Presented elapsed_ms=185.606
+FACE FRAME 29 begin
+FRAME CADENCE frame=29 elapsed_ms=181.650 paused=false
+FACE FRAME 29 animation_ready_ms=1.525
+FACE FRAME 29 mesh_ready_ms=174.683
+FACE FRAME 29 outcome=Presented elapsed_ms=174.951
+FACE FRAME 30 begin
+FRAME CADENCE frame=30 elapsed_ms=179.995 paused=false
+FACE FRAME 30 animation_ready_ms=4.292
+FACE FRAME 30 mesh_ready_ms=173.532
+FACE FRAME 30 outcome=Presented elapsed_ms=174.683
+FACE FRAME 31 begin
+FRAME CADENCE frame=31 elapsed_ms=179.282 paused=false
+FACE FRAME 31 animation_ready_ms=6.723
+FACE FRAME 31 mesh_ready_ms=183.027
+FACE FRAME 31 outcome=Presented elapsed_ms=183.331
+FACE FRAME 32 begin
+FRAME CADENCE frame=32 elapsed_ms=178.909 paused=false
+FACE FRAME 32 animation_ready_ms=1.459
+FACE FRAME 32 mesh_ready_ms=169.523
+FACE FRAME 32 outcome=Presented elapsed_ms=169.835
+FACE FRAME 33 begin
+FRAME CADENCE frame=33 elapsed_ms=172.300 paused=false
+FACE FRAME 33 animation_ready_ms=1.548
+FACE FRAME 33 mesh_ready_ms=167.938
+FACE FRAME 33 outcome=Presented elapsed_ms=168.211
+FACE FRAME 34 begin
+FRAME CADENCE frame=34 elapsed_ms=198.331 paused=false
+FACE FRAME 34 animation_ready_ms=1.520
+FACE FRAME 34 mesh_ready_ms=166.287
+FACE FRAME 34 outcome=Presented elapsed_ms=166.845
+FACE FRAME 35 begin
+FRAME CADENCE frame=35 elapsed_ms=168.346 paused=false
+FACE FRAME 35 animation_ready_ms=1.516
+FACE FRAME 35 mesh_ready_ms=166.580
+FACE FRAME 35 outcome=Presented elapsed_ms=167.195
+FACE FRAME 36 begin
+FRAME CADENCE frame=36 elapsed_ms=169.818 paused=false
+FACE FRAME 36 animation_ready_ms=1.534
+FACE FRAME 36 mesh_ready_ms=161.528
+FACE FRAME 36 outcome=Presented elapsed_ms=161.794
+FACE FRAME 37 begin
+FRAME CADENCE frame=37 elapsed_ms=163.371 paused=false
+FACE FRAME 37 animation_ready_ms=1.540
+FACE FRAME 37 mesh_ready_ms=165.957
+FACE FRAME 37 outcome=Presented elapsed_ms=166.230
+FACE FRAME 38 begin
+FRAME CADENCE frame=38 elapsed_ms=167.381 paused=false
+FACE FRAME 38 animation_ready_ms=1.528
+FACE FRAME 38 mesh_ready_ms=167.902
+FACE FRAME 38 outcome=Presented elapsed_ms=168.178
+FACE FRAME 39 begin
+FRAME CADENCE frame=39 elapsed_ms=170.270 paused=false
+FACE FRAME 39 animation_ready_ms=1.510
+FACE FRAME 39 mesh_ready_ms=163.168
+FACE FRAME 39 outcome=Presented elapsed_ms=163.438
+FACE FRAME 40 begin
+FRAME CADENCE frame=40 elapsed_ms=167.647 paused=false
+FACE FRAME 40 animation_ready_ms=1.448
+FACE FRAME 40 mesh_ready_ms=159.388
+FACE FRAME 40 outcome=Presented elapsed_ms=159.647
+FACE FRAME 41 begin
+FRAME CADENCE frame=41 elapsed_ms=160.843 paused=false
+FACE FRAME 41 animation_ready_ms=1.459
+FACE FRAME 41 mesh_ready_ms=163.116
+FACE FRAME 41 outcome=Presented elapsed_ms=163.394
+FACE FRAME 42 begin
+FRAME CADENCE frame=42 elapsed_ms=165.621 paused=false
+FACE FRAME 42 animation_ready_ms=1.528
+FACE FRAME 42 mesh_ready_ms=166.255
+FACE FRAME 42 outcome=Presented elapsed_ms=166.509
+FACE FRAME 43 begin
+FRAME CADENCE frame=43 elapsed_ms=167.735 paused=false
+FACE FRAME 43 animation_ready_ms=1.520
+FACE FRAME 43 mesh_ready_ms=168.355
+FACE FRAME 43 outcome=Presented elapsed_ms=168.865
+FACE FRAME 44 begin
+FRAME CADENCE frame=44 elapsed_ms=171.356 paused=false
+FACE FRAME 44 animation_ready_ms=1.529
+FACE FRAME 44 mesh_ready_ms=166.293
+FACE FRAME 44 outcome=Presented elapsed_ms=166.574
+FACE FRAME 45 begin
+FRAME CADENCE frame=45 elapsed_ms=167.800 paused=false
+FACE FRAME 45 animation_ready_ms=1.537
+FACE FRAME 45 mesh_ready_ms=171.334
+FACE FRAME 45 outcome=Presented elapsed_ms=171.587
+FACE FRAME 46 begin
+FRAME CADENCE frame=46 elapsed_ms=173.838 paused=false
+FACE FRAME 46 animation_ready_ms=1.458
+FACE FRAME 46 mesh_ready_ms=161.518
+FACE FRAME 46 outcome=Presented elapsed_ms=161.826
+FACE FRAME 47 begin
+FRAME CADENCE frame=47 elapsed_ms=163.056 paused=false
+FACE FRAME 47 animation_ready_ms=1.534
+FACE FRAME 47 mesh_ready_ms=166.103
+FACE FRAME 47 outcome=Presented elapsed_ms=166.396
+FACE FRAME 48 begin
+FRAME CADENCE frame=48 elapsed_ms=168.697 paused=false
+FACE FRAME 48 animation_ready_ms=1.466
+FACE FRAME 48 mesh_ready_ms=164.351
+FACE FRAME 48 outcome=Presented elapsed_ms=164.622
+FACE FRAME 49 begin
+FRAME CADENCE frame=49 elapsed_ms=166.158 paused=false
+FACE FRAME 49 animation_ready_ms=1.457
+FACE FRAME 49 mesh_ready_ms=161.259
+FACE FRAME 49 outcome=Presented elapsed_ms=161.518
+FACE FRAME 50 begin
+FRAME CADENCE frame=50 elapsed_ms=161.622 paused=false
+FACE FRAME 50 animation_ready_ms=1.511
+FACE FRAME 50 mesh_ready_ms=157.783
+FACE FRAME 50 outcome=Presented elapsed_ms=158.059
+FACE FRAME 51 begin
+FRAME CADENCE frame=51 elapsed_ms=159.929 paused=false
+FACE FRAME 51 animation_ready_ms=1.464
+FACE FRAME 51 mesh_ready_ms=161.407
+FACE FRAME 51 outcome=Presented elapsed_ms=167.895
+FACE FRAME 52 begin
+FRAME CADENCE frame=52 elapsed_ms=196.469 paused=false
+FACE FRAME 52 animation_ready_ms=25.461
+FACE FRAME 52 mesh_ready_ms=202.167
+FACE FRAME 52 outcome=Presented elapsed_ms=219.307
+FACE FRAME 53 begin
+FRAME CADENCE frame=53 elapsed_ms=217.916 paused=false
+FACE FRAME 53 animation_ready_ms=1.512
+FACE FRAME 53 mesh_ready_ms=172.614
+FACE FRAME 53 outcome=Presented elapsed_ms=174.889
+FACE FRAME 54 begin
+FRAME CADENCE frame=54 elapsed_ms=194.625 paused=false
+FACE FRAME 54 animation_ready_ms=4.408
+FACE FRAME 54 mesh_ready_ms=182.860
+FACE FRAME 54 outcome=Presented elapsed_ms=191.088
+FACE FRAME 55 begin
+FRAME CADENCE frame=55 elapsed_ms=213.551 paused=false
+FACE FRAME 55 animation_ready_ms=3.002
+FACE FRAME 55 mesh_ready_ms=169.923
+FACE FRAME 55 outcome=Presented elapsed_ms=181.906
+FACE FRAME 56 begin
+FRAME CADENCE frame=56 elapsed_ms=260.215 paused=false
+FACE FRAME 56 animation_ready_ms=61.197
+FACE FRAME 56 mesh_ready_ms=249.834
+FACE FRAME 56 outcome=Presented elapsed_ms=285.223
+FACE FRAME 57 begin
+FRAME CADENCE frame=57 elapsed_ms=329.656 paused=false
+FACE FRAME 57 animation_ready_ms=22.369
+FACE FRAME 57 mesh_ready_ms=220.003
+FACE FRAME 57 outcome=Presented elapsed_ms=243.748
+FACE FRAME 58 begin
+FRAME CADENCE frame=58 elapsed_ms=242.203 paused=false
+FACE FRAME 58 animation_ready_ms=7.120
+FACE FRAME 58 mesh_ready_ms=176.774
+FACE FRAME 58 outcome=Presented elapsed_ms=181.871
+FACE FRAME 59 begin
+FRAME CADENCE frame=59 elapsed_ms=213.831 paused=false
+FACE FRAME 59 animation_ready_ms=44.350
+FACE FRAME 59 mesh_ready_ms=215.306
+FACE FRAME 59 outcome=Presented elapsed_ms=226.468
+FACE FRAME 60 begin
+FRAME CADENCE frame=60 elapsed_ms=208.955 paused=false
+FACE FRAME 60 animation_ready_ms=4.660
+FACE FRAME 60 mesh_ready_ms=171.586
+FACE FRAME 60 outcome=Presented elapsed_ms=182.806
+FACE FRAME 61 begin
+FRAME CADENCE frame=61 elapsed_ms=197.863 paused=false
+FACE FRAME 61 animation_ready_ms=1.549
+FACE FRAME 61 mesh_ready_ms=179.010
+FACE FRAME 61 outcome=Presented elapsed_ms=186.888
+FACE FRAME 62 begin
+FRAME CADENCE frame=62 elapsed_ms=195.636 paused=false
+FACE FRAME 62 animation_ready_ms=4.507
+FACE FRAME 62 mesh_ready_ms=165.050
+FACE FRAME 62 outcome=Presented elapsed_ms=165.354
+FACE FRAME 63 begin
+FRAME CADENCE frame=63 elapsed_ms=165.403 paused=false
+FACE FRAME 63 animation_ready_ms=1.451
+FACE FRAME 63 mesh_ready_ms=164.835
+FACE FRAME 63 outcome=Presented elapsed_ms=165.100
+FACE FRAME 64 begin
+FRAME CADENCE frame=64 elapsed_ms=168.165 paused=false
+FACE FRAME 64 animation_ready_ms=1.458
+FACE FRAME 64 mesh_ready_ms=163.071
+FACE FRAME 64 outcome=Presented elapsed_ms=163.332
+FACE FRAME 65 begin
+FRAME CADENCE frame=65 elapsed_ms=165.118 paused=false
+FACE FRAME 65 animation_ready_ms=1.449
+FACE FRAME 65 mesh_ready_ms=161.521
+FACE FRAME 65 outcome=Presented elapsed_ms=161.794
+FACE FRAME 66 begin
+FRAME CADENCE frame=66 elapsed_ms=162.461 paused=false
+FACE FRAME 66 animation_ready_ms=1.512
+FACE FRAME 66 mesh_ready_ms=167.313
+FACE FRAME 66 outcome=Presented elapsed_ms=167.609
+FACE FRAME 67 begin
+FRAME CADENCE frame=67 elapsed_ms=171.082 paused=false
+FACE FRAME 67 animation_ready_ms=1.526
+FACE FRAME 67 mesh_ready_ms=170.371
+FACE FRAME 67 outcome=Presented elapsed_ms=170.654
+FACE FRAME 68 begin
+FRAME CADENCE frame=68 elapsed_ms=172.669 paused=false
+FACE FRAME 68 animation_ready_ms=1.521
+FACE FRAME 68 mesh_ready_ms=173.914
+FACE FRAME 68 outcome=Presented elapsed_ms=174.165
+FACE FRAME 69 begin
+FRAME CADENCE frame=69 elapsed_ms=174.248 paused=false
+FACE FRAME 69 animation_ready_ms=1.501
+FACE FRAME 69 mesh_ready_ms=171.287
+FACE FRAME 69 outcome=Presented elapsed_ms=171.578
+FACE FRAME 70 begin
+FRAME CADENCE frame=70 elapsed_ms=174.965 paused=false
+FACE FRAME 70 animation_ready_ms=1.524
+FACE FRAME 70 mesh_ready_ms=170.930
+FACE FRAME 70 outcome=Presented elapsed_ms=171.318
+FACE FRAME 71 begin
+FRAME CADENCE frame=71 elapsed_ms=173.482 paused=false
+FACE FRAME 71 animation_ready_ms=1.530
+FACE FRAME 71 mesh_ready_ms=173.099
+FACE FRAME 71 outcome=Presented elapsed_ms=173.377
+FACE FRAME 72 begin
+FRAME CADENCE frame=72 elapsed_ms=175.284 paused=false
+FACE FRAME 72 animation_ready_ms=1.526
+FACE FRAME 72 mesh_ready_ms=173.744
+FACE FRAME 72 outcome=Presented elapsed_ms=174.020
+FACE FRAME 73 begin
+FRAME CADENCE frame=73 elapsed_ms=176.137 paused=false
+FACE FRAME 73 animation_ready_ms=1.534
+FACE FRAME 73 mesh_ready_ms=172.441
+FACE FRAME 73 outcome=Presented elapsed_ms=172.732
+FACE FRAME 74 begin
+FRAME CADENCE frame=74 elapsed_ms=174.671 paused=false
+FACE FRAME 74 animation_ready_ms=1.550
+FACE FRAME 74 mesh_ready_ms=167.044
+FACE FRAME 74 outcome=Presented elapsed_ms=167.302
+FACE FRAME 75 begin
+FRAME CADENCE frame=75 elapsed_ms=169.092 paused=false
+FACE FRAME 75 animation_ready_ms=1.522
+FACE FRAME 75 mesh_ready_ms=166.485
+FACE FRAME 75 outcome=Presented elapsed_ms=166.779
+FACE FRAME 76 begin
+FRAME CADENCE frame=76 elapsed_ms=168.863 paused=false
+FACE FRAME 76 animation_ready_ms=1.542
+FACE FRAME 76 mesh_ready_ms=167.341
+FACE FRAME 76 outcome=Presented elapsed_ms=167.653
+FACE FRAME 77 begin
+FRAME CADENCE frame=77 elapsed_ms=168.906 paused=false
+FACE FRAME 77 animation_ready_ms=1.534
+FACE FRAME 77 mesh_ready_ms=173.258
+FACE FRAME 77 outcome=Presented elapsed_ms=173.544
+FACE FRAME 78 begin
+FRAME CADENCE frame=78 elapsed_ms=176.030 paused=false
+FACE FRAME 78 animation_ready_ms=1.535
+FACE FRAME 78 mesh_ready_ms=172.609
+FACE FRAME 78 outcome=Presented elapsed_ms=172.869
+FACE FRAME 79 begin
+FRAME CADENCE frame=79 elapsed_ms=174.828 paused=false
+FACE FRAME 79 animation_ready_ms=1.524
+FACE FRAME 79 mesh_ready_ms=168.028
+FACE FRAME 79 outcome=Presented elapsed_ms=168.313
+FACE FRAME 80 begin
+FRAME CADENCE frame=80 elapsed_ms=170.175 paused=false
+FACE FRAME 80 animation_ready_ms=1.523
+FACE FRAME 80 mesh_ready_ms=163.054
+FACE FRAME 80 outcome=Presented elapsed_ms=163.319
+FACE FRAME 81 begin
+FRAME CADENCE frame=81 elapsed_ms=166.771 paused=false
+FACE FRAME 81 animation_ready_ms=1.456
+FACE FRAME 81 mesh_ready_ms=163.017
+FACE FRAME 81 outcome=Presented elapsed_ms=163.313
+FACE FRAME 82 begin
+FRAME CADENCE frame=82 elapsed_ms=165.202 paused=false
+FACE FRAME 82 animation_ready_ms=1.477
+FACE FRAME 82 mesh_ready_ms=162.667
+FACE FRAME 82 outcome=Presented elapsed_ms=162.944
+FACE FRAME 83 begin
+FRAME CADENCE frame=83 elapsed_ms=164.968 paused=false
+FACE FRAME 83 animation_ready_ms=1.471
+FACE FRAME 83 mesh_ready_ms=165.733
+FACE FRAME 83 outcome=Presented elapsed_ms=166.001
+FACE FRAME 84 begin
+FRAME CADENCE frame=84 elapsed_ms=168.799 paused=false
+FACE FRAME 84 animation_ready_ms=1.475
+FACE FRAME 84 mesh_ready_ms=164.223
+FACE FRAME 84 outcome=Presented elapsed_ms=164.498
+FACE FRAME 85 begin
+FRAME CADENCE frame=85 elapsed_ms=164.600 paused=false
+FACE FRAME 85 animation_ready_ms=1.437
+FACE FRAME 85 mesh_ready_ms=166.879
+FACE FRAME 85 outcome=Presented elapsed_ms=167.183
+FACE FRAME 86 begin
+FRAME CADENCE frame=86 elapsed_ms=168.616 paused=false
+FACE FRAME 86 animation_ready_ms=1.471
+FACE FRAME 86 mesh_ready_ms=163.222
+FACE FRAME 86 outcome=Presented elapsed_ms=163.505
+FACE FRAME 87 begin
+FRAME CADENCE frame=87 elapsed_ms=167.904 paused=false
+FACE FRAME 87 animation_ready_ms=1.529
+FACE FRAME 87 mesh_ready_ms=169.585
+FACE FRAME 87 outcome=Presented elapsed_ms=169.856
+FACE FRAME 88 begin
+FRAME CADENCE frame=88 elapsed_ms=171.794 paused=false
+FACE FRAME 88 animation_ready_ms=1.463
+FACE FRAME 88 mesh_ready_ms=171.880
+FACE FRAME 88 outcome=Presented elapsed_ms=172.161
+FACE FRAME 89 begin
+FRAME CADENCE frame=89 elapsed_ms=173.516 paused=false
+FACE FRAME 89 animation_ready_ms=1.565
+FACE FRAME 89 mesh_ready_ms=166.325
+FACE FRAME 89 outcome=Presented elapsed_ms=166.606
+FACE FRAME 90 begin
+FRAME CADENCE frame=90 elapsed_ms=169.246 paused=false
+FACE FRAME 90 animation_ready_ms=1.528
+FACE FRAME 90 mesh_ready_ms=165.635
+FACE FRAME 90 outcome=Presented elapsed_ms=165.907
+FACE FRAME 91 begin
+FRAME CADENCE frame=91 elapsed_ms=166.697 paused=false
+FACE FRAME 91 animation_ready_ms=1.525
+FACE FRAME 91 mesh_ready_ms=163.724
+FACE FRAME 91 outcome=Presented elapsed_ms=164.013
+FACE FRAME 92 begin
+FRAME CADENCE frame=92 elapsed_ms=165.859 paused=false
+FACE FRAME 92 animation_ready_ms=1.551
+FACE FRAME 92 mesh_ready_ms=164.792
+FACE FRAME 92 outcome=Presented elapsed_ms=165.091
+FACE FRAME 93 begin
+FRAME CADENCE frame=93 elapsed_ms=167.951 paused=false
+FACE FRAME 93 animation_ready_ms=1.456
+FACE FRAME 93 mesh_ready_ms=169.383
+FACE FRAME 93 outcome=Presented elapsed_ms=169.689
+FACE FRAME 94 begin
+FRAME CADENCE frame=94 elapsed_ms=170.586 paused=false
+FACE FRAME 94 animation_ready_ms=1.546
+FACE FRAME 94 mesh_ready_ms=170.807
+FACE FRAME 94 outcome=Presented elapsed_ms=171.099
+FACE FRAME 95 begin
+FRAME CADENCE frame=95 elapsed_ms=172.371 paused=false
+FACE FRAME 95 animation_ready_ms=1.539
+FACE FRAME 95 mesh_ready_ms=172.252
+FACE FRAME 95 outcome=Presented elapsed_ms=172.532
+FACE FRAME 96 begin
+FRAME CADENCE frame=96 elapsed_ms=175.035 paused=false
+FACE FRAME 96 animation_ready_ms=1.536
+FACE FRAME 96 mesh_ready_ms=169.183
+FACE FRAME 96 outcome=Presented elapsed_ms=169.461
+FACE FRAME 97 begin
+FRAME CADENCE frame=97 elapsed_ms=171.432 paused=false
+FACE FRAME 97 animation_ready_ms=1.531
+FACE FRAME 97 mesh_ready_ms=169.314
+FACE FRAME 97 outcome=Presented elapsed_ms=169.573
+FACE FRAME 98 begin
+FRAME CADENCE frame=98 elapsed_ms=170.756 paused=false
+FACE FRAME 98 animation_ready_ms=1.555
+FACE FRAME 98 mesh_ready_ms=166.517
+FACE FRAME 98 outcome=Presented elapsed_ms=167.609
+FACE FRAME 99 begin
+FRAME CADENCE frame=99 elapsed_ms=173.600 paused=false
+FACE FRAME 99 animation_ready_ms=4.893
+FACE FRAME 99 mesh_ready_ms=173.637
+FACE FRAME 99 outcome=Presented elapsed_ms=173.912
+FACE FRAME 100 begin
+FRAME CADENCE frame=100 elapsed_ms=172.553 paused=false
+FACE FRAME 100 animation_ready_ms=1.534
+FACE FRAME 100 mesh_ready_ms=163.751
+FACE FRAME 100 outcome=Presented elapsed_ms=164.047
+FACE FRAME 101 begin
+FRAME CADENCE frame=101 elapsed_ms=166.152 paused=false
+FACE FRAME 101 animation_ready_ms=1.531
+FACE FRAME 101 mesh_ready_ms=165.630
+FACE FRAME 101 outcome=Presented elapsed_ms=165.912
+FACE FRAME 102 begin
+FRAME CADENCE frame=102 elapsed_ms=169.779 paused=false
+FACE FRAME 102 animation_ready_ms=1.529
+FACE FRAME 102 mesh_ready_ms=164.766
+FACE FRAME 102 outcome=Presented elapsed_ms=165.055
+FACE FRAME 103 begin
+FRAME CADENCE frame=103 elapsed_ms=174.425 paused=false
+FACE FRAME 103 animation_ready_ms=8.079
+FACE FRAME 103 mesh_ready_ms=175.866
+FACE FRAME 103 outcome=Presented elapsed_ms=176.174
+FACE FRAME 104 begin
+FRAME CADENCE frame=104 elapsed_ms=172.343 paused=false
+FACE FRAME 104 animation_ready_ms=1.637
+FACE FRAME 104 mesh_ready_ms=166.481
+FACE FRAME 104 outcome=Presented elapsed_ms=166.761
+FACE FRAME 105 begin
+FRAME CADENCE frame=105 elapsed_ms=168.045 paused=false
+FACE FRAME 105 animation_ready_ms=1.600
+FACE FRAME 105 mesh_ready_ms=165.259
+FACE FRAME 105 outcome=Presented elapsed_ms=165.538
+FACE FRAME 106 begin
+FRAME CADENCE frame=106 elapsed_ms=168.014 paused=false
+FACE FRAME 106 animation_ready_ms=1.524
+FACE FRAME 106 mesh_ready_ms=133.352
+FACE FRAME 106 outcome=Presented elapsed_ms=133.633
+FACE FRAME 107 begin
+FRAME CADENCE frame=107 elapsed_ms=137.792 paused=false
+FACE FRAME 107 animation_ready_ms=1.525
+FACE FRAME 107 mesh_ready_ms=132.685
+FACE FRAME 107 outcome=Presented elapsed_ms=132.968
+FACE FRAME 108 begin
+FRAME CADENCE frame=108 elapsed_ms=134.457 paused=false
+FACE FRAME 108 animation_ready_ms=1.454
+FACE FRAME 108 mesh_ready_ms=134.362
+FACE FRAME 108 outcome=Presented elapsed_ms=134.639
+FACE FRAME 109 begin
+FRAME CADENCE frame=109 elapsed_ms=137.050 paused=false
+FACE FRAME 109 animation_ready_ms=1.458
+FACE FRAME 109 mesh_ready_ms=126.827
+FACE FRAME 109 outcome=Presented elapsed_ms=127.105
+FACE FRAME 110 begin
+FRAME CADENCE frame=110 elapsed_ms=128.900 paused=false
+FACE FRAME 110 animation_ready_ms=1.450
+FACE FRAME 110 mesh_ready_ms=128.465
+FACE FRAME 110 outcome=Presented elapsed_ms=128.742
+FACE FRAME 111 begin
+FRAME CADENCE frame=111 elapsed_ms=130.208 paused=false
+FACE FRAME 111 animation_ready_ms=1.454
+FACE FRAME 111 mesh_ready_ms=128.976
+FACE FRAME 111 outcome=Presented elapsed_ms=129.238
+FACE FRAME 112 begin
+FRAME CADENCE frame=112 elapsed_ms=130.439 paused=false
+FACE FRAME 112 animation_ready_ms=1.456
+FACE FRAME 112 mesh_ready_ms=131.854
+FACE FRAME 112 outcome=Presented elapsed_ms=132.110
+FACE FRAME 113 begin
+FRAME CADENCE frame=113 elapsed_ms=134.902 paused=false
+FACE FRAME 113 animation_ready_ms=1.444
+FACE FRAME 113 mesh_ready_ms=139.645
+FACE FRAME 113 outcome=Presented elapsed_ms=139.908
+FACE FRAME 114 begin
+FRAME CADENCE frame=114 elapsed_ms=139.994 paused=false
+FACE FRAME 114 animation_ready_ms=1.511
+FACE FRAME 114 mesh_ready_ms=138.333
+FACE FRAME 114 outcome=Presented elapsed_ms=138.623
+FACE FRAME 115 begin
+FRAME CADENCE frame=115 elapsed_ms=139.715 paused=false
+FACE FRAME 115 animation_ready_ms=1.513
+FACE FRAME 115 mesh_ready_ms=137.112
+FACE FRAME 115 outcome=Presented elapsed_ms=137.400
+FACE FRAME 116 begin
+FRAME CADENCE frame=116 elapsed_ms=137.539 paused=false
+FACE FRAME 116 animation_ready_ms=1.503
+FACE FRAME 116 mesh_ready_ms=134.517
+FACE FRAME 116 outcome=Presented elapsed_ms=134.801
+FACE FRAME 117 begin
+FRAME CADENCE frame=117 elapsed_ms=134.854 paused=false
+FACE FRAME 117 animation_ready_ms=1.505
+FACE FRAME 117 mesh_ready_ms=133.104
+FACE FRAME 117 outcome=Presented elapsed_ms=133.379
+FACE FRAME 118 begin
+FRAME CADENCE frame=118 elapsed_ms=146.518 paused=false
+FACE FRAME 118 animation_ready_ms=1.539
+FACE FRAME 118 mesh_ready_ms=131.123
+FACE FRAME 118 outcome=Presented elapsed_ms=131.379
+FACE FRAME 119 begin
+FRAME CADENCE frame=119 elapsed_ms=133.492 paused=false
+FACE FRAME 119 animation_ready_ms=1.454
+FACE FRAME 119 mesh_ready_ms=168.354
+FACE FRAME 119 outcome=Presented elapsed_ms=168.709
+FACE FRAME 120 begin
+FRAME CADENCE frame=120 elapsed_ms=171.408 paused=false
+FACE FRAME 120 animation_ready_ms=1.445
+FACE FRAME 120 mesh_ready_ms=163.159
+FACE FRAME 120 outcome=Presented elapsed_ms=163.527
+FACE FRAME 121 begin
+FRAME CADENCE frame=121 elapsed_ms=165.768 paused=false
+FACE FRAME 121 animation_ready_ms=1.468
+FACE FRAME 121 mesh_ready_ms=168.088
+FACE FRAME 121 outcome=Presented elapsed_ms=168.365
+FACE FRAME 122 begin
+FRAME CADENCE frame=122 elapsed_ms=170.566 paused=false
+FACE FRAME 122 animation_ready_ms=1.523
+FACE FRAME 122 mesh_ready_ms=171.223
+FACE FRAME 122 outcome=Presented elapsed_ms=171.553
+FACE FRAME 123 begin
+FRAME CADENCE frame=123 elapsed_ms=174.155 paused=false
+FACE FRAME 123 animation_ready_ms=1.533
+FACE FRAME 123 mesh_ready_ms=172.907
+FACE FRAME 123 outcome=Presented elapsed_ms=173.213
+FACE FRAME 124 begin
+FRAME CADENCE frame=124 elapsed_ms=175.315 paused=false
+FACE FRAME 124 animation_ready_ms=1.521
+FACE FRAME 124 mesh_ready_ms=167.630
+FACE FRAME 124 outcome=Presented elapsed_ms=167.907
+FACE FRAME 125 begin
+FRAME CADENCE frame=125 elapsed_ms=170.310 paused=false
+FACE FRAME 125 animation_ready_ms=1.533
+FACE FRAME 125 mesh_ready_ms=166.918
+FACE FRAME 125 outcome=Presented elapsed_ms=167.201
+FACE FRAME 126 begin
+FRAME CADENCE frame=126 elapsed_ms=171.758 paused=false
+FACE FRAME 126 animation_ready_ms=1.526
+FACE FRAME 126 mesh_ready_ms=174.692
+FACE FRAME 126 outcome=Presented elapsed_ms=174.959
+FACE FRAME 127 begin
+FRAME CADENCE frame=127 elapsed_ms=179.577 paused=false
+FACE FRAME 127 animation_ready_ms=1.546
+FACE FRAME 127 mesh_ready_ms=178.775
+FACE FRAME 127 outcome=Presented elapsed_ms=179.059
+FACE FRAME 128 begin
+FRAME CADENCE frame=128 elapsed_ms=181.382 paused=false
+FACE FRAME 128 animation_ready_ms=1.522
+FACE FRAME 128 mesh_ready_ms=170.632
+FACE FRAME 128 outcome=Presented elapsed_ms=170.882
+FACE FRAME 129 begin
+FRAME CADENCE frame=129 elapsed_ms=171.019 paused=false
+FACE FRAME 129 animation_ready_ms=1.462
+FACE FRAME 129 mesh_ready_ms=176.713
+FACE FRAME 129 outcome=Presented elapsed_ms=177.018
+FACE FRAME 130 begin
+FRAME CADENCE frame=130 elapsed_ms=181.906 paused=false
+FACE FRAME 130 animation_ready_ms=1.456
+FACE FRAME 130 mesh_ready_ms=172.774
+FACE FRAME 130 outcome=Presented elapsed_ms=173.049
+FACE FRAME 131 begin
+FRAME CADENCE frame=131 elapsed_ms=175.550 paused=false
+FACE FRAME 131 animation_ready_ms=1.474
+FACE FRAME 131 mesh_ready_ms=172.426
+FACE FRAME 131 outcome=Presented elapsed_ms=172.712
+FACE FRAME 132 begin
+FRAME CADENCE frame=132 elapsed_ms=174.916 paused=false
+FACE FRAME 132 animation_ready_ms=1.471
+FACE FRAME 132 mesh_ready_ms=183.393
+FACE FRAME 132 outcome=Presented elapsed_ms=183.678
+FACE FRAME 133 begin
+FRAME CADENCE frame=133 elapsed_ms=185.880 paused=false
+FACE FRAME 133 animation_ready_ms=1.473
+FACE FRAME 133 mesh_ready_ms=174.263
+FACE FRAME 133 outcome=Presented elapsed_ms=174.540
+FACE FRAME 134 begin
+FRAME CADENCE frame=134 elapsed_ms=177.258 paused=false
+FACE FRAME 134 animation_ready_ms=1.533
+FACE FRAME 134 mesh_ready_ms=166.848
+FACE FRAME 134 outcome=Presented elapsed_ms=167.119
+FACE FRAME 135 begin
+FRAME CADENCE frame=135 elapsed_ms=169.066 paused=false
+FACE FRAME 135 animation_ready_ms=1.525
+FACE FRAME 135 mesh_ready_ms=164.917
+FACE FRAME 135 outcome=Presented elapsed_ms=165.193
+FACE FRAME 136 begin
+FRAME CADENCE frame=136 elapsed_ms=165.453 paused=false
+FACE FRAME 136 animation_ready_ms=1.535
+FACE FRAME 136 mesh_ready_ms=179.988
+FACE FRAME 136 outcome=Presented elapsed_ms=180.268
+FACE FRAME 137 begin
+FRAME CADENCE frame=137 elapsed_ms=183.433 paused=false
+FACE FRAME 137 animation_ready_ms=1.541
+FACE FRAME 137 mesh_ready_ms=177.396
+FACE FRAME 137 outcome=Presented elapsed_ms=177.665
+FACE FRAME 138 begin
+FRAME CADENCE frame=138 elapsed_ms=179.043 paused=false
+FACE FRAME 138 animation_ready_ms=1.485
+FACE FRAME 138 mesh_ready_ms=176.364
+FACE FRAME 138 outcome=Presented elapsed_ms=176.628
+FACE FRAME 139 begin
+FRAME CADENCE frame=139 elapsed_ms=179.065 paused=false
+FACE FRAME 139 animation_ready_ms=1.519
+FACE FRAME 139 mesh_ready_ms=177.793
+FACE FRAME 139 outcome=Presented elapsed_ms=178.032
+FACE FRAME 140 begin
+FRAME CADENCE frame=140 elapsed_ms=180.273 paused=false
+FACE FRAME 140 animation_ready_ms=1.451
+FACE FRAME 140 mesh_ready_ms=173.085
+FACE FRAME 140 outcome=Presented elapsed_ms=173.394
+FACE FRAME 141 begin
+FRAME CADENCE frame=141 elapsed_ms=175.515 paused=false
+FACE FRAME 141 animation_ready_ms=1.448
+FACE FRAME 141 mesh_ready_ms=173.907
+FACE FRAME 141 outcome=Presented elapsed_ms=174.174
+FACE FRAME 142 begin
+FRAME CADENCE frame=142 elapsed_ms=176.742 paused=false
+FACE FRAME 142 animation_ready_ms=1.521
+FACE FRAME 142 mesh_ready_ms=179.300
+FACE FRAME 142 outcome=Presented elapsed_ms=179.579
+FACE FRAME 143 begin
+FRAME CADENCE frame=143 elapsed_ms=181.749 paused=false
+FACE FRAME 143 animation_ready_ms=1.447
+FACE FRAME 143 mesh_ready_ms=173.554
+FACE FRAME 143 outcome=Presented elapsed_ms=173.827
+FACE FRAME 144 begin
+FRAME CADENCE frame=144 elapsed_ms=181.815 paused=false
+FACE FRAME 144 animation_ready_ms=1.459
+FACE FRAME 144 mesh_ready_ms=169.494
+FACE FRAME 144 outcome=Presented elapsed_ms=169.754
+FACE FRAME 145 begin
+FRAME CADENCE frame=145 elapsed_ms=171.391 paused=false
+FACE FRAME 145 animation_ready_ms=1.450
+FACE FRAME 145 mesh_ready_ms=173.061
+FACE FRAME 145 outcome=Presented elapsed_ms=173.332
+FACE FRAME 146 begin
+FRAME CADENCE frame=146 elapsed_ms=176.189 paused=false
+FACE FRAME 146 animation_ready_ms=1.460
+FACE FRAME 146 mesh_ready_ms=169.893
+FACE FRAME 146 outcome=Presented elapsed_ms=170.184
+FACE FRAME 147 begin
+FRAME CADENCE frame=147 elapsed_ms=173.477 paused=false
+FACE FRAME 147 animation_ready_ms=1.527
+FACE FRAME 147 mesh_ready_ms=171.881
+FACE FRAME 147 outcome=Presented elapsed_ms=172.152

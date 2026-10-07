@@ -76,6 +76,7 @@ pub struct SceneSurface {
     state: SurfaceState,
     motion: Option<MotionTarget>,
     presented_frames: u64,
+    pixel_probe: Option<(crate::HdrPixelProbe, [u32; 2], Option<u64>)>,
 }
 impl SceneSurface {
     /// # Errors
@@ -332,7 +333,75 @@ impl SceneSurface {
             state,
             motion: None,
             presented_frames: 0,
+            pixel_probe: None,
         })
+    }
+    /// Request one asynchronous pixel from the next successfully submitted frame.
+    /// Opt-in diagnostics only; coordinates address physical surface pixels.
+    /// Resize cancels pending probes. sRGB results are normalized storage values.
+    /// # Errors
+    /// Rejects unsupported copy usage, coordinates, formats or another pending probe.
+    pub fn request_pixel_probe(&mut self, point: [u32; 2]) -> Result<(), RendererError> {
+        if self.pixel_probe.is_some()
+            || point[0] >= self.config.width
+            || point[1] >= self.config.height
+            || !self
+                .surface
+                .get_capabilities(&self.adapter)
+                .usages
+                .contains(wgpu::TextureUsages::COPY_SRC)
+            || !matches!(
+                self.config.format,
+                wgpu::TextureFormat::Rgba8Unorm
+                    | wgpu::TextureFormat::Rgba8UnormSrgb
+                    | wgpu::TextureFormat::Bgra8Unorm
+                    | wgpu::TextureFormat::Bgra8UnormSrgb
+                    | wgpu::TextureFormat::Rgba16Float
+                    | wgpu::TextureFormat::Rgba32Float
+            )
+        {
+            return Err(RendererError::Scene(crate::SceneError::InvalidTexture));
+        }
+        self.check_device()?;
+        if !self.config.usage.contains(wgpu::TextureUsages::COPY_SRC) {
+            self.config.usage |= wgpu::TextureUsages::COPY_SRC;
+            if self.state != SurfaceState::Suspended {
+                self.surface.configure(&self.device, &self.config);
+            }
+        }
+        self.pixel_probe = Some((crate::HdrPixelProbe::new(&self.device), point, None));
+        Ok(())
+    }
+    #[must_use]
+    pub fn pixel_probe_pending(&self) -> bool {
+        self.pixel_probe.is_some()
+    }
+    /// Poll without waiting; returns the source presentation ID and mapping result once.
+    pub fn take_pixel_probe(&mut self) -> Option<(u64, Result<[f32; 4], String>)> {
+        let _ = self.device.poll(wgpu::PollType::Poll);
+        let (probe, _, frame) = self.pixel_probe.as_ref()?;
+        let frame = (*frame)?;
+        let result = probe.take_result()?;
+        self.pixel_probe = None;
+        Some((frame, result))
+    }
+    fn encode_pixel_probe(
+        &mut self,
+        encoder: &mut wgpu::CommandEncoder,
+        texture: &wgpu::Texture,
+    ) -> Result<(), RendererError> {
+        if let Some((probe, point, None)) = &mut self.pixel_probe {
+            probe
+                .encode(encoder, texture, point[0], point[1])
+                .map_err(RendererError::Scene)?;
+        }
+        Ok(())
+    }
+    fn submit_pixel_probe(&mut self, frame_id: u64) {
+        if let Some((probe, _, frame @ None)) = &mut self.pixel_probe {
+            probe.begin_read();
+            *frame = Some(frame_id);
+        }
     }
     /// First reported device failure. Recreate this surface and its GPU resources.
     #[must_use]
@@ -348,9 +417,24 @@ impl SceneSurface {
     }
     /// # Errors
     /// Rejects reported device loss and unsupported surface dimensions.
+    /// Explicit benchmark/low-latency presentation. Returns the selected backend
+    /// mode; an unavailable non-vsync mode is reported instead of claiming it.
+    pub fn enable_unthrottled_presentation(&mut self) -> Result<wgpu::PresentMode, RendererError> {
+        let capabilities = self.surface.get_capabilities(&self.adapter);
+        let mode = [wgpu::PresentMode::Immediate, wgpu::PresentMode::Mailbox]
+            .into_iter()
+            .find(|mode| capabilities.present_modes.contains(mode))
+            .ok_or(RendererError::UnsupportedSurface)?;
+        self.config.present_mode = mode;
+        if self.state == SurfaceState::Active {
+            self.surface.configure(&self.device, &self.config);
+        }
+        Ok(mode)
+    }
     pub fn resize(&mut self, width: u32, height: u32) -> Result<(), RendererError> {
         self.check_device()?;
         validate_size(&self.device, width, height)?;
+        self.pixel_probe = None;
         self.invalidate_temporal_history();
         if width == 0 || height == 0 {
             self.state = SurfaceState::Suspended;
@@ -975,7 +1059,10 @@ impl SceneSurface {
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
         encode(&mut encoder, &view)?;
+        self.encode_pixel_probe(&mut encoder, &frame.texture)
+            .map_err(E::from)?;
         self.queue.submit([encoder.finish()]);
+        self.submit_pixel_probe(frame_id);
         self.queue.present(frame);
         self.presented_frames = frame_id;
         if suboptimal {
@@ -1249,6 +1336,36 @@ impl SceneSurface {
             &wgpu::TextureView,
         ) -> Result<(), RendererError>,
     {
+        self.render_scene_with_preparation_and_temporal_hooks(
+            scene,
+            draws,
+            layers,
+            |_, _| Ok(()),
+            consume,
+            submitted,
+        )
+    }
+    /// Acquire a presentation frame before encoding resident geometry updates.
+    /// Skipped/hidden surfaces do not run the preparation hook or its GPU work.
+    pub fn render_scene_with_preparation_and_temporal_hooks<P, F, G>(
+        &mut self,
+        scene: &SceneRenderer,
+        draws: &[SceneDraw<'_>],
+        layers: &[SceneDraw<'_>],
+        prepare: P,
+        consume: F,
+        submitted: G,
+    ) -> Result<RenderOutcome, RendererError>
+    where
+        P: FnOnce(&wgpu::Queue, &mut wgpu::CommandEncoder) -> Result<(), RendererError>,
+        F: FnOnce(&TemporalFrame<'_>, &mut wgpu::CommandEncoder),
+        G: FnOnce(
+            &TemporalFrame<'_>,
+            &wgpu::Device,
+            &wgpu::Queue,
+            &wgpu::TextureView,
+        ) -> Result<(), RendererError>,
+    {
         self.check_device()?;
         // Consume pending uploads even when suspension or acquisition skips
         // presentation; otherwise write_buffer staging allocations accumulate.
@@ -1286,6 +1403,7 @@ impl SceneSurface {
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        prepare(&self.queue, &mut encoder)?;
         self.encode_temporal_inputs(scene, draws, layers, &mut encoder)?;
         self.encode_presentation(scene, draws, layers, &mut encoder, &view)?;
 
@@ -1305,6 +1423,16 @@ impl SceneSurface {
             return Err(error);
         }
         self.present_overlays(scene, draws, &view);
+        if self
+            .pixel_probe
+            .as_ref()
+            .is_some_and(|(_, _, id)| id.is_none())
+        {
+            let mut probe_encoder = self.device.create_command_encoder(&Default::default());
+            self.encode_pixel_probe(&mut probe_encoder, &frame.texture)?;
+            self.queue.submit([probe_encoder.finish()]);
+            self.submit_pixel_probe(frame_id);
+        }
         self.queue.present(frame);
         self.presented_frames = frame_id;
         if let Some(motion) = &mut self.motion {

@@ -1,0 +1,8 @@
+{
+  "committed_steps": 96,
+  "source": "full-rig-harmonic-traced-2026-10-07",
+  "sha256": {
+    "capture.nodes.jsonl": "1fa0b7d7398762eaca0aea8ffbcb1e5fd3213852ab001612b535672415e12677",
+    "capture.energy.jsonl": "fefab7c9a31979c67edbf4ae18156ff37e583e02263cf435afdb4328bf77717b"
+  }
+}

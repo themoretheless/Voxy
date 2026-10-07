@@ -1,0 +1,242 @@
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
+METAL WINDOW number=5440 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=SkippedOccluded positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.48499998, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+METAL WINDOW number=5440 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=27 ticks=294 key=Space state=Pressed
+GAME KEY frames=27 ticks=294 key=Space state=Released
+EDITOR PRESENT frames=27 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.4625299, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=28 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=61 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=121 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=181 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=241 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=301 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=361 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=421 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=481 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=541 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=601 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=661 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=721 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=781 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=841 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=892 ticks=1248 key=Space state=Pressed
+GAME KEY frames=892 ticks=1248 key=Space state=Released
+EDITOR PRESENT frames=892 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.2, -0.47098267, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=893 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=901 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=961 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1021 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1081 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1141 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1201 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1261 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1321 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1381 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1441 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1501 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1561 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1621 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1681 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1741 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1801 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1861 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1921 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=1981 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2017 ticks=2624 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2017 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.21165635, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2018 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2023 ticks=2631 key=ArrowLeft state=Released
+EDITOR PRESENT frames=2023 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.27, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2024 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2028 ticks=2636 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2028 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.28269172, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2029 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2033 ticks=2642 key=ArrowLeft state=Released
+EDITOR PRESENT frames=2033 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.33, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2034 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=2041 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2042 ticks=2651 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2042 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.3394384, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2043 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2050 ticks=2660 key=ArrowLeft state=Released
+EDITOR PRESENT frames=2050 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.42000002, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2051 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2060 ticks=2670 key=ArrowRight state=Pressed
+EDITOR PRESENT frames=2060 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.40844646, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2061 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2089 ticks=2700 key=ArrowRight state=Pressed
+EDITOR PRESENT frames=2089 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.11266711, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2090 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2091 ticks=2702 key=ArrowRight state=Pressed
+EDITOR PRESENT frames=2091 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.093366586, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2092 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2093 ticks=2704 key=ArrowRight state=Pressed
+EDITOR PRESENT frames=2093 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.085, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2094 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2095 ticks=2706 key=ArrowRight state=Pressed
+EDITOR PRESENT frames=2095 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.085, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2096 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2097 ticks=2708 key=ArrowRight state=Pressed
+EDITOR PRESENT frames=2097 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.085, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2098 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2099 ticks=2710 key=ArrowRight state=Released
+EDITOR PRESENT frames=2099 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.085, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=2100 ticks=2711 key=ArrowLeft state=Pressed
+WINDOW PIXEL frame=2100 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+EDITOR PRESENT frames=2100 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.095152065, -0.48500004, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2101 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2130 ticks=2744 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2130 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.42039767, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2131 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2132 ticks=2746 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2132 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.43910608, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2133 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2134 ticks=2748 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2134 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.45934683, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2135 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2136 ticks=2750 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2136 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.47909272, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2137 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2138 ticks=2752 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2138 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.49934232, -0.48500004, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2139 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2142 ticks=2756 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2142 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.53808546, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2143 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2144 ticks=2758 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2144 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.5581479, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2145 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2146 ticks=2760 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2146 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.57425547, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2147 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2148 ticks=2762 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2148 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.59824157, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2149 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2150 ticks=2764 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2150 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.61895216, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2151 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2154 ticks=2768 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2154 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.65734583, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2155 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2156 ticks=2770 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2156 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.6833157, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2157 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2159 ticks=2773 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2159 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.7108878, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2160 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=2161 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2162 ticks=2776 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2162 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.7398901, -0.485, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2163 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2164 ticks=2778 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2164 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.7593279, -0.48624372, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2165 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2167 ticks=2781 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2167 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.7929552, -0.4943184, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=2168 ticks=2782 key=ArrowLeft state=Pressed
+WINDOW PIXEL frame=2168 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+EDITOR PRESENT frames=2168 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.79976535, -0.49690616, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2169 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2170 ticks=2784 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2170 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.81925964, -0.5059385, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2171 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2173 ticks=2786 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2173 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.84357786, -0.52071863, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=2174 ticks=2787 key=ArrowLeft state=Pressed
+WINDOW PIXEL frame=2174 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+EDITOR PRESENT frames=2174 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.85589045, -0.5297123, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2175 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2176 ticks=2790 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2176 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.8794333, -0.5498044, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2177 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2179 ticks=2792 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2179 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.90591055, -0.5766986, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2180 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2182 ticks=2795 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2182 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.9320214, -0.6078937, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=2183 ticks=2796 key=ArrowLeft state=Pressed
+WINDOW PIXEL frame=2183 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+EDITOR PRESENT frames=2183 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.94068086, -0.6192411, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2184 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2185 ticks=2798 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2185 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.96222955, -0.6496034, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2186 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2187 ticks=2800 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2187 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-0.9840111, -0.6834178, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2188 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2189 ticks=2803 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2189 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.0083522, -0.725034, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2190 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2192 ticks=2806 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2192 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.037533, -0.7800662, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2193 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2194 ticks=2808 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2194 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.0578487, -0.8217441, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2195 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2197 ticks=2810 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2197 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.0835983, -0.8784892, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=2198 ticks=2811 key=ArrowLeft state=Pressed
+WINDOW PIXEL frame=2198 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+EDITOR PRESENT frames=2198 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.0967045, -0.90909076, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2199 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2200 ticks=2814 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2200 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.1183901, -0.9622548, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2201 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2203 ticks=2817 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2203 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.1499, -1.0450602, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=2204 ticks=2818 key=ArrowLeft state=Pressed
+WINDOW PIXEL frame=2204 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+EDITOR PRESENT frames=2204 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.1583815, -1.0684683, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2205 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2206 ticks=2820 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2206 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.1809919, -1.1332431, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2207 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2208 ticks=2822 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2208 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.1988034, -1.1866636, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2209 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2210 ticks=2824 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2210 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.2177464, -1.2457883, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2211 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2212 ticks=2826 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2212 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.2393445, -1.316148, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2213 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2214 ticks=2828 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2214 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.2568417, -1.3753843, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2215 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2216 ticks=2830 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2216 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.276606, -1.4447817, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2217 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2220 ticks=2834 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2220 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.3202527, -1.6073105, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2221 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2222 ticks=2836 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2222 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.3368058, -1.6722229, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2223 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2225 ticks=2838 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2225 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.3623848, -1.7761903, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2226 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2227 ticks=2840 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2227 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.3863847, -1.8776673, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2228 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+GAME KEY frames=2229 ticks=2843 key=ArrowLeft state=Pressed
+EDITOR PRESENT frames=2229 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.4081903, -1.9732499, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+GAME KEY frames=2230 ticks=2844 key=ArrowLeft state=Pressed
+GAME KEY frames=2230 ticks=2844 key=ArrowLeft state=Released
+WINDOW PIXEL frame=2230 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+EDITOR PRESENT frames=2230 draws=3 outcome=Presented positions=[(NodeId { scene: 9, slot: 0, generation: 0 }, Vec4(-1.415, -2.0196354, 0.5, 1.0)), (NodeId { scene: 9, slot: 1, generation: 0 }, Vec4(0.0, -0.55, 0.5, 1.0)), (NodeId { scene: 9, slot: 2, generation: 0 }, Vec4(-0.02, -0.485, 0.5, 1.0))]
+WINDOW PIXEL frame=2231 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=2281 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])
+WINDOW PIXEL frame=2341 rgba_storage=Ok([1.0, 1.0, 1.0, 1.0])

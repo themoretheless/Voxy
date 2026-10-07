@@ -1,0 +1,10 @@
+
+running 1 test
+HAIR: 203 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+GROOM DIAG mesh=false self=false: stretch=0.000001, 35.0 ms
+GROOM DIAG mesh=true self=false: stretch=0.000361, 68.9 ms
+GROOM DIAG mesh=true self=true: stretch=0.000411, 69.9 ms
+test female_hair::tests::resting_groom_contacts_preserve_lengths ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 288 filtered out; finished in 2.62s
+

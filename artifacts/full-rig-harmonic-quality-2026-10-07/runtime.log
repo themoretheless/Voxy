@@ -8,3 +8,8 @@ SKIN bound=3273 total=3273
 SKIN physical contact: 4672 responsive triangles; native FEM envelope disabled
 CAPTURE final_step=480 simulated_s=2.000000000 limited=true
 frame t=0.00
+frame t=0.67
+frame t=1.33
+frame t=2.00
+snapshot simulation + render seconds=27522.712031292; step receipts=[(3583, 1496, 2)]
+STAGE_SECONDS simulation=27520.902629459997 receipts=0.632740419 mesh_deformation=0.29200116699999995 upload_encode_gpu_readback=0.8086870440000001 capture_io=0.074355706

@@ -1,0 +1,31 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "native_character_integrated": false,
+  "reports": [
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 94.461666,
+      "iterations": 64,
+      "max_absolute_error": 0.12880920160906906,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 2.9618005262012476e-8
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 125.31629199999999,
+      "iterations": 256,
+      "max_absolute_error": 0.0050744890083610494,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 2.8144629574710264e-12
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 209.227041,
+      "iterations": 512,
+      "max_absolute_error": 0.00006299008029098108,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 3.5712659414640865e-15
+    }
+  ],
+  "scope": "Static original body against CPU f64 reference; wall times include CPU encoding, readback and equation audit, not GPU timestamps.",
+  "target_120fps_achieved": false,
+  "undirected_edges": 127020,
+  "vertices": 42342
+}

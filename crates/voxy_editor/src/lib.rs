@@ -1899,6 +1899,22 @@ impl App {
                     graphics.fog = None;
                 }
             }
+            if std::env::var_os("VOXY_WINDOW_PIXEL_PROBE").is_some() {
+                if let Some((frame, pixel)) = graphics.host.take_pixel_probe() {
+                    println!("WINDOW PIXEL frame={frame} rgba_storage={pixel:?}");
+                }
+                if ((self.trace.pending && self.trace.last_outcome.is_none())
+                    || (self.frames > 0 && self.frames.is_multiple_of(60)))
+                    && !graphics.host.pixel_probe_pending()
+                {
+                    let size = self.window.as_ref().ok_or("missing window")?.inner_size();
+                    // Stable floor point in the standalone gameplay diagnostic fixture.
+                    let point = [size.width / 2, (size.height as f64 * 0.775) as u32];
+                    if let Err(error) = graphics.host.request_pixel_probe(point) {
+                        eprintln!("WINDOW PIXEL unavailable: {error}");
+                    }
+                }
+            }
             let outcome = if let Some((_, volume, bounds)) = styles.fog.first() {
                 if styles.fog.len() != 1 {
                     return Err("multiple overlapping fog volumes are not yet composed".into());
@@ -4241,6 +4257,14 @@ impl App {
                     0.0
                 },
             )?;
+            if self.trace.enabled {
+                println!(
+                    "GAME KEY frames={} ticks={} key={key:?} state={state:?}",
+                    self.frames, self.play.simulation_ticks
+                );
+                self.trace.pending = true;
+                self.trace.last_outcome = None;
+            }
         }
         Ok(())
     }
@@ -6432,6 +6456,21 @@ mod tests {
         let mut peak = before.y;
         for _ in 0..180 {
             app.advance_game(1. / 60.).unwrap();
+            // Exercise the same interpolated extraction used by native presentation.
+            app.draw().unwrap();
+            let rendered = app
+                .extraction
+                .instances()
+                .iter()
+                .find(|instance| instance.owner == actor)
+                .expect("jumping actor must remain in the render extraction");
+            let projection = app.camera.matrix(Vec2::new(640., 480.)).unwrap();
+            for corner in [Vec3::new(-0.04, -0.04, 0.), Vec3::new(0.04, 0.04, 0.)] {
+                let clip = projection * rendered.world * corner.extend(1.);
+                assert!(clip.is_finite() && clip.w > 0.);
+                assert!(clip.x.abs() < clip.w && clip.y.abs() < clip.w);
+                assert!(clip.z >= 0. && clip.z <= clip.w);
+            }
             let position = app.scene.local(actor).unwrap().translation;
             assert!(position.is_finite());
             peak = peak.max(position.y);

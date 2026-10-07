@@ -1,5 +1,4 @@
 //! Surface-only screened diffusion of irradiance, not volumetric tissue optics.
-use std::collections::BTreeMap;
 
 #[derive(Debug)]
 struct Timings {
@@ -84,27 +83,17 @@ fn diffuse_measured_with_parallel(
 ) -> Result<(Vec<[f64; 3]>, Timings), &'static str> {
     diffuse_measured_initial(points, triangles, source, radii_m, parallel, None)
 }
-fn diffuse_measured_initial(
+fn assemble_surface(
     points: &[[f32; 3]],
     triangles: &[[usize; 3]],
-    source: &[[f64; 3]],
-    radii_m: [f64; 3],
-    parallel: bool,
-    initial: Option<&[[f64; 3]]>,
-) -> Result<(Vec<[f64; 3]>, Timings), &'static str> {
-    let initial = initial.filter(|v| {
-        v.len() == points.len() && v.iter().flatten().all(|x| x.is_finite() && *x >= 0.)
-    });
-    if points.len() != source.len()
-        || points.iter().flatten().any(|x| !x.is_finite())
-        || source.iter().flatten().any(|x| !x.is_finite() || *x < 0.)
-        || radii_m.iter().any(|x| !x.is_finite() || *x < 0.)
-    {
-        return Err("invalid surface diffusion input");
-    }
-    let started = std::time::Instant::now();
+) -> Result<(Vec<f64>, Vec<(usize, usize, f64)>), &'static str> {
     let mut mass = vec![0.; points.len()];
-    let mut weights = BTreeMap::<(usize, usize), f64>::new();
+    let mut weights = Vec::with_capacity(
+        triangles
+            .len()
+            .checked_mul(3)
+            .ok_or("diffusion topology too large")?,
+    );
     for t in triangles {
         if t.iter().any(|i| *i >= points.len()) {
             return Err("invalid diffusion triangle");
@@ -133,13 +122,46 @@ fn diffuse_measured_initial(
             if length2 <= 0. {
                 return Err("zero diffusion edge");
             }
-            *weights.entry((a.min(b), a.max(b))).or_default() += 2. * area / (3. * length2);
+            weights.push((a.min(b), a.max(b), 2. * area / (3. * length2)));
         }
     }
     if mass.iter().any(|x| *x <= 0.) {
         return Err("unsupported diffusion vertex");
     }
-    let edges: Vec<_> = weights.into_iter().map(|((a, b), w)| (a, b, w)).collect();
+    // Stable grouping retains the original contribution order for every edge,
+    // preserving floating-point sums while avoiding a tree insertion per face edge.
+    weights.sort_by_key(|&(a, b, _)| (a, b));
+    let mut edges: Vec<(usize, usize, f64)> = Vec::new();
+    for (a, b, w) in weights {
+        if let Some(last) = edges.last_mut().filter(|last| last.0 == a && last.1 == b) {
+            last.2 += w;
+        } else {
+            // Match the old zero-initialized accumulator, including signed zero.
+            edges.push((a, b, 0. + w));
+        }
+    }
+    Ok((mass, edges))
+}
+fn diffuse_measured_initial(
+    points: &[[f32; 3]],
+    triangles: &[[usize; 3]],
+    source: &[[f64; 3]],
+    radii_m: [f64; 3],
+    parallel: bool,
+    initial: Option<&[[f64; 3]]>,
+) -> Result<(Vec<[f64; 3]>, Timings), &'static str> {
+    let initial = initial.filter(|v| {
+        v.len() == points.len() && v.iter().flatten().all(|x| x.is_finite() && *x >= 0.)
+    });
+    if points.len() != source.len()
+        || points.iter().flatten().any(|x| !x.is_finite())
+        || source.iter().flatten().any(|x| !x.is_finite() || *x < 0.)
+        || radii_m.iter().any(|x| !x.is_finite() || *x < 0.)
+    {
+        return Err("invalid surface diffusion input");
+    }
+    let started = std::time::Instant::now();
+    let (mass, edges) = assemble_surface(points, triangles)?;
     let mut timings = Timings {
         assembly_ms: started.elapsed().as_secs_f64() * 1000.,
         solve_ms: 0.,
@@ -403,6 +425,11 @@ mod benchmark {
             }
         }
         let report = serde_json::json!({"vertices":points.len(),"triangles":triangles.len(),"samples":samples,"serialSolveMs":serial_timing.solve_ms,"serialAssemblyMs":serial_timing.assembly_ms,"scope":"Static imported-body kernel profile, seven samples after warmup; not GPU or full renderer timing."});
+        if let Ok(path) = std::env::var("VOXY_LIGHT_DIFFUSION_GPU_INPUT") {
+            let (mass, edges) = assemble_surface(&points, &triangles).unwrap();
+            let input = serde_json::json!({"mass":mass,"edges":edges,"source":source,"radii":[0.002,0.001,0.0005],"reference":reference.as_ref().unwrap(),"scope":"Static original imported body; not posed runtime geometry"});
+            std::fs::write(path, serde_json::to_vec(&input).unwrap()).unwrap();
+        }
         if let Ok(path) = std::env::var("VOXY_LIGHT_DIFFUSION_REFERENCE") {
             let bits: Vec<u8> = reference
                 .unwrap()

@@ -1,0 +1,9 @@
+{
+  "frames": 1000,
+  "first_frame": 100,
+  "render_fps": 152.33390006621954,
+  "p95_ms": 17.162708,
+  "max_ms": 58.064625,
+  "quality": "1800x1300, MSAA4, full hair triangles and physics owners retained",
+  "limitation": "render presentation cadence is independent of slow CPU physics/mesh preparation"
+}

@@ -374,9 +374,22 @@ pub fn build_naive_mesh(
 ///
 /// Returns cancellation or an output-bound failure.
 pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMesh, MeshError> {
+    if cancel.is_cancelled() {
+        return Err(MeshError::Cancelled);
+    }
+    if let voxy_world::PalettedBlocks::Uniform(block) = &input.center.data.blocks {
+        if let Some(def) = input.registry.get(*block) {
+            if def.render == RenderKind::Invisible {
+                return Ok(finish_mesh(Vec::new()));
+            }
+        }
+    }
+
+    let center_dense = input.center.data.blocks.to_dense();
     let mut quads = Vec::new();
     for face in FaceDir::ALL {
         let (normal_axis, u_axis, v_axis) = face.axes();
+        let normal = face.normal();
         for slice in 0_u8..32 {
             if cancel.is_cancelled() {
                 return Err(MeshError::Cancelled);
@@ -388,16 +401,17 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                     cell[normal_axis] = slice;
                     cell[u_axis] = u;
                     cell[v_axis] = v;
-                    let local = LocalPos::new(cell[0], cell[1], cell[2])
-                        .map_err(|_| MeshError::Invariant)?;
-                    let source = input.center.data.blocks.get(local.index());
-                    let normal = face.normal();
-                    let neighbor = sample_relative(
-                        input,
-                        i16::from(cell[0]) + normal[0],
-                        i16::from(cell[1]) + normal[1],
-                        i16::from(cell[2]) + normal[2],
-                    );
+                    let cell_index = usize::from(cell[0]) + 32 * (usize::from(cell[2]) + 32 * usize::from(cell[1]));
+                    let source = center_dense[cell_index];
+                    let nx = i16::from(cell[0]) + normal[0];
+                    let ny = i16::from(cell[1]) + normal[1];
+                    let nz = i16::from(cell[2]) + normal[2];
+                    let neighbor = if (0..32).contains(&nx) && (0..32).contains(&ny) && (0..32).contains(&nz) {
+                        let n_index = (nx as usize) + 32 * ((nz as usize) + 32 * (ny as usize));
+                        Sample::Loaded(center_dense[n_index])
+                    } else {
+                        sample_relative(input, nx, ny, nz)
+                    };
                     if let FaceDecision::Emit { material, layer } =
                         classify_directed_face(source, &neighbor, face, &input.registry)
                     {

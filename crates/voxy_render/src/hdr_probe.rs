@@ -1,4 +1,4 @@
-//! One-shot asynchronous RGBA16/32Float pixel readback for render diagnostics.
+//! One-shot asynchronous float or RGBA/BGRA8 pixel readback for render diagnostics.
 use std::sync::{Arc, Mutex};
 type ProbeResult = Result<[f32; 4], String>;
 #[derive(Debug)]
@@ -25,7 +25,9 @@ impl HdrPixelProbe {
             result: Arc::new(Mutex::new(None)),
         }
     }
-    /// Copy one pixel once. Source must be RGBA16/32Float/COPY_SRC on the same device.
+    /// Copy one pixel once. Source must be RGBA16/32Float or RGBA/BGRA8
+    /// with COPY_SRC on the same device. Eight-bit values are normalized storage
+    /// values; sRGB sources are not converted to linear light.
     /// # Errors
     /// Rejects invalid source format or coordinates before encoding.
     pub fn encode(
@@ -40,7 +42,12 @@ impl HdrPixelProbe {
         }
         if !matches!(
             texture.format(),
-            wgpu::TextureFormat::Rgba16Float | wgpu::TextureFormat::Rgba32Float
+            wgpu::TextureFormat::Rgba16Float
+                | wgpu::TextureFormat::Rgba32Float
+                | wgpu::TextureFormat::Rgba8Unorm
+                | wgpu::TextureFormat::Rgba8UnormSrgb
+                | wgpu::TextureFormat::Bgra8Unorm
+                | wgpu::TextureFormat::Bgra8UnormSrgb
         ) || texture.sample_count() != 1
             || x >= texture.width()
             || y >= texture.height()
@@ -95,12 +102,24 @@ impl HdrPixelProbe {
                             f32::from_le_bytes(
                                 bytes[c * 4..c * 4 + 4].try_into().expect("RGBA32 pixel"),
                             )
-                        } else {
+                        } else if format == wgpu::TextureFormat::Rgba16Float {
                             half::f16::from_bits(u16::from_le_bytes([
                                 bytes[c * 2],
                                 bytes[c * 2 + 1],
                             ]))
                             .to_f32()
+                        } else {
+                            let index = if matches!(
+                                format,
+                                wgpu::TextureFormat::Bgra8Unorm
+                                    | wgpu::TextureFormat::Bgra8UnormSrgb
+                            ) && c < 3
+                            {
+                                2 - c
+                            } else {
+                                c
+                            };
+                            f32::from(bytes[index]) / 255.
                         }
                     }))
                 });

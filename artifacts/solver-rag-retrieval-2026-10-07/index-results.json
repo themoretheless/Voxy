@@ -1,0 +1,38 @@
+[
+  {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"query\":\"elasticity\",\"match_count\":0,\"matches\":[]}"
+        }
+      ],
+      "isError": false
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "tool call error: tool call failed for `rag-mcp/query_with_index`\n\nCaused by:\n    timed out awaiting tools/call after 300s"
+        }
+      ],
+      "isError": true
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"query\":\"Voxy\",\"match_count\":5,\"matches\":[{\"entry\":{\"id\":\"idx-e9d72f02-2fb7-433f-996d-e16214d812e4\",\"slug\":\"voxy-engine-chat-01a0f31e-2026-10-03\",\"title\":\"Voxy — Создать 2D/3D движок: снимок чата 2026-10-03\",\"kind\":\"source_summary\",\"summary\":\"Полная история разработки 2D/3D Voxy: Metal ray tracing, сцены и общий цикл, HDR/compute/UI, отражения, WebGPU/WebGL, CUDA/DX12/RTX/DLSS/Frame Generation, OpenXR и мобильные платформы; проверенные отчёты и оставшаяся работа. 1674 сообщения, 512 итоговых отчётов.\",\"page_id\":\"e9d72f02-2fb7-433f-996d-e16214d812e4\",\"updated_at\":\"2026-10-07T09:55:20.800941Z\"},\"score\":10.0},{\"entry\":{\"id\":\"idx-1a54f62b-5e07-41c9-8d5c-1a796143b287\",\"slug\":\"voxy-voxy-adr-0001-8f968a85\",\"title\":\"voxy — Voxy ADR 0001 — фундамент движка\",\"kind\":\"source_summary\",\"category\":\"architecture\",\"summary\":\"Кураторская wiki-копия проектного документа file:///Users/themoretheless/Documents/ChatGPT/Voxy/docs/adr/0001-engine-foundation.md\",\"page_id\":\"1a54f62b-5e07-41c9-8d5c-1a796143b287\",\"updated_at\":\"2026-10-07T09:55:20.800941Z\"},\"score\":10.0},{\"entry\":{\"id\":\"idx-f750ed7a-6182-4f9f-9779-bf58ff90b0f3\",\"slug\":\"voxy-overview\",\"title\":\"voxy — обзор проекта\",\"kind\":\"source_summary\",\"category\":\"projects\",\"summary\":\"Навигационная карта проекта voxy по индексированным источникам.\",\"page_id\":\"f750ed7a-6182-4f9f-9779-bf58ff90b0f3\",\"updated_at\":\"2026-10-07T09:55:20.800941Z\"},\"score\":10.0},{\"entry\":{\"id\":\"idx-23cbcd30-8c9f-4508-982e-7076f0d40947\",\"slug\":\"voxy-archive-01a0f6c4-8707-7360-ab2d-dfa212a8873e\",\"title\":\"Архив Voxy: Добавить Rush из tokenizer (01a0f6c4)\",\"kind\":\"source_summary\",\"summary\":\"Подключение tokenizer/Rush 0.7.0 из release 60797844, Cargo.lock, 43 теста и Clippy. Планы языка и пяти направлений Voxy следует отличать от более позднего выполненного интеграционного чата.\",\"page_id\":\"23cbcd30-8c9f-4508-982e-7076f0d40947\",\"updated_at\":\"2026-10-07T09:55:20.800941Z\"},\"score\":10.0},{\"entry\":{\"id\":\"idx-980287fe-e28b-49fb-870d-53d2fba9480b\",\"slug\":\"voxy-archive-01a07130-920a-7ec2-9f19-e3431d8be1a4\",\"title\":\"Архив Voxy: Оценить пинбол на движке (01a07130)\",\"kind\":\"source_summary\",\"summary\":\"Плоская физика пинбола с объёмной отрисовкой, шар, лопатки, бамперы, запуск, очки и три жизни. 99 тестов, Clippy и Metal; commit 0a76d2d, пример voxy_app/pinball.\",\"page_id\":\"980287fe-e28b-49fb-870d-53d2fba9480b\",\"updated_at\":\"2026-10-07T09:55:20.800941Z\"},\"score\":10.0}]}"
+        }
+      ],
+      "isError": false
+    }
+  }
+]

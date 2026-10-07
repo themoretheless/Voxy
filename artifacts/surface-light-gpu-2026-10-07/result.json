@@ -1,0 +1,15 @@
+{
+  "backend": "Metal Apple M4 Max",
+  "equation": "(M + radius_squared L) x = M source",
+  "implementation": "GPU-resident ping-pong weighted Jacobi compute; host CSR admission once",
+  "native_gate_passed": true,
+  "native_gate_nodes": 3,
+  "iterations": 64,
+  "analytic_max_error_below": 0.000001,
+  "checks": ["known coupled solution", "constant channel", "zero-radius channel", "total mass-weighted illumination", "odd/even continuation", "invalid CSR and asymmetric edge rejection", "invalid source leaves previous input intact"],
+  "full_body_parity_verified": false,
+  "full_body_gpu_time_measured": false,
+  "native_character_integrated": false,
+  "target_120fps_achieved": false,
+  "remaining": ["full-body residual and image parity", "efficient iteration strategy and GPU timing", "dynamic geometry assembly on GPU", "resident output consumed by native shading", "deformation, normals and surface-detail migration"]
+}

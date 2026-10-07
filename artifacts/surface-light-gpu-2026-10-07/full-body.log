@@ -1,0 +1,4 @@
+FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":94.461666,"iterations":64,"max_absolute_error":0.12880920160906906,"qualified":false,"squared_l2_equation_residual_ratio":2.9618005262012476e-8}
+FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":125.31629199999999,"iterations":256,"max_absolute_error":0.0050744890083610494,"qualified":false,"squared_l2_equation_residual_ratio":2.8144629574710264e-12}
+FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":209.227041,"iterations":512,"max_absolute_error":0.00006299008029098108,"qualified":true,"squared_l2_equation_residual_ratio":3.5712659414640865e-15}
+FULL BODY GATE qualification=true

@@ -184,17 +184,21 @@ fn filtered_microheight(uv:vec2<f32>,dx:vec2<f32>,dy:vec2<f32>)->f32 {
     let parameters=textureSample(image,image_sampler,material_uv);
     let uv_dx=dpdx(in.uv);
     let uv_dy=dpdy(in.uv);
-    let texel_step=max(vec2<f32>(1.0/4096.0,1.0/2048.0),(abs(uv_dx)+abs(uv_dy))*0.5);
-    let height_xp=filtered_microheight(material_uv+vec2<f32>(texel_step.x,0.0),uv_dx,uv_dy);
-    let height_xm=filtered_microheight(material_uv-vec2<f32>(texel_step.x,0.0),uv_dx,uv_dy);
-    let height_yp=filtered_microheight(material_uv+vec2<f32>(0.0,texel_step.y),uv_dx,uv_dy);
-    let height_ym=filtered_microheight(material_uv-vec2<f32>(0.0,texel_step.y),uv_dx,uv_dy);
     let material_dx=dpdx(in.material_point);
     let material_dy=dpdy(in.material_point);
     let point_dx=dpdx(in.point);
     let point_dy=dpdy(in.point);
     let globe_dx=dpdx(in.color.rgb*2.0-vec3<f32>(1.0));
     let globe_dy=dpdy(in.color.rgb*2.0-vec3<f32>(1.0));
+    // Opaque prelit fibres have their own material. They must not run skin
+    // pore/pigment integration or be mistaken for a liquid film.
+    if in.uv.x == -7.0 { return texel*in.color; }
+    let texel_step=max(vec2<f32>(1.0/4096.0,1.0/2048.0),(abs(uv_dx)+abs(uv_dy))*0.5);
+    let height_xp=filtered_microheight(material_uv+vec2<f32>(texel_step.x,0.0),uv_dx,uv_dy);
+    let height_xm=filtered_microheight(material_uv-vec2<f32>(texel_step.x,0.0),uv_dx,uv_dy);
+    let height_yp=filtered_microheight(material_uv+vec2<f32>(0.0,texel_step.y),uv_dx,uv_dy);
+    let height_ym=filtered_microheight(material_uv-vec2<f32>(0.0,texel_step.y),uv_dx,uv_dy);
+
     let view=normalize(in.to_camera);
     let smooth_length2=dot(in.smooth_normal,in.smooth_normal);
     let geometric=cross(point_dx,point_dy);
@@ -404,7 +408,11 @@ fn filtered_microheight(uv:vec2<f32>,dx:vec2<f32>,dy:vec2<f32>)->f32 {
             let frequency=4200.0+seed*593.0;
             let dx=dot(material_dx,direction)*frequency;
             let dy=dot(material_dy,direction)*frequency;
-            let attenuation=exp(-0.5*(dx*dx+dy*dy));
+            // Below 1e-9 slope contribution at this pixel footprint. Cull
+            // unresolved detail before evaluating its phase, without aliasing.
+            let footprint2=dx*dx+dy*dy;
+            if footprint2>32.0 { continue; }
+            let attenuation=exp(-0.5*footprint2);
             let phase=dot(in.material_point,direction)*frequency+seed*1.324718;
             slope+=0.0000007*frequency*cos(phase)*attenuation*direction;
         }
@@ -436,6 +444,7 @@ fn filtered_microheight(uv:vec2<f32>,dx:vec2<f32>,dy:vec2<f32>)->f32 {
         for(var octave=0;octave<4;octave=octave+1) {
             let frequency=80.0*pow(3.0,f32(octave));
             let resolved=1.0-smoothstep(0.25,0.75,footprint*frequency);
+            if resolved==0.0 { continue; }
             let amplitude=0.045*pow(0.55,f32(octave))*resolved;
             pigment+=amplitude*skin_noise(in.material_point*frequency+vec3<f32>(11.3,7.1,3.8));
             redness+=amplitude*skin_noise(in.material_point*frequency+vec3<f32>(-5.7,13.9,8.2));

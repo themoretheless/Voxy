@@ -1,0 +1,391 @@
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 203 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+FACE MESH t=0.000 stage=deformation ms=13.009
+FACE MESH t=0.000 stage=normals ms=3.771
+FACE MESH t=0.000 stage=diffusion ms=100.390
+FACE MESH t=0.000 stage=vertex_lighting ms=0.602
+FACE MESH t=0.000 stage=face_features ms=14.687
+FACE MESH t=0.000 stage=hair_and_shapes ms=2.955
+FACE MESH t=0.000 stage=film_and_probe ms=0.047
+FACE MESH t=0.000 stage=transmission ms=0.004
+FACE MESH t=0.000 stage=mesh_validation ms=4.379
+SCENE GPU: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FACE FRAME 0 begin
+FRAME CADENCE frame=0 elapsed_ms=14.457 paused=false
+FACE FRAME 0 animation_ready_ms=0.519
+FACE MESH t=0.014 stage=deformation ms=13.170
+FACE MESH t=0.014 stage=normals ms=3.714
+FACE MESH t=0.014 stage=diffusion ms=75.686
+FACE MESH t=0.014 stage=vertex_lighting ms=0.607
+FACE MESH t=0.014 stage=face_features ms=14.654
+FACE MESH t=0.014 stage=hair_and_shapes ms=2.783
+FACE MESH t=0.014 stage=film_and_probe ms=0.034
+FACE MESH t=0.014 stage=transmission ms=0.004
+FACE MESH t=0.014 stage=mesh_validation ms=3.439
+FACE FRAME 0 mesh_ready_ms=147.232
+FACE FRAME 0 outcome=SkippedOccluded elapsed_ms=147.410
+FACE FRAME 0 begin
+FRAME CADENCE frame=0 elapsed_ms=7.480 paused=false
+FACE FRAME 0 animation_ready_ms=0.048
+FACE MESH t=0.014 stage=deformation ms=13.230
+FACE MESH t=0.014 stage=normals ms=3.688
+FACE MESH t=0.014 stage=diffusion ms=1.293
+FACE MESH t=0.014 stage=vertex_lighting ms=0.602
+FACE MESH t=0.014 stage=face_features ms=15.621
+FACE MESH t=0.014 stage=hair_and_shapes ms=5.289
+FACE MESH t=0.014 stage=film_and_probe ms=0.590
+FACE MESH t=0.014 stage=transmission ms=0.006
+FACE MESH t=0.014 stage=mesh_validation ms=4.513
+FACE FRAME 0 mesh_ready_ms=61.147
+FACE FRAME 0 outcome=Presented elapsed_ms=63.987
+FACE FRAME 1 begin
+FRAME CADENCE frame=1 elapsed_ms=69.640 paused=false
+FACE FRAME 1 animation_ready_ms=1.413
+FACE MESH t=0.064 stage=deformation ms=13.351
+FACE MESH t=0.064 stage=normals ms=4.631
+FACE MESH t=0.064 stage=diffusion ms=86.187
+FACE MESH t=0.064 stage=vertex_lighting ms=0.770
+FACE MESH t=0.064 stage=face_features ms=15.101
+FACE MESH t=0.064 stage=hair_and_shapes ms=4.789
+FACE MESH t=0.064 stage=film_and_probe ms=0.369
+FACE MESH t=0.064 stage=transmission ms=0.007
+FACE MESH t=0.064 stage=mesh_validation ms=4.068
+FACE FRAME 1 mesh_ready_ms=164.666
+FACE FRAME 1 outcome=Presented elapsed_ms=165.306
+FACE FRAME 2 begin
+FRAME CADENCE frame=2 elapsed_ms=173.249 paused=false
+FACE FRAME 2 animation_ready_ms=1.402
+FACE MESH t=0.114 stage=deformation ms=13.542
+FACE MESH t=0.114 stage=normals ms=3.689
+FACE MESH t=0.114 stage=diffusion ms=74.745
+FACE MESH t=0.114 stage=vertex_lighting ms=0.605
+FACE MESH t=0.114 stage=face_features ms=14.750
+FACE MESH t=0.114 stage=hair_and_shapes ms=4.010
+FACE MESH t=0.114 stage=film_and_probe ms=0.456
+FACE MESH t=0.114 stage=transmission ms=0.007
+FACE MESH t=0.114 stage=mesh_validation ms=3.833
+FACE FRAME 2 mesh_ready_ms=146.651
+FACE FRAME 2 outcome=Presented elapsed_ms=146.932
+FACE FRAME 3 begin
+FRAME CADENCE frame=3 elapsed_ms=151.608 paused=false
+FACE FRAME 3 animation_ready_ms=1.389
+FACE MESH t=0.164 stage=deformation ms=13.131
+FACE MESH t=0.164 stage=normals ms=3.705
+FACE MESH t=0.164 stage=diffusion ms=81.507
+FACE MESH t=0.164 stage=vertex_lighting ms=0.605
+FACE MESH t=0.164 stage=face_features ms=14.533
+FACE MESH t=0.164 stage=hair_and_shapes ms=4.978
+FACE MESH t=0.164 stage=film_and_probe ms=0.351
+FACE MESH t=0.164 stage=transmission ms=0.005
+FACE MESH t=0.164 stage=mesh_validation ms=4.595
+FACE FRAME 3 mesh_ready_ms=155.574
+FACE FRAME 3 outcome=Presented elapsed_ms=155.850
+FACE FRAME 4 begin
+FRAME CADENCE frame=4 elapsed_ms=157.496 paused=false
+FACE FRAME 4 animation_ready_ms=1.407
+FACE MESH t=0.214 stage=deformation ms=13.604
+FACE MESH t=0.214 stage=normals ms=3.710
+FACE MESH t=0.214 stage=diffusion ms=84.169
+FACE MESH t=0.214 stage=vertex_lighting ms=0.650
+FACE MESH t=0.214 stage=face_features ms=14.999
+FACE MESH t=0.214 stage=hair_and_shapes ms=4.467
+FACE MESH t=0.214 stage=film_and_probe ms=0.712
+FACE MESH t=0.214 stage=transmission ms=0.007
+FACE MESH t=0.214 stage=mesh_validation ms=4.405
+FACE FRAME 4 mesh_ready_ms=160.575
+FACE FRAME 4 outcome=Presented elapsed_ms=160.913
+FACE FRAME 5 begin
+FRAME CADENCE frame=5 elapsed_ms=164.837 paused=false
+FACE FRAME 5 animation_ready_ms=1.415
+FACE MESH t=0.264 stage=deformation ms=13.474
+FACE MESH t=0.264 stage=normals ms=3.852
+FACE MESH t=0.264 stage=diffusion ms=83.851
+FACE MESH t=0.264 stage=vertex_lighting ms=0.667
+FACE MESH t=0.264 stage=face_features ms=15.232
+FACE MESH t=0.264 stage=hair_and_shapes ms=4.182
+FACE MESH t=0.264 stage=film_and_probe ms=0.410
+FACE MESH t=0.264 stage=transmission ms=0.005
+FACE MESH t=0.264 stage=mesh_validation ms=4.631
+FACE FRAME 5 mesh_ready_ms=158.678
+FACE FRAME 5 outcome=Presented elapsed_ms=158.937
+FACE FRAME 6 begin
+FRAME CADENCE frame=6 elapsed_ms=161.023 paused=false
+FACE FRAME 6 animation_ready_ms=1.466
+FACE MESH t=0.314 stage=deformation ms=13.938
+FACE MESH t=0.314 stage=normals ms=3.842
+FACE MESH t=0.314 stage=diffusion ms=79.513
+FACE MESH t=0.314 stage=vertex_lighting ms=0.630
+FACE MESH t=0.314 stage=face_features ms=15.374
+FACE MESH t=0.314 stage=hair_and_shapes ms=4.187
+FACE MESH t=0.314 stage=film_and_probe ms=0.324
+FACE MESH t=0.314 stage=transmission ms=0.005
+FACE MESH t=0.314 stage=mesh_validation ms=3.847
+FACE FRAME 6 mesh_ready_ms=153.127
+FACE FRAME 6 outcome=Presented elapsed_ms=153.376
+FACE FRAME 7 begin
+FRAME CADENCE frame=7 elapsed_ms=153.516 paused=false
+FACE FRAME 7 animation_ready_ms=1.446
+FACE MESH t=0.364 stage=deformation ms=14.681
+FACE MESH t=0.364 stage=normals ms=3.885
+FACE MESH t=0.364 stage=diffusion ms=86.192
+FACE MESH t=0.364 stage=vertex_lighting ms=0.607
+FACE MESH t=0.364 stage=face_features ms=15.123
+FACE MESH t=0.364 stage=hair_and_shapes ms=3.526
+FACE MESH t=0.364 stage=film_and_probe ms=0.342
+FACE MESH t=0.364 stage=transmission ms=0.004
+FACE MESH t=0.364 stage=mesh_validation ms=3.904
+FACE FRAME 7 mesh_ready_ms=160.013
+FACE FRAME 7 outcome=Presented elapsed_ms=160.288
+FACE FRAME 8 begin
+FRAME CADENCE frame=8 elapsed_ms=163.295 paused=false
+FACE FRAME 8 animation_ready_ms=1.452
+FACE MESH t=0.414 stage=deformation ms=14.315
+FACE MESH t=0.414 stage=normals ms=3.760
+FACE MESH t=0.414 stage=diffusion ms=89.462
+FACE MESH t=0.414 stage=vertex_lighting ms=0.629
+FACE MESH t=0.414 stage=face_features ms=15.298
+FACE MESH t=0.414 stage=hair_and_shapes ms=3.561
+FACE MESH t=0.414 stage=film_and_probe ms=0.380
+FACE MESH t=0.414 stage=transmission ms=0.005
+FACE MESH t=0.414 stage=mesh_validation ms=4.178
+FACE FRAME 8 mesh_ready_ms=162.412
+FACE FRAME 8 outcome=Presented elapsed_ms=162.690
+FACE FRAME 9 begin
+FRAME CADENCE frame=9 elapsed_ms=164.626 paused=false
+FACE FRAME 9 animation_ready_ms=1.454
+FACE MESH t=0.464 stage=deformation ms=14.439
+FACE MESH t=0.464 stage=normals ms=3.715
+FACE MESH t=0.464 stage=diffusion ms=91.404
+FACE MESH t=0.464 stage=vertex_lighting ms=0.629
+FACE MESH t=0.464 stage=face_features ms=15.152
+FACE MESH t=0.464 stage=hair_and_shapes ms=3.947
+FACE MESH t=0.464 stage=film_and_probe ms=0.308
+FACE MESH t=0.464 stage=transmission ms=0.006
+FACE MESH t=0.464 stage=mesh_validation ms=4.235
+FACE FRAME 9 mesh_ready_ms=164.791
+FACE FRAME 9 outcome=Presented elapsed_ms=165.059
+FACE FRAME 10 begin
+FRAME CADENCE frame=10 elapsed_ms=166.987 paused=false
+FACE FRAME 10 animation_ready_ms=1.453
+FACE MESH t=0.514 stage=deformation ms=14.844
+FACE MESH t=0.514 stage=normals ms=3.889
+FACE MESH t=0.514 stage=diffusion ms=91.613
+FACE MESH t=0.514 stage=vertex_lighting ms=0.630
+FACE MESH t=0.514 stage=face_features ms=15.224
+FACE MESH t=0.514 stage=hair_and_shapes ms=3.792
+FACE MESH t=0.514 stage=film_and_probe ms=0.334
+FACE MESH t=0.514 stage=transmission ms=0.005
+FACE MESH t=0.514 stage=mesh_validation ms=3.751
+FACE FRAME 10 mesh_ready_ms=164.353
+FACE FRAME 10 outcome=Presented elapsed_ms=164.617
+FACE FRAME 11 begin
+FRAME CADENCE frame=11 elapsed_ms=166.437 paused=false
+FACE FRAME 11 animation_ready_ms=1.446
+FACE MESH t=0.564 stage=deformation ms=14.671
+FACE MESH t=0.564 stage=normals ms=3.870
+FACE MESH t=0.564 stage=diffusion ms=90.106
+FACE MESH t=0.564 stage=vertex_lighting ms=0.638
+FACE MESH t=0.564 stage=face_features ms=15.146
+FACE MESH t=0.564 stage=hair_and_shapes ms=3.913
+FACE MESH t=0.564 stage=film_and_probe ms=0.311
+FACE MESH t=0.564 stage=transmission ms=0.006
+FACE MESH t=0.564 stage=mesh_validation ms=3.817
+FACE FRAME 11 mesh_ready_ms=163.690
+FACE FRAME 11 outcome=Presented elapsed_ms=163.997
+FACE FRAME 12 begin
+FRAME CADENCE frame=12 elapsed_ms=165.870 paused=false
+FACE FRAME 12 animation_ready_ms=1.447
+FACE MESH t=0.614 stage=deformation ms=14.607
+FACE MESH t=0.614 stage=normals ms=3.880
+FACE MESH t=0.614 stage=diffusion ms=90.386
+FACE MESH t=0.614 stage=vertex_lighting ms=0.632
+FACE MESH t=0.614 stage=face_features ms=15.290
+FACE MESH t=0.614 stage=hair_and_shapes ms=3.657
+FACE MESH t=0.614 stage=film_and_probe ms=0.377
+FACE MESH t=0.614 stage=transmission ms=0.006
+FACE MESH t=0.614 stage=mesh_validation ms=3.689
+FACE FRAME 12 mesh_ready_ms=164.230
+FACE FRAME 12 outcome=Presented elapsed_ms=164.483
+FACE FRAME 13 begin
+FRAME CADENCE frame=13 elapsed_ms=166.406 paused=false
+FACE FRAME 13 animation_ready_ms=1.461
+FACE MESH t=0.664 stage=deformation ms=14.596
+FACE MESH t=0.664 stage=normals ms=3.883
+FACE MESH t=0.664 stage=diffusion ms=91.164
+FACE MESH t=0.664 stage=vertex_lighting ms=0.761
+FACE MESH t=0.664 stage=face_features ms=15.269
+FACE MESH t=0.664 stage=hair_and_shapes ms=3.710
+FACE MESH t=0.664 stage=film_and_probe ms=0.304
+FACE MESH t=0.664 stage=transmission ms=0.006
+FACE MESH t=0.664 stage=mesh_validation ms=3.878
+FACE FRAME 13 mesh_ready_ms=164.820
+FACE FRAME 13 outcome=Presented elapsed_ms=165.114
+FACE FRAME 14 begin
+FRAME CADENCE frame=14 elapsed_ms=166.938 paused=false
+FACE FRAME 14 animation_ready_ms=1.452
+FACE MESH t=0.714 stage=deformation ms=14.712
+FACE MESH t=0.714 stage=normals ms=3.847
+FACE MESH t=0.714 stage=diffusion ms=88.293
+FACE MESH t=0.714 stage=vertex_lighting ms=0.605
+FACE MESH t=0.714 stage=face_features ms=14.670
+FACE MESH t=0.714 stage=hair_and_shapes ms=4.025
+FACE MESH t=0.714 stage=film_and_probe ms=0.368
+FACE MESH t=0.714 stage=transmission ms=0.008
+FACE MESH t=0.714 stage=mesh_validation ms=3.698
+FACE FRAME 14 mesh_ready_ms=160.173
+FACE FRAME 14 outcome=Presented elapsed_ms=160.435
+FACE FRAME 15 begin
+FRAME CADENCE frame=15 elapsed_ms=162.097 paused=false
+FACE FRAME 15 animation_ready_ms=1.413
+FACE MESH t=0.764 stage=deformation ms=14.149
+FACE MESH t=0.764 stage=normals ms=3.703
+FACE MESH t=0.764 stage=diffusion ms=80.084
+FACE MESH t=0.764 stage=vertex_lighting ms=0.616
+FACE MESH t=0.764 stage=face_features ms=14.529
+FACE MESH t=0.764 stage=hair_and_shapes ms=3.439
+FACE MESH t=0.764 stage=film_and_probe ms=0.291
+FACE MESH t=0.764 stage=transmission ms=0.006
+FACE MESH t=0.764 stage=mesh_validation ms=3.767
+FACE FRAME 15 mesh_ready_ms=151.908
+FACE FRAME 15 outcome=Presented elapsed_ms=152.177
+FACE FRAME 16 begin
+FRAME CADENCE frame=16 elapsed_ms=153.922 paused=false
+FACE FRAME 16 animation_ready_ms=1.486
+FACE MESH t=0.814 stage=deformation ms=13.950
+FACE MESH t=0.814 stage=normals ms=3.683
+FACE MESH t=0.814 stage=diffusion ms=75.518
+FACE MESH t=0.814 stage=vertex_lighting ms=0.585
+FACE MESH t=0.814 stage=face_features ms=14.057
+FACE MESH t=0.814 stage=hair_and_shapes ms=3.310
+FACE MESH t=0.814 stage=film_and_probe ms=0.316
+FACE MESH t=0.814 stage=transmission ms=0.006
+FACE MESH t=0.814 stage=mesh_validation ms=3.537
+FACE FRAME 16 mesh_ready_ms=143.469
+FACE FRAME 16 outcome=Presented elapsed_ms=143.770
+FACE FRAME 17 begin
+FRAME CADENCE frame=17 elapsed_ms=144.408 paused=false
+FACE FRAME 17 animation_ready_ms=1.333
+FACE MESH t=0.864 stage=deformation ms=13.169
+FACE MESH t=0.864 stage=normals ms=3.499
+FACE MESH t=0.864 stage=diffusion ms=77.948
+FACE MESH t=0.864 stage=vertex_lighting ms=0.573
+FACE MESH t=0.864 stage=face_features ms=13.431
+FACE MESH t=0.864 stage=hair_and_shapes ms=3.351
+FACE MESH t=0.864 stage=film_and_probe ms=0.301
+FACE MESH t=0.864 stage=transmission ms=0.006
+FACE MESH t=0.864 stage=mesh_validation ms=3.416
+FACE FRAME 17 mesh_ready_ms=145.216
+FACE FRAME 17 outcome=Presented elapsed_ms=145.475
+FACE FRAME 18 begin
+FRAME CADENCE frame=18 elapsed_ms=145.541 paused=false
+FACE FRAME 18 animation_ready_ms=1.335
+FACE MESH t=0.914 stage=deformation ms=13.438
+FACE MESH t=0.914 stage=normals ms=3.558
+FACE MESH t=0.914 stage=diffusion ms=81.241
+FACE MESH t=0.914 stage=vertex_lighting ms=0.616
+FACE MESH t=0.914 stage=face_features ms=15.246
+FACE MESH t=0.914 stage=hair_and_shapes ms=3.486
+FACE MESH t=0.914 stage=film_and_probe ms=0.402
+FACE MESH t=0.914 stage=transmission ms=0.008
+FACE MESH t=0.914 stage=mesh_validation ms=3.635
+FACE FRAME 18 mesh_ready_ms=150.433
+FACE FRAME 18 outcome=Presented elapsed_ms=150.711
+FACE FRAME 19 begin
+FRAME CADENCE frame=19 elapsed_ms=150.816 paused=false
+FACE FRAME 19 animation_ready_ms=1.372
+FACE MESH t=0.964 stage=deformation ms=13.985
+FACE MESH t=0.964 stage=normals ms=3.720
+FACE MESH t=0.964 stage=diffusion ms=83.688
+FACE MESH t=0.964 stage=vertex_lighting ms=0.609
+FACE MESH t=0.964 stage=face_features ms=14.171
+FACE MESH t=0.964 stage=hair_and_shapes ms=3.428
+FACE MESH t=0.964 stage=film_and_probe ms=0.306
+FACE MESH t=0.964 stage=transmission ms=0.006
+FACE MESH t=0.964 stage=mesh_validation ms=3.550
+FACE FRAME 19 mesh_ready_ms=153.280
+FACE FRAME 19 outcome=Presented elapsed_ms=153.567
+FACE FRAME 20 begin
+FRAME CADENCE frame=20 elapsed_ms=155.136 paused=false
+FACE FRAME 20 animation_ready_ms=1.381
+FACE MESH t=1.014 stage=deformation ms=14.002
+FACE MESH t=1.014 stage=normals ms=3.696
+FACE MESH t=1.014 stage=diffusion ms=82.824
+FACE MESH t=1.014 stage=vertex_lighting ms=0.609
+FACE MESH t=1.014 stage=face_features ms=14.512
+FACE MESH t=1.014 stage=hair_and_shapes ms=3.379
+FACE MESH t=1.014 stage=film_and_probe ms=0.355
+FACE MESH t=1.014 stage=transmission ms=0.006
+FACE MESH t=1.014 stage=mesh_validation ms=3.624
+FACE FRAME 20 mesh_ready_ms=152.454
+FACE FRAME 20 outcome=Presented elapsed_ms=152.694
+FACE FRAME 21 begin
+FRAME CADENCE frame=21 elapsed_ms=153.714 paused=false
+FACE FRAME 21 animation_ready_ms=1.383
+FACE MESH t=1.064 stage=deformation ms=13.973
+FACE MESH t=1.064 stage=normals ms=3.725
+FACE MESH t=1.064 stage=diffusion ms=80.898
+FACE MESH t=1.064 stage=vertex_lighting ms=0.606
+FACE MESH t=1.064 stage=face_features ms=14.478
+FACE MESH t=1.064 stage=hair_and_shapes ms=3.427
+FACE MESH t=1.064 stage=film_and_probe ms=0.312
+FACE MESH t=1.064 stage=transmission ms=0.006
+FACE MESH t=1.064 stage=mesh_validation ms=3.671
+FACE FRAME 21 mesh_ready_ms=152.092
+FACE FRAME 21 outcome=Presented elapsed_ms=152.382
+FACE FRAME 22 begin
+FRAME CADENCE frame=22 elapsed_ms=153.511 paused=false
+FACE FRAME 22 animation_ready_ms=1.383
+FACE MESH t=1.114 stage=deformation ms=13.957
+FACE MESH t=1.114 stage=normals ms=3.717
+FACE MESH t=1.114 stage=diffusion ms=82.897
+FACE MESH t=1.114 stage=vertex_lighting ms=0.607
+FACE MESH t=1.114 stage=face_features ms=14.604
+FACE MESH t=1.114 stage=hair_and_shapes ms=3.523
+FACE MESH t=1.114 stage=film_and_probe ms=0.354
+FACE MESH t=1.114 stage=transmission ms=0.006
+FACE MESH t=1.114 stage=mesh_validation ms=3.714
+FACE FRAME 22 mesh_ready_ms=153.688
+FACE FRAME 22 outcome=Presented elapsed_ms=153.947
+FACE FRAME 23 begin
+FRAME CADENCE frame=23 elapsed_ms=158.164 paused=false
+FACE FRAME 23 animation_ready_ms=1.395
+FACE MESH t=1.164 stage=deformation ms=13.993
+FACE MESH t=1.164 stage=normals ms=3.750
+FACE MESH t=1.164 stage=diffusion ms=86.807
+FACE MESH t=1.164 stage=vertex_lighting ms=0.610
+FACE MESH t=1.164 stage=face_features ms=14.496
+FACE MESH t=1.164 stage=hair_and_shapes ms=3.356
+FACE MESH t=1.164 stage=film_and_probe ms=0.250
+FACE MESH t=1.164 stage=transmission ms=0.006
+FACE MESH t=1.164 stage=mesh_validation ms=3.772
+FACE FRAME 23 mesh_ready_ms=158.158
+FACE FRAME 23 outcome=Presented elapsed_ms=158.414
+FACE FRAME 24 begin
+FRAME CADENCE frame=24 elapsed_ms=159.380 paused=false
+FACE FRAME 24 animation_ready_ms=1.407
+FACE MESH t=1.214 stage=deformation ms=14.582
+FACE MESH t=1.214 stage=normals ms=3.895
+FACE MESH t=1.214 stage=diffusion ms=90.681
+FACE MESH t=1.214 stage=vertex_lighting ms=0.629
+FACE MESH t=1.214 stage=face_features ms=15.289
+FACE MESH t=1.214 stage=hair_and_shapes ms=3.539
+FACE MESH t=1.214 stage=film_and_probe ms=0.376
+FACE MESH t=1.214 stage=transmission ms=0.005
+FACE MESH t=1.214 stage=mesh_validation ms=3.757
+FACE FRAME 24 mesh_ready_ms=162.469
+FACE FRAME 24 outcome=Presented elapsed_ms=162.741
+FACE FRAME 25 begin
+FRAME CADENCE frame=25 elapsed_ms=165.086 paused=false
+FACE FRAME 25 animation_ready_ms=1.448
+FACE MESH t=1.264 stage=deformation ms=14.614
+FACE MESH t=1.264 stage=normals ms=3.892
+FACE MESH t=1.264 stage=diffusion ms=90.923
+FACE MESH t=1.264 stage=vertex_lighting ms=0.633
+FACE MESH t=1.264 stage=face_features ms=15.254
+FACE MESH t=1.264 stage=hair_and_shapes ms=3.580
+FACE MESH t=1.264 stage=film_and_probe ms=0.356
+FACE MESH t=1.264 stage=transmission ms=0.007
+FACE MESH t=1.264 stage=mesh_validation ms=4.115
+FACE FRAME 25 mesh_ready_ms=164.972
+FACE FRAME 25 outcome=Presented elapsed_ms=165.295

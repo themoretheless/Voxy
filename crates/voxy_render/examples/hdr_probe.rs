@@ -43,10 +43,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         assert!(probe.encode(&mut encoder, &texture, 3, 0).is_err());
         assert!(probe.encode(&mut encoder, &texture, 0, 2).is_err());
         for (format, usage) in [
-            (
-                wgpu::TextureFormat::Rgba8Unorm,
-                wgpu::TextureUsages::COPY_SRC,
-            ),
+            (wgpu::TextureFormat::R8Unorm, wgpu::TextureUsages::COPY_SRC),
             (
                 wgpu::TextureFormat::Rgba16Float,
                 wgpu::TextureUsages::TEXTURE_BINDING,
@@ -109,6 +106,57 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .expect("RGBA32 mapping completed")?,
             reference
         );
+        for format in [
+            wgpu::TextureFormat::Rgba8Unorm,
+            wgpu::TextureFormat::Rgba8UnormSrgb,
+            wgpu::TextureFormat::Bgra8Unorm,
+            wgpu::TextureFormat::Bgra8UnormSrgb,
+        ] {
+            let source = device.create_texture(&wgpu::TextureDescriptor {
+                label: Some("presentation pixel fixture"),
+                size: texture.size(),
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format,
+                usage: wgpu::TextureUsages::COPY_SRC | wgpu::TextureUsages::COPY_DST,
+                view_formats: &[],
+            });
+            let bgra = matches!(
+                format,
+                wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb
+            );
+            let rgba = [17u8, 83, 201, 129];
+            let storage = if bgra {
+                [rgba[2], rgba[1], rgba[0], rgba[3]]
+            } else {
+                rgba
+            };
+            let mut pixels = vec![0u8; 24];
+            pixels[16..20].copy_from_slice(&storage);
+            queue.write_texture(
+                source.as_image_copy(),
+                &pixels,
+                wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(12),
+                    rows_per_image: Some(2),
+                },
+                source.size(),
+            );
+            let mut probe = HdrPixelProbe::new(&device);
+            let mut encoder = device.create_command_encoder(&Default::default());
+            probe.encode(&mut encoder, &source, 1, 1)?;
+            queue.submit([encoder.finish()]);
+            probe.begin_read();
+            device.poll(wgpu::PollType::wait_indefinitely())?;
+            assert_eq!(
+                probe.take_result().expect("8-bit mapping completed")?,
+                rgba.map(|v| f32::from(v) / 255.)
+            );
+            assert!(probe.take_result().is_none());
+            println!("PRESENTATION PIXEL PASS format={format:?}");
+        }
         println!(
             "HDR probe PASS {:?}: nonzero origin, HDR range, rejection and one-shot lifecycle",
             adapter.get_info()

@@ -1,0 +1,3 @@
+Chebyshev prototype uses conservative symmetric-diagonal Gershgorin bounds and a per-channel recurrence. It did not reduce the full-body qualification budget: 512 passes, absolute error 8.46e-5. It remains opt-in. update_incident retains the GPU iterate and resets recurrence; a moving-body parity gate is still required before runtime admission.
+
+Timestamp pairs were non-monotonic on some Metal runs. Negative or zero intervals are rejected and reported as null; no FPS conclusion is based on these timings. Initial subtraction overflow is preserved in timestamp-order-failure.log and repaired with checked subtraction. Full-body output is finite and nonnegative only at qualified budgets; early Chebyshev iterates can be negative and must not be presented.

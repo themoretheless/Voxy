@@ -1,0 +1,22 @@
+{
+  "target_fps": 120,
+  "frame_budget_ms": 8.333333333333334,
+  "target_achieved": false,
+  "release_baseline_samples": 138,
+  "release_baseline_mean_cadence_ms": 175.23910869565216,
+  "release_baseline_p95_cadence_ms": 224.852,
+  "kernel": {
+    "before": {
+      "assembly_median_ms": 16.990042,
+      "solve_median_ms": 55.929874999999996
+    },
+    "after": {
+      "assembly_median_ms": 9.522375,
+      "solve_median_ms": 63.313917
+    }
+  },
+  "bitwise_equivalence": true,
+  "focused_tests_passed": 6,
+  "full_render_after_optimization_measured": false,
+  "limitations": "Static kernel timings under active background jobs; separate assembly and solve. Native CPU submission/cadence measurements are not GPU timing. Secondary-motion demo has hair dynamics disabled by its existing configuration."
+}
