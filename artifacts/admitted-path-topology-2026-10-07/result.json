@@ -1,0 +1,69 @@
+{
+  "status": "regressions, bounded microbenchmark and short native audit passed",
+  "tests_passed": 185,
+  "ignored_tests": 10,
+  "topology_admission_scope": "One immutable face slice within PreparedPrescribedContactPath::response. Both endpoints retain full validation; every sample retains coordinate/index/finite/area checks. No cached acceptance across calls or owners.",
+  "benchmark": {
+    "fixture": "1024 domain-inactive triangles, 16 panels, 10 responses per trial, 8 ABBA/BAAB trials",
+    "legacy_median_s": 0.0386919165,
+    "admitted_median_s": 0.017953041500000003,
+    "elapsed_reduction_percent": 53.60002004553069,
+    "trials": [
+      {
+        "trial": 0,
+        "admitted": false,
+        "elapsed_s": 0.038185208
+      },
+      {
+        "trial": 1,
+        "admitted": true,
+        "elapsed_s": 0.017719208
+      },
+      {
+        "trial": 2,
+        "admitted": true,
+        "elapsed_s": 0.018186875
+      },
+      {
+        "trial": 3,
+        "admitted": false,
+        "elapsed_s": 0.038353958
+      },
+      {
+        "trial": 4,
+        "admitted": true,
+        "elapsed_s": 0.017263125
+      },
+      {
+        "trial": 5,
+        "admitted": false,
+        "elapsed_s": 0.039029875
+      },
+      {
+        "trial": 6,
+        "admitted": false,
+        "elapsed_s": 0.041148916
+      },
+      {
+        "trial": 7,
+        "admitted": true,
+        "elapsed_s": 0.018689834
+      }
+    ],
+    "scope": "This isolated CPU validation fixture only; not full-rig or universal speedup."
+  },
+  "source_sha256": "d775cc1fc135597d4c74bac7aade2087163c62ba4ab13a2a283f503734a3278a",
+  "full_clip_qualified": false,
+  "runtime_build": "passed",
+  "short_capture": "completed 3 steps",
+  "short_baseline_byte_parity": {
+    "nodes.json": true,
+    "nodes.jsonl": true,
+    "energy.jsonl": true,
+    "csv": true,
+    "png": true
+  },
+  "short_native_audit": "passed; requested_steps=3, requested_capture_complete=true, full_clip_qualified=false",
+  "full_480_step_candidate_exec_session": 3242,
+  "full_480_step_candidate_pid": 51794
+}

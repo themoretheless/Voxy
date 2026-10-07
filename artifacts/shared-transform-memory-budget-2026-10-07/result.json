@@ -1,0 +1,17 @@
+{
+  "status": "qualified within stated managed-uniform scope",
+  "adapter": "Apple M4 Max / Metal",
+  "uniform_bytes_per_draw": 256,
+  "independent_gpu_float_references": 128,
+  "default_tests_passed": 152,
+  "explicit_gpu_tests_passed": 22,
+  "wasm_check": "passed",
+  "automatic_retirement": false,
+  "engine_wide_cap": false,
+  "sources_sha256": {
+    "crates/voxy_render/src/scene.rs": "8dc017e8fc4f7e506c18ce302deb91034d9178b33834a252fdf8e19ed9c0fa63",
+    "crates/voxy_render/src/scene/transform_memory_tests.rs": "490f434ef7f75d4d8577cb62a9743b7ebf5350d4cd751a59276a8a6297023389",
+    "crates/voxy_render/src/compute_memory.rs": "9100b4ccae7ae0c3c6e9f9077318c0f361a6cff5a27d2fb6a851be32e0a414e6"
+  },
+  "native_app_build": "passed"
+}

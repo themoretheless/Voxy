@@ -112,7 +112,8 @@ fn update_pin(inner: &Arc<Inner>) {
     });
 }
 /// One shared resident-storage limit per device. This covers managed compute
-/// and scene geometry/colour textures, not staging, CUDA allocations or driver overhead.
+/// and scene geometry/transform uniforms/colour textures, not staging, CUDA allocations
+/// or driver overhead.
 #[derive(Clone, Debug)]
 pub struct ComputeMemoryBudget(Arc<Inner>);
 impl ComputeMemoryBudget {

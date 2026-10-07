@@ -1,0 +1,68 @@
+{
+  "status": "regressions, combined microbenchmark and short runtime/native audit passed",
+  "tests_passed": 185,
+  "ignored": 10,
+  "scope": "Prepared contact path response and normal-stencil samples reuse full immutable endpoint topology admission; dynamic finite/index/area checks remain on every sample.",
+  "benchmark": {
+    "fixture": "1024 domain-inactive faces /16 panels /10 combined response+normal-stencil evaluations /8 ABBA BAAB trials",
+    "baseline": "legacy full topology validation for both response and stiffness",
+    "legacy_median_s": 0.084062021,
+    "admitted_median_s": 0.0362636455,
+    "elapsed_reduction_percent": 56.86084504201964,
+    "trials": [
+      {
+        "trial": 0,
+        "admitted": false,
+        "elapsed_s": 0.086483042
+      },
+      {
+        "trial": 1,
+        "admitted": true,
+        "elapsed_s": 0.034676667
+      },
+      {
+        "trial": 2,
+        "admitted": true,
+        "elapsed_s": 0.037822875
+      },
+      {
+        "trial": 3,
+        "admitted": false,
+        "elapsed_s": 0.08555725
+      },
+      {
+        "trial": 4,
+        "admitted": true,
+        "elapsed_s": 0.0358415
+      },
+      {
+        "trial": 5,
+        "admitted": false,
+        "elapsed_s": 0.082566792
+      },
+      {
+        "trial": 6,
+        "admitted": false,
+        "elapsed_s": 0.081692833
+      },
+      {
+        "trial": 7,
+        "admitted": true,
+        "elapsed_s": 0.036685791
+      }
+    ],
+    "limit": "Isolated CPU validation fixture only, not full-rig speedup, real-time or all hardware qualification."
+  },
+  "full_clip_qualified": false,
+  "source_sha256": "2695d90556af3f6ac57bff36328fdc6ff26e967a45f6a44252133cb427c8ea08",
+  "short_baseline_byte_parity": {
+    "nodes.json": true,
+    "nodes.jsonl": true,
+    "energy.jsonl": true,
+    "csv": true,
+    "png": true
+  },
+  "runtime_build": "passed",
+  "short_native_audit": "passed; complete requested three-step capture, not full480 clip",
+  "wasm_check": "passed"
+}

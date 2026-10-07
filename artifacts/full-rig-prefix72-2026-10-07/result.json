@@ -1,0 +1,17 @@
+{
+  "status": "native prefix node/energy audit passed",
+  "source_capture": "full-rig-compensated-material-2026-10-07",
+  "requested_steps": 480,
+  "observed_committed_steps": 72,
+  "time_s": 0.3,
+  "node_checkpoints": 7,
+  "energy_records": 73,
+  "maximum_pin_error_m": 4.440892098500626e-16,
+  "full_clip_qualified": false,
+  "native_audit_exit_code": 0,
+  "sha256": {
+    "nodes.jsonl": "e6a27dd3ec6c5e3cd49c76c6f79b812c32017c4b5d2f1d48a95e12fc83c0fbaf",
+    "energy.jsonl": "3b6b0f76a4a2aa403ef39f9059d89360d1fa1bf3f4196ff7a3804748642bcb81",
+    "native-audit.log": "712200370d49141ca129c46cd5463661412f9c7ce023050e6de5064997c88f74"
+  }
+}

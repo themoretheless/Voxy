@@ -27,6 +27,7 @@ impl std::error::Error for SceneSkinError {}
 #[derive(Debug)]
 pub struct SceneSkinner {
     device: wgpu::Device,
+    memory_budget: crate::ComputeMemoryBudget,
     pipeline: wgpu::ComputePipeline,
     identity: Arc<()>,
 }
@@ -116,6 +117,7 @@ impl SceneSkinner {
         });
         Ok(Self {
             device: device.clone(),
+            memory_budget: renderer.compute_memory_budget().clone(),
             pipeline,
             identity: Arc::new(()),
         })
@@ -144,7 +146,8 @@ impl SceneSkinner {
             packed.extend(v.joints.map(f32::from));
             packed.extend(v.weights.map(|w| f32::from(w) / 65535.0));
         }
-        let [buffer] = crate::ComputeMemoryBudget::for_device(&self.device)
+        let [buffer] = self
+            .memory_budget
             .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
                 label: "shared scene skin source",
                 size: bytes,

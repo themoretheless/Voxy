@@ -1,0 +1,53 @@
+{
+  "status": "native prefix node/energy audit passed",
+  "runtime_source": "full-rig-admitted-topology-2026-10-07; includes factored kinetic and response topology admission, excludes later stencil topology admission",
+  "requested_steps": 480,
+  "committed_steps_audited": 56,
+  "energy_records": 57,
+  "node_checkpoints": 5,
+  "last_node_checkpoint_time_s": 0.2,
+  "energy_commit_time_s": 0.23333333333333334,
+  "full_clip_qualified": false,
+  "baseline_prefix_byte_parity": {
+    "all_committed_energy_records": false,
+    "scheduled_node_checkpoints": false
+  },
+  "sha256": {
+    "nodes.jsonl": "8e988f857472598b9a9da23a9e501bad081c909d1a1d590b8a5de0c73f9ea7d4",
+    "energy.jsonl": "a242ea8b4d6712ae66919e700ee595926cc38ee0d4eb6a18f744ffd61459ba32",
+    "native-audit.log": "64bfcc9127f9eb2ea14fa213ad66284a30487f6a1f6ee5fd3b50a9936c76f336"
+  },
+  "baseline_differences": {
+    "first_energy_difference_step": 1,
+    "scheduled_node_delta": [
+      {
+        "time_s": 0.0,
+        "maximum_position_delta_m": 0.0,
+        "maximum_velocity_delta_m_s": 0.0
+      },
+      {
+        "time_s": 0.05,
+        "maximum_position_delta_m": 0.0,
+        "maximum_velocity_delta_m_s": 0.0
+      },
+      {
+        "time_s": 0.1,
+        "maximum_position_delta_m": 0.0,
+        "maximum_velocity_delta_m_s": 0.0
+      },
+      {
+        "time_s": 0.15,
+        "maximum_position_delta_m": 0.0,
+        "maximum_velocity_delta_m_s": 0.0
+      },
+      {
+        "time_s": 0.2,
+        "maximum_position_delta_m": 0.0,
+        "maximum_velocity_delta_m_s": 0.0
+      }
+    ],
+    "limit": "Raw trace bytes differ from the reported solver defect arithmetic. All saved physical node states are exactly equal through0.2s; this does not prove every unsaved node frame or full480-step parity.",
+    "mechanical_heat_work_receipts_equal": true,
+    "saved_physical_node_positions_and_velocities_equal": true
+  }
+}

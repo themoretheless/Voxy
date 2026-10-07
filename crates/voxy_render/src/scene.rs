@@ -84,7 +84,6 @@ impl std::fmt::Display for SceneShaderError {
 impl std::error::Error for SceneShaderError {}
 use bytemuck::{Pod, Zeroable};
 use glam::Mat4;
-use wgpu::util::DeviceExt;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
@@ -551,10 +550,15 @@ impl SceneTexture {
 /// A draw owns its uniform so updating one object cannot overwrite another draw.
 #[derive(Debug)]
 pub struct SceneTransform {
-    buffer: wgpu::Buffer,
+    buffer: crate::ComputeStorage,
     bind_group: wgpu::BindGroup,
 }
 impl SceneTransform {
+    /// Logical bytes retained by this transform in the shared device ledger.
+    #[must_use]
+    pub fn allocation_bytes(&self) -> u64 {
+        self.buffer.size()
+    }
     /// Set the positive world half-space for planar_reflection_pbr_clip_shader.
     /// Preserves world/tint/light/view/PBR. Reapply after MVP or motion updates,
     /// which overwrite this plane in the previous-MVP slot.
@@ -786,6 +790,7 @@ struct ViewPass<'a> {
 #[derive(Debug)]
 pub struct SceneRenderer {
     device: wgpu::Device,
+    compute_memory_budget: crate::ComputeMemoryBudget,
     world_pipeline: wgpu::RenderPipeline,
     overlay_pipeline: wgpu::RenderPipeline,
     transparent_pipeline: wgpu::RenderPipeline,
@@ -804,6 +809,11 @@ pub struct SceneRenderer {
 }
 
 impl SceneRenderer {
+    /// Shared device owner retained even when no scene resource is resident.
+    #[must_use]
+    pub fn compute_memory_budget(&self) -> &crate::ComputeMemoryBudget {
+        &self.compute_memory_budget
+    }
     fn resource_device(&self, supplied: &wgpu::Device) -> Result<&wgpu::Device, SceneError> {
         if supplied != &self.device {
             return Err(SceneError::DeviceMismatch);
@@ -941,6 +951,7 @@ impl SceneRenderer {
             );
         Self {
             device: device.clone(),
+            compute_memory_budget: crate::ComputeMemoryBudget::for_device(device),
             world_pipeline,
             overlay_pipeline,
             transparent_pipeline,
@@ -1771,7 +1782,7 @@ impl SceneRenderer {
     }
 
     /// # Errors
-    /// Rejects a foreign device or non-finite matrices.
+    /// Rejects a foreign device, non-finite matrices or shared memory exhaustion.
     pub fn create_transform(
         &self,
         device: &wgpu::Device,
@@ -1789,11 +1800,15 @@ impl SceneRenderer {
         uniform.extend([1.; 4]);
         uniform.extend([0., 0., 1., 0.]);
         uniform.extend([0.; 4]);
-        let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("scene MVP and material view"),
-            contents: bytemuck::cast_slice(&uniform),
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-        });
+        let contents = bytemuck::cast_slice(&uniform);
+        let [buffer] = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+                label: "scene MVP and material view",
+                size: contents.len() as u64,
+                contents: Some(contents),
+                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            }])
+            .map_err(scene_memory_error)?;
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("scene transform"),
             layout: &self.transform_layout,
@@ -3451,3 +3466,7 @@ mod texture_memory_tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "scene/transform_memory_tests.rs"]
+mod transform_memory_tests;

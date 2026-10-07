@@ -1,0 +1,16 @@
+    Finished `release` profile [optimized] target(s) in 0.05s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+PATH_TOPOLOGY_BENCH trial=0 admitted=false iterations=10 faces=1024 panels=16 elapsed_s=0.086483042
+PATH_TOPOLOGY_BENCH trial=1 admitted=true iterations=10 faces=1024 panels=16 elapsed_s=0.034676667
+PATH_TOPOLOGY_BENCH trial=2 admitted=true iterations=10 faces=1024 panels=16 elapsed_s=0.037822875
+PATH_TOPOLOGY_BENCH trial=3 admitted=false iterations=10 faces=1024 panels=16 elapsed_s=0.085557250
+PATH_TOPOLOGY_BENCH trial=4 admitted=true iterations=10 faces=1024 panels=16 elapsed_s=0.035841500
+PATH_TOPOLOGY_BENCH trial=5 admitted=false iterations=10 faces=1024 panels=16 elapsed_s=0.082566792
+PATH_TOPOLOGY_BENCH trial=6 admitted=false iterations=10 faces=1024 panels=16 elapsed_s=0.081692833
+PATH_TOPOLOGY_BENCH trial=7 admitted=true iterations=10 faces=1024 panels=16 elapsed_s=0.036685791
+test biomechanics::prescribed_surface::path_topology_admission_tests::benchmark_admitted_path_topology_against_legacy ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 127 filtered out; finished in 0.50s
+

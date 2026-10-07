@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "results": [
+    "test result: ok. 114 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 0.63s",
+    "test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.19s",
+    "test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s"
+  ],
+  "changes": "Read-only diagnostic endpoints include the actual stationary/moving embedded skin owner. No numerical admission changes.",
+  "source_sha256": "bd923d273947f0aa60247475f6280813e3da0ad4059b17bdd6f0686b60029b5c",
+  "active_reproduction_uses_prior_committed_binary": true
+}

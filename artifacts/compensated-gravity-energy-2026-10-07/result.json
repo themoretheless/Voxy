@@ -1,0 +1,15 @@
+{
+  "status": "regressions passed; full clip candidate live",
+  "change": "Compensated independently evaluated endpoint gravity potential only; no tolerance, force, iteration or refinement gate changes",
+  "regression_tests_passed": 182,
+  "ignored_tests": 9,
+  "runtime_build": "passed",
+  "full_clip_qualified": false,
+  "full_clip_session": 72979,
+  "original_diagnostic_session": 23131,
+  "source_sha256": "5804b4e20287936d7b3c5a598679a4a4ee4c70f2bd91708376fdba7407b1d24e",
+  "short_native_audit": "passed at 3 steps / 0.0125 s with unchanged 5e-10 J/s rate",
+  "short_full_node_trace_bytes_equal": false,
+  "short_physical_nodes_and_times_equal": true,
+  "short_trace_difference": "Energy receipts change from more accurate gravity diagnostics; every physical node coordinate and checkpoint time match."
+}

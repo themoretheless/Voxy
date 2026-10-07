@@ -1,0 +1,32 @@
+{
+  "status": "terminal rejection on frame 55; original diagnostic reproduction",
+  "requested_steps": 55,
+  "energy_records_observed": 55,
+  "process": [
+    "36385    00:32 /tmp/voxy-contact-derivatives-20261006/release/examples/body_motion_snapshot artifacts/full-rig-work-arithmetic-2026-10-07/capture.png artifacts/full-rig-work-arithmetic-2026-10-07/frames --cesium --contact --capture-steps=55 --tissue-regions=artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json"
+  ],
+  "exec_session": 23131,
+  "gate_changes": false,
+  "diagnostic_version": "committed 4b84bfa1; contact-free fixture, later skin diagnostic correction does not affect active binary",
+  "energy_prefix_identical_to_rejected_baseline": true,
+  "latest_committed_frame": {
+    "energy_receipts": [
+      [
+        0.03254480909113644,
+        5.252142975955774,
+        5.219598166864456,
+        3.676715359769758e-13
+      ]
+    ],
+    "step": 54,
+    "time_s": 0.225
+  },
+  "process_live_verified": false,
+  "committed_steps_observed": 54,
+  "exit_code": 1,
+  "rejected_step": 55,
+  "rejected_time_s": 0.229166667,
+  "terminal_error": "implicit midpoint work defect",
+  "full_clip_qualified": false,
+  "committed_energy_trace_identical": true
+}

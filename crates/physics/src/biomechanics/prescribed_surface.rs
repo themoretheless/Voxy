@@ -332,6 +332,14 @@ impl PreparedPrescribedContactPath {
         end: &[Vec3],
         faces: &[[usize; 3]],
     ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_with_admitted_faces::<true>(start, end, faces)
+    }
+    fn normal_stencils_with_admitted_faces<const ADMITTED: bool>(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
         if start.len() != end.len() {
             return Err("body contact vertex count changed");
         }
@@ -344,11 +352,21 @@ impl PreparedPrescribedContactPath {
                 .zip(end)
                 .map(|(a, b)| trajectory_point(*a, *b, time))
                 .collect();
-            for mut block in surface.normal_stencils_with_coordinates::<true>(
-                &body,
-                faces,
-                self.coordinates(start, end, time),
-            )? {
+            let blocks = if ADMITTED {
+                validate_admitted_face_geometry(&body, faces)?;
+                surface.normal_stencils_for_validated_geometry::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            } else {
+                surface.normal_stencils_with_coordinates::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            };
+            for mut block in blocks {
                 // Endpoint = 2*midpoint-start; sampled positions have derivative
                 // 2*time with respect to the midpoint unknown.
                 block.normal_curvature_n_m *= 2. * time * weight;
@@ -358,6 +376,14 @@ impl PreparedPrescribedContactPath {
         Ok(result)
     }
     pub(super) fn response(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedContactPathResponse, &'static str> {
+        self.response_with_admitted_faces::<true>(start, end, faces)
+    }
+    fn response_with_admitted_faces<const ADMITTED: bool>(
         &self,
         start: &[Vec3],
         end: &[Vec3],
@@ -379,11 +405,23 @@ impl PreparedPrescribedContactPath {
                 .zip(end)
                 .map(|(a, b)| trajectory_point(*a, *b, time))
                 .collect();
-            let response = surface.response_with_coordinates::<true>(
-                &body,
-                faces,
-                self.coordinates(start, end, time),
-            )?;
+            // Both endpoints already admitted this immutable face slice above.
+            // Sample coordinates/areas still need admission on every call.
+            let response = if ADMITTED {
+                validate_admitted_face_geometry(&body, faces)?;
+                surface.response_for_validated_geometry::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            } else {
+                // Legacy full validation retained only as a native test oracle.
+                surface.response_with_coordinates::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            };
             result.midpoint_objective_j += 0.5 * weight / time * response.potential_j;
             for (sum, gradient) in result
                 .body_gradient_n
@@ -819,6 +857,14 @@ impl PrescribedTriangleSurface {
         coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
     ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
         validate_faces(body, faces)?;
+        self.normal_stencils_for_validated_geometry::<PRUNED>(body, faces, coordinates)
+    }
+    fn normal_stencils_for_validated_geometry<const PRUNED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
         let mut stencils = Vec::new();
         for &face in faces {
             if !self.body_face_may_contact(face) {
@@ -2398,5 +2444,137 @@ mod inactive_domain_tests {
             "INACTIVE_DOMAIN_BENCH elapsed_s={:.17e} steps=200 faces=512 potential_j={potential:.17e}",
             start.elapsed().as_secs_f64()
         );
+    }
+}
+
+#[cfg(test)]
+mod path_topology_admission_tests {
+    use super::*;
+    fn check(
+        path: &PreparedPrescribedContactPath,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) {
+        let admitted_stencils = path.normal_stencils(start, end, faces);
+        let legacy_stencils = path.normal_stencils_with_admitted_faces::<false>(start, end, faces);
+        assert_eq!(
+            format!("{admitted_stencils:?}"),
+            format!("{legacy_stencils:?}")
+        );
+        let admitted = path.response(start, end, faces);
+        let legacy = path.response_with_admitted_faces::<false>(start, end, faces);
+        match (admitted, legacy) {
+            (Ok(a), Ok(b)) => {
+                assert_eq!(a.midpoint_objective_j, b.midpoint_objective_j);
+                assert_eq!(a.body_gradient_n, b.body_gradient_n);
+                assert_eq!(a.obstacle_gradient_n, b.obstacle_gradient_n);
+            }
+            (Err(a), Err(b)) => assert_eq!(a, b),
+            (a, b) => panic!("admission mismatch {a:?} {b:?}"),
+        }
+    }
+    #[test]
+    fn immutable_path_topology_matches_legacy_and_rechecks_sample_geometry() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-2., -2., 0.], [2., -2., 0.], [0., 2., 0.]],
+            vec![[0, 1, 2]],
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap();
+        let start = [[0., 0., 0.015], [0.125, 0., 0.015], [0., 0.125, 0.015]];
+        let end = start.map(|p| [p[0] + 0.0001, p[1], p[2] + 0.0002]);
+        for panels in [1, 2, 4, 8, 16] {
+            let path = surface.prepare_path_panels(&surface, panels).unwrap();
+            check(&path, &start, &end, &[[0, 1, 2]]);
+            assert!(
+                path.response(&start, &end, &[[0, 1, 2]])
+                    .unwrap()
+                    .midpoint_objective_j
+                    > 0.
+            );
+            check(&path, &start, &end, &[[0, 1, 2], [2, 1, 0]]);
+            assert!(
+                path.response(&start, &end, &[[0, 1, 2], [2, 1, 0]])
+                    .is_err()
+            );
+            check(&path, &start, &end, &[[0, 1, 3]]);
+            check(&path, &start, &end[..2], &[[0, 1, 2]]);
+            let mut bad = end;
+            bad[0][2] = f64::NAN;
+            check(&path, &start, &bad, &[[0, 1, 2]]);
+        }
+        let inactive = surface
+            .with_body_contact_domains(vec![(vec![[0, 1, 2]], vec![false])])
+            .unwrap();
+        let path = inactive.prepare_path(&inactive).unwrap();
+        let folded = [[0., 0., 0.015], [-0.125, 0., 0.015], [0., 0.125, 0.015]];
+        check(&path, &start, &folded, &[[0, 1, 2]]);
+        assert_eq!(
+            path.response(&start, &folded, &[[0, 1, 2]]).unwrap_err(),
+            "degenerate contact triangle"
+        );
+        assert_eq!(
+            path.response(&start, &end, &[[0, 1, 2]])
+                .unwrap()
+                .midpoint_objective_j,
+            0.
+        );
+    }
+
+    #[test]
+    #[ignore = "native bounded topology validation benchmark; not full-rig speed qualification"]
+    fn benchmark_admitted_path_topology_against_legacy() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-2., -2., 0.], [2., -2., 0.], [0., 2., 0.]],
+            vec![[0, 1, 2]],
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap();
+        let mut body = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..1024 {
+            let x = i as f64 * 0.5;
+            body.extend([[x, 0., 1.], [x + 0.125, 0., 1.], [x, 0.125, 1.]]);
+            faces.push([3 * i, 3 * i + 1, 3 * i + 2]);
+        }
+        let inactive = surface
+            .with_body_contact_domains(vec![(faces.clone(), vec![false])])
+            .unwrap();
+        let path = inactive.prepare_path_panels(&inactive, 16).unwrap();
+        let end: Vec<_> = body.iter().map(|p| [p[0], p[1], p[2] + 0.001]).collect();
+        check(&path, &body, &end, &faces);
+        for (trial, admitted) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let now = std::time::Instant::now();
+            for _ in 0..10 {
+                let value = if admitted {
+                    path.response(&body, &end, &faces)
+                } else {
+                    path.response_with_admitted_faces::<false>(&body, &end, &faces)
+                }
+                .unwrap();
+                assert_eq!(value.midpoint_objective_j, 0.);
+                let stencils = if admitted {
+                    path.normal_stencils(&body, &end, &faces)
+                } else {
+                    path.normal_stencils_with_admitted_faces::<false>(&body, &end, &faces)
+                }
+                .unwrap();
+                assert!(stencils.is_empty());
+                std::hint::black_box(stencils);
+                std::hint::black_box(value);
+            }
+            eprintln!(
+                "PATH_TOPOLOGY_BENCH trial={trial} admitted={admitted} iterations=10 faces=1024 panels=16 elapsed_s={:.9}",
+                now.elapsed().as_secs_f64()
+            );
+        }
     }
 }

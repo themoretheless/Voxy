@@ -1,0 +1,15 @@
+{
+  "status": "regressions and short native capture audit passed",
+  "tests_passed": 209,
+  "ignored": 9,
+  "change": "Coupled surface/skin implicit and material-only implicit steps use compensated free-node endpoint kinetic changes via factored velocity differences. Pin work and explicit/support Verlet retain their existing arithmetic.",
+  "oracle": "Binary-exact integer polynomial n+1/2 for v:n->n+1 with n=2^27+1; original squared difference loses 0.5 J. Opposite node cancels exactly; pinned node excluded.",
+  "tolerances_or_gates_relaxed": false,
+  "full_clip_qualified": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia.rs": "dc581c2cc0d0681c374822363f29ad9acd306f6f6ea5b7df3c11c3c33a277e91",
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "1feedb4ebf993542a4e9bda9211883372eaccad77754008db7956aaf2358a7aa"
+  },
+  "runtime_build": "passed",
+  "short_native_audit": "passed at 3 physical steps; authored rate 5e-10 J/s"
+}

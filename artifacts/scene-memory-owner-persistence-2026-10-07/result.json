@@ -1,0 +1,15 @@
+{
+  "status": "qualified within scene producer lifetime scope",
+  "default_renderer_tests_passed": 154,
+  "explicit_gpu_tests_passed": 22,
+  "wasm_check": "passed",
+  "shared_owner": "SceneRenderer and SceneSkinner retain the existing ComputeMemoryBudget; no secondary registry or ledger.",
+  "coverage": "Empty configured producers preserve capacity and refuse different limits after external handle and resource retirement. Empty formerly unbounded producers still reject retroactive finite configuration.",
+  "limits": "No finite default or automatic retirement; configuration lifetime after every budget/program/renderer/resource owner is destroyed remains separate from device-lifetime configuration. Raw external GPU aliases and driver overhead remain outside payload accounting.",
+  "sources_sha256": {
+    "crates/voxy_render/src/scene.rs": "f2e5ce48c9f1202786b400b57790e40a4dfc1b2cfb9876fbf22039612e952912",
+    "crates/voxy_render/src/scene/skinning.rs": "954d7f690e8b327a99c8cab7b341eb8cf29cbb0070f98d15b860932ddde47975",
+    "crates/voxy_render/src/scene/transform_memory_tests.rs": "87037c0a1329063d1b7e851d221f0a129bcf0c4152c900852f003a61424c645d"
+  },
+  "native_app_build": "passed"
+}

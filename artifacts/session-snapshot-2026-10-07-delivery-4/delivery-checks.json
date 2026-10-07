@@ -1,0 +1,16 @@
+{
+  "format_check": "passed",
+  "physics_release_lib": {
+    "passed": 118,
+    "ignored": 10,
+    "failed": 0
+  },
+  "renderer_release_lib": {
+    "passed": 154,
+    "ignored": 22,
+    "failed": 0
+  },
+  "snapshot_hashes": "all verified",
+  "full_rig_480_steps": "not qualified; live runs preserved",
+  "cleanup": "no additional branches/worktrees/stashes"
+}

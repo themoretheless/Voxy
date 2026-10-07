@@ -1,0 +1,3 @@
+Sampling process 42743 for 1 second with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Sample analysis of process 42743 written to file artifacts/full-rig-compensated-material-2026-10-07/solver-profile-through-step60.txt

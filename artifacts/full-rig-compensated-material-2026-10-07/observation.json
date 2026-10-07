@@ -1,0 +1,41 @@
+{
+  "status": "live 480-step strict candidate; not full-clip qualification",
+  "exec_session": 8152,
+  "process_live_verified": "42743 26:07 Rs   /tmp/voxy-contact-derivatives-20261006/release/examples/body_motion_snapshot artifacts/full-rig-compensated-material-2026-10-07/capture.png artifacts/full-rig-compensated-material-2026-10-07/frames --cesium --contact --capture-steps=480 --tissue-regions=artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json",
+  "requested_steps": 480,
+  "committed_steps_observed": 81,
+  "latest_committed_frame": {
+    "energy_receipts": [
+      [
+        -2.0438866759206133,
+        8.807806403256926,
+        10.851693079178121,
+        5.455641758318799e-13
+      ]
+    ],
+    "step": 81,
+    "time_s": 0.3375
+  },
+  "energy_budget_rate_j_s": 5e-10,
+  "full_clip_qualified": false,
+  "executable_sha256": "6dd5e2ca98e1dc95e67a2048803a863b6403a2f5ea4d95227080314d435f628b",
+  "immutable_step56_prefix_audit": {
+    "status": "passed",
+    "frames": 56,
+    "time_s": 0.23333333333333334,
+    "maximum_frame_defect_j": 7.183142969324763e-14,
+    "final_cumulative_defect_j": 6.306066779870889e-13,
+    "full_clip_qualified": false
+  },
+  "runtime_version": "Material/gravity compensation; excludes later factored kinetic and scene-owner persistence edits.",
+  "immutable_step60_node_energy_audit": {
+    "status": "passed",
+    "energy_records": 61,
+    "node_checkpoints": 6,
+    "last_node_time_s": 0.25,
+    "maximum_pin_error_m": 4.440892098500626e-16,
+    "maximum_frame_balance_j": 7.183142969324763e-14,
+    "full_clip_qualified": false,
+    "negative_cases_rejected": 5
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "status": "native audit expectations passed",
+  "observed_committed_steps": 60,
+  "requested_steps": 480,
+  "node_checkpoints": 6,
+  "full_clip_qualified": false,
+  "results": [
+    {
+      "name": "observed-through-step60-node-audit",
+      "exit_code": 0,
+      "expected_success": true,
+      "matched_expectation": true
+    },
+    {
+      "name": "negative-missing-node",
+      "exit_code": 101,
+      "expected_success": false,
+      "matched_expectation": true
+    },
+    {
+      "name": "negative-missing-energy",
+      "exit_code": 101,
+      "expected_success": false,
+      "matched_expectation": true
+    },
+    {
+      "name": "negative-displaced-pin",
+      "exit_code": 101,
+      "expected_success": false,
+      "matched_expectation": true
+    },
+    {
+      "name": "negative-incomplete-as-complete",
+      "exit_code": 101,
+      "expected_success": false,
+      "matched_expectation": true
+    },
+    {
+      "name": "negative-full-endpoint-as-prefix",
+      "exit_code": 101,
+      "expected_success": false,
+      "matched_expectation": true
+    },
+    {
+      "name": "completed-short-audit-after-prefix-refactor",
+      "exit_code": 0,
+      "expected_success": true,
+      "matched_expectation": true
+    }
+  ],
+  "fixture_sha256": {
+    "observed-through-step60-energy.jsonl": "d26549d7f6669eabf13ecb78beab68797fd6430e3ad66dc99dfcf0a4b471cacb",
+    "observed-through-step60-nodes.jsonl": "814df8484bd2883e717347ebbfdda75493181cc6adf0b79ce8a942908954f3d0"
+  },
+  "native_audit_binary_sha256": "a8ca3ffb61d0033f412c61088aeb8e8c407f08aa6c161c01da4375b659ffce21"
+}

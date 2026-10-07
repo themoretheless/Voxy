@@ -1,0 +1,22 @@
+{
+  "status": "native regression suites passed; runtime qualification pending",
+  "passed": 240,
+  "ignored": 9,
+  "regression_suites": 8,
+  "independent_cell_scale_fixture": "65 disjoint tetrahedra; one stiff and 64 power-of-two-scaled materials; energy invariant to element order; gradient unchanged",
+  "changes": "One shared compensated endpoint-energy accumulator for pore aggregate, element, bond, gap, surface, embedded contact, cavity, dead-load and gravity contributions. Integrated forces and admission gates unchanged. Individual constitutive/contact/pore sub-evaluations retain their existing arithmetic.",
+  "full_clip_qualified": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/mod.rs": "b05602a43d97b78a950d1b9d26f63f2d4c5365087efa4b4e12ec24d79d39b1e6",
+    "crates/physics/src/biomechanics/energy_sum.rs": "44644a466e1813f604b39a1ed72aadabc7fb8887185b849aec726bd32361162e",
+    "crates/physics/src/biomechanics/inertia.rs": "8b357bebd177446fd2a1406236964b9ad2215d351a79bdaa81034e75f4fd858e"
+  },
+  "runtime_build": "passed",
+  "short_runtime": "completed 3 steps / 0.0125 s",
+  "short_native_audit": "passed; 2338 nodes, 6845 cells, 3 exact source pins; authored rate 5e-10 J/s",
+  "full_clip_exec_session": 8152,
+  "full_clip_pid": 42743,
+  "coupled_regression_tests_passed": 35,
+  "total_physics_tests_passed": 275,
+  "additional_coupled_suites": "wet cohesion, wear/wet, poroelastic cells/body, internal surface contact, HGO viscoelastic body, muscle activation"
+}

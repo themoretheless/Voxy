@@ -1,0 +1,28 @@
+{
+  "status": "terminal rejection at frame55; gravity-only compensation insufficient",
+  "exec_session": 72979,
+  "process_live_verified": false,
+  "requested_steps": 480,
+  "committed_steps_observed": 54,
+  "latest_committed_frame": {
+    "energy_receipts": [
+      [
+        0.09148428747728499,
+        5.045111572402922,
+        4.953627284925418,
+        3.907897620604497e-13
+      ]
+    ],
+    "step": 53,
+    "time_s": 0.22083333333333333
+  },
+  "energy_budget_rate_j_s": 5e-10,
+  "full_clip_qualified": false,
+  "preserved_executable": "/tmp/voxy-gravity-compensation-only-20261007",
+  "executable_sha256": "ad27f923cd6b7401e61fd15f51091c9a96ea5abce4a1b99e217d8b6c34821999",
+  "energy_records_observed": 50,
+  "exit_code": 1,
+  "rejected_step": 55,
+  "rejected_time_s": 0.229166667,
+  "terminal_error": "implicit midpoint work defect"
+}

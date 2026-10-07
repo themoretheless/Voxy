@@ -172,6 +172,7 @@ fn gpu_scene_skinning_independent_instances_and_last_good_pose() {
     let mut encoder = device.create_command_encoder(&Default::default());
     let other = SceneSkinner {
         device: device.clone(),
+        memory_budget: skinner.memory_budget.clone(),
         pipeline: skinner.pipeline.clone(),
         identity: Arc::new(()),
     };

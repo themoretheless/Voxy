@@ -375,6 +375,21 @@ impl InertialBody {
         let (potential, _, contact) = self.evaluate()?;
         self.diagnostics_from_potential(potential, contact)
     }
+    // Algebraically exact kinetic change without subtracting nearly equal
+    // squared velocities. This uses measured endpoints, never integrated work.
+    fn free_kinetic_change(&self, velocities: &[Vec3]) -> f64 {
+        let mut change = super::energy_sum::EnergySum::default();
+        for node in 0..self.masses.len() {
+            if !self.body.pinned[node] {
+                for axis in 0..3 {
+                    let old = self.velocities[node][axis];
+                    let new = velocities[node][axis];
+                    change.add(0.5 * self.masses[node] * (new - old) * (new + old));
+                }
+            }
+        }
+        change.finish()
+    }
     // Reuse a force evaluation at this exact position/history. Velocities may
     // have changed since evaluation; kinetic quantities are always read fresh.
     fn diagnostics_from_potential(
@@ -399,9 +414,14 @@ impl InertialBody {
             potential_j: potential,
             contact_j: contact,
         };
+        // Accumulate the independently evaluated endpoint potential and all
+        // gravity contributions with compensation. Repeatedly rounding a small
+        // nodal term into the much larger material energy can erase their total.
+        let mut potential = super::energy_sum::EnergySum::new(potential);
         for ((&mass, &position), &rest) in self.masses.iter().zip(positions).zip(&self.body.rest) {
-            result.potential_j -= mass * dot(self.acceleration, super::sub(position, rest));
+            potential.add(-mass * dot(self.acceleration, super::sub(position, rest)));
         }
+        result.potential_j = potential.finish();
         for ((&mass, &velocity), &position) in self.masses.iter().zip(velocities).zip(positions) {
             let momentum = velocity.map(|v| mass * v);
             let angular = cross(position, momentum);
@@ -630,5 +650,59 @@ impl InertialBody {
             correction_work_j: motion.correction_work_j,
             energy_defect_j: defect,
         })
+    }
+}
+
+#[cfg(test)]
+mod diagnostic_energy_tests {
+    use super::*;
+    #[test]
+    fn gravity_endpoint_keeps_sub_ulp_nodal_contributions() {
+        let rest = vec![[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
+        let material = super::super::Material::from_young_poisson(300., 0.4).unwrap();
+        let body = Body::new(rest.clone(), vec![false; 4], vec![([0, 1, 2, 3], material)]).unwrap();
+        // Unit nodal masses: density 24 * volume 1/6 / four nodes.
+        let mut dynamics = InertialBody::new(body, &[24.], vec![[0.; 3]; 4]).unwrap();
+        assert_eq!(dynamics.masses, vec![1.; 4]);
+        dynamics.acceleration = [0., -2_f64.powi(-10), 0.];
+        let positions: Vec<_> = rest
+            .iter()
+            .map(|p| [p[0], p[1] + 2_f64.powi(-44), p[2]])
+            .collect();
+        let expected = 1. + 2_f64.powi(-52);
+        let observed = dynamics
+            .diagnostics_at(1., 0., &positions, &dynamics.velocities)
+            .unwrap();
+        assert_eq!(observed.potential_j, expected);
+        assert_eq!(observed.kinetic_j, 0.);
+        let naive = (0..4).fold(1., |sum, _| sum + 2_f64.powi(-54));
+        assert_eq!(naive, 1.); // The original accumulation loses the entire gravity change.
+        dynamics.acceleration[1] = f64::INFINITY;
+        assert!(
+            dynamics
+                .diagnostics_at(1., 0., &positions, &dynamics.velocities)
+                .is_err()
+        );
+    }
+    #[test]
+    fn free_kinetic_change_preserves_binary_exact_endpoint_difference_and_pin_exclusion() {
+        let rest = vec![[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
+        let material = super::super::Material::from_young_poisson(300., 0.4).unwrap();
+        let body = Body::new(rest, vec![false; 4], vec![([0, 1, 2, 3], material)]).unwrap();
+        let old = 2_f64.powi(27) + 1.;
+        let new = old + 1.;
+        let mut velocities = vec![[0.; 3]; 4];
+        velocities[0][0] = old;
+        let mut dynamics = InertialBody::new(body, &[24.], velocities.clone()).unwrap();
+        velocities[0][0] = new;
+        // Independent integer-polynomial oracle: ((n+1)^2-n^2)/2=n+1/2.
+        let expected = old + 0.5;
+        assert_eq!(dynamics.free_kinetic_change(&velocities), expected);
+        assert_ne!(0.5 * (new * new - old * old), expected);
+        velocities[1][0] = old;
+        dynamics.velocities[1][0] = new;
+        assert_eq!(dynamics.free_kinetic_change(&velocities), 0.);
+        dynamics.body.pinned[0] = true;
+        assert_eq!(dynamics.free_kinetic_change(&velocities), -expected);
     }
 }
