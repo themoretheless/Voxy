@@ -1,0 +1,73 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "single_scattering_implemented": true,
+  "medium_shadow_attenuation": true,
+  "normalized_hg_phase": true,
+  "slab_gpu_cases": 8,
+  "optical_thicknesses": [
+    0.5,
+    1e-06
+  ],
+  "maximum_slab_analytic_rgb_error": 8.31183148586323e-07,
+  "rendered_scene_pixels": 16384,
+  "illuminated_scene_pixels": 1792,
+  "maximum_scene_native_rgb_error": 8.078984341519657e-07,
+  "foreground_unchanged": true,
+  "alpha_preserved": true,
+  "physics_tests_passed": 4,
+  "render_tests_passed": 155,
+  "render_tests_ignored": 22,
+  "window_exit_status": 0,
+  "presented_window_frames": [
+    {
+      "id": 1,
+      "width": 320,
+      "height": 240,
+      "storage_and_hdr_output_bytes": 4300976
+    },
+    {
+      "id": 2,
+      "width": 320,
+      "height": 240,
+      "storage_and_hdr_output_bytes": 4300976
+    },
+    {
+      "id": 3,
+      "width": 320,
+      "height": 240,
+      "storage_and_hdr_output_bytes": 4300976
+    },
+    {
+      "id": 4,
+      "width": 321,
+      "height": 241,
+      "storage_and_hdr_output_bytes": 4332392
+    }
+  ],
+  "qualification_readbacks_used": true,
+  "cpu_scene_upload_for_composition": false,
+  "multiple_scattering_implemented": false,
+  "solid_geometry_shadowing_implemented": false,
+  "optically_thick_accuracy_qualified": false,
+  "calibrated_water_oil_optics_qualified": false,
+  "dynamic_thermal_optical_coupling_qualified": false,
+  "editor_component_qualified": false,
+  "nvidia_qualified": false,
+  "sha256": {
+    "crates/physics/src/liquid/droplet_optics.rs": "ef9c0d762144bcba0e4721fc85b0995e4a0b7bdc8306cd8793de57ca2260c460",
+    "crates/physics/tests/liquid_droplet_optics.rs": "fdac46d187ba6ff5fcc83b841a3f32a8c85a7d914832b402c462c625bdbab806",
+    "crates/voxy_render/src/droplet_extinction.rs": "e4168a196cce442382496e9a480a6757aac86ba609da47ae38e46566eecd40a3",
+    "crates/voxy_render/src/droplet_extinction_common.wgsl": "c65c756a26b067c1a78603c1b5f50e95f82c027bf73e7552ff323976a92b4f44",
+    "crates/voxy_render/src/droplet_extinction_scene.wgsl": "c64528deeb6aeee32fc9e9cb44a2ccae9b8a8d9a2c83ab3a14318f812cef3c2d",
+    "crates/voxy_render/examples/droplet_extinction_smoke.rs": "90cf67d50ef4b7c4ef161a99c51d686d354b6414abce54a1f7f52ef08ba33163",
+    "crates/voxy_render/examples/temporal_surface_smoke.rs": "56d3c1e501f290e7df8528b1099ba012f98cdd64b6328873d706c585c334d8c0",
+    "artifacts/droplet-single-scattering-2026-10-07/qualified-runtime.log": "a80233ff77d223a7537149e4d68cab65a5c7981dc9d24bf5383e06ab570e0683",
+    "artifacts/droplet-single-scattering-2026-10-07/qualified-physics-tests.log": "a6e764cc1a4fc176d69b600e64ffd9efe97b80f94ce7e418a6cb91b06c86db96",
+    "artifacts/droplet-single-scattering-2026-10-07/render-tests.log": "66239c7cb931194832d74c2ba87c8de6d45e2bc694424c4f55be305f3ac6e5e9",
+    "artifacts/droplet-single-scattering-2026-10-07/window-runtime.log": "310b7b84f72384cbcf537e09f522f5378019f3642af438449c1a2ee197e86be3",
+    "artifacts/droplet-single-scattering-2026-10-07/window-launcher.sh": "903e16568104e119846717fe555e774df08e7cc21a1ae53966f10e6ba75ed709",
+    "artifacts/droplet-single-scattering-2026-10-07/comparison.png": "94942f79d1cd09e3a7003ee330a97b6e9155ae4c43b8a8dc9c9b78d15b153515"
+  },
+  "window_executable_sha256": "54da30277f81d98484e88a40934764423292f2a23b75c4dd3417e85460f9ecf8"
+}

@@ -1,0 +1,10 @@
+{
+  "render_passed": 155,
+  "render_ignored": 22,
+  "physics_passed": 5,
+  "metal_slab_cases": 20,
+  "metal_scene_pixels": 16384,
+  "full_rig_480_steps": "unqualified",
+  "nvidia": "unqualified",
+  "original_processes": "preserved"
+}

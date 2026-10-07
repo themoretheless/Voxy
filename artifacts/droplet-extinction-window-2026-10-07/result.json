@@ -1,0 +1,65 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "launch_mode": "macOS application, locally built executable",
+  "extinction_exit_code": 0,
+  "baseline_exit_code": 0,
+  "presented_frames": [
+    {
+      "id": 1,
+      "width": 320,
+      "height": 240,
+      "storage_and_hdr_output_bytes": 4300940
+    },
+    {
+      "id": 2,
+      "width": 320,
+      "height": 240,
+      "storage_and_hdr_output_bytes": 4300940
+    },
+    {
+      "id": 3,
+      "width": 320,
+      "height": 240,
+      "storage_and_hdr_output_bytes": 4300940
+    },
+    {
+      "id": 4,
+      "width": 321,
+      "height": 241,
+      "storage_and_hdr_output_bytes": 4332356
+    }
+  ],
+  "expected_center_linear_rgba": [
+    "4*exp(-0.5)",
+    "exp(-0.5)",
+    0,
+    1
+  ],
+  "center_absolute_error_limit": 0.002,
+  "qualification_gpu_pixel_readback": true,
+  "cpu_scene_pixel_upload": false,
+  "zero_output_budget_rejected": true,
+  "resized_native_window_verified": true,
+  "render_tests_passed": 155,
+  "render_tests_ignored": 22,
+  "editor_authoring_fog_component_verified": false,
+  "editor_ui_ordering_verified": false,
+  "nvidia_hardware_verified": false,
+  "scattered_light_implemented": false,
+  "executable_sha256": "809ed5aadce0843bfea73b1509acb584dad2d4f787f01ea25e2e0ede23b4dde7",
+  "sha256": {
+    "crates/voxy_render/src/droplet_extinction.rs": "88d5c5b4f28c5742d91cb90cc1cd6d7a0bcf5dc46fc57821a9dfc5f8f82bbadb",
+    "crates/voxy_render/src/blit.rs": "5d9216e1d993677e2b4e875e7eddea6f02e77e1e700ad7039c2abffa9b562dab",
+    "crates/voxy_render/src/storage_color_blit.wgsl": "416f891b5774a14858e15d68a3ff6e45ecfaa6475042ad76b06fb77fb619a062",
+    "crates/voxy_render/examples/temporal_surface_smoke.rs": "8a82a9a11faf725caa538e988972cabb21b5aa7e1cc55a2184daf523ad1f4355",
+    "artifacts/droplet-extinction-window-2026-10-07/final-bundle-runtime.log": "53807ba02b12d42d3bd94d87f15bebd6af5fd75878fcd926f039c12ed3198c25",
+    "artifacts/droplet-extinction-window-2026-10-07/final-bundle-exit.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/droplet-extinction-window-2026-10-07/baseline-bundle-runtime.log": "f2e8052973ab7f9dec3b6b3723ed9bb574f357ce9d45373b96a97f26b51942d7",
+    "artifacts/droplet-extinction-window-2026-10-07/baseline-bundle-exit.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "artifacts/droplet-extinction-window-2026-10-07/render-tests.log": "c4d9cc1d224d86fb4bac4a10ad9adff3076befe6014dad466c478eaeeefeca27"
+  },
+  "failed_frame_not_presented": true,
+  "failed_frame_invalidates_temporal_history": true,
+  "presentation_id_not_advanced_on_failure": true
+}

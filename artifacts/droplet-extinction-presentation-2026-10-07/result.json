@@ -1,0 +1,31 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "scene_pixels": 16384,
+  "linear_rgba8_and_srgb_maximum_byte_error": 1,
+  "hdr_fixture_pixels": 39,
+  "hdr_fixture_dimensions": [
+    13,
+    3
+  ],
+  "hdr_rgba16_bits_exact": true,
+  "hdr_rgb_above_one": true,
+  "varying_alpha": true,
+  "storage_to_color_without_cpu_pixel_upload": true,
+  "qualification_readback_after_composition": true,
+  "window_presentation_verified": false,
+  "nvidia_verified": false,
+  "scattered_light_implemented": false,
+  "sha256": {
+    "crates/voxy_render/src/blit.rs": "5d9216e1d993677e2b4e875e7eddea6f02e77e1e700ad7039c2abffa9b562dab",
+    "crates/voxy_render/src/storage_color_blit.wgsl": "416f891b5774a14858e15d68a3ff6e45ecfaa6475042ad76b06fb77fb619a062",
+    "crates/voxy_render/src/droplet_extinction.rs": "03930ef3c1983373c58d90f588029c626e0c4a20d73df577e02784d8e63bcb65",
+    "crates/voxy_render/examples/droplet_extinction_smoke.rs": "a982b22b91b8664c2cc8a5074ac413a067d89f278811be4056ebf20c5487006c",
+    "artifacts/droplet-extinction-presentation-2026-10-07/comparison.png": "ab2ccac3b48bcb2cb8ed31acd6ed6829c09f732aa7896fd39cc69dfdcb8c3645",
+    "artifacts/droplet-extinction-presentation-2026-10-07/hdr-runtime.log": "f489447174bc8082a7a2be66d000015601a2216be836df87f98f615e0cba92eb",
+    "artifacts/droplet-extinction-presentation-2026-10-07/render-tests.log": "49746758e2128369376a8a78900e3674f1a2d5246dde9b49d1414d830af063db"
+  },
+  "render_tests_passed": 155,
+  "render_tests_ignored": 22,
+  "diff_check": "passed"
+}

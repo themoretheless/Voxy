@@ -513,3 +513,195 @@ fn display_parameter_buffer(device: &wgpu::Device, value: f32) -> wgpu::Buffer {
         usage: wgpu::BufferUsages::UNIFORM,
     })
 }
+
+/// Row-major linear RGBA f32 pixels held in a caller-owned storage buffer.
+/// Keep the producer's allocation owner alive through submission and completion.
+#[derive(Clone, Copy, Debug)]
+pub struct StorageColorView<'a> {
+    pub buffer: &'a wgpu::Buffer,
+    pub width: u32,
+    pub height: u32,
+    /// Offset in 32-bit words, not bytes; four words follow for each pixel.
+    pub offset_words: u32,
+}
+
+/// Present compute output directly, without a staging buffer or CPU pixel upload.
+/// Writes linear colors; an sRGB attachment performs encoding once. HDR output
+/// can be directed to `ProcessedColorTarget` and the existing tone-mapping pass.
+#[derive(Debug)]
+pub struct StorageColorBlit {
+    device: wgpu::Device,
+    layout: wgpu::BindGroupLayout,
+    pipeline: wgpu::RenderPipeline,
+}
+impl StorageColorBlit {
+    pub async fn new(
+        device: &wgpu::Device,
+        target_format: wgpu::TextureFormat,
+    ) -> Result<Self, crate::ComputeError> {
+        if !matches!(
+            target_format,
+            wgpu::TextureFormat::Rgba8Unorm
+                | wgpu::TextureFormat::Rgba8UnormSrgb
+                | wgpu::TextureFormat::Bgra8Unorm
+                | wgpu::TextureFormat::Bgra8UnormSrgb
+                | wgpu::TextureFormat::Rgba16Float
+                | wgpu::TextureFormat::Rgba32Float
+        ) {
+            return Err(crate::ComputeError::Unsupported);
+        }
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("resident color composition"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: wgpu::BufferSize::new(16),
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: wgpu::BufferSize::new(16),
+                    },
+                    count: None,
+                },
+            ],
+        });
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("resident color composition"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("storage_color_blit.wgsl").into()),
+        });
+        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("resident color composition"),
+            bind_group_layouts: &[Some(&layout)],
+            immediate_size: 0,
+        });
+        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("resident color composition"),
+            layout: Some(&pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &shader,
+                entry_point: Some("vs_main"),
+                compilation_options: Default::default(),
+                buffers: &[],
+            },
+            primitive: Default::default(),
+            depth_stencil: None,
+            multisample: Default::default(),
+            fragment: Some(wgpu::FragmentState {
+                module: &shader,
+                entry_point: Some("fs_main"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format: target_format,
+                    blend: None,
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+            }),
+            multiview_mask: None,
+            cache: None,
+        });
+        if let Some(error) = scope.pop().await {
+            return Err(crate::ComputeError::Validation(error.to_string()));
+        }
+        Ok(Self {
+            device: device.clone(),
+            layout,
+            pipeline,
+        })
+    }
+    /// Source, encoder and attachment must share this device. The attachment
+    /// must be a single-sample base-level 2D view with the same pixel dimensions.
+    /// Encode after the producing compute pass in the same command stream.
+    /// Rejects invalid ranges before allocating or recording commands.
+    pub async fn encode_checked(
+        &self,
+        device: &wgpu::Device,
+        encoder: &mut wgpu::CommandEncoder,
+        source: StorageColorView<'_>,
+        target: &wgpu::TextureView,
+    ) -> Result<(), crate::ComputeError> {
+        if device != &self.device {
+            return Err(crate::ComputeError::DeviceMismatch);
+        }
+        let end = u64::from(source.width)
+            .checked_mul(u64::from(source.height))
+            .and_then(|n| n.checked_mul(4))
+            .and_then(|n| n.checked_add(u64::from(source.offset_words)))
+            .filter(|n| *n <= u64::from(u32::MAX))
+            .and_then(|n| n.checked_mul(4))
+            .ok_or(crate::ComputeError::InvalidBuffer)?;
+        if source.width == 0
+            || source.height == 0
+            || end > source.buffer.size()
+            || !source.buffer.usage().contains(wgpu::BufferUsages::STORAGE)
+            || source.buffer.size() > u64::from(device.limits().max_storage_buffer_binding_size)
+            || target.texture().width() != source.width
+            || target.texture().height() != source.height
+            || target.texture().sample_count() != 1
+            || target.texture().dimension() != wgpu::TextureDimension::D2
+            || !target
+                .texture()
+                .usage()
+                .contains(wgpu::TextureUsages::RENDER_ATTACHMENT)
+        {
+            return Err(crate::ComputeError::InvalidBuffer);
+        }
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let parameters = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("resident color dimensions"),
+            contents: bytemuck::cast_slice(&[
+                source.offset_words,
+                source.width,
+                source.height,
+                0_u32,
+            ]),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+        let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("resident color composition"),
+            layout: &self.layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: source.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: parameters.as_entire_binding(),
+                },
+            ],
+        });
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("resident color composition"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: target,
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                ..Default::default()
+            });
+            pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(0, &group, &[]);
+            pass.draw(0..3, 0..1);
+        }
+        if let Some(error) = scope.pop().await {
+            return Err(crate::ComputeError::Validation(error.to_string()));
+        }
+        Ok(())
+    }
+}

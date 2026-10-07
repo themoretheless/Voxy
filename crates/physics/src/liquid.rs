@@ -1308,4 +1308,4 @@ pub use droplet_gas_evaporation::{SpatialVaporExchangeReport, SpatialVaporTransp
 
 #[path = "liquid/droplet_optics.rs"]
 mod droplet_optics;
-pub use droplet_optics::DropletExtinctionGrid;
+pub use droplet_optics::{DirectionalScatteringLight, DropletExtinctionGrid};
