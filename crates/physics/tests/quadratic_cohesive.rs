@@ -181,12 +181,14 @@ fn wet_material_update_preserves_point_history_and_integrated_fracture_work() {
     assert!((updated.dissipated_j - initial.dissipated_j).abs() < 1e-12);
     assert!((updated.stored_j - initial.stored_j - work).abs() < 1e-12);
     let before = accepted.states();
-    assert!(
-        accepted
-            .update_material_at(&positions, Material::new(1e6, 1e7, 1000., 10.).unwrap())
-            .is_err()
-    );
-    assert_eq!(accepted.states(), before);
+    let drying_work = accepted
+        .update_material_at(&positions, Material::new(1e6, 1e7, 1000., 10.).unwrap())
+        .unwrap();
+    assert_eq!(drying_work, 0.);
+    assert!(accepted.is_fully_broken());
+    for (old, new) in before.iter().zip(accepted.states()) {
+        assert_eq!(old.maximum_separation_m(), new.maximum_separation_m());
+    }
     let closed = accepted.trial_at(&rest()).unwrap();
     assert!(closed.quadrature.iter().all(|q| q.damage == 1.));
     assert!((closed.dissipated_j - initial.dissipated_j).abs() < 1e-12);

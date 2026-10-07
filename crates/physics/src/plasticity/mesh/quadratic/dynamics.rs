@@ -75,6 +75,31 @@ pub struct QuadraticAdvanceLimits {
     /// Budget for the sum of absolute substep energy defects over the interval.
     pub energy_tolerance_j: f64,
 }
+impl QuadraticAdvanceLimits {
+    /// Set the total interval energy budget from an explicit positive rate.
+    /// Adaptive children still share this budget; no minimum energy floor is added.
+    /// Other sampling/attempt limits are retained and validated by advancement.
+    /// # Errors
+    /// Nonpositive/nonfinite interval or rate, overflowing or zero-rounded budget.
+    pub fn with_interval_energy_rate(
+        mut self,
+        interval_s: f64,
+        maximum_defect_j_s: f64,
+    ) -> Result<Self, &'static str> {
+        let budget = interval_s * maximum_defect_j_s;
+        if !interval_s.is_finite()
+            || interval_s <= 0.
+            || !maximum_defect_j_s.is_finite()
+            || maximum_defect_j_s <= 0.
+            || !budget.is_finite()
+            || budget <= 0.
+        {
+            return Err("invalid quadratic interval energy rate");
+        }
+        self.energy_tolerance_j = budget;
+        Ok(self)
+    }
+}
 #[derive(Clone, Copy, Debug)]
 pub struct QuadraticSubstep {
     pub dt_s: f64,

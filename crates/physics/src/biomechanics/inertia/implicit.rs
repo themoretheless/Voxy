@@ -1660,21 +1660,24 @@ fn coupled_contact_direction_with_material(
     body: Option<&super::super::Body>,
 ) -> Vec<Vec3> {
     let apply = |v: &[Vec3]| {
-        let mut result: Vec<Vec3> = v
-            .iter()
-            .zip(weight)
-            .enumerate()
-            .map(|(node, (v, w))| {
-                if pinned[node] {
-                    [0.; 3]
-                } else {
-                    std::array::from_fn(|axis| w * v[axis])
-                }
-            })
-            .collect();
-        if let Some(body) = body {
-            result = rest_material_action(body, weight, v);
-        }
+        // The material operator already includes inertia. Construct only the
+        // selected operator output instead of allocating and discarding an
+        // inertia-only vector at every conjugate-gradient iteration.
+        let mut result: Vec<Vec3> = if let Some(body) = body {
+            rest_material_action(body, weight, v)
+        } else {
+            v.iter()
+                .zip(weight)
+                .enumerate()
+                .map(|(node, (v, w))| {
+                    if pinned[node] {
+                        [0.; 3]
+                    } else {
+                        std::array::from_fn(|axis| w * v[axis])
+                    }
+                })
+                .collect()
+        };
         for block in blocks {
             let body = block
                 .body_face
@@ -1701,7 +1704,31 @@ fn coupled_contact_direction_with_material(
 
 // Rest isotropic elasticity plus inertia is only a search metric. Nonlinear
 // forces, anisotropy, memory and endpoint work remain in the real evaluator.
+#[cfg(test)]
+fn rest_material_moduli(body: &super::super::Body) -> Vec<(f64, f64)> {
+    body.elements
+        .iter()
+        .map(|e| {
+            e.viscoelastic
+                .as_ref()
+                .map_or((e.material.shear_pa, e.material.bulk_pa), |m| {
+                    m.rest_moduli()
+                })
+        })
+        .collect()
+}
+
 fn rest_material_action(body: &super::super::Body, weight: &[f64], v: &[Vec3]) -> Vec<Vec3> {
+    rest_material_action_prepared(body, weight, v, None)
+}
+
+// Moduli belong to one immutable search solve, never to a persistent body cache.
+fn rest_material_action_prepared(
+    body: &super::super::Body,
+    weight: &[f64],
+    v: &[Vec3],
+    moduli: Option<&[(f64, f64)]>,
+) -> Vec<Vec3> {
     let mut result: Vec<_> = v
         .iter()
         .enumerate()
@@ -1713,13 +1740,17 @@ fn rest_material_action(body: &super::super::Body, weight: &[f64], v: &[Vec3]) -
             }
         })
         .collect();
-    for e in &body.elements {
-        let (mu, bulk) = e
-            .viscoelastic
-            .as_ref()
-            .map_or((e.material.shear_pa, e.material.bulk_pa), |m| {
-                m.rest_moduli()
-            });
+    for (index, e) in body.elements.iter().enumerate() {
+        let (mu, bulk) = moduli.map_or_else(
+            || {
+                e.viscoelastic
+                    .as_ref()
+                    .map_or((e.material.shear_pa, e.material.bulk_pa), |m| {
+                        m.rest_moduli()
+                    })
+            },
+            |values| values[index],
+        );
         let mut h = [[0.; 3]; 3];
         for corner in 0..4 {
             let node = e.nodes[corner];
@@ -1883,6 +1914,65 @@ mod tests {
         assert!(project_branch_segment(&first, &second, &[4., 1.], &[false]).is_err());
     }
     #[test]
+    #[ignore = "manual prepared material operator ABBA timing"]
+    fn prepared_material_moduli_profile() {
+        use super::super::super::{Body, Material, MaxwellBranch, OgdenTerm, ViscoelasticOgden};
+        let mut points = Vec::new();
+        let mut cells = Vec::new();
+        let material = Material::from_young_poisson(300., 0.4).unwrap();
+        for i in 0..1024 {
+            let n = points.len();
+            let x = i as f64 * 2.;
+            points.extend([[x, 0., 0.], [x + 1., 0., 0.], [x, 1., 0.], [x, 0., 1.]]);
+            cells.push(([n, n + 1, n + 2, n + 3], material.clone()));
+        }
+        let mut body = Body::new(points, vec![false; 4096], cells).unwrap();
+        let law = ViscoelasticOgden::new(
+            vec![OgdenTerm {
+                shear_pa: 100.,
+                exponent: 2.,
+            }],
+            1000.,
+            vec![MaxwellBranch {
+                shear_pa: 700.,
+                relaxation_seconds: 0.2,
+            }],
+        )
+        .unwrap();
+        for e in &mut body.elements {
+            e.viscoelastic = Some(law.clone());
+        }
+        let weight = vec![2.; 4096];
+        let v: Vec<_> = (0..4096).map(|i| [i as f64 * 0.00001, 0.2, -0.1]).collect();
+        let moduli = rest_material_moduli(&body);
+        assert_eq!(
+            rest_material_action(&body, &weight, &v),
+            rest_material_action_prepared(&body, &weight, &v, Some(&moduli))
+        );
+        for (trial, prepared) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let start = std::time::Instant::now();
+            // Charge preparation once per solve, with 64 operator applications.
+            for _ in 0..100 {
+                let moduli = prepared.then(|| rest_material_moduli(&body));
+                for _ in 0..64 {
+                    std::hint::black_box(rest_material_action_prepared(
+                        std::hint::black_box(&body),
+                        &weight,
+                        &v,
+                        moduli.as_deref(),
+                    ));
+                }
+            }
+            eprintln!(
+                "MATERIAL_MODULI_PROFILE trial={trial} prepared={prepared} elapsed_s={:.9}",
+                start.elapsed().as_secs_f64()
+            );
+        }
+    }
+    #[test]
     fn rest_material_metric_matches_affine_energy_and_solves_coupled_system() {
         use super::super::super::{Body, Material};
         let points = vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
@@ -1905,6 +1995,15 @@ mod tests {
             .map(|p| [0.2 * p[0] + 0.4 * p[1], -0.1 * p[1], 0.3 * p[2]])
             .collect();
         let action = rest_material_action(&body, &weight, &affine);
+        assert_eq!(
+            action,
+            rest_material_action_prepared(
+                &body,
+                &weight,
+                &affine,
+                Some(&rest_material_moduli(&body))
+            )
+        );
         let quadratic: f64 = affine.iter().zip(&action).map(|(v, a)| dot(*v, *a)).sum();
         // Independent affine strain: trace=.4, sym off-diagonal=.2.
         let dev_squared = (0.2_f64 - 0.4 / 3.).powi(2)

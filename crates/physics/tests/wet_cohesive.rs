@@ -61,7 +61,8 @@ fn wet_law_migration_preserves_fracture_work_and_rejects_healing() {
     let (_, closed) = wet.response(&migrated, [0.; 3], normal).unwrap();
     assert_eq!(closed.damage, 1.);
     assert!((closed.dissipated_j_m2 - after.dissipated_j_m2).abs() < 1e-12);
-    assert!(dry.migrate_history(&wet, &migrated, jump, normal).is_err());
+    let (dried, _) = dry.migrate_history(&wet, &migrated, jump, normal).unwrap();
+    assert_eq!(dry.damage(&dried), 1.);
     assert!(
         wet.migrate_history(&dry, &old, [0.001, 0., 0.], normal)
             .is_err()
@@ -99,7 +100,8 @@ fn calibrated_heating_migrates_damage_without_erasing_fracture_work() {
     assert_eq!(after.damage, 1.);
     assert!((after.dissipated_j_m2 - before.dissipated_j_m2).abs() < 1e-12);
     assert!((after.stored_j_m2 - before.stored_j_m2 - work).abs() < 1e-12);
-    assert!(cold.migrate_history(&hot, &heated, jump, n).is_err());
+    let (cooled, _) = cold.migrate_history(&hot, &heated, jump, n).unwrap();
+    assert_eq!(cold.damage(&cooled), 1.);
     assert!(law.at_temperature(601.).is_err());
     assert!(law.at_temperature(f64::NAN).is_err());
 }

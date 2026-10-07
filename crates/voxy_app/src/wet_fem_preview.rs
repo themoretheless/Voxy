@@ -18,6 +18,7 @@ pub(crate) struct WetFemPreview {
     bulk: Calibration,
     bond: CohesiveCalibration,
     initial_mass: f64,
+    drying_vapor: Option<physics::moisture::VaporReservoir>,
     thermal: Option<(
         physics::moisture::ThermalVapor,
         physics::moisture::MaterialThermalStore,
@@ -25,6 +26,9 @@ pub(crate) struct WetFemPreview {
 }
 impl WetFemPreview {
     pub(crate) fn new() -> Result<Self, Box<dyn std::error::Error>> {
+        Self::with_preload(0.0125)
+    }
+    fn with_preload(opening: f64) -> Result<Self, Box<dyn std::error::Error>> {
         let dry = CohesiveProperties {
             stiffness_pa_m: 1e6,
             closure_pa_m: 1e7,
@@ -56,7 +60,7 @@ impl WetFemPreview {
         .body;
         let n = body.positions().len();
         let prescribed: Vec<_> = (0..n)
-            .map(|i| [Some(0.), Some(0.), Some(if i < 10 { 0.0125 } else { 0. })])
+            .map(|i| [Some(0.), Some(0.), Some(if i < 10 { opening } else { 0. })])
             .collect();
         if !body
             .equilibrate(&vec![[0.; 3]; n], &prescribed, 4, 1e-7)?
@@ -95,6 +99,7 @@ impl WetFemPreview {
             dynamics,
             initial_mass,
             thermal: None,
+            drying_vapor: None,
             bond,
             bulk: Calibration::new(
                 dry_bulk,
@@ -117,6 +122,12 @@ impl WetFemPreview {
         })
     }
     pub(crate) fn wet(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        self.wet_with_expected_fragments(2)
+    }
+    fn wet_with_expected_fragments(
+        &mut self,
+        expected: usize,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         let mut next = self.clone();
         let n = next.dynamics.velocities().len();
         let transfer = next.water.advance_surface_film_supplies(
@@ -151,7 +162,7 @@ impl WetFemPreview {
             || bulk.energy_defect_j.abs() > 1e-10
             || transfer.mass_defect_kg.abs() > 1e-12
             || fracture.fragments_before != 1
-            || fracture.fragments_after != 2
+            || fracture.fragments_after != expected
         {
             return Err("wet FEM water/material balance failed".into());
         }
@@ -159,6 +170,60 @@ impl WetFemPreview {
             "WET FEM: retained_water_kg={retained}, supply_water_kg={supplied}, parameter_work_j={}",
             bulk.elastic_parameter_work_j + fracture.total_parameter_work_j
         );
+        *self = next;
+        Ok(())
+    }
+    /// Finite isothermal drying; broken interface history must remain broken.
+    pub(crate) fn dry(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        use physics::moisture::{VaporLink, VaporReservoir};
+        let mut next = self.clone();
+        let before: f64 = next.water.cells().iter().map(|c| c.water_kg).sum();
+        let topology = next.topology()?;
+        let mut vapor = next
+            .drying_vapor
+            .clone()
+            .unwrap_or(VaporReservoir::new(1., 0., 2.4e6, 1e6)?);
+        let total_before = before + vapor.water_kg();
+        let energy_before = vapor.accounted_energy_j();
+        let n = next.dynamics.velocities().len();
+        let (transfer, bulk, fracture) = next.dynamics.advance_moisture_vapor_with_cohesion(
+            1.,
+            &mut next.water,
+            &mut vapor,
+            &[
+                VaporLink {
+                    material_cell: 0,
+                    conductance_kg_s: 0.01,
+                },
+                VaporLink {
+                    material_cell: 1,
+                    conductance_kg_s: 0.01,
+                },
+            ],
+            &[1000. / 6.; 2],
+            &[next.bulk; 2],
+            &vec![[0.; 3]; n],
+            &[next.bond],
+            &[0.5],
+        )?;
+        let retained: f64 = next.water.cells().iter().map(|c| c.water_kg).sum();
+        if retained >= before
+            || transfer.vapor_water_change_kg <= 0.
+            || (retained + vapor.water_kg() - total_before).abs() > 1e-12
+            || (vapor.accounted_energy_j() - energy_before).abs() > 1e-8
+            || (next.dynamics.energy()?.mass_kg - next.initial_mass - retained).abs() > 1e-10
+            || next.topology()? != topology
+            || fracture.fragments_after != fracture.fragments_before
+        {
+            return Err("drying FEM water/energy/history acceptance failed".into());
+        }
+        println!(
+            "DRY FEM: retained_water_kg={retained} vapor_water_kg={} latent_exchange_j={} parameter_work_j={}",
+            vapor.water_kg(),
+            transfer.latent_exchange_j,
+            bulk.elastic_parameter_work_j + fracture.total_parameter_work_j
+        );
+        next.drying_vapor = Some(vapor);
         *self = next;
         Ok(())
     }
@@ -363,6 +428,281 @@ impl WetFemPreview {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn partial_drying_loaded_transaction_moves_and_rolls_back_failed_interval() {
+        use physics::moisture::{VaporLink, VaporReservoir};
+        use physics::plasticity::mesh::QuadraticAdvanceLimits;
+        let mut demo = WetFemPreview::with_preload(0.006).unwrap();
+        demo.wet_with_expected_fragments(1).unwrap();
+        let mut vapor = VaporReservoir::new(1., 0., 2.4e6, 1e6).unwrap();
+        let n = demo.dynamics.velocities().len();
+        let initial_positions = demo.dynamics.positions().to_vec();
+        let initial_water: f64 = demo.water.cells().iter().map(|c| c.water_kg).sum();
+        let initial_energy = vapor.accounted_energy_j();
+        let limits = QuadraticAdvanceLimits {
+            minimum_dt_s: 1e-8,
+            maximum_dt_s: 1e-5,
+            max_attempts: 100,
+            energy_tolerance_j: 1e-8,
+        };
+        let run = |demo: &mut WetFemPreview, vapor: &mut VaporReservoir, dt, limits| {
+            demo.dynamics.advance_vapor_loaded(
+                dt,
+                &mut demo.water,
+                vapor,
+                &[
+                    VaporLink {
+                        material_cell: 0,
+                        conductance_kg_s: 0.01,
+                    },
+                    VaporLink {
+                        material_cell: 1,
+                        conductance_kg_s: 0.01,
+                    },
+                ],
+                &[1000. / 6.; 2],
+                &[demo.bulk; 2],
+                &vec![[0.; 3]; n],
+                &[demo.bond],
+                &[0.5],
+                &vec![[0.; 3]; n],
+                [0., -9.81, 0.],
+                limits,
+            )
+        };
+        for _ in 0..3 {
+            let (transfer, bulk, cohesive, motion) =
+                run(&mut demo, &mut vapor, 1e-5, limits).unwrap();
+            assert!(transfer.vapor_water_change_kg > 0.);
+            assert!(transfer.mass_defect_kg.abs() < 1e-12);
+            assert!(bulk.energy_defect_j.abs() < 1e-10);
+            assert_eq!(cohesive.fragments_after, 1);
+            assert!(!motion.substeps.is_empty());
+            println!(
+                "PARTIAL_DRYING_MOTION_RECEIPT vapor_change_kg={} water_defect_kg={} latent_defect_j={} dynamic_absolute_defect_j={} substeps={}",
+                transfer.vapor_water_change_kg,
+                transfer.mass_defect_kg,
+                transfer.energy_defect_j,
+                motion.absolute_energy_defect_j,
+                motion.substeps.len()
+            );
+            let water: f64 = demo.water.cells().iter().map(|c| c.water_kg).sum();
+            assert!((water + vapor.water_kg() - initial_water).abs() < 1e-12);
+            assert!((vapor.accounted_energy_j() - initial_energy).abs() < 1e-8);
+            assert!(
+                (demo.dynamics.energy().unwrap().mass_kg - demo.initial_mass - water).abs() < 1e-10
+            );
+            assert_eq!(demo.topology().unwrap(), (6, 1));
+        }
+        assert_ne!(demo.dynamics.positions(), initial_positions.as_slice());
+        let before = format!("{demo:?}{vapor:?}");
+        let impossible = QuadraticAdvanceLimits {
+            max_attempts: 1,
+            ..limits
+        };
+        assert_eq!(
+            run(&mut demo, &mut vapor, 1e-4, impossible).unwrap_err(),
+            "quadratic adaptive attempt limit reached"
+        );
+        assert_eq!(format!("{demo:?}{vapor:?}"), before);
+        println!(
+            "PARTIAL_DRYING_MOTION_PASS interval_s=0.00003 accepted_intervals=3 late_failure_rollback=true"
+        );
+    }
+    #[test]
+    #[ignore = "manual native partial-drying motion timestep qualification"]
+    fn partial_drying_motion_convergence() {
+        run_partial_drying_motion_convergence(false);
+    }
+    #[test]
+    #[ignore = "manual native partial-drying time-scaled energy qualification"]
+    fn partial_drying_motion_time_scaled_convergence() {
+        run_partial_drying_motion_convergence(true);
+    }
+    fn run_partial_drying_motion_convergence(time_scaled: bool) {
+        println!(
+            "PARTIAL_DRYING_ENERGY_POLICY time_scaled={time_scaled} reference_rate_j_s=0.001 base_step_budget_j=0.00000001"
+        );
+        use physics::moisture::{VaporLink, VaporReservoir};
+        use physics::plasticity::mesh::QuadraticAdvanceLimits;
+        let mut results = Vec::new();
+        for level in 0..3 {
+            let mut demo = WetFemPreview::with_preload(0.006).unwrap();
+            demo.wet_with_expected_fragments(1).unwrap();
+            let mut vapor = VaporReservoir::new(1., 0., 2.4e6, 1e6).unwrap();
+            let initial_water: f64 = demo.water.cells().iter().map(|c| c.water_kg).sum();
+            let energy = vapor.accounted_energy_j();
+            let n = demo.dynamics.velocities().len();
+            let steps = 10000 * (1 << level);
+            let dt = 0.1 / steps as f64;
+            let limits = QuadraticAdvanceLimits {
+                minimum_dt_s: 1e-8,
+                maximum_dt_s: dt,
+                max_attempts: 100,
+                energy_tolerance_j: 1e-8,
+            };
+            let limits = if time_scaled {
+                limits.with_interval_energy_rate(dt, 1e-3).unwrap()
+            } else {
+                limits
+            };
+            let mechanical = |demo: &WetFemPreview| {
+                let e = demo.dynamics.energy().unwrap();
+                assert_eq!(
+                    e.hardening_j
+                        + e.dissipated_j
+                        + e.impact_dissipated_j
+                        + e.contact_j
+                        + e.surface_contact_j
+                        + e.friction_dissipated_j
+                        + e.cohesive_friction_dissipated_j
+                        + e.cohesive_friction_released_j,
+                    0.
+                );
+                e.kinetic_j + e.elastic_j + e.cohesive_stored_j + e.fracture_dissipated_j
+            };
+            let initial_mechanical = mechanical(&demo);
+            let mut boundary_work = 0.;
+            let mut maximum_independent_balance = 0_f64;
+            let mut max_defect = 0_f64;
+            for _ in 0..steps {
+                let old_positions = demo.dynamics.positions().to_vec();
+                let (transfer, bulk, cohesive, motion) = demo
+                    .dynamics
+                    .advance_vapor_loaded(
+                        dt,
+                        &mut demo.water,
+                        &mut vapor,
+                        &[
+                            VaporLink {
+                                material_cell: 0,
+                                conductance_kg_s: 0.01,
+                            },
+                            VaporLink {
+                                material_cell: 1,
+                                conductance_kg_s: 0.01,
+                            },
+                        ],
+                        &[1000. / 6.; 2],
+                        &[demo.bulk; 2],
+                        &vec![[0.; 3]; n],
+                        &[demo.bond],
+                        &[0.5],
+                        &vec![[0.; 3]; n],
+                        [0., -9.81, 0.],
+                        limits,
+                    )
+                    .unwrap();
+                let densities: Vec<_> = demo
+                    .water
+                    .cells()
+                    .iter()
+                    .map(|c| 1000. + 6. * c.water_kg)
+                    .collect();
+                let mass = demo.dynamics.body().consistent_mass(&densities).unwrap();
+                let gravity_work: f64 = mass
+                    .iter()
+                    .enumerate()
+                    .map(|(i, row)| {
+                        row.iter().sum::<f64>()
+                            * -9.81
+                            * (demo.dynamics.positions()[i][1] - old_positions[i][1])
+                    })
+                    .sum();
+                boundary_work += gravity_work + bulk.carried_water_kinetic_j
+                    - bulk.kinetic_transfer_loss_j
+                    + bulk.elastic_parameter_work_j
+                    + cohesive.total_parameter_work_j;
+                let balance = mechanical(&demo) - initial_mechanical - boundary_work;
+                assert!(balance.is_finite());
+                maximum_independent_balance = maximum_independent_balance.max(balance.abs());
+                assert!(transfer.mass_defect_kg.abs() < 1e-12);
+                max_defect = max_defect.max(motion.absolute_energy_defect_j);
+                assert_eq!(demo.topology().unwrap(), (6, 1));
+            }
+            let water: f64 = demo.water.cells().iter().map(|c| c.water_kg).sum();
+            let exact =
+                initial_water / 6. + (initial_water - initial_water / 6.) * (-0.12_f64 * 0.1).exp();
+            let error = (water - exact).abs();
+            assert!((water + vapor.water_kg() - initial_water).abs() < 1e-11);
+            assert!((vapor.accounted_energy_j() - energy).abs() < 1e-7);
+            println!(
+                "PARTIAL_DRYING_CONVERGENCE level={level} steps={steps} dt_s={dt} water_kg={water} exact_water_error_kg={error} maximum_dynamic_defect_j={max_defect}"
+            );
+            println!(
+                "PARTIAL_DRYING_INDEPENDENT_ENERGY level={level} maximum_balance_j={maximum_independent_balance} final_balance_j={} reported_solver_defect_subtracted=false",
+                mechanical(&demo) - initial_mechanical - boundary_work
+            );
+            results.push((
+                error,
+                demo.dynamics.positions().to_vec(),
+                maximum_independent_balance,
+                (mechanical(&demo) - initial_mechanical - boundary_work).abs(),
+            ));
+        }
+        assert!(results[1].0 < results[0].0 && results[2].0 < results[1].0);
+        if time_scaled {
+            assert!(results[1].2 < results[0].2 && results[2].2 < results[1].2);
+            assert!(results[1].3 < results[0].3 && results[2].3 < results[1].3);
+        }
+        let delta = |a: &[[f64; 3]], b: &[[f64; 3]]| {
+            a.iter()
+                .zip(b)
+                .flat_map(|(a, b)| (0..3).map(move |i| (a[i] - b[i]).abs()))
+                .fold(0_f64, f64::max)
+        };
+        let coarse = delta(&results[0].1, &results[1].1);
+        let fine = delta(&results[1].1, &results[2].1);
+        println!("PARTIAL_DRYING_POSITION_CONVERGENCE coarse_delta_m={coarse} fine_delta_m={fine}");
+        assert!(fine < coarse);
+    }
+    #[test]
+    fn partial_damage_drying_preserves_volume_history_and_finite_inventories() {
+        let mut demo = WetFemPreview::with_preload(0.006).unwrap();
+        demo.wet_with_expected_fragments(1).unwrap();
+        assert_eq!(demo.topology().unwrap(), (6, 1));
+        let before = demo.dynamics.energy().unwrap();
+        assert!(before.fracture_dissipated_j > 0.);
+        let geometry: Vec<_> = demo
+            .mesh()
+            .unwrap()
+            .vertices()
+            .iter()
+            .map(|v| v.position)
+            .collect();
+        for _ in 0..5 {
+            demo.dry().unwrap();
+            assert_eq!(demo.topology().unwrap(), (6, 1));
+            assert!(
+                (demo.dynamics.energy().unwrap().fracture_dissipated_j
+                    - before.fracture_dissipated_j)
+                    .abs()
+                    < 1e-12
+            );
+            assert_eq!(
+                demo.mesh()
+                    .unwrap()
+                    .vertices()
+                    .iter()
+                    .map(|v| v.position)
+                    .collect::<Vec<_>>(),
+                geometry
+            );
+        }
+    }
+    #[test]
+    fn drying_preserves_broken_topology_and_rolls_back_invalid_prior_inventory() {
+        let mut demo = WetFemPreview::new().unwrap();
+        demo.wet().unwrap();
+        demo.dry().unwrap();
+        assert_eq!(demo.topology().unwrap(), (8, 2));
+        demo.dry().unwrap();
+        assert_eq!(demo.topology().unwrap(), (8, 2));
+        let mut invalid = WetFemPreview::new().unwrap();
+        let before = format!("{invalid:?}");
+        assert!(invalid.dry().is_err());
+        assert_eq!(format!("{invalid:?}"), before);
+    }
     #[test]
     fn admitted_fragment_motion_reaches_mesh_and_preserves_other_owners() {
         for heated in [false, true] {

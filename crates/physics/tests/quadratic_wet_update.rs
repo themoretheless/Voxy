@@ -376,22 +376,39 @@ fn wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work() {
             (joint.energy().unwrap().fracture_dissipated_j - before.fracture_dissipated_j).abs()
                 < 1e-12
         );
-        let accepted = format!("{joint:?}");
+        let fracture_before = joint.energy().unwrap().fracture_dissipated_j;
         let dry_water = [Cell {
             capacity_kg: 0.001,
             water_kg: 0.,
         }; 2];
+        let (bulk, face) = joint
+            .apply_thermal_moisture_with_cohesion(
+                &dry_water,
+                &dry_mass,
+                &[bulk_law; 2],
+                &[300.; 2],
+                &velocities,
+                &[face_law],
+                &[300.],
+                &[0.5],
+            )
+            .unwrap();
+        assert_eq!(face.fragments_before, 2);
+        assert_eq!(face.fragments_after, 2);
+        assert!((bulk.water_mass_change_kg + 0.002).abs() < 1e-12);
+        assert!((joint.energy().unwrap().fracture_dissipated_j - fracture_before).abs() < 1e-12);
+        let accepted = format!("{joint:?}");
         assert!(
             joint
                 .apply_thermal_moisture_with_cohesion(
-                    &dry_water,
+                    &water,
                     &dry_mass,
                     &[bulk_law; 2],
-                    &[300.; 2],
+                    &[600.; 2],
                     &velocities,
                     &[face_law],
-                    &[300.],
-                    &[0.5]
+                    &[600.],
+                    &[2.]
                 )
                 .is_err()
         );
@@ -518,29 +535,28 @@ fn wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work() {
         (after.cohesive_stored_j - before.cohesive_stored_j - report.total_parameter_work_j).abs()
             < 1e-12
     );
-    assert!(
-        dynamics
-            .apply_cohesive_moisture(&[0.], &[calibration])
-            .is_err()
-    );
+    let dried_face = dynamics
+        .apply_cohesive_moisture(&[0.], &[calibration])
+        .unwrap();
+    assert_eq!(dried_face.fragments_after, 2);
     assert!((dynamics.energy().unwrap().cohesive_stored_j - after.cohesive_stored_j).abs() < 1e-12);
     let dry_water = [Cell {
         capacity_kg: 0.001,
         water_kg: 0.,
     }; 2];
-    assert!(
-        dynamics
-            .apply_moisture_with_cohesion(
-                &dry_water,
-                &[1. / 6.; 2],
-                &bulk_calibration,
-                &vec![[0.; 3]; n],
-                &[calibration],
-                &[0.5]
-            )
-            .is_err()
-    );
-    assert_eq!(dynamics.energy().unwrap().mass_kg, after.mass_kg);
+    let (dried_bulk, dried_face) = dynamics
+        .apply_moisture_with_cohesion(
+            &dry_water,
+            &[1. / 6.; 2],
+            &bulk_calibration,
+            &vec![[0.; 3]; n],
+            &[calibration],
+            &[0.5],
+        )
+        .unwrap();
+    assert_eq!(dried_face.fragments_after, 2);
+    assert!((dried_bulk.water_mass_change_kg + 0.002).abs() < 1e-12);
+    assert!((dynamics.energy().unwrap().mass_kg - after.mass_kg + 0.002).abs() < 1e-12);
     assert_eq!(
         dynamics.energy().unwrap().fracture_dissipated_j,
         after.fracture_dissipated_j

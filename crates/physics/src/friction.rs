@@ -4,7 +4,7 @@ use crate::biomechanics::Matrix;
 mod slider;
 pub use slider::SliderStep;
 pub type Vec3 = [f64; 3];
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Material {
     normal_stiffness: f64,
     tangential_stiffness: f64,
