@@ -1,6 +1,10 @@
 //! Quasistatic tetrahedral finite elements in metres, newtons and pascals.
 //! Constitutive verification is distinct from anatomical/experimental validation.
 #![allow(clippy::many_single_char_names)]
+// === OPTIMIZATION #21-25: SIMD-accelerated math kernels ===
+#[cfg(feature = "nightly")]
+mod simd_math;
+
 mod cell_poroelastic;
 mod implicit_pore;
 mod vascular_pore;
@@ -881,3 +885,47 @@ impl Body {
 
 mod calibration;
 pub use calibration::{FitError, TensilePoint, fit_tensile, tensile_error, tensile_stress};
+
+
+/// SIMD-accelerated vector/matrix operations for nightly Rust
+#[cfg(feature = "nightly")]
+pub mod simd_math {
+    use core::arch::x86_64::*;
+    
+    /// Fused multiply-add dot product using AVX2
+    #[target_feature(enable = "avx2")]
+    pub unsafe fn dot_avx2(a: &[f64; 3], b: &[f64; 3]) -> f64 {
+        let va = _mm256_loadu_pd(a.as_ptr());
+        let vb = _mm256_loadu_pd(b.as_ptr());
+        let prod = _mm256_mul_pd(va, vb);
+        let sum = _mm256_add_pd(prod, _mm256_setzero_pd());
+        let h1 = _mm256_extractf128_pd(sum, 1);
+        let h0 = _mm256_castpd256_pd128(sum);
+        _mm_cvtsd_f64(_mm_add_sd(h0, h1))
+    }
+    
+    /// SIMD-unrolled cross product (AVX2)
+    #[target_feature(enable = "avx2")]
+    pub unsafe fn cross_avx2(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+        let va = _mm256_set_pd(a[2], a[1], a[0], 0.0);
+        let vb = _mm256_set_pd(b[2], b[1], b[0], 0.0);
+        
+        // Cross product components with horizontal operations
+        let x = _mm256_sub_pd(
+            _mm256_mul_pd(_mm256_permute2f128_pd(va, vb, 0b01000100), _mm256_set1_pd(1.0)),
+            _mm256_mul_pd(_mm256_permute2f128_pd(va, vb, 0b10010101), _mm256_set1_pd(1.0))
+        );
+        let y = _mm256_sub_pd(
+            _mm256_mul_pd(_mm256_permute2f128_pd(va, vb, 0b10001000), _mm256_set1_pd(1.0)),
+            _mm256_mul_pd(_mm256_permute2f128_pd(va, vb, 0b01010100), _mm256_set1_pd(1.0))
+        );
+        let z = _mm256_sub_pd(
+            _mm256_mul_pd(_mm256_permute2f128_pd(va, vb, 0b01000100), _mm256_set1_pd(1.0)),
+            _mm256_mul_pd(_mm256_permute2f128_pd(va, vb, 0b10010101), _mm256_set1_pd(1.0))
+        );
+        
+        [_mm256_extractf128_pd(x, 0).extract(0), 
+         _mm256_extractf128_pd(y, 0).extract(0), 
+         _mm256_extractf128_pd(z, 0).extract(0)]
+    }
+}
