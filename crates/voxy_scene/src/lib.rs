@@ -1,4 +1,7 @@
 //! Renderer-independent scene hierarchy with generational object handles.
+mod fog;
+pub use fog::{FogBounds, FogError, FogVolume};
+
 mod simulation;
 pub use simulation::{
     SceneSimulation, SimulationError, SimulationFrame, SimulationLimits, SimulationStepError,

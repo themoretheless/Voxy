@@ -258,7 +258,7 @@ impl Smoke {
                 let extinction_frame = if let Some(pass) = extinction {
                     let mut input_storage = voxy_render::DropletExtinctionSceneInput::new(
                         voxy_render::ExtinctionGridView {
-                            origin: [-1., -1., 0.], spacing: [2., 2., 1.], shape: [1, 1, 1], extinction_m_inverse: &[0.5],
+                            origin: [-1., -1., 0.], spacing: [2., 2., 1.], shape: [1, 1, 1], extinction_m_inverse: &[f64::from(window_extinction_coefficient().map_err(RendererError::TemporalConsumer)?)],
                         }, extinction_camera(), input.color.width(), input.color.height(), 16_000_000,
                     ).map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
                     if std::env::var("VOXY_TEMPORAL_SCATTERING").as_deref() == Ok("1") {
@@ -932,6 +932,20 @@ fn extinction_camera() -> voxy_render::SceneCamera {
         },
     }
 }
+// Qualification-only coefficient; reject malformed calibration instead of
+// silently running a different slab from the requested fixture.
+fn window_extinction_coefficient() -> Result<f32, String> {
+    let sigma = match std::env::var("VOXY_TEMPORAL_EXTINCTION_SIGMA") {
+        Ok(value) => value.parse::<f32>().map_err(|e| e.to_string())?,
+        Err(std::env::VarError::NotPresent) => 0.5,
+        Err(error) => return Err(error.to_string()),
+    };
+    if !sigma.is_finite() || !(0. ..=10_000.).contains(&sigma) {
+        return Err("window extinction coefficient must be finite in [0, 10000]".into());
+    }
+    Ok(sigma)
+}
+
 fn validate_extinction_center(
     texture: &wgpu::Texture,
     device: &wgpu::Device,
@@ -987,13 +1001,13 @@ fn validate_extinction_center(
         .get_mapped_range()
         .map_err(|e| e.to_string())?;
     let scattered = if std::env::var("VOXY_TEMPORAL_SCATTERING").as_deref() == Ok("1") {
-        0.8 * (1. - (-1_f32).exp()) / (8. * std::f32::consts::PI)
+        0.8 * (1. - (-2. * window_extinction_coefficient()?).exp()) / (8. * std::f32::consts::PI)
     } else {
         0.
     };
     for (k, expected) in [
-        4. * ((-0.5_f32).exp() + scattered),
-        (-0.5_f32).exp() + 2. * scattered,
+        4. * ((-window_extinction_coefficient()?).exp() + scattered),
+        (-window_extinction_coefficient()?).exp() + 2. * scattered,
         scattered,
         1.,
     ]
@@ -1004,7 +1018,19 @@ fn validate_extinction_center(
             mapped[k * 2..k * 2 + 2].try_into().unwrap(),
         ))
         .to_f32();
-        if (actual - expected).abs() > 0.002 {
+        println!(
+            "WINDOW OPTICAL CENTER sigma={} channel={k} actual={actual:.9} expected={expected:.9}",
+            window_extinction_coefficient()?
+        );
+        // At saturation the slab result is independent of tiny surface-depth
+        // quantization. Require the exact nearest-half analytic result there;
+        // retain the original geometry/readback tolerance for finite depths.
+        let mismatch = if window_extinction_coefficient()? == 10_000. {
+            actual != half::f16::from_f32(expected).to_f32()
+        } else {
+            (actual - expected).abs() > 0.002
+        };
+        if mismatch {
             return Err(format!(
                 "window extinction center channel={k} actual={actual} expected={expected}"
             ));

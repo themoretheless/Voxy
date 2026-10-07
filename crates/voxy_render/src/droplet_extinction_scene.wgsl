@@ -98,8 +98,10 @@ fn directional_scattering(start:vec3<f32>,end:vec3<f32>,metadata:u32)->vec3<f32>
         var ratio=1.0;
         if rate>0.0 {ratio=extinction_weight(rate)/rate;}
         let minimum=min(prefix_tau+shadow_a,prefix_tau+tau+shadow_b);
-        scattered+=tau*ratio*exp(-minimum);
+        scattered+=solid_visibility((begin+finish)*0.5)*tau*ratio*exp(-minimum);
         prefix_tau+=tau;
     }
     return irradiance*(albedo*phase)*scattered;
 }
+
+fn solid_visibility(world:vec3<f32>)->f32 {return 1.0;}

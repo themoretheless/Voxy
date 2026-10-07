@@ -249,6 +249,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     verify_rendered_scene(&device, &queue, camera, &field)?;
     verify_hdr_storage_presentation(&device, &queue)?;
     verify_single_scattering(&device, &queue)?;
+    verify_solid_shadow_scattering(&device, &queue)?;
     if let Some(error) = pollster::block_on(scope.pop()) {
         return Err(error.into());
     }
@@ -831,6 +832,135 @@ fn verify_hdr_storage_presentation(
     }
     drop(mapped);
     staging.unmap();
+    // Compose two disjoint offset views into a preinitialized HDR window.
+    // The second uses the existing tone mapper; untouched pixels model the UI.
+    let window = voxy_render::ProcessedColorTarget::new(device, 37, 11, true)?;
+    let identity = voxy_render::TextureBlit::new(device, wgpu::TextureFormat::Rgba16Float);
+    let tone = voxy_render::TextureBlit::tone_mapped(device, wgpu::TextureFormat::Rgba16Float, 1.)
+        .unwrap();
+    let mut encoder = device.create_command_encoder(&Default::default());
+    {
+        let _clear = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("HDR view neighbours"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: window.view(),
+                depth_slice: None,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color {
+                        r: 0.25,
+                        g: 0.5,
+                        b: 0.75,
+                        a: 1.,
+                    }),
+                    store: wgpu::StoreOp::Store,
+                },
+            })],
+            ..Default::default()
+        });
+    }
+    for bad in [
+        [0, 0, 0, 1],
+        [36, 0, 2, 1],
+        [u32::MAX, 0, 2, 1],
+        [0, 10, 1, 2],
+    ] {
+        assert!(
+            identity
+                .encode_viewport(device, &mut encoder, target.view(), window.view(), bad)
+                .is_err()
+        );
+    }
+    identity.encode_viewport(
+        device,
+        &mut encoder,
+        target.view(),
+        window.view(),
+        [3, 2, width, height],
+    )?;
+    tone.encode_viewport(
+        device,
+        &mut encoder,
+        target.view(),
+        window.view(),
+        [20, 6, width, height],
+    )?;
+    let view_read = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("HDR view readback"),
+        size: 512 * 11,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    encoder.copy_texture_to_buffer(
+        wgpu::TexelCopyTextureInfo {
+            texture: window.texture(),
+            mip_level: 0,
+            origin: wgpu::Origin3d::ZERO,
+            aspect: wgpu::TextureAspect::All,
+        },
+        wgpu::TexelCopyBufferInfo {
+            buffer: &view_read,
+            layout: wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(512),
+                rows_per_image: Some(11),
+            },
+        },
+        window.texture().size(),
+    );
+    queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    view_read
+        .slice(..)
+        .map_async(wgpu::MapMode::Read, move |v| {
+            let _ = tx.send(v);
+        });
+    device.poll(wgpu::PollType::wait_indefinitely())?;
+    rx.recv()??;
+    let mapped = view_read.slice(..).get_mapped_range()?;
+    let mut untouched = 0;
+    let mut composed = 0;
+    for y in 0..11_usize {
+        for x in 0..37_usize {
+            let identity_region = (3..16).contains(&x) && (2..5).contains(&y);
+            let tone_region = (20..33).contains(&x) && (6..9).contains(&y);
+            let expected = if identity_region {
+                colors[(y - 2) * 13 + x - 3].map(|v| half::f16::from_f32(v).to_f32())
+            } else if tone_region {
+                let mut rgba =
+                    colors[(y - 6) * 13 + x - 20].map(|v| half::f16::from_f32(v).to_f32());
+                for v in &mut rgba[..3] {
+                    *v = *v / (1. + *v);
+                }
+                rgba
+            } else {
+                [0.25, 0.5, 0.75, 1.]
+            };
+            if identity_region || tone_region {
+                composed += 1;
+            } else {
+                untouched += 1;
+            }
+            for k in 0..4 {
+                let offset = y * 512 + x * 8 + k * 2;
+                let bits = u16::from_le_bytes(mapped[offset..offset + 2].try_into()?);
+                let expected_bits = half::f16::from_f32(expected[k]).to_bits();
+                if tone_region {
+                    assert!(
+                        bits.abs_diff(expected_bits) <= 1,
+                        "tone view x={x} y={y} k={k}"
+                    );
+                } else {
+                    assert_eq!(bits, expected_bits, "view x={x} y={y} k={k}");
+                }
+            }
+        }
+    }
+    drop(mapped);
+    view_read.unmap();
+    println!(
+        "HDR VIEWPORT COMPOSITION PASS composed_pixels={composed} untouched_pixels={untouched} invalid_regions_rejected=4 offsets_preserved=true alpha_preserved=true"
+    );
     println!(
         "EXTINCTION HDR PRESENTATION PASS pixels={} width={width} height={height} offset_words=5 rgba16_exact=true alpha_varies=true unclamped_rgb=true",
         width * height
@@ -1054,6 +1184,293 @@ fn verify_single_scattering(
     }
     println!(
         "SINGLE SCATTERING GPU PASS cases={cases} maximum_analytic_error={maximum_error:.17e} optically_thin_nonzero=true alpha_preserved=true"
+    );
+    Ok(())
+}
+
+fn verify_solid_shadow_scattering(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+) -> Result<(), Box<dyn std::error::Error>> {
+    use voxy_render::{
+        SceneDraw, SceneMesh, SceneRenderer, SceneVertex, ShadowFilter, ShadowMap, ShadowSettings,
+    };
+    let size = 16;
+    let camera = voxy_render::SceneCamera {
+        eye: glam::Vec3::new(0.5, 0.5, -1.),
+        target: glam::Vec3::new(0.5, 0.5, 0.),
+        up: glam::Vec3::Y,
+        projection: voxy_render::SceneProjection::Orthographic {
+            left: -0.5,
+            right: 0.5,
+            bottom: -0.5,
+            top: 0.5,
+            near: 0.,
+            far: 3.,
+        },
+    };
+    let light_camera = voxy_render::SceneCamera {
+        eye: glam::Vec3::new(0.5, 0.5, -0.5),
+        ..camera
+    };
+    let light_matrix = light_camera.view_projection()?;
+    let renderer = SceneRenderer::new(device, wgpu::TextureFormat::Rgba16Float);
+    let mesh = |z, xmax| {
+        SceneMesh::new(
+            [[0., 0., z], [xmax, 0., z], [xmax, 1., z], [0., 1., z]]
+                .into_iter()
+                .map(|position| SceneVertex {
+                    position,
+                    uv: [0.; 2],
+                    color: [0., 0., 0., 1.],
+                })
+                .collect(),
+            vec![0, 2, 1, 0, 3, 2],
+        )
+    };
+    let back = renderer.upload_mesh(device, &mesh(2., 1.)?)?;
+    let full = renderer.upload_mesh(device, &mesh(-0.25, 1.)?)?;
+    let half = renderer.upload_mesh(device, &mesh(-0.25, 0.5)?)?;
+    let white = renderer.upload_texture(device, queue, 1, 1, &[255; 4])?;
+    let transform = renderer.create_transform(device, camera.view_projection()?)?;
+    let texture = |format| {
+        device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("shadowed fog fixture"),
+            size: wgpu::Extent3d {
+                width: size,
+                height: size,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        })
+    };
+    let color = texture(wgpu::TextureFormat::Rgba16Float);
+    let depth = texture(wgpu::TextureFormat::Depth32Float);
+    let input = voxy_render::DropletExtinctionSceneInput::new(
+        ExtinctionGridView {
+            origin: [0.; 3],
+            spacing: [1.; 3],
+            shape: [1; 3],
+            extinction_m_inverse: &[0.5],
+        },
+        camera,
+        size,
+        size,
+        100_000,
+    )?
+    .with_directional_scattering(
+        voxy_render::DirectionalScatteringOptions {
+            direction_to_light: [0., 0., -1.],
+            irradiance_rgb: [4., 2., 1.],
+            albedo: 0.8,
+            asymmetry: 0.,
+            samples: 32,
+        },
+        100_000,
+        200_000,
+    )?;
+    let map = ShadowMap::new(device, 64, 64)?;
+    let lit = 4_f32 * 0.8 * (1. - (-1_f32).exp()) / (8. * std::f32::consts::PI);
+    let mut cases = 0;
+    for filter in [
+        ShadowFilter::Hard,
+        ShadowFilter::Pcf3x3,
+        ShadowFilter::Pcf5x5,
+    ] {
+        let make_pass = |enabled| {
+            pollster::block_on(voxy_render::DropletExtinctionPass::with_directional_shadow(
+                device,
+                &map,
+                ShadowSettings {
+                    light_from_world: light_matrix,
+                    bias: 0.,
+                    enabled,
+                    filter,
+                },
+            ))
+        };
+        let cached = make_pass(true)?;
+        let wrong_light = voxy_render::DropletExtinctionSceneInput::new(
+            ExtinctionGridView {
+                origin: [0.; 3],
+                spacing: [1.; 3],
+                shape: [1; 3],
+                extinction_m_inverse: &[0.5],
+            },
+            camera,
+            size,
+            size,
+            100_000,
+        )?
+        .with_directional_scattering(
+            voxy_render::DirectionalScatteringOptions {
+                direction_to_light: [0., 0., 1.],
+                irradiance_rgb: [4., 2., 1.],
+                albedo: 0.8,
+                asymmetry: 0.,
+                samples: 32,
+            },
+            100_000,
+            200_000,
+        )?;
+        assert!(matches!(
+            pollster::block_on(cached.prepare(&wrong_light, &color, &depth, 4096)),
+            Err(voxy_render::ComputeError::InvalidBuffer)
+        ));
+        for invalid in [
+            glam::Mat4::ZERO,
+            glam::Mat4::perspective_rh(1., 1., 0.1, 10.),
+        ] {
+            assert!(matches!(
+                pollster::block_on(voxy_render::DropletExtinctionPass::with_directional_shadow(
+                    device,
+                    &map,
+                    ShadowSettings {
+                        light_from_world: invalid,
+                        bias: 0.,
+                        enabled: true,
+                        filter,
+                    }
+                )),
+                Err(voxy_render::ComputeError::InvalidBuffer)
+            ));
+        }
+        let disabled = make_pass(false)?;
+        let mut previous: Option<(wgpu::Texture, Vec<u8>)> = None;
+        for mode in [0, 1, 2, 4, 0, 1, 0, 3] {
+            let enabled = mode != 3;
+            let pass = if enabled { &cached } else { &disabled };
+
+            let frame = pollster::block_on(pass.prepare(&input, &color, &depth, 4096))?;
+            let mut encoder = device.create_command_encoder(&Default::default());
+            renderer.encode(
+                &mut encoder,
+                &color.create_view(&Default::default()),
+                &depth.create_view(&Default::default()),
+                wgpu::Color::BLACK,
+                &[SceneDraw {
+                    geometry: &back,
+                    texture: &white,
+                    transform: &transform,
+                    overlay: false,
+                }],
+            );
+            let draw = match mode {
+                0 => None,
+                1 | 3 => Some(map.prepare(&full, light_matrix)?),
+                4 => Some(map.prepare(
+                    &half,
+                    light_matrix * glam::Mat4::from_translation(glam::Vec3::new(0.5, 0., 0.)),
+                )?),
+                _ => Some(map.prepare(&half, light_matrix)?),
+            };
+            map.encode(&mut encoder, &draw.into_iter().collect::<Vec<_>>())?;
+            pollster::block_on(frame.encode(&mut encoder))?;
+            let staging = device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("shadow fog HDR proof"),
+                size: 4096,
+                usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+                mapped_at_creation: false,
+            });
+            encoder.copy_texture_to_buffer(
+                wgpu::TexelCopyTextureInfo {
+                    texture: frame.output(),
+                    mip_level: 0,
+                    origin: wgpu::Origin3d::ZERO,
+                    aspect: wgpu::TextureAspect::All,
+                },
+                wgpu::TexelCopyBufferInfo {
+                    buffer: &staging,
+                    layout: wgpu::TexelCopyBufferLayout {
+                        offset: 0,
+                        bytes_per_row: Some(256),
+                        rows_per_image: Some(size),
+                    },
+                },
+                frame.output().size(),
+            );
+            queue.submit([encoder.finish()]);
+            let (tx, rx) = std::sync::mpsc::channel();
+            staging.slice(..).map_async(wgpu::MapMode::Read, move |v| {
+                let _ = tx.send(v);
+            });
+            device.poll(wgpu::PollType::wait_indefinitely())?;
+            rx.recv()??;
+            let bytes = staging.slice(..).get_mapped_range()?;
+            for y in 2..14_usize {
+                for x in 2..14_usize {
+                    // Camera and light both look along +Z: world X increases leftward.
+                    let blocked =
+                        enabled && (mode == 1 || (mode == 2 && x >= 8) || (mode == 4 && x < 8));
+                    let expected = if blocked { 0. } else { lit };
+                    let offset = y * 256 + x * 8;
+                    for (k, scale) in [1., 0.5, 0.25, 0.].into_iter().enumerate() {
+                        let actual = half::f16::from_bits(u16::from_le_bytes(
+                            bytes[offset + 2 * k..offset + 2 * k + 2].try_into()?,
+                        ))
+                        .to_f32();
+                        let target = if k == 3 { 1. } else { expected * scale };
+                        // Skip the two columns whose PCF footprint touches the split.
+                        if matches!(mode, 2 | 4) && (7..=8).contains(&x) {
+                            continue;
+                        }
+                        assert!(
+                            (actual - target).abs() < 0.0001,
+                            "shadow filter={filter:?} mode={mode} x={x} y={y} k={k} actual={actual} expected={target}"
+                        );
+                    }
+                }
+            }
+            let current_bytes = bytes.to_vec();
+            drop(bytes);
+            staging.unmap();
+            if let Some((old_texture, old_bytes)) = &previous {
+                let mut encoder = device.create_command_encoder(&Default::default());
+                encoder.copy_texture_to_buffer(
+                    wgpu::TexelCopyTextureInfo {
+                        texture: old_texture,
+                        mip_level: 0,
+                        origin: wgpu::Origin3d::ZERO,
+                        aspect: wgpu::TextureAspect::All,
+                    },
+                    wgpu::TexelCopyBufferInfo {
+                        buffer: &staging,
+                        layout: wgpu::TexelCopyBufferLayout {
+                            offset: 0,
+                            bytes_per_row: Some(256),
+                            rows_per_image: Some(size),
+                        },
+                    },
+                    old_texture.size(),
+                );
+                queue.submit([encoder.finish()]);
+                let (tx, rx) = std::sync::mpsc::channel();
+                staging.slice(..).map_async(wgpu::MapMode::Read, move |v| {
+                    let _ = tx.send(v);
+                });
+                device.poll(wgpu::PollType::wait_indefinitely())?;
+                rx.recv()??;
+                let old_read = staging.slice(..).get_mapped_range()?;
+                for y in 0..size as usize {
+                    assert_eq!(
+                        &old_read[y * 256..y * 256 + size as usize * 8],
+                        &old_bytes[y * 256..y * 256 + size as usize * 8]
+                    );
+                }
+                drop(old_read);
+                staging.unmap();
+            }
+            previous = Some((frame.output().clone(), current_bytes));
+            cases += 1;
+        }
+    }
+    println!(
+        "SOLID SHADOW SCATTERING PASS cases={cases} empty_full_half_moved_disabled=true cached_pass=true prior_output_preserved=true filters=hard_pcf3_pcf5 raster_shadow_cpu_upload=false"
     );
     Ok(())
 }
