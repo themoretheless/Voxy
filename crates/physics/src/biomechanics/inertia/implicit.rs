@@ -172,6 +172,37 @@ impl InertialBody {
         dt: f64,
         tolerance_j: f64,
     ) -> Result<(DrivenSupportStep, super::super::EmbeddedSkinWork), &'static str> {
+        self.advance_implicit_surface_and_skin_retry_policy(
+            targets,
+            next,
+            next_skin,
+            dt,
+            tolerance_j,
+            false,
+        )
+    }
+    pub(super) fn advance_implicit_surface_and_skin_retry_policy(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        next: Arc<PrescribedTriangleSurface>,
+        next_skin: Option<super::super::StationaryEmbeddedContact>,
+        dt: f64,
+        tolerance_j: f64,
+        temporal_refinement: bool,
+    ) -> Result<(DrivenSupportStep, super::super::EmbeddedSkinWork), &'static str> {
+        // An adaptive caller can reduce time after a failed nonlinear solve.
+        // Keep the original contact rescue policy whenever any authored pair is
+        // eligible. Pure-material path quadrature still refines on its own error.
+        let contact_free = !next.may_contact_faces(&self.body.surface())
+            && self
+                .body
+                .stationary_embedded_contact()
+                .is_none_or(|skin| !skin.may_have_contact_pairs());
+        let nonlinear_retry_panels = if temporal_refinement && contact_free {
+            1
+        } else {
+            64
+        };
         let mut knots = vec![0., 1.];
         for attempt in 0..32 {
             match self.advance_implicit_surface_quadrature(
@@ -198,7 +229,7 @@ impl InertialBody {
                 Err(
                     reason @ ("implicit contact nonlinear nonconvergence"
                     | "implicit contact line search failed"),
-                ) if next_skin.is_some() && knots.len() - 1 <= 64 => {
+                ) if next_skin.is_some() && knots.len() - 1 <= nonlinear_retry_panels => {
                     // Re-evaluate actual sampled forces; no force averaging across poses
                     // or relaxation of nonlinear/work admission. Retry remains atomic.
                     let mut refined = Vec::with_capacity(2 * knots.len() - 1);

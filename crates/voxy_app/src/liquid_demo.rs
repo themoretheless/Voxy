@@ -56,6 +56,9 @@ fn impact_gas_grid() -> Result<FiniteDropletGasGrid, physics::liquid::Error> {
 struct ImpactFilm {
     thermal: ThermalFilmMixture,
     captured_sensible_energy: f64,
+    // Sticking/rebound transfers momentum to the prescribed stationary substrate.
+    substrate_impulse: [f64; 3],
+    carrier_gravity_impulse: [f64; 3],
     points: Vec<[f64; 3]>,
     triangles: Vec<[usize; 3]>,
     captured: usize,
@@ -243,6 +246,8 @@ impl LiquidDemo {
                     )
                     .map_err(|_| physics::liquid::Error::InvalidConfig)?,
                     captured_sensible_energy: 0.,
+                    substrate_impulse: [0.; 3],
+                    carrier_gravity_impulse: [0.; 3],
                     points,
                     triangles,
                     captured: 0,
@@ -396,6 +401,22 @@ impl LiquidDemo {
                 let initial_velocities: Vec<_> =
                     liquid.particles().iter().map(|p| p.velocity).collect();
                 let previous: Vec<_> = liquid.particles().iter().map(|p| p.position).collect();
+                if let Some(films) = &mut self.films {
+                    let flags = liquid
+                        .droplet_population()
+                        .ok_or(physics::liquid::Error::InvalidConfig)?;
+                    let carrier_mass: f64 = liquid
+                        .particles()
+                        .iter()
+                        .zip(flags)
+                        .filter(|(_, droplet)| !**droplet)
+                        .map(|(particle, _)| particle.mass)
+                        .sum();
+                    for axis in 0..3 {
+                        films[index].carrier_gravity_impulse[axis] +=
+                            carrier_mass * IMPACT_GRAVITY[axis] / 120.;
+                    }
+                }
                 let advance = if self.films.is_some() {
                     Liquid::step_carrier_and_droplets
                 } else {
@@ -484,6 +505,10 @@ impl LiquidDemo {
                         .thermal_energy
                         .ok_or(physics::liquid::Error::InvalidTransport)?;
 
+                    for axis in 0..3 {
+                        film.substrate_impulse[axis] += report.spray.substrate_impulse[axis]
+                            + report.deposition.capture.absorbed.momentum[axis];
+                    }
                     film.fragments += report.spray.fragments_created;
                     film.thermal
                         .step_with_surface_shear(
@@ -495,10 +520,46 @@ impl LiquidDemo {
                         .map_err(|_| physics::liquid::Error::NumericalFailure)?;
                 }
             }
+            if self.films.is_some() {
+                for index in 0..2 {
+                    let balance = self
+                        .impact_momentum_balance(index)
+                        .map_err(|_| physics::liquid::Error::NumericalFailure)?;
+                    if balance.iter().any(|v| !v.is_finite() || v.abs() > 1e-9) {
+                        return Err(physics::liquid::Error::NumericalFailure);
+                    }
+                }
+            }
             self.accumulator -= 1.0 / 120.0;
             self.steps += 1;
         }
         Ok(())
+    }
+    /// Total impulse balance across emitted fluid, finite gas, and stationary
+    /// substrate. Film flow is overdamped; deposited momentum belongs to substrate.
+    fn impact_momentum_balance(&self, index: usize) -> Result<[f64; 3], &'static str> {
+        let film = self
+            .films
+            .as_ref()
+            .ok_or("missing impact film")?
+            .get(index)
+            .ok_or("invalid impact reservoir")?;
+        let gas = film.gas_grid.totals().map_err(|_| "invalid gas totals")?;
+        Ok(std::array::from_fn(|axis| {
+            let liquid: f64 = self.liquids[index]
+                .particles()
+                .iter()
+                .map(|p| p.mass * p.velocity[axis])
+                .sum();
+            liquid
+                + gas.momentum[axis]
+                + film.substrate_impulse[axis]
+                + film.gas_flow.wall_impulse[axis]
+                + film.gas_wall_viscosity.wall_impulse[axis]
+                - film.carrier_gravity_impulse[axis]
+                - film.flight.impulse[axis]
+                - self.emitted_source_momentum[index][axis]
+        }))
     }
     pub(crate) fn verify(&self) -> Result<(), &'static str> {
         if self.steps < 120 {
@@ -543,6 +604,13 @@ impl LiquidDemo {
         for (index, liquid) in self.liquids.iter().enumerate() {
             if let Some(films) = &self.films {
                 let film = &films[index];
+                if self
+                    .impact_momentum_balance(index)?
+                    .iter()
+                    .any(|v| !v.is_finite() || v.abs() > 1e-9)
+                {
+                    return Err("native impact global momentum ledger failed");
+                }
                 let expected = if index == 0 { 5.0 } else { 4.0 };
                 if (self.emitted_mass[index] - expected).abs() > 1e-9
                     || (liquid.mass() + film.thermal.mixture().film().total_mass() - expected).abs()
@@ -1090,8 +1158,14 @@ mod tests {
     #[test]
     fn native_jets_spray_deposit_and_preserve_mass_and_reset_mode() {
         let mut demo = LiquidDemo::new_impacts().unwrap();
+        let mut maximum_balance = 0_f64;
         for _ in 0..120 {
             demo.advance(1.0 / 120.0).unwrap();
+            for index in 0..2 {
+                for value in demo.impact_momentum_balance(index).unwrap() {
+                    maximum_balance = maximum_balance.max(value.abs());
+                }
+            }
             assert!(demo.mesh().unwrap().vertices().len() <= 60_024);
         }
         demo.verify().unwrap();
@@ -1138,12 +1212,32 @@ mod tests {
                     .any(|v| *v != 0.0)
             );
         }
+        assert!(
+            demo.films.as_ref().unwrap().iter().all(|film| film
+                .substrate_impulse
+                .iter()
+                .any(|v| *v != 0.)
+                && film.carrier_gravity_impulse[1] < 0.)
+        );
+        eprintln!("NATIVE_IMPACT_MOMENTUM steps=120 maximum_balance_kg_m_s={maximum_balance:.17e}");
+        // A missing external impulse must reject the entire next frame, keeping
+        // both reservoirs, finite gas/film inventories, emitters and clock.
+        let mut broken = demo.clone();
+        broken.films.as_mut().unwrap()[1].substrate_impulse[0] += 1e-4;
+        let before = format!("{broken:?}");
+        assert_eq!(
+            broken.advance(1. / 120.),
+            Err(physics::liquid::Error::NumericalFailure)
+        );
+        assert_eq!(format!("{broken:?}"), before);
         let reset = demo.restart().unwrap();
         assert!(reset.films.is_some());
         assert_eq!(reset.steps, 0);
         for film in reset.films.unwrap() {
             assert_eq!(film.thermal.mixture().film().total_mass(), 0.0);
             assert_eq!(film.captured_sensible_energy, 0.);
+            assert_eq!(film.substrate_impulse, [0.; 3]);
+            assert_eq!(film.carrier_gravity_impulse, [0.; 3]);
             assert!(film.thermal.energies_j().iter().all(|e| *e == 0.));
             assert_eq!(film.captured, 0);
             assert_eq!(film.fragments, 0);

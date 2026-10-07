@@ -2,7 +2,7 @@
 use physics::{
     biomechanics::Material as Elastic,
     moisture::{
-        Body, Calibration, Cell, CohesiveCalibration, CohesiveProperties, Properties, WaterSupply,
+        Body, Calibration, Cell, CohesiveCalibration, CohesiveProperties, FilmSupply, Properties,
     },
     plasticity::{
         Material,
@@ -14,7 +14,7 @@ use voxy_render::SceneMesh;
 pub(crate) struct WetFemPreview {
     dynamics: FiniteQuadraticDynamics,
     water: Body,
-    sources: [WaterSupply; 2],
+    sources: physics::surface_film::FilmMixture,
     bulk: Calibration,
     bond: CohesiveCalibration,
     initial_mass: f64,
@@ -80,6 +80,17 @@ impl WetFemPreview {
             hardness_pa: 1e8,
             wear_coefficient: 1e-3,
         };
+        let source_surface = physics::surface_film::SurfaceFilm::new(
+            &[[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [1., 1., 0.]],
+            vec![[0, 1, 2], [1, 3, 2]],
+            physics::surface_film::Material::default(),
+        )?;
+        let mut sources = physics::surface_film::FilmMixture::new(
+            source_surface,
+            vec!["water".into()],
+            vec![vec![1.]; 2],
+        )?;
+        sources.deposit_component_masses_batch(&[(0, vec![0.1]), (1, vec![0.1])])?;
         Ok(Self {
             dynamics,
             initial_mass,
@@ -102,27 +113,31 @@ impl WetFemPreview {
                 ],
                 vec![],
             )?,
-            sources: [
-                WaterSupply {
-                    cell: 0,
-                    water_kg: 0.1,
-                    conductance_kg_s: 100.,
-                },
-                WaterSupply {
-                    cell: 1,
-                    water_kg: 0.1,
-                    conductance_kg_s: 100.,
-                },
-            ],
+            sources,
         })
     }
     pub(crate) fn wet(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let mut next = self.clone();
         let n = next.dynamics.velocities().len();
-        let (transfer, bulk, fracture) = next.dynamics.advance_moisture_supplies_with_cohesion(
+        let transfer = next.water.advance_surface_film_supplies(
             1.,
-            &mut next.water,
             &mut next.sources,
+            0,
+            &[
+                FilmSupply {
+                    film_cell: 0,
+                    material_cell: 0,
+                    conductance_kg_s: 100.,
+                },
+                FilmSupply {
+                    film_cell: 1,
+                    material_cell: 1,
+                    conductance_kg_s: 100.,
+                },
+            ],
+        )?;
+        let (bulk, fracture) = next.dynamics.apply_moisture_with_cohesion(
+            next.water.cells(),
             &[1000. / 6.; 2],
             &[next.bulk; 2],
             &vec![[0.; 3]; n],
@@ -130,7 +145,7 @@ impl WetFemPreview {
             &[0.5],
         )?;
         let retained: f64 = next.water.cells().iter().map(|c| c.water_kg).sum();
-        let supplied: f64 = next.sources.iter().map(|s| s.water_kg).sum();
+        let supplied = next.sources.component_masses()?[0];
         if (retained + supplied - 0.2).abs() > 1e-12
             || (next.dynamics.energy()?.mass_kg - next.initial_mass - retained).abs() > 1e-10
             || bulk.energy_defect_j.abs() > 1e-10
@@ -359,6 +374,11 @@ mod tests {
                 demo.heat().unwrap();
             } else {
                 demo.wet().unwrap();
+                // This diagnostic requires the original single fragment. A later
+                // topology admission failure must retain film, water and mechanics.
+                let before = format!("{demo:?}");
+                assert!(demo.wet().is_err());
+                assert_eq!(format!("{demo:?}"), before);
             }
             let water = format!("{:?}{:?}{:?}", demo.water, demo.sources, demo.thermal);
             let before = demo.mesh().unwrap();

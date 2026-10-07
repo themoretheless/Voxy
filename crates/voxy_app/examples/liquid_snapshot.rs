@@ -105,6 +105,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
         mapped_at_creation: false,
     });
+    let compare_optical = optical && !reference && diagnostic.is_none();
+    let background_color = compare_optical.then(|| {
+        target(
+            format,
+            wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+        )
+    });
+    let background_readback = compare_optical.then(|| {
+        device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("liquid background reference pixels"),
+            size: 4096 * 768,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        })
+    });
+    let mut optical_effects = Vec::new();
     let mut frames = Vec::new();
     let stages: &[usize] = if impacts {
         &[0, 30, 48, 42]
@@ -192,6 +208,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             b: 0.065,
             a: 1.0,
         };
+        if let (Some(background), Some(buffer)) = (&background_color, &background_readback) {
+            renderer.encode(
+                &mut encoder,
+                &background.create_view(&Default::default()),
+                &depth.create_view(&Default::default()),
+                clear,
+                &draws,
+            );
+            encoder.copy_texture_to_buffer(
+                wgpu::TexelCopyTextureInfo {
+                    texture: background,
+                    mip_level: 0,
+                    origin: wgpu::Origin3d::ZERO,
+                    aspect: wgpu::TextureAspect::All,
+                },
+                wgpu::TexelCopyBufferInfo {
+                    buffer,
+                    layout: wgpu::TexelCopyBufferLayout {
+                        offset: 0,
+                        bytes_per_row: Some(4096),
+                        rows_per_image: Some(768),
+                    },
+                },
+                background.size(),
+            );
+        }
         if optical && !reference {
             fluid.encode(
                 &renderer,
@@ -251,6 +293,47 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         device.poll(wgpu::PollType::wait_indefinitely())?;
         rx.recv()??;
         let pixels = readback.slice(..).get_mapped_range()?;
+        if let Some(buffer) = &background_readback {
+            let (tx, rx) = std::sync::mpsc::channel();
+            buffer.slice(..).map_async(wgpu::MapMode::Read, move |r| {
+                let _ = tx.send(r);
+            });
+            device.poll(wgpu::PollType::wait_indefinitely())?;
+            rx.recv()??;
+            let background = buffer.slice(..).get_mapped_range()?;
+            let mut changed = [0_usize; 2];
+            for (index, (output, baseline)) in pixels
+                .chunks_exact(4)
+                .zip(background.chunks_exact(4))
+                .enumerate()
+            {
+                if (0..3).any(|channel| output[channel].abs_diff(baseline[channel]) > 2) {
+                    changed[usize::from(index % 1024 >= 512)] += 1;
+                }
+            }
+            println!(
+                "OPTICAL_EFFECT frame={frame} left_pixels={} right_pixels={}",
+                changed[0], changed[1]
+            );
+            if impacts && frame == 0 && changed != [0, 0] {
+                return Err("empty optical frame differs from background reference".into());
+            }
+            optical_effects.push(serde_json::json!({"frame":frame,
+                "left_changed_pixels":changed[0],"right_changed_pixels":changed[1]}));
+            if !(impacts && frame == 0)
+                && (if close_water {
+                    changed.iter().sum::<usize>() == 0
+                } else {
+                    changed.contains(&0)
+                })
+            {
+                return Err(
+                    "liquid optical contribution missing against same-frame background".into(),
+                );
+            }
+            drop(background);
+            buffer.unmap();
+        }
         let blue = pixels
             .chunks_exact(4)
             .filter(|p| p[2] > 70 && p[0] < 40)
@@ -262,7 +345,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if !optical && !(impacts && frame == 0) && (blue < 100 || gold < 100) {
             return Err("liquid particles missing from rendered pixels".into());
         }
-        println!("frame={frame}: water_pixels={blue}, oil_pixels={gold}");
+        println!("frame={frame}: blue_pixels={blue}, gold_pixels={gold}");
         if frame == 2 {
             image::save_buffer(
                 format!("{path}-active.png"),
@@ -295,6 +378,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         768,
         image::ColorType::Rgba8,
     )?;
+    if compare_optical {
+        std::fs::write(
+            std::path::Path::new(&path).with_extension("optical-audit.json"),
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "scope":"same-frame GPU background differential; paired fixture halves, not calibrated optics",
+                "rgb_difference_threshold":2,"frames":optical_effects
+            }))?,
+        )?;
+    }
     println!("LIQUID SNAPSHOT PASS: {path}");
     Ok(())
 }
