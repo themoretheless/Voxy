@@ -20,6 +20,10 @@ struct Resources {
     liquid_renderer: Option<voxy_render::ScreenSpaceFluidRenderer>,
     scene: SceneRenderer,
     cube: SceneGeometry,
+    hair_geometry: Option<SceneGeometry>,
+    gpu_secondary: Option<voxy_render::SurfaceDeformation>,
+    gpu_secondary_reference: Vec<[f32; 4]>,
+    gpu_secondary_last_controls: Vec<[f32; 4]>,
     film_layer: Option<SceneGeometry>,
     optical_frames: u64,
     film_mass_checks: u64,
@@ -31,6 +35,9 @@ struct Resources {
     material_creases: Vec<f32>,
     atlas_update: crate::female_complexion::AtlasUpdate,
     world_transform: SceneTransform,
+    last_view_position: Option<Vec3>,
+    last_world_motion: Option<voxy_render::MotionMatrices>,
+    last_overlay_mvp: Option<Mat4>,
     overlay_transform: SceneTransform,
     motion_frames: u64,
     rush_floor: Option<SceneGeometry>,
@@ -48,6 +55,8 @@ enum MotionMode {
 pub struct SceneApp {
     female: Option<crate::female_demo::FemaleDemo>,
     orbit_drag: bool,
+    camera_motion: crate::camera_motion::CameraMotion,
+    full_model_worker: Option<crate::full_model_worker::FullModelWorker>,
     cursor: Option<(f64, f64)>,
     liquids: Option<crate::liquid_demo::LiquidDemo>,
     liquid_optics: bool,
@@ -73,6 +82,8 @@ pub struct SceneApp {
     object: NodeId,
     started: Instant,
     frames: u32,
+    profile_last_present: Option<Instant>,
+    defer_redraw_until: Option<Instant>,
     resize_stages: u8,
     smoke: bool,
     gravity_smoke_stage: u8,
@@ -97,6 +108,8 @@ impl SceneApp {
         Ok(Self {
             female: None,
             orbit_drag: false,
+            camera_motion: Default::default(),
+            full_model_worker: None,
             cursor: None,
             liquids: None,
             liquid_optics: false,
@@ -122,6 +135,8 @@ impl SceneApp {
             resources: None,
             started: Instant::now(),
             frames: 0,
+            profile_last_present: None,
+            defer_redraw_until: None,
             resize_stages: 0,
             smoke,
             gravity_smoke_stage: 0,
@@ -329,14 +344,14 @@ impl SceneApp {
         }
         Ok(app)
     }
-    /// Selects a lightweight inertial-motion preview on the imported mannequin.
+    /// Selects the complete inertial-motion example with dynamic hair and skin.
     pub fn with_female_secondary(self) -> Result<Self, Box<dyn std::error::Error>> {
         let mut app = self.with_female()?;
         if let Some(female) = &mut app.female {
             female.secondary_only = true;
             female.yaw = 1.1;
             female.distance = 2.1;
-            female.simulate_hair = false;
+            female.simulate_hair = true;
             female.pressing = false;
         }
         Ok(app)
@@ -534,7 +549,11 @@ impl SceneApp {
                     Window::default_attributes()
                         .with_title("Voxy 2D/3D | Space: pause | Esc: exit")
                         .with_visible(false)
-                        .with_inner_size(winit::dpi::LogicalSize::new(900, 650)),
+                        .with_inner_size(if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+                            winit::dpi::Size::Physical(winit::dpi::PhysicalSize::new(1280, 900))
+                        } else {
+                            winit::dpi::Size::Logical(winit::dpi::LogicalSize::new(900., 650.))
+                        }),
                 )?,
             )
         };
@@ -548,11 +567,32 @@ impl SceneApp {
             options,
             instance,
         ))?;
+        if std::env::var_os("VOXY_GPU_SECONDARY").is_some()
+            || std::env::var_os("VOXY_ASYNC_FULL").is_some()
+        {
+            match host.enable_unthrottled_presentation() {
+                Ok(mode) => eprintln!("GPU SECONDARY presentation={mode:?}"),
+                Err(error) => eprintln!(
+                    "GPU SECONDARY non-vsync unavailable: {error}; retaining existing presentation"
+                ),
+            }
+        }
         if self.motion_vectors == MotionMode::Enabled {
             pollster::block_on(host.enable_motion_vectors())?;
         }
-        if self.female.is_some() {
+        if self.female.is_some()
+            && (std::env::var_os("VOXY_GPU_SECONDARY").is_none()
+                || std::env::var_os("VOXY_GPU_SECONDARY_MSAA").is_some())
+        {
             host.enable_msaa4()?;
+        }
+        if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+            eprintln!(
+                "GPU SECONDARY resolution={}x{} MSAA4={}",
+                size.width,
+                size.height,
+                std::env::var_os("VOXY_GPU_SECONDARY_MSAA").is_some()
+            );
         }
         let mut scene = host.create_scene_renderer();
         if self.female.is_some() {
@@ -581,12 +621,56 @@ impl SceneApp {
         } else {
             cube_mesh()?
         };
-        let cube = if self.liquids.is_some() || self.wear.is_some() || self.fem.is_some() {
+        let mut hair_geometry = None;
+        let cube = if std::env::var_os("VOXY_ASYNC_FULL").is_some() {
+            let (body, hair) =
+                crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
+            let mut partitions = scene.upload_shared_mesh_partitions(host.device(), &mesh)?;
+            let mut hair_owner = partitions.pop().unwrap();
+            let mut body_owner = partitions.pop().unwrap();
+            body_owner.update_index_partition(host.queue(), &body)?;
+            hair_owner.update_index_partition(host.queue(), &hair)?;
+            pollster::block_on(scene.set_geometry_opaque_shader(
+                host.device(),
+                &mut hair_owner,
+                include_str!("female_hair_material.wgsl"),
+            ))?;
+            hair_geometry = Some(hair_owner);
+            body_owner
+        } else if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+            scene.upload_mesh(host.device(), &SceneMesh::quad([1.; 4]))?
+        } else if self.liquids.is_some() || self.wear.is_some() || self.fem.is_some() {
             let mut geometry = scene.reserve_geometry(host.device(), 60_024, 60_024)?;
             geometry.update(host.queue(), &mesh)?;
             geometry
         } else {
             scene.upload_mesh(host.device(), &mesh)?
+        };
+        let (gpu_secondary, gpu_secondary_reference) = if std::env::var_os("VOXY_GPU_SECONDARY")
+            .is_some()
+        {
+            let female = self
+                .female
+                .as_ref()
+                .ok_or("GPU secondary mode requires the body preview")?;
+            let (offsets, weights, count) = female.gpu_secondary_binding(mesh.vertices().len())?;
+            eprintln!(
+                "GPU SECONDARY preview: {} vertices; neutral initial facial pose and baked initial irradiance; same nonlinear tissue simulation",
+                mesh.vertices().len()
+            );
+            let mut gpu = scene.prepare_surface_deformation(
+                host.device(),
+                &mesh,
+                &offsets,
+                &weights,
+                count,
+            )?;
+            gpu.set_deforming_normal_prefix(female.gpu_secondary_body_vertices())?;
+            let reference = female.gpu_secondary_controls();
+            gpu.update_controls(host.queue(), &vec![[0.; 4]; reference.len()])?;
+            (Some(gpu), reference)
+        } else {
+            (None, Vec::new())
         };
         let rush_floor = self
             .rush
@@ -670,7 +754,14 @@ impl SceneApp {
             );
         }
         if let Some(female) = &self.female {
-            let title = female.title();
+            let title = if gpu_secondary.is_some() {
+                format!(
+                    "GPU preview | neutral face / initial irradiance | {}",
+                    female.title()
+                )
+            } else {
+                female.title()
+            };
             self.female_window_title = if self.paused {
                 format!("Paused | {title}")
             } else {
@@ -684,6 +775,10 @@ impl SceneApp {
             liquid_renderer: None,
             scene,
             cube,
+            hair_geometry,
+            gpu_secondary,
+            gpu_secondary_last_controls: vec![[0.; 4]; gpu_secondary_reference.len()],
+            gpu_secondary_reference,
             film_layer: None,
             optical_frames: 0,
             film_mass_checks: 0,
@@ -703,6 +798,9 @@ impl SceneApp {
                 .unwrap_or_default(),
             atlas_update: Default::default(),
             world_transform,
+            last_view_position: None,
+            last_world_motion: None,
+            last_overlay_mvp: None,
             overlay_transform,
             motion_frames: 0,
             rush_floor,
@@ -721,6 +819,18 @@ impl SceneApp {
             window.focus_window();
         }
         self.window = Some(window);
+        if self.full_model_worker.is_none() && std::env::var_os("VOXY_ASYNC_FULL").is_some() {
+            let simulation = self
+                .female
+                .take()
+                .ok_or("background full model requires female example")?;
+            let view = simulation.background_view_replica()?;
+            let controls = crate::full_model_worker::Controls::capture(&view, self.paused);
+            self.full_model_worker = Some(crate::full_model_worker::FullModelWorker::new(
+                simulation, controls,
+            )?);
+            self.female = Some(view);
+        }
         self.last = Instant::now();
         Ok(())
     }
@@ -736,26 +846,44 @@ impl SceneApp {
         {
             return Err(voxy_render::RendererError::DeviceLost(message.to_owned()).into());
         }
-        let trace = std::env::var_os("VOXY_FACE_FRAME_TRACE").is_some()
-            && self.female.is_some()
-            && self.frames < 8;
+        let trace = self.female.is_some()
+            && (std::env::var_os("VOXY_FRAME_PROFILE").is_some()
+                || (std::env::var_os("VOXY_FACE_FRAME_TRACE").is_some() && self.frames < 8));
         let frame_started = Instant::now();
         if trace {
             eprintln!("FACE FRAME {} begin", self.frames);
         }
         let now = Instant::now();
         let elapsed = now.duration_since(self.last).as_secs_f32();
+        if trace {
+            eprintln!(
+                "FRAME CADENCE frame={} elapsed_ms={:.3} paused={}",
+                self.frames,
+                f64::from(elapsed) * 1000.,
+                self.paused
+            );
+        }
         let dt = elapsed.min(0.1);
         self.last = now;
+        if let Some(female) = &mut self.female {
+            let view = self.camera_motion.advance(
+                [female.yaw, female.pitch, female.distance],
+                dt,
+                female.hand_focus,
+            );
+            [female.yaw, female.pitch, female.distance] = view;
+        }
         self.frame_loop.set_paused(self.paused);
         let frame_work = self.frame_loop.advance(f64::from(elapsed));
         if !self.paused {
             if let Some(female) = &mut self.female {
-                female.advance(if self.smoke {
-                    1.0 / 60.0
-                } else {
-                    f64::from(elapsed)
-                })?;
+                if self.full_model_worker.is_none() {
+                    female.advance(if self.smoke {
+                        1.0 / 60.0
+                    } else {
+                        f64::from(elapsed)
+                    })?;
+                }
             } else if let Some(xray) = &mut self.xray {
                 if self.smoke {
                     xray.enabled = !(40..80).contains(&self.frames);
@@ -967,7 +1095,16 @@ impl SceneApp {
                 )?;
                 r.material_creases = creases;
             }
-            let title = female.title();
+            let title = if let Some(worker) = &self.full_model_worker {
+                format!("Full physics worker | {}", worker.title)
+            } else if r.gpu_secondary.is_some() {
+                format!(
+                    "GPU preview | neutral face / initial irradiance | {}",
+                    female.title()
+                )
+            } else {
+                female.title()
+            };
             let title = if self.paused {
                 format!("Paused | {title}")
             } else {
@@ -977,19 +1114,50 @@ impl SceneApp {
                 window.set_title(&title);
                 self.female_window_title = title;
             }
-            r.world_transform
-                .update_view_position(r.host.queue(), female.eye())?;
-            let mesh = female.mesh()?;
-            if let Some((body, film)) = mesh.split_material_layer(-2., -6.)? {
-                r.cube.update(r.host.queue(), &body)?;
-                if let Some(layer) = &mut r.film_layer {
-                    layer.update(r.host.queue(), &film)?;
-                } else {
-                    r.film_layer = Some(r.scene.upload_mesh(r.host.device(), &film)?);
+            let view_position = female.eye();
+            if r.last_view_position != Some(view_position) {
+                r.world_transform
+                    .update_view_position(r.host.queue(), view_position)?;
+                r.last_view_position = Some(view_position);
+            }
+            let prepared_mesh = if let Some(worker) = &mut self.full_model_worker {
+                let result = worker
+                    .poll(crate::full_model_worker::Controls::capture(
+                        female,
+                        self.paused,
+                    ))
+                    .map_err(std::io::Error::other)?;
+                if let Some(frame) = result {
+                    eprintln!("FULL MODEL WORKER work_ms={:.3} physics_ms={:.3} mesh_ms={:.3} partition_ms={:.3} streams_ms={:.3}", frame.work_ms, frame.phase_ms[0], frame.phase_ms[1], frame.phase_ms[2], frame.phase_ms[3]);
+                    r.cube.update_shared_vertex_streams(r.host.queue(), &frame.mesh)?;
+                    r.cube
+                        .update_index_partition(r.host.queue(), &frame.body_indices)?;
+                    if let Some(hair) = &mut r.hair_geometry {
+                        hair.update_index_partition(r.host.queue(), &frame.hair_indices)?;
+                    }
                 }
+                None
+            } else if r.gpu_secondary.is_none() {
+                Some(female.mesh()?)
             } else {
-                r.film_layer = None;
-                r.cube.update(r.host.queue(), &mesh)?;
+                None
+            };
+            if let Some(mesh) = prepared_mesh {
+                if let Some((body, film)) = if female.film.is_some() {
+                    mesh.split_material_layer(-2., -6.)?
+                } else {
+                    None
+                } {
+                    r.cube.update(r.host.queue(), &body)?;
+                    if let Some(layer) = &mut r.film_layer {
+                        layer.update(r.host.queue(), &film)?;
+                    } else {
+                        r.film_layer = Some(r.scene.upload_mesh(r.host.device(), &film)?);
+                    }
+                } else {
+                    r.film_layer = None;
+                    r.cube.update(r.host.queue(), &mesh)?;
+                }
             }
             if trace {
                 eprintln!(
@@ -1075,7 +1243,10 @@ impl SceneApp {
             self.motion.reset();
         }
         let motion = self.motion.prepare(mvp)?;
-        r.world_transform.update_motion(r.host.queue(), motion)?;
+        if r.last_world_motion != Some(motion) {
+            r.world_transform.update_motion(r.host.queue(), motion)?;
+            r.last_world_motion = Some(motion);
+        }
         if let Some(female) = &self.female {
             let labels = female.diagnostic_legend_labels();
             if labels != r.legend_labels {
@@ -1103,14 +1274,21 @@ impl SceneApp {
             Quat::IDENTITY,
             Vec3::new(110.0, size.height as f32 - 60.0, 0.0),
         );
-        r.overlay_transform
-            .update(r.host.queue(), overlay_vp * model)?;
+        let overlay_mvp = overlay_vp * model;
+        if r.last_overlay_mvp != Some(overlay_mvp) {
+            r.overlay_transform.update(r.host.queue(), overlay_mvp)?;
+            r.last_overlay_mvp = Some(overlay_mvp);
+        }
         let expect_temporal_reset = r.host.temporal_frame().is_none();
         let mut temporal_candidate = None;
         let mut temporal_submitted = None;
+        let mut draw_list = Vec::new();
         let draws = [
             SceneDraw {
-                geometry: &r.cube,
+                geometry: r
+                    .gpu_secondary
+                    .as_ref()
+                    .map_or(&r.cube, |gpu| gpu.geometry()),
                 texture: &r.texture,
                 transform: &r.world_transform,
                 overlay: false,
@@ -1122,6 +1300,18 @@ impl SceneApp {
                 overlay: true,
             },
         ];
+        let [body_draw, overlay_draw] = draws;
+        draw_list.push(body_draw);
+        if let Some(hair) = &r.hair_geometry {
+            draw_list.push(SceneDraw {
+                geometry: hair,
+                texture: &r.texture,
+                transform: &r.world_transform,
+                overlay: false,
+            });
+        }
+        draw_list.push(overlay_draw);
+        let draws = draw_list.as_slice();
         let draws = if self
             .female
             .as_ref()
@@ -1134,7 +1324,7 @@ impl SceneApp {
             || self.gravity.is_some()
             || self.tissues.is_some()
         {
-            &draws[..1]
+            &draws[..draws.len() - 1]
         } else {
             &draws[..]
         };
@@ -1227,6 +1417,21 @@ impl SceneApp {
                 overlay: false,
             })
             .collect();
+        let gpu_controls = self
+            .female
+            .as_ref()
+            .filter(|_| r.gpu_secondary.is_some())
+            .map(|female| {
+                female
+                    .gpu_secondary_controls()
+                    .iter()
+                    .zip(&r.gpu_secondary_reference)
+                    .map(|(p, r)| std::array::from_fn(|k| p[k] - r[k]))
+                    .collect::<Vec<[f32; 4]>>()
+            });
+        let update_gpu = gpu_controls
+            .as_ref()
+            .is_some_and(|controls| controls != &r.gpu_secondary_last_controls);
         let outcome = if self.liquid_optics && self.liquids.is_some() {
             let fluid = r
                 .liquid_renderer
@@ -1239,20 +1444,49 @@ impl SceneApp {
                 },
             )?
         } else {
-            r.host
-                .render_scene_with_refractive_layers_and_temporal_hooks(
-                    &r.scene,
-                    &active_draws,
-                    &refractive_layers,
-                    |inputs, _encoder| {
-                        temporal_candidate = Some((inputs.presentation_id, inputs.reset_history));
-                    },
-                    |inputs, _device, _queue, _target| {
-                        temporal_submitted = Some((inputs.presentation_id, inputs.reset_history));
-                        Ok(())
-                    },
-                )?
+            r.host.render_scene_with_preparation_and_temporal_hooks(
+                &r.scene,
+                &active_draws,
+                &refractive_layers,
+                |queue, encoder| {
+                    if update_gpu
+                        && let (Some(gpu), Some(controls)) = (&r.gpu_secondary, &gpu_controls)
+                    {
+                        gpu.upload_controls(queue, controls)
+                            .map_err(voxy_render::RendererError::Scene)?;
+                        gpu.encode(encoder)
+                            .map_err(voxy_render::RendererError::Scene)?;
+                    }
+                    Ok(())
+                },
+                |inputs, _encoder| {
+                    temporal_candidate = Some((inputs.presentation_id, inputs.reset_history));
+                },
+                |inputs, _device, _queue, _target| {
+                    temporal_submitted = Some((inputs.presentation_id, inputs.reset_history));
+                    Ok(())
+                },
+            )?
         };
+        if outcome == RenderOutcome::Presented
+            && let Some(controls) = gpu_controls
+        {
+            r.gpu_secondary_last_controls = controls;
+        }
+        if matches!(
+            outcome,
+            RenderOutcome::SkippedOccluded | RenderOutcome::SkippedTimeout
+        ) {
+            self.defer_redraw_until = Some(Instant::now() + std::time::Duration::from_millis(16));
+        } else if self.female.is_some()
+            && r.gpu_secondary.is_none()
+            && self.full_model_worker.is_none()
+        {
+            // Let native input/accessibility run between expensive full-model frames.
+            self.defer_redraw_until = Some(Instant::now() + std::time::Duration::from_millis(16));
+        } else {
+            self.defer_redraw_until = None;
+        }
         if trace {
             eprintln!(
                 "FACE FRAME {} outcome={outcome:?} elapsed_ms={:.3}",
@@ -1308,6 +1542,20 @@ impl SceneApp {
                 r.motion_frames = frame_id;
             }
             self.motion.presented(mvp)?;
+            if std::env::var_os("VOXY_FRAME_PROFILE").is_some()
+                || std::env::var_os("VOXY_PRESENT_PROFILE").is_some()
+            {
+                let presented = Instant::now();
+                if let Some(previous) = self.profile_last_present {
+                    eprintln!(
+                        "PRESENT CADENCE frame={} interval_ms={:.6} paused={}",
+                        self.frames,
+                        presented.duration_since(previous).as_secs_f64() * 1000.,
+                        self.paused
+                    );
+                }
+                self.profile_last_present = Some(presented);
+            }
             self.frames += 1;
         }
         if self.smoke {
@@ -1490,6 +1738,20 @@ impl ApplicationHandler for SceneApp {
                 }
             }
         }
+        if self.female.is_some()
+            && let WindowEvent::KeyboardInput { event, .. } = &event
+        {
+            let index = match event.physical_key {
+                PhysicalKey::Code(KeyCode::ArrowLeft) => Some(0),
+                PhysicalKey::Code(KeyCode::ArrowRight) => Some(1),
+                PhysicalKey::Code(KeyCode::ArrowUp) => Some(2),
+                PhysicalKey::Code(KeyCode::ArrowDown) => Some(3),
+                _ => None,
+            };
+            if let Some(index) = index {
+                self.camera_motion.held[index] = event.state == ElementState::Pressed;
+            }
+        }
         match event {
             WindowEvent::CloseRequested => {
                 if self.smoke {
@@ -1543,7 +1805,8 @@ impl ApplicationHandler for SceneApp {
                     && let Some((x, y)) = self.cursor
                     && let Some(female) = &mut self.female
                 {
-                    female.orbit(
+                    self.camera_motion.orbit(
+                        [female.yaw, female.pitch, female.distance],
                         (position.x - x) as f32 * 0.007,
                         (position.y - y) as f32 * 0.007,
                     );
@@ -1556,12 +1819,17 @@ impl ApplicationHandler for SceneApp {
                         winit::event::MouseScrollDelta::LineDelta(_, y) => -y * 0.1,
                         winit::event::MouseScrollDelta::PixelDelta(p) => -p.y as f32 * 0.003,
                     };
-                    female.zoom(amount);
+                    self.camera_motion.zoom(
+                        [female.yaw, female.pitch, female.distance],
+                        amount,
+                        female.hand_focus,
+                    );
                 }
             }
             WindowEvent::Focused(false) => {
                 self.touch.reset();
                 self.orbit_drag = false;
+                self.camera_motion.held = [false; 4];
                 self.cursor = None;
             }
             WindowEvent::Resized(size) => {
@@ -1661,26 +1929,6 @@ impl ApplicationHandler for SceneApp {
                     {
                         if let Some(female) = &mut self.female {
                             female.set_grasp_cycle(true);
-                        }
-                    }
-                    PhysicalKey::Code(KeyCode::ArrowLeft) if self.female.is_some() => {
-                        if let Some(female) = &mut self.female {
-                            female.orbit(-0.15, 0.0);
-                        }
-                    }
-                    PhysicalKey::Code(KeyCode::ArrowRight) if self.female.is_some() => {
-                        if let Some(female) = &mut self.female {
-                            female.orbit(0.15, 0.0);
-                        }
-                    }
-                    PhysicalKey::Code(KeyCode::ArrowUp) if self.female.is_some() => {
-                        if let Some(female) = &mut self.female {
-                            female.zoom(-0.15);
-                        }
-                    }
-                    PhysicalKey::Code(KeyCode::ArrowDown) if self.female.is_some() => {
-                        if let Some(female) = &mut self.female {
-                            female.zoom(0.15);
                         }
                     }
                     PhysicalKey::Code(KeyCode::KeyF) if self.xray.is_some() => {
@@ -1803,7 +2051,15 @@ impl ApplicationHandler for SceneApp {
             _ => {}
         }
     }
-    fn about_to_wait(&mut self, _: &ActiveEventLoop) {
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        if let Some(deadline) = self.defer_redraw_until {
+            if Instant::now() < deadline {
+                event_loop.set_control_flow(ControlFlow::WaitUntil(deadline));
+                return;
+            }
+            self.defer_redraw_until = None;
+            event_loop.set_control_flow(ControlFlow::Poll);
+        }
         if !self.occluded
             && self.resources.is_some()
             && let Some(window) = &self.window

@@ -122,6 +122,7 @@ pub fn build_light(
     }
     let mut opaque = vec![true; PADDED_VOLUME];
     let mut emission = vec![0_u8; PADDED_VOLUME];
+    let mut has_emission = false;
     for y in -1..=CHUNK_EDGE {
         for z in -1..=CHUNK_EDGE {
             for x in -1..=CHUNK_EDGE {
@@ -135,6 +136,9 @@ pub fn build_light(
                 let index = padded_index([x, y, z]);
                 opaque[index] = definition.occlusion == Occlusion::FullCube;
                 emission[index] = definition.emission;
+                if definition.emission > 0 {
+                    has_emission = true;
+                }
             }
         }
     }
@@ -145,7 +149,9 @@ pub fn build_light(
     }
     propagate(&opaque, &mut sky, budget, cancel, true)?;
     let mut block = emission;
-    propagate(&opaque, &mut block, budget, cancel, false)?;
+    if has_emission {
+        propagate(&opaque, &mut block, budget, cancel, false)?;
+    }
 
     let mut packed = vec![0_u8; CHUNK_VOLUME];
     for local in LocalIndex::all() {
@@ -261,6 +267,12 @@ fn propagate(
         .enumerate()
         .filter_map(|(index, &level)| (level > 1).then_some(index))
         .collect();
+    if queue.is_empty() {
+        return Ok(());
+    }
+    const STRIDE_Z: usize = PADDED_EDGE;
+    const STRIDE_Y: usize = PADDED_EDGE * PADDED_EDGE;
+
     let mut steps = 0_usize;
     while let Some(index) = queue.pop_front() {
         steps = steps.checked_add(1).ok_or(LightingError::BudgetExceeded)?;
@@ -270,28 +282,80 @@ fn propagate(
         if steps.is_multiple_of(1024) && cancel.is_cancelled() {
             return Err(LightingError::Cancelled);
         }
-        let pos = padded_position(index);
-        for (axis, delta) in [(0, -1), (0, 1), (1, -1), (1, 1), (2, -1), (2, 1)] {
-            let mut neighbor = pos;
-            neighbor[axis] += delta;
-            if neighbor
-                .iter()
-                .any(|value| !(-1..=CHUNK_EDGE).contains(value))
-            {
-                continue;
+        let current_light = light[index];
+        let current_attenuated = current_light.saturating_sub(1);
+        let x = index % PADDED_EDGE;
+        let yz = index / PADDED_EDGE;
+        let z = yz % PADDED_EDGE;
+        let y = yz / PADDED_EDGE;
+
+        // Down: y > 0
+        if y > 0 {
+            let neighbor_index = index - STRIDE_Y;
+            if !opaque[neighbor_index] {
+                let candidate = if preserve_direct_down && current_light == MAX_LIGHT {
+                    MAX_LIGHT
+                } else {
+                    current_attenuated
+                };
+                if candidate > light[neighbor_index] {
+                    light[neighbor_index] = candidate;
+                    if candidate > 1 {
+                        queue.push_back(neighbor_index);
+                    }
+                }
             }
-            let neighbor_index = padded_index(neighbor);
-            if opaque[neighbor_index] {
-                continue;
+        }
+
+        if current_attenuated > 0 {
+            // Up: y < PADDED_EDGE - 1
+            if y < PADDED_EDGE - 1 {
+                let neighbor_index = index + STRIDE_Y;
+                if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
+                    light[neighbor_index] = current_attenuated;
+                    if current_attenuated > 1 {
+                        queue.push_back(neighbor_index);
+                    }
+                }
             }
-            let attenuation = u8::from(
-                !(preserve_direct_down && axis == 1 && delta == -1 && light[index] == MAX_LIGHT),
-            );
-            let candidate = light[index].saturating_sub(attenuation);
-            if candidate > light[neighbor_index] {
-                light[neighbor_index] = candidate;
-                if candidate > 1 {
-                    queue.push_back(neighbor_index);
+            // Left: x > 0
+            if x > 0 {
+                let neighbor_index = index - 1;
+                if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
+                    light[neighbor_index] = current_attenuated;
+                    if current_attenuated > 1 {
+                        queue.push_back(neighbor_index);
+                    }
+                }
+            }
+            // Right: x < PADDED_EDGE - 1
+            if x < PADDED_EDGE - 1 {
+                let neighbor_index = index + 1;
+                if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
+                    light[neighbor_index] = current_attenuated;
+                    if current_attenuated > 1 {
+                        queue.push_back(neighbor_index);
+                    }
+                }
+            }
+            // Back: z > 0
+            if z > 0 {
+                let neighbor_index = index - STRIDE_Z;
+                if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
+                    light[neighbor_index] = current_attenuated;
+                    if current_attenuated > 1 {
+                        queue.push_back(neighbor_index);
+                    }
+                }
+            }
+            // Forward: z < PADDED_EDGE - 1
+            if z < PADDED_EDGE - 1 {
+                let neighbor_index = index + STRIDE_Z;
+                if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
+                    light[neighbor_index] = current_attenuated;
+                    if current_attenuated > 1 {
+                        queue.push_back(neighbor_index);
+                    }
                 }
             }
         }
@@ -304,13 +368,7 @@ fn padded_index(pos: [i64; 3]) -> usize {
     (y * PADDED_EDGE + z) * PADDED_EDGE + x
 }
 
-fn padded_position(index: usize) -> [i64; 3] {
-    let x = index % PADDED_EDGE;
-    let yz = index / PADDED_EDGE;
-    let z = yz % PADDED_EDGE;
-    let y = yz / PADDED_EDGE;
-    [x, y, z].map(|value| i64::try_from(value).unwrap_or(0) - 1)
-}
+
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum LightingError {

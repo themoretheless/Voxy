@@ -206,6 +206,11 @@ impl EmbeddedSurface {
     pub(crate) fn reference_geometry(&self) -> (&[Point], &[[usize; 4]], &[Point]) {
         (&self.rest, &self.cells, &self.surface)
     }
+    /// Immutable sparse displacement map for resident renderers. Prescribed
+    /// vertices have no tissue coefficients; no simulation state is exported.
+    pub fn displacement_bindings(&self) -> impl ExactSizeIterator<Item = Option<([usize; 4], [f64; 4])>> + '_ {
+        self.bindings.iter().map(|b| b.as_ref().map(|b| (b.indices, b.weights)))
+    }
     /// Produces new render positions; caller-owned buffers remain unchanged on failure.
     /// Vertex order/count must match rest geometry. Normals must be recomputed by renderer.
     /// # Errors

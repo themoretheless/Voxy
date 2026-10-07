@@ -23,12 +23,25 @@ struct Strand {
 #[derive(Debug)]
 pub(crate) struct FaceFeatures {
     strands: Vec<Strand>,
+    lash_motion: Vec<physics::secondary_motion::SecondaryMotion>,
     seams: Vec<([u32; 3], [Vec3; 3])>,
     rims: Vec<Vec<([usize; 3], Vec3)>>,
     lash_skin_vertices: Vec<usize>,
     lash_skin_triangles: Vec<[usize; 3]>,
 }
 impl FaceFeatures {
+    pub(crate) fn advance_lashes(
+        &mut self,
+        dt: f64,
+        acceleration: [f64; 3],
+    ) -> Result<(), &'static str> {
+        for (strand, motion) in self.strands.iter().zip(&mut self.lash_motion) {
+            if matches!(strand.kind, Kind::Lash | Kind::LowerLash) {
+                motion.step(dt, acceleration, [0.; 3])?;
+            }
+        }
+        Ok(())
+    }
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Self {
         let face: Vec<[usize; 3]> = indices
             .chunks_exact(3)
@@ -83,17 +96,17 @@ impl FaceFeatures {
             });
         };
         for side in [-1., 1.] {
-            for i in 0..300 {
-                let t = i as f32 / 299.;
+            for i in 0..600 {
+                let t = i as f32 / 599.;
                 let x = 0.013 + 0.048 * t;
                 let y = 0.737
                     + 0.009 * (t * std::f32::consts::PI).sin()
-                    + (((i * 73) % 101) as f32 / 100. - 0.5) * 0.003;
+                    + (((i * 73) % 101) as f32 / 100. - 0.5) * 0.007;
                 let z = 0.144 - 0.035 * t;
                 add(
                     Vec3::new(side * x, y, z),
                     Vec3::new(side * 0.0035, 0.0025 * (1. - t) + 0.0005, 0.0007),
-                    0.000055,
+                    0.000075,
                     Kind::Brow,
                 );
             }
@@ -225,6 +238,18 @@ impl FaceFeatures {
             .map(|ids| ids.map(|i| mapping[&i]))
             .collect();
         Self {
+            lash_motion: strands
+                .iter()
+                .map(|_| {
+                    physics::secondary_motion::SecondaryMotion::new(
+                        physics::secondary_motion::Config {
+                            frequency: 24.,
+                            damping_ratio: 0.3,
+                        },
+                    )
+                    .unwrap()
+                })
+                .collect(),
             strands,
             seams,
             rims,
@@ -347,7 +372,13 @@ impl FaceFeatures {
                 color[3] = 0.;
             }
             if matches!(strand.kind, Kind::Lash | Kind::LowerLash) {
-                let bend = transport(lash_bend(strand.direction, lower, index)) * control("length");
+                let mut bend =
+                    transport(lash_bend(strand.direction, lower, index)) * control("length");
+                if let Some(motion) = self.lash_motion.get(index) {
+                    // Root stays attached; inertial bending is resolved before existing skin contacts.
+                    bend +=
+                        head.transform_vector3(Vec3::from_array(motion.offset().map(|v| v as f32)));
+                }
                 curved_lash(
                     vertices,
                     indices,
@@ -1926,6 +1957,7 @@ mod tests {
         crate::female_face::deform(&mut body, 3, pose);
         let features = FaceFeatures {
             strands: Vec::new(),
+            lash_motion: Vec::new(),
             seams: vec![([0, 1, 2], original)],
             rims: Vec::new(),
             lash_skin_vertices: Vec::new(),
@@ -2065,5 +2097,49 @@ mod tests {
                 || (v.uv[0] == -1. && (0.15..=0.9).contains(&v.uv[1]))
                 || ((-1.4..=-1.2).contains(&v.uv[0]) && (0.0..=1.0).contains(&v.uv[1]))));
         }
+    }
+}
+
+#[cfg(test)]
+mod inertial_lash_regression {
+    use super::*;
+    #[test]
+    fn lashes_respond_to_acceleration_and_settle_without_moving_the_attachment() {
+        let strand = Strand {
+            roots: [0, 1, 2],
+            weights: Vec3::new(1., 0., 0.),
+            direction: Vec3::Y * 0.005,
+            radius: 0.00004,
+            kind: Kind::Lash,
+            side: 1.,
+            bind_frame: Quat::IDENTITY,
+        };
+        let mut features = FaceFeatures {
+            strands: vec![strand],
+            lash_motion: vec![
+                physics::secondary_motion::SecondaryMotion::new(
+                    physics::secondary_motion::Config {
+                        frequency: 24.,
+                        damping_ratio: 0.3,
+                    },
+                )
+                .unwrap(),
+            ],
+            seams: vec![],
+            rims: vec![],
+            lash_skin_vertices: vec![],
+            lash_skin_triangles: vec![],
+        };
+        for _ in 0..12 {
+            features.advance_lashes(1. / 240., [0., 20., 0.]).unwrap();
+        }
+        let peak = features.lash_motion[0].offset()[1].abs();
+        assert!(peak > 1e-5 && peak < 0.001);
+        for _ in 0..240 {
+            features.advance_lashes(1. / 240., [0.; 3]).unwrap();
+        }
+        assert!(features.lash_motion[0].offset()[1].abs() < peak * 0.001);
+        assert_eq!(features.strands[0].roots, strand.roots);
+        assert_eq!(features.strands[0].weights, strand.weights);
     }
 }

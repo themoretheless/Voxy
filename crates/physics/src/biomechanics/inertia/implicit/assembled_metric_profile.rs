@@ -9,6 +9,14 @@ impl RigidCoarse {
         Self::partitioned(body, weight, false)
     }
     fn partitioned(body: &Body, weight: &[f64], spatial: bool) -> Self {
+        Self::partitioned_modes(body, weight, spatial, false)
+    }
+    fn partitioned_modes(
+        body: &Body,
+        weight: &[f64],
+        spatial: bool,
+        local_rotations: bool,
+    ) -> Self {
         let center: Vec3 = std::array::from_fn(|a| {
             body.rest.iter().map(|p| p[a]).sum::<f64>() / body.rest.len() as f64
         });
@@ -24,24 +32,80 @@ impl RigidCoarse {
             };
             groups.entry(key).or_insert_with(Vec::new).push(i);
         }
-        let rotations = 3 * groups.len();
-        let mut basis = vec![vec![[0.; 3]; body.positions.len()]; rotations + 3];
-        for (group, nodes) in groups.values().enumerate() {
-            for &node in nodes {
-                for axis in 0..3 {
-                    basis[group * 3 + axis][node][axis] = 1.;
+        let mut basis = if local_rotations {
+            let mut candidates = Vec::new();
+            for nodes in groups.values() {
+                let centroid: Vec3 = std::array::from_fn(|a| {
+                    nodes.iter().map(|&i| body.rest[i][a]).sum::<f64>() / nodes.len() as f64
+                });
+                let mut modes = vec![vec![[0.; 3]; body.positions.len()]; 6];
+                for &i in nodes {
+                    let q: Vec3 = std::array::from_fn(|a| body.rest[i][a] - centroid[a]);
+                    for a in 0..3 {
+                        modes[a][i][a] = 1.;
+                    }
+                    modes[3][i] = [0., -q[2], q[1]];
+                    modes[4][i] = [q[2], 0., -q[0]];
+                    modes[5][i] = [-q[1], q[0], 0.];
+                }
+                candidates.extend(modes);
+            }
+            // Small or collinear aggregates need fewer than six independent modes.
+            let mut independent: Vec<Vec<Vec3>> = Vec::new();
+            for mut v in candidates {
+                let original = v.iter().map(|p| dot(*p, *p)).sum::<f64>().sqrt();
+                if original == 0. {
+                    continue;
+                }
+                assert!(original.is_finite());
+                for _ in 0..2 {
+                    for u in &independent {
+                        let projection: f64 = v.iter().zip(u).map(|(a, b)| dot(*a, *b)).sum();
+                        for (p, q) in v.iter_mut().zip(u) {
+                            for a in 0..3 {
+                                p[a] -= projection * q[a];
+                            }
+                        }
+                    }
+                }
+                let norm = v.iter().map(|p| dot(*p, *p)).sum::<f64>().sqrt();
+                if norm <= original * 1e-12 {
+                    continue;
+                }
+                for p in &mut v {
+                    for x in p {
+                        *x /= norm;
+                    }
+                }
+                independent.push(v);
+            }
+            eprintln!(
+                "TEST_COARSE_LOCAL_ROTATIONS aggregates={} independent_modes={} full_amg=false",
+                groups.len(),
+                independent.len()
+            );
+            independent
+        } else {
+            let rotations = 3 * groups.len();
+            let mut basis = vec![vec![[0.; 3]; body.positions.len()]; rotations + 3];
+            for (group, nodes) in groups.values().enumerate() {
+                for &node in nodes {
+                    for axis in 0..3 {
+                        basis[group * 3 + axis][node][axis] = 1.;
+                    }
                 }
             }
-        }
-        for (i, p) in body.rest.iter().enumerate() {
-            if body.pinned[i] {
-                continue;
+            for (i, p) in body.rest.iter().enumerate() {
+                if body.pinned[i] {
+                    continue;
+                }
+                let q: Vec3 = std::array::from_fn(|a| p[a] - center[a]);
+                basis[rotations][i] = [0., -q[2], q[1]];
+                basis[rotations + 1][i] = [q[2], 0., -q[0]];
+                basis[rotations + 2][i] = [-q[1], q[0], 0.];
             }
-            let q: Vec3 = std::array::from_fn(|a| p[a] - center[a]);
-            basis[rotations][i] = [0., -q[2], q[1]];
-            basis[rotations + 1][i] = [q[2], 0., -q[0]];
-            basis[rotations + 2][i] = [-q[1], q[0], 0.];
-        }
+            basis
+        };
         if std::env::var_os("VOXY_TEST_COARSE_SMOOTH").is_some() {
             let metric = AssembledMetric::new(body);
             let mut diagonal = vec![[1.; 3]; body.positions.len()];
@@ -192,17 +256,54 @@ fn spatial_coarse_recovers_partition_modes_and_preserves_pins() {
         )
         .unwrap();
     let weights = vec![2.; count];
-    let coarse = RigidCoarse::partitioned(&body, &weights, true);
-    assert!(coarse.basis.len() > 6);
-    for mode in &coarse.basis {
-        let actual = coarse.apply(&rest_material_action(&body, &weights, mode));
-        assert_eq!(actual[0], [0.; 3]);
-        for (a, b) in actual.iter().zip(mode) {
-            for axis in 0..3 {
-                assert!((a[axis] - b[axis]).abs() < 1e-8);
+    for local_rotations in [false, true] {
+        let coarse = RigidCoarse::partitioned_modes(&body, &weights, true, local_rotations);
+        assert!(coarse.basis.len() > 6);
+        for mode in &coarse.basis {
+            let actual = coarse.apply(&rest_material_action(&body, &weights, mode));
+            assert_eq!(actual[0], [0.; 3]);
+            for (a, b) in actual.iter().zip(mode) {
+                for axis in 0..3 {
+                    assert!((a[axis] - b[axis]).abs() < 1e-8);
+                }
             }
         }
     }
+}
+#[test]
+fn local_rotations_drop_singleton_modes_and_recover_independent_displacement() {
+    let mesh = TetraMesh::from_lattice_cells([0.; 3], [0.1; 3], &[[0, 0, 0]]).unwrap();
+    let mut pins = vec![false; mesh.points.len()];
+    pins[0] = true;
+    let body = mesh
+        .into_body(
+            pins,
+            &Material {
+                shear_pa: 35000.,
+                bulk_pa: 2e6,
+                fibers: vec![],
+            },
+        )
+        .unwrap();
+    let weights = vec![2.; body.positions.len()];
+    let coarse = RigidCoarse::partitioned_modes(&body, &weights, true, true);
+    assert_eq!(coarse.basis.len(), 3 * (body.positions.len() - 1));
+    let expected: Vec<Vec3> = (0..body.positions.len())
+        .map(|i| {
+            if i == 0 {
+                [0.; 3]
+            } else {
+                [i as f64 * 0.01, -0.02, 0.03]
+            }
+        })
+        .collect();
+    let recovered = coarse.apply(&rest_material_action(&body, &weights, &expected));
+    for (a, b) in recovered.iter().zip(&expected) {
+        for axis in 0..3 {
+            assert!((a[axis] - b[axis]).abs() < 1e-9);
+        }
+    }
+    assert_eq!(recovered[0], [0.; 3]);
 }
 struct AssembledMetric {
     rows: Vec<Vec<(usize, [[f64; 3]; 3])>>,
@@ -470,10 +571,11 @@ fn full_mesh_block_jacobi_search_diagnosis() {
         })
         .collect();
     let coarse = std::env::var_os("VOXY_TEST_RIGID_COARSE").map(|_| {
-        RigidCoarse::partitioned(
+        RigidCoarse::partitioned_modes(
             &body,
             &weight,
             std::env::var_os("VOXY_TEST_SPATIAL_COARSE").is_some(),
+            std::env::var_os("VOXY_TEST_LOCAL_ROTATIONS").is_some(),
         )
     });
     for phase in [0., 0.4, 1.3] {

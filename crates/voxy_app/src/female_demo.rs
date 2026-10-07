@@ -1156,6 +1156,36 @@ impl FemaleDemo {
         }
         offset
     }
+    pub(crate) fn background_view_replica(&self) -> Result<Self, Box<dyn std::error::Error>> {
+        if !self.secondary_only
+            || self.animation_only
+            || self.parameter_file.is_some()
+            || self.face_parameter_file.is_some()
+            || self.film.is_some()
+            || self.cold_response.is_some()
+            || self.body_parameters != Default::default()
+        {
+            return Err(
+                "background full-model mode requires the unparameterized secondary example".into(),
+            );
+        }
+        // This copy is a passive UI/view facade. Only the transferred original is advanced.
+        let mut view = Self::new()?;
+        view.secondary_only = true;
+        view.simulate_hair = self.simulate_hair;
+        view.yaw = self.yaw;
+        view.pitch = self.pitch;
+        view.distance = self.distance;
+        view.pressing = self.pressing;
+        view.probe_enabled = self.probe_enabled;
+        view.show_skin = self.show_skin;
+        view.show_complexion = self.show_complexion;
+        view.show_strain = self.show_strain;
+        view.show_hair = self.show_hair;
+        view.face_parameters = self.face_parameters.clone();
+        view.preview_expression = self.preview_expression;
+        Ok(view)
+    }
     pub(crate) fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
         if let Some(path) = &self.face_parameter_file {
             if let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified()) {
@@ -1305,6 +1335,7 @@ impl FemaleDemo {
                     ],
                 )?;
             }
+            self.features.advance_lashes(h, [0., acceleration, 0.])?;
             if self.secondary_only {
                 let bob = self.root_bob(time);
                 for region in &mut self.regions {
@@ -1313,8 +1344,53 @@ impl FemaleDemo {
                         .max_displacement
                         .max(region.maximum_local_displacement(bob));
                 }
+                // Retain the elastic skin solver in the inertial demo instead of freezing its state.
+                let targets: Vec<_> = self
+                    .skin_reference_rest
+                    .iter()
+                    .map(|rest| {
+                        let mut p = *rest;
+                        p[1] += self.support_offset(*rest, time);
+                        self.body_parameters
+                            .transform(p.map(|v| v as f32))
+                            .map(f64::from)
+                    })
+                    .collect();
+                for (i, attachment) in self.attachments.iter_mut().enumerate() {
+                    attachment.target = self.targets[i];
+                    attachment.velocity =
+                        std::array::from_fn(|k| (targets[i][k] - self.targets[i][k]) / h);
+                }
                 let head = self.hair_physics_head_matrix(time);
-                self.advance_hair(h, time, head)?;
+                let hair_pose = self.simulate_hair.then(|| self.hair_collider_pose(time));
+                let skin = &mut self.skin;
+                let hair = &mut self.hair;
+                let attachments = &self.attachments;
+                let body_vertices = self.body_vertices;
+                // Hair contacts use the independently posed canonical body,
+                // so neither solver reads the other solver's mutable state.
+                std::thread::scope(|scope| {
+                    let hair_step = hair_pose.as_ref().map(|posed| {
+                        scope.spawn(move || hair.advance(h, time, head, &posed[..body_vertices]))
+                    });
+                    let skin_result = skin.step_with_contacts(
+                        h,
+                        [0., -9.81, 0.],
+                        &vec![[0.; 3]; targets.len()],
+                        attachments,
+                        &ContactScene::default(),
+                        SolverConfig {
+                            force_tolerance: 1e-6,
+                            ..Default::default()
+                        },
+                    );
+                    if let Some(hair_step) = hair_step {
+                        hair_step.join().map_err(|_| "hair worker panicked")??;
+                    }
+                    skin_result?;
+                    Ok::<_, &'static str>(())
+                })?;
+                self.targets = targets;
                 self.advance_cold_response(h)?;
                 self.time = time;
                 self.animation_time = time;
@@ -1474,6 +1550,70 @@ impl FemaleDemo {
         Ok(())
     }
     #[allow(clippy::cast_possible_truncation)]
+    pub(crate) fn gpu_secondary_binding(
+        &self,
+        count: usize,
+    ) -> Result<(Vec<u32>, Vec<voxy_render::SurfaceDeformationWeight>, u32), voxy_render::SceneError>
+    {
+        if !self.secondary_only
+            || self.film.is_some()
+            || self.simulate_hair
+            || self.cold_response.is_some()
+            || self.parameter_file.is_some()
+        {
+            return Err(voxy_render::SceneError::InvalidGeometry);
+        }
+        let mut rows = vec![
+            vec![voxy_render::SurfaceDeformationWeight {
+                control: 0,
+                weight: 1.
+            }];
+            count
+        ];
+        for (index, vertex) in self.vertices.iter().enumerate().take(self.body_vertices) {
+            for i in 0..4 {
+                let center = [
+                    if i % 2 == 0 { -0.1 } else { 0.1 },
+                    if i < 2 { 0.36 } else { -0.10 },
+                    if i < 2 { 0.10 } else { -0.11 },
+                ];
+                let radius = [0.11_f64, 0.12, 0.10];
+                let distance: f64 = (0..3)
+                    .map(|k| ((f64::from(vertex.position[k]) - center[k]) / radius[k]).powi(2))
+                    .sum();
+                rows[index].push(voxy_render::SurfaceDeformationWeight {
+                    control: 1 + i as u32,
+                    weight: (-distance).exp() as f32,
+                });
+            }
+        }
+        for (i, region) in self.regions.iter().enumerate() {
+            region.gpu_displacement_weights(5 + i as u32 * 7, &mut rows);
+        }
+        let mut offsets = vec![0];
+        let mut weights = Vec::new();
+        for row in rows {
+            weights.extend(row);
+            offsets.push(weights.len() as u32);
+        }
+        Ok((offsets, weights, 5 + self.regions.len() as u32 * 7))
+    }
+    pub(crate) fn gpu_secondary_body_vertices(&self) -> u32 {
+        self.body_vertices as u32
+    }
+    pub(crate) fn gpu_secondary_controls(&self) -> Vec<[f32; 4]> {
+        let bob = self.root_bob(self.time);
+        let mut controls = vec![[0., bob as f32, 0., 0.]];
+        controls.extend(
+            self.secondary
+                .iter()
+                .map(|s| [0., s.offset()[1] as f32, 0., 0.]),
+        );
+        for region in &self.regions {
+            controls.extend(region.gpu_displacements(bob));
+        }
+        controls
+    }
     pub(crate) fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let trace = std::env::var_os("VOXY_FACE_MESH_TRACE").is_some();
         let mut checkpoint = std::time::Instant::now();
@@ -2415,6 +2555,50 @@ mod tests {
                 );
             }
         }
+    }
+    #[test]
+    fn parallel_full_secondary_preserves_skin_and_hair_contacts() {
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.secondary_only = true;
+        demo.simulate_hair = true;
+        let before = demo.skin.positions().to_vec();
+        for _ in 0..4 {
+            demo.advance(1. / 120.).unwrap();
+            demo.hair.verify(demo.hair_physics_head_matrix(demo.time)).unwrap();
+            assert!(demo.skin.positions().iter().flatten().all(|v| v.is_finite()));
+        }
+        assert!(demo.skin.positions().iter().zip(&before)
+            .any(|(a, b)| (a[1] - b[1]).abs() > 1e-6));
+        assert_eq!(demo.steps, 4);
+    }
+    #[test]
+    fn full_secondary_demo_advances_skin_and_all_volume_regions() {
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.secondary_only = true;
+        demo.simulate_hair = false; // This regression isolates the skin and volume owners.
+        let before = demo.skin.positions().to_vec();
+        for _ in 0..4 {
+            demo.advance(1. / 120.).unwrap();
+        }
+        assert!(
+            demo.skin
+                .positions()
+                .iter()
+                .zip(&before)
+                .any(|(a, b)| (a[1] - b[1]).abs() > 1e-6)
+        );
+        assert!(
+            demo.regions
+                .iter()
+                .all(|r| r.maximum_local_displacement(demo.root_bob(demo.time)) > 1e-6)
+        );
+        assert!(
+            demo.skin
+                .positions()
+                .iter()
+                .flatten()
+                .all(|v| v.is_finite())
+        );
     }
     #[test]
     fn preview_has_visible_soft_region_motion_and_settles() {

@@ -189,6 +189,41 @@ impl Region {
         self.body
             .step_with_contact(dt, [0.0, -2.0, 0.0], &[collider], 32, 0.35)
     }
+    pub(crate) fn gpu_displacement_weights(
+        &self,
+        base: u32,
+        rows: &mut [Vec<voxy_render::SurfaceDeformationWeight>],
+    ) {
+        for ((vertex, blend), binding) in self
+            .vertices
+            .iter()
+            .zip(self.binding.displacement_bindings())
+        {
+            if let Some((indices, weights)) = binding {
+                for (node, weight) in indices.into_iter().zip(weights) {
+                    rows[*vertex].push(voxy_render::SurfaceDeformationWeight {
+                        control: base + node as u32,
+                        weight: (weight * blend) as f32,
+                    });
+                }
+            }
+        }
+    }
+    pub(crate) fn gpu_displacements(&self, bob: f64) -> Vec<[f32; 4]> {
+        self.body
+            .positions()
+            .iter()
+            .zip(&self.rest)
+            .map(|(p, r)| {
+                [
+                    (p[0] - r[0]) as f32,
+                    (p[1] - r[1] - bob) as f32,
+                    (p[2] - r[2]) as f32,
+                    0.,
+                ]
+            })
+            .collect()
+    }
     pub(crate) fn apply(&self, _rest: &[SceneVertex], mesh: &mut [SceneVertex], bob: f64) {
         let points = self
             .binding
@@ -373,5 +408,51 @@ mod parameterized_tests {
             mesh.iter()
                 .all(|v| v.position.iter().all(|p| p.is_finite()))
         );
+    }
+}
+
+#[cfg(test)]
+mod gpu_transfer_regression {
+    #[test]
+    fn sparse_gpu_weights_match_existing_region_transfer_after_dynamics() {
+        let mesh = voxy_render::ObjAsset::parse(
+            include_str!(
+                "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+            ),
+            voxy_render::ObjLimits::default(),
+        )
+        .unwrap()
+        .mesh;
+        let mut regions = super::Region::build(mesh.vertices()).unwrap();
+        let mut rows = vec![Vec::new(); mesh.vertices().len()];
+        for (i, region) in regions.iter().enumerate() {
+            region.gpu_displacement_weights(i as u32 * 7, &mut rows);
+        }
+        for frame in 0..24 {
+            let bob = 0.015 * (frame as f64 / 24. * std::f64::consts::TAU).sin();
+            for region in &mut regions {
+                region.step(1. / 240., bob).unwrap();
+            }
+            let mut cpu = mesh.vertices().to_vec();
+            for region in &regions {
+                region.apply(mesh.vertices(), &mut cpu, bob);
+            }
+            let controls: Vec<_> = regions
+                .iter()
+                .flat_map(|r| r.gpu_displacements(bob))
+                .collect();
+            let mut error = 0_f32;
+            for (i, row) in rows.iter().enumerate() {
+                for axis in 0..3 {
+                    let delta: f32 = row
+                        .iter()
+                        .map(|w| w.weight * controls[w.control as usize][axis])
+                        .sum();
+                    let gpu = mesh.vertices()[i].position[axis] + delta;
+                    error = error.max((gpu - cpu[i].position[axis]).abs());
+                }
+            }
+            assert!(error < 1e-6, "Sparse transfer mismatch: {error}");
+        }
     }
 }

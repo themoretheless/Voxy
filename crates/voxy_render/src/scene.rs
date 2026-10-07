@@ -262,6 +262,16 @@ impl SceneMesh {
     pub fn explicit_material_coordinates(&self) -> Option<&[[f32; 3]]> {
         self.material_coordinates.as_deref()
     }
+    /// Prepares identical default normal and coordinate streams on a worker thread.
+    /// This avoids geometric welding and allocations during native frame submission.
+    #[must_use]
+    pub fn with_prepared_upload_streams(mut self) -> Self {
+        if self.authored_normals.is_none() { self.authored_normals = Some(smooth_normals(&self)); }
+        if self.material_coordinates.is_none() {
+            self.material_coordinates = Some(self.vertices.iter().map(|v| v.position).collect());
+        }
+        self
+    }
     fn material_coordinates(&self) -> std::borrow::Cow<'_, [[f32; 3]]> {
         match &self.material_coordinates {
             Some(coordinates) => std::borrow::Cow::Borrowed(coordinates),
@@ -404,6 +414,8 @@ pub struct SceneGeometry {
     vertex_capacity: usize,
     index_capacity: usize,
     depth_mode: SceneDepthMode,
+    opaque_shader: Option<(u64, wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::RenderPipeline)>,
+    partitioned_indices: bool,
 }
 
 /// Additional resource owners publish with their geometry after one admission.
@@ -413,6 +425,12 @@ struct UploadedGeometryBatch {
 }
 
 impl SceneGeometry {
+    pub(crate) fn deformation_normals(&self) -> &wgpu::Buffer {
+        &self.normals
+    }
+    pub(crate) fn deformation_vertices(&self) -> &wgpu::Buffer {
+        &self.vertices
+    }
     pub(crate) fn belongs_to(&self, device: &wgpu::Device) -> bool {
         &self.device == device
     }
@@ -435,10 +453,28 @@ impl SceneGeometry {
     /// # Errors
     /// Rejects invalid meshes and capacity overflow before writing either buffer.
     pub fn update(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh) -> Result<(), SceneError> {
+        self.update_mesh(queue, mesh, false)
+    }
+
+    /// Updates shared vertex streams without restoring the full index stream when
+    /// the mesh topology is unchanged. A topology change restores the full mesh;
+    /// callers must then install their new material partitions before drawing.
+    /// Submit prior draws before updating the shared allocation.
+    pub fn update_shared_vertex_streams(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh) -> Result<(), SceneError> {
+        self.update_mesh(queue, mesh, true)
+    }
+
+    fn update_mesh(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh, preserve_partition: bool) -> Result<(), SceneError> {
         mesh.validate_for_upload()?;
         if mesh.vertices.len() > self.vertex_capacity || mesh.indices.len() > self.index_capacity {
             return Err(SceneError::GeometryCapacityExceeded);
         }
+        let retain_partition = preserve_partition
+            && self.partitioned_indices
+            && self.normal_cache.indices == mesh.indices
+            && self.normal_cache.positions.len() == mesh.vertices.len();
+        let indices_changed = !retain_partition
+            && (self.partitioned_indices || self.normal_cache.indices != mesh.indices);
         let coordinates = mesh.material_coordinates();
         if coordinates.as_ref() != self.coordinate_cache.as_slice() {
             queue.write_buffer(
@@ -457,16 +493,30 @@ impl SceneGeometry {
                 bytemuck::cast_slice(&self.normal_cache.normals),
             );
         }
-        queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(&mesh.indices));
+        if indices_changed {
+            queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(&mesh.indices));
+        }
         queue.write_buffer(
             &self.material_parameters,
             0,
             bytemuck::cast_slice(&mesh.material_parameters),
         );
-        self.index_count = count;
+        if !retain_partition {
+            self.index_count = count;
+            self.partitioned_indices = false;
+        }
         Ok(())
     }
 
+    #[must_use]
+    pub fn update_index_partition(&mut self, queue: &wgpu::Queue, indices: &[u32]) -> Result<(), SceneError> {
+        if indices.len() > self.index_capacity || indices.len() % 3 != 0
+            || indices.iter().any(|i| *i as usize >= self.vertex_capacity) { return Err(SceneError::InvalidGeometry); }
+        if !indices.is_empty() { queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(indices)); }
+        self.index_count = indices.len() as u32;
+        self.partitioned_indices = true;
+        Ok(())
+    }
     #[must_use]
     pub fn index_count(&self) -> u32 {
         self.index_count
@@ -1271,12 +1321,49 @@ impl SceneRenderer {
 
     /// # Errors
     /// Rejects a foreign device or invalid geometry, including primitive helper input.
+    pub fn upload_shared_mesh_partitions(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<Vec<SceneGeometry>,SceneError> {
+        self.upload_mesh_index_variants(device, mesh, &[mesh.indices(), mesh.indices()], wgpu::BufferUsages::empty())
+    }
+    pub async fn set_geometry_opaque_shader(&self, device: &wgpu::Device, geometry: &mut SceneGeometry, source: &str) -> Result<(),SceneShaderError> {
+        if device != &self.device || device != &geometry.device {
+            return Err(SceneShaderError("geometry material device mismatch".into()));
+        }
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor { label:Some("geometry opaque shader"), source:wgpu::ShaderSource::Wgsl(source.into()) });
+        let one = Self::create_shader_pipelines(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,1,
+            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout));
+        let four = Self::create_shader_pipelines(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,4,
+            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout));
+        if let Some(error) = scope.pop().await { return Err(SceneShaderError(error.to_string())); }
+        geometry.opaque_shader = Some((self.shader_revision,self.transform_layout.clone(),one.0,four.0));
+        Ok(())
+    }
     pub fn upload_mesh(
         &self,
         device: &wgpu::Device,
         mesh: &SceneMesh,
     ) -> Result<SceneGeometry, SceneError> {
         self.upload_mesh_with_usage(device, mesh, wgpu::BufferUsages::empty())
+    }
+
+    /// Keep a fixed mesh and sparse displacement binding resident on the GPU.
+    /// Only control-node displacements are uploaded per pose; rendering consumes
+    /// the resulting geometry without CPU vertex readback.
+    pub fn prepare_surface_deformation(
+        &self,
+        device: &wgpu::Device,
+        mesh: &SceneMesh,
+        offsets: &[u32],
+        weights: &[crate::SurfaceDeformationWeight],
+        control_count: u32,
+    ) -> Result<crate::SurfaceDeformation, SceneError> {
+        crate::surface_deformation::validate(device, mesh, offsets, weights, control_count)?;
+        let geometry = self.upload_mesh_with_usage(
+            device,
+            mesh,
+            wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+        )?;
+        crate::SurfaceDeformation::new(device, mesh, geometry, offsets, weights, control_count)
     }
 
     fn upload_mesh_with_usage(
@@ -1389,6 +1476,8 @@ impl SceneRenderer {
                     indices,
                     index_count: source.len() as u32,
                     depth_mode: SceneDepthMode::Opaque,
+                    opaque_shader: None,
+                    partitioned_indices: false,
                     vertex_capacity: mesh.vertices.len(),
                     index_capacity: source.len(),
                 }
@@ -1477,6 +1566,8 @@ impl SceneRenderer {
             coordinate_cache: Vec::new(),
             index_count: 0,
             depth_mode: SceneDepthMode::Opaque,
+            opaque_shader: None,
+            partitioned_indices: false,
             vertex_capacity,
             index_capacity,
         })
@@ -2592,6 +2683,10 @@ impl SceneRenderer {
                 };
                 draw_stage == stage
             }) {
+                if stage == 0 {
+                    let msaa = self.msaa_pipelines.as_ref().is_some_and(|p| std::ptr::eq(pipelines.0, &p.0));
+                    pass.set_pipeline(draw.geometry.opaque_shader.as_ref().filter(|p| p.0 == self.shader_revision && p.1 == self.transform_layout).map_or(pipelines.0, |p| if msaa { &p.3 } else { &p.2 }));
+                }
                 if let Some(shadow) = &self.shadow {
                     pass.set_bind_group(2, &shadow.group, &[]);
                 }
@@ -3470,3 +3565,59 @@ mod texture_memory_tests {
 #[cfg(test)]
 #[path = "scene/transform_memory_tests.rs"]
 mod transform_memory_tests;
+
+#[cfg(test)]
+mod background_upload_regression {
+    use super::*;
+    #[test]
+    fn worker_preparation_preserves_default_welded_shading_and_authored_streams() {
+        let mut mesh = SceneMesh::quad([0.7,0.4,0.2,1.]);
+        mesh.vertices[2].position[2] = 0.3;
+        let fallback = NormalCache::from_mesh(&mesh);
+        let coordinates = mesh.material_coordinates().into_owned();
+        let ready = mesh.clone().with_prepared_upload_streams();
+        let prepared = NormalCache::from_mesh(&ready);
+        assert_eq!(fallback.normals, prepared.normals);
+        assert_eq!(coordinates, ready.material_coordinates().as_ref());
+        assert_eq!(mesh.indices, ready.indices);
+        let normals = vec![[0.,0.,1.]; mesh.vertices.len()];
+        let authored = mesh.with_normals(normals.clone()).unwrap().with_material_coordinates(coordinates.clone()).unwrap().with_prepared_upload_streams();
+        assert_eq!(authored.authored_normals.as_ref(), Some(&normals));
+        assert_eq!(authored.material_coordinates.as_ref(), Some(&coordinates));
+    }
+}
+
+#[cfg(test)]
+mod opaque_partition_regression {
+    use super::*;
+    #[test]
+    fn shared_partitions_keep_vertex_owners_and_reject_invalid_replacement() {
+        let (device,queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let scene = SceneRenderer::new(&device,wgpu::TextureFormat::Rgba8Unorm);
+        let mesh = SceneMesh::quad([1.;4]);
+        let mut parts = scene.upload_shared_mesh_partitions(&device,&mesh).unwrap();
+        assert!(std::sync::Arc::ptr_eq(&parts[0].vertices,&parts[1].vertices));
+        assert!(std::sync::Arc::ptr_eq(&parts[0].normals,&parts[1].normals));
+        parts[0].update_index_partition(&queue,&mesh.indices()[..3]).unwrap();
+        parts[1].update_index_partition(&queue,&mesh.indices()[3..]).unwrap();
+        assert_eq!(parts[0].index_count(),3);
+        assert_eq!(parts[1].index_count(),3);
+        let mut deformed = mesh.clone();
+        deformed.vertices[0].position[2] = 0.1;
+        parts[0].update_shared_vertex_streams(&queue, &deformed).unwrap();
+        assert_eq!(parts[0].index_count(), 3);
+        assert!(parts[0].partitioned_indices);
+        deformed.indices.truncate(3);
+        parts[0].update_shared_vertex_streams(&queue, &deformed).unwrap();
+        assert_eq!(parts[0].index_count(), 3);
+        assert!(!parts[0].partitioned_indices);
+        parts[0].update_index_partition(&queue, &mesh.indices()[..3]).unwrap();
+        parts[0].update(&queue, &mesh).unwrap();
+        assert_eq!(parts[0].index_count(), 6);
+        assert!(parts[0].update_index_partition(&queue,&[0,1,999]).is_err());
+        assert_eq!(parts[0].index_count(),6);
+        let invalid = pollster::block_on(scene.set_geometry_opaque_shader(&device,&mut parts[0],"invalid wgsl"));
+        assert!(invalid.is_err());
+        assert!(parts[0].opaque_shader.is_none());
+    }
+}

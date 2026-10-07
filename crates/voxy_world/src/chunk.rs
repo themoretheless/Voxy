@@ -84,7 +84,31 @@ impl PalettedBlocks {
 
     #[must_use]
     pub fn to_dense(&self) -> Vec<BlockStateId> {
-        LocalIndex::all().map(|index| self.get(index)).collect()
+        match self {
+            Self::Uniform(block) => vec![*block; CHUNK_VOLUME],
+            Self::Direct(blocks) => blocks.to_vec(),
+            Self::Packed {
+                bits_per_index,
+                palette,
+                words,
+            } => {
+                let bits = *bits_per_index;
+                let mask = (1_u64 << bits) - 1;
+                let mut dense = Vec::with_capacity(CHUNK_VOLUME);
+                for index in 0..CHUNK_VOLUME {
+                    let bit_index = index * usize::from(bits);
+                    let word = bit_index / 64;
+                    let shift = bit_index % 64;
+                    let mut value = words[word] >> shift;
+                    if shift + usize::from(bits) > 64 {
+                        value |= words[word + 1] << (64 - shift);
+                    }
+                    let palette_index = (value & mask) as usize;
+                    dense.push(palette[palette_index]);
+                }
+                dense
+            }
+        }
     }
 
     /// Returns a repacked copy with the supplied cells replaced.

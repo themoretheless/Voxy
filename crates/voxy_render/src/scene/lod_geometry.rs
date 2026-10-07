@@ -241,6 +241,8 @@ impl SceneRenderer {
             vertex_capacity: base.vertex_capacity,
             index_capacity: indices.len(),
             depth_mode: base.depth_mode,
+                opaque_shader: base.opaque_shader.clone(),
+                partitioned_indices: false,
             indices: buffer,
         };
         target.allocation_bytes += geometry.indices.size();

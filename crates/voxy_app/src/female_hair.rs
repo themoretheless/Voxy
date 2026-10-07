@@ -3,7 +3,7 @@ use glam::{Mat4, Quat, Vec3};
 use physics::hair::{HairMaterial, HairRod, HairSystem, RootPose, TriangleMesh};
 use std::collections::BTreeMap;
 use voxy_render::SceneVertex;
-const FOLLOWERS: usize = 20;
+const FOLLOWERS: usize = 60;
 
 #[derive(Debug)]
 pub(crate) struct FemaleHair {
@@ -45,14 +45,14 @@ impl FemaleHair {
         let mut scalp = BTreeMap::new();
         for (i, v) in body.iter().enumerate() {
             let p = Vec3::from_array(v.position);
-            if p.y > 0.755
-                && (p.z < 0.095 || p.y > 0.785)
+            if p.y > 0.735
+                && (p.z < 0.095 || p.y > 0.775 || p.x.abs() > 0.075)
                 && normals[i]
                     .normalize_or_zero()
                     .dot((p - Vec3::new(0.0, 0.72, 0.055)).normalize_or_zero())
                     > 0.5
             {
-                let cell = p.to_array().map(|x| (x / 0.014).floor() as i32);
+                let cell = p.to_array().map(|x| (x / 0.010).floor() as i32);
                 scalp.entry(cell).or_insert((
                     p + normals[i].normalize_or_zero() * 0.001,
                     (i, normals[i].normalize_or_zero() * 0.001),
@@ -270,6 +270,89 @@ impl FemaleHair {
             std::slice::from_ref(&self.collider),
         )
     }
+    /// Static render LOD: retain every guide/follower and simplify only its
+    /// polygonal sampling. Bounds both centre/section position and prelit colour.
+    pub fn append_lod(
+        &self,
+        vertices: &mut Vec<SceneVertex>,
+        indices: &mut Vec<u32>,
+        tolerance: f32,
+    ) {
+        let mut full = Vec::new();
+        let mut discarded_indices = Vec::new();
+        self.append(&mut full, &mut discarded_indices);
+        let stride = FOLLOWERS * 4;
+        fn select(
+            full: &[SceneVertex],
+            stride: usize,
+            a: usize,
+            b: usize,
+            tolerance: f32,
+            out: &mut Vec<usize>,
+        ) {
+            let mut worst = 1_f32;
+            let mut split = None;
+            for j in a + 1..b {
+                let t = (j - a) as f32 / (b - a) as f32;
+                for k in 0..stride {
+                    let left = &full[a * stride + k];
+                    let right = &full[b * stride + k];
+                    let sample = &full[j * stride + k];
+                    let interpolated =
+                        Vec3::from_array(left.position).lerp(Vec3::from_array(right.position), t);
+                    let geometry =
+                        (Vec3::from_array(sample.position) - interpolated).length() / tolerance;
+                    let colour = (0..3)
+                        .map(|c| {
+                            (sample.color[c]
+                                - (left.color[c] + t * (right.color[c] - left.color[c])))
+                                .abs()
+                                * 255.
+                        })
+                        .fold(0_f32, f32::max);
+                    let error = geometry.max(colour);
+                    if error > worst {
+                        worst = error;
+                        split = Some(j);
+                    }
+                }
+            }
+            if let Some(j) = split {
+                select(full, stride, a, j, tolerance, out);
+                select(full, stride, j, b, tolerance, out);
+            } else {
+                out.push(b);
+            }
+        }
+        let mut source = 0;
+        let original = full.len();
+        let start = vertices.len();
+        for strand in self.system.rods() {
+            let count = strand.positions().len();
+            let data = &full[source..source + count * stride];
+            let mut selected = vec![0];
+            select(data, stride, 0, count - 1, tolerance, &mut selected);
+            let base = vertices.len() as u32;
+            for &j in &selected {
+                vertices.extend_from_slice(&data[j * stride..(j + 1) * stride]);
+            }
+            let stride = stride as u32;
+            for j in 0..selected.len() as u32 - 1 {
+                for fibre in 0..FOLLOWERS as u32 {
+                    for side in 0..4 {
+                        let a = base + j * stride + fibre * 4 + side;
+                        let b = base + j * stride + fibre * 4 + (side + 1) % 4;
+                        indices.extend([a, b, b + stride, a, b + stride, a + stride]);
+                    }
+                }
+            }
+            source += count * stride as usize;
+        }
+        eprintln!(
+            "HAIR RENDER LOD vertices_before={original} vertices_after={} tolerance_m={tolerance} max_colour_error=1/255 guides_and_followers_preserved=true",
+            vertices.len() - start
+        );
+    }
     pub fn append(&self, vertices: &mut Vec<SceneVertex>, indices: &mut Vec<u32>) {
         let point_count: usize = self
             .system
@@ -307,7 +390,7 @@ impl FemaleHair {
                     for (normal, light) in normals.into_iter().zip(lights) {
                         vertices.push(SceneVertex {
                             position: (p + offset + normal * radius).to_array(),
-                            uv: [0.0; 2],
+                            uv: [-7.0, 0.0],
                             color: [
                                 0.12 * shade * light,
                                 0.055 * shade * light,
@@ -319,8 +402,10 @@ impl FemaleHair {
                 }
             }
             let stride = FOLLOWERS as u32 * 4;
-            for j in 0..points.len() as u32 - 1 {
-                for fibre in 0..FOLLOWERS as u32 {
+            // Keep each follower's adjacent rings in the post-transform cache.
+            // The full triangle set and tessellation remain identical.
+            for fibre in 0..FOLLOWERS as u32 {
+                for j in 0..points.len() as u32 - 1 {
                     for side in 0..4 {
                         let a = base + j * stride + fibre * 4 + side;
                         let b = base + j * stride + fibre * 4 + (side + 1) % 4;
@@ -346,6 +431,38 @@ impl FemaleHair {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn cache_order_retains_every_full_resolution_triangle() {
+        let body = voxy_render::ObjAsset::parse(
+            include_str!("../../../assets/characters/blender-female/body.obj"),
+            voxy_render::ObjLimits::default(),
+        ).unwrap();
+        let hair = FemaleHair::new(body.mesh.vertices(), body.mesh.indices()).unwrap();
+        let mut vertices = Vec::new();
+        let mut indices = Vec::new();
+        hair.append(&mut vertices, &mut indices);
+        let mut original = Vec::<[u32; 3]>::new();
+        let mut base = 0;
+        let stride = FOLLOWERS as u32 * 4;
+        for rod in hair.system.rods() {
+            for ring in 0..rod.positions().len() as u32 - 1 {
+                for fibre in 0..FOLLOWERS as u32 {
+                    for side in 0..4 {
+                        let a = base + ring * stride + fibre * 4 + side;
+                        let b = base + ring * stride + fibre * 4 + (side + 1) % 4;
+                        original.extend([[a, b, b + stride], [a, b + stride, a + stride]]);
+                    }
+                }
+            }
+            base += rod.positions().len() as u32 * stride;
+        }
+        assert_eq!(vertices.len(), base as usize);
+        let mut reordered: Vec<[u32; 3]> = indices.chunks_exact(3)
+            .map(|t| t.try_into().unwrap()).collect();
+        original.sort_unstable();
+        reordered.sort_unstable();
+        assert_eq!(original, reordered);
+    }
     #[test]
     fn authored_fringe_respects_requested_arc_length() {
         let body = voxy_render::ObjAsset::parse(
