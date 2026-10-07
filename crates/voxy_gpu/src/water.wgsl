@@ -20,7 +20,7 @@ fn read_amount(index: u32) -> u32 {
     if data[base] == 11u { data[5] = 5u; data[6] = index; return 9u; }
     return data[base];
 }
-@compute @workgroup_size(1)
+@compute @workgroup_size(64)
 fn cs_main() {
     let active_base = 8u + data[0] * 8u;
     for (var work_index = 0u; work_index < data[1]; work_index += 1u) {

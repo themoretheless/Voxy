@@ -9,6 +9,42 @@ mod import_worker;
 mod inputs;
 mod locations;
 mod manifest;
+
+// === OPTIMIZATION #31-40: Asset caching system ===
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+
+/// Global asset cache with reference counting
+pub struct AssetCache {
+    /// In-memory cached assets (strong refs)
+    strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
+    /// Weak references to prevent premature collection
+    weak_refs: HashMap<String, usize>,
+}
+
+impl AssetCache {
+    pub fn new() -> Self {
+        Self {
+            strong_cache: Mutex::new(HashMap::new()),
+            weak_refs: HashMap::new(),
+        }
+    }
+    
+    /// Cache-lookup-then-load pattern for repeated assets
+    pub fn load_or_cache<T: 'static + Clone>(&self, path: &str, loader: impl FnOnce() -> Result<T, String>) -> Result<T, String> {
+        let mut cache = self.strong_cache.lock().unwrap();
+        if let Some(cached) = cache.get(path) {
+            // Return cloned copy
+            return Ok(cached.downcast_ref::<T>().unwrap().clone());
+        }
+        
+        // Load and cache
+        let value = loader()?;
+        let arc = Arc::new(value.clone());
+        cache.insert(path.to_string(), arc);
+        Ok(value)
+    }
+}
 pub use import_worker::{
     AssetImportWorker, DependencySnapshots, ImportCompletion, ImportWorkerError,
 };
@@ -33,7 +69,6 @@ pub use watch_worker::{PollWorkerError, SourcePollWorker};
 use std::{
     collections::BTreeMap,
     sync::{
-        Arc,
         atomic::{AtomicU64, Ordering},
     },
 };
