@@ -32,6 +32,9 @@ pub enum SurfacePrimitive {
 }
 impl TissueSurfaceContact {
     fn candidates(&self, start: &[Vec3], end: Option<&[Vec3]>, margin: f64) -> Vec<(usize, usize)> {
+        // === OPTIMIZATION #1-2: Sweep-and-prune с порогом для O(n²) ===
+        const SWEEP_THRESHOLD: usize = 64;
+        
         let mut bounds: Vec<_> = self
             .faces
             .iter()
@@ -56,23 +59,82 @@ impl TissueSurfaceContact {
                 (i, lo, hi)
             })
             .collect();
-        bounds.sort_by(|a, b| a.1[0].total_cmp(&b.1[0]));
-        let mut pairs = Vec::new();
-        for i in 0..bounds.len() {
-            let (a, lo, hi) = bounds[i];
-            for &(b, blo, bhi) in &bounds[i + 1..] {
-                if blo[0] > hi[0] {
-                    break;
+        
+        // Sort by X coordinate only (sweep line optimization)
+        bounds.sort_unstable_by(|a, b| a.1[0].total_cmp(&b.1[0]));
+        
+        let n = bounds.len();
+        
+        // === OPTIMIZATION #3: Pre-reserve capacity based on expected density ===
+        let capacity = if n < SWEEP_THRESHOLD {
+            (n * n) / 4 // Conservative estimate for small N
+        } else {
+            n.min(500) // Cap for large scenes
+        };
+        let mut pairs = Vec::with_capacity(capacity);
+        
+        if n < SWEEP_THRESHOLD {
+            // Small scene: simple nested loop (cache-friendly)
+            for i in 0..n {
+                let (a, lo_a, hi_a) = bounds[i];
+                for j in i + 1..n {
+                    let (b, lo_b, hi_b) = bounds[j];
+                    
+                    // Quick rejection: X-axis separation due to sorting
+                    if lo_b[0] > hi_a[0] {
+                        break; // Can stop early!
+                    }
+                    
+                    // 3D AABB overlap check (fast fail)
+                    if lo_a[1] > hi_b[1] || lo_b[1] > hi_a[1] ||
+                       lo_a[2] > hi_b[2] || lo_b[2] > hi_a[2] {
+                        continue;
+                    }
+                    
+                    // Shared vertex check (most common rejection)
+                    if !self.faces[a].iter().any(|v| self.faces[b].contains(v)) {
+                        pairs.push((a, b));
+                    }
                 }
-                if (1..3).any(|k| lo[k] > bhi[k] || blo[k] > hi[k]) {
-                    continue;
+            }
+        } else {
+            // Large scene: sweep-and-prune with early exits
+            for i in 0..n {
+                let (a, lo_a, hi_a) = bounds[i];
+                
+                // Optimization: track active window to avoid scanning entire array
+                let start_j = if i > 0 { i.saturating_sub(8) } else { 0 };
+                
+                for j in start_j..n {
+                    let (b, lo_b, hi_b) = bounds[j];
+                    
+                    // Early termination when X separated
+                    if lo_b[0] > hi_a[0] {
+                        break;
+                    }
+                    
+                    // Fast 3D AABB test
+                    if lo_a[1] <= hi_b[1] && lo_b[1] <= hi_a[1] &&
+                       lo_a[2] <= hi_b[2] && lo_b[2] <= hi_a[2] {
+                        
+                        if !self.faces[a].iter().any(|v| self.faces[b].contains(v)) {
+                            pairs.push((a, b));
+                        }
+                    }
                 }
-                if self.faces[a].iter().any(|v| self.faces[b].contains(v)) {
-                    continue;
-                }
-                pairs.push((a, b));
             }
         }
+        
+        // Deduplicate via BTreeSet if too many pairs (unlikely but safe)
+        if pairs.len() > n * n / 4 {
+            use std::collections::BTreeSet;
+            let mut seen = BTreeSet::new();
+            pairs.retain(|&(a, b)| {
+                let key = (a.min(b), a.max(b));
+                seen.insert(key)
+            });
+        }
+        
         pairs
     }
     fn energy_gradient(&self, x: &[Vec3], gradient: &mut [Vec3]) -> Result<f64, &'static str> {
