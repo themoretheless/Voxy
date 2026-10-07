@@ -12,6 +12,20 @@ pub struct MediumTransportCameraRay {
     medium: OpticalMediumId,
 }
 impl MediumTransportCameraRay {
+    /// Camera-plane medium is explicit, including each orthographic ray origin.
+    /// Scene occupancy is checked by transport at encountered boundaries.
+    pub fn from_pixel(
+        camera: crate::SceneCamera,
+        viewport: [u32; 2],
+        pixel: [u32; 2],
+        medium: OpticalMediumId,
+    ) -> Result<Self, ComputeError> {
+        let (origin, direction) = camera
+            .pixel_ray(viewport, pixel)
+            .map_err(|_| ComputeError::InvalidBuffer)?;
+        Self::new(origin.to_array(), direction.to_array(), medium)
+    }
+
     pub fn new(
         origin: [f32; 3],
         direction: [f32; 3],
@@ -45,6 +59,166 @@ pub struct MediumPathComputeInput {
     color_offset: usize,
     budget: GpuMediumTransportBudget,
     triangles: usize,
+}
+/// Caller-owned scene identity and revision namespace, camera revision and size.
+/// Every change to source geometry, media, light sources or lens must change its
+/// corresponding revision. A new scene must have a distinct identity.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct MediumFrameKey {
+    pub scene_id: u128,
+    pub scene_revision: u64,
+    pub camera_revision: u64,
+    pub viewport: [u32; 2],
+}
+/// Encoded work, not yet submitted. Caller discards its encoder on failure.
+#[derive(Debug)]
+pub struct EncodedMediumImage {
+    input: MediumPathComputeInput,
+    key: MediumFrameKey,
+    device: wgpu::Device,
+    dispatch: crate::ComputeDispatch,
+}
+/// Nonblocking readback using the existing bounded staging pool.
+#[derive(Debug)]
+pub struct PendingMediumImage {
+    input: MediumPathComputeInput,
+    key: MediumFrameKey,
+    device: wgpu::Device,
+    pending: crate::PendingComputeReadback,
+    ready: Option<AcceptedMediumImage>,
+}
+impl EncodedMediumImage {
+    /// Call only after successful submission of its encoder on the device queue.
+    pub fn submitted(self) -> PendingMediumImage {
+        PendingMediumImage {
+            input: self.input,
+            key: self.key,
+            device: self.device,
+            pending: self.dispatch.begin_read(),
+            ready: None,
+        }
+    }
+}
+impl PendingMediumImage {
+    /// Caller polls the original device with PollType::Poll (or the browser loop).
+    /// Stale results are drained, then rejected before allocation or queue writes.
+    /// Only replace the current image on Ok(Some(image)). No blocking wait occurs.
+    /// MemoryBudget retains the admitted snapshot for retry after retirement.
+    /// Changed frame keys discard retained snapshots before another upload.
+    pub fn try_upload(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        current: MediumFrameKey,
+    ) -> Result<Option<MediumImage>, ComputeError> {
+        if device != &self.device {
+            return Err(ComputeError::DeviceMismatch);
+        }
+        if self.ready.is_none() {
+            let Some(bytes) = self.pending.try_read()? else {
+                return Ok(None);
+            };
+            if current != self.key {
+                return Err(ComputeError::Validation(
+                    "stale optical frame scene/camera/viewport".into(),
+                ));
+            }
+            self.ready = Some(self.input.accept_image(&bytes, self.key.viewport)?);
+        }
+        if current != self.key {
+            self.ready.take();
+            return Err(ComputeError::Validation(
+                "stale optical frame scene/camera/viewport".into(),
+            ));
+        }
+        match self
+            .ready
+            .as_ref()
+            .expect("admitted medium snapshot")
+            .upload(device, queue)
+        {
+            Ok(image) => {
+                self.ready.take();
+                Ok(Some(image))
+            }
+            Err(ComputeError::MemoryBudget) => Err(ComputeError::MemoryBudget),
+            Err(error) => {
+                self.ready.take();
+                Err(error)
+            }
+        }
+    }
+}
+/// Immutable, fully admitted CPU snapshot for HDR presentation.
+/// Half-float conversion is checked before any GPU allocation or queue write.
+#[derive(Debug)]
+pub struct AcceptedMediumImage {
+    size: [u32; 2],
+    rgba16: Vec<u16>,
+}
+/// Shared-budget HDR source usable by the existing TextureBlit pass.
+#[derive(Debug)]
+pub struct MediumImage {
+    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+    view: wgpu::TextureView,
+}
+impl MediumImage {
+    pub fn view(&self) -> &wgpu::TextureView {
+        &self.view
+    }
+    pub fn texture(&self) -> &wgpu::Texture {
+        &self.texture
+    }
+    pub fn allocation_bytes(&self) -> u64 {
+        self.texture.allocation_bytes()
+    }
+}
+impl AcceptedMediumImage {
+    /// Upload a new image without mutating an existing presentation source.
+    /// The queue must belong to the supplied device. The caller replaces its
+    /// previous source only on success and retains submitted sources until done.
+    pub fn upload(
+        &self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> Result<MediumImage, ComputeError> {
+        let [width, height] = self.size;
+        let texture = crate::ComputeMemoryBudget::for_device(device).allocate_texture(
+            &wgpu::TextureDescriptor {
+                label: Some("accepted medium HDR image"),
+                size: wgpu::Extent3d {
+                    width,
+                    height,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: wgpu::TextureFormat::Rgba16Float,
+                usage: wgpu::TextureUsages::TEXTURE_BINDING
+                    | wgpu::TextureUsages::COPY_DST
+                    | wgpu::TextureUsages::COPY_SRC,
+                view_formats: &[],
+            },
+        )?;
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &texture,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            bytemuck::cast_slice(&self.rgba16),
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(width * 8),
+                rows_per_image: Some(height),
+            },
+            texture.size(),
+        );
+        let view = texture.create_view(&Default::default());
+        Ok(MediumImage { texture, view })
+    }
 }
 fn admit(x: f64) -> Result<u32, ComputeError> {
     let v = x as f32;
@@ -174,7 +348,68 @@ impl MediumPathComputeInput {
         bytemuck::cast_slice(&self.words)
     }
     pub fn workgroups(&self) -> [u32; 3] {
-        [self.rays as u32, 1, 1]
+        // Two-dimensional dispatch keeps full-window ray batches below the
+        // portable per-dimension limit without another submission owner.
+        let columns = (self.rays as u32).min(65_535);
+        [columns, (self.rays as u32).div_ceil(columns), 1]
+    }
+    /// Record computation and bounded snapshot copy in the caller's encoder.
+    /// Reuse a program compiled with MEDIUM_PATH_SHADER; unrelated/reloaded
+    /// shaders are rejected before job allocation or command encoding.
+    pub fn encode_image(
+        self,
+        device: &wgpu::Device,
+        program: &crate::ComputeProgram,
+        encoder: &mut wgpu::CommandEncoder,
+        key: MediumFrameKey,
+    ) -> Result<EncodedMediumImage, ComputeError> {
+        if key.viewport.contains(&0)
+            || (key.viewport[0] as usize).checked_mul(key.viewport[1] as usize) != Some(self.rays)
+            || key.viewport[0].checked_mul(8).is_none()
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        if !program.matches_shader(MEDIUM_PATH_SHADER, "cs_main") {
+            return Err(ComputeError::Validation(
+                "optical frame requires qualified medium path shader".into(),
+            ));
+        }
+        let job = program.create_job(device, self.bytes())?;
+        let dispatch = job.encode(encoder, self.workgroups())?;
+        Ok(EncodedMediumImage {
+            input: self,
+            key,
+            device: device.clone(),
+            dispatch,
+        })
+    }
+    /// Admit row-major pixels as a complete HDR image; no partial image is returned.
+    /// Rejects dimension mismatch, failed rays and radiance outside finite f16.
+    pub fn accept_image(
+        &self,
+        bytes: &[u8],
+        size: [u32; 2],
+    ) -> Result<AcceptedMediumImage, ComputeError> {
+        let [width, height] = size;
+        if width == 0
+            || height == 0
+            || width.checked_mul(8).is_none()
+            || (width as usize).checked_mul(height as usize) != Some(self.rays)
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let estimates = self.decode(bytes)?;
+        let mut rgba16 = Vec::with_capacity(self.rays * 4);
+        for estimate in estimates {
+            for x in estimate.radiance.into_iter().chain([1.]) {
+                let h = half::f16::from_f32(x);
+                if !h.is_finite() {
+                    return Err(ComputeError::InvalidBuffer);
+                }
+                rgba16.push(h.to_bits());
+            }
+        }
+        Ok(AcceptedMediumImage { size, rgba16 })
     }
     /// Reject the entire candidate batch on any failed ray. Tail bounds exclude
     /// f32 roundoff, geometry uncertainty and modelling error, as on CPU.
@@ -333,19 +568,207 @@ mod tests {
         .unwrap();
         assert!(output.starts_with("#version 310 es"));
     }
-    fn execute(
+    #[test]
+    fn accepted_image_rejects_partial_dimensions_and_half_float_overflow() {
+        let media = [HomogeneousOpticalMedium::new(AIR, 1., [0.; 3], [0.; 3]).unwrap()];
+        let scene = CpuMediumTransportScene::new(&media, &[], [-1.; 3], [1.; 3], [1.; 3]).unwrap();
+        let rays = [MediumTransportCameraRay::new([0.; 3], [0., 0., -1.], AIR).unwrap(); 2];
+        let input = MediumPathComputeInput::new(&scene, &rays, budget()).unwrap();
+        let mut words = input.words.clone();
+        for i in 0..2 {
+            words[input.color_offset + i * 4..input.color_offset + i * 4 + 4].copy_from_slice(&[
+                2_f32.to_bits(),
+                3_f32.to_bits(),
+                4_f32.to_bits(),
+                1_f32.to_bits(),
+            ]);
+        }
+        let bytes = bytemuck::cast_slice(&words);
+        assert!(input.accept_image(bytes, [1, 1]).is_err());
+        assert!(input.accept_image(input.bytes(), [2, 1]).is_err());
+        let accepted = input.accept_image(bytes, [2, 1]).unwrap();
+        assert_eq!(accepted.rgba16.len(), 8);
+        words[input.color_offset + 4] = 70000_f32.to_bits();
+        assert!(
+            input
+                .accept_image(bytemuck::cast_slice(&words), [2, 1])
+                .is_err()
+        );
+        words[input.color_offset + 4] = 2_f32.to_bits();
+        words[input.color_offset + 4 * input.rays + 8 + 4] = 4;
+        assert!(matches!(
+            input.accept_image(bytemuck::cast_slice(&words), [2, 1]),
+            Err(ComputeError::MemoryBudget)
+        ));
+    }
+    fn execute_bytes(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         program: &crate::ComputeProgram,
         input: &MediumPathComputeInput,
-    ) -> Result<Vec<GpuMediumTransportEstimate>, ComputeError> {
+    ) -> Result<Vec<u8>, ComputeError> {
         let job = program.create_job(device, input.bytes())?;
         let mut encoder = device.create_command_encoder(&Default::default());
         let dispatch = job.encode(&mut encoder, input.workgroups())?;
         queue.submit([encoder.finish()]);
         let mut pending = dispatch.begin_read();
         device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-        input.decode(&pending.try_read()?.ok_or(ComputeError::Consumed)?)
+        pending.try_read()?.ok_or(ComputeError::Consumed)
+    }
+    fn execute(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        program: &crate::ComputeProgram,
+        input: &MediumPathComputeInput,
+    ) -> Result<Vec<GpuMediumTransportEstimate>, ComputeError> {
+        input.decode(&execute_bytes(device, queue, program, input)?)
+    }
+    #[test]
+    #[ignore = "requires physical GPU; full-window dispatch beyond 65535 rays"]
+    fn gpu_image_dispatch_crosses_portable_row_limit() {
+        let instance = crate::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        println!("MEDIUM LARGE DISPATCH GPU {:?}", adapter.get_info());
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let _readback_owner = crate::ComputeReadbackPool::configure(
+            &device,
+            crate::ComputeReadbackLimits {
+                max_bytes: 96 << 20,
+                max_buffers: 2,
+            },
+        )
+        .unwrap();
+        let program =
+            pollster::block_on(crate::ComputeProgram::new(&device, MEDIUM_PATH_SHADER)).unwrap();
+        let media = [HomogeneousOpticalMedium::new(AIR, 1., [0.2, 0.4, 0.8], [0.; 3]).unwrap()];
+        let scene = CpuMediumTransportScene::new(&media, &[], [-1.; 3], [1.; 3], [1.; 3]).unwrap();
+        let camera = crate::SceneCamera {
+            eye: glam::Vec3::ZERO,
+            target: glam::Vec3::NEG_Z,
+            up: glam::Vec3::new(0.2, 1., 0.),
+            projection: crate::SceneProjection::Perspective {
+                vertical_fov: 0.7,
+                aspect: 1280. / 720.,
+                near: 0.1,
+                far: 3.,
+            },
+        };
+        let rays: Vec<_> = (0..720)
+            .flat_map(|y| {
+                (0..1280).map(move |x| {
+                    MediumTransportCameraRay::from_pixel(camera, [1280, 720], [x, y], AIR).unwrap()
+                })
+            })
+            .collect();
+        let input = MediumPathComputeInput::new(
+            &scene,
+            &rays,
+            GpuMediumTransportBudget {
+                max_bytes: 96 << 20,
+                ..budget()
+            },
+        )
+        .unwrap();
+        assert_eq!(input.workgroups(), [65_535, 15, 1]);
+        let results = execute(&device, &queue, &program, &input).unwrap();
+        assert_eq!(results.len(), rays.len());
+        for (i, result) in results.iter().enumerate() {
+            let (_, direction) = rays[i].geometry.components();
+            // The entire frustum reaches z=-1 before either side face.
+            assert!(direction[0].abs() < -direction[2] && direction[1].abs() < -direction[2]);
+            let distance = 1. / -f64::from(direction[2]);
+            for (k, sigma) in [0.2_f64, 0.4, 0.8].into_iter().enumerate() {
+                assert!(
+                    (f64::from(result.radiance[k]) - (-sigma * distance).exp()).abs() < 2e-6,
+                    "pixel={i} channel={k}"
+                );
+            }
+            assert_eq!(result.traced_rays, 1);
+        }
+        println!(
+            "MEDIUM LARGE DISPATCH PASS viewport=1280x720 pixels=921600 groups=65535x15 rgb_analytic_checks=2764800 partial_last_row_guard=true"
+        );
+    }
+    #[test]
+    #[ignore = "requires physical GPU; image upload budget recovery"]
+    fn gpu_pending_image_retries_after_confirmed_memory_retirement() {
+        let instance = crate::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let memory = crate::ComputeMemoryBudget::configure(&device, 1 << 20).unwrap();
+        let program =
+            pollster::block_on(crate::ComputeProgram::new(&device, MEDIUM_PATH_SHADER)).unwrap();
+        let media = [HomogeneousOpticalMedium::new(AIR, 1., [0.; 3], [0.; 3]).unwrap()];
+        let scene = CpuMediumTransportScene::new(&media, &[], [-1.; 3], [1.; 3], [2.; 3]).unwrap();
+        let rays = [MediumTransportCameraRay::new([0.; 3], [0., 0., -1.], AIR).unwrap(); 2];
+        let key = MediumFrameKey {
+            scene_id: 1,
+            scene_revision: 0,
+            camera_revision: 0,
+            viewport: [2, 1],
+        };
+        for stale in [false, true] {
+            let input = MediumPathComputeInput::new(&scene, &rays, budget()).unwrap();
+            let mut encoder = device.create_command_encoder(&Default::default());
+            let encoded = input
+                .encode_image(&device, &program, &mut encoder, key)
+                .unwrap();
+            queue.submit([encoder.finish()]);
+            let mut pending = encoded.submitted();
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            let pressure = memory
+                .allocate_storage(
+                    "upload memory pressure",
+                    &vec![0; (memory.max_bytes() - memory.stats().allocated_bytes) as usize],
+                )
+                .unwrap();
+            assert!(matches!(
+                pending.try_upload(&device, &queue, key),
+                Err(ComputeError::MemoryBudget)
+            ));
+            assert!(pending.ready.is_some());
+            drop(pressure);
+            // Drop alone is insufficient: retirement has not been confirmed.
+            assert!(matches!(
+                pending.try_upload(&device, &queue, key),
+                Err(ComputeError::MemoryBudget)
+            ));
+            if stale {
+                let before = memory.stats();
+                assert!(matches!(
+                    pending.try_upload(
+                        &device,
+                        &queue,
+                        MediumFrameKey {
+                            camera_revision: 1,
+                            ..key
+                        }
+                    ),
+                    Err(ComputeError::Validation(_))
+                ));
+                assert!(pending.ready.is_none());
+                assert_eq!(memory.stats(), before);
+            }
+            memory.discard_retired().unwrap();
+            if !stale {
+                let image = pending.try_upload(&device, &queue, key).unwrap().unwrap();
+                assert_eq!(image.allocation_bytes(), 16);
+                assert!(pending.ready.is_none());
+                assert!(matches!(
+                    pending.try_upload(&device, &queue, key),
+                    Err(ComputeError::Consumed)
+                ));
+                queue.submit([]);
+                device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+                drop(image);
+                memory.discard_retired().unwrap();
+            }
+        }
+        println!(
+            "MEDIUM MEMORY RETRY PASS no_retrace=true unconfirmed_retirement_rejected=true confirmed_retirement_retry=true retained_stale_rejected=true"
+        );
     }
     #[test]
     #[ignore = "requires physical GPU; all-branch medium transport parity"]
@@ -486,6 +909,179 @@ mod tests {
             execute(&device, &queue, &program, &input),
             Err(ComputeError::Validation(_))
         ));
+        let key = MediumFrameKey {
+            scene_id: 17,
+            scene_revision: 3,
+            camera_revision: 9,
+            viewport: [2, 1],
+        };
+        let memory = crate::ComputeMemoryBudget::for_device(&device);
+        for current in [
+            key,
+            MediumFrameKey {
+                scene_id: 18,
+                ..key
+            },
+            MediumFrameKey {
+                scene_revision: 4,
+                ..key
+            },
+            MediumFrameKey {
+                camera_revision: 10,
+                ..key
+            },
+            MediumFrameKey {
+                viewport: [1, 2],
+                ..key
+            },
+        ] {
+            let input = MediumPathComputeInput::new(&scene, &rays[..2], budget()).unwrap();
+            let mut encoder = device.create_command_encoder(&Default::default());
+            let encoded = input
+                .encode_image(&device, &program, &mut encoder, key)
+                .unwrap();
+            queue.submit([encoder.finish()]);
+            let mut pending = encoded.submitted();
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            let before = memory.stats();
+            let result = pending.try_upload(&device, &queue, current);
+            if current == key {
+                let image = result.unwrap().unwrap();
+                assert_eq!(image.texture().width(), 2);
+                assert_eq!(memory.stats().allocated_bytes, before.allocated_bytes + 16);
+                assert_eq!(
+                    memory.stats().allocated_textures,
+                    before.allocated_textures + 1
+                );
+            } else {
+                assert!(matches!(result, Err(ComputeError::Validation(_))));
+                assert_eq!(memory.stats(), before);
+            }
+            assert!(matches!(
+                pending.try_upload(&device, &queue, current),
+                Err(ComputeError::Consumed)
+            ));
+        }
+        let unrelated = pollster::block_on(crate::ComputeProgram::new(
+            &device,
+            crate::MEDIUM_GEOMETRY_SHADER,
+        ))
+        .unwrap();
+        let input = MediumPathComputeInput::new(&scene, &rays[..2], budget()).unwrap();
+        let mut encoder = device.create_command_encoder(&Default::default());
+        let before = memory.stats();
+        assert!(matches!(
+            input.encode_image(&device, &unrelated, &mut encoder, key),
+            Err(ComputeError::Validation(_))
+        ));
+        assert_eq!(memory.stats(), before);
+        println!(
+            "MEDIUM ASYNC IMAGE PASS valid_upload=1 stale_scene_identity_revision_camera_viewport_rejected=4 unrelated_shader_rejected=true consumed_rejected=true stale_texture_allocations=0"
+        );
+        let mut pixel_checks = 0;
+        for projection in [
+            crate::SceneProjection::Perspective {
+                vertical_fov: 0.7,
+                aspect: 9. / 7.,
+                near: 0.1,
+                far: 30.,
+            },
+            crate::SceneProjection::Orthographic {
+                left: -0.6,
+                right: 0.8,
+                bottom: -0.5,
+                top: 0.7,
+                near: 0.,
+                far: 30.,
+            },
+        ] {
+            let camera = crate::SceneCamera {
+                eye: glam::Vec3::new(0.13, 0.17, 2.),
+                target: glam::Vec3::new(0., 0., -1.),
+                up: glam::Vec3::new(0.2, 1., 0.),
+                projection,
+            };
+            let pixels: Vec<_> = (0..7)
+                .flat_map(|y| {
+                    (0..9).map(move |x| {
+                        MediumTransportCameraRay::from_pixel(camera, [9, 7], [x, y], AIR).unwrap()
+                    })
+                })
+                .collect();
+            let input = MediumPathComputeInput::new(&scene, &pixels, budget()).unwrap();
+            let bytes = execute_bytes(&device, &queue, &program, &input).unwrap();
+            let results = input.decode(&bytes).unwrap();
+            let accepted = input.accept_image(&bytes, [9, 7]).unwrap();
+            let image = accepted.upload(&device, &queue).unwrap();
+            assert_eq!(image.allocation_bytes(), 9 * 7 * 8);
+            // A failed pixel cannot yield a replacement image. Previous source
+            // is still sampled below after the rejection.
+            let mut failed = bytes.clone();
+            let status = (input.color_offset + 4 * input.rays + 8 * (input.rays - 1) + 4) * 4;
+            failed[status..status + 4].copy_from_slice(&3_u32.to_le_bytes());
+            assert!(matches!(
+                input.accept_image(&failed, [9, 7]),
+                Err(ComputeError::WorkBudget)
+            ));
+            let target = crate::ProcessedColorTarget::new(&device, 9, 7, true).unwrap();
+            let blit = crate::TextureBlit::new(&device, wgpu::TextureFormat::Rgba16Float);
+            let mut encoder = device.create_command_encoder(&Default::default());
+            blit.encode(&device, &mut encoder, image.view(), target.view());
+            let mut probes: Vec<_> = [[0, 0], [4, 3], [8, 6]]
+                .into_iter()
+                .map(|[x, y]| {
+                    let mut probe = crate::HdrPixelProbe::new(&device);
+                    probe.encode(&mut encoder, target.texture(), x, y).unwrap();
+                    (x, y, probe)
+                })
+                .collect();
+            queue.submit([encoder.finish()]);
+            for (_, _, probe) in &mut probes {
+                probe.begin_read();
+            }
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            for (x, y, probe) in probes {
+                let pixel = probe.take_result().unwrap().unwrap();
+                for k in 0..4 {
+                    assert_eq!(
+                        pixel[k],
+                        half::f16::from_bits(accepted.rgba16[(y * 9 + x) as usize * 4 + k])
+                            .to_f32()
+                    );
+                }
+            }
+            for (ray, gpu) in pixels.iter().zip(results) {
+                let (origin, direction) = ray.geometry.components();
+                let cpu = scene
+                    .estimate(
+                        origin.map(f64::from),
+                        glam::DVec3::from_array(direction.map(f64::from))
+                            .normalize()
+                            .to_array(),
+                        AIR,
+                        MediumTransportBudget {
+                            max_rays: 4096,
+                            max_triangle_tests: 1 << 20,
+                            absolute_error_rgb: [1e-12; 3],
+                        },
+                    )
+                    .unwrap();
+                for k in 0..3 {
+                    assert!(
+                        (f64::from(gpu.radiance[k]) - cpu.radiance[k]).abs()
+                            <= f64::from(gpu.unresolved_upper_bound[k])
+                                + cpu.unresolved_upper_bound[k]
+                                + 3e-5 * (1. + cpu.radiance[k].abs()),
+                        "pixel GPU={gpu:?} CPU={cpu:?}"
+                    );
+                    pixel_checks += 1;
+                }
+            }
+        }
+        println!("MEDIUM CAMERA GRID PASS lenses=2 pixels=126 rgb_comparisons={pixel_checks}");
+        println!(
+            "MEDIUM HDR IMAGE PASS images=2 displayed_probe_scalars=24 last_pixel_failure_preserves_source=true"
+        );
         println!(
             "MEDIUM PATH PASS profiles={profiles} camera_rays=25 scalar_checks={checks} work_failure_rejected=true frontier_failure_rejected=true occupancy_failure_rejected=true"
         );

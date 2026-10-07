@@ -1,0 +1,17 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 23.17s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+INACTIVE_PATH_PROFILE trial=0 skip=false elapsed_s=0.149251083 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+INACTIVE_PATH_PROFILE trial=1 skip=true elapsed_s=0.083809958 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+INACTIVE_PATH_PROFILE trial=2 skip=true elapsed_s=0.095003333 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+INACTIVE_PATH_PROFILE trial=3 skip=false elapsed_s=0.195433500 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+INACTIVE_PATH_PROFILE trial=4 skip=true elapsed_s=0.077566459 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+INACTIVE_PATH_PROFILE trial=5 skip=false elapsed_s=0.151549083 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+INACTIVE_PATH_PROFILE trial=6 skip=false elapsed_s=0.115792125 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+INACTIVE_PATH_PROFILE trial=7 skip=true elapsed_s=0.091948375 nodes=2338 faces=4672 iterations=100 geometry_admission_preserved=true response_equal=true
+test biomechanics::prescribed_surface::inactive_path_tests::full_mesh_inactive_path_profile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 140 filtered out; finished in 1.10s
+

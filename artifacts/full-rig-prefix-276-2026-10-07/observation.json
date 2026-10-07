@@ -1,0 +1,10 @@
+{
+  "pid": 90673,
+  "process": "PID STAT  ELAPSED COMMAND\n90673 Rs   06:24:42 /tmp/voxy-contact-derivatives-20261006/release/examples/body_motion_snapshot artifacts/full-rig-endpoint-admission-2026-10-07/capture.png artifacts/full-rig-endpoint-admission-2026-10-07/frames --cesium --contact --capture-steps=480 --tissue-regions=artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json",
+  "committed_steps": 276,
+  "requested_steps": 480,
+  "simulated_s": 1.15,
+  "full_clip_qualified": false,
+  "source_launch": "artifacts/full-rig-endpoint-admission-2026-10-07/launch.json",
+  "scope": "immutable node and every-step energy prefix; three source support pins; full contact qualification remains separate"
+}

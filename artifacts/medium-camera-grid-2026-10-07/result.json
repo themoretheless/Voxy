@@ -1,0 +1,20 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "viewport": [
+    9,
+    7
+  ],
+  "lenses": [
+    "perspective",
+    "asymmetric orthographic near=0"
+  ],
+  "pixels": 126,
+  "cpu_rgb_comparisons": 378,
+  "reprojection_test": "pixel_rays_reproject_to_centers_for_both_lenses",
+  "native_presentation_qualified": false,
+  "sha256": {
+    "camera.rs": "538cfe84c879e7c49a82451383319c9e928ce5f844a687b45c1431be8ac8e1a7",
+    "medium_path_compute.rs": "267308894a21ce3a8b63649ff5114df684edfa9a9305f7570600bf8243f1dbad"
+  }
+}

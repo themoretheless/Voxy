@@ -1,0 +1,16 @@
+{
+  "physics_passed": 126,
+  "physics_failed": 0,
+  "physics_ignored": 15,
+  "editor_all_targets_check": "passed",
+  "editor_runtime_qualified": false,
+  "full_rig_last_observed_step": 286,
+  "full_rig_requested_steps": 480,
+  "full_rig_live_pid": 90673,
+  "full_clip_qualified": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "761b9be3d19e514f7c95efc0449d23936ea6af29af7e4432bf39104612438237",
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "fb754ade0646a7ae8592e6266addbeed73b7fd4a9cf2c7c014e20bbea3d84e59"
+  },
+  "scope": "current physics library regression and editor type-check after inactive path and query scratch changes; live rig uses its original executable"
+}

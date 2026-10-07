@@ -340,6 +340,14 @@ impl PreparedPrescribedContactPath {
         end: &[Vec3],
         faces: &[[usize; 3]],
     ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_with_inactive_path::<ADMITTED, true>(start, end, faces)
+    }
+    fn normal_stencils_with_inactive_path<const ADMITTED: bool, const SKIP_INACTIVE: bool>(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
         if start.len() != end.len() {
             return Err("body contact vertex count changed");
         }
@@ -351,6 +359,7 @@ impl PreparedPrescribedContactPath {
         } else {
             validate_faces(end, faces)?;
         }
+        let inactive = SKIP_INACTIVE && ADMITTED && !self.samples[0].2.may_contact_faces(faces);
         let mut result = Vec::new();
         for &(time, weight, ref surface) in &self.samples {
             let body: Vec<_> = start
@@ -360,6 +369,9 @@ impl PreparedPrescribedContactPath {
                 .collect();
             let blocks = if ADMITTED {
                 validate_admitted_face_geometry(&body, faces)?;
+                if inactive {
+                    continue;
+                }
                 surface.normal_stencils_for_validated_geometry::<true>(
                     &body,
                     faces,
@@ -395,6 +407,14 @@ impl PreparedPrescribedContactPath {
         end: &[Vec3],
         faces: &[[usize; 3]],
     ) -> Result<PrescribedContactPathResponse, &'static str> {
+        self.response_with_inactive_path::<ADMITTED, true>(start, end, faces)
+    }
+    fn response_with_inactive_path<const ADMITTED: bool, const SKIP_INACTIVE: bool>(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedContactPathResponse, &'static str> {
         if start.len() != end.len() {
             return Err("body contact vertex count changed");
         }
@@ -406,6 +426,7 @@ impl PreparedPrescribedContactPath {
         } else {
             validate_faces(end, faces)?;
         }
+        let inactive = SKIP_INACTIVE && ADMITTED && !self.samples[0].2.may_contact_faces(faces);
         let mut result = PrescribedContactPathResponse {
             body_gradient_n: vec![[0.; 3]; start.len()],
             obstacle_gradient_n: vec![[0.; 3]; self.samples[0].2.positions.len()],
@@ -421,6 +442,12 @@ impl PreparedPrescribedContactPath {
             // Sample coordinates/areas still need admission on every call.
             let response = if ADMITTED {
                 validate_admitted_face_geometry(&body, faces)?;
+                if inactive {
+                    // Preserve the legacy overflow admission for a malformed
+                    // quadrature scale even when the contact potential is zero.
+                    result.midpoint_objective_j += 0.5 * weight / time * 0.;
+                    continue;
+                }
                 surface.response_for_validated_geometry::<true>(
                     &body,
                     faces,
@@ -877,21 +904,32 @@ impl PrescribedTriangleSurface {
         faces: &[[usize; 3]],
         coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
     ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_with_query_scratch::<PRUNED, true>(body, faces, coordinates)
+    }
+    fn normal_stencils_with_query_scratch<const PRUNED: bool, const REUSE: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
         let mut stencils = Vec::new();
+        let mut candidates = Vec::new();
         for &face in faces {
             if !self.body_face_may_contact(face) {
                 continue;
             }
             let triangle = face.map(|node| body[node]);
             let prepared = PreparedTriangle::new(triangle);
-            let mut candidates = Vec::new();
+            let mut fresh = Vec::new();
+            let candidates = if REUSE { &mut candidates } else { &mut fresh };
+            candidates.clear();
             self.index.query_conservative(
                 TriangleBounds::triangle(triangle),
                 self.minimum + self.activation,
-                &mut candidates,
+                &mut *candidates,
             );
             candidates.sort_unstable();
-            for index in candidates {
+            for &index in &*candidates {
                 if !self.pair_enabled(&face, index) {
                     continue;
                 }
@@ -1167,29 +1205,40 @@ impl PrescribedTriangleSurface {
         faces: &[[usize; 3]],
         coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
     ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        self.response_with_query_scratch::<INDEXED, true>(body, faces, coordinates)
+    }
+    fn response_with_query_scratch<const INDEXED: bool, const REUSE: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
         let mut response = PrescribedSurfaceResponse {
             potential_j: 0.,
             body_gradient_n: vec![[0.; 3]; body.len()],
             obstacle_gradient_n: vec![[0.; 3]; self.positions.len()],
         };
+        let mut candidates = Vec::new();
         for face in faces {
             if !self.body_face_may_contact(*face) {
                 continue;
             }
             let triangle = face.map(|node| body[node]);
             let prepared = PreparedTriangle::new(triangle);
-            let mut candidates = Vec::new();
+            let mut fresh = Vec::new();
+            let candidates = if REUSE { &mut candidates } else { &mut fresh };
+            candidates.clear();
             if INDEXED {
                 self.index.query_conservative(
                     TriangleBounds::triangle(triangle),
                     self.minimum + self.activation,
-                    &mut candidates,
+                    &mut *candidates,
                 );
             } else {
                 candidates.extend(0..self.faces.len());
             }
             candidates.sort_unstable();
-            for index in candidates {
+            for &index in &*candidates {
                 if !self.pair_enabled(&face, index) {
                     continue;
                 }
@@ -2618,6 +2667,217 @@ mod path_topology_admission_tests {
             eprintln!(
                 "ENDPOINT_ADMISSION_BENCH trial={trial} admitted={admitted} faces=1024 iterations=1000 elapsed_s={:.9}",
                 now.elapsed().as_secs_f64()
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod query_scratch_profile {
+    use super::*;
+    #[test]
+    #[ignore = "manual active-contact scratch paired timing; not full-rig speed"]
+    fn active_contact_query_scratch_profile() {
+        let mut points = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..1024 {
+            let x = i as f64;
+            let n = points.len();
+            points.extend([[x, 0., 0.], [x + 0.2, 0., 0.], [x, 0.2, 0.]]);
+            faces.push([n, n + 1, n + 2]);
+        }
+        let body: Vec<_> = points.iter().map(|p| [p[0], p[1], 0.015]).collect();
+        let surface =
+            PrescribedTriangleSurface::new(points, faces.clone(), 0.001, 0.03, 100.).unwrap();
+        let baseline = surface
+            .response_with_query_scratch::<true, false>(&body, &faces, None)
+            .unwrap();
+        let reused = surface
+            .response_with_query_scratch::<true, true>(&body, &faces, None)
+            .unwrap();
+        assert_eq!(baseline.potential_j.to_bits(), reused.potential_j.to_bits());
+        for (a, b) in baseline
+            .body_gradient_n
+            .iter()
+            .chain(&baseline.obstacle_gradient_n)
+            .flatten()
+            .zip(
+                reused
+                    .body_gradient_n
+                    .iter()
+                    .chain(&reused.obstacle_gradient_n)
+                    .flatten(),
+            )
+        {
+            assert_eq!(a.to_bits(), b.to_bits());
+        }
+        let baseline = surface
+            .normal_stencils_with_query_scratch::<true, false>(&body, &faces, None)
+            .unwrap();
+        let reused = surface
+            .normal_stencils_with_query_scratch::<true, true>(&body, &faces, None)
+            .unwrap();
+        assert_eq!(baseline.len(), 1024);
+        assert_eq!(format!("{baseline:?}"), format!("{reused:?}"));
+        for (trial, reuse) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let start = std::time::Instant::now();
+            for _ in 0..200 {
+                let body = std::hint::black_box(&body);
+                let (r, n) = if reuse {
+                    (
+                        surface
+                            .response_with_query_scratch::<true, true>(body, &faces, None)
+                            .unwrap(),
+                        surface
+                            .normal_stencils_with_query_scratch::<true, true>(body, &faces, None)
+                            .unwrap(),
+                    )
+                } else {
+                    (
+                        surface
+                            .response_with_query_scratch::<true, false>(body, &faces, None)
+                            .unwrap(),
+                        surface
+                            .normal_stencils_with_query_scratch::<true, false>(body, &faces, None)
+                            .unwrap(),
+                    )
+                };
+                std::hint::black_box((r, n));
+            }
+            eprintln!(
+                "CONTACT_SCRATCH_PROFILE trial={trial} reuse={reuse} elapsed_s={:.9} faces=1024 iterations=200 exact_energy_gradient_bits=true stencils_equal=true",
+                start.elapsed().as_secs_f64()
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod inactive_path_tests {
+    use super::*;
+    #[test]
+    fn inactive_path_keeps_midpoint_geometry_errors_and_unlisted_contacts() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap()
+        .with_body_contact_domains(vec![(vec![[0, 1, 2]], vec![false])])
+        .unwrap();
+        let start = [[-1., -1., 0.015], [1., -1., 0.015], [0., 1., 0.015]];
+        let path = surface.prepare_path(&surface).unwrap();
+        let faces = [[0, 1, 2]];
+        let new = path
+            .response_with_inactive_path::<true, true>(&start, &start, &faces)
+            .unwrap();
+        let old = path
+            .response_with_inactive_path::<true, false>(&start, &start, &faces)
+            .unwrap();
+        assert_eq!(format!("{new:?}"), format!("{old:?}"));
+        assert!(
+            path.normal_stencils(&start, &start, &faces)
+                .unwrap()
+                .is_empty()
+        );
+        let mut collapsed = start;
+        collapsed.swap(0, 1);
+        assert_eq!(
+            path.response_with_inactive_path::<true, true>(&start, &collapsed, &faces)
+                .unwrap_err(),
+            path.response_with_inactive_path::<true, false>(&start, &collapsed, &faces)
+                .unwrap_err()
+        );
+        assert_eq!(
+            path.normal_stencils_with_inactive_path::<true, true>(&start, &collapsed, &faces)
+                .unwrap_err(),
+            path.normal_stencils_with_inactive_path::<true, false>(&start, &collapsed, &faces)
+                .unwrap_err()
+        );
+        let mut malformed = surface.prepare_path(&surface).unwrap();
+        malformed.samples[0].0 = 0.;
+        assert_eq!(
+            malformed
+                .response_with_inactive_path::<true, true>(&start, &start, &faces)
+                .unwrap_err(),
+            malformed
+                .response_with_inactive_path::<true, false>(&start, &start, &faces)
+                .unwrap_err()
+        );
+        let points: Vec<_> = start
+            .into_iter()
+            .chain(start.map(|p| [p[0] * 0.5, p[1] * 0.5, p[2]]))
+            .collect();
+        let faces = [[0, 1, 2], [3, 4, 5]];
+        let new = path
+            .response_with_inactive_path::<true, true>(&points, &points, &faces)
+            .unwrap();
+        let old = path
+            .response_with_inactive_path::<true, false>(&points, &points, &faces)
+            .unwrap();
+        assert!(new.midpoint_objective_j > 0.);
+        assert_eq!(format!("{new:?}"), format!("{old:?}"));
+    }
+    #[test]
+    #[ignore = "manual full-mesh disabled-domain path paired timing"]
+    fn full_mesh_inactive_path_profile() {
+        let mesh = super::super::TetraMesh::from_medit_volume(include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
+        )))
+        .unwrap();
+        let surface = PrescribedTriangleSurface::new(
+            mesh.points.clone(),
+            mesh.boundary.clone(),
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap()
+        .with_body_contact_domains(vec![(
+            mesh.boundary.clone(),
+            vec![false; mesh.boundary.len()],
+        )])
+        .unwrap();
+        let path = surface.prepare_path(&surface).unwrap();
+        let old = path
+            .response_with_inactive_path::<true, false>(&mesh.points, &mesh.points, &mesh.boundary)
+            .unwrap();
+        let new = path
+            .response_with_inactive_path::<true, true>(&mesh.points, &mesh.points, &mesh.boundary)
+            .unwrap();
+        assert_eq!(format!("{old:?}"), format!("{new:?}"));
+        for (trial, skip) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let start = std::time::Instant::now();
+            for _ in 0..100 {
+                std::hint::black_box(if skip {
+                    path.response_with_inactive_path::<true, true>(
+                        &mesh.points,
+                        &mesh.points,
+                        &mesh.boundary,
+                    )
+                } else {
+                    path.response_with_inactive_path::<true, false>(
+                        &mesh.points,
+                        &mesh.points,
+                        &mesh.boundary,
+                    )
+                })
+                .unwrap();
+            }
+            eprintln!(
+                "INACTIVE_PATH_PROFILE trial={trial} skip={skip} elapsed_s={:.9} nodes={} faces={} iterations=100 geometry_admission_preserved=true response_equal=true",
+                start.elapsed().as_secs_f64(),
+                mesh.points.len(),
+                mesh.boundary.len()
             );
         }
     }

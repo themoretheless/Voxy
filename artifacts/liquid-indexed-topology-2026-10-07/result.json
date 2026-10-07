@@ -1,0 +1,20 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "tests_passed": 4,
+  "vertices_per_particle_before": 24,
+  "vertices_per_particle_after": 6,
+  "indices_per_particle": 24,
+  "raw_vertex_and_index_bytes_per_particle_before": 960,
+  "raw_vertex_and_index_bytes_per_particle_after": 312,
+  "raw_geometry_payload_reduction_fraction": 0.675,
+  "volume_centroid_verified": true,
+  "single_particle_closed_boundary_admitted": true,
+  "complete_and_one_sided_f32_collapse_rejected": true,
+  "ordinary_draw_blue_pixels": 364,
+  "optical_regression_changed_pixels": 408,
+  "preserved_neighbor_pixels": 4096,
+  "empty_state_clears": true,
+  "scope": "indexed particle octahedra; no union surface or joint fog/liquid transport qualification",
+  "source_sha256": "91f5558530f686ddc392180f3ac9a3fea026c5ada22171b79635a0c7566eadd4"
+}

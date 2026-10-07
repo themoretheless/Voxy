@@ -1,0 +1,22 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "valid_uploads": 1,
+  "stale_rejections": [
+    "scene identity",
+    "scene revision",
+    "camera revision",
+    "viewport"
+  ],
+  "stale_texture_allocations": 0,
+  "unrelated_shader_rejected": true,
+  "repeat_read_rejected": true,
+  "ownership": "existing ComputeProgram, ComputeReadbackPool and ComputeMemoryBudget",
+  "waiting": "try_upload does not block; GPU test explicitly waits for verification",
+  "native_editor_integration": false,
+  "sha256": {
+    "compute.rs": "8e4629bde512dec4f756777741bfa9ffb06a5987047ba88ede50e3ebf379c53e",
+    "medium_path_compute.rs": "159ee40773660f988c1f718db7db2db7e76ddb94dfd5774b22e8ad07357c2f11",
+    "lib.rs": "3e4ccf90ea50717d3200b84b75b2a65f2b4b2b9a9a7f8b40965c33c2e72a9bd4"
+  }
+}

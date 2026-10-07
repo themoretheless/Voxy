@@ -1,0 +1,117 @@
+{
+  "decision": "candidate remains test-only; no stable performance win established",
+  "mesh_nodes": 2338,
+  "mesh_cells": 6845,
+  "pins": 3,
+  "material": "synthetic isotropic elastic search material on the actual rig mesh",
+  "applications_per_trial": 2000,
+  "bitwise_action_parity": true,
+  "production_operator_source_unchanged": true,
+  "production_operator_sha256": "498814b9b683e5c8b06d4eba4372f588e8c322ff9ae9fbed37fe6498e0d51057",
+  "tests_passed": 125,
+  "tests_ignored": 13,
+  "runs": {
+    "initial-profile.log": {
+      "trials": [
+        {
+          "trial": 0,
+          "candidate": false,
+          "elapsed_s": 0.330225417
+        },
+        {
+          "trial": 1,
+          "candidate": true,
+          "elapsed_s": 0.311074375
+        },
+        {
+          "trial": 2,
+          "candidate": true,
+          "elapsed_s": 0.313903209
+        },
+        {
+          "trial": 3,
+          "candidate": false,
+          "elapsed_s": 0.298727208
+        },
+        {
+          "trial": 4,
+          "candidate": true,
+          "elapsed_s": 0.311433
+        },
+        {
+          "trial": 5,
+          "candidate": false,
+          "elapsed_s": 0.321081291
+        },
+        {
+          "trial": 6,
+          "candidate": false,
+          "elapsed_s": 0.304808708
+        },
+        {
+          "trial": 7,
+          "candidate": true,
+          "elapsed_s": 0.411642708
+        }
+      ],
+      "median_s": {
+        "False": 0.3129449995,
+        "True": 0.31266810450000004
+      }
+    },
+    "final-profile.log": {
+      "trials": [
+        {
+          "trial": 0,
+          "candidate": false,
+          "elapsed_s": 0.342778916
+        },
+        {
+          "trial": 1,
+          "candidate": true,
+          "elapsed_s": 0.371919375
+        },
+        {
+          "trial": 2,
+          "candidate": true,
+          "elapsed_s": 0.3205
+        },
+        {
+          "trial": 3,
+          "candidate": false,
+          "elapsed_s": 0.384609917
+        },
+        {
+          "trial": 4,
+          "candidate": true,
+          "elapsed_s": 0.346200625
+        },
+        {
+          "trial": 5,
+          "candidate": false,
+          "elapsed_s": 0.394494708
+        },
+        {
+          "trial": 6,
+          "candidate": false,
+          "elapsed_s": 0.474828084
+        },
+        {
+          "trial": 7,
+          "candidate": true,
+          "elapsed_s": 0.41311175
+        }
+      ],
+      "median_s": {
+        "False": 0.3895523125,
+        "True": 0.35906
+      }
+    }
+  },
+  "limits": [
+    "concurrent live native rig processes",
+    "final timing overlaps library regression",
+    "initial and final candidate plumbing differ; compare variants only within each run",
+    "no full-clip or realtime speedup qualification"
+  ]
+}

@@ -9733,3 +9733,217 @@ checks and 32 homogeneous-transfer probes / 512 scalar checks. Evidence:
 `artifacts/medium-path-gpu-2026-10-07/`. Geometry remains a linear scan; native
 presentation, material lighting, heterogeneous directional scattering and
 additional hardware backends remain unqualified.
+
+### Camera pixel rays for medium transport
+
+SceneCamera now provides pixel-center world rays using top-left image coordinates.
+Perspective rays originate at the eye; orthographic rays originate on the camera
+plane, preserving optical segments before the near clipping plane. The adapter
+MediumTransportCameraRay::from_pixel uses this shared camera convention and
+requires an explicit medium at the origin.
+
+Projection round trips cover shifted and rolled views, asymmetric orthographic
+bounds, near=0 and near=0.3, three viewport sizes and three distances per ray.
+Actual Metal transport matches the tighter CPU reference for two 9x7 pixel
+grids: 126 pixels and 378 RGB comparisons. Existing branch and rejection tests
+still pass. Evidence: `artifacts/medium-camera-grid-2026-10-07/`. Native frame
+acceptance and editor-window presentation remain pending.
+
+### Admitted medium HDR image source
+
+MediumPathComputeInput::accept_image validates the complete row-major candidate
+batch and dimensions before returning an immutable AcceptedMediumImage. Conversion
+to RGBA16Float rejects overflow before any texture allocation. Its upload creates
+a new MediumImage through the shared ComputeMemoryBudget owner; callers retain
+the prior image on failure and retain submitted sources until GPU completion.
+The texture view works with the existing TextureBlit presentation pass.
+
+On Metal, both camera grids were uploaded and displayed into an offscreen HDR
+target; 24 readback scalar checks matched the accepted half-float pixels exactly.
+A synthetic failure in the last pixel rejects the replacement while the prior
+source still displays correctly. Dimension mismatch, unexecuted input and
+half-float overflow are also rejected. Evidence:
+`artifacts/medium-hdr-image-2026-10-07/`. This bridge uses CPU readback/upload;
+half-float quantization is additional to the transport tail bound. Native editor
+window integration and a resident GPU frame-admission path remain pending.
+
+### Nonblocking medium image publication
+
+MediumPathComputeInput::encode_image records work in the caller's encoder using
+the existing ComputeProgram/storage/readback owners. It rejects a program with
+an unrelated shader or entry point before allocation. EncodedMediumImage becomes
+PendingMediumImage only after caller-confirmed successful queue submission.
+try_upload checks device ownership and reads through the existing bounded pool
+without waiting. Completed stale snapshots are drained and rejected before
+texture creation or queue writes. MediumFrameKey includes caller-maintained
+scene identity, scene revision, camera revision and viewport. Consumers must
+advance these keys when source inputs change and replace the previous image only
+on successful publication.
+
+On Metal, one matching result uploaded successfully; four independent stale
+keys produced no texture allocations. Unrelated shader and repeated consumption
+were rejected. The existing camera grids, HDR display probes and branch-budget
+checks still pass. Evidence: `artifacts/medium-async-publication-2026-10-07/`.
+The test waits explicitly for GPU completion; the publication API does not.
+Native editor scene extraction, update scheduling and window presentation remain
+unintegrated; this is the asynchronous handoff needed for that integration.
+
+### Medium image upload recovery under memory pressure
+
+PendingMediumImage now retains its fully admitted CPU snapshot when GPU texture
+admission returns MemoryBudget. Retry does not remap consumed staging or retrace
+light. Successful upload consumes the snapshot; a changed frame key discards it
+before another allocation. Other upload errors remain terminal.
+
+A real Metal test fills the shared managed-memory budget and verifies two failed
+uploads, including one after dropping pressure storage but before confirmed
+retirement. Upload succeeds after explicit retirement using the same snapshot.
+A second case changes the camera while the retained result is waiting; it rejects
+the snapshot with no texture allocation. The four focused tests, including the
+existing GPU geometry/transport/display regression, pass. Evidence:
+`artifacts/medium-upload-recovery-2026-10-07/`. The retirement wait occurs only in
+the qualification test; production publication remains nonblocking. Native
+editor integration remains pending.
+
+### Full-window medium dispatch
+
+MediumPathComputeInput now spreads ray groups over two dispatch dimensions,
+using at most 65535 columns. The shared shader flattens group coordinates and
+guards the partial final row, preserving the packed storage ABI. A single row
+previously rejected batches above the portable per-dimension workgroup limit.
+
+Metal qualification now covers a rolled perspective camera at 1280x720: 921600
+pixel-center rays and 2764800 RGB comparisons against analytic homogeneous
+absorption over each metric ray length. Dispatch is 65535x15x1. This full-size
+fixture contains no medium boundary meshes; refraction, opacity and display are
+covered by the separate existing regressions. The staging owner explicitly
+retains a 96 MiB budget through program construction and readback. An initial
+failed qualification dropped that owner too early, reverting to the default
+64 MiB readback limit; the failure log is preserved. Evidence:
+`artifacts/medium-full-window-dispatch-2026-10-07/`. This proves full-size kernel
+execution, not native editor-window integration or realtime rendering.
+
+### Full-rig live prefix at 276 steps
+
+Original process 90673 remains live with its preserved launch executable. An
+immutable prefix now covers 276/480 steps (1.15 simulated seconds), 25 node
+checkpoints and 277 per-step energy records. The native authored-pose audit
+passes for all 2338 nodes, 6845 cells and three support pins: maximum pin error
+8.8818e-16 m, maximum frame energy defect 7.1831e-14 J, maximum cumulative
+defect 6.2705e-13 J, under the authored 5e-10 J/s admission policy.
+
+A five-second live profile at 10 ms intervals collected 452 main-thread samples.
+Top-of-stack counts include 122 in prescribed surface contact response, 64 in
+rest material action and 41 in viscoelastic response. This is one phase of the
+original executable; it does not measure speedup from later source changes.
+Evidence: `artifacts/full-rig-prefix-276-2026-10-07/`. An initial audit launch
+used relative paths from the test crate and failed before reading its captures;
+the successful audit uses absolute paths, and both logs are preserved. Full
+480-step completion, general self-contact and realtime execution remain unproved.
+
+### Full-rig search material symmetry candidate rejected
+
+A test-only triangular stress assembly computes each symmetric tensor component
+once while preserving the original floating operation order. On the actual
+2338-node/6845-cell rig mesh with three pins and a synthetic isotropic elastic
+search material, its complete action matches the baseline bit for bit. Eight
+release ABBA/BAAB trials per run charge 2000 full operator applications each.
+Initial and final timing results disagree on the benefit; concurrent rig work
+and overlap with the library regression limit performance attribution. No
+consistent gain is established, so production code remains exactly unchanged.
+The candidate and benchmark remain only in the ignored qualification test.
+
+The physics library passes 125 tests, 13 ignored. Evidence:
+`artifacts/full-rig-symmetric-operator-2026-10-07/`. This comparison does not
+qualify viscoelastic physical-force performance, full-clip speedup or realtime
+rig execution. The original live full-rig process is preserved.
+
+### Per-call contact query scratch reuse
+
+Prescribed surface response and normal-stencil assembly reuse one candidate
+vector across body faces, clearing it before each broadphase query. Capacity
+grows only when required by a larger candidate list and is released at call end.
+No persistent geometry cache or new ownership subsystem is introduced. Sorted
+pair order, exact triangle distance, barrier law and gradient accumulation remain
+unchanged. Nineteen focused prescribed-surface tests pass, including indexed vs
+all-pairs motion admission and conservative normal-pruning/error parity; six
+manual gates remain ignored. Evidence: `artifacts/contact-query-scratch-2026-10-07/`.
+No runtime speedup is claimed. Original process 90673 continues with its launch
+executable and does not include this later source change.
+
+### Contact query scratch paired qualification
+
+A const-selected private reference retains per-face candidate allocation solely
+for comparison with the production per-call reuse path. On 1024 sparse parallel
+active triangle contacts, energy and both gradients match bit for bit and normal
+stencils match exactly. Eight release ABBA/BAAB trials time 200 combined response
+and stencil evaluations per trial. Median times are approximately 0.4231 s for
+per-face allocation and 0.4032 s for reuse, but the trial scatter prevents a
+conclusive speedup claim. No own regression workload ran concurrently with the
+benchmark; existing live native rigs remain a source of interference.
+
+Nineteen focused prescribed-surface tests pass, seven manual gates ignored.
+Evidence: `artifacts/contact-query-scratch-profile-2026-10-07/`. Reuse remains
+for reduced buffer churn; this does not qualify full-rig throughput or realtime
+performance.
+
+### Prepared inactive contact paths
+
+Prepared path response and normal-stencil assembly classify completely disabled
+body contact domains once per call. They still validate endpoints and every
+sampled coordinate and triangle area. Inactive samples omit repeated mask
+lookups, empty response allocations and zero-gradient accumulation. Unlisted
+faces remain potentially active. Zero-potential objective scaling preserves the
+legacy overflow rejection even for malformed quadrature. No physical barrier,
+separation or energy tolerance changes.
+
+Twenty focused tests pass, eight manual gates ignored. New regression covers
+intermediate triangle collapse, unlisted active contacts and invalid quadrature
+scaling against the non-shortcut reference. On the actual 2338-node/4672-face
+volume mesh with disabled domains and stationary endpoints, eight release paired
+trials (100 response evaluations each) give median baseline 0.139662 s and new
+0.076243 s, a 1.83x ratio. All four paired comparisons favor the new path.
+Evidence: `artifacts/full-mesh-inactive-path-2026-10-07/`. This is one operation
+with disabled contact pairs, not moving full-rig or realtime performance proof.
+Original process 90673 retains its original executable.
+
+### Inactive contact path integration regression
+
+After the prepared inactive-path and per-call candidate scratch changes, the
+complete physics library passes 126 tests with 15 manual gates ignored. The
+editor passes cargo check for all targets. Evidence:
+`artifacts/inactive-path-integration-2026-10-07/`. These checks cover current
+source, while original full-rig process 90673 remains live on its launch binary
+and has committed 286/480 steps at this observation. Native editor execution,
+full-clip completion and realtime performance remain separately unqualified.
+
+### Imported startup after inactive-path optimization
+
+The current body-motion example passes imported_startup_drives_native_tetra_supports_with_independent_energy_balance.
+It drives three source-bound support pins over three native clip steps in one
+tetrahedron selected from the actual authored volume. Pin motion is nonzero, the
+free node responds dynamically, and support-to-skin coordinates remain within
+1e-13 m. Maximum per-step balance defect is 1.27326e-10 J under this fixture's
+1e-9 J test threshold. This is the illustrative single-cell startup policy,
+not the full-rig 5e-10 J/s strict-rate qualification. Evidence:
+`artifacts/inactive-path-imported-startup-2026-10-07/`. Full-volume moving-clip
+completion and realtime performance remain pending.
+
+### Indexed accepted-liquid particle geometry
+
+The existing editor liquid mesh now uses six shared vertices and 24 indices per
+particle instead of 24 duplicated vertices. Triangle order, positions, UVs and
+particle colors are preserved. Raw vertex/index payload changes from 960 to
+312 bytes per particle (67.5% reduction); simulation ownership and particle
+inventory do not change. Single-particle topology is closed and passes the
+existing medium-boundary admission. Particle extents must remain strictly on
+both sides of the rounded GPU center; full and one-sided f32 collapse reject
+the whole candidate mesh before publication.
+
+Four CPU/GPU tests pass on Metal: volume/centroid, closed topology, precision
+rejection, material admission, visible rendering and empty-state clearing. The
+ordinary draw covers 364 blue pixels; existing optical/viewport regression
+changes 408 pixels while preserving all 4096 neighboring-view pixels. Evidence:
+`artifacts/liquid-indexed-topology-2026-10-07/`. Individual closed particle
+components can overlap; this does not produce the union boundary of a fluid
+or qualify native joint fog/liquid transport.

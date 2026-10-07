@@ -1,0 +1,25 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "viewport": [
+    1280,
+    720
+  ],
+  "pixels": 921600,
+  "rgb_analytic_checks": 2764800,
+  "groups": [
+    65535,
+    15,
+    1
+  ],
+  "camera": "rolled perspective pixel-center rays",
+  "reference": "exp(-sigma * metric distance to z=-1), checked per channel per pixel",
+  "staging_budget_bytes": 100663296,
+  "input_budget_bytes": 100663296,
+  "native_editor_window_qualified": false,
+  "scope": "homogeneous absorption, no triangle boundaries in full-size fixture; branch and display fixtures separately qualified",
+  "sha256": {
+    "medium_path_compute.rs": "d7e756530e20f8e431d9b9481d7ac82c22cec29164f186e55541c64e09af2ad4",
+    "medium_path_compute.wgsl": "3eeafa004c5cbde285b9278dd56665dc43d8402876cf8562d437af4d3164d77f"
+  }
+}

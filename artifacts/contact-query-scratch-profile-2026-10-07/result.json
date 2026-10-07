@@ -1,0 +1,66 @@
+{
+  "faces": 1024,
+  "iterations_per_trial": 200,
+  "timed_operations": [
+    "contact response",
+    "normal stencils"
+  ],
+  "fixture": "sparse parallel active triangle contacts; synthetic, not full rig",
+  "trials": [
+    {
+      "trial": 0,
+      "reuse": false,
+      "elapsed_s": 0.42843925
+    },
+    {
+      "trial": 1,
+      "reuse": true,
+      "elapsed_s": 0.45851
+    },
+    {
+      "trial": 2,
+      "reuse": true,
+      "elapsed_s": 0.376594708
+    },
+    {
+      "trial": 3,
+      "reuse": false,
+      "elapsed_s": 0.5326725
+    },
+    {
+      "trial": 4,
+      "reuse": true,
+      "elapsed_s": 0.385690958
+    },
+    {
+      "trial": 5,
+      "reuse": false,
+      "elapsed_s": 0.392136834
+    },
+    {
+      "trial": 6,
+      "reuse": false,
+      "elapsed_s": 0.417756708
+    },
+    {
+      "trial": 7,
+      "reuse": true,
+      "elapsed_s": 0.42064925
+    }
+  ],
+  "median_s": {
+    "False": 0.423097979,
+    "True": 0.403170104
+  },
+  "energy_gradient_bitwise_equal": true,
+  "normal_stencils_equal": true,
+  "focused_tests_passed": 19,
+  "focused_tests_ignored": 7,
+  "decision": "retain per-call scratch reuse; no conclusive runtime speedup claim",
+  "limits": [
+    "concurrent native rig processes preserved",
+    "single microbenchmark fixture",
+    "no realtime or full-rig throughput qualification"
+  ],
+  "source_sha256": "63ef09ecf58cd04fe2236cf9ca90a22eb07e9b9d8d8281badb3e7180ce10fa50"
+}

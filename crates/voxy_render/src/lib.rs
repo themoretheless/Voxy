@@ -247,8 +247,9 @@ pub use medium_path::{
     MediumTransportEstimate,
 };
 pub use medium_path_compute::{
-    GpuMediumTransportBudget, GpuMediumTransportEstimate, MEDIUM_PATH_SHADER,
-    MediumPathComputeInput, MediumTransportCameraRay,
+    AcceptedMediumImage, EncodedMediumImage, GpuMediumTransportBudget, GpuMediumTransportEstimate,
+    MEDIUM_PATH_SHADER, MediumFrameKey, MediumImage, MediumPathComputeInput,
+    MediumTransportCameraRay, PendingMediumImage,
 };
 
 mod medium_transport;

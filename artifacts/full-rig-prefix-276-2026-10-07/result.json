@@ -1,0 +1,33 @@
+{
+  "committed_steps": 276,
+  "requested_steps": 480,
+  "simulated_s": 1.15,
+  "checkpoints": 25,
+  "energy_frames": 277,
+  "nodes": 2338,
+  "cells": 6845,
+  "pins": 3,
+  "maximum_pin_error_m": 8.881784197001252e-16,
+  "maximum_frame_energy_defect_j": 7.183142969324763e-14,
+  "maximum_cumulative_energy_defect_j": 6.270539643082884e-13,
+  "maximum_checkpoint_interval_energy_defect_j": 2.7794433421490794e-13,
+  "authored_energy_rate_j_s": 5e-10,
+  "maximum_free_motion_m": 0.4457806403830662,
+  "audit_passed": true,
+  "full_clip_qualified": false,
+  "realtime_qualified": false,
+  "profile": {
+    "pid": 90673,
+    "duration_s": 5,
+    "interval_ms": 10,
+    "main_thread_samples": 452,
+    "top_stack_contact_response_samples": 122,
+    "top_stack_rest_material_action_samples": 64,
+    "top_stack_viscoelastic_response_samples": 41,
+    "scope": "single live phase of original executable; not a paired performance comparison"
+  },
+  "capture_hashes": {
+    "capture.nodes.jsonl": "4b941f34fc931139305ab4c00eb5054c20b552e9149ee4bbf86d4d19d4807dad",
+    "capture.energy.jsonl": "ea161eaed7d1cc65b45a4d1e70567c63c4c1fcf05bde36502288e680a2c1e8f2"
+  }
+}

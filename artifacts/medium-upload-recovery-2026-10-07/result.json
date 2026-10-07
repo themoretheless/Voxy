@@ -1,0 +1,11 @@
+{
+  "backend": "Metal",
+  "snapshot_retained_after_budget_failure": true,
+  "unconfirmed_retirement_retry_rejected": true,
+  "confirmed_retirement_retry_succeeded": true,
+  "retained_snapshot_camera_change_rejected": true,
+  "retrace_required": false,
+  "sha256": "58e3467e1c6d276a28f9eb0ed6ea642f907367295940958ead9690996c8d9055",
+  "native_editor_integrated": false,
+  "focused_tests_passed": 4
+}

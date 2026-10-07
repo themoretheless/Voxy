@@ -1,0 +1,67 @@
+{
+  "nodes": 2338,
+  "faces": 4672,
+  "iterations_per_trial": 100,
+  "trials": [
+    {
+      "trial": 0,
+      "skip_inactive": false,
+      "elapsed_s": 0.143426708
+    },
+    {
+      "trial": 1,
+      "skip_inactive": true,
+      "elapsed_s": 0.07127725
+    },
+    {
+      "trial": 2,
+      "skip_inactive": true,
+      "elapsed_s": 0.0812095
+    },
+    {
+      "trial": 3,
+      "skip_inactive": false,
+      "elapsed_s": 0.126387208
+    },
+    {
+      "trial": 4,
+      "skip_inactive": true,
+      "elapsed_s": 0.089501917
+    },
+    {
+      "trial": 5,
+      "skip_inactive": false,
+      "elapsed_s": 0.191653542
+    },
+    {
+      "trial": 6,
+      "skip_inactive": false,
+      "elapsed_s": 0.135896417
+    },
+    {
+      "trial": 7,
+      "skip_inactive": true,
+      "elapsed_s": 0.058970708
+    }
+  ],
+  "median_s": {
+    "False": 0.1396615625,
+    "True": 0.076243375
+  },
+  "median_ratio_baseline_over_candidate": 1.8317862043751343,
+  "scope": "prepared path response on actual volume mesh with all authored contact domains disabled and stationary endpoints",
+  "response_equal": true,
+  "every_sample_geometry_checked": true,
+  "midpoint_collapse_rejected": true,
+  "unlisted_contact_preserved": true,
+  "malformed_quadrature_overflow_rejected": true,
+  "tests_passed": 20,
+  "tests_ignored": 8,
+  "full_rig_runtime_speedup_qualified": false,
+  "limits": [
+    "live original native processes preserved",
+    "no moving full-clip throughput comparison",
+    "normal stencils covered by regression, not timed in this benchmark"
+  ],
+  "source_sha256": "761b9be3d19e514f7c95efc0449d23936ea6af29af7e4432bf39104612438237"
+}

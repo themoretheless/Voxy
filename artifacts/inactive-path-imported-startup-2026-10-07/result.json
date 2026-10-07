@@ -1,0 +1,29 @@
+{
+  "test_passed": true,
+  "steps": 3,
+  "tetrahedra": 1,
+  "pins": 3,
+  "original_volume_node_ids": [
+    1282,
+    167,
+    1856,
+    488
+  ],
+  "source_vertex_ids": [
+    1383,
+    167,
+    2284,
+    494
+  ],
+  "maximum_balance_j": 1.2732596411553168e-10,
+  "test_balance_limit_j": 1e-09,
+  "maximum_pin_motion_m": 0.00014435575102536569,
+  "maximum_free_offset_m": 0.0002701688888253617,
+  "scope": "current imported startup, one tetrahedron, three source-driven support pins, disabled contact domains",
+  "full_rig_strict_energy_budget_qualified": false,
+  "full_clip_qualified": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "761b9be3d19e514f7c95efc0449d23936ea6af29af7e4432bf39104612438237",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "d909076be084cb1394f263b52907446c0310611b9b14dabfb2165c793683dd3b"
+  }
+}

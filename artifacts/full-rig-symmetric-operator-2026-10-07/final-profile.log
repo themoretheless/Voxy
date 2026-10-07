@@ -1,0 +1,17 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 26.79s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+SYMMETRIC_MATERIAL_PROFILE trial=0 symmetric=false elapsed_s=0.342778916 nodes=2338 cells=6845 applications=2000 exact_bits=true
+SYMMETRIC_MATERIAL_PROFILE trial=1 symmetric=true elapsed_s=0.371919375 nodes=2338 cells=6845 applications=2000 exact_bits=true
+SYMMETRIC_MATERIAL_PROFILE trial=2 symmetric=true elapsed_s=0.320500000 nodes=2338 cells=6845 applications=2000 exact_bits=true
+SYMMETRIC_MATERIAL_PROFILE trial=3 symmetric=false elapsed_s=0.384609917 nodes=2338 cells=6845 applications=2000 exact_bits=true
+SYMMETRIC_MATERIAL_PROFILE trial=4 symmetric=true elapsed_s=0.346200625 nodes=2338 cells=6845 applications=2000 exact_bits=true
+SYMMETRIC_MATERIAL_PROFILE trial=5 symmetric=false elapsed_s=0.394494708 nodes=2338 cells=6845 applications=2000 exact_bits=true
+SYMMETRIC_MATERIAL_PROFILE trial=6 symmetric=false elapsed_s=0.474828084 nodes=2338 cells=6845 applications=2000 exact_bits=true
+SYMMETRIC_MATERIAL_PROFILE trial=7 symmetric=true elapsed_s=0.413111750 nodes=2338 cells=6845 applications=2000 exact_bits=true
+test biomechanics::inertia::implicit::tests::full_rig_symmetric_material_operator_profile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 137 filtered out; finished in 3.19s
+

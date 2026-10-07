@@ -1,0 +1,17 @@
+{
+  "tests_passed": 19,
+  "tests_ignored": 6,
+  "scope": [
+    "contact response",
+    "normal stencils",
+    "indexed/all-pairs motion admission",
+    "conservative normal pruning and errors"
+  ],
+  "change": "reuse query candidate vector capacity across faces within each call; clear before every query",
+  "pair_order": "unchanged sorted index order",
+  "force_and_energy_arithmetic": "unchanged",
+  "persistent_geometry_cache_added": false,
+  "runtime_speedup_measured": false,
+  "running_full_rig_uses_prior_executable": true,
+  "source_sha256": "8f06f184edea1dc0433bc93a6ed72317f97b550b45c8fcfefd04cbb295b48d54"
+}
