@@ -1,0 +1,166 @@
+{
+  "status": "Immutable delivery observation; live originals retained and not full-clip qualification",
+  "files": [
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/capture.log",
+      "bytes": 44765434,
+      "sha256": "8aeafa4d537bee84075327471017ee1be4271851b68bb94dced5a90966f18b62",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/capture.nodes.jsonl",
+      "bytes": 2272616,
+      "sha256": "25e969300a2e43e024175e0c08227622f57da3bb88afac95eaa5b59b857ef517",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0000.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0000.png",
+      "bytes": 32366,
+      "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0001.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0001.png",
+      "bytes": 32572,
+      "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0002.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0002.png",
+      "bytes": 33109,
+      "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0003.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0003.png",
+      "bytes": 33579,
+      "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0004.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0004.png",
+      "bytes": 34076,
+      "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0005.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0005.png",
+      "bytes": 33902,
+      "sha256": "6c602823499494e85e34bc5339bc742313b1963b403ee62d4ce753a77200d54a",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0006.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0006.png",
+      "bytes": 33785,
+      "sha256": "4b9541c2118cef4aaee12c60e277688e1ca48aaf8dae408e0947726c1e9c79f6",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-clip-2026-10-07/frames/frame-0007.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-clip-2026-10-07/frames/frame-0007.png",
+      "bytes": 33326,
+      "sha256": "1930a98aa58a485bd574c40a9e9f71d21766e8be1e7389527969e06f58dbceb8",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-strict-energy-2026-10-07/capture.log",
+      "bytes": 33122688,
+      "sha256": "9dc2275b424a496449bf957005156121a2e75688839510e129c3765cbe542968",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-strict-energy-2026-10-07/capture.nodes.jsonl",
+      "bytes": 1379908,
+      "sha256": "d224c40fbecf0d9fcc850190e3ddec1c28b1d32ab65983f5bed2b2da5f56a7db",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0000.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0000.png",
+      "bytes": 32366,
+      "sha256": "f933d695f3e8e521e7a0084ac8a5dac5f1d1408ffce36b90182223d971ce6306",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0001.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0001.png",
+      "bytes": 32572,
+      "sha256": "6670365b67fbf3cff6d9a6796b59bebe4f636464c8a28f3614d73e7c7b7d27df",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0002.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0002.png",
+      "bytes": 33109,
+      "sha256": "ddb3e0c6b7e59e1b9c8da434c8e6f5a3c1cb3e99360348e992ce3ec2045a9554",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0003.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0003.png",
+      "bytes": 33579,
+      "sha256": "39578c953797ca65a99a6322725fdf92b33affc2bd67fa4f53559e4822885a14",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0004.png",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-rig-strict-energy-2026-10-07/frames/frame-0004.png",
+      "bytes": 34076,
+      "sha256": "931285ae0e07eaf52bc0bcb93579f7694ef3f89590518b46c27514e621f7d7d9",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-volume-release-2026-10-07/capture.log",
+      "bytes": 9230837,
+      "sha256": "0e5950c512fafd68a97a7cd6e733f1e5091849083d04e81324357194e7358e18",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/full-volume-release-2026-10-07/capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/full-volume-release-2026-10-07/capture.nodes.jsonl",
+      "bytes": 182441,
+      "sha256": "54551c8135b9abc03e8ca6a80837709a848d3e0f945fb83cbe972ec21b2f3e6b",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.log",
+      "bytes": 16683,
+      "sha256": "0152e0cea3cdb3336ba3bdce4fdb1f14e51a800c3d9643228b514f9971d499ef",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/inactive-contact-domain-2026-10-07/full-volume-cached-capture.nodes.jsonl",
+      "bytes": 182441,
+      "sha256": "54551c8135b9abc03e8ca6a80837709a848d3e0f945fb83cbe972ec21b2f3e6b",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/source-node-reference-2026-10-07/full-volume-capture.log",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/source-node-reference-2026-10-07/full-volume-capture.log",
+      "bytes": 16683,
+      "sha256": "0152e0cea3cdb3336ba3bdce4fdb1f14e51a800c3d9643228b514f9971d499ef",
+      "observation_only": true
+    },
+    {
+      "source": "artifacts/source-node-reference-2026-10-07/full-volume-capture.nodes.jsonl",
+      "snapshot": "artifacts/session-snapshot-2026-10-07-delivery-3/artifacts/source-node-reference-2026-10-07/full-volume-capture.nodes.jsonl",
+      "bytes": 182441,
+      "sha256": "54551c8135b9abc03e8ca6a80837709a848d3e0f945fb83cbe972ec21b2f3e6b",
+      "observation_only": true
+    }
+  ]
+}

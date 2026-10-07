@@ -1,0 +1,152 @@
+{
+  "scope": "Eight alternating ABBA short full-volume captures; three 1/240s frames plus initial state. Not full 480-step clip or universal engine speedup.",
+  "measured_captures": 8,
+  "median_simulation_and_render_s": {
+    "before": 3.0711970835,
+    "after": 2.000006521
+  },
+  "relative_elapsed_reduction": 0.34878600538368865,
+  "all_states_energy_and_csv_byte_identical": true,
+  "binary_sha256": {
+    "before": "2c88973ff6d11a691d0391138eafcc491cbe876d3a75a455be3a428804fb2292",
+    "after": "5e6e5b058a5f7359f8f8f7ff30b91a7b054dfb13b32ab822831a60ed9ac4244c"
+  },
+  "manifest_sha256": "dd64b875e492dd31f0b8d4ba249e8076794e926ecfcb4b5e803286d82431227a",
+  "observations": [
+    {
+      "index": 0,
+      "mode": "after",
+      "warmup": true,
+      "exit_code": 0,
+      "wall_s": 3.8338221669982886,
+      "simulation_and_render_s": 2.451296333,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 1,
+      "mode": "before",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 4.270039999999426,
+      "simulation_and_render_s": 3.094934667,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 2,
+      "mode": "after",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 3.0385764579987153,
+      "simulation_and_render_s": 2.0742735,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 3,
+      "mode": "after",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 3.005658374999257,
+      "simulation_and_render_s": 2.034850417,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 4,
+      "mode": "before",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 3.964366666999922,
+      "simulation_and_render_s": 3.022211125,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 5,
+      "mode": "before",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 3.9908380420001777,
+      "simulation_and_render_s": 3.0474595,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 6,
+      "mode": "after",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 2.8984802499999205,
+      "simulation_and_render_s": 1.963212208,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 7,
+      "mode": "after",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 2.914218542000526,
+      "simulation_and_render_s": 1.965162625,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    },
+    {
+      "index": 8,
+      "mode": "before",
+      "warmup": false,
+      "exit_code": 0,
+      "wall_s": 4.044825958000729,
+      "simulation_and_render_s": 3.105930459,
+      "step_receipts": "[(12, 0, 0)]",
+      "exact_bytes_equal_baseline": {
+        ".nodes.json": true,
+        ".nodes.jsonl": true,
+        ".energy.jsonl": true,
+        ".csv": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "status": "Terminal rejection; full clip unqualified",
+  "pid": 26986,
+  "exec_session": 63828,
+  "requested_steps": 480,
+  "observed_committed_steps": 54,
+  "last_observed_time_s": 0.225,
+  "energy_budget_rate_j_s": 5e-10,
+  "maximum_frame_defect_j": 1.053046538856961e-13,
+  "final_cumulative_defect_j": 1.6409096303959814e-13,
+  "native_prefix_audit": "passed",
+  "full_clip_qualified": false,
+  "prior_captures_preserved": true,
+  "limit": "Committed partial trajectory only; nominal frame 55 rejected without relaxing admission gates.",
+  "historical_prefix_observation": {
+    "observed_committed_steps": 26,
+    "last_observed_time_s": 0.10833333333333334,
+    "maximum_frame_defect_j": 1.053046538856961e-13,
+    "final_cumulative_defect_j": 1.6409096303959814e-13,
+    "native_prefix_audit": "passed"
+  },
+  "exit_code": 1,
+  "rejected_step": 55,
+  "rejected_time_s": 0.229166667,
+  "terminal_error": "implicit midpoint work defect",
+  "terminal_trace_parity": {
+    "capture.energy.jsonl": true,
+    "capture.nodes.jsonl": true
+  }
+}

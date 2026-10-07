@@ -1,0 +1,328 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 4 warnings
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/model.rs:1156:19
+     |
+1156 |             Mat4::perspective_rh(1., 1., 0.1, 100.),
+     |                   ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_render` (lib test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/voxy_render-8a0d4a2a920749ed)
+
+running 19 tests
+FLUID RESIDENCY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+mesh budget adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+skeletal budget adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FILM GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+REJECTED SCENE SHADER: Validation Error
+
+Caused by:
+  In Device::create_shader_module, label = 'custom scene shader'
+    
+Shader 'custom scene shader' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found "this"
+  ┌─ wgsl:1:1
+  │
+1 │ this is not WGSL
+  │ ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file
+
+
+
+REJECTED SCENE SHADER: Validation Error
+
+Caused by:
+  In Device::create_render_pipeline, label = 'scene pipeline'
+    Error matching ShaderStages(VERTEX) shader requirements against the pipeline
+      Unable to find entry point 'vs_main'
+
+SHADER ROLLBACK GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+logical_live_bytes=111648 rejected_resize_bytes=443424
+test fluid_screen::allocation_tests::gpu_budget_boundary_and_rejected_resize_preserve_previous_resources ... ok
+SKELETAL_DEVICE_BUDGET_PASS source_bytes=256 instance_bytes=440 partial_admission_rejected=true output_matches_cpu=true final_charged_bytes=0
+test scene::memory_tests::gpu_shared_mesh_budget_preserves_replacement_and_lod_owners ... ok
+test scene::skinning::tests::gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission ... ok
+test scene::skinning::tests::gpu_skeletal_device_budget_admits_whole_instances_and_retains_source ... ok
+LEGACY_NORMAL_PROBE adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None } cases=12 max_error=0.000000085600654 old_forward_error=1.2534771
+test skinned::normal_tests::gpu_legacy_normal_transport_matches_inverse_transpose ... ok
+LIT_NORMAL_COMPARISON colored_pixels=2317 max_cpu_gpu_channel_delta=0 old_formula_difference_pixels=2317
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+test scene::skinning::tests::gpu_scene_skinning_independent_instances_and_last_good_pose ... ok
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+FILM count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+test scene::lod_geometry::tests::gpu_lod_upload_shares_streams_and_counts_all_index_buffers ... ok
+test scene::skinning::tests::gpu_skin_normals_follow_inverse_transpose_and_keep_last_good ... ok
+FILM count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04000698
+ABSORPTION channel=0 actual=0.041992188 expected=0.042007327
+ABSORPTION channel=1 actual=0.060791016 expected=0.06081061
+ABSORPTION channel=2 actual=0.0803833 expected=0.08041403
+FILM count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.040985107 expected_m=0.04099997
+ABSORPTION channel=0test renderer::skinned_lod::tests::gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams ... ok
+ actual=0.043029785 expected=0.04304997
+ABSORPTION channel=1 actual=0.062316895 expected=0.062319957
+ABSORPTION channel=2 actual=0.08239746 expected=0.08240994
+FILM count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=LEGACY_SMOOTH_NORMALS checked_pixels=3092 max_srgb_channel_error=0 old_unnormalized_differing_pixels=2950
+0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+test scene::multi_view_tests::gpu_disjoint_views_preserve_both_regions_and_clear_gap ... ok
+LEGACY_FLAT_NORMALS model=Mat4 { x_axis: Vec4(1.0, 0.0, 0.0, 0.0), y_axis: Vec4(0.0, 1.0, 0.0, 0.0), z_axis: Vec4(0.0, 0.0, 1.0, 0.0), w_axis: Vec4(0.0, 0.0, 0.0, 1.0) } cpu_face_channel_difference=0
+FILM count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.010001744
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001744
+ABSORPTION channel=1 actual=0.00040006638 expected=0.00040006975
+ABSORPTION channel=2 actual=0.00020003319 expected=0.00020003488
+FILM count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+test scene::multi_view_tests::gpu_disjoint_views_xray_keeps_nearest_internals_and_world_depth ... ok
+LEGACY_FLAT_NORMALS model=Mat4 { x_axis: Vec4(0.7368488, 0.0, -0.31153467, 0.0), y_axis: Vec4(0.0, 0.7, 0.0, 0.0), z_axis: Vec4(0.38941833, 0.0, 0.921061, 0.0), w_axis: Vec4(0.0, 0.0, 0.0, 1.0) } cpu_face_channel_difference=0
+LEGACY_RASTER adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None } colored=1733 cpu_pixel_difference=0 old_normal_channel_difference=5199 rejected_frames=2 recovery=true
+FILM count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+test renderer::legacy_skin_tests::gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose ... ok
+FILM count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.010001745
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001746
+ABSORPTION channel=1 actual=0.00039982796 expected=0.00040006978
+ABSORPTION channel=2 actual=0.00019991398 expected=0.00020003489
+FILM count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.11022949 expected_m=0.11029862
+ABSORPTION channel=0 actual=0.09222412 expected=0.092295475
+ABSORPTION channel=1 actual=0.45214844 expected=0.45227578
+ABSORPTION channel=2 actual=0.90283203 expected=0.90335137
+FILM count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=16,16 actual_m=0.090270996 expected_m=0.09029513
+ABSORPTION channel=0 actual=0.090270996 expected=0.09029513
+ABSORPTION channel=1 actual=0.45141602 expected=0.45147565
+ABSORPTION channel=2 actual=0.90283203 expected=0.9029513
+FILM count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+test fluid_screen::film_gpu_tests::film_gpu_integrates_prism_thickness_and_near_clipping ... ok
+REFERENCE_RIG_FRAME_PIXELS colored=1944
+REFERENCE_RIG_FRAME_PIXELS colored=1944
+REFERENCE_RIG_GPU_TIMESTAMPS asset=bind-mirror supported=true period_ns=1 interval_us=Some((16.833, 17.792)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=bind-mirror supported=true viewport=128x128 render_us=Some((53.375, 55.792)) compute_to_render_end_us=Some((129.459, 218.0))
+REFERENCE_RIG_PROFILE asset=bind-mirror adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000020861626 motion=0.33529758 cpu_pose_skin_us=(5.166, 16.083) preflight_us=(20.75, 76.45800000000001) prepared_encode_us=(6.292, 15.5) submit_readback_us=(596.083, 867.625) logical_bytes=50408
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig-step supported=true period_ns=1 interval_us=Some((16.75, 17.541)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig-step supported=true viewport=128x128 render_us=Some((55.625, 57.041000000000004)) compute_to_render_end_us=Some((132.375, 224.709))
+REFERENCE_RIG_PROFILE asset=reference-rig-step adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000011920929 max_normal_error=0.00000014057727 motion=0 cpu_pose_skin_us=(5.209, 23.958) preflight_us=(20.5, 76.334) prepared_encode_us=(6.709, 33.25) submit_readback_us=(602.958, 1027.25) logical_bytes=50408
+test scene::skinning::tests::gpu_reference_rig_step_clips_match_cpu_and_render ... ok
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig-cubic supported=true period_ns=1 interval_us=Some((16.792, 17.709)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig-cubic supported=true viewport=128x128 render_us=Some((53.583, 57.125)) compute_to_render_end_us=Some((124.0, 236.542))
+REFERENCE_RIG_PROFILE asset=reference-rig-cubic adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000019768625 motion=0.33887938 cpu_pose_skin_us=(5.541, 27.041) preflight_us=(20.041, 89.66699999999999) prepared_encode_us=(7.041, 30.125) submit_readback_us=(579.4580000000001, 1141.833) logical_bytes=50408
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig supported=true period_ns=1 interval_us=Some((16.875, 18.292)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig supported=true viewport=128x128 render_us=Some((53.416000000000004, 56.0)) compute_to_render_end_us=Some((140.083, 185.583))
+REFERENCE_RIG_PROFILE asset=reference-rig adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000021699616 motion=0.33529755 cpu_pose_skin_us=(6.333, 26.792) preflight_us=(20.416, 76.584) prepared_encode_us=(7.208, 34.5) submit_readback_us=(596.917, 1046.0420000000001) logical_bytes=50408
+test scene::skinning::tests::gpu_reference_rig_cubic_clips_match_cpu_and_render ... ok
+test scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions ... ok
+REFERENCE_RIG_FRAME_PIXELS colored=1601
+REFERENCE_RIG_FRAME_PIXELS colored=1685
+REFERENCE_RIG_FRAME_PIXELS colored=1685
+REFERENCE_RIG_GPU_TIMESTAMPS asset=animated-mirror supported=true period_ns=1 interval_us=Some((17.0, 18.375)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=animated-mirror supported=true viewport=128x128 render_us=Some((53.541000000000004, 58.542)) compute_to_render_end_us=Some((87.541, 182.5))
+REFERENCE_RIG_PROFILE asset=animated-mirror adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000018907454 motion=0.33792466 cpu_pose_skin_us=(4.9590000000000005, 7.5) preflight_us=(19.25, 37.125) prepared_encode_us=(4.583, 10.083) submit_readback_us=(388.458, 534.834) logical_bytes=50408
+test scene::skinning::tests::gpu_mirrored_rig_matches_cpu_positions_normals_and_render ... ok
+REFERENCE_RIG_FRAME_PIXELS colored=1533
+REFERENCE_RIG_FRAME_PIXELS colored=1533
+REFERENCE_RIG_GPU_TIMESTAMPS asset=fox supported=true period_ns=1 interval_us=Some((16.042, 17.208)) samples=195
+REFERENCE_RIG_RENDER_GPU asset=fox supported=true viewport=128x128 render_us=Some((70.584, 80.375)) compute_to_render_end_us=Some((95.541, 173.333))
+REFERENCE_RIG_PROFILE asset=fox adapter="Apple M4 Max" backend=Metal vertices=1728 joints=26 clips=3 samples=195 max_position_error=0.000015258789 max_normal_error=0 motion=55.07767 cpu_pose_skin_us=(14.625, 18.875) preflight_us=(45.125, 61.834) prepared_encode_us=(4.667000000000001, 11.958) submit_readback_us=(395.458, 565.75) logical_bytes=222896
+test scene::skinning::tests::gpu_fox_step_clips_match_cpu_and_render ... ok
+REFERENCE_RIG_GPU_TIMESTAMPS asset=fox supported=true period_ns=1 interval_us=Some((16.291, 17.166)) samples=195
+REFERENCE_RIG_RENDER_GPU asset=fox supported=true viewport=128x128 render_us=Some((70.459, 81.084)) compute_to_render_end_us=Some((96.917, 165.625))
+REFERENCE_RIG_PROFILE asset=fox adapter="Apple M4 Max" backend=Metal vertices=1728 joints=26 clips=3 samples=195 max_position_error=0.000019073486 max_normal_error=0 motion=54.77839 cpu_pose_skin_us=(14.959, 23.167) preflight_us=(45.208, 59.542) prepared_encode_us=(4.584, 11.0) submit_readback_us=(393.125, 571.5) logical_bytes=222896
+test scene::skinning::tests::gpu_fox_all_clips_match_cpu_and_render ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 149 filtered out; finished in 0.17s
+

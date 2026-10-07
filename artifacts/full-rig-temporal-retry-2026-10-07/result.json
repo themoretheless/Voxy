@@ -1,5 +1,5 @@
 {
-  "status": "live; full clip unqualified",
+  "status": "Terminal exit 1: implicit midpoint work defect rejected nominal frame 55",
   "pid": 14525,
   "exec_session": 49153,
   "requested_steps": 480,
@@ -13,5 +13,16 @@
   "maximum_frame_energy_defect_j": 1.053046538856961e-13,
   "frame_energy_budget_j": 2.0833333333333334e-12,
   "final_cumulative_energy_defect_j": 2.1316282072803006e-14,
-  "shared_completed_audit_regression_passed": true
+  "shared_completed_audit_regression_passed": true,
+  "process_pid": 14525,
+  "exit_code": 1,
+  "terminal_error": "Error: \"implicit midpoint work defect; rejected frame step=55 time_s=0.229166667; last committed energy receipts=Ok([[0.03254480909113644, 5.252142975955774, 5.219598166864456, 3.676715359769758e-13]]); last committed refinement=[(222, 6, 1)]\"",
+  "committed_steps": 54,
+  "last_committed_time_s": 0.225,
+  "failed_step": 55,
+  "failed_step_time_s": 0.22916666666666666,
+  "full_clip_qualified": false,
+  "energy_budget_rate_j_s": 5e-10,
+  "admission_not_relaxed": true,
+  "artifacts_preserved": true
 }

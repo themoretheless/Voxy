@@ -1,0 +1,56 @@
+{
+  "status": "Shared managed geometry admission and physical Metal checks passed; full goal incomplete",
+  "base_commit": "0d364e65a7655dcaa5f5073525f387bcbd4ce839",
+  "configured_budget_scope": [
+    "managed compute storage",
+    "scene geometry buffers",
+    "shared eager LOD buffers",
+    "streamed ordinary and skeletal LOD index buffers"
+  ],
+  "admission": "Entire mesh/eager LOD batch admitted before GPU buffer creation; failed replacement preserves published geometry",
+  "checks": {
+    "renderer_tests_passed": 148,
+    "renderer_tests_ignored": 19,
+    "explicit_existing_gpu_tests_passed": 17,
+    "explicit_mesh_gpu_test_passed": true,
+    "focused_budget_tests_passed": 7,
+    "streamed_budget_and_retirement_test_passed": true,
+    "wasm_browser_check": "passed",
+    "native_editor_build": "passed",
+    "native_editor_lod_acceptance": {
+      "exit_code": 1,
+      "presented_frames": 0,
+      "last_surface": "SkippedOccluded",
+      "verdict": "unverified"
+    },
+    "format": "passed",
+    "diff_check": "passed"
+  },
+  "physical_adapter": "Apple M4 Max",
+  "physical_backend": "Metal",
+  "full_rig_observation": {
+    "records": 55,
+    "committed_intervals": 54,
+    "time_s": 0.225,
+    "native_energy_prefix_audit": "passed",
+    "max_frame_defect_j": 1.8207657603852567e-13,
+    "final_cumulative_defect_j": 1.8118839761882555e-13,
+    "full_clip_qualified": false,
+    "speedup_measured": false
+  },
+  "remaining_scope": [
+    "automatic retirement coordination/default device cap",
+    "textures and transform uniforms",
+    "skeletal source/palette/parameter buffers",
+    "staging/CUDA/driver allocation ownership",
+    "other backend and native-window qualification",
+    "complete calibrated full-volume rig clip"
+  ],
+  "sources_sha256": {
+    "crates/voxy_render/src/compute_memory.rs": "fe2c672d761be34f841a9ce9f4896c5680786d3426070b474b8c746693afeba9",
+    "crates/voxy_render/src/scene.rs": "931130775853472aa3918df4a66d0bdf9ef1666e055b30615a650673ad7692f8",
+    "crates/voxy_render/src/scene/lod_geometry.rs": "385fe9ec9ef44a1d9d41a62f50dc5266969f27985404d4ced564ae639cda11e9",
+    "crates/voxy_render/src/scene/skinning.rs": "bf5215c12b8b50952f6cd40b2db20446b122d93d31340c3f7589a59bcdebc59f",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "16ca65f59ea3eb4461f13554c7a3b44cf72dc89c0cc08efa3099bdd23e990448"
+  }
+}

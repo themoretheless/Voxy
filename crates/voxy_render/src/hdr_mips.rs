@@ -2,7 +2,7 @@
 use crate::RendererError;
 #[derive(Debug)]
 pub struct HdrMipPyramid {
-    texture: wgpu::Texture,
+    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
     views: Vec<wgpu::TextureView>,
     groups: Vec<wgpu::BindGroup>,
     pipeline: wgpu::RenderPipeline,
@@ -21,23 +21,30 @@ impl HdrMipPyramid {
             });
         }
         let levels = width.max(height).ilog2() + 1;
-        let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("linear HDR mip pyramid"),
-            size: wgpu::Extent3d {
-                width,
-                height,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: levels,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba16Float,
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT
-                | wgpu::TextureUsages::TEXTURE_BINDING
-                | wgpu::TextureUsages::COPY_SRC
-                | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
+        let texture = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_texture(&wgpu::TextureDescriptor {
+                label: Some("linear HDR mip pyramid"),
+                size: wgpu::Extent3d {
+                    width,
+                    height,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: levels,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: wgpu::TextureFormat::Rgba16Float,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
+                    | wgpu::TextureUsages::TEXTURE_BINDING
+                    | wgpu::TextureUsages::COPY_SRC
+                    | wgpu::TextureUsages::COPY_DST,
+                view_formats: &[],
+            })
+            .map_err(|error| {
+                RendererError::Scene(match error {
+                    crate::ComputeError::MemoryBudget => crate::SceneError::MemoryBudget,
+                    _ => crate::SceneError::InvalidTexture,
+                })
+            })?;
         let views: Vec<_> = (0..levels)
             .map(|level| {
                 texture.create_view(&wgpu::TextureViewDescriptor {
@@ -118,6 +125,13 @@ impl HdrMipPyramid {
     #[must_use]
     pub fn texture(&self) -> &wgpu::Texture {
         &self.texture
+    }
+    pub(crate) fn managed_texture(&self) -> std::sync::Arc<crate::compute_memory::ManagedTexture> {
+        self.texture.clone()
+    }
+    #[must_use]
+    pub fn allocation_bytes(&self) -> u64 {
+        self.texture.allocation_bytes()
     }
     /// Base-level render attachment; initialize it before encoding downsampling.
     #[must_use]

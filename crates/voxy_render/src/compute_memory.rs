@@ -1,22 +1,74 @@
-//! Shared resident-compute admission. Retired resources stay charged until explicit cleanup.
+//! Shared managed-buffer and colour-texture admission. Retired resources stay charged until explicit cleanup.
 use crate::ComputeError;
 use std::sync::{Arc, Mutex, Weak};
 use wgpu::util::DeviceExt;
+
+/// A batch is admitted in full before any of its GPU buffers are created.
+#[derive(Clone, Copy)]
+pub(crate) struct ManagedBufferDescriptor<'a> {
+    pub label: &'a str,
+    pub size: u64,
+    pub contents: Option<&'a [u8]>,
+    pub usage: wgpu::BufferUsages,
+}
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct ComputeMemoryStats {
     pub allocated_bytes: u64,
     pub allocated_buffers: usize,
     pub retired_buffers: usize,
+    pub allocated_textures: usize,
+    pub retired_textures: usize,
 }
 #[derive(Debug, Default)]
 struct State {
     stats: ComputeMemoryStats,
-    retired: Vec<wgpu::Buffer>,
+    retired: Vec<ManagedResource>,
     max_bytes: u64,
     require_retirement: bool,
     ever_allocated: bool,
 }
+#[derive(Debug)]
+enum ManagedResource {
+    Buffer(wgpu::Buffer),
+    Texture { texture: wgpu::Texture, bytes: u64 },
+}
+impl ManagedResource {
+    fn bytes(&self) -> u64 {
+        match self {
+            Self::Buffer(buffer) => buffer.size(),
+            Self::Texture { bytes, .. } => *bytes,
+        }
+    }
+    fn destroy(&self) {
+        match self {
+            Self::Buffer(buffer) => buffer.destroy(),
+            Self::Texture { texture, .. } => texture.destroy(),
+        }
+    }
+}
+fn release_resources(state: &mut State, resources: &[ManagedResource]) {
+    for resource in resources {
+        state.stats.allocated_bytes -= resource.bytes();
+        match resource {
+            ManagedResource::Buffer(_) => state.stats.allocated_buffers -= 1,
+            ManagedResource::Texture { .. } => state.stats.allocated_textures -= 1,
+        }
+    }
+}
+fn retire_resource(owner: &Arc<Inner>, resource: ManagedResource) {
+    let mut state = owner.state.lock().expect("compute memory state poisoned");
+    if state.require_retirement {
+        state.retired.push(resource);
+        drop(state);
+        update_pin(owner);
+    } else {
+        release_resources(&mut state, std::slice::from_ref(&resource));
+        drop(state);
+        drop(resource);
+    }
+}
+
 #[derive(Debug)]
 struct Inner {
     device: wgpu::Device,
@@ -60,7 +112,7 @@ fn update_pin(inner: &Arc<Inner>) {
     });
 }
 /// One shared resident-storage limit per device. This covers managed compute
-/// buffers, not textures, meshes, staging, CUDA allocations or driver overhead.
+/// and scene geometry/colour textures, not staging, CUDA allocations or driver overhead.
 #[derive(Clone, Debug)]
 pub struct ComputeMemoryBudget(Arc<Inner>);
 impl ComputeMemoryBudget {
@@ -142,7 +194,16 @@ impl ComputeMemoryBudget {
     pub fn stats(&self) -> ComputeMemoryStats {
         let state = self.0.state.lock().expect("compute memory state poisoned");
         ComputeMemoryStats {
-            retired_buffers: state.retired.len(),
+            retired_buffers: state
+                .retired
+                .iter()
+                .filter(|r| matches!(r, ManagedResource::Buffer(_)))
+                .count(),
+            retired_textures: state
+                .retired
+                .iter()
+                .filter(|r| matches!(r, ManagedResource::Texture { .. }))
+                .count(),
             ..state.stats
         }
     }
@@ -157,36 +218,103 @@ impl ComputeMemoryBudget {
         label: &str,
         data: &[u8],
     ) -> Result<ComputeStorage, ComputeError> {
-        let size = u64::try_from(data.len()).map_err(|_| ComputeError::InvalidBuffer)?;
+        let [storage] = self.allocate_buffers([ManagedBufferDescriptor {
+            label,
+            size: u64::try_from(data.len()).map_err(|_| ComputeError::InvalidBuffer)?,
+            contents: Some(data),
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::COPY_SRC
+                | wgpu::BufferUsages::COPY_DST,
+        }])?;
+        Ok(storage)
+    }
+
+    pub(crate) fn allocate_buffers<const N: usize>(
+        &self,
+        descriptors: [ManagedBufferDescriptor<'_>; N],
+    ) -> Result<[ComputeStorage; N], ComputeError> {
+        let buffers = self.allocate_buffer_batch(&descriptors)?;
+        Ok(buffers
+            .try_into()
+            .expect("batch preserves descriptor count"))
+    }
+
+    pub(crate) fn allocate_buffer_batch(
+        &self,
+        descriptors: &[ManagedBufferDescriptor<'_>],
+    ) -> Result<Vec<ComputeStorage>, ComputeError> {
         let limits = self.0.device.limits();
-        if size == 0
-            || !size.is_multiple_of(4)
-            || size > limits.max_buffer_size
-            || size > limits.max_storage_buffer_binding_size
-        {
-            return Err(ComputeError::InvalidBuffer);
+        let mut bytes = 0_u64;
+        for descriptor in descriptors {
+            let size = descriptor.size;
+            if size == 0
+                || !size.is_multiple_of(4)
+                || size > limits.max_buffer_size
+                || (descriptor.usage.contains(wgpu::BufferUsages::STORAGE)
+                    && size > limits.max_storage_buffer_binding_size)
+                || descriptor
+                    .contents
+                    .is_some_and(|data| data.len() as u64 != size)
+            {
+                return Err(ComputeError::InvalidBuffer);
+            }
+            bytes = bytes.checked_add(size).ok_or(ComputeError::InvalidBuffer)?;
         }
         let mut state = self.0.state.lock().expect("compute memory state poisoned");
-        if size > state.max_bytes || state.stats.allocated_bytes > state.max_bytes - size {
+        if bytes > state.max_bytes || state.stats.allocated_bytes > state.max_bytes - bytes {
             return Err(ComputeError::MemoryBudget);
         }
-        let buffer = self
-            .0
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some(label),
-                contents: data,
-                usage: wgpu::BufferUsages::STORAGE
-                    | wgpu::BufferUsages::COPY_SRC
-                    | wgpu::BufferUsages::COPY_DST,
-            });
+        let buffers: Vec<_> = descriptors
+            .iter()
+            .map(|descriptor| {
+                if let Some(contents) = descriptor.contents {
+                    self.0
+                        .device
+                        .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                            label: Some(descriptor.label),
+                            contents,
+                            usage: descriptor.usage,
+                        })
+                } else {
+                    self.0.device.create_buffer(&wgpu::BufferDescriptor {
+                        label: Some(descriptor.label),
+                        size: descriptor.size,
+                        usage: descriptor.usage,
+                        mapped_at_creation: false,
+                    })
+                }
+            })
+            .collect();
+        state.ever_allocated |= !descriptors.is_empty();
+        state.stats.allocated_bytes += bytes;
+        state.stats.allocated_buffers += descriptors.len();
+        Ok(buffers
+            .into_iter()
+            .map(|buffer| ComputeStorage {
+                owner: self.0.clone(),
+                buffer: Some(buffer),
+            })
+            .collect())
+    }
+    /// Managed 2D colour allocation; all mip/layer payloads share device capacity.
+    pub(crate) fn allocate_texture(
+        &self,
+        descriptor: &wgpu::TextureDescriptor<'_>,
+    ) -> Result<Arc<ManagedTexture>, ComputeError> {
+        let bytes = colour_texture_bytes(descriptor, &self.0.device.limits())?;
+        let mut state = self.0.state.lock().expect("compute memory state poisoned");
+        if bytes > state.max_bytes || state.stats.allocated_bytes > state.max_bytes - bytes {
+            return Err(ComputeError::MemoryBudget);
+        }
+        let texture = self.0.device.create_texture(descriptor);
         state.ever_allocated = true;
-        state.stats.allocated_bytes += size;
-        state.stats.allocated_buffers += 1;
-        Ok(ComputeStorage {
+        state.stats.allocated_bytes += bytes;
+        state.stats.allocated_textures += 1;
+        Ok(Arc::new(ManagedTexture {
             owner: self.0.clone(),
-            buffer: Some(buffer),
-        })
+            texture: Some(texture),
+            bytes,
+        }))
     }
     /// Schedule nonblocking retirement on this device's queue after submitting
     /// all commands that reference retired storage. Discard unsubmitted encoders
@@ -197,7 +325,7 @@ impl ComputeMemoryBudget {
     /// Panics if the budget state is poisoned.
     #[must_use]
     pub fn begin_retirement(&self, queue: &wgpu::Queue) -> PendingComputeRetirement {
-        let buffers = std::mem::take(
+        let resources = std::mem::take(
             &mut self
                 .0
                 .state
@@ -206,10 +334,10 @@ impl ComputeMemoryBudget {
                 .retired,
         );
         let (sender, receiver) = std::sync::mpsc::channel();
-        for buffer in &buffers {
-            buffer.destroy();
+        for resource in &resources {
+            resource.destroy();
         }
-        if buffers.is_empty() {
+        if resources.is_empty() {
             let _ = sender.send(());
         } else {
             // Capture only the Send notification: browser resources stay on
@@ -220,12 +348,12 @@ impl ComputeMemoryBudget {
         }
         PendingComputeRetirement {
             owner: self.0.clone(),
-            buffers: Some(buffers),
+            resources: Some(resources),
             receiver,
         }
     }
     /// Destroy retired storage, then block until submitted GPU work completes.
-    /// Discard unsubmitted encoders and externally retained bindings/buffer clones
+    /// Discard unsubmitted encoders and externally retained bindings/resource clones
     /// referencing retired storage before calling this operation. Never implicit.
     /// # Errors
     /// Poll failures preserve storage charges for retry.
@@ -233,7 +361,7 @@ impl ComputeMemoryBudget {
     /// Panics if the budget state or registry is poisoned.
     #[cfg(not(target_arch = "wasm32"))]
     pub fn discard_retired(&self) -> Result<(), ComputeError> {
-        let buffers = std::mem::take(
+        let resources = std::mem::take(
             &mut self
                 .0
                 .state
@@ -241,11 +369,11 @@ impl ComputeMemoryBudget {
                 .expect("compute memory state poisoned")
                 .retired,
         );
-        if buffers.is_empty() {
+        if resources.is_empty() {
             return Ok(());
         }
-        for buffer in &buffers {
-            buffer.destroy();
+        for resource in &resources {
+            resource.destroy();
         }
         if let Err(error) = self.0.device.poll(wgpu::PollType::wait_indefinitely()) {
             self.0
@@ -253,24 +381,23 @@ impl ComputeMemoryBudget {
                 .lock()
                 .expect("compute memory state poisoned")
                 .retired
-                .extend(buffers);
+                .extend(resources);
             return Err(ComputeError::Mapping(error.to_string()));
         }
         {
             let mut state = self.0.state.lock().expect("compute memory state poisoned");
-            state.stats.allocated_bytes -= buffers.iter().map(wgpu::Buffer::size).sum::<u64>();
-            state.stats.allocated_buffers -= buffers.len();
+            release_resources(&mut state, &resources);
         }
         update_pin(&self.0);
         Ok(())
     }
 }
 /// Completion ticket for nonblocking native/browser retirement. Dropping an
-/// unfinished ticket restores its buffers to the charged retirement queue.
+/// unfinished ticket restores its resources to the charged retirement queue.
 #[derive(Debug)]
 pub struct PendingComputeRetirement {
     owner: Arc<Inner>,
-    buffers: Option<Vec<wgpu::Buffer>>,
+    resources: Option<Vec<ManagedResource>>,
     receiver: std::sync::mpsc::Receiver<()>,
 }
 impl PendingComputeRetirement {
@@ -282,7 +409,7 @@ impl PendingComputeRetirement {
     /// # Panics
     /// Panics if the budget state or registry is poisoned.
     pub fn try_finish(&mut self) -> Result<bool, ComputeError> {
-        if self.buffers.is_none() {
+        if self.resources.is_none() {
             return Ok(true);
         }
         match self.receiver.try_recv() {
@@ -294,15 +421,14 @@ impl PendingComputeRetirement {
                 ));
             }
         }
-        let buffers = self.buffers.take().expect("unfinished retirement");
+        let resources = self.resources.take().expect("unfinished retirement");
         {
             let mut state = self
                 .owner
                 .state
                 .lock()
                 .expect("compute memory state poisoned");
-            state.stats.allocated_bytes -= buffers.iter().map(wgpu::Buffer::size).sum::<u64>();
-            state.stats.allocated_buffers -= buffers.len();
+            release_resources(&mut state, &resources);
         }
         update_pin(&self.owner);
         Ok(true)
@@ -310,13 +436,13 @@ impl PendingComputeRetirement {
 }
 impl Drop for PendingComputeRetirement {
     fn drop(&mut self) {
-        if let Some(buffers) = self.buffers.take() {
+        if let Some(resources) = self.resources.take() {
             self.owner
                 .state
                 .lock()
                 .expect("compute memory state poisoned")
                 .retired
-                .extend(buffers);
+                .extend(resources);
             update_pin(&self.owner);
         }
     }
@@ -338,29 +464,217 @@ impl std::ops::Deref for ComputeStorage {
 impl Drop for ComputeStorage {
     fn drop(&mut self) {
         let buffer = self.buffer.take().expect("live compute storage");
-        let mut state = self
-            .owner
-            .state
-            .lock()
-            .expect("compute memory state poisoned");
-        if state.require_retirement {
-            state.retired.push(buffer);
-            drop(state);
-            update_pin(&self.owner);
-        } else {
-            // Preserve ordinary wgpu lifetime management until the application
-            // opts into a bounded budget plus an explicit retirement cadence.
-            state.stats.allocated_bytes -= buffer.size();
-            state.stats.allocated_buffers -= 1;
-            drop(state);
-            drop(buffer);
-        }
+        retire_resource(&self.owner, ManagedResource::Buffer(buffer));
     }
+}
+
+/// Retains one shared colour allocation across material and HDR mip views.
+#[derive(Debug)]
+pub(crate) struct ManagedTexture {
+    owner: Arc<Inner>,
+    texture: Option<wgpu::Texture>,
+    bytes: u64,
+}
+impl ManagedTexture {
+    pub(crate) fn allocation_bytes(&self) -> u64 {
+        self.bytes
+    }
+}
+impl std::ops::Deref for ManagedTexture {
+    type Target = wgpu::Texture;
+    fn deref(&self) -> &Self::Target {
+        self.texture.as_ref().expect("live managed texture")
+    }
+}
+impl Drop for ManagedTexture {
+    fn drop(&mut self) {
+        retire_resource(
+            &self.owner,
+            ManagedResource::Texture {
+                texture: self.texture.take().expect("live managed texture"),
+                bytes: self.bytes,
+            },
+        );
+    }
+}
+fn colour_texture_bytes(
+    descriptor: &wgpu::TextureDescriptor<'_>,
+    limits: &wgpu::Limits,
+) -> Result<u64, ComputeError> {
+    let texel_bytes = match descriptor.format {
+        wgpu::TextureFormat::Rgba8Unorm
+        | wgpu::TextureFormat::Rgba8UnormSrgb
+        | wgpu::TextureFormat::Bgra8Unorm
+        | wgpu::TextureFormat::Bgra8UnormSrgb => 4_u64,
+        wgpu::TextureFormat::Rgba16Float => 8,
+        _ => return Err(ComputeError::InvalidBuffer),
+    };
+    let size = descriptor.size;
+    if descriptor.dimension != wgpu::TextureDimension::D2
+        || descriptor.sample_count != 1
+        || size.width == 0
+        || size.height == 0
+        || size.depth_or_array_layers == 0
+        || size.width > limits.max_texture_dimension_2d
+        || size.height > limits.max_texture_dimension_2d
+        || size.depth_or_array_layers > limits.max_texture_array_layers
+        || descriptor.mip_level_count == 0
+        || descriptor.mip_level_count > size.width.max(size.height).ilog2() + 1
+    {
+        return Err(ComputeError::InvalidBuffer);
+    }
+    let mut bytes = 0_u64;
+    for level in 0..descriptor.mip_level_count {
+        let level_bytes = u64::from((size.width >> level).max(1))
+            .checked_mul(u64::from((size.height >> level).max(1)))
+            .and_then(|n| n.checked_mul(u64::from(size.depth_or_array_layers)))
+            .and_then(|n| n.checked_mul(texel_bytes))
+            .ok_or(ComputeError::InvalidBuffer)?;
+        bytes = bytes
+            .checked_add(level_bytes)
+            .ok_or(ComputeError::InvalidBuffer)?;
+    }
+    Ok(bytes)
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
+    fn texture_descriptor(
+        width: u32,
+        height: u32,
+        levels: u32,
+        format: wgpu::TextureFormat,
+    ) -> wgpu::TextureDescriptor<'static> {
+        wgpu::TextureDescriptor {
+            label: Some("budget texture fixture"),
+            size: wgpu::Extent3d {
+                width,
+                height,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: levels,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        }
+    }
+    #[test]
+    fn texture_mip_payload_and_invalid_admission_are_exact() {
+        let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let limits = device.limits();
+        let rgba = texture_descriptor(4, 2, 3, wgpu::TextureFormat::Rgba8UnormSrgb);
+        assert_eq!(colour_texture_bytes(&rgba, &limits).unwrap(), 44);
+        let hdr = texture_descriptor(3, 2, 2, wgpu::TextureFormat::Rgba16Float);
+        assert_eq!(colour_texture_bytes(&hdr, &limits).unwrap(), 56);
+        let budget = ComputeMemoryBudget::configure(&device, 40).unwrap();
+        assert!(matches!(
+            budget.allocate_texture(&rgba),
+            Err(ComputeError::MemoryBudget)
+        ));
+        assert_eq!(budget.stats(), ComputeMemoryStats::default());
+        for invalid in [
+            texture_descriptor(0, 2, 1, wgpu::TextureFormat::Rgba8Unorm),
+            texture_descriptor(4, 2, 4, wgpu::TextureFormat::Rgba8Unorm),
+            texture_descriptor(4, 2, 0, wgpu::TextureFormat::Rgba8Unorm),
+            texture_descriptor(4, 2, 1, wgpu::TextureFormat::Depth32Float),
+        ] {
+            assert!(matches!(
+                budget.allocate_texture(&invalid),
+                Err(ComputeError::InvalidBuffer)
+            ));
+            assert_eq!(budget.stats(), ComputeMemoryStats::default());
+        }
+    }
+    #[test]
+    fn shared_texture_and_buffer_retirement_cancellation_keeps_all_charges() {
+        let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let budget = ComputeMemoryBudget::configure(&device, 92).unwrap();
+        let mut descriptor = texture_descriptor(4, 2, 3, wgpu::TextureFormat::Rgba8Unorm);
+        descriptor.size.depth_or_array_layers = 2;
+        let texture = budget.allocate_texture(&descriptor).unwrap();
+        let alias = texture.clone();
+        let buffer = budget.allocate_storage("mixed resource", &[0; 4]).unwrap();
+        assert_eq!(budget.stats().allocated_bytes, 92);
+        assert_eq!(budget.stats().allocated_textures, 1);
+        drop(texture);
+        assert_eq!(budget.stats().retired_textures, 0);
+        drop(alias);
+        drop(buffer);
+        assert_eq!(budget.stats().retired_textures, 1);
+        assert_eq!(budget.stats().retired_buffers, 1);
+        let pending = budget.begin_retirement(&queue);
+        assert_eq!(budget.stats().allocated_bytes, 92);
+        assert!(matches!(
+            budget.allocate_storage("pending fence", &[0; 4]),
+            Err(ComputeError::MemoryBudget)
+        ));
+        drop(pending);
+        assert_eq!(budget.stats().retired_textures, 1);
+        assert_eq!(budget.stats().retired_buffers, 1);
+        let mut pending = budget.begin_retirement(&queue);
+        let (sender, receiver) = std::sync::mpsc::channel();
+        drop(sender);
+        pending.receiver = receiver;
+        assert!(matches!(
+            pending.try_finish(),
+            Err(ComputeError::Mapping(_))
+        ));
+        assert_eq!(budget.stats().allocated_bytes, 92);
+        drop(pending);
+        budget.discard_retired().unwrap();
+        assert_eq!(budget.stats(), ComputeMemoryStats::default());
+    }
+    #[test]
+    fn unconfigured_texture_owners_keep_ordinary_lifetime() {
+        let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let budget = ComputeMemoryBudget::for_device(&device);
+        let texture = budget
+            .allocate_texture(&texture_descriptor(
+                1,
+                1,
+                1,
+                wgpu::TextureFormat::Rgba8Unorm,
+            ))
+            .unwrap();
+        assert_eq!(budget.stats().allocated_bytes, 4);
+        let alias = texture.clone();
+        drop(texture);
+        assert_eq!(budget.stats().allocated_bytes, 4);
+        drop(alias);
+        assert_eq!(budget.stats(), ComputeMemoryStats::default());
+    }
+    #[test]
+    fn batch_validation_and_admission_leave_no_partial_retirement() {
+        let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let budget = ComputeMemoryBudget::configure(&device, 8).unwrap();
+        let descriptor = |size, contents| ManagedBufferDescriptor {
+            label: "batch test",
+            size,
+            contents,
+            usage: wgpu::BufferUsages::STORAGE,
+        };
+        assert!(matches!(
+            budget.allocate_buffers([descriptor(4, Some(&[0; 4])), descriptor(4, Some(&[0; 3])),]),
+            Err(ComputeError::InvalidBuffer)
+        ));
+        assert_eq!(budget.stats(), ComputeMemoryStats::default());
+        assert!(matches!(
+            budget.allocate_buffers([descriptor(4, Some(&[0; 4])), descriptor(8, None),]),
+            Err(ComputeError::MemoryBudget)
+        ));
+        assert_eq!(budget.stats(), ComputeMemoryStats::default());
+        let buffers = budget
+            .allocate_buffers([descriptor(4, Some(&[0; 4])), descriptor(4, None)])
+            .unwrap();
+        assert_eq!(budget.stats().allocated_bytes, 8);
+        drop(buffers);
+        assert_eq!(budget.stats().retired_buffers, 2);
+        budget.discard_retired().unwrap();
+        assert_eq!(budget.stats(), ComputeMemoryStats::default());
+    }
     #[test]
     fn shared_limit_retains_retired_charge_after_last_owner() {
         let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());

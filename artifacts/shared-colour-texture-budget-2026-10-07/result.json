@@ -1,0 +1,60 @@
+{
+  "status": "Shared managed scene colour/HDR admission, mixed retirement and physical Metal readback passed",
+  "base_commit": "0d364e65a7655dcaa5f5073525f387bcbd4ce839",
+  "ledger": "existing per-device ComputeMemoryBudget; one mixed buffer/texture retirement queue",
+  "managed_paths": [
+    "SceneRenderer uploaded RGBA8 sRGB mip chains",
+    "SceneRenderer sampled colour attachments",
+    "HdrMipPyramid and retained planar material bindings"
+  ],
+  "formats": [
+    "RGBA8 linear/sRGB",
+    "BGRA8 linear/sRGB",
+    "RGBA16Float"
+  ],
+  "dimensional_scope": "2D, single sample, checked mip/layer payload; compressed/depth/3D/MSAA are not admitted by this helper",
+  "shared_views": "Arc of one ManagedTexture; no extra charge for sampler/mip views",
+  "stats": "allocated_bytes includes all managed buffer/colour payload; existing buffer counts retained and texture counts added",
+  "new_gpu_fixture": {
+    "image_mips_bytes": 44,
+    "hdr_npot_mips_bytes": 56,
+    "competing_resources": "existing mesh and compute storage",
+    "rejected_paths": [
+      "image upload",
+      "sampled colour attachment",
+      "HDR pyramid"
+    ],
+    "uploaded_mips_after_rejection": "three GPU textureLoad colours read back exactly",
+    "mixed_retirement": "buffer and texture charges retained until explicit queue ticket completion; idempotent finish",
+    "final_charged_bytes": 0
+  },
+  "checks": {
+    "renderer_passed": 151,
+    "renderer_ignored": 21,
+    "explicit_gpu_passed": 20,
+    "focused_memory_passed": 10,
+    "wasm_browser_build": "passed",
+    "hdr_mips_channel_references_passed": 556,
+    "material_mips_numeric_probe": "passed",
+    "planar_capture_numeric_probe": "passed",
+    "format": "passed",
+    "diff_check": "passed"
+  },
+  "physical_adapter": "Apple M4 Max",
+  "physical_backend": "Metal",
+  "remaining_scope": [
+    "depth/MSAA/3D/compressed/environment and other allocation paths",
+    "transform uniforms",
+    "automatic/default retirement coordination",
+    "external raw texture/view clones require caller lifetime discipline",
+    "CUDA/all hardware and driver/device-loss recovery",
+    "full calibrated tissue clip"
+  ],
+  "sources_sha256": {
+    "crates/voxy_render/src/compute_memory.rs": "717c6f538ebe0e062383a9786adb9bcdbef67ae6ebbb678c21e786a2d40595ee",
+    "crates/voxy_render/src/scene.rs": "c87e1058fc30f557c981e806be6ccad9e6cfdd2c52ce16ebf4c8e6d7309f3ee7",
+    "crates/voxy_render/src/hdr_mips.rs": "46e9685c3e06d9235afaf5d6ddb5784d9d58e976bbd9fc04ecf794709572011c",
+    "crates/voxy_render/src/planar_capture.rs": "d0da91d65801c8a3b79834b6e9f0e71e2832690e33dd4e66fe6cb4129f30d14b"
+  },
+  "full_goal_complete": false
+}

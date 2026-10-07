@@ -1,0 +1,7 @@
+
+running 1 test
+LIVE_PREFIX_ENERGY_AUDIT committed_frames=26 last_time_s=0.10833333333333334 maximum_frame_defect_j=1.05304653885696098e-13 final_cumulative_defect_j=1.64090963039598137e-13 full_clip_qualified=false
+test collision_tests::audits_committed_rig_energy_prefix ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 68 filtered out; finished in 0.00s
+

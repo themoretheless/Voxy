@@ -114,9 +114,30 @@ pub enum SceneError {
     InvalidTexture,
     InvalidTransform,
     GeometryCapacityExceeded,
+    MemoryBudget,
     MultisamplingNotEnabled,
     TimestampQueriesNotEnabled,
     DeviceMismatch,
+}
+fn scene_memory_error(error: crate::ComputeError) -> SceneError {
+    match error {
+        crate::ComputeError::MemoryBudget => SceneError::MemoryBudget,
+        _ => SceneError::InvalidGeometry,
+    }
+}
+fn managed_scene_indices(
+    device: &wgpu::Device,
+    indices: &[u32],
+) -> Result<std::sync::Arc<crate::ComputeStorage>, SceneError> {
+    let [buffer] = crate::ComputeMemoryBudget::for_device(device)
+        .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+            label: "scene LOD indices",
+            size: indices.len() as u64 * 4,
+            contents: Some(bytemuck::cast_slice(indices)),
+            usage: wgpu::BufferUsages::INDEX,
+        }])
+        .map_err(scene_memory_error)?;
+    Ok(std::sync::Arc::new(buffer))
 }
 impl std::fmt::Display for SceneError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -373,17 +394,23 @@ pub enum SceneDepthMode {
 #[derive(Debug)]
 pub struct SceneGeometry {
     device: wgpu::Device,
-    vertices: wgpu::Buffer,
-    normals: wgpu::Buffer,
+    vertices: std::sync::Arc<crate::ComputeStorage>,
+    normals: std::sync::Arc<crate::ComputeStorage>,
     normal_cache: NormalCache,
-    material_coordinates: wgpu::Buffer,
+    material_coordinates: std::sync::Arc<crate::ComputeStorage>,
     coordinate_cache: Vec<[f32; 3]>,
-    material_parameters: wgpu::Buffer,
-    indices: wgpu::Buffer,
+    material_parameters: std::sync::Arc<crate::ComputeStorage>,
+    indices: std::sync::Arc<crate::ComputeStorage>,
     index_count: u32,
     vertex_capacity: usize,
     index_capacity: usize,
     depth_mode: SceneDepthMode,
+}
+
+/// Additional resource owners publish with their geometry after one admission.
+struct UploadedGeometryBatch {
+    geometries: Vec<SceneGeometry>,
+    additional_buffers: Vec<std::sync::Arc<crate::ComputeStorage>>,
 }
 
 impl SceneGeometry {
@@ -497,7 +524,7 @@ fn geometry_sizes(
 pub struct SceneTexture {
     device: wgpu::Device,
     bind_group: wgpu::BindGroup,
-    texture: wgpu::Texture,
+    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
     sampler: wgpu::Sampler,
 }
 impl SceneTexture {
@@ -508,6 +535,11 @@ impl SceneTexture {
     #[must_use]
     pub fn texture(&self) -> &wgpu::Texture {
         &self.texture
+    }
+    /// Logical payload across all allocated mip levels, shared by material views.
+    #[must_use]
+    pub fn allocation_bytes(&self) -> u64 {
+        self.texture.allocation_bytes()
     }
     /// Reuse the material's wrapping/filtering/anisotropy configuration.
     #[must_use]
@@ -1242,49 +1274,118 @@ impl SceneRenderer {
         mesh: &SceneMesh,
         additional_vertex_usage: wgpu::BufferUsages,
     ) -> Result<SceneGeometry, SceneError> {
+        let mut geometry = self.upload_mesh_index_variants(
+            device,
+            mesh,
+            &[mesh.indices()],
+            additional_vertex_usage,
+        )?;
+        Ok(geometry.remove(0))
+    }
+
+    fn upload_mesh_index_variants(
+        &self,
+        device: &wgpu::Device,
+        mesh: &SceneMesh,
+        variants: &[&[u32]],
+        additional_vertex_usage: wgpu::BufferUsages,
+    ) -> Result<Vec<SceneGeometry>, SceneError> {
+        Ok(self
+            .upload_mesh_buffer_batch(device, mesh, variants, additional_vertex_usage, &[])?
+            .geometries)
+    }
+
+    fn upload_mesh_buffer_batch(
+        &self,
+        device: &wgpu::Device,
+        mesh: &SceneMesh,
+        variants: &[&[u32]],
+        additional_vertex_usage: wgpu::BufferUsages,
+        additional_buffers: &[crate::compute_memory::ManagedBufferDescriptor<'_>],
+    ) -> Result<UploadedGeometryBatch, SceneError> {
+        use crate::compute_memory::ManagedBufferDescriptor;
         let device = self.resource_device(device)?;
         mesh.validate_for_upload()?;
-        geometry_sizes(device, mesh.vertices.len(), mesh.indices.len())?;
+        if variants.is_empty() {
+            return Err(SceneError::InvalidGeometry);
+        }
+        for indices in variants {
+            geometry_sizes(device, mesh.vertices.len(), indices.len())?;
+            if indices.iter().any(|i| *i as usize >= mesh.vertices.len()) {
+                return Err(SceneError::InvalidIndex);
+            }
+        }
         let normal_cache = NormalCache::from_mesh(mesh);
         let coordinates = mesh.material_coordinates();
-        Ok(SceneGeometry {
-            device: device.clone(),
-            vertices: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene vertices"),
-                contents: bytemuck::cast_slice(&mesh.vertices),
-                usage: wgpu::BufferUsages::VERTEX
-                    | wgpu::BufferUsages::COPY_DST
-                    | additional_vertex_usage,
-            }),
-            normals: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene smooth normals"),
-                contents: bytemuck::cast_slice(&normal_cache.normals),
-                usage: wgpu::BufferUsages::VERTEX
-                    | wgpu::BufferUsages::COPY_DST
-                    | additional_vertex_usage,
-            }),
-            normal_cache,
-            material_coordinates: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene material coordinates"),
-                contents: bytemuck::cast_slice(coordinates.as_ref()),
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-            }),
-            coordinate_cache: coordinates.into_owned(),
-            material_parameters: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene material parameters"),
-                contents: bytemuck::cast_slice(&mesh.material_parameters),
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-            }),
-            indices: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene indices"),
-                contents: bytemuck::cast_slice(&mesh.indices),
-                usage: wgpu::BufferUsages::INDEX | wgpu::BufferUsages::COPY_DST,
-            }),
-            index_count: u32::try_from(mesh.indices.len())
-                .map_err(|_| SceneError::InvalidGeometry)?,
-            depth_mode: SceneDepthMode::Opaque,
-            vertex_capacity: mesh.vertices.len(),
-            index_capacity: mesh.indices.len(),
+        let vertex_usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
+        let data = [
+            bytemuck::cast_slice(&mesh.vertices),
+            bytemuck::cast_slice(&normal_cache.normals),
+            bytemuck::cast_slice(coordinates.as_ref()),
+            bytemuck::cast_slice(&mesh.material_parameters),
+        ];
+        let labels = [
+            "scene vertices",
+            "scene smooth normals",
+            "scene material coordinates",
+            "scene material parameters",
+        ];
+        let usages = [
+            vertex_usage | additional_vertex_usage,
+            vertex_usage | additional_vertex_usage,
+            vertex_usage,
+            vertex_usage,
+        ];
+        let mut descriptors: Vec<_> = (0..4)
+            .map(|i| ManagedBufferDescriptor {
+                label: labels[i],
+                size: data[i].len() as u64,
+                contents: Some(data[i]),
+                usage: usages[i],
+            })
+            .collect();
+        descriptors.extend(variants.iter().map(|indices| ManagedBufferDescriptor {
+            label: "scene indices",
+            size: indices.len() as u64 * 4,
+            contents: Some(bytemuck::cast_slice(indices)),
+            usage: wgpu::BufferUsages::INDEX | wgpu::BufferUsages::COPY_DST,
+        }));
+        descriptors.extend_from_slice(additional_buffers);
+        let mut buffers = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_buffer_batch(&descriptors)
+            .map_err(scene_memory_error)?
+            .into_iter()
+            .map(std::sync::Arc::new);
+        let vertices = buffers.next().expect("validated vertex stream");
+        let normals = buffers.next().expect("validated normal stream");
+        let material_coordinates = buffers.next().expect("validated coordinate stream");
+        let material_parameters = buffers.next().expect("validated parameter stream");
+        let mut cache = Some((normal_cache, coordinates.into_owned()));
+        let geometries = buffers
+            .by_ref()
+            .take(variants.len())
+            .zip(variants)
+            .map(|(indices, source)| {
+                let (normal_cache, coordinate_cache) = cache.take().unwrap_or_default();
+                SceneGeometry {
+                    device: device.clone(),
+                    vertices: vertices.clone(),
+                    normals: normals.clone(),
+                    normal_cache,
+                    material_coordinates: material_coordinates.clone(),
+                    coordinate_cache,
+                    material_parameters: material_parameters.clone(),
+                    indices,
+                    index_count: source.len() as u32,
+                    depth_mode: SceneDepthMode::Opaque,
+                    vertex_capacity: mesh.vertices.len(),
+                    index_capacity: source.len(),
+                }
+            })
+            .collect();
+        Ok(UploadedGeometryBatch {
+            geometries,
+            additional_buffers: buffers.collect(),
         })
     }
 
@@ -1317,39 +1418,52 @@ impl SceneRenderer {
     ) -> Result<SceneGeometry, SceneError> {
         let device = self.resource_device(device)?;
         let (vertex_bytes, index_bytes) = geometry_sizes(device, vertex_capacity, index_capacity)?;
+        use crate::compute_memory::ManagedBufferDescriptor;
+        let vertex_usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
+        let parameters = [1.333_f32, 0.2, 0.08, 0.04];
+        let sizes = [
+            vertex_bytes,
+            vertex_capacity as u64 * 12,
+            vertex_capacity as u64 * 12,
+            16,
+            index_bytes,
+        ];
+        let labels = [
+            "reserved scene vertices",
+            "reserved scene normals",
+            "reserved material coordinates",
+            "reserved scene material parameters",
+            "reserved scene indices",
+        ];
+        let descriptors = std::array::from_fn(|i| ManagedBufferDescriptor {
+            label: labels[i],
+            size: sizes[i],
+            contents: (i == 3).then(|| bytemuck::cast_slice(&parameters)),
+            usage: if i == 4 {
+                wgpu::BufferUsages::INDEX | wgpu::BufferUsages::COPY_DST
+            } else {
+                vertex_usage
+            },
+        });
+        let [
+            vertices,
+            normals,
+            material_coordinates,
+            material_parameters,
+            indices,
+        ] = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_buffers(descriptors)
+            .map_err(scene_memory_error)?
+            .map(std::sync::Arc::new);
         Ok(SceneGeometry {
             device: device.clone(),
-            vertices: device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("reserved scene vertices"),
-                size: vertex_bytes,
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            }),
+            vertices,
+            normals,
+            material_coordinates,
+            material_parameters,
+            indices,
             normal_cache: NormalCache::default(),
             coordinate_cache: Vec::new(),
-            material_coordinates: device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("reserved material coordinates"),
-                size: vertex_capacity as u64 * 12,
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            }),
-            material_parameters: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("reserved scene material parameters"),
-                contents: bytemuck::cast_slice(&[1.333_f32, 0.2, 0.08, 0.04]),
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-            }),
-            normals: device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("reserved scene normals"),
-                size: (vertex_capacity as u64) * 12,
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            }),
-            indices: device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("reserved scene indices"),
-                size: index_bytes,
-                usage: wgpu::BufferUsages::INDEX | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            }),
             index_count: 0,
             depth_mode: SceneDepthMode::Opaque,
             vertex_capacity,
@@ -1479,20 +1593,26 @@ impl SceneRenderer {
                 return Err(SceneError::InvalidTexture);
             }
         }
-        let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("scene image"),
-            size: wgpu::Extent3d {
-                width,
-                height,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: u32::try_from(levels.len()).map_err(|_| SceneError::InvalidTexture)?,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba8UnormSrgb,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
+        let texture = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_texture(&wgpu::TextureDescriptor {
+                label: Some("scene image"),
+                size: wgpu::Extent3d {
+                    width,
+                    height,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: u32::try_from(levels.len())
+                    .map_err(|_| SceneError::InvalidTexture)?,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: wgpu::TextureFormat::Rgba8UnormSrgb,
+                usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+                view_formats: &[],
+            })
+            .map_err(|error| match error {
+                crate::ComputeError::MemoryBudget => SceneError::MemoryBudget,
+                _ => SceneError::InvalidTexture,
+            })?;
         for (level, &(w, h, rgba)) in levels.iter().enumerate() {
             queue.write_texture(
                 wgpu::TexelCopyTextureInfo {
@@ -1553,23 +1673,28 @@ impl SceneRenderer {
         {
             return Err(SceneError::InvalidTexture);
         }
-        let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("sampled opaque scene colour"),
-            size: wgpu::Extent3d {
-                width,
-                height,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: self.color_format,
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT
-                | wgpu::TextureUsages::TEXTURE_BINDING
-                | wgpu::TextureUsages::COPY_SRC
-                | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
+        let texture = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_texture(&wgpu::TextureDescriptor {
+                label: Some("sampled opaque scene colour"),
+                size: wgpu::Extent3d {
+                    width,
+                    height,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: self.color_format,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
+                    | wgpu::TextureUsages::TEXTURE_BINDING
+                    | wgpu::TextureUsages::COPY_SRC
+                    | wgpu::TextureUsages::COPY_DST,
+                view_formats: &[],
+            })
+            .map_err(|error| match error {
+                crate::ComputeError::MemoryBudget => SceneError::MemoryBudget,
+                _ => SceneError::InvalidTexture,
+            })?;
         self.bind_image(
             device,
             texture,
@@ -1602,7 +1727,7 @@ impl SceneRenderer {
     pub(crate) fn bind_image(
         &self,
         device: &wgpu::Device,
-        texture: wgpu::Texture,
+        texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
         sampling: TextureSampling,
         mip_levels: u32,
     ) -> Result<SceneTexture, SceneError> {
@@ -2985,7 +3110,7 @@ mod tests {
         }
         let mut reserved = renderer.reserve_geometry(&device, 8, 12).unwrap();
         assert_eq!(reserved.capacity(), (8, 12));
-        assert_eq!(reserved.index_count(), 0);
+        assert_eq!(reserved.index_count, 0);
         let mesh = SceneMesh::quad([1.0; 4]);
         let mut geometry = renderer.upload_mesh(&device, &mesh).unwrap();
         let triangle = SceneMesh::new(mesh.vertices.clone(), vec![0, 1, 2]).unwrap();
@@ -3031,3 +3156,298 @@ pub use skinning::{
     SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource,
     SceneSkinner,
 };
+
+#[cfg(test)]
+mod memory_tests {
+    use super::*;
+    use crate::{ComputeError, ComputeMemoryBudget, LodIndexSet};
+
+    fn read_vertices(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        geometry: &SceneGeometry,
+    ) -> Vec<u8> {
+        let size = geometry.vertices.size();
+        let readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("budget regression readback"),
+            size,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        encoder.copy_buffer_to_buffer(&geometry.vertices, 0, &readback, 0, size);
+        queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        readback
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |result| {
+                tx.send(result).unwrap();
+            });
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        rx.recv().unwrap().unwrap();
+        let data = readback.slice(..).get_mapped_range().unwrap().to_vec();
+        readback.unmap();
+        data
+    }
+
+    #[test]
+    #[ignore = "requires physical GPU; shared mesh budget and retirement qualification"]
+    fn gpu_shared_mesh_budget_preserves_replacement_and_lod_owners() {
+        let instance = crate::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default()))
+            .expect("physical GPU required for mesh budget qualification");
+        eprintln!("mesh budget adapter: {:?}", adapter.get_info());
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let mesh = SceneMesh::quad([1.; 4]);
+        let bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
+        let variants = LodIndexSet::new(
+            mesh.vertices.len(),
+            vec![(0., mesh.indices.clone()), (0.01, mesh.indices.clone())],
+        )
+        .unwrap();
+        let bundle_bytes = SceneRenderer::lod_mesh_allocation_bytes(&mesh, &variants).unwrap();
+        let budget = ComputeMemoryBudget::configure(&device, bundle_bytes + 20).unwrap();
+        let compute = budget
+            .allocate_storage("shared compute owner", &[0; 4])
+            .unwrap();
+        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+        // Extra copy usage only for independent GPU-byte verification.
+        let mut geometry = renderer
+            .upload_mesh_with_usage(&device, &mesh, wgpu::BufferUsages::COPY_SRC)
+            .unwrap();
+        geometry.set_depth_mode(SceneDepthMode::Xray);
+        assert_eq!(budget.stats().allocated_bytes, bytes + 4);
+        let expected = bytemuck::cast_slice::<SceneVertex, u8>(&mesh.vertices).to_vec();
+        assert_eq!(read_vertices(&device, &queue, &geometry), expected);
+        let before = budget.stats();
+        assert_eq!(
+            renderer.replace_mesh(&device, &mut geometry, &mesh),
+            Err(SceneError::MemoryBudget)
+        );
+        assert_eq!(geometry.depth_mode(), SceneDepthMode::Xray);
+        assert_eq!(budget.stats(), before);
+        assert_eq!(read_vertices(&device, &queue, &geometry), expected);
+        // Enough room for early individual buffers, but not a complete bundle:
+        // failed upload must neither allocate nor retire a partial candidate.
+        assert!(matches!(
+            renderer.upload_lod_mesh(&device, &mesh, &variants),
+            Err(SceneError::MemoryBudget)
+        ));
+        assert!(matches!(
+            renderer.reserve_geometry(&device, mesh.vertices.len(), mesh.indices.len()),
+            Err(SceneError::MemoryBudget)
+        ));
+        assert_eq!(budget.stats(), before);
+        let spare = budget
+            .allocate_storage("no partial budget leak", &[0; 16])
+            .unwrap();
+        drop(spare);
+        drop(compute);
+        drop(geometry);
+        assert_eq!(budget.stats().allocated_bytes, bytes + 20);
+        budget.discard_retired().unwrap();
+        assert_eq!(budget.stats().allocated_bytes, 0);
+
+        let mut bundle = renderer.upload_lod_mesh(&device, &mesh, &variants).unwrap();
+        assert_eq!(budget.stats().allocated_bytes, bundle_bytes);
+        assert_eq!(budget.stats().allocated_buffers, 6); // Four shared streams, two indices.
+        let vertex_owner = bundle.level(1).unwrap().vertices.clone();
+        let shared_bytes = vertex_owner.size();
+        assert_eq!(
+            renderer.replace_lod_mesh(&device, &mut bundle, &mesh, &variants),
+            Err(SceneError::MemoryBudget)
+        );
+        assert_eq!(budget.stats().allocated_bytes, bundle_bytes);
+        assert_eq!(budget.stats().retired_buffers, 0);
+        drop(bundle);
+        assert_eq!(budget.stats().retired_buffers, 5);
+        budget.discard_retired().unwrap();
+        assert_eq!(budget.stats().allocated_bytes, shared_bytes);
+        assert_eq!(budget.stats().allocated_buffers, 1);
+        drop(vertex_owner);
+        assert_eq!(budget.stats().retired_buffers, 1);
+        budget.discard_retired().unwrap();
+        assert_eq!(budget.stats().allocated_bytes, 0);
+        let reserved = renderer
+            .reserve_geometry(&device, mesh.vertices.len(), mesh.indices.len())
+            .unwrap();
+        assert_eq!(budget.stats().allocated_bytes, bytes);
+        assert_eq!(reserved.index_count, 0);
+        drop(reserved);
+        budget.discard_retired().unwrap();
+        assert_eq!(budget.stats().allocated_bytes, 0);
+        assert!(pollster::block_on(scope.pop()).is_none());
+        assert!(matches!(
+            budget.allocate_storage("exhaustion", &vec![0; (bundle_bytes + 24) as usize]),
+            Err(ComputeError::MemoryBudget)
+        ));
+    }
+}
+
+#[cfg(test)]
+mod texture_memory_tests {
+    use super::*;
+    #[test]
+    #[ignore = "requires physical GPU; shared colour mip/HDR admission and lifetime"]
+    fn gpu_image_hdr_budget_shares_views_and_preserves_uploaded_mips() {
+        let gpu = crate::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
+        eprintln!("texture budget adapter: {:?}", adapter.get_info());
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let mesh = SceneMesh::quad([1.; 4]);
+        let mesh_bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
+        let budget =
+            crate::ComputeMemoryBudget::configure(&device, mesh_bytes + 44 + 56 + 4).unwrap();
+        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+        let geometry = renderer.upload_mesh(&device, &mesh).unwrap();
+        let compute = budget.allocate_storage("shared compute", &[0; 4]).unwrap();
+        let base = [255, 0, 0, 255].repeat(8);
+        let middle = [0, 255, 0, 255].repeat(2);
+        let tail = [0, 0, 255, 255];
+        let image = renderer
+            .upload_texture_levels(
+                &device,
+                &queue,
+                &[(4, 2, &base), (2, 1, &middle), (1, 1, &tail)],
+                TextureSampling::default(),
+            )
+            .unwrap();
+        assert_eq!(image.allocation_bytes(), 44);
+        let alias = renderer
+            .texture_binding(&device, &image, TextureSampling::default(), 1)
+            .unwrap();
+        let before = budget.stats();
+        assert_eq!(before.allocated_textures, 1);
+        assert!(matches!(
+            renderer.texture_binding(&device, &image, TextureSampling::default(), 4),
+            Err(SceneError::InvalidTexture)
+        ));
+        assert_eq!(budget.stats(), before);
+        let hdr = crate::HdrMipPyramid::new(&device, 3, 2).unwrap();
+        assert_eq!(hdr.allocation_bytes(), 56);
+        let hdr_alias = renderer
+            .bind_image(
+                &device,
+                hdr.managed_texture(),
+                TextureSampling::default(),
+                2,
+            )
+            .unwrap();
+        assert_eq!(hdr_alias.allocation_bytes(), 56);
+        assert_eq!(budget.stats().allocated_bytes, mesh_bytes + 104);
+        assert_eq!(budget.stats().allocated_textures, 2);
+        assert_eq!(budget.stats().allocated_buffers, 6);
+        let full = budget.stats();
+        assert!(matches!(
+            renderer.upload_texture(&device, &queue, 1, 1, &[255; 4]),
+            Err(SceneError::MemoryBudget)
+        ));
+        assert!(matches!(
+            renderer.create_sampled_color(&device, 1, 1),
+            Err(SceneError::MemoryBudget)
+        ));
+        assert!(matches!(
+            crate::HdrMipPyramid::new(&device, 1, 1),
+            Err(crate::RendererError::Scene(SceneError::MemoryBudget))
+        ));
+        assert_eq!(budget.stats(), full);
+
+        // Independently read the GPU's three uploaded sRGB mip texels after
+        // failed admission. End-point primary colours decode exactly to 0/1.
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("mip budget readback"), source: wgpu::ShaderSource::Wgsl(r#"
+                @group(0) @binding(0) var image: texture_2d<f32>;
+                @group(0) @binding(1) var<storage, read_write> colors: array<vec4<f32>, 3>;
+                @compute @workgroup_size(1) fn main() {
+                    for (var i = 0u; i < 3u; i++) { colors[i] = textureLoad(image, vec2<i32>(0), i32(i)); }
+                }
+            "#.into()),
+        });
+        let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: None,
+            module: &shader,
+            entry_point: Some("main"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let result = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 48,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let staging = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 48,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let view = image.texture().create_view(&Default::default());
+        let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &pipeline.get_bind_group_layout(0),
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::TextureView(&view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.as_entire_binding(),
+                },
+            ],
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        {
+            let mut pass = encoder.begin_compute_pass(&Default::default());
+            pass.set_pipeline(&pipeline);
+            pass.set_bind_group(0, &binding, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        encoder.copy_buffer_to_buffer(&result, 0, &staging, 0, 48);
+        queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        staging.slice(..).map_async(wgpu::MapMode::Read, move |r| {
+            tx.send(r).unwrap();
+        });
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        rx.recv().unwrap().unwrap();
+        let mapped = staging.slice(..).get_mapped_range().unwrap();
+        assert_eq!(
+            bytemuck::cast_slice::<u8, [f32; 4]>(&mapped),
+            &[[1., 0., 0., 1.], [0., 1., 0., 1.], [0., 0., 1., 1.]]
+        );
+        drop(mapped);
+        staging.unmap();
+        drop((view, binding, pipeline));
+        drop(image);
+        drop(hdr);
+        assert_eq!(budget.stats().retired_textures, 0);
+        drop(alias);
+        drop(hdr_alias);
+        drop(geometry);
+        drop(compute);
+        assert_eq!(budget.stats().retired_textures, 2);
+        assert_eq!(budget.stats().retired_buffers, 6);
+        let mut ticket = budget.begin_retirement(&queue);
+        assert_eq!(budget.stats().allocated_bytes, mesh_bytes + 104);
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        assert!(ticket.try_finish().unwrap());
+        assert!(ticket.try_finish().unwrap());
+        assert_eq!(budget.stats(), crate::ComputeMemoryStats::default());
+        let replacement = renderer.create_sampled_color(&device, 1, 1).unwrap();
+        assert_eq!(replacement.allocation_bytes(), 4);
+        drop(replacement);
+        budget.discard_retired().unwrap();
+        assert_eq!(budget.stats(), crate::ComputeMemoryStats::default());
+        assert!(pollster::block_on(scope.pop()).is_none());
+        eprintln!(
+            "TEXTURE_DEVICE_BUDGET_PASS image_mips_bytes=44 hdr_npot_mips_bytes=56 views_share_owner=true uploaded_mips_survive_rejection=true final_charged_bytes=0"
+        );
+    }
+}

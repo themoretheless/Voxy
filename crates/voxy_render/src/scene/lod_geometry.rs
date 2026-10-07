@@ -3,7 +3,6 @@ use crate::{
     CertifiedLodIndexSet, LodError, LodIndexSet, LodLevel, LodPolicy, SceneCamera, SceneLodBounds,
 };
 use std::sync::{Arc, Weak};
-use wgpu::util::DeviceExt;
 
 /// Selection history owned by one instance/view, without retaining GPU resources.
 /// Bundle replacement automatically discards stale previous-level state.
@@ -229,11 +228,7 @@ impl SceneRenderer {
         if bytes > bundle_budget.saturating_sub(target.allocation_bytes) {
             return Err(SceneError::GeometryCapacityExceeded);
         }
-        let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("streamed scene LOD indices"),
-            contents: bytemuck::cast_slice(indices),
-            usage: wgpu::BufferUsages::INDEX,
-        });
+        let buffer = super::managed_scene_indices(device, indices)?;
         let geometry = SceneGeometry {
             device: device.clone(),
             vertices: base.vertices.clone(),
@@ -347,32 +342,17 @@ impl SceneRenderer {
         for level in variants.levels() {
             geometry_sizes(device, mesh.vertices.len(), level.index_count as usize)?;
         }
-        let base = self.upload_mesh(device, mesh)?;
-        let mut allocation_bytes = base.allocation_bytes();
-        let mut levels = Vec::with_capacity(variants.levels().len());
-        for index in 1..variants.levels().len() {
-            let indices = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene LOD indices"),
-                contents: bytemuck::cast_slice(variants.indices(index).unwrap_or_default()),
-                usage: wgpu::BufferUsages::INDEX,
-            });
-            allocation_bytes += indices.size();
-            levels.push(Some(SceneGeometry {
-                device: device.clone(),
-                vertices: base.vertices.clone(),
-                normals: base.normals.clone(),
-                normal_cache: NormalCache::default(),
-                material_coordinates: base.material_coordinates.clone(),
-                coordinate_cache: Vec::new(),
-                material_parameters: base.material_parameters.clone(),
-                indices,
-                index_count: variants.levels()[index].index_count,
-                vertex_capacity: base.vertex_capacity,
-                index_capacity: variants.levels()[index].index_count as usize,
-                depth_mode: base.depth_mode,
-            }));
-        }
-        levels.insert(0, Some(base));
+        let index_variants: Vec<_> = (0..variants.levels().len())
+            .map(|i| variants.indices(i).unwrap_or_default())
+            .collect();
+        let uploaded = self.upload_mesh_index_variants(
+            device,
+            mesh,
+            &index_variants,
+            wgpu::BufferUsages::empty(),
+        )?;
+        let allocation_bytes = Self::lod_mesh_allocation_bytes(mesh, variants)?;
+        let levels = uploaded.into_iter().map(Some).collect();
         Ok(SceneLodGeometry {
             identity: Arc::new(()),
             certified_geometric_errors: false,
@@ -457,14 +437,14 @@ mod tests {
                 .unwrap()
         );
         assert_eq!(bundle.allocation_bytes(), base_bytes + 12);
-        assert_eq!(
-            bundle.level(0).unwrap().vertices,
-            bundle.level(1).unwrap().vertices
-        );
-        assert_eq!(
-            bundle.level(0).unwrap().normals,
-            bundle.level(1).unwrap().normals
-        );
+        assert!(std::sync::Arc::ptr_eq(
+            &bundle.level(0).unwrap().vertices,
+            &bundle.level(1).unwrap().vertices
+        ));
+        assert!(std::sync::Arc::ptr_eq(
+            &bundle.level(0).unwrap().normals,
+            &bundle.level(1).unwrap().normals
+        ));
         assert_eq!(bundle.select(policy, 1., 1., None).unwrap().0, 1);
         assert!(
             !renderer
@@ -488,6 +468,55 @@ mod tests {
             Err(SceneError::DeviceMismatch)
         ));
         assert_eq!(bundle.allocation_bytes(), base_bytes + 12);
+
+        // The independent device ledger also includes compute and retired LOD
+        // indices, beyond the bundle's caller-provided residency limit.
+        let (bounded_device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let shared =
+            crate::ComputeMemoryBudget::configure(&bounded_device, base_bytes + 12).unwrap();
+        let bounded_renderer = SceneRenderer::new(&bounded_device, wgpu::TextureFormat::Rgba8Unorm);
+        let mut bounded = bounded_renderer
+            .upload_streaming_certified_lod_mesh(&bounded_device, &mesh, source)
+            .unwrap();
+        let compute = shared
+            .allocate_storage("competing compute", &[0; 12])
+            .unwrap();
+        let before = shared.stats();
+        assert_eq!(
+            bounded_renderer.ensure_lod_level(&bounded_device, &mut bounded, 1, base_bytes + 12),
+            Err(SceneError::MemoryBudget)
+        );
+        assert_eq!(shared.stats(), before);
+        assert!(bounded.level(1).is_none());
+        assert_eq!(bounded.allocation_bytes(), base_bytes);
+        drop(compute);
+        assert_eq!(
+            bounded_renderer.ensure_lod_level(&bounded_device, &mut bounded, 1, base_bytes + 12),
+            Err(SceneError::MemoryBudget)
+        );
+        shared.discard_retired().unwrap();
+        assert!(
+            bounded_renderer
+                .ensure_lod_level(&bounded_device, &mut bounded, 1, base_bytes + 12)
+                .unwrap()
+        );
+        assert_eq!(shared.stats().allocated_bytes, base_bytes + 12);
+        assert!(bounded.evict_level(1).unwrap());
+        assert_eq!(bounded.allocation_bytes(), base_bytes);
+        assert_eq!(shared.stats().retired_buffers, 1);
+        assert_eq!(
+            bounded_renderer.ensure_lod_level(&bounded_device, &mut bounded, 1, base_bytes + 12),
+            Err(SceneError::MemoryBudget)
+        );
+        shared.discard_retired().unwrap();
+        assert!(
+            bounded_renderer
+                .ensure_lod_level(&bounded_device, &mut bounded, 1, base_bytes + 12)
+                .unwrap()
+        );
+        drop(bounded);
+        shared.discard_retired().unwrap();
+        assert_eq!(shared.stats().allocated_bytes, 0);
     }
     #[test]
     fn certified_upload_rejects_changed_positions_and_preserves_last_good() {
@@ -524,7 +553,10 @@ mod tests {
         ));
         assert!(published.has_certified_geometric_errors());
         assert_eq!(published.allocation_bytes(), bytes);
-        assert_eq!(published.level(0).unwrap().vertices, buffer);
+        assert!(std::sync::Arc::ptr_eq(
+            &published.level(0).unwrap().vertices,
+            &buffer
+        ));
         mesh.vertices[0].position[2] = 0.0;
         mesh.indices = vec![0, 2, 1];
         assert!(matches!(
@@ -735,7 +767,10 @@ mod tests {
                 .replace_lod_mesh(&device, &mut published, &mesh, &wrong_domain)
                 .is_err()
         );
-        assert_eq!(published.level(0).unwrap().vertices, previous_buffer);
+        assert!(std::sync::Arc::ptr_eq(
+            &published.level(0).unwrap().vertices,
+            &previous_buffer
+        ));
         assert_eq!(published.allocation_bytes(), previous_bytes);
         assert!(matches!(
             renderer.upload_lod_mesh(&device, &mesh, &wrong_domain),
@@ -807,11 +842,17 @@ mod tests {
                 .0,
             0
         );
-        assert_eq!(base.vertices, coarse.vertices);
-        assert_eq!(base.normals, coarse.normals);
-        assert_eq!(base.material_coordinates, coarse.material_coordinates);
-        assert_eq!(base.material_parameters, coarse.material_parameters);
-        assert_ne!(base.indices, coarse.indices);
+        assert!(std::sync::Arc::ptr_eq(&base.vertices, &coarse.vertices));
+        assert!(std::sync::Arc::ptr_eq(&base.normals, &coarse.normals));
+        assert!(std::sync::Arc::ptr_eq(
+            &base.material_coordinates,
+            &coarse.material_coordinates
+        ));
+        assert!(std::sync::Arc::ptr_eq(
+            &base.material_parameters,
+            &coarse.material_parameters
+        ));
+        assert!(!std::sync::Arc::ptr_eq(&base.indices, &coarse.indices));
         let fine_pixels = rendered_pixels(&renderer, &device, &queue, base);
         let coarse_pixels = rendered_pixels(&renderer, &device, &queue, coarse);
         assert!(fine_pixels > coarse_pixels && coarse_pixels > 0);

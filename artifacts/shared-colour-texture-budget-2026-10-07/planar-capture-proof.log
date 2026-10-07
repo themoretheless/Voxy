@@ -1,0 +1,2 @@
+PLANAR CAPTURE GPU: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+PLANAR CAPTURE PASS: 1728 HDR + 192 PBR + 576 Fresnel + 192 last-mip + 1152 roughness/material + 1536 frustum rejection references; projection, clipping, retention and ownership

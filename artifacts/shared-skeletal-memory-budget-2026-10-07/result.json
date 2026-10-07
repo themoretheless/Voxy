@@ -1,0 +1,53 @@
+{
+  "status": "SceneSkinner shared device accounting and atomic complete-instance admission passed",
+  "base_commit": "0d364e65a7655dcaa5f5073525f387bcbd4ce839",
+  "physical_adapter": "Apple M4 Max",
+  "physical_backend": "Metal",
+  "new_budget_fixture": {
+    "shared_source_bytes": 256,
+    "instance_bytes": 440,
+    "instances": 2,
+    "competing_compute_bytes": 36,
+    "whole_instance_rejection": "no partial geometry/palette/parameter charges or retirement",
+    "source_and_skeletal_lod_rejection": "unchanged accounting",
+    "gpu_output_after_rejection": "positions match CPU baking at 1e-5; UV/color exact",
+    "shared_source_lifetime": "retained by other instance",
+    "lod_after_instance_retirement": "four shared streams plus index retained",
+    "final_charged_bytes": 0
+  },
+  "checks": {
+    "renderer_passed": 148,
+    "renderer_ignored": 20,
+    "explicit_gpu_passed": 19,
+    "wasm_browser_build": "passed",
+    "native_editor_build": "passed",
+    "format": "passed",
+    "diff_check": "passed"
+  },
+  "allocation_owner": "existing per-device ComputeMemoryBudget; no second ledger",
+  "source_sharing": "one managed buffer owned by Arc<SceneSkinSource> across instances",
+  "instance_parameters": "explicit retained managed owner; seven-buffer batch with geometry and palette",
+  "logical_instance_bytes": "derived from actual buffer sizes",
+  "full_goal_complete": false,
+  "full_rig_profile": {
+    "pid": 14525,
+    "sampling_exit_code": 0,
+    "interval_s": 1,
+    "scope": "Live solver sample; no full-clip or speedup qualification",
+    "next_work": "Investigate repeated implicit material path/nonlinear work using saved live profile"
+  },
+  "not_covered": [
+    "automatic/default retirement coordinator",
+    "texture/transform/other allocation classes",
+    "CUDA and other hardware backends",
+    "device-loss/driver-OOM recovery",
+    "native-window acceptance",
+    "calibrated complete full-volume tissue clip"
+  ],
+  "sources_sha256": {
+    "crates/voxy_render/src/compute_memory.rs": "090d2c19e4b0e254aa65bd92024125be719291b99b65b069002b7bc68724e1a0",
+    "crates/voxy_render/src/scene.rs": "2ef17aac478b149aa24b461950e493927d1063b0e772bfaed0df2afbdda8a59c",
+    "crates/voxy_render/src/scene/skinning.rs": "6236fac95bdef4305ab638101b97ccdd53c62b9fa9aa8d3232319258d08c1de0",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "7b58d1d0b60e181789a356fc8fa4de416271930d4f2de99ee8cbe01a4c5361ef"
+  }
+}

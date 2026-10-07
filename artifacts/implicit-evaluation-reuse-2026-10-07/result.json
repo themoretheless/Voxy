@@ -1,0 +1,50 @@
+{
+  "status": "Frozen implicit evaluation reuse; release regressions and byte-exact short full-volume native comparison passed",
+  "base_commit": "0d364e65a7655dcaa5f5073525f387bcbd4ce839",
+  "change_scope": "Reuse only within one immutable quadrature/material-history attempt and exact accepted midpoint; no cross-frame, retry, owner or history cache",
+  "unchanged_admission": [
+    "96 iteration/48 line search bounds",
+    "Armijo and residual noise-band criteria",
+    "kinematic residual and impulse-work convergence",
+    "independent endpoint energy/work",
+    "CCD and volume/contact path checks",
+    "Maxwell history and rollback",
+    "authored 5e-10 J/s energy policy"
+  ],
+  "physics_tests_passed": 181,
+  "physics_tests_ignored": 9,
+  "benchmark": {
+    "order": "ABBA ABBA after warmups",
+    "measured_captures": 8,
+    "physical_frames_per_capture": 3,
+    "native_nodes": 2338,
+    "native_cells": 6845,
+    "pins": 3,
+    "median_before_simulation_and_render_s": 3.0711970835,
+    "median_after_simulation_and_render_s": 2.000006521,
+    "relative_elapsed_reduction": 0.34878600538368865,
+    "node_states_energy_streams_and_csv_byte_identical": true,
+    "all_composite_pngs_byte_identical": true
+  },
+  "independent_native_short_audit": {
+    "passed": true,
+    "checkpoints": 4,
+    "final_time_s": 0.0125,
+    "max_pin_error_m": 0,
+    "max_cumulative_energy_defect_j": 7.073859456096371e-14,
+    "max_frame_energy_defect_j": 4.791921387737973e-14
+  },
+  "full_clip_candidate": {
+    "exec_session": 63828,
+    "capture_steps": 480,
+    "path": "artifacts/full-rig-evaluation-reuse-2026-10-07/",
+    "full_clip_qualified": false,
+    "prior_live_captures_preserved": true,
+    "pid": 26986
+  },
+  "format": "passed",
+  "diff_check": "passed",
+  "limits": "Measured short full-volume native simulation plus render on Apple M4 Max/Metal with concurrent existing live captures. Not universal engine speedup, real-time/production rig, completed full clip or material calibration.",
+  "before_source_sha256": "c454c6678cdd24b5135028840188ce5a6dacd49aae75e4b8d728274e4a3b6aa1",
+  "after_source_sha256": "93de53e69da4a205890db58bbc26aa0683c3509eba5f31f59b1705621eaa98b4"
+}

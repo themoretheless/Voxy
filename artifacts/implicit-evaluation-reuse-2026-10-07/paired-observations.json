@@ -1,0 +1,137 @@
+[
+  {
+    "index": 0,
+    "mode": "after",
+    "warmup": true,
+    "exit_code": 0,
+    "wall_s": 3.8338221669982886,
+    "simulation_and_render_s": 2.451296333,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 1,
+    "mode": "before",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 4.270039999999426,
+    "simulation_and_render_s": 3.094934667,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 2,
+    "mode": "after",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 3.0385764579987153,
+    "simulation_and_render_s": 2.0742735,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 3,
+    "mode": "after",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 3.005658374999257,
+    "simulation_and_render_s": 2.034850417,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 4,
+    "mode": "before",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 3.964366666999922,
+    "simulation_and_render_s": 3.022211125,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 5,
+    "mode": "before",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 3.9908380420001777,
+    "simulation_and_render_s": 3.0474595,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 6,
+    "mode": "after",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 2.8984802499999205,
+    "simulation_and_render_s": 1.963212208,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 7,
+    "mode": "after",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 2.914218542000526,
+    "simulation_and_render_s": 1.965162625,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  },
+  {
+    "index": 8,
+    "mode": "before",
+    "warmup": false,
+    "exit_code": 0,
+    "wall_s": 4.044825958000729,
+    "simulation_and_render_s": 3.105930459,
+    "step_receipts": "[(12, 0, 0)]",
+    "exact_bytes_equal_baseline": {
+      ".nodes.json": true,
+      ".nodes.jsonl": true,
+      ".energy.jsonl": true,
+      ".csv": true
+    }
+  }
+]
