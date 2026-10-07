@@ -2410,6 +2410,81 @@ mod tests {
             result
         };
         assert_eq!(bits(&average), bits(&separate));
+        // Cover a family of deformed trials, including opposite motion directions.
+        for scale in [-8., -4., -1., 0., 0.25, 1., 4., 8.] {
+            let trial: Vec<Vec3> = points.iter().map(|p| p.map(|v| v * scale)).collect();
+            let shared = evaluate(&trial);
+            let separate = dynamics
+                .average_material_path_with_skin_separate_responses(
+                    &trial,
+                    &end,
+                    &nodes,
+                    initial,
+                    Some((&next, &samples)),
+                )
+                .unwrap();
+            assert_eq!(bits(&shared), bits(&separate), "trial scale={scale}");
+        }
+        let prepared = samples[0]
+            .prepare_sampled_response(&current, &next, &rest)
+            .unwrap();
+        let mut invalid_gradient = vec![[17.; 3]; 3];
+        assert!(prepared.energy_gradient(&mut invalid_gradient).is_err());
+        assert_eq!(invalid_gradient, vec![[17.; 3]; 3]);
+        let foreign = StationaryEmbeddedContact::new(
+            Arc::new(
+                EmbeddedTriangleContact::new(&rest, &[[0, 1, 2, 3]], &base, vec![[0, 1, 2]])
+                    .unwrap(),
+            ),
+            rest.clone(),
+            base.clone(),
+            obstacle.clone(),
+        )
+        .unwrap();
+        assert!(
+            samples[0]
+                .prepare_sampled_response(&foreign, &next, &rest)
+                .is_err()
+        );
+        assert!(
+            samples[0]
+                .prepare_sampled_response(&current, &foreign, &rest)
+                .is_err()
+        );
+        if std::env::var_os("VOXY_SHARED_CONTACT_PROFILE").is_some() {
+            for batch in 0..9 {
+                let measure = |shared: bool| {
+                    let started = std::time::Instant::now();
+                    for _ in 0..100 {
+                        let value = if shared {
+                            evaluate(std::hint::black_box(&points))
+                        } else {
+                            dynamics
+                                .average_material_path_with_skin_separate_responses(
+                                    std::hint::black_box(&points),
+                                    &end,
+                                    &nodes,
+                                    initial,
+                                    Some((&next, &samples)),
+                                )
+                                .unwrap()
+                        };
+                        std::hint::black_box(value);
+                    }
+                    started.elapsed().as_secs_f64()
+                };
+                let (shared, separate) = if batch % 2 == 0 {
+                    let shared = measure(true);
+                    (shared, measure(false))
+                } else {
+                    let separate = measure(false);
+                    (measure(true), separate)
+                };
+                println!(
+                    "SHARED_CONTACT_PAIRED batch={batch} iterations=100 shared_s={shared:.9} separate_s={separate:.9}"
+                );
+            }
+        }
         println!(
             "SHARED CONTACT RESPONSE PARITY quadrature_nodes={} full_potential_gradient_work_bits_equal=true",
             nodes.len()

@@ -9279,3 +9279,235 @@ Evidence is in `artifacts/endpoint-rig-prefix204-2026-10-07/`. Full capture,
 all-contact/self-contact behavior, current-build runtime parity, real-time
 performance and NVIDIA/CUDA execution remain unqualified. The overall engine
 objective remains active and unfinished.
+
+### Shared immutable contact response qualification (2026-10-07)
+
+Material quadrature now prepares one embedded response bound to immutable trial
+coordinates and admitted start/end owners, then derives contact energy, nodal
+gradient and prescribed actuator work from that response. Eight positive,
+negative and zero displacement scales produce bit-identical potential, all
+stored gradient fields and work against the separately evaluated path. The
+independent finite-difference and energy/work checks also pass. Foreign owners
+are rejected; a wrong gradient length preserves the destination before failure.
+
+Nine alternating-order release batches of 100 evaluations on a four-node
+moving-contact fixture (20 quadrature nodes) give a median shared time of
+0.002055916 s versus 0.003615834 s for separate responses. The median paired
+ratio is 1.7607723272740714; all nine shared batches were faster. All batches,
+including the slower first batch, are retained. Eight original long rig
+calculations continued during measurement. This is a small-fixture measurement,
+not a full-rig, realtime or universal hardware performance claim.
+
+The release physics library passes 125 tests, with 12 intentionally ignored.
+Evidence and source hashes: `artifacts/shared-contact-response-2026-10-07/`.
+Full production rig and the overall engine objective remain unfinished.
+
+### Prescribed skin work without displacement arrays (2026-10-07)
+
+`RelativeSurfaceLoads::actuator_work_between_j` evaluates actuator work directly
+from start/end reference and base poses, preserving the reference-before-base,
+node-before-axis sum order. Sampled embedded contact now uses this path: the two
+temporary displacement vectors per quadrature sample are removed. Length and
+nonfinite displacement checks precede summation, including overflow of subtraction
+between finite coordinates. Loads and poses remain immutable.
+
+Seven displacement scales from -1e6 to 1e6, including zero and +/-1e-12, match
+the existing displacement-array API bit for bit when given identical endpoint
+differences. Independent spring energy and wrench checks remain in place. The
+initial test incorrectly compared authored decimal deltas with reconstructed
+endpoint differences; rounding after pose addition makes those inputs different.
+That comparison now uses the unchanged independent energy tolerance; the exact
+parity checks use the same displacements. Release validation passes 125 physics
+library tests and 13 surface integration tests (13 ignored in total).
+Evidence: `artifacts/contact-work-without-delta-arrays-2026-10-07/`. No additional
+speedup or completed full-rig production qualification is claimed.
+
+### Orthographic liquid and film optics (2026-10-07)
+
+The existing screen-space fluid renderer now accepts orthographic SceneCamera
+projections. Explicit uniform flags identify projection and filtering without
+inferring camera type from rounded matrix entries. Each orthographic pixel has
+its own eye-space ray origin and parallel direction. Sphere intersection, prism
+halfspaces, opaque-depth clipping and reconstructed positions use that origin.
+Particle bounds, bilateral filter footprint and refraction pixel scale use
+orthographic projection scale; perspective behavior remains covered.
+
+Physical GPU validation on Metal checks both camera projections with both depth
+filters: nine protocols each, 108 thickness pixel cases and 324 RGB integrated
+absorption checks. Protocols include zero/two films, sphere+film, near clipping,
+opaque planes before/within/behind film, SI scaling and rejected-update snapshot
+retention. IOR=1 planar cases independently check final exp(-tau) color. These
+checks do not qualify general refractive image quality or native editor views.
+Evidence: `artifacts/orthographic-liquid-optics-2026-10-07/`.
+
+Fog/liquid joint optical transport remains incomplete: the editor rejection is
+retained, because blindly ordering independent composites loses medium
+attenuation around refracted and reflected paths. This camera support removes a
+separate renderer restriction; it does not certify joint transport or full fluid
+physics. The overall engine objective remains active.
+
+### Liquid optics with displaced and rolled cameras (2026-10-07)
+
+The physical GPU oracle now computes triangle membership in world space instead
+of relying on fixed inside/outside pixel labels. Sphere chords likewise use the
+world-space camera or per-pixel orthographic origin. Four camera cases cover
+centered perspective/orthographic views and translated views rolled 90 degrees;
+the translated orthographic view also has asymmetric projection bounds. Both
+filter modes pass all nine protocols: 216 thickness and 648 RGB absorption
+checks. The prior centered-view qualification remains separately preserved.
+Evidence: `artifacts/liquid-shifted-camera-2026-10-07/`. This strengthens renderer
+ray/occlusion evidence without claiming general refraction quality, native
+editor visual acceptance or completed fog/liquid joint transport.
+
+### Lens-aware fluid refraction pixel scale (2026-10-07)
+
+The perspective fluid composite formerly used viewport height divided by depth
+for both transverse axes, omitting the authored lens projection scales. It now
+uses half viewport size times the corresponding projection diagonal, divided
+by depth for perspective and independent of depth for orthographic views. The
+existing screen-space refraction model, 0.01 depth clamp and environment fallback
+remain; this correction does not establish complete Snell ray transport.
+
+A GPU compute entry invokes the actual production shader helper. An independent
+CPU oracle projects two displaced eye-space points: 36 scalar checks pass for
+three fields of view, three depths, both projection types, a 128x64 viewport and
+asymmetric orthographic bounds. All 155 ordinary renderer tests and the physical
+fluid optics integration test pass; the four-camera/two-filter GPU suite retains
+216 thickness and 648 absorption checks. Evidence is preserved in
+`artifacts/liquid-refraction-projection-2026-10-07/`. General refractive image
+quality and joint fog/liquid transport remain unqualified.
+
+### Unified displacement-free work across contact paths (2026-10-07)
+
+Adaptive embedded path response and endpoint motion work now use the same
+validated `actuator_work_between_j` API as sampled quadrature. Path response
+removes its node/reference/base delta vectors; nodal dot products subtract the
+endpoints in the original node/axis order. Endpoint work removes reference/base
+delta vectors while preserving the original half-start plus half-end arithmetic.
+No contact law, quadrature budget, history ownership or rollback policy changes.
+
+Release validation passes 125 physics library tests, all 33 embedded contact
+integration tests and 13 surface integration tests. These cover independent
+energy/force balance, moving CCD, stiffness sweeps, time refinement, Maxwell
+heat/actuator work and complete-state rollback. Evidence is preserved in
+`artifacts/contact-work-all-paths-2026-10-07/`. Allocation removal is established
+from source; no additional measured speedup or full-rig qualification is claimed.
+
+### Imported rig display and mechanical diagnostics (2026-10-07)
+
+The snapshot example no longer unconditionally draws its cyan FEM diagnostic
+surface over imported deforming skin. `--show-tissue` explicitly enables that
+additional mesh. Contact binding, tissue mechanics, skin deformation and
+simulation remain active in both modes; the standalone procedural-body display
+is unaffected. A regression checks identical imported skin vertices/indices
+with the diagnostic switch enabled, plus its one additional mesh.
+
+Two actual GPU runs of the default imported Cesium fixture each capture three
+steps: visible skin and explicit tissue diagnostics. Their physical CSV outputs
+are byte-identical, while their images differ by the diagnostic display. This is
+a short preview fixture, not the complete authored 480-step rig capture. Evidence:
+`artifacts/rig-display-modes-2026-10-07/`. The binding regression passed; the
+broader example suite was still running at evidence capture and must not be
+reported as completed. Original long rig processes were preserved.
+
+### Editor camera and current-target compatibility (2026-10-07)
+
+`cargo check -p voxy_editor --all-targets` passes with the current physics,
+liquid camera and rig display changes. ViewportCamera's orthographic projection
+uses near=0; the physical GPU fixture now includes that setting with shifted,
+rolled and asymmetric orthographic rays. Case 4 replaces the ordinary 0.1 near
+plane with zero while retaining the dedicated 1.98 clipping protocol. The log's
+near field is the protocol input, not this case-specific override.
+
+Five camera cases and both filters pass 270 analytic thickness and 810 RGB
+absorption checks. Evidence: `artifacts/editor-liquid-compatibility-2026-10-07/`.
+The broad snapshot example suite is still running and must not be called fully
+passed; full-character volume admission and source-pin/startup checks have
+completed successfully. Native editor visual acceptance, complete long rig
+capture and joint fog/liquid transport remain unqualified.
+
+### Close-camera refraction projection without a depth floor (2026-10-07)
+
+The lens-aware helper now divides by the actual positive surface depth instead
+of imposing the inherited 0.01 floor. The composite already rejects nonpositive
+surface depth before evaluating this helper. Close-camera refraction therefore
+retains the authored projection scale rather than flattening below 0.01 units.
+This supersedes the earlier qualification's retained-depth-clamp limitation.
+
+GPU comparison with independently projected displaced points now covers five
+depths (0.001, 0.005, 0.1, 1 and 9), all within a camera range of 0.0001 to 10,
+three fields of view and both projections: 60 scalar checks pass. The 270 physical
+thickness / 810 RGB absorption checks, 155 ordinary renderer tests and fluid
+integration test remain passing. Evidence is in
+`artifacts/liquid-near-depth-projection-2026-10-07/`. This is a projection-scale
+correction, not full Snell transport or complete fog/liquid joint optics.
+
+### Joint participating-medium transport architecture (2026-10-07)
+
+Proposed ADR 0003 (`docs/adr/0003-participating-media-transport.md`) defines
+physical snapshot ownership, per-constituent coefficients, interface media,
+ordered radiance segments and acceptance gates for joint fog/liquid optics.
+An analytic counterexample shows why independently compositing overlapping
+media is not an admissible substitute. This is architectural progress, not a
+completed rendering feature; the editor rejection remains in place. Current
+RAG index lookup found no matching participating-media catalog entry; wiki
+search remained pending on exec handle 2058 and was not restarted. Primary
+PBRT sources and current renderer source ground the proposal. Evidence is in
+`artifacts/participating-media-design-2026-10-07/`.
+
+### CPU optical segment reference (2026-10-07)
+
+`voxy_render::OpticalSegment` implements immutable RGB transfer for an already
+identified ray segment. Homogeneous integration uses expm1 for thin optical
+paths; an overflowing optical depth saturates transmission to zero while the
+source integral can remain finite. Coexisting constituent coefficients sum
+before integration. Ordered front/back segments compose their transmittance
+and source radiance; background application preserves coverage alpha. Negative,
+nonfinite and unrepresentable radiance inputs reject without mutation.
+
+Three meaningful reference tests cover independent overlap/slab numeric
+solutions, segment partition invariance, ordering/associativity, vacuum/emission,
+thin underflow, dense overflow, rejected inputs and preserved alpha. All 158
+ordinary renderer tests pass. Evidence:
+`artifacts/medium-transfer-reference-2026-10-07/`.
+
+This is the CPU mathematical reference for ADR 0003, not ray traversal or a
+second simulation owner. The caller must establish segment identity, adjacency,
+interface order and lighting source terms. GPU integration, actual refractive
+paths and windowed joint fog/liquid rendering remain incomplete.
+
+### Shared GPU medium-transfer operations (2026-10-07)
+
+The binding-free WGSL transfer functions implement homogeneous RGB segments,
+ordered front/back composition and background application. The existing droplet
+scene shader now uses the common background composition and thin-extinction
+weight. Its geometry, grid, lighting and submitted-frame ownership remain.
+
+A strengthened dense-source test exposed Metal reciprocal underflow: sigma and
+source of 1e38 yielded zero instead of finite unit radiance even with direct
+source/sigma division. The thick-medium branch now divides normalized mantissas
+and restores the exponent using frexp/ldexp, avoiding the vanished reciprocal.
+The original failure is retained. Thirty-two probes / 512 scalar checks pass
+against the f64 CPU reference, including zero length, thin/dense attenuation,
+ordered sources and bit-preserved alpha. Tolerance is 1e-6 absolute plus 2e-5
+relative. All 159 ordinary renderer tests and three actual editor fog/shadow GPU
+tests pass. The pure transfer operations translate to GLSL ES 300 without storage
+bindings; that is translation evidence, not execution on a GLES device.
+
+Evidence: `artifacts/medium-transfer-gpu-2026-10-07/`. Joint refractive ray
+traversal, medium boundaries and windowed fog/liquid composition remain
+incomplete. Metal parity does not qualify NVIDIA/CUDA or other GPU backends.
+
+### Smooth dielectric CPU reference and delivery validation
+
+`dielectric_boundary_sample` computes explicit incident/transmitted-medium
+Snell directions and unpolarized Fresnel power fractions, including total
+internal reflection. It validates unit vectors, normal orientation and finite
+positive indices. Three analytical tests cover normal incidence, Brewster
+angle, reciprocity, critical-angle transitions and extreme index contrast.
+This is a CPU reference, not an integrated GPU boundary tracer or a radiance
+multiplier. All 162 ordinary renderer tests pass (24 ignored).
+
+Delivery evidence: `artifacts/push-medium-contact-delivery-2026-10-07/`.
+The broad body-motion example suite and original full-rig computations remain
+running at delivery; their completion is not claimed.

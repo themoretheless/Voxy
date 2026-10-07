@@ -44,7 +44,7 @@ fn displayed_meshes(
     phase: f64,
     skin: Option<(&tissue_demo::TissueSkinBinding, &[DMat4])>,
 ) -> Result<Vec<SceneMesh>, Box<dyn std::error::Error>> {
-    displayed_meshes_startup(demo, model, phase, skin, 0.)
+    displayed_meshes_startup(demo, model, phase, skin, 0., false)
 }
 fn displayed_meshes_startup(
     demo: &tissue_demo::TissueDemo,
@@ -52,6 +52,7 @@ fn displayed_meshes_startup(
     phase: f64,
     skin: Option<(&tissue_demo::TissueSkinBinding, &[DMat4])>,
     startup_seconds: f64,
+    show_tissue: bool,
 ) -> Result<Vec<SceneMesh>, Box<dyn std::error::Error>> {
     let Some(model) = model else {
         return Ok(vec![demo.mesh()?]);
@@ -134,7 +135,9 @@ fn displayed_meshes_startup(
     if deformed_skin.as_ref().is_some_and(|p| cursor != p.len()) {
         return Err("skin render vertex count changed".into());
     }
-    meshes.push(demo.tissue_mesh()?);
+    if show_tissue {
+        meshes.push(demo.tissue_mesh()?);
+    }
     Ok(meshes)
 }
 fn contact_positions(
@@ -757,13 +760,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             && arg != "--cesium"
             && arg != "--contact"
             && arg != "--wide-contact"
+            && arg != "--show-tissue"
             && !arg.starts_with("--capture-steps=")
             && !arg.starts_with("--tissue-regions=")
             && !arg.starts_with("--cuda-tissue-device=")
             && !arg.starts_with("--cuda-tissue-budget-bytes=")
     }) {
         return Err(
-            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact] [--capture-steps=N] [--tissue-regions=MANIFEST.json] [--cuda-tissue-device=N --cuda-tissue-budget-bytes=N]"
+            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact] [--show-tissue] [--capture-steps=N] [--tissue-regions=MANIFEST.json] [--cuda-tissue-device=N --cuda-tissue-budget-bytes=N]"
                 .into(),
         );
     }
@@ -874,7 +878,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
     }
     let skin = skin_binding.as_ref().zip(reference64.as_deref());
-    let meshes = displayed_meshes_startup(&demo, imported.as_ref(), 0., skin, startup_seconds)?;
+    let show_tissue = remaining.iter().any(|arg| arg == "--show-tissue");
+    let meshes = displayed_meshes_startup(
+        &demo,
+        imported.as_ref(),
+        0.,
+        skin,
+        startup_seconds,
+        show_tissue,
+    )?;
     let mut geometries = meshes
         .iter()
         .map(|mesh| renderer.reserve_geometry(&device, mesh.vertices().len(), mesh.indices().len()))
@@ -1083,6 +1095,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             (step as f64 / (240. * duration)).min(1.),
             skin,
             startup_seconds,
+            show_tissue,
         )?;
         stage_seconds[2] += stage_start.elapsed().as_secs_f64();
         let stage_start = std::time::Instant::now();
@@ -1732,6 +1745,22 @@ mod collision_tests {
         let reference64 = pose.skin_matrices(&model.skeleton).unwrap();
         let before =
             displayed_meshes(&demo, Some(&model), 0., Some((&binding, &reference64))).unwrap();
+        assert_eq!(before.len(), model.primitives.len());
+        let diagnostic = displayed_meshes_startup(
+            &demo,
+            Some(&model),
+            0.,
+            Some((&binding, &reference64)),
+            0.,
+            true,
+        )
+        .unwrap();
+        assert_eq!(diagnostic.len(), before.len() + 1);
+        for (visible, diagnostic) in before.iter().zip(&diagnostic) {
+            assert_eq!(visible.indices(), diagnostic.indices());
+            assert_eq!(visible.vertices(), diagnostic.vertices());
+        }
+
         demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
             .unwrap();
         let after =

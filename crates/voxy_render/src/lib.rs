@@ -227,6 +227,12 @@ pub use planar_reflection::{
 mod planar_temporal;
 pub use planar_temporal::{PlanarTemporalError, PlanarTemporalFrame, PlanarTemporalPipeline};
 
+mod dielectric_boundary;
+pub use dielectric_boundary::{DielectricBoundarySample, dielectric_boundary_sample};
+
+mod medium_transport;
+pub use medium_transport::OpticalSegment;
+
 mod droplet_extinction;
 pub use droplet_extinction::{
     DROPLET_EXTINCTION_REFERENCE_SHADER, DROPLET_EXTINCTION_SHADER, DropletExtinctionComputeInput,

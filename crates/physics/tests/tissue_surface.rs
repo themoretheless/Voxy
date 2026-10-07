@@ -291,6 +291,70 @@ fn moving_skin_reference_work_closes_independent_spring_energy_and_moment() {
     let actuator_work = loads
         .actuator_work_j(&reference_delta, &base_delta)
         .unwrap();
+    // Authored deltas and endpoint subtraction differ by rounding after pose addition.
+    assert!(
+        (loads
+            .actuator_work_between_j(&reference0, &reference1, &base0, &base1)
+            .unwrap()
+            - actuator_work)
+            .abs()
+            < 1e-14
+    );
+    for scale in [-1e6, -1., -1e-12, 0., 1e-12, 1., 1e6] {
+        let r: Vec<_> = reference0
+            .iter()
+            .zip(&reference1)
+            .map(|(a, b)| std::array::from_fn(|i| a[i] + scale * (b[i] - a[i])))
+            .collect();
+        let b: Vec<_> = base0
+            .iter()
+            .zip(&base1)
+            .map(|(a, b)| std::array::from_fn(|i| a[i] + scale * (b[i] - a[i])))
+            .collect();
+        let rd: Vec<_> = r
+            .iter()
+            .zip(&reference0)
+            .map(|(b, a)| std::array::from_fn(|i| b[i] - a[i]))
+            .collect();
+        let bd: Vec<_> = b
+            .iter()
+            .zip(&base0)
+            .map(|(b, a)| std::array::from_fn(|i| b[i] - a[i]))
+            .collect();
+        assert_eq!(
+            loads
+                .actuator_work_between_j(&reference0, &r, &base0, &b)
+                .unwrap()
+                .to_bits(),
+            loads.actuator_work_j(&rd, &bd).unwrap().to_bits()
+        );
+    }
+    assert_eq!(
+        loads
+            .actuator_work_between_j(&reference0[..3], &reference1, &base0, &base1)
+            .unwrap_err(),
+        "invalid prescribed skin displacement"
+    );
+    for bad in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+        let mut invalid = reference1;
+        invalid[0][0] = bad;
+        assert_eq!(
+            loads
+                .actuator_work_between_j(&reference0, &invalid, &base0, &base1)
+                .unwrap_err(),
+            "invalid prescribed skin displacement"
+        );
+    }
+    let mut extreme_start = reference0;
+    let mut extreme_end = reference1;
+    extreme_start[0][0] = -f64::MAX;
+    extreme_end[0][0] = f64::MAX;
+    assert_eq!(
+        loads
+            .actuator_work_between_j(&extreme_start, &extreme_end, &base0, &base1)
+            .unwrap_err(),
+        "invalid prescribed skin displacement"
+    );
     assert!(actuator_work.abs() > 1e-4);
     assert!((energy(&end) - energy(&start) + mechanical_work - actuator_work).abs() < 1e-14);
     // Evaluate moments at the midpoint used for this affine path's exact force average.

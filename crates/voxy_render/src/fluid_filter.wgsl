@@ -26,8 +26,12 @@ fn vs_fullscreen(@builtin(vertex_index) index: u32) -> FullInput {
 fn filter_depth(pixel: vec2f, axis: vec2i) -> vec2f {
     let index = pixel_index(pixel);
     let centre = textureLoad(input_depth, index, 0).xy;
-    if (centre.x <= 0.0 || camera.viewport.w == 0.0) { return centre; }
-    let footprint = centre.y * camera.projection[1][1] * camera.viewport.y / (2.0 * centre.x);
+    if (centre.x <= 0.0 || (u32(camera.viewport.w) & 1u) == 0u) { return centre; }
+    var footprint = centre.y * camera.projection[1][1] * camera.viewport.y / (2.0 * centre.x);
+    if camera.viewport.w >= 2.0 {
+        let pixels_per_unit = vec2f(abs(camera.projection[0][0]),abs(camera.projection[1][1])) * camera.viewport.xy * 0.5;
+        footprint = centre.y * dot(pixels_per_unit,vec2f(abs(axis)));
+    }
     let extent = i32(clamp(footprint * 0.5, 1.0, camera.controls.z));
     let range = max(centre.y * camera.controls.w, 0.00001);
     var total = 0.0; var weight = 0.0;

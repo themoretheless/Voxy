@@ -201,24 +201,6 @@ impl EmbeddedTriangleContact {
             - obstacle
                 .response_admitted_skin(&x0, &self.faces)?
                 .potential_j;
-        let node_delta: Vec<_> = end
-            .nodes
-            .iter()
-            .zip(start.nodes)
-            .map(|(&b, &a)| sub(b, a))
-            .collect();
-        let reference_delta: Vec<_> = end
-            .reference
-            .iter()
-            .zip(start.reference)
-            .map(|(&b, &a)| sub(b, a))
-            .collect();
-        let base_delta: Vec<_> = end
-            .base
-            .iter()
-            .zip(start.base)
-            .map(|(&b, &a)| sub(b, a))
-            .collect();
         let mut knots = vec![0., 1.];
         for _ in 0..32 {
             let path = obstacle.prepare_path_partition(next, &knots)?;
@@ -237,10 +219,15 @@ impl EmbeddedTriangleContact {
             let body_work: f64 = loads
                 .nodal_forces_n()
                 .iter()
-                .zip(&node_delta)
-                .map(|(&f, &d)| dot(f, d))
+                .zip(start.nodes.iter().zip(end.nodes))
+                .map(|(&f, (&a, &b))| dot(f, sub(b, a)))
                 .sum();
-            let rig_work = loads.actuator_work_j(&reference_delta, &base_delta)?;
+            let rig_work = loads.actuator_work_between_j(
+                start.reference,
+                end.reference,
+                start.base,
+                end.base,
+            )?;
             let obstacle_work: f64 = obstacle_forces
                 .iter()
                 .zip(obstacle.positions().iter().zip(next.positions()))
@@ -430,24 +417,19 @@ impl StationaryEmbeddedContact {
         self.same_owner(next)?;
         let a = self.response(start)?;
         let b = next.response(end)?;
-        let reference_delta: Vec<_> = self
-            .reference
-            .iter()
-            .zip(next.reference.iter())
-            .map(|(&a, &b)| sub(b, a))
-            .collect();
-        let base_delta: Vec<_> = self
-            .base
-            .iter()
-            .zip(next.base.iter())
-            .map(|(&a, &b)| sub(b, a))
-            .collect();
-        let rig = 0.5
-            * a.skin_loads
-                .actuator_work_j(&reference_delta, &base_delta)?
-            + 0.5
-                * b.skin_loads
-                    .actuator_work_j(&reference_delta, &base_delta)?;
+        let rig =
+            0.5 * a.skin_loads.actuator_work_between_j(
+                &self.reference,
+                &next.reference,
+                &self.base,
+                &next.base,
+            )? + 0.5
+                * b.skin_loads.actuator_work_between_j(
+                    &self.reference,
+                    &next.reference,
+                    &self.base,
+                    &next.base,
+                )?;
         let obstacle: f64 = a
             .obstacle_forces_n
             .iter()
@@ -624,21 +606,12 @@ impl SampledEmbeddedResponse<'_> {
         let start = self.start;
         let end = self.end;
         let response = &self.response;
-        let reference_delta: Vec<_> = start
-            .reference
-            .iter()
-            .zip(end.reference.iter())
-            .map(|(&a, &b)| sub(b, a))
-            .collect();
-        let base_delta: Vec<_> = start
-            .base
-            .iter()
-            .zip(end.base.iter())
-            .map(|(&a, &b)| sub(b, a))
-            .collect();
-        let rig = response
-            .skin_loads
-            .actuator_work_j(&reference_delta, &base_delta)?;
+        let rig = response.skin_loads.actuator_work_between_j(
+            &start.reference,
+            &end.reference,
+            &start.base,
+            &end.base,
+        )?;
         let obstacle: f64 = response
             .obstacle_forces_n
             .iter()

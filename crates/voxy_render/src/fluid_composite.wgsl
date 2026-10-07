@@ -13,7 +13,15 @@ fn eye_position(pixel: vec2f, device_depth: f32) -> vec3f {
     let p = camera.inverse_projection * vec4f(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, device_depth, 1.0);
     return p.xyz / p.w;
 }
-fn ray(pixel: vec2f) -> vec3f { return normalize(eye_position(pixel, 1.0)); }
+fn orthographic() -> bool { return camera.viewport.w >= 2.0; }
+fn ray_origin(pixel: vec2f) -> vec3f {
+    if orthographic() { return vec3f(eye_position(pixel, 0.0).xy, 0.0); }
+    return vec3f(0.0);
+}
+fn ray(pixel: vec2f) -> vec3f {
+    if orthographic() { return normalize(eye_position(pixel, 1.0)-eye_position(pixel, 0.0)); }
+    return normalize(eye_position(pixel, 1.0));
+}
 fn pixel_index(pixel: vec2f) -> vec2i { return clamp(vec2i(pixel), vec2i(0), vec2i(camera.viewport.xy) - 1); }
 struct FullInput { @builtin(position) position: vec4f, @location(0) uv: vec2f }
 @vertex
@@ -28,8 +36,15 @@ fn vs_fullscreen(@builtin(vertex_index) index: u32) -> FullInput {
 @group(0) @binding(4) var background: texture_2d<f32>;
 @group(0) @binding(5) var depth: texture_depth_2d;
 @group(0) @binding(6) var optical_depth: texture_2d<f32>;
+// Convert eye-space transverse displacement to pixels using the authored lens.
+fn pixels_per_unit(depth: f32) -> vec2f {
+    let scale = 0.5 * camera.viewport.xy * vec2f(abs(camera.projection[0][0]),abs(camera.projection[1][1]));
+    if orthographic() { return scale; }
+    // The caller rejects nonpositive surface depth before reconstruction.
+    return scale / depth;
+}
 fn position_at(pixel: vec2f, depth: f32) -> vec3f {
-    let direction = ray(pixel); return direction * depth / -direction.z;
+    let direction = ray(pixel); let origin = ray_origin(pixel); return origin + direction * (depth + origin.z) / -direction.z;
 }
 fn tangent(pixel: vec2f, axis: vec2f, centre: vec2f) -> vec3f {
     let a = textureLoad(depth_radius, pixel_index(pixel+axis), 0).xy;
@@ -57,7 +72,7 @@ fn tangent(pixel: vec2f, axis: vec2f, centre: vec2f) -> vec3f {
     let absorption_path = textureLoad(optical_depth,index,0).xyz;
     let f0 = pow((optical.w-1.0)/(optical.w+1.0),2.0);
     let fresnel = f0+(1.0-f0)*pow(1.0-clamp(dot(normal,view),0.0,1.0),5.0);
-    let offset = normal.xy * vec2f(1,-1) * path * camera.viewport.z * camera.viewport.y / max(surface.x,0.01) * (1.0-1.0/optical.w);
+    let offset = normal.xy * vec2f(1,-1) * path * camera.viewport.z * pixels_per_unit(surface.x) * (1.0-1.0/optical.w);
     let q = pixel_index(pixel+offset);
     var refracted = textureLoad(background,q,0).rgb;
     if (-eye_position(vec2f(q)+0.5,scene_depth_at(vec2f(q)+0.5)).z < surface.x) { refracted=base.rgb; }
