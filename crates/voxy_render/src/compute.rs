@@ -202,6 +202,13 @@ impl ComputeProgram {
         self.revision
     }
 
+    pub(crate) fn matches_shader(&self, source: &str, entry_point: &str) -> bool {
+        self.source == source
+            && self.entry_point.as_ref() == entry_point
+            && !self.scene_inputs
+            && self.additional_layout.is_none()
+    }
+
     /// Creates a job with independent storage and readback. Supply shader-compatible
     /// data; byte count must be a nonzero multiple of four and fit device limits.
     /// # Errors

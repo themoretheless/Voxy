@@ -2088,6 +2088,135 @@ mod tests {
         assert!(project_branch_segment(&first, &second, &[0., 1.], &[false, true]).is_err());
         assert!(project_branch_segment(&first, &second, &[4., 1.], &[false]).is_err());
     }
+    fn symmetric_material_action(
+        body: &super::super::Body,
+        weight: &[f64],
+        v: &[Vec3],
+        moduli: Option<&[(f64, f64)]>,
+    ) -> Vec<Vec3> {
+        let mut result: Vec<_> = v
+            .iter()
+            .enumerate()
+            .map(|(i, v)| {
+                if body.pinned[i] {
+                    [0.; 3]
+                } else {
+                    v.map(|x| weight[i] * x)
+                }
+            })
+            .collect();
+        for (index, e) in body.elements.iter().enumerate() {
+            let (mu, bulk) = moduli.map_or_else(
+                || {
+                    e.viscoelastic
+                        .as_ref()
+                        .map_or((e.material.shear_pa, e.material.bulk_pa), |m| {
+                            m.rest_moduli()
+                        })
+                },
+                |values| values[index],
+            );
+            let mut h = [[0.; 3]; 3];
+            for corner in 0..4 {
+                let node = e.nodes[corner];
+                if !body.pinned[node] {
+                    for a in 0..3 {
+                        for b in 0..3 {
+                            h[a][b] += v[node][a] * e.gradients[corner][b];
+                        }
+                    }
+                }
+            }
+            let trace = h[0][0] + h[1][1] + h[2][2];
+            let mut stress = [[0.; 3]; 3];
+            for a in 0..3 {
+                for b in a..3 {
+                    let sym = 0.5 * (h[a][b] + h[b][a]);
+                    let dev = if a == b { sym - trace / 3. } else { sym };
+                    let value = 2. * mu * dev + if a == b { bulk * trace } else { 0. };
+                    stress[a][b] = value;
+                    stress[b][a] = value;
+                }
+            }
+            for corner in 0..4 {
+                let node = e.nodes[corner];
+                if !body.pinned[node] {
+                    for a in 0..3 {
+                        result[node][a] += e.volume * dot(stress[a], e.gradients[corner]);
+                    }
+                }
+            }
+        }
+        result
+    }
+
+    #[test]
+    #[ignore = "manual full-rig material operator parity and paired timing"]
+    fn full_rig_symmetric_material_operator_profile() {
+        use super::super::super::{Body, Material, TetraMesh};
+        let mesh = TetraMesh::from_medit_volume(include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
+        )))
+        .unwrap();
+        let material = Material::from_young_poisson(300., 0.4).unwrap();
+        let mut pins = vec![false; mesh.points.len()];
+        for i in [1282, 167, 1856] {
+            pins[i] = true;
+        }
+        let body = Body::new(
+            mesh.points,
+            pins,
+            mesh.cells
+                .into_iter()
+                .map(|cell| (cell, material.clone()))
+                .collect(),
+        )
+        .unwrap();
+        let weight = vec![2.; body.positions.len()];
+        let vectors: Vec<Vec3> = (0..weight.len())
+            .map(|i| {
+                [
+                    (i as f64 * 0.17).sin(),
+                    (i as f64 * 0.13).cos(),
+                    (i as f64 * 0.11).sin(),
+                ]
+            })
+            .collect();
+        let old = rest_material_action_prepared(&body, &weight, &vectors, None);
+        let candidate = symmetric_material_action(&body, &weight, &vectors, None);
+        assert_eq!(
+            old.iter()
+                .flatten()
+                .map(|x| x.to_bits())
+                .collect::<Vec<_>>(),
+            candidate
+                .iter()
+                .flatten()
+                .map(|x| x.to_bits())
+                .collect::<Vec<_>>()
+        );
+        for (trial, symmetric) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let start = std::time::Instant::now();
+            for _ in 0..2000 {
+                let v = std::hint::black_box(&vectors);
+                std::hint::black_box(if symmetric {
+                    symmetric_material_action(&body, &weight, v, None)
+                } else {
+                    rest_material_action_prepared(&body, &weight, v, None)
+                });
+            }
+            eprintln!(
+                "SYMMETRIC_MATERIAL_PROFILE trial={trial} symmetric={symmetric} elapsed_s={:.9} nodes={} cells={} applications=2000 exact_bits=true",
+                start.elapsed().as_secs_f64(),
+                weight.len(),
+                body.elements.len()
+            );
+        }
+    }
     #[test]
     #[ignore = "manual prepared material operator ABBA timing"]
     fn prepared_material_moduli_profile() {

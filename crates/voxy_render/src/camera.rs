@@ -38,6 +38,61 @@ impl std::fmt::Display for InvalidSceneCamera {
 impl std::error::Error for InvalidSceneCamera {}
 
 impl SceneCamera {
+    /// World-space origin and unit direction through a pixel center. Pixels use
+    /// top-left image coordinates. Perspective origins are at the eye;
+    /// orthographic origins are on the camera plane, before near clipping.
+    /// This preserves participating medium between the eye and the near plane.
+    /// # Errors
+    /// Rejects invalid cameras, empty viewports and out-of-range pixels.
+    pub fn pixel_ray(
+        self,
+        viewport: [u32; 2],
+        pixel: [u32; 2],
+    ) -> Result<(Vec3, Vec3), InvalidSceneCamera> {
+        self.view_projection()?;
+        if viewport.contains(&0) || (0..2).any(|i| pixel[i] >= viewport[i]) {
+            return Err(InvalidSceneCamera);
+        }
+        let forward = (self.target - self.eye)
+            .try_normalize()
+            .ok_or(InvalidSceneCamera)?;
+        let right = forward
+            .cross(self.up)
+            .try_normalize()
+            .ok_or(InvalidSceneCamera)?;
+        let up = right.cross(forward);
+        // f64 avoids losing the center offset for large integer viewports.
+        let u = (f64::from(pixel[0]) + 0.5) / f64::from(viewport[0]);
+        let v = (f64::from(pixel[1]) + 0.5) / f64::from(viewport[1]);
+        let (origin, direction) = match self.projection {
+            SceneProjection::Perspective {
+                vertical_fov,
+                aspect,
+                ..
+            } => {
+                let scale = f64::from(vertical_fov).mul_add(0.5, 0.).tan();
+                let x = ((2. * u - 1.) * scale * f64::from(aspect)) as f32;
+                let y = ((1. - 2. * v) * scale) as f32;
+                (self.eye, forward + right * x + up * y)
+            }
+            SceneProjection::Orthographic {
+                left,
+                right: r,
+                bottom,
+                top,
+                ..
+            } => {
+                let x = (f64::from(left) + u * (f64::from(r) - f64::from(left))) as f32;
+                let y = (f64::from(top) + v * (f64::from(bottom) - f64::from(top))) as f32;
+                (self.eye + right * x + up * y, forward)
+            }
+        };
+        if !origin.is_finite() {
+            return Err(InvalidSceneCamera);
+        }
+        Ok((origin, direction.try_normalize().ok_or(InvalidSceneCamera)?))
+    }
+
     /// Reflect eye, target and up across a world-space plane for a capture pass.
     /// The plane normal must be finite and normalizable; unit length is not required.
     /// Projection is preserved.
@@ -362,5 +417,69 @@ mod tests {
             view.lod_pixel_scale(Vec3::ONE, Vec3::ZERO, [1000, 1000])
                 .is_err()
         );
+    }
+    #[test]
+    fn pixel_rays_reproject_to_centers_for_both_lenses() {
+        let projections = [
+            SceneProjection::Perspective {
+                vertical_fov: 0.8,
+                aspect: 1.7,
+                near: 0.3,
+                far: 50.,
+            },
+            SceneProjection::Orthographic {
+                left: -2.,
+                right: 4.,
+                bottom: -3.,
+                top: 1.,
+                near: 0.,
+                far: 50.,
+            },
+            SceneProjection::Orthographic {
+                left: -2.,
+                right: 4.,
+                bottom: -3.,
+                top: 1.,
+                near: 0.3,
+                far: 50.,
+            },
+        ];
+        for projection in projections {
+            let view = SceneCamera {
+                eye: Vec3::new(3., 2., 4.),
+                target: Vec3::new(1., -1., 0.),
+                up: Vec3::new(0.3, 1., 0.2),
+                projection,
+            };
+            let matrix = view.view_projection().unwrap();
+            let forward = (view.target - view.eye).normalize();
+            for viewport in [[1, 1], [17, 9], [8, 14]] {
+                for pixel in [
+                    [0, 0],
+                    [viewport[0] / 2, viewport[1] / 2],
+                    [viewport[0] - 1, viewport[1] - 1],
+                ] {
+                    let (origin, direction) = view.pixel_ray(viewport, pixel).unwrap();
+                    assert!((direction.length() - 1.).abs() < 1e-6);
+                    match projection {
+                        SceneProjection::Perspective { .. } => assert_eq!(origin, view.eye),
+                        _ => {
+                            assert!((origin - view.eye).dot(forward).abs() < 1e-6);
+                            assert!((direction - forward).length() < 1e-6);
+                        }
+                    }
+                    for distance in [1., 5., 20.] {
+                        let clip = matrix * (origin + direction * distance).extend(1.);
+                        let ndc = clip.truncate() / clip.w;
+                        let expected_x = 2. * (pixel[0] as f32 + 0.5) / viewport[0] as f32 - 1.;
+                        let expected_y = 1. - 2. * (pixel[1] as f32 + 0.5) / viewport[1] as f32;
+                        assert!((ndc.x - expected_x).abs() < 3e-6);
+                        assert!((ndc.y - expected_y).abs() < 3e-6);
+                    }
+                }
+            }
+            assert!(view.pixel_ray([0, 9], [0, 0]).is_err());
+            assert!(view.pixel_ray([8, 9], [8, 0]).is_err());
+        }
     }
 }

@@ -12,8 +12,8 @@ pub(super) fn mesh(liquid: &Liquid) -> Result<Option<SceneMesh>, String> {
     let materials = liquid
         .effective_materials()
         .map_err(|e| format!("liquid draw material: {e:?}"))?;
-    let mut vertices = Vec::with_capacity(liquid.particles().len() * 24);
-    let mut indices = Vec::with_capacity(vertices.capacity());
+    let mut vertices = Vec::with_capacity(liquid.particles().len() * 6);
+    let mut indices = Vec::with_capacity(liquid.particles().len() * 24);
     for (p, m) in liquid.particles().iter().zip(materials) {
         // Octahedron volume = 4r^3/3, exactly matching represented fluid volume.
         let r = (3. * p.mass / (4. * m.rest_density)).cbrt();
@@ -27,6 +27,22 @@ pub(super) fn mesh(liquid: &Liquid) -> Result<Option<SceneMesh>, String> {
             1 => [1., 0.65, 0.1, 1.],
             _ => [0.7, 0.3, 1., 1.],
         };
+        let gpu_points = points.map(|point| point.map(|v| v as f32));
+        let gpu_center = p.position.map(|v| v as f32);
+        if gpu_points.iter().flatten().any(|v| !v.is_finite())
+            || (0..3).any(|axis| {
+                gpu_points[2 * axis][axis] <= gpu_center[axis]
+                    || gpu_points[2 * axis + 1][axis] >= gpu_center[axis]
+            })
+        {
+            return Err("liquid particle extent is not representable in GPU coordinates".into());
+        }
+        let base = u32::try_from(vertices.len()).map_err(|_| "liquid draw index overflow")?;
+        vertices.extend(gpu_points.map(|position| SceneVertex {
+            position,
+            uv: [0.; 2],
+            color,
+        }));
         for face in [
             [0, 2, 4],
             [2, 1, 4],
@@ -37,15 +53,7 @@ pub(super) fn mesh(liquid: &Liquid) -> Result<Option<SceneMesh>, String> {
             [3, 1, 5],
             [0, 3, 5],
         ] {
-            for point in face.map(|i| points[i]) {
-                indices
-                    .push(u32::try_from(vertices.len()).map_err(|_| "liquid draw index overflow")?);
-                vertices.push(SceneVertex {
-                    position: point.map(|v| v as f32),
-                    uv: [0.; 2],
-                    color,
-                });
-            }
+            indices.extend(face.map(|i| base + i as u32));
         }
     }
     SceneMesh::new(vertices, indices)
@@ -71,10 +79,20 @@ mod tests {
         )
         .unwrap();
         let mesh = mesh(&liquid).unwrap().unwrap();
+        assert_eq!(mesh.vertices().len(), 6);
+        assert_eq!(mesh.indices().len(), 24);
+        voxy_render::MediumBoundaryMesh::from_scene_mesh(
+            &mesh,
+            voxy_render::OpticalMediumId(1),
+            voxy_render::OpticalMediumId(0),
+            1.,
+            8,
+        )
+        .unwrap();
         let mut volume = 0.;
-        for face in mesh.vertices().chunks_exact(3) {
+        for indices in mesh.indices().chunks_exact(3) {
+            let face = indices.iter().map(|&i| &mesh.vertices()[i as usize]);
             let points: Vec<_> = face
-                .iter()
                 .map(|v| {
                     glam::DVec3::from_array(v.position.map(f64::from))
                         - glam::DVec3::from_array(p.position)
@@ -88,8 +106,27 @@ mod tests {
             .iter()
             .map(|v| glam::Vec3::from_array(v.position))
             .sum::<glam::Vec3>()
-            / 24.;
+            / mesh.vertices().len() as f32;
         assert!((center - glam::Vec3::new(1., 2., 3.)).length() < 1e-6);
+    }
+    #[test]
+    fn gpu_coordinate_collapse_rejects_the_whole_particle_mesh() {
+        let particle = |position| physics::liquid::Particle {
+            position,
+            velocity: [0.; 3],
+            mass: 1.,
+            material: 0,
+        };
+        for center in [1e8, 1e8 + 4.] {
+            let liquid = Liquid::new(
+                vec![particle([0.; 3]), particle([center; 3])],
+                vec![physics::liquid::Material::WATER],
+                physics::liquid::Config::default(),
+            )
+            .unwrap();
+            assert!(mesh(&liquid).unwrap_err().contains("not representable"));
+            assert_eq!(liquid.particles().len(), 2);
+        }
     }
 }
 
