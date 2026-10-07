@@ -1,0 +1,8 @@
+{
+  "steps": 24,
+  "source": "artifacts/full-rig-harmonic-traced-2026-10-07",
+  "sha256": {
+    "capture.nodes.jsonl": "223c6503eb154ac8a7ed1afdbfdb800d1ba34bbd1ef61457b5051e63a123ef7a",
+    "capture.energy.jsonl": "d6083466304bff54fe643ee7ce579abd5f5a444f82ae87c57b98f44d7fd1a58e"
+  }
+}

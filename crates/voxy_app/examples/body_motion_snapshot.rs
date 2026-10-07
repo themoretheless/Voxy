@@ -1326,6 +1326,85 @@ mod collision_tests {
     fn audits_committed_full_rig_nodes_and_energy_prefix() {
         audit_supported_rig_capture(true);
     }
+    fn checkpoint_cell_volume_ratios(
+        volume: &physics::biomechanics::TetraMesh,
+        nodes: &[[[f64; 3]; 2]],
+    ) -> Result<(f64, f64), String> {
+        if nodes.len() != volume.points.len() {
+            return Err("checkpoint node count differs from reference volume".into());
+        }
+        let determinant = |p: [[f64; 3]; 4]| {
+            let p = p.map(glam::DVec3::from_array);
+            (p[1] - p[0]).dot((p[2] - p[0]).cross(p[3] - p[0]))
+        };
+        let mut minimum = f64::INFINITY;
+        let mut maximum = 0_f64;
+        let mut worst = (0, 0_f64);
+        let mut total_volume = 0.;
+        let mut deviating_volume = 0.;
+        for (id, cell) in volume.cells.iter().enumerate() {
+            let rest = determinant(cell.map(|i| volume.points[i]));
+            let current = determinant(cell.map(|i| nodes[i][0]));
+            let ratio = current / rest;
+            if !rest.is_finite() || rest == 0. || !ratio.is_finite() || ratio <= 0. {
+                return Err(format!(
+                    "checkpoint cell {id} has invalid signed volume ratio {ratio}"
+                ));
+            }
+            minimum = minimum.min(ratio);
+            maximum = maximum.max(ratio);
+            let reference_volume = rest.abs() / 6.;
+            total_volume += reference_volume;
+            // Diagnostic threshold only; this is not material admission policy.
+            if (ratio - 1.).abs() > 0.1 {
+                deviating_volume += reference_volume;
+            }
+            if (ratio - 1.).abs() > worst.1 {
+                worst = (id, (ratio - 1.).abs());
+            }
+        }
+        if std::env::var_os("VOXY_RIG_VOLUME_DETAIL").is_some() {
+            let cell = volume.cells[worst.0];
+            let centroid = cell
+                .map(|i| glam::DVec3::from_array(volume.points[i]))
+                .into_iter()
+                .sum::<glam::DVec3>()
+                / 4.;
+            let reference_volume = determinant(cell.map(|i| volume.points[i])).abs() / 6.;
+            let quality = volume.cell_altitude_edge_ratios()?;
+            eprintln!(
+                "RIG_VOLUME_DETAIL worst_cell={} worst_nodes={cell:?} worst_absolute_ratio_deviation={:.17e} reference_centroid_m={:?} reference_volume_m3={reference_volume:.17e} altitude_edge_ratio={:.17e} reference_volume_fraction_deviation_above_0_1={:.17e} diagnostic_threshold_only=true",
+                worst.0,
+                worst.1,
+                centroid.to_array(),
+                quality[worst.0],
+                deviating_volume / total_volume
+            );
+        }
+        Ok((minimum, maximum))
+    }
+    #[test]
+    fn checkpoint_volume_audit_rejects_inversion_collapse_and_nonfinite_positions() {
+        let volume = physics::biomechanics::TetraMesh::from_tetrahedra(
+            vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            vec![[0, 1, 2, 3]],
+        )
+        .unwrap();
+        let mut nodes: Vec<_> = volume.points.iter().map(|&p| [p, [0.; 3]]).collect();
+        assert_eq!(
+            checkpoint_cell_volume_ratios(&volume, &nodes).unwrap(),
+            (1., 1.)
+        );
+        nodes[3][0][2] = 0.5;
+        assert_eq!(
+            checkpoint_cell_volume_ratios(&volume, &nodes).unwrap(),
+            (0.5, 0.5)
+        );
+        for z in [-1., 0., f64::NAN, f64::INFINITY] {
+            nodes[3][0][2] = z;
+            assert!(checkpoint_cell_volume_ratios(&volume, &nodes).is_err());
+        }
+    }
     fn audit_supported_rig_capture(prefix: bool) {
         let path = std::env::var("VOXY_RIG_SUPPORTED_CAPTURE")
             .expect("completed runtime checkpoint path required");
@@ -1340,14 +1419,45 @@ mod collision_tests {
             ModelLimits::default(),
         )
         .unwrap();
-        let volume = physics::biomechanics::TetraMesh::from_medit_volume(include_str!(
-            "../../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
-        ))
+        let reference_volume = std::env::var("VOXY_RIG_REFERENCE_VOLUME")
+            .ok()
+            .map(|path| std::fs::read_to_string(path).expect("reference volume file"));
+        let volume = physics::biomechanics::TetraMesh::from_medit_volume(
+            reference_volume.as_deref().unwrap_or(include_str!(
+                "../../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
+            )),
+        )
         .unwrap();
         let (bind, _) =
             contact_positions_from_pose64(&model, &model.skeleton.bind_pose64()).unwrap();
-        let pins = [1282, 167, 1856];
-        let sources = pins.map(|n| bind.iter().position(|p| *p == volume.points[n]).unwrap());
+        let quality = volume.cell_altitude_edge_ratios().unwrap();
+        let (worst_cell, minimum_quality) = quality
+            .iter()
+            .enumerate()
+            .min_by(|a, b| a.1.total_cmp(b.1))
+            .unwrap();
+        eprintln!(
+            "RIG_REFERENCE_QUALITY cells={} minimum_altitude_edge_ratio={minimum_quality:.17e} worst_cell={worst_cell}",
+            quality.len()
+        );
+        let pins: Vec<usize> = if let Ok(path) = std::env::var("VOXY_RIG_SUPPORT_MANIFEST") {
+            let manifest: serde_json::Value =
+                serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+            assert_eq!(manifest["regions"].as_array().unwrap().len(), 1);
+            serde_json::from_value(manifest["regions"][0]["supports"].clone()).unwrap()
+        } else {
+            vec![1282, 167, 1856]
+        };
+        assert!(!pins.is_empty());
+        let unique: std::collections::BTreeSet<_> = pins.iter().copied().collect();
+        assert_eq!(unique.len(), pins.len(), "duplicate support node");
+        let sources: Vec<_> = pins
+            .iter()
+            .map(|&n| {
+                assert!(n < volume.points.len(), "support outside reference mesh");
+                bind.iter().position(|p| *p == volume.points[n]).unwrap()
+            })
+            .collect();
         let end: usize = std::env::var("VOXY_RIG_SUPPORTED_CAPTURE_STEPS")
             .unwrap_or_else(|_| "3".into())
             .parse()
@@ -1421,15 +1531,29 @@ mod collision_tests {
         let mut maximum_pin_error = 0_f64;
         let mut maximum_balance = 0_f64;
         let mut maximum_free_motion = 0_f64;
+        let mut minimum_volume_ratio = f64::INFINITY;
+        let mut maximum_volume_ratio = 0_f64;
         for (step, row) in rows.iter().enumerate() {
             let time = row["time_s"].as_f64().unwrap();
             assert!((time - expected_steps[step] as f64 / 240.).abs() < 1e-14);
             let nodes: Vec<[[f64; 3]; 2]> = serde_json::from_value(row["nodes"].clone()).unwrap();
-            assert_eq!(nodes.len(), 2338);
+            assert_eq!(nodes.len(), volume.points.len());
             assert!(nodes.iter().flatten().flatten().all(|v| v.is_finite()));
+            let (minimum, maximum) =
+                checkpoint_cell_volume_ratios(&volume, &nodes).unwrap_or_else(|error| {
+                    panic!("checkpoint step {}: {error}", expected_steps[step])
+                });
+            minimum_volume_ratio = minimum_volume_ratio.min(minimum);
+            maximum_volume_ratio = maximum_volume_ratio.max(maximum);
+            if std::env::var_os("VOXY_RIG_VOLUME_DETAIL").is_some() {
+                eprintln!(
+                    "RIG_VOLUME_DETAIL_CONTEXT step={} support_nodes={pins:?}",
+                    expected_steps[step]
+                );
+            }
             let pose = imported_pose64(&model, time / 2., 0.5).unwrap();
             let (source, _) = contact_positions_from_pose64(&model, &pose).unwrap();
-            for (pin, source_id) in pins.iter().zip(sources) {
+            for (pin, source_id) in pins.iter().zip(sources.iter().copied()) {
                 for axis in 0..3 {
                     maximum_pin_error = maximum_pin_error
                         .max((nodes[*pin][0][axis] - source[source_id][axis]).abs());
@@ -1470,16 +1594,127 @@ mod collision_tests {
                 assert!(receipts[0][1].abs() > 1e-6);
             }
         }
+        eprintln!(
+            "RIG_VOLUME_AUDIT checkpoints={} cells_per_checkpoint={} minimum_signed_volume_ratio={minimum_volume_ratio:.17e} maximum_signed_volume_ratio={maximum_volume_ratio:.17e} continuous_between_checkpoints_qualified=false",
+            rows.len(),
+            volume.cells.len()
+        );
         assert!(maximum_pin_error < 1e-13);
         assert!(maximum_free_motion > 1e-6);
         eprintln!(
-            "RIG_SUPPORTED_AUDIT checkpoints={} nodes=2338 cells=6845 pins=3 committed_time_s={} last_node_time_s={} maximum_pin_error_m={maximum_pin_error:.17e} maximum_independent_balance_j={maximum_balance:.17e} maximum_free_motion_m={maximum_free_motion:.17e} maximum_interval_balance_j={maximum_interval_balance:.17e} authored_rate_j_s={energy_rate:?} prefix={prefix} requested_steps={end} requested_capture_complete={} full_clip_qualified={}",
+            "RIG_SUPPORTED_AUDIT checkpoints={} nodes={} cells={} pins={} committed_time_s={} last_node_time_s={} maximum_pin_error_m={maximum_pin_error:.17e} maximum_independent_balance_j={maximum_balance:.17e} maximum_free_motion_m={maximum_free_motion:.17e} maximum_interval_balance_j={maximum_interval_balance:.17e} authored_rate_j_s={energy_rate:?} prefix={prefix} requested_steps={end} requested_capture_complete={} full_clip_qualified={}",
             rows.len(),
+            volume.points.len(),
+            volume.cells.len(),
+            pins.len(),
             committed_end as f64 / 240.,
             expected_steps.last().unwrap().to_owned() as f64 / 240.,
             !prefix,
             !prefix && end == 480
         );
+    }
+    #[test]
+    #[ignore = "manual support patch candidate; requires reference volume, manifest and output path"]
+    fn prepares_boundary_one_ring_support_candidate() {
+        use std::collections::BTreeSet;
+        let mesh_path = std::env::var("VOXY_RIG_REFERENCE_VOLUME").unwrap();
+        let manifest_path = std::env::var("VOXY_RIG_INTERIOR_MANIFEST").unwrap();
+        let output = std::env::var("VOXY_RIG_SUPPORT_CANDIDATE").unwrap();
+        assert!(
+            !std::path::Path::new(&output).exists(),
+            "preserve existing candidate"
+        );
+        let volume = physics::biomechanics::TetraMesh::from_medit_volume(
+            &std::fs::read_to_string(&mesh_path).unwrap(),
+        )
+        .unwrap();
+        let mut manifest: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(manifest_path).unwrap()).unwrap();
+        assert_eq!(manifest["regions"].as_array().unwrap().len(), 1);
+        let seeds: BTreeSet<usize> = manifest["regions"][0]["supports"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_u64().unwrap() as usize)
+            .collect();
+        let mut patch = seeds.clone();
+        // Expand only on the exterior surface; interior FEM nodes stay free.
+        for face in &volume.boundary {
+            if face.iter().any(|i| seeds.contains(i)) {
+                patch.extend(face.iter().copied());
+            }
+        }
+        assert!(patch.len() > seeds.len());
+        let model = ModelAsset::parse(
+            include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let (skin, _) =
+            contact_positions_from_pose64(&model, &model.skeleton.bind_pose64()).unwrap();
+        for &node in &patch {
+            assert!(
+                skin.contains(&volume.points[node]),
+                "support must have exact source alias"
+            );
+        }
+        manifest["regions"][0]["supports"] = serde_json::json!(patch);
+        let copied_mesh = std::path::Path::new(&output)
+            .parent()
+            .unwrap()
+            .join("candidate.mesh");
+        assert!(!copied_mesh.exists(), "preserve existing mesh");
+        std::fs::copy(mesh_path, copied_mesh).unwrap();
+        manifest["regions"][0]["mesh"] = serde_json::json!("candidate.mesh");
+        // Only an experimental boundary condition: no claim of anatomical calibration.
+        std::fs::write(&output, serde_json::to_string_pretty(&manifest).unwrap()).unwrap();
+        eprintln!(
+            "SUPPORT_PATCH_CANDIDATE seeds={seeds:?} support_nodes={patch:?} nodes={} cells={} calibrated=false dynamics_advanced=false",
+            volume.points.len(),
+            volume.cells.len()
+        );
+    }
+    #[test]
+    #[ignore = "manual authored mesh with interior nodes; requires VOXY_RIG_INTERIOR_MANIFEST"]
+    fn imported_interior_volume_extends_native_source_pose() {
+        let path = std::env::var("VOXY_RIG_INTERIOR_MANIFEST").unwrap();
+        const MODEL: &[u8] = include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb");
+        let model = ModelAsset::parse(MODEL, &[], ModelLimits::default()).unwrap();
+        let imported = tissue_regions::load(std::path::Path::new(&path), &model, MODEL).unwrap();
+        let mut demo = imported.value().instantiate().unwrap();
+        demo.assemble_regions().unwrap();
+        let (rest, _) =
+            contact_positions_from_pose64(&model, &model.skeleton.bind_pose64()).unwrap();
+        let binding = imported.value().bind_skin(&demo, &rest).unwrap();
+        let audit_volume = std::env::var("VOXY_RIG_REFERENCE_VOLUME").ok().map(|path| {
+            physics::biomechanics::TetraMesh::from_medit_volume(
+                &std::fs::read_to_string(path).unwrap(),
+            )
+            .unwrap()
+        });
+        for time in [0., 0.05, 0.1, 0.2, 0.5] {
+            let pose = imported_pose64(&model, time / 2., 0.5).unwrap();
+            let (skin, _) = contact_positions_from_pose64(&model, &pose).unwrap();
+            let palette = pose.skin_matrices(&model.skeleton).unwrap();
+            let reference = binding.posed_reference_nodes(&palette, &skin).unwrap();
+            assert_eq!(reference.len(), 3227);
+            assert!(reference.iter().flatten().all(|v| v.is_finite()));
+            if let Some(volume) = &audit_volume {
+                let states: Vec<_> = reference.iter().map(|&p| [p, [0.; 3]]).collect();
+                let ratios = checkpoint_cell_volume_ratios(volume, &states);
+                // This reference drives targets, not the accepted physical state.
+                // Report inversion rather than silently treating it as physical proof.
+                eprintln!(
+                    "KINEMATIC_REFERENCE_VOLUME native_time_s={time} ratios={ratios:?} physical_state_qualified=false"
+                );
+            }
+            eprintln!(
+                "INTERIOR_REFERENCE native_time_s={time} nodes={} dynamics_advanced=false",
+                reference.len()
+            );
+        }
+        eprintln!("INTERIOR_IMPORT {}", imported.value().coverage_report);
     }
     #[test]
     fn imported_startup_drives_native_tetra_supports_with_independent_energy_balance() {

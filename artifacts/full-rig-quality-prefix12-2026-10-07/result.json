@@ -1,0 +1,26 @@
+{
+  "audit_passed": true,
+  "requested_steps": 480,
+  "committed_steps": 12,
+  "committed_simulated_s": 0.05,
+  "nodes": 3227,
+  "cells": 12284,
+  "node_checkpoints": 2,
+  "energy_frames": 13,
+  "minimum_signed_volume_ratio": 0.8263862198259556,
+  "maximum_signed_volume_ratio": 1.1350305333676796,
+  "maximum_pin_error_m": 4.440892098500626e-16,
+  "maximum_checkpoint_cumulative_energy_defect_j": 5.2936821592908245e-14,
+  "authored_energy_rate_j_s": 5e-10,
+  "maximum_free_motion_m": 0.01229561879463581,
+  "reference_volume": "artifacts/tissue-quality-remesh-2026-10-07/candidate.mesh",
+  "full_clip_qualified": false,
+  "continuous_between_checkpoints_qualified": false,
+  "excessive_expansion_corrected": false,
+  "self_contact_qualified": false,
+  "realtime_qualified": false,
+  "capture_sha256": {
+    "capture.nodes.jsonl": "3eca1b1834d5e5852c3b32f005c45ad113c93e84ccb4a39180cc0c4f5a80cf4b",
+    "capture.energy.jsonl": "915193527315c031cfe83e926f0883bec8c313f675808dab710a87b253bfa04f"
+  }
+}

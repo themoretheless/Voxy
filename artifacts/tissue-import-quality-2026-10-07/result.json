@@ -1,0 +1,26 @@
+{
+  "tests": {
+    "passed": 4,
+    "failed": 0,
+    "ignored": 0,
+    "duration_s": 80.58
+  },
+  "source_sha256": {
+    "crates/voxy_app/examples/body_motion_snapshot/tissue_regions.rs": "cf856824aac7ed545b9d778b32789d072eaa77c3714b795882ae717f72d37087",
+    "crates/physics/src/biomechanics/tetra_mesh.rs": "b374afb9f81f8758b366c63e3a52cd35acbf79b5a859edeafba0af136619a9f6"
+  },
+  "integration": [
+    "offline native volume check",
+    "authored tissue manifest coverage report"
+  ],
+  "formats": [
+    "vxtm-v1",
+    "medit-volume-v1",
+    "star-shaped-surface-v1"
+  ],
+  "full_character_cells": 6845,
+  "bound_source_vertices": 3273,
+  "quality_is_diagnostic_only": true,
+  "full_clip_qualified": false,
+  "material_compressibility_qualified": false
+}

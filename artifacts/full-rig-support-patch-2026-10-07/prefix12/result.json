@@ -1,0 +1,15 @@
+{
+  "audit_passed": true,
+  "committed_steps": 12,
+  "simulated_s": 0.05,
+  "support_count": 19,
+  "minimum_volume_ratio": 0.938819728401547,
+  "maximum_volume_ratio": 1.051159200140184,
+  "three_support_same_binary_prefix_range": [
+    0.8263862198,
+    1.1350305334
+  ],
+  "scope": "early checkpoint extrema only; not full clip or calibrated anatomical attachment",
+  "full_clip_qualified": false,
+  "realtime_qualified": false
+}

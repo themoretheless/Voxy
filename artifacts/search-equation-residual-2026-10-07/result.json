@@ -1,0 +1,15 @@
+{
+  "optional_environment": "VOXY_CONTACT_SEARCH_VERIFY=1",
+  "diagnostic_operator_actions": 1,
+  "measurement": "squared unpreconditioned L2 norm of residual + operator(returned direction), divided by initial residual norm squared, free nodes only",
+  "math_or_admission_policy_changed": false,
+  "diagnostic_action_failure_changes_direction": false,
+  "overflow_or_undefined_ratio": "None; not zero or convergence certificate",
+  "analytic_test_passed": true,
+  "search_regression_passed": 8,
+  "manual_profiles_ignored": 3,
+  "native_affine_contact_test_passed": true,
+  "backend_rollback_test_with_diagnostic_enabled_passed": true,
+  "full_rig_equation_residual_measured": false,
+  "existing_live_binaries_contain_new_diagnostic": false
+}

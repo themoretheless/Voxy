@@ -1,0 +1,19 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 35.43s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+
+thread 'biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile' (5162302) panicked at crates/physics/src/biomechanics/inertia/implicit.rs:3149:9:
+search direction relative discrepancy 0.002651831112314191
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile ... FAILED
+
+failures:
+
+failures:
+    biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.35s
+
+error: test failed, to rerun pass `-p physics --lib`

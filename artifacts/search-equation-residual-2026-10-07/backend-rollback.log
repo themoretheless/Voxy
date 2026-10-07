@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 1 test
+test biomechanics::inertia::implicit::backend_transaction_tests::explicit_backend_success_matches_native_and_failures_rollback_support_step ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 150 filtered out; finished in 0.00s
+

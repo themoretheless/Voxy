@@ -1,0 +1,40 @@
+{
+  "native_exit_code": 0,
+  "presented_frames": 30,
+  "native_checks": [
+    "LOD NATIVE FAR PASS",
+    "LOD NATIVE NEAR AND LAST GOOD PASS",
+    "LOD NATIVE BUDGET RECOVERY PASS",
+    "LOD NATIVE PRESENTED AFTER FAILURE PASS",
+    "LOD NATIVE SINGLE RESTORED PASS",
+    "LOD NATIVE COMPETITION FALLBACK PASS",
+    "LOD NATIVE COMPETITION RECOVERY PASS"
+  ],
+  "split_view_phases": 3,
+  "includes_msaa4": true,
+  "competition": {
+    "owners": 2,
+    "mandatory_bytes": 62816,
+    "optional_level_bytes": [
+      3072,
+      3072
+    ],
+    "contracted_budget": 65888,
+    "accepted_live_bytes_when_contracted": 65888,
+    "recovered_live_bytes": 68960
+  },
+  "animated_gpu_resource_gate": {
+    "passed": 1,
+    "failed": 0,
+    "cpu_fallback_exercised": true,
+    "duration_s": 1.43
+  },
+  "scope": "current standalone native LOD scene and animated LOD allocation/pose unit gate; two logical assets share identical fixture topology; logical resident bytes are not total physical VRAM; no animated native pixel-equivalence claim",
+  "source_sha256": {
+    "crates/voxy_editor/src/main.rs": "7659977e57e5ba7168c7bdbd2c406d5fc804c6d37e7997d20259e53b0381620a",
+    "crates/voxy_editor/src/lod_smoke.rs": "8e2d0444677da3a497e6e258c26e6be01c9842c50decbad71b801ddb07dc7351",
+    "crates/voxy_editor/src/animated_models.rs": "c24892257642f83b395fde794ee5f39c83f813d98edac6ef5dd4c39f6d950617",
+    "crates/voxy_editor/src/animated_models/tests.rs": "996d3c3e21b946dc611e3af5786e1ad9ac88f076a3ef3097b8f13ce1410a4043"
+  },
+  "binary_sha256": "2161bb835cab06b1bf37f8ad672747d2d176969bfe8964fc46ecbc6e13d81ea3"
+}

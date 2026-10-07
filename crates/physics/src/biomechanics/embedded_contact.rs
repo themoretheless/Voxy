@@ -697,3 +697,46 @@ mod response_profile {
         );
     }
 }
+
+#[cfg(test)]
+mod reference_composition_tests {
+    use super::*;
+
+    #[test]
+    fn inverted_displacement_reference_does_not_invert_actual_contact_skin() {
+        let mesh = super::super::TetraMesh::from_tetrahedra(
+            vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            vec![[0, 1, 2, 3]],
+        )
+        .unwrap();
+        let contact = EmbeddedTriangleContact::new(
+            &mesh.points,
+            &mesh.cells,
+            &mesh.points,
+            mesh.boundary.clone(),
+        )
+        .unwrap();
+        // Reflection has negative determinant. It is a displacement reference,
+        // not an admitted mechanical configuration or a matrix being inverted.
+        let reference: Vec<_> = mesh.points.iter().map(|p| [-p[0], p[1], p[2]]).collect();
+        let skin = contact
+            .positions(RelativeSkinPose {
+                nodes: &mesh.points,
+                reference: &reference,
+                base: &reference,
+            })
+            .unwrap();
+        assert_eq!(skin, mesh.points);
+        let forces = vec![[0.25, -0.5, 1.]; skin.len()];
+        let loads = contact.embedding.relative_loads(&forces).unwrap();
+        for (node, reference) in loads
+            .nodal_forces_n()
+            .iter()
+            .zip(loads.reference_forces_n())
+        {
+            for axis in 0..3 {
+                assert_eq!(node[axis], -reference[axis]);
+            }
+        }
+    }
+}

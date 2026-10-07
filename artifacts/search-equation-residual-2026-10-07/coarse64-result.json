@@ -1,0 +1,20 @@
+{
+  "test_only": true,
+  "modes": "three translations and three rotations restricted to free nodes",
+  "coarse_dimension": 6,
+  "subspace_recovery_test_passed": true,
+  "full_mesh_descent_tests_passed": true,
+  "strict_equation_convergence_verified": false,
+  "scalar_squared_residual_ratios": [
+    1.2969433807442876,
+    1.290477715243902,
+    1.287234106558776
+  ],
+  "block_plus_coarse_squared_residual_ratios": [
+    1.5585448669390463,
+    1.1847831091455732,
+    0.8830664622374365
+  ],
+  "production_preconditioner_changed": false,
+  "performance_claim": false
+}

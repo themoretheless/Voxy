@@ -1,0 +1,22 @@
+{
+  "source_pid": 89549,
+  "committed_steps": 84,
+  "requested_steps": 480,
+  "sha256": {
+    "capture.nodes.jsonl": "d4cdad0a9b0e5fdc77cb7e404ed9339caa44d573a6fe81b2a420c814e0e254f4",
+    "capture.energy.jsonl": "d5842d10f757833818c43eb9488bd369551fe681a50fbd1751c2f23bd9796605"
+  },
+  "audit_passed": true,
+  "committed_simulated_s": 0.35,
+  "node_checkpoints": 8,
+  "energy_frames": 85,
+  "nodes": 3227,
+  "cells": 12284,
+  "minimum_signed_volume_ratio": 0.6446987924076949,
+  "maximum_signed_volume_ratio": 1.5446250619176654,
+  "maximum_pin_error_m": 4.440892098500626e-16,
+  "maximum_checkpoint_energy_defect_j": 3.4638958368304884e-13,
+  "full_clip_qualified": false,
+  "realistic_compressibility_qualified": false,
+  "continuous_between_checkpoints_qualified": false
+}

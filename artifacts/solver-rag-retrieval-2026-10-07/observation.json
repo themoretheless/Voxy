@@ -1,0 +1,18 @@
+{
+  "observed_utc": "2026-10-07T11:11:32.902142+00:00",
+  "queries": [
+    "elasticity",
+    "multigrid",
+    "Voxy"
+  ],
+  "stage": "query_with_index",
+  "exec_cell": "2741",
+  "rag_pid": 1776,
+  "listener": "127.0.0.1:7432",
+  "service_process_confirmed_live": true,
+  "health_timeout_s": 3,
+  "query_terminal_result_observed": false,
+  "sample_observation": "DuckDB query execution present in sampled tokio worker; not proof of a deadlock or completion",
+  "service_restarted": false,
+  "retrieval_hits_claimed": false
+}

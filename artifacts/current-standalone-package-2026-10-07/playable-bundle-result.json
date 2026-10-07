@@ -1,0 +1,13 @@
+{
+  "bundle": "/tmp/VoxyPlayable-20261007.app",
+  "package": "playable.vpak",
+  "export_exit_code": 0,
+  "plist_validation_passed": true,
+  "native_window_observed": true,
+  "initial_player_floor_step_visible": true,
+  "input_jump_qualified": false,
+  "after_space_player_not_visible_in_snapshot": true,
+  "runtime_log_error_reported": false,
+  "signed_distribution_qualified": false,
+  "source_fixture": "crates/voxy_editor/examples/game/"
+}

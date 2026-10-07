@@ -1,0 +1,43 @@
+{
+  "manifest_changes": [
+    {
+      "path": "/regions/0/mesh",
+      "baseline": "tetgen-volume.mesh",
+      "candidate": "candidate.mesh"
+    },
+    {
+      "path": "/regions/0/mesh_blake3",
+      "baseline": "3860e2a7726cfae6c431009d3dde70bb24ecc9fe6168fb1109ba64ab61c8b925",
+      "candidate": "1840e46ce817a5608444f0ca872da963a18b8e4f875bf0c6a792fc989bc2fe4a"
+    }
+  ],
+  "supports": [
+    1282,
+    167,
+    1856
+  ],
+  "support_reference_coordinates_equal": true,
+  "support_coordinates_m": {
+    "1282": [
+      -2.0484441706175583e-07,
+      1.3109303379650528,
+      -0.13100002317181333
+    ],
+    "167": [
+      -0.05770591538200742,
+      1.198690215430655,
+      2.8172479861130963e-08
+    ],
+    "1856": [
+      0.05770559825141779,
+      1.198690220465443,
+      3.3016302134453556e-08
+    ]
+  },
+  "source_skin_reference": "same original model and startup duration",
+  "material_parameters_equal": true,
+  "energy_policy_equal": true,
+  "candidate_nodes": 3227,
+  "baseline_nodes": 2338,
+  "scope": "physical source contract equality; executables differ, no runtime speed comparison or mesh-only causal claim"
+}

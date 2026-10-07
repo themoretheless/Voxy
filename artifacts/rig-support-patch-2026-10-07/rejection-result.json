@@ -1,0 +1,8 @@
+{
+  "atomic_invalid_palette_rejection_passed": true,
+  "authored_material_variable_support_regression_passed": true,
+  "coverage": "rigid/blended/free and assembled/unassembled owners; projective invalid palettes preserve owner; duplicate supports and invalid material rejected",
+  "invalid_support_index_source_check": "crates/voxy_app/src/tissue_demo.rs:430 (get_mut rejects before owner construction)",
+  "out_of_range_support_test_run": false,
+  "full_rig_patch_contact_and_realtime_qualified": false
+}

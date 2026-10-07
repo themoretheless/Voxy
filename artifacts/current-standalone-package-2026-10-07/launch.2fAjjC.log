@@ -1,0 +1,7 @@
+MODEL PUBLISHED frames=0 first_x=0 asset=a
+MODEL PUBLISHED frames=0 first_x=0 asset=b
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=0 asset=a
+MODEL PUBLISHED frames=0 first_x=0 asset=b
+GAME NATIVE PASS frames=3 ticks=58
+GAME NATIVE PASS frames=3 ticks=58

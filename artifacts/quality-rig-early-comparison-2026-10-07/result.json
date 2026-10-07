@@ -1,0 +1,39 @@
+{
+  "scope": "independent early geometry comparison; not late expansion correction, full-clip or mesh-only causal qualification",
+  "step": 36,
+  "time_s": 0.15,
+  "profiles": {
+    "baseline": {
+      "nodes": 2338,
+      "cells": 6845,
+      "minimum_volume_ratio": 0.9089165152995848,
+      "maximum_volume_ratio": 2.6039382087419654,
+      "weighted_mean_volume_ratio": 1.0006325944478782,
+      "reference_volume_fraction_with_absolute_ratio_deviation_above_0_1": 6.737059470876767e-05,
+      "reference_volume_m3": 0.05371328527883002,
+      "energy_receipt": [
+        -0.9115413468986464,
+        0.4419579732462178,
+        1.35349932014538,
+        5.042764560610249e-13
+      ],
+      "snapshot_sha256": "0f2e00e9b973a6fcfad0cc7b13cbe9ec915f22742700e78e24e0bb4ed557f895"
+    },
+    "quality": {
+      "nodes": 3227,
+      "cells": 12284,
+      "minimum_volume_ratio": 0.7838279626527492,
+      "maximum_volume_ratio": 1.2147274908395451,
+      "weighted_mean_volume_ratio": 1.0006607173804158,
+      "reference_volume_fraction_with_absolute_ratio_deviation_above_0_1": 0.0007943624895585422,
+      "reference_volume_m3": 0.05371328527883002,
+      "energy_receipt": [
+        -0.2240729623471367,
+        0.9237709171745878,
+        1.1478438795216925,
+        -3.0452657601881313e-14
+      ],
+      "snapshot_sha256": "c029cd5b1c4837bb8de65e048de943a50d91adb05805d6e534b4b6e7d7c3dd5c"
+    }
+  }
+}

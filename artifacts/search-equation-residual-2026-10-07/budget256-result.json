@@ -1,0 +1,46 @@
+{
+  "test_passed": true,
+  "production_limit": 64,
+  "test_limit": 256,
+  "strict_equation_convergence_verified": false,
+  "cases": [
+    {
+      "limit": 256,
+      "actions": 256,
+      "stop": "IterationLimit",
+      "squared_l2_ratio": 0.6852060168391193
+    },
+    {
+      "limit": 256,
+      "actions": 256,
+      "stop": "IterationLimit",
+      "squared_l2_ratio": 0.2785426006024363
+    },
+    {
+      "limit": 256,
+      "actions": 256,
+      "stop": "IterationLimit",
+      "squared_l2_ratio": 0.9218827631156098
+    },
+    {
+      "limit": 256,
+      "actions": 256,
+      "stop": "IterationLimit",
+      "squared_l2_ratio": 0.6450079158551327
+    },
+    {
+      "limit": 256,
+      "actions": 256,
+      "stop": "IterationLimit",
+      "squared_l2_ratio": 0.5687045558593413
+    },
+    {
+      "limit": 256,
+      "actions": 256,
+      "stop": "IterationLimit",
+      "squared_l2_ratio": 0.8261498924268744
+    }
+  ],
+  "runtime_policy_changed": false,
+  "scope": "three synthetic residuals, scalar and block preconditioning; not dynamic full-rig convergence"
+}

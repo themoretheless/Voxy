@@ -1,0 +1,39 @@
+{
+  "source": "crates/physics/tests/embedded_skin_contact.rs",
+  "pending_tests": {
+    "adaptive_implicit_parallel_contact_trajectory_refines_with_contact_quadrature": {
+      "steps": [
+        8,
+        16,
+        32
+      ],
+      "asserts_position_error_decreases": true,
+      "asserts_velocity_error_decreases": true
+    },
+    "fixed_implicit_parallel_contact_trajectory_records_refinement_limit": {
+      "steps": [
+        512,
+        1024,
+        2048,
+        4096,
+        8192
+      ],
+      "asserts_finite_errors": true,
+      "asserts_error_decreases": false
+    },
+    "fixed_parallel_contact_stricter_budget_comparison": {
+      "steps": [
+        8192,
+        16384
+      ],
+      "budgets": [
+        8e-06,
+        8e-08
+      ],
+      "asserts_finite_strict_velocity_error": true,
+      "asserts_stricter_budget_improves_accuracy": false
+    }
+  },
+  "scope": "passing test suite cannot certify fixed-step convergence or stricter-budget accuracy improvement",
+  "full_rig_trajectory_convergence_qualified": false
+}

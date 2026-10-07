@@ -1,0 +1,14 @@
+{
+  "test_only": true,
+  "partition": "nonempty spatial octants about arithmetic rest-node centroid; three translations each plus three global rotations",
+  "subspace_inverse_and_pin_test_passed": true,
+  "full_mesh_finite_descent_test_passed": true,
+  "strict_equation_convergence_verified": false,
+  "block_plus_spatial_squared_residual_ratios": [
+    2.8856050427385096,
+    1.9089567206365876,
+    2.502023322176703
+  ],
+  "promoted": false,
+  "performance_claim": false
+}

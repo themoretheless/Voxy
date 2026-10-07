@@ -1,0 +1,50 @@
+{
+  "committed_steps": 288,
+  "requested_steps": 480,
+  "checkpoints": 26,
+  "cells_per_checkpoint": 6845,
+  "energy_frames": 289,
+  "audit_passed": true,
+  "rejection_test_passed": true,
+  "minimum_volume_ratio": {
+    "ratio": 0.7577714042541364,
+    "cell_id_zero_based": 2211,
+    "step": 264,
+    "time_s": 1.1,
+    "reference_nodes_zero_based": [
+      189,
+      1874,
+      191,
+      1158
+    ]
+  },
+  "maximum_volume_ratio": {
+    "ratio": 5.399373254226985,
+    "cell_id_zero_based": 2148,
+    "step": 276,
+    "time_s": 1.15,
+    "reference_nodes_zero_based": [
+      190,
+      189,
+      188,
+      191
+    ]
+  },
+  "full_clip_qualified": false,
+  "realtime_qualified": false,
+  "continuous_between_checkpoints_qualified": false,
+  "physiological_material_qualified": false,
+  "finding": "Positive orientation at captured checkpoints does not establish realistic compressibility; maximum element volume exceeds five times reference.",
+  "source_sha256": "0826f6ed85e4e615f7166ee99d41f12f07b36308dcf5a7bf707f9ab2f26d1eb4",
+  "capture_sha256": {
+    "capture.nodes.jsonl": "d362c65ea7eb5d1fe77070281ef5df84075e9c56b6473b4ac4836a266240eddd",
+    "capture.energy.jsonl": "875a6cc274485c7435420c5232b501d043bc5bdedbdf9266d6ffd3b3d92997c8"
+  },
+  "quality_source_sha256": "b374afb9f81f8758b366c63e3a52cd35acbf79b5a859edeafba0af136619a9f6",
+  "reference_quality_audit": {
+    "passed": true,
+    "minimum_altitude_edge_ratio": 0.0010979112002733966,
+    "worst_cell_zero_based": 4125,
+    "scale_invariance_and_flat_cell_regression_passed": true
+  }
+}

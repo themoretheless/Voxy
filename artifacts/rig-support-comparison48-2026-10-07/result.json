@@ -1,0 +1,26 @@
+{
+  "committed_steps": 48,
+  "simulated_s": 0.2,
+  "same_executable_sha256": "d794319b5a2fe3fe3af6acd16c1238682bc6bbe3f3eab0b937d91fdc35be8be4",
+  "scope": "five sampled checkpoints through step48; not continuous positivity or whole-clip material qualification",
+  "profiles": {
+    "three": {
+      "minimum_signed_volume_ratio": 0.699658172786,
+      "maximum_signed_volume_ratio": 1.3229694116860358,
+      "maximum_pin_error_m": 4.440892098500626e-16,
+      "maximum_independent_balance_j": 1.532107773982716e-13,
+      "maximum_free_motion_m": 0.1983815823670153,
+      "audit_passed": true
+    },
+    "patch": {
+      "minimum_signed_volume_ratio": 0.8334157969099854,
+      "maximum_signed_volume_ratio": 1.2007101566213256,
+      "maximum_pin_error_m": 4.440892098500626e-16,
+      "maximum_independent_balance_j": 7.793765632868599e-14,
+      "maximum_free_motion_m": 0.19996647530305434,
+      "audit_passed": true
+    }
+  },
+  "full_clip_qualified": false,
+  "anatomical_calibration_verified": false
+}

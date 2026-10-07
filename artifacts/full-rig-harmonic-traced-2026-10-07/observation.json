@@ -1,0 +1,17 @@
+{
+  "observed_utc": "2026-10-07T09:56:20.249096+00:00",
+  "ps": "  PID STAT  ELAPSED\n86629 R       10:38\n89549 R       00:54\n90673 Rs   07:39:16\n",
+  "terminal_exists": false,
+  "captures": {
+    "capture.energy.jsonl": {
+      "records": 20,
+      "last_time_s": 0.07916666666666666,
+      "last_step": 19
+    },
+    "capture.nodes.jsonl": {
+      "records": 2,
+      "last_time_s": 0.05,
+      "last_step": 12
+    }
+  }
+}

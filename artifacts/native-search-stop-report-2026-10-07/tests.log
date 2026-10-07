@@ -1,0 +1,26 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.51s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 17 tests
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile ... ignored, manual assembled search metric parity and assembly-amortized timing
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_block_jacobi_search_diagnosis ... ignored, manual block-Jacobi rest-search residual qualification on imported mesh
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_incomplete_factor_search_diagnosis ... ignored, manual sparse factor search residual diagnosis
+test biomechanics::inertia::implicit::tests::full_rig_symmetric_material_operator_profile ... ignored, manual full-rig material operator parity and paired timing
+test biomechanics::inertia::implicit::tests::prepared_material_moduli_profile ... ignored, manual prepared material operator ABBA timing
+test biomechanics::inertia::implicit::tests::generalized_branch_projection_preserves_convexity_and_inertia_metric ... ok
+test biomechanics::inertia::implicit::tests::fallible_search_stops_on_backend_error_without_diagonal_fallback ... ok
+test biomechanics::inertia::implicit::tests::material_contact_search_recovers_affine_motion_and_keeps_pins ... ok
+test biomechanics::inertia::implicit::assembled_metric_profile::sparse_factor_matches_independent_coupled_node_inverse_and_rejects_bad_pivot ... ok
+test biomechanics::inertia::implicit::tests::rest_material_metric_matches_affine_energy_and_solves_coupled_system ... ok
+test biomechanics::inertia::implicit::tests::coupled_direction_matches_rank_one_inverse_and_holds_pins ... ok
+test biomechanics::inertia::implicit::backend_transaction_tests::explicit_backend_preserves_shared_assembly_owner_and_rejects_mixed_owners ... ok
+test biomechanics::inertia::implicit::backend_transaction_tests::explicit_backend_success_matches_native_and_failures_rollback_support_step ... ok
+test biomechanics::inertia::implicit::tests::search_report_distinguishes_exact_inverse_budget_exhaustion_and_bad_metric ... ok
+test biomechanics::inertia::implicit::backend_transaction_tests::explicit_backend_success_and_failures_are_atomic_in_contact_free_surface_path ... ok
+test biomechanics::inertia::implicit::tests::averaged_material_search_gradient_matches_energy_differences ... ok
+SHARED CONTACT RESPONSE PARITY quadrature_nodes=20 full_potential_gradient_work_bits_equal=true
+test biomechanics::inertia::implicit::tests::moving_skin_shared_quadrature_matches_derivative_and_independent_work ... ok
+
+test result: ok. 12 passed; 0 failed; 5 ignored; 0 measured; 132 filtered out; finished in 0.07s
+

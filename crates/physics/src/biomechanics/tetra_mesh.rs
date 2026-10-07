@@ -135,6 +135,43 @@ fn raw<const N: usize>(bytes: &[u8], offset: usize) -> Result<[u8; N], &'static 
         .map_err(|_| "invalid tetrahedral value")
 }
 impl TetraMesh {
+    /// Minimum face altitude divided by longest edge for each reference cell.
+    /// Dimensionless and invariant under uniform scaling. Smaller values identify
+    /// flat/sliver elements; this is a diagnostic, not a material admission policy.
+    /// # Errors
+    /// Rejects invalid meshes and unrepresentable metric arithmetic.
+    pub fn cell_altitude_edge_ratios(&self) -> Result<Vec<f64>, &'static str> {
+        self.validate()?;
+        self.cells
+            .iter()
+            .map(|cell| {
+                let p = cell.map(|i| self.points[i]);
+                let determinant = det(columns(sub(p[1], p[0]), sub(p[2], p[0]), sub(p[3], p[0])));
+                let mut longest = 0_f64;
+                for i in 0..4 {
+                    for j in i + 1..4 {
+                        let edge = sub(p[i], p[j]);
+                        longest = longest.max(dot(edge, edge).sqrt());
+                    }
+                }
+                let mut largest_face = 0_f64;
+                for [a, b, c] in [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]] {
+                    let area = cross(sub(p[b], p[a]), sub(p[c], p[a]));
+                    largest_face = largest_face.max(dot(area, area).sqrt());
+                }
+                let ratio = determinant.abs() / largest_face / longest;
+                if !ratio.is_finite()
+                    || ratio <= 0.
+                    || !longest.is_finite()
+                    || !largest_face.is_finite()
+                {
+                    return Err("unrepresentable tetrahedral altitude/edge ratio");
+                }
+                Ok(ratio)
+            })
+            .collect()
+    }
+
     /// Reference-area lumped weights for constant vector traction on selected
     /// boundary triangles. Units m²; force_i = weight_i * traction (Pa).
     /// Preserves the resultant and first moment of the continuous patch load.
@@ -407,5 +444,36 @@ impl TetraMesh {
                 .map(|c| (c, material.clone()))
                 .collect(),
         )
+    }
+}
+
+#[cfg(test)]
+mod quality_tests {
+    use super::*;
+    #[test]
+    fn altitude_edge_ratio_detects_flat_cells_and_is_scale_invariant() {
+        let mesh = |scale: f64, height: f64| {
+            TetraMesh::from_tetrahedra(
+                vec![
+                    [0.; 3],
+                    [scale, 0., 0.],
+                    [0., scale, 0.],
+                    [0., 0., scale * height],
+                ],
+                vec![[0, 1, 2, 3]],
+            )
+            .unwrap()
+        };
+        let ordinary = mesh(1., 1.).cell_altitude_edge_ratios().unwrap()[0];
+        assert!((ordinary - 1. / 6_f64.sqrt()).abs() < 1e-14);
+        for scale in [0.001, 1000.] {
+            assert!(
+                (mesh(scale, 1.).cell_altitude_edge_ratios().unwrap()[0] - ordinary).abs() < 1e-14
+            );
+        }
+        assert!(mesh(1., 1e-4).cell_altitude_edge_ratios().unwrap()[0] < 1e-4);
+        let mut invalid = mesh(1., 1.);
+        invalid.points[3] = invalid.points[0];
+        assert!(invalid.cell_altitude_edge_ratios().is_err());
     }
 }

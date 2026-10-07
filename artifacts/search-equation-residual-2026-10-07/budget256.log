@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 1 test
+TEST_SEARCH_BUDGET limit=256 actions=256 stop=IterationLimit squared_l2_residual_ratio=Some(0.6852060168391193)
+BLOCK_JACOBI_DIAG phase=0 block=false actions=257 elapsed_s=13.685808334 common_true_residual_ratio=4.78283851856104114e-1 quadratic_objective=-5.89298614947427555e-6 requested_ratio=1e-12 preparation_timing_included=false
+TEST_SEARCH_BUDGET limit=256 actions=256 stop=IterationLimit squared_l2_residual_ratio=Some(0.2785426006024363)
+BLOCK_JACOBI_DIAG phase=0 block=true actions=257 elapsed_s=15.910663375 common_true_residual_ratio=1.58569520946482051e-1 quadratic_objective=-6.76270761365064671e-6 requested_ratio=1e-12 preparation_timing_included=false
+TEST_SEARCH_BUDGET limit=256 actions=256 stop=IterationLimit squared_l2_residual_ratio=Some(0.9218827631156098)
+BLOCK_JACOBI_DIAG phase=0.4 block=false actions=257 elapsed_s=14.196455958 common_true_residual_ratio=5.95620121429522031e-1 quadratic_objective=-5.90178466646553867e-6 requested_ratio=1e-12 preparation_timing_included=false
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_block_jacobi_search_diagnosis has been running for over 60 seconds
+TEST_SEARCH_BUDGET limit=256 actions=256 stop=IterationLimit squared_l2_residual_ratio=Some(0.6450079158551327)
+BLOCK_JACOBI_DIAG phase=0.4 block=true actions=257 elapsed_s=14.620239583 common_true_residual_ratio=1.86692313586320907e-1 quadratic_objective=-6.95179526698107725e-6 requested_ratio=1e-12 preparation_timing_included=false
+TEST_SEARCH_BUDGET limit=256 actions=256 stop=IterationLimit squared_l2_residual_ratio=Some(0.5687045558593413)
+BLOCK_JACOBI_DIAG phase=1.3 block=false actions=257 elapsed_s=14.371834625 common_true_residual_ratio=3.86337535292356093e-1 quadratic_objective=-5.94790936126036927e-6 requested_ratio=1e-12 preparation_timing_included=false
+TEST_SEARCH_BUDGET limit=256 actions=256 stop=IterationLimit squared_l2_residual_ratio=Some(0.8261498924268744)
+BLOCK_JACOBI_DIAG phase=1.3 block=true actions=257 elapsed_s=15.331444917 common_true_residual_ratio=1.99191709260740313e-1 quadratic_objective=-6.77626421659715699e-6 requested_ratio=1e-12 preparation_timing_included=false
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_block_jacobi_search_diagnosis ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 150 filtered out; finished in 100.53s
+

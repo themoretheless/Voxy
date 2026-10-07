@@ -1,0 +1,34 @@
+{
+  "import_and_finite_reference_test_passed": true,
+  "kinematic_volume_qualified": false,
+  "physical_state_inversion_proven": false,
+  "sampled_reference_ratios": {
+    "0": [
+      1,
+      1
+    ],
+    "0.05": [
+      0.7149814922806162,
+      1.5196857089607678
+    ],
+    "0.1": [
+      0.21812039508576087,
+      2.7173910715451717
+    ]
+  },
+  "first_invalid_cells": {
+    "0.2": {
+      "cell": 3580,
+      "signed_ratio": -0.6824762971999185
+    },
+    "0.5": {
+      "cell": 1195,
+      "signed_ratio": -2.70694984973808
+    }
+  },
+  "scope": "source-skinned boundary plus harmonic interior reference only; no physical steps advanced",
+  "next_action": "continue actual physical-volume and contact admission audits; kinematic reference determinant alone is not an invalidity criterion",
+  "contact_uses_reference_inverse": false,
+  "reference_role": "base + fixed binding weights times (physical nodes - reference nodes)",
+  "negative_reference_determinant_proves_contact_failure": false
+}

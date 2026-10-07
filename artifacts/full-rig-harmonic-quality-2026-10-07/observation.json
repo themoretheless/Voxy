@@ -1,0 +1,6 @@
+{
+  "observed_utc": "2026-10-07T09:48:14.584819+00:00",
+  "ps": "  PID STAT  ELAPSED\n86629 R       02:32\n90673 Rs   07:31:10\n",
+  "terminal_exists": false,
+  "captures": {}
+}

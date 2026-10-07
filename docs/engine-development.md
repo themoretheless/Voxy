@@ -9947,3 +9947,354 @@ changes 408 pixels while preserving all 4096 neighboring-view pixels. Evidence:
 `artifacts/liquid-indexed-topology-2026-10-07/`. Individual closed particle
 components can overlap; this does not produce the union boundary of a fluid
 or qualify native joint fog/liquid transport.
+
+### Full-rig checkpoint signed-volume audit
+
+The native capture audit now independently checks the signed current/reference
+volume ratio of every tetrahedron at every saved node checkpoint. Inverted,
+collapsed and nonfinite cells fail the audit; a focused rejection regression
+covers those cases. This is a checkpoint check, not continuous certification
+between saved frames or a self-intersection test.
+
+`artifacts/full-rig-volume-prefix-288-2026-10-07/` preserves 26 immutable
+checkpoints and 289 energy records from the existing 480-step full-volume job.
+The node/energy audit and rejection regression pass. All 6845 cells remain
+positively oriented at these checkpoints, with volume ratios from 0.7577714043
+to 5.3993732542. This large expansion is an unresolved material/deformation
+qualification concern: positive orientation and a passing energy budget do not
+establish realistic tissue compressibility. The result records the extreme
+cells and times for follow-up. The original job remains independent of these
+audit changes; full-clip and real-time qualification remain incomplete.
+
+The follow-up diagnosis at step 276 identifies expanded cell 2148 as a small
+flat reference element (4.3163653514e-9 m³, no prescribed support node). Its
+volumetric equilibrium energy is 0.0835410286 J under the authored 2 MPa bulk
+modulus. Three elements exceed twice their reference volume, representing
+2.9244338354e-7 of total reference volume. These observations identify a local
+mesh/material qualification concern but do not prove mesh quality causes the
+expansion. No bulk coefficient or solver tolerance was changed to hide it.
+
+`TetraMesh::cell_altitude_edge_ratios` now reports the minimum face altitude
+divided by longest edge for each validated reference element. It uses the
+existing mesh owner and imposes no arbitrary quality rejection threshold.
+The regression checks the analytic right-tetrahedron ratio, uniform scaling,
+a flat element and collapsed geometry; the full-rig checkpoint audit also
+reports the minimum reference ratio and its cell.
+
+### Tissue import reference-quality report
+
+The existing native offline volume check and authored tissue manifest importer
+now publish `reference_mesh_quality` using the shared tetrahedral altitude/edge
+metric. Each report includes the minimum, lower median, fifth-percentile order
+statistic and at most eight lowest-quality cells with their node IDs. The
+report is prepared before dynamics publication and supports VXTM, Medit and
+star-shaped surface volume providers without creating another importer.
+It does not silently reject cells against an invented material-independent
+quality threshold or alter reference geometry/material constants.
+
+The full-character preflight regression checks all 6845 cells and identifies
+cell 4125 as the minimum ratio (0.0010979112003), while full-skin coverage stays
+3273 vertices. `artifacts/tissue-import-quality-2026-10-07/` preserves the
+import regression output and reference report. Deformation, self-contact and
+full-clip qualification remain separate unresolved requirements.
+
+### Surface-preserving quality remesh candidate
+
+`artifacts/tissue-quality-remesh-2026-10-07/` contains an offline TetGen
+candidate built from the exact existing bind-pose PLC with
+`-pYq1.4/10S10000JC` (same reviewed external AGPL tool commit; no runtime
+dependency). It adds 889 interior nodes, yielding 3227 nodes and 12284 cells.
+The independent audit preserves all original coordinates and all 4672 boundary
+facets exactly; volume difference remains 6.94e-18 m³. The existing native
+bind-volume gate exits successfully and covers all 3273 source vertices.
+
+Minimum altitude/edge ratio improves from 0.0010979112 to 0.0067248239,
+fifth-percentile ratio from 0.0490832204 to 0.1571587112 and median from
+0.1515865428 to 0.3955820078. This improves reference geometry only: it does
+not prove that tissue expansion is corrected. The candidate manifest keeps
+the authored material and support nodes, changes only mesh path/digest, and
+is preserved for subsequent import/dynamics qualification. It is not
+promoted into the active old-binary capture or the canonical rig fixture.
+
+### Interior-node source-reference integration gap
+
+The quality candidate's first full-runtime launch terminates before simulation
+with `volume reference node missing from source skin`. The native geometric
+preflight remains valid; the authored source-skin reference owner currently
+requires an exact source vertex alias for every volume node, so 889 new
+interior nodes are not admitted. Material, source support coordinates and
+energy policy were compared and match the baseline; only mesh path/digest
+changes. The original full-rig process is preserved. Launch hash, command,
+comparison contract and terminal output are in
+`artifacts/full-rig-quality-candidate-2026-10-07/`.
+
+The existing capture audit now accepts an explicit
+`VOXY_RIG_REFERENCE_VOLUME` and derives node/cell counts from it, retaining
+the original default reference mesh. Its regression passes on the immutable
+288-step baseline. Before candidate dynamics can be qualified, the source
+reference must provide an explicit interior extension while preserving exact
+boundary aliases and rejecting separated aliases. Simply assigning the whole
+interior to one bone or ignoring missing nodes would change the source
+reference contract and is not admitted.
+
+### Native interior source-reference extension
+
+The assembled source-skin binding now admits interior volume nodes through
+`physics::biomechanics::HarmonicReference`. The immutable reference owner
+assembles the linear tetrahedral scalar Laplacian and extends prescribed
+boundary displacements using Jacobi-preconditioned conjugate gradients. All
+exterior nodes still require exact source aliases; separated seam aliases are
+rejected before solving. The original all-source-node path retains its exact
+coordinate copies. Physical free nodes are not pinned by this reference.
+
+Each solve checks the original linear-system residual against the supplied
+relative tolerance (1e-12 in the binding) and rejects iteration exhaustion
+without publishing a partial reference. This residual is not a positional
+error bound or a continuous non-inversion certificate. Nonlinear source
+motion is interpolated harmonically, not anatomically calibrated.
+
+Two native tests cover affine reproduction, exact boundary preservation,
+missing boundary constraints and iteration-budget rejection with immutable
+owner preservation. Four assembled source-reference regressions pass,
+including alias rejection and existing supported-motion work accounting.
+The manual candidate import/pose gate exercises 3227 nodes at native startup
+times 0, 0.05 and 0.5 without advancing physical dynamics; evidence is in
+`artifacts/harmonic-tissue-reference-2026-10-07/`. Full candidate dynamics and
+the excessive-volume comparison remain to be qualified.
+
+### Full quality-candidate dynamics launch
+
+After the interior source-reference gate passed, the current release capture
+entrypoint was rebuilt successfully and copied to a separate immutable binary
+path. The full 480-step/2-second quality-candidate job is running in
+`artifacts/full-rig-harmonic-quality-2026-10-07/`; its initial runtime admission
+reports 3273/3273 bound source vertices and 4672 responsive skin triangles.
+The launch preserves the original baseline process and records executable and
+source hashes, material/energy scope and process identity. The supervisor
+refuses duplicate launches in the same capture directory and records the
+actual terminal code on exit. Live status alone does not qualify completed
+steps, energy, non-inversion or improved compressibility; inspect committed
+traces and audit them against the explicit candidate reference volume.
+The anatomical pair domains remain disabled by the existing import, so this
+launch is not self-contact qualification or a real-time performance test.
+
+The post-extension physics library regression passes: 129 tests, zero failures,
+15 explicitly ignored manual gates (92.17 seconds under concurrent live jobs;
+not a performance measurement).
+
+### Assembled rest search metric candidate
+
+A 3-second/10-ms sample of the confirmed live quality-rig process identifies
+rest-material matrix actions inside the implicit search, not harmonic reference
+setup, as a major sampled phase. The retained test-only candidate assembles
+global sparse 3x3 isotropic stiffness blocks once per search call and adds
+existing inertia during action. It changes no physical force or energy owner.
+
+`artifacts/assembled-search-metric-2026-10-07/` records three-vector parity on
+the actual 3227-node/12284-cell mesh (maximum normalized action difference
+6.58e-16), exact pinned zeros and positive sampled curvature. Eight paired
+trials include 16 assemblies and 64 actions per assembly; every adjacent pair
+favors assembly, with median baseline 1.310470146 s versus candidate
+1.094401313 s (about 1.20 ratio). Timing runs alongside preserved live rig
+processes and uses synthetic material directions, not full nonlinear motion.
+The candidate stays test-only until full search-direction parity, short-search
+assembly cost and nonlinear/contact transaction regressions are admitted.
+It is not a claim of whole-rig or real-time speedup.
+
+The subsequent assembled-metric full-PCG direction admission **fails**: on
+the same candidate mesh, finite iteration search directions differ by
+0.0026518311123 relative maximum, exceeding the 1e-8 gate despite primitive
+action differences near 6.58e-16. The candidate remains test-only and is not
+promoted. The short-search timing stops before measurement at that gate;
+previous action timing does not establish accepted complete-search behavior.
+No tolerance was loosened to pass this result.
+
+The first harmonic quality launch omitted `VOXY_CAPTURE_NODE_STATE`; its
+missing per-step traces therefore did not imply zero committed simulation
+steps. That untraced process is preserved. A separate traced launch with
+`VOXY_CAPTURE_NODE_STATE=1` and `VOXY_REFINEMENT_DIAGNOSTICS=1` uses the same
+immutable binary in `artifacts/full-rig-harmonic-traced-2026-10-07/`. The
+supervisor records those explicit environment settings and terminal status.
+The baseline is preserved too. Subsequent committed-step and energy claims
+must come from the traced capture, not absent files of the first launch.
+
+The immutable first 12 steps of the traced quality rig now pass the native
+node/energy/reference audit (`artifacts/full-rig-quality-prefix12-2026-10-07/`):
+3227 nodes, 12284 cells, 13 energy records and two scheduled node checkpoints.
+At 0.05 seconds, volume ratios at the saved checkpoints range 0.8263862198
+to 1.1350305334, maximum pin error is 4.44e-16 m and independent checkpoint
+energy defect is 5.29e-14 J under the unchanged 5e-10 J/s policy. This is
+actual full-volume dynamics, not the earlier pose-only gate; it remains an
+early prefix and does not prove correction of the baseline's late expansion,
+full-clip completion, continuous non-inversion or real-time performance.
+
+### Search residual and equal-time deformation diagnosis
+
+The independent true preconditioned residual of returned search directions is
+0.775692593 of initial for the original operator and 0.995372507 for the
+assembled candidate, far above the requested squared ratio 1e-12. Both yield
+negative search quadratic objectives, but neither establishes a converged
+linear solution. The existing solver permits a finite descent direction after
+its 64-iteration budget; this is a search metric policy, not physical energy
+admission. The candidate's complete direction gate remains failed.
+`search-diagnostics.log` preserves these measurements; the physical solver
+and energy policy were not altered to make them pass.
+
+`artifacts/quality-rig-early-comparison-2026-10-07/` retains both actual node
+checkpoints at step 36 (0.15 s) and independently computes signed volume
+ratios against each mesh. Baseline range is 0.9089165153–2.6039382087, quality
+range 0.7838279627–1.2147274908. However, reference-volume fraction in elements
+with |J-1|>0.1 increases from 6.73705947e-5 to 7.94362490e-4; the smaller
+worst expansion is therefore not evidence of uniformly improved tissue
+compressibility. The 10% value is a reporting threshold, not a new admission
+policy. Weighted mean ratios are 1.0006325944 and 1.0006607174. Reference
+volume is equal, 0.05371328527883002 m³. Executables and discretizations differ;
+this does not prove mesh-only causality or correction at late clip times.
+
+### Block-Jacobi search diagnosis
+
+The test-only native block-Jacobi preconditioner uses each node's full 3x3
+assembled isotropic stiffness diagonal plus inertia. Against the unchanged
+original matrix action, three synthetic full-mesh probes reduce the common
+true squared residual ratios from 0.7757/0.6969/0.8891 to
+0.7118/0.5930/0.6330. Each probe, including the scalar baseline, performs
+exactly 64 actions: iteration exhaustion is now measured directly, not inferred
+from absent runtime logs. None meets the 1e-12 requested ratio. All returned
+directions are finite descent directions and hold the three pins exactly.
+
+`artifacts/block-jacobi-search-2026-10-07/` records this diagnostic gate and
+its scope. It does not establish strict convergence or a runtime speedup;
+preparation was excluded from incidental timings. The proposal remains
+test-only. A stronger global search preconditioner or independently qualified
+iteration policy is still needed; physical force, energy and rollback
+requirements remain unchanged.
+
+The traced quality-rig prefix through 60 steps (0.25 seconds) passes the native
+audit: 61 energy records, six node checkpoints, maximum per-frame energy
+defect 1.0131e-13 J and pin error 4.44e-16 m. All 12284 cells are positively
+oriented at saved checkpoints, but ratios already span 0.6446987924 to
+1.5446250619. Positive volumes and energy admission therefore still do not
+establish realistic compressibility. Immutable evidence is in
+`artifacts/full-rig-quality-prefix60-2026-10-07/`. Full clip remains active
+and unqualified; no completed steps were inferred from the untraced process.
+
+### Incomplete sparse factor diagnosis
+
+A test-only zero-fill incomplete Cholesky factor of the assembled search
+stiffness rejects nonpositive pivots with relative diagonal shifts 0, 0.001,
+0.01 and 0.1. A shift of 1 produces finite factors, but the 64-action true
+squared residual ratios remain 0.5726/0.6219/0.6367 on the three synthetic
+full-mesh probes, far above 1e-12. The diagonal stabilization affects the
+preconditioner only; all residuals are measured with the unchanged original
+operator and physical energy admission is untouched. No factor candidate is
+promoted. A separate ordinary test checks an independently specified coupled
+3x3 system solution and rejection of a nonpositive pivot.
+
+`artifacts/incomplete-factor-search-2026-10-07/` retains both test outputs and
+rejected shifts. These probes concern an illustrative static search system
+with inertia weights 2, not full-rig dynamics or a speed comparison. The
+result rules out this zero-fill proposal as a demonstrated convergence fix;
+stronger global coupling/fill or coarse-space methods remain unqualified.
+
+### Native search stop reporting
+
+The existing implicit search now retains an internal direction report: action
+count, stop reason, recursive initial/final preconditioned residual and use of
+the original fallback. `VOXY_CONTACT_SEARCH_TRACE=1` publishes this information
+through the existing native path, including explicit backend operations. It
+does not add matrix actions, change physical thresholds, swallow backend
+errors or replace the native force/energy admission. `RecursiveTolerance`
+refers only to the iterative estimate; the log explicitly states that the true
+equation residual is not verified. `ZeroResidual` refers to zero recursive
+initial norm, not proof of absent physical forces. Iteration exhaustion stays
+distinct from tolerance attainment.
+
+An independent 2I inverse test verifies the solved direction and stop count;
+a negative-curvature metric checks the fallback and an ill-conditioned
+96-node diagonal system verifies exhaustion of all 64 actions. Existing
+backend error and contact transaction checks pass. Focused suite: 12 passed,
+five manual profiles ignored; full physics suite: 131 passed, zero failures,
+18 manual gates ignored. Evidence and opt-in trace are in
+`artifacts/native-search-stop-report-2026-10-07/`. Existing long rig binaries
+predate this reporting change and continue without restart.
+
+### Current standalone native LOD qualification
+
+The standalone `voxy_editor --manifest ... a --scene ... --lod-smoke` gate
+now completes successfully on the current checkout: 30 presented frames,
+near/far selection, last-good preservation and presentation after admission
+failure, budget recovery, three split-view phases (including MSAA4), view
+retirement and two-asset shared-budget competition/recovery. At contraction,
+logical live residency is exactly 65888 bytes under the same 65888-byte
+budget; restoring the budget recovers both optional levels. This refresh
+supersedes the prior standalone run's occluded-window limitation.
+
+The current real-GPU animated LOD view/budget/CPU-fallback unit gate also
+passes. `artifacts/current-native-lod-2026-10-07/` preserves both terminal
+outputs and current source/binary hashes. Scope remains the existing two
+logical asset identities with identical certified fixture topology; logical
+residency is not total physical VRAM. The animated unit gate validates its
+resource/pose owner path, not animated native-window pixel equivalence. No
+LOD implementation was changed merely to rerun successful acceptance.
+
+### Harmonic rig committed prefix 84
+
+The immutable 84-step (0.35 s of requested 2 s) capture passed the native nodes and every-frame energy audit: 3227 nodes, 12284 tetrahedra, eight node checkpoints and 85 energy records. Signed volume ratios remain 0.6446987924–1.5446250619; maximum pin error is 4.44e-16 m and checkpoint energy defect is 3.46e-13 J. This does not qualify realistic compressibility, continuous positivity between checkpoints, self-contact, realtime execution, or the full clip. Evidence: `artifacts/full-rig-quality-prefix84-2026-10-07/result.json` and `audit.log`. PID 89549 was confirmed live after the audit; the original jobs were preserved.
+
+The optional native `VOXY_RIG_VOLUME_DETAIL` checkpoint diagnostic identifies the most distorted reference cell and the reference-volume fraction with |J−1| > 0.1. The threshold is descriptive, not a calibrated material gate. At step 84 this fraction is 0.002653876565 (0.2654%); the maximum sampled fraction through step 84 is 0.002700941681. The late prefix worst cell is 7787, reference centroid [−0.00623813, 1.30700504, −0.12862868] m. This localization is not proof of the cause or a correction. Native prefix audit and inversion/collapse/nonfinite regression pass; evidence is `full-rig-quality-prefix84-2026-10-07/detail.log` and `detail-regression.log`.
+
+Native localization identifies both worst prefix cells as incident to moving support node 1282: cell 8976 has nodes [2064,1283,1282,2733], quality 0.4123621; cell 7787 has nodes [1282,1283,559,2842], quality 0.3251610 and reference volume 2.924727e-7 m³. These are not the minimum-quality cell (1195). This is evidence to investigate point-support load concentration before changing the constitutive bulk modulus, not causal proof. The enriched native audit passes (`localization.log`); existing live captures use their original immutable executables.
+
+### Experimental surface support patch
+
+The native manual generator expands the three source support seeds to their exterior one-ring (19 exact source-skin nodes), leaving interior nodes free. `artifacts/rig-support-patch-2026-10-07/regions-relative.json` preserves mesh bytes, material, startup and energy settings; only supports differ. Native import, assembly and harmonic source reference at 0, 0.05 and 0.5 s pass (3273 skin vertices). No physical steps were advanced; anatomical calibration, load concentration relief and energy/volume improvement remain unproven. An initial absolute-path candidate was correctly rejected by the importer and preserved; the accepted candidate uses a local relative mesh copy. Evidence: `comparison-contract.json`, `prepare-relative.log`, `import-relative.log`. Existing full rigs remain live and unchanged.
+
+The 19-support physical capture uses the same immutable executable d794319b as traced three-support PID 89549; new PID 8925 was verified live. Native audit now accepts an explicit `VOXY_RIG_SUPPORT_MANIFEST` and validates all supports, preserving the default three-support path. Both default-manifest regression and candidate prefix12 pass. At 0.05 s candidate signed volume ratios are 0.9388197–1.0511592 versus 0.8263862–1.1350305 for three supports. This is an early checkpoint comparison, not anatomical calibration, late-clip correction or runtime-speed evidence. Evidence: `artifacts/full-rig-support-patch-2026-10-07/prefix12/`.
+
+At the immutable matched step24 prefix (0.1 s), both support variants pass native all-support and every-frame energy checks. Three checkpoints show J range 0.7009706–1.2043267 for three supports and 0.9173703–1.1032358 for 19 supports, using the same immutable executable, reference volume and material. Maximum free-node coordinate motion remains about 0.0491 m in both. The patch reduces sampled extreme volume excursions at this early time; neither whole-clip improvement nor anatomical attachment calibration is established. Evidence: `artifacts/rig-support-comparison24-2026-10-07/result.json`, frozen captures and separate native audit logs.
+
+Current support regressions also pass: invalid projective palettes leave the owner unchanged for rigid, blended and free volumes before/after assembly; authored variable supports retain coupled mechanical/thermal ownership and reject duplicate supports or invalid material. The source rejects out-of-range support IDs before owner construction via checked lookup; no new out-of-range test was run. Evidence: `artifacts/rig-support-patch-2026-10-07/rejection-result.json` and its two regression logs. These checks do not establish anatomical or whole-rig contact qualification.
+
+Matched prefix48 (0.2 s) extends the same-executable support comparison to five node checkpoints and 49 energy records. Both native audits pass. Three supports have J range 0.6996582–1.3229694; 19 supports have 0.8334158–1.2007102. Sampled extremes improve but the patch still permits approximately 20% expansion, so it is not promoted as realistic material or calibrated attachment. Free coordinate motion is 0.19838 m versus 0.19997 m; this is not a shape/trajectory equivalence certificate. Evidence: `artifacts/rig-support-comparison48-2026-10-07/result.json` and preserved native captures/logs.
+
+### Noninvertible kinematic volume reference detected
+
+New native volume diagnosis of source-skin plus harmonic interior (no physical advance) finds J range 0.7150–1.5197 at 0.05 s and 0.2181–2.7174 at 0.1 s. At 0.2 s cell 3580 is inverted (J=−0.6824763); at 0.5 s the first invalid cell is 1195 (J=−2.7069498). The import/finite-position regression passes but volume qualification explicitly fails; this does not prove accepted physical state inversion. It exposes a reference-map limitation and requires inspecting embedded contact dependence before promoting the harmonic rig. Evidence: `artifacts/rig-support-patch-2026-10-07/kinematic-volume-result.json` and `kinematic-volume.log`.
+
+### Correction: kinematic reference determinant is not contact admission
+
+Source inspection shows `TissueSurfaceEmbedding::deform_relative_into` composes base + W(physical−reference) with immutable bind-time weights; it never inverts the posed reference tetrahedra. Thus the negative reference determinants diagnosed above do not themselves invalidate embedded contact or require an orientation-preserving reference map. Admission checks actual composed skin triangles and physical nodes. A new native regression reflects the reference (negative determinant), uses its surface as base, and verifies exact recovery of the unreflected actual skin plus equal/opposite node/reference loads. It passes; the embedded filter reports 1 passed, 1 manual profile ignored. This corrects the previous inferred remediation while preserving the measured reference determinants and remaining actual-state physics qualification requirements. Evidence: `reference-composition.log` and updated `kinematic-volume-result.json`.
+
+The 19-support prefix60 audit (0.25 s, six checkpoints and 61 energy frames) passes with J=0.8110358–1.2259505 versus the same-executable three-support prefix60 J=0.6446988–1.5446251. Max pin error is 4.44e-16 m; independent checkpoint energy defect is 1.94e-13 J. Distribution of supports helps sampled extrema but does not remove substantial volume changes; candidate remains experimental. No constitutive parameters or production trajectory have been changed. Evidence: `artifacts/full-rig-support-patch-2026-10-07/prefix60/result.json`.
+
+Current full `tissue_surface` integration suite passes 13 tests (one manual profile ignored), including virtual work, resultant and moment transfer. The full `embedded_skin_contact` suite has 30/33 tests reported passing; three trajectory-refinement checks remain running, process 13873 confirmed live. Do not count this suite as complete until terminal exit/result is observed. Evidence: `artifacts/rig-support-patch-2026-10-07/integration-observation.json` and integration logs; resume session 17485 without restarting.
+
+Contact gate scope audit: the adaptive 8/16/32 interval trajectory test asserts both position and velocity errors decrease relative to the finest run. The fixed 512–8192 interval test only asserts finite discrepancies, and the stricter 8192/16384 budget comparison only asserts finite strict velocity error. Their success must not be represented as fixed-step convergence or accuracy improvement under a stricter energy budget. Current suite remains live; evidence: `artifacts/rig-support-patch-2026-10-07/contact-gate-scope.json`.
+
+### Direct search equation residual diagnostic
+
+`VOXY_CONTACT_SEARCH_VERIFY=1` now evaluates the original operator on the returned search direction once and reports the squared unpreconditioned free-node L2 residual ratio. This is separate from the recursive preconditioned estimate and iteration action count. Diagnostic backend failure, overflow or undefined zero-denominator ratio is reported as unavailable; direction and admission policy are unchanged. Analytic exact/half/zero-action and invalid arithmetic tests pass; search regressions report 8 passed, 3 manual profiles ignored. Native affine contact and backend rollback pass with the diagnostic enabled. This does not measure the full rig: existing live immutable executables predate it. Evidence: `artifacts/search-equation-residual-2026-10-07/`.
+
+Terminal contact integration result: session 17485 exits 0, full `embedded_skin_contact` suite passes 33/33 tests in 578.10 s. Combined with 13 passing surface tests this closes the current contact regression run. The previously documented scope limits still apply: two fixed-schedule tests assert finite discrepancies rather than convergence. Full-rig physics and realtime qualification remain open.
+
+Direct equation diagnostic on the imported 3227-node/12284-cell mesh now reports squared unpreconditioned residual ratios 1.287–1.297 for scalar preconditioning and 1.124–1.706 for experimental block Jacobi across three synthetic residuals. Both retain finite descent but do not strictly solve the linear equation. The profile reports 65 actions because it includes 64 search actions plus one diagnostic; it is not a timing comparison. This confirms the convergence gap on a synthetic linear rest-search fixture, not the cause of actual full-rig deformation. Block Jacobi remains unpromoted. Evidence: `artifacts/search-equation-residual-2026-10-07/full-mesh-result.json` and `full-mesh.log`.
+
+Test-only search budget diagnosis at 256 actions completes six synthetic full-mesh cases, all stopping at the iteration limit. Error improves relative to 64 actions in these cases but strict equation convergence remains unverified. Production wrapper stays at 64; `VOXY_TEST_SEARCH_ACTION_LIMIT` is read only by a cfg(test) helper. Current search regressions pass 8 tests (3 profiles ignored). Evidence: `artifacts/search-equation-residual-2026-10-07/budget256-result.json`.
+
+Experimental six-mode global coarse preconditioning (three free-node translations and rotations, normalized basis; original-operator projected 6×6 Cholesky) is now test-only. Its inverse recovers all six basis modes on an independent cube fixture. Full imported-mesh descent/pin checks pass; squared direct residual ratios for block+coarse are 1.5585, 1.1848, 0.8831 versus plain block 1.7062, 1.2472, 1.1240. These modest improvements do not attain strict convergence. Production preconditioning and 64-action limit remain unchanged; no performance claim. Evidence: `artifacts/search-equation-residual-2026-10-07/coarse64-result.json`, `coarse64.log`, `coarse-subspace.log`.
+
+Test-only spatial coarse basis replaces global translations with separate translations on nonempty centroid octants, retaining three global rotations. The generalized projected Cholesky recovers its basis and preserves pins on a multi-cell fixture. Full-mesh direct squared residual ratios are [2.8856050427385096, 1.9089567206365876, 2.502023322176703]; this is worse than the six-mode global experiment in all three cases, despite finite descent. This unsmoothed spatial basis is rejected for production; global partition quality must not be inferred from its algebraic correctness. Evidence: `artifacts/search-equation-residual-2026-10-07/spatial64-result.json`, `spatial64.log`, `spatial-subspace.log`.
+
+PETSc primary reference https://petsc.org/release/manualpages/PC/PCGAMG/ documents smoothing of aggregation prolongation and near-null-space information for elasticity. Inspired by that mechanism, a test-only single damped-Jacobi smoothing step is added to the spatial basis, using original native operator actions and a scaled row-sum bound for damping (0.0560326). The 27-mode subspace/pin regression passes. Direct residual ratios remain [1.5929551407054037, 1.5045686667963745, 1.219056803425384], so strict convergence is still not attained. This experiment is not full smoothed aggregation: no graph aggregation hierarchy or per-aggregate rigid-mode preservation is established. It remains unpromoted. Evidence: `artifacts/search-equation-residual-2026-10-07/smooth64-result.json`.
+
+The preserved 19-support capture reaches audited step84 (0.35 s): eight node checkpoints, 85 energy frames, J=0.8082240–1.2259505. Pin error 4.44e-16 m and independent energy defect 1.94e-13 J pass. Matched three-support range is 0.6446988–1.5446251, so sampled extreme-volume reduction persists. Full clip, continuous positivity, realistic compressibility, realtime and self-contact remain unqualified. Evidence: `artifacts/full-rig-support-patch-2026-10-07/prefix84/result.json`.
+
+RAG solver retrieval is pending: index queries elasticity/multigrid/Voxy were dispatched in cell 2741. PID 1776 is alive and listening on 7432, but a 3 s health request times out. A native one-second process sample shows DuckDB query execution; this is not proof of deadlock or successful retrieval. No service restart, store write or hit/completion claim. Evidence: `artifacts/solver-rag-retrieval-2026-10-07/observation.json` and `service-sample.txt`; continue waiting on the same cell.
+
+The assembled metric, incomplete factor and coarse-space experiments are extracted from `inertia/implicit.rs` into `inertia/implicit/assembled_metric_profile.rs`, retaining the same cfg(test) module path and private helper access. This removes 614 experiment lines from the production source without introducing a second physics owner. Both coarse subspace tests and 8 search regressions pass; three manual profiles remain ignored. New module is formatted. Evidence: `artifacts/search-equation-residual-2026-10-07/module-extraction-result.json` and logs.
+
+### Current native packaged-game runtime
+
+Current voxy_app debug build exports the existing a/b scene to a six-source 491950-byte game.vpak. Native packaged launch from `/tmp/voxy-independent-run-20261007` exits 0 with GAME NATIVE PASS, 3 presented frames and 12 game ticks. It uses the existing isolated package materialization path; no repository source files were moved/deleted. This qualifies the narrow current-host native package smoke, not a signed macOS application, other platforms, visible UI (draws=0), or full rig. Evidence: `artifacts/current-standalone-package-2026-10-07/result.json`, package and logs.
+
+`tools/macos/package-game.sh` bundles the existing voxy_app runner and resource package, refuses existing output and stages publication; logs remain outside the app. A local smoke bundle passes plist validation and subsequent native three-frame gates after an initial occlusion timeout (logs preserved). `/tmp/VoxyPlayable-20261007.app` packages the existing gameplay fixture; actual native window shows white player, floor and step. After a Space input, the player was not visible in the later snapshot: jump behavior is not qualified and needs separate investigation. No signed/notarized distribution claim. Evidence: `artifacts/current-standalone-package-2026-10-07/playable-bundle-result.json` and preserved runtime logs.

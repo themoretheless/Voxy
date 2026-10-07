@@ -95,6 +95,26 @@ fn digest_hex(digest: [u8; 32]) -> String {
     digest.iter().map(|byte| format!("{byte:02x}")).collect()
 }
 
+fn reference_mesh_quality(mesh: &TetraMesh) -> Result<Value, Error> {
+    let ratios = mesh.cell_altitude_edge_ratios()?;
+    let mut ranked: Vec<_> = ratios.into_iter().enumerate().collect();
+    ranked.sort_by(|a, b| a.1.total_cmp(&b.1).then(a.0.cmp(&b.0)));
+    if ranked.is_empty() {
+        return Err("empty reference volume quality report".into());
+    }
+    Ok(serde_json::json!({
+        "metric":"minimum-face-altitude/longest-edge",
+        "scope":"reference geometry diagnostic; not dynamic or material qualification",
+        "cells":ranked.len(),
+        "minimum":ranked[0].1,
+        "median":ranked[(ranked.len()-1)/2].1,
+        "fifth_percentile":ranked[(ranked.len()-1)/20].1,
+        "lowest_cells":ranked.iter().take(8).map(|&(id, ratio)| serde_json::json!({
+            "cell_id":id, "nodes":mesh.cells[id], "altitude_edge_ratio":ratio
+        })).collect::<Vec<_>>()
+    }))
+}
+
 /// Observe an offline volume and audit all source vertices with the same native
 /// membership/binding provider as runtime. This publishes a report, not dynamics.
 pub(super) fn check_volume(
@@ -164,6 +184,7 @@ pub(super) fn check_volume_reference(
         report["volume_nodes"] = mesh.points.len().into();
         report["volume_cells"] = mesh.cells.len().into();
         report["volume_boundary_triangles"] = mesh.boundary.len().into();
+        report["reference_mesh_quality"] = reference_mesh_quality(&mesh)?;
         let pose = model.sample_pose_phase64(reference.clip(), 0.)?;
         let (skin, _) = super::contact_positions_from_pose64(model, &pose)?;
         report["source_vertices"] = skin.len().into();
@@ -557,6 +578,11 @@ pub(super) fn load(
     {
         return Err("bind-pose source supports require an explicit startup duration".into());
     }
+    let mesh_quality = regions
+        .volumes
+        .iter()
+        .map(|spec| reference_mesh_quality(&spec.mesh))
+        .collect::<Result<Vec<_>, _>>()?;
     // Geometry and requested source membership are admitted before publication.
     let mut demo = regions.instantiate()?;
     demo.assemble_regions()?;
@@ -570,8 +596,8 @@ pub(super) fn load(
         "kinematic_reference":if regions.source_node_reference {"source-skin-nodes"} else {"region-joints"},
         "source_vertices":source_positions.len(), "bound_vertices":binding.bound_vertex_count(),
         "tissue_owned_vertices":binding.tissue_owned_vertices(), "contract_supplied":regions.coverage.is_some(),
-        "regions": regions.volumes.iter().zip(mesh_formats).map(|(spec, format)| serde_json::json!({
-            "mesh_format":format,
+        "regions": regions.volumes.iter().zip(mesh_formats).zip(mesh_quality).map(|((spec, format), quality)| serde_json::json!({
+            "mesh_format":format, "reference_mesh_quality":quality,
             "nodes":spec.mesh.points.len(), "cells":spec.mesh.cells.len(),
             "boundary_triangles":spec.mesh.boundary.len(), "supports":spec.supports.len(),
             "joint":spec.joint, "support_joint_overrides":spec.support_joint_overrides,
@@ -1054,6 +1080,13 @@ mod tests {
         assert_eq!(report.value()["complete_skin_binding"], true);
         assert_eq!(report.value()["reference_pose"], "skeleton-bind-pose");
         assert_eq!(report.value()["bound_vertices"], 3273);
+        let quality = &report.value()["reference_mesh_quality"];
+        assert_eq!(quality["cells"], 6845);
+        assert_eq!(quality["lowest_cells"][0]["cell_id"], 4125);
+        assert_eq!(quality["lowest_cells"].as_array().unwrap().len(), 8);
+        assert!((quality["minimum"].as_f64().unwrap() - 0.0010979112002733966).abs() < 1e-14);
+        assert!(quality["median"].as_f64().unwrap() > quality["minimum"].as_f64().unwrap());
+        eprintln!("FULL_CHARACTER_REFERENCE_QUALITY {quality}");
         assert_eq!(
             report.value()["exterior_source_vertices"],
             serde_json::json!([])

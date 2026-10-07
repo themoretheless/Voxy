@@ -1,0 +1,17 @@
+{
+  "bundle": "/tmp/VoxyGame-20261007.app",
+  "smoke_bundle": "/tmp/VoxyGameSmoke-20261007.app",
+  "plist_validation_passed": true,
+  "launchservices_open_attempted": true,
+  "first_launch_surface_occluded": true,
+  "subsequent_native_pass_logs": [
+    "launch.gPKe8h",
+    "launch.2fAjjC",
+    "launch.Q5IO74"
+  ],
+  "distribution_signing_verified": false,
+  "notarization_verified": false,
+  "debug_binary": true,
+  "script_sha256": "c23c0cd734e18b91f752c7eaf4f1b138b0afa0e9d92f154722bdf4cb635929cf",
+  "log_directory_outside_bundle": "/Users/themoretheless/Library/Logs/Voxy/Game"
+}

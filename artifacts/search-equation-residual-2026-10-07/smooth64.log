@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 1 test
+TEST_COARSE_SMOOTH modes=27 steps=1 damping=5.60325766957010876e-2 scaled_row_sum_bound=1.42774087357181525e1 full_amg=false
+TISSUE_SEARCH_EQUATION nodes=3227 diagnostic_actions=1 operator_action_succeeded=true squared_l2_residual_ratio=Some(1.2969433807442876) diagnostic_only=true
+BLOCK_JACOBI_DIAG phase=0 block=false actions=65 elapsed_s=3.716441167 common_true_residual_ratio=7.75692592953508675e-1 quadratic_objective=-1.71364579679375467e-6 requested_ratio=1e-12 preparation_timing_included=false
+TISSUE_SEARCH_EQUATION nodes=3227 diagnostic_actions=1 operator_action_succeeded=true squared_l2_residual_ratio=Some(1.5929551407054037) diagnostic_only=true
+BLOCK_JACOBI_DIAG phase=0 block=true actions=65 elapsed_s=5.480600542 common_true_residual_ratio=8.08001726257777664e-1 quadratic_objective=-3.31571755820444901e-6 requested_ratio=1e-12 preparation_timing_included=false
+TISSUE_SEARCH_EQUATION nodes=3227 diagnostic_actions=1 operator_action_succeeded=true squared_l2_residual_ratio=Some(1.290477715243902) diagnostic_only=true
+BLOCK_JACOBI_DIAG phase=0.4 block=false actions=65 elapsed_s=3.593317583 common_true_residual_ratio=6.96855544106240732e-1 quadratic_objective=-1.66573897101709589e-6 requested_ratio=1e-12 preparation_timing_included=false
+TISSUE_SEARCH_EQUATION nodes=3227 diagnostic_actions=1 operator_action_succeeded=true squared_l2_residual_ratio=Some(1.5045686667963745) diagnostic_only=true
+BLOCK_JACOBI_DIAG phase=0.4 block=true actions=65 elapsed_s=5.845341375 common_true_residual_ratio=7.42963203897027635e-1 quadratic_objective=-3.31003774774393029e-6 requested_ratio=1e-12 preparation_timing_included=false
+TISSUE_SEARCH_EQUATION nodes=3227 diagnostic_actions=1 operator_action_succeeded=true squared_l2_residual_ratio=Some(1.287234106558776) diagnostic_only=true
+BLOCK_JACOBI_DIAG phase=1.3 block=false actions=65 elapsed_s=4.125000958 common_true_residual_ratio=8.89080723592158062e-1 quadratic_objective=-1.95843261035004366e-6 requested_ratio=1e-12 preparation_timing_included=false
+TISSUE_SEARCH_EQUATION nodes=3227 diagnostic_actions=1 operator_action_succeeded=true squared_l2_residual_ratio=Some(1.219056803425384) diagnostic_only=true
+BLOCK_JACOBI_DIAG phase=1.3 block=true actions=65 elapsed_s=6.213411292 common_true_residual_ratio=6.17793443796937791e-1 quadratic_objective=-3.54293308192089764e-6 requested_ratio=1e-12 preparation_timing_included=false
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_block_jacobi_search_diagnosis ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 152 filtered out; finished in 45.36s
+

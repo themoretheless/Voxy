@@ -1,0 +1,8 @@
+{
+  "steps": 48,
+  "source": "artifacts/full-rig-support-patch-2026-10-07",
+  "sha256": {
+    "capture.nodes.jsonl": "d09f2288bc1336b24a728490c2e1b4bb318d93e757b83c4f7d5c1fc84273a46b",
+    "capture.energy.jsonl": "7f442bb267d3bb23e4d97049f495668ac4c970e6affaf32a31f9b0c338efb303"
+  }
+}

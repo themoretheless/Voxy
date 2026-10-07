@@ -1,0 +1,105 @@
+{
+  "bound_vertices": 3273,
+  "complete_skin_binding": true,
+  "exterior_source_vertices": [],
+  "maximum_rest_component_error_m": 4.440892098500626e-16,
+  "reference_mesh_quality": {
+    "cells": 12284,
+    "fifth_percentile": 0.15715871117285068,
+    "lowest_cells": [
+      {
+        "altitude_edge_ratio": 0.006724823904828999,
+        "cell_id": 1195,
+        "nodes": [
+          614,
+          615,
+          613,
+          1218
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.006725281780747014,
+        "cell_id": 10839,
+        "nodes": [
+          606,
+          1543,
+          1216,
+          1212
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.016867957459267485,
+        "cell_id": 11460,
+        "nodes": [
+          2632,
+          2548,
+          2378,
+          3186
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.018736317528808787,
+        "cell_id": 6243,
+        "nodes": [
+          1943,
+          387,
+          3075,
+          3138
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.018969148534293663,
+        "cell_id": 3079,
+        "nodes": [
+          1700,
+          2926,
+          1010,
+          2271
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.01933645644337531,
+        "cell_id": 12278,
+        "nodes": [
+          413,
+          395,
+          1211,
+          415
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.019336582988542347,
+        "cell_id": 10784,
+        "nodes": [
+          398,
+          1213,
+          399,
+          397
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.02225146252941056,
+        "cell_id": 541,
+        "nodes": [
+          2669,
+          1214,
+          2962,
+          1307
+        ]
+      }
+    ],
+    "median": 0.395582007819864,
+    "metric": "minimum-face-altitude/longest-edge",
+    "minimum": 0.006724823904828999,
+    "scope": "reference geometry diagnostic; not dynamic or material qualification"
+  },
+  "reference_pose": "skeleton-bind-pose",
+  "scope": "native reference-pose volume admission and full source skin membership; not animation dynamics",
+  "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+  "source_vertices": 3273,
+  "volume_admitted": true,
+  "volume_blake3": "1840e46ce817a5608444f0ca872da963a18b8e4f875bf0c6a792fc989bc2fe4a",
+  "volume_boundary_triangles": 4672,
+  "volume_cells": 12284,
+  "volume_nodes": 3227
+}

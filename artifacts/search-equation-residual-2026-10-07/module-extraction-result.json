@@ -1,0 +1,10 @@
+{
+  "extracted_unformatted_lines": 614,
+  "module": "crates/physics/src/biomechanics/inertia/implicit/assembled_metric_profile.rs",
+  "compiled_only_under_cfg_test": true,
+  "production_math_changed": false,
+  "coarse_subspace_tests_passed": 2,
+  "search_regressions_passed": 8,
+  "manual_profiles_ignored": 3,
+  "new_module_rustfmt_passed": true
+}

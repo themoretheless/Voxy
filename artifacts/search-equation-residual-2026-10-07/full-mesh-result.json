@@ -1,0 +1,60 @@
+{
+  "nodes": 3227,
+  "cells": 12284,
+  "synthetic_linear_rest_search": true,
+  "actual_full_rig_dynamic_step": false,
+  "all_finite_descent_checks_passed": true,
+  "strict_equation_convergence_verified": false,
+  "rows": [
+    {
+      "phase": 0.0,
+      "block_jacobi": false,
+      "squared_unpreconditioned_residual_ratio": 1.2969433807442876,
+      "squared_common_preconditioned_residual_ratio": 0.7756925929535087,
+      "search_actions": 64,
+      "diagnostic_actions": 1
+    },
+    {
+      "phase": 0.0,
+      "block_jacobi": true,
+      "squared_unpreconditioned_residual_ratio": 1.7061862267398882,
+      "squared_common_preconditioned_residual_ratio": 0.7117919329176422,
+      "search_actions": 64,
+      "diagnostic_actions": 1
+    },
+    {
+      "phase": 0.4,
+      "block_jacobi": false,
+      "squared_unpreconditioned_residual_ratio": 1.290477715243902,
+      "squared_common_preconditioned_residual_ratio": 0.6968555441062407,
+      "search_actions": 64,
+      "diagnostic_actions": 1
+    },
+    {
+      "phase": 0.4,
+      "block_jacobi": true,
+      "squared_unpreconditioned_residual_ratio": 1.2472164976159819,
+      "squared_common_preconditioned_residual_ratio": 0.5929710098610639,
+      "search_actions": 64,
+      "diagnostic_actions": 1
+    },
+    {
+      "phase": 1.3,
+      "block_jacobi": false,
+      "squared_unpreconditioned_residual_ratio": 1.287234106558776,
+      "squared_common_preconditioned_residual_ratio": 0.8890807235921581,
+      "search_actions": 64,
+      "diagnostic_actions": 1
+    },
+    {
+      "phase": 1.3,
+      "block_jacobi": true,
+      "squared_unpreconditioned_residual_ratio": 1.1239954917882289,
+      "squared_common_preconditioned_residual_ratio": 0.633031593776675,
+      "search_actions": 64,
+      "diagnostic_actions": 1
+    }
+  ],
+  "performance_claim": false,
+  "block_preconditioner_promoted": false
+}

@@ -1,0 +1,90 @@
+{
+  "tests_passed": 1,
+  "nodes": 3227,
+  "cells": 12284,
+  "material_shear_pa": 35000.0,
+  "material_bulk_pa": 2000000.0,
+  "weight_per_node": 2.0,
+  "scope": "synthetic directions on actual candidate mesh; search operator only, not physical trajectory or real-time performance",
+  "vectors_checked": 3,
+  "maximum_action_error_normalized_by_baseline_maximum": 6.580150588501264e-16,
+  "pinned_outputs_exact_zero": true,
+  "assembly_cost_included": true,
+  "solves_per_trial": 16,
+  "applications_per_solve": 64,
+  "trials": [
+    {
+      "trial": 0,
+      "assembled": false,
+      "elapsed_s": 1.167788125
+    },
+    {
+      "trial": 1,
+      "assembled": true,
+      "elapsed_s": 1.036527416
+    },
+    {
+      "trial": 2,
+      "assembled": true,
+      "elapsed_s": 1.152275209
+    },
+    {
+      "trial": 3,
+      "assembled": false,
+      "elapsed_s": 1.450693125
+    },
+    {
+      "trial": 4,
+      "assembled": true,
+      "elapsed_s": 1.181260333
+    },
+    {
+      "trial": 5,
+      "assembled": false,
+      "elapsed_s": 1.425262334
+    },
+    {
+      "trial": 6,
+      "assembled": false,
+      "elapsed_s": 1.195677958
+    },
+    {
+      "trial": 7,
+      "assembled": true,
+      "elapsed_s": 0.999125916
+    }
+  ],
+  "baseline_median_s": 1.3104701460000001,
+  "assembled_median_s": 1.0944013125,
+  "baseline_over_assembled_ratio": 1.1974310803835042,
+  "paired_ratios": [
+    1.1266350575718878,
+    1.2589814600445857,
+    1.2065607336363506,
+    1.196723995296705
+  ],
+  "concurrent_live_rigs": [
+    86629,
+    90673
+  ],
+  "other_regression_suites_during_timing": false,
+  "production_promoted": false,
+  "next_admission": "complete search-direction parity, fewer-iteration assembly cost and existing nonlinear/contact transaction regressions",
+  "source_sha256": "f8b0febe0c71584e452c1602796b45416daccd0c5235185b406a949f634d5cf8",
+  "search_direction_admission": {
+    "passed": false,
+    "maximum_relative_difference": 0.002651831112314191,
+    "required_maximum_relative_difference": 1e-08,
+    "short_search_timing_executed": false,
+    "production_decision": "reject promotion pending numerical search consistency investigation"
+  },
+  "search_diagnostics": {
+    "baseline_true_preconditioned_residual_ratio": 0.7756925929535087,
+    "candidate_true_preconditioned_residual_ratio": 0.9953725070134664,
+    "requested_ratio": 1e-12,
+    "baseline_quadratic_objective": -1.7136457967937547e-06,
+    "candidate_quadratic_objective": -1.716018569303807e-06,
+    "scope": "independent residuals of returned directions; production search has 64-iteration cap and accepts finite descent, convergence not established",
+    "promotion_rejected": true
+  }
+}

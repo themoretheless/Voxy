@@ -1,0 +1,21 @@
+{
+  "build_export_exit_code": 0,
+  "native_runtime_exit_code": 0,
+  "export_sources": 6,
+  "package_bytes": 491950,
+  "native_presented_frames": 3,
+  "native_game_ticks": 12,
+  "launch_cwd": "/tmp/voxy-independent-run-20261007",
+  "package_sha256": "edd5b8e1fc14a459b7cd521180fcb987f206c6def12fbc19bfdc071a63394f22",
+  "binary_sha256": "d5ecf8b61e615656173d407a2f9ed654abdac37fc05d7459154c76bb31ea3828",
+  "sources_sha256": {
+    "crates/voxy_editor/src/packaged_game.rs": "ef554500e7d36482f74bd977d0116056af39cb9ab72555134a56ee7ba3d1adc5",
+    "crates/voxy_editor/src/gameplay_smoke.rs": "97a209dbad3ae37bfd6dad0f7f9cb601627753de8117cb0ea7b6e9bec0d48d6c",
+    "crates/voxy_app/src/main.rs": "f2233da620ee44bb936d3b934d603ab74e62e29754d3c54d54c1a0e73f76922e"
+  },
+  "scope": "native standalone packaged game smoke in actual window on current host; debug binary; fixture models a/b",
+  "signed_macos_app_qualified": false,
+  "other_platforms_qualified": false,
+  "ui_draw_qualified": false,
+  "full_rig_qualified": false
+}

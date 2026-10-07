@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-10-07T10:56:36.683552+00:00",
+  "surface_tests_passed": 13,
+  "surface_manual_profiles_ignored": 1,
+  "contact_total_tests": 33,
+  "contact_tests_reported_passed": 33,
+  "contact_terminal_result_observed": true,
+  "contact_process_confirmed_live_pid": null,
+  "contact_exec_session": 17485,
+  "pending_scope": null,
+  "contact_exit_code": 0,
+  "contact_elapsed_s": 578.1
+}

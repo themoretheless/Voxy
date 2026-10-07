@@ -1,0 +1,7 @@
+{
+  "steps": 60,
+  "sha256": {
+    "capture.nodes.jsonl": "190170881530add0f39547bb66f211726b248b367ade647e2dfc4c9e155cbe9e",
+    "capture.energy.jsonl": "f89e217ad4d13583971e404fea4f3eebef8d464db63fe6fccbca1e41f73849fb"
+  }
+}

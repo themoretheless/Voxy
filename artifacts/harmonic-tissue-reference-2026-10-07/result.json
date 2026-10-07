@@ -1,0 +1,29 @@
+{
+  "native_solver_tests_passed": 2,
+  "assembly_regression_tests_passed": 4,
+  "candidate_import_pose_tests_passed": 1,
+  "candidate_nodes": 3227,
+  "candidate_cells": 12284,
+  "candidate_native_times_s": [
+    0.0,
+    0.05,
+    0.5
+  ],
+  "relative_equation_residual_tolerance": 1e-12,
+  "partial_reference_on_budget_failure": false,
+  "fixed_boundary_coordinates_exact": true,
+  "physical_dynamics_advanced": false,
+  "full_clip_qualified": false,
+  "volume_expansion_correction_qualified": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/harmonic_reference.rs": "610df4ac7113df855033b065cba33fb3d5dfb8fb59535f94eb79d8d998c971be",
+    "crates/voxy_app/src/tissue_demo/assembly.rs": "461d5bad0455eff37eae51e5463d2f676fe199642fe2aaa23fffa688345ae19e",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "5b0c7e07aae2c9b91c1b59e828f8539df5e442045a353b4e1945e9d697758a02"
+  },
+  "physics_library_regression": {
+    "passed": 129,
+    "failed": 0,
+    "ignored": 15,
+    "duration_s": 92.17
+  }
+}

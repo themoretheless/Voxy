@@ -1,0 +1,45 @@
+{
+  "version": 2,
+  "coordinate_space": "scene_bind_pose_metres",
+  "material_profile": "authored-ogden-maxwell-v1",
+  "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+  "coverage": {
+    "minimum_bound_vertices": 3273,
+    "required_vertices": []
+  },
+  "regions": [
+    {
+      "mesh": "candidate.mesh",
+      "mesh_format": "medit-volume-v1",
+      "mesh_blake3": "1840e46ce817a5608444f0ca872da963a18b8e4f875bf0c6a792fc989bc2fe4a",
+      "joint": "Skeleton_torso_joint_2",
+      "supports": [
+        1282,
+        167,
+        1856
+      ],
+      "excluded_obstacle_faces": [],
+      "material": {
+        "density_kg_m3": 1000.0,
+        "specific_heat_j_kg_k": 2000.0,
+        "temperature_kelvin": 295.0,
+        "bulk_pa": 2000000.0,
+        "ogden_terms": [
+          {
+            "shear_pa": 15000.0,
+            "exponent": 2.0
+          }
+        ],
+        "maxwell_branches": [
+          {
+            "shear_pa": 20000.0,
+            "relaxation_seconds": 0.5
+          }
+        ]
+      }
+    }
+  ],
+  "kinematic_reference": "source-skin-nodes",
+  "startup_seconds": 0.5,
+  "energy_budget_rate_j_s": 5e-10
+}

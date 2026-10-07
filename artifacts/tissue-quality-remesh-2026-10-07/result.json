@@ -1,0 +1,203 @@
+{
+  "tool_commit": "9ce1cea8b9ac236aab3d15f2a15d0fc260006348",
+  "tool_license": "AGPL-3.0 external offline tool; not linked into runtime",
+  "arguments": "-pYq1.4/10S10000JC",
+  "meshing_exit_code": 0,
+  "native_admission_exit_code": 0,
+  "baseline_quality": {
+    "cells": 6845,
+    "fifth_percentile": 0.049083220387273176,
+    "lowest_cells": [
+      {
+        "altitude_edge_ratio": 0.0010979112002733966,
+        "cell_id": 4125,
+        "nodes": [
+          1021,
+          1023,
+          1075,
+          2274
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.001097920181048439,
+        "cell_id": 3810,
+        "nodes": [
+          997,
+          999,
+          2267,
+          1068
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.0012179254389687343,
+        "cell_id": 1103,
+        "nodes": [
+          290,
+          1310,
+          1309,
+          283
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.001219203775853078,
+        "cell_id": 6548,
+        "nodes": [
+          605,
+          1917,
+          604,
+          1918
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.0018937246300380843,
+        "cell_id": 6796,
+        "nodes": [
+          1306,
+          403,
+          1307,
+          611
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.002413814059700173,
+        "cell_id": 6642,
+        "nodes": [
+          1403,
+          2284,
+          1020,
+          1719
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.002413878564658837,
+        "cell_id": 939,
+        "nodes": [
+          1404,
+          1720,
+          990,
+          994
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.0024512726970399657,
+        "cell_id": 6512,
+        "nodes": [
+          609,
+          606,
+          604,
+          1212
+        ]
+      }
+    ],
+    "median": 0.15158654282222211,
+    "metric": "minimum-face-altitude/longest-edge",
+    "minimum": 0.0010979112002733966,
+    "scope": "reference geometry diagnostic; not dynamic or material qualification"
+  },
+  "candidate_quality": {
+    "cells": 12284,
+    "fifth_percentile": 0.15715871117285068,
+    "lowest_cells": [
+      {
+        "altitude_edge_ratio": 0.006724823904828999,
+        "cell_id": 1195,
+        "nodes": [
+          614,
+          615,
+          613,
+          1218
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.006725281780747014,
+        "cell_id": 10839,
+        "nodes": [
+          606,
+          1543,
+          1216,
+          1212
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.016867957459267485,
+        "cell_id": 11460,
+        "nodes": [
+          2632,
+          2548,
+          2378,
+          3186
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.018736317528808787,
+        "cell_id": 6243,
+        "nodes": [
+          1943,
+          387,
+          3075,
+          3138
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.018969148534293663,
+        "cell_id": 3079,
+        "nodes": [
+          1700,
+          2926,
+          1010,
+          2271
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.01933645644337531,
+        "cell_id": 12278,
+        "nodes": [
+          413,
+          395,
+          1211,
+          415
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.019336582988542347,
+        "cell_id": 10784,
+        "nodes": [
+          398,
+          1213,
+          399,
+          397
+        ]
+      },
+      {
+        "altitude_edge_ratio": 0.02225146252941056,
+        "cell_id": 541,
+        "nodes": [
+          2669,
+          1214,
+          2962,
+          1307
+        ]
+      }
+    ],
+    "median": 0.395582007819864,
+    "metric": "minimum-face-altitude/longest-edge",
+    "minimum": 0.006724823904828999,
+    "scope": "reference geometry diagnostic; not dynamic or material qualification"
+  },
+  "preservation_audit": {
+    "all_source_points_retained_exactly": true,
+    "maximum_source_coordinate_error_m": 0.0,
+    "all_source_facets_retained": true,
+    "boundary_facets": 4672,
+    "source_facets": 4672,
+    "tetrahedral_volume_m3": 0.05371328527883002,
+    "source_signed_surface_volume_m3": 0.053713285278830014,
+    "volume_difference_m3": 6.938893903907228e-18,
+    "scope": "independent rest geometry preservation and ordinary floating volume sum; no anatomical calibration or dynamics"
+  },
+  "dynamic_qualification": false,
+  "promoted_to_runtime": false,
+  "native_complete_skin_binding": true,
+  "native_bound_vertices": 3273,
+  "mesh_sha256": "9e3f77a735726b554c5585f77fcf5b2f950ef8b0369eea4c8eac43f0a4540aa7"
+}

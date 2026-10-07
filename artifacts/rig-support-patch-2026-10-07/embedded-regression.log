@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 2 tests
+test biomechanics::embedded_contact::response_profile::inactive_embedded_response_profile ... ignored, manual native embedded response timing; not a realtime engine claim
+test biomechanics::embedded_contact::reference_composition_tests::inverted_displacement_reference_does_not_invert_actual_contact_skin ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 148 filtered out; finished in 0.00s
+

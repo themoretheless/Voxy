@@ -1,0 +1,115 @@
+{
+  "step": 276,
+  "material_bulk_pa": 2000000.0,
+  "formula": "0.5 * bulk_pa * (J - 1)^2 * reference_volume_m3",
+  "scope": "equilibrium volumetric energy only; excludes isochoric/Maxwell energy, not constitutive replacement",
+  "maximum_ratio_cell": {
+    "cell_id": 2148,
+    "ratio": 5.399373254226985,
+    "rest_volume_m3": 4.316365351399566e-09,
+    "bulk_energy_j": 0.08354102857770697
+  },
+  "maximum_ratio_cell_reference_points_m": [
+    [
+      -0.022630726108289367,
+      1.1415701379977852,
+      -0.04652834084751667
+    ],
+    [
+      -0.03674605611820569,
+      1.1485101705164225,
+      -0.030238150910917826
+    ],
+    [
+      -0.039600345023071214,
+      1.1416200853709921,
+      -0.032720870114957466
+    ],
+    [
+      -0.02099236434671436,
+      1.1481401453091988,
+      -0.04306048553221075
+    ]
+  ],
+  "maximum_ratio_cell_contains_support": false,
+  "maximum_ratio_cell_longest_edge_m": 0.022644577293892097,
+  "maximum_ratio_cell_edge_cubed_over_six_volume": 448.35622747824664,
+  "total_reference_volume_m3": 0.05371328527883002,
+  "total_bulk_energy_j": 4.944650575685222,
+  "counts_above_ratio": {
+    "1.1": 40,
+    "1.5": 4,
+    "2": 3,
+    "3": 2,
+    "5": 1
+  },
+  "reference_volume_fraction_above_ratio": {
+    "1.1": 0.0007382504507498183,
+    "1.5": 4.2430308524847084e-07,
+    "2": 2.924433835440987e-07,
+    "3": 2.1214017553274626e-07,
+    "5": 8.035936228798821e-08
+  },
+  "highest_bulk_energy_cells": [
+    {
+      "cell_id": 5539,
+      "ratio": 0.8081732074185954,
+      "rest_volume_m3": 4.353863725435716e-06,
+      "bulk_energy_j": 0.16021138033912916
+    },
+    {
+      "cell_id": 5595,
+      "ratio": 0.9847123812197459,
+      "rest_volume_m3": 0.0005902932188841594,
+      "bulk_energy_j": 0.13795818846559682
+    },
+    {
+      "cell_id": 5565,
+      "ratio": 1.1312024757678567,
+      "rest_volume_m3": 5.75901000965886e-06,
+      "bulk_energy_j": 0.09913611458777989
+    },
+    {
+      "cell_id": 2173,
+      "ratio": 1.0913800741693418,
+      "rest_volume_m3": 1.0959812045179969e-05,
+      "bulk_energy_j": 0.09151791530642223
+    },
+    {
+      "cell_id": 2148,
+      "ratio": 5.399373254226985,
+      "rest_volume_m3": 4.316365351399566e-09,
+      "bulk_energy_j": 0.08354102857770697
+    },
+    {
+      "cell_id": 2209,
+      "ratio": 1.3464930070099923,
+      "rest_volume_m3": 6.531373098313157e-07,
+      "bulk_energy_j": 0.0784139698130364
+    },
+    {
+      "cell_id": 183,
+      "ratio": 0.8410100868361345,
+      "rest_volume_m3": 3.070168536097196e-06,
+      "bulk_energy_j": 0.0776070831582018
+    },
+    {
+      "cell_id": 5480,
+      "ratio": 1.1036842767467474,
+      "rest_volume_m3": 6.5606942364203464e-06,
+      "bulk_energy_j": 0.07053027918341033
+    },
+    {
+      "cell_id": 2180,
+      "ratio": 3.9820235667381803,
+      "rest_volume_m3": 7.078380416091911e-09,
+      "bulk_energy_j": 0.06294424693978723
+    },
+    {
+      "cell_id": 2232,
+      "ratio": 0.8819521622480426,
+      "rest_volume_m3": 4.353877556158424e-06,
+      "bulk_energy_j": 0.060672555068225116
+    }
+  ]
+}

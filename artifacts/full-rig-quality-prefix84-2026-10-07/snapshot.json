@@ -1,0 +1,9 @@
+{
+  "source_pid": 89549,
+  "committed_steps": 84,
+  "requested_steps": 480,
+  "sha256": {
+    "capture.nodes.jsonl": "d4cdad0a9b0e5fdc77cb7e404ed9339caa44d573a6fe81b2a420c814e0e254f4",
+    "capture.energy.jsonl": "d5842d10f757833818c43eb9488bd369551fe681a50fbd1751c2f23bd9796605"
+  }
+}

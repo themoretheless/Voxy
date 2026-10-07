@@ -1,0 +1,90 @@
+{
+  "cells": 6845,
+  "fifth_percentile": 0.049083220387273176,
+  "lowest_cells": [
+    {
+      "altitude_edge_ratio": 0.0010979112002733966,
+      "cell_id": 4125,
+      "nodes": [
+        1021,
+        1023,
+        1075,
+        2274
+      ]
+    },
+    {
+      "altitude_edge_ratio": 0.001097920181048439,
+      "cell_id": 3810,
+      "nodes": [
+        997,
+        999,
+        2267,
+        1068
+      ]
+    },
+    {
+      "altitude_edge_ratio": 0.0012179254389687343,
+      "cell_id": 1103,
+      "nodes": [
+        290,
+        1310,
+        1309,
+        283
+      ]
+    },
+    {
+      "altitude_edge_ratio": 0.001219203775853078,
+      "cell_id": 6548,
+      "nodes": [
+        605,
+        1917,
+        604,
+        1918
+      ]
+    },
+    {
+      "altitude_edge_ratio": 0.0018937246300380843,
+      "cell_id": 6796,
+      "nodes": [
+        1306,
+        403,
+        1307,
+        611
+      ]
+    },
+    {
+      "altitude_edge_ratio": 0.002413814059700173,
+      "cell_id": 6642,
+      "nodes": [
+        1403,
+        2284,
+        1020,
+        1719
+      ]
+    },
+    {
+      "altitude_edge_ratio": 0.002413878564658837,
+      "cell_id": 939,
+      "nodes": [
+        1404,
+        1720,
+        990,
+        994
+      ]
+    },
+    {
+      "altitude_edge_ratio": 0.0024512726970399657,
+      "cell_id": 6512,
+      "nodes": [
+        609,
+        606,
+        604,
+        1212
+      ]
+    }
+  ],
+  "median": 0.15158654282222211,
+  "metric": "minimum-face-altitude/longest-edge",
+  "minimum": 0.0010979112002733966,
+  "scope": "reference geometry diagnostic; not dynamic or material qualification"
+}

@@ -1,0 +1,20 @@
+{
+  "committed_steps": 60,
+  "simulated_s": 0.25,
+  "support_count": 19,
+  "audit_passed": true,
+  "full_clip_qualified": false,
+  "realistic_compressibility_qualified": false,
+  "scope": "six saved node checkpoints and all 61 energy frames; not continuous geometric qualification",
+  "minimum_signed_volume_ratio": 0.8110358430769686,
+  "maximum_signed_volume_ratio": 1.2259505216107005,
+  "maximum_pin_error_m": 4.440892098500626e-16,
+  "maximum_independent_balance_j": 1.936228954946273e-13,
+  "maximum_free_motion_m": 0.306399128849319,
+  "same_binary_three_support_reference": {
+    "minimum_signed_volume_ratio": 0.6446987924076949,
+    "maximum_signed_volume_ratio": 1.5446250619176654,
+    "maximum_free_motion_m": 0.31193600167745034
+  },
+  "comparison_baseline_evidence": "../../full-rig-quality-prefix60-2026-10-07/result.json"
+}

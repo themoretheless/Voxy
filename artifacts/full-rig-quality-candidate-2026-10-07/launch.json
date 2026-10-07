@@ -1,0 +1,28 @@
+{
+  "pid": 83659,
+  "started_utc": "2026-10-07T09:37:08.757247+00:00",
+  "command": [
+    "/tmp/voxy-rig-quality-bb60a324026ecb7d",
+    "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/full-rig-quality-candidate-2026-10-07/capture.png",
+    "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/full-rig-quality-candidate-2026-10-07/frames",
+    "--cesium",
+    "--contact",
+    "--capture-steps=480",
+    "--tissue-regions=/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/tissue-quality-remesh-2026-10-07/candidate-regions.json"
+  ],
+  "executable_sha256": "bb60a324026ecb7dc6535b0b6d4dddad8a9108ae2cc2935cd0fafa33bc8c0524",
+  "source_sha256": {
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "43422e5f87c0be1258ffa1e83933014ec28e72119d0fb0b2fc1460d000229848",
+    "crates/physics/src/biomechanics/tetra_mesh.rs": "b374afb9f81f8758b366c63e3a52cd35acbf79b5a859edeafba0af136619a9f6",
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "761b9be3d19e514f7c95efc0449d23936ea6af29af7e4432bf39104612438237"
+  },
+  "requested_steps": 480,
+  "energy_budget_rate_j_s": 5e-10,
+  "reference_volume": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/tissue-quality-remesh-2026-10-07/candidate.mesh",
+  "contact_scope": "anatomical pair domains disabled by existing import; not self-contact qualification",
+  "full_clip_qualified": false,
+  "realtime_qualified": false,
+  "baseline_process_preserved": 90673,
+  "runtime_status": "terminated before simulation",
+  "runtime_error": "volume reference node missing from source skin"
+}

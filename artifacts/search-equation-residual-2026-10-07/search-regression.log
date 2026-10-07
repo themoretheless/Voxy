@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 11 tests
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile ... ignored, manual assembled search metric parity and assembly-amortized timing
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_block_jacobi_search_diagnosis ... ignored, manual block-Jacobi rest-search residual qualification on imported mesh
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_incomplete_factor_search_diagnosis ... ignored, manual sparse factor search residual diagnosis
+test biomechanics::inertia::implicit::true_search_residual_tests::equation_residual_uses_returned_direction_and_free_nodes ... ok
+test biomechanics::inertia::implicit::tests::material_contact_search_recovers_affine_motion_and_keeps_pins ... ok
+test biomechanics::search_snapshot::tests::exported_operator_data_has_canonical_order_moduli_and_immutable_ownership ... ok
+test biomechanics::inertia::implicit::tests::fallible_search_stops_on_backend_error_without_diagonal_fallback ... ok
+test biomechanics::search_snapshot::tests::invalid_weights_and_rest_overflow_reject_without_mutating_body ... ok
+test biomechanics::inertia::implicit::tests::search_report_distinguishes_exact_inverse_budget_exhaustion_and_bad_metric ... ok
+test biomechanics::inertia::implicit::tests::averaged_material_search_gradient_matches_energy_differences ... ok
+test plasticity::mesh::quadratic::plane::tests::analytic_minimum_agrees_with_independent_dense_triangle_search ... ok
+
+test result: ok. 8 passed; 0 failed; 3 ignored; 0 measured; 140 filtered out; finished in 0.01s
+

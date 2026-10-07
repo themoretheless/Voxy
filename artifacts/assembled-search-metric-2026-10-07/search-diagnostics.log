@@ -1,0 +1,20 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 26.70s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+ASSEMBLED_SEARCH_DIAGNOSTICS baseline_true_preconditioned_residual_ratio=7.75692592953508675e-1 candidate_true_preconditioned_residual_ratio=9.95372507013466357e-1 requested_ratio=1e-12 baseline_quadratic_objective=-1.71364579679375467e-6 candidate_quadratic_objective=-1.71601856930380709e-6
+
+thread 'biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile' (5183909) panicked at crates/physics/src/biomechanics/inertia/implicit.rs:3172:9:
+search direction relative discrepancy 0.002651831112314191
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile ... FAILED
+
+failures:
+
+failures:
+    biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.31s
+
+error: test failed, to rerun pass `-p physics --lib`

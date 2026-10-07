@@ -1,0 +1,26 @@
+{
+  "focused_tests": {
+    "passed": 12,
+    "failed": 0,
+    "ignored": 5
+  },
+  "physics_library": {
+    "passed": 131,
+    "failed": 0,
+    "ignored": 18,
+    "duration_s": 59.06
+  },
+  "trace_environment": "VOXY_CONTACT_SEARCH_TRACE=1",
+  "scope": "existing CPU and explicit backend search stop diagnostics; recursive residual only, not independently verified equation residual",
+  "stop_reasons": [
+    "RecursiveTolerance",
+    "IterationLimit",
+    "NonpositiveRecursiveResidual",
+    "InvalidCurvature",
+    "InvalidDirection",
+    "ZeroResidual"
+  ],
+  "additional_operator_applications_for_reporting": 0,
+  "physical_thresholds_changed": false,
+  "source_sha256": "ead508d093fbee677477399469755be3301a4ac397e0aa5d985739f295ce637b"
+}

@@ -1,0 +1,21 @@
+{
+  "test_only": true,
+  "modes": 27,
+  "smoothing_steps": 1,
+  "damping": 0.05603257669570109,
+  "squared_l2_residual_ratios": [
+    1.5929551407054037,
+    1.5045686667963745,
+    1.219056803425384
+  ],
+  "unsmoothed_spatial_ratios": [
+    2.8856050427385096,
+    1.9089567206365876,
+    2.502023322176703
+  ],
+  "strict_equation_convergence_verified": false,
+  "subspace_and_pin_test_passed": true,
+  "full_amg_implemented": false,
+  "promoted": false,
+  "source": "https://petsc.org/release/manualpages/PC/PCGAMG/"
+}

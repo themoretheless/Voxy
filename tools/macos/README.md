@@ -64,3 +64,18 @@ normal/material/distance/miss/nonfinite rejection. Spatial filtering is a biased
 current-frame estimator; general moving rough/curved temporal filtering remains
 pending. The demo's ray acceleration contains its emissive triangle, while the
 reflecting mesh supplies raster guides; this is a single-reflector scene.
+
+## Packaged game application
+
+Build `voxy_app` and export a resource package with its existing `--export-game`
+entrypoint, then create a local app without modifying the source scene:
+
+```sh
+tools/macos/package-game.sh /absolute/path/to/voxy_app /absolute/path/to/game.vpak /absolute/path/to/VoxyGame.app
+```
+
+Add `--smoke` for the existing native game acceptance mode. The builder refuses
+an existing output, validates the plist, and includes the executable and package.
+The launcher writes unique logs under `~/Library/Logs/Voxy/Game`, outside the
+application bundle; `VOXY_GAME_LOG_DIR` can override that location. This is a
+local application bundle, with no distribution signing or notarization implied.

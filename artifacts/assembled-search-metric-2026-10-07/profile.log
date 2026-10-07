@@ -1,0 +1,17 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 1m 13s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+ASSEMBLED_METRIC_PROFILE trial=0 assembled=false elapsed_s=1.167788125 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+ASSEMBLED_METRIC_PROFILE trial=1 assembled=true elapsed_s=1.036527416 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+ASSEMBLED_METRIC_PROFILE trial=2 assembled=true elapsed_s=1.152275209 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+ASSEMBLED_METRIC_PROFILE trial=3 assembled=false elapsed_s=1.450693125 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+ASSEMBLED_METRIC_PROFILE trial=4 assembled=true elapsed_s=1.181260333 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+ASSEMBLED_METRIC_PROFILE trial=5 assembled=false elapsed_s=1.425262334 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+ASSEMBLED_METRIC_PROFILE trial=6 assembled=false elapsed_s=1.195677958 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+ASSEMBLED_METRIC_PROFILE trial=7 assembled=true elapsed_s=0.999125916 nodes=3227 cells=12284 solves=16 applications_per_solve=64 assembly_cost_included=true maximum_relative_error=6.58015058850126361e-16
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 10.21s
+

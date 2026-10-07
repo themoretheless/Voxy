@@ -1,0 +1,10 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.82s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/physics-74c936782d895dfe)
+
+running 2 tests
+test biomechanics::harmonic_reference::tests::affine_extension_preserves_boundary_and_interior_and_rejects_missing_constraints ... ok
+test biomechanics::harmonic_reference::tests::iteration_exhaustion_rejects_without_publishing_partial_reference ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 142 filtered out; finished in 0.05s
+

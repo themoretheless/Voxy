@@ -1,0 +1,7 @@
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=floor
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.025 asset=step
