@@ -1,0 +1,69 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 16.76s
+     Running tests/cohesive.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/cohesive-4a750d081f10654d)
+
+running 5 tests
+test arbitrary_interface_orientation_rotates_traction_and_tangent ... ok
+test broken_faces_retain_frictionless_compression_contact ... ok
+test rejected_trials_and_material_parameters_are_explicit ... ok
+test mixed_mode_tangent_matches_derivative_and_compression_does_not_damage ... ok
+test monotonic_work_is_exact_fracture_energy_and_unloading_cannot_heal ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cohesive_mesh.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/cohesive_mesh-91c3277fb2654e25)
+
+running 3 tests
+test invalid_interface_and_failed_equilibrium_preserve_geometry_and_history ... ok
+test nonuniform_opening_uses_independent_quadrature_history_and_consistent_nodal_forces ... ok
+test displacement_loading_fracture_work_and_reclosure_are_mesh_independent ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cohesive_topology.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/cohesive_topology-b227575eb0dc6905)
+
+running 4 tests
+test boundary_faces_are_unpaired_and_invalid_topologies_fail ... ok
+test free_interface_nodes_transfer_applied_force_and_match_linear_work ... ok
+test shared_face_is_bonded_then_breaks_into_two_independent_cells ... ok
+test source_load_mapping_preserves_force_and_reference_moment_and_checks_inputs ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wet_cohesive.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/wet_cohesive-33266e431d482dcc)
+
+running 3 tests
+test calibrated_wet_interface_has_lower_peak_and_fracture_work ... ok
+test wet_law_migration_preserves_fracture_work_and_rejects_healing ... FAILED
+test calibrated_heating_migrates_damage_without_erasing_fracture_work ... FAILED
+
+failures:
+
+---- wet_law_migration_preserves_fracture_work_and_rejects_healing stdout ----
+
+thread 'wet_law_migration_preserves_fracture_work_and_rejects_healing' (2703871) panicked at crates/physics/tests/wet_cohesive.rs:64:5:
+assertion failed: dry.migrate_history(&wet, &migrated, jump, normal).is_err()
+
+---- calibrated_heating_migrates_damage_without_erasing_fracture_work stdout ----
+
+thread 'calibrated_heating_migrates_damage_without_erasing_fracture_work' (2703869) panicked at crates/physics/tests/wet_cohesive.rs:102:5:
+assertion failed: cold.migrate_history(&hot, &heated, jump, n).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    calibrated_heating_migrates_damage_without_erasing_fracture_work
+    wet_law_migration_preserves_fracture_work_and_rejects_healing
+
+test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test wet_cohesive`

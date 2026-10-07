@@ -1,0 +1,15 @@
+{
+  "status": "terminal fracture migration fixed; repeated drying native/Metal runtime passed",
+  "tests_passed": 169,
+  "ignored": 11,
+  "history_invariant": "Terminal accepted fracture remains broken across calibrated laws; measured maximum separation is never fabricated",
+  "partial_damage": "Existing rejection of healing preserved and explicitly tested",
+  "oracle": "Ten wet/dry terminal history cycles preserve fracture dissipation, zero tensile traction/tangent, actual maximum separation and compression closure",
+  "drying_exchanges": 2,
+  "retained_material_water_kg": 0.16603294664519164,
+  "vapor_water_kg": 0.033767253155008274,
+  "gpu": "Apple M4 Max Metal",
+  "limitations": "Frictional law migration still explicitly unsupported; partial-damage drying migration remains rejected when it would heal. No general thermal/gas calibration claim.",
+  "extended_coupled_tests_passed": 33,
+  "extended_scope": "Quadratic cohesive/thermal-moisture transactions, crack friction and dynamic friction, wet materials, wet wear; terminal drying now checks retained fragmentation/dissipation and lost water mass, plus invalid late mixing rollback"
+}

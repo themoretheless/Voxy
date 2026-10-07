@@ -1,0 +1,67 @@
+{
+  "status": "candidate rejected; production moduli preparation removed",
+  "tests_passed": 185,
+  "ignored": 10,
+  "cache_scope": "No production moduli cache; prepared reference exists only in ignored benchmark and parity test",
+  "force_arithmetic": "unchanged; same element order and moduli sum order",
+  "oracle": "analytic affine energy and coupled contact/material solve, prepared vs uncached exact action parity",
+  "tradeoff": "one element-count vector per solve, 16 logical bytes per element; speedup not measured",
+  "runtime_full_clip": "not qualified; live PID60406 predates moduli preparation",
+  "next_gate": "Candidate rejected; do not claim speedup or use preparation in production",
+  "benchmark": {
+    "fixture": "1024 disjoint viscoelastic tetrahedra, 100 solves x64 applications, preparation included, eight ABBA/BAAB trials",
+    "trials": [
+      {
+        "trial": 0,
+        "prepared": false,
+        "elapsed_s": 0.14253025
+      },
+      {
+        "trial": 1,
+        "prepared": true,
+        "elapsed_s": 0.151352125
+      },
+      {
+        "trial": 2,
+        "prepared": true,
+        "elapsed_s": 0.199127333
+      },
+      {
+        "trial": 3,
+        "prepared": false,
+        "elapsed_s": 0.162936042
+      },
+      {
+        "trial": 4,
+        "prepared": true,
+        "elapsed_s": 0.169428875
+      },
+      {
+        "trial": 5,
+        "prepared": false,
+        "elapsed_s": 0.189055166
+      },
+      {
+        "trial": 6,
+        "prepared": false,
+        "elapsed_s": 0.264959875
+      },
+      {
+        "trial": 7,
+        "prepared": true,
+        "elapsed_s": 0.184781334
+      }
+    ],
+    "median_s": {
+      "False": 0.175995604,
+      "True": 0.1771051045
+    },
+    "limit": "Concurrent native full-rig workloads; no reliable speedup demonstrated"
+  },
+  "decision": "Keep uncached production operator and retain manual benchmark oracle",
+  "post_rejection_tests": {
+    "passed": 118,
+    "ignored": 11,
+    "failed": 0
+  }
+}

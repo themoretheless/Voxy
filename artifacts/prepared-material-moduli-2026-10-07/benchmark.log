@@ -1,0 +1,17 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 14.41s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+MATERIAL_MODULI_PROFILE trial=0 prepared=false elapsed_s=0.142530250
+MATERIAL_MODULI_PROFILE trial=1 prepared=true elapsed_s=0.151352125
+MATERIAL_MODULI_PROFILE trial=2 prepared=true elapsed_s=0.199127333
+MATERIAL_MODULI_PROFILE trial=3 prepared=false elapsed_s=0.162936042
+MATERIAL_MODULI_PROFILE trial=4 prepared=true elapsed_s=0.169428875
+MATERIAL_MODULI_PROFILE trial=5 prepared=false elapsed_s=0.189055166
+MATERIAL_MODULI_PROFILE trial=6 prepared=false elapsed_s=0.264959875
+MATERIAL_MODULI_PROFILE trial=7 prepared=true elapsed_s=0.184781334
+test biomechanics::inertia::implicit::tests::prepared_material_moduli_profile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 128 filtered out; finished in 1.47s
+

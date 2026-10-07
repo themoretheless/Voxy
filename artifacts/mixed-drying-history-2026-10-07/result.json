@@ -1,0 +1,16 @@
+{
+  "status": "mixed-mode migrated damage energy/tangent/objectivity regression passed",
+  "tests_passed": 9,
+  "cases": [
+    "retained damage plateau in mixed tensile/shear loading",
+    "renewed damage beyond floor crossover",
+    "compression with sliding damage"
+  ],
+  "checks": [
+    "All three force components vs independent finite difference of stored+fracture energy",
+    "All nine tangent entries vs independent force differences",
+    "3D rotated force and tangent covariance",
+    "Rotation-invariant damage/stored energy/fracture dissipation"
+  ],
+  "limits": "Local constitutive law qualification, no whole-body stability or material calibration claim"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "shared interval energy-rate API and native qualification passed",
+  "physics_tests_passed": 17,
+  "native_qualification_passed": true,
+  "native_receipt_marker_parity_with_manual_policy": true,
+  "api": "QuadraticAdvanceLimits::with_interval_energy_rate",
+  "invariants": [
+    "Exactly partitioned binary interval preserves total energy budget",
+    "No hidden minimum budget; zero-rounded product rejects",
+    "Nonfinite/nonpositive inputs and overflow reject",
+    "Sampling and attempt limits remain unchanged"
+  ],
+  "defaults_changed": false,
+  "full_rig_rate_changed": false
+}

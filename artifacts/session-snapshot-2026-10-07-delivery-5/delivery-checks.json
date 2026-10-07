@@ -1,0 +1,10 @@
+{
+  "physics_passed": 149,
+  "physics_ignored": 11,
+  "preview_passed": 4,
+  "preview_ignored": 2,
+  "format": "passed",
+  "diff_check": "passed",
+  "snapshot_sha256": "all verified",
+  "full_rig_complete": false
+}

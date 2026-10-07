@@ -1,0 +1,30 @@
+{
+  "status": "independent cumulative mechanical audit measured",
+  "duration_s": 0.1,
+  "steps": [
+    10000,
+    20000,
+    40000
+  ],
+  "runs": [
+    {
+      "level": 0,
+      "maximum_balance_j": 1.4474177589818282e-07,
+      "final_balance_j": -9.634106845624046e-10
+    },
+    {
+      "level": 1,
+      "maximum_balance_j": 3.3947728184102743e-08,
+      "final_balance_j": -6.042171207809588e-10
+    },
+    {
+      "level": 2,
+      "maximum_balance_j": 6.645990424658521e-09,
+      "final_balance_j": 6.260762575038825e-09
+    }
+  ],
+  "energy": "Kinetic + elastic + cohesive stored + cumulative fracture; other energy channels explicitly zero in fixture",
+  "physical_boundary_work": "Gravity from consistent nodal weights and measured displacement, carried water kinetic minus transfer loss, explicit bulk/cohesive parameter work",
+  "reported_solver_defect_subtracted": false,
+  "limits": "Maximum cumulative imbalance refines; final fine-step balance is worse than medium. No production energy-rate gate or universal long-time acceptance claimed."
+}

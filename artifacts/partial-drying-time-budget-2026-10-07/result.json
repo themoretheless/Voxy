@@ -1,0 +1,36 @@
+{
+  "status": "time-scaled independent energy, water and position refinement assertions passed",
+  "duration_s": 0.1,
+  "steps": [
+    10000,
+    20000,
+    40000
+  ],
+  "energy_rate_j_s": 0.001,
+  "step_budgets_j": [
+    1e-08,
+    5e-09,
+    2.5e-09
+  ],
+  "basis": "Keep prior1e-8 J at1e-5 s; tighten only smaller intervals",
+  "runs": [
+    {
+      "level": 0,
+      "maximum_balance_j": 1.4474177589818282e-07,
+      "final_balance_j": -9.634106845624046e-10
+    },
+    {
+      "level": 1,
+      "maximum_balance_j": 3.5341855664228206e-08,
+      "final_balance_j": -5.229594535194337e-10
+    },
+    {
+      "level": 2,
+      "maximum_balance_j": 8.047479127526458e-09,
+      "final_balance_j": -2.0943957679264713e-10
+    }
+  ],
+  "reported_solver_defect_subtracted": false,
+  "no_production_defaults_changed": true,
+  "scope": "Authored two-cell finite vapor/gravity example; this rate is not the separate5e-10 J/s full-rig calibration"
+}

@@ -1,0 +1,38 @@
+{
+  "status": "native partial cohesive FEM preview passed five finite drying exchanges",
+  "tests_passed": 3,
+  "preload_m": 0.006,
+  "topology": [
+    6,
+    1
+  ],
+  "material_vapor_water_steps_kg": [
+    [
+      0.18196089624661058,
+      0.017839303553589276
+    ],
+    [
+      0.16603294664519164,
+      0.033767253155008274
+    ],
+    [
+      0.15181156307249613,
+      0.047988636727703815
+    ],
+    [
+      0.1391138991683037,
+      0.06068630063189626
+    ],
+    [
+      0.12777669925384616,
+      0.0720235005463538
+    ]
+  ],
+  "invariants": [
+    "positive pre-existing fracture dissipation remains unchanged",
+    "same physical mesh vertex positions",
+    "same one-fragment/six-face topology",
+    "water/latent-energy/mechanical-mass acceptance checked at each dry exchange"
+  ],
+  "scope": "Native full quadratic two-cell preview at fixed pose; no browser/GPU partial preview or loaded dynamic partial-drying qualification"
+}

@@ -1,0 +1,19 @@
+{
+  "status": "wasm compile and native Metal repeated drying/motion passed",
+  "wasm": "cargo check voxy_web wasm32-unknown-unknown; not browser execution",
+  "native": "Apple M4 Max Metal wet_fem_snapshot --dry --motion; two drying exchanges and accepted 0.25s motion",
+  "terminal_preview_png_byte_parity_with_pre_partial_floor": true,
+  "png_sha256": "ee195ad915c7569690966542b6ec7e182534af5b2c7c45a9884ce397b76dae01",
+  "rig_live_pids": [
+    60406,
+    42743,
+    51794
+  ],
+  "rig_committed_steps_observed": [
+    68,
+    99,
+    87
+  ],
+  "full_clip_qualified": false,
+  "cuda_physical_qualification": false
+}

@@ -1,0 +1,103 @@
+{
+  "pid": 60406,
+  "duration_s": 1,
+  "scope": "One sampled early trajectory interval; not throughput or comparison with older late trajectory profiles",
+  "collapsed_leaf_samples": [
+    {
+      "symbol": "__workq_kernreturn  (in libsystem_kernel.dylib)",
+      "collapsed_leaf_samples": 1484
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics12biomechanics7inertia8implicit20rest_material_action  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 204
+    },
+    {
+      "symbol": "_RINvMs2_NtNtCs7KDHeV3lXiN_7physics12biomechanics18prescribed_surfaceNtB6_25PrescribedTriangleSurface31response_for_validated_geometryKb1_EBa_  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 108
+    },
+    {
+      "symbol": "_RNvMsi_NtNtNtCs7CMGwZ9BQm0_5alloc11collections5btree3mapINtB5_8BTreeMapAjj3_NtNtB7_7set_val9SetValZSTE6insertCs7KDHeV3lXiN_7physics  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 63
+    },
+    {
+      "symbol": "_RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics12viscoelasticNtB2_17ViscoelasticOgden18response_at_strain  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 46
+    },
+    {
+      "symbol": "log  (in libsystem_m.dylib)",
+      "collapsed_leaf_samples": 39
+    },
+    {
+      "symbol": "_RINvMs2_NtNtCs7KDHeV3lXiN_7physics12biomechanics18prescribed_surfaceNtB6_25PrescribedTriangleSurface38normal_stencils_for_validated_geometryKb1_EBa_  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 27
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics12biomechanics7inertia8implicit39coupled_contact_direction_with_material  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 22
+    },
+    {
+      "symbol": "_RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body7surface  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 18
+    },
+    {
+      "symbol": "_RNvMs0_NtNtCs7KDHeV3lXiN_7physics12biomechanics18prescribed_surfaceNtB5_24PreparedPrescribedMotion14rejection_time  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 17
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics12viscoelastic6strain  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 17
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics18prescribed_surface14validate_faces  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 15
+    },
+    {
+      "symbol": "<deduplicated_symbol>  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 14
+    },
+    {
+      "symbol": "_RNvMNtNtNtCs7KDHeV3lXiN_7physics12biomechanics7inertia8supportsNtB4_12InertialBody19volume_path_is_open  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 14
+    },
+    {
+      "symbol": "_RNvMs_NtCs7KDHeV3lXiN_7physics14tissue_surfaceNtB4_15EmbeddedSurface22accumulate_forces_into  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 13
+    },
+    {
+      "symbol": "_RINvNtCsfIBWXedyoEb_4core5array11try_from_fnINtNtNtB4_3ops9try_trait17NeverShortCircuitdEKj3_NCINvMBJ_BG_10wrap_mut_1jNCNCNvMs_NtCs7KDHeV3lXiN_7physics14tissue_surfaceNtB21_15EmbeddedSurface20deform_relative_intos_00E0EB23_  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 12
+    },
+    {
+      "symbol": "_RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body36evaluate_with_embedded_contact_state  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 11
+    },
+    {
+      "symbol": "_RNvMs_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB4_7Element8response  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 11
+    },
+    {
+      "symbol": "_RNvNtCs7KDHeV3lXiN_7physics12biomechanics2mm  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 11
+    },
+    {
+      "symbol": "_RNvMs_NtCs7KDHeV3lXiN_7physics14tissue_surfaceNtB4_15EmbeddedSurface20deform_relative_into  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 10
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics10invariants23isochoric_metric_excess  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 8
+    },
+    {
+      "symbol": "_platform_memmove  (in libsystem_platform.dylib)",
+      "collapsed_leaf_samples": 8
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics18prescribed_surface31validate_admitted_face_geometry  (in body_motion_snapshot)",
+      "collapsed_leaf_samples": 7
+    },
+    {
+      "symbol": "pow  (in libsystem_m.dylib)",
+      "collapsed_leaf_samples": 6
+    }
+  ]
+}

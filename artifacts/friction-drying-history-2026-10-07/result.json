@@ -1,0 +1,13 @@
+{
+  "status": "unchanged-friction cohesive history migration qualified by native regressions",
+  "tests_passed_unique": 156,
+  "ignored": 11,
+  "supported": "Same exact friction coefficient, normal/tangential stiffness and accepted fixed contact history; cohesive moisture/thermal parameters may change",
+  "oracle": "Binary-exact stick and slip accepted states; fixed-history force/tangent/mode and cumulative physical/numerical friction/release receipts equal before/after migration; fracture work retained",
+  "rejected": [
+    "Changed friction parameters or friction enabled/disabled",
+    "Changed accepted contact state during migration",
+    "New loading outside accepted pose"
+  ],
+  "scope": "This is no-op friction history retention, not general changed-friction parameter migration or full-scene runtime qualification"
+}

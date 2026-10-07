@@ -14,6 +14,10 @@ pub struct Material {
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct State {
     maximum_separation_m: f64,
+    // Terminal accepted fracture survives changes in calibrated failure separation.
+    fully_fractured: bool,
+    // Accepted damage carried across parameter changes without inventing opening.
+    damage_floor: f64,
     contact: crate::friction::State,
     fracture_offset_j_m2: f64,
 }
@@ -94,11 +98,14 @@ impl Material {
     pub fn failure_m(&self) -> f64 {
         self.failure_m
     }
-    /// Irreversible damage from accepted maximum separation, independent of pose.
+    /// Damage from accepted maximum separation and retained migration floor.
     #[must_use]
     pub fn damage(&self, state: &State) -> f64 {
         let maximum = state.maximum_separation_m;
-        if maximum <= self.onset_m {
+        if state.fully_fractured {
+            return 1.;
+        }
+        let geometric = if maximum <= self.onset_m {
             0.
         } else if maximum >= self.failure_m {
             1.
@@ -106,7 +113,8 @@ impl Material {
             ((self.failure_m / maximum)
                 * ((maximum - self.onset_m) / (self.failure_m - self.onset_m)).clamp(0., 1.))
             .clamp(0., 1.)
-        }
+        };
+        geometric.max(state.damage_floor)
     }
     /// Candidate history and consistent tangent for total displacement jump.
     /// Normal must be unit length; compression never degrades normal contact.
@@ -131,14 +139,32 @@ impl Material {
         let maximum = old.maximum_separation_m.max(separation);
         let mut next = State {
             maximum_separation_m: maximum,
+            fully_fractured: old.fully_fractured || maximum >= self.failure_m,
+            damage_floor: old.damage_floor,
             contact: old.contact,
             fracture_offset_j_m2: old.fracture_offset_j_m2,
         };
-        let progress = ((maximum - self.onset_m) / (self.failure_m - self.onset_m)).clamp(0., 1.);
+        let progress = if next.fully_fractured {
+            1.
+        } else {
+            let geometric =
+                ((maximum - self.onset_m) / (self.failure_m - self.onset_m)).clamp(0., 1.);
+            let floor = next.damage_floor;
+            // Inverse bilinear damage law, expressed as fracture progress.
+            // This is an internal work coordinate, never a measured opening.
+            let floor_progress = if floor > 0. {
+                self.onset_m * floor / ((1. - floor) * self.failure_m + floor * self.onset_m)
+            } else {
+                0.
+            };
+            geometric.max(floor_progress)
+        };
         let damage = self.damage(&next);
         // Compute the remaining stiffness directly to avoid 1-d cancellation
         // close to complete separation.
-        let remaining = if maximum <= self.onset_m {
+        let remaining = if next.fully_fractured {
+            0.
+        } else if maximum <= self.onset_m {
             1.
         } else if maximum >= self.failure_m {
             0.
@@ -146,11 +172,21 @@ impl Material {
             (self.onset_m / maximum)
                 * ((self.failure_m - maximum) / (self.failure_m - self.onset_m))
         };
+        let remaining = if next.damage_floor > 0. {
+            remaining.min(1. - next.damage_floor)
+        } else {
+            remaining
+        };
+        let mut geometry_only = next;
+        geometry_only.damage_floor = 0.;
+        let geometric_damage = self.damage(&geometry_only);
         let mut traction: Vec3 = std::array::from_fn(|i| {
             self.stiffness_pa_m * remaining * effective[i]
                 + self.closure_pa_m * normal_gap.min(0.) * normal[i]
         });
-        let loading = separation > old.maximum_separation_m
+        let loading = !next.fully_fractured
+            && geometric_damage > next.damage_floor
+            && separation > old.maximum_separation_m
             && separation > self.onset_m
             && separation < self.failure_m;
         let derivative = if loading {
@@ -192,7 +228,7 @@ impl Material {
         let mut friction_released = 0.;
         let mut friction_mode = None;
         if let Some(material) = self.friction {
-            if old.maximum_separation_m >= self.failure_m {
+            if old.fully_fractured || old.maximum_separation_m >= self.failure_m {
                 let (state, response) = material.response(&old.contact, jump, normal)?;
                 next.contact = state;
                 for (i, value) in traction.iter_mut().enumerate() {
@@ -243,13 +279,13 @@ fn dot(a: Vec3, b: Vec3) -> f64 {
 }
 
 impl Material {
-    /// Migrate accepted history to a changed frictionless cohesive law at fixed
+    /// Migrate accepted history to a changed cohesive law with unchanged friction parameters at fixed
     /// pose. Preserves accumulated fracture work using a history offset and
-    /// rejects any law that would reduce existing damage. Returned signed work
+    /// retains accepted damage as a floor when the new law is stronger. Returned signed work
     /// is the change in stored energy per reference area and must be accounted
     /// as external parameter work. This is not a wet chemistry energy model.
     /// # Errors
-    /// Healing, new loading, friction-history migration or nonfinite balances.
+    /// New loading, friction-history migration or nonfinite balances.
     pub fn migrate_history(
         &self,
         old_material: &Self,
@@ -257,23 +293,31 @@ impl Material {
         jump: Vec3,
         normal: Vec3,
     ) -> Result<(State, f64), &'static str> {
-        if self.friction.is_some() || old_material.friction.is_some() {
+        if self.friction != old_material.friction {
             return Err("cohesive friction history migration unsupported");
         }
-        if self.damage(old) < old_material.damage(old) {
-            return Err("cohesive parameter change would heal damage");
-        }
         let (accepted, before) = old_material.response(old, jump, normal)?;
-        if accepted.maximum_separation_m != old.maximum_separation_m {
+        if accepted.maximum_separation_m != old.maximum_separation_m
+            || accepted.contact != old.contact
+        {
             return Err("cohesive migration requires accepted fixed pose");
         }
-        let (mut next, after) = self.response(old, jump, normal)?;
+        let mut retained = *old;
+        retained.damage_floor = retained.damage_floor.max(before.damage);
+        retained.fully_fractured |= before.damage == 1.;
+        let (mut next, after) = self.response(&retained, jump, normal)?;
+        if next.contact != old.contact {
+            return Err("cohesive migration would change accepted friction history");
+        }
         next.fracture_offset_j_m2 += before.dissipated_j_m2 - after.dissipated_j_m2;
         let work = after.stored_j_m2 - before.stored_j_m2;
         if !next.fracture_offset_j_m2.is_finite() || !work.is_finite() {
             return Err("cohesive parameter work overflow");
         }
         let (_, verified) = self.response(&next, jump, normal)?;
+        if verified.damage < before.damage {
+            return Err("cohesive parameter change would heal damage");
+        }
         if (verified.dissipated_j_m2 - before.dissipated_j_m2).abs()
             > 1e-12 * before.dissipated_j_m2.abs().max(self.fracture_j_m2)
         {

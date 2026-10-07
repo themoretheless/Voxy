@@ -1,0 +1,12 @@
+{
+  "status": "native atomic partial-drying/load/motion regression passed",
+  "preview_tests_passed": 4,
+  "accepted_intervals": 3,
+  "interval_s": 1e-05,
+  "total_time_s": 3e-05,
+  "maximum_dynamic_absolute_defect_j": 4.2188031302249824e-14,
+  "maximum_water_defect_kg": 4.343976706258157e-17,
+  "latent_defect_j": 0,
+  "late_failure": "quadratic adaptive attempt limit reached; entire preview and vapor state exactly restored",
+  "scope": "two-cell partial interface; actual native gravity-loaded motion and finite vapor; short split intervals only, no long-time convergence/GPU scene acceptance"
+}

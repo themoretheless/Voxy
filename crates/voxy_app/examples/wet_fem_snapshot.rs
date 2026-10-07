@@ -9,12 +9,16 @@ use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, Scen
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arguments: Vec<_> = std::env::args().skip(1).collect();
     let motion = arguments.iter().any(|a| a == "--motion");
+    let drying = arguments.iter().any(|a| a == "--dry");
     let heated = arguments.iter().any(|a| a == "--heated");
     if arguments
         .iter()
-        .any(|a| a.starts_with("--") && a != "--heated" && a != "--motion")
+        .any(|a| a.starts_with("--") && a != "--heated" && a != "--motion" && a != "--dry")
     {
-        return Err("usage: wet_fem_snapshot [output.png] [--heated] [--motion]".into());
+        return Err("usage: wet_fem_snapshot [output.png] [--heated] [--motion] [--dry]".into());
+    }
+    if heated && drying {
+        return Err("--dry requires wet uptake; cannot combine with --heated".into());
     }
     let path = arguments
         .iter()
@@ -78,7 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         mapped_at_creation: false,
     });
     let mut frames = Vec::new();
-    for frame in 0..if motion { 3 } else { 2 } {
+    for frame in 0..(2 + usize::from(motion) + usize::from(drying)) {
         if frame == 1 {
             if heated {
                 demo.heat()?;
@@ -86,7 +90,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 demo.wet()?;
             }
         }
-        if frame == 2 {
+        if drying && frame == 2 {
+            // Two accepted exchanges exercise migration after the first dry update.
+            demo.dry()?;
+            demo.dry()?;
+        }
+        if motion && frame == 2 + usize::from(drying) {
             demo.separate()?;
         }
         let (faces, fragments) = demo.topology()?;
@@ -160,7 +169,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         drop(pixels);
         readback.unmap();
     }
-    if motion && frames[1] == frames[2] {
+    let motion_frame = 2 + usize::from(drying);
+    if motion && frames[motion_frame - 1] == frames[motion_frame] {
         return Err("physical FEM fragment motion did not reach GPU pixels".into());
     }
     if frames[0] == frames[1] {

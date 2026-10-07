@@ -1,0 +1,15 @@
+{
+  "status": "partial irreversible damage migration and analytic work/tangent/cycle checks passed",
+  "tests_passed": 170,
+  "ignored": 11,
+  "invariants": [
+    "No damage reduction across stronger calibrated law",
+    "Measured maximum opening unchanged by migration",
+    "Accepted fracture work preserved via explicit offset",
+    "Signed stored-energy parameter work reported",
+    "Ten wet/dry fixed-pose cycles preserve damage and energy",
+    "New loading closes independent piecewise traction work",
+    "Tangent agrees with force differences below/above floor crossover"
+  ],
+  "limits": "Frictional law migration remains unsupported. Isothermal authored material calibration, not universal chemistry or production scene acceptance."
+}

@@ -1,0 +1,35 @@
+{
+  "status": "0.1s native partial-drying loaded timestep comparison passed",
+  "duration_s": 0.1,
+  "runs": [
+    {
+      "level": 0,
+      "steps": 10000,
+      "dt_s": 1e-05,
+      "water_kg": 0.1978141391901023,
+      "exact_water_error_kg": 1.1844528413629263e-09,
+      "maximum_dynamic_defect_j": 1.1781756373459296e-09
+    },
+    {
+      "level": 1,
+      "steps": 20000,
+      "dt_s": 5e-06,
+      "water_kg": 0.19781413859786823,
+      "exact_water_error_kg": 5.92218774020381e-10,
+      "maximum_dynamic_defect_j": 2.582584916754893e-09
+    },
+    {
+      "level": 2,
+      "steps": 40000,
+      "dt_s": 2.5e-06,
+      "water_kg": 0.197814138302687,
+      "exact_water_error_kg": 2.9703753345877715e-10,
+      "maximum_dynamic_defect_j": 8.433706857879919e-09
+    }
+  ],
+  "position_coarse_delta_m": 7.873251417142568e-10,
+  "position_fine_delta_m": 3.729780928551918e-10,
+  "water_reference": "Independent two-identical-cell finite-reservoir activity ODE: W/6 + (5W/6)exp(-0.12t)",
+  "topology": "one fragment/six exposed faces through every interval",
+  "limits": "Water and positional refinement observed; maximum local dynamic energy defects increase under refinement and do not demonstrate energy convergence. Fixed per-step tolerance is 1e-8 J; cumulative mechanical balance still needs independent qualification."
+}

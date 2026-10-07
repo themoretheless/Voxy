@@ -1,0 +1,17 @@
+{
+  "status": "native prefix audit passed",
+  "runtime": "latest launched allocation + response/normal-stencil topology version; predates rejected test-only moduli candidate",
+  "requested_steps": 480,
+  "committed_steps_audited": 48,
+  "time_s": 0.2,
+  "energy_records": 49,
+  "node_checkpoints": 5,
+  "baseline_energy_byte_parity": true,
+  "baseline_nodes_byte_parity": true,
+  "full_clip_qualified": false,
+  "sha256": {
+    "energy.jsonl": "d8138640d5709f20c9607a40b4a69470e2305474afd8480ae854a9ba1e7e3e01",
+    "native-audit.log": "9b47462ca6e9793d5c3af56d02a5c0111dfbeaf58536476d64df78827b34ec14",
+    "nodes.jsonl": "8e988f857472598b9a9da23a9e501bad081c909d1a1d590b8a5de0c73f9ea7d4"
+  }
+}

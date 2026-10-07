@@ -1,0 +1,30 @@
+{
+  "physical_checkpoints": [
+    {
+      "time_s": 0.0,
+      "physical_nodes_equal": true
+    },
+    {
+      "time_s": 0.05,
+      "physical_nodes_equal": true
+    },
+    {
+      "time_s": 0.1,
+      "physical_nodes_equal": true
+    },
+    {
+      "time_s": 0.15,
+      "physical_nodes_equal": true
+    },
+    {
+      "time_s": 0.2,
+      "physical_nodes_equal": true
+    },
+    {
+      "time_s": 0.25,
+      "physical_nodes_equal": true
+    }
+  ],
+  "all_first_three_energy_receipt_columns_equal_through_step60": true,
+  "scope": "Saved physical checkpoints only; fourth solver-defect column differs. Full480 remains unqualified."
+}

@@ -1,0 +1,40 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 19.00s
+     Running tests/cohesive.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/cohesive-4a750d081f10654d)
+
+running 8 tests
+test arbitrary_interface_orientation_rotates_traction_and_tangent ... ok
+test mixed_mode_tangent_matches_derivative_and_compression_does_not_damage ... ok
+test broken_faces_retain_frictionless_compression_contact ... ok
+test monotonic_work_is_exact_fracture_energy_and_unloading_cannot_heal ... ok
+test partial_drying_retains_damage_and_closes_piecewise_loading_work ... ok
+test rejected_trials_and_material_parameters_are_explicit ... ok
+test terminal_fracture_survives_parameter_cycles_without_fabricating_separation ... ok
+test wet_dry_migration_preserves_accepted_stick_and_slide_with_identical_friction ... FAILED
+
+failures:
+
+---- wet_dry_migration_preserves_accepted_stick_and_slide_with_identical_friction stdout ----
+
+thread 'wet_dry_migration_preserves_accepted_stick_and_slide_with_identical_friction' (2741705) panicked at crates/physics/tests/cohesive.rs:262:9:
+assertion `left == right` failed
+  left: [[1048576.0, 0.0, 0.0], [0.0, 65536.0, 0.0], [0.0, 0.0, 65536.0]]
+ right: [[1048576.0, 0.0, 0.0], [-262144.0, 0.0, 0.0], [0.0, 0.0, 16384.0]]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    wet_dry_migration_preserves_accepted_stick_and_slide_with_identical_friction
+
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test cohesive`

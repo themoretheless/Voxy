@@ -1,0 +1,17 @@
+{
+  "status": "native prefix audit passed",
+  "source": "latest allocation+normal-stencil+response topology executable",
+  "pid": 60406,
+  "requested_steps": 480,
+  "committed_steps_audited": 15,
+  "energy_records": 16,
+  "node_checkpoints": 2,
+  "full_clip_qualified": false,
+  "response_only_baseline_energy_byte_parity": true,
+  "response_only_baseline_nodes_byte_parity": true,
+  "sha256": {
+    "energy.jsonl": "f9773201de8f0a6efd189a2f252ce02760edc6b0d632b31f50118166f3f39c09",
+    "nodes.jsonl": "ea7b42a75f0939e1d8e733fbe9d0281a5079cd4bd4c0d62e2a67c36557b19c77",
+    "native-audit.log": "36856c49c5d164df106ea8ac7649ada93b2f22aa95b6e4f452a2bfbc19015b53"
+  }
+}

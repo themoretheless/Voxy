@@ -1,0 +1,17 @@
+{
+  "status": "first drying transaction and Metal four-frame runtime passed",
+  "water_before_kg": 0.1998001998001998,
+  "material_water_after_kg": 0.18196089624661058,
+  "vapor_water_kg": 0.017839303553589276,
+  "latent_exchange_j": 42814.32852861426,
+  "tests_passed": 2,
+  "gpu": "Apple M4 Max Metal",
+  "stages": [
+    "dry intact",
+    "wet fractured",
+    "isothermal drying retains fracture",
+    "fragment motion"
+  ],
+  "repeated_drying": "rejected by existing no-healing history gate; verified entire preview rollback; repeated cycles remain incomplete",
+  "limits": "Authored finite isothermal vapor; no gas motion/sensible heat/swelling/general calibration"
+}

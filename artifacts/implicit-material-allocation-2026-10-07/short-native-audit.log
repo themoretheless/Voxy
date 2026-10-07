@@ -1,0 +1,8 @@
+
+running 1 test
+test collision_tests::audits_completed_full_rig_supported_capture_against_native_clip ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 69 filtered out; finished in 0.08s
+
+RIG_PER_FRAME_ENERGY_AUDIT frames=4 maximum_frame_balance_j=4.76902303785507894e-14 prefix=false requested_steps=3 requested_capture_complete=true full_clip_qualified=false
+RIG_SUPPORTED_AUDIT checkpoints=4 nodes=2338 cells=6845 pins=3 committed_time_s=0.0125 last_node_time_s=0.0125 maximum_pin_error_m=0.00000000000000000e0 maximum_independent_balance_j=7.14602395269700597e-14 maximum_free_motion_m=8.58970383242674274e-4 maximum_interval_balance_j=4.76902303785507894e-14 authored_rate_j_s=Some(5e-10) prefix=false requested_steps=3 requested_capture_complete=true full_clip_qualified=false

@@ -1,0 +1,21 @@
+{
+  "change": "Avoid constructing discarded inertia-only operator output when material operator already includes inertia",
+  "library_tests_passed": 118,
+  "library_ignored": 10,
+  "coupled_tests_passed": 67,
+  "format_and_diff_check": "passed",
+  "speedup": "not measured",
+  "native_full_clip": "not qualified; existing live runs predate this allocation change",
+  "initial_command_error": "Unavailable test target names; retained initial log; corrected suites passed",
+  "runtime_build": "passed",
+  "runtime_short_steps": 3,
+  "short_byte_parity": {
+    "nodes.json": true,
+    "nodes.jsonl": true,
+    "energy.jsonl": true,
+    "csv": true,
+    "png": true
+  },
+  "native_short_audit_exit_code": 0,
+  "full_clip_qualified": false
+}

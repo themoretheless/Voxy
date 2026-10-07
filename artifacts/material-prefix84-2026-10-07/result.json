@@ -1,0 +1,14 @@
+{
+  "source": "full-rig-compensated-material-2026-10-07",
+  "committed_steps_audited": 84,
+  "requested_steps": 480,
+  "energy_records": 85,
+  "node_checkpoints": 8,
+  "exit_code": 0,
+  "full_clip_qualified": false,
+  "sha256": {
+    "energy.jsonl": "40f1c9014d3836bdbec563e5790211706a8dd267a9a0b70c9325c6b3eec1e2b3",
+    "native-audit.log": "2980126759527715348f9e40e4d85b6d7e757f740668bd2e14e8ef37a3355f7a",
+    "nodes.jsonl": "bc5e7d5ff8e3527e532bd5ad9b93da5494e1e7726263e3cdf6741696a05667bd"
+  }
+}
