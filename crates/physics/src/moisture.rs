@@ -120,6 +120,42 @@ impl Body {
         {
             return Err("invalid moisture step");
         }
+        // An exact fixed point has zero flux on every active edge and bath.
+        // Preserve accepted inventories rather than introduce roundoff by solving
+        // and reconstructing capacity * saturation at an unchanged state.
+        let activity: Vec<_> = self
+            .cells
+            .iter()
+            .map(|c| c.water_kg / c.capacity_kg)
+            .collect();
+        let stationary = added.iter().all(|&x| x == 0.)
+            && self
+                .links
+                .iter()
+                .all(|l| l.conductance_kg_s == 0. || activity[l.cells[0]] == activity[l.cells[1]])
+            && reservoirs
+                .iter()
+                .all(|r| r.conductance_kg_s == 0. || activity[r.cell] == r.saturation);
+        if stationary {
+            // Invalid/unrepresentable operators still reject at equilibrium.
+            let mut diagonal: Vec<_> = self.cells.iter().map(|c| c.capacity_kg).collect();
+            for link in &self.links {
+                let weight = dt_s * link.conductance_kg_s;
+                for &i in &link.cells {
+                    diagonal[i] += weight;
+                }
+            }
+            for r in reservoirs {
+                diagonal[r.cell] += dt_s * r.conductance_kg_s;
+            }
+            if diagonal.iter().any(|x| !x.is_finite()) {
+                return Err("moisture equilibrium operator overflow");
+            }
+            return Ok(Transfer {
+                reservoir_water_kg: vec![0.; reservoirs.len()],
+                mass_defect_kg: 0.,
+            });
+        }
         let saturation = transport::saturations(self, dt_s, reservoirs, added)?;
         let mut candidate = self.cells.clone();
         for (cell, &s) in candidate.iter_mut().zip(&saturation) {

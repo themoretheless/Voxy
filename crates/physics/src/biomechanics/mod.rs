@@ -19,6 +19,10 @@ mod coupling;
 mod poroelastic;
 pub use cell_poroelastic::{AdaptiveTissueExchangeConfig, CellPoreTissue, LymphaticWallAttachment};
 pub use poroelastic::{PoreFluid, PoreTissue};
+mod search_snapshot;
+pub use search_snapshot::{
+    TissueSearchBackend, TissueSearchElement, TissueSearchOperation, TissueSearchSnapshot,
+};
 mod inertia;
 pub use inertia::{
     DrivenMuscleStep, DrivenSupportStep, InertialAssembly, InertialBody, InertialDiagnostics,

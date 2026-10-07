@@ -1,6 +1,7 @@
 //! Midpoint kinematics and path-averaged forces with independently admitted work.
-use super::super::lbfgs::secant_scale;
-use super::super::lbfgs::{SecantPair, push_secant, secant_direction};
+use super::super::lbfgs::{SecantPair, push_secant, try_secant_direction, try_secant_scale};
+#[cfg(test)]
+use super::super::lbfgs::{secant_direction, secant_scale};
 use super::{DrivenSupportStep, InertialBody, PrescribedTriangleSurface, SupportTarget, Vec3, dot};
 use std::sync::Arc;
 // Observe failures without replacing the original error or changing admission.
@@ -377,6 +378,11 @@ impl InertialBody {
                 .body
                 .stationary_embedded_contact()
                 .is_none_or(|skin| !skin.may_have_contact_pairs());
+        let search_operation = if contact_free {
+            self.prepare_tissue_search(&weight)?
+        } else {
+            None
+        };
         let prepared_motion = current.prepare_motion(&next)?;
         let world_endpoint = |points: &[Vec3]| -> Vec<Vec3> {
             points
@@ -706,18 +712,19 @@ impl InertialBody {
                 return Err("implicit search metric overflow");
             }
             let base_direction = |r: &[Vec3]| {
-                coupled_contact_direction_with_material(
+                try_coupled_contact_direction_with_material(
                     &weight,
                     &diagonal,
                     &blocks,
                     &self.body.pinned,
                     r,
                     contact_free.then_some(&self.body),
+                    search_operation.as_deref(),
                 )
             };
-            let mut direction = secant_direction(&history, &free_residual, |q| {
-                base_direction(q).iter().map(|d| d.map(|v| -v)).collect()
-            });
+            let mut direction = try_secant_direction(&history, &free_residual, |q| {
+                base_direction(q).map(|v| v.iter().map(|d| d.map(|x| -x)).collect())
+            })?;
             let mut slope: f64 = free_residual
                 .iter()
                 .zip(&direction)
@@ -728,7 +735,7 @@ impl InertialBody {
                 || direction.iter().flatten().any(|v| !v.is_finite())
             {
                 history.clear();
-                direction = base_direction(&free_residual);
+                direction = base_direction(&free_residual)?;
                 slope = free_residual
                     .iter()
                     .zip(&direction)
@@ -1457,11 +1464,22 @@ impl InertialBody {
         {
             return Err("implicit support preconditioner overflow");
         }
+        let search_operation = self.prepare_tissue_search(&weight)?;
         let inverse_material = |g: &[Vec3]| {
-            preconditioned_direction(
+            try_preconditioned_direction(
                 &self.body.pinned,
                 g,
-                |v| rest_material_action(&self.body, &weight, v),
+                |v| {
+                    if let Some(operation) = search_operation.as_deref() {
+                        super::super::search_snapshot::checked_search_action(
+                            operation,
+                            v,
+                            &self.body.pinned,
+                        )
+                    } else {
+                        Ok(rest_material_action(&self.body, &weight, v))
+                    }
+                },
                 |r| {
                     r.iter()
                         .enumerate()
@@ -1469,9 +1487,12 @@ impl InertialBody {
                         .collect()
                 },
             )
-            .into_iter()
-            .map(|v| v.map(|x| -x))
-            .collect::<Vec<_>>()
+            .map(|vectors| {
+                vectors
+                    .into_iter()
+                    .map(|v| v.map(|x| -x))
+                    .collect::<Vec<_>>()
+            })
         };
         let mut history = Vec::new();
         let mut state = evaluate(&mid)?;
@@ -1492,18 +1513,14 @@ impl InertialBody {
                 converged = true;
                 break;
             }
-            let scale = secant_scale(&history, |g| {
-                g.iter()
-                    .zip(inverse_material(g))
-                    .map(|(g, v)| dot(*g, v))
-                    .sum()
-            });
-            let direction = secant_direction(&history, &state.1, |g| {
+            let scale = try_secant_scale(&history, |g| {
                 inverse_material(g)
-                    .into_iter()
-                    .map(|v| v.map(|x| scale * x))
-                    .collect()
-            });
+                    .map(|values| g.iter().zip(values).map(|(g, v)| dot(*g, v)).sum())
+            })?;
+            let direction = try_secant_direction(&history, &state.1, |g| {
+                inverse_material(g)
+                    .map(|values| values.into_iter().map(|v| v.map(|x| scale * x)).collect())
+            })?;
             let slope: f64 = direction
                 .iter()
                 .zip(&state.1)
@@ -1641,6 +1658,7 @@ fn relative_midpoint_endpoint(
 // coupling between vertices and axes. This is a search metric, not the full
 // material/geometric Hessian; nonlinear admission still checks the real model.
 #[cfg(test)]
+#[cfg(test)]
 fn coupled_contact_direction(
     weight: &[f64],
     diagonal: &[Vec3],
@@ -1651,6 +1669,7 @@ fn coupled_contact_direction(
     coupled_contact_direction_with_material(weight, diagonal, blocks, pinned, residual, None)
 }
 
+#[cfg(test)]
 fn coupled_contact_direction_with_material(
     weight: &[f64],
     diagonal: &[Vec3],
@@ -1659,12 +1678,30 @@ fn coupled_contact_direction_with_material(
     residual: &[Vec3],
     body: Option<&super::super::Body>,
 ) -> Vec<Vec3> {
+    try_coupled_contact_direction_with_material(
+        weight, diagonal, blocks, pinned, residual, body, None,
+    )
+    .unwrap()
+}
+fn try_coupled_contact_direction_with_material(
+    weight: &[f64],
+    diagonal: &[Vec3],
+    blocks: &[super::super::PrescribedContactStencil],
+    pinned: &[bool],
+    residual: &[Vec3],
+    body: Option<&super::super::Body>,
+    operation: Option<&dyn super::super::TissueSearchOperation>,
+) -> Result<Vec<Vec3>, &'static str> {
     let apply = |v: &[Vec3]| {
         // The material operator already includes inertia. Construct only the
         // selected operator output instead of allocating and discarding an
         // inertia-only vector at every conjugate-gradient iteration.
         let mut result: Vec<Vec3> = if let Some(body) = body {
-            rest_material_action(body, weight, v)
+            if let Some(operation) = operation {
+                super::super::search_snapshot::checked_search_action(operation, v, pinned)?
+            } else {
+                rest_material_action(body, weight, v)
+            }
         } else {
             v.iter()
                 .zip(weight)
@@ -1692,9 +1729,9 @@ fn coupled_contact_direction_with_material(
                 }
             }
         }
-        result
+        Ok(result)
     };
-    preconditioned_direction(pinned, residual, apply, |r| {
+    try_preconditioned_direction(pinned, residual, apply, |r| {
         r.iter()
             .zip(diagonal)
             .map(|(r, d)| std::array::from_fn(|axis| r[axis] / d[axis]))
@@ -1718,7 +1755,11 @@ fn rest_material_moduli(body: &super::super::Body) -> Vec<(f64, f64)> {
         .collect()
 }
 
-fn rest_material_action(body: &super::super::Body, weight: &[f64], v: &[Vec3]) -> Vec<Vec3> {
+pub(in crate::biomechanics) fn rest_material_action(
+    body: &super::super::Body,
+    weight: &[f64],
+    v: &[Vec3],
+) -> Vec<Vec3> {
     rest_material_action_prepared(body, weight, v, None)
 }
 
@@ -1783,12 +1824,30 @@ fn rest_material_action_prepared(
 }
 
 // Shared SPD search solve; finite descent admission retains the diagonal fallback.
+#[cfg(test)]
 fn preconditioned_direction(
     pinned: &[bool],
     residual: &[Vec3],
     apply: impl Fn(&[Vec3]) -> Vec<Vec3>,
     precondition: impl Fn(&[Vec3]) -> Vec<Vec3>,
 ) -> Vec<Vec3> {
+    try_preconditioned_direction::<std::convert::Infallible>(
+        pinned,
+        residual,
+        |v| Ok(apply(v)),
+        precondition,
+    )
+    .unwrap_or_else(|never| match never {})
+}
+
+// Backend errors propagate immediately; only an accepted numerical metric retains
+// the existing diagonal direction fallback. Physical owners decide transaction commit.
+fn try_preconditioned_direction<E>(
+    pinned: &[bool],
+    residual: &[Vec3],
+    apply: impl Fn(&[Vec3]) -> Result<Vec<Vec3>, E>,
+    precondition: impl Fn(&[Vec3]) -> Vec<Vec3>,
+) -> Result<Vec<Vec3>, E> {
     let n = residual.len();
     let inner = |a: &[Vec3], b: &[Vec3]| -> f64 { a.iter().zip(b).map(|(a, b)| dot(*a, *b)).sum() };
     let mut r: Vec<Vec3> = residual
@@ -1806,10 +1865,10 @@ fn preconditioned_direction(
         if rz <= initial * 1e-12 || rz <= 0. {
             break;
         }
-        let action = apply(&search);
+        let action = apply(&search)?;
         let curvature = inner(&search, &action);
         if !curvature.is_finite() || curvature <= 0. {
-            return fallback;
+            return Ok(fallback);
         }
         let alpha = rz / curvature;
         for node in 0..n {
@@ -1829,15 +1888,68 @@ fn preconditioned_direction(
         rz = next;
     }
     if direction.iter().flatten().all(|v| v.is_finite()) && inner(residual, &direction) < 0. {
-        direction
+        Ok(direction)
     } else {
-        fallback
+        Ok(fallback)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn fallible_search_stops_on_backend_error_without_diagonal_fallback() {
+        let calls = std::cell::Cell::new(0);
+        let result = try_preconditioned_direction(
+            &[false, false],
+            &[[1., 2., 3.], [2., -1., 4.]],
+            |_| {
+                calls.set(calls.get() + 1);
+                Err("CUDA search driver failure")
+            },
+            |r| r.to_vec(),
+        );
+        assert_eq!(result, Err("CUDA search driver failure"));
+        assert_eq!(calls.get(), 1);
+        let residual = [[1., 2., 3.], [2., -1., 4.]];
+        let apply = |v: &[Vec3]| vec![v[0].map(|x| 2. * x), v[1].map(|x| 7. * x)];
+        let native = preconditioned_direction(&[false, false], &residual, apply, |r| r.to_vec());
+        let checked = try_preconditioned_direction::<&str>(
+            &[false, false],
+            &residual,
+            |v| Ok(apply(v)),
+            |r| r.to_vec(),
+        )
+        .unwrap();
+        assert_eq!(
+            native
+                .iter()
+                .flatten()
+                .map(|x| x.to_bits())
+                .collect::<Vec<_>>(),
+            checked
+                .iter()
+                .flatten()
+                .map(|x| x.to_bits())
+                .collect::<Vec<_>>()
+        );
+        calls.set(0);
+        let late = try_preconditioned_direction(
+            &[false, false],
+            &residual,
+            |v| {
+                calls.set(calls.get() + 1);
+                if calls.get() == 2 {
+                    Err("CUDA readback numerical overflow")
+                } else {
+                    Ok(apply(v))
+                }
+            },
+            |r| r.to_vec(),
+        );
+        assert_eq!(late, Err("CUDA readback numerical overflow"));
+        assert_eq!(calls.get(), 2);
+    }
     // Independent two-branch generalized-stationarity oracle. Kept test-only
     // until exact coincident contact branches are available to the production solver.
     fn project_branch_segment(
@@ -2420,5 +2532,167 @@ mod tests {
             }
         }
         assert_eq!(scaled[1], [0.; 3]);
+    }
+}
+
+#[cfg(test)]
+mod backend_transaction_tests {
+    use super::*;
+    use crate::biomechanics::{
+        Body, Material, TissueSearchBackend, TissueSearchOperation, TissueSearchSnapshot,
+    };
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    #[derive(Debug)]
+    struct ProofBackend {
+        body: Body,
+        calls: Arc<AtomicUsize>,
+        failure: usize,
+    }
+    #[derive(Debug)]
+    struct ProofOperation {
+        body: Body,
+        weights: Vec<f64>,
+        calls: Arc<AtomicUsize>,
+        failure: usize,
+    }
+    impl TissueSearchBackend for ProofBackend {
+        fn prepare(
+            &self,
+            snapshot: TissueSearchSnapshot,
+        ) -> Result<Box<dyn TissueSearchOperation>, &'static str> {
+            if self.failure == usize::MAX {
+                return Err("injected backend preparation failure");
+            }
+            Ok(Box::new(ProofOperation {
+                body: self.body.clone(),
+                weights: snapshot.inertia_weights().to_vec(),
+                calls: self.calls.clone(),
+                failure: self.failure,
+            }))
+        }
+    }
+    impl TissueSearchOperation for ProofOperation {
+        fn apply(&self, v: &[Vec3]) -> Result<Vec<Vec3>, &'static str> {
+            let call = self.calls.fetch_add(1, Ordering::SeqCst) + 1;
+            if call == self.failure {
+                return Err("injected backend application failure");
+            }
+            let mut result = self.body.tissue_search_action(&self.weights, v)?;
+            if self.failure == usize::MAX - 1 {
+                result[0][0] = f64::NAN;
+            }
+            Ok(result)
+        }
+    }
+    fn specimen() -> InertialBody {
+        let body = Body::new(
+            vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            vec![false; 4],
+            vec![(
+                [0, 1, 2, 3],
+                Material {
+                    shear_pa: 100.,
+                    bulk_pa: 1000.,
+                    fibers: vec![],
+                },
+            )],
+        )
+        .unwrap();
+        let mut owner = InertialBody::new(
+            body,
+            &[6.],
+            vec![
+                [0.2, 0.1, 0.],
+                [0.1, -0.1, 0.],
+                [0.3, 0.2, 0.1],
+                [0.05, 0., -0.1],
+            ],
+        )
+        .unwrap();
+        owner.set_uniform_acceleration([0., -2., 0.]).unwrap();
+        owner
+    }
+    fn install(owner: &mut InertialBody, failure: usize) -> Arc<AtomicUsize> {
+        let calls = Arc::new(AtomicUsize::new(0));
+        owner.set_tissue_search_backend(Some(Arc::new(ProofBackend {
+            body: owner.body.clone(),
+            calls: calls.clone(),
+            failure,
+        })));
+        calls
+    }
+    #[test]
+    fn explicit_backend_success_matches_native_and_failures_rollback_support_step() {
+        check_backend_transaction(false);
+    }
+    #[test]
+    fn explicit_backend_success_and_failures_are_atomic_in_contact_free_surface_path() {
+        check_backend_transaction(true);
+    }
+    fn check_backend_transaction(coupled: bool) {
+        let mut initial = specimen();
+        if coupled {
+            let surface = PrescribedTriangleSurface::new(
+                vec![[-2., -2., -2.], [2., -2., -2.], [0., 2., -2.]],
+                vec![[0, 1, 2]],
+                0.001,
+                0.03,
+                100.,
+            )
+            .unwrap()
+            .with_body_contact_domains(vec![(initial.body.surface(), vec![false])])
+            .unwrap();
+            initial
+                .set_prescribed_surface(Some(Arc::new(surface)))
+                .unwrap();
+        }
+        let advance = |owner: &mut InertialBody| {
+            if coupled {
+                owner.step_implicit_with_surface_motion(
+                    None,
+                    owner.prescribed_surface.clone().unwrap(),
+                    0.01,
+                    1e-8,
+                )
+            } else {
+                owner.step_implicit_with_supports(None, 0.01, 1e-8)
+            }
+        };
+        let mut native = initial.clone();
+        let a = advance(&mut native).unwrap();
+        let mut backend = initial.clone();
+        let calls = install(&mut backend, 0);
+        let b = advance(&mut backend).unwrap();
+        assert!(calls.load(Ordering::SeqCst) > 0);
+        backend.set_tissue_search_backend(None);
+        assert_eq!(format!("{a:?}"), format!("{b:?}"));
+        assert_eq!(format!("{native:?}"), format!("{backend:?}"));
+        for failure in [1, 2, usize::MAX, usize::MAX - 1] {
+            let mut failed = initial.clone();
+            let calls = install(&mut failed, failure);
+            let result = advance(&mut failed);
+            let expected = match failure {
+                usize::MAX => "injected backend preparation failure",
+                x if x == usize::MAX - 1 => "invalid tissue search backend output",
+                _ => "injected backend application failure",
+            };
+            assert_eq!(result.unwrap_err(), expected);
+            if failure == 2 {
+                assert_eq!(calls.load(Ordering::SeqCst), 2);
+            }
+            failed.set_tissue_search_backend(None);
+            assert_eq!(format!("{failed:?}"), format!("{initial:?}"));
+        }
+    }
+    #[test]
+    fn explicit_backend_preserves_shared_assembly_owner_and_rejects_mixed_owners() {
+        let mut owner = specimen();
+        install(&mut owner, 0);
+        let combined = InertialBody::assemble_tissues(&[owner.clone(), owner.clone()]).unwrap();
+        assert!(Arc::ptr_eq(
+            combined.body.search_backend.as_ref().unwrap(),
+            owner.search_backend.as_ref().unwrap()
+        ));
+        assert!(InertialBody::assemble_tissues(&[owner, specimen()]).is_err());
     }
 }

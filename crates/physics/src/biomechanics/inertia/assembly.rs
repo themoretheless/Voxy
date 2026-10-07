@@ -28,6 +28,11 @@ impl InertialBody {
     pub fn assemble_tissues(parts: &[Self]) -> Result<InertialAssembly, &'static str> {
         let first = parts.first().ok_or("empty inertial tissue assembly")?;
         for part in parts {
+            match (&part.search_backend, &first.search_backend) {
+                (None, None) => {}
+                (Some(a), Some(b)) if Arc::ptr_eq(a, b) => {}
+                _ => return Err("mixed inertial tissue search backend ownership"),
+            }
             if part.acceleration != first.acceleration || part.plane != first.plane {
                 return Err("mixed inertial tissue acceleration or plane");
             }
@@ -110,6 +115,7 @@ impl InertialBody {
                 .collect(),
             thermal,
             acceleration: first.acceleration,
+            search_backend: first.search_backend.clone(),
             plane: first.plane,
             prescribed_surface,
         };

@@ -266,6 +266,23 @@ pub(crate) struct TissueDemo {
     accumulator: f64,
 }
 impl TissueDemo {
+    /// Select the implicit rest-material search backend on the existing continuum owners.
+    /// Validate all owners before changing any regional configuration.
+    pub(crate) fn set_tissue_search_backend(
+        &mut self,
+        backend: Arc<dyn physics::biomechanics::TissueSearchBackend>,
+    ) -> Result<(), &'static str> {
+        if self.bodies.is_empty() || self.bodies.iter().any(|b| matches!(b, DemoTissue::Xpbd(_))) {
+            return Err("tissue search backend requires continuum owners");
+        }
+        for body in &mut self.bodies {
+            if let DemoTissue::Continuum { dynamics, .. } = body {
+                dynamics.set_tissue_search_backend(Some(backend.clone()));
+            }
+        }
+        Ok(())
+    }
+
     pub(crate) fn new() -> Self {
         let kinds = [
             TissueKind::Skin,
@@ -3307,5 +3324,59 @@ mod tests {
             d.advance(0.1).unwrap();
         }
         assert_eq!(d.mesh().unwrap().vertices().len(), n);
+    }
+}
+
+#[cfg(test)]
+mod search_backend_selection_tests {
+    use super::*;
+    #[derive(Debug)]
+    struct SelectedBackend;
+    impl physics::biomechanics::TissueSearchBackend for SelectedBackend {
+        fn prepare(
+            &self,
+            _: physics::biomechanics::TissueSearchSnapshot,
+        ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str> {
+            Err("fixture tissue backend selected")
+        }
+    }
+    fn assert_selected_owners(demo: &mut TissueDemo) {
+        for owner in &mut demo.bodies {
+            let DemoTissue::Continuum { dynamics, .. } = owner else {
+                panic!("continuum fixture required")
+            };
+            let before = format!("{dynamics:?}");
+            assert_eq!(
+                dynamics
+                    .step_implicit_with_supports(None, 1e-5, 1e-8)
+                    .unwrap_err(),
+                "fixture tissue backend selected"
+            );
+            assert_eq!(format!("{dynamics:?}"), before);
+        }
+    }
+    #[test]
+    fn selected_backend_reaches_regional_and_assembled_owners_without_mutation_on_error() {
+        let mut demo = TissueDemo::body();
+        let before = demo.continuum_node_state().unwrap();
+        demo.set_tissue_search_backend(Arc::new(SelectedBackend))
+            .unwrap();
+        assert_eq!(demo.continuum_node_state().unwrap(), before);
+        assert_selected_owners(&mut demo);
+        demo.assemble_regions().unwrap();
+        assert_selected_owners(&mut demo);
+    }
+    #[test]
+    fn incompatible_owner_rejects_before_changing_any_regional_selection() {
+        let mut demo = TissueDemo::body();
+        demo.bodies
+            .push(DemoTissue::Xpbd(sample(TissueKind::Skin, [0.; 3]).unwrap()));
+        let before = format!("{demo:?}");
+        assert_eq!(
+            demo.set_tissue_search_backend(Arc::new(SelectedBackend))
+                .unwrap_err(),
+            "tissue search backend requires continuum owners"
+        );
+        assert_eq!(format!("{demo:?}"), before);
     }
 }

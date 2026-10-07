@@ -207,8 +207,8 @@ impl WetFemPreview {
             &[0.5],
         )?;
         let retained: f64 = next.water.cells().iter().map(|c| c.water_kg).sum();
-        if retained >= before
-            || transfer.vapor_water_change_kg <= 0.
+        if retained > before
+            || transfer.vapor_water_change_kg < 0.
             || (retained + vapor.water_kg() - total_before).abs() > 1e-12
             || (vapor.accounted_energy_j() - energy_before).abs() > 1e-8
             || (next.dynamics.energy()?.mass_kg - next.initial_mass - retained).abs() > 1e-10
@@ -699,9 +699,65 @@ mod tests {
         demo.dry().unwrap();
         assert_eq!(demo.topology().unwrap(), (8, 2));
         let mut invalid = WetFemPreview::new().unwrap();
+        invalid.wet().unwrap();
+        invalid.drying_vapor =
+            Some(physics::moisture::VaporReservoir::new(1., 0., 2.4e6, 0.).unwrap());
         let before = format!("{invalid:?}");
         assert!(invalid.dry().is_err());
         assert_eq!(format!("{invalid:?}"), before);
+    }
+    #[test]
+    fn already_dry_equilibrium_accepts_without_changing_physical_state() {
+        let mut demo = WetFemPreview::new().unwrap();
+        let energy = format!("{:?}", demo.dynamics.energy().unwrap());
+        let positions = demo.dynamics.body().positions().to_vec();
+        let velocities = demo.dynamics.velocities().to_vec();
+        let water = format!("{:?}", demo.water);
+        let topology = demo.topology().unwrap();
+        for _ in 0..3 {
+            demo.dry().unwrap();
+            assert_eq!(format!("{:?}", demo.dynamics.energy().unwrap()), energy);
+            assert_eq!(demo.dynamics.body().positions(), positions);
+            assert_eq!(demo.dynamics.velocities(), velocities);
+            assert_eq!(format!("{:?}", demo.water), water);
+            assert_eq!(demo.topology().unwrap(), topology);
+            let vapor = demo.drying_vapor.as_ref().unwrap();
+            assert_eq!(vapor.water_kg(), 0.);
+            assert_eq!(vapor.thermal_j(), 1e6);
+            assert_eq!(vapor.accounted_energy_j(), 1e6);
+        }
+    }
+    #[test]
+    fn wet_activity_equilibrium_preserves_accepted_physical_state() {
+        let mut demo = WetFemPreview::with_preload(0.006).unwrap();
+        demo.wet_with_expected_fragments(1).unwrap();
+        let cell = demo.water.cells()[0];
+        assert_eq!(cell.water_kg, demo.water.cells()[1].water_kg);
+        demo.drying_vapor = Some(
+            physics::moisture::VaporReservoir::new(cell.capacity_kg, cell.water_kg, 2.4e6, 1e6)
+                .unwrap(),
+        );
+        let before = format!(
+            "{:?} {:?} {:?} {:?}",
+            demo.dynamics.energy().unwrap(),
+            demo.dynamics.body().positions(),
+            demo.water,
+            demo.drying_vapor
+        );
+        for _ in 0..3 {
+            demo.dry().unwrap();
+            assert_eq!(
+                format!(
+                    "{:?} {:?} {:?} {:?}",
+                    demo.dynamics.energy().unwrap(),
+                    demo.dynamics.body().positions(),
+                    demo.water,
+                    demo.drying_vapor
+                ),
+                before
+            );
+            assert_eq!(demo.topology().unwrap(), (6, 1));
+        }
     }
     #[test]
     fn admitted_fragment_motion_reaches_mesh_and_preserves_other_owners() {

@@ -5,6 +5,7 @@ mod assembly;
 mod film_binding;
 pub use assembly::InertialAssembly;
 mod implicit;
+pub(super) use implicit::rest_material_action;
 mod supports;
 mod thermal;
 pub use film_binding::SolidFilmBinding;
@@ -23,6 +24,7 @@ pub struct InertialBody {
     acceleration: Vec3,
     plane: Option<PlaneContact>,
     prescribed_surface: Option<Arc<PrescribedTriangleSurface>>,
+    search_backend: Option<Arc<dyn super::TissueSearchBackend>>,
 }
 struct PotentialEvaluation {
     potential_j: f64,
@@ -73,6 +75,25 @@ pub struct InertialDiagnostics {
     pub contact_j: f64,
 }
 impl InertialBody {
+    /// Explicit optional backend for the qualified rest-material implicit search metric.
+    /// Native nonlinear forces, contacts and work gates remain authoritative.
+    /// Active-contact paths that select the inertia-only metric do not use this operator.
+    pub fn set_tissue_search_backend(
+        &mut self,
+        backend: Option<Arc<dyn super::TissueSearchBackend>>,
+    ) {
+        self.search_backend = backend;
+    }
+    fn prepare_tissue_search(
+        &self,
+        weights: &[f64],
+    ) -> Result<Option<Box<dyn super::TissueSearchOperation>>, &'static str> {
+        self.search_backend
+            .as_ref()
+            .map(|b| b.prepare(self.body.tissue_search_snapshot(weights)?))
+            .transpose()
+    }
+
     /// Reference densities in kg/m³ per cell, nodal velocities in m/s.
     /// Uses the existing objective finite-deformation constitutive responses.
     /// No pins or viscoelastic histories: only time-independent potentials apply.
@@ -131,6 +152,7 @@ impl InertialBody {
             acceleration: [0.; 3],
             plane: None,
             prescribed_surface: None,
+            search_backend: None,
         };
         result.diagnostics()?;
         Ok(result)
