@@ -1,0 +1,58 @@
+{
+  "utc": "2026-10-07T06:04:01.094399+00:00",
+  "committed_steps": 204,
+  "requested_steps": 480,
+  "scheduled_node_steps": [
+    0,
+    12,
+    24,
+    36,
+    48,
+    60,
+    72,
+    84,
+    96,
+    108,
+    120,
+    132,
+    144,
+    156,
+    160,
+    168,
+    180,
+    192,
+    204
+  ],
+  "atomic_cross_file_snapshot": false,
+  "original_processes_preserved": true,
+  "files": {
+    "endpoint-energy.jsonl": {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/capture.energy.jsonl",
+      "source_bytes_at_observation": 28420,
+      "snapshot_bytes": 28280,
+      "sha256": "fd026b5974c43ac9cd14287453df5284e0301df905a73401370e06c2ec9214e4",
+      "records": 205
+    },
+    "endpoint-nodes.jsonl": {
+      "source": "artifacts/full-rig-endpoint-admission-2026-10-07/capture.nodes.jsonl",
+      "source_bytes_at_observation": 5550785,
+      "snapshot_bytes": 5550785,
+      "sha256": "25c84db8a76c68454d75cc44bff94ac12507b8f59d153788175679ae5923f8d8",
+      "records": 19
+    },
+    "allocation-energy.jsonl": {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/capture.energy.jsonl",
+      "source_bytes_at_observation": 30766,
+      "snapshot_bytes": 28280,
+      "sha256": "fd026b5974c43ac9cd14287453df5284e0301df905a73401370e06c2ec9214e4",
+      "records": 205
+    },
+    "allocation-nodes.jsonl": {
+      "source": "artifacts/full-rig-current-allocation-2026-10-07/capture.nodes.jsonl",
+      "source_bytes_at_observation": 5848937,
+      "snapshot_bytes": 5550785,
+      "sha256": "25c84db8a76c68454d75cc44bff94ac12507b8f59d153788175679ae5923f8d8",
+      "records": 19
+    }
+  }
+}

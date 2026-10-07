@@ -1,0 +1,27 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "cached_setting_update_cases": 21,
+  "prepared_frames_checked": 42,
+  "settings_are_immutable_for_prepared_frames": true,
+  "shadow_map_replacement_sizes": [
+    64,
+    32
+  ],
+  "old_and_new_frames_executed_after_update": true,
+  "reversed_light_direction": true,
+  "projection_bias_filter_enabled_updates": true,
+  "invalid_updates_preserve_old_state": true,
+  "foreign_device_rejected": true,
+  "shadow_settings_bytes_charged_per_frame": 80,
+  "shader_recompilation_during_update": false,
+  "render_library_passed": 155,
+  "editor_library_passed": 177,
+  "existing_moving_shadow_cases": 24,
+  "dense_slab_cases": 20,
+  "rendered_scene_pixels": 16384,
+  "editor_shadow_authoring_and_connection": "not implemented",
+  "shadow_texel_snapshot": "live at execution; queue ordering required",
+  "performance_gain": "not measured",
+  "nvidia": "unqualified"
+}

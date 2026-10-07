@@ -43,6 +43,66 @@ impl InertialBody {
             &[super::super::StationaryEmbeddedContact],
         )>,
     ) -> Result<super::PotentialEvaluation, &'static str> {
+        self.average_material_path_with_skin_evaluator(
+            points,
+            end,
+            nodes,
+            initial_potential_j,
+            skin_motion,
+            |world, sample, current, next| {
+                let prepared = sample.prepare_sampled_response(current, next, world)?;
+                let work = prepared.motion_work()?;
+                let mut value = self.evaluate_at_sampled_skin(&prepared, self.plane, None)?;
+                value.embedded_skin_work = work;
+                Ok(value)
+            },
+        )
+    }
+    #[cfg(test)]
+    fn average_material_path_with_skin_separate_responses(
+        &self,
+        points: &[Vec3],
+        end: &[Vec3],
+        nodes: &[(f64, f64)],
+        initial_potential_j: f64,
+        skin_motion: Option<(
+            &super::super::StationaryEmbeddedContact,
+            &[super::super::StationaryEmbeddedContact],
+        )>,
+    ) -> Result<super::PotentialEvaluation, &'static str> {
+        self.average_material_path_with_skin_evaluator(
+            points,
+            end,
+            nodes,
+            initial_potential_j,
+            skin_motion,
+            |world, sample, current, next| {
+                let work = sample.sampled_motion_work(current, next, world)?;
+                let mut value =
+                    self.evaluate_at_contacts_and_skin(world, self.plane, None, Some(sample))?;
+                value.embedded_skin_work = work;
+                Ok(value)
+            },
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn average_material_path_with_skin_evaluator(
+        &self,
+        points: &[Vec3],
+        end: &[Vec3],
+        nodes: &[(f64, f64)],
+        initial_potential_j: f64,
+        skin_motion: Option<(
+            &super::super::StationaryEmbeddedContact,
+            &[super::super::StationaryEmbeddedContact],
+        )>,
+        evaluate: impl Fn(
+            &[Vec3],
+            &super::super::StationaryEmbeddedContact,
+            &super::super::StationaryEmbeddedContact,
+            &super::super::StationaryEmbeddedContact,
+        ) -> Result<super::PotentialEvaluation, &'static str>,
+    ) -> Result<super::PotentialEvaluation, &'static str> {
         if points.len() != self.masses.len()
             || end.len() != self.masses.len()
             || nodes
@@ -89,14 +149,17 @@ impl InertialBody {
                 .collect();
             let value = if let Some((next, samples)) = skin_motion {
                 let sample = &samples[sample_index];
-                let work = sample.sampled_motion_work(
+                let value = evaluate(
+                    &world,
+                    sample,
                     self.body.stationary_embedded_contact().unwrap(),
                     next,
-                    &world,
                 )?;
-                average.embedded_skin_work.rig_work_j += weight * work.rig_work_j;
-                average.embedded_skin_work.obstacle_work_j += weight * work.obstacle_work_j;
-                self.evaluate_at_contacts_and_skin(&world, self.plane, None, Some(sample))?
+                average.embedded_skin_work.rig_work_j +=
+                    weight * value.embedded_skin_work.rig_work_j;
+                average.embedded_skin_work.obstacle_work_j +=
+                    weight * value.embedded_skin_work.obstacle_work_j;
+                value
             } else {
                 self.evaluate_at_contacts(&world, self.plane, None)?
             };
@@ -2324,6 +2387,33 @@ mod tests {
                 .unwrap()
         };
         let average = evaluate(&points);
+        let separate = dynamics
+            .average_material_path_with_skin_separate_responses(
+                &points,
+                &end,
+                &nodes,
+                initial,
+                Some((&next, &samples)),
+            )
+            .unwrap();
+        let bits = |value: &crate::biomechanics::inertia::PotentialEvaluation| {
+            let mut result = vec![
+                value.potential_j.to_bits(),
+                value.contact_j.to_bits(),
+                value.plane_offset_gradient.to_bits(),
+            ];
+            result.extend(value.gradient.iter().flatten().map(|v| v.to_bits()));
+            result.extend(value.plane_rotation_gradient.iter().map(|v| v.to_bits()));
+            result.extend(value.surface_gradient.iter().flatten().map(|v| v.to_bits()));
+            result.push(value.embedded_skin_work.rig_work_j.to_bits());
+            result.push(value.embedded_skin_work.obstacle_work_j.to_bits());
+            result
+        };
+        assert_eq!(bits(&average), bits(&separate));
+        println!(
+            "SHARED CONTACT RESPONSE PARITY quadrature_nodes={} full_potential_gradient_work_bits_equal=true",
+            nodes.len()
+        );
         for node in 0..4 {
             for axis in 0..3 {
                 let mut plus = points;

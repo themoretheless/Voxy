@@ -1,0 +1,31 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "editor_library_passed": 180,
+  "editor_library_ignored": 16,
+  "explicit_gpu_tests_passed": 5,
+  "skinned_shadow_checked_pixels": 448,
+  "boundary_pixels_excluded": 64,
+  "synthetic_bending_joints": 2,
+  "independent_skin_instances": 2,
+  "shared_immutable_skin_source": true,
+  "skin_compute_before_raster_shadow_and_fog": true,
+  "native_presented_shadow_frames": 21,
+  "native_gpu_skin_shadow_frames": 11,
+  "native_distinct_accepted_palettes": 11,
+  "native_accepted_tick_range": [
+    2,
+    26
+  ],
+  "native_play_ticks": 26,
+  "native_imported_rig_joints": 1,
+  "native_fixture_sha256": "dd6024e3e4c52a59b7b69198bc85f9f5f4e4477a57a310399a2592c48b4d6923",
+  "native_exit": 0,
+  "gpu_cpu_lod_geometry_classification": "passed",
+  "gpu_playback_failed_revision_retention": "passed",
+  "full_production_rig_shadow_quality": "unqualified",
+  "full_rig_480_steps": "unqualified",
+  "nvidia": "unqualified",
+  "performance_gain": "not measured",
+  "executable_sha256": "9bcc8e784de1d17c312e1198f17f97a7c7c17ab0b7635e4dc1e9e30f47e0d14a"
+}

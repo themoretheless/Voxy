@@ -1,0 +1,47 @@
+METAL WINDOW number=2918 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=0 outcome=SkippedOccluded positions=[(NodeId { scene: 6, slot: 0, generation: 0 }, Vec4(-0.35, -0.455, 0.5, 1.0)), (NodeId { scene: 6, slot: 1, generation: 0 }, Vec4(0.0, -0.5, 0.5, 1.0)), (NodeId { scene: 6, slot: 2, generation: 0 }, Vec4(0.0, 0.0, 0.0, 1.0)), (NodeId { scene: 6, slot: 3, generation: 0 }, Vec4(0.0, 0.0, 0.0, 1.0)), (NodeId { scene: 6, slot: 4, generation: 0 }, Vec4(0.0, -0.35, 0.5, 1.0)), (NodeId { scene: 6, slot: 5, generation: 0 }, Vec4(0.35, -0.38, 0.55, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly
+METAL WINDOW number=2918 occlusion=8192 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=ground
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly
+MODEL PUBLISHED frames=0 first_x=-0.7 asset=ground
+MODEL PUBLISHED frames=0 first_x=-0.04 asset=player
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+METAL WINDOW number=2918 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=6 outcome=Presented positions=[(NodeId { scene: 6, slot: 0, generation: 0 }, Vec4(-0.35, -0.455, 0.5, 1.0)), (NodeId { scene: 6, slot: 1, generation: 0 }, Vec4(0.0, -0.5, 0.5, 1.0)), (NodeId { scene: 6, slot: 2, generation: 0 }, Vec4(0.0, 0.0, 0.0, 1.0)), (NodeId { scene: 6, slot: 3, generation: 0 }, Vec4(0.0, 0.0, 0.0, 1.0)), (NodeId { scene: 6, slot: 4, generation: 0 }, Vec4(0.0, -0.35, 0.5, 1.0)), (NodeId { scene: 6, slot: 5, generation: 0 }, Vec4(0.35, -0.38, 0.55, 1.0))]
+EDITOR FOG PRESENT frame=1 views=1 owner=NodeId { scene: 6, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=2 views=1 owner=NodeId { scene: 6, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=3 views=1 owner=NodeId { scene: 6, slot: 6, generation: 0 }
+SCENE3D GPU GEOMETRY BYTES unique=19792 naive=28896
+SCENE3D GPU SHARING MIPS PASS frames=3
+SCENE3D GPU IMAGE BUDGET PASS
+SCENE3D GPU GEOMETRY BUDGET PASS
+EDITOR KEY frames=3 key=KeyG
+SCENE3D CAMERA PICK TEXTURE PERSIST PASS frames=3
+EDITOR PRESENT frames=3 draws=6 outcome=Presented positions=[(NodeId { scene: 14, slot: 0, generation: 0 }, Vec4(-0.35, -0.455, 0.5, 1.0)), (NodeId { scene: 14, slot: 1, generation: 0 }, Vec4(0.0, -0.5, 0.5, 1.0)), (NodeId { scene: 14, slot: 2, generation: 0 }, Vec4(0.0, 0.0, 0.0, 1.0)), (NodeId { scene: 14, slot: 3, generation: 0 }, Vec4(0.0, 0.0, 0.0, 1.0)), (NodeId { scene: 14, slot: 4, generation: 0 }, Vec4(0.0, -0.35, 0.5, 1.0)), (NodeId { scene: 14, slot: 5, generation: 0 }, Vec4(0.35, -0.38, 0.55, 1.0))]
+EDITOR FOG PRESENT frame=4 views=1 owner=NodeId { scene: 14, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=5 views=1 owner=NodeId { scene: 14, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=6 views=1 owner=NodeId { scene: 14, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=7 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+GAME UI GPU PUBLISHED draws=0
+EDITOR FOG PRESENT frame=8 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=9 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=10 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=11 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=12 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=13 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=14 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=15 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=16 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=17 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=18 views=1 owner=NodeId { scene: 15, slot: 6, generation: 0 }
+SCENE3D PLAY STOP RELOAD PASS ticks=27 frames=18
+EDITOR FOG PRESENT frame=19 views=1 owner=NodeId { scene: 19, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=20 views=1 owner=NodeId { scene: 19, slot: 6, generation: 0 }
+EDITOR FOG PRESENT frame=21 views=1 owner=NodeId { scene: 19, slot: 6, generation: 0 }
+SCENE3D NATIVE PASS frames=21

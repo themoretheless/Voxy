@@ -740,6 +740,22 @@ fn animated_lod_views_budget_and_cpu_fallback() {
             .unwrap();
         assert_eq!(owners.owners[&owner].lod_history[&0], 1);
         assert_eq!(owners.owners[&owner].lod_history[&1], 0);
+        for view in [0, 1] {
+            let selected = owners
+                .geometry_inputs_for_view(owner, view)
+                .unwrap()
+                .next()
+                .unwrap();
+            assert_eq!(selected.gpu_deformed, !cpu);
+            assert!(std::ptr::eq(
+                selected.geometry,
+                owners
+                    .geometries_for_view(owner, view)
+                    .unwrap()
+                    .next()
+                    .unwrap()
+            ));
+        }
         assert_eq!(
             owners
                 .geometries_for_view(owner, 0)

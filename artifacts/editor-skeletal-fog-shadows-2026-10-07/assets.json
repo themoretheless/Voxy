@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "asset": "assembly",
+      "source": "assembly.glb"
+    },
+    {
+      "asset": "player",
+      "source": "animated-triangle.glb"
+    },
+    {
+      "asset": "ground",
+      "source": "ground.obj"
+    }
+  ]
+}

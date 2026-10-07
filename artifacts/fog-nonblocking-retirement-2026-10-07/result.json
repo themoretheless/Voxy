@@ -1,0 +1,23 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "editor_library_passed": 177,
+  "editor_library_ignored": 14,
+  "explicit_gpu_test_passed": 1,
+  "checked_pixels": 2560,
+  "retirement_poll": "PollType::Poll",
+  "completion": "queue.on_submitted_work_done",
+  "submitted_resources_retained": true,
+  "shared_sources_charged_once": true,
+  "pending_resize_budget_rejection_preserves_targets": true,
+  "replaced_and_removed_sources_retained": true,
+  "disabled_fog_retains_pending_resources": true,
+  "late_encode_failure_preserves_prior_submission": true,
+  "disconnected_callback_retains_charge": true,
+  "native_presented_frames": 21,
+  "native_exit": 0,
+  "performance_gain": "not measured",
+  "nvidia": "unqualified",
+  "full_rig_480_steps": "unqualified",
+  "executable_sha256": "2d9bd690285ec31fdb3ea12d75f03fe33dd50df5cabb739926be7e28c77f3f72"
+}

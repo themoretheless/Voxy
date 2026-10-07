@@ -307,9 +307,30 @@ impl InertialBody {
         surface: Option<&PrescribedTriangleSurface>,
         skin: Option<&super::StationaryEmbeddedContact>,
     ) -> Result<PotentialEvaluation, &'static str> {
+        self.evaluate_at_contacts_with_gradient(positions, plane, surface, |gradient| {
+            super::Body::embedded_contact_energy_gradient(skin, positions, gradient)
+        })
+    }
+    fn evaluate_at_sampled_skin(
+        &self,
+        sample: &super::embedded_contact::SampledEmbeddedResponse<'_>,
+        plane: Option<PlaneContact>,
+        surface: Option<&PrescribedTriangleSurface>,
+    ) -> Result<PotentialEvaluation, &'static str> {
+        self.evaluate_at_contacts_with_gradient(sample.positions(), plane, surface, |gradient| {
+            sample.energy_gradient(gradient)
+        })
+    }
+    fn evaluate_at_contacts_with_gradient(
+        &self,
+        positions: &[Vec3],
+        plane: Option<PlaneContact>,
+        surface: Option<&PrescribedTriangleSurface>,
+        embedded: impl FnOnce(&mut [Vec3]) -> Result<f64, &'static str>,
+    ) -> Result<PotentialEvaluation, &'static str> {
         let (mut energy, mut gradient, embedded_contact_j) = self
             .body
-            .evaluate_with_embedded_contact_state(positions, skin)?;
+            .evaluate_with_embedded_contact_gradient(positions, embedded)?;
         let mut contact = embedded_contact_j;
         let mut offset_gradient = 0.;
         let mut rotation_gradient = [0.; 3];

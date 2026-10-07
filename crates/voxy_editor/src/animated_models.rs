@@ -13,6 +13,11 @@ use voxy_render::{
 use voxy_scene::NodeId;
 
 #[derive(Debug)]
+pub(super) struct PosedGeometry<'a> {
+    pub geometry: &'a SceneGeometry,
+    pub gpu_deformed: bool,
+}
+#[derive(Debug)]
 enum Primitive {
     Skin {
         instance: SceneSkinInstance,
@@ -181,6 +186,18 @@ impl AnimatedModels {
         }
         Ok(Some((min, max)))
     }
+    /// Evidence from the accepted palette used to update this owner's streams.
+    /// Called only by opt-in diagnostics after presentation.
+    pub(super) fn pose_evidence(&self, owner: NodeId) -> Option<(u64, String)> {
+        let state = self.owners.get(&owner)?;
+        let mut hash = blake3::Hasher::new();
+        for joint in &state.frame.skin_matrices {
+            for value in joint.to_cols_array() {
+                hash.update(&value.to_bits().to_le_bytes());
+            }
+        }
+        Some((state.ticks, hash.finalize().to_hex().to_string()))
+    }
     pub(super) fn counts(&self) -> (usize, usize, usize) {
         let mut sources = HashSet::new();
         let mut primitives = 0;
@@ -225,11 +242,20 @@ impl AnimatedModels {
             .get(&owner)
             .map(|state| state.primitives.iter().map(Primitive::geometry))
     }
+    #[cfg(test)]
     pub(super) fn geometries_for_view(
         &self,
         owner: NodeId,
         view: u8,
     ) -> Option<impl Iterator<Item = &SceneGeometry>> {
+        self.geometry_inputs_for_view(owner, view)
+            .map(|inputs| inputs.map(|input| input.geometry))
+    }
+    pub(super) fn geometry_inputs_for_view(
+        &self,
+        owner: NodeId,
+        view: u8,
+    ) -> Option<impl Iterator<Item = PosedGeometry<'_>>> {
         self.owners.get(&owner).map(move |state| {
             let selected = state
                 .lod_history
@@ -240,10 +266,18 @@ impl AnimatedModels {
                 .iter()
                 .enumerate()
                 .map(move |(index, primitive)| {
-                    if index == 0 {
-                        selected.map_or_else(|| primitive.geometry(), LodGeometry::geometry)
+                    if index == 0
+                        && let Some(selected) = selected
+                    {
+                        PosedGeometry {
+                            geometry: selected.geometry(),
+                            gpu_deformed: matches!(selected, LodGeometry::Gpu(_)),
+                        }
                     } else {
-                        primitive.geometry()
+                        PosedGeometry {
+                            geometry: primitive.geometry(),
+                            gpu_deformed: matches!(primitive, Primitive::Skin { .. }),
+                        }
                     }
                 })
         })

@@ -1,0 +1,302 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "player",
+      "parent": null,
+      "name": "Player",
+      "active": true,
+      "translation": [
+        -0.35,
+        -0.455,
+        0.5
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "editor.model.v1": "player",
+        "editor.opaque-shadow-caster.v1": {
+          "enabled": true
+        },
+        "game.character.v1": {
+          "gravity": -2.4,
+          "half_extents": [
+            0.03999999910593033,
+            0.03999999910593033,
+            0.03999999910593033
+          ],
+          "jump_speed": 0.9,
+          "speed": 0.6
+        }
+      }
+    },
+    {
+      "id": "ground",
+      "parent": null,
+      "name": "Ground",
+      "active": true,
+      "translation": [
+        0.0,
+        -0.5,
+        0.5
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "editor.model.v1": "ground",
+        "editor.opaque-shadow-caster.v1": {
+          "enabled": true
+        },
+        "game.box.v1": {
+          "half_extents": [
+            0.699999988079071,
+            0.02500000037252903,
+            0.30000001192092896
+          ]
+        }
+      }
+    },
+    {
+      "id": "model-2",
+      "parent": null,
+      "name": "Assembly resource",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "editor.directional-shadow.v1": {
+          "bias": 0.00009999999747378752,
+          "center": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "enabled": true,
+          "extent": [
+            10.0,
+            10.0,
+            10.0
+          ],
+          "filter": "pcf3x3",
+          "resolution": 128,
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "editor.light.v1": {
+          "direction": [
+            0.4000000059604645,
+            0.800000011920929,
+            1.0
+          ],
+          "intensity": 0.800000011920929
+        },
+        "editor.model-part.v1": {
+          "node": 4294967295
+        },
+        "editor.model.v1": "assembly",
+        "editor.opaque-shadow-caster.v1": {
+          "enabled": true
+        }
+      }
+    },
+    {
+      "id": "model-3",
+      "parent": "model-2",
+      "name": "Assembly",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "editor.model-part.v1": {
+          "node": 0
+        },
+        "editor.model.v1": "assembly",
+        "editor.opaque-shadow-caster.v1": {
+          "enabled": true
+        }
+      }
+    },
+    {
+      "id": "model-4",
+      "parent": "model-3",
+      "name": "Textured cube",
+      "active": true,
+      "translation": [
+        0.0,
+        -0.35,
+        0.5
+      ],
+      "rotation": [
+        0.0,
+        0.29552022,
+        0.0,
+        0.9553365
+      ],
+      "scale": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "components": {
+        "editor.camera.v1": {
+          "distance": 1.5620572566986084,
+          "legacy": false,
+          "perspective": true,
+          "pitch": 0.164000004529953,
+          "target": [
+            -0.004153667017817497,
+            -0.15245424211025238,
+            0.502863347530365
+          ],
+          "yaw": 0.4899999797344208
+        },
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "editor.model-part.v1": {
+          "node": 1
+        },
+        "editor.model.v1": "assembly",
+        "editor.opaque-shadow-caster.v1": {
+          "enabled": true
+        },
+        "game.box.v1": {
+          "half_extents": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "id": "model-5",
+      "parent": "model-3",
+      "name": "Second cube",
+      "active": true,
+      "translation": [
+        0.35,
+        -0.38,
+        0.55
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.07,
+        0.07,
+        0.07
+      ],
+      "components": {
+        "editor.model-part.v1": {
+          "node": 2
+        },
+        "editor.model.v1": "assembly",
+        "editor.opaque-shadow-caster.v1": {
+          "enabled": true
+        },
+        "game.box.v1": {
+          "half_extents": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "id": "fog-volume",
+      "parent": null,
+      "name": "Fog",
+      "active": true,
+      "translation": [
+        -2.0,
+        -2.0,
+        -1.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "scene.fog.v1": {
+          "asymmetry": 0.0,
+          "enabled": true,
+          "extinction_m_inverse": 0.25,
+          "samples": 8,
+          "single_scattering_albedo": 0.800000011920929,
+          "size": [
+            4.0,
+            4.0,
+            4.0
+          ]
+        }
+      }
+    }
+  ]
+}

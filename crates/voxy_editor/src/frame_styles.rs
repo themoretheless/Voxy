@@ -6,6 +6,8 @@ use voxy_scene::{NodeId, SceneSystemAccess};
 pub(super) struct FrameStyles {
     pub camera: EditorCamera,
     pub light: Option<DirectionalLight>,
+    pub shadow: Option<(crate::DirectionalShadow, voxy_render::ShadowSettings)>,
+    pub casters: HashSet<NodeId>,
     pub materials: HashMap<NodeId, SceneMaterial>,
     pub parts: HashMap<NodeId, u32>,
     pub ui_owners: HashSet<NodeId>,
@@ -37,12 +39,39 @@ impl FrameStyles {
         if !camera.valid() {
             return Err("invalid presentation camera".into());
         }
-        let light = scene
+        let selected_light = scene
             .active_components::<DirectionalLight>()
             .next()
-            .map(|(_, light)| *light);
+            .map(|(owner, light)| (owner, *light));
+        let light = selected_light.map(|(_, light)| light);
         if light.is_some_and(|light| !light.valid()) {
             return Err("invalid presentation light".into());
+        }
+        let shadow = if let Some((owner, light)) = selected_light {
+            scene
+                .component::<crate::DirectionalShadow>(owner)
+                .map_err(|e| e.to_string())?
+                .copied()
+                .map(|s| {
+                    s.validate().map_err(str::to_owned)?;
+                    if s.enabled {
+                        s.settings(light).map(|settings| Some((s, settings)))
+                    } else {
+                        Ok(None)
+                    }
+                })
+                .transpose()?
+                .flatten()
+        } else {
+            None
+        };
+        let casters: HashSet<_> = scene
+            .active_components::<crate::OpaqueShadowCaster>()
+            .filter(|(_, caster)| caster.enabled)
+            .map(|(owner, _)| owner)
+            .collect();
+        if casters.len() > capacity {
+            return Err("shadow caster capacity exceeded".into());
         }
         let mut fog = Vec::new();
         for (owner, volume) in scene.active_components::<voxy_scene::FogVolume>() {
@@ -90,6 +119,8 @@ impl FrameStyles {
         Ok(Self {
             camera: camera.clone(),
             light,
+            shadow,
+            casters,
             materials,
             parts,
             ui_owners,
@@ -375,5 +406,84 @@ mod tests {
             .get_mut("scene.fog.v1")
             .unwrap()["extinction_m_inverse"] = serde_json::json!(-0.5);
         assert!(document.load(&registry, 2).is_err());
+    }
+}
+
+#[cfg(test)]
+mod shadow_snapshot_tests {
+    use super::*;
+    #[test]
+    fn shadows_follow_selected_light_and_caster_activity_without_mutating_prior_snapshot() {
+        use voxy_scene::{SceneGraph, Transform, extraction_schedule};
+        let mut scene = SceneGraph::new(8);
+        let root = scene.spawn(None, Transform::default()).unwrap();
+        let light = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(light, crate::DirectionalLight::default())
+            .unwrap();
+        scene
+            .insert_component(light, crate::DirectionalShadow::default())
+            .unwrap();
+        let caster = scene.spawn(Some(root), Transform::default()).unwrap();
+        scene
+            .insert_component(
+                caster,
+                crate::ModelInstance {
+                    asset: voxy_assets::AssetId("fixture".into()),
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(caster, crate::OpaqueShadowCaster::default())
+            .unwrap();
+        let capture = |scene: &mut SceneGraph| {
+            let mut result = None;
+            extraction_schedule()
+                .unwrap()
+                .run_scene(scene, |_, access| {
+                    result = Some(FrameStyles::prepare(&access, &EditorCamera::default(), 8)?);
+                    Ok::<(), String>(())
+                })
+                .unwrap();
+            result.unwrap()
+        };
+        let first = capture(&mut scene);
+        assert!(first.shadow.is_some());
+        assert!(first.casters.contains(&caster));
+        scene.set_active(root, false).unwrap();
+        assert!(capture(&mut scene).casters.is_empty());
+        scene.set_active(root, true).unwrap();
+        scene
+            .component_mut::<crate::OpaqueShadowCaster>(caster)
+            .unwrap()
+            .unwrap()
+            .enabled = false;
+        assert!(capture(&mut scene).casters.is_empty());
+        scene
+            .component_mut::<crate::DirectionalShadow>(light)
+            .unwrap()
+            .unwrap()
+            .enabled = false;
+        assert!(capture(&mut scene).shadow.is_none());
+        scene
+            .component_mut::<crate::DirectionalShadow>(light)
+            .unwrap()
+            .unwrap()
+            .enabled = true;
+        scene
+            .component_mut::<crate::DirectionalLight>(light)
+            .unwrap()
+            .unwrap()
+            .direction = [0., 0., 1.];
+        let changed = capture(&mut scene);
+        assert_ne!(
+            first.shadow.unwrap().1.light_from_world,
+            changed.shadow.unwrap().1.light_from_world
+        );
+        assert!(first.casters.contains(&caster));
+        scene
+            .remove_component::<crate::DirectionalLight>(light)
+            .unwrap();
+        assert!(capture(&mut scene).shadow.is_none());
     }
 }

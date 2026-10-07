@@ -1,0 +1,65 @@
+{
+  "runtime_pid": 90673,
+  "committed_steps": 204,
+  "requested_steps": 480,
+  "committed_time_s": 0.85,
+  "energy_frames": 205,
+  "node_checkpoints": 19,
+  "native_audit_passed": true,
+  "nodes": 2338,
+  "cells": 6845,
+  "pins": 3,
+  "maximum_pin_error_m": 6.661338147750939e-16,
+  "maximum_frame_balance_j": 7.183142969324763e-14,
+  "maximum_independent_balance_j": 6.270539643082884e-13,
+  "maximum_free_motion_m": 0.4457806403830662,
+  "maximum_interval_balance_j": 2.7794433421490794e-13,
+  "authored_energy_rate_j_s": 5e-10,
+  "allocation_and_endpoint_prefix_byte_parity": true,
+  "runtime_executable_sha256_at_launch": "017e474ea336705be30bab7c25f3380a1a0ddfbda1e3300616dae1b503917e27",
+  "source_hashes": {
+    "crates/physics/src/biomechanics/prescribed_surface.rs": {
+      "runtime_launch_sha256": "4d4f27de7d2441e818a5722964b4f9bfdd0be321093c094d0f622556b4d7b9d9",
+      "current_sha256": "4d4f27de7d2441e818a5722964b4f9bfdd0be321093c094d0f622556b4d7b9d9"
+    },
+    "crates/physics/src/biomechanics/inertia/implicit.rs": {
+      "runtime_launch_sha256": "66eccd39eaceb8ee888deee97bd5ab233d4e14096e3cba17a5a65c763545531f",
+      "current_sha256": "a30e653844520c816b7cf87159f3b613edf274326865969c0bdcaf1422d8b4b8"
+    },
+    "crates/physics/src/moisture.rs": {
+      "runtime_launch_sha256": "c628f01343bcf984ddc18fdd98256744fae0c696092ea68c978bf1230b193046",
+      "current_sha256": "c628f01343bcf984ddc18fdd98256744fae0c696092ea68c978bf1230b193046"
+    },
+    "crates/physics/src/cohesive.rs": {
+      "runtime_launch_sha256": "4a2e78ae76570b33b8230b8ecf789b4dd9d7b752a0481fcb3af450830ce9ca4e",
+      "current_sha256": "4a2e78ae76570b33b8230b8ecf789b4dd9d7b752a0481fcb3af450830ce9ca4e"
+    },
+    "crates/voxy_app/examples/body_motion_snapshot.rs": {
+      "runtime_launch_sha256": "678cf73adc2c80ea476418b4daa52e01fe1696b3d2b3b60c512993b6c4fd09ff",
+      "current_sha256": "f86d1e0448cff265a6e4b2dffa6405d5a44e9e065bead0a3562bd2c7edf57b7f"
+    },
+    "artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json": {
+      "runtime_launch_sha256": "dd64b875e492dd31f0b8d4ba249e8076794e926ecfcb4b5e803286d82431227a",
+      "current_sha256": "dd64b875e492dd31f0b8d4ba249e8076794e926ecfcb4b5e803286d82431227a"
+    }
+  },
+  "profile_scope": "one second of live PID90673; older mapped executable; not current performance qualification",
+  "profile_sample_main_thread": 739,
+  "full_capture_qualified": false,
+  "complete_self_contact_qualified": false,
+  "realtime_qualified": false,
+  "cuda_runtime": false,
+  "original_processes_preserved": true,
+  "sha256": {
+    "profile-command.log": "e9405ffebc832496ad4ad08582fc3328af99afec27315ef799b2fc561456488c",
+    "live-runtime-profile.txt": "59326c4eb30236e77248b803a71431b4a08aa3b36988a4158d805afc2f8cefcd",
+    "endpoint-energy.jsonl": "fd026b5974c43ac9cd14287453df5284e0301df905a73401370e06c2ec9214e4",
+    "endpoint-nodes.jsonl": "25c84db8a76c68454d75cc44bff94ac12507b8f59d153788175679ae5923f8d8",
+    "snapshot.json": "f58f6b964537963a8cde7b3395e05afc18692999f3b9125aafae17cac51f736a",
+    "native-audit.log": "a355b5085b356c3a7f294257ccc881db05463cabddee6fad74832f894db83813",
+    "initial-relative-path-failure.log": "a317c1a53760140fd96a8ca76d4a2cb0473507989dd2d277b7627b8d9acb3d17",
+    "processes.txt": "35f2b80b432fae6a847305e69807f28363cfb18a002cb9aaf33fb84ed0b4f169",
+    "allocation-energy.jsonl": "fd026b5974c43ac9cd14287453df5284e0301df905a73401370e06c2ec9214e4",
+    "allocation-nodes.jsonl": "25c84db8a76c68454d75cc44bff94ac12507b8f59d153788175679ae5923f8d8"
+  }
+}

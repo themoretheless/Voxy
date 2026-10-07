@@ -1,0 +1,10 @@
+{
+  "physics_passed": 125,
+  "editor_passed": 180,
+  "render_passed": 155,
+  "explicit_gpu_passed": 3,
+  "gpu": "Apple M4 Max / Metal",
+  "contact_parity": "All potential, gradient and actuator work fields match separately evaluated response bit patterns; finite-difference and independent-work regression passed",
+  "full_rig_complete": false,
+  "performance_speedup_measured": false
+}
