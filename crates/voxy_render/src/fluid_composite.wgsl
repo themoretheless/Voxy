@@ -70,13 +70,15 @@ fn tangent(pixel: vec2f, axis: vec2f, centre: vec2f) -> vec3f {
     let optical = textureLoad(material,index,0);
     let path = textureLoad(thickness,index,0).x;
     let absorption_path = textureLoad(optical_depth,index,0).xyz;
-    let f0 = pow((optical.w-1.0)/(optical.w+1.0),2.0);
-    let fresnel = f0+(1.0-f0)*pow(1.0-clamp(dot(normal,view),0.0,1.0),5.0);
+    // Current screen-space surface represents entry from air; interior media
+    // and radiance scaling require the separately designed boundary tracer.
+    let boundary = dielectric_boundary(-view,normal,1.0,optical.w);
+    let fresnel = boundary.reflectance;
     let offset = normal.xy * vec2f(1,-1) * path * camera.viewport.z * pixels_per_unit(surface.x) * (1.0-1.0/optical.w);
     let q = pixel_index(pixel+offset);
     var refracted = textureLoad(background,q,0).rgb;
     if (-eye_position(vec2f(q)+0.5,scene_depth_at(vec2f(q)+0.5)).z < surface.x) { refracted=base.rgb; }
-    let reflected = reflect(-view,normal);
+    let reflected = boundary.reflected;
     let sky = mix(vec3f(0.025,0.04,0.06),vec3f(0.65,0.75,0.9),clamp(reflected.y*0.5+0.5,0.0,1.0));
     // Analytic studio panel: a documented environment fallback, independent of scene depth.
     let panel = exp(-pow(abs((reflected.x+0.35)/0.18),4.0)) * exp(-pow(abs((reflected.y-0.4)/0.65),4.0));
@@ -84,7 +86,7 @@ fn tangent(pixel: vec2f, axis: vec2f, centre: vec2f) -> vec3f {
     let light = normalize(vec3f(-0.4,0.7,1.0));
     let specular = pow(max(dot(reflect(-light,normal),view),0.0),100.0)*2.0;
     let transmission = exp(-absorption_path);
-    return vec4f(refracted*transmission*(1.0-fresnel)+environment*fresnel+vec3f(specular*fresnel),1);
+    return vec4f(refracted*transmission*boundary.transmittance+environment*fresnel+vec3f(specular*fresnel),1);
 }
 @fragment fn fs_depth_debug(input: FullInput) -> @location(0) vec4f {
     let d=textureLoad(depth_radius,pixel_index(input.position.xy),0).x;
