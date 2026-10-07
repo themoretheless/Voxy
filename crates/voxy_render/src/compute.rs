@@ -37,6 +37,7 @@ pub struct ComputeProgram {
     source: String,
     entry_point: std::sync::Arc<str>,
     revision: u64,
+    scene_inputs: bool,
 }
 
 impl ComputeProgram {
@@ -55,6 +56,21 @@ impl ComputeProgram {
         source: &str,
         entry_point: &str,
     ) -> Result<Self, ComputeError> {
+        Self::with_layout(device, source, entry_point, false).await
+    }
+    /// Compute storage plus read-only 2D scene color/depth texture inputs.
+    pub async fn with_scene_textures(
+        device: &wgpu::Device,
+        source: &str,
+    ) -> Result<Self, ComputeError> {
+        Self::with_layout(device, source, "cs_main", true).await
+    }
+    async fn with_layout(
+        device: &wgpu::Device,
+        source: &str,
+        entry_point: &str,
+        scene_inputs: bool,
+    ) -> Result<Self, ComputeError> {
         let limits = device.limits();
         if limits.max_compute_workgroups_per_dimension == 0
             || limits.max_storage_buffers_per_shader_stage == 0
@@ -70,18 +86,36 @@ impl ComputeProgram {
             return Err(ComputeError::Validation(error.to_string()));
         }
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let mut entries = vec![wgpu::BindGroupLayoutEntry {
+            binding: 0,
+            visibility: wgpu::ShaderStages::COMPUTE,
+            ty: wgpu::BindingType::Buffer {
+                ty: wgpu::BufferBindingType::Storage { read_only: false },
+                has_dynamic_offset: false,
+                min_binding_size: None,
+            },
+            count: None,
+        }];
+        if scene_inputs {
+            for (binding, sample_type) in [
+                (1, wgpu::TextureSampleType::Float { filterable: false }),
+                (2, wgpu::TextureSampleType::Depth),
+            ] {
+                entries.push(wgpu::BindGroupLayoutEntry {
+                    binding,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Texture {
+                        sample_type,
+                        view_dimension: wgpu::TextureViewDimension::D2,
+                        multisampled: false,
+                    },
+                    count: None,
+                });
+            }
+        }
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("compute storage ABI"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::COMPUTE,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: false },
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-                count: None,
-            }],
+            entries: &entries,
         });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("compute pipeline layout"),
@@ -109,6 +143,7 @@ impl ComputeProgram {
             source: source.to_owned(),
             entry_point: entry_point.into(),
             revision: 0,
+            scene_inputs,
         })
     }
 
@@ -135,7 +170,8 @@ impl ComputeProgram {
         if self.source == source && self.entry_point.as_ref() == entry_point {
             return Ok(false);
         }
-        let mut candidate = Self::with_entry_point(&self.device, source, entry_point).await?;
+        let mut candidate =
+            Self::with_layout(&self.device, source, entry_point, self.scene_inputs).await?;
         candidate.revision = self.revision.saturating_add(1);
         *self = candidate;
         Ok(true)
@@ -157,6 +193,35 @@ impl ComputeProgram {
         device: &wgpu::Device,
         data: &[u8],
     ) -> Result<ComputeJob, ComputeError> {
+        if self.scene_inputs {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        self.create_job_bound(device, data, None)
+    }
+    /// Scene views are retained by the job bind group; validation catches incompatible resources.
+    pub async fn create_scene_job(
+        &self,
+        device: &wgpu::Device,
+        data: &[u8],
+        color: &wgpu::TextureView,
+        depth: &wgpu::TextureView,
+    ) -> Result<ComputeJob, ComputeError> {
+        if !self.scene_inputs {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let scope = self.device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let result = self.create_job_bound(device, data, Some((color, depth)));
+        if let Some(error) = scope.pop().await {
+            return Err(ComputeError::Validation(error.to_string()));
+        }
+        result
+    }
+    fn create_job_bound(
+        &self,
+        device: &wgpu::Device,
+        data: &[u8],
+        scene: Option<(&wgpu::TextureView, &wgpu::TextureView)>,
+    ) -> Result<ComputeJob, ComputeError> {
         if device != &self.device {
             return Err(ComputeError::DeviceMismatch);
         }
@@ -173,13 +238,24 @@ impl ComputeProgram {
         let storage = self
             .memory_budget
             .allocate_storage("compute job storage", data)?;
+        let mut entries = vec![wgpu::BindGroupEntry {
+            binding: 0,
+            resource: storage.as_entire_binding(),
+        }];
+        if let Some((color, depth)) = scene {
+            entries.push(wgpu::BindGroupEntry {
+                binding: 1,
+                resource: wgpu::BindingResource::TextureView(color),
+            });
+            entries.push(wgpu::BindGroupEntry {
+                binding: 2,
+                resource: wgpu::BindingResource::TextureView(depth),
+            });
+        }
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("compute job"),
             layout: &self.layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: storage.as_entire_binding(),
-            }],
+            entries: &entries,
         });
         Ok(ComputeJob {
             readback_pool: self.readback_pool.clone(),

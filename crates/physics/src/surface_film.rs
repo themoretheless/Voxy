@@ -276,6 +276,26 @@ impl SurfaceFilm {
         gravity: [f64; 3],
         contact: Option<BridgeConfig>,
     ) -> Result<(f64, f64), &'static str> {
+        self.advance_on_geometry_with_contact_admitted(
+            points,
+            dt,
+            sources,
+            gravity,
+            contact,
+            |_, added, transferred| Ok((added, transferred)),
+        )
+    }
+    /// Admit owner receipts against the staged film before publishing any state or cache.
+    /// The admission callback receives read-only physical state; failure rolls back all stages.
+    pub fn advance_on_geometry_with_contact_admitted<T>(
+        &mut self,
+        points: &[[f64; 3]],
+        dt: f64,
+        sources: &[(usize, f64)],
+        gravity: [f64; 3],
+        contact: Option<BridgeConfig>,
+        admit: impl FnOnce(&Self, f64, f64) -> Result<T, &'static str>,
+    ) -> Result<T, &'static str> {
         if !dt.is_finite() || dt <= 0. || dt > 0.1 {
             return Err("invalid film frame timestep");
         }
@@ -300,6 +320,7 @@ impl SurfaceFilm {
         } else {
             0.
         };
+        let receipt = admit(&next, added, transferred)?;
         if contact.is_none() {
             if let Some(mut index) = self.self_contact_index.take() {
                 index.refit(&next.geometry);
@@ -307,7 +328,7 @@ impl SurfaceFilm {
             }
         }
         *self = next;
-        Ok((added, transferred))
+        Ok(receipt)
     }
     pub fn material(&self) -> Material {
         self.material

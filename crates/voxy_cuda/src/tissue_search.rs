@@ -1,13 +1,7 @@
 use crate::{CudaCompute, CudaError};
 use physics::biomechanics::TissueSearchSnapshot;
 
-fn pack(
-    snapshot: &TissueSearchSnapshot,
-    direction: &[[f64; 3]],
-    limit: usize,
-) -> Result<(Vec<f64>, usize), CudaError> {
-    let n = snapshot.pinned().len();
-    let e = snapshot.elements().len();
+fn layout(n: usize, e: usize, limit: usize) -> Result<(usize, usize), CudaError> {
     let words = n
         .checked_mul(6)
         .and_then(|x| e.checked_mul(23).and_then(|y| x.checked_add(y)))
@@ -22,6 +16,30 @@ fn pack(
     if n == 0 || e == 0 || words > u32::MAX as usize || total > limit {
         return Err(CudaError::BufferLimit);
     }
+    Ok((words, total))
+}
+
+/// Admission probe only: no buffers exist yet. Applications must reserve again.
+#[cfg(any(feature = "cuda", test))]
+fn prepare_capacity(
+    snapshot: &TissueSearchSnapshot,
+    limit: usize,
+    budget: &std::sync::Arc<crate::budget::AllocationBudget>,
+) -> Result<(), CudaError> {
+    let (_, bytes) = layout(snapshot.pinned().len(), snapshot.elements().len(), limit)?;
+    let reservation = budget.reserve(bytes)?;
+    drop(reservation);
+    Ok(())
+}
+
+fn pack(
+    snapshot: &TissueSearchSnapshot,
+    direction: &[[f64; 3]],
+    limit: usize,
+) -> Result<(Vec<f64>, usize), CudaError> {
+    let n = snapshot.pinned().len();
+    let e = snapshot.elements().len();
+    let (words, total) = layout(n, e, limit)?;
     if direction.len() != n || direction.iter().flatten().any(|x| !x.is_finite()) {
         return Err(CudaError::InvalidTissueSearchInput);
     }
@@ -71,6 +89,34 @@ fn decode(snapshot: &TissueSearchSnapshot, words: &[f64]) -> Result<Vec<[f64; 3]
     Ok(result)
 }
 impl CudaCompute {
+    #[cfg(feature = "cuda")]
+    fn tissue_search_functions(&self) -> Result<[cudarc::driver::CudaFunction; 2], CudaError> {
+        let mut cached = self
+            .tissue_search
+            .lock()
+            .map_err(|_| CudaError::KernelCachePoisoned)?;
+        if cached.is_none() {
+            let ptx = cudarc::nvrtc::compile_ptx_with_opts(
+                include_str!("tissue_search.cu"),
+                self.compiler_options("tissue_search.cu")?,
+            )
+            .map_err(CudaError::Compile)?;
+            let module = self.context.load_module(ptx).map_err(CudaError::Driver)?;
+            *cached = Some([
+                module
+                    .load_function("tissue_search_elements")
+                    .map_err(CudaError::Driver)?,
+                module
+                    .load_function("tissue_search_nodes")
+                    .map_err(CudaError::Driver)?,
+            ]);
+        }
+        Ok(cached
+            .as_ref()
+            .ok_or(CudaError::KernelCachePoisoned)?
+            .clone())
+    }
+
     /// Evaluate the canonical rest-material search metric using two f64 CUDA kernels.
     /// This is not nonlinear force integration. No CPU fallback or state publication.
     /// # Errors
@@ -86,32 +132,7 @@ impl CudaCompute {
         {
             use cudarc::driver::{LaunchConfig, PushKernelArg};
             let reservation = self.allocation_budget.reserve(bytes)?;
-            let functions = {
-                let mut cached = self
-                    .tissue_search
-                    .lock()
-                    .map_err(|_| CudaError::KernelCachePoisoned)?;
-                if cached.is_none() {
-                    let ptx = cudarc::nvrtc::compile_ptx_with_opts(
-                        include_str!("tissue_search.cu"),
-                        self.compiler_options("tissue_search.cu")?,
-                    )
-                    .map_err(CudaError::Compile)?;
-                    let module = self.context.load_module(ptx).map_err(CudaError::Driver)?;
-                    *cached = Some([
-                        module
-                            .load_function("tissue_search_elements")
-                            .map_err(CudaError::Driver)?,
-                        module
-                            .load_function("tissue_search_nodes")
-                            .map_err(CudaError::Driver)?,
-                    ]);
-                }
-                cached
-                    .as_ref()
-                    .ok_or(CudaError::KernelCachePoisoned)?
-                    .clone()
-            };
+            let functions = self.tissue_search_functions()?;
             let stream = self.context.default_stream();
             let input = stream.clone_htod(&packed).map_err(CudaError::Driver)?;
             let mut force = match stream.alloc_zeros::<f64>(12 * snapshot.elements().len()) {
@@ -210,6 +231,54 @@ mod tests {
         .unwrap();
         body.set_viscoelastic_ogden(0, law).unwrap();
         body
+    }
+    #[test]
+    fn preparation_rejects_occupied_capacity_and_releases_probe_without_buffers() {
+        let snapshot = specimen(2).tissue_search_snapshot(&[1.; 10]).unwrap();
+        let (_, bytes) = layout(
+            snapshot.pinned().len(),
+            snapshot.elements().len(),
+            usize::MAX,
+        )
+        .unwrap();
+        let budget = crate::budget::AllocationBudget::new(bytes);
+        let occupied = budget.reserve(1).unwrap();
+        assert!(matches!(
+            prepare_capacity(&snapshot, bytes, &budget),
+            Err(CudaError::BufferLimit)
+        ));
+        assert_eq!(budget.used_bytes(), 1);
+        drop(occupied);
+        for _ in 0..16 {
+            prepare_capacity(&snapshot, bytes, &budget).unwrap();
+            assert_eq!(budget.used_bytes(), 0);
+        }
+        let occupied = budget.reserve(bytes).unwrap();
+        assert!(matches!(
+            prepare_capacity(&snapshot, bytes, &budget),
+            Err(CudaError::BufferLimit)
+        ));
+        assert_eq!(budget.used_bytes(), bytes);
+        drop(occupied);
+        assert_eq!(budget.used_bytes(), 0);
+    }
+    #[test]
+    fn preparation_layout_checks_budget_without_packing_or_allocating() {
+        let expected = 8 * (3 + 9 * 10 + 35 * 4);
+        assert_eq!(
+            layout(10, 4, expected).unwrap(),
+            (3 + 6 * 10 + 23 * 4, expected)
+        );
+        for (n, e, limit) in [
+            (10, 4, expected - 1),
+            (0, 4, usize::MAX),
+            (10, 0, usize::MAX),
+            (usize::MAX, 4, usize::MAX),
+            (10, usize::MAX, usize::MAX),
+            (u32::MAX as usize, 4, usize::MAX),
+        ] {
+            assert!(matches!(layout(n, e, limit), Err(CudaError::BufferLimit)));
+        }
     }
     #[test]
     fn input_budget_and_canonical_assembly_order() {
@@ -524,6 +593,20 @@ struct CudaTissueSearchOperation {
     compute: std::sync::Arc<CudaCompute>,
     snapshot: TissueSearchSnapshot,
 }
+/// CUDA infrastructure/readback failures cannot be repaired by temporal subdivision.
+/// Kept alongside the adapter's legacy string error mapping until solver errors are typed.
+pub fn is_tissue_search_backend_failure(error: &str) -> bool {
+    matches!(
+        error,
+        "CUDA tissue search disabled"
+            | "CUDA tissue search driver unavailable"
+            | "CUDA tissue search allocation budget exceeded"
+            | "CUDA tissue search numerical overflow"
+            | "invalid CUDA tissue search input or output"
+            | "CUDA tissue search backend failure"
+            | "invalid tissue search backend output"
+    )
+}
 #[cfg(feature = "cuda")]
 fn backend_failure(error: CudaError) -> &'static str {
     match error {
@@ -542,6 +625,15 @@ impl physics::biomechanics::TissueSearchBackend for CudaTissueSearchBackend {
     ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str> {
         #[cfg(feature = "cuda")]
         {
+            prepare_capacity(
+                &snapshot,
+                self.compute.max_bytes,
+                &self.compute.allocation_budget,
+            )
+            .map_err(backend_failure)?;
+            self.compute
+                .tissue_search_functions()
+                .map_err(backend_failure)?;
             Ok(Box::new(CudaTissueSearchOperation {
                 compute: std::sync::Arc::clone(&self.compute),
                 snapshot,

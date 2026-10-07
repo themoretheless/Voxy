@@ -132,3 +132,57 @@ fn moving_surfaces_exchange_only_during_contact_and_preserve_source_mass() {
         "MOVING CONTACT: active={active}, separated={separated}, gross={gross:.9e} m3, max mass relative error={maximum_error:.9e}"
     );
 }
+
+#[test]
+fn owner_admission_failure_preserves_cached_contact_and_subsequent_physics() {
+    for contact in [None, Some(BridgeConfig::default())] {
+        let mut film = fixture();
+        let mut reference = film.clone();
+        let old = film.state();
+        let mut points = old.points.clone();
+        for p in &mut points {
+            p[0] += 0.001;
+        }
+        let mut admitted = false;
+        let failure: Result<(), _> = film.advance_on_geometry_with_contact_admitted(
+            &points,
+            0.01,
+            &[(0, 1e-9)],
+            [0.; 3],
+            contact,
+            |candidate, added, transferred| {
+                admitted = true;
+                assert_eq!(candidate.state().points, points);
+                assert!(added > 0.);
+                assert!(candidate.total_mass() > reference.total_mass());
+                if contact.is_some() {
+                    assert!(transferred > 0.);
+                }
+                Err("owner receipt rejected")
+            },
+        );
+        assert_eq!(failure, Err("owner receipt rejected"));
+        assert!(admitted);
+        assert_eq!(film.state().points, old.points);
+        assert_eq!(film.state().cell_volumes_m3, old.cell_volumes_m3);
+        let receipt = film
+            .advance_on_geometry_with_contact_admitted(
+                &points,
+                0.01,
+                &[(0, 1e-9)],
+                [0.; 3],
+                contact,
+                |_, added, transferred| Ok((added, transferred)),
+            )
+            .unwrap();
+        let expected = reference
+            .advance_on_geometry_with_contact(&points, 0.01, &[(0, 1e-9)], [0.; 3], contact)
+            .unwrap();
+        assert_eq!(receipt, expected);
+        assert_eq!(film.state().points, reference.state().points);
+        assert_eq!(
+            film.state().cell_volumes_m3,
+            reference.state().cell_volumes_m3
+        );
+    }
+}

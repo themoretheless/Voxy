@@ -1670,6 +1670,7 @@ impl TissueDemo {
                 rejected_steps: 0,
                 max_refinement_depth: depth,
             }),
+            Err(error) if voxy_cuda::is_tissue_search_backend_failure(error) => Err(error),
             // Imported supports can require finer steps than the procedural
             // fixture. Keep a finite refinement limit and unchanged per-time
             // energy admission; a rejected frame still commits nothing.
@@ -3365,6 +3366,175 @@ mod search_backend_selection_tests {
         assert_selected_owners(&mut demo);
         demo.assemble_regions().unwrap();
         assert_selected_owners(&mut demo);
+    }
+    #[test]
+    fn cuda_backend_failure_stops_refinement_and_preserves_physical_owner() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        struct FailingCuda(Arc<AtomicUsize>, &'static str);
+        impl std::fmt::Debug for FailingCuda {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                f.debug_tuple("FailingCuda").field(&self.1).finish()
+            }
+        }
+        impl physics::biomechanics::TissueSearchBackend for FailingCuda {
+            fn prepare(
+                &self,
+                _: physics::biomechanics::TissueSearchSnapshot,
+            ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str>
+            {
+                self.0.fetch_add(1, Ordering::SeqCst);
+                Err(self.1)
+            }
+        }
+        for error in [
+            "CUDA tissue search disabled",
+            "CUDA tissue search driver unavailable",
+            "CUDA tissue search allocation budget exceeded",
+            "CUDA tissue search numerical overflow",
+            "invalid CUDA tissue search input or output",
+            "CUDA tissue search backend failure",
+            "invalid tissue search backend output",
+        ] {
+            let mut demo = TissueDemo::body();
+            let far = Arc::new(
+                PrescribedTriangleSurface::new(
+                    vec![[-10., -10., -10.], [10., -10., -10.], [0., 10., -10.]],
+                    vec![[0, 1, 2]],
+                    0.001,
+                    0.03,
+                    100.,
+                )
+                .unwrap()
+                .with_body_contact_domains(vec![(
+                    match &demo.bodies[0] {
+                        DemoTissue::Continuum { dynamics, .. } => dynamics.body().surface(),
+                        _ => panic!(),
+                    },
+                    vec![false],
+                )])
+                .unwrap(),
+            );
+
+            let calls = Arc::new(AtomicUsize::new(0));
+            demo.set_tissue_search_backend(Arc::new(FailingCuda(calls.clone(), error)))
+                .unwrap();
+            let DemoTissue::Continuum { dynamics, .. } = &mut demo.bodies[0] else {
+                panic!()
+            };
+            dynamics.set_prescribed_surface(Some(far.clone())).unwrap();
+            let before = format!("{dynamics:?}");
+            let snapshot = dynamics
+                .body()
+                .tissue_search_snapshot(&vec![1.; dynamics.body().positions().len()])
+                .unwrap();
+            let targets: Vec<_> = dynamics
+                .body()
+                .positions()
+                .iter()
+                .zip(snapshot.pinned())
+                .enumerate()
+                .filter_map(|(node, (&position_m, &pinned))| {
+                    pinned.then_some(SupportTarget { node, position_m })
+                })
+                .collect();
+            assert_eq!(
+                TissueDemo::advance_continuum_contact_budget(
+                    dynamics,
+                    &targets,
+                    Some(far),
+                    1. / 960.,
+                    0,
+                    0.0024
+                )
+                .unwrap_err(),
+                error
+            );
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+            assert_eq!(format!("{dynamics:?}"), before);
+        }
+        assert!(!voxy_cuda::is_tissue_search_backend_failure(
+            "energy budget exceeded"
+        ));
+    }
+    #[test]
+    fn cuda_failure_in_second_frame_rolls_back_clock_and_every_region() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        struct Failure(Arc<AtomicUsize>);
+        impl std::fmt::Debug for Failure {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                f.write_str("Failure")
+            }
+        }
+        impl physics::biomechanics::TissueSearchBackend for Failure {
+            fn prepare(
+                &self,
+                _: physics::biomechanics::TissueSearchSnapshot,
+            ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str>
+            {
+                self.0.fetch_add(1, Ordering::SeqCst);
+                Err("CUDA tissue search backend failure")
+            }
+        }
+        for workers in [1, 4] {
+            let mut demo = TissueDemo::body();
+            let surfaces: Vec<_> = demo
+                .bodies
+                .iter()
+                .map(|body| {
+                    let DemoTissue::Continuum { dynamics, .. } = body else {
+                        panic!()
+                    };
+                    Arc::new(
+                        PrescribedTriangleSurface::new(
+                            vec![[-10., -10., -10.], [10., -10., -10.], [0., 10., -10.]],
+                            vec![[0, 1, 2]],
+                            0.0001,
+                            0.003,
+                            100.,
+                        )
+                        .unwrap()
+                        .with_body_contact_domains(vec![(dynamics.body().surface(), vec![false])])
+                        .unwrap(),
+                    )
+                })
+                .collect();
+            demo.bind_contact_surfaces(&surfaces).unwrap();
+            demo.advance(0.5 / 240.).unwrap();
+            let before = format!("{demo:?}");
+            let before_nodes = demo.continuum_node_state().unwrap();
+            let calls = Arc::new(AtomicUsize::new(0));
+            let mut frames = 0;
+            let mut first_frame_changed = false;
+            let result = demo.advance_with_body_step(2. / 240., |candidate, time| {
+                frames += 1;
+                if frames == 2 {
+                    first_frame_changed = candidate.continuum_node_state().unwrap() != before_nodes;
+                    let DemoTissue::Continuum { dynamics, .. } = &mut candidate.bodies[1] else {
+                        panic!()
+                    };
+                    dynamics.set_tissue_search_backend(Some(Arc::new(Failure(calls.clone()))));
+                }
+                let palette = candidate
+                    .body_palette_at(time)
+                    .iter()
+                    .map(|m| DMat4::from_cols_array(&m.to_cols_array().map(f64::from)))
+                    .collect::<Vec<_>>();
+                candidate.step_body_with_contact64_workers(
+                    &palette,
+                    0.5,
+                    Some(surfaces.clone()),
+                    workers,
+                )
+            });
+            assert_eq!(result, Err("CUDA tissue search backend failure"));
+            assert_eq!(frames, 2);
+            assert!(
+                first_frame_changed,
+                "first staged frame must actually advance mechanics"
+            );
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+            assert_eq!(format!("{demo:?}"), before);
+        }
     }
     #[test]
     fn incompatible_owner_rejects_before_changing_any_regional_selection() {

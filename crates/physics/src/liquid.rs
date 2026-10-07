@@ -1301,3 +1301,11 @@ pub use support_world::{
     RigidWorldReactionRates, RigidWorldReactions, SupportedWorldConfig,
     resolve_rigid_world_reactions,
 };
+
+#[path = "liquid/droplet_gas_evaporation.rs"]
+mod droplet_gas_evaporation;
+pub use droplet_gas_evaporation::{SpatialVaporExchangeReport, SpatialVaporTransportControl};
+
+#[path = "liquid/droplet_optics.rs"]
+mod droplet_optics;
+pub use droplet_optics::DropletExtinctionGrid;
