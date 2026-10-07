@@ -1,0 +1,16 @@
+{
+  "status": "fallible shared search primitives implemented and verified",
+  "native_library_passed": 122,
+  "manual_ignored": 12,
+  "primitives": [
+    "CG operator application",
+    "L-BFGS inverse action",
+    "secant inverse quadratic scaling"
+  ],
+  "tests": "first- and second-CG-application failures stop immediately; secant errors retain history; successful native arithmetic matches f64 bits",
+  "default_native_path": "Infallible adapter over shared implementation; original curvature/descent fallback retained",
+  "GPU_backend_transaction_connected": false,
+  "physical_step_rollback_tested_for_backend_failure": false,
+  "scope": "Typed error propagation groundwork; does not yet prove CUDA transaction integration or NVIDIA execution",
+  "sha256": "fa457343cb24c7d0e1bc7edc513842cbf5d097e7fe3af4aa1a2f48685ef17527"
+}

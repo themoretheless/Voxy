@@ -1,0 +1,12 @@
+{
+  "status": "full physics release test suite passed",
+  "passed": 1642,
+  "failed": 0,
+  "ignored": 15,
+  "test_reports": 217,
+  "base_commit": "ccd90d0b949ee57fea1688a9d7de4d75e68e1df1",
+  "source_changes_since_commit": "documentation and rig audit artifacts only",
+  "command": "cargo test -p physics --release",
+  "native_log_sha256": "11ca3e1a6515181f6789807af8b6d2e1c3f152d3a6b79059b591faa609cd0b29",
+  "scope": "native CPU unit, integration and doc tests; excluded ignored/manual tests, actual CUDA execution, browser runtime and full rig/editor acceptance"
+}

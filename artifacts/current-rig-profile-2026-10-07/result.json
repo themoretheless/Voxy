@@ -1,0 +1,18 @@
+{
+  "status": "one-second live process profile captured",
+  "pid": 60406,
+  "committed_step_before_sample": 93,
+  "committed_time_s": 0.3875,
+  "sample_duration_s": 1,
+  "collapsed_leaf_samples": {
+    "rest_material_action": 196,
+    "prescribed_response": 142,
+    "btree_insert": 71,
+    "viscoelastic_response_at_strain": 50,
+    "normal_stencils": 23,
+    "validate_faces": 21
+  },
+  "scope": "Single-stage diagnostic sample, not throughput, CPU percentage, comparative speedup or full clip qualification. Process predates cohesive/equilibrium fixes.",
+  "next_target": "Benchmark rest material operator arithmetic/data access and endpoint validation separately; rejected prepared-moduli cache remains rejected. Preserve endpoint work, contact admission and trajectory parity.",
+  "sha256": "efc1811d5a2051a598180c0299ca93c583bd9b12ee04f035b6a3bb5f0ba41ceb"
+}

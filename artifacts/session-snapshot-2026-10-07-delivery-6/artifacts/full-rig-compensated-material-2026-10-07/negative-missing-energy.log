@@ -1,0 +1,17 @@
+
+running 1 test
+test collision_tests::audits_committed_full_rig_nodes_and_energy_prefix ... FAILED
+
+failures:
+
+failures:
+    collision_tests::audits_committed_full_rig_nodes_and_energy_prefix
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 69 filtered out; finished in 0.08s
+
+
+thread 'collision_tests::audits_committed_full_rig_nodes_and_energy_prefix' (2581280) panicked at crates/voxy_app/examples/body_motion_snapshot.rs:1305:13:
+assertion `left == right` failed: incomplete per-frame energy capture
+  left: 60
+ right: 61
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

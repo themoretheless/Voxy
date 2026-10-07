@@ -1,0 +1,31 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.54s
+     Running tests/moisture_vapor.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/moisture_vapor-bfc6ef23a8ef9fd8)
+
+running 1 test
+test exact_nonzero_activity_equilibrium_preserves_all_inventories ... FAILED
+
+failures:
+
+---- exact_nonzero_activity_equilibrium_preserves_all_inventories stdout ----
+
+thread 'exact_nonzero_activity_equilibrium_preserves_all_inventories' (2878510) panicked at crates/physics/tests/moisture_vapor.rs:770:13:
+assertion failed: report.material_water_change_kg.iter().all(|&x| x == 0.)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    exact_nonzero_activity_equilibrium_preserves_all_inventories
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test moisture_vapor`

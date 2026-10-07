@@ -1,0 +1,17 @@
+
+running 1 test
+PARTIAL_DRYING_ENERGY_POLICY time_scaled=true reference_rate_j_s=0.001 base_step_budget_j=0.00000001
+WET FEM: retained_water_kg=0.1998001998001998, supply_water_kg=0.0001998001998069765, parameter_work_j=-0.7882302763749947
+PARTIAL_DRYING_CONVERGENCE level=0 steps=10000 dt_s=0.00001 water_kg=0.1978141391901023 exact_water_error_kg=0.0000000011844528413629263 maximum_dynamic_defect_j=0.0000000011781756373459296
+PARTIAL_DRYING_INDEPENDENT_ENERGY level=0 maximum_balance_j=0.00000014474177589818282 final_balance_j=-0.0000000009634106845624046 reported_solver_defect_subtracted=false
+WET FEM: retained_water_kg=0.1998001998001998, supply_water_kg=0.0001998001998069765, parameter_work_j=-0.7882302763749947
+PARTIAL_DRYING_CONVERGENCE level=1 steps=20000 dt_s=0.000005 water_kg=0.19781413859786823 exact_water_error_kg=0.000000000592218774020381 maximum_dynamic_defect_j=0.0000000011890547782500427
+PARTIAL_DRYING_INDEPENDENT_ENERGY level=1 maximum_balance_j=0.000000035341855664228206 final_balance_j=-0.0000000005229594535194337 reported_solver_defect_subtracted=false
+WET FEM: retained_water_kg=0.1998001998001998, supply_water_kg=0.0001998001998069765, parameter_work_j=-0.7882302763749947
+PARTIAL_DRYING_CONVERGENCE level=2 steps=40000 dt_s=0.0000025 water_kg=0.197814138302687 exact_water_error_kg=0.00000000029703753345877715 maximum_dynamic_defect_j=0.0000000011940727213423374
+PARTIAL_DRYING_INDEPENDENT_ENERGY level=2 maximum_balance_j=0.000000008047479127526458 final_balance_j=-0.00000000020943957679264713 reported_solver_defect_subtracted=false
+PARTIAL_DRYING_POSITION_CONVERGENCE coarse_delta_m=0.0000000007869044903532907 fine_delta_m=0.0000000003602804165029824
+test wet_fem_preview::tests::partial_drying_motion_time_scaled_convergence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 6.70s
+

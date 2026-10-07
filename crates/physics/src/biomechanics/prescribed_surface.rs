@@ -344,7 +344,13 @@ impl PreparedPrescribedContactPath {
             return Err("body contact vertex count changed");
         }
         validate_faces(start, faces)?;
-        validate_faces(end, faces)?;
+        if ADMITTED {
+            // Same vertex count and immutable face indices: topology was admitted
+            // at start. End coordinates and triangle areas still require checking.
+            validate_admitted_face_geometry(end, faces)?;
+        } else {
+            validate_faces(end, faces)?;
+        }
         let mut result = Vec::new();
         for &(time, weight, ref surface) in &self.samples {
             let body: Vec<_> = start
@@ -393,7 +399,13 @@ impl PreparedPrescribedContactPath {
             return Err("body contact vertex count changed");
         }
         validate_faces(start, faces)?;
-        validate_faces(end, faces)?;
+        if ADMITTED {
+            // Same vertex count and immutable face indices: topology was admitted
+            // at start. End coordinates and triangle areas still require checking.
+            validate_admitted_face_geometry(end, faces)?;
+        } else {
+            validate_faces(end, faces)?;
+        }
         let mut result = PrescribedContactPathResponse {
             body_gradient_n: vec![[0.; 3]; start.len()],
             obstacle_gradient_n: vec![[0.; 3]; self.samples[0].2.positions.len()],
@@ -1289,7 +1301,8 @@ impl PrescribedTriangleSurface {
             return Err("body contact vertex count changed");
         }
         validate_faces(body_start, faces)?;
-        validate_faces(body_end, faces)?;
+        // Vertex counts match and the same face slice is used at both endpoints.
+        validate_admitted_face_geometry(body_end, faces)?;
         for face in faces {
             if !self.body_face_may_contact(*face) {
                 continue;
@@ -2573,6 +2586,37 @@ mod path_topology_admission_tests {
             }
             eprintln!(
                 "PATH_TOPOLOGY_BENCH trial={trial} admitted={admitted} iterations=10 faces=1024 panels=16 elapsed_s={:.9}",
+                now.elapsed().as_secs_f64()
+            );
+        }
+    }
+
+    #[test]
+    #[ignore = "isolated endpoint admission benchmark; not full-rig throughput"]
+    fn benchmark_second_endpoint_admission() {
+        let mut body = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..1024 {
+            let x = i as f64 * 0.5;
+            body.extend([[x, 0., 1.], [x + 0.125, 0., 1.], [x, 0.125, 1.]]);
+            faces.push([3 * i, 3 * i + 1, 3 * i + 2]);
+        }
+        validate_faces(&body, &faces).unwrap();
+        for (trial, admitted) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let now = std::time::Instant::now();
+            for _ in 0..1000 {
+                let result = if admitted {
+                    validate_admitted_face_geometry(std::hint::black_box(&body), &faces)
+                } else {
+                    validate_faces(std::hint::black_box(&body), &faces)
+                };
+                std::hint::black_box(result).unwrap();
+            }
+            eprintln!(
+                "ENDPOINT_ADMISSION_BENCH trial={trial} admitted={admitted} faces=1024 iterations=1000 elapsed_s={:.9}",
                 now.elapsed().as_secs_f64()
             );
         }

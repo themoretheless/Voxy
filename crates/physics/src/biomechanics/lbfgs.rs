@@ -11,24 +11,39 @@ pub(super) fn secant_scale(
     history: &[SecantPair],
     inverse_quadratic: impl FnOnce(&[Vec3]) -> f64,
 ) -> f64 {
+    try_secant_scale::<std::convert::Infallible>(history, |q| Ok(inverse_quadratic(q)))
+        .unwrap_or_else(|never| match never {})
+}
+pub(super) fn try_secant_scale<E>(
+    history: &[SecantPair],
+    inverse_quadratic: impl FnOnce(&[Vec3]) -> Result<f64, E>,
+) -> Result<f64, E> {
     let Some((s, y, _)) = history.last() else {
-        return 1.;
+        return Ok(1.);
     };
-    let denominator = inverse_quadratic(y);
+    let denominator = inverse_quadratic(y)?;
     let numerator = inner(s, y);
     if denominator.is_finite() && denominator > 0. && numerator.is_finite() && numerator > 0. {
         let ratio = numerator / denominator;
         if ratio.is_finite() && ratio > 0. {
-            return ratio.clamp(1e-8, 1e8);
+            return Ok(ratio.clamp(1e-8, 1e8));
         }
     }
-    1.
+    Ok(1.)
 }
 pub(super) fn secant_direction(
     history: &[SecantPair],
     gradient: &[Vec3],
     inverse: impl FnOnce(&[Vec3]) -> Vec<Vec3>,
 ) -> Vec<Vec3> {
+    try_secant_direction::<std::convert::Infallible>(history, gradient, |q| Ok(inverse(q)))
+        .unwrap_or_else(|never| match never {})
+}
+pub(super) fn try_secant_direction<E>(
+    history: &[SecantPair],
+    gradient: &[Vec3],
+    inverse: impl FnOnce(&[Vec3]) -> Result<Vec<Vec3>, E>,
+) -> Result<Vec<Vec3>, E> {
     let mut q = gradient.to_vec();
     let mut alphas = Vec::with_capacity(history.len());
     for (s, y, rho) in history.iter().rev() {
@@ -38,14 +53,14 @@ pub(super) fn secant_direction(
             *q = sub(*q, scale(*y, alpha));
         }
     }
-    let mut r = inverse(&q);
+    let mut r = inverse(&q)?;
     for ((s, y, rho), alpha) in history.iter().zip(alphas.into_iter().rev()) {
         let beta = rho * inner(y, &r);
         for (r, s) in r.iter_mut().zip(s) {
             *r = add(*r, scale(*s, alpha - beta));
         }
     }
-    r.iter().map(|r| scale(*r, -1.)).collect()
+    Ok(r.iter().map(|r| scale(*r, -1.)).collect())
 }
 pub(super) fn push_secant(
     history: &mut Vec<SecantPair>,
@@ -401,5 +416,44 @@ mod secant_tests {
         assert_eq!(secant_scale(&history, |_| 4.), 0.5);
         assert_eq!(secant_scale(&history, |_| 1e-20), 1e8);
         assert_eq!(secant_scale(&history, |_| 1e20), 1e-8);
+    }
+}
+
+#[cfg(test)]
+mod backend_failure_tests {
+    use super::*;
+    #[test]
+    fn secant_backend_errors_preserve_history_and_successful_arithmetic() {
+        let mut history = Vec::new();
+        push_secant(&mut history, vec![[1., 2., 3.]], vec![[2., 3., 5.]], 4);
+        let before = format!("{history:?}");
+        assert_eq!(
+            try_secant_scale(&history, |_| Err("CUDA metric failure")),
+            Err("CUDA metric failure")
+        );
+        assert_eq!(
+            try_secant_direction(&history, &[[3., 4., 5.]], |_| Err("CUDA inverse failure")),
+            Err("CUDA inverse failure")
+        );
+        assert_eq!(format!("{history:?}"), before);
+        let native = secant_direction(&history, &[[3., 4., 5.]], |r| r.to_vec());
+        let checked =
+            try_secant_direction::<&str>(&history, &[[3., 4., 5.]], |r| Ok(r.to_vec())).unwrap();
+        assert_eq!(
+            native
+                .iter()
+                .flatten()
+                .map(|x| x.to_bits())
+                .collect::<Vec<_>>(),
+            checked
+                .iter()
+                .flatten()
+                .map(|x| x.to_bits())
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(
+            secant_scale(&history, |r| inner(r, r)),
+            try_secant_scale::<&str>(&history, |r| Ok(inner(r, r))).unwrap()
+        );
     }
 }

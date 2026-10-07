@@ -1,0 +1,10 @@
+{
+  "status": "already-dry preview equilibrium and rollback regressions passed",
+  "passed": 5,
+  "ignored_manual": 2,
+  "production_change": "Allow zero vapor transfer instead of requiring strictly positive evaporation; retain all direction, mass, latent-energy and topology gates.",
+  "verified": "Three successive already-dry zero-water exchanges preserve every reported mechanical energy channel, positions, velocities, water cells, topology and vapor inventories exactly. Insufficient latent heat after wetting rejects atomically.",
+  "scope": "Existing finite isothermal two-cell preview; nonzero wet equilibrium and coupled thermal/gas motion are not qualified by this fixture.",
+  "initial_test_failure": "Compared full internal mechanics state; accepted damage-history migration can change internal bookkeeping at unchanged physical state. Corrected oracle uses complete public energy, geometry, velocity, inventory and topology observables.",
+  "sha256": "eedc3e56923affefd47e77f23e3380ff64fe3da2a97225bfc5c3da97ece6de79"
+}

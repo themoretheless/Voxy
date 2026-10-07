@@ -1,0 +1,15 @@
+{
+  "status": "canonical immutable tissue search snapshot implemented",
+  "tests_passed": 120,
+  "manual_tests_ignored": 12,
+  "API": "Body::tissue_search_snapshot",
+  "preserves": "canonical element order, gradients, reference volume, effective Ogden/Maxwell search moduli, pin ownership and supplied inertia weights",
+  "verified": "analytic tetrahedron volume/moduli, no physical-state mutation, snapshot ownership across body changes, invalid weights and nonfinite rest rejection",
+  "production_solver_changed": false,
+  "CUDA_kernel_connected": false,
+  "scope": "Explicit input boundary for future search backend; not nonlinear forces, history, contacts, work, calibrated material or GPU execution",
+  "sha256": {
+    "crates/physics/src/biomechanics/search_snapshot.rs": "d1e8db326d11faf0343e00a032950688b4b8efdb7d43be509041e5142ab96ce5",
+    "artifacts/tissue-search-backend-boundary-2026-10-07/library.log": "ed2474656139a8d2ab1e75bdcd02890ca9912785aa30581495340b6f1fe13f1d"
+  }
+}

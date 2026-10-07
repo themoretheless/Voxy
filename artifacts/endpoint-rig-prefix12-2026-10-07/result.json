@@ -1,0 +1,17 @@
+{
+  "status": "native prefix passed",
+  "pid": 90673,
+  "committed_steps_audited": 12,
+  "requested_steps": 480,
+  "time_s": 0.05,
+  "previous_allocation_runtime_byte_parity": {
+    "energy": true,
+    "nodes": true
+  },
+  "full_clip_qualified": false,
+  "sha256": {
+    "energy.jsonl": "c83bca05334426307831332b614a2520a0e882148357148d139c0be040384b4a",
+    "native-audit.log": "f63c275034c3f432a78a1e3bed265fa7fc1efc8a4d9697c8fbaa8e536eff50c7",
+    "nodes.jsonl": "ea7b42a75f0939e1d8e733fbe9d0281a5079cd4bd4c0d62e2a67c36557b19c77"
+  }
+}

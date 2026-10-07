@@ -1,0 +1,21 @@
+{
+  "status": "browser compilation, CUDA feature compilation and host tests passed",
+  "wasm_runtime_tested": false,
+  "cuda_unit_tests_passed": 18,
+  "cuda_source_host_parity_passed": true,
+  "cuda_host_fixture": "257 bodies x128 steps plus 2560 orbit steps; exact CPU reference parity and singular/overflow rollback",
+  "NVIDIA_execution_verified": false,
+  "CUDA_finite_tissue_solver_connected": false,
+  "source_audit_scope": [
+    "crates/voxy_cuda/src",
+    "crates/physics/src",
+    "crates/voxy_app/src/cuda_motion.rs",
+    "crates/voxy_app/src/main.rs"
+  ],
+  "sha256": {
+    "cuda-source.log": "1441df15ad8e88e46793066044f05983d618c3c0e76ae4c649d45fe7e9867ccc",
+    "wasm.log": "45a7b70a4621da9437368eb27be75642cb26f8b9f91014372c4f2486665ad022",
+    "cuda-tests.log": "0dfe6f4e1b6f310d630f4b4490162fc8225571fcef7bac96c8085cedb8d31c40",
+    "cuda.log": "014c37af56714592d79afff09aaa36dceaeaf1e15e9346779def92261a371fac"
+  }
+}

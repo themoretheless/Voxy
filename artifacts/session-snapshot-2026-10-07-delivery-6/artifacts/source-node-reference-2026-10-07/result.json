@@ -1,0 +1,46 @@
+{
+  "status": "source node reference integrated and regression qualified; full-volume runtime live",
+  "tests": {
+    "reference_transfer_regressions": 3,
+    "full_clip_source_reference": 1,
+    "manifest_reference_regression": 1,
+    "legacy_import_regression": 1,
+    "all_passed": true
+  },
+  "clip_reference_audit": {
+    "samples": 481,
+    "volume_nodes": 2338,
+    "source_vertices": 3273,
+    "node_positions_equal_native_skin_provider": true,
+    "max_reference_cancellation_error_m": 5.273559366969494e-16,
+    "max_pose_change_component_m": 0.681299268796347,
+    "scope": "held physical reference state and sampled native skeletal poses; not dynamic animation or continuous certificate"
+  },
+  "runtime": {
+    "session": 57222,
+    "pid": 35083,
+    "confirmed_live": true,
+    "terminal_exit_code": null,
+    "backend": "Metal Apple M4 Max",
+    "bound_skin_vertices": 3273,
+    "responsive_skin_triangles": 4672,
+    "target_simulated_seconds": 0.0125,
+    "completed_checkpoints": 1,
+    "completed_checkpoint_time_s": 0.0,
+    "checkpoint_stream": "full-volume-capture.nodes.jsonl",
+    "material_scope": "uncalibrated explicit control fixture",
+    "bone_supports": 0,
+    "limitations": [
+      "No completed dynamics interval yet",
+      "No bone support coupling qualified",
+      "Self-contact is separate and not enabled by this source obstacle mask",
+      "CPU physics/skinning and GPU raster; no whole-hardware or real-time claim"
+    ]
+  },
+  "native_build_exit_code": 0,
+  "changes": [
+    "Explicit source-skin-nodes map retains exact aliases; missing node and diverging alias rejected",
+    "Render and staged physical contact share the source node reference map",
+    "Existing capture entrypoint selects declared reference pose and binding policy; legacy defaults unchanged"
+  ]
+}

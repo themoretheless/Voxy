@@ -1,0 +1,18 @@
+{
+  "status": "native endpoint-admission rig prefix60 passed beyond original failure55",
+  "pid": 90673,
+  "steps": 60,
+  "time_s": 0.25,
+  "requested_steps": 480,
+  "full_clip_qualified": false,
+  "prior_allocation_prefix_byte_parity": {
+    "nodes": true,
+    "energy": true
+  },
+  "runtime_scope": "predates new CUDA search and fallible primitives; no GPU tissue execution inferred",
+  "sha256": {
+    "energy.jsonl": "257ab3a925bd6337e454c4b39ceb7919fecdd96967422e5a6541cfb941e34129",
+    "native-audit.log": "d27c4d72b75eed397d4b35a2e954d193e8a9d6ba0504b06549f32eb0c1e2722d",
+    "nodes.jsonl": "90339ee1323c47d8e487a6978ab4b53ac96b2126856d79137f6e59e71b0c77fd"
+  }
+}

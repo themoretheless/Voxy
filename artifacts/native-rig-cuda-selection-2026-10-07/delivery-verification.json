@@ -1,0 +1,14 @@
+{
+  "native_default_byte_parity": {
+    ".png": true,
+    ".csv": true,
+    ".nodes.json": true,
+    ".nodes.jsonl": true,
+    ".energy.jsonl": true
+  },
+  "example_tests_passed": 67,
+  "example_tests_ignored": 6,
+  "cuda_feature_compile_passed": true,
+  "nvidia_execution_verified": false,
+  "full_480_step_capture_verified": false
+}

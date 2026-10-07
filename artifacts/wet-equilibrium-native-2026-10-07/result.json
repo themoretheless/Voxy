@@ -1,0 +1,19 @@
+{
+  "status": "native motion refinement and Metal snapshot passed",
+  "motion_duration_s": 0.1,
+  "refinement_intervals": [
+    10000,
+    20000,
+    40000
+  ],
+  "previous_qualification_marker_byte_parity": true,
+  "previous_Metal_png_byte_parity": true,
+  "partial_motion_maximum_independent_balance_j": 8.047479127526458e-09,
+  "partial_motion_final_independent_balance_j": -2.0943957679264713e-10,
+  "scope": "Existing two-cell FEM fixtures, not full character/editor/CUDA or general gas dynamics",
+  "sha256": {
+    "time-qualified.log": "59fb2b08e76b7628c4677f2717495913a751cb8bd804c81a46706f6dcb2ffc2b",
+    "dry-motion.png": "ee195ad915c7569690966542b6ec7e182534af5b2c7c45a9884ce397b76dae01",
+    "runtime.log": "ec72ae7f453a2de9fd9cc0802359f0b06f1162b8497a439b680ab58a47dbafcd"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "status": "explicit CUDA adapter wired to shared implicit rest-material search and transaction gates",
+  "API": [
+    "InertialBody::set_tissue_search_backend",
+    "TissueSearchBackend::prepare",
+    "TissueSearchOperation::apply",
+    "Arc<CudaCompute>::tissue_search_backend"
+  ],
+  "native_library_passed": 125,
+  "native_contact_and_viscoelastic_integration_passed": 82,
+  "CUDA_feature_unit_passed": 21,
+  "CUDA_disabled_unit_passed": 23,
+  "feature_and_disabled_compilation_passed": true,
+  "verified": "Successful proof backend matches complete native support and contact-free surface step reports/state exactly; preparation, first/second apply and NaN output errors reject with physical-owner rollback. Common regional backend Arc retained, mixed owners rejected. Disabled CUDA fails at prepare without CPU fallback.",
+  "physical_NVIDIA_transaction_test": "implemented, ignored, explicit device required; counts actual GPU operator calls to reject a no-CG predictor-only qualification",
+  "NVIDIA_execution_verified": false,
+  "application_UI_or_rig_CUDA_selection_enabled": false,
+  "persistent_device_operator_inputs": false,
+  "active_contact_scope": "Existing inertia-only active-contact metric stays native; backend is invoked only where rest-material search is qualified. Nonlinear forces, history, contact/work gates stay native.",
+  "initial_validation_repairs": "Added missing assembly initializer; corrected surface-path fixture dispatch; replaced time-dependent fixture in time-independent constructor; eager Disabled rejection at backend prepare prevents unused-operator acceptance. Original logs retained.",
+  "sha256": {
+    "final-library.log": "e6abd37a94eef8cc4edb3c2942695fdbbcf996660a4be5669a9f3f5b60ef81f7",
+    "integration.log": "c7131f5fb6304deef1727d516f7a5b670b071b545fd1ff577d1f2182075add90",
+    "admitted-cuda-tests.log": "2ff666b76df7d7332cd38572b6315442d273b77241d4a92d384f6c3d7368ffbc",
+    "admitted-disabled-cuda-tests.log": "3a21f00a0457674f2ac3b1f8c25e4849815f17da6914bcbe1bc341f0ea984b14",
+    "final-feature-check.log": "a67bad85d568c5a758a9854a79b0bd1ca5f0b48b8e7d58c7b09a659c16424131",
+    "final-disabled-check.log": "6c520b950575105cd8b67ec469e14595d9e9fdbd5907212087affab2efceff75"
+  }
+}

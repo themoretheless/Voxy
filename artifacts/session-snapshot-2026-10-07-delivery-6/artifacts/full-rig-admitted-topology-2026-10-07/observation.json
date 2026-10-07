@@ -1,0 +1,25 @@
+{
+  "status": "live current-version 480-step strict candidate; not full-clip qualification",
+  "pid": 51794,
+  "exec_session": 3242,
+  "requested_steps": 480,
+  "committed_steps_observed": 60,
+  "latest_committed_frame": {
+    "energy_receipts": [
+      [
+        -0.010440142609066339,
+        6.81996914930634,
+        6.830409291915972,
+        5.512770539191405e-13
+      ]
+    ],
+    "step": 60,
+    "time_s": 0.25
+  },
+  "process_live_verified": "51794 08:23 Rs   /tmp/voxy-contact-derivatives-20261006/release/examples/body_motion_snapshot artifacts/full-rig-admitted-topology-2026-10-07/capture.png artifacts/full-rig-admitted-topology-2026-10-07/frames --cesium --contact --capture-steps=480 --tissue-regions=artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json",
+  "energy_budget_rate_j_s": 5e-10,
+  "full_clip_qualified": false,
+  "prior_runs_preserved": true,
+  "executable_sha256": "c64e51807a1fa2a2ac18dd5277cf10dfcf2b10a29e19d45bcac52e8bb77749b2",
+  "runtime_version": "Material/gravity compensation, factored kinetic change and response topology admission; excludes later normal-stencil topology admission."
+}

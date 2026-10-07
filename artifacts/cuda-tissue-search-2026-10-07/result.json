@@ -1,0 +1,33 @@
+{
+  "status": "two-kernel CUDA rest-material search operation implemented; host arithmetic parity verified",
+  "API": "CudaCompute::tissue_search_action",
+  "kernel_stages": [
+    "per-element rest isotropic stress action",
+    "canonical CSR node assembly without floating atomic sums"
+  ],
+  "native_reference": "Body::tissue_search_action calls the unchanged canonical implicit rest-material operator",
+  "precision": "f64; compiler fmad disabled; host comparison uses every output f64 bit including signed zero",
+  "host_source_parity_cases": "1,17,257 pairs of tetrahedra; five direction modes; pinned/shared nodes, heterogeneous elastic and Ogden-Maxwell search moduli",
+  "tests": {
+    "native_library_passed": 120,
+    "cuda_enabled_unit_passed": 20,
+    "cuda_disabled_unit_passed": 21,
+    "explicit_CUDA_source_host_parity_passed": 1
+  },
+  "memory": "Combined input/element scratch/output checked and admitted in existing CUDA allocation ledger; explicit synchronized retirement on success/error; nonfinite or displaced pinned readback rejects before return",
+  "physical_NVIDIA_test": "implemented and ignored; requires VOXY_TEST_CUDA_DEVICE",
+  "NVIDIA_execution_verified": false,
+  "NVRTC_device_compilation_verified": false,
+  "implicit_solver_backend_connected": false,
+  "nonlinear_material_forces_or_history_GPU_implemented": false,
+  "scope": "Rest-material search metric operation only; not complete CUDA tissue integration, real-time speed or full hardware qualification",
+  "sha256": {
+    "crates/voxy_cuda/src/tissue_search.rs": "afb204e7314ea902259413391eb8b9c6f33ff550b949f0819e2eda4c11ba5170",
+    "crates/voxy_cuda/src/tissue_search.cu": "38ba09b8eb012367056de1e182bac26e9e4ea9a63f96fa9626a4d5d2e97f36b4",
+    "tools/cuda/tissue_search_host.cpp": "216d6936095e74bf18d7e291bb5a1dd9b13379c7f7e8eb04b4a514d432de0681",
+    "artifacts/cuda-tissue-search-2026-10-07/final-source-parity.log": "c24edbe458309a6fc70741e4a58104e2a9381b66ededb01c5d7c88c4bc3d628c",
+    "artifacts/cuda-tissue-search-2026-10-07/final-unit.log": "059869ba31801ce81eec2f09301f95f2aa69c3db1ca9b0eacc5978e8846cf8f8",
+    "artifacts/cuda-tissue-search-2026-10-07/final-disabled-unit.log": "2a75fdf809d0efc1bc1073fa8e19b1c1d7fd6d7763277512d290941f6b3a14f1",
+    "artifacts/cuda-tissue-search-2026-10-07/native-library.log": "80877d4640ac5fae3410cb3197342822b49ad544cd3c6f52de3fa38c94f1d652"
+  }
+}

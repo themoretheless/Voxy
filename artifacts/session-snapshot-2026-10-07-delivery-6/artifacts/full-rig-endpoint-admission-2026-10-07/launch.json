@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-07T02:17:14.141473+00:00",
+  "pid": 90673,
+  "session_id": 19071,
+  "process_at_launch": "90673    00:10 Rs   /tmp/voxy-contact-derivatives-20261006/release/examples/body_motion_snapshot artifacts/full-rig-endpoint-admission-2026-10-07/capture.png artifacts/full-rig-endpoint-admission-2026-10-07/frames --cesium --contact --capture-steps=480 --tissue-regions=artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json",
+  "requested_steps": 480,
+  "requested_duration_s": 2,
+  "capture_node_state": true,
+  "status": "running; not qualified",
+  "native_executable_sha256": "017e474ea336705be30bab7c25f3380a1a0ddfbda1e3300616dae1b503917e27",
+  "source_sha256": {
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "4d4f27de7d2441e818a5722964b4f9bfdd0be321093c094d0f622556b4d7b9d9",
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "66eccd39eaceb8ee888deee97bd5ab233d4e14096e3cba17a5a65c763545531f",
+    "crates/physics/src/moisture.rs": "c628f01343bcf984ddc18fdd98256744fae0c696092ea68c978bf1230b193046",
+    "crates/physics/src/cohesive.rs": "4a2e78ae76570b33b8230b8ecf789b4dd9d7b752a0481fcb3af450830ce9ca4e",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "678cf73adc2c80ea476418b4daa52e01fe1696b3d2b3b60c512993b6c4fd09ff",
+    "artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json": "dd64b875e492dd31f0b8d4ba249e8076794e926ecfcb4b5e803286d82431227a"
+  },
+  "scope": "Current endpoint topology optimization plus prior allocation/topology changes; includes current cohesive/equilibrium source but fixture does not exercise drying. Full interval-energy rate unchanged."
+}

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-07T01:33:17.629919+00:00",
+  "process": "60406    00:08 Rs   /tmp/voxy-contact-derivatives-20261006/release/examples/body_motion_snapshot artifacts/full-rig-current-allocation-2026-10-07/capture.png artifacts/full-rig-current-allocation-2026-10-07/frames --cesium --contact --capture-steps=480 --tissue-regions=artifacts/character-bind-pose-2026-10-07/startup-three-source-pins-strict-energy-regions.json",
+  "session_id": 12591,
+  "requested_steps": 480,
+  "source": "Includes compensated material/gravity, factored kinetic, response and normal-stencil topology admission, discarded material-search allocation removal",
+  "executable_sha256": "6a6e8641a4a231c1b405c3f1fa705c9ad2e2e7c686af9e705a5ffefb34460995",
+  "prior_runtime_check": "Three steps byte-identical node/energy/CSV/PNG; independent native audit passed",
+  "full_clip_qualified": false,
+  "process_state": "confirmed live",
+  "no_processes_stopped": true
+}

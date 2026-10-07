@@ -1,0 +1,4 @@
+   Compiling cudarc v0.19.10
+    Checking libloading v0.9.0
+    Checking voxy_cuda v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_cuda)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.45s

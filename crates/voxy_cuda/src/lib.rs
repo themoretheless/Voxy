@@ -15,6 +15,7 @@ pub enum CudaError {
     InvalidProjectileInput,
     InvalidVoxelInput,
     InvalidWaterInput,
+    InvalidTissueSearchInput,
     SingularPair,
     NumericalOverflow,
     RenderViewOutOfRange,
@@ -90,6 +91,8 @@ pub struct CudaCompute {
     box_sweep: std::sync::Mutex<Option<cudarc::driver::CudaFunction>>,
     #[cfg(feature = "cuda")]
     water: std::sync::Mutex<Option<cudarc::driver::CudaFunction>>,
+    #[cfg(feature = "cuda")]
+    tissue_search: std::sync::Mutex<Option<[cudarc::driver::CudaFunction; 2]>>,
 }
 impl CudaCompute {
     /// Current bytes reserved by private device buffers and external imports.
@@ -282,6 +285,7 @@ impl CudaCompute {
                 voxel_regions: std::sync::Mutex::new(None),
                 box_sweep: std::sync::Mutex::new(None),
                 water: std::sync::Mutex::new(None),
+                tissue_search: std::sync::Mutex::new(None),
             })
         }
         #[cfg(not(feature = "cuda"))]
@@ -601,3 +605,5 @@ mod water;
 
 #[cfg(any(feature = "cuda", test))]
 mod budget;
+
+mod tissue_search;

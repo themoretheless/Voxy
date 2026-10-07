@@ -749,3 +749,72 @@ fn prepared_multicell_thermal_network_matches_independent_ode_with_opposing_flux
         report.attempts, report.accepted_intervals
     );
 }
+
+#[test]
+fn exact_nonzero_activity_equilibrium_preserves_all_inventories() {
+    for n in [1, 3, 129] {
+        let cells: Vec<_> = (0..n)
+            .map(|i| {
+                let capacity_kg = if i % 2 == 0 { 0.1 } else { 0.3 };
+                Cell {
+                    capacity_kg,
+                    water_kg: capacity_kg * 0.5,
+                }
+            })
+            .collect();
+        let mut body = Body::new(cells, vec![]).unwrap();
+        let mut vapor = VaporReservoir::new(0.75, 0.375, 2.4e6, 1e6).unwrap();
+        let before = format!("{body:?} {vapor:?}");
+        let links: Vec<_> = (0..n)
+            .map(|material_cell| VaporLink {
+                material_cell,
+                conductance_kg_s: 0.01,
+            })
+            .collect();
+        for _ in 0..10 {
+            let report = body.advance_vapor(1., &mut vapor, &links).unwrap();
+            assert!(report.material_water_change_kg.iter().all(|&x| x == 0.));
+            assert_eq!(report.vapor_water_change_kg, 0.);
+            assert_eq!(report.latent_exchange_j, 0.);
+            assert_eq!(report.mass_defect_kg, 0.);
+            assert_eq!(report.energy_defect_j, 0.);
+            assert_eq!(format!("{body:?} {vapor:?}"), before);
+        }
+    }
+}
+
+#[test]
+fn equilibrium_does_not_hide_invalid_operator_or_small_physical_flux() {
+    let mut body = Body::new(
+        vec![Cell {
+            capacity_kg: 1.,
+            water_kg: 0.5,
+        }],
+        vec![],
+    )
+    .unwrap();
+    let mut vapor = VaporReservoir::new(1., 0.5, 2.4e6, 1e6).unwrap();
+    let before = format!("{body:?} {vapor:?}");
+    let link = VaporLink {
+        material_cell: 0,
+        conductance_kg_s: f64::MAX,
+    };
+    assert!(body.advance_vapor(2., &mut vapor, &[link]).is_err());
+    assert_eq!(format!("{body:?} {vapor:?}"), before);
+    assert!(body.advance_vapor(0., &mut vapor, &[]).is_err());
+    assert_eq!(format!("{body:?} {vapor:?}"), before);
+    let mut vapor = VaporReservoir::new(1., 0.5 - 1e-6, 2.4e6, 1e6).unwrap();
+    let report = body
+        .advance_vapor(
+            1.,
+            &mut vapor,
+            &[VaporLink {
+                conductance_kg_s: 0.1,
+                ..link
+            }],
+        )
+        .unwrap();
+    let expected = 1e-7 / 1.2;
+    assert!(report.vapor_water_change_kg > 0.);
+    assert!((report.vapor_water_change_kg - expected).abs() < 1e-15);
+}

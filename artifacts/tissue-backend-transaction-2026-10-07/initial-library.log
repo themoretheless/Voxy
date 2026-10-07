@@ -1,0 +1,9 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+error[E0063]: missing field `search_backend` in initializer of `inertia::InertialBody`
+  --> crates/physics/src/biomechanics/inertia/assembly.rs:97:20
+   |
+97 |         let body = Self {
+   |                    ^^^^ missing `search_backend`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `physics` (lib test) due to 1 previous error

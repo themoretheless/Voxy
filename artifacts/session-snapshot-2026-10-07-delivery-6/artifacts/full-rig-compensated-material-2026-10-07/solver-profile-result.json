@@ -1,0 +1,14 @@
+{
+  "status": "one-second live native sampling observation; not a speed measurement",
+  "pid": 42743,
+  "main_thread_samples": 746,
+  "collapsed_leaf_sample_counts": {
+    "prescribed_response_geometry": 160,
+    "btree_insert": 118,
+    "rest_material_action": 89,
+    "ogden_response": 55,
+    "validate_faces": 25
+  },
+  "scope": "This snapshot suggests immutable topology/domain validation and repeated constitutive work are targets for measured optimization; no changed numerical policy or speedup claim.",
+  "audit_source_sha256": "df96196b19a04c35637eae3bf946eb3b097b2c3e232cbe02974ebefcc9419eb2"
+}

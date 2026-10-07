@@ -9,6 +9,35 @@ use glam::{DMat4, Mat4, Vec3};
 use std::io::Write;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 use voxy_render::{ModelAsset, ModelLimits, SceneMesh};
+fn cuda_tissue_selection(arguments: &[String]) -> Result<Option<(usize, usize)>, &'static str> {
+    let devices: Vec<_> = arguments
+        .iter()
+        .filter_map(|a| a.strip_prefix("--cuda-tissue-device="))
+        .collect();
+    let budgets: Vec<_> = arguments
+        .iter()
+        .filter_map(|a| a.strip_prefix("--cuda-tissue-budget-bytes="))
+        .collect();
+    if devices.len() > 1 || budgets.len() > 1 {
+        return Err("CUDA tissue device/budget specified more than once");
+    }
+    match (devices.first(), budgets.first()) {
+        (None, None) => Ok(None),
+        (Some(device), Some(budget)) => {
+            let device = device
+                .parse::<usize>()
+                .map_err(|_| "invalid CUDA tissue device ordinal")?;
+            let budget = budget
+                .parse::<usize>()
+                .map_err(|_| "invalid CUDA tissue byte budget")?;
+            if budget == 0 {
+                return Err("CUDA tissue byte budget must be positive");
+            }
+            Ok(Some((device, budget)))
+        }
+        _ => Err("CUDA tissue selection requires both device and byte budget"),
+    }
+}
 fn displayed_meshes(
     demo: &tissue_demo::TissueDemo,
     model: Option<&ModelAsset>,
@@ -635,6 +664,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cesium = remaining.iter().any(|arg| arg == "--cesium");
     let contact = remaining.iter().any(|arg| arg == "--contact");
     let wide_contact = remaining.iter().any(|arg| arg == "--wide-contact");
+    let cuda_tissue_selection = cuda_tissue_selection(&remaining)?;
+    if cuda_tissue_selection.is_some() && (!cesium || !contact) {
+        return Err("CUDA tissue search requires --cesium --contact".into());
+    }
     if wide_contact && !contact {
         return Err("--wide-contact requires --contact".into());
     }
@@ -726,9 +759,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             && arg != "--wide-contact"
             && !arg.starts_with("--capture-steps=")
             && !arg.starts_with("--tissue-regions=")
+            && !arg.starts_with("--cuda-tissue-device=")
+            && !arg.starts_with("--cuda-tissue-budget-bytes=")
     }) {
         return Err(
-            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact] [--capture-steps=N] [--tissue-regions=MANIFEST.json]"
+            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact] [--capture-steps=N] [--tissue-regions=MANIFEST.json] [--cuda-tissue-device=N --cuda-tissue-budget-bytes=N]"
                 .into(),
         );
     }
@@ -740,6 +775,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("only one frame directory is supported".into());
     }
     let frame_directory = directories.first().map(std::path::PathBuf::from);
+    // Fail explicit device selection before renderer allocation or capture creation.
+    let cuda_tissue_compute = cuda_tissue_selection
+        .map(|(ordinal, budget)| {
+            let compute = std::sync::Arc::new(voxy_cuda::CudaCompute::new(ordinal, budget)?);
+            println!("TISSUE CUDA search device {:?}", compute.capabilities()?);
+            Ok::<_, voxy_cuda::CudaError>(compute)
+        })
+        .transpose()?;
     if let Some(directory) = &frame_directory {
         std::fs::create_dir_all(directory)?;
     }
@@ -790,6 +833,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if imported.is_some() {
         demo.assemble_regions()?;
         println!("TISSUE assembled regional dynamics into one global owner");
+    }
+    if let Some(compute) = &cuda_tissue_compute {
+        demo.set_tissue_search_backend(compute.tissue_search_backend())?;
+        println!("TISSUE CUDA rest-material search selected; nonlinear forces/work remain native");
     }
     let skin_binding = if let Some(model) = &imported {
         let pose = model.sample_pose_phase64(reference_clip, 0.)?;
@@ -1155,6 +1202,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod collision_tests {
+    #[test]
+    fn explicit_cuda_tissue_selection_requires_unique_device_and_finite_budget() {
+        let args = |s: &[&str]| s.iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        assert_eq!(super::cuda_tissue_selection(&[]).unwrap(), None);
+        assert_eq!(
+            super::cuda_tissue_selection(&args(&[
+                "--cuda-tissue-device=0",
+                "--cuda-tissue-budget-bytes=1024"
+            ]))
+            .unwrap(),
+            Some((0, 1024))
+        );
+        for invalid in [
+            vec!["--cuda-tissue-device=0"],
+            vec!["--cuda-tissue-budget-bytes=1024"],
+            vec!["--cuda-tissue-device=0", "--cuda-tissue-budget-bytes=0"],
+            vec!["--cuda-tissue-device=-1", "--cuda-tissue-budget-bytes=1024"],
+            vec!["--cuda-tissue-device=0", "--cuda-tissue-budget-bytes=nan"],
+            vec![
+                "--cuda-tissue-device=0",
+                "--cuda-tissue-device=1",
+                "--cuda-tissue-budget-bytes=1024",
+            ],
+            vec![
+                "--cuda-tissue-device=0",
+                "--cuda-tissue-budget-bytes=1",
+                "--cuda-tissue-budget-bytes=2",
+            ],
+        ] {
+            assert!(super::cuda_tissue_selection(&args(&invalid)).is_err());
+        }
+    }
+
     use super::*;
     use crate::tissue_demo::TissueDemo;
     use std::sync::Arc;

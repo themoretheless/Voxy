@@ -1,0 +1,13 @@
+{
+  "status": "exact nonzero moisture equilibrium fixed and verified",
+  "passed": 55,
+  "failed": 0,
+  "ignored": 3,
+  "reproduced_before_fix": true,
+  "scope": "Exact zero-flux state on every active edge/bath, zero source; no tolerance, no suppression of near-equilibrium flux.",
+  "fixtures": "Ten repeated exchanges in 1, 3 and 129 material-cell vapor networks; three partial-damage volumetric preview steps; overflow and invalid dt rollback; independent nonzero small-flux formula.",
+  "sha256": {
+    "qualified-regressions.log": "bba69b98ed5707b110526631ccf6fd200b4d4b835ebd9b15de68458c123e5fff",
+    "preview.log": "9a1d1a91f4897d4250cfe4245fa8ac166a7cfbc17f27f881939c446aec10abb6"
+  }
+}

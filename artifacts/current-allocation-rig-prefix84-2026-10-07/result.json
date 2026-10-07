@@ -1,0 +1,20 @@
+{
+  "status": "native prefix audit passed",
+  "runtime_pid": 60406,
+  "requested_steps": 480,
+  "committed_steps_audited": 84,
+  "time_s": 0.35,
+  "energy_records": 85,
+  "node_checkpoints": 8,
+  "response_only_baseline_byte_parity": {
+    "energy": true,
+    "nodes": true
+  },
+  "full_clip_qualified": false,
+  "runtime_scope": "both topology optimizations and removed discarded inertia allocation; predates cohesive drying changes",
+  "sha256": {
+    "energy.jsonl": "3c8452a988891b98af3fe5ab8e96d1a8d6c1919946f1fd47b08ebb7b476441e3",
+    "native-audit.log": "0a321cb5a93a6b0a435cd17c9a9fe3684d2d4a19a47ef8e2883f452821391106",
+    "nodes.jsonl": "a4c755645e7c1e5615ad9c61bab96b4a1b73c419e0246a7856a92b22cff19814"
+  }
+}

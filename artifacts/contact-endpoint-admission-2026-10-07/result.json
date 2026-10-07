@@ -1,0 +1,33 @@
+{
+  "status": "duplicate endpoint topology admission removed; regressions passed",
+  "regressions_passed": 185,
+  "benchmark_passed": 1,
+  "median_full_second_endpoint_s": 0.0320996665,
+  "median_geometry_only_second_endpoint_s": 0.0035029375,
+  "isolated_elapsed_reduction_percent": 89.08730874197711,
+  "benchmark_scope": "1024 faces, 1000 second-endpoint admissions, eight balanced trials; not full rig performance",
+  "production_paths": [
+    "prepared path response",
+    "prepared path normal stencils",
+    "indexed path rejection"
+  ],
+  "invariants": "Same immutable face slice and equal endpoint vertex count; full start topology and every endpoint/sample finite-coordinate/index/area checks retained.",
+  "native_full_rig_parity_pending": true,
+  "sha256": {
+    "benchmark.log": "2d129852be5d42c0d03cb212fc06cf02104b850bba165d9e18ec4149874ba9db",
+    "contact-regressions.log": "a6ff17fb0814a83706c7a8cd1a6c7e9d64239359464c147227faa4445cd541d3",
+    "library.log": "1c72f3e52fe9f49085c3b454ccb86e6d442eb420ef4c866e737ba03ee16e317a"
+  },
+  "native_short_steps": 3,
+  "native_short_byte_parity": {
+    "nodes.json": true,
+    "nodes.jsonl": true,
+    "energy.jsonl": true,
+    "csv": true,
+    "png": true
+  },
+  "native_short_independent_audit": "passed",
+  "full_480_step_clip_qualified": false,
+  "initial_command_error": "First run omitted VOXY_CAPTURE_NODE_STATE; rerun with capture enabled. Both initial logs retained.",
+  "native_executable_sha256": "017e474ea336705be30bab7c25f3380a1a0ddfbda1e3300616dae1b503917e27"
+}
