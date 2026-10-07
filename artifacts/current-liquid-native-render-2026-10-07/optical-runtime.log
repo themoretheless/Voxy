@@ -1,0 +1,16 @@
+LIQUID GPU adapter=Apple M4 Max backend=Metal device_type=IntegratedGpu
+OPTICAL FILM frame=0 cells=0
+OPTICAL_EFFECT frame=0 left_pixels=0 right_pixels=0
+frame=0: blue_pixels=0, gold_pixels=0
+OPTICAL FILM frame=1 cells=0
+OPTICAL_EFFECT frame=1 left_pixels=544 right_pixels=1362
+frame=1: blue_pixels=0, gold_pixels=0
+OPTICAL FILM frame=2 cells=0
+OPTICAL_EFFECT frame=2 left_pixels=1293 right_pixels=1989
+frame=2: blue_pixels=0, gold_pixels=106
+FINITE SOURCE 0: remaining_mass_kg=95.00000000000011 emitted_mass_kg=5 reserve_j=6276994.375002855 emitted_energy_j=6276005.343808897 energy_defect_j=0
+FINITE SOURCE 1: remaining_mass_kg=95.9999999999999 emitted_mass_kg=4.0000000000000036 reserve_j=7532195.5000014445 emitted_energy_j=5020804.320023588 energy_defect_j=0
+OPTICAL FILM frame=3 cells=205
+OPTICAL_EFFECT frame=3 left_pixels=3607 right_pixels=4778
+frame=3: blue_pixels=0, gold_pixels=0
+LIQUID SNAPSHOT PASS: artifacts/current-liquid-native-render-2026-10-07/finite-impact-optical.png

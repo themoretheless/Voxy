@@ -607,3 +607,4 @@ mod water;
 mod budget;
 
 mod tissue_search;
+pub use tissue_search::is_tissue_search_backend_failure;

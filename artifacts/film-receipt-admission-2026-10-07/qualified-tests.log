@@ -1,0 +1,199 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 4 warnings
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: function `start_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:21:15
+   |
+21 | pub(crate) fn start_refinement_diagnostics() {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `take_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:24:15
+   |
+24 | pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `body_volumes_m3` is never used
+   --> crates/voxy_app/src/tissue_demo.rs:535:19
+    |
+268 | impl TissueDemo {
+    | --------------- method in this implementation
+...
+535 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets` and `set_strain_fixture` are never used
+    --> crates/voxy_app/src/female_demo.rs:199:19
+     |
+ 195 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 199 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1018 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib test) generated 5 warnings
+    Finished `release` profile [optimized] target(s) in 24.98s
+     Running unittests src/lib.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/voxy_app-0f54d6699ef5f60d)
+
+running 26 tests
+test surface_film_preview::atomic_frame_profile::actual_body_atomic_frame_profile ... ignored, paired release full-body geometry/source/transport benchmark
+test surface_film_preview::body_remap_tests::current_refined_body_transfer_preserves_wet_foot_source_history ... ignored, requires generated unadopted refinement assets; full-model transfer check
+test surface_film_preview::checkpoint_restore_tests::restore_actual_native_body_capture ... ignored, requires a preserved actual native film capture path
+test surface_film_preview::tests::body_deformation_with_sources_preserves_mass_budget ... ignored, full body moving-surface source mass-budget study
+test surface_film_preview::tests::body_gravity_transport_spatial_refinement ... ignored, expensive full-body spatial refinement study
+test surface_film_preview::tests::body_mesh_temporal_convergence_and_mass_budget ... ignored, full body temporal convergence study; writes measured report
+test surface_film_preview::invalid_advance_tests::invalid_contact_receipt_rolls_back_successful_geometry_and_source_candidate ... ok
+test surface_film_preview::tests::independent_sources_add_the_sum_of_their_mass_inputs ... ok
+test surface_film_preview::body_remap_tests::refinement_transfer_welds_seams_and_preserves_volume_history ... ok
+test surface_film_preview::invalid_advance_tests::invalid_source_inventory_rejects_before_moving_substrate_or_adding_liquid ... ok
+test surface_film_preview::tests::configured_contact_angle_changes_potential_without_seeding_mass ... ok
+test surface_film_preview::invalid_advance_tests::invalid_timestep_and_substrate_preserve_geometry_mass_and_sources ... ok
+test surface_film_preview::invalid_advance_tests::failed_contact_preserves_film_and_source_receipts ... ok
+test surface_film_preview::tests::layer_uses_solver_thickness_and_preserves_substrate ... ok
+test surface_film_preview::tests::moving_source_retains_existing_liquid_and_changes_only_new_input ... ok
+test surface_film_preview::checkpoint_restore_tests::malformed_restore_does_not_change_existing_state ... ok
+test surface_film_preview::tests::source_distribution_is_invariant_under_local_refinement ... ok
+test surface_film_preview::tests::clipped_brush_distribution_converges_under_refinement ... ok
+test surface_film_preview::tests::snapshot_contains_current_geometry_distribution_and_source_history ... ok
+test surface_film_preview::checkpoint_restore_tests::serialized_restore_preserves_state_and_continuation ... ok
+test surface_film_preview::tests::preview_self_contact_moves_liquid_and_stops_after_separation ... ok
+test surface_film_preview::tests::body_morph_surface_area_quality_matrix ... ok
+test surface_film_preview::unsupported_body_remap_tests::unsupported_wet_surface_rejects_without_dropping_mass ... ok
+test surface_film_preview::body_remap_tests::repaired_preview_transfer_preserves_running_source_counters ... ok
+test surface_film_preview::body_remap_tests::actual_body_correspondence_preserves_mass_in_both_directions ... ok
+test surface_film_preview::body_remap_tests::repaired_body_correspondence_runs_in_actual_solver ... ok
+
+test result: ok. 20 passed; 0 failed; 6 ignored; 0 measured; 257 filtered out; finished in 52.67s
+

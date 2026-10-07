@@ -132,34 +132,6 @@ fn symmetric_pair_time_refinement_matches_discrete_fourier_mode() {
     }
 }
 #[test]
-fn spatial_refinement_matches_continuum_heat_equation() {
-    let mut previous = None;
-    for n in [8, 16, 32] {
-        let mut g = wave(n);
-        let initial = g.clone();
-        let c = GasGridHeatControl {
-            conductivity: 0.2,
-            max_exchange_number: 0.005,
-            boundaries: [GasGridBoundary::Periodic; 3],
-            ..Default::default()
-        };
-        g.conduct_heat(0.02, c).unwrap();
-        let decay = (-0.1 * (2.0 * std::f64::consts::PI).powi(2) * 0.02).exp();
-        let error = g
-            .cells()
-            .iter()
-            .zip(initial.cells())
-            .map(|(a, b)| (a.temperature - 2.0 - (b.temperature - 2.0) * decay).abs())
-            .sum::<f64>()
-            / n as f64;
-        eprintln!("heat mesh: n={n}, l1_error={error}");
-        if let Some(old) = previous {
-            assert!(old / error > 3.5, "ratio={}", old / error);
-        }
-        previous = Some(error);
-    }
-}
-#[test]
 fn late_substep_budget_and_invalid_conductivity_leave_every_cell_unchanged() {
     let mut g = pair();
     let before = g.clone();
@@ -178,4 +150,74 @@ fn late_substep_budget_and_invalid_conductivity_leave_every_cell_unchanged() {
     let r = g.conduct_heat(0.2, c).unwrap();
     assert_eq!(r, Default::default());
     assert_eq!(g, before);
+}
+
+#[test]
+fn spatial_refinement_matches_continuum_heat_equation() {
+    let duration = 0.2;
+    let conductivity = 0.1;
+    let density = 1.;
+    let cv = 2.;
+    let diffusivity = conductivity / (density * cv);
+    let mut errors = Vec::new();
+    for n in [8, 16, 32, 64] {
+        let dx = 1. / n as f64;
+        let wave = std::f64::consts::TAU;
+        // Exact cell-average of the same continuous initial cosine profile.
+        let cell_average = (std::f64::consts::PI * dx).sin() / (std::f64::consts::PI * dx);
+        let mut gas = FiniteDropletGasGrid::new(
+            [0.; 3],
+            [dx, 1., 1.],
+            [n, 1, 1],
+            (0..n)
+                .map(|i| VaporCell {
+                    mass: density * dx,
+                    volume: dx,
+                    temperature: 300. + 10. * cell_average * (wave * (i as f64 + 0.5) * dx).cos(),
+                    velocity: [0.; 3],
+                    specific_heat_cv: cv,
+                })
+                .collect(),
+        )
+        .unwrap();
+        let before = gas.totals().unwrap();
+        // Reduce splitting error together with spatial cell size.
+        let steps = (duration * diffusivity / (0.02 * dx * dx)).ceil() as usize;
+        for _ in 0..steps {
+            gas.conduct_heat(
+                duration / steps as f64,
+                GasGridHeatControl {
+                    conductivity,
+                    max_exchange_number: 0.05,
+                    boundaries: [GasGridBoundary::Periodic; 3],
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        }
+        let decay = (-diffusivity * wave * wave * duration).exp();
+        let error = gas
+            .cells()
+            .iter()
+            .enumerate()
+            .map(|(i, cell)| {
+                let exact =
+                    300. + 10. * cell_average * decay * (wave * (i as f64 + 0.5) * dx).cos();
+                (cell.temperature - exact).abs() * dx
+            })
+            .sum::<f64>();
+        assert!(error.is_finite() && error > 0.);
+        assert!((gas.totals().unwrap().thermal_energy - before.thermal_energy).abs() < 1e-8);
+        assert_eq!(gas.totals().unwrap().mass, before.mass);
+        errors.push(error);
+        eprintln!(
+            "GAS_FOURIER_REFINEMENT cells={n} steps={steps} l1_temperature_error_k={error:.17e}"
+        );
+    }
+    for pair in errors.windows(2) {
+        assert!(
+            pair[1] < pair[0] / 3.5,
+            "Fourier diffusion did not converge: {errors:?}"
+        );
+    }
 }

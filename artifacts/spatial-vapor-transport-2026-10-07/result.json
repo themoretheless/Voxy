@@ -1,0 +1,11 @@
+{
+  "steps": 50,
+  "duration_s": 0.05,
+  "vapor_mass_change_kg": 0.00010587295201371083,
+  "max_independent_energy_error_j": 4.263256414560601e-14,
+  "composed_flow_heat_phase_tests_passed": 5,
+  "late_failure_changes_gas_then_rolls_back": true,
+  "pure_vapor_only": true,
+  "splitting_order": 1,
+  "carrier_air_or_nucleation": false
+}

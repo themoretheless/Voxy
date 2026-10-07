@@ -1,0 +1,15 @@
+{
+  "pid": 90673,
+  "committed_steps": 84,
+  "requested_steps": 480,
+  "time_s": 0.35,
+  "native_audit_passed": true,
+  "previous_allocation_prefix_exact_node_and_energy_parity": true,
+  "full_clip_qualified": false,
+  "cuda_runtime": false,
+  "sha256": {
+    "energy.jsonl": "3c8452a988891b98af3fe5ab8e96d1a8d6c1919946f1fd47b08ebb7b476441e3",
+    "native-audit.log": "3ab1eab5798d1ae4be4fc9ba3a7d67ac55ba50c152c5f922020b013cc7ed9a1a",
+    "nodes.jsonl": "a4c755645e7c1e5615ad9c61bab96b4a1b73c419e0246a7856a92b22cff19814"
+  }
+}

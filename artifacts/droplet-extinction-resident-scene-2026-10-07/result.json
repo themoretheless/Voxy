@@ -1,0 +1,20 @@
+{
+  "gpu": "Apple M4 Max/Metal",
+  "pixels": 16384,
+  "maximum_difference_from_cpu_scene_upload_path": 1.7881393432617188e-07,
+  "scene_color_depth_cpu_upload": false,
+  "dispatch": "8x8 two-dimensional pixel grid",
+  "texture_type_validation_passed": true,
+  "scene_pipeline_reload_preserves_layout": true,
+  "uncomputed_readback_rejected": true,
+  "default_compute_smoke_exact_results": 1042,
+  "final_output_readback_for_qualification": true,
+  "direct_presentation_of_output_buffer": false,
+  "in_scattering": false,
+  "nvidia_execution": false,
+  "source_sha256": {
+    "crates/voxy_render/src/compute.rs": "d4e06f3a018ce8aa8a2bc8ad599cd7467897de6b5e7b35fd3c816fd24d1e650b",
+    "crates/voxy_render/src/droplet_extinction_scene.wgsl": "a7bf5439722029b7a49e0271ca43e798c984b18fbad62de3acbfd52b47e8822e",
+    "crates/voxy_render/src/droplet_extinction.rs": "b4e94a25c36c7c830d508b3b32c47a25f29b9615d0236cc895c0d6643082aa8e"
+  }
+}

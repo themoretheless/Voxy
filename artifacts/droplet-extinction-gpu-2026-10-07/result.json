@@ -1,0 +1,18 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "rays": 131,
+  "maximum_optical_depth_error": 1.7575466082497826e-08,
+  "maximum_transmission_error": 4.2599701544077107e-08,
+  "wgsl_validation_passed": true,
+  "existing_compute_ownership_and_readback_used": true,
+  "invalid_budget_nan_truncated_and_uncomputed_output_rejected": true,
+  "production_optimized_traversal": false,
+  "in_scattering": false,
+  "nvidia_execution": false,
+  "source_sha256": {
+    "crates/voxy_render/src/droplet_extinction.rs": "625a4ecaf90d470bf1fbbb9f8f61899b35d91918545ed0425d6e9568e9bcbe62",
+    "crates/voxy_render/src/droplet_extinction.wgsl": "1e23ff299ae334484ffc1bbadb7d28e4792dfc6d6b8b31b41bf76c57dd78ed71",
+    "crates/voxy_render/examples/droplet_extinction_smoke.rs": "33e407a32138ad65a913bdeadfd2942f60de363057e6b774d559486abbb7fc47"
+  }
+}

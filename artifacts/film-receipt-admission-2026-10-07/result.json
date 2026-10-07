@@ -1,0 +1,6 @@
+{
+  "receipt_failure_tests_passed": 4,
+  "source_and_contact_receipts_publish_atomically": true,
+  "relative_mass_budget": 1e-09,
+  "extra_clone_performance_qualified": false
+}

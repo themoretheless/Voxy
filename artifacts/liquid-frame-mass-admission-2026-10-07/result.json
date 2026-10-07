@@ -1,0 +1,11 @@
+{
+  "tests_passed": 8,
+  "tests_ignored": 1,
+  "per_step_fluid_plus_film_mass_gate": true,
+  "per_step_finite_source_mass_gate": true,
+  "absolute_mass_budget_kg": 1e-09,
+  "corrupted_fluid_accounting_modes": 4,
+  "corrupted_source_modes": 2,
+  "full_frame_rollback_verified": true,
+  "full_fluid_physics_qualified": false
+}

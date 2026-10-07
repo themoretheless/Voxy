@@ -1,0 +1,8 @@
+{
+  "native_surface_film_passed": 25,
+  "native_atomic_contact_passed": 4,
+  "preview_rejection_passed": 4,
+  "extra_preview_film_clone_removed": true,
+  "post_rejection_continuation_exact_parity": true,
+  "measured_speedup": null
+}

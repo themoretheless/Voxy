@@ -226,3 +226,16 @@ pub use planar_reflection::{
 
 mod planar_temporal;
 pub use planar_temporal::{PlanarTemporalError, PlanarTemporalFrame, PlanarTemporalPipeline};
+
+mod droplet_extinction;
+pub use droplet_extinction::{
+    DROPLET_EXTINCTION_REFERENCE_SHADER, DROPLET_EXTINCTION_SHADER, DropletExtinctionComputeInput,
+    ExtinctionGridView,
+};
+
+pub use droplet_extinction::{
+    DROPLET_EXTINCTION_COMPOSITE_SHADER, DropletExtinctionCompositeInput,
+    extinction_segments_from_depth,
+};
+
+pub use droplet_extinction::{DROPLET_EXTINCTION_SCENE_SHADER, DropletExtinctionSceneInput};

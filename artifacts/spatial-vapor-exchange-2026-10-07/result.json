@@ -1,0 +1,11 @@
+{
+  "spatial_tests_passed": 3,
+  "evaporation_condensation_verified": true,
+  "shared_and_separate_cells_verified": true,
+  "exact_ordered_pair_parity": true,
+  "independent_global_conservation_verified": true,
+  "late_failure_full_rollback_verified": true,
+  "carrier_air_mixture": false,
+  "fog_nucleation": false,
+  "fog_rendering": false
+}

@@ -1,0 +1,55 @@
+    Blocking waiting for file lock on build directory
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 27.37s
+     Running tests/surface_film.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/surface_film-018a5359f2d1e4e2)
+
+running 27 tests
+test concave_fold_accumulates_film_by_capillarity_without_mass_loss ... ignored, expensive anisotropic fold convergence study
+test gravity_substep_reuse_benchmark ... ignored, paired release benchmark for internal gravity reuse
+test atomic_frame_rejects_post_source_overflow_without_changing_geometry_or_mass ... ok
+test automatic_bridges_require_proximity_opposed_faces_and_matching_density ... ok
+test conservative_remap_preserves_mass_and_uniform_refinement_thickness ... ok
+test bridge_exchange_is_invariant_under_planar_mesh_refinement ... ok
+test contact_exchange_limits_multiple_receivers_and_preserves_total_volume ... ok
+test conservative_remap_rejects_incomplete_and_invalid_maps_without_mutation ... ok
+test fixed_strip_measurement_clips_partial_triangles ... ok
+test deposit_receipt_tracks_actual_growth_and_late_unresolved_addition_rolls_back ... ok
+test geometry_motion_retains_mass_and_invalid_input_is_atomic ... ok
+test gravity_flux_uses_cross_edge_distance_on_skew_cells ... ok
+test material_edit_allows_roundoff_in_dry_cells_without_losing_bulk_mass ... ok
+test material_replacement_conserves_mass_and_rejects_invalid_edits ... ok
+test gravity_parallel_to_shared_edge_has_no_spurious_cross_edge_flow ... ok
+test driving_pressure_matches_hydrostatic_potential_and_is_read_only ... ok
+test equilibrium_and_wetting_are_conservative ... ok
+test gravity_moves_film_down_and_retains_volume ... ok
+test precursor_wetting_counts_added_liquid_and_keeps_uniform_layer_in_equilibrium ... ok
+test self_bridges_require_film_to_span_gap_and_follow_geometry ... ok
+test self_contact_excludes_shared_vertices_and_rejects_invalid_links_atomically ... ok
+test self_contacts_share_a_limited_donor_without_losing_mass ... ok
+test sources_are_explicit_and_atomic ... ok
+test wetting_diffusion_converges_to_analytic_two_cell_solution ... ok
+test substrate_curvature_converges_on_anisotropic_cylindrical_graph ... ok
+test self_contact_exchange_converges_to_analytic_uniform_plate_solution ... ok
+test self_contact_uniform_plate_transfer_is_mesh_invariant ... ok
+
+test result: ok. 25 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/surface_film_atomic_contact.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/surface_film_atomic_contact-925986334bb298e3)
+
+running 4 tests
+test failed_contact_rolls_back_geometry_source_and_transport ... ok
+test successful_atomic_contact_matches_sequential_physics_and_source_mass ... ok
+test owner_admission_failure_preserves_cached_contact_and_subsequent_physics ... ok
+test moving_surfaces_exchange_only_during_contact_and_preserve_source_mass ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

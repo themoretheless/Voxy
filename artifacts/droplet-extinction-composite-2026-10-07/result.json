@@ -1,0 +1,12 @@
+{
+  "physical_gpu": "Apple M4 Max/Metal",
+  "depth_fixture_opaque_foreground_unattenuated": true,
+  "background_transmission": 0.7304026910486455,
+  "alpha_preserved": true,
+  "linear_light_rgb_composition": true,
+  "camera_projection_unit_test_passed": true,
+  "gpu_traversal_rays": 1158,
+  "actual_scene_depth_texture_integration": false,
+  "in_scattering": false,
+  "nvidia_execution": false
+}

@@ -1,0 +1,8 @@
+{
+  "feature_passed": 23,
+  "disabled_passed": 25,
+  "shared_occupied_budget_rejected": true,
+  "repeated_probe_retained_bytes": 0,
+  "persistent_capacity_guarantee": false,
+  "nvidia_execution_verified": false
+}

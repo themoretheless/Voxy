@@ -1,0 +1,16 @@
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/voxy_render/src/droplet_extinction.rs:14:1
+   |
+14 | / pub struct ExtinctionGridView<'a> {
+15 | |     pub origin: [f64; 3],
+16 | |     pub spacing: [f64; 3],
+17 | |     pub shape: [usize; 3],
+18 | |     pub extinction_m_inverse: &'a [f64],
+19 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `voxy_render` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.27s

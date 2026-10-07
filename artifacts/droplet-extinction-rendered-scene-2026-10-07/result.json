@@ -1,0 +1,15 @@
+{
+  "gpu": "Apple M4 Max/Metal",
+  "actual_scene_color_depth_readback": true,
+  "pixels": 16384,
+  "unchanged_foreground_pixels": 4992,
+  "attenuated_background_pixels": 1560,
+  "maximum_independent_linear_rgb_error": 1.261564980259422e-07,
+  "gpu_validation_passed": true,
+  "fully_gpu_resident_scene_path": false,
+  "in_scattering": false,
+  "sha256": {
+    "comparison.png": "ab2ccac3b48bcb2cb8ed31acd6ed6829c09f732aa7896fd39cc69dfdcb8c3645",
+    "runtime.log": "196ce1bcfbf51dcfdca8dd36cd340f8bfd98515a62e13255be49007ca246bcb5"
+  }
+}

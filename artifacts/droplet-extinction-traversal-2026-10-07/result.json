@@ -1,0 +1,15 @@
+{
+  "backend": "Metal",
+  "physical_adapter": "Apple M4 Max",
+  "cells": 105,
+  "heterogeneous_3d_rays": 1027,
+  "maximum_native_optical_depth_error": 4.598602123540019e-07,
+  "maximum_dense_gpu_optical_depth_error": 1.1920928955078125e-07,
+  "analytic_rays": 131,
+  "validation_scopes_passed": true,
+  "shader_traversal": "bounded grid-plane traversal",
+  "measured_speedup": null,
+  "scene_composition": false,
+  "nvidia_qualified": false,
+  "shader_sha256": "66f7a83a19d019c0ca941c68271bf3b6f47a7e006827d36f4d944120cf1cc6a9"
+}

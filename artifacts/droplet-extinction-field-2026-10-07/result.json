@@ -1,0 +1,11 @@
+{
+  "optics_tests_passed": 2,
+  "spatial_vapor_tests_passed": 6,
+  "gas_grid_tests_passed": 6,
+  "physical_cross_section_binning": true,
+  "analytic_segment_transmission_verified": true,
+  "physical_owners_unchanged": true,
+  "gpu_fog_renderer": false,
+  "calibrated_scattering": false,
+  "cpu_reference_complexity": "all grid cells per segment"
+}

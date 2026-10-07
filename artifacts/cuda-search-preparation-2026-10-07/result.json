@@ -1,0 +1,11 @@
+{
+  "feature_tests_passed": 22,
+  "feature_tests_ignored": 4,
+  "disabled_tests_passed": 24,
+  "disabled_tests_ignored": 2,
+  "preparation_checks_configured_capacity": true,
+  "kernel_loading_before_predictor_admission": true,
+  "concurrent_budget_reserved_during_preparation": false,
+  "persistent_device_inputs": false,
+  "nvidia_execution_verified": false
+}

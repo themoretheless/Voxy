@@ -82,6 +82,8 @@ pub(crate) struct LiquidDemo {
     emitters: [PulsedEmitter; 2],
     finite_sources: Option<[(physics::liquid::TranslatingBody, f64); 2]>,
     emitted_mass: [f64; 2],
+    initial_liquid_mass: [f64; 2],
+    initial_source_mass: [f64; 2],
     initial_source_energy_j: [f64; 2],
     emitted_source_energy_j: [f64; 2],
     emitted_source_momentum: [[f64; 3]; 2],
@@ -146,8 +148,12 @@ impl LiquidDemo {
             emitter.density = material.rest_density;
             Ok(emitter)
         };
+        let liquids = [make(Material::WATER)?, make(Material::OIL)?];
+        let initial_liquid_mass = liquids.each_ref().map(|liquid| liquid.mass());
         Ok(Self {
-            liquids: [make(Material::WATER)?, make(Material::OIL)?],
+            liquids,
+            initial_liquid_mass,
+            initial_source_mass: [0.; 2],
             emitters: [source(Material::WATER)?, source(Material::OIL)?],
             finite_sources: None,
             emitted_mass: [0.0; 2],
@@ -178,6 +184,12 @@ impl LiquidDemo {
         for emitter in &mut self.emitters {
             emitter.nozzle_radius = 0.;
         }
+        self.initial_source_mass = self
+            .finite_sources
+            .as_ref()
+            .unwrap()
+            .each_ref()
+            .map(|(body, _)| body.mass);
         self.initial_source_energy_j = [energy_j; 2];
     }
     pub(crate) fn new_finite_impacts() -> Result<Self, physics::liquid::Error> {
@@ -269,6 +281,7 @@ impl LiquidDemo {
         let (water, water_film) = make(Material::WATER)?;
         let (oil, oil_film) = make(Material::OIL)?;
         demo.liquids = [water, oil];
+        demo.initial_liquid_mass = demo.liquids.each_ref().map(|liquid| liquid.mass());
         demo.films = Some([water_film, oil_film]);
         for emitter in &mut demo.emitters {
             emitter.template.field = Some(LiquidField {
@@ -518,6 +531,24 @@ impl LiquidDemo {
                             0.001,
                         )
                         .map_err(|_| physics::liquid::Error::NumericalFailure)?;
+                }
+            }
+            for index in 0..2 {
+                let film_mass = self.films.as_ref().map_or(0., |films| {
+                    films[index].thermal.mixture().film().total_mass()
+                });
+                let expected = self.initial_liquid_mass[index] + self.emitted_mass[index];
+                let mass = self.liquids[index].mass() + film_mass;
+                if !expected.is_finite() || !mass.is_finite() || (mass - expected).abs() > 1e-9 {
+                    return Err(physics::liquid::Error::NumericalFailure);
+                }
+                if let Some(sources) = &self.finite_sources {
+                    let source_mass = sources[index].0.mass;
+                    let defect =
+                        source_mass + self.emitted_mass[index] - self.initial_source_mass[index];
+                    if !source_mass.is_finite() || !defect.is_finite() || defect.abs() > 1e-9 {
+                        return Err(physics::liquid::Error::NumericalFailure);
+                    }
                 }
             }
             if self.films.is_some() {
@@ -1255,6 +1286,38 @@ mod tests {
                 GasGridWallViscosityReport::default()
             );
             assert_eq!(film.flight, DropletFlightReport::default());
+        }
+    }
+    #[test]
+    fn corrupted_mass_inventory_rejects_entire_nominal_frame() {
+        for mut demo in [
+            LiquidDemo::new().unwrap(),
+            LiquidDemo::new_impacts().unwrap(),
+            LiquidDemo::new_finite_sources().unwrap(),
+            LiquidDemo::new_finite_impacts().unwrap(),
+        ] {
+            demo.emitted_mass[1] += 0.001;
+            let before = format!("{demo:?}");
+            assert!(matches!(
+                demo.advance(1. / 120.),
+                Err(physics::liquid::Error::NumericalFailure)
+            ));
+            assert_eq!(format!("{demo:?}"), before);
+        }
+    }
+    #[test]
+    fn corrupted_finite_source_mass_rejects_before_publishing_fluid() {
+        for mut demo in [
+            LiquidDemo::new_finite_sources().unwrap(),
+            LiquidDemo::new_finite_impacts().unwrap(),
+        ] {
+            demo.finite_sources.as_mut().unwrap()[1].0.mass -= 0.001;
+            let before = format!("{demo:?}");
+            assert!(matches!(
+                demo.advance(1. / 120.),
+                Err(physics::liquid::Error::NumericalFailure)
+            ));
+            assert_eq!(format!("{demo:?}"), before);
         }
     }
     #[test]

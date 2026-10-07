@@ -1,0 +1,25 @@
+{
+  "tests_passed": 6,
+  "duration_s": 0.2,
+  "samples": [
+    {
+      "cells": 16,
+      "steps": 129,
+      "l1_temperature_error_k": 0.02178424471355811
+    },
+    {
+      "cells": 32,
+      "steps": 513,
+      "l1_temperature_error_k": 0.005499633711671947
+    },
+    {
+      "cells": 64,
+      "steps": 2049,
+      "l1_temperature_error_k": 0.0014179564495195862
+    }
+  ],
+  "analytical_reference": "Tcell=300+10*sinc(pi*dx)*cos(2*pi*xcell)*exp(-alpha*(2*pi)^2*t)",
+  "diffusivity_m2_s": 0.05,
+  "refinement_error_ratio": 15.363126787807035,
+  "full_coupled_cloud_spatial_convergence": false
+}

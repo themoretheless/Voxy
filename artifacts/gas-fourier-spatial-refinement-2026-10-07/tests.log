@@ -1,0 +1,34 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.93s
+     Running tests/liquid_gas_grid_heat.rs (/tmp/voxy-contact-derivatives-20261006/release/deps/liquid_gas_grid_heat-1cf72d143baaaa69)
+
+running 7 tests
+heat mesh: n=8, l1_error=0.00023438423747925222
+heat time: steps=8, max_error=0.000052106842170690504
+heat mesh: n=16test periodic_two_cell_ring_has_two_distinct_conducting_faces ... ok
+test late_substep_budget_and_invalid_conductivity_leave_every_cell_unchanged ... ok
+, l1_error=0.test pair_semigroup_and_maximum_principle_hold_at_long_times ... ok
+00005941964176450765
+test unequal_capacities_match_exact_pair_and_preserve_mass_velocity_energy ... heat time: steps=16, max_error=0.000013038002090709488
+ok
+heat time: steps=32, max_error=0.0000032602061546815886
+test symmetric_pair_time_refinement_matches_discrete_fourier_mode ... ok
+GAS_FOURIER_REFINEMENT cells=8 steps=33 l1_temperature_error_k=8.62501799649280088e-2
+heat mesh: n=32, l1_error=0.000014908468965403078
+test spatial_refinement_matches_continuum_heat_equation ... ok
+GAS_FOURIER_REFINEMENT cells=16 steps=129 l1_temperature_error_k=2.17842447135581097e-2
+GAS_FOURIER_REFINEMENT cells=32 steps=513 l1_temperature_error_k=5.49963371167194737e-3
+GAS_FOURIER_REFINEMENT cells=64 steps=2049 l1_temperature_error_k=1.41795644951958622e-3
+test periodic_fourier_temperature_mode_converges_to_analytic_diffusion ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

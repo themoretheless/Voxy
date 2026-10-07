@@ -1,0 +1,8 @@
+
+running 1 test
+RIG_PER_FRAME_ENERGY_AUDIT frames=85 maximum_frame_balance_j=7.18314296932476282e-14 prefix=true requested_steps=480 requested_capture_complete=false full_clip_qualified=false
+RIG_SUPPORTED_AUDIT checkpoints=8 nodes=2338 cells=6845 pins=3 committed_time_s=0.35 last_node_time_s=0.35 maximum_pin_error_m=4.44089209850062616e-16 maximum_independent_balance_j=6.07514039074885659e-13 maximum_free_motion_m=3.42219456631664198e-1 maximum_interval_balance_j=2.77944334214907940e-13 authored_rate_j_s=Some(5e-10) prefix=true requested_steps=480 requested_capture_complete=false full_clip_qualified=false
+test collision_tests::audits_committed_full_rig_nodes_and_energy_prefix ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 69 filtered out; finished in 0.08s
+

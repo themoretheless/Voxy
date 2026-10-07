@@ -1,0 +1,15 @@
+
+running 1 test
+test collision_tests::audits_committed_full_rig_nodes_and_energy_prefix ... FAILED
+
+failures:
+
+failures:
+    collision_tests::audits_committed_full_rig_nodes_and_energy_prefix
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 69 filtered out; finished in 0.07s
+
+
+thread 'collision_tests::audits_committed_full_rig_nodes_and_energy_prefix' (2581289) panicked at crates/voxy_app/examples/body_motion_snapshot.rs:1267:13:
+prefix must be strictly incomplete; use completed audit for whole clip
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

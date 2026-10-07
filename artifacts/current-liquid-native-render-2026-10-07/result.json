@@ -1,0 +1,30 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "steps": 120,
+  "duration_s": 1,
+  "finite_sources": true,
+  "emitted_mass_kg": [
+    5.0,
+    4.0000000000000036
+  ],
+  "source_energy_defect_j": [
+    0.0,
+    0.0
+  ],
+  "diagnostic_and_optical_native_runs_passed": true,
+  "shader_validation_errors": false,
+  "film_cells_last_frame": 205,
+  "nvidia_execution_verified": false,
+  "calibrated_optics": false,
+  "sha256": {
+    "crates/voxy_app/src/liquid_demo.rs": "b93167120104db76198935e8517423e8118ac2194b5c49b64cc2ccfe0454a809",
+    "crates/voxy_app/examples/liquid_snapshot.rs": "1b23bf476dfd563451cab0c531963af1fe4c341a4664e07dfdf9f7352bd0e92a",
+    "artifacts/current-liquid-native-render-2026-10-07/finite-impact-optical.png-active.png": "51950029818a41a1dd93e95fd3bb9f6c6e7598469b9f1254c1f927b1b1c00a09",
+    "artifacts/current-liquid-native-render-2026-10-07/finite-impact.png": "82e001756810ea0439976bfc36fc5fa50c5a7963463886e7b2327bb1a3e792a9",
+    "artifacts/current-liquid-native-render-2026-10-07/finite-impact-optical.png": "8c4fb13514577c83ea00c69bdaa9085f4e7233c6c3f47b985b01934f50e65340",
+    "artifacts/current-liquid-native-render-2026-10-07/finite-impact.png-active.png": "928f93797b5d050e9c5d7099996dd14cc6e89e2fc54089c8c727cc7963615e63",
+    "artifacts/current-liquid-native-render-2026-10-07/optical-runtime.log": "7b816600c66a51bbfec2ef27479350abce8a336a4d888da55bdc222241b99291",
+    "artifacts/current-liquid-native-render-2026-10-07/runtime.log": "2814f8eb1b898a63f1de728fc2e1d78a16f4962ac1449756e41a275a6d4383c4"
+  }
+}

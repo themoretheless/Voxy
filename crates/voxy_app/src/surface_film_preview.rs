@@ -560,16 +560,40 @@ impl FilmPreview {
                     transfer_speed: self.settings.self_contact_transfer_speed_m_s,
                     ..Default::default()
                 });
-        let (added, transferred) = self.film.advance_on_geometry_with_contact(
-            &points,
-            dt,
-            &sources,
-            [0., -9.81, 0.],
-            contact,
-        )?;
-        self.source_added_mass_kg += added * self.settings.material.density;
+        // Stage the film and its receipts together; neither publishes on admission failure.
+        self.verify_mass_balance(1e-9)?;
+        let initial = self.initial_mass_kg;
+        let old_added = self.source_added_mass_kg;
+        let old_gross = self.self_contact_gross_volume_m3;
+        let density = self.settings.material.density;
+        let (source_added_mass, gross_volume, transferred) =
+            self.film.advance_on_geometry_with_contact_admitted(
+                &points,
+                dt,
+                &sources,
+                [0., -9.81, 0.],
+                contact,
+                |candidate, added, transferred| {
+                    let source_added_mass = old_added + added * density;
+                    let gross_volume = old_gross + transferred;
+                    let expected = initial + source_added_mass;
+                    let mass = candidate.total_mass();
+                    if !source_added_mass.is_finite()
+                        || !gross_volume.is_finite()
+                        || !transferred.is_finite()
+                        || transferred < 0.
+                        || !expected.is_finite()
+                        || !mass.is_finite()
+                        || (mass - expected).abs() > 1e-9 * expected.max(1e-12)
+                    {
+                        return Err("film source/contact receipt admission failed");
+                    }
+                    Ok((source_added_mass, gross_volume, transferred))
+                },
+            )?;
+        self.source_added_mass_kg = source_added_mass;
         self.self_contact_last_volume_m3 = transferred;
-        self.self_contact_gross_volume_m3 += transferred;
+        self.self_contact_gross_volume_m3 = gross_volume;
         self.self_contact_error = None;
         Ok(())
     }
@@ -932,6 +956,8 @@ mod tests {
         let mut preview =
             FilmPreview::new(&vertices, &[0, 1, 2, 3, 5, 4], [0.005, 0.005, 0.], 0.01, 0.).unwrap();
         preview.film.deposit(0, 1e-8).unwrap();
+        // This direct fixture deposit establishes the initial inventory.
+        preview.initial_mass_kg = preview.film.total_mass();
         let mass = preview.film.total_mass();
         let settings=preview.settings.patched(&serde_json::json!({"self_contact_enabled":true,"self_contact_transfer_speed_m_s":0.01})).unwrap();
         preview.configure(settings).unwrap();
@@ -1677,6 +1703,50 @@ mod invalid_advance_tests {
         assert_eq!(film.film.state().points, old.points);
         assert_eq!(film.film.state().cell_volumes_m3, old.cell_volumes_m3);
         assert_eq!(film.measurements(), measurements);
+    }
+    #[test]
+    fn invalid_source_inventory_rejects_before_moving_substrate_or_adding_liquid() {
+        let v = |position| voxy_render::SceneVertex {
+            position,
+            uv: [0.; 2],
+            color: [1.; 4],
+        };
+        let vertices = [v([0., 0., 0.]), v([0.01, 0., 0.]), v([0., 0.01, 0.])];
+        let moved = [v([0., 0., 0.]), v([0.02, 0., 0.]), v([0., 0.02, 0.])];
+        for corruption in [0.001, f64::INFINITY, f64::NAN] {
+            let mut film =
+                super::FilmPreview::new(&vertices, &[0, 1, 2], [0.; 3], 0.1, 1e-8).unwrap();
+            film.settings.source_rate_m3_s = 1e-9;
+            film.source_added_mass_kg = corruption;
+            let old = film.film.state();
+            assert!(film.advance(&moved, 0.01).is_err());
+            assert_eq!(film.film.state().points, old.points);
+            assert_eq!(film.film.state().cell_volumes_m3, old.cell_volumes_m3);
+            assert_eq!(film.source_added_mass_kg.to_bits(), corruption.to_bits());
+        }
+    }
+    #[test]
+    fn invalid_contact_receipt_rolls_back_successful_geometry_and_source_candidate() {
+        let v = |position| voxy_render::SceneVertex {
+            position,
+            uv: [0.; 2],
+            color: [1.; 4],
+        };
+        let vertices = [v([0., 0., 0.]), v([0.01, 0., 0.]), v([0., 0.01, 0.])];
+        let moved = [v([0., 0., 0.]), v([0.02, 0., 0.]), v([0., 0.02, 0.])];
+        let mut film = super::FilmPreview::new(&vertices, &[0, 1, 2], [0.; 3], 0.1, 1e-8).unwrap();
+        film.settings.source_rate_m3_s = 1e-9;
+        film.self_contact_gross_volume_m3 = f64::INFINITY;
+        let old = film.film.state();
+        let mass_receipt = film.source_added_mass_kg;
+        assert_eq!(
+            film.advance(&moved, 0.01),
+            Err("film source/contact receipt admission failed")
+        );
+        assert_eq!(film.film.state().points, old.points);
+        assert_eq!(film.film.state().cell_volumes_m3, old.cell_volumes_m3);
+        assert_eq!(film.source_added_mass_kg, mass_receipt);
+        assert_eq!(film.self_contact_gross_volume_m3, f64::INFINITY);
     }
     #[test]
     fn invalid_timestep_and_substrate_preserve_geometry_mass_and_sources() {

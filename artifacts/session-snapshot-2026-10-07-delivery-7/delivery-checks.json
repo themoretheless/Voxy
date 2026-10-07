@@ -1,0 +1,14 @@
+{
+  "physics_tests_passed": 18,
+  "render_tests_passed": 155,
+  "render_tests_ignored": 22,
+  "cuda_disabled_tests_passed": 25,
+  "cuda_disabled_tests_ignored": 2,
+  "format": "passed",
+  "diff_check": "passed",
+  "metal_extinction": "passed, 16384 rendered scene pixels",
+  "active_captures": "preserved in immutable snapshot; original processes retained",
+  "direct_gpu_presentation": "not implemented",
+  "full_rig_480_steps": "not qualified",
+  "nvidia_hardware": "not qualified"
+}

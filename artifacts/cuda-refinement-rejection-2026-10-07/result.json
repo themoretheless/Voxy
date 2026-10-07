@@ -1,0 +1,9 @@
+{
+  "backend_selection_tests_passed": 3,
+  "fatal_error_classes_exercised": 7,
+  "preparation_calls_per_failure": 1,
+  "physical_owner_unchanged": true,
+  "cuda_feature_compile_passed": true,
+  "nvidia_execution_verified": false,
+  "typed_solver_error_api": false
+}
