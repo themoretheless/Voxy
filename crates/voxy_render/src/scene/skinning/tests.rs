@@ -47,8 +47,11 @@ fn gpu_scene_skinning_independent_instances_and_last_good_pose() {
         .create_instance(&renderer, source.clone(), &palette, color, live, 4096)
         .unwrap();
     assert!(Arc::ptr_eq(&first.source, &second.source));
-    assert_ne!(first.geometry.vertices, second.geometry.vertices);
-    assert_ne!(first.palette, second.palette);
+    assert!(!std::sync::Arc::ptr_eq(
+        &first.geometry.vertices,
+        &second.geometry.vertices
+    ));
+    assert!(!Arc::ptr_eq(&first.palette, &second.palette));
     let read = |instance: &SceneSkinInstance, pose: Option<&[Mat4]>| {
         let size = instance.geometry.vertices.size();
         let staging = device.create_buffer(&wgpu::BufferDescriptor {
@@ -296,13 +299,22 @@ fn gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission() {
     assert_eq!(level.index_allocation_bytes(), 12);
     assert_eq!(instance.geometry.index_count(), 6);
     assert_eq!(level.geometry().index_count(), 3);
-    assert_eq!(level.geometry.vertices, instance.geometry.vertices);
-    assert_eq!(level.geometry.normals, instance.geometry.normals);
-    assert_eq!(
-        level.geometry.material_coordinates,
-        instance.geometry.material_coordinates
-    );
-    assert_ne!(level.geometry.indices, instance.geometry.indices);
+    assert!(std::sync::Arc::ptr_eq(
+        &level.geometry.vertices,
+        &instance.geometry.vertices
+    ));
+    assert!(std::sync::Arc::ptr_eq(
+        &level.geometry.normals,
+        &instance.geometry.normals
+    ));
+    assert!(std::sync::Arc::ptr_eq(
+        &level.geometry.material_coordinates,
+        &instance.geometry.material_coordinates
+    ));
+    assert!(!std::sync::Arc::ptr_eq(
+        &level.geometry.indices,
+        &instance.geometry.indices
+    ));
     let other = SceneSkinner::new(&renderer).unwrap();
     assert!(matches!(
         other.create_lod_level(&instance, &lod, 1, live, 8192),
@@ -1336,4 +1348,147 @@ fn lit_normal_comparison(
     }
     drop(mapped);
     staging.unmap();
+}
+
+#[test]
+#[ignore = "requires physical GPU; atomic shared skeletal memory admission"]
+fn gpu_skeletal_device_budget_admits_whole_instances_and_retains_source() {
+    let gpu = crate::GraphicsOptions::default().create_instance();
+    let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
+    eprintln!("skeletal budget adapter: {:?}", adapter.get_info());
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let lod = crate::skinned_lod::tests::source();
+    let mesh = Arc::new(lod.mesh().clone());
+    let mut joints = vec![Mat4::IDENTITY; usize::from(mesh.joint_count())];
+    let color = [0.25, 0.5, 0.75, 1.];
+    let preview = mesh
+        .posed_scene_mesh(&joints, Mat4::IDENTITY, color)
+        .unwrap();
+    let source_bytes = mesh.vertices().len() as u64 * 64;
+    let instance_bytes =
+        SceneRenderer::mesh_allocation_bytes(&preview) + joints.len() as u64 * 64 + 32;
+    let budget =
+        crate::ComputeMemoryBudget::configure(&device, source_bytes + 2 * instance_bytes + 4)
+            .unwrap();
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let skinner = SceneSkinner::new(&renderer).unwrap();
+    let source = skinner.upload_source(mesh.clone(), 0, u64::MAX).unwrap();
+    assert_eq!(budget.stats().allocated_bytes, source_bytes);
+    let first = skinner
+        .create_instance(&renderer, source.clone(), &joints, color, 0, u64::MAX)
+        .unwrap();
+    assert_eq!(first.allocation_bytes(), instance_bytes);
+    assert_eq!(
+        budget.stats().allocated_bytes,
+        source_bytes + instance_bytes
+    );
+    assert_eq!(budget.stats().allocated_buffers, 8);
+    // Geometry and palette individually fit; the complete instance is 32 bytes
+    // too large. Reject before allocating/retiring any part of the candidate.
+    let compute = budget
+        .allocate_storage("competing compute", &[0; 36])
+        .unwrap();
+    let before = budget.stats();
+    assert!(matches!(
+        skinner.create_instance(&renderer, source.clone(), &joints, color, 0, u64::MAX),
+        Err(SceneSkinError::Scene(SceneError::MemoryBudget))
+    ));
+    assert_eq!(budget.stats(), before);
+    drop(compute);
+    assert!(matches!(
+        skinner.create_instance(&renderer, source.clone(), &joints, color, 0, u64::MAX),
+        Err(SceneSkinError::Scene(SceneError::MemoryBudget))
+    ));
+    assert_eq!(budget.stats().retired_buffers, 1);
+    budget.discard_retired().unwrap();
+    let second = skinner
+        .create_instance(&renderer, source.clone(), &joints, color, 0, u64::MAX)
+        .unwrap();
+    assert_eq!(
+        budget.stats().allocated_bytes,
+        source_bytes + 2 * instance_bytes
+    );
+    assert_eq!(budget.stats().allocated_buffers, 15);
+    let before = budget.stats();
+    assert!(matches!(
+        skinner.upload_source(mesh.clone(), 0, u64::MAX),
+        Err(SceneSkinError::Scene(SceneError::MemoryBudget))
+    ));
+    assert!(matches!(
+        skinner.create_lod_level(&first, &lod, 1, 0, u64::MAX),
+        Err(SceneSkinError::Scene(SceneError::MemoryBudget))
+    ));
+    assert_eq!(budget.stats(), before);
+
+    // The original instance still computes valid output after failed admissions.
+    joints[1] = Mat4::from_translation(glam::Vec3::new(0.25, 0.1, 0.));
+    let size = first.geometry.vertices.size();
+    let readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("skeletal budget output"),
+        size,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    let mut encoder = device.create_command_encoder(&Default::default());
+    skinner
+        .encode_pose(&queue, &mut encoder, &first, &joints)
+        .unwrap();
+    encoder.copy_buffer_to_buffer(&first.geometry.vertices, 0, &readback, 0, size);
+    queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    readback
+        .slice(..)
+        .map_async(wgpu::MapMode::Read, move |result| {
+            tx.send(result).unwrap();
+        });
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    rx.recv().unwrap().unwrap();
+    let mapped = readback.slice(..).get_mapped_range().unwrap();
+    let actual: &[SceneVertex] = bytemuck::cast_slice(&mapped);
+    let expected = mesh
+        .posed_scene_mesh(&joints, Mat4::IDENTITY, color)
+        .unwrap();
+    assert_eq!(actual.len(), expected.vertices().len());
+    for (a, b) in actual.iter().zip(expected.vertices()) {
+        assert!(
+            glam::Vec3::from_array(a.position)
+                .abs_diff_eq(glam::Vec3::from_array(b.position), 1e-5)
+        );
+        assert_eq!(a.uv, b.uv);
+        assert_eq!(a.color, b.color);
+    }
+    drop(mapped);
+    readback.unmap();
+    drop(source);
+    drop(first);
+    assert_eq!(budget.stats().retired_buffers, 7);
+    budget.discard_retired().unwrap();
+    assert_eq!(
+        budget.stats().allocated_bytes,
+        source_bytes + instance_bytes
+    );
+    assert_eq!(budget.stats().allocated_buffers, 8);
+    let level = skinner
+        .create_lod_level(&second, &lod, 1, 0, u64::MAX)
+        .unwrap();
+    let level_bytes = level.index_allocation_bytes();
+    let shared_bytes = second.geometry.vertices.size()
+        + second.geometry.normals.size()
+        + second.geometry.material_coordinates.size()
+        + second.geometry.material_parameters.size();
+    drop(second);
+    // The LOD still owns four streams; source, base indices, palette and params retire.
+    assert_eq!(budget.stats().retired_buffers, 4);
+    budget.discard_retired().unwrap();
+    assert_eq!(budget.stats().allocated_bytes, shared_bytes + level_bytes);
+    assert_eq!(budget.stats().allocated_buffers, 5);
+    drop(level);
+    budget.discard_retired().unwrap();
+    assert_eq!(budget.stats().allocated_bytes, 0);
+    assert_eq!(budget.stats().allocated_buffers, 0);
+    assert!(pollster::block_on(scope.pop()).is_none());
+    eprintln!(
+        "SKELETAL_DEVICE_BUDGET_PASS source_bytes={source_bytes} instance_bytes={instance_bytes} partial_admission_rejected=true output_matches_cpu=true final_charged_bytes=0"
+    );
 }

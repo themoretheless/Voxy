@@ -468,15 +468,17 @@ impl InertialBody {
                 Err("implicit objective overflow")
             }
         };
-        let objective = |points: &[Vec3]| -> Result<f64, &'static str> {
-            let evaluation = path_evaluation(points)?;
-            objective_value(points, evaluation.potential_j)
-        };
         let mut converged = false;
         let mut history: Vec<SecantPair> = Vec::new();
         let mut previous: Option<(Vec<Vec3>, Vec<Vec3>)> = None;
+        // These evaluations belong only to this frozen quadrature/history and
+        // the exact accepted midpoint. No result crosses a retry or time step.
+        let mut accepted_evaluation = None;
+        let mut converged_evaluation = None;
         for iteration in 0..96 {
-            let mut evaluation = path_evaluation(&mid);
+            let mut evaluation = accepted_evaluation
+                .take()
+                .map_or_else(|| path_evaluation(&mid), Ok);
             let mut initial_feasible = iteration != 0 || feasible_guess(&mid);
             if iteration == 0
                 && (evaluation.is_ok() || matches!(evaluation, Err("closed surface contact gap")))
@@ -649,6 +651,7 @@ impl InertialBody {
                 && residual_impulse_work.abs() <= tolerance_j.min(1e-8) * 0.125
             {
                 converged = true;
+                converged_evaluation = Some(evaluation);
                 break;
             }
             let free_residual: Vec<Vec3> = residual
@@ -809,7 +812,7 @@ impl InertialBody {
             if !slope.is_finite() {
                 return Err("implicit residual overflow");
             }
-            let initial = objective(&mid)?;
+            let initial = objective_value(&mid, evaluation.potential_j)?;
             let noise_scale = evaluation
                 .gradient
                 .iter()
@@ -862,7 +865,14 @@ impl InertialBody {
                 if safe {
                     safe_trials += 1;
                 }
-                let trial_objective = if safe { objective(&trial).ok() } else { None };
+                let trial_evaluation = if safe {
+                    path_evaluation(&trial).ok()
+                } else {
+                    None
+                };
+                let trial_objective = trial_evaluation
+                    .as_ref()
+                    .and_then(|value| objective_value(&trial, value.potential_j).ok());
                 if let Some(value) = trial_objective {
                     objective_trials += 1;
                     smallest_objective_change = smallest_objective_change.min(value - initial);
@@ -878,7 +888,7 @@ impl InertialBody {
                     && trial_objective
                         .is_some_and(|value| (value - initial).abs() <= objective_noise)
                 {
-                    if let Ok(trial_evaluation) = path_evaluation(&trial) {
+                    if let Some(trial_evaluation) = &trial_evaluation {
                         let trial_norm = assemble_residual(&trial, &trial_evaluation.gradient).1;
                         smallest_trial_norm = smallest_trial_norm.min(trial_norm);
                         admissible =
@@ -899,6 +909,7 @@ impl InertialBody {
                     }
                     previous = Some((mid.clone(), free_residual.clone()));
                     mid = trial;
+                    accepted_evaluation = trial_evaluation;
                     accepted = true;
                     break;
                 }
@@ -967,7 +978,7 @@ impl InertialBody {
                 );
             }
         }
-        let middle = path_evaluation(&mid)?;
+        let middle = converged_evaluation.expect("converged midpoint has its frozen evaluation");
         let before = observe_contact_stage("world initial diagnostics", dt, self.diagnostics())?;
         let mut velocity = self.velocities.clone();
         let mut reaction = 0.;
@@ -1044,7 +1055,54 @@ impl InertialBody {
             .any(|v| !v.is_finite())
             || defect.abs() > tolerance_j
         {
-            if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
+            if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some()
+                || std::env::var_os("VOXY_IMPLICIT_WORK_TRACE").is_some()
+            {
+                // Compare arithmetic without changing the independently admitted
+                // balance or its error. Avoid subtracting total gravity/kinetic
+                // energies in the diagnostic alternative, while evaluating raw
+                // material/contact endpoint energies independently of force work.
+                let arithmetic = (|| -> Result<[f64; 5], &'static str> {
+                    let old = self.evaluate_at_contacts(
+                        &self.body.positions,
+                        self.plane,
+                        Some(&current),
+                    )?;
+                    let mut kinetic = 0.;
+                    let mut gravity = 0.;
+                    for node in 0..n {
+                        for axis in 0..3 {
+                            if !self.body.pinned[node] {
+                                let before_v = self.velocities[node][axis];
+                                let after_v = velocity[node][axis];
+                                kinetic += 0.5
+                                    * self.masses[node]
+                                    * (after_v - before_v)
+                                    * (after_v + before_v);
+                            }
+                            gravity += self.masses[node]
+                                * self.acceleration[axis]
+                                * (end[node][axis] - self.body.positions[node][axis]);
+                        }
+                    }
+                    let raw_change = final_eval.potential_j - old.potential_j;
+                    let alternative = kinetic + raw_change - gravity - reaction - surface_work;
+                    Ok([
+                        kinetic,
+                        gravity,
+                        raw_change,
+                        alternative,
+                        after.potential_j - before.potential_j,
+                    ])
+                })();
+                match arithmetic {
+                    Ok([kinetic, gravity, raw_change, alternative, original_change]) => eprintln!(
+                        "IMPLICIT_BALANCE_ARITHMETIC dt={dt:.17e} admitted_defect_j={defect:.17e} budget_j={tolerance_j:.17e} original_kinetic_change_j={free_kinetic_change:.17e} factored_kinetic_change_j={kinetic:.17e} original_potential_change_j={original_change:.17e} raw_potential_change_j={raw_change:.17e} gravity_work_j={gravity:.17e} reaction_j={reaction:.17e} surface_work_j={surface_work:.17e} diagnostic_alternative_defect_j={alternative:.17e}"
+                    ),
+                    Err(error) => eprintln!(
+                        "IMPLICIT_BALANCE_ARITHMETIC_REJECTION dt={dt:.17e} error={error:?}"
+                    ),
+                }
                 // Diagnostic decomposition only; failures never replace the
                 // original admission result. Potentials excluding the prescribed
                 // surface still include material, internal contact and fixed plane.

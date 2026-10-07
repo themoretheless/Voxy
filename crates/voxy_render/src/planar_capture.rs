@@ -138,7 +138,7 @@ impl PlanarReflectionCapture {
         renderer: &SceneRenderer,
         sampling: crate::TextureSampling,
     ) -> Result<crate::SceneTexture, SceneError> {
-        renderer.bind_image(&self.device, self.color.texture().clone(), sampling, 1)
+        renderer.bind_image(&self.device, self.color.managed_texture(), sampling, 1)
     }
     /// Bind every initialized HDR mip level for explicit LOD or trilinear sampling.
     /// Recreate after resize; never sample while rendering into this capture.
@@ -151,7 +151,7 @@ impl PlanarReflectionCapture {
     ) -> Result<crate::SceneTexture, SceneError> {
         renderer.bind_image(
             &self.device,
-            self.color.texture().clone(),
+            self.color.managed_texture(),
             sampling,
             self.color.texture().mip_level_count(),
         )

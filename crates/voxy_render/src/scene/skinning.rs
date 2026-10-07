@@ -34,16 +34,16 @@ pub struct SceneSkinner {
 pub struct SceneSkinSource {
     device: wgpu::Device,
     mesh: Arc<SkinnedMesh>,
-    buffer: wgpu::Buffer,
+    buffer: crate::ComputeStorage,
 }
 #[derive(Debug)]
 pub struct SceneSkinInstance {
     owner: Arc<()>,
     source: Arc<SceneSkinSource>,
     geometry: SceneGeometry,
-    palette: wgpu::Buffer,
+    palette: Arc<crate::ComputeStorage>,
     binding: wgpu::BindGroup,
-    bytes: u64,
+    parameters: Arc<crate::ComputeStorage>,
 }
 
 /// A pose preflight bound to immutable instance and palette borrows.
@@ -121,7 +121,7 @@ impl SceneSkinner {
         })
     }
 
-    /// Upload shared immutable skin attributes after logical-byte admission.
+    /// Upload shared immutable skin attributes after logical-byte and device-budget admission.
     pub fn upload_source(
         &self,
         mesh: Arc<SkinnedMesh>,
@@ -144,13 +144,14 @@ impl SceneSkinner {
             packed.extend(v.joints.map(f32::from));
             packed.extend(v.weights.map(|w| f32::from(w) / 65535.0));
         }
-        let buffer = self
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("shared scene skin source"),
-                contents: bytemuck::cast_slice(&packed),
+        let [buffer] = crate::ComputeMemoryBudget::for_device(&self.device)
+            .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+                label: "shared scene skin source",
+                size: bytes,
+                contents: Some(bytemuck::cast_slice(&packed)),
                 usage: wgpu::BufferUsages::STORAGE,
-            });
+            }])
+            .map_err(|error| SceneSkinError::Scene(super::scene_memory_error(error)))?;
         Ok(Arc::new(SceneSkinSource {
             device: self.device.clone(),
             mesh,
@@ -161,6 +162,8 @@ impl SceneSkinner {
     /// Creates an independently posed instance. The initial CPU preview ensures
     /// valid geometry before the first encoded compute pass. Source bytes are
     /// accounted separately; `live` must include every retained owner.
+    /// Geometry, palette and parameters are admitted atomically against the
+    /// shared device budget, preserving existing instances on rejection.
     pub fn create_instance(
         &self,
         renderer: &SceneRenderer,
@@ -189,31 +192,38 @@ impl SceneSkinner {
             .map_err(SceneSkinError::Scene)?;
         let bytes = SceneRenderer::mesh_allocation_bytes(&mesh) + joints.len() as u64 * 64 + 32;
         admit(live, bytes, budget)?;
-        let geometry = renderer
-            .upload_mesh_with_usage(
-                &self.device,
-                &mesh,
-                wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
-            )
-            .map_err(SceneSkinError::Scene)?;
-        let palette = self
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene instance palette"),
-                contents: bytemuck::cast_slice(joints),
-                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-            });
         let mut params = Vec::from(bytemuck::cast_slice::<f32, u8>(&color));
         params.extend((mesh.vertices().len() as u32).to_le_bytes());
         params.extend([0; 12]);
-        let parameters = self
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene instance skin parameters"),
-                contents: &params,
+        let descriptors = [
+            crate::compute_memory::ManagedBufferDescriptor {
+                label: "scene instance palette",
+                size: joints.len() as u64 * 64,
+                contents: Some(bytemuck::cast_slice(joints)),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            },
+            crate::compute_memory::ManagedBufferDescriptor {
+                label: "scene instance skin parameters",
+                size: params.len() as u64,
+                contents: Some(&params),
                 usage: wgpu::BufferUsages::UNIFORM,
-            });
-        let buffers = [
+            },
+        ];
+        let mut batch = renderer
+            .upload_mesh_buffer_batch(
+                &self.device,
+                &mesh,
+                &[mesh.indices()],
+                wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+                &descriptors,
+            )
+            .map_err(SceneSkinError::Scene)?;
+        let geometry = batch.geometries.remove(0);
+        let [palette, parameters]: [_; 2] = batch
+            .additional_buffers
+            .try_into()
+            .expect("validated palette and parameter descriptors");
+        let buffers: [&wgpu::Buffer; 5] = [
             &source.buffer,
             &palette,
             &geometry.vertices,
@@ -239,7 +249,7 @@ impl SceneSkinner {
             geometry,
             palette,
             binding,
-            bytes,
+            parameters,
         })
     }
 
@@ -336,13 +346,8 @@ impl SceneSkinner {
             .map_err(SceneSkinError::Scene)?;
         let bytes = indices.len() as u64 * 4;
         admit(live, bytes, budget)?;
-        let indices_buffer = self
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("scene skeletal LOD indices"),
-                contents: bytemuck::cast_slice(indices),
-                usage: wgpu::BufferUsages::INDEX,
-            });
+        let indices_buffer =
+            super::managed_scene_indices(&self.device, indices).map_err(SceneSkinError::Scene)?;
         let base = &instance.geometry;
         Ok(SceneSkinLodLevel {
             geometry: SceneGeometry {
@@ -408,7 +413,7 @@ impl SceneSkinInstance {
         &self.geometry
     }
     pub fn allocation_bytes(&self) -> u64 {
-        self.bytes
+        self.geometry.allocation_bytes() + self.palette.size() + self.parameters.size()
     }
 }
 
