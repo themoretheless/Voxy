@@ -243,6 +243,7 @@ impl SceneRenderer {
             depth_mode: base.depth_mode,
                 opaque_shader: base.opaque_shader.clone(),
                 partitioned_indices: false,
+                partition_cache: Vec::new(),
             indices: buffer,
         };
         target.allocation_bytes += geometry.indices.size();

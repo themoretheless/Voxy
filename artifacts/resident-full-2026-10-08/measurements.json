@@ -1,0 +1,38 @@
+{
+  "method": "1000 consecutive successful presentation intervals, not display refresh or physical simulation rate",
+  "quality": "full model, hair, skin, five volumetric cages, 1800x1300 MSAA4",
+  "windows": [
+    {
+      "start_frame": 100,
+      "render_fps": 149.66629280111536,
+      "p95_ms": 16.371666,
+      "max_ms": 47.352041
+    },
+    {
+      "start_frame": 1100,
+      "render_fps": 156.00401742356888,
+      "p95_ms": 16.498375,
+      "max_ms": 56.683875
+    },
+    {
+      "start_frame": 2100,
+      "render_fps": 101.12460419513904,
+      "p95_ms": 22.256208,
+      "max_ms": 45.025
+    }
+  ],
+  "latest_cpu_upload_ms": [
+    "45.684",
+    "37.800",
+    "70.455",
+    "43.332",
+    "42.563"
+  ],
+  "latest_pose_prepare_ms": [
+    "2419.990",
+    "2148.117",
+    "1808.921",
+    "1950.897",
+    "2028.470"
+  ]
+}

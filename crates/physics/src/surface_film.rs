@@ -1122,8 +1122,22 @@ impl SurfaceFilm {
                 .map(|(edge, &(a, b, _, _))| gravity_terms(edge, a, b))
                 .collect()
         });
+        let n_cells = volume.len();
+        let mut height = vec![0.; n_cells];
+        let mut flux = Vec::with_capacity(self.edges.len());
+        let mut outgoing = vec![0.; n_cells];
+        let mut delta = vec![0.; n_cells];
+        let mut energy_delta = energy.as_ref().map(|_| vec![0.; n_cells]);
+        let mut component_delta = inventory.as_ref().map(|rows| {
+            rows.iter()
+                .map(|row| vec![0.0; row.len()])
+                .collect::<Vec<_>>()
+        });
+
         for _ in 0..count {
-            let height: Vec<_> = volume.iter().zip(&self.area).map(|(v, a)| v / a).collect();
+            for (h, (&v, &a)) in height.iter_mut().zip(volume.iter().zip(&self.area)) {
+                *h = v / a;
+            }
             let pressure = self.pressure_for_height(&height, gravity)?;
             let cell_viscosities = match (&inventory, component_viscosities) {
                 (Some(rows), Some(values)) => Some(mixture::blend_viscosities(
@@ -1138,8 +1152,17 @@ impl SurfaceFilm {
                     .as_ref()
                     .map_or(self.material.viscosity, |values| values[cell])
             };
-            let mut flux = Vec::new();
-            let mut outgoing = vec![0.; volume.len()];
+            flux.clear();
+            outgoing.fill(0.);
+            delta.fill(0.);
+            if let Some(ref mut ed) = energy_delta {
+                ed.fill(0.);
+            }
+            if let Some(ref mut cd) = component_delta {
+                for row in cd {
+                    row.fill(0.0);
+                }
+            }
             for (edge, &(a, b, length, distance)) in self.edges.iter().enumerate() {
                 // Integrate the known gravity gradient along facet conormals.
                 // Remove its centroid-difference contribution first: tangential
@@ -1215,14 +1238,7 @@ impl SurfaceFilm {
                 }
                 flux.push((a, b, amount));
             }
-            let mut energy_delta = energy.as_ref().map(|_| vec![0.; volume.len()]);
-            let mut delta = vec![0.; volume.len()];
-            let mut component_delta = inventory.as_ref().map(|rows| {
-                rows.iter()
-                    .map(|row| vec![0.0; row.len()])
-                    .collect::<Vec<_>>()
-            });
-            for (a, b, amount) in flux {
+            for &(a, b, amount) in &flux {
                 let donor = if amount >= 0. { a } else { b };
                 let scale = if outgoing[donor] > volume[donor] {
                     volume[donor] / outgoing[donor]
@@ -1254,9 +1270,9 @@ impl SurfaceFilm {
                     }
                 }
             }
-            if let (Some(rows), Some(change)) = (&mut inventory, component_delta) {
-                for (row, delta) in rows.iter_mut().zip(change) {
-                    for (v, d) in row.iter_mut().zip(delta) {
+            if let (Some(rows), Some(change)) = (&mut inventory, &component_delta) {
+                for (row, d_row) in rows.iter_mut().zip(change) {
+                    for (v, &d) in row.iter_mut().zip(d_row) {
                         *v = (*v + d).max(0.0);
                         if !v.is_finite() {
                             return Err("film component inventory overflow");
@@ -1264,8 +1280,8 @@ impl SurfaceFilm {
                     }
                 }
             }
-            if let (Some(values), Some(change)) = (&mut energy, energy_delta) {
-                for (e, d) in values.iter_mut().zip(change) {
+            if let (Some(values), Some(change)) = (&mut energy, &energy_delta) {
+                for (e, &d) in values.iter_mut().zip(change) {
                     let next = *e + d;
                     if !next.is_finite() || next < -16. * f64::EPSILON * *e {
                         return Err("film energy transport overflow");
@@ -1273,7 +1289,7 @@ impl SurfaceFilm {
                     *e = next.max(0.);
                 }
             }
-            for (v, d) in volume.iter_mut().zip(delta) {
+            for (v, &d) in volume.iter_mut().zip(&delta) {
                 *v = (*v + d).max(0.);
                 if !v.is_finite() {
                     return Err("film volume overflow");

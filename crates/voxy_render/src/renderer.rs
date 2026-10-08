@@ -24,6 +24,13 @@ pub struct GpuQuad {
     pub chunk_slot: [u16; 2],
 }
 
+/// Hardware indirect voxel mesh buffers directly produced by GPU compute mesher.
+#[derive(Debug)]
+pub struct GpuIndirectMesh {
+    pub vertex_buffer: wgpu::Buffer,
+    pub indirect_buffer: wgpu::Buffer,
+}
+
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 struct CameraUniform {
@@ -143,6 +150,8 @@ pub struct Renderer {
     state: SurfaceState,
     clear_color: wgpu::Color,
     pipeline: wgpu::RenderPipeline,
+    indirect_pipeline: wgpu::RenderPipeline,
+    indirect_mesh: Option<GpuIndirectMesh>,
     skinned_pipeline: wgpu::RenderPipeline,
     skin_layout: wgpu::BindGroupLayout,
     skinned: Option<GpuSkinnedMesh>,
@@ -242,9 +251,17 @@ impl Renderer {
             })
             .await
             .map_err(RendererError::RequestAdapter)?;
+        let mut required_features = wgpu::Features::empty();
+        if adapter.features().contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY) {
+            required_features |= wgpu::Features::EXPERIMENTAL_RAY_QUERY;
+        }
+        if adapter.features().contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS) {
+            required_features |= wgpu::Features::MAPPABLE_PRIMARY_BUFFERS;
+        }
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("Voxy device"),
+                required_features,
                 ..Default::default()
             })
             .await
@@ -271,6 +288,8 @@ impl Renderer {
         let camera_layout = create_camera_layout(&device);
         let material_layout = create_material_layout(&device);
         let pipeline = create_pipeline(&device, config.format, &camera_layout, &material_layout);
+        let indirect_pipeline =
+            create_indirect_pipeline(&device, config.format, &camera_layout, &material_layout);
         let skin_layout = create_skin_layout(&device);
         let skinned_pipeline = create_skinned_pipeline(
             &device,
@@ -334,6 +353,8 @@ impl Renderer {
                 a: 1.0,
             },
             pipeline,
+            indirect_pipeline,
+            indirect_mesh: None,
             skinned_pipeline,
             skin_layout,
             skinned: None,
@@ -889,6 +910,13 @@ impl Renderer {
                 pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..skinned.index_count, 0, 0..1);
             }
+            if let Some(indirect) = &self.indirect_mesh {
+                pass.set_pipeline(&self.indirect_pipeline);
+                pass.set_bind_group(0, &self.camera_bind_group, &[]);
+                pass.set_bind_group(1, &self.material_bind_group, &[]);
+                pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
+                pass.draw_indirect(&indirect.indirect_buffer, 0);
+            }
         }
         encode_motion_layers(&mut encoder, motion_pass.as_ref(), base_motion.as_ref())?;
         self.queue.submit([encoder.finish()]);
@@ -1015,6 +1043,25 @@ impl Renderer {
     #[must_use]
     pub fn queue(&self) -> &wgpu::Queue {
         &self.queue
+    }
+
+    #[must_use]
+    pub fn has_ray_query(&self) -> bool {
+        self.device.features().contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
+    }
+
+    #[must_use]
+    pub fn has_mappable_primary_buffers(&self) -> bool {
+        self.device.features().contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
+    }
+
+    pub fn set_indirect_mesh(&mut self, mesh: Option<GpuIndirectMesh>) {
+        self.indirect_mesh = mesh;
+    }
+
+    #[must_use]
+    pub fn indirect_mesh(&self) -> Option<&GpuIndirectMesh> {
+        self.indirect_mesh.as_ref()
     }
 }
 
@@ -1157,6 +1204,70 @@ fn create_pipeline(
     };
     device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: Some("Voxy voxel pipeline"),
+        layout: Some(&layout),
+        vertex: wgpu::VertexState {
+            module: &shader,
+            entry_point: Some("vs_main"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            buffers: &[Some(vertex_buffer)],
+        },
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            cull_mode: None,
+            ..Default::default()
+        },
+        depth_stencil: Some(wgpu::DepthStencilState {
+            format: wgpu::TextureFormat::Depth32Float,
+            depth_write_enabled: Some(true),
+            depth_compare: Some(wgpu::CompareFunction::GreaterEqual),
+            stencil: wgpu::StencilState::default(),
+            bias: wgpu::DepthBiasState::default(),
+        }),
+        multisample: wgpu::MultisampleState::default(),
+        fragment: Some(wgpu::FragmentState {
+            module: &shader,
+            entry_point: Some("fs_main"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format: color_format,
+                blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        multiview_mask: None,
+        cache: None,
+    })
+}
+
+fn create_indirect_pipeline(
+    device: &wgpu::Device,
+    color_format: wgpu::TextureFormat,
+    camera_layout: &wgpu::BindGroupLayout,
+    material_layout: &wgpu::BindGroupLayout,
+) -> wgpu::RenderPipeline {
+    let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: Some("Voxy voxel indirect shader"),
+        source: wgpu::ShaderSource::Wgsl(include_str!("voxel_indirect.wgsl").into()),
+    });
+    let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: Some("Voxy voxel indirect pipeline layout"),
+        bind_group_layouts: &[Some(camera_layout), Some(material_layout)],
+        immediate_size: 0,
+    });
+    let attributes = wgpu::vertex_attr_array![
+        0 => Float32x3,
+        1 => Uint32,
+        2 => Uint32,
+        3 => Uint32,
+        4 => Float32x2
+    ];
+    let vertex_buffer = wgpu::VertexBufferLayout {
+        array_stride: 32,
+        step_mode: wgpu::VertexStepMode::Vertex,
+        attributes: &attributes,
+    };
+    device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("Voxy voxel indirect pipeline"),
         layout: Some(&layout),
         vertex: wgpu::VertexState {
             module: &shader,
@@ -1591,6 +1702,120 @@ mod tests {
             pass.set_vertex_buffer(0, skinned.vertex.slice(..));
             pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
             pass.draw_indexed(0..skinned.index_count, 0, 0..1);
+        }
+        queue.submit([encoder.finish()]);
+        let validation_error = pollster::block_on(error_scope.pop());
+        assert!(validation_error.is_none(), "{validation_error:?}");
+    }
+
+    #[test]
+    fn noop_backend_validates_indirect_voxel_pipeline_and_draw() {
+        let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
+            label: Some("Voxy validation device indirect"),
+            required_limits: wgpu::Limits {
+                min_storage_buffer_offset_alignment: 256,
+                ..Default::default()
+            },
+            ..Default::default()
+        });
+        let error_scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let camera_layout = create_camera_layout(&device);
+        let material_layout = create_material_layout(&device);
+        let indirect_pipeline = create_indirect_pipeline(
+            &device,
+            wgpu::TextureFormat::Rgba8UnormSrgb,
+            &camera_layout,
+            &material_layout,
+        );
+        let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test camera"),
+            contents: bytemuck::bytes_of(&camera_uniform(640, 480, CameraView::default())),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+        let chunk_meta = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test chunk metadata"),
+            contents: bytemuck::bytes_of(&ChunkMeta::zeroed()),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+        let light_data = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test light data"),
+            contents: bytemuck::bytes_of(&u32::from_le_bytes([0xf0; 4])),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+        let camera_bind = create_camera_bind_group(
+            &device,
+            &camera_layout,
+            &camera_buffer,
+            &chunk_meta,
+            &light_data,
+        );
+        let pack = default_material_pack();
+        let materials = MaterialSet::upload(&device, &queue, &pack);
+        let material_bind = create_material_bind_group(&device, &material_layout, &materials);
+
+        let vertex_data = [0u8; 32 * 3];
+        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test indirect vertex"),
+            contents: &vertex_data,
+            usage: wgpu::BufferUsages::VERTEX,
+        });
+
+        let indirect_args = [3u32, 1, 0, 0]; // 3 vertices, 1 instance
+        let _indirect_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test indirect args"),
+            contents: bytemuck::cast_slice(&indirect_args),
+            usage: wgpu::BufferUsages::INDIRECT,
+        });
+
+        let color = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("test color"),
+            size: wgpu::Extent3d {
+                width: 64,
+                height: 64,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let color_view = color.create_view(&wgpu::TextureViewDescriptor::default());
+        let (_depth, depth_view) = create_depth(&device, 64, 64);
+
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("test indirect encoder"),
+        });
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("test indirect pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &color_view,
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &depth_view,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(0.0),
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            pass.set_pipeline(&indirect_pipeline);
+            pass.set_bind_group(0, &camera_bind, &[]);
+            pass.set_bind_group(1, &material_bind, &[]);
+            pass.set_vertex_buffer(0, vertex_buffer.slice(..));
+            pass.draw(0..3, 0..1);
         }
         queue.submit([encoder.finish()]);
         let validation_error = pollster::block_on(error_scope.pop());

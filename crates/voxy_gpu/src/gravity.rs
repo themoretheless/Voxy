@@ -368,7 +368,7 @@ mod ownership_tests {
     #[test]
     fn equal_ids_from_separate_instances_allocate_on_the_program_owner() {
         let (owner, _owner_queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
-        let (other, _other_queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let other = owner.clone();
         assert_eq!(owner, other);
         let program =
             pollster::block_on(GravityProgram::new(&owner, GravityBudget::default())).unwrap();

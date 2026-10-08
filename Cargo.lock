@@ -2560,6 +2560,7 @@ name = "voxy_gpu"
 version = "0.1.0"
 dependencies = [
  "bytemuck",
+ "glam",
  "physics",
  "physics_voxel",
  "pollster",

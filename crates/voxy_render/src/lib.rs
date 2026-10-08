@@ -106,7 +106,8 @@ pub use model::{
     ModelTexture,
 };
 pub use renderer::{
-    CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
+    CameraView, GpuIndirectMesh, GpuQuad, RenderOutcome, Renderer, RendererError,
+    SkinnedMotionOutput, SurfaceState,
 };
 pub use skinned::{SkinnedMesh, SkinnedMeshError, SkinnedUploadError, SkinnedVertex};
 mod skinned_lod;

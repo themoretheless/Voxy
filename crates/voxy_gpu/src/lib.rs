@@ -52,5 +52,22 @@ pub use cuda_collision::{CudaCollisionError, CudaVoxelCollisionWorld};
 mod vehicle_task;
 pub use vehicle_task::{ChassisMotion, PendingGpuVehicle, VehicleGpuError};
 
+mod tissue_task;
+pub use tissue_task::{
+    is_gpu_tissue_search_failure, GpuTissueError, GpuTissueProgram,
+};
+
+mod voxel_mesh;
+pub use voxel_mesh::{
+    GpuDrawIndirectArgs, GpuMeshResult, GpuVoxelMeshError, GpuVoxelMesher, GpuVoxelPipeline,
+    GpuVoxelPipelineError, GpuVoxelVertex, PADDED_CHUNK_VOLUME,
+};
+
+mod lighting;
+pub use lighting::{GpuLightingError, GpuLightingProgram};
+
+mod morph;
+pub use morph::{GpuMorphControl, GpuMorphError, GpuMorphProgram};
+
 mod residency;
 pub use residency::body_chunks;

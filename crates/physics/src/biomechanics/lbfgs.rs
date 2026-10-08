@@ -2,12 +2,60 @@
 use super::{Body, Equilibrium, Vec3, add, columns, det, dot, mm, scale, sub};
 #[inline]
 fn inner(a: &[Vec3], b: &[Vec3]) -> f64 {
+    debug_assert_eq!(a.len(), b.len());
     let mut sum = 0.0;
-    for (va, vb) in a.iter().zip(b) {
+    let chunks_a = a.chunks_exact(4);
+    let chunks_b = b.chunks_exact(4);
+    let rem_a = chunks_a.remainder();
+    let rem_b = chunks_b.remainder();
+
+    for (ca, cb) in chunks_a.zip(chunks_b) {
+        sum += ca[0][0] * cb[0][0] + ca[0][1] * cb[0][1] + ca[0][2] * cb[0][2];
+        sum += ca[1][0] * cb[1][0] + ca[1][1] * cb[1][1] + ca[1][2] * cb[1][2];
+        sum += ca[2][0] * cb[2][0] + ca[2][1] * cb[2][1] + ca[2][2] * cb[2][2];
+        sum += ca[3][0] * cb[3][0] + ca[3][1] * cb[3][1] + ca[3][2] * cb[3][2];
+    }
+    for (va, vb) in rem_a.iter().zip(rem_b) {
         sum += va[0] * vb[0] + va[1] * vb[1] + va[2] * vb[2];
     }
     sum
 }
+
+#[inline]
+fn daxpy(alpha: f64, x: &[Vec3], y: &mut [Vec3]) {
+    debug_assert_eq!(x.len(), y.len());
+    let chunks_x = x.chunks_exact(4);
+    let chunks_y = y.chunks_exact_mut(4);
+    let rem_x = chunks_x.remainder();
+
+    let rem_y = {
+        let mut cy_iter = chunks_y;
+        for (cx, cy) in chunks_x.zip(&mut cy_iter) {
+            cy[0][0] += cx[0][0] * alpha;
+            cy[0][1] += cx[0][1] * alpha;
+            cy[0][2] += cx[0][2] * alpha;
+
+            cy[1][0] += cx[1][0] * alpha;
+            cy[1][1] += cx[1][1] * alpha;
+            cy[1][2] += cx[1][2] * alpha;
+
+            cy[2][0] += cx[2][0] * alpha;
+            cy[2][2] += cx[2][2] * alpha;
+            cy[2][1] += cx[2][1] * alpha;
+
+            cy[3][0] += cx[3][0] * alpha;
+            cy[3][1] += cx[3][1] * alpha;
+            cy[3][2] += cx[3][2] * alpha;
+        }
+        cy_iter.into_remainder()
+    };
+    for (yi, xi) in rem_y.iter_mut().zip(rem_x) {
+        yi[0] += xi[0] * alpha;
+        yi[1] += xi[1] * alpha;
+        yi[2] += xi[2] * alpha;
+    }
+}
+
 // Shared secant algebra; owners keep their own objective, constraints and admission.
 pub(super) type SecantPair = (Vec<Vec3>, Vec<Vec3>, f64);
 /// Rayleigh scaling of the initial positive inverse, using the latest secant.
@@ -58,25 +106,17 @@ pub(super) fn try_secant_direction<E>(
         let alpha = rho * inner(s, &q);
         alphas.push(alpha);
         
-        // In-place vector subtraction (daxpy) avoiding intermediate arrays
-        for (qi, yi) in q.iter_mut().zip(y) {
-            qi[0] -= yi[0] * alpha;
-            qi[1] -= yi[1] * alpha;
-            qi[2] -= yi[2] * alpha;
-        }
+        // In-place vector subtraction (daxpy)
+        daxpy(-alpha, y, &mut q);
     }
     
     let mut r = inverse(&q)?;
     
-    // Reuse allocation for beta computation with in-place FMA
+    // Reuse allocation for beta computation with in-place FMA (daxpy)
     for ((s, y, rho), alpha) in history.iter().zip(alphas.into_iter().rev()) {
         let beta = rho * inner(y, &r);
         let gamma = alpha - beta;
-        for (ri, si) in r.iter_mut().zip(s) {
-            ri[0] += si[0] * gamma;
-            ri[1] += si[1] * gamma;
-            ri[2] += si[2] * gamma;
-        }
+        daxpy(gamma, s, &mut r);
     }
     
     for ri in &mut r {

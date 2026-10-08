@@ -2606,6 +2606,16 @@ impl FaceParameters {
         signature
     }
     fn apply_filtered(&self, vertices: &mut [SceneVertex], head: Mat4, wrinkles: Option<bool>) {
+        struct ActiveControl<'a> {
+            control: &'a Control,
+            amount: f32,
+            is_left: bool,
+            is_right: bool,
+            is_nose: bool,
+            center: Vec3,
+            inv_radius: Vec3,
+        }
+
         let active: Vec<_> = CONTROLS
             .iter()
             .filter_map(|control| {
@@ -2613,7 +2623,18 @@ impl FaceParameters {
                 (control.mode != 2
                     && amount != 0.
                     && wrinkles.is_none_or(|only| (control.mode == 3) == only))
-                .then_some((control, amount))
+                .then(|| {
+                    let rad = Vec3::from_array(control.radius);
+                    ActiveControl {
+                        control,
+                        amount,
+                        is_left: control.key.ends_with("_left"),
+                        is_right: control.key.ends_with("_right"),
+                        is_nose: control.key.starts_with("nose_"),
+                        center: Vec3::from_array(control.center),
+                        inv_radius: Vec3::new(1.0 / rad.x, 1.0 / rad.y, 1.0 / rad.z),
+                    }
+                })
             })
             .collect();
         if active.is_empty() {
@@ -2626,21 +2647,27 @@ impl FaceParameters {
                 continue;
             }
             let mut delta = Vec3::ZERO;
-            for &(control, amount) in &active {
+            for active_ctrl in &active {
                 // Anatomical left is positive X in this bind-space model.
-                if (control.key.ends_with("_left") && point.x <= 0.)
-                    || (control.key.ends_with("_right") && point.x >= 0.)
+                if (active_ctrl.is_left && point.x <= 0.)
+                    || (active_ctrl.is_right && point.x >= 0.)
                 {
                     continue;
                 }
-                let mut center = Vec3::from_array(control.center);
+                let mut center = active_ctrl.center;
                 if center.x != 0. {
                     center.x *= if point.x < 0. { -1. } else { 1. };
                 }
                 let local = point - center;
-                let distance = (local / Vec3::from_array(control.radius)).length_squared();
+                let norm_local = local * active_ctrl.inv_radius;
+                let distance = norm_local.length_squared();
+                if distance >= 1.0 {
+                    continue;
+                }
                 // Compact C1 support: no movement leaks into the opposite feature or neck.
-                let weight = (1. - distance).max(0.).powi(2);
+                let weight = (1. - distance).powi(2);
+                let control = active_ctrl.control;
+                let amount = active_ctrl.amount;
                 let change = if control.mode == 3 {
                     -0.001 * amount * wrinkle_profile(control.key, point)
                 } else if control.mode == 0 {
@@ -2654,17 +2681,16 @@ impl FaceParameters {
                             1.
                         }
                 };
-                let side_weight =
-                    if control.key.ends_with("_left") || control.key.ends_with("_right") {
-                        let t = (point.x.abs() / 0.005).min(1.);
-                        t * t * (3. - 2. * t)
-                    } else {
-                        1.
-                    };
+                let side_weight = if active_ctrl.is_left || active_ctrl.is_right {
+                    let t = (point.x.abs() / 0.005).min(1.);
+                    t * t * (3. - 2. * t)
+                } else {
+                    1.
+                };
                 // Per-component feature mask, analogous to Simplex targetWeights:
                 // the nasal ellipsoid overlaps upper-lip vertices in this asset.
                 // Taper its contribution to zero below the nasal base.
-                let feature_weight = if control.key.starts_with("nose_") {
+                let feature_weight = if active_ctrl.is_nose {
                     let t = ((point.y - 0.653) / 0.010).clamp(0., 1.);
                     t * t * (3. - 2. * t)
                 } else {

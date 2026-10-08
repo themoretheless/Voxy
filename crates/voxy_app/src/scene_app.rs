@@ -1125,15 +1125,27 @@ impl SceneApp {
                     .poll(crate::full_model_worker::Controls::capture(
                         female,
                         self.paused,
-                    ))
-                    .map_err(std::io::Error::other)?;
+                    ));
+                let result = match result {
+                    Ok(frame) => frame,
+                    Err(error) => {
+                        eprintln!("Full-model preparation failed; retaining last uploaded pose: {error}");
+                        None
+                    }
+                };
                 if let Some(frame) = result {
                     eprintln!("FULL MODEL WORKER work_ms={:.3} physics_ms={:.3} mesh_ms={:.3} partition_ms={:.3} streams_ms={:.3}", frame.work_ms, frame.phase_ms[0], frame.phase_ms[1], frame.phase_ms[2], frame.phase_ms[3]);
+                    let upload_started = Instant::now();
                     r.cube.update_shared_vertex_streams(r.host.queue(), &frame.mesh)?;
                     r.cube
                         .update_index_partition(r.host.queue(), &frame.body_indices)?;
                     if let Some(hair) = &mut r.hair_geometry {
                         hair.update_index_partition(r.host.queue(), &frame.hair_indices)?;
+                    }
+                    if std::env::var_os("VOXY_PRESENT_PROFILE").is_some()
+                        || std::env::var_os("VOXY_FRAME_PROFILE").is_some()
+                    {
+                        eprintln!("FULL MODEL CPU UPLOAD stage_ms={:.3}", upload_started.elapsed().as_secs_f64()*1000.);
                     }
                 }
                 None
