@@ -512,7 +512,7 @@ impl FemaleDemo {
             self.time,
             frame,
             size,
-            &serde_json::json!({"view":{"mode":if self.show_strain {"strain"} else if self.show_skin {"displacement"} else {"material"}},"skinShell":tissue_diagnostics::measurements(&self.skin,!self.secondary_only && !self.animation_only),"fluid":self.film.as_ref().map(|f| f.measurements()),
+            &serde_json::json!({"view":{"mode":if self.show_strain {"strain"} else if self.show_skin {"displacement"} else {"material"}},"skinShell":tissue_diagnostics::measurements(&self.skin,!self.animation_only),"fluid":self.film.as_ref().map(|f| f.measurements()),
                 "tissueCageVolumesM3":self.regions.iter().map(|r| r.volume_m3()).collect::<Vec<_>>(),
                 "tissueCageMassesKg":self.regions.iter().map(|r| r.mass_kg()).collect::<Vec<_>>(),
                 "secondaryDynamics": {
@@ -523,7 +523,7 @@ impl FemaleDemo {
                     "peakLocalDisplacementM":self.max_displacement
                 },
                 "tissueCageReferenceDensityKgM3":1000.,
-                "tissueCageOrder":["leftBreast","rightBreast","leftButtock","rightButtock"],
+                "tissueCageOrder":["leftBreast","rightBreast","leftButtock","rightButtock","abdomen"],
                 "anatomicalVolumeMeasurement":false,
                 "coldResponse":{"enabled":self.cold_response.is_some(),
                     "target":self.body_parameters.nipple_cold_response,
@@ -796,19 +796,22 @@ impl FemaleDemo {
         );
         frame * self.hair_head_matrix(time) * frame.inverse()
     }
-    fn root_bob(&self, time: f64) -> f64 {
-        if self.secondary_only && !self.animation_only {
-            {
-                let phase = time % 6.0;
-                if phase < 4.0 {
-                    0.08 * (phase * std::f64::consts::TAU).sin().powi(2)
-                } else {
-                    0.0
-                }
-            }
-        } else {
-            0.0
+    // One trajectory drives the rendered root, hair attachments and tissue excitation.
+    // The returned acceleration is the analytic second derivative of the position.
+    fn root_motion(&self, time: f64) -> (f64, f64) {
+        if !self.secondary_only || self.animation_only {
+            return (0.0, 0.0);
         }
+        let phase = time.rem_euclid(6.0);
+        if phase >= 4.0 {
+            return (0.0, 0.0);
+        }
+        let angle = phase * std::f64::consts::TAU;
+        let omega = 2.0 * std::f64::consts::TAU;
+        (0.08 * angle.sin().powi(2), 0.04 * omega * omega * (2.0 * angle).cos())
+    }
+    fn root_bob(&self, time: f64) -> f64 {
+        self.root_motion(time).0
     }
     fn face_pose(&self) -> crate::female_face::FacePose {
         let mut pose = self
@@ -1034,6 +1037,15 @@ impl FemaleDemo {
             .collect();
         self.skin
             .set_state(positions, vec![[0.; 3]; self.skin.positions().len()])
+    }
+    pub(crate) fn gpu_hair_surface_frames(&self) -> Vec<voxy_render::FiberSurfaceFrame> {
+        self.hair.gpu_surface_frames()
+    }
+    pub(crate) fn gpu_hair_surface_input(&self) -> Result<voxy_render::FiberSurfaceInput, voxy_render::SceneError> {
+        self.hair.gpu_surface_input()
+    }
+    pub(crate) fn simulation_time(&self) -> f64 {
+        self.time
     }
     pub(crate) fn preview_pose(&mut self, time: f64) {
         self.time = time;
@@ -1266,6 +1278,7 @@ impl FemaleDemo {
         if !dt.is_finite() || dt < 0.0 {
             return Err("invalid animation timestep");
         }
+        self.solver_ms = [0.; 2];
         if self.animation_only {
             let previous = (self.time, self.animation_time, self.cold_response);
             let result = (|| {
@@ -1290,19 +1303,13 @@ impl FemaleDemo {
         // Integrate elapsed frame time, with a bounded implicit step and backlog.
         // Hair independently subdivides this interval to at most 1/240 s.
         self.accumulator = (self.accumulator + dt.min(0.1)).min(0.1);
-        let h = self.accumulator.min(0.05);
+        let h = 1.0 / 120.0;
         let mut count = 0;
-        while h >= 1.0 / 120.0 && count < 1 {
+        while self.accumulator + 1e-12 >= h && count < 6 {
             let time = self.time + h;
             // Driven damped springs in metres; base excitation is the same root bob
             // rendered below. Separate stiffness for anterior/posterior soft regions.
-            let phase = time % 6.0;
-            let omega = std::f64::consts::TAU * 2.0;
-            let acceleration = if phase < 4.0 {
-                0.04 * omega * omega * (phase * omega).cos()
-            } else {
-                0.0
-            };
+            let acceleration = self.root_motion(time).1;
             for (index, state) in self.secondary.iter_mut().enumerate() {
                 let size = if index < 2 {
                     self.body_parameters.breast_size
@@ -1405,7 +1412,8 @@ impl FemaleDemo {
                     skin_result?;
                     Ok::<_, &'static str>((skin_ms, hair_ms))
                 })?;
-                self.solver_ms = [skin_ms, hair_ms];
+                self.solver_ms[0] += skin_ms;
+                self.solver_ms[1] += hair_ms;
                 self.targets = targets;
                 self.advance_cold_response(h)?;
                 self.time = time;
@@ -1510,7 +1518,8 @@ impl FemaleDemo {
                 };
                 Ok::<_, &'static str>((report?, skin_ms, hair_ms))
             })?;
-            self.solver_ms = [skin_ms, hair_ms];
+            self.solver_ms[0] += skin_ms;
+            self.solver_ms[1] += hair_ms;
             self.probe_center = next_center;
             self.probe_depth = next_depth;
             let endpoint_contacts = ContactScene {
@@ -1631,6 +1640,15 @@ impl FemaleDemo {
         controls
     }
     pub(crate) fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+        self.mesh_with_hair(self.show_hair)
+    }
+    pub(crate) fn mesh_with_full_hair(&self) -> Result<SceneMesh,voxy_render::SceneError> {
+        self.mesh_with_hair(true)
+    }
+    pub(crate) fn mesh_without_hair(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+        self.mesh_with_hair(false)
+    }
+    fn mesh_with_hair(&self, include_hair: bool) -> Result<SceneMesh, voxy_render::SceneError> {
         let trace = std::env::var_os("VOXY_FACE_MESH_TRACE").is_some();
         let mut checkpoint = std::time::Instant::now();
         let mut mark = |stage: &str| {
@@ -1881,15 +1899,22 @@ impl FemaleDemo {
         );
         mark("face_features");
         let hair_start = vertices.len();
-        if self.show_hair {
-            self.hair.append(&mut vertices, &mut indices);
+        let hair_index_start = indices.len();
+        let mut hair_normals = Vec::new();
+        if include_hair {
+            self.hair.append_with_normals(&mut vertices, &mut indices, &mut hair_normals);
         }
+        let hair_end = vertices.len();
+        let hair_index_end = indices.len();
         if self.animation_only || !self.simulate_hair {
             let head = self.hair_physics_head_matrix(self.time);
             for vertex in &mut vertices[hair_start..] {
                 vertex.position = head
                     .transform_point3(Vec3::from_array(vertex.position))
                     .to_array();
+            }
+            for normal in &mut hair_normals {
+                *normal = head.transform_vector3(Vec3::from_array(*normal)).normalize_or_zero().to_array();
             }
         }
         self.face_parameters
@@ -2004,7 +2029,27 @@ impl FemaleDemo {
                 *coordinate = [0., 0., pupil_radius];
             }
         }
+        // Hair radial normals come directly from the solved Cosserat frame.
+        // Weld only the much smaller non-hair surfaces. Film retains its existing
+        // complete geometric normal path because it can add overlapping layers.
+        // Face morphs also retain it until their Jacobian transports strand normals.
+        let authored_normals = if self.film.is_none() && include_hair
+            && self.face_parameters == crate::face_parameters::FaceParameters::default()
+        {
+            let prefix = SceneMesh::new(vertices[..hair_start].to_vec(), indices[..hair_index_start].to_vec())?
+                .with_prepared_upload_streams();
+            let suffix_indices = indices[hair_index_end..].iter()
+                .map(|i| i.checked_sub(hair_end as u32).ok_or(voxy_render::SceneError::InvalidGeometry))
+                .collect::<Result<Vec<_>, _>>()?;
+            let suffix = SceneMesh::new(vertices[hair_end..].to_vec(), suffix_indices)?
+                .with_prepared_upload_streams();
+            let mut combined = prefix.authored_normals().unwrap().to_vec();
+            combined.append(&mut hair_normals);
+            combined.extend_from_slice(suffix.authored_normals().unwrap());
+            Some(combined)
+        } else { None };
         let mesh = SceneMesh::new(vertices, indices)?.with_material_coordinates(coordinates)?;
+        let mesh = if let Some(normals) = authored_normals { mesh.with_normals(normals)? } else { mesh };
         mark("mesh_validation");
         if let Some(film) = &self.film {
             mesh.with_material_parameters(film.optical_parameters())
@@ -2593,6 +2638,84 @@ mod tests {
         demo.secondary_only = false;
         assert!(demo.hair_head_matrix(1.25).abs_diff_eq(
             glam::Mat4::from_translation(Vec3::Y*demo.root_bob(1.25) as f32)*demo.rig.head_matrix(1.25), 1e-7));
+    }
+    #[test]
+    fn jump_excitation_matches_visible_root_and_stops_during_settling() {
+        let mut demo = FemaleDemo::new().unwrap();
+        // A stationary root must not receive an invisible jump force.
+        assert_eq!(demo.root_motion(0.25), (0.0, 0.0));
+        demo.secondary_only = true;
+        let epsilon = 1e-4;
+        for time in [0.07, 0.25, 0.43, 1.27, 3.73] {
+            let (position, acceleration) = demo.root_motion(time);
+            let numerical = (demo.root_bob(time + epsilon) - 2.0 * position
+                + demo.root_bob(time - epsilon)) / (epsilon * epsilon);
+            assert!((numerical - acceleration).abs() < 1e-5);
+        }
+        for time in [4.0, 4.5, 5.99] {
+            assert_eq!(demo.root_motion(time), (0.0, 0.0));
+        }
+        demo.animation_only = true;
+        assert_eq!(demo.root_motion(0.25), (0.0, 0.0));
+    }
+    #[test]
+    #[ignore = "export full-model native systems for GPU qualification"]
+    fn export_hair_linear_systems() {
+        let mut demo = FemaleDemo::new().unwrap(); demo.secondary_only = true;
+        let times: &[f64] = if std::env::var_os("VOXY_HAIR_QUALIFY_CYCLE").is_some() {
+            &[1./120.,0.25,0.5,1.,2.,4.,5.95]
+        } else { &[1./120.] };
+        let mut rows = Vec::new();
+        for &target in times {
+            while demo.time + 1e-10 < target { demo.advance(1./120.).unwrap(); }
+            let systems = demo.hair.qualification_systems(1./240.).unwrap();
+            assert_eq!(systems.len(),469);
+            rows.extend(systems.iter().map(|s| serde_json::json!({"simulation_seconds":demo.time,"band":s.band_width,"first":s.active.start,"end":s.active.end,"matrix":s.matrix,"rhs":s.rhs})));
+        }
+        let path=std::env::var("VOXY_HAIR_SYSTEM_FILE").expect("absolute qualification output path");
+        assert!(std::path::Path::new(&path).is_absolute());
+        std::fs::write(path,serde_json::to_vec(&rows).unwrap()).unwrap();
+    }
+    #[test]
+    fn delayed_full_model_frame_matches_six_fixed_physics_steps() {
+        let mut delayed=FemaleDemo::new().unwrap();
+        let mut fixed=FemaleDemo::new().unwrap();
+        delayed.secondary_only=true;fixed.secondary_only=true;
+        let started = std::time::Instant::now();
+        delayed.advance(0.05).unwrap();
+        eprintln!("FULL SIX-STEP POSE wall_ms={:.3} skin_ms={:.3} hair_ms={:.3}",
+            started.elapsed().as_secs_f64() * 1000., delayed.solver_ms[0], delayed.solver_ms[1]);
+        let mut summed = [0.; 2];
+        for _ in 0..6 {
+            fixed.advance(1./120.).unwrap();
+            for (total, elapsed) in summed.iter_mut().zip(fixed.solver_ms) { *total += elapsed; }
+        }
+        assert!(delayed.solver_ms.iter().all(|ms| ms.is_finite() && *ms > 0.));
+        assert!(summed.iter().all(|ms| *ms > 0.));
+        assert_eq!(delayed.steps,6);assert_eq!(delayed.time,fixed.time);
+        assert_eq!(delayed.skin.positions(),fixed.skin.positions());
+        assert_eq!(delayed.skin.velocities(),fixed.skin.velocities());
+        let a=delayed.gpu_hair_surface_frames();let b=fixed.gpu_hair_surface_frames();
+        assert_eq!(a.len(),b.len());
+        for (a,b) in a.iter().zip(&b) {
+            assert_eq!(a.position_arc,b.position_arc);assert_eq!(a.u_red,b.u_red);
+            assert_eq!(a.v_green,b.v_green);assert_eq!(a.w_blue,b.w_blue);
+        }
+        delayed.hair.verify(delayed.hair_physics_head_matrix(delayed.time)).unwrap();
+        delayed.advance(0.).unwrap();
+        assert_eq!(delayed.solver_ms, [0.; 2], "a frame without substeps must not report stale solver costs");
+    }
+    #[test]
+    fn gpu_body_stream_preserves_every_non_hair_vertex() {
+        let mut demo=FemaleDemo::new().unwrap();demo.secondary_only=true;
+        demo.advance(1./120.).unwrap();
+        let full=demo.mesh().unwrap();let body=demo.mesh_without_hair().unwrap();
+        let non_hair:Vec<_>=full.vertices().iter().filter(|v| v.uv[0]!=-7.).collect();
+        assert_eq!(body.vertices().len(),non_hair.len());
+        assert!(body.vertices().iter().all(|v| v.uv[0]!=-7.));
+        assert!(body.vertices().iter().zip(non_hair).all(|(a,b)| a.position==b.position && a.uv==b.uv && a.color==b.color));
+        assert_eq!(body.indices().len(),full.indices().chunks_exact(3).filter(|ids| full.vertices()[ids[0] as usize].uv[0]!=-7.).count()*3);
+        assert!(demo.show_hair,"separate body publication must preserve the full model setting");
     }
     #[test]
     fn parallel_full_secondary_preserves_skin_and_hair_contacts() {

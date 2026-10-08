@@ -1,12 +1,76 @@
 //! Banded Gauss-Newton solve of the implicit Cosserat rod energy.
 //! Each station holds position (3 DOFs) and segment-frame rotation (3 DOFs).
 use super::{HairRod, math::*};
-const BAND: usize = 9;
+pub(super) const BAND: usize = 9;
+#[path = "contact_active_set.rs"]
+mod contact_active_set;
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    #[test]
+    fn separated_contact_within_active_tolerance_has_no_attractive_force() {
+        let rest=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],super::super::HairMaterial::default()).unwrap();
+        let (baseline_matrix,baseline_rhs)=assemble(&mut rest.clone(),1./240.).unwrap();
+        let mut separated=rest.clone();
+        separated.record_point_contact(1,[1.,0.,0.],[-5e-11,0.01,0.],super::super::ContactSource::Mesh(0));
+        let (matrix,rhs)=assemble(&mut separated,1./240.).unwrap();
+        assert_eq!(rhs,baseline_rhs,"separated contact introduced an attractive force");
+        let mut penetrating=rest.clone();
+        penetrating.record_point_contact(1,[1.,0.,0.],[5e-11,0.01,0.],super::super::ContactSource::Mesh(0));
+        let (penetrating_matrix,penetrating_rhs)=assemble(&mut penetrating,1./240.).unwrap();
+        assert_eq!(matrix,baseline_matrix,"a separated resting contact must release its stiffness");
+        assert!(penetrating_matrix[6*BAND]>baseline_matrix[6*BAND],"penetrating contact stiffness must remain enabled");
+        assert!(penetrating_rhs[6]>baseline_rhs[6],"penetration must generate an outward force");
+    }
+    #[test]
+    fn boundary_contact_releases_opening_motion_and_resists_closing_motion() {
+        for predicted in [-1e-4,1e-4] {
+            let mut free=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],super::super::HairMaterial::default()).unwrap();
+            free.predicted_x[1][0]=predicted;
+            let mut contact=free.clone();contact.record_point_contact(1,[1.,0.,0.],[0.,0.01,0.],super::super::ContactSource::Mesh(0));
+            let (mut free_matrix,mut free_rhs)=assemble(&mut free,1./240.).unwrap();
+            let (mut matrix,mut rhs)=assemble(&mut contact,1./240.).unwrap();
+            if predicted>0. {
+                assert_eq!(matrix,free_matrix,"opening contact retained adhesive stiffness");
+                assert_eq!(rhs,free_rhs);
+            }
+            let end=rhs.len()-3;
+            cholesky(&mut free_matrix,&mut free_rhs,6..end);
+            cholesky(&mut matrix,&mut rhs,6..end);
+            if predicted<0. {
+                assert!(rhs[6]>free_rhs[6],"closing contact failed to resist penetration");
+                assert!(rhs[6]<=0.,"nonadhesive plane pushed beyond the free opening side");
+            } else {assert_eq!(rhs,free_rhs);}
+        }
+    }
+    #[test]
+    fn independent_surfaces_keep_two_normal_constraints_without_cross_axis_stiffness() {
+        let mut free=HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],super::super::HairMaterial::default()).unwrap();
+        free.predicted_x[1][0]=-1e-4;free.predicted_x[1][1]=-2e-4;
+        let mut contact=free.clone();
+        contact.record_point_contact(1,[1.,0.,0.],[0.,0.,0.01],super::super::ContactSource::Mesh(0));
+        contact.record_point_contact(1,[0.,1.,0.],[0.,0.,0.01],super::super::ContactSource::Mesh(1));
+        let (baseline,_)=assemble(&mut free,1./240.).unwrap();
+        let (matrix,_)=assemble(&mut contact,1./240.).unwrap();
+        assert!(matrix[6*BAND]>baseline[6*BAND]);
+        assert!(matrix[7*BAND]>baseline[7*BAND]);
+        assert_eq!(matrix[7*BAND+1],baseline[7*BAND+1],"two surfaces were averaged into an artificial diagonal plane");
+    }
+    #[test]
+    fn interior_segment_contact_couples_both_endpoint_positions() {
+        let mut free=HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],super::super::HairMaterial::default()).unwrap();
+        free.predicted_x[1][0]=-1e-4;free.predicted_x[2][0]=-1e-4;
+        let stiffness=free.material.young_modulus*free.material.area()/0.01*100.;
+        let mut contact=free.clone();
+        contact.record_contact(1,0.5,[1.,0.,0.],[0.,0.,0.015],super::super::ContactSource::Mesh(0));
+        let (baseline,_)=assemble(&mut free,1./240.).unwrap();
+        let (matrix,_)=assemble(&mut contact,1./240.).unwrap();
+        for index in [6*BAND,12*BAND,12*BAND+6] {
+            assert!(((matrix[index]-baseline[index])-stiffness*0.25).abs()<stiffness*1e-12,"segment shape weights missing at {index}");
+        }
+    }
     #[test]
     fn active_band_solve_recovers_known_solution_and_preserves_fixed_dofs() {
         for n in [12usize, 24, 126] {
@@ -105,7 +169,7 @@ fn constraint(
         }
     }
 }
-fn cholesky(matrix: &mut [f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
+pub(super) fn cholesky(matrix: &mut [f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
     let first = active.start;
     let end = active.end;
     for i in first..end {
@@ -122,6 +186,10 @@ fn cholesky(matrix: &mut [f64], rhs: &mut [f64], active: std::ops::Range<usize>)
             };
         }
     }
+    solve_factored(matrix,rhs,active);
+}
+pub(super) fn solve_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
+    let first=active.start;let end=active.end;
     for i in first..end {
         for j in i.saturating_sub(BAND - 1).max(first)..i {
             rhs[i] -= matrix[i * BAND + i - j] * rhs[j];
@@ -135,7 +203,7 @@ fn cholesky(matrix: &mut [f64], rhs: &mut [f64], active: std::ops::Range<usize>)
         rhs[i] /= matrix[i * BAND];
     }
 }
-pub(super) fn solve(rod: &mut HairRod, dt: f64) {
+pub(super) fn assemble(rod: &mut HairRod, dt: f64) -> Result<(Vec<f64>, Vec<f64>), &'static str> {
     let n = rod.x.len() * 6;
     let mut matrix = std::mem::take(&mut rod.solve_matrix);
     matrix.resize(n * BAND, 0.);
@@ -239,27 +307,47 @@ pub(super) fn solve(rod: &mut HairRod, dt: f64) {
             constraint(&mut matrix, &mut rhs, &jac, value, rigidity / l);
         }
     }
-    // Unilateral contact planes remain in the coupled solve: resolving one point
-    // propagates along the rod instead of simply shortening the adjacent segment.
-    for i in 1..rod.x.len() {
-        let normal = rod.normals[i];
-        if len(normal) > 1e-12 {
-            let normal = unit(normal);
-            let gap = dot(sub(rod.x[i], rod.contact_targets[i]), normal);
-            if gap <= 1e-10 {
-                let jac: [(usize, f64); 3] = std::array::from_fn(|a| (i * 6 + a, normal[a]));
-                constraint(
-                    &mut matrix,
-                    &mut rhs,
-                    &jac,
-                    gap,
-                    ea / rod.lengths[i - 1] * 100.,
-                );
-            }
+    // Resolve the entire coupled unilateral set, including contacts whose
+    // opening/closing direction changes in response to another contact.
+    let mut planes=Vec::new();
+    for contact in &rod.contacts {
+        let i=contact.segment;let t=contact.fraction;
+        let normal=contact.normal;
+        let position=add(mul(rod.x[i],1.-t),mul(rod.x[i+1],t));
+        let gap=dot(sub(position,contact.target),normal);
+        if gap<=1e-10 {
+            planes.push(contact_active_set::Plane {
+                jacobian:std::array::from_fn(|slot| {
+                    let axis=slot%3;
+                    let point=if slot<3 {i} else {i+1};
+                    let weight=if slot<3 {1.-t} else {t};
+                    if point==0 {(6+axis,0.)} else {(point*6+axis,weight*normal[axis])}
+                }),
+                gap,
+                stiffness:ea*100.*((1.-t)/rod.lengths[i.saturating_sub(1)]+t/rod.lengths[i]),
+            });
         }
     }
+    if !planes.is_empty() {
+        let solution=contact_active_set::solve_contact_set(&matrix,&rhs,6..n-3,&planes)?;
+        for (plane,active) in planes.iter().zip(solution.active) {
+            if active {constraint(&mut matrix,&mut rhs,&plane.jacobian,plane.gap,plane.stiffness);}
+        }
+    }
+    Ok((matrix, rhs))
+}
+
+pub(super) fn solve(rod: &mut HairRod, dt: f64) -> Result<(), &'static str> {
+    let n = rod.x.len() * 6;
+    let (mut matrix, mut rhs) = assemble(rod, dt)?;
     // Root DOFs are fixed and uncoupled; the final station has no segment frame.
     cholesky(&mut matrix, &mut rhs, 6..n - 3);
+    apply_correction(rod, &rhs);
+    rod.solve_matrix = matrix;
+    rod.solve_rhs = rhs;
+    Ok(())
+}
+pub(super) fn apply_correction(rod: &mut HairRod, rhs: &[f64]) {
     let max_angle = (1..rod.q.len())
         .map(|i| len([rhs[i * 6 + 3], rhs[i * 6 + 4], rhs[i * 6 + 5]]))
         .fold(0., f64::max);
@@ -280,6 +368,4 @@ pub(super) fn solve(rod: &mut HairRod, dt: f64) {
             );
         }
     }
-    rod.solve_matrix = matrix;
-    rod.solve_rhs = rhs;
 }

@@ -15,12 +15,21 @@ use winit::{
 };
 
 #[derive(Debug)]
+struct ResidentHair {
+    input: voxy_render::FiberSurfaceInput,
+    job: voxy_render::ComputeJob,
+    transfer: voxy_render::FiberSurfaceTransfer,
+    indices: Vec<u32>,
+    dirty: bool,
+}
+#[derive(Debug)]
 struct Resources {
     host: Renderer,
     liquid_renderer: Option<voxy_render::ScreenSpaceFluidRenderer>,
     scene: SceneRenderer,
     cube: SceneGeometry,
     hair_geometry: Option<SceneGeometry>,
+    gpu_hair: Option<ResidentHair>,
     gpu_secondary: Option<voxy_render::SurfaceDeformation>,
     gpu_secondary_reference: Vec<[f32; 4]>,
     gpu_secondary_last_controls: Vec<[f32; 4]>,
@@ -600,8 +609,12 @@ impl SceneApp {
                 scene.reload_shader(host.device(), crate::female_eyes::MATERIAL_SHADER),
             )?;
         }
+        let use_gpu_hair=std::env::var_os("VOXY_ASYNC_FULL").is_some()
+            && std::env::var_os("VOXY_DISABLE_GPU_HAIR").is_none()
+            && self.female.as_ref().is_some_and(|f| f.face_parameters==crate::face_parameters::FaceParameters::default()
+                && f.film.is_none() && f.simulate_hair);
         let mesh = if let Some(female) = &self.female {
-            female.mesh()?
+            if use_gpu_hair { female.mesh_with_full_hair()? } else { female.mesh()? }
         } else if let Some(xray) = &self.xray {
             xray.shell(Vec3::new(0.0, 0.2, 3.0))?
         } else if let Some(fem) = &self.fem {
@@ -622,7 +635,23 @@ impl SceneApp {
             cube_mesh()?
         };
         let mut hair_geometry = None;
-        let cube = if std::env::var_os("VOXY_ASYNC_FULL").is_some() {
+        let mut gpu_hair=None;
+        let cube = if use_gpu_hair {
+            let female=self.female.as_ref().ok_or("resident hair requires full model")?;
+            let (_,indices)=crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
+            let mut hair=scene.upload_compute_mesh(host.device(),&mesh)?;
+            hair.update_index_partition(host.queue(),if female.show_hair { &indices } else { &[] })?;
+            pollster::block_on(scene.set_geometry_opaque_shader(host.device(),&mut hair,include_str!("female_hair_material.wgsl")))?;
+            let input=female.gpu_hair_surface_input()?;
+            let base=mesh.vertices().iter().position(|v| v.uv[0]==-7.).ok_or("missing full hair surface")?;
+            let program=pollster::block_on(voxy_render::ComputeProgram::new(host.device(),voxy_render::FIBER_SURFACE_SHADER))?;
+            let job=program.create_job(host.device(),input.bytes())?;
+            let transfer=pollster::block_on(voxy_render::FiberSurfaceTransfer::new(host.device(),&hair,job.buffer(),&input,base as u32))?;
+            eprintln!("FULL MODEL GPU HAIR initialized vertices={} resident=true",input.vertex_count());
+            gpu_hair=Some(ResidentHair { input,job,transfer,indices,dirty:true });
+            hair_geometry=Some(hair);
+            scene.upload_mesh(host.device(),&female.mesh_without_hair()?)?
+        } else if std::env::var_os("VOXY_ASYNC_FULL").is_some() {
             let (body, hair) =
                 crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
             let mut partitions = scene.upload_shared_mesh_partitions(host.device(), &mesh)?;
@@ -776,6 +805,7 @@ impl SceneApp {
             scene,
             cube,
             hair_geometry,
+            gpu_hair,
             gpu_secondary,
             gpu_secondary_last_controls: vec![[0.; 4]; gpu_secondary_reference.len()],
             gpu_secondary_reference,
@@ -827,7 +857,7 @@ impl SceneApp {
             let view = simulation.background_view_replica()?;
             let controls = crate::full_model_worker::Controls::capture(&view, self.paused);
             self.full_model_worker = Some(crate::full_model_worker::FullModelWorker::new(
-                simulation, controls,
+                simulation, controls, self.resources.as_ref().is_some_and(|r| r.gpu_hair.is_some()),
             )?);
             self.female = Some(view);
         }
@@ -1134,13 +1164,25 @@ impl SceneApp {
                     }
                 };
                 if let Some(frame) = result {
-                    eprintln!("FULL MODEL WORKER work_ms={:.3} physics_ms={:.3} mesh_ms={:.3} partition_ms={:.3} streams_ms={:.3}", frame.work_ms, frame.phase_ms[0], frame.phase_ms[1], frame.phase_ms[2], frame.phase_ms[3]);
+                    eprintln!("FULL MODEL WORKER work_ms={:.3} physics_ms={:.3} mesh_ms={:.3} partition_ms={:.3} streams_ms={:.3} skin_solver_ms={:.3} hair_solver_ms={:.3} simulated_s={:.6}", frame.work_ms, frame.phase_ms[0], frame.phase_ms[1], frame.phase_ms[2], frame.phase_ms[3],frame.solver_ms[0],frame.solver_ms[1],frame.simulation_time);
                     let upload_started = Instant::now();
-                    r.cube.update_shared_vertex_streams(r.host.queue(), &frame.mesh)?;
-                    r.cube
-                        .update_index_partition(r.host.queue(), &frame.body_indices)?;
-                    if let Some(hair) = &mut r.hair_geometry {
-                        hair.update_index_partition(r.host.queue(), &frame.hair_indices)?;
+                    if let Some(gpu)=&mut r.gpu_hair {
+                        let frames=frame.hair_frames.as_ref().ok_or("missing solved GPU hair frames")?;
+                        let bytes=gpu.input.replace_frames(frames)?;
+                        let uploaded=bytes.len();
+                        r.cube.update(r.host.queue(),&frame.mesh)?;
+                        r.host.queue().write_buffer(gpu.job.buffer(),32,bytes);
+                        gpu.dirty=true;
+                        if let Some(hair)=&mut r.hair_geometry {
+                            hair.update_index_partition(r.host.queue(),if frame.hair_visible { &gpu.indices } else { &[] })?;
+                        }
+                        eprintln!("FULL MODEL GPU HAIR frame body_vertices={} hair_vertices={} upload_bytes={uploaded} cpu_hair_vertices=0",frame.mesh.vertices().len(),gpu.input.vertex_count());
+                    } else {
+                        r.cube.update_shared_vertex_streams(r.host.queue(), &frame.mesh)?;
+                        r.cube.update_index_partition(r.host.queue(), &frame.body_indices)?;
+                        if let Some(hair) = &mut r.hair_geometry {
+                            hair.update_index_partition(r.host.queue(), &frame.hair_indices)?;
+                        }
                     }
                     if std::env::var_os("VOXY_PRESENT_PROFILE").is_some()
                         || std::env::var_os("VOXY_FRAME_PROFILE").is_some()
@@ -1461,6 +1503,14 @@ impl SceneApp {
                 &active_draws,
                 &refractive_layers,
                 |queue, encoder| {
+                    if let Some(hair)=&mut r.gpu_hair {
+                        if hair.dirty {
+                            hair.job.encode_step(encoder,[hair.input.vertex_count().div_ceil(64),1,1])
+                                .map_err(|_| voxy_render::RendererError::Scene(voxy_render::SceneError::InvalidGeometry))?;
+                            hair.transfer.encode(encoder);
+                            hair.dirty=false;
+                        }
+                    }
                     if update_gpu
                         && let (Some(gpu), Some(controls)) = (&r.gpu_secondary, &gpu_controls)
                     {

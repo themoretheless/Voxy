@@ -37,9 +37,30 @@ pub(crate) struct Frame {
     pub mesh: SceneMesh,
     pub body_indices: Vec<u32>,
     pub hair_indices: Vec<u32>,
+    pub hair_frames: Option<Vec<voxy_render::FiberSurfaceFrame>>,
+    pub hair_visible: bool,
+    pub simulation_time: f64,
     pub title: String,
     pub work_ms: f64,
     pub phase_ms: [f64; 4],
+    /// Accumulated solver costs; skin and hair run concurrently.
+    pub solver_ms: [f64; 2],
+}
+impl Frame {
+    fn validate_publication(&self) -> Result<(), String> {
+        if !self.simulation_time.is_finite() || self.simulation_time < 0.
+            || !self.work_ms.is_finite() || self.work_ms < 0.
+            || self.solver_ms.iter().any(|v| !v.is_finite() || *v < 0.)
+            || self.phase_ms.iter().any(|v| !v.is_finite() || *v < 0.) {
+            return Err("invalid full-model frame timing".into());
+        }
+        if let Some(frames)=&self.hair_frames {
+            if frames.is_empty() || self.mesh.vertices().iter().any(|v| v.uv[0]==-7.) {
+                return Err("invalid separated GPU hair publication".into());
+            }
+        }
+        Ok(())
+    }
 }
 #[derive(Debug)]
 pub(crate) struct FullModelWorker {
@@ -51,7 +72,7 @@ pub(crate) struct FullModelWorker {
     pub failure: Option<String>,
 }
 impl FullModelWorker {
-    pub fn new(mut simulation: FemaleDemo, controls: Controls) -> std::io::Result<Self> {
+    pub fn new(mut simulation: FemaleDemo, controls: Controls, gpu_hair: bool) -> std::io::Result<Self> {
         let shared = Arc::new(Mutex::new(controls));
         let stopped = Arc::new(AtomicBool::new(false));
         let (sender, receiver) = mpsc::sync_channel(1);
@@ -90,11 +111,14 @@ impl FullModelWorker {
                     let mesh_started = std::time::Instant::now();
                     let result = advance
                     .map_err(str::to_owned)
-                    .and_then(|()| simulation.mesh().map_err(|e| e.to_string()))
+                    .and_then(|()| if gpu_hair { simulation.mesh_without_hair() } else { simulation.mesh() }.map_err(|e| e.to_string()))
                     .and_then(|mesh| {
                         let mesh_ms = mesh_started.elapsed().as_secs_f64() * 1000.;
                         let partition_started = std::time::Instant::now();
-                        let (body_indices, hair_indices) = partition_hair(&mesh)?;
+                        let (body_indices, hair_indices) = if gpu_hair {
+                            (mesh.indices().to_vec(),Vec::new())
+                        } else { partition_hair(&mesh)? };
+                        let hair_frames=gpu_hair.then(|| simulation.gpu_hair_surface_frames());
                         let partition_ms = partition_started.elapsed().as_secs_f64() * 1000.;
                         let streams_started = std::time::Instant::now();
                         let mesh = mesh.with_prepared_upload_streams();
@@ -102,8 +126,12 @@ impl FullModelWorker {
                             mesh,
                             body_indices,
                             hair_indices,
+                            hair_frames,
+                            hair_visible:simulation.show_hair,
+                            simulation_time:simulation.simulation_time(),
                             title: simulation.title(),
                             work_ms: started.elapsed().as_secs_f64() * 1000.,
+                            solver_ms: if settings.paused { [0.; 2] } else { simulation.solver_ms },
                             phase_ms: [advance_ms, mesh_ms, partition_ms, streams_started.elapsed().as_secs_f64() * 1000.],
                         })
                     });
@@ -131,6 +159,7 @@ impl FullModelWorker {
         }
         match self.receiver.try_recv() {
             Ok(Ok(frame)) => {
+                if let Err(error)=frame.validate_publication() { return self.fail(error); }
                 self.title = frame.title.clone();
                 Ok(Some(frame))
             }
@@ -196,7 +225,7 @@ mod tests {
         let (mut worker, sender, controls) = fixture();
         sender.send(Ok(Frame {
             mesh: SceneMesh::quad([1.; 4]), body_indices: vec![0, 1, 2],
-            hair_indices: vec![], title: "Valid pose".into(), work_ms: 1., phase_ms: [0.; 4],
+            hair_indices: vec![], hair_frames:None, hair_visible:true, simulation_time:0., title: "Valid pose".into(), work_ms: 1., phase_ms: [0.; 4], solver_ms: [0.; 2],
         })).unwrap();
         let retained = worker.poll(controls).unwrap().unwrap();
         assert_eq!(worker.title, "Valid pose");
@@ -211,6 +240,19 @@ mod tests {
         assert_eq!(retained.mesh.indices().len(), 6);
     }
 
+    #[test]
+    fn invalid_pose_metadata_is_rejected_before_publication() {
+        let (mut worker,sender,controls)=fixture();
+        sender.send(Ok(Frame {
+            mesh:SceneMesh::quad([1.;4]),body_indices:vec![0,1,2],hair_indices:vec![],
+            hair_frames:None,hair_visible:true,simulation_time:f64::NAN,
+            title:"Invalid replacement".into(),work_ms:1.,phase_ms:[0.;4],solver_ms:[0.;2],
+        })).unwrap();
+        assert_eq!(worker.poll(controls).unwrap_err(),"invalid full-model frame timing");
+        assert_ne!(worker.title,"Invalid replacement");
+        assert!(worker.poll(controls).unwrap().is_none());
+        assert!(worker.failure.is_some());
+    }
     #[test]
     fn disconnected_worker_reports_once_and_keeps_diagnostic() {
         let (mut worker, sender, controls) = fixture();

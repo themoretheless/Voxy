@@ -22,6 +22,7 @@ mod female_demo;
 mod female_rig;
 
 mod female_hair;
+pub mod gpu_hair_solver;
 
 mod rig_skinning;
 

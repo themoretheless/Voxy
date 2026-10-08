@@ -21,6 +21,29 @@ fn system(rod: HairRod) -> HairSystem {
     s
 }
 #[test]
+fn joint_contact_failure_rolls_back_pose_and_future_dynamics() {
+    let rod=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],HairMaterial::default()).unwrap();
+    let mut actual=system(rod);actual.iterations=1;actual.substeps=1;actual.joint_contact_velocities=true;
+    let mut control=actual.clone();let dt=1./240.;
+    let points=[[0.,-1.,-1.],[0.,1.,-1.],[0.,0.,1.]];
+    let mut walls=Vec::new();
+    for (shift,face) in [(-dt,[0,1,2]),(dt,[0,2,1])] {
+        let previous=points.map(|mut point| {point[0]=shift;point});
+        let mut wall=TriangleMesh::new(&previous,&[face]).unwrap();
+        wall.refit_with_timestep(&points,dt).unwrap();walls.push(wall);
+    }
+    assert!(actual.step(dt,&[root()],[0.;3],[0.;3],&walls).is_err(),"opposing surface velocities must reject the staged step");
+    assert_eq!(actual.rods()[0].positions(),control.rods()[0].positions());
+    assert_eq!(actual.rods()[0].orientations(),control.rods()[0].orientations());
+    actual.joint_contact_velocities=false;control.joint_contact_velocities=false;
+    for _ in 0..3 {
+        actual.step(dt,&[root()],[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        control.step(dt,&[root()],[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        assert_eq!(actual.rods()[0].positions(),control.rods()[0].positions());
+        assert_eq!(actual.rods()[0].orientations(),control.rods()[0].orientations());
+    }
+}
+#[test]
 fn constitutive_units_and_rest_equilibrium() {
     let material = HairMaterial::default();
     let mut s = system(straight(0.2, 16, material));
@@ -286,6 +309,7 @@ fn parallel_guides_match_serial_solver_with_surface_contacts() {
             serial.iterations = iterations;
             let mut parallel = serial.clone();
             parallel.workers = 4;
+            parallel.profiling = true;
             for _ in 0..4 {
                 for system in [&mut serial, &mut parallel] {
                     system
@@ -299,6 +323,10 @@ fn parallel_guides_match_serial_solver_with_surface_contacts() {
                         .unwrap();
                 }
             }
+            assert!(parallel.last_profile.structural_ms > 0.);
+            assert!(parallel.last_profile.mesh_contacts_ms > 0.);
+            assert_eq!(parallel.last_profile.self_contacts_ms > 0., self_collision);
+            assert_eq!(serial.last_profile.structural_ms, 0.);
             for (a, b) in serial.rods().iter().zip(parallel.rods()) {
                 assert_eq!(a.positions(), b.positions());
                 assert_eq!(a.orientations(), b.orientations());
@@ -382,4 +410,124 @@ fn surface_refit_invalidates_clearance_from_previous_step() {
         s.rods()[0].positions()[2][1] > 0.031,
         "refitted surface was ignored"
     );
+}
+
+#[test]
+fn linear_system_capture_preserves_dynamic_state_and_next_step() {
+    let mut actual = system(straight(0.2, 20, HairMaterial::default()));
+    actual.step(1./120., &[root()], [0.,-9.81,0.], [0.;3], &[]).unwrap();
+    let mut reference = actual.clone();
+    let positions = actual.rods()[0].positions().to_vec();
+    let orientations = actual.rods()[0].orientations().to_vec();
+    let assembled = actual.rods()[0].linear_system(1./240.).unwrap();
+    assert_eq!(assembled.band_width, 9);
+    assert_eq!(assembled.rhs.len(), 126);
+    assert_eq!(assembled.matrix.len(), 126*9);
+    assert_eq!(assembled.active, 6..123);
+    assert!(assembled.matrix.iter().chain(&assembled.rhs).all(|v| v.is_finite()));
+    assert!(assembled.active.clone().all(|i| assembled.matrix[i*9] > 0.));
+    assert_eq!(actual.rods()[0].positions(), positions);
+    assert_eq!(actual.rods()[0].orientations(), orientations);
+    for dt in [0., -1., f64::NAN, f64::INFINITY, 0.1] {
+        assert!(actual.rods()[0].linear_system(dt).is_err());
+    }
+    for system in [&mut actual, &mut reference] {
+        system.step(1./120., &[root()], [0.,-9.81,0.], [0.;3], &[]).unwrap();
+    }
+    assert_eq!(actual.rods()[0].positions(), reference.rods()[0].positions());
+    assert_eq!(actual.rods()[0].orientations(), reference.rods()[0].orientations());
+}
+
+struct NativeBatch { calls: usize, corrupt: Option<usize>, fail_after: Option<usize> }
+impl physics::hair::HairLinearSolver for NativeBatch {
+    fn solve(&mut self,systems:&[physics::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
+        self.calls+=1;
+        if self.fail_after==Some(self.calls) {return Err("injected accelerator failure");}
+        let mut corrections=systems.iter().map(|s|s.solve_native()).collect::<Result<Vec<_>,_>>()?;
+        match self.corrupt {
+            Some(0)=>{corrections.pop();},
+            Some(1)=>{corrections[0][6]=f64::NAN;},
+            Some(2)=>{corrections[0][0]=1.;},
+            Some(3)=>{corrections[0][6]+=1.;},
+            _=>{}
+        }
+        Ok(corrections)
+    }
+}
+fn accelerator_fixture()->(HairSystem,Vec<RootPose>,TriangleMesh) {
+    let curves:Vec<_>=(0..8).map(|rod|(0..=8).map(|point|[rod as f64*0.001,0.04,point as f64*0.01]).collect::<Vec<_>>()).collect();
+    let roots=curves.iter().map(|curve|RootPose {position:curve[0],rotation:[0.,0.,0.,1.]}).collect();
+    let rods=curves.into_iter().map(|curve|HairRod::new(curve,HairMaterial::default()).unwrap()).collect();
+    let floor=TriangleMesh::new(&[[-1.,0.,-1.],[1.,0.,-1.],[1.,0.,1.],[-1.,0.,1.]],&[[0,2,1],[0,3,2]]).unwrap();
+    (HairSystem::new(rods).unwrap(),roots,floor)
+}
+#[test]
+fn external_batches_preserve_native_contact_order_and_dynamic_state() {
+    let (initial,roots,floor)=accelerator_fixture();
+    for workers in [1,4] {for iterations in [1,4,5,9] {
+        let mut native=initial.clone();native.workers=workers;native.iterations=iterations;
+        let mut external=native.clone();let mut solver=NativeBatch {calls:0,corrupt:None,fail_after:None};
+        for _ in 0..4 {
+            native.step(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor)).unwrap();
+            external.step_with_solver(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor),&mut solver).unwrap();
+            for (a,b) in native.rods().iter().zip(external.rods()) {
+                assert_eq!(a.positions(),b.positions());assert_eq!(a.orientations(),b.orientations());
+            }
+        }
+        assert_eq!(solver.calls,4*initial.substeps*iterations);
+    }}
+}
+#[test]
+fn external_failures_rollback_all_substeps_and_hidden_state() {
+    let (initial,roots,floor)=accelerator_fixture();
+    for corruption in [None,Some(0),Some(1),Some(2),Some(3)] {
+        let mut actual=initial.clone();let mut reference=initial.clone();
+        let mut solver=NativeBatch {calls:0,corrupt:corruption,fail_after:if corruption.is_none() {Some(3)} else {None}};
+        assert!(actual.step_with_solver(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor),&mut solver).is_err());
+        for (a,b) in actual.rods().iter().zip(initial.rods()) {
+            assert_eq!(a.positions(),b.positions());assert_eq!(a.orientations(),b.orientations());
+        }
+        for system in [&mut actual,&mut reference] {system.step(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor)).unwrap();}
+        for (a,b) in actual.rods().iter().zip(reference.rods()) {
+            assert_eq!(a.positions(),b.positions());assert_eq!(a.orientations(),b.orientations());
+        }
+    }
+}
+
+#[test]
+fn native_numerical_failure_rolls_back_pose_and_next_step_state() {
+    let mut candidate=system(straight(0.1,4,HairMaterial::default()));
+    candidate.iterations=1;candidate.substeps=2;
+    let mut reference=candidate.clone();
+    let extreme=RootPose {position:[1e308;3],..root()};
+    assert!(candidate.step(1./120.,&[extreme],[0.;3],[0.;3],&[]).is_err());
+    assert_eq!(candidate.rods()[0].positions(),reference.rods()[0].positions());
+    assert_eq!(candidate.rods()[0].orientations(),reference.rods()[0].orientations());
+    for _ in 0..3 {
+        candidate.step(1./120.,&[root()],[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        reference.step(1./120.,&[root()],[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        assert_eq!(candidate.rods()[0].positions(),reference.rods()[0].positions());
+        assert_eq!(candidate.rods()[0].orientations(),reference.rods()[0].orientations());
+    }
+}
+
+#[test]
+fn terminal_contact_accelerator_failure_rolls_back_reconciled_state() {
+    let (mut initial,roots,floor)=accelerator_fixture();
+    initial.iterations=1;initial.substeps=2;initial.terminal_contact_iterations=2;
+    let mut actual=initial.clone();let mut reference=initial.clone();
+    let mut failure=NativeBatch {calls:0,corrupt:None,fail_after:Some(2)};
+    assert!(actual.step_with_solver(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor),&mut failure).is_err());
+    for (a,b) in actual.rods().iter().zip(reference.rods()) {
+        assert_eq!(a.positions(),b.positions());assert_eq!(a.orientations(),b.orientations());
+    }
+    let mut good=NativeBatch {calls:0,corrupt:None,fail_after:None};
+    for _ in 0..3 {
+        actual.step_with_solver(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor),&mut good).unwrap();
+        reference.step(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor)).unwrap();
+        for (a,b) in actual.rods().iter().zip(reference.rods()) {
+            assert_eq!(a.positions(),b.positions());assert_eq!(a.orientations(),b.orientations());
+        }
+    }
+    assert_eq!(good.calls,18);
 }

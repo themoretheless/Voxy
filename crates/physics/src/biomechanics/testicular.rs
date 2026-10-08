@@ -445,6 +445,29 @@ mod testicular_tests {
     }
 
     #[test]
+    fn outer_wall_motion_transfers_to_core_with_layered_mass_and_energy_guard() {
+        let geometry = TesticularGeometry {centers_m:[[-0.02,0.,0.],[0.02,0.,0.]],
+            radii_m:[[0.015,0.02,0.025];2],sectors:8,rings:3};
+        let core = Material {shear_pa:1000.,bulk_pa:100_000.,fibers:vec![]};
+        let wall = Material {shear_pa:3000.,bulk_pa:200_000.,fibers:vec![]};
+        for body in geometry.build_layered([0.8,0.9],[core.clone(),core],[wall.clone(),wall]).unwrap() {
+            let outer_count = (body.rest.len()-1)/2;
+            // These fixture laws identify its authored regions; no density is
+            // inferred from stiffness in the production solver.
+            let density: Vec<_> = body.elements.iter().map(|e|
+                if e.material.shear_pa == 1000. {1000.} else {1100.}).collect();
+            let expected_mass: f64 = body.elements.iter().zip(&density).map(|(e,d)|e.volume*d).sum();
+            let mut velocity = vec![[0.;3];body.rest.len()];
+            velocity[..outer_count].fill([0.001,0.,0.]);
+            let mut dynamic = super::super::InertialBody::new(body,&density,velocity).unwrap();
+            assert!((dynamic.masses().iter().sum::<f64>()-expected_mass).abs() < 1e-14);
+            for _ in 0..4 { assert!(dynamic.step(1e-5,1e-8).unwrap().abs() <= 1e-8); }
+            assert!(dynamic.velocities()[outer_count..].iter().flatten().any(|v|v.abs()>1e-12));
+            assert!(dynamic.body().positions().iter().flatten().all(|p|p.is_finite()));
+        }
+    }
+
+    #[test]
     fn bonded_core_wall_shares_nodes_preserves_volume_and_distinct_laws() {
         let geometry = TesticularGeometry {centers_m:[[-0.02,0.,0.],[0.02,0.,0.]],
             radii_m:[[0.015,0.02,0.025];2],sectors:8,rings:3};
