@@ -245,6 +245,7 @@ impl SceneRenderer {
                 partitioned_indices: false,
                 partition_cache: Vec::new(),
             indices: buffer,
+            shadow_dirty: true,
         };
         target.allocation_bytes += geometry.indices.size();
         target.levels[index] = Some(geometry);
