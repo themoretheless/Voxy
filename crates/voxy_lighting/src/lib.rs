@@ -123,17 +123,31 @@ pub fn build_light(
     let mut opaque = vec![true; PADDED_VOLUME];
     let mut emission = vec![0_u8; PADDED_VOLUME];
     let mut has_emission = false;
+    let center_dense = input.center.data.blocks.to_dense();
+
     for y in -1..=CHUNK_EDGE {
+        let py = usize::try_from(y + 1).unwrap_or(0);
+        let in_y = (0..CHUNK_EDGE).contains(&y);
         for z in -1..=CHUNK_EDGE {
+            let pz = usize::try_from(z + 1).unwrap_or(0);
+            let in_z = (0..CHUNK_EDGE).contains(&z);
+            let base_padded = (py * PADDED_EDGE + pz) * PADDED_EDGE;
+
             for x in -1..=CHUNK_EDGE {
-                let Some(block) = sample(input, [x, y, z]) else {
-                    continue;
+                let block = if in_y && in_z && (0..CHUNK_EDGE).contains(&x) {
+                    center_dense[(x as usize) + 32 * ((z as usize) + 32 * (y as usize))]
+                } else {
+                    let Some(b) = sample(input, [x, y, z]) else {
+                        continue;
+                    };
+                    b
                 };
                 let definition = input
                     .registry
                     .get(block)
                     .ok_or(LightingError::UnknownBlock(block.get()))?;
-                let index = padded_index([x, y, z]);
+                let px = usize::try_from(x + 1).unwrap_or(0);
+                let index = base_padded + px;
                 opaque[index] = definition.occlusion == Occlusion::FullCube;
                 emission[index] = definition.emission;
                 if definition.emission > 0 {
@@ -154,18 +168,17 @@ pub fn build_light(
     }
 
     let mut packed = vec![0_u8; CHUNK_VOLUME];
-    for local in LocalIndex::all() {
-        let raw = usize::from(local.get());
-        let edge = 32_usize;
-        let x = raw % edge;
-        let z = (raw / edge) % edge;
-        let y = raw / (edge * edge);
-        let padded = padded_index([
-            i64::from(u8::try_from(x).unwrap_or(0)),
-            i64::from(u8::try_from(y).unwrap_or(0)),
-            i64::from(u8::try_from(z).unwrap_or(0)),
-        ]);
-        packed[usize::from(local.get())] = (sky[padded] << 4) | block[padded];
+    for y in 0..32_usize {
+        let py = (y + 1) * PADDED_EDGE;
+        for z in 0..32_usize {
+            let base_padded = (py + (z + 1)) * PADDED_EDGE + 1;
+            let base_local = 32 * (z + 32 * y);
+            for x in 0..32_usize {
+                let padded = base_padded + x;
+                let local_idx = base_local + x;
+                packed[local_idx] = (sky[padded] << 4) | block[padded];
+            }
+        }
     }
     Ok(LightVolume {
         packed: packed.into_boxed_slice(),
