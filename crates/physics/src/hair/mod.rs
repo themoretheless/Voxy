@@ -66,6 +66,20 @@ pub struct RootPose {
     pub position: V,
     pub rotation: Q,
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ContactSource {
+    Mesh(usize),
+    Strand { other_rod: usize, other_segment: usize },
+}
+#[derive(Clone, Debug)]
+struct RodContact {
+    segment: usize,
+    fraction: f64,
+    normal: V,
+    target: V,
+    source: ContactSource,
+    surface_velocity: V,
+}
 #[derive(Clone, Debug)]
 pub struct HairRod {
     rest_x: Vec<V>,
@@ -76,7 +90,7 @@ pub struct HairRod {
     old_x: Vec<V>,
     predicted_x: Vec<V>,
     predicted_q: Vec<Q>,
-    contact_targets: Vec<V>,
+    contacts: Vec<RodContact>,
     // Exact nearest-surface queries warm-start from the previous triangle.
     nearest_cache: Vec<Vec<usize>>,
     clearance_cache: Vec<Vec<Option<contact::Clearance>>>,
@@ -91,6 +105,8 @@ pub struct HairRod {
     inv_inertia: Vec<f64>,
 
     normals: Vec<V>,
+    surface_velocity_sum: Vec<V>,
+    surface_velocity_weight: Vec<f64>,
     material: HairMaterial,
 }
 impl HairRod {
@@ -141,7 +157,7 @@ impl HairRod {
         let rest_relative = q.windows(2).map(|q| qm(conj(q[0]), q[1])).collect();
         Ok(Self {
             predicted_x: points.clone(),
-            contact_targets: points.clone(),
+            contacts: Vec::new(),
             nearest_cache: Vec::new(),
             clearance_cache: Vec::new(),
             contact_candidates: Vec::new(),
@@ -162,8 +178,30 @@ impl HairRod {
             rest_relative,
 
             normals: vec![[0.; 3]; n],
+            surface_velocity_sum: vec![[0.; 3]; n],
+            surface_velocity_weight: vec![0.; n],
             material,
         })
+    }
+    fn record_contact(&mut self, mut segment:usize, mut fraction:f64, normal:V, target:V, source:ContactSource) -> usize {
+        // Canonicalize a shared endpoint so node and capsule queries do not
+        // count the same geometric contact twice.
+        if fraction==1. && segment+1<self.lengths.len() {segment+=1;fraction=0.;}
+        if let Some(index)=self.contacts.iter().position(|contact| {
+            contact.source==source && contact.segment==segment
+                && (contact.fraction-fraction).abs()*self.lengths[segment]<=1e-12
+                && dot(contact.normal,normal)>1.-1e-12
+                && dot(sub(contact.target,target),normal).abs()<=1e-12
+        }) {
+            let existing=&mut self.contacts[index];
+            existing.fraction=fraction;existing.normal=normal;existing.target=target;
+            index
+        } else {self.contacts.push(RodContact {segment,fraction,normal,target,source,surface_velocity:[0.;3]});self.contacts.len()-1}
+    }
+    fn record_point_contact(&mut self, point:usize, normal:V, target:V, source:ContactSource) -> usize {
+        let segment=point.min(self.lengths.len()-1);
+        let fraction=if point==self.lengths.len() {1.} else {0.};
+        self.record_contact(segment,fraction,normal,target,source)
     }
     /// Canonical stress-free curve, independent of the current dynamic pose.
     pub fn rest_positions(&self) -> &[V] {
@@ -202,6 +240,9 @@ impl HairRod {
         self.old_q.clone_from(&self.q);
 
         self.normals.fill([0.; 3]);
+        self.surface_velocity_sum.fill([0.;3]);
+        self.surface_velocity_weight.fill(0.);
+        self.contacts.clear();
         self.x[0] = root.position;
         self.q[0] = qunit(qm(root.rotation, self.rest_q[0]));
         let drag = (-self.material.air_drag * dt).exp();
@@ -220,8 +261,8 @@ impl HairRod {
         self.predicted_x.clone_from(&self.x);
         self.predicted_q.clone_from(&self.q);
     }
-    fn solve(&mut self, dt: f64, _reverse: bool) {
-        direct::solve(self, dt);
+    fn solve(&mut self, dt: f64, _reverse: bool) -> Result<(), &'static str> {
+        direct::solve(self, dt)
     }
     fn finish(&mut self, dt: f64) {
         for i in 0..self.x.len() {
@@ -229,16 +270,81 @@ impl HairRod {
             let normal = self.normals[i];
             if len(normal) > 1e-12 {
                 let n = unit(normal);
-                let vn = dot(self.velocity[i], n);
-                let tangent = sub(self.velocity[i], mul(n, vn));
+                let surface=mul(self.surface_velocity_sum[i],1./self.surface_velocity_weight[i].max(1e-30));
+                let relative=sub(self.velocity[i],surface);
+                let vn = dot(relative, n);
+                let tangent = sub(relative, mul(n, vn));
                 let removed = self.material.friction * vn.abs();
                 let factor = (1. - removed / len(tangent).max(1e-30)).max(0.);
-                self.velocity[i] = add(mul(tangent, factor), mul(n, vn.max(0.)));
+                self.velocity[i] = add(surface,add(mul(tangent, factor), mul(n, vn.max(0.))));
             }
         }
         for i in 0..self.q.len() {
             self.omega[i] = mul(log(qm(self.q[i], conj(self.old_q[i]))), 1. / dt);
         }
+    }
+    fn record_surface_response(&mut self, point: usize, correction: V, velocity: V) {
+        self.normals[point]=add(self.normals[point],correction);
+        let weight=len(correction);
+        self.surface_velocity_sum[point]=add(self.surface_velocity_sum[point],mul(velocity,weight));
+        self.surface_velocity_weight[point]+=weight;
+    }
+}
+/// Solver phase costs. Independent guide costs are summed worker times, not wall time.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct HairStepProfile {
+    pub structural_ms: f64,
+    pub mesh_contacts_ms: f64,
+    pub self_contacts_ms: f64,
+}
+/// Native assembled Cosserat system for accelerator qualification.
+/// Lower triangular row bands include the diagonal at offset zero.
+#[derive(Clone, Debug)]
+pub struct HairLinearSystem {
+    pub band_width: usize,
+    pub matrix: Vec<f64>,
+    pub rhs: Vec<f64>,
+    pub active: std::ops::Range<usize>,
+}
+/// Accelerator ownership remains outside physics; one callback receives all
+/// independent rod matrices from the current nonlinear iteration.
+pub trait HairLinearSolver {
+    fn solve(&mut self, systems: &[HairLinearSystem]) -> Result<Vec<Vec<f64>>, &'static str>;
+}
+impl HairLinearSystem {
+    pub fn solve_native(&self) -> Result<Vec<f64>, &'static str> {
+        if self.band_width != direct::BAND || self.rhs.len() < 12 || self.rhs.len() % 6 != 0
+            || self.matrix.len() != self.rhs.len() * direct::BAND || self.active != (6..self.rhs.len()-3)
+            || self.matrix.iter().chain(&self.rhs).any(|v| !v.is_finite()) {return Err("invalid hair linear system");}
+        let mut matrix=self.matrix.clone();let mut rhs=self.rhs.clone();
+        direct::cholesky(&mut matrix,&mut rhs,self.active.clone());
+        self.validate_correction(&rhs)?;Ok(rhs)
+    }
+    fn validate_correction(&self, values:&[f64]) -> Result<(), &'static str> {
+        if values.len()!=self.rhs.len() || values.iter().any(|v|!v.is_finite()) {return Err("invalid hair accelerator correction");}
+        if (0..self.active.start).chain(self.active.end..values.len()).any(|i|values[i]!=self.rhs[i]) {return Err("hair accelerator changed fixed DOFs");}
+        for i in self.active.clone() {
+            let term=self.matrix[i*direct::BAND]*values[i];let mut ax=term;let mut scale=term.abs()+self.rhs[i].abs();
+            for j in i.saturating_sub(direct::BAND-1).max(self.active.start)..i {
+                let term=self.matrix[i*direct::BAND+i-j]*values[j];ax+=term;scale+=term.abs();
+            }
+            for j in i+1..(i+direct::BAND).min(self.active.end) {
+                let term=self.matrix[j*direct::BAND+j-i]*values[j];ax+=term;scale+=term.abs();
+            }
+            if !ax.is_finite() || !scale.is_finite() || (ax-self.rhs[i]).abs()>1e-8*scale.max(1e-30) {return Err("hair accelerator residual exceeds tolerance");}
+        }
+        Ok(())
+    }
+}
+impl HairRod {
+    /// Capture the same assembly used by the native solver without changing the rod.
+    pub fn linear_system(&self, dt: f64) -> Result<HairLinearSystem, &'static str> {
+        if !dt.is_finite() || !(1e-6..=1./20.).contains(&dt) { return Err("invalid hair linear-system timestep"); }
+        let mut staged = self.clone();
+        let (matrix, rhs) = direct::assemble(&mut staged, dt)?;
+        if matrix.iter().chain(&rhs).any(|v| !v.is_finite()) { return Err("hair linear-system overflow"); }
+        let count = rhs.len();
+        Ok(HairLinearSystem { band_width: direct::BAND, matrix, rhs, active: 6..count-3 })
     }
 }
 /// Coupled guide solve. Segment contacts run inside the structural iterations.
@@ -251,6 +357,15 @@ pub struct HairSystem {
     pub substeps: usize,
     pub contact_radius: f64,
     pub self_collision: bool,
+    /// Experimental joint normal-velocity projection. Full-model stretch and
+    /// long-cycle accelerator qualification remain required before default use.
+    pub joint_contact_velocities: bool,
+    /// Experimental time-aligned mesh sampling; full-model stretch qualification is pending.
+    pub sample_collider_motion: bool,
+    /// Experimental structural reconciliation after the final contact projection.
+    pub terminal_contact_iterations: usize,
+    pub profiling: bool,
+    pub last_profile: HairStepProfile,
 }
 impl HairSystem {
     pub fn new(rods: Vec<HairRod>) -> Result<Self, &'static str> {
@@ -264,6 +379,11 @@ impl HairSystem {
             substeps: 4,
             contact_radius: 40e-6,
             self_collision: true,
+            joint_contact_velocities: false,
+            sample_collider_motion: false,
+            terminal_contact_iterations: 0,
+            profiling: false,
+            last_profile: HairStepProfile::default(),
         })
     }
     /// Stage all guide rebuilds before publishing a new system. Preserves solver
@@ -284,6 +404,10 @@ impl HairSystem {
         system.substeps = self.substeps;
         system.contact_radius = self.contact_radius;
         system.self_collision = self.self_collision;
+        system.joint_contact_velocities = self.joint_contact_velocities;
+        system.sample_collider_motion = self.sample_collider_motion;
+        system.terminal_contact_iterations = self.terminal_contact_iterations;
+        system.profiling = self.profiling;
         Ok(system)
     }
     pub fn rods(&self) -> &[HairRod] {
@@ -298,6 +422,32 @@ impl HairSystem {
         air_velocity: V,
         meshes: &[TriangleMesh],
     ) -> Result<(), &'static str> {
+        let mut staged=self.clone();
+        staged.step_impl(dt,roots,gravity,air_velocity,meshes,None)?;
+        *self=staged;
+        Ok(())
+    }
+    /// The complete step commits only after the accelerator and contacts succeed.
+    pub fn step_with_solver(&mut self,dt:f64,roots:&[RootPose],gravity:V,air_velocity:V,meshes:&[TriangleMesh],solver:&mut dyn HairLinearSolver)->Result<(), &'static str> {
+        let mut staged=self.clone();
+        staged.step_impl(dt,roots,gravity,air_velocity,meshes,Some(solver))?;
+        *self=staged;Ok(())
+    }
+    fn solve_external_rods(rods:&mut [HairRod],dt:f64,solver:&mut dyn HairLinearSolver)->Result<(), &'static str> {
+        let systems=rods.iter_mut().map(|rod| {
+            let (matrix,rhs)=direct::assemble(rod,dt)?;let n=rhs.len();
+            Ok(HairLinearSystem {band_width:direct::BAND,matrix,rhs,active:6..n-3})
+        }).collect::<Result<Vec<_>, &'static str>>()?;
+        let corrections=solver.solve(&systems)?;
+        if corrections.len()!=systems.len() {return Err("hair accelerator changed batch size");}
+        for (system,correction) in systems.iter().zip(&corrections) {system.validate_correction(correction)?;}
+        for ((rod,system),correction) in rods.iter_mut().zip(systems).zip(corrections) {
+            direct::apply_correction(rod,&correction);
+            rod.solve_matrix=system.matrix;rod.solve_rhs=system.rhs;
+        }
+        Ok(())
+    }
+    fn step_impl(&mut self,dt:f64,roots:&[RootPose],gravity:V,air_velocity:V,meshes:&[TriangleMesh],mut solver:Option<&mut dyn HairLinearSolver>)->Result<(), &'static str> {
         if !dt.is_finite()
             || dt < 1e-6
             || dt > 1. / 20.
@@ -307,6 +457,7 @@ impl HairSystem {
             || self.workers > 64
             || self.iterations == 0
             || self.iterations > 128
+            || self.terminal_contact_iterations > 32
             || !self.contact_radius.is_finite()
             || self.contact_radius <= 0.
             || roots.len() != self.rods.len()
@@ -320,6 +471,12 @@ impl HairSystem {
         {
             return Err("invalid hair step");
         }
+        if self.sample_collider_motion && meshes.iter().filter_map(TriangleMesh::motion_duration).any(|duration|(duration-dt).abs()>1e-12*dt) {
+            return Err("collider motion duration differs from hair step");
+        }
+        let mut sampled_meshes=(self.sample_collider_motion && meshes.iter().any(|mesh|mesh.motion_duration().is_some())).then(||meshes.to_vec());
+        self.last_profile = HairStepProfile::default();
+        let profiling = self.profiling;
         // Meshes are immutable for this step. Invalidate distance bounds before
         // every new call so animated/refitted or replaced surfaces cannot reuse them.
         for rod in &mut self.rods {
@@ -330,6 +487,14 @@ impl HairSystem {
         let substeps = self.substeps.max((dt * 240.0).ceil() as usize);
         let dt = dt / substeps as f64;
         for substep in 0..substeps {
+            let meshes=if let Some(sampled)=&mut sampled_meshes {
+                for (sample,source) in sampled.iter_mut().zip(meshes) {
+                    sample.sample_motion(source,(substep+1) as f64/substeps as f64)?;
+                }
+                for rod in &mut self.rods {for cache in &mut rod.clearance_cache {cache.fill(None);}}
+                sampled.as_slice()
+            } else {meshes};
+            let mut strand_responses=Vec::new();
             for (rod, root) in self.rods.iter_mut().zip(roots) {
                 // Interpolate moving attachments over substeps rather than teleporting on first substep.
                 let t = 1. / (substeps - substep) as f64;
@@ -353,36 +518,87 @@ impl HairSystem {
             for first in (0..self.iterations).step_by(batch) {
                 let end = (first + batch).min(self.iterations);
                 let radius = self.contact_radius;
-                if !parallel {
+                if let Some(solver)=solver.as_deref_mut() {
+                    for _ in first..end {
+                        let started=profiling.then(std::time::Instant::now);
+                        Self::solve_external_rods(&mut self.rods,dt,solver)?;
+                        if let Some(started)=started {self.last_profile.structural_ms+=started.elapsed().as_secs_f64()*1000.;}
+                        let started=profiling.then(std::time::Instant::now);
+                        for rod in &mut self.rods {contact::mesh_contacts(rod,meshes,radius);}
+                        if let Some(started)=started {self.last_profile.mesh_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
+                    }
+                } else if !parallel {
                     for rod in &mut self.rods {
-                        rod.solve(dt, first % 2 != 0);
+                        let started = profiling.then(std::time::Instant::now);
+                        rod.solve(dt, first % 2 != 0)?;
+                        if let Some(started) = started { self.last_profile.structural_ms += started.elapsed().as_secs_f64() * 1000.; }
+                        let started = profiling.then(std::time::Instant::now);
                         contact::mesh_contacts(rod, meshes, radius);
+                        if let Some(started) = started { self.last_profile.mesh_contacts_ms += started.elapsed().as_secs_f64() * 1000.; }
                     }
                 } else {
                     let chunk = self.rods.len().div_ceil(self.workers);
-                    std::thread::scope(|scope| {
+                    let profiles = std::thread::scope(|scope| {
+                        let mut workers = Vec::new();
                         for rods in self.rods.chunks_mut(chunk) {
-                            scope.spawn(move || {
+                            workers.push(scope.spawn(move || {
+                                let mut profile = HairStepProfile::default();
                                 for rod in rods {
                                     for iteration in first..end {
-                                        rod.solve(dt, iteration % 2 != 0);
+                                        let started = profiling.then(std::time::Instant::now);
+                                        rod.solve(dt, iteration % 2 != 0)?;
+                                        if let Some(started) = started { profile.structural_ms += started.elapsed().as_secs_f64() * 1000.; }
+                                        let started = profiling.then(std::time::Instant::now);
                                         contact::mesh_contacts(rod, meshes, radius);
+                                        if let Some(started) = started { profile.mesh_contacts_ms += started.elapsed().as_secs_f64() * 1000.; }
                                     }
                                 }
-                            });
+                                Ok::<_, &'static str>(profile)
+                            }));
                         }
-                    });
+                        workers.into_iter().map(|worker| worker.join().map_err(|_| "hair profile worker panicked").and_then(|result| result)).collect::<Result<Vec<_>, _>>()
+                    })?;
+                    for profile in profiles {
+                        self.last_profile.structural_ms += profile.structural_ms;
+                        self.last_profile.mesh_contacts_ms += profile.mesh_contacts_ms;
+                    }
                 }
                 if self.self_collision && (end % 4 == 0 || end == self.iterations) {
-                    contact::self_contacts(&mut self.rods, radius);
+                    let started = profiling.then(std::time::Instant::now);
+                    strand_responses.extend(contact::self_contacts(&mut self.rods, radius));
+                    if let Some(started) = started { self.last_profile.self_contacts_ms += started.elapsed().as_secs_f64() * 1000.; }
+                    // A strand reaction can move a guide into the body after
+                    // its independent mesh phase. Refresh those constraints
+                    // before the shared velocity projection.
+                    if self.joint_contact_velocities {
+                        let started=profiling.then(std::time::Instant::now);
+                        for rod in &mut self.rods {contact::refresh_mesh_constraints(rod,meshes,radius);}
+                        if let Some(started)=started {self.last_profile.mesh_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
+                    }
                 }
+            }
+            // Position projection must not be the last operation on an elastic rod:
+            // reconcile its physical strain with the final unilateral constraints.
+            for _ in 0..self.terminal_contact_iterations {
+                let started=profiling.then(std::time::Instant::now);
+                if let Some(solver)=solver.as_deref_mut() {
+                    Self::solve_external_rods(&mut self.rods,dt,solver)?;
+                } else {for rod in &mut self.rods {direct::solve(rod,dt)?;}}
+                if let Some(started)=started {self.last_profile.structural_ms+=started.elapsed().as_secs_f64()*1000.;}
+                let started=profiling.then(std::time::Instant::now);
+                for rod in &mut self.rods {contact::refresh_mesh_constraints(rod,meshes,self.contact_radius);}
+                if let Some(started)=started {self.last_profile.mesh_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
             }
             for rod in &mut self.rods {
                 rod.finish(dt);
             }
+            contact::finish_strand_contacts(&mut self.rods,&strand_responses,dt);
+            if self.joint_contact_velocities {
+                contact::stabilize_contact_velocities(&mut self.rods,&strand_responses,dt,self.contact_radius)?;
+            }
         }
         if self.rods.iter().any(|r| {
-            r.x.iter().any(|p| !finite(*p)) || r.q.iter().flatten().any(|q| !q.is_finite())
+            r.x.iter().chain(&r.velocity).chain(&r.omega).any(|p| !finite(*p)) || r.q.iter().flatten().any(|q| !q.is_finite())
         }) {
             return Err("hair solver overflow");
         }

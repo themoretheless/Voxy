@@ -10,6 +10,7 @@ default = []
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
 
 [dependencies]
+wgpu = { version = "30.0.1", features = ["noop"] }
 voxy_core = { path = "../voxy_core" }
 voxy_editor = { path = "../voxy_editor" }
 voxy_assets = { path = "../voxy_assets" }
@@ -39,5 +40,4 @@ path = "examples/pinball/main.rs"
 test = true
 
 [dev-dependencies]
-wgpu = { version = "30.0.1", features = ["noop"] }
 image = { version = "0.25.10", default-features = false, features = ["png"] }

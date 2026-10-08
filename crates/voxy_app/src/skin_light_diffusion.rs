@@ -142,6 +142,44 @@ fn assemble_surface(
     }
     Ok((mass, edges))
 }
+// Canonical rows retain each edge's original arithmetic direction and order.
+// Independent rows avoid repeatedly scattering both endpoints into the output vector.
+#[derive(Clone, Copy, Default)]
+struct Coupling { neighbor_direction: usize, weight: f64 }
+struct SurfaceRows { offsets: Vec<usize>, couplings: Vec<Coupling> }
+impl SurfaceRows {
+    fn new(count: usize, edges: &[(usize, usize, f64)]) -> Result<Self, &'static str> {
+        if count > usize::MAX/2 { return Err("diffusion topology too large"); }
+        let mut offsets=vec![0usize; count+1];
+        for &(a,b,_) in edges {
+            if a>=count || b>=count { return Err("invalid diffusion edge"); }
+            offsets[a+1]+=1;offsets[b+1]+=1;
+        }
+        for i in 0..count { offsets[i+1]+=offsets[i]; }
+        let mut cursors=offsets[..count].to_vec();
+        let mut couplings=vec![Coupling::default();offsets[count]];
+        for &(a,b,w) in edges {
+            couplings[cursors[a]]=Coupling { neighbor_direction:b*2,weight:w };cursors[a]+=1;
+            couplings[cursors[b]]=Coupling { neighbor_direction:a*2+1,weight:w };cursors[b]+=1;
+        }
+        Ok(Self { offsets,couplings })
+    }
+    fn apply(&self, mass: &[f64], lambda: f64, x: &[f64], y: &mut [f64]) {
+        for i in 0..mass.len() {
+            let mut value=mass[i]*x[i];
+            for edge in &self.couplings[self.offsets[i]..self.offsets[i+1]] {
+                let neighbor=edge.neighbor_direction/2;
+                if edge.neighbor_direction%2==0 {
+                    value+=lambda*edge.weight*(x[i]-x[neighbor]);
+                } else {
+                    value-=lambda*edge.weight*(x[neighbor]-x[i]);
+                }
+            }
+            y[i]=value;
+        }
+    }
+}
+
 fn diffuse_measured_initial(
     points: &[[f32; 3]],
     triangles: &[[usize; 3]],
@@ -149,6 +187,12 @@ fn diffuse_measured_initial(
     radii_m: [f64; 3],
     parallel: bool,
     initial: Option<&[[f64; 3]]>,
+) -> Result<(Vec<[f64; 3]>, Timings), &'static str> {
+    diffuse_measured_initial_operator(points,triangles,source,radii_m,parallel,initial,false)
+}
+fn diffuse_measured_initial_operator(
+    points: &[[f32; 3]], triangles: &[[usize; 3]], source: &[[f64; 3]],
+    radii_m: [f64; 3], parallel: bool, initial: Option<&[[f64; 3]]>, use_rows: bool,
 ) -> Result<(Vec<[f64; 3]>, Timings), &'static str> {
     let initial = initial.filter(|v| {
         v.len() == points.len() && v.iter().flatten().all(|x| x.is_finite() && *x >= 0.)
@@ -162,6 +206,7 @@ fn diffuse_measured_initial(
     }
     let started = std::time::Instant::now();
     let (mass, edges) = assemble_surface(points, triangles)?;
+    let rows=if use_rows { Some(SurfaceRows::new(mass.len(),&edges)?) } else { None };
     let mut timings = Timings {
         assembly_ms: started.elapsed().as_secs_f64() * 1000.,
         solve_ms: 0.,
@@ -178,13 +223,10 @@ fn diffuse_measured_initial(
             return Ok((source.iter().map(|s| s[channel]).collect(), 0));
         }
         let apply = |x: &[f64], y: &mut [f64]| {
-            for (value, (m, v)) in y.iter_mut().zip(mass.iter().zip(x)) {
-                *value = m * v;
-            }
-            for &(a, b, w) in edges {
-                let flux = lambda * w * (x[a] - x[b]);
-                y[a] += flux;
-                y[b] -= flux;
+            if let Some(rows)=&rows { rows.apply(mass,lambda,x,y); }
+            else {
+                for (value,(m,v)) in y.iter_mut().zip(mass.iter().zip(x)) { *value=m*v; }
+                for &(a,b,w) in edges { let flux=lambda*w*(x[a]-x[b]);y[a]+=flux;y[b]-=flux; }
             }
         };
         let mut diagonal = mass.clone();
@@ -276,6 +318,22 @@ fn diffuse_measured_initial(
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn independent_matrix_rows_match_canonical_scatter_bit_for_bit() {
+        let points=[[0.,0.,0.],[0.01,0.,0.],[0.01,0.01,0.],[0.,0.01,0.]];
+        let (mass,edges)=super::assemble_surface(&points,&[[0,1,2],[0,2,3]]).unwrap();
+        let rows=super::SurfaceRows::new(mass.len(),&edges).unwrap();
+        for x in [[0.,0.,0.,0.],[1.,1.,1.,1.],[0.123456789,1e-8,0.987654321,1e3],[-1e-9,3.5,-2.7,0.]] {
+            for lambda in [0.,1e-8,1e-6,1e-3] {
+                let mut expected:Vec<_>=mass.iter().zip(x).map(|(m,v)| m*v).collect();
+                for &(a,b,w) in &edges {
+                    let flux=lambda*w*(x[a]-x[b]);expected[a]+=flux;expected[b]-=flux;
+                }
+                let mut actual=vec![0.;mass.len()];rows.apply(&mass,lambda,&x,&mut actual);
+                assert!(actual.iter().zip(expected).all(|(a,b)| a.to_bits()==b.to_bits()));
+            }
+        }
+    }
     #[test]
     fn unused_render_vertices_do_not_change_the_surface_solution() {
         let p = [[0., 0., 0.], [0.01, 0., 0.], [0., 0.01, 0.]];
@@ -424,7 +482,19 @@ mod benchmark {
                 samples.push(serde_json::json!({"assemblyMs":t.assembly_ms,"solveMs":t.solve_ms,"iterations":t.iterations}));
             }
         }
-        let report = serde_json::json!({"vertices":points.len(),"triangles":triangles.len(),"samples":samples,"serialSolveMs":serial_timing.solve_ms,"serialAssemblyMs":serial_timing.assembly_ms,"scope":"Static imported-body kernel profile, seven samples after warmup; not GPU or full renderer timing."});
+        let mut operator_pairs=Vec::new();
+        for run in 0..6 {
+            let mut timings=[(0.,0.);2];
+            for use_rows in if run%2==0 { [false,true] } else { [true,false] } {
+                let (output,t)=diffuse_measured_initial_operator(&points,&triangles,&source,
+                    [0.002,0.001,0.0005],true,None,use_rows).unwrap();
+                assert_eq!(reference.as_ref().unwrap(),&output);
+                timings[usize::from(use_rows)]=(t.assembly_ms,t.solve_ms);
+            }
+            if run>0 { operator_pairs.push(serde_json::json!({"scatterAssemblyMs":timings[0].0,"scatterSolveMs":timings[0].1,
+                "rowsAssemblyMs":timings[1].0,"rowsSolveMs":timings[1].1,"bitwiseEqual":true})); }
+        }
+        let report = serde_json::json!({"vertices":points.len(),"triangles":triangles.len(),"samples":samples,"operatorPairs":operator_pairs,"serialSolveMs":serial_timing.solve_ms,"serialAssemblyMs":serial_timing.assembly_ms,"scope":"Static imported-body kernel profile, seven samples after warmup; not GPU or full renderer timing."});
         if let Ok(path) = std::env::var("VOXY_LIGHT_DIFFUSION_GPU_INPUT") {
             let (mass, edges) = assemble_surface(&points, &triangles).unwrap();
             let input = serde_json::json!({"mass":mass,"edges":edges,"source":source,"radii":[0.002,0.001,0.0005],"reference":reference.as_ref().unwrap(),"scope":"Static original imported body; not posed runtime geometry"});
