@@ -4,7 +4,7 @@ use std::collections::HashMap;
 mod features;
 #[path = "velocity_contacts.rs"]
 mod velocity_contacts;
-pub(super) use velocity_contacts::stabilize_contact_velocities;
+pub(super) use velocity_contacts::{stabilize_contact_velocities,reconcile_contact_positions};
 /// An exact surface query bounds clearance inside the ball around its query point.
 /// The distance function is 1-Lipschitz; the certificate expires at the next step.
 #[derive(Clone, Copy, Debug)]
@@ -929,6 +929,23 @@ fn candidate_cell_pairs(grid: &ContactGrid) -> Vec<(SegmentId, SegmentId)> {
 }
 
 pub(super) fn self_contacts(rods: &mut [HairRod], radius: f64) -> Vec<StrandResponse> {
+    gather_strand_contacts(rods,radius,true)
+}
+/// Re-query the current geometry without moving it. Historical projections supply
+/// friction load only; old normals and released pairs must not constrain velocity.
+pub(super) fn refresh_strand_responses(rods:&mut [HairRod],radius:f64,history:&[StrandResponse])->Vec<StrandResponse> {
+    let mut loads:std::collections::BTreeMap<((usize,usize),(usize,usize)),Vec<(V,f64)>>=std::collections::BTreeMap::new();
+    for response in history {
+        loads.entry(((response.a.0,response.a.1),(response.b.0,response.b.1))).or_default().push((response.normal,response.impulse));
+    }
+    let mut current=gather_strand_contacts(rods,radius,false);
+    for response in &mut current {
+        response.impulse=loads.get(&((response.a.0,response.a.1),(response.b.0,response.b.1)))
+            .map_or(0.,|loads|loads.iter().map(|(normal,impulse)|dot(*normal,response.normal).max(0.)*impulse).sum());
+    }
+    current
+}
+fn gather_strand_contacts(rods: &mut [HairRod], radius: f64, project_positions:bool) -> Vec<StrandResponse> {
     let mut responses=Vec::new();
     const CONTACT_TOLERANCE: f64 = 1e-10;
     let query_radius = radius + CONTACT_TOLERANCE * 0.5;
@@ -1004,17 +1021,17 @@ pub(super) fn self_contacts(rods: &mut [HairRod], radius: f64) -> Vec<StrandResp
             continue;
         }
         let depth = separation - distance;
-        let impulse = pair_impulse(rods,(ra,ia,s),(rb,ib,t),depth);
+        let impulse = if project_positions {pair_impulse(rods,(ra,ia,s),(rb,ib,t),depth)} else {0.};
         // Keep the physical separation target from before projection. The
         // displacement limiter controls this iteration, not the contact gap:
         // an incomplete projection must still enter the structural solve.
         responses.push(StrandResponse {a:(ra,ia,s),b:(rb,ib,t),normal,impulse});
         let target_a=add(p,mul(normal,depth*wa/(wa+wb)));
         let target_b=add(q,mul(normal,-depth*wb/(wa+wb)));
-        if wa > 0. && project(&mut rods[ra],ia,s,normal,impulse*wa,None) {
+        if wa > 0. && (!project_positions || project(&mut rods[ra],ia,s,normal,impulse*wa,None)) {
             rods[ra].record_contact(ia,s,normal,target_a,ContactSource::Strand {other_rod:rb,other_segment:ib});
         }
-        if wb > 0. && project(&mut rods[rb],ib,t,mul(normal,-1.),impulse*wb,None) {
+        if wb > 0. && (!project_positions || project(&mut rods[rb],ib,t,mul(normal,-1.),impulse*wb,None)) {
             rods[rb].record_contact(ib,t,mul(normal,-1.),target_b,ContactSource::Strand {other_rod:ra,other_segment:ia});
         }
     }
@@ -1072,6 +1089,49 @@ mod query_tests {
         rod.record_surface_response(1,[0.,1e-4,0.],velocity);
         rod.finish(dt);
         assert!(len(sub(rod.velocity[1],velocity))<1e-12,"common surface motion generated friction: {:?}",rod.velocity[1]);
+    }
+    #[test]
+    fn released_strand_contacts_do_not_apply_historical_velocity_impulses() {
+        let make=|x|HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],super::super::HairMaterial::default()).unwrap();
+        let mut rods=vec![make(0.),make(60e-6)];
+        let history=self_contacts(&mut rods,40e-6);
+        assert!(!history.is_empty());
+        for point in &mut rods[1].x {point[0]+=0.01;}
+        rods[0].velocity.fill([1.,2.,0.]);rods[1].velocity.fill([-1.,0.,0.]);
+        let before=rods.clone();
+        let current=refresh_strand_responses(&mut rods,40e-6,&history);
+        assert!(current.is_empty());
+        finish_strand_contacts(&mut rods,&current,1./240.);
+        for (actual,expected) in rods.iter().zip(&before) {
+            assert_eq!(actual.x,expected.x);assert_eq!(actual.velocity,expected.velocity);
+            assert!(actual.contacts.iter().all(|c|matches!(c.source,ContactSource::Mesh(_))));
+        }
+    }
+    #[test]
+    fn refreshed_strand_contacts_use_current_geometry_without_projecting() {
+        let make=|x|HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],super::super::HairMaterial::default()).unwrap();
+        let mut rods=vec![make(0.),make(80e-6)];
+        let history=[StrandResponse {a:(0,1,0.5),b:(1,1,0.5),normal:[0.,1.,0.],impulse:1e-6}];
+        let before=rods.clone();let current=refresh_strand_responses(&mut rods,40e-6,&history);
+        assert!(!current.is_empty());
+        for response in current {
+            assert!(response.normal[0] < -0.99);assert_eq!(response.impulse,0.,"orthogonal historical load must not become friction");
+        }
+        for (actual,expected) in rods.iter().zip(before) {assert_eq!(actual.x,expected.x);}
+    }
+    #[test]
+    fn current_strand_manifold_combines_projection_load_without_duplicate_velocity_constraints() {
+        let make=|x|HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],super::super::HairMaterial::default()).unwrap();
+        let mut rods=vec![make(0.),make(80e-6)];
+        let history=[
+            StrandResponse {a:(0,1,0.2),b:(1,1,0.2),normal:[-1.,0.,0.],impulse:1e-6},
+            StrandResponse {a:(0,1,0.8),b:(1,1,0.8),normal:[-1.,0.,0.],impulse:2e-6},
+        ];
+        let current=refresh_strand_responses(&mut rods,40e-6,&history);
+        let pair=current.iter().filter(|r|r.a.1==1 && r.b.1==1).collect::<Vec<_>>();
+        assert_eq!(pair.len(),1);
+        assert!((pair[0].impulse-3e-6).abs()<1e-20);
+        assert!(len(sub(pair[0].normal,[-1.,0.,0.]))<1e-15);
     }
     #[test]
     fn strand_velocity_response_preserves_common_translation() {

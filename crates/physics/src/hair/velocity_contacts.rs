@@ -21,14 +21,38 @@ struct Response {
     linear: Vec<V>,
     angular: Vec<V>,
 }
+// One contact operator acts on either velocities or positional increments.
+// This keeps compliance, active-set logic and fixed-root ownership identical.
+trait ProjectionVector {
+    fn linear(&self,rod:usize,point:usize)->V;
+    fn add_linear(&mut self,rod:usize,point:usize,change:V);
+    fn add_angular(&mut self,rod:usize,point:usize,change:V);
+    fn shape(&self)->Vec<usize>;
+    fn finite(&self)->bool;
+}
+impl ProjectionVector for [HairRod] {
+    fn linear(&self,r:usize,p:usize)->V {self[r].velocity[p]}
+    fn add_linear(&mut self,r:usize,p:usize,v:V) {self[r].velocity[p]=add(self[r].velocity[p],v);}
+    fn add_angular(&mut self,r:usize,p:usize,v:V) {self[r].omega[p]=add(self[r].omega[p],v);}
+    fn shape(&self)->Vec<usize> {self.iter().map(|rod|rod.x.len()).collect()}
+    fn finite(&self)->bool {self.iter().all(|rod|rod.velocity.iter().chain(&rod.omega).all(|v|finite(*v)))}
+}
+struct PositionIncrement {linear:Vec<Vec<V>>,angular:Vec<Vec<V>>}
+impl ProjectionVector for PositionIncrement {
+    fn linear(&self,r:usize,p:usize)->V {self.linear[r][p]}
+    fn add_linear(&mut self,r:usize,p:usize,v:V) {self.linear[r][p]=add(self.linear[r][p],v);}
+    fn add_angular(&mut self,r:usize,p:usize,v:V) {self.angular[r][p]=add(self.angular[r][p],v);}
+    fn shape(&self)->Vec<usize> {self.linear.iter().map(Vec::len).collect()}
+    fn finite(&self)->bool {self.linear.iter().chain(&self.angular).all(|points|points.iter().all(|v|finite(*v)))}
+}
 impl Constraint {
-    fn speed(&self, rods: &[HairRod]) -> f64 {
+    fn speed<S:ProjectionVector+?Sized>(&self, rods: &S) -> f64 {
         self.entries
             .iter()
-            .map(|entry| dot(entry.gradient, rods[entry.rod].velocity[entry.point]))
+            .map(|entry| dot(entry.gradient, rods.linear(entry.rod,entry.point)))
             .sum()
     }
-    fn residual(&self, rods: &[HairRod]) -> f64 {
+    fn residual<S:ProjectionVector+?Sized>(&self, rods: &S) -> f64 {
         let gap = self.speed(rods) - self.bound;
         if self.multiplier > 0. {
             gap.abs()
@@ -36,20 +60,18 @@ impl Constraint {
             (-gap).max(0.)
         }
     }
-    fn apply(&self, rods: &mut [HairRod], impulse: f64) {
+    fn apply<S:ProjectionVector+?Sized>(&self, rods: &mut S, impulse: f64) {
         if self.response.is_empty() {
             for entry in self.entries {
-                let velocity = &mut rods[entry.rod].velocity[entry.point];
-                *velocity = add(*velocity, mul(entry.gradient, entry.mobility * impulse));
+                rods.add_linear(entry.rod,entry.point,mul(entry.gradient,entry.mobility*impulse));
             }
         } else {
             for response in &self.response {
-                let rod = &mut rods[response.rod];
-                for (velocity, change) in rod.velocity.iter_mut().zip(&response.linear) {
-                    *velocity = add(*velocity, mul(*change, impulse));
+                for (point,change) in response.linear.iter().enumerate() {
+                    rods.add_linear(response.rod,point,mul(*change,impulse));
                 }
-                for (omega, change) in rod.omega.iter_mut().zip(&response.angular) {
-                    *omega = add(*omega, mul(*change, impulse));
+                for (point,change) in response.angular.iter().enumerate() {
+                    rods.add_angular(response.rod,point,mul(*change,impulse));
                 }
             }
         }
@@ -186,9 +208,9 @@ fn prepare_implicit_response(
     }
     Ok(())
 }
-fn accelerate_active_set(
+fn accelerate_active_set<S:ProjectionVector+?Sized>(
     constraints: &mut [Constraint],
-    rods: &mut [HairRod],
+    rods: &mut S,
     tolerance: f64,
 ) -> Result<bool, &'static str> {
     let mut active: Vec<_> = constraints
@@ -198,7 +220,7 @@ fn accelerate_active_set(
             (c.multiplier > 0. || c.bound - c.speed(rods) > tolerance).then_some(i)
         })
         .collect();
-    let mut scratch: Vec<Vec<V>> = rods.iter().map(|rod| vec![[0.; 3]; rod.x.len()]).collect();
+    let mut scratch: Vec<Vec<V>> = rods.shape().into_iter().map(|n|vec![[0.;3];n]).collect();
     // All constraints use the same particle mobility, so J M^-1 J^T is
     // symmetric positive semidefinite. Apply it without a dense Gram matrix.
     for _ in 0..32 {
@@ -371,6 +393,54 @@ pub(in crate::hair) fn stabilize_contact_velocities(
         return Ok(());
     }
     prepare_implicit_response(&mut constraints, rods, dt)?;
+    solve_projection(&mut constraints,rods,1e-9)
+}
+pub(in crate::hair) fn reconcile_contact_positions(rods:&mut [HairRod],responses:&mut [StrandResponse],dt:f64,radius:f64)->Result<(), &'static str> {
+    if !dt.is_finite() || dt<=0. || !radius.is_finite() || radius<=0. {return Err("invalid shared contact position step");}
+    let mut constraints=Vec::new();
+    for (index,rod) in rods.iter().enumerate() {
+        for contact in &rod.contacts {
+            if !matches!(contact.source,ContactSource::Mesh(_)) {continue;}
+            let i=contact.segment;let t=contact.fraction;
+            let position=add(mul(rod.x[i],1.-t),mul(rod.x[i+1],t));
+            let gap=dot(sub(position,contact.target),contact.normal);
+            let pair=entries(index,i,t,contact.normal,rod);
+            let zero=Entry {rod:index,point:0,gradient:[0.;3],mobility:0.};
+            add_constraint(&mut constraints,[pair[0],pair[1],zero,zero],-gap)?;
+        }
+    }
+    let body_constraints=constraints.len();
+    for response in responses.iter() {
+        let (ra,ia,s)=response.a;let (rb,ib,t)=response.b;
+        let pa=add(mul(rods[ra].x[ia],1.-s),mul(rods[ra].x[ia+1],s));
+        let pb=add(mul(rods[rb].x[ib],1.-t),mul(rods[rb].x[ib+1],t));
+        let a=entries(ra,ia,s,response.normal,&rods[ra]);
+        let b=entries(rb,ib,t,mul(response.normal,-1.),&rods[rb]);
+        add_constraint(&mut constraints,[a[0],a[1],b[0],b[1]],2.*radius-dot(sub(pa,pb),response.normal))?;
+    }
+    if constraints.is_empty() {return Ok(());}
+    prepare_implicit_response(&mut constraints,rods,dt)?;
+    let mut increment=PositionIncrement {
+        linear:rods.iter().map(|rod|vec![[0.;3];rod.x.len()]).collect(),
+        angular:rods.iter().map(|rod|vec![[0.;3];rod.q.len()]).collect(),
+    };
+    solve_projection(&mut constraints,&mut increment,1e-11)?;
+    if !increment.finite() || increment.angular.iter().any(|angles|angles.iter().any(|angle|len(*angle)>0.35)) {
+        return Err("shared contact position increment exceeds linearization");
+    }
+    // Publish only a completely solved increment. Roots remain exact zeros.
+    for (index,rod) in rods.iter_mut().enumerate() {
+        for point in 1..rod.x.len() {
+            rod.x[point]=add(rod.x[point],increment.linear[index][point]);
+            if point<rod.q.len() {apply(&mut rod.q[point],increment.angular[index][point]);}
+        }
+    }
+    for (response,constraint) in responses.iter_mut().zip(&constraints[body_constraints..]) {
+        response.impulse+=constraint.multiplier;
+    }
+    Ok(())
+}
+fn solve_projection<S:ProjectionVector+?Sized>(constraints:&mut [Constraint],rods:&mut S,absolute_tolerance:f64)->Result<(), &'static str> {
     let scale = constraints.iter().try_fold(1f64, |scale, constraint| {
         let speed = constraint.speed(rods);
         if !speed.is_finite() {
@@ -381,12 +451,12 @@ pub(in crate::hair) fn stabilize_contact_velocities(
     if !scale.is_finite() {
         return Err("shared contact velocity overflow");
     }
-    let tolerance = 1e-9 * scale;
+    let tolerance = absolute_tolerance * scale;
     // Projected Gauss-Seidel solves the joint nonnegative impulse problem.
     // A later strand reaction may activate a body plane (and vice versa).
     let mut last_residual = 0.;
     for sweep in 0..4096 {
-        for constraint in &mut constraints {
+        for constraint in constraints.iter_mut() {
             let speed = constraint.speed(rods);
             if !speed.is_finite() {
                 return Err("shared contact velocity overflow");
@@ -410,14 +480,12 @@ pub(in crate::hair) fn stabilize_contact_velocities(
         })?;
         last_residual = residual;
         if residual <= tolerance
-            && rods
-                .iter()
-                .all(|rod| rod.velocity.iter().all(|velocity| finite(*velocity)))
+            && rods.finite()
         {
             return Ok(());
         }
         if sweep % 16 == 15 {
-            accelerate_active_set(&mut constraints, rods, tolerance)?;
+            accelerate_active_set(constraints, rods, tolerance)?;
         }
     }
     eprintln!(
@@ -486,6 +554,30 @@ mod tests {
         assert!(stabilize_contact_velocities(&mut rods, &[], 1. / 240., 40e-6).is_err());
     }
     #[test]
+    fn joint_position_projection_resolves_wall_and_pair_without_moving_roots_or_velocities() {
+        let mut rods=vec![rod(0.),rod(40e-6)];
+        rods[0].record_point_contact(1,[-1.,0.,0.],[-10e-6,0.01,0.],ContactSource::Mesh(0));
+        let mut responses=[StrandResponse {a:(0,1,0.),b:(1,1,0.),normal:[-1.,0.,0.],impulse:0.}];
+        let original=rods.clone();
+        reconcile_contact_positions(&mut rods,&mut responses,1./240.,40e-6).unwrap();
+        assert!(rods[0].x[1][0]<=-10e-6+1e-11);
+        assert!(rods[1].x[1][0]-rods[0].x[1][0]>=80e-6-1e-11);
+        assert!(responses[0].impulse>0.);
+        for (actual,before) in rods.iter().zip(original) {
+            assert_eq!(actual.x[0],before.x[0]);assert_eq!(actual.q[0],before.q[0]);
+            assert_eq!(actual.velocity,before.velocity);assert_eq!(actual.omega,before.omega);
+            assert!(actual.max_relative_stretch()<0.05);
+        }
+    }
+    #[test]
+    fn open_position_contact_has_no_attractive_reaction() {
+        let mut rods=vec![rod(0.),rod(1e-3)];let original=rods.clone();
+        let mut responses=[StrandResponse {a:(0,1,0.),b:(1,1,0.),normal:[-1.,0.,0.],impulse:0.}];
+        reconcile_contact_positions(&mut rods,&mut responses,1./240.,40e-6).unwrap();
+        for (actual,before) in rods.iter().zip(original) {assert_eq!(actual.x,before.x);assert_eq!(actual.q,before.q);}
+        assert_eq!(responses[0].impulse,0.);
+    }
+    #[test]
     fn active_newton_solve_releases_a_plane_without_a_negative_impulse() {
         let mut rods = vec![rod(0.)];
         rods[0].velocity[1] = [-1., 1., 0.];
@@ -500,13 +592,13 @@ mod tests {
             let pair = entries(0, 1, 0., normal, &rods[0]);
             add_constraint(&mut constraints, [pair[0], pair[1], zero, zero], 0.).unwrap();
         }
-        assert!(accelerate_active_set(&mut constraints, &mut rods, 1e-9).unwrap());
+        assert!(accelerate_active_set(&mut constraints, rods.as_mut_slice(), 1e-9).unwrap());
         assert!(len(sub(rods[0].velocity[1], [0., 1., 0.])) < 1e-12);
         assert!(constraints[0].multiplier > 0.);
         assert_eq!(constraints[1].multiplier, 0.);
         assert!(constraints
             .iter()
-            .all(|constraint| constraint.residual(&rods) < 1e-12));
+            .all(|constraint| constraint.residual(rods.as_slice()) < 1e-12));
     }
     #[test]
     fn overflowing_finite_velocity_does_not_pass_a_nan_residual() {
