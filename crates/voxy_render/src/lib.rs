@@ -3,6 +3,8 @@
 mod accumulation;
 pub use accumulation::{RadianceAccumulationFrame, RadianceAccumulator};
 mod backend;
+mod banded_solve;
+pub use banded_solve::{BandedSystem,BandedSolveInput,BandedSolveError,BANDED_SOLVE_SHADER};
 mod blit;
 mod camera;
 mod planar_capture;
@@ -279,3 +281,6 @@ mod surface_deformation;
 pub use surface_deformation::{SurfaceDeformation, SurfaceDeformationWeight};
 
 mod surface_normal_transport;
+
+mod fiber_surface;
+pub use fiber_surface::{FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer, FIBER_SURFACE_SHADER};
