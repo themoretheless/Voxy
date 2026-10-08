@@ -14,6 +14,7 @@ pub(crate) struct FemaleHair {
     targets: Vec<Vec3>,
     collider: TriangleMesh,
     render_offsets: Vec<Vec<Vec3>>,
+    render_indices: Vec<u32>,
 }
 impl FemaleHair {
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
@@ -79,7 +80,12 @@ impl FemaleHair {
             let length = if front_fringe {
                 0.035 + (root.y - 0.755).max(0.0) * 0.4
             } else {
-                0.25 + (i % 11) as f32 * 0.004
+                // Stable, nonperiodic layering avoids eleven repeating blunt
+                // tip heights without changing guide density or solver order.
+                let seed = (i as u32).wrapping_mul(747_796_405).wrapping_add(2_891_336_453);
+                let word = ((seed >> ((seed >> 28) + 4)) ^ seed).wrapping_mul(277_803_737);
+                let variation = ((word >> 22) ^ word) as f32 / u32::MAX as f32;
+                0.24 + 0.085 * variation
             };
             // Start from a collision-free scalp-following groom, then let the rod relax.
             // The ellipsoid is used only for authoring the initial curve, never as a collider.
@@ -222,7 +228,23 @@ impl FemaleHair {
             "HAIR: {} Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact",
             roots.len()
         );
+        let mut render_indices = Vec::new();
+        let mut base = 0;
+        let stride = FOLLOWERS as u32 * 4;
+        for strand in system.rods() {
+            for fibre in 0..FOLLOWERS as u32 {
+                for j in 0..strand.positions().len() as u32 - 1 {
+                    for side in 0..4 {
+                        let a = base + j * stride + fibre * 4 + side;
+                        let b = base + j * stride + fibre * 4 + (side + 1) % 4;
+                        render_indices.extend([a, b, b + stride, a, b + stride, a + stride]);
+                    }
+                }
+            }
+            base += strand.positions().len() as u32 * stride;
+        }
         Ok(Self {
+            render_indices,
             system,
             targets: roots.clone(),
             #[cfg(test)]
@@ -360,13 +382,11 @@ impl FemaleHair {
             .iter()
             .map(|rod| rod.positions().len())
             .sum();
-        let segment_count = point_count - self.system.rods().len();
+        let mesh_base = vertices.len() as u32;
         vertices.reserve(point_count * FOLLOWERS * 4);
-        indices.reserve(segment_count * FOLLOWERS * 24);
-        let key = Vec3::new(-0.4, 0.7, 0.6).normalize();
+        indices.reserve(self.render_indices.len());
         for (i, strand) in self.system.rods().iter().enumerate() {
             let points = strand.positions();
-            let base = vertices.len() as u32;
             for (j, p) in points.iter().enumerate() {
                 let p = Vec3::from_array(p.map(|x| x as f32));
                 let frame = strand.orientations()[j.min(strand.orientations().len() - 1)];
@@ -378,42 +398,29 @@ impl FemaleHair {
                 );
                 let u = frame * Vec3::X;
                 let v = frame * Vec3::Y;
-                let normals = [u, v, -u, -v];
-                let lights = normals.map(|normal| 0.55 + 0.45 * normal.dot(key).max(0.0));
+                let basis = glam::Mat3::from_cols(u, v, frame * Vec3::Z);
                 let t = j as f32 / (points.len() - 1) as f32;
                 // Render fibres represent small bundles, so distant views retain
                 // continuous coverage instead of isolated subpixel fragments.
                 let radius = 0.00030 * (1.0 - 0.6 * t);
+                let section = [u, v, -u, -v].map(|normal| normal * radius);
                 for fibre in 0..FOLLOWERS {
-                    let offset = frame * self.render_offsets[i][j * FOLLOWERS + fibre];
+                    let center = p + basis * self.render_offsets[i][j * FOLLOWERS + fibre];
                     let shade = 0.8 + ((i + fibre) % 7) as f32 * 0.04;
-                    for (normal, light) in normals.into_iter().zip(lights) {
+                    let color = [0.055 * shade, 0.022 * shade, 0.009 * shade, 1.0];
+                    for offset in section {
                         vertices.push(SceneVertex {
-                            position: (p + offset + normal * radius).to_array(),
-                            uv: [-7.0, 0.0],
-                            color: [
-                                0.12 * shade * light,
-                                0.055 * shade * light,
-                                0.025 * shade * light,
-                                1.0,
-                            ],
+                            position: (center + offset).to_array(),
+                            uv: [-7.0, t],
+                            color,
                         });
                     }
                 }
             }
-            let stride = FOLLOWERS as u32 * 4;
-            // Keep each follower's adjacent rings in the post-transform cache.
-            // The full triangle set and tessellation remain identical.
-            for fibre in 0..FOLLOWERS as u32 {
-                for j in 0..points.len() as u32 - 1 {
-                    for side in 0..4 {
-                        let a = base + j * stride + fibre * 4 + side;
-                        let b = base + j * stride + fibre * 4 + (side + 1) % 4;
-                        indices.extend([a, b, b + stride, a, b + stride, a + stride]);
-                    }
-                }
-            }
         }
+        // Topology is immutable: only transport the cached local indices into
+        // the caller's mesh. No guide or follower is removed.
+        indices.extend(self.render_indices.iter().map(|index| mesh_base + index));
     }
     pub fn verify(&self, _head: Mat4) -> Result<(), &'static str> {
         for (rod, target) in self.system.rods().iter().zip(&self.targets) {
@@ -431,6 +438,36 @@ impl FemaleHair {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn full_resolution_basis_transport_matches_quaternion_reference() {
+        let asset = voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/body.obj"),
+            voxy_render::ObjLimits::default()).unwrap();
+        let hair = FemaleHair::new(asset.mesh.vertices(), asset.mesh.indices()).unwrap();
+        let mut vertices = Vec::new();
+        let mut indices = Vec::new();
+        hair.append(&mut vertices, &mut indices);
+        let mut cursor = 0;
+        for (i, strand) in hair.system.rods().iter().enumerate() {
+            for (j, p) in strand.positions().iter().enumerate() {
+                let p = Vec3::from_array(p.map(|x| x as f32));
+                let q = strand.orientations()[j.min(strand.orientations().len()-1)];
+                let frame = Quat::from_array(q.map(|x| x as f32));
+                let u = frame*Vec3::X;
+                let v = frame*Vec3::Y;
+                let t = j as f32/(strand.positions().len()-1) as f32;
+                for fibre in 0..FOLLOWERS {
+                    let offset = frame*hair.render_offsets[i][j*FOLLOWERS+fibre];
+                    for normal in [u,v,-u,-v] {
+                        let reference = p+offset+normal*(0.00030*(1.-0.6*t));
+                        assert!(Vec3::from_array(vertices[cursor].position).distance(reference)<2e-7);
+                        assert_eq!(vertices[cursor].uv, [-7.,t]);
+                        cursor += 1;
+                    }
+                }
+            }
+        }
+        assert_eq!(cursor,vertices.len());
+    }
     #[test]
     fn cache_order_retains_every_full_resolution_triangle() {
         let body = voxy_render::ObjAsset::parse(
@@ -456,6 +493,13 @@ mod tests {
             }
             base += rod.positions().len() as u32 * stride;
         }
+        assert_eq!(indices, hair.render_indices);
+        let mut shifted_vertices = vec![vertices[0]; 7];
+        let mut shifted_indices = vec![0, 1, 2];
+        hair.append(&mut shifted_vertices, &mut shifted_indices);
+        assert_eq!(&shifted_indices[..3], &[0, 1, 2]);
+        assert!(shifted_indices[3..].iter().zip(&indices)
+            .all(|(shifted, local)| *shifted == *local + 7));
         assert_eq!(vertices.len(), base as usize);
         let mut reordered: Vec<[u32; 3]> = indices.chunks_exact(3)
             .map(|t| t.try_into().unwrap()).collect();

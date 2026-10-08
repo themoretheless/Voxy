@@ -416,6 +416,7 @@ pub struct SceneGeometry {
     depth_mode: SceneDepthMode,
     opaque_shader: Option<(u64, wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::RenderPipeline)>,
     partitioned_indices: bool,
+    partition_cache: Vec<u32>,
 }
 
 /// Additional resource owners publish with their geometry after one admission.
@@ -504,18 +505,31 @@ impl SceneGeometry {
         if !retain_partition {
             self.index_count = count;
             self.partitioned_indices = false;
+            self.partition_cache.clear();
         }
         Ok(())
     }
 
     #[must_use]
     pub fn update_index_partition(&mut self, queue: &wgpu::Queue, indices: &[u32]) -> Result<(), SceneError> {
+        self.update_index_partition_if_changed(queue, indices).map(|_| ())
+    }
+
+    /// Returns whether the index allocation changed. Exact validated cache hits
+    /// retain the existing GPU stream; full-mesh updates invalidate this cache.
+    pub fn update_index_partition_if_changed(&mut self, queue: &wgpu::Queue, indices: &[u32]) -> Result<bool, SceneError> {
+        if self.partitioned_indices && self.partition_cache == indices {
+            return Ok(false);
+        }
         if indices.len() > self.index_capacity || indices.len() % 3 != 0
             || indices.iter().any(|i| *i as usize >= self.vertex_capacity) { return Err(SceneError::InvalidGeometry); }
+        let count = u32::try_from(indices.len()).map_err(|_| SceneError::InvalidGeometry)?;
         if !indices.is_empty() { queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(indices)); }
-        self.index_count = indices.len() as u32;
+        self.partition_cache.clear();
+        self.partition_cache.extend_from_slice(indices);
+        self.index_count = count;
         self.partitioned_indices = true;
-        Ok(())
+        Ok(true)
     }
     #[must_use]
     pub fn index_count(&self) -> u32 {
@@ -1478,6 +1492,7 @@ impl SceneRenderer {
                     depth_mode: SceneDepthMode::Opaque,
                     opaque_shader: None,
                     partitioned_indices: false,
+                    partition_cache: Vec::new(),
                     vertex_capacity: mesh.vertices.len(),
                     index_capacity: source.len(),
                 }
@@ -1568,6 +1583,7 @@ impl SceneRenderer {
             depth_mode: SceneDepthMode::Opaque,
             opaque_shader: None,
             partitioned_indices: false,
+            partition_cache: Vec::new(),
             vertex_capacity,
             index_capacity,
         })
@@ -2726,7 +2742,7 @@ fn validate_view_regions(size: [u32; 2], views: &[SceneView<'_>]) -> Result<(), 
 
 #[derive(Debug, Default)]
 struct NormalCache {
-    authored: Option<Vec<[f32; 3]>>,
+    authored: bool,
     positions: Vec<[f32; 3]>,
     indices: Vec<u32>,
     normals: Vec<[f32; 3]>,
@@ -2742,27 +2758,27 @@ impl NormalCache {
     // rebuild the weld map only when no authored stream is supplied.
     #[allow(clippy::float_cmp)] // Exact geometry equality is the cache invalidation contract.
     fn refresh(&mut self, mesh: &SceneMesh) -> bool {
-        if self.authored == mesh.authored_normals
-            && self.indices == mesh.indices
-            && self.positions.len() == mesh.vertices.len()
-            && self
-                .positions
-                .iter()
-                .zip(&mesh.vertices)
-                .all(|(p, v)| *p == v.position)
-        {
-            return false;
+        let geometry_changed = self.indices != mesh.indices
+            || self.positions.len() != mesh.vertices.len()
+            || !self.positions.iter().zip(&mesh.vertices).all(|(p,v)| *p == v.position);
+        let changed = match &mesh.authored_normals {
+            Some(normals) => self.normals != *normals,
+            None => self.authored || geometry_changed,
+        };
+        if changed {
+            if let Some(normals) = &mesh.authored_normals {
+                self.normals.clone_from(normals);
+            } else {
+                self.normals = smooth_normals(mesh);
+            }
         }
-        self.normals = mesh
-            .authored_normals
-            .clone()
-            .unwrap_or_else(|| smooth_normals(mesh));
-        self.authored.clone_from(&mesh.authored_normals);
-        self.positions.clear();
-        self.positions
-            .extend(mesh.vertices.iter().map(|v| v.position));
-        self.indices.clone_from(&mesh.indices);
-        true
+        self.authored = mesh.authored_normals.is_some();
+        if geometry_changed {
+            self.positions.clear();
+            self.positions.extend(mesh.vertices.iter().map(|v| v.position));
+            self.indices.clone_from(&mesh.indices);
+        }
+        changed
     }
 }
 
@@ -2776,6 +2792,9 @@ pub(crate) fn smooth_normals(mesh: &SceneMesh) -> Vec<[f32; 3]> {
         let key = vertex
             .position
             .map(|x| if x == 0. { 0 } else { x.to_bits() });
+        // An injective 96-bit key avoids array hashing's length prefix while
+        // retaining the randomized standard hasher and exact seam identity.
+        let key = (u64::from(key[0]) << 32 | u64::from(key[1]), key[2]);
         let id = *lookup.entry(key).or_insert_with(|| {
             let id = sums.len();
             sums.push(glam::Vec3::ZERO);
@@ -3570,6 +3589,52 @@ mod transform_memory_tests;
 mod background_upload_regression {
     use super::*;
     #[test]
+    fn authored_normal_cache_tracks_geometry_without_duplicate_streams() {
+        let mut mesh = SceneMesh::quad([1.;4]).with_normals(vec![[0.,0.,1.];4]).unwrap();
+        let mut cache = NormalCache::from_mesh(&mesh);
+        let allocation = cache.normals.as_ptr();
+        mesh.vertices[2].position[2] = 0.25;
+        assert!(!cache.refresh(&mesh), "unchanged authored normals need no GPU upload");
+        assert_eq!(cache.normals.as_ptr(), allocation);
+        assert_eq!(cache.positions[2], mesh.vertices[2].position);
+        mesh.authored_normals.as_mut().unwrap()[2] = [0.,1.,0.];
+        assert!(cache.refresh(&mesh));
+        assert_eq!(cache.normals, *mesh.authored_normals.as_ref().unwrap());
+        mesh.authored_normals = None;
+        assert!(cache.refresh(&mesh), "dropping authored normals regenerates from current geometry");
+        assert_eq!(cache.normals, smooth_normals(&mesh));
+        assert!(!cache.refresh(&mesh));
+    }
+    #[test]
+    fn packed_weld_keys_preserve_seams_and_signed_zero() {
+        let mut mesh = SceneMesh::quad([1.;4]);
+        mesh.vertices[2].position[2] = 0.15;
+        let mut duplicate = mesh.vertices.clone();
+        for v in &mut duplicate {
+            if v.position[2] == 0.0 { v.position[2] = -0.0; }
+        }
+        mesh.vertices.extend(duplicate);
+        mesh.indices.extend([4,5,6,4,6,7]);
+        let mut lookup = std::collections::HashMap::new();
+        let mut mapping = Vec::new();
+        let mut sums = Vec::<glam::Vec3>::new();
+        for vertex in &mesh.vertices {
+            let key = vertex.position.map(|x| if x == 0. {0} else {x.to_bits()});
+            let id = *lookup.entry(key).or_insert_with(|| {
+                let id = sums.len(); sums.push(glam::Vec3::ZERO); id
+            });
+            mapping.push(id);
+        }
+        for tri in mesh.indices.chunks_exact(3) {
+            let p = |i: u32| glam::Vec3::from_array(mesh.vertices[i as usize].position);
+            let n = (p(tri[1])-p(tri[0])).cross(p(tri[2])-p(tri[0]));
+            for &i in tri { sums[mapping[i as usize]] += n; }
+        }
+        for n in &mut sums { *n = n.normalize_or_zero(); }
+        let reference: Vec<_> = mapping.iter().map(|&i| sums[i].to_array()).collect();
+        assert_eq!(smooth_normals(&mesh), reference);
+    }
+    #[test]
     fn worker_preparation_preserves_default_welded_shading_and_authored_streams() {
         let mut mesh = SceneMesh::quad([0.7,0.4,0.2,1.]);
         mesh.vertices[2].position[2] = 0.3;
@@ -3598,8 +3663,12 @@ mod opaque_partition_regression {
         let mut parts = scene.upload_shared_mesh_partitions(&device,&mesh).unwrap();
         assert!(std::sync::Arc::ptr_eq(&parts[0].vertices,&parts[1].vertices));
         assert!(std::sync::Arc::ptr_eq(&parts[0].normals,&parts[1].normals));
-        parts[0].update_index_partition(&queue,&mesh.indices()[..3]).unwrap();
+        assert!(parts[0].update_index_partition_if_changed(&queue,&mesh.indices()[..3]).unwrap());
         parts[1].update_index_partition(&queue,&mesh.indices()[3..]).unwrap();
+        let cached = parts[0].partition_cache.as_ptr();
+        assert!(!parts[0].update_index_partition_if_changed(&queue,&mesh.indices()[..3]).unwrap());
+        assert_eq!(parts[0].partition_cache.as_ptr(), cached);
+        assert_eq!(parts[0].partition_cache, mesh.indices()[..3]);
         assert_eq!(parts[0].index_count(),3);
         assert_eq!(parts[1].index_count(),3);
         let mut deformed = mesh.clone();
@@ -3607,10 +3676,12 @@ mod opaque_partition_regression {
         parts[0].update_shared_vertex_streams(&queue, &deformed).unwrap();
         assert_eq!(parts[0].index_count(), 3);
         assert!(parts[0].partitioned_indices);
+        assert_eq!(parts[0].partition_cache, mesh.indices()[..3]);
         deformed.indices.truncate(3);
         parts[0].update_shared_vertex_streams(&queue, &deformed).unwrap();
         assert_eq!(parts[0].index_count(), 3);
         assert!(!parts[0].partitioned_indices);
+        assert!(parts[0].partition_cache.is_empty());
         parts[0].update_index_partition(&queue, &mesh.indices()[..3]).unwrap();
         parts[0].update(&queue, &mesh).unwrap();
         assert_eq!(parts[0].index_count(), 6);

@@ -368,6 +368,7 @@ impl SceneSkinner {
                 depth_mode: base.depth_mode,
                 opaque_shader: base.opaque_shader.clone(),
                 partitioned_indices: false,
+                partition_cache: Vec::new(),
             },
         })
     }

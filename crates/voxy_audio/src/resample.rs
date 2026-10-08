@@ -32,41 +32,78 @@ impl Clip {
             return Err(AudioError::Capacity);
         }
         let cutoff = 0.9 * (f64::from(target_rate) / f64::from(self.rate)).min(1.0);
+        let g = gcd(self.rate, target_rate);
+        let num_phases = (target_rate / g) as usize;
+        let rate_reduced = u128::from(self.rate / g);
+        let target_reduced = u128::from(target_rate / g);
+
+        // Precompute polyphase filter bank if number of phases is reasonable (<= 1024).
+        let polyphase_table: Option<Vec<[f64; 65]>> = if num_phases <= 1024 {
+            let mut table = Vec::with_capacity(num_phases);
+            for p in 0..num_phases {
+                #[allow(clippy::cast_possible_truncation)]
+                let remainder = (p as u32) * g;
+                let fraction = f64::from(remainder) / f64::from(target_rate);
+                table.push(compute_filter_weights(fraction, cutoff));
+            }
+            Some(table)
+        } else {
+            None
+        };
+
         let mut frames = Vec::with_capacity(count);
+        let input_len = self.frames.len();
+
         for index in 0..count {
             let phase = index as u128 * u128::from(self.rate);
             let center = usize::try_from(phase / u128::from(target_rate))
                 .map_err(|_| AudioError::Capacity)?;
-            let remainder =
-                u32::try_from(phase % u128::from(target_rate)).map_err(|_| AudioError::Capacity)?;
-            let fraction = f64::from(remainder) / f64::from(target_rate);
-            let mut sum = [0.0; 2];
-            let mut normalization = 0.0;
-            for offset in -32_i32..=32 {
-                let distance = f64::from(offset) - fraction;
-                let argument = std::f64::consts::PI * cutoff * distance;
-                let sinc = if argument.abs() < 1e-12 {
-                    1.0
-                } else {
-                    argument.sin() / argument
-                };
-                let window = 0.5 * (1.0 + (std::f64::consts::PI * distance / 33.0).cos());
-                let weight = cutoff * sinc * window;
-                let magnitude =
-                    usize::try_from(offset.unsigned_abs()).map_err(|_| AudioError::Capacity)?;
-                let sample_index = if offset < 0 {
-                    center.saturating_sub(magnitude)
-                } else {
-                    center.saturating_add(magnitude)
+
+            let kernel = if let Some(ref table) = polyphase_table {
+                let phase_idx = usize::try_from((index as u128 * rate_reduced) % target_reduced)
+                    .map_err(|_| AudioError::Capacity)?;
+                table[phase_idx]
+            } else {
+                let remainder = u32::try_from(phase % u128::from(target_rate))
+                    .map_err(|_| AudioError::Capacity)?;
+                let fraction = f64::from(remainder) / f64::from(target_rate);
+                compute_filter_weights(fraction, cutoff)
+            };
+
+            // Fast path: contiguous interior samples without saturating arithmetic or clamping.
+            let (sum0, sum1) = if center >= 32 && center + 32 < input_len {
+                let window = &self.frames[center - 32..=center + 32];
+                let mut s0 = 0.0f64;
+                let mut s1 = 0.0f64;
+                for (frame, &weight) in window.iter().zip(kernel.iter()) {
+                    s0 += f64::from(frame[0]) * weight;
+                    s1 += f64::from(frame[1]) * weight;
                 }
-                .min(self.frames.len() - 1);
-                for (channel, value) in sum.iter_mut().enumerate() {
-                    *value += f64::from(self.frames[sample_index][channel]) * weight;
+                (s0, s1)
+            } else {
+                let mut s0 = 0.0f64;
+                let mut s1 = 0.0f64;
+                for (k, offset) in (-32_i32..=32).enumerate() {
+                    let magnitude =
+                        usize::try_from(offset.unsigned_abs()).map_err(|_| AudioError::Capacity)?;
+                    let sample_index = if offset < 0 {
+                        center.saturating_sub(magnitude)
+                    } else {
+                        center.saturating_add(magnitude)
+                    }
+                    .min(input_len - 1);
+                    let weight = kernel[k];
+                    s0 += f64::from(self.frames[sample_index][0]) * weight;
+                    s1 += f64::from(self.frames[sample_index][1]) * weight;
                 }
-                normalization += weight;
-            }
+                (s0, s1)
+            };
+
             #[allow(clippy::cast_possible_truncation)] // Explicit clipping of filter overshoot.
-            frames.push(sum.map(|value| (value / normalization).clamp(-1.0, 1.0) as f32));
+            frames.push([
+                sum0.clamp(-1.0, 1.0) as f32,
+                sum1.clamp(-1.0, 1.0) as f32,
+            ]);
         }
         Self::new(target_rate, frames)
     }
@@ -113,6 +150,39 @@ impl Clip {
         Self::new(target_rate, frames)
     }
 }
+
+const fn gcd(mut a: u32, mut b: u32) -> u32 {
+    while b != 0 {
+        let t = b;
+        b = a % b;
+        a = t;
+    }
+    a
+}
+
+fn compute_filter_weights(fraction: f64, cutoff: f64) -> [f64; 65] {
+    let mut weights = [0.0f64; 65];
+    let mut normalization = 0.0f64;
+    for (k, offset) in (-32_i32..=32).enumerate() {
+        let distance = f64::from(offset) - fraction;
+        let argument = std::f64::consts::PI * cutoff * distance;
+        let sinc = if argument.abs() < 1e-12 {
+            1.0
+        } else {
+            argument.sin() / argument
+        };
+        let window = 0.5 * (1.0 + (std::f64::consts::PI * distance / 33.0).cos());
+        let weight = cutoff * sinc * window;
+        weights[k] = weight;
+        normalization += weight;
+    }
+    let inv_norm = 1.0 / normalization;
+    for w in &mut weights {
+        *w *= inv_norm;
+    }
+    weights
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

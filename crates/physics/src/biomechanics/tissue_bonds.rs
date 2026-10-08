@@ -244,7 +244,7 @@ let mut candidates: Vec<(f64, usize)> = corpus_surface
                 // Quickselect/partition is O(n) average vs O(n log n) for full sort
                 if candidates.len() > neighbors {
                     // Partition so that first 'neighbors' are the smallest distances
-                    candidates.select_nth_unstable_by::<_, Ordering>(|a: &(f64, usize), b: &(f64, usize)| a.0.total_cmp(&b.0));
+                    candidates.select_nth_unstable_by(neighbors - 1, |a: &(f64, usize), b: &(f64, usize)| a.0.total_cmp(&b.0));
                 }
                 
                 // Take the k nearest (already at front after select_nth)

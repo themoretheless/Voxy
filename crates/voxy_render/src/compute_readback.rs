@@ -220,10 +220,14 @@ impl ComputeReadbackPool {
                 buffer.destroy();
             }
             // Admission and allocation are serialized across all program owners.
+            let mut usage = wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ;
+            if self.0.device.features().contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS) {
+                usage |= wgpu::BufferUsages::STORAGE;
+            }
             let buffer = self.0.device.create_buffer(&wgpu::BufferDescriptor {
                 label: Some("pooled compute readback"),
                 size,
-                usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+                usage,
                 mapped_at_creation: false,
             });
             state.stats.allocated_bytes += size;

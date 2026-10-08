@@ -48,6 +48,7 @@ pub(crate) struct FullModelWorker {
     receiver: mpsc::Receiver<Result<Frame, String>>,
     thread: Option<std::thread::JoinHandle<()>>,
     pub title: String,
+    pub failure: Option<String>,
 }
 impl FullModelWorker {
     pub fn new(mut simulation: FemaleDemo, controls: Controls) -> std::io::Result<Self> {
@@ -120,19 +121,28 @@ impl FullModelWorker {
             receiver,
             thread: Some(thread),
             title,
+            failure: None,
         })
     }
     pub fn poll(&mut self, controls: Controls) -> Result<Option<Frame>, String> {
         *self.controls.lock().unwrap() = controls;
+        if self.failure.is_some() {
+            return Ok(None);
+        }
         match self.receiver.try_recv() {
             Ok(Ok(frame)) => {
                 self.title = frame.title.clone();
                 Ok(Some(frame))
             }
-            Ok(Err(error)) => Err(error),
+            Ok(Err(error)) => self.fail(error),
             Err(mpsc::TryRecvError::Empty) => Ok(None),
-            Err(mpsc::TryRecvError::Disconnected) => Err("full-model worker stopped".into()),
+            Err(mpsc::TryRecvError::Disconnected) => self.fail("full-model worker stopped".into()),
         }
+    }
+    fn fail(&mut self, error: String) -> Result<Option<Frame>, String> {
+        self.title = format!("Physics preparation stopped | {error}");
+        self.failure = Some(error.clone());
+        Err(error)
     }
 }
 impl Drop for FullModelWorker {
@@ -162,4 +172,55 @@ pub(crate) fn partition_hair(mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), S
         }
     }
     Ok((body, hair))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn fixture() -> (FullModelWorker, mpsc::SyncSender<Result<Frame, String>>, Controls) {
+        let controls = Controls {
+            view: [0., 0., 2.], paused: false, pressing: false, probe: false,
+            skin: true, complexion: true, strain: false, hair: true,
+        };
+        let (sender, receiver) = mpsc::sync_channel(1);
+        (FullModelWorker {
+            controls: Arc::new(Mutex::new(controls)),
+            stopped: Arc::new(AtomicBool::new(false)), receiver, thread: None,
+            title: "Initial pose".into(), failure: None,
+        }, sender, controls)
+    }
+
+    #[test]
+    fn preparation_failure_emits_no_replacement_pose_and_reports_once() {
+        let (mut worker, sender, controls) = fixture();
+        sender.send(Ok(Frame {
+            mesh: SceneMesh::quad([1.; 4]), body_indices: vec![0, 1, 2],
+            hair_indices: vec![], title: "Valid pose".into(), work_ms: 1., phase_ms: [0.; 4],
+        })).unwrap();
+        let retained = worker.poll(controls).unwrap().unwrap();
+        assert_eq!(worker.title, "Valid pose");
+        sender.send(Err("non-finite tissue state".into())).unwrap();
+        assert_eq!(worker.poll(controls).unwrap_err(), "non-finite tissue state");
+        drop(sender);
+        assert!(worker.poll(controls).unwrap().is_none());
+        assert!(worker.poll(controls).unwrap().is_none());
+        assert_eq!(worker.failure.as_deref(), Some("non-finite tissue state"));
+        assert!(worker.title.contains("Physics preparation stopped"));
+        assert_eq!(retained.title, "Valid pose");
+        assert_eq!(retained.mesh.indices().len(), 6);
+    }
+
+    #[test]
+    fn disconnected_worker_reports_once_and_keeps_diagnostic() {
+        let (mut worker, sender, controls) = fixture();
+        drop(sender);
+        assert_eq!(worker.poll(controls).unwrap_err(), "full-model worker stopped");
+        let diagnostic = worker.title.clone();
+        let mut camera_controls = controls;
+        camera_controls.view[0] = 0.5;
+        assert!(worker.poll(camera_controls).unwrap().is_none());
+        assert_eq!(worker.title, diagnostic);
+        assert_eq!(*worker.controls.lock().unwrap(), camera_controls);
+    }
 }

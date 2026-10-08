@@ -19,6 +19,7 @@ voxy_render = { path = "../voxy_render" }
 wgpu = "30.0.1"
 pollster = "1.0.1"
 bytemuck = "1.25.2"
+glam = "0.33.6"
 
 [lints]
 workspace = true

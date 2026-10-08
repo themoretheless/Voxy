@@ -756,7 +756,9 @@ impl FemaleDemo {
     }
     fn hair_collider_pose(&self, time: f64) -> Vec<SceneVertex> {
         let mut posed = self.vertices.clone();
-        self.rig.deform(&mut posed, time as f32);
+        if !self.secondary_only {
+            self.rig.deform(&mut posed, time as f32);
+        }
         let bob = self.root_bob(time);
         for v in &mut posed {
             v.position[1] += bob as f32;
@@ -766,7 +768,12 @@ impl FemaleDemo {
     }
     fn hair_head_matrix(&self, time: f64) -> glam::Mat4 {
         let bob = self.root_bob(time) as f32;
-        glam::Mat4::from_translation(Vec3::new(0.0, bob, 0.0)) * self.rig.head_matrix(time as f32)
+        let head = if self.secondary_only {
+            glam::Mat4::IDENTITY
+        } else {
+            self.rig.head_matrix(time as f32)
+        };
+        glam::Mat4::from_translation(Vec3::new(0.0, bob, 0.0)) * head
     }
     // Conjugate the canonical head pose into the edited head's local affine
     // frame. Collider/root positions still come from the full nonlinear morph.
@@ -1369,10 +1376,15 @@ impl FemaleDemo {
                 let body_vertices = self.body_vertices;
                 // Hair contacts use the independently posed canonical body,
                 // so neither solver reads the other solver's mutable state.
-                std::thread::scope(|scope| {
+                let (skin_ms, hair_ms) = std::thread::scope(|scope| {
                     let hair_step = hair_pose.as_ref().map(|posed| {
-                        scope.spawn(move || hair.advance(h, time, head, &posed[..body_vertices]))
+                        scope.spawn(move || {
+                            let started = std::time::Instant::now();
+                            let result = hair.advance(h, time, head, &posed[..body_vertices]);
+                            (result, started.elapsed().as_secs_f64() * 1000.)
+                        })
                     });
+                    let started = std::time::Instant::now();
                     let skin_result = skin.step_with_contacts(
                         h,
                         [0., -9.81, 0.],
@@ -1384,12 +1396,16 @@ impl FemaleDemo {
                             ..Default::default()
                         },
                     );
-                    if let Some(hair_step) = hair_step {
-                        hair_step.join().map_err(|_| "hair worker panicked")??;
-                    }
+                    let skin_ms = started.elapsed().as_secs_f64() * 1000.;
+                    let hair_ms = if let Some(hair_step) = hair_step {
+                        let (result, elapsed) = hair_step.join().map_err(|_| "hair worker panicked")?;
+                        result?;
+                        elapsed
+                    } else { 0. };
                     skin_result?;
-                    Ok::<_, &'static str>(())
+                    Ok::<_, &'static str>((skin_ms, hair_ms))
                 })?;
+                self.solver_ms = [skin_ms, hair_ms];
                 self.targets = targets;
                 self.advance_cold_response(h)?;
                 self.time = time;
@@ -2557,6 +2573,28 @@ mod tests {
         }
     }
     #[test]
+    fn secondary_face_and_hair_colliders_share_the_rendered_head_pose() {
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.secondary_only = true;
+        for time in [0.0, 0.5, 1.25, 2.75, 4.5] {
+            let head = demo.hair_head_matrix(time);
+            let posed = demo.hair_collider_pose(time);
+            let bob = demo.root_bob(time) as f32;
+            for point in [Vec3::new(-0.025, 0.646, 0.148), Vec3::new(0.025, 0.646, 0.148)] {
+                assert!(head.transform_point3(point).distance(point + Vec3::Y*bob) < 1e-7);
+            }
+            for (rest, posed) in demo.vertices[..demo.body_vertices].iter().zip(&posed) {
+                let point = Vec3::from_array(rest.position);
+                if point.y > 0.6 {
+                    assert!(Vec3::from_array(posed.position).distance(head.transform_point3(point)) < 1e-7);
+                }
+            }
+        }
+        demo.secondary_only = false;
+        assert!(demo.hair_head_matrix(1.25).abs_diff_eq(
+            glam::Mat4::from_translation(Vec3::Y*demo.root_bob(1.25) as f32)*demo.rig.head_matrix(1.25), 1e-7));
+    }
+    #[test]
     fn parallel_full_secondary_preserves_skin_and_hair_contacts() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2565,6 +2603,9 @@ mod tests {
         for _ in 0..4 {
             demo.advance(1. / 120.).unwrap();
             demo.hair.verify(demo.hair_physics_head_matrix(demo.time)).unwrap();
+            assert!(demo.solver_ms.iter().all(|ms| ms.is_finite() && *ms > 0.));
+            eprintln!("FULL SECONDARY SOLVERS step={} skin_ms={:.3} hair_ms={:.3}",
+                demo.steps, demo.solver_ms[0], demo.solver_ms[1]);
             assert!(demo.skin.positions().iter().flatten().all(|v| v.is_finite()));
         }
         assert!(demo.skin.positions().iter().zip(&before)
@@ -2576,10 +2617,18 @@ mod tests {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
         demo.simulate_hair = false; // This regression isolates the skin and volume owners.
+        assert_eq!(demo.regions.len(), 5, "paired chest/hip cages plus abdomen");
         let before = demo.skin.positions().to_vec();
         for _ in 0..4 {
             demo.advance(1. / 120.).unwrap();
         }
+        let mut abdomen_surface = demo.vertices.clone();
+        demo.regions[4].apply(&demo.vertices, &mut abdomen_surface, demo.root_bob(demo.time));
+        assert!(abdomen_surface.iter().zip(&demo.vertices).any(|(posed, rest)| {
+            let p = Vec3::from_array(rest.position);
+            p.x.abs() < 0.10 && (0.0..0.25).contains(&p.y) && p.z > 0.04
+                && Vec3::from_array(posed.position).distance(p) > 1e-6
+        }), "the abdomen cage must move the visible abdominal surface");
         assert!(
             demo.skin
                 .positions()

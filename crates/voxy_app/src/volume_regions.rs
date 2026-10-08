@@ -49,13 +49,16 @@ impl Region {
         // skipping it at defaults creates an inertia jump on the first edit.
         let morph = |p: [f64; 3]| parameters.transform(p.map(|v| v as f32)).map(f64::from);
         let mut regions = Vec::new();
-        for i in 0..4 {
-            let center = [
+        for i in 0..5 {
+            let anterior = i < 2 || i == 4;
+            let center = if i == 4 {
+                [0.0, 0.12, 0.10]
+            } else { [
                 if i % 2 == 0 { -0.10 } else { 0.10 },
                 if i < 2 { 0.36 } else { -0.10 },
                 if i < 2 { 0.10 } else { -0.11 },
-            ];
-            let radii = [0.16, 0.18, 0.16];
+            ] };
+            let radii = if i == 4 { [0.14, 0.20, 0.12] } else { [0.16, 0.18, 0.16] };
             let mut rest = vec![center];
             for axis in 0..3 {
                 for sign in [1.0, -1.0] {
@@ -80,7 +83,7 @@ impl Region {
                     }
                 }
             }
-            let pin = if i < 2 { 6 } else { 5 };
+            let pin = if anterior { 6 } else { 5 };
             let mut weights = vec![1.0; 7];
             weights[3] = 0.0;
             weights[pin] = 0.0;
@@ -136,7 +139,7 @@ impl Region {
             body.set_hardening(25.0)?;
             let rest = transformed_rest;
             let mut collider_center = center;
-            collider_center[2] += if i < 2 { -0.27 } else { 0.27 };
+            collider_center[2] += if anterior { -0.27 } else { 0.27 };
             regions.push(Self {
                 body,
                 rest,
