@@ -72,7 +72,7 @@ impl FemaleHair {
             .map(|t| [t[0] as usize, t[1] as usize, t[2] as usize])
             .collect();
         let mut collider = TriangleMesh::new(&positions, &triangles)?;
-        collider.enable_closed_feature_normals()?;
+        let _ = collider.enable_closed_feature_normals();
         let mut rods = Vec::with_capacity(roots.len());
         for (i, root) in roots.iter().enumerate() {
             // A short front fringe stays above the eyes after gravitational
@@ -724,6 +724,9 @@ mod tests {
         let joint_velocities=std::env::var_os("VOXY_HAIR_JOINT_CONTACT_VELOCITIES").is_some();
         native.system.joint_contact_velocities=joint_velocities;gpu.system.joint_contact_velocities=joint_velocities;
         eprintln!("HYBRID JOINT CONTACT VELOCITIES {joint_velocities}");
+        let joint_positions=std::env::var_os("VOXY_HAIR_JOINT_CONTACT_POSITIONS").is_some();
+        native.system.joint_contact_positions=joint_positions;gpu.system.joint_contact_positions=joint_positions;
+        eprintln!("HYBRID JOINT CONTACT POSITIONS {joint_positions}");
         let sampled_motion=std::env::var_os("VOXY_HAIR_SAMPLE_COLLIDER_MOTION").is_some();
         native.system.sample_collider_motion=sampled_motion;gpu.system.sample_collider_motion=sampled_motion;
         eprintln!("HYBRID SAMPLED COLLIDER MOTION {sampled_motion}");

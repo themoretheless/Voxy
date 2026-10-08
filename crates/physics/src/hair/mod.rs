@@ -360,6 +360,8 @@ pub struct HairSystem {
     /// Experimental joint normal-velocity projection. Full-model stretch and
     /// long-cycle accelerator qualification remain required before default use.
     pub joint_contact_velocities: bool,
+    /// Experimental joint elastic position contact projection.
+    pub joint_contact_positions: bool,
     /// Experimental time-aligned mesh sampling; full-model stretch qualification is pending.
     pub sample_collider_motion: bool,
     /// Experimental structural reconciliation after the final contact projection.
@@ -380,6 +382,7 @@ impl HairSystem {
             contact_radius: 40e-6,
             self_collision: true,
             joint_contact_velocities: false,
+            joint_contact_positions: false,
             sample_collider_motion: false,
             terminal_contact_iterations: 0,
             profiling: false,
@@ -405,6 +408,7 @@ impl HairSystem {
         system.contact_radius = self.contact_radius;
         system.self_collision = self.self_collision;
         system.joint_contact_velocities = self.joint_contact_velocities;
+        system.joint_contact_positions = self.joint_contact_positions;
         system.sample_collider_motion = self.sample_collider_motion;
         system.terminal_contact_iterations = self.terminal_contact_iterations;
         system.profiling = self.profiling;
@@ -518,13 +522,14 @@ impl HairSystem {
             for first in (0..self.iterations).step_by(batch) {
                 let end = (first + batch).min(self.iterations);
                 let radius = self.contact_radius;
+                let joint_positions=self.joint_contact_positions;
                 if let Some(solver)=solver.as_deref_mut() {
                     for _ in first..end {
                         let started=profiling.then(std::time::Instant::now);
                         Self::solve_external_rods(&mut self.rods,dt,solver)?;
                         if let Some(started)=started {self.last_profile.structural_ms+=started.elapsed().as_secs_f64()*1000.;}
                         let started=profiling.then(std::time::Instant::now);
-                        for rod in &mut self.rods {contact::mesh_contacts(rod,meshes,radius);}
+                        for rod in &mut self.rods {if joint_positions {contact::refresh_mesh_constraints(rod,meshes,radius);} else {contact::mesh_contacts(rod,meshes,radius);}}
                         if let Some(started)=started {self.last_profile.mesh_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
                     }
                 } else if !parallel {
@@ -533,7 +538,7 @@ impl HairSystem {
                         rod.solve(dt, first % 2 != 0)?;
                         if let Some(started) = started { self.last_profile.structural_ms += started.elapsed().as_secs_f64() * 1000.; }
                         let started = profiling.then(std::time::Instant::now);
-                        contact::mesh_contacts(rod, meshes, radius);
+                        if joint_positions {contact::refresh_mesh_constraints(rod,meshes,radius);} else {contact::mesh_contacts(rod, meshes, radius);}
                         if let Some(started) = started { self.last_profile.mesh_contacts_ms += started.elapsed().as_secs_f64() * 1000.; }
                     }
                 } else {
@@ -549,7 +554,7 @@ impl HairSystem {
                                         rod.solve(dt, iteration % 2 != 0)?;
                                         if let Some(started) = started { profile.structural_ms += started.elapsed().as_secs_f64() * 1000.; }
                                         let started = profiling.then(std::time::Instant::now);
-                                        contact::mesh_contacts(rod, meshes, radius);
+                                        if joint_positions {contact::refresh_mesh_constraints(rod,meshes,radius);} else {contact::mesh_contacts(rod, meshes, radius);}
                                         if let Some(started) = started { profile.mesh_contacts_ms += started.elapsed().as_secs_f64() * 1000.; }
                                     }
                                 }
@@ -563,9 +568,20 @@ impl HairSystem {
                         self.last_profile.mesh_contacts_ms += profile.mesh_contacts_ms;
                     }
                 }
+                if joint_positions && !self.self_collision && end==self.iterations {
+                    let started=profiling.then(std::time::Instant::now);
+                    for rod in &mut self.rods {contact::refresh_mesh_constraints(rod,meshes,radius);}
+                    contact::reconcile_contact_positions(&mut self.rods,&mut [],dt,radius)?;
+                    if let Some(started)=started {self.last_profile.mesh_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
+                }
                 if self.self_collision && (end % 4 == 0 || end == self.iterations) {
                     let started = profiling.then(std::time::Instant::now);
-                    strand_responses.extend(contact::self_contacts(&mut self.rods, radius));
+                    if joint_positions {
+                        let mut current=contact::refresh_strand_responses(&mut self.rods,radius,&[]);
+                        for rod in &mut self.rods {contact::refresh_mesh_constraints(rod,meshes,radius);}
+                        contact::reconcile_contact_positions(&mut self.rods,&mut current,dt,radius)?;
+                        strand_responses.extend(current);
+                    } else {strand_responses.extend(contact::self_contacts(&mut self.rods, radius));}
                     if let Some(started) = started { self.last_profile.self_contacts_ms += started.elapsed().as_secs_f64() * 1000.; }
                     // A strand reaction can move a guide into the body after
                     // its independent mesh phase. Refresh those constraints
@@ -588,6 +604,11 @@ impl HairSystem {
                 let started=profiling.then(std::time::Instant::now);
                 for rod in &mut self.rods {contact::refresh_mesh_constraints(rod,meshes,self.contact_radius);}
                 if let Some(started)=started {self.last_profile.mesh_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
+            }
+            if self.self_collision {
+                let started=profiling.then(std::time::Instant::now);
+                strand_responses=contact::refresh_strand_responses(&mut self.rods,self.contact_radius,&strand_responses);
+                if let Some(started)=started {self.last_profile.self_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
             }
             for rod in &mut self.rods {
                 rod.finish(dt);
