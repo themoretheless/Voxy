@@ -1,6 +1,6 @@
 //! Nonadjacent triangle barriers and conservative advancement of straight steps.
 use super::surface_distance::{
-    PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+    PreparedTriangle, triangle_distance, triangle_pair_path_is_open,
 };
 use super::{Body, Vec3, add, cross, dot, scale, sub};
 #[derive(Clone, Debug)]
@@ -634,6 +634,7 @@ impl Body {
 
 #[cfg(test)]
 mod pruning_tests {
+    use super::super::surface_distance::separation_lower_bound;
     use super::*;
     #[test]
     fn normal_barrier_curvature_matches_energy_second_difference() {

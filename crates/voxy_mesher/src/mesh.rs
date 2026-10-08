@@ -387,39 +387,120 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
 
     let center_dense = input.center.data.blocks.to_dense();
     let mut quads = Vec::new();
+    let mut mask = [None; 32 * 32];
+
     for face in FaceDir::ALL {
         let (normal_axis, u_axis, v_axis) = face.axes();
         let normal = face.normal();
+        let mat_idx = face.material_index();
+
         for slice in 0_u8..32 {
             if cancel.is_cancelled() {
                 return Err(MeshError::Cancelled);
             }
-            let mut mask = [None; 32 * 32];
-            for v in 0_u8..32 {
-                for u in 0_u8..32 {
-                    let mut cell = [0_u8; 3];
-                    cell[normal_axis] = slice;
-                    cell[u_axis] = u;
-                    cell[v_axis] = v;
-                    let cell_index = usize::from(cell[0]) + 32 * (usize::from(cell[2]) + 32 * usize::from(cell[1]));
-                    let source = center_dense[cell_index];
-                    let nx = i16::from(cell[0]) + normal[0];
-                    let ny = i16::from(cell[1]) + normal[1];
-                    let nz = i16::from(cell[2]) + normal[2];
-                    let neighbor = if (0..32).contains(&nx) && (0..32).contains(&ny) && (0..32).contains(&nz) {
-                        let n_index = (nx as usize) + 32 * ((nz as usize) + 32 * (ny as usize));
-                        Sample::Loaded(center_dense[n_index])
-                    } else {
-                        sample_relative(input, nx, ny, nz)
+
+            let mut mask_has_any = false;
+            let is_boundary = match face {
+                FaceDir::NegX | FaceDir::NegY | FaceDir::NegZ => slice == 0,
+                FaceDir::PosX | FaceDir::PosY | FaceDir::PosZ => slice == 31,
+            };
+
+            if is_boundary {
+                for v in 0_u8..32 {
+                    for u in 0_u8..32 {
+                        let mut cell = [0_u8; 3];
+                        cell[normal_axis] = slice;
+                        cell[u_axis] = u;
+                        cell[v_axis] = v;
+                        let cell_index = usize::from(cell[0])
+                            + 32 * (usize::from(cell[2]) + 32 * usize::from(cell[1]));
+                        let source = center_dense[cell_index];
+                        if source == BlockStateId::AIR {
+                            continue;
+                        }
+                        let nx = i16::from(cell[0]) + normal[0];
+                        let ny = i16::from(cell[1]) + normal[1];
+                        let nz = i16::from(cell[2]) + normal[2];
+                        let neighbor = sample_relative(input, nx, ny, nz);
+                        if let FaceDecision::Emit { material, layer } =
+                            classify_directed_face(source, &neighbor, face, &input.registry)
+                        {
+                            mask[usize::from(v) * 32 + usize::from(u)] = Some((material, layer));
+                            mask_has_any = true;
+                        }
+                    }
+                }
+            } else {
+                let neighbor_offset: isize = match face {
+                    FaceDir::PosX => 1,
+                    FaceDir::NegX => -1,
+                    FaceDir::PosY => 1024,
+                    FaceDir::NegY => -1024,
+                    FaceDir::PosZ => 32,
+                    FaceDir::NegZ => -32,
+                };
+
+                for v in 0_u8..32 {
+                    let v_idx = usize::from(v);
+                    let v_base = match face {
+                        FaceDir::NegX | FaceDir::PosX => usize::from(slice) + 1024 * v_idx,
+                        FaceDir::NegY | FaceDir::PosY => 32 * v_idx + 1024 * usize::from(slice),
+                        FaceDir::NegZ | FaceDir::PosZ => 32 * usize::from(slice) + 1024 * v_idx,
                     };
-                    if let FaceDecision::Emit { material, layer } =
-                        classify_directed_face(source, &neighbor, face, &input.registry)
-                    {
-                        mask[usize::from(v) * 32 + usize::from(u)] = Some((material, layer));
+                    let u_stride = match face {
+                        FaceDir::NegX | FaceDir::PosX => 32,
+                        FaceDir::NegY | FaceDir::PosY | FaceDir::NegZ | FaceDir::PosZ => 1,
+                    };
+
+                    for u in 0_u8..32 {
+                        let u_idx = usize::from(u);
+                        let cell_index = v_base + u_idx * u_stride;
+                        let source = center_dense[cell_index];
+                        if source == BlockStateId::AIR {
+                            continue;
+                        }
+                        let Some(source_def) = input.registry.get(source) else {
+                            continue;
+                        };
+                        let layer = match source_def.render {
+                            RenderKind::Invisible => continue,
+                            RenderKind::Opaque => RenderLayer::Opaque,
+                            RenderKind::Cutout => RenderLayer::Cutout,
+                            RenderKind::Translucent => RenderLayer::Translucent,
+                        };
+
+                        let n_index = (cell_index as isize + neighbor_offset) as usize;
+                        let neighbor_id = center_dense[n_index];
+
+                        if neighbor_id == source {
+                            if source_def.occlusion == Occlusion::FullCube
+                                || source_def.translucent_interface_group.is_some()
+                            {
+                                continue;
+                            }
+                        } else if neighbor_id != BlockStateId::AIR {
+                            if let Some(neighbor_def) = input.registry.get(neighbor_id) {
+                                if neighbor_def.occlusion == Occlusion::FullCube {
+                                    continue;
+                                }
+                                if source_def.translucent_interface_group.is_some()
+                                    && source_def.translucent_interface_group
+                                        == neighbor_def.translucent_interface_group
+                                {
+                                    continue;
+                                }
+                            }
+                        }
+
+                        mask[v_idx * 32 + u_idx] = Some((source_def.face_materials[mat_idx], layer));
+                        mask_has_any = true;
                     }
                 }
             }
-            merge_mask(&mut mask, face, slice, &mut quads)?;
+
+            if mask_has_any {
+                merge_mask(&mut mask, face, slice, &mut quads)?;
+            }
         }
     }
     Ok(finish_mesh(quads))
@@ -788,5 +869,37 @@ mod tests {
         let input = input(registry(), PalettedBlocks::uniform(BlockStateId::AIR));
         assert_eq!(build_naive_mesh(&input, &token), Err(MeshError::Cancelled));
         assert_eq!(build_mesh(&input, &token), Err(MeshError::Cancelled));
+    }
+
+    #[test]
+    fn complex_terrain_greedy_matches_naive() {
+        let registry = registry();
+        let stone = state(&registry, "stone");
+        let glass = state(&registry, "glass");
+        let water = state(&registry, "water");
+
+        let mut dense = vec![BlockStateId::AIR; CHUNK_VOLUME];
+        for y in 0..16 {
+            for z in 0..32 {
+                for x in 0..32 {
+                    let idx = x + 32 * (z + 32 * y);
+                    if y < 8 {
+                        dense[idx] = stone;
+                    } else if (x + z) % 3 == 0 {
+                        dense[idx] = glass;
+                    } else if (x * z) % 7 == 0 {
+                        dense[idx] = water;
+                    }
+                }
+            }
+        }
+        let input = input(
+            Arc::clone(&registry),
+            PalettedBlocks::from_dense(dense).unwrap(),
+        );
+        let naive = build_naive_mesh(&input, &CancelToken::new()).unwrap();
+        let greedy = build_mesh(&input, &CancelToken::new()).unwrap();
+        assert_eq!(face_areas(&naive), face_areas(&greedy));
+        assert!(greedy.quad_count() < naive.quad_count());
     }
 }
