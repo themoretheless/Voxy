@@ -1,0 +1,25 @@
+{
+  "qualified": false,
+  "packing_tests_passed": 5,
+  "audited_batches": 2400,
+  "scalar_representation": "two f32 components per normalized coefficient/RHS",
+  "max_normalized_matrix_roundtrip_error": 8.881784197001252e-16,
+  "max_normalized_rhs_roundtrip_error": 1.7763568394002505e-15,
+  "max_translation_correction_error_m": 1.8563523106933724e-09,
+  "max_rotation_correction_error_rad": 1.0666082336796556e-07,
+  "full_model": {
+    "frames": 120,
+    "guides": 469,
+    "gpu_calls": 2400,
+    "first_divergence_frame": 100,
+    "position_error_m": 0.0006210567316640853,
+    "quaternion_component_error": 0.017554526448402906,
+    "strain_guard_passed_all_frames": true
+  },
+  "audit_matches_previous_trajectory_exactly": true,
+  "cause_boundary": "Audit quantifies input representation loss and total solve error. It does not isolate packing, equilibration and GPU arithmetic contributions or establish a single cause of trajectory amplification.",
+  "candidate_groom_default": false,
+  "terminal_iterations_default": 0,
+  "gpu_runtime_enabled": false,
+  "fps_measured": false
+}

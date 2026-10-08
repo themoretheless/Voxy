@@ -1,0 +1,10 @@
+{
+  "full_body": {
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0
+  },
+  "hair_collider_height_crop": {
+    "boundary_edges": 158,
+    "nonmanifold_edges": 0
+  }
+}

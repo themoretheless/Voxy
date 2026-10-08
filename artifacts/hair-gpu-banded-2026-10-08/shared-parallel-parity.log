@@ -1,0 +1,7 @@
+ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+COMPENSATED RUNTIME normalized_errors=[5.5394909316108865e-15, 9.084536317719296e-15, 8.342563735762018e-15, 6.693479517618566e-15] worst_samples=[971, 1005, 353, 147]
+PASS: 1024 runtime pairs, cancellation and dynamic ranges; matrix gate remains separate
+COMPENSATED ARITHMETIC PROBE [100000000.0, 1.0, 1.0002, 1.0003319e-8]
+GPU SOLVE TIMING workgroup=32 systems=3283 median_ms=7.291875 samples=8 single_submission=true excludes_cpu_assembly_upload_readback=true
+GPU BANDED compensated=true equilibrated=true systems=3283 failed=0 position_error_m=0.000000000010385276673867535 angle_error_rad=0.0000000005156742324818886 component_backward_error=0.0000000000009428486885842504
+PASS: native full-model linear-system gate; nonlinear/contact integration remains CPU

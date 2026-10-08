@@ -1,0 +1,9 @@
+{
+  "nominal_simulation_time_s": 0.25,
+  "changed_pixels": 5219,
+  "changed_pixels_below_y_300": 432,
+  "changed_pixels_below_y_300_above_3_levels": 0,
+  "gpu_backend": "Metal",
+  "gpu_validation_passed": true,
+  "scope": "hair material capture check; two separate runs, not exact state identity or realtime performance proof"
+}

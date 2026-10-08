@@ -1,0 +1,53 @@
+
+running 1 test
+HYBRID FOLLICLE PRESERVING GROOM true
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HYBRID STRUCTURAL ITERATIONS 6
+HYBRID JOINT CONTACT VELOCITIES false
+HYBRID JOINT CONTACT POSITIONS false
+HYBRID SAMPLED COLLIDER MOTION false
+HYBRID TERMINAL CONTACT ITERATIONS 0
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID EXTRA DIVISION REFINEMENT false
+HYBRID CONTACT CASE full
+HYBRID TEST BACKEND cpu_control=true perturbation=0
+HYBRID HAIR FRAME frame=1 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=2 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=3 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=4 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=5 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=6 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=7 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=8 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=9 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=10 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=11 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=12 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=13 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=14 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=15 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=16 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=17 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=18 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=19 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=20 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=21 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=22 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=23 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=24 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=25 max_position_error_m=0 max_quaternion_component_error=0
+HYBRID HAIR FRAME frame=26 max_position_error_m=0 max_quaternion_component_error=0
+
+thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (21391278) panicked at crates/voxy_app/src/female_hair.rs:815:21:
+frame 27 external: hair lost its scalp attachment, over-stretched or became nonfinite; rod=290 segment=1 signed_strain=0.08770280460792579 endpoints=[[0.031058878431181342, 0.8175988120081952, -0.05220975243326459], [0.032528748044819464, 0.8077950881048501, -0.06036069262942408]]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED
+
+failures:
+
+failures:
+    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 304 filtered out; finished in 34.46s
+

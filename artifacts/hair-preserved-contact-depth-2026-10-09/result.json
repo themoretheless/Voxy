@@ -1,0 +1,18 @@
+{
+  "change": "Preserve original physical pair separation targets before limited contact projection",
+  "hair_tests_passed": 35,
+  "hair_tests_ignored": 1,
+  "integration_tests_passed": 15,
+  "frames": 30,
+  "cpu_perturbation": 1e-10,
+  "cpu_position_error_m": 3.1481237177666266e-06,
+  "cpu_quaternion_component_error": 6.045897250345211e-05,
+  "previous_cpu_position_error_m": 0.0008678972888432473,
+  "cpu_strict_gate_passed": false,
+  "gpu_calls": 360,
+  "gpu_position_error_m": 0.007804303074238045,
+  "gpu_quaternion_component_error": 0.07001046232049069,
+  "gpu_strict_gate_passed": false,
+  "gpu_solver_enabled_in_runtime": false,
+  "runtime_fps_verified": false
+}

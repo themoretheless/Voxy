@@ -1,0 +1,14 @@
+{
+  "closed_vertex_fan_validation": true,
+  "collapsed_refit_rejected_before_mutation": true,
+  "previous_collider_preserved_after_invalid_refit": true,
+  "self_intersection_certified": false,
+  "physics_library_tests_passed": 162,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 14,
+  "character_asset_admission_status": "passed",
+  "full_model_stability_gate_passed": false,
+  "latest_position_error_m": 0.006972404867593672,
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false
+}

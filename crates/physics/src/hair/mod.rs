@@ -451,6 +451,44 @@ impl HairSystem {
         }
         Ok(())
     }
+    fn reconcile_positions(rods:&mut [HairRod],meshes:&[TriangleMesh],dt:f64,radius:f64,self_collision:bool,history:&mut Vec<contact::StrandResponse>)->Result<(), &'static str> {
+        let mut last_worst=None;
+        let mut first_gap=0.;
+        for iteration in 0..32 {
+            let mut current=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
+            for rod in rods.iter_mut() {contact::refresh_mesh_constraints(rod,meshes,radius);}
+            let complete=contact::reconcile_contact_positions(rods,&mut current,dt,radius)?;
+            // The common trust scale preserves paired reactions. Re-query all
+            // geometry before the next nonlinear increment rather than fixing
+            // one strand to the other's preceding position.
+            history.extend(current);
+            // A solved tangent problem is not proof of separation in the new
+            // nonlinear geometry: rotations can change a closest feature or
+            // create another pair. Admit only a freshly queried feasible pose.
+            if self_collision {let _=contact::refresh_strand_responses(rods,radius,&[]);}
+            for rod in rods.iter_mut() {contact::refresh_mesh_constraints(rod,meshes,radius);}
+            let mut unresolved=false;
+            let mut worst=None;
+            for (index,rod) in rods.iter().enumerate() {
+                for contact in &rod.contacts {
+                    let i=contact.segment;let t=contact.fraction;
+                    let position=add(mul(rod.x[i],1.-t),mul(rod.x[i+1],t));
+                    let gap=dot(sub(position,contact.target),contact.normal);
+                    if !gap.is_finite() {return Err("joint hair contact geometry overflow");}
+                    unresolved|=gap < -1e-10;
+                    if gap < worst.as_ref().map_or(0.,|value:&(usize,usize,f64,f64,ContactSource,V,V,V,V,V)|value.3) {
+                        worst=Some((index,i,t,gap,contact.source,rod.x[0],rod.x[i],rod.x[i+1],contact.normal,contact.target));
+                    }
+                }
+            }
+            for rod in rods.iter_mut() {rod.contacts.retain(|contact|matches!(contact.source,ContactSource::Mesh(_)));}
+            if complete && !unresolved {return Ok(());}
+            if iteration==0 {first_gap=worst.as_ref().map_or(0.,|value|value.3);}
+            last_worst=worst;
+        }
+        eprintln!("HAIR NONLINEAR CONTACT NONCONVERGENCE first_gap_m={first_gap} worst=(rod,segment,fraction,gap,source,root,a,b,normal,target) {last_worst:?}");
+        Err("joint hair contact position linearization did not converge")
+    }
     fn step_impl(&mut self,dt:f64,roots:&[RootPose],gravity:V,air_velocity:V,meshes:&[TriangleMesh],mut solver:Option<&mut dyn HairLinearSolver>)->Result<(), &'static str> {
         if !dt.is_finite()
             || dt < 1e-6
@@ -510,7 +548,9 @@ impl HairSystem {
             // Guides are independent until shared self-contact. Keep workers
             // alive across each independent batch instead of spawning per iteration.
             let parallel = self.workers > 1 && self.rods.len() >= 8;
-            let batch = if parallel {
+            let batch = if self.joint_contact_positions {
+                1
+            } else if parallel {
                 if self.self_collision {
                     4
                 } else {
@@ -568,19 +608,15 @@ impl HairSystem {
                         self.last_profile.mesh_contacts_ms += profile.mesh_contacts_ms;
                     }
                 }
-                if joint_positions && !self.self_collision && end==self.iterations {
+                if joint_positions && !self.self_collision {
                     let started=profiling.then(std::time::Instant::now);
-                    for rod in &mut self.rods {contact::refresh_mesh_constraints(rod,meshes,radius);}
-                    contact::reconcile_contact_positions(&mut self.rods,&mut [],dt,radius)?;
+                    Self::reconcile_positions(&mut self.rods,meshes,dt,radius,false,&mut strand_responses)?;
                     if let Some(started)=started {self.last_profile.mesh_contacts_ms+=started.elapsed().as_secs_f64()*1000.;}
                 }
-                if self.self_collision && (end % 4 == 0 || end == self.iterations) {
+                if self.self_collision && (joint_positions || end % 4 == 0 || end == self.iterations) {
                     let started = profiling.then(std::time::Instant::now);
                     if joint_positions {
-                        let mut current=contact::refresh_strand_responses(&mut self.rods,radius,&[]);
-                        for rod in &mut self.rods {contact::refresh_mesh_constraints(rod,meshes,radius);}
-                        contact::reconcile_contact_positions(&mut self.rods,&mut current,dt,radius)?;
-                        strand_responses.extend(current);
+                        Self::reconcile_positions(&mut self.rods,meshes,dt,radius,true,&mut strand_responses)?;
                     } else {strand_responses.extend(contact::self_contacts(&mut self.rods, radius));}
                     if let Some(started) = started { self.last_profile.self_contacts_ms += started.elapsed().as_secs_f64() * 1000.; }
                     // A strand reaction can move a guide into the body after

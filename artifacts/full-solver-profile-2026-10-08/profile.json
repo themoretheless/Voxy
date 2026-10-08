@@ -1,0 +1,13 @@
+{
+  "scope": "one isolated full-model six-substep pose; not interactive frame rate",
+  "physics_step_seconds": 0.008333333333333333,
+  "substeps": 6,
+  "simulated_seconds": 0.05,
+  "wall_ms": 180.73,
+  "skin_solver_ms": 150.685,
+  "hair_solver_ms": 176.335,
+  "solvers_parallel": true,
+  "quality_reduced": false,
+  "next_target": "profile Cosserat structural batches and contact phases before GPU implementation",
+  "real_time_160_fps_verified": false
+}

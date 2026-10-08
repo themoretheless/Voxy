@@ -1,0 +1,22 @@
+{
+  "qualified": false,
+  "operator_tests_passed": 50,
+  "operator_tests_ignored": 1,
+  "integration_tests_passed": 17,
+  "change": "Current strand manifold replaces historical velocity constraints. Historical projections supply friction load projected onto current normal; released pairs receive no velocity response. Geometry refresh does not project positions.",
+  "default_cpu_control_120_frames": {
+    "position_error_m": 0.005262299771477491,
+    "quaternion_component_error": 0.07322144556319965,
+    "first_divergence_frame": 82,
+    "strain_guard_passed_all_frames": true
+  },
+  "sampled_motion_terminal_4_cpu_control_120_frames": {
+    "position_error_m": 0.00599489646432054,
+    "quaternion_component_error": 0.058515240560199355,
+    "first_divergence_frame": 14,
+    "strain_guard_passed_all_frames": true
+  },
+  "scale_perturbation": 1e-10,
+  "gpu_physics_qualified": false,
+  "fps_measured": false
+}

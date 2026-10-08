@@ -1,0 +1,22 @@
+{
+  "cpu_hair_vertices_per_frame": 0,
+  "cpu_body_and_face_vertices": 171495,
+  "gpu_hair_vertices": 2363760,
+  "hair_frame_upload_bytes": 630336,
+  "gpu_backend": "Metal",
+  "sample_cpu_mesh_update_ms": 181.44,
+  "mesh_stage_ms": {
+    "deformation": 18.156,
+    "normals": 8.085,
+    "diffusion": 114.727,
+    "vertex_lighting": 1.769,
+    "face_features": 27.555,
+    "hair_and_shapes": 0.593,
+    "film_and_probe": 0.003,
+    "transmission": 0.001,
+    "mesh_validation": 1.231
+  },
+  "interactive_window_connected": false,
+  "realtime_160fps_verified": false,
+  "full_non_hair_geometry_regression_passed": true
+}

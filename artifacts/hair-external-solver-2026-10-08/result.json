@@ -1,0 +1,28 @@
+{
+  "physics_api": "HairSystem::step_with_solver / HairLinearSolver",
+  "reference_backend": "CPU f64 batch callback",
+  "workers_tested": [
+    1,
+    4
+  ],
+  "iterations_tested": [
+    1,
+    4,
+    5,
+    9
+  ],
+  "surface_and_self_contacts_retained": true,
+  "positions_and_orientations_bit_identical": true,
+  "failure_cases": [
+    "failure on third iteration",
+    "wrong batch count",
+    "NaN correction",
+    "changed fixed DOF",
+    "wrong residual"
+  ],
+  "whole_step_rollback_verified": true,
+  "next_native_step_after_failure_bit_identical": true,
+  "passed_hair_dynamics_tests": 14,
+  "gpu_backend_connected": false,
+  "runtime_gpu_physics_enabled": false
+}

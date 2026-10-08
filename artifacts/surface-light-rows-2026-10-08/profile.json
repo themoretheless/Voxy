@@ -1,0 +1,109 @@
+{
+  "operatorPairs": [
+    {
+      "bitwiseEqual": true,
+      "rowsAssemblyMs": 7.724791,
+      "rowsSolveMs": 48.739084000000005,
+      "scatterAssemblyMs": 7.358334,
+      "scatterSolveMs": 47.229625
+    },
+    {
+      "bitwiseEqual": true,
+      "rowsAssemblyMs": 7.711542,
+      "rowsSolveMs": 49.149832999999994,
+      "scatterAssemblyMs": 7.400042,
+      "scatterSolveMs": 47.648458999999995
+    },
+    {
+      "bitwiseEqual": true,
+      "rowsAssemblyMs": 7.687458,
+      "rowsSolveMs": 48.349333,
+      "scatterAssemblyMs": 7.474417,
+      "scatterSolveMs": 47.665040999999995
+    },
+    {
+      "bitwiseEqual": true,
+      "rowsAssemblyMs": 7.724125,
+      "rowsSolveMs": 49.224790999999996,
+      "scatterAssemblyMs": 7.312417,
+      "scatterSolveMs": 47.449333
+    },
+    {
+      "bitwiseEqual": true,
+      "rowsAssemblyMs": 7.611167,
+      "rowsSolveMs": 47.831125,
+      "scatterAssemblyMs": 7.432125,
+      "scatterSolveMs": 47.550833
+    }
+  ],
+  "samples": [
+    {
+      "assemblyMs": 7.949167,
+      "iterations": [
+        124,
+        88,
+        62
+      ],
+      "solveMs": 47.971166000000004
+    },
+    {
+      "assemblyMs": 7.805625,
+      "iterations": [
+        124,
+        88,
+        62
+      ],
+      "solveMs": 47.474583
+    },
+    {
+      "assemblyMs": 7.922834,
+      "iterations": [
+        124,
+        88,
+        62
+      ],
+      "solveMs": 49.118833
+    },
+    {
+      "assemblyMs": 7.9092910000000005,
+      "iterations": [
+        124,
+        88,
+        62
+      ],
+      "solveMs": 48.671
+    },
+    {
+      "assemblyMs": 8.646208000000001,
+      "iterations": [
+        124,
+        88,
+        62
+      ],
+      "solveMs": 48.184958
+    },
+    {
+      "assemblyMs": 7.563000000000001,
+      "iterations": [
+        124,
+        88,
+        62
+      ],
+      "solveMs": 47.658208
+    },
+    {
+      "assemblyMs": 7.7415,
+      "iterations": [
+        124,
+        88,
+        62
+      ],
+      "solveMs": 48.160374999999995
+    }
+  ],
+  "scope": "Static imported-body kernel profile, seven samples after warmup; not GPU or full renderer timing.",
+  "serialAssemblyMs": 8.786208,
+  "serialSolveMs": 112.329917,
+  "triangles": 84680,
+  "vertices": 42342
+}

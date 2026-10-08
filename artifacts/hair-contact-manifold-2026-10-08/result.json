@@ -1,0 +1,22 @@
+{
+  "changes": [
+    "Preserve independent point and segment contact constraints instead of averaging their normals",
+    "Use six position Jacobian entries for coupled capsule endpoint response",
+    "Refresh mesh and strand contact ownership separately",
+    "Deduplicate shared node/capsule endpoints"
+  ],
+  "physical_radius_changed": false,
+  "boundary_query_tolerance_m": 1e-10,
+  "solver_band_width": 9,
+  "physics_library_tests_passed": 170,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 15,
+  "full_model_stability_status": "completed_strict_gate_failed",
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false,
+  "full_model_frames": 30,
+  "position_error_m": 4.154949904522365e-06,
+  "quaternion_component_error": 7.965984840532792e-05,
+  "position_gate_m": 1e-06,
+  "quaternion_component_gate": 5e-05
+}

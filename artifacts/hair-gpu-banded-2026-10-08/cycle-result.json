@@ -1,0 +1,40 @@
+{
+  "pose_times_seconds": [
+    0.008333333333333333,
+    0.25,
+    0.5,
+    1,
+    2,
+    4,
+    5.95
+  ],
+  "systems": 3283,
+  "factorization_failures": 0,
+  "max_position_correction_error_m": 1.0385276673867535e-11,
+  "max_rotation_correction_error_rad": 5.156742324818886e-10,
+  "max_component_backward_error": 9.428486885842504e-13,
+  "accuracy_gate_passed": true,
+  "timing_runs": [
+    {
+      "log": "cycle-timed.log",
+      "systems": 3283,
+      "median_gpu_ms": 1.515834,
+      "valid_samples": 8
+    },
+    {
+      "log": "cycle-timed-repeat.log",
+      "systems": 3283,
+      "median_gpu_ms": 1.480167,
+      "valid_samples": 8
+    },
+    {
+      "log": "one-timed.log",
+      "systems": 469,
+      "median_gpu_ms": 6.054375,
+      "valid_samples": 8
+    }
+  ],
+  "timing_scope": "pass boundary timestamps; no CPU assembly, upload, readback, nonlinear iteration or contacts",
+  "gpu_runtime_physics_enabled": false,
+  "real_time_160_fps_verified": false
+}

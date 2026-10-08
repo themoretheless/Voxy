@@ -1,0 +1,27 @@
+{
+  "qualified": false,
+  "joint_contact_positions_default": false,
+  "operator_tests_passed": 54,
+  "operator_tests_ignored": 1,
+  "integration_tests_passed": 19,
+  "dense_equivalence_passed": true,
+  "method": "Experimental joint position contacts after every structural iteration. Canonical fixed-root rows merge duplicate shared-endpoint constraints, retaining strongest bound. Common 0.35-radian increment scale with geometry refresh; at most 32 nonlinear increments, rollback on exhaustion. Duplicate pair aliases divide one reaction load.",
+  "cadence_only": {
+    "frames": 120,
+    "position_error_m": 0.0031925005799238876,
+    "quaternion_component_error": 0.031639832601752294,
+    "first_divergence_frame": 74,
+    "strain_guard_passed_all_frames": true
+  },
+  "canonical_trust": {
+    "frames": 120,
+    "position_error_m": 0.029829347254424713,
+    "quaternion_component_error": 0.1470445386856567,
+    "first_divergence_frame": 38,
+    "strain_guard_passed_all_frames": true
+  },
+  "cpu_control": true,
+  "scale_perturbation": 1e-10,
+  "gpu_physics_qualified": false,
+  "fps_measured": false
+}

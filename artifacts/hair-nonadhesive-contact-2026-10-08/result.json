@@ -1,0 +1,26 @@
+{
+  "change": "Clamp contact residual to penetration while preserving active-set stiffness and tolerance",
+  "active_set_tolerance_m": 1e-10,
+  "physics_library_tests_passed": 160,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 14,
+  "first_divergence_before_fix": {
+    "frame": 3,
+    "rod": 283,
+    "point": 20,
+    "position_error_m": 0.0003799519407183677,
+    "body_normals_match": true
+  },
+  "position_error_before_fix_m": 0.008019558425374163,
+  "full_model_after_fix_status": "failed_stability_gate",
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false,
+  "position_error_after_fix_m": 0.008129709152052605,
+  "quaternion_component_error_after_fix": 0.15660011890991735,
+  "first_divergence_after_fix": {
+    "frame": 3,
+    "rod": 229,
+    "point": 20,
+    "position_error_m": 2.032896953554214e-05
+  }
+}

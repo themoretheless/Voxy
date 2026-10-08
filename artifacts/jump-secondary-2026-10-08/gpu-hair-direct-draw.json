@@ -1,0 +1,15 @@
+{
+  "gpu_backend": "Metal",
+  "geometry_readback": false,
+  "cpu_hair_poisoned": true,
+  "vertices": 2363760,
+  "dynamic_frame_upload_bytes": 630336,
+  "image_comparison_separate_runs": true,
+  "different_pixels": 17,
+  "pixels_difference_above_3_levels": 3,
+  "max_channel_difference": 29,
+  "resident_updated_pose_count": 2,
+  "one_resident_job_across_poses": true,
+  "interactive_window_connected": false,
+  "cpu_mesh_construction_eliminated": false
+}

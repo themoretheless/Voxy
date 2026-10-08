@@ -1,0 +1,14 @@
+{
+  "change": "Return the free minimizer immediately when all unilateral contact planes are open, avoiding a redundant factorization",
+  "focused_tests_passed": 5,
+  "physics_library_tests_passed": 171,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 15,
+  "full_model_frames": 30,
+  "full_model_position_error_m": 4.154949904522365e-06,
+  "full_model_quaternion_component_error": 7.965984840532792e-05,
+  "trajectory_error_metrics_exactly_match_pre_optimization": true,
+  "strict_stability_gate_passed": false,
+  "performance_gain_measured": false,
+  "runtime_160_fps_verified": false
+}

@@ -1,0 +1,371 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib) generated 2 warnings
+warning: field `weak_refs` is never read
+  --> crates/voxy_assets/src/lib.rs:22:5
+   |
+18 | pub struct AssetCache {
+   |            ---------- field in this struct
+...
+22 |     weak_refs: HashMap<String, usize>,
+   |     ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/voxy_assets/src/lib.rs:18:1
+   |
+18 | / pub struct AssetCache {
+19 | |     /// In-memory cached assets (strong refs)
+20 | |     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
+21 | |     /// Weak references to prevent premature collection
+22 | |     weak_refs: HashMap<String, usize>,
+23 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `voxy_assets` (lib) generated 2 warnings
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 6 warnings
+warning: function `start_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:21:15
+   |
+21 | pub(crate) fn start_refinement_diagnostics() {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `take_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:24:15
+   |
+24 | pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `body_volumes_m3` is never used
+   --> crates/voxy_app/src/tissue_demo.rs:535:19
+    |
+268 | impl TissueDemo {
+    | --------------- method in this implementation
+...
+535 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets`, `advance_hair`, `set_strain_fixture`, and `orbit` are never used
+    --> crates/voxy_app/src/female_demo.rs:199:19
+     |
+ 195 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 199 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+ 749 |     fn advance_hair(&mut self, h: f64, time: f64, head: glam::Mat4) -> Result<(), &'static str> {
+     |        ^^^^^^^^^^^^
+...
+1028 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1146 |     pub(crate) fn orbit(&mut self, x: f32, y: f32) {
+     |                   ^^^^^
+
+warning: method `append_lod` is never used
+   --> crates/voxy_app/src/female_hair.rs:319:12
+    |
+ 21 | impl FemaleHair {
+    | --------------- method in this implementation
+...
+319 |     pub fn append_lod(
+    |            ^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib test) generated 6 warnings
+    Finished `release` profile [optimized] target(s) in 0.56s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f)
+
+running 1 test
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID EXTRA DIVISION REFINEMENT false
+HYBRID CONTACT CASE mesh
+HYBRID TEST BACKEND cpu_control=true perturbation=0.0000000001
+HYBRID HAIR FRAME frame=1 max_position_error_m=0.00000000000005795364188543317 max_quaternion_component_error=0.0000000000021958823648304815
+HYBRID HAIR FRAME frame=2 max_position_error_m=0.00000000000011553258350005535 max_quaternion_component_error=0.0000000000033383851238966145
+HYBRID HAIR FRAME frame=3 max_position_error_m=0.0000000000018020029912690916 max_quaternion_component_error=0.0000000000223715213021336
+HYBRID HAIR FRAME frame=4 max_position_error_m=0.0000000000031235014574804154 max_quaternion_component_error=0.00000000002845204627455189
+HYBRID HAIR FRAME frame=5 max_position_error_m=0.000000000006335931779233306 max_quaternion_component_error=0.000000000040042136273399365
+HYBRID HAIR FRAME frame=6 max_position_error_m=0.000000000016904311284093865 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=7 max_position_error_m=0.000000000025737412201465304 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=8 max_position_error_m=0.00000000003149477206809692 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=9 max_position_error_m=0.00000000003528261016683132 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=10 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=11 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=12 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=13 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=14 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=15 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=16 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=17 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=18 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=19 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=20 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=21 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=22 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=23 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=24 max_position_error_m=0.00000000003580941793090986 max_quaternion_component_error=0.0000000004134795839050298
+HYBRID HAIR FRAME frame=25 max_position_error_m=0.00000000003853070640325029 max_quaternion_component_error=0.0000000004749603488285459
+HYBRID HAIR FRAME frame=26 max_position_error_m=0.000000000049547282943152027 max_quaternion_component_error=0.0000000007204740692934308
+HYBRID HAIR FRAME frame=27 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000009250827326390265
+HYBRID HAIR FRAME frame=28 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010232764080519985
+HYBRID HAIR FRAME frame=29 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=30 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=31 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=32 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=33 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=34 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=35 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=36 max_position_error_m=0.00000000005630154675806409 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=37 max_position_error_m=0.000000000056376570078953137 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=38 max_position_error_m=0.0000000000591616755585278 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=39 max_position_error_m=0.00000000006327038892806058 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=40 max_position_error_m=0.00000000006855416234685663 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=41 max_position_error_m=0.00000000007455092099206695 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=42 max_position_error_m=0.00000000008057998712729386 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=43 max_position_error_m=0.00000000008591960476422855 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=44 max_position_error_m=0.00000000009001144274378703 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=45 max_position_error_m=0.00000000009300960002178726 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=46 max_position_error_m=0.00000000009300960002178726 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=47 max_position_error_m=0.00000000009300960002178726 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=48 max_position_error_m=0.00000000009792855415469148 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=49 max_position_error_m=0.00000000010822753804262675 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=50 max_position_error_m=0.00000000010822753804262675 max_quaternion_component_error=0.0000000010609593203980694
+HYBRID HAIR FRAME frame=51 max_position_error_m=0.00000000010822753804262675 max_quaternion_component_error=0.0000000011570510105585186
+HYBRID HAIR FRAME frame=52 max_position_error_m=0.00000000010822753804262675 max_quaternion_component_error=0.0000000014972671991131392
+HYBRID HAIR FRAME frame=53 max_position_error_m=0.00000000010822753804262675 max_quaternion_component_error=0.000000001765831703082199
+HYBRID HAIR FRAME frame=54 max_position_error_m=0.00000000012090228991568086 max_quaternion_component_error=0.0000000018331853812725285
+HYBRID HAIR FRAME frame=55 max_position_error_m=0.0000000001324731956076075 max_quaternion_component_error=0.0000000018331853812725285
+HYBRID HAIR FRAME frame=56 max_position_error_m=0.00000000014180915296202468 max_quaternion_component_error=0.000000001861322984630931
+HYBRID HAIR FRAME frame=57 max_position_error_m=0.0000000001506969184855711 max_quaternion_component_error=0.0000000018802330248313126
+HYBRID HAIR FRAME frame=58 max_position_error_m=0.0000000001544926339636099 max_quaternion_component_error=0.0000000018802330248313126
+HYBRID HAIR FRAME frame=59 max_position_error_m=0.00000000015976640496684347 max_quaternion_component_error=0.0000000018802330248313126
+HYBRID HAIR FRAME frame=60 max_position_error_m=0.00000000016477733760789093 max_quaternion_component_error=0.0000000018802330248313126
+HYBRID HAIR FRAME frame=61 max_position_error_m=0.00000000016853381537562662 max_quaternion_component_error=0.0000000018962208470085784
+HYBRID HAIR FRAME frame=62 max_position_error_m=0.0000000001889336048721546 max_quaternion_component_error=0.000000002096985430785625
+HYBRID HAIR FRAME frame=63 max_position_error_m=0.00000000020681252543841566 max_quaternion_component_error=0.0000000023958171835314346
+HYBRID HAIR FRAME frame=64 max_position_error_m=0.00000000021700743979558013 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=65 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=66 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=67 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=68 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=69 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=70 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=71 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=72 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=73 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=74 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=75 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=76 max_position_error_m=0.00000000021835232233424762 max_quaternion_component_error=0.0000000026038582262577492
+HYBRID HAIR FRAME frame=77 max_position_error_m=0.00000000028910031313333917 max_quaternion_component_error=0.00000000342597430980085
+HYBRID HAIR FRAME frame=78 max_position_error_m=0.0000000004596630437392335 max_quaternion_component_error=0.0000000035548174126542875
+HYBRID HAIR FRAME frame=79 max_position_error_m=0.0000000006070138697245042 max_quaternion_component_error=0.000000003704392903536302
+HYBRID HAIR FRAME frame=80 max_position_error_m=0.0000000007311985183999781 max_quaternion_component_error=0.000000005038593008099834
+HYBRID HAIR FRAME frame=81 max_position_error_m=0.0000000008491274489097478 max_quaternion_component_error=0.000000006586380996154162
+HYBRID HAIR FRAME frame=82 max_position_error_m=0.000000000919039629121432 max_quaternion_component_error=0.00000001034814745004553
+HYBRID HAIR FRAME frame=83 max_position_error_m=0.000000001007836647470839 max_quaternion_component_error=0.000000012889736389354312
+HYBRID HAIR FRAME frame=84 max_position_error_m=0.0000000012931639647995041 max_quaternion_component_error=0.000000013669279597117168
+HYBRID HAIR FRAME frame=85 max_position_error_m=0.0000000015305411243948797 max_quaternion_component_error=0.000000013669279597117168
+HYBRID HAIR FRAME frame=86 max_position_error_m=0.000000001978018887571764 max_quaternion_component_error=0.000000013669279597117168
+HYBRID HAIR FRAME frame=87 max_position_error_m=0.0000000023598468457119992 max_quaternion_component_error=0.000000013669279597117168
+HYBRID HAIR FRAME frame=88 max_position_error_m=0.000000002679505312075392 max_quaternion_component_error=0.000000013669279597117168
+HYBRID HAIR FRAME frame=89 max_position_error_m=0.000000002679505312075392 max_quaternion_component_error=0.00000002157934153590446
+HYBRID HAIR FRAME frame=90 max_position_error_m=0.0000000028692562215049122 max_quaternion_component_error=0.000000031150819604364166
+HYBRID HAIR FRAME frame=91 max_position_error_m=0.0000000028692562215049122 max_quaternion_component_error=0.000000031150819604364166
+HYBRID HAIR FRAME frame=92 max_position_error_m=0.0000000036553426951968504 max_quaternion_component_error=0.00000006919573891650543
+HYBRID HAIR FRAME frame=93 max_position_error_m=0.000000005327229560259106 max_quaternion_component_error=0.00000010240246273163223
+HYBRID HAIR FRAME frame=94 max_position_error_m=0.0000000068671688613353155 max_quaternion_component_error=0.00000012949440325593642
+HYBRID HAIR FRAME frame=95 max_position_error_m=0.000000008170261744933072 max_quaternion_component_error=0.000000147849919418519
+HYBRID HAIR FRAME frame=96 max_position_error_m=0.000000009669265846334874 max_quaternion_component_error=0.00000015846575429634413
+HYBRID HAIR FRAME frame=97 max_position_error_m=0.000000011163374752376498 max_quaternion_component_error=0.00000018109420507617102
+HYBRID HAIR FRAME frame=98 max_position_error_m=0.000000012527652609728435 max_quaternion_component_error=0.00000019305932380531132
+HYBRID HAIR FRAME frame=99 max_position_error_m=0.00000001375526621771872 max_quaternion_component_error=0.00000019305932380531132
+HYBRID HAIR FRAME frame=100 max_position_error_m=0.00000001476561957425293 max_quaternion_component_error=0.00000019305932380531132
+HYBRID HAIR FRAME frame=101 max_position_error_m=0.00000001566103931260887 max_quaternion_component_error=0.00000019906564611982258
+HYBRID HAIR FRAME frame=102 max_position_error_m=0.00000001630786232442727 max_quaternion_component_error=0.0000002211376601141124
+HYBRID HAIR FRAME frame=103 max_position_error_m=0.000000016642521694087975 max_quaternion_component_error=0.00000023733647830370685
+HYBRID HAIR FRAME frame=104 max_position_error_m=0.000000016787222598124707 max_quaternion_component_error=0.00000025087205258317313
+HYBRID HAIR FRAME frame=105 max_position_error_m=0.000000018011142188800733 max_quaternion_component_error=0.0000002622802502405541
+HYBRID HAIR FRAME frame=106 max_position_error_m=0.000000019432989648016097 max_quaternion_component_error=0.00000027146423965673794
+HYBRID HAIR FRAME frame=107 max_position_error_m=0.00000002079841873725563 max_quaternion_component_error=0.0000002782492603556688
+HYBRID HAIR FRAME frame=108 max_position_error_m=0.00000002186196813858121 max_quaternion_component_error=0.00000028254015227088813
+HYBRID HAIR FRAME frame=109 max_position_error_m=0.00000002200932658347199 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=110 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=111 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=112 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=113 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=114 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=115 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=116 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=117 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=118 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=119 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID HAIR FRAME frame=120 max_position_error_m=0.00000002246124855553866 max_quaternion_component_error=0.0000002831054856690385
+HYBRID FULL HAIR guides=469 frames=120 calls=0 position_error_m=0.00000002246124855553866 quaternion_component_error=0.0000002831054856690385 native_ms=10071.605998999998 hybrid_ms=33786.457661 solver_bridge_ms=0
+HYBRID LINEAR AUDIT max_errors=[0.0, 0.0] enabled=false
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 304 filtered out; finished in 49.26s
+

@@ -1,0 +1,68 @@
+{
+  "scope": "469 actual model guides, alternating separate processes; single submission timing within each process",
+  "runs": [
+    {
+      "round": 0,
+      "refinements": 2,
+      "gpu_ms": 1.7705,
+      "samples": 8
+    },
+    {
+      "round": 0,
+      "refinements": 1,
+      "gpu_ms": 1.13275,
+      "samples": 7
+    },
+    {
+      "round": 1,
+      "refinements": 1,
+      "gpu_ms": 1.128625,
+      "samples": 7
+    },
+    {
+      "round": 1,
+      "refinements": 2,
+      "gpu_ms": 1.216083,
+      "samples": 7
+    },
+    {
+      "round": 2,
+      "refinements": 2,
+      "gpu_ms": 1.180042,
+      "samples": 7
+    },
+    {
+      "round": 2,
+      "refinements": 1,
+      "gpu_ms": 1.132542,
+      "samples": 7
+    },
+    {
+      "round": 3,
+      "refinements": 1,
+      "gpu_ms": 1.128167,
+      "samples": 7
+    },
+    {
+      "round": 3,
+      "refinements": 2,
+      "gpu_ms": 1.184166,
+      "samples": 7
+    }
+  ],
+  "median_ms": {
+    "1": 1.1305835,
+    "2": 1.2001245
+  },
+  "all_accuracy_gates_passed": true,
+  "shader_default_refinements": 1,
+  "baseline_option": "--double-refinement",
+  "comparison_speedup_percent": 5.794482155809677,
+  "full_cycle_systems": 3283,
+  "full_cycle_factorization_failures": 0,
+  "full_cycle_position_correction_error_m": 2.1151403965433656e-11,
+  "full_cycle_rotation_correction_error_rad": 2.0068418290011825e-09,
+  "thresholds_changed": false,
+  "physics_model_changed": false,
+  "runtime_gpu_physics_enabled": false
+}

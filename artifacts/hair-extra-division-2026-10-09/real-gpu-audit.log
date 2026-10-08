@@ -1,0 +1,659 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib) generated 2 warnings
+warning: field `weak_refs` is never read
+  --> crates/voxy_assets/src/lib.rs:22:5
+   |
+18 | pub struct AssetCache {
+   |            ---------- field in this struct
+...
+22 |     weak_refs: HashMap<String, usize>,
+   |     ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/voxy_assets/src/lib.rs:18:1
+   |
+18 | / pub struct AssetCache {
+19 | |     /// In-memory cached assets (strong refs)
+20 | |     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
+21 | |     /// Weak references to prevent premature collection
+22 | |     weak_refs: HashMap<String, usize>,
+23 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `voxy_assets` (lib) generated 2 warnings
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 6 warnings
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: function `start_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:21:15
+   |
+21 | pub(crate) fn start_refinement_diagnostics() {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `take_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:24:15
+   |
+24 | pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `body_volumes_m3` is never used
+   --> crates/voxy_app/src/tissue_demo.rs:535:19
+    |
+268 | impl TissueDemo {
+    | --------------- method in this implementation
+...
+535 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets`, `advance_hair`, `set_strain_fixture`, and `orbit` are never used
+    --> crates/voxy_app/src/female_demo.rs:199:19
+     |
+ 195 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 199 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+ 749 |     fn advance_hair(&mut self, h: f64, time: f64, head: glam::Mat4) -> Result<(), &'static str> {
+     |        ^^^^^^^^^^^^
+...
+1028 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1146 |     pub(crate) fn orbit(&mut self, x: f32, y: f32) {
+     |                   ^^^^^
+
+warning: method `append_lod` is never used
+   --> crates/voxy_app/src/female_hair.rs:319:12
+    |
+ 21 | impl FemaleHair {
+    | --------------- method in this implementation
+...
+319 |     pub fn append_lod(
+    |            ^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib test) generated 6 warnings
+    Finished `release` profile [optimized] target(s) in 1m 11s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f)
+
+running 1 test
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID EXTRA DIVISION REFINEMENT true
+HYBRID CONTACT CASE full
+HYBRID TEST BACKEND cpu_control=false perturbation=0
+GPU HAIR LINEAR AUDIT call=1 position_correction_error_m=0.000000000002747873678815918 rotation_correction_error_rad=0.00000000014451748131527609 worst_rods=[5, 86]
+GPU HAIR LINEAR AUDIT call=2 position_correction_error_m=0.0000000000007285222399044726 rotation_correction_error_rad=0.00000000003764009069706642 worst_rods=[27, 27]
+GPU HAIR LINEAR AUDIT call=3 position_correction_error_m=0.0000000000006803257772674404 rotation_correction_error_rad=0.00000000004870301124199061 worst_rods=[26, 26]
+GPU HAIR LINEAR AUDIT call=4 position_correction_error_m=0.00000000000013255350898128907 rotation_correction_error_rad=0.0000000000056927273767333475 worst_rods=[379, 402]
+GPU HAIR LINEAR AUDIT call=5 position_correction_error_m=0.0000000000021949315855937816 rotation_correction_error_rad=0.00000000015397192592095377 worst_rods=[325, 325]
+GPU HAIR LINEAR AUDIT call=6 position_correction_error_m=0.0000000000008130026057755202 rotation_correction_error_rad=0.000000000044840950397251333 worst_rods=[436, 436]
+GPU HAIR LINEAR AUDIT call=7 position_correction_error_m=0.000000000004945610341069474 rotation_correction_error_rad=0.00000000022401508426028727 worst_rods=[439, 464]
+GPU HAIR LINEAR AUDIT call=8 position_correction_error_m=0.000000000000746483244955156 rotation_correction_error_rad=0.00000000003318512999117562 worst_rods=[446, 446]
+GPU HAIR LINEAR AUDIT call=9 position_correction_error_m=0.00000000000021412398501217977 rotation_correction_error_rad=0.000000000011404187490182682 worst_rods=[51, 436]
+GPU HAIR LINEAR AUDIT call=10 position_correction_error_m=0.00000000000018806386018992822 rotation_correction_error_rad=0.00000000001307147283208937 worst_rods=[51, 51]
+GPU HAIR LINEAR AUDIT call=11 position_correction_error_m=0.000000000017704517716124886 rotation_correction_error_rad=0.0000000016509477821294305 worst_rods=[91, 91]
+GPU HAIR LINEAR AUDIT call=12 position_correction_error_m=0.000000000005999093108670535 rotation_correction_error_rad=0.0000000003625747501713461 worst_rods=[306, 306]
+HYBRID HAIR FRAME frame=1 max_position_error_m=0.0000000000058454491247417195 max_quaternion_component_error=0.00000000016984580408774264
+GPU HAIR LINEAR AUDIT call=13 position_correction_error_m=0.000000000009428199269478216 rotation_correction_error_rad=0.00000000044154753291170135 worst_rods=[464, 464]
+GPU HAIR LINEAR AUDIT call=14 position_correction_error_m=0.000000000006419855397071447 rotation_correction_error_rad=0.00000000023354917457439617 worst_rods=[115, 20]
+GPU HAIR LINEAR AUDIT call=15 position_correction_error_m=0.000000000001871097298367791 rotation_correction_error_rad=0.00000000008934943757088476 worst_rods=[415, 342]
+GPU HAIR LINEAR AUDIT call=16 position_correction_error_m=0.0000000000010295467820289894 rotation_correction_error_rad=0.00000000007001641405329426 worst_rods=[401, 401]
+GPU HAIR LINEAR AUDIT call=17 position_correction_error_m=0.00000000000142234387787675 rotation_correction_error_rad=0.0000000001178411021107023 worst_rods=[393, 393]
+GPU HAIR LINEAR AUDIT call=18 position_correction_error_m=0.0000000000036923942703837205 rotation_correction_error_rad=0.00000000035650414564880606 worst_rods=[455, 455]
+GPU HAIR LINEAR AUDIT call=19 position_correction_error_m=0.000000000022605652755507827 rotation_correction_error_rad=0.0000000012460946402330364 worst_rods=[451, 451]
+GPU HAIR LINEAR AUDIT call=20 position_correction_error_m=0.000000000004473903357699906 rotation_correction_error_rad=0.0000000003795897210905817 worst_rods=[137, 137]
+GPU HAIR LINEAR AUDIT call=21 position_correction_error_m=0.0000000000003739056658150393 rotation_correction_error_rad=0.000000000024380198380968832 worst_rods=[454, 136]
+GPU HAIR LINEAR AUDIT call=22 position_correction_error_m=0.000000000002112886126096839 rotation_correction_error_rad=0.00000000013086546191316828 worst_rods=[401, 401]
+GPU HAIR LINEAR AUDIT call=23 position_correction_error_m=0.00000000002947754616355186 rotation_correction_error_rad=0.0000000014732154871022196 worst_rods=[373, 373]
+GPU HAIR LINEAR AUDIT call=24 position_correction_error_m=0.0000000000005514395770523858 rotation_correction_error_rad=0.00000000004194568130333476 worst_rods=[18, 18]
+HYBRID HAIR FRAME frame=2 max_position_error_m=0.000000000008189664224556026 max_quaternion_component_error=0.0000000002710132257499609
+GPU HAIR LINEAR AUDIT call=25 position_correction_error_m=0.00000000003384702528018771 rotation_correction_error_rad=0.000000001512471187571987 worst_rods=[24, 24]
+GPU HAIR LINEAR AUDIT call=26 position_correction_error_m=0.00000000003415731352005968 rotation_correction_error_rad=0.0000000023807017733058766 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=27 position_correction_error_m=0.000000000010595092023776148 rotation_correction_error_rad=0.0000000006473925978633943 worst_rods=[386, 386]
+GPU HAIR LINEAR AUDIT call=28 position_correction_error_m=0.00000000000678861274919923 rotation_correction_error_rad=0.00000000037001256225632773 worst_rods=[410, 410]
+GPU HAIR LINEAR AUDIT call=29 position_correction_error_m=0.00000000001106900199753999 rotation_correction_error_rad=0.000000000978439371190909 worst_rods=[421, 430]
+GPU HAIR LINEAR AUDIT call=30 position_correction_error_m=0.000000000013941047426711817 rotation_correction_error_rad=0.0000000009276442634875703 worst_rods=[415, 415]
+GPU HAIR LINEAR AUDIT call=31 position_correction_error_m=0.000000000025235261851084406 rotation_correction_error_rad=0.0000000013733752329825322 worst_rods=[22, 5]
+GPU HAIR LINEAR AUDIT call=32 position_correction_error_m=0.00000000004440136061286456 rotation_correction_error_rad=0.0000000023653461047462576 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=33 position_correction_error_m=0.000000000001940232864441351 rotation_correction_error_rad=0.0000000000912540021777669 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=34 position_correction_error_m=0.0000000000010012143566474896 rotation_correction_error_rad=0.00000000008226722081339233 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=35 position_correction_error_m=0.0000000000028826934939042877 rotation_correction_error_rad=0.00000000015255951363313258 worst_rods=[12, 12]
+GPU HAIR LINEAR AUDIT call=36 position_correction_error_m=0.0000000000014246105380436025 rotation_correction_error_rad=0.00000000009092870900673233 worst_rods=[463, 463]
+HYBRID HAIR FRAME frame=3 max_position_error_m=0.00000000002236212603978771 max_quaternion_component_error=0.0000000005985404394337479
+GPU HAIR LINEAR AUDIT call=37 position_correction_error_m=0.000000000027257783161670213 rotation_correction_error_rad=0.000000001401496905507893 worst_rods=[460, 460]
+GPU HAIR LINEAR AUDIT call=38 position_correction_error_m=0.00000000024650096536443095 rotation_correction_error_rad=0.000000014369096357214062 worst_rods=[258, 258]
+GPU HAIR LINEAR AUDIT call=39 position_correction_error_m=0.0000000000048518505836245285 rotation_correction_error_rad=0.00000000036846852305427724 worst_rods=[367, 355]
+GPU HAIR LINEAR AUDIT call=40 position_correction_error_m=0.000000000003829170352109487 rotation_correction_error_rad=0.0000000002166759714358757 worst_rods=[198, 401]
+GPU HAIR LINEAR AUDIT call=41 position_correction_error_m=0.000000000031302450215209277 rotation_correction_error_rad=0.00000000165551572450795 worst_rods=[10, 10]
+GPU HAIR LINEAR AUDIT call=42 position_correction_error_m=0.00000000000892569850495517 rotation_correction_error_rad=0.00000000038240263039446276 worst_rods=[10, 10]
+GPU HAIR LINEAR AUDIT call=43 position_correction_error_m=0.00000000003081170718956597 rotation_correction_error_rad=0.0000000016368647114822776 worst_rods=[439, 22]
+GPU HAIR LINEAR AUDIT call=44 position_correction_error_m=0.00000000008064828562999796 rotation_correction_error_rad=0.0000000043576087634111804 worst_rods=[200, 200]
+GPU HAIR LINEAR AUDIT call=45 position_correction_error_m=0.00000000000113430582345336 rotation_correction_error_rad=0.0000000000592447116755726 worst_rods=[258, 258]
+GPU HAIR LINEAR AUDIT call=46 position_correction_error_m=0.0000000000016738525543652082 rotation_correction_error_rad=0.000000000046199802664070866 worst_rods=[259, 259]
+GPU HAIR LINEAR AUDIT call=47 position_correction_error_m=0.0000000000007057444330273079 rotation_correction_error_rad=0.00000000004434104472483824 worst_rods=[282, 281]
+GPU HAIR LINEAR AUDIT call=48 position_correction_error_m=0.0000000000004635165101946667 rotation_correction_error_rad=0.00000000003525713054841617 worst_rods=[173, 198]
+HYBRID HAIR FRAME frame=4 max_position_error_m=0.00000000042765216368145786 max_quaternion_component_error=0.000000014499587752681009
+GPU HAIR LINEAR AUDIT call=49 position_correction_error_m=0.000000000025726882429966125 rotation_correction_error_rad=0.0000000013094508550387518 worst_rods=[450, 450]
+GPU HAIR LINEAR AUDIT call=50 position_correction_error_m=0.0000000005567544179049637 rotation_correction_error_rad=0.00000003165882352107463 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=51 position_correction_error_m=0.000000000013302500810954965 rotation_correction_error_rad=0.00000000040521615229938135 worst_rods=[230, 230]
+GPU HAIR LINEAR AUDIT call=52 position_correction_error_m=0.00000000008300774399910556 rotation_correction_error_rad=0.000000004748389161035593 worst_rods=[230, 230]
+GPU HAIR LINEAR AUDIT call=53 position_correction_error_m=0.000000000035018740294698314 rotation_correction_error_rad=0.000000002049149761332303 worst_rods=[361, 361]
+GPU HAIR LINEAR AUDIT call=54 position_correction_error_m=0.000000000009084534705982965 rotation_correction_error_rad=0.0000000004668312490047066 worst_rods=[115, 115]
+GPU HAIR LINEAR AUDIT call=55 position_correction_error_m=0.000000000025984310135420546 rotation_correction_error_rad=0.0000000012829430469374348 worst_rods=[466, 458]
+GPU HAIR LINEAR AUDIT call=56 position_correction_error_m=0.00000000008388512004838715 rotation_correction_error_rad=0.0000000049769432065166486 worst_rods=[147, 147]
+GPU HAIR LINEAR AUDIT call=57 position_correction_error_m=0.0000000000017232634840011073 rotation_correction_error_rad=0.0000000001900109323355048 worst_rods=[201, 191]
+GPU HAIR LINEAR AUDIT call=58 position_correction_error_m=0.0000000000005195345087891443 rotation_correction_error_rad=0.00000000006028749027775504 worst_rods=[314, 253]
+GPU HAIR LINEAR AUDIT call=59 position_correction_error_m=0.0000000000006807186175958498 rotation_correction_error_rad=0.000000000051796782141178 worst_rods=[197, 438]
+GPU HAIR LINEAR AUDIT call=60 position_correction_error_m=0.0000000000009833488868018006 rotation_correction_error_rad=0.000000000040618116509127944 worst_rods=[137, 137]
+HYBRID HAIR FRAME frame=5 max_position_error_m=0.0000000006245271244598172 max_quaternion_component_error=0.000000014670402670446947
+GPU HAIR LINEAR AUDIT call=61 position_correction_error_m=0.000000000019917337364897675 rotation_correction_error_rad=0.0000000009133881411632627 worst_rods=[428, 428]
+GPU HAIR LINEAR AUDIT call=62 position_correction_error_m=0.0000000007641952450617578 rotation_correction_error_rad=0.00000004676789111188184 worst_rods=[343, 343]
+GPU HAIR LINEAR AUDIT call=63 position_correction_error_m=0.00000000001195112606967863 rotation_correction_error_rad=0.0000000004509816825537527 worst_rods=[286, 286]
+GPU HAIR LINEAR AUDIT call=64 position_correction_error_m=0.0000000002267106919133944 rotation_correction_error_rad=0.00000002005840517294022 worst_rods=[286, 286]
+GPU HAIR LINEAR AUDIT call=65 position_correction_error_m=0.000000000014921694508804838 rotation_correction_error_rad=0.0000000008392619689490122 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=66 position_correction_error_m=0.0000000002926818483753313 rotation_correction_error_rad=0.000000025467267975032293 worst_rods=[286, 286]
+GPU HAIR LINEAR AUDIT call=67 position_correction_error_m=0.000000000018045159794590274 rotation_correction_error_rad=0.0000000009460807899358721 worst_rods=[458, 458]
+GPU HAIR LINEAR AUDIT call=68 position_correction_error_m=0.0000000000017363620307200844 rotation_correction_error_rad=0.00000000016311573402746915 worst_rods=[272, 272]
+GPU HAIR LINEAR AUDIT call=69 position_correction_error_m=0.0000000000005176993951800171 rotation_correction_error_rad=0.00000000004145712451716216 worst_rods=[368, 173]
+GPU HAIR LINEAR AUDIT call=70 position_correction_error_m=0.0000000000007705970464597783 rotation_correction_error_rad=0.00000000008090777353642054 worst_rods=[311, 311]
+GPU HAIR LINEAR AUDIT call=71 position_correction_error_m=0.0000000000008632895186742612 rotation_correction_error_rad=0.000000000046014943591576873 worst_rods=[167, 136]
+GPU HAIR LINEAR AUDIT call=72 position_correction_error_m=0.0000000000007954986902493008 rotation_correction_error_rad=0.00000000010538495770484602 worst_rods=[310, 310]
+HYBRID HAIR FRAME frame=6 max_position_error_m=0.000000004674203385457432 max_quaternion_component_error=0.00000018140123686505305
+GPU HAIR LINEAR AUDIT call=73 position_correction_error_m=0.00000000001496496790419702 rotation_correction_error_rad=0.0000000007090566840270429 worst_rods=[74, 21]
+GPU HAIR LINEAR AUDIT call=74 position_correction_error_m=0.000000000305732803494458 rotation_correction_error_rad=0.00000002691401082555167 worst_rods=[177, 177]
+GPU HAIR LINEAR AUDIT call=75 position_correction_error_m=0.0000000000029174541471901905 rotation_correction_error_rad=0.0000000001281698857290292 worst_rods=[316, 150]
+GPU HAIR LINEAR AUDIT call=76 position_correction_error_m=0.00000000003083534095378246 rotation_correction_error_rad=0.000000002169819796060679 worst_rods=[316, 316]
+GPU HAIR LINEAR AUDIT call=77 position_correction_error_m=0.000000000004176056303875891 rotation_correction_error_rad=0.00000000028723057265978014 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=78 position_correction_error_m=0.00000000010055932079871752 rotation_correction_error_rad=0.000000008515155382887718 worst_rods=[316, 316]
+GPU HAIR LINEAR AUDIT call=79 position_correction_error_m=0.00000000001509140764286744 rotation_correction_error_rad=0.0000000008005848588232833 worst_rods=[22, 22]
+GPU HAIR LINEAR AUDIT call=80 position_correction_error_m=0.0000000000010085053892526247 rotation_correction_error_rad=0.00000000004551559476539957 worst_rods=[135, 135]
+GPU HAIR LINEAR AUDIT call=81 position_correction_error_m=0.0000000000006727397840731487 rotation_correction_error_rad=0.000000000027300946225938816 worst_rods=[311, 311]
+GPU HAIR LINEAR AUDIT call=82 position_correction_error_m=0.000000000000653433802563514 rotation_correction_error_rad=0.00000000006323914482353477 worst_rods=[342, 255]
+GPU HAIR LINEAR AUDIT call=83 position_correction_error_m=0.0000000000010906156111946484 rotation_correction_error_rad=0.000000000052167269419187146 worst_rods=[176, 466]
+GPU HAIR LINEAR AUDIT call=84 position_correction_error_m=0.000000000001264005305317336 rotation_correction_error_rad=0.00000000006899836324985925 worst_rods=[134, 141]
+HYBRID HAIR FRAME frame=7 max_position_error_m=0.00000005356275223356022 max_quaternion_component_error=0.0000011383158805278182
+GPU HAIR LINEAR AUDIT call=85 position_correction_error_m=0.000000000015466373516105636 rotation_correction_error_rad=0.000000000760947011131663 worst_rods=[82, 399]
+GPU HAIR LINEAR AUDIT call=86 position_correction_error_m=0.00000000038711120371520344 rotation_correction_error_rad=0.00000001592514337067641 worst_rods=[260, 260]
+GPU HAIR LINEAR AUDIT call=87 position_correction_error_m=0.000000000005652608491278936 rotation_correction_error_rad=0.0000000004681460282363742 worst_rods=[284, 231]
+GPU HAIR LINEAR AUDIT call=88 position_correction_error_m=0.000000000010832277156286102 rotation_correction_error_rad=0.0000000005813526603474714 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=89 position_correction_error_m=0.000000000015358020058605856 rotation_correction_error_rad=0.0000000008418094645835927 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=90 position_correction_error_m=0.00000000005367564465813546 rotation_correction_error_rad=0.00000000298434462212005 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=91 position_correction_error_m=0.000000000016068576482418384 rotation_correction_error_rad=0.0000000009188326992705734 worst_rods=[450, 450]
+GPU HAIR LINEAR AUDIT call=92 position_correction_error_m=0.0000000000013986661357096378 rotation_correction_error_rad=0.00000000009819661159508539 worst_rods=[228, 256]
+GPU HAIR LINEAR AUDIT call=93 position_correction_error_m=0.00000000000016657316937460434 rotation_correction_error_rad=0.000000000010355731951215003 worst_rods=[192, 115]
+GPU HAIR LINEAR AUDIT call=94 position_correction_error_m=0.0000000000002072920514642365 rotation_correction_error_rad=0.000000000018238603308835463 worst_rods=[192, 342]
+GPU HAIR LINEAR AUDIT call=95 position_correction_error_m=0.0000000000010181001820677021 rotation_correction_error_rad=0.00000000010394348879880222 worst_rods=[70, 70]
+GPU HAIR LINEAR AUDIT call=96 position_correction_error_m=0.0000000000004961217797260636 rotation_correction_error_rad=0.000000000017442277223250757 worst_rods=[115, 115]
+HYBRID HAIR FRAME frame=8 max_position_error_m=0.00000013484348851747208 max_quaternion_component_error=0.000003073387036645059
+GPU HAIR LINEAR AUDIT call=97 position_correction_error_m=0.000000000013615503364518278 rotation_correction_error_rad=0.0000000006321493085936769 worst_rods=[412, 169]
+GPU HAIR LINEAR AUDIT call=98 position_correction_error_m=0.00000000002624386291440249 rotation_correction_error_rad=0.0000000019935888669053714 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=99 position_correction_error_m=0.0000000000040276789133150866 rotation_correction_error_rad=0.0000000002442587937467877 worst_rods=[284, 0]
+GPU HAIR LINEAR AUDIT call=100 position_correction_error_m=0.0000000000050448570017638805 rotation_correction_error_rad=0.00000000042923777379688666 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=101 position_correction_error_m=0.000000000019511501084517463 rotation_correction_error_rad=0.0000000006669260387004439 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=102 position_correction_error_m=0.0000000000046490660849047086 rotation_correction_error_rad=0.00000000026191313527712534 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=103 position_correction_error_m=0.000000000020889467076696394 rotation_correction_error_rad=0.0000000008835853776076319 worst_rods=[460, 460]
+GPU HAIR LINEAR AUDIT call=104 position_correction_error_m=0.0000000000007718621206596887 rotation_correction_error_rad=0.00000000007692947754517343 worst_rods=[69, 69]
+GPU HAIR LINEAR AUDIT call=105 position_correction_error_m=0.0000000000003687104298906365 rotation_correction_error_rad=0.00000000001862250414638722 worst_rods=[136, 401]
+GPU HAIR LINEAR AUDIT call=106 position_correction_error_m=0.00000000000026665686802748723 rotation_correction_error_rad=0.000000000035344391476066495 worst_rods=[401, 401]
+GPU HAIR LINEAR AUDIT call=107 position_correction_error_m=0.0000000000012262889271738575 rotation_correction_error_rad=0.0000000001292631744711733 worst_rods=[20, 20]
+GPU HAIR LINEAR AUDIT call=108 position_correction_error_m=0.0000000000004726141014459694 rotation_correction_error_rad=0.0000000000315811734402649 worst_rods=[312, 255]
+HYBRID HAIR FRAME frame=9 max_position_error_m=0.0000001743977042223399 max_quaternion_component_error=0.000003073387036645059
+GPU HAIR LINEAR AUDIT call=109 position_correction_error_m=0.000000000020611607635511592 rotation_correction_error_rad=0.0000000010882070579929307 worst_rods=[13, 13]
+GPU HAIR LINEAR AUDIT call=110 position_correction_error_m=0.00000000005487287454118434 rotation_correction_error_rad=0.0000000026849083269164797 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=111 position_correction_error_m=0.000000000007240215805365269 rotation_correction_error_rad=0.0000000002818432848217256 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=112 position_correction_error_m=0.00000000000986382556308809 rotation_correction_error_rad=0.00000000045144665783425353 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=113 position_correction_error_m=0.00000000001791483237797986 rotation_correction_error_rad=0.0000000008707689153064635 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=114 position_correction_error_m=0.00000000009096517490928875 rotation_correction_error_rad=0.000000006488036025098509 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=115 position_correction_error_m=0.000000000018580077634864495 rotation_correction_error_rad=0.0000000010128122251464033 worst_rods=[4, 4]
+GPU HAIR LINEAR AUDIT call=116 position_correction_error_m=0.0000000000007559541710601587 rotation_correction_error_rad=0.0000000000527197124931128 worst_rods=[147, 147]
+GPU HAIR LINEAR AUDIT call=117 position_correction_error_m=0.00000000000022648284072820934 rotation_correction_error_rad=0.000000000011193333586401177 worst_rods=[136, 136]
+GPU HAIR LINEAR AUDIT call=118 position_correction_error_m=0.00000000000040518275041569185 rotation_correction_error_rad=0.00000000003186838119784152 worst_rods=[136, 136]
+GPU HAIR LINEAR AUDIT call=119 position_correction_error_m=0.0000000000008329217578238041 rotation_correction_error_rad=0.00000000004640301055729157 worst_rods=[388, 277]
+GPU HAIR LINEAR AUDIT call=120 position_correction_error_m=0.0000000000008237691670291702 rotation_correction_error_rad=0.00000000005135120453858555 worst_rods=[332, 332]
+HYBRID HAIR FRAME frame=10 max_position_error_m=0.0000001743977042223399 max_quaternion_component_error=0.000005017166525400629
+GPU HAIR LINEAR AUDIT call=121 position_correction_error_m=0.000000000021722283260333652 rotation_correction_error_rad=0.0000000016162766923455418 worst_rods=[338, 338]
+GPU HAIR LINEAR AUDIT call=122 position_correction_error_m=0.00000000002388223322715658 rotation_correction_error_rad=0.0000000016399265894903592 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=123 position_correction_error_m=0.000000000004170372030091259 rotation_correction_error_rad=0.00000000017031276302453824 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=124 position_correction_error_m=0.000000000006849385750413994 rotation_correction_error_rad=0.0000000005227638530391765 worst_rods=[259, 259]
+GPU HAIR LINEAR AUDIT call=125 position_correction_error_m=0.000000000010591786562402783 rotation_correction_error_rad=0.0000000007650643243928279 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=126 position_correction_error_m=0.000000000016876802784600818 rotation_correction_error_rad=0.0000000007850273292070399 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=127 position_correction_error_m=0.000000000019550960947845725 rotation_correction_error_rad=0.0000000009692448176522317 worst_rods=[450, 450]
+GPU HAIR LINEAR AUDIT call=128 position_correction_error_m=0.0000000000012025400511798349 rotation_correction_error_rad=0.0000000000537616768594637 worst_rods=[222, 222]
+GPU HAIR LINEAR AUDIT call=129 position_correction_error_m=0.00000000000011697131978294362 rotation_correction_error_rad=0.00000000001424385002307682 worst_rods=[146, 173]
+GPU HAIR LINEAR AUDIT call=130 position_correction_error_m=0.0000000000002996425705486822 rotation_correction_error_rad=0.000000000017667776963659065 worst_rods=[146, 217]
+GPU HAIR LINEAR AUDIT call=131 position_correction_error_m=0.0000000000005826246128885944 rotation_correction_error_rad=0.0000000000549191438853347 worst_rods=[388, 388]
+GPU HAIR LINEAR AUDIT call=132 position_correction_error_m=0.00000000000041462162479397047 rotation_correction_error_rad=0.00000000001725241824401813 worst_rods=[172, 172]
+HAIR FIRST DIVERGENCE frame=11 rod=463 point=17 error_m=0.0000821886130308036
+HAIR DIVERGENCE NEIGHBOR native point=16 position=[0.10688022073259959, 0.5632725913405928, 0.019982107121719533] body_distance_m=0.0033280058518547245 body_normal=[0.1871282561996555, 0.736993896822376, 0.64947903105354]
+HAIR DIVERGENCE NEIGHBOR native point=17 position=[0.10910761770586326, 0.5556980830083859, 0.026498465458532613] body_distance_m=0.0026993773082841445 body_normal=[0.27387647999882064, 0.7062801659845821, 0.6528093143026122]
+HAIR DIVERGENCE NEIGHBOR native point=18 position=[0.11068703296298012, 0.542726666773393, 0.03439030803766198] body_distance_m=0.0016932933164250149 body_normal=[0.22324473156378527, 0.608180031645093, 0.7617603553199569]
+HAIR DIVERGENCE NEIGHBOR external point=16 position=[0.10688730593177913, 0.563273653302962, 0.019936573452800466] body_distance_m=0.003300672319674082 body_normal=[0.18135205993070422, 0.7506685632076484, 0.6353016122840042]
+HAIR DIVERGENCE NEIGHBOR external point=17 position=[0.10912352812352413, 0.5556703568930583, 0.02641627684550181] body_distance_m=0.0026304989000166057 body_normal=[0.27387647999882064, 0.7062801659845821, 0.6528093143026122]
+HAIR DIVERGENCE NEIGHBOR external point=18 position=[0.11069792188146275, 0.5427096856202581, 0.03432675471250946] body_distance_m=0.0016369842083078514 body_normal=[0.22324473156378527, 0.608180031645093, 0.7617603553199569]
+HYBRID HAIR FRAME frame=11 max_position_error_m=0.0000821886130308036 max_quaternion_component_error=0.001977095630087855
+GPU HAIR LINEAR AUDIT call=133 position_correction_error_m=0.000000000018741905922180224 rotation_correction_error_rad=0.0000000009941784930023179 worst_rods=[14, 99]
+GPU HAIR LINEAR AUDIT call=134 position_correction_error_m=0.00000000004063860299283287 rotation_correction_error_rad=0.000000002098805327449549 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=135 position_correction_error_m=0.0000000000023149021855154816 rotation_correction_error_rad=0.00000000012456482026412807 worst_rods=[230, 229]
+GPU HAIR LINEAR AUDIT call=136 position_correction_error_m=0.000000000005168299443199676 rotation_correction_error_rad=0.00000000026669527660773146 worst_rods=[284, 229]
+GPU HAIR LINEAR AUDIT call=137 position_correction_error_m=0.000000000007330017886067464 rotation_correction_error_rad=0.0000000004913030121622697 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=138 position_correction_error_m=0.0000000000059290061602728164 rotation_correction_error_rad=0.00000000030961784292004094 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=139 position_correction_error_m=0.000000000019499777172745508 rotation_correction_error_rad=0.0000000010023266305489442 worst_rods=[458, 458]
+GPU HAIR LINEAR AUDIT call=140 position_correction_error_m=0.000000000000624234453783576 rotation_correction_error_rad=0.00000000004119587049961071 worst_rods=[133, 174]
+GPU HAIR LINEAR AUDIT call=141 position_correction_error_m=0.00000000000021570953709229915 rotation_correction_error_rad=0.000000000017478153473138303 worst_rods=[113, 113]
+GPU HAIR LINEAR AUDIT call=142 position_correction_error_m=0.00000000000031610295164827967 rotation_correction_error_rad=0.000000000014538953374554353 worst_rods=[334, 245]
+GPU HAIR LINEAR AUDIT call=143 position_correction_error_m=0.00000000000665905245983596 rotation_correction_error_rad=0.0000000006928399329947377 worst_rods=[363, 363]
+GPU HAIR LINEAR AUDIT call=144 position_correction_error_m=0.0000000000007981002740197612 rotation_correction_error_rad=0.00000000010513863737959817 worst_rods=[334, 334]
+HYBRID HAIR FRAME frame=12 max_position_error_m=0.0011157499142755573 max_quaternion_component_error=0.01688496147465518
+GPU HAIR LINEAR AUDIT call=145 position_correction_error_m=0.000000000018870178965409157 rotation_correction_error_rad=0.000000000990179446682532 worst_rods=[13, 13]
+GPU HAIR LINEAR AUDIT call=146 position_correction_error_m=0.0000000000275092318783904 rotation_correction_error_rad=0.0000000013764469598831486 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=147 position_correction_error_m=0.00000000001656504571505941 rotation_correction_error_rad=0.0000000008164857213184724 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=148 position_correction_error_m=0.000000000007042740082254233 rotation_correction_error_rad=0.0000000004012199251220844 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=149 position_correction_error_m=0.000000000008461860444113067 rotation_correction_error_rad=0.0000000005067242736522815 worst_rods=[259, 259]
+GPU HAIR LINEAR AUDIT call=150 position_correction_error_m=0.00000000001477243904323333 rotation_correction_error_rad=0.0000000007181730626859562 worst_rods=[259, 259]
+GPU HAIR LINEAR AUDIT call=151 position_correction_error_m=0.000000000014542885423468252 rotation_correction_error_rad=0.0000000007468566550795919 worst_rods=[439, 439]
+GPU HAIR LINEAR AUDIT call=152 position_correction_error_m=0.0000000000007482934322904696 rotation_correction_error_rad=0.00000000004082335684774119 worst_rods=[141, 141]
+GPU HAIR LINEAR AUDIT call=153 position_correction_error_m=0.00000000000027145971085687677 rotation_correction_error_rad=0.0000000000310391016274808 worst_rods=[361, 361]
+GPU HAIR LINEAR AUDIT call=154 position_correction_error_m=0.0000000000006511154327292976 rotation_correction_error_rad=0.00000000007120593004117381 worst_rods=[245, 245]
+GPU HAIR LINEAR AUDIT call=155 position_correction_error_m=0.0000000000005502454172978525 rotation_correction_error_rad=0.00000000003123577395000576 worst_rods=[125, 79]
+GPU HAIR LINEAR AUDIT call=156 position_correction_error_m=0.0000000000004209887816228764 rotation_correction_error_rad=0.000000000032779366027080314 worst_rods=[146, 245]
+HYBRID HAIR FRAME frame=13 max_position_error_m=0.0013409566882863974 max_quaternion_component_error=0.028221910066160594
+GPU HAIR LINEAR AUDIT call=157 position_correction_error_m=0.00000000001515036219309346 rotation_correction_error_rad=0.000000000788970788007104 worst_rods=[160, 160]
+GPU HAIR LINEAR AUDIT call=158 position_correction_error_m=0.000000000020267324053562224 rotation_correction_error_rad=0.0000000007455587367095895 worst_rods=[228, 257]
+GPU HAIR LINEAR AUDIT call=159 position_correction_error_m=0.000000000007330334256261395 rotation_correction_error_rad=0.0000000002445818972156809 worst_rods=[228, 200]
+GPU HAIR LINEAR AUDIT call=160 position_correction_error_m=0.0000000000167172659653529 rotation_correction_error_rad=0.0000000005588722144030285 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=161 position_correction_error_m=0.000000000003567559513458678 rotation_correction_error_rad=0.00000000020058739516387245 worst_rods=[284, 200]
+GPU HAIR LINEAR AUDIT call=162 position_correction_error_m=0.000000000020133339777184014 rotation_correction_error_rad=0.0000000011940203669541516 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=163 position_correction_error_m=0.000000000012785040116435747 rotation_correction_error_rad=0.0000000007366198571251426 worst_rods=[3, 3]
+GPU HAIR LINEAR AUDIT call=164 position_correction_error_m=0.0000000000004315934647159108 rotation_correction_error_rad=0.000000000028131719176371917 worst_rods=[174, 254]
+GPU HAIR LINEAR AUDIT call=165 position_correction_error_m=0.00000000000013692674178202892 rotation_correction_error_rad=0.000000000012827582746011146 worst_rods=[282, 282]
+GPU HAIR LINEAR AUDIT call=166 position_correction_error_m=0.0000000000002082522522484087 rotation_correction_error_rad=0.00000000002615255408067174 worst_rods=[272, 272]
+GPU HAIR LINEAR AUDIT call=167 position_correction_error_m=0.0000000000006209713156819698 rotation_correction_error_rad=0.00000000004234808022914732 worst_rods=[119, 330]
+GPU HAIR LINEAR AUDIT call=168 position_correction_error_m=0.00000000000020733421761138376 rotation_correction_error_rad=0.000000000013394946610234548 worst_rods=[227, 188]
+HYBRID HAIR FRAME frame=14 max_position_error_m=0.001744107792688493 max_quaternion_component_error=0.03810921649953736
+GPU HAIR LINEAR AUDIT call=169 position_correction_error_m=0.00000000001316914565135767 rotation_correction_error_rad=0.000000000660790575360802 worst_rods=[22, 22]
+GPU HAIR LINEAR AUDIT call=170 position_correction_error_m=0.00000000004916326688201439 rotation_correction_error_rad=0.0000000012384325251500045 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=171 position_correction_error_m=0.0000000000044256082360003696 rotation_correction_error_rad=0.00000000024021879776146837 worst_rods=[230, 230]
+GPU HAIR LINEAR AUDIT call=172 position_correction_error_m=0.0000000000047017495996006745 rotation_correction_error_rad=0.00000000023670140424526115 worst_rods=[284, 200]
+GPU HAIR LINEAR AUDIT call=173 position_correction_error_m=0.000000000010988557719998626 rotation_correction_error_rad=0.0000000007299545690120368 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=174 position_correction_error_m=0.00000000002547699334145919 rotation_correction_error_rad=0.0000000011104881506852668 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=175 position_correction_error_m=0.000000000018882173385623147 rotation_correction_error_rad=0.0000000008953047753038415 worst_rods=[452, 452]
+GPU HAIR LINEAR AUDIT call=176 position_correction_error_m=0.0000000000005008311643281849 rotation_correction_error_rad=0.00000000003362199375248759 worst_rods=[147, 147]
+GPU HAIR LINEAR AUDIT call=177 position_correction_error_m=0.0000000000001309210715099568 rotation_correction_error_rad=0.000000000011460448041955562 worst_rods=[369, 369]
+GPU HAIR LINEAR AUDIT call=178 position_correction_error_m=0.00000000000007412856102334466 rotation_correction_error_rad=0.0000000000033249140203236993 worst_rods=[137, 137]
+GPU HAIR LINEAR AUDIT call=179 position_correction_error_m=0.0000000000009984778913505084 rotation_correction_error_rad=0.00000000009080095182689707 worst_rods=[89, 89]
+GPU HAIR LINEAR AUDIT call=180 position_correction_error_m=0.00000000000014251369995135071 rotation_correction_error_rad=0.000000000016036073510750093 worst_rods=[226, 226]
+HYBRID HAIR FRAME frame=15 max_position_error_m=0.0019777106037631165 max_quaternion_component_error=0.03810921649953736
+GPU HAIR LINEAR AUDIT call=181 position_correction_error_m=0.000000000012471067445873549 rotation_correction_error_rad=0.0000000006923799120844842 worst_rods=[3, 3]
+GPU HAIR LINEAR AUDIT call=182 position_correction_error_m=0.00000000000570723697563462 rotation_correction_error_rad=0.00000000043646511665301757 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=183 position_correction_error_m=0.000000000003753436509491099 rotation_correction_error_rad=0.00000000020439025157689 worst_rods=[200, 200]
+GPU HAIR LINEAR AUDIT call=184 position_correction_error_m=0.0000000000032968926525454856 rotation_correction_error_rad=0.00000000019496180624772874 worst_rods=[230, 230]
+GPU HAIR LINEAR AUDIT call=185 position_correction_error_m=0.0000000000069063782741785734 rotation_correction_error_rad=0.00000000038875817495731546 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=186 position_correction_error_m=0.000000000009076966188348924 rotation_correction_error_rad=0.000000000400367819192865 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=187 position_correction_error_m=0.00000000001351557516078572 rotation_correction_error_rad=0.0000000006591700761209062 worst_rods=[358, 21]
+GPU HAIR LINEAR AUDIT call=188 position_correction_error_m=0.000000000000526276999681264 rotation_correction_error_rad=0.000000000034129998523549365 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=189 position_correction_error_m=0.00000000000010988881313689532 rotation_correction_error_rad=0.000000000013628708838558934 worst_rods=[272, 272]
+GPU HAIR LINEAR AUDIT call=190 position_correction_error_m=0.00000000000008389810414697891 rotation_correction_error_rad=0.000000000004050749454831762 worst_rods=[226, 226]
+GPU HAIR LINEAR AUDIT call=191 position_correction_error_m=0.0000000000004153052633916335 rotation_correction_error_rad=0.00000000003150839034364442 worst_rods=[372, 372]
+GPU HAIR LINEAR AUDIT call=192 position_correction_error_m=0.00000000000028088322683375577 rotation_correction_error_rad=0.000000000029477266981492445 worst_rods=[226, 226]
+HYBRID HAIR FRAME frame=16 max_position_error_m=0.0022283649382517055 max_quaternion_component_error=0.03810921649953736
+GPU HAIR LINEAR AUDIT call=193 position_correction_error_m=0.000000000013089702986888302 rotation_correction_error_rad=0.0000000009945582205017622 worst_rods=[128, 132]
+GPU HAIR LINEAR AUDIT call=194 position_correction_error_m=0.00000000000853140412929534 rotation_correction_error_rad=0.0000000004112782441001439 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=195 position_correction_error_m=0.00000000000678509066084367 rotation_correction_error_rad=0.00000000034954802941022933 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=196 position_correction_error_m=0.0000000000072000843397775245 rotation_correction_error_rad=0.0000000004143831584292601 worst_rods=[229, 351]
+GPU HAIR LINEAR AUDIT call=197 position_correction_error_m=0.000000000010887218528782532 rotation_correction_error_rad=0.0000000005388218397937156 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=198 position_correction_error_m=0.000000000005320443751907246 rotation_correction_error_rad=0.0000000003187230757095705 worst_rods=[283, 351]
+GPU HAIR LINEAR AUDIT call=199 position_correction_error_m=0.000000000011378857356142066 rotation_correction_error_rad=0.0000000006280715739159781 worst_rods=[416, 176]
+GPU HAIR LINEAR AUDIT call=200 position_correction_error_m=0.0000000000008967164914796578 rotation_correction_error_rad=0.00000000004366666023995075 worst_rods=[186, 186]
+GPU HAIR LINEAR AUDIT call=201 position_correction_error_m=0.00000000000022305735817435002 rotation_correction_error_rad=0.000000000009333370881714487 worst_rods=[131, 131]
+GPU HAIR LINEAR AUDIT call=202 position_correction_error_m=0.0000000000003332057869095788 rotation_correction_error_rad=0.0000000000111711525446756 worst_rods=[131, 107]
+GPU HAIR LINEAR AUDIT call=203 position_correction_error_m=0.00000000000043958145297070574 rotation_correction_error_rad=0.00000000002092314451036803 worst_rods=[118, 118]
+GPU HAIR LINEAR AUDIT call=204 position_correction_error_m=0.00000000000021415277185040868 rotation_correction_error_rad=0.000000000018973688939438738 worst_rods=[226, 226]
+HYBRID HAIR FRAME frame=17 max_position_error_m=0.0023535996761002327 max_quaternion_component_error=0.03810921649953736
+GPU HAIR LINEAR AUDIT call=205 position_correction_error_m=0.000000000014543488700662077 rotation_correction_error_rad=0.0000000008035135215609529 worst_rods=[23, 23]
+GPU HAIR LINEAR AUDIT call=206 position_correction_error_m=0.000000000006032285632920527 rotation_correction_error_rad=0.0000000003455387382472752 worst_rods=[431, 431]
+GPU HAIR LINEAR AUDIT call=207 position_correction_error_m=0.000000000004857008556875516 rotation_correction_error_rad=0.0000000002758484766020135 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=208 position_correction_error_m=0.00000000000547429603817845 rotation_correction_error_rad=0.00000000024485247510086516 worst_rods=[256, 259]
+GPU HAIR LINEAR AUDIT call=209 position_correction_error_m=0.000000000008921058407648135 rotation_correction_error_rad=0.0000000005167645688534256 worst_rods=[200, 200]
+GPU HAIR LINEAR AUDIT call=210 position_correction_error_m=0.000000000006468567607958607 rotation_correction_error_rad=0.0000000003682314869690728 worst_rods=[284, 351]
+GPU HAIR LINEAR AUDIT call=211 position_correction_error_m=0.000000000012502939005301639 rotation_correction_error_rad=0.0000000008395597828059209 worst_rods=[233, 233]
+GPU HAIR LINEAR AUDIT call=212 position_correction_error_m=0.0000000000030379335742028663 rotation_correction_error_rad=0.00000000015014432253913912 worst_rods=[324, 324]
+GPU HAIR LINEAR AUDIT call=213 position_correction_error_m=0.00000000000014760990163059347 rotation_correction_error_rad=0.000000000007377325746821262 worst_rods=[226, 275]
+GPU HAIR LINEAR AUDIT call=214 position_correction_error_m=0.0000000000002769440865600225 rotation_correction_error_rad=0.000000000023442914276472493 worst_rods=[135, 135]
+GPU HAIR LINEAR AUDIT call=215 position_correction_error_m=0.0000000000008491855074244765 rotation_correction_error_rad=0.000000000053807809119801875 worst_rods=[246, 246]
+GPU HAIR LINEAR AUDIT call=216 position_correction_error_m=0.00000000000020994081581689195 rotation_correction_error_rad=0.000000000019531076408951797 worst_rods=[135, 135]
+HYBRID HAIR FRAME frame=18 max_position_error_m=0.002737168466866835 max_quaternion_component_error=0.03810921649953736
+GPU HAIR LINEAR AUDIT call=217 position_correction_error_m=0.00000000002961264707838224 rotation_correction_error_rad=0.0000000014364288612733755 worst_rods=[210, 210]
+GPU HAIR LINEAR AUDIT call=218 position_correction_error_m=0.00000000002513715803434749 rotation_correction_error_rad=0.000000001078563800771537 worst_rods=[131, 131]
+GPU HAIR LINEAR AUDIT call=219 position_correction_error_m=0.0000000000049334868838563 rotation_correction_error_rad=0.00000000028003098293980996 worst_rods=[200, 200]
+GPU HAIR LINEAR AUDIT call=220 position_correction_error_m=0.000000000016851266042283708 rotation_correction_error_rad=0.000000000666791521953744 worst_rods=[107, 107]
+GPU HAIR LINEAR AUDIT call=221 position_correction_error_m=0.0000000000071829054816151434 rotation_correction_error_rad=0.000000000371036287631632 worst_rods=[174, 174]
+GPU HAIR LINEAR AUDIT call=222 position_correction_error_m=0.00000000003486439630918936 rotation_correction_error_rad=0.0000000014929419202627803 worst_rods=[107, 107]
+GPU HAIR LINEAR AUDIT call=223 position_correction_error_m=0.000000000012101765661624853 rotation_correction_error_rad=0.0000000008300700751751044 worst_rods=[133, 337]
+GPU HAIR LINEAR AUDIT call=224 position_correction_error_m=0.0000000000027031861449776373 rotation_correction_error_rad=0.00000000017032460988483655 worst_rods=[115, 115]
+GPU HAIR LINEAR AUDIT call=225 position_correction_error_m=0.000000000000828562885619652 rotation_correction_error_rad=0.00000000008002001145035464 worst_rods=[209, 209]
+GPU HAIR LINEAR AUDIT call=226 position_correction_error_m=0.00000000000017838047662241396 rotation_correction_error_rad=0.000000000011046896036814857 worst_rods=[445, 253]
+GPU HAIR LINEAR AUDIT call=227 position_correction_error_m=0.000000000001638110796369028 rotation_correction_error_rad=0.00000000012092853107770196 worst_rods=[364, 364]
+GPU HAIR LINEAR AUDIT call=228 position_correction_error_m=0.00000000000024832658715792655 rotation_correction_error_rad=0.00000000002455280943836069 worst_rods=[209, 209]
+HYBRID HAIR FRAME frame=19 max_position_error_m=0.0035211257044580613 max_quaternion_component_error=0.03810921649953736
+GPU HAIR LINEAR AUDIT call=229 position_correction_error_m=0.00000000001058215342610025 rotation_correction_error_rad=0.0000000004139216556314773 worst_rods=[372, 411]
+GPU HAIR LINEAR AUDIT call=230 position_correction_error_m=0.00000000007724060432055813 rotation_correction_error_rad=0.00000000464197474209227 worst_rods=[115, 115]
+GPU HAIR LINEAR AUDIT call=231 position_correction_error_m=0.000000000006302531538787725 rotation_correction_error_rad=0.0000000003720076628471389 worst_rods=[200, 200]
+GPU HAIR LINEAR AUDIT call=232 position_correction_error_m=0.000000000007824241363314777 rotation_correction_error_rad=0.00000000038608739404318027 worst_rods=[197, 284]
+GPU HAIR LINEAR AUDIT call=233 position_correction_error_m=0.00000000006857372308877174 rotation_correction_error_rad=0.000000007358423426140348 worst_rods=[138, 138]
+GPU HAIR LINEAR AUDIT call=234 position_correction_error_m=0.000000000006331518466527568 rotation_correction_error_rad=0.00000000043646741776370845 worst_rods=[229, 138]
+GPU HAIR LINEAR AUDIT call=235 position_correction_error_m=0.000000000012593181678661677 rotation_correction_error_rad=0.0000000006803361552506354 worst_rods=[449, 449]
+GPU HAIR LINEAR AUDIT call=236 position_correction_error_m=0.000000000003979592476816831 rotation_correction_error_rad=0.00000000019948482535975254 worst_rods=[166, 166]
+GPU HAIR LINEAR AUDIT call=237 position_correction_error_m=0.0000000000004558016561840433 rotation_correction_error_rad=0.00000000006059692331250588 worst_rods=[220, 220]
+GPU HAIR LINEAR AUDIT call=238 position_correction_error_m=0.00000000000018388605186616357 rotation_correction_error_rad=0.000000000019663286623949894 worst_rods=[220, 220]
+GPU HAIR LINEAR AUDIT call=239 position_correction_error_m=0.0000000000004681055136272912 rotation_correction_error_rad=0.00000000003023784445489036 worst_rods=[338, 337]
+GPU HAIR LINEAR AUDIT call=240 position_correction_error_m=0.00000000000020394802383374988 rotation_correction_error_rad=0.000000000025617952204015637 worst_rods=[275, 275]
+HYBRID HAIR FRAME frame=20 max_position_error_m=0.0035211257044580613 max_quaternion_component_error=0.03810921649953736
+GPU HAIR LINEAR AUDIT call=241 position_correction_error_m=0.0000000000062016960983941535 rotation_correction_error_rad=0.0000000003460480120769799 worst_rods=[362, 362]
+GPU HAIR LINEAR AUDIT call=242 position_correction_error_m=0.00000000004005804807530474 rotation_correction_error_rad=0.000000002155242226006826 worst_rods=[334, 334]
+GPU HAIR LINEAR AUDIT call=243 position_correction_error_m=0.00000000000401598586742373 rotation_correction_error_rad=0.0000000002231397440004843 worst_rods=[258, 258]
+GPU HAIR LINEAR AUDIT call=244 position_correction_error_m=0.00000000002265132081468585 rotation_correction_error_rad=0.000000001017477503943362 worst_rods=[107, 107]
+GPU HAIR LINEAR AUDIT call=245 position_correction_error_m=0.000000000006352063216781903 rotation_correction_error_rad=0.00000000030529894931574653 worst_rods=[166, 166]
+GPU HAIR LINEAR AUDIT call=246 position_correction_error_m=0.00000000000932480848653684 rotation_correction_error_rad=0.0000000004888926295049112 worst_rods=[334, 334]
+GPU HAIR LINEAR AUDIT call=247 position_correction_error_m=0.000000000009193171316432616 rotation_correction_error_rad=0.00000000045802832013275285 worst_rods=[5, 5]
+GPU HAIR LINEAR AUDIT call=248 position_correction_error_m=0.000000000004190721215684666 rotation_correction_error_rad=0.0000000002058890245792977 worst_rods=[282, 282]
+GPU HAIR LINEAR AUDIT call=249 position_correction_error_m=0.0000000000013972884264565333 rotation_correction_error_rad=0.0000000001585294603922982 worst_rods=[216, 216]
+GPU HAIR LINEAR AUDIT call=250 position_correction_error_m=0.0000000000007671938171555093 rotation_correction_error_rad=0.00000000006529474877448038 worst_rods=[216, 216]
+GPU HAIR LINEAR AUDIT call=251 position_correction_error_m=0.0000000000006854600471484316 rotation_correction_error_rad=0.000000000026263551663324725 worst_rods=[299, 299]
+GPU HAIR LINEAR AUDIT call=252 position_correction_error_m=0.0000000000003152484783636167 rotation_correction_error_rad=0.000000000027494430343555365 worst_rods=[216, 216]
+HYBRID HAIR FRAME frame=21 max_position_error_m=0.0037449150440478363 max_quaternion_component_error=0.04586026253611335
+GPU HAIR LINEAR AUDIT call=253 position_correction_error_m=0.000000000011099599239944649 rotation_correction_error_rad=0.0000000005601560734355693 worst_rods=[14, 14]
+GPU HAIR LINEAR AUDIT call=254 position_correction_error_m=0.000000000021497185542090902 rotation_correction_error_rad=0.0000000010896290189577051 worst_rods=[305, 305]
+GPU HAIR LINEAR AUDIT call=255 position_correction_error_m=0.000000000010257064037640269 rotation_correction_error_rad=0.0000000005698316241065614 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=256 position_correction_error_m=0.00000000002565325699804312 rotation_correction_error_rad=0.0000000013451859556812273 worst_rods=[282, 282]
+GPU HAIR LINEAR AUDIT call=257 position_correction_error_m=0.000000000011254111249685284 rotation_correction_error_rad=0.0000000005756614678486486 worst_rods=[257, 229]
+GPU HAIR LINEAR AUDIT call=258 position_correction_error_m=0.000000000021562361515433184 rotation_correction_error_rad=0.0000000011146304088049952 worst_rods=[282, 282]
+GPU HAIR LINEAR AUDIT call=259 position_correction_error_m=0.000000000007757146162391815 rotation_correction_error_rad=0.0000000006190248277079119 worst_rods=[132, 91]
+GPU HAIR LINEAR AUDIT call=260 position_correction_error_m=0.0000000000009716278210605486 rotation_correction_error_rad=0.00000000005860884867703309 worst_rods=[174, 284]
+GPU HAIR LINEAR AUDIT call=261 position_correction_error_m=0.00000000000011336556638329371 rotation_correction_error_rad=0.0000000000047150507239898665 worst_rods=[275, 167]
+GPU HAIR LINEAR AUDIT call=262 position_correction_error_m=0.00000000000017511266416948834 rotation_correction_error_rad=0.000000000018268215065675442 worst_rods=[220, 220]
+GPU HAIR LINEAR AUDIT call=263 position_correction_error_m=0.0000000000005452431109148788 rotation_correction_error_rad=0.00000000004476947024906197 worst_rods=[149, 64]
+GPU HAIR LINEAR AUDIT call=264 position_correction_error_m=0.00000000000023419594646282953 rotation_correction_error_rad=0.000000000018094404446999945 worst_rods=[149, 149]
+HYBRID HAIR FRAME frame=22 max_position_error_m=0.0037449150440478363 max_quaternion_component_error=0.05705065962697957
+GPU HAIR LINEAR AUDIT call=265 position_correction_error_m=0.000000000005265503975220888 rotation_correction_error_rad=0.0000000004021899063788581 worst_rods=[459, 125]
+GPU HAIR LINEAR AUDIT call=266 position_correction_error_m=0.000000000013934910164789191 rotation_correction_error_rad=0.0000000006734882252584784 worst_rods=[145, 145]
+GPU HAIR LINEAR AUDIT call=267 position_correction_error_m=0.000000000007560238574771689 rotation_correction_error_rad=0.0000000004149664095415978 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=268 position_correction_error_m=0.0000000000032862866650217124 rotation_correction_error_rad=0.0000000002227707029262005 worst_rods=[258, 257]
+GPU HAIR LINEAR AUDIT call=269 position_correction_error_m=0.000000000027643869493303684 rotation_correction_error_rad=0.0000000014113004181103006 worst_rods=[229, 229]
+GPU HAIR LINEAR AUDIT call=270 position_correction_error_m=0.000000000020483492479224027 rotation_correction_error_rad=0.000000001356644860686651 worst_rods=[199, 199]
+GPU HAIR LINEAR AUDIT call=271 position_correction_error_m=0.000000000008255340259045313 rotation_correction_error_rad=0.0000000003907701488781168 worst_rods=[80, 118]
+GPU HAIR LINEAR AUDIT call=272 position_correction_error_m=0.00000000000079419068164336 rotation_correction_error_rad=0.00000000005249879449621773 worst_rods=[256, 256]
+GPU HAIR LINEAR AUDIT call=273 position_correction_error_m=0.00000000000015835301616523058 rotation_correction_error_rad=0.00000000001011331865691592 worst_rods=[167, 167]
+GPU HAIR LINEAR AUDIT call=274 position_correction_error_m=0.00000000000009236250544768232 rotation_correction_error_rad=0.000000000008519539240747775 worst_rods=[310, 310]
+GPU HAIR LINEAR AUDIT call=275 position_correction_error_m=0.0000000000005143754752646654 rotation_correction_error_rad=0.00000000003644558526499919 worst_rods=[434, 434]
+GPU HAIR LINEAR AUDIT call=276 position_correction_error_m=0.00000000000023189106393423217 rotation_correction_error_rad=0.000000000008821147696840004 worst_rods=[276, 276]
+HYBRID HAIR FRAME frame=23 max_position_error_m=0.004035796733995123 max_quaternion_component_error=0.06138116353250257
+GPU HAIR LINEAR AUDIT call=277 position_correction_error_m=0.00000000000961280943625846 rotation_correction_error_rad=0.0000000004872226866750595 worst_rods=[3, 3]
+GPU HAIR LINEAR AUDIT call=278 position_correction_error_m=0.000000000010972259938731715 rotation_correction_error_rad=0.0000000005534878128737875 worst_rods=[166, 166]
+GPU HAIR LINEAR AUDIT call=279 position_correction_error_m=0.0000000000005635827972382858 rotation_correction_error_rad=0.000000000048119890017073175 worst_rods=[85, 97]
+GPU HAIR LINEAR AUDIT call=280 position_correction_error_m=0.000000000005043206087115837 rotation_correction_error_rad=0.00000000020592168074873296 worst_rods=[228, 228]
+GPU HAIR LINEAR AUDIT call=281 position_correction_error_m=0.000000000002489568269351222 rotation_correction_error_rad=0.00000000012544047658241686 worst_rods=[282, 228]
+GPU HAIR LINEAR AUDIT call=282 position_correction_error_m=0.000000000005113455808140963 rotation_correction_error_rad=0.00000000025140965351222455 worst_rods=[304, 304]
+GPU HAIR LINEAR AUDIT call=283 position_correction_error_m=0.000000000007829476487714732 rotation_correction_error_rad=0.0000000004996463052325817 worst_rods=[398, 363]
+GPU HAIR LINEAR AUDIT call=284 position_correction_error_m=0.0000000000002903589369808446 rotation_correction_error_rad=0.000000000013365452191174687 worst_rods=[109, 310]
+GPU HAIR LINEAR AUDIT call=285 position_correction_error_m=0.00000000000015328546876356049 rotation_correction_error_rad=0.000000000010469295569359716 worst_rods=[276, 342]
+GPU HAIR LINEAR AUDIT call=286 position_correction_error_m=0.00000000000015927738745573393 rotation_correction_error_rad=0.00000000001240842584931956 worst_rods=[276, 341]
+GPU HAIR LINEAR AUDIT call=287 position_correction_error_m=0.0000000000004050572946718081 rotation_correction_error_rad=0.00000000004783378988043596 worst_rods=[225, 225]
+GPU HAIR LINEAR AUDIT call=288 position_correction_error_m=0.0000000000002636001971713896 rotation_correction_error_rad=0.00000000003427797021920975 worst_rods=[249, 249]
+HYBRID HAIR FRAME frame=24 max_position_error_m=0.004454655321926473 max_quaternion_component_error=0.06716937192363442
+GPU HAIR LINEAR AUDIT call=289 position_correction_error_m=0.000000000013170385301016635 rotation_correction_error_rad=0.0000000010853378196173935 worst_rods=[329, 329]
+GPU HAIR LINEAR AUDIT call=290 position_correction_error_m=0.000000000007889260933717415 rotation_correction_error_rad=0.00000000038662280928830617 worst_rods=[282, 282]
+GPU HAIR LINEAR AUDIT call=291 position_correction_error_m=0.0000000000009771450650301796 rotation_correction_error_rad=0.000000000043526349191580493 worst_rods=[12, 86]
+GPU HAIR LINEAR AUDIT call=292 position_correction_error_m=0.0000000000033022736021376398 rotation_correction_error_rad=0.0000000001758105917792907 worst_rods=[114, 114]
+GPU HAIR LINEAR AUDIT call=293 position_correction_error_m=0.0000000000024938064037850066 rotation_correction_error_rad=0.00000000042316921234492044 worst_rods=[284, 284]
+GPU HAIR LINEAR AUDIT call=294 position_correction_error_m=0.000000000007526302118424782 rotation_correction_error_rad=0.0000000004642981505991947 worst_rods=[303, 303]
+GPU HAIR LINEAR AUDIT call=295 position_correction_error_m=0.000000000012710044388491992 rotation_correction_error_rad=0.0000000005306511237368472 worst_rods=[133, 340]
+GPU HAIR LINEAR AUDIT call=296 position_correction_error_m=0.00000000000019935369256388709 rotation_correction_error_rad=0.00000000001395102262879977 worst_rods=[297, 253]
+GPU HAIR LINEAR AUDIT call=297 position_correction_error_m=0.00000000000011033605330930916 rotation_correction_error_rad=0.000000000007064579390231307 worst_rods=[310, 276]
+GPU HAIR LINEAR AUDIT call=298 position_correction_error_m=0.00000000000011961843326838487 rotation_correction_error_rad=0.000000000009236793513216213 worst_rods=[310, 255]
+GPU HAIR LINEAR AUDIT call=299 position_correction_error_m=0.0000000000005109900421226181 rotation_correction_error_rad=0.00000000003560775459210408 worst_rods=[391, 221]
+GPU HAIR LINEAR AUDIT call=300 position_correction_error_m=0.00000000000038303180885292804 rotation_correction_error_rad=0.00000000003618688161621808 worst_rods=[225, 225]
+HYBRID HAIR FRAME frame=25 max_position_error_m=0.005028206509284219 max_quaternion_component_error=0.0700103302101936
+GPU HAIR LINEAR AUDIT call=301 position_correction_error_m=0.000000000011013212477400947 rotation_correction_error_rad=0.0000000004123412548906469 worst_rods=[330, 330]
+GPU HAIR LINEAR AUDIT call=302 position_correction_error_m=0.000000000010086198586403694 rotation_correction_error_rad=0.0000000004631881163341678 worst_rods=[107, 107]
+GPU HAIR LINEAR AUDIT call=303 position_correction_error_m=0.0000000000004036033931110322 rotation_correction_error_rad=0.00000000005453598683757832 worst_rods=[216, 216]
+GPU HAIR LINEAR AUDIT call=304 position_correction_error_m=0.0000000000012718702772831353 rotation_correction_error_rad=0.00000000006335661119002967 worst_rods=[280, 280]
+GPU HAIR LINEAR AUDIT call=305 position_correction_error_m=0.0000000000029749141789315453 rotation_correction_error_rad=0.00000000013161762131563837 worst_rods=[198, 198]
+GPU HAIR LINEAR AUDIT call=306 position_correction_error_m=0.000000000001862881322724913 rotation_correction_error_rad=0.00000000007077793993254256 worst_rods=[198, 198]
+GPU HAIR LINEAR AUDIT call=307 position_correction_error_m=0.000000000005841691036066396 rotation_correction_error_rad=0.00000000025151262669775853 worst_rods=[222, 194]
+GPU HAIR LINEAR AUDIT call=308 position_correction_error_m=0.00000000000022689372624652704 rotation_correction_error_rad=0.0000000000273277806633887 worst_rods=[276, 276]
+GPU HAIR LINEAR AUDIT call=309 position_correction_error_m=0.00000000000006514883948885008 rotation_correction_error_rad=0.0000000000064760156872484265 worst_rods=[167, 254]
+GPU HAIR LINEAR AUDIT call=310 position_correction_error_m=0.0000000000001390207427529131 rotation_correction_error_rad=0.000000000012199657679467374 worst_rods=[172, 172]
+GPU HAIR LINEAR AUDIT call=311 position_correction_error_m=0.00000000000106445723478568 rotation_correction_error_rad=0.00000000010111175048274634 worst_rods=[362, 362]
+GPU HAIR LINEAR AUDIT call=312 position_correction_error_m=0.0000000000001228063239275723 rotation_correction_error_rad=0.000000000009053885245691173 worst_rods=[114, 276]
+HYBRID HAIR FRAME frame=26 max_position_error_m=0.005549087209976544 max_quaternion_component_error=0.0700103302101936
+GPU HAIR LINEAR AUDIT call=313 position_correction_error_m=0.000000000006566763747898642 rotation_correction_error_rad=0.00000000036608260693682393 worst_rods=[22, 22]
+GPU HAIR LINEAR AUDIT call=314 position_correction_error_m=0.00000000000436927047209215 rotation_correction_error_rad=0.00000000021510991859291506 worst_rods=[282, 282]
+GPU HAIR LINEAR AUDIT call=315 position_correction_error_m=0.0000000000010302331836481264 rotation_correction_error_rad=0.00000000015047228046904948 worst_rods=[257, 257]
+GPU HAIR LINEAR AUDIT call=316 position_correction_error_m=0.000000000002668771182778168 rotation_correction_error_rad=0.00000000013320708034877948 worst_rods=[114, 114]
+GPU HAIR LINEAR AUDIT call=317 position_correction_error_m=0.0000000000011481668446675 rotation_correction_error_rad=0.00000000006473863806144564 worst_rods=[128, 109]
+GPU HAIR LINEAR AUDIT call=318 position_correction_error_m=0.0000000000034457350167604872 rotation_correction_error_rad=0.00000000018049288040729305 worst_rods=[114, 114]
+GPU HAIR LINEAR AUDIT call=319 position_correction_error_m=0.000000000006423572855270357 rotation_correction_error_rad=0.0000000003831903284262639 worst_rods=[109, 109]
+GPU HAIR LINEAR AUDIT call=320 position_correction_error_m=0.00000000000011927405677708558 rotation_correction_error_rad=0.000000000006326223345089893 worst_rods=[114, 276]
+GPU HAIR LINEAR AUDIT call=321 position_correction_error_m=0.0000000000001174744454951514 rotation_correction_error_rad=0.000000000004769881104677021 worst_rods=[341, 341]
+GPU HAIR LINEAR AUDIT call=322 position_correction_error_m=0.00000000000012682924507715146 rotation_correction_error_rad=0.000000000012184287378948916 worst_rods=[225, 225]
+GPU HAIR LINEAR AUDIT call=323 position_correction_error_m=0.000000000000908081434076698 rotation_correction_error_rad=0.000000000047518702514515176 worst_rods=[329, 433]
+GPU HAIR LINEAR AUDIT call=324 position_correction_error_m=0.0000000000002484620988769601 rotation_correction_error_rad=0.000000000025848738712422694 worst_rods=[341, 341]
+HYBRID HAIR FRAME frame=27 max_position_error_m=0.006024578592662519 max_quaternion_component_error=0.0700103302101936
+GPU HAIR LINEAR AUDIT call=325 position_correction_error_m=0.000000000004711739082664118 rotation_correction_error_rad=0.00000000025134267106832753 worst_rods=[451, 450]
+GPU HAIR LINEAR AUDIT call=326 position_correction_error_m=0.0000000000019542567705147645 rotation_correction_error_rad=0.00000000008700501256952986 worst_rods=[107, 107]
+GPU HAIR LINEAR AUDIT call=327 position_correction_error_m=0.0000000000004803110017462427 rotation_correction_error_rad=0.00000000003830621410350066 worst_rods=[311, 311]
+GPU HAIR LINEAR AUDIT call=328 position_correction_error_m=0.00000000000019450576132368225 rotation_correction_error_rad=0.00000000001559848647816886 worst_rods=[197, 173]
+GPU HAIR LINEAR AUDIT call=329 position_correction_error_m=0.0000000000010724391481201773 rotation_correction_error_rad=0.00000000006801051909144373 worst_rods=[342, 341]
+GPU HAIR LINEAR AUDIT call=330 position_correction_error_m=0.0000000000005796060720676503 rotation_correction_error_rad=0.000000000027250303142462018 worst_rods=[342, 342]
+GPU HAIR LINEAR AUDIT call=331 position_correction_error_m=0.0000000000053659300852486325 rotation_correction_error_rad=0.0000000003090387884832624 worst_rods=[150, 150]
+GPU HAIR LINEAR AUDIT call=332 position_correction_error_m=0.00000000000006570082363640739 rotation_correction_error_rad=0.0000000000042075060951063566 worst_rods=[276, 173]
+GPU HAIR LINEAR AUDIT call=333 position_correction_error_m=0.00000000000006318267357739845 rotation_correction_error_rad=0.0000000000052169885165348484 worst_rods=[276, 172]
+GPU HAIR LINEAR AUDIT call=334 position_correction_error_m=0.00000000000006283940924035891 rotation_correction_error_rad=0.0000000000034708804840660745 worst_rods=[276, 276]
+GPU HAIR LINEAR AUDIT call=335 position_correction_error_m=0.000000000001226161397893319 rotation_correction_error_rad=0.00000000011374370629396724 worst_rods=[89, 89]
+GPU HAIR LINEAR AUDIT call=336 position_correction_error_m=0.000000000000049928079249098034 rotation_correction_error_rad=0.00000000000359355557463803 worst_rods=[40, 226]
+HYBRID HAIR FRAME frame=28 max_position_error_m=0.0064629745719042425 max_quaternion_component_error=0.0700103302101936
+GPU HAIR LINEAR AUDIT call=337 position_correction_error_m=0.000000000004504590155204012 rotation_correction_error_rad=0.0000000002707743430651688 worst_rods=[451, 99]
+GPU HAIR LINEAR AUDIT call=338 position_correction_error_m=0.00000000000526875013412355 rotation_correction_error_rad=0.0000000002317493454084829 worst_rods=[312, 312]
+GPU HAIR LINEAR AUDIT call=339 position_correction_error_m=0.00000000000040421814463667744 rotation_correction_error_rad=0.000000000027548474027146164 worst_rods=[341, 341]
+GPU HAIR LINEAR AUDIT call=340 position_correction_error_m=0.00000000000019195647421441824 rotation_correction_error_rad=0.000000000010167699581592471 worst_rods=[167, 334]
+GPU HAIR LINEAR AUDIT call=341 position_correction_error_m=0.0000000000013401181206407209 rotation_correction_error_rad=0.00000000010489757586856774 worst_rods=[91, 91]
+GPU HAIR LINEAR AUDIT call=342 position_correction_error_m=0.000000000003974560867329047 rotation_correction_error_rad=0.00000000017699872795727545 worst_rods=[195, 195]
+GPU HAIR LINEAR AUDIT call=343 position_correction_error_m=0.000000000004627228830135499 rotation_correction_error_rad=0.00000000022643683976475426 worst_rods=[168, 168]
+GPU HAIR LINEAR AUDIT call=344 position_correction_error_m=0.00000000000014682118774879058 rotation_correction_error_rad=0.00000000001009960973359647 worst_rods=[173, 173]
+GPU HAIR LINEAR AUDIT call=345 position_correction_error_m=0.0000000000000599658499667987 rotation_correction_error_rad=0.000000000003876725356748503 worst_rods=[172, 226]
+GPU HAIR LINEAR AUDIT call=346 position_correction_error_m=0.0000000000003029982270945017 rotation_correction_error_rad=0.000000000024095344426308674 worst_rods=[173, 172]
+GPU HAIR LINEAR AUDIT call=347 position_correction_error_m=0.0000000000015695953922440636 rotation_correction_error_rad=0.00000000010201853771485414 worst_rods=[331, 331]
+GPU HAIR LINEAR AUDIT call=348 position_correction_error_m=0.000000000002227322174624697 rotation_correction_error_rad=0.0000000001133473896339221 worst_rods=[120, 120]
+HYBRID HAIR FRAME frame=29 max_position_error_m=0.006870812359151365 max_quaternion_component_error=0.0700103302101936
+GPU HAIR LINEAR AUDIT call=349 position_correction_error_m=0.000000000004571380668211451 rotation_correction_error_rad=0.00000000025246417239763175 worst_rods=[23, 23]
+GPU HAIR LINEAR AUDIT call=350 position_correction_error_m=0.000000000003252611421777278 rotation_correction_error_rad=0.0000000001453807504069038 worst_rods=[312, 312]
+GPU HAIR LINEAR AUDIT call=351 position_correction_error_m=0.00000000000027635430747148645 rotation_correction_error_rad=0.000000000015779188719533543 worst_rods=[311, 173]
+GPU HAIR LINEAR AUDIT call=352 position_correction_error_m=0.0000000000002342967738767389 rotation_correction_error_rad=0.000000000012027921193757951 worst_rods=[173, 173]
+GPU HAIR LINEAR AUDIT call=353 position_correction_error_m=0.0000000000015280879284097684 rotation_correction_error_rad=0.0000000001034045948910059 worst_rods=[194, 194]
+GPU HAIR LINEAR AUDIT call=354 position_correction_error_m=0.0000000000003160962838049189 rotation_correction_error_rad=0.000000000013606646191710592 worst_rods=[173, 311]
+GPU HAIR LINEAR AUDIT call=355 position_correction_error_m=0.000000000003644530993185749 rotation_correction_error_rad=0.0000000001797734027614295 worst_rods=[15, 338]
+GPU HAIR LINEAR AUDIT call=356 position_correction_error_m=0.0000000000024195208418167566 rotation_correction_error_rad=0.00000000011260867932572083 worst_rods=[107, 107]
+GPU HAIR LINEAR AUDIT call=357 position_correction_error_m=0.00000000000020447182223206836 rotation_correction_error_rad=0.00000000001177059318069329 worst_rods=[167, 167]
+GPU HAIR LINEAR AUDIT call=358 position_correction_error_m=0.0000000000001409919036176547 rotation_correction_error_rad=0.000000000010729810703130616 worst_rods=[167, 310]
+GPU HAIR LINEAR AUDIT call=359 position_correction_error_m=0.00000000000038864791850816253 rotation_correction_error_rad=0.00000000003624760170836683 worst_rods=[434, 434]
+GPU HAIR LINEAR AUDIT call=360 position_correction_error_m=0.00000000000017052906057190252 rotation_correction_error_rad=0.000000000012029640304722644 worst_rods=[198, 145]
+HYBRID HAIR FRAME frame=30 max_position_error_m=0.0072497376385540074 max_quaternion_component_error=0.0700103302101936
+HYBRID FULL HAIR guides=469 frames=30 calls=360 position_error_m=0.0072497376385540074 quaternion_component_error=0.0700103302101936 native_ms=4795.703127000001 hybrid_ms=35205.14470799999 solver_bridge_ms=16685.089809999998
+HYBRID LINEAR AUDIT max_errors=[7.641952450617578e-10, 4.676789111188184e-8] enabled=true
+
+thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (19809961) panicked at crates/voxy_app/src/female_hair.rs:791:9:
+GPU position drift 0.0072497376385540074
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED
+
+failures:
+
+failures:
+    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 304 filtered out; finished in 48.79s
+
+error: test failed, to rerun pass `-p voxy_app --lib`

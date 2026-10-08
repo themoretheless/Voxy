@@ -4,7 +4,7 @@ mod accumulation;
 pub use accumulation::{RadianceAccumulationFrame, RadianceAccumulator};
 mod backend;
 mod banded_solve;
-pub use banded_solve::{BandedSystem,BandedSolveInput,BandedSolveError,BANDED_SOLVE_SHADER};
+pub use banded_solve::{BandedSystem,BandedSolveInput,BandedSolveError,BandedPackedReference,BANDED_SOLVE_SHADER};
 mod blit;
 mod camera;
 mod planar_capture;

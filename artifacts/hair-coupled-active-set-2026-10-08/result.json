@@ -1,0 +1,13 @@
+{
+  "status": "qualified_prototype_not_integrated",
+  "analytic_tests_passed": 3,
+  "coupled_activation_and_release_verified": true,
+  "stationarity_absolute_gate": 1e-12,
+  "invalid_fixed_dofs_and_assembly_overflow_rejected": true,
+  "active_set_iteration_limit": 128,
+  "newton_direction_backtracking_limit": 32,
+  "rod_runtime_integration_verified": false,
+  "full_model_stability_gate_passed": false,
+  "gpu_backend_verified": false,
+  "fps_target_verified": false
+}

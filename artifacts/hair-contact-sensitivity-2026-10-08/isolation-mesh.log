@@ -1,0 +1,52 @@
+
+running 1 test
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED
+
+failures:
+
+failures:
+    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 303 filtered out; finished in 6.43s
+
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID CONTACT CASE mesh
+HYBRID TEST BACKEND cpu_control=true perturbation=0.0000000001
+HYBRID HAIR FRAME frame=1 max_position_error_m=0.00036145754829342014 max_quaternion_component_error=0.005817896122225996
+HYBRID HAIR FRAME frame=2 max_position_error_m=0.0006459415357958909 max_quaternion_component_error=0.012647689463027023
+HYBRID HAIR FRAME frame=3 max_position_error_m=0.003614486479798229 max_quaternion_component_error=0.028299980399745128
+HYBRID HAIR FRAME frame=4 max_position_error_m=0.00575128647231099 max_quaternion_component_error=0.03029053425037931
+HYBRID HAIR FRAME frame=5 max_position_error_m=0.007472805885817446 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=6 max_position_error_m=0.008170204243645673 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=7 max_position_error_m=0.01024937416293703 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=8 max_position_error_m=0.010597031810027358 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=9 max_position_error_m=0.012532877827031774 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=10 max_position_error_m=0.013190151673813821 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=11 max_position_error_m=0.016351377269943346 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=12 max_position_error_m=0.01775323707248594 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=13 max_position_error_m=0.01775323707248594 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=14 max_position_error_m=0.01775323707248594 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=15 max_position_error_m=0.01808685834733481 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=16 max_position_error_m=0.0193889022718301 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=17 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=18 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=19 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.14877809127254443
+HYBRID HAIR FRAME frame=20 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=21 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=22 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=23 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=24 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=25 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=26 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=27 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=28 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=29 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID HAIR FRAME frame=30 max_position_error_m=0.01963852936945798 max_quaternion_component_error=0.20197559329276238
+HYBRID FULL HAIR guides=469 frames=30 calls=0 position_error_m=0.01963852936945798 quaternion_component_error=0.20197559329276238 native_ms=585.525833 hybrid_ms=3595.32425 solver_bridge_ms=0
+HYBRID LINEAR AUDIT max_errors=[0.0, 0.0] enabled=false
+
+thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (18324670) panicked at crates/voxy_app/src/female_hair.rs:771:9:
+GPU position drift 0.01963852936945798
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

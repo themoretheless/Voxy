@@ -1,0 +1,17 @@
+{
+  "change": "Expose optional second compensated division refinement in GPU hair solver qualification",
+  "frames": 30,
+  "gpu_calls": 360,
+  "max_same_matrix_position_correction_error_m": 7.641952450617578e-10,
+  "max_same_matrix_rotation_correction_error_rad": 4.676789111188184e-08,
+  "trajectory_position_error_m": 0.0072497376385540074,
+  "trajectory_quaternion_component_error": 0.0700103302101936,
+  "strict_gate_passed": false,
+  "default_extra_refinement_enabled": false,
+  "runtime_gpu_solver_enabled": false,
+  "native_control_status": "passed",
+  "runtime_fps_verified": false,
+  "native_control_frames": 30,
+  "native_control_position_error_m": 0,
+  "native_control_quaternion_component_error": 0
+}

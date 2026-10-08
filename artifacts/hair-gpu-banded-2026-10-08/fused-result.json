@@ -1,0 +1,16 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "repair": "explicit fma rounding in compensated add/multiply; diagonal equilibration",
+  "arithmetic_samples": 1024,
+  "arithmetic_max_normalized_error": 9.084536317719296e-15,
+  "native_full_model_matrices": 469,
+  "factorization_failures": 0,
+  "max_position_correction_error_m": 7.985665009439076e-12,
+  "max_rotation_correction_error_rad": 5.072939993425174e-10,
+  "max_component_backward_error": 7.434388504271696e-14,
+  "linear_system_gate_passed": true,
+  "qualification_scope": "one exported posed batch, not full nonlinear animation or all hardware",
+  "runtime_physics_gpu_enabled": false,
+  "real_time_160_fps_verified": false
+}
