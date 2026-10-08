@@ -161,6 +161,11 @@ pub(super) fn triangle_distance(a: [Vec3; 3], b: [Vec3; 3]) -> Result<Closest, &
             return Err("degenerate contact triangle");
         }
     }
+    triangle_distance_validated(a, b)
+}
+/// Closest features after the caller has checked both nondegenerate triangles.
+/// Shared surface evaluation can validate each face once rather than per pair.
+pub(super) fn triangle_distance_validated(a: [Vec3;3], b: [Vec3;3]) -> Result<Closest, &'static str> {
     for i in 0..3 {
         if segment_hits(a[i], a[(i + 1) % 3], b) || segment_hits(b[i], b[(i + 1) % 3], a) {
             return Ok(Closest {

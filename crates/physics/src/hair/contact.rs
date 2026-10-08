@@ -1,5 +1,5 @@
 use super::{HairRod, math::*};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 /// An exact surface query bounds clearance inside the ball around its query point.
 /// The distance function is 1-Lipschitz; the certificate expires at the next step.
 #[derive(Clone, Copy, Debug)]
@@ -649,10 +649,39 @@ pub(super) fn mesh_contacts(rod: &mut HairRod, meshes: &[TriangleMesh], radius: 
     }
     rod.contact_candidates = candidates;
 }
+// An injective 96-bit cell key retains signed coordinates while avoiding
+// the array hash's length prefix in the self-contact broad phase.
+fn cell_key(cell: [i32; 3]) -> (u64, u32) {
+    ((u64::from(cell[0] as u32) << 32) | u64::from(cell[1] as u32), cell[2] as u32)
+}
+
+type SegmentId = (usize, usize);
+type ContactGrid = HashMap<(u64, u32), Vec<(SegmentId, [i32; 3])>>;
+
+fn unique_cell_pairs(grid: &ContactGrid) -> Vec<(SegmentId, SegmentId)> {
+    let mut pairs = Vec::new();
+    for (&key, entries) in grid {
+        for a in 0..entries.len() {
+            for b in a + 1..entries.len() {
+                // Intersecting integer AABBs have a unique lowest shared cell.
+                // Emit here only, avoiding repeated HashSet insertions elsewhere.
+                let owner = std::array::from_fn(|axis| entries[a].1[axis].max(entries[b].1[axis]));
+                if cell_key(owner) != key { continue; }
+                let mut pair = (entries[a].0, entries[b].0);
+                if pair.0 > pair.1 { pair = (pair.1, pair.0); }
+                if pair.0.0 == pair.1.0 && pair.0.1.abs_diff(pair.1.1) <= 2 { continue; }
+                pairs.push(pair);
+            }
+        }
+    }
+    pairs.sort_unstable();
+    pairs
+}
+
 pub(super) fn self_contacts(rods: &mut [HairRod], radius: f64) {
     // Segment AABBs, not just particles, enter the spatial hash. Adjacent segments are excluded.
     let cell = 0.008f64.max(radius * 4.);
-    let mut grid: HashMap<[i32; 3], Vec<(usize, usize)>> = HashMap::new();
+    let mut grid: ContactGrid = HashMap::new();
     for (r, rod) in rods.iter().enumerate() {
         for (i, p) in rod.x.windows(2).enumerate() {
             let min: [i32; 3] =
@@ -666,30 +695,13 @@ pub(super) fn self_contacts(rods: &mut [HairRod], radius: f64) {
             for x in min[0]..=max[0] {
                 for y in min[1]..=max[1] {
                     for z in min[2]..=max[2] {
-                        grid.entry([x, y, z]).or_default().push((r, i));
+                        grid.entry(cell_key([x, y, z])).or_default().push(((r, i), min));
                     }
                 }
             }
         }
     }
-    let mut pairs = HashSet::new();
-    for entries in grid.values() {
-        for a in 0..entries.len() {
-            for b in a + 1..entries.len() {
-                let mut pair = (entries[a], entries[b]);
-                if pair.0 > pair.1 {
-                    pair = (pair.1, pair.0);
-                }
-                if pair.0.0 == pair.1.0 && pair.0.1.abs_diff(pair.1.1) <= 2 {
-                    continue;
-                }
-                pairs.insert(pair);
-            }
-        }
-    }
-    // Deterministic order despite randomized HashMap iteration.
-    let mut pairs: Vec<_> = pairs.into_iter().collect();
-    pairs.sort_unstable();
+    let pairs = unique_cell_pairs(&grid);
     for ((ra, ia), (rb, ib)) in pairs {
         let separation = radius * 2.;
         // Grid cells are broader than a fibre. Reject disjoint current capsule
@@ -936,5 +948,49 @@ mod closed_surface_tests {
         .unwrap();
         assert_eq!(mesh.contains_closed_surface([0., 0., 0.]).unwrap(), None);
         assert!(mesh.contains_closed_surface([f64::NAN, 0., 0.]).is_err());
+    }
+}
+
+#[cfg(test)]
+mod cell_key_tests {
+    use super::cell_key;
+    #[test]
+    fn signed_cell_coordinates_round_trip_without_aliasing() {
+        let values = [i32::MIN, -65_536, -1, 0, 1, 65_536, i32::MAX];
+        let mut keys = std::collections::HashSet::new();
+        for x in values { for y in values { for z in values {
+            let key = cell_key([x, y, z]);
+            assert!(keys.insert(key));
+            assert_eq!([(key.0 >> 32) as u32 as i32, key.0 as u32 as i32, key.1 as i32], [x, y, z]);
+        } } }
+    }
+}
+
+#[cfg(test)]
+mod unique_pair_tests {
+    use super::*;
+    #[test]
+    fn canonical_cells_preserve_hashset_candidates_exactly() {
+        let mut grid = ContactGrid::new();
+        for id in 0..48 {
+            let min = [(id % 5) as i32 - 3, (id % 7) as i32 - 4, (id % 3) as i32 - 2];
+            let max = [min[0] + 3, min[1] + 2, min[2] + 1];
+            for x in min[0]..=max[0] { for y in min[1]..=max[1] { for z in min[2]..=max[2] {
+                grid.entry(cell_key([x,y,z])).or_default().push(((id / 8, id % 8), min));
+            } } }
+        }
+        let mut reference = std::collections::HashSet::new();
+        for entries in grid.values() {
+            for a in 0..entries.len() { for b in a+1..entries.len() {
+                let mut pair = (entries[a].0, entries[b].0);
+                if pair.0 > pair.1 { pair = (pair.1, pair.0); }
+                if pair.0.0 == pair.1.0 && pair.0.1.abs_diff(pair.1.1) <= 2 { continue; }
+                reference.insert(pair);
+            } }
+        }
+        let mut reference: Vec<_> = reference.into_iter().collect();
+        reference.sort_unstable();
+        assert!(!reference.is_empty());
+        assert_eq!(unique_cell_pairs(&grid), reference);
     }
 }

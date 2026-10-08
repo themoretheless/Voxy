@@ -1,0 +1,36 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:891:7
+    |
+891 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 10.62s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 6 tests
+test biomechanics::urogenital::testicular_tests::paired_solids_use_validated_caller_geometry ... ok
+test biomechanics::urogenital::testicular_tests::paired_prescribed_supports_move_and_reject_missing_targets_atomically ... ok
+test biomechanics::urogenital::testicular_tests::paired_dynamics_follow_free_fall_and_preserve_state_on_invalid_step ... ok
+test biomechanics::urogenital::testicular_tests::paired_assembly_preserves_mass_and_maps_supports_to_one_owner ... ok
+test biomechanics::urogenital::testicular_tests::assembled_contact_is_active_and_invalid_replacement_is_atomic ... ok
+test biomechanics::urogenital::testicular_tests::initial_contact_repels_and_rejected_followup_preserves_state ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 157 filtered out; finished in 0.01s
+

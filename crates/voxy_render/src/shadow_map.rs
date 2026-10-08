@@ -181,8 +181,8 @@ impl ShadowMap {
         if draws.iter().any(|draw| draw.device != self.device) {
             return Err(SceneError::DeviceMismatch);
         }
-        // OPTIMIZATION #41: Skip shadow raster if all geometries are static
-        if !draws.is_empty() && !draws.iter().any(|draw| draw.geometry.shadow_dirty()) {
+        // OPTIMIZATION #41: Skip shadow raster if ALL geometries are static (none dirty)
+        if !draws.is_empty() && draws.iter().all(|draw| !draw.geometry.shadow_dirty()) {
             return Ok(());
         }
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
