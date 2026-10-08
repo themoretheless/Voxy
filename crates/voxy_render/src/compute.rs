@@ -344,11 +344,29 @@ impl ComputeJob {
     ) -> Result<(), ComputeError> {
         self.encode_step_with_binding(encoder, workgroups, None)
     }
+    /// Profile one resident dispatch using pass-boundary GPU timestamps.
+    pub fn encode_step_with_timestamps(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        workgroups: [u32; 3],
+        timestamps: wgpu::ComputePassTimestampWrites<'_>,
+    ) -> Result<(), ComputeError> {
+        self.encode_step_options(encoder, workgroups, None, Some(timestamps))
+    }
     pub(crate) fn encode_step_with_binding(
         &self,
         encoder: &mut wgpu::CommandEncoder,
         workgroups: [u32; 3],
         additional: Option<&wgpu::BindGroup>,
+    ) -> Result<(), ComputeError> {
+        self.encode_step_options(encoder, workgroups, additional, None)
+    }
+    fn encode_step_options(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        workgroups: [u32; 3],
+        additional: Option<&wgpu::BindGroup>,
+        timestamps: Option<wgpu::ComputePassTimestampWrites<'_>>,
     ) -> Result<(), ComputeError> {
         if additional.is_some() != self.requires_additional_binding {
             return Err(ComputeError::InvalidBuffer);
@@ -360,7 +378,10 @@ impl ComputeJob {
             return Err(ComputeError::InvalidDispatch);
         }
         {
-            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                timestamp_writes: timestamps,
+                ..Default::default()
+            });
             pass.set_pipeline(&self.pipeline);
             pass.set_bind_group(0, &self.bind_group, &[]);
             if let Some(group) = additional {

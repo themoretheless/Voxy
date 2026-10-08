@@ -428,6 +428,7 @@ struct UploadedGeometryBatch {
 }
 
 impl SceneGeometry {
+    pub(crate) fn deformation_vertex_capacity(&self) -> usize { self.vertex_capacity }
     pub(crate) fn deformation_normals(&self) -> &wgpu::Buffer {
         &self.normals
     }
@@ -455,6 +456,7 @@ impl SceneGeometry {
     }
 
     /// OPTIMIZATION #41: Mark geometry as static (skip shadow on next frame)
+    #[allow(dead_code)]
     pub(crate) fn mark_shadow_clean(&mut self) {
         self.shadow_dirty = false;
     }
@@ -1359,6 +1361,10 @@ impl SceneRenderer {
     pub fn upload_shared_mesh_partitions(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<Vec<SceneGeometry>,SceneError> {
         self.upload_mesh_index_variants(device, mesh, &[mesh.indices(), mesh.indices()], wgpu::BufferUsages::empty())
     }
+    /// Shared draw streams that may be updated by admitted compute transfers.
+    pub fn upload_compute_shared_mesh_partitions(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<Vec<SceneGeometry>,SceneError> {
+        self.upload_mesh_index_variants(device, mesh, &[mesh.indices(), mesh.indices()], wgpu::BufferUsages::STORAGE)
+    }
     pub async fn set_geometry_opaque_shader(&self, device: &wgpu::Device, geometry: &mut SceneGeometry, source: &str) -> Result<(),SceneShaderError> {
         if device != &self.device || device != &geometry.device {
             return Err(SceneShaderError("geometry material device mismatch".into()));
@@ -1379,6 +1385,11 @@ impl SceneRenderer {
         mesh: &SceneMesh,
     ) -> Result<SceneGeometry, SceneError> {
         self.upload_mesh_with_usage(device, mesh, wgpu::BufferUsages::empty())
+    }
+
+    /// Fixed topology with vertex and normal storage writable by admitted compute work.
+    pub fn upload_compute_mesh(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<SceneGeometry, SceneError> {
+        self.upload_mesh_with_usage(device, mesh, wgpu::BufferUsages::STORAGE)
     }
 
     /// Keep a fixed mesh and sparse displacement binding resident on the GPU.
