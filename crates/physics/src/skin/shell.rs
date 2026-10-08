@@ -889,12 +889,15 @@ impl Skin {
         for b in &e.blocks {
             for (i, &vertex) in b.ids.iter().enumerate() {
                 for a in 0..3 {
-                    for (j, &other) in b.ids.iter().enumerate() {
+                    let row_start = (i * 3 + a) * b.g.len();
+                    let row = &b.h[row_start..row_start + b.g.len()];
+                    let mut value = out[vertex][a];
+                    for (&other, coefficients) in b.ids.iter().zip(row.chunks_exact(3)) {
                         for c in 0..3 {
-                            out[vertex][a] +=
-                                b.h[(i * 3 + a) * b.g.len() + j * 3 + c] * x[other][c];
+                            value += coefficients[c] * x[other][c];
                         }
                     }
+                    out[vertex][a] = value;
                 }
             }
         }
@@ -1157,6 +1160,39 @@ fn vector_dot(a: &[Point], b: &[Point]) -> f64 {
 mod objective_tests {
     use super::*;
     use crate::skin::{ContactPlane, ContactSphere};
+
+    #[test]
+    fn contiguous_hessian_rows_preserve_operator_bits() {
+        let skin = patch(5, 5, 0.01, SkinMaterial::default()).unwrap();
+        let posed: Vec<_> = skin.rest.iter()
+            .map(|p| [1.02 * p[0], 0.98 * p[1], 0.003 * (20. * p[0]).sin()]).collect();
+        let e = skin.evaluate(&posed, Some((&skin.rest, 1. / 120.)),
+            1. / 120., &[], &ContactScene::default()).unwrap();
+        let x: Vec<_> = posed.iter().enumerate()
+            .map(|(i, p)| [p[0] - 0.01, p[1] + 0.002, (i as f64 * 0.7).sin()]).collect();
+        for shift in [0., 0.001, 100.] {
+            let mut expected: Vec<_> = x.iter().enumerate()
+                .map(|(i, &v)| mul(v, e.inertia[i] + shift)).collect();
+            for b in &e.blocks {
+                for (i, &vertex) in b.ids.iter().enumerate() {
+                    for a in 0..3 {
+                        for (j, &other) in b.ids.iter().enumerate() {
+                            for c in 0..3 {
+                                expected[vertex][a] +=
+                                    b.h[(i * 3 + a) * b.g.len() + j * 3 + c] * x[other][c];
+                            }
+                        }
+                    }
+                }
+            }
+            for &i in skin.pins.keys() { expected[i] = [0.; 3]; }
+            let mut actual = vec![[0.; 3]; x.len()];
+            skin.apply_into(&e, &x, shift, &mut actual);
+            for (actual, expected) in actual.iter().flatten().zip(expected.iter().flatten()) {
+                assert_eq!(actual.to_bits(), expected.to_bits());
+            }
+        }
+    }
 
     #[test]
     fn parallel_elements_preserve_derivatives_and_integrated_state_exactly() {

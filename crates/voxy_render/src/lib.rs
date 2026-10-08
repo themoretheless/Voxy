@@ -211,7 +211,7 @@ pub use temporal_resolve::{
 pub const TEXTURED_POINT_LIGHT_SHADER: &str = include_str!("scene_point_light.wgsl");
 
 mod shadow_map;
-pub use shadow_map::{ShadowDraw, ShadowMap};
+pub use shadow_map::{ShadowDraw, ShadowDrawMask, ShadowMap};
 
 mod shadow_visibility;
 pub use shadow_visibility::{ShadowFilter, ShadowSettings};

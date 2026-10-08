@@ -417,6 +417,8 @@ pub struct SceneGeometry {
     opaque_shader: Option<(u64, wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::RenderPipeline)>,
     partitioned_indices: bool,
     partition_cache: Vec<u32>,
+    /// OPTIMIZATION #41: Shadow dirty flag for lazy updates
+    shadow_dirty: bool,
 }
 
 /// Additional resource owners publish with their geometry after one admission.
@@ -439,6 +441,22 @@ impl SceneGeometry {
         pass.set_vertex_buffer(0, self.vertices.slice(..));
         pass.set_index_buffer(self.indices.slice(..), wgpu::IndexFormat::Uint32);
         pass.draw_indexed(0..self.index_count, 0, 0..1);
+    }
+
+    /// OPTIMIZATION #41: Check if shadow needs recomputation
+    #[must_use]
+    pub(crate) fn shadow_dirty(&self) -> bool {
+        self.shadow_dirty
+    }
+
+    /// OPTIMIZATION #41: Mark geometry as needing shadow update
+    pub(crate) fn mark_shadow_dirty(&mut self) {
+        self.shadow_dirty = true;
+    }
+
+    /// OPTIMIZATION #41: Mark geometry as static (skip shadow on next frame)
+    pub(crate) fn mark_shadow_clean(&mut self) {
+        self.shadow_dirty = false;
     }
 
     pub fn set_depth_mode(&mut self, mode: SceneDepthMode) {
@@ -470,6 +488,9 @@ impl SceneGeometry {
         if mesh.vertices.len() > self.vertex_capacity || mesh.indices.len() > self.index_capacity {
             return Err(SceneError::GeometryCapacityExceeded);
         }
+        // OPTIMIZATION #41: Mark shadows dirty on geometry update
+        self.mark_shadow_dirty();
+        
         let retain_partition = preserve_partition
             && self.partitioned_indices
             && self.normal_cache.indices == mesh.indices
@@ -1495,6 +1516,7 @@ impl SceneRenderer {
                     partition_cache: Vec::new(),
                     vertex_capacity: mesh.vertices.len(),
                     index_capacity: source.len(),
+                    shadow_dirty: true,
                 }
             })
             .collect();
@@ -1586,6 +1608,7 @@ impl SceneRenderer {
             partition_cache: Vec::new(),
             vertex_capacity,
             index_capacity,
+            shadow_dirty: true,
         })
     }
 

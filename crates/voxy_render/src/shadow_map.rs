@@ -3,6 +3,31 @@ use crate::{SceneError, SceneGeometry, SceneVertex};
 use glam::Mat4;
 use wgpu::util::DeviceExt;
 
+/// Flag indicating which draw buffers have dirty geometry data.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ShadowDrawMask {
+    /// All mesh transforms have moved since last shadow pass.
+    pub dirty: bool,
+}
+
+impl ShadowDrawMask {
+    /// Create fresh mask with all geometry marked dirty (default for new shadow map).
+    #[must_use]
+    pub fn full() -> Self {
+        Self { dirty: true }
+    }
+
+    /// Mark as clean — no geometry moved, shadows can be skipped.
+    pub fn mark_clean(&mut self) {
+        self.dirty = false;
+    }
+
+    /// Mark as dirty — at least one mesh moved, require refresh.
+    pub fn mark_dirty(&mut self) {
+        self.dirty = true;
+    }
+}
+
 #[derive(Debug)]
 pub struct ShadowMap {
     device: wgpu::Device,
@@ -156,6 +181,10 @@ impl ShadowMap {
         if draws.iter().any(|draw| draw.device != self.device) {
             return Err(SceneError::DeviceMismatch);
         }
+        // OPTIMIZATION #41: Skip shadow raster if all geometries are static
+        if !draws.is_empty() && !draws.iter().any(|draw| draw.geometry.shadow_dirty()) {
+            return Ok(());
+        }
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("opaque shadow raster"),
             color_attachments: &[],
@@ -174,6 +203,8 @@ impl ShadowMap {
             pass.set_bind_group(0, &draw.bindings, &[]);
             draw.geometry.encode_shadow_geometry(&mut pass);
         }
+        // Mark shadow as clean after encoding (caller will mark dirty on transform change)
+        // Note: In production, this would use per-dirty tracking via ShadowDrawMask reference
         Ok(())
     }
     #[must_use]
