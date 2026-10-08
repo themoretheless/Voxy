@@ -76,6 +76,8 @@ mod tissue_bonds;
 pub use tissue_bonds::{TissueAssembly, TissueBond};
 mod urogenital;
 pub use urogenital::{ClitoralComplex, ClitoralGeometry, UrogenitalWallGeometry};
+mod testicular;
+pub use testicular::TesticularGeometry;
 mod genital_pads;
 pub use genital_pads::{LabiaMajoraGeometry, LabialPad};
 mod specimens;

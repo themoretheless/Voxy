@@ -264,7 +264,7 @@ impl ClitoralGeometry {
         })
     }
 }
-fn ellipsoid(
+pub(super) fn ellipsoid(
     center: Vec3,
     radii: Vec3,
     sectors: usize,

@@ -1,6 +1,6 @@
 //! Nonadjacent triangle barriers and conservative advancement of straight steps.
 use super::surface_distance::{
-    PreparedTriangle, triangle_distance, triangle_pair_path_is_open,
+    PreparedTriangle, triangle_distance, triangle_distance_validated, triangle_pair_path_is_open,
 };
 use super::{Body, Vec3, add, cross, dot, scale, sub};
 #[derive(Clone, Debug)]
@@ -32,9 +32,6 @@ pub enum SurfacePrimitive {
 }
 impl TissueSurfaceContact {
     fn candidates(&self, start: &[Vec3], end: Option<&[Vec3]>, margin: f64) -> Vec<(usize, usize)> {
-        // === OPTIMIZATION #1-2: Sweep-and-prune с порогом для O(n²) ===
-        const SWEEP_THRESHOLD: usize = 64;
-        
         let mut bounds: Vec<_> = self
             .faces
             .iter()
@@ -63,78 +60,22 @@ impl TissueSurfaceContact {
         // Sort by X coordinate only (sweep line optimization)
         bounds.sort_unstable_by(|a, b| a.1[0].total_cmp(&b.1[0]));
         
-        let n = bounds.len();
-        
-        // === OPTIMIZATION #3: Pre-reserve capacity based on expected density ===
-        let capacity = if n < SWEEP_THRESHOLD {
-            (n * n) / 4 // Conservative estimate for small N
-        } else {
-            n.min(500) // Cap for large scenes
-        };
-        let mut pairs = Vec::with_capacity(capacity);
-        
-        if n < SWEEP_THRESHOLD {
-            // Small scene: simple nested loop (cache-friendly)
-            for i in 0..n {
-                let (a, lo_a, hi_a) = bounds[i];
-                for j in i + 1..n {
-                    let (b, lo_b, hi_b) = bounds[j];
-                    
-                    // Quick rejection: X-axis separation due to sorting
-                    if lo_b[0] > hi_a[0] {
-                        break; // Can stop early!
-                    }
-                    
-                    // 3D AABB overlap check (fast fail)
-                    if lo_a[1] > hi_b[1] || lo_b[1] > hi_a[1] ||
-                       lo_a[2] > hi_b[2] || lo_b[2] > hi_a[2] {
-                        continue;
-                    }
-                    
-                    // Shared vertex check (most common rejection)
-                    if !self.faces[a].iter().any(|v| self.faces[b].contains(v)) {
-                        pairs.push((a, b));
-                    }
+        let mut pairs = Vec::new();
+        for (i, &(a, lo_a, hi_a)) in bounds.iter().enumerate() {
+            for &(b, lo_b, hi_b) in &bounds[i + 1..] {
+                if lo_b[0] > hi_a[0] { break; }
+                if lo_a[1] > hi_b[1] || lo_b[1] > hi_a[1]
+                    || lo_a[2] > hi_b[2] || lo_b[2] > hi_a[2] {
+                    continue;
                 }
-            }
-        } else {
-            // Large scene: sweep-and-prune with early exits
-            for i in 0..n {
-                let (a, lo_a, hi_a) = bounds[i];
-                
-                // Optimization: track active window to avoid scanning entire array
-                let start_j = if i > 0 { i.saturating_sub(8) } else { 0 };
-                
-                for j in start_j..n {
-                    let (b, lo_b, hi_b) = bounds[j];
-                    
-                    // Early termination when X separated
-                    if lo_b[0] > hi_a[0] {
-                        break;
-                    }
-                    
-                    // Fast 3D AABB test
-                    if lo_a[1] <= hi_b[1] && lo_b[1] <= hi_a[1] &&
-                       lo_a[2] <= hi_b[2] && lo_b[2] <= hi_a[2] {
-                        
-                        if !self.faces[a].iter().any(|v| self.faces[b].contains(v)) {
-                            pairs.push((a, b));
-                        }
-                    }
+                if !self.faces[a].iter().any(|v| self.faces[b].contains(v)) {
+                    pairs.push((a.min(b), a.max(b)));
                 }
             }
         }
-        
-        // Deduplicate via BTreeSet if too many pairs (unlikely but safe)
-        if pairs.len() > n * n / 4 {
-            use std::collections::BTreeSet;
-            let mut seen = BTreeSet::new();
-            pairs.retain(|&(a, b)| {
-                let key = (a.min(b), a.max(b));
-                seen.insert(key)
-            });
-        }
-        
+        // Canonical order also keeps force/energy summation independent of
+        // changes in the spatial ordering of moving triangles.
+        pairs.sort_unstable();
         pairs
     }
     fn energy_gradient(&self, x: &[Vec3], gradient: &mut [Vec3]) -> Result<f64, &'static str> {
@@ -172,7 +113,7 @@ impl TissueSurfaceContact {
             let fb = self.faces[b];
             let a = fa.map(|i| x[i]);
             let b = fb.map(|i| x[i]);
-            let closest = triangle_distance(a, b)?;
+            let closest = triangle_distance_validated(a, b)?;
             let (pair_energy, derivative) = barrier_response(
                 closest.distance,
                 self.minimum_distance_m,
@@ -482,9 +423,14 @@ impl Body {
     pub fn minimum_surface_contact_distance(&self) -> Result<Option<f64>, &'static str> {
         let mut minimum = f64::INFINITY;
         for contact in &self.surface_contacts {
+            let prepared: Vec<_> = contact.faces.iter()
+                .map(|face| PreparedTriangle::new(face.map(|i| self.positions[i]))).collect();
             for (i, a) in contact.faces.iter().enumerate() {
-                for b in &contact.faces[i + 1..] {
+                for (offset, b) in contact.faces[i + 1..].iter().enumerate() {
                     if a.iter().any(|v| b.contains(v)) {
+                        continue;
+                    }
+                    if prepared[i].separation_lower_bound(&prepared[i + 1 + offset]) >= minimum {
                         continue;
                     }
                     let closest = triangle_distance(
@@ -636,6 +582,38 @@ impl Body {
 mod pruning_tests {
     use super::super::surface_distance::separation_lower_bound;
     use super::*;
+    #[test]
+    fn sweep_candidates_match_exhaustive_pairs_without_duplicates() {
+        let mut x = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..100 {
+            let start = x.len();
+            let offset = (i % 9) as f64 * 0.001;
+            x.extend([[offset,0.,0.], [offset+0.002,0.,0.], [offset,0.002,0.]]);
+            faces.push([start,start+1,start+2]);
+        }
+        let contact = TissueSurfaceContact {faces, minimum_distance_m: 0.0001,
+            activation_gap_m: 0.001, pair_stiffness_n_m: 1.};
+        let margin = 0.001;
+        let mut expected = Vec::new();
+        for a in 0..contact.faces.len() {
+            for b in a+1..contact.faces.len() {
+                let overlaps = (0..3).all(|axis| {
+                    let range = |face: [usize;3]| {
+                        let lo = face.iter().map(|&i| x[i][axis]).fold(f64::INFINITY,f64::min) - margin*0.5;
+                        let hi = face.iter().map(|&i| x[i][axis]).fold(f64::NEG_INFINITY,f64::max) + margin*0.5;
+                        (lo,hi)
+                    };
+                    let (al,ah) = range(contact.faces[a]);
+                    let (bl,bh) = range(contact.faces[b]);
+                    al <= bh && bl <= ah
+                });
+                if overlaps { expected.push((a,b)); }
+            }
+        }
+        assert_eq!(contact.candidates(&x,None,margin), expected);
+    }
+
     #[test]
     fn normal_barrier_curvature_matches_energy_second_difference() {
         let h = 5e-5;

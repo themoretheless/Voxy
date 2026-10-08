@@ -243,6 +243,33 @@ impl InertialBody {
         *self = candidate;
         Ok(change)
     }
+    /// Add elastic node-to-node tissue links without resetting kinematics or mass.
+    /// Returns their parameter-induced potential change at the current pose.
+    /// Link stiffness is caller supplied; invalid/duplicate links preserve state.
+    pub fn add_tissue_bonds(&mut self, pairs: &[([usize; 2], f64)]) -> Result<f64, &'static str> {
+        let before = self.diagnostics()?.potential_j;
+        let mut candidate = self.clone();
+        candidate.body.add_tissue_bonds(pairs)?;
+        let change = candidate.diagnostics()?.potential_j - before;
+        if !change.is_finite() { return Err("tissue bond potential overflow"); }
+        *self = candidate;
+        Ok(change)
+    }
+
+    /// Replace tissue contact groups at fixed positions and return the potential
+    /// change. Invalid controls or a closed gap preserve the entire dynamic state.
+    pub fn set_surface_contacts(
+        &mut self, contacts: Vec<super::TissueSurfaceContact>,
+    ) -> Result<f64, &'static str> {
+        let before = self.diagnostics()?.potential_j;
+        let mut candidate = self.clone();
+        candidate.body.set_surface_contacts(contacts)?;
+        let change = candidate.diagnostics()?.potential_j - before;
+        if !change.is_finite() { return Err("surface contact potential overflow"); }
+        *self = candidate;
+        Ok(change)
+    }
+
     fn evaluate(&self) -> Result<(f64, Vec<Vec3>, f64), &'static str> {
         self.evaluate_at(&self.body.positions)
     }
