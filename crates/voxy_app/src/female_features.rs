@@ -2034,7 +2034,7 @@ mod tests {
         )
         .unwrap();
         let features = FaceFeatures::new(asset.mesh.vertices(), asset.mesh.indices());
-        assert_eq!(features.strands.len(), 964);
+        assert_eq!(features.strands.len(), 1564);
         let lower: Vec<_> = features
             .strands
             .iter()

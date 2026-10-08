@@ -531,3 +531,40 @@ fn terminal_contact_accelerator_failure_rolls_back_reconciled_state() {
     }
     assert_eq!(good.calls,18);
 }
+
+#[test]
+fn incompatible_joint_position_contacts_rollback_pose_and_future_dynamics() {
+    let rod=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],HairMaterial::default()).unwrap();
+    let mut actual=system(rod);actual.iterations=1;actual.substeps=1;
+    actual.joint_contact_positions=true;let mut control=actual.clone();let dt=1./240.;
+    let points=[[0.,-1.,-1.],[0.,1.,-1.],[0.,0.,1.]];
+    let walls=[TriangleMesh::new(&points,&[[0,1,2]]).unwrap(),TriangleMesh::new(&points,&[[0,2,1]]).unwrap()];
+    assert!(actual.step(dt,&[root()],[0.;3],[0.;3],&walls).is_err());
+    assert_eq!(actual.rods()[0].positions(),control.rods()[0].positions());
+    assert_eq!(actual.rods()[0].orientations(),control.rods()[0].orientations());
+    for _ in 0..3 {
+        actual.step(dt,&[root()],[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        control.step(dt,&[root()],[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        assert_eq!(actual.rods()[0].positions(),control.rods()[0].positions());
+        assert_eq!(actual.rods()[0].orientations(),control.rods()[0].orientations());
+    }
+}
+
+#[test]
+fn joint_position_contacts_preserve_worker_and_accelerator_equivalence() {
+    let (mut initial,roots,floor)=accelerator_fixture();
+    initial.iterations=3;initial.substeps=2;initial.contact_radius=0.0006;
+    initial.joint_contact_positions=true;
+    let mut serial=initial.clone();let mut parallel=initial.clone();parallel.workers=4;
+    let mut external=parallel.clone();let mut solver=NativeBatch {calls:0,corrupt:None,fail_after:None};
+    for _ in 0..3 {
+        serial.step(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor)).unwrap();
+        parallel.step(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor)).unwrap();
+        external.step_with_solver(1./120.,&roots,[0.,-9.81,0.],[0.;3],std::slice::from_ref(&floor),&mut solver).unwrap();
+        for ((a,b),c) in serial.rods().iter().zip(parallel.rods()).zip(external.rods()) {
+            assert_eq!(a.positions(),b.positions());assert_eq!(a.orientations(),b.orientations());
+            assert_eq!(a.positions(),c.positions());assert_eq!(a.orientations(),c.orientations());
+        }
+    }
+    assert_eq!(solver.calls,18);
+}

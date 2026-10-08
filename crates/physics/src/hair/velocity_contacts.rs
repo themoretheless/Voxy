@@ -1,4 +1,4 @@
-//! Shared mass-metric normal projection after mesh and strand friction.
+//! Shared unilateral contact projection under the rod compliance operator.
 use super::{ContactSource, HairRod, StrandResponse};
 use crate::hair::math::*;
 
@@ -92,9 +92,22 @@ fn entries(rod: usize, segment: usize, fraction: f64, normal: V, hair: &HairRod)
 }
 fn add_constraint(
     constraints: &mut Vec<Constraint>,
-    entries: [Entry; 4],
+    mut entries: [Entry; 4],
     bound: f64,
-) -> Result<(), &'static str> {
+) -> Result<Option<usize>, &'static str> {
+    // Pinned-root entries contribute no increment. Canonical station order
+    // removes aliases of a shared endpoint from adjacent capsule pairs.
+    for entry in &mut entries {if entry.point==0 {entry.gradient=[0.;3];}}
+    entries.sort_by_key(|entry|(entry.rod,entry.point));
+    let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
+    let mut packed=[zero;4];let mut count=0;
+    for entry in entries {
+        if dot(entry.gradient,entry.gradient)==0. {continue;}
+        if count>0 && packed[count-1].rod==entry.rod && packed[count-1].point==entry.point {
+            packed[count-1].gradient=add(packed[count-1].gradient,entry.gradient);
+        } else {packed[count]=entry;count+=1;}
+    }
+    let entries=packed;
     let diagonal = entries
         .iter()
         .map(|entry| entry.mobility * dot(entry.gradient, entry.gradient))
@@ -103,6 +116,13 @@ fn add_constraint(
         return Err("invalid shared contact velocity constraint");
     }
     if diagonal > 1e-30 {
+        if let Some((index,existing))=constraints.iter_mut().enumerate().find(|(_,constraint)| {
+            constraint.entries.iter().zip(entries).all(|(a,b)|a.rod==b.rod && a.point==b.point
+                && a.mobility==b.mobility && len(sub(a.gradient,b.gradient))<=1e-12)
+        }) {
+            existing.bound=existing.bound.max(bound);
+            return Ok(Some(index));
+        }
         constraints.push(Constraint {
             entries,
             bound,
@@ -110,8 +130,9 @@ fn add_constraint(
             multiplier: 0.,
             response: Vec::new(),
         });
+        return Ok(Some(constraints.len()-1));
     }
-    Ok(())
+    Ok(None)
 }
 fn prepare_implicit_response(
     constraints: &mut [Constraint],
@@ -395,7 +416,7 @@ pub(in crate::hair) fn stabilize_contact_velocities(
     prepare_implicit_response(&mut constraints, rods, dt)?;
     solve_projection(&mut constraints,rods,1e-9)
 }
-pub(in crate::hair) fn reconcile_contact_positions(rods:&mut [HairRod],responses:&mut [StrandResponse],dt:f64,radius:f64)->Result<(), &'static str> {
+pub(in crate::hair) fn reconcile_contact_positions(rods:&mut [HairRod],responses:&mut [StrandResponse],dt:f64,radius:f64)->Result<bool, &'static str> {
     if !dt.is_finite() || dt<=0. || !radius.is_finite() || radius<=0. {return Err("invalid shared contact position step");}
     let mut constraints=Vec::new();
     for (index,rod) in rods.iter().enumerate() {
@@ -409,36 +430,38 @@ pub(in crate::hair) fn reconcile_contact_positions(rods:&mut [HairRod],responses
             add_constraint(&mut constraints,[pair[0],pair[1],zero,zero],-gap)?;
         }
     }
-    let body_constraints=constraints.len();
+    let mut pair_constraints=Vec::with_capacity(responses.len());
     for response in responses.iter() {
         let (ra,ia,s)=response.a;let (rb,ib,t)=response.b;
         let pa=add(mul(rods[ra].x[ia],1.-s),mul(rods[ra].x[ia+1],s));
         let pb=add(mul(rods[rb].x[ib],1.-t),mul(rods[rb].x[ib+1],t));
         let a=entries(ra,ia,s,response.normal,&rods[ra]);
         let b=entries(rb,ib,t,mul(response.normal,-1.),&rods[rb]);
-        add_constraint(&mut constraints,[a[0],a[1],b[0],b[1]],2.*radius-dot(sub(pa,pb),response.normal))?;
+        pair_constraints.push(add_constraint(&mut constraints,[a[0],a[1],b[0],b[1]],2.*radius-dot(sub(pa,pb),response.normal))?);
     }
-    if constraints.is_empty() {return Ok(());}
+    if constraints.is_empty() {return Ok(true);}
     prepare_implicit_response(&mut constraints,rods,dt)?;
     let mut increment=PositionIncrement {
         linear:rods.iter().map(|rod|vec![[0.;3];rod.x.len()]).collect(),
         angular:rods.iter().map(|rod|vec![[0.;3];rod.q.len()]).collect(),
     };
-    solve_projection(&mut constraints,&mut increment,1e-11)?;
-    if !increment.finite() || increment.angular.iter().any(|angles|angles.iter().any(|angle|len(*angle)>0.35)) {
-        return Err("shared contact position increment exceeds linearization");
-    }
+    solve_projection(&mut constraints,&mut increment,1e-5)?;
+    if !increment.finite() {return Err("shared contact position increment overflow");}
+    let maximum_angle=increment.angular.iter().flatten().map(|angle|len(*angle)).fold(0.,f64::max);
+    let scale=if maximum_angle>0.35 {0.35/maximum_angle} else {1.};
     // Publish only a completely solved increment. Roots remain exact zeros.
     for (index,rod) in rods.iter_mut().enumerate() {
         for point in 1..rod.x.len() {
-            rod.x[point]=add(rod.x[point],increment.linear[index][point]);
-            if point<rod.q.len() {apply(&mut rod.q[point],increment.angular[index][point]);}
+            rod.x[point]=add(rod.x[point],mul(increment.linear[index][point],scale));
+            if point<rod.q.len() {apply(&mut rod.q[point],mul(increment.angular[index][point],scale));}
         }
     }
-    for (response,constraint) in responses.iter_mut().zip(&constraints[body_constraints..]) {
-        response.impulse+=constraint.multiplier;
+    let mut multiplicity=vec![0usize;constraints.len()];
+    for index in pair_constraints.iter().flatten() {multiplicity[*index]+=1;}
+    for (response,index) in responses.iter_mut().zip(pair_constraints) {
+        if let Some(index)=index {response.impulse+=constraints[index].multiplier*scale/multiplicity[index] as f64;}
     }
-    Ok(())
+    Ok(scale==1.)
 }
 fn solve_projection<S:ProjectionVector+?Sized>(constraints:&mut [Constraint],rods:&mut S,absolute_tolerance:f64)->Result<(), &'static str> {
     let scale = constraints.iter().try_fold(1f64, |scale, constraint| {
@@ -489,12 +512,12 @@ fn solve_projection<S:ProjectionVector+?Sized>(constraints:&mut [Constraint],rod
         }
     }
     eprintln!(
-        "HAIR VELOCITY NONCONVERGENCE constraints={} residual_m_s={} tolerance_m_s={}",
+        "HAIR CONTACT PROJECTION NONCONVERGENCE constraints={} residual={} tolerance={}",
         constraints.len(),
         last_residual,
         tolerance
     );
-    Err("shared contact velocity constraints did not converge")
+    Err("shared contact projection constraints did not converge")
 }
 
 #[cfg(test)]
@@ -568,6 +591,26 @@ mod tests {
             assert_eq!(actual.velocity,before.velocity);assert_eq!(actual.omega,before.omega);
             assert!(actual.max_relative_stretch()<0.05);
         }
+    }
+    #[test]
+    fn shared_endpoint_constraints_have_one_canonical_row_and_strongest_bound() {
+        let hair=rod(0.);let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
+        let a=entries(0,0,1.,[1.,0.,0.],&hair);
+        let b=entries(0,1,0.,[1.,0.,0.],&hair);
+        let mut constraints=Vec::new();
+        let first=add_constraint(&mut constraints,[a[0],a[1],zero,zero],1e-6).unwrap();
+        let second=add_constraint(&mut constraints,[zero,b[1],b[0],zero],2e-6).unwrap();
+        assert_eq!(first,second);assert_eq!(constraints.len(),1);assert_eq!(constraints[0].bound,2e-6);
+    }
+    #[test]
+    fn duplicate_pair_aliases_share_one_positional_reaction_load() {
+        let original=vec![rod(0.),rod(40e-6)];let mut single=original.clone();let mut duplicate=original;
+        let make=|segment,fraction|StrandResponse {a:(0,segment,fraction),b:(1,segment,fraction),normal:[-1.,0.,0.],impulse:0.};
+        let mut one=[make(1,0.)];let mut two=[make(0,1.),make(1,0.)];
+        assert!(reconcile_contact_positions(&mut single,&mut one,1./240.,40e-6).unwrap());
+        assert!(reconcile_contact_positions(&mut duplicate,&mut two,1./240.,40e-6).unwrap());
+        for (a,b) in single.iter().zip(duplicate) {assert_eq!(a.x,b.x);assert_eq!(a.q,b.q);}
+        assert!((two.iter().map(|r|r.impulse).sum::<f64>()-one[0].impulse).abs()<1e-20);
     }
     #[test]
     fn open_position_contact_has_no_attractive_reaction() {

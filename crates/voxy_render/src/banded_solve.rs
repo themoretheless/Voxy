@@ -19,10 +19,19 @@ impl std::fmt::Display for BandedSolveError {
     }
 }
 impl std::error::Error for BandedSolveError {}
+/// Immutable normalized input as represented by the shader's hi/lo words.
+/// Consumers own reference solving; this codec does not implement another solver.
+#[derive(Debug)]
+pub struct BandedPackedReference {
+    pub matrix:Vec<f64>,
+    pub rhs:Vec<f64>,
+    pub scales:Vec<f64>,
+}
 #[derive(Debug)]
 pub struct BandedSolveInput {
     words: Vec<u32>,
     scales: Vec<Vec<f64>>,
+    packing_error: [f64; 2],
     n: usize,
     active: std::ops::Range<usize>,
 }
@@ -72,6 +81,7 @@ impl BandedSolveInput {
             active.end as u32,
         ]);
         let mut scales = Vec::new();
+        let mut packing_error=[0f64;2];
         for system in systems {
             if system.matrix.len() != matrix_len
                 || system.rhs.len() != n
@@ -90,7 +100,7 @@ impl BandedSolveInput {
             if diagonal.iter().any(|v| !v.is_finite()) {
                 return Err(BandedSolveError::NumericRange);
             }
-            let mut push = |value: f64| -> Result<(), BandedSolveError> {
+            let mut push = |value: f64, kind: usize| -> Result<(), BandedSolveError> {
                 let hi = value as f32;
                 let lo = (value - hi as f64) as f32;
                 if !value.is_finite()
@@ -100,6 +110,7 @@ impl BandedSolveInput {
                 {
                     return Err(BandedSolveError::NumericRange);
                 }
+                packing_error[kind]=packing_error[kind].max(((hi as f64+lo as f64)-value).abs());
                 words.extend([hi.to_bits(), lo.to_bits()]);
                 Ok(())
             };
@@ -109,11 +120,11 @@ impl BandedSolveInput {
                         system.matrix[i * 9 + offset] * diagonal[i] * diagonal[i - offset]
                     } else {
                         0.
-                    })?;
+                    },0)?;
                 }
             }
             for (&value, &scale) in system.rhs.iter().zip(&diagonal) {
-                push(value * scale)?;
+                push(value * scale,1)?;
             }
             words.push(0);
             scales.push(diagonal);
@@ -121,8 +132,24 @@ impl BandedSolveInput {
         Ok(Self {
             words,
             scales,
+            packing_error,
             n,
             active,
+        })
+    }
+    /// Maximum absolute hi/lo round-trip error in equilibrated matrix/RHS units.
+    /// This measures input representation only, not correction or trajectory error.
+    pub fn packing_error(&self)->[f64;2] {self.packing_error}
+    /// Decode one immutable input system for an independent arithmetic audit.
+    /// Multiplying a solved normalized correction by `scales` restores its units.
+    pub fn packed_reference(&self,index:usize)->Option<BandedPackedReference> {
+        let scales=self.scales.get(index)?.clone();
+        let base=4+index*(self.n*20+1);
+        let read=|offset:usize|f32::from_bits(self.words[offset]) as f64+f32::from_bits(self.words[offset+1]) as f64;
+        Some(BandedPackedReference {
+            matrix:(0..self.n*9).map(|i|read(base+i*2)).collect(),
+            rhs:(0..self.n).map(|i|read(base+self.n*18+i*2)).collect(),
+            scales,
         })
     }
     pub fn bytes(&self) -> &[u8] {
@@ -200,6 +227,28 @@ pub const BANDED_SOLVE_SHADER: &str = include_str!("hair_banded_compensated.wgsl
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn packed_reference_decodes_immutable_words_and_physical_scales() {
+        let mut matrix=vec![0.;18];matrix[0]=4.;matrix[9]=9.;matrix[10]=3.;
+        let rhs=[8.,18.];
+        let input=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&rhs}],0..2).unwrap();
+        let saved=input.bytes().to_vec();let reference=input.packed_reference(0).unwrap();
+        assert_eq!(reference.scales,vec![0.5,1./3.]);
+        assert_eq!(reference.matrix[0],1.);assert_eq!(reference.matrix[9],1.);
+        assert_eq!(reference.matrix[10],0.5);assert_eq!(reference.rhs,vec![4.,6.]);
+        assert_eq!(input.bytes(),saved);assert!(input.packed_reference(1).is_none());
+    }
+    #[test]
+    fn packing_audit_distinguishes_lost_low_bits_from_exact_inputs() {
+        let value=0.125+2f64.powi(-28)+2f64.powi(-54);
+        let mut matrix=vec![0.;18];matrix[0]=1.;matrix[9]=1.;matrix[10]=value;
+        let rhs=[value,1.];let row=BandedSystem {matrix:&matrix,rhs:&rhs};
+        let input=BandedSolveInput::new(&[row],0..2).unwrap();
+        assert_eq!(input.packing_error(),[2f64.powi(-54);2]);
+        matrix[10]=0.125;let rhs=[0.125,1.];
+        let exact=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&rhs}],0..2).unwrap();
+        assert_eq!(exact.packing_error(),[0.;2]);
+    }
     #[test]
     fn admitted_batch_rejects_bad_status_nonfinite_and_residual_before_publication() {
         let mut matrix = vec![0.; 18];

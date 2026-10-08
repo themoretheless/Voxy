@@ -1134,6 +1134,29 @@ mod query_tests {
         assert!(len(sub(pair[0].normal,[-1.,0.,0.]))<1e-15);
     }
     #[test]
+    fn nonlinear_joint_contact_requeries_pairs_created_by_a_solved_increment() {
+        let make=|x|HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],super::super::HairMaterial::default()).unwrap();
+        let initial=vec![make(0.),make(20e-6),make(120e-6)];let radius=40e-6;let dt=1./240.;
+        let penetration=|rods:&[HairRod],responses:&[StrandResponse]|responses.iter().map(|r| {
+            let (a,i,s)=r.a;let (b,j,t)=r.b;
+            let pa=add(mul(rods[a].x[i],1.-s),mul(rods[a].x[i+1],s));
+            let pb=add(mul(rods[b].x[j],1.-t),mul(rods[b].x[j+1],t));
+            2.*radius-dot(sub(pa,pb),r.normal)
+        }).fold(0.,f64::max);
+        let mut once=initial.clone();let mut contacts=refresh_strand_responses(&mut once,radius,&[]);
+        assert!(reconcile_contact_positions(&mut once,&mut contacts,dt,radius).unwrap());
+        let newly_detected=refresh_strand_responses(&mut once,radius,&[]);
+        assert!(penetration(&once,&newly_detected)>1e-9,"fixture must expose a new contact after a solved tangent step");
+        let mut actual=initial.clone();let mut history=Vec::new();
+        super::super::HairSystem::reconcile_positions(&mut actual,&[],dt,radius,true,&mut history).unwrap();
+        let current=refresh_strand_responses(&mut actual,radius,&[]);
+        assert!(penetration(&actual,&current)<=1e-10);
+        for (after,before) in actual.iter().zip(initial) {
+            assert_eq!(after.x[0],before.x[0]);assert_eq!(after.q[0],before.q[0]);
+            assert_eq!(after.velocity,before.velocity);
+        }
+    }
+    #[test]
     fn strand_velocity_response_preserves_common_translation() {
         let make=|x|HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],super::super::HairMaterial::default()).unwrap();
         let mut rods=vec![make(0.),make(80e-6)];

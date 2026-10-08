@@ -27,6 +27,14 @@ impl FemaleHair {
         indices: &[u32],
         parameters: crate::body_parameters::BodyParameters,
     ) -> Result<Self, &'static str> {
+        Self::new_parameterized_with_groom(body,indices,parameters,false)
+    }
+    /// Candidate authoring retains both follicle coordinates. Native contact
+    /// qualification is required before selecting it in the normal demo.
+    pub(crate) fn new_parameterized_with_groom(
+        body:&[SceneVertex],indices:&[u32],parameters:crate::body_parameters::BodyParameters,
+        preserve_follicle_coordinates:bool,
+    )->Result<Self, &'static str> {
         parameters.validate()?;
         let morph = |p: [f64; 3]| {
             if parameters == Default::default() {
@@ -89,7 +97,7 @@ impl FemaleHair {
                 let variation = ((word >> 22) ^ word) as f32 / u32::MAX as f32;
                 0.24 + 0.085 * variation
             };
-            // Start from a collision-free scalp-following groom, then let the rod relax.
+            // Author a scalp-following groom; actual mesh/strand contacts qualify its geometry.
             // The ellipsoid is used only for authoring the initial curve, never as a collider.
             let center = Vec3::new(0.0, 0.71, 0.06);
             let radii = Vec3::new(0.112, 0.12, 0.125);
@@ -108,20 +116,30 @@ impl FemaleHair {
                     // Sweep front roots toward the sides and back, keeping the face clear.
                     let comb = (distance / 0.075).clamp(0.0, 1.0);
                     let comb = comb * comb * (3.0 - 2.0 * comb);
-                    let target = if local.x >= 0.0 {
-                        -0.6
+                    // A constant target collapses entire scalp meridians into
+                    // coincident hanging curves. Route each hemisphere with a
+                    // monotone angular map, including its posterior roots.
+                    let target = if !preserve_follicle_coordinates {
+                        if local.x>=0.0 {-0.6} else {-std::f32::consts::PI+0.6}
+                    } else if local.x >= 0.0 {
+                        -0.85 + 0.42 * azimuth
                     } else {
-                        -std::f32::consts::PI + 0.6
+                        let angle = if azimuth < 0.0 {azimuth + std::f32::consts::TAU} else {azimuth};
+                        std::f32::consts::PI + 0.85 + 0.42 * (angle - std::f32::consts::PI)
                     };
                     let turn = (target - azimuth + std::f32::consts::PI)
                         .rem_euclid(std::f32::consts::TAU)
                         - std::f32::consts::PI;
-                    let azimuth = azimuth + if local.z > 0.0 { turn * comb } else { 0.0 };
+                    let azimuth = azimuth + if preserve_follicle_coordinates || local.z>0.0 {turn*comb} else {0.0};
+                    // The second follicle coordinate remains a radial layer:
+                    // crown fibres lie outside fibres rooted further down the scalp.
+                    // Equal terminal polar angle must not erase this coordinate.
+                    let layer = if preserve_follicle_coordinates {0.012 * ((1.65 - polar) / 1.65).clamp(0.0, 1.0) * comb} else {0.0};
                     let envelope = center
                         + Vec3::new(
-                            radii.x * angle.sin() * azimuth.cos(),
+                            (radii.x + layer) * angle.sin() * azimuth.cos(),
                             radii.y * angle.cos() - hanging,
-                            radii.z * angle.sin() * azimuth.sin(),
+                            (radii.z + layer) * angle.sin() * azimuth.sin(),
                         );
                     let transition = (distance / 0.012).min(1.0);
                     root.lerp(envelope, transition)
@@ -713,8 +731,10 @@ mod tests {
     #[ignore = "native GPU full-model dynamics qualification"]
     fn gpu_linear_solver_tracks_full_model_jump_with_contacts() {
         let body=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
-        let mut native=FemaleHair::new(body.mesh.vertices(),body.mesh.indices()).unwrap();
-        let mut gpu=FemaleHair::new(body.mesh.vertices(),body.mesh.indices()).unwrap();
+        let preserve_follicles=std::env::var_os("VOXY_HAIR_PRESERVE_FOLLICLE_COORDINATES").is_some();
+        eprintln!("HYBRID FOLLICLE PRESERVING GROOM {preserve_follicles}");
+        let mut native=FemaleHair::new_parameterized_with_groom(body.mesh.vertices(),body.mesh.indices(),Default::default(),preserve_follicles).unwrap();
+        let mut gpu=FemaleHair::new_parameterized_with_groom(body.mesh.vertices(),body.mesh.indices(),Default::default(),preserve_follicles).unwrap();
         if let Ok(value)=std::env::var("VOXY_HAIR_QUALIFICATION_ITERATIONS") {
             let iterations=value.parse::<usize>().unwrap();
             assert!((6..=128).contains(&iterations),"qualification iterations must be in 6..128");
@@ -742,7 +762,9 @@ mod tests {
         let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
         let extra_refinement=std::env::var_os("VOXY_HAIR_EXTRA_DIVISION_REFINEMENT").is_some();
         eprintln!("HYBRID EXTRA DIVISION REFINEMENT {extra_refinement}");
-        let mut solver=pollster::block_on(crate::gpu_hair_solver::GpuHairLinearSolver::new_with_extra_division_refinement(&device,&queue,extra_refinement)).unwrap();
+        let extra_root=std::env::var_os("VOXY_HAIR_EXTRA_ROOT_REFINEMENT").is_some();
+        eprintln!("HYBRID EXTRA ROOT REFINEMENT {extra_root}");
+        let mut solver=pollster::block_on(crate::gpu_hair_solver::GpuHairLinearSolver::new_with_refinements(&device,&queue,extra_refinement,extra_root)).unwrap();
         struct NativeControl {calls:usize,perturbation:f64}
         impl physics::hair::HairLinearSolver for NativeControl {
             fn solve(&mut self,systems:&[physics::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
@@ -778,7 +800,7 @@ mod tests {
             let head=Mat4::from_translation(Vec3::Y*bob)*rig.head_matrix(time as f32);
             let mut posed=body.mesh.vertices().to_vec();rig.deform(&mut posed,time as f32);
             for vertex in &mut posed {vertex.position[1]+=bob;}
-            let started=std::time::Instant::now();native.advance(1./120.,time,head,&posed).unwrap();native_ms+=started.elapsed().as_secs_f64()*1000.;
+            let started=std::time::Instant::now();native.advance(1./120.,time,head,&posed).unwrap_or_else(|error|panic!("native frame {frame}: {error}"));native_ms+=started.elapsed().as_secs_f64()*1000.;
             let started=std::time::Instant::now();
             if cpu_control {
                 gpu.advance_with_solver(1./120.,time,head,&posed,&mut control).unwrap();
@@ -819,7 +841,7 @@ mod tests {
             eprintln!("HYBRID HAIR FRAME frame={} max_position_error_m={} max_quaternion_component_error={}",frame,position_error,rotation_error);
         }
         eprintln!("HYBRID FULL HAIR guides={} frames={} calls={} position_error_m={} quaternion_component_error={} native_ms={} hybrid_ms={} solver_bridge_ms={}",gpu.system.rods().len(),frames,solver.calls,position_error,rotation_error,native_ms,gpu_ms,solver.elapsed_ms);
-        eprintln!("HYBRID LINEAR AUDIT max_errors={:?} enabled={}",solver.max_linear_error,solver.reference_audit);
+        eprintln!("HYBRID LINEAR AUDIT max_errors={:?} packing_errors={:?} stage_errors={:?} enabled={}",solver.max_linear_error,solver.max_packing_error,solver.max_stage_error,solver.reference_audit);
         assert_eq!(gpu.system.rods().len(),469);assert_eq!(if cpu_control {control.calls} else {solver.calls},expected_calls);
         assert!(position_error<1e-6,"GPU position drift {position_error}");
         assert!(rotation_error<5e-5,"GPU rotation drift {rotation_error}");
