@@ -964,12 +964,9 @@ pub struct DarcySolve {
 }
 impl Default for DarcySolve {
     fn default() -> Self {
-        // === OPTIMIZATION #19-20: Adaptive solver parameters ===
-        // Reduced iterations и increased tolerance for practical convergence
-        // Most scenarios converge in 50-200 iterations with ~1e-10 tolerance
         Self {
-            max_iterations: 500,      // Reduced from 2000 (rarely uses >300)
-            relative_tolerance: 1e-10, // Sufficient precision for physiological calculations
+            max_iterations: 2000,
+            relative_tolerance: 1e-13,
         }
     }
 }

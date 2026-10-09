@@ -170,6 +170,14 @@ fn unilateral_supported(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,sort_act
     unilateral_with_basis_support(columns,bounds,tolerance,sort_active,sparse,true)
 }
 fn unilateral_with_basis_support(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,sort_active:bool,sparse:bool,sparse_basis:bool)->Option<(Vec<f64>,Vec<f64>)> {
+    unilateral_with_equality_backend(columns,bounds,tolerance,sort_active,sparse,sparse_basis,None)
+}
+pub(super) fn unilateral_accelerated(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,
+    backend:&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>)->Option<(Vec<f64>,Vec<f64>)> {
+    unilateral_with_equality_backend(columns,bounds,tolerance,false,true,true,Some(backend))
+}
+fn unilateral_with_equality_backend(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,sort_active:bool,sparse:bool,sparse_basis:bool,
+    mut backend:Option<&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>>)->Option<(Vec<f64>,Vec<f64>)> {
     let n = columns.len();
     let m = columns.first()?.len();
     if bounds.len() != n
@@ -194,7 +202,12 @@ fn unilateral_with_basis_support(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64
     for iteration in 0..512 {
         if !active.is_empty() {
             let targets: Vec<_> = active.iter().map(|&i| bounds[i]).collect();
-            let (candidate, reactions) = factor.solve(&active, &targets, tolerance)?;
+            let (candidate, reactions) = if let Some(backend)=backend.as_deref_mut() {
+                let selected:Vec<_>=active.iter().map(|&i|columns[i].clone()).collect();
+                backend(&selected,&targets,tolerance)?
+            } else {factor.solve(&active, &targets, tolerance)?};
+            if candidate.len()!=m || reactions.len()!=active.len()
+                || candidate.iter().chain(&reactions).any(|v|!v.is_finite()) {return None;}
             let release = active
                 .iter()
                 .zip(&reactions)

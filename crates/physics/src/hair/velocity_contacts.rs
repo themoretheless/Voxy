@@ -552,12 +552,15 @@ impl<'a> NativeNewtonStep<'a> {
         Ok(Self {rods,dt,free,systems:square_root_projection::FrozenSystems::new(rods,dt)})
     }
     fn project(&self,constraints:&mut [Constraint],tolerance:f64)->Result<PositionIncrement,&'static str> {
-        constrained_newton_increment_prepared(constraints,self.rods,self.dt,None,tolerance,Some((&self.free,&self.systems)))
+        self.project_with_solver(constraints,tolerance,None)
+    }
+    fn project_with_solver(&self,constraints:&mut [Constraint],tolerance:f64,solver:Option<&mut dyn crate::hair::HairLinearSolver>)->Result<PositionIncrement,&'static str> {
+        constrained_newton_increment_prepared(constraints,self.rods,self.dt,solver,tolerance,Some((&self.free,&self.systems)))
     }
 }
 fn constrained_newton_increment_prepared(
     constraints:&mut [Constraint],rods:&[HairRod],dt:f64,
-    solver:Option<&mut dyn crate::hair::HairLinearSolver>,tolerance:f64,
+    mut solver:Option<&mut dyn crate::hair::HairLinearSolver>,tolerance:f64,
     prepared:Option<(&PositionIncrement,&square_root_projection::FrozenSystems<'_>)>,
 )->Result<PositionIncrement,&'static str> {
     let prepared_free=prepared.map(|(free,_)|free);
@@ -574,7 +577,8 @@ fn constrained_newton_increment_prepared(
             Err("constrained Newton step requires response loads")
         }
     }
-    let native_projection=solver.is_none();
+    let joint_projection=solver.as_ref().is_some_and(|backend|backend.joint_contact_coordinates_enabled());
+    let native_projection=solver.is_none() || joint_projection;
     let mut native = Native;
     if native_projection {
         // QR owns contact response columns. Solve only the elastic free load;
@@ -583,13 +587,17 @@ fn constrained_newton_increment_prepared(
             response_batches::prepare_with_free(&mut [],rods,dt,&mut native,&mut free)?;
         }
     } else {
-        response_batches::prepare_with_free(constraints,rods,dt,solver.unwrap(),&mut free)?;
+        response_batches::prepare_with_free(constraints,rods,dt,solver.as_deref_mut().unwrap(),&mut free)?;
     }
     if native_projection {
         // Original square-root columns preserve directions lost by forming a
         // rounded Gram matrix. Try that canonical native solve first instead
         // of exhausting iterative Gram recovery before using the same owner.
-        let projected=if let Some((_,systems))=prepared {
+        let projected=if joint_projection {
+            if let Some((_,systems))=prepared {
+                square_root_projection::solve_accelerated_prepared(constraints,systems,free.clone(),tolerance,solver.take().unwrap())
+            } else {square_root_projection::solve_accelerated(constraints,rods,dt,free.clone(),tolerance,solver.take().unwrap())}
+        } else if let Some((_,systems))=prepared {
             square_root_projection::solve_prepared(constraints,systems,free.clone(),tolerance)
         } else {square_root_projection::solve(constraints,rods,dt,free.clone(),tolerance)};
         match projected {
@@ -957,11 +965,27 @@ mod tests {
         response_batches::prepare_with_free(&mut legacy_constraints,&rods,1./240.,&mut Legacy,&mut legacy_free).unwrap();
         let legacy=square_root_projection::solve(&mut legacy_constraints,&rods,1./240.,legacy_free,1e-14).unwrap();
         let coupled = constrained_newton_increment(&mut constraints, &rods, 1./240., None, 1e-14).unwrap();
+        struct UnavailableJoint {calls:usize,fallbacks:usize}
+        impl crate::hair::HairLinearSolver for UnavailableJoint {
+            fn joint_contact_coordinates_enabled(&self)->bool {true}
+            fn solve_joint_coordinates(&mut self,_:&[Vec<f64>],_:&[f64],_:f64)->Option<(Vec<f64>,Vec<f64>)> {self.calls+=1;None}
+            fn joint_contact_result(&mut self,accelerated:bool) {assert!(!accelerated);self.fallbacks+=1;}
+            fn solve(&mut self,_:&[crate::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {panic!("joint route must retain native free owner")}
+            fn solve_responses(&mut self,_:&[crate::hair::HairResponseSystem])->Result<Vec<Vec<Vec<f64>>>, &'static str> {panic!("joint route must not form Gram compliances")}
+        }
+        let mut backend=UnavailableJoint {calls:0,fallbacks:0};
+        let (mut accelerated_rows,_)=position_constraints(&rods,&pairs,radius).unwrap();
+        let fallback=constrained_newton_increment(&mut accelerated_rows,&rods,1./240.,Some(&mut backend),1e-14).unwrap();
+        assert!(backend.calls>0 && backend.fallbacks>0);
+        assert_eq!(fallback.linear,coupled.linear);assert_eq!(fallback.angular,coupled.angular);
+        assert_eq!(accelerated_rows[0].multiplier.to_bits(),constraints[0].multiplier.to_bits());
+        assert!(accelerated_rows.iter().all(|c|c.response.is_empty()));
         assert_eq!(coupled.linear,legacy.linear);assert_eq!(coupled.angular,legacy.angular);
         assert!(constraints.iter().all(|c|c.response.is_empty()),"successful QR must not prepare unused Gram responses");
         assert_eq!(constraints[0].multiplier.to_bits(),legacy_constraints[0].multiplier.to_bits());
         let prepared=NativeNewtonStep::new(&rods,1./240.,1e-14).unwrap();
         assert_eq!(prepared.systems.assembled_count(),0);
+        let mut computed_columns = None;
         for offset in [0.,1e-8,-1e-8] {
             let (mut cached_rows,_)=position_constraints(&rods,&pairs,radius).unwrap();
             let (mut fresh_rows,_)=position_constraints(&rods,&pairs,radius).unwrap();
@@ -973,6 +997,35 @@ mod tests {
             assert_eq!(bits(&cached),bits(&fresh));
             assert_eq!(cached_rows.iter().map(|c|c.multiplier.to_bits()).collect::<Vec<_>>(),fresh_rows.iter().map(|c|c.multiplier.to_bits()).collect::<Vec<_>>());
             assert_eq!(prepared.systems.assembled_count(),2,"contact matrices must be assembled only once for touched rods");
+            let actual_columns=prepared.systems.computed_load_columns();
+            assert!(actual_columns>0);
+            if let Some(previous)=computed_columns {assert_eq!(actual_columns,previous,"changed bounds must reuse exact rod load columns");}
+            computed_columns=Some(actual_columns);
+        }
+        if std::env::var_os("VOXY_HAIR_FROZEN_OPERATOR_BENCH").is_some() {
+            let mut paired = Vec::new();
+            for round in 0..7 {
+                let measure = |cached:bool| {
+                    let began = std::time::Instant::now();
+                    for _ in 0..100 {
+                        let (mut rows,_) = position_constraints(std::hint::black_box(&rods), &pairs, radius).unwrap();
+                        let step = if cached { prepared.project(&mut rows, 1e-14) } else {
+                            square_root_projection::solve(&mut rows, &rods, 1./240., free.clone(), 1e-14)
+                        }.unwrap();
+                        for (a,b) in step.linear.iter().chain(&step.angular).flat_map(|v|v.iter().flatten())
+                            .zip(coupled.linear.iter().chain(&coupled.angular).flat_map(|v|v.iter().flatten())) {
+                            assert_eq!(a.to_bits(), b.to_bits());
+                        }
+                        assert_eq!(rows[0].multiplier.to_bits(),constraints[0].multiplier.to_bits());
+                        std::hint::black_box(step);
+                    }
+                    began.elapsed().as_secs_f64()
+                };
+                let times = if round%2==0 {let fresh=measure(false);(fresh,measure(true))}
+                    else {let cached=measure(true);(measure(false),cached)};
+                paired.push(times);
+            }
+            eprintln!("FROZEN OPERATOR fresh_cached_seconds={paired:?} scope=complete_immutable_contact_projection");
         }
         assert!(constraints[0].multiplier > 0.);
         assert!(constraints[0].residual(&coupled) <= 1e-14);

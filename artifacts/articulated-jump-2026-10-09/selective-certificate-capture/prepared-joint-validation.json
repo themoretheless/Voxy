@@ -1,0 +1,15 @@
+{
+  "implemented": "PreparedNativeJoint borrows immutable original requests and owns factor/whitened-column preparation across Newton bound-only correction trials.",
+  "validation": {
+    "changed_bound_and_release_trials": "7 bitwise comparisons against fresh preparation; immutable factors/columns unchanged",
+    "invalid_bounds": "NaN, changed row count and zero tolerance rejected",
+    "release_units": 326,
+    "ignored_diagnostics": 39
+  },
+  "limitations": [
+    "No cross-cut cache yet; new contact sets still prepare again.",
+    "No end-to-end speedup measured.",
+    "Live session62714 runs selective certificate before PreparedNativeJoint change."
+  ],
+  "next": "Rod-local factors and exact-load whitened columns scoped to FrozenSystems immutable pose/dt, with bounded storage and changed-load misses."
+}

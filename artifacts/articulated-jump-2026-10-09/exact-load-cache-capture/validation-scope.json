@@ -1,0 +1,26 @@
+{
+  "source_changes": [
+    "PreparedNativeJoint borrows original immutable requests, prepares once across bound-only Newton correction trials.",
+    "FrozenSystems owns a mutex-protected rod-local factor and exact-load cache for its immutable pose/dt lifetime.",
+    "Matrix, RHS, active DOFs and band-width identities are checked before cached use.",
+    "Load keys preserve exact float bits, signed zero and subnormals.",
+    "At most128 retained columns and256KiB key/value payload per rod, excluding HashMap/identity/factor overhead; overflow computes fresh without dropping loads.",
+    "Prepared output dimensions checked before physical solve; original force balance, bounds admission and sorted retry retained."
+  ],
+  "validation": {
+    "physics_units_passed": 327,
+    "hair_units_passed": 186,
+    "hair_integration_passed": 20,
+    "historical469_guide_geometry_passed": true,
+    "frozen_owner_changed_bounds_no_new_whitening": true,
+    "bitwise_coordinates_and_reactions": true
+  },
+  "benchmark_scope": "3-rod 1-contact complete immutable projection, warm cache, seven alternating pairs x100 evaluations;1.42x median; concurrent full qualifier load; not isolated cache-only or full-frame result.",
+  "full720_session": 58786,
+  "new_full_run_state": "verified computing",
+  "existing_full_session": 62714,
+  "existing_full_pid": 96352,
+  "rendered_fps_proven": false,
+  "full720_pid": 7118,
+  "existing_full_session_status": "superseded intentionally after verified replacement"
+}

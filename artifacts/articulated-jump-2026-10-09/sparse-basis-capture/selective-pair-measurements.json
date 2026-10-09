@@ -1,0 +1,81 @@
+{
+  "scope": "12 captured frame3 pairs; 7 alternating runs x100; black_box inputs on both paths; concurrent full qualifier load",
+  "bitwise_fraction_agreement": true,
+  "pairs": [
+    {
+      "pair": 0,
+      "original_seconds_100": 0.000111417,
+      "selective_seconds_100": 0.0001175,
+      "ratio": 0.9482297872340425
+    },
+    {
+      "pair": 1,
+      "original_seconds_100": 0.003028,
+      "selective_seconds_100": 0.000494042,
+      "ratio": 6.1290335639480045
+    },
+    {
+      "pair": 2,
+      "original_seconds_100": 0.0001115,
+      "selective_seconds_100": 0.000117792,
+      "ratio": 0.9465838087476229
+    },
+    {
+      "pair": 3,
+      "original_seconds_100": 0.000110125,
+      "selective_seconds_100": 0.00011675,
+      "ratio": 0.9432548179871519
+    },
+    {
+      "pair": 4,
+      "original_seconds_100": 0.006417958,
+      "selective_seconds_100": 0.000526917,
+      "ratio": 12.180206749829669
+    },
+    {
+      "pair": 5,
+      "original_seconds_100": 0.005873958,
+      "selective_seconds_100": 0.000369667,
+      "ratio": 15.88986303889717
+    },
+    {
+      "pair": 6,
+      "original_seconds_100": 0.000101583,
+      "selective_seconds_100": 0.000107125,
+      "ratio": 0.9482660443407235
+    },
+    {
+      "pair": 7,
+      "original_seconds_100": 0.000101667,
+      "selective_seconds_100": 0.0001075,
+      "ratio": 0.945739534883721
+    },
+    {
+      "pair": 8,
+      "original_seconds_100": 0.000103083,
+      "selective_seconds_100": 0.000108459,
+      "ratio": 0.9504328824717174
+    },
+    {
+      "pair": 9,
+      "original_seconds_100": 0.0039325,
+      "selective_seconds_100": 0.00771925,
+      "ratio": 0.509440684004275
+    },
+    {
+      "pair": 10,
+      "original_seconds_100": 0.005659875,
+      "selective_seconds_100": 0.009399958,
+      "ratio": 0.6021170520123601
+    },
+    {
+      "pair": 11,
+      "original_seconds_100": 0.003719459,
+      "selective_seconds_100": 0.003688333,
+      "ratio": 1.0084390427870804
+    }
+  ],
+  "production_changed": false,
+  "decision": "Do not deploy this restart-based selective variant. It repeats initial sweep work and failed-certificate work for rejected candidates; measured regressions remain. Next candidate should resume validated conservative-advance state rather than restart it, and retain certificate result for the same immutable pair.",
+  "full_animation_or_fps_proof": false
+}

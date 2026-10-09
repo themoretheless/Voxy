@@ -1,0 +1,80 @@
+{
+  "scope": "12 captured frame3 pairs; 7 alternating runs x100; black_box inputs; concurrent qualifier load",
+  "bitwise_fraction_agreement": true,
+  "pairs": [
+    {
+      "pair": 0,
+      "original_seconds_100": 8.9125e-05,
+      "selective_seconds_100": 8.9625e-05,
+      "ratio": 0.9944211994421199
+    },
+    {
+      "pair": 1,
+      "original_seconds_100": 0.002387041,
+      "selective_seconds_100": 0.00038025,
+      "ratio": 6.277556870479947
+    },
+    {
+      "pair": 2,
+      "original_seconds_100": 8.8042e-05,
+      "selective_seconds_100": 8.85e-05,
+      "ratio": 0.9948248587570622
+    },
+    {
+      "pair": 3,
+      "original_seconds_100": 8.7792e-05,
+      "selective_seconds_100": 8.8333e-05,
+      "ratio": 0.9938754485865985
+    },
+    {
+      "pair": 4,
+      "original_seconds_100": 0.0050405,
+      "selective_seconds_100": 0.000403792,
+      "ratio": 12.482911994294092
+    },
+    {
+      "pair": 5,
+      "original_seconds_100": 0.004937709,
+      "selective_seconds_100": 0.000308083,
+      "ratio": 16.02720370809165
+    },
+    {
+      "pair": 6,
+      "original_seconds_100": 8.675e-05,
+      "selective_seconds_100": 8.7292e-05,
+      "ratio": 0.9937909544975484
+    },
+    {
+      "pair": 7,
+      "original_seconds_100": 8.6709e-05,
+      "selective_seconds_100": 8.7084e-05,
+      "ratio": 0.9956938128703321
+    },
+    {
+      "pair": 8,
+      "original_seconds_100": 8.9209e-05,
+      "selective_seconds_100": 8.9208e-05,
+      "ratio": 1.0000112097569724
+    },
+    {
+      "pair": 9,
+      "original_seconds_100": 0.003060208,
+      "selective_seconds_100": 0.003065959,
+      "ratio": 0.9981242410612797
+    },
+    {
+      "pair": 10,
+      "original_seconds_100": 0.004601875,
+      "selective_seconds_100": 0.004630083,
+      "ratio": 0.9939076686098284
+    },
+    {
+      "pair": 11,
+      "original_seconds_100": 0.003069791,
+      "selective_seconds_100": 0.00307725,
+      "ratio": 0.99757608254123
+    }
+  ],
+  "production_selector_enabled": false,
+  "full_animation_or_fps_proof": false
+}

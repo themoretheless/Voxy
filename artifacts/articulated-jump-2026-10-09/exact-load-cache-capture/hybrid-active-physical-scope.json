@@ -1,0 +1,15 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "gpu_stages": ["resident twice-MGS QR", "triangular equality solves", "coordinate recovery"],
+  "cpu_stages": ["active contact selection", "negative reaction release", "physical preparation", "original admission"],
+  "cases": [
+    {"capture": "../frozen-systems-capture/slow-contact-input.vqc", "systems": 21, "rows": 58, "coordinates": 2646, "active": 24, "iterations": 49, "equality_calls": 48, "absolute_physical_tolerance": 1e-14, "accelerated": true, "native_fallback_used": false, "log": "hybrid-active-physical-metal.log"},
+    {"capture": "slow-contact-input.vqc", "systems": 21, "rows": 61, "coordinates": 2646, "active": 24, "iterations": 55, "equality_calls": 54, "absolute_physical_tolerance": 1e-14, "accelerated": true, "native_fallback_used": false, "log": "hybrid-active-latest-physical-metal.log"}
+  ],
+  "manufactured_bounds": false,
+  "production_animation_backend_connected": false,
+  "complete_animation_qualified": false,
+  "cuda_qualified": false,
+  "rendered_fps_qualified": false
+}

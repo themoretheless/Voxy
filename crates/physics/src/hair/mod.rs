@@ -323,6 +323,12 @@ pub use contact_response_system::HairResponseSystem;
 /// Accelerator ownership remains outside physics; one callback receives all
 /// independent rod matrices from the current nonlinear iteration.
 pub trait HairLinearSolver {
+    /// Opt in to square-root joint contacts; defaults preserve legacy backends.
+    fn joint_contact_coordinates_enabled(&self)->bool {false}
+    fn solve_joint_coordinates(&mut self,_columns:&[Vec<f64>],_bounds:&[f64],_tolerance:f64)
+        ->Option<(Vec<f64>,Vec<f64>)> {None}
+    /// Physical owner reports whether the candidate survived original admission.
+    fn joint_contact_result(&mut self,_accelerated:bool) {}
     /// Explicit qualification opt-in for contact response batches.
     fn contact_responses_enabled(&self)->bool {false}
     fn solve(&mut self, systems: &[HairLinearSystem]) -> Result<Vec<Vec<f64>>, &'static str>;

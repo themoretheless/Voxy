@@ -1,0 +1,15 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "log": "joint-dot-metal-captured.log",
+  "scope": "rectangular W-transpose times vector, compensated paired-f32 GPU arithmetic",
+  "cases": [
+    {"rows": 67, "width": 129, "maximum_absolute_error_divided_by_sum_absolute_products": 1.849547488685115e-15},
+    {"rows": 58, "width": 2646, "maximum_absolute_error_divided_by_sum_absolute_products": 3.0711870537015963e-15, "capture": "../frozen-systems-capture/slow-contact-input.vqc"}
+  ],
+  "physical_joint_solver_connected": false,
+  "gpu_qr_verified": false,
+  "cuda_verified": false,
+  "rendered_fps_verified": false,
+  "decode_is_transport_validation_only": true
+}

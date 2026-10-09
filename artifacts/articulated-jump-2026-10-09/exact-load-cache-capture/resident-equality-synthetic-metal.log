@@ -1,0 +1,2 @@
+EQUALITY ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+RESIDENT EQUALITY columns=17 coordinates=129 bound_error=1.004674380259016e-14 force_error=2.8554729195466567e-15 coordinate_error=2.073617239194596e-15 intermediate_readbacks=0 manufactured_bounds=true unilateral_solver=false physical_rod_admission=false

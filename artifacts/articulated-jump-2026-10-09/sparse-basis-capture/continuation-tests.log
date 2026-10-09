@@ -1,0 +1,52 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+error[E0689]: can't call method `mul_add` on ambiguous numeric type `{float}`
+   --> crates/physics/src/hair/contact_continuous.rs:970:48
+    |
+964 |         for (speed, offset, slope) in [(1., 1e-7, -1e-8), (1., 0.4, -0.3),
+    |                             ----- you must specify a type for this binding, like `f32`
+...
+970 |                     whole_calls += 1; Ok(slope.mul_add(t, offset))
+    |                                                ^^^^^^^
+
+error[E0689]: can't call method `mul_add` on ambiguous numeric type `{float}`
+   --> crates/physics/src/hair/contact_continuous.rs:975:52
+    |
+964 |         for (speed, offset, slope) in [(1., 1e-7, -1e-8), (1., 0.4, -0.3),
+    |                             ----- you must specify a type for this binding, like `f32`
+...
+975 |                         split_calls += 1; Ok(slope.mul_add(t, offset))
+    |                                                    ^^^^^^^
+
+error[E0689]: can't call method `mul_add` on ambiguous numeric type `{float}`
+   --> crates/physics/src/hair/contact_continuous.rs:980:56
+    |
+964 |         for (speed, offset, slope) in [(1., 1e-7, -1e-8), (1., 0.4, -0.3),
+    |                             ----- you must specify a type for this binding, like `f32`
+...
+980 |                             split_calls += 1; Ok(slope.mul_add(t, offset))
+    |                                                        ^^^^^^^
+
+For more information about this error, try `rustc --explain E0689`.
+warning: `physics` (lib test) generated 2 warnings
+error: could not compile `physics` (lib test) due to 3 previous errors; 2 warnings emitted

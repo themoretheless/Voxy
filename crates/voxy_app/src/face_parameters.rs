@@ -2640,10 +2640,27 @@ impl FaceParameters {
         if active.is_empty() {
             return;
         }
+        let mut min_bound = Vec3::splat(f32::INFINITY);
+        let mut max_bound = Vec3::splat(f32::NEG_INFINITY);
+        for active_ctrl in &active {
+            let r = Vec3::from_array(active_ctrl.control.radius);
+            let c = active_ctrl.center;
+            let cx = c.x.abs();
+            min_bound = min_bound.min(Vec3::new(-cx - r.x, c.y - r.y, c.z - r.z));
+            max_bound = max_bound.max(Vec3::new(cx + r.x, c.y + r.y, c.z + r.z));
+        }
+
         let inverse = head.inverse();
         for vertex in vertices {
             let point = inverse.transform_point3(Vec3::from_array(vertex.position));
-            if point.y < 0.575 {
+            if point.y < 0.575
+                || point.x < min_bound.x
+                || point.x > max_bound.x
+                || point.y < min_bound.y
+                || point.y > max_bound.y
+                || point.z < min_bound.z
+                || point.z > max_bound.z
+            {
                 continue;
             }
             let mut delta = Vec3::ZERO;
@@ -2698,7 +2715,9 @@ impl FaceParameters {
                 };
                 delta[control.axis] += weight * side_weight * feature_weight * change;
             }
-            vertex.position = head.transform_point3(point + delta).to_array();
+            if delta != Vec3::ZERO {
+                vertex.position = head.transform_point3(point + delta).to_array();
+            }
         }
     }
 }

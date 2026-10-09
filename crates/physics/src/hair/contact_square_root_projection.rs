@@ -8,14 +8,25 @@ mod newton_diagnostics;
 pub(super) struct FrozenSystems<'a> {
     rods:&'a [HairRod],
     dt:f64,
+    loads:Vec<std::sync::Mutex<Option<crate::hair::contact_response_system::NativeLoadCache>>>,
     requests:Vec<std::sync::OnceLock<Result<crate::hair::HairResponseSystem,&'static str>>>,
 }
 impl<'a> FrozenSystems<'a> {
     pub(super) fn new(rods:&'a [HairRod],dt:f64)->Self {
-        Self {rods,dt,requests:(0..rods.len()).map(|_|std::sync::OnceLock::new()).collect()}
+        Self {rods,dt,loads:(0..rods.len()).map(|_|std::sync::Mutex::new(None)).collect(),requests:(0..rods.len()).map(|_|std::sync::OnceLock::new()).collect()}
     }
     #[cfg(test)]
     pub(super) fn assembled_count(&self)->usize {self.requests.iter().filter(|slot|slot.get().is_some()).count()}
+    #[cfg(test)]
+    pub(super) fn computed_load_columns(&self)->usize {
+        self.loads.iter().map(|slot|slot.lock().unwrap().as_ref().map_or(0,|cache|cache.computed_columns())).sum()
+    }
+    fn prepare_loads(&self, index:usize, request:&crate::hair::HairResponseSystem)
+        -> Result<(Vec<f64>,Vec<Vec<f64>>), &'static str> {
+        let mut slot = self.loads[index].lock().map_err(|_|"hair load cache poisoned")?;
+        if slot.is_none() { *slot = Some(crate::hair::contact_response_system::NativeLoadCache::new(request)?); }
+        slot.as_mut().unwrap().prepare(request)
+    }
     fn request(&self,index:usize)->Result<crate::hair::HairResponseSystem,&'static str> {
         self.requests[index].get_or_init(||response_batches::request_for_rod(&self.rods[index],self.dt,false)).clone()
     }
@@ -25,7 +36,7 @@ pub(super) fn solve_prepared(
 )->Result<PositionIncrement,&'static str> {
     let work=constraints.len().saturating_mul(constraints.len()).saturating_mul(systems.rods.len());
     let workers=if work>=100_000 {std::thread::available_parallelism().map_or(1,usize::from)} else {1};
-    solve_with_workers_prepared(constraints,systems.rods,systems.dt,free,tolerance,workers,Some(systems))
+    solve_with_workers_prepared(constraints,systems.rods,systems.dt,free,tolerance,workers,Some(systems),None)
 }
 
 pub(super) fn solve(
@@ -42,16 +53,21 @@ pub(super) fn solve(
 fn solve_with_workers(
     constraints:&mut [Constraint],rods:&[HairRod],dt:f64,free:PositionIncrement,tolerance:f64,workers:usize,
 )->Result<PositionIncrement, &'static str> {
-    solve_with_workers_prepared(constraints,rods,dt,free,tolerance,workers,None)
+    solve_with_workers_prepared(constraints,rods,dt,free,tolerance,workers,None,None)
 }
 fn solve_with_workers_prepared(
     constraints:&mut [Constraint],rods:&[HairRod],dt:f64,mut free:PositionIncrement,tolerance:f64,workers:usize,
-    prepared:Option<&FrozenSystems<'_>>,
+    prepared:Option<&FrozenSystems<'_>>,backend:Option<&mut dyn crate::hair::HairLinearSolver>,
 )->Result<PositionIncrement, &'static str> {
     let original=std::env::var_os("VOXY_HAIR_NEWTON_FAILURE_EXPORT").map(|_|free.clone());
     let groups = contact_islands(constraints, rods.len())?;
     let scale = constraints.iter().map(|c|c.bound.abs().max(c.speed(&free).abs())).fold(1.,f64::max);
-    let results=solve_independent_islands(&groups,constraints,rods,dt,&free,tolerance*scale,workers,prepared)?;
+    let results=if let Some(backend)=backend {
+        groups.iter().map(|(ids,rows)| {
+            let (requests,bounds)=prepare_island(ids,rows,constraints,rods,dt,&free,prepared)?;
+            solve_island_increment(&requests,ids,rows,constraints,&free,&bounds,tolerance*scale,prepared,Some(&mut *backend))
+        }).collect::<Result<Vec<_>,_>>()?
+    } else {solve_independent_islands(&groups,constraints,rods,dt,&free,tolerance*scale,workers,prepared)?};
     let mut staged_reactions=vec![0.;constraints.len()];
     for ((ids,rows),(responses,reactions)) in groups.iter().zip(results) {
         for (&r, response) in ids.iter().zip(responses) {
@@ -95,12 +111,16 @@ fn solve_with_workers_prepared(
     Ok(free)
 }
 
-type IslandSolution=(Vec<Vec<f64>>,Vec<f64>);
-fn solve_independent_islands(
-    groups:&[(Vec<usize>,Vec<usize>)],constraints:&[Constraint],rods:&[HairRod],dt:f64,
-    free:&PositionIncrement,tolerance:f64,workers:usize,prepared:Option<&FrozenSystems<'_>>,
-)->Result<Vec<IslandSolution>, &'static str> {
-    let solve_one=|(ids,rows):&(Vec<usize>,Vec<usize>)|->Result<IslandSolution, &'static str> {
+pub(super) fn solve_accelerated(constraints:&mut [Constraint],rods:&[HairRod],dt:f64,free:PositionIncrement,tolerance:f64,
+    backend:&mut dyn crate::hair::HairLinearSolver)->Result<PositionIncrement,&'static str> {
+    solve_with_workers_prepared(constraints,rods,dt,free,tolerance,1,None,Some(backend))
+}
+pub(super) fn solve_accelerated_prepared(constraints:&mut [Constraint],systems:&FrozenSystems<'_>,free:PositionIncrement,tolerance:f64,
+    backend:&mut dyn crate::hair::HairLinearSolver)->Result<PositionIncrement,&'static str> {
+    solve_with_workers_prepared(constraints,systems.rods,systems.dt,free,tolerance,1,Some(systems),Some(backend))
+}
+fn prepare_island(ids:&[usize],rows:&[usize],constraints:&[Constraint],rods:&[HairRod],dt:f64,
+    free:&PositionIncrement,prepared:Option<&FrozenSystems<'_>>)->Result<(Vec<crate::hair::HairResponseSystem>,Vec<f64>),&'static str> {
         if rows.len() > 512 {
             return Err("native square-root contact island exceeds capacity");
         }
@@ -124,8 +144,18 @@ fn solve_independent_islands(
             .iter()
             .map(|&i| constraints[i].bound - constraints[i].speed(free))
             .collect();
+    Ok((requests,bounds))
+}
+
+type IslandSolution=(Vec<Vec<f64>>,Vec<f64>);
+fn solve_independent_islands(
+    groups:&[(Vec<usize>,Vec<usize>)],constraints:&[Constraint],rods:&[HairRod],dt:f64,
+    free:&PositionIncrement,tolerance:f64,workers:usize,prepared:Option<&FrozenSystems<'_>>,
+)->Result<Vec<IslandSolution>, &'static str> {
+    let solve_one=|(ids,rows):&(Vec<usize>,Vec<usize>)|->Result<IslandSolution, &'static str> {
+        let (requests,bounds)=prepare_island(ids,rows,constraints,rods,dt,free,prepared)?;
         let (responses, reactions) = solve_island_increment(
-            &requests,ids,rows,constraints,free,&bounds,tolerance)?;
+            &requests,ids,rows,constraints,free,&bounds,tolerance,prepared,None)?;
         Ok((responses,reactions))
     };
     let workers=workers.max(1).min(groups.len());
@@ -160,13 +190,21 @@ fn solve_independent_islands(
 fn solve_island_increment(
     requests:&[crate::hair::HairResponseSystem],ids:&[usize],rows:&[usize],
     constraints:&[Constraint],free:&PositionIncrement,original_bounds:&[f64],tolerance:f64,
+    frozen:Option<&FrozenSystems<'_>>,mut backend:Option<&mut dyn crate::hair::HairLinearSolver>,
 )->Result<(Vec<Vec<f64>>,Vec<f64>), &'static str> {
     let mut slots=vec![None;free.linear.len()];
     for (slot,&r) in ids.iter().enumerate() {slots[r]=Some(slot);}
     let mut bounds=original_bounds.to_vec();
+    let prepared = if let Some(frozen) = frozen {
+        crate::hair::contact_response_system::PreparedNativeJoint::new_with_preparation(requests, &bounds, tolerance,
+            |index, request| frozen.prepare_loads(ids[index], request))?
+    } else { crate::hair::contact_response_system::PreparedNativeJoint::new(requests, &bounds, tolerance)? };
     for refinement in 0..8 {
-        let (responses,reactions)=crate::hair::HairResponseSystem::solve_joint_load_inequalities_native(
-            requests,&bounds,tolerance)?;
+        let (responses,reactions)=if let Some(backend)=backend.as_deref_mut() {
+            let (responses,reactions,accelerated)=prepared.solve_accelerated(&bounds,tolerance,
+                |columns,bounds,tolerance|backend.solve_joint_coordinates(columns,bounds,tolerance))?;
+            backend.joint_contact_result(accelerated);(responses,reactions)
+        } else {prepared.solve(&bounds,tolerance)?};
         let mut admitted=true;
         for (i,&row) in rows.iter().enumerate() {
             let c=&constraints[row];
@@ -268,7 +306,7 @@ mod tests {
         assert!((row.speed(&add_response(&local[0]))-row.bound).abs()>tolerance,
             "admitted local load response can fail after rounded free addition");
         let (responses,reactions)=solve_island_increment(&requests,&[0],&[0],
-            std::slice::from_ref(&row),&free,&bounds,tolerance).unwrap();
+            std::slice::from_ref(&row),&free,&bounds,tolerance,None,None).unwrap();
         let candidate=add_response(&responses[0]);
         assert!((row.speed(&candidate)-row.bound).abs()<=tolerance);
         assert!(reactions[0]>0.);

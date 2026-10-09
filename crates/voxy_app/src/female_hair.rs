@@ -894,6 +894,8 @@ mod tests {
         assert!(solver.contact_residual_refinements.is_none_or(|value|value<=3));
         solver.reuse_refinement_factors=std::env::var_os("VOXY_HAIR_REUSE_REFINEMENT_FACTORS").is_some();
         solver.contact_response_batches=std::env::var_os("VOXY_HAIR_CONTACT_RESPONSE_BATCHES").is_some();
+        solver.joint_contact_qr=std::env::var_os("VOXY_HAIR_JOINT_QR").is_some();
+        eprintln!("HYBRID JOINT QR {}",solver.joint_contact_qr);
         solver.batch_response_waves=std::env::var_os("VOXY_HAIR_BATCH_RESPONSE_WAVES").is_some();
         solver.compact_response_readback=std::env::var_os("VOXY_HAIR_COMPACT_RESPONSE_READBACK").is_some();
         solver.gpu_response_transport=std::env::var_os("VOXY_HAIR_GPU_RESPONSE_TRANSPORT").is_some();
@@ -921,6 +923,7 @@ mod tests {
         eprintln!("HYBRID CONTACT CASE {contact_case}");
         let cpu_control=std::env::var_os("VOXY_HAIR_CPU_CONTROL").is_some();
         let native_only=std::env::var_os("VOXY_HAIR_NATIVE_ONLY").is_some();
+        assert!(!solver.joint_contact_qr || (!native_only && !cpu_control),"joint GPU qualification requires the actual GPU backend");
         assert!(!native_only||cpu_control,"native-only qualification requires explicit CPU control");
         let perturbation=std::env::var("VOXY_HAIR_CPU_SCALE_PERTURBATION").ok().map(|v|v.parse::<f64>().unwrap()).unwrap_or(0.);
         assert!(perturbation.is_finite() && perturbation.abs()<=1e-9);
@@ -1021,6 +1024,8 @@ mod tests {
         eprintln!("HYBRID RESIDUAL REFINEMENT DISPATCHES {}",solver.refinement_dispatches);
         eprintln!("HYBRID REUSED FACTOR DISPATCHES {}",solver.reused_factor_dispatches);
         eprintln!("HYBRID CONTACT RESPONSE CALLS {} DISPATCHES {} SUBMISSIONS {}",solver.response_calls,solver.response_dispatches,solver.response_submissions);
+        eprintln!("HYBRID JOINT CONTACT CALLS {} EQUALITY DISPATCHES {} ADMITTED {} NATIVE FALLBACKS {}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_admitted,solver.joint_native_fallbacks);
+        if solver.joint_contact_qr {assert!(solver.joint_coordinate_calls>0 && solver.joint_admitted>0,"joint qualification did not admit GPU contact output");}
         assert_eq!(gpu.system.rods().len(),469);assert_eq!(if cpu_control {control.calls} else {solver.calls},expected_calls);
         if swept && !cpu_control {assert!(solver.response_calls>0,"swept structural motion must exercise the response backend");}
         assert!(position_error<1e-6,"GPU position drift {position_error}");
