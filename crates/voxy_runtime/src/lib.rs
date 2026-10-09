@@ -12,7 +12,8 @@ use voxy_core::{ChunkPos, TickId, WorldEpoch};
 
 pub use bootstrap::{
     BootstrapChunk, BootstrapError, BootstrapScene, build_bootstrap_mesh, build_bootstrap_scene,
-    build_generated_scene, build_procedural_scene, rebuild_bootstrap_chunks,
+    build_generated_scene, build_procedural_scene, invalidated_derived_chunks,
+    rebuild_bootstrap_chunks,
 };
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]

@@ -93,9 +93,10 @@ pub fn raycast(
     let mut voxel = origin.voxel;
     let mut distance = 0.0;
     let mut normal = [0_i8; 3];
+    let mut cursor = crate::chunk_cursor::ChunkCursor::new(view);
 
     for _ in 0..config.max_steps {
-        match view.sample(voxel) {
+        match cursor.sample(voxel) {
             Sample::Loaded(block) if block != BlockStateId::AIR => {
                 return Ok(RaycastResult::Hit(VoxelHit {
                     pos: voxel,

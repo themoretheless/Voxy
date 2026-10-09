@@ -99,6 +99,8 @@ pub struct SceneApp {
     paused: bool,
     occluded: bool,
     female_window_title: String,
+    /// Last title pushed to the windowing system by the gravity / X-ray / tissue paths.
+    last_title: String,
     done: bool,
     recovering_gpu: bool,
     injected_device_loss: bool,
@@ -152,6 +154,7 @@ impl SceneApp {
             paused: false,
             occluded: false,
             female_window_title: String::new(),
+            last_title: String::new(),
             done: false,
             recovering_gpu: false,
             injected_device_loss: false,
@@ -609,12 +612,19 @@ impl SceneApp {
                 scene.reload_shader(host.device(), crate::female_eyes::MATERIAL_SHADER),
             )?;
         }
-        let use_gpu_hair=std::env::var_os("VOXY_ASYNC_FULL").is_some()
+        let use_gpu_hair = std::env::var_os("VOXY_ASYNC_FULL").is_some()
             && std::env::var_os("VOXY_DISABLE_GPU_HAIR").is_none()
-            && self.female.as_ref().is_some_and(|f| f.face_parameters==crate::face_parameters::FaceParameters::default()
-                && f.film.is_none() && f.simulate_hair);
+            && self.female.as_ref().is_some_and(|f| {
+                f.face_parameters == crate::face_parameters::FaceParameters::default()
+                    && f.film.is_none()
+                    && f.simulate_hair
+            });
         let mesh = if let Some(female) = &self.female {
-            if use_gpu_hair { female.mesh_with_full_hair()? } else { female.mesh()? }
+            if use_gpu_hair {
+                female.mesh_with_full_hair()?
+            } else {
+                female.mesh()?
+            }
         } else if let Some(xray) = &self.xray {
             xray.shell(Vec3::new(0.0, 0.2, 3.0))?
         } else if let Some(fem) = &self.fem {
@@ -635,22 +645,55 @@ impl SceneApp {
             cube_mesh()?
         };
         let mut hair_geometry = None;
-        let mut gpu_hair=None;
+        let mut gpu_hair = None;
         let cube = if use_gpu_hair {
-            let female=self.female.as_ref().ok_or("resident hair requires full model")?;
-            let (_,indices)=crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
-            let mut hair=scene.upload_compute_mesh(host.device(),&mesh)?;
-            hair.update_index_partition(host.queue(),if female.show_hair { &indices } else { &[] })?;
-            pollster::block_on(scene.set_geometry_opaque_shader(host.device(),&mut hair,include_str!("female_hair_material.wgsl")))?;
-            let input=female.gpu_hair_surface_input()?;
-            let base=mesh.vertices().iter().position(|v| v.uv[0]==-7.).ok_or("missing full hair surface")?;
-            let program=pollster::block_on(voxy_render::ComputeProgram::new(host.device(),voxy_render::FIBER_SURFACE_SHADER))?;
-            let job=program.create_job(host.device(),input.bytes())?;
-            let transfer=pollster::block_on(voxy_render::FiberSurfaceTransfer::new(host.device(),&hair,job.buffer(),&input,base as u32))?;
-            eprintln!("FULL MODEL GPU HAIR initialized vertices={} resident=true",input.vertex_count());
-            gpu_hair=Some(ResidentHair { input,job,transfer,indices,dirty:true });
-            hair_geometry=Some(hair);
-            scene.upload_mesh(host.device(),&female.mesh_without_hair()?)?
+            let female = self
+                .female
+                .as_ref()
+                .ok_or("resident hair requires full model")?;
+            let (_, indices) =
+                crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
+            let mut hair = scene.upload_compute_mesh(host.device(), &mesh)?;
+            hair.update_index_partition(
+                host.queue(),
+                if female.show_hair { &indices } else { &[] },
+            )?;
+            pollster::block_on(scene.set_geometry_opaque_shader(
+                host.device(),
+                &mut hair,
+                include_str!("female_hair_material.wgsl"),
+            ))?;
+            let input = female.gpu_hair_surface_input()?;
+            let base = mesh
+                .vertices()
+                .iter()
+                .position(|v| v.uv[0] == -7.)
+                .ok_or("missing full hair surface")?;
+            let program = pollster::block_on(voxy_render::ComputeProgram::new(
+                host.device(),
+                voxy_render::FIBER_SURFACE_SHADER,
+            ))?;
+            let job = program.create_job(host.device(), input.bytes())?;
+            let transfer = pollster::block_on(voxy_render::FiberSurfaceTransfer::new(
+                host.device(),
+                &hair,
+                job.buffer(),
+                &input,
+                base as u32,
+            ))?;
+            eprintln!(
+                "FULL MODEL GPU HAIR initialized vertices={} resident=true",
+                input.vertex_count()
+            );
+            gpu_hair = Some(ResidentHair {
+                input,
+                job,
+                transfer,
+                indices,
+                dirty: true,
+            });
+            hair_geometry = Some(hair);
+            scene.upload_mesh(host.device(), &female.mesh_without_hair()?)?
         } else if std::env::var_os("VOXY_ASYNC_FULL").is_some() {
             let (body, hair) =
                 crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
@@ -762,6 +805,8 @@ impl SceneApp {
         let world_transform = scene.create_transform(host.device(), Mat4::IDENTITY)?;
         let overlay_transform = scene.create_transform(host.device(), Mat4::IDENTITY)?;
         println!("SCENE GPU: {:?}", host.adapter_info());
+        // Fresh resources (first start or GPU recovery): forget the cached title so it is re-sent.
+        self.last_title.clear();
         if self.liquids.is_some() || self.wear.is_some() || self.fem.is_some() {
             window.set_title(
                 if self.fem.is_some() { "Voxy FEM | dynamic fracture | Space: pause | R: reset | Esc: exit" } else if self.wear.is_some() { "Voxy wear | receding solid and emitted grains | Space: pause | R: reset | Esc: exit" } else if self.liquid_optics { "Voxy liquid optics | water (left), oil (right) | Space: pause | R: reset | Esc: exit" } else { "Voxy liquids | water (blue), oil (gold) | Space: pause | R: reset | Esc: exit" },
@@ -771,7 +816,7 @@ impl SceneApp {
             window.set_title("Voxy grass & hair | Space: pause | Esc: exit");
         }
         if let Some(gravity) = &self.gravity {
-            window.set_title(&gravity.title());
+            set_title_if_changed(&window, &mut self.last_title, gravity.title());
         }
         if self.tissues.as_ref().is_some_and(|t| t.is_body()) {
             window.set_title(
@@ -857,7 +902,11 @@ impl SceneApp {
             let view = simulation.background_view_replica()?;
             let controls = crate::full_model_worker::Controls::capture(&view, self.paused);
             self.full_model_worker = Some(crate::full_model_worker::FullModelWorker::new(
-                simulation, controls, self.resources.as_ref().is_some_and(|r| r.gpu_hair.is_some()),
+                simulation,
+                controls,
+                self.resources
+                    .as_ref()
+                    .is_some_and(|r| r.gpu_hair.is_some()),
             )?);
             self.female = Some(view);
         }
@@ -943,10 +992,9 @@ impl SceneApp {
                 if let Some(title) = tissues
                     .body_motion_title()
                     .or_else(|| tissues.biomechanics_title())
+                    && let Some(window) = &self.window
                 {
-                    if let Some(window) = &self.window {
-                        window.set_title(&title);
-                    }
+                    set_title_if_changed(window, &mut self.last_title, title);
                 }
             } else if let Some(gravity) = &mut self.gravity {
                 if self.smoke && self.frames >= 30 && self.gravity_smoke_stage == 0 {
@@ -1030,10 +1078,10 @@ impl SceneApp {
             return Ok(());
         };
         if let Some(gravity) = &self.gravity {
-            window.set_title(&gravity.title());
+            set_title_if_changed(window, &mut self.last_title, gravity.title());
         }
         if let Some(xray) = &self.xray {
-            window.set_title(&xray.title());
+            set_title_if_changed(window, &mut self.last_title, xray.title());
         }
         let size = window.inner_size();
         if size.width == 0 || size.height == 0 {
@@ -1151,35 +1199,62 @@ impl SceneApp {
                 r.last_view_position = Some(view_position);
             }
             let prepared_mesh = if let Some(worker) = &mut self.full_model_worker {
-                let result = worker
-                    .poll(crate::full_model_worker::Controls::capture(
-                        female,
-                        self.paused,
-                    ));
+                let result = worker.poll(crate::full_model_worker::Controls::capture(
+                    female,
+                    self.paused,
+                ));
                 let result = match result {
                     Ok(frame) => frame,
                     Err(error) => {
-                        eprintln!("Full-model preparation failed; retaining last uploaded pose: {error}");
+                        eprintln!(
+                            "Full-model preparation failed; retaining last uploaded pose: {error}"
+                        );
                         None
                     }
                 };
                 if let Some(frame) = result {
-                    eprintln!("FULL MODEL WORKER work_ms={:.3} physics_ms={:.3} mesh_ms={:.3} partition_ms={:.3} streams_ms={:.3} skin_solver_ms={:.3} hair_solver_ms={:.3} simulated_s={:.6}", frame.work_ms, frame.phase_ms[0], frame.phase_ms[1], frame.phase_ms[2], frame.phase_ms[3],frame.solver_ms[0],frame.solver_ms[1],frame.simulation_time);
+                    eprintln!(
+                        "FULL MODEL WORKER work_ms={:.3} physics_ms={:.3} mesh_ms={:.3} partition_ms={:.3} streams_ms={:.3} skin_solver_ms={:.3} hair_solver_ms={:.3} simulated_s={:.6}",
+                        frame.work_ms,
+                        frame.phase_ms[0],
+                        frame.phase_ms[1],
+                        frame.phase_ms[2],
+                        frame.phase_ms[3],
+                        frame.solver_ms[0],
+                        frame.solver_ms[1],
+                        frame.simulation_time
+                    );
                     let upload_started = Instant::now();
-                    if let Some(gpu)=&mut r.gpu_hair {
-                        let frames=frame.hair_frames.as_ref().ok_or("missing solved GPU hair frames")?;
-                        let bytes=gpu.input.replace_frames(frames)?;
-                        let uploaded=bytes.len();
-                        r.cube.update(r.host.queue(),&frame.mesh)?;
-                        r.host.queue().write_buffer(gpu.job.buffer(),32,bytes);
-                        gpu.dirty=true;
-                        if let Some(hair)=&mut r.hair_geometry {
-                            hair.update_index_partition(r.host.queue(),if frame.hair_visible { &gpu.indices } else { &[] })?;
+                    if let Some(gpu) = &mut r.gpu_hair {
+                        let frames = frame
+                            .hair_frames
+                            .as_ref()
+                            .ok_or("missing solved GPU hair frames")?;
+                        let bytes = gpu.input.replace_frames(frames)?;
+                        let uploaded = bytes.len();
+                        r.cube.update(r.host.queue(), &frame.mesh)?;
+                        r.host.queue().write_buffer(gpu.job.buffer(), 32, bytes);
+                        gpu.dirty = true;
+                        if let Some(hair) = &mut r.hair_geometry {
+                            hair.update_index_partition(
+                                r.host.queue(),
+                                if frame.hair_visible {
+                                    &gpu.indices
+                                } else {
+                                    &[]
+                                },
+                            )?;
                         }
-                        eprintln!("FULL MODEL GPU HAIR frame body_vertices={} hair_vertices={} upload_bytes={uploaded} cpu_hair_vertices=0",frame.mesh.vertices().len(),gpu.input.vertex_count());
+                        eprintln!(
+                            "FULL MODEL GPU HAIR frame body_vertices={} hair_vertices={} upload_bytes={uploaded} cpu_hair_vertices=0",
+                            frame.mesh.vertices().len(),
+                            gpu.input.vertex_count()
+                        );
                     } else {
-                        r.cube.update_shared_vertex_streams(r.host.queue(), &frame.mesh)?;
-                        r.cube.update_index_partition(r.host.queue(), &frame.body_indices)?;
+                        r.cube
+                            .update_shared_vertex_streams(r.host.queue(), &frame.mesh)?;
+                        r.cube
+                            .update_index_partition(r.host.queue(), &frame.body_indices)?;
                         if let Some(hair) = &mut r.hair_geometry {
                             hair.update_index_partition(r.host.queue(), &frame.hair_indices)?;
                         }
@@ -1187,7 +1262,10 @@ impl SceneApp {
                     if std::env::var_os("VOXY_PRESENT_PROFILE").is_some()
                         || std::env::var_os("VOXY_FRAME_PROFILE").is_some()
                     {
-                        eprintln!("FULL MODEL CPU UPLOAD stage_ms={:.3}", upload_started.elapsed().as_secs_f64()*1000.);
+                        eprintln!(
+                            "FULL MODEL CPU UPLOAD stage_ms={:.3}",
+                            upload_started.elapsed().as_secs_f64() * 1000.
+                        );
                     }
                 }
                 None
@@ -1442,12 +1520,15 @@ impl SceneApp {
                 });
             }
         }
-        if let Some(rush) = &self.rush {
+        if let Some(rush) = &mut self.rush {
+            let visible = rush.panel_visible;
             let text = rush.panel_text();
-            if rush.panel_visible {
+            if visible {
                 if r.rush_panel.as_ref().is_none_or(|panel| panel.text != text) {
                     r.rush_panel = Some(crate::rush_diagnostics::DiagnosticPanel::build(
-                        &r.scene, &r.host, text,
+                        &r.scene,
+                        &r.host,
+                        text.to_owned(),
                     )?);
                 }
                 if let Some(panel) = &r.rush_panel {
@@ -1503,12 +1584,20 @@ impl SceneApp {
                 &active_draws,
                 &refractive_layers,
                 |queue, encoder| {
-                    if let Some(hair)=&mut r.gpu_hair {
+                    if let Some(hair) = &mut r.gpu_hair {
                         if hair.dirty {
-                            hair.job.encode_step(encoder,[hair.input.vertex_count().div_ceil(64),1,1])
-                                .map_err(|_| voxy_render::RendererError::Scene(voxy_render::SceneError::InvalidGeometry))?;
+                            hair.job
+                                .encode_step(
+                                    encoder,
+                                    [hair.input.vertex_count().div_ceil(64), 1, 1],
+                                )
+                                .map_err(|_| {
+                                    voxy_render::RendererError::Scene(
+                                        voxy_render::SceneError::InvalidGeometry,
+                                    )
+                                })?;
                             hair.transfer.encode(encoder);
-                            hair.dirty=false;
+                            hair.dirty = false;
                         }
                     }
                     if update_gpu
@@ -1753,6 +1842,13 @@ impl SceneApp {
         self.failure = Some(error.to_string());
         eprintln!("SCENE ERROR: {error}");
         event_loop.exit();
+    }
+}
+/// Push `title` to the windowing system only when it differs from the last one sent.
+fn set_title_if_changed(window: &Window, last_title: &mut String, title: String) {
+    if *last_title != title {
+        window.set_title(&title);
+        *last_title = title;
     }
 }
 impl ApplicationHandler for SceneApp {

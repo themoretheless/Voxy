@@ -266,9 +266,17 @@ pub const HALO_OFFSETS: [HaloOffset; 26] = [
 ];
 
 impl HaloOffset {
+    /// Position in [`HALO_OFFSETS`]: `dx` varies fastest, then `dz`, then `dy`, with the
+    /// center excluded. Pinned by `halo_order_is_unique_and_canonical`.
     #[must_use]
     pub fn index(self) -> Option<usize> {
-        HALO_OFFSETS.iter().position(|candidate| *candidate == self)
+        let component = |value: i8| usize::try_from(value + 1).ok().filter(|v| *v < 3);
+        let raw = component(self.dx)? + 3 * component(self.dz)? + 9 * component(self.dy)?;
+        match raw.cmp(&13) {
+            std::cmp::Ordering::Less => Some(raw),
+            std::cmp::Ordering::Equal => None,
+            std::cmp::Ordering::Greater => Some(raw - 1),
+        }
     }
 }
 
@@ -368,6 +376,45 @@ pub fn build_naive_mesh(
     Ok(finish_mesh(quads))
 }
 
+/// Face-classification data for one distinct block of a chunk.
+#[derive(Clone, Copy, Debug)]
+struct SlotClass {
+    /// `None` for unregistered or invisible blocks, which emit no faces.
+    layer: Option<RenderLayer>,
+    /// Registered at all; unknown neighbors never occlude.
+    known: bool,
+    full_cube: bool,
+    group: Option<voxy_world::InterfaceGroupId>,
+    materials: [MaterialId; 6],
+}
+
+impl SlotClass {
+    fn classify(registry: &BlockRegistry, block: BlockStateId) -> Self {
+        let Some(definition) = registry.get(block) else {
+            return Self {
+                layer: None,
+                known: false,
+                full_cube: false,
+                group: None,
+                materials: [MaterialId(0); 6],
+            };
+        };
+        let layer = match definition.render {
+            RenderKind::Invisible => None,
+            RenderKind::Opaque => Some(RenderLayer::Opaque),
+            RenderKind::Cutout => Some(RenderLayer::Cutout),
+            RenderKind::Translucent => Some(RenderLayer::Translucent),
+        };
+        Self {
+            layer,
+            known: true,
+            full_cube: definition.occlusion == Occlusion::FullCube,
+            group: definition.translucent_interface_group,
+            materials: definition.face_materials,
+        }
+    }
+}
+
 /// Builds a deterministic greedy quad mesh using the same classifier as the oracle.
 ///
 /// # Errors
@@ -377,127 +424,45 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
     if cancel.is_cancelled() {
         return Err(MeshError::Cancelled);
     }
-    if let voxy_world::PalettedBlocks::Uniform(block) = &input.center.data.blocks {
-        if let Some(def) = input.registry.get(*block) {
-            if def.render == RenderKind::Invisible {
-                return Ok(finish_mesh(Vec::new()));
-            }
-        }
+    if let voxy_world::PalettedBlocks::Uniform(block) = &input.center.data.blocks
+        && input
+            .registry
+            .get(*block)
+            .is_some_and(|def| def.render == RenderKind::Invisible)
+    {
+        return Ok(finish_mesh(Vec::new()));
     }
 
-    let center_dense = input.center.data.blocks.to_dense();
+    // Classify each distinct block once; interior slices then only compare slots.
+    let (palette, slots) = input.center.data.blocks.palette_indices();
+    let classes: Vec<SlotClass> = palette
+        .iter()
+        .map(|&block| SlotClass::classify(&input.registry, block))
+        .collect();
+    let rows = uniform_rows(&slots);
+    // One distinct block that never faces itself (occluding, grouped or invisible)
+    // cannot produce interior faces at all.
+    let skip_interior = palette.len() == 1 && interior_face(&classes, 0, 0, 0).is_none();
     let mut quads = Vec::new();
     let mut mask = [None; 32 * 32];
 
     for face in FaceDir::ALL {
-        let (normal_axis, u_axis, v_axis) = face.axes();
-        let normal = face.normal();
-        let mat_idx = face.material_index();
-
         for slice in 0_u8..32 {
             if cancel.is_cancelled() {
                 return Err(MeshError::Cancelled);
             }
-
-            let mut mask_has_any = false;
             let is_boundary = match face {
                 FaceDir::NegX | FaceDir::NegY | FaceDir::NegZ => slice == 0,
                 FaceDir::PosX | FaceDir::PosY | FaceDir::PosZ => slice == 31,
             };
-
-            if is_boundary {
-                for v in 0_u8..32 {
-                    for u in 0_u8..32 {
-                        let mut cell = [0_u8; 3];
-                        cell[normal_axis] = slice;
-                        cell[u_axis] = u;
-                        cell[v_axis] = v;
-                        let cell_index = usize::from(cell[0])
-                            + 32 * (usize::from(cell[2]) + 32 * usize::from(cell[1]));
-                        let source = center_dense[cell_index];
-                        if source == BlockStateId::AIR {
-                            continue;
-                        }
-                        let nx = i16::from(cell[0]) + normal[0];
-                        let ny = i16::from(cell[1]) + normal[1];
-                        let nz = i16::from(cell[2]) + normal[2];
-                        let neighbor = sample_relative(input, nx, ny, nz);
-                        if let FaceDecision::Emit { material, layer } =
-                            classify_directed_face(source, &neighbor, face, &input.registry)
-                        {
-                            mask[usize::from(v) * 32 + usize::from(u)] = Some((material, layer));
-                            mask_has_any = true;
-                        }
-                    }
-                }
-            } else {
-                let neighbor_offset: isize = match face {
-                    FaceDir::PosX => 1,
-                    FaceDir::NegX => -1,
-                    FaceDir::PosY => 1024,
-                    FaceDir::NegY => -1024,
-                    FaceDir::PosZ => 32,
-                    FaceDir::NegZ => -32,
-                };
-
-                for v in 0_u8..32 {
-                    let v_idx = usize::from(v);
-                    let v_base = match face {
-                        FaceDir::NegX | FaceDir::PosX => usize::from(slice) + 1024 * v_idx,
-                        FaceDir::NegY | FaceDir::PosY => 32 * v_idx + 1024 * usize::from(slice),
-                        FaceDir::NegZ | FaceDir::PosZ => 32 * usize::from(slice) + 1024 * v_idx,
-                    };
-                    let u_stride = match face {
-                        FaceDir::NegX | FaceDir::PosX => 32,
-                        FaceDir::NegY | FaceDir::PosY | FaceDir::NegZ | FaceDir::PosZ => 1,
-                    };
-
-                    for u in 0_u8..32 {
-                        let u_idx = usize::from(u);
-                        let cell_index = v_base + u_idx * u_stride;
-                        let source = center_dense[cell_index];
-                        if source == BlockStateId::AIR {
-                            continue;
-                        }
-                        let Some(source_def) = input.registry.get(source) else {
-                            continue;
-                        };
-                        let layer = match source_def.render {
-                            RenderKind::Invisible => continue,
-                            RenderKind::Opaque => RenderLayer::Opaque,
-                            RenderKind::Cutout => RenderLayer::Cutout,
-                            RenderKind::Translucent => RenderLayer::Translucent,
-                        };
-
-                        let n_index = (cell_index as isize + neighbor_offset) as usize;
-                        let neighbor_id = center_dense[n_index];
-
-                        if neighbor_id == source {
-                            if source_def.occlusion == Occlusion::FullCube
-                                || source_def.translucent_interface_group.is_some()
-                            {
-                                continue;
-                            }
-                        } else if neighbor_id != BlockStateId::AIR {
-                            if let Some(neighbor_def) = input.registry.get(neighbor_id) {
-                                if neighbor_def.occlusion == Occlusion::FullCube {
-                                    continue;
-                                }
-                                if source_def.translucent_interface_group.is_some()
-                                    && source_def.translucent_interface_group
-                                        == neighbor_def.translucent_interface_group
-                                {
-                                    continue;
-                                }
-                            }
-                        }
-
-                        mask[v_idx * 32 + u_idx] = Some((source_def.face_materials[mat_idx], layer));
-                        mask_has_any = true;
-                    }
-                }
+            if !is_boundary && skip_interior {
+                continue;
             }
-
+            let mask_has_any = if is_boundary {
+                boundary_mask(input, &palette, &slots, face, slice, &mut mask)
+            } else {
+                interior_mask(&classes, &slots, &rows, face, slice, &mut mask)
+            };
             if mask_has_any {
                 merge_mask(&mut mask, face, slice, &mut quads)?;
             }
@@ -506,8 +471,208 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
     Ok(finish_mesh(quads))
 }
 
+type FaceMask = [Option<(MaterialId, RenderLayer)>; 1024];
+
+/// Fills the mask of a chunk-boundary slice by sampling the halo through the oracle classifier.
+///
+/// A boundary slice faces exactly one halo chunk, resolved once per slice; every cell then
+/// reads the mirrored boundary cell of that neighbor or reports it unloaded, exactly as
+/// [`sample_relative`] would.
+fn boundary_mask(
+    input: &MeshingInput,
+    palette: &[BlockStateId],
+    slots: &[u16],
+    face: FaceDir,
+    slice: u8,
+    mask: &mut FaceMask,
+) -> bool {
+    let (normal_axis, u_axis, v_axis) = face.axes();
+    let normal = face.normal();
+    let offset = HaloOffset {
+        dx: i8::try_from(normal[0]).unwrap_or(0),
+        dy: i8::try_from(normal[1]).unwrap_or(0),
+        dz: i8::try_from(normal[2]).unwrap_or(0),
+    };
+    let chunk = ChunkPos {
+        x: input.center.pos.x.saturating_add(i64::from(offset.dx)),
+        y: input.center.pos.y.saturating_add(i64::from(offset.dy)),
+        z: input.center.pos.z.saturating_add(i64::from(offset.dz)),
+    };
+    let neighbor = offset
+        .index()
+        .and_then(|index| input.neighbors[index].as_ref());
+    let mirrored = if face.positive() { 0 } else { 31 };
+    let mut mask_has_any = false;
+    for v in 0_u8..32 {
+        for u in 0_u8..32 {
+            let mut cell = [0_u8; 3];
+            cell[normal_axis] = slice;
+            cell[u_axis] = u;
+            cell[v_axis] = v;
+            let cell_index =
+                usize::from(cell[0]) + 32 * (usize::from(cell[2]) + 32 * usize::from(cell[1]));
+            let source = palette[usize::from(slots[cell_index])];
+            if source == BlockStateId::AIR {
+                continue;
+            }
+            let mut local = cell;
+            local[normal_axis] = mirrored;
+            let sample = match (neighbor, LocalPos::new(local[0], local[1], local[2])) {
+                (Some(snapshot), Ok(local)) => {
+                    Sample::Loaded(snapshot.data.blocks.get(local.index()))
+                }
+                _ => Sample::Unloaded { chunk },
+            };
+            if let FaceDecision::Emit { material, layer } =
+                classify_directed_face(source, &sample, face, &input.registry)
+            {
+                mask[usize::from(v) * 32 + usize::from(u)] = Some((material, layer));
+                mask_has_any = true;
+            }
+        }
+    }
+    mask_has_any
+}
+
+/// Slot shared by all 32 cells of an x-row, keyed by `y * 32 + z`, when the row is uniform.
+///
+/// Terrain rows are mostly uniform (air above, rock below), so interior slices decide
+/// whole rows at once and only resolve mixed rows cell by cell.
+fn uniform_rows(slots: &[u16]) -> Vec<Option<u16>> {
+    slots
+        .chunks_exact(32)
+        .map(|row| row.iter().all(|slot| *slot == row[0]).then_some(row[0]))
+        .collect()
+}
+
+/// Face decision between two cells inside the chunk, mirroring [`classify_directed_face`].
+fn interior_face(
+    classes: &[SlotClass],
+    source_slot: u16,
+    neighbor_slot: u16,
+    mat_idx: usize,
+) -> Option<(MaterialId, RenderLayer)> {
+    let source = &classes[usize::from(source_slot)];
+    let layer = source.layer?;
+    if neighbor_slot == source_slot {
+        if source.full_cube || source.group.is_some() {
+            return None;
+        }
+    } else {
+        let neighbor = &classes[usize::from(neighbor_slot)];
+        if neighbor.known
+            && (neighbor.full_cube || (source.group.is_some() && source.group == neighbor.group))
+        {
+            return None;
+        }
+    }
+    Some((source.materials[mat_idx], layer))
+}
+
+/// Fills one mask row from an x-row and its neighbor x-row (both contiguous in `slots`).
+fn fill_row(
+    classes: &[SlotClass],
+    slots: &[u16],
+    rows: &[Option<u16>],
+    mat_idx: usize,
+    (row, base): (usize, usize),
+    (neighbor_row, neighbor_base): (usize, usize),
+    out: &mut [Option<(MaterialId, RenderLayer)>],
+) -> bool {
+    if let (Some(source), Some(neighbor)) = (rows[row], rows[neighbor_row]) {
+        return match interior_face(classes, source, neighbor, mat_idx) {
+            Some(entry) => {
+                out.fill(Some(entry));
+                true
+            }
+            None => false,
+        };
+    }
+    let mut any = false;
+    for (u, cell) in out.iter_mut().enumerate() {
+        if let Some(entry) =
+            interior_face(classes, slots[base + u], slots[neighbor_base + u], mat_idx)
+        {
+            *cell = Some(entry);
+            any = true;
+        }
+    }
+    any
+}
+
+/// Fills the mask of an interior slice from per-slot classes; both cells are in the chunk.
+fn interior_mask(
+    classes: &[SlotClass],
+    slots: &[u16],
+    rows: &[Option<u16>],
+    face: FaceDir,
+    slice: u8,
+    mask: &mut FaceMask,
+) -> bool {
+    let mat_idx = face.material_index();
+    let slice = usize::from(slice);
+    let neighbor_slice = if face.positive() {
+        slice + 1
+    } else {
+        slice - 1
+    };
+    let mut mask_has_any = false;
+    match face {
+        FaceDir::NegX | FaceDir::PosX => {
+            // u runs along z, v along y; both cells sit in the same x-row.
+            for v in 0..32 {
+                for u in 0..32 {
+                    let base = 32 * (u + 32 * v);
+                    let decision = match rows[v * 32 + u] {
+                        Some(slot) => interior_face(classes, slot, slot, mat_idx),
+                        None => interior_face(
+                            classes,
+                            slots[base + slice],
+                            slots[base + neighbor_slice],
+                            mat_idx,
+                        ),
+                    };
+                    if let Some(entry) = decision {
+                        mask[v * 32 + u] = Some(entry);
+                        mask_has_any = true;
+                    }
+                }
+            }
+        }
+        FaceDir::NegY | FaceDir::PosY => {
+            // u runs along x, v along z; the slice is y.
+            for v in 0..32 {
+                mask_has_any |= fill_row(
+                    classes,
+                    slots,
+                    rows,
+                    mat_idx,
+                    (slice * 32 + v, 32 * (v + 32 * slice)),
+                    (neighbor_slice * 32 + v, 32 * (v + 32 * neighbor_slice)),
+                    &mut mask[v * 32..v * 32 + 32],
+                );
+            }
+        }
+        FaceDir::NegZ | FaceDir::PosZ => {
+            // u runs along x, v along y; the slice is z.
+            for v in 0..32 {
+                mask_has_any |= fill_row(
+                    classes,
+                    slots,
+                    rows,
+                    mat_idx,
+                    (v * 32 + slice, 32 * (slice + 32 * v)),
+                    (v * 32 + neighbor_slice, 32 * (neighbor_slice + 32 * v)),
+                    &mut mask[v * 32..v * 32 + 32],
+                );
+            }
+        }
+    }
+    mask_has_any
+}
+
 fn merge_mask(
-    mask: &mut [Option<(MaterialId, RenderLayer)>; 1024],
+    mask: &mut FaceMask,
     face: FaceDir,
     slice: u8,
     output: &mut Vec<Quad>,
@@ -869,6 +1034,136 @@ mod tests {
         let input = input(registry(), PalettedBlocks::uniform(BlockStateId::AIR));
         assert_eq!(build_naive_mesh(&input, &token), Err(MeshError::Cancelled));
         assert_eq!(build_mesh(&input, &token), Err(MeshError::Cancelled));
+    }
+
+    struct Lcg(u64);
+
+    impl Lcg {
+        fn next(&mut self) -> u64 {
+            self.0 = self
+                .0
+                .wrapping_mul(6_364_136_223_846_793_005)
+                .wrapping_add(1_442_695_040_888_963_407);
+            self.0 >> 33
+        }
+    }
+
+    /// Terrain-like chunk: rock below a jittered height, pockets, lamps (opaque but not
+    /// occluding), glass and water layers above, and a uniform-rock variant.
+    fn terrain_blocks(seed: u64, registry: &BlockRegistry, rock_only: bool) -> PalettedBlocks {
+        let stone = state(registry, "stone");
+        let glass = state(registry, "glass");
+        let water = state(registry, "water");
+        let lamp = state(registry, "lamp");
+        if rock_only {
+            return PalettedBlocks::uniform(stone);
+        }
+        let mut random = Lcg(seed);
+        let mut dense = vec![BlockStateId::AIR; CHUNK_VOLUME];
+        for z in 0..32_usize {
+            for x in 0..32_usize {
+                let jitter = usize::try_from(random.next() % 5).unwrap();
+                let height = 6 + ((x * 2 + z * 3 + jitter) % 18);
+                for y in 0..32_usize {
+                    let index = x + 32 * (z + 32 * y);
+                    dense[index] = if y < height {
+                        match random.next() % 29 {
+                            0 => BlockStateId::AIR,
+                            1 => lamp,
+                            _ => stone,
+                        }
+                    } else if y < height + 2 && random.next().is_multiple_of(3) {
+                        water
+                    } else if random.next().is_multiple_of(41) {
+                        glass
+                    } else {
+                        BlockStateId::AIR
+                    };
+                }
+            }
+        }
+        PalettedBlocks::from_dense(dense).unwrap()
+    }
+
+    #[test]
+    fn random_terrain_with_halos_matches_naive() {
+        let registry = Arc::new(
+            BlockRegistry::new(vec![
+                block("air", RenderKind::Invisible, Occlusion::None, None, 0),
+                block("stone", RenderKind::Opaque, Occlusion::FullCube, None, 1),
+                block(
+                    "glass",
+                    RenderKind::Translucent,
+                    Occlusion::None,
+                    Some(1),
+                    2,
+                ),
+                block(
+                    "water",
+                    RenderKind::Translucent,
+                    Occlusion::None,
+                    Some(2),
+                    3,
+                ),
+                block("lamp", RenderKind::Opaque, Occlusion::None, None, 4),
+            ])
+            .unwrap(),
+        );
+        for (seed, rock_only, with_halo) in [
+            (1, false, true),
+            (2, false, false),
+            (3, true, true),
+            (4, true, false),
+            (5, false, true),
+        ] {
+            let mut input = input(
+                Arc::clone(&registry),
+                terrain_blocks(seed, &registry, rock_only),
+            );
+            if with_halo {
+                for (index, offset) in HALO_OFFSETS.into_iter().enumerate() {
+                    if (index + usize::try_from(seed).unwrap()) % 3 == 0 {
+                        continue;
+                    }
+                    input.neighbors[index] = Some(snapshot(
+                        ChunkPos {
+                            x: i64::from(offset.dx),
+                            y: i64::from(offset.dy),
+                            z: i64::from(offset.dz),
+                        },
+                        terrain_blocks(seed + 10 + index as u64, &registry, index % 4 == 0),
+                    ));
+                }
+            }
+            let naive = build_naive_mesh(&input, &CancelToken::new()).unwrap();
+            let greedy = build_mesh(&input, &CancelToken::new()).unwrap();
+            assert_eq!(face_areas(&naive), face_areas(&greedy), "seed {seed}");
+            assert_eq!(naive.bounds, greedy.bounds, "seed {seed}");
+            assert_eq!(covered_cells(&naive), covered_cells(&greedy), "seed {seed}");
+        }
+    }
+
+    /// Every unit face with its material and layer, independent of quad merging.
+    fn covered_cells(mesh: &ChunkMesh) -> BTreeMap<([u8; 3], FaceDir), (MaterialId, RenderLayer)> {
+        let mut cells = BTreeMap::new();
+        for quad in mesh
+            .opaque
+            .iter()
+            .chain(mesh.cutout.iter())
+            .chain(mesh.translucent.iter())
+        {
+            let (_, u_axis, v_axis) = quad.face.axes();
+            for du in 0..quad.extent_u.get() {
+                for dv in 0..quad.extent_v.get() {
+                    let mut cell = quad.origin;
+                    cell[u_axis] += du;
+                    cell[v_axis] += dv;
+                    let previous = cells.insert((cell, quad.face), (quad.material, quad.layer));
+                    assert!(previous.is_none(), "overlapping quads at {cell:?}");
+                }
+            }
+        }
+        cells
     }
 
     #[test]

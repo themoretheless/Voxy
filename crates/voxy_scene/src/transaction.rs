@@ -1,6 +1,5 @@
 //! Atomic structural batches, validated on a component-free hierarchy shadow.
 use crate::{Node, NodeId, SceneGraph, SceneGraphError, Slot, Transform};
-use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub enum SceneMutation {
     SetLocal(NodeId, Transform),
@@ -38,7 +37,7 @@ impl SceneGraph {
                         effective_active: n.effective_active,
                         parent: n.parent,
                         children: n.children.clone(),
-                        components: HashMap::new(),
+                        components: crate::ComponentMap::default(),
                     }),
                 })
                 .collect(),
@@ -64,6 +63,28 @@ impl SceneGraph {
     /// no intervening mutation or callbacks; this signals an internal invariant bug.
     pub fn apply_atomic(&mut self, commands: &[SceneMutation]) -> Result<(), MutationError> {
         if commands.is_empty() {
+            return Ok(());
+        }
+        // Transform-only batches cannot change structure, so validating each command
+        // in order gives the same first failure as the shadow replay without copying
+        // the whole graph; `set_locals` then commits them with last-write-wins.
+        if commands
+            .iter()
+            .all(|command| matches!(command, SceneMutation::SetLocal(..)))
+        {
+            let mut edits = Vec::with_capacity(commands.len());
+            for (index, command) in commands.iter().enumerate() {
+                let SceneMutation::SetLocal(id, local) = command else {
+                    continue;
+                };
+                self.node(*id)
+                    .map(|_| ())
+                    .and_then(|()| local.matrix().map(|_| ()))
+                    .map_err(|cause| MutationError { index, cause })?;
+                edits.push((*id, *local));
+            }
+            self.set_locals(&edits)
+                .expect("validated transform batch commits without structural change");
             return Ok(());
         }
         let mut shadow = self.hierarchy_shadow();

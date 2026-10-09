@@ -3,6 +3,7 @@ mod graphics_options;
 mod pet;
 mod terrain_options;
 
+use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
@@ -22,7 +23,10 @@ use voxy_animation::{
     AnimationClip, Animator, Joint, JointTrack, Playback, QuatKey, Skeleton, Transform,
 };
 use voxy_render::{CameraView, RenderOutcome, Renderer, RendererError, SkinnedMesh, SkinnedVertex};
-use voxy_runtime::{BootstrapScene, build_procedural_scene, rebuild_bootstrap_chunks};
+use voxy_runtime::{
+    BootstrapChunk, BootstrapScene, build_procedural_scene, invalidated_derived_chunks,
+    rebuild_bootstrap_chunks,
+};
 use voxy_world::{ChunkPos, EditSource, ResourceKey, VoxelPos, World};
 use winit::application::ApplicationHandler;
 use winit::event::{
@@ -59,6 +63,10 @@ struct VoxyApp {
     cursor_captured: bool,
     projectiles: Vec<ProjectileState>,
     resident_positions: Vec<ChunkPos>,
+    /// Last rebuilt light and mesh per resident chunk; uploaded as one set.
+    derived_chunks: BTreeMap<ChunkPos, BootstrapChunk>,
+    /// Resident chunks whose derived data must be rebuilt after recent commits.
+    dirty_chunks: BTreeSet<ChunkPos>,
     camera_anchor: ChunkPos,
     derivation_epoch: u64,
     rebuild: Option<std::thread::JoinHandle<RebuildResult>>,
@@ -257,6 +265,11 @@ impl ApplicationHandler for VoxyApp {
                 .then_some(0);
                 self.autopilot_start = self.actor_position;
                 self.autopilot_initial_yaw = self.camera.yaw;
+                self.derived_chunks = scene
+                    .chunks
+                    .into_iter()
+                    .map(|chunk| (chunk.pos, chunk))
+                    .collect();
                 self.world = Some(scene.world);
                 self.last_update = Some(Instant::now());
                 self.load_time_seconds = loading_started.elapsed().as_secs_f32();
@@ -816,10 +829,7 @@ impl VoxyApp {
                 Quat::from_rotation_y(self.actor_yaw),
                 self.actor_position,
             );
-            if let Err(error) = renderer
-                .update_skin_matrices(&frame.skin_matrices)
-                .and_then(|()| renderer.update_skinned_model(model))
-            {
+            if let Err(error) = renderer.update_skinned_pose(&frame.skin_matrices, model) {
                 eprintln!("Voxy animated actor update failed: {error}");
                 event_loop.exit();
                 return false;
@@ -921,6 +931,8 @@ impl VoxyApp {
             match plan {
                 Ok(DestructionPlan::Transaction(transaction)) => match world.commit(transaction) {
                     Ok(receipt) => {
+                        self.dirty_chunks
+                            .extend(invalidated_derived_chunks(&receipt));
                         if let Some(states) = self.water_states {
                             wake_water_after_edits(
                                 world,
@@ -1135,9 +1147,20 @@ impl VoxyApp {
         let Some(world) = self.world.clone() else {
             return;
         };
-        let positions = self.resident_positions.clone();
+        // Only chunks invalidated by commits since the last rebuild are derived again;
+        // their merged output equals a full resident rebuild.
+        let positions: Vec<ChunkPos> = self
+            .resident_positions
+            .iter()
+            .copied()
+            .filter(|pos| self.dirty_chunks.contains(pos))
+            .collect();
+        self.dirty_chunks.clear();
         let epoch = self.derivation_epoch;
         self.rebuild_pending = None;
+        if positions.is_empty() {
+            return;
+        }
         self.rebuild = Some(std::thread::spawn(move || {
             let started = Instant::now();
             let result = rebuild_bootstrap_chunks(&world, &positions, epoch);
@@ -1161,10 +1184,6 @@ impl VoxyApp {
             event_loop.exit();
             return;
         };
-        if epoch != self.derivation_epoch {
-            self.start_rebuild();
-            return;
-        }
         let chunks = match result {
             Ok(chunks) => chunks,
             Err(error) => {
@@ -1173,8 +1192,15 @@ impl VoxyApp {
                 return;
             }
         };
-        let uploads = chunks
-            .iter()
+        // Results stay valid for chunks no later commit invalidated; those chunks are
+        // already in `dirty_chunks` and rebuilt below when the epoch moved on.
+        let rebuilt = chunks.len();
+        for chunk in chunks {
+            self.derived_chunks.insert(chunk.pos, chunk);
+        }
+        let uploads = self
+            .derived_chunks
+            .values()
             .map(|chunk| (chunk.pos, &chunk.mesh, &chunk.light))
             .collect::<Vec<_>>();
         if let Some(renderer) = &mut self.renderer
@@ -1185,9 +1211,12 @@ impl VoxyApp {
             return;
         }
         println!(
-            "Voxy background rebuild: {:.2}ms",
+            "Voxy background rebuild: {:.2}ms ({rebuilt} chunks)",
             duration.as_secs_f64() * 1000.0
         );
+        if epoch != self.derivation_epoch {
+            self.start_rebuild();
+        }
     }
 
     fn advance_water(&mut self, event_loop: &ActiveEventLoop) {
@@ -1241,11 +1270,17 @@ impl VoxyApp {
                 false
             }
             Ok(WaterPlan::Transaction { edit, next_active }) => match world.commit(edit) {
-                Ok(_) => {
+                Ok(receipt) => {
+                    self.dirty_chunks
+                        .extend(invalidated_derived_chunks(&receipt));
                     self.water_active = deferred;
                     self.water_active.extend(next_active.into_vec());
-                    let mut seen = std::collections::BTreeSet::new();
-                    self.water_active.retain(|position| seen.insert(*position));
+                    // Order is not observable by the planner: `step_water` copies the active
+                    // slice into a `BTreeSet` and emits `next_active` sorted. It only decides
+                    // which cells `split_off(max_active)` defers once the list exceeds the
+                    // budget, where the GPU path already keys that partition on sorted order.
+                    self.water_active.sort_unstable();
+                    self.water_active.dedup();
                     self.water_commits += 1;
                     true
                 }
@@ -1291,7 +1326,13 @@ impl VoxyApp {
                 );
             }
             let world = self.world.as_mut().ok_or("GPU water world unavailable")?;
-            let outcome = publish_water_plan(world, &mut self.water_active, work.active, plan)?;
+            let outcome = publish_water_plan(
+                world,
+                &mut self.water_active,
+                &mut self.dirty_chunks,
+                work.active,
+                plan,
+            )?;
             if outcome == WaterPublication::Retry {
                 self.water_tick_divider = 59;
             }
@@ -1360,6 +1401,8 @@ impl VoxyApp {
             return Err("autopilot water bed no longer destructible".into());
         };
         let receipt = world.commit(edit).map_err(|error| error.to_string())?;
+        self.dirty_chunks
+            .extend(invalidated_derived_chunks(&receipt));
         wake_water_after_edits(
             world,
             states,
@@ -1618,13 +1661,15 @@ enum WaterPublication {
 fn publish_water_plan(
     world: &mut World,
     active: &mut Vec<VoxelPos>,
+    dirty: &mut BTreeSet<ChunkPos>,
     submitted: Vec<VoxelPos>,
     plan: WaterPlan,
 ) -> Result<WaterPublication, String> {
     let outcome = match plan {
         WaterPlan::Settled => WaterPublication::Settled,
         WaterPlan::Transaction { edit, next_active } => match world.commit(edit) {
-            Ok(_) => {
+            Ok(receipt) => {
+                dirty.extend(invalidated_derived_chunks(&receipt));
                 active.extend(next_active.into_vec());
                 WaterPublication::Committed
             }
@@ -1694,7 +1739,7 @@ fn wake_water_after_edits(
     active: &mut Vec<VoxelPos>,
 ) {
     use voxy_world::{Sample, VoxelView};
-    let mut seen: std::collections::BTreeSet<_> = active.iter().copied().collect();
+    let before = active.len();
     for edit in changed {
         for (dx, dy, dz) in [
             (0, 0, 0),
@@ -1715,11 +1760,17 @@ fn wake_water_after_edits(
             let position = VoxelPos { x, y, z };
             if let Sample::Loaded(block) = world.sample(position)
                 && states.0.contains(&block)
-                && seen.insert(position)
             {
                 active.push(position);
             }
         }
+    }
+    if active.len() > before {
+        // Dedupe once per commit instead of rebuilding a set of the whole list. Order is not
+        // observable by the planner (see `advance_water`); it only affects which cells the
+        // `split_off(max_active)` partition defers when the list exceeds the budget.
+        active.sort_unstable();
+        active.dedup();
     }
 }
 
@@ -2120,10 +2171,19 @@ mod terrain_gameplay_tests {
             })
             .unwrap();
         let mut active = vec![new, new];
+        let mut dirty = BTreeSet::new();
         assert_eq!(
-            publish_water_plan(&mut scene.world, &mut active, vec![source], plan).unwrap(),
+            publish_water_plan(
+                &mut scene.world,
+                &mut active,
+                &mut dirty,
+                vec![source],
+                plan
+            )
+            .unwrap(),
             WaterPublication::Retry
         );
+        assert!(dirty.is_empty());
         assert_eq!(active, [new, source]);
         assert_eq!(scene.world.sample(source), Sample::Loaded(states.0[7]));
         let fresh = step_water(
@@ -2137,9 +2197,17 @@ mod terrain_gameplay_tests {
         .unwrap();
         active.retain(|&pos| pos != source);
         assert_eq!(
-            publish_water_plan(&mut scene.world, &mut active, vec![source], fresh).unwrap(),
+            publish_water_plan(
+                &mut scene.world,
+                &mut active,
+                &mut dirty,
+                vec![source],
+                fresh
+            )
+            .unwrap(),
             WaterPublication::Committed
         );
+        assert!(dirty.contains(&voxy_core::split_voxel(source).0));
         assert!(active.contains(&new));
         assert_eq!(
             scene.world.sample(source),
@@ -2149,6 +2217,7 @@ mod terrain_gameplay_tests {
             publish_water_plan(
                 &mut scene.world,
                 &mut active,
+                &mut dirty,
                 vec![source],
                 WaterPlan::Settled
             )

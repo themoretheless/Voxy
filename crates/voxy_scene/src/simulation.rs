@@ -78,8 +78,8 @@ pub struct SceneSimulation {
     step: f64,
     max_steps: usize,
     max_behaviors: usize,
-    previous: HashMap<NodeId, Pose>,
-    current: HashMap<NodeId, Pose>,
+    previous: PoseMap,
+    current: PoseMap,
     alpha: f32,
 }
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -88,7 +88,8 @@ struct Pose {
     parent: Option<NodeId>,
     active: bool,
 }
-fn poses(scene: &SceneGraph) -> HashMap<NodeId, Pose> {
+type PoseMap = HashMap<NodeId, Pose, crate::FastHashBuilder>;
+fn poses(scene: &SceneGraph) -> PoseMap {
     scene
         .nodes()
         .map(|(id, local, parent)| {
@@ -227,7 +228,13 @@ impl SceneSimulation {
         self.behaviors.sync(scene);
         let time = self.clock.advance(elapsed, self.step, self.max_steps);
         for completed_steps in 0..time.steps {
-            self.previous = poses(scene);
+            if completed_steps == 0 {
+                self.previous = poses(scene);
+            } else {
+                // `current` was captured at the end of the previous step and nothing
+                // touched the scene since, so it is exactly this step's start pose.
+                std::mem::swap(&mut self.previous, &mut self.current);
+            }
             self.behaviors.fixed_update(scene, self.step);
             if let Err(error) = fixed(scene, &mut self.behaviors, self.step) {
                 self.current = poses(scene);
