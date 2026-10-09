@@ -51,6 +51,9 @@ pub fn swept_capsule_pairs(
     motions: &[CapsuleMotion],
     tolerance_m: f64,
 ) -> Result<Vec<(usize, usize)>, &'static str> {
+    Ok(bound_pairs(&motion_bounds(motions,tolerance_m)?))
+}
+fn motion_bounds(motions:&[CapsuleMotion],tolerance_m:f64)->Result<Vec<(V,V)>, &'static str> {
     if !tolerance_m.is_finite() || tolerance_m <= 0. {
         return Err("invalid swept capsule bounds tolerance");
     }
@@ -103,42 +106,92 @@ pub fn swept_capsule_pairs(
         }
         bounds.push((min, max));
     }
-    // Sweep along the greatest scene extent, then reject disjoint bounds on
-    // all axes. Final pair sorting makes results independent of sweep order.
-    let extent: V = std::array::from_fn(|axis| {
-        bounds
-            .iter()
-            .map(|b| b.1[axis])
-            .fold(f64::NEG_INFINITY, f64::max)
-            - bounds
-                .iter()
-                .map(|b| b.0[axis])
-                .fold(f64::INFINITY, f64::min)
-    });
-    let axis = (0..3)
-        .max_by(|a, b| extent[*a].total_cmp(&extent[*b]))
-        .unwrap();
-    let mut order: Vec<_> = (0..motions.len()).collect();
-    order.sort_unstable_by(|a, b| {
-        bounds[*a].0[axis]
-            .total_cmp(&bounds[*b].0[axis])
-            .then(a.cmp(b))
-    });
-    let mut pairs = Vec::new();
-    for (slot, &a) in order.iter().enumerate() {
-        for &b in &order[slot + 1..] {
-            if bounds[b].0[axis] > bounds[a].1[axis] {
-                break;
+    Ok(bounds)
+}
+
+// Solve-local candidate reuse. Current padded bounds are always validated and
+// compared exactly; enclosure failure rebuilds rather than admitting stale IDs.
+#[derive(Default)]
+pub(in crate::hair) struct SweptPairCache {
+    envelope:Vec<(V,V)>,
+    pairs:Vec<(usize,usize)>,
+    #[cfg(test)]
+    rebuilds:usize,
+}
+impl SweptPairCache {
+    // Bounds only: this does not admit either trajectory. Every query still
+    // validates its own bounds and proves enclosure before reusing pairs.
+    pub(in crate::hair) fn seed(&mut self,first:&[CapsuleMotion],second:&[CapsuleMotion],tolerance:f64)->Result<(), &'static str> {
+        let mut bounds=motion_bounds(first,tolerance)?;
+        let other=motion_bounds(second,tolerance)?;
+        if bounds.len()!=other.len() {return Err("candidate envelope shape mismatch");}
+        for (a,b) in bounds.iter_mut().zip(other) {
+            for axis in 0..3 {a.0[axis]=a.0[axis].min(b.0[axis]);a.1[axis]=a.1[axis].max(b.1[axis]);}
+        }
+        self.pairs=bound_pairs(&bounds);self.envelope=bounds;
+        #[cfg(test)] {self.rebuilds+=1;}
+        Ok(())
+    }
+    pub(in crate::hair) fn query(&mut self,motions:&[CapsuleMotion],tolerance:f64)->Result<Vec<(usize,usize)>, &'static str> {
+        let bounds=motion_bounds(motions,tolerance)?;
+        let contained=self.envelope.len()==bounds.len() && bounds.iter().zip(&self.envelope).all(|(b,e)|
+            (0..3).all(|axis|b.0[axis]>=e.0[axis]&&b.1[axis]<=e.1[axis]));
+        if !contained {
+            #[cfg(test)] {self.rebuilds+=1;}
+            self.pairs=bound_pairs(&bounds);self.envelope=bounds;
+            return Ok(self.pairs.clone());
+        }
+        Ok(self.pairs.iter().copied().filter(|&(a,b)|
+            (0..3).all(|axis|bounds[a].0[axis]<=bounds[b].1[axis]&&bounds[b].0[axis]<=bounds[a].1[axis])).collect())
+    }
+}
+
+// Geometry-only hierarchy: leaves retain the exact padded bounds above.
+// Pair output remains sorted in the original input identities.
+fn bound_pairs(bounds: &[(V, V)]) -> Vec<(usize, usize)> {
+    struct Node { bounds: (V,V), children: Option<(usize,usize)>, id: usize, size: usize }
+    fn build(ids: &mut [usize], bounds: &[(V,V)], nodes: &mut Vec<Node>) -> usize {
+        let min = std::array::from_fn(|axis| ids.iter().map(|&id| bounds[id].0[axis]).fold(f64::INFINITY,f64::min));
+        let max = std::array::from_fn(|axis| ids.iter().map(|&id| bounds[id].1[axis]).fold(f64::NEG_INFINITY,f64::max));
+        let index = nodes.len();
+        nodes.push(Node { bounds: (min,max), children: None, id: ids[0], size: ids.len() });
+        if ids.len() > 1 {
+            let axis = (0..3).max_by(|&a,&b| (max[a]-min[a]).total_cmp(&(max[b]-min[b]))).unwrap();
+            let midpoint = ids.len()/2;
+            // Half sums avoid overflowing a finite coordinate pair.
+            ids.select_nth_unstable_by(midpoint, |&a,&b|
+                (bounds[a].0[axis]*0.5 + bounds[a].1[axis]*0.5)
+                    .total_cmp(&(bounds[b].0[axis]*0.5 + bounds[b].1[axis]*0.5)).then(a.cmp(&b)));
+            let (left,right) = ids.split_at_mut(midpoint);
+            let l = build(left,bounds,nodes); let r = build(right,bounds,nodes);
+            nodes[index].children = Some((l,r));
+        }
+        index
+    }
+    fn visit(a: usize, b: usize, nodes: &[Node], pairs: &mut Vec<(usize,usize)>) {
+        let aa=&nodes[a]; let bb=&nodes[b];
+        if !(0..3).all(|axis| aa.bounds.0[axis] <= bb.bounds.1[axis]
+            && bb.bounds.0[axis] <= aa.bounds.1[axis]) { return; }
+        if a == b {
+            if let Some((l,r))=aa.children {
+                visit(l,l,nodes,pairs); visit(l,r,nodes,pairs); visit(r,r,nodes,pairs);
             }
-            if (0..3).all(|axis| {
-                bounds[a].0[axis] <= bounds[b].1[axis] && bounds[b].0[axis] <= bounds[a].1[axis]
-            }) {
-                pairs.push((a.min(b), a.max(b)));
+        } else {
+            match (aa.children,bb.children) {
+                (None,None) => pairs.push((aa.id.min(bb.id),aa.id.max(bb.id))),
+                (Some((l,r)),Some(_)) if aa.size>=bb.size => {visit(l,b,nodes,pairs);visit(r,b,nodes,pairs);}
+                (Some(_),Some((l,r))) => {visit(a,l,nodes,pairs);visit(a,r,nodes,pairs);}
+                (Some((l,r)),None) => { visit(l,b,nodes,pairs); visit(r,b,nodes,pairs); }
+                (None,Some((l,r))) => { visit(a,l,nodes,pairs); visit(a,r,nodes,pairs); }
             }
         }
     }
-    pairs.sort_unstable();
-    Ok(pairs)
+    if bounds.is_empty() {return Vec::new();}
+    let mut ids: Vec<_>=(0..bounds.len()).collect();
+    let mut nodes=Vec::with_capacity(bounds.len()*2-1);
+    let root=build(&mut ids,bounds,&mut nodes);
+    let mut pairs=Vec::new(); visit(root,root,&nodes,&mut pairs);
+    pairs.sort_unstable(); pairs
 }
 
 /// Run continuous queries only for swept candidates, retaining every outcome
@@ -224,8 +277,19 @@ pub fn sweep_capsules(
     if !speed.is_finite() {
         return Err("capsule sweep motion overflow");
     }
+    conservative_advance(speed, roundoff, options, |fraction| gap(&a, &b, fraction))
+}
+
+// Shared admission kernel: every geometry query retains the same conservative
+// step margin and terminal-state semantics.
+pub(super) fn conservative_advance(
+    speed: f64,
+    roundoff: f64,
+    options: CapsuleSweepOptions,
+    mut distance: impl FnMut(f64) -> Result<f64, &'static str>,
+) -> Result<CapsuleSweep, &'static str> {
     let mut fraction = 0.;
-    let mut current = gap(&a, &b, fraction)?;
+    let mut current = distance(fraction)?;
     if current <= options.tolerance_m {
         return Ok(CapsuleSweep::InitialContact { gap_m: current });
     }
@@ -255,7 +319,7 @@ pub fn sweep_capsules(
             });
         }
         fraction = next;
-        current = gap(&a, &b, fraction)?;
+        current = distance(fraction)?;
         if current < 0. {
             return Err("capsule sweep lost conservative clearance");
         }
@@ -670,4 +734,207 @@ mod tests {
             );
         }
     }
+}
+
+#[cfg(test)]
+fn sweep_bound_pairs_reference(bounds: &[(V,V)]) -> Vec<(usize,usize)> {
+    // Sweep along the greatest scene extent, then reject disjoint bounds on
+    // all axes. Final pair sorting makes results independent of sweep order.
+    let extent: V = std::array::from_fn(|axis| {
+        bounds
+            .iter()
+            .map(|b| b.1[axis])
+            .fold(f64::NEG_INFINITY, f64::max)
+            - bounds
+                .iter()
+                .map(|b| b.0[axis])
+                .fold(f64::INFINITY, f64::min)
+    });
+    let axis = (0..3)
+        .max_by(|a, b| extent[*a].total_cmp(&extent[*b]))
+        .unwrap();
+    let mut order: Vec<_> = (0..bounds.len()).collect();
+    order.sort_unstable_by(|a, b| {
+        bounds[*a].0[axis]
+            .total_cmp(&bounds[*b].0[axis])
+            .then(a.cmp(b))
+    });
+    let mut pairs = Vec::new();
+    for (slot, &a) in order.iter().enumerate() {
+        for &b in &order[slot + 1..] {
+            if bounds[b].0[axis] > bounds[a].1[axis] {
+                break;
+            }
+            if (0..3).all(|axis| {
+                bounds[a].0[axis] <= bounds[b].1[axis] && bounds[b].0[axis] <= bounds[a].1[axis]
+            }) {
+                pairs.push((a.min(b), a.max(b)));
+            }
+        }
+    }
+    pairs.sort_unstable();
+    pairs
+}
+
+#[cfg(test)]
+mod hierarchy_tests {
+    use super::*;
+    #[test]
+    #[ignore = "paired broad-phase benchmark requires a captured VJR1 motion"]
+    fn captured_full_groom_hierarchy_matches_original_sweep() {
+        let data=std::fs::read(std::env::var("VOXY_HAIR_ROOT_MOTION_FAILURE_FIXTURE").unwrap()).unwrap();
+        assert_eq!(&data[..4],b"VJR1");
+        let count=u32::from_le_bytes(data[4..8].try_into().unwrap()) as usize;
+        let radius=f64::from_le_bytes(data[8..16].try_into().unwrap());
+        let mut offset=16; let mut motions=Vec::new();let mut staged=Vec::new();
+        for _ in 0..count {
+            let n=u32::from_le_bytes(data[offset..offset+4].try_into().unwrap()) as usize; offset+=4;
+            let mut scalar=|| {let value=f64::from_le_bytes(data[offset..offset+8].try_into().unwrap()); offset+=8; assert!(value.is_finite()); value};
+            let mut points=|n| (0..n).map(|_| std::array::from_fn::<_,3,_>(|_|scalar())).collect::<Vec<_>>();
+            let start=points(n); let current=points(n); let increment=points(n); let _angular=points(n-1);
+            for i in 0..n-1 {
+                staged.push([current[i],current[i+1]]);
+                motions.push(CapsuleMotion{start:[start[i],start[i+1]],
+                    end:[add(current[i],increment[i]),add(current[i+1],increment[i+1])],radius});
+            }
+        }
+        let pairs=u32::from_le_bytes(data[offset..offset+4].try_into().unwrap()) as usize;
+        assert_eq!(offset+4+pairs*8,data.len());
+        let tolerance=5e-11;
+        let bounds:Vec<(V,V)>=motions.iter().map(|m| {
+            let scale=m.start.iter().chain(&m.end).flatten().map(|v|v.abs()).fold(m.radius,f64::max);
+            let margin=m.radius+tolerance+64.*f64::EPSILON*scale;
+            (std::array::from_fn(|axis|m.start.iter().chain(&m.end).map(|p|p[axis]).fold(f64::INFINITY,f64::min)-margin),
+             std::array::from_fn(|axis|m.start.iter().chain(&m.end).map(|p|p[axis]).fold(f64::NEG_INFINITY,f64::max)+margin))
+        }).collect();
+        let expected=sweep_bound_pairs_reference(&bounds);
+        assert_eq!(swept_capsule_pairs(&motions,tolerance).unwrap(),expected);
+        let mut timing=Vec::new();
+        for repeat in 0..7 {
+            let run=|hierarchy| {
+                let start=std::time::Instant::now();
+                let pairs=if hierarchy {bound_pairs(&bounds)} else {one_sided_bound_pairs_reference(&bounds)};
+                (pairs,start.elapsed().as_secs_f64())
+            };
+            let (new,old)=if repeat%2==0 {(run(true),run(false))} else {let old=run(false);(run(true),old)};
+            assert_eq!(new.0,old.0); timing.push((old.1,new.1));
+        }
+        let sequence:Vec<Vec<_>>=[1.,0.5,0.25,0.125,0.0625,0.03125,0.015625,0.0078125].into_iter().map(|scale|
+            motions.iter().zip(&staged).map(|(motion,stage)|CapsuleMotion {start:motion.start,
+                end:std::array::from_fn(|p|add(stage[p],mul(sub(motion.end[p],stage[p]),scale))),radius:motion.radius}).collect()).collect();
+        let mut cache_timings=Vec::new();
+        for _ in 0..3 {
+            let began=std::time::Instant::now();
+            let fresh:Vec<_>=sequence.iter().map(|m|swept_capsule_pairs(m,tolerance).unwrap()).collect();
+            let fresh_seconds=began.elapsed().as_secs_f64();
+            let mut cache=SweptPairCache::default();let began=std::time::Instant::now();
+            let zero:Vec<_>=motions.iter().zip(&staged).map(|(motion,stage)|CapsuleMotion {
+                start:motion.start,end:*stage,radius:motion.radius}).collect();
+            cache.seed(&zero,&motions,tolerance).unwrap();
+            let cached:Vec<_>=sequence.iter().map(|m|cache.query(m,tolerance).unwrap()).collect();
+            let cached_seconds=began.elapsed().as_secs_f64();assert_eq!(fresh,cached);
+            cache_timings.push((fresh_seconds,cached_seconds,cache.rebuilds));
+        }
+        eprintln!("captured eight-scale fresh/cached candidate-query seconds and rebuilds={cache_timings:?}");
+        eprintln!("full-groom broad phase segments={} pairs={} one-sided/balanced hierarchy seconds={timing:?}",motions.len(),expected.len());
+    }
+    #[test]
+    fn cached_pairs_match_fresh_after_shrink_expand_radius_and_identity_changes() {
+        let capsule=|x:f64,end:f64|CapsuleMotion {start:[[x,0.,0.],[x,1.,0.]],end:[[end,0.,0.],[end,1.,0.]],radius:0.1};
+        let mut motions=vec![capsule(-1.,-0.3),capsule(0.3,0.3),capsule(3.,3.)];
+        let mut cache=SweptPairCache::default();
+        assert_eq!(cache.query(&motions,1e-10).unwrap(),swept_capsule_pairs(&motions,1e-10).unwrap());
+        motions[0].end=motions[0].start;
+        assert_eq!(cache.query(&motions,1e-10).unwrap(),swept_capsule_pairs(&motions,1e-10).unwrap());
+        assert_eq!(cache.rebuilds,1,"contained shrink reuses the original envelope");
+        motions[0].end=[[0.5,0.,0.],[0.5,1.,0.]];
+        assert_eq!(cache.query(&motions,1e-10).unwrap(),vec![(0,1)]);
+        assert_eq!(cache.rebuilds,2,"newly colliding out-of-envelope path must rebuild");
+        motions[2].radius=3.;
+        assert_eq!(cache.query(&motions,1e-10).unwrap(),swept_capsule_pairs(&motions,1e-10).unwrap());
+        motions.swap(0,2);
+        assert_eq!(cache.query(&motions,1e-10).unwrap(),swept_capsule_pairs(&motions,1e-10).unwrap());
+        motions.pop();
+        assert_eq!(cache.query(&motions,1e-9).unwrap(),swept_capsule_pairs(&motions,1e-9).unwrap());
+        motions[0].radius=0.;assert!(cache.query(&motions,1e-10).is_err());
+        motions.clear();assert!(cache.query(&motions,1e-10).unwrap().is_empty());
+    }
+    #[test]
+    fn seeded_envelope_retains_pairs_when_free_motion_shrinks_past_staged_offset() {
+        let capsule=|start,end|CapsuleMotion {start:[[start,0.,0.],[start,1.,0.]],end:[[end,0.,0.],[end,1.,0.]],radius:0.1};
+        let zero=[capsule(0.,-2.),capsule(-1.,-1.)];
+        let full=[capsule(0.,2.),capsule(-1.,-1.)];
+        let mut cache=SweptPairCache::default();cache.seed(&zero,&full,1e-10).unwrap();
+        for scale in [1.,0.5,0.25,0.125,0.] {
+            let motions=[capsule(0.,-2.+4.*scale),zero[1]];
+            assert_eq!(cache.query(&motions,1e-10).unwrap(),swept_capsule_pairs(&motions,1e-10).unwrap());
+        }
+        assert_eq!(cache.rebuilds,1);
+        let outside=[capsule(0.,-4.),zero[1]];
+        assert_eq!(cache.query(&outside,1e-10).unwrap(),swept_capsule_pairs(&outside,1e-10).unwrap());
+        assert_eq!(cache.rebuilds,2);
+    }
+    #[test]
+    fn hierarchy_matches_original_sweep_for_dense_degenerate_and_sparse_bounds() {
+        let mut random=123456789u64;
+        for count in [0,1,2,31,256,1024] {
+            for dense in [false,true] {
+                let mut boxes=Vec::new();
+                for i in 0..count {
+                    let mut next=|| {random=random.wrapping_mul(6364136223846793005).wrapping_add(1); (random>>11) as f64 / ((1u64<<53) as f64)};
+                    let p:V=std::array::from_fn(|_| if dense {next()*0.001} else {next()});
+                    let width:V=std::array::from_fn(|_| if i%7==0 {0.} else {next()*0.02});
+                    boxes.push((p,std::array::from_fn(|axis| p[axis]+width[axis])));
+                }
+                assert_eq!(bound_pairs(&boxes),sweep_bound_pairs_reference(&boxes));
+            }
+        }
+        let touching=vec![([0.;3],[1.;3]),([1.;3],[2.;3]),([1.;3],[1.;3])];
+        assert_eq!(bound_pairs(&touching),vec![(0,1),(0,2),(1,2)]);
+    }
+}
+
+#[cfg(test)]
+fn one_sided_bound_pairs_reference(bounds: &[(V, V)]) -> Vec<(usize, usize)> {
+    struct Node { bounds: (V,V), children: Option<(usize,usize)>, id: usize }
+    fn build(ids: &mut [usize], bounds: &[(V,V)], nodes: &mut Vec<Node>) -> usize {
+        let min = std::array::from_fn(|axis| ids.iter().map(|&id| bounds[id].0[axis]).fold(f64::INFINITY,f64::min));
+        let max = std::array::from_fn(|axis| ids.iter().map(|&id| bounds[id].1[axis]).fold(f64::NEG_INFINITY,f64::max));
+        let index = nodes.len();
+        nodes.push(Node { bounds: (min,max), children: None, id: ids[0] });
+        if ids.len() > 1 {
+            let axis = (0..3).max_by(|&a,&b| (max[a]-min[a]).total_cmp(&(max[b]-min[b]))).unwrap();
+            let midpoint = ids.len()/2;
+            // Half sums avoid overflowing a finite coordinate pair.
+            ids.select_nth_unstable_by(midpoint, |&a,&b|
+                (bounds[a].0[axis]*0.5 + bounds[a].1[axis]*0.5)
+                    .total_cmp(&(bounds[b].0[axis]*0.5 + bounds[b].1[axis]*0.5)).then(a.cmp(&b)));
+            let (left,right) = ids.split_at_mut(midpoint);
+            let l = build(left,bounds,nodes); let r = build(right,bounds,nodes);
+            nodes[index].children = Some((l,r));
+        }
+        index
+    }
+    fn visit(a: usize, b: usize, nodes: &[Node], pairs: &mut Vec<(usize,usize)>) {
+        let aa=&nodes[a]; let bb=&nodes[b];
+        if !(0..3).all(|axis| aa.bounds.0[axis] <= bb.bounds.1[axis]
+            && bb.bounds.0[axis] <= aa.bounds.1[axis]) { return; }
+        if a == b {
+            if let Some((l,r))=aa.children {
+                visit(l,l,nodes,pairs); visit(l,r,nodes,pairs); visit(r,r,nodes,pairs);
+            }
+        } else {
+            match (aa.children,bb.children) {
+                (None,None) => pairs.push((aa.id.min(bb.id),aa.id.max(bb.id))),
+                (Some((l,r)),_) => { visit(l,b,nodes,pairs); visit(r,b,nodes,pairs); }
+                (None,Some((l,r))) => { visit(a,l,nodes,pairs); visit(a,r,nodes,pairs); }
+            }
+        }
+    }
+    if bounds.is_empty() {return Vec::new();}
+    let mut ids: Vec<_>=(0..bounds.len()).collect();
+    let mut nodes=Vec::with_capacity(bounds.len()*2-1);
+    let root=build(&mut ids,bounds,&mut nodes);
+    let mut pairs=Vec::new(); visit(root,root,&nodes,&mut pairs);
+    pairs.sort_unstable(); pairs
 }

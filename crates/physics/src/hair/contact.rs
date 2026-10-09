@@ -2,12 +2,18 @@ use super::{HairRod, ContactSource, math::*};
 use std::collections::HashMap;
 #[path="contact_continuous.rs"]
 mod continuous;
+#[path="contact_triangle_sweep.rs"]
+mod triangle_sweep;
+#[path="contact_polynomial.rs"]
+mod polynomial;
+pub use triangle_sweep::{TriangleMotion,sweep_capsule_triangle};
+pub(super) use triangle_sweep::trajectory_contact;
 pub use continuous::{CapsuleMotion,CapsuleSweepOptions,CapsuleSweep,sweep_capsules,swept_capsule_pairs,swept_capsule_contacts};
 #[path = "contact_features.rs"]
 mod features;
 #[path = "velocity_contacts.rs"]
 mod velocity_contacts;
-pub(super) use velocity_contacts::{advance_swept_strands,strand_fraction,recover_friction_pressure,stabilize_contact_velocities,reconcile_contact_positions,stabilize_contact_velocities_with_solver,reconcile_contact_positions_with_solver};
+pub(super) use velocity_contacts::{admit_staged_strands,reconcile_elastic_contact_positions_with_solver,advance_swept_strands,strand_fraction,recover_friction_pressure,stabilize_contact_velocities,reconcile_contact_positions,stabilize_contact_velocities_with_solver,reconcile_contact_positions_with_solver};
 /// An exact surface query bounds clearance inside the ball around its query point.
 /// The distance function is 1-Lipschitz; the certificate expires at the next step.
 #[derive(Clone, Copy, Debug)]
@@ -47,10 +53,24 @@ struct Node {
 pub struct TriangleMesh {
     triangles: Vec<Triangle>,
     nodes: Vec<Node>,
+    // Immutable derived data shared by collider clones; every geometry writer invalidates it.
+    motion_bounds: std::sync::OnceLock<std::sync::Arc<triangle_sweep::MotionBounds>>,
     feature_normals: Option<features::FeatureNormals>,
     motion_dt: Option<f64>,
 }
+#[path = "contact_groom.rs"]
+mod groom;
 impl TriangleMesh {
+    pub(super) fn replay_geometry(&self)->(Vec<V>,Vec<V>,Vec<V>,Vec<[usize;3]>,bool) {
+        let n=self.triangles.iter().flat_map(|t|t.ids).max().unwrap()+1;
+        let mut current=vec![[0.;3];n];let mut previous=current.clone();let mut velocity=current.clone();
+        for t in &self.triangles {for i in 0..3 {current[t.ids[i]]=t.p[i];previous[t.ids[i]]=t.previous_p[i];velocity[t.ids[i]]=t.velocity[i];}}
+        (current,previous,velocity,self.triangles.iter().map(|t|t.ids).collect(),self.feature_normals.is_some())
+    }
+    pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+        self.motion_bounds.take();
+        for t in &mut self.triangles {t.previous_p=t.ids.map(|i|previous[i]);t.velocity=t.ids.map(|i|velocity[i]);}
+    }
     pub fn new(vertices: &[V], indices: &[[usize; 3]]) -> Result<Self, &'static str> {
         if vertices.iter().any(|p| !finite(*p))
             || indices.iter().flatten().any(|i| *i >= vertices.len())
@@ -82,6 +102,7 @@ impl TriangleMesh {
         let mut mesh = Self {
             triangles,
             nodes: Vec::new(),
+            motion_bounds: std::sync::OnceLock::new(),
             feature_normals: None,
             motion_dt: None,
         };
@@ -406,6 +427,7 @@ impl TriangleMesh {
         if self.feature_normals.as_ref().is_some_and(|normals| !normals.validate_refit(&self.triangles, vertices)) {
             return Err("animated collider splits welded topology or degenerates a face");
         }
+        self.motion_bounds.take();
         for t in &mut self.triangles {
             t.previous_p = t.p;
             t.velocity = [[0.;3];3];
@@ -457,6 +479,32 @@ impl TriangleMesh {
         Ok(())
     }
     pub(super) fn motion_duration(&self) -> Option<f64> {self.motion_dt}
+    /// Immutable collider motion restricted to an authoritative time interval.
+    /// Preserves material velocities and gives continuous queries matching
+    /// start/end vertices instead of the full frame's previous pose.
+    pub fn motion_interval(&self, start:f64, end:f64)->Result<Self, &'static str> {
+        if !start.is_finite() || !end.is_finite() || start<0. || end>1. || start>=end {
+            return Err("invalid collider motion interval");
+        }
+        let mut sample=self.clone();
+        sample.motion_bounds.take();
+        if let Some(duration)=self.motion_dt {
+            sample.sample_motion(self,end)?;
+            for (sample,source) in sample.triangles.iter_mut().zip(&self.triangles) {
+                let positions=std::array::from_fn(|i|add(mul(source.previous_p[i],1.-start),mul(source.p[i],start)));
+                if positions.iter().any(|p|!finite(*p)) || len(cross(sub(positions[1],positions[0]),sub(positions[2],positions[0])))<1e-14 {
+                    return Err("collider motion degenerates an intermediate face");
+                }
+                sample.previous_p=positions;
+            }
+            let h=duration*(end-start);
+            if !h.is_finite() || h<=0. {return Err("invalid collider motion interval duration");}
+            sample.motion_dt=Some(h);
+        } else {
+            for face in &mut sample.triangles {face.previous_p=face.p;face.velocity=[[0.;3];3];}
+        }
+        Ok(sample)
+    }
     // Always sample authoritative endpoints, never the preceding sampled pose.
     pub(super) fn sample_motion(&mut self, source: &Self, fraction: f64) -> Result<(), &'static str> {
         if source.motion_dt.is_none() {return Ok(());}
@@ -507,6 +555,7 @@ impl TriangleMesh {
         let transform =
             |p: V| std::array::from_fn(|a| dot([m[a][0], m[a][1], m[a][2]], p) + m[a][3]);
         let mut result = self.clone();
+        result.motion_bounds.take();
         for t in &mut result.triangles {
             t.p = t.p.map(transform);
             t.previous_p = t.previous_p.map(transform);
@@ -748,6 +797,74 @@ fn distance_gradient(delta: V, distance: f64, signed: f64, fallback: V, epsilon:
 pub(super) fn mesh_contacts(rod: &mut HairRod, meshes: &[TriangleMesh], radius: f64) {
     gather_mesh_contacts(rod,meshes,radius,true);
 }
+// Approximate the deepest signed-distance witness in one interior interval.
+// Coarse samples bracket candidate minima; bounded refinement retains every
+// sampled candidate, including the old midpoint. This is constraint discovery,
+// not a global segment-clearance certificate for arbitrary nonconvex meshes.
+fn deepest_interval_witness(mesh:&TriangleMesh,a:V,b:V,lo:f64,hi:f64)->Result<(f64,f64,V), &'static str> {
+    let evaluate=|t:f64|mesh.signed_distance_closed(add(mul(a,1.-t),mul(b,t))).map(|(d,n)|(t,d,n));
+    let samples=(0..=8).map(|i|evaluate(lo+(hi-lo)*i as f64/8.)).collect::<Result<Vec<_>,_>>()?;
+    let segment_length=len(sub(b,a));
+    let mut best=samples[4];
+    for value in &samples {if value.1<best.1 {best=*value;}}
+    for i in 0..=8 {
+        // A deepest endpoint sample can hide an even deeper medial peak in
+        // the last sampling cell. Refine those boundary cells as well as
+        // interior brackets; retain the endpoint itself in `best`.
+        let (start,end)=if i==0 {
+            if samples[0].1>samples[1].1 {continue;}(0,1)
+        } else if i==8 {
+            if samples[8].1>samples[7].1 {continue;}(7,8)
+        } else {
+            if samples[i].1>samples[i-1].1 || samples[i].1>samples[i+1].1 {continue;}(i-1,i+1)
+        };
+        let mut left=samples[start].0;let mut right=samples[end].0;
+        let ratio=(5f64.sqrt()-1.)*0.5;
+        let mut x=evaluate(right-ratio*(right-left))?;
+        let mut y=evaluate(left+ratio*(right-left))?;
+        for _ in 0..80 {
+            for value in [x,y] {if value.1<best.1 {best=value;}}
+            // Discovery precision must be finer than the 1e-10 m contact
+            // admission gate, including long/scaled segments. Keep a bounded
+            // search, but stop by physical interval width rather than count.
+            if (right-left)*segment_length<=1e-12 {break;}
+            if x.1<=y.1 {right=y.0;y=x;x=evaluate(right-ratio*(right-left))?;}
+            else {left=x.0;x=y;y=evaluate(left+ratio*(right-left))?;}
+        }
+    }
+    let position=add(mul(a,1.-best.0),mul(b,best.0));
+    let mut nearest=(f64::INFINITY,0,[0.;3]);
+    mesh.nearest(position,0,&mut nearest);
+    // Feature pseudonormals determine sign, not the metric derivative at
+    // concave edges. Use the actual closest-point distance gradient.
+    best.2=distance_gradient(sub(position,nearest.2),best.1.abs(),best.1,best.2,1e-10);
+    Ok(best)
+}
+// At a medial minimum of signed distance along a segment, combine the
+// two observed one-sided metric gradients so their segment derivative is zero.
+// Return unit force direction AND its original gradient magnitude separately.
+fn interior_envelope_gradient(mesh:&TriangleMesh,a:V,b:V,t:f64,lo:f64,hi:f64,normal:V,velocity:V)->(V,f64,V) {
+    let delta=(hi-lo)*1e-6;
+    if t-delta<=lo || t+delta>=hi {return (normal,1.,velocity);}
+    let probe=|fraction:f64|->Option<(V,V)> {
+        let p=add(mul(a,1.-fraction),mul(b,fraction));
+        let (signed,pseudo)=mesh.signed_distance_closed(p).ok()?;
+        let mut nearest=(f64::INFINITY,0,[0.;3]);mesh.nearest(p,0,&mut nearest);
+        Some((distance_gradient(sub(p,nearest.2),signed.abs(),signed,pseudo,1e-10),mesh.surface_velocity(nearest.1,nearest.2)))
+    };
+    let (Some((left,vl)),Some((right,vr)))=(probe(t-delta),probe(t+delta)) else {return (normal,1.,velocity);};
+    let segment=sub(b,a);let dl=dot(left,segment);let dr=dot(right,segment);
+    if !(dl<0. && dr>0.) {return (normal,1.,velocity);}
+    let w=dr/(dr-dl);
+    let g=add(mul(left,w),mul(right,1.-w));let scale=len(g);
+    // A zero generalized gradient needs a nonlocal escape, not division by zero.
+    if !scale.is_finite() || scale<1e-12 || scale>1.+1e-12 {return (normal,1.,velocity);}
+    let direction=mul(g,1./scale);
+    let blended=add(mul(vl,w),mul(vr,1.-w));
+    let normal_speed=(w*dot(left,vl)+(1.-w)*dot(right,vr))/scale;
+    let velocity=add(blended,mul(direction,normal_speed-dot(direction,blended)));
+    (direction,scale,velocity)
+}
 pub(super) fn refresh_mesh_constraints(rod: &mut HairRod, meshes: &[TriangleMesh], radius: f64) {
     gather_mesh_contacts(rod,meshes,radius,false);
 }
@@ -830,6 +947,7 @@ fn gather_mesh_contacts(rod: &mut HairRod, meshes: &[TriangleMesh], radius: f64,
             candidates.clear();
             mesh.query(min, max, 0, &mut candidates);
             let mut contact: Option<(f64, f64, V, f64, [usize;3], V)> = None;
+            let mut crossings = Vec::new();
             for &id in &candidates {
                 let tri = &mesh.triangles[id];
                 let (t, p, q) = segment_triangle(a, b, tri);
@@ -839,6 +957,9 @@ fn gather_mesh_contacts(rod: &mut HairRod, meshes: &[TriangleMesh], radius: f64,
                 let contact_normal = mesh.contact_normal(id, p);
                 let delta = sub(p, q);
                 let distance = len(delta);
+                if mesh.feature_normals.is_some() && distance < 1e-10 {
+                    crossings.push(t);
+                }
                 let signed = if dot(delta, contact_normal) < 0. {
                     -distance
                 } else {
@@ -851,6 +972,46 @@ fn gather_mesh_contacts(rod: &mut HairRod, meshes: &[TriangleMesh], radius: f64,
                 let normal = distance_gradient(delta,distance,signed,contact_normal,1e-10);
                 if contact.as_ref().is_none_or(|c| segment_contact_precedes(distance,t,tri.ids,c.0,c.1,c.4,len(sub(b,a)))) {
                     contact = Some((distance,t,normal,signed,tri.ids,mesh.surface_velocity(id,q)));
+                }
+            }
+            // A segment with exterior endpoints can traverse a closed body.
+            // Its boundary intersection has zero distance, hiding the actual
+            // penetration. Add interior witnesses between surface crossings;
+            // these discover constraints, never certify continuous clearance.
+            // A segment entirely inside the volume has no boundary crossings.
+            // It still needs an interior depth witness; endpoint constraints
+            // alone can miss a deeper penetration in the middle.
+            let free_start=if i==0 {0.15} else {0.};
+            let inside_endpoint=mesh.feature_normals.is_some() && [free_start,1.].into_iter().any(|t| {
+                let p=add(mul(a,1.-t),mul(b,t));
+                let node=if t==0. {Some(i)} else if t==1. {Some(i+1)} else {None};
+                if let Some(bound)=node.and_then(|point|rod.clearance_cache[mesh_index][point]) {
+                    if bound.excludes(&[p],query_radius) {return false;}
+                    // Reuse the exact signed endpoint query above only at the
+                    // same position. Moved/projected points must be re-queried.
+                    if bound.position==p {return bound.distance < -CONTACT_TOLERANCE;}
+                }
+                mesh.signed_distance_closed(p).is_ok_and(|(distance,_)|distance < -CONTACT_TOLERANCE)
+            });
+            if !crossings.is_empty() || inside_endpoint {
+                crossings.extend([if i == 0 {0.15} else {0.0}, 1.0]);
+                crossings.retain(|t| *t >= if i == 0 {0.15} else {0.0});
+                crossings.sort_by(f64::total_cmp);
+                crossings.dedup_by(|a,b| (*a-*b).abs() < 1e-12);
+                for interval in crossings.windows(2) {
+                    if let Ok((t,signed,normal)) = deepest_interval_witness(mesh,a,b,interval[0],interval[1]) {
+                        let position = add(mul(a,1.-t),mul(b,t));
+                        if signed >= -CONTACT_TOLERANCE {continue;}
+                        let mut nearest = (f64::INFINITY,0,[0.;3]);
+                        mesh.nearest(position,0,&mut nearest);
+                        let velocity = mesh.surface_velocity(nearest.1,nearest.2);
+                        let (normal,scale,velocity)=interior_envelope_gradient(mesh,a,b,t,interval[0],interval[1],normal,velocity);
+                        let depth = (radius-signed)/scale;
+                        let index = rod.record_contact(i,t,normal,add(position,mul(normal,depth)),ContactSource::Mesh(mesh_index));
+                        rod.contacts[index].metric_scale=scale;
+                        rod.contacts[index].surface_velocity = velocity;
+                        if project_positions {project(rod,i,t,normal,depth,Some(velocity));}
+                    }
                 }
             }
             if let Some((_,t,normal,signed,_,velocity))=contact {
@@ -899,6 +1060,9 @@ fn sort_contact_pairs(pairs: &mut [(SegmentId, SegmentId)]) {
 }
 
 fn unique_cell_pairs(grid: &ContactGrid) -> Vec<(SegmentId, SegmentId)> {
+    unique_cell_pairs_filtered(grid,|_|true)
+}
+fn unique_cell_pairs_filtered(grid: &ContactGrid, mut keep:impl FnMut((SegmentId,SegmentId))->bool) -> Vec<(SegmentId, SegmentId)> {
     let mut pairs = Vec::new();
     for (&key, entries) in grid {
         for a in 0..entries.len() {
@@ -908,6 +1072,7 @@ fn unique_cell_pairs(grid: &ContactGrid) -> Vec<(SegmentId, SegmentId)> {
                 let mut pair = (entries[a].0, entries[b].0);
                 if pair.0 > pair.1 { pair = (pair.1, pair.0); }
                 if pair.0.0 == pair.1.0 && pair.0.1.abs_diff(pair.1.1) <= 2 { continue; }
+                if !keep(pair) {continue;}
                 pairs.push(pair);
             }
         }
@@ -968,6 +1133,13 @@ pub(super) fn refresh_strand_responses(rods:&mut [HairRod],radius:f64,history:&[
     current
 }
 fn gather_strand_contacts(rods: &mut [HairRod], radius: f64, project_positions:bool) -> Vec<StrandResponse> {
+    gather_strand_contacts_impl(rods,radius,project_positions,!project_positions)
+}
+#[cfg(test)]
+pub(super) fn reference_strand_refresh(rods:&mut [HairRod],radius:f64)->Vec<StrandResponse> {
+    gather_strand_contacts_impl(rods,radius,false,false)
+}
+fn gather_strand_contacts_impl(rods: &mut [HairRod], radius: f64, project_positions:bool,filter_before_sort:bool) -> Vec<StrandResponse> {
     let mut responses=Vec::new();
     const CONTACT_TOLERANCE: f64 = 1e-10;
     let query_radius = radius + CONTACT_TOLERANCE * 0.5;
@@ -994,13 +1166,26 @@ fn gather_strand_contacts(rods: &mut [HairRod], radius: f64, project_positions:b
             }
         }
     }
-    let pairs = unique_cell_pairs(&grid);
+    let query_separation=radius*2.+CONTACT_TOLERANCE;
+    // A refresh does not move geometry: discard disjoint capsules before
+    // allocation/sorting, preserving exactly the same surviving pair order.
+    // Sequential projection can move later pairs into range, so it retains
+    // the original broad candidate list and checks live bounds below.
+    let pairs=if !filter_before_sort {unique_cell_pairs(&grid)} else {
+        unique_cell_pairs_filtered(&grid,|((ra,ia),(rb,ib))| {
+            !(0..3).any(|axis| {
+                let a0=rods[ra].x[ia][axis];let a1=rods[ra].x[ia+1][axis];
+                let b0=rods[rb].x[ib][axis];let b1=rods[rb].x[ib+1][axis];
+                a0.min(a1)-query_separation>b0.max(b1) || b0.min(b1)-query_separation>a0.max(a1)
+            })
+        })
+    };
     for ((ra, ia), (rb, ib)) in pairs {
         let separation = radius * 2.;
         let query_separation = separation + CONTACT_TOLERANCE;
         // Grid cells are broader than a fibre. Reject disjoint current capsule
         // bounds before the more expensive segment-distance calculation.
-        if (0..3).any(|axis| {
+        if !filter_before_sort && (0..3).any(|axis| {
             let a0 = rods[ra].x[ia][axis];
             let a1 = rods[ra].x[ia + 1][axis];
             let b0 = rods[rb].x[ib][axis];
@@ -1115,6 +1300,33 @@ mod query_tests {
         }
         assert_eq!(source.triangles[0].p[0],[0.,0.,2.]);
         assert_eq!(source.triangles[0].previous_p[0],points[0]);
+    }
+    #[test]
+    fn interval_motion_aligns_previous_vertices_duration_and_velocity() {
+        let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.]];
+        let mut source=TriangleMesh::new(&points,&[[0,1,2]]).unwrap();
+        source.refit_with_timestep(&points.map(|p|add(p,[0.,0.,2.])),0.5).unwrap();
+        let before=format!("{source:?}");
+        let a=source.motion_interval(0.25,0.5).unwrap();
+        let b=source.motion_interval(0.5,0.75).unwrap();
+        assert_eq!(a.triangles[0].previous_p[0],[0.,0.,0.5]);
+        assert_eq!(a.triangles[0].p[0],[0.,0.,1.]);
+        assert_eq!(a.motion_duration(),Some(0.125));
+        assert_eq!(a.triangles[0].p,b.triangles[0].previous_p);
+        assert_eq!(a.surface_velocity(0,[0.2,0.3,1.]),[0.,0.,4.]);
+        for (lo,hi) in [(0.5,0.5),(0.75,0.25),(-0.1,0.5),(0.,1.1),(f64::NAN,1.)] {
+            assert!(source.motion_interval(lo,hi).is_err());
+        }
+        assert_eq!(format!("{source:?}"),before);
+    }
+    #[test]
+    fn untimed_refit_is_stationary_in_continuous_queries() {
+        let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.]];
+        let mut source=TriangleMesh::new(&points,&[[0,1,2]]).unwrap();
+        source.refit(&points.map(|p|add(p,[0.,0.,2.]))).unwrap();
+        let sample=source.motion_interval(0.,1.).unwrap();
+        assert_eq!(sample.triangles[0].previous_p,sample.triangles[0].p);
+        assert_eq!(sample.motion_duration(),None);
     }
     #[test]
     fn collapsed_intermediate_motion_is_rejected_atomically() {
@@ -1515,6 +1727,85 @@ mod closed_surface_tests {
     use super::*;
 
     #[test]
+    fn interior_peak_near_endpoint_is_not_hidden_by_endpoint_sample() {
+        let peak=0.2/(3f64.sqrt()+1.);
+        for scale in [1e-3,1.,1e3] {
+            let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]].map(|p|mul(p,scale));
+            let mut mesh=TriangleMesh::new(&points,&[[0,2,1],[0,1,3],[0,3,2],[1,2,3]]).unwrap();
+            mesh.enable_closed_feature_normals().unwrap();
+            let a=mul([0.,0.4,0.4],scale);let b=mul([peak/0.99,0.4,0.4],scale);
+            for (a,b,expected_t) in [(a,b,0.99),(b,a,0.01)] {
+                let (t,signed,_)=deepest_interval_witness(&mesh,a,b,0.,1.).unwrap();
+                assert!((signed/scale+peak).abs()<1e-8,"missed analytic interior depth: {signed} at {t}");
+                assert!((signed+peak*scale).abs()<2e-12,"witness precision is insufficient for the 1e-10 m contact gate");
+                assert!((t-expected_t).abs()<1e-6,"interior ridge was replaced by endpoint");
+            }
+        }
+    }
+
+    #[test]
+    fn medial_envelope_gradient_matches_analytic_tetrahedron_derivative() {
+        let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]];
+        let mut mesh=TriangleMesh::new(&points,&[[0,2,1],[0,1,3],[0,3,2],[1,2,3]]).unwrap();
+        mesh.enable_closed_feature_normals().unwrap();
+        let a=[0.,0.4,0.4];let b=[0.2,0.4,0.4];
+        let (t,_,normal)=deepest_interval_witness(&mesh,a,b,0.,1.).unwrap();
+        let (direction,scale,_)=interior_envelope_gradient(&mesh,a,b,t,0.,1.,normal,[0.;3]);
+        let gradient=mul(direction,scale);
+        let expected=1./(3f64.sqrt()+1.);
+        assert!(gradient[0].abs()<1e-10);
+        assert!((gradient[1]-expected).abs()<1e-8 && (gradient[2]-expected).abs()<1e-8);
+        let h=1e-5;
+        let shifted=|dy|deepest_interval_witness(&mesh,add(a,[0.,dy,0.]),add(b,[0.,dy,0.]),0.,1.).unwrap().1;
+        let derivative=(shifted(h)-shifted(-h))/(2.*h);
+        assert!((derivative-gradient[1]).abs()<1e-4);
+    }
+
+    #[test]
+    fn interior_witness_finds_deeper_contact_than_crossing_midpoint() {
+        for scale in [1e-3,1.,1e3] {
+            let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]].map(|p|mul(p,scale));
+            let mut mesh=TriangleMesh::new(&points,&[[0,2,1],[0,1,3],[0,3,2],[1,2,3]]).unwrap();
+            mesh.enable_closed_feature_normals().unwrap();
+            let a=mul([0.,0.2,0.2],scale);let b=mul([0.6,0.2,0.2],scale);
+            let (_,depth,_)=deepest_interval_witness(&mesh,a,b,0.,1.).unwrap();
+            let midpoint=mesh.signed_distance_closed(mul(add(a,b),0.5)).unwrap().0;
+            assert!((depth/scale+0.2).abs()<1e-8,"tetrahedron has analytic maximum interior depth 0.2");
+            assert!(depth<midpoint-0.02*scale);
+        }
+    }
+
+    #[test]
+    fn fully_interior_segment_discovers_depth_without_boundary_crossings() {
+        let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]];
+        let mut mesh=TriangleMesh::new(&points,&[[0,2,1],[0,1,3],[0,3,2],[1,2,3]]).unwrap();
+        mesh.enable_closed_feature_normals().unwrap();
+        let mut rod=HairRod::new(vec![[0.05,0.2,0.2],[0.1,0.2,0.2],[0.5,0.2,0.2]],Default::default()).unwrap();
+        let before=rod.x.clone();
+        refresh_mesh_constraints(&mut rod,&[mesh],40e-6);
+        assert_eq!(rod.x,before);
+        assert!(rod.contacts.iter().any(|c| {
+            let p=add(mul(rod.x[c.segment],1.-c.fraction),mul(rod.x[c.segment+1],c.fraction));
+            c.segment==1 && c.fraction>0. && c.fraction<1. && dot(sub(p,c.target),c.normal) < -0.199
+        }),"wholly interior segment must expose analytic interior depth 0.2");
+    }
+
+    #[test]
+    fn crossing_segment_recovers_interior_depth_with_exterior_endpoints() {
+        let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]];
+        let mut mesh=TriangleMesh::new(&points,&[[0,2,1],[0,1,3],[0,3,2],[1,2,3]]).unwrap();
+        mesh.enable_closed_feature_normals().unwrap();
+        let mut rod=HairRod::new(vec![[-0.5,0.2,0.2],[-0.1,0.2,0.2],[0.9,0.2,0.2]],Default::default()).unwrap();
+        let before=rod.x.clone();
+        refresh_mesh_constraints(&mut rod,&[mesh],40e-6);
+        assert_eq!(rod.x,before,"constraint discovery must not move the rod");
+        assert!(rod.contacts.iter().any(|c| {
+            let p=add(mul(rod.x[c.segment],1.-c.fraction),mul(rod.x[c.segment+1],c.fraction));
+            dot(sub(p,c.target),c.normal) < -0.1
+        }),"surface intersection must expose interior penetration, not just fiber radius");
+    }
+
+    #[test]
     fn feature_normals_classify_faces_edges_vertices_and_refresh_after_motion() {
         let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]];
         let faces=[[0,2,1],[0,1,3],[0,3,2],[1,2,3]];
@@ -1578,6 +1869,9 @@ mod closed_surface_tests {
         let projected=add(point,mul(gradient,radius-signed));
         assert!(mesh.signed_distance_closed(projected).unwrap().0>0.,"metric recovery must exit the solid");
         assert!(len(sub(gradient,unit([0.1,0.2,0.])))<1e-14);
+        let (_,witness_signed,witness_normal)=deepest_interval_witness(&mesh,point,point,0.,1.).unwrap();
+        assert!((witness_signed-signed).abs()<1e-14);
+        assert!(len(sub(witness_normal,gradient))<1e-14,"interior witness must use the metric gradient too");
     }
     #[test]
     fn feature_admission_rejects_touching_vertex_fans_and_collapsed_refits() {

@@ -1,13 +1,33 @@
 //! Opt-in exact binary capture of an original failed joint response admission.
 use super::HairResponseSystem;
 use std::io::Write;
+static CAPTURE_LOCK:std::sync::Mutex<()>=std::sync::Mutex::new(());
 
 /// Unsolved input: no candidate response or reaction is implied by this file.
 pub(super) fn export_input(requests:&[HairResponseSystem],columns:&[Vec<f64>],
     bounds:&[f64],effective:&[f64],tolerance:f64,refinement:usize) {
     let Some(path)=std::env::var_os("VOXY_HAIR_QR_INPUT_EXPORT") else {return;};
+    export_input_to(&path,requests,columns,bounds,effective,tolerance,refinement,false);
+}
+
+/// Capture the first slow operator once; retain immutable physical loads and
+/// original/effective bounds, not only the compressed QR matrix.
+pub(super) fn export_profile_input(requests:&[HairResponseSystem],columns:&[Vec<f64>],
+    bounds:&[f64],effective:&[f64],tolerance:f64,refinement:usize) {
+    use std::sync::atomic::{AtomicBool,Ordering};
+    static CAPTURED:AtomicBool=AtomicBool::new(false);
+    let Some(path)=std::env::var_os("VOXY_HAIR_QR_PROFILE_INPUT_EXPORT") else {return;};
+    if CAPTURED.compare_exchange(false,true,Ordering::Relaxed,Ordering::Relaxed).is_err() {return;}
+    export_input_to(&path,requests,columns,bounds,effective,tolerance,refinement,true);
+}
+
+fn export_input_to(path:&std::ffi::OsStr,requests:&[HairResponseSystem],columns:&[Vec<f64>],
+    bounds:&[f64],effective:&[f64],tolerance:f64,refinement:usize,preserve_existing:bool) {
+    let _capture_guard=CAPTURE_LOCK.lock().unwrap_or_else(|e|e.into_inner());
     let write=||->std::io::Result<()> {
-        let mut out=std::io::BufWriter::new(std::fs::File::create(&path)?);
+        let file=if preserve_existing {std::fs::OpenOptions::new().write(true).create_new(true).open(path)?}
+            else {std::fs::File::create(path)?};
+        let mut out=std::io::BufWriter::new(file);
         out.write_all(b"VQC1")?;
         let width=requests.iter().map(|r|r.system.rhs.len()).sum::<usize>();
         for n in [bounds.len(),width,requests.len(),refinement] {out.write_all(&(n as u32).to_le_bytes())?;}
@@ -37,6 +57,7 @@ pub(super) fn export(
     tolerance: f64, failed_row: usize,
 ) {
     let Some(path)=std::env::var_os("VOXY_HAIR_QR_FAILURE_EXPORT") else {return;};
+    let _capture_guard=CAPTURE_LOCK.lock().unwrap_or_else(|e|e.into_inner());
     let write=|| -> std::io::Result<()> {
         let mut out=std::io::BufWriter::new(std::fs::File::create(&path)?);
         out.write_all(b"VQI1")?;

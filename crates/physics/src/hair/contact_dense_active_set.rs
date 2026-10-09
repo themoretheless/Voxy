@@ -143,7 +143,9 @@ pub(super) fn solve<S: ProjectionVector + ?Sized>(
     tolerance: f64,
 ) -> Result<bool, &'static str> {
     let n = constraints.len();
-    if n == 0 || n > 256 {
+    // Bound dense storage to 2 MiB for the 512-row Gram matrix. The captured
+    // 304-row feasible physical component exceeded the former 256-row limit.
+    if n == 0 || n > 512 {
         return Ok(false);
     }
     let scales: Vec<_> = constraints.iter().map(|c| c.diagonal.sqrt()).collect();
@@ -195,7 +197,7 @@ mod tests {
         let data = std::fs::read(path).unwrap();
         assert_eq!(&data[..4], b"VQP1");
         let n = u32::from_le_bytes(data[4..8].try_into().unwrap()) as usize;
-        assert!((1..=256).contains(&n));
+        assert!((1..=512).contains(&n));
         let scalar = |offset| f64::from_le_bytes(data[offset..offset + 8].try_into().unwrap());
         let tolerance = scalar(8);
         let original: Vec<_> = (0..n * n).map(|i| scalar(16 + 8 * i)).collect();

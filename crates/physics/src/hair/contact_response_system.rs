@@ -244,6 +244,16 @@ impl HairResponseSystem {
         bounds: &[f64],
         absolute_tolerance: f64,
     ) -> Result<(Vec<Vec<f64>>, Vec<f64>), &'static str> {
+        Self::solve_joint_load_inequalities_with_coordinates(requests,bounds,absolute_tolerance,true,
+            |prepared,bounds,tolerance|prepared.solve_appended(bounds,tolerance))
+    }
+
+    // Shared physical owner: alternate QR ordering cannot bypass original
+    // whitening refinement, load/force balance or inequality admission.
+    fn solve_joint_load_inequalities_with_coordinates(
+        requests:&[Self],bounds:&[f64],absolute_tolerance:f64,retry_sorted:bool,
+        solve_coordinates:impl Fn(&square_root_qr::NonzeroCoordinates<'_>,&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>,
+    )->Result<(Vec<Vec<f64>>,Vec<f64>), &'static str> {
         if !absolute_tolerance.is_finite()
             || absolute_tolerance <= 0.
             || bounds.iter().any(|v| !v.is_finite())
@@ -271,6 +281,27 @@ impl HairResponseSystem {
             }
             factors.push(factor);
         }
+        let reduced=if columns.is_empty() {None} else {
+            Some(square_root_qr::NonzeroCoordinates::new(&columns)
+                .ok_or("invalid joint square-root coordinate map")?)
+        };
+        let attempt=Self::solve_prepared_joint_loads(requests,bounds,absolute_tolerance,&factors,&columns,
+            reduced.as_ref(),&solve_coordinates);
+        if !retry_sorted || attempt.is_ok() {return attempt;}
+        if std::env::var_os("VOXY_HAIR_QR_PROFILE").is_some() {
+            eprintln!("HAIR QR SORTED RETRY rows={} reason={}",bounds.len(),attempt.as_ref().unwrap_err());
+        }
+        Self::solve_prepared_joint_loads(requests,bounds,absolute_tolerance,&factors,&columns,
+            reduced.as_ref(),&|prepared,bounds,tolerance|prepared.solve(bounds,tolerance))
+    }
+
+    // Prepared factors/columns are immutable and scoped to this exact operator.
+    // Each trial has fresh defect bounds and must admit original physical loads.
+    fn solve_prepared_joint_loads(
+        requests:&[Self],bounds:&[f64],absolute_tolerance:f64,
+        factors:&[Vec<f64>],columns:&[Vec<f64>],reduced:Option<&square_root_qr::NonzeroCoordinates<'_>>,
+        solve_coordinates:&impl Fn(&square_root_qr::NonzeroCoordinates<'_>,&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>,
+    )->Result<(Vec<Vec<f64>>,Vec<f64>), &'static str> {
         let mut effective_bounds = bounds.to_vec();
         // Numerical defect correction for whitening/back-transformation only.
         // Every trial must still pass the ORIGINAL inequalities, nonnegative
@@ -279,7 +310,19 @@ impl HairResponseSystem {
             let (coordinates, reactions) = if bounds.is_empty() {
                 (vec![0.; requests.iter().map(|r| r.system.rhs.len()).sum()], Vec::new())
             } else {
-                match square_root_qr::unilateral(&columns, &effective_bounds, absolute_tolerance) {
+                let reduced=reduced.expect("nonempty load columns");
+                let started=std::env::var_os("VOXY_HAIR_QR_PROFILE").map(|_|std::time::Instant::now());
+                let solution=solve_coordinates(reduced,&effective_bounds, absolute_tolerance);
+                if let Some(started)=started {
+                    let milliseconds=started.elapsed().as_secs_f64()*1000.;
+                    if milliseconds>=10. {
+                        square_root_diagnostics::export_profile_input(requests,&columns,bounds,
+                            &effective_bounds,absolute_tolerance,refinement);
+                        eprintln!("HAIR QR PROFILE systems={} rows={} coordinates={} compact_coordinates={} refinement={refinement} elapsed_ms={milliseconds} admitted_coordinates={}",
+                            requests.len(),bounds.len(),columns.first().map_or(0,Vec::len),reduced.coordinate_count(),solution.is_some());
+                    }
+                }
+                match solution {
                     Some(solution)=>solution,
                     None=> {
                         square_root_diagnostics::export_input(requests,&columns,bounds,
@@ -290,7 +333,7 @@ impl HairResponseSystem {
             };
             let mut responses = Vec::with_capacity(requests.len());
             let mut offset = 0;
-            for (request, factor) in requests.iter().zip(&factors) {
+            for (request, factor) in requests.iter().zip(factors) {
                 let end = offset + request.system.rhs.len();
                 let mut response = coordinates[offset..end].to_vec();
                 direct::solve_upper_factored(factor, &mut response, request.system.active.clone());
@@ -306,9 +349,8 @@ impl HairResponseSystem {
             }
             let mut failed = None;
             for i in 0..bounds.len() {
-                let actual = requests.iter().zip(&responses)
-                    .map(|(r,x)| r.loads[i].iter().zip(x).map(|(a,b)| a*b).sum::<f64>())
-                    .sum::<f64>();
+                let actual = square_root_qr::accurate_products(requests.iter().zip(&responses)
+                    .flat_map(|(r,x)| r.loads[i].iter().copied().zip(x.iter().copied())));
                 let gap = actual - bounds[i];
                 let reaction = reactions[i];
                 if !gap.is_finite() || !reaction.is_finite() || reaction < 0.
@@ -316,7 +358,7 @@ impl HairResponseSystem {
                         else { gap < -absolute_tolerance } {
                     failed.get_or_insert(i);
                 }
-                let whitened = columns[i].iter().zip(&coordinates).map(|(a,b)| a*b).sum::<f64>();
+                let whitened = square_root_qr::accurate_dot(&columns[i], &coordinates);
                 effective_bounds[i] = bounds[i] - (actual - whitened);
             }
             if let Some(i) = failed {

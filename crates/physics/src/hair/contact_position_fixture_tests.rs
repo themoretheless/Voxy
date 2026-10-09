@@ -347,6 +347,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 18,
                     fraction: 0.3815395440265171,
                     normal: [0.176295873446737, 0.06559644006775432, -0.9821491088709948],
@@ -363,6 +365,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 19,
                     fraction: 0.5085151825732986,
                     normal: [
@@ -619,6 +623,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 18,
                     fraction: 0.3815395432840315,
                     normal: [0.1762958733103478, 0.06559643765456333, -0.9821491090566506],
@@ -635,6 +641,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 19,
                     fraction: 0.5085151836496786,
                     normal: [
@@ -891,6 +899,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 18,
                     fraction: 0.3814402909939825,
                     normal: [
@@ -911,6 +921,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 19,
                     fraction: 0.5084818891869181,
                     normal: [
@@ -1167,6 +1179,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 18,
                     fraction: 0.3814402903923969,
                     normal: [0.17633053305007323, 0.0662103041217679, -0.9821016947049731],
@@ -1183,6 +1197,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                     segment: 19,
                     fraction: 0.5084818904230192,
                     normal: [
