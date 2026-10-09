@@ -250,3 +250,374 @@ warning: method `topology` is never used
 100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
     |                   ^^^^^^^^
 
+warning: `voxy_app` (lib test) generated 6 warnings
+    Finished `release` profile [optimized] target(s) in 41.63s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f)
+
+running 1 test
+HYBRID FOLLICLE PRESERVING GROOM false
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HYBRID STRUCTURAL ITERATIONS 6
+HYBRID TEMPORAL SUBSTEPS 2
+HYBRID JOINT CONTACT VELOCITIES true
+HYBRID JOINT CONTACT POSITIONS true
+HYBRID SWEPT STRAND POSITIONS true
+HYBRID FORCE BALANCED FRICTION PRESSURE true
+HYBRID SAMPLED COLLIDER MOTION true
+HYBRID CONTINUOUS MESH ADMISSION true
+HYBRID TERMINAL CONTACT ITERATIONS 0
+HYBRID ARTICULATED JUMP true
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID EXTRA DIVISION REFINEMENT false
+HYBRID EXTRA ROOT REFINEMENT false
+HYBRID JOINT QR true
+HYBRID RESIDUAL REFINEMENTS 1 CONTACT OVERRIDE Some(1)
+HYBRID REUSE REFINEMENT FACTORS true
+HYBRID CONTACT RESPONSE BATCHES true
+HYBRID BATCH RESPONSE WAVES true COMPACT READBACK true
+HYBRID CONTACT CASE full
+HYBRID TEST BACKEND cpu_control=false native_only=false perturbation=0
+HAIR SWEPT REFINEMENT count=1 cuts=99 constraints=99 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=166 constraints=166 fraction=0.0001220703125
+HAIR SWEPT REFINEMENT count=3 cuts=195 constraints=195 fraction=0.000244140625
+HAIR SWEPT REFINEMENT count=4 cuts=212 constraints=212 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=5 cuts=222 constraints=222 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=6 cuts=232 constraints=232 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=7 cuts=241 constraints=241 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.003057163027431283 maximum_accepted_translation_m=0.003057163027431283
+HAIR SWEPT SOLVE PROFILE elapsed_ms=299.09375 initial_projection_ms=15.424292 initial_admission_ms=32.400333 refinements=7 cuts=241 constraints=241 groups=241 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=85 constraints=131 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=137 constraints=183 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=162 constraints=208 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=172 constraints=218 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=179 constraints=225 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=185 constraints=231 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=190 constraints=236 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.002255024576265836 maximum_accepted_translation_m=0.002255024576265836
+HAIR SWEPT SOLVE PROFILE elapsed_ms=245.36749999999998 initial_projection_ms=16.189792 initial_admission_ms=34.221042 refinements=7 cuts=190 constraints=236 groups=210 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=87 constraints=111 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=138 constraints=162 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=165 constraints=189 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=4 cuts=176 constraints=200 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=184 constraints=208 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=191 constraints=215 fraction=0.125
+HAIR SWEPT REFINEMENT count=7 cuts=197 constraints=221 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0022395126813909223 maximum_accepted_translation_m=0.0022395126813909223
+HAIR SWEPT SOLVE PROFILE elapsed_ms=436.784334 initial_projection_ms=26.052459 initial_admission_ms=94.401958 refinements=7 cuts=197 constraints=221 groups=217 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=86 constraints=126 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=138 constraints=178 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=166 constraints=206 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=4 cuts=175 constraints=215 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=183 constraints=223 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=190 constraints=230 fraction=0.125
+HAIR SWEPT REFINEMENT count=7 cuts=196 constraints=236 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0002344283801003615 maximum_accepted_translation_m=0.0002344283801003615
+HAIR SWEPT SOLVE PROFILE elapsed_ms=323.294417 initial_projection_ms=17.079125 initial_admission_ms=94.12020899999999 refinements=7 cuts=196 constraints=236 groups=216 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=85 constraints=110 fraction=0.0000019073486328125
+HAIR SWEPT REFINEMENT count=2 cuts=131 constraints=156 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=155 constraints=180 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=4 cuts=166 constraints=191 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=176 constraints=201 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=6 cuts=185 constraints=210 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=7 cuts=193 constraints=218 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.002045596175921532 maximum_accepted_translation_m=0.002045596175921532
+HAIR SWEPT SOLVE PROFILE elapsed_ms=234.85820900000002 initial_projection_ms=17.888583999999998 initial_admission_ms=31.179 refinements=7 cuts=193 constraints=218 groups=217 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=83 constraints=132 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=127 constraints=176 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=146 constraints=195 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=153 constraints=202 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=160 constraints=209 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=6 cuts=166 constraints=215 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=171 constraints=220 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020661101521816903 maximum_accepted_translation_m=0.0020661101521816903
+HAIR SWEPT SOLVE PROFILE elapsed_ms=287.715959 initial_projection_ms=24.714125 initial_admission_ms=81.493584 refinements=7 cuts=171 constraints=220 groups=196 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=86 constraints=114 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=132 constraints=160 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=157 constraints=185 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=167 constraints=195 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=176 constraints=204 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=183 constraints=211 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=189 constraints=217 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020663811179601655 maximum_accepted_translation_m=0.0020663811179601655
+HAIR SWEPT SOLVE PROFILE elapsed_ms=238.72233300000002 initial_projection_ms=17.18325 initial_admission_ms=37.23675 refinements=7 cuts=189 constraints=217 groups=213 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=87 constraints=130 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=132 constraints=175 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=155 constraints=198 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=164 constraints=207 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=172 constraints=215 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=179 constraints=222 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=185 constraints=228 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00023326676138131586 maximum_accepted_translation_m=0.00023326676138131586
+HAIR SWEPT SOLVE PROFILE elapsed_ms=247.533792 initial_projection_ms=15.780375 initial_admission_ms=44.493625 refinements=7 cuts=185 constraints=228 groups=209 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=82 constraints=108 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=128 constraints=154 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=151 constraints=177 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=160 constraints=186 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=170 constraints=196 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=6 cuts=179 constraints=205 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=7 cuts=187 constraints=213 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020663195909987045 maximum_accepted_translation_m=0.0020663195909987045
+HAIR SWEPT SOLVE PROFILE elapsed_ms=252.861958 initial_projection_ms=16.401791999999997 initial_admission_ms=30.512416000000005 refinements=7 cuts=187 constraints=213 groups=212 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=84 constraints=132 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=128 constraints=176 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=147 constraints=195 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=155 constraints=203 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=162 constraints=210 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=168 constraints=216 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=173 constraints=221 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.002062831523098074 maximum_accepted_translation_m=0.002062831523098074
+HAIR SWEPT SOLVE PROFILE elapsed_ms=262.312 initial_projection_ms=14.809125 initial_admission_ms=58.40775 refinements=7 cuts=173 constraints=221 groups=198 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=83 constraints=112 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=129 constraints=158 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=153 constraints=182 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=162 constraints=191 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=5 cuts=170 constraints=199 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=6 cuts=177 constraints=206 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=183 constraints=212 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020633670711191136 maximum_accepted_translation_m=0.0020633670711191136
+HAIR SWEPT SOLVE PROFILE elapsed_ms=243.942375 initial_projection_ms=17.881083 initial_admission_ms=31.193249999999995 refinements=7 cuts=183 constraints=212 groups=208 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=84 constraints=129 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=129 constraints=174 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=151 constraints=196 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=159 constraints=204 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=5 cuts=167 constraints=212 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=6 cuts=174 constraints=219 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=180 constraints=225 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0002332598536787427 maximum_accepted_translation_m=0.0002332598536787427
+HAIR SWEPT SOLVE PROFILE elapsed_ms=225.220958 initial_projection_ms=16.696666 initial_admission_ms=40.027 refinements=7 cuts=180 constraints=225 groups=205 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=85 constraints=110 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=131 constraints=156 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=154 constraints=179 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=164 constraints=189 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=175 constraints=200 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=6 cuts=184 constraints=209 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=7 cuts=192 constraints=217 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020667327164557697 maximum_accepted_translation_m=0.0020667327164557697
+HAIR SWEPT SOLVE PROFILE elapsed_ms=237.968875 initial_projection_ms=17.281000000000002 initial_admission_ms=31.696958999999996 refinements=7 cuts=192 constraints=217 groups=216 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=83 constraints=132 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=127 constraints=176 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=146 constraints=195 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=153 constraints=202 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=160 constraints=209 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=6 cuts=166 constraints=215 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=171 constraints=220 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00206277899263943 maximum_accepted_translation_m=0.00206277899263943
+HAIR SWEPT SOLVE PROFILE elapsed_ms=233.905709 initial_projection_ms=17.311625 initial_admission_ms=37.425584 refinements=7 cuts=171 constraints=220 groups=196 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=86 constraints=114 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=132 constraints=160 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=157 constraints=185 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=167 constraints=195 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=176 constraints=204 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=183 constraints=211 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=189 constraints=217 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020633180666994703 maximum_accepted_translation_m=0.0020633180666994703
+HAIR SWEPT SOLVE PROFILE elapsed_ms=234.575208 initial_projection_ms=16.59975 initial_admission_ms=32.73275 refinements=7 cuts=189 constraints=217 groups=213 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=87 constraints=131 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=132 constraints=176 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=155 constraints=199 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=164 constraints=208 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=172 constraints=216 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=179 constraints=223 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=185 constraints=229 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00023325960524893654 maximum_accepted_translation_m=0.00023325960524893654
+HAIR SWEPT SOLVE PROFILE elapsed_ms=304.193083 initial_projection_ms=18.0555 initial_admission_ms=40.410292 refinements=7 cuts=185 constraints=229 groups=209 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=82 constraints=108 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=128 constraints=154 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=151 constraints=177 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=160 constraints=186 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=170 constraints=196 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=6 cuts=179 constraints=205 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=7 cuts=187 constraints=213 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020667171715470067 maximum_accepted_translation_m=0.0020667171715470067
+HAIR SWEPT SOLVE PROFILE elapsed_ms=301.497417 initial_projection_ms=19.047833 initial_admission_ms=69.91983400000001 refinements=7 cuts=187 constraints=213 groups=212 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=85 constraints=134 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=129 constraints=178 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=148 constraints=197 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=156 constraints=205 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=163 constraints=212 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=169 constraints=218 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=174 constraints=223 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.002180961119507036 maximum_accepted_translation_m=0.002180961119507036
+HAIR SWEPT SOLVE PROFILE elapsed_ms=300.66575 initial_projection_ms=15.4905 initial_admission_ms=74.60454200000001 refinements=7 cuts=174 constraints=223 groups=199 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=83 constraints=110 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=129 constraints=156 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=153 constraints=180 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=162 constraints=189 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=5 cuts=170 constraints=197 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=6 cuts=177 constraints=204 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=183 constraints=210 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.002180952519907445 maximum_accepted_translation_m=0.002180952519907445
+HAIR SWEPT SOLVE PROFILE elapsed_ms=309.854417 initial_projection_ms=16.222084000000002 initial_admission_ms=59.671665999999995 refinements=7 cuts=183 constraints=210 groups=208 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=84 constraints=127 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=129 constraints=172 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=151 constraints=194 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=160 constraints=203 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=5 cuts=168 constraints=211 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=6 cuts=175 constraints=218 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=181 constraints=224 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0002049059046894398 maximum_accepted_translation_m=0.0002049059046894398
+HAIR SWEPT SOLVE PROFILE elapsed_ms=294.978042 initial_projection_ms=19.798834000000003 initial_admission_ms=41.72687499999999 refinements=7 cuts=181 constraints=224 groups=206 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=85 constraints=110 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=131 constraints=156 fraction=0.000030517578125
+HAIR SWEPT REFINEMENT count=3 cuts=154 constraints=179 fraction=0.000030517578125
+HAIR SWEPT REFINEMENT count=4 cuts=164 constraints=189 fraction=0.000030517578125
+HAIR SWEPT REFINEMENT count=5 cuts=175 constraints=200 fraction=0.00006103515625
+HAIR SWEPT REFINEMENT count=6 cuts=184 constraints=209 fraction=0.00006103515625
+HAIR SWEPT REFINEMENT count=7 cuts=192 constraints=217 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0020527753794352564 maximum_accepted_translation_m=0.0020527753794352564
+HAIR SWEPT SOLVE PROFILE elapsed_ms=315.266375 initial_projection_ms=19.005125 initial_admission_ms=61.448457999999995 refinements=7 cuts=192 constraints=217 groups=216 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=83 constraints=132 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=127 constraints=176 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=146 constraints=195 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=153 constraints=202 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=5 cuts=160 constraints=209 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=6 cuts=166 constraints=215 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=171 constraints=220 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0022170492712293706 maximum_accepted_translation_m=0.0022170492712293706
+HAIR SWEPT SOLVE PROFILE elapsed_ms=235.046625 initial_projection_ms=17.553124999999998 initial_admission_ms=40.174915999999996 refinements=7 cuts=171 constraints=220 groups=196 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=86 constraints=114 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=132 constraints=160 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=157 constraints=185 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=167 constraints=195 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=176 constraints=204 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=183 constraints=211 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=189 constraints=217 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0022166235340511805 maximum_accepted_translation_m=0.0022166235340511805
+HAIR SWEPT SOLVE PROFILE elapsed_ms=240.805208 initial_projection_ms=17.898417 initial_admission_ms=42.118624999999994 refinements=7 cuts=189 constraints=217 groups=213 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=87 constraints=131 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=132 constraints=176 fraction=0.0009765625
+HAIR SWEPT REFINEMENT count=3 cuts=155 constraints=199 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=4 cuts=164 constraints=208 fraction=0.0078125
+HAIR SWEPT REFINEMENT count=5 cuts=172 constraints=216 fraction=0.015625
+HAIR SWEPT REFINEMENT count=6 cuts=179 constraints=223 fraction=0.0625
+HAIR SWEPT REFINEMENT count=7 cuts=185 constraints=229 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00023319775369078324 maximum_accepted_translation_m=0.00023319775369078324
+HAIR SWEPT SOLVE PROFILE elapsed_ms=288.217042 initial_projection_ms=15.807459 initial_admission_ms=68.689875 refinements=7 cuts=185 constraints=229 groups=209 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=120 constraints=145 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=202 constraints=227 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=3 cuts=231 constraints=256 fraction=0.00390625
+HAIR SWEPT REFINEMENT count=4 cuts=240 constraints=265 fraction=0.0078125
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/gpu-joint-qualification-capture/slow-contact-input.vqc" systems=21 rows=61 refinement=0
+HAIR QR PROFILE systems=21 rows=61 coordinates=2646 compact_coordinates=1215 refinement=0 elapsed_ms=10.780542 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=245 constraints=270 fraction=0.03125
+HAIR QR PROFILE systems=21 rows=63 coordinates=2646 compact_coordinates=1215 refinement=0 elapsed_ms=17.354083 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=247 constraints=272 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.002291021821582967 maximum_accepted_translation_m=0.002291021821582967
+HAIR SWEPT SOLVE PROFILE elapsed_ms=290.970208 initial_projection_ms=16.232625 initial_admission_ms=39.613125000000004 refinements=6 cuts=247 constraints=272 groups=272 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=115 constraints=167 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=186 constraints=238 fraction=0.00048828125
+HAIR SWEPT REFINEMENT count=3 cuts=215 constraints=267 fraction=0.0078125
+HAIR QR PROFILE systems=20 rows=60 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=14.232916999999999 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=237 constraints=289 fraction=0.015625
+HAIR QR PROFILE systems=20 rows=65 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=19.183666 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=248 constraints=300 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=67 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=21.926125000000003 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=254 constraints=306 fraction=0.125
+HAIR QR PROFILE systems=20 rows=67 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=19.461916 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=257 constraints=309 fraction=0.125
+HAIR QR PROFILE systems=20 rows=67 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=18.142041000000003 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=259 constraints=311 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0008606865760023639 maximum_accepted_translation_m=0.0008606865760023639
+HAIR SWEPT SOLVE PROFILE elapsed_ms=404.853583 initial_projection_ms=17.007167 initial_admission_ms=57.067875 refinements=8 cuts=259 constraints=311 groups=282 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=117 constraints=142 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=188 constraints=213 fraction=0.001953125
+HAIR QR PROFILE systems=20 rows=52 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=11.844957999999998 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=217 constraints=242 fraction=0.00390625
+HAIR QR PROFILE systems=20 rows=58 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=14.823292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=234 constraints=259 fraction=0.0078125
+HAIR QR PROFILE systems=20 rows=63 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=17.377667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=245 constraints=270 fraction=0.03125
+HAIR QR PROFILE systems=20 rows=65 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=17.794332999999998 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=251 constraints=276 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=65 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=16.138708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=254 constraints=279 fraction=0.125
+HAIR QR PROFILE systems=20 rows=65 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=16.082875 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=255 constraints=280 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00025112917673360437 maximum_accepted_translation_m=0.00025112917673360437
+HAIR SWEPT SOLVE PROFILE elapsed_ms=438.443042 initial_projection_ms=29.781792000000003 initial_admission_ms=61.452166999999996 refinements=8 cuts=255 constraints=280 groups=277 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=113 constraints=155 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=182 constraints=224 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=3 cuts=207 constraints=249 fraction=0.0078125
+HAIR QR PROFILE systems=20 rows=57 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=12.905375 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=223 constraints=265 fraction=0.015625
+HAIR QR PROFILE systems=20 rows=62 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.379708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=234 constraints=276 fraction=0.03125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.653667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=240 constraints=282 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=16.601708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=243 constraints=285 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=16.566541 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=244 constraints=286 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0002511285057583683 maximum_accepted_translation_m=0.0002511285057583683
+HAIR SWEPT SOLVE PROFILE elapsed_ms=380.18583299999995 initial_projection_ms=16.255374999999997 initial_admission_ms=57.326792 refinements=8 cuts=244 constraints=286 groups=268 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=113 constraints=140 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=180 constraints=207 fraction=0.001953125
+HAIR QR PROFILE systems=20 rows=51 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=12.433042 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=207 constraints=234 fraction=0.00390625
+HAIR QR PROFILE systems=20 rows=57 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=12.380166999999998 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=224 constraints=251 fraction=0.015625
+HAIR QR PROFILE systems=20 rows=62 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.385875 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=235 constraints=262 fraction=0.03125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=16.857750000000003 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=241 constraints=268 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=19.400042 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=244 constraints=271 fraction=0.125
+HAIR QR PROFILE systems=8 rows=21 coordinates=1008 compact_coordinates=186 refinement=0 elapsed_ms=12.693792 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=14 coordinates=882 compact_coordinates=333 refinement=0 elapsed_ms=15.427833999999999 admitted_coordinates=true
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=33.507667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=245 constraints=272 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0002402901172715705 maximum_accepted_translation_m=0.0002402901172715705
+HAIR SWEPT SOLVE PROFILE elapsed_ms=433.901083 initial_projection_ms=17.907375 initial_admission_ms=89.443625 refinements=8 cuts=245 constraints=272 groups=268 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=112 constraints=145 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=181 constraints=214 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=3 cuts=206 constraints=239 fraction=0.00390625
+HAIR QR PROFILE systems=20 rows=57 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=12.443 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=222 constraints=255 fraction=0.015625
+HAIR QR PROFILE systems=20 rows=62 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=17.44875 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=233 constraints=266 fraction=0.03125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=24.555708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=239 constraints=272 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.143291999999999 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=242 constraints=275 fraction=0.125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=16.456917 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=243 constraints=276 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000020036159050648935 maximum_accepted_translation_m=0.0000020036159050648935
+HAIR SWEPT SOLVE PROFILE elapsed_ms=392.921959 initial_projection_ms=17.5085 initial_admission_ms=65.200209 refinements=8 cuts=243 constraints=276 groups=266 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=113 constraints=141 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=183 constraints=211 fraction=0.001953125
+HAIR SWEPT REFINEMENT count=3 cuts=210 constraints=238 fraction=0.00390625
+HAIR QR PROFILE systems=20 rows=57 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=12.243667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=226 constraints=254 fraction=0.015625
+HAIR QR PROFILE systems=20 rows=62 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.385333 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=237 constraints=265 fraction=0.03125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=16.763707999999998 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=243 constraints=271 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.132792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=246 constraints=274 fraction=0.125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=17.706209 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=247 constraints=275 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00023973593490574444 maximum_accepted_translation_m=0.00023973593490574444
+HAIR SWEPT SOLVE PROFILE elapsed_ms=385.059125 initial_projection_ms=19.141875 initial_admission_ms=62.876334 refinements=8 cuts=247 constraints=275 groups=271 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=112 constraints=145 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=180 constraints=213 fraction=0.001953125
+HAIR QR PROFILE systems=20 rows=51 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=10.122541 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=205 constraints=238 fraction=0.0078125
+HAIR QR PROFILE systems=20 rows=57 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=13.418417 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=221 constraints=254 fraction=0.015625
+HAIR QR PROFILE systems=20 rows=62 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.137292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=232 constraints=265 fraction=0.03125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=20.316916 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=238 constraints=271 fraction=0.0625
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.603625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=242 constraints=275 fraction=0.125
+HAIR QR PROFILE systems=20 rows=64 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=15.724041000000001 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=243 constraints=276 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00023970664652765868 maximum_accepted_translation_m=0.00023970664652765868
+HAIR SWEPT SOLVE PROFILE elapsed_ms=361.842417 initial_projection_ms=18.004417 initial_admission_ms=54.301541 refinements=8 cuts=243 constraints=276 groups=266 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=113 constraints=141 fraction=0.0000152587890625
+HAIR SWEPT REFINEMENT count=2 cuts=183 constraints=211 fraction=0.001953125
+HAIR QR PROFILE systems=20 rows=51 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=10.393958 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=210 constraints=238 fraction=0.00390625
+HAIR QR PROFILE systems=20 rows=57 coordinates=2520 compact_coordinates=1176 refinement=0 elapsed_ms=13.28575 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=226 constraints=254 fraction=0.015625
