@@ -47,6 +47,29 @@ fn energy(factor: &[f64], correction: &[f64], free: &[f64], planes: &[Plane]) ->
             .sum::<f64>()
 }
 
+// Evaluate F(x+a*d)-F(x) directly. Subtracting two total energies can
+// erase the descent of a small mode next to a very stiff component.
+fn energy_change(factor:&[f64],current:&[f64],free:&[f64],direction:&[f64],fraction:f64,planes:&[Plane])->f64 {
+    let mut change=0.;
+    for column in 0..current.len() {
+        let mut displacement=0.;let mut step=0.;
+        for row in column..current.len().min(column+BAND) {
+            let value=factor[row*BAND+row-column];
+            displacement+=value*(current[row]-free[row]);
+            step+=value*direction[row];
+        }
+        change+=fraction*step*(displacement+0.5*fraction*step);
+    }
+    for plane in planes {
+        let old=gap(plane,current);
+        let step=plane.jacobian.iter().map(|&(i,n)|n*direction[i]).sum::<f64>()*fraction;
+        let new=old+step;
+        // Keep the small difference explicitly when both endpoints penetrate.
+        let delta=if old<0. && new<0. {step} else {new.min(0.)-old.min(0.)};
+        change+=0.5*plane.stiffness*delta*(new.min(0.)+old.min(0.));
+    }
+    change
+}
 pub(super) fn solve_contact_set(
     matrix: &[f64],
     rhs: &[f64],
@@ -145,8 +168,8 @@ pub(super) fn solve_contact_set(
             for i in 0..target.len() {
                 target[i] = current[i] + fraction * direction[i];
             }
-            let candidate = energy(&base_factor, &target, &free, planes);
-            if candidate.is_finite() && candidate <= previous + 1e-4 * fraction * derivative {
+            let change = energy_change(&base_factor,&current,&free,&direction,fraction,planes);
+            if change.is_finite() && change <= 1e-4 * fraction * derivative {
                 current.clone_from(&target);
                 accepted = true;
                 break;
@@ -164,6 +187,26 @@ pub(super) fn solve_contact_set(
 mod tests {
     use super::*;
 
+    #[test]
+    fn energy_difference_retains_descent_hidden_by_a_stiff_constant_mode() {
+        let mut factor=vec![0.;2*BAND];factor[0]=1e12;factor[BAND]=1.;
+        let current=[1.,1.];let free=[0.,0.];let direction=[0.,-0.5];
+        let candidate=[1.,0.5];
+        assert_eq!(energy(&factor,&candidate,&free,&[]),energy(&factor,&current,&free,&[]));
+        assert_eq!(energy_change(&factor,&current,&free,&direction,1.,&[]),-0.375);
+    }
+    #[test]
+    fn energy_difference_tracks_closing_and_opening_penalty_boundaries() {
+        let mut factor=vec![0.;2*BAND];factor[0]=1.;factor[BAND]=1.;
+        let planes=[Plane {jacobian:[(0,1.),(0,0.),(0,0.),(0,0.),(0,0.),(0,0.)],gap:0.,stiffness:7.}];
+        for (current,direction) in [([-1.,0.],[2.,0.]),([1.,0.],[-2.,0.]),([-1.,0.],[0.25,0.])] {
+            for fraction in [0.25,0.5,1.] {
+                let next=std::array::from_fn::<_,2,_>(|i|current[i]+fraction*direction[i]);
+                let reference=energy(&factor,&next,&[0.,0.],&planes)-energy(&factor,&current,&[0.,0.],&planes);
+                assert!((energy_change(&factor,&current,&[0.,0.],&direction,fraction,&planes)-reference).abs()<1e-12);
+            }
+        }
+    }
     #[test]
     fn open_contacts_return_the_free_minimizer_without_refactorization() {
         let (matrix, rhs, mut planes) = problem(0.75, [1., 2.]);

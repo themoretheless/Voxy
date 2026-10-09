@@ -254,12 +254,6 @@ impl Renderer {
         let mut required_features = wgpu::Features::empty();
         if adapter
             .features()
-            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
-        {
-            required_features |= wgpu::Features::EXPERIMENTAL_RAY_QUERY;
-        }
-        if adapter
-            .features()
             .contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
         {
             required_features |= wgpu::Features::MAPPABLE_PRIMARY_BUFFERS;
