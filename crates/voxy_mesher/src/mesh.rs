@@ -268,7 +268,23 @@ pub const HALO_OFFSETS: [HaloOffset; 26] = [
 impl HaloOffset {
     #[must_use]
     pub fn index(self) -> Option<usize> {
-        HALO_OFFSETS.iter().position(|candidate| *candidate == self)
+        if (-1..=1).contains(&self.dx) && (-1..=1).contains(&self.dy) && (-1..=1).contains(&self.dz) {
+            let key = (self.dx + 1) as usize * 9 + (self.dy + 1) as usize * 3 + (self.dz + 1) as usize;
+            const LUT: [Option<u8>; 27] = {
+                let mut lut = [None; 27];
+                let mut i = 0;
+                while i < 26 {
+                    let h = HALO_OFFSETS[i];
+                    let k = (h.dx + 1) as usize * 9 + (h.dy + 1) as usize * 3 + (h.dz + 1) as usize;
+                    lut[k] = Some(i as u8);
+                    i += 1;
+                }
+                lut
+            };
+            LUT[key].map(|idx| idx as usize)
+        } else {
+            None
+        }
     }
 }
 
@@ -391,7 +407,6 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
 
     for face in FaceDir::ALL {
         let (normal_axis, u_axis, v_axis) = face.axes();
-        let normal = face.normal();
         let mat_idx = face.material_index();
 
         for slice in 0_u8..32 {
@@ -406,6 +421,17 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
             };
 
             if is_boundary {
+                let halo_idx = match face {
+                    FaceDir::NegX => 12,
+                    FaceDir::PosX => 13,
+                    FaceDir::NegY => 4,
+                    FaceDir::PosY => 21,
+                    FaceDir::NegZ => 10,
+                    FaceDir::PosZ => 14,
+                };
+                let neighbor_chunk = input.neighbors[halo_idx].as_ref();
+                let neighbor_dense = neighbor_chunk.map(|c| c.data.blocks.to_dense());
+
                 for v in 0_u8..32 {
                     for u in 0_u8..32 {
                         let mut cell = [0_u8; 3];
@@ -418,10 +444,53 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                         if source == BlockStateId::AIR {
                             continue;
                         }
-                        let nx = i16::from(cell[0]) + normal[0];
-                        let ny = i16::from(cell[1]) + normal[1];
-                        let nz = i16::from(cell[2]) + normal[2];
-                        let neighbor = sample_relative(input, nx, ny, nz);
+                        let neighbor = if let Some(dense) = &neighbor_dense {
+                            let n_cell = match face {
+                                FaceDir::NegX => [31, cell[1], cell[2]],
+                                FaceDir::PosX => [0, cell[1], cell[2]],
+                                FaceDir::NegY => [cell[0], 31, cell[2]],
+                                FaceDir::PosY => [cell[0], 0, cell[2]],
+                                FaceDir::NegZ => [cell[0], cell[1], 31],
+                                FaceDir::PosZ => [cell[0], cell[1], 0],
+                            };
+                            let n_index = usize::from(n_cell[0])
+                                + 32 * (usize::from(n_cell[2]) + 32 * usize::from(n_cell[1]));
+                            Sample::Loaded(dense[n_index])
+                        } else {
+                            let chunk = match face {
+                                FaceDir::NegX => ChunkPos {
+                                    x: input.center.pos.x - 1,
+                                    y: input.center.pos.y,
+                                    z: input.center.pos.z,
+                                },
+                                FaceDir::PosX => ChunkPos {
+                                    x: input.center.pos.x + 1,
+                                    y: input.center.pos.y,
+                                    z: input.center.pos.z,
+                                },
+                                FaceDir::NegY => ChunkPos {
+                                    x: input.center.pos.x,
+                                    y: input.center.pos.y - 1,
+                                    z: input.center.pos.z,
+                                },
+                                FaceDir::PosY => ChunkPos {
+                                    x: input.center.pos.x,
+                                    y: input.center.pos.y + 1,
+                                    z: input.center.pos.z,
+                                },
+                                FaceDir::NegZ => ChunkPos {
+                                    x: input.center.pos.x,
+                                    y: input.center.pos.y,
+                                    z: input.center.pos.z - 1,
+                                },
+                                FaceDir::PosZ => ChunkPos {
+                                    x: input.center.pos.x,
+                                    y: input.center.pos.y,
+                                    z: input.center.pos.z + 1,
+                                },
+                            };
+                            Sample::Unloaded { chunk }
+                        };
                         if let FaceDecision::Emit { material, layer } =
                             classify_directed_face(source, &neighbor, face, &input.registry)
                         {

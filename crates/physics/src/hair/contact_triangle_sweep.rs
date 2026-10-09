@@ -163,34 +163,21 @@ impl TriangleMesh {
         }
         let MotionBounds { faces, nodes } = self.cached_motion_bounds();
         let mut result = Vec::new();
-        let mut stack = Vec::new();
+        let mut stack = Vec::with_capacity(64);
         for (index, &motion) in motions.iter().enumerate() {
-            let scale = motion
-                .start
-                .iter()
-                .chain(&motion.end)
-                .flatten()
-                .map(|x| x.abs())
-                .fold(motion.radius, f64::max);
+            let mut scale = motion.radius;
+            let mut min_p = motion.start[0];
+            let mut max_p = motion.start[0];
+            for p in [motion.start[0], motion.start[1], motion.end[0], motion.end[1]] {
+                for axis in 0..3 {
+                    min_p[axis] = min_p[axis].min(p[axis]);
+                    max_p[axis] = max_p[axis].max(p[axis]);
+                    scale = scale.max(p[axis].abs());
+                }
+            }
             let margin = motion.radius + options.tolerance_m + 64. * f64::EPSILON * scale;
-            let lo: V = std::array::from_fn(|axis| {
-                motion
-                    .start
-                    .iter()
-                    .chain(&motion.end)
-                    .map(|p| p[axis])
-                    .fold(f64::INFINITY, f64::min)
-                    - margin
-            });
-            let hi: V = std::array::from_fn(|axis| {
-                motion
-                    .start
-                    .iter()
-                    .chain(&motion.end)
-                    .map(|p| p[axis])
-                    .fold(f64::NEG_INFINITY, f64::max)
-                    + margin
-            });
+            let lo: V = [min_p[0] - margin, min_p[1] - margin, min_p[2] - margin];
+            let hi: V = [max_p[0] + margin, max_p[1] + margin, max_p[2] + margin];
             if !finite(lo) || !finite(hi) {
                 return Err("triangle sweep bounds overflow");
             }
@@ -399,7 +386,8 @@ fn moving_axis_clear_interval(
         return false;
     }
     let squared_radius = radius.mul(radius);
-    let mut conditions = vec![(norm, 4, true)];
+    let mut conditions = Vec::with_capacity(13);
+    conditions.push((norm, 4, true));
     for endpoint in 0..2 {
         for vertex in 0..3 {
             let mut projection = zero();
@@ -541,7 +529,8 @@ fn supporting_plane_clear(
     } else {
         1.
     };
-    let mut conditions = vec![(norm, 4, true)];
+    let mut conditions = Vec::with_capacity(5);
+    conditions.push((norm, 4, true));
     for endpoint in 0..2 {
         let relative = difference(
             capsule.start[endpoint],
@@ -585,26 +574,32 @@ pub fn sweep_capsule_triangle(
     {
         return Err("invalid capsule triangle sweep");
     }
-    let coordinate_scale = capsule
-        .start
-        .iter()
-        .chain(&capsule.end)
-        .chain(&triangle.start)
-        .chain(&triangle.end)
-        .flatten()
-        .map(|x| x.abs())
-        .fold(capsule.radius, f64::max);
+    let mut coordinate_scale = capsule.radius;
+    for p in [capsule.start[0], capsule.start[1], capsule.end[0], capsule.end[1]] {
+        for axis in 0..3 {
+            coordinate_scale = coordinate_scale.max(p[axis].abs());
+        }
+    }
+    for p in [triangle.start[0], triangle.start[1], triangle.start[2], triangle.end[0], triangle.end[1], triangle.end[2]] {
+        for axis in 0..3 {
+            coordinate_scale = coordinate_scale.max(p[axis].abs());
+        }
+    }
     let roundoff = 64. * f64::EPSILON * coordinate_scale;
     if options.tolerance_m < roundoff {
         return Err("triangle sweep tolerance is below coordinate precision; recenter the query");
     }
-    let va: [V; 2] = std::array::from_fn(|i| sub(capsule.end[i], capsule.start[i]));
-    let vb: [V; 3] = std::array::from_fn(|i| sub(triangle.end[i], triangle.start[i]));
-    let speed = va
-        .iter()
-        .flat_map(|a| vb.iter().map(move |b| len(sub(*a, *b))))
-        .fold(0., f64::max)
-        * (1. + 16. * f64::EPSILON);
+    let va: [V; 2] = [sub(capsule.end[0], capsule.start[0]), sub(capsule.end[1], capsule.start[1])];
+    let vb: [V; 3] = [sub(triangle.end[0], triangle.start[0]), sub(triangle.end[1], triangle.start[1]), sub(triangle.end[2], triangle.start[2])];
+    let mut max_speed2 = 0.0f64;
+    for a in &va {
+        for b in &vb {
+            let d = sub(*a, *b);
+            let d2 = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+            max_speed2 = max_speed2.max(d2);
+        }
+    }
+    let speed = max_speed2.sqrt() * (1. + 16. * f64::EPSILON);
     if !speed.is_finite() {
         return Err("triangle sweep motion overflow");
     }

@@ -1,8 +1,8 @@
 //! Resident GPU equality backend under physics-owned active-set selection.
 use super::*;
 use voxy_render::{ResidentContactEqualityInput,JOINT_CONTACT_QR_SHADER,JOINT_CONTACT_EQUALITY_SHADER};
-// Admit stationarity against the original f64 columns, not the packed QR
-// basis. Compensated products retain cancellation in coupled contact loads.
+// Evaluate equality defects against original f64 columns. Compensated
+// products retain cancellation in coupled contact loads.
 fn original_products(pairs:impl Iterator<Item=(f64,f64)>)->f64 {
     let mut sum=0f64;let mut correction=0f64;
     for (a,b) in pairs {
@@ -27,23 +27,42 @@ impl GpuHairLinearSolver {
                 self.joint_equality_dispatches+=1;
                 let result=(||->Result<_,Box<dyn std::error::Error>> {
                     let mut rhs=bounds.to_vec();let mut reactions=vec![0.;bounds.len()];
-                    for refinement in 0..4 {
-                    let input=ResidentContactEqualityInput::new_with_support_compaction(columns,&rhs,self.joint_support_compaction)?;
+                    let mut coordinates=Vec::<f64>::new();
+                    let mut input=ResidentContactEqualityInput::new_with_support_compaction(columns,&rhs,self.joint_support_compaction)?;
                     let mut job=qr.create_job(&self.device,input.bytes())?;
+                    for refinement in 0..8 {
+                    if refinement>0 {
+                        input.update_bounds(&rhs)?;
+                        let (offset,bytes)=input.equality_update();
+                        self.queue.write_buffer(job.buffer(),offset,bytes);
+                    }
                     let mut encoder=self.device.create_command_encoder(&Default::default());
-                    for _ in 0..input.columns() {job.encode_step(&mut encoder,[1,1,1])?;}
-                    job.use_program(solve)?;job.encode_step(&mut encoder,[1,1,1])?;
-                    let dispatch=job.encode_readback(&mut encoder)?;
+                    if refinement==0 {
+                        for _ in 0..input.columns() {job.encode_step(&mut encoder,[1,1,1])?;}
+                        job.use_program(solve)?;
+                    }
+                    job.encode_step(&mut encoder,[1,1,1])?;
+                    let dispatch=job.encode_snapshot(&mut encoder)?;
                     self.queue.submit([encoder.finish()]);let mut read=dispatch.begin_read();
                     self.device.poll(wgpu::PollType::wait_indefinitely())?;
                     let bytes=read.try_read()?.ok_or("pending GPU joint contact readback")?;
                     let output=input.decode(&bytes)?;
                     for (total,delta) in reactions.iter_mut().zip(output.reactions) {*total+=delta;}
-                    let coordinates:Vec<_>=(0..columns[0].len()).map(|i|original_products(columns.iter().zip(&reactions).map(|(column,&reaction)|(column[i],reaction)))).collect();
+                    if coordinates.is_empty() {coordinates=output.coordinates;}
+                    else {for (total,delta) in coordinates.iter_mut().zip(output.coordinates) {*total+=delta;}}
                     rhs=columns.iter().zip(bounds).map(|(column,&bound)|bound-original_products(column.iter().copied().zip(coordinates.iter().copied()))).collect();
                     if coordinates.iter().any(|v|!v.is_finite()) || reactions.iter().any(|v|!v.is_finite()) || rhs.iter().any(|v|!v.is_finite()) {return Err("original GPU equality refinement overflow".into());}
-                    if rhs.iter().all(|v|v.abs()<=tolerance) {return Ok((coordinates,reactions));}
-                    if refinement<3 {self.joint_equality_dispatches+=1;}
+                    // Physical feasibility alone can accept a small equality
+                    // defect which an ill-conditioned operator amplifies into
+                    // visible motion. Refine to original f64 backward accuracy
+                    // as well; this never increases the physical tolerance.
+                    let precise=columns.iter().zip(bounds).zip(&rhs).all(|((column,&bound),&defect)| {
+                        let magnitude=bound.abs()+original_products(column.iter().zip(&coordinates).map(|(&a,&b)|(a.abs(),b.abs())));
+                        let numerical_limit=32.*f64::EPSILON*magnitude.max(f64::MIN_POSITIVE);
+                        magnitude.is_finite() && defect.abs()<=tolerance.min(numerical_limit)
+                    });
+                    if precise {return Ok((coordinates,reactions));}
+                    if refinement<7 {self.joint_equality_dispatches+=1;}
                     }
                     Err("original GPU equality refinement did not converge".into())
                 })();

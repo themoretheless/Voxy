@@ -823,3 +823,66 @@ see `qr-validation-only-capture/codec-tests.log`. No runtime speedup is claimed
 for this allocation removal. The running original-stationarity trajectory
 binary predates this decode-only change. The current physics library suite
 also passed 329 tests (39 ignored); hardware trajectory gates remain unproven.
+
+The original-stationarity trajectory run is terminal (exit 101): frame 1
+position error 0.000032942765239921123 m. Its first rod 53 difference was
+contact-positions/substep 0/iteration 1 (2.3087257661202898e-9 m), with identical
+velocities; the second contact correction exceeded the position gate.
+See `original-stationarity-capture/phase-comparison.json`. Reconstruction
+alone did not resolve the trajectory failure.
+
+Seven alternating pairs of that backend with validation-only decoding still
+admitted the complete captured physical operator without native fallback:
+dense median 0.531306 s, compact median 0.306206416 s, 1.73512x. This measures
+support compaction within that version, not its speed relative to the earlier
+backend and not rendered FPS. See
+`qr-validation-only-capture/paired-original-stationarity.json`.
+
+A subsequent candidate additionally requires equality defects to reach
+original f64 backward accuracy (32 epsilon times original bound/product
+magnitude), capped by the unchanged physical tolerance. Nonfinite magnitude
+rejects the candidate. Four GPU correction trials remain bounded; the
+existing original native fallback owns failure. This new stopping criterion
+is not covered by the preceding paired timing and awaits hardware/trajectory
+qualification.
+
+The stricter reconstruction experiment failed the hardware operator test:
+the GPU candidate could not reach original backward accuracy and the owner
+fell back to native. Preserve `backward-accuracy-capture/reconstruction-rejected.log`;
+this is rejection evidence, not successful GPU qualification. The current
+candidate instead accumulates GPU QR coordinate corrections directly,
+evaluates defects with original f64 columns, and retains the same backward
+accuracy and physical gates. Up to eight correction trials are permitted;
+no column, contact, rank gate or model detail is removed. Its separate
+hardware test is running in `backward-accuracy-capture/additive-metal.log`.
+
+The additive-correction hardware test subsequently passed: original 21
+systems / 61 rows / 2646 coordinates at 1e-14, 103 GPU equality dispatches,
+one admitted candidate and no native fallback. A fresh full-density paired
+720-frame trajectory configuration is now running in
+`additive-backward-trajectory-capture/qualification.log`. Its completion and
+rendered performance are unproven; preceding timing results do not cover
+the stricter stopping criterion or extra correction dispatches.
+
+The current implementation reuses one GPU QR workspace within each immutable
+selected equality operator. Later numerical corrections upload only packed
+RHS and reset equality scratch/status, retaining GPU Q/R. Snapshots allow
+readback without consuming the resident job. Bound updates are transactional
+and retain original scaling/range checks. Nine codec/WGSL tests passed,
+including unchanged operator prefix, equivalence to fresh RHS packing, and
+shape/nonfinite/overflow rejection without mutation; see
+`resident-refinement-capture/codec-tests.log`. A separate hardware test is
+pending. The already-running additive trajectory binary predates resident
+factor reuse and is preserved; neither trajectory accuracy nor a speedup is
+claimed from codec tests.
+
+Resident QR reuse now passed the actual Metal physical operator test:
+21 systems, 61 rows, 2646 coordinates, 103 equality dispatches, one admitted
+GPU candidate, zero native fallbacks, original tolerance 1e-14. See
+`resident-refinement-capture/backend-metal.log`. The initial unrelated
+voxel-mesher constructor build failure is preserved separately; that field
+was already present in the current checkout when retried. No unrelated work
+was reverted. Test compilation also passed after adding per-frame cumulative
+GPU admission/fallback counters before trajectory assertions; failed first
+frames will no longer suppress that evidence. This hardware operator test
+and compilation still do not establish full trajectory agreement or FPS.

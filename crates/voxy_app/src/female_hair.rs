@@ -962,6 +962,11 @@ mod tests {
             // Solver wall time only: this excludes rendering and verification.
             // Log individual frames so a slow solve cannot hide in the total.
             eprintln!("HYBRID HAIR FRAME TIMING frame={frame} native_ms={native_frame_ms} external_ms={external_frame_ms} native_only={native_only} cpu_control={cpu_control}");
+            if solver.joint_contact_qr {
+                // Emit before trajectory assertions: a failed first frame must
+                // still expose actual GPU admission versus native recovery.
+                eprintln!("HYBRID JOINT FRAME COUNTERS frame={frame} coordinate_calls={} equality_dispatches={} admitted={} native_fallbacks={}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_admitted,solver.joint_native_fallbacks);
+            }
             if trace.is_some() {
                 let a=native.system.step_trace();
                 let b=gpu.system.step_trace();

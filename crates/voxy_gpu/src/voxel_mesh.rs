@@ -3,7 +3,6 @@
 //! generates `DrawIndirectArgs` on GPU with zero host readback overhead.
 
 use voxy_render::ComputeError;
-use wgpu::util::DeviceExt;
 
 /// Size of a padded chunk volume: 32 + 2 boundary slices along each axis = 34^3.
 pub const PADDED_CHUNK_VOLUME: usize = 34 * 34 * 34;
@@ -164,6 +163,12 @@ impl GpuMeshResult {
     }
 }
 
+#[derive(Debug)]
+struct VoxelStagingSlot {
+    config_buffer: wgpu::Buffer,
+    voxels_buffer: wgpu::Buffer,
+}
+
 /// GPU Compute Pipeline for parallel voxel chunk meshing.
 #[derive(Debug)]
 pub struct GpuVoxelMesher {
@@ -171,6 +176,7 @@ pub struct GpuVoxelMesher {
     bind_group_layout: wgpu::BindGroupLayout,
     pipeline_reset: wgpu::ComputePipeline,
     pipeline_mesh: wgpu::ComputePipeline,
+    staging_pool: std::sync::Mutex<Vec<VoxelStagingSlot>>,
 }
 
 impl GpuVoxelMesher {
@@ -267,6 +273,7 @@ impl GpuVoxelMesher {
             bind_group_layout,
             pipeline_reset,
             pipeline_mesh,
+            staging_pool: std::sync::Mutex::new(Vec::new()),
         })
     }
 
@@ -290,17 +297,33 @@ impl GpuVoxelMesher {
             _pad2: 0,
         };
 
-        let config_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("voxel mesh config"),
-            contents: bytemuck::bytes_of(&config),
-            usage: wgpu::BufferUsages::STORAGE,
-        });
+        let slot = {
+            let mut pool = self
+                .staging_pool
+                .lock()
+                .map_err(|e| GpuVoxelMeshError::Wgpu(e.to_string()))?;
+            pool.pop().unwrap_or_else(|| {
+                let config_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+                    label: Some("voxel mesh config"),
+                    size: std::mem::size_of::<VoxelMeshConfig>() as u64,
+                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                    mapped_at_creation: false,
+                });
+                let voxels_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+                    label: Some("padded voxels buffer"),
+                    size: (PADDED_CHUNK_VOLUME * std::mem::size_of::<u32>()) as u64,
+                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                    mapped_at_creation: false,
+                });
+                VoxelStagingSlot {
+                    config_buffer,
+                    voxels_buffer,
+                }
+            })
+        };
 
-        let voxels_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("padded voxels buffer"),
-            contents: bytemuck::cast_slice(padded_voxels),
-            usage: wgpu::BufferUsages::STORAGE,
-        });
+        queue.write_buffer(&slot.config_buffer, 0, bytemuck::bytes_of(&config));
+        queue.write_buffer(&slot.voxels_buffer, 0, bytemuck::cast_slice(padded_voxels));
 
         let indirect_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("voxel mesh indirect args"),
@@ -327,11 +350,11 @@ impl GpuVoxelMesher {
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
-                    resource: config_buffer.as_entire_binding(),
+                    resource: slot.config_buffer.as_entire_binding(),
                 },
                 wgpu::BindGroupEntry {
                     binding: 1,
-                    resource: voxels_buffer.as_entire_binding(),
+                    resource: slot.voxels_buffer.as_entire_binding(),
                 },
                 wgpu::BindGroupEntry {
                     binding: 2,
@@ -371,6 +394,10 @@ impl GpuVoxelMesher {
         }
 
         queue.submit([encoder.finish()]);
+
+        if let Ok(mut pool) = self.staging_pool.lock() {
+            pool.push(slot);
+        }
 
         Ok(GpuMeshResult {
             vertex_buffer,

@@ -188,6 +188,7 @@ fn emit_quad(
 ) {
     let quad_index = atomicAdd(&indirect_args.vertex_count, 6u) / 6u;
     if (quad_index >= config.max_quads) {
+        atomicMin(&indirect_args.vertex_count, config.max_quads * 6u);
         return;
     }
 

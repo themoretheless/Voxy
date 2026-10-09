@@ -914,14 +914,18 @@ impl Skin {
     }
     fn cg(&self, e: &Evaluation, g: &[Point], shift: f64, limit: usize) -> Option<Vec<Point>> {
         let mut x = vec![[0.0; 3]; g.len()];
-        let mut r: Vec<Point> = g.iter().map(|&v| mul(v, -1.0)).collect();
-        let precondition = |r: &[Point]| {
-            r.iter()
-                .enumerate()
-                .map(|(i, v)| std::array::from_fn(|a| v[a] / (e.diagonal[i][a] + shift).max(1e-9)))
-                .collect::<Vec<Point>>()
-        };
-        let mut z = precondition(&r);
+        let mut r = Vec::with_capacity(g.len());
+        for &v in g {
+            r.push([-v[0], -v[1], -v[2]]);
+        }
+        let mut z = Vec::with_capacity(g.len());
+        for (i, v) in r.iter().enumerate() {
+            z.push([
+                v[0] / (e.diagonal[i][0] + shift).max(1e-9),
+                v[1] / (e.diagonal[i][1] + shift).max(1e-9),
+                v[2] / (e.diagonal[i][2] + shift).max(1e-9),
+            ]);
+        }
         let mut d = z.clone();
         let mut rz = vector_dot(&r, &z);
         let tolerance = vector_dot(&r, &r) * 1e-8;
@@ -1108,12 +1112,11 @@ impl Skin {
                 if let Some(direction) = self.cg(&e, &g, shift, config.max_cg) {
                     let slope = vector_dot(&g, &direction);
                     let mut fraction = 1.0;
+                    let mut trial = vec![[0.0; 3]; p.len()];
                     for _ in 0..32 {
-                        let trial: Vec<Point> = p
-                            .iter()
-                            .zip(&direction)
-                            .map(|(&v, &d)| add(v, mul(d, fraction)))
-                            .collect();
+                        for (t, (&v, &d)) in trial.iter_mut().zip(p.iter().zip(&direction)) {
+                            *t = add(v, mul(d, fraction));
+                        }
                         if !safe_path(
                             &p,
                             &trial,
