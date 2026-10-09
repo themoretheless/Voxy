@@ -41276,3 +41276,421 @@ HAIR SWEPT REFINEMENT count=1 cuts=186 constraints=654 fraction=0.00001525878906
 HAIR QR PROFILE systems=19 rows=84 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=15.243209 admitted_coordinates=true
 HAIR SWEPT REFINEMENT count=2 cuts=278 constraints=746 fraction=0.00006103515625
 HAIR QR PROFILE systems=14 rows=81 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=13.308499999999999 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=101 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=38.905167 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=327 constraints=795 fraction=0.0001220703125
+HAIR QR PROFILE systems=14 rows=88 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=12.000874999999999 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=60.075542000000006 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=356 constraints=824 fraction=0.000244140625
+HAIR QR PROFILE systems=14 rows=95 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=20.274 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=115 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=61.111292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=374 constraints=842 fraction=0.015625
+HAIR QR PROFILE systems=14 rows=100 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=34.90025 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=66.414625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=384 constraints=852 fraction=0.125
+HAIR QR PROFILE systems=14 rows=101 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=16.827083 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=48.730791 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=386 constraints=854 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000015543846350845215 maximum_accepted_translation_m=0.000015543846350845215
+HAIR SWEPT SOLVE PROFILE elapsed_ms=956.1509590000001 initial_projection_ms=21.265209 initial_admission_ms=135.939541 refinements=7 cuts=386 constraints=854 groups=401 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=189 constraints=635 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=80 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=16.041916999999998 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=277 constraints=723 fraction=0.00006103515625
+HAIR QR PROFILE systems=14 rows=73 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=20.82225 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=97 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=61.799458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=320 constraints=766 fraction=0.0001220703125
+HAIR QR PROFILE systems=19 rows=107 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=46.380458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=348 constraints=794 fraction=0.000244140625
+HAIR QR PROFILE systems=14 rows=86 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=19.536583999999998 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=51.051292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=366 constraints=812 fraction=0.015625
+HAIR QR PROFILE systems=14 rows=90 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=15.927750000000001 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=113 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=47.136375 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=375 constraints=821 fraction=0.125
+HAIR QR PROFILE systems=14 rows=91 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=20.880041 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=114 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=65.89125 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=377 constraints=823 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000015522408493385885 maximum_accepted_translation_m=0.000015522408493385885
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1191.3580829999999 initial_projection_ms=27.173916 initial_admission_ms=226.027834 refinements=7 cuts=377 constraints=823 groups=392 minimum_scale=1
+HAIR QR PROFILE systems=19 rows=59 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=12.691958 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=1 cuts=189 constraints=653 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=83 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=21.714792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=277 constraints=741 fraction=0.00006103515625
+HAIR QR PROFILE systems=14 rows=74 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=13.238417 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=100 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=48.530708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=320 constraints=784 fraction=0.0001220703125
+HAIR QR PROFILE systems=19 rows=110 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=39.952334 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=348 constraints=812 fraction=0.000244140625
+HAIR QR PROFILE systems=14 rows=87 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=13.314375 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=114 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=49.727834 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=366 constraints=830 fraction=0.015625
+HAIR QR PROFILE systems=14 rows=91 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=15.714540999999999 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=47.929291 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=375 constraints=839 fraction=0.125
+HAIR QR PROFILE systems=14 rows=92 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=13.282166 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=44.692750000000004 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=377 constraints=841 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00001552238616595859 maximum_accepted_translation_m=0.00001552238616595859
+HAIR SWEPT SOLVE PROFILE elapsed_ms=903.739875 initial_projection_ms=17.607166 initial_admission_ms=149.74504199999998 refinements=7 cuts=377 constraints=841 groups=392 minimum_scale=1
+HAIR QR PROFILE systems=19 rows=59 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=12.646667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=1 cuts=189 constraints=654 fraction=0.0000152587890625
+HAIR QR PROFILE systems=14 rows=65 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=10.127749999999999 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=83 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=21.904708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=277 constraints=742 fraction=0.00006103515625
+HAIR QR PROFILE systems=19 rows=100 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=31.884333 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=320 constraints=785 fraction=0.0001220703125
+HAIR QR PROFILE systems=19 rows=110 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=38.857167 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=348 constraints=813 fraction=0.000244140625
+HAIR QR PROFILE systems=14 rows=87 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=11.11275 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=114 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=40.156542 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=366 constraints=831 fraction=0.015625
+HAIR QR PROFILE systems=14 rows=91 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=12.313708 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=41.686625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=375 constraints=840 fraction=0.125
+HAIR QR PROFILE systems=14 rows=92 coordinates=1764 compact_coordinates=594 refinement=0 elapsed_ms=11.992958 admitted_coordinates=true
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=873 refinement=0 elapsed_ms=40.230292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=377 constraints=842 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00001552238616595859 maximum_accepted_translation_m=0.00001552238616595859
+HAIR SWEPT SOLVE PROFILE elapsed_ms=764.77025 initial_projection_ms=24.562875000000002 initial_admission_ms=142.597291 refinements=7 cuts=377 constraints=842 groups=392 minimum_scale=1
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/sparse-basis-capture/root-motion.vjr" rods=469 bytes=936352
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/sparse-basis-capture/root-motion.vjr" rods=469 bytes=937848
+HAIR SWEPT REFINEMENT count=1 cuts=187 constraints=217 error=swept strand component admission did not converge
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/sparse-basis-capture/root-motion.vjr" rods=469 bytes=938752
+HAIR SWEPT REFINEMENT count=2 cuts=300 constraints=330 error=swept strand component admission did not converge
+HAIR QR PROFILE systems=19 rows=89 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=15.53925 admitted_coordinates=true
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/sparse-basis-capture/root-motion.vjr" rods=469 bytes=939160
+HAIR SWEPT REFINEMENT count=3 cuts=351 constraints=381 error=swept strand component admission did not converge
+HAIR QR PROFILE systems=19 rows=102 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=21.903 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=380 constraints=410 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=109 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=26.484458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=392 constraints=422 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=110 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=27.495167000000002 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=397 constraints=427 fraction=0.125
+HAIR QR PROFILE systems=19 rows=110 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=27.558625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=398 constraints=428 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0021502607870133353 maximum_accepted_translation_m=0.0021502607870133353
+HAIR SWEPT SOLVE PROFILE elapsed_ms=594.925292 initial_projection_ms=13.188458 initial_admission_ms=61.878167000000005 refinements=7 cuts=398 constraints=428 groups=424 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=719 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=102 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=10.406708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=299 constraints=826 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=27.163125 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=353 constraints=880 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=132 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.273583 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=377 constraints=904 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=138 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.705583 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=390 constraints=917 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=140 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=45.457416 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=398 constraints=925 fraction=0.0625
+HAIR QR PROFILE systems=19 rows=141 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=46.217166 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=400 constraints=927 fraction=0.0625
+HAIR QR PROFILE systems=19 rows=142 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=46.640084 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=401 constraints=928 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0008212928503771465 maximum_accepted_translation_m=0.0008212928503771465
+HAIR SWEPT SOLVE PROFILE elapsed_ms=618.245333 initial_projection_ms=13.802541 initial_admission_ms=49.473584 refinements=8 cuts=401 constraints=928 groups=417 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=306 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=80 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=14.607917 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=295 constraints=409 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=100 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=30.98025 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=348 constraints=462 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=114 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=45.02175 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=378 constraints=492 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=52.154375 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=391 constraints=505 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=123 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=53.640958000000005 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=399 constraints=513 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=125 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=56.267125 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=402 constraints=516 fraction=0.125
+HAIR QR PROFILE systems=19 rows=127 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=56.747833 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=404 constraints=518 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00046079759531682577 maximum_accepted_translation_m=0.00046079759531682577
+HAIR SWEPT SOLVE PROFILE elapsed_ms=675.346042 initial_projection_ms=12.652917 initial_admission_ms=50.338333 refinements=8 cuts=404 constraints=518 groups=418 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=193 constraints=562 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=86 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=17.226208 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=295 constraints=664 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=106 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=34.202957999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=347 constraints=716 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=49.589792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=374 constraints=743 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=126 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=56.536125 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=387 constraints=756 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=129 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=58.755792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=395 constraints=764 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=131 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=61.832875 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=398 constraints=767 fraction=0.125
+HAIR QR PROFILE systems=19 rows=133 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=62.814792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=400 constraints=769 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00018563934885770924 maximum_accepted_translation_m=0.00018563934885770924
+HAIR SWEPT SOLVE PROFILE elapsed_ms=744.1344170000001 initial_projection_ms=13.196042 initial_admission_ms=53.865792000000006 refinements=8 cuts=400 constraints=769 groups=414 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=536 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=79 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=11.649667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=288 constraints=632 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=100 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=26.953667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=337 constraints=681 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=112 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=52.104625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=360 constraints=704 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=43.096250000000005 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=372 constraints=716 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.686416 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=379 constraints=723 fraction=0.0625
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=45.211124999999996 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=381 constraints=725 fraction=0.125
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=46.201375000000006 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=382 constraints=726 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0008327251114589691 maximum_accepted_translation_m=0.0008327251114589691
+HAIR SWEPT SOLVE PROFILE elapsed_ms=632.723167 initial_projection_ms=15.833709 initial_admission_ms=54.965 refinements=8 cuts=382 constraints=726 groups=400 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=615 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=79 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=12.583291 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=289 constraints=712 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=100 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=28.765709 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=338 constraints=761 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=112 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.285458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=361 constraints=784 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=46.00425 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=373 constraints=796 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=48.060625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=380 constraints=803 fraction=0.0625
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=47.477292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=382 constraints=805 fraction=0.125
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=46.900916 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=383 constraints=806 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000005437743747547878 maximum_accepted_translation_m=0.000005437743747547878
+HAIR SWEPT SOLVE PROFILE elapsed_ms=650.36025 initial_projection_ms=13.57925 initial_admission_ms=52.377375 refinements=8 cuts=383 constraints=806 groups=401 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=623 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=80 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=11.539375 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=292 constraints=723 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=101 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=26.949709 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=341 constraints=772 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=113 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=39.501000000000005 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=366 constraints=797 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.974709 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=378 constraints=809 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.964375000000004 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=385 constraints=816 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=45.162583999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=387 constraints=818 fraction=0.125
+HAIR QR PROFILE systems=19 rows=122 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=46.063624999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=388 constraints=819 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000006489314540811112 maximum_accepted_translation_m=0.000006489314540811112
+HAIR SWEPT SOLVE PROFILE elapsed_ms=605.899042 initial_projection_ms=13.223208999999999 initial_admission_ms=47.102041 refinements=8 cuts=388 constraints=819 groups=407 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=632 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=80 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=11.500833 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=292 constraints=732 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=101 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=26.425292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=341 constraints=781 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=113 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=39.647792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=366 constraints=806 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=43.023667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=378 constraints=818 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=47.701458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=385 constraints=825 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=45.894292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=387 constraints=827 fraction=0.125
+HAIR QR PROFILE systems=19 rows=122 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=45.9775 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=388 constraints=828 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000004281796834846206 maximum_accepted_translation_m=0.000004281796834846206
+HAIR SWEPT SOLVE PROFILE elapsed_ms=607.510958 initial_projection_ms=13.163417 initial_admission_ms=46.375499999999995 refinements=8 cuts=388 constraints=828 groups=407 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=613 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=80 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=11.548792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=290 constraints=711 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=100 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=26.68125 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=338 constraints=759 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=112 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=38.746458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=361 constraints=782 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.950208 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=373 constraints=794 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.643417 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=380 constraints=801 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.700416 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=382 constraints=803 fraction=0.125
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=45.095542 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=383 constraints=804 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000026319439737570487 maximum_accepted_translation_m=0.0000026319439737570487
+HAIR SWEPT SOLVE PROFILE elapsed_ms=605.6165 initial_projection_ms=12.999125 initial_admission_ms=46.306084 refinements=8 cuts=383 constraints=804 groups=403 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=628 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=80 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=11.633790999999999 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=290 constraints=726 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=100 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=26.886042 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=338 constraints=774 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=112 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=38.732583 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=361 constraints=797 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.332291 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=373 constraints=809 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.086332999999996 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=380 constraints=816 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.641124999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=382 constraints=818 fraction=0.125
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.932874999999996 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=383 constraints=819 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000026319439737570487 maximum_accepted_translation_m=0.0000026319439737570487
+HAIR SWEPT SOLVE PROFILE elapsed_ms=597.4834169999999 initial_projection_ms=13.421959000000001 initial_admission_ms=46.634040999999996 refinements=8 cuts=383 constraints=819 groups=403 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=190 constraints=267 fraction=0.000003814697265625
+HAIR SWEPT REFINEMENT count=2 cuts=290 constraints=367 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=93 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=24.628708 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=340 constraints=417 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=105 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=33.517041 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=366 constraints=443 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=37.3845 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=379 constraints=456 fraction=0.0078125
+HAIR QR PROFILE systems=19 rows=114 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=38.308875 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=387 constraints=464 fraction=0.0625
+HAIR QR PROFILE systems=19 rows=115 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=38.751042 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=389 constraints=466 fraction=0.125
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=39.412667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=390 constraints=467 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0004607954741183829 maximum_accepted_translation_m=0.0004607954741183829
+HAIR SWEPT SOLVE PROFILE elapsed_ms=571.9399579999999 initial_projection_ms=12.78525 initial_admission_ms=47.755 refinements=8 cuts=390 constraints=467 groups=409 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=501 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=78 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=10.022292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=290 constraints=599 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=98 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=27.027416 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=337 constraints=646 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=112 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=40.119292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=365 constraints=674 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=117 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=44.233292 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=377 constraints=686 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=47.149958 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=385 constraints=694 fraction=0.0625
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=47.869209000000005 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=387 constraints=696 fraction=0.125
+HAIR QR PROFILE systems=19 rows=122 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=48.536916999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=388 constraints=697 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0004605256700480616 maximum_accepted_translation_m=0.0004605256700480616
+HAIR SWEPT SOLVE PROFILE elapsed_ms=605.515375 initial_projection_ms=13.032416999999999 initial_admission_ms=46.619208 refinements=8 cuts=388 constraints=697 groups=408 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=191 constraints=332 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=81 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=14.001875 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=292 constraints=433 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=102 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=29.930083 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=343 constraints=484 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=114 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=43.285959 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=369 constraints=510 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=48.463874999999994 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=381 constraints=522 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=121 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=49.559958 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=388 constraints=529 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=122 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=49.658333 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=390 constraints=531 fraction=0.125
+HAIR QR PROFILE systems=19 rows=123 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=50.88075 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=391 constraints=532 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0004606623635896674 maximum_accepted_translation_m=0.0004606623635896674
+HAIR SWEPT SOLVE PROFILE elapsed_ms=641.5072080000001 initial_projection_ms=13.24275 initial_admission_ms=47.957083000000004 refinements=8 cuts=391 constraints=532 groups=410 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=500 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=86 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=16.343917 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=292 constraints=600 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=107 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=32.880624999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=341 constraints=649 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=46.657042000000004 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=366 constraints=674 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=124 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=52.831208 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=378 constraints=686 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=126 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=54.033167 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=385 constraints=693 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=127 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=55.466459 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=387 constraints=695 fraction=0.125
+HAIR QR PROFILE systems=19 rows=128 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=56.051209 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=388 constraints=696 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0001203129767858827 maximum_accepted_translation_m=0.0001203129767858827
+HAIR SWEPT SOLVE PROFILE elapsed_ms=661.5603329999999 initial_projection_ms=13.73225 initial_admission_ms=47.417750000000005 refinements=8 cuts=388 constraints=696 groups=407 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=456 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=79 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=10.284583 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=289 constraints=553 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=99 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=25.255458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=337 constraints=601 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=36.842290999999996 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=360 constraints=624 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=40.155125 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=372 constraints=636 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.595417000000005 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=379 constraints=643 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.912541 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=381 constraints=645 fraction=0.125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.628333 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=382 constraints=646 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0001355438327797666 maximum_accepted_translation_m=0.0001355438327797666
+HAIR SWEPT SOLVE PROFILE elapsed_ms=581.225959 initial_projection_ms=12.730709 initial_admission_ms=47.25016600000001 refinements=8 cuts=382 constraints=646 groups=402 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=493 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=79 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=10.338458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=290 constraints=591 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=99 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=25.449083 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=338 constraints=639 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=36.765875 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=361 constraints=662 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=40.317709 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=373 constraints=674 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.640083000000004 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=380 constraints=681 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.535667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=382 constraints=683 fraction=0.125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.594667 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=383 constraints=684 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00011409226985331324 maximum_accepted_translation_m=0.00011409226985331324
+HAIR SWEPT SOLVE PROFILE elapsed_ms=588.6945420000001 initial_projection_ms=13.170042 initial_admission_ms=48.811167 refinements=8 cuts=383 constraints=684 groups=403 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=514 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=79 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=10.166625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=290 constraints=612 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=99 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=24.93575 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=338 constraints=660 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=37.298375 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=361 constraints=683 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=39.828792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=373 constraints=695 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.10425 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=380 constraints=702 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.792625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=382 constraints=704 fraction=0.125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=43.283291 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=383 constraints=705 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00011478082596433762 maximum_accepted_translation_m=0.00011478082596433762
+HAIR SWEPT SOLVE PROFILE elapsed_ms=588.735458 initial_projection_ms=13.083041999999999 initial_admission_ms=48.00325 refinements=8 cuts=383 constraints=705 groups=403 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=497 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=79 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=10.198250000000002 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=292 constraints=597 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=99 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=25.4325 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=340 constraints=645 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=37.094167 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=365 constraints=670 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=40.50625 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=377 constraints=682 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.951791 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=384 constraints=689 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.540541000000005 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=386 constraints=691 fraction=0.125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.833709 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=387 constraints=692 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000005449178853794613 maximum_accepted_translation_m=0.000005449178853794613
+HAIR SWEPT SOLVE PROFILE elapsed_ms=584.958375 initial_projection_ms=13.180958 initial_admission_ms=47.022583999999995 refinements=8 cuts=387 constraints=692 groups=406 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=505 fraction=0.000003814697265625
+HAIR QR PROFILE systems=19 rows=79 coordinates=2394 compact_coordinates=819 refinement=0 elapsed_ms=10.286332999999999 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=2 cuts=292 constraints=605 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=99 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=25.248083 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=340 constraints=653 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=36.371624999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=365 constraints=678 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=40.332792 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=377 constraints=690 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=118 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=41.722958 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=384 constraints=697 fraction=0.03125
+HAIR QR PROFILE systems=19 rows=119 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.501458 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=386 constraints=699 fraction=0.125
+HAIR QR PROFILE systems=19 rows=120 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=42.747333999999995 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=387 constraints=700 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000005449178853794613 maximum_accepted_translation_m=0.000005449178853794613
+HAIR SWEPT SOLVE PROFILE elapsed_ms=588.660375 initial_projection_ms=13.147667 initial_admission_ms=47.077292 refinements=8 cuts=387 constraints=700 groups=406 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=190 constraints=269 fraction=0.000003814697265625
+HAIR SWEPT REFINEMENT count=2 cuts=288 constraints=367 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=93 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=24.789665999999997 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=336 constraints=415 fraction=0.0009765625
+HAIR QR PROFILE systems=19 rows=105 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=32.276125 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=4 cuts=361 constraints=440 fraction=0.00390625
+HAIR QR PROFILE systems=19 rows=111 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=36.679 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=5 cuts=374 constraints=453 fraction=0.015625
+HAIR QR PROFILE systems=19 rows=114 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=38.527416 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=6 cuts=382 constraints=461 fraction=0.0625
+HAIR QR PROFILE systems=19 rows=115 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=39.335750000000004 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=7 cuts=384 constraints=463 fraction=0.125
+HAIR QR PROFILE systems=19 rows=116 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=39.194874999999996 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=8 cuts=385 constraints=464 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00046079588964005803 maximum_accepted_translation_m=0.00046079588964005803
+HAIR SWEPT SOLVE PROFILE elapsed_ms=573.4941249999999 initial_projection_ms=12.904292 initial_admission_ms=51.099542 refinements=8 cuts=385 constraints=464 groups=405 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=192 constraints=497 fraction=0.000003814697265625
+HAIR SWEPT REFINEMENT count=2 cuts=292 constraints=597 fraction=0.0000152587890625
+HAIR QR PROFILE systems=19 rows=98 coordinates=2394 compact_coordinates=867 refinement=0 elapsed_ms=26.180291 admitted_coordinates=true
+HAIR SWEPT REFINEMENT count=3 cuts=341 constraints=646 fraction=0.0009765625
