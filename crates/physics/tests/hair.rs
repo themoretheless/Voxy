@@ -439,6 +439,26 @@ fn linear_system_capture_preserves_dynamic_state_and_next_step() {
 }
 
 struct NativeBatch { calls: usize, corrupt: Option<usize>, fail_after: Option<usize> }
+#[test]
+fn original_matrix_residual_refinement_preserves_fixed_degrees_of_freedom() {
+    let n=18;
+    let mut matrix=vec![0.;n*9];
+    let mut rhs=vec![0.;n];
+    for i in 0..n {matrix[i*9]=4.;if i>0 {matrix[i*9+1]=0.5;}}
+    for i in 6..15 {rhs[i]=4.+if i>6 {0.5} else {0.}+if i<14 {0.5} else {0.};}
+    let system=physics::hair::HairLinearSystem {band_width:9,matrix,rhs,active:6..15};
+    let mut approximate=vec![0.;n];
+    for i in system.active.clone() {approximate[i]=1.+(i as f64-10.)*1e-6;}
+    let residual=system.correction_residual(&approximate).unwrap();
+    assert!(residual[..6].iter().chain(&residual[15..]).all(|v|*v==0.));
+    let mut increment_system=system.clone();increment_system.rhs=residual;
+    let increment=increment_system.solve_native().unwrap();
+    for i in system.active.clone() {approximate[i]+=increment[i];}
+    system.validate_correction(&approximate).unwrap();
+    assert!(approximate[6..15].iter().all(|v|(*v-1.).abs()<1e-14));
+    assert!(system.correction_residual(&vec![f64::NAN;n]).is_err());
+    assert!(system.correction_residual(&[0.;6]).is_err());
+}
 impl physics::hair::HairLinearSolver for NativeBatch {
     fn solve(&mut self,systems:&[physics::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
         self.calls+=1;

@@ -137,6 +137,23 @@ impl BandedSolveInput {
             active,
         })
     }
+    /// Repack force columns using the exact admitted coefficient words/scales.
+    /// Coefficients are immutable; no matrix re-equilibration is performed.
+    pub fn with_rhs(&self,rhs:&[&[f64]],max_error:f64)->Result<Self,BandedSolveError> {
+        if rhs.len()!=self.scales.len() || !max_error.is_finite() || !(0.0..=1e-40).contains(&max_error) || rhs.iter().any(|values|values.len()!=self.n || values.iter().any(|value|!value.is_finite())) {return Err(BandedSolveError::InvalidInput);}
+        let mut words=self.words.clone();let mut rhs_error=0f64;
+        for (system,(values,scales)) in rhs.iter().zip(&self.scales).enumerate() {
+            let base=4+system*(self.n*20+1)+self.n*18;
+            for (i,(&value,&scale)) in values.iter().zip(scales).enumerate() {
+                let normalized=value*scale;let hi=normalized as f32;let lo=(normalized-hi as f64) as f32;
+                if !normalized.is_finite() || !hi.is_finite() || !lo.is_finite() || (normalized.abs()>max_error && hi==0. && lo==0.) {return Err(BandedSolveError::NumericRange);}
+                rhs_error=rhs_error.max(((hi as f64+lo as f64)-normalized).abs());
+                words[base+i*2]=hi.to_bits();words[base+i*2+1]=lo.to_bits();
+            }
+            words[base+self.n*2]=0;
+        }
+        Ok(Self {words,scales:self.scales.clone(),packing_error:[self.packing_error[0],rhs_error],n:self.n,active:self.active.clone()})
+    }
     /// Maximum absolute hi/lo round-trip error in equilibrated matrix/RHS units.
     /// This measures input representation only, not correction or trajectory error.
     pub fn packing_error(&self)->[f64;2] {self.packing_error}
@@ -155,6 +172,38 @@ impl BandedSolveInput {
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    /// Update only right-hand sides in a successfully factored GPU batch.
+    /// Exact normalized matrix/header equality is required; factors are never
+    /// reused across a changed coefficient or active-range layout.
+    pub fn factored_rhs_updates(&self,factored_input:&Self)->Result<Vec<(u64,Vec<u8>)>,BandedSolveError> {
+        if self.words[..4]!=factored_input.words[..4] {return Err(BandedSolveError::InvalidInput);}
+        let mut updates=Vec::with_capacity(self.scales.len());
+        for system in 0..self.scales.len() {
+            let base=4+system*(self.n*20+1);let rhs=base+self.n*18;
+            if self.words[base..rhs]!=factored_input.words[base..rhs] {return Err(BandedSolveError::InvalidInput);}
+            let mut payload=self.words[rhs..rhs+self.n*2+1].to_vec();
+            // Shader consumes this command and publishes normal status zero.
+            payload[self.n*2]=2;
+            updates.push((rhs as u64*4,bytemuck::cast_slice(&payload).to_vec()));
+        }
+        Ok(updates)
+    }
+    /// Only the immutable header and solved RHS/status need host transfer.
+    pub fn compact_output_size(&self)->u64 {16+self.scales.len() as u64*(self.n as u64*2+1)*4}
+    /// Ordered source/destination byte ranges for a complete compact snapshot.
+    pub fn compact_output_ranges(&self)->Vec<(u64,u64,u64)> {
+        let mut ranges=vec![(0,0,16)];
+        for system in 0..self.scales.len() {
+            let source=(4+system*(self.n*20+1)+self.n*18)*4;
+            let target=(4+system*(self.n*2+1))*4;
+            ranges.push((source as u64,target as u64,(self.n*2+1) as u64*4));
+        }
+        ranges
+    }
+    /// Uses the same admission arithmetic as full-storage decoding.
+    pub fn decode_compact_checked(&self,bytes:&[u8],tolerance:f64)->Result<Vec<Vec<f64>>,BandedSolveError> {
+        self.decode_output(bytes,tolerance,true)
+    }
     pub fn dispatch(&self) -> [u32; 3] {
         [(self.scales.len() as u32).div_ceil(32), 1, 1]
     }
@@ -165,7 +214,11 @@ impl BandedSolveInput {
         bytes: &[u8],
         tolerance: f64,
     ) -> Result<Vec<Vec<f64>>, BandedSolveError> {
-        if bytes.len() != self.bytes().len() || !tolerance.is_finite() || tolerance <= 0. {
+        self.decode_output(bytes,tolerance,false)
+    }
+    fn decode_output(&self,bytes:&[u8],tolerance:f64,compact:bool)->Result<Vec<Vec<f64>>,BandedSolveError> {
+        let expected=if compact {self.compact_output_size() as usize} else {self.bytes().len()};
+        if bytes.len() != expected || !tolerance.is_finite() || tolerance <= 0. {
             return Err(BandedSolveError::InvalidOutput);
         }
         let words: Vec<u32> = bytes
@@ -182,16 +235,17 @@ impl BandedSolveInput {
         for (system, scales) in self.scales.iter().enumerate() {
             let base = 4 + system * (self.n * 20 + 1);
             let rhs = base + self.n * 18;
-            let status = words[base + self.n * 20];
+            let output_rhs=if compact {4+system*(self.n*2+1)} else {rhs};
+            let status = words[output_rhs + self.n * 2];
             if status != 0 {
                 return Err(BandedSolveError::Factorization { system, status });
             }
             for i in (0..self.active.start).chain(self.active.end..self.n) {
-                if words[rhs + i * 2..rhs + i * 2 + 2] != self.words[rhs + i * 2..rhs + i * 2 + 2] {
+                if words[output_rhs + i * 2..output_rhs + i * 2 + 2] != self.words[rhs + i * 2..rhs + i * 2 + 2] {
                     return Err(BandedSolveError::InvalidOutput);
                 }
             }
-            let values: Vec<_> = (0..self.n).map(|i| read(&words, rhs + i * 2)).collect();
+            let values: Vec<_> = (0..self.n).map(|i| read(&words, output_rhs + i * 2)).collect();
             if values.iter().any(|v| !v.is_finite()) {
                 return Err(BandedSolveError::InvalidOutput);
             }
@@ -227,6 +281,77 @@ pub const BANDED_SOLVE_SHADER: &str = include_str!("hair_banded_compensated.wgsl
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn rhs_repacking_is_bitwise_equal_to_fresh_equilibration_and_checks_ranges() {
+        let mut matrix=vec![0.;36];for i in 0..4 {matrix[i*9]=(i+1) as f64*0.013;}
+        matrix[10]=-0.001;
+        let zero=[0.;4];let a=[0.,1.234567890123e-9,-1e-12,0.];let b=[0.,-8e-8,2e-9,0.];
+        let first=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&zero};2],1..3).unwrap();
+        let repacked=first.with_rhs(&[&a,&b],0.).unwrap();
+        let fresh=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&a},BandedSystem {matrix:&matrix,rhs:&b}],1..3).unwrap();
+        assert_eq!(repacked.bytes(),fresh.bytes());assert_eq!(repacked.packing_error(),fresh.packing_error());
+        assert_eq!(first.packed_reference(0).unwrap().rhs,vec![0.;4]);
+        assert!(first.with_rhs(&[&a],0.).is_err());assert!(first.with_rhs(&[&a,&a[..3]],0.).is_err());
+        for value in [f64::NAN,f64::INFINITY,1e300,1e-300] {
+            let bad=[0.,value,0.,0.];assert!(first.with_rhs(&[&bad,&b],0.).is_err());
+        }
+        let tiny=[0.,1e-300,0.,0.];assert!(first.with_rhs(&[&tiny,&b],1e-40).is_ok());
+        assert!(first.with_rhs(&[&a,&b],f64::NAN).is_err());assert!(first.with_rhs(&[&a,&b],1e-20).is_err());
+    }
+    #[test]
+    fn compact_readback_preserves_full_admission_and_rejects_corruption() {
+        let mut matrix=vec![0.;27];for i in 0..3 {matrix[i*9]=1.;}
+        let row=BandedSystem {matrix:&matrix,rhs:&[0.,2.,0.]};
+        let input=BandedSolveInput::new(&[row,row],1..2).unwrap();
+        let full=input.bytes();let mut compact=vec![0;input.compact_output_size() as usize];
+        let mut end=0;
+        for (source,target,size) in input.compact_output_ranges() {
+            assert_eq!(target,end);end=target+size;
+            compact[target as usize..end as usize].copy_from_slice(&full[source as usize..(source+size) as usize]);
+        }
+        assert_eq!(end,input.compact_output_size());
+        assert!(compact.len()<full.len()/2);
+        assert_eq!(input.decode_checked(full,1e-8),input.decode_compact_checked(&compact,1e-8));
+        assert!(input.decode_compact_checked(&compact[..compact.len()-4],1e-8).is_err());
+        for (word,value) in [(0,999u32),(4,1f32.to_bits()),(6,f32::NAN.to_bits()),(6,0),(10,1),(10,2),(13,1f32.to_bits())] {
+            let mut bad=compact.clone();bad[word*4..word*4+4].copy_from_slice(&value.to_ne_bytes());
+            assert!(input.decode_compact_checked(&bad,1e-8).is_err(),"word {word} corruption admitted");
+        }
+    }
+    #[test]
+    fn factored_rhs_updates_preserve_headers_and_factor_storage() {
+        let mut matrix=vec![0.;18];matrix[0]=4.;matrix[9]=9.;matrix[10]=1.;
+        let old=[1.,2.];let new=[3.,4.];
+        let original=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&old};2],0..2).unwrap();
+        let next=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&new};2],0..2).unwrap();
+        let mut gpu=original.bytes().to_vec();
+        for system in 0..2 {
+            let base=4+system*41;
+            gpu[base*4..(base+36)*4].fill(0x5a);
+        }
+        let before=gpu.clone();
+        for (offset,payload) in next.factored_rhs_updates(&original).unwrap() {
+            let offset=offset as usize;gpu[offset..offset+payload.len()].copy_from_slice(&payload);
+        }
+        assert_eq!(&gpu[..16],&before[..16]);
+        for system in 0..2 {
+            let base=4+system*41;let rhs=base+36;
+            assert_eq!(&gpu[base*4..rhs*4],&before[base*4..rhs*4]);
+            assert_eq!(&gpu[rhs*4..(rhs+4)*4],&next.bytes()[rhs*4..(rhs+4)*4]);
+            assert_eq!(u32::from_ne_bytes(gpu[(rhs+4)*4..(rhs+5)*4].try_into().unwrap()),2);
+        }
+        assert!(matches!(next.decode_checked(&gpu,1e-8),Err(BandedSolveError::Factorization {status:2,..})));
+    }
+    #[test]
+    fn factored_rhs_updates_reject_changed_matrix_or_layout() {
+        let mut matrix=vec![0.;18];matrix[0]=4.;matrix[9]=9.;matrix[10]=1.;let rhs=[1.,2.];
+        let original=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&rhs}],0..2).unwrap();
+        let changed_layout=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&rhs}],1..2).unwrap();
+        assert_eq!(changed_layout.factored_rhs_updates(&original).unwrap_err(),BandedSolveError::InvalidInput);
+        matrix[10]=2.;
+        let changed_matrix=BandedSolveInput::new(&[BandedSystem {matrix:&matrix,rhs:&rhs}],0..2).unwrap();
+        assert_eq!(changed_matrix.factored_rhs_updates(&original).unwrap_err(),BandedSolveError::InvalidInput);
+    }
     #[test]
     fn packed_reference_decodes_immutable_words_and_physical_scales() {
         let mut matrix=vec![0.;18];matrix[0]=4.;matrix[9]=9.;matrix[10]=3.;
