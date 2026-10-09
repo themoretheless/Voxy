@@ -886,3 +886,26 @@ was reverted. Test compilation also passed after adding per-frame cumulative
 GPU admission/fallback counters before trajectory assertions; failed first
 frames will no longer suppress that evidence. This hardware operator test
 and compilation still do not establish full trajectory agreement or FPS.
+
+The additive/backward-accuracy full trajectory run failed frame 1 (exit 101):
+position error 0.000033266114801186464 m. Its first rod 53 phase difference
+remains contact-positions/substep 0/iteration 1, 1.312805197883904e-9 m;
+see `additive-backward-trajectory-capture/phase-comparison.json`. Equality
+defect refinement alone has not resolved the original trajectory mismatch.
+
+Seven alternating warmed support-compaction pairs for the current resident
+refinement backend passed original physical admission without native fallback:
+compact median 0.268995125 s versus dense 0.5156585 s (1.91698x). Compact used
+103 equality dispatches per projection versus dense 105. See
+`resident-refinement-capture/support-paired.json`. This compares support
+compaction within this version, not factor reuse against fresh factorization,
+not whole-model simulation and not rendered FPS.
+
+Opt-in island-input observation now preserves the first sixteen complete
+physical operators containing a specified original rod, separately for
+native and external paths. Original loads, immutable columns, system
+matrices and bounds are captured in VQC1, without dropping any member of
+the island or changing physical selection/publication. Files use create-new
+semantics. The physics suite passed after this addition; a fresh full-density
+720-frame run in `island-input-trajectory-capture` records rod 53 inputs for
+direct replay and phase localization. No trajectory success is claimed.
