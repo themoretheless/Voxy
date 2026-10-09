@@ -252,10 +252,16 @@ impl Renderer {
             .await
             .map_err(RendererError::RequestAdapter)?;
         let mut required_features = wgpu::Features::empty();
-        if adapter.features().contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY) {
+        if adapter
+            .features()
+            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
+        {
             required_features |= wgpu::Features::EXPERIMENTAL_RAY_QUERY;
         }
-        if adapter.features().contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS) {
+        if adapter
+            .features()
+            .contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
+        {
             required_features |= wgpu::Features::MAPPABLE_PRIMARY_BUFFERS;
         }
         let (device, queue) = adapter
@@ -778,6 +784,61 @@ impl Renderer {
         Ok(())
     }
 
+    /// Updates joints and world transform together: one pose validation and one
+    /// pair of GPU writes, where calling [`Self::update_skin_matrices`] followed by
+    /// [`Self::update_skinned_model`] validates and writes twice per tick.
+    ///
+    /// # Errors
+    ///
+    /// Rejects missing geometry or invalid/singular deformation before GPU writes.
+    pub fn update_skinned_pose(
+        &mut self,
+        joints: &[Mat4],
+        model: Mat4,
+    ) -> Result<(), RendererError> {
+        self.check_device()?;
+        if !model.is_finite() {
+            return Err(RendererError::Skinned(SkinnedUploadError::NonFiniteMatrix));
+        }
+        let lod_pose = self
+            .skinned_lod
+            .as_ref()
+            .map(|lod| {
+                lod.pose.source().prepare(joints, model).map_err(|error| {
+                    RendererError::SkinnedLod(crate::SkinnedLodGpuError::Pose(error))
+                })
+            })
+            .transpose()?;
+        let skinned = self.skinned.as_ref().ok_or(RendererError::NoSkinnedMesh)?;
+        if joints.len() != skinned.joint_count {
+            return Err(RendererError::Skinned(
+                SkinnedUploadError::JointCountMismatch,
+            ));
+        }
+        if joints.iter().any(|matrix| !matrix.is_finite()) {
+            return Err(RendererError::Skinned(SkinnedUploadError::NonFiniteMatrix));
+        }
+        let motion = self
+            .skinned_motion
+            .as_ref()
+            .ok_or(RendererError::NoSkinnedMesh)?;
+        skinned
+            .write_pose(&self.queue, motion.history.mesh(), joints, model)
+            .map_err(RendererError::Skinned)?;
+        if let Some(motion) = &mut self.skinned_motion {
+            motion.joints.clone_from_slice(joints);
+            motion.model = model;
+        }
+        if let Some(pose) = lod_pose {
+            self.skinned_lod
+                .as_mut()
+                .ok_or(RendererError::NoSkinnedLod)?
+                .pose = pose;
+            self.bind_skinned_lod_level(0)?;
+        }
+        Ok(())
+    }
+
     /// Updates the animated object's world transform without rebuilding its mesh.
     ///
     /// # Errors
@@ -1047,12 +1108,16 @@ impl Renderer {
 
     #[must_use]
     pub fn has_ray_query(&self) -> bool {
-        self.device.features().contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
+        self.device
+            .features()
+            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
     }
 
     #[must_use]
     pub fn has_mappable_primary_buffers(&self) -> bool {
-        self.device.features().contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
+        self.device
+            .features()
+            .contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
     }
 
     pub fn set_indirect_mesh(&mut self, mesh: Option<GpuIndirectMesh>) {

@@ -160,8 +160,10 @@ impl SkinnedMesh {
     ) -> Result<(), SkinnedUploadError> {
         validate_temporal_palette(self, joints, model)?;
         for vertex in self.vertices.iter() {
-            skinned_position(vertex, joints, model)?;
-            skinned_normal(vertex, joints, model)?;
+            // The blended palette is identical for the position and normal tests.
+            let skin = blended_skin(vertex, joints);
+            skinned_position_with(vertex, skin, model)?;
+            skinned_normal_with(vertex, skin, model)?;
         }
         Ok(())
     }
@@ -651,15 +653,27 @@ fn validate_temporal_palette(
     }
     Ok(())
 }
+fn blended_skin(vertex: &SkinnedVertex, joints: &[Mat4]) -> Mat4 {
+    let mut skin = Mat4::ZERO;
+    for (joint, weight) in vertex.joints.into_iter().zip(vertex.weights) {
+        skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
+    }
+    skin
+}
+
 fn skinned_position(
     vertex: &SkinnedVertex,
     joints: &[Mat4],
     model: Mat4,
 ) -> Result<[f32; 3], SkinnedUploadError> {
-    let mut skin = Mat4::ZERO;
-    for (joint, weight) in vertex.joints.into_iter().zip(vertex.weights) {
-        skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
-    }
+    skinned_position_with(vertex, blended_skin(vertex, joints), model)
+}
+
+fn skinned_position_with(
+    vertex: &SkinnedVertex,
+    skin: Mat4,
+    model: Mat4,
+) -> Result<[f32; 3], SkinnedUploadError> {
     let world = model * skin * glam::Vec3::from_array(vertex.position).extend(1.0);
     if !world.is_finite() {
         return Err(SkinnedUploadError::NonFiniteMatrix);
@@ -672,10 +686,14 @@ fn skinned_normal(
     joints: &[Mat4],
     model: Mat4,
 ) -> Result<[f32; 3], SkinnedUploadError> {
-    let mut skin = Mat4::ZERO;
-    for (joint, weight) in vertex.joints.into_iter().zip(vertex.weights) {
-        skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
-    }
+    skinned_normal_with(vertex, blended_skin(vertex, joints), model)
+}
+
+fn skinned_normal_with(
+    vertex: &SkinnedVertex,
+    skin: Mat4,
+    model: Mat4,
+) -> Result<[f32; 3], SkinnedUploadError> {
     let mut linear = glam::Mat3::from_mat4(model * skin);
     let scale = linear
         .to_cols_array()

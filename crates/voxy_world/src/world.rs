@@ -4,7 +4,10 @@ use std::sync::Arc;
 
 use voxy_core::{ChunkPos, LocalPos, TickId, VoxelPos, WorldEpoch, split_voxel};
 
-use crate::{BlockRegistry, BlockStateId, ChunkData, ChunkRevision, ChunkSnapshot, GeneratedChunk};
+use crate::{
+    BlockRegistry, BlockStateId, ChunkData, ChunkRevision, ChunkSnapshot, GeneratedChunk,
+    PalettedBlocks,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum UnavailableReason {
@@ -335,7 +338,19 @@ impl World {
 
         let mut staged = Vec::with_capacity(touched.len());
         let mut inverse = Vec::with_capacity(writes.len());
+        let mut chunk_writes = Vec::new();
+        let mut updates = Vec::new();
+        // Writes are sorted by chunk, so each touched chunk owns one contiguous run.
+        let mut remaining = writes.as_slice();
         for pos in touched {
+            let run = remaining
+                .iter()
+                .take_while(|(chunk, _, _)| *chunk == pos)
+                .count();
+            let (run_writes, rest) = remaining.split_at(run);
+            remaining = rest;
+            chunk_writes.clear();
+            chunk_writes.extend(run_writes.iter().map(|(_, local, write)| (*local, *write)));
             let slot = self
                 .chunks
                 .get(&pos)
@@ -344,26 +359,18 @@ impl World {
                 .revision
                 .checked_next()
                 .ok_or(CommitError::RevisionOverflow(pos))?;
-            let chunk_writes: Vec<_> = writes
-                .iter()
-                .filter(|(chunk, _, _)| *chunk == pos)
-                .map(|(_, local, write)| (*local, *write))
-                .collect();
+            updates.clear();
             for (local, write) in &chunk_writes {
                 inverse.push(VoxelWrite {
                     pos: write.pos,
                     block: slot.data.blocks.get(local.index()),
                 });
+                updates.push((local.index(), write.block));
             }
             let blocks = slot
                 .data
                 .blocks
-                .with_updates(
-                    &chunk_writes
-                        .iter()
-                        .map(|(local, write)| (local.index(), write.block))
-                        .collect::<Vec<_>>(),
-                )
+                .with_updates(&updates)
                 .map_err(|_| CommitError::InvalidChunk(pos))?;
             let after = Arc::new(ChunkData {
                 blocks,
@@ -400,6 +407,19 @@ impl World {
     }
 
     fn validate_chunk(&self, data: &ChunkData) -> Result<(), CommitError> {
+        // Packed palettes list exactly the blocks present, so checking them avoids
+        // expanding the chunk; the dense scan only runs to report the first bad cell.
+        let distinct: &[BlockStateId] = match &data.blocks {
+            PalettedBlocks::Uniform(block) => std::slice::from_ref(block),
+            PalettedBlocks::Packed { palette, .. } => palette,
+            PalettedBlocks::Direct(blocks) => blocks,
+        };
+        if distinct
+            .iter()
+            .all(|block| self.registry.get(*block).is_some())
+        {
+            return Ok(());
+        }
         for block in data.blocks.to_dense() {
             if self.registry.get(block).is_none() {
                 return Err(CommitError::UnknownBlock(block));

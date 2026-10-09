@@ -16,6 +16,21 @@ pub(crate) struct SceneRush {
     pub panel_visible: bool,
     pub selected_message: usize,
     pub line_offset: usize,
+    /// Bumped by every `record`, so a history that stays at 32 entries still invalidates the panel.
+    message_generation: u64,
+    /// Inputs the cached panel text was built from, with the text itself.
+    panel_cache: Option<(PanelKey, String)>,
+}
+/// Everything `panel_text` reads; the text is rebuilt only when this changes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct PanelKey {
+    paused: bool,
+    physics_enabled: bool,
+    contacted: bool,
+    message_generation: u64,
+    messages: usize,
+    selected_message: usize,
+    line_offset: usize,
 }
 impl SceneRush {
     pub fn new(
@@ -76,6 +91,8 @@ impl SceneRush {
             panel_visible: true,
             selected_message: 0,
             line_offset: 0,
+            message_generation: 0,
+            panel_cache: None,
         })
     }
     pub fn enable_character(&mut self, scene: &mut SceneGraph) -> Result<(), String> {
@@ -232,33 +249,52 @@ impl SceneRush {
             }
             self.messages.push_back(message);
         }
+        self.message_generation += 1;
         self.selected_message = 0;
         self.line_offset = 0;
     }
-    pub fn panel_text(&self) -> String {
-        let status = if self.scripts.paused(self.owner) {
-            "PAUSED"
-        } else {
-            "RUNNING"
+    /// Diagnostic panel text, rebuilt only when one of its inputs changed since the last call.
+    pub fn panel_text(&mut self) -> &str {
+        let key = PanelKey {
+            paused: self.scripts.paused(self.owner),
+            physics_enabled: self.physics_enabled,
+            contacted: self.contacts > 0,
+            message_generation: self.message_generation,
+            messages: self.messages.len(),
+            selected_message: self.selected_message,
+            line_offset: self.line_offset,
         };
+        if self
+            .panel_cache
+            .as_ref()
+            .is_none_or(|(cached, _)| *cached != key)
+        {
+            self.panel_cache = Some((key, self.build_panel_text(key)));
+        }
+        self.panel_cache
+            .as_ref()
+            .map_or("", |(_, text)| text.as_str())
+    }
+    fn build_panel_text(&self, key: PanelKey) -> String {
+        let status = if key.paused { "PAUSED" } else { "RUNNING" };
         let message = self
             .messages
             .iter()
             .rev()
-            .nth(self.selected_message)
+            .nth(key.selected_message)
             .map_or("No script errors", String::as_str);
         format!(
             "Rush diagnostics | {status} | F1 hide | PgUp/PgDn history | Up/Down scroll\nA/D move  F spawn  E event | Physics: {}\n{}",
-            if !self.physics_enabled {
+            if !key.physics_enabled {
                 "disabled"
-            } else if self.contacts > 0 {
+            } else if key.contacted {
                 "contacts received"
             } else {
                 "waiting for contact"
             },
             message
                 .lines()
-                .skip(self.line_offset)
+                .skip(key.line_offset)
                 .collect::<Vec<_>>()
                 .join("\n")
         )
@@ -397,6 +433,58 @@ mod diagnostic_tests {
         assert_eq!(runtime.messages.len(), 2);
         runtime.keyboard(KeyCode::PageUp, true);
         assert!(runtime.panel_text().contains("at fail"));
+        std::fs::remove_file(file).unwrap();
+    }
+    #[test]
+    fn panel_text_cache_tracks_every_input() {
+        let file =
+            std::env::temp_dir().join(format!("rush-diagnostic-cache-{}.r", std::process::id()));
+        std::fs::write(&file, "fn update(delta) { }").unwrap();
+        let mut scene = SceneGraph::new(1);
+        let owner = scene.spawn(None, Default::default()).unwrap();
+        let mut runtime = SceneRush::new(&mut scene, owner, &file, vec![]).unwrap();
+        let initial = runtime.panel_text().to_owned();
+        assert!(initial.contains("RUNNING"));
+        assert!(initial.contains("Physics: disabled"));
+        assert!(initial.contains("No script errors"));
+        assert_eq!(
+            runtime.panel_text(),
+            initial,
+            "unchanged inputs reuse the text"
+        );
+        runtime.record("first line\nsecond line".into());
+        let recorded = runtime.panel_text().to_owned();
+        assert!(recorded.contains("first line\nsecond line"));
+        runtime.keyboard(KeyCode::ArrowDown, true);
+        let scrolled = runtime.panel_text().to_owned();
+        assert!(!scrolled.contains("first line"));
+        assert!(scrolled.ends_with("second line"));
+        runtime.keyboard(KeyCode::ArrowUp, true);
+        assert_eq!(runtime.panel_text(), recorded);
+        runtime.record("newer".into());
+        runtime.keyboard(KeyCode::PageUp, true);
+        assert!(runtime.panel_text().contains("first line"));
+        runtime.keyboard(KeyCode::PageDown, true);
+        assert!(runtime.panel_text().ends_with("newer"));
+        runtime.enable_character(&mut scene).unwrap();
+        assert!(
+            runtime
+                .panel_text()
+                .contains("Physics: waiting for contact")
+        );
+        runtime.contacts = 1;
+        assert!(runtime.panel_text().contains("Physics: contacts received"));
+        for i in 0..40 {
+            runtime.record(format!("message {i}"));
+        }
+        assert_eq!(runtime.messages.len(), 32);
+        assert!(runtime.panel_text().ends_with("message 39"));
+        runtime.record("beyond the ring".into());
+        assert_eq!(runtime.messages.len(), 32, "history length saturates");
+        assert!(
+            runtime.panel_text().ends_with("beyond the ring"),
+            "a full history still invalidates the cached text"
+        );
         std::fs::remove_file(file).unwrap();
     }
 }

@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::sync::Arc;
 
@@ -9,9 +9,9 @@ use voxy_lighting::{
 use voxy_mesher::{ChunkMesh, HALO_OFFSETS, MeshError, MeshStamp, MeshingInput, build_mesh};
 use voxy_world::{
     BlockDef, BlockRegistry, BlockStateId, ChunkData, ChunkGenerator, ChunkRevision, ChunkSnapshot,
-    CollisionShape, GeneratedChunk, GenerationError, InterfaceGroupId, MaterialId, Occlusion,
-    ProceduralTerrainGenerator, RegistryError, RenderKind, ResourceKey, SimpleTerrainGenerator,
-    TerrainPalette, VoxelView, World, WorldLimits, WorldSeed,
+    CollisionShape, CommitReceipt, GeneratedChunk, GenerationError, InterfaceGroupId, MaterialId,
+    Occlusion, ProceduralTerrainGenerator, RegistryError, RenderKind, ResourceKey,
+    SimpleTerrainGenerator, TerrainPalette, VoxelView, World, WorldLimits, WorldSeed,
 };
 
 #[derive(Debug)]
@@ -387,6 +387,39 @@ pub fn rebuild_bootstrap_chunks(
     Ok(chunks)
 }
 
+/// Chunks whose derived light or mesh can differ after `receipt` was committed.
+///
+/// Lighting samples a one-cell halo across all six faces, so every face neighbor of an
+/// edited chunk is included; meshing only crosses a boundary at edited boundary cells,
+/// which the receipt already lists per chunk. Intersect the result with the resident set,
+/// pass it to [`rebuild_bootstrap_chunks`] and merge the output into the previous derived
+/// chunks: the merged set equals a full rebuild of every resident chunk.
+#[must_use]
+pub fn invalidated_derived_chunks(receipt: &CommitReceipt) -> BTreeSet<ChunkPos> {
+    let mut dirty = BTreeSet::new();
+    for delta in &receipt.chunks {
+        dirty.insert(delta.pos);
+        dirty.extend(delta.invalidated_neighbor_meshes.iter().copied());
+        for (dx, dy, dz) in [
+            (-1, 0, 0),
+            (1, 0, 0),
+            (0, -1, 0),
+            (0, 1, 0),
+            (0, 0, -1),
+            (0, 0, 1),
+        ] {
+            if let (Some(x), Some(y), Some(z)) = (
+                delta.pos.x.checked_add(dx),
+                delta.pos.y.checked_add(dy),
+                delta.pos.z.checked_add(dz),
+            ) {
+                dirty.insert(ChunkPos { x, y, z });
+            }
+        }
+    }
+    dirty
+}
+
 fn default_registry() -> Result<BlockRegistry, RegistryError> {
     let mut definitions = vec![
         definition(
@@ -574,5 +607,86 @@ mod tests {
             build_bootstrap_scene(1, 9),
             Err(BootstrapError::InvalidRadius(9))
         ));
+    }
+
+    #[test]
+    fn invalidated_chunks_rebuild_equals_full_rebuild() {
+        use voxy_core::VoxelPos;
+        use voxy_world::{EditSource, EditTxn, VoxelWrite};
+
+        let scene = build_procedural_scene(7, 1).unwrap();
+        let mut world = scene.world;
+        let positions: Vec<ChunkPos> = scene.chunks.iter().map(|chunk| chunk.pos).collect();
+        let mut derived: BTreeMap<ChunkPos, BootstrapChunk> = scene
+            .chunks
+            .into_iter()
+            .map(|chunk| (chunk.pos, chunk))
+            .collect();
+        let stone = world
+            .registry()
+            .find(&ResourceKey::parse("voxy:stone").unwrap())
+            .unwrap();
+        let edits: Vec<Vec<VoxelPos>> = vec![
+            vec![VoxelPos {
+                x: 16,
+                y: 16,
+                z: 16,
+            }],
+            vec![VoxelPos { x: 0, y: 5, z: 10 }],
+            vec![VoxelPos {
+                x: 31,
+                y: 31,
+                z: 31,
+            }],
+            vec![
+                VoxelPos { x: -1, y: 3, z: 0 },
+                VoxelPos { x: 0, y: 3, z: 0 },
+            ],
+            (0..40)
+                .map(|i| VoxelPos {
+                    x: 10 + i % 20,
+                    y: 12,
+                    z: 31 + i / 20,
+                })
+                .collect(),
+            vec![VoxelPos {
+                x: -32,
+                y: 0,
+                z: -32,
+            }],
+        ];
+        for (round, edit) in edits.iter().enumerate() {
+            let block = if round % 2 == 0 {
+                stone
+            } else {
+                BlockStateId::AIR
+            };
+            let receipt = world
+                .commit(EditTxn {
+                    source: EditSource::Simulation,
+                    expected: Vec::new(),
+                    writes: edit.iter().map(|&pos| VoxelWrite { pos, block }).collect(),
+                })
+                .unwrap();
+            let dirty: Vec<ChunkPos> = invalidated_derived_chunks(&receipt)
+                .into_iter()
+                .filter(|pos| positions.contains(pos))
+                .collect();
+            assert!(!dirty.is_empty(), "round {round}");
+            assert!(dirty.len() < positions.len(), "round {round}");
+            for chunk in rebuild_bootstrap_chunks(&world, &dirty, 2).unwrap() {
+                derived.insert(chunk.pos, chunk);
+            }
+            for chunk in rebuild_bootstrap_chunks(&world, &positions, 2).unwrap() {
+                let cached = &derived[&chunk.pos];
+                assert_eq!(cached.mesh, chunk.mesh, "round {round} {:?}", chunk.pos);
+                assert_eq!(
+                    cached.light.bytes(),
+                    chunk.light.bytes(),
+                    "round {round} {:?}",
+                    chunk.pos
+                );
+            }
+        }
     }
 }

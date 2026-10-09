@@ -45,7 +45,11 @@ fn support_max(edges: [DVec3; 3], axis: DVec3, normal: DVec3, angle: f64) -> f64
             .map(|[a, b, c]| (a * t.cos() + b * t.sin() + c).abs())
             .sum::<f64>()
     };
-    let mut cuts = vec![0., end];
+    // At most 2 endpoints + 3 terms x 2 bases x 4 periods = 26 cuts, so a fixed
+    // array replaces a heap allocation per (obstacle, axis) evaluation.
+    let mut cuts = [0_f64; 26];
+    let mut count = 2;
+    cuts[1] = end;
     for [a, b, c] in terms {
         let radius = a.hypot(b);
         if radius == 0. || c.abs() > radius {
@@ -57,13 +61,23 @@ fn support_max(edges: [DVec3; 3], axis: DVec3, normal: DVec3, angle: f64) -> f64
             for period in -1..=2 {
                 let t = base + f64::from(period) * std::f64::consts::TAU;
                 if t > 0. && t < end {
-                    cuts.push(t);
+                    debug_assert!(count < cuts.len());
+                    cuts[count] = t;
+                    count += 1;
                 }
             }
         }
     }
+    let cuts = &mut cuts[..count];
     cuts.sort_by(f64::total_cmp);
-    cuts.dedup();
+    let mut kept = 1;
+    for index in 1..cuts.len() {
+        if cuts[index] != cuts[kept - 1] {
+            cuts[kept] = cuts[index];
+            kept += 1;
+        }
+    }
+    let cuts = &cuts[..kept];
     let mut maximum = cuts.iter().copied().map(evaluate).fold(0_f64, f64::max);
     for interval in cuts.windows(2) {
         let middle = (interval[0] + interval[1]) * 0.5;

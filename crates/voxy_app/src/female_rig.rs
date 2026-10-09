@@ -3871,7 +3871,11 @@ mod thumb_tip_contact_tests {
     use super::*;
     #[test]
     fn closed_thumb_tip_contacts_cylinder_and_sphere() {
-        let asset=voxy_render::ObjAsset::parse(include_str!("/Users/themoretheless/Documents/ChatGPT/Voxy/assets/characters/blender-female/body.obj"),voxy_render::ObjLimits::default()).unwrap();
+        let asset = voxy_render::ObjAsset::parse(
+            include_str!("../../../assets/characters/blender-female/body.obj"),
+            voxy_render::ObjLimits::default(),
+        )
+        .unwrap();
         let rest = asset.mesh.vertices();
         for object in [
             GraspObject::Cylinder {

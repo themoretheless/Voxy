@@ -157,7 +157,53 @@ struct Node {
     effective_active: bool,
     parent: Option<NodeId>,
     children: Vec<NodeId>,
-    components: HashMap<TypeId, Component>,
+    components: ComponentMap,
+}
+
+/// Per-node component storage keyed by `TypeId`.
+///
+/// `TypeId` values are already well-distributed hashes, so the deterministic
+/// multiply/xor fold in [`FastHasher`] replaces the randomized `SipHash` default
+/// that dominated every component lookup on the fixed-tick paths.
+pub(crate) type ComponentMap = HashMap<TypeId, Component, FastHashBuilder>;
+pub(crate) type FastHashBuilder = std::hash::BuildHasherDefault<FastHasher>;
+
+/// Deterministic multiply/xor-shift hasher for `TypeId` and [`NodeId`] keys.
+#[derive(Debug, Default)]
+pub(crate) struct FastHasher(u64);
+
+impl FastHasher {
+    fn mix(&mut self, value: u64) {
+        let mut x = (self.0 ^ value).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+        x ^= x >> 31;
+        self.0 = x;
+    }
+}
+
+impl std::hash::Hasher for FastHasher {
+    fn finish(&self) -> u64 {
+        let x = self.0.wrapping_mul(0x94D0_49BB_1331_11EB);
+        x ^ (x >> 29)
+    }
+    fn write(&mut self, bytes: &[u8]) {
+        for chunk in bytes.chunks(8) {
+            let mut word = [0_u8; 8];
+            word[..chunk.len()].copy_from_slice(chunk);
+            self.mix(u64::from_le_bytes(word));
+        }
+    }
+    fn write_u64(&mut self, value: u64) {
+        self.mix(value);
+    }
+    fn write_usize(&mut self, value: usize) {
+        self.mix(value as u64);
+    }
+    fn write_u128(&mut self, value: u128) {
+        let [low, high] = [value & u128::from(u64::MAX), value >> 64]
+            .map(|half| u64::try_from(half).unwrap_or(0));
+        self.mix(low);
+        self.mix(high);
+    }
 }
 #[derive(Debug)]
 struct Slot {
@@ -275,7 +321,7 @@ impl SceneGraph {
             effective_active,
             parent,
             children: Vec::new(),
-            components: HashMap::new(),
+            components: ComponentMap::default(),
         });
         if let Some(parent) = parent {
             self.node_mut(parent)?.children.push(id);
@@ -333,8 +379,32 @@ impl SceneGraph {
     pub fn active_components<T: Any + Send + Sync>(
         &self,
     ) -> impl Iterator<Item = (NodeId, &T)> + '_ {
-        self.components::<T>()
-            .filter(|(id, _)| self.active_in_hierarchy(*id) == Ok(true))
+        self.slot_components::<T>()
+            .filter(|(_, node, _)| node.effective_active)
+            .map(|(id, _, value)| (id, value))
+    }
+
+    /// Live nodes holding `T`, in slot order, without re-validating each handle.
+    fn slot_components<T: Any + Send + Sync>(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, &Node, &T)> + '_ {
+        let key = TypeId::of::<T>();
+        self.slots
+            .iter()
+            .enumerate()
+            .filter_map(move |(slot, entry)| {
+                let node = entry.node.as_ref()?;
+                let value = node.components.get(&key)?.0.downcast_ref::<T>()?;
+                Some((
+                    NodeId {
+                        scene: self.id,
+                        slot,
+                        generation: entry.generation,
+                    },
+                    node,
+                    value,
+                ))
+            })
     }
 
     /// Visits effectively active owners containing both required component types.
@@ -435,12 +505,8 @@ impl SceneGraph {
 
     /// Visits nodes with a component in stable slot order.
     pub fn components<T: Any + Send + Sync>(&self) -> impl Iterator<Item = (NodeId, &T)> + '_ {
-        self.nodes().filter_map(|(id, _, _)| {
-            self.component::<T>(id)
-                .ok()
-                .flatten()
-                .map(|value| (id, value))
-        })
+        self.slot_components::<T>()
+            .map(|(id, _, value)| (id, value))
     }
 
     /// Enumerates live nodes in slot order, with local transforms and parents.
@@ -494,6 +560,72 @@ impl SceneGraph {
             self.node(id)?;
             local.matrix()?;
         }
+        // Sparse batches (the editor's per-tick case) avoid scene-sized scratch
+        // vectors: edits are ordered by slot (stable, so the last write to a slot still
+        // wins) and dirty ancestry is tested by binary search. Dense batches keep the
+        // linear scratch path, which is cheaper once most slots are edited anyway.
+        let roots = if edits.len().saturating_mul(8) < self.slots.len() {
+            self.dirty_roots_sparse(edits)?
+        } else {
+            self.dirty_roots_dense(edits)?
+        };
+        for root in roots {
+            self.refresh_subtree(root)?;
+        }
+        Ok(())
+    }
+
+    /// Applies a sparse batch and returns the dirty subtree roots in edit order.
+    fn dirty_roots_sparse(
+        &mut self,
+        edits: &[(NodeId, Transform)],
+    ) -> Result<Vec<NodeId>, SceneGraphError> {
+        let mut ordered: Vec<(usize, usize)> = edits
+            .iter()
+            .enumerate()
+            .map(|(index, (id, _))| (id.slot, index))
+            .collect();
+        ordered.sort_by_key(|&(slot, _)| slot);
+        let mut dirty_slots = Vec::with_capacity(ordered.len());
+        let mut unique = Vec::with_capacity(ordered.len());
+        let mut position = 0;
+        while position < ordered.len() {
+            let slot = ordered[position].0;
+            let mut last = position;
+            while last + 1 < ordered.len() && ordered[last + 1].0 == slot {
+                last += 1;
+            }
+            let (id, local) = edits[ordered[last].1];
+            position = last + 1;
+            if self.node(id)?.local != local {
+                self.node_mut(id)?.local = local;
+                dirty_slots.push(slot);
+                unique.push(id);
+            }
+        }
+        let mut roots = Vec::new();
+        for id in unique {
+            let mut ancestor = self.node(id)?.parent;
+            let mut covered = false;
+            while let Some(parent) = ancestor {
+                if dirty_slots.binary_search(&parent.slot).is_ok() {
+                    covered = true;
+                    break;
+                }
+                ancestor = self.node(parent)?.parent;
+            }
+            if !covered {
+                roots.push(id);
+            }
+        }
+        Ok(roots)
+    }
+
+    /// Applies a dense batch with slot-indexed scratch and returns the dirty roots.
+    fn dirty_roots_dense(
+        &mut self,
+        edits: &[(NodeId, Transform)],
+    ) -> Result<Vec<NodeId>, SceneGraphError> {
         let mut values = vec![None; self.slots.len()];
         let mut unique = Vec::with_capacity(edits.len());
         for &(id, local) in edits {
@@ -529,10 +661,7 @@ impl SceneGraph {
                 roots.push(id);
             }
         }
-        for root in roots {
-            self.refresh_subtree(root)?;
-        }
-        Ok(())
+        Ok(roots)
     }
 
     /// Returns the immediate parent of a live scene node.
