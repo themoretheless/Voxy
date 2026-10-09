@@ -1,0 +1,2221 @@
+{
+ "date": "2026-10-09",
+ "hardware": {
+  "cpu": "Intel Xeon @ 2.80GHz, 4 vCPU (shared cloud container)",
+  "ram_bytes": 16106127360,
+  "os": "Linux 6.18"
+ },
+ "compiler": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+ "profile": "optimized Cargo bench",
+ "baseline_commit": "92a057e8",
+ "method": "before = benchmark binary built from the baseline commit in a separate worktree (with the new benchmark sources copied in); after = this change; binaries alternated per round on the same machine, medians of per-run p50 (3 warmup + 21 samples per run)",
+ "paired_median_p50_ns": {
+  "voxel_pipeline (cargo bench -p voxy_runtime --bench voxel_pipeline, 5 rounds)": {
+   "palette_to_dense": {
+    "before_ns": 65229,
+    "after_ns": 50303,
+    "ratio": 0.771,
+    "before_samples": [
+     117840,
+     65229,
+     108783,
+     58528,
+     64691
+    ],
+    "after_samples": [
+     49767,
+     50052,
+     95889,
+     96885,
+     50303
+    ]
+   },
+   "palette_from_dense": {
+    "before_ns": 299776,
+    "after_ns": 65696,
+    "ratio": 0.219,
+    "before_samples": [
+     436323,
+     301932,
+     299776,
+     299204,
+     298809
+    ],
+    "after_samples": [
+     65660,
+     65424,
+     65750,
+     97417,
+     65696
+    ]
+   },
+   "palette_with_updates_1": {
+    "before_ns": 403368,
+    "after_ns": 8731,
+    "ratio": 0.022,
+    "before_samples": [
+     406283,
+     403368,
+     401041,
+     400827,
+     403380
+    ],
+    "after_samples": [
+     8731,
+     8723,
+     8609,
+     8821,
+     8738
+    ]
+   },
+   "palette_with_updates_64": {
+    "before_ns": 369163,
+    "after_ns": 8192,
+    "ratio": 0.022,
+    "before_samples": [
+     370128,
+     374282,
+     366377,
+     368860,
+     369163
+    ],
+    "after_samples": [
+     9144,
+     9152,
+     8192,
+     8168,
+     8187
+    ]
+   },
+   "palette_with_updates_new_palette_entry": {
+    "before_ns": 416391,
+    "after_ns": 112772,
+    "ratio": 0.271,
+    "before_samples": [
+     416391,
+     418493,
+     414059,
+     414646,
+     419702
+    ],
+    "after_samples": [
+     113071,
+     112772,
+     112951,
+     112364,
+     112486
+    ]
+   },
+   "world_commit_1_write": {
+    "before_ns": 388383,
+    "after_ns": 1010,
+    "ratio": 0.003,
+    "before_samples": [
+     388383,
+     391795,
+     387762,
+     385766,
+     392750
+    ],
+    "after_samples": [
+     1011,
+     925,
+     1025,
+     932,
+     1010
+    ]
+   },
+   "world_commit_64_writes": {
+    "before_ns": 372171,
+    "after_ns": 5209,
+    "ratio": 0.014,
+    "before_samples": [
+     374196,
+     366934,
+     372171,
+     366394,
+     423134
+    ],
+    "after_samples": [
+     5192,
+     5146,
+     5209,
+     11904,
+     9815
+    ]
+   },
+   "mesh_all_resident": {
+    "before_ns": 3617345,
+    "after_ns": 2842855,
+    "ratio": 0.786,
+    "before_samples": [
+     3617345,
+     3651641,
+     3564748,
+     3539338,
+     4150060
+    ],
+    "after_samples": [
+     2951694,
+     2945302,
+     2748936,
+     2803153,
+     2842855
+    ]
+   },
+   "light_all_resident": {
+    "before_ns": 5361991,
+    "after_ns": 3320933,
+    "ratio": 0.619,
+    "before_samples": [
+     5311713,
+     5436446,
+     5370625,
+     5305159,
+     5361991
+    ],
+    "after_samples": [
+     7366968,
+     3316734,
+     3313031,
+     3473324,
+     3320933
+    ]
+   },
+   "rebuild_all_resident": {
+    "before_ns": 9520043,
+    "after_ns": 6755454,
+    "ratio": 0.71,
+    "before_samples": [
+     9520043,
+     9490892,
+     9888006,
+     9940313,
+     9332639
+    ],
+    "after_samples": [
+     6847036,
+     6755454,
+     6605517,
+     6920641,
+     6604239
+    ]
+   }
+  },
+  "voxel_queries (cargo bench -p physics_voxel --bench voxel_queries, 5 rounds)": {
+   "water_tick": {
+    "before_ns": 4296596,
+    "after_ns": 4128786,
+    "ratio": 0.961,
+    "before_samples": [
+     4317320,
+     4296596,
+     4280044,
+     4362435,
+     4259233
+    ],
+    "after_samples": [
+     4118516,
+     4205508,
+     4195622,
+     4089871,
+     4128786
+    ]
+   },
+   "sweep_aabb_x10000": {
+    "before_ns": 2741555,
+    "after_ns": 2172102,
+    "ratio": 0.792,
+    "before_samples": [
+     2786099,
+     2713074,
+     2780758,
+     2720720,
+     2741555
+    ],
+    "after_samples": [
+     2174838,
+     2172102,
+     2128874,
+     2196591,
+     2115671
+    ]
+   },
+   "raycast_x10000": {
+    "before_ns": 11208419,
+    "after_ns": 8321087,
+    "ratio": 0.742,
+    "before_samples": [
+     11921841,
+     11157678,
+     11443830,
+     11208419,
+     11173791
+    ],
+    "after_samples": [
+     8242435,
+     8336929,
+     8448619,
+     8321087,
+     8229694
+    ]
+   }
+  },
+  "angular_motion (cargo bench -p voxy_gameplay --bench angular_motion, 3 rounds)": {
+   "1000,behavior": {
+    "before_ns": 424967,
+    "after_ns": 405542,
+    "ratio": 0.954,
+    "before_samples": [
+     469897,
+     409169,
+     424967
+    ],
+    "after_samples": [
+     413749,
+     389374,
+     405542
+    ]
+   },
+   "1000,batch": {
+    "before_ns": 218264,
+    "after_ns": 125084,
+    "ratio": 0.573,
+    "before_samples": [
+     244563,
+     218264,
+     214422
+    ],
+    "after_samples": [
+     125084,
+     107234,
+     126651
+    ]
+   },
+   "10000,behavior": {
+    "before_ns": 8067027,
+    "after_ns": 7471482,
+    "ratio": 0.926,
+    "before_samples": [
+     7705217,
+     8596232,
+     8067027
+    ],
+    "after_samples": [
+     7660710,
+     7471482,
+     6824520
+    ]
+   },
+   "10000,batch": {
+    "before_ns": 3879524,
+    "after_ns": 2727892,
+    "ratio": 0.703,
+    "before_samples": [
+     3461076,
+     4162463,
+     3879524
+    ],
+    "after_samples": [
+     2727892,
+     2734448,
+     2014364
+    ]
+   },
+   "100000,behavior": {
+    "before_ns": 219712557,
+    "after_ns": 209540822,
+    "ratio": 0.954,
+    "before_samples": [
+     219712557,
+     217612744,
+     226305684
+    ],
+    "after_samples": [
+     207322101,
+     222428972,
+     209540822
+    ]
+   },
+   "100000,batch": {
+    "before_ns": 74996905,
+    "after_ns": 54343512,
+    "ratio": 0.725,
+    "before_samples": [
+     74040717,
+     74996905,
+     76868380
+    ],
+    "after_samples": [
+     53337671,
+     54343512,
+     55887441
+    ]
+   }
+  },
+  "scene_scaling (cargo bench -p voxy_scene --bench scene_scaling, 3 rounds)": {
+   "1000,cached_world_reads": {
+    "before_ns": 6088,
+    "after_ns": 7134,
+    "ratio": 1.172,
+    "before_samples": [
+     6065,
+     6088,
+     6176
+    ],
+    "after_samples": [
+     7134,
+     10010,
+     6059
+    ]
+   },
+   "1000,projection_serial": {
+    "before_ns": 34083,
+    "after_ns": 20469,
+    "ratio": 0.601,
+    "before_samples": [
+     34083,
+     34700,
+     33801
+    ],
+    "after_samples": [
+     20469,
+     23885,
+     11855
+    ]
+   },
+   "1000,projection_scoped": {
+    "before_ns": 34421,
+    "after_ns": 20752,
+    "ratio": 0.603,
+    "before_samples": [
+     34421,
+     34935,
+     34100
+    ],
+    "after_samples": [
+     20752,
+     24490,
+     12366
+    ]
+   },
+   "1000,root_edit": {
+    "before_ns": 29537,
+    "after_ns": 44564,
+    "ratio": 1.509,
+    "before_samples": [
+     29637,
+     29537,
+     29518
+    ],
+    "after_samples": [
+     44564,
+     50462,
+     29687
+    ]
+   },
+   "1000,one_percent_leaf_edits": {
+    "before_ns": 602,
+    "after_ns": 1080,
+    "ratio": 1.794,
+    "before_samples": [
+     618,
+     602,
+     591
+    ],
+    "after_samples": [
+     1080,
+     3370,
+     586
+    ]
+   },
+   "1000,all_node_edits": {
+    "before_ns": 330816,
+    "after_ns": 518255,
+    "ratio": 1.567,
+    "before_samples": [
+     343008,
+     330816,
+     313485
+    ],
+    "after_samples": [
+     518255,
+     561695,
+     326077
+    ]
+   },
+   "1000,all_node_batch_edits": {
+    "before_ns": 56281,
+    "after_ns": 86049,
+    "ratio": 1.529,
+    "before_samples": [
+     56905,
+     56281,
+     56135
+    ],
+    "after_samples": [
+     86049,
+     92038,
+     55485
+    ]
+   },
+   "1000,node_hashmap_updates": {
+    "before_ns": 24736,
+    "after_ns": 26159,
+    "ratio": 1.058,
+    "before_samples": [
+     24736,
+     24680,
+     25051
+    ],
+    "after_samples": [
+     26159,
+     28998,
+     15267
+    ]
+   },
+   "1000,typed_table_updates": {
+    "before_ns": 3207,
+    "after_ns": 4438,
+    "ratio": 1.384,
+    "before_samples": [
+     3207,
+     3209,
+     3198
+    ],
+    "after_samples": [
+     4438,
+     5337,
+     3237
+    ]
+   },
+   "1000,wide_single_leaf_batch": {
+    "before_ns": 82,
+    "after_ns": 131,
+    "ratio": 1.598,
+    "before_samples": [
+     83,
+     81,
+     82
+    ],
+    "after_samples": [
+     153,
+     131,
+     83
+    ]
+   },
+   "1000,wide_all_node_batch": {
+    "before_ns": 50757,
+    "after_ns": 81899,
+    "ratio": 1.614,
+    "before_samples": [
+     51091,
+     50757,
+     50675
+    ],
+    "after_samples": [
+     81899,
+     89489,
+     50657
+    ]
+   },
+   "1000,chain_single_leaf_batch": {
+    "before_ns": 81,
+    "after_ns": 138,
+    "ratio": 1.704,
+    "before_samples": [
+     81,
+     81,
+     81
+    ],
+    "after_samples": [
+     138,
+     149,
+     80
+    ]
+   },
+   "1000,chain_all_node_batch": {
+    "before_ns": 51731,
+    "after_ns": 82614,
+    "ratio": 1.597,
+    "before_samples": [
+     51731,
+     51796,
+     51650
+    ],
+    "after_samples": [
+     82614,
+     89823,
+     50925
+    ]
+   },
+   "10000,cached_world_reads": {
+    "before_ns": 86257,
+    "after_ns": 113786,
+    "ratio": 1.319,
+    "before_samples": [
+     86623,
+     84327,
+     86257
+    ],
+    "after_samples": [
+     114630,
+     113786,
+     105011
+    ]
+   },
+   "10000,projection_serial": {
+    "before_ns": 414526,
+    "after_ns": 231767,
+    "ratio": 0.559,
+    "before_samples": [
+     414526,
+     637161,
+     402397
+    ],
+    "after_samples": [
+     318656,
+     205873,
+     231767
+    ]
+   },
+   "10000,projection_scoped": {
+    "before_ns": 423623,
+    "after_ns": 217936,
+    "ratio": 0.514,
+    "before_samples": [
+     423623,
+     638715,
+     403222
+    ],
+    "after_samples": [
+     317043,
+     202487,
+     217936
+    ]
+   },
+   "10000,root_edit": {
+    "before_ns": 474227,
+    "after_ns": 435233,
+    "ratio": 0.918,
+    "before_samples": [
+     422399,
+     620233,
+     474227
+    ],
+    "after_samples": [
+     629489,
+     419503,
+     435233
+    ]
+   },
+   "10000,one_percent_leaf_edits": {
+    "before_ns": 5820,
+    "after_ns": 5633,
+    "ratio": 0.968,
+    "before_samples": [
+     5820,
+     9791,
+     5742
+    ],
+    "after_samples": [
+     11694,
+     5609,
+     5633
+    ]
+   },
+   "10000,all_node_edits": {
+    "before_ns": 6327924,
+    "after_ns": 5876344,
+    "ratio": 0.929,
+    "before_samples": [
+     6327924,
+     8692562,
+     5725183
+    ],
+    "after_samples": [
+     5602557,
+     9528092,
+     5876344
+    ]
+   },
+   "10000,all_node_batch_edits": {
+    "before_ns": 1255764,
+    "after_ns": 900778,
+    "ratio": 0.717,
+    "before_samples": [
+     1500172,
+     1255764,
+     887726
+    ],
+    "after_samples": [
+     900778,
+     888341,
+     980854
+    ]
+   },
+   "10000,node_hashmap_updates": {
+    "before_ns": 474502,
+    "after_ns": 201191,
+    "ratio": 0.424,
+    "before_samples": [
+     544538,
+     474502,
+     289074
+    ],
+    "after_samples": [
+     198017,
+     204368,
+     201191
+    ]
+   },
+   "10000,typed_table_updates": {
+    "before_ns": 66985,
+    "after_ns": 50065,
+    "ratio": 0.747,
+    "before_samples": [
+     107020,
+     66985,
+     50571
+    ],
+    "after_samples": [
+     50864,
+     47585,
+     50065
+    ]
+   },
+   "10000,wide_single_leaf_batch": {
+    "before_ns": 152,
+    "after_ns": 82,
+    "ratio": 0.539,
+    "before_samples": [
+     170,
+     81,
+     152
+    ],
+    "after_samples": [
+     81,
+     82,
+     83
+    ]
+   },
+   "10000,wide_all_node_batch": {
+    "before_ns": 1028777,
+    "after_ns": 688505,
+    "ratio": 0.669,
+    "before_samples": [
+     1160972,
+     693396,
+     1028777
+    ],
+    "after_samples": [
+     663756,
+     688505,
+     690271
+    ]
+   },
+   "10000,chain_single_leaf_batch": {
+    "before_ns": 80,
+    "after_ns": 80,
+    "ratio": 1.0,
+    "before_samples": [
+     82,
+     80,
+     80
+    ],
+    "after_samples": [
+     81,
+     80,
+     80
+    ]
+   },
+   "10000,chain_all_node_batch": {
+    "before_ns": 704279,
+    "after_ns": 698946,
+    "ratio": 0.992,
+    "before_samples": [
+     694225,
+     704279,
+     764104
+    ],
+    "after_samples": [
+     684565,
+     698946,
+     717400
+    ]
+   },
+   "100000,cached_world_reads": {
+    "before_ns": 3445769,
+    "after_ns": 2949511,
+    "ratio": 0.856,
+    "before_samples": [
+     2839708,
+     3491281,
+     3445769
+    ],
+    "after_samples": [
+     3198025,
+     2949511,
+     2716246
+    ]
+   },
+   "100000,projection_serial": {
+    "before_ns": 9543169,
+    "after_ns": 7446312,
+    "ratio": 0.78,
+    "before_samples": [
+     9543169,
+     10012049,
+     9321218
+    ],
+    "after_samples": [
+     7738565,
+     7446312,
+     7292621
+    ]
+   },
+   "100000,projection_scoped": {
+    "before_ns": 9466028,
+    "after_ns": 7639311,
+    "ratio": 0.807,
+    "before_samples": [
+     9437552,
+     9699513,
+     9466028
+    ],
+    "after_samples": [
+     7639311,
+     7649302,
+     7293855
+    ]
+   },
+   "100000,root_edit": {
+    "before_ns": 12845690,
+    "after_ns": 12732540,
+    "ratio": 0.991,
+    "before_samples": [
+     12845690,
+     13155954,
+     12463003
+    ],
+    "after_samples": [
+     12527015,
+     13110847,
+     12732540
+    ]
+   },
+   "100000,one_percent_leaf_edits": {
+    "before_ns": 57250,
+    "after_ns": 56369,
+    "ratio": 0.985,
+    "before_samples": [
+     57493,
+     56768,
+     57250
+    ],
+    "after_samples": [
+     56369,
+     87104,
+     55798
+    ]
+   },
+   "100000,all_node_edits": {
+    "before_ns": 209744887,
+    "after_ns": 212977981,
+    "ratio": 1.015,
+    "before_samples": [
+     196587215,
+     209744887,
+     216659786
+    ],
+    "after_samples": [
+     212977981,
+     224828095,
+     195486491
+    ]
+   },
+   "100000,all_node_batch_edits": {
+    "before_ns": 28756071,
+    "after_ns": 27048797,
+    "ratio": 0.941,
+    "before_samples": [
+     26529731,
+     28756071,
+     29314148
+    ],
+    "after_samples": [
+     26566693,
+     29509234,
+     27048797
+    ]
+   },
+   "100000,node_hashmap_updates": {
+    "before_ns": 8358788,
+    "after_ns": 7126140,
+    "ratio": 0.853,
+    "before_samples": [
+     8217384,
+     8358788,
+     8800259
+    ],
+    "after_samples": [
+     7419525,
+     7082930,
+     7126140
+    ]
+   },
+   "100000,typed_table_updates": {
+    "before_ns": 1072639,
+    "after_ns": 1075536,
+    "ratio": 1.003,
+    "before_samples": [
+     886778,
+     1072639,
+     1388959
+    ],
+    "after_samples": [
+     969649,
+     2406663,
+     1075536
+    ]
+   },
+   "100000,wide_single_leaf_batch": {
+    "before_ns": 82,
+    "after_ns": 81,
+    "ratio": 0.988,
+    "before_samples": [
+     89,
+     82,
+     82
+    ],
+    "after_samples": [
+     82,
+     80,
+     81
+    ]
+   },
+   "100000,wide_all_node_batch": {
+    "before_ns": 23135993,
+    "after_ns": 19937344,
+    "ratio": 0.862,
+    "before_samples": [
+     25270656,
+     22480898,
+     23135993
+    ],
+    "after_samples": [
+     20409978,
+     19937344,
+     18951389
+    ]
+   },
+   "100000,chain_single_leaf_batch": {
+    "before_ns": 80,
+    "after_ns": 80,
+    "ratio": 1.0,
+    "before_samples": [
+     82,
+     80,
+     80
+    ],
+    "after_samples": [
+     83,
+     80,
+     80
+    ]
+   },
+   "100000,chain_all_node_batch": {
+    "before_ns": 22423591,
+    "after_ns": 19798260,
+    "ratio": 0.883,
+    "before_samples": [
+     24644833,
+     22423591,
+     20833624
+    ],
+    "after_samples": [
+     20028909,
+     19798260,
+     16937006
+    ]
+   }
+  },
+  "processor_requirements (cargo bench -p voxy_scene --bench processor_requirements, 3 rounds)": {
+   "1000,1,0,1000,active_requirement_scan": {
+    "before_ns": 37146,
+    "after_ns": 10745,
+    "ratio": 0.289,
+    "before_samples": [
+     37146,
+     36903,
+     37283
+    ],
+    "after_samples": [
+     10690,
+     10745,
+     10787
+    ]
+   },
+   "1000,1,0,1000,transactional_rebuild_64byte_rows": {
+    "before_ns": 50473,
+    "after_ns": 37557,
+    "ratio": 0.744,
+    "before_samples": [
+     50473,
+     50374,
+     69121
+    ],
+    "after_samples": [
+     37557,
+     37226,
+     38187
+    ]
+   },
+   "1000,1,0,1000,published_table_scan": {
+    "before_ns": 3099,
+    "after_ns": 3148,
+    "ratio": 1.016,
+    "before_samples": [
+     3094,
+     3104,
+     3099
+    ],
+    "after_samples": [
+     3149,
+     3148,
+     3147
+    ]
+   },
+   "1000,1,0,1000,reuse_unchanged_64byte_rows": {
+    "before_ns": 88426,
+    "after_ns": 62311,
+    "ratio": 0.705,
+    "before_samples": [
+     137014,
+     88426,
+     88269
+    ],
+    "after_samples": [
+     62311,
+     59244,
+     82570
+    ]
+   },
+   "1000,1,0,1000,validated_associated_scan": {
+    "before_ns": 37623,
+    "after_ns": 15703,
+    "ratio": 0.417,
+    "before_samples": [
+     57806,
+     37623,
+     37583
+    ],
+    "after_samples": [
+     15703,
+     14641,
+     18048
+    ]
+   },
+   "1000,1,0,1000,one_percent_churn_full_rebuild": {
+    "before_ns": 49096,
+    "after_ns": 35103,
+    "ratio": 0.715,
+    "before_samples": [
+     52761,
+     49096,
+     48637
+    ],
+    "after_samples": [
+     35924,
+     35103,
+     33014
+    ]
+   },
+   "1000,1,0,1000,one_percent_churn_factory_reuse": {
+    "before_ns": 90446,
+    "after_ns": 61069,
+    "ratio": 0.675,
+    "before_samples": [
+     90420,
+     91071,
+     90446
+    ],
+    "after_samples": [
+     61989,
+     61069,
+     60651
+    ]
+   },
+   "1000,10,0,100,active_requirement_scan": {
+    "before_ns": 33841,
+    "after_ns": 8642,
+    "ratio": 0.255,
+    "before_samples": [
+     33881,
+     33841,
+     33818
+    ],
+    "after_samples": [
+     8642,
+     8633,
+     9543
+    ]
+   },
+   "1000,10,0,100,transactional_rebuild_64byte_rows": {
+    "before_ns": 38621,
+    "after_ns": 14560,
+    "ratio": 0.377,
+    "before_samples": [
+     38734,
+     38621,
+     38404
+    ],
+    "after_samples": [
+     14781,
+     14541,
+     14560
+    ]
+   },
+   "1000,10,0,100,published_table_scan": {
+    "before_ns": 289,
+    "after_ns": 288,
+    "ratio": 0.997,
+    "before_samples": [
+     289,
+     291,
+     289
+    ],
+    "after_samples": [
+     288,
+     289,
+     286
+    ]
+   },
+   "1000,10,0,100,reuse_unchanged_64byte_rows": {
+    "before_ns": 42000,
+    "after_ns": 16636,
+    "ratio": 0.396,
+    "before_samples": [
+     41872,
+     42181,
+     42000
+    ],
+    "after_samples": [
+     17415,
+     16632,
+     16636
+    ]
+   },
+   "1000,10,0,100,validated_associated_scan": {
+    "before_ns": 3700,
+    "after_ns": 1651,
+    "ratio": 0.446,
+    "before_samples": [
+     3724,
+     3680,
+     3700
+    ],
+    "after_samples": [
+     1650,
+     1659,
+     1651
+    ]
+   },
+   "1000,10,0,100,one_percent_churn_full_rebuild": {
+    "before_ns": 38030,
+    "after_ns": 14104,
+    "ratio": 0.371,
+    "before_samples": [
+     38030,
+     38125,
+     37933
+    ],
+    "after_samples": [
+     14990,
+     14104,
+     14080
+    ]
+   },
+   "1000,10,0,100,one_percent_churn_factory_reuse": {
+    "before_ns": 41737,
+    "after_ns": 15932,
+    "ratio": 0.382,
+    "before_samples": [
+     41737,
+     41634,
+     41821
+    ],
+    "after_samples": [
+     15932,
+     16002,
+     15821
+    ]
+   },
+   "1000,1,2,500,active_requirement_scan": {
+    "before_ns": 27586,
+    "after_ns": 7795,
+    "ratio": 0.283,
+    "before_samples": [
+     27627,
+     27535,
+     27586
+    ],
+    "after_samples": [
+     7818,
+     7789,
+     7795
+    ]
+   },
+   "1000,1,2,500,transactional_rebuild_64byte_rows": {
+    "before_ns": 47881,
+    "after_ns": 21748,
+    "ratio": 0.454,
+    "before_samples": [
+     34887,
+     47881,
+     49059
+    ],
+    "after_samples": [
+     22092,
+     21620,
+     21748
+    ]
+   },
+   "1000,1,2,500,published_table_scan": {
+    "before_ns": 1668,
+    "after_ns": 1657,
+    "ratio": 0.993,
+    "before_samples": [
+     1673,
+     1667,
+     1668
+    ],
+    "after_samples": [
+     1655,
+     1657,
+     1657
+    ]
+   },
+   "1000,1,2,500,reuse_unchanged_64byte_rows": {
+    "before_ns": 55102,
+    "after_ns": 32101,
+    "ratio": 0.583,
+    "before_samples": [
+     55082,
+     55381,
+     55102
+    ],
+    "after_samples": [
+     32632,
+     32101,
+     31981
+    ]
+   },
+   "1000,1,2,500,validated_associated_scan": {
+    "before_ns": 18168,
+    "after_ns": 7589,
+    "ratio": 0.418,
+    "before_samples": [
+     18059,
+     18234,
+     18168
+    ],
+    "after_samples": [
+     7614,
+     7578,
+     7589
+    ]
+   },
+   "1000,1,2,500,one_percent_churn_full_rebuild": {
+    "before_ns": 34906,
+    "after_ns": 21180,
+    "ratio": 0.607,
+    "before_samples": [
+     34906,
+     35095,
+     34834
+    ],
+    "after_samples": [
+     21191,
+     21180,
+     20884
+    ]
+   },
+   "1000,1,2,500,one_percent_churn_factory_reuse": {
+    "before_ns": 54898,
+    "after_ns": 32501,
+    "ratio": 0.592,
+    "before_samples": [
+     54700,
+     55814,
+     54898
+    ],
+    "after_samples": [
+     32735,
+     32501,
+     32500
+    ]
+   },
+   "1000,10,2,50,active_requirement_scan": {
+    "before_ns": 26586,
+    "after_ns": 6822,
+    "ratio": 0.257,
+    "before_samples": [
+     26594,
+     26586,
+     26492
+    ],
+    "after_samples": [
+     6821,
+     6827,
+     6822
+    ]
+   },
+   "1000,10,2,50,transactional_rebuild_64byte_rows": {
+    "before_ns": 29216,
+    "after_ns": 11174,
+    "ratio": 0.382,
+    "before_samples": [
+     34551,
+     29097,
+     29216
+    ],
+    "after_samples": [
+     18889,
+     11174,
+     10872
+    ]
+   },
+   "1000,10,2,50,published_table_scan": {
+    "before_ns": 153,
+    "after_ns": 160,
+    "ratio": 1.046,
+    "before_samples": [
+     156,
+     153,
+     151
+    ],
+    "after_samples": [
+     254,
+     157,
+     160
+    ]
+   },
+   "1000,10,2,50,reuse_unchanged_64byte_rows": {
+    "before_ns": 31702,
+    "after_ns": 12806,
+    "ratio": 0.404,
+    "before_samples": [
+     31457,
+     31702,
+     31775
+    ],
+    "after_samples": [
+     26937,
+     12806,
+     12722
+    ]
+   },
+   "1000,10,2,50,validated_associated_scan": {
+    "before_ns": 1808,
+    "after_ns": 774,
+    "ratio": 0.428,
+    "before_samples": [
+     1808,
+     1802,
+     1831
+    ],
+    "after_samples": [
+     2074,
+     774,
+     764
+    ]
+   },
+   "1000,10,2,50,one_percent_churn_full_rebuild": {
+    "before_ns": 29064,
+    "after_ns": 10725,
+    "ratio": 0.369,
+    "before_samples": [
+     29092,
+     29064,
+     28918
+    ],
+    "after_samples": [
+     19034,
+     10629,
+     10725
+    ]
+   },
+   "1000,10,2,50,one_percent_churn_factory_reuse": {
+    "before_ns": 30809,
+    "after_ns": 11985,
+    "ratio": 0.389,
+    "before_samples": [
+     30846,
+     30777,
+     30809
+    ],
+    "after_samples": [
+     20391,
+     11960,
+     11985
+    ]
+   },
+   "10000,1,0,10000,active_requirement_scan": {
+    "before_ns": 411172,
+    "after_ns": 166046,
+    "ratio": 0.404,
+    "before_samples": [
+     408811,
+     411521,
+     411172
+    ],
+    "after_samples": [
+     167228,
+     166046,
+     164393
+    ]
+   },
+   "10000,1,0,10000,transactional_rebuild_64byte_rows": {
+    "before_ns": 594845,
+    "after_ns": 478682,
+    "ratio": 0.805,
+    "before_samples": [
+     590153,
+     594845,
+     653927
+    ],
+    "after_samples": [
+     478682,
+     461456,
+     485430
+    ]
+   },
+   "10000,1,0,10000,published_table_scan": {
+    "before_ns": 60271,
+    "after_ns": 62808,
+    "ratio": 1.042,
+    "before_samples": [
+     60271,
+     64370,
+     59672
+    ],
+    "after_samples": [
+     64291,
+     62450,
+     62808
+    ]
+   },
+   "10000,1,0,10000,reuse_unchanged_64byte_rows": {
+    "before_ns": 1050462,
+    "after_ns": 750164,
+    "ratio": 0.714,
+    "before_samples": [
+     1050462,
+     997884,
+     1076996
+    ],
+    "after_samples": [
+     1074738,
+     750164,
+     733380
+    ]
+   },
+   "10000,1,0,10000,validated_associated_scan": {
+    "before_ns": 434406,
+    "after_ns": 231184,
+    "ratio": 0.532,
+    "before_samples": [
+     605276,
+     424693,
+     434406
+    ],
+    "after_samples": [
+     335387,
+     209571,
+     231184
+    ]
+   },
+   "10000,1,0,10000,one_percent_churn_full_rebuild": {
+    "before_ns": 731369,
+    "after_ns": 666706,
+    "ratio": 0.912,
+    "before_samples": [
+     1034379,
+     678724,
+     731369
+    ],
+    "after_samples": [
+     840561,
+     606701,
+     666706
+    ]
+   },
+   "10000,1,0,10000,one_percent_churn_factory_reuse": {
+    "before_ns": 1046092,
+    "after_ns": 750241,
+    "ratio": 0.717,
+    "before_samples": [
+     1046092,
+     1024944,
+     2677641
+    ],
+    "after_samples": [
+     774180,
+     733480,
+     750241
+    ]
+   },
+   "10000,10,0,1000,active_requirement_scan": {
+    "before_ns": 397936,
+    "after_ns": 148255,
+    "ratio": 0.373,
+    "before_samples": [
+     388331,
+     397936,
+     1083894
+    ],
+    "after_samples": [
+     156152,
+     144802,
+     148255
+    ]
+   },
+   "10000,10,0,1000,transactional_rebuild_64byte_rows": {
+    "before_ns": 435961,
+    "after_ns": 205724,
+    "ratio": 0.472,
+    "before_samples": [
+     423633,
+     435961,
+     1088130
+    ],
+    "after_samples": [
+     205724,
+     194210,
+     226277
+    ]
+   },
+   "10000,10,0,1000,published_table_scan": {
+    "before_ns": 3485,
+    "after_ns": 3509,
+    "ratio": 1.007,
+    "before_samples": [
+     3480,
+     3490,
+     3485
+    ],
+    "after_samples": [
+     3502,
+     3509,
+     4286
+    ]
+   },
+   "10000,10,0,1000,reuse_unchanged_64byte_rows": {
+    "before_ns": 467356,
+    "after_ns": 216859,
+    "ratio": 0.464,
+    "before_samples": [
+     467356,
+     467768,
+     454648
+    ],
+    "after_samples": [
+     220420,
+     212011,
+     216859
+    ]
+   },
+   "10000,10,0,1000,validated_associated_scan": {
+    "before_ns": 39693,
+    "after_ns": 15898,
+    "ratio": 0.401,
+    "before_samples": [
+     39682,
+     39966,
+     39693
+    ],
+    "after_samples": [
+     15897,
+     15904,
+     15898
+    ]
+   },
+   "10000,10,0,1000,one_percent_churn_full_rebuild": {
+    "before_ns": 433167,
+    "after_ns": 198353,
+    "ratio": 0.458,
+    "before_samples": [
+     429733,
+     442359,
+     433167
+    ],
+    "after_samples": [
+     199563,
+     198353,
+     196964
+    ]
+   },
+   "10000,10,0,1000,one_percent_churn_factory_reuse": {
+    "before_ns": 464233,
+    "after_ns": 215199,
+    "ratio": 0.464,
+    "before_samples": [
+     463178,
+     464233,
+     465799
+    ],
+    "after_samples": [
+     281874,
+     207091,
+     215199
+    ]
+   },
+   "10000,1,2,5000,active_requirement_scan": {
+    "before_ns": 296019,
+    "after_ns": 158068,
+    "ratio": 0.534,
+    "before_samples": [
+     295379,
+     301247,
+     296019
+    ],
+    "after_samples": [
+     223411,
+     151144,
+     158068
+    ]
+   },
+   "10000,1,2,5000,transactional_rebuild_64byte_rows": {
+    "before_ns": 430526,
+    "after_ns": 335553,
+    "ratio": 0.779,
+    "before_samples": [
+     440485,
+     430526,
+     427075
+    ],
+    "after_samples": [
+     356299,
+     282577,
+     335553
+    ]
+   },
+   "10000,1,2,5000,published_table_scan": {
+    "before_ns": 23698,
+    "after_ns": 28712,
+    "ratio": 1.212,
+    "before_samples": [
+     23698,
+     25309,
+     23685
+    ],
+    "after_samples": [
+     28712,
+     26916,
+     43604
+    ]
+   },
+   "10000,1,2,5000,reuse_unchanged_64byte_rows": {
+    "before_ns": 615799,
+    "after_ns": 396003,
+    "ratio": 0.643,
+    "before_samples": [
+     612577,
+     625519,
+     615799
+    ],
+    "after_samples": [
+     396423,
+     373051,
+     396003
+    ]
+   },
+   "10000,1,2,5000,validated_associated_scan": {
+    "before_ns": 229246,
+    "after_ns": 150869,
+    "ratio": 0.658,
+    "before_samples": [
+     219316,
+     232142,
+     229246
+    ],
+    "after_samples": [
+     157038,
+     145542,
+     150869
+    ]
+   },
+   "10000,1,2,5000,one_percent_churn_full_rebuild": {
+    "before_ns": 439084,
+    "after_ns": 287420,
+    "ratio": 0.655,
+    "before_samples": [
+     443319,
+     439084,
+     438486
+    ],
+    "after_samples": [
+     287420,
+     282704,
+     295404
+    ]
+   },
+   "10000,1,2,5000,one_percent_churn_factory_reuse": {
+    "before_ns": 654118,
+    "after_ns": 398933,
+    "ratio": 0.61,
+    "before_samples": [
+     666190,
+     651819,
+     654118
+    ],
+    "after_samples": [
+     398933,
+     398801,
+     454433
+    ]
+   },
+   "10000,10,2,500,active_requirement_scan": {
+    "before_ns": 305756,
+    "after_ns": 156143,
+    "ratio": 0.511,
+    "before_samples": [
+     310766,
+     292307,
+     305756
+    ],
+    "after_samples": [
+     149815,
+     163132,
+     156143
+    ]
+   },
+   "10000,10,2,500,transactional_rebuild_64byte_rows": {
+    "before_ns": 327987,
+    "after_ns": 180980,
+    "ratio": 0.552,
+    "before_samples": [
+     335690,
+     312335,
+     327987
+    ],
+    "after_samples": [
+     180980,
+     171899,
+     203620
+    ]
+   },
+   "10000,10,2,500,published_table_scan": {
+    "before_ns": 1777,
+    "after_ns": 1797,
+    "ratio": 1.011,
+    "before_samples": [
+     1777,
+     1777,
+     1783
+    ],
+    "after_samples": [
+     1790,
+     1797,
+     1797
+    ]
+   },
+   "10000,10,2,500,reuse_unchanged_64byte_rows": {
+    "before_ns": 330627,
+    "after_ns": 187642,
+    "ratio": 0.568,
+    "before_samples": [
+     315580,
+     330627,
+     353191
+    ],
+    "after_samples": [
+     187642,
+     183532,
+     203582
+    ]
+   },
+   "10000,10,2,500,validated_associated_scan": {
+    "before_ns": 18693,
+    "after_ns": 8297,
+    "ratio": 0.444,
+    "before_samples": [
+     18613,
+     18693,
+     18788
+    ],
+    "after_samples": [
+     8335,
+     8297,
+     8292
+    ]
+   },
+   "10000,10,2,500,one_percent_churn_full_rebuild": {
+    "before_ns": 318400,
+    "after_ns": 190713,
+    "ratio": 0.599,
+    "before_samples": [
+     476510,
+     318400,
+     307625
+    ],
+    "after_samples": [
+     190713,
+     170671,
+     201652
+    ]
+   },
+   "10000,10,2,500,one_percent_churn_factory_reuse": {
+    "before_ns": 390425,
+    "after_ns": 181370,
+    "ratio": 0.465,
+    "before_samples": [
+     531367,
+     332563,
+     390425
+    ],
+    "after_samples": [
+     188826,
+     181370,
+     181253
+    ]
+   },
+   "100000,1,0,100000,active_requirement_scan": {
+    "before_ns": 7654752,
+    "after_ns": 6118806,
+    "ratio": 0.799,
+    "before_samples": [
+     7423643,
+     7654752,
+     7713258
+    ],
+    "after_samples": [
+     5780628,
+     6118806,
+     6122967
+    ]
+   },
+   "100000,1,0,100000,transactional_rebuild_64byte_rows": {
+    "before_ns": 12749178,
+    "after_ns": 10194570,
+    "ratio": 0.8,
+    "before_samples": [
+     12887655,
+     12749178,
+     11119515
+    ],
+    "after_samples": [
+     9710932,
+     10194570,
+     11119332
+    ]
+   },
+   "100000,1,0,100000,published_table_scan": {
+    "before_ns": 2032347,
+    "after_ns": 1182403,
+    "ratio": 0.582,
+    "before_samples": [
+     1380017,
+     2417727,
+     2032347
+    ],
+    "after_samples": [
+     1182403,
+     1147674,
+     1509073
+    ]
+   },
+   "100000,1,0,100000,reuse_unchanged_64byte_rows": {
+    "before_ns": 15998514,
+    "after_ns": 12277955,
+    "ratio": 0.767,
+    "before_samples": [
+     15998514,
+     15351910,
+     19136834
+    ],
+    "after_samples": [
+     12029598,
+     12277955,
+     14123588
+    ]
+   },
+   "100000,1,0,100000,validated_associated_scan": {
+    "before_ns": 8769631,
+    "after_ns": 6273269,
+    "ratio": 0.715,
+    "before_samples": [
+     8769631,
+     8574069,
+     8991694
+    ],
+    "after_samples": [
+     6273269,
+     6135804,
+     7997415
+    ]
+   },
+   "100000,1,0,100000,one_percent_churn_full_rebuild": {
+    "before_ns": 13515475,
+    "after_ns": 10298030,
+    "ratio": 0.762,
+    "before_samples": [
+     13515475,
+     14421578,
+     12245441
+    ],
+    "after_samples": [
+     10298030,
+     10094211,
+     12466189
+    ]
+   },
+   "100000,1,0,100000,one_percent_churn_factory_reuse": {
+    "before_ns": 16701547,
+    "after_ns": 12444353,
+    "ratio": 0.745,
+    "before_samples": [
+     16701547,
+     15713403,
+     18564744
+    ],
+    "after_samples": [
+     12444353,
+     12041690,
+     13008467
+    ]
+   },
+   "100000,10,0,10000,active_requirement_scan": {
+    "before_ns": 8825761,
+    "after_ns": 4445855,
+    "ratio": 0.504,
+    "before_samples": [
+     8825761,
+     9213971,
+     8499952
+    ],
+    "after_samples": [
+     4984475,
+     3896526,
+     4445855
+    ]
+   },
+   "100000,10,0,10000,transactional_rebuild_64byte_rows": {
+    "before_ns": 10058677,
+    "after_ns": 5601878,
+    "ratio": 0.557,
+    "before_samples": [
+     9637986,
+     10200981,
+     10058677
+    ],
+    "after_samples": [
+     6254078,
+     5188390,
+     5601878
+    ]
+   },
+   "100000,10,0,10000,published_table_scan": {
+    "before_ns": 151882,
+    "after_ns": 142731,
+    "ratio": 0.94,
+    "before_samples": [
+     151882,
+     150696,
+     162081
+    ],
+    "after_samples": [
+     146075,
+     142731,
+     140691
+    ]
+   },
+   "100000,10,0,10000,reuse_unchanged_64byte_rows": {
+    "before_ns": 9227731,
+    "after_ns": 5844646,
+    "ratio": 0.633,
+    "before_samples": [
+     9227731,
+     8867424,
+     11761220
+    ],
+    "after_samples": [
+     5952709,
+     5840703,
+     5844646
+    ]
+   },
+   "100000,10,0,10000,validated_associated_scan": {
+    "before_ns": 790377,
+    "after_ns": 453132,
+    "ratio": 0.573,
+    "before_samples": [
+     835240,
+     790377,
+     745314
+    ],
+    "after_samples": [
+     453132,
+     445712,
+     453610
+    ]
+   },
+   "100000,10,0,10000,one_percent_churn_full_rebuild": {
+    "before_ns": 9482446,
+    "after_ns": 6009576,
+    "ratio": 0.634,
+    "before_samples": [
+     9136105,
+     11995709,
+     9482446
+    ],
+    "after_samples": [
+     5611053,
+     6009576,
+     6317466
+    ]
+   },
+   "100000,10,0,10000,one_percent_churn_factory_reuse": {
+    "before_ns": 9061958,
+    "after_ns": 6729634,
+    "ratio": 0.743,
+    "before_samples": [
+     8294520,
+     9398721,
+     9061958
+    ],
+    "after_samples": [
+     6133339,
+     6729634,
+     7803594
+    ]
+   },
+   "100000,1,2,50000,active_requirement_scan": {
+    "before_ns": 7569892,
+    "after_ns": 4952833,
+    "ratio": 0.654,
+    "before_samples": [
+     6958504,
+     7677082,
+     7569892
+    ],
+    "after_samples": [
+     4952833,
+     5201116,
+     4607787
+    ]
+   },
+   "100000,1,2,50000,transactional_rebuild_64byte_rows": {
+    "before_ns": 8845951,
+    "after_ns": 7669038,
+    "ratio": 0.867,
+    "before_samples": [
+     8552062,
+     9327334,
+     8845951
+    ],
+    "after_samples": [
+     8943052,
+     7407197,
+     7669038
+    ]
+   },
+   "100000,1,2,50000,published_table_scan": {
+    "before_ns": 544455,
+    "after_ns": 563824,
+    "ratio": 1.036,
+    "before_samples": [
+     544455,
+     550199,
+     508430
+    ],
+    "after_samples": [
+     563824,
+     764790,
+     551344
+    ]
+   },
+   "100000,1,2,50000,reuse_unchanged_64byte_rows": {
+    "before_ns": 12105241,
+    "after_ns": 9414042,
+    "ratio": 0.778,
+    "before_samples": [
+     12105241,
+     10780820,
+     12109420
+    ],
+    "after_samples": [
+     9414042,
+     9608435,
+     8586344
+    ]
+   },
+   "100000,1,2,50000,validated_associated_scan": {
+    "before_ns": 8258696,
+    "after_ns": 5338980,
+    "ratio": 0.646,
+    "before_samples": [
+     8258696,
+     7456350,
+     8276751
+    ],
+    "after_samples": [
+     5138903,
+     5511715,
+     5338980
+    ]
+   },
+   "100000,1,2,50000,one_percent_churn_full_rebuild": {
+    "before_ns": 9567789,
+    "after_ns": 7767159,
+    "ratio": 0.812,
+    "before_samples": [
+     9108019,
+     9567789,
+     9835650
+    ],
+    "after_samples": [
+     7490459,
+     8736649,
+     7767159
+    ]
+   },
+   "100000,1,2,50000,one_percent_churn_factory_reuse": {
+    "before_ns": 11073656,
+    "after_ns": 9609046,
+    "ratio": 0.868,
+    "before_samples": [
+     10899700,
+     11073656,
+     12111020
+    ],
+    "after_samples": [
+     8822333,
+     9657533,
+     9609046
+    ]
+   },
+   "100000,10,2,5000,active_requirement_scan": {
+    "before_ns": 6851640,
+    "after_ns": 4629965,
+    "ratio": 0.676,
+    "before_samples": [
+     6851640,
+     6665133,
+     6887236
+    ],
+    "after_samples": [
+     4629965,
+     3856535,
+     4906871
+    ]
+   },
+   "100000,10,2,5000,transactional_rebuild_64byte_rows": {
+    "before_ns": 8075995,
+    "after_ns": 6206048,
+    "ratio": 0.768,
+    "before_samples": [
+     7481264,
+     8075995,
+     8611190
+    ],
+    "after_samples": [
+     6454036,
+     6206048,
+     5097822
+    ]
+   },
+   "100000,10,2,5000,published_table_scan": {
+    "before_ns": 99362,
+    "after_ns": 105656,
+    "ratio": 1.063,
+    "before_samples": [
+     99362,
+     95928,
+     115206
+    ],
+    "after_samples": [
+     105656,
+     128614,
+     103225
+    ]
+   },
+   "100000,10,2,5000,reuse_unchanged_64byte_rows": {
+    "before_ns": 7944518,
+    "after_ns": 5628622,
+    "ratio": 0.708,
+    "before_samples": [
+     7880469,
+     7944518,
+     8964539
+    ],
+    "after_samples": [
+     6310207,
+     5050490,
+     5628622
+    ]
+   },
+   "100000,10,2,5000,validated_associated_scan": {
+    "before_ns": 473262,
+    "after_ns": 282555,
+    "ratio": 0.597,
+    "before_samples": [
+     432713,
+     500610,
+     473262
+    ],
+    "after_samples": [
+     282555,
+     287593,
+     280362
+    ]
+   },
+   "100000,10,2,5000,one_percent_churn_full_rebuild": {
+    "before_ns": 7205381,
+    "after_ns": 5812853,
+    "ratio": 0.807,
+    "before_samples": [
+     7117233,
+     7205381,
+     8103918
+    ],
+    "after_samples": [
+     6419844,
+     4617611,
+     5812853
+    ]
+   },
+   "100000,10,2,5000,one_percent_churn_factory_reuse": {
+    "before_ns": 7641011,
+    "after_ns": 5509486,
+    "ratio": 0.721,
+    "before_samples": [
+     7537636,
+     7641011,
+     8058017
+    ],
+    "after_samples": [
+     5941430,
+     5194614,
+     5509486
+    ]
+   }
+  }
+ },
+ "equivalence_evidence": [
+  "voxy_world: PalettedBlocks::with_updates fast path compared against the dense repack oracle on random in-palette/new-block/last-occurrence/duplicate updates (chunk.rs tests)",
+  "voxy_lighting: new build_light compared byte-for-byte and budget-for-budget (minimal passing budget via bisection) against the previous implementation kept verbatim in the test module",
+  "voxy_mesher: greedy mesh compared against the naive per-face oracle on randomized terrain with lamps/glass/water and partial halos (areas, bounds and exact per-cell coverage)",
+  "voxy_runtime: partial rebuild of invalidated_derived_chunks merged into the previous derived set equals a full resident rebuild after interior, boundary, corner and multi-chunk edits",
+  "voxy_render: welded normals compared against an ordered-map reference on a seam grid; skinned pose validation blends once per vertex with the same accumulation order",
+  "physics_voxel: benchmark checksums of water plans, sweep contacts and raycast hits identical before/after; chunk cursor compared against direct sampling across chunk edges",
+  "voxy_scene: all 71 scene tests pass; transform-only atomic batches validate in command order and commit through set_locals"
+ ],
+ "limitations": [
+  "shared 4-vCPU cloud host; absolute timings vary run to run, ratios come from alternated runs",
+  "scene_scaling rows at 1000 objects showed inconsistent 1.5x swings in both directions across paired runs, including workloads whose code did not change (single-leaf batches); the 10k/100k rows are the stable signal",
+  "no GPU in the container: render changes are measured on their CPU parts only; the app's per-edit rebuild saving is derived from rebuild_all_resident scaled by the dirty-chunk ratio, not from a presented-frame measurement",
+  "water_tick is unchanged (planner not rewritten); the 4% delta is noise"
+ ]
+}

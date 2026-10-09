@@ -16,3 +16,7 @@ voxy_world = { path = "../voxy_world" }
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "voxel_pipeline"
+harness = false

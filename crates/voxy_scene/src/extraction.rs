@@ -110,23 +110,31 @@ impl<T: Any + Clone + Send + Sync> SceneExtraction<T> {
         scene: &SceneGraph,
         mut world: impl FnMut(NodeId) -> Result<Mat4, SceneGraphError>,
     ) -> Result<(), SceneGraphError> {
-        self.staging.clear();
+        // Overwrite retained staging entries in place so owned component payloads
+        // (asset ID strings) reuse their allocations instead of dropping and cloning.
+        let mut count = 0;
         for (owner, component) in scene.active_components::<T>() {
-            if self.staging.len() >= self.capacity {
+            if count >= self.capacity {
                 return Err(SceneGraphError::Capacity);
             }
-            self.staging.push(ExtractedInstance {
-                owner,
-                world: {
-                    let matrix = world(owner)?;
-                    if !matrix.is_finite() {
-                        return Err(SceneGraphError::WorldOverflow);
-                    }
-                    matrix
-                },
-                component: component.clone(),
-            });
+            let matrix = world(owner)?;
+            if !matrix.is_finite() {
+                return Err(SceneGraphError::WorldOverflow);
+            }
+            if let Some(entry) = self.staging.get_mut(count) {
+                entry.owner = owner;
+                entry.world = matrix;
+                entry.component.clone_from(component);
+            } else {
+                self.staging.push(ExtractedInstance {
+                    owner,
+                    world: matrix,
+                    component: component.clone(),
+                });
+            }
+            count += 1;
         }
+        self.staging.truncate(count);
         std::mem::swap(&mut self.instances, &mut self.staging);
         Ok(())
     }

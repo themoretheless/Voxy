@@ -1,0 +1,11 @@
+workload,before_median_p50_ns,after_median_p50_ns,ratio_after_over_before,rounds=5
+palette_to_dense,65229,50303,0.771
+palette_from_dense,299776,65696,0.219
+palette_with_updates_1,403368,8731,0.022
+palette_with_updates_64,369163,8192,0.022
+palette_with_updates_new_palette_entry,416391,112772,0.271
+world_commit_1_write,388383,1010,0.003
+world_commit_64_writes,372171,5209,0.014
+mesh_all_resident,3617345,2842855,0.786
+light_all_resident,5361991,3320933,0.619
+rebuild_all_resident,9520043,6755454,0.710

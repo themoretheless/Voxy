@@ -1,0 +1,4 @@
+workload,before_median_p50_ns,after_median_p50_ns,ratio_after_over_before,rounds=5
+water_tick,4296596,4128786,0.961
+sweep_aabb_x10000,2741555,2172102,0.792
+raycast_x10000,11208419,8321087,0.742

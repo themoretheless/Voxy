@@ -1,5 +1,6 @@
 //! Renderer-independent voxel physics.
 mod character;
+mod chunk_cursor;
 mod collision;
 mod destruction;
 mod projectile;
