@@ -1,0 +1,17 @@
+{
+  "process_id": 52315,
+  "sample_duration_seconds": 1,
+  "source": "live-cpu-sample.txt",
+  "metric": "collapsed top-of-stack samples; not frame time or percentages",
+  "counts": {
+    "EqualityQr.solve": 374,
+    "sweep_capsules.closure": 336,
+    "segment_pair": 267,
+    "sweep_capsules": 132,
+    "solve_lower_factored": 73,
+    "triangle_mesh.swept_capsule_queries": 5
+  },
+  "finding": "Both coupled QR and strand-strand continuous collision remain material. This sample does not support prioritizing body triangle queries over them.",
+  "next_action": "Inspect repeated strand-pair narrow-phase evaluations and immutable-motion reuse before changing collision gates.",
+  "rendered_fps_proven": false
+}

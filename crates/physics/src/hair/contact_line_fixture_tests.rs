@@ -56,7 +56,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 0");
+    assert!(measured_clear(a, b), "nominal restriction 0");
     let a = CapsuleMotion {
         start: [
             [
@@ -107,7 +107,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 1");
+    assert!(measured_clear(a, b), "nominal restriction 1");
     let a = CapsuleMotion {
         start: [
             [
@@ -162,7 +162,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 2");
+    assert!(measured_clear(a, b), "nominal restriction 2");
     let a = CapsuleMotion {
         start: [
             [
@@ -213,7 +213,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 3");
+    assert!(measured_clear(a, b), "nominal restriction 3");
     let a = CapsuleMotion {
         start: [
             [0.04076751269440692, 0.7982166547784026, 0.13075017629909014],
@@ -240,7 +240,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 4");
+    assert!(measured_clear(a, b), "nominal restriction 4");
     let a = CapsuleMotion {
         start: [
             [
@@ -295,7 +295,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 5");
+    assert!(measured_clear(a, b), "nominal restriction 5");
     let a = CapsuleMotion {
         start: [
             [
@@ -330,7 +330,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 6");
+    assert!(measured_clear(a, b), "nominal restriction 6");
     let a = CapsuleMotion {
         start: [
             [
@@ -373,7 +373,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 7");
+    assert!(measured_clear(a, b), "nominal restriction 7");
     let a = CapsuleMotion {
         start: [
             [
@@ -428,7 +428,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(clear(a, b, 512), "nominal restriction 8");
+    assert!(measured_clear(a, b), "nominal restriction 8");
     let a = CapsuleMotion {
         start: [
             [
@@ -483,7 +483,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(!clear(a, b, 512), "reduced collision 9");
+    assert!(!measured_clear(a, b), "reduced collision 9");
     let a = CapsuleMotion {
         start: [
             [
@@ -538,7 +538,7 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(!clear(a, b, 512), "reduced collision 10");
+    assert!(!measured_clear(a, b), "reduced collision 10");
     let a = CapsuleMotion {
         start: [
             [
@@ -593,5 +593,82 @@ fn nominal_frame3_restrictions_are_continuously_clear() {
         ],
         radius: 40e-6,
     };
-    assert!(!clear(a, b, 512), "reduced collision 11");
+    assert!(!measured_clear(a, b), "reduced collision 11");
+}
+
+// Opt-in diagnostic on the original captured pairs. It compares kernels,
+// not equivalent admission policies or an end-to-end frame benchmark.
+fn measured_clear(a: CapsuleMotion, b: CapsuleMotion) -> bool {
+    let admitted = clear(a, b, 512);
+    if std::env::var_os("VOXY_HAIR_PAIR_KERNEL_BENCH").is_some() {
+        let options = crate::hair::CapsuleSweepOptions {
+            tolerance_m: 5e-11, ..Default::default()
+        };
+        let reference = crate::hair::sweep_capsules(a, b, options)
+            .expect("captured sweep must retain valid input");
+        let original = super::super::pair_fraction(a, b, options).unwrap();
+        let candidate = || {
+            let a = std::hint::black_box(a);
+            let b = std::hint::black_box(b);
+            let early = crate::hair::sweep_capsules(a, b, crate::hair::CapsuleSweepOptions {
+                max_iterations: 16, ..options
+            })?;
+            if early == crate::hair::CapsuleSweep::Clear {
+                return Ok::<f64, &'static str>(1.);
+            }
+            if matches!(early, crate::hair::CapsuleSweep::IterationLimit { .. })
+                && clear(a, b, 512) {
+                return Ok(1.);
+            }
+            super::super::pair_fraction(a, b, options)
+        };
+        let mut candidate_pairs = Vec::new();
+        for round in 0..7 {
+            let measure = |selective: bool| {
+                let began = std::time::Instant::now();
+                for _ in 0..100 {
+                    let value = if selective { candidate() } else {
+                        super::super::pair_fraction(std::hint::black_box(a), std::hint::black_box(b), options)
+                    }.unwrap();
+                    assert_eq!(value.to_bits(), original.to_bits());
+                    std::hint::black_box(value);
+                }
+                began.elapsed().as_secs_f64()
+            };
+            let times = if round % 2 == 0 {
+                let original = measure(false); (original, measure(true))
+            } else {
+                let selective = measure(true); (measure(false), selective)
+            };
+            candidate_pairs.push(times);
+        }
+        eprintln!("CAPTURED SELECTIVE PAIR fraction={original} original_selective_seconds={candidate_pairs:?}");
+        let mut paired = Vec::new();
+        for round in 0..7 {
+            let certificate = || {
+                let began = std::time::Instant::now();
+                for _ in 0..100 {
+                    assert_eq!(clear(std::hint::black_box(a), std::hint::black_box(b), 512), admitted);
+                }
+                began.elapsed().as_secs_f64()
+            };
+            let sweep = || {
+                let began = std::time::Instant::now();
+                for _ in 0..100 {
+                    assert_eq!(crate::hair::sweep_capsules(
+                        std::hint::black_box(a), std::hint::black_box(b), options,
+                    ).expect("captured sweep must retain valid input"), reference);
+                }
+                began.elapsed().as_secs_f64()
+            };
+            let (cert, advance) = if round % 2 == 0 {
+                let cert = certificate(); (cert, sweep())
+            } else {
+                let advance = sweep(); (certificate(), advance)
+            };
+            paired.push((cert, advance));
+        }
+        eprintln!("CAPTURED PAIR KERNEL admitted={admitted} certificate_sweep_seconds={paired:?}");
+    }
+    admitted
 }

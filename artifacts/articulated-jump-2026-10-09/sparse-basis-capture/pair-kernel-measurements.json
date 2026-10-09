@@ -1,0 +1,91 @@
+{
+  "scope": "12 captured frame3 pairs; isolated kernels; 7 alternating pairs of 100 evaluations; concurrent qualification load",
+  "pairs": [
+    {
+      "pair": 0,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 9.7834e-05,
+      "sweep_seconds_100": 3.959e-06,
+      "sweep_over_certificate": 0.04046650448719259
+    },
+    {
+      "pair": 1,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 0.00035225,
+      "sweep_seconds_100": 0.002414041,
+      "sweep_over_certificate": 6.853203690560681
+    },
+    {
+      "pair": 2,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 9.6709e-05,
+      "sweep_seconds_100": 5.625e-06,
+      "sweep_over_certificate": 0.05816418327146388
+    },
+    {
+      "pair": 3,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 9.675e-05,
+      "sweep_seconds_100": 5.459e-06,
+      "sweep_over_certificate": 0.05642377260981912
+    },
+    {
+      "pair": 4,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 0.000379,
+      "sweep_seconds_100": 0.005612167,
+      "sweep_over_certificate": 14.807828496042218
+    },
+    {
+      "pair": 5,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 0.000270083,
+      "sweep_seconds_100": 0.005448375,
+      "sweep_over_certificate": 20.172965347689413
+    },
+    {
+      "pair": 6,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 9.8292e-05,
+      "sweep_seconds_100": 4.125e-06,
+      "sweep_over_certificate": 0.041966792821389334
+    },
+    {
+      "pair": 7,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 9.6542e-05,
+      "sweep_seconds_100": 4.042e-06,
+      "sweep_over_certificate": 0.041867788112945656
+    },
+    {
+      "pair": 8,
+      "certificate_admitted": true,
+      "certificate_seconds_100": 0.000138209,
+      "sweep_seconds_100": 4.458e-06,
+      "sweep_over_certificate": 0.03225549710945018
+    },
+    {
+      "pair": 9,
+      "certificate_admitted": false,
+      "certificate_seconds_100": 0.003422459,
+      "sweep_seconds_100": 0.000127875,
+      "sweep_over_certificate": 0.03736348631203471
+    },
+    {
+      "pair": 10,
+      "certificate_admitted": false,
+      "certificate_seconds_100": 0.003462625,
+      "sweep_seconds_100": 0.001712834,
+      "sweep_over_certificate": 0.49466344175300536
+    },
+    {
+      "pair": 11,
+      "certificate_admitted": false,
+      "certificate_seconds_100": 0.003807542,
+      "sweep_seconds_100": 4.666e-06,
+      "sweep_over_certificate": 0.0012254625162375096
+    }
+  ],
+  "conclusion": "Unconditional certificate-first ordering would slow most captured pairs. Do not apply it. Three admitted near-contact pairs benefit; a selective trigger requires separate validation.",
+  "production_changed": false
+}
