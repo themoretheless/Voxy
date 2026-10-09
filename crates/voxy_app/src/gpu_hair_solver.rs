@@ -5,9 +5,15 @@ use voxy_render::{BandedSolveInput,BandedSystem,ComputeJob,ComputeProgram,BANDED
 use wgpu::util::DeviceExt;
 #[path="gpu_hair_response_dispatch.rs"]
 mod response_dispatch;
+#[path="gpu_hair_joint.rs"]
+mod joint;
 #[derive(Debug)]
 pub struct GpuHairLinearSolver {
     device:wgpu::Device,queue:wgpu::Queue,program:ComputeProgram,resident:Option<ComputeJob>,
+    pub joint_contact_qr:bool,
+    joint_programs:Option<(ComputeProgram,ComputeProgram)>,
+    pub joint_coordinate_calls:usize,pub joint_equality_dispatches:usize,
+    pub joint_admitted:usize,pub joint_native_fallbacks:usize,
     pub reference_audit:bool,
     pub max_linear_error:[f64;2],
     pub max_packing_error:[f64;2],
@@ -57,7 +63,7 @@ impl GpuHairLinearSolver {
             }
         }
         let program=ComputeProgram::new(device,&source).await?;
-        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
+        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,joint_contact_qr:false,joint_programs:None,joint_coordinate_calls:0,joint_equality_dispatches:0,joint_admitted:0,joint_native_fallbacks:0,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
     }
     fn solve_checked(&mut self,systems:&[HairLinearSystem])->Result<Vec<Vec<f64>>,Box<dyn std::error::Error>> {
         if self.residual_refinements>3 {return Err("hair residual refinements must be in 0..3".into());}
@@ -244,7 +250,21 @@ impl GpuHairLinearSolver {
     }
 }
 impl HairLinearSolver for GpuHairLinearSolver {
-    fn contact_responses_enabled(&self)->bool {self.contact_response_batches}
+    fn joint_contact_coordinates_enabled(&self)->bool {self.joint_contact_qr}
+    fn solve_joint_coordinates(&mut self,columns:&[Vec<f64>],bounds:&[f64],tolerance:f64)->Option<(Vec<f64>,Vec<f64>)> {
+        self.joint_coordinate_calls+=1;
+        match self.solve_joint_checked(columns,bounds,tolerance) {
+            Ok(result)=>{if result.is_some() {self.last_error=None;}result},
+            Err(error)=>{self.last_error=Some(error.to_string());None}
+        }
+    }
+    fn joint_contact_result(&mut self,accelerated:bool) {
+        if accelerated {self.joint_admitted+=1;} else {
+            self.joint_native_fallbacks+=1;
+            if self.last_error.is_none() {self.last_error=Some("GPU joint candidate rejected by original physical admission".into());}
+        }
+    }
+    fn contact_responses_enabled(&self)->bool {self.contact_response_batches || self.joint_contact_qr}
     fn solve_responses(&mut self,systems:&[HairResponseSystem])->Result<Vec<Vec<Vec<f64>>>, &'static str> {
         let started=std::time::Instant::now();self.response_calls+=1;
         let result=self.solve_responses_checked(systems);self.elapsed_ms+=started.elapsed().as_secs_f64()*1000.;

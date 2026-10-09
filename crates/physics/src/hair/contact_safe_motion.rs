@@ -374,6 +374,27 @@ fn pair_fraction(
     b: CapsuleMotion,
     options: CapsuleSweepOptions,
 ) -> Result<f64, &'static str> {
+    let (outcome, certificate) = crate::hair::contact::continuous::sweep_capsules_selective(
+        a, b, options, || line_certificate::clear(a, b, 512),
+    )?;
+    if outcome == CapsuleSweep::Clear { return Ok(1.); }
+    // A failed certificate belongs to this exact immutable pair and must not
+    // be evaluated again after resuming conservative advancement.
+    if (certificate.is_none() && line_certificate::clear(a, b, 512))
+        || interval_planes_clear(a, b, 32768)? { return Ok(1.); }
+    match outcome {
+        CapsuleSweep::Approach { fraction, .. } | CapsuleSweep::IterationLimit { fraction, .. }
+            if fraction > 0. => Ok(fraction),
+        _ => initial_support_fraction(a, b),
+    }
+}
+
+#[cfg(test)]
+fn pair_fraction_reference(
+    a: CapsuleMotion,
+    b: CapsuleMotion,
+    options: CapsuleSweepOptions,
+) -> Result<f64, &'static str> {
     let outcome = sweep_capsules(a, b, options)?;
     if outcome == CapsuleSweep::Clear {
         return Ok(1.);
@@ -531,9 +552,10 @@ pub(in crate::hair) fn advance(
     let profile_started=std::env::var_os("VOXY_HAIR_SWEEP_REFINEMENT_TRACE").map(|_|std::time::Instant::now());
     let mut responses = super::super::refresh_strand_responses(rods, radius, &[]);
     let (mut constraints, aliases) = position_constraints(rods, &responses, radius)?;
-    let native_step=if solver.is_none() {Some(NativeNewtonStep::new(rods,dt,1e-14)?)} else {None};
+    let native_step=if solver.as_ref().is_none_or(|backend|backend.joint_contact_coordinates_enabled()) {Some(NativeNewtonStep::new(rods,dt,1e-14)?)} else {None};
     let mut increment = if let Some(backend) = solver.as_mut() {
-        constrained_newton_increment(&mut constraints, rods, dt, Some(&mut **backend), 1e-14)?
+        if let Some(step)=&native_step {step.project_with_solver(&mut constraints,1e-14,Some(&mut **backend))?}
+        else {constrained_newton_increment(&mut constraints, rods, dt, Some(&mut **backend), 1e-14)?}
     } else {
         native_step.as_ref().unwrap().project(&mut constraints,1e-14)?
     };
@@ -587,13 +609,14 @@ pub(in crate::hair) fn advance(
                 constraint.multiplier = 0.;
             }
             increment = if let Some(backend) = solver.as_mut() {
-                constrained_newton_increment(
+                if let Some(step)=&native_step {step.project_with_solver(&mut constraints,1e-14,Some(&mut **backend))?}
+                else {constrained_newton_increment(
                     &mut constraints,
                     rods,
                     dt,
                     Some(&mut **backend),
                     1e-14,
-                )?
+                )?}
             } else {
                 native_step.as_ref().unwrap().project(&mut constraints,1e-14)?
             };

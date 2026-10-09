@@ -11,6 +11,46 @@ const PADDED_EDGE: usize = 34;
 const PADDED_VOLUME: usize = PADDED_EDGE * PADDED_EDGE * PADDED_EDGE;
 const MAX_LIGHT: u8 = 15;
 
+const FLAG_DOWN: u8 = 1 << 0;
+const FLAG_UP: u8 = 1 << 1;
+const FLAG_LEFT: u8 = 1 << 2;
+const FLAG_RIGHT: u8 = 1 << 3;
+const FLAG_BACK: u8 = 1 << 4;
+const FLAG_FORWARD: u8 = 1 << 5;
+
+const PADDED_NEIGHBOR_FLAGS: [u8; PADDED_VOLUME] = {
+    let mut flags = [0u8; PADDED_VOLUME];
+    let mut index = 0;
+    while index < PADDED_VOLUME {
+        let x = index % PADDED_EDGE;
+        let yz = index / PADDED_EDGE;
+        let z = yz % PADDED_EDGE;
+        let y = yz / PADDED_EDGE;
+        let mut f = 0u8;
+        if y > 0 {
+            f |= FLAG_DOWN;
+        }
+        if y < PADDED_EDGE - 1 {
+            f |= FLAG_UP;
+        }
+        if x > 0 {
+            f |= FLAG_LEFT;
+        }
+        if x < PADDED_EDGE - 1 {
+            f |= FLAG_RIGHT;
+        }
+        if z > 0 {
+            f |= FLAG_BACK;
+        }
+        if z < PADDED_EDGE - 1 {
+            f |= FLAG_FORWARD;
+        }
+        flags[index] = f;
+        index += 1;
+    }
+    flags
+};
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum FaceNeighbor {
     NegX,
@@ -297,13 +337,10 @@ fn propagate(
         }
         let current_light = light[index];
         let current_attenuated = current_light.saturating_sub(1);
-        let x = index % PADDED_EDGE;
-        let yz = index / PADDED_EDGE;
-        let z = yz % PADDED_EDGE;
-        let y = yz / PADDED_EDGE;
+        let flags = PADDED_NEIGHBOR_FLAGS[index];
 
         // Down: y > 0
-        if y > 0 {
+        if (flags & FLAG_DOWN) != 0 {
             let neighbor_index = index - STRIDE_Y;
             if !opaque[neighbor_index] {
                 let candidate = if preserve_direct_down && current_light == MAX_LIGHT {
@@ -322,7 +359,7 @@ fn propagate(
 
         if current_attenuated > 0 {
             // Up: y < PADDED_EDGE - 1
-            if y < PADDED_EDGE - 1 {
+            if (flags & FLAG_UP) != 0 {
                 let neighbor_index = index + STRIDE_Y;
                 if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
                     light[neighbor_index] = current_attenuated;
@@ -332,7 +369,7 @@ fn propagate(
                 }
             }
             // Left: x > 0
-            if x > 0 {
+            if (flags & FLAG_LEFT) != 0 {
                 let neighbor_index = index - 1;
                 if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
                     light[neighbor_index] = current_attenuated;
@@ -342,7 +379,7 @@ fn propagate(
                 }
             }
             // Right: x < PADDED_EDGE - 1
-            if x < PADDED_EDGE - 1 {
+            if (flags & FLAG_RIGHT) != 0 {
                 let neighbor_index = index + 1;
                 if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
                     light[neighbor_index] = current_attenuated;
@@ -352,7 +389,7 @@ fn propagate(
                 }
             }
             // Back: z > 0
-            if z > 0 {
+            if (flags & FLAG_BACK) != 0 {
                 let neighbor_index = index - STRIDE_Z;
                 if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
                     light[neighbor_index] = current_attenuated;
@@ -362,7 +399,7 @@ fn propagate(
                 }
             }
             // Forward: z < PADDED_EDGE - 1
-            if z < PADDED_EDGE - 1 {
+            if (flags & FLAG_FORWARD) != 0 {
                 let neighbor_index = index + STRIDE_Z;
                 if !opaque[neighbor_index] && current_attenuated > light[neighbor_index] {
                     light[neighbor_index] = current_attenuated;

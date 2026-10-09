@@ -286,6 +286,7 @@ impl ComputeProgram {
             entries: &entries,
         });
         Ok(ComputeJob {
+            device: self.device.clone(),
             readback_pool: self.readback_pool.clone(),
             pipeline: self.pipeline.clone(),
             bind_group,
@@ -302,6 +303,7 @@ impl ComputeProgram {
 /// One-shot job. Ownership prevents re-dispatch while its readback is mapped.
 #[derive(Debug)]
 pub struct ComputeJob {
+    device: wgpu::Device,
     readback_pool: ComputeReadbackPool,
     pipeline: wgpu::ComputePipeline,
     bind_group: wgpu::BindGroup,
@@ -313,6 +315,21 @@ pub struct ComputeJob {
     requires_additional_binding: bool,
 }
 impl ComputeJob {
+    /// Switch a resident storage job to another plain-storage pipeline without
+    /// copying or reallocating its buffer. Rejection leaves the job unchanged.
+    /// The caller owns shader storage-ABI compatibility and command ordering.
+    pub fn use_program(&mut self,program:&ComputeProgram)->Result<(),ComputeError> {
+        if self.device!=program.device {return Err(ComputeError::DeviceMismatch);}
+        if program.scene_inputs || program.additional_layout.is_some() {return Err(ComputeError::InvalidBuffer);}
+        let bind_group=self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label:Some("resident compute pipeline switch"),layout:&program.layout,
+            entries:&[wgpu::BindGroupEntry {binding:0,resource:self.storage.as_entire_binding()}],
+        });
+        self.pipeline=program.pipeline.clone();self.bind_group=bind_group;
+        self.max_workgroups=program.max_workgroups;self.entry_point=program.entry_point.clone();
+        self.revision=program.revision;self.requires_additional_binding=false;
+        Ok(())
+    }
     /// Selected entry point retained when this job was created.
     #[must_use]
     pub fn entry_point(&self) -> &str {
@@ -551,6 +568,25 @@ impl PendingComputeReadback {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn resident_pipeline_switch_preserves_allocation_and_rejects_foreign_owner() {
+        let (owner,_owner_queue)=wgpu::Device::noop(&Default::default());
+        let (other,_other_queue)=wgpu::Device::noop(&Default::default());
+        let source="@compute @workgroup_size(1) fn cs_main() {}";
+        let first=pollster::block_on(ComputeProgram::new(&owner,source)).unwrap();
+        let second=pollster::block_on(ComputeProgram::with_entry_point(&owner,"@compute @workgroup_size(1) fn next() {}","next")).unwrap();
+        let foreign=pollster::block_on(ComputeProgram::new(&other,source)).unwrap();
+        let mut job=first.create_job(&owner,&[0;4]).unwrap();
+        let stats=ComputeMemoryBudget::for_device(&owner).stats();
+        let buffer=job.buffer().clone();
+        assert_eq!(job.use_program(&foreign),Err(ComputeError::DeviceMismatch));
+        assert_eq!(job.entry_point(),"cs_main");
+        job.use_program(&second).unwrap();
+        assert_eq!(job.entry_point(),"next");assert_eq!(job.buffer(),&buffer);
+        assert_eq!(ComputeMemoryBudget::for_device(&owner).stats(),stats);
+        let mut encoder=owner.create_command_encoder(&Default::default());
+        job.encode_step(&mut encoder,[1,1,1]).unwrap();let _=encoder.finish();
+    }
 
     #[test]
     fn jobs_reject_different_devices_in_one_instance() {

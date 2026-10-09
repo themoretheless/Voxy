@@ -606,20 +606,10 @@ fn measured_clear(a: CapsuleMotion, b: CapsuleMotion) -> bool {
         };
         let reference = crate::hair::sweep_capsules(a, b, options)
             .expect("captured sweep must retain valid input");
-        let original = super::super::pair_fraction(a, b, options).unwrap();
+        let original = super::super::pair_fraction_reference(a, b, options).unwrap();
         let candidate = || {
             let a = std::hint::black_box(a);
             let b = std::hint::black_box(b);
-            let early = crate::hair::sweep_capsules(a, b, crate::hair::CapsuleSweepOptions {
-                max_iterations: 16, ..options
-            })?;
-            if early == crate::hair::CapsuleSweep::Clear {
-                return Ok::<f64, &'static str>(1.);
-            }
-            if matches!(early, crate::hair::CapsuleSweep::IterationLimit { .. })
-                && clear(a, b, 512) {
-                return Ok(1.);
-            }
             super::super::pair_fraction(a, b, options)
         };
         let mut candidate_pairs = Vec::new();
@@ -628,7 +618,7 @@ fn measured_clear(a: CapsuleMotion, b: CapsuleMotion) -> bool {
                 let began = std::time::Instant::now();
                 for _ in 0..100 {
                     let value = if selective { candidate() } else {
-                        super::super::pair_fraction(std::hint::black_box(a), std::hint::black_box(b), options)
+                        super::super::pair_fraction_reference(std::hint::black_box(a), std::hint::black_box(b), options)
                     }.unwrap();
                     assert_eq!(value.to_bits(), original.to_bits());
                     std::hint::black_box(value);

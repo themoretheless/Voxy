@@ -1063,7 +1063,7 @@ fn unique_cell_pairs(grid: &ContactGrid) -> Vec<(SegmentId, SegmentId)> {
     unique_cell_pairs_filtered(grid,|_|true)
 }
 fn unique_cell_pairs_filtered(grid: &ContactGrid, mut keep:impl FnMut((SegmentId,SegmentId))->bool) -> Vec<(SegmentId, SegmentId)> {
-    let mut pairs = Vec::new();
+    let mut pairs = Vec::with_capacity(grid.len().saturating_mul(2));
     for (&key, entries) in grid {
         for a in 0..entries.len() {
             for b in a + 1..entries.len() {
@@ -1146,7 +1146,8 @@ fn gather_strand_contacts_impl(rods: &mut [HairRod], radius: f64, project_positi
     for rod in rods.iter_mut() {rod.contacts.retain(|contact| matches!(contact.source,ContactSource::Mesh(_)));}
     // Segment AABBs, not just particles, enter the spatial hash. Adjacent segments are excluded.
     let cell = 0.008f64.max(radius * 4.);
-    let mut grid: ContactGrid = HashMap::new();
+    let total_segments: usize = rods.iter().map(|rod| rod.x.len().saturating_sub(1)).sum();
+    let mut grid: ContactGrid = HashMap::with_capacity(total_segments.saturating_mul(2));
     for (r, rod) in rods.iter().enumerate() {
         for (i, p) in rod.x.windows(2).enumerate() {
             let min: [i32; 3] =

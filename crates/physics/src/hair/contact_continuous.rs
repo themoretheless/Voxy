@@ -236,6 +236,13 @@ pub fn sweep_capsules(
     b: CapsuleMotion,
     options: CapsuleSweepOptions,
 ) -> Result<CapsuleSweep, &'static str> {
+    let (speed, roundoff) = capsule_sweep_parameters(a, b, options)?;
+    conservative_advance(speed, roundoff, options, |fraction| gap(&a, &b, fraction))
+}
+
+fn capsule_sweep_parameters(
+    a: CapsuleMotion, b: CapsuleMotion, options: CapsuleSweepOptions,
+) -> Result<(f64, f64), &'static str> {
     if !options.tolerance_m.is_finite()
         || options.tolerance_m <= 0.
         || options.max_iterations == 0
@@ -277,7 +284,31 @@ pub fn sweep_capsules(
     if !speed.is_finite() {
         return Err("capsule sweep motion overflow");
     }
-    conservative_advance(speed, roundoff, options, |fraction| gap(&a, &b, fraction))
+    Ok((speed, roundoff))
+}
+
+// Validation is shared with the production query; a failed certificate
+// resumes exactly the same immutable trajectory.
+pub(super) fn sweep_capsules_selective(
+    a: CapsuleMotion, b: CapsuleMotion, options: CapsuleSweepOptions,
+    mut certificate: impl FnMut() -> bool,
+) -> Result<(CapsuleSweep, Option<bool>), &'static str> {
+    let (speed, roundoff) = capsule_sweep_parameters(a, b, options)?;
+    let prefix_options = CapsuleSweepOptions {
+        max_iterations: options.max_iterations.min(16), ..options
+    };
+    let prefix = conservative_advance(speed, roundoff, prefix_options,
+        |fraction| gap(&a, &b, fraction))?;
+    if let CapsuleSweep::IterationLimit { fraction, gap_m, iterations: 16 } = prefix {
+        if options.max_iterations > 16 {
+            let certified = certificate();
+            if certified { return Ok((CapsuleSweep::Clear, Some(true))); }
+            let outcome = continue_advance(speed, roundoff, options, fraction, gap_m, 16,
+                |fraction| gap(&a, &b, fraction))?;
+            return Ok((outcome, Some(false)));
+        }
+    }
+    Ok((prefix, None))
 }
 
 // Shared admission kernel: every geometry query retains the same conservative
@@ -288,15 +319,30 @@ pub(super) fn conservative_advance(
     options: CapsuleSweepOptions,
     mut distance: impl FnMut(f64) -> Result<f64, &'static str>,
 ) -> Result<CapsuleSweep, &'static str> {
-    let mut fraction = 0.;
-    let mut current = distance(fraction)?;
+    let fraction = 0.;
+    let current = distance(fraction)?;
     if current <= options.tolerance_m {
         return Ok(CapsuleSweep::InitialContact { gap_m: current });
     }
     if speed == 0. {
         return Ok(CapsuleSweep::Clear);
     }
-    for iteration in 0..options.max_iterations {
+    continue_advance(speed, roundoff, options, fraction, current, 0, distance)
+}
+
+// Resume only the same immutable distance operator and validated parameters.
+// The completed iteration count is absolute; resumption consumes the original
+// budget and does not recompute any already evaluated distance.
+fn continue_advance(
+    speed: f64,
+    roundoff: f64,
+    options: CapsuleSweepOptions,
+    mut fraction: f64,
+    mut current: f64,
+    completed: usize,
+    mut distance: impl FnMut(f64) -> Result<f64, &'static str>,
+) -> Result<CapsuleSweep, &'static str> {
+    for iteration in completed..options.max_iterations {
         if current <= 2. * options.tolerance_m {
             return Ok(CapsuleSweep::Approach {
                 fraction,
@@ -937,4 +983,69 @@ fn one_sided_bound_pairs_reference(bounds: &[(V, V)]) -> Vec<(usize, usize)> {
     let root=build(&mut ids,bounds,&mut nodes);
     let mut pairs=Vec::new(); visit(root,root,&nodes,&mut pairs);
     pairs.sort_unstable(); pairs
+}
+
+#[cfg(test)]
+mod continuation_tests {
+    use super::*;
+    #[test]
+    fn selective_resume_retains_crossings_budgets_and_invalid_input_rejection() {
+        let a = CapsuleMotion { start: [[-0.1, -0.1, 0.], [-0.1, 0.1, 0.]],
+            end: [[0.1, -0.1, 0.], [0.1, 0.1, 0.]], radius: 4e-5 };
+        for shift in [-0.2, -0.1, -1e-7, 0., 1e-7, 0.1, 0.2] {
+            let b = CapsuleMotion { start: [[shift, 0., -0.1], [shift, 0., 0.1]],
+                end: [[shift, 0., -0.1], [shift, 0., 0.1]], radius: 4e-5 };
+            for budget in [1, 16, 17, 32, 1024] {
+                let options = CapsuleSweepOptions { max_iterations: budget, ..Default::default() };
+                let original = sweep_capsules(a, b, options);
+                let mut calls = 0;
+                let selective = sweep_capsules_selective(a, b, options, || { calls += 1; false });
+                assert_eq!(selective.map(|result| result.0), original);
+                assert!(calls <= 1);
+            }
+        }
+        for invalid in [CapsuleMotion { radius: 0., ..a },
+            CapsuleMotion { radius: f64::NAN, ..a },
+            CapsuleMotion { start: [[f64::INFINITY; 3]; 2], ..a }] {
+            let mut calls = 0;
+            assert!(sweep_capsules_selective(invalid, a, Default::default(), || {
+                calls += 1; true
+            }).is_err());
+            assert_eq!(calls, 0, "certificate cannot bypass input validation");
+        }
+    }
+
+    #[test]
+    fn resumed_advance_preserves_terminal_result_and_distance_count() {
+        // Slow near-tangent motion exercises budgets, while the other cases
+        // exercise clearance, approach, and nonfinite/error publication.
+        for (speed, offset, slope) in [(1., 1e-7, -1e-8_f64), (1., 0.4, -0.3),
+            (0.5, 2., -0.1), (1., 0.1, -1.)] {
+            for budget in [17, 32, 128, 1024] {
+                let options = CapsuleSweepOptions { max_iterations: budget, ..Default::default() };
+                let mut whole_calls = 0;
+                let whole = conservative_advance(speed, 1e-15, options, |t| {
+                    whole_calls += 1; Ok(slope.mul_add(t, offset))
+                });
+                let mut split_calls = 0;
+                let prefix = conservative_advance(speed, 1e-15,
+                    CapsuleSweepOptions { max_iterations: 16, ..options }, |t| {
+                        split_calls += 1; Ok(slope.mul_add(t, offset))
+                    });
+                let split = match prefix {
+                    Ok(CapsuleSweep::IterationLimit { fraction, gap_m, iterations: 16 }) =>
+                        continue_advance(speed, 1e-15, options, fraction, gap_m, 16, |t| {
+                            split_calls += 1; Ok(slope.mul_add(t, offset))
+                        }),
+                    other => other,
+                };
+                assert_eq!(split, whole);
+                assert_eq!(split_calls, whole_calls);
+            }
+        }
+        let options = CapsuleSweepOptions { max_iterations: 32, ..Default::default() };
+        let failure = continue_advance(1., 1e-15, options, 0.1, 1e-7, 16,
+            |_| Err("distance failure"));
+        assert_eq!(failure, Err("distance failure"));
+    }
 }
