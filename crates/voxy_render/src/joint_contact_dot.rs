@@ -169,6 +169,28 @@ impl ResidentContactEqualityInput {
     }
     pub fn bytes(&self)->&[u8] {bytemuck::cast_slice(&self.words)}
     pub fn columns(&self)->usize {self.qr.count}
+    /// Change only equality RHS/scratch for this immutable resident QR.
+    /// Validation is transactional; rejected bounds leave the input untouched.
+    pub fn update_bounds(&mut self,bounds:&[f64])->Result<(),JointDotError> {
+        if bounds.len()!=self.qr.count || bounds.iter().any(|v|!v.is_finite()) {return Err(JointDotError::Shape);}
+        let mut normalized=Vec::with_capacity(bounds.len());
+        for (&b,&s) in bounds.iter().zip(&self.qr.scales) {
+            let v=b/s;
+            if !v.is_finite() || !s.recip().is_finite() || (b!=0. && v==0.) {return Err(JointDotError::NumericRange);}
+            normalized.push(v);
+        }
+        let scale=normalized.iter().map(|v|v.abs()).fold(0.,f64::max).max(f64::MIN_POSITIVE);
+        let mut packed=Vec::with_capacity(bounds.len()*2);
+        for v in normalized {let n=v/scale;if v!=0. && n==0. {return Err(JointDotError::NumericRange);}packed.extend(pack(n)?);}
+        self.words[self.rhs..].fill(0);
+        self.words[self.rhs..self.rhs+packed.len()].copy_from_slice(&packed);
+        *self.words.last_mut().unwrap()=u32::MAX;self.scale=scale;
+        Ok(())
+    }
+    /// Upload this range only, retaining original columns, completed Q and R.
+    pub fn equality_update(&self)->(u64,&[u8]) {
+        ((self.rhs*4) as u64,bytemuck::cast_slice(&self.words[self.rhs..]))
+    }
     pub fn decode(&self,bytes:&[u8])->Result<ResidentContactEqualityOutput,JointDotError> {
         if bytes.len()!=self.words.len()*4 {return Err(JointDotError::Output);}
         // Equality admission needs the QR validity gates, not a second host
@@ -292,6 +314,27 @@ mod tests {
             let mut corrupt=words.clone();corrupt[offset]=value;
             assert_eq!(input.decode(bytemuck::cast_slice(&corrupt)).unwrap_err(),JointDotError::Output);
         }
+    }
+    #[test]
+    fn equality_rhs_update_preserves_operator_and_rejects_bad_bounds() {
+        let mut input=ResidentContactEqualityInput::new(&[vec![0.,2.,0.]],&[6.]).unwrap();
+        let prefix=input.words[..input.rhs].to_vec();
+        input.update_bounds(&[-12.]).unwrap();
+        assert_eq!(&input.words[..input.rhs],prefix);
+        let fresh=ResidentContactEqualityInput::new(&[vec![0.,2.,0.]],&[-12.]).unwrap();
+        assert_eq!(input.words,fresh.words);assert_eq!(input.scale,fresh.scale);
+        let saved=input.words.clone();let scale=input.scale;
+        for bounds in [vec![],vec![f64::NAN],vec![f64::INFINITY]] {
+            assert!(input.update_bounds(&bounds).is_err());
+            assert_eq!(input.words,saved);assert_eq!(input.scale,scale);
+        }
+        let (offset,bytes)=input.equality_update();
+        assert_eq!(offset,input.rhs as u64*4);
+        assert_eq!(bytes,&input.bytes()[offset as usize..]);
+        let mut tiny=ResidentContactEqualityInput::new(&[vec![1e-300]],&[0.]).unwrap();
+        let saved=tiny.words.clone();let scale=tiny.scale;
+        assert_eq!(tiny.update_bounds(&[f64::MAX]),Err(JointDotError::NumericRange));
+        assert_eq!(tiny.words,saved);assert_eq!(tiny.scale,scale);
     }
     #[test]
     fn resident_equality_shader_and_transport_gates() {
