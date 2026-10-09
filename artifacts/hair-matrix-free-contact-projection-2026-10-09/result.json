@@ -1,0 +1,24 @@
+{
+  "change": "Remove 256-contact fallback rejection using matrix-free normalized compliance product for larger contact sets",
+  "source_sha256": "6d9ab306d28d936f96f08f0803c1b6ed0ab4e643adb5d8e570d043aa3c8e2ff2",
+  "dense_matrix_threshold": 256,
+  "maximum_contacts_fixed_limit": null,
+  "projection_iteration_limit": 100000,
+  "strict_residual_and_geometry_gates_unchanged": true,
+  "unit_tests": {
+    "passed": 61,
+    "ignored": 1
+  },
+  "hair_integration_tests": {
+    "passed": 19
+  },
+  "rebase_tests": {
+    "passed": 1
+  },
+  "300_dependent_contact_regression_before": "failed",
+  "300_dependent_contact_regression_after": "passed",
+  "matrix_free_vs_independent_native_compliance": "passed",
+  "defaults_changed": false,
+  "runtime_qualified": false,
+  "FPS_measured": false
+}

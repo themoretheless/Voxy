@@ -1,0 +1,40 @@
+{
+  "paired_phases": 47,
+  "unmatched_phases": 0,
+  "max_position_delta_m": 1.5322187962851785e-12,
+  "final_rod390": {
+    "native": {
+      "phase": "finished",
+      "signed_root_segment_strain": -0.07464100414119523,
+      "root_segment": [
+        [
+          0.056071456521749496,
+          0.7873165011405945,
+          0.07599975913763046
+        ],
+        [
+          0.057546087629879894,
+          0.7889036496966229,
+          0.07644499200245779
+        ]
+      ]
+    },
+    "external": {
+      "phase": "finished",
+      "signed_root_segment_strain": -0.07464100411916252,
+      "root_segment": [
+        [
+          0.056071456521749496,
+          0.7873165011405945,
+          0.07599975913763046
+        ],
+        [
+          0.05754608762988995,
+          0.788903649696689,
+          0.07644499200245021
+        ]
+      ]
+    }
+  },
+  "scope": "First failed frame only; not admitted full animation"
+}

@@ -1,0 +1,15 @@
+{
+  "query": "Cosserat contact friction",
+  "cascade": [
+    "query_with_index",
+    "search_wiki",
+    "search(mode=lex,timeout_ms=3000)"
+  ],
+  "wiki_search": "timeout after candidate retrieval",
+  "reviewed_raw_hit_ids": [
+    "8dd441bb-e09e-4320-b815-4983631bd91d",
+    "53fb6482-addd-40d6-899a-28d0ce4559ab",
+    "175bc28f-31ab-4a4f-a5b6-a89ab0a3ba0a"
+  ],
+  "decision": "no implementation based on these hits: two unrelated 2D friction examples and an older hair chat archive; current source and live qualification remain authoritative"
+}

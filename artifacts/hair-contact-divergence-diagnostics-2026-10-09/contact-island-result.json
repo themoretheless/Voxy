@@ -1,0 +1,34 @@
+{
+  "unit_tests": {
+    "passed": 115,
+    "failed": 0,
+    "ignored": 5
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "change": "native QR recovery partitions complete original constraint set by rod-compliance connectivity; single rod stations never split",
+  "capacity_rows_per_island": 512,
+  "old_global_capacity_removed": true,
+  "reactions_published_after_all_islands_admitted": true,
+  "regressions": [
+    "300 independent constraints exceed old global256 cap while preserving every gate and root",
+    "different stations link transitive rod island"
+  ],
+  "full_native_only": {
+    "passed": false,
+    "passed_frames": [
+      1,
+      2
+    ],
+    "frame2_261_row_projection_recovered": true,
+    "frame3_projection_rows_observed": 444,
+    "failed_frame": 3,
+    "failure": "swept strand components have no admissible progress",
+    "duration_s": 51.62
+  },
+  "gpu_fallback_introduced": false,
+  "render_fps_measured": false,
+  "default_swept_enabled": false
+}

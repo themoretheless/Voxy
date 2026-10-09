@@ -1,0 +1,12 @@
+iteration=0 active=[]
+iteration=1 active=[1]
+iteration=2 active=[1, 60]
+iteration=3 active=[1, 2, 60]
+iteration=4 active=[1, 2, 53, 60]
+iteration=5 active=[0, 1, 2, 53, 60]
+iteration=6 active=[0, 1, 2, 27, 53, 60]
+iteration=7 active=[0, 2, 27, 53, 60]
+iteration=8 active=[0, 2, 27, 48, 53, 60]
+iteration=9 active=[0, 2, 26, 27, 48, 53, 60]
+iteration=10 active=[2, 26, 27, 48, 53, 60]
+result=true

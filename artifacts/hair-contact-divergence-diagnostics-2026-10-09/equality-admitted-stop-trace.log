@@ -1,0 +1,31 @@
+iteration=0 active=[]
+iteration=1 active=[1]
+equality size=1 refine=0 max_error=3.7947076036992655e-19
+iteration=2 active=[1, 60]
+equality size=2 refine=0 max_error=3.7947076036992655e-19
+iteration=3 active=[1, 2, 60]
+equality size=3 refine=0 max_error=2.1649348980190553e-15
+iteration=4 active=[1, 2, 53, 60]
+equality size=4 refine=0 max_error=3.0531133177191805e-15
+iteration=5 active=[0, 1, 2, 53, 60]
+equality size=5 refine=0 max_error=3.0531133177191805e-15
+iteration=6 active=[0, 1, 2, 27, 53, 60]
+equality size=6 refine=0 max_error=3.0531133177191805e-15
+iteration=7 active=[0, 2, 27, 53, 60]
+equality size=5 refine=0 max_error=3.0531133177191805e-15
+iteration=8 active=[0, 2, 27, 48, 53, 60]
+equality size=6 refine=0 max_error=2.5368596112684827e-14
+equality size=6 refine=1 max_error=2.5368596112684827e-14
+equality size=6 refine=2 max_error=3.957945082788683e-14
+equality size=6 refine=3 max_error=4.568567746332519e-14
+equality size=6 refine=4 max_error=1.1157741397482823e-14
+equality size=6 refine=5 max_error=1.1157741397482823e-14
+equality size=6 refine=6 max_error=1.1157741397482823e-14
+equality size=6 refine=7 max_error=3.0531133177191805e-15
+iteration=9 active=[0, 2, 26, 27, 48, 53, 60]
+equality size=7 refine=0 max_error=1.1157741397482823e-14
+equality size=7 refine=1 max_error=3.0531133177191805e-15
+iteration=10 active=[2, 26, 27, 48, 53, 60]
+equality size=6 refine=0 max_error=2.5368596112684827e-14
+equality size=6 refine=1 max_error=3.0531133177191805e-15
+rows=94 width=882 result=true

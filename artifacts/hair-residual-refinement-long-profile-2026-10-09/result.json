@@ -1,0 +1,33 @@
+{
+  "backend": "Metal Apple M4 Max",
+  "frames": 120,
+  "guides": 469,
+  "structural_GPU_batches": 1440,
+  "additional_GPU_refinement_batches": 1440,
+  "passed": false,
+  "position_error_m": 4.970671987734876e-05,
+  "quaternion_component_error": 0.0005287613311704131,
+  "first_divergence_frame": 73,
+  "position_gate_m": 1e-06,
+  "quaternion_gate": 5e-05,
+  "native_ms": 200665.68495500006,
+  "hybrid_ms": 238687.85283199995,
+  "CPU_profile": {
+    "duration_seconds": 2,
+    "scope": "short live sample of the qualification process, both native and hybrid paths",
+    "top_nonwaiting_leaf_sample_counts": {
+      "gather_strand_contacts": 249,
+      "solve_factored": 243,
+      "cholesky": 124,
+      "closest_triangle_feature": 107,
+      "TriangleMesh_query": 104,
+      "assemble": 92
+    },
+    "whole_runtime_percentage_claim": false
+  },
+  "strict_root_and_strain_checks_completed": true,
+  "refinement_default_enabled": false,
+  "runtime_qualified": false,
+  "FPS_measured": false,
+  "conclusion": "Short-run precision improvement does not establish full-trajectory qualification; contact CPU work is substantial in the live sample."
+}

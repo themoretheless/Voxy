@@ -1,0 +1,37 @@
+{
+  "backend": "Metal Apple M4 Max",
+  "frames": 30,
+  "guides": 469,
+  "structural_GPU_batches": 360,
+  "additional_GPU_refinement_batches": 360,
+  "residual_refinements": 1,
+  "original_matrix_residual_backend": "CPU f64 owned by physics",
+  "correction_equation_backend": "GPU compensated banded solve",
+  "passed": true,
+  "position_error_m": 1.4464471287389813e-11,
+  "quaternion_component_error": 1.6966977822718832e-10,
+  "position_gate_m": 1e-06,
+  "quaternion_gate": 5e-05,
+  "native_ms": 44379.806958,
+  "hybrid_ms": 54306.423998,
+  "physics_unit_tests": {
+    "passed": 61,
+    "ignored": 1
+  },
+  "physics_hair_integration_tests": {
+    "passed": 20
+  },
+  "rebase_tests": {
+    "passed": 1
+  },
+  "refinement_default_enabled": false,
+  "120_frame_validation_after_change": false,
+  "FPS_measured": false,
+  "runtime_qualified": false,
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "2e571373b3e65fc87ccd5ac0811308ba668e1b8511f6b178e27fe31fc0418ece",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "0584c421b8ccaa46d91f9679774d94886ed7c85f61e4d2a65fad3fa008e5c05e",
+    "crates/voxy_app/src/female_hair.rs": "4a86faa1104633bf9d74d259eb7370c6075078905a37b2b350a0fc101daa4b5b",
+    "crates/physics/tests/hair.rs": "1c41a4100542e9e696db732bb3b2606aad6c7260e536fa16d326bfbd3b9588b7"
+  }
+}

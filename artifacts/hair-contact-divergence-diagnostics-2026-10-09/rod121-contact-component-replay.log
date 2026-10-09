@@ -1,0 +1,9 @@
+
+running 1 test
+CAPTURED COMPONENT case=0 rods=5 constraints=13 complete=true replay_vs_captured_position_error_m=1.133676486020363e-13 rotation_error=7.681633107381458e-13
+CAPTURED COMPONENT case=1 rods=5 constraints=13 complete=true replay_vs_captured_position_error_m=1.7274376373777045e-13 rotation_error=2.0626833574510783e-12
+CAPTURED COMPONENT selected_rod=121 native_replay_input_perturbation_delta_m=1.7184885073295852e-7
+test hair::contact::velocity_contacts::captured_component_tests::captured_contact_component_replays_without_full_model_warmup ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 236 filtered out; finished in 0.00s
+

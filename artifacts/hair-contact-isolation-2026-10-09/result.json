@@ -1,0 +1,36 @@
+{
+  "diagnostic_isolation_only": true,
+  "production_contacts_unchanged": true,
+  "fps_measured": false,
+  "position_gate_m": 1e-06,
+  "quaternion_gate": 5e-05,
+  "runs": {
+    "mesh": {
+      "frames": 120,
+      "guides": 469,
+      "gpu_calls": 2400,
+      "position_error_m": 3.1754303631004177e-09,
+      "quaternion_component_error": 1.159287802976472e-07,
+      "passed": true
+    },
+    "self": {
+      "frames": 120,
+      "guides": 469,
+      "gpu_calls": 2400,
+      "position_error_m": 1.686503645070836e-10,
+      "quaternion_component_error": 3.177057950054518e-09,
+      "passed": true
+    },
+    "full_joint_velocity": {
+      "frames": 120,
+      "guides": 469,
+      "gpu_calls": 2400,
+      "position_error_m": 0.0030575756122935976,
+      "quaternion_component_error": 0.04943244473120095,
+      "first_divergence_frame": 91,
+      "passed": false,
+      "enabled_by_default": false
+    }
+  },
+  "conclusion": "Isolated contact modes meet trajectory gates; combined contacts do not. Joint velocity projection alone is insufficient. This does not establish absence of penetration or runtime performance."
+}

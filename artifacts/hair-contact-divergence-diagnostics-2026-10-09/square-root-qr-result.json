@@ -1,0 +1,30 @@
+{
+  "unit_tests": {
+    "passed": 107,
+    "failed": 0,
+    "ignored": 5
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "implemented": [
+    "canonical lower/upper factor solve ownership",
+    "shared factor preparation for native responses and square-root coordinates",
+    "native minimum-energy load equalities via twice-orthogonalized QR",
+    "original load equality residual admission"
+  ],
+  "regressions": [
+    "square-root compliance energy equals native response energy",
+    "fixed degrees of freedom remain exact zero",
+    "1e-10 independent direction retained when rounded Gram determinant is zero",
+    "near-dependent equality solve satisfies original 1e-14 bound residual",
+    "physical minimum-energy response agreement",
+    "incompatible load equalities rejected"
+  ],
+  "runtime_unilateral_integration": false,
+  "full_model_new_qualification_run": false,
+  "last_full_model_evidence": "dense active solve still fails frame2 with 106 constraints",
+  "real_gpu_square_root_qualified": false,
+  "render_fps_measured": false
+}

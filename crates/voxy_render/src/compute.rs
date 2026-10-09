@@ -446,6 +446,16 @@ pub struct ComputeDispatch {
     readback: Arc<ReadbackLease>,
 }
 impl ComputeDispatch {
+    /// Gather ordered source ranges into one complete staging snapshot.
+    /// Destination ranges must be contiguous, aligned and cover `size` exactly.
+    /// Validates every range before allocating or recording commands.
+    pub fn gather_buffer(device:&wgpu::Device,encoder:&mut wgpu::CommandEncoder,source:&wgpu::Buffer,ranges:&[(u64,u64,u64)],size:u64)->Result<Self,ComputeError> {
+        if !source.usage().contains(wgpu::BufferUsages::COPY_SRC) || size>device.limits().max_buffer_size {return Err(ComputeError::InvalidBuffer);}
+        validate_gather_ranges(source.size(),ranges,size)?;
+        let readback=ComputeReadbackPool::for_device(device).acquire(size)?;
+        for &(offset,target,length) in ranges {encoder.copy_buffer_to_buffer(source,offset,readback.buffer(),target,length);}
+        Ok(Self {readback})
+    }
     /// Records a bounded copy from caller-owned storage for one-shot readback.
     /// The source must belong to this device and permit `COPY_SRC`. Submit the
     /// encoder before `begin_read`; source ownership is managed by the caller.
@@ -597,5 +607,31 @@ mod tests {
             program.create_job(&owner, &[]),
             Err(ComputeError::InvalidBuffer)
         ));
+    }
+}
+
+fn validate_gather_ranges(source_size:u64,ranges:&[(u64,u64,u64)],size:u64)->Result<(),ComputeError> {
+    if size==0 || !size.is_multiple_of(4) || ranges.is_empty() {return Err(ComputeError::InvalidBuffer);}
+    let mut end=0;
+    for &(source,target,length) in ranges {
+        if target!=end || length==0 || !source.is_multiple_of(4) || !length.is_multiple_of(4) || source.checked_add(length).is_none_or(|value|value>source_size) {return Err(ComputeError::InvalidBuffer);}
+        end=target.checked_add(length).filter(|value|*value<=size).ok_or(ComputeError::InvalidBuffer)?;
+    }
+    if end!=size {return Err(ComputeError::InvalidBuffer);}
+    Ok(())
+}
+#[cfg(test)]
+mod gather_range_tests {
+    use super::*;
+    #[test]
+    fn gathering_rejects_gaps_overlap_alignment_overflow_and_bounds() {
+        assert!(validate_gather_ranges(100,&[(0,0,16),(80,16,20)],36).is_ok());
+        for (ranges,size) in [
+            (vec![],4),(vec![(0,0,0)],4),(vec![(0,0,4)],0),
+            (vec![(0,0,4)],8),(vec![(0,0,8)],4),
+            (vec![(0,0,4),(8,8,4)],12),(vec![(0,0,8),(8,4,4)],12),
+            (vec![(1,0,4)],4),(vec![(0,0,5)],8),
+            (vec![(100,0,4)],4),(vec![(u64::MAX-3,0,4)],4),
+        ] {assert!(validate_gather_ranges(100,&ranges,size).is_err(),"admitted {ranges:?}");}
     }
 }

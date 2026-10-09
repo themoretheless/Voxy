@@ -1,0 +1,43 @@
+{
+  "initial_parallel_policy": {
+    "qualification_frames": 30,
+    "passed_accuracy_gate": true,
+    "position_error_m": 1.4464471287389813e-11,
+    "native_ms": 129040.89133299999,
+    "hybrid_ms": 154826.028792,
+    "wall_seconds": 288.43,
+    "performance_regression": true,
+    "superseded": true
+  },
+  "dense_fixture": {
+    "rods": 64,
+    "contact_rows": 3840,
+    "serial_median_ms": 19.273417,
+    "parallel_8_median_ms": 5.361875,
+    "response_equivalence": "bitwise",
+    "runtime_FPS_claim": false
+  },
+  "current_policy": "original serial contact compliance preparation restored",
+  "current_policy_full_model_validation": "completed; rejected for performance",
+  "runtime_qualified": false,
+  "FPS_measured": false,
+  "budgeted_policy_full_model_validation": {
+    "frames": 30,
+    "passed_accuracy_gate": true,
+    "wall_seconds": 200.69,
+    "native_ms": 88584.59174800002,
+    "hybrid_ms": 105630.966999,
+    "position_error_m": 1.4464471287389813e-11,
+    "performance_regression": true
+  },
+  "prototype_retained_as_artifact": true,
+  "production_parallel_change_reverted": true,
+  "restored_path_validation": {
+    "unit_tests_passed": 61,
+    "unit_tests_ignored": 1,
+    "hair_integration_tests_passed": 20,
+    "rebase_tests_passed": 1,
+    "diff_check": "passed"
+  },
+  "next_direction": "Batch compliance factorization and response solves on an existing GPU backend or persistent scheduler; avoid scoped thread creation inside each nonlinear contact iteration."
+}

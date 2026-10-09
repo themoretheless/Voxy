@@ -1,0 +1,14 @@
+{
+  "scope": "independent dense active-set audit, not runtime fallback",
+  "iterations": 8,
+  "best_residual_m": 2.0328790734103208e-19,
+  "passes_original_gate": true,
+  "history": [
+    {
+      "iteration": 7,
+      "active": 74,
+      "residual_m": 2.0328790734103208e-19,
+      "condition": 30.49899325346902
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+Model smoke on AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+SECONDARY SAMPLE: frame=0 simulated_s=0.000000 advance_ms=0.000
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=1 simulated_s=0.050000 advance_ms=297.446
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=2 simulated_s=0.100000 advance_ms=292.285
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=3 simulated_s=0.150000 advance_ms=294.786
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=4 simulated_s=0.200000 advance_ms=295.325
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=5 simulated_s=0.250000 advance_ms=286.252
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=6 simulated_s=0.300000 advance_ms=282.945
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=7 simulated_s=0.350000 advance_ms=289.591
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=8 simulated_s=0.400000 advance_ms=291.345
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=9 simulated_s=0.450000 advance_ms=297.908
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=10 simulated_s=0.500000 advance_ms=313.650
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=11 simulated_s=0.550000 advance_ms=315.956
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=12 simulated_s=0.600000 advance_ms=320.846
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=13 simulated_s=0.650000 advance_ms=319.305
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=14 simulated_s=0.700000 advance_ms=315.037
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=15 simulated_s=0.750000 advance_ms=306.602
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=16 simulated_s=0.800000 advance_ms=301.667
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=17 simulated_s=0.850000 advance_ms=315.517
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=18 simulated_s=0.900000 advance_ms=317.491
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=19 simulated_s=0.950000 advance_ms=309.729
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=20 simulated_s=1.000000 advance_ms=374.029
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=21 simulated_s=1.050000 advance_ms=366.038
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=22 simulated_s=1.100000 advance_ms=355.639
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=23 simulated_s=1.150000 advance_ms=535.779
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=24 simulated_s=1.200000 advance_ms=357.860
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=25 simulated_s=1.250000 advance_ms=384.445
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=26 simulated_s=1.300000 advance_ms=327.846
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=27 simulated_s=1.350000 advance_ms=315.084
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=28 simulated_s=1.400000 advance_ms=297.736
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=29 simulated_s=1.450000 advance_ms=295.870
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=30 simulated_s=1.500000 advance_ms=313.981
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=31 simulated_s=1.550000 advance_ms=344.337
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=32 simulated_s=1.600000 advance_ms=319.946
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=33 simulated_s=1.650000 advance_ms=327.228
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=34 simulated_s=1.700000 advance_ms=460.504
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=35 simulated_s=1.750000 advance_ms=407.248
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=36 simulated_s=1.800000 advance_ms=371.744
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=37 simulated_s=1.850000 advance_ms=406.211
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=38 simulated_s=1.900000 advance_ms=389.732
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=39 simulated_s=1.950000 advance_ms=339.314
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=40 simulated_s=2.000000 advance_ms=381.084
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=41 simulated_s=2.050000 advance_ms=367.349
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=42 simulated_s=2.100000 advance_ms=386.599
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=43 simulated_s=2.150000 advance_ms=350.387
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=44 simulated_s=2.200000 advance_ms=338.920
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=45 simulated_s=2.250000 advance_ms=328.880
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=46 simulated_s=2.300000 advance_ms=323.896
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=47 simulated_s=2.350000 advance_ms=329.257
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=48 simulated_s=2.400000 advance_ms=308.972
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=49 simulated_s=2.450000 advance_ms=316.399
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=50 simulated_s=2.500000 advance_ms=328.587
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=51 simulated_s=2.550000 advance_ms=348.379
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=52 simulated_s=2.600000 advance_ms=358.200
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=53 simulated_s=2.650000 advance_ms=369.766
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=54 simulated_s=2.700000 advance_ms=453.961
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=55 simulated_s=2.750000 advance_ms=308.649
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=56 simulated_s=2.800000 advance_ms=297.738
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=57 simulated_s=2.850000 advance_ms=340.796
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=58 simulated_s=2.900000 advance_ms=319.774
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=59 simulated_s=2.950000 advance_ms=322.784
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=60 simulated_s=3.000000 advance_ms=303.241
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=61 simulated_s=3.050000 advance_ms=297.412
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=62 simulated_s=3.100000 advance_ms=307.424
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=63 simulated_s=3.150000 advance_ms=325.459
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=64 simulated_s=3.200000 advance_ms=299.401
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=65 simulated_s=3.250000 advance_ms=291.858
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=66 simulated_s=3.300000 advance_ms=288.602
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=67 simulated_s=3.350000 advance_ms=298.680
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=68 simulated_s=3.400000 advance_ms=291.049
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=69 simulated_s=3.450000 advance_ms=292.122
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=70 simulated_s=3.500000 advance_ms=300.177
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=71 simulated_s=3.550000 advance_ms=311.660
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=72 simulated_s=3.600000 advance_ms=299.023
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=73 simulated_s=3.650000 advance_ms=307.487
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=74 simulated_s=3.700000 advance_ms=310.789
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=75 simulated_s=3.750000 advance_ms=403.806
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=76 simulated_s=3.800000 advance_ms=291.740
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=77 simulated_s=3.850000 advance_ms=305.240
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=78 simulated_s=3.900000 advance_ms=355.059
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=79 simulated_s=3.950000 advance_ms=301.414
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=80 simulated_s=4.000000 advance_ms=309.529
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=81 simulated_s=4.050000 advance_ms=309.234
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=82 simulated_s=4.100000 advance_ms=321.778
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=83 simulated_s=4.150000 advance_ms=310.783
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=84 simulated_s=4.200000 advance_ms=304.112
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=85 simulated_s=4.250000 advance_ms=299.181
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=86 simulated_s=4.300000 advance_ms=300.828
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=87 simulated_s=4.350000 advance_ms=304.274
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=88 simulated_s=4.400000 advance_ms=309.671
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=89 simulated_s=4.450000 advance_ms=303.885
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=90 simulated_s=4.500000 advance_ms=310.259
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=91 simulated_s=4.550000 advance_ms=310.086
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=92 simulated_s=4.600000 advance_ms=311.901
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=93 simulated_s=4.650000 advance_ms=308.193
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=94 simulated_s=4.700000 advance_ms=296.205
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=95 simulated_s=4.750000 advance_ms=299.076
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=96 simulated_s=4.800000 advance_ms=299.555
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=97 simulated_s=4.850000 advance_ms=317.565
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=98 simulated_s=4.900000 advance_ms=306.521
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=99 simulated_s=4.950000 advance_ms=335.719
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=100 simulated_s=5.000000 advance_ms=305.258
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=101 simulated_s=5.050000 advance_ms=309.349
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=102 simulated_s=5.100000 advance_ms=297.006
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=103 simulated_s=5.150000 advance_ms=305.875
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=104 simulated_s=5.200000 advance_ms=298.701
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=105 simulated_s=5.250000 advance_ms=300.027
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=106 simulated_s=5.300000 advance_ms=298.964
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=107 simulated_s=5.350000 advance_ms=293.656
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=108 simulated_s=5.400000 advance_ms=296.643
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=109 simulated_s=5.450000 advance_ms=301.301
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=110 simulated_s=5.500000 advance_ms=299.026
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=111 simulated_s=5.550000 advance_ms=302.915
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=112 simulated_s=5.600000 advance_ms=304.583
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=113 simulated_s=5.650000 advance_ms=293.010
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=114 simulated_s=5.700000 advance_ms=294.328
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=115 simulated_s=5.750000 advance_ms=289.860
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=116 simulated_s=5.800000 advance_ms=305.067
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=117 simulated_s=5.850000 advance_ms=334.144
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=118 simulated_s=5.900000 advance_ms=308.935
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+SECONDARY SAMPLE: frame=119 simulated_s=5.950000 advance_ms=323.746
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=false
+Mesh update CPU: median 109.56 ms, max 263.22 ms
+PASS: rendered 120 samples at 0.05 s intervals (0..5.95 s)

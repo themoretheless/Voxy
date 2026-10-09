@@ -1,0 +1,42 @@
+iteration=0 active=[]
+iteration=1 active=[1]
+equality size=1 refine=0 max_error=5.421010862427522e-20
+iteration=2 active=[1, 60]
+equality size=2 refine=0 max_error=5.421010862427522e-20
+iteration=3 active=[1, 2, 60]
+equality size=3 refine=0 max_error=7.704015377030249e-15
+iteration=4 active=[1, 2, 53, 60]
+equality size=4 refine=0 max_error=1.1777796619927283e-14
+equality size=4 refine=1 max_error=1.6109238509115498e-14
+equality size=4 refine=2 max_error=8.59289852814249e-15
+iteration=5 active=[0, 1, 2, 53, 60]
+equality size=5 refine=0 max_error=1.1777796619927283e-14
+equality size=5 refine=1 max_error=1.6109238509115498e-14
+equality size=5 refine=2 max_error=8.59289852814249e-15
+iteration=6 active=[0, 1, 2, 27, 53, 60]
+equality size=6 refine=0 max_error=1.1777796619927283e-14
+equality size=6 refine=1 max_error=1.6109238509115498e-14
+equality size=6 refine=2 max_error=8.59289852814249e-15
+iteration=7 active=[0, 2, 27, 53, 60]
+equality size=5 refine=0 max_error=1.1777796619927283e-14
+equality size=5 refine=1 max_error=1.6109238509115498e-14
+equality size=5 refine=2 max_error=8.59289852814249e-15
+iteration=8 active=[0, 2, 27, 48, 53, 60]
+equality size=6 refine=0 max_error=7.859218918021549e-15
+iteration=9 active=[0, 2, 26, 27, 48, 53, 60]
+equality size=7 refine=0 max_error=3.450804095597726e-14
+equality size=7 refine=1 max_error=1.1298741890014563e-14
+equality size=7 refine=2 max_error=1.2376547269682403e-14
+equality size=7 refine=3 max_error=1.4876283798564982e-14
+equality size=7 refine=4 max_error=2.91590753279114e-14
+equality size=7 refine=5 max_error=2.332601342983076e-14
+equality size=7 refine=6 max_error=1.771645980960801e-14
+equality size=7 refine=7 max_error=1.2959685408153732e-14
+iteration=10 active=[2, 26, 27, 48, 53, 60]
+equality size=6 refine=0 max_error=3.9905253580718725e-14
+equality size=6 refine=1 max_error=5.037170767302479e-14
+equality size=6 refine=2 max_error=3.374156423013863e-14
+equality size=6 refine=3 max_error=1.8005670739118518e-14
+equality size=6 refine=4 max_error=1.2913552605714473e-14
+equality size=6 refine=5 max_error=8.156778204260196e-15
+rows=100 width=882 result=true

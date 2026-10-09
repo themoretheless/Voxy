@@ -1,0 +1,25 @@
+{
+  "unit_tests": {
+    "passed": 113,
+    "failed": 0,
+    "ignored": 5
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "change": "localized golden-section counterexample time augments coarse swept contact witnesses on non-Clear capsule queries; final continuous admission unchanged",
+  "regression": "captured pair149/9-202/19 has no negative coarse samples but a <-1e-7 m localized gap",
+  "full_native_only": {
+    "passed": false,
+    "failed_frame": 2,
+    "constraints": 261,
+    "original_projection_residual_m": 7.254523736663083e-11,
+    "tolerance_m": 1e-14,
+    "native_qr_capacity": 256,
+    "duration_s": 19.07
+  },
+  "continuous_gate_relaxed": false,
+  "default_swept_enabled": false,
+  "render_fps_measured": false
+}

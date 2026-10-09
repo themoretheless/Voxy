@@ -1,0 +1,28 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "unit_tests": {
+    "passed": 64,
+    "ignored": 1
+  },
+  "integration_tests": {
+    "hair": 20,
+    "hair_rebase": 1
+  },
+  "gpu_batch": {
+    "requests": 4,
+    "loads": 7,
+    "dispatches": 12,
+    "mixed_shapes": true,
+    "max_relative_error": 3.639522824627257e-11,
+    "passed": true
+  },
+  "full_contact_integration": false,
+  "runtime_qualified": false,
+  "fps_measured": false,
+  "source_sha256": {
+    "crates/physics/src/hair/contact_response_system.rs": "3b68e0c954d910769ba9c38d9b755ff88711e5d51ce5d7e3e2ef51b33a9d6ddb",
+    "crates/physics/src/hair/mod.rs": "d54e0b88e6ca5624fadeb65e873edeef45754dc1141785fccba38af65bb78485",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "fb7dbb9eae1ea9b35bf8cf2b952caad9830b86486a056dd27aaefd49f578787d"
+  }
+}

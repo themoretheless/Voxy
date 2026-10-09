@@ -1,0 +1,69 @@
+{
+  "backend": "Metal",
+  "frames": 120,
+  "guides": 469,
+  "stages": [
+    "equilibration",
+    "packing",
+    "GPU arithmetic"
+  ],
+  "position_gate_m": 1e-06,
+  "quaternion_gate": 5e-05,
+  "runtime_gpu_linear_enabled": false,
+  "extra_root_refinement_default": false,
+  "fps_measured": false,
+  "runs": {
+    "baseline": {
+      "audited_batches": 2400,
+      "position_error_m": 0.0006210567316640853,
+      "quaternion_component_error": 0.017554526448402906,
+      "max_stage_errors": [
+        [
+          5.6381123782287684e-11,
+          4.059842503845168e-09
+        ],
+        [
+          1.2825356808477892e-10,
+          9.484339258403196e-09
+        ],
+        [
+          1.7965098879010877e-09,
+          1.0333433626830146e-07
+        ]
+      ],
+      "qualified": false
+    },
+    "root_refinement": {
+      "audited_batches": 2400,
+      "position_error_m": 0.0031461417741881353,
+      "quaternion_component_error": 0.055378155420742536,
+      "max_stage_errors": [
+        [
+          8.024833662162445e-11,
+          3.7152005395724164e-09
+        ],
+        [
+          2.2049923584059605e-10,
+          1.2634892951335353e-08
+        ],
+        [
+          7.523898404261306e-10,
+          3.833708538125702e-08
+        ]
+      ],
+      "qualified": false
+    }
+  },
+  "native_validation": {
+    "five_volume_regions_and_skin": "passed",
+    "combined_skin_and_hair_contacts_four_steps": "passed",
+    "visual_review_current_result": false,
+    "measured_hair_solver_ms": [
+      46.976,
+      47.155,
+      45.683,
+      45.571
+    ],
+    "runtime_fps_proven": false
+  }
+}

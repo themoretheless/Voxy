@@ -1,0 +1,23 @@
+{
+  "change": "Residual-checked accelerated projected-gradient fallback on the unchanged contact compliance operator",
+  "dense_contact_limit": 256,
+  "position_tolerance_m": 1e-11,
+  "hair_unit_tests": {
+    "passed": 59,
+    "ignored": 1
+  },
+  "hair_integration_tests": {
+    "passed": 19,
+    "failed": 0
+  },
+  "rebase_tests": {
+    "passed": 1
+  },
+  "previously_failing_dense_contact_equivalence": "passed",
+  "dependent_rows_regression": "passed",
+  "incompatible_contacts_still_rejected": true,
+  "joint_positions_default_enabled": false,
+  "full_model_GPU_retested_after_change": false,
+  "FPS_measured": false,
+  "runtime_qualified": false
+}

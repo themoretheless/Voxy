@@ -1,0 +1,39 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "experimental_default_enabled": false,
+  "mixed_shapes_and_ragged_loads": {
+    "dispatches": 12,
+    "submissions": 4,
+    "bitwise_equal_to_separate_submissions": true
+  },
+  "bounded_chunks": {
+    "loads": 17,
+    "chunk_limit": 8,
+    "refinement_stages": 2,
+    "submissions": 6,
+    "bitwise_equal": true
+  },
+  "speedup_measured": true,
+  "fps_measured": false,
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_response_dispatch.rs": "b0bb6e1d2dea9203bdc49e90f3707f19af6685bb0fe3b95212f6583fb24952cc",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "5c6108c6d8ea4b1849fcab77b2980d38664bdbcc009e5d793cf4863bd89e03a2"
+  },
+  "full_model": {
+    "status": "passed",
+    "frames": 30,
+    "guides": 469,
+    "contact_calls": 4002,
+    "contact_dispatches": 33618,
+    "position_error_m": 2.5202118170142285e-11,
+    "quaternion_component_error": 5.636613328863227e-10,
+    "native_ms": 61470.246123,
+    "hybrid_ms": 158767.463754,
+    "solver_bridge_ms": 105685.540289,
+    "compact_readback": false,
+    "wall_seconds": 223.61,
+    "comparison_previous_hybrid_ms": 257841.692915,
+    "timing_caveat": "separate runs; native timing also changed; no render FPS measurement"
+  }
+}

@@ -1,0 +1,15 @@
+
+running 1 test
+
+thread 'hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission' (27629653) panicked at crates/physics/src/hair/contact_safe_motion.rs:444:14:
+captured joint root motion must admit a full checked path: "swept strand component admission did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission ... FAILED
+
+failures:
+
+failures:
+    hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 260 filtered out; finished in 0.64s
+

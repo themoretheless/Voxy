@@ -1,0 +1,577 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: function `prepare_implicit_response` is never used
+   --> crates/physics/src/hair/velocity_contacts.rs:141:4
+    |
+141 | fn prepare_implicit_response(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 3 warnings
+warning: field `weak_refs` is never read
+  --> crates/voxy_assets/src/lib.rs:22:5
+   |
+18 | pub struct AssetCache {
+   |            ---------- field in this struct
+...
+22 |     weak_refs: HashMap<String, usize>,
+   |     ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/voxy_assets/src/lib.rs:18:1
+   |
+18 | / pub struct AssetCache {
+19 | |     /// In-memory cached assets (strong refs)
+20 | |     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
+21 | |     /// Weak references to prevent premature collection
+22 | |     weak_refs: HashMap<String, usize>,
+23 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `voxy_assets` (lib) generated 2 warnings
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 6 warnings
+warning: function `start_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:21:15
+   |
+21 | pub(crate) fn start_refinement_diagnostics() {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `take_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:24:15
+   |
+24 | pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `body_volumes_m3` is never used
+   --> crates/voxy_app/src/tissue_demo.rs:535:19
+    |
+268 | impl TissueDemo {
+    | --------------- method in this implementation
+...
+535 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets`, `advance_hair`, `set_strain_fixture`, and `orbit` are never used
+    --> crates/voxy_app/src/female_demo.rs:199:19
+     |
+ 195 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 199 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+ 749 |     fn advance_hair(&mut self, h: f64, time: f64, head: glam::Mat4) -> Result<(), &'static str> {
+     |        ^^^^^^^^^^^^
+...
+1028 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1146 |     pub(crate) fn orbit(&mut self, x: f32, y: f32) {
+     |                   ^^^^^
+
+warning: method `append_lod` is never used
+   --> crates/voxy_app/src/female_hair.rs:337:12
+    |
+ 21 | impl FemaleHair {
+    | --------------- method in this implementation
+...
+337 |     pub fn append_lod(
+    |            ^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib test) generated 6 warnings
+    Finished `release` profile [optimized] target(s) in 0.37s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f)
+
+running 1 test
+HYBRID FOLLICLE PRESERVING GROOM true
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HYBRID STRUCTURAL ITERATIONS 6
+HYBRID JOINT CONTACT VELOCITIES true
+HYBRID JOINT CONTACT POSITIONS true
+HYBRID SAMPLED COLLIDER MOTION true
+HYBRID TERMINAL CONTACT ITERATIONS 0
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID EXTRA DIVISION REFINEMENT false
+HYBRID EXTRA ROOT REFINEMENT false
+HYBRID RESIDUAL REFINEMENTS 1 CONTACT OVERRIDE Some(1)
+HYBRID REUSE REFINEMENT FACTORS false
+HYBRID CONTACT RESPONSE BATCHES true
+HYBRID BATCH RESPONSE WAVES true COMPACT READBACK true
+HYBRID CONTACT CASE full
+HYBRID TEST BACKEND cpu_control=false perturbation=0
+HAIR CONTACT TRACE frame=1 native rod=153 []
+HAIR CONTACT TRACE frame=1 external rod=153 []
+HYBRID HAIR FRAME frame=1 max_position_error_m=0.000000000000039371284010769614 max_quaternion_component_error=0.0000000000008505418591653324
+HAIR CONTACT TRACE frame=2 native rod=153 []
+HAIR CONTACT TRACE frame=2 external rod=153 []
+HYBRID HAIR FRAME frame=2 max_position_error_m=0.00000000000013311574065255627 max_quaternion_component_error=0.000000000003430644657242965
+HAIR CONTACT TRACE frame=3 native rod=153 []
+HAIR CONTACT TRACE frame=3 external rod=153 []
+HYBRID HAIR FRAME frame=3 max_position_error_m=0.0000000000003898201206276042 max_quaternion_component_error=0.0000000000069115824175014495
+HAIR CONTACT TRACE frame=4 native rod=153 []
+HAIR CONTACT TRACE frame=4 external rod=153 []
+HYBRID HAIR FRAME frame=4 max_position_error_m=0.0000000000007090751596994238 max_quaternion_component_error=0.000000000020504209441440935
+HAIR CONTACT TRACE frame=5 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 2 }, segment: 0, fraction: 0.8744244703984468, normal: [0.9456257020708203, 0.14351380762687468, -0.29188322768447145], target: [-0.032552331314304316, 0.7540136182447077, -0.04913273509857467], surface_velocity: [0.0, 0.0, 0.0], gap_m: 3.957726948008813e-11 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 1 }, segment: 1, fraction: 0.27936289049149937, normal: [0.9406786786103836, 0.10732630526669615, -0.3218768208579526], target: [-0.03291588405669256, 0.7499885182922778, -0.05174143109165785], surface_velocity: [0.0, 0.0, 0.0], gap_m: 8.760738658605383e-18 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 7 }, segment: 5, fraction: 0.864843914336172, normal: [-0.9378742861766722, -0.09355286675066088, 0.33412525263938136], target: [-0.027405198380812585, 0.6895679253357475, -0.058761119972450114], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.5336439279037323e-13 }]
+HAIR SEGMENT PAIR frame=5 native rod=153 segment=0 other_rod=155 other_segment=2 a=[-0.02994898520410061, 0.7577751874923706, -0.03884907439351082] b=[-0.03292619611357136, 0.7534734217374977, -0.05060956493871464] c=[-0.03304321756120251, 0.7588934811328486, -0.04804965443991826] d=[-0.03192537393323221, 0.7457256547928801, -0.050902518708050785]
+HAIR SEGMENT PAIR frame=5 native rod=153 segment=1 other_rod=154 other_segment=1 a=[-0.03292619611357136, 0.7534734217374977, -0.05060956493871464] b=[-0.03288928334802592, 0.7409989537110223, -0.054661163026606174] c=[-0.033319673729226305, 0.761220939962536, -0.048927628037899205] d=[-0.03288302660157653, 0.7462808328029237, -0.05263315071419864]
+HAIR SEGMENT PAIR frame=5 native rod=153 segment=5 other_rod=155 other_segment=7 a=[-0.028240809950141874, 0.7011160382148289, -0.057873247957092006] b=[-0.027274610668012633, 0.6877632092387937, -0.05889987484385037] c=[-0.027462311106030722, 0.692466050238853, -0.05834940809113434] d=[-0.026851573619177723, 0.67910607617403, -0.06037580054008326]
+HAIR CONTACT TRACE frame=5 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 2 }, segment: 0, fraction: 0.8744244703984081, normal: [0.9456257020706318, 0.14351380762823385, -0.29188322768441327], target: [-0.03255233131430421, 0.7540136182447079, -0.049132735098574215], surface_velocity: [0.0, 0.0, 0.0], gap_m: 3.957726869539436e-11 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 1 }, segment: 1, fraction: 0.2793628904915481, normal: [0.9406786786105762, 0.10732630526533034, -0.321876820857845], target: [-0.032915884056692345, 0.749988518292277, -0.05174143109165777], surface_velocity: [0.0, 0.0, 0.0], gap_m: 4.2938004384868946e-18 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 7 }, segment: 5, fraction: 0.8648439143369375, normal: [-0.937874286176647, -0.09355286675058914, 0.3341252526394721], target: [-0.02740519838081188, 0.6895679253357369, -0.05876111997245117], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.5339461338152947e-13 }]
+HAIR SEGMENT PAIR frame=5 external rod=153 segment=0 other_rod=155 other_segment=2 a=[-0.02994898520410061, 0.7577751874923706, -0.03884907439351082] b=[-0.03292619611357136, 0.7534734217374977, -0.05060956493871464] c=[-0.03304321756120263, 0.7588934811328485, -0.048049654439918] d=[-0.03192537393323164, 0.74572565479288, -0.05090251870805015]
+HAIR SEGMENT PAIR frame=5 external rod=153 segment=1 other_rod=154 other_segment=1 a=[-0.03292619611357136, 0.7534734217374977, -0.05060956493871464] b=[-0.03288928334802518, 0.7409989537110219, -0.054661163026605154] c=[-0.033319673729226305, 0.761220939962536, -0.048927628037899205] d=[-0.03288302660157628, 0.7462808328029236, -0.052633150714198336]
+HAIR SEGMENT PAIR frame=5 external rod=153 segment=5 other_rod=155 other_segment=7 a=[-0.028240809950141905, 0.7011160382148286, -0.057873247957092304] b=[-0.027274610668012705, 0.6877632092387933, -0.05889987484385063] c=[-0.027462311106030434, 0.692466050238853, -0.05834940809113378] d=[-0.02685157361917765, 0.6791060761740301, -0.06037580054008282]
+HYBRID HAIR FRAME frame=5 max_position_error_m=0.0000000000011184768389238542 max_quaternion_component_error=0.000000000021925655735444138
+HAIR CONTACT TRACE frame=6 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.49936113076270666, normal: [0.11172813349398446, 0.19827742926137193, -0.973757097653954], target: [-0.022490922342410388, 0.5092810931774567, -0.067025732383904], surface_velocity: [-0.0005915610290428206, 0.27364253997802734, 0.00019847830012390287], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 162, other_segment: 4 }, segment: 0, fraction: 0.24239496441147265, normal: [0.9335141394088539, 0.18776381031092326, -0.3054441079170959], target: [-0.03068883092620164, 0.7590128158263044, -0.041686378235218], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=6 native rod=153 segment=0 other_rod=162 other_segment=4 a=[-0.029965925961732864, 0.7600555419921875, -0.03883600980043411] b=[-0.032948269123126366, 0.7557537770260102, -0.050595199772488574] c=[-0.031020696055540465, 0.7616075748948186, -0.040843667401201364] d=[-0.029811845895906863, 0.7493407418048903, -0.044689832950043105]
+HAIR CONTACT TRACE frame=6 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.49936113076229344, normal: [0.11172813349351844, 0.19827742926131456, -0.9737570976540192], target: [-0.02249092234241009, 0.5092810931774621, -0.06702573238390289], surface_velocity: [-0.0005915610290429429, 0.27364253997802734, 0.00019847830012394483], gap_m: 1.3513594377595739e-17 }, HairContactDiagnostic { source: Strand { other_rod: 162, other_segment: 4 }, segment: 0, fraction: 0.24239496441121322, normal: [0.9335141394088978, 0.18776381031094083, -0.30544410791695104], target: [-0.030688830926200866, 0.7590128158263055, -0.04168637823521495], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=6 external rod=153 segment=0 other_rod=162 other_segment=4 a=[-0.029965925961732864, 0.7600555419921875, -0.03883600980043411] b=[-0.032948269123126366, 0.7557537770260102, -0.050595199772488574] c=[-0.031020696055539174, 0.7616075748948179, -0.04084366740119923] d=[-0.029811845895907105, 0.7493407418048891, -0.044689832950039525]
+HYBRID HAIR FRAME frame=6 max_position_error_m=0.0000000000013276532651040895 max_quaternion_component_error=0.000000000021925655735444138
+HAIR CONTACT TRACE frame=7 native rod=153 []
+HAIR CONTACT TRACE frame=7 external rod=153 []
+HYBRID HAIR FRAME frame=7 max_position_error_m=0.0000000000016929652124630934 max_quaternion_component_error=0.000000000030897839842225494
+HAIR CONTACT TRACE frame=8 native rod=153 []
+HAIR CONTACT TRACE frame=8 external rod=153 []
+HYBRID HAIR FRAME frame=8 max_position_error_m=0.0000000000018415616254152667 max_quaternion_component_error=0.000000000030897839842225494
+HAIR CONTACT TRACE frame=9 native rod=153 []
+HAIR CONTACT TRACE frame=9 external rod=153 []
+HYBRID HAIR FRAME frame=9 max_position_error_m=0.000000000002015727862403338 max_quaternion_component_error=0.000000000030897839842225494
+HAIR CONTACT TRACE frame=10 native rod=153 []
+HAIR CONTACT TRACE frame=10 external rod=153 []
+HYBRID HAIR FRAME frame=10 max_position_error_m=0.000000000002648957442286104 max_quaternion_component_error=0.00000000003414657445688363
+HAIR CONTACT TRACE frame=11 native rod=153 []
+HAIR CONTACT TRACE frame=11 external rod=153 []
+HYBRID HAIR FRAME frame=11 max_position_error_m=0.000000000002987096681117407 max_quaternion_component_error=0.00000000012043257016647324
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts has been running for over 60 seconds
+HAIR CONTACT TRACE frame=12 native rod=153 []
+HAIR CONTACT TRACE frame=12 external rod=153 []
+HYBRID HAIR FRAME frame=12 max_position_error_m=0.000000000006335475546959124 max_quaternion_component_error=0.00000000012043257016647324
+HAIR CONTACT TRACE frame=13 native rod=153 []
+HAIR CONTACT TRACE frame=13 external rod=153 []
+HYBRID HAIR FRAME frame=13 max_position_error_m=0.000000000008962863437544932 max_quaternion_component_error=0.00000000013170455004374304
+HAIR CONTACT TRACE frame=14 native rod=153 []
+HAIR CONTACT TRACE frame=14 external rod=153 []
+HYBRID HAIR FRAME frame=14 max_position_error_m=0.000000000010357430191287875 max_quaternion_component_error=0.000000000136388622618
+HAIR CONTACT TRACE frame=15 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 167, other_segment: 17 }, segment: 13, fraction: 0.7076185887092085, normal: [-0.9943128652657391, -0.06598158784620722, 0.08359638767512081], target: [-0.031172208712062423, 0.6186897804202695, -0.054748924691615616], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=15 native rod=153 segment=13 other_rod=167 other_segment=17 a=[-0.03174647961467707, 0.6281628686083102, -0.05410243199807141] b=[-0.030934925322890876, 0.6147755885973075, -0.055016049452247535] c=[-0.031117116146078812, 0.62195311209569, -0.05247491431821664] d=[-0.031026006345555822, 0.609813616390966, -0.060972788152215074]
+HAIR CONTACT TRACE frame=15 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 167, other_segment: 17 }, segment: 13, fraction: 0.7076185887057896, normal: [-0.994312865265892, -0.06598158784620874, 0.08359638767330127], target: [-0.031172208712082983, 0.6186897804203141, -0.05474892469160433], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=15 external rod=153 segment=13 other_rod=167 other_segment=17 a=[-0.03174647961469213, 0.6281628686083089, -0.054102431998060384] b=[-0.030934925322909788, 0.6147755885973064, -0.05501604945224055] c=[-0.031117116146102294, 0.621953112095672, -0.052474914318255836] d=[-0.03102600634556653, 0.6098136163909361, -0.06097278815223738]
+HYBRID HAIR FRAME frame=15 max_position_error_m=0.000000000012888218270390439 max_quaternion_component_error=0.0000000001707722296906411
+HAIR CONTACT TRACE frame=16 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 10 }, segment: 11, fraction: 0.8916797268794999, normal: [0.9994150715684308, 0.008407884115324085, 0.03314848724409063], target: [-0.03273039548048453, 0.6472978318781201, -0.05290418439155202], surface_velocity: [0.0, 0.0, 0.0], gap_m: -7.868297800900482e-18 }]
+HAIR SEGMENT PAIR frame=16 native rod=153 segment=11 other_rod=154 other_segment=10 a=[-0.03283185718453852, 0.6592841903776921, -0.05288540697399134] b=[-0.03271807002419894, 0.6458417422225465, -0.052906465451597856] c=[-0.03294130099835568, 0.6613715136852495, -0.05252853323643582] d=[-0.032796944721272085, 0.6458565420462293, -0.052945558462769646]
+HAIR CONTACT TRACE frame=16 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 10 }, segment: 11, fraction: 0.8916797270906952, normal: [0.9994150715673059, 0.008407884115324107, 0.03314848727800456], target: [-0.03273039548047617, 0.6472978318752801, -0.05290418439157723], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=16 external rod=153 segment=11 other_rod=154 other_segment=10 a=[-0.03283185718454541, 0.659284190377691, -0.05288540697399886] b=[-0.03271807002421568, 0.6458417422225455, -0.052906465451620234] c=[-0.032941300998374015, 0.6613715136852488, -0.0525285332364136] d=[-0.03279694472129001, 0.6458565420462279, -0.05294555846271859]
+HYBRID HAIR FRAME frame=16 max_position_error_m=0.000000000013882353600003228 max_quaternion_component_error=0.00000000018083323727324796
+HAIR CONTACT TRACE frame=17 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5650925559103883, normal: [0.1009609162918526, 0.27193175023973565, -0.9570057557784403], target: [-0.023999726244971445, 0.5634594040581947, -0.06384121259752369], surface_velocity: [-0.0009087738902940168, 0.4962444305419922, 0.0003420835816196063], gap_m: 0.0 }]
+HAIR CONTACT TRACE frame=17 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5650925559102112, normal: [0.10096091629177638, 0.2719317502423059, -0.957005755777718], target: [-0.023999726245001973, 0.5634594040581955, -0.06384121259752669], surface_velocity: [-0.0009087738902940783, 0.4962444305419922, 0.00034208358162004994], gap_m: 2.6912524162375495e-17 }]
+HYBRID HAIR FRAME frame=17 max_position_error_m=0.000000000013882353600003228 max_quaternion_component_error=0.00000000018083323727324796
+HAIR CONTACT TRACE frame=18 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5721738440146875, normal: [0.10086878285444784, 0.26824792565274647, -0.9580545595259493], target: [-0.02482008079401337, 0.5675207859759359, -0.063919118340515], surface_velocity: [-0.0009101913877221275, 0.4853010177612304, 0.0003538988885109429], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 10 }, segment: 11, fraction: 0.14592750438296206, normal: [0.8506226155510179, -0.002563980223968247, -0.525770474559533], target: [-0.03341380799151642, 0.6656792247280252, -0.0520771599019167], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.2541145407970265e-18 }]
+HAIR SEGMENT PAIR frame=18 native rod=153 segment=11 other_rod=154 other_segment=10 a=[-0.03341790945715696, 0.6676408480380978, -0.052093361577774194] b=[-0.03338980327074686, 0.6541983971556065, -0.05198233606599007] c=[-0.03345451817594626, 0.6696737551453327, -0.05201034538655815] d=[-0.03356075055328602, 0.6541531810609227, -0.05210652655324963]
+HAIR CONTACT TRACE frame=18 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5721738440134626, normal: [0.10086878285440624, 0.26824792565541145, -0.9580545595252075], target: [-0.024820080794053255, 0.5675207859759368, -0.06391911834051892], surface_velocity: [-0.0009101913877222086, 0.48530101776123047, 0.00035389888851152293], gap_m: 1.3295677885399974e-17 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 10 }, segment: 11, fraction: 0.14592750502746535, normal: [0.8506226153199935, -0.002563980222580591, -0.5257704749333043], target: [-0.03341380799154572, 0.6656792247193641, -0.05207715990190604], surface_velocity: [0.0, 0.0, 0.0], gap_m: -3.932924531148364e-18 }]
+HAIR SEGMENT PAIR frame=18 external rod=153 segment=11 other_rod=154 other_segment=10 a=[-0.03341790945721276, 0.6676408480381004, -0.05209336157782757] b=[-0.03338980327074519, 0.6541983971556089, -0.051982336066095015] c=[-0.033454518175894156, 0.6696737551453334, -0.05201034538647181] d=[-0.03356075055324805, 0.6541531810609233, -0.052106526553132596]
+HYBRID HAIR FRAME frame=18 max_position_error_m=0.000000000013882353600003228 max_quaternion_component_error=0.00000000018083323727324796
+HAIR CONTACT TRACE frame=19 native rod=153 []
+HAIR CONTACT TRACE frame=19 external rod=153 []
+HYBRID HAIR FRAME frame=19 max_position_error_m=0.000000000013882353600003228 max_quaternion_component_error=0.00000000018083323727324796
+HAIR CONTACT TRACE frame=20 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.4140607410289736, normal: [-0.9197578279034323, -0.11373822264524383, 0.3756449849523629], target: [-0.03316178490618867, 0.7903304553412412, -0.05569265042640653], surface_velocity: [0.0, 0.0, 0.0], gap_m: 7.355212881617338e-12 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 2 }, segment: 1, fraction: 0.6070916097031741, normal: [0.9058089683225521, 0.1288488458610459, -0.40361874067826714], target: [-0.0334379370843262, 0.8006597824068229, -0.05318615817714559], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.7928171834596345e-12 }]
+HAIR SEGMENT PAIR frame=20 native rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.033556712146387696, 0.7958351410305039, -0.05499290528464583] b=[-0.0326029215685788, 0.7825407493032911, -0.056682862988094926] c=[-0.032957515488030296, 0.7982651330360506, -0.05300299778183746] d=[-0.033167034336313926, 0.7855589309957257, -0.057363198245175294]
+HAIR SEGMENT PAIR frame=20 native rod=153 segment=1 other_rod=154 other_segment=2 a=[-0.033254415052397096, 0.8081144445420274, -0.050394512501513646] b=[-0.033556712146387696, 0.7958351410305039, -0.05499290528464583] c=[-0.033545000267830236, 0.8010989187319019, -0.05308803730917285] d=[-0.03236699151870148, 0.7857962374490992, -0.05532946428212533]
+HAIR CONTACT TRACE frame=20 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.4140607410274185, normal: [-0.9197578279031423, -0.11373822264527234, 0.3756449849530642], target: [-0.033161784906188395, 0.7903304553412617, -0.055692650426403645], surface_velocity: [0.0, 0.0, 0.0], gap_m: 7.355196341872078e-12 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 2 }, segment: 1, fraction: 0.6070916097050164, normal: [0.9058089683224905, 0.12884884586111114, -0.4036187406783848], target: [-0.03343793708432665, 0.8006597824068, -0.05318615817715319], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.7927847064042024e-12 }]
+HAIR SEGMENT PAIR frame=20 external rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.033556712146387536, 0.7958351410305033, -0.05499290528464439] b=[-0.032602921568574736, 0.7825407493032912, -0.05668286298809633] c=[-0.032957515488030296, 0.7982651330360506, -0.05300299778183746] d=[-0.03316703433631403, 0.7855589309957276, -0.057363198245181324]
+HAIR SEGMENT PAIR frame=20 external rod=153 segment=1 other_rod=154 other_segment=2 a=[-0.033254415052397096, 0.8081144445420274, -0.050394512501513646] b=[-0.033556712146387536, 0.7958351410305033, -0.05499290528464439] c=[-0.0335450002678324, 0.801098918731903, -0.05308803730917672] d=[-0.03236699151870753, 0.7857962374491011, -0.055329464282136594]
+HYBRID HAIR FRAME frame=20 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.00000000020665424926846754
+HAIR CONTACT TRACE frame=21 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5600147143011661, normal: [0.10057797374164747, 0.25868057756697027, -0.9607124595776008], target: [-0.027811283726075945, 0.578734502683407, -0.06420417076038819], surface_velocity: [-0.0009087574392454471, 0.4213731008220773, 0.0003929912586569527], gap_m: 1.8428918560339654e-12 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 2 }, segment: 1, fraction: 0.6338338693012303, normal: [0.8980307985103326, 0.1361023320989335, -0.4183501405809803], target: [-0.033472118869992996, 0.803855403562001, -0.05332914437908143], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.5110394280141547e-17 }]
+HAIR SEGMENT PAIR frame=21 native rod=153 segment=1 other_rod=154 other_segment=2 a=[-0.03327602903628311, 0.8116258745775824, -0.05038024149364261] b=[-0.033585400061100806, 0.799366398724473, -0.055032726992232064] c=[-0.03360741691814988, 0.8046400185159808, -0.053173088232611895] d=[-0.03238833943851343, 0.789357203383385, -0.055528191201499835]
+HAIR CONTACT TRACE frame=21 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5600147142946488, normal: [0.10057797374162943, 0.2586805775585972, -0.9607124595798571], target: [-0.02781128372612202, 0.5787345026834076, -0.06420417076039282], surface_velocity: [-0.0009087574392455419, 0.42137310082207724, 0.0003929912586576121], gap_m: 1.8429051885976234e-12 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 2 }, segment: 1, fraction: 0.6338338693033438, normal: [0.8980307985107592, 0.13610233209891928, -0.41835014058006925], target: [-0.033472118869992004, 0.8038554035619745, -0.05332914437908967], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=21 external rod=153 segment=1 other_rod=154 other_segment=2 a=[-0.03327602903628311, 0.8116258745775824, -0.05038024149364261] b=[-0.03358540006109821, 0.799366398724472, -0.05503272699222955] c=[-0.033607416918150966, 0.804640018515982, -0.05317308823261587] d=[-0.032388339438517745, 0.7893572033833861, -0.05552819120150502]
+HYBRID HAIR FRAME frame=21 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.00000000020665424926846754
+HAIR CONTACT TRACE frame=22 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5496112119704282, normal: [0.10052791228394162, 0.24392833935790786, -0.9645688695525715], target: [-0.028880379273308485, 0.582010453442409, -0.06430594382645562], surface_velocity: [-0.0009105254325277714, 0.39046525955200195, 0.00040907065081067384], gap_m: 0.0 }]
+HAIR CONTACT TRACE frame=22 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.5496112119627368, normal: [0.10052791228392888, 0.2439283393493398, -0.9645688695547395], target: [-0.02888037927335418, 0.5820104534424095, -0.06430594382646021], surface_velocity: [-0.000910525432527861, 0.39046525955200195, 0.0004090706508113268], gap_m: 4.050702255197215e-17 }]
+HYBRID HAIR FRAME frame=22 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.00000000020665424926846754
+HAIR CONTACT TRACE frame=23 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 17 }, segment: 19, fraction: 0.04368143811691922, normal: [0.9959936661613521, 0.08648244287621064, -0.022746517109926784], target: [-0.029488223948822157, 0.5784718624559781, -0.06603907447704685], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.2949967032227772e-14 }]
+HAIR SEGMENT PAIR frame=23 native rod=153 segment=19 other_rod=151 other_segment=17 a=[-0.029528780139269593, 0.5789993489638735, -0.06580938599642559] b=[-0.028600326493541658, 0.566923590228973, -0.07106764878546173] c=[-0.030265634239170724, 0.5870578528149063, -0.06391823569854395] d=[-0.029200058160258672, 0.5739347424851827, -0.0671544064790392]
+HAIR CONTACT TRACE frame=23 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 17 }, segment: 19, fraction: 0.04368143812059126, normal: [0.995993666159598, 0.08648244288591964, -0.02274651714982399], target: [-0.029488223948861355, 0.578471862455838, -0.06603907447709645], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.295342257941734e-14 }]
+HAIR SEGMENT PAIR frame=23 external rod=153 segment=19 other_rod=151 other_segment=17 a=[-0.02952878013930802, 0.5789993489637768, -0.06580938599645297] b=[-0.02860032649367567, 0.566923590228898, -0.07106764878555591] c=[-0.03026563423922068, 0.5870578528149087, -0.06391823569854713] d=[-0.02920005816030998, 0.5739347424851879, -0.06715440647905375]
+HYBRID HAIR FRAME frame=23 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.00000000020665424926846754
+HAIR CONTACT TRACE frame=24 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.10971078404621552, 0.23277170525842175, -0.9663233812213441], target: [-0.030438955541505462, 0.5815018913997296, -0.0659376650471214], surface_velocity: [-0.0007647500579964019, 0.316185447223296, 0.00035482872931302345], gap_m: 2.9231579293522337e-13 }]
+HAIR CONTACT TRACE frame=24 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.10971078404617335, 0.2327717052592048, -0.9663233812211602], target: [-0.030438955542042765, 0.5815018913996352, -0.06593766504720515], surface_velocity: [-0.000764750057994886, 0.31618544722329556, 0.00035482872931958266], gap_m: 2.964742370218714e-13 }]
+HYBRID HAIR FRAME frame=24 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.00000000020665424926846754
+HAIR CONTACT TRACE frame=25 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 17 }, segment: 19, fraction: 0.011513747492250594, normal: [0.9966477362836177, 0.01626434206203224, 0.08017955436412483], target: [-0.031266676010391715, 0.5835177431459013, -0.06611742456396187], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.915632901641334e-18 }]
+HAIR SEGMENT PAIR frame=25 native rod=153 segment=19 other_rod=151 other_segment=17 a=[-0.031273683723206123, 0.5836578024027583, -0.06605872818571733] b=[-0.030665044979032795, 0.5714932784759245, -0.07115666682681088] c=[-0.031633273461652026, 0.59182045519218, -0.06424250305374428] d=[-0.031176734866173648, 0.5786048514647393, -0.0672365962490108]
+HAIR CONTACT TRACE frame=25 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 17 }, segment: 19, fraction: 0.011513747533430298, normal: [0.9966477362657009, 0.016264341941296098, 0.08017955461132595], target: [-0.031266676010436256, 0.5835177431453186, -0.06611742456419814], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.915632901517011e-18 }]
+HAIR SEGMENT PAIR frame=25 external rod=153 segment=19 other_rod=151 other_segment=17 a=[-0.031273683723273264, 0.583657802402677, -0.0660587281857444] b=[-0.03066504497931399, 0.5714932784758054, -0.07115666682677387] c=[-0.03163327346114237, 0.5918204551922315, -0.06424250305426217] d=[-0.031176734866572218, 0.5786048514646224, -0.06723659624892495]
+HYBRID HAIR FRAME frame=25 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.00000000020665424926846754
+HAIR CONTACT TRACE frame=26 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.10948017448752886, 0.2330073005707089, -0.9662927554705829], target: [-0.032005883407357674, 0.5854532818450008, -0.06616331844753308], surface_velocity: [-0.0007526196844506864, 0.22809333727537617, 0.0003706078169657208], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 16 }, segment: 18, fraction: 0.3174087488579015, normal: [0.9904606646639614, -0.013844973981159456, 0.13709846260583947], target: [-0.03212957010413117, 0.5943830141514534, -0.06436797578169955], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=26 native rod=153 segment=18 other_rod=151 other_segment=16 a=[-0.032187085109791666, 0.5985353896093643, -0.06353313140246093] b=[-0.032005883407357674, 0.5854532818450008, -0.06616331844753308] c=[-0.03214981611735588, 0.6076101007115727, -0.0634694861367879] d=[-0.032211798619994035, 0.593713379175928, -0.06442506590647765]
+HAIR CONTACT TRACE frame=26 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.10948017448735747, 0.2330073005707133, -0.9662927554706011], target: [-0.03200588340691244, 0.5854532818449161, -0.06616331844750306], surface_velocity: [-0.0007526196844479685, 0.22809333727537606, 0.00037060781695843543], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 16 }, segment: 18, fraction: 0.3174087488914749, normal: [0.9904606646292956, -0.013844974018627458, 0.1370984628524971], target: [-0.03212957010378214, 0.5943830141509422, -0.06436797578182801], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.872701467856121e-18 }]
+HAIR SEGMENT PAIR frame=26 external rod=153 segment=18 other_rod=151 other_segment=16 a=[-0.03218708510949628, 0.5985353896092982, -0.06353313140253374] b=[-0.03200588340691244, 0.5854532818449161, -0.06616331844750306] c=[-0.032149816116696976, 0.6076101007115856, -0.06346948613709387] d=[-0.032211798619655424, 0.5937133791759284, -0.06442506590658106]
+HYBRID HAIR FRAME frame=26 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.00000000020665424926846754
+HAIR CONTACT TRACE frame=27 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.10936397503260906, 0.23312537559328603, -0.9662774343942613], target: [-0.03266726214071608, 0.5868764128806725, -0.06625303988872451], surface_velocity: [-0.0007524974270202837, 0.1800559937843515, 0.0003780102739436812], gap_m: 8.953061333383295e-15 }]
+HAIR CONTACT TRACE frame=27 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.10936397503253575, 0.2331253755931298, -0.9662774343943075], target: [-0.03266726213999429, 0.586876412880585, -0.06625303988866392], surface_velocity: [-0.0007524974270170194, 0.18005599378435216, 0.0003780102739326255], gap_m: 8.98063978479896e-15 }]
+HYBRID HAIR FRAME frame=27 max_position_error_m=0.00000000001517527770111826 max_quaternion_component_error=0.000000000304215902469096
+HAIR CONTACT TRACE frame=28 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08434251492667816, 0.21554157864912893, -0.9728453978147218], target: [-0.03330348665985543, 0.5879112620401895, -0.06632092694582614], surface_velocity: [-0.0007512923523733319, 0.13002940721961115, 0.0003852235578141824], gap_m: 3.622499450096593e-15 }, HairContactDiagnostic { source: Strand { other_rod: 156, other_segment: 3 }, segment: 0, fraction: 0.8131359606996366, normal: [0.9444500886276735, 0.13629700441052084, -0.2990604565633814], target: [-0.032848125989579716, 0.8280442894532015, -0.04808874089634954], surface_velocity: [0.0, 0.0, 0.0], gap_m: -2.07514877894736e-18 }]
+HAIR SEGMENT PAIR frame=28 native rod=153 segment=0 other_rod=156 other_segment=3 a=[-0.030332578346133232, 0.8315421938896179, -0.038550324738025665] b=[-0.03342621552986086, 0.8272404478035061, -0.05028073222131647] c=[-0.03299648790886156, 0.8288519816401121, -0.047921665655706026] d=[-0.03182585599129859, 0.8156899386877196, -0.05022335279935482]
+HAIR CONTACT TRACE frame=28 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08434251492670662, 0.21554157864920165, -0.9728453978147031], target: [-0.03330348665892127, 0.5879112620401016, -0.06632092694576464], surface_velocity: [-0.0007512923523703174, 0.1300294072196103, 0.0003852235578035946], gap_m: 3.608998508095911e-15 }, HairContactDiagnostic { source: Strand { other_rod: 156, other_segment: 3 }, segment: 0, fraction: 0.813135960706342, normal: [0.9444500886274328, 0.13629700441192394, -0.29906045656350183], target: [-0.032848125989600456, 0.8280442894531727, -0.04808874089642819], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=28 external rod=153 segment=0 other_rod=156 other_segment=3 a=[-0.030332578346133232, 0.8315421938896179, -0.038550324738025665] b=[-0.03342621552986086, 0.8272404478035061, -0.05028073222131647] c=[-0.03299648790888677, 0.828851981640137, -0.0479216656557728] d=[-0.031825855991329005, 0.8156899386877507, -0.05022335279946026]
+HYBRID HAIR FRAME frame=28 max_position_error_m=0.000000000018466103646197496 max_quaternion_component_error=0.000000000304215902469096
+HAIR CONTACT TRACE frame=29 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08426138090323293, 0.21567876574148037, -0.9728220236489878], target: [-0.03391078649068479, 0.5885477834902969, -0.06637388189801234], surface_velocity: [-0.0007516596072340716, 0.07860308247694851, 0.0003903195710032593], gap_m: 0.0 }]
+HAIR CONTACT TRACE frame=29 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.0842613809032045, 0.2156787657414076, -0.9728220236490065], target: [-0.03391078648959035, 0.5885477834901941, -0.06637388189794034], surface_velocity: [-0.0007516596072305942, 0.0786030824769475, 0.0003903195709908484], gap_m: 1.350061761896957e-17 }]
+HYBRID HAIR FRAME frame=29 max_position_error_m=0.000000000022305393643229365 max_quaternion_component_error=0.0000000004187424434975995
+HAIR CONTACT TRACE frame=30 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08417523753052189, 0.2158152605512063, -0.9727992098577667], target: [-0.03448590128609449, 0.588773817496018, -0.06641830978597062], surface_velocity: [-0.0007520128545960646, 0.02629162856494808, 0.0003966159435418422], gap_m: 2.7000602028031303e-17 }]
+HAIR CONTACT TRACE frame=30 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08417523753037805, 0.21581526055128228, -0.9727992098577622], target: [-0.03448590128488946, 0.5887738174958844, -0.06641830978589598], surface_velocity: [-0.0007520128545917244, 0.02629162856495034, 0.00039661594352787585], gap_m: 1.350030101401559e-17 }]
+HYBRID HAIR FRAME frame=30 max_position_error_m=0.000000000025202118170142285 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=31 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08409516504931012, 0.21595071678373445, -0.9727760745083733], target: [-0.0350262527289797, 0.5886009547579827, -0.06645095608615417], surface_velocity: [-0.0007429782005107921, -0.026295290071131384, 0.00039721931979247004], gap_m: 0.0 }]
+HAIR CONTACT TRACE frame=31 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08409516504913789, 0.2159507167837376, -0.9727760745083875], target: [-0.03502625272769209, 0.5886009547578327, -0.06645095608607615], surface_velocity: [-0.0007429782005061569, -0.02629529007113259, 0.00039721931977760124], gap_m: 0.0 }]
+HYBRID HAIR FRAME frame=31 max_position_error_m=0.000000000027677610203724612 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=32 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08401426951993907, 0.21608728778468317, -0.9727527366062203], target: [-0.03553114885252476, 0.5880250947960938, -0.06647313844183345], surface_velocity: [-0.0007454746667561052, -0.07860219839854843, 0.00040265749556560245], gap_m: 1.1631143394655951e-15 }]
+HAIR CONTACT TRACE frame=32 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08401426951993907, 0.21608728778468317, -0.9727527366062203], target: [-0.03553114885117198, 0.5880250947959421, -0.06647313844175029], surface_velocity: [-0.0007454746667512826, -0.0786021983985483, 0.00040265749555023047], gap_m: 1.1631143394655951e-15 }]
+HYBRID HAIR FRAME frame=32 max_position_error_m=0.00000000002989967995414844 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=33 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08393510832846962, 0.21622000898335408, -0.9727300783388608], target: [-0.03600154943980654, 0.5870368033934156, -0.06648866869102656], surface_velocity: [-0.0007488234684156572, -0.13002510869279313, 0.0004078861526859263], gap_m: 0.0 }]
+HAIR CONTACT TRACE frame=33 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.08393510832846962, 0.21622000898335408, -0.9727300783388608], target: [-0.036001549438399505, 0.587036803393269, -0.06648866869093771], surface_velocity: [-0.0007488234684107735, -0.13002510869279457, 0.0004078861526701379], gap_m: 0.0 }]
+HYBRID HAIR FRAME frame=33 max_position_error_m=0.00000000003192850150934845 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=34 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.0838542189528753, 0.21635721353381504, -0.9727065467630442], target: [-0.036488297341929696, 0.5856368232093415, -0.06650432962256624], surface_velocity: [-0.000750780294041125, -0.18005421897547585, 0.0004160157909548056], gap_m: 1.3499015055249478e-17 }]
+HAIR CONTACT TRACE frame=34 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.0838542189529036, 0.21635721353388807, -0.9727065467630256], target: [-0.0364882973409727, 0.5856368232092254, -0.06650432962250957], surface_velocity: [-0.0007507802940375225, -0.18005421897547574, 0.00041601579094378567], gap_m: 0.0 }]
+HYBRID HAIR FRAME frame=34 max_position_error_m=0.000000000033770930496501705 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=35 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.05767789353879331, normal: [-0.9049410217216454, 0.1453541747076065, -0.3999423847261693], target: [-0.03698527557120368, 0.5831033650701284, -0.06674589092674554], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.2558579478039808e-17 }]
+HAIR SEGMENT PAIR frame=35 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03696645186233275, 0.5838315807275072, -0.06652382184144527] b=[-0.037292811022073505, 0.5712060215626428, -0.07037398126432556] c=[-0.03680786799139723, 0.5847288443360465, -0.06635651784047782] d=[-0.037759001663449324, 0.5699009794890803, -0.06959341452850319]
+HAIR CONTACT TRACE frame=35 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.05767789353494874, normal: [-0.9049410216479323, 0.1453541747422891, -0.39994238488035344], target: [-0.036985275570276734, 0.5831033650700608, -0.06674589092667144], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.279289738508417e-18 }]
+HAIR SEGMENT PAIR frame=35 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.036966451861414576, 0.5838315807273917, -0.06652382184138768] b=[-0.037292811021024955, 0.571206021562515, -0.07037398126423837] c=[-0.03680786799045433, 0.5847288443362298, -0.06635651784032502] d=[-0.03775900166255537, 0.5699009794892872, -0.06959341452844461]
+HYBRID HAIR FRAME frame=35 max_position_error_m=0.000000000035520114627374255 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=36 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.06989951715392786, normal: [-0.8710091952515213, 0.16750313799739053, -0.46182862681770187], target: [-0.03745347407110005, 0.5807504018764081, -0.06680410188783233], surface_velocity: [0.0, 0.0, 0.0], gap_m: -9.974357326054996e-20 }]
+HAIR SEGMENT PAIR frame=36 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03742305758504742, 0.5816344555538112, -0.0665408251678051] b=[-0.0378582034528745, 0.5689869622176799, -0.07030732786692206] c=[-0.037248504581552176, 0.5825155059390141, -0.06637725489787208] d=[-0.038375329670847565, 0.5677022770204703, -0.06962475240324388]
+HAIR CONTACT TRACE frame=36 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.06989951716966715, normal: [-0.8710091951085112, 0.1675031380460329, -0.46182862706977706], target: [-0.03745347407018194, 0.5807504018760816, -0.06680410188781961], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.500574374561582e-17 }]
+HAIR SEGMENT PAIR frame=36 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03742305758413317, 0.5816344555536889, -0.06654082516774876] b=[-0.037858203451806856, 0.5689869622174856, -0.07030732786664168] c=[-0.03724850458060673, 0.5825155059391262, -0.06637725489772849] d=[-0.03837532966994278, 0.5677022770206092, -0.06962475240320859]
+HYBRID HAIR FRAME frame=36 max_position_error_m=0.000000000036441155648603285 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=37 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.10466616402118628, normal: [-0.8421694693608957, 0.1839366092798281, -0.5068707020957388], target: [-0.03791342785102283, 0.5777434167348623, -0.06695688565093819], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=37 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.0378563308887204, 0.5790690965466476, -0.06657068118041501] b=[-0.03840184588715741, 0.566403305035296, -0.0702605505296443] c=[-0.03765453805375541, 0.5799425787652769, -0.06643115527661843] d=[-0.03893497809492789, 0.5651410313408923, -0.06967497846174243]
+HAIR CONTACT TRACE frame=37 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.10466616405498312, normal: [-0.8421694691933768, 0.18393660932839354, -0.5068707023564489], target: [-0.037913427850099095, 0.577743416734284, -0.06695688565089451], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.6264790470629194e-17 }]
+HAIR SEGMENT PAIR frame=37 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03785633088779742, 0.579069096546504, -0.06657068118026647] b=[-0.038401845886051195, 0.5664033050350892, -0.07026055052930612] c=[-0.03765453805279368, 0.5799425787652629, -0.06643115527640954] d=[-0.03893497809397874, 0.5651410313409072, -0.06967497846165983]
+HYBRID HAIR FRAME frame=37 max_position_error_m=0.000000000036441155648603285 max_quaternion_component_error=0.0000000005636613328863227
+HAIR CONTACT TRACE frame=38 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.11278041009739641, normal: [-0.8262604601234567, 0.19411703261471372, -0.5287837267592792], target: [-0.0383260871688426, 0.5747329403920839, -0.06704099793589935], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.146666733958047e-17 }]
+HAIR SEGMENT PAIR frame=38 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03825225556055261, 0.5761627274806125, -0.06663148857072629] b=[-0.0389069047875437, 0.5634851083152465, -0.07026252134334526] c=[-0.038040156995765746, 0.5770375836188366, -0.06649045582707169] d=[-0.03944159734123351, 0.5622461843888849, -0.06973054756090812]
+HAIR CONTACT TRACE frame=38 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.11278041013842992, normal: [-0.8262604599613782, 0.19411703265494631, -0.5287837269977683], target: [-0.03832608716787002, 0.5747329403913967, -0.06704099793586975], surface_velocity: [0.0, 0.0, 0.0], gap_m: 5.73333366866559e-18 }]
+HAIR SEGMENT PAIR frame=38 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03825225555957182, 0.5761627274804527, -0.06663148857056969] b=[-0.0389069047863975, 0.5634851083150224, -0.07026252134299363] c=[-0.0380401569947608, 0.5770375836186816, -0.06649045582688345] d=[-0.03944159734019157, 0.5622461843887562, -0.06973054756085609]
+HYBRID HAIR FRAME frame=38 max_position_error_m=0.00000000004525553543022198 max_quaternion_component_error=0.0000000007667450008241872
+HAIR CONTACT TRACE frame=39 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.11601526880134286, normal: [-0.8314289707270857, 0.19684394965268454, -0.5195943861521506], target: [-0.03871107900010808, 0.5714691510000739, -0.06710928712451476], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.8749215470171224e-17 }]
+HAIR SEGMENT PAIR frame=39 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.038621293553073935, 0.5729412248234701, -0.06669527456106852] b=[-0.03939520415951232, 0.5602526034152232, -0.0702638786570964] c=[-0.038404774326036735, 0.5738338092472416, -0.06654962347762332] d=[-0.039894393717070285, 0.5590463147193488, -0.0697681265173765]
+HAIR CONTACT TRACE frame=39 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.11601526883836764, normal: [-0.8314289706513012, 0.19684394966383328, -0.5195943862691937], target: [-0.038711078999104434, 0.5714691509994038, -0.06710928712448361], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=39 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03862129355206007, 0.5729412248232755, -0.0666952745609213] b=[-0.039395204158339386, 0.56025260341498, -0.07026387865681077] c=[-0.03840477432501659, 0.5738338092469899, -0.06654962347748931] d=[-0.03989439371592881, 0.5590463147190884, -0.06976812651725826]
+HYBRID HAIR FRAME frame=39 max_position_error_m=0.00000000006809670882734764 max_quaternion_component_error=0.0000000008652111804785534
+HAIR CONTACT TRACE frame=40 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.13214743515242144, normal: [-0.8661107162507048, 0.18949607604591612, -0.46254022998966415], target: [-0.039089310754415955, 0.5677592203020548, -0.06721720757743606], surface_velocity: [0.0, 0.0, 0.0], gap_m: -4.091847952735172e-19 }]
+HAIR SEGMENT PAIR frame=40 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03896800418621137, 0.5694377887399575, -0.06675666987742152] b=[-0.03988596803518561, 0.5567355487307843, -0.07024169930295177] c=[-0.03874609168486711, 0.5703664523228807, -0.06661878498587827] d=[-0.04029133219452705, 0.5555735389583892, -0.06978575204362177]
+HAIR CONTACT TRACE frame=40 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.13214743530728493, normal: [-0.8661107162897423, 0.18949607602234422, -0.46254022992622296], target: [-0.03908931075356284, 0.567759220299881, -0.06721720757782443], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.2019700738743232e-17 }]
+HAIR SEGMENT PAIR frame=40 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.038968004185229665, 0.569437788739754, -0.06675666987727837] b=[-0.039885968034101243, 0.5567355487305564, -0.07024169930274676] c=[-0.03874609168384821, 0.5703664523225845, -0.06661878498589112] d=[-0.04029133219332494, 0.5555735389580506, -0.0697857520435254]
+HYBRID HAIR FRAME frame=40 max_position_error_m=0.00000000008430545150872604 max_quaternion_component_error=0.0000000008980061694252583
+HAIR CONTACT TRACE frame=41 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.4142679897105015, normal: [0.20396931397877244, -0.03734695951662373, 0.9782646490443638], target: [-0.029026449285494478, 0.760944002617679, -0.061233895097687945], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.7880746096618804e-18 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.163728737063088, normal: [-0.9220547943948881, 0.17062849276271128, -0.34742031257674905], target: [-0.0394582625077526, 0.5636141359392475, -0.06736660063479681], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.398040391895122e-18 }]
+HAIR SEGMENT PAIR frame=41 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.02985330608562352, 0.7664342059027015, -0.060851896407995903] b=[-0.02785735945043487, 0.7531814240769583, -0.06177400166155168] c=[-0.02962074104614165, 0.7678796891015766, -0.060926980107605604] d=[-0.02833576440318813, 0.7524666210136652, -0.0617833199897354]
+HAIR SEGMENT PAIR frame=41 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03928120649776469, 0.5656965497960503, -0.0668137722944374] b=[-0.040362604993617573, 0.5529778670885641, -0.07019026166506262] c=[-0.039058248874751365, 0.5666673942500018, -0.06669842330882003] d=[-0.04063324186211663, 0.5518616605032884, -0.06978992417802722]
+HAIR CONTACT TRACE frame=41 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.41426798899574496, normal: [0.2039693138126118, -0.037346959541608486, 0.9782646490780548], target: [-0.02902644928709476, 0.7609440026270565, -0.061233895096781336], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.1642080762278687e-17 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.16372873734227916, normal: [-0.9220547944964658, 0.17062849270581412, -0.3474203123351057], target: [-0.03945826250708972, 0.563614135935513, -0.06736660063558982], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=41 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.029853306085783324, 0.7664342059026095, -0.06085189640776123] b=[-0.027857359450628134, 0.7531814240768591, -0.061774001661285965] c=[-0.029620741046890456, 0.7678796891013605, -0.06092698010717298] d=[-0.02833576440402192, 0.7524666210134497, -0.0617833199894402]
+HAIR SEGMENT PAIR frame=41 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03928120649680547, 0.5656965497958673, -0.06681377229428781] b=[-0.04036260499262424, 0.552977867088378, -0.07019026166491245] c=[-0.03905824887376119, 0.5666673942497145, -0.06669842330895114] d=[-0.040633241860905576, 0.5518616605029424, -0.0697899241779892]
+HYBRID HAIR FRAME frame=41 max_position_error_m=0.00000000009624369357030815 max_quaternion_component_error=0.0000000008980061694252583
+HAIR CONTACT TRACE frame=42 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.18736019405713794, 0.21320313918214742, -0.9588746420287427], target: [-0.03954354998041757, 0.561755800310801, -0.06686483252156593], surface_velocity: [-0.0007503358483910481, -0.46906083214046873, 0.0004477074177701225], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5327957285196498, normal: [0.22626755278423144, -0.037859450778767394, 0.9733291614576054], target: [-0.028982619506115182, 0.7554114426650226, -0.06125205699204329], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.6384770872561546e-14 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.21446285030267295, normal: [-0.9756407202384625, 0.13860511337793233, -0.17004060561543727], target: [-0.03981048103607079, 0.5590238292094671, -0.06756017441608023], surface_velocity: [0.0, 0.0, 0.0], gap_m: 5.828275901302311e-16 }]
+HAIR SEGMENT PAIR frame=42 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.030019829369113377, 0.7624746171586646, -0.06073620391333387] b=[-0.028073098553748153, 0.7492178019937463, -0.06170440439068569] c=[-0.029719273986461067, 0.7639331710985754, -0.060831532280689965] d=[-0.02841949831131532, 0.7485238728954521, -0.06173306144758388]
+HAIR SEGMENT PAIR frame=42 native rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.03954354998041757, 0.561755800310801, -0.06686483252156593] b=[-0.040788199369703786, 0.5490171320636985, -0.07010708120721497] c=[-0.03933043983395286, 0.5627736835035191, -0.06678741055227543] d=[-0.04091502053077874, 0.5479486429999022, -0.06977990146739955]
+HAIR CONTACT TRACE frame=42 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.0, normal: [0.18736019405697057, 0.21320313918215436, -0.958874642028774], target: [-0.0395435499794585, 0.5617558003106531, -0.0668648325214114], surface_velocity: [-0.0007503358483852832, -0.469060832140467, 0.00044770741775525215], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5327957288122981, normal: [0.22626755249005612, -0.03785945082317471, 0.9733291615242643], target: [-0.028982619505782518, 0.7554114426610766, -0.061252056992162095], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.6384770872561278e-14 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 17 }, segment: 19, fraction: 0.21446285068144832, normal: [-0.9756407203193077, 0.13860511328771538, -0.1700406052251106], target: [-0.039810481035581984, 0.5590238292044971, -0.06756017441716589], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.073455038397857e-16 }]
+HAIR SEGMENT PAIR frame=42 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03001982936934546, 0.762474617158601, -0.060736203913197666] b=[-0.028073098553989546, 0.7492178019936774, -0.06170440439049632] c=[-0.029719273986525453, 0.7639331710984716, -0.060831532280430554] d=[-0.028419498311207284, 0.7485238728953798, -0.06173306144761018]
+HAIR SEGMENT PAIR frame=42 external rod=153 segment=19 other_rod=154 other_segment=17 a=[-0.0395435499794585, 0.5617558003106531, -0.0668648325214114] b=[-0.040788199368739265, 0.5490171320635644, -0.07010708120711692] c=[-0.03933043983300914, 0.5627736835034004, -0.06678741055247706] d=[-0.0409150205295698, 0.5479486429997085, -0.06977990146736983]
+HYBRID HAIR FRAME frame=42 max_position_error_m=0.00000000010639655823041494 max_quaternion_component_error=0.0000000008980061694252583
+HAIR CONTACT TRACE frame=43 native rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.14754167146003036, normal: [0.18548821208930005, 0.21183489683776652, -0.9595416091330524], target: [-0.03994379297689674, 0.5557740299877254, -0.06736925263323275], surface_velocity: [-0.0006947516611187387, -0.48529904324159745, 0.0004172362182222319], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5787698665623974, normal: [0.21926301542201584, -0.041255770666371226, 0.9747931531636692], target: [-0.029102387556141668, 0.7506829171357776, -0.06112738967732241], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.504941533717992e-17 }]
+HAIR SEGMENT PAIR frame=43 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.0301929354746236, 0.7583600602949859, -0.06055717303103383] b=[-0.028308684096853633, 0.7450954734483923, -0.06154239475599227] c=[-0.029870023556361293, 0.7598242474685009, -0.06064990703350047] d=[-0.02860508906543699, 0.7444141863495183, -0.06158662606493397]
+HAIR CONTACT TRACE frame=43 external rod=153 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.14754167153673803, normal: [0.18548821209865005, 0.21183489684884874, -0.9595416091287985], target: [-0.03994379297594151, 0.5557740299866405, -0.06736925263328758], surface_velocity: [-0.0006947516610911024, -0.48529904324159834, 0.0004172362181941575], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5787698670454434, normal: [0.2192630152694232, -0.04125577068581199, 0.9747931531971694], target: [-0.029102387555367953, 0.7506829171293566, -0.06112738967774965], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=43 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03019293547476449, 0.758360060294974, -0.060557173031016875] b=[-0.02830868409698689, 0.7450954734483775, -0.061542394755920535] c=[-0.02987002355608473, 0.7598242474685156, -0.060649907033492455] d=[-0.028605089065192293, 0.7444141863495353, -0.06158662606500478]
+HYBRID HAIR FRAME frame=43 max_position_error_m=0.00000000011394288290667021 max_quaternion_component_error=0.0000000008980061694252583
+HAIR CONTACT TRACE frame=44 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6141832677541909, normal: [0.20181412741253604, -0.0446019420161052, 0.978407749736841], target: [-0.029291653712503144, 0.7459842590670739, -0.06092570387265107], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.1740877867112172e-17 }]
+HAIR SEGMENT PAIR frame=44 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03040085685380694, 0.7541381713827926, -0.060325204552652896] b=[-0.028594876131864313, 0.7408621465481627, -0.06130292464293464] c=[-0.03006258718034467, 0.755602422940729, -0.06040999449418571] d=[-0.028852558364623256, 0.7401889125692097, -0.061362228780656745]
+HAIR CONTACT TRACE frame=44 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6141832683978561, normal: [0.2018141273807205, -0.044601942017496655, 0.97840774974334], target: [-0.029291653711388563, 0.7459842590585494, -0.06092570387333179], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.104069445820953e-17 }]
+HAIR SEGMENT PAIR frame=44 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.030400856853857253, 0.7541381713828149, -0.06032520455272995] b=[-0.028594876131910644, 0.7408621465481826, -0.06130292464296992] c=[-0.03006258717989871, 0.7556024229408201, -0.060409994494347925] d=[-0.028852558364185467, 0.740188912569299, -0.06136222878079786]
+HYBRID HAIR FRAME frame=44 max_position_error_m=0.0000000001186325343516259 max_quaternion_component_error=0.0000000008980061694252583
+HAIR CONTACT TRACE frame=45 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6363210147909357, normal: [0.1752217145684687, -0.04743370554117145, 0.9833856793355897], target: [-0.02953923273060383, 0.7414038772793525, -0.06064661687745802], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.079224435256599e-19 }]
+HAIR SEGMENT PAIR frame=45 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.030633341705152497, 0.74986039786651, -0.06004376514762459] b=[-0.028913912440494093, 0.736570689699421, -0.06099116703412602] c=[-0.030295419314971508, 0.7513185280854191, -0.060114995411218834] d=[-0.02914085576988568, 0.7359005902295007, -0.06106440371345453]
+HAIR CONTACT TRACE frame=45 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6363210155072703, normal: [0.1752217145885491, -0.04743370553700838, 0.9833856793322127], target: [-0.029539232729323114, 0.7414038772698743, -0.060646616878268396], surface_velocity: [0.0, 0.0, 0.0], gap_m: -6.823608895507959e-18 }]
+HAIR SEGMENT PAIR frame=45 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03063334170511305, 0.7498603978665508, -0.06004376514776146] b=[-0.028913912440439588, 0.7365706896994632, -0.06099116703425479] c=[-0.030295419314453887, 0.7513185280855383, -0.06011499541144966] d=[-0.029140855769301813, 0.7359005902296237, -0.06106440371366687]
+HYBRID HAIR FRAME frame=45 max_position_error_m=0.000000000121698651156521 max_quaternion_component_error=0.0000000011866167770602232
+HAIR CONTACT TRACE frame=46 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6481144184715883, normal: [0.14512717096659503, -0.04879474729130069, 0.9882090754916242], target: [-0.029826368051246204, 0.7369525593435202, -0.06030065906362851], surface_velocity: [0.0, 0.0, 0.0], gap_m: 5.035110209557042e-19 }]
+HAIR SEGMENT PAIR frame=46 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.030880243870749686, 0.7455757426601646, -0.059720101688428395] b=[-0.029254179414432268, 0.7322707102910654, -0.060615865397202554] c=[-0.030548338419177094, 0.7470271252339339, -0.05977813460345361] d=[-0.029460333057809814, 0.7316026480811865, -0.06069953132752898]
+HAIR CONTACT TRACE frame=46 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6481144191550993, normal: [0.1451271709763014, -0.04879474729270033, 0.9882090754901296], target: [-0.029826368050033372, 0.7369525593344814, -0.06030065906445908], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=46 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.030880243870677736, 0.7455757426602142, -0.05972010168861367] b=[-0.029254179414314883, 0.7322707102911239, -0.0606158653974388] c=[-0.030548338418676265, 0.7470271252340454, -0.05977813460369915] d=[-0.029460333057208923, 0.7316026480813083, -0.06069953132783259]
+HYBRID HAIR FRAME frame=46 max_position_error_m=0.0000000001286598327876476 max_quaternion_component_error=0.0000000011866167770602232
+HAIR CONTACT TRACE frame=47 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 6 }, segment: 7, fraction: 0.8344876458107594, normal: [-0.733087343146295, 0.06234719676783962, -0.6772708279365787], target: [-0.029954947373198277, 0.6900221493122233, -0.06260402574563775], surface_velocity: [0.0, 0.0, 0.0], gap_m: -2.5434076481946864e-18 }, HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 13 }, segment: 15, fraction: 0.20251888939126464, normal: [-0.6971757352813603, 0.06821754342104801, -0.7136472244074743], target: [-0.03373551508353661, 0.5912396923494931, -0.06781326831176303], surface_velocity: [0.0, 0.0, 0.0], gap_m: -5.0662162904668036e-18 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6487229778212386, normal: [0.12223030436791252, -0.04775364951526084, 0.9913522792893055], target: [-0.03014358795686586, 0.7326917788015066, -0.05989844432060963], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=47 native rod=153 segment=7 other_rod=151 other_segment=6 a=[-0.029708273657547645, 0.701211417723605, -0.061840983666767095] b=[-0.030003872659988204, 0.6878028688163164, -0.06275536757970006] c=[-0.02935634903660499, 0.7021262937893614, -0.062019570315232087] d=[-0.02997626955522353, 0.6882237457946951, -0.06262837995598425]
+HAIR SEGMENT PAIR frame=47 native rod=153 segment=15 other_rod=151 other_segment=13 a=[-0.03347625749049046, 0.5939497632564703, -0.06780748635595821] b=[-0.03475642248559505, 0.5805679453177923, -0.06783603656094005] c=[-0.032799578611686316, 0.6048296122096137, -0.06731644195543177] d=[-0.03369902817851233, 0.5909363170522912, -0.06776581251498623]
+HAIR SEGMENT PAIR frame=47 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03113505969436595, 0.7413333306124191, -0.05935993390423355] b=[-0.0296067158998699, 0.7280124646860486, -0.060190042340017166] c=[-0.030813006843867896, 0.7427784167879163, -0.05941072965085814] d=[-0.029803351592964034, 0.727345509915938, -0.060278623044931715]
+HAIR CONTACT TRACE frame=47 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 6 }, segment: 7, fraction: 0.8344876483527449, normal: [-0.7330873434844356, 0.06234719675673736, -0.6772708275715925], target: [-0.02995494737449881, 0.690022149278156, -0.06260402574740287], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.92192933601647e-18 }, HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 13 }, segment: 15, fraction: 0.202518899465886, normal: [-0.6971757376143403, 0.06821754363060623, -0.7136472221083097], target: [-0.03373551509316453, 0.5912396922144897, -0.06781326831342337], surface_velocity: [0.0, 0.0, 0.0], gap_m: -5.0662162423711845e-18 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6487229784525649, normal: [0.12223030429756766, -0.047753649526362366, 0.991352279297444], target: [-0.03014358795577778, 0.7326917787931447, -0.0598984443213852], surface_velocity: [0.0, 0.0, 0.0], gap_m: 4.240715566815589e-19 }]
+HAIR SEGMENT PAIR frame=47 external rod=153 segment=7 other_rod=151 other_segment=6 a=[-0.029708273657682836, 0.701211417723637, -0.06184098366655957] b=[-0.030003872660619428, 0.6878028688163305, -0.06275536757907106] c=[-0.029356349036615402, 0.7021262937893702, -0.06201957031544951] d=[-0.029976269554940017, 0.688223745794695, -0.0626283799562993]
+HAIR SEGMENT PAIR frame=47 external rod=153 segment=15 other_rod=151 other_segment=13 a=[-0.03347625748708046, 0.5939497632562702, -0.06780748635750207] b=[-0.03475642248288003, 0.5805679453176581, -0.06783603656163877] c=[-0.03279957861062803, 0.6048296122094028, -0.0673164419521117] d=[-0.033699028179255415, 0.590936317052227, -0.06776581251248304]
+HAIR SEGMENT PAIR frame=47 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.031135059694282582, 0.7413333306124608, -0.059359933904457304] b=[-0.029606715899725133, 0.7280124646861, -0.06019004234028369] c=[-0.030813006843402137, 0.7427784167880114, -0.059410729651086826] d=[-0.02980335159238476, 0.7273455099160466, -0.06027862304526984]
+HYBRID HAIR FRAME frame=47 max_position_error_m=0.0000000001608594507596095 max_quaternion_component_error=0.0000000011866167770602232
+HAIR CONTACT TRACE frame=48 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.64105314743302, normal: [0.1153215838148793, -0.04432582856456043, 0.9923387290781778], target: [-0.03047797504671342, 0.728631450828665, -0.059463451411057244], surface_velocity: [0.0, 0.0, 0.0], gap_m: -4.001021174609962e-19 }]
+HAIR SEGMENT PAIR frame=48 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03139247252327697, 0.7371806948872256, -0.058975297910953545] b=[-0.029965917673300042, 0.7238444464142332, -0.059736784695720795] c=[-0.03108301886265621, 0.7386217447360295, -0.059027508870972425] d=[-0.030161719857913008, 0.7231794797011077, -0.059824350543890265]
+HAIR CONTACT TRACE frame=48 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6410531481524324, normal: [0.11532158399825272, -0.04432582856456549, 0.9923387290568672], target: [-0.030477975045637557, 0.7286314508191232, -0.05946345141200026], surface_velocity: [0.0, 0.0, 0.0], gap_m: 7.285835275760943e-18 }]
+HAIR SEGMENT PAIR frame=48 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03139247252318153, 0.7371806948872729, -0.058975297911175714] b=[-0.029965917673276134, 0.7238444464142886, -0.05973678469621287] c=[-0.031083018862241015, 0.7386217447361239, -0.059027508871288124] d=[-0.03016171985738886, 0.7231794797012185, -0.059824350544403604]
+HYBRID HAIR FRAME frame=48 max_position_error_m=0.0000000001878986133352356 max_quaternion_component_error=0.000000002056824377483224
+HAIR CONTACT TRACE frame=49 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 6 }, segment: 7, fraction: 0.2355718693994201, normal: [-0.7370665684881716, 0.06536688352958923, -0.6726515027521313], target: [-0.030753068636012633, 0.6898519642909885, -0.06109462577517296], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.557213359428197e-18 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6321276648314573, normal: [0.09423257808045146, -0.04090066772765992, 0.9947096845852779], target: [-0.030820496931292383, 0.7247263722727257, -0.05900722728720299], surface_velocity: [0.0, 0.0, 0.0], gap_m: 3.269349307959533e-19 }]
+HAIR SEGMENT PAIR frame=49 native rod=153 segment=7 other_rod=151 other_segment=6 a=[-0.03068398365907865, 0.693009541037448, -0.060863479745022854] b=[-0.030977248627897358, 0.6796056624058029, -0.06184469210598684] c=[-0.030478491960226048, 0.6939410870645502, -0.06087919189407439] d=[-0.03121045458976382, 0.6800414813951796, -0.061427869358940415]
+HAIR SEGMENT PAIR frame=49 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.031651407346691265, 0.7331668496685748, -0.05858145482455468] b=[-0.030336941200647134, 0.7198143611358991, -0.059255009371106344] c=[-0.03135686701350064, 0.7346024139569631, -0.05863075539711807] d=[-0.030529205841693358, 0.7191507843678479, -0.05934450597647956]
+HAIR CONTACT TRACE frame=49 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 6 }, segment: 7, fraction: 0.235571870363417, normal: [-0.7370665700058179, 0.0653668834879541, -0.6726515010931969], target: [-0.03075306863674806, 0.6898519642781447, -0.06109462577560117], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.6321276651548512, normal: [0.09423257800707727, -0.04090066774153971, 0.9947096845916583], target: [-0.030820496930593477, 0.7247263722685173, -0.05900722728800379], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.90218496657054e-18 }]
+HAIR SEGMENT PAIR frame=49 external rod=153 segment=7 other_rod=151 other_segment=6 a=[-0.030683983659224187, 0.693009541037527, -0.06086347974461692] b=[-0.030977248629346876, 0.6796056624058756, -0.06184469210510658] c=[-0.03047849196052825, 0.6939410870644432, -0.06087919189407309] d=[-0.031210454588851043, 0.680041481395017, -0.061427869359143544]
+HAIR SEGMENT PAIR frame=49 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.031651407346501834, 0.7331668496686727, -0.05858145482507025] b=[-0.03033694120032421, 0.7198143611360157, -0.059255009371728534] c=[-0.031356867013121154, 0.7346024139570932, -0.058630755397607204] d=[-0.03052920584116923, 0.7191507843679938, -0.05934450597714296]
+HYBRID HAIR FRAME frame=49 max_position_error_m=0.00000000021071787370541273 max_quaternion_component_error=0.0000000025155356686568098
+HAIR CONTACT TRACE frame=50 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 6 }, segment: 7, fraction: 0.19189565279519796, normal: [-0.7676418277159247, 0.0659111111314479, -0.6374807838440093], target: [-0.03122528443634546, 0.6865912560605314, -0.06050637983803415], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.5076581922317663e-17 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5966064763322257, normal: [0.08431532449032599, -0.0362914423956977, 0.9957780160582632], target: [-0.031184604835310804, 0.7213626565597645, -0.05853494243149567], surface_velocity: [0.0, 0.0, 0.0], gap_m: -2.8804385108154034e-18 }]
+HAIR SEGMENT PAIR frame=50 native rod=153 segment=7 other_rod=151 other_segment=6 a=[-0.03116038909151187, 0.6891632359792007, -0.060318600572902135] b=[-0.03149856947177749, 0.6757602230333352, -0.06129714939564399] c=[-0.03096723884734333, 0.6901202046471413, -0.060326750368736165] d=[-0.031740539979587055, 0.6762212141666536, -0.06083261598821977]
+HAIR SEGMENT PAIR frame=50 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.031908470949253434, 0.7293369079376705, -0.058183026557503785] b=[-0.03069516512261749, 0.7159708924915601, -0.058772889202232975] c=[-0.03163632012548872, 0.7307659811143004, -0.05823432650319635] d=[-0.030904505337433896, 0.7153056887711972, -0.05885974652682115]
+HAIR CONTACT TRACE frame=50 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 6 }, segment: 7, fraction: 0.19189565292337224, normal: [-0.7676418287660438, 0.06591111108983724, -0.6374807825837788], target: [-0.031225284436674265, 0.6865912560589342, -0.0605063798377218], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.7601189131241432e-18 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5966064768357004, normal: [0.08431532394869888, -0.03629144243177863, 0.9957780161028094], target: [-0.031184604834372326, 0.7213626565531832, -0.0585349424322093], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=50 external rod=153 segment=7 other_rod=151 other_segment=6 a=[-0.031160389091706393, 0.6891632359793197, -0.06031860057247231] b=[-0.03149856947244582, 0.6757602230334633, -0.061297149395172716] c=[-0.030967238847701806, 0.6901202046469567, -0.060326750368535104] d=[-0.03174053997919293, 0.6762212141664184, -0.0608326159877777]
+HAIR SEGMENT PAIR frame=50 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.03190847094895766, 0.7293369079378214, -0.058183026558046774] b=[-0.030695165122268355, 0.7159708924917065, -0.058772889202564196] c=[-0.031636320124930076, 0.7307659811144287, -0.05823432650356186] d=[-0.030904505336702064, 0.7153056887713392, -0.058859746527318284]
+HYBRID HAIR FRAME frame=50 max_position_error_m=0.00000000022956368750381984 max_quaternion_component_error=0.0000000025155356686568098
+HAIR CONTACT TRACE frame=51 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.45707389618109995, normal: [0.8654074758941173, 0.13193241417546758, -0.4833877726591826], target: [-0.03384559194563622, 0.746251547810838, -0.05543661181077617], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.004970658877432e-18 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5173951167286869, normal: [0.081421075790503, -0.0308362017975555, 0.9962026586371958], target: [-0.031562803217116214, 0.7188145779266301, -0.05805781864910992], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.0336050677837187e-17 }]
+HAIR SEGMENT PAIR frame=51 native rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.03425681403553442, 0.7523096345632712, -0.0545193702817941] b=[-0.03335712999465175, 0.7390555703888586, -0.05652613885170308] c=[-0.033635880008748474, 0.7547537961736934, -0.05257512356337436] d=[-0.034053541858913676, 0.7420076313018512, -0.05680170955936758]
+HAIR SEGMENT PAIR frame=51 native rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.032143416126198025, 0.7257359906539625, -0.057796120685344496] b=[-0.03102123137742647, 0.7123585688276912, -0.05830191974549035] c=[-0.03191215367401479, 0.7271561812188572, -0.05785136682860535] d=[-0.03127623369255793, 0.7116881103656563, -0.05838213618429688]
+HAIR CONTACT TRACE frame=51 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.4570738963248129, normal: [0.8654074758518431, 0.13193241419210258, -0.48338777273032574], target: [-0.033845591945713994, 0.7462515478089966, -0.05543661181125007], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.650794189162346e-18 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 4 }, segment: 4, fraction: 0.5173951179466179, normal: [0.08142107514979266, -0.030836201837804788, 0.9962026586883163], target: [-0.031562803215754685, 0.7188145779104297, -0.05805781864990675], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=51 external rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.03425681403575717, 0.7523096345633238, -0.05451937028191608] b=[-0.033357129994840175, 0.7390555703889345, -0.05652613885196403] c=[-0.03363588000874847, 0.7547537961736934, -0.05257512356337436] d=[-0.03405354185893671, 0.7420076313017885, -0.0568017095591745]
+HAIR SEGMENT PAIR frame=51 external rod=153 segment=4 other_rod=154 other_segment=4 a=[-0.032143416126201016, 0.7257359906540596, -0.05779612068564244] b=[-0.031021231377433765, 0.7123585688277795, -0.05830191974556189] c=[-0.031912153673306756, 0.7271561812189411, -0.05785136682875485] d=[-0.03127623369178456, 0.7116881103657486, -0.058382136184618114]
+HYBRID HAIR FRAME frame=51 max_position_error_m=0.0000000002443793223338986 max_quaternion_component_error=0.0000000025155356686568098
+HAIR CONTACT TRACE frame=52 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.44499082794302863, normal: [0.8547004097242166, 0.12924291609406666, -0.5027757733391284], target: [-0.03390969122570366, 0.7431266182815411, -0.05530332950248972], surface_velocity: [0.0, 0.0, 0.0], gap_m: 7.923778856662762e-17 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 2 }, segment: 1, fraction: 0.7064746754466915, normal: [-0.8853081661869581, -0.13523575619761535, 0.44490531703761915], target: [-0.03418100237884919, 0.752645436367903, -0.05311647483765115], surface_velocity: [0.0, 0.0, 0.0], gap_m: -1.5014185028318678e-17 }]
+HAIR SEGMENT PAIR frame=52 native rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.034289832658567214, 0.7490291686177107, -0.054432253761292515] b=[-0.033435564640008686, 0.7357647371608779, -0.05638976768404861] c=[-0.03365674458169183, 0.7514999782602271, -0.0525617672902288] d=[-0.034146535705668765, 0.738720732179313, -0.05667941140337921]
+HAIR SEGMENT PAIR frame=52 native rod=153 segment=1 other_rod=154 other_segment=2 a=[-0.03391906301583316, 0.7613492904187704, -0.04994957777534909] b=[-0.034289832658567214, 0.7490291686177107, -0.054432253761292515] c=[-0.034217159927672804, 0.7543939455864207, -0.05283675151590933] d=[-0.03327929177868716, 0.7391603421709494, -0.05560099257869352]
+HAIR CONTACT TRACE frame=52 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.44499082798943806, normal: [0.8547004097351344, 0.1292429160829628, -0.5027757733234227], target: [-0.0339096912257741, 0.7431266182809559, -0.05530332950267482], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.140023469640963e-17 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 2 }, segment: 1, fraction: 0.7064746753803453, normal: [-0.8853081661659389, -0.13523575621285, 0.4449053170748139], target: [-0.03418100237885703, 0.7526454363687444, -0.053116474837417056], surface_velocity: [0.0, 0.0, 0.0], gap_m: -1.1927034237543725e-17 }]
+HAIR SEGMENT PAIR frame=52 external rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.03428983265861314, 0.7490291686177446, -0.05443225376138213] b=[-0.03343556464019879, 0.735764737160904, -0.05638976768414864] c=[-0.03365674458169183, 0.7514999782602271, -0.05256176729022881] d=[-0.034146535705743275, 0.7387207321793144, -0.056679411403375804]
+HAIR SEGMENT PAIR frame=52 external rod=153 segment=1 other_rod=154 other_segment=2 a=[-0.03391906301583316, 0.7613492904187704, -0.04994957777534909] b=[-0.03428983265861314, 0.7490291686177446, -0.05443225376138213] c=[-0.0342171599276481, 0.7543939455863985, -0.052836751515837777] d=[-0.033279291778496076, 0.7391603421709331, -0.05560099257859757]
+HYBRID HAIR FRAME frame=52 max_position_error_m=0.00000000031679490974934055 max_quaternion_component_error=0.0000000029496498576975227
+HAIR CONTACT TRACE frame=53 native rod=153 []
+HAIR CONTACT TRACE frame=53 external rod=153 []
+HYBRID HAIR FRAME frame=53 max_position_error_m=0.0000000003819600052912264 max_quaternion_component_error=0.0000000029564181658336963
+HAIR CONTACT TRACE frame=54 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.45038568723745065, normal: [0.8360444596327045, 0.12829817880523112, -0.5334503152428726], target: [-0.03400766859434955, 0.7374358839216256, -0.05520637029421569], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.175076123363018e-16 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 11 }, segment: 10, fraction: 0.02027479903171132, normal: [0.856979122641738, -0.0539207315006212, 0.5125225244519841], target: [-0.034105682666220785, 0.6360626774869369, -0.060832637740926954], surface_velocity: [0.0, 0.0, 0.0], gap_m: 9.542743182197077e-18 }]
+HAIR SEGMENT PAIR frame=54 native rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.03437686365952442, 0.7434142349939726, -0.054347156131287884] b=[-0.033557132758571646, 0.7301403871747478, -0.05625488585555673] c=[-0.033698460129403696, 0.7459045304388825, -0.05253503632293791] d=[-0.03426715433195182, 0.7330834470502532, -0.0565098681409073]
+HAIR SEGMENT PAIR frame=54 native rod=153 segment=10 other_rod=155 other_segment=11 a=[-0.034101503199391, 0.6363343406108228, -0.060811045404947674] b=[-0.03430764417387116, 0.6229352867676239, -0.06187602937571387] c=[-0.034157854695012195, 0.6407452308874837, -0.06040885725568296] d=[-0.03420500131497443, 0.6272850124439627, -0.06174612756660618]
+HAIR CONTACT TRACE frame=54 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.45038568720907024, normal: [0.8360444595991854, 0.1282981788149795, -0.5334503152930606], target: [-0.03400766859431244, 0.737435883921926, -0.055206370293963164], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.138060571957162e-16 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 11 }, segment: 10, fraction: 0.020274810279218927, normal: [0.8569791534479902, -0.05392072704029969, 0.51252247341069], target: [-0.034105682665925785, 0.6360626773361991, -0.06083263775472659], surface_velocity: [0.0, 0.0, 0.0], gap_m: 5.9864032664668986e-18 }]
+HAIR SEGMENT PAIR frame=54 external rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.03437686365947987, 0.7434142349938921, -0.05434715613106797] b=[-0.03355713275849198, 0.7301403871746766, -0.0562548858553846] c=[-0.033698460129403696, 0.7459045304388825, -0.05253503632293791] d=[-0.0342671543319149, 0.7330834470501818, -0.05650986814068198]
+HAIR SEGMENT PAIR frame=54 external rod=153 segment=10 other_rod=155 other_segment=11 a=[-0.03410150319697478, 0.6363343406108045, -0.06081104540690313] b=[-0.03430764416172089, 0.6229352867669411, -0.061876029371048503] c=[-0.03415785469449872, 0.6407452308871382, -0.06040885724944687] d=[-0.03420500132066013, 0.6272850124439158, -0.06174612756314718]
+HYBRID HAIR FRAME frame=54 max_position_error_m=0.00000000042815259670980765 max_quaternion_component_error=0.0000000029564181658336963
+HAIR CONTACT TRACE frame=55 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.44868261260305414, normal: [0.8517706099393094, 0.11848576974281694, -0.5103410138447322], target: [-0.03402493624182427, 0.7351675667124754, -0.05515220775948139], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.3154562965891008e-17 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 11 }, segment: 10, fraction: 0.11398283741147322, normal: [0.8757014435715537, -0.049330349187470986, 0.48032644979819655], target: [-0.03451691132430981, 0.6324738462421267, -0.06010489582584155], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=55 native rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.03435864379800855, 0.7411293838021329, -0.05432501929763197] b=[-0.03361489410321146, 0.7278420022049953, -0.05616861305102136] c=[-0.03371916227653094, 0.7436241165143793, -0.052521750764747084] d=[-0.03428609045894062, 0.7307879843455818, -0.05644812883333742]
+HAIR SEGMENT PAIR frame=55 native rod=153 segment=10 other_rod=155 other_segment=11 a=[-0.03449060759617985, 0.6340019965769004, -0.05999590749727449] b=[-0.03472137679553755, 0.6205951506913473, -0.06095208941941445] c=[-0.034566941984683665, 0.6383434566203864, -0.05957741737619442] d=[-0.03461290817359658, 0.6248794821072452, -0.06087638791270189]
+HAIR CONTACT TRACE frame=55 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.4486826125951808, normal: [0.8517706098568351, 0.11848576978030065, -0.510341013973681], target: [-0.03402493624175241, 0.7351675667125117, -0.055152207759259816], surface_velocity: [0.0, 0.0, 0.0], gap_m: -7.244217077789601e-18 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 11 }, segment: 10, fraction: 0.11398285254078126, normal: [0.8757014569679903, -0.049330347258455545, 0.4803264255727546], target: [-0.03451691132614604, 0.6324738460393834, -0.06010489584229239], surface_velocity: [0.0, 0.0, 0.0], gap_m: -3.332934106292336e-18 }]
+HAIR SEGMENT PAIR frame=55 external rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.034358643798081505, 0.7411293838020522, -0.054325019297396644] b=[-0.03361489410294861, 0.727842002204942, -0.05616861305084903] c=[-0.033719162276530934, 0.7436241165143793, -0.052521750764747084] d=[-0.0342860904588282, 0.7307879843454839, -0.05644812883303119]
+HAIR SEGMENT PAIR frame=55 external rod=153 segment=10 other_rod=155 other_segment=11 a=[-0.034490607594971474, 0.6340019965770406, -0.05999590749981341] b=[-0.034721376790409465, 0.6205951506910735, -0.060952089417088955] c=[-0.03456694198449747, 0.6383434566198539, -0.05957741737113863] d=[-0.03461290817892669, 0.624879482106742, -0.060876387907746375]
+HYBRID HAIR FRAME frame=55 max_position_error_m=0.0000000004595328562118084 max_quaternion_component_error=0.0000000029564181658336963
+HAIR CONTACT TRACE frame=56 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.4435106711140971, normal: [0.8508624338280311, 0.11540765410543151, -0.5125565257355723], target: [-0.03405686683452034, 0.7333222539221874, -0.055082397010618206], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.8716867635735594e-17 }, HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 9 }, segment: 10, fraction: 0.0664698163909695, normal: [-0.7679356020908635, 0.05371082458654201, -0.6382711479955651], target: [-0.03480957472998672, 0.6311616715141395, -0.059273030175043255], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.5086143113749534e-17 }]
+HAIR SEGMENT PAIR frame=56 native rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.03437567220789832, 0.7392185988203375, -0.054283999573389315] b=[-0.033656849879278465, 0.7259238907508823, -0.05608417595972816] c=[-0.03373986220291989, 0.7417234428377393, -0.05250845878024363] d=[-0.034328302317349076, 0.7288712788146391, -0.05637909467774276]
+HAIR SEGMENT PAIR frame=56 native rod=153 segment=10 other_rod=151 other_segment=9 a=[-0.03479318751308261, 0.6320533530285622, -0.05921771101759901] b=[-0.035039723727471, 0.6186385196073598, -0.06004995579346639] c=[-0.03473672135220939, 0.6315816812367667, -0.05920000107737036] d=[-0.035110947268038865, 0.6176756419189453, -0.0599199512677265]
+HAIR CONTACT TRACE frame=56 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 1 }, segment: 2, fraction: 0.44351067112157416, normal: [0.8508624337565921, 0.11540765414150629, -0.512556525846041], target: [-0.034056866834489226, 0.733322253922058, -0.05508239701057714], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.3017194859859208e-17 }, HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 9 }, segment: 10, fraction: 0.06646983860237499, normal: [-0.7679355733447821, 0.05371082576616153, -0.6382711824821311], target: [-0.03480957473683694, 0.6311616712163093, -0.05927303019671477], surface_velocity: [0.0, 0.0, 0.0], gap_m: 4.428896017164918e-18 }]
+HAIR SEGMENT PAIR frame=56 external rod=153 segment=2 other_rod=151 other_segment=1 a=[-0.034375672207985944, 0.7392185988202896, -0.05428399957324726] b=[-0.033656849879110495, 0.7259238907508746, -0.05608417595978348] c=[-0.033739862202919885, 0.7417234428377393, -0.05250845878024363] d=[-0.03432830231728542, 0.7288712788145985, -0.05637909467761788]
+HAIR SEGMENT PAIR frame=56 external rod=153 segment=10 other_rod=151 other_segment=9 a=[-0.03479318751471971, 0.632053353028717, -0.05921771102107048] b=[-0.03503972372515438, 0.6186385196071738, -0.06004995579264594] c=[-0.034736721353309755, 0.6315816812366246, -0.059200001080797905] d=[-0.035110947270312505, 0.6176756419189464, -0.059919951273378694]
+HYBRID HAIR FRAME frame=56 max_position_error_m=0.000000000477519621067124 max_quaternion_component_error=0.0000000029564181658336963
+HAIR CONTACT TRACE frame=57 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 9 }, segment: 10, fraction: 0.7100195540445324, normal: [-0.7330060270399827, 0.050784523981614524, -0.6783237401470046], target: [-0.035198034802137304, 0.6209710692064245, -0.059087063680078405], surface_velocity: [0.0, 0.0, 0.0], gap_m: 5.104497611736479e-13 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 10 }, segment: 10, fraction: 0.9595264017438391, normal: [0.9809002321117309, -0.02906048363902336, 0.19232842466421432], target: [-0.03526154027000717, 0.6176225253218653, -0.05926913650425784], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.415813976597447e-12 }]
+HAIR SEGMENT PAIR frame=57 native rod=153 segment=10 other_rod=151 other_segment=9 a=[-0.03501731783043656, 0.6304999925911374, -0.05856894056659506] b=[-0.03527184176720067, 0.6170793433563286, -0.05929867133369601] c=[-0.03488583107480618, 0.6300659319900732, -0.0586255862979975] d=[-0.03527347652122899, 0.6161555679015094, -0.05924812793272627]
+HAIR SEGMENT PAIR frame=57 native rod=153 segment=10 other_rod=154 other_segment=10 a=[-0.03501731783043656, 0.6304999925911374, -0.05856894056659506] b=[-0.03527184176720067, 0.6170793433563286, -0.05929867133369601] c=[-0.03532090231104475, 0.619208592705957, -0.05914268549583527] d=[-0.03550742690101165, 0.6037503379629746, -0.060527100440847234]
+HAIR CONTACT TRACE frame=57 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 9 }, segment: 10, fraction: 0.7062964361913506, normal: [-0.7310177343628949, 0.050843137032631165, -0.6804616429040077], target: [-0.03519688894334983, 0.6210210376843714, -0.05908467231194429], surface_velocity: [0.0, 0.0, 0.0], gap_m: 4.999528553638925e-13 }, HairContactDiagnostic { source: Strand { other_rod: 154, other_segment: 10 }, segment: 10, fraction: 0.9599743067078694, normal: [0.9809894860702947, -0.029024842834237667, 0.191878051683841], target: [-0.03526142436240648, 0.6176165118289975, -0.059269723508538374], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.336904182934078e-12 }]
+HAIR SEGMENT PAIR frame=57 external rod=153 segment=10 other_rod=151 other_segment=9 a=[-0.0350172077814692, 0.6305000059276331, -0.058569448024709696] b=[-0.035271606859588606, 0.6170793403861916, -0.0592989211767379] c=[-0.03488616378615949, 0.6300659345623576, -0.05862509412012906] d=[-0.035273920706220374, 0.6161555851352627, -0.0592478898667053]
+HAIR SEGMENT PAIR frame=57 external rod=153 segment=10 other_rod=154 other_segment=10 a=[-0.0350172077814692, 0.6305000059276331, -0.058569448024709696] b=[-0.035271606859588606, 0.6170793403861916, -0.0592989211767379] c=[-0.03532071475257146, 0.6192085902694842, -0.05914269973542009] d=[-0.03550729988467997, 0.6037503347132881, -0.06052709666263353]
+HYBRID HAIR FRAME frame=57 max_position_error_m=0.000000507458114633319 max_quaternion_component_error=0.000006691295552196941
+HAIR CONTACT TRACE frame=58 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 10 }, segment: 11, fraction: 0.22231229648928866, normal: [-0.4565755956905025, 0.05814956706288868, -0.8877822668144829], target: [-0.03543823128774309, 0.6129443848788757, -0.058760741765026665], surface_velocity: [0.0, 0.0, 0.0], gap_m: 1.2496486194415234e-17 }]
+HAIR SEGMENT PAIR frame=58 native rod=153 segment=11 other_rod=151 other_segment=10 a=[-0.035411592546497596, 0.6159272698797617, -0.05857906335324444] b=[-0.035531418312621084, 0.6025097259652273, -0.05939628495839745] c=[-0.0353517059839753, 0.6150576672659565, -0.05857670890034275] d=[-0.03567999372611976, 0.6011516226438216, -0.05931871775489198]
+HAIR CONTACT TRACE frame=58 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 10 }, segment: 11, fraction: 0.21891809915865787, normal: [-0.45332136170797205, 0.05818459690442921, -0.8894460611539629], target: [-0.03543740107667794, 0.6129899102496933, -0.05875834453833196], surface_velocity: [0.0, 0.0, 0.0], gap_m: -3.145548833266371e-18 }]
+HAIR SEGMENT PAIR frame=58 external rod=153 segment=11 other_rod=151 other_segment=10 a=[-0.035411214430579235, 0.6159272598725425, -0.058579539386843175] b=[-0.03553083289154406, 0.6025096866607436, -0.0593963067175297] c=[-0.0353521866388695, 0.6150576982567766, -0.05857656410919348] d=[-0.03568063107874164, 0.6011516720526914, -0.059318852683327615]
+HYBRID HAIR FRAME frame=58 max_position_error_m=0.0000008889810557202726 max_quaternion_component_error=0.000011700420537275047
+HAIR FIRST DIVERGENCE frame=59 rod=153 point=9 error_m=0.0000010338894672057286
+HAIR DIVERGENCE CONTACTS native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 12 }, segment: 11, fraction: 0.32699786704781175, normal: [0.9056281677432844, -0.030542151055471988, 0.4229713924118823], target: [-0.035490472559701586, 0.6108205496788853, -0.058183582831096405], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.9349536163339623e-18 }]
+HAIR DIVERGENCE NEIGHBOR native point=8 position=[-0.03439741233314659, 0.6554951595362553, -0.05648321354410182] body_distance_m=0.03966215631887834 body_normal=[-0.2826174640076188, -0.5305389516012503, -0.799159427068059]
+HAIR DIVERGENCE NEIGHBOR native point=9 position=[-0.03487758805791486, 0.6420653268019628, -0.05683210140722333] body_distance_m=0.04726601353962968 body_normal=[-0.27022992798737744, -0.5148826686368327, -0.8135549296497135]
+HAIR DIVERGENCE NEIGHBOR native point=10 position=[-0.035229133086422504, 0.6286356528673565, -0.05731317253087256] body_distance_m=0.04909392740295726 body_normal=[-0.29655516561228923, 0.1902873130541853, -0.935866321778536]
+HAIR DIVERGENCE CONTACTS external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 12 }, segment: 11, fraction: 0.3283693919445353, normal: [0.9060601487754532, -0.03045516409616586, 0.4220515250308653], target: [-0.03549031007338257, 0.6108021248429263, -0.05818513755686592], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR DIVERGENCE NEIGHBOR external point=8 position=[-0.03439736659912017, 0.6554951688842086, -0.05648419099339047] body_distance_m=0.03966291957200392 body_normal=[-0.2826174640076188, -0.5305389516012503, -0.799159427068059]
+HAIR DIVERGENCE NEIGHBOR external point=9 position=[-0.03487753829716025, 0.6420653374580667, -0.05683313529669053] body_distance_m=0.047266825214105725 body_normal=[-0.27022992798737744, -0.5148826686368327, -0.8135549296497135]
+HAIR DIVERGENCE NEIGHBOR external point=10 position=[-0.03522906474446092, 0.62863565896089, -0.05731409522156245] body_distance_m=0.04909477181045976 body_normal=[-0.29655516561228923, 0.1902873130541853, -0.935866321778536]
+HAIR CONTACT TRACE frame=59 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 12 }, segment: 11, fraction: 0.32699786704781175, normal: [0.9056281677432844, -0.030542151055471988, 0.4229713924118823], target: [-0.035490472559701586, 0.6108205496788853, -0.058183582831096405], surface_velocity: [0.0, 0.0, 0.0], gap_m: 2.9349536163339623e-18 }]
+HAIR SEGMENT PAIR frame=59 native rod=153 segment=11 other_rod=155 other_segment=12 a=[-0.03546143387738358, 0.6152088812949525, -0.0579288827724844] b=[-0.03555023776647367, 0.601788819397651, -0.058707787114923936] c=[-0.03566292208845277, 0.6192884924010402, -0.05739202968469577] d=[-0.035503903732936895, 0.6058266969949904, -0.058704562164844]
+HAIR CONTACT TRACE frame=59 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 12 }, segment: 11, fraction: 0.3283693919445353, normal: [0.9060601487754532, -0.03045516409616586, 0.4220515250308653], target: [-0.03549031007338257, 0.6108021248429263, -0.05818513755686592], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }]
+HAIR SEGMENT PAIR frame=59 external rod=153 segment=11 other_rod=155 other_segment=12 a=[-0.03546124599591873, 0.6152088730709652, -0.0579295421338666] b=[-0.03554975630831942, 0.6017887787011974, -0.05870791986720447] c=[-0.03566296846569366, 0.619288473914278, -0.05739165140099461] d=[-0.03550401876947104, 0.6058266875400936, -0.058704284730373174]
+HYBRID HAIR FRAME frame=59 max_position_error_m=0.0000010338894672057286 max_quaternion_component_error=0.00001532346649985028
+HAIR CONTACT TRACE frame=60 native rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 10 }, segment: 11, fraction: 0.6793952553826326, normal: [-0.7147525808792647, 0.041926168226067054, -0.6981195775397719], target: [-0.035478671129530084, 0.605821240168218, -0.05781805754583394], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 12 }, segment: 11, fraction: 0.6183836802268297, normal: [0.9222101743096252, -0.024884617680845607, 0.38588748386374117], target: [-0.03547601506422501, 0.6066400939925615, -0.05777159992648065], surface_velocity: [0.0, 0.0, 0.0], gap_m: 6.811553269442585e-14 }]
+HAIR SEGMENT PAIR frame=60 native rod=153 segment=11 other_rod=151 other_segment=10 a=[-0.0354490944761766, 0.6149395984746393, -0.05730072807020159] b=[-0.035492628270560884, 0.6015183120670887, -0.05806218389659089] c=[-0.03526197971535992, 0.6141482844725369, -0.05742523041189495] d=[-0.03552843959993309, 0.600232541324899, -0.057988143859153206]
+HAIR SEGMENT PAIR frame=60 native rod=153 segment=11 other_rod=155 other_segment=12 a=[-0.0354490944761766, 0.6149395984746393, -0.05730072807020159] b=[-0.035492628270560884, 0.6015183120670887, -0.05806218389659089] c=[-0.03573256780630788, 0.6189879444975769, -0.056569521322556535] d=[-0.03553332474806827, 0.6055297890570578, -0.05791355306748911]
+HAIR CONTACT TRACE frame=60 external rod=153 [HairContactDiagnostic { source: Strand { other_rod: 151, other_segment: 10 }, segment: 11, fraction: 0.676930078586612, normal: [-0.7133811858112648, 0.04197019889684777, -0.6995182528962863], target: [-0.03547816740656361, 0.6058543280307424, -0.05781675841347801], surface_velocity: [0.0, 0.0, 0.0], gap_m: 0.0 }, HairContactDiagnostic { source: Strand { other_rod: 155, other_segment: 12 }, segment: 11, fraction: 0.6200335174139819, normal: [0.9224219398749679, -0.024833333808790513, 0.3853843151572755], target: [-0.035475699730296725, 0.6066179544751125, -0.057773458385578395], surface_velocity: [0.0, 0.0, 0.0], gap_m: 7.04804831301889e-14 }]
+HAIR SEGMENT PAIR frame=60 external rod=153 segment=11 other_rod=151 other_segment=10 a=[-0.03544880808679377, 0.6149396171649779, -0.05730159386393094] b=[-0.03549217936057604, 0.6015183061291246, -0.05806262453141539] c=[-0.035262238071548616, 0.6141482513529652, -0.05742497780550205] d=[-0.035528667155290614, 0.6002325199035315, -0.05798819473288229]
+HAIR SEGMENT PAIR frame=60 external rod=153 segment=11 other_rod=155 other_segment=12 a=[-0.03544880808679377, 0.6149396171649779, -0.05730159386393094] b=[-0.03549217936057604, 0.6015183061291246, -0.05806262453141539] c=[-0.035732599787728636, 0.6189879319010784, -0.056569055379064856] d=[-0.035533353873910115, 0.6055297844088574, -0.057913166831140436]
+HYBRID HAIR FRAME frame=60 max_position_error_m=0.0000011232018305579183 max_quaternion_component_error=0.00001532346649985028
+HYBRID FULL HAIR guides=469 frames=60 calls=720 position_error_m=0.0000011232018305579183 quaternion_component_error=0.00001532346649985028 native_ms=88520.66608499998 hybrid_ms=227016.10866299993 solver_bridge_ms=146741.14180000042
+HYBRID LINEAR AUDIT max_errors=[0.0, 0.0] packing_errors=[8.881784197001252e-16, 4.85722573273506e-17] stage_errors=[[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]] enabled=false
+HYBRID RESIDUAL REFINEMENT DISPATCHES 720
+HYBRID REUSED FACTOR DISPATCHES 0
+HYBRID CONTACT RESPONSE CALLS 7601 DISPATCHES 63892 SUBMISSIONS 15602
+
+thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (22664329) panicked at crates/voxy_app/src/female_hair.rs:877:9:
+GPU position drift 0.0000011232018305579183
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED
+
+failures:
+
+failures:
+    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 307 filtered out; finished in 317.95s
+
+error: test failed, to rerun pass `-p voxy_app --lib`

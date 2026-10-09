@@ -1,0 +1,27 @@
+{
+  "metal": {
+    "frames": 30,
+    "guides": 469,
+    "calls": 360,
+    "passed": true,
+    "position_error_m": 4.069722406296883e-10,
+    "quaternion_component_error": 5.936480140800171e-09,
+    "native_total_ms": 48400.788044,
+    "hybrid_total_ms": 54092.232248
+  },
+  "dense_contact_audit": {
+    "rows": 36,
+    "normalized_rank": 33,
+    "relative_symmetry_error": 8.747099028113843e-16,
+    "independent_projected_gradient_residual_m": 1.2628316907188202e-12,
+    "iterations": 100000,
+    "production_solver_converged": false,
+    "extra_pcg_iterations_fixed_issue": false,
+    "active_boundary_experiment_fixed_issue": false
+  },
+  "failed_experiments_reverted": true,
+  "temporary_export_instrumentation_removed": true,
+  "runtime_qualified": false,
+  "fps_measured": false,
+  "defaults_changed": false
+}

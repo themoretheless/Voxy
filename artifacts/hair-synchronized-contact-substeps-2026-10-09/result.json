@@ -1,0 +1,25 @@
+{
+  "backend": "native CPU control, not GPU arithmetic",
+  "guides": 469,
+  "segments_per_guide": 20,
+  "full_body_contacts": true,
+  "self_contacts": true,
+  "joint_positions": true,
+  "position_projection_tolerance_m": 1e-11,
+  "sampled_collider_motion": true,
+  "frames": 30,
+  "passed": true,
+  "native_external_state_error": 0,
+  "without_sampled_motion_failure_frame": 13,
+  "native_total_ms": 62771.056539,
+  "external_native_total_ms": 64560.838669,
+  "qualified_for_runtime": false,
+  "fps_measured": false,
+  "defaults_changed": false,
+  "remaining": [
+    "120-frame native validation",
+    "actual GPU trajectory validation",
+    "dense joint-contact integration convergence",
+    "runtime performance and visual review"
+  ]
+}

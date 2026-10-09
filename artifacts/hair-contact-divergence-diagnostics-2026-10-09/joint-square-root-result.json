@@ -1,0 +1,28 @@
+{
+  "unit_tests": {
+    "passed": 111,
+    "failed": 0,
+    "ignored": 5
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "implemented": "joint native square-root projection across independent local compliance systems; single-system API delegates to joint owner",
+  "validation": [
+    "local canonical force balance",
+    "global original inequality complementarity",
+    "nonnegative reactions",
+    "exact fixed DOFs"
+  ],
+  "regressions": [
+    "paired equal and opposite displacement/reaction for a joint contact",
+    "fixed roots remain zero",
+    "opening contact produces no motion or reaction",
+    "inconsistent global load count rejects"
+  ],
+  "hair_system_runtime_integration": false,
+  "gpu_fallback_introduced": false,
+  "render_fps_measured": false,
+  "full_model_new_qualification_run": false
+}

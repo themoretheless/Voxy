@@ -1,0 +1,59 @@
+{
+  "scope": "exact rational sufficient certificate for traced binary endpoints and physical clearance threshold; no full-model qualification",
+  "rows": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(111,8) b=(132,13)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 103
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(131,1)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 100
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(135,2)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 86
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(132,6) b=(233,19)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 106
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(137,0) b=(201,16)",
+      "certified": false,
+      "reason": "line lower bound below threshold",
+      "visited": 1
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(137,0) b=(201,17)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 95
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,17)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 89
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(106,0) b=(113,1)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 89
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(106,0) b=(136,2)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 89
+    }
+  ]
+}

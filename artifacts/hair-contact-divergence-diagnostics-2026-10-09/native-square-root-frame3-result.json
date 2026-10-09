@@ -1,0 +1,18 @@
+{
+  "scope": "checkpoint before localized witness change",
+  "full_model_failed_frame": 3,
+  "full_model_duration_s": 32.18,
+  "fixture_bytes": 938704,
+  "replay_failure_duration_s": 0.47,
+  "guides": 469,
+  "initial_coarse_samples": 33,
+  "initial_sampled_penetrating_pairs": 0,
+  "localized_pair149_202_gap_m": -1.361487741558231e-07,
+  "localized_pair149_202_time": 0.005442939708614939,
+  "reduced_pair385_393_scale": 0.309362663505,
+  "reduced_pair385_393_end_gap_m": -8.46954072505346e-06,
+  "stall_minimum_scale": 1.744e-321,
+  "stall_minimum_next_scale": 0.0,
+  "interpretation": "real between-sample collisions restrict initial motion; later group reductions create root-adjacent collisions and eventually underflow",
+  "continuous_admission_gate_relaxed": false
+}

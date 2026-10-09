@@ -1,0 +1,25 @@
+{
+  "rows": 91,
+  "coordinates": 882,
+  "systems": 7,
+  "defect_refinement": 0,
+  "bytes": 1356348,
+  "tolerance": 1e-14,
+  "maximum_numeric_bound_shift": 0.0,
+  "original_load_feasibility": {
+    "status": 0,
+    "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "scope": "numerical linear feasibility; no energy, force-balance or continuous-geometry proof",
+    "minimum_exact_gap": -6.94863010559121e-20,
+    "within_requested_tolerance": true,
+    "maximum_parameter": 9847.168646949214
+  },
+  "whitened_feasibility": {
+    "status": 0,
+    "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "scope": "numerical linear feasibility; no energy, force-balance or continuous-geometry proof",
+    "minimum_exact_gap": -0.0002323942189552357,
+    "within_requested_tolerance": false,
+    "maximum_parameter": 9683306.359454611
+  }
+}

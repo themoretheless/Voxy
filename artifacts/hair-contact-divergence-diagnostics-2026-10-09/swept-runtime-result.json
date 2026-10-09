@@ -1,0 +1,45 @@
+{
+  "scope": "Experimental HairSystem constrained structural step with swept strand guard and transactional initial contact admission",
+  "default_enabled": false,
+  "unit_tests": {
+    "passed": 92,
+    "ignored": 3,
+    "failed": 0
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "release_application_test_build": "passed",
+  "full_model_qualification": {
+    "status": "FAILED",
+    "frames_completed_before_admission_failure": 1,
+    "qualification_passed_frames": 0,
+    "requested_frames": 30,
+    "guides": 469,
+    "adapter": "Apple M4 Max / Metal",
+    "gate": "absolute segment strain <= 0.05",
+    "rod": 390,
+    "segment": 0,
+    "native_signed_strain": -0.07464100414119523,
+    "gpu_signed_strain": -0.07464100411916252,
+    "max_selected_rod_phase_position_delta_m": 1.5322187962851785e-12,
+    "selected_rod_paired_phases": 47
+  },
+  "initial_groom_audit": {
+    "penetrating_pairs": 26,
+    "minimum_gap_m": -7.689852084084912e-05,
+    "independent_reference_decimal_digits": 80
+  },
+  "observed_kinematics": {
+    "root_displacement_m": 0.00022294547973836516,
+    "first_free_node_displacement_m": 5.668063741158781e-08
+  },
+  "incomplete": [
+    "Global swept fraction stalls independent guide motion; replace with verified contact-component step admission and recheck newly created intercomponent crossings",
+    "Moving-mesh continuous collision admission",
+    "Full model long-cycle GPU/native qualification",
+    "Realtime GPU ownership and render FPS"
+  ],
+  "fps_proven": false
+}

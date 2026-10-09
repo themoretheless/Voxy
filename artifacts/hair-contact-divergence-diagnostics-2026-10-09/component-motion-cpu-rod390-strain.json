@@ -1,0 +1,8 @@
+{
+  "rod": 390,
+  "frame": 1,
+  "signed_root_segment_strain": -6.472451175021376e-08,
+  "root_displacement_m": 0.00022294547973836516,
+  "first_free_node_displacement_m": 0.0002230455347360292,
+  "scope": "Native/control first frame; GPU qualification failed separately"
+}

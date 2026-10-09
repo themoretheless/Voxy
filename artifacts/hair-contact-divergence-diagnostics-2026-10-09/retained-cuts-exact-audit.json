@@ -1,0 +1,29 @@
+{
+  "scope": "exact rational sufficient certificate for traced binary endpoints and physical clearance threshold; no full-model qualification",
+  "rows": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,16)",
+      "certified": false,
+      "reason": "line lower bound below threshold",
+      "visited": 1
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,17)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 88
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(131,1)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 89
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(135,2)",
+      "certified": false,
+      "reason": "subdivision depth",
+      "visited": 91
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "implementation": "up to eight original-load defect corrections after whitening/backtransform; factors reused; full unilateral solve repeated with numerical defect compensation; original bounds and original force/complementarity validation remain mandatory",
+  "regression": {
+    "captured_systems": 7,
+    "rows": 88,
+    "coordinates": 882,
+    "passed": true,
+    "seconds": 0.01,
+    "old_native_gap": 1.548414174656898e-14,
+    "new_native_gap": 9.232198339148567e-15,
+    "absolute_tolerance": 1e-14
+  },
+  "independent_audit": {
+    "scope": "100-digit original binary loads, returned response/reactions and unchanged original bounds; no full-animation proof",
+    "rows": 88,
+    "tolerance": 1e-14,
+    "failed_row_new_exact_gap": 8.584505250198136e-15,
+    "max_active_exact_gap_abs": 8.584505250198136e-15,
+    "minimum_inactive_exact_gap": 1.7849081825681185e-07,
+    "nonnegative_reactions": true,
+    "maximum_fixed_response": 0.0,
+    "passed": true
+  },
+  "unit": {
+    "passed": 120,
+    "ignored": 6
+  },
+  "integration": {
+    "passed": 20
+  },
+  "full_model": {
+    "guides": 469,
+    "mode": "native-only paired, no GPU qualification",
+    "passed_frames": [
+      1,
+      2
+    ],
+    "failed_frame": 3,
+    "seconds": 94.5,
+    "error": "native square-root Newton admission failed",
+    "last_completed_refinement": 21,
+    "failed_projection_constraints": 1041
+  },
+  "rejected_experiment": {
+    "local_tolerance_factor": 0.125,
+    "error": "joint square-root active contacts did not converge",
+    "source_reverted": true
+  },
+  "remaining": "original Newton free-plus-response admission and nonlinear angular-trust convergence; local QP admission does not qualify the complete trajectory",
+  "rendered_fps": null,
+  "whole_jump_complete": false,
+  "gpu_qualified": false
+}

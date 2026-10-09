@@ -1,0 +1,9 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+test female_demo::tests::full_secondary_demo_advances_skin_and_all_volume_regions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 307 filtered out; finished in 4.45s
+

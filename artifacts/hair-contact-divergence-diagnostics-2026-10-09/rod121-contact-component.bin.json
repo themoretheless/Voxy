@@ -1,0 +1,156 @@
+{
+  "frame": 111,
+  "substep": 1,
+  "structural_iteration": 1,
+  "iteration": 0,
+  "rod": 121,
+  "before_component_native": [
+    71,
+    93,
+    106,
+    121,
+    122
+  ],
+  "before_component_external": [
+    71,
+    93,
+    106,
+    121,
+    122
+  ],
+  "before_position_delta_all_m": 1.5277905676680525e-09,
+  "before_selected_position_delta_m": 7.73690278510486e-10,
+  "after_component_native": [
+    71,
+    93,
+    106,
+    121,
+    122
+  ],
+  "after_component_external": [
+    71,
+    93,
+    106,
+    121,
+    122
+  ],
+  "after_position_delta_all_m": 1.7184885461526966e-07,
+  "after_selected_position_delta_m": 1.7184885461526966e-07,
+  "pair_ids_native": [
+    [
+      71,
+      13,
+      93,
+      10
+    ],
+    [
+      71,
+      14,
+      93,
+      10
+    ],
+    [
+      71,
+      19,
+      121,
+      14
+    ],
+    [
+      93,
+      0,
+      106,
+      4
+    ],
+    [
+      93,
+      14,
+      106,
+      17
+    ],
+    [
+      93,
+      14,
+      106,
+      18
+    ],
+    [
+      121,
+      12,
+      122,
+      13
+    ],
+    [
+      121,
+      13,
+      122,
+      13
+    ],
+    [
+      121,
+      13,
+      122,
+      14
+    ]
+  ],
+  "pair_ids_external": [
+    [
+      71,
+      13,
+      93,
+      10
+    ],
+    [
+      71,
+      14,
+      93,
+      10
+    ],
+    [
+      71,
+      19,
+      121,
+      14
+    ],
+    [
+      93,
+      0,
+      106,
+      4
+    ],
+    [
+      93,
+      14,
+      106,
+      17
+    ],
+    [
+      93,
+      14,
+      106,
+      18
+    ],
+    [
+      121,
+      12,
+      122,
+      13
+    ],
+    [
+      121,
+      13,
+      122,
+      13
+    ],
+    [
+      121,
+      13,
+      122,
+      14
+    ]
+  ],
+  "pair_topology_equal": true,
+  "selected_delta_increase_m": 1.7107516433675918e-07,
+  "fixture_bytes": 29796,
+  "rest_source": "/tmp/voxy-hair-contact-rest-all.json",
+  "limits": "Fixed contact-connected component replay; other independent components and nonlinear surface re-query are excluded."
+}

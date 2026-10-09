@@ -1,0 +1,160 @@
+{
+  "changes": [
+    "bounded island response-addition defect refinement against original Newton rows; original row/force/complementarity gates preserved",
+    "VJN1 captures original free and rounded Newton candidates plus original entries, bounds and reactions",
+    "VQC1 captures unsolved original/surrogate joint bounds, whitened columns and canonical response systems without implying a solution"
+  ],
+  "original_newton_capture": {
+    "scope": "pointwise original candidate admission; no motion/energy/GPU proof",
+    "rods": 469,
+    "constraints": 1041,
+    "failed_row": 164,
+    "tolerance": 1e-14,
+    "bytes": 1109984,
+    "native_bad_rows": 1,
+    "reference_bad_rows": 1,
+    "maximum_original_angular_norm": 0.060078526395315496,
+    "maximum_candidate_angular_norm": 4118.14342192446,
+    "rows": [
+      {
+        "row": 164,
+        "bound": 2.0085191713620112e-05,
+        "reaction": 0.0008990192381795367,
+        "original_speed": 0.00044023508554902324,
+        "native_candidate_speed": 2.0085191724625306e-05,
+        "native_gap": 1.1005194151814113e-14,
+        "reference_gap": 1.019156555946466e-14,
+        "native_bad": true,
+        "reference_bad": true,
+        "entries": [
+          {
+            "rod": 145,
+            "point": 1,
+            "gradient": [
+              0.3290952885207883,
+              0.47952429371439376,
+              -0.2650406039536319
+            ],
+            "before": [
+              1.4808718666944523e-06,
+              0.0005418159291085147,
+              8.095658691531675e-06
+            ],
+            "after": [
+              0.01091756060889207,
+              0.015585124631747155,
+              -0.008594159666670233
+            ]
+          },
+          {
+            "rod": 200,
+            "point": 17,
+            "gradient": [
+              -0.48225793048340826,
+              -0.7026973693323284,
+              0.38839186586737523
+            ],
+            "before": [
+              0.0003943493624102364,
+              -0.0003817516917494738,
+              0.00023164724325847893
+            ],
+            "after": [
+              22.47208728048216,
+              5.835042794285615,
+              38.344945558970835
+            ]
+          },
+          {
+            "rod": 200,
+            "point": 18,
+            "gradient": [
+              -0.03264924184797155,
+              -0.04757316553460783,
+              0.02629443531965957
+            ],
+            "before": [
+              0.0004448781330021628,
+              -0.00045427374631234037,
+              0.00026414340209278045
+            ],
+            "after": [
+              32.61862149524886,
+              -0.609724551044867,
+              40.593730842201374
+            ]
+          },
+          {
+            "rod": 0,
+            "point": 0,
+            "gradient": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "before": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "after": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "unit": {
+    "passed": 121,
+    "ignored": 6
+  },
+  "integration": {
+    "passed": 20
+  },
+  "full_model": {
+    "guides": 469,
+    "mode": "native-only paired, not GPU",
+    "passed_frames": [
+      1,
+      2
+    ],
+    "failed_frame": 3,
+    "seconds": 31.38,
+    "completed_refinements": 22,
+    "constraints_at_next_failure": 1044,
+    "error": "joint square-root active contacts did not converge"
+  },
+  "next_problem": {
+    "rows": 91,
+    "coordinates": 882,
+    "systems": 7,
+    "defect_refinement": 0,
+    "bytes": 1356348,
+    "tolerance": 1e-14,
+    "maximum_numeric_bound_shift": 0.0,
+    "original_load_feasibility": {
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "scope": "numerical linear feasibility; no energy, force-balance or continuous-geometry proof",
+      "minimum_exact_gap": -6.94863010559121e-20,
+      "within_requested_tolerance": true,
+      "maximum_parameter": 9847.168646949214
+    },
+    "whitened_feasibility": {
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "scope": "numerical linear feasibility; no energy, force-balance or continuous-geometry proof",
+      "minimum_exact_gap": -0.0002323942189552357,
+      "within_requested_tolerance": false,
+      "maximum_parameter": 9683306.359454611
+    }
+  },
+  "next_capture_seconds": 32.61,
+  "whole_jump_complete": false,
+  "gpu_qualification": false,
+  "rendered_fps": null,
+  "next_work": "diagnose bounded active-set QR convergence for the feasible original 91-row input; preserve original Newton and continuous-motion admission"
+}

@@ -1,0 +1,88 @@
+{
+  "implementation": "native outward-rounded degree-six Bernstein moving-line certificate; existing geometric threshold unchanged; unknown retains prior admission path",
+  "unit": {
+    "passed": 118,
+    "ignored": 5
+  },
+  "integration": {
+    "passed": 20
+  },
+  "original_frame3_geometry_replay": {
+    "passed": true,
+    "seconds": 0.03
+  },
+  "new_full_model": {
+    "mode": "native-only paired model, not GPU",
+    "guides": 469,
+    "passed_frames": [
+      1,
+      2
+    ],
+    "failed_frame": 3,
+    "elapsed_seconds": 243.19,
+    "failure": "swept strand components have no admissible progress",
+    "scope": "qualification binary preceded final invalid-arithmetic early rejection guard; no finite-input change after qualification"
+  },
+  "new_replay": {
+    "passed": false
+  },
+  "pointwise_counterexamples": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(111,8) b=(132,13)",
+      "gap_m": -7.487285451411672e-08,
+      "time": 1.0,
+      "initial_candidate": true
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(131,1)",
+      "gap_m": -1.8624767657716138e-06,
+      "time": 1.0,
+      "initial_candidate": true
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(135,2)",
+      "gap_m": -4.2243221391362405e-06,
+      "time": 1.0,
+      "initial_candidate": true
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(132,6) b=(233,19)",
+      "gap_m": -2.9643028076663594e-10,
+      "time": 1.0,
+      "initial_candidate": true
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(137,0) b=(201,16)",
+      "gap_m": -7.99999997469183e-05,
+      "time": 0.9577983092443777,
+      "initial_candidate": true
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(137,0) b=(201,17)",
+      "gap_m": -6.025451439935887e-05,
+      "time": 0.7757699478620325,
+      "initial_candidate": true
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,17)",
+      "gap_m": -7.999999972355735e-05,
+      "time": 0.8355694760916526,
+      "initial_candidate": true
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(106,0) b=(113,1)",
+      "gap_m": -3.879814342590662e-05,
+      "time": 1.0,
+      "initial_candidate": false
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(106,0) b=(136,2)",
+      "gap_m": -4.1189965469030984e-05,
+      "time": 1.0,
+      "initial_candidate": false
+    }
+  ],
+  "gpu_qualification": false,
+  "rendered_fps": null,
+  "whole_jump_complete": false
+}

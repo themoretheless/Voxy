@@ -1,0 +1,236 @@
+{
+  "physics_unit_tests_passed": 80,
+  "diagnostics_read_only_test_passed": true,
+  "contact_trace_env": "VOXY_HAIR_CONTACT_TRACE_ROD",
+  "full_model_trace_rerun_performed": true,
+  "current_qualification_session": 33340,
+  "current_qualification_status": "failed",
+  "first_divergence": {
+    "frame": 59,
+    "rod": 153,
+    "point": 9,
+    "position_error_m": 1.0338894672057286e-06,
+    "required_gate_m": 1e-06
+  },
+  "observed_frame_72_position_error_m": 0.0012511520734792905,
+  "runtime_gpu_enabled": false,
+  "cause_identified": false,
+  "app_release_check_passed": true,
+  "full_model_120_terminal_error_m": 0.002527482605900945,
+  "trace_reproduction": {
+    "session_id": 5280,
+    "status": "failed",
+    "frames": 60,
+    "rod": 153,
+    "log": "/tmp/voxy-contact-trace-153-60.log",
+    "gpu_transport_shader": true,
+    "contact_refinement_override": 1,
+    "position_error_m": 1.1232018305579183e-06,
+    "quaternion_component_error": 1.532346649985028e-05,
+    "wall_seconds": 306.5
+  },
+  "first_contact_geometry_difference": {
+    "frame": 57,
+    "rod": 153,
+    "native_count": 2,
+    "external_count": 2,
+    "same_ordered_provenance": true,
+    "max_fraction_delta": 0.003723117853181801,
+    "max_gap_m_delta": 7.890979366336918e-14,
+    "max_normal_delta": 0.002137902757003096,
+    "max_target_delta": 4.996847794691561e-05,
+    "max_surface_velocity_delta": 0.0
+  },
+  "contact_provenance_equal_through_frame": 60,
+  "finding": "contact target moves about 50 micrometres at frame 57 before position gate exceeds 1 micrometre at frame 59; segment endpoint capture added for exact fixture",
+  "pair_endpoint_capture": {
+    "status": "failed_trajectory_gate",
+    "log": "/tmp/voxy-contact-pair-endpoints-153-60.log",
+    "frames": 60,
+    "rod": 153,
+    "metal_compile_and_solver_regressions_passed": true,
+    "captured_pairs": 104
+  },
+  "independent_geometry_audit": {
+    "decimal_digits": 80,
+    "max_distance_error_m": 1.5734484028195883e-17,
+    "max_closest_point_error_m": 1.1102230246251565e-16,
+    "critical_fixture_count": 8,
+    "finding": "closest-point displacement reproduced by high precision; distance formula error not detected; causal phase remains unknown"
+  },
+  "captured_geometry_regression_passed": true,
+  "phase_trace": {
+    "status": "failed_trajectory_gate",
+    "frame": 57,
+    "rod": 153,
+    "log": "/tmp/voxy-contact-phase-trace-57.log",
+    "native_motion_bitwise_preserved_by_diagnostics": true,
+    "physics_unit_tests_passed": 68,
+    "physics_integration_tests_passed": 21,
+    "metal_bridge_regressions_passed": true,
+    "paired_common_phases": 34,
+    "external_only_structural_phases": 12,
+    "finding": "position difference already present in predicted phase of substep 0; inherited velocity difference requires tracing earlier frames",
+    "predicted_position_delta_m": 6.753122169175785e-07,
+    "predicted_velocity_delta_m_per_s": 0.0001620740989090319
+  },
+  "phase_range": {
+    "terminal_status": "failed_trajectory_gate",
+    "matched_common_phases": 170,
+    "external_only_structural_phases": 60,
+    "first_large_velocity_difference": {
+      "frame": 56,
+      "substep": 1,
+      "phase": "strand-friction",
+      "before_delta_m_per_s": 7.70147279283151e-10,
+      "after_delta_m_per_s": 0.00016383944668242612
+    },
+    "cause_within_friction_inputs_not_yet_identified": false
+  },
+  "friction_input_observer": {
+    "physics_unit_tests_passed": 69,
+    "bitwise_motion_and_equal_opposite_momentum_test_passed": true,
+    "metal_bridge_regressions_passed": true
+  },
+  "friction_input_trace": {
+    "status": "failed_trajectory_gate",
+    "frames": [
+      53,
+      54,
+      55,
+      56
+    ],
+    "log": "friction-input-trace-53-56.log",
+    "full_qualification_frames": 60,
+    "finding": {
+      "frame": 56,
+      "substep": 1,
+      "pair": [
+        151,
+        9,
+        153,
+        10
+      ],
+      "normal_load_relative_difference": 0.023756,
+      "position_delta_before_friction_m": 1.705726532e-11,
+      "relative_contact_velocity_effect_delta_m_per_s": 0.00031307643958750493,
+      "cause": "Accumulated numerical correction pressure differs despite nearly identical current poses; absolute physical force recovery removes this earlier amplification."
+    }
+  },
+  "force_pressure_experiment": "force-pressure-experiment.json",
+  "parallel_phase_observer": {
+    "unit_tests_passed": 71,
+    "bitwise_parallel_motion_preserved": true,
+    "all_structural_iterations_captured": true,
+    "log": "parallel-phase-hair-tests.log"
+  },
+  "latest_phase_trace": {
+    "status": "failed-trajectory-gate-terminal",
+    "session": 32399,
+    "frames": 112,
+    "selected_rod": 121,
+    "trace_frames": [
+      106,
+      111
+    ],
+    "log": "rod121-phase106-111-trace.log",
+    "binary": "pre-parallel-observer-enhancement",
+    "note": "Existing live job retained; common phases and friction records available, native worker structural snapshots absent in this binary.",
+    "paired_phases": 204,
+    "finding": {
+      "frame": 111,
+      "substep": 1,
+      "iteration": 1,
+      "amplification_phase": "contact-positions",
+      "before_position_delta_m": 7.73690278510486e-10,
+      "after_position_delta_m": 1.7184885187787602e-07,
+      "maximum_inner_phase_delta_m": 2.4266686378004998e-05,
+      "velocity_change_cause": "position differences reconstructed into velocities by rod.finish; friction does not amplify the selected guide on this step"
+    }
+  },
+  "captured_tangent_replay": {
+    "fixture_cases": 4,
+    "native_input_perturbation_output_delta_m": [
+      7.736271831482178e-10,
+      7.71798729093387e-10
+    ],
+    "gpu_proof": "rod121-contact-gpu-replay.log",
+    "independent_reference_digits": 80,
+    "independent_reference": "rod121-response-precision-audit.json",
+    "maximum_native_gpu_projected_position_delta_m": 4.579851588157195e-16,
+    "relative_contact_gram_determinants": [
+      0.7821477960189109,
+      0.7821653882706991
+    ],
+    "finding": "Captured initial body-plane tangent problems remain stable; their GPU responses do not reproduce the nonlinear stage amplification. Re-query and transient constraints remain to be isolated.",
+    "nonlinear_surface_replay": {
+      "passed": true,
+      "full_body_vertices": 60866,
+      "full_body_triangles": 121728,
+      "paired_perturbed_output_delta_m": [
+        7.736271762093239e-10,
+        7.717987221544931e-10
+      ],
+      "finding": "Body-only nonlinear re-query does not reproduce the full shared-stage movement or amplification; transient strand constraints remain to be captured.",
+      "log": "rod121-nonlinear-surface-replay.log",
+      "rebuild_command": "VOXY_HAIR_PRESERVE_FOLLICLE_COORDINATES=1 VOXY_HAIR_REPLAY_REST_FILE=/tmp/voxy-guide121-rest.json VOXY_HAIR_CONTACT_REPLAY_COLLIDER=/tmp/voxy-guide121-collider.bin cargo test -p voxy_app --release --lib export_hair_contact_replay_rest_curve -- --ignored --nocapture"
+    }
+  },
+  "contact_component_observer": {
+    "read_only_parallel_paired_contacts_test_passed": true,
+    "transitive_component_capture_test_passed": true,
+    "parser_sanity_paired_queries": 6,
+    "parser_sanity_unmatched_queries": 0,
+    "enabled_only_with_selected_guide_trace": true,
+    "log": "contact-component-hair-tests.log"
+  },
+  "contact_component_trace": {
+    "status": "failed-trajectory-gate-terminal",
+    "session": 43827,
+    "full_steps": 112,
+    "trace_step": 111,
+    "rod": 121,
+    "log": "rod121-contact-component-111.log.gz",
+    "paired_queries": 131,
+    "unmatched_queries": 0,
+    "log_sha256": "62bbeb4072507e40535ea5a6931598ec0685142e41d2e85f575828694f28a86a"
+  },
+  "contact_component_replay": {
+    "passed": true,
+    "rod_ids": [
+      71,
+      93,
+      106,
+      121,
+      122
+    ],
+    "constraints": 13,
+    "native_replay_vs_native_full_component_output_error_m": 1.133676486020363e-13,
+    "native_replay_vs_gpu_full_component_output_error_m": 1.7274376373777045e-13,
+    "input_geometry_perturbation_output_delta_m": 1.7184885073295852e-07,
+    "fixture": "rod121-contact-component.bin",
+    "log": "rod121-contact-component-replay.log",
+    "finding": "Native replay reproduces both trajectories: amplification is in the shared geometric contact problem, not the GPU solution of the captured equations."
+  },
+  "continuous_capsule_query": {
+    "default_runtime_integrated": false,
+    "captured_transition_initial_minimum_clearance_m": 3.690861177875661e-07,
+    "captured_transition_deepest_penetration_m": 7.962531678720453e-05,
+    "safe_motion_fractions": [
+      0.0046130617190689015,
+      0.004993731915894328,
+      0.02492951956298811
+    ],
+    "captured_sweep_iterations": [
+      6,
+      13,
+      11
+    ],
+    "actual_capture_cases_passed": 3,
+    "limitations": "Geometry query only. Contact-safe coupled Newton updates, treatment of initially active constraints, and fixed-root integration remain to be implemented and qualified.",
+    "physics_unit_tests_passed": 80,
+    "app_release_check_passed": true,
+    "unit_log": "continuous-all-hair-tests.log",
+    "app_check_log": "continuous-app-check.log"
+  }
+}

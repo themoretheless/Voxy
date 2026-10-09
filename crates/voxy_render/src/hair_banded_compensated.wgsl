@@ -42,7 +42,9 @@ fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
     if id.x>=data[0] { return; }
     let n=data[1]; let first=data[2]; let end=data[3];
     let base=4u+id.x*(n*20u+1u); let rhs=base+n*18u; let status=rhs+n*2u;
+    let reuse_factors=data[status]==2u;
     data[status]=0u;
+    if !reuse_factors {
     for(var i=first;i<end;i++) {
         let start=max(first,select(0u,i-8u,i>=8u));
         for(var j=start;j<=i;j++) {
@@ -54,6 +56,7 @@ fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
                 save(base+i*18u,root(sum));
             } else { save(base+(i*9u+i-j)*2u,divide(sum,load(base+j*18u))); }
         }
+    }
     }
     for(var i=first;i<end;i++) {
         var value=load(rhs+i*2u);
