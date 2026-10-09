@@ -1,0 +1,25 @@
+{
+  "measurements": [
+    {
+      "contact_rows": 46,
+      "evaluations_per_sample": 100,
+      "paired_repeats": 7,
+      "dense_median_ms": 5.949000000000001,
+      "sparse_median_ms": 0.46825,
+      "ratio": 12.704751735184196,
+      "residual_bits_equal": true,
+      "scope": "residual evaluation only; support construction excluded; not full QR or rendered frame"
+    },
+    {
+      "contact_rows": 100,
+      "evaluations_per_sample": 100,
+      "paired_repeats": 7,
+      "dense_median_ms": 8.118708,
+      "sparse_median_ms": 2.344458,
+      "ratio": 3.46293599629424,
+      "residual_bits_equal": true,
+      "scope": "residual evaluation only; support construction excluded; not full QR or rendered frame"
+    }
+  ],
+  "fps_qualified": false
+}

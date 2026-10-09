@@ -1,0 +1,44 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 14.46s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+CAPTURED INTERVAL PROBE fraction=0 signed_distance=Ok((0.0049373310897982015, [0.36622469805866825, -0.12454851152405663, 0.922153533208532])) ray_inside=Ok(Some(false))
+CAPTURED INTERVAL PROBE fraction=0.85 signed_distance=Ok((8.672745934134645e-5, [-0.15967592906770528, 0.3494315715902008, 0.9232557470454044])) ray_inside=Ok(Some(false))
+CAPTURED INTERVAL PROBE fraction=0.86 signed_distance=Ok((3.2968839160775038e-6, [-0.15967592906770528, 0.3494315715902008, 0.9232557470454044])) ray_inside=Ok(Some(false))
+CAPTURED INTERVAL PROBE fraction=0.88 signed_distance=Ok((-0.0001928435667250979, [0.018524283503537353, 0.45256547640113, 0.891538748731932])) ray_inside=Ok(Some(true))
+CAPTURED INTERVAL PROBE fraction=0.9 signed_distance=Ok((-0.00042568292584462756, [0.1552114123901332, 0.4057969095528868, 0.900687673758882])) ray_inside=Ok(Some(true))
+CAPTURED INTERVAL PROBE fraction=0.95 signed_distance=Ok((-0.001014343128529084, [0.1552114123901332, 0.4057969095528868, 0.900687673758882])) ray_inside=Ok(Some(true))
+CAPTURED INTERVAL PROBE fraction=0.97 signed_distance=Ok((-0.001249807209602936, [0.1552114123901332, 0.4057969095528868, 0.900687673758882])) ray_inside=Ok(Some(true))
+CAPTURED INTERVAL PROBE fraction=0.98 signed_distance=Ok((-0.0013675392501398152, [0.1552114123901332, 0.4057969095528868, 0.900687673758882])) ray_inside=Ok(Some(true))
+CAPTURED INTERVAL PROBE fraction=0.99 signed_distance=Ok((-0.0014852712906766822, [0.1552114123901332, 0.4057969095528868, 0.900687673758882])) ray_inside=Ok(Some(true))
+CAPTURED INTERVAL PROBE fraction=0.991091841156475 signed_distance=Ok((-0.0014981257594060444, [0.1552114123901332, 0.4057969095528868, 0.900687673758882])) ray_inside=Ok(Some(true))
+CAPTURED INTERVAL PROBE fraction=1 signed_distance=Ok((-0.0013975587516662843, [-0.10782054433504658, -0.39961369225692456, -0.9103206177935786])) ray_inside=Ok(Some(true))
+REPLAY MERIT captured=1.7522810769070946e-5 rebuilt=1.7522810769070946e-5 rods=469 meshes=1
+REPLAY RESULT Err("joint hair contact direction has no descending geometry step")
+test hair::contact_replay::tests::replay_rejected_contact_geometry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 301 filtered out; finished in 0.28s
+

@@ -1,0 +1,18 @@
+{
+  "guides": 469,
+  "points_per_guide": [
+    21
+  ],
+  "before_max_initial_strain": 0.448759572169116,
+  "after_max_initial_strain": 0.028671143974862923,
+  "worst_initialized_guide": 455,
+  "after_guides_above_5_percent": 0,
+  "before_rest_intersection_segments": 51,
+  "after_rest_intersection_segments": 0,
+  "after_initialized_intersection_segments": 0,
+  "authored_length_ratio_range": [
+    0.9995067852087025,
+    1.1460162497458533
+  ],
+  "scope": "static authoring and initialization only; intersections are finite triangle queries, not continuous capsule proof"
+}

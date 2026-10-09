@@ -1,0 +1,71 @@
+{
+  "rod": 431,
+  "segment": 8,
+  "fraction": 0.10027787880022085,
+  "probes": [
+    {
+      "fraction_offset": -1e-05,
+      "distance_m": 0.001716731904555192,
+      "metric_normal": [
+        -0.6128034703405613,
+        0.057598633100419246,
+        -0.7881334304567522
+      ],
+      "normal_dot_segment_m": -0.005664070033353917,
+      "triangle": 72878
+    },
+    {
+      "fraction_offset": -1e-06,
+      "distance_m": 0.0017167828811855083,
+      "metric_normal": [
+        -0.6128034703405633,
+        0.05759863310045968,
+        -0.7881334304567476
+      ],
+      "normal_dot_segment_m": -0.005664070033354424,
+      "triangle": 72878
+    },
+    {
+      "fraction_offset": 0,
+      "distance_m": 0.0017167884750675345,
+      "metric_normal": [
+        0.7055193843535209,
+        0.1422719639744484,
+        0.6942629808424774
+      ],
+      "normal_dot_segment_m": 0.0031734545520807943,
+      "triangle": 72900
+    },
+    {
+      "fraction_offset": 1e-06,
+      "distance_m": 0.001716785301612969,
+      "metric_normal": [
+        0.7055193843535327,
+        0.14227196397437988,
+        0.6942629808424796
+      ],
+      "normal_dot_segment_m": 0.003173454552081718,
+      "triangle": 72900
+    },
+    {
+      "fraction_offset": 1e-05,
+      "distance_m": 0.0017167567405219927,
+      "metric_normal": [
+        0.7055193843535268,
+        0.14227196397440028,
+        0.6942629808424813
+      ],
+      "normal_dot_segment_m": 0.0031734545520814414,
+      "triangle": 72900
+    }
+  ],
+  "scope": "Nearest triangle distances only at interior probes; no global clearance certificate.",
+  "left_weight": 0.35908862503323996,
+  "stationary_subgradient": [
+    0.23212464311153402,
+    0.11186673401387931,
+    0.16195129175483092
+  ],
+  "subgradient_norm": 0.3043423023827733,
+  "stationary_dot_segment_m": 3.2526065174565133e-19
+}

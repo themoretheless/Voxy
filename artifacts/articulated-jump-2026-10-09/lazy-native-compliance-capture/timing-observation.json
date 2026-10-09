@@ -1,0 +1,39 @@
+{
+  "timed_frames": [
+    {
+      "frame": 1,
+      "native_ms": 12249.602958000001,
+      "external_ms": 12085.081041000001
+    },
+    {
+      "frame": 2,
+      "native_ms": 50210.717082999996,
+      "external_ms": 51891.177208
+    },
+    {
+      "frame": 3,
+      "native_ms": 89597.422917,
+      "external_ms": 95946.018541
+    },
+    {
+      "frame": 4,
+      "native_ms": 129861.74075,
+      "external_ms": 136083.49312499998
+    },
+    {
+      "frame": 5,
+      "native_ms": 189461.518,
+      "external_ms": 178761.386042
+    }
+  ],
+  "verified_completed_frames": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "complete": false,
+  "rendered_fps": null,
+  "scope": "paired native CPU physics with tracing, not controlled comparative benchmark"
+}

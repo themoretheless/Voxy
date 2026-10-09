@@ -1,0 +1,45 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 14.92s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+ELASTIC CONTACT REPLAY iteration=0 maximum_strain=6.534658988633479e-3
+ELASTIC CONTACT REPLAY WHOLE STRAND SWEEP fraction=0.00000023460320795083833
+
+thread 'hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission' (34007958) panicked at crates/physics/src/hair/contact_replay.rs:528:21:
+assertion `left == right` failed: feasible endpoints alone cannot qualify strand trajectories
+  left: 2.3460320795083833e-7
+ right: 1.0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission ... FAILED
+
+failures:
+
+failures:
+    hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 336 filtered out; finished in 2.55s
+
+error: test failed, to rerun pass `-p physics --lib`

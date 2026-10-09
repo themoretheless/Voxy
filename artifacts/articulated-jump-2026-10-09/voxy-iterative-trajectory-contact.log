@@ -1,0 +1,35 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 16.49s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+CAPTURED TRAJECTORY RESPONSE time=0.15325123552152253 fraction=1 before=-0.000002323564702990096 after=0.0000000000000000021576461243904455 stretch=0.0000012693179756162465
+CAPTURED TRAJECTORY RESPONSE refreshed_time=0.15252205690379297 refreshed_gap=-0.000000005224195536875065
+CAPTURED TRAJECTORY ITERATION iteration=0 time=0.15252205690379297 gap=-0.000000005224195536875065 query=InitialContact { gap_m: 2.975457337114906e-17 }
+CAPTURED TRAJECTORY CERTIFIED iteration=1
+test hair::contact::triangle_sweep::trajectory::tests::captured_time_contact_has_correct_jacobian_and_native_reaction ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 323 filtered out; finished in 0.00s
+

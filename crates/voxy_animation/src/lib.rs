@@ -899,6 +899,18 @@ impl Pose {
         &self.local
     }
 
+    /// Updates one local translation, preserving its rotation and scale.
+    /// Invalid joints or nonfinite translations leave the pose unchanged.
+    pub fn set_joint_translation(&mut self, index: usize, translation: Vec3) -> Result<(), AnimationError> {
+        let Some(current) = self.local.get(index).copied() else {
+            return Err(AnimationError::InvalidPose(index));
+        };
+        let replacement = Transform { translation, ..current };
+        if !replacement.is_valid() { return Err(AnimationError::InvalidPose(index)); }
+        self.local[index] = replacement;
+        Ok(())
+    }
+
     /// Updates one local rotation, preserving its translation and scale.
     /// # Errors
     /// Rejects an unknown joint or a nonfinite/nonunit quaternion without changing the pose.
@@ -2402,6 +2414,25 @@ mod tests {
             animator.advance(&rig, 0.25).unwrap().root_motion,
             Vec3::Y * 2.5
         );
+    }
+
+    #[test]
+    fn joint_translation_edit_moves_descendants_and_rejects_invalid_updates() {
+        let rig = skeleton();
+        let mut pose = rig.bind_pose();
+        let rotation = Quat::from_rotation_z(0.4);
+        pose.set_joint_rotation(0, rotation).unwrap();
+        let translation = Vec3::new(0.1, 0.2, 0.3);
+        pose.set_joint_translation(0, translation).unwrap();
+        let child = rig.joints()[1].bind_local.translation;
+        let expected = translation + rotation * child;
+        let before = pose.skin_matrices(&rig).unwrap();
+        let child_rest = rig.joints()[1].inverse_bind.inverse().transform_point3(Vec3::ZERO);
+        assert!(before[1].transform_point3(child_rest).abs_diff_eq(expected, 1e-6));
+        assert_eq!(pose.local()[0].rotation, rotation);
+        assert!(pose.set_joint_translation(0, Vec3::splat(f32::NAN)).is_err());
+        assert!(pose.set_joint_translation(999, Vec3::ZERO).is_err());
+        assert_eq!(pose.skin_matrices(&rig).unwrap(), before);
     }
 
     fn skeleton() -> Skeleton {

@@ -1,0 +1,1 @@
+Stopped with SIGINT after verifying the process was live. Superseded by immutable active-set QR prefix reuse, a material solver optimization. This is not a terminal mathematical failure or a completed trajectory qualification. Preserve qualification.log.

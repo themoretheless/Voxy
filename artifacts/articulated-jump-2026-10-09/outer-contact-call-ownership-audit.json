@@ -1,0 +1,9 @@
+{
+  "source": "crates/physics/src/hair/mod.rs",
+  "structural_route": "per structural iteration advance_swept_strands; then mesh geometry refresh",
+  "geometry_reconciliation_route": "reconcile_positions_mode with continuous_mesh && self_collision calls advance_swept_strands again inside up to 128 iterations",
+  "inner_route": "each advance_swept_strands computes fresh elastic free Newton step and up to 32 witness-cut refinements",
+  "why_not_removed": "mesh geometry changes and nonlinear admission can reopen contacts; free elastic motion is currently part of reconciliation contract; simply skipping changes physical integration and risks penetration",
+  "next_required_design_work": "separate ownership of structural elastic step and geometry correction, preserve original whole-interval geometry admission and exact force/reaction gates, qualify full current jump and independent-guide behavior",
+  "implemented_removal": false
+}

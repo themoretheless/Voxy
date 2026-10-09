@@ -1,0 +1,31 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.11s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+append experiment rows=100 compact_width=639 sorted/append seconds and max coordinate difference=[(0.001119292, 0.000907334, 4.482091781055075e-16), (0.000690916, 0.000637041, 4.482091781055075e-16), (0.00070675, 0.000621, 4.482091781055075e-16), (0.000640125, 0.000585583, 4.482091781055075e-16), (0.000636, 0.000572541, 4.482091781055075e-16), (0.00067375, 0.000593625, 4.482091781055075e-16), (0.000654875, 0.000588833, 4.482091781055075e-16)]
+test hair::contact_response_system::square_root_qr::tests::captured_guarded_append_order_retains_original_physical_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 361 filtered out; finished in 0.17s
+

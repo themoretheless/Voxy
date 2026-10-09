@@ -1,0 +1,43 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.11s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+REPLAY MERIT captured=2.902079228447023e-5 rebuilt=5.175412518189963e-5 rods=469 meshes=1
+HAIR NONLINEAR CONTACT NONCONVERGENCE first_gap_m=-0.003328599261484439 worst=(rod,segment,fraction,gap,source,root,a,b,normal,target) Some((334, 10, 0.835512771028665, -0.002045041672283584, Mesh(0), [0.03785330802202225, 0.7359225451946259, 0.054949428886175156], [0.07494243364170637, 0.6252889834281319, 0.05275553543665841], [0.07293138951601486, 0.6138188734375147, 0.061604490995807316], [-0.22783135740138108, -0.36054929006587966, 0.9044871928433451], [0.07279625597145017, 0.6149682217227709, 0.06199866481800387]))
+REPLAY RESULT Err("joint hair contact position linearization did not converge")
+
+thread 'hair::contact_replay::tests::captured_contact_reaches_feasible_geometry' (31536488) panicked at crates/physics/src/hair/contact_replay.rs:194:20:
+corrected captured geometry must converge: "joint hair contact position linearization did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry ... FAILED
+
+failures:
+
+failures:
+    hair::contact_replay::tests::captured_contact_reaches_feasible_geometry
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 297 filtered out; finished in 4.10s
+
+error: test failed, to rerun pass `-p physics --lib`

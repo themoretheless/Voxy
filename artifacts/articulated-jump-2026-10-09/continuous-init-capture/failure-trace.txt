@@ -1,0 +1,4 @@
+error: invalid collider motion interval
+phases: []
+projections: []
+friction: []

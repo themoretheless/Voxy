@@ -11,6 +11,8 @@ pub struct HairPhaseDiagnostic {
     pub velocities: Vec<V>,
     pub orientations: Vec<Q>,
     pub contacts: Vec<HairContactDiagnostic>,
+    /// Signed axial strain of every segment, measured against its rest length.
+    pub relative_strains: Vec<f64>,
 }
 /// Per-pair friction inputs and impulses in deterministic application order.
 #[derive(Clone, Debug)]
@@ -47,6 +49,9 @@ impl HairPhaseDiagnostic {
             velocities: rod.velocity.clone(),
             orientations: rod.q.clone(),
             contacts: rod.contact_diagnostics(),
+            relative_strains: rod.x.windows(2).zip(rod.rest_lengths()).map(|(p, length)| {
+                super::math::len(super::math::sub(p[1], p[0])) / length - 1.
+            }).collect(),
         }
     }
 }
@@ -83,6 +88,28 @@ impl HairSystem {
 mod tests {
     use super::*;
     use crate::hair::RootPose;
+    #[test]
+    fn rejected_candidate_preserves_complete_state_and_next_step() {
+        let rod=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],Default::default()).unwrap();
+        let mut hair=HairSystem::new(vec![rod]).unwrap();
+        hair.self_collision=false;
+        hair.set_trace_rod(Some(0)).unwrap();
+        let before=format!("{hair:?}");
+        let mut reference=hair.clone();
+        let roots=[RootPose {position:[0.;3],rotation:[0.,0.,0.,1.]}];
+        let mut observed=false;
+        let result=hair.step_validated(1./240.,&roots,[0.,-9.81,0.],[0.;3],&[],None,|candidate| {
+            observed=true;
+            assert!(!candidate.step_trace().is_empty());
+            Err("application rejected candidate")
+        });
+        assert!(observed);
+        assert_eq!(result,Err("application rejected candidate"));
+        assert_eq!(format!("{hair:?}"),before);
+        hair.step(1./240.,&roots,[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        reference.step(1./240.,&roots,[0.,-9.81,0.],[0.;3],&[]).unwrap();
+        assert_eq!(format!("{hair:?}"),format!("{reference:?}"));
+    }
     #[test]
     fn parallel_structural_observation_is_complete_and_preserves_motion() {
         let rods: Vec<_> = (0..8)

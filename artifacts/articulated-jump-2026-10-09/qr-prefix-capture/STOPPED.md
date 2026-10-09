@@ -1,0 +1,1 @@
+Confirmed live process 50041 stopped explicitly with SIGINT after the conservative capsule-pair hierarchy passed reference comparisons. Superseded binary, not mathematical failure or completed qualification. Preserve log and captured motion.

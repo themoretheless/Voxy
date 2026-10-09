@@ -1,0 +1,56 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.11s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+REPLAY MERIT captured=1.3953667982708245e-19 rebuilt=1.3953667982708245e-19 rods=469 meshes=1
+HAIR CONTACT PARTS iteration=0 scale=0e0 mesh_raw=1.3953667982708223e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.25534794528400984, -3.534923067992706e-10, [-0.24402932078788614, 0.13664742179194797, -0.9600922730203677], [-0.13499246479585328, 0.3364831444201373, -0.03292283530959536]))
+HAIR CONTACT PARTS iteration=0 scale=1e0 mesh_raw=4.074112384541851e-17 strand=1.9787004571895408e-34 worst_mesh=Some((198, 4, 0.5148157382183345, -4.5133759057541665e-9, [-0.4662408882112233, 0.4820421954732526, -0.7417915852470531], [-0.038236518876958885, 0.652617826127929, 0.016278673488643283]))
+HAIR CONTACT PARTS iteration=0 scale=5e-1 mesh_raw=5.256248957117011e-18 strand=1.485867103767604e-34 worst_mesh=Some((198, 4, 0.5147149638991672, -2.274978988183581e-9, [-0.46624052636039937, 0.4820240373368129, -0.7418036121566788], [-0.03823621305274843, 0.6526191369320253, 0.016279333749500503]))
+HAIR CONTACT PARTS iteration=0 scale=2.5e-1 mesh_raw=1.465226556237706e-18 strand=3.3855559734826555e-34 worst_mesh=Some((198, 4, 0.5146644965504984, -1.1795459749000006e-9, [-0.46624034506807205, 0.48201494397936007, -0.7418096348871315], [-0.03823605988085751, 0.652619793359198, 0.016279664431565793]))
+HAIR CONTACT PARTS iteration=0 scale=1.25e-1 mesh_raw=5.262835286032583e-19 strand=3.3855559734826555e-34 worst_mesh=Some((198, 4, 0.5146391669465485, -6.377709615333014e-10, [-0.4662402540577301, 0.48201038006305225, -0.741812657621623], [-0.038235982999640435, 0.6526201228151235, 0.016279830407812997]))
+HAIR CONTACT PARTS iteration=0 scale=6.25e-2 mesh_raw=2.588351531365973e-19 strand=2.1918983982302405e-34 worst_mesh=Some((198, 4, 0.5146265794159162, -3.6836883663679643e-10, [-0.46624020882551725, 0.48200811202780636, -0.7418141597554794], [-0.03823594479220954, 0.6526202865375724, 0.01627991289170005]))
+HAIR CONTACT PARTS iteration=0 scale=3.125e-2 mesh_raw=3.0336442915342223e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.2553484679407796, -3.427004785376967e-10, [-0.2440310221382612, 0.13664839800913298, -0.9600917016388032], [-0.1349924655013799, 0.3364830676111935, -0.032922846069535196]))
+HAIR CONTACT PARTS iteration=0 scale=1.5625e-2 mesh_raw=1.6317092669029762e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.25534820729217994, -3.4807547956873267e-10, [-0.24403017367611435, 0.13664791116977032, -0.9600919865869854], [-0.13499246514936863, 0.3364831059151662, -0.03292284070368697]))
+HAIR CONTACT PARTS iteration=0 scale=7.8125e-3 mesh_raw=1.6956945978970384e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.25534807594814807, -3.507786865990075e-10, [-0.24402974612531098, 0.13664766584615434, -0.96009213017544], [-0.13499246497224093, 0.33648312521792456, -0.03292283799958303]))
+HAIR CONTACT PARTS iteration=0 scale=3.90625e-3 mesh_raw=1.5208628488356596e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.2553480120563376, -3.5213418538472655e-10, [-0.2440295381452573, 0.13664754650828903, -0.9600922000234549], [-0.13499246488564656, 0.33648313460610824, -0.032922836684507475]))
+HAIR CONTACT PARTS iteration=0 scale=1.953125e-3 mesh_raw=3.0147237652434206e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.25534797790992275, -3.5281292677604223e-10, [-0.24402942699189917, 0.13664748272930188, -0.960092237353136], [-0.13499246483990668, 0.3364831396254929, -0.032922835981263734]))
+HAIR CONTACT PARTS iteration=0 scale=9.765625e-4 mesh_raw=1.5011439360433698e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.2553479563861057, -3.531525283770459e-10, [-0.2440293569264635, 0.1366474425277892, -0.9600922608836463], [-0.1349924648120686, 0.3364831427931142, -0.03292283553719445]))
+HAIR CONTACT PARTS iteration=0 scale=4.8828125e-4 mesh_raw=1.6023101942009772e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.25534795215991196, -3.5332239650527267e-10, [-0.24402934317029087, 0.13664743463422246, -0.9600922655035621], [-0.1349924648054257, 0.3364831434107803, -0.03292283545091499]))
+HAIR CONTACT PARTS iteration=0 scale=2.44140625e-4 mesh_raw=2.847697946572488e-19 strand=2.1918983982302405e-34 worst_mesh=Some((45, 19, 0.2553479457043635, -3.534073546147617e-10, [-0.24402932215631784, 0.13664742257588602, -0.960092272560974], [-0.13499246479727844, 0.3364831443615397, -0.03292283531757918]))
+REPLAY RESULT Err("joint hair contact direction has no descending geometry step")
+
+thread 'hair::contact_replay::tests::captured_contact_reaches_feasible_geometry' (33630836) panicked at crates/physics/src/hair/contact_replay.rs:564:20:
+corrected captured geometry must converge: "joint hair contact direction has no descending geometry step"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry ... FAILED
+
+failures:
+
+failures:
+    hair::contact_replay::tests::captured_contact_reaches_feasible_geometry
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 331 filtered out; finished in 1.31s
+
+error: test failed, to rerun pass `-p physics --lib`

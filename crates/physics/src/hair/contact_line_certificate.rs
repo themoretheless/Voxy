@@ -3,75 +3,7 @@
 //! Failure to prove separation is unknown, never permission to publish motion.
 use crate::hair::CapsuleMotion;
 
-#[derive(Clone, Copy, Debug)]
-struct Bound {
-    lo: f64,
-    hi: f64,
-}
-impl Bound {
-    fn exact(x: f64) -> Self {
-        Self { lo: x, hi: x }
-    }
-    fn add(self, b: Self) -> Self {
-        Self {
-            lo: (self.lo + b.lo).next_down(),
-            hi: (self.hi + b.hi).next_up(),
-        }
-    }
-    fn neg(self) -> Self {
-        Self {
-            lo: -self.hi,
-            hi: -self.lo,
-        }
-    }
-    fn sub(self, b: Self) -> Self {
-        self.add(b.neg())
-    }
-    fn mul(self, b: Self) -> Self {
-        let products = [
-            self.lo * b.lo,
-            self.lo * b.hi,
-            self.hi * b.lo,
-            self.hi * b.hi,
-        ];
-        if products.iter().any(|x| !x.is_finite()) {
-            return Self {
-                lo: f64::NEG_INFINITY,
-                hi: f64::INFINITY,
-            };
-        }
-        Self {
-            lo: products
-                .into_iter()
-                .fold(f64::INFINITY, f64::min)
-                .next_down(),
-            hi: products
-                .into_iter()
-                .fold(f64::NEG_INFINITY, f64::max)
-                .next_up(),
-        }
-    }
-}
-type Poly = [Bound; 7];
-fn zero() -> Poly {
-    [Bound::exact(0.); 7]
-}
-fn sum(a: Poly, b: Poly) -> Poly {
-    std::array::from_fn(|i| a[i].add(b[i]))
-}
-fn difference(a: Poly, b: Poly) -> Poly {
-    std::array::from_fn(|i| a[i].sub(b[i]))
-}
-fn product(a: Poly, da: usize, b: Poly, db: usize) -> Poly {
-    assert!(da + db <= 6);
-    let mut out = zero();
-    for i in 0..=da {
-        for j in 0..=db {
-            out[i + j] = out[i + j].add(a[i].mul(b[j]));
-        }
-    }
-    out
-}
+use crate::hair::contact::polynomial::*;
 fn linear_difference(
     a: CapsuleMotion,
     pa: usize,
@@ -86,38 +18,6 @@ fn linear_difference(
     out[1] = end.sub(start);
     out
 }
-fn choose(n: usize, k: usize) -> u32 {
-    (0..k).fold(1, |value, i| value * (n - i) as u32 / (i + 1) as u32)
-}
-fn bernstein(power: Poly, degree: usize) -> Poly {
-    let mut out = zero();
-    for i in 0..=degree {
-        for (j, coefficient) in power.iter().enumerate().take(i + 1) {
-            let ratio = choose(i, j) as f64 / choose(degree, j) as f64;
-            let enclosed = Bound {
-                lo: ratio.next_down(),
-                hi: ratio.next_up(),
-            };
-            out[i] = out[i].add(coefficient.mul(enclosed));
-        }
-    }
-    out
-}
-fn split(mut values: Poly, degree: usize) -> (Poly, Poly) {
-    let mut left = zero();
-    let mut right = zero();
-    left[0] = values[0];
-    right[degree] = values[degree];
-    for level in 1..=degree {
-        for i in 0..=degree - level {
-            values[i] = values[i].add(values[i + 1]).mul(Bound::exact(0.5));
-        }
-        left[level] = values[0];
-        right[degree - level] = values[degree - level];
-    }
-    (left, right)
-}
-
 pub(super) fn clear(a: CapsuleMotion, b: CapsuleMotion, budget: usize) -> bool {
     let u: [Poly; 3] = std::array::from_fn(|i| linear_difference(a, 1, a, 0, i));
     let v: [Poly; 3] = std::array::from_fn(|i| linear_difference(b, 1, b, 0, i));
@@ -145,31 +45,31 @@ pub(super) fn clear(a: CapsuleMotion, b: CapsuleMotion, budget: usize) -> bool {
         product(triple, 3, triple, 3),
         std::array::from_fn(|i| norm[i].mul(squared)),
     );
-    let mut stack = vec![(bernstein(clearance, 6), bernstein(norm, 4), 0usize)];
-    let mut visited = 0;
-    while let Some((c, n, depth)) = stack.pop() {
-        visited += 1;
-        if visited > budget {
-            return false;
+    if certify_nonnegative(&[(clearance,6,false),(norm,4,true)],budget) {return true;}
+    let mut alternatives=vec![vec![(clearance,6,false),(norm,4,true)]];
+    for (segment,line) in [(a,b),(b,a)] {
+        for endpoint in 0..2 {
+            // The inward direction points from this endpoint into its segment.
+            let inward:[Poly;3]=std::array::from_fn(|i|linear_difference(segment,1-endpoint,segment,endpoint,i));
+            let direction:[Poly;3]=std::array::from_fn(|i|linear_difference(line,1,line,0,i));
+            let offset:[Poly;3]=std::array::from_fn(|i|linear_difference(segment,endpoint,line,0,i));
+            let mut length=zero();let mut along=zero();let mut inward_along=zero();let mut inward_offset=zero();let mut cross_squared=zero();
+            for i in 0..3 {
+                length=sum(length,product(direction[i],1,direction[i],1));
+                along=sum(along,product(offset[i],1,direction[i],1));
+                inward_along=sum(inward_along,product(inward[i],1,direction[i],1));
+                inward_offset=sum(inward_offset,product(inward[i],1,offset[i],1));
+                let c=difference(product(offset[(i+1)%3],1,direction[(i+2)%3],1),product(offset[(i+2)%3],1,direction[(i+1)%3],1));
+                cross_squared=sum(cross_squared,product(c,2,c,2));
+            }
+            let separation=difference(cross_squared,std::array::from_fn(|i|length[i].mul(squared)));
+            // inward dot (endpoint - projection_on_line) >= 0 ensures
+            // every point of the finite segment stays on the safe side.
+            let side=difference(product(inward_offset,2,length,2),product(inward_along,2,along,2));
+            alternatives.push(vec![(separation,4,false),(side,4,false),(length,2,true)]);
         }
-        if c.iter()
-            .chain(&n[..5])
-            .any(|x| !x.lo.is_finite() || !x.hi.is_finite())
-        {
-            return false;
-        }
-        if c.iter().all(|x| x.lo >= 0.) && n[..5].iter().all(|x| x.lo > 0.) {
-            continue;
-        }
-        if c.iter().all(|x| x.hi < 0.) || depth >= 48 {
-            return false;
-        }
-        let (cl, cr) = split(c, 6);
-        let (nl, nr) = split(n, 4);
-        stack.push((cr, nr, depth + 1));
-        stack.push((cl, nl, depth + 1));
     }
-    true
+    certify_alternatives(&alternatives,budget)
 }
 
 #[cfg(test)]
@@ -179,6 +79,21 @@ mod fixture_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn finite_endpoint_certificate_keeps_crossings_unknown_and_endpoint_order_independent() {
+        let a=CapsuleMotion {start:[[0.,0.,0.],[1.,0.,0.]],end:[[0.,0.,0.],[1.,0.,0.]],radius:1e-4};
+        let b=CapsuleMotion {start:[[1.001,-0.1,0.],[1.001,0.1,0.]],end:[[1.001,-0.1,0.],[1.001,0.1,0.]],radius:1e-4};
+        let reverse=|m:CapsuleMotion|CapsuleMotion {start:[m.start[1],m.start[0]],end:[m.end[1],m.end[0]],..m};
+        for first in [a,reverse(a)] {
+            for second in [b,reverse(b)] {
+                assert!(clear(first,second,512));
+                assert!(clear(second,first,512));
+                assert!(!clear(first,second,0));
+                let crossing=CapsuleMotion {end:second.end.map(|p|[0.999,p[1],p[2]]),..second};
+                assert!(!clear(first,crossing,512),"finite endpoint proof admitted a swept crossing");
+            }
+        }
+    }
     #[test]
     fn continuous_line_bound_rejects_tunnel_and_unknown_parallel_lines() {
         let a = CapsuleMotion {

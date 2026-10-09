@@ -281,6 +281,8 @@ pub use surface_light_diffusion::{SurfaceLightDiffusion, SurfaceLightEdge};
 
 mod surface_deformation;
 pub use surface_deformation::{SurfaceDeformation, SurfaceDeformationWeight};
+mod surface_rigid_skinning;
+pub use surface_rigid_skinning::SurfaceRigidSkinWeight;
 
 mod surface_normal_transport;
 

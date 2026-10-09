@@ -92,6 +92,7 @@ pub(crate) struct FemaleDemo {
     pub(crate) body_parameters: crate::body_parameters::BodyParameters,
     cold_response: Option<crate::body_parameters::ColdResponse>,
     pub(crate) secondary_only: bool,
+    pub(crate) rig_pose_only: bool,
     pub(crate) animation_only: bool,
     regions: Vec<crate::volume_regions::Region>,
     secondary: [SecondaryMotion; 4],
@@ -469,6 +470,7 @@ impl FemaleDemo {
             face_parameter_file: None,
             face_parameter_revision: None,
             secondary_only: false,
+            rig_pose_only: false,
             animation_only: false,
             secondary: std::array::from_fn(|i| {
                 SecondaryMotion::new(SecondaryConfig {
@@ -588,6 +590,7 @@ impl FemaleDemo {
             let same_source = parameters.body_model == self.body_parameters.body_model;
             replacement.animation_only = self.animation_only;
             replacement.secondary_only = self.secondary_only;
+            replacement.rig_pose_only = self.rig_pose_only;
             if same_source {
                 // Force a rebase even when resetting to source defaults at a nonzero pose time.
                 replacement.body_parameters = self.body_parameters;
@@ -635,6 +638,7 @@ impl FemaleDemo {
             replacement.surface_diffusion_enabled = self.surface_diffusion_enabled;
             replacement.animation_only = self.animation_only;
             replacement.secondary_only = self.secondary_only;
+            replacement.rig_pose_only = self.rig_pose_only;
             replacement.yaw = self.yaw;
             replacement.pitch = self.pitch;
             replacement.distance = self.distance;
@@ -685,7 +689,8 @@ impl FemaleDemo {
             .collect();
         let mut skin = self.skin.rebased(rest)?;
         let mut targets = if self.secondary_only {
-            self.skin_reference_rest.clone()
+            if self.animation_only {self.skin_reference_rest.clone()}
+            else {self.skin_rig.jump_pose_points(&self.skin_reference_rest, self.time)}
         } else {
             self.skin_rig
                 .pose_points(&self.skin_reference_rest, self.time as f32)
@@ -756,7 +761,9 @@ impl FemaleDemo {
     }
     fn hair_collider_pose(&self, time: f64) -> Vec<SceneVertex> {
         let mut posed = self.vertices.clone();
-        if !self.secondary_only {
+        if self.secondary_only {
+            if !self.animation_only {self.rig.deform_jump(&mut posed, time);}
+        } else {
             self.rig.deform(&mut posed, time as f32);
         }
         let bob = self.root_bob(time);
@@ -769,7 +776,7 @@ impl FemaleDemo {
     fn hair_head_matrix(&self, time: f64) -> glam::Mat4 {
         let bob = self.root_bob(time) as f32;
         let head = if self.secondary_only {
-            glam::Mat4::IDENTITY
+            if self.animation_only {glam::Mat4::IDENTITY} else {self.rig.jump_head_matrix(time)}
         } else {
             self.rig.head_matrix(time as f32)
         };
@@ -802,13 +809,8 @@ impl FemaleDemo {
         if !self.secondary_only || self.animation_only {
             return (0.0, 0.0);
         }
-        let phase = time.rem_euclid(6.0);
-        if phase >= 4.0 {
-            return (0.0, 0.0);
-        }
-        let angle = phase * std::f64::consts::TAU;
-        let omega = 2.0 * std::f64::consts::TAU;
-        (0.08 * angle.sin().powi(2), 0.04 * omega * omega * (2.0 * angle).cos())
+        let motion = crate::jump_motion::sample(time);
+        (motion.height, motion.acceleration)
     }
     fn root_bob(&self, time: f64) -> f64 {
         self.root_motion(time).0
@@ -1160,6 +1162,7 @@ impl FemaleDemo {
             return 0.0;
         }
         let bob = self.root_bob(time);
+        if self.rig_pose_only {return bob;}
         let mut offset = bob;
         for (i, state) in self.secondary.iter().enumerate() {
             let center = [
@@ -1178,6 +1181,7 @@ impl FemaleDemo {
     pub(crate) fn background_view_replica(&self) -> Result<Self, Box<dyn std::error::Error>> {
         if !self.secondary_only
             || self.animation_only
+            || self.rig_pose_only
             || self.parameter_file.is_some()
             || self.face_parameter_file.is_some()
             || self.film.is_some()
@@ -1206,6 +1210,7 @@ impl FemaleDemo {
         Ok(view)
     }
     pub(crate) fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
+        if self.rig_pose_only {return Err("pose-only rig preview cannot advance physical state");}
         if let Some(path) = &self.face_parameter_file {
             if let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified()) {
                 if self.face_parameter_revision != Some(revision) {
@@ -1359,11 +1364,10 @@ impl FemaleDemo {
                         .max(region.maximum_local_displacement(bob));
                 }
                 // Retain the elastic skin solver in the inertial demo instead of freezing its state.
-                let targets: Vec<_> = self
-                    .skin_reference_rest
-                    .iter()
-                    .map(|rest| {
-                        let mut p = *rest;
+                let posed_shell = self.skin_rig.jump_pose_points(&self.skin_reference_rest, time);
+                let targets: Vec<_> = posed_shell.iter().zip(&self.skin_reference_rest)
+                    .map(|(posed, rest)| {
+                        let mut p = *posed;
                         p[1] += self.support_offset(*rest, time);
                         self.body_parameters
                             .transform(p.map(|v| v as f32))
@@ -1392,16 +1396,16 @@ impl FemaleDemo {
                         })
                     });
                     let started = std::time::Instant::now();
-                    let skin_result = skin.step_with_contacts(
+                    let skin_result = skin.step_adaptive(
                         h,
                         [0., -9.81, 0.],
                         &vec![[0.; 3]; targets.len()],
                         attachments,
-                        &ContactScene::default(),
                         SolverConfig {
                             force_tolerance: 1e-6,
                             ..Default::default()
                         },
+                        6,
                     );
                     let skin_ms = started.elapsed().as_secs_f64() * 1000.;
                     let hair_ms = if let Some(hair_step) = hair_step {
@@ -1581,10 +1585,13 @@ impl FemaleDemo {
     ) -> Result<(Vec<u32>, Vec<voxy_render::SurfaceDeformationWeight>, u32), voxy_render::SceneError>
     {
         if !self.secondary_only
+            || self.rig_pose_only
             || self.film.is_some()
             || self.simulate_hair
             || self.cold_response.is_some()
             || self.parameter_file.is_some()
+            || self.body_parameters != Default::default()
+            || self.time != 0.
         {
             return Err(voxy_render::SceneError::InvalidGeometry);
         }
@@ -1626,6 +1633,8 @@ impl FemaleDemo {
     pub(crate) fn gpu_secondary_body_vertices(&self) -> u32 {
         self.body_vertices as u32
     }
+    pub(crate) fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {self.rig.gpu_jump_weights()}
+    pub(crate) fn gpu_jump_palette(&self) -> Vec<glam::Mat4> {self.rig.jump_palette(if self.animation_only {5.} else {self.time})}
     pub(crate) fn gpu_secondary_controls(&self) -> Vec<[f32; 4]> {
         let bob = self.root_bob(self.time);
         let mut controls = vec![[0., bob as f32, 0., 0.]];
@@ -1676,21 +1685,23 @@ impl FemaleDemo {
             self.face_pose(),
             self.lid_contour.as_ref(),
         );
-        if !self.secondary_only {
+        if self.secondary_only {
+            if !self.animation_only {self.rig.deform_jump(&mut vertices, self.time);}
+        } else {
             self.rig.deform(&mut vertices, self.time as f32);
         }
         for (vertex, rest) in vertices.iter_mut().zip(&self.vertices) {
             vertex.position[1] +=
                 self.support_offset(rest.position.map(f64::from), self.time) as f32;
         }
-        let displacement = self
+        let displacement = if self.rig_pose_only {vec![[0.;3];self.body_vertices]} else {self
             .embedding
             .deform(
                 self.skin.positions(),
                 &self.targets,
                 &vec![[0.; 3]; self.body_vertices],
             )
-            .expect("validated finite shell and binding dimensions");
+            .expect("validated finite shell and binding dimensions")};
         let mut normal_geometry = vertices.clone();
         self.render_body_parameters().apply(&mut normal_geometry);
         for (vertex, delta) in normal_geometry.iter_mut().zip(&displacement) {
@@ -1698,7 +1709,7 @@ impl FemaleDemo {
                 vertex.position[k] += delta[k] as f32;
             }
         }
-        if self.secondary_only {
+        if self.secondary_only && !self.rig_pose_only {
             for region in &self.regions {
                 region.apply(
                     &self.vertices,
@@ -1926,7 +1937,7 @@ impl FemaleDemo {
                 vertex.position[k] += delta[k] as f32;
             }
         }
-        if self.secondary_only {
+        if self.secondary_only && !self.rig_pose_only {
             for region in &self.regions {
                 region.apply(&self.vertices, &mut vertices, self.root_bob(self.time));
             }
@@ -2626,11 +2637,11 @@ mod tests {
             let posed = demo.hair_collider_pose(time);
             let bob = demo.root_bob(time) as f32;
             for point in [Vec3::new(-0.025, 0.646, 0.148), Vec3::new(0.025, 0.646, 0.148)] {
-                assert!(head.transform_point3(point).distance(point + Vec3::Y*bob) < 1e-7);
+                assert!(head.transform_point3(point).distance(demo.rig.jump_head_matrix(time).transform_point3(point) + Vec3::Y*bob) < 1e-7);
             }
             for (rest, posed) in demo.vertices[..demo.body_vertices].iter().zip(&posed) {
                 let point = Vec3::from_array(rest.position);
-                if point.y > 0.6 {
+                if point.y > 0.62 {
                     assert!(Vec3::from_array(posed.position).distance(head.transform_point3(point)) < 1e-7);
                 }
             }
@@ -2645,7 +2656,7 @@ mod tests {
         // A stationary root must not receive an invisible jump force.
         assert_eq!(demo.root_motion(0.25), (0.0, 0.0));
         demo.secondary_only = true;
-        let epsilon = 1e-4;
+        let epsilon = 1e-5;
         for time in [0.07, 0.25, 0.43, 1.27, 3.73] {
             let (position, acceleration) = demo.root_motion(time);
             let numerical = (demo.root_bob(time + epsilon) - 2.0 * position

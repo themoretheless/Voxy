@@ -40,8 +40,8 @@ fn daxpy(alpha: f64, x: &[Vec3], y: &mut [Vec3]) {
             cy[1][2] += cx[1][2] * alpha;
 
             cy[2][0] += cx[2][0] * alpha;
-            cy[2][2] += cx[2][2] * alpha;
             cy[2][1] += cx[2][1] * alpha;
+            cy[2][2] += cx[2][2] * alpha;
 
             cy[3][0] += cx[3][0] * alpha;
             cy[3][1] += cx[3][1] * alpha;

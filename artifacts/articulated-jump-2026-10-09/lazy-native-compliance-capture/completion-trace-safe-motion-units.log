@@ -1,0 +1,614 @@
+
+running 28 tests
+test hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission ... ignored, requires a captured joint-root motion fixture
+test hair::contact::velocity_contacts::safe_motion::tests::captured_witness_sampling_matches_before_change_reference ... ignored, requires a captured joint-root motion fixture
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::localized_witness_finds_captured_penetration_between_coarse_samples ... ok
+test hair::contact::velocity_contacts::safe_motion::line_certificate::tests::overflow_never_certifies_clearance ... ok
+test hair::contact::velocity_contacts::safe_motion::line_certificate::fixture_tests::nominal_frame3_restrictions_are_continuously_clear ... ok
+test hair::contact::velocity_contacts::safe_motion::line_certificate::tests::continuous_line_bound_rejects_tunnel_and_unknown_parallel_lines ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::swept_cut_keeps_the_first_contact_side_after_candidate_crosses ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::follicle_corner_permission_keeps_distal_crossings_visible ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::angular_trust_region_is_local_to_the_contact_component ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::interval_planes_do_not_admit_a_tunnel_or_exhausted_query ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::shifted_witness_cannot_reopen_a_previously_constrained_crossing ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::affine_cut_includes_prescribed_root_and_time_interpolation ... ok
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000024999822074961238 maximum_accepted_translation_m=0.000024999822074961238
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.272542 initial_projection_ms=0.0test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::early_witness_residual_and_gradient_remain_in_physical_metres ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::opening_pair_above_initial_band_does_not_return_zero_progress ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::contact_group_does_not_slow_an_independent_guide ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::initial_plane_allows_opening_and_sliding_but_bounds_closing ... ok
+59042000000000004 initial_admission_ms=0.008458 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::angular_trust_collision_is_found_on_the_path_that_will_be_admitted ... ok
+HAIR SWEPT COMPLETION collision_limited=test hair::contact::velocity_contacts::safe_motion::tests::reduced_free_motion_cannot_hide_prescribed_root_compression ... ok
+false elastic_limited=test hair::contact::velocity_contacts::safe_motion::tests::root_and_free_motion_are_admitted_as_one_path ... ok
+false minimum_trust=1 maximum_free_translation_m=0.0000006356293513258889 maximum_accepted_translation_m=0.0000006356293513258889
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.527458 initial_projection_ms=0.027625 initial_admission_ms=0.0037920000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000001989943262511732 maximum_accepted_translation_m=0.000000001989943262511732test hair::contact::velocity_contacts::safe_motion::tests::checked_scale_search_merges_new_neighbors_and_preserves_independent_motion ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::stopped_new_collision_enters_the_next_contact_active_set ... ok
+
+test hair::contact::velocity_contacts::safe_motion::tests::safe_newton_segments_do_not_certify_the_chord_of_one_physical_interval ... ok
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.20916700000000002 initial_projection_ms=0.013959 initial_admission_ms=0.002041000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+test hair::contact::velocity_contacts::safe_motion::tests::reducing_one_group_rechecks_and_merges_a_new_neighbor_collision ... ok
+HAIR SWEPT INITIAL PENETRATION gap_m=-0.00004799991200153518 start_a=[[-6.000116002062718e-6, 0.0019999999999878223, 0.0], [-3.000058001031359e-5, 0.009999999999939111, test hair::contact::velocity_contacts::safe_motion::tests::parallel_pair_queries_preserve_order_and_first_rejection ... ok
+0.0]] start_b=[[2e-5, 0.0, 0.0], [5.000058001017179e-5, 0.009999999999925981, 0.0]]
+HAIR SWEPT PAIR REJECT a=(0,0) b=(1,0) reason=swept strand motion starts in penetration
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000010558956723175936 maximum_accepted_translation_m=0.0000000010558956723175936
+test hair::contact::velocity_contacts::safe_motion::tests::penetrating_start_and_invalid_modes_roll_back_complete_runtime_state ... ok
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1.0488330000000001 initial_projection_ms=0.017791 initial_admission_ms=0.002999999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT REFINEMENT count=1 cuts=1 constraints=1 fraction=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00046 maximum_accepted_translation_m=0.00046
+HAIR SWEPT SOLVE PROFILE elapsed_ms=2.258083 initial_projection_ms=0.32537499999999997 initial_admission_ms=0.109458 refinements=1 cuts=1 constraints=1 groups=1 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000622845747572453 maximum_accepted_translation_m=0.00000000000622845747572453
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.7117910000000001 initial_projection_ms=0.015791 initial_admission_ms=0.0026250000000000023 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000003960315367309617 maximum_accepted_translation_m=0.0000000000003960315367309617
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.400833 initial_projection_ms=0.02 initial_admission_ms=0.0035829999999999994 refinements=0 cuts=test hair::contact::velocity_contacts::safe_motion::tests::collision_limited_low_strain_step_activates_reactions_before_publication ... ok
+0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000019501358553138816 maximum_accepted_translation_m=0.000000000000019501358553138816
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.27295800000000003 initial_projection_ms=0.016708 initial_admission_ms=0.037958 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000027997296583056803 maximum_accepted_translation_m=0.0000000000000000027997296583056803
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.18554199999999998 initial_projection_ms=0.015042 initial_admission_ms=0.0024999999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000027997296588616862 maximum_accepted_translation_m=0.0000000000000000027997296588616862
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.04775 initial_projection_ms=0.013167 initial_admission_ms=0.002791 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000006410981219745455 maximum_accepted_translation_m=0.00000000000000006410981219745455
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.30775 initial_projection_ms=0.022583 initial_admission_ms=0.005250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000027997296588616862 maximum_accepted_translation_m=0.0000000000000000027997296588616862
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.282083 initial_projection_ms=0.014916 initial_admission_ms=0.0033339999999999984 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000027584433748926823 maximum_accepted_translation_m=0.000027584433748926823
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.090917 initial_projection_ms=0.019292 initial_admission_ms=0.004083 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000003339253162968187 maximum_accepted_translation_m=0.0000000003339253162968187
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.138792 initial_projection_ms=0.014375 initial_admission_ms=0.0026250000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000004542244124488336 maximum_accepted_translation_m=0.00000000000004542244124488336
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.082792 initial_projection_ms=0.043167000000000004 initial_admission_ms=0.002791000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002609577917616209 maximum_accepted_translation_m=0.000000000000000002609577917616209
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.15308300000000002 initial_projection_ms=0.0085 initial_admission_ms=0.0016249999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001439521451705342 maximum_accepted_translation_m=0.000000000000000001439521451705342
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.047208 initial_projection_ms=0.011375 initial_admission_ms=0.002458 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000033365425812484936 maximum_accepted_translation_m=0.0000000000000000033365425812484936
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1.1125 initial_projection_ms=0.022 initial_admission_ms=0.004708 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001439521451705342 maximum_accepted_translation_m=0.000000000000000001439521451705342
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.20166699999999999 initial_projection_ms=0.008417 initial_admission_ms=0.0013750000000000012 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000272174558174091 maximum_accepted_translation_m=0.000000272174558174091
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.20775000000000002 initial_projection_ms=0.015291999999999998 initial_admission_ms=0.003541000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000027079288609325735 maximum_accepted_translation_m=0.000027079288609325735
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.1235 initial_projection_ms=0.020166999999999997 initial_admission_ms=0.0051250000000000046 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000008520896098900125 maximum_accepted_translation_m=0.0000000008520896098900125
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.09975 initial_projection_ms=0.013875 initial_admission_ms=0.002792000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000021616761667196178 maximum_accepted_translation_m=0.00000000021616761667196178
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.146375 initial_projection_ms=0.009917 initial_admission_ms=0.0019999999999999983 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000026673336299669318 maximum_accepted_translation_m=0.0000000000026673336299669318
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.18100000000000002 initial_projection_ms=0.009583 initial_admission_ms=0.0017090000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000008277432076279406 maximum_accepted_translation_m=0.0000000000000008277432076279406
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.23970799999999998 initial_projection_ms=0.029833000000000002 initial_admission_ms=0.0018749999999999982 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000026330790411182986 maximum_accepted_translation_m=0.0000000000000000026330790411182986
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037667 initial_projection_ms=0.009958 initial_admission_ms=0.0017499999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000008352537779266881 maximum_accepted_translation_m=0.000000000000008352537779266881
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.306666 initial_projection_ms=0.02275 initial_admission_ms=0.005458000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000026330790411182986 maximum_accepted_translation_m=0.0000000000000000026330790411182986
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.20666700000000002 initial_projection_ms=0.007875 initial_admission_ms=0.0013330000000000009 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000026145149698767252 maximum_accepted_translation_m=0.000000000000000026145149698767252
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.13433299999999998 initial_projection_ms=0.019333 initial_admission_ms=0.0045000000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000026330790411182986 maximum_accepted_translation_m=0.0000000000000000026330790411182986
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.16504200000000002 initial_projection_ms=0.014709 initial_admission_ms=0.0032910000000000023 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003529497418315383 maximum_accepted_translation_m=0.000000000000000003529497418315383
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.127792 initial_projection_ms=0.017458 initial_admission_ms=0.003374999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000025338630963376565 maximum_accepted_translation_m=0.000025338630963376565
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.24479200000000004 initial_projection_ms=0.012334000000000001 initial_admission_ms=0.002541 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000006356293513258889 maximum_accepted_translation_m=0.0000006356293513258889
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.200125 initial_projection_ms=0.016167 initial_admission_ms=0.0025829999999999985 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000573338045308077 maximum_accepted_translation_m=0.00000000000573338045308077
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.17033299999999998 initial_projection_ms=0.017458 initial_admission_ms=0.0037079999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000015270574273557726 maximum_accepted_translation_m=0.00000000000000015270574273557726
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.050166 initial_projection_ms=0.011416 initial_admission_ms=0.0026669999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002175011945250425 maximum_accepted_translation_m=0.000000000000000002175011945250425
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.053083 initial_projection_ms=0.008624999999999999 initial_admission_ms=0.0015000000000000013 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000001989943262511732 maximum_accepted_translation_m=0.000000001989943262511732
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.379 initial_projection_ms=0.016292 initial_admission_ms=0.004333 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000021750119451857276 maximum_accepted_translation_m=0.0000000000000000021750119451857276
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.120042 initial_projection_ms=0.007875 initial_admission_ms=0.0014590000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000622845747572453 maximum_accepted_translation_m=0.00000000000622845747572453
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.098 initial_projection_ms=0.012084 initial_admission_ms=0.003125000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000021750119451857276 maximum_accepted_translation_m=0.0000000000000000021750119451857276
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.185417 initial_projection_ms=0.009334 initial_admission_ms=0.0017499999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000019501358553138816 maximum_accepted_translation_m=0.000000000000019501358553138816
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.15520799999999998 initial_projection_ms=0.009042000000000001 initial_admission_ms=0.0017909999999999975 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00002499999725496414 maximum_accepted_translation_m=0.00002499999725496414
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.15725 initial_projection_ms=0.013708 initial_admission_ms=0.003250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000006410981219745455 maximum_accepted_translation_m=0.00000000000000006410981219745455
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.134709 initial_projection_ms=0.011459 initial_admission_ms=0.0022909999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000004413191186822678 maximum_accepted_translation_m=0.000000000004413191186822678
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.209916 initial_projection_ms=0.011125 initial_admission_ms=0.002208 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000002942977583334067 maximum_accepted_translation_m=0.00000000000000002942977583334067
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.094208 initial_projection_ms=0.026833 initial_admission_ms=0.005332999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000009848336848531255 maximum_accepted_translation_m=0.0000000000000000009848336848531255
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.063584 initial_projection_ms=0.012709 initial_admission_ms=0.0022910000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000000984839930679499 maximum_accepted_translation_m=0.000000000000000000984839930679499
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.046666 initial_projection_ms=0.012374999999999999 initial_admission_ms=0.0025410000000000016 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000000984839930679499 maximum_accepted_translation_m=0.000000000000000000984839930679499
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.158625 initial_projection_ms=0.107375 initial_admission_ms=0.0030000000000000027 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000024999998162115688 maximum_accepted_translation_m=0.000024999998162115688
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.046166 initial_projection_ms=0.009000000000000001 initial_admission_ms=0.0017079999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000019748907600127058 maximum_accepted_translation_m=0.0000000000019748907600127058
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043375 initial_projection_ms=0.008041 initial_admission_ms=0.0013749999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000001650925915721451 maximum_accepted_translation_m=0.00000000000000001650925915721451
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.042624999999999996 initial_projection_ms=0.007542 initial_admission_ms=0.0012919999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003065947392571464 maximum_accepted_translation_m=0.000000000000000003065947392571464
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.040542 initial_projection_ms=0.007708 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000030659408500385388 maximum_accepted_translation_m=0.0000000000000000030659408500385388
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.042333 initial_projection_ms=0.007625 initial_admission_ms=0.0012500000000000011 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000030659408500385388 maximum_accepted_translation_m=0.0000000000000000030659408500385388
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.052875 initial_projection_ms=0.007625 initial_admission_ms=0.0012910000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000033365425812484936 maximum_accepted_translation_m=0.0000000000000000033365425812484936
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1.475333 initial_projection_ms=0.014375 initial_admission_ms=0.0035420000000000017 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000024999999798530884 maximum_accepted_translation_m=0.000024999999798530884
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.10804200000000001 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0013339999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000272174558174091 maximum_accepted_translation_m=0.000000272174558174091
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.08462499999999999 initial_projection_ms=0.009792 initial_admission_ms=0.002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000023617595477410354 maximum_accepted_translation_m=0.000000000000023617595477410354
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.097291 initial_projection_ms=0.009833 initial_admission_ms=0.0018329999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000008520896098900125 maximum_accepted_translation_m=0.0000000008520896098900125
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.10241700000000001 initial_projection_ms=0.008417 initial_admission_ms=0.001458000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000032389854253981537 maximum_accepted_translation_m=0.0000000000000000032389854253981537
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.089792 initial_projection_ms=0.0085 initial_admission_ms=0.0014999999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000026673336299669318 maximum_accepted_translation_m=0.0000000000026673336299669318
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.08854100000000001 initial_projection_ms=0.009290999999999999 initial_admission_ms=0.0019590000000000024 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000000323896502540431 maximum_accepted_translation_m=0.00000000000000000323896502540431
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.1425 initial_projection_ms=0.008542000000000001 initial_admission_ms=0.0013749999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000008352537779266881 maximum_accepted_translation_m=0.000000000000008352537779266881
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.231 initial_projection_ms=0.008875000000000001 initial_admission_ms=0.0016669999999999983 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000000323896502540431 maximum_accepted_translation_m=0.00000000000000000323896502540431
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.263625 initial_projection_ms=0.009167 initial_admission_ms=0.002041000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000026145149698767252 maximum_accepted_translation_m=0.000000000000000026145149698767252
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.1535 initial_projection_ms=0.020874999999999998 initial_admission_ms=0.005375000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000000323896502540431 maximum_accepted_translation_m=0.00000000000000000323896502540431
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.201958 initial_projection_ms=0.032332999999999994 initial_admission_ms=0.0029590000000000033 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003529497418315383 maximum_accepted_translation_m=0.000000000000000003529497418315383
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.120834 initial_projection_ms=0.017374999999999998 initial_admission_ms=0.00375 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00002503293667118035 maximum_accepted_translation_m=0.00002503293667118035
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.11625 initial_projection_ms=0.010084000000000001 initial_admission_ms=0.0024999999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000054243753322597325 maximum_accepted_translation_m=0.000000000000054243753322597325
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.035167 initial_projection_ms=0.008667 initial_admission_ms=0.0018329999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000018886528824464907 maximum_accepted_translation_m=0.000000018886528824464907
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.225583 initial_projection_ms=0.010708 initial_admission_ms=0.0017499999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000025582353311604668 maximum_accepted_translation_m=0.0000000000000000025582353311604668
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.116583 initial_projection_ms=0.030417 initial_admission_ms=0.0017080000000000012 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000005912674933178042 maximum_accepted_translation_m=0.00000000005912674933178042
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.17225000000000001 initial_projection_ms=0.008291999999999999 initial_admission_ms=0.0013330000000000009 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000025582353311837343 maximum_accepted_translation_m=0.0000000000000000025582353311837343
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.208208 initial_projection_ms=0.009125 initial_admission_ms=0.0017499999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000018511024548616905 maximum_accepted_translation_m=0.00000000000018511024548616905
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.149375 initial_projection_ms=0.020292 initial_admission_ms=0.004499999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000025582353311837343 maximum_accepted_translation_m=0.0000000000000000025582353311837343
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.207 initial_projection_ms=0.008916 initial_admission_ms=0.001875 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000580884848323266 maximum_accepted_translation_m=0.000000000000000580884848323266
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.19929100000000002 initial_projection_ms=0.007958000000000002 initial_admission_ms=0.0013329999999999974 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000025582353311837343 maximum_accepted_translation_m=0.0000000000000000025582353311837343
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.044083 initial_projection_ms=0.010542 initial_admission_ms=0.002458 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002379853049051852 maximum_accepted_translation_m=0.000000000000000002379853049051852
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.090125 initial_projection_ms=0.010750000000000001 initial_admission_ms=0.002624999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000023798530489088913 maximum_accepted_translation_m=0.0000000000000000023798530489088913
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.051709000000000005 initial_projection_ms=0.00825 initial_admission_ms=0.0014169999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000660788212122377 maximum_accepted_translation_m=0.0000000660788212122377
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.033834 initial_projection_ms=0.007875 initial_admission_ms=0.001209 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000020686848255612988 maximum_accepted_translation_m=0.00000000020686848255612988
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.07150000000000001 initial_projection_ms=0.031 initial_admission_ms=0.003916999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000006476511791517504 maximum_accepted_translation_m=0.0000000000006476511791517504
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.04275 initial_projection_ms=0.00975 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00002501867518941023 maximum_accepted_translation_m=0.00002501867518941023
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.5682499999999999 initial_projection_ms=0.007916 initial_admission_ms=0.001542 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000002030145477059511 maximum_accepted_translation_m=0.000000000000002030145477059511
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.16674999999999998 initial_projection_ms=0.038958 initial_admission_ms=0.002042000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000006400458988475513 maximum_accepted_translation_m=0.000000000000000006400458988475513
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041083 initial_projection_ms=0.010958 initial_admission_ms=0.002333 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000017438557476065834 maximum_accepted_translation_m=0.000000000000017438557476065834
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.264209 initial_projection_ms=0.014167 initial_admission_ms=0.0035419999999999983 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003509981999133264 maximum_accepted_translation_m=0.000000000000000003509981999133264
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.140792 initial_projection_ms=0.009667 initial_admission_ms=0.001916000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000018886528824464907 maximum_accepted_translation_m=0.000000018886528824464907
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.057417 initial_projection_ms=0.009417 initial_admission_ms=0.001791000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000005912674933178042 maximum_accepted_translation_m=0.00000000005912674933178042
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037042000000000005 initial_projection_ms=0.008208 initial_admission_ms=0.0016249999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002467160017068664 maximum_accepted_translation_m=0.000000000000000002467160017068664
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.35291700000000004 initial_projection_ms=0.013917 initial_admission_ms=0.0030830000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000018511024548616905 maximum_accepted_translation_m=0.00000000000018511024548616905
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.19487500000000002 initial_projection_ms=0.007542 initial_admission_ms=0.0011660000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000024671596241644462 maximum_accepted_translation_m=0.0000000000000000024671596241644462
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.217958 initial_projection_ms=0.010958 initial_admission_ms=0.002416999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000580884848323266 maximum_accepted_translation_m=0.000000000000000580884848323266
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.059584 initial_projection_ms=0.020125 initial_admission_ms=0.00375 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000024671596241644462 maximum_accepted_translation_m=0.0000000000000000024671596241644462
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.17304199999999997 initial_projection_ms=0.023625 initial_admission_ms=0.005208999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002379853049051852 maximum_accepted_translation_m=0.000000000000000002379853049051852
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.112875 initial_projection_ms=0.0085 initial_admission_ms=0.0018329999999999978 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000023798530489088913 maximum_accepted_translation_m=0.0000000000000000023798530489088913
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.047875 initial_projection_ms=0.00825 initial_admission_ms=0.0014579999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000660788212122377 maximum_accepted_translation_m=0.0000000660788212122377
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.052 initial_projection_ms=0.007208 initial_admission_ms=0.0012089999999999991 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000020686848255612988 maximum_accepted_translation_m=0.00000000020686848255612988
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037375 initial_projection_ms=0.006916 initial_admission_ms=0.0011669999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000006476511791517504 maximum_accepted_translation_m=0.0000000000006476511791517504
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.034458 initial_projection_ms=0.007083 initial_admission_ms=0.0010840000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000002030145477059511 maximum_accepted_translation_m=0.000000000000002030145477059511
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.034041999999999996 initial_projection_ms=0.007 initial_admission_ms=0.0011249999999999984 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000024671596241644462 maximum_accepted_translation_m=0.0000000000000000024671596241644462
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.575125 initial_projection_ms=0.008209000000000001 initial_admission_ms=0.001624999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000025000975892443083 maximum_accepted_translation_m=0.000025000975892443083
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041625 initial_projection_ms=0.009375 initial_admission_ms=0.0022080000000000016 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000006400458988475513 maximum_accepted_translation_m=0.000000000000000006400458988475513
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.252666 initial_projection_ms=0.007208 initial_admission_ms=0.0012499999999999985 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003509981999133264 maximum_accepted_translation_m=0.000000000000000003509981999133264
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.040584 initial_projection_ms=0.011167 initial_admission_ms=0.0019580000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000015803077375387154 maximum_accepted_translation_m=0.00000000000000015803077375387154
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.282083 initial_projection_ms=0.007708 initial_admission_ms=0.0015840000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000002427078352425514 maximum_accepted_translation_m=0.00000002427078352425514
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.18420799999999998 initial_projection_ms=0.008457999999999999 initial_admission_ms=0.0014170000000000016 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000022905968148262692 maximum_accepted_translation_m=0.0000000000000000022905968148262692
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.139459 initial_projection_ms=0.011084 initial_admission_ms=0.002791 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000007598286947276611 maximum_accepted_translation_m=0.00000000007598286947276611
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.153 initial_projection_ms=0.040042 initial_admission_ms=0.0022079999999999947 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000023787900961484065 maximum_accepted_translation_m=0.00000000000023787900961484065
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.03625 initial_projection_ms=0.010665999999999998 initial_admission_ms=0.0017500000000000016 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000007447213628585668 maximum_accepted_translation_m=0.0000000000000007447213628585668
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037042000000000005 initial_projection_ms=0.008749999999999999 initial_admission_ms=0.0016670000000000018 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002290594689441714 maximum_accepted_translation_m=0.000000000000000002290594689441714
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.341209 initial_projection_ms=0.008 initial_admission_ms=0.0014590000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000004442512922383287 maximum_accepted_translation_m=0.000000000000000004442512922383287
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.17550000000000002 initial_projection_ms=0.0295 initial_admission_ms=0.001917000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000025093546049474323 maximum_accepted_translation_m=0.0000000000000000025093546049474323
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.056166 initial_projection_ms=0.01 initial_admission_ms=0.001875 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002290594689441714 maximum_accepted_translation_m=0.000000000000000002290594689441714
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.212833 initial_projection_ms=0.013458000000000001 initial_admission_ms=0.0028339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000036865383618730286 maximum_accepted_translation_m=0.0000000036865383618730286
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.112125 initial_projection_ms=0.008459 initial_admission_ms=0.0016250000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002290594689441714 maximum_accepted_translation_m=0.000000000000000002290594689441714
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.13433299999999998 initial_projection_ms=0.008541 initial_admission_ms=0.0017090000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000011541191250462921 maximum_accepted_translation_m=0.000000000011541191250462921
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.098583 initial_projection_ms=0.009542 initial_admission_ms=0.001875 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000024999999967189648 maximum_accepted_translation_m=0.000024999999967189648
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.079416 initial_projection_ms=0.007916 initial_admission_ms=0.0014590000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000003613159272727116 maximum_accepted_translation_m=0.00000000000003613159272727116
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.08025 initial_projection_ms=0.00825 initial_admission_ms=0.0014160000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000011314651688153659 maximum_accepted_translation_m=0.00000000000000011314651688153659
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.032042 initial_projection_ms=0.008624999999999999 initial_admission_ms=0.0012920000000000015 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002698831127172026 maximum_accepted_translation_m=0.000000000000000002698831127172026
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.032833 initial_projection_ms=0.007541 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002698831127515818 maximum_accepted_translation_m=0.000000000000000002698831127515818
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.067625 initial_projection_ms=0.008459 initial_admission_ms=0.0012910000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000006393194701932119 maximum_accepted_translation_m=0.0000000000000006393194701932119
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.38816700000000004 initial_projection_ms=0.007375 initial_admission_ms=0.0012919999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000002427078352425514 maximum_accepted_translation_m=0.00000002427078352425514
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.093917 initial_projection_ms=0.007333999999999999 initial_admission_ms=0.001375000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000014780952811220756 maximum_accepted_translation_m=0.0000000000000000014780952811220756
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.146583 initial_projection_ms=0.009082999999999999 initial_admission_ms=0.0018330000000000013 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000007598286947276611 maximum_accepted_translation_m=0.00000000007598286947276611
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.09866699999999999 initial_projection_ms=0.008084 initial_admission_ms=0.0013750000000000012 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000023787900961484065 maximum_accepted_translation_m=0.00000000000023787900961484065
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037834 initial_projection_ms=0.008209000000000001 initial_admission_ms=0.0014999999999999979 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000007447213628585668 maximum_accepted_translation_m=0.0000000000000007447213628585668
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.034375 initial_projection_ms=0.007416 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000004442512922383287 maximum_accepted_translation_m=0.000000000000000004442512922383287
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041665999999999995 initial_projection_ms=0.007708 initial_admission_ms=0.0013749999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001478095281133125 maximum_accepted_translation_m=0.000000000000000001478095281133125
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.513083 initial_projection_ms=0.008083 initial_admission_ms=0.0016249999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000025093546049474323 maximum_accepted_translation_m=0.0000000000000000025093546049474323
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.18512499999999998 initial_projection_ms=0.008375 initial_admission_ms=0.0015829999999999993 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000036865383618730286 maximum_accepted_translation_m=0.0000000036865383618730286
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.034 initial_projection_ms=0.00975 initial_admission_ms=0.0017499999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001478095281133125 maximum_accepted_translation_m=0.000000000000000001478095281133125
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.216333 initial_projection_ms=0.022542 initial_admission_ms=0.0051660000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000011541191250462921 maximum_accepted_translation_m=0.000000000011541191250462921
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.183542 initial_projection_ms=0.006875 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000003613159272727116 maximum_accepted_translation_m=0.00000000000003613159272727116
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.036042 initial_projection_ms=0.009959 initial_admission_ms=0.0020409999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000011314651688153659 maximum_accepted_translation_m=0.00000000000000011314651688153659
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031458 initial_projection_ms=0.007166 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001478095281133125 maximum_accepted_translation_m=0.000000000000000001478095281133125
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.23970799999999998 initial_projection_ms=0.021792000000000002 initial_admission_ms=0.0052910000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002698831127172026 maximum_accepted_translation_m=0.000000000000000002698831127172026
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.115291 initial_projection_ms=0.006916 initial_admission_ms=0.0011249999999999993 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002698831127515818 maximum_accepted_translation_m=0.000000000000000002698831127515818
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.033083 initial_projection_ms=0.007416 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000024999999984069463 maximum_accepted_translation_m=0.000024999999984069463
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.206541 initial_projection_ms=0.009791 initial_admission_ms=0.001875 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000004896838248308493 maximum_accepted_translation_m=0.0000000000000004896838248308493
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.058792000000000004 initial_projection_ms=0.014584 initial_admission_ms=0.0036250000000000032 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000006749894175794104 maximum_accepted_translation_m=0.000000006749894175794104
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.352084 initial_projection_ms=0.010125 initial_admission_ms=0.002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003020865334797965 maximum_accepted_translation_m=0.000000000000000003020865334797965
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.209917 initial_projection_ms=0.012333 initial_admission_ms=0.002958999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000021131430966749796 maximum_accepted_translation_m=0.000000000021131430966749796
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.135166 initial_projection_ms=0.034375 initial_admission_ms=0.005374999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003020865334766442 maximum_accepted_translation_m=0.000000000000000003020865334766442
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.236125 initial_projection_ms=0.011459 initial_admission_ms=0.0023750000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000006615597698262592 maximum_accepted_translation_m=0.00000000000006615597698262592
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.206959 initial_projection_ms=0.013709 initial_admission_ms=0.002666 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003020865334766442 maximum_accepted_translation_m=0.000000000000000003020865334766442
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.175792 initial_projection_ms=0.013375 initial_admission_ms=0.0033750000000000013 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000020768626780495532 maximum_accepted_translation_m=0.00000000000000020768626780495532
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.146 initial_projection_ms=0.010209 initial_admission_ms=0.001791000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000015752996043209035 maximum_accepted_translation_m=0.0000000000000000015752996043209035
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.040458 initial_projection_ms=0.008708 initial_admission_ms=0.001624999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000015752996040423244 maximum_accepted_translation_m=0.0000000000000000015752996040423244
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.03975 initial_projection_ms=0.007542 initial_admission_ms=0.001207999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000002104816347277434 maximum_accepted_translation_m=0.000000002104816347277434
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037208 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0011659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000006589402991020496 maximum_accepted_translation_m=0.000000000006589402991020496
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0395 initial_projection_ms=0.007583 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000020629217377299683 maximum_accepted_translation_m=0.000000000000020629217377299683
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041375 initial_projection_ms=0.007333 initial_admission_ms=0.0011249999999999984 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000006458996710975 maximum_accepted_translation_m=0.00000000000000006458996710975
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.039458 initial_projection_ms=0.007292 initial_admission_ms=0.0013329999999999991 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000012527154289603286 maximum_accepted_translation_m=0.0000000000000000012527154289603286
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.039708 initial_projection_ms=0.007417 initial_admission_ms=0.001125000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000012525738084809428 maximum_accepted_translation_m=0.0000000000000000012525738084809428
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031542 initial_projection_ms=0.00725 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000006749894175794104 maximum_accepted_translation_m=0.000000006749894175794104
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.07454200000000001 initial_projection_ms=0.00725 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003020865334766442 maximum_accepted_translation_m=0.000000000000000003020865334766442
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1.0614590000000002 initial_projection_ms=0.011125 initial_admission_ms=0.0027500000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000021131430966749796 maximum_accepted_translation_m=0.000000000021131430966749796
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.278584 initial_projection_ms=0.008792 initial_admission_ms=0.001667 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000025000018704993678 maximum_accepted_translation_m=0.000025000018704993678
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.260042 initial_projection_ms=0.033207999999999994 initial_admission_ms=0.0020000000000000018 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000006615597698262592 maximum_accepted_translation_m=0.00000000000006615597698262592
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.175041 initial_projection_ms=0.021416 initial_admission_ms=0.006166999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000007358592797797129 maximum_accepted_translation_m=0.0000000000000007358592797797129
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.196375 initial_projection_ms=0.009667 initial_admission_ms=0.0020419999999999987 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000020768626780495532 maximum_accepted_translation_m=0.00000000000000020768626780495532
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001856460466463108 maximum_accepted_translation_m=0.000000000000000001856460466463108
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.14387499999999998 initial_projection_ms=0.010584000000000001 initial_admission_ms=0.002165999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.1975 initial_projection_ms=0.017625000000000002 initial_admission_ms=0.004541 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001856460466485004 maximum_accepted_translation_m=0.000000000000000001856460466485004
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.17300000000000001 initial_projection_ms=0.013625000000000002 initial_admission_ms=0.002166999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000015752996043209035 maximum_accepted_translation_m=0.0000000000000000015752996043209035
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.160541 initial_projection_ms=0.021041 initial_admission_ms=0.011209 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000015752996040423244 maximum_accepted_translation_m=0.0000000000000000015752996040423244
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.039708 initial_projection_ms=0.013417 initial_admission_ms=0.0030830000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001856460466485004 maximum_accepted_translation_m=0.000000000000000001856460466485004
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.200375 initial_projection_ms=0.0235 initial_admission_ms=0.0038340000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000002104816347277434 maximum_accepted_translation_m=0.000000002104816347277434
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.10500000000000001 initial_projection_ms=0.012041999999999999 initial_admission_ms=0.0033330000000000026 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000006589402991020496 maximum_accepted_translation_m=0.000000000006589402991020496
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.057416 initial_projection_ms=0.012374999999999999 initial_admission_ms=0.0032080000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000020629217377299683 maximum_accepted_translation_m=0.000000000000020629217377299683
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.049332999999999995 initial_projection_ms=0.00825 initial_admission_ms=0.001667 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000001856460466485004 maximum_accepted_translation_m=0.000000000000000001856460466485004
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.412458 initial_projection_ms=0.009833 initial_admission_ms=0.0020420000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000006458996710975 maximum_accepted_translation_m=0.00000000000000006458996710975
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.136083 initial_projection_ms=0.009958 initial_admission_ms=0.0022500000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000012527154289603286 maximum_accepted_translation_m=0.0000000000000000012527154289603286
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.034875 initial_projection_ms=0.011 initial_admission_ms=0.0025830000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000012525738084809428 maximum_accepted_translation_m=0.0000000000000000012525738084809428
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031041000000000003 initial_projection_ms=0.007958000000000002 initial_admission_ms=0.0014999999999999979 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000005369043391172717 maximum_accepted_translation_m=0.0000000005369043391172717
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031458 initial_projection_ms=0.008416 initial_admission_ms=0.0014169999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000025000373877087185 maximum_accepted_translation_m=0.000025000373877087185
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.319708 initial_projection_ms=0.009916 initial_admission_ms=0.002125 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000016808493146436536 maximum_accepted_translation_m=0.0000000000016808493146436536
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.175958 initial_projection_ms=0.007917 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000043502179359188564 maximum_accepted_translation_m=0.00000000000000043502179359188564
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.27512499999999995 initial_projection_ms=0.011708 initial_admission_ms=0.0027089999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000052652188292632514 maximum_accepted_translation_m=0.0000000000000052652188292632514
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.170167 initial_projection_ms=0.022709 initial_admission_ms=0.005583000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000001647416950770783 maximum_accepted_translation_m=0.00000000000000001647416950770783
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.07291600000000001 initial_projection_ms=0.012083 initial_admission_ms=0.0022920000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000016097077999451253 maximum_accepted_translation_m=0.0000000000000000016097077999451253
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.2925 initial_projection_ms=0.011875 initial_admission_ms=0.0028330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002780336901865593 maximum_accepted_translation_m=0.000000000000000002780336901865593
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.115167 initial_projection_ms=0.011042 initial_admission_ms=0.0020409999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000016097077999352996 maximum_accepted_translation_m=0.0000000000000000016097077999352996
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.1395 initial_projection_ms=0.030000000000000002 initial_admission_ms=0.0023329999999999913 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002780336901565355 maximum_accepted_translation_m=0.000000000000000002780336901565355
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.1075 initial_projection_ms=0.01 initial_admission_ms=0.0017499999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000016097077999470826 maximum_accepted_translation_m=0.0000000000000000016097077999470826
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.08349999999999999 initial_projection_ms=0.008916 initial_admission_ms=0.0015839999999999986 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000678370492654034 maximum_accepted_translation_m=0.000000000678370492654034
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.079791 initial_projection_ms=0.009583 initial_admission_ms=0.0019580000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000016097077999470826 maximum_accepted_translation_m=0.0000000000000000016097077999470826
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.169041 initial_projection_ms=0.008041 initial_admission_ms=0.0014169999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000021237275726692786 maximum_accepted_translation_m=0.0000000000021237275726692786
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.27954100000000004 initial_projection_ms=0.008708 initial_admission_ms=0.001542 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000025000155619703746 maximum_accepted_translation_m=0.000025000155619703746
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.218083 initial_projection_ms=0.0195 initial_admission_ms=0.004957999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000006650135594077454 maximum_accepted_translation_m=0.000000000000006650135594077454
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.29325 initial_projection_ms=0.010332999999999998 initial_admission_ms=0.0018330000000000013 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000023498157955165915 maximum_accepted_translation_m=0.000000000000000023498157955165915
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043916 initial_projection_ms=0.010791 initial_admission_ms=0.002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000732219789047704 maximum_accepted_translation_m=0.0000000000000000732219789047704
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.390792 initial_projection_ms=0.018542 initial_admission_ms=0.004333 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000032491587919345 maximum_accepted_translation_m=0.0000000000000000032491587919345
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.051167 initial_projection_ms=0.011083 initial_admission_ms=0.0026669999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000028351890273088632 maximum_accepted_translation_m=0.0000000000000000028351890273088632
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.47154199999999996 initial_projection_ms=0.017042 initial_admission_ms=0.004082999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000032491709822265366 maximum_accepted_translation_m=0.0000000000000000032491709822265366
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.29716699999999996 initial_projection_ms=0.008124999999999999 initial_admission_ms=0.0017090000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000032491709822265366 maximum_accepted_translation_m=0.0000000000000000032491709822265366
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.077 initial_projection_ms=0.016166 initial_admission_ms=0.003667 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002835303751953571 maximum_accepted_translation_m=0.000000000000000002835303751953571
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.29224999999999995 initial_projection_ms=0.023791999999999997 initial_admission_ms=0.005541000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000032491709822265366 maximum_accepted_translation_m=0.0000000000000000032491709822265366
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.105875 initial_projection_ms=0.013417 initial_admission_ms=0.002541 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000024999999999880458 maximum_accepted_translation_m=0.000024999999999880458
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.035500000000000004 initial_projection_ms=0.009459 initial_admission_ms=0.0019159999999999993 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000005369043391172717 maximum_accepted_translation_m=0.0000000005369043391172717
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.174833 initial_projection_ms=0.011667 initial_admission_ms=0.0028330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000003067174181740183 maximum_accepted_translation_m=0.0000000000000003067174181740183
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.11758400000000001 initial_projection_ms=0.00825 initial_admission_ms=0.0014169999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000016808493146436536 maximum_accepted_translation_m=0.0000000000016808493146436536
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.14804099999999998 initial_projection_ms=0.008624999999999999 initial_admission_ms=0.0016660000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000052652188292632514 maximum_accepted_translation_m=0.0000000000000052652188292632514
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.079041 initial_projection_ms=0.010916 initial_admission_ms=0.002959 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000001647416950770783 maximum_accepted_translation_m=0.00000000000000001647416950770783
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037375 initial_projection_ms=0.009084 initial_admission_ms=0.0018330000000000013 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002780336901865593 maximum_accepted_translation_m=0.000000000000000002780336901865593
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.04575 initial_projection_ms=0.008 initial_admission_ms=0.0013330000000000009 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000000229683317277844 maximum_accepted_translation_m=0.00000000000000000229683317277844
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.581125 initial_projection_ms=0.009708 initial_admission_ms=0.0020840000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002780336901565355 maximum_accepted_translation_m=0.000000000000000002780336901565355
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.251625 initial_projection_ms=0.041208 initial_admission_ms=0.0042079999999999965 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002296828938379029 maximum_accepted_translation_m=0.000000000000000002296828938379029
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.175625 initial_projection_ms=0.020083 initial_admission_ms=0.004833999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000678370492654034 maximum_accepted_translation_m=0.000000000678370492654034
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.201292 initial_projection_ms=0.010542 initial_admission_ms=0.0023750000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000021237275726692786 maximum_accepted_translation_m=0.0000000000021237275726692786
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.033583 initial_projection_ms=0.00975 initial_admission_ms=0.0019579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000000229683317277844 maximum_accepted_translation_m=0.00000000000000000229683317277844
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.19266699999999998 initial_projection_ms=0.021792000000000002 initial_admission_ms=0.003667 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002296828938379029 maximum_accepted_translation_m=0.000000000000000002296828938379029
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.034416999999999996 initial_projection_ms=0.01 initial_admission_ms=0.0020829999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000006650135594077454 maximum_accepted_translation_m=0.000000000000006650135594077454
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.16025 initial_projection_ms=0.007625 initial_admission_ms=0.0012910000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=test hair::contact::velocity_contacts::safe_motion::tests::runtime_moving_roots_remain_exact_and_elastic_nodes_follow ... ok
+1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000023498157955165915 maximum_accepted_translation_m=0.000000000000000023498157955165915
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.076375 initial_projection_ms=0.017583 initial_admission_ms=0.004291999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000028351890273088632 maximum_accepted_translation_m=0.0000000000000000028351890273088632
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.07258300000000001 initial_projection_ms=0.018042000000000002 initial_admission_ms=0.0024579999999999984 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002835303751953571 maximum_accepted_translation_m=0.000000000000000002835303751953571
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.069125 initial_projection_ms=0.012875 initial_admission_ms=0.0023330000000000017 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000017608065059388924 maximum_accepted_translation_m=0.00000000017608065059388924
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.057958 initial_projection_ms=0.013667 initial_admission_ms=0.0021659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000005512435150547081 maximum_accepted_translation_m=0.0000000000005512435150547081
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.079167 initial_projection_ms=0.013292 initial_admission_ms=0.002166999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000017257602788877142 maximum_accepted_translation_m=0.0000000000000017257602788877142
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.074291 initial_projection_ms=0.01825 initial_admission_ms=0.002125000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000007263413184903423 maximum_accepted_translation_m=0.000000000000000007263413184903423
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.165875 initial_projection_ms=0.012875 initial_admission_ms=0.0022500000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000023253528117218823 maximum_accepted_translation_m=0.0000000000000000023253528117218823
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.053 initial_projection_ms=0.0125 initial_admission_ms=0.002875000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000023253528117387835 maximum_accepted_translation_m=0.0000000000000000023253528117387835
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0415 initial_projection_ms=0.011625 initial_admission_ms=0.0024170000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000006914130420250642 maximum_accepted_translation_m=0.00000000006914130420250642
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.109167 initial_projection_ms=0.070625 initial_admission_ms=0.0025000000000000022 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000021645590387051975 maximum_accepted_translation_m=0.00000000000021645590387051975
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043667 initial_projection_ms=0.010292 initial_admission_ms=0.0014579999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000006806745933069134 maximum_accepted_translation_m=0.0000000000000006806745933069134
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.034749999999999996 initial_projection_ms=0.008334 initial_admission_ms=0.0012500000000000011 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002851043857109325 maximum_accepted_translation_m=0.000000000000000002851043857109325
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031583 initial_projection_ms=0.008375 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000028509791944877947 maximum_accepted_translation_m=0.0000000000000000028509791944877947
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.030917000000000004 initial_projection_ms=0.007833 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000028510046402152063 maximum_accepted_translation_m=0.0000000000000000028510046402152063
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031167 initial_projection_ms=0.008209000000000001 initial_admission_ms=0.001207999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000017608065059388924 maximum_accepted_translation_m=0.00000000017608065059388924
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.033457999999999995 initial_projection_ms=0.00775 initial_admission_ms=0.0012500000000000011 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000005512435150547081 maximum_accepted_translation_m=0.0000000000005512435150547081
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043625000000000004 initial_projection_ms=0.0095 initial_admission_ms=0.0016249999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000017257602788877142 maximum_accepted_translation_m=0.0000000000000017257602788877142
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.12479099999999999 initial_projection_ms=0.007708 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000007263413184903423 maximum_accepted_translation_m=0.000000000000000007263413184903423
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.057540999999999995 initial_projection_ms=0.014833 initial_admission_ms=0.0038750000000000017 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000023253528117218823 maximum_accepted_translation_m=0.0000000000000000023253528117218823
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043417000000000004 initial_projection_ms=0.009125 initial_admission_ms=0.0018330000000000013 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000023253528117387835 maximum_accepted_translation_m=0.0000000000000000023253528117387835
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041124999999999995 initial_projection_ms=0.007833 initial_admission_ms=0.0013340000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000006914130420250642 maximum_accepted_translation_m=0.00000000006914130420250642
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.045458 initial_projection_ms=0.007625 initial_admission_ms=0.0014579999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000021645590387051975 maximum_accepted_translation_m=0.00000000000021645590387051975
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043458000000000004 initial_projection_ms=0.007375 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000006806745933069134 maximum_accepted_translation_m=0.0000000000000006806745933069134
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043542 initial_projection_ms=0.007333 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002851043857109325 maximum_accepted_translation_m=0.000000000000000002851043857109325
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.044583000000000005 initial_projection_ms=0.007416 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000028509791944877947 maximum_accepted_translation_m=0.0000000000000000028509791944877947
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.044125000000000004 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000028510046402152063 maximum_accepted_translation_m=0.0000000000000000028510046402152063
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.044875 initial_projection_ms=0.007333 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000006712335842726294 maximum_accepted_translation_m=0.00000000006712335842726294
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.046125000000000006 initial_projection_ms=0.009041 initial_admission_ms=0.001542 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000021014118012017675 maximum_accepted_translation_m=0.00000000000021014118012017675
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.045708 initial_projection_ms=0.008375 initial_admission_ms=0.0012910000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000065787424041803495 maximum_accepted_translation_m=0.00000000000000065787424041803495
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.061583 initial_projection_ms=0.007583 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000004575939223542173 maximum_accepted_translation_m=0.000000000000000004575939223542173
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.04375 initial_projection_ms=0.007708 initial_admission_ms=0.0011670000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000026770879862041843 maximum_accepted_translation_m=0.0000000000000000026770879862041843
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.042125 initial_projection_ms=0.007958000000000002 initial_admission_ms=0.001166999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002677302642401703 maximum_accepted_translation_m=0.000000000000000002677302642401703
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.046458 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0011249999999999984 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000014010380570012054 maximum_accepted_translation_m=0.000000000014010380570012054
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.064667 initial_projection_ms=0.00775 initial_admission_ms=0.0011669999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000043861328047980587 maximum_accepted_translation_m=0.000000000000043861328047980587
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.050958 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000013731728543115814 maximum_accepted_translation_m=0.00000000000000013731728543115814
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.058832999999999996 initial_projection_ms=0.007666999999999999 initial_admission_ms=0.0011660000000000012 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003926243420511432 maximum_accepted_translation_m=0.000000000000000003926243420511432
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041167 initial_projection_ms=0.008083 initial_admission_ms=0.0011669999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000031360947786016556 maximum_accepted_translation_m=0.0000000000000000031360947786016556
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.032542 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000031362493003084635 maximum_accepted_translation_m=0.0000000000000000031362493003084635
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.056749999999999995 initial_projection_ms=0.007584 initial_admission_ms=0.0011659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000006712335842726294 maximum_accepted_translation_m=0.00000000006712335842726294
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043334000000000004 initial_projection_ms=0.007584 initial_admission_ms=0.0014160000000000015 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000021014118012017675 maximum_accepted_translation_m=0.00000000000021014118012017675
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041582999999999995 initial_projection_ms=0.007333 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000065787424041803495 maximum_accepted_translation_m=0.00000000000000065787424041803495
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041417 initial_projection_ms=0.007209 initial_admission_ms=0.0011660000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000004575939223542173 maximum_accepted_translation_m=0.000000000000000004575939223542173
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.064917 initial_projection_ms=0.00725 initial_admission_ms=0.0012079999999999981 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000026770879862041843 maximum_accepted_translation_m=0.0000000000000000026770879862041843
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.077958 initial_projection_ms=0.014667 initial_admission_ms=0.0037909999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002677302642401703 maximum_accepted_translation_m=0.000000000000000002677302642401703
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.04725 initial_projection_ms=0.009917 initial_admission_ms=0.0018329999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000014010380570012054 maximum_accepted_translation_m=0.000000000014010380570012054
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.048208 initial_projection_ms=0.007875 initial_admission_ms=0.0014999999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000043861328047980587 maximum_accepted_translation_m=0.000000000000043861328047980587
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.045083000000000005 initial_projection_ms=0.007583 initial_admission_ms=0.001333 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000013731728543115814 maximum_accepted_translation_m=0.00000000000000013731728543115814
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.044417 initial_projection_ms=0.007375 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003926243420511432 maximum_accepted_translation_m=0.000000000000000003926243420511432
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.058582999999999996 initial_projection_ms=0.007375 initial_admission_ms=0.001125000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000031360947786016556 maximum_accepted_translation_m=0.0000000000000000031360947786016556
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.032833 initial_projection_ms=0.007583 initial_admission_ms=0.0013339999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000031362493003084635 maximum_accepted_translation_m=0.0000000000000000031362493003084635
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.030750000000000003 initial_projection_ms=0.007125 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000008302593372209763 maximum_accepted_translation_m=0.000000000008302593372209763
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.035416 initial_projection_ms=0.008957999999999999 initial_admission_ms=0.0013330000000000009 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000025992348461367523 maximum_accepted_translation_m=0.000000000000025992348461367523
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031333 initial_projection_ms=0.008166 initial_admission_ms=0.001209 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000008138020391505671 maximum_accepted_translation_m=0.00000000000000008138020391505671
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.031124999999999996 initial_projection_ms=0.007917 initial_admission_ms=0.0011659999999999986 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003338774203680984 maximum_accepted_translation_m=0.000000000000000003338774203680984
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.032458 initial_projection_ms=0.007875 initial_admission_ms=0.001207999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000033388227142112392 maximum_accepted_translation_m=0.0000000000000000033388227142112392
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.038708 initial_projection_ms=0.007958000000000002 initial_admission_ms=0.001166999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003338727746013288 maximum_accepted_translation_m=0.000000000000000003338727746013288
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.045084 initial_projection_ms=0.007709000000000001 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000006540327365561502 maximum_accepted_translation_m=0.000000000006540327365561502
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.047833 initial_projection_ms=0.007958000000000002 initial_admission_ms=0.0012089999999999983 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000020475336266191052 maximum_accepted_translation_m=0.000000000000020475336266191052
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.039709 initial_projection_ms=0.007958999999999999 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000006627218819224477 maximum_accepted_translation_m=0.00000000000000006627218819224477
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.043332999999999997 initial_projection_ms=0.008 initial_admission_ms=0.0013749999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002982587839334022 maximum_accepted_translation_m=0.000000000000000002982587839334022
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.035542 initial_projection_ms=0.007666999999999999 initial_admission_ms=0.0012909999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000000298251074485528 maximum_accepted_translation_m=0.00000000000000000298251074485528
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041415999999999994 initial_projection_ms=0.007875 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002982460263726904 maximum_accepted_translation_m=0.000000000000000002982460263726904
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.044292000000000005 initial_projection_ms=0.008124999999999999 initial_admission_ms=0.0012080000000000025 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000008302593372209763 maximum_accepted_translation_m=0.000000000008302593372209763
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.052583 initial_projection_ms=0.013083 initial_admission_ms=0.0032090000000000018 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000025992348461367523 maximum_accepted_translation_m=0.000000000000025992348461367523
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.035625 initial_projection_ms=0.008291000000000001 initial_admission_ms=0.0015419999999999982 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000008138020391505671 maximum_accepted_translation_m=0.00000000000000008138020391505671
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.049125 initial_projection_ms=0.011708 initial_admission_ms=0.0028340000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003338774203680984 maximum_accepted_translation_m=0.000000000000000003338774203680984
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0575 initial_projection_ms=0.015000000000000001 initial_admission_ms=0.004042000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0000000000000000033388227142112392 maximum_accepted_translation_m=0.0000000000000000033388227142112392
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.037167 initial_projection_ms=0.008667 initial_admission_ms=0.0017080000000000012 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000003338727746013288 maximum_accepted_translation_m=0.000000000000000003338727746013288
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.032084 initial_projection_ms=0.007709000000000001 initial_admission_ms=0.0013330000000000009 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000006540327365561502 maximum_accepted_translation_m=0.000000000006540327365561502
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.048208 initial_projection_ms=0.007625 initial_admission_ms=0.0013329999999999991 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000020475336266191052 maximum_accepted_translation_m=0.000000000000020475336266191052
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.041875 initial_projection_ms=0.007708 initial_admission_ms=0.001542 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000006627218819224477 maximum_accepted_translation_m=0.00000000000000006627218819224477
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.040042 initial_projection_ms=0.007084 initial_admission_ms=0.0012910000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002982587839334022 maximum_accepted_translation_m=0.000000000000000002982587839334022
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.04275 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0012090000000000009 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.00000000000000000298251074485528 maximum_accepted_translation_m=0.00000000000000000298251074485528
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.032584 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0012499999999999985 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT COMPLETION collision_limited=false elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.000000000000000002982460263726904 maximum_accepted_translation_m=0.000000000000000002982460263726904
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.044667 initial_projection_ms=0.007292 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+test hair::contact::velocity_contacts::safe_motion::tests::runtime_swept_mode_uses_response_backend_and_preserves_exact_roots ... ok
+
+test result: ok. 26 passed; 0 failed; 2 ignored; 0 measured; 330 filtered out; finished in 0.04s
+

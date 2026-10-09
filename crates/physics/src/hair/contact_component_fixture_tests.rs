@@ -66,6 +66,8 @@ fn snapshot(input: &mut Cursor<Vec<u8>>) -> Snapshot {
             assert!(segment < n - 1 && (0.0..=1.0).contains(&fraction));
             assert!((len(normal) - 1.).abs() < 1e-5);
             rod.contacts.push(RodContact {
+                metric_scale:1.,
+                    trajectory_time:None,
                 segment,
                 fraction,
                 normal,

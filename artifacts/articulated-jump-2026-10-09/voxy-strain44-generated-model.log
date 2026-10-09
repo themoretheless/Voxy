@@ -1,0 +1,171 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 12.58s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+HAIR NONLINEAR MERIT iteration=0 before=4.773945524005579e-5 full=1.499115456785666e-7 accepted=1.499115456785666e-7 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=1 added_rows=628 before=1.499115456785666e-7 rejected=3.6911479544410443e-6
+HAIR NONLINEAR MERIT iteration=2 before=1.499115456785666e-7 full=2.347818468704855e-8 accepted=2.347818468704855e-8 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=3 added_rows=950 before=2.347818468704855e-8 rejected=2.2057564168204086e-5
+HAIR CONTACT MODEL iteration=4 added_rows=104 before=2.347818468704855e-8 rejected=1.056342485192271e-7
+HAIR NONLINEAR MERIT iteration=5 before=2.347818468704855e-8 full=9.199685677219188e-9 accepted=9.199685677219188e-9 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=6 added_rows=869 before=9.199685677219188e-9 rejected=3.0331142080192793e-5
+HAIR CONTACT MODEL iteration=7 added_rows=101 before=9.199685677219188e-9 rejected=2.6568083260808943e-7
+HAIR CONTACT MODEL iteration=8 added_rows=27 before=9.199685677219188e-9 rejected=2.6274976613200874e-8
+HAIR CONTACT MODEL iteration=9 added_rows=18 before=9.199685677219188e-9 rejected=2.5961939119231754e-8
+HAIR CONTACT MODEL iteration=10 added_rows=5 before=9.199685677219188e-9 rejected=2.5985278186293786e-8
+HAIR CONTACT MODEL iteration=11 added_rows=1 before=9.199685677219188e-9 rejected=2.5985278173627775e-8
+HAIR NONLINEAR MERIT iteration=12 before=9.199685677219188e-9 full=2.598527817362488e-8 accepted=8.85163478401038e-9 scale=3.5369326905595695e-2 tangent_complete=false
+HAIR CONTACT MODEL iteration=13 added_rows=881 before=8.85163478401038e-9 rejected=3.0316095423120214e-5
+HAIR CONTACT MODEL iteration=14 added_rows=89 before=8.85163478401038e-9 rejected=2.3346174238298943e-7
+HAIR NONLINEAR MERIT iteration=15 before=8.85163478401038e-9 full=3.802456104817432e-9 accepted=3.802456104817432e-9 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=16 added_rows=787 before=3.802456104817432e-9 rejected=2.1253639245539486e-5
+HAIR CONTACT MODEL iteration=17 added_rows=87 before=3.802456104817432e-9 rejected=1.2743966496774947e-7
+HAIR CONTACT MODEL iteration=18 added_rows=26 before=3.802456104817432e-9 rejected=1.630084671899145e-8
+HAIR CONTACT MODEL iteration=19 added_rows=10 before=3.802456104817432e-9 rejected=1.6140785726878494e-8
+HAIR CONTACT MODEL iteration=20 added_rows=7 before=3.802456104817432e-9 rejected=1.614027452991117e-8
+HAIR CONTACT MODEL iteration=21 added_rows=6 before=3.802456104817432e-9 rejected=1.6140249832610723e-8
+HAIR CONTACT MODEL iteration=22 added_rows=2 before=3.802456104817432e-9 rejected=1.6140249247090563e-8
+HAIR NONLINEAR MERIT iteration=23 before=3.802456104817432e-9 full=1.6140249245269568e-8 accepted=3.654561723184683e-9 scale=2.4265687232548735e-2 tangent_complete=false
+HAIR CONTACT MODEL iteration=24 added_rows=809 before=3.654561723184683e-9 rejected=2.1560542256135834e-5
+HAIR CONTACT MODEL iteration=25 added_rows=75 before=3.654561723184683e-9 rejected=1.0232998034428972e-7
+HAIR NONLINEAR MERIT iteration=26 before=3.654561723184683e-9 full=3.001157428765479e-10 accepted=3.001157428765479e-10 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=27 added_rows=772 before=3.001157428765479e-10 rejected=1.8447820900019437e-5
+HAIR CONTACT MODEL iteration=28 added_rows=88 before=3.001157428765479e-10 rejected=1.5233604462944008e-7
+HAIR CONTACT MODEL iteration=29 added_rows=29 before=3.001157428765479e-10 rejected=1.099570532658285e-8
+HAIR CONTACT MODEL iteration=30 added_rows=15 before=3.001157428765479e-10 rejected=1.0989588417245922e-8
+HAIR CONTACT MODEL iteration=31 added_rows=6 before=3.001157428765479e-10 rejected=1.0989578920935942e-8
+HAIR CONTACT MODEL iteration=32 added_rows=1 before=3.001157428765479e-10 rejected=1.0989578909471429e-8
+HAIR CONTACT MODEL iteration=33 added_rows=1 before=3.001157428765479e-10 rejected=1.0989578908887608e-8
+HAIR NONLINEAR MERIT iteration=34 before=3.001157428765479e-10 full=1.0989578908873622e-8 accepted=2.903510403433144e-10 scale=5.2502166344452345e-3 tangent_complete=false
+HAIR CONTACT MODEL iteration=35 added_rows=794 before=2.903510403433144e-10 rejected=1.8591362296518322e-5
+HAIR CONTACT MODEL iteration=36 added_rows=77 before=2.903510403433144e-10 rejected=1.481255676385848e-7
+HAIR CONTACT MODEL iteration=37 added_rows=22 before=2.903510403433144e-10 rejected=1.0538495858603939e-8
+HAIR CONTACT MODEL iteration=38 added_rows=16 before=2.903510403433144e-10 rejected=1.0526797552707443e-8
+HAIR CONTACT MODEL iteration=39 added_rows=8 before=2.903510403433144e-10 rejected=1.0526677040714515e-8
+HAIR CONTACT MODEL iteration=40 added_rows=1 before=2.903510403433144e-10 rejected=1.052667260557478e-8
+HAIR CONTACT MODEL iteration=41 added_rows=1 before=2.903510403433144e-10 rejected=1.0526672604990886e-8
+HAIR NONLINEAR MERIT iteration=42 before=2.903510403433144e-10 full=1.0526672604976903e-8 accepted=2.6843731757819865e-10 scale=4.317232338226798e-2 tangent_complete=false
+HAIR CONTACT MODEL iteration=43 added_rows=785 before=2.6843731757819865e-10 rejected=2.364694831990891e-5
+HAIR CONTACT MODEL iteration=44 added_rows=73 before=2.6843731757819865e-10 rejected=1.2963181232863387e-7
+HAIR CONTACT MODEL iteration=45 added_rows=21 before=2.6843731757819865e-10 rejected=3.6292349339138135e-9
+HAIR CONTACT MODEL iteration=46 added_rows=18 before=2.6843731757819865e-10 rejected=3.6253961398491186e-9
+HAIR CONTACT MODEL iteration=47 added_rows=6 before=2.6843731757819865e-10 rejected=3.6253885142190225e-9
+HAIR CONTACT MODEL iteration=48 added_rows=1 before=2.6843731757819865e-10 rejected=3.6253885027542397e-9
+HAIR CONTACT MODEL iteration=49 added_rows=1 before=2.6843731757819865e-10 rejected=3.625388502170512e-9
+HAIR NONLINEAR MERIT iteration=50 before=2.6843731757819865e-10 full=3.6253885021565297e-9 accepted=2.3792988917824233e-10 scale=1e-1 tangent_complete=false
+HAIR CONTACT MODEL iteration=51 added_rows=798 before=2.3792988917824233e-10 rejected=1.7725716068140683e-5
+HAIR CONTACT MODEL iteration=52 added_rows=71 before=2.3792988917824233e-10 rejected=4.480800948711207e-8
+HAIR NONLINEAR MERIT iteration=53 before=2.3792988917824233e-10 full=2.071520643282368e-10 accepted=2.071520643282368e-10 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=54 added_rows=785 before=2.071520643282368e-10 rejected=2.1652673146345497e-5
+HAIR CONTACT MODEL iteration=55 added_rows=68 before=2.071520643282368e-10 rejected=1.2916990511646506e-7
+HAIR CONTACT MODEL iteration=56 added_rows=18 before=2.071520643282368e-10 rejected=1.5207069939625928e-8
+HAIR CONTACT MODEL iteration=57 added_rows=5 before=2.071520643282368e-10 rejected=1.5230301372695954e-8
+HAIR CONTACT MODEL iteration=58 added_rows=3 before=2.071520643282368e-10 rejected=1.523030078170201e-8
+HAIR CONTACT MODEL iteration=59 added_rows=1 before=2.071520643282368e-10 rejected=1.5230300769595092e-8
+HAIR NONLINEAR MERIT iteration=60 before=2.071520643282368e-10 full=1.5230300769592213e-8 accepted=1.7737127421203894e-10 scale=3.54403981566597e-2 tangent_complete=false
+HAIR CONTACT MODEL iteration=61 added_rows=806 before=1.7737127421203894e-10 rejected=2.2645829057584063e-5
+HAIR CONTACT MODEL iteration=62 added_rows=85 before=1.7737127421203894e-10 rejected=8.655186853358057e-8
+HAIR CONTACT MODEL iteration=63 added_rows=19 before=1.7737127421203894e-10 rejected=3.618002473403726e-9
+HAIR CONTACT MODEL iteration=64 added_rows=8 before=1.7737127421203894e-10 rejected=3.617981151113837e-9
+HAIR CONTACT MODEL iteration=65 added_rows=3 before=1.7737127421203894e-10 rejected=3.6179805601813978e-9
+HAIR CONTACT MODEL iteration=66 added_rows=1 before=1.7737127421203894e-10 rejected=3.6179805480769975e-9
+HAIR NONLINEAR MERIT iteration=67 before=1.7737127421203894e-10 full=3.617980548074127e-9 accepted=1.7363491443638475e-10 scale=1.042945092820903e-2 tangent_complete=false
+HAIR CONTACT MODEL iteration=68 added_rows=816 before=1.7363491443638475e-10 rejected=2.2491715795368662e-5
+HAIR CONTACT MODEL iteration=69 added_rows=77 before=1.7363491443638475e-10 rejected=1.165384638358556e-7
+HAIR CONTACT MODEL iteration=70 added_rows=19 before=1.7363491443638475e-10 rejected=3.406844873342437e-9
+HAIR CONTACT MODEL iteration=71 added_rows=6 before=1.7363491443638475e-10 rejected=3.406051025760481e-9
+HAIR CONTACT MODEL iteration=72 added_rows=2 before=1.7363491443638475e-10 rejected=3.4060504210249538e-9
+HAIR CONTACT MODEL iteration=73 added_rows=1 before=1.7363491443638475e-10 rejected=3.4060504089201705e-9
+HAIR NONLINEAR MERIT iteration=74 before=1.7363491443638475e-10 full=3.4060504089173097e-9 accepted=1.718177191931138e-10 scale=1e-1 tangent_complete=false
+HAIR CONTACT MODEL iteration=75 added_rows=820 before=1.718177191931138e-10 rejected=2.2947432220165114e-5
+HAIR CONTACT MODEL iteration=76 added_rows=73 before=1.718177191931138e-10 rejected=9.194231845773206e-8
+HAIR NONLINEAR MERIT iteration=77 before=1.718177191931138e-10 full=3.27921188023131e-11 accepted=3.27921188023131e-11 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=78 added_rows=806 before=3.27921188023131e-11 rejected=2.4883829850767837e-5
+HAIR CONTACT MODEL iteration=79 added_rows=80 before=3.27921188023131e-11 rejected=1.439641693452549e-7
+HAIR CONTACT MODEL iteration=80 added_rows=30 before=3.27921188023131e-11 rejected=8.952140556409224e-9
+HAIR CONTACT MODEL iteration=81 added_rows=23 before=3.27921188023131e-11 rejected=8.829436688231615e-9
+HAIR CONTACT MODEL iteration=82 added_rows=15 before=3.27921188023131e-11 rejected=8.827737054421735e-9
+HAIR CONTACT MODEL iteration=83 added_rows=7 before=3.27921188023131e-11 rejected=8.82859421317574e-9
+HAIR CONTACT MODEL iteration=84 added_rows=4 before=3.27921188023131e-11 rejected=8.829260233074472e-9
+HAIR CONTACT MODEL iteration=85 added_rows=2 before=3.27921188023131e-11 rejected=8.829598216622333e-9
+HAIR CONTACT MODEL iteration=86 added_rows=1 before=3.27921188023131e-11 rejected=8.829759985777486e-9
+HAIR CONTACT MODEL iteration=87 added_rows=1 before=3.27921188023131e-11 rejected=8.829838220312884e-9
+HAIR NONLINEAR MERIT iteration=88 before=3.27921188023131e-11 full=8.829876161511512e-9 accepted=3.2729963612043056e-11 scale=1.0000000000000002e-3 tangent_complete=false
+HAIR CONTACT MODEL iteration=89 added_rows=822 before=3.2729963612043056e-11 rejected=2.5618553959328595e-5
+HAIR CONTACT MODEL iteration=90 added_rows=92 before=3.2729963612043056e-11 rejected=1.45456506728473e-7
+HAIR CONTACT MODEL iteration=91 added_rows=30 before=3.2729963612043056e-11 rejected=5.896497947610895e-10
+HAIR CONTACT MODEL iteration=92 added_rows=26 before=3.2729963612043056e-11 rejected=5.706369592848442e-10
+HAIR CONTACT MODEL iteration=93 added_rows=17 before=3.2729963612043056e-11 rejected=5.693279116122439e-10
+HAIR CONTACT MODEL iteration=94 added_rows=8 before=3.2729963612043056e-11 rejected=5.692383076803091e-10
+HAIR CONTACT MODEL iteration=95 added_rows=4 before=3.2729963612043056e-11 rejected=5.692347347179694e-10
+HAIR CONTACT MODEL iteration=96 added_rows=2 before=3.2729963612043056e-11 rejected=5.692347084262158e-10
+HAIR CONTACT MODEL iteration=97 added_rows=1 before=3.2729963612043056e-11 rejected=5.69234768315228e-10
+HAIR CONTACT MODEL iteration=98 added_rows=1 before=3.2729963612043056e-11 rejected=5.692348017696002e-10
+HAIR NONLINEAR MERIT iteration=99 before=3.2729963612043056e-11 full=5.692348182814153e-10 accepted=3.249303839436836e-11 scale=3.5829372735437103e-3 tangent_complete=false
+HAIR CONTACT MODEL iteration=100 added_rows=823 before=3.249303839436836e-11 rejected=2.526084602082995e-5
+HAIR CONTACT MODEL iteration=101 added_rows=76 before=3.249303839436836e-11 rejected=6.09481829737808e-8
+HAIR NONLINEAR MERIT iteration=102 before=3.249303839436836e-11 full=2.1510636304094487e-11 accepted=2.1510636304094487e-11 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=103 added_rows=765 before=2.1510636304094487e-11 rejected=1.1328594560243243e-5
+HAIR CONTACT MODEL iteration=104 added_rows=76 before=2.1510636304094487e-11 rejected=3.9720881142456344e-8
+HAIR CONTACT MODEL iteration=105 added_rows=23 before=2.1510636304094487e-11 rejected=8.38958502796019e-9
+HAIR CONTACT MODEL iteration=106 added_rows=7 before=2.1510636304094487e-11 rejected=8.38937222919045e-9
+HAIR CONTACT MODEL iteration=107 added_rows=1 before=2.1510636304094487e-11 rejected=8.389372307247683e-9
+HAIR NONLINEAR MERIT iteration=108 before=2.1510636304094487e-11 full=8.389372307247683e-9 accepted=2.1401601007920188e-11 scale=1.0000000000000002e-2 tangent_complete=false
+HAIR CONTACT MODEL iteration=109 added_rows=781 before=2.1401601007920188e-11 rejected=1.1674939246432019e-5
+HAIR CONTACT MODEL iteration=110 added_rows=75 before=2.1401601007920188e-11 rejected=2.403612174649109e-8
+HAIR CONTACT MODEL iteration=111 added_rows=21 before=2.1401601007920188e-11 rejected=2.4453933444197817e-10
+HAIR CONTACT MODEL iteration=112 added_rows=8 before=2.1401601007920188e-11 rejected=2.445329160382946e-10
+HAIR NONLINEAR MERIT iteration=113 before=2.1401601007920188e-11 full=2.4453291388296614e-10 accepted=1.5527515589821165e-11 scale=1.190704170767631e-1 tangent_complete=false
+HAIR CONTACT MODEL iteration=114 added_rows=799 before=1.5527515589821165e-11 rejected=1.2316500967249092e-5
+HAIR CONTACT MODEL iteration=115 added_rows=77 before=1.5527515589821165e-11 rejected=2.289640112043705e-8
+HAIR CONTACT MODEL iteration=116 added_rows=23 before=1.5527515589821165e-11 rejected=3.283510996129455e-11
+HAIR CONTACT MODEL iteration=117 added_rows=6 before=1.5527515589821165e-11 rejected=3.2825268936534846e-11
+HAIR NONLINEAR MERIT iteration=118 before=1.5527515589821165e-11 full=3.282526031786276e-11 accepted=3.5022221099505886e-12 scale=3.7924202648898525e-1 tangent_complete=false
+HAIR CONTACT MODEL iteration=119 added_rows=809 before=3.5022221099505886e-12 rejected=1.1969788583749544e-5
+HAIR CONTACT MODEL iteration=120 added_rows=76 before=3.5022221099505886e-12 rejected=2.2454688329032077e-8
+HAIR CONTACT MODEL iteration=121 added_rows=24 before=3.5022221099505886e-12 rejected=3.9675095723205326e-11
+HAIR CONTACT MODEL iteration=122 added_rows=6 before=3.5022221099505886e-12 rejected=3.9655945112731444e-11
+HAIR CONTACT MODEL iteration=123 added_rows=3 before=3.5022221099505886e-12 rejected=3.965517292801545e-11
+HAIR CONTACT MODEL iteration=124 added_rows=2 before=3.5022221099505886e-12 rejected=3.965514989856179e-11
+HAIR CONTACT MODEL iteration=125 added_rows=1 before=3.5022221099505886e-12 rejected=3.9655149311906997e-11
+HAIR NONLINEAR MERIT iteration=126 before=3.5022221099505886e-12 full=3.9655149297925034e-11 accepted=2.1731438921332357e-12 scale=1.2595885887863092e-1 tangent_complete=false
+HAIR CONTACT MODEL iteration=127 added_rows=801 before=2.1731438921332357e-12 rejected=1.2090458414147799e-5
+HAIR NONLINEAR MERIT HISTORY [1.499115456785666e-7, 2.347818468704855e-8, 9.199685677219188e-9, 8.85163478401038e-9, 3.802456104817432e-9, 3.654561723184683e-9, 3.001157428765479e-10, 2.903510403433144e-10, 2.6843731757819865e-10, 2.3792988917824233e-10, 2.071520643282368e-10, 1.7737127421203894e-10, 1.7363491443638475e-10, 1.718177191931138e-10, 3.27921188023131e-11, 3.2729963612043056e-11, 3.249303839436836e-11, 2.1510636304094487e-11, 2.1401601007920188e-11, 1.5527515589821165e-11, 3.5022221099505886e-12, 2.1731438921332357e-12]
+HAIR NONLINEAR CONTACT NONCONVERGENCE first_gap_m=-0.00024195210732138187 worst=(rod,segment,fraction,gap,source,root,a,b,normal,target) Some((436, 19, 0.2714721146909486, -8.94179655491595e-7, Mesh(0), [0.07434187084436417, 0.6119031310081482, 0.044247452169656754], [0.15337608336129135, 0.3617594988143091, -0.029692992074009095], [0.14439518053505077, 0.237238422089082, -0.020860551603161866], [0.35526790191509194, -0.0816767180937405, -0.9311893639804336], [0.15094019145597926, 0.32795499926690336, -0.02730092582628672]))
+
+thread 'hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission' (33966326) panicked at crates/physics/src/hair/contact_replay.rs:509:14:
+captured contact correction: "joint hair contact position linearization did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission ... FAILED
+
+failures:
+
+failures:
+    hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 334 filtered out; finished in 24.77s
+
+error: test failed, to rerun pass `-p physics --lib`

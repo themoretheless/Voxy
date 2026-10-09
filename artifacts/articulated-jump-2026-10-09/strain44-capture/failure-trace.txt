@@ -1,0 +1,4 @@
+error: hair axial strain exceeds admission limit
+phases: []
+projections: []
+friction: []

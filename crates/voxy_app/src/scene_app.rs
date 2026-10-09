@@ -33,6 +33,7 @@ struct Resources {
     gpu_secondary: Option<voxy_render::SurfaceDeformation>,
     gpu_secondary_reference: Vec<[f32; 4]>,
     gpu_secondary_last_controls: Vec<[f32; 4]>,
+    gpu_jump_last_palette: Vec<Mat4>,
     film_layer: Option<SceneGeometry>,
     optical_frames: u64,
     film_mass_checks: u64,
@@ -360,7 +361,6 @@ impl SceneApp {
             female.secondary_only = true;
             female.yaw = 1.1;
             female.distance = 2.1;
-            female.simulate_hair = true;
             female.pressing = false;
         }
         Ok(app)
@@ -695,6 +695,10 @@ impl SceneApp {
                 count,
             )?;
             gpu.set_deforming_normal_prefix(female.gpu_secondary_body_vertices())?;
+            let palette=female.gpu_jump_palette();
+            gpu.enable_rigid_skinning(host.device(),mesh.authored_normals().ok_or("jump GPU source lacks normals")?,
+                &female.gpu_jump_weights(),palette.len() as u32,Some(3))?;
+            gpu.upload_rigid_pose(host.queue(),&palette)?;
             let reference = female.gpu_secondary_controls();
             gpu.update_controls(host.queue(), &vec![[0.; 4]; reference.len()])?;
             (Some(gpu), reference)
@@ -808,6 +812,7 @@ impl SceneApp {
             gpu_hair,
             gpu_secondary,
             gpu_secondary_last_controls: vec![[0.; 4]; gpu_secondary_reference.len()],
+            gpu_jump_last_palette: Vec::new(),
             gpu_secondary_reference,
             film_layer: None,
             optical_frames: 0,
@@ -1483,9 +1488,10 @@ impl SceneApp {
                     .map(|(p, r)| std::array::from_fn(|k| p[k] - r[k]))
                     .collect::<Vec<[f32; 4]>>()
             });
-        let update_gpu = gpu_controls
-            .as_ref()
-            .is_some_and(|controls| controls != &r.gpu_secondary_last_controls);
+        let gpu_jump_palette=self.female.as_ref().filter(|_|r.gpu_secondary.is_some())
+            .map(|female|female.gpu_jump_palette());
+        let update_gpu = gpu_controls.as_ref().is_some_and(|controls| controls != &r.gpu_secondary_last_controls)
+            || gpu_jump_palette.as_ref().is_some_and(|palette|palette!=&r.gpu_jump_last_palette);
         let outcome = if self.liquid_optics && self.liquids.is_some() {
             let fluid = r
                 .liquid_renderer
@@ -1514,6 +1520,9 @@ impl SceneApp {
                     if update_gpu
                         && let (Some(gpu), Some(controls)) = (&r.gpu_secondary, &gpu_controls)
                     {
+                        if let Some(palette)=&gpu_jump_palette {
+                            gpu.upload_rigid_pose(queue,palette).map_err(voxy_render::RendererError::Scene)?;
+                        }
                         gpu.upload_controls(queue, controls)
                             .map_err(voxy_render::RendererError::Scene)?;
                         gpu.encode(encoder)
@@ -1534,6 +1543,7 @@ impl SceneApp {
             && let Some(controls) = gpu_controls
         {
             r.gpu_secondary_last_controls = controls;
+            if let Some(palette)=gpu_jump_palette {r.gpu_jump_last_palette=palette;}
         }
         if matches!(
             outcome,

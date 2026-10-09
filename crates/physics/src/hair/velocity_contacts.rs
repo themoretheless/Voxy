@@ -11,7 +11,7 @@ mod square_root_projection;
 mod response_batches;
 #[path="contact_safe_motion.rs"]
 mod safe_motion;
-pub(in crate::hair) use safe_motion::{advance as advance_swept_strands,strand_fraction};
+pub(in crate::hair) use safe_motion::{advance as advance_swept_strands,strand_fraction,admit_staged_strands};
 
 #[derive(Clone, Copy)]
 struct Entry {
@@ -398,7 +398,7 @@ pub(in crate::hair) fn stabilize_contact_velocities_with_solver(rods:&mut [HairR
     let mut constraints = Vec::new();
     for (index, rod) in rods.iter().enumerate() {
         for contact in &rod.contacts {
-            if !matches!(contact.source, ContactSource::Mesh(_)) {
+            if contact.trajectory_time.is_some() || !matches!(contact.source, ContactSource::Mesh(_)) {
                 continue;
             }
             let i = contact.segment;
@@ -440,23 +440,35 @@ pub(in crate::hair) fn reconcile_contact_positions(rods:&mut [HairRod],responses
     reconcile_contact_positions_with_solver(rods,responses,dt,radius,None)
 }
 pub(in crate::hair) fn reconcile_contact_positions_with_solver(rods:&mut [HairRod],responses:&mut [StrandResponse],dt:f64,radius:f64,solver:Option<&mut dyn crate::hair::HairLinearSolver>)->Result<bool, &'static str> {
+    reconcile_position_increment(rods,responses,dt,radius,solver,false)
+}
+pub(in crate::hair) fn reconcile_elastic_contact_positions_with_solver(rods:&mut [HairRod],responses:&mut [StrandResponse],dt:f64,radius:f64,solver:Option<&mut dyn crate::hair::HairLinearSolver>)->Result<bool, &'static str> {
+    reconcile_position_increment(rods,responses,dt,radius,solver,true)
+}
+fn reconcile_position_increment(rods:&mut [HairRod],responses:&mut [StrandResponse],dt:f64,radius:f64,solver:Option<&mut dyn crate::hair::HairLinearSolver>,include_free:bool)->Result<bool, &'static str> {
     if !dt.is_finite() || dt<=0. || !radius.is_finite() || radius<=0. {return Err("invalid shared contact position step");}
     let (mut constraints,pair_constraints)=position_constraints(rods,responses,radius)?;
     if constraints.is_empty() {return Ok(true);}
-    prepare_implicit_response_with_solver(&mut constraints,rods,dt,solver)?;
-    let mut increment=PositionIncrement {
-        linear:rods.iter().map(|rod|vec![[0.;3];rod.x.len()]).collect(),
-        angular:rods.iter().map(|rod|vec![[0.;3];rod.q.len()]).collect(),
+    // Couple the free implicit elastic step and unilateral reactions under
+    // the SAME H. Projecting a zero increment separately fights the preceding
+    // elastic solve and can settle into a stretch/contact alternating cycle.
+    // Original physical metre rows retain their 1e-11 solve tolerance.
+    let increment=if include_free {
+        constrained_newton_increment(&mut constraints,rods,dt,solver,1e-11)?
+    } else {
+        prepare_implicit_response_with_solver(&mut constraints,rods,dt,solver)?;
+        let mut increment=PositionIncrement {linear:rods.iter().map(|r|vec![[0.;3];r.x.len()]).collect(),angular:rods.iter().map(|r|vec![[0.;3];r.q.len()]).collect()};
+        solve_projection(&mut constraints,&mut increment,1e-11)?;
+        increment
     };
-    // Position residuals are metres. Solve more tightly than the nonlinear
-    // geometry admission threshold (1e-10 m); a velocity-scale tolerance can
-    // otherwise accept a submicron penetration or an overshooting reaction.
-    solve_projection(&mut constraints,&mut increment,1e-11)?;
     if !increment.finite() {return Err("shared contact position increment overflow");}
-    let maximum_angle=increment.angular.iter().flatten().map(|angle|len(*angle)).fold(0.,f64::max);
-    let scale=if maximum_angle>0.35 {0.35/maximum_angle} else {1.};
+    // A shared reaction requires a common fraction within its connected
+    // contact component, not across unrelated rods. Reuse the swept-motion
+    // component owner so both paths preserve the same pairing invariant.
+    let (_,scales)=safe_motion::trust_components(rods,&increment,responses)?;
     // Publish only a completely solved increment. Roots remain exact zeros.
     for (index,rod) in rods.iter_mut().enumerate() {
+        let scale=scales[index];
         for point in 1..rod.x.len() {
             rod.x[point]=add(rod.x[point],mul(increment.linear[index][point],scale));
             if point<rod.q.len() {apply(&mut rod.q[point],mul(increment.angular[index][point],scale));}
@@ -465,9 +477,9 @@ pub(in crate::hair) fn reconcile_contact_positions_with_solver(rods:&mut [HairRo
     let mut multiplicity=vec![0usize;constraints.len()];
     for index in pair_constraints.iter().flatten() {multiplicity[*index]+=1;}
     for (response,index) in responses.iter_mut().zip(pair_constraints) {
-        if let Some(index)=index {response.impulse+=constraints[index].multiplier*scale/multiplicity[index] as f64;}
+        if let Some(index)=index {response.impulse+=constraints[index].multiplier*scales[response.a.0]/multiplicity[index] as f64;}
     }
-    Ok(scale==1.)
+    Ok(scales.iter().all(|scale|*scale==1.))
 }
 // Reuse exactly the geometry and alias ownership of positional projection.
 fn position_constraints(rods:&[HairRod],responses:&[StrandResponse],radius:f64)->Result<(Vec<Constraint>,Vec<Option<usize>>), &'static str> {
@@ -477,8 +489,14 @@ fn position_constraints(rods:&[HairRod],responses:&[StrandResponse],radius:f64)-
             if !matches!(contact.source,ContactSource::Mesh(_)) {continue;}
             let i=contact.segment;let t=contact.fraction;
             let position=add(mul(rod.x[i],1.-t),mul(rod.x[i+1],t));
-            let gap=dot(sub(position,contact.target),contact.normal);
-            let pair=entries(index,i,t,contact.normal,rod);
+            // Use the physical envelope Jacobian, including the time factor
+            // for a trajectory witness. Unit-plane rescaling otherwise changes
+            // the force multiplier and the residual's physical tolerance.
+            if !contact.metric_scale.is_finite() || contact.metric_scale <= 0. {
+                return Err("invalid contact physical metric");
+            }
+            let gap=contact.physical_gap(position);
+            let pair=entries(index,i,t,mul(contact.normal,contact.metric_scale),rod);
             let zero=Entry {rod:index,point:0,gradient:[0.;3],mobility:0.};
             add_constraint(&mut constraints,[pair[0],pair[1],zero,zero],-gap)?;
         }
@@ -517,13 +535,39 @@ fn constrained_newton_increment(
     constraints: &mut [Constraint], rods: &[HairRod], dt: f64,
     solver: Option<&mut dyn crate::hair::HairLinearSolver>, tolerance: f64,
 ) -> Result<PositionIncrement, &'static str> {
+    constrained_newton_increment_prepared(constraints,rods,dt,solver,tolerance,None)
+}
+
+// Borrow the frozen pose for the complete cut-refinement transaction. This
+// context cannot survive a mutable pose update or change its timestep.
+struct NativeNewtonStep<'a> {
+    rods:&'a [HairRod],
+    dt:f64,
+    free:PositionIncrement,
+    systems:square_root_projection::FrozenSystems<'a>,
+}
+impl<'a> NativeNewtonStep<'a> {
+    fn new(rods:&'a [HairRod],dt:f64,tolerance:f64)->Result<Self,&'static str> {
+        let free=constrained_newton_increment(&mut [],rods,dt,None,tolerance)?;
+        Ok(Self {rods,dt,free,systems:square_root_projection::FrozenSystems::new(rods,dt)})
+    }
+    fn project(&self,constraints:&mut [Constraint],tolerance:f64)->Result<PositionIncrement,&'static str> {
+        constrained_newton_increment_prepared(constraints,self.rods,self.dt,None,tolerance,Some((&self.free,&self.systems)))
+    }
+}
+fn constrained_newton_increment_prepared(
+    constraints:&mut [Constraint],rods:&[HairRod],dt:f64,
+    solver:Option<&mut dyn crate::hair::HairLinearSolver>,tolerance:f64,
+    prepared:Option<(&PositionIncrement,&square_root_projection::FrozenSystems<'_>)>,
+)->Result<PositionIncrement,&'static str> {
+    let prepared_free=prepared.map(|(free,_)|free);
     if !dt.is_finite() || dt <= 0. || !tolerance.is_finite() || tolerance <= 0. {
         return Err("invalid constrained Newton step");
     }
-    let mut free = PositionIncrement {
+    let mut free = prepared_free.cloned().unwrap_or_else(||PositionIncrement {
         linear: rods.iter().map(|rod| vec![[0.;3];rod.x.len()]).collect(),
         angular: rods.iter().map(|rod| vec![[0.;3];rod.q.len()]).collect(),
-    };
+    });
     struct Native;
     impl crate::hair::HairLinearSolver for Native {
         fn solve(&mut self, _: &[crate::hair::HairLinearSystem]) -> Result<Vec<Vec<f64>>, &'static str> {
@@ -532,16 +576,28 @@ fn constrained_newton_increment(
     }
     let native_projection=solver.is_none();
     let mut native = Native;
-    response_batches::prepare_with_free(constraints, rods, dt, solver.unwrap_or(&mut native), &mut free)?;
+    if native_projection {
+        // QR owns contact response columns. Solve only the elastic free load;
+        // Gram compliances are needed solely by the legacy recovery path.
+        if prepared_free.is_none() {
+            response_batches::prepare_with_free(&mut [],rods,dt,&mut native,&mut free)?;
+        }
+    } else {
+        response_batches::prepare_with_free(constraints,rods,dt,solver.unwrap(),&mut free)?;
+    }
     if native_projection {
         // Original square-root columns preserve directions lost by forming a
         // rounded Gram matrix. Try that canonical native solve first instead
         // of exhausting iterative Gram recovery before using the same owner.
-        match square_root_projection::solve(constraints,rods,dt,free.clone(),tolerance) {
+        let projected=if let Some((_,systems))=prepared {
+            square_root_projection::solve_prepared(constraints,systems,free.clone(),tolerance)
+        } else {square_root_projection::solve(constraints,rods,dt,free.clone(),tolerance)};
+        match projected {
             Ok(candidate)=>free=candidate,
             Err(square_root_error)=> {
                 // Failed square-root solves stage reactions without publication.
                 // The legacy native projection still starts from original free.
+                response_batches::prepare(constraints,rods,dt,&mut native)?;
                 if solve_projection(constraints,&mut free,tolerance).is_err() {
                     return Err(square_root_error);
                 }
@@ -828,6 +884,40 @@ mod tests {
         assert_eq!(first,second);assert_eq!(constraints.len(),1);assert_eq!(constraints[0].bound,2e-6);
     }
     #[test]
+    fn trajectory_position_row_uses_physical_time_jacobian() {
+        let mut hair=rod(0.);
+        hair.contacts.push(crate::hair::RodContact {
+            segment:1, fraction:0.4, normal:[1.,0.,0.],
+            target:[1e-5,0.014,0.], surface_velocity:[0.;3],
+            source:ContactSource::Mesh(0), metric_scale:0.25,
+            trajectory_time:Some(0.25),
+        });
+        let (rows,_)=position_constraints(&[hair],&[],40e-6).unwrap();
+        assert_eq!(rows.len(),1);
+        assert!((rows[0].bound-2.5e-6).abs()<1e-20);
+        let gradient: V=rows[0].entries.iter().fold([0.;3],|a,e|add(a,e.gradient));
+        assert_eq!(gradient,[0.25,0.,0.]);
+        let direction=PositionIncrement {linear:vec![vec![[0.;3],[2e-6,0.,0.],[-1e-6,0.,0.]]],angular:vec![vec![[0.;3];2]]};
+        assert!((rows[0].speed(&direction)-2e-7).abs()<1e-20);
+    }
+    #[test]
+    fn shared_position_entrypoint_applies_free_elastic_motion_with_contact_reactions() {
+        let radius=40e-6;
+        let mut rods=vec![rod(0.),rod(2.*radius),rod(0.01)];
+        for point in 1..3 {
+            rods[0].predicted_x[point][0]+=1e-3;
+            rods[1].predicted_x[point][0]-=1e-3;
+            rods[2].predicted_x[point][0]+=1e-3;
+        }
+        let roots:Vec<_>=rods.iter().map(|rod|rod.x[0]).collect();
+        let mut pairs=[StrandResponse {a:(0,1,0.),b:(1,1,0.),normal:[-1.,0.,0.],impulse:0.}];
+        reconcile_elastic_contact_positions_with_solver(&mut rods,&mut pairs,1./240.,radius,None).unwrap();
+        assert!(rods[2].x[1][0]>0.01+1e-9,"a zero-only projection froze the independent elastic guide");
+        let separation=dot(sub(rods[0].x[1],rods[1].x[1]),pairs[0].normal);
+        assert!(separation>=2.*radius-1e-11,"coupled elastic motion crossed the active contact");
+        for (rod,root) in rods.iter().zip(roots) {assert_eq!(rod.x[0],root);}
+    }
+    #[test]
     fn coupled_newton_motion_releases_separating_contact() {
         let radius=40e-6;
         let mut rods=vec![rod(0.),rod(2.*radius)];
@@ -858,7 +948,32 @@ mod tests {
         let (mut constraints, _) = position_constraints(&rods, &pairs, radius).unwrap();
         let free = constrained_newton_increment(&mut [], &rods, 1./240., None, 1e-14).unwrap();
         assert!(dot(sub(free.linear[0][1],free.linear[1][1]),pairs[0].normal) < -1e-9);
+        struct Legacy;
+        impl crate::hair::HairLinearSolver for Legacy {
+            fn solve(&mut self,_:&[crate::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {Err("response-only reference")}
+        }
+        let (mut legacy_constraints,_)=position_constraints(&rods,&pairs,radius).unwrap();
+        let mut legacy_free=free.clone();
+        response_batches::prepare_with_free(&mut legacy_constraints,&rods,1./240.,&mut Legacy,&mut legacy_free).unwrap();
+        let legacy=square_root_projection::solve(&mut legacy_constraints,&rods,1./240.,legacy_free,1e-14).unwrap();
         let coupled = constrained_newton_increment(&mut constraints, &rods, 1./240., None, 1e-14).unwrap();
+        assert_eq!(coupled.linear,legacy.linear);assert_eq!(coupled.angular,legacy.angular);
+        assert!(constraints.iter().all(|c|c.response.is_empty()),"successful QR must not prepare unused Gram responses");
+        assert_eq!(constraints[0].multiplier.to_bits(),legacy_constraints[0].multiplier.to_bits());
+        let prepared=NativeNewtonStep::new(&rods,1./240.,1e-14).unwrap();
+        assert_eq!(prepared.systems.assembled_count(),0);
+        for offset in [0.,1e-8,-1e-8] {
+            let (mut cached_rows,_)=position_constraints(&rods,&pairs,radius).unwrap();
+            let (mut fresh_rows,_)=position_constraints(&rods,&pairs,radius).unwrap();
+            cached_rows[0].bound+=offset;fresh_rows[0].bound+=offset;
+            let cached=prepared.project(&mut cached_rows,1e-14).unwrap();
+            let fresh=constrained_newton_increment(&mut fresh_rows,&rods,1./240.,None,1e-14).unwrap();
+            let bits=|step:&PositionIncrement|step.linear.iter().chain(&step.angular)
+                .flat_map(|points|points.iter().flatten()).map(|v|v.to_bits()).collect::<Vec<_>>();
+            assert_eq!(bits(&cached),bits(&fresh));
+            assert_eq!(cached_rows.iter().map(|c|c.multiplier.to_bits()).collect::<Vec<_>>(),fresh_rows.iter().map(|c|c.multiplier.to_bits()).collect::<Vec<_>>());
+            assert_eq!(prepared.systems.assembled_count(),2,"contact matrices must be assembled only once for touched rods");
+        }
         assert!(constraints[0].multiplier > 0.);
         assert!(constraints[0].residual(&coupled) <= 1e-14);
         assert_eq!(coupled.linear[2],free.linear[2]);

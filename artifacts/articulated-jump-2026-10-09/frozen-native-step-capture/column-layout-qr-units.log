@@ -1,0 +1,44 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 19.41s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 14 tests
+test hair::contact_response_system::square_root_qr::tests::captured_active_contacts_retain_original_clearance ... ignored, requires a captured VQC1 contact input
+test hair::contact_response_system::square_root_qr::tests::captured_coordinate_reconstruction_layout_experiment ... ignored, requires a captured VQC1 input; does not change production arithmetic
+test hair::contact_response_system::square_root_qr::tests::captured_guarded_append_order_retains_original_physical_admission ... ignored, requires a captured VQC1 operator and original physical loads
+test hair::contact_response_system::square_root_qr::tests::captured_prefix_reuse_matches_reference_and_reports_paired_time ... ignored, paired timing requires a captured VQC1 physical contact input
+test hair::contact_response_system::square_root_qr::tests::contact_clearance_survives_cancellation_across_response_systems ... ok
+test hair::contact_response_system::square_root_qr::tests::opening_contacts_release_and_coupled_closing_contacts_enter ... ok
+test hair::contact_response_system::square_root_qr::tests::near_parallel_constraint_keeps_one_clearance_budget ... ok
+test hair::contact_response_system::square_root_qr::tests::immutable_column_validation_rejects_only_selected_invalid_identities ... ok
+test hair::contact_response_system::square_root_qr::tests::two_active_constraints_retain_the_direction_missing_from_gram ... ok
+test hair::contact_response_system::square_root_qr::tests::exact_zero_reduction_preserves_tiny_directions_and_zero_load_feasibility ... ok
+test hair::contact_response_system::square_root_qr::tests::immutable_coordinate_map_reuses_loads_with_changed_bounds ... ok
+test hair::contact_response_system::square_root_qr::tests::active_prefix_reuse_matches_uncached_arithmetic_bitwise ... ok
+test hair::contact_response_system::square_root_qr::tests::exact_sparse_gaps_preserve_dense_solutions_and_tiny_coefficients ... ok
+test hair::contact_response_system::square_root_qr::tests::exact_zero_support_preserves_cancellation_subnormals_and_overflow_rejection ... ok
+
+test result: ok. 10 passed; 0 failed; 4 ignored; 0 measured; 347 filtered out; finished in 0.00s
+

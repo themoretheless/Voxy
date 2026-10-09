@@ -1,0 +1,9 @@
+{
+  "guides": 469,
+  "rest_intersecting_segments": 51,
+  "initialized_intersecting_segments": 0,
+  "maximum_initial_relative_strain": 0.448759572169116,
+  "worst_guide": 18,
+  "guides_above_5_percent": 1,
+  "scope": "finite triangle intersection counterexamples; zero hits is not capsule or swept clearance proof"
+}

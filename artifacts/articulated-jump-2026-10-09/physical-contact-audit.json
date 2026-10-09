@@ -1,0 +1,8 @@
+{
+  "rows": 100,
+  "systems": 7,
+  "tolerance": 1e-14,
+  "max_active_exact_residual": 1.8492184589471823e-15,
+  "minimum_inactive_exact_gap": 1.782631205918748e-07,
+  "all_original_physical_gaps_admitted": true
+}

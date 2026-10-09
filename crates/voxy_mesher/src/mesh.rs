@@ -518,17 +518,25 @@ fn merge_mask(
             let Some(key) = mask[v * 32 + u] else {
                 continue;
             };
-            let width = (u..32)
-                .take_while(|&candidate| mask[v * 32 + candidate] == Some(key))
-                .count();
-            let height = (v..32)
-                .take_while(|&row| {
-                    (u..u + width).all(|column| mask[row * 32 + column] == Some(key))
-                })
-                .count();
-            for row in v..v + height {
-                for column in u..u + width {
-                    mask[row * 32 + column] = None;
+            let v_row = v * 32;
+            let mut width = 1_usize;
+            while u + width < 32 && mask[v_row + u + width] == Some(key) {
+                width += 1;
+            }
+            let mut height = 1_usize;
+            'find_height: while v + height < 32 {
+                let row_base = (v + height) * 32 + u;
+                for col in 0..width {
+                    if mask[row_base + col] != Some(key) {
+                        break 'find_height;
+                    }
+                }
+                height += 1;
+            }
+            for row in 0..height {
+                let row_base = (v + row) * 32 + u;
+                for col in 0..width {
+                    mask[row_base + col] = None;
                 }
             }
             let mut origin = [0_u8; 3];

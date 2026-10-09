@@ -20,6 +20,7 @@ mod biomechanics_demo;
 mod female_demo;
 
 mod female_rig;
+mod jump_motion;
 
 mod female_hair;
 pub mod gpu_hair_solver;

@@ -1,0 +1,19 @@
+{
+  "existing_format": "VHR1/VHR2 diagnostic nonlinear replay",
+  "saved": [
+    "rod material",
+    "rest/current/old/predicted positions and orientations",
+    "linear/angular velocity",
+    "mesh current/previous geometry and velocity"
+  ],
+  "not_complete_checkpoint": [
+    "HairSystem solver/admission settings",
+    "swept_strand_initialized",
+    "simulation frame/time and rig animation state",
+    "rod contacts and surface velocity/normal accumulators",
+    "exact nearest-surface warm-start caches and tie behavior"
+  ],
+  "reader_scope": "currently test-only loader",
+  "resume_full_trajectory_qualified": false,
+  "required_proof": "restore complete physical/config/time state and compare subsequent multi-frame physical results to uninterrupted run; include full groom contact cases"
+}

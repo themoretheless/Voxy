@@ -1,15 +1,22 @@
 //! Read-only physical contact geometry for accelerator divergence diagnostics.
-use super::math::{V, add, dot, mul, sub};
+use super::math::{V, add, mul};
 use super::{ContactSource, HairRod};
 #[derive(Clone, Debug, PartialEq)]
 pub struct HairContactDiagnostic {
     pub source: ContactSource,
     pub segment: usize,
     pub fraction: f64,
+    /// Unit direction of the linearized contact force.
     pub normal: V,
+    /// Linearized plane target; medial targets compensate metric_scale.
     pub target: V,
+    /// Effective surface velocity of this contact linearization.
     pub surface_velocity: V,
-    /// Current segment position relative to the contact plane, in metres.
+    /// Physical residual per unit-normal plane residual.
+    pub metric_scale:f64,
+    /// Normalized time of a past trajectory constraint; None is endpoint geometry.
+    pub trajectory_time:Option<f64>,
+    /// Current physical signed contact residual, in metres.
     pub gap_m: f64,
 }
 impl HairRod {
@@ -28,7 +35,9 @@ impl HairRod {
                     normal: contact.normal,
                     target: contact.target,
                     surface_velocity: contact.surface_velocity,
-                    gap_m: dot(sub(position, contact.target), contact.normal),
+                    metric_scale:contact.metric_scale,
+                    trajectory_time:contact.trajectory_time,
+                    gap_m: contact.physical_gap(position),
                 }
             })
             .collect()
@@ -57,5 +66,9 @@ mod tests {
         assert_eq!(contact.surface_velocity, [0.25, 0., 0.]);
         rod.x[1][0] = -0.00002;
         assert_eq!(rod.contact_diagnostics()[0].gap_m, -0.00002);
+        rod.contacts[0].metric_scale=0.25;
+        let scaled=rod.contact_diagnostics();
+        assert_eq!(scaled[0].metric_scale,0.25);
+        assert_eq!(scaled[0].gap_m,-0.000005);
     }
 }

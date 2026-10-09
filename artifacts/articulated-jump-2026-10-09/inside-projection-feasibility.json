@@ -1,0 +1,17 @@
+{
+  "constraints": 304,
+  "free_position_coordinates": 1686,
+  "original_tolerance_m": 1e-11,
+  "lp_status": 0,
+  "lp_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "scope": "Original tangent inequalities only; not implicit equilibrium, nonlinear contact, strain or motion qualification.",
+  "lp_original_max_violation_m": "1.22635598507822424807522579554342991115878082433186079317891151554183251239836768020832335080588793E-14",
+  "lp_max_position_coordinate_m": 0.4388897848384949,
+  "captured_original_max_violation_m": "0.0000699096806452526027495768994095063373546381613003943582441685708787557085308606019680155441164967900",
+  "captured_complementarity_residual_m": "0.0000699096806452526027495768994095063373546381613003943582441685708787557085308606019680155441164967900",
+  "gram_max_asymmetry": 6.461050361394882e-09,
+  "gram_min_eigenvalue": 18.808217553087502,
+  "independent_dual_original_max_violation_m": "4.51578745762615112483039898126884077862539975192592754888246120437145236792275682091580000E-15",
+  "independent_dual_complementarity_residual_m": "4.8400741550661398697197198384734435189037526151029376718717966987526324373902752995494300E-15",
+  "independent_dual_active_rows": 152
+}

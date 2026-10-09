@@ -1,0 +1,9 @@
+
+running 1 test
+captured QR rows=100 width=882, paired original/cached seconds=[(0.001546625, 0.000756709), (0.001536125, 0.000690334), (0.001544417, 0.000673708), (0.001519, 0.000678709), (0.001567959, 0.00066425), (0.00153475, 0.000688167), (0.001504167, 0.000712459)]
+captured exact gap dense/sparse seconds=[(0.000982666, 0.000536417), (0.000989416, 0.0005285), (0.001023167, 0.000556), (0.001020667, 0.000543375), (0.001011958, 0.000537667), (0.001004375, 0.000542125), (0.001001958, 0.000534667)]
+captured QR residual 100 evaluations dense/sparse seconds=[(0.008112833, 0.002312), (0.008118708, 0.002344458), (0.008150875, 0.002315875), (0.007803042, 0.00230475), (0.008019417, 0.002362667), (0.008193542, 0.002355083), (0.008156416, 0.002351459)]
+test hair::contact_response_system::square_root_qr::tests::captured_prefix_reuse_matches_reference_and_reports_paired_time ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 359 filtered out; finished in 0.10s
+

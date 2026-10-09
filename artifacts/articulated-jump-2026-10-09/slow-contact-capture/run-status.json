@@ -1,0 +1,10 @@
+{
+  "status": "stopped_capture_complete",
+  "session": 33610,
+  "rows": 46,
+  "coordinates": 2142,
+  "compact_coordinates": 987,
+  "systems": 17,
+  "full_jump_qualified": false,
+  "fps_qualified": false
+}

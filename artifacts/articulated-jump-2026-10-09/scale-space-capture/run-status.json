@@ -1,0 +1,11 @@
+{
+  "observed_at_utc": "2026-10-09T17:28:07.446760+00:00",
+  "status": "running",
+  "session": 90348,
+  "child_pid": 60907,
+  "completed_paired_frames": 2,
+  "native_only": true,
+  "contains_zero_coordinate_optimization": false,
+  "full_jump_qualified": false,
+  "fps_qualified": false
+}

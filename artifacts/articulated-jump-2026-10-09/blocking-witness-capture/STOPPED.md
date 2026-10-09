@@ -1,0 +1,1 @@
+Qualification intentionally stopped after frame 1 completed and frame 2 remained live. The binary was built before the final original-clock fix in HairSystem structural iterations. It is superseded by the current source; this is not a terminal mathematical-failure result or complete trajectory qualification. Log preserved.

@@ -14,8 +14,8 @@ impl GpuHairLinearSolver {
             if !self.compact_response_readback {
                 return Err("GPU response transport requires compact readback".into());
             }
-            if self.response_transfer_program.is_none() {
-                self.response_transfer_program = Some(pollster::block_on(
+            if self.rhs_transfer_program.is_none() {
+                self.rhs_transfer_program = Some(pollster::block_on(
                     voxy_render::BandedTransferProgram::new(&self.device),
                 )?);
             }
@@ -67,7 +67,7 @@ impl GpuHairLinearSolver {
                                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
                             });
                     if reuse || wave != 0 {
-                        self.response_transfer_program.as_ref().unwrap().encode(
+                        self.rhs_transfer_program.as_ref().unwrap().encode(
                             &mut encoder,
                             job.buffer(),
                             &buffer,
@@ -101,7 +101,7 @@ impl GpuHairLinearSolver {
                 }
                 job.encode_step(&mut encoder, inputs[wave].dispatch())?;
                 snapshots.push(if let Some(compact) = compact.as_ref() {
-                    self.response_transfer_program.as_ref().unwrap().encode(
+                    self.rhs_transfer_program.as_ref().unwrap().encode(
                         &mut encoder,
                         job.buffer(),
                         compact,

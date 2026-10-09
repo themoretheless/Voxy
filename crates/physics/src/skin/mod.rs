@@ -4,6 +4,7 @@ mod contact;
 mod dual;
 mod material;
 mod shell;
+mod adaptive;
 pub use contact::*;
 pub use material::*;
 pub use shell::*;

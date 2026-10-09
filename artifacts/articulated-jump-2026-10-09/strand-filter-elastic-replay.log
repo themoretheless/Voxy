@@ -1,0 +1,41 @@
+    Blocking waiting for file lock on build directory
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 9.43s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+ELASTIC CONTACT REPLAY iteration=0 maximum_strain=6.455467196761133e-2
+ELASTIC CONTACT REPLAY iteration=1 maximum_strain=6.918953539527162e-2
+ELASTIC CONTACT REPLAY iteration=2 maximum_strain=7.068068447378706e-2
+ELASTIC CONTACT REPLAY iteration=3 maximum_strain=1.2218799185813989e-1
+ELASTIC CONTACT REPLAY iteration=4 maximum_strain=1.2086521639716397e-1
+ELASTIC CONTACT REPLAY iteration=5 maximum_strain=6.580479876288758e-2
+ELASTIC CONTACT REPLAY iteration=6 maximum_strain=7.278374979751101e-2
+ELASTIC CONTACT REPLAY iteration=7 maximum_strain=6.925548379363611e-2
+ELASTIC CONTACT REPLAY iteration=8 maximum_strain=5.7800329019663366e-2
+ELASTIC CONTACT REPLAY iteration=9 maximum_strain=4.396673621060243e-2
+test hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 300 filtered out; finished in 1.78s
+

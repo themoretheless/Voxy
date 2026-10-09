@@ -1,0 +1,17 @@
+{
+  "reason": "superseded after current frozen-native-step binary was confirmed computing; new production sparse QR residual and frozen-pose free increment",
+  "completed_paired_frames": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "full_qualification_complete": false,
+  "replacement": "../frozen-native-step-capture/qualification.log",
+  "previous_pid": 3809,
+  "replacement_pid_observed": 29392,
+  "observed_replacement_session": 66222
+}

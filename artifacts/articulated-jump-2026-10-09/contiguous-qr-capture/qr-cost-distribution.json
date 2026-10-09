@@ -1,0 +1,143 @@
+{
+  "scope": "Cumulative QR diagnostics from both paired CPU copies, excludes in-flight calls; not per-frame or FPS",
+  "completed_qr_calls": 5136,
+  "buckets": [
+    {
+      "min_ms": 0,
+      "max_ms": 5,
+      "count": 0,
+      "total_ms": 0
+    },
+    {
+      "min_ms": 5,
+      "max_ms": 10,
+      "count": 0,
+      "total_ms": 0
+    },
+    {
+      "min_ms": 10,
+      "max_ms": 25,
+      "count": 4479,
+      "total_ms": 70404.880966
+    },
+    {
+      "min_ms": 25,
+      "max_ms": 50,
+      "count": 555,
+      "total_ms": 18571.373951
+    },
+    {
+      "min_ms": 50,
+      "max_ms": 100,
+      "count": 99,
+      "total_ms": 5793.497208
+    },
+    {
+      "min_ms": 100,
+      "max_ms": null,
+      "count": 3,
+      "total_ms": 376.517125
+    }
+  ],
+  "defect_refinement_counts": {
+    "0": 5136
+  },
+  "slowest": [
+    {
+      "systems": 18,
+      "rows": 152,
+      "coordinates": 2268,
+      "compact": 528,
+      "refinement": 0,
+      "elapsed_ms": 166.52
+    },
+    {
+      "systems": 26,
+      "rows": 76,
+      "coordinates": 3276,
+      "compact": 1626,
+      "refinement": 0,
+      "elapsed_ms": 108.8595
+    },
+    {
+      "systems": 18,
+      "rows": 154,
+      "coordinates": 2268,
+      "compact": 528,
+      "refinement": 0,
+      "elapsed_ms": 101.137625
+    },
+    {
+      "systems": 18,
+      "rows": 154,
+      "coordinates": 2268,
+      "compact": 534,
+      "refinement": 0,
+      "elapsed_ms": 94.518375
+    },
+    {
+      "systems": 18,
+      "rows": 150,
+      "coordinates": 2268,
+      "compact": 528,
+      "refinement": 0,
+      "elapsed_ms": 87.107208
+    },
+    {
+      "systems": 18,
+      "rows": 150,
+      "coordinates": 2268,
+      "compact": 528,
+      "refinement": 0,
+      "elapsed_ms": 82.021625
+    },
+    {
+      "systems": 18,
+      "rows": 163,
+      "coordinates": 2268,
+      "compact": 540,
+      "refinement": 0,
+      "elapsed_ms": 76.69475
+    },
+    {
+      "systems": 18,
+      "rows": 164,
+      "coordinates": 2268,
+      "compact": 540,
+      "refinement": 0,
+      "elapsed_ms": 76.09245800000001
+    },
+    {
+      "systems": 18,
+      "rows": 161,
+      "coordinates": 2268,
+      "compact": 540,
+      "refinement": 0,
+      "elapsed_ms": 75.849583
+    },
+    {
+      "systems": 18,
+      "rows": 153,
+      "coordinates": 2268,
+      "compact": 528,
+      "refinement": 0,
+      "elapsed_ms": 73.29370899999999
+    },
+    {
+      "systems": 18,
+      "rows": 161,
+      "coordinates": 2268,
+      "compact": 540,
+      "refinement": 0,
+      "elapsed_ms": 72.524
+    },
+    {
+      "systems": 18,
+      "rows": 153,
+      "coordinates": 2268,
+      "compact": 534,
+      "refinement": 0,
+      "elapsed_ms": 71.661959
+    }
+  ]
+}

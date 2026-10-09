@@ -1,0 +1,7 @@
+
+running 1 test
+append experiment rows=100 compact_width=639 sorted/append seconds and max coordinate difference=[(0.000684084, 0.000571959, 4.482091781055075e-16), (0.000626459, 0.000573416, 4.482091781055075e-16), (0.000669083, 0.000576708, 4.482091781055075e-16), (0.00065325, 0.000631833, 4.482091781055075e-16), (0.000908708, 0.000599958, 4.482091781055075e-16), (0.000648125, 0.000588333, 4.482091781055075e-16), (0.000652, 0.000583709, 4.482091781055075e-16)]
+test hair::contact_response_system::square_root_qr::tests::captured_guarded_append_order_retains_original_physical_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 359 filtered out; finished in 0.14s
+

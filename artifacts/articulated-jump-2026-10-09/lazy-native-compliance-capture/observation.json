@@ -1,0 +1,1233 @@
+{
+  "session": 56003,
+  "cargo_pid": 45795,
+  "test_pid": 46354,
+  "observed_live": true,
+  "completed": false,
+  "profile_rows": [
+    {
+      "elapsed_ms": 274.825542,
+      "initial_projection_ms": 11.827792,
+      "initial_admission_ms": 17.111374999999995,
+      "refinements": 7.0,
+      "cuts": 241.0,
+      "constraints": 241.0,
+      "groups": 241.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 266.121917,
+      "initial_projection_ms": 13.010584,
+      "initial_admission_ms": 23.843333,
+      "refinements": 7.0,
+      "cuts": 190.0,
+      "constraints": 236.0,
+      "groups": 210.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 261.88195800000005,
+      "initial_projection_ms": 12.179791,
+      "initial_admission_ms": 24.460209,
+      "refinements": 7.0,
+      "cuts": 197.0,
+      "constraints": 221.0,
+      "groups": 217.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 260.75733299999996,
+      "initial_projection_ms": 12.070083,
+      "initial_admission_ms": 24.511583999999996,
+      "refinements": 7.0,
+      "cuts": 196.0,
+      "constraints": 236.0,
+      "groups": 216.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 269.86112499999996,
+      "initial_projection_ms": 12.33025,
+      "initial_admission_ms": 21.56675,
+      "refinements": 7.0,
+      "cuts": 193.0,
+      "constraints": 218.0,
+      "groups": 217.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 262.202542,
+      "initial_projection_ms": 12.029292,
+      "initial_admission_ms": 22.593708,
+      "refinements": 7.0,
+      "cuts": 171.0,
+      "constraints": 220.0,
+      "groups": 196.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 263.49545800000004,
+      "initial_projection_ms": 12.017166,
+      "initial_admission_ms": 22.756334,
+      "refinements": 7.0,
+      "cuts": 189.0,
+      "constraints": 217.0,
+      "groups": 213.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 261.037375,
+      "initial_projection_ms": 12.409792,
+      "initial_admission_ms": 24.278875000000003,
+      "refinements": 7.0,
+      "cuts": 185.0,
+      "constraints": 228.0,
+      "groups": 209.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 270.85170899999997,
+      "initial_projection_ms": 12.495084,
+      "initial_admission_ms": 22.965125,
+      "refinements": 7.0,
+      "cuts": 187.0,
+      "constraints": 213.0,
+      "groups": 212.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 257.85524999999996,
+      "initial_projection_ms": 12.095125,
+      "initial_admission_ms": 24.709416,
+      "refinements": 7.0,
+      "cuts": 173.0,
+      "constraints": 221.0,
+      "groups": 198.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 261.304792,
+      "initial_projection_ms": 12.217833,
+      "initial_admission_ms": 23.022917,
+      "refinements": 7.0,
+      "cuts": 183.0,
+      "constraints": 212.0,
+      "groups": 208.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 261.750875,
+      "initial_projection_ms": 12.42725,
+      "initial_admission_ms": 21.756875,
+      "refinements": 7.0,
+      "cuts": 180.0,
+      "constraints": 225.0,
+      "groups": 205.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 267.483417,
+      "initial_projection_ms": 12.260416999999999,
+      "initial_admission_ms": 23.709792000000007,
+      "refinements": 7.0,
+      "cuts": 192.0,
+      "constraints": 217.0,
+      "groups": 216.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 261.507583,
+      "initial_projection_ms": 12.394,
+      "initial_admission_ms": 23.336540999999997,
+      "refinements": 7.0,
+      "cuts": 171.0,
+      "constraints": 220.0,
+      "groups": 196.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 257.438125,
+      "initial_projection_ms": 12.330416,
+      "initial_admission_ms": 21.939417,
+      "refinements": 7.0,
+      "cuts": 189.0,
+      "constraints": 217.0,
+      "groups": 213.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 258.246666,
+      "initial_projection_ms": 12.468791,
+      "initial_admission_ms": 23.320542,
+      "refinements": 7.0,
+      "cuts": 185.0,
+      "constraints": 229.0,
+      "groups": 209.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 271.0475,
+      "initial_projection_ms": 12.425666999999999,
+      "initial_admission_ms": 23.853417000000007,
+      "refinements": 7.0,
+      "cuts": 187.0,
+      "constraints": 213.0,
+      "groups": 212.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 264.24199999999996,
+      "initial_projection_ms": 12.478833999999999,
+      "initial_admission_ms": 25.165291000000003,
+      "refinements": 7.0,
+      "cuts": 174.0,
+      "constraints": 223.0,
+      "groups": 199.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 260.617292,
+      "initial_projection_ms": 12.508292,
+      "initial_admission_ms": 21.372083,
+      "refinements": 7.0,
+      "cuts": 183.0,
+      "constraints": 210.0,
+      "groups": 208.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 262.994459,
+      "initial_projection_ms": 12.436959,
+      "initial_admission_ms": 22.093375,
+      "refinements": 7.0,
+      "cuts": 181.0,
+      "constraints": 224.0,
+      "groups": 206.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 296.389708,
+      "initial_projection_ms": 12.558083,
+      "initial_admission_ms": 22.400625,
+      "refinements": 7.0,
+      "cuts": 192.0,
+      "constraints": 217.0,
+      "groups": 216.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 265.982459,
+      "initial_projection_ms": 12.819125000000001,
+      "initial_admission_ms": 22.995959,
+      "refinements": 7.0,
+      "cuts": 171.0,
+      "constraints": 220.0,
+      "groups": 196.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 260.343083,
+      "initial_projection_ms": 12.280125,
+      "initial_admission_ms": 22.383917000000004,
+      "refinements": 7.0,
+      "cuts": 189.0,
+      "constraints": 217.0,
+      "groups": 213.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 262.32349999999997,
+      "initial_projection_ms": 12.416165999999999,
+      "initial_admission_ms": 22.349000000000004,
+      "refinements": 7.0,
+      "cuts": 185.0,
+      "constraints": 229.0,
+      "groups": 209.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 277.299459,
+      "initial_projection_ms": 12.942333999999999,
+      "initial_admission_ms": 22.390583000000003,
+      "refinements": 6.0,
+      "cuts": 247.0,
+      "constraints": 272.0,
+      "groups": 272.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 385.946209,
+      "initial_projection_ms": 12.726667,
+      "initial_admission_ms": 23.855207999999998,
+      "refinements": 8.0,
+      "cuts": 259.0,
+      "constraints": 311.0,
+      "groups": 282.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 391.174416,
+      "initial_projection_ms": 12.308375,
+      "initial_admission_ms": 24.659166,
+      "refinements": 8.0,
+      "cuts": 255.0,
+      "constraints": 280.0,
+      "groups": 277.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 379.984458,
+      "initial_projection_ms": 12.676333,
+      "initial_admission_ms": 23.583334,
+      "refinements": 8.0,
+      "cuts": 244.0,
+      "constraints": 286.0,
+      "groups": 268.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 378.149375,
+      "initial_projection_ms": 12.568,
+      "initial_admission_ms": 25.888292000000007,
+      "refinements": 8.0,
+      "cuts": 245.0,
+      "constraints": 272.0,
+      "groups": 268.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 376.938875,
+      "initial_projection_ms": 12.265334,
+      "initial_admission_ms": 25.271416,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 379.136708,
+      "initial_projection_ms": 12.493875,
+      "initial_admission_ms": 24.380667000000006,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 373.18320900000003,
+      "initial_projection_ms": 11.968584000000002,
+      "initial_admission_ms": 23.932333,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 402.417542,
+      "initial_projection_ms": 26.231042,
+      "initial_admission_ms": 24.640582999999996,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 387.361333,
+      "initial_projection_ms": 12.513458,
+      "initial_admission_ms": 23.530709,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 375.162125,
+      "initial_projection_ms": 12.271792,
+      "initial_admission_ms": 24.123250000000006,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 371.545708,
+      "initial_projection_ms": 12.497,
+      "initial_admission_ms": 22.630667000000003,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 386.487208,
+      "initial_projection_ms": 12.443,
+      "initial_admission_ms": 24.107542000000002,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 370.89954200000005,
+      "initial_projection_ms": 12.320124999999999,
+      "initial_admission_ms": 22.728042000000002,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 271.309584,
+      "initial_projection_ms": 12.124584,
+      "initial_admission_ms": 15.965707999999998,
+      "refinements": 7.0,
+      "cuts": 241.0,
+      "constraints": 241.0,
+      "groups": 241.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 259.396542,
+      "initial_projection_ms": 12.296,
+      "initial_admission_ms": 22.304832999999995,
+      "refinements": 7.0,
+      "cuts": 190.0,
+      "constraints": 236.0,
+      "groups": 210.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 258.302542,
+      "initial_projection_ms": 12.692459,
+      "initial_admission_ms": 24.339250000000007,
+      "refinements": 7.0,
+      "cuts": 197.0,
+      "constraints": 221.0,
+      "groups": 217.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 271.39675,
+      "initial_projection_ms": 12.382417,
+      "initial_admission_ms": 23.9445,
+      "refinements": 7.0,
+      "cuts": 196.0,
+      "constraints": 236.0,
+      "groups": 216.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 267.402291,
+      "initial_projection_ms": 12.672166,
+      "initial_admission_ms": 21.949666999999994,
+      "refinements": 7.0,
+      "cuts": 193.0,
+      "constraints": 218.0,
+      "groups": 217.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 259.5325,
+      "initial_projection_ms": 12.654208,
+      "initial_admission_ms": 22.142084,
+      "refinements": 7.0,
+      "cuts": 171.0,
+      "constraints": 220.0,
+      "groups": 196.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 257.252291,
+      "initial_projection_ms": 12.345625,
+      "initial_admission_ms": 22.048499999999997,
+      "refinements": 7.0,
+      "cuts": 189.0,
+      "constraints": 217.0,
+      "groups": 213.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 258.182167,
+      "initial_projection_ms": 12.257667,
+      "initial_admission_ms": 22.787166,
+      "refinements": 7.0,
+      "cuts": 185.0,
+      "constraints": 228.0,
+      "groups": 209.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 267.373125,
+      "initial_projection_ms": 12.765916,
+      "initial_admission_ms": 21.822292,
+      "refinements": 7.0,
+      "cuts": 187.0,
+      "constraints": 213.0,
+      "groups": 212.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 258.246959,
+      "initial_projection_ms": 12.73675,
+      "initial_admission_ms": 24.019166999999996,
+      "refinements": 7.0,
+      "cuts": 173.0,
+      "constraints": 221.0,
+      "groups": 198.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 261.115875,
+      "initial_projection_ms": 12.493625,
+      "initial_admission_ms": 21.193583000000004,
+      "refinements": 7.0,
+      "cuts": 183.0,
+      "constraints": 212.0,
+      "groups": 208.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 260.82275,
+      "initial_projection_ms": 12.643208,
+      "initial_admission_ms": 21.480916999999998,
+      "refinements": 7.0,
+      "cuts": 180.0,
+      "constraints": 225.0,
+      "groups": 205.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 265.909625,
+      "initial_projection_ms": 12.359084,
+      "initial_admission_ms": 22.292416,
+      "refinements": 7.0,
+      "cuts": 192.0,
+      "constraints": 217.0,
+      "groups": 216.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 261.259666,
+      "initial_projection_ms": 12.161583,
+      "initial_admission_ms": 22.196625000000004,
+      "refinements": 7.0,
+      "cuts": 171.0,
+      "constraints": 220.0,
+      "groups": 196.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 255.00558299999997,
+      "initial_projection_ms": 12.441625,
+      "initial_admission_ms": 21.935249999999996,
+      "refinements": 7.0,
+      "cuts": 189.0,
+      "constraints": 217.0,
+      "groups": 213.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 271.12350000000004,
+      "initial_projection_ms": 12.485875,
+      "initial_admission_ms": 22.198749999999997,
+      "refinements": 7.0,
+      "cuts": 185.0,
+      "constraints": 229.0,
+      "groups": 209.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 267.638834,
+      "initial_projection_ms": 12.505542,
+      "initial_admission_ms": 21.719707999999997,
+      "refinements": 7.0,
+      "cuts": 187.0,
+      "constraints": 213.0,
+      "groups": 212.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 256.820916,
+      "initial_projection_ms": 12.501166,
+      "initial_admission_ms": 24.316709000000003,
+      "refinements": 7.0,
+      "cuts": 174.0,
+      "constraints": 223.0,
+      "groups": 199.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 260.171541,
+      "initial_projection_ms": 12.447375000000001,
+      "initial_admission_ms": 21.364874999999998,
+      "refinements": 7.0,
+      "cuts": 183.0,
+      "constraints": 210.0,
+      "groups": 208.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 258.776,
+      "initial_projection_ms": 12.501208,
+      "initial_admission_ms": 21.329292000000002,
+      "refinements": 7.0,
+      "cuts": 181.0,
+      "constraints": 224.0,
+      "groups": 206.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 289.190208,
+      "initial_projection_ms": 12.497333,
+      "initial_admission_ms": 22.597541999999997,
+      "refinements": 7.0,
+      "cuts": 192.0,
+      "constraints": 217.0,
+      "groups": 216.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 258.87845799999997,
+      "initial_projection_ms": 12.520042,
+      "initial_admission_ms": 22.670416,
+      "refinements": 7.0,
+      "cuts": 171.0,
+      "constraints": 220.0,
+      "groups": 196.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 258.22079199999996,
+      "initial_projection_ms": 12.447709,
+      "initial_admission_ms": 22.185208,
+      "refinements": 7.0,
+      "cuts": 189.0,
+      "constraints": 217.0,
+      "groups": 213.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 257.15770799999996,
+      "initial_projection_ms": 12.413083,
+      "initial_admission_ms": 22.405958,
+      "refinements": 7.0,
+      "cuts": 185.0,
+      "constraints": 229.0,
+      "groups": 209.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 267.935625,
+      "initial_projection_ms": 12.525583,
+      "initial_admission_ms": 19.611334000000006,
+      "refinements": 6.0,
+      "cuts": 247.0,
+      "constraints": 272.0,
+      "groups": 272.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 380.215833,
+      "initial_projection_ms": 12.473875000000001,
+      "initial_admission_ms": 24.543083000000003,
+      "refinements": 8.0,
+      "cuts": 259.0,
+      "constraints": 311.0,
+      "groups": 282.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 391.94800000000004,
+      "initial_projection_ms": 12.421458,
+      "initial_admission_ms": 24.247208999999998,
+      "refinements": 8.0,
+      "cuts": 255.0,
+      "constraints": 280.0,
+      "groups": 277.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 373.62204199999996,
+      "initial_projection_ms": 12.305250000000001,
+      "initial_admission_ms": 23.969250000000002,
+      "refinements": 8.0,
+      "cuts": 244.0,
+      "constraints": 286.0,
+      "groups": 268.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 372.84837500000003,
+      "initial_projection_ms": 12.032375,
+      "initial_admission_ms": 23.774124999999998,
+      "refinements": 8.0,
+      "cuts": 245.0,
+      "constraints": 272.0,
+      "groups": 268.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 371.506291,
+      "initial_projection_ms": 12.154875,
+      "initial_admission_ms": 24.083541,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 372.455583,
+      "initial_projection_ms": 12.501333,
+      "initial_admission_ms": 23.209916999999997,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 371.18525,
+      "initial_projection_ms": 12.610042,
+      "initial_admission_ms": 23.161625,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 375.612709,
+      "initial_projection_ms": 12.499042,
+      "initial_admission_ms": 23.930083,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 370.791834,
+      "initial_projection_ms": 12.282959,
+      "initial_admission_ms": 22.958833000000006,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 376.849041,
+      "initial_projection_ms": 12.178791,
+      "initial_admission_ms": 23.590667,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 377.299709,
+      "initial_projection_ms": 12.163459,
+      "initial_admission_ms": 22.715625,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 373.22775,
+      "initial_projection_ms": 12.545583,
+      "initial_admission_ms": 23.840125,
+      "refinements": 8.0,
+      "cuts": 247.0,
+      "constraints": 275.0,
+      "groups": 271.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 369.113542,
+      "initial_projection_ms": 11.928709,
+      "initial_admission_ms": 22.415166000000006,
+      "refinements": 8.0,
+      "cuts": 243.0,
+      "constraints": 276.0,
+      "groups": 266.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 351.366416,
+      "initial_projection_ms": 12.300165999999999,
+      "initial_admission_ms": 20.390375,
+      "refinements": 8.0,
+      "cuts": 314.0,
+      "constraints": 338.0,
+      "groups": 338.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 438.42087499999997,
+      "initial_projection_ms": 12.262208,
+      "initial_admission_ms": 31.890667,
+      "refinements": 9.0,
+      "cuts": 353.0,
+      "constraints": 503.0,
+      "groups": 364.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 366.411125,
+      "initial_projection_ms": 12.681166000000001,
+      "initial_admission_ms": 28.450166999999997,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 379.0,
+      "groups": 357.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 370.37179199999997,
+      "initial_projection_ms": 12.397125,
+      "initial_admission_ms": 28.881208,
+      "refinements": 8.0,
+      "cuts": 344.0,
+      "constraints": 400.0,
+      "groups": 356.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 374.735208,
+      "initial_projection_ms": 12.350667,
+      "initial_admission_ms": 29.622458,
+      "refinements": 8.0,
+      "cuts": 344.0,
+      "constraints": 390.0,
+      "groups": 357.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 370.381375,
+      "initial_projection_ms": 12.191625,
+      "initial_admission_ms": 29.776707999999992,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 408.0,
+      "groups": 358.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 385.914709,
+      "initial_projection_ms": 12.245584000000001,
+      "initial_admission_ms": 45.189916,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 410.0,
+      "groups": 358.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 390.51750000000004,
+      "initial_projection_ms": 12.358875,
+      "initial_admission_ms": 30.547458,
+      "refinements": 8.0,
+      "cuts": 354.0,
+      "constraints": 420.0,
+      "groups": 367.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 390.407416,
+      "initial_projection_ms": 12.274375000000001,
+      "initial_admission_ms": 30.491957999999997,
+      "refinements": 8.0,
+      "cuts": 354.0,
+      "constraints": 423.0,
+      "groups": 367.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 367.300834,
+      "initial_projection_ms": 12.13125,
+      "initial_admission_ms": 28.657041999999997,
+      "refinements": 8.0,
+      "cuts": 344.0,
+      "constraints": 370.0,
+      "groups": 358.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 385.47704100000004,
+      "initial_projection_ms": 12.308665999999999,
+      "initial_admission_ms": 31.768000000000004,
+      "refinements": 8.0,
+      "cuts": 348.0,
+      "constraints": 394.0,
+      "groups": 361.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 365.398417,
+      "initial_projection_ms": 12.231250000000001,
+      "initial_admission_ms": 28.733249999999998,
+      "refinements": 8.0,
+      "cuts": 338.0,
+      "constraints": 377.0,
+      "groups": 352.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 388.4425,
+      "initial_projection_ms": 12.381625,
+      "initial_admission_ms": 30.54625,
+      "refinements": 8.0,
+      "cuts": 353.0,
+      "constraints": 395.0,
+      "groups": 365.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 368.477875,
+      "initial_projection_ms": 12.331583,
+      "initial_admission_ms": 29.481917000000003,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 374.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 383.923042,
+      "initial_projection_ms": 12.303834,
+      "initial_admission_ms": 29.495207999999998,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 392.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 397.749333,
+      "initial_projection_ms": 12.45375,
+      "initial_admission_ms": 32.111833,
+      "refinements": 8.0,
+      "cuts": 355.0,
+      "constraints": 400.0,
+      "groups": 369.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 395.130792,
+      "initial_projection_ms": 12.405417,
+      "initial_admission_ms": 31.1655,
+      "refinements": 8.0,
+      "cuts": 352.0,
+      "constraints": 403.0,
+      "groups": 366.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 393.45416700000004,
+      "initial_projection_ms": 12.354042000000002,
+      "initial_admission_ms": 30.140457999999995,
+      "refinements": 8.0,
+      "cuts": 354.0,
+      "constraints": 408.0,
+      "groups": 368.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 394.395,
+      "initial_projection_ms": 12.541500000000001,
+      "initial_admission_ms": 31.064833,
+      "refinements": 8.0,
+      "cuts": 354.0,
+      "constraints": 410.0,
+      "groups": 368.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 383.70975000000004,
+      "initial_projection_ms": 12.49875,
+      "initial_admission_ms": 30.171208999999998,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 372.0,
+      "groups": 360.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 447.601334,
+      "initial_projection_ms": 13.258167,
+      "initial_admission_ms": 55.963125000000005,
+      "refinements": 8.0,
+      "cuts": 351.0,
+      "constraints": 399.0,
+      "groups": 365.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 381.76125,
+      "initial_projection_ms": 12.225292,
+      "initial_admission_ms": 29.7105,
+      "refinements": 8.0,
+      "cuts": 338.0,
+      "constraints": 372.0,
+      "groups": 354.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 388.52575,
+      "initial_projection_ms": 12.312,
+      "initial_admission_ms": 30.424999999999997,
+      "refinements": 8.0,
+      "cuts": 335.0,
+      "constraints": 389.0,
+      "groups": 351.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 409.947041,
+      "initial_projection_ms": 12.184958,
+      "initial_admission_ms": 30.865499999999997,
+      "refinements": 8.0,
+      "cuts": 352.0,
+      "constraints": 401.0,
+      "groups": 366.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 376.181959,
+      "initial_projection_ms": 12.544875000000001,
+      "initial_admission_ms": 30.466375000000003,
+      "refinements": 8.0,
+      "cuts": 343.0,
+      "constraints": 392.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 370.567542,
+      "initial_projection_ms": 11.919625,
+      "initial_admission_ms": 29.214917000000003,
+      "refinements": 8.0,
+      "cuts": 343.0,
+      "constraints": 395.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 392.914625,
+      "initial_projection_ms": 12.451916,
+      "initial_admission_ms": 30.600416999999997,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 397.0,
+      "groups": 361.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 371.90625,
+      "initial_projection_ms": 12.569166,
+      "initial_admission_ms": 29.665084000000004,
+      "refinements": 8.0,
+      "cuts": 342.0,
+      "constraints": 371.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 385.992,
+      "initial_projection_ms": 12.145833999999999,
+      "initial_admission_ms": 29.068999999999996,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 396.0,
+      "groups": 361.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 374.24875000000003,
+      "initial_projection_ms": 12.408624999999999,
+      "initial_admission_ms": 29.4285,
+      "refinements": 8.0,
+      "cuts": 338.0,
+      "constraints": 372.0,
+      "groups": 354.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 376.76020900000003,
+      "initial_projection_ms": 12.126709,
+      "initial_admission_ms": 29.590083000000007,
+      "refinements": 8.0,
+      "cuts": 335.0,
+      "constraints": 389.0,
+      "groups": 351.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 416.42075,
+      "initial_projection_ms": 12.035959,
+      "initial_admission_ms": 31.369332999999997,
+      "refinements": 8.0,
+      "cuts": 352.0,
+      "constraints": 402.0,
+      "groups": 366.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 392.163416,
+      "initial_projection_ms": 12.571666,
+      "initial_admission_ms": 31.806666999999997,
+      "refinements": 8.0,
+      "cuts": 343.0,
+      "constraints": 392.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 399.49591699999996,
+      "initial_projection_ms": 13.319833,
+      "initial_admission_ms": 33.121083999999996,
+      "refinements": 8.0,
+      "cuts": 343.0,
+      "constraints": 395.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 406.671958,
+      "initial_projection_ms": 12.345375,
+      "initial_admission_ms": 31.554040999999994,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 397.0,
+      "groups": 361.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 398.057791,
+      "initial_projection_ms": 12.381291000000001,
+      "initial_admission_ms": 31.347334,
+      "refinements": 8.0,
+      "cuts": 342.0,
+      "constraints": 371.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 392.451083,
+      "initial_projection_ms": 12.549458,
+      "initial_admission_ms": 30.086833999999996,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 395.0,
+      "groups": 361.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 379.5795,
+      "initial_projection_ms": 12.73925,
+      "initial_admission_ms": 31.151249999999997,
+      "refinements": 8.0,
+      "cuts": 338.0,
+      "constraints": 372.0,
+      "groups": 354.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 376.965,
+      "initial_projection_ms": 12.055,
+      "initial_admission_ms": 31.142333,
+      "refinements": 8.0,
+      "cuts": 335.0,
+      "constraints": 389.0,
+      "groups": 351.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 404.55979199999996,
+      "initial_projection_ms": 12.378042,
+      "initial_admission_ms": 31.900792000000003,
+      "refinements": 8.0,
+      "cuts": 352.0,
+      "constraints": 401.0,
+      "groups": 366.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 391.190333,
+      "initial_projection_ms": 12.637666000000001,
+      "initial_admission_ms": 31.961750000000002,
+      "refinements": 8.0,
+      "cuts": 343.0,
+      "constraints": 392.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 393.891959,
+      "initial_projection_ms": 12.799584,
+      "initial_admission_ms": 31.820415999999998,
+      "refinements": 8.0,
+      "cuts": 343.0,
+      "constraints": 395.0,
+      "groups": 359.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 406.922459,
+      "initial_projection_ms": 12.577959,
+      "initial_admission_ms": 31.751666,
+      "refinements": 8.0,
+      "cuts": 351.0,
+      "constraints": 402.0,
+      "groups": 366.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 383.45875,
+      "initial_projection_ms": 12.718833,
+      "initial_admission_ms": 30.634792,
+      "refinements": 8.0,
+      "cuts": 344.0,
+      "constraints": 372.0,
+      "groups": 360.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 394.020375,
+      "initial_projection_ms": 12.646958999999999,
+      "initial_admission_ms": 30.931125000000005,
+      "refinements": 8.0,
+      "cuts": 345.0,
+      "constraints": 396.0,
+      "groups": 361.0,
+      "minimum_scale": 1.0
+    },
+    {
+      "elapsed_ms": 379.283333,
+      "initial_projection_ms": 12.342667,
+      "initial_admission_ms": 30.144916000000002,
+      "refinements": 8.0,
+      "cuts": 338.0,
+      "constraints": 373.0,
+      "groups": 354.0,
+      "minimum_scale": 1.0
+    }
+  ],
+  "rendered_fps": null,
+  "superseded_session": 47344,
+  "superseded_test_pid": 31251,
+  "reason": "current native path removes eager unused Gram response preparation"
+}
