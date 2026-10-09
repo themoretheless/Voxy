@@ -440,6 +440,12 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                     FaceDir::NegZ => -32,
                 };
 
+                let mut last_source = BlockStateId::AIR;
+                let mut last_source_def = None;
+                let mut last_layer = RenderLayer::Opaque;
+                let mut last_neighbor = BlockStateId::AIR;
+                let mut last_neighbor_def = None;
+
                 for v in 0_u8..32 {
                     let v_idx = usize::from(v);
                     let v_base = match face {
@@ -459,14 +465,30 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                         if source == BlockStateId::AIR {
                             continue;
                         }
-                        let Some(source_def) = input.registry.get(source) else {
-                            continue;
-                        };
-                        let layer = match source_def.render {
-                            RenderKind::Invisible => continue,
-                            RenderKind::Opaque => RenderLayer::Opaque,
-                            RenderKind::Cutout => RenderLayer::Cutout,
-                            RenderKind::Translucent => RenderLayer::Translucent,
+                        let (source_def, layer) = if source == last_source {
+                            if let Some(def) = last_source_def {
+                                (def, last_layer)
+                            } else {
+                                continue;
+                            }
+                        } else {
+                            last_source = source;
+                            let Some(def) = input.registry.get(source) else {
+                                last_source_def = None;
+                                continue;
+                            };
+                            let l = match def.render {
+                                RenderKind::Invisible => {
+                                    last_source_def = None;
+                                    continue;
+                                }
+                                RenderKind::Opaque => RenderLayer::Opaque,
+                                RenderKind::Cutout => RenderLayer::Cutout,
+                                RenderKind::Translucent => RenderLayer::Translucent,
+                            };
+                            last_source_def = Some(def);
+                            last_layer = l;
+                            (def, l)
                         };
 
                         let n_index = (cell_index as isize + neighbor_offset) as usize;
@@ -479,7 +501,14 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                                 continue;
                             }
                         } else if neighbor_id != BlockStateId::AIR {
-                            if let Some(neighbor_def) = input.registry.get(neighbor_id) {
+                            let neighbor_def = if neighbor_id == last_neighbor {
+                                last_neighbor_def
+                            } else {
+                                last_neighbor = neighbor_id;
+                                last_neighbor_def = input.registry.get(neighbor_id);
+                                last_neighbor_def
+                            };
+                            if let Some(neighbor_def) = neighbor_def {
                                 if neighbor_def.occlusion == Occlusion::FullCube {
                                     continue;
                                 }
@@ -535,9 +564,7 @@ fn merge_mask(
             }
             for row in 0..height {
                 let row_base = (v + row) * 32 + u;
-                for col in 0..width {
-                    mask[row_base + col] = None;
-                }
+                mask[row_base..row_base + width].fill(None);
             }
             let mut origin = [0_u8; 3];
             origin[normal_axis] = slice + u8::from(face.positive());

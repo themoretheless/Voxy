@@ -680,10 +680,12 @@ fn pairs(
     budget: usize,
     check_budget: usize,
 ) -> Result<Vec<(usize, usize)>, Error> {
-    let mut grid: BTreeMap<[i64; 3], Vec<usize>> = BTreeMap::new();
+    let mut grid: std::collections::HashMap<[i64; 3], Vec<usize>> =
+        std::collections::HashMap::with_capacity(particles.len());
     for (i, p) in particles.iter().enumerate() {
         grid.entry(cell(p.position, h)?).or_default().push(i);
     }
+    let h2 = h * h;
     let mut result = Vec::new();
     let mut checks = 0;
     for (i, p) in particles.iter().enumerate() {
@@ -700,7 +702,9 @@ fn pairs(
                                 return Err(Error::NeighborBudget);
                             }
                             checks += 1;
-                            if norm(sub(p.position, particles[j].position)) < h {
+                            let d = sub(p.position, particles[j].position);
+                            let dist2 = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+                            if dist2 < h2 {
                                 if result.len() >= budget {
                                     return Err(Error::PairBudget);
                                 }
