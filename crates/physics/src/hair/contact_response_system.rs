@@ -703,6 +703,9 @@ impl<'a> PreparedNativeJoint<'a> {
             Err(_)=>self.solve(bounds,absolute_tolerance).map(|(responses,reactions)|(responses,reactions,false)),
         }
     }
+    pub(super) fn capture_observed_input(&self,path:&std::path::Path,bounds:&[f64],tolerance:f64) {
+        square_root_diagnostics::export_input_to(path.as_os_str(),self.requests,&self.columns,bounds,bounds,tolerance,0,true);
+    }
     pub(super) fn solve(&self, bounds: &[f64], tolerance: f64)
         -> Result<(Vec<Vec<f64>>, Vec<f64>), &'static str> {
         self.solve_with_coordinates(bounds, tolerance, true,

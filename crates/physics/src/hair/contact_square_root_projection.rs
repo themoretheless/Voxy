@@ -199,6 +199,25 @@ fn solve_island_increment(
         crate::hair::contact_response_system::PreparedNativeJoint::new_with_preparation(requests, &bounds, tolerance,
             |index, request| frozen.prepare_loads(ids[index], request))?
     } else { crate::hair::contact_response_system::PreparedNativeJoint::new(requests, &bounds, tolerance)? };
+    // Opt-in diagnostic snapshots of complete original islands. Observation
+    // never changes selection, bounds, precision or physical publication.
+    if let Some(directory)=std::env::var_os("VOXY_HAIR_ISLAND_INPUT_EXPORT") {
+        let target=std::env::var("VOXY_HAIR_ISLAND_INPUT_ROD").ok().and_then(|v|v.parse::<usize>().ok()).unwrap_or(53);
+        if ids.contains(&target) {
+            use std::sync::atomic::{AtomicUsize,Ordering};
+            static NATIVE:AtomicUsize=AtomicUsize::new(0);
+            static EXTERNAL:AtomicUsize=AtomicUsize::new(0);
+            let (label,counter)=if backend.is_some() {("external",&EXTERNAL)} else {("native",&NATIVE)};
+            let index=counter.fetch_add(1,Ordering::Relaxed);
+            if index<16 {
+                let directory=std::path::Path::new(&directory);
+                match std::fs::create_dir_all(directory) {
+                    Ok(())=>prepared.capture_observed_input(&directory.join(format!("{label}-{index:02}.vqc")),&bounds,tolerance),
+                    Err(error)=>eprintln!("HAIR ISLAND INPUT EXPORT ERROR {error}"),
+                }
+            }
+        }
+    }
     for refinement in 0..8 {
         let (responses,reactions)=if let Some(backend)=backend.as_deref_mut() {
             let (responses,reactions,accelerated)=prepared.solve_accelerated(&bounds,tolerance,

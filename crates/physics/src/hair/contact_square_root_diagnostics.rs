@@ -21,7 +21,7 @@ pub(super) fn export_profile_input(requests:&[HairResponseSystem],columns:&[Vec<
     export_input_to(&path,requests,columns,bounds,effective,tolerance,refinement,true);
 }
 
-fn export_input_to(path:&std::ffi::OsStr,requests:&[HairResponseSystem],columns:&[Vec<f64>],
+pub(super) fn export_input_to(path:&std::ffi::OsStr,requests:&[HairResponseSystem],columns:&[Vec<f64>],
     bounds:&[f64],effective:&[f64],tolerance:f64,refinement:usize,preserve_existing:bool) {
     let _capture_guard=CAPTURE_LOCK.lock().unwrap_or_else(|e|e.into_inner());
     let write=||->std::io::Result<()> {
