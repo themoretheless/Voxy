@@ -747,3 +747,79 @@ Regression admits a valid candidate at1e-14 original tolerance; malformed coordi
 joint_contact_unilateral now runs the native algorithm's host contact-selection/release sequence with GPU resident equality solves, using original VQC1 bounds, matrices and loads. Negative equality reactions release along the same feasible dual segment; all original gaps and complementarity use compensated/FMA CPU products and unchanged absolute tolerance. The public physical owner then performs original back-transform/force/bound admission and retains native fallback. This is an experimental hardware harness, not production animation backend wiring or GPU-only contact selection. A targeted analytic release fixture passes (hybrid-active-release-test.log).
 
 Metal original physical admission succeeded without native fallback on two21-system captures:58 rows/2646 coordinates,49 iterations/48 GPU equality solves; latest61 rows/2646 coordinates,55 iterations/54 equality solves. Both have24 active contacts and original absolute tolerance1e-14; each physical owner used one candidate call and reported accelerated=true. Evidence: hybrid-active-physical-metal.log, hybrid-active-latest-physical-metal.log, hybrid-active-physical-scope.json. Bounds are original physical captures, not manufactured. Buffers are resident within each equality solve; active-set iterations still repack/rebuild the selected operator. No performance comparison, full animation GPU qualification, CUDA or rendered>160FPS claim. The existing full native CPU qualifier was confirmed live through14 paired frames with zero position/quaternion differences; complete720 remains pending.
+
+### Application joint-contact backend and Newton routing
+
+HairLinearSolver now has backward-compatible opt-in joint coordinate callbacks and physical-admission feedback. Canonical active selection/release lives once in physics; both native and alternate equality solvers use it. The hardware example no longer duplicates selection. GpuHairLinearSolver implements the equality callback with resident GPU QR/triangular solve and records calls/equality dispatches/admissions/native fallbacks. The mode defaults off and qualification selects it with VOXY_HAIR_JOINT_QR.
+
+Newton projection routes opted-in backends through the same square-root island owner, full original-free addition admission and bounded correction. Islands are submitted serially to the mutable GPU owner; native parallel workers retain their previous path. Immutable NativeNewtonStep free motion and FrozenSystems exact factor/load caches are retained across swept refinements for the new route too. An unavailable-backend regression verifies native-identical coordinate/reaction output and no Gram response preparation. Latest frozen-route release physics329 passed/39 ignored (joint-route-frozen-all-units.log); application check passed (joint-route-app-check.log). Early build logs retain the subsequently fixed moved-Option compile error.
+
+The actual application GPU backend passes latest21-system/61-row capture at1e-14 original physical tolerance,54 equality dispatches,1 admitted result and0 fallbacks (joint-app-backend-metal-absolute.log, exit0). The first relative fixture path failed to open; retained log is joint-app-backend-metal.log. Shared canonical release fixture passes (canonical-active-release-test.log). This validates the backend and route boundaries, not a complete trajectory.
+
+New full720 native/GPU paired jump qualification launched in session84447, gpu-joint-qualification-capture/qualification.log. run_gpu_joint_jump.sh keeps469x20 guides, continuous mesh/strand contacts, joint positions/velocities, pressure recovery and original tolerances, and enables actual GPU backend plus one original-residual refinement for banded responses. CPU-control/native-only modes are explicitly unset. The previous native CPU qualifier session58786/PID7118 is preserved as a separate live reference, not replaced or stopped. Full trajectory and rendered FPS remain pending.
+
+The new qualifier childPID90056/cargo89240 was confirmed computing swept refinements; its log confirms joint QR enabled and cpu_control=false/native_only=false. Preserve session84447 and re-poll it on observation timeout. This is a live qualification, not completed GPU animation proof.
+
+### Exact structural support for resident GPU QR
+
+A one-second sample of livePID90056 confirms canonical active selection reaching GpuHairLinearSolver::solve_joint_checked and Device::poll (gpu-joint-qualification-capture/live-cpu-sample.txt). It samples one phase and is not a whole-frame performance breakdown. ResidentContactQrInput now removes only axes that are exactly zero in every original column, after full finite validation; signed zeros are structural zeros, all nonzero magnitudes are retained. Q and equality coordinates are expanded to their original width before callback/physical admission. Packing-range failures still reject the candidate and retain native fallback; no epsilon compaction or density change.
+
+Latest61-row operator has2646 original axes,1215 retained exact nonzero axes and1431 omitted exact-zero axes (exact-support-scope.json). Eight release codec/WGSL tests pass, including exact support,1e-30 coefficients, nonfinite-axis rejection and explicit expanded equality coordinate/reaction reconstruction (exact-support-codec-tests-current.log). The initial test fixture used1e-100 alongside1, outside the existing paired-f32 packing range, and correctly received NumericRange; its failed log is retained rather than weakening that gate. Current hardware application backend still passes original physical admission at1e-14 with54 equality dispatches,1 admitted result and0 fallbacks (exact-support-backend-metal.log). Its single test duration is not a controlled speed comparison. The live full720 GPU qualifier still runs the earlier uncompressed codec; preserve it. Complete trajectory/CUDA/rendered FPS remain pending.
+
+## Controlled support compaction and failed full trajectory
+
+Seven alternating warmed Metal pairs on the complete captured 21-system,
+61-row physical operator measured dense median 0.522269375 s versus compact
+0.293841625 s (1.77738x). Both used 54 equality dispatches, no native fallback,
+and passed the original physical admission at 1e-14. This is an operator
+measurement, not rendered FPS or whole-animation qualification. Exact-zero
+support compaction is retained on that evidence. See
+`gpu-joint-qualification-capture/exact-support-paired.json`.
+
+The original dense full-trajectory GPU run failed at frame 1: position
+0.00024016502585343102 m and quaternion component 0.003538876064187846,
+exceeding unchanged 1e-6 m / 5e-5 gates. Native rod 53 retained a mesh contact
+which external rod 53 did not. The process was terminated because cumulative
+errors had already conclusively failed acceptance, not because of timeout.
+Its original log/captures remain preserved. The test now checks those same
+gates after every frame, after printing diagnostics. A new full-density
+720-frame configuration captures rod 53 phase traces at frame 1 in
+`gpu-frame-one-phase-capture`; its success is not yet established.
+
+That phase run is now terminal (test exit 101). The compact backend still
+failed frame 1 at 0.00003326611480120034 m. Paired rod 53 traces aligned:
+initial admission, prediction and the first structural solve were identical;
+the first nonzero error was contact-positions/substep 0/iteration 1
+(1.312805197883904e-9 m), and the first position-gate violation was the
+third contact correction (2.416795403886729e-6 m). This localizes the first
+error before end-of-substep velocity stabilization, so that earlier velocity
+path hypothesis does not explain the first divergence. The preserved
+`gpu-frame-one-phase-capture/phase-comparison.json` is per-rod diagnostic
+evidence, not successful full-model qualification.
+
+The GPU equality backend now reconstructs stationarity using compensated
+products of the original f64 columns and accumulated reactions. Up to four
+GPU equality corrections solve the original bounds defect; failure returns
+to the existing physical owner's native fallback. Original physical gates
+remain mandatory. Hardware and trajectory qualification of this change are
+pending; the earlier 1.77738x operator measurement predates this refinement
+and must not be attributed to the modified backend.
+
+The original-stationarity hardware operator test passed on Apple M4 Max / Metal:
+21 systems, 61 rows, 2646 coordinates, tolerance 1e-14, 54 equality dispatches,
+one admitted GPU result and zero native fallbacks. Its log is preserved in
+`original-stationarity-capture/backend-metal.log`. Compilation also passed.
+A fresh full-density 720-frame paired jump qualification is running in
+`original-stationarity-capture/qualification.log`, with rod 53 phase diagnostics
+on frame 1 and immediate unchanged trajectory gates. Operator acceptance does
+not establish full trajectory agreement or rendered FPS.
+
+Equality decoding now validates QR publication without allocating expanded
+host basis vectors and triangular columns that were immediately discarded.
+Original prefix, completion/status, finite Q, finite rescaled R and positive
+diagonal gates remain in a shared validation path. Eight codec/WGSL tests
+passed, including corrupt Q NaN and R infinite/negative diagonal rejection;
+see `qr-validation-only-capture/codec-tests.log`. No runtime speedup is claimed
+for this allocation removal. The running original-stationarity trajectory
+binary predates this decode-only change. The current physics library suite
+also passed 329 tests (39 ignored); hardware trajectory gates remain unproven.

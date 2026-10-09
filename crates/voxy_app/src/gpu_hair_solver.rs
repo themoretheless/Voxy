@@ -11,6 +11,7 @@ mod joint;
 pub struct GpuHairLinearSolver {
     device:wgpu::Device,queue:wgpu::Queue,program:ComputeProgram,resident:Option<ComputeJob>,
     pub joint_contact_qr:bool,
+    pub joint_support_compaction:bool,
     joint_programs:Option<(ComputeProgram,ComputeProgram)>,
     pub joint_coordinate_calls:usize,pub joint_equality_dispatches:usize,
     pub joint_admitted:usize,pub joint_native_fallbacks:usize,
@@ -63,7 +64,7 @@ impl GpuHairLinearSolver {
             }
         }
         let program=ComputeProgram::new(device,&source).await?;
-        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,joint_contact_qr:false,joint_programs:None,joint_coordinate_calls:0,joint_equality_dispatches:0,joint_admitted:0,joint_native_fallbacks:0,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
+        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,joint_contact_qr:false,joint_support_compaction:true,joint_programs:None,joint_coordinate_calls:0,joint_equality_dispatches:0,joint_admitted:0,joint_native_fallbacks:0,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
     }
     fn solve_checked(&mut self,systems:&[HairLinearSystem])->Result<Vec<Vec<f64>>,Box<dyn std::error::Error>> {
         if self.residual_refinements>3 {return Err("hair residual refinements must be in 0..3".into());}

@@ -963,6 +963,18 @@ mod tests {
             // Log individual frames so a slow solve cannot hide in the total.
             eprintln!("HYBRID HAIR FRAME TIMING frame={frame} native_ms={native_frame_ms} external_ms={external_frame_ms} native_only={native_only} cpu_control={cpu_control}");
             if trace.is_some() {
+                let a=native.system.step_trace();
+                let b=gpu.system.step_trace();
+                for (index,(a,b)) in a.iter().zip(b).enumerate() {
+                    // A phase mismatch must not be mistaken for numerical drift.
+                    if (a.phase,a.substep,a.iteration,a.rod)!=(b.phase,b.substep,b.iteration,b.rod) {
+                        eprintln!("HAIR PHASE ALIGNMENT FAILURE frame={frame} index={index} native=({}, {}, {}, {}) external=({}, {}, {}, {})",a.phase,a.substep,a.iteration,a.rod,b.phase,b.substep,b.iteration,b.rod);
+                        break;
+                    }
+                    let error=a.positions.iter().zip(&b.positions).flat_map(|(a,b)|(0..3).map(move |axis|(a[axis]-b[axis]).abs())).fold(0f64,f64::max);
+                    eprintln!("HAIR PHASE COMPARISON frame={frame} index={index} phase={} substep={} iteration={} position_error_m={error} native_contacts={} external_contacts={}",a.phase,a.substep,a.iteration,a.contacts.len(),b.contacts.len());
+                }
+                if a.len()!=b.len() {eprintln!("HAIR PHASE COUNT MISMATCH frame={frame} native={} external={}",a.len(),b.len());}
                 for (label,hair) in [("native",&native),("external",&gpu)] {
                     for entry in hair.system.contact_projection_trace() {eprintln!("HAIR PROJECTION TRACE frame={frame} {label} {entry:?}");}
                     for entry in hair.system.step_trace() {eprintln!("HAIR PHASE TRACE frame={frame} {label} {entry:?}");}
@@ -1018,6 +1030,11 @@ mod tests {
                 }
             }
             eprintln!("HYBRID HAIR FRAME frame={} max_position_error_m={} max_quaternion_component_error={}",frame,position_error,rotation_error);
+            // These maxima are cumulative: a later frame cannot repair a
+            // failed trajectory comparison. Preserve the diagnostics above
+            // and reject immediately using the same final acceptance gates.
+            assert!(position_error<1e-6,"frame {frame}: GPU position drift {position_error}; worst rod={} point={}",worst.1,worst.2);
+            assert!(rotation_error<5e-5,"frame {frame}: GPU rotation drift {rotation_error}");
         }
         eprintln!("HYBRID FULL HAIR guides={} frames={} calls={} position_error_m={} quaternion_component_error={} native_ms={} hybrid_ms={} solver_bridge_ms={}",gpu.system.rods().len(),frames,solver.calls,position_error,rotation_error,native_ms,gpu_ms,solver.elapsed_ms);
         eprintln!("HYBRID LINEAR AUDIT max_errors={:?} packing_errors={:?} stage_errors={:?} enabled={}",solver.max_linear_error,solver.max_packing_error,solver.max_stage_error,solver.reference_audit);

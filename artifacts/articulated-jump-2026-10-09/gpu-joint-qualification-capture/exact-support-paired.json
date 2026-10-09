@@ -1,0 +1,66 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "coordinates": 2646,
+  "maximum_reaction_difference": 1.4761438696617984e-20,
+  "maximum_response_difference": 1.6441709105308178e-14,
+  "median_compact_seconds": 0.293841625,
+  "median_dense_seconds": 0.522269375,
+  "native_fallback_used": false,
+  "pairs": [
+    {
+      "compact_equality_dispatches": 54,
+      "compact_seconds": 0.301801083,
+      "dense_equality_dispatches": 54,
+      "dense_seconds": 0.503752083,
+      "pair": 0
+    },
+    {
+      "compact_equality_dispatches": 54,
+      "compact_seconds": 0.293841625,
+      "dense_equality_dispatches": 54,
+      "dense_seconds": 0.491830333,
+      "pair": 1
+    },
+    {
+      "compact_equality_dispatches": 54,
+      "compact_seconds": 0.259495,
+      "dense_equality_dispatches": 54,
+      "dense_seconds": 0.522269375,
+      "pair": 2
+    },
+    {
+      "compact_equality_dispatches": 54,
+      "compact_seconds": 0.297111167,
+      "dense_equality_dispatches": 54,
+      "dense_seconds": 0.5188575,
+      "pair": 3
+    },
+    {
+      "compact_equality_dispatches": 54,
+      "compact_seconds": 0.311442542,
+      "dense_equality_dispatches": 54,
+      "dense_seconds": 0.590898333,
+      "pair": 4
+    },
+    {
+      "compact_equality_dispatches": 54,
+      "compact_seconds": 0.293241708,
+      "dense_equality_dispatches": 54,
+      "dense_seconds": 0.611627959,
+      "pair": 5
+    },
+    {
+      "compact_equality_dispatches": 54,
+      "compact_seconds": 0.288065,
+      "dense_equality_dispatches": 54,
+      "dense_seconds": 0.532567958,
+      "pair": 6
+    }
+  ],
+  "rendered_fps_measured": false,
+  "rows": 61,
+  "scope": "complete original physical projection, warmed shaders, seven alternating pairs; excludes device creation, fixture load, rendering and extra post-timing validation",
+  "speedup": 1.7773839053605833,
+  "systems": 21,
+  "whole_animation_benchmark": false
+}

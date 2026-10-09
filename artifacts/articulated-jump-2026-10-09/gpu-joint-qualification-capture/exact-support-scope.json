@@ -1,0 +1,10 @@
+{
+  "scope": "original full captured operator support, not active-subset timing",
+  "rows": 61,
+  "original_coordinates": 2646,
+  "retained_exact_nonzero_coordinates": 1215,
+  "omitted_exact_zero_coordinates": 1431,
+  "threshold": null,
+  "nonfinite_input_rejected_before_compaction": true,
+  "rendered_fps_measured": false
+}

@@ -146,7 +146,11 @@ pub struct ResidentContactEqualityInput {qr:ResidentContactQrInput,words:Vec<u32
 pub struct ResidentContactEqualityOutput {pub coordinates:Vec<f64>,pub reactions:Vec<f64>}
 impl ResidentContactEqualityInput {
     pub fn new(columns:&[Vec<f64>],bounds:&[f64])->Result<Self,JointDotError> {
-        let qr=ResidentContactQrInput::new(columns)?;
+        Self::new_with_support_compaction(columns,bounds,true)
+    }
+    /// Qualification switch for paired measurements of the same operator.
+    pub fn new_with_support_compaction(columns:&[Vec<f64>],bounds:&[f64],compact:bool)->Result<Self,JointDotError> {
+        let qr=ResidentContactQrInput::new_with_support_compaction(columns,compact)?;
         if bounds.len()!=qr.count || bounds.iter().any(|v|!v.is_finite()) {return Err(JointDotError::Shape);}
         let mut normalized=Vec::with_capacity(qr.count);
         for (&b,&s) in bounds.iter().zip(&qr.scales) {
@@ -167,17 +171,21 @@ impl ResidentContactEqualityInput {
     pub fn columns(&self)->usize {self.qr.count}
     pub fn decode(&self,bytes:&[u8])->Result<ResidentContactEqualityOutput,JointDotError> {
         if bytes.len()!=self.words.len()*4 {return Err(JointDotError::Output);}
-        self.qr.decode(&bytes[..self.rhs*4])?;
+        // Equality admission needs the QR validity gates, not a second host
+        // copy of every expanded basis vector and triangular column.
+        self.qr.checked_words(&bytes[..self.rhs*4])?;
         let words:Vec<_>=bytes.chunks_exact(4).map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
         if words[self.rhs..self.rhs+self.qr.count*2]!=self.words[self.rhs..self.rhs+self.qr.count*2] || words[words.len()-1]!=0 {return Err(JointDotError::Output);}
         let pair=|offset:usize|->Result<f64,JointDotError> {
             let hi=f32::from_bits(words[offset]) as f64;let lo=f32::from_bits(words[offset+1]) as f64;
             if !hi.is_finite()||!lo.is_finite() {return Err(JointDotError::Output);}Ok(hi+lo)
         };
-        let coordinates=(0..self.qr.width).map(|i| {
+        let compact=(0..self.qr.width).map(|i| {
             let v=rescale(pair(self.output+i*2)?,self.scale,1.);
             if !v.is_finite() {return Err(JointDotError::Output);}Ok(v)
         }).collect::<Result<Vec<_>,_>>()?;
+        let mut coordinates=vec![0.;self.qr.original_width];
+        for (&id,value) in self.qr.ids.iter().zip(compact) {coordinates[id]=value;}
         let reactions=(0..self.qr.count).map(|i| {
             let v=rescale(pair(self.rhs+self.qr.count*4+i*2)?,self.scale,self.qr.scales[i].recip());
             if !v.is_finite() {return Err(JointDotError::Output);}Ok(v)
@@ -188,13 +196,20 @@ impl ResidentContactEqualityInput {
 /// Experimental full-column QR workspace. A single owner holds original packed
 /// columns, Q and R until all ordered column dispatches finish.
 #[derive(Debug)]
-pub struct ResidentContactQrInput {words:Vec<u32>,scales:Vec<f64>,width:usize,count:usize,input_end:usize}
+pub struct ResidentContactQrInput {words:Vec<u32>,scales:Vec<f64>,width:usize,original_width:usize,ids:Vec<usize>,count:usize,input_end:usize}
 #[derive(Debug)]
 pub struct ResidentContactQrOutput {pub basis:Vec<Vec<f64>>,pub triangular_columns:Vec<Vec<f64>>}
 impl ResidentContactQrInput {
     pub fn new(columns:&[Vec<f64>])->Result<Self,JointDotError> {
-        let count=columns.len();let width=columns.first().map_or(0,Vec::len);
+        Self::new_with_support_compaction(columns,true)
+    }
+    pub fn new_with_support_compaction(columns:&[Vec<f64>],compact:bool)->Result<Self,JointDotError> {
+        let count=columns.len();let original_width=columns.first().map_or(0,Vec::len);let width=original_width;
         if count==0 || width==0 || count>width || columns.iter().any(|c|c.len()!=width || c.iter().any(|v|!v.is_finite())) {return Err(JointDotError::Shape);}
+        // Exact structural support only: never use a magnitude threshold.
+        let ids:Vec<_>=(0..width).filter(|&i|!compact || columns.iter().any(|c|c[i]!=0.)).collect();
+        let width=ids.len();
+        if count>width {return Err(JointDotError::NumericRange);}
         let matrix=count.checked_mul(width).and_then(|n|n.checked_mul(2)).ok_or(JointDotError::Capacity)?;
         let total=count.checked_mul(count).and_then(|n|n.checked_mul(2)).and_then(|n|matrix.checked_mul(2).and_then(|m|m.checked_add(n))).and_then(|n|n.checked_add(4)).filter(|&n|n<=u32::MAX as usize).ok_or(JointDotError::Capacity)?;
         let mut words=Vec::new();words.try_reserve_exact(total).map_err(|_|JointDotError::Capacity)?;
@@ -203,14 +218,14 @@ impl ResidentContactQrInput {
             let scale=c.iter().map(|v|v.abs()).fold(0.,f64::max);
             if scale==0. {return Err(JointDotError::NumericRange);}
             scales.push(scale);
-            for &v in c {let normalized=v/scale;if v!=0. && normalized==0. {return Err(JointDotError::NumericRange);}words.extend(pack(normalized)?);}
+            for &i in &ids {let v=c[i];let normalized=v/scale;if v!=0. && normalized==0. {return Err(JointDotError::NumericRange);}words.extend(pack(normalized)?);}
         }
         let input_end=words.len();words.resize(total,0);
-        Ok(Self {words,scales,width,count,input_end})
+        Ok(Self {words,scales,width,original_width,ids,count,input_end})
     }
     pub fn bytes(&self)->&[u8] {bytemuck::cast_slice(&self.words)}
     pub fn columns(&self)->usize {self.count}
-    pub fn decode(&self,bytes:&[u8])->Result<ResidentContactQrOutput,JointDotError> {
+    fn checked_words(&self,bytes:&[u8])->Result<Vec<u32>,JointDotError> {
         if bytes.len()!=self.words.len()*4 {return Err(JointDotError::Output);}
         let words:Vec<_>=bytes.chunks_exact(4).map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
         if words[..2]!=self.words[..2] || words[2]!=self.count as u32 || words[3]!=0 || words[4..self.input_end]!=self.words[4..self.input_end] {return Err(JointDotError::Output);}
@@ -218,15 +233,27 @@ impl ResidentContactQrInput {
             let hi=f32::from_bits(words[offset]) as f64;let lo=f32::from_bits(words[offset+1]) as f64;
             if !hi.is_finite() || !lo.is_finite() {return Err(JointDotError::Output);}Ok(hi+lo)
         };
+        let r=self.input_end+self.count*self.width*2;
+        for j in 0..self.count {
+            for i in 0..self.width {pair(self.input_end+(j*self.width+i)*2)?;}
+            for i in 0..=j {
+                let v=rescale(pair(r+(j*self.count+i)*2)?,self.scales[j],1.);
+                if !v.is_finite() || (i==j && v<=0.) {return Err(JointDotError::Output);}
+            }
+        }
+        Ok(words)
+    }
+    pub fn decode(&self,bytes:&[u8])->Result<ResidentContactQrOutput,JointDotError> {
+        let words=self.checked_words(bytes)?;
+        let pair=|offset:usize|f32::from_bits(words[offset]) as f64+f32::from_bits(words[offset+1]) as f64;
         let mut basis=Vec::with_capacity(self.count);let mut triangular_columns=Vec::with_capacity(self.count);
         let r=self.input_end+self.count*self.width*2;
         for j in 0..self.count {
-            let q=(0..self.width).map(|i|pair(self.input_end+(j*self.width+i)*2)).collect::<Result<Vec<_>,_>>()?;
+            let mut q=vec![0.;self.original_width];
+            for (i,&original) in self.ids.iter().enumerate() {q[original]=pair(self.input_end+(j*self.width+i)*2);}
             let column=(0..=j).map(|i| {
-                let v=rescale(pair(r+(j*self.count+i)*2)?,self.scales[j],1.);
-                if !v.is_finite() {return Err(JointDotError::Output);}Ok(v)
-            }).collect::<Result<Vec<_>,_>>()?;
-            if column[j]<=0. {return Err(JointDotError::Output);}
+                rescale(pair(r+(j*self.count+i)*2),self.scales[j],1.)
+            }).collect::<Vec<_>>();
             basis.push(q);triangular_columns.push(column);
         }
         Ok(ResidentContactQrOutput {basis,triangular_columns})
@@ -243,6 +270,28 @@ mod tests {
         assert_eq!(input.columns(),2);assert!(input.decode(input.bytes()).is_err());
         assert!(ResidentContactQrInput::new(&[vec![0.,0.]]).is_err());
         assert!(ResidentContactQrInput::new(&[vec![1.],vec![1.]]).is_err());
+    }
+    #[test]
+    fn resident_qr_compacts_only_exact_zero_axes() {
+        let input=ResidentContactQrInput::new(&[vec![0.,1.,-0.,1e-30,1e-30],vec![0.,0.,0.,1.,0.]]).unwrap();
+        assert_eq!(input.ids,vec![1,3,4]);assert_eq!(input.width,3);assert_eq!(input.original_width,5);
+        assert!(ResidentContactQrInput::new(&[vec![0.,1.,f64::NAN]]).is_err());
+        let input=ResidentContactEqualityInput::new(&[vec![0.,2.,0.]],&[6.]).unwrap();
+        let mut words=input.words.clone();words[2]=1;
+        words[input.qr.input_end]=1f32.to_bits();
+        words[input.qr.input_end+2]=1f32.to_bits();
+        words[input.rhs+2]=1f32.to_bits();words[input.rhs+4]=1f32.to_bits();
+        words[input.output]=1f32.to_bits();*words.last_mut().unwrap()=0;
+        let output=input.decode(bytemuck::cast_slice(&words)).unwrap();
+        assert_eq!(output.coordinates,vec![0.,3.,0.]);assert_eq!(output.reactions,vec![1.5]);
+        // Validation-only equality decoding must retain every QR publication
+        // gate even though it no longer allocates expanded host Q/R copies.
+        for (offset,value) in [(input.qr.input_end,f32::NAN.to_bits()),
+            (input.qr.input_end+2,f32::INFINITY.to_bits()),
+            (input.qr.input_end+2,(-1f32).to_bits())] {
+            let mut corrupt=words.clone();corrupt[offset]=value;
+            assert_eq!(input.decode(bytemuck::cast_slice(&corrupt)).unwrap_err(),JointDotError::Output);
+        }
     }
     #[test]
     fn resident_equality_shader_and_transport_gates() {

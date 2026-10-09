@@ -66,12 +66,15 @@ impl PcmStream {
     /// No time-stretch, sample repetition, waiting or allocation occurs.
     pub fn read(&mut self, output: &mut [[f32; 2]]) -> StreamRead {
         let supplied = output.len().min(self.frames.len());
-        for (frame, sample) in output[..supplied]
-            .iter_mut()
-            .zip(self.frames.drain(..supplied))
-        {
-            *frame = sample;
+        let (front, back) = self.frames.as_slices();
+        if supplied <= front.len() {
+            output[..supplied].copy_from_slice(&front[..supplied]);
+        } else {
+            output[..front.len()].copy_from_slice(front);
+            let rem = supplied - front.len();
+            output[front.len()..supplied].copy_from_slice(&back[..rem]);
         }
+        self.frames.drain(..supplied);
         output[supplied..].fill([0.0; 2]);
         let missing = output.len() - supplied;
         self.missing_total = self
