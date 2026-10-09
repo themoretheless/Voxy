@@ -1,0 +1,42 @@
+{
+  "changes": [
+    "Separate mesh velocity/friction normals from strand contacts",
+    "Apply equal and opposite normal and Coulomb friction impulses to relative strand velocities at every substep",
+    "Preserve common translation and Galilean invariance",
+    "Reject nonfinite final velocities transactionally",
+    "Extend full-model qualification to 30..720 frames without loosening gates"
+  ],
+  "hair_tests_passed": 37,
+  "hair_tests_ignored": 1,
+  "physics_tests_passed": 178,
+  "physics_tests_ignored": 20,
+  "integration_tests_passed": 15,
+  "short_cpu": {
+    "frames": 30,
+    "position_error_m": 2.0541576772892256e-10,
+    "quaternion_component_error": 3.2696873542015226e-09,
+    "strict_gate_passed": true
+  },
+  "short_gpu": {
+    "frames": 30,
+    "calls": 360,
+    "position_error_m": 2.9679183055630887e-08,
+    "quaternion_component_error": 3.500086288577009e-07,
+    "strict_gate_passed": true
+  },
+  "cycle_cpu": {
+    "frames": 120,
+    "position_error_m": 0.0014088594949664829,
+    "quaternion_component_error": 0.025643490986922646,
+    "strict_gate_passed": false
+  },
+  "cycle_gpu": {
+    "frames": 120,
+    "calls": 1440,
+    "position_error_m": 0.014485041179749622,
+    "quaternion_component_error": 0.22017048513958132,
+    "strict_gate_passed": false
+  },
+  "gpu_solver_enabled_in_runtime": false,
+  "runtime_fps_verified": false
+}

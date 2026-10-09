@@ -1,0 +1,25 @@
+{
+  "scope": "Canonical structural free increment projected against current unilateral contact constraints; candidate only, no pose publication",
+  "unit_tests": {
+    "passed": 83,
+    "ignored": 3,
+    "failed": 0
+  },
+  "integration_checks": "hair and hair_rebase passed",
+  "application_check": "release passed",
+  "proved": [
+    "Closing contact constrained under same rod compliance as free structural motion",
+    "Separating contact released with zero reaction",
+    "Unconstrained guide motion preserved",
+    "Exact zero root increments",
+    "Preparation does not mutate poses"
+  ],
+  "unfinished": [
+    "Swept broadphase and nonlinear admission of candidate",
+    "Contact-safe prediction with prescribed moving roots and colliders",
+    "Runtime integration",
+    "Full model GPU trajectory qualification",
+    "Greater than 160 rendered FPS"
+  ],
+  "production_enabled": false
+}

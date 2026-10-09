@@ -1,0 +1,30 @@
+{
+  "changes": [
+    "Resolve equal-distance triangle candidates using vertex topology keys",
+    "Choose first segment crossing among near-zero-distance contacts",
+    "Exclude permitted follicle contacts before selecting the best collision"
+  ],
+  "unit_tests_passed": 14,
+  "integration_tests_passed": 14,
+  "full_model_cpu_relative_correction_perturbation": 1e-10,
+  "previous_max_position_divergence_m": 0.020022867892274143,
+  "current_max_position_divergence_m": 0.008284932406173132,
+  "full_model_stability_gate_passed": false,
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false,
+  "rejected_inside_distance_gradient_experiment": {
+    "integration_tests_passed": 14,
+    "max_position_divergence_m": 0.010271422744043135,
+    "retained": false,
+    "reason": "Full-model perturbation divergence increased relative to the retained 0.008284932406173132 m baseline"
+  },
+  "full_body_collider": {
+    "height_crop_removed": true,
+    "lower_body_surface_regression_passed": true,
+    "unperturbed_external_cpu_parity_position_error_m": 0,
+    "unperturbed_external_cpu_parity_quaternion_component_error": 0,
+    "perturbed_position_error_m": 0.008284932406173132,
+    "stability_gate_passed": false,
+    "performance_improvement_verified": false
+  }
+}

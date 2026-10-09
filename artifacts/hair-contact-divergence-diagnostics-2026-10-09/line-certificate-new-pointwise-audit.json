@@ -1,0 +1,203 @@
+{
+  "scope": "localized pointwise searches checked with an 80-digit reference; no universal clearance certificate; both-root trimmed paths need separate classification",
+  "rows": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(111,8) b=(132,13)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 1.0,
+      "reference_gap_m": -7.487285451411672e-08,
+      "reference": {
+        "s": 0.3772723348806262,
+        "t": 0.6926799042221419,
+        "distance_m": 7.992512714548589e-05,
+        "p": [
+          -0.06605622134795228,
+          0.8026833444241872,
+          0.08589784118295063
+        ],
+        "q": [
+          -0.06605358696212692,
+          0.8027441457105915,
+          0.08584603105332199
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(131,1)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 1.0,
+      "reference_gap_m": -1.8624767657716138e-06,
+      "reference": {
+        "s": 0.8245285794467286,
+        "t": 0.7007554228131464,
+        "distance_m": 7.813752323422839e-05,
+        "p": [
+          -0.040110621806798065,
+          0.7900027340229107,
+          -0.022649586748005848
+        ],
+        "q": [
+          -0.04005598211087922,
+          0.7900410349821918,
+          -0.022690244006708542
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(135,2)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 1.0,
+      "reference_gap_m": -4.2243221391362405e-06,
+      "reference": {
+        "s": 0.8402808004218699,
+        "t": 0.4089881078087965,
+        "distance_m": 7.577567786086377e-05,
+        "p": [
+          -0.04017539308699085,
+          0.7898983266880699,
+          -0.02283498990539817
+        ],
+        "q": [
+          -0.04012991022753462,
+          0.7899429462685673,
+          -0.022876006437274974
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(132,6) b=(233,19)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 1.0,
+      "reference_gap_m": -2.9643028076663594e-10,
+      "reference": {
+        "s": 0.27789812120816004,
+        "t": 0.5290306502157671,
+        "distance_m": 7.999970356971924e-05,
+        "p": [
+          -0.05052824697605972,
+          0.8096217244064889,
+          0.09180443324582348
+        ],
+        "q": [
+          -0.050526929213697315,
+          0.8096921130282887,
+          0.09176643774615931
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(137,0) b=(201,16)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 0.9577983092443777,
+      "reference_gap_m": -7.99999997469183e-05,
+      "reference": {
+        "s": 0.3353621458103921,
+        "t": 0.8350418551196411,
+        "distance_m": 2.5308170640650954e-13,
+        "p": [
+          -0.04064081933081454,
+          0.8106807181246637,
+          0.01611644277341534
+        ],
+        "q": [
+          -0.040640819330937314,
+          0.8106807181244704,
+          0.016116442773523212
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(137,0) b=(201,17)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 0.7757699478620325,
+      "reference_gap_m": -6.025451439935887e-05,
+      "reference": {
+        "s": 0.38265041459760285,
+        "t": 0.0,
+        "distance_m": 1.9745485600641134e-05,
+        "p": [
+          -0.0410167359028643,
+          0.8105239422274766,
+          0.015583481757149747
+        ],
+        "q": [
+          -0.041006436207933254,
+          0.8105382806678215,
+          0.015574638137166549
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,17)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 0.8355694760916526,
+      "reference_gap_m": -7.999999972355735e-05,
+      "reference": {
+        "s": 0.4540838430921973,
+        "t": 0.050019754034307355,
+        "distance_m": 2.7644265448954756e-13,
+        "p": [
+          -0.03392093324372715,
+          0.8130356754057417,
+          0.012288203659592873
+        ],
+        "q": [
+          -0.03392093324363611,
+          0.8130356754059898,
+          0.01228820365951158
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(106,0) b=(113,1)",
+      "nominal_initial_trust_candidate": false,
+      "nominal_endpoint_error_m": 0.0005418385039492879,
+      "local_search_time": 1.0,
+      "reference_gap_m": -3.879814342590662e-05,
+      "reference": {
+        "s": 0.8787358340643557,
+        "t": 0.520106692870031,
+        "distance_m": 4.120185657409339e-05,
+        "p": [
+          -0.04865004923014769,
+          0.7929998127451691,
+          -0.013299683231771357
+        ],
+        "q": [
+          -0.04862851220936793,
+          0.7930254492579418,
+          -0.013323694040461135
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(106,0) b=(136,2)",
+      "nominal_initial_trust_candidate": false,
+      "nominal_endpoint_error_m": 0.0005417968310271748,
+      "local_search_time": 1.0,
+      "reference_gap_m": -4.1189965469030984e-05,
+      "reference": {
+        "s": 0.8909809822787963,
+        "t": 0.21387134255990428,
+        "distance_m": 3.881003453096902e-05,
+        "p": [
+          -0.04871943720809612,
+          0.7929158985300035,
+          -0.013451518108261737
+        ],
+        "q": [
+          -0.048704654797769906,
+          0.7929440164274585,
+          -0.013473813465804299
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+
+running 1 test
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 303 filtered out; finished in 4.86s
+
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID CONTACT CASE none
+HYBRID TEST BACKEND cpu_control=true perturbation=0.0000000001
+HYBRID HAIR FRAME frame=1 max_position_error_m=0.00000000000000011102230246251565 max_quaternion_component_error=0.0000000000000016375789613221059
+HYBRID HAIR FRAME frame=2 max_position_error_m=0.00000000000000033306690738754696 max_quaternion_component_error=0.000000000000004551914400963142
+HYBRID HAIR FRAME frame=3 max_position_error_m=0.0000000000000004440892098500626 max_quaternion_component_error=0.0000000000000052735593669694936
+HYBRID HAIR FRAME frame=4 max_position_error_m=0.0000000000000004440892098500626 max_quaternion_component_error=0.000000000000010325074129013956
+HYBRID HAIR FRAME frame=5 max_position_error_m=0.0000000000000006661338147750939 max_quaternion_component_error=0.000000000000010325074129013956
+HYBRID HAIR FRAME frame=6 max_position_error_m=0.0000000000000008881784197001252 max_quaternion_component_error=0.000000000000010325074129013956
+HYBRID HAIR FRAME frame=7 max_position_error_m=0.0000000000000011102230246251565 max_quaternion_component_error=0.000000000000010325074129013956
+HYBRID HAIR FRAME frame=8 max_position_error_m=0.0000000000000013322676295501878 max_quaternion_component_error=0.000000000000010325074129013956
+HYBRID HAIR FRAME frame=9 max_position_error_m=0.0000000000000015543122344752192 max_quaternion_component_error=0.000000000000010602629885170245
+HYBRID HAIR FRAME frame=10 max_position_error_m=0.0000000000000017208456881689926 max_quaternion_component_error=0.000000000000010602629885170245
+HYBRID HAIR FRAME frame=11 max_position_error_m=0.000000000000001887379141862766 max_quaternion_component_error=0.000000000000010602629885170245
+HYBRID HAIR FRAME frame=12 max_position_error_m=0.000000000000001887379141862766 max_quaternion_component_error=0.000000000000010602629885170245
+HYBRID HAIR FRAME frame=13 max_position_error_m=0.000000000000001887379141862766 max_quaternion_component_error=0.000000000000010602629885170245
+HYBRID HAIR FRAME frame=14 max_position_error_m=0.000000000000001887379141862766 max_quaternion_component_error=0.000000000000011712852909795402
+HYBRID HAIR FRAME frame=15 max_position_error_m=0.000000000000001887379141862766 max_quaternion_component_error=0.000000000000011712852909795402
+HYBRID HAIR FRAME frame=16 max_position_error_m=0.0000000000000019290125052862095 max_quaternion_component_error=0.000000000000011712852909795402
+HYBRID HAIR FRAME frame=17 max_position_error_m=0.0000000000000020747292772682613 max_quaternion_component_error=0.000000000000012656542480726785
+HYBRID HAIR FRAME frame=18 max_position_error_m=0.0000000000000021163626406917047 max_quaternion_component_error=0.000000000000014432899320127035
+HYBRID HAIR FRAME frame=19 max_position_error_m=0.0000000000000021163626406917047 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=20 max_position_error_m=0.0000000000000021163626406917047 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=21 max_position_error_m=0.000000000000002185751579730777 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=22 max_position_error_m=0.000000000000002338407245616736 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=23 max_position_error_m=0.000000000000002456368441983159 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=24 max_position_error_m=0.0000000000000025743296383495817 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=25 max_position_error_m=0.0000000000000026749435999562365 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=26 max_position_error_m=0.0000000000000028345381597461028 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=27 max_position_error_m=0.0000000000000029906632725840154 max_quaternion_component_error=0.00000000000001509903313490213
+HYBRID HAIR FRAME frame=28 max_position_error_m=0.0000000000000031225022567582528 max_quaternion_component_error=0.000000000000017930101847696278
+HYBRID HAIR FRAME frame=29 max_position_error_m=0.0000000000000032213814948889308 max_quaternion_component_error=0.000000000000019539925233402755
+HYBRID HAIR FRAME frame=30 max_position_error_m=0.0000000000000033020461365218523 max_quaternion_component_error=0.000000000000019539925233402755
+HYBRID FULL HAIR guides=469 frames=30 calls=0 position_error_m=0.0000000000000033020461365218523 quaternion_component_error=0.000000000000019539925233402755 native_ms=299.287626 hybrid_ms=2356.4087520000003 solver_bridge_ms=0
+HYBRID LINEAR AUDIT max_errors=[0.0, 0.0] enabled=false

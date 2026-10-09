@@ -1,0 +1,93 @@
+{
+  "scope": "localized pointwise searches checked with an 80-digit reference; no universal clearance certificate; both-root trimmed paths need separate classification",
+  "rows": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,16)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 1.0,
+      "reference_gap_m": -1.4239482936849457e-05,
+      "reference": {
+        "s": 0.29452164828452093,
+        "t": 0.8818690061421298,
+        "distance_m": 6.576051706315055e-05,
+        "p": [
+          -0.03298740821907753,
+          0.8133417699613604,
+          0.01389854784964314
+        ],
+        "q": [
+          -0.032949952365728764,
+          0.8133888110182544,
+          0.013871927488627188
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,17)",
+      "nominal_initial_trust_candidate": true,
+      "nominal_endpoint_error_m": 0.0,
+      "local_search_time": 0.4550373428622239,
+      "reference_gap_m": -4.887474398956163e-06,
+      "reference": {
+        "s": 0.48326511636898284,
+        "t": 0.0,
+        "distance_m": 7.511252560104384e-05,
+        "p": [
+          -0.034092404382509184,
+          0.81285612701013,
+          0.011992099417917432
+        ],
+        "q": [
+          -0.034048332181883446,
+          0.812908502139142,
+          0.011961174048151696
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(131,1)",
+      "nominal_initial_trust_candidate": false,
+      "nominal_endpoint_error_m": 0.000512507157973241,
+      "local_search_time": 1.0,
+      "reference_gap_m": -1.7871337672360917e-05,
+      "reference": {
+        "s": 0.8417808777573885,
+        "t": 0.714532352728049,
+        "distance_m": 6.212866232763909e-05,
+        "p": [
+          -0.040178409450239566,
+          0.7895718631036572,
+          -0.02285785224331963
+        ],
+        "q": [
+          -0.04013666694672364,
+          0.7896035243150029,
+          -0.022891245383018802
+        ]
+      }
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(135,2)",
+      "nominal_initial_trust_candidate": false,
+      "nominal_endpoint_error_m": 0.0005124963044824682,
+      "local_search_time": 1.0,
+      "reference_gap_m": -4.181891240052527e-05,
+      "reference": {
+        "s": 0.8671283931232829,
+        "t": 0.4339891445566078,
+        "distance_m": 3.818108759947474e-05,
+        "p": [
+          -0.04028254054692648,
+          0.7893943261680278,
+          -0.02315634849734042
+        ],
+        "q": [
+          -0.040261330681039244,
+          0.7894178088186765,
+          -0.023177714408456958
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "change": "Select unilateral planes using the unconstrained coupled elastic/inertial correction; release opening contact and retain closing contact",
+  "physics_library_tests_passed": 161,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 14,
+  "contact_radius_or_material_parameters_changed": false,
+  "solver_iteration_count_changed": false,
+  "predictor_backend": "native f64 banded solve during assembly",
+  "global_complementarity_convergence_certified": false,
+  "full_model_perturbation_status": "failed_stability_gate",
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false,
+  "previous_position_error_m": 0.008129709152052605,
+  "position_error_m": 0.006972404867593672,
+  "quaternion_component_error": 0.10472648867151314
+}

@@ -1,10 +1,13 @@
 use super::{HairRod, ContactSource, math::*};
 use std::collections::HashMap;
+#[path="contact_continuous.rs"]
+mod continuous;
+pub use continuous::{CapsuleMotion,CapsuleSweepOptions,CapsuleSweep,sweep_capsules,swept_capsule_pairs,swept_capsule_contacts};
 #[path = "contact_features.rs"]
 mod features;
 #[path = "velocity_contacts.rs"]
 mod velocity_contacts;
-pub(super) use velocity_contacts::{stabilize_contact_velocities,reconcile_contact_positions};
+pub(super) use velocity_contacts::{advance_swept_strands,strand_fraction,recover_friction_pressure,stabilize_contact_velocities,reconcile_contact_positions,stabilize_contact_velocities_with_solver,reconcile_contact_positions_with_solver};
 /// An exact surface query bounds clearance inside the ball around its query point.
 /// The distance function is 1-Lipschitz; the certificate expires at the next step.
 #[derive(Clone, Copy, Debug)]
@@ -693,13 +696,17 @@ fn pair_impulse(rods: &[HairRod], a: (usize, usize, f64), b: (usize, usize, f64)
     }
     impulse
 }
+#[derive(Clone)]
 pub(super) struct StrandResponse {
-    a: (usize, usize, f64),
-    b: (usize, usize, f64),
-    normal: V,
-    impulse: f64,
+    pub(super) a: (usize, usize, f64),
+    pub(super) b: (usize, usize, f64),
+    pub(super) normal: V,
+    pub(super) impulse: f64,
 }
 pub(super) fn finish_strand_contacts(rods: &mut [HairRod], responses: &[StrandResponse], dt: f64) {
+    finish_strand_contacts_with_diagnostics(rods,responses,dt,0,None);
+}
+pub(super) fn finish_strand_contacts_with_diagnostics(rods:&mut [HairRod],responses:&[StrandResponse],dt:f64,substep:usize,mut diagnostics:Option<&mut Vec<super::HairFrictionDiagnostic>>) {
     for response in responses {
         let (ra,ia,s)=response.a; let (rb,ib,t)=response.b;
         let wa=contact_weight(&rods[ra],ia,s);let wb=contact_weight(&rods[rb],ib,t);
@@ -713,6 +720,8 @@ pub(super) fn finish_strand_contacts(rods: &mut [HairRod], responses: &[StrandRe
         let friction=(rods[ra].material.friction*rods[rb].material.friction).sqrt();
         let tangent_impulse=(friction*(response.impulse/dt+normal_impulse)).min(tangent_speed/(wa+wb));
         let impulse=sub(mul(response.normal,normal_impulse),mul(tangent,tangent_impulse/tangent_speed.max(1e-30)));
+        if let Some(diagnostics)=diagnostics.as_mut() {diagnostics.push(super::HairFrictionDiagnostic {substep,a:response.a,b:response.b,normal:response.normal,position_impulse:response.impulse,relative_velocity:relative,normal_speed,tangent_speed,mobility_a:wa,mobility_b:wb,friction,normal_impulse,tangent_impulse,applied_impulse:impulse});}
+
         for (rod,segment,fraction,sign) in [(ra,ia,s,1.),(rb,ib,t,-1.)] {
             if contact_weight(&rods[rod],segment,fraction)==0. {continue;}
             for (point,weight) in [(segment,1.-fraction),(segment+1,fraction)] {
@@ -931,6 +940,19 @@ fn candidate_cell_pairs(grid: &ContactGrid) -> Vec<(SegmentId, SegmentId)> {
 pub(super) fn self_contacts(rods: &mut [HairRod], radius: f64) -> Vec<StrandResponse> {
     gather_strand_contacts(rods,radius,true)
 }
+/// Query witnesses must be refreshed before use. A pair owns one clearance
+/// budget; splitting its positional targets does not split that budget.
+pub(super) fn strand_geometry_admitted(rods:&[HairRod],responses:&[StrandResponse],radius:f64)->Result<bool, &'static str> {
+    for response in responses {
+        let (ra,ia,s)=response.a;let (rb,ib,t)=response.b;
+        let a=add(mul(rods[ra].x[ia],1.-s),mul(rods[ra].x[ia+1],s));
+        let b=add(mul(rods[rb].x[ib],1.-t),mul(rods[rb].x[ib+1],t));
+        let gap=len(sub(a,b))-2.*radius;
+        if !gap.is_finite() {return Err("joint strand contact geometry overflow");}
+        if gap < -1e-10 {return Ok(false);}
+    }
+    Ok(true)
+}
 /// Re-query the current geometry without moving it. Historical projections supply
 /// friction load only; old normals and released pairs must not constrain velocity.
 pub(super) fn refresh_strand_responses(rods:&mut [HairRod],radius:f64,history:&[StrandResponse])->Vec<StrandResponse> {
@@ -1042,6 +1064,29 @@ fn gather_strand_contacts(rods: &mut [HairRod], radius: f64, project_positions:b
 mod query_tests {
     use super::*;
     #[test]
+    fn pair_clearance_is_not_two_independent_target_tolerances() {
+        let radius=40e-6;
+        let half=(2.*radius-1.45e-10)*0.5;
+        let mut rods=vec![
+            HairRod::new(vec![[-0.001,0.,0.],[-half,0.01,0.],[-half,0.02,0.]],super::super::HairMaterial::default()).unwrap(),
+            HairRod::new(vec![[0.001,0.,0.],[half,0.01,0.],[half,0.02,0.]],super::super::HairMaterial::default()).unwrap(),
+        ];
+        let roots=[rods[0].x[0],rods[1].x[0]];
+        let pairs=refresh_strand_responses(&mut rods,radius,&[]);
+        assert!(!pairs.is_empty());
+        for rod in &rods {
+            for contact in &rod.contacts {
+                let p=add(mul(rod.x[contact.segment],1.-contact.fraction),mul(rod.x[contact.segment+1],contact.fraction));
+                assert!(dot(sub(p,contact.target),contact.normal)>=-1e-10);
+            }
+        }
+        assert!(!strand_geometry_admitted(&rods,&pairs,radius).unwrap());
+        super::super::HairSystem::reconcile_positions(&mut rods,&[],1./240.,radius,true,&mut Vec::new(),None).unwrap();
+        let pairs=refresh_strand_responses(&mut rods,radius,&[]);
+        assert!(strand_geometry_admitted(&rods,&pairs,radius).unwrap());
+        assert_eq!([rods[0].x[0],rods[1].x[0]],roots);
+    }
+    #[test]
     fn animated_surface_velocity_tracks_material_points_and_invalid_refits_are_atomic() {
         let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.]];
         let moved=[[0.,0.,0.],[1.,0.,1.],[0.,1.,2.]];
@@ -1132,6 +1177,29 @@ mod query_tests {
         assert_eq!(pair.len(),1);
         assert!((pair[0].impulse-3e-6).abs()<1e-20);
         assert!(len(sub(pair[0].normal,[-1.,0.,0.]))<1e-15);
+    }
+    #[test]
+    fn nonlinear_joint_contact_requeries_pairs_created_by_a_solved_increment() {
+        let make=|x|HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],super::super::HairMaterial::default()).unwrap();
+        let initial=vec![make(0.),make(20e-6),make(120e-6)];let radius=40e-6;let dt=1./240.;
+        let penetration=|rods:&[HairRod],responses:&[StrandResponse]|responses.iter().map(|r| {
+            let (a,i,s)=r.a;let (b,j,t)=r.b;
+            let pa=add(mul(rods[a].x[i],1.-s),mul(rods[a].x[i+1],s));
+            let pb=add(mul(rods[b].x[j],1.-t),mul(rods[b].x[j+1],t));
+            2.*radius-dot(sub(pa,pb),r.normal)
+        }).fold(0.,f64::max);
+        let mut once=initial.clone();let mut contacts=refresh_strand_responses(&mut once,radius,&[]);
+        assert!(reconcile_contact_positions(&mut once,&mut contacts,dt,radius).unwrap());
+        let newly_detected=refresh_strand_responses(&mut once,radius,&[]);
+        assert!(penetration(&once,&newly_detected)>1e-9,"fixture must expose a new contact after a solved tangent step");
+        let mut actual=initial.clone();let mut history=Vec::new();
+        super::super::HairSystem::reconcile_positions(&mut actual,&[],dt,radius,true,&mut history,None).unwrap();
+        let current=refresh_strand_responses(&mut actual,radius,&[]);
+        assert!(penetration(&actual,&current)<=1e-10);
+        for (after,before) in actual.iter().zip(initial) {
+            assert_eq!(after.x[0],before.x[0]);assert_eq!(after.q[0],before.q[0]);
+            assert_eq!(after.velocity,before.velocity);
+        }
     }
     #[test]
     fn strand_velocity_response_preserves_common_translation() {
@@ -1668,3 +1736,11 @@ mod unique_pair_tests {
         assert_eq!(candidate_cell_pairs(&grid), reference);
     }
 }
+
+#[cfg(test)]
+#[path="segment_pair_fixture_tests.rs"]
+mod segment_pair_fixture_tests;
+
+#[cfg(test)]
+#[path="friction_diagnostics_tests.rs"]
+mod friction_diagnostics_tests;

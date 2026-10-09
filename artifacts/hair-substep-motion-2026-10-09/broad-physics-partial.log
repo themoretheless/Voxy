@@ -1,0 +1,685 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+warning: `physics` (lib) generated 2 warnings (2 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 06s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/debug/deps/physics-74c936782d895dfe)
+
+running 208 tests
+test biomechanics::embedded_contact::response_profile::inactive_embedded_response_profile ... ignored, manual native embedded response timing; not a realtime engine claim
+test biomechanics::contact_mollifier::tests::gradient_matches_differences_and_balances_resultant ... ok
+test biomechanics::contact_mollifier::tests::parallel_and_threshold_limits_and_invalid_geometry ... ok
+test biomechanics::contact_mollifier::tests::observed_plateau_edge_pair_is_outside_parallel_mollification ... ok
+test astrophysics_spin::material_moment_arc_tests::tensor_arc_rebasing_preserves_analytic_force_couple_phase_and_impulse ... ok
+test astrophysics_spin::scalar_inertia_tests::scalar_transform_handles_large_vectors_and_retains_validation ... ok
+test astrophysics_spin::scalar_inertia_tests::scalar_inertia_is_exactly_independent_of_orientation ... ok
+test astrophysics_spin::angular_jerk_tests::angular_jerk_matches_independent_acceleration_difference ... ok
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile ... ignored, manual assembled search metric parity and assembly-amortized timing
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_block_jacobi_search_diagnosis ... ignored, manual block-Jacobi rest-search residual qualification on imported mesh
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_incomplete_factor_search_diagnosis ... ignored, manual sparse factor search residual diagnosis
+test biomechanics::hgo::tests::metric_stress_projects_to_deformation_response ... ok
+test biomechanics::contact_precision::tests::compensated_gap_keeps_exact_closed_floor_closed ... ok
+test biomechanics::hgo::tests::energy_derivative_and_volume_independent_reinforcement ... ok
+test biomechanics::hgo::tests::invalid_inputs_and_fiber_overflow_are_rejected ... ok
+test biomechanics::embedded_contact::reference_composition_tests::inverted_displacement_reference_does_not_invert_actual_contact_skin ... ok
+test biomechanics::harmonic_reference::tests::affine_extension_preserves_boundary_and_interior_and_rejects_missing_constraints ... ok
+test biomechanics::contact_precision::tests::captured_edge_gaps_agree_with_independent_decimal_oracle ... ok
+test biomechanics::energy_sum::tests::endpoint_material_keeps_small_cells_across_element_order ... ok
+test biomechanics::hgo::tests::rigid_rotation_covariance_and_compression_slackness ... ok
+test biomechanics::inertia::diagnostic_energy_tests::free_kinetic_change_preserves_binary_exact_endpoint_difference_and_pin_exclusion ... ok
+test biomechanics::inertia::diagnostic_energy_tests::gravity_endpoint_keeps_sub_ulp_nodal_contributions ... ok
+test biomechanics::inertia::implicit::assembled_metric_profile::sparse_factor_matches_independent_coupled_node_inverse_and_rejects_bad_pivot ... ok
+test biomechanics::inertia::implicit::tests::full_rig_symmetric_material_operator_profile ... ignored, manual full-rig material operator parity and paired timing
+test biomechanics::inertia::implicit::tests::prepared_material_moduli_profile ... ignored, manual prepared material operator ABBA timing
+test biomechanics::inertia::implicit::assembled_metric_profile::rigid_coarse_recovers_its_six_mode_subspace ... ok
+test biomechanics::inertia::implicit::assembled_metric_profile::local_rotations_drop_singleton_modes_and_recover_independent_displacement ... ok
+test biomechanics::inertia::implicit::backend_transaction_tests::explicit_backend_preserves_shared_assembly_owner_and_rejects_mixed_owners ... ok
+test biomechanics::inertia::implicit::tests::generalized_branch_projection_preserves_convexity_and_inertia_metric ... ok
+test biomechanics::inertia::implicit::tests::fallible_search_stops_on_backend_error_without_diagonal_fallback ... ok
+test biomechanics::inertia::implicit::tests::material_contact_search_recovers_affine_motion_and_keeps_pins ... ok
+test biomechanics::inertia::implicit::true_search_residual_tests::equation_residual_uses_returned_direction_and_free_nodes ... ok
+test biomechanics::inertia::implicit::tests::rest_material_metric_matches_affine_energy_and_solves_coupled_system ... ok
+test biomechanics::inertia::thermal::assembly_tests::thermal_assembly_preserves_compensation_below_the_main_inventory_ulp ... ok
+test biomechanics::inertia::thermal::tests::thermal_inventory_retains_sub_ulp_heat_and_rejects_complete_loss ... ok
+test biomechanics::inertia::implicit::tests::coupled_direction_matches_rank_one_inverse_and_holds_pins ... ok
+test biomechanics::lbfgs::secant_tests::secant_admission_rejects_bad_curvature_and_bounds_memory ... ok
+test biomechanics::lbfgs::backend_failure_tests::secant_backend_errors_preserve_history_and_successful_arithmetic ... ok
+test biomechanics::prescribed_surface::inactive_domain_tests::inactive_domain_benchmark ... ignored, manual inactive-domain comparison; no timing threshold
+test biomechanics::prescribed_surface::inactive_path_tests::full_mesh_inactive_path_profile ... ignored, manual full-mesh disabled-domain path paired timing
+test biomechanics::inertia::implicit::backend_transaction_tests::explicit_backend_success_matches_native_and_failures_rollback_support_step ... ok
+test biomechanics::inertia::implicit::backend_transaction_tests::explicit_backend_success_and_failures_are_atomic_in_contact_free_surface_path ... ok
+test biomechanics::inertia::implicit::tests::search_report_distinguishes_exact_inverse_budget_exhaustion_and_bad_metric ... ok
+test biomechanics::inertia::implicit::tests::averaged_material_search_gradient_matches_energy_differences ... ok
+test biomechanics::lbfgs::secant_tests::secant_scale_rejects_invalid_quadratic_forms_and_bounds_positive_ratios ... ok
+test biomechanics::lbfgs::secant_tests::two_loop_matches_independent_dense_inverse_bfgs_updates ... ok
+test biomechanics::harmonic_reference::tests::iteration_exhaustion_rejects_without_publishing_partial_reference ... ok
+test biomechanics::prescribed_surface::inactive_path_tests::inactive_path_keeps_midpoint_geometry_errors_and_unlisted_contacts ... ok
+test biomechanics::prescribed_surface::inactive_domain_tests::inactive_masks_preserve_geometry_admission_and_unlisted_face_contacts ... ok
+test biomechanics::prescribed_surface::index_tests::near_machine_precision_barrier_partition_diagnostic ... ignored, diagnostic extreme endpoint gaps; reports actual refinement admission
+test biomechanics::prescribed_surface::instantaneous_pose_tests::instantaneous_pose_microbenchmark ... ignored, manual instantaneous-pose preparation benchmark
+test biomechanics::prescribed_surface::index_tests::compensated_path_objective_gradient_matches_moving_oblique_surface_force ... ok
+test biomechanics::prescribed_surface::index_tests::rejection_location_refines_only_its_interval ... ok
+test biomechanics::prescribed_surface::index_tests::motion_cache_from_different_source_cannot_hide_crossing ... ok
+test biomechanics::prescribed_surface::index_tests::prepared_motion_keeps_the_actual_source_when_cached_source_differs ... ok
+test biomechanics::prescribed_surface::index_tests::path_normal_blocks_match_midpoint_force_derivative_in_narrow_gap ... ok
+test biomechanics::prescribed_surface::index_tests::adaptive_partition_resolves_endpoint_barrier_without_redefining_work ... ok
+test biomechanics::prescribed_surface::index_tests::contact_partition_refinement_preserves_capacity_order_and_source ... ok
+test biomechanics::prescribed_surface::instantaneous_pose_tests::instantaneous_samples_preserve_force_normal_and_motion_admission ... ok
+test biomechanics::prescribed_surface::local_displacement_precision_tests::local_path_retains_contact_change_below_world_coordinate_resolution ... ok
+test biomechanics::prescribed_surface::normal_pruning_tests::normal_pruning_microbenchmark ... ignored, manual normal-pruning microbenchmark
+test biomechanics::prescribed_surface::path_topology_admission_tests::benchmark_admitted_path_topology_against_legacy ... ignored, native bounded topology validation benchmark; not full-rig speed qualification
+test biomechanics::prescribed_surface::path_topology_admission_tests::benchmark_second_endpoint_admission ... ignored, isolated endpoint admission benchmark; not full-rig throughput
+test biomechanics::prescribed_surface::query_scratch_profile::active_contact_query_scratch_profile ... ignored, manual active-contact scratch paired timing; not full-rig speed
+test biomechanics::prescribed_surface::index_tests::compensated_moving_obstacle_force_work_matches_scalar_endpoint_oracle ... ok
+test biomechanics::prescribed_surface::restored_guess_tests::closed_fully_pinned_feature_cannot_be_restored ... ok
+test biomechanics::prescribed_surface::restored_guess_tests::shallow_closed_guess_restores_separation_without_moving_pins_or_source ... ok
+test biomechanics::prescribed_surface::index_tests::compensated_trajectory_resolves_machine_scale_barrier_force_work ... ok
+test biomechanics::search_snapshot::tests::exported_operator_data_has_canonical_order_moduli_and_immutable_ownership ... ok
+test biomechanics::search_snapshot::tests::invalid_weights_and_rest_overflow_reject_without_mutating_body ... ok
+test biomechanics::stress_memory::tests::frozen_potential_differentiates_to_trial_stress ... ok
+test biomechanics::stress_memory::tests::invalid_update_preserves_future_history ... ok
+test biomechanics::inertia::implicit::assembled_metric_profile::spatial_coarse_recovers_partition_modes_and_preserves_pins ... ok
+test biomechanics::stress_memory::tests::exact_ramp_and_hold_under_refinement ... ok
+test biomechanics::surface_contact::pruning_tests::frozen_wall_pruning_work_and_time ... ignored, requires VOXY_CONTACT_BENCH_OBJ frozen OBJ fixture
+test biomechanics::prescribed_surface::index_tests::prepared_quadrature_poses_remain_bound_to_their_original_motion ... ok
+test biomechanics::stress_memory::tests::rejected_solver_trials_do_not_change_committed_history ... ok
+test biomechanics::surface_contact::pruning_tests::normal_barrier_curvature_matches_energy_second_difference ... ok
+test biomechanics::surface_contact::pruning_tests::path_pruning_rejects_degenerate_candidate_before_distance_certificate ... ok
+test biomechanics::surface_distance::affine_precision_tests::oblique_triangle_and_edge_queries_share_affine_precision ... ok
+test biomechanics::surface_distance::affine_precision_tests::oblique_vertex_face_keeps_small_separation_after_large_translation ... ok
+test biomechanics::stress_memory::tests::tiny_intervals_and_extreme_time_ratio_are_finite ... ok
+test biomechanics::surface_contact::pruning_tests::sweep_candidates_match_exhaustive_pairs_without_duplicates ... ok
+test biomechanics::surface_distance::trajectory_precision_tests::authored_endpoints_survive_large_displacement_cancellation ... ok
+test biomechanics::surface_distance::moving_pair_frame_tests::large_common_translation_keeps_a_binary_narrow_gap_open ... ok
+test biomechanics::surface_distance::trajectory_precision_tests::reversed_trajectory_uses_identical_nearest_endpoint_arithmetic ... ok
+test biomechanics::surface_distance::relative_motion_tests::common_translation_preserves_a_narrow_open_gap ... ok
+test biomechanics::surface_distance::relative_motion_tests::relative_motion_still_rejects_a_swept_crossing ... ok
+test biomechanics::testicular::testicular_tests::hollow_shells_preserve_wall_volume_and_have_no_internal_boundary_faces ... ok
+test biomechanics::surface_distance::moving_pair_frame_tests::closed_authored_endpoint_remains_rejected_in_relative_frame ... ok
+test biomechanics::testicular::testicular_tests::bonded_core_wall_shares_nodes_preserves_volume_and_distinct_laws ... ok
+test biomechanics::testicular::testicular_tests::dynamic_elastic_link_retains_state_and_matches_extension_energy ... ok
+test biomechanics::prescribed_surface::path_topology_admission_tests::immutable_path_topology_matches_legacy_and_rechecks_sample_geometry ... ok
+test biomechanics::testicular::testicular_tests::sustained_pair_contact_preserves_energy_gap_and_momentum ... ignored, manual sustained nonlinear contact qualification and timing
+test biomechanics::testicular::testicular_tests::paired_assembly_preserves_mass_and_maps_supports_to_one_owner ... ok
+test biomechanics::testicular::testicular_tests::paired_solids_use_validated_caller_geometry ... ok
+test biomechanics::testicular::testicular_tests::paired_prescribed_supports_move_and_reject_missing_targets_atomically ... ok
+test biomechanics::testicular::testicular_tests::paired_dynamics_follow_free_fall_and_preserve_state_on_invalid_step ... ok
+test biomechanics::tetra_mesh::quality_tests::altitude_edge_ratio_detects_flat_cells_and_is_scale_invariant ... ok
+test biomechanics::tetra_mesh::refinement_tests::shared_faces_are_conforming_and_volume_is_preserved ... ok
+test biomechanics::viscoelastic_hgo::tests::frozen_history_gradient_and_rotation ... ok
+test biomechanics::testicular::testicular_tests::volumetric_suspension_links_transfer_force_without_moving_fixed_supports ... ok
+test biomechanics::viscoelastic_hgo::tests::isotropic_volume_and_rejected_history ... ok
+test contact::reaction::rate::interval_tests::interval_bounds_preserve_true_unload_time_and_reject_crossing_it ... ok
+test biomechanics::viscoelastic_hgo::tests::physical_step_commit_preserves_end_stress_and_frozen_gradient ... ok
+test hair::contact::cell_key_tests::signed_cell_coordinates_round_trip_without_aliasing ... ok
+test hair::contact::closed_surface_tests::feature_admission_rejects_touching_vertex_fans_and_collapsed_refits ... ok
+test hair::contact::closed_surface_tests::concave_edge_recovery_uses_metric_gradient_instead_of_sign_pseudonormal ... ok
+test hair::contact::closed_surface_tests::feature_normals_classify_faces_edges_vertices_and_refresh_after_motion ... ok
+test hair::contact::closed_surface_tests::feature_topology_welds_seams_and_rejects_open_or_split_surfaces ... ok
+test hair::contact::closed_surface_tests::surface_vertex_is_ambiguous_and_nonfinite_queries_are_rejected ... ok
+test hair::contact::closed_surface_tests::oriented_crossings_preserve_nested_cavities ... ok
+test hair::contact::first_surface_segment_tests::segment_hits_finite_surface_and_reports_distance_and_orientation ... ok
+test hair::contact::query_tests::accumulated_contact_direction_matches_applied_weighted_corrections ... ok
+test hair::contact::query_tests::allowed_follicle_contact_does_not_hide_a_later_surface_crossing ... ok
+test hair::contact::query_tests::animated_surface_velocity_tracks_material_points_and_invalid_refits_are_atomic ... ok
+test hair::contact::query_tests::capped_pair_projection_preserves_free_particle_momentum ... ok
+test hair::contact::query_tests::capsule_query_detects_interior_contact_and_rejects_distant_plane_extension ... ok
+test hair::contact::query_tests::closest_point_regions_preserve_face_edge_and_vertex_identity ... ok
+test hair::contact::query_tests::collapsed_intermediate_motion_is_rejected_atomically ... ok
+test hair::contact::query_tests::leaf_query_contains_exactly_overlapping_triangle_bounds ... ok
+test hair::contact::query_tests::moving_surface_response_preserves_common_translation ... ok
+test hair::contact::query_tests::limited_strand_projection_preserves_unresolved_penetration_in_constraints ... ok
+test hair::contact::query_tests::multiple_intersections_choose_first_and_shared_features_use_topology ... ok
+test hair::contact::query_tests::near_parallel_segments_preserve_the_interior_minimum_across_scales ... ok
+test hair::contact::query_tests::point_segments_project_onto_the_other_segment_in_both_orders ... ok
+test hair::contact::query_tests::sampled_motion_uses_full_interval_velocity_and_original_endpoints ... ok
+test hair::contact::query_tests::separated_strands_retain_boundary_planes_without_projection_or_adhesion ... ok
+test hair::contact::query_tests::shared_endpoint_contact_is_unique_and_collision_owners_expire_separately ... ok
+test hair::contact::query_tests::strand_velocity_response_preserves_common_translation ... ok
+test hair::contact::query_tests::strand_velocity_response_conserves_momentum_dissipates_energy_and_is_galilean_invariant ... ok
+test hair::contact::unique_pair_tests::canonical_cells_preserve_hashset_candidates_exactly ... ok
+test hair::contact::unique_pair_tests::owner_filter_profile ... ignored, paired broad-phase benchmark
+test hair::contact::query_tests::clearance_skips_match_full_queries_when_particles_cross_surface ... ok
+test hair::contact::velocity_contacts::tests::active_newton_solve_releases_a_plane_without_a_negative_impulse ... ok
+test hair::contact::velocity_contacts::tests::implicit_rod_response_is_reciprocal_and_transmits_rotation ... ok
+test hair::contact::unique_pair_tests::packed_sort_preserves_lexicographic_order_and_large_id_fallback ... ok
+test hair::contact::velocity_contacts::tests::overflowing_finite_velocity_does_not_pass_a_nan_residual ... ok
+test hair::contact::velocity_contacts::tests::separated_strands_can_close_without_an_artificial_early_impulse ... ok
+test hair::contact::velocity_contacts::tests::shared_wall_and_strand_reactions_satisfy_both_constraints ... ok
+test hair::direct::contact_active_set::tests::coupled_reaction_activates_a_contact_that_was_opening_in_free_motion ... ok
+test hair::direct::contact_active_set::tests::coupled_reaction_releases_a_contact_that_was_closing_in_free_motion ... ok
+test hair::direct::contact_active_set::tests::factored_energy_preserves_a_small_positive_mode_in_a_stiff_system ... ok
+test hair::direct::contact_active_set::tests::invalid_fixed_dofs_and_contact_assembly_overflow_are_rejected ... ok
+test hair::direct::contact_active_set::tests::open_contacts_return_the_free_minimizer_without_refactorization ... ok
+test hair::direct::tests::active_band_solve_recovers_known_solution_and_preserves_fixed_dofs ... ok
+test hair::direct::tests::boundary_contact_releases_opening_motion_and_resists_closing_motion ... ok
+test hair::direct::tests::independent_surfaces_keep_two_normal_constraints_without_cross_axis_stiffness ... ok
+test hair::direct::tests::interior_segment_contact_couples_both_endpoint_positions ... ok
+test hair::direct::tests::packed_constraint_matches_analytic_rank_one_matrix_with_fixed_root ... ok
+test hair::direct::tests::separated_contact_within_active_tolerance_has_no_attractive_force ... ok
+test heat_exchange::tests::finite_heat_survives_underflowing_fraction_and_overflowing_intermediate_energy ... ok
+test liquid::density_kernel_tests::normalized_volume_kernels_and_wendland_nonnegative_spectral_samples ... ok
+test liquid::emission::tests::aperture_emission_is_invariant_under_extreme_direction_rescaling ... ok
+test liquid::emission::tests::circular_aperture_samples_area_in_the_normal_plane_and_rolls_back ... ok
+test liquid::emission::tests::finite_source_large_boost_admission_and_energy_rounding_are_bounded ... ok
+test liquid::emission::tests::finite_source_recoil_conserves_mass_momentum_energy_and_late_failure ... ok
+test hair::contact::query_tests::warm_start_remains_exact_after_surface_refit_and_far_motion ... ok
+test liquid::emission::tests::idle_finite_source_advances_only_clock_and_rejects_invalid_composition ... ok
+test liquid::emission::tests::moving_nozzle_is_galilean_covariant_and_invalid_velocity_rolls_back ... ok
+test liquid::emission::tests::pulses_conserve_volume_momentum_and_rollback ... ok
+test liquid::emission::tests::finite_source_recoil_refines_to_continuous_variable_mass_solution ... ok
+test liquid::emission::tests::reaction_books_actual_momentum_and_origin_dependent_torque_atomically ... ok
+test liquid::rheology::tests::rank_deficient_strain_fit_requests_fallback_and_overflow_is_rejected ... ok
+test biomechanics::inertia::implicit::tests::moving_skin_shared_quadrature_matches_derivative_and_independent_work ... ok
+test liquid::transport::implicit_heat_tests::opposite_extreme_bounds_do_not_overflow_the_midpoint ... ok
+test liquid::transport::implicit_heat_tests::subresolution_exchange_still_admits_temperature_difference ... ok
+test liquid::wall_pressure::tests::hydrostatic_affine_pressure_is_reproduced_for_irregular_neighbor_volumes ... ok
+test liquid::water_helmholtz::tests::water_helmholtz_critical_density_axis_has_finite_derivatives_away_from_critical_temperature ... ok
+test liquid::water_helmholtz::tests::water_helmholtz_matches_official_table_six_derivatives ... ok
+test moisture::vapor::adaptive::preparation_benchmark::prepared_network_benchmark ... ignored, manual prepared-network comparison; no timing threshold
+test planar::tests::endpoint_contact_has_radial_normal ... ok
+test planar::tests::rotating_flipper_transfers_surface_velocity ... ok
+test planar::tests::separating_overlap_is_corrected_without_second_impulse ... ok
+test planar::tests::wall_reflects_normal_and_preserves_tangent ... ok
+test plasticity::mesh::quadratic::plane::coulomb::acceleration_tests::accelerated_dual_recovers_coupled_analytic_stick_slide_solution ... ok
+test hair::contact::velocity_contacts::tests::incompatible_surface_velocities_report_nonconvergence ... ok
+test plasticity::mesh::quadratic::plane::tests::analytic_minimum_handles_edges_flat_singular_and_interior_cases ... ok
+test plasticity::mesh::quadratic::plane::tests::analytic_minimum_agrees_with_independent_dense_triangle_search ... ok
+test skin::shell::objective_tests::benchmark_objective_evaluations ... ignored, manual release performance measurement
+test skin::contact::broadphase_tests::bounding_box_never_discards_an_active_closest_feature ... ok
+test liquid::rheology::tests::cream_flow_curve_density_and_atomic_configuration ... ok
+test biomechanics::testicular::testicular_tests::outer_wall_motion_transfers_to_core_with_layered_mass_and_energy_guard ... ok
+test skin::shell::objective_tests::contiguous_hessian_rows_preserve_operator_bits ... ok
+test tissue::reaction_friction_tests::elastic_pressure_produces_friction_without_incoming_normal_velocity ... ok
+test tissue::reaction_friction_tests::friction_budget_has_impulse_units_and_does_not_reverse_sliding ... ok
+test triangle_index::cached_scale_tests::benchmark_cached_conservative_padding ... ignored, manual microbenchmark; candidate equivalence has a separate test
+test liquid::thixotropy::tests::adaptive_substeps_match_replaying_each_accepted_interval ... ok
+test triangle_index::tests::localized_query_prunes_large_mesh_and_sweep_keeps_crossing ... ok
+test triangle_index::tests::staged_refit_shares_topology_without_mutating_source_bounds ... ok
+test biomechanics::prescribed_surface::index_tests::indexed_energy_and_both_gradients_match_full_scan_after_refit ... ok
+test wear::suspension::compensated_tests::increments_below_two_part_precision_remain_owned ... ok
+test wear::suspension::compensated_tests::sub_ulp_increments_accumulate_and_overflow_is_atomic ... ok
+test biomechanics::viscoelastic_hgo::tests::closed_imposed_stretch_cycles_have_positive_work_in_checked_protocols ... ok
+test triangle_index::cached_scale_tests::cached_padding_preserves_original_candidate_order_after_refit ... ok
+test triangle_index::tests::static_and_swept_refits_never_drop_brute_force_candidates ... ok
+test biomechanics::prescribed_surface::normal_pruning_tests::conservative_normal_pruning_matches_unpruned_features_and_errors ... ok
+test biomechanics::testicular::testicular_tests::dynamic_contact_repels_with_balanced_momentum_and_open_gap ... ok
+test biomechanics::surface_contact::pruning_tests::pruning_preserves_unpruned_energy_gradients_and_contact_errors ... ok
+test biomechanics::surface_distance::lower_bound_tests::bounds_never_exceed_exact_features_on_random_oblique_triangles ... ok
+test biomechanics::testicular::testicular_tests::assembled_contact_is_active_and_invalid_replacement_is_atomic ... ok
+test biomechanics::tetra_mesh::refinement_tests::atlas_refinement_preserves_reference_volume_and_boundary ... ok
+test skin::shell::objective_tests::scalar_objective_matches_full_derivatives_with_history_and_contacts ... ok
+test biomechanics::testicular::testicular_tests::paired_contact_motion_converges_under_timestep_refinement ... ok
+test surface_film::sphere::tests::swept_bounds_match_unfiltered_face_edge_vertex_and_overlap_queries ... ok
+test biomechanics::prescribed_surface::index_tests::indexed_motion_admission_matches_all_pairs_for_endpoint_trajectories ... ok
+test skin::shell::objective_tests::parallel_elements_preserve_derivatives_and_integrated_state_exactly ... ok
+test biomechanics::surface_contact::pruning_tests::path_pruning_never_accepts_a_path_rejected_by_exact_feature_guard has been running for over 60 seconds
+test biomechanics::surface_contact::pruning_tests::path_pruning_never_accepts_a_path_rejected_by_exact_feature_guard ... ok
+
+test result: ok. 188 passed; 0 failed; 20 ignored; 0 measured; 0 filtered out; finished in 79.61s
+
+     Running tests/anatomy_tet.rs (/tmp/voxy-release-120fps-20261007/debug/deps/anatomy_tet-78261981df59973a)
+
+running 2 tests
+test malformed_mesh_payload_geometry_and_boundary_are_rejected ... ok
+test real_reference_anatomy_imports_into_fem_with_expected_volume has been running for over 60 seconds
+test real_reference_anatomy_imports_into_fem_with_expected_volume ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 183.41s
+
+     Running tests/astrophysics.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics-d0a02783aa96640d)
+
+running 4 tests
+test eccentric_ellipse_returns_to_periapsis ... ok
+test circle_has_known_period_and_quarter_turn ... ok
+test hyperbolic_branch_and_invalid_states_are_rejected ... ok
+test all_three_conics_preserve_invariants_and_reverse_time ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_atmosphere.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_atmosphere-90866c452c035987)
+
+running 3 tests
+test nonstatic_and_invalid_atmospheres_are_rejected ... ok
+test temperature_surface_and_hydrostatic_pressure_with_eos ... ok
+test atmosphere_gas_cell_preserves_thermal_and_kinetic_energy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_binary.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_binary-d91d060d6bcc6dbf)
+
+running 4 tests
+test contact_and_budget_failures_are_atomic_even_after_substeps ... ok
+test synchronous_circular_pair_has_no_initial_tidal_heating ... ok
+test figure_torque_has_orbital_backreaction ... ok
+test dissipative_tides_exchange_spin_orbit_and_deposit_positive_heat ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.06s
+
+     Running tests/astrophysics_column.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_column-a5c15d2337bc8e68)
+
+running 3 tests
+test empty_radiation_and_atomic_budget ... ok
+test equilibrium_and_flux_balance ... ok
+test heating_and_cooling_conserve_combined_energy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_coupled.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_coupled-28b55e89130af24f)
+
+running 5 tests
+test shared_budget_failure_restores_radiation_and_hydro ... ok
+test open_irradiated_column_reports_full_boundary_ledger ... ok
+test irradiation_and_gravity_evolve_in_one_atomic_step ... ok
+test joint_energy_balance_on_multiple_meshes ... ok
+test long_irradiated_collapse_keeps_energy_without_global_rescaling ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.85s
+
+     Running tests/astrophysics_eos.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_eos-d0ba38a02e251acd)
+
+running 5 tests
+test adiabatic_sound_speed_matches_gas_and_radiation_limits ... ok
+test invalid_composition_and_inputs_rejected ... ok
+test composition_sets_molecular_weights ... ok
+test energy_temperature_roundtrip_and_heat_capacity_derivative ... ok
+test pressure_inversion_recovers_gas_and_radiation_dominated_states ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_evolution.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_evolution-69df8cb6e335a3fa)
+
+running 3 tests
+test segment_budget_counts_exactly_the_solved_rays ... ok
+test late_ray_budget_failure_restores_all_state_and_ledgers ... ok
+test dynamic_radiative_sphere_conserves_energy_and_mass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/astrophysics_free_free.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_free_free-78a5ef26c47a69b9)
+
+running 9 tests
+test zero_duration_spectral_evolution_validates_inputs_without_ray_work ... ok
+test spectral_blackbody_irradiation_keeps_lte_balance_and_checks_domain ... ok
+test eddington_surface_has_opaque_flux_scaling_and_preserves_irradiated_lte ... ok
+test opaque_spectral_core_transport_scales_with_inverse_absorption ... ok
+test opaque_transfer_damps_alternating_cell_temperatures ... ok
+test joint_solver_uses_spectral_absorption_and_cumulative_budgets ... ok
+test spectral_radiative_evolution_and_real_reaction_close_energy_atomically ... ok
+test spectral_transfer_refines_to_optically_thin_planck_power ... ok
+test physical_stellar_profile_satisfies_explicit_absolute_and_relative_balance ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.72s
+
+     Running tests/astrophysics_gas.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_gas-d185408a8f522935)
+
+running 7 tests
+test contact_flux_preserves_stationary_density_jumps_and_supersonic_upwind ... ok
+test ionized_contact_flux_uses_local_composition_and_radiation_pressure ... ok
+test reported_fluxes_match_cell_and_boundary_changes ... ok
+test reflecting_wall_conserves_mass_energy_and_budget_is_atomic ... ok
+test periodic_conservation_and_uniform_flow ... ok
+test contact_evolution_keeps_static_layers_and_conserves_dynamic_transport ... ok
+test sod_shock_tube_matches_star_region ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/astrophysics_gas_gravity.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_gas_gravity-b1985520791c98b3)
+
+running 5 tests
+test uniform_slab_matches_analytic_field_and_potential ... ok
+test potential_is_energy_derivative_for_nonuniform_density ... ok
+test late_budget_failure_is_atomic_and_periodic_rejected ... ok
+test outflow_ledger_preserves_mass_and_energy_with_throughflow ... ok
+test collapse_preserves_mass_symmetry_and_energy ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+     Running tests/astrophysics_ionized_evolution.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_ionized_evolution-d52ea1b7fe0d17fb)
+
+running 2 tests
+test same_eos_drives_radiation_and_dynamics_without_double_energy ... ok
+test ionized_lte_equilibrium_and_cv_field_independence ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/astrophysics_nuclear.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_nuclear-df43a4e436770830)
+
+running 6 tests
+test invalid_charge_range_and_late_budget_are_atomic ... ok
+test instantaneous_rates_have_analytic_units_budget_and_endothermic_sign ... ok
+test coefficient_sets_add_and_density_order_is_correct ... ok
+test triple_fuel_analytic_decay_and_energy_reservoir ... ok
+test isochoric_feedback_conserves_energy_and_rolls_back ... ok
+test temperature_dependent_rate_responds_to_heating ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/astrophysics_opacity.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_opacity-773faea85bf63d29)
+
+running 5 tests
+test slope_bound_includes_each_density_row_and_temperature_interval ... ok
+test domain_and_invalid_tables_are_explicit ... ok
+test power_law_values_and_derivatives_are_exact_in_log_space ... ok
+test csv_unordered_grid_and_invalid_nodes ... ok
+test free_free_planck_mean_matches_independent_frequency_integral ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_radhydro.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_radhydro-25dcb4fb61ad08f5)
+
+running 3 tests
+test late_component_failure_rolls_back_hydro ... ok
+test lte_preserves_uniform_gas ... ok
+test irradiation_drives_motion_and_conserves_energy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/astrophysics_radiation.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_radiation-570ee90b9dbeb0bf)
+
+running 6 tests
+test linear_source_preserves_sub_ulp_diffusion_offsets ... ok
+test beer_lambert_and_thin_limit ... ok
+test invalid_layers_and_budget_fail_without_result ... ok
+test lte_and_opaque_limit ... ok
+test linear_source_has_correct_thin_and_diffusion_limits ... ok
+test layer_splitting_and_energy_accounting ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_reaclib.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_reaclib-0cba0ee419dc7529)
+
+running 3 tests
+test actual_fy05_records_and_additive_rates ... ok
+test mapping_species_order_and_binding_are_checked ... ok
+test malformed_mixed_weak_budget_and_domain_are_rejected ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_reactive.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_reactive-d216ca805fadc99b)
+
+running 13 tests
+test thermal_residual_detects_local_imbalance_despite_global_cancellation ... ok
+test instantaneous_thermal_balance_closes_local_and_global_power_without_mutation ... ok
+test burning_sphere_closed_and_open_energy_and_atomicity ... ok
+test radiating_burning_sphere_energy_and_late_ray_failure ... ok
+test reactive_exterior_inflow_closes_nuclear_and_gas_energy_ledgers ... ok
+test thermal_search_balances_burning_shells_and_rolls_back_failed_searches ... ok
+test joint_stellar_search_satisfies_hydrostatic_and_thermal_equations ... ok
+test reactive_table_matches_constant_and_post_burn_domain_failure_is_atomic ... ok
+test radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure ... ok
+test balanced_burning_sphere_closed_and_open_preserves_complete_energy ... ok
+test balanced_radiating_burning_sphere_energy_and_late_failure ... ok
+test polytrope_exterior_burning_and_tabulated_radiation_share_one_energy_ledger ... ok
+test imported_reaction_with_tabulated_radiation_has_a_cumulative_energy_ledger ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running tests/astrophysics_spherical.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_spherical-12c15f5b4e1e4364)
+
+running 5 tests
+test uniform_sphere_binding_and_field ... ok
+test late_budget_failure_is_atomic ... ok
+test geometric_pressure_preserves_uniform_static_gas ... ok
+test composition_transport_conserves_species_with_open_boundary ... ok
+test collapse_and_open_exchange_conserve_energy_mass ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/astrophysics_spherical_eos.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_spherical_eos-5f8073eee1bde03a)
+
+running 16 tests
+test exterior_force_residual_matches_pressure_flux_and_initial_derivative ... ok
+test static_residual_matches_initial_momentum_derivative ... ok
+test local_composition_hydrostatic_pressure_matches_independent_quadrature ... ok
+test atmospheric_exterior_flux_conserves_mass_energy_and_rolls_back ... ok
+test radiation_pressure_gradient_evolves_conservatively ... ok
+test stratified_hydrostatic_initializer_matches_uniform_and_virial ... ok
+test ionized_gas_limit_matches_gamma_five_thirds_dynamics ... ok
+test exterior_inflow_uses_supplied_composition_and_conserves_species ... ok
+test hydrostatic_residual_matches_uniform_gravity_and_refines_equilibrium ... ok
+test constant_radiation_pressure_does_not_drive_spurious_flow ... ok
+test spherical_contact_transport_keeps_static_composition_and_gravity_ledgers ... ok
+test local_composition_eos_matches_uniform_and_drives_stratified_gas ... ok
+test uniform_hydrostatic_initializer_refines_and_is_atomic ... ok
+test polytrope_initializes_local_eos_mass_and_temperature_atomically ... ok
+test balanced_sphere_keeps_equilibrium_and_evolves_perturbations_conservatively ... ok
+test balanced_open_sphere_keeps_equilibrium_and_accounts_for_reservoir_inflow ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.92s
+
+     Running tests/astrophysics_spherical_radiation.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_spherical_radiation-72b84e14147d63c0)
+
+running 8 tests
+test effective_temperature_recovers_blackbody_and_handles_extreme_radius ... ok
+test radial_optical_depth_radius_uniform_layered_and_thin ... ok
+test ray_refinement_and_budgets ... ok
+test equilibrium_transparency_and_core_sampling ... ok
+test different_compositions_at_equal_temperature_remain_in_radiative_equilibrium ... ok
+test tabulated_absorption_matches_constant_and_domain_exit_rolls_back ... ok
+test spherical_heating_preserves_energy_and_budget_is_atomic ... ok
+test uniform_sphere_matches_analytic_luminosity_and_thick_limit ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/astrophysics_star.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_star-9522bf59a35aa7b1)
+
+running 6 tests
+test rejects_invalid_and_exhausted_budget ... ok
+test fractional_index_and_physical_mass ... ok
+test sampled_profile_matches_analytic_solution_and_rejects_malformed_data ... ok
+test refinement_converges_and_hydrostatic_balance_holds ... ok
+test known_surfaces_and_profiles ... ok
+test volume_averages_match_analytic_polytropes_including_centre_and_surface ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.84s
+
+     Running tests/astrophysics_thermal.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_thermal-05ccd9674e2ad713)
+
+running 3 tests
+test insulation_and_invalid_input_are_atomic ... ok
+test luminosity_and_energy_balance ... ok
+test stiff_cooling_and_bath_heating_stay_bounded ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_tides.rs (/tmp/voxy-release-120fps-20261007/debug/deps/astrophysics_tides-254892eb2a8c1085)
+
+running 5 tests
+test gradient_matches_finite_difference_inside_outside_and_with_softening ... ok
+test spherical_spin_matches_analytic_rotation_and_torque ... ok
+test point_tides_stretch_radially_and_compress_transversely ... ok
+test gradient_torque_matches_forces_on_a_small_extended_body ... ok
+test asymmetric_free_rotation_preserves_momentum_and_bounded_energy ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/beam_accuracy.rs (/tmp/voxy-release-120fps-20261007/debug/deps/beam_accuracy-73d3cd9cc95b0f56)
+
+running 1 test
+test cantilever_mesh_refinement_reduces_bending_stiffness_error ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.88s
+
+     Running tests/biomechanics.rs (/tmp/voxy-release-120fps-20261007/debug/deps/biomechanics-bfaf43c2ce995ed8)
+
+running 9 tests
+test matrix_small_strain_shear_is_physical_and_fibers_are_directional ... ok
+test near_rest_energy_retains_tiny_shear_instead_of_cancelling_to_zero ... ok
+test calibration_recovers_material_and_detects_held_out_error ... ok
+test analytic_stress_matches_energy_gradient_and_rigid_rotation ... ok
+test rejects_inversion_open_pressure_and_invalid_load_atomically ... ok
+test affine_patch_energy_is_exact_and_cavity_geometry_refines ... ok
+test assembled_pressure_energy_gradient_and_force_balance ... ok
+test specimens_have_noninverted_connected_volume_and_bonded_layers ... ok
+test pressure_expands_and_muscle_activation_contracts ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.44s
+
+     Running tests/boxes.rs (/tmp/voxy-release-120fps-20261007/debug/deps/boxes-f2fd68b2a0c57789)
+
+running 5 tests
+test invalid_bounds_rejected_even_with_empty_backend ... ok
+test overflow_does_not_publish_partial_state ... ok
+test query_error_does_not_publish_partial_state ... ok
+test slides_against_arbitrary_box ... ok
+test lands_jumps_and_lands_on_non_grid_floor ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/buoyancy.rs (/tmp/voxy-release-120fps-20261007/debug/deps/buoyancy-8ba8839fd4549461)
+
+running 5 tests
+test neutral_half_submersion_and_recoil_match_archimedes ... ok
+test drag_dissipates_energy_and_preserves_total_momentum ... ok
+test displaced_mass_matches_analytic_sphere_caps_in_multiple_layers ... ok
+test missing_carrier_overlapping_layers_and_work_limits_are_atomic ... ok
+test light_body_rises_heavy_body_sinks_and_dry_body_free_falls ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cell_poroelastic.rs (/tmp/voxy-release-120fps-20261007/debug/deps/cell_poroelastic-7d16668a6fb4ec62)
+
+running 5 tests
+test darcy_half_cell_resistances_geometry_and_scaling ... ok
+test invalid_assignment_and_failed_coupling_preserve_cell_state ... ok
+test local_pore_energy_gradient_and_total_stress ... ok
+test spatial_pressure_transfer_changes_local_geometry_and_keeps_inventory ... ok
+test fixed_skeleton_diffusion_matches_discrete_and_continuous_limits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/circulation.rs (/tmp/voxy-release-120fps-20261007/debug/deps/circulation-62068606bcc411ca)
+
+running 11 tests
+test invalid_input_and_nonconvergence_preserve_all_state ... ok
+test ideal_valve_blocks_reverse_pressure_and_allows_forward_flow ... ok
+test gauge_invariance_and_negative_bidirectional_flow ... ok
+test external_exchange_changes_pressure_and_obeys_open_volume_balance ... ok
+test pipe_coefficients_scale_with_geometry_and_validate_fluid_inputs ... ok
+test joint_protein_step_uses_accepted_volume_and_reversing_donor ... ok
+test joint_external_water_and_protein_exchange_preserves_concentration_and_ledgers ... ok
+test closed_two_compartments_match_discrete_rc_exchange_and_conserve_volume ... ok
+test inertial_and_quadratic_flow_satisfy_discrete_momentum_equation ... ok
+test pulsatile_closed_vascular_loop_conserves_protein ... ok
+test pulsatile_chamber_drives_closed_loop_without_creating_blood ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cohesive.rs (/tmp/voxy-release-120fps-20261007/debug/deps/cohesive-30616dcea37bbfd1)
+
+running 9 tests
+test broken_faces_retain_frictionless_compression_contact ... ok
+test mixed_mode_tangent_matches_derivative_and_compression_does_not_damage ... ok
+test monotonic_work_is_exact_fracture_energy_and_unloading_cannot_heal ... ok
+test migrated_partial_damage_is_objective_and_closes_mixed_mode_energy_gradient ... ok
+test arbitrary_interface_orientation_rotates_traction_and_tangent ... ok
+test rejected_trials_and_material_parameters_are_explicit ... ok
+test terminal_fracture_survives_parameter_cycles_without_fabricating_separation ... ok
+test wet_dry_migration_preserves_accepted_stick_and_slide_with_identical_friction ... ok
+test partial_drying_retains_damage_and_closes_piecewise_loading_work ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cohesive_mesh.rs (/tmp/voxy-release-120fps-20261007/debug/deps/cohesive_mesh-8c05ea408c40a908)
+
+running 3 tests
+test invalid_interface_and_failed_equilibrium_preserve_geometry_and_history ... ok
+test nonuniform_opening_uses_independent_quadrature_history_and_consistent_nodal_forces ... ok
+test displacement_loading_fracture_work_and_reclosure_are_mesh_independent ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+
+     Running tests/cohesive_topology.rs (/tmp/voxy-release-120fps-20261007/debug/deps/cohesive_topology-ba85849a865a7f51)
+
+running 4 tests
+test source_load_mapping_preserves_force_and_reference_moment_and_checks_inputs ... ok
+test boundary_faces_are_unpaired_and_invalid_topologies_fail ... ok
+test free_interface_nodes_transfer_applied_force_and_match_linear_work ... ok
+test shared_face_is_bonded_then_breaks_into_two_independent_cells ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contact_network.rs (/tmp/voxy-release-120fps-20261007/debug/deps/contact_network-4564a8e47c7fde32)
+
+running 8 tests
+test simultaneous_inelastic_chain_conserves_momentum_and_measures_energy_loss ... ok
+test disconnected_high_energy_body_does_not_erase_measured_collision_loss ... ok
+test network_invalid_indices_inputs_and_late_budget_preserve_all_states ... ok
+test disconnected_and_outgoing_supports_do_not_receive_unrelated_loads ... ok
+test stack_transmits_complete_weight_through_all_shared_bodies ... ok
+test body_permutation_contact_order_and_reciprocal_orientation_preserve_stack ... ok
+test an_eccentric_load_distributes_force_and_torque_between_two_finite_supports ... ok
+test explicit_network_limits_and_duplicate_constraints_are_admitted_without_panics ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/convex_tissue_surface.rs (/tmp/voxy-release-120fps-20261007/debug/deps/convex_tissue_surface-c10850a9fe8f0c09)
+
+running 7 tests
+test star_surface_rejects_center_outside_kernel_and_invalid_boundaries ... ok
+test rejects_open_inward_nonconvex_and_unusable_source_geometry ... ok
+test complete_source_skin_embeds_and_affine_motion_preserves_exact_cube_mass ... ok
+test authored_volume_round_trips_existing_interchange_and_rejects_invalid_export ... ok
+test concave_star_surface_preserves_complete_skin_volume_and_reciprocal_loads ... ok
+test sheared_source_boundary_refines_conformingly_without_losing_volume ... ok
+test dense_concave_source_boundary_remains_complete_after_radial_fill ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-release-120fps-20261007/debug/deps/embedded_skin_contact-93e4b80bfb5fbf36)
+
+running 33 tests
+test embedded_normal_metric_is_symmetric_positive_and_preserves_tangent_nullspace ... ok
+test embedded_nearest_pair_reports_closed_gap_without_changing_contact ... ok
+test embedded_contact_requires_actual_material_cell_membership ... ok
+test existing_step_books_moving_skin_rig_and_obstacle_work ... ok
+test existing_inertial_step_responds_to_embedded_contact_and_books_parameter_work_once ... ok
+test existing_implicit_solver_includes_stationary_embedded_contact_in_averaged_material_path ... ok
+test existing_inertial_step_rejects_embedded_tunnelling_without_mutating_state ... ok
+test embedded_ccd_rejects_crossing_even_with_open_endpoints ... ok
+test invalid_embedded_contact_topology_never_enters_evaluation ... ok
+test actual_contact_potential_matches_all_tissue_rig_and_obstacle_forces ... ok
+test adaptive_closed_trial_exhaustion_preserves_maxwell_thermal_state ... ok
+test mixed_triangle_contact_preserves_force_chain_rule_and_prescribed_ccd ... ok
+test moving_skin_energy_discrepancy_converges_under_time_refinement ... ok
+test moving_skin_crossing_and_work_failure_preserve_complete_state ... ok
+test implicit_maxwell_moving_skin_and_native_contact_balance_heat_and_both_actuators ... ok
+test moving_skin_maxwell_transaction_balances_mechanics_heat_and_actuator_work ... ok
+test implicit_moving_skin_admits_independent_energy_and_commits_pose_atomically ... ok
+test same_pose_native_branch_bundles_preserve_selected_response_and_force_balance ... ok
+test mixed_skin_uses_existing_implicit_motion_work_and_atomic_rollback ... ok
+test moving_skin_failure_rolls_back_maxwell_history_and_thermal_storage ... ok
+test prescribed_vertex_obstruction_is_distinct_from_a_movable_closed_trial ... ok
+test simultaneous_comotion_uses_moving_ccd_instead_of_old_stationary_skin_guard ... ok
+test wrong_rest_contact_owner_is_rejected_atomically ... ok
+test staged_skin_motion_uses_actual_nodes_instead_of_rest_pose_for_admission ... ok
+test simultaneous_tissue_rig_and_obstacle_motion_passes_work_budget ... ok
+test shared_skin_triangle_couples_two_dynamic_fem_regions_in_existing_solver ... ok
+test parallel_native_terminal_feature_kink_has_distinct_one_sided_derivatives ... ok
+test implicit_moving_skin_stiffness_sweep_and_work_rejection_are_transactional ... ok
+test adaptive_implicit_maxwell_admits_full_parallel_contact_interval_and_rolls_back_limit ... ok
+test implicit_maxwell_parallel_native_feature_quadrature_closes_full_step ... ok
+test fixed_implicit_parallel_contact_trajectory_records_refinement_limit ... ok
+test adaptive_implicit_parallel_contact_trajectory_refines_with_contact_quadrature has been running for over 60 seconds
+test fixed_parallel_contact_stricter_budget_comparison has been running for over 60 seconds

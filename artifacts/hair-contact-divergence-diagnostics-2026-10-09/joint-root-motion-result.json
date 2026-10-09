@@ -1,0 +1,97 @@
+{
+  "scope": "Joint prescribed-root and free-node candidate path admission; experimental, not completed full-model qualification",
+  "default_enabled": false,
+  "unit_tests": {
+    "passed": 97,
+    "failed": 0,
+    "ignored": 4
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "release_app_test_build": "passed",
+  "native_control_full_model": {
+    "passed_frames": 1,
+    "failed_frame": 2,
+    "error": "swept strand component admission did not converge"
+  },
+  "standalone_replay": {
+    "status": "FAILED with same component admission error",
+    "test_elapsed_s": 0.64,
+    "guides": 469,
+    "bytes": 936184,
+    "sha256": "1e195603007bf2046a429335e2c5f55fdd407006c974418c9aafecae4b0519c5",
+    "format": "VJR1: exact start/staged positions, free/angular increments, seed rod connectivity"
+  },
+  "sampled_candidate_audit": {
+    "times": 33,
+    "candidate_pairs": 5492,
+    "pairs_with_negative_distance_sample": 85,
+    "minimum_sampled_gap_m": -7.98962177841736e-05,
+    "initial_trust_scale_minimum": 1.0,
+    "root_segment_counterexample": {
+      "a": [
+        136,
+        1
+      ],
+      "b": [
+        113,
+        0
+      ],
+      "sample_time": 0.34375,
+      "region": "full",
+      "gap_m": -6.25361290964499e-05,
+      "points": [
+        [
+          -0.04731823667763608,
+          0.8031536890580188,
+          0.000452894216397332
+        ],
+        [
+          -0.04912378733804808,
+          0.7944175650580784,
+          -0.011428270977217787
+        ],
+        [
+          -0.042103455751203,
+          0.8024909440428019,
+          0.004903077948256396
+        ],
+        [
+          -0.048506503403676765,
+          0.7973318644927954,
+          -0.0074765904558615
+        ]
+      ],
+      "reference": {
+        "s": 0.6669197509105663,
+        "t": 1.0,
+        "distance_m": 1.7463870903550098e-05,
+        "p": [
+          -0.04852239407433446,
+          0.7973273954160547,
+          -0.007470889515055753
+        ],
+        "q": [
+          -0.048506503403676765,
+          0.7973318644927954,
+          -0.0074765904558615
+        ]
+      }
+    },
+    "scope": "Negative distance at a sampled time proves this candidate intersects; absence of a negative sample does not prove CCD separation"
+  },
+  "proved": [
+    "Root-only intermediate pose is no longer separately published/admitted",
+    "Prescribed root target is retained exactly during group admission",
+    "Eight moving-root runtime steps preserve roots and strain gates",
+    "Rigid coupled motion admitted even when root-only motion intersects"
+  ],
+  "next_required_work": [
+    "Insert newly swept contacts into the elastic solve with prescribed-root contributions, rather than only reducing free motion",
+    "GPU rejected response batch precision remains unresolved",
+    "Whole-cycle full-model and real-time GPU/render qualification"
+  ],
+  "render_fps_proven": false
+}

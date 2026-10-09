@@ -1,0 +1,66 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.65s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/debug/deps/physics-74c936782d895dfe)
+
+running 36 tests
+test hair::contact::closed_surface_tests::feature_topology_welds_seams_and_rejects_open_or_split_surfaces ... ok
+test hair::contact::query_tests::capsule_query_detects_interior_contact_and_rejects_distant_plane_extension ... ok
+test hair::contact::query_tests::closest_point_regions_preserve_face_edge_and_vertex_identity ... ok
+test hair::contact::query_tests::limited_strand_projection_preserves_unresolved_penetration_in_constraints ... ok
+test hair::contact::query_tests::leaf_query_contains_exactly_overlapping_triangle_bounds ... ok
+test hair::contact::closed_surface_tests::feature_admission_rejects_touching_vertex_fans_and_collapsed_refits ... ok
+test hair::contact::query_tests::accumulated_contact_direction_matches_applied_weighted_corrections ... ok
+test hair::contact::cell_key_tests::signed_cell_coordinates_round_trip_without_aliasing ... ok
+test hair::contact::first_surface_segment_tests::segment_hits_finite_surface_and_reports_distance_and_orientation ... ok
+test hair::contact::closed_surface_tests::feature_normals_classify_faces_edges_vertices_and_refresh_after_motion ... ok
+test hair::contact::closed_surface_tests::concave_edge_recovery_uses_metric_gradient_instead_of_sign_pseudonormal ... ok
+test hair::contact::query_tests::allowed_follicle_contact_does_not_hide_a_later_surface_crossing ... ok
+test hair::contact::closed_surface_tests::surface_vertex_is_ambiguous_and_nonfinite_queries_are_rejected ... ok
+test hair::contact::query_tests::capped_pair_projection_preserves_free_particle_momentum ... ok
+test hair::contact::closed_surface_tests::oriented_crossings_preserve_nested_cavities ... ok
+test hair::contact::query_tests::multiple_intersections_choose_first_and_shared_features_use_topology ... ok
+test hair::contact::query_tests::shared_endpoint_contact_is_unique_and_collision_owners_expire_separately ... ok
+test hair::contact::query_tests::near_parallel_segments_preserve_the_interior_minimum_across_scales ... ok
+test hair::contact::query_tests::point_segments_project_onto_the_other_segment_in_both_orders ... ok
+test hair::contact::query_tests::separated_strands_retain_boundary_planes_without_projection_or_adhesion ... ok
+test hair::contact::unique_pair_tests::owner_filter_profile ... ignored, paired broad-phase benchmark
+test hair::direct::tests::packed_constraint_matches_analytic_rank_one_matrix_with_fixed_root ... ok
+test hair::contact::query_tests::clearance_skips_match_full_queries_when_particles_cross_surface ... ok
+test hair::direct::contact_active_set::tests::coupled_reaction_releases_a_contact_that_was_closing_in_free_motion ... ok
+test hair::direct::contact_active_set::tests::factored_energy_preserves_a_small_positive_mode_in_a_stiff_system ... ok
+test hair::direct::contact_active_set::tests::open_contacts_return_the_free_minimizer_without_refactorization ... ok
+test hair::direct::contact_active_set::tests::invalid_fixed_dofs_and_contact_assembly_overflow_are_rejected ... ok
+test hair::direct::tests::active_band_solve_recovers_known_solution_and_preserves_fixed_dofs ... ok
+test hair::direct::tests::independent_surfaces_keep_two_normal_constraints_without_cross_axis_stiffness ... ok
+test hair::direct::tests::boundary_contact_releases_opening_motion_and_resists_closing_motion ... ok
+test hair::direct::tests::interior_segment_contact_couples_both_endpoint_positions ... ok
+test hair::direct::tests::separated_contact_within_active_tolerance_has_no_attractive_force ... ok
+test hair::contact::unique_pair_tests::canonical_cells_preserve_hashset_candidates_exactly ... ok
+test hair::direct::contact_active_set::tests::coupled_reaction_activates_a_contact_that_was_opening_in_free_motion ... ok
+test hair::contact::unique_pair_tests::packed_sort_preserves_lexicographic_order_and_large_id_fallback ... ok
+test hair::contact::query_tests::warm_start_remains_exact_after_surface_refit_and_far_motion ... ok
+
+test result: ok. 35 passed; 0 failed; 1 ignored; 0 measured; 160 filtered out; finished in 0.04s
+

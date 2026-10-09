@@ -1,0 +1,22 @@
+{
+  "frames": 120,
+  "simulation_step_seconds": 0.008333333333333333,
+  "capture_interval_seconds": 0.05,
+  "video_fps": 20,
+  "offline": true,
+  "runtime_160_fps_verified": false,
+  "regions": [
+    "leftBreast",
+    "rightBreast",
+    "leftButtock",
+    "rightButtock",
+    "abdomen",
+    "skin",
+    "hair"
+  ],
+  "hair_guides": 469,
+  "hair_gpu_vertices": 2363760,
+  "physical_model_simplified": false,
+  "contact_sensitivity_position_error_m": 4.154949904522365e-06,
+  "contact_sensitivity_strict_gate_passed": false
+}

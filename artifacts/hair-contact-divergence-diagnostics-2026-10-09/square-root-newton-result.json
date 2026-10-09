@@ -1,0 +1,28 @@
+{
+  "unit_tests": {
+    "passed": 112,
+    "failed": 0,
+    "ignored": 5
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "runtime_integration": "native constrained Newton recovery for <=256 constraints after original projection failure; external backends do not enter this path",
+  "full_model": {
+    "mode": "paired native-only, 469 guides, CPU control explicit; not GPU physics",
+    "passed": false,
+    "passed_frames": [
+      1,
+      2
+    ],
+    "failed_frame": 3,
+    "failure": "swept strand components have no admissible progress",
+    "duration_s": 29.93,
+    "frame_2_max_position_difference_m": 0,
+    "frame_2_max_quaternion_component_difference": 0,
+    "frame_2_strain_gate_passed": true
+  },
+  "gpu_fallback_introduced": false,
+  "render_fps_measured": false
+}

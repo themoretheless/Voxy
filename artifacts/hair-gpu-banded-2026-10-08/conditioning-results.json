@@ -1,0 +1,22 @@
+{
+  "systems": 469,
+  "equilibrated_f32": {
+    "failed_factorizations": 15,
+    "position_error_m": 4.232206985160704e-05,
+    "angle_error_rad": 0.0046589169566816965
+  },
+  "equilibrated_compensated_split": {
+    "arithmetic_probe_passed": true,
+    "failed_factorizations": 7,
+    "position_error_m": 2.7011814064783563e-05,
+    "angle_error_rad": 0.0041267478172715075
+  },
+  "thresholds_unchanged": {
+    "position_m": 1e-06,
+    "angle_rad": 0.0001,
+    "component_backward_error": 0.0001
+  },
+  "full_matrix_gate_passed": false,
+  "runtime_enabled": false,
+  "next_action": "qualify compensated arithmetic over cancellation and dynamic ranges, inspect native scaled pivots"
+}

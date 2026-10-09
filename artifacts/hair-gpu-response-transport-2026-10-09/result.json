@@ -1,0 +1,47 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "gpu_transport_shader_qualified": true,
+  "resident_header_factors_status_and_solutions_bitwise_preserved": true,
+  "responses_bitwise_equal_to_host_copy_transport": true,
+  "mixed_shapes_ragged_loads_and_17_load_chunks_verified": true,
+  "default_enabled": false,
+  "full_model_transport_qualified": false,
+  "transport_speedup_measured": true,
+  "fps_measured": false,
+  "separate_120_frame_compact_qualification": {
+    "session_id": 33340,
+    "status": "running",
+    "log": "/tmp/voxy-full-compact-contact-120.log",
+    "gpu_transport_shader": false
+  },
+  "source_sha256": {
+    "crates/voxy_render/src/banded_transfer.rs": "d4c1fccec61c762ef58bc05b2dfc73b9edbdc46a631856f1d1fcc0912f0d1bea",
+    "crates/voxy_render/src/banded_transfer.wgsl": "a80d432bcdf86e84dc1b42462539a8aa253992ff67e4b8a6af36e33235e9480d",
+    "crates/voxy_app/src/gpu_hair_response_dispatch.rs": "43cb58b1f9fea3c07a553a170bdf2a86a7bd8fc45adc425e7617f6975869cd4b",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "4938b6cd430549c1991d4fb31eb687ebe74505a95f6a654cb494af3d42639694"
+  },
+  "benchmark": {
+    "guides": 469,
+    "loads_per_guide": 17,
+    "refinements": 1,
+    "alternating_order": true,
+    "host_copy_ms": [
+      114.823625,
+      116.875375,
+      115.09075,
+      109.167
+    ],
+    "shader_transport_ms": [
+      85.414208,
+      85.841708,
+      81.477334,
+      83.491208
+    ],
+    "host_copy_mean_ms": 113.9891875,
+    "shader_transport_mean_ms": 84.0561145,
+    "mean_time_reduction_percent": 26.259572207232374,
+    "responses_bitwise_equal": true,
+    "caveat": "synthetic rod-load batch, simultaneous separate qualification on host, not whole-model or render FPS"
+  }
+}

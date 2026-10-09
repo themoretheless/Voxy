@@ -1,0 +1,56 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 12.73s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 2 tests
+CAPTURED CONTACT OUTPUT case=0 point13=[-0.03036512192401377, 0.5632491205118532, -0.06346773421844913]
+CAPTURED CONTACT OUTPUT case=1 point13=[-0.030365122159661015, 0.5632491205311363, -0.06346773445927976]
+CAPTURED CONTACT OUTPUT case=2 point13=[-0.03036409938565623, 0.563247825454397, -0.06346746661861384]
+CAPTURED CONTACT OUTPUT case=3 point13=[-0.030364099633558343, 0.5632478254691916, -0.06346746683710554]
+CAPTURED BODY CONTACT REPLAY iteration=1 native_vs_perturbed_input_position_delta_m=7.736271831482178e-10
+CAPTURED BODY CONTACT REPLAY iteration=4 native_vs_perturbed_input_position_delta_m=7.71798729093387e-10
+test hair::contact::velocity_contacts::captured_position_tests::captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes ... ok
+CAPTURED SURFACE REPLAY case=0 iteration=0 before_point13=[-0.03036507714302969, 0.5632492527038871, -0.06346785790049413] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.3815395440265171, normal: [0.176295873446737, 0.06559644006775432, -0.9821491088709948], target: [-0.024954816814839752, 0.4785986124725952, -0.07288587182127956], surface_velocity: [-0.0017123614220290071, -0.4213728353899145, 0.0005864191935856935], gap_m: -2.3356227623637842e-5 }, HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.5085151825732986, normal: [0.22586751581433895, -0.006024632143748956, -0.9741393992172742], target: [-0.023560292172929067, 0.4598496882943993, -0.07320792807192118], surface_velocity: [-0.001718836371115865, -0.4213695155464281, 0.000553500555269651], gap_m: -1.9201633110255412e-5 }]
+CAPTURED SURFACE REPLAY case=0 iteration=0 after_point13=[-0.03036512192401377, 0.5632491205118532, -0.06346773421844913] worst_gap=-1.8763925846306058e-9
+CAPTURED SURFACE REPLAY case=0 iteration=1 before_point13=[-0.03036512192401377, 0.5632491205118532, -0.06346773421844913] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.38164040735248217, normal: [0.17629741808358823, 0.06562377275489074, -0.9821470057106905], target: [-0.024954677482923304, 0.4785986038218921, -0.07288584738893884], surface_velocity: [-0.0017123608350116729, -0.42137283556172445, 0.000586415943514112], gap_m: 4.4751414080045036e-11 }, HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.5087418919129221, normal: [0.22634380145257316, -0.006465586920455177, -0.9740260159409359], target: [-0.02356073418805575, 0.45984914599319715, -0.07320802719634889], surface_velocity: [-0.0017188388080417755, -0.4213695153832867, 0.0005535113633929362], gap_m: -1.8763925846306058e-9 }]
+CAPTURED SURFACE REPLAY case=0 iteration=1 after_point13=[-0.030365121924503108, 0.5632491205082751, -0.06346773421957158] worst_gap=-7.329655296652607e-12
+CAPTURED SURFACE REPLAY case=1 iteration=0 before_point13=[-0.03036507737875082, 0.5632492527229462, -0.06346785814095722] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.3815395432840315, normal: [0.1762958733103478, 0.06559643765456333, -0.9821491090566506], target: [-0.024954816902735703, 0.4785986124786479, -0.07288587183665264], surface_velocity: [-0.0017123614223994615, -0.4213728353898061, 0.0005864191956367463], gap_m: -2.3356190030101502e-5 }, HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.5085151836496786, normal: [0.22586751776582017, -0.0060246339500435245, -0.9741393987536253], target: [-0.023560292189187985, 0.4598496882757366, -0.0732079280755756], surface_velocity: [-0.0017188363712022127, -0.4213695155464223, 0.0005535005556526155], gap_m: -1.9201639161707784e-5 }]
+CAPTURED SURFACE REPLAY case=1 iteration=0 after_point13=[-0.030365122159661015, 0.5632491205311363, -0.06346773445927976] worst_gap=-1.876377339012194e-9
+CAPTURED SURFACE REPLAY case=1 iteration=1 before_point13=[-0.030365122159661015, 0.5632491205311363, -0.06346773445927976] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.38164040638623703, normal: [0.1762974180378181, 0.06562377194443714, -0.982147005773058], target: [-0.024954677570262446, 0.4785986038279703, -0.07288584740421027], surface_velocity: [-0.001712360835379796, -0.4213728355616167, 0.0005864159455522556], gap_m: 4.475395670537309e-11 }, HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.5087418925988895, normal: [0.22634380034325718, -0.006465585893761158, -0.9740260162055335], target: [-0.02356073420320529, 0.45984914597604953, -0.07320802719975551], surface_velocity: [-0.0017188388081216125, -0.42136951538328127, 0.0005535113637470246], gap_m: -1.876377339012194e-9 }]
+CAPTURED SURFACE REPLAY case=1 iteration=1 after_point13=[-0.03036512216015035, 0.5632491205275583, -0.0634677344604022] worst_gap=-7.329598871483486e-12
+CAPTURED SURFACE REPLAY case=2 iteration=0 before_point13=[-0.030364065195685297, 0.5632479193481347, -0.06346756719421304] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.3814402909939825, normal: [0.17633053317338265, 0.06621030630952505, -0.9821016945353416], target: [-0.024954403490314817, 0.4785986082060648, -0.07288579790669378], surface_velocity: [-0.0017123596857283039, -0.42137283589810004, 0.0005864095804086296], gap_m: -1.6616645135030922e-5 }, HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.5084818891869181, normal: [0.22516915405146834, -0.005378234205085638, -0.974304842777958], target: [-0.02356045587056486, 0.459849559660882, -0.07320796521275597], surface_velocity: [-0.001718837088679899, -0.4213695154983904, 0.0005535037377712244], gap_m: -6.018320398537139e-9 }]
+CAPTURED SURFACE REPLAY case=2 iteration=0 after_point13=[-0.03036409938565623, 0.563247825454397, -0.06346746661861384] worst_gap=-1.7353575256796028e-10
+CAPTURED SURFACE REPLAY case=2 iteration=1 before_point13=[-0.03036409938565623, 0.563247825454397, -0.06346746661861384] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.38151726859619267, normal: [0.17632267763644494, 0.0660710731883581, -0.9821124816633037], target: [-0.024954379370088986, 0.4785986009271881, -0.07288579406637162], surface_velocity: [-0.0017123595827382083, -0.42137283592824354, 0.0005864090101951729], gap_m: -1.7353575256796028e-10 }]
+CAPTURED SURFACE REPLAY case=2 iteration=1 after_point13=[-0.030364099386025457, 0.5632478254533793, -0.06346746661753182] worst_gap=0e0
+CAPTURED SURFACE REPLAY case=3 iteration=0 before_point13=[-0.03036406544365536, 0.5632479193627031, -0.06346756741243689] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.3814402903923969, normal: [0.17633053305007323, 0.0662103041217679, -0.9821016947049731], target: [-0.024954403577731467, 0.478598608212093, -0.0728857979219825], surface_velocity: [-0.0017123596860967403, -0.4213728358979922, 0.0005864095824485095], gap_m: -1.6616605947421655e-5 }, HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 0.5084818904230192, normal: [0.22516915574736512, -0.005378235773779372, -0.9743048423773641], target: [-0.023560455887005866, 0.4598495596420333, -0.07320796521645156], surface_velocity: [-0.001718837088767155, -0.42136951549838453, 0.0005535037381582176], gap_m: -6.018384326268325e-9 }]
+CAPTURED SURFACE REPLAY case=3 iteration=0 after_point13=[-0.030364099633558343, 0.5632478254691916, -0.06346746683710554] worst_gap=-1.7353491906373868e-10
+CAPTURED SURFACE REPLAY case=3 iteration=1 before_point13=[-0.030364099633558343, 0.5632478254691916, -0.06346746683710554] contacts=[HairContactDiagnostic { source: Mesh(0), segment: 18, fraction: 0.3815172678109002, normal: [0.1763226775314565, 0.06607107132873524, -0.9821124818072577], target: [-0.024954379457564742, 0.47859860093323364, -0.07288579408166977], surface_velocity: [-0.0017123595831068969, -0.42137283592813557, 0.0005864090122364492], gap_m: -1.7353491906373868e-10 }]
+CAPTURED SURFACE REPLAY case=3 iteration=1 after_point13=[-0.030364099633927565, 0.5632478254681739, -0.06346746683602351] worst_gap=0e0
+CAPTURED NONLINEAR SURFACE REPLAY iteration=1 native_vs_perturbed_input_position_delta_m=7.736271762093239e-10
+CAPTURED NONLINEAR SURFACE REPLAY iteration=4 native_vs_perturbed_input_position_delta_m=7.717987221544931e-10
+test hair::contact::velocity_contacts::captured_position_tests::captured_body_contact_nonlinear_surface_replay ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 232 filtered out; finished in 0.13s
+

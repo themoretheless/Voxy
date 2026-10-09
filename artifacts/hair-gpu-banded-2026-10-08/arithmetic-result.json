@@ -1,0 +1,17 @@
+{
+  "native_scaled_systems": 469,
+  "native_nonpositive_pivots": 0,
+  "native_minimum_scaled_pivot": 3.81077051713283e-08,
+  "runtime_arithmetic_samples": 1024,
+  "normalized_errors": {
+    "add": 1.070366695408066e-07,
+    "multiply": 1.3965271957941252e-07,
+    "divide": 1.3841855543135626e-07,
+    "sqrt": 1.0459118764578912e-07
+  },
+  "arithmetic_threshold": 1e-12,
+  "arithmetic_gate_passed": false,
+  "matrix_solver_now_rejected_before_dispatch": true,
+  "runtime_enabled": false,
+  "next_action": "inspect generated Metal arithmetic and operation contraction; qualify any repair on buffer operands"
+}

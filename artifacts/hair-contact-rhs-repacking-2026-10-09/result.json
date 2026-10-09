@@ -1,0 +1,17 @@
+{
+  "codec_tests_passed": 10,
+  "gpu_proof_passed": true,
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "bitwise_equal_to_fresh_matrix_packing": true,
+  "bitwise_equal_to_separate_submissions": true,
+  "malformed_rhs_and_numeric_range_rejections_verified": true,
+  "compact_and_chunked_readback_verified": true,
+  "full_model_120_frame_qualification": "running",
+  "full_model_log": "/tmp/voxy-full-compact-contact-120.log",
+  "fps_measured": false,
+  "source_sha256": {
+    "crates/voxy_render/src/banded_solve.rs": "b3e028c9602afc12997889fb989bd761527cd535199ef99901eb358f3acb1e79",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "d2e7535dfa032fe6e9ee95d7031b570c9dd520b8e6408399560ab4f3bbb3f6ca"
+  }
+}

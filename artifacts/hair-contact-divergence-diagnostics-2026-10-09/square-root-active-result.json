@@ -1,0 +1,29 @@
+{
+  "unit_tests": {
+    "passed": 110,
+    "failed": 0,
+    "ignored": 5
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "implemented": [
+    "QR equality reactions via triangular solve",
+    "bounded unilateral square-root active solve",
+    "native displacement and nonnegative reaction API",
+    "original inequality and canonical force-balance validation"
+  ],
+  "regressions": [
+    "opening contacts exert zero reaction",
+    "closing contact activates coupled neighbor",
+    "near-parallel inactive inequality remains admitted",
+    "two active constraints retain independent direction lost in rounded Gram",
+    "physical minimum-energy response and positive reactions agree with native reference"
+  ],
+  "runtime_cross_rod_integration": false,
+  "gpu_integration": false,
+  "full_model_new_qualification_run": false,
+  "last_full_model_failure": "frame2, 106-row contact projection nonconvergence",
+  "render_fps_measured": false
+}

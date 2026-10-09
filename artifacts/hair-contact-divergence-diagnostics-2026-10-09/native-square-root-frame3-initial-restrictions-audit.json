@@ -1,0 +1,137 @@
+{
+  "scope": "local numerical minima of first admission-query restricted pairs; independent 80-digit distance checks; not a global certificate",
+  "rows": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(10,19) b=(60,19)",
+      "time": 4.934022979240817e-06,
+      "gap_m": -4.808436634973212e-17,
+      "reference_gap_m": -1.554474864801092e-17
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(46,13) b=(56,17)",
+      "time": 0.014730287060094717,
+      "gap_m": -8.895220760467932e-10,
+      "reference_gap_m": -8.895220442932221e-10
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(55,11) b=(64,18)",
+      "time": 0.015476281553269744,
+      "gap_m": -4.555538938861691e-09,
+      "reference_gap_m": -4.555538897431616e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(113,1) b=(136,2)",
+      "time": 0.05258829574565818,
+      "gap_m": -1.0770358724478514e-09,
+      "reference_gap_m": -1.0770358861494564e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(114,1) b=(115,2)",
+      "time": 1.8668722686531567e-05,
+      "gap_m": 7.889792759277568e-11,
+      "reference_gap_m": 7.889794099622503e-11
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(131,1) b=(135,2)",
+      "time": 0.024578129582370194,
+      "gap_m": -5.741634528390847e-10,
+      "reference_gap_m": -5.741634575282591e-10
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(134,12) b=(164,17)",
+      "time": 0.014943542071190887,
+      "gap_m": -5.706263721941599e-09,
+      "reference_gap_m": -5.706263693399977e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(136,1) b=(137,2)",
+      "time": 0.0019282042040089287,
+      "gap_m": 8.711784014992473e-11,
+      "reference_gap_m": 8.71178666857729e-11
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(149,9) b=(202,19)",
+      "time": 0.005442939708614939,
+      "gap_m": -1.3614877415963136e-07,
+      "reference_gap_m": -1.361487741558231e-07
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(166,2) b=(167,2)",
+      "time": 0.19824926029956316,
+      "gap_m": -1.0538073077191474e-09,
+      "reference_gap_m": -1.0538072991403977e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(199,7) b=(229,13)",
+      "time": 0.015350548401682469,
+      "gap_m": -6.6966204974110936e-09,
+      "reference_gap_m": -6.696620439175884e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(247,19) b=(274,15)",
+      "time": 0.015239672918260174,
+      "gap_m": -9.518466553861652e-09,
+      "reference_gap_m": -9.518466512214736e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(263,1) b=(264,2)",
+      "time": 0.7016889806321002,
+      "gap_m": -7.411500279057466e-10,
+      "reference_gap_m": -7.411500243820895e-10
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(301,19) b=(366,11)",
+      "time": 0.015652469402283056,
+      "gap_m": -1.5034741595999052e-08,
+      "reference_gap_m": -1.5034741553552537e-08
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(315,15) b=(335,9)",
+      "time": 0.01763346227501014,
+      "gap_m": -3.365011628567974e-09,
+      "reference_gap_m": -3.3650116010156862e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(327,1) b=(328,2)",
+      "time": 0.015288252920020957,
+      "gap_m": -2.121334541787558e-08,
+      "reference_gap_m": -2.1213345373192896e-08
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(328,1) b=(332,2)",
+      "time": 0.01639252300851963,
+      "gap_m": -7.1297740813483154e-09,
+      "reference_gap_m": -7.129774062971089e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(338,17) b=(362,8)",
+      "time": 0.015557636576156721,
+      "gap_m": -1.13981509207179e-08,
+      "reference_gap_m": -1.1398150886836583e-08
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(344,18) b=(369,1)",
+      "time": 0.3598815230188175,
+      "gap_m": -1.9581356841641916e-08,
+      "reference_gap_m": -1.9581356823495082e-08
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(374,15) b=(399,9)",
+      "time": 0.01521892357184477,
+      "gap_m": -6.7895289626476556e-09,
+      "reference_gap_m": -6.7895289112293675e-09
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(397,16) b=(432,1)",
+      "time": 8.823651784548684e-07,
+      "gap_m": -1.315950386854281e-16,
+      "reference_gap_m": -8.483881999699072e-17
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(409,16) b=(445,15)",
+      "time": 0.0,
+      "gap_m": 3.6483403104137224e-17,
+      "reference_gap_m": 2.451652162532847e-17
+    }
+  ]
+}

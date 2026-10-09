@@ -1,0 +1,35 @@
+
+running 1 test
+HYBRID FOLLICLE PRESERVING GROOM true
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HYBRID STRUCTURAL ITERATIONS 6
+HYBRID JOINT CONTACT VELOCITIES true
+HYBRID JOINT CONTACT POSITIONS true
+HYBRID SWEPT STRAND POSITIONS true
+HYBRID FORCE BALANCED FRICTION PRESSURE true
+HYBRID SAMPLED COLLIDER MOTION true
+HYBRID TERMINAL CONTACT ITERATIONS 0
+HYBRID HAIR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+HYBRID EXTRA DIVISION REFINEMENT false
+HYBRID EXTRA ROOT REFINEMENT false
+HYBRID RESIDUAL REFINEMENTS 1 CONTACT OVERRIDE Some(1)
+HYBRID REUSE REFINEMENT FACTORS false
+HYBRID CONTACT RESPONSE BATCHES true
+HYBRID BATCH RESPONSE WAVES true COMPACT READBACK true
+HYBRID CONTACT CASE full
+HYBRID TEST BACKEND cpu_control=true perturbation=0
+HYBRID HAIR FRAME frame=1 max_position_error_m=0 max_quaternion_component_error=0
+
+thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (27489812) panicked at crates/voxy_app/src/female_hair.rs:862:114:
+native frame 2: prescribed hair roots cross a strand during prediction
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED
+
+failures:
+
+failures:
+    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 309 filtered out; finished in 8.61s
+

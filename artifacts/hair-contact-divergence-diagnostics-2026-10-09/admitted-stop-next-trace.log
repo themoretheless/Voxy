@@ -1,0 +1,72 @@
+iteration=0 active=[]
+iteration=1 active=[1]
+equality size=1 refine=0 max_error=3.7947076036992655e-19
+iteration=2 active=[1, 60]
+equality size=2 refine=0 max_error=3.7947076036992655e-19
+iteration=3 active=[1, 2, 60]
+equality size=3 refine=0 max_error=3.6914915568786455e-15
+iteration=4 active=[1, 2, 53, 60]
+equality size=4 refine=0 max_error=2.856048730848215e-14
+equality size=4 refine=1 max_error=8.540390616929017e-14
+equality size=4 refine=2 max_error=2.8282931552325863e-14
+equality size=4 refine=3 max_error=8.512635041313388e-14
+equality size=4 refine=4 max_error=2.856048730848215e-14
+equality size=4 refine=5 max_error=2.856048730848215e-14
+equality size=4 refine=6 max_error=2.856048730848215e-14
+equality size=4 refine=7 max_error=8.540390616929017e-14
+iteration=5 active=[0, 1, 2, 53, 60]
+equality size=5 refine=0 max_error=2.856048730848215e-14
+equality size=5 refine=1 max_error=8.540390616929017e-14
+equality size=5 refine=2 max_error=2.8282931552325863e-14
+equality size=5 refine=3 max_error=8.512635041313388e-14
+equality size=5 refine=4 max_error=2.856048730848215e-14
+equality size=5 refine=5 max_error=2.856048730848215e-14
+equality size=5 refine=6 max_error=2.856048730848215e-14
+equality size=5 refine=7 max_error=8.540390616929017e-14
+iteration=6 active=[0, 1, 2, 27, 53, 60]
+equality size=6 refine=0 max_error=2.856048730848215e-14
+equality size=6 refine=1 max_error=8.540390616929017e-14
+equality size=6 refine=2 max_error=2.8282931552325863e-14
+equality size=6 refine=3 max_error=8.512635041313388e-14
+equality size=6 refine=4 max_error=2.856048730848215e-14
+equality size=6 refine=5 max_error=2.856048730848215e-14
+equality size=6 refine=6 max_error=2.856048730848215e-14
+equality size=6 refine=7 max_error=8.540390616929017e-14
+iteration=7 active=[0, 2, 27, 53, 60]
+equality size=5 refine=0 max_error=2.856048730848215e-14
+equality size=5 refine=1 max_error=8.540390616929017e-14
+equality size=5 refine=2 max_error=2.8282931552325863e-14
+equality size=5 refine=3 max_error=8.512635041313388e-14
+equality size=5 refine=4 max_error=2.856048730848215e-14
+equality size=5 refine=5 max_error=2.856048730848215e-14
+equality size=5 refine=6 max_error=2.856048730848215e-14
+equality size=5 refine=7 max_error=8.540390616929017e-14
+iteration=8 active=[0, 2, 27, 48, 53, 60]
+equality size=6 refine=0 max_error=1.4224732503009818e-13
+equality size=6 refine=1 max_error=2.856048730848215e-14
+equality size=6 refine=2 max_error=2.8282931552325863e-14
+equality size=6 refine=3 max_error=1.4224732503009818e-13
+equality size=6 refine=4 max_error=8.512635041313388e-14
+equality size=6 refine=5 max_error=2.856048730848215e-14
+equality size=6 refine=6 max_error=8.512635041313388e-14
+equality size=6 refine=7 max_error=2.8282931552325863e-14
+iteration=9 active=[0, 2, 26, 27, 48, 53, 60]
+equality size=7 refine=0 max_error=1.4224732503009818e-13
+equality size=7 refine=1 max_error=2.8282931552325863e-14
+equality size=7 refine=2 max_error=2.8282931552325863e-14
+equality size=7 refine=3 max_error=8.512635041313388e-14
+equality size=7 refine=4 max_error=2.8282931552325863e-14
+equality size=7 refine=5 max_error=2.856048730848215e-14
+equality size=7 refine=6 max_error=2.856048730848215e-14
+equality size=7 refine=7 max_error=2.856048730848215e-14
+iteration=10 active=[2, 26, 27, 48, 53, 60]
+equality size=6 refine=0 max_error=8.540390616929017e-14
+equality size=6 refine=1 max_error=2.856048730848215e-14
+equality size=6 refine=2 max_error=2.856048730848215e-14
+equality size=6 refine=3 max_error=2.8282931552325863e-14
+equality size=6 refine=4 max_error=2.8282931552325863e-14
+equality size=6 refine=5 max_error=2.8282931552325863e-14
+equality size=6 refine=6 max_error=2.8282931552325863e-14
+equality size=6 refine=7 max_error=2.856048730848215e-14
+FAIL no entering row active_gaps=[(2, -2.8282931552325863e-14, 0.009707215300171717), (26, 0.0, 0.06843929132416562), (27, 0.0, 0.09443739299954845), (48, 1.0587911840678754e-22, 0.020883330614986113), (53, 3.9387032047324966e-20, 45.58779567948075), (60, -5.692061405548898e-19, 679.8700775449485)]
+rows=100 width=882 result=false

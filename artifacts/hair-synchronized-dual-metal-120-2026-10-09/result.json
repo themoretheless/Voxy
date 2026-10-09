@@ -1,0 +1,23 @@
+{
+  "backend": "Metal Apple M4 Max",
+  "guides": 469,
+  "frames": 120,
+  "GPU_batches": 1440,
+  "joint_positions": true,
+  "sampled_collider_motion": true,
+  "position_tolerance_m": 1e-11,
+  "position_error_m": 0.00046700580850173035,
+  "quaternion_component_error": 0.003674369932156085,
+  "position_gate_m": 1e-06,
+  "quaternion_gate": 5e-05,
+  "first_divergence_frame": 109,
+  "passed": false,
+  "strict_root_and_strain_checks_completed_all_frames": true,
+  "test_binary_sha256": "04b09a58e368c513e0d1033b5d6b54b01078670c4e550dbdf2272ff87a7f3c31",
+  "binary_contains_matrix_free_extension": false,
+  "native_total_ms": 175124.889621,
+  "hybrid_total_ms": 195829.915793,
+  "FPS_measured": false,
+  "runtime_qualified": false,
+  "defaults_changed": false
+}

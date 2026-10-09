@@ -1,0 +1,13 @@
+{
+  "cadence_sample_count": 1000,
+  "present_call_cadence_fps": 83.29924572012379,
+  "physical_pose_preparation_median_ms": 1203.9755,
+  "cpu_upload_median_ms": 4.9625,
+  "maximum_simulated_seconds": 7.091667,
+  "preparation_failure": false,
+  "gpu_hair_vertices": 2363760,
+  "dynamic_hair_upload_bytes": 630336,
+  "cpu_hair_vertices_per_prepared_frame": 0,
+  "fixed_physics_step_seconds": 0.008333333333333333,
+  "scope": "running native window, present-call cadence; not physical update FPS or display completion"
+}

@@ -1,0 +1,16 @@
+{
+  "coupled_active_set_integrated_in_native_and_external_assembly": true,
+  "native_step_atomic_commit": true,
+  "native_failure_pose_and_next_step_rollback_verified": true,
+  "factored_energy_cancellation_regression_passed": true,
+  "physics_library_tests_passed": 166,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 15,
+  "initial_full_model_failure": "coupled contact line search failed before frame 7 completed",
+  "stable_energy_full_model_status": "completed_30_frames_failed_stability_gate",
+  "full_model_stability_gate_passed": false,
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false,
+  "position_error_m": 0.016487451549236573,
+  "quaternion_component_error": 0.13498088997808003
+}

@@ -1,0 +1,19 @@
+{
+  "changes": [
+    "Shared contact impulse limiter for both strands",
+    "Exclude permitted pinned-root contact overlap from movable contact weights"
+  ],
+  "hair_tests_passed": 34,
+  "hair_tests_ignored": 1,
+  "integration_tests_passed": 15,
+  "full_model_frames": 30,
+  "position_error_m": 0.0008678972888432473,
+  "quaternion_component_error": 0.018248323089352536,
+  "previous_position_error_m": 0.007240353631756569,
+  "first_divergence_frame": 20,
+  "first_divergence_rod": 52,
+  "first_divergence_point": 20,
+  "strict_gate_passed": false,
+  "gpu_linear_runtime_enabled": false,
+  "fps_target_verified": false
+}

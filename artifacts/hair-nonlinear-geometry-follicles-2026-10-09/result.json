@@ -1,0 +1,33 @@
+{
+  "qualified": false,
+  "joint_contact_positions_default": false,
+  "follicle_preserving_groom_default": false,
+  "operator_tests_passed": 55,
+  "operator_tests_ignored": 1,
+  "integration_tests_passed": 19,
+  "default_fringe_regression_passed": true,
+  "change": "Position admission re-queries mesh and strand geometry after every increment, including complete tangent solves; newly created penetrations require another nonlinear solve. First/last worst contact diagnostics on failure. Candidate groom retains angular follicle ordering and polar radial layers rather than collapsing long guides onto two azimuths.",
+  "old_groom_geometry": {
+    "failed_native_frame": 1,
+    "worst_gap_m": -4.1567955179102965e-05,
+    "rod": 26,
+    "other_rod": 45
+  },
+  "candidate_groom_geometry": {
+    "failed_native_frame": 2,
+    "worst_gap_m": -5.953781601689038e-07,
+    "rod": 146,
+    "other_rod": 136
+  },
+  "candidate_real_gpu": {
+    "passed_frames": 17,
+    "requested_frames": 120,
+    "max_position_error_m": 1.2926877346330912e-09,
+    "native_failed_frame": 18,
+    "error": "coupled contact line search failed",
+    "gpu_backend": "Metal, Apple M4 Max",
+    "passed": false
+  },
+  "candidate_env": "VOXY_HAIR_PRESERVE_FOLLICLE_COORDINATES=1",
+  "fps_measured": false
+}

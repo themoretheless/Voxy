@@ -1,0 +1,16 @@
+
+running 1 test
+REJECTED RESPONSE REPLAY ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None } requests=469 captured_error="banded solve: Residual { system: 0 }"
+
+thread 'gpu_hair_solver::tests::gpu_captured_rejected_response_batch' (27524357) panicked at crates/voxy_app/src/gpu_hair_solver.rs:253:73:
+checked GPU hair response solver failed: Some("banded solve: Residual { system: 0 }")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::tests::gpu_captured_rejected_response_batch ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::tests::gpu_captured_rejected_response_batch
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 310 filtered out; finished in 0.13s
+

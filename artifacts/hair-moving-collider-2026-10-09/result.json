@@ -1,0 +1,27 @@
+{
+  "changes": [
+    "Retain previous triangle material positions and explicit collider motion duration",
+    "Interpolate material-point velocity at face/edge/vertex contacts",
+    "Apply mesh velocity and friction response in the moving surface frame",
+    "Use timed collider refit in actual full-model hair path"
+  ],
+  "hair_tests_passed": 39,
+  "hair_tests_ignored": 1,
+  "physics_tests_passed": 180,
+  "physics_tests_ignored": 20,
+  "hair_integration_tests_passed": 15,
+  "frames": 120,
+  "previous_mesh_only_position_error_m": 1.6775270075528037e-05,
+  "mesh_only_position_error_m": 2.246124855553866e-08,
+  "mesh_only_quaternion_component_error": 2.831054856690385e-07,
+  "mesh_only_strict_gate_passed": true,
+  "self_only_position_error_m": 1.0309631093274874e-08,
+  "self_only_strict_gate_passed": true,
+  "full_cycle_position_error_m": 0.003189401362808042,
+  "full_cycle_quaternion_component_error": 0.040533562912201504,
+  "full_cycle_strict_gate_passed": false,
+  "full_cycle_first_divergence_frame": 97,
+  "gpu_solver_enabled_in_runtime": false,
+  "runtime_fps_verified": false,
+  "remaining_issue": "Combined body and strand contact stability; each isolated case passes current CPU perturbation gate"
+}

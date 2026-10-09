@@ -1,0 +1,26 @@
+{
+  "native_full_model": {
+    "guides": 469,
+    "passed_frames": [
+      1,
+      2
+    ],
+    "failed_frame": 3,
+    "error": "swept strand components have no admissible progress",
+    "elapsed_seconds": 50.85
+  },
+  "continuous_reference": {
+    "method": "exact rational Bernstein moving infinite-line lower bound",
+    "certified_nominal_full_step_pairs": 9,
+    "reduced_trial_pairs_uncertified": 3,
+    "clearance_threshold_m": 7.999990000000001e-05,
+    "scope": "traced pair endpoints only; not full model or GPU qualification"
+  },
+  "reduced_trial_pointwise_penetrations_m": [
+    4.06112299e-05,
+    1.10188369e-05,
+    2.75743884e-05
+  ],
+  "rendered_fps": null,
+  "runtime_fix_complete": false
+}

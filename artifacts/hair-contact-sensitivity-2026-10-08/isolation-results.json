@@ -1,0 +1,32 @@
+{
+  "diagnostic_only": true,
+  "production_contacts_unchanged": true,
+  "relative_cpu_correction_perturbation": 1e-10,
+  "reports": [
+    {
+      "case": "none",
+      "exit_code": 0,
+      "position_error_m": 3.3020461365218523e-15,
+      "quaternion_component_error": 1.9539925233402755e-14
+    },
+    {
+      "case": "mesh",
+      "exit_code": 101,
+      "position_error_m": 0.01963852936945798,
+      "quaternion_component_error": 0.20197559329276238
+    },
+    {
+      "case": "self",
+      "exit_code": 0,
+      "position_error_m": 1.2889003753180361e-10,
+      "quaternion_component_error": 3.3203112481672292e-09
+    }
+  ],
+  "guides": 469,
+  "simulation_seconds": 0.25,
+  "steps": 30,
+  "conclusion": "amplification localized to body triangle mesh contacts; guide self contacts alone stay within dynamic position tolerance",
+  "normal_library_build_passed": true,
+  "mesh_skip_switch_compiled_only_in_tests": true,
+  "next_action": "qualify stable nearest/contact selection at triangle features and multiple segment intersections"
+}

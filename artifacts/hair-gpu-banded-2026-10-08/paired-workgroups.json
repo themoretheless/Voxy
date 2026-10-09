@@ -1,0 +1,57 @@
+{
+  "scope": "separate native processes in alternating order; no runtime animation",
+  "runs": [
+    {
+      "round": 0,
+      "workgroup": 1,
+      "gpu_ms": 3.06525,
+      "samples": 8
+    },
+    {
+      "round": 0,
+      "workgroup": 32,
+      "gpu_ms": 1.60075,
+      "samples": 8
+    },
+    {
+      "round": 1,
+      "workgroup": 32,
+      "gpu_ms": 1.396667,
+      "samples": 8
+    },
+    {
+      "round": 1,
+      "workgroup": 1,
+      "gpu_ms": 1.302208,
+      "samples": 8
+    },
+    {
+      "round": 2,
+      "workgroup": 1,
+      "gpu_ms": 1.670667,
+      "samples": 8
+    },
+    {
+      "round": 2,
+      "workgroup": 32,
+      "gpu_ms": 2.643375,
+      "samples": 8
+    },
+    {
+      "round": 3,
+      "workgroup": 32,
+      "gpu_ms": 2.021542,
+      "samples": 8
+    },
+    {
+      "round": 3,
+      "workgroup": 1,
+      "gpu_ms": 1.936125,
+      "samples": 8
+    }
+  ],
+  "median_ms": {
+    "1": 1.803396,
+    "32": 1.811146
+  }
+}

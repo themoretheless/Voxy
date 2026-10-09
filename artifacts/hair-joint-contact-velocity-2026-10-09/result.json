@@ -1,0 +1,53 @@
+{
+  "changes": [
+    "Joint body/strand normal velocity constraints after friction",
+    "Implicit Cosserat rod response H=M+dt^2 K includes material-frame rotations",
+    "Matrix-free PCG active-set acceleration",
+    "Refresh mesh constraints after strand projection without another position projection",
+    "Finite residual/velocity validation and transactional rejection",
+    "Preserve experimental mode across groom rebase"
+  ],
+  "operator_tests_passed": 45,
+  "operator_tests_ignored": 1,
+  "physics_library_tests_passed": 186,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 16,
+  "public_joint_failure_rolls_back_pose_and_future_dynamics": true,
+  "default_joint_contact_velocities_enabled": false,
+  "default_gpu_linear_solver_enabled": false,
+  "prepared_groom_short_cpu": {
+    "frames": 30,
+    "position_error_m": 5.833504901353592e-09,
+    "quaternion_component_error": 5.2229045199858604e-08,
+    "strict_gate_passed": true
+  },
+  "prepared_groom_long_cpu": {
+    "frames": 120,
+    "position_error_m": 0.004198091601879866,
+    "quaternion_component_error": 0.09735210951167916,
+    "first_divergence_frame": 78,
+    "first_divergence_rod": 40,
+    "first_divergence_point": 18,
+    "strict_gate_passed": false
+  },
+  "startup_candidate_stretch_failure": {
+    "frame": 10,
+    "rod": 207,
+    "segment": 1,
+    "signed_strain": 0.0767172499853972,
+    "strain_gate": 0.05
+  },
+  "sixteen_iterations_candidate_strict_gate_passed": false,
+  "runtime_fps_verified": false,
+  "locomotion_scope": [
+    "walking gait",
+    "running gait"
+  ],
+  "existing_locomotion_infrastructure": [
+    "selected root motion",
+    "two-bone IK",
+    "authored stance curves",
+    "foot anchors in ordinary Play"
+  ],
+  "walking_running_full_model_demonstration_qualified": false
+}

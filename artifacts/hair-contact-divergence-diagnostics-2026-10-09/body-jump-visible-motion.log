@@ -1,0 +1,29 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+test female_demo::tests::jump_excitation_matches_visible_root_and_stops_during_settling ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 307 filtered out; finished in 2.74s
+
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+test female_demo::tests::secondary_motion_changes_actual_model_vertices ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 307 filtered out; finished in 6.51s
+
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+region support peak mm: [13.937492841339791, 13.937492841339791, 12.02752544625147, 12.02752544625147]
+rendered peak mm: [12.087094413464017, 12.09844909829355, 9.398425745193636, 9.594945984308758]
+test female_demo::tests::preview_has_visible_soft_region_motion_and_settles ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 307 filtered out; finished in 39.71s
+

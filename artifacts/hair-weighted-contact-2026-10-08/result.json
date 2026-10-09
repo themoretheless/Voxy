@@ -1,0 +1,19 @@
+{
+  "change": "Contact direction accumulates applied mass-weighted and capped position corrections",
+  "unit_tests_passed": 15,
+  "integration_tests_passed": 14,
+  "full_model_frames": 30,
+  "guides": 469,
+  "cpu_relative_correction_perturbation": 1e-10,
+  "position_error_m": 0.013343882685181357,
+  "quaternion_component_error": 0.1949233338203445,
+  "stability_gate_passed": false,
+  "gpu_runtime_enabled": false,
+  "fps_target_verified": false,
+  "next_step": "Classify closest geometric features before adding closed-surface angle-weighted pseudonormals",
+  "reference": "https://doi.org/10.1109/TVCG.2005.49",
+  "feature_classification_tests_passed": 16,
+  "closest_query_preserves_geometric_feature": true,
+  "first_divergent_frame": 3,
+  "first_divergent_frame_position_error_m": 1.7715614765809184e-05
+}

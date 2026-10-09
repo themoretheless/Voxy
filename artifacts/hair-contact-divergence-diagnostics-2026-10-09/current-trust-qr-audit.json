@@ -1,0 +1,30 @@
+{
+  "rows": 88,
+  "coordinates": 882,
+  "systems": 7,
+  "failed_row": 2,
+  "absolute_tolerance": 1e-14,
+  "captured_bytes": 1328076,
+  "native_original_bad_rows": 1,
+  "max_original_gap_abs_m": 1.529332216421153e-14,
+  "max_whitened_active_gap_abs_m": 4.163336342344337e-16,
+  "max_coordinate": 0.0219925416249421,
+  "max_response": 3287.334167371116,
+  "maximum_fixed_response": 0.0,
+  "pointwise_exact_rows": [
+    {
+      "row": 2,
+      "reaction": 0.000899019238179539,
+      "original_gap_m": 1.71512535520351e-14,
+      "whitened_gap_m": 1.5898157955114373e-15
+    }
+  ],
+  "original_load_lp": {
+    "status": 0,
+    "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "scope": "numerical feasibility only; no physical pose, energy or continuous-geometry proof",
+    "minimum_exact_pointwise_gap_m": -3.7601458306143805e-20,
+    "within_captured_absolute_tolerance": true,
+    "maximum_linear_coordinate": 5432.223360781127
+  }
+}

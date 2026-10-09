@@ -1,0 +1,7 @@
+{
+  "rows": 100,
+  "tolerance": 1e-14,
+  "max_active_exact_residual": 8.156784312647624e-15,
+  "minimum_inactive_exact_gap": 1.7826312059176268e-07,
+  "all_exact_rows_admitted": true
+}

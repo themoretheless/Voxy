@@ -1,0 +1,19 @@
+{
+  "sample_collider_motion_default": false,
+  "hair_tests_passed": 47,
+  "hair_tests_ignored": 1,
+  "full_model_6_iterations": {
+    "failed_frame": 2,
+    "signed_strain": 0.056325780443339246
+  },
+  "full_model_16_iterations": {
+    "failed_frame": 18,
+    "signed_strain": -0.07408517772696155
+  },
+  "strain_limit": 0.05,
+  "qualified": false,
+  "fps_measured": false,
+  "sampling": "linear vertex motion, material velocity over full interval; per-substep BVH refit and clearance invalidation",
+  "integration_tests_passed": 16,
+  "broad_suite": "188 library tests passed, 20 ignored; broad integration run stopped after focused hair integration passed; no claim of complete suite"
+}

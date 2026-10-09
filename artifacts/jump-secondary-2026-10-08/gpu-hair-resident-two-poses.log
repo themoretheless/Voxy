@@ -1,0 +1,10 @@
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+Model smoke on AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+SECONDARY SAMPLE: frame=0 simulated_s=0.000000 advance_ms=0.000
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=true
+SECONDARY SAMPLE: frame=1 simulated_s=0.250000 advance_ms=2500.768
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=true
+Mesh update CPU: median 526.97 ms, max 526.97 ms
+PASS: imported female model rendered in 2 poses

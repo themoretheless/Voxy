@@ -1,0 +1,23 @@
+{
+  "integration": "HairSystem joint positions and velocities route explicitly enabled contact batches",
+  "default_enabled": false,
+  "native_bitwise_equivalence": true,
+  "partial_results_rejected_before_publication": true,
+  "hair_unit_tests_passed": 65,
+  "hair_integration_tests_passed": 21,
+  "full_model_gpu_test": {
+    "status": "passed",
+    "frames": 30,
+    "guides": 469,
+    "position_error_m": 2.5202118170142285e-11,
+    "quaternion_component_error": 5.636613328863227e-10,
+    "native_ms": 74341.13012500001,
+    "hybrid_ms": 257841.692915,
+    "solver_bridge_ms": 180687.558729,
+    "wall_seconds": 334.8,
+    "root_and_stretch_gates_passed": true,
+    "batched_wave_submissions": false
+  },
+  "runtime_qualified": false,
+  "fps_measured": false
+}

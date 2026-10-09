@@ -1,0 +1,33 @@
+{
+  "qualified": false,
+  "change": "Armijo evaluates energy change directly under the factored stiffness metric and unilateral penalties; no subtraction of total energies. Armijo constant 1e-4 and physical tolerances unchanged.",
+  "operator_tests_passed": 57,
+  "operator_tests_ignored": 1,
+  "integration_tests_passed": 19,
+  "previous_native_line_search_failure_frame": 18,
+  "without_terminal": {
+    "gpu_failed_frame": 27,
+    "gpu_signed_strain": 0.08770280480730008,
+    "cpu_failed_frame": 27,
+    "cpu_signed_strain": 0.08770280460792579,
+    "cpu_control_perturbation": 0.0,
+    "max_gpu_position_error_through_frame_26_m": 1.3740684146057447e-09
+  },
+  "terminal_4_gpu": {
+    "guides": 469,
+    "frames": 120,
+    "calls": 2400,
+    "strain_guard_passed_all_frames": true,
+    "position_error_m": 0.0006210567316640853,
+    "quaternion_component_error": 0.017554526448402906,
+    "first_divergence_frame": 100,
+    "position_gate_m": 1e-06,
+    "quaternion_gate": 5e-05,
+    "passed": false,
+    "backend": "Metal, Apple M4 Max"
+  },
+  "follicle_preserving_groom_default": false,
+  "terminal_contact_iterations_default": 0,
+  "gpu_runtime_enabled": false,
+  "fps_measured": false
+}

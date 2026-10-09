@@ -1,0 +1,23 @@
+{
+  "reference": "https://doi.org/10.1109/TVCG.2005.49",
+  "feature_normals_enabled_in_character_source": true,
+  "geometry_tests_passed": 18,
+  "source_topology_rebuilt_per_pose": false,
+  "closed_edge_winding_validation": true,
+  "seam_split_refit_rejected_before_mutation": true,
+  "self_intersection_and_vertex_manifold_certification": false,
+  "full_model_frames": 30,
+  "guides": 469,
+  "cpu_relative_correction_perturbation": 1e-10,
+  "previous_position_error_m": 0.013343882685181357,
+  "position_error_m": 0.008019558425374163,
+  "quaternion_component_error": 0.1335967398004527,
+  "stability_gate_passed": false,
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false,
+  "physics_regression_status": "passed",
+  "physics_regression_counts": [
+    159,
+    14
+  ]
+}

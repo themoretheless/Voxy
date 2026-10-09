@@ -1,0 +1,21 @@
+{
+  "systems": 3283,
+  "native_accuracy_gate_passed": true,
+  "gpu_output_bit_identical": true,
+  "whole_output_bytes": 33105788,
+  "timing_runs": [
+    {
+      "mode": "serial",
+      "gpu_median_ms": 1.681459,
+      "sha256": "99bb31744513b807609421316e50d0e5bda99ad0ba88823a2a7178906dfcd0d5"
+    },
+    {
+      "mode": "shared-parallel",
+      "gpu_median_ms": 7.291875,
+      "sha256": "99bb31744513b807609421316e50d0e5bda99ad0ba88823a2a7178906dfcd0d5"
+    }
+  ],
+  "runtime_enabled": false,
+  "default_shader_changed": false,
+  "next_action": "avoid per-column barriers; retain canonical shader until a faster qualified replacement exists"
+}

@@ -1,0 +1,24 @@
+{
+  "qualified": false,
+  "terminal_contact_iterations_default": 0,
+  "sample_collider_motion_default": false,
+  "candidate": {
+    "structural_iterations": 6,
+    "terminal_iterations": 4,
+    "sample_collider_motion": true,
+    "frames": 120,
+    "guides": 469,
+    "strain_guard_passed_all_frames": true,
+    "position_error_m": 0.004186445041172326,
+    "quaternion_component_error": 0.04881964768917707,
+    "first_divergence_frame": 40,
+    "cpu_control": true,
+    "scale_perturbation": 1e-10,
+    "gpu_physics_qualified": false
+  },
+  "operator_tests_passed": 47,
+  "operator_tests_ignored": 1,
+  "rollback_test_passed": true,
+  "fps_measured": false,
+  "integration_tests_passed": 17
+}

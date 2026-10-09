@@ -1,0 +1,13 @@
+iteration=0 active=[]
+iteration=1 active=[1]
+iteration=2 active=[1, 60]
+iteration=3 active=[1, 2, 60]
+iteration=4 active=[1, 2, 53, 60]
+iteration=5 active=[0, 1, 2, 53, 60]
+iteration=6 active=[0, 1, 2, 27, 53, 60]
+iteration=7 active=[0, 2, 27, 53, 60]
+iteration=8 active=[0, 2, 27, 48, 53, 60]
+iteration=9 active=[0, 2, 26, 27, 48, 53, 60]
+iteration=10 active=[2, 26, 27, 48, 53, 60]
+FAIL no entering row active_gaps=[(2, 1.7263968032921184e-14, 0.0029540975273758545), (26, 0.0, 0.006340101289600555), (27, 0.0, 0.008748135620199257), (48, -1.0058516248644817e-21, 0.0019355974830840793), (53, 1.1650938189482901e-18, 4.221960727078365), (60, 7.047314121155779e-19, 62.9638646698537)]
+rows=94 width=882 result=false

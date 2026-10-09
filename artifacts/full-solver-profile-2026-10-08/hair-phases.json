@@ -1,0 +1,10 @@
+{
+  "scope": "full 469-guide model, six fixed substeps, profiling enabled",
+  "substeps": 6,
+  "structural_worker_sum_ms": 399.478,
+  "mesh_contact_worker_sum_ms": 216.70600000000002,
+  "self_contact_wall_sum_ms": 82.511,
+  "worker_times_are_not_wall_times": true,
+  "profiling_changes_solver_state": false,
+  "timing_overhead_included": true
+}

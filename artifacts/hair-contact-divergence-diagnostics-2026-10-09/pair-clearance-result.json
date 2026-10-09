@@ -1,0 +1,27 @@
+{
+  "unit_tests": {
+    "passed": 101,
+    "failed": 0,
+    "ignored": 4
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "fixed": "pair geometric admission no longer spends two split target clearance budgets",
+  "previous_pair_gap_m": -1.4475977446642193e-10,
+  "clearance_tolerance_m": 1e-10,
+  "full_native_control": {
+    "passed": false,
+    "frame": 2,
+    "step_completed": true,
+    "failed_gate": "relative strain <= 5%",
+    "rod": 288,
+    "segment": 0,
+    "signed_strain": -0.2251930723450094
+  },
+  "phase_evidence": "compression arises with prescribed root movement; safe structural response nearly stalls; projection and velocity phases do not introduce it",
+  "default_enabled": false,
+  "render_fps_measured": false,
+  "real_gpu_qualified": false
+}

@@ -1,0 +1,36 @@
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+Model smoke on AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FACE MESH t=0.000 stage=deformation ms=13.710
+FACE MESH t=0.000 stage=normals ms=4.214
+FACE MESH t=0.000 stage=diffusion ms=97.729
+FACE MESH t=0.000 stage=vertex_lighting ms=0.800
+FACE MESH t=0.000 stage=face_features ms=15.889
+FACE MESH t=0.000 stage=hair_and_shapes ms=22.067
+FACE MESH t=0.000 stage=film_and_probe ms=0.499
+FACE MESH t=0.000 stage=transmission ms=0.002
+FACE MESH t=0.000 stage=mesh_validation ms=41.184
+FACE MESH t=0.000 stage=deformation ms=13.135
+FACE MESH t=0.000 stage=normals ms=3.997
+FACE MESH t=0.000 stage=diffusion ms=0.854
+FACE MESH t=0.000 stage=vertex_lighting ms=0.701
+FACE MESH t=0.000 stage=face_features ms=15.501
+FACE MESH t=0.000 stage=hair_and_shapes ms=0.508
+FACE MESH t=0.000 stage=film_and_probe ms=0.003
+FACE MESH t=0.000 stage=transmission ms=0.001
+FACE MESH t=0.000 stage=mesh_validation ms=1.056
+SECONDARY SAMPLE: frame=0 simulated_s=0.250000 advance_ms=1917.287
+FACE MESH t=0.250 stage=deformation ms=18.156
+FACE MESH t=0.250 stage=normals ms=8.085
+FACE MESH t=0.250 stage=diffusion ms=114.727
+FACE MESH t=0.250 stage=vertex_lighting ms=1.769
+FACE MESH t=0.250 stage=face_features ms=27.555
+FACE MESH t=0.250 stage=hair_and_shapes ms=0.593
+FACE MESH t=0.250 stage=film_and_probe ms=0.003
+FACE MESH t=0.250 stage=transmission ms=0.001
+FACE MESH t=0.250 stage=mesh_validation ms=1.231
+GPU BODY STREAM: vertices=171495 cpu_hair_vertices=0
+GPU HAIR DRAW: vertices=2363760 frame_upload_bytes=630336 no_geometry_readback=true cpu_hair_poisoned=true
+Mesh update CPU: median 181.44 ms, max 181.44 ms
+PASS: snapshot saved to artifacts/jump-secondary-2026-10-08/gpu-body-separated-snapshot.png

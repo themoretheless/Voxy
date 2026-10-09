@@ -1,0 +1,18 @@
+{
+  "guides": 469,
+  "physical_steps": 30,
+  "same_matrix_gpu_cpu_audit_calls": 360,
+  "max_gpu_linear_position_error_m": 9.031091490960264e-10,
+  "max_gpu_linear_rotation_error_rad": 4.4118437465823224e-08,
+  "unperturbed_cpu_external_path_bit_identical": true,
+  "cpu_control_gate_passed": true,
+  "cpu_relative_correction_perturbation": 1e-10,
+  "perturbed_cpu_first_step_position_difference_m": 0.00038104625980786566,
+  "perturbed_cpu_max_position_difference_m": 0.020022867892274143,
+  "gpu_dynamic_gate_passed": false,
+  "perturbed_cpu_dynamic_gate_passed": false,
+  "original_linear_residual_gate_unchanged": true,
+  "runtime_gpu_physics_enabled": false,
+  "conclusion": "native nonlinear dynamics amplify tiny admitted correction changes; not a GPU-only or external-ordering failure",
+  "next_action": "isolate contact phases and degenerate contact normal selection"
+}

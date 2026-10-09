@@ -1,0 +1,18 @@
+{
+  "systems": 469,
+  "workgroup": 32,
+  "single_submission_dispatches": 9,
+  "warmup_dispatches": 1,
+  "valid_gpu_timestamp_samples": 8,
+  "median_dispatch_ms": 1.814542,
+  "accuracy_gate_passed": true,
+  "paired_workgroup_medians_ms": {
+    "1": 1.803396,
+    "32": 1.811146
+  },
+  "workgroup_improvement_verified": false,
+  "default_workgroup_changed": false,
+  "runtime_gpu_physics_enabled": false,
+  "timing_scope": "one linear solve pass; immutable input copied between passes, copies outside timestamp interval",
+  "next_action": "reduce sequential band factorization cost before replacing native solver"
+}

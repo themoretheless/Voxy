@@ -1,0 +1,9 @@
+{
+  "last_simulated_seconds": 8.491667,
+  "preparation_failure": false,
+  "recent_worker_pose_count": 30,
+  "recent_median_work_ms": 1521.5525,
+  "recent_median_physics_ms": 1177.476,
+  "recent_median_mesh_ms": 315.5145,
+  "scope": "running binary before new publication gate; gate verified by unit tests"
+}

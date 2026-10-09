@@ -1,0 +1,41 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+
+running 1 test
+joint_position_contacts_preserve_worker_and_accelerator_equivalence --- FAILED
+
+failures:
+
+---- joint_position_contacts_preserve_worker_and_accelerator_equivalence stdout ----
+HAIR VELOCITY NONCONVERGENCE constraints=42 residual_m_s=0.0000012495012947738674 tolerance_m_s=0.00000000001
+
+thread 'joint_position_contacts_preserve_worker_and_accelerator_equivalence' (21049630) panicked at crates/physics/tests/hair.rs:561:87:
+called `Result::unwrap()` on an `Err` value: "shared contact velocity constraints did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    joint_position_contacts_preserve_worker_and_accelerator_equivalence
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 45.35s
+
+error: test failed, to rerun pass `-p physics --test hair`

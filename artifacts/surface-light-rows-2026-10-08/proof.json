@@ -1,0 +1,12 @@
+{
+  "dataset": "static original body, not current posed refined model",
+  "vertices": 42342,
+  "triangles": 84680,
+  "reference_bitwise_equal": true,
+  "reference_sha256": "46cc6e36f23ab3737fd43418cc1b2d9fff8a068f32b9183787bd67ee8ca877e2",
+  "paired_median_baseline_ms": 54.982957999999996,
+  "paired_median_rows_ms": 56.463875,
+  "rows_slowdown_percent": 2.693410929255591,
+  "independent_rows_enabled_in_runtime": false,
+  "gpu_replacement_qualified": false
+}

@@ -1,0 +1,19 @@
+{
+  "mesh_only_position_error_m": 1.6134816371859984e-08,
+  "mesh_only_quaternion_component_error": 2.538839931620629e-07,
+  "mesh_only_strict_gate_passed": true,
+  "hair_library_tests_passed": 31,
+  "hair_library_tests_ignored": 1,
+  "boundary_query_tolerance_m": 1e-10,
+  "physical_radius_changed": false,
+  "full_model_position_error_m": 4.154949904522365e-06,
+  "full_model_quaternion_component_error": 7.965984840532792e-05,
+  "full_model_strict_gate_passed": false,
+  "full_model_error_unchanged_by_boundary_fix": true,
+  "real_gpu_status": "completed_strict_gate_failed",
+  "real_gpu_calls": 360,
+  "real_gpu_frames": 30,
+  "real_gpu_position_error_m": 9.500438700087849e-05,
+  "real_gpu_quaternion_component_error": 0.001051854490163373,
+  "gpu_linear_solver_enabled_in_runtime": false
+}

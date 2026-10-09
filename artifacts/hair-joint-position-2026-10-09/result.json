@@ -1,0 +1,24 @@
+{
+  "qualified": false,
+  "joint_contact_positions_default": false,
+  "operator_tests_passed": 52,
+  "operator_tests_ignored": 1,
+  "integration_tests_passed": 18,
+  "method": "Joint unilateral positional increment under H=M+dt^2*K. Shared operator for velocity and position. Nonlocal linear/angular rod compliance; roots fixed; pair reactions excluded from independently anchored strand planes.",
+  "full_model": {
+    "frames": 120,
+    "guides": 469,
+    "structural_iterations": 6,
+    "contact_phase": "every fourth and final iteration",
+    "cpu_control": true,
+    "scale_perturbation": 1e-10,
+    "position_error_m": 0.009845386232471845,
+    "quaternion_component_error": 0.06828740883557254,
+    "first_divergence_frame": 54,
+    "strain_guard_passed_all_frames": true,
+    "passed": false
+  },
+  "rollback": "incompatible joint contacts preserve pose and subsequent dynamics",
+  "gpu_physics_qualified": false,
+  "fps_measured": false
+}

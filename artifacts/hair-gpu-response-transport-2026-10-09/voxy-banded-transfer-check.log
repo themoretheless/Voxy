@@ -1,0 +1,31 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling syn v3.0.4
+   Compiling syn v2.0.119
+   Compiling serde v1.0.229
+    Checking serde_json v1.0.151
+   Compiling bytemuck_derive v1.12.0
+   Compiling thiserror-impl v2.0.20
+   Compiling serde_derive v1.0.229
+   Compiling zerocopy-derive v0.8.56
+   Compiling gltf-derive v1.4.1
+    Checking bytemuck v1.25.2
+    Checking thiserror v2.0.20
+    Checking zerocopy v0.8.56
+    Checking gltf-json v1.4.1
+    Checking glam v0.33.6
+    Checking image v0.25.10
+    Checking naga-types v30.0.1
+    Checking wgpu-types v30.0.1
+    Checking gltf v1.4.1
+    Checking half v2.7.1
+    Checking naga v30.0.1
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+    Checking wgpu-naga-bridge v30.0.1
+    Checking wgpu-hal v30.0.1 (/Users/themoretheless/Documents/ChatGPT/Voxy/vendor/wgpu-hal)
+    Checking wgpu-core-deps-apple v30.0.1
+    Checking wgpu-core v30.0.1
+    Checking wgpu v30.0.1 (/Users/themoretheless/Documents/ChatGPT/Voxy/vendor/wgpu)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `release` profile [optimized] target(s) in 11.91s

@@ -189,6 +189,11 @@ pub(super) fn cholesky(matrix: &mut [f64], rhs: &mut [f64], active: std::ops::Ra
     solve_factored(matrix,rhs,active);
 }
 pub(super) fn solve_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
+    solve_lower_factored(matrix,rhs,active.clone());
+    solve_upper_factored(matrix,rhs,active);
+}
+/// Forward half of the same canonical Cholesky response, L*w=load.
+pub(super) fn solve_lower_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
     let first=active.start;let end=active.end;
     for i in first..end {
         for j in i.saturating_sub(BAND - 1).max(first)..i {
@@ -196,6 +201,9 @@ pub(super) fn solve_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::
         }
         rhs[i] /= matrix[i * BAND];
     }
+}
+pub(super) fn solve_upper_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
+    let first=active.start;let end=active.end;
     for i in (first..end).rev() {
         for j in i + 1..(i + BAND).min(end) {
             rhs[i] -= matrix[j * BAND + j - i] * rhs[j];

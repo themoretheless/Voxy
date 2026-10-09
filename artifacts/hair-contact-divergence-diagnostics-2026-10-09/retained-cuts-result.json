@@ -1,0 +1,51 @@
+{
+  "implementation": "retain distinct barycentric/time/normal swept witnesses within one native Newton admission transaction; exact duplicate witnesses ignored; canonical constraint coalescing unchanged",
+  "regression": "new witness alone admits crossing the earlier witness; retained original plane rejects that candidate with exact pinned roots",
+  "unit": {
+    "passed": 119,
+    "ignored": 5
+  },
+  "integration": {
+    "passed": 20
+  },
+  "full_model": {
+    "mode": "native-only paired control, not GPU",
+    "guides": 469,
+    "passed_frames": [
+      1,
+      2
+    ],
+    "failed_frame": 3,
+    "elapsed_seconds": 163.07,
+    "max_reported_constraints": 981,
+    "error": "swept strand components have no admissible progress"
+  },
+  "replay": {
+    "passed": false
+  },
+  "nominal_restrictions": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,16)",
+      "reference_gap_m": -1.4239482936849457e-05,
+      "pointwise_time": 1.0
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(145,0) b=(200,17)",
+      "reference_gap_m": -4.887474398956163e-06,
+      "pointwise_time": 0.4550373428622239
+    }
+  ],
+  "reduced_restrictions": [
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(131,1)",
+      "reference_gap_m": -1.7871337672360917e-05
+    },
+    {
+      "identity": "HAIR SWEPT LIMIT a=(130,0) b=(135,2)",
+      "reference_gap_m": -4.181891240052527e-05
+    }
+  ],
+  "scope": "pointwise searches provide counterexamples only; runtime still rejects full motion; no complete-jump/GPU/FPS proof",
+  "rendered_fps": null,
+  "next_work": "nonlinear continuous contact refinement and native/GPU projection scalability; do not omit witnesses or relax gates"
+}

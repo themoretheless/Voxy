@@ -1,0 +1,24 @@
+{
+  "scope": "Swept AABB candidate selection and conservative continuous capsule query, not runtime integration",
+  "unit_tests": {
+    "passed": 86,
+    "failed": 0,
+    "ignored": 3
+  },
+  "release_app_check": "passed",
+  "evidence": [
+    "Crossing detected with separated endpoint states",
+    "Deterministic sorted unique pairs",
+    "64-motion brute force continuous and 17 intermediate-pose comparisons",
+    "Large movement never silently omitted",
+    "Invalid coordinates and insufficient precision rejected",
+    "All three captured guide121/122 collision paths selected and queried"
+  ],
+  "limitations": [
+    "Initial contacts require constrained nonlinear integration",
+    "Anatomical follicle and rod adjacency ownership remains with integration caller",
+    "Sweep-and-prune worst case quadratic candidate count",
+    "No proof of full-model real-time performance or greater than160FPS"
+  ],
+  "runtime_enabled": false
+}

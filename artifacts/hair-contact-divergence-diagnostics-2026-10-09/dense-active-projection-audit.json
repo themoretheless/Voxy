@@ -1,0 +1,18 @@
+{
+  "scope": "independent numerical audit; reconstructed effective bounds; not a formal proof or runtime fallback",
+  "constraints": 106,
+  "columns": 642,
+  "tolerance_m": 1e-14,
+  "gram_relative_asymmetry": 1.2212453270876722e-15,
+  "normalized_eigenvalue_min": -4.953341830199724e-16,
+  "jacobian_rank": 106,
+  "primal_status": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "primal_max_violation_m": 4.3029273720518457e-19,
+  "farkas_status": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+  "farkas_bound_dot_m": null,
+  "farkas_transpose_residual": null,
+  "dual_status": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+  "dual_iterations": 150,
+  "dual_max_kkt_residual_m": 8.913753727648153e-12,
+  "dual_passes_original_gate": false
+}

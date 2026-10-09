@@ -1,0 +1,25 @@
+{
+  "unit_tests": {
+    "passed": 100,
+    "failed": 0,
+    "ignored": 4
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "captured_geometry_replay": {
+    "passed": true,
+    "seconds": 0.04,
+    "scope": "candidate geometry and continuous admission only"
+  },
+  "full_native_control": {
+    "passed": false,
+    "frame": 2,
+    "error": "swept strand motion starts in penetration",
+    "frame_1_passed": true
+  },
+  "real_metal_response_precision": "unresolved prior rejection",
+  "default_enabled": false,
+  "render_fps_measured": false
+}

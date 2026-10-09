@@ -1,0 +1,14 @@
+{
+  "change": "Use closest-point metric gradients for interior recovery; reserve pseudonormals for sign classification and zero-distance fallback",
+  "capsule_penetration_uses_signed_distance": true,
+  "concave_solid_regression_old_projection_remains_inside": true,
+  "concave_solid_regression_new_projection_exits_solid": true,
+  "physics_library_tests_passed": 167,
+  "physics_library_tests_ignored": 20,
+  "hair_integration_tests_passed": 15,
+  "full_model_stability_status": "completed_30_frames_failed_stability_gate",
+  "gpu_linear_solver_enabled_in_runtime": false,
+  "fps_target_verified": false,
+  "position_error_m": 0.009666014837178966,
+  "quaternion_component_error": 0.1336016278845745
+}

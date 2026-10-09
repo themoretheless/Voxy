@@ -1,0 +1,17 @@
+{
+  "change": "Cross-product determinant and numerator preserve near-parallel interior closest points; handle point-segment degeneracy in both orders",
+  "geometry_tests_passed": 33,
+  "geometry_tests_ignored": 1,
+  "integration_tests_passed": 15,
+  "full_model_frames": 30,
+  "position_error_m": 0.007240353631756569,
+  "quaternion_component_error": 0.06942964195187232,
+  "strict_gate_passed": false,
+  "previous_position_error_m": 4.154949904522365e-06,
+  "stability_regressed": true,
+  "first_divergence_frame": 11,
+  "first_divergence_rod": 463,
+  "first_divergence_point": 17,
+  "runtime_gpu_solver_enabled": false,
+  "fps_verified": false
+}

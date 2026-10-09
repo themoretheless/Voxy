@@ -1,0 +1,13 @@
+{
+  "paired_fixture_pairs": 164218,
+  "baseline_median_ms": 6.21,
+  "packed_median_ms": 3.014,
+  "pair_order_exact": true,
+  "physical_quality_reduced": false,
+  "full_model_pose_ms": 161.9,
+  "full_model_skin_worker_ms": 146.176,
+  "full_model_hair_wall_ms": 154.352,
+  "full_model_timing_is_single_separate_run": true,
+  "real_time_160_fps_verified": false,
+  "passed_tests": 24
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "workgroup": 1,
+    "exit_code": 0,
+    "median_gpu_ms": 1.950792,
+    "valid_samples": 8,
+    "gate_passed": true
+  },
+  {
+    "workgroup": 4,
+    "exit_code": 0,
+    "median_gpu_ms": 3.202833,
+    "valid_samples": 8,
+    "gate_passed": true
+  },
+  {
+    "workgroup": 8,
+    "exit_code": 0,
+    "median_gpu_ms": 2.2605,
+    "valid_samples": 8,
+    "gate_passed": true
+  },
+  {
+    "workgroup": 16,
+    "exit_code": 0,
+    "median_gpu_ms": 2.622458,
+    "valid_samples": 8,
+    "gate_passed": true
+  },
+  {
+    "workgroup": 32,
+    "exit_code": 0,
+    "median_gpu_ms": 5.003167,
+    "valid_samples": 8,
+    "gate_passed": true
+  },
+  {
+    "workgroup": 64,
+    "exit_code": 0,
+    "median_gpu_ms": 4.037459,
+    "valid_samples": 8,
+    "gate_passed": true
+  }
+]

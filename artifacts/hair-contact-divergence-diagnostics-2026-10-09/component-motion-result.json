@@ -1,0 +1,51 @@
+{
+  "scope": "Contact-component swept structural admission with complete cross-component re-query, not production or FPS qualification",
+  "unit_tests": {
+    "passed": 95,
+    "failed": 0,
+    "ignored": 3
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "release_app_test_build": "passed",
+  "native_control": {
+    "passed_frames": 1,
+    "failed_frame": 2,
+    "error": "prescribed hair roots cross a strand during prediction",
+    "first_frame_rod390": {
+      "rod": 390,
+      "frame": 1,
+      "signed_root_segment_strain": -6.472451175021376e-08,
+      "root_displacement_m": 0.00022294547973836516,
+      "first_free_node_displacement_m": 0.0002230455347360292,
+      "scope": "Native/control first frame; GPU qualification failed separately"
+    }
+  },
+  "real_gpu": {
+    "adapter": "Apple M4 Max / Metal",
+    "failed_frame": 1,
+    "error": "banded solve: Residual { system: 0 }",
+    "response_call": 17,
+    "requests": 469,
+    "loads": 480,
+    "independent_replay_status": "FAILED with same residual rejection",
+    "independent_replay_test_elapsed_s": 0.13,
+    "fixture_sha256": "6d1d7a56f138750d04f3916801d4fc8e33e072b6626f813c5ffd890307a3e799"
+  },
+  "proved": [
+    "Independent guide retains full motion despite another group collision",
+    "A new collision created by group reduction is rechecked and joins the groups",
+    "Angular trust region applies per contact group",
+    "All final group trajectories admitted before pose publication",
+    "Root390 old 7.46 percent compression resolved in first native/control frame"
+  ],
+  "incomplete": [
+    "Joint prescribed-root and free-node path admission",
+    "GPU rejected response batch accuracy",
+    "Long-cycle qualification",
+    "Production GPU activation and greater than160 rendered FPS"
+  ],
+  "default_enabled": false
+}

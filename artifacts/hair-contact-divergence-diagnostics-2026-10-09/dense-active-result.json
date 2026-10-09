@@ -1,0 +1,87 @@
+{
+  "unit_tests": {
+    "passed": 104,
+    "failed": 0,
+    "ignored": 5
+  },
+  "integration_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "captured_103_constraint_dual": {
+    "passed": true,
+    "original_gate_m": 1e-14,
+    "scope": "dual operator and every inequality; full animation still requires separate qualification"
+  },
+  "full_native_control": {
+    "passed": false,
+    "frame": 2,
+    "error": "shared contact projection constraints did not converge",
+    "constraints": 106
+  },
+  "captured_106_constraint_dual": {
+    "passed": false
+  },
+  "next_failure_audit": {
+    "scope": "independent numerical active-set audit; original floating-point operator",
+    "cycle_detected": true,
+    "history": [
+      {
+        "iteration": 0,
+        "release": 74,
+        "fraction": 2.3284428476760074e-08
+      },
+      {
+        "iteration": 1,
+        "release": 47,
+        "fraction": 8.41463178540385e-09
+      },
+      {
+        "iteration": 2,
+        "release": 54,
+        "fraction": 1.3153129468216147e-07
+      },
+      {
+        "iteration": 3,
+        "release": 45,
+        "fraction": 2.4619337303973566e-07
+      },
+      {
+        "iteration": 4,
+        "release": 79,
+        "fraction": 3.519116476903272e-07
+      },
+      {
+        "iteration": 5,
+        "release": 91,
+        "fraction": 1.8850888562692436e-06
+      },
+      {
+        "iteration": 6,
+        "release": 27,
+        "fraction": 0.03136533400401673
+      },
+      {
+        "iteration": 7,
+        "release": 28,
+        "fraction": 0.10681919710672784
+      },
+      {
+        "iteration": 8,
+        "active": 75,
+        "residual_m": 1.8354306789702957e-12,
+        "condition": 155.2591590399113,
+        "enter": 74,
+        "enter_schur_curvature": 0.0
+      },
+      {
+        "iteration": 9,
+        "release": 74,
+        "fraction": 0.0
+      }
+    ]
+  },
+  "default_swept_enabled": false,
+  "render_fps_measured": false,
+  "real_gpu_qualified": false
+}

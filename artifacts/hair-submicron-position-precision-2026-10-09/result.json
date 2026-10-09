@@ -1,0 +1,29 @@
+{
+  "change": "position projection residual tolerance tightened from 1e-5 m to 1e-11 m",
+  "geometry_gate_m": 1e-10,
+  "regression_before": "failed",
+  "regression_after": "passed",
+  "hair_unit_tests": {
+    "passed": 58,
+    "ignored": 1
+  },
+  "hair_integration_tests": {
+    "passed": 18,
+    "failed": 1,
+    "failure": "joint_position_contacts_preserve_worker_and_accelerator_equivalence",
+    "residual_m": 1.4228772834085844e-06
+  },
+  "rebase_test": "passed",
+  "full_model_test": {
+    "passed": false,
+    "backend": "native CPU control",
+    "first_failure_frame": 13,
+    "cause": "nonlinear mesh contact did not converge",
+    "worst_rod": 256,
+    "worst_segment": 0,
+    "fraction": 0.2261183808166092,
+    "gap_m": -3.9999999999996656e-05
+  },
+  "joint_positions_default_enabled": false,
+  "fps_measured": false
+}

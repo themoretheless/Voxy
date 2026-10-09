@@ -1,0 +1,42 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 14.68s
+     Running tests/hair.rs (/tmp/voxy-release-120fps-20261007/release/deps/hair-ba8380f1b14b6ffd)
+
+running 1 test
+HAIR CONTACT PROJECTION NONCONVERGENCE constraints=36 residual=0.0000014228772834085844 tolerance=0.00000000001
+
+thread 'joint_position_contacts_preserve_worker_and_accelerator_equivalence' (21821817) panicked at crates/physics/tests/hair.rs:561:87:
+called `Result::unwrap()` on an `Err` value: "shared contact projection constraints did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test joint_position_contacts_preserve_worker_and_accelerator_equivalence ... FAILED
+
+failures:
+
+failures:
+    joint_position_contacts_preserve_worker_and_accelerator_equivalence
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p physics --test hair`

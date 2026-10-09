@@ -1,0 +1,21 @@
+{
+  "adapter": "Apple M4 Max Metal",
+  "guides": 469,
+  "segments_per_guide": 20,
+  "physical_steps": 30,
+  "simulation_seconds": 0.25,
+  "gpu_linear_calls": 360,
+  "resident_gpu_job_reused": true,
+  "full_body_triangle_contacts": true,
+  "guide_self_contacts": true,
+  "native_wall_ms": 715.1511230000002,
+  "hybrid_wall_ms": 4686.918249,
+  "bridge_wall_ms": 2563.9175889999983,
+  "first_frame_position_drift_m": 0.0006035192882845181,
+  "max_position_drift_m": 0.02061118822240271,
+  "max_quaternion_component_drift": 0.27619719680088456,
+  "dynamic_accuracy_gate_passed": false,
+  "runtime_enabled": false,
+  "input_admission_tests_passed": 4,
+  "next_action": "audit every in-loop linear correction against CPU to isolate conditioning from nonlinear contact sensitivity"
+}

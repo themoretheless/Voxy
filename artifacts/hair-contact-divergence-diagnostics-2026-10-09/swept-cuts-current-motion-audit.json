@@ -1,0 +1,10 @@
+{
+  "scope": "33 sampled times on the initial trust-scaled candidate. Negative gaps are counterexamples; no negative sample does not prove separation. Later component reductions not sampled.",
+  "guides": 469,
+  "radius_m": 4e-05,
+  "candidate_pairs": 5480,
+  "sampled_penetrating_pairs": 0,
+  "minimum_sampled_gap_m": 0,
+  "minimum_initial_trust_scale": 1.0,
+  "rows": []
+}

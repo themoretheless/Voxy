@@ -1,0 +1,44 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "codec_tests_passed": 9,
+  "gather_range_tests_passed": 1,
+  "gpu_proof_passed": true,
+  "bitwise_equal_to_full_readback": true,
+  "mixed_shapes_ragged_loads_and_17_load_chunk_boundary_verified": true,
+  "transfer_bytes_example": {
+    "guides": 469,
+    "rows": 126,
+    "full": 4729412,
+    "compact": 474644
+  },
+  "default_enabled": false,
+  "full_model_compact_path_qualified": false,
+  "fps_measured": false,
+  "source_sha256": {
+    "crates/voxy_render/src/banded_solve.rs": "dae61abebf567c9fc578d135b7f1afc9078b8cad902b98fd208796f436d8d347",
+    "crates/voxy_render/src/compute.rs": "8f4b1a06ffd68561fdec4fa269055dfe408c3f772eb65d93bcc8089d0fcd3421",
+    "crates/voxy_app/src/gpu_hair_response_dispatch.rs": "91bc6acf98a10acdd5bf7f08b885c1ab55d2d32b937e62930844ee034461e3db",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "60b1c9f5067e8a3b5ae547522782d4c2a75da82e0a2ba379c109fcdd40f7398b"
+  },
+  "full_model_120": {
+    "status": "failed",
+    "frames": 120,
+    "guides": 469,
+    "first_divergence_frame": 59,
+    "first_divergence_rod": 153,
+    "first_divergence_point": 9,
+    "position_error_m": 0.002527482605900945,
+    "quaternion_component_error": 0.03551131983375144,
+    "position_gate_m": 1e-06,
+    "quaternion_gate": 5e-05,
+    "native_ms": 162847.958006,
+    "hybrid_ms": 477935.680545,
+    "solver_bridge_ms": 327719.604615,
+    "contact_calls": 14549,
+    "contact_dispatches": 135576,
+    "contact_submissions": 30900,
+    "wall_seconds": 647.12,
+    "gpu_transport_shader": false
+  }
+}

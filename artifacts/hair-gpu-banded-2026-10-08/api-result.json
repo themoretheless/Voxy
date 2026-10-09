@@ -1,0 +1,12 @@
+{
+  "renderer_api": "BandedSolveInput",
+  "native_full_model_systems_checked": 3283,
+  "packed_input_matches_qualified_example": true,
+  "atomic_batch_admission": true,
+  "immutable_input_residual_audit": true,
+  "inactive_dofs_preserved": true,
+  "malformed_and_numeric_range_rejected": true,
+  "passed_api_tests": 3,
+  "gpu_accuracy_gate_passed": true,
+  "runtime_physics_integration_enabled": false
+}

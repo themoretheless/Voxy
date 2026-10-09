@@ -1,0 +1,92 @@
+{
+  "status": "60-frames-pass-120-frames-fail-default-off",
+  "default_enabled": false,
+  "flag": "VOXY_HAIR_RECOVER_FRICTION_PRESSURE",
+  "method": "Recover absolute contact reactions by projecting the current free Newton increment under the shared M+dt^2 K operator; never apply the virtual increment to poses. Reuse the same contact geometry, aliases and multi-load backend.",
+  "unit_tests": {
+    "passed": 70,
+    "failed": 0,
+    "ignored": 1,
+    "log": "force-pressure-unit-tests.log",
+    "analytic_case": "two resting rods at capsule clearance, known inward inertial load at both free points; total pressure matches force; stale history discarded; separating state releases pressure; poses unchanged",
+    "resting_friction": "Nonzero tangential friction at zero closing normal velocity, paired momentum preserved."
+  },
+  "qualification": {
+    "passed": false,
+    "frames": 120,
+    "simulation_seconds": 1,
+    "guides": 469,
+    "first_position_divergence": {
+      "frame": 111,
+      "rod": 121,
+      "point": 13,
+      "error_m": 5.833348877347377e-06
+    },
+    "position_error_m": 9.793220208306752e-05,
+    "quaternion_component_error": 0.0010360718191054774,
+    "native_ms": 169817.0901620001,
+    "hybrid_ms": 455576.6504190002,
+    "solver_bridge_ms": 302861.7540929988,
+    "wall_seconds": 627.87,
+    "position_gate_m": 1e-06,
+    "quaternion_component_gate": 5e-05,
+    "log": "force-pressure-full-120.log"
+  },
+  "limitations": [
+    "Force recovery is experimental and disabled by default: 120-frame trajectory admission failed.",
+    "Earlier frame 56-59 drift disappeared in this experiment, but later frame 111 drift remains.",
+    "No render FPS measured; >160 FPS has not been established.",
+    "Recording shows current native default physics and GPU hair rendering, not the rejected experimental solver."
+  ],
+  "body_checks": {
+    "passed": 4,
+    "log": "body-jump-visible-motion.log",
+    "render_vertex_peak_mm": {
+      "breasts": [
+        12.087094413464017,
+        12.09844909829355
+      ],
+      "buttocks": [
+        9.398425745193636,
+        9.594945984308758
+      ]
+    },
+    "abdomen": "separate actual surface binding check >1e-6 m",
+    "limits": "CPU-computed rendered mesh vertices, not an inspected animation or FPS measurement"
+  },
+  "integration_tests": {
+    "passed": 21,
+    "log": "force-pressure-integration-tests.log"
+  },
+  "qualification_60": {
+    "passed": true,
+    "frames": 60,
+    "guides": 469,
+    "position_error_m": 4.685951769840824e-10,
+    "quaternion_component_error": 3.403741163920948e-09,
+    "native_ms": 102539.03728700004,
+    "hybrid_ms": 237712.642416,
+    "wall_seconds": 346.19,
+    "log": "force-pressure-full-60.log"
+  },
+  "demo_recording": {
+    "file": "jump-body-hair-current.mp4",
+    "inline_preview": "jump-body-hair-current.gif",
+    "views": [
+      "front",
+      "side"
+    ],
+    "duration_seconds": 6,
+    "samples": 120,
+    "sample_interval_seconds": 0.05,
+    "render_hair_vertices": 2363760,
+    "cpu_hair_vertices": 0,
+    "geometry_readback": false,
+    "simulation": "current default native demo, experimental force-pressure path disabled",
+    "limits": "Offline rendering; sample cadence is not measured runtime FPS.",
+    "logs": [
+      "jump-front-render.log",
+      "jump-side-render.log"
+    ]
+  }
+}

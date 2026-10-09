@@ -1,0 +1,140 @@
+    Blocking waiting for file lock on build directory
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 31.78s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 109 tests
+test hair::contact::cell_key_tests::signed_cell_coordinates_round_trip_without_aliasing ... ok
+test hair::contact::closed_surface_tests::feature_admission_rejects_touching_vertex_fans_and_collapsed_refits ... ok
+test hair::contact::closed_surface_tests::surface_vertex_is_ambiguous_and_nonfinite_queries_are_rejected ... ok
+test hair::contact::continuous::tests::detects_crossing_between_two_separated_end_states ... ok
+test hair::contact::continuous::tests::initial_contact_and_iteration_limit_are_not_reported_clear ... ok
+test hair::contact::continuous::tests::swept_bounds_find_crossing_with_clear_endpoint_states ... ok
+test hair::contact::closed_surface_tests::concave_edge_recovery_uses_metric_gradient_instead_of_sign_pseudonormal ... ok
+test hair::contact::continuous::tests::stationary_sphere_against_a_moving_segment ... ok
+test hair::contact::continuous::tests::rejects_invalid_or_unresolvable_precision_requests ... ok
+test hair::contact::continuous::tests::common_translation_and_separating_motion_remain_clear ... ok
+test hair::contact::continuous::tests::swept_bounds_never_silently_drop_large_motion_or_invalid_input ... ok
+test hair::contact::closed_surface_tests::oriented_crossings_preserve_nested_cavities ... ok
+test hair::contact::closed_surface_tests::feature_topology_welds_seams_and_rejects_open_or_split_surfaces ... ok
+test hair::contact::closed_surface_tests::feature_normals_classify_faces_edges_vertices_and_refresh_after_motion ... ok
+test hair::contact::continuous::tests::captured_structural_transition_is_limited_before_deep_overlap ... ok
+test hair::contact::first_surface_segment_tests::segment_hits_finite_surface_and_reports_distance_and_orientation ... ok
+test hair::contact::friction_diagnostics_tests::friction_observation_preserves_equal_opposite_response_bitwise ... ok
+test hair::contact::query_tests::accumulated_contact_direction_matches_applied_weighted_corrections ... ok
+test hair::contact::query_tests::allowed_follicle_contact_does_not_hide_a_later_surface_crossing ... ok
+test hair::contact::query_tests::animated_surface_velocity_tracks_material_points_and_invalid_refits_are_atomic ... ok
+test hair::contact::query_tests::capsule_query_detects_interior_contact_and_rejects_distant_plane_extension ... ok
+test hair::contact::query_tests::capped_pair_projection_preserves_free_particle_momentum ... ok
+test hair::contact::query_tests::closest_point_regions_preserve_face_edge_and_vertex_identity ... ok
+test hair::contact::query_tests::collapsed_intermediate_motion_is_rejected_atomically ... ok
+test hair::contact::query_tests::clearance_skips_match_full_queries_when_particles_cross_surface ... ok
+test hair::contact::query_tests::leaf_query_contains_exactly_overlapping_triangle_bounds ... ok
+test hair::contact::query_tests::limited_strand_projection_preserves_unresolved_penetration_in_constraints ... ok
+test hair::contact::query_tests::moving_surface_response_preserves_common_translation ... ok
+test hair::contact::query_tests::current_strand_manifold_combines_projection_load_without_duplicate_velocity_constraints ... ok
+test hair::contact::query_tests::multiple_intersections_choose_first_and_shared_features_use_topology ... ok
+test hair::contact::query_tests::near_parallel_segments_preserve_the_interior_minimum_across_scales ... ok
+test hair::contact::query_tests::point_segments_project_onto_the_other_segment_in_both_orders ... ok
+test hair::contact::query_tests::pair_clearance_is_not_two_independent_target_tolerances ... ok
+test hair::contact::query_tests::refreshed_strand_contacts_use_current_geometry_without_projecting ... ok
+test hair::contact::query_tests::sampled_motion_uses_full_interval_velocity_and_original_endpoints ... ok
+test hair::contact::query_tests::released_strand_contacts_do_not_apply_historical_velocity_impulses ... ok
+test hair::contact::query_tests::separated_strands_retain_boundary_planes_without_projection_or_adhesion ... ok
+test hair::contact::query_tests::shared_endpoint_contact_is_unique_and_collision_owners_expire_separately ... ok
+test hair::contact::query_tests::strand_velocity_response_conserves_momentum_dissipates_energy_and_is_galilean_invariant ... ok
+test hair::contact::query_tests::nonlinear_joint_contact_requeries_pairs_created_by_a_solved_increment ... ok
+test hair::contact::query_tests::strand_velocity_response_preserves_common_translation ... ok
+test hair::contact::segment_pair_fixture_tests::captured_near_parallel_pairs_match_high_precision_geometry ... ok
+test hair::contact::unique_pair_tests::owner_filter_profile ... ignored, paired broad-phase benchmark
+test hair::contact::velocity_contacts::captured_component_tests::captured_contact_component_replays_without_full_model_warmup ... ignored, requires an actual captured contact component binary
+test hair::contact::velocity_contacts::captured_position_tests::captured_body_contact_nonlinear_surface_replay ... ignored, requires captured anatomical collider binary for nonlinear replay
+test hair::contact::velocity_contacts::dense_active_set::tests::captured_projection_retains_all_inequality_gates ... ignored, requires an exported VQP1 projection fixture
+test hair::contact::query_tests::warm_start_remains_exact_after_surface_refit_and_far_motion ... ok
+test hair::contact::velocity_contacts::projected_gradient::tests::matrix_free_product_matches_combined_native_rod_compliance ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission ... ignored, requires a captured joint-root motion fixture
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::affine_cut_includes_prescribed_root_and_time_interpolation ... ok
+test hair::contact::velocity_contacts::dense_active_set::tests::dependent_active_plane_releases_without_discarding_inequality ... ok
+test hair::contact::velocity_contacts::dense_active_set::tests::released_plane_reenters_when_other_reaction_closes_it ... ok
+test hair::contact::unique_pair_tests::canonical_cells_preserve_hashset_candidates_exactly ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::swept_cut_keeps_the_first_contact_side_after_candidate_crosses ... ok
+test hair::contact::unique_pair_tests::packed_sort_preserves_lexicographic_order_and_large_id_fallback ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::initial_plane_allows_opening_and_sliding_but_bounds_closing ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::angular_trust_region_is_local_to_the_contact_component ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::interval_planes_do_not_admit_a_tunnel_or_exhausted_query ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::opening_pair_above_initial_band_does_not_return_zero_progress ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::follicle_corner_permission_keeps_distal_crossings_visible ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::contact_group_does_not_slow_an_independent_guide ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::reduced_free_motion_cannot_hide_prescribed_root_compression ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::penetrating_start_and_invalid_modes_roll_back_complete_runtime_state ... ok
+test hair::contact::velocity_contacts::captured_position_tests::captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::reducing_one_group_rechecks_and_merges_a_new_neighbor_collision ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::stopped_new_collision_enters_the_next_contact_active_set ... ok
+test hair::contact::velocity_contacts::tests::active_newton_solve_releases_a_plane_without_a_negative_impulse ... ok
+test hair::contact::velocity_contacts::tests::contact_backend_batches_match_native_and_reject_partial_results ... ok
+test hair::contact::velocity_contacts::tests::dual_projection_resolves_dependent_rows_with_different_bounds ... ok
+test hair::contact::velocity_contacts::tests::coupled_newton_motion_releases_separating_contact ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::root_and_free_motion_are_admitted_as_one_path ... ok
+test hair::contact::velocity_contacts::tests::coupled_newton_motion_stops_closing_contact_and_preserves_free_guide ... ok
+test hair::contact::velocity_contacts::tests::duplicate_pair_aliases_share_one_positional_reaction_load ... ok
+test hair::contact::velocity_contacts::tests::implicit_rod_response_is_reciprocal_and_transmits_rotation ... ok
+test hair::contact::velocity_contacts::tests::free_newton_batch_keeps_unconstrained_guides_moving ... ok
+test hair::contact::velocity_contacts::tests::dual_projection_handles_more_than_256_dependent_contacts ... ok
+test hair::contact::velocity_contacts::tests::joint_position_projection_resolves_wall_and_pair_without_moving_roots_or_velocities ... ok
+test hair::contact::velocity_contacts::tests::open_position_contact_has_no_attractive_reaction ... ok
+test hair::contact::velocity_contacts::tests::overflowing_finite_velocity_does_not_pass_a_nan_residual ... ok
+test hair::contact::velocity_contacts::tests::separated_strands_can_close_without_an_artificial_early_impulse ... ok
+test hair::contact::velocity_contacts::tests::shared_endpoint_constraints_have_one_canonical_row_and_strongest_bound ... ok
+test hair::contact::velocity_contacts::tests::recovered_pressure_matches_inertial_force_and_discards_solver_history ... ok
+test hair::contact::velocity_contacts::tests::submicron_wall_projection_does_not_admit_linear_residual_as_separation ... ok
+test hair::contact::velocity_contacts::tests::shared_wall_and_strand_reactions_satisfy_both_constraints ... ok
+test hair::contact_response_system::tests::legacy_backend_gets_native_response_default_without_structural_calls ... ok
+test hair::contact_response_system::tests::response_loads_reject_bad_dimensions_nonfinite_values_and_fixed_forces ... ok
+test hair::contact_diagnostics::tests::diagnostics_report_current_geometry_without_mutating_contacts ... ok
+test hair::contact_response_system::tests::shared_factor_native_responses_match_independent_solves_exactly ... ok
+test hair::direct::contact_active_set::tests::coupled_reaction_activates_a_contact_that_was_opening_in_free_motion ... ok
+test hair::direct::contact_active_set::tests::coupled_reaction_releases_a_contact_that_was_closing_in_free_motion ... ok
+test hair::direct::contact_active_set::tests::energy_difference_retains_descent_hidden_by_a_stiff_constant_mode ... ok
+test hair::direct::contact_active_set::tests::energy_difference_tracks_closing_and_opening_penalty_boundaries ... ok
+test hair::direct::contact_active_set::tests::factored_energy_preserves_a_small_positive_mode_in_a_stiff_system ... ok
+test hair::direct::contact_active_set::tests::invalid_fixed_dofs_and_contact_assembly_overflow_are_rejected ... ok
+test hair::direct::contact_active_set::tests::open_contacts_return_the_free_minimizer_without_refactorization ... ok
+test hair::direct::tests::active_band_solve_recovers_known_solution_and_preserves_fixed_dofs ... ok
+test hair::direct::tests::independent_surfaces_keep_two_normal_constraints_without_cross_axis_stiffness ... ok
+test hair::direct::tests::boundary_contact_releases_opening_motion_and_resists_closing_motion ... ok
+test hair::direct::tests::interior_segment_contact_couples_both_endpoint_positions ... ok
+test hair::direct::tests::packed_constraint_matches_analytic_rank_one_matrix_with_fixed_root ... ok
+test hair::direct::tests::separated_contact_within_active_tolerance_has_no_attractive_force ... ok
+test hair::projection_diagnostics::tests::snapshot_captures_transitive_contact_component_in_stable_rod_order ... ok
+test hair::phase_diagnostics::tests::tracing_preserves_native_motion_and_validates_selection ... ok
+test hair::projection_diagnostics::tests::observing_real_paired_contacts_preserves_parallel_step_bitwise ... ok
+test hair::phase_diagnostics::tests::parallel_structural_observation_is_complete_and_preserves_motion ... ok
+test hair::contact::continuous::tests::swept_candidates_cover_brute_force_continuous_queries ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::runtime_moving_roots_remain_exact_and_elastic_nodes_follow ... ok
+test hair::contact::velocity_contacts::tests::incompatible_surface_velocities_report_nonconvergence ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::runtime_swept_mode_uses_response_backend_and_preserves_exact_roots ... ok
+
+test result: ok. 104 passed; 0 failed; 5 ignored; 0 measured; 160 filtered out; finished in 0.00s
+

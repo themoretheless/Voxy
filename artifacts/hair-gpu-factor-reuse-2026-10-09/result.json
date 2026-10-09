@@ -1,0 +1,43 @@
+{
+  "change": "Reuse resident normalized Cholesky factors when only right-hand sides change; exact matrix/header identity required",
+  "backend": "Metal Apple M4 Max",
+  "codec_tests_passed": 8,
+  "paired_GPU_proof": {
+    "batches": 12,
+    "systems_per_batch": 469,
+    "refinement_counts": [
+      1,
+      2,
+      3
+    ],
+    "reused_factor_dispatches": 24,
+    "corrections_equal": "bitwise",
+    "fresh_total_ms": 345.546792,
+    "cached_total_ms": 313.734331,
+    "scope": "paired solver qualification, not game FPS"
+  },
+  "full_model": {
+    "guides": 469,
+    "frames": 30,
+    "passed": true,
+    "structural_batches": 360,
+    "reused_factor_dispatches": 360,
+    "position_error_m": 1.4464471287389813e-11,
+    "quaternion_component_error": 1.6966977822718832e-10,
+    "native_ms": 61065.160788,
+    "hybrid_ms": 72093.029788,
+    "wall_seconds": 135.6,
+    "whole_runtime_speedup_established": false
+  },
+  "reuse_default_enabled": false,
+  "contact_compliance_still_native_CPU": true,
+  "long_trajectory_accuracy_resolved": false,
+  "runtime_qualified": false,
+  "FPS_measured": false,
+  "source_sha256": {
+    "crates/voxy_render/src/banded_solve.rs": "37fc1755bd5430c75a4854d12a2e889436f2181f40d991ef29f10e92afec025a",
+    "crates/voxy_render/src/hair_banded_compensated.wgsl": "84765b23c932a7ae04c4991cb20f51a3f2f057a45d960f18e3e7936576e3c01f",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "3ab0ae0da52be557d930465180880853b939685a1eddfef761fcc206b8fd6e3d",
+    "crates/voxy_app/src/female_hair.rs": "4a1c94ed68e489051bd0623726b32931b992c38d6277d3ef86f23e27b04e0387"
+  }
+}
