@@ -336,6 +336,8 @@ pub struct Body {
     surface_contacts: Vec<TissueSurfaceContact>,
     surface_contact_law: SurfaceContactLaw,
     embedded_contact: Option<StationaryEmbeddedContact>,
+    surface_faces: Vec<[usize; 3]>,
+    surface_nodes: Vec<usize>,
 }
 #[derive(Clone, Copy, Debug)]
 pub struct Equilibrium {
@@ -406,6 +408,10 @@ impl Body {
         if diagonal.iter().zip(&pinned).any(|(d, p)| !*p && *d <= 0.) {
             return Err("unconnected free vertex");
         }
+        let surface_faces = Self::compute_surface_faces(&points, &elements);
+        let mut surface_nodes: Vec<usize> = surface_faces.iter().flatten().copied().collect();
+        surface_nodes.sort_unstable();
+        surface_nodes.dedup();
         Ok(Self {
             forces: vec![[0.; 3]; points.len()],
             rest: points.clone(),
@@ -420,6 +426,8 @@ impl Body {
             surface_contacts: Vec::new(),
             surface_contact_law: SurfaceContactLaw::TriangleMinimum,
             embedded_contact: None,
+            surface_faces,
+            surface_nodes,
             diagonal,
         })
     }
@@ -858,17 +866,26 @@ impl Body {
     /// Boundary faces oriented away from the solid. Internal shared faces removed.
     #[must_use]
     pub fn surface(&self) -> Vec<[usize; 3]> {
+        self.surface_faces.clone()
+    }
+    pub(crate) fn surface_faces(&self) -> &[[usize; 3]] {
+        &self.surface_faces
+    }
+    pub(crate) fn surface_nodes(&self) -> &[usize] {
+        &self.surface_nodes
+    }
+    fn compute_surface_faces(rest: &[Vec3], elements: &[Element]) -> Vec<[usize; 3]> {
         use std::collections::BTreeMap;
         let mut faces = BTreeMap::<[usize; 3], ([usize; 3], usize)>::new();
-        for e in &self.elements {
+        for e in elements {
             for (mut face, opposite) in [
                 ([e.nodes[1], e.nodes[2], e.nodes[3]], e.nodes[0]),
                 ([e.nodes[0], e.nodes[3], e.nodes[2]], e.nodes[1]),
                 ([e.nodes[0], e.nodes[1], e.nodes[3]], e.nodes[2]),
                 ([e.nodes[0], e.nodes[2], e.nodes[1]], e.nodes[3]),
             ] {
-                let [a, b, c] = face.map(|i| self.rest[i]);
-                if dot(cross(sub(b, a), sub(c, a)), sub(self.rest[opposite], a)) > 0. {
+                let [a, b, c] = face.map(|i| rest[i]);
+                if dot(cross(sub(b, a), sub(c, a)), sub(rest[opposite], a)) > 0. {
                     face.swap(1, 2);
                 }
                 let mut key = face;

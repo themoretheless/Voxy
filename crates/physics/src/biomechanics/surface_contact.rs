@@ -321,26 +321,28 @@ impl Body {
         Ok(self.primitive_stencils_unchecked(x))
     }
     fn primitive_stencils_unchecked(&self, x: &[Vec3]) -> Vec<SurfacePrimitive> {
-        let mut set = std::collections::BTreeSet::new();
+        let mut stencils = Vec::new();
         for (group, contact) in self.surface_contacts.iter().enumerate() {
-            for (a, b) in contact.candidates(
+            let candidates = contact.candidates(
                 x,
                 None,
                 contact.minimum_distance_m + contact.activation_gap_m,
-            ) {
+            );
+            stencils.reserve(candidates.len() * 15);
+            for (a, b) in candidates {
                 let mut a = contact.faces[a];
                 let mut b = contact.faces[b];
                 a.sort_unstable();
                 b.sort_unstable();
                 for vertex in a {
-                    set.insert(SurfacePrimitive::VertexFace {
+                    stencils.push(SurfacePrimitive::VertexFace {
                         group,
                         vertex,
                         face: b,
                     });
                 }
                 for vertex in b {
-                    set.insert(SurfacePrimitive::VertexFace {
+                    stencils.push(SurfacePrimitive::VertexFace {
                         group,
                         vertex,
                         face: a,
@@ -354,12 +356,14 @@ impl Body {
                         eb.sort_unstable();
                         let mut edges = [ea, eb];
                         edges.sort_unstable();
-                        set.insert(SurfacePrimitive::EdgeEdge { group, edges });
+                        stencils.push(SurfacePrimitive::EdgeEdge { group, edges });
                     }
                 }
             }
         }
-        set.into_iter().collect()
+        stencils.sort_unstable();
+        stencils.dedup();
+        stencils
     }
     /// Select a contact energy atomically without changing the geometry guard.
     /// Primitive stiffness is discrete and not interchangeable with a tissue fit.
