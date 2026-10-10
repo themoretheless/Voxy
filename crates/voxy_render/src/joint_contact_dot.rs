@@ -446,6 +446,63 @@ mod tests {
         }
     }
     #[test]
+    #[ignore = "requires an actual GPU with optional pass-boundary timestamp support"]
+    fn gpu_repeated_qr_pass_timestamps_preserve_factors() {
+        let instance=crate::GraphicsOptions::default().create_instance();
+        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        eprintln!("GPU REPEATED QR ADAPTER {:?}",adapter.get_info());
+        assert_ne!(adapter.get_info().device_type,wgpu::DeviceType::Cpu);
+        let supported=adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY);
+        if !supported {
+            eprintln!("GPU REPEATED QR TIMESTAMPS supported=false measured=false");
+            return;
+        }
+        let descriptor=wgpu::DeviceDescriptor {required_features:wgpu::Features::TIMESTAMP_QUERY,..Default::default()};
+        let (device,queue)=pollster::block_on(adapter.request_device(&descriptor)).unwrap();
+        let scope=device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let qr=pollster::block_on(crate::ComputeProgram::new(&device,JOINT_CONTACT_QR_SHADER)).unwrap();
+        let queries=device.create_query_set(&wgpu::QuerySetDescriptor {label:Some("ordered QR pass interval"),ty:wgpu::QueryType::Timestamp,count:2});
+        let resolved=device.create_buffer(&wgpu::BufferDescriptor {label:Some("QR timestamp resolve"),size:256,
+            usage:wgpu::BufferUsages::QUERY_RESOLVE|wgpu::BufferUsages::COPY_SRC,mapped_at_creation:false});
+        let period=f64::from(queue.get_timestamp_period());
+        assert!(period.is_finite() && period>0.);
+        let mut samples=Vec::new();
+        for sample in 0..9 {
+            let columns=vec![vec![1.,0.25+sample as f64*0.001,0.,0.],vec![0.,1.,0.5,0.],vec![0.125,0.,1.,0.3]];
+            let input=ResidentContactQrInput::new_with_support_compaction(&columns,false).unwrap();
+            let run=|timed:bool| {
+                let job=qr.create_job(&device,input.bytes()).unwrap();
+                let mut encoder=device.create_command_encoder(&Default::default());
+                if timed {
+                    let writes=||wgpu::ComputePassTimestampWrites {query_set:&queries,beginning_of_pass_write_index:Some(0),end_of_pass_write_index:Some(1)};
+                    assert_eq!(job.encode_repeated_steps_with_timestamps(&mut encoder,[1,1,1],0,writes()),Err(crate::ComputeError::InvalidDispatch));
+                    job.encode_repeated_steps_with_timestamps(&mut encoder,[1,1,1],input.columns() as u32,writes()).unwrap();
+                } else {job.encode_repeated_steps(&mut encoder,[1,1,1],input.columns() as u32).unwrap();}
+                let dispatch=job.encode_snapshot(&mut encoder).unwrap();
+                let submission=queue.submit([encoder.finish()]);let mut read=dispatch.begin_read();
+                device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();
+                read.try_read().unwrap().unwrap()
+            };
+            let plain=run(false);let timed=run(true);
+            assert_eq!(plain,timed,"timestamp instrumentation changed QR factors at sample {sample}");
+            input.decode(&timed).unwrap();
+            // Resolve after completed computation: distinguish real samples
+            // from backends that expose unwritten pass-boundary timestamps.
+            let mut encoder=device.create_command_encoder(&Default::default());
+            encoder.resolve_query_set(&queries,0..2,&resolved,0);
+            let dispatch=crate::ComputeDispatch::gather_buffers(&device,&mut encoder,&[(&resolved,0,0,16)],16).unwrap();
+            let submission=queue.submit([encoder.finish()]);let mut read=dispatch.begin_read();
+            device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();
+            let bytes=read.try_read().unwrap().unwrap();
+            let begin=u64::from_le_bytes(bytes[..8].try_into().unwrap());
+            let end=u64::from_le_bytes(bytes[8..16].try_into().unwrap());
+            assert!(end>begin,"GPU interval must be written and positive");
+            samples.push((end-begin) as f64*period);
+        }
+        assert!(pollster::block_on(scope.pop()).is_none(),"GPU validation error");
+        eprintln!("GPU REPEATED QR TIMESTAMPS supported=true passes={} repetitions_per_pass=3 period_ns={period} samples_ns={samples:?} exact_unprofiled_factors=true scope=selected_QR_passes_not_full_model_or_fps",samples.len());
+    }
+    #[test]
     #[ignore = "requires an actual GPU; validated QR prefix equals complete fresh factors"]
     fn gpu_validated_qr_prefix_matches_fresh_append_and_release() {
         let instance=crate::GraphicsOptions::default().create_instance();

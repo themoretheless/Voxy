@@ -1,0 +1,5 @@
+{
+  "/tmp/voxy-repeated-qr-render-tests": "05f4c5af141572e2e82ad52ac28d1d67c8c276d2245ee4752b2ebd7dcbd1e42d",
+  "crates/voxy_render/src/compute.rs": "f6b788dd0ce5b7c1cfd692780855d7073b86ba9408fd2ee41990aea10059b0d4",
+  "crates/voxy_render/src/joint_contact_dot.rs": "2e5d0fa2cf3966d8da64d5b96e5b7ba3595a9810600e49508e177415c8cf4749"
+}

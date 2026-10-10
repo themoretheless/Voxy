@@ -1,0 +1,11 @@
+# Ordered QR GPU pass timing
+
+ComputeJob::encode_repeated_steps_with_timestamps records ordered resident dispatches in one compute pass with caller-owned boundary timestamp queries. It uses the existing repeated-dispatch encoder; no factorization/shader/physical tolerance changes. Timestamp requests now reject disabled TIMESTAMP_QUERY before recording a pass for both single and repeated dispatch APIs. Caller query ownership/type/indices remain subject to wgpu validation.
+
+The initial actual GPU test passes nine varying three-column operators. Each complete QR snapshot is bitwise equal to an unprofiled pass; QR decoding succeeds and written timestamp intervals are positive. Samples in nanoseconds: 23500, 24875, 24792, 25167, 25083, 24292, 25334, 24333, 24667. Period 1 ns. These are selected pass-boundary intervals under uncontrolled concurrent load, not full-model throughput, GPU-frame time or FPS. No timing result is fabricated when TIMESTAMP_QUERY is unavailable.
+
+Initial broad testing found a fixture error: discarding the noop queue made command encoder creation panic. The fixture now retains the queue. A separate Cargo rebuild briefly encountered two absent functions during an unrelated biomechanics edit; they subsequently appeared. Both original logs are retained. Corrected broad validation and a fresh actual GPU rerun are pending in session 28917.
+
+The frozen full-density jump run (session 50174) is unchanged and remains live. Its 469 guides, 20 segments, 720 requested frames and original numerical gates remain; only frames 1-2 have been observed passing. This instrumentation does not close full trajectory, rendered secondary-physics playback, >160 FPS, CUDA or cross-hardware coverage.
+
+Final current-source validation completed: 212 renderer unit tests pass (34 ignored), including disabled-feature preflight and ordinary encoder usability after rejection. The freshly frozen binary /tmp/voxy-repeated-qr-render-tests also passes the actual GPU timing/bitwise QR test on Apple M4 Max/Metal; full adapter info and all nine fresh intervals are in actual-gpu-final.log. Final build logs, source/binary hashes and summary are preserved. Earlier pending/failure statements above describe historical attempts, not current status.

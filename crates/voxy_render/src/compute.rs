@@ -371,6 +371,19 @@ impl ComputeJob {
     )->Result<(),ComputeError> {
         self.encode_repeated_step_options(encoder,workgroups,None,None,repetitions)
     }
+    /// Profile an ordered group of resident dispatches as one GPU pass.
+    /// The caller owns and resolves the query set. The interval includes pass
+    /// boundaries, excludes host/readback work, and is not a frame-time sample.
+    /// # Errors
+    /// Rejects disabled timestamp support, zero repetitions and invalid dispatch
+    /// dimensions before recording a pass. Query ownership/type/indices remain
+    /// subject to wgpu validation, as for `encode_step_with_timestamps`.
+    pub fn encode_repeated_steps_with_timestamps(
+        &self, encoder:&mut wgpu::CommandEncoder, workgroups:[u32;3], repetitions:u32,
+        timestamps:wgpu::ComputePassTimestampWrites<'_>,
+    )->Result<(),ComputeError> {
+        self.encode_repeated_step_options(encoder,workgroups,None,Some(timestamps),repetitions)
+    }
     /// Profile one resident dispatch using pass-boundary GPU timestamps.
     pub fn encode_step_with_timestamps(
         &self,
@@ -403,6 +416,9 @@ impl ComputeJob {
         repetitions:u32,
     )->Result<(),ComputeError> {
         if repetitions==0 {return Err(ComputeError::InvalidDispatch);}
+        if timestamps.is_some() && !self.device.features().contains(wgpu::Features::TIMESTAMP_QUERY) {
+            return Err(ComputeError::Unsupported);
+        }
         if additional.is_some() != self.requires_additional_binding {
             return Err(ComputeError::InvalidBuffer);
         }
@@ -606,6 +622,24 @@ impl PendingComputeReadback {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn timestamp_dispatches_reject_disabled_feature_without_recording_a_pass() {
+        let (device,_queue)=wgpu::Device::noop(&Default::default());
+        assert!(!device.features().contains(wgpu::Features::TIMESTAMP_QUERY));
+        let scope=device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let program=pollster::block_on(ComputeProgram::new(&device,"@compute @workgroup_size(1) fn cs_main() {}")).unwrap();
+        let job=program.create_job(&device,&[0;4]).unwrap();
+        // A disabled device cannot create a timestamp query set. An ordinary
+        // set suffices to prove preflight returns before wgpu sees the pass.
+        let queries=device.create_query_set(&wgpu::QuerySetDescriptor {label:None,ty:wgpu::QueryType::Occlusion,count:2});
+        let writes=||wgpu::ComputePassTimestampWrites {query_set:&queries,beginning_of_pass_write_index:Some(0),end_of_pass_write_index:Some(1)};
+        let mut encoder=device.create_command_encoder(&Default::default());
+        assert_eq!(job.encode_step_with_timestamps(&mut encoder,[1,1,1],writes()),Err(ComputeError::Unsupported));
+        assert_eq!(job.encode_repeated_steps_with_timestamps(&mut encoder,[1,1,1],3,writes()),Err(ComputeError::Unsupported));
+        job.encode_repeated_steps(&mut encoder,[1,1,1],3).unwrap();
+        let _=encoder.finish();
+        assert!(pollster::block_on(scope.pop()).is_none(),"rejected profiling request recorded an invalid pass");
+    }
     #[test]
     fn resident_pipeline_switch_preserves_allocation_and_rejects_foreign_owner() {
         let (owner,_owner_queue)=wgpu::Device::noop(&Default::default());

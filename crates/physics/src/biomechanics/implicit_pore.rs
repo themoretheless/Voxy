@@ -325,6 +325,11 @@ impl Body {
             Some((r, _)) => r.pressure_pa()?,
             None => 0.,
         };
+        let boundaries: Vec<_> = reservoir.map_or_else(
+            || prescribed.to_vec(),
+            |(_, ports)| ports.iter().map(|p| (*p, reservoir_pressure)).collect(),
+        );
+        let mut old_pressure = vec![0.0; old.len()];
         let mut trial = self.clone();
         for iteration in 0..config.outer_iterations {
             let solid = trial.equilibrate(config.solid_iterations, config.solid_tolerance_n)?;
@@ -333,17 +338,15 @@ impl Body {
             }
             let current_pressure = trial.cell_pore_response_at(trial.positions())?.0;
             // Reconstruct old inventory pressure at the CURRENT solid volume.
-            let old_pressure: Vec<_> = current_pressure
-                .iter()
+            for ((((dst, p), f), old), s) in old_pressure
+                .iter_mut()
+                .zip(&current_pressure)
                 .zip(&trial.cell_pore_fluids)
                 .zip(&old)
                 .zip(&storage)
-                .map(|(((p, f), old), s)| p + (old - f.fluid_volume_m3) / s)
-                .collect();
-            let boundaries: Vec<_> = reservoir.map_or_else(
-                || prescribed.to_vec(),
-                |(_, ports)| ports.iter().map(|p| (*p, reservoir_pressure)).collect(),
-            );
+            {
+                *dst = p + (old - f.fluid_volume_m3) / s;
+            }
             let model = trial
                 .deformed_darcy_with_boundaries(permeability, viscosity_pa_s, &boundaries)?
                 .with_added_boundary_resistances(resistances)?;

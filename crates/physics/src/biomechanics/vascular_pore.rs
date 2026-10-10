@@ -434,39 +434,51 @@ impl Body {
                 return Err("osmotic concentration overflow");
             }
         }
+        let port_membranes: Vec<(f64, f64)> = ports
+            .iter()
+            .map(|p| {
+                let mut key = p.nodes;
+                key.sort_unstable();
+                membrane_by_face.get(&key).copied().unwrap_or((0., 0.))
+            })
+            .collect();
+        let mut tissue_mass = vec![0.0; tissue_protein_kg.len()];
+        let mut boundaries = vec![([0_usize; 3], 0.0); ports.len()];
+        let mut concentrations = vec![
+            super::ProteinMembrane {
+                concentration_kg_per_m3: 0.0,
+                reflection: 0.0,
+                diffusive_conductance_m3_per_s: 0.0,
+            };
+            ports.len()
+        ];
+        let mut exchange_water = vec![0.; n];
+        let mut exchange_protein = vec![0.; n];
+        let mut blood_mass = vec![0.0; blood_protein_kg.len()];
+        let mut next_concentration = vec![0.0; n];
+        let mut next_local = vec![0.0; ports.len()];
         for iteration in 0..config.iterations {
             let mut tissue_trial = self.clone();
-            let mut tissue_mass = tissue_protein_kg.to_vec();
-            let boundaries: Vec<_> = ports
+            tissue_mass.copy_from_slice(tissue_protein_kg);
+            for (i, ((p, &(reflection, conductance)), (dst_b, dst_c))) in ports
                 .iter()
+                .zip(&port_membranes)
+                .zip(boundaries.iter_mut().zip(&mut concentrations))
                 .enumerate()
-                .map(|(i, p)| {
-                    let mut key = p.nodes;
-                    key.sort_unstable();
-                    let reflection = membrane_by_face.get(&key).map_or(0., |m| m.0);
-                    Ok((
-                        p.nodes,
-                        pressure[p.compartment]
-                            - reflection
-                                * (osmotic_law.pressure_pa(concentration[p.compartment])?
-                                    - osmotic_law.pressure_pa(local_concentration[i])?),
-                    ))
-                })
-                .collect::<Result<Vec<_>, &'static str>>()?;
-            let concentrations: Vec<_> = ports
-                .iter()
-                .map(|p| {
-                    let mut key = p.nodes;
-                    key.sort_unstable();
-                    let (reflection, conductance) =
-                        membrane_by_face.get(&key).copied().unwrap_or((0., 0.));
-                    super::ProteinMembrane {
-                        concentration_kg_per_m3: concentration[p.compartment],
-                        reflection,
-                        diffusive_conductance_m3_per_s: conductance,
-                    }
-                })
-                .collect();
+            {
+                *dst_b = (
+                    p.nodes,
+                    pressure[p.compartment]
+                        - reflection
+                            * (osmotic_law.pressure_pa(concentration[p.compartment])?
+                                - osmotic_law.pressure_pa(local_concentration[i])?),
+                );
+                *dst_c = super::ProteinMembrane {
+                    concentration_kg_per_m3: concentration[p.compartment],
+                    reflection,
+                    diffusive_conductance_m3_per_s: conductance,
+                };
+            }
             let tissue_report = tissue_trial
                 .implicit_cell_pore_boundary_protein_step_with_membranes(
                     &mut tissue_mass,
@@ -489,8 +501,8 @@ impl Body {
                 .zip(tissue_protein_kg.iter())
                 .map(|(m, old)| m - old)
                 .sum::<f64>();
-            let mut exchange_water = vec![0.; n];
-            let mut exchange_protein = vec![0.; n];
+            exchange_water.fill(0.);
+            exchange_protein.fill(0.);
             let model = tissue_trial.deformed_darcy_with_boundaries(
                 permeability,
                 viscosity_pa_s,
@@ -523,7 +535,7 @@ impl Body {
                         + conductance * (tissue_concentration - concentration[compartment]));
             }
             let mut blood_trial = blood.clone();
-            let mut blood_mass = blood_protein_kg.to_vec();
+            blood_mass.copy_from_slice(blood_protein_kg);
             let circulation_report = blood_trial.step_with_protein_exchange(
                 &mut blood_mass,
                 seconds,
@@ -535,11 +547,13 @@ impl Body {
                 config.circulation_tolerance_m3,
             )?;
             let next_pressure = blood_trial.pressures();
-            let next_concentration: Vec<_> = blood_mass
-                .iter()
+            for ((dst, m), v) in next_concentration
+                .iter_mut()
+                .zip(&blood_mass)
                 .zip(blood_trial.volumes())
-                .map(|(m, v)| m / v)
-                .collect();
+            {
+                *dst = m / v;
+            }
             if next_concentration
                 .iter()
                 .chain(next_pressure)
@@ -555,14 +569,11 @@ impl Body {
                 .iter()
                 .map(|i| (next_concentration[*i] - concentration[*i]).abs())
                 .fold(0., f64::max);
-            let mut next_local = local_concentration.clone();
+            next_local.copy_from_slice(&local_concentration);
             if osmotic_law.active() {
-                for (i, p) in ports.iter().enumerate() {
+                for (i, (p, &(reflection, _))) in ports.iter().zip(&port_membranes).enumerate() {
                     next_local[i] = tissue_mass[owners[i]]
                         / tissue_trial.cell_pore_fluids()[owners[i]].fluid_volume_m3;
-                    let mut key = p.nodes;
-                    key.sort_unstable();
-                    let reflection = membrane_by_face.get(&key).map_or(0., |m| m.0);
                     let next_effective = next_pressure[p.compartment]
                         - reflection
                             * (osmotic_law.pressure_pa(next_concentration[p.compartment])?

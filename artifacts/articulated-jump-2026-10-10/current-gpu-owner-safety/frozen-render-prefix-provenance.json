@@ -1,0 +1,6 @@
+{
+  "binary": "/tmp/voxy-release-120fps-20261007/release/deps/voxy_render-8a0d4a2a920749ed",
+  "sha256": "db11a11bf4d618bb612937e226aff23f2bfc21767a36e62a83bf23bc9189b55d",
+  "current_source_build_confirmed": false,
+  "scope": "existing renderer binary only; current-source rebuild session 28416 pending"
+}

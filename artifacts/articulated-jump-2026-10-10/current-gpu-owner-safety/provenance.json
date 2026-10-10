@@ -1,0 +1,5 @@
+{
+  "/tmp/voxy-contact-owner-gpu-tests": "2654561c9548f8eec6f788f9987d5da151e757987696b0496607c3a9fe2704b1",
+  "crates/voxy_app/src/gpu_hair_joint.rs": "9631da16058cd7a7b85363a3298f5008f140822cf3538e2721e366f0bcc3b6a5",
+  "crates/voxy_render/src/joint_contact_dot.rs": "321f7d44be86f4c55d508c2d3c3f1717e33101c0890ba9cd8c7a9c6bb528f034"
+}

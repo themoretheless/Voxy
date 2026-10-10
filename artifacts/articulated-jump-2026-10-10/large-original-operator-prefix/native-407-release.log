@@ -1,0 +1,15 @@
+
+running 1 test
+JOINT BACKEND ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+JOINT BACKEND storage_limit=8
+JOINT NATIVE COMPARISON {"absolute_physical_tolerance":1e-14,"angular_response_unit":"unassigned","coordinates":1764,"linear_response_unit":"unassigned","maximum_angular_response_component_difference":1.474514954580286e-16,"maximum_linear_response_component_difference":2.927345865710862e-18,"maximum_reaction_difference":3.677076316739631e-24,"native_fallback_used":false,"response_quantity":"unspecified","rows":174,"scope":"same complete captured physical operator; not whole trajectory","systems":14}
+JOINT GPU WORKSPACE creations=63 reuses=3 scope=original_physical_operator_not_full_model_or_fps
+JOINT RELEASE DIRECTIONS 14 early=14
+JOINT BACKEND ORIGINAL systems=14 rows=174 width=1764 tolerance=1e-14 coordinate_calls=1 equality_dispatches=106 admitted=1 fallbacks=0
+JOINT EXACT REUSE DISABLED physically_admitted=true retained_cache=false
+JOINT QR PREFIX REUSE physically_admitted=true reused_columns=2582
+JOINT COOPERATIVE GPU BATCH operators=4 original_rows=174 original_coordinates=1764 equality_dispatches=318 submissions=106 exact_serial_match=true native_fallbacks=0 scope=coordinate_operators_not_full_trajectory
+test gpu_hair_solver::joint::tests::gpu_joint_backend_admits_captured_original_physics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 333 filtered out; finished in 3.13s
+
