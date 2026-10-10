@@ -144,6 +144,34 @@ pub const JOINT_CONTACT_EQUALITY_SHADER:&str=include_str!("joint_contact_equalit
 pub struct ResidentContactEqualityInput {qr:ResidentContactQrInput,words:Vec<u32>,scale:f64,rhs:usize,output:usize}
 #[derive(Debug)]
 pub struct ResidentContactEqualityOutput {pub coordinates:Vec<f64>,pub reactions:Vec<f64>}
+/// A validated immutable QR prefix. The caller must retain exclusive ownership
+/// of its GPU workspace and only upload `equality_update` ranges thereafter.
+#[derive(Debug)]
+pub struct ValidatedResidentContactEquality {input:ResidentContactEqualityInput}
+/// Host snapshot of a fully validated GPU QR factor. Reuse requires identical
+/// packed column prefixes, per-column scales and compact coordinate mapping.
+#[derive(Debug)]
+pub struct ResidentContactQrPrefix {
+    words:Vec<u32>, scales:Vec<f64>, ids:Vec<usize>, width:usize,
+    original_width:usize, count:usize, input_end:usize,
+}
+impl ValidatedResidentContactEquality {
+    /// Validate the complete immutable QR snapshot before retaining a prefix.
+    pub fn qr_prefix(&self,bytes:&[u8])->Result<ResidentContactQrPrefix,JointDotError> {
+        if bytes.len()!=self.input.words.len()*4 {return Err(JointDotError::Output);}
+        let qr=&self.input.qr;
+        let words=qr.checked_words(&bytes[..self.input.rhs*4])?;
+        Ok(ResidentContactQrPrefix {words,scales:qr.scales.clone(),ids:qr.ids.clone(),
+            width:qr.width,original_width:qr.original_width,count:qr.count,input_end:qr.input_end})
+    }
+    pub fn update_bounds(&mut self,bounds:&[f64])->Result<(),JointDotError> {self.input.update_bounds(bounds)}
+    pub fn equality_update(&self)->(u64,&[u8]) {self.input.equality_update()}
+    pub fn decode_tail(&self,bytes:&[u8])->Result<ResidentContactEqualityOutput,JointDotError> {
+        if bytes.len()!=(self.input.words.len()-self.input.rhs)*4 {return Err(JointDotError::Output);}
+        let words:Vec<_>=bytes.chunks_exact(4).map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
+        self.input.decode_tail_words(&words)
+    }
+}
 impl ResidentContactEqualityInput {
     pub fn new(columns:&[Vec<f64>],bounds:&[f64])->Result<Self,JointDotError> {
         Self::new_with_support_compaction(columns,bounds,true)
@@ -169,6 +197,31 @@ impl ResidentContactEqualityInput {
     }
     pub fn bytes(&self)->&[u8] {bytemuck::cast_slice(&self.words)}
     pub fn columns(&self)->usize {self.qr.count}
+    /// Populate only an identical leading GPU factor. Unmatched columns and
+    /// every equality output remain fresh. Returns ordered QR steps avoided.
+    pub fn reuse_qr_prefix(&mut self,prefix:&ResidentContactQrPrefix)->usize {
+        let qr=&self.qr;
+        if qr.width!=prefix.width || qr.original_width!=prefix.original_width || qr.ids!=prefix.ids {return 0;}
+        let stride=qr.width*2;
+        let mut count=0;
+        while count<qr.count.min(prefix.count) {
+            let start=4+count*stride;
+            if qr.scales[count].to_bits()!=prefix.scales[count].to_bits()
+                || self.words[start..start+stride]!=prefix.words[start..start+stride] {break;}
+            count+=1;
+        }
+        let old_r=prefix.input_end+prefix.count*stride;
+        let new_r=qr.input_end+qr.count*stride;
+        for j in 0..count {
+            self.words[qr.input_end+j*stride..qr.input_end+(j+1)*stride]
+                .copy_from_slice(&prefix.words[prefix.input_end+j*stride..prefix.input_end+(j+1)*stride]);
+            let length=(j+1)*2;
+            self.words[new_r+j*qr.count*2..new_r+j*qr.count*2+length]
+                .copy_from_slice(&prefix.words[old_r+j*prefix.count*2..old_r+j*prefix.count*2+length]);
+        }
+        self.words[2]=count as u32;
+        count
+    }
     /// Change only equality RHS/scratch for this immutable resident QR.
     /// Validation is transactional; rejected bounds leave the input untouched.
     pub fn update_bounds(&mut self,bounds:&[f64])->Result<(),JointDotError> {
@@ -196,20 +249,29 @@ impl ResidentContactEqualityInput {
         // Equality admission needs the QR validity gates, not a second host
         // copy of every expanded basis vector and triangular column.
         self.qr.checked_words(&bytes[..self.rhs*4])?;
-        let words:Vec<_>=bytes.chunks_exact(4).map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
-        if words[self.rhs..self.rhs+self.qr.count*2]!=self.words[self.rhs..self.rhs+self.qr.count*2] || words[words.len()-1]!=0 {return Err(JointDotError::Output);}
+        // QR prefix has already passed every publication gate. Decode only
+        // the equality tail rather than copying the complete workspace again.
+        let words:Vec<_>=bytes[self.rhs*4..].chunks_exact(4).map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
+        self.decode_tail_words(&words)
+    }
+    pub fn into_validated(self,bytes:&[u8])->Result<(ValidatedResidentContactEquality,ResidentContactEqualityOutput),JointDotError> {
+        let output=self.decode(bytes)?;
+        Ok((ValidatedResidentContactEquality {input:self},output))
+    }
+    fn decode_tail_words(&self,words:&[u32])->Result<ResidentContactEqualityOutput,JointDotError> {
+        if words.len()!=self.words.len()-self.rhs || words[..self.qr.count*2]!=self.words[self.rhs..self.rhs+self.qr.count*2] || words[words.len()-1]!=0 {return Err(JointDotError::Output);}
         let pair=|offset:usize|->Result<f64,JointDotError> {
             let hi=f32::from_bits(words[offset]) as f64;let lo=f32::from_bits(words[offset+1]) as f64;
             if !hi.is_finite()||!lo.is_finite() {return Err(JointDotError::Output);}Ok(hi+lo)
         };
-        let compact=(0..self.qr.width).map(|i| {
-            let v=rescale(pair(self.output+i*2)?,self.scale,1.);
-            if !v.is_finite() {return Err(JointDotError::Output);}Ok(v)
-        }).collect::<Result<Vec<_>,_>>()?;
         let mut coordinates=vec![0.;self.qr.original_width];
-        for (&id,value) in self.qr.ids.iter().zip(compact) {coordinates[id]=value;}
+        for (i,&id) in self.qr.ids.iter().enumerate() {
+            let v=rescale(pair(self.output-self.rhs+i*2)?,self.scale,1.);
+            if !v.is_finite() {return Err(JointDotError::Output);}
+            coordinates[id]=v;
+        }
         let reactions=(0..self.qr.count).map(|i| {
-            let v=rescale(pair(self.rhs+self.qr.count*4+i*2)?,self.scale,self.qr.scales[i].recip());
+            let v=rescale(pair(self.qr.count*4+i*2)?,self.scale,self.qr.scales[i].recip());
             if !v.is_finite() {return Err(JointDotError::Output);}Ok(v)
         }).collect::<Result<Vec<_>,_>>()?;
         Ok(ResidentContactEqualityOutput {coordinates,reactions})
@@ -221,6 +283,17 @@ impl ResidentContactEqualityInput {
 pub struct ResidentContactQrInput {words:Vec<u32>,scales:Vec<f64>,width:usize,original_width:usize,ids:Vec<usize>,count:usize,input_end:usize}
 #[derive(Debug)]
 pub struct ResidentContactQrOutput {pub basis:Vec<Vec<f64>>,pub triangular_columns:Vec<Vec<f64>>}
+// Shape and finite values are checked by the input owner before this scan.
+// Stream each column contiguously instead of repeatedly crossing allocations.
+fn exact_coordinate_support(columns:&[Vec<f64>],width:usize,compact:bool)->Vec<usize> {
+    if !compact || columns[0].iter().all(|&v|v!=0.) {return (0..width).collect();}
+    if columns.len()<4 {return (0..width).filter(|&i|columns.iter().any(|c|c[i]!=0.)).collect();}
+    let mut present=vec![false;width];
+    for column in columns {
+        for (present,&value) in present.iter_mut().zip(column) {*present|=value!=0.;}
+    }
+    present.into_iter().enumerate().filter_map(|(i,used)|used.then_some(i)).collect()
+}
 impl ResidentContactQrInput {
     pub fn new(columns:&[Vec<f64>])->Result<Self,JointDotError> {
         Self::new_with_support_compaction(columns,true)
@@ -229,7 +302,7 @@ impl ResidentContactQrInput {
         let count=columns.len();let original_width=columns.first().map_or(0,Vec::len);let width=original_width;
         if count==0 || width==0 || count>width || columns.iter().any(|c|c.len()!=width || c.iter().any(|v|!v.is_finite())) {return Err(JointDotError::Shape);}
         // Exact structural support only: never use a magnitude threshold.
-        let ids:Vec<_>=(0..width).filter(|&i|!compact || columns.iter().any(|c|c[i]!=0.)).collect();
+        let ids=exact_coordinate_support(columns,width,compact);
         let width=ids.len();
         if count>width {return Err(JointDotError::NumericRange);}
         let matrix=count.checked_mul(width).and_then(|n|n.checked_mul(2)).ok_or(JointDotError::Capacity)?;
@@ -284,6 +357,164 @@ impl ResidentContactQrInput {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn streamed_support_preserves_zero_sign_tiny_terms_and_coordinate_order() {
+        let columns=vec![vec![-0.,0.,f64::from_bits(1),0.,0.],vec![0.,0.,0.,-2.,0.],
+            vec![0.,0.,0.,0.,0.],vec![0.,3.,0.,0.,0.]];
+        assert_eq!(exact_coordinate_support(&columns,5,true),vec![1,2,3]);
+        assert_eq!(exact_coordinate_support(&columns,5,false),vec![0,1,2,3,4]);
+        let mut seed=0x1977_1a55_391e_733du64;
+        for count in [1,2,3,4,17,61] {
+            for width in [1,31,257] {
+                let mut columns=vec![vec![0.;width];count];
+                for column in &mut columns {for v in column {
+                    seed^=seed<<13;seed^=seed>>7;seed^=seed<<17;
+                    *v=match seed%5 {0=>-0.,1=>f64::from_bits(1),2=>-1e-300,_=>0.};
+                }}
+                let expected:Vec<_>=(0..width).filter(|&i|columns.iter().any(|c|c[i]!=0.)).collect();
+                assert_eq!(exact_coordinate_support(&columns,width,true),expected);
+                columns[0].fill(-1.);
+                assert_eq!(exact_coordinate_support(&columns,width,true),(0..width).collect::<Vec<_>>());
+            }
+        }
+    }
+    #[test]
+    #[ignore = "paired CPU support scan benchmark on an original VQC1 contact operator"]
+    fn captured_coordinate_support_scan_matches_original_and_measures_cost() {
+        let bytes=std::fs::read(std::env::var("VOXY_HAIR_QR_INPUT_FIXTURE").unwrap()).unwrap();
+        assert_eq!(&bytes[..4],b"VQC1");
+        let rows=u32::from_le_bytes(bytes[4..8].try_into().unwrap()) as usize;
+        let width=u32::from_le_bytes(bytes[8..12].try_into().unwrap()) as usize;
+        let offset=28+rows*16;
+        let columns:Vec<Vec<_>>=bytes[offset..offset+rows*width*8].chunks_exact(width*8)
+            .map(|column|column.chunks_exact(8).map(|v|f64::from_le_bytes(v.try_into().unwrap())).collect()).collect();
+        assert!(columns.iter().flatten().all(|v|v.is_finite()));
+        for dense in [false,true] {
+            let mut columns=columns.clone();if dense {columns[0].fill(1.);}
+            let expected:Vec<_>=(0..width).filter(|&i|columns.iter().any(|c|c[i]!=0.)).collect();
+            let mut old=Vec::new();let mut new=Vec::new();
+            for pair in 0..12 {
+                for streamed in [pair%2==0,pair%2!=0] {
+                    let started=std::time::Instant::now();
+                    for _ in 0..64 {
+                        let columns=std::hint::black_box(&columns);
+                        let ids=if streamed {exact_coordinate_support(columns,width,true)} else {
+                            (0..width).filter(|&i|columns.iter().any(|c|c[i]!=0.)).collect()
+                        };
+                        assert_eq!(ids,expected);std::hint::black_box(ids);
+                    }
+                    let us=started.elapsed().as_secs_f64()*1e6/64.;
+                    if streamed {new.push(us);} else {old.push(us);}
+                }
+            }
+            old.sort_by(f64::total_cmp);new.sort_by(f64::total_cmp);
+            eprintln!("COORDINATE SUPPORT rows={rows} width={width} dense_first={dense} exact_ids=true original_median_us={} streamed_median_us={} scope=cpu_support_scan_not_full_packing_or_fps",old[6],new[6]);
+        }
+    }
+    #[test]
+    #[ignore = "requires an actual GPU; positive tiny QR pivot and exact dependence"]
+    fn gpu_resident_qr_keeps_small_positive_pivot_and_rejects_zero_pivot() {
+        let instance=crate::GraphicsOptions::default().create_instance();
+        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type,wgpu::DeviceType::Cpu);
+        let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let program=pollster::block_on(crate::ComputeProgram::new(&device,JOINT_CONTACT_QR_SHADER)).unwrap();
+        for pivot in [1e-13,1e-20,1e-30,0.] {
+            eprintln!("GPU QR PIVOT {pivot:e}");
+            let positive=pivot>0.;
+            let second=if positive {vec![1.,pivot]} else {vec![2.,0.]};
+            let input=ResidentContactQrInput::new_with_support_compaction(&[vec![1.,0.],second],false).unwrap();
+            let job=program.create_job(&device,input.bytes()).unwrap();
+            let mut encoder=device.create_command_encoder(&Default::default());
+            assert!(job.encode_repeated_steps(&mut encoder,[1,1,1],0).is_err());
+            assert!(job.encode_repeated_steps(&mut encoder,[0,1,1],1).is_err());
+            job.encode_repeated_steps(&mut encoder,[1,1,1],input.columns() as u32).unwrap();
+            let dispatch=job.encode_snapshot(&mut encoder).unwrap();
+            let submission=queue.submit([encoder.finish()]);let mut read=dispatch.begin_read();
+            device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();
+            let bytes=read.try_read().unwrap().unwrap();
+            if positive {
+                let output=input.decode(&bytes).unwrap();
+                assert!((output.triangular_columns[1][1]/pivot-1.).abs()<1e-6);
+                assert!(output.basis[1][0].abs()<1e-10);
+                assert!((output.basis[1][1]-1.).abs()<1e-6);
+            } else {
+                assert_eq!(input.decode(&bytes).unwrap_err(),JointDotError::Output);
+                let status=u32::from_le_bytes(bytes[12..16].try_into().unwrap());
+                assert_ne!(status&4,0,"zero pivot did not report rank rejection");
+            }
+        }
+    }
+    #[test]
+    #[ignore = "requires an actual GPU; validated QR prefix equals complete fresh factors"]
+    fn gpu_validated_qr_prefix_matches_fresh_append_and_release() {
+        let instance=crate::GraphicsOptions::default().create_instance();
+        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type,wgpu::DeviceType::Cpu);
+        let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let qr=pollster::block_on(crate::ComputeProgram::new(&device,JOINT_CONTACT_QR_SHADER)).unwrap();
+        let solve=pollster::block_on(crate::ComputeProgram::new(&device,JOINT_CONTACT_EQUALITY_SHADER)).unwrap();
+        let run=|columns:&[Vec<f64>],prefix:Option<&ResidentContactQrPrefix>| {
+            let bounds:Vec<_>=(0..columns.len()).map(|i|i as f64+1.).collect();
+            let mut input=ResidentContactEqualityInput::new_with_support_compaction(columns,&bounds,false).unwrap();
+            let reused=prefix.map_or(0,|prefix|input.reuse_qr_prefix(prefix));
+            let mut job=qr.create_job(&device,input.bytes()).unwrap();
+            let mut encoder=device.create_command_encoder(&Default::default());
+            if input.columns()>reused {job.encode_repeated_steps(&mut encoder,[1,1,1],(input.columns()-reused) as u32).unwrap();}
+            job.use_program(&solve).unwrap();job.encode_step(&mut encoder,[1,1,1]).unwrap();
+            let dispatch=job.encode_snapshot(&mut encoder).unwrap();
+            let submission=queue.submit([encoder.finish()]);let mut read=dispatch.begin_read();
+            device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();
+            let bytes=read.try_read().unwrap().unwrap();
+            let (state,_)=input.into_validated(&bytes).unwrap();
+            (state.qr_prefix(&bytes).unwrap(),bytes,reused)
+        };
+        let columns=vec![vec![1.,0.25,0.,0.],vec![0.,1.,0.5,0.],vec![0.125,0.,1.,0.3]];
+        let (initial,_,_)=run(&columns[..2],None);
+        let (_,fresh,_)=run(&columns,None);
+        let (appended,reused,count)=run(&columns,Some(&initial));
+        assert_eq!(count,2);assert_eq!(fresh,reused,"appended QR differs bitwise");
+        let released=vec![columns[0].clone(),columns[2].clone()];
+        let (_,fresh,_)=run(&released,None);
+        let (_,reused,count)=run(&released,Some(&appended));
+        assert_eq!(count,1);assert_eq!(fresh,reused,"released QR suffix differs bitwise");
+        let (_,fresh,_)=run(&columns,None);
+        let (_,reused,count)=run(&columns,Some(&appended));
+        assert_eq!(count,3);assert_eq!(fresh,reused,"complete prefix reuse differs bitwise");
+        let mut changed=columns.clone();changed[0][0]=1f64.next_up();
+        let input_bounds=[1.,2.,3.];
+        let mut input=ResidentContactEqualityInput::new_with_support_compaction(&changed,&input_bounds,false).unwrap();
+        assert_eq!(input.reuse_qr_prefix(&appended),0,"changed column scale reused a prefix");
+        let mut compact=ResidentContactEqualityInput::new(&columns[..2],&[1.,2.]).unwrap();
+        assert_eq!(compact.reuse_qr_prefix(&initial),0,"changed coordinate mapping reused a prefix");
+        let input=ResidentContactEqualityInput::new_with_support_compaction(&columns,&input_bounds,false).unwrap();
+        let (state,_)=input.into_validated(&fresh).unwrap();
+        let mut corrupt=fresh.clone();corrupt[12..16].copy_from_slice(&1u32.to_le_bytes());
+        assert!(state.qr_prefix(&corrupt).is_err(),"invalid QR status entered prefix token");
+    }
+
+    #[test]
+    fn validated_equality_tail_keeps_result_and_publication_gates() {
+        let input=ResidentContactEqualityInput::new(&[vec![0.,2.,0.]],&[6.]).unwrap();
+        let mut words=input.words.clone();words[2]=1;
+        words[input.qr.input_end]=1f32.to_bits();words[input.qr.input_end+2]=1f32.to_bits();
+        words[input.rhs+2]=1f32.to_bits();words[input.rhs+4]=1f32.to_bits();
+        words[input.output]=1f32.to_bits();*words.last_mut().unwrap()=0;
+        let (mut validated,full)=input.into_validated(bytemuck::cast_slice(&words)).unwrap();
+        let offset=validated.equality_update().0 as usize/4;
+        let tail=&words[offset..];let result=validated.decode_tail(bytemuck::cast_slice(tail)).unwrap();
+        assert_eq!(result.coordinates,full.coordinates);assert_eq!(result.reactions,full.reactions);
+        for (index,value) in [(0,0),(tail.len()-1,u32::MAX),(6,f32::NAN.to_bits()),(4,f32::INFINITY.to_bits())] {
+            let mut corrupt=tail.to_vec();corrupt[index]=value;
+            assert_eq!(validated.decode_tail(bytemuck::cast_slice(&corrupt)).unwrap_err(),JointDotError::Output);
+        }
+        assert!(validated.decode_tail(&bytemuck::cast_slice(tail)[..tail.len()*4-4]).is_err());
+        validated.update_bounds(&[-12.]).unwrap();
+        let mut tail=bytemuck::cast_slice::<u8,u32>(validated.equality_update().1).to_vec();
+        tail[2]=(-1f32).to_bits();tail[4]=(-1f32).to_bits();tail[6]=(-1f32).to_bits();*tail.last_mut().unwrap()=0;
+        let result=validated.decode_tail(bytemuck::cast_slice(&tail)).unwrap();
+        assert_eq!(result.coordinates,vec![0.,-6.,0.]);assert_eq!(result.reactions,vec![-3.]);
+    }
     #[test]
     fn resident_qr_shader_and_publication_gates() {
         let module=naga::front::wgsl::parse_str(JOINT_CONTACT_QR_SHADER).unwrap();

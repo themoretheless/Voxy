@@ -1,4 +1,5 @@
 //! Minimum-energy equality coordinates without forming a compliance Gram.
+use super::HairContactEqualityProposal;
 pub(super) fn minimum_norm(columns: &[Vec<f64>], bounds: &[f64], tolerance: f64) -> Option<Vec<f64>> {
     equality_with_reactions(columns, bounds, tolerance).map(|solution| solution.0)
 }
@@ -15,6 +16,8 @@ struct EqualityQr<'a> {
     supports: Vec<Vec<usize>>,
     active: Vec<usize>,
     q: Vec<Vec<f64>>,
+    q_spares: Vec<Vec<f64>>,
+    r_spares: Vec<Vec<f64>>,
     q_supports:Vec<Vec<usize>>,
     sparse_basis:bool,
     r: Vec<Vec<f64>>,
@@ -30,7 +33,7 @@ impl<'a> EqualityQr<'a> {
             && column.iter().all(|value|value.is_finite())).collect();
         let supports=columns.iter().map(|column|column.iter().enumerate()
             .filter_map(|(i,&value)|(value!=0.).then_some(i)).collect()).collect();
-        Self { columns, valid_columns, supports, active: Vec::new(), q: Vec::new(), q_supports:Vec::new(), sparse_basis:false, r: Vec::new(), rebuilt_columns: 0 }
+        Self { columns, valid_columns, supports, active: Vec::new(), q: Vec::new(), q_spares:Vec::new(), r_spares:Vec::new(), q_supports:Vec::new(), sparse_basis:false, r: Vec::new(), rebuilt_columns: 0 }
     }
     fn residuals(&self,active:&[usize],bounds:&[f64],state:&[f64])->Option<Vec<f64>> {
         if state.iter().any(|value|!value.is_finite()) {return None;}
@@ -45,12 +48,20 @@ impl<'a> EqualityQr<'a> {
             || bounds.iter().any(|v| !v.is_finite())
             || !tolerance.is_finite() || tolerance <= 0. { return None; }
         let prefix = self.active.iter().zip(active).take_while(|(a,b)| a == b).count();
-        self.active.truncate(prefix); self.q.truncate(prefix); self.q_supports.truncate(prefix); self.r.truncate(prefix);
+        self.active.truncate(prefix);
+        self.q_spares.extend(self.q.drain(prefix..));
+        self.r_spares.extend(self.r.drain(prefix..));
+        self.q_supports.truncate(prefix);
         for &id in &active[prefix..] {
             self.rebuilt_columns += 1;
             let k = self.q.len();
-            let mut v = self.columns[id].clone();
-            let mut r = vec![0.; k + 1];
+            // Recycle discarded suffix storage within this immutable operator.
+            // Copy every original coefficient and clear the entire new R row;
+            // no previous numerical value participates in the rebuilt factor.
+            let mut v=self.q_spares.pop().unwrap_or_default();
+            v.clone_from(&self.columns[id]);
+            let mut r=self.r_spares.pop().unwrap_or_default();
+            r.resize(k+1,0.);r.fill(0.);
             for _ in 0..2 {
                 for (j, basis) in self.q.iter().enumerate() {
                     let projection = if self.sparse_basis {
@@ -170,14 +181,118 @@ fn unilateral_supported(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,sort_act
     unilateral_with_basis_support(columns,bounds,tolerance,sort_active,sparse,true)
 }
 fn unilateral_with_basis_support(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,sort_active:bool,sparse:bool,sparse_basis:bool)->Option<(Vec<f64>,Vec<f64>)> {
-    unilateral_with_equality_backend(columns,bounds,tolerance,sort_active,sparse,sparse_basis,None)
+    unilateral_with_equality_backend(columns,bounds,tolerance,sort_active,sparse,sparse_basis,None,None)
 }
 pub(super) fn unilateral_accelerated(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,
     backend:&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>)->Option<(Vec<f64>,Vec<f64>)> {
-    unilateral_with_equality_backend(columns,bounds,tolerance,false,true,true,Some(backend))
+    let mut adapted=|columns:&[Vec<f64>],bounds:&[f64],tolerance|backend(columns,bounds,tolerance)
+        .map(|(coordinates,reactions)|HairContactEqualityProposal::Solution(coordinates,reactions));
+    unilateral_with_equality_backend(columns,bounds,tolerance,false,true,true,Some(&mut adapted),None)
 }
+pub(super) fn unilateral_seeded_accelerated(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,seeds:&[f64],
+    backend:&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>)->Option<(Vec<f64>,Vec<f64>)> {
+    unilateral_with_proposals(columns,bounds,tolerance,seeds,&mut |columns,bounds,tolerance|
+        backend(columns,bounds,tolerance).map(|(coordinates,reactions)|HairContactEqualityProposal::Solution(coordinates,reactions)))
+}
+pub(super) fn unilateral_with_proposals(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,seeds:&[f64],
+    backend:&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<HairContactEqualityProposal>)->Option<(Vec<f64>,Vec<f64>)> {
+    if seeds.len()==columns.len() && seeds.iter().all(|v|v.is_finite()&&*v>=0.) {
+        if let Some(output)=unilateral_with_equality_backend(columns,bounds,tolerance,false,true,true,Some(&mut *backend),Some(seeds)) {
+            return Some(output);
+        }
+    }
+    unilateral_with_equality_backend(columns,bounds,tolerance,false,true,true,Some(backend),None)
+}
+// Cooperative rounds retain each immutable operator and its original active-set
+// arithmetic. A backend can encode every ready request under one device owner.
+pub(super) fn unilateral_batch_with_proposals(
+    requests: &[super::HairContactCoordinateRequest<'_>],
+    equality: &mut dyn FnMut(&[super::HairContactEqualityRequest<'_>])
+        -> Option<Vec<Option<HairContactEqualityProposal>>>,
+) -> Option<Vec<(Vec<f64>, Vec<f64>)>> {
+    let mut hinted = Vec::with_capacity(requests.len());
+    let mut owners = Vec::with_capacity(requests.len());
+    for request in requests {
+        // If hint reconstruction overflows, cold construction still validates
+        // the complete operator. Construct only one retained QR/support owner.
+        let seeded = if request.seeds.len() == request.columns.len()
+            && request.seeds.iter().all(|v| v.is_finite() && *v >= 0.) {
+            UnilateralContinuation::new(request.columns, request.bounds,
+                request.tolerance, false, true, true, Some(request.seeds), true)
+        } else { None };
+        hinted.push(seeded.is_some());
+        owners.push(match seeded {
+            Some(owner) => owner,
+            None => UnilateralContinuation::new(request.columns, request.bounds,
+                request.tolerance, false, true, true, None, true)?,
+        });
+    }
+    loop {
+        let mut ready = Vec::new();
+        for (index, owner) in owners.iter_mut().enumerate() {
+            let status = match owner.poll() {
+                Some(status) => status,
+                None if hinted[index] => {
+                    let r = &requests[index];
+                    *owner = UnilateralContinuation::new(r.columns, r.bounds,
+                        r.tolerance, false, true, true, None, true)?;
+                    hinted[index] = false;
+                    owner.poll()?
+                }
+                None => return None,
+            };
+            if status { ready.push(index); }
+        }
+        if ready.is_empty() {
+            return Some(owners.into_iter().map(|o| (o.state, o.multipliers)).collect());
+        }
+        let batch: Vec<_> = ready.iter().map(|&index| {
+            let o = &owners[index];
+            super::HairContactEqualityRequest { operator_index:index,
+                columns:&o.selected[..o.active.len()], bounds:&o.targets,
+                tolerance:o.tolerance }
+        }).collect();
+        let proposals = equality(&batch)?;
+        if proposals.len() != ready.len() { return None; }
+        for (index, proposal) in ready.into_iter().zip(proposals) {
+            if proposal.and_then(|p| owners[index].resume(p)).is_none() {
+                if !hinted[index] { return None; }
+                let r = &requests[index];
+                owners[index] = UnilateralContinuation::new(r.columns, r.bounds,
+                    r.tolerance, false, true, true, None, true)?;
+                hinted[index] = false;
+            }
+        }
+    }
+}
+
 fn unilateral_with_equality_backend(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,sort_active:bool,sparse:bool,sparse_basis:bool,
-    mut backend:Option<&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>>)->Option<(Vec<f64>,Vec<f64>)> {
+    mut backend:Option<&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<HairContactEqualityProposal>>,seeds:Option<&[f64]>)->Option<(Vec<f64>,Vec<f64>)> {
+    let mut owner=UnilateralContinuation::new(columns,bounds,tolerance,sort_active,sparse,sparse_basis,seeds,backend.is_some())?;
+    while owner.poll()? {
+        let proposal=if let Some(backend)=backend.as_deref_mut() {
+            backend(&owner.selected[..owner.active.len()],&owner.targets,tolerance)?
+        } else {
+            let (state,reactions)=owner.factor.solve(&owner.active,&owner.targets,tolerance)?;
+            HairContactEqualityProposal::Solution(state,reactions)
+        };
+        owner.resume(proposal)?;
+    }
+    Some((owner.state,owner.multipliers))
+}
+
+// One immutable coordinate operator, paused only at equality requests. No
+// threads, device ownership or physical admission decisions live in this state.
+pub(super) struct UnilateralContinuation<'a> {
+    columns:&'a [Vec<f64>],bounds:&'a [f64],tolerance:f64,
+    sort_active:bool,sparse:bool,needs_selected:bool,
+    state:Vec<f64>,multipliers:Vec<f64>,active:Vec<usize>,factor:EqualityQr<'a>,
+    active_flags:Vec<bool>,gaps:Vec<f64>,
+    selected:Vec<Vec<f64>>,targets:Vec<f64>,iteration:usize,waiting:bool,done:bool,failed:bool,
+}
+impl<'a> UnilateralContinuation<'a> {
+    fn new(columns:&'a [Vec<f64>],bounds:&'a [f64],tolerance:f64,sort_active:bool,sparse:bool,sparse_basis:bool,
+        seeds:Option<&[f64]>,needs_selected:bool)->Option<Self> {
     let n = columns.len();
     let m = columns.first()?.len();
     if bounds.len() != n
@@ -197,87 +312,165 @@ fn unilateral_with_equality_backend(columns:&[Vec<f64>],bounds:&[f64],tolerance:
     let mut state = vec![0.; m];
     let mut multipliers = vec![0.; n];
     let mut active: Vec<usize> = Vec::new();
-    let mut factor = EqualityQr::new(columns);
-    factor.sparse_basis=sparse_basis;
-    for iteration in 0..512 {
-        if !active.is_empty() {
-            let targets: Vec<_> = active.iter().map(|&i| bounds[i]).collect();
-            let (candidate, reactions) = if let Some(backend)=backend.as_deref_mut() {
-                let selected:Vec<_>=active.iter().map(|&i|columns[i].clone()).collect();
-                backend(&selected,&targets,tolerance)?
-            } else {factor.solve(&active, &targets, tolerance)?};
-            if candidate.len()!=m || reactions.len()!=active.len()
-                || candidate.iter().chain(&reactions).any(|v|!v.is_finite()) {return None;}
-            let release = active
+    if let Some(seeds)=seeds {
+        if seeds.len()!=n || seeds.iter().any(|v|!v.is_finite()||*v<0.) {return None;}
+        multipliers.copy_from_slice(seeds);
+        active.extend((0..n).filter(|&i|seeds[i]>0.));
+        // Reconstruct the dual-associated primal using CURRENT columns.
+        // Reusing a previous primal would break the release-segment invariant.
+        state=accurate_column_combination(columns,seeds,m);
+        if state.iter().any(|v|!v.is_finite()) {return None;}
+    }
+        let mut active_flags=vec![false;n];
+        for &i in &active {active_flags[i]=true;}
+        let mut factor=EqualityQr::new(columns);factor.sparse_basis=sparse_basis;
+        Some(Self {columns,bounds,tolerance,sort_active,sparse,needs_selected,state,multipliers,active,factor,
+            active_flags,gaps:vec![0.;n],
+            selected:Vec::new(),targets:Vec::new(),iteration:0,waiting:false,done:false,failed:false})
+    }
+    // true: equality request ready; false: complete. Repeated polling while
+    // waiting is inert, so a coordinator can collect independent ready owners.
+    fn poll(&mut self)->Option<bool> {
+        if self.failed {return None;}
+        if self.done {return Some(false);}
+        if self.waiting {return Some(true);}
+        while self.iteration<512 {
+            if !self.active.is_empty() {
+                self.targets.clear();self.targets.extend(self.active.iter().map(|&i|self.bounds[i]));
+                if self.needs_selected {
+                    self.selected.resize_with(self.selected.len().max(self.active.len()),Vec::new);
+                    for (row,&id) in self.selected.iter_mut().zip(&self.active) {row.clone_from(&self.columns[id]);}
+                }
+                self.waiting=true;
+                return Some(true);
+            }
+            self.failed=true;
+            self.done=self.check_original_gaps()?;
+            self.failed=false;
+            self.iteration+=1;
+            if self.done {return Some(false);}
+        }
+        self.failed=true;
+        None
+    }
+    fn resume(&mut self,proposal:HairContactEqualityProposal)->Option<()> {
+        if self.failed || !self.waiting || self.done {return None;}
+        self.waiting=false;
+        self.failed=true;
+        let m=self.columns.first()?.len();
+        let (candidate,reactions)=match proposal {
+            HairContactEqualityProposal::Solution(state,reactions)=>(Some(state),reactions),
+            HairContactEqualityProposal::ReleaseDirection(reactions)=>(None,reactions),
+        };
+            if candidate.as_ref().is_some_and(|c|c.len()!=m || c.iter().any(|v|!v.is_finite()))
+                || reactions.len()!=self.active.len() || reactions.iter().any(|v|!v.is_finite()) {return None;}
+            let release = self.active
                 .iter()
                 .zip(&reactions)
                 .enumerate()
                 .filter(|(_, (_, v))| **v < 0.)
-                .map(|(k, (&i, &v))| (k, multipliers[i] / (multipliers[i] - v)))
+                .map(|(k, (&i, &v))| (k, self.multipliers[i] / (self.multipliers[i] - v)))
                 .min_by(|a, b| a.1.total_cmp(&b.1));
             if let Some((k, fraction)) = release {
                 if !fraction.is_finite() || !(0. ..=1.).contains(&fraction) {
                     return None;
                 }
-                for (value, &next) in state.iter_mut().zip(&candidate) {
-                    *value += fraction * (next - *value);
+                if let Some(candidate)=&candidate {
+                    for (value,&next) in self.state.iter_mut().zip(candidate) {*value+=fraction*(next-*value);}
                 }
-                for (&i, &next) in active.iter().zip(&reactions) {
-                    multipliers[i] = (multipliers[i] + fraction * (next - multipliers[i])).max(0.);
+                for (&i, &next) in self.active.iter().zip(&reactions) {
+                    let updated=self.multipliers[i]+fraction*(next-self.multipliers[i]);
+                    if !updated.is_finite() {return None;}
+                    self.multipliers[i]=updated.max(0.);
                 }
-                multipliers[active[k]] = 0.;
-                active.remove(k);
-                continue;
+                self.multipliers[self.active[k]] = 0.;
+                self.active_flags[self.active[k]]=false;
+                self.active.remove(k);
+                if candidate.is_none() {
+                    // A direction is not a solution. Restore exact primal/dual
+                    // association before another equality solve or any KKT test.
+                    self.state=accurate_supported_column_combination(self.columns,&self.multipliers,m,&self.factor.supports);
+                    if self.state.iter().any(|v|!v.is_finite()) {return None;}
+                }
+                self.iteration+=1;
+                self.failed=false;
+                return Some(());
             }
-            state = candidate;
-            multipliers.fill(0.);
-            for (&i, &v) in active.iter().zip(&reactions) {
-                multipliers[i] = v;
+            // A release-only proposal can never enter solution publication.
+            self.state = candidate?;
+            self.multipliers.fill(0.);
+            for (&i, &v) in self.active.iter().zip(&reactions) {
+                self.multipliers[i] = v;
             }
-        }
+        self.done=self.check_original_gaps()?;
+        self.iteration+=1;
+        self.failed=false;
+        Some(())
+    }
+    fn check_original_gaps(&mut self)->Option<bool> {
+        let n=self.columns.len();let m=self.columns.first()?.len();
         // Reject nonfinite state explicitly: dropping 0*infinity must never
         // hide the NaN which the original dense gap computation rejected.
-        if state.iter().any(|v|!v.is_finite()) {return None;}
-        let gaps: Vec<_> = columns.iter().zip(bounds).enumerate().map(|(row,(c,b))|
-            (if sparse {accurate_products(factor.supports[row].iter().map(|&i|(c[i],state[i])))}
-                else {accurate_dot(c,&state)})-b).collect();
+        if self.state.iter().any(|v|!v.is_finite()) {return None;}
+        for (row,((c,b),gap)) in self.columns.iter().zip(self.bounds).zip(&mut self.gaps).enumerate() {
+            *gap=(if self.sparse {accurate_products(self.factor.supports[row].iter().map(|&i|(c[i],self.state[i])))}
+                else {accurate_dot(c,&self.state)})-b;
+        }
+        let gaps=&self.gaps;
         if gaps.iter().any(|v| !v.is_finite()) {
             return None;
         }
         if (0..n).all(|i| {
-            if multipliers[i] > 0. {
-                gaps[i].abs() <= tolerance
+            if self.multipliers[i] > 0. {
+                gaps[i].abs() <= self.tolerance
             } else {
-                gaps[i] >= -tolerance
+                gaps[i] >= -self.tolerance
             }
         }) {
             if std::env::var_os("VOXY_HAIR_QR_ITERATION_TRACE").is_some() {
-                eprintln!("HAIR QR ITERATIONS sorted={sort_active} rows={n} width={m} iterations={} active={} rebuilt_columns={}",iteration+1,active.len(),factor.rebuilt_columns);
+                eprintln!("HAIR QR ITERATIONS sorted={} rows={} width={} iterations={} active={} rebuilt_columns={}",self.sort_active,n,m,self.iteration+1,self.active.len(),self.factor.rebuilt_columns);
             }
-            return Some((state, multipliers));
+            return Some(true);
         }
         let enter = (0..n)
-            .filter(|i| !active.contains(i) && gaps[*i] < -tolerance)
+            .filter(|i| !self.active_flags[*i] && gaps[*i] < -self.tolerance)
             .min_by(|&a, &b| gaps[a].total_cmp(&gaps[b]))?;
-        active.push(enter);
-        if sort_active {active.sort_unstable();}
+        self.active.push(enter);
+        self.active_flags[enter]=true;
+        if self.sort_active {self.active.sort_unstable();}
+        Some(false)
     }
-    None
 }
 
-// Traverse each basis column contiguously while retaining the original
-// per-coordinate product order, Neumaier correction, and FMA product error.
-// No zero or small coefficient is omitted.
+// Preserve column order, Neumaier correction and FMA product error.
 fn accurate_column_combination(columns:&[Vec<f64>],weights:&[f64],width:usize)->Vec<f64> {
+    accurate_column_combination_impl(columns,weights,width,None)
+}
+
+// Support belongs to the same immutable columns. Nonfinite weights require
+// dense evaluation: omitting 0 * infinity would otherwise hide invalid input.
+fn accurate_supported_column_combination(columns:&[Vec<f64>],weights:&[f64],width:usize,supports:&[Vec<usize>])->Vec<f64> {
+    let support=weights.iter().all(|w|w.is_finite()).then_some(supports);
+    accurate_column_combination_impl(columns,weights,width,support)
+}
+
+fn accurate_column_combination_impl(columns:&[Vec<f64>],weights:&[f64],width:usize,supports:Option<&[Vec<usize>]>)->Vec<f64> {
     let mut sums=vec![0f64;width];
     let mut corrections=vec![0f64;width];
-    for (column,&weight) in columns.iter().zip(weights) {
-        for ((sum,correction),&axis) in sums.iter_mut().zip(&mut corrections).zip(column) {
+    for (column_index,(column,&weight)) in columns.iter().zip(weights).enumerate() {
+        let mut accumulate=|i:usize,axis:f64| {
+            let sum=&mut sums[i];
+            let correction=&mut corrections[i];
             let product=axis*weight;
             let next=*sum+product;
             *correction+=if sum.abs()>=product.abs() {(*sum-next)+product} else {(product-next)+*sum};
             *correction+=axis.mul_add(weight,-product);
             *sum=next;
+        };
+        if let Some(supports)=supports {
+            for &i in &supports[column_index] {accumulate(i,column[i]);}
+        } else {
+            for (i,&axis) in column.iter().take(width).enumerate() {accumulate(i,axis);}
         }
     }
     for (sum,correction) in sums.iter_mut().zip(corrections) {*sum+=correction;}
@@ -311,18 +504,126 @@ pub(super) fn accurate_products(products: impl Iterator<Item = (f64, f64)>) -> f
 mod tests {
     use super::*;
     #[test]
+    fn release_only_directions_require_negative_dual_and_restore_original_stationarity() {
+        let columns=vec![vec![1.,0.],vec![1.,1.]];let bounds=[1.,3.];
+        let result=unilateral_with_proposals(&columns,&bounds,1e-12,&[1.,1.],&mut |selected,targets,tolerance| {
+            if selected.len()==2 {Some(HairContactEqualityProposal::ReleaseDirection(vec![-1.,2.]))}
+            else {equality_with_reactions(selected,targets,tolerance).map(|(x,y)|HairContactEqualityProposal::Solution(x,y))}
+        }).unwrap();
+        assert!(result.0.iter().all(|v|(v-1.5).abs()<1e-12));
+        assert_eq!(result.1[0],0.);assert!((result.1[1]-1.5).abs()<1e-12);
+        for (a,b) in result.0.iter().zip(accurate_column_combination(&columns,&result.1,2)) {assert!((a-b).abs()<1e-12);}
+        for direction in [vec![1.,2.],vec![f64::NAN,2.],vec![-1.]] {
+            assert!(unilateral_with_proposals(&columns,&bounds,1e-12,&[1.,1.],&mut |_,_,_|
+                Some(HairContactEqualityProposal::ReleaseDirection(direction.clone()))).is_none());
+        }
+    }
+
+    #[test]
+    fn seeded_active_set_reconstructs_current_operator_and_retries_bad_hints() {
+        let solve = |columns: &[Vec<f64>], bounds: &[f64], seeds: &[f64]| {
+            let mut calls = 0;
+            let mut first_storage=None;
+            let result = unilateral_seeded_accelerated(columns, bounds, 1e-12, seeds,
+                &mut |selected, targets, tolerance| {
+                    calls += 1;
+                    for (row,&target) in selected.iter().zip(targets) {
+                        let id=columns.iter().position(|c|c==row).expect("stale callback column");
+                        assert_eq!(target.to_bits(),bounds[id].to_bits());
+                    }
+                    if columns.len()==3 {
+                        let pointer=selected[0].as_ptr();
+                        if let Some(previous)=first_storage {assert_eq!(pointer,previous,"active-set callback storage reallocated");}
+                        first_storage=Some(pointer);
+                    }
+                    equality_with_reactions(selected, targets, tolerance)
+                });
+            (result, calls)
+        };
+        let columns = vec![vec![2., 0., 0.], vec![0., 3., 0.], vec![0., 0., 4.]];
+        let bounds = [2., 6., 12.];
+        let cold = solve(&columns, &bounds, &[]);
+        let warm = solve(&columns, &bounds, &[0.5, 2. / 3., 0.75]);
+        assert_eq!(warm.0, cold.0);
+        assert_eq!(warm.1, 1);
+        assert!(cold.1 > warm.1);
+        // Old hints remain hints when current bounds release an active row.
+        let changed = [2., -6., 12.];
+        assert_eq!(solve(&columns, &changed, &[10., 20., 30.]).0,
+                   solve(&columns, &changed, &[]).0);
+        for seeds in [vec![-1., 0., 0.], vec![f64::NAN, 0., 0.],
+                      vec![f64::INFINITY, 0., 0.], vec![1.]] {
+            assert_eq!(solve(&columns, &bounds, &seeds).0, cold.0);
+        }
+        // A dependent seeded active set must retry the canonical empty set.
+        let dependent = vec![vec![1.], vec![1.]];
+        assert_eq!(solve(&dependent, &[1., 1.], &[1., 1.]).0,
+                   solve(&dependent, &[1., 1.], &[]).0);
+        let impossible = vec![vec![1.], vec![-1.]];
+        assert!(solve(&impossible, &[1., 1.], &[1., 1.]).0.is_none());
+    }
+
+    #[test]
+    fn seeded_active_set_matches_cold_on_coupled_changing_operators() {
+        let mut random = 0x934bc172fd8a560eu64;
+        let mut next = || {
+            random = random.wrapping_mul(6364136223846793005).wrapping_add(1);
+            ((random >> 11) as f64 / ((1u64 << 53) as f64)) * 2. - 1.
+        };
+        let mut direction_count=0;
+        for case in 0..512 {
+            let n = 2 + case % 7;
+            let columns: Vec<Vec<f64>> = (0..n).map(|i| (0..n).map(|j| {
+                next() * 0.125 + if i == j { 2. } else { 0. }
+            }).collect()).collect();
+            let bounds: Vec<_> = (0..n).map(|_| next() * 3.).collect();
+            // Deliberately unrelated hints exercise releases and changing loads.
+            let seeds: Vec<_> = (0..n).map(|_| next().abs() * 8.).collect();
+            let cold = unilateral_accelerated(&columns, &bounds, 1e-11,
+                &mut equality_with_reactions).expect("well-conditioned cold system");
+            let warm = unilateral_seeded_accelerated(&columns, &bounds, 1e-11,
+                &seeds, &mut equality_with_reactions).expect("seeded system must recover");
+            let proposed=unilateral_with_proposals(&columns,&bounds,1e-11,&seeds,&mut |selected,targets,tolerance| {
+                let (coordinates,reactions)=equality_with_reactions(selected,targets,tolerance)?;
+                if reactions.iter().any(|v|*v<0.) {
+                    direction_count+=1;Some(HairContactEqualityProposal::ReleaseDirection(reactions))
+                } else {Some(HairContactEqualityProposal::Solution(coordinates,reactions))}
+            }).expect("release-only path must recover");
+            for warm in [&warm,&proposed] {
+            for (a,b) in cold.0.iter().zip(&warm.0) {
+                assert!((a-b).abs() < 1e-10, "coordinate changed in case {case}: {a} {b}");
+            }
+            for (i, (&reaction, column)) in warm.1.iter().zip(&columns).enumerate() {
+                let gap = accurate_dot(column, &warm.0) - bounds[i];
+                assert!(reaction >= 0.);
+                assert!(if reaction > 0. {gap.abs() <= 1e-11} else {gap >= -1e-11});
+            }
+            let associated = accurate_column_combination(&columns, &warm.1, n);
+            for (actual, expected) in warm.0.iter().zip(associated) {
+                assert!((actual-expected).abs() < 1e-10, "stationarity changed in case {case}");
+            }
+            }
+        }
+        assert!(direction_count>0,"differential cases did not exercise release proposals");
+    }
+
+    #[test]
     fn contiguous_coordinates_preserve_compensation_and_nonfinite_results() {
         let check=|columns:&[Vec<f64>],weights:&[f64]| {
             let width=columns[0].len();
             let actual=accurate_column_combination(columns,weights,width);
+            let supports:Vec<Vec<usize>>=columns.iter().map(|c|c.iter().enumerate().filter_map(|(i,&v)|(v!=0.).then_some(i)).collect()).collect();
+            let sparse=accurate_supported_column_combination(columns,weights,width,&supports);
             for i in 0..width {
                 let expected=accurate_products(columns.iter().zip(weights).map(|(c,&w)|(c[i],w)));
-                if expected.is_nan() {assert!(actual[i].is_nan());}
-                else {assert_eq!(actual[i].to_bits(),expected.to_bits());}
+                if expected.is_nan() {assert!(actual[i].is_nan());assert!(sparse[i].is_nan());}
+                else {assert_eq!(actual[i].to_bits(),expected.to_bits());assert_eq!(sparse[i].to_bits(),expected.to_bits());}
             }
         };
         check(&[vec![1.,f64::MIN_POSITIVE,0.,f64::MAX],
                 vec![3e-15,0.,-0.,f64::MAX],vec![-1.,-f64::MIN_POSITIVE,0.,0.]],&[1.,1.,1.]);
+        check(&[vec![0.,1.,-0.],vec![1.,0.,0.]],&[f64::INFINITY,1.]);
+        check(&[vec![0.,1.,-0.]],&[f64::NAN]);
         let mut seed=0x42f13579abcdefu64;
         for _ in 0..512 {
             let mut next=|| {
@@ -330,7 +631,7 @@ mod tests {
                 let exponent=(seed>>52)%2047;
                 f64::from_bits((seed&0x800fffffffffffff)|(exponent<<52))
             };
-            let columns:Vec<Vec<_>>=(0..7).map(|_|(0..13).map(|_|next()).collect()).collect();
+            let columns:Vec<Vec<_>>=(0..7).map(|_|(0..13).map(|i|if i%3==0 {0.} else {next()}).collect()).collect();
             let weights:Vec<_>=(0..7).map(|_|next()).collect();
             check(&columns,&weights);
         }
@@ -583,17 +884,24 @@ mod tests {
         for sparse_basis in [false,true] {
         let mut factor = EqualityQr::new(&columns);
         factor.sparse_basis=sparse_basis;
+        let mut recycled=false;
+        let mut previous_storage=Vec::new();
         for (step, active) in [vec![0], vec![0,2], vec![0,1,2], vec![0,2],
             vec![0,2,3], vec![2,3], vec![0,1,2,3], vec![0]].iter().enumerate() {
             let bounds: Vec<_> = active.iter().map(|&i| (i + step + 1) as f64 * 0.001).collect();
             let selected: Vec<_> = active.iter().map(|&i| columns[i].clone()).collect();
             let actual = factor.solve(active, &bounds, 1e-10).unwrap();
+            if step==5 {recycled=factor.q.iter().any(|v|previous_storage.contains(&v.as_ptr()));}
+            previous_storage=factor.q.iter().map(|v|v.as_ptr()).collect();
+            assert!(factor.q.len()+factor.q_spares.len()<=columns.len());
+            assert!(factor.r.len()+factor.r_spares.len()<=columns.len());
             let expected = uncached_equality_reference(&selected, &bounds, 1e-10).unwrap();
             assert_eq!(actual.0.iter().map(|v| v.to_bits()).collect::<Vec<_>>(),
                 expected.0.iter().map(|v| v.to_bits()).collect::<Vec<_>>());
             assert_eq!(actual.1.iter().map(|v| v.to_bits()).collect::<Vec<_>>(),
                 expected.1.iter().map(|v| v.to_bits()).collect::<Vec<_>>());
         }
+        assert!(recycled,"changed prefix must reuse discarded factor storage");
         }
     }
 
@@ -883,4 +1191,91 @@ fn uncached_unilateral_reference(
         active.sort_unstable();
     }
     None
+}
+
+#[cfg(test)]
+mod continuation_tests {
+    use super::*;
+    #[test]
+    fn cooperative_rounds_match_serial_with_release_retry_and_early_completion() {
+        let columns = [vec![vec![1.,0.],vec![0.,1.]],
+            vec![vec![1.,0.],vec![1.,1.]],vec![vec![1.,0.]]];
+        let bounds = [vec![1.,2.],vec![1.,0.5],vec![-1.]];
+        let seeds = [vec![],vec![1.,1.],vec![]];
+        let requests:Vec<_>=(0..3).map(|i|super::super::HairContactCoordinateRequest {
+            columns:&columns[i],bounds:&bounds[i],tolerance:1e-12,seeds:&seeds[i]
+        }).collect();
+        let proposal=|c:&[Vec<f64>],b:&[f64],t:f64| {
+            let (x,r)=equality_with_reactions(c,b,t)?;
+            Some(if r.iter().any(|v|*v<0.) {HairContactEqualityProposal::ReleaseDirection(r)}
+                else {HairContactEqualityProposal::Solution(x,r)})
+        };
+        let expected:Vec<_>=requests.iter().map(|r|unilateral_with_proposals(
+            r.columns,r.bounds,r.tolerance,r.seeds,&mut |c,b,t|proposal(c,b,t)).unwrap()).collect();
+        let mut rounds=Vec::new();
+        let actual=unilateral_batch_with_proposals(&requests,&mut |batch| {
+            rounds.push(batch.iter().map(|r|r.operator_index).collect::<Vec<_>>());
+            Some(batch.iter().map(|r|proposal(r.columns,r.bounds,r.tolerance)).collect())
+        }).unwrap();
+        assert_eq!(actual,expected);
+        assert_eq!(rounds[0],vec![0,1]);
+        assert!(rounds.iter().all(|ids|!ids.contains(&2)),"already feasible owner reached backend");
+        // Fail the hinted owner once while its neighbor continues normally.
+        let mut rejected=false;
+        let retried=unilateral_batch_with_proposals(&requests,&mut |batch| Some(batch.iter().map(|r| {
+            if r.operator_index==1 && !rejected {rejected=true;None}
+            else {proposal(r.columns,r.bounds,r.tolerance)}
+        }).collect())).unwrap();
+        assert!(rejected);
+        assert_eq!(retried,expected);
+        // A cold rejection cannot be converted into partial success.
+        assert!(unilateral_batch_with_proposals(&requests,&mut |batch|
+            Some(batch.iter().map(|_|None).collect())).is_none());
+        assert!(unilateral_batch_with_proposals(&requests,&mut |_|Some(vec![])).is_none());
+        let invalid_columns=vec![vec![f64::NAN,0.]];
+        let invalid=[super::super::HairContactCoordinateRequest {
+            columns:&columns[0],bounds:&bounds[0],tolerance:1e-12,seeds:&[]
+        },super::super::HairContactCoordinateRequest {
+            columns:&invalid_columns,bounds:&[1.],tolerance:1e-12,seeds:&[]
+        }];
+        let mut called=false;
+        assert!(unilateral_batch_with_proposals(&invalid,&mut |_| {called=true;None}).is_none());
+        assert!(!called,"invalid later operator dispatched an earlier owner");
+        assert_eq!(unilateral_batch_with_proposals(&[],&mut |_|panic!("empty batch dispatched")),Some(vec![]));
+    }
+    #[test]
+    fn paused_coordinate_owners_interleave_without_crossing_state() {
+        let columns=[vec![vec![1.,0.],vec![0.,1.]],vec![vec![1.,0.],vec![1.,1.]]];
+        let bounds=[vec![1.,2.],vec![1.,0.5]];
+        let seeds=[vec![],vec![1.,1.]];
+        let proposal=|c:&[Vec<f64>],b:&[f64],t:f64| {
+            let (x,r)=equality_with_reactions(c,b,t)?;
+            Some(if r.iter().any(|v|*v<0.) {HairContactEqualityProposal::ReleaseDirection(r)}
+                else {HairContactEqualityProposal::Solution(x,r)})
+        };
+        let expected:Vec<_>=(0..2).map(|i|unilateral_with_proposals(&columns[i],&bounds[i],1e-12,&seeds[i],&mut |c,b,t|proposal(c,b,t)).unwrap()).collect();
+        let mut owners:Vec<_>=(0..2).map(|i|UnilateralContinuation::new(&columns[i],&bounds[i],1e-12,false,true,true,
+            if seeds[i].is_empty() {None} else {Some(seeds[i].as_slice())},true).unwrap()).collect();
+        let mut done=[false;2];
+        for _ in 0..32 {
+            for i in [1,0] {
+                if done[i] {continue;}
+                let owner=&mut owners[i];
+                if !owner.poll().unwrap() {done[i]=true;continue;}
+                let before=(owner.iteration,owner.state.clone(),owner.multipliers.clone(),owner.targets.clone());
+                assert!(owner.poll().unwrap());
+                assert_eq!((owner.iteration,owner.state.clone(),owner.multipliers.clone(),owner.targets.clone()),before);
+                let result=proposal(&owner.selected[..owner.active.len()],&owner.targets,owner.tolerance).unwrap();
+                owner.resume(result).unwrap();
+            }
+            if done.iter().all(|v|*v) {break;}
+        }
+        assert_eq!(done,[true,true]);
+        for (owner,expected) in owners.iter().zip(expected) {assert_eq!((&owner.state,&owner.multipliers),(&expected.0,&expected.1));}
+        let mut rejected=UnilateralContinuation::new(&columns[0],&bounds[0],1e-12,false,true,true,None,true).unwrap();
+        assert!(rejected.poll().unwrap());
+        assert!(rejected.resume(HairContactEqualityProposal::Solution(vec![f64::NAN;2],vec![0.])).is_none());
+        assert!(rejected.poll().is_none(),"rejected owner was accidentally rescheduled");
+    }
+
 }

@@ -22,7 +22,7 @@ pub(super) fn export_profile_input(requests:&[HairResponseSystem],columns:&[Vec<
 }
 
 pub(super) fn export_input_to(path:&std::ffi::OsStr,requests:&[HairResponseSystem],columns:&[Vec<f64>],
-    bounds:&[f64],effective:&[f64],tolerance:f64,refinement:usize,preserve_existing:bool) {
+    bounds:&[f64],effective:&[f64],tolerance:f64,refinement:usize,preserve_existing:bool) -> bool {
     let _capture_guard=CAPTURE_LOCK.lock().unwrap_or_else(|e|e.into_inner());
     let write=||->std::io::Result<()> {
         let file=if preserve_existing {std::fs::OpenOptions::new().write(true).create_new(true).open(path)?}
@@ -46,8 +46,8 @@ pub(super) fn export_input_to(path:&std::ffi::OsStr,requests:&[HairResponseSyste
         out.flush()
     };
     match write() {
-        Ok(())=>eprintln!("HAIR QR INPUT EXPORT {:?} systems={} rows={} refinement={refinement}",path,requests.len(),bounds.len()),
-        Err(error)=>eprintln!("HAIR QR INPUT EXPORT ERROR {error}"),
+        Ok(())=> {eprintln!("HAIR QR INPUT EXPORT {:?} systems={} rows={} refinement={refinement}",path,requests.len(),bounds.len());true},
+        Err(error)=> {eprintln!("HAIR QR INPUT EXPORT ERROR {error}");false},
     }
 }
 

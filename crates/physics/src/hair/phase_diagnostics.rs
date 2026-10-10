@@ -1,6 +1,26 @@
 //! Optional bounded per-rod step observation; disabled in ordinary simulation.
 use super::math::{Q, V};
 use super::{HairContactDiagnostic, HairRod, HairSystem};
+std::thread_local! {
+    static CONTACT_OBSERVATION_FRAME: std::cell::Cell<Option<usize>> = const { std::cell::Cell::new(None) };
+}
+
+/// Label opt-in contact snapshots during a caller-owned frame. This diagnostic
+/// scope never changes timestep, contact selection or physical admission.
+/// Nested scopes and unwinding restore the previous thread-local label.
+pub fn observe_contact_frame<T>(frame:usize, run:impl FnOnce()->T)->T {
+    assert!(frame>0,"contact observation frames are one-based");
+    with_observation_frame(Some(frame),run)
+}
+pub(super) fn observation_frame()->Option<usize> {CONTACT_OBSERVATION_FRAME.get()}
+pub(super) fn with_observation_frame<T>(frame:Option<usize>,run:impl FnOnce()->T)->T {
+    struct Restore(Option<usize>);
+    impl Drop for Restore {
+        fn drop(&mut self) {CONTACT_OBSERVATION_FRAME.set(self.0);}
+    }
+    let _restore=Restore(CONTACT_OBSERVATION_FRAME.replace(frame));
+    run()
+}
 #[derive(Clone, Debug)]
 pub struct HairPhaseDiagnostic {
     pub phase: &'static str,
@@ -13,6 +33,9 @@ pub struct HairPhaseDiagnostic {
     pub contacts: Vec<HairContactDiagnostic>,
     /// Signed axial strain of every segment, measured against its rest length.
     pub relative_strains: Vec<f64>,
+    /// Inertial targets differ from current positions before Newton iteration.
+    pub predicted_positions: Vec<V>,
+    pub angular_velocities: Vec<V>,
 }
 /// Per-pair friction inputs and impulses in deterministic application order.
 #[derive(Clone, Debug)]
@@ -52,6 +75,8 @@ impl HairPhaseDiagnostic {
             relative_strains: rod.x.windows(2).zip(rod.rest_lengths()).map(|(p, length)| {
                 super::math::len(super::math::sub(p[1], p[0])) / length - 1.
             }).collect(),
+            predicted_positions: rod.predicted_x.clone(),
+            angular_velocities: rod.omega.clone(),
         }
     }
 }
@@ -218,5 +243,30 @@ mod tests {
         }
         traced.set_trace_rod(None).unwrap();
         assert!(traced.step_trace().is_empty());
+    }
+}
+
+#[cfg(test)]
+mod observation_scope_tests {
+    use super::*;
+    #[test]
+    fn frame_scope_restores_nested_panics_and_does_not_leak_to_other_threads() {
+        assert_eq!(observation_frame(),None);
+        observe_contact_frame(4,|| {
+            assert_eq!(observation_frame(),Some(4));
+            let failed=std::panic::catch_unwind(||observe_contact_frame(5,|| {
+                assert_eq!(observation_frame(),Some(5));
+                panic!("intentional diagnostic scope unwind");
+            }));
+            assert!(failed.is_err());assert_eq!(observation_frame(),Some(4));
+            std::thread::scope(|scope|scope.spawn(|| {
+                assert_eq!(observation_frame(),None);
+                with_observation_frame(Some(4),||assert_eq!(observation_frame(),Some(4)));
+                assert_eq!(observation_frame(),None);
+            }).join().unwrap());
+        });
+        assert_eq!(observation_frame(),None);
+        assert!(std::panic::catch_unwind(||observe_contact_frame(0,||())).is_err());
+        assert_eq!(observation_frame(),None);
     }
 }

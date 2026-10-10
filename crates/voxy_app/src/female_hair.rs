@@ -18,6 +18,11 @@ pub(crate) struct FemaleHair {
     render_offsets: Vec<Vec<Vec3>>,
     render_indices: Vec<u32>,
 }
+// Only mutable simulation state travels through preparation. Groom/render data
+// remains owned by FemaleHair and is never copied for a coupled transaction.
+pub(crate) struct PreparedHairStep {
+    system:HairSystem,collider:TriangleMesh,targets:Vec<Vec3>,
+}
 impl FemaleHair {
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
         Self::new_parameterized(body, indices, Default::default())
@@ -80,7 +85,9 @@ impl FemaleHair {
             .map(|t| [t[0] as usize, t[1] as usize, t[2] as usize])
             .collect();
         let mut collider = TriangleMesh::new(&positions, &triangles)?;
-        let _ = collider.enable_closed_feature_normals();
+        // Guide fitting requires a closed oriented collider; retain its actual
+        // topology error instead of failing later with missing feature normals.
+        collider.enable_closed_feature_normals()?;
         let mut rods = Vec::with_capacity(roots.len());
         for (i, root) in roots.iter().enumerate() {
             // A short front fringe stays above the eyes after gravitational
@@ -295,6 +302,14 @@ impl FemaleHair {
         self.advance_impl(dt,time,head,body,Some(solver))
     }
     fn advance_impl(&mut self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex],solver:Option<&mut dyn physics::hair::HairLinearSolver>)->Result<(), &'static str> {
+        let staged=self.prepare_impl(dt,time,head,body,solver)?;
+        self.publish_prepared(staged);
+        Ok(())
+    }
+    pub(crate) fn prepare_advance(&self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex])->Result<PreparedHairStep,&'static str> {
+        self.prepare_impl(dt,time,head,body,None)
+    }
+    fn prepare_impl(&self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex],solver:Option<&mut dyn physics::hair::HairLinearSolver>)->Result<PreparedHairStep,&'static str> {
         let rotation = Quat::from_mat4(&head).normalize().to_array().map(f64::from);
         if self.root_bindings.iter().any(|(i, _)| *i >= body.len()) {
             return Err("missing scalp binding vertex");
@@ -324,18 +339,26 @@ impl FemaleHair {
         let meshes=if self.skip_mesh_contacts {&[]} else {meshes};
         // HairSystem already enforces at least 240 Hz internally. Its single
         // staged solve owns publication; no second clone of guide state is needed.
-        self.system.step_validated(dt,&roots,gravity,air,meshes,solver, |system| {
+        let system=self.system.prepare_validated(dt,&roots,gravity,air,meshes,solver, |system| {
             let substeps=system.substeps.max((dt*240.).ceil() as usize);
             Self::verify_system_at_timestep(system, &targets, Some(dt/substeps as f64))
         })?;
-        self.targets = targets;
-        self.collider = collider;
+        Ok(PreparedHairStep {system,collider,targets})
+    }
+    pub(crate) fn publish_prepared(&mut self,staged:PreparedHairStep) {
+        self.system=staged.system;
+        self.targets=staged.targets;
+        self.collider=staged.collider;
         if self.system.profiling {
             let profile = self.system.last_profile;
             eprintln!("HAIR PHASES structural_worker_ms={:.3} mesh_contact_worker_ms={:.3} self_contact_wall_ms={:.3}",
                 profile.structural_ms, profile.mesh_contacts_ms, profile.self_contacts_ms);
         }
-        Ok(())
+    }
+    pub(crate) fn exchange_prepared(&mut self,staged:&mut PreparedHairStep) {
+        std::mem::swap(&mut self.system,&mut staged.system);
+        std::mem::swap(&mut self.collider,&mut staged.collider);
+        std::mem::swap(&mut self.targets,&mut staged.targets);
     }
     /// Static render LOD: retain every guide/follower and simplify only its
     /// polygonal sampling. Bounds both centre/section position and prelit colour.
@@ -895,6 +918,18 @@ mod tests {
         solver.reuse_refinement_factors=std::env::var_os("VOXY_HAIR_REUSE_REFINEMENT_FACTORS").is_some();
         solver.contact_response_batches=std::env::var_os("VOXY_HAIR_CONTACT_RESPONSE_BATCHES").is_some();
         solver.joint_contact_qr=std::env::var_os("VOXY_HAIR_JOINT_QR").is_some();
+        solver.joint_coordinate_batches=std::env::var_os("VOXY_HAIR_JOINT_COORDINATE_BATCHES").is_some();
+        eprintln!("HYBRID JOINT COORDINATE BATCHES {}",solver.joint_coordinate_batches);
+        assert!(!solver.joint_coordinate_batches || solver.joint_contact_qr,"coordinate batching qualification requires the GPU joint backend");
+        solver.joint_result_reuse=std::env::var_os("VOXY_HAIR_JOINT_RESULT_REUSE").is_some();
+        solver.joint_dual_hints=std::env::var_os("VOXY_HAIR_JOINT_DUAL_HINTS").is_some();
+        solver.joint_qr_prefix_reuse=std::env::var_os("VOXY_HAIR_JOINT_QR_PREFIX_REUSE").is_some();
+        solver.joint_release_directions=std::env::var_os("VOXY_HAIR_JOINT_RELEASE_DIRECTIONS").is_some();
+        solver.joint_early_release_directions=std::env::var_os("VOXY_HAIR_JOINT_EARLY_RELEASE_DIRECTIONS").is_some();
+        eprintln!("HYBRID JOINT RELEASE DIRECTIONS {} early={}",solver.joint_release_directions,solver.joint_early_release_directions);
+        eprintln!("HYBRID JOINT QR PREFIX REUSE {}",solver.joint_qr_prefix_reuse);
+        eprintln!("HYBRID JOINT PHYSICS OWNED DUAL HINTS {}",solver.joint_dual_hints);
+        eprintln!("HYBRID JOINT EXACT RESULT REUSE {}",solver.joint_result_reuse);
         eprintln!("HYBRID JOINT QR {}",solver.joint_contact_qr);
         solver.batch_response_waves=std::env::var_os("VOXY_HAIR_BATCH_RESPONSE_WAVES").is_some();
         solver.compact_response_readback=std::env::var_os("VOXY_HAIR_COMPACT_RESPONSE_READBACK").is_some();
@@ -950,14 +985,18 @@ mod tests {
             let mut posed=body.mesh.vertices().to_vec();
             if articulated_jump {rig.deform_jump(&mut posed,time);} else {rig.deform(&mut posed,time as f32);}
             for vertex in &mut posed {vertex.position[1]+=bob;}
-            let started=std::time::Instant::now();native.advance(1./120.,time,head,&posed).unwrap_or_else(|error|panic!("native frame {frame}: {error}"));
+            if std::env::var_os("VOXY_HAIR_SWEPT_INCREMENT_TRACE_ROD").is_some() {eprintln!("HAIR SWEPT INCREMENT OWNER frame={frame} backend=native");}
+            let started=std::time::Instant::now();physics::hair::observe_contact_frame(frame,||native.advance(1./120.,time,head,&posed)).unwrap_or_else(|error|panic!("native frame {frame}: {error}"));
             let native_frame_ms=started.elapsed().as_secs_f64()*1000.;native_ms+=native_frame_ms;
             let started=std::time::Instant::now();
+            if std::env::var_os("VOXY_HAIR_SWEPT_INCREMENT_TRACE_ROD").is_some() {eprintln!("HAIR SWEPT INCREMENT OWNER frame={frame} backend=external");}
+            physics::hair::observe_contact_frame(frame,|| {
             if native_only {
                 gpu.advance(1./120.,time,head,&posed).unwrap_or_else(|error|panic!("native-only paired frame {frame}: {error}"));
             } else if cpu_control {
                 gpu.advance_with_solver(1./120.,time,head,&posed,&mut control).unwrap();
             } else {gpu.advance_with_solver(1./120.,time,head,&posed,&mut solver).unwrap_or_else(|error|panic!("frame {frame}: {error}, {:?}",solver.last_error));}
+            });
             let external_frame_ms=started.elapsed().as_secs_f64()*1000.;gpu_ms+=external_frame_ms;
             // Solver wall time only: this excludes rendering and verification.
             // Log individual frames so a slow solve cannot hide in the total.
@@ -965,7 +1004,11 @@ mod tests {
             if solver.joint_contact_qr {
                 // Emit before trajectory assertions: a failed first frame must
                 // still expose actual GPU admission versus native recovery.
-                eprintln!("HYBRID JOINT FRAME COUNTERS frame={frame} coordinate_calls={} equality_dispatches={} admitted={} native_fallbacks={}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_admitted,solver.joint_native_fallbacks);
+                eprintln!("HYBRID JOINT FRAME COUNTERS frame={frame} coordinate_calls={} equality_dispatches={} cache_hits={} admitted={} native_fallbacks={}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_result_cache_hits,solver.joint_admitted,solver.joint_native_fallbacks);
+                eprintln!("HYBRID JOINT SUBMISSION FRAME COUNTERS frame={frame} submissions={} equality_dispatches={}",solver.joint_equality_submissions,solver.joint_equality_dispatches);
+                eprintln!("HYBRID JOINT HINT FRAME COUNTERS frame={frame} attempts={}",solver.joint_dual_hint_attempts);
+                eprintln!("HYBRID JOINT QR PREFIX FRAME COUNTERS frame={frame} reused_columns={}",solver.joint_qr_columns_reused);
+                eprintln!("HYBRID JOINT RELEASE FRAME COUNTERS frame={frame} directions={} early={}",solver.joint_release_direction_calls,solver.joint_early_release_direction_calls);
             }
             if trace.is_some() {
                 let a=native.system.step_trace();
@@ -978,6 +1021,9 @@ mod tests {
                     }
                     let error=a.positions.iter().zip(&b.positions).flat_map(|(a,b)|(0..3).map(move |axis|(a[axis]-b[axis]).abs())).fold(0f64,f64::max);
                     eprintln!("HAIR PHASE COMPARISON frame={frame} index={index} phase={} substep={} iteration={} position_error_m={error} native_contacts={} external_contacts={}",a.phase,a.substep,a.iteration,a.contacts.len(),b.contacts.len());
+                    let maximum=|a:&[[f64;3]],b:&[[f64;3]]|a.iter().zip(b).flat_map(|(a,b)|(0..3).map(move |axis|(a[axis]-b[axis]).abs())).fold(0f64,f64::max);
+                    eprintln!("HAIR PHASE INERTIAL COMPARISON frame={frame} index={index} phase={} substep={} iteration={} predicted_position_error_m={} velocity_error_m_s={} angular_velocity_error_rad_s={}",a.phase,a.substep,a.iteration,
+                        maximum(&a.predicted_positions,&b.predicted_positions),maximum(&a.velocities,&b.velocities),maximum(&a.angular_velocities,&b.angular_velocities));
                 }
                 if a.len()!=b.len() {eprintln!("HAIR PHASE COUNT MISMATCH frame={frame} native={} external={}",a.len(),b.len());}
                 for (label,hair) in [("native",&native),("external",&gpu)] {
@@ -1046,8 +1092,13 @@ mod tests {
         eprintln!("HYBRID RESIDUAL REFINEMENT DISPATCHES {}",solver.refinement_dispatches);
         eprintln!("HYBRID REUSED FACTOR DISPATCHES {}",solver.reused_factor_dispatches);
         eprintln!("HYBRID CONTACT RESPONSE CALLS {} DISPATCHES {} SUBMISSIONS {}",solver.response_calls,solver.response_dispatches,solver.response_submissions);
-        eprintln!("HYBRID JOINT CONTACT CALLS {} EQUALITY DISPATCHES {} ADMITTED {} NATIVE FALLBACKS {}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_admitted,solver.joint_native_fallbacks);
+        eprintln!("HYBRID JOINT CONTACT CALLS {} EQUALITY DISPATCHES {} CACHE HITS {} ADMITTED {} NATIVE FALLBACKS {}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_result_cache_hits,solver.joint_admitted,solver.joint_native_fallbacks);
+        eprintln!("HYBRID JOINT HINT ATTEMPTS {}",solver.joint_dual_hint_attempts);
+        eprintln!("HYBRID JOINT QR COLUMNS REUSED {}",solver.joint_qr_columns_reused);
+        eprintln!("HYBRID JOINT RELEASE DIRECTION CALLS {} early={}",solver.joint_release_direction_calls,solver.joint_early_release_direction_calls);
         if solver.joint_contact_qr {assert!(solver.joint_coordinate_calls>0 && solver.joint_admitted>0,"joint qualification did not admit GPU contact output");}
+        if solver.joint_coordinate_batches {assert!(solver.joint_equality_submissions<solver.joint_equality_dispatches,
+            "coordinate batching qualification never combined independent GPU jobs");}
         assert_eq!(gpu.system.rods().len(),469);assert_eq!(if cpu_control {control.calls} else {solver.calls},expected_calls);
         if swept && !cpu_control {assert!(solver.response_calls>0,"swept structural motion must exercise the response backend");}
         assert!(position_error<1e-6,"GPU position drift {position_error}");

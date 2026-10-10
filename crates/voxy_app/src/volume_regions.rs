@@ -168,6 +168,10 @@ impl Region {
         Ok(regions)
     }
     pub(crate) fn step(&mut self, dt: f64, bob: f64) -> Result<(), &'static str> {
+        *self=self.prepare_step(dt,bob)?;
+        Ok(())
+    }
+    pub(crate) fn prepare_step(&self, dt:f64, bob:f64)->Result<Self,&'static str> {
         if !dt.is_finite() || dt <= 0.0 || dt > 0.1 || !bob.is_finite() {
             return Err("invalid volume region step");
         }
@@ -178,8 +182,7 @@ impl Region {
             let target = old_bob + (bob - old_bob) * i as f64 / count as f64;
             next.substep(dt / count as f64, target)?;
         }
-        *self = next;
-        Ok(())
+        Ok(next)
     }
     fn substep(&mut self, dt: f64, bob: f64) -> Result<(), &'static str> {
         for index in [3, self.pin] {

@@ -511,3 +511,28 @@ fn principal_stretches_and_thickness_match_affine_deformation() {
         }
     }
 }
+
+#[test]
+fn discarded_prepared_skin_preserves_future_motion_and_material_history() {
+    let mut actual=triangle(SkinMaterial::default(),&[0,2]);
+    let mut control=actual.clone();
+    let forces=[[0.,0.,0.01];3];
+    let dt=1./240.;
+    let original_positions=actual.positions().to_vec();
+    let original_velocities=actual.velocities().to_vec();
+    let original_energy=actual.stored_energy().unwrap();
+    let (candidate,_)=actual.prepare_adaptive_with_contacts(dt,[0.;3],&forces,&[],
+        &physics::skin::ContactScene::default(),SolverConfig::default(),6).unwrap();
+    assert_ne!(candidate.positions(),original_positions);
+    drop(candidate); // The coupled hair solve failed before publication.
+    assert_eq!(actual.positions(),original_positions);
+    assert_eq!(actual.velocities(),original_velocities);
+    assert_eq!(actual.stored_energy().unwrap(),original_energy);
+    for _ in 0..8 {
+        actual.step_adaptive(dt,[0.;3],&forces,&[],SolverConfig::default(),6).unwrap();
+        control.step_adaptive(dt,[0.;3],&forces,&[],SolverConfig::default(),6).unwrap();
+        assert_eq!(actual.positions(),control.positions());
+        assert_eq!(actual.velocities(),control.velocities());
+        assert_eq!(actual.stored_energy().unwrap(),control.stored_energy().unwrap());
+    }
+}

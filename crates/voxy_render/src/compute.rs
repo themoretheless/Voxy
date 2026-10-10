@@ -361,6 +361,16 @@ impl ComputeJob {
     ) -> Result<(), ComputeError> {
         self.encode_step_with_binding(encoder, workgroups, None)
     }
+    /// Encode ordered repetitions with one pipeline/binding setup and no host
+    /// transfer. Dispatch command order retains resident storage dependencies.
+    /// # Errors
+    /// Rejects zero repetitions, invalid workgroups or an additional-binding ABI
+    /// before recording a pass.
+    pub fn encode_repeated_steps(
+        &self, encoder:&mut wgpu::CommandEncoder, workgroups:[u32;3], repetitions:u32,
+    )->Result<(),ComputeError> {
+        self.encode_repeated_step_options(encoder,workgroups,None,None,repetitions)
+    }
     /// Profile one resident dispatch using pass-boundary GPU timestamps.
     pub fn encode_step_with_timestamps(
         &self,
@@ -385,6 +395,14 @@ impl ComputeJob {
         additional: Option<&wgpu::BindGroup>,
         timestamps: Option<wgpu::ComputePassTimestampWrites<'_>>,
     ) -> Result<(), ComputeError> {
+        self.encode_repeated_step_options(encoder,workgroups,additional,timestamps,1)
+    }
+    fn encode_repeated_step_options(
+        &self, encoder:&mut wgpu::CommandEncoder, workgroups:[u32;3],
+        additional:Option<&wgpu::BindGroup>, timestamps:Option<wgpu::ComputePassTimestampWrites<'_>>,
+        repetitions:u32,
+    )->Result<(),ComputeError> {
+        if repetitions==0 {return Err(ComputeError::InvalidDispatch);}
         if additional.is_some() != self.requires_additional_binding {
             return Err(ComputeError::InvalidBuffer);
         }
@@ -404,7 +422,9 @@ impl ComputeJob {
             if let Some(group) = additional {
                 pass.set_bind_group(1, group, &[]);
             }
-            pass.dispatch_workgroups(workgroups[0], workgroups[1], workgroups[2]);
+            for _ in 0..repetitions {
+                pass.dispatch_workgroups(workgroups[0], workgroups[1], workgroups[2]);
+            }
         }
         Ok(())
     }
@@ -463,6 +483,24 @@ pub struct ComputeDispatch {
     readback: Arc<ReadbackLease>,
 }
 impl ComputeDispatch {
+    /// Gather ranges from multiple caller-owned buffers into one staging lease.
+    /// All sources must belong to this device and encoder. Destination ranges
+    /// are contiguous and must cover `size` exactly. Every range is validated
+    /// before allocating staging or recording any copy.
+    /// # Errors
+    /// Rejects invalid ranges/usages, device size limits and staging exhaustion.
+    pub fn gather_buffers(device:&wgpu::Device,encoder:&mut wgpu::CommandEncoder,
+        ranges:&[(&wgpu::Buffer,u64,u64,u64)],size:u64)->Result<Self,ComputeError> {
+        if size>device.limits().max_buffer_size || ranges.iter().any(|(source,_,_,_)|
+            !source.usage().contains(wgpu::BufferUsages::COPY_SRC)) {return Err(ComputeError::InvalidBuffer);}
+        validate_multi_gather_ranges(ranges.iter().map(|(source,offset,target,length)|
+            (source.size(),*offset,*target,*length)),size)?;
+        let readback=ComputeReadbackPool::for_device(device).acquire(size)?;
+        for &(source,offset,target,length) in ranges {
+            encoder.copy_buffer_to_buffer(source,offset,readback.buffer(),target,length);
+        }
+        Ok(Self {readback})
+    }
     /// Gather ordered source ranges into one complete staging snapshot.
     /// Destination ranges must be contiguous, aligned and cover `size` exactly.
     /// Validates every range before allocating or recording commands.
@@ -647,9 +685,12 @@ mod tests {
 }
 
 fn validate_gather_ranges(source_size:u64,ranges:&[(u64,u64,u64)],size:u64)->Result<(),ComputeError> {
-    if size==0 || !size.is_multiple_of(4) || ranges.is_empty() {return Err(ComputeError::InvalidBuffer);}
+    validate_multi_gather_ranges(ranges.iter().map(|&(source,target,length)|(source_size,source,target,length)),size)
+}
+fn validate_multi_gather_ranges(ranges:impl Iterator<Item=(u64,u64,u64,u64)>,size:u64)->Result<(),ComputeError> {
+    if size==0 || !size.is_multiple_of(4) {return Err(ComputeError::InvalidBuffer);}
     let mut end=0;
-    for &(source,target,length) in ranges {
+    for (source_size,source,target,length) in ranges {
         if target!=end || length==0 || !source.is_multiple_of(4) || !length.is_multiple_of(4) || source.checked_add(length).is_none_or(|value|value>source_size) {return Err(ComputeError::InvalidBuffer);}
         end=target.checked_add(length).filter(|value|*value<=size).ok_or(ComputeError::InvalidBuffer)?;
     }
@@ -659,6 +700,42 @@ fn validate_gather_ranges(source_size:u64,ranges:&[(u64,u64,u64)],size:u64)->Res
 #[cfg(test)]
 mod gather_range_tests {
     use super::*;
+    #[test]
+    fn multiple_source_ranges_validate_each_source_before_publication() {
+        assert!(validate_multi_gather_ranges([(16,4,0,8),(12,8,8,4)].into_iter(),12).is_ok());
+        for ranges in [vec![],vec![(16,4,0,8),(8,8,8,4)],
+            vec![(16,4,0,8),(12,8,4,4)],vec![(16,4,0,8),(12,8,12,4)],
+            vec![(16,4,0,8),(12,9,8,4)],vec![(16,4,0,8),(12,8,8,0)],
+            vec![(16,4,0,8),(u64::MAX,u64::MAX-3,8,8)]] {
+            assert!(validate_multi_gather_ranges(ranges.into_iter(),12).is_err());
+        }
+    }
+    #[test]
+    #[ignore = "requires GPU; heterogeneous sources share a single bounded staging lease"]
+    fn gpu_multiple_sources_use_one_readback_and_invalid_tail_preserves_pool() {
+        use wgpu::util::DeviceExt;
+        let instance=crate::GraphicsOptions::default().create_instance();
+        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let pool=ComputeReadbackPool::configure(&device,crate::ComputeReadbackLimits {max_bytes:12,max_buffers:1}).unwrap();
+        let a=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:None,
+            contents:bytemuck::cast_slice(&[11u32,22,33,44]),usage:wgpu::BufferUsages::COPY_SRC});
+        let b=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:None,
+            contents:bytemuck::cast_slice(&[55u32,66,77]),usage:wgpu::BufferUsages::COPY_SRC});
+        let mut encoder=device.create_command_encoder(&Default::default());
+        let dispatch=ComputeDispatch::gather_buffers(&device,&mut encoder,&[(&a,4,0,8),(&b,8,8,4)],12).unwrap();
+        let submission=queue.submit([encoder.finish()]);let mut read=dispatch.begin_read();
+        device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();
+        let bytes=read.try_read().unwrap().unwrap();
+        assert_eq!(bytes,bytemuck::cast_slice::<u32,u8>(&[22,33,77]));
+        assert_eq!(pool.stats().allocated_buffers,1);assert_eq!(pool.stats().quarantined_buffers,0);
+        assert_eq!(pool.available_capacity(),pool.limits());
+        let before=pool.stats();
+        let mut encoder=device.create_command_encoder(&Default::default());
+        assert!(ComputeDispatch::gather_buffers(&device,&mut encoder,&[(&a,4,0,8),(&b,12,8,4)],12).is_err());
+        drop(encoder);
+        assert_eq!(pool.stats(),before,"invalid later source leased staging or recorded an abandoned copy");
+    }
     #[test]
     fn gathering_rejects_gaps_overlap_alignment_overflow_and_bounds() {
         assert!(validate_gather_ranges(100,&[(0,0,16),(80,16,20)],36).is_ok());

@@ -35,12 +35,22 @@ impl FaceFeatures {
         dt: f64,
         acceleration: [f64; 3],
     ) -> Result<(), &'static str> {
-        for (strand, motion) in self.strands.iter().zip(&mut self.lash_motion) {
-            if matches!(strand.kind, Kind::Lash | Kind::LowerLash) {
-                motion.step(dt, acceleration, [0.; 3])?;
-            }
-        }
+        let candidate=self.prepare_lashes(dt,acceleration)?;
+        self.publish_lashes(candidate);
         Ok(())
+    }
+    pub(crate) fn prepare_lashes(&self,dt:f64,acceleration:[f64;3])->Result<Vec<physics::secondary_motion::SecondaryMotion>,&'static str> {
+        let mut candidate=self.lash_motion.clone();
+        for (strand,motion) in self.strands.iter().zip(&mut candidate) {
+            if matches!(strand.kind,Kind::Lash|Kind::LowerLash) {motion.step(dt,acceleration,[0.;3])?;}
+        }
+        Ok(candidate)
+    }
+    pub(crate) fn publish_lashes(&mut self,candidate:Vec<physics::secondary_motion::SecondaryMotion>) {
+        self.lash_motion=candidate;
+    }
+    pub(crate) fn exchange_lashes(&mut self,candidate:&mut Vec<physics::secondary_motion::SecondaryMotion>) {
+        std::mem::swap(&mut self.lash_motion,candidate);
     }
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Self {
         let face: Vec<[usize; 3]> = indices
@@ -2130,6 +2140,13 @@ mod inertial_lash_regression {
             lash_skin_vertices: vec![],
             lash_skin_triangles: vec![],
         };
+        let original=format!("{:?}",features.lash_motion);
+        let discarded=features.prepare_lashes(1./240.,[0.,20.,0.]).unwrap();
+        assert!(discarded[0].offset()[1].abs()>0.);
+        assert_eq!(format!("{:?}",features.lash_motion),original);
+        drop(discarded); // A sibling skin/hair candidate was rejected.
+        assert!(features.prepare_lashes(f64::NAN,[0.;3]).is_err());
+        assert_eq!(format!("{:?}",features.lash_motion),original);
         for _ in 0..12 {
             features.advance_lashes(1. / 240., [0., 20., 0.]).unwrap();
         }

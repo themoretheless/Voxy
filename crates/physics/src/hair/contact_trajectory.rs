@@ -190,6 +190,29 @@ mod tests {
     use super::*;
     use crate::hair::{ContactSource, HairMaterial, HairRod};
     #[test]
+    fn oblique_face_crossing_plateau_keeps_witness_under_ulp_motion() {
+        let vertices=[[0.13,-0.27,0.19],[1.17,0.31,0.41],[0.23,1.29,0.73]];
+        let normal=unit(cross(sub(vertices[1],vertices[0]),sub(vertices[2],vertices[0])));
+        let center=mul(add(add(vertices[0],vertices[1]),vertices[2]),1./3.);
+        let triangle=TriangleMotion {start:vertices,end:vertices};
+        let capsule=CapsuleMotion {
+            start:[-0.0065,0.0065].map(|offset|add(center,mul(normal,offset+0.0105))),
+            end:[-0.0065,0.0065].map(|offset|add(center,mul(normal,offset-0.0105))),
+            radius:40e-6,
+        };
+        let reference=trajectory_contact_oriented(capsule,triangle,Default::default(),true).unwrap().unwrap();
+        assert_eq!(reference.gap,-capsule.radius);
+        for shift in [-1e-15,1e-15] {
+            let mut moved=capsule;
+            for point in &mut moved.end {point[0]+=shift;}
+            let contact=trajectory_contact_oriented(moved,triangle,Default::default(),true).unwrap().unwrap();
+            assert_eq!(contact.time,reference.time,"roundoff selected another point of the crossing plateau");
+            assert!((contact.fraction-reference.fraction).abs()<1e-12);
+            assert!(len(sub(contact.normal,reference.normal))<1e-12);
+            assert_eq!(contact.gap,-capsule.radius);
+        }
+    }
+    #[test]
     fn exact_face_crossing_uses_validated_closed_winding() {
         let vertices = [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]];
         for reversed in [false, true] {

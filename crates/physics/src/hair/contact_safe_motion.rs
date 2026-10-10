@@ -541,24 +541,48 @@ fn contact_motion_limited(rods:&[HairRod],increment:&PositionIncrement,scales:&[
     Ok(scales.iter().zip(trust).any(|(scale,trust)|*scale<trust))
 }
 
+// Optional per-owner observation separates the free solve, contact projection
+// and swept admission hidden behind the outer "structural" phase label.
+fn trace_increment(phase:&str,refinement:usize,rods:&[HairRod],increment:&PositionIncrement,scales:Option<&[f64]>) {
+    let Some(index)=std::env::var("VOXY_HAIR_SWEPT_INCREMENT_TRACE_ROD").ok()
+        .and_then(|value|value.parse::<usize>().ok()) else {return;};
+    let (Some(rod),Some(linear),Some(angular))=(rods.get(index),increment.linear.get(index),increment.angular.get(index)) else {return;};
+    let scale=scales.and_then(|values|values.get(index)).copied();
+    eprintln!("HAIR SWEPT INCREMENT phase={phase} refinement={refinement} rod={index} scale={scale:?} positions={:?} orientations={:?} linear={linear:?} angular={angular:?}",rod.x,rod.q);
+}
+
 pub(in crate::hair) fn advance(
     rods: &mut [HairRod],
     dt: f64,
     radius: f64,
-    mut solver: Option<&mut dyn crate::hair::HairLinearSolver>,
+    solver: Option<&mut dyn crate::hair::HairLinearSolver>,
     history: &mut Vec<StrandResponse>,
     start: Option<&[HairRod]>,
 ) -> Result<f64, &'static str> {
+    advance_mode(rods,dt,radius,solver,history,start,false)
+}
+// Contact-only corrections share the same swept proof and active-set owner,
+// while structural advance retains unconstrained elastic motion for all rods.
+pub(in crate::hair) fn advance_contacts(
+    rods:&mut [HairRod],dt:f64,radius:f64,solver:Option<&mut dyn crate::hair::HairLinearSolver>,
+    history:&mut Vec<StrandResponse>,start:Option<&[HairRod]>,
+)->Result<f64,&'static str> {advance_mode(rods,dt,radius,solver,history,start,true)}
+fn advance_mode(
+    rods:&mut [HairRod],dt:f64,radius:f64,mut solver:Option<&mut dyn crate::hair::HairLinearSolver>,
+    history:&mut Vec<StrandResponse>,start:Option<&[HairRod]>,contact_only:bool,
+)->Result<f64,&'static str> {
     let profile_started=std::env::var_os("VOXY_HAIR_SWEEP_REFINEMENT_TRACE").map(|_|std::time::Instant::now());
     let mut responses = super::super::refresh_strand_responses(rods, radius, &[]);
     let (mut constraints, aliases) = position_constraints(rods, &responses, radius)?;
-    let native_step=if solver.as_ref().is_none_or(|backend|backend.joint_contact_coordinates_enabled()) {Some(NativeNewtonStep::new(rods,dt,1e-14)?)} else {None};
+    let native_step=if contact_only || solver.as_ref().is_none_or(|backend|backend.joint_contact_coordinates_enabled()) {Some(NativeNewtonStep::new(rods,dt,1e-14)?)} else {None};
+    if let Some(step)=&native_step {trace_increment("free",0,rods,&step.free,None);}
     let mut increment = if let Some(backend) = solver.as_mut() {
-        if let Some(step)=&native_step {step.project_with_solver(&mut constraints,1e-14,Some(&mut **backend))?}
+        if let Some(step)=&native_step {if contact_only {step.project_contacts_with_solver(&mut constraints,1e-14,Some(&mut **backend))?} else {step.project_with_solver(&mut constraints,1e-14,Some(&mut **backend))?}}
         else {constrained_newton_increment(&mut constraints, rods, dt, Some(&mut **backend), 1e-14)?}
     } else {
-        native_step.as_ref().unwrap().project(&mut constraints,1e-14)?
+        if contact_only {native_step.as_ref().unwrap().project_contacts_with_solver(&mut constraints,1e-14,None)?} else {native_step.as_ref().unwrap().project(&mut constraints,1e-14)?}
     };
+    trace_increment("projected",0,rods,&increment,None);
     let initial_projection_ms=profile_started.map(|started|started.elapsed().as_secs_f64()*1000.);
     let mut groups = responses.clone();
     let mut cuts = Vec::new();
@@ -609,7 +633,7 @@ pub(in crate::hair) fn advance(
                 constraint.multiplier = 0.;
             }
             increment = if let Some(backend) = solver.as_mut() {
-                if let Some(step)=&native_step {step.project_with_solver(&mut constraints,1e-14,Some(&mut **backend))?}
+                if let Some(step)=&native_step {if contact_only {step.project_contacts_with_solver(&mut constraints,1e-14,Some(&mut **backend))?} else {step.project_with_solver(&mut constraints,1e-14,Some(&mut **backend))?}}
                 else {constrained_newton_increment(
                     &mut constraints,
                     rods,
@@ -618,8 +642,9 @@ pub(in crate::hair) fn advance(
                     1e-14,
                 )?}
             } else {
-                native_step.as_ref().unwrap().project(&mut constraints,1e-14)?
+                if contact_only {native_step.as_ref().unwrap().project_contacts_with_solver(&mut constraints,1e-14,None)?} else {native_step.as_ref().unwrap().project(&mut constraints,1e-14)?}
             };
+            trace_increment("projected",refinement_count,rods,&increment,None);
             admission = component_scales_from(rods, previous, &increment, &groups, radius);
             if std::env::var_os("VOXY_HAIR_SWEEP_REFINEMENT_TRACE").is_some() {
                 let status=match &admission {
@@ -638,6 +663,7 @@ pub(in crate::hair) fn advance(
         return Err("swept contact refinement budget exhausted");
     }
     let scales = admission?;
+    trace_increment("admitted",refinement_count,rods,&increment,Some(&scales));
     drop(native_step);
     if let Some(started)=profile_started {
         let (_,trust)=trust_components(rods,&increment,&groups)?;
