@@ -1,0 +1,30 @@
+
+running 9 tests
+test hair::contact::velocity_contacts::square_root_projection::tests::tiny_nonzero_jacobians_cannot_split_coupled_rod_owners ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::rod_compliance_keeps_different_stations_in_the_same_island ... ok
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/external-00.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-00.vqc" systems=2 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-01.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-02.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/external-01.vqc" systems=1 rows=1 refinement=0
+test hair::contact::velocity_contacts::square_root_projection::tests::cooperative_newton_rounds_retry_only_unfinished_original_rows ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::rounded_free_plus_response_is_checked_in_original_newton_coordinates ... ok
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-03.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-04.vqc" systems=2 rows=1 refinement=0test hair::contact::velocity_contacts::square_root_projection::tests::rejected_parallel_island_does_not_publish_other_reactions ... ok
+
+test hair::contact::velocity_contacts::square_root_projection::tests::joint_newton_recovery_preserves_free_guides_and_releases_opening_motion ... ok
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/external-02.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/external-03.vqc" systems=1 rows=1 refinement=0
+test hair::contact::velocity_contacts::square_root_projection::tests::frozen_dual_hints_follow_exact_rows_and_only_opt_in_backends ... ok
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/external-04.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/external-05.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/external-06.vqc" systems=1 rows=1 refinement=0
+test hair::contact::velocity_contacts::square_root_projection::tests::independent_physical_islands_batch_initial_trials_and_preserve_admission ... ok
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-05.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-06.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-07.vqc" systems=1 rows=1 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/batched-operators/native-08.vqc" systems=1 rows=1 refinement=0
+test hair::contact::velocity_contacts::square_root_projection::tests::independent_islands_exceed_old_global_capacity_without_dropping_rows ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 390 filtered out; finished in 0.04s
+

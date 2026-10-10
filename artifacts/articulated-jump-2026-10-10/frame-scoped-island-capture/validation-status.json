@@ -1,0 +1,23 @@
+{
+  "scope_restoration_and_thread_isolation": "passed",
+  "newton_island_regressions_passed": 9,
+  "native_captured_worker_counts": [
+    1,
+    2,
+    4
+  ],
+  "native_matching_frame_operators": 3,
+  "native_excluded_frame_operators": 0,
+  "actual_gpu_labelled_operators": 10,
+  "gpu_exact_serial_pose_and_rotation": true,
+  "gpu_native_fallbacks": 0,
+  "invalid_frame_labels_rejected": 4,
+  "targeted_full_capture": {
+    "directory": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture",
+    "test_pid": 53604,
+    "exec_session": 6320,
+    "status": "failed with exact prior frame errors",
+    "terminal_analysis": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture/terminal-analysis.json"
+  },
+  "rendered_fps_qualified": false
+}

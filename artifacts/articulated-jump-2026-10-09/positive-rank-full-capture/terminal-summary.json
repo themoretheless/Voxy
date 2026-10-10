@@ -1,0 +1,17 @@
+{
+  "status": "failed",
+  "session": 6884,
+  "exit_code": 101,
+  "frame": 3,
+  "position_error_m": 3.3000427043378133e-06,
+  "position_gate_m": 1e-06,
+  "quaternion_error": 0.00011808149030062554,
+  "quaternion_gate": 5e-05,
+  "coordinate_calls": 139587,
+  "admitted": 139587,
+  "native_fallbacks": 0,
+  "worst_rod": 454,
+  "worst_point": 20,
+  "observed_external_contact_neighbor": 423,
+  "note": "same-input physical admission and zero CPU fallback did not qualify full trajectory; old run predates scaled QR norms, frozen hints and prefix reuse"
+}

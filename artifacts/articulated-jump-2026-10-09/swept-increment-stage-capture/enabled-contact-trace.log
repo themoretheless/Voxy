@@ -1,0 +1,34 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.13s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+HAIR SWEPT INCREMENT phase=free refinement=0 rod=0 scale=None positions=[[-0.0005, 0.0, 0.0], [-0.0005, 0.0, 0.1], [-0.0005, 0.0, 0.2]] orientations=[[-0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0]] linear=[[0.0, 0.0, 0.0], [2.977302275136046e-7, 0.0, 0.0], [0.0004713013917386308, 0.0, 0.0]] angular=[[0.0, 0.0, 0.0], [0.0, 0.004709837727988373, 0.0]]
+HAIR SWEPT INCREMENT phase=projected refinement=0 rod=0 scale=None positions=[[-0.0005, 0.0, 0.0], [-0.0005, 0.0, 0.1], [-0.0005, 0.0, 0.2]] orientations=[[-0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0]] linear=[[0.0, 0.0, 0.0], [2.977302275136046e-7, 0.0, 0.0], [0.0004713013917386308, 0.0, 0.0]] angular=[[0.0, 0.0, 0.0], [0.0, 0.004709837727988373, 0.0]]
+HAIR SWEPT INCREMENT phase=projected refinement=1 rod=0 scale=None positions=[[-0.0005, 0.0, 0.0], [-0.0005, 0.0, 0.1], [-0.0005, 0.0, 0.2]] orientations=[[-0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0]] linear=[[0.0, 0.0, 0.0], [2.9725327347825784e-7, 0.0, 0.0], [0.00046, 0.0, 0.0]] angular=[[0.0, 0.0, 0.0], [0.0, 0.004596833352093489, 0.0]]
+HAIR SWEPT INCREMENT phase=admitted refinement=1 rod=0 scale=Some(1.0) positions=[[-0.0005, 0.0, 0.0], [-0.0005, 0.0, 0.1], [-0.0005, 0.0, 0.2]] orientations=[[-0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0]] linear=[[0.0, 0.0, 0.0], [2.9725327347825784e-7, 0.0, 0.0], [0.00046, 0.0, 0.0]] angular=[[0.0, 0.0, 0.0], [0.0, 0.004596833352093489, 0.0]]
+test hair::contact::velocity_contacts::safe_motion::tests::collision_limited_low_strain_step_activates_reactions_before_publication ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 382 filtered out; finished in 0.01s
+

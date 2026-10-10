@@ -1,0 +1,16 @@
+
+running 11 tests
+test medium_geometry_compute::tests::gpu_geometry_queries_match_cpu_and_reject_ambiguous_hits ... ignored, requires physical GPU; actual metric geometry CPU parity
+test medium_path_compute::tests::gpu_all_branches_match_cpu_with_opacity_and_budget_rejection ... ignored, requires physical GPU; all-branch medium transport parity
+test medium_path_compute::tests::gpu_image_dispatch_crosses_portable_row_limit ... ignored, requires physical GPU; full-window dispatch beyond 65535 rays
+test medium_path_compute::tests::gpu_pending_image_retries_after_confirmed_memory_retirement ... ignored, requires physical GPU; image upload budget recovery
+test medium_geometry_compute::tests::geometry_input_admits_work_memory_and_numeric_representation ... ok
+test medium_path_compute::tests::accepted_image_rejects_partial_dimensions_and_half_float_overflow ... ok
+test medium_geometry_compute::tests::geometry_compute_translates_to_gles_310_with_one_storage_binding ... ok
+test compute::tests::separate_noop_contexts_are_foreign_and_owner_clones_encode_jobs ... ok
+test compute::tests::jobs_reject_different_devices_in_one_instance ... ok
+test compute::tests::resident_pipeline_switch_preserves_allocation_and_rejects_foreign_owner ... ok
+test medium_path_compute::tests::transport_abi_limits_and_shader_validation ... ok
+
+test result: ok. 7 passed; 0 failed; 4 ignored; 0 measured; 227 filtered out; finished in 0.00s
+

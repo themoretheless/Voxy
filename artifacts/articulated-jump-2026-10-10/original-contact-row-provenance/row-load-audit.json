@@ -1,0 +1,27 @@
+{
+  "schema": "voxy-original-row-load-audit-v1",
+  "operators": [
+    {
+      "file": "native-00.vqc",
+      "sha256": "55f1004eb3d67d9f019f211c9fc9472a5291acf26697619587c8c7164519c477",
+      "rows": 2,
+      "systems": 2,
+      "exact_original_load_reconstruction": true
+    },
+    {
+      "file": "native-01.vqc",
+      "sha256": "0b887f2547d56ea05b23085cfd06a15f8f43067ead56247bd9096ed9a48a001f",
+      "rows": 2,
+      "systems": 2,
+      "exact_original_load_reconstruction": true
+    },
+    {
+      "file": "native-02.vqc",
+      "sha256": "fab27257711b79984d729027c43257e4ff52032da86f671d1f820152aeaa6487",
+      "rows": 2,
+      "systems": 2,
+      "exact_original_load_reconstruction": true
+    }
+  ],
+  "limits": "Exact original row-to-load correspondence for selected captures. Global row indices are snapshot-local. Quantity and full trajectory remain unqualified."
+}

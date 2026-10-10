@@ -1,0 +1,22 @@
+[
+  {
+    "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/early-release-full-capture/qualification.log",
+    "expected_frames": 720,
+    "completed_frame_count": 6,
+    "last_completed_frame": 6,
+    "complete_ordered_frame_sequence": false,
+    "observed_frames_within_original_error_limits": false,
+    "observed_frames_have_gpu_admission_without_native_fallback": true,
+    "terminal_test_result": [
+      "FAILED",
+      "0",
+      "1",
+      "0"
+    ],
+    "complete_paired_trajectory_log_checks_pass": false,
+    "maximum_observed_position_error_m": 9.198537073512592e-06,
+    "maximum_observed_quaternion_error": 0.00019552032000652586,
+    "scope": "Log evidence only; verify launch/source/model and live process separately. Does not establish physical hardware coverage or rendered FPS.",
+    "rendered_fps_measured": false
+  }
+]

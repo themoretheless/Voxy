@@ -1,0 +1,41 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.38s
+     Running unittests src/lib.rs (/tmp/voxy-physics-diagnostics-20261010/debug/deps/physics-74c936782d895dfe)
+
+running 1 test
+
+thread 'hair::contact::translated_interior_strand_contact_has_no_tangential_force' (78258388) panicked at crates/physics/src/hair/contact.rs:2516:13:
+translated closest-point subtraction introduces tangential force: center=[1000.0, -2000.0, 3000.0], normal=[-0.6399999983083399, 0.4800000015734258, -0.6000000005456968], tangent=[0.6000000000024253, 0.7999999999981809, 0.0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::translated_interior_strand_contact_has_no_tangential_force ... FAILED
+
+failures:
+
+failures:
+    hair::contact::translated_interior_strand_contact_has_no_tangential_force
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 399 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --lib`

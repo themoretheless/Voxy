@@ -11,9 +11,33 @@ mod joint;
 pub struct GpuHairLinearSolver {
     device:wgpu::Device,queue:wgpu::Queue,program:ComputeProgram,resident:Option<ComputeJob>,
     pub joint_contact_qr:bool,
+    pub joint_coordinate_batches:bool,
     pub joint_support_compaction:bool,
+    #[cfg(test)]
+    pub(super) joint_full_refinement_readback:bool,
+    #[cfg(test)]
+    pub(super) joint_separate_qr_passes:bool,
     joint_programs:Option<(ComputeProgram,ComputeProgram)>,
+    joint_result_cache:Option<joint::JointResultCache>,
+    joint_workspaces:joint::EqualityWorkspacePool,
+    /// Opt-in exact reuse; full jump measurements found no single-entry hits.
+    pub joint_result_reuse:bool,
+    /// Qualification opt-in; hints are supplied by the immutable physical owner.
+    pub joint_dual_hints:bool,
+    pub joint_dual_hint_attempts:usize,
+    /// Qualification opt-in: reuse only validated identical QR prefixes.
+    pub joint_qr_prefix_reuse:bool,
+    pub joint_qr_columns_reused:usize,
+    /// Qualification opt-in: intermediate dual directions cannot publish solutions.
+    pub joint_release_directions:bool,
+    pub joint_release_direction_calls:usize,
+    pub joint_early_release_directions:bool,
+    pub joint_early_release_direction_calls:usize,
+    pub joint_result_cache_hits:usize,
     pub joint_coordinate_calls:usize,pub joint_equality_dispatches:usize,
+    pub joint_equality_submissions:usize,
+    /// Scoped GPU workspace allocation/reinitialization counts; no numerical caching.
+    pub joint_workspace_creations:usize,pub joint_workspace_reuses:usize,
     pub joint_admitted:usize,pub joint_native_fallbacks:usize,
     pub reference_audit:bool,
     pub max_linear_error:[f64;2],
@@ -40,7 +64,80 @@ pub struct GpuHairLinearSolver {
     pub response_dispatches:usize,
     pub calls:usize,pub elapsed_ms:f64,pub last_error:Option<String>,
 }
+// Exact power-of-two RHS normalization keeps compensated low words out of
+// GPU subnormal arithmetic near equilibrium. Coefficients and physical gates
+// are unchanged; callers undo each multiplier before original-f64 admission.
+fn normalize_small_rhs(systems:&[HairLinearSystem],rhs:&[&[f64]])
+    ->Result<(Vec<Vec<f64>>,Vec<f64>),Box<dyn std::error::Error>> {
+    if systems.len()!=rhs.len() {return Err("hair RHS normalization count mismatch".into());}
+    let mut values=Vec::with_capacity(rhs.len());let mut multipliers=Vec::with_capacity(rhs.len());
+    for (system,rhs) in systems.iter().zip(rhs) {
+        if rhs.len()!=system.rhs.len() || system.matrix.len()!=rhs.len()*9 {
+            return Err("hair RHS normalization shape mismatch".into());
+        }
+        let mut maximum=0f64;let mut maximum_rhs=0f64;
+        for (i,&b) in rhs.iter().enumerate() {
+            let diagonal=system.matrix[i*9];
+            if !b.is_finite() || !diagonal.is_finite() || diagonal<=0. {return Err("invalid hair RHS normalization input".into());}
+            let normalized=b*(1./diagonal.sqrt());
+            if !normalized.is_finite() {return Err("hair RHS normalization overflow".into());}
+            maximum=maximum.max(normalized.abs());maximum_rhs=maximum_rhs.max(b.abs());
+        }
+        let exponent=((maximum.to_bits()>>52)&0x7ff) as i32-1023;
+        let mut shift=if maximum>0. && exponent < 0 {(-exponent).min(512)} else {0};
+        while shift>0 && !(maximum_rhs*2f64.powi(shift)).is_finite() {shift-=1;}
+        let multiplier=2f64.powi(shift);
+        let scaled:Vec<_>=rhs.iter().map(|b|b*multiplier).collect();
+        values.push(scaled);multipliers.push(multiplier);
+    }
+    Ok((values,multipliers))
+}
+fn undo_rhs_normalization(values:&mut [Vec<f64>],multipliers:&[f64]) {
+    for (values,&multiplier) in values.iter_mut().zip(multipliers) {
+        for value in values {*value/=multiplier;}
+    }
+}
+// Observe the final refined correction on the identical original operator.
+// This diagnostic neither substitutes native results nor changes admission.
+fn capture_structural_difference(path:&std::path::Path,systems:&[HairLinearSystem],
+    corrections:&[Vec<f64>],call:usize)->Result<bool,Box<dyn std::error::Error>> {
+    if path.exists() {return Ok(false);}
+    if systems.len()!=corrections.len() {return Err("structural audit batch count mismatch".into());}
+    for (index,(system,actual)) in systems.iter().zip(corrections).enumerate() {
+        if actual.len()!=system.rhs.len() {return Err("structural audit correction size mismatch".into());}
+        let native=system.solve_native()?;
+        let mut maximum=[0f64;2];
+        for i in system.active.clone() {
+            if !actual[i].is_finite() {return Err("structural audit nonfinite correction".into());}
+            let kind=usize::from(i%6>=3);
+            maximum[kind]=maximum[kind].max((actual[i]-native[i]).abs());
+        }
+        if maximum[0]<=1e-9 && maximum[1]<=1e-7 {continue;}
+        let bits=|values:&[f64]|values.iter().map(|v|v.to_bits()).collect::<Vec<_>>();
+        let report=serde_json::json!({"schema":"voxy-structural-same-input-difference-v1",
+            "call":call,"system_index":index,"batch_size":systems.len(),
+            "band_width":system.band_width,"active_start":system.active.start,"active_end":system.active.end,
+            "matrix_bits":bits(&system.matrix),"rhs_bits":bits(&system.rhs),
+            "native_bits":bits(&native),"accelerated_bits":bits(actual),
+            "maximum_translation_difference_m":maximum[0],"maximum_angle_difference_rad":maximum[1],
+            "scope":"post-refinement same original operator; diagnostic trigger, not a physical admission gate"});
+        let file=match std::fs::OpenOptions::new().write(true).create_new(true).open(path) {
+            Ok(file)=>file,Err(error) if error.kind()==std::io::ErrorKind::AlreadyExists=>return Ok(false),
+            Err(error)=>return Err(error.into()),
+        };
+        serde_json::to_writer(std::io::BufWriter::new(file),&report)?;
+        return Ok(true);
+    }
+    Ok(false)
+}
 impl GpuHairLinearSolver {
+    /// Release the bounded, non-numerical joint workspace cache. Configured
+    /// device retirement still owns in-flight storage accounting; this does
+    /// not wait for the queue or pretend its memory charge is already free.
+    pub fn clear_joint_workspace_cache(&mut self) {
+        self.joint_workspaces=Default::default();
+    }
+
     pub async fn new(device:&wgpu::Device,queue:&wgpu::Queue)->Result<Self,voxy_render::ComputeError> {
         Self::new_with_extra_division_refinement(device,queue,false).await
     }
@@ -64,17 +161,20 @@ impl GpuHairLinearSolver {
             }
         }
         let program=ComputeProgram::new(device,&source).await?;
-        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,joint_contact_qr:false,joint_support_compaction:true,joint_programs:None,joint_coordinate_calls:0,joint_equality_dispatches:0,joint_admitted:0,joint_native_fallbacks:0,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
+        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,joint_contact_qr:false,joint_coordinate_batches:false,joint_support_compaction:true,#[cfg(test)] joint_full_refinement_readback:true,#[cfg(test)] joint_separate_qr_passes:false,joint_programs:None,joint_result_cache:None,joint_workspaces:Default::default(),joint_result_reuse:false,joint_dual_hints:false,joint_dual_hint_attempts:0,joint_qr_prefix_reuse:false,joint_qr_columns_reused:0,joint_release_directions:false,joint_release_direction_calls:0,joint_early_release_directions:false,joint_early_release_direction_calls:0,joint_result_cache_hits:0,joint_coordinate_calls:0,joint_equality_dispatches:0,joint_equality_submissions:0,joint_workspace_creations:0,joint_workspace_reuses:0,joint_admitted:0,joint_native_fallbacks:0,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
     }
     fn solve_checked(&mut self,systems:&[HairLinearSystem])->Result<Vec<Vec<f64>>,Box<dyn std::error::Error>> {
         if self.residual_refinements>3 {return Err("hair residual refinements must be in 0..3".into());}
         let first=systems.first().ok_or("empty hair accelerator batch")?;
         if systems.iter().any(|s|s.band_width!=9 || s.active!=first.active) {return Err("inconsistent hair accelerator batch".into());}
-        let rows:Vec<_>=systems.iter().map(|s|BandedSystem {matrix:&s.matrix,rhs:&s.rhs}).collect();
+        let original_rhs:Vec<_>=systems.iter().map(|s|s.rhs.as_slice()).collect();
+        let (scaled_rhs,rhs_multipliers)=normalize_small_rhs(systems,&original_rhs)?;
+        let rows:Vec<_>=systems.iter().zip(&scaled_rhs).map(|(s,rhs)|BandedSystem {matrix:&s.matrix,rhs}).collect();
         let input=BandedSolveInput::new_with_underflow_tolerance(&rows,first.active.clone(),1e-40)?;
         let packing_error=input.packing_error();
         for kind in 0..2 {self.max_packing_error[kind]=self.max_packing_error[kind].max(packing_error[kind]);}
         let mut corrections=self.dispatch_input(&input,None)?;
+        undo_rhs_normalization(&mut corrections,&rhs_multipliers);
         if self.reference_audit {
             let mut errors=[0f64;2];let mut worst=[0usize;2];
             let mut stages=[[0f64;2];3];
@@ -96,7 +196,7 @@ impl GpuHairLinearSolver {
                     let kind=usize::from(i%6>=3);let error=(native[i]-correction[i]).abs();
                     if error>errors[kind] {errors[kind]=error;worst[kind]=index;}
                     let balanced=equilibrated[i]*packed.scales[i];
-                    let represented=represented[i]*packed.scales[i];
+                    let represented=represented[i]*packed.scales[i]/rhs_multipliers[index];
                     for (stage,error) in [(0,(native[i]-balanced).abs()),(1,(balanced-represented).abs()),(2,(represented-correction[i]).abs())] {
                         stages[stage][kind]=stages[stage][kind].max(error);
                     }
@@ -113,8 +213,11 @@ impl GpuHairLinearSolver {
             // The residual changes only RHS values. Keep the exact admitted
             // coefficient words/scales rather than re-equilibrating the matrix.
             let residual_columns:Vec<_>=residuals.iter().map(Vec::as_slice).collect();
+            let (scaled_residuals,residual_multipliers)=normalize_small_rhs(systems,&residual_columns)?;
+            let residual_columns:Vec<_>=scaled_residuals.iter().map(Vec::as_slice).collect();
             let increment_input=input.with_rhs(&residual_columns,1e-40)?;
-            let increments=self.dispatch_input(&increment_input,if self.reuse_refinement_factors {Some(&input)} else {None})?;
+            let mut increments=self.dispatch_input(&increment_input,if self.reuse_refinement_factors {Some(&input)} else {None})?;
+            undo_rhs_normalization(&mut increments,&residual_multipliers);
             self.refinement_dispatches+=1;
             if self.reuse_refinement_factors {self.reused_factor_dispatches+=1;}
             for ((system,correction),increment) in systems.iter().zip(&mut corrections).zip(increments) {
@@ -123,9 +226,23 @@ impl GpuHairLinearSolver {
                 system.validate_correction(correction)?;
             }
         }
+        if let Some(path)=std::env::var_os("VOXY_HAIR_STRUCTURAL_DIFFERENCE_EXPORT") {
+            match capture_structural_difference(std::path::Path::new(&path),systems,&corrections,self.calls) {
+                Ok(true)=>eprintln!("HAIR STRUCTURAL SAME INPUT AUDIT captured={path:?} call={}",self.calls),
+                Ok(false)=>{},Err(error)=>eprintln!("HAIR STRUCTURAL SAME INPUT AUDIT ERROR {error}"),
+            }
+        }
         Ok(corrections)
     }
     fn dispatch_input(&mut self,input:&BandedSolveInput,factored_input:Option<&BandedSolveInput>)->Result<Vec<Vec<f64>>,Box<dyn std::error::Error>> {
+        // Reference auditing leases both snapshots simultaneously. Reject a
+        // known shortage before encoding either copy, preserving pool capacity.
+        let capacity=voxy_render::ComputeReadbackPool::for_device(&self.device).available_capacity();
+        let requested_bytes=input.compact_output_size()+if self.reference_audit {input.bytes().len() as u64} else {0};
+        let requested_buffers=if self.reference_audit {2} else {1};
+        if requested_bytes>capacity.max_bytes || requested_buffers>capacity.max_buffers {
+            return Err(format!("hair correction staging capacity before encoding: bytes={requested_bytes} buffers={requested_buffers} available={capacity:?}").into());
+        }
         let mut rhs_upload=None;
         if let Some(factored_input)=factored_input {
             let job=self.resident.as_ref().ok_or("missing resident hair factors")?;
@@ -171,12 +288,32 @@ impl GpuHairLinearSolver {
             // exactly the same RHS/status bits without a second storage binding.
             voxy_render::ComputeDispatch::gather_buffer(&self.device,&mut encoder,job.buffer(),&input.compact_output_ranges(),input.compact_output_size())?
         };
-        self.queue.submit([encoder.finish()]);
+        let submission=self.queue.submit([encoder.finish()]);
         let mut read=dispatch.begin_read();
         let mut full_read=full_snapshot.map(|snapshot|snapshot.begin_read());
-        self.device.poll(wgpu::PollType::wait_indefinitely())?;
+        self.device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None})?;
         let bytes=read.try_read()?.ok_or("hair accelerator readback pending")?;
-        let corrections=input.decode_compact_checked(&bytes,1e-8)?;
+        let corrections=match input.decode_compact_checked(&bytes,1e-8) {
+            Ok(corrections)=>corrections,
+            Err(error)=> {
+                if let Some(path)=std::env::var_os("VOXY_HAIR_BANDED_DECODE_FAILURE_EXPORT") {
+                    if let Ok(file)=std::fs::OpenOptions::new().write(true).create_new(true).open(path) {
+                        let words=|bytes:&[u8]|bytes.chunks_exact(4).map(|w|u32::from_ne_bytes(w.try_into().unwrap())).collect::<Vec<_>>();
+                        let input_words=words(input.bytes());
+                        let scales:Vec<_>=(0..input_words[0] as usize).map(|i|input.packed_reference(i).unwrap().scales
+                            .iter().map(|x|x.to_bits()).collect::<Vec<_>>()).collect();
+                        let report=serde_json::json!({"schema":"voxy-banded-decode-failure-v1","error":error.to_string(),
+                            "tolerance":1e-8,"input_words":input_words,"compact_output_words":words(&bytes),"scales_bits":scales,
+                            "scope":"exact rejected normalized GPU solve; not an admitted physical correction"});
+                        let mut out=std::io::BufWriter::new(file);
+                        if let Err(error)=serde_json::to_writer(&mut out,&report).and_then(|_| {
+                            use std::io::Write;out.flush().map_err(serde_json::Error::io)
+                        }) {eprintln!("HAIR BANDED DECODE FAILURE EXPORT ERROR {error}");}
+                    }
+                }
+                return Err(error.into());
+            },
+        };
         if let Some(read)=&mut full_read {
             let bytes=read.try_read()?.ok_or("hair full reference readback pending")?;
             let reference=input.decode_checked(&bytes,1e-8)?;
@@ -252,9 +389,22 @@ impl GpuHairLinearSolver {
 }
 impl HairLinearSolver for GpuHairLinearSolver {
     fn joint_contact_coordinates_enabled(&self)->bool {self.joint_contact_qr}
+    fn joint_contact_coordinate_batches_enabled(&self)->bool {self.joint_contact_qr && self.joint_coordinate_batches}
+    fn joint_contact_hints_enabled(&self)->bool {self.joint_dual_hints}
     fn solve_joint_coordinates(&mut self,columns:&[Vec<f64>],bounds:&[f64],tolerance:f64)->Option<(Vec<f64>,Vec<f64>)> {
+        self.solve_joint_coordinates_seeded(columns,bounds,tolerance,&[])
+    }
+    fn solve_joint_coordinates_seeded(&mut self,columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,seeds:&[f64])->Option<(Vec<f64>,Vec<f64>)> {
         self.joint_coordinate_calls+=1;
-        match self.solve_joint_checked(columns,bounds,tolerance) {
+        match self.solve_joint_seeded_checked(columns,bounds,tolerance,seeds) {
+            Ok(result)=>{if result.is_some() {self.last_error=None;}result},
+            Err(error)=>{self.last_error=Some(error.to_string());None}
+        }
+    }
+    fn solve_joint_coordinates_batch(&mut self,requests:&[physics::hair::HairContactCoordinateRequest<'_>])
+        ->Option<Vec<(Vec<f64>,Vec<f64>)>> {
+        self.joint_coordinate_calls+=requests.len();
+        match self.solve_joint_batch_checked(requests) {
             Ok(result)=>{if result.is_some() {self.last_error=None;}result},
             Err(error)=>{self.last_error=Some(error.to_string());None}
         }
@@ -263,6 +413,10 @@ impl HairLinearSolver for GpuHairLinearSolver {
         if accelerated {self.joint_admitted+=1;} else {
             self.joint_native_fallbacks+=1;
             if self.last_error.is_none() {self.last_error=Some("GPU joint candidate rejected by original physical admission".into());}
+            if std::env::var_os("VOXY_HAIR_QR_PROFILE").is_some() {
+                eprintln!("HYBRID JOINT FALLBACK count={} coordinate_calls={} equality_dispatches={} reason={:?}",
+                    self.joint_native_fallbacks,self.joint_coordinate_calls,self.joint_equality_dispatches,self.last_error);
+            }
         }
     }
     fn contact_responses_enabled(&self)->bool {self.contact_response_batches || self.joint_contact_qr}
@@ -300,6 +454,29 @@ impl HairLinearSolver for GpuHairLinearSolver {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn structural_same_input_audit_preserves_results_and_existing_evidence() {
+        let rod=physics::hair::HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],Default::default()).unwrap();
+        let system=rod.linear_system(1./240.).unwrap();
+        let expected=system.solve_native().unwrap();
+        let mut actual=vec![expected.clone()];
+        let path=std::env::temp_dir().join(format!("voxy-structural-audit-{}.json",std::process::id()));
+        assert!(!path.exists(),"preserve previous evidence");
+        assert!(!capture_structural_difference(&path,std::slice::from_ref(&system),&actual,7).unwrap());
+        assert!(!path.exists());
+        actual[0][system.active.start]+=1e-6;
+        let before=(actual.clone(),system.matrix.clone(),system.rhs.clone());
+        assert!(capture_structural_difference(&path,std::slice::from_ref(&system),&actual,8).unwrap());
+        assert_eq!((&actual,&system.matrix,&system.rhs),(&before.0,&before.1,&before.2));
+        let bytes=std::fs::read(&path).unwrap();
+        let report:serde_json::Value=serde_json::from_slice(&bytes).unwrap();
+        assert_eq!(report["schema"],"voxy-structural-same-input-difference-v1");
+        assert_eq!(report["native_bits"][system.active.start].as_u64(),Some(expected[system.active.start].to_bits()));
+        assert_eq!(report["accelerated_bits"][system.active.start].as_u64(),Some(actual[0][system.active.start].to_bits()));
+        assert!(!capture_structural_difference(&path,std::slice::from_ref(&system),&actual,9).unwrap());
+        assert_eq!(std::fs::read(&path).unwrap(),bytes);
+        std::fs::remove_file(path).unwrap();
+    }
     fn captured_system(linear:&serde_json::Value)->HairLinearSystem {
         HairLinearSystem {
             band_width:linear["band_width"].as_u64().unwrap() as usize,
@@ -455,7 +632,11 @@ mod tests {
         let instance=voxy_render::GraphicsOptions::default().create_instance();
         let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
         eprintln!("SHARED RESPONSE ADAPTER {:?}",adapter.get_info());
-        let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut descriptor=wgpu::DeviceDescriptor::default();
+        let one_storage=std::env::var_os("VOXY_HAIR_TRANSFER_ONE_STORAGE").is_some();
+        if one_storage {descriptor.required_limits.max_storage_buffers_per_shader_stage=1;}
+        let (device,queue)=pollster::block_on(adapter.request_device(&descriptor)).unwrap();
+        eprintln!("SHARED RESPONSE storage_limit={}",device.limits().max_storage_buffers_per_shader_stage);
         let mut gpu=pollster::block_on(GpuHairLinearSolver::new(&device,&queue)).unwrap();
         gpu.residual_refinements=1;
         let mut requests=Vec::new();
@@ -506,7 +687,10 @@ mod tests {
         let transported=gpu.solve_responses(&requests).unwrap_or_else(|e|panic!("{e}: {:?}",gpu.last_error));
         assert_eq!(legacy,transported,"GPU transport changed arithmetic");
         assert_eq!(resident_before,snapshot_resident(&gpu),"GPU transport altered resident factors/header/status or solutions");
-        assert!(gpu.response_transfer_dispatches>0);
+        if one_storage {
+            assert_eq!(gpu.response_transfer_dispatches,0);
+            assert!(gpu.rhs_transfer_program.is_none(),"copy transport must not compile a two-storage shader");
+        } else {assert!(gpu.response_transfer_dispatches>0);}
 
         let dispatches_before_rejection=gpu.response_dispatches;
 

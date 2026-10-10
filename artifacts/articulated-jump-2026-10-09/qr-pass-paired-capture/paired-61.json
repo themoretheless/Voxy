@@ -1,0 +1,68 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "comparison": "separate QR passes versus one ordered QR pass; full readback and support compaction in both",
+  "concurrent_system_load_controlled": false,
+  "coordinates": 2646,
+  "maximum_reaction_difference": 0.0,
+  "maximum_response_difference": 0.0,
+  "median_grouped_pass_seconds": 0.251522292,
+  "median_separate_pass_seconds": 0.301075375,
+  "native_fallback_used": false,
+  "pairs": [
+    {
+      "grouped_equality_dispatches": 103,
+      "grouped_pass_seconds": 0.258062958,
+      "pair": 0,
+      "separate_equality_dispatches": 103,
+      "separate_pass_seconds": 0.286317333
+    },
+    {
+      "grouped_equality_dispatches": 103,
+      "grouped_pass_seconds": 0.251522292,
+      "pair": 1,
+      "separate_equality_dispatches": 103,
+      "separate_pass_seconds": 0.348179417
+    },
+    {
+      "grouped_equality_dispatches": 103,
+      "grouped_pass_seconds": 0.239605375,
+      "pair": 2,
+      "separate_equality_dispatches": 103,
+      "separate_pass_seconds": 0.31749525
+    },
+    {
+      "grouped_equality_dispatches": 103,
+      "grouped_pass_seconds": 0.260340667,
+      "pair": 3,
+      "separate_equality_dispatches": 103,
+      "separate_pass_seconds": 0.301408708
+    },
+    {
+      "grouped_equality_dispatches": 103,
+      "grouped_pass_seconds": 0.276848958,
+      "pair": 4,
+      "separate_equality_dispatches": 103,
+      "separate_pass_seconds": 0.295310209
+    },
+    {
+      "grouped_equality_dispatches": 103,
+      "grouped_pass_seconds": 0.237842083,
+      "pair": 5,
+      "separate_equality_dispatches": 103,
+      "separate_pass_seconds": 0.28344975
+    },
+    {
+      "grouped_equality_dispatches": 103,
+      "grouped_pass_seconds": 0.234051709,
+      "pair": 6,
+      "separate_equality_dispatches": 103,
+      "separate_pass_seconds": 0.301075375
+    }
+  ],
+  "rendered_fps_measured": false,
+  "rows": 61,
+  "scope": "complete original physical projection, warmed shaders, seven alternating pairs; excludes device creation, fixture load, rendering and extra post-timing validation",
+  "speedup": 1.1970126886407348,
+  "systems": 21,
+  "whole_animation_benchmark": false
+}

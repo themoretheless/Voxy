@@ -1,0 +1,11 @@
+{
+  "change": "Reuse immutable exact-nonzero column supports for release-only primal reconstruction; preserve column order, compensated addition and FMA product correction; dense fallback for nonfinite weights.",
+  "source_sha256": "c89bb6dd707a5e4273f99c550ddfc39eca923cc19b3447ae0969bd5bd8d47496",
+  "validation": {
+    "physics_library_passed": 335,
+    "ignored": 39,
+    "failed": 0
+  },
+  "performance": "No timing claim. Full jump process 63918 verified live; first two frames completed, zero native fallbacks, position error <= 2.229036395740014e-8 m. That process predates this reconstruction optimization.",
+  "scope": "No physical gates changed; full trajectory and >160 FPS remain unqualified."
+}

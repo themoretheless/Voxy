@@ -1,0 +1,25 @@
+{
+  "frames_requested": 720,
+  "full_model": true,
+  "features": [
+    "cooperative_outer_newton",
+    "cooperative_inner_physical_refinement",
+    "cooperative_gpu_equalities",
+    "power_two_rhs_normalization",
+    "release_directions",
+    "early_release_directions",
+    "frozen_dual_hints",
+    "validated_qr_prefix"
+  ],
+  "sha256": {
+    "crates/physics/src/hair/contact_response_system.rs": "ab12a0bf3ef949d712e7932e978152621880cc568f8c0b1f007200f0f1818bf1",
+    "crates/physics/src/hair/contact_square_root_projection.rs": "1fcf7a74699952a12d85dd7d5fbe4b3e47f01f3c5ee4887591520ccf75fafe7c",
+    "crates/physics/src/hair/contact_square_root_qr.rs": "96668723cd0e6f4fd88519e659c092c01ed67f650500a29cf1e96a4cc88e5fd2",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "4e44728f78e23d03b6a20b0158939deae8cd37fee1e639e2c24efeb6fbec9f61",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "4de19c5c68f8d6f2546e205742358e09dbbec0992205e248705d7be0a042a65c",
+    "crates/voxy_app/src/female_hair.rs": "3b87c4d666557d2edf590e9696a9b478a2eb559e74d5c8aadbcc94258de65d2c",
+    "artifacts/articulated-jump-2026-10-09/run_gpu_joint_jump.sh": "9e228971c2a2159ce7ccace30a1df6a258881eaa8fdc5b4ca5b3284172457ded",
+    "/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f": "b9fa9d9856344adb121623f344515d2f57783a62d694fc6d21e8b742ae9a60d9"
+  },
+  "scope": "Full paired dynamics, original limits; no extra same-input native audit. Not a rendered FPS measurement. Existing old diagnostic processes preserved."
+}

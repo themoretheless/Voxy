@@ -1,0 +1,59 @@
+rdinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376860 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376861 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376862 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376863 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376864 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376865 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376866 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376867 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376868 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376869 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376870 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376871 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376872 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376873 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376874 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376875 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376876 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376877 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376878 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376879 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376880 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376881 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376882 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376883 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376884 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376885 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376886 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376887 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HYBRID JOINT FALLBACK count=376888 coordinate_calls=948718 equality_dispatches=2518757 reason=Some("compute error: ReadbackBudget")
+HAIR JOINT PHYSICAL BATCH PROFILE operators=66 refinement=0 elapsed_ms=5.222042
+HYBRID HAIR FRAME TIMING frame=10 native_ms=85954.29125 external_ms=347277.738042 native_only=false cpu_control=false
+HYBRID JOINT FRAME COUNTERS frame=10 coordinate_calls=948784 equality_dispatches=2518814 cache_hits=0 admitted=571896 native_fallbacks=376888
+HYBRID JOINT SUBMISSION FRAME COUNTERS frame=10 submissions=711187 equality_dispatches=2518814
+HYBRID JOINT HINT FRAME COUNTERS frame=10 attempts=815260
+HYBRID JOINT QR PREFIX FRAME COUNTERS frame=10 reused_columns=15275592
+HYBRID JOINT RELEASE FRAME COUNTERS frame=10 directions=383790 early=383790
+HAIR FIRST DIVERGENCE frame=10 rod=409 point=20 error_m=0.00018540370752624658
+HAIR DIVERGENCE CONTACTS native rod=409 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 1.0, normal: [0.1860747626918362, 0.06781026316017248, -0.9801928131236859], target: [0.09721777221538935, 0.4405739954296814, -0.07566747894749414], surface_velocity: [0.0, -0.2555486890398377, 0.008652681013980746], metric_scale: 1.0, trajectory_time: None, gap_m: 0.0 }]
+HAIR DIVERGENCE NEIGHBOR native point=19 position=[0.09867291823449788, 0.4567625545617508, -0.07429167871390674] body_distance_m=0.00009296952785785416 body_normal=[0.14752911773171873, 0.08870632531627484, -0.9850717472703113]
+HAIR DIVERGENCE NEIGHBOR native point=20 position=[0.09721777221538935, 0.4405739954296814, -0.07566747894749414] body_distance_m=0.0000399999999999937 body_normal=[0.1860747626918507, 0.06781026316068192, -0.9801928131236479]
+HAIR DIVERGENCE CONTACTS external rod=409 [HairContactDiagnostic { source: Mesh(0), segment: 19, fraction: 1.0, normal: [0.1860747626918362, 0.06781026316017248, -0.9801928131236859], target: [0.0974031759229156, 0.4405325049128899, -0.07563515319730131], surface_velocity: [0.0, -0.2555496422639023, 0.008651475906658585], metric_scale: 1.0, trajectory_time: None, gap_m: 0.0 }]
+HAIR DIVERGENCE NEIGHBOR external point=19 position=[0.09873257268905426, 0.4567332551731969, -0.07427569816208784] body_distance_m=0.00008342926571211944 body_normal=[0.14752911773171873, 0.08870632531627484, -0.9850717472703113]
+HAIR DIVERGENCE NEIGHBOR external point=20 position=[0.0974031759229156, 0.4405325049128899, -0.07563515319730131] body_distance_m=0.0000399999999999937 body_normal=[0.1860747626918507, 0.06781026316068192, -0.9801928131236479]
+HYBRID HAIR FRAME frame=10 max_position_error_m=0.00018540370752624658 max_quaternion_component_error=0.002712951886454318
+
+thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (68599053) panicked at crates/voxy_app/src/female_hair.rs:1080:13:
+frame 10: GPU position drift 0.00018540370752624658; worst rod=409 point=20
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED
+
+failures:
+
+failures:
+    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 324 filtered out; finished in 5384.68s
+
+error: test failed, to rerun pass `-p voxy_app --lib`

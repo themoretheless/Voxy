@@ -1,0 +1,15 @@
+{
+  "source_sha256": "e3d7da3e87695ee54f350400a794d9f89f1a78628d467e3c6603d14c5c476e45",
+  "change": "Retain active callback row and target storage within one immutable operator; rewrite all current column bits and pass only current active slice.",
+  "physics_library_passed": 338,
+  "ignored": 39,
+  "actual_gpu_physical_fixture_passed": 1,
+  "regressions": [
+    "Pointer reuse across orthogonal active-set changes",
+    "Current row-to-bound identity including release and cold retries",
+    "512 coupled differential cases and original KKT tests",
+    "Actual Metal 47-row original physical publication, native comparison, changed/restored bounds, cache-disabled work"
+  ],
+  "fps_measured": false,
+  "full_trajectory_completed": false
+}

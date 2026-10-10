@@ -1,0 +1,31 @@
+{
+  "created_utc": "2026-10-10T04:40:51.952991+00:00",
+  "scope": "full original density paired 720-frame gate with velocity-island snapshots; not rendered FPS",
+  "target_rod": 227,
+  "minimum_observed_tolerance": 1e-09,
+  "snapshot_limit_per_backend": 1024,
+  "source_sha256": {
+    "crates/physics/src/hair/contact_square_root_projection.rs": "e9c75fb73de03af3b895a2ad037fb7f476e678de678aad893692ba836598bde8",
+    "crates/physics/src/hair/velocity_contacts.rs": "2312e1f261d724e31a6dd0ea3cb5f183f84c04f8912ee3d02ca0807fc4736d6d",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "8566c73a0f79ce7248c3513cc4edbee0689b768ee4f7ab3cdd928f841edfbb4a",
+    "crates/voxy_render/src/compute.rs": "2131e13d50087d749c6436bd13daed52cf990064fcc19b9a0aa8dc1912054499"
+  },
+  "cargo_pid_at_launch": 97723,
+  "session_id": 94829,
+  "environment_overrides": {
+    "VOXY_HAIR_JOINT_BATCH_COMPARE": "1",
+    "VOXY_HAIR_JOINT_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_EARLY_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_DUAL_HINTS": "1",
+    "VOXY_HAIR_JOINT_QR_PREFIX_REUSE": "1",
+    "VOXY_HAIR_ISLAND_INPUT_ROD": "227",
+    "VOXY_HAIR_ISLAND_INPUT_MIN_TOLERANCE": "1e-9",
+    "VOXY_HAIR_ISLAND_INPUT_LIMIT": "1024",
+    "VOXY_HAIR_PHASE_TRACE_FRAME": "4",
+    "VOXY_HAIR_PHASE_TRACE_END_FRAME": "6"
+  },
+  "test_pid_observed_live": 98867,
+  "physics_suite_session": 67739,
+  "physics_suite_pid_observed_live": 98487,
+  "observed_utc": "2026-10-10T04:42:15.720495+00:00"
+}

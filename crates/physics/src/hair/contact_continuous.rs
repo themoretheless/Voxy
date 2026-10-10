@@ -148,7 +148,7 @@ impl SweptPairCache {
 
 // Geometry-only hierarchy: leaves retain the exact padded bounds above.
 // Pair output remains sorted in the original input identities.
-fn bound_pairs(bounds: &[(V, V)]) -> Vec<(usize, usize)> {
+pub(super) fn bound_pairs(bounds: &[(V, V)]) -> Vec<(usize, usize)> {
     struct Node { bounds: (V,V), children: Option<(usize,usize)>, id: usize, size: usize }
     fn build(ids: &mut [usize], bounds: &[(V,V)], nodes: &mut Vec<Node>) -> usize {
         let min = std::array::from_fn(|axis| ids.iter().map(|&id| bounds[id].0[axis]).fold(f64::INFINITY,f64::min));

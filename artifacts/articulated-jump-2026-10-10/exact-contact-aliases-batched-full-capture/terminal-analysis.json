@@ -1,0 +1,31 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "runtime_coordinate_batches": true,
+  "frames": [
+    {
+      "frame": 1,
+      "max_position_error_m": 5.120668715712529e-09,
+      "max_quaternion_component_error": 2.0715367776702465e-07
+    },
+    {
+      "frame": 2,
+      "max_position_error_m": 6.8175398821592684e-09,
+      "max_quaternion_component_error": 2.0715367776702465e-07
+    },
+    {
+      "frame": 3,
+      "max_position_error_m": 8.268174710754188e-09,
+      "max_quaternion_component_error": 2.0715367776702465e-07
+    },
+    {
+      "frame": 4,
+      "max_position_error_m": 9.398101680643811e-05,
+      "max_quaternion_component_error": 0.002209269760113264
+    }
+  ],
+  "worst_rod": 233,
+  "worst_point": 20,
+  "cpu_fallback_log_count": 0,
+  "limits": "Frozen run includes exact contact alias fixes but predates persistent GPU workspace cache and finite flat-face manifold. Not complete trajectory or rendered FPS."
+}

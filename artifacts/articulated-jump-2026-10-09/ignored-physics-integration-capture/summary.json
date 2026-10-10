@@ -1,0 +1,39 @@
+{
+  "scope": "four formerly ignored integration checks explicitly run unchanged in fidelity; concurrent load not controlled, timings are not qualification",
+  "results": [
+    {
+      "log": "surface-film.log",
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "log": "moisture.log",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "log": "tissue-surface.log",
+      "passed": 1,
+      "failed": 0
+    }
+  ],
+  "passed": 4,
+  "failed": 0,
+  "fold_grid_columns": [
+    25,
+    49,
+    97
+  ],
+  "fold_maximum_relative_mass_error": 1.638e-15,
+  "full_jump_frame_two": {
+    "coordinate_calls": 44916,
+    "equality_submissions": 460715,
+    "admitted": 44916,
+    "native_fallbacks": 0,
+    "cache_hits": 0,
+    "maximum_position_difference_m": 4.283969581853064e-09,
+    "maximum_quaternion_component_difference": 1.6032926627995714e-07,
+    "scope": "positive-rank binary; predates scaled norm, CPU support and grouped pass updates; two completed frames only"
+  },
+  "rendered_fps_measured": false
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "file": "external-00.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "external-01.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "external-02.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "external-03.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "external-04.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "external-05.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "external-06.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-00.vqc",
+    "rows": 1,
+    "systems": 2,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-01.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-02.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-03.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-04.vqc",
+    "rows": 1,
+    "systems": 2,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-05.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-06.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-07.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  },
+  {
+    "file": "native-08.vqc",
+    "rows": 1,
+    "systems": 1,
+    "exact_original_load_reconstruction": true
+  }
+]

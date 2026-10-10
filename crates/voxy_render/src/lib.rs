@@ -6,7 +6,7 @@ mod backend;
 mod joint_contact_dot;
 pub use joint_contact_dot::{JointContactDotInput,JointDotError,JOINT_CONTACT_DOT_SHADER,JOINT_CONTACT_NORMALIZE_SHADER,JOINT_CONTACT_NORMALIZE_SERIAL_SHADER};
 pub use joint_contact_dot::{ResidentContactQrInput,ResidentContactQrOutput,JOINT_CONTACT_QR_SHADER};
-pub use joint_contact_dot::{ResidentContactEqualityInput,ResidentContactEqualityOutput,JOINT_CONTACT_EQUALITY_SHADER};
+pub use joint_contact_dot::{ResidentContactEqualityInput,ResidentContactEqualityOutput,ValidatedResidentContactEquality,ResidentContactQrPrefix,JOINT_CONTACT_EQUALITY_SHADER};
 mod banded_solve;
 mod banded_transfer;
 pub use banded_transfer::BandedTransferProgram;

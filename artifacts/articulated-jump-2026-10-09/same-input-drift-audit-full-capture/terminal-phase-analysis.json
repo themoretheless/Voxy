@@ -1,0 +1,492 @@
+{
+  "terminal": "FAILED",
+  "process_handle_missing": true,
+  "failed_frame": 6,
+  "final_position_difference_m": 9.198537073512592e-06,
+  "final_quaternion_component_difference": 0.00019552032000652586,
+  "same_input_joint_capture_present": false,
+  "frame6_phase_comparisons": [
+    {
+      "frame": 6,
+      "index": 0,
+      "phase": "predicted",
+      "substep": 0,
+      "iteration": 0,
+      "position_error_m": 7.806809824463523e-08,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 1,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 0,
+      "position_error_m": 1.583635111485418e-05,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 2,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 1,
+      "position_error_m": 1.583635111485418e-05,
+      "native_contacts": 5,
+      "external_contacts": 4
+    },
+    {
+      "frame": 6,
+      "index": 3,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 1,
+      "position_error_m": 7.297063992627029e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 4,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 1,
+      "position_error_m": 1.5632753751340656e-05,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 5,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 2,
+      "position_error_m": 1.5632753751340656e-05,
+      "native_contacts": 5,
+      "external_contacts": 5
+    },
+    {
+      "frame": 6,
+      "index": 6,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 2,
+      "position_error_m": 7.297059669508776e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 7,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 2,
+      "position_error_m": 1.563275389609292e-05,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 8,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 3,
+      "position_error_m": 1.563275389609292e-05,
+      "native_contacts": 5,
+      "external_contacts": 5
+    },
+    {
+      "frame": 6,
+      "index": 9,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 3,
+      "position_error_m": 7.29709450610766e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 10,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 3,
+      "position_error_m": 1.563275330579081e-05,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 11,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 4,
+      "position_error_m": 1.563275330579081e-05,
+      "native_contacts": 5,
+      "external_contacts": 5
+    },
+    {
+      "frame": 6,
+      "index": 12,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 4,
+      "position_error_m": 7.297059672332906e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 13,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 4,
+      "position_error_m": 1.5632753914838343e-05,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 14,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 5,
+      "position_error_m": 1.5632753914838343e-05,
+      "native_contacts": 5,
+      "external_contacts": 5
+    },
+    {
+      "frame": 6,
+      "index": 15,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 5,
+      "position_error_m": 7.297094505268054e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 16,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 5,
+      "position_error_m": 1.563275332190986e-05,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 17,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 6,
+      "position_error_m": 1.563275332190986e-05,
+      "native_contacts": 5,
+      "external_contacts": 5
+    },
+    {
+      "frame": 6,
+      "index": 18,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 6,
+      "position_error_m": 7.297059670847983e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 19,
+      "phase": "continuous-mesh-admission",
+      "substep": 0,
+      "iteration": 6,
+      "position_error_m": 7.297059670847983e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 20,
+      "phase": "before-finish",
+      "substep": 0,
+      "iteration": 6,
+      "position_error_m": 7.297059670847983e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 21,
+      "phase": "rod-velocities",
+      "substep": 0,
+      "iteration": 6,
+      "position_error_m": 7.297059670847983e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 22,
+      "phase": "strand-friction",
+      "substep": 0,
+      "iteration": 6,
+      "position_error_m": 7.297059670847983e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 23,
+      "phase": "finished",
+      "substep": 0,
+      "iteration": 6,
+      "position_error_m": 7.297059670847983e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 24,
+      "phase": "predicted",
+      "substep": 1,
+      "iteration": 0,
+      "position_error_m": 7.297059670847983e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 25,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 0,
+      "position_error_m": 9.428970061099717e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 26,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 1,
+      "position_error_m": 9.428970061099717e-06,
+      "native_contacts": 6,
+      "external_contacts": 6
+    },
+    {
+      "frame": 6,
+      "index": 27,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 1,
+      "position_error_m": 9.198569134213908e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 28,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 1,
+      "position_error_m": 9.367730127170237e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 29,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 2,
+      "position_error_m": 9.367730127170237e-06,
+      "native_contacts": 6,
+      "external_contacts": 6
+    },
+    {
+      "frame": 6,
+      "index": 30,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 2,
+      "position_error_m": 9.198537073533408e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 31,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 2,
+      "position_error_m": 9.367731392442846e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 32,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 3,
+      "position_error_m": 9.367731392442846e-06,
+      "native_contacts": 6,
+      "external_contacts": 6
+    },
+    {
+      "frame": 6,
+      "index": 33,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 3,
+      "position_error_m": 9.198537073540347e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 34,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 3,
+      "position_error_m": 9.36773139349062e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 35,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 4,
+      "position_error_m": 9.36773139349062e-06,
+      "native_contacts": 6,
+      "external_contacts": 6
+    },
+    {
+      "frame": 6,
+      "index": 36,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 4,
+      "position_error_m": 9.198537073533408e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 37,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 4,
+      "position_error_m": 9.367731392435907e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 38,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 5,
+      "position_error_m": 9.367731392435907e-06,
+      "native_contacts": 6,
+      "external_contacts": 6
+    },
+    {
+      "frame": 6,
+      "index": 39,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 5,
+      "position_error_m": 9.198537073575042e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 40,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 5,
+      "position_error_m": 9.367731394781253e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 41,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 6,
+      "position_error_m": 9.367731394781253e-06,
+      "native_contacts": 6,
+      "external_contacts": 6
+    },
+    {
+      "frame": 6,
+      "index": 42,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 6,
+      "position_error_m": 9.198537073512592e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 43,
+      "phase": "continuous-mesh-admission",
+      "substep": 1,
+      "iteration": 6,
+      "position_error_m": 9.198537073512592e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 44,
+      "phase": "before-finish",
+      "substep": 1,
+      "iteration": 6,
+      "position_error_m": 9.198537073512592e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 45,
+      "phase": "rod-velocities",
+      "substep": 1,
+      "iteration": 6,
+      "position_error_m": 9.198537073512592e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 46,
+      "phase": "strand-friction",
+      "substep": 1,
+      "iteration": 6,
+      "position_error_m": 9.198537073512592e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    },
+    {
+      "frame": 6,
+      "index": 47,
+      "phase": "finished",
+      "substep": 1,
+      "iteration": 6,
+      "position_error_m": 9.198537073512592e-06,
+      "native_contacts": 0,
+      "external_contacts": 0
+    }
+  ],
+  "inference": "First observed amplification above 1e-6 m occurs in structural phase substep0 iteration0, before contact count differs. This does not distinguish same-input linear solve error from nonlinear sensitivity to inherited state differences. No same-input joint capture was produced. Audit structural post-refinement operator next.",
+  "source_verified_scope": "The structural phase calls contact_safe_motion::advance, including native free Newton solve, contact projection, CCD cut activation and component admission. NativeNewtonStep::new uses native free solve for both native and GPU-QR modes. The phase label alone does not identify a GPU structural linear solve error."
+}

@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-10-10T04:18:27.256287+00:00",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_joint.rs": "25708a18c3e186051c106c10bd4985c00666eee659a89b81e96ee9475ff90c45",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "8e03b25a4c6a8f34666be38681c3fc543acee1147c1c2b6ad39770c77cf0b8e9",
+    "crates/voxy_render/src/compute_memory.rs": "9100b4ccae7ae0c3c6e9f9077318c0f361a6cff5a27d2fb6a851be32e0a414e6",
+    "crates/voxy_render/src/compute.rs": "9f05cf1bc8c0b1308ebbbbdf2763e336f3be33efe32756adb09653990e09093e"
+  },
+  "proof": "Strict 220-byte managed storage budget: one allocation and five successful reinitializations across larger and smaller layouts; larger request rejects without changing cache/accounting; smaller retry succeeds; retired charge retained until explicit queue completion observation. Twenty-four changing operators/full-storage equality; same-size layout changes; bounded staging; physical contacts; original 61-row/2646-coordinate operator with original 1e-14 admission and full/tail readback equality. Zero native fallback on selected hardware fixtures.",
+  "limits": "Managed storage budget excludes independent readback staging and driver allocations. Full/tail timing comparison is uncontrolled concurrent diagnostic and did not justify changing production full readback. Full 720-frame dynamics, rendered >160 FPS, CUDA and all hardware remain unqualified. Running full test uses frozen pre-pooling binary.",
+  "production_check": "cargo check -p voxy_app --release --lib PASS, existing warnings retained"
+}

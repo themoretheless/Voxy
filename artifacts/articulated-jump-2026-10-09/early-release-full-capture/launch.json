@@ -1,0 +1,19 @@
+{
+  "frames_requested": 720,
+  "full_model": true,
+  "features": [
+    "release_directions",
+    "early_release_directions",
+    "frozen_dual_hints",
+    "validated_qr_prefix"
+  ],
+  "sha256": {
+    "crates/physics/src/hair/contact_square_root_qr.rs": "c89bb6dd707a5e4273f99c550ddfc39eca923cc19b3447ae0969bd5bd8d47496",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "8b670a5c4902bed61d285696ad7d0aa454a9e0c68209bf0eec96ada387f2ed76",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "72ac2ca705611ed63c6da3a40907d67af9ae6a2ee514a0fb3dfb83da9f715f50",
+    "crates/voxy_app/src/female_hair.rs": "28176992871c489cdefd9d8a1b86897f06855a4291384a09321366bc766b0889",
+    "artifacts/articulated-jump-2026-10-09/run_gpu_joint_jump.sh": "9e228971c2a2159ce7ccace30a1df6a258881eaa8fdc5b4ca5b3284172457ded",
+    "/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f": "d470c10b48c5151cb61ed23435ac973ea6be7cc882d9fd4951570ceed8478b79"
+  },
+  "scope": "Full native/GPU paired trajectory, not rendered FPS. Existing late-release trajectory preserved."
+}

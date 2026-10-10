@@ -1,0 +1,62 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:70:19
+   |
+63 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+70 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 3 warnings
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 3.90s
+     Running tests/skin.rs (/tmp/voxy-release-120fps-20261007/release/deps/skin-028cc4772bc61ca8)
+
+running 21 tests
+test attachments_follow_start_target_plus_velocity_without_artificial_drag ... ok
+test adaptive_skin_keeps_moving_attachment_trajectory ... ok
+test adaptive_skin_preserves_state_when_subdivisions_fail ... ok
+test extreme_valid_relaxation_times_keep_committed_memory_finite ... ok
+test incompressibility_tracks_thickness ... ok
+test invalid_and_nonconverged_steps_are_atomic ... ok
+test material_gradient_and_tangent_match_finite_differences ... ok
+test nonlinear_fibers_are_tension_only_and_directional ... ok
+test exact_rest_has_zero_energy_and_force ... ok
+test rejects_disconnected_vertex_fans_even_when_all_edges_are_manifold ... ok
+test free_fall_and_rigid_translation_need_no_artificial_drag ... ok
+test forces_are_objective_and_conserve_linear_and_angular_momentum ... ok
+test discarded_prepared_skin_preserves_future_motion_and_material_history ... ok
+test principal_stretches_and_thickness_match_affine_deformation ... ok
+test rejects_overflowing_laminate_totals_before_returning_a_response ... ok
+test rejects_nonmanifold_winding_and_unused_vertices ... ok
+test sphere_contacts_face_interior_when_all_vertices_are_clear ... ok
+test swept_sphere_cannot_cross_a_face_with_clear_endpoints ... ok
+test plane_contact_stops_load_and_remains_nonpenetrating ... ok
+test maxwell_stress_relaxes_at_fixed_strain ... ok
+test shell_energy_gradient_matches_finite_difference_including_hinges ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

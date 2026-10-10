@@ -1,0 +1,11 @@
+{
+  "physics_passed": 338,
+  "physics_ignored": 39,
+  "actual_model_forearm_passed": 1,
+  "actual_model_surface_probe_passed": 2,
+  "moving_contact_tests_passed": 3,
+  "film_state_tests_passed": 5,
+  "full_character_clock_session": 93456,
+  "full_character_clock_status": "running; not qualified",
+  "source_sha256": "cfc376d374a9ac11a2adb3c28a86007ea0cfb5c598820df3edfefe1423ca8e8a"
+}

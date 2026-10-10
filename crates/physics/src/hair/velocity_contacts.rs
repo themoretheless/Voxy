@@ -11,7 +11,7 @@ mod square_root_projection;
 mod response_batches;
 #[path="contact_safe_motion.rs"]
 mod safe_motion;
-pub(in crate::hair) use safe_motion::{advance as advance_swept_strands,strand_fraction,admit_staged_strands};
+pub(in crate::hair) use safe_motion::{advance as advance_swept_strands,advance_contacts as reconcile_swept_contact_owners,strand_fraction,admit_staged_strands};
 
 #[derive(Clone, Copy)]
 struct Entry {
@@ -128,9 +128,12 @@ fn add_constraint(
         return Err("invalid shared contact velocity constraint");
     }
     if diagonal > 1e-30 {
+        // Only identical physical Jacobians are aliases. A small angular
+        // difference can produce a residual larger than solve tolerance when
+        // multiplied by the free state; never discard that original row.
         if let Some((index,existing))=constraints.iter_mut().enumerate().find(|(_,constraint)| {
             constraint.entries.iter().zip(entries).all(|(a,b)|a.rod==b.rod && a.point==b.point
-                && a.mobility==b.mobility && len(sub(a.gradient,b.gradient))<=1e-12)
+                && a.mobility==b.mobility && a.gradient==b.gradient)
         }) {
             existing.bound=existing.bound.max(bound);
             return Ok(Some(index));
@@ -433,6 +436,24 @@ pub(in crate::hair) fn stabilize_contact_velocities_with_solver(rods:&mut [HairR
     if constraints.is_empty() {
         return Ok(());
     }
+    if solver.as_ref().is_none_or(|backend|backend.joint_contact_coordinates_enabled()) {
+        // Use the same original-column owner as positional contact. Forming a
+        // separately rounded Gram operator here can amplify tiny pose changes
+        // into a large velocity jump before the next physical substep.
+        let free=PositionIncrement {
+            linear:rods.iter().map(|rod|rod.velocity.clone()).collect(),
+            angular:rods.iter().map(|rod|rod.omega.clone()).collect(),
+        };
+        let projected=if let Some(backend)=solver {
+            square_root_projection::solve_accelerated(&mut constraints,rods,dt,free,1e-9,backend)?
+        } else {square_root_projection::solve(&mut constraints,rods,dt,free,1e-9)?};
+        if !projected.finite() {return Err("shared contact velocity projection overflow");}
+        for (index,rod) in rods.iter_mut().enumerate() {
+            rod.velocity.clone_from(&projected.linear[index]);
+            rod.omega.clone_from(&projected.angular[index]);
+        }
+        return Ok(());
+    }
     prepare_implicit_response_with_solver(&mut constraints, rods, dt,solver)?;
     solve_projection(&mut constraints,rods,1e-9)
 }
@@ -456,10 +477,15 @@ fn reconcile_position_increment(rods:&mut [HairRod],responses:&mut [StrandRespon
     let increment=if include_free {
         constrained_newton_increment(&mut constraints,rods,dt,solver,1e-11)?
     } else {
-        prepare_implicit_response_with_solver(&mut constraints,rods,dt,solver)?;
-        let mut increment=PositionIncrement {linear:rods.iter().map(|r|vec![[0.;3];r.x.len()]).collect(),angular:rods.iter().map(|r|vec![[0.;3];r.q.len()]).collect()};
-        solve_projection(&mut constraints,&mut increment,1e-11)?;
-        increment
+        let free=PositionIncrement {linear:rods.iter().map(|r|vec![[0.;3];r.x.len()]).collect(),angular:rods.iter().map(|r|vec![[0.;3];r.q.len()]).collect()};
+        // A finite contact manifold contains dependent rows. Project under
+        // the original compliance columns rather than a separately rounded
+        // Gram matrix, using the same owner as elastic contact and velocity.
+        // Backends without coordinate support still accelerate structural
+        // steps; their contact projection explicitly remains native.
+        if let Some(backend)=solver.filter(|backend|backend.joint_contact_coordinates_enabled()) {
+            square_root_projection::solve_accelerated(&mut constraints,rods,dt,free,1e-11,backend)?
+        } else {square_root_projection::solve(&mut constraints,rods,dt,free,1e-11)?}
     };
     if !increment.finite() {return Err("shared contact position increment overflow");}
     // A shared reaction requires a common fraction within its connected
@@ -556,6 +582,26 @@ impl<'a> NativeNewtonStep<'a> {
     }
     fn project_with_solver(&self,constraints:&mut [Constraint],tolerance:f64,solver:Option<&mut dyn crate::hair::HairLinearSolver>)->Result<PositionIncrement,&'static str> {
         constrained_newton_increment_prepared(constraints,self.rods,self.dt,solver,tolerance,Some((&self.free,&self.systems)))
+    }
+    fn project_contacts_with_solver(&self,constraints:&mut [Constraint],tolerance:f64,solver:Option<&mut dyn crate::hair::HairLinearSolver>)->Result<PositionIncrement,&'static str> {
+        // Structural iterations own unconstrained elastic motion. A contact
+        // reconciliation must not advance remote rods whenever another island
+        // needs an extra nonlinear iteration. New swept rows add their owners
+        // on every retry, so newly contacted neighbors retain their full H/free
+        // load rather than being treated as immovable obstacles.
+        let mut involved=vec![false;self.rods.len()];
+        for row in constraints.iter() {for entry in row.entries {
+            if entry.gradient.iter().any(|&v|v!=0.) {involved[entry.rod]=true;}
+        }}
+        let mut free=self.free.clone();
+        for (r,used) in involved.into_iter().enumerate() {
+            if !used {free.linear[r].fill([0.;3]);free.angular[r].fill([0.;3]);}
+        }
+        // The canonical column owner remains native for response-only backends;
+        // unsupported coordinate acceleration cannot overwrite the scoped free
+        // load by assembling a second global elastic response batch.
+        let solver=solver.filter(|backend|backend.joint_contact_coordinates_enabled());
+        constrained_newton_increment_prepared(constraints,self.rods,self.dt,solver,tolerance,Some((&free,&self.systems)))
     }
 }
 fn constrained_newton_increment_prepared(
@@ -739,6 +785,40 @@ mod tests {
         .unwrap()
     }
     #[test]
+    fn near_parallel_contacts_retain_both_original_inequalities() {
+        let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
+        let normal_a=[1.,0.,0.];
+        let normal_b=[1.,5e-13,0.];
+        let mut rows=Vec::new();
+        for gradient in [normal_a,normal_b] {
+            add_constraint(&mut rows,[Entry {rod:0,point:1,gradient,mobility:1.},zero,zero,zero],0.).unwrap();
+        }
+        let mut state=PositionIncrement {
+            linear:vec![vec![[0.;3],[0.,-10.,0.]]],angular:vec![vec![[0.;3]]],
+        };
+        solve_projection(&mut rows,&mut state,1e-14).unwrap();
+        for normal in [normal_a,normal_b] {
+            assert!(dot(normal,state.linear[0][1])>=-1e-14,
+                "contact aliasing discarded an original physical inequality");
+        }
+        assert_eq!(rows.len(),2);
+        // Exercise the original-column compliance owner used by native and
+        // GPU contact paths, not only the diagonal compatibility projector.
+        let native_rods=[rod(0.)];
+        let mut free=PositionIncrement {
+            linear:vec![vec![[0.;3];3]],angular:vec![vec![[0.;3];2]],
+        };
+        free.linear[0][1]=[0.,-10.,0.];
+        let projected=square_root_projection::solve(&mut rows,&native_rods,1./240.,free,1e-14).unwrap();
+        for normal in [normal_a,normal_b] {
+            assert!(dot(normal,projected.linear[0][1])>=-1e-14,
+                "original-column solve violated a retained physical row");
+        }
+        // Exact aliases still share one owner and retain the tighter bound.
+        let index=add_constraint(&mut rows,[Entry {rod:0,point:1,gradient:normal_b,mobility:1.},zero,zero,zero],2e-13).unwrap();
+        assert_eq!(index,Some(1));assert_eq!(rows.len(),2);assert_eq!(rows[1].bound,2e-13);
+    }
+    #[test]
     fn recovered_pressure_matches_inertial_force_and_discards_solver_history() {
         let dt=1./240.; let radius=40e-6; let approach=1e-6;
         let mut rods=vec![rod(0.),rod(2.*radius)];
@@ -807,6 +887,35 @@ mod tests {
         assert_eq!(increment.linear[0][0],[0.;3]);
     }
     #[test]
+    fn velocity_projection_uses_original_columns_without_gram_response_callbacks() {
+        struct Columns {calls:usize}
+        impl crate::hair::HairLinearSolver for Columns {
+            fn solve(&mut self,_:&[crate::hair::HairLinearSystem])->Result<Vec<Vec<f64>>,&'static str> {panic!("unexpected structural callback");}
+            fn joint_contact_coordinates_enabled(&self)->bool {true}
+            fn solve_responses(&mut self,_:&[crate::hair::HairResponseSystem])->Result<Vec<Vec<Vec<f64>>>,&'static str> {panic!("velocity projection used Gram response callbacks");}
+            fn solve_joint_coordinates(&mut self,columns:&[Vec<f64>],bounds:&[f64],_:f64)->Option<(Vec<f64>,Vec<f64>)> {
+                self.calls+=1;assert_eq!(columns.len(),1);
+                let norm=columns[0].iter().map(|v|v*v).sum::<f64>();
+                let reaction=bounds[0].max(0.)/norm;
+                Some((columns[0].iter().map(|v|v*reaction).collect(),vec![reaction]))
+            }
+        }
+        let mut rods=vec![rod(0.)];
+        rods[0].velocity[1]=[-1.,0.,0.];
+        rods[0].record_point_contact(1,[1.,0.,0.],[0.,0.01,0.],ContactSource::Mesh(0));
+        let pose=(rods[0].x.clone(),rods[0].q.clone());
+        let mut native=rods.clone();let mut backend=Columns {calls:0};
+        stabilize_contact_velocities(&mut native,&[],1./240.,40e-6).unwrap();
+        stabilize_contact_velocities_with_solver(&mut rods,&[],1./240.,40e-6,Some(&mut backend)).unwrap();
+        assert!(backend.calls>0);
+        assert!(rods[0].velocity[1][0].abs()<1e-9);
+        assert_eq!(rods[0].velocity[0],[0.;3]);
+        assert_eq!((&rods[0].x,&rods[0].q),(&pose.0,&pose.1));
+        for (a,b) in rods[0].velocity.iter().chain(&rods[0].omega).zip(native[0].velocity.iter().chain(&native[0].omega)) {
+            assert!(len(sub(*a,*b))<1e-9);
+        }
+    }
+    #[test]
     fn shared_wall_and_strand_reactions_satisfy_both_constraints() {
         let mut rods = vec![rod(0.), rod(80e-6)];
         rods[0].velocity[1] = [-1., 0., 0.];
@@ -850,7 +959,9 @@ mod tests {
             );
             rods[0].contacts[index].surface_velocity = normal;
         }
+        let before=format!("{rods:?}");
         assert!(stabilize_contact_velocities(&mut rods, &[], 1. / 240., 40e-6).is_err());
+        assert_eq!(format!("{rods:?}"),before,"rejected velocity projection published partial state");
     }
     #[test]
     fn submicron_wall_projection_does_not_admit_linear_residual_as_separation() {
@@ -1212,3 +1323,86 @@ mod captured_position_tests;
 #[cfg(test)]
 #[path="contact_component_fixture_tests.rs"]
 mod captured_component_tests;
+
+#[cfg(test)]
+mod contact_owner_isolation_tests {
+    use super::*;
+    #[test]
+    fn swept_contact_pass_activates_new_neighbor_without_moving_remote_guide() {
+        let radius=40e-6;
+        let mut rods:Vec<_>=[0.,0.0002,10.].into_iter().map(|x|
+            HairRod::new(vec![[x,0.,0.],[x,0.,0.01],[x,0.,0.02]],Default::default()).unwrap()).collect();
+        rods[2].predicted_x[1][0]+=1e-4;
+        rods[0].record_contact(1,1.,[1.,0.,0.],[0.0004,0.,0.02],ContactSource::Mesh(0));
+        let start=rods.clone();
+        assert!(crate::hair::contact::refresh_strand_responses(&mut rods,radius,&[]).is_empty());
+        let mut history=Vec::new();
+        assert_eq!(reconcile_swept_contact_owners(&mut rods,1./240.,radius,None,&mut history,Some(&start)).unwrap(),1.);
+        assert!(rods[0].x[2][0]>=0.0004-1e-10,"mesh contact was not separated");
+        assert!(rods[1].x[2][0]>start[1].x[2][0]+1e-5,"new neighbor was frozen");
+        assert_eq!(rods[2].x,start[2].x);
+        assert_eq!(rods[2].q,start[2].q);
+        let end:Vec<_>=rods.iter().map(|rod|rod.x.clone()).collect();
+        assert_eq!(strand_fraction(&start,&end,radius).unwrap(),1.);
+        let pairs=crate::hair::contact::refresh_strand_responses(&mut rods,radius,&[]);
+        assert!(crate::hair::contact::strand_geometry_admitted(&rods,&pairs,radius).unwrap());
+        for (rod,old) in rods.iter().zip(&start) {assert_eq!(rod.x[0],old.x[0]);}
+    }
+    #[test]
+    fn newly_added_contact_owner_keeps_full_elastic_motion_and_compliance() {
+        let mut rods:Vec<_>=[0.,0.02,10.].into_iter().map(|x|
+            HairRod::new(vec![[x,0.,0.],[x,0.,0.01],[x,0.,0.02]],Default::default()).unwrap()).collect();
+        for rod in &mut rods {rod.predicted_x[1][0]+=1e-4;}
+        let step=NativeNewtonStep::new(&rods,1./240.,1e-14).unwrap();
+        let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
+        let mut rows=Vec::new();
+        let first=entries(0,1,0.,[0.,1.,0.],&rods[0]);
+        add_constraint(&mut rows,[first[0],first[1],zero,zero],0.).unwrap();
+        let before=step.project_contacts_with_solver(&mut rows,1e-14,None).unwrap();
+        assert!(before.linear[1].iter().all(|v|*v==[0.;3]));
+        assert!(before.angular[1].iter().all(|v|*v==[0.;3]));
+        // A swept witness can add a neighbor after the initial projection.
+        // Keep its tangential free load and solve its normal load under H.
+        let neighbor=entries(1,1,0.,[0.,1.,0.],&rods[1]);
+        add_constraint(&mut rows,[neighbor[0],neighbor[1],zero,zero],1e-5).unwrap();
+        for row in &mut rows {row.multiplier=0.;}
+        let activated=step.project_contacts_with_solver(&mut rows,1e-14,None).unwrap();
+        let reference=step.project_with_solver(&mut rows,1e-14,None).unwrap();
+        assert!(activated.linear[1][1][1]>=1e-5-1e-14);
+        assert!(activated.linear[1][1][0].abs()>1e-12,"new owner lost tangential elastic motion");
+        assert_eq!(activated.linear[1],reference.linear[1]);
+        assert_eq!(activated.angular[1],reference.angular[1]);
+        assert!(activated.angular[1].iter().any(|v|len(*v)>0.),"new owner lost coupled rotational compliance");
+        assert!(activated.linear[2].iter().all(|v|*v==[0.;3]));
+        assert!(activated.angular[2].iter().all(|v|*v==[0.;3]));
+        for r in 0..rods.len() {assert_eq!(activated.linear[r][0],[0.;3]);assert_eq!(activated.angular[r][0],[0.;3]);}
+    }
+    #[test]
+    fn swept_contact_pass_preserves_free_guides_but_structural_pass_advances_them() {
+        let mut free=HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],Default::default()).unwrap();
+        free.predicted_x[1][0]+=1e-4;
+        let mut contacts=vec![free.clone()];
+        let start=contacts.clone();
+        reconcile_swept_contact_owners(&mut contacts,1./240.,40e-6,None,&mut Vec::new(),Some(&start)).unwrap();
+        assert_eq!(contacts[0].x,free.x);
+        assert_eq!(contacts[0].q,free.q);
+        let mut structural=vec![free.clone()];
+        advance_swept_strands(&mut structural,1./240.,40e-6,None,&mut Vec::new(),Some(&start)).unwrap();
+        assert_ne!(structural[0].x,free.x,"structural pass lost unconstrained elastic motion");
+        assert_eq!(structural[0].x[0],free.x[0]);
+    }
+    #[test]
+    fn swept_contact_reconciliation_does_not_advance_unrelated_free_guides() {
+        let contact=HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],Default::default()).unwrap();
+        let mut free=HairRod::new(vec![[10.,0.,0.],[10.,0.,0.01],[10.,0.,0.02]],Default::default()).unwrap();
+        free.predicted_x[1][0]+=1e-4;
+        let mut rods=vec![contact,free.clone()];
+        rods[0].record_contact(1,0.,[0.,1.,0.],[0.,1e-5,0.01],ContactSource::Mesh(0));
+        let start=rods.clone();
+        reconcile_swept_contact_owners(&mut rods,1./240.,40e-6,None,&mut Vec::new(),Some(&start)).unwrap();
+        assert!(rods[0].x[1][1]>=1e-5-1e-10,"contact owner was not separated");
+        assert_eq!(rods[1].x,free.x,"contact projection advanced an unrelated free guide");
+        assert_eq!(rods[1].q,free.q,"contact projection rotated an unrelated free guide");
+        assert_eq!(rods[0].x[0],[0.;3]);assert_eq!(rods[1].x[0],free.x[0]);
+    }
+}

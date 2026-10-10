@@ -1,0 +1,75 @@
+{
+  "schema": "voxy-vqc-input-comparison-v1",
+  "left": {
+    "path": "artifacts/articulated-jump-2026-10-09/island-input-trajectory-capture/operators/native-00.vqc",
+    "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+    "rows": 11,
+    "coordinates": 126,
+    "refinement": 0,
+    "tolerance": 1e-14,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "right": {
+    "path": "artifacts/articulated-jump-2026-10-09/island-input-trajectory-capture/operators/external-00.vqc",
+    "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+    "rows": 11,
+    "coordinates": 126,
+    "refinement": 0,
+    "tolerance": 1e-14,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "same_stored_layout": true,
+  "sections": {
+    "bounds": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "effective_bounds": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "columns": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_0_matrix": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_0_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_0_loads": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    }
+  },
+  "limits": "Stored-order comparison only. Matching dimensions do not prove semantic rod or row correspondence. No solver accuracy, conditioning, trajectory admission or FPS proof."
+}

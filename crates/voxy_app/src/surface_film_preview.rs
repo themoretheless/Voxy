@@ -1682,6 +1682,40 @@ mod unsupported_body_remap_tests {
 #[cfg(test)]
 mod invalid_advance_tests {
     #[test]
+    fn rejected_film_substep_restores_body_hair_and_retry_matches_fresh_step() {
+        let settings=crate::film_settings::FilmSettings::default();
+        for secondary_only in [false,true] {
+            let make=|| {
+                let mut demo=crate::female_demo::FemaleDemo::new().unwrap();
+                demo.secondary_only=secondary_only;
+                demo.simulate_hair=true;
+                demo.surface_diffusion_enabled=false;
+                demo.enable_film([0.,0.20,0.13],0.04,5e-8).unwrap();
+                demo
+            };
+            let mut demo=make();
+            let positions=|demo:&crate::female_demo::FemaleDemo|demo.mesh().unwrap().vertices().iter().map(|v|v.position).collect::<Vec<_>>();
+            let before=positions(&demo);
+            let film=demo.film.as_mut().unwrap();
+            film.settings.self_contact_enabled=true;
+            film.settings.self_contact_max_gap_m=f64::NAN;
+            let film_before=film.state_snapshot();
+            assert!(demo.advance(1./120.).is_err());
+            assert_eq!(demo.steps,0);
+            assert_eq!(positions(&demo),before,"failed film left physical geometry advanced");
+            assert_eq!(demo.film.as_ref().unwrap().state_snapshot(),film_before);
+            let film=demo.film.as_mut().unwrap();
+            film.settings.self_contact_enabled=settings.self_contact_enabled;
+            film.settings.self_contact_max_gap_m=settings.self_contact_max_gap_m;
+            demo.advance(0.).unwrap(); // Retry the already queued physical time.
+            let mut reference=make();
+            reference.advance(1./120.).unwrap();
+            assert_eq!(demo.steps,reference.steps);
+            assert_eq!(positions(&demo),positions(&reference),"retry did not restore hidden physical history");
+            assert_eq!(demo.film.as_ref().unwrap().state_snapshot(),reference.film.as_ref().unwrap().state_snapshot());
+        }
+    }
+    #[test]
     fn failed_contact_preserves_film_and_source_receipts() {
         let v = |position| voxy_render::SceneVertex {
             position,

@@ -146,6 +146,18 @@ impl ComputeReadbackPool {
     pub fn limits(&self) -> ComputeReadbackLimits {
         self.0.limits
     }
+    /// Capacity available to new leases, including evictable cached buffers.
+    /// This is a scheduling snapshot, not a reservation: concurrent consumers
+    /// must still handle admission failure. Quarantined storage stays charged.
+    #[must_use]
+    pub fn available_capacity(&self) -> ComputeReadbackLimits {
+        let state = self.0.state.lock().expect("readback pool poisoned");
+        let cached_bytes: u64 = state.free.iter().map(wgpu::Buffer::size).sum();
+        ComputeReadbackLimits {
+            max_bytes: self.0.limits.max_bytes - (state.stats.allocated_bytes - cached_bytes),
+            max_buffers: self.0.limits.max_buffers - (state.stats.allocated_buffers - state.free.len()),
+        }
+    }
     /// Current staging allocation and reuse counters.
     /// # Panics
     /// Panics if the pool state is poisoned.
@@ -292,6 +304,23 @@ impl Drop for ReadbackLease {
 #[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
+    #[test]
+    fn available_capacity_excludes_live_and_quarantined_but_includes_cache() {
+        let (device, _) = wgpu::Device::noop(&Default::default());
+        let pool = ComputeReadbackPool::configure(&device, ComputeReadbackLimits {
+            max_bytes: 16, max_buffers: 2,
+        }).unwrap();
+        let first = pool.acquire(4).unwrap();
+        let second = pool.acquire(8).unwrap();
+        assert_eq!(pool.available_capacity(), ComputeReadbackLimits { max_bytes: 4, max_buffers: 0 });
+        first.unmapped(); // Simulate a successfully completed map/unmap.
+        drop(first);
+        assert_eq!(pool.available_capacity(), ComputeReadbackLimits { max_bytes: 8, max_buffers: 1 });
+        drop(second); // Unconfirmed storage remains charged.
+        assert_eq!(pool.available_capacity(), ComputeReadbackLimits { max_bytes: 8, max_buffers: 1 });
+        pool.discard_quarantine().unwrap();
+        assert_eq!(pool.available_capacity(), pool.limits());
+    }
     #[test]
     fn shared_admission_and_unconfirmed_cancellation() {
         let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());

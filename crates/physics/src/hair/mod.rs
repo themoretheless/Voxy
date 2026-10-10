@@ -196,13 +196,15 @@ impl HairRod {
     }
     fn record_contact(&mut self, mut segment:usize, mut fraction:f64, normal:V, target:V, source:ContactSource) -> usize {
         // Canonicalize a shared endpoint so node and capsule queries do not
-        // count the same geometric contact twice.
+        // count the same geometric contact twice. Only equal endpoint weights,
+        // unit-metric normals and plane offsets identify the same physical row;
+        // nearby planes can exclude different motions.
         if fraction==1. && segment+1<self.lengths.len() {segment+=1;fraction=0.;}
         if let Some(index)=self.contacts.iter().position(|contact| {
             contact.trajectory_time.is_none() && contact.source==source && contact.segment==segment
-                && (contact.fraction-fraction).abs()*self.lengths[segment]<=1e-12
-                && dot(contact.normal,normal)>1.-1e-12
-                && dot(sub(contact.target,target),normal).abs()<=1e-12
+                && contact.metric_scale==1. && contact.fraction==fraction
+                && contact.normal==normal
+                && dot(contact.target,normal)==dot(target,normal)
         }) {
             let existing=&mut self.contacts[index];
             existing.fraction=fraction;existing.normal=normal;existing.target=target;existing.metric_scale=1.;
@@ -319,7 +321,7 @@ pub struct HairLinearSystem {
 }
 #[path = "contact_response_system.rs"]
 mod contact_response_system;
-pub use contact_response_system::HairResponseSystem;
+pub use contact_response_system::{HairResponseSystem,HairContactEqualityProposal,HairContactCoordinateRequest,HairContactEqualityRequest};
 /// Accelerator ownership remains outside physics; one callback receives all
 /// independent rod matrices from the current nonlinear iteration.
 pub trait HairLinearSolver {
@@ -327,6 +329,20 @@ pub trait HairLinearSolver {
     fn joint_contact_coordinates_enabled(&self)->bool {false}
     fn solve_joint_coordinates(&mut self,_columns:&[Vec<f64>],_bounds:&[f64],_tolerance:f64)
         ->Option<(Vec<f64>,Vec<f64>)> {None}
+    fn joint_contact_hints_enabled(&self)->bool {false}
+    /// Optional dual hints owned by one immutable physical projection. Backends
+    /// may ignore them; hints never bypass original physical admission.
+    fn solve_joint_coordinates_seeded(&mut self, columns:&[Vec<f64>], bounds:&[f64], tolerance:f64,
+        _seeds:&[f64])->Option<(Vec<f64>,Vec<f64>)> {
+        self.solve_joint_coordinates(columns,bounds,tolerance)
+    }
+    fn joint_contact_coordinate_batches_enabled(&self)->bool {false}
+    /// Independent immutable coordinate operators. Legacy backends retain
+    /// sequential behavior; each returned candidate still needs physical admission.
+    fn solve_joint_coordinates_batch(&mut self,requests:&[HairContactCoordinateRequest<'_>])
+        ->Option<Vec<(Vec<f64>,Vec<f64>)>> {
+        requests.iter().map(|r|self.solve_joint_coordinates_seeded(r.columns,r.bounds,r.tolerance,r.seeds)).collect()
+    }
     /// Physical owner reports whether the candidate survived original admission.
     fn joint_contact_result(&mut self,_accelerated:bool) {}
     /// Explicit qualification opt-in for contact response batches.
@@ -411,7 +427,7 @@ impl HairRod {
 /// Coupled guide solve. Segment contacts run inside the structural iterations.
 #[path="phase_diagnostics.rs"]
 mod phase_diagnostics;
-pub use phase_diagnostics::{HairPhaseDiagnostic,HairFrictionDiagnostic};
+pub use phase_diagnostics::{HairPhaseDiagnostic,HairFrictionDiagnostic,observe_contact_frame};
 mod projection_diagnostics;
 pub use projection_diagnostics::{HairContactProjectionDiagnostic,HairProjectionPairDiagnostic};
 use projection_diagnostics::HairProjectionTrace;
@@ -534,6 +550,16 @@ impl HairSystem {
         meshes:&[TriangleMesh], solver:Option<&mut dyn HairLinearSolver>,
         validate:impl FnOnce(&HairSystem)->Result<(), &'static str>,
     )->Result<(), &'static str> {
+        *self=self.prepare_validated(dt,roots,gravity,air_velocity,meshes,solver,validate)?;
+        Ok(())
+    }
+    /// Prepare an admitted state without publishing it, for coupled transactions.
+    /// Accelerator observations remain external to the transaction.
+    pub fn prepare_validated(
+        &self,dt:f64,roots:&[RootPose],gravity:V,air_velocity:V,
+        meshes:&[TriangleMesh],solver:Option<&mut dyn HairLinearSolver>,
+        validate:impl FnOnce(&HairSystem)->Result<(), &'static str>,
+    )->Result<Self,&'static str> {
         let mut staged=self.clone();
         let result=staged.step_impl(dt,roots,gravity,air_velocity,meshes,solver)
             .and_then(|()| {
@@ -573,8 +599,7 @@ impl HairSystem {
             }
             return Err(error);
         }
-        *self=staged;
-        Ok(())
+        Ok(staged)
     }
     fn solve_external_rods(rods:&mut [HairRod],dt:f64,solver:&mut dyn HairLinearSolver)->Result<(), &'static str> {
         let systems=rods.iter_mut().map(|rod| {
@@ -624,7 +649,7 @@ impl HairSystem {
             if continuous_mesh {model.install(rods);}
             let projection=if let Some(start)=&motion_start {
                 let mut reactions=Vec::new();
-                let result=if let Some(backend)=solver.as_mut() {contact::advance_swept_strands(rods,dt,radius,Some(&mut **backend),&mut reactions,Some(start))} else {contact::advance_swept_strands(rods,dt,radius,None,&mut reactions,Some(start))};
+                let result=if let Some(backend)=solver.as_mut() {contact::reconcile_swept_contact_owners(rods,dt,radius,Some(&mut **backend),&mut reactions,Some(start))} else {contact::reconcile_swept_contact_owners(rods,dt,radius,None,&mut reactions,Some(start))};
                 current=reactions;
                 result.map(|fraction|fraction==1.)
             } else if continuous_mesh {
@@ -1154,6 +1179,9 @@ mod contact_merit_tests {
         }
         assert!(contact::refresh_strand_responses(&mut rods,radius,&[]).is_empty());
         let mut history=Vec::new();
+        // Match the runtime: structural motion owns the free load and discovers
+        // swept pairs before the contact-only reconciliation loop.
+        contact::advance_swept_strands(&mut rods,1./240.,radius,None,&mut history,Some(&start)).unwrap();
         HairSystem::reconcile_positions_mode(&mut rods,&[],1./240.,radius,true,&mut history,None,None,true).unwrap();
         let pairs=contact::refresh_strand_responses(&mut rods,radius,&[]);
         assert!(contact::strand_geometry_admitted(&rods,&pairs,radius).unwrap());

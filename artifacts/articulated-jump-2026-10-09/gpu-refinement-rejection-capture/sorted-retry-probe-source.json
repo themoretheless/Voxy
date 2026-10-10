@@ -1,0 +1,5 @@
+{
+  "probe_sha256": "2b22f088db0c26f21b1f923eac6272bd2e0f2535f78031cc7887b2b35f0f6568",
+  "restored_sha256": "5ec1b14b223b91791a950a965f5d5c6a084ae7a9d085ad5e1b4e8487122bb4f1",
+  "result": "still failed captured coordinate and original physical operator; not retained as production fix"
+}

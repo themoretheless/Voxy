@@ -1,0 +1,10 @@
+{
+  "source_sha256": "d87b19d21992f5dc8e9e87a65b232da0922e2e555b7d1fcac172dfae99b968bd",
+  "stage": "Prepare all independent island request/bound inputs before any backend call. Original per-island and global admission remain unchanged.",
+  "regression": "Valid first island and oversized later island reject with zero coordinate backend calls and unchanged original reactions.",
+  "physics_library_passed": 338,
+  "ignored": 39,
+  "gpu_submissions_batched": false,
+  "next": "Introduce batch scheduling for ready coordinate/equality requests and shared device submission while preserving refinement and all-or-nothing publication.",
+  "fps_measured": false
+}

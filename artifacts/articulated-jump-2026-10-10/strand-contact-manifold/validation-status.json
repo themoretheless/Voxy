@@ -1,0 +1,35 @@
+{
+  "observed_utc": "2026-10-10T06:24:39.820575+00:00",
+  "physics_units": {
+    "passed": 354,
+    "failed": 0,
+    "ignored": 39
+  },
+  "hair_integration": {
+    "passed": 21,
+    "failed": 0
+  },
+  "metal_physical_scene": {
+    "passed": true,
+    "guides": 4,
+    "frames": 4,
+    "exact_serial_pose_and_rotation": true,
+    "fallbacks": 0
+  },
+  "same_input_gpu_velocity_operators": {
+    "passed": 24,
+    "failed": 0,
+    "fallbacks": 0
+  },
+  "full_current_trajectory": {
+    "status": "failed",
+    "test_pid": 75678,
+    "cargo_pid": 75671,
+    "session_id": 11844,
+    "runtime_coordinate_batches": true,
+    "last_admitted_frame": 1,
+    "frame_1_max_position_error_m": 9.43649073525878e-09,
+    "path": "../strand-manifold-batched-full-capture/"
+  },
+  "rendered_fps": "unqualified"
+}

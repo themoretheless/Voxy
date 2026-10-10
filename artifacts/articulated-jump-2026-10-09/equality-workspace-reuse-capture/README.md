@@ -1,0 +1,9 @@
+# Scoped GPU equality workspace reuse
+
+Completed equality jobs can return to an exact-byte-size pool, bounded to 32 inactive jobs / 8 MiB per coordinate solve. Borrowed workspaces switch back to the QR pipeline and upload the entire freshly constructed input, including the initial status/header, matrix and work area. Separately validated prefix reuse remains owned by its original numerical gate. There is no cross-frame result cache or shared mutable operator identity.
+
+The GPU storage can be reused across changed operators and even different QR layouts with equal byte counts because every input byte is overwritten. Only submission-confirmed completed jobs are retained. Encoding failures and failed submission waits are not retained. Original physical admission and fallback semantics remain unchanged. GPU memory budgets are still enforced; configured retirement remains explicit at the device owner, with no implicit global wait or discarded retirement charge.
+
+Hardware checks passed: 24 changing operators/bounds with one creation / 23 reuses and full-storage bit equality; same-size different layouts; invalid-input pool preservation and scoped allocation release; 65-owner batches with independently constrained byte/count staging budgets; seeded release and dependent-hint cold retry; four-guide/four-step physical serial/batch equality including velocities. The captured original 21-system / 61-row / 2646-coordinate physical operator retained 1e-14 admission, zero native fallback and exact cooperative-vs-serial output; it used 25 workspace creations and 29 full reinitializations.
+
+Allocation counters are not a latency or FPS benchmark. Full 720-frame dynamics, >160 rendered FPS, CUDA and hardware portability remain unqualified. The live bounded-readback full run retains its pre-pooling binary and is preserved as a separate experiment.

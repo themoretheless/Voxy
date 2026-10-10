@@ -1,0 +1,18 @@
+HAIR DIVERGENCE NEIGHBOR external point=6 position=[-0.01395022235127645, 0.7732643874357106, -0.03325408728250868] body_distance_m=0.00041636744938663365 body_normal=[-0.1139847217680772, 0.473113027816402, -0.8735969013875052]
+HAIR DIVERGENCE NEIGHBOR external point=7 position=[-0.014837129526864208, 0.7612744141321904, -0.039234817508539355] body_distance_m=0.0009635916119220051 body_normal=[-0.1069768421849808, 0.31960879714605994, -0.9414914614710951]
+HAIR DIVERGENCE NEIGHBOR external point=8 position=[-0.015664878332823547, 0.7490892318946313, -0.04481557220676577] body_distance_m=0.0027835479469855676 body_normal=[-0.21089939306081024, 0.23035260632797436, -0.9499784854219022]
+HYBRID HAIR FRAME frame=6 max_position_error_m=0.000009198537074470159 max_quaternion_component_error=0.00019552032001785014
+
+thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (67604292) panicked at crates/voxy_app/src/female_hair.rs:1075:13:
+frame 6: GPU position drift 0.000009198537074470159; worst rod=227 point=7
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED
+
+failures:
+
+failures:
+    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 323 filtered out; finished in 2960.83s
+
+error: test failed, to rerun pass `-p voxy_app --lib`

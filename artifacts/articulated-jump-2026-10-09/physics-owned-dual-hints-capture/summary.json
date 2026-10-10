@@ -1,0 +1,58 @@
+{
+  "scope": "same full captured physical operators, including changed and restored bounds; not complete jump or FPS",
+  "hardware": "Apple M4 Max Metal; second case emulates one storage binding",
+  "default_enabled": false,
+  "qualification_environment": "VOXY_HAIR_JOINT_DUAL_HINTS=1",
+  "ownership": "seeds local to immutable island; only opt-in backends receive/store hints; no cross-island cache",
+  "gates": "original physical admission unchanged; invalid/unusable hints retry zero-dual coordinate owner; no CPU fallback in fixture checks",
+  "cases": {
+    "changing-54-metal": [
+      {
+        "mode": "cold",
+        "equality_submissions": 59,
+        "maximum_response_difference_from_native": 5.551115123125783e-16
+      },
+      {
+        "mode": "seeded",
+        "equality_submissions": 1,
+        "maximum_response_difference_from_native": 4.5447586666247375e-14
+      },
+      {
+        "mode": "changed",
+        "equality_submissions": 1,
+        "maximum_response_difference_from_native": 3.2955409234869393e-15
+      },
+      {
+        "mode": "restored",
+        "equality_submissions": 1,
+        "maximum_response_difference_from_native": 4.5447586666247375e-14
+      }
+    ],
+    "changing-61-one-storage-metal": [
+      {
+        "mode": "cold",
+        "equality_submissions": 103,
+        "maximum_response_difference_from_native": 7.546047120499111e-17
+      },
+      {
+        "mode": "seeded",
+        "equality_submissions": 2,
+        "maximum_response_difference_from_native": 1.0668549377257364e-16
+      },
+      {
+        "mode": "changed",
+        "equality_submissions": 2,
+        "maximum_response_difference_from_native": 1.1188966420050406e-16
+      },
+      {
+        "mode": "restored",
+        "equality_submissions": 2,
+        "maximum_response_difference_from_native": 1.0668549377257364e-16
+      }
+    ]
+  },
+  "library_passed": 333,
+  "hair_integration_passed": 20,
+  "synthetic_gpu": "passed releases and dependent-hint GPU rejection followed by successful cold retry",
+  "remaining": "full jump effectiveness, all-frame admission, real-time FPS, other hardware and CUDA unproven"
+}

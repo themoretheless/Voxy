@@ -1,0 +1,7 @@
+{
+  "exec_session": 77748,
+  "cargo_pid": 49946,
+  "test_pid": 49956,
+  "observed_live_at": "2026-10-10T03:52:48.450721+00:00",
+  "state": "live; ps verified; no full-trajectory result yet"
+}

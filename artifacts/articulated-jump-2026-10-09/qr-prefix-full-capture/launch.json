@@ -1,0 +1,31 @@
+{
+  "captured_utc": "2026-10-10T00:17:26.217800+00:00",
+  "session": 51235,
+  "cargo_pid": 18961,
+  "test_pid": 18990,
+  "frames": 720,
+  "guides": 469,
+  "segments_per_guide": 20,
+  "dual_hints": true,
+  "qr_prefix_reuse": true,
+  "exact_result_reuse": false,
+  "phase_trace": null,
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "f1ce90de6897ad80e7494e3b1858749882d6bdea71ab38ddd84b92d0d9cdff5a",
+    "crates/physics/src/hair/contact_square_root_projection.rs": "e05f4e72999f5c4375d17653d893ac763e55ab4ca808dff0d266fff9950c4fa4",
+    "crates/physics/src/hair/contact_square_root_qr.rs": "5ec1b14b223b91791a950a965f5d5c6a084ae7a9d085ad5e1b4e8487122bb4f1",
+    "crates/physics/src/hair/contact_response_system.rs": "6e17a70affc312b6216c9b4f0a7371c00d54405ee58e02f9b6344dee69b6c2c4",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "cc8db2e65c5422bed7b237e8687076de5c8c2bf59a36cff26dac475f16467615",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "226df9005e6fe7d35498698f762add267a73a7d20c1c582b5421362570e59916",
+    "crates/voxy_app/src/female_hair.rs": "b92cabab778e604799d4645bd9ac820f5b5c0dfb947141c308063c9065d62205",
+    "crates/voxy_render/src/joint_contact_dot.rs": "857b1b62868a7874b0178969c5daadd374e9655c01face482bc23a4a6d6bce3d",
+    "crates/voxy_render/src/compute.rs": "9f05cf1bc8c0b1308ebbbbdf2763e336f3be33efe32756adb09653990e09093e",
+    "artifacts/articulated-jump-2026-10-09/run_gpu_joint_jump.sh": "9e228971c2a2159ce7ccace30a1df6a258881eaa8fdc5b4ca5b3284172457ded"
+  },
+  "binary_sha256": "9564248bdc68d13b9856284ceac6a4c344426001d9d255dd34bace9d7d7f8f09",
+  "failure_capture": [
+    "rejected-accelerator.vqc",
+    "rejected-coordinates.json"
+  ],
+  "scope": "full paired native/GPU correctness under concurrent runs; no controlled speedup or rendered FPS measurement"
+}

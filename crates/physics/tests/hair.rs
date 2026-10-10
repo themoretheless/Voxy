@@ -588,3 +588,20 @@ fn joint_position_contacts_preserve_worker_and_accelerator_equivalence() {
     }
     assert_eq!(solver.calls,18);
 }
+
+#[test]
+fn prepared_hair_can_be_discarded_without_changing_future_dynamics() {
+    let mut original=system(straight(0.05,5,HairMaterial::default()));
+    let mut control=original.clone();
+    let dt=1./240.;let roots=[root()];let gravity=[0.,-9.81,0.];
+    let before=format!("{original:?}");
+    let candidate=original.prepare_validated(dt,&roots,gravity,[0.;3],&[],None,|_|Ok(())).unwrap();
+    assert_eq!(format!("{original:?}"),before);
+    assert_ne!(candidate.rods()[0].positions(),original.rods()[0].positions());
+    drop(candidate); // A sibling solver rejected its candidate.
+    assert!(original.prepare_validated(dt,&roots,gravity,[0.;3],&[],None,|_|Err("sibling rejected")).is_err());
+    assert_eq!(format!("{original:?}"),before);
+    original.step(dt,&roots,gravity,[0.;3],&[]).unwrap();
+    control.step(dt,&roots,gravity,[0.;3],&[]).unwrap();
+    assert_eq!(format!("{original:?}"),format!("{control:?}"));
+}

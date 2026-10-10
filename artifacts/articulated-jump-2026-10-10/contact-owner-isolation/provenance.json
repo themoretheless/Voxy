@@ -1,0 +1,10 @@
+{
+  "binary": "/tmp/voxy-contact-owner-gpu-tests",
+  "binary_sha256": "2654561c9548f8eec6f788f9987d5da151e757987696b0496607c3a9fe2704b1",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_safe_motion.rs": "cf6e7bda95ac4bff3cd5b1cbeca13ac207908889b6985055b59058bf5fa6d6fb",
+    "crates/physics/src/hair/velocity_contacts.rs": "5351a5bc711d4dfd84cc74b7b7699d3b7593bed7883f49b2d96e031b148201fa",
+    "crates/physics/src/hair/mod.rs": "96815b5437652532deded185c43c1646a50e08b4722c88ab9f470508af66e382",
+    "crates/physics/src/hair/contact.rs": "aa21eabbf9c40ecb5f5504e108f91d1d0c8b962f7befe524403d196b0f65997a"
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "scope": "saved original velocity correction inputs; not absolute velocities or full state",
+  "observations": [
+    {
+      "file": "external-00.vqc",
+      "rows": 1,
+      "bounds": [
+        0.15005116774328
+      ],
+      "load_nonzero_coordinates": [
+        [
+          24,
+          -0.11223148802231712
+        ],
+        [
+          25,
+          0.6555768225161505
+        ],
+        [
+          26,
+          -0.6978580021990857
+        ],
+        [
+          30,
+          -0.004185788845391073
+        ],
+        [
+          31,
+          0.024450412262549376
+        ],
+        [
+          32,
+          -0.02602733237120563
+        ]
+      ],
+      "maximum_native_linear_correction_m_s": 0.11818629345688811,
+      "maximum_native_angular_correction_rad_s": 6.1831332292501635
+    },
+    {
+      "file": "external-01.vqc",
+      "rows": 1,
+      "bounds": [
+        8.534404460441847e-05
+      ],
+      "load_nonzero_coordinates": [
+        [
+          24,
+          -0.11287465348306955
+        ],
+        [
+          25,
+          0.6294457668433303
+        ],
+        [
+          26,
+          -0.7203512139339217
+        ],
+        [
+          30,
+          -0.004306532063078216
+        ],
+        [
+          31,
+          0.02401538603426365
+        ],
+        [
+          32,
+          -0.027483722020453964
+        ]
+      ],
+      "maximum_native_linear_correction_m_s": 6.716877762555742e-05,
+      "maximum_native_angular_correction_rad_s": 0.0037049577631070173
+    },
+    {
+      "file": "native-00.vqc",
+      "rows": 1,
+      "bounds": [
+        0.1500511677432787
+      ],
+      "load_nonzero_coordinates": [
+        [
+          24,
+          -0.11223148802231006
+        ],
+        [
+          25,
+          0.6555768225161093
+        ],
+        [
+          26,
+          -0.6978580021991253
+        ],
+        [
+          30,
+          -0.00418578884539083
+        ],
+        [
+          31,
+          0.024450412262547957
+        ],
+        [
+          32,
+          -0.026027332371207235
+        ]
+      ],
+      "maximum_native_linear_correction_m_s": 0.11818629345682723,
+      "maximum_native_angular_correction_rad_s": 6.183133229251408
+    },
+    {
+      "file": "native-01.vqc",
+      "rows": 1,
+      "bounds": [
+        8.534404459105416e-05
+      ],
+      "load_nonzero_coordinates": [
+        [
+          24,
+          -0.11287465348313526
+        ],
+        [
+          25,
+          0.6294457668427649
+        ],
+        [
+          26,
+          -0.7203512139343606
+        ],
+        [
+          30,
+          -0.004306532063084788
+        ],
+        [
+          31,
+          0.024015386034264743
+        ],
+        [
+          32,
+          -0.02748372202049665
+        ]
+      ],
+      "maximum_native_linear_correction_m_s": 6.716877761530223e-05,
+      "maximum_native_angular_correction_rad_s": 0.0037049577623825933
+    },
+    {
+      "file": "native-02.vqc",
+      "rows": 1,
+      "bounds": [
+        0.01799684297827866
+      ],
+      "load_nonzero_coordinates": [
+        [
+          24,
+          -0.0517109094892877
+        ],
+        [
+          25,
+          0.2870411800792327
+        ],
+        [
+          26,
+          -0.3364762196764307
+        ],
+        [
+          30,
+          -0.06441778430972821
+        ],
+        [
+          31,
+          0.35757554854424517
+        ],
+        [
+          32,
+          -0.4191582155204442
+        ]
+      ],
+      "maximum_native_linear_correction_m_s": 0.014141788291068273,
+      "maximum_native_angular_correction_rad_s": 0.8936384920673738
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "sha256": {
+    "crates/physics/src/hair/mod.rs": "e914acb497968bdba27ae88d5193574489029671e2cd086e9ddbc6e9079696a2",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "970ee0aff5f033664ed9fb5cf563f7b8323709b05dafddc72203b5fa0946ea78",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "b58abdcc0117736bd0dddb51ae9e5e62b4ed8bcf59aa25f06a96e119a6729022",
+    "/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f": "fbd460f04dd31056e32083c5f83c2d828c11f04815b12f5d98b334ed5cf8210e"
+  },
+  "scope": "Coordinate backend and real Metal capture checks; physical independent-island batching not integrated, full trajectory/FPS not qualified."
+}

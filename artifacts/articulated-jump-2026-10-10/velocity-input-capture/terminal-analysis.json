@@ -1,0 +1,42 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "elapsed_seconds": 3055.75,
+  "frames": [
+    {
+      "frame": 1,
+      "max_position_error_m": 2.229036381862226e-08,
+      "max_quaternion_component_error": 3.7886909751150277e-07
+    },
+    {
+      "frame": 2,
+      "max_position_error_m": 2.229036381862226e-08,
+      "max_quaternion_component_error": 4.995456141521082e-07
+    },
+    {
+      "frame": 3,
+      "max_position_error_m": 2.229036381862226e-08,
+      "max_quaternion_component_error": 5.947447965226615e-07
+    },
+    {
+      "frame": 4,
+      "max_position_error_m": 2.671080669147674e-08,
+      "max_quaternion_component_error": 6.630638842153314e-07
+    },
+    {
+      "frame": 5,
+      "max_position_error_m": 7.790279298904024e-08,
+      "max_quaternion_component_error": 9.357562374967543e-07
+    },
+    {
+      "frame": 6,
+      "max_position_error_m": 9.198564197523962e-06,
+      "max_quaternion_component_error": 0.00019551939762246784
+    }
+  ],
+  "worst_rod": 227,
+  "worst_point": 7,
+  "cpu_fallback_log_count": 0,
+  "observation": "Frame-6 position/quaternion errors reproduce the older bounded-readback scalar run exactly. Frame-5 captured differing contact witnesses independently reproduce the finite velocity correction difference.",
+  "limits": "Frozen scalar GPU trajectory predates exact contact aliases, persistent workspace cache, and finite-face manifold fixes. Not current source qualification."
+}

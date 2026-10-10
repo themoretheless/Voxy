@@ -1,0 +1,7 @@
+{
+  "exec_session_id": 43433,
+  "cargo_pid": 7629,
+  "test_pid": 7636,
+  "confirmed_live": true,
+  "scope": "PID inspected after launch; revalidate before every wait or terminal claim."
+}

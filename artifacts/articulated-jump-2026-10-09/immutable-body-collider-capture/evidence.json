@@ -1,0 +1,12 @@
+{
+  "cause": "Parameter edits reconstructed the closed hair collider from render indices after removal of 340 mouth seal triangles.",
+  "fix": "Preserve original source body collision indices separately and reuse them on parameter edits.",
+  "source_sha256": "c6db7f5ed1fd9016d5f8bb2e231c77a171bf04d39943014a15decb5b81368944",
+  "tests": {
+    "before_isolated_exit": 101,
+    "after_isolated_pass": 1,
+    "rebase_suite_pass": 3,
+    "parameterized_hair_pass": 1
+  },
+  "scope": "Focused morph/collider regressions; not full application suite or trajectory qualification."
+}

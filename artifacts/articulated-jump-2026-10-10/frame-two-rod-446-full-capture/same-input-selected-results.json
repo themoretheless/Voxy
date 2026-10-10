@@ -1,0 +1,54 @@
+{
+  "replays": [
+    {
+      "file": "native-00",
+      "absolute_physical_tolerance": 1e-14,
+      "angular_response_unit": "unassigned",
+      "coordinates": 1512,
+      "linear_response_unit": "unassigned",
+      "maximum_angular_response_component_difference": 3.9898639947466563e-17,
+      "maximum_linear_response_component_difference": 4.87890977618477e-19,
+      "maximum_reaction_difference": 2.0679515313825692e-24,
+      "native_fallback_used": false,
+      "response_quantity": "unspecified",
+      "rows": 21,
+      "scope": "same complete captured physical operator; not whole trajectory",
+      "systems": 12
+    },
+    {
+      "file": "external-00",
+      "absolute_physical_tolerance": 1e-14,
+      "angular_response_unit": "unassigned",
+      "coordinates": 1512,
+      "linear_response_unit": "unassigned",
+      "maximum_angular_response_component_difference": 8.153200337090993e-17,
+      "maximum_linear_response_component_difference": 8.673617379884035e-19,
+      "maximum_reaction_difference": 5.169878828456423e-25,
+      "native_fallback_used": false,
+      "response_quantity": "unspecified",
+      "rows": 21,
+      "scope": "same complete captured physical operator; not whole trajectory",
+      "systems": 12
+    },
+    {
+      "file": "native-407",
+      "absolute_physical_tolerance": 1e-14,
+      "angular_response_unit": "unassigned",
+      "coordinates": 1764,
+      "linear_response_unit": "unassigned",
+      "maximum_angular_response_component_difference": 1.474514954580286e-16,
+      "maximum_linear_response_component_difference": 2.927345865710862e-18,
+      "maximum_reaction_difference": 3.677076316739631e-24,
+      "native_fallback_used": false,
+      "response_quantity": "unspecified",
+      "rows": 174,
+      "scope": "same complete captured physical operator; not whole trajectory",
+      "systems": 14
+    }
+  ],
+  "first_observation_different_input_native_correction_difference": {
+    "linear_components": 2.593428424487246e-10,
+    "angular_components": 1.4724845381203222e-08
+  },
+  "limits": "First observations have matching stored rod and point-entry order, not independently persistent contact feature identities. Cross-input differences are not solver error. Physical quantity unassigned."
+}

@@ -1,0 +1,11 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "coordinates": 2016,
+  "maximum_angular_increment_difference_rad": 4.9439619065339e-17,
+  "maximum_reaction_difference": 2.8434333556510326e-24,
+  "maximum_translation_difference_m": 4.743384504624082e-19,
+  "native_fallback_used": false,
+  "rows": 63,
+  "scope": "same complete captured physical operator; not whole trajectory",
+  "systems": 16
+}

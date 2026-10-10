@@ -1,0 +1,405 @@
+{
+  "schema": "voxy-vqc-input-comparison-v1",
+  "left": {
+    "path": "artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture/operators/native-00.vqc",
+    "sha256": "281fdf3569a6841a87221ec35914aa26da4b7d1adc22d6d2eab388c6d38cd629",
+    "rows": 21,
+    "coordinates": 1512,
+    "refinement": 0,
+    "tolerance": 1e-14,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "right": {
+    "path": "artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture/operators/external-00.vqc",
+    "sha256": "be2410fea6ad903af07e17fd0c38411e5d5f0550dc08c2ef7e2548f47a1920bc",
+    "rows": 21,
+    "coordinates": 1512,
+    "refinement": 0,
+    "tolerance": 1e-14,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "same_stored_layout": true,
+  "sections": {
+    "bounds": {
+      "bitwise_equal": false,
+      "changed_scalars": 21,
+      "maximum_absolute_difference": 2.003445490967237e-10,
+      "difference_overflow": false
+    },
+    "effective_bounds": {
+      "bitwise_equal": false,
+      "changed_scalars": 21,
+      "maximum_absolute_difference": 2.003445490967237e-10,
+      "difference_overflow": false
+    },
+    "columns": {
+      "bitwise_equal": false,
+      "changed_scalars": 1320,
+      "maximum_absolute_difference": 0.0038037102035559656,
+      "difference_overflow": false
+    },
+    "system_0_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 896,
+      "maximum_absolute_difference": 3.3926737287581776e-12,
+      "difference_overflow": false
+    },
+    "system_0_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_0_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 18,
+      "maximum_absolute_difference": 2.930686320568032e-07,
+      "difference_overflow": false
+    },
+    "system_1_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 816,
+      "maximum_absolute_difference": 1.249000902703301e-16,
+      "difference_overflow": false
+    },
+    "system_1_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_1_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 12,
+      "maximum_absolute_difference": 1.473676736196694e-11,
+      "difference_overflow": false
+    },
+    "system_2_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 907,
+      "maximum_absolute_difference": 6.382696888379558e-11,
+      "difference_overflow": false
+    },
+    "system_2_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_2_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 6,
+      "maximum_absolute_difference": 8.159359177195569e-08,
+      "difference_overflow": false
+    },
+    "system_3_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 909,
+      "maximum_absolute_difference": 2.333751178418275e-10,
+      "difference_overflow": false
+    },
+    "system_3_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_3_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 12,
+      "maximum_absolute_difference": 6.02934738025418e-07,
+      "difference_overflow": false
+    },
+    "system_4_matrix": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_4_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_4_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 9,
+      "maximum_absolute_difference": 1.1574349742526913e-07,
+      "difference_overflow": false
+    },
+    "system_5_matrix": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_5_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_5_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 6,
+      "maximum_absolute_difference": 2.5017283578065985e-08,
+      "difference_overflow": false
+    },
+    "system_6_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 909,
+      "maximum_absolute_difference": 4.601081043942301e-10,
+      "difference_overflow": false
+    },
+    "system_6_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_6_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 45,
+      "maximum_absolute_difference": 5.57602215900399e-07,
+      "difference_overflow": false
+    },
+    "system_7_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 838,
+      "maximum_absolute_difference": 8.500145032286355e-17,
+      "difference_overflow": false
+    },
+    "system_7_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_7_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 24,
+      "maximum_absolute_difference": 2.2770967111895857e-08,
+      "difference_overflow": false
+    },
+    "system_8_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 909,
+      "maximum_absolute_difference": 1.2345033693211827e-09,
+      "difference_overflow": false
+    },
+    "system_8_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_8_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 39,
+      "maximum_absolute_difference": 9.156381974712025e-07,
+      "difference_overflow": false
+    },
+    "system_9_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 909,
+      "maximum_absolute_difference": 1.5016058466099658e-09,
+      "difference_overflow": false
+    },
+    "system_9_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_9_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 45,
+      "maximum_absolute_difference": 9.290995650959588e-07,
+      "difference_overflow": false
+    },
+    "system_10_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 904,
+      "maximum_absolute_difference": 2.961547673763221e-11,
+      "difference_overflow": false
+    },
+    "system_10_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_10_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 12,
+      "maximum_absolute_difference": 1.0123119369986888e-06,
+      "difference_overflow": false
+    },
+    "system_11_matrix": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_11_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_11_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 6,
+      "maximum_absolute_difference": 6.904155025466707e-11,
+      "difference_overflow": false
+    }
+  },
+  "limits": "Stored-order comparison only. Matching dimensions do not prove semantic rod or row correspondence. No solver accuracy, conditioning, trajectory admission or FPS proof."
+}

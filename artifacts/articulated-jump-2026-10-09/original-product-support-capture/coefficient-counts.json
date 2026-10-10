@@ -1,0 +1,20 @@
+[
+  {
+    "fixture": "exact-face-intersection-capture/contact-input.vqc",
+    "rows": 54,
+    "width": 1512,
+    "total_original_coefficients": 81648,
+    "exact_nonzero_coefficients": 3024,
+    "zero_coefficients": 78624,
+    "scope": "full captured whitened operator; not selected active sets or wall time"
+  },
+  {
+    "fixture": "exact-load-cache-capture/slow-contact-input.vqc",
+    "rows": 61,
+    "width": 2646,
+    "total_original_coefficients": 161406,
+    "exact_nonzero_coefficients": 5802,
+    "zero_coefficients": 155604,
+    "scope": "full captured whitened operator; not selected active sets or wall time"
+  }
+]

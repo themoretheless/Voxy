@@ -1,0 +1,41 @@
+{
+  "saved_operator_count": 256,
+  "initial_full_test_passes": 250,
+  "initial_failures_only_prefix_coverage": 6,
+  "no_prefix_retries": [
+    {
+      "fixture": "external-102.vqc",
+      "exit_code": 0,
+      "scope": "prefix reuse disabled; original physical gates unchanged"
+    },
+    {
+      "fixture": "external-111.vqc",
+      "exit_code": 0,
+      "scope": "prefix reuse disabled; original physical gates unchanged"
+    },
+    {
+      "fixture": "external-120.vqc",
+      "exit_code": 0,
+      "scope": "prefix reuse disabled; original physical gates unchanged"
+    },
+    {
+      "fixture": "native-102.vqc",
+      "exit_code": 0,
+      "scope": "prefix reuse disabled; original physical gates unchanged"
+    },
+    {
+      "fixture": "native-111.vqc",
+      "exit_code": 0,
+      "scope": "prefix reuse disabled; original physical gates unchanged"
+    },
+    {
+      "fixture": "native-120.vqc",
+      "exit_code": 0,
+      "scope": "prefix reuse disabled; original physical gates unchanged"
+    }
+  ],
+  "maximum_same_input_translation_difference": 3.131175874138137e-16,
+  "maximum_same_input_angular_difference": 3.468059173172833e-14,
+  "native_fallbacks": 0,
+  "scope": "256 historical original operators; not velocity precursor or complete trajectory/FPS qualification"
+}

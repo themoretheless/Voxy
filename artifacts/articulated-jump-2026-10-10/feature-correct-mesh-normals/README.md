@@ -1,0 +1,11 @@
+# Geometric face normals for metric hair/body contacts
+
+The former distance-gradient calculation subtracts closest world points, divides by their small separation and acquires a tangential component even on a planar face. The saved before regression fails at center [0.13,-0.27,0.19], with gap 20 micrometres and normal [0.6400000000013922,-0.4799999999979217,0.6000000000001777]. It also exercises center [1000,-2000,3000], both signed sides, all discovered point/segment contacts, and unchanged positions during discovery. The same original 1e-12 tangency test passes after the correction.
+
+When the actual closest feature is a face interior and the existing zero-distance threshold does not apply, use its geometric outward normal. Edge and vertex gradients keep the previous signed closest-point metric direction; zero-distance pseudonormal behavior and sign classification remain unchanged. This applies to node, segment, flat support, interior deepest-witness and envelope-probe contact calculations. It changes neither candidate distance, follicle admission, contact radius nor physical acceptance gates.
+
+An independent finite-difference regression checks signed metric derivatives on face, edge and vertex regions, including both sides of a face. Final qualification passes: 363 physics units (39 ignored), 21 hair integrations, and actual Metal 4-guide/4-frame scene with exact serial pose/rotation and zero native fallback. That selected scene uses 319 equality dispatches and 102 submissions; this is not an FPS claim. This concrete numerical defect is not established as the cause of the complete scene's divergence.
+
+The live full run ../feature-normal-batched-full-capture uses a frozen binary with earlier strand feature normals and predates this mesh correction. It passed frames 1-2 with zero native fallback at the latest observation. It has not been restarted. No whole-scene jump, rendered secondary-physics capture or >160 FPS qualification is established.
+
+The full run ../mesh-feature-normal-batched-full-capture terminated at frame 2 (rod 446 point 19, 3.955094080576593e-6 m drift). The earlier strand-feature run terminated at frame 3 (rod 164 tip). Selected tests do not qualify either full trajectory. The targeted frame-2/rod-446 diagnostic repeat is now live separately, preserving physical source and original gates.

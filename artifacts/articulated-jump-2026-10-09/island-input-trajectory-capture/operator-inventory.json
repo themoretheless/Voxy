@@ -1,0 +1,293 @@
+{
+  "scope": "currently observed operators only; a running capture may add files",
+  "operators": [
+    {
+      "file": "external-00.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-01.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-02.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-03.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-04.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-05.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-06.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-07.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "external-08.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "external-09.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "external-10.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "external-11.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "external-12.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "external-13.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "external-14.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "external-15.vqc",
+      "sha256": "e986a6e59be89839a36be948c2bbe66d97fd6eb70cb718371b61fecb51ce979e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444238187772e-05,
+      "bounds_max": 0.0005032702235421825
+    },
+    {
+      "file": "native-00.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-01.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-02.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-03.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-04.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-05.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-06.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-07.vqc",
+      "sha256": "ffb108716f8128f4c86b64c10a61e437730e17a5d9455f9e0ec54f4b481ef49e",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 1.9536299015078564e-05,
+      "bounds_max": 0.0004962451770138111
+    },
+    {
+      "file": "native-08.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    },
+    {
+      "file": "native-09.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    },
+    {
+      "file": "native-10.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    },
+    {
+      "file": "native-11.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    },
+    {
+      "file": "native-12.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    },
+    {
+      "file": "native-13.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    },
+    {
+      "file": "native-14.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    },
+    {
+      "file": "native-15.vqc",
+      "sha256": "67cdc6f1e2ac1c2c746d0ccf2d950e9ee51ce173243e1426ca794dabf6cee7a1",
+      "rows": 11,
+      "coordinates": 126,
+      "systems": 1,
+      "bounds_min": 2.2539444241884116e-05,
+      "bounds_max": 0.0005032702234033223
+    }
+  ]
+}

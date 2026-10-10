@@ -1,0 +1,18 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+
+thread 'female_demo::parameter_skin_rebase_tests::skin_material_coordinates_stay_attached_across_morph_and_animation' (61916520) panicked at crates/voxy_app/src/female_demo.rs:3102:46:
+called `Result::unwrap()` on an `Err` value: "guide fitting requires closed feature normals"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_demo::parameter_skin_rebase_tests::skin_material_coordinates_stay_attached_across_morph_and_animation ... FAILED
+
+failures:
+
+failures:
+    female_demo::parameter_skin_rebase_tests::skin_material_coordinates_stay_attached_across_morph_and_animation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 322 filtered out; finished in 16.42s
+

@@ -1,0 +1,21 @@
+{
+  "cadence_session": 21655,
+  "terminal_exit": 0,
+  "test_passed": 1,
+  "display_frames": [
+    180,
+    120
+  ],
+  "simulated_seconds_each": 6,
+  "fixed_physical_steps_each": 720,
+  "hair_enabled": true,
+  "scope": "Ordinary full-character elapsed-time regression, not articulated-jump secondary-physics render or FPS qualification.",
+  "full_app_suite_session": 80634,
+  "full_app_suite_status": "running",
+  "current_gpu_complete_47_row_physical_fixture": {
+    "admitted": true,
+    "fallbacks": 0,
+    "equality_dispatches": 52
+  },
+  "binary_sha256": "e662a477fc2efb0db8d27378934e562959a3c0bc791a2792c2ad87a1f620eaf0"
+}

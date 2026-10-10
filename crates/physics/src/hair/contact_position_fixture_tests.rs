@@ -1250,7 +1250,7 @@ fn captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes()
     for index in 0..4 {
         let before = fixture(index);
         let mut rods = vec![before.clone()];
-        let (constraints, _) = position_constraints(&rods, &[], 40e-6).unwrap();
+        let (mut constraints, _) = position_constraints(&rods, &[], 40e-6).unwrap();
         assert_eq!(constraints.len(), 2);
         let bounds: Vec<_> = constraints
             .iter()
@@ -1259,6 +1259,11 @@ fn captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes()
         let mut capture = Capture {
             requests: Vec::new(),
         };
+        // Capture the original H/J loads independently of motion projection.
+        // A response-only backend does not implement coordinate projection;
+        // the production QR owner must not call it merely for observation.
+        prepare_implicit_response_with_solver(&mut constraints,&rods,1./240.,Some(&mut capture)).unwrap();
+        let mut requests=std::mem::take(&mut capture.requests);
         assert!(
             reconcile_contact_positions_with_solver(
                 &mut rods,
@@ -1281,13 +1286,14 @@ fn captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes()
             );
             assert!(dot(sub(point, contact.target), contact.normal) >= -1e-11);
         }
-        assert_eq!(capture.requests.len(), 1);
-        assert_eq!(capture.requests[0].loads.len(), 2);
+        assert!(capture.requests.is_empty(),"native coordinate owner called an unsupported response-only backend");
+        assert_eq!(requests.len(), 1);
+        assert_eq!(requests[0].loads.len(), 2);
         eprintln!(
             "CAPTURED CONTACT OUTPUT case={index} point13={:?}",
             rods[0].x[13]
         );
-        snapshots.push((capture.requests.remove(0), bounds));
+        snapshots.push((requests.remove(0), bounds));
         outputs.push(rods.remove(0));
     }
     for pair in 0..2 {

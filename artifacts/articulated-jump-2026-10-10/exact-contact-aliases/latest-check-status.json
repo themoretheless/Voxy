@@ -1,0 +1,27 @@
+{
+  "observed_utc": "2026-10-10T05:00:48.839509+00:00",
+  "unit_tests": {
+    "passed": 348,
+    "ignored": 39,
+    "failed": 0
+  },
+  "small_physical_gpu_scene": "passed 4 guides x 4 frames, exact serial poses and orientations, zero fallback",
+  "integration": {
+    "status": "passed",
+    "passed": 21,
+    "failed": 0,
+    "elapsed_seconds": 195.94
+  },
+  "historical_velocity_capture": {
+    "pid_observed_live": 98867,
+    "status": "running frozen pre-fix binary"
+  },
+  "limits": "No full trajectory or rendered FPS qualification",
+  "corrected_full_trajectory": {
+    "session": 65282,
+    "pid_observed_live": 20418,
+    "status": "running",
+    "coordinate_batches_confirmed": true,
+    "previous_scalar_capture": "interrupted after runtime configuration mismatch; preserved"
+  }
+}

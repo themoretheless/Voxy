@@ -1,0 +1,16 @@
+{
+  "pid": 47617,
+  "sample_seconds": 1,
+  "test_thread_stack_samples": 725,
+  "gpu_coordinate_solver_stack_samples": 355,
+  "device_poll_stack_samples": 283,
+  "attribution": "GpuHairLinearSolver::solve_joint_seeded_checked -> wgpu Device::poll -> Metal wait observed on actual external path.",
+  "source_observation": "solve_with_workers_prepared iterates groups serially when backend exists; coordinate equality loop submits and waits per refinement.",
+  "next_architectural_work": "Batch independent island work / overlap submissions, preserve original operator admission per island and global all-or-nothing reaction publication.",
+  "limits": [
+    "Single interval, not full-trajectory time percentages.",
+    "Other live runs share hardware.",
+    "No rendered FPS evidence.",
+    "Does not establish GPU storage allocation as dominant."
+  ]
+}

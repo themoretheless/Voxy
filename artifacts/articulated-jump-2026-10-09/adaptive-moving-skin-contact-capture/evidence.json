@@ -1,0 +1,21 @@
+{
+  "source_sha256": {
+    "crates/physics/src/skin/adaptive.rs": "80223691e87d959598376a44b2c2e706c032aaf49b1f02ed09d67e1f1dd76b92",
+    "crates/voxy_app/src/female_demo.rs": "d8b8dc6b2aaf4cca5fea3f505ee731bc1ed1d23251e5b961da9fc1d1e42c3f0a"
+  },
+  "physics_library": {
+    "passed": 337,
+    "ignored": 39,
+    "failed": 0
+  },
+  "skin_integration_passed": 20,
+  "actual_model_session": 73237,
+  "actual_model_status": "live at last authoritative poll",
+  "full_post_topology_suite": {
+    "passed": 275,
+    "failed": 6,
+    "ignored": 42,
+    "scope": "predates contact-aware adaptive integration and film assertion correction"
+  },
+  "scope": "Original nonlinear/contact gates unchanged. Public adaptive contact owner is integrated into normal full-skin stepping. Full model convergence remains unproven."
+}

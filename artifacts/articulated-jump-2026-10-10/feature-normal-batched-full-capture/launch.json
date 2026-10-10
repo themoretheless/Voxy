@@ -1,0 +1,44 @@
+{
+  "created_utc": "2026-10-10T06:48:01.146085+00:00",
+  "scope": "469-guide 720-frame original-gate native/actual-GPU paired trajectory. Not rendered FPS.",
+  "binary": "/tmp/voxy-feature-normal-gpu-tests",
+  "binary_sha256": "47c818dce324a77e57c806ff193d42bdaf59be231125b1b90bb2491e4f4fe0d4",
+  "source_sha256": {
+    "crates/physics/src/hair/contact.rs": "7606c95311f9e3636dda43aab38f2207bc449bca705ee7e303d0dfc12e4ff0bd",
+    "crates/physics/src/hair/contact_square_root_projection.rs": "67dbef32a1f8b546aff59a1925509180ea9878f34e0ea5e25d3ec10476a330ec",
+    "crates/voxy_app/src/female_hair.rs": "28169491ffea9515948a233221e800401b9dc577f336e9b4295d30d2da221d27",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "1a6689316d91fb1488bddea1e43d476d18043f547db52a7ca22a33d798cc4e89",
+    "artifacts/articulated-jump-2026-10-10/feature-normal-batched-full-capture/run.sh": "dad6d6820da00f25563c107345f38a650852368e8e01b0a008f30940db6df7bf"
+  },
+  "environment_overrides": {
+    "VOXY_HAIR_JOINT_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_EARLY_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_DUAL_HINTS": "1",
+    "VOXY_HAIR_JOINT_QR_PREFIX_REUSE": "1",
+    "VOXY_HAIR_ISLAND_INPUT_ROD": "20",
+    "VOXY_HAIR_ISLAND_INPUT_MIN_TOLERANCE": "0",
+    "VOXY_HAIR_ISLAND_INPUT_SKIP": "1024",
+    "VOXY_HAIR_ISLAND_INPUT_LIMIT": "1024",
+    "VOXY_HAIR_ISLAND_INPUT_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/feature-normal-batched-full-capture/operators",
+    "VOXY_HAIR_PHASE_TRACE_ROD": "20",
+    "VOXY_HAIR_PHASE_TRACE_FRAME": "1",
+    "VOXY_HAIR_PHASE_TRACE_END_FRAME": "5"
+  },
+  "capture_limits": "Mixed physical operators. v2 sidecars identify original rows, not quantity. Skip is per-backend observation ordinal, not a physical frame or substep.",
+  "launch_reason": "Qualified new production feature-normal correction and diagnostic-only original row provenance. Previous-source run PID2911 is live and preserved; this is not a restart on timeout.",
+  "exec_session": 43283,
+  "test_pid": 28997,
+  "last_observed_utc": "2026-10-10T06:56:17.479107+00:00",
+  "runtime_confirmation": [
+    "HYBRID JOINT COORDINATE BATCHES true",
+    "HYBRID JOINT QR PREFIX REUSE true",
+    "HYBRID JOINT QR true",
+    "HYBRID CONTACT CASE full",
+    "HYBRID TEST BACKEND cpu_control=false native_only=false perturbation=0",
+    "HYBRID JOINT QR PREFIX FRAME COUNTERS frame=1 reused_columns=111223"
+  ],
+  "last_observed_frames": [
+    "HYBRID HAIR FRAME frame=1 max_position_error_m=0.000000014905227690986678 max_quaternion_component_error=0.00000044942328106256646",
+    "HYBRID HAIR FRAME frame=2 max_position_error_m=0.000000014905227690986678 max_quaternion_component_error=0.00000044942328106256646"
+  ]
+}

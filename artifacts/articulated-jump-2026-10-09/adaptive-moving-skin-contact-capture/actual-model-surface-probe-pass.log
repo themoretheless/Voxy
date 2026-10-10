@@ -1,0 +1,14 @@
+
+running 2 tests
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+Facial render mouth opening: 340 seal triangles
+test female_demo::tests::real_mesh_loads_and_skin_deforms_rendered_surface ... ok
+SKIN PROBE: peak axial reaction 4.949890 N; retracts without overlap
+test female_demo::tests::probe_contacts_actual_surface_and_retracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 321 filtered out; finished in 16.24s
+

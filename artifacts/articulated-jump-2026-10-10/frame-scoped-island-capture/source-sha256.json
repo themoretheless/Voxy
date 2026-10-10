@@ -1,0 +1,5 @@
+{
+  "crates/physics/src/hair/phase_diagnostics.rs": "bcf4997fe1f03c8d42f8d817ceb1273b8047bc150d50e9d82973e575ccc189d8",
+  "crates/physics/src/hair/contact_square_root_projection.rs": "f54eb88ef2c4e4ff1d3281148196604d635a854b0233dcf08ac47a94d7e0f4e8",
+  "crates/voxy_app/src/female_hair.rs": "074eaa7be47479d716d6fddc1f017949dead6e6a1879b9002530b19bc3bc3084"
+}

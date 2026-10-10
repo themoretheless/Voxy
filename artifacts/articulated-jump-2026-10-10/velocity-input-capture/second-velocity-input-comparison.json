@@ -1,0 +1,75 @@
+{
+  "schema": "voxy-vqc-input-comparison-v1",
+  "left": {
+    "path": "artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/native-02.vqc",
+    "sha256": "ce30601947f6a963c081c2ab473a989e422eb1cfc0226b5a2f17821ccdc99903",
+    "rows": 1,
+    "coordinates": 126,
+    "refinement": 0,
+    "tolerance": 1e-09,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "right": {
+    "path": "artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/external-02.vqc",
+    "sha256": "620bfccbcc1acb975aca6be4f9a46e5601796708e917dd6d2d39e60adc8d90f0",
+    "rows": 1,
+    "coordinates": 126,
+    "refinement": 0,
+    "tolerance": 1e-09,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "same_stored_layout": true,
+  "sections": {
+    "bounds": {
+      "bitwise_equal": false,
+      "changed_scalars": 1,
+      "maximum_absolute_difference": 0.007154902717533468,
+      "difference_overflow": false
+    },
+    "effective_bounds": {
+      "bitwise_equal": false,
+      "changed_scalars": 1,
+      "maximum_absolute_difference": 0.007154902717533468,
+      "difference_overflow": false
+    },
+    "columns": {
+      "bitwise_equal": false,
+      "changed_scalars": 99,
+      "maximum_absolute_difference": 238.41538793159816,
+      "difference_overflow": false
+    },
+    "system_0_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 909,
+      "maximum_absolute_difference": 6.415521215663578e-08,
+      "difference_overflow": false
+    },
+    "system_0_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_0_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 6,
+      "maximum_absolute_difference": 0.14419128132464876,
+      "difference_overflow": false
+    }
+  },
+  "limits": "Stored-order comparison only. Matching dimensions do not prove semantic rod or row correspondence. No solver accuracy, conditioning, trajectory admission or FPS proof."
+}

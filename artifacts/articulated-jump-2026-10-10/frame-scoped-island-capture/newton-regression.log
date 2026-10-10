@@ -1,0 +1,39 @@
+    Blocking waiting for file lock on package cache
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s
+     Running unittests src/lib.rs (/tmp/voxy-physics-diagnostics-20261010/debug/deps/physics-74c936782d895dfe)
+
+running 9 tests
+test hair::contact::velocity_contacts::square_root_projection::tests::rod_compliance_keeps_different_stations_in_the_same_island ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::tiny_nonzero_jacobians_cannot_split_coupled_rod_owners ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::rounded_free_plus_response_is_checked_in_original_newton_coordinates ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::cooperative_newton_rounds_retry_only_unfinished_original_rows ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::frozen_dual_hints_follow_exact_rows_and_only_opt_in_backends ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::joint_newton_recovery_preserves_free_guides_and_releases_opening_motion ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::independent_physical_islands_batch_initial_trials_and_preserve_admission ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::rejected_parallel_island_does_not_publish_other_reactions ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::independent_islands_exceed_old_global_capacity_without_dropping_rows ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 394 filtered out; finished in 0.06s
+

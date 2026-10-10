@@ -1,0 +1,67 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "comparison": "full snapshot versus validated tail; exact-zero support compaction enabled in both",
+  "coordinates": 2646,
+  "maximum_reaction_difference": 0.0,
+  "maximum_response_difference": 0.0,
+  "median_full_readback_seconds": 0.417892375,
+  "median_tail_readback_seconds": 0.49341525,
+  "native_fallback_used": false,
+  "pairs": [
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.348343667,
+      "pair": 0,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.555157083
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.345898166,
+      "pair": 1,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.49341525
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.428276708,
+      "pair": 2,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.457130083
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.476122666,
+      "pair": 3,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.599072
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.343443583,
+      "pair": 4,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.370125875
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.504564625,
+      "pair": 5,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.45219375
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.417892375,
+      "pair": 6,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.496942834
+    }
+  ],
+  "rendered_fps_measured": false,
+  "rows": 61,
+  "scope": "complete original physical projection, warmed shaders, seven alternating pairs; excludes device creation, fixture load, rendering and extra post-timing validation",
+  "speedup": 0.8469385066635049,
+  "systems": 21,
+  "whole_animation_benchmark": false
+}

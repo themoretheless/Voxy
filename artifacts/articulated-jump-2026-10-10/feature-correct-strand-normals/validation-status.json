@@ -1,0 +1,27 @@
+{
+  "observed_utc": "2026-10-10T06:46:08.505688+00:00",
+  "physics_units": {
+    "passed": 361,
+    "ignored": 39
+  },
+  "hair_integration": {
+    "passed": 21,
+    "failed": 0
+  },
+  "actual_metal_scene": {
+    "guides": 4,
+    "frames": 4,
+    "exact_serial_pose_and_rotation": true,
+    "native_fallbacks": 0
+  },
+  "immutable_test_binary": "/tmp/voxy-feature-normal-gpu-tests",
+  "binary_sha256": "47c818dce324a77e57c806ff193d42bdaf59be231125b1b90bb2491e4f4fe0d4",
+  "full_current_source_trajectory": {
+    "directory": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/feature-normal-batched-full-capture",
+    "test_pid": 28997,
+    "exec_session": 43283,
+    "status": "failed at frame 3, rod 164 tip",
+    "terminal_analysis": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/feature-normal-batched-full-capture/terminal-analysis.json"
+  },
+  "rendered_fps_qualified": false
+}

@@ -1,0 +1,21 @@
+{
+  "early_release_full": {
+    "session": 90832,
+    "cargo_pid": 47415,
+    "child_pid": 47617
+  },
+  "ordinary_app_library": {
+    "session": 2588,
+    "log": "/tmp/voxy-current-app-library.log",
+    "status": "running at last observation; multiple model/morph tests failed"
+  },
+  "isolated_skin_rebase": {
+    "exit_code": 101,
+    "reason": "guide fitting requires closed feature normals",
+    "path": "independent-skin-rebase-failure.log"
+  },
+  "late_release_full": {
+    "child_pid": 63918,
+    "preserved": true
+  }
+}

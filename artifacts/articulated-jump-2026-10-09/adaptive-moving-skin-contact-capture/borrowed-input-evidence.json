@@ -1,0 +1,14 @@
+{
+  "source_sha256": "84d2ae128c28650658071a5d7b2f5c98db77ddd7f91314e017e881b9b70da742",
+  "change": "Borrow original attachment and contact slices on elapsed=0; borrow empty contact scene on all retries. Shifted nonempty retry scenes still own transformed copies.",
+  "physics_library_passed": 338,
+  "ignored": 39,
+  "failed": 0,
+  "timing_measured": false,
+  "application_suite": {
+    "session": 80634,
+    "pid": 55168,
+    "verified_live": true,
+    "scope": "Compiled before this allocation change; no terminal result yet."
+  }
+}

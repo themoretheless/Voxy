@@ -1,0 +1,10 @@
+{
+  "observed_at": "2026-10-10T03:47:44.745448+00:00",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_joint.rs": "ce2df3ccbcf80a47b81a8fb3d25979f1d31a4f5a8b3909a4aeccdc85d79acb1c",
+    "crates/voxy_render/src/compute_readback.rs": "5b54bcad0f240d735e702ae5cb9973ed28556ed911c9436a45083d7b5f4b80ca"
+  },
+  "proof": "65 GPU equality owners, repeated twice; byte and buffer budgets each permit two snapshots; exact scalar equality, 33 submissions, no quarantine; 4 pool tests; 4-guide 4-step physical scalar/batch equality including contact velocities; seeded release and dependent hint retry.",
+  "limits": "Full 720-frame trajectory and rendered FPS not qualified. Existing full runs use frozen prior binaries and do not include this change. Scheduling snapshot is not an atomic reservation against concurrent consumers. Single snapshot larger than available capacity remains rejected before encoding.",
+  "original_fixture": "PASS: 61 original contact rows, 2646 coordinates, 21 physical systems, four coordinate operators; exact serial batch match, no native fallback; original physical admission unchanged."
+}

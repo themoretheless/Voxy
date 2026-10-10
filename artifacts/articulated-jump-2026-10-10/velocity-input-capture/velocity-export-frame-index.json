@@ -1,0 +1,63 @@
+{
+  "schema": "voxy-velocity-export-log-index-v1",
+  "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/velocity-input-capture/qualification.log",
+  "last_frame_completion_marker": 4,
+  "exports": [
+    {
+      "file": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/native-00.vqc",
+      "backend": "native",
+      "observation_index": 0,
+      "frame_from_log_order": 4,
+      "observation_in_frame": 1,
+      "systems": 1,
+      "rows": 1,
+      "refinement": 0,
+      "log_line": 17457
+    },
+    {
+      "file": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/external-00.vqc",
+      "backend": "external",
+      "observation_index": 0,
+      "frame_from_log_order": 4,
+      "observation_in_frame": 1,
+      "systems": 1,
+      "rows": 1,
+      "refinement": 0,
+      "log_line": 22668
+    },
+    {
+      "file": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/native-01.vqc",
+      "backend": "native",
+      "observation_index": 1,
+      "frame_from_log_order": 5,
+      "observation_in_frame": 1,
+      "systems": 1,
+      "rows": 1,
+      "refinement": 0,
+      "log_line": 26045
+    },
+    {
+      "file": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/native-02.vqc",
+      "backend": "native",
+      "observation_index": 2,
+      "frame_from_log_order": 5,
+      "observation_in_frame": 2,
+      "systems": 1,
+      "rows": 1,
+      "refinement": 0,
+      "log_line": 28425
+    },
+    {
+      "file": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/external-01.vqc",
+      "backend": "external",
+      "observation_index": 1,
+      "frame_from_log_order": 5,
+      "observation_in_frame": 1,
+      "systems": 1,
+      "rows": 1,
+      "refinement": 0,
+      "log_line": 31802
+    }
+  ],
+  "limits": "Frame inferred from ordered paired-test completion markers and source loop order. Observation ordinal is not physical substep. Caller must verify velocity-only capture filter and launch provenance. This index does not match row identities or certify physics/FPS."
+}

@@ -1,0 +1,64 @@
+[
+  {
+    "index": 0,
+    "same_header": true,
+    "scope": "same observed target rod island; input differences are not solver error",
+    "fields": {
+      "bounds": {
+        "maximum_absolute_difference": 0.0,
+        "native_maximum_absolute": 0.0004962451770138111
+      },
+      "effective_bounds": {
+        "maximum_absolute_difference": 0.0,
+        "native_maximum_absolute": 0.0004962451770138111
+      },
+      "whitened_columns": {
+        "maximum_absolute_difference": 0.0,
+        "native_maximum_absolute": 3148.9156118881274
+      },
+      "system_0_matrix": {
+        "maximum_absolute_difference": 0.0,
+        "native_maximum_absolute": 0.05424368616298648
+      },
+      "system_0_rhs": {
+        "maximum_absolute_difference": 0.0,
+        "native_maximum_absolute": 0.0
+      },
+      "system_0_loads": {
+        "maximum_absolute_difference": 0.0,
+        "native_maximum_absolute": 0.7543301629980564
+      }
+    }
+  },
+  {
+    "index": 8,
+    "same_header": true,
+    "scope": "same observed target rod island; input differences are not solver error",
+    "fields": {
+      "bounds": {
+        "maximum_absolute_difference": 1.3886016902303622e-13,
+        "native_maximum_absolute": 0.0005032702234033223
+      },
+      "effective_bounds": {
+        "maximum_absolute_difference": 1.3886016902303622e-13,
+        "native_maximum_absolute": 0.0005032702234033223
+      },
+      "whitened_columns": {
+        "maximum_absolute_difference": 199.98152519667963,
+        "native_maximum_absolute": 3177.4018738452046
+      },
+      "system_0_matrix": {
+        "maximum_absolute_difference": 3.469446951953614e-17,
+        "native_maximum_absolute": 0.054240560943000025
+      },
+      "system_0_rhs": {
+        "maximum_absolute_difference": 0.0,
+        "native_maximum_absolute": 0.0
+      },
+      "system_0_loads": {
+        "maximum_absolute_difference": 0.04720415577494119,
+        "native_maximum_absolute": 0.7543301629980464
+      }
+    }
+  }
+]

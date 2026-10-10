@@ -1,0 +1,47 @@
+{
+  "scope": "observed inputs only; ordinal snapshots can come from different later decisions",
+  "pairs": [
+    {
+      "index": 0,
+      "same_header": true,
+      "byte_identical": false,
+      "maximum_load_difference": 6.973319909356346e-08
+    },
+    {
+      "index": 8,
+      "same_header": true,
+      "byte_identical": false,
+      "maximum_load_difference": 2.6911447451039017e-07
+    },
+    {
+      "index": 16,
+      "same_header": true,
+      "byte_identical": false,
+      "maximum_load_difference": 2.0843071842080452e-07
+    },
+    {
+      "index": 24,
+      "same_header": true,
+      "byte_identical": false,
+      "maximum_load_difference": 1.5738196952261307e-07
+    },
+    {
+      "index": 32,
+      "same_header": true,
+      "byte_identical": false,
+      "maximum_load_difference": 1.6679496019772477e-07
+    },
+    {
+      "index": 40,
+      "same_header": true,
+      "byte_identical": false,
+      "maximum_load_difference": 2.569354977666194e-07
+    },
+    {
+      "index": 48,
+      "same_header": true,
+      "byte_identical": false,
+      "maximum_load_difference": 1.7683395131529167e-07
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "elapsed_seconds": 301.41,
+  "first_failing_frame": 2,
+  "worst_rod": 446,
+  "worst_point": 19,
+  "maximum_position_error_m": 3.955094080576593e-06,
+  "maximum_quaternion_component_error": 0.0002665447427230294,
+  "reproduces_prior_physical_frame_errors_exactly": true,
+  "completed_operator_snapshots": 1678,
+  "frames": [
+    "HYBRID HAIR FRAME frame=1 max_position_error_m=0.000000003898660463907966 max_quaternion_component_error=0.00000009078353542524287",
+    "HYBRID HAIR FRAME frame=2 max_position_error_m=0.000003955094080576593 max_quaternion_component_error=0.0002665447427230294"
+  ],
+  "limits": "Frame-scoped observation reproduces frozen prior source trajectory, not completion. Original 469-guide/720-frame acceptance remains unqualified."
+}

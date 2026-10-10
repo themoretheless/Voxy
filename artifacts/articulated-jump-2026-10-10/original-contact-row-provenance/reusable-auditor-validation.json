@@ -1,0 +1,51 @@
+{
+  "audited_original_snapshots": 19,
+  "checked_load_scalars": 540,
+  "corrupt_metadata_rejected": [
+    {
+      "case": "missing rows",
+      "reason": "metadata/operator dimensions differ"
+    },
+    {
+      "case": "duplicate rod owner",
+      "reason": "duplicate rod owner"
+    },
+    {
+      "case": "wrong tolerance",
+      "reason": "metadata/operator tolerance differs"
+    },
+    {
+      "case": "changed gradient bit",
+      "reason": "original row/load byte mismatch for rod 0"
+    },
+    {
+      "case": "invalid point",
+      "reason": "original row load has no valid rod/point owner"
+    },
+    {
+      "case": "missing owner",
+      "reason": "original row load has no valid rod/point owner"
+    },
+    {
+      "case": "nonfinite gradient",
+      "reason": "nonfinite original row scalar"
+    },
+    {
+      "case": "boolean bits",
+      "reason": "invalid f64 bits"
+    },
+    {
+      "case": "nonfinite bound",
+      "reason": "nonfinite original row scalar"
+    },
+    {
+      "case": "negative mobility",
+      "reason": "negative original mobility"
+    },
+    {
+      "case": "v1 schema",
+      "reason": "requires v2 original row metadata; v1 does not establish row ownership"
+    }
+  ],
+  "limits": "Selected original snapshots and deliberate malformed sidecars, not full trajectory qualification."
+}

@@ -1,0 +1,40 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+error[E0277]: `hair::contact::StrandResponse` doesn't implement `Debug`
+    --> crates/physics/src/hair/contact.rs:2273:121
+     |
+2273 | ...nts: old={old:?} new={new:?}");
+     |             ^^^^^^^ `hair::contact::StrandResponse` cannot be formatted using `{:?}` because it doesn't implement `Debug`
+     |
+     = help: the trait `Debug` is not implemented for `hair::contact::StrandResponse`
+     = note: add `#[derive(Debug)]` to `hair::contact::StrandResponse` or manually `impl Debug for hair::contact::StrandResponse`
+     = note: required for `&hair::contact::StrandResponse` to implement `Debug`
+help: consider annotating `hair::contact::StrandResponse` with `#[derive(Debug)]`
+     |
+ 773 + #[derive(Debug)]
+ 774 | pub(super) struct StrandResponse {
+     |
+
+For more information about this error, try `rustc --explain E0277`.
+warning: `physics` (lib test) generated 2 warnings
+error: could not compile `physics` (lib test) due to 1 previous error; 2 warnings emitted

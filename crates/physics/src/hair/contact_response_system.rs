@@ -38,6 +38,73 @@ mod tests {
         HairResponseSystem { system, loads }
     }
     #[test]
+    fn same_input_audit_preserves_outputs_and_exports_complete_original_operator() {
+        let mut request=fixture();request.system.matrix.fill(0.);
+        for i in 0..request.system.rhs.len() {request.system.matrix[i*direct::BAND]=1.;}
+        request.loads=vec![vec![0.;18]];request.loads[0][6]=1.;
+        let requests=[request];let bounds=[1.];
+        let prepared=PreparedNativeJoint::new(&requests,&bounds,1e-14).unwrap();
+        let (mut responses,reactions)=prepared.solve(&bounds,1e-14).unwrap();
+        let path=std::env::temp_dir().join(format!("voxy-same-input-audit-{}.vqc",std::process::id()));
+        assert!(!path.exists(),"preserve previous diagnostic evidence");
+        prepared.capture_accelerator_difference(&path,&bounds,1e-14,&responses,&reactions);
+        assert!(!path.exists(),"identical solve exported a divergence");
+        responses[0][6]+=1e-6;
+        let before=(responses.clone(),reactions.clone(),requests[0].system.matrix.clone());
+        prepared.capture_accelerator_difference(&path,&bounds,1e-14,&responses,&reactions);
+        assert_eq!((&responses,&reactions,&requests[0].system.matrix),(&before.0,&before.1,&before.2));
+        let bytes=std::fs::read(&path).unwrap();assert_eq!(&bytes[..4],b"VQC1");
+        let mut report_path=path.as_os_str().to_os_string();report_path.push(".comparison.txt");
+        let report=std::fs::read_to_string(&report_path).unwrap();
+        assert!(report.contains("native_responses="));assert!(report.contains("accelerated_responses="));
+        // Preserve prior evidence, including when a caller requests overwrite.
+        assert!(!square_root_diagnostics::export_input_to(path.as_os_str(),&requests,
+            &prepared.columns,&bounds,&bounds,1e-14,0,true));
+        assert_eq!(std::fs::read(&path).unwrap(),bytes);
+        std::fs::remove_file(path).unwrap();std::fs::remove_file(report_path).unwrap();
+    }
+    #[test]
+    fn cooperative_whitening_refinement_keeps_original_bounds_and_drops_finished_owners() {
+        fn candidate(columns:&[Vec<f64>],bounds:&[f64])->(Vec<f64>,Vec<f64>) {
+            let c=columns[0][6];let mut x=vec![0.;columns[0].len()];x[6]=bounds[0]/c;
+            let reaction=x[6]/c;(x,vec![reaction])
+        }
+        struct Backend {rounds:Vec<usize>}
+        impl crate::hair::HairLinearSolver for Backend {
+            fn solve(&mut self,_:&[HairLinearSystem])->Result<Vec<Vec<f64>>,&'static str> {panic!("unexpected structural solve")}
+            fn joint_contact_hints_enabled(&self)->bool {true}
+            fn solve_joint_coordinates(&mut self,_:&[Vec<f64>],_:&[f64],_:f64)->Option<(Vec<f64>,Vec<f64>)> {
+                panic!("whitening correction escaped cooperative batch")
+            }
+            fn solve_joint_coordinates_batch(&mut self,requests:&[HairContactCoordinateRequest<'_>])
+                ->Option<Vec<(Vec<f64>,Vec<f64>)>> {
+                self.rounds.push(requests.len());
+                if self.rounds.len()>1 {assert!(requests.iter().all(|r|r.seeds.iter().any(|&v|v>0.)));}
+                Some(requests.iter().map(|r|candidate(r.columns,r.bounds)).collect())
+            }
+        }
+        let request=|diagonal,load| {
+            let mut r=fixture();r.system.matrix.fill(0.);
+            for i in 0..18 {r.system.matrix[i*direct::BAND]=1.;}
+            r.system.matrix[6*direct::BAND]=diagonal;r.loads=vec![vec![0.;18]];r.loads[0][6]=load;r
+        };
+        let a=[request(3.,2e-7)];let b=[request(1.,1.)];let ba=[1.1];let bb=[1.];let tolerance=1e-17;
+        let ja=PreparedNativeJoint::new(&a,&ba,tolerance).unwrap();
+        let jb=PreparedNativeJoint::new(&b,&bb,tolerance).unwrap();
+        let mut serial_calls=0;
+        let expected_a=ja.solve_accelerated(&ba,tolerance,|c,b,_| {serial_calls+=1;Some(candidate(c,b))}).unwrap();
+        assert!(serial_calls>1,"fixture missed original-load defect correction");
+        let expected_b=jb.solve_accelerated(&bb,tolerance,|c,b,_|Some(candidate(c,b))).unwrap();
+        let mut seeds=vec![vec![],vec![]];let mut backend=Backend {rounds:Vec::new()};
+        let actual=PreparedNativeJoint::solve_accelerated_batch(&[&ja,&jb],&[&ba,&bb],tolerance,&mut seeds,&mut backend).unwrap();
+        assert_eq!(actual,vec![expected_a,expected_b]);assert_eq!(backend.rounds[0],2);
+        assert!(backend.rounds.len()>1);assert!(backend.rounds[1..].iter().all(|&count|count==1));
+        for ((requests,bounds),(responses,reactions,accelerated)) in [(&a[..],&ba[..]),(&b[..],&bb[..])].into_iter().zip(&actual) {
+            assert!(*accelerated);HairResponseSystem::validate_joint_solution(requests,bounds,responses,reactions,tolerance).unwrap();
+        }
+        assert_eq!(ba,[1.1]);assert_eq!(bb,[1.]);
+    }
+    #[test]
     fn joint_accelerator_owner_admits_original_physics_and_preserves_native_fallback() {
         let mut request=fixture();request.system.matrix.fill(0.);
         for i in 0..request.system.rhs.len() {request.system.matrix[i*direct::BAND]=1.;}
@@ -356,6 +423,35 @@ mod tests {
     }
 }
 
+/// An equality backend may supply a dual direction solely to release an
+/// active constraint. Such a direction is never an admitted equality solution.
+#[derive(Debug)]
+pub enum HairContactEqualityProposal {
+    Solution(Vec<f64>,Vec<f64>),
+    ReleaseDirection(Vec<f64>),
+}
+
+/// One immutable coordinate operator. Hints belong to these exact columns.
+/// Returned coordinates still require admission by the original physical owner.
+#[derive(Debug)]
+pub struct HairContactCoordinateRequest<'a> {
+    pub columns: &'a [Vec<f64>],
+    pub bounds: &'a [f64],
+    pub tolerance: f64,
+    pub seeds: &'a [f64],
+}
+
+/// A borrowed equality request from an independent paused active-set owner.
+/// Replies must retain this request order; operator indices remain stable
+/// when other operators finish or retry without hints.
+#[derive(Debug)]
+pub struct HairContactEqualityRequest<'a> {
+    pub operator_index: usize,
+    pub columns: &'a [Vec<f64>],
+    pub bounds: &'a [f64],
+    pub tolerance: f64,
+}
+
 impl HairResponseSystem {
     /// Canonical active-set selection with an alternate equality backend.
     /// Returns whitened coordinates only; original physical admission is still
@@ -363,6 +459,38 @@ impl HairResponseSystem {
     pub fn solve_contact_coordinates_with_equality_accelerator(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,
         mut equality:impl FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>)->Option<(Vec<f64>,Vec<f64>)> {
         square_root_qr::unilateral_accelerated(columns,bounds,tolerance,&mut equality)
+    }
+    /// Seed canonical active-set selection with nonnegative dual hints.
+    /// Current columns reconstruct the associated primal. Invalid or unusable
+    /// hints retry zero-dual selection; all original constraints remain checked.
+    /// Like the unseeded coordinate API, ORIGINAL physical admission is required.
+    pub fn solve_contact_coordinates_seeded_with_equality_accelerator(
+        columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,seeds:&[f64],
+        mut equality:impl FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>,
+    )->Option<(Vec<f64>,Vec<f64>)> {
+        square_root_qr::unilateral_seeded_accelerated(columns,bounds,tolerance,seeds,&mut equality)
+    }
+    /// Typed release directions can change the active set only. The owner
+    /// reconstructs the associated primal from original columns; final KKT
+    /// and original physical admission are mandatory before publication.
+    pub fn solve_contact_coordinates_with_proposals(
+        columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,seeds:&[f64],
+        mut equality:impl FnMut(&[Vec<f64>],&[f64],f64)->Option<HairContactEqualityProposal>,
+    )->Option<(Vec<f64>,Vec<f64>)> {
+        square_root_qr::unilateral_with_proposals(columns,bounds,tolerance,seeds,&mut equality)
+    }
+    /// Advance independent coordinate operators in cooperative equality rounds.
+    /// All inputs are validated before the first backend call. Each round
+    /// exposes all ready requests to one backend owner, without worker threads.
+    /// A missing per-request proposal retries valid hints once from zero duals;
+    /// a failed batch or cold solve rejects the entire output. No partial result
+    /// is published. This does not perform original physical admission.
+    pub fn solve_contact_coordinate_batch_with_proposals(
+        requests: &[HairContactCoordinateRequest<'_>],
+        mut equality: impl FnMut(&[HairContactEqualityRequest<'_>])
+            -> Option<Vec<Option<HairContactEqualityProposal>>>,
+    ) -> Option<Vec<(Vec<f64>, Vec<f64>)>> {
+        square_root_qr::unilateral_batch_with_proposals(requests, &mut equality)
     }
     /// Try an accelerator in whitened coordinates through the original physical
     /// owner, including defect correction. Any rejected candidate falls back to
@@ -471,6 +599,26 @@ impl HairResponseSystem {
                     }
                 }
             };
+            let (responses,failed)=Self::admit_prepared_joint_trial(requests,bounds,absolute_tolerance,
+                factors,columns,&coordinates,&reactions,&mut effective_bounds)?;
+            if let Some(i) = failed {
+                if refinement == 7 || effective_bounds.iter().any(|v| !v.is_finite()) {
+                    square_root_diagnostics::export(requests,&columns,bounds,&coordinates,
+                        &reactions,&responses,absolute_tolerance,i);
+                    return Err("joint square-root inequality residual failed");
+                }
+            } else {
+                return Ok((responses, reactions));
+            }
+        }
+        unreachable!("bounded refinement returns on its final trial")
+    }
+    // One physical candidate gate, independent of coordinate scheduling.
+    // Retain the exact scalar arithmetic and original immutable load bounds.
+    fn admit_prepared_joint_trial(
+        requests:&[Self],bounds:&[f64],absolute_tolerance:f64,factors:&[Vec<f64>],columns:&[Vec<f64>],
+        coordinates:&[f64],reactions:&[f64],effective_bounds:&mut [f64],
+    )->Result<(Vec<Vec<f64>>,Option<usize>),&'static str> {
             let mut responses = Vec::with_capacity(requests.len());
             let mut offset = 0;
             for (request, factor) in requests.iter().zip(factors) {
@@ -478,7 +626,7 @@ impl HairResponseSystem {
                 let mut response = coordinates[offset..end].to_vec();
                 direct::solve_upper_factored(factor, &mut response, request.system.active.clone());
                 let mut force = vec![0.; response.len()];
-                for (load, &reaction) in request.loads.iter().zip(&reactions) {
+                for (load, &reaction) in request.loads.iter().zip(reactions) {
                     for (value, &axis) in force.iter_mut().zip(load) {
                         *value += reaction * axis;
                     }
@@ -501,17 +649,7 @@ impl HairResponseSystem {
                 let whitened = square_root_qr::accurate_dot(&columns[i], &coordinates);
                 effective_bounds[i] = bounds[i] - (actual - whitened);
             }
-            if let Some(i) = failed {
-                if refinement == 7 || effective_bounds.iter().any(|v| !v.is_finite()) {
-                    square_root_diagnostics::export(requests,&columns,bounds,&coordinates,
-                        &reactions,&responses,absolute_tolerance,i);
-                    return Err("joint square-root inequality residual failed");
-                }
-            } else {
-                return Ok((responses, reactions));
-            }
-        }
-        unreachable!("bounded refinement returns on its final trial")
+            Ok((responses,failed))
     }
     /// Minimum-energy native response to load_i dot displacement >= bound_i.
     /// Returns nonnegative reactions; released inequalities remain admitted.
@@ -699,12 +837,134 @@ impl<'a> PreparedNativeJoint<'a> {
                 Some((coordinates,reactions))
             });
         match attempt {
-            Ok((responses,reactions))=>Ok((responses,reactions,used.get())),
-            Err(_)=>self.solve(bounds,absolute_tolerance).map(|(responses,reactions)|(responses,reactions,false)),
+            Ok((responses,reactions))=> {
+                // Opt-in same-input audit separates local numerical error from
+                // trajectory branching. It never changes admission or output.
+                self.observe_accelerator_difference(bounds,absolute_tolerance,&responses,&reactions);
+                Ok((responses,reactions,used.get()))
+            },
+            Err(_)=>self.recover_accelerated(bounds,absolute_tolerance),
         }
     }
-    pub(super) fn capture_observed_input(&self,path:&std::path::Path,bounds:&[f64],tolerance:f64) {
-        square_root_diagnostics::export_input_to(path.as_os_str(),self.requests,&self.columns,bounds,bounds,tolerance,0,true);
+    // Cooperative original-load refinement. Only unfinished physical owners
+    // request another coordinate solve; matrices and original bounds never move.
+    pub(super) fn solve_accelerated_batch(joints:&[&Self],bounds:&[&[f64]],tolerance:f64,
+        seeds:&mut [Vec<f64>],backend:&mut dyn super::HairLinearSolver)
+        ->Result<Vec<(Vec<Vec<f64>>,Vec<f64>,bool)>,&'static str> {
+        if joints.len()!=bounds.len() || joints.len()!=seeds.len() {return Err("joint physical batch input count mismatch");}
+        if !tolerance.is_finite() || tolerance<=0. || bounds.iter().any(|b|b.iter().any(|v|!v.is_finite())) {
+            return Err("invalid joint square-root bounds");
+        }
+        if joints.iter().zip(bounds).any(|(j,b)|j.columns.len()!=b.len()) {return Err("joint square-root load count mismatch");}
+        let widths:Vec<_>=joints.iter().map(|j|j.requests.iter().map(|r|r.system.rhs.len()).sum::<usize>()).collect();
+        if joints.iter().zip(&widths).any(|(joint,&width)|joint.columns.iter().any(|c|
+            c.len()!=width || c.iter().any(|v|!v.is_finite()))) {return Err("invalid joint square-root coordinate map");}
+        let mut effective:Vec<_>=bounds.iter().map(|b|b.to_vec()).collect();
+        let mut finished:Vec<_>=(0..joints.len()).map(|_|None).collect();
+        let use_hints=backend.joint_contact_hints_enabled();
+        for i in 0..joints.len() {
+            if bounds[i].is_empty() {
+                let (responses,reactions)=joints[i].solve(bounds[i],tolerance)?;
+                finished[i]=Some((responses,reactions,false));
+            }
+        }
+        for refinement in 0..8 {
+            let ready:Vec<_>=(0..joints.len()).filter(|&i|finished[i].is_none()).collect();
+            if ready.is_empty() {break;}
+            let requests:Vec<_>=ready.iter().map(|&i|HairContactCoordinateRequest {
+                columns:&joints[i].columns,bounds:&effective[i],tolerance,
+                seeds:if use_hints {&seeds[i]} else {&[]}
+            }).collect();
+            let started=std::env::var_os("VOXY_HAIR_QR_PROFILE").map(|_|std::time::Instant::now());
+            let proposals=backend.solve_joint_coordinates_batch(&requests);
+            if let Some(started)=started {
+                eprintln!("HAIR JOINT PHYSICAL BATCH PROFILE operators={} refinement={refinement} elapsed_ms={}",ready.len(),started.elapsed().as_secs_f64()*1000.);
+            }
+            let proposals=match proposals {
+                Some(proposals)=> {
+                    if proposals.len()!=ready.len() {return Err("joint coordinate batch result count mismatch");}
+                    proposals.into_iter().map(Some).collect::<Vec<_>>()
+                },
+                None=>(0..ready.len()).map(|_|None).collect(),
+            };
+            for (i,proposal) in ready.into_iter().zip(proposals) {
+                let Some((coordinates,reactions))=proposal else {
+                    square_root_diagnostics::export_input(joints[i].requests,&joints[i].columns,bounds[i],&effective[i],tolerance,refinement);
+                    finished[i]=Some(joints[i].recover_accelerated(bounds[i],tolerance)?);continue;
+                };
+                if use_hints {seeds[i].clone_from(&reactions);}
+                if coordinates.len()!=widths[i] || reactions.len()!=bounds[i].len()
+                    || coordinates.iter().any(|v|!v.is_finite()) || reactions.iter().any(|v|!v.is_finite() || *v<0.) {
+                    square_root_diagnostics::export_input(joints[i].requests,&joints[i].columns,bounds[i],&effective[i],tolerance,refinement);
+                    finished[i]=Some(joints[i].recover_accelerated(bounds[i],tolerance)?);continue;
+                }
+                match HairResponseSystem::admit_prepared_joint_trial(joints[i].requests,bounds[i],tolerance,
+                    &joints[i].factors,&joints[i].columns,&coordinates,&reactions,&mut effective[i]) {
+                    Ok((responses,None))=> {
+                        joints[i].observe_accelerator_difference(bounds[i],tolerance,&responses,&reactions);
+                        finished[i]=Some((responses,reactions,true));
+                    },
+                    Ok((responses,Some(failed)))=> {
+                        if refinement==7 || effective[i].iter().any(|v|!v.is_finite()) {
+                            square_root_diagnostics::export(joints[i].requests,&joints[i].columns,bounds[i],&coordinates,
+                                &reactions,&responses,tolerance,failed);
+                            finished[i]=Some(joints[i].recover_accelerated(bounds[i],tolerance)?);
+                        }
+                    },
+                    Err(_)=>finished[i]=Some(joints[i].recover_accelerated(bounds[i],tolerance)?),
+                }
+            }
+        }
+        finished.into_iter().map(|r|r.ok_or("joint square-root inequality residual failed")).collect()
+    }
+    fn recover_accelerated(&self,bounds:&[f64],absolute_tolerance:f64)
+        ->Result<(Vec<Vec<f64>>,Vec<f64>,bool),&'static str> {
+                if let Some(path)=std::env::var_os("VOXY_HAIR_ACCELERATOR_REJECTION_EXPORT") {
+                    use std::sync::atomic::{AtomicBool,Ordering};
+                    static CAPTURED:AtomicBool=AtomicBool::new(false);
+                    if CAPTURED.compare_exchange(false,true,Ordering::Relaxed,Ordering::Relaxed).is_ok() {
+                        self.capture_observed_input(std::path::Path::new(&path),bounds,absolute_tolerance);
+                    }
+                }
+                self.solve(bounds,absolute_tolerance).map(|(responses,reactions)|(responses,reactions,false))
+    }
+
+    fn observe_accelerator_difference(&self,bounds:&[f64],tolerance:f64,
+        responses:&[Vec<f64>],reactions:&[f64]) {
+        let Some(path)=std::env::var_os("VOXY_HAIR_ACCELERATOR_DIFFERENCE_EXPORT") else {return;};
+        self.capture_accelerator_difference(std::path::Path::new(&path),bounds,tolerance,responses,reactions);
+    }
+    fn capture_accelerator_difference(&self,path:&std::path::Path,bounds:&[f64],tolerance:f64,
+        responses:&[Vec<f64>],reactions:&[f64]) {
+        let native=match self.solve(bounds,tolerance) {
+            Ok(native)=>native,
+            Err(error)=> {eprintln!("HAIR SAME INPUT AUDIT native_failed={error}");return;},
+        };
+        let mut translation=0f64;let mut angular=0f64;
+        for (a,b) in native.0.iter().zip(responses) {
+            for (i,(a,b)) in a.iter().zip(b).enumerate() {
+                if i%6<3 {translation=translation.max((a-b).abs());}
+                else {angular=angular.max((a-b).abs());}
+            }
+        }
+        let reaction=native.1.iter().zip(reactions).map(|(a,b)|(a-b).abs()).fold(0f64,f64::max);
+        // Observation thresholds only: original physical gates are untouched.
+        if translation<=1e-9 && angular<=1e-7 {return;}
+        use std::sync::atomic::{AtomicBool,Ordering};
+        static CAPTURED:AtomicBool=AtomicBool::new(false);
+        if CAPTURED.compare_exchange(false,true,Ordering::Relaxed,Ordering::Relaxed).is_err() {return;}
+        if !square_root_diagnostics::export_input_to(path.as_os_str(),self.requests,&self.columns,
+            bounds,bounds,tolerance,0,true) {return;}
+        let report=format!("scope=same immutable physical operator; not whole trajectory\ntranslation_difference_m={translation:.17e}\nangular_increment_difference_rad={angular:.17e}\nreaction_difference={reaction:.17e}\nabsolute_physical_tolerance={tolerance:.17e}\nnative_responses={:?}\naccelerated_responses={responses:?}\nnative_reactions={:?}\naccelerated_reactions={reactions:?}\n",native.0,native.1);
+        let mut report_path=path.as_os_str().to_os_string();report_path.push(".comparison.txt");
+        if let Err(error)=std::fs::OpenOptions::new().write(true).create_new(true).open(&report_path)
+            .and_then(|mut file| {use std::io::Write;file.write_all(report.as_bytes())}) {
+            eprintln!("HAIR SAME INPUT AUDIT export_failed={error}");
+        }
+        eprintln!("HAIR SAME INPUT AUDIT translation_difference_m={translation} angular_increment_difference_rad={angular} reaction_difference={reaction}");
+    }
+    pub(super) fn capture_observed_input(&self,path:&std::path::Path,bounds:&[f64],tolerance:f64)->bool {
+        square_root_diagnostics::export_input_to(path.as_os_str(),self.requests,&self.columns,bounds,bounds,tolerance,0,true)
     }
     pub(super) fn solve(&self, bounds: &[f64], tolerance: f64)
         -> Result<(Vec<Vec<f64>>, Vec<f64>), &'static str> {

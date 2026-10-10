@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-10-10T03:52:21.590093+00:00",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_response_dispatch.rs": "0652214e1963fc82998df8a33ae0d36cf416e38753ad6a25cc375465ec6c48cb",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "b31aa3e92b8a1ac8efcd150bd18125b8ffda82808a210fdea8cd137e2b62ab2c",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "ce2df3ccbcf80a47b81a8fb3d25979f1d31a4f5a8b3909a4aeccdc85d79acb1c",
+    "crates/voxy_render/src/compute_readback.rs": "5b54bcad0f240d735e702ae5cb9973ed28556ed911c9436a45083d7b5f4b80ca"
+  },
+  "scope": "Ordered response waves scheduled by actual shared staging capacity; full/compact, byte/buffer constraints, copy/gather shader, fresh/reused factors, original physical residuals, exact serial outputs. Audit snapshot shortage rejected before any copy, pool remains usable. Mixed shapes and one-storage transport regressions pass. No full trajectory or rendered FPS claim."
+}

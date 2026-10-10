@@ -1,0 +1,16 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "elapsed_seconds": 770.45,
+  "first_failing_frame": 3,
+  "worst_rod": 164,
+  "worst_point": 20,
+  "maximum_position_error_m": 4.601769555624691e-05,
+  "maximum_quaternion_component_error": 0.0015979275918912017,
+  "frames": [
+    "HYBRID HAIR FRAME frame=1 max_position_error_m=0.000000014905227690986678 max_quaternion_component_error=0.00000044942328106256646",
+    "HYBRID HAIR FRAME frame=2 max_position_error_m=0.000000014905227690986678 max_quaternion_component_error=0.00000044942328106256646",
+    "HYBRID HAIR FRAME frame=3 max_position_error_m=0.00004601769555624691 max_quaternion_component_error=0.0015979275918912017"
+  ],
+  "limits": "Frozen production source includes strand feature normals but predates geometric mesh-face gradients and frame-scoped capture. Selected tests pass, full trajectory does not."
+}
