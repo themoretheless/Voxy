@@ -1220,7 +1220,7 @@ impl App {
                     &access,
                     &self.camera,
                     scene_limits::OBJECTS,
-                    &render_world,
+                    render_world,
                 )?;
                 self.extraction
                     .refresh_scoped_with(access, render_world)
@@ -1502,8 +1502,7 @@ impl App {
                     .transpose()?
                     .flatten();
                 if let Some(mesh) = &mesh {
-                    let bytes = (mesh.vertices().len()
-                        * std::mem::size_of::<voxy_render::SceneVertex>()
+                    let bytes = (std::mem::size_of_val(mesh.vertices())
                         + mesh.indices().len() * 4) as u64;
                     if graphics.geometry_bytes().saturating_add(bytes)
                         > graphics.residency_cache.geometry_budget
@@ -1787,7 +1786,9 @@ impl App {
                         && let Some((geometry, _, texture)) =
                             model.part(styles.parts.get(&instance.owner).copied())
                     {
-                        let geometry = if !styles.parts.contains_key(&instance.owner) {
+                        let geometry = if styles.parts.contains_key(&instance.owner) {
+                            geometry
+                        } else {
                             let history = graphics
                                 .lod_history
                                 .entry((view, instance.owner))
@@ -1810,8 +1811,6 @@ impl App {
                                     [region[2], region[3]]
                                 );
                             }
-                            geometry
-                        } else {
                             geometry
                         };
                         if styles.casters.contains(&instance.owner) {
@@ -1894,13 +1893,12 @@ impl App {
             }
             let draw_count = view_draws.iter().map(Vec::len).sum::<usize>() + overlays.len();
             let present_start = profile_start.map(|_| Instant::now());
-            if styles.fog.is_empty() {
-                if let Some(fog) = &mut graphics.fog
+            if styles.fog.is_empty()
+                && let Some(fog) = &mut graphics.fog
                     && fog.deactivate(graphics.host.device())?
                 {
                     graphics.fog = None;
                 }
-            }
             if std::env::var_os("VOXY_WINDOW_PIXEL_PROBE").is_some() {
                 if let Some((frame, pixel)) = graphics.host.take_pixel_probe() {
                     println!("WINDOW PIXEL frame={frame} rgba_storage={pixel:?}");
@@ -1911,7 +1909,7 @@ impl App {
                 {
                     let size = self.window.as_ref().ok_or("missing window")?.inner_size();
                     // Stable floor point in the standalone gameplay diagnostic fixture.
-                    let point = [size.width / 2, (size.height as f64 * 0.775) as u32];
+                    let point = [size.width / 2, (f64::from(size.height) * 0.775) as u32];
                     if let Err(error) = graphics.host.request_pixel_probe(point) {
                         eprintln!("WINDOW PIXEL unavailable: {error}");
                     }
@@ -4136,7 +4134,7 @@ impl App {
             .poll(&self.scene, &self.authoring.authoring_project)?
         {
             audio_session::AudioPoll::Ready | audio_session::AudioPoll::RetryPlay => {
-                self.toggle_play()?
+                self.toggle_play()?;
             }
             audio_session::AudioPoll::Pending => {}
         }
@@ -4499,7 +4497,7 @@ impl ApplicationHandler for App {
                     && self
                         .panels
                         .as_ref()
-                        .is_none_or(|panels| panels.input_ready())
+                        .is_none_or(panels::Panels::input_ready)
                 {
                     let cursor = self.cursor.unwrap();
                     let size = self.window.as_ref().map(|w| w.inner_size()).unwrap();
@@ -4523,7 +4521,7 @@ impl ApplicationHandler for App {
                     && self
                         .panels
                         .as_ref()
-                        .is_none_or(|panels| panels.input_ready())
+                        .is_none_or(panels::Panels::input_ready)
                     && let Some(cursor) = self
                         .cursor
                         .filter(|cursor| !self.standalone && self.cursor_in_viewport(*cursor))

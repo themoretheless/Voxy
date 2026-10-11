@@ -54,7 +54,7 @@ pub(crate) fn validate(
         u64::from(control_count) * 16,
     ];
     if sizes.iter().any(|s| {
-        *s > u64::from(limits.max_storage_buffer_binding_size) || *s > limits.max_buffer_size
+        *s > limits.max_storage_buffer_binding_size || *s > limits.max_buffer_size
     }) {
         return Err(SceneError::GeometryCapacityExceeded);
     }

@@ -370,7 +370,7 @@ fn replay_contact_geometry(
     let end = start.with_positions(points("surface_end")?)?;
     let mut samples = Vec::new();
     for index in 0..=32 {
-        let t = index as f64 / 32.;
+        let t = f64::from(index) / 32.;
         let position = |a: [f64; 3], b: [f64; 3]| {
             std::array::from_fn(|axis| {
                 if t <= 0.5 {
@@ -712,8 +712,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let startup_seconds = authored.as_ref().map_or(0., |a| a.value().startup_seconds);
     let reference_clip = authored
         .as_ref()
-        .map(|a| a.value().reference.clip())
-        .unwrap_or(Some(0));
+        .map_or(Some(0), |a| a.value().reference.clip());
     let reference = imported
         .as_ref()
         .map(|model| {

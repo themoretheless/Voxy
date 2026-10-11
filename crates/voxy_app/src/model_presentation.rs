@@ -52,7 +52,7 @@ pub fn status(parameters: &Path, current: &Value) -> Value {
             size.len() == 2
                 && size.iter().all(|n| {
                     n.as_u64()
-                        .is_some_and(|n| n > 0 && n <= u64::from(u32::MAX))
+                        .is_some_and(|n| n > 0 && u32::try_from(n).is_ok())
                 })
         })
         && receipt["presentedAtUnixSeconds"]
@@ -64,7 +64,7 @@ pub fn status(parameters: &Path, current: &Value) -> Value {
     let age = now() - receipt["presentedAtUnixSeconds"].as_f64().unwrap();
     let fresh = (0. ..=5.).contains(&age);
     json!({"liveApplied":if fresh {Value::Bool(receipt["parameters"]==*current)}else{Value::Null},"fresh":fresh,"ageSeconds":age,"receipt":receipt,
-        "reason":if !fresh {"Receipt stale; viewer may be paused, minimized or stopped"}else{"Fresh renderer presentation receipt; screenshot not captured"}})
+        "reason":if fresh {"Fresh renderer presentation receipt; screenshot not captured"} else {"Receipt stale; viewer may be paused, minimized or stopped"}})
 }
 
 fn film_request_path(parameters: &Path) -> std::path::PathBuf {

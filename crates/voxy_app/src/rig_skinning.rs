@@ -74,12 +74,12 @@ pub(crate) fn deform_point(
         } else {
             weight
         };
-        real = real + transform.real * signed_weight;
-        dual = dual + transform.dual * signed_weight;
+        real += transform.real * signed_weight;
+        dual += transform.dual * signed_weight;
     }
     let length = real.length();
-    real = real / length;
-    dual = dual / length;
+    real /= length;
+    dual /= length;
     dual = dual - real * real.dot(dual);
     let translation = dual * real.conjugate() * 2.;
     real * p + Vec3::new(translation.x, translation.y, translation.z)

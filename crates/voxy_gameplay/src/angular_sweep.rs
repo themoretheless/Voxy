@@ -425,7 +425,7 @@ pub(crate) fn sweep_path(
         let angular_travel = span.angular_speed_bound().map_or_else(
             || {
                 span.body_angular_displacement()
-                    .map_or(0., |axis| axis.length())
+                    .map_or(0., glam::DVec3::length)
             },
             |speed| speed * duration,
         );
@@ -692,7 +692,7 @@ fn rigid_body_clearance(
 }
 
 /// Sweep of an approximate field with automatically derived controller pose
-/// evaluation bounds. evaluation_radius is an additional world allowance.
+/// evaluation bounds. `evaluation_radius` is an additional world allowance.
 /// Source-field approximation error is carried separately by the approximation;
 /// grounding and final scene publication are checked at the transaction boundary.
 #[cfg_attr(not(test), allow(dead_code))]
@@ -856,7 +856,7 @@ fn sweep_rigid_approximation_with_axis_errors(
     {
         return Err(PhysicsError::InvalidMotion);
     }
-    if coordinate_certificate.is_some_and(|proof| !std::ptr::eq(proof.path(), &approximation.path))
+    if coordinate_certificate.is_some_and(|proof| !std::ptr::eq(proof.path(), &raw const approximation.path))
     {
         return Err(PhysicsError::InvalidMotion);
     }
@@ -1326,11 +1326,10 @@ fn sweep_rigid_path_with_bounds(
                             && normal[axis] != 0.
                             && (0..3).all(|other| other == axis || normal[other] == 0.)
                     });
-                    if clearance == 0.
+                    if (clearance == 0.
                         || coordinate_certificate.is_some()
-                        || exact_numeric_projection
-                    {
-                        if let Some(cache) = enclosed_path {
+                        || exact_numeric_projection)
+                        && let Some(cache) = enclosed_path {
                             // The whole field is monotone away from this plane;
                             // exact initial touching is safe throughout it.
                             if invariant_projection_separates(
@@ -1352,7 +1351,6 @@ fn sweep_rigid_path_with_bounds(
                                 break;
                             }
                         }
-                    }
                     if clearance > 0. || initial_points.is_some() {
                         // Every point moves at most speed_bound over this unit
                         // interval. Reject only if the certified initial gap

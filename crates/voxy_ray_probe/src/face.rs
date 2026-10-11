@@ -508,7 +508,7 @@ fn ray_shade(
             normals[i as usize] += n;
         }
         if smooth_lids {
-            let p = p.map(|p| p.as_dvec3());
+            let p = p.map(glam::Vec3::as_dvec3);
             if let Some(unit) = (p[1] - p[0]).cross(p[2] - p[0]).try_normalize() {
                 for (corner, &i) in face.iter().enumerate() {
                     let vertex = &mesh.vertices()[i as usize];
@@ -530,11 +530,10 @@ fn ray_shade(
     }
     if smooth_lids {
         for (vertex, normal) in mesh.vertices().iter().zip(&mut normals) {
-            if skin(vertex) {
-                if let Some(&smooth) = skin_normals.get(&position_key(vertex.position)?) {
+            if skin(vertex)
+                && let Some(&smooth) = skin_normals.get(&position_key(vertex.position)?) {
                     *normal = smooth;
                 }
-            }
         }
     }
     let scene = RayScene::new(device, &triangles)?;

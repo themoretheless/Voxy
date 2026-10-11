@@ -272,7 +272,7 @@ impl SceneSimulation {
         })
     }
     /// Runs a validated serial phase plan at each fixed tick after behavior hooks.
-    /// The frame command barrier and pose capture use the same path as advance_with.
+    /// The frame command barrier and pose capture use the same path as `advance_with`.
     /// Access declarations describe intent; callbacks still receive mutable scene access.
     /// # Errors
     /// Preserves simulation validation errors and the failing system's typed error.

@@ -7,7 +7,7 @@ use crate::{
 pub enum ImportedEnvironmentError {
     Image(HdrImageError),
     Renderer(RendererError),
-    /// RGBA16Float cannot store radiance above 65504 without infinity.
+    /// `RGBA16Float` cannot store radiance above 65504 without infinity.
     HalfFloatRange,
 }
 impl std::fmt::Display for ImportedEnvironmentError {
@@ -35,7 +35,7 @@ pub struct ImportedEnvironment {
 }
 impl ImportedEnvironment {
     /// Resample and upload a panorama. Encode the retained producers before consuming outputs.
-    /// CPU limits include source RGB32F, resampled faces and packed RGBA16Float faces.
+    /// CPU limits include source RGB32F, resampled faces and packed `RGBA16Float` faces.
     /// Queue must belong to device (wgpu validation). Radiance is never tone mapped.
     /// # Errors
     /// Rejects CPU limits, nonrepresentable half radiance and device dimensions.

@@ -182,7 +182,7 @@ impl TemporalHistory {
         );
         Ok(())
     }
-    /// Convert a sampled Depth32Float attachment into pending R32Float history.
+    /// Convert a sampled `Depth32Float` attachment into pending `R32Float` history.
     /// Preserves the stored NDC depth, including background; no linearization.
     /// # Errors
     /// Rejects incompatible size, format, samples or missing texture binding.

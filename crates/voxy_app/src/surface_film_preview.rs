@@ -59,7 +59,7 @@ impl FilmPreview {
     ) -> Result<Self, &'static str> {
         let key = |triangle: [[f64; 3]; 3]| {
             let mut points = triangle.map(|p| p.map(|v| (v as f32).to_bits()));
-            points.sort();
+            points.sort_unstable();
             points
         };
         let reference = |source: &str| -> Result<Vec<[[f64; 3]; 3]>, &'static str> {
@@ -160,7 +160,7 @@ impl FilmPreview {
     ) -> Result<Self, &'static str> {
         let key = |triangle: [[f64; 3]; 3]| {
             let mut points = triangle.map(|p| p.map(|v| (v as f32).to_bits()));
-            points.sort();
+            points.sort_unstable();
             points
         };
         let mut result = Self::new(
@@ -414,7 +414,7 @@ impl FilmPreview {
             contact_angle: settings.contact_angle_rad,
             precursor_thickness: settings.precursor_thickness_m,
         });
-        let expected_wetting=wetting.map(|w|serde_json::json!({"contactAngleRad":w.contact_angle,"precursorThicknessM":w.precursor_thickness})).unwrap_or(serde_json::Value::Null);
+        let expected_wetting=wetting.map_or(serde_json::Value::Null, |w|serde_json::json!({"contactAngleRad":w.contact_angle,"precursorThicknessM":w.precursor_thickness}));
         if number(material, "density")? != settings.material.density
             || number(material, "viscosity")? != settings.material.viscosity
             || number(material, "surfaceTension")? != settings.material.surface_tension

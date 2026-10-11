@@ -1,6 +1,6 @@
 //! Validated deterministic phase plans. Execution is serial until scoped access
 //! enforcement for other resources and worker dispatch are implemented.
-//! run_scene enforces the scene grant; other declarations describe intent.
+//! `run_scene` enforces the scene grant; other declarations describe intent.
 use std::collections::{BTreeMap, BTreeSet};
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SystemAccess {
@@ -116,7 +116,7 @@ impl SceneSystemAccess<'_> {
 }
 /// Systems in a batch are dependency-independent and have no declared write
 /// conflicts. Batches are ordered barriers; lower phases always finish first.
-/// Scene declarations grant capabilities only through run_scene. Other resource
+/// Scene declarations grant capabilities only through `run_scene`. Other resource
 /// declarations and the legacy run methods do not enforce borrowing.
 #[derive(Clone, Debug)]
 pub struct SchedulePlan {

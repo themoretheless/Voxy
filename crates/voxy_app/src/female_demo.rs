@@ -516,18 +516,17 @@ impl FemaleDemo {
         let Some(path) = &self.parameter_file else {
             return;
         };
-        if let Some(id) = presentation_receipts::pending_film_state(path) {
-            if let Err(error) = presentation_receipts::publish_film_state(
+        if let Some(id) = presentation_receipts::pending_film_state(path)
+            && let Err(error) = presentation_receipts::publish_film_state(
                 path,
                 &id,
                 &self.body_parameters.to_json(),
                 self.time,
                 frame,
-                self.film.as_ref().map(|film| film.state_snapshot()),
+                self.film.as_ref().map(super::surface_film_preview::FilmPreview::state_snapshot),
             ) {
                 eprintln!("Film state capture failed: {error}");
             }
-        }
         if self
             .last_presentation_receipt
             .is_some_and(|t| t.elapsed().as_secs_f64() < 0.5)
@@ -540,9 +539,9 @@ impl FemaleDemo {
             self.time,
             frame,
             size,
-            &serde_json::json!({"view":{"mode":if self.show_strain {"strain"} else if self.show_skin {"displacement"} else {"material"}},"skinShell":tissue_diagnostics::measurements(&self.skin,!self.animation_only),"fluid":self.film.as_ref().map(|f| f.measurements()),
-                "tissueCageVolumesM3":self.regions.iter().map(|r| r.volume_m3()).collect::<Vec<_>>(),
-                "tissueCageMassesKg":self.regions.iter().map(|r| r.mass_kg()).collect::<Vec<_>>(),
+            &serde_json::json!({"view":{"mode":if self.show_strain {"strain"} else if self.show_skin {"displacement"} else {"material"}},"skinShell":tissue_diagnostics::measurements(&self.skin,!self.animation_only),"fluid":self.film.as_ref().map(super::surface_film_preview::FilmPreview::measurements),
+                "tissueCageVolumesM3":self.regions.iter().map(super::volume_regions::Region::volume_m3).collect::<Vec<_>>(),
+                "tissueCageMassesKg":self.regions.iter().map(super::volume_regions::Region::mass_kg).collect::<Vec<_>>(),
                 "secondaryDynamics": {
                     "enabled":self.secondary_only && !self.animation_only,
                     "steps":self.steps,
@@ -1102,7 +1101,7 @@ impl FemaleDemo {
         if self
             .film
             .as_ref()
-            .is_some_and(|film| film.thickness_view_enabled())
+            .is_some_and(super::surface_film_preview::FilmPreview::thickness_view_enabled)
         {
             legend.push_str("Film: blue 0 um, green 50 um, red >=100 um; <0.1 um hidden | ");
         }
@@ -1118,7 +1117,7 @@ impl FemaleDemo {
         if self
             .film
             .as_ref()
-            .is_some_and(|film| film.thickness_view_enabled())
+            .is_some_and(super::surface_film_preview::FilmPreview::thickness_view_enabled)
         {
             rows.push(["0um", "50um", "100um+"]);
         }
@@ -1130,7 +1129,7 @@ impl FemaleDemo {
             || self
                 .film
                 .as_ref()
-                .is_some_and(|film| film.thickness_view_enabled())
+                .is_some_and(super::surface_film_preview::FilmPreview::thickness_view_enabled)
     }
     fn base_title(&self) -> String {
         if self.hand_focus {
@@ -1310,9 +1309,9 @@ impl FemaleDemo {
         if self.rig_pose_only {
             return Err("pose-only rig preview cannot advance physical state");
         }
-        if let Some(path) = &self.face_parameter_file {
-            if let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified()) {
-                if self.face_parameter_revision != Some(revision) {
+        if let Some(path) = &self.face_parameter_file
+            && let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified())
+                && self.face_parameter_revision != Some(revision) {
                     match std::fs::read_to_string(path)
                         .map_err(|e| e.to_string())
                         .and_then(|text| crate::face_parameters::FaceParameters::from_json(&text))
@@ -1325,11 +1324,9 @@ impl FemaleDemo {
                     }
                     self.face_parameter_revision = Some(revision);
                 }
-            }
-        }
-        if let Some(path) = &self.parameter_file {
-            if let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified()) {
-                if self.parameter_revision != Some(revision) {
+        if let Some(path) = &self.parameter_file
+            && let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified())
+                && self.parameter_revision != Some(revision) {
                     match std::fs::read_to_string(path)
                         .map_err(|e| e.to_string())
                         .and_then(|text| {
@@ -1345,13 +1342,11 @@ impl FemaleDemo {
                     }
                     self.parameter_revision = Some(revision);
                 }
-            }
-        }
 
         if let Some(body_path) = &self.parameter_file {
             let path = view_settings::path(body_path);
-            if let Ok(revision) = std::fs::metadata(&path).and_then(|m| m.modified()) {
-                if self.view_revision != Some(revision) {
+            if let Ok(revision) = std::fs::metadata(&path).and_then(|m| m.modified())
+                && self.view_revision != Some(revision) {
                     match view_settings::ViewSettings::read(&path) {
                         Ok(settings) => {
                             self.show_strain = settings.mode == "strain";
@@ -1361,12 +1356,11 @@ impl FemaleDemo {
                     }
                     self.view_revision = Some(revision);
                 }
-            }
         }
         if let (Some(body_path), Some(film)) = (&self.parameter_file, &mut self.film) {
             let path = crate::film_settings::path(body_path);
-            if let Ok(revision) = std::fs::metadata(&path).and_then(|m| m.modified()) {
-                if self.film_revision != Some(revision) {
+            if let Ok(revision) = std::fs::metadata(&path).and_then(|m| m.modified())
+                && self.film_revision != Some(revision) {
                     match crate::film_settings::FilmSettings::read(&path) {
                         Ok(settings) => {
                             if let Err(error) = film.configure(settings) {
@@ -1377,7 +1371,6 @@ impl FemaleDemo {
                     }
                     self.film_revision = Some(revision);
                 }
-            }
         }
         if !dt.is_finite() || dt < 0.0 {
             return Err("invalid animation timestep");
@@ -1415,7 +1408,7 @@ impl FemaleDemo {
             let acceleration = self.root_motion(time).1;
             let mut next_secondary = self.secondary.clone();
             for (index, state) in next_secondary.iter_mut().enumerate() {
-                let size = if index < 2 {
+                let size = f64::from(if index < 2 {
                     self.body_parameters.breast_size
                         * if index % 2 == 0 {
                             self.body_parameters.left_breast_size
@@ -1429,7 +1422,7 @@ impl FemaleDemo {
                         } else {
                             self.body_parameters.right_buttock_size
                         }
-                } as f64;
+                });
                 state.configure(SecondaryConfig {
                     frequency: (if index < 2 { 3.5 } else { 3.8 }) / size.sqrt(),
                     damping_ratio: 0.16,

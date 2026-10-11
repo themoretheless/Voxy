@@ -631,13 +631,13 @@ impl BodyParameters {
                     + 0.004 * profile(x, y - 0.10, 0.008, 0.010));
         }
         // Normalize stature after changing segment proportions; soles remain anchored.
-        let bottom = leg_y(-0.820042849);
+        let bottom = leg_y(-0.820_042_85);
         let top = -0.10
             + 0.58 * self.torso_length
-            + (0.819330931 - 0.48) * self.head_size
+            + (0.819_330_93 - 0.48) * self.head_size
             + (self.neck_length - 1.) * 0.08;
         let scale = (self.height_cm / 100.) / (top - bottom);
-        [px * scale, (py - bottom) * scale - 0.820042849, pz * scale]
+        [px * scale, (py - bottom) * scale - 0.820_042_85, pz * scale]
     }
     /// Preflight the reference surface after this morph. Does not detect
     /// intersections; area checks cannot establish anatomical validity.
@@ -647,7 +647,7 @@ impl BodyParameters {
         indices: &[u32],
     ) -> Result<serde_json::Value, &'static str> {
         self.validate()?;
-        if indices.is_empty() || indices.len() % 3 != 0 {
+        if indices.is_empty() || !indices.len().is_multiple_of(3) {
             return Err("invalid surface triangles");
         }
         let mut minimum_ratio = f64::INFINITY;

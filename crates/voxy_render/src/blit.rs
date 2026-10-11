@@ -434,7 +434,7 @@ impl TextureBlit {
     /// Replace target contents with source color, scaling by nearest sampling.
     /// # Panics
     /// Panics before encoding if the device differs from the pipeline owner.
-    /// Use encode_checked for recoverable device-owner validation.
+    /// Use `encode_checked` for recoverable device-owner validation.
     pub fn encode(
         &self,
         device: &wgpu::Device,
@@ -448,7 +448,7 @@ impl TextureBlit {
     /// Encode display composition, rejecting a foreign pipeline device before allocation.
     /// Source, target and encoder must also belong to the supplied device.
     /// # Errors
-    /// Returns DeviceMismatch when the supplied device differs from the pipeline owner.
+    /// Returns `DeviceMismatch` when the supplied device differs from the pipeline owner.
     pub fn encode_checked(
         &self,
         device: &wgpu::Device,
@@ -683,14 +683,14 @@ impl StorageColorBlit {
             .checked_mul(u64::from(source.height))
             .and_then(|n| n.checked_mul(4))
             .and_then(|n| n.checked_add(u64::from(source.offset_words)))
-            .filter(|n| *n <= u64::from(u32::MAX))
+            .filter(|n| u32::try_from(*n).is_ok())
             .and_then(|n| n.checked_mul(4))
             .ok_or(crate::ComputeError::InvalidBuffer)?;
         if source.width == 0
             || source.height == 0
             || end > source.buffer.size()
             || !source.buffer.usage().contains(wgpu::BufferUsages::STORAGE)
-            || source.buffer.size() > u64::from(device.limits().max_storage_buffer_binding_size)
+            || source.buffer.size() > device.limits().max_storage_buffer_binding_size
             || target.texture().width() != source.width
             || target.texture().height() != source.height
             || target.texture().sample_count() != 1

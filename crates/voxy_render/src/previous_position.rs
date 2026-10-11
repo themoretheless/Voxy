@@ -401,8 +401,8 @@ pub struct PreviousDepthPass(PreviousPositionPass);
 impl PreviousDepthPass {
     /// Geometry/cameras must match the opaque primary pass. Paired previous
     /// vertices follow deformation; background/behind-camera/out-of-range is zero.
-    /// Encode after primary coverage. Output is sampleable R32Float for rejection,
-    /// or renderable R16Float with half precision on OpenGL.
+    /// Encode after primary coverage. Output is sampleable `R32Float` for rejection,
+    /// or renderable `R16Float` with half precision on OpenGL.
     /// # Errors
     /// Rejects invalid paired geometry, matrices, depth resources or capacity.
     pub fn new(

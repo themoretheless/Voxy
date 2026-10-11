@@ -357,14 +357,12 @@ impl AffineBox {
                 && (normal.dot(point) - other_plane).abs() <= tolerance
                 && contains(point, &a, &planes_a)
                 && contains(point, &b, &planes_b)
-            {
-                if !points
+                && !points
                     .iter()
                     .any(|old: &DVec3| (*old - point).abs().max_element() <= tolerance)
                 {
                     points.push(point);
                 }
-            }
         };
         for point in va.into_iter().chain(vb) {
             admit(point);
@@ -638,7 +636,7 @@ pub(crate) fn move_body_affine_carrying_velocity(
         {
             *center += snap * fraction;
             velocity.y = 0.;
-            if let Some(carried) = carried.as_deref_mut() {
+            if let Some(carried) = carried {
                 carried.y = carried.y.max(0.);
             }
             grounded = true;

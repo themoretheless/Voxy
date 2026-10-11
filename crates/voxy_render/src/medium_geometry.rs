@@ -1,4 +1,4 @@
-//! Immutable CPU reference geometry for medium boundaries derived from SceneMesh.
+//! Immutable CPU reference geometry for medium boundaries derived from `SceneMesh`.
 //! No simulation inventory, lighting integration or alternate application runner.
 use glam::DVec3;
 use std::collections::BTreeMap;
@@ -11,7 +11,7 @@ pub struct OpticalMediumId(pub u64);
 pub struct MediumBoundaryHit {
     pub distance_m: f64,
     pub position_m: [f64; 3],
-    /// Points into the incident medium, matching dielectric_boundary_sample.
+    /// Points into the incident medium, matching `dielectric_boundary_sample`.
     pub incident_normal: [f64; 3],
     pub incident_medium: OpticalMediumId,
     pub transmitted_medium: OpticalMediumId,
@@ -141,7 +141,7 @@ impl MediumBoundaryMesh {
         })
     }
     /// First crossing on a unit ray, in the explicitly supplied metric interval
-    /// (minimum_distance_m, maximum_distance_m]. No hidden bias or origin offset.
+    /// (`minimum_distance_m`, `maximum_distance_m`]. No hidden bias or origin offset.
     /// Does not infer camera occupancy, pick optical coefficients or integrate light.
     /// O(triangles) CPU oracle; not a production acceleration structure.
     /// # Errors
@@ -314,8 +314,8 @@ fn first_triangle_hit(
         }) {
             continue;
         }
-        if let Some(previous) = hit.as_ref() {
-            if distance == best {
+        if let Some(previous) = hit.as_ref()
+            && distance == best {
                 let oriented = if denominator < 0. {
                     triangle.outward
                 } else {
@@ -328,7 +328,6 @@ fn first_triangle_hit(
                 }
                 continue;
             }
-        }
         let entering = denominator < 0.;
         best = distance;
         hit = Some(TriangleIntersection {
@@ -371,7 +370,7 @@ impl OpaqueRadianceMesh {
         }
         Ok(())
     }
-    /// Geometry is a derivative of SceneMesh. Both sides terminate the ray;
+    /// Geometry is a derivative of `SceneMesh`. Both sides terminate the ray;
     /// outgoing radiance is physical L, not reduced L/n^2 or reflectance.
     /// # Errors
     /// Triangle budget, invalid scale/radiance or degenerate geometry.

@@ -47,7 +47,7 @@ impl PreparedSkinnedFrame {
             return Ok(Vec::new());
         }
         let vertices = &self.motion.vertices;
-        if vertices.len() % 3 != 0
+        if !vertices.len().is_multiple_of(3)
             || vertices
                 .iter()
                 .any(|v| v.previous.iter().any(|p| !p.is_finite()))

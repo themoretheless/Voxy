@@ -946,8 +946,8 @@ impl Panels {
                             Action::CollectionPage(forward),
                         ));
                     }
-                    if !playing {
-                        if let Some(deleted) = self.collection_deleted_items.get(&list.key).cloned()
+                    if !playing
+                        && let Some(deleted) = self.collection_deleted_items.get(&list.key).cloned()
                         {
                             let pages = deleted.len().div_ceil(3).max(1);
                             let page = self.deleted_page % pages;
@@ -979,7 +979,6 @@ impl Panels {
                                 ));
                             }
                         }
-                    }
                 } else {
                     self.text(
                         &mut batch,

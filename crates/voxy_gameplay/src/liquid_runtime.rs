@@ -344,12 +344,11 @@ fn trajectory_events_counted(
                 Err(crate::PhysicsError::SweepBudget) => return Err(Error::CollisionBudget),
                 Err(_) => return Err(Error::CollisionBackend),
             };
-            if let GeometryHit::Contact { fraction, .. } = hit.contact.geometry {
-                if fraction < earliest {
+            if let GeometryHit::Contact { fraction, .. } = hit.contact.geometry
+                && fraction < earliest {
                     earliest = fraction;
                     result = hit;
                 }
-            }
         }
     }
     Ok(result)
@@ -2072,14 +2071,14 @@ impl SceneLiquidRuntime {
         }
         Ok(())
     }
-    /// First admitted body for compatibility; use body_states for the entire world.
+    /// First admitted body for compatibility; use `body_states` for the entire world.
     #[must_use]
     pub fn body_state(&self) -> Option<(NodeId, physics::liquid::TranslatingBody)> {
         self.body_states().next()
     }
 
     /// All admitted COM states (legacy bodies use the root pivot), including paused
-    /// inactive bodies, in stable owner order. Rotation is exposed by body_rigid_states.
+    /// inactive bodies, in stable owner order. Rotation is exposed by `body_rigid_states`.
     pub fn body_states(
         &self,
     ) -> impl Iterator<Item = (NodeId, physics::liquid::TranslatingBody)> + '_ {

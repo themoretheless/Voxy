@@ -299,7 +299,7 @@ impl crate::App {
         self.validate_authoring_document(&document)?;
         let registry = &self.authoring.authoring_project.registry;
         let baseline = snapshot.source.instance_baseline(
-            &registry,
+            registry,
             voxy_scene::PrefabLimits {
                 max_objects: 128,
                 max_instances: 128,
@@ -313,13 +313,13 @@ impl crate::App {
         )?;
         snapshot.source = snapshot
             .source
-            .capture_edits(&baseline, &document, &registry, 128)?;
+            .capture_edits(&baseline, &document, registry, 128)?;
         snapshot.expanded = document.clone();
         self.authoring
             .history
             .as_mut()
             .ok_or("missing history")?
-            .commit_with_metadata(document, serde_json::to_value(snapshot)?, &registry)?;
+            .commit_with_metadata(document, serde_json::to_value(snapshot)?, registry)?;
         self.restore_authoring()?;
         self.field = None;
         self.panel_cache = None;

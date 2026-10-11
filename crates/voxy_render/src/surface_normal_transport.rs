@@ -80,7 +80,7 @@ impl SurfaceNormalTransport {
         ];
         if device.limits().max_storage_buffers_per_shader_stage < 6
             || data.iter().any(|d| {
-                d.len() as u64 > u64::from(device.limits().max_storage_buffer_binding_size)
+                d.len() as u64 > device.limits().max_storage_buffer_binding_size
             })
         {
             return Err(SceneError::GeometryCapacityExceeded);

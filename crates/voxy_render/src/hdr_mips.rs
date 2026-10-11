@@ -8,7 +8,7 @@ pub struct HdrMipPyramid {
     pipeline: wgpu::RenderPipeline,
 }
 impl HdrMipPyramid {
-    /// Allocate RGBA16Float levels and retain each downsample pass binding.
+    /// Allocate `RGBA16Float` levels and retain each downsample pass binding.
     /// # Errors
     /// Rejects zero dimensions and dimensions exceeding device texture limits.
     pub fn new(device: &wgpu::Device, width: u32, height: u32) -> Result<Self, RendererError> {

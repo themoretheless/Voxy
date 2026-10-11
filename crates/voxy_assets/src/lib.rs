@@ -22,7 +22,14 @@ pub struct AssetCache {
     weak_refs: HashMap<String, usize>,
 }
 
+impl Default for AssetCache {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AssetCache {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             strong_cache: Mutex::new(HashMap::new()),

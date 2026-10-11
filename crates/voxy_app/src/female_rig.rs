@@ -36,7 +36,7 @@ impl GraspObject {
     ) -> Result<Self, &'static str> {
         if vertices.is_empty()
             || indices.is_empty()
-            || indices.len() % 3 != 0
+            || !indices.len().is_multiple_of(3)
             || indices.iter().any(|&i| i as usize >= vertices.len())
         {
             return Err("invalid grasp mesh indices");
@@ -742,7 +742,7 @@ impl FemaleRig {
         indices: &[u32],
     ) -> Result<(), &'static str> {
         if vertices.len() != self.weights.len()
-            || indices.len() % 3 != 0
+            || !indices.len().is_multiple_of(3)
             || indices.iter().any(|&i| i as usize >= vertices.len())
         {
             return Err("invalid hand surface binding");
@@ -1367,8 +1367,7 @@ fn finger_clearance_from(
     if let Some(finger) = FINGER_CHAINS
         .iter()
         .position(|candidate| *candidate == chain)
-    {
-        if finger != 0 || !matches!(object, GraspObject::Cylinder { .. }) {
+        && (finger != 0 || !matches!(object, GraspObject::Cylinder { .. })) {
             // Use both actual hand surfaces: their vertices and skin weights differ.
             // Retain a small clearance margin before the final surface correction.
             type Cloud = Vec<(Vec3, Box<[(usize, f32)]>)>;
@@ -1432,7 +1431,6 @@ fn finger_clearance_from(
                 ) - if finger == 0 { 0.0002 } else { 0.0001 };
             }
         }
-    }
     let mut point = Vec3::from_array(chain[0]);
     let mut rotation = Quat::IDENTITY;
     let mut clearance = f32::INFINITY;
@@ -1901,13 +1899,13 @@ fn finger_surface_gap(
             transform * Mat4::from_translation(-origin),
         );
     }
-    let skin_gap = skin
+    
+    skin
         .iter()
         .map(|(point, weights)| {
             object.distance(crate::rig_skinning::deform_point(*point, weights, &palette))
         })
-        .fold(f32::INFINITY, f32::min);
-    skin_gap
+        .fold(f32::INFINITY, f32::min)
 }
 
 fn cylinder_curled_contact_pose(
@@ -2081,7 +2079,7 @@ fn finger_weights_uncorrected(p: Vec3) -> Option<Vec<(usize, f32)>> {
     let sigma = 0.006 + 0.003 * smooth(-0.050, -0.010, point.y) * smooth(0.060, 0.090, point.z);
     let probabilities = samples.map(|sample| (-(sample.0 - minimum) / (2. * sigma.powi(2))).exp());
     let total: f32 = probabilities.iter().sum();
-    let side = if p.x >= 0. { 0 } else { 1 };
+    let side = usize::from(p.x < 0.);
     let envelope = smooth(0.32, 0.34, point.x) * (1. - smooth(0.015, 0.03, point.y));
     let mut result = Vec::with_capacity(19);
     let mut sum = 0.;

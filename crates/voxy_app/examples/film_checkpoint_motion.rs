@@ -45,13 +45,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut states = Vec::new();
     let mut runs = Vec::new();
     for steps in [20, 40, 80, 160] {
-        let dt = duration / steps as f64;
+        let dt = duration / f64::from(steps);
         let mut film = SurfaceFilm::from_state(&initial)?;
         let started = std::time::Instant::now();
         let mut supplied = 0.;
         let mut max_mass_error = 0_f64;
         for step in 1..=steps {
-            let time = step as f64 * dt;
+            let time = f64::from(step) * dt;
             let points = posed(&initial.points, time, duration);
             supplied +=
                 film.advance_on_geometry(&points, dt, &[(source, rate)], [0., -9.81, 0.])?;

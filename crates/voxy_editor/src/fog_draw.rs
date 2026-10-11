@@ -198,7 +198,7 @@ impl FogDraw {
                 .checked_mul(48)
                 .and_then(|n| n.checked_add(176))
                 .ok_or("fog byte count overflow")?;
-            if storage > u64::from(device.limits().max_storage_buffer_binding_size) {
+            if storage > device.limits().max_storage_buffer_binding_size {
                 return Err("fog view exceeds GPU storage binding capacity".into());
             }
             if camera.is_none() {

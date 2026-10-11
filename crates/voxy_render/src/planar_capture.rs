@@ -52,7 +52,7 @@ pub struct PlanarReflectionCapture {
     depth: wgpu::TextureView,
 }
 impl PlanarReflectionCapture {
-    /// Allocate single-sample RGBA16Float mip pyramid and conventional depth.
+    /// Allocate single-sample `RGBA16Float` mip pyramid and conventional depth.
     /// # Errors
     /// Rejects dimensions outside the device's texture limits.
     pub fn new(device: &wgpu::Device, width: u32, height: u32) -> Result<Self, RendererError> {

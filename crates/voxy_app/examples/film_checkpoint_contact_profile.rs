@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut max_mass_error = [0_f64; 2];
     let config = BridgeConfig::default();
     for frame in 0..22 {
-        let phase = std::f64::consts::TAU * (frame + 1) as f64 / 22.;
+        let phase = std::f64::consts::TAU * f64::from(frame + 1) / 22.;
         let points: Vec<_> = initial
             .points
             .iter()

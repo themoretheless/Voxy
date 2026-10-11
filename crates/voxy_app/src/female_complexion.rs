@@ -374,7 +374,7 @@ pub(crate) fn atlas() -> &'static [u8] {
 }
 fn build_atlas(layers: SkinLayers) -> Vec<u8> {
     let workers = std::thread::available_parallelism()
-        .map_or(1, |n| n.get())
+        .map_or(1, std::num::NonZero::get)
         .min(8);
     build_atlas_with_workers(layers, workers)
 }
