@@ -312,7 +312,7 @@ impl InertialBody {
                 next_surface.unwrap(),
                 &self.body.positions,
                 &positions,
-                &self.body.surface(),
+                self.body.surface_faces(),
             )? {
                 return Err("inertial prescribed surface path crossing");
             }
@@ -488,16 +488,7 @@ impl InertialBody {
         let initial = self.plane.unwrap();
         let theta = angle[0].hypot(angle[1]).hypot(angle[2]);
         let offset_delta = next.offset_m - initial.offset_m;
-        let mut boundary = vec![false; positions.len()];
-        for face in self.body.surface() {
-            for node in face {
-                boundary[node] = true;
-            }
-        }
-        for (node, on_surface) in boundary.into_iter().enumerate() {
-            if !on_surface {
-                continue;
-            }
+        for &node in self.body.surface_nodes() {
             let start = self.body.positions[node];
             let end = positions[node];
             let g0 = dot(initial.normal, start) - initial.offset_m;

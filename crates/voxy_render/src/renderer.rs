@@ -258,6 +258,9 @@ impl Renderer {
         {
             required_features |= wgpu::Features::MAPPABLE_PRIMARY_BUFFERS;
         }
+        if adapter.features().contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY) {
+            required_features |= wgpu::Features::EXPERIMENTAL_RAY_QUERY;
+        }
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("Voxy device"),

@@ -363,16 +363,7 @@ impl InertialBody {
         let mut rotation_gradient = [0.; 3];
         if let Some(plane) = plane {
             let mut plane_contact_j = 0.;
-            let mut boundary = vec![false; self.masses.len()];
-            for face in self.body.surface() {
-                for node in face {
-                    boundary[node] = true;
-                }
-            }
-            for (node, &on_surface) in boundary.iter().enumerate() {
-                if !on_surface {
-                    continue;
-                }
+            for &node in self.body.surface_nodes() {
                 let gap = dot(plane.normal, positions[node]) - plane.offset_m;
                 if !gap.is_finite() {
                     return Err("plane gap overflow");
@@ -394,7 +385,7 @@ impl InertialBody {
         }
         let mut surface_gradient = Vec::new();
         if let Some(surface) = surface {
-            let response = surface.response(positions, &self.body.surface())?;
+            let response = surface.response(positions, self.body.surface_faces())?;
             energy += response.potential_j;
             contact += response.potential_j;
             for (body_gradient, contact_gradient) in

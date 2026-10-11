@@ -172,40 +172,40 @@ impl PreparedPrescribedContactPath {
         if start.len() != end.len() {
             return Err("body contact vertex count changed");
         }
-        let body_pose = |time: f64| -> Vec<Vec3> {
+        let mut body = vec![[0.0; 3]; start.len()];
+        let fill_body_pose = |time: f64, dst: &mut [Vec3]| {
             if time == 0. {
-                return start.to_vec();
+                dst.copy_from_slice(start);
+            } else if time == 1. {
+                dst.copy_from_slice(end);
+            } else {
+                for ((out, a), b) in dst.iter_mut().zip(start).zip(end) {
+                    *out = trajectory_point(*a, *b, time);
+                }
             }
-            if time == 1. {
-                return end.to_vec();
-            }
-            start
-                .iter()
-                .zip(end)
-                .map(|(a, b)| trajectory_point(*a, *b, time))
-                .collect()
         };
-        let energies = self
-            .boundaries
-            .iter()
-            .map(|(time, surface)| {
+        let mut energies = Vec::with_capacity(self.boundaries.len());
+        for (time, surface) in &self.boundaries {
+            fill_body_pose(*time, &mut body);
+            energies.push(
                 surface
                     .response_with_coordinates::<true>(
-                        &body_pose(*time),
+                        &body,
                         faces,
                         self.coordinates(start, end, *time),
-                    )
-                    .map(|r| r.potential_j)
-            })
-            .collect::<Result<Vec<_>, _>>()?;
+                    )?
+                    .potential_j,
+            );
+        }
         let obstacle_start = self.boundaries[0].1.positions();
         let obstacle_end = self.boundaries.last().unwrap().1.positions();
-        let mut defects = Vec::new();
+        let mut defects = Vec::with_capacity(self.samples.len() / 5);
         for (panel, samples) in self.samples.chunks_exact(5).enumerate() {
             let mut work = 0.;
             for (time, weight, surface) in samples {
+                fill_body_pose(*time, &mut body);
                 let response = surface.response_with_coordinates::<true>(
-                    &body_pose(*time),
+                    &body,
                     faces,
                     self.coordinates(start, end, *time),
                 )?;
@@ -239,23 +239,23 @@ impl PreparedPrescribedContactPath {
         if start.len() != end.len() {
             return Err("body contact vertex count changed");
         }
-        let pose = |time| {
-            start
-                .iter()
-                .zip(end)
-                .map(|(a, b)| trajectory_point(*a, *b, time))
-                .collect::<Vec<_>>()
+        let mut body = vec![[0.0; 3]; start.len()];
+        let fill_pose = |time: f64, dst: &mut [Vec3]| {
+            for ((out, a), b) in dst.iter_mut().zip(start).zip(end) {
+                *out = trajectory_point(*a, *b, time);
+            }
         };
-        let energies = self
-            .boundaries
-            .iter()
-            .map(|(time, _)| evaluate(&pose(*time)).map(|v| v.0))
-            .collect::<Result<Vec<_>, _>>()?;
-        let mut defects = Vec::new();
+        let mut energies = Vec::with_capacity(self.boundaries.len());
+        for (time, _) in &self.boundaries {
+            fill_pose(*time, &mut body);
+            energies.push(evaluate(&body)?.0);
+        }
+        let mut defects = Vec::with_capacity(self.samples.len() / 5);
         for (panel, samples) in self.samples.chunks_exact(5).enumerate() {
             let mut work = 0.;
             for (time, weight, _) in samples {
-                let (_, gradient) = evaluate(&pose(*time))?;
+                fill_pose(*time, &mut body);
+                let (_, gradient) = evaluate(&body)?;
                 if gradient.len() != start.len() {
                     return Err("potential gradient vertex count changed");
                 }
@@ -361,12 +361,11 @@ impl PreparedPrescribedContactPath {
         }
         let inactive = SKIP_INACTIVE && ADMITTED && !self.samples[0].2.may_contact_faces(faces);
         let mut result = Vec::new();
+        let mut body = vec![[0.0; 3]; start.len()];
         for &(time, weight, ref surface) in &self.samples {
-            let body: Vec<_> = start
-                .iter()
-                .zip(end)
-                .map(|(a, b)| trajectory_point(*a, *b, time))
-                .collect();
+            for ((out, a), b) in body.iter_mut().zip(start).zip(end) {
+                *out = trajectory_point(*a, *b, time);
+            }
             let blocks = if ADMITTED {
                 validate_admitted_face_geometry(&body, faces)?;
                 if inactive {
@@ -432,12 +431,11 @@ impl PreparedPrescribedContactPath {
             obstacle_gradient_n: vec![[0.; 3]; self.samples[0].2.positions.len()],
             midpoint_objective_j: 0.,
         };
+        let mut body = vec![[0.0; 3]; start.len()];
         for &(time, weight, ref surface) in &self.samples {
-            let body: Vec<_> = start
-                .iter()
-                .zip(end)
-                .map(|(a, b)| trajectory_point(*a, *b, time))
-                .collect();
+            for ((out, a), b) in body.iter_mut().zip(start).zip(end) {
+                *out = trajectory_point(*a, *b, time);
+            }
             // Both endpoints already admitted this immutable face slice above.
             // Sample coordinates/areas still need admission on every call.
             let response = if ADMITTED {
@@ -988,19 +986,20 @@ impl PrescribedTriangleSurface {
     ) -> Result<Vec<Vec<PrescribedContactBranch>>, &'static str> {
         validate_faces(body, faces)?;
         let mut bundles = Vec::new();
+        let mut indices = Vec::new();
         for &face in faces {
             if !self.body_face_may_contact(face) {
                 continue;
             }
             let triangle = face.map(|i| body[i]);
-            let mut indices = Vec::new();
+            indices.clear();
             self.index.query_conservative(
                 TriangleBounds::triangle(triangle),
                 self.minimum + self.activation,
                 &mut indices,
             );
             indices.sort_unstable();
-            for index in indices {
+            for &index in &indices {
                 if !self.pair_enabled(&face, index) {
                     continue;
                 }
@@ -1062,19 +1061,20 @@ impl PrescribedTriangleSurface {
     ) -> Result<Option<PrescribedContactFeature>, &'static str> {
         validate_faces(body, faces)?;
         let mut nearest: Option<PrescribedContactFeature> = None;
+        let mut candidates = Vec::new();
         for &face in faces {
             if !self.body_face_may_contact(face) {
                 continue;
             }
             let triangle = face.map(|node| body[node]);
-            let mut candidates = Vec::new();
+            candidates.clear();
             self.index.query_conservative(
                 TriangleBounds::triangle(triangle),
                 self.minimum + self.activation,
                 &mut candidates,
             );
             candidates.sort_unstable();
-            for index in candidates {
+            for &index in &candidates {
                 if !self.pair_enabled(&face, index) {
                     continue;
                 }
@@ -1352,11 +1352,12 @@ impl PrescribedTriangleSurface {
         validate_faces(body_start, faces)?;
         // Vertex counts match and the same face slice is used at both endpoints.
         validate_admitted_face_geometry(body_end, faces)?;
+        let mut candidates = Vec::new();
         for face in faces {
             if !self.body_face_may_contact(*face) {
                 continue;
             }
-            let mut candidates = Vec::new();
+            candidates.clear();
             index.query_conservative(
                 TriangleBounds::swept(
                     face.map(|node| body_start[node]),
@@ -1366,7 +1367,7 @@ impl PrescribedTriangleSurface {
                 &mut candidates,
             );
             candidates.sort_unstable();
-            for index in candidates {
+            for &index in &candidates {
                 if !self.pair_enabled(&face, index) {
                     continue;
                 }

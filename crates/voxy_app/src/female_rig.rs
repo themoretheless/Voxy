@@ -4,6 +4,9 @@ use voxy_animation::{
     AnimationClip, Joint, JointTrack, Playback, Pose, QuatKey, Skeleton, Transform,
 };
 use voxy_render::SceneVertex;
+#[cfg(test)]
+#[path = "jump_rig_tests.rs"]
+mod jump_rig_tests;
 
 /// Object in the canonical left hand's rest frame. Meshes must be closed and outward wound.
 #[derive(Debug)]
@@ -302,6 +305,7 @@ pub(crate) struct FemaleRig {
     grasp_mix: f32,
     grasp_cycle: bool,
     body_motion: bool,
+    jump_chains: [voxy_animation::TwoBoneChain; 2],
     grasp_object: Option<std::sync::Arc<GraspObject>>,
     grasp_samples: Option<std::sync::Arc<Vec<[[Quat; 3]; 5]>>>,
     hand_edges: Vec<(usize, usize, f32)>,
@@ -534,6 +538,10 @@ impl FemaleRig {
         )?;
         let clip =
             AnimationClip::new("relaxed arm gesture", 6., Playback::Loop, tracks, &skeleton)?;
+        let jump_chains = [
+            voxy_animation::TwoBoneChain::new(&skeleton, [7, 8, 9])?,
+            voxy_animation::TwoBoneChain::new(&skeleton, [13, 14, 15])?,
+        ];
         Ok(Self {
             skeleton,
             clip,
@@ -541,6 +549,7 @@ impl FemaleRig {
             grasp_mix: 0.,
             grasp_cycle: false,
             body_motion: true,
+            jump_chains,
             grasp_object: None,
             grasp_samples: None,
             hand_edges: Vec::new(),
@@ -976,6 +985,71 @@ impl FemaleRig {
         self.pose(time)
             .skin_matrices(&self.skeleton)
             .expect("validated rig")[3]
+    }
+    /// Planted ankle targets are expressed before the shared vertical root
+    /// displacement. IK preserves segment lengths during the squat and landing.
+    fn jump_pose(&self, time: f64) -> Pose {
+        let motion = crate::jump_motion::sample(time);
+        let mut pose = self.skeleton.bind_pose();
+        if motion.height == 0. && motion.flight.is_none() && motion.limb_weight == 0. { return pose; }
+        let lean = 0.15 * motion.compression;
+        let pelvis_z = -0.035 * motion.compression;
+        let mut translation = pose.local()[0].translation;
+        translation.z += pelvis_z;
+        pose.set_joint_translation(0, translation).expect("finite jump pelvis");
+        pose.set_joint_rotation(0, Quat::from_rotation_x(lean)).expect("jump pelvis");
+        pose.set_joint_rotation(1, Quat::from_rotation_x(-0.03 * motion.compression)).expect("jump spine");
+        pose.set_joint_rotation(3, Quat::from_rotation_x(-0.12 * motion.compression)).expect("level jump gaze");
+        let tuck = motion.flight.map_or(0., |phase| (std::f32::consts::PI * phase).sin().powi(2));
+        for (side, sign) in [1f32, -1.].into_iter().enumerate() {
+            let ankle = if motion.flight.is_some() {
+                Vec3::new(sign * 0.10, -0.74 + 0.10 * tuck, -0.04 * tuck)
+            } else {
+                Vec3::new(sign * 0.10, -0.74 - motion.height as f32, 0.)
+            };
+            let (solved, result) = pose.solve_two_bone(&self.jump_chains[side], voxy_animation::TwoBoneTarget {
+                position: ankle,
+                pole: {
+                    let bend = if motion.flight.is_some() { tuck } else { motion.compression };
+                    let w = smooth(0., 0.1, bend);
+                    Vec3::new(sign * (0.10 + 0.30 * (1. - w)), -0.42, 0.70 * w)
+                },
+                rotation: Some(Quat::from_rotation_x(0.20 * tuck)),
+                weight: 1.,
+            }).expect("validated jump leg chain");
+            debug_assert!(result.tip_position.distance(ankle) < 2e-5, "jump leg target unreachable");
+            pose = solved;
+            let arm = if side == 0 { 4 } else { 10 };
+            let lower = Quat::from_rotation_z(-sign * 0.48 * motion.limb_weight);
+            pose.set_joint_rotation(arm, Quat::from_rotation_x(motion.arm_swing) * lower).expect("jump arm swing");
+            let elbow_axis = Vec3::new(-0.23, -sign * 0.12, 0.).normalize();
+            pose.set_joint_rotation(arm + 1, Quat::from_axis_angle(elbow_axis, 0.35 * motion.limb_weight)).expect("jump elbow");
+        }
+        pose
+    }
+    pub(crate) fn jump_palette(&self, time: f64) -> Vec<Mat4> {
+        self.jump_pose(time).skin_matrices(&self.skeleton).expect("validated jump pose")
+    }
+    pub(crate) fn jump_head_matrix(&self, time: f64) -> Mat4 { self.jump_palette(time)[3] }
+    pub(crate) fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
+        self.weights.iter().map(|row| voxy_render::SurfaceRigidSkinWeight {
+            joints: row.map(|(joint,_)| joint as u32), weights: row.map(|(_,weight)| weight),
+        }).collect()
+    }
+    pub(crate) fn deform_jump(&self, vertices: &mut [SceneVertex], time: f64) {
+        let palette: Vec<_> = self.jump_palette(time).into_iter()
+            .map(crate::rig_skinning::RigidSkinTransform::from_matrix).collect();
+        assert_eq!(vertices.len(), self.weights.len(), "jump skin binding count mismatch");
+        for (vertex, weights) in vertices.iter_mut().zip(&self.weights) {
+            vertex.position = crate::rig_skinning::deform_point(Vec3::from_array(vertex.position), weights, &palette).to_array();
+        }
+    }
+    pub(crate) fn jump_pose_points(&self, points: &[[f64; 3]], time: f64) -> Vec<[f64; 3]> {
+        let palette: Vec<_> = self.jump_palette(time).into_iter()
+            .map(crate::rig_skinning::RigidSkinTransform::from_matrix).collect();
+        assert_eq!(points.len(), self.weights.len(), "jump shell binding count mismatch");
+        points.iter().zip(&self.weights).map(|(p,w)|
+            crate::rig_skinning::deform_point(Vec3::from_array(p.map(|x| x as f32)), w, &palette).to_array().map(f64::from)).collect()
     }
     /// Apply the same procedural skeleton to reduced physical-shell points.
     pub(crate) fn pose_points(&self, points: &[[f64; 3]], time: f32) -> Vec<[f64; 3]> {

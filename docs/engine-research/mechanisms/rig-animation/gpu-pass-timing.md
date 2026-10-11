@@ -29,3 +29,23 @@ Evidence is in `artifacts/rig-gpu-timestamps-2026-10-03/`. The older native-fram
 profile is a separate hashed snapshot preceding this transaction-order change.
 Full render-pass timestamps, complex rigs and non-Metal/CUDA verification remain
 open work.
+
+## Ordered compute-pass timing, 2026-10-10
+
+`ComputeJob::encode_repeated_steps_with_timestamps` now exposes pass-boundary
+queries for ordered resident dispatches sharing one compute pass. It uses the same
+encoder as ordinary repeated dispatches. Both single and repeated timestamp APIs
+reject disabled `TIMESTAMP_QUERY` before recording a pass; query ownership, type
+and index validity remain the caller's wgpu contract.
+
+Actual Metal validation compares all QR factor bytes for nine varying operators
+with and without instrumentation, decodes every factor, resolves positive GPU
+intervals and records the device timestamp period. The disabled-feature unit test
+verifies that ordinary encoding remains usable after rejection. The renderer unit
+suite passes 212 tests (34 ignored). Evidence and full source/binary hashes are in
+`artifacts/articulated-jump-2026-10-10/repeated-qr-gpu-pass-timestamps/`.
+
+These intervals measure selected QR passes under uncontrolled concurrent load.
+They do not measure equality solves, CPU assembly, whole-trajectory throughput,
+full-frame GPU time or rendered FPS. The full-density jump qualification remains
+a separate live run on its unchanged frozen binary.
