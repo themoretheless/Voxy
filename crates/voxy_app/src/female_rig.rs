@@ -1367,70 +1367,64 @@ fn finger_clearance_from(
     if let Some(finger) = FINGER_CHAINS
         .iter()
         .position(|candidate| *candidate == chain)
-        && (finger != 0 || !matches!(object, GraspObject::Cylinder { .. })) {
-            // Use both actual hand surfaces: their vertices and skin weights differ.
-            // Retain a small clearance margin before the final surface correction.
-            type Cloud = Vec<(Vec3, Box<[(usize, f32)]>)>;
-            static CLOUDS: std::sync::OnceLock<[[Cloud; 3]; 5]> = std::sync::OnceLock::new();
-            let clouds = CLOUDS.get_or_init(|| {
-                let asset = voxy_render::ObjAsset::parse(
-                    include_str!("../../../assets/characters/blender-female/body.obj"),
-                    voxy_render::ObjLimits::default(),
-                )
-                .unwrap();
-                let mut clouds: [[Cloud; 3]; 5] =
-                    std::array::from_fn(|_| std::array::from_fn(|_| Vec::new()));
-                for vertex in asset.mesh.vertices() {
-                    let point = Vec3::from_array(vertex.position);
-                    if point.x.abs() <= 0.32 {
+        && (finger != 0 || !matches!(object, GraspObject::Cylinder { .. }))
+    {
+        // Use both actual hand surfaces: their vertices and skin weights differ.
+        // Retain a small clearance margin before the final surface correction.
+        type Cloud = Vec<(Vec3, Box<[(usize, f32)]>)>;
+        static CLOUDS: std::sync::OnceLock<[[Cloud; 3]; 5]> = std::sync::OnceLock::new();
+        let clouds = CLOUDS.get_or_init(|| {
+            let asset = voxy_render::ObjAsset::parse(
+                include_str!("../../../assets/characters/blender-female/body.obj"),
+                voxy_render::ObjLimits::default(),
+            )
+            .unwrap();
+            let mut clouds: [[Cloud; 3]; 5] =
+                std::array::from_fn(|_| std::array::from_fn(|_| Vec::new()));
+            for vertex in asset.mesh.vertices() {
+                let point = Vec3::from_array(vertex.position);
+                if point.x.abs() <= 0.32 {
+                    continue;
+                }
+                let side = usize::from(point.x < 0.);
+                let canonical = Vec3::new(point.x.abs(), point.y, point.z);
+                let Some(weights) = finger_weights(point) else {
+                    continue;
+                };
+                for finger in 0..5 {
+                    let root = 16 + side * 15 + finger * 3;
+                    let own: f32 = weights
+                        .iter()
+                        .filter(|(bone, _)| (root..root + 3).contains(bone))
+                        .map(|(_, weight)| weight)
+                        .sum();
+                    if own < 0.8 {
                         continue;
                     }
-                    let side = usize::from(point.x < 0.);
-                    let canonical = Vec3::new(point.x.abs(), point.y, point.z);
-                    let Some(weights) = finger_weights(point) else {
-                        continue;
-                    };
-                    for finger in 0..5 {
-                        let root = 16 + side * 15 + finger * 3;
-                        let own: f32 = weights
-                            .iter()
-                            .filter(|(bone, _)| (root..root + 3).contains(bone))
-                            .map(|(_, weight)| weight)
-                            .sum();
-                        if own < 0.8 {
-                            continue;
-                        }
-                        let mut compact: Vec<_> = weights
-                            .iter()
-                            .filter(|(bone, weight)| {
-                                (root..root + 3).contains(bone) && *weight > 0.
-                            })
-                            .map(|(bone, weight)| (*bone - side * 15, *weight))
-                            .collect();
-                        compact.push((0, 1. - own));
-                        for first in 0..3 {
-                            if compact.iter().any(|(bone, weight)| {
-                                (16 + finger * 3 + first..16 + finger * 3 + 3).contains(bone)
-                                    && *weight > 0.
-                            }) {
-                                clouds[finger][first]
-                                    .push((canonical, compact.clone().into_boxed_slice()));
-                            }
+                    let mut compact: Vec<_> = weights
+                        .iter()
+                        .filter(|(bone, weight)| (root..root + 3).contains(bone) && *weight > 0.)
+                        .map(|(bone, weight)| (*bone - side * 15, *weight))
+                        .collect();
+                    compact.push((0, 1. - own));
+                    for first in 0..3 {
+                        if compact.iter().any(|(bone, weight)| {
+                            (16 + finger * 3 + first..16 + finger * 3 + 3).contains(bone)
+                                && *weight > 0.
+                        }) {
+                            clouds[finger][first]
+                                .push((canonical, compact.clone().into_boxed_slice()));
                         }
                     }
                 }
-                clouds
-            });
-            if !clouds[finger][first].is_empty() {
-                return finger_surface_gap(
-                    chain,
-                    finger,
-                    rotations,
-                    object,
-                    &clouds[finger][first],
-                ) - if finger == 0 { 0.0002 } else { 0.0001 };
             }
+            clouds
+        });
+        if !clouds[finger][first].is_empty() {
+            return finger_surface_gap(chain, finger, rotations, object, &clouds[finger][first])
+                - if finger == 0 { 0.0002 } else { 0.0001 };
         }
+    }
     let mut point = Vec3::from_array(chain[0]);
     let mut rotation = Quat::IDENTITY;
     let mut clearance = f32::INFINITY;
@@ -1899,9 +1893,8 @@ fn finger_surface_gap(
             transform * Mat4::from_translation(-origin),
         );
     }
-    
-    skin
-        .iter()
+
+    skin.iter()
         .map(|(point, weights)| {
             object.distance(crate::rig_skinning::deform_point(*point, weights, &palette))
         })

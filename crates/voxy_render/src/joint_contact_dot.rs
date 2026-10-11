@@ -105,8 +105,9 @@ impl JointContactDotInput {
             }
             let pair = pack(normalized)?;
             packing_error = packing_error.max(
-                (normalized - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
-                    .abs(),
+                (normalized
+                    - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
+                .abs(),
             );
             words.extend(pair);
         }
@@ -214,8 +215,9 @@ impl JointContactDotInput {
                 let pair = pack(normalized)?;
                 packing_error = packing_error.max(
                     (normalized
-                        - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
-                        .abs(),
+                        - (f64::from(f32::from_bits(pair[0]))
+                            + f64::from(f32::from_bits(pair[1]))))
+                    .abs(),
                 );
                 words.extend(pair);
             }
@@ -227,8 +229,9 @@ impl JointContactDotInput {
             }
             let pair = pack(normalized)?;
             packing_error = packing_error.max(
-                (normalized - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
-                    .abs(),
+                (normalized
+                    - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
+                .abs(),
             );
             words.extend(pair);
         }

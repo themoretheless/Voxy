@@ -167,15 +167,17 @@ pub(crate) fn member_diff(
         return true;
     }
     if let (Some(a), Some(b)) = (old.as_object(), new.as_object())
-        && a.keys().eq(b.keys()) && path.split('/').count() < 32 {
-            for (key, value) in a {
-                let encoded = key.replace('~', "~0").replace('/', "~1");
-                if !member_diff(value, &b[key], &format!("{path}/{encoded}"), result) {
-                    return false;
-                }
+        && a.keys().eq(b.keys())
+        && path.split('/').count() < 32
+    {
+        for (key, value) in a {
+            let encoded = key.replace('~', "~0").replace('/', "~1");
+            if !member_diff(value, &b[key], &format!("{path}/{encoded}"), result) {
+                return false;
             }
-            return true;
         }
+        return true;
+    }
     if path.is_empty() || path.len() > 1024 {
         return false;
     }

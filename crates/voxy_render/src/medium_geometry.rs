@@ -315,19 +315,20 @@ fn first_triangle_hit(
             continue;
         }
         if let Some(previous) = hit.as_ref()
-            && distance == best {
-                let oriented = if denominator < 0. {
-                    triangle.outward
-                } else {
-                    -triangle.outward
-                };
-                if reject_crease
-                    && DVec3::from_array(previous.incident_normal).dot(oriented) < 1. - 1e-12
-                {
-                    return Err("ambiguous medium boundary edge crossing");
-                }
-                continue;
+            && distance == best
+        {
+            let oriented = if denominator < 0. {
+                triangle.outward
+            } else {
+                -triangle.outward
+            };
+            if reject_crease
+                && DVec3::from_array(previous.incident_normal).dot(oriented) < 1. - 1e-12
+            {
+                return Err("ambiguous medium boundary edge crossing");
             }
+            continue;
+        }
         let entering = denominator < 0.;
         best = distance;
         hit = Some(TriangleIntersection {

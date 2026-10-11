@@ -97,9 +97,9 @@ impl AuthoringProject {
                 && (value.iter().any(|v| !v.is_finite())
                     || value[..3].iter().any(|v| *v < 0.)
                     || value[3] < 1.)
-                {
-                    return Err(format!("invalid liquid optics: {name}"));
-                }
+            {
+                return Err(format!("invalid liquid optics: {name}"));
+            }
             optics.push(m.optics);
             materials.push((
                 name,

@@ -79,9 +79,9 @@ impl SurfaceNormalTransport {
             bytemuck::cast_slice(&triangles),
         ];
         if device.limits().max_storage_buffers_per_shader_stage < 6
-            || data.iter().any(|d| {
-                d.len() as u64 > device.limits().max_storage_buffer_binding_size
-            })
+            || data
+                .iter()
+                .any(|d| d.len() as u64 > device.limits().max_storage_buffer_binding_size)
         {
             return Err(SceneError::GeometryCapacityExceeded);
         }

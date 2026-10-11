@@ -254,7 +254,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let target = arguments
             .get(index + 1)
             .ok_or("--switch-body-model requires female or male")?;
-        let before = model.film.as_ref().map(surface_film_preview::FilmPreview::measurements);
+        let before = model
+            .film
+            .as_ref()
+            .map(surface_film_preview::FilmPreview::measurements);
         let source = model.body_parameters.body_model.as_str();
         let parameters = model
             .body_parameters
@@ -883,12 +886,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             mesh
         };
         geometry.update(&queue, &mesh)?;
-        if !gpu_hair_render
-            && let Some(hair_geometry) = &mut hair_geometry {
-                let (body, hair) = full_model_worker::partition_hair(&mesh)?;
-                geometry.update_index_partition(&queue, &body)?;
-                hair_geometry.update_index_partition(&queue, &hair)?;
-            }
+        if !gpu_hair_render && let Some(hair_geometry) = &mut hair_geometry {
+            let (body, hair) = full_model_worker::partition_hair(&mesh)?;
+            geometry.update_index_partition(&queue, &body)?;
+            hair_geometry.update_index_partition(&queue, &hair)?;
+        }
         mesh_ms.push(started.elapsed().as_secs_f64() * 1000.);
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
         if let Some((input, job, transfer)) = &mut resident_hair {

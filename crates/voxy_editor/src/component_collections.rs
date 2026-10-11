@@ -139,15 +139,15 @@ impl crate::App {
                             .component_collections
                             .get(list.schema)
                             .and_then(|changes| changes.get(list.path))
-                        {
-                            candidates.extend(
-                                changes
-                                    .removed
-                                    .iter()
-                                    .filter(|id| item_key(id) == target)
-                                    .cloned(),
-                            );
-                        }
+                    {
+                        candidates.extend(
+                            changes
+                                .removed
+                                .iter()
+                                .filter(|id| item_key(id) == target)
+                                .cloned(),
+                        );
+                    }
                 }
             }
             if candidates.len() != 1 {
@@ -294,13 +294,13 @@ impl crate::App {
                             .component_collections
                             .get(list.schema)
                             .and_then(|changes| changes.get(list.path))
-                        {
-                            for id in &changes.removed {
-                                deleted
-                                    .entry(id.clone())
-                                    .or_insert_with(|| id.chars().take(40).collect());
-                            }
+                    {
+                        for id in &changes.removed {
+                            deleted
+                                .entry(id.clone())
+                                .or_insert_with(|| id.chars().take(40).collect());
                         }
+                    }
                 }
             }
             if !deleted.is_empty() {
