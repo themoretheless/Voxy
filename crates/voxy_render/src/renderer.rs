@@ -461,9 +461,18 @@ impl Renderer {
         if chunks.len() > 1024 {
             return Err(RendererError::TooManyChunks(chunks.len()));
         }
-        let mut quads = Vec::new();
+        // Sizes are known up front: one light word per four packed light bytes and
+        // the summed quad counts, so neither vector regrows during the upload.
+        let mut quads = Vec::with_capacity(
+            chunks
+                .iter()
+                .map(|(_, mesh, _)| mesh.quad_count())
+                .sum::<usize>()
+                .max(1),
+        );
         let mut metadata = Vec::with_capacity(chunks.len().max(1));
-        let mut light_words = Vec::new();
+        let mut light_words =
+            Vec::with_capacity((chunks.len() * voxy_core::CHUNK_VOLUME / 4).max(1));
         let mut chunk_draws = Vec::with_capacity(chunks.len());
         for &(pos, mesh, light) in chunks {
             let relative_origin = relative_chunk_origin(pos, camera_anchor)?;

@@ -40,12 +40,14 @@ rebuild.
 
 | workload | before p50 | after p50 | ratio |
 | --- | ---: | ---: | ---: |
-| sweep_aabb x10000 | 2.74 ms | 2.17 ms | 0.79 |
-| raycast x10000 (128 steps max) | 11.2 ms | 8.3 ms | 0.74 |
-| water_tick (3040 active cells) | 4.30 ms | 4.13 ms | 0.96 (unchanged code) |
+| sweep_aabb x10000 | 2.55 ms | 2.14 ms | 0.84 |
+| raycast x10000 (128 steps max) | 11.1 ms | 7.7 ms | 0.69 |
+| water_tick (3040 active cells, 862 writes) | 3.25 ms | 2.38 ms | 0.73 |
 
 Rays and sweeps resolve the chunk once per run of cells (`ChunkCursor`) instead of a
-map lookup per voxel; results and checksums are identical.
+map lookup per voxel; the water planner keeps one map of (initial, current) level per
+sampled cell instead of two maps plus a touched set and samples through the same
+cursor. Results and checksums are identical.
 
 ## Scene graph and gameplay
 
@@ -75,4 +77,4 @@ relative.
 ## Limitations
 
 See `report.json`: shared 4-vCPU host, no GPU (render changes measured on CPU parts),
-1000-object `scene_scaling` rows were noisy in both directions, water planner untouched.
+1000-object `scene_scaling` rows were noisy in both directions.

@@ -204,60 +204,60 @@
   },
   "voxel_queries (cargo bench -p physics_voxel --bench voxel_queries, 5 rounds)": {
    "water_tick": {
-    "before_ns": 4296596,
-    "after_ns": 4128786,
-    "ratio": 0.961,
+    "before_ns": 3247266,
+    "after_ns": 2383888,
+    "ratio": 0.734,
     "before_samples": [
-     4317320,
-     4296596,
-     4280044,
-     4362435,
-     4259233
+     3009549,
+     3300771,
+     3254751,
+     3247266,
+     3231880
     ],
     "after_samples": [
-     4118516,
-     4205508,
-     4195622,
-     4089871,
-     4128786
+     2383888,
+     2759550,
+     2203603,
+     2333119,
+     2673528
     ]
    },
    "sweep_aabb_x10000": {
-    "before_ns": 2741555,
-    "after_ns": 2172102,
-    "ratio": 0.792,
+    "before_ns": 2546649,
+    "after_ns": 2139433,
+    "ratio": 0.84,
     "before_samples": [
-     2786099,
-     2713074,
-     2780758,
-     2720720,
-     2741555
+     2330321,
+     2648979,
+     2546649,
+     2393034,
+     3695598
     ],
     "after_samples": [
-     2174838,
-     2172102,
-     2128874,
-     2196591,
-     2115671
+     2139433,
+     3105354,
+     1934506,
+     2043789,
+     2279383
     ]
    },
    "raycast_x10000": {
-    "before_ns": 11208419,
-    "after_ns": 8321087,
-    "ratio": 0.742,
+    "before_ns": 11149727,
+    "after_ns": 7714116,
+    "ratio": 0.692,
     "before_samples": [
-     11921841,
-     11157678,
-     11443830,
-     11208419,
-     11173791
+     11149727,
+     12797409,
+     11049391,
+     10940937,
+     15861220
     ],
     "after_samples": [
-     8242435,
-     8336929,
-     8448619,
-     8321087,
-     8229694
+     7545859,
+     8649555,
+     7714116,
+     7806830,
+     7566894
     ]
    }
   },
@@ -2210,12 +2210,12 @@
   "voxy_runtime: partial rebuild of invalidated_derived_chunks merged into the previous derived set equals a full resident rebuild after interior, boundary, corner and multi-chunk edits",
   "voxy_render: welded normals compared against an ordered-map reference on a seam grid; skinned pose validation blends once per vertex with the same accumulation order",
   "physics_voxel: benchmark checksums of water plans, sweep contacts and raycast hits identical before/after; chunk cursor compared against direct sampling across chunk edges",
-  "voxy_scene: all 71 scene tests pass; transform-only atomic batches validate in command order and commit through set_locals"
+  "voxy_scene: all 71 scene tests pass; transform-only atomic batches validate in command order and commit through set_locals",
+  "physics_voxel: rewritten water planner (single cell map, chunk cursor) emits the same plan; benchmark checksum of 862 writes over 3040 active cells identical before/after"
  ],
  "limitations": [
   "shared 4-vCPU cloud host; absolute timings vary run to run, ratios come from alternated runs",
   "scene_scaling rows at 1000 objects showed inconsistent 1.5x swings in both directions across paired runs, including workloads whose code did not change (single-leaf batches); the 10k/100k rows are the stable signal",
-  "no GPU in the container: render changes are measured on their CPU parts only; the app's per-edit rebuild saving is derived from rebuild_all_resident scaled by the dirty-chunk ratio, not from a presented-frame measurement",
-  "water_tick is unchanged (planner not rewritten); the 4% delta is noise"
+  "no GPU in the container: render changes are measured on their CPU parts only; the app's per-edit rebuild saving is derived from rebuild_all_resident scaled by the dirty-chunk ratio, not from a presented-frame measurement"
  ]
 }
