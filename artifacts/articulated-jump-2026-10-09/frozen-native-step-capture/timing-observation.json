@@ -1,0 +1,26 @@
+{
+  "observed_at": "2026-10-09T19:59:36.332072+00:00",
+  "session": 66222,
+  "pid": 29392,
+  "requested_frames": 720,
+  "completed_paired_frames": [
+    {
+      "frame": 1,
+      "native_ms": 9534.782958,
+      "cpu_control_ms": 10070.027333
+    },
+    {
+      "frame": 2,
+      "native_ms": 42227.060458,
+      "cpu_control_ms": 41614.406791999994
+    },
+    {
+      "frame": 3,
+      "native_ms": 79655.05604099999,
+      "cpu_control_ms": 83150.139584
+    }
+  ],
+  "scope": "CPU physics with diagnostics; excludes rendering; not GPU or FPS qualification",
+  "profile": "live-cpu-sample.txt",
+  "complete": false
+}

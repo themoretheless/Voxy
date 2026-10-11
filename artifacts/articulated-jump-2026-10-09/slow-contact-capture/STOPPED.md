@@ -1,0 +1,1 @@
+Capture-purpose live child 71494 was stopped explicitly with SIGINT after the first slow task was saved and independently validated. Existing trajectory runs 90348 and 69803 continue. This capture stop is not mathematical failure or completed jump qualification.

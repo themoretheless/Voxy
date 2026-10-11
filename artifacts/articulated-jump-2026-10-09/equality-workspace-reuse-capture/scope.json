@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-10-10T04:12:24.691997+00:00",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_joint.rs": "2fd286be82de781435daef82967fda284b30bad9a4517d0da49950c268660a29",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "8e03b25a4c6a8f34666be38681c3fc543acee1147c1c2b6ad39770c77cf0b8e9",
+    "crates/voxy_render/src/compute.rs": "9f05cf1bc8c0b1308ebbbbdf2763e336f3be33efe32756adb09653990e09093e",
+    "crates/voxy_render/src/compute_memory.rs": "9100b4ccae7ae0c3c6e9f9077318c0f361a6cff5a27d2fb6a851be32e0a414e6"
+  },
+  "proof": "24 changed operators/bounds exactly match fresh GPU storage; equal-size different layouts reset exactly; invalid input preserves pool; scoped storage memory released; bounded 65-owner batch twice with byte/count limits; seeded release/dependent hint retry; 4-guide 4-step physical state exact serial comparison; original captured 21-system/61-row/2646-coordinate physical gate at 1e-14, no fallback.",
+  "original_operator_allocations": {
+    "creations": 25,
+    "reinitializations": 29
+  },
+  "retained_cache_limits": {
+    "bytes": 8388608,
+    "jobs": 32,
+    "scope": "completed inactive jobs only, scoped to one coordinate solve; not total VRAM"
+  },
+  "limits": "No whole trajectory, CUDA, all-hardware or rendered FPS claim. Running bounded-readback full test uses frozen earlier binary and does not include workspace pooling. Timings not compared as a controlled benchmark."
+}

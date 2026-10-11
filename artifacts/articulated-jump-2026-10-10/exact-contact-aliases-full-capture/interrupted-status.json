@@ -1,0 +1,8 @@
+{
+  "status": "interrupted",
+  "reason": "Runtime log confirmed coordinate_batches=false; intended cooperative GPU path was not enabled by test-only BATCH_COMPARE flag. Replaced by fresh batched capture, not an observation-timeout restart.",
+  "observed_utc": "2026-10-10T05:03:07.341069+00:00",
+  "test_pid": 19299,
+  "original_log_preserved": true,
+  "qualification_result": "unproven; interruption is not a physics rejection"
+}

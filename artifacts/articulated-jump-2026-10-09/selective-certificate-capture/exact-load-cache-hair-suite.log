@@ -1,0 +1,48 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+error[E0061]: this function takes 8 arguments but 7 arguments were supplied
+   --> crates/physics/src/hair/contact_square_root_projection.rs:281:35
+    |
+281 |           let (responses,reactions)=solve_island_increment(&requests,&[0],&[0],
+    |  ___________________________________^^^^^^^^^^^^^^^^^^^^^^-
+282 | |             std::slice::from_ref(&row),&free,&bounds,tolerance).unwrap();
+    | |_______________________________________________________________- argument #8 of type `Option<&FrozenSystems<'_>>` is missing
+    |
+note: function defined here
+   --> crates/physics/src/hair/contact_square_root_projection.rs:167:4
+    |
+167 | fn solve_island_increment(
+    |    ^^^^^^^^^^^^^^^^^^^^^^
+...
+170 |     frozen:Option<&FrozenSystems<'_>>,
+    |     ---------------------------------
+help: provide the argument
+    |
+281 -         let (responses,reactions)=solve_island_increment(&requests,&[0],&[0],
+282 -             std::slice::from_ref(&row),&free,&bounds,tolerance).unwrap();
+281 +         let (responses,reactions)=solve_island_increment(&requests, &[0], &[0], std::slice::from_ref(&row), &free, &bounds, tolerance, /* Option<&FrozenSystems<'_>> */).unwrap();
+    |
+
+For more information about this error, try `rustc --explain E0061`.
+warning: `physics` (lib test) generated 2 warnings
+error: could not compile `physics` (lib test) due to 1 previous error; 2 warnings emitted

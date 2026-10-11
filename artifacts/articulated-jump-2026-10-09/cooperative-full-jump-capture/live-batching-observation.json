@@ -1,0 +1,37 @@
+{
+  "scope": "Live prefix only; profile intervals include host orchestration, packing, device wait and readback; concurrent runs prevent FPS inference",
+  "live_process": "  PID ELAPSED STAT COMMAND\n86606   01:24 R    /tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f gpu_linear_solver_tracks_full_model_jump_with_contacts --ignored --nocapture\n",
+  "log_bytes": 197055,
+  "completed_frames": [
+    [
+      "1",
+      "0.00000002229036395740014",
+      "0.0000003788691004674716"
+    ]
+  ],
+  "observed_physical_batch_count": 389,
+  "observed_owner_trials": 9099,
+  "owner_count_histogram": {
+    "11": 1,
+    "12": 3,
+    "13": 6,
+    "14": 8,
+    "15": 6,
+    "16": 1,
+    "19": 1,
+    "20": 10,
+    "21": 11,
+    "22": 81,
+    "23": 85,
+    "24": 2,
+    "25": 4,
+    "26": 169,
+    "27": 1
+  },
+  "physical_refinement_histogram": {
+    "0": 389
+  },
+  "summed_batch_wall_ms": 18391.510497,
+  "maximum_batch_wall_ms": 400.315333,
+  "terminal_marker": []
+}

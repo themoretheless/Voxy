@@ -1,0 +1,55 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+error[E0382]: borrow of moved value: `solver`
+    --> crates/physics/src/hair/velocity_contacts.rs:594:98
+     |
+ 560 |     mut solver:Option<&mut dyn crate::hair::HairLinearSolver>,tolerance:f64,
+     |     ---------- move occurs because `solver` has type `Option<&mut dyn HairLinearSolver>`, which does not implement the `Copy` trait
+...
+ 587 |         response_batches::prepare_with_free(constraints,rods,dt,solver.unwrap(),&mut free)?;
+     |                                                                        -------- `solver` moved due to this method call
+...
+ 594 |             square_root_projection::solve_accelerated(constraints,rods,dt,free.clone(),tolerance,solver.take().unwrap())
+     |                                                                                                  ^^^^^^ value borrowed here after move
+     |
+note: `Option::<T>::unwrap` takes ownership of the receiver `self`, which moves `solver`
+    --> /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/option.rs:1010:25
+     |
+1010 |     pub const fn unwrap(self) -> T {
+     |                         ^^^^
+help: consider calling `.as_ref()` to borrow the value's contents
+     |
+ 587 |         response_batches::prepare_with_free(constraints,rods,dt,solver.as_ref().unwrap(),&mut free)?;
+     |                                                                       +++++++++
+help: consider calling `.as_mut()` to mutably borrow the value's contents
+     |
+ 587 |         response_batches::prepare_with_free(constraints,rods,dt,solver.as_mut().unwrap(),&mut free)?;
+     |                                                                       +++++++++
+help: you could `clone` the value and consume it, if the `&mut dyn HairLinearSolver: Clone` trait bound could be satisfied
+     |
+ 587 |         response_batches::prepare_with_free(constraints,rods,dt,solver.clone().unwrap(),&mut free)?;
+     |                                                                       ++++++++
+
+For more information about this error, try `rustc --explain E0382`.
+warning: `physics` (lib test) generated 2 warnings
+error: could not compile `physics` (lib test) due to 1 previous error; 2 warnings emitted

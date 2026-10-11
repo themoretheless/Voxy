@@ -1,0 +1,11 @@
+{
+  "session": 47344,
+  "cargo_pid": 30672,
+  "test_pid": 31251,
+  "confirmed_live": true,
+  "completed": false,
+  "rendered_fps": null,
+  "superseded_session": 43834,
+  "superseded_test_pid": 18979,
+  "supersession_reason": "current exact sparse gap optimization absent from earlier qualifier; captured task shows ~27% improvement with bitwise matching"
+}

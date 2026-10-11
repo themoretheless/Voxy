@@ -1,0 +1,46 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.08s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 14 tests
+test hair::contact::continuous::hierarchy_tests::captured_full_groom_hierarchy_matches_original_sweep ... ignored, paired broad-phase benchmark requires a captured VJR1 motion
+test hair::contact::continuous::continuation_tests::resumed_advance_preserves_terminal_result_and_distance_count ... ok
+CAPTURED CAPSULE SWEEP case=0 safe_fraction=0.0046130617190689015 gap_m=1.6751124632904436e-10 iterations=6
+test hair::contact::continuous::hierarchy_tests::seeded_envelope_retains_pairs_when_free_motion_shrinks_past_staged_offset ... ok
+test hair::contact::continuous::tests::common_translation_and_separating_motion_remain_clear ... ok
+test hair::contact::continuous::tests::initial_contact_and_iteration_limit_are_not_reported_clear ... ok
+test hair::contact::continuous::tests::detects_crossing_between_two_separated_end_states ... ok
+test hair::contact::continuous::tests::rejects_invalid_or_unresolvable_precision_requests ... ok
+test hair::contact::continuous::tests::stationary_sphere_against_a_moving_segment ... ok
+test hair::contact::continuous::tests::swept_bounds_find_crossing_with_clear_endpoint_states ... ok
+test hair::contact::continuous::hierarchy_tests::cached_pairs_match_fresh_after_shrink_expand_radius_and_identity_changes ... ok
+test hair::contact::continuous::tests::swept_bounds_never_silently_drop_large_motion_or_invalid_input ... ok
+CAPTURED CAPSULE SWEEP case=1 safe_fraction=0.004993731915894328 gap_m=1.54459483655482e-10 iterations=13
+CAPTURED CAPSULE SWEEP case=2 safe_fraction=0.02492951956298811 gap_m=1.9172256073311453e-10 iterations=11
+test hair::contact::continuous::tests::captured_structural_transition_is_limited_before_deep_overlap ... ok
+test hair::contact::continuous::tests::swept_candidates_cover_brute_force_continuous_queries ... ok
+test hair::contact::continuous::hierarchy_tests::hierarchy_matches_original_sweep_for_dense_degenerate_and_sparse_bounds ... ok
+
+test result: ok. 13 passed; 0 failed; 1 ignored; 0 measured; 349 filtered out; finished in 0.02s
+

@@ -238,6 +238,39 @@ fn invalid_and_nonconverged_steps_are_atomic() {
     assert_eq!(s.velocities(), old_v);
     assert_eq!(s.stored_energy().unwrap(), e);
 }
+
+#[test]
+fn adaptive_skin_preserves_state_when_subdivisions_fail() {
+    let mut skin = triangle(matrix_material(), &[0, 2]);
+    let before = skin.clone();
+    let result = skin.step_adaptive(
+        1.0 / 60.0,
+        [0.0, -9.81, 0.0],
+        &[[0.0, 100.0, 10.0]; 3],
+        &[],
+        SolverConfig { max_newton: 1, ..Default::default() },
+        3,
+    );
+    assert!(result.is_err());
+    assert_eq!(skin.positions(), before.positions());
+    assert_eq!(skin.velocities(), before.velocities());
+    assert_eq!(skin.stored_energy().unwrap(), before.stored_energy().unwrap());
+    assert!(skin.step_adaptive(1.0 / 60.0, [0.0; 3], &[[0.0; 3]; 3], &[], SolverConfig::default(), 13).is_err());
+}
+
+#[test]
+fn adaptive_skin_keeps_moving_attachment_trajectory() {
+    let mut skin = triangle(matrix_material(), &[0, 2]);
+    let mut direct = skin.clone();
+    let attachments = [physics::skin::Attachment {
+        vertex: 1, target: [0.02, 0.0, 0.0], velocity: [0.01, 0.0, 0.02],
+        stiffness: 100.0, viscosity: 0.1,
+    }];
+    skin.step_adaptive(1.0 / 120.0, [0.0; 3], &[[0.0; 3]; 3], &attachments, SolverConfig::default(), 6).unwrap();
+    direct.step(1.0 / 120.0, [0.0; 3], &[[0.0; 3]; 3], &attachments, SolverConfig::default()).unwrap();
+    assert_eq!(skin.positions(), direct.positions());
+    assert_eq!(skin.velocities(), direct.velocities());
+}
 #[test]
 fn rejects_nonmanifold_winding_and_unused_vertices() {
     let m = matrix_material();
@@ -476,5 +509,30 @@ fn principal_stretches_and_thickness_match_affine_deformation() {
             assert!((metric.area_ratio - 0.96).abs() < 1e-12);
             assert!((metric.thickness * metric.area_ratio - rest_thickness).abs() < 1e-14);
         }
+    }
+}
+
+#[test]
+fn discarded_prepared_skin_preserves_future_motion_and_material_history() {
+    let mut actual=triangle(SkinMaterial::default(),&[0,2]);
+    let mut control=actual.clone();
+    let forces=[[0.,0.,0.01];3];
+    let dt=1./240.;
+    let original_positions=actual.positions().to_vec();
+    let original_velocities=actual.velocities().to_vec();
+    let original_energy=actual.stored_energy().unwrap();
+    let (candidate,_)=actual.prepare_adaptive_with_contacts(dt,[0.;3],&forces,&[],
+        &physics::skin::ContactScene::default(),SolverConfig::default(),6).unwrap();
+    assert_ne!(candidate.positions(),original_positions);
+    drop(candidate); // The coupled hair solve failed before publication.
+    assert_eq!(actual.positions(),original_positions);
+    assert_eq!(actual.velocities(),original_velocities);
+    assert_eq!(actual.stored_energy().unwrap(),original_energy);
+    for _ in 0..8 {
+        actual.step_adaptive(dt,[0.;3],&forces,&[],SolverConfig::default(),6).unwrap();
+        control.step_adaptive(dt,[0.;3],&forces,&[],SolverConfig::default(),6).unwrap();
+        assert_eq!(actual.positions(),control.positions());
+        assert_eq!(actual.velocities(),control.velocities());
+        assert_eq!(actual.stored_energy().unwrap(),control.stored_energy().unwrap());
     }
 }

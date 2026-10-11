@@ -1,0 +1,43 @@
+test biomechanics::embedded_contact::response_profile::inactive_embedded_response_profile ... ignored, manual native embedded response timing; not a realtime engine claim
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_assembled_search_metric_profile ... ignored, manual assembled search metric parity and assembly-amortized timing
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_block_jacobi_search_diagnosis ... ignored, manual block-Jacobi rest-search residual qualification on imported mesh
+test biomechanics::inertia::implicit::assembled_metric_profile::full_mesh_incomplete_factor_search_diagnosis ... ignored, manual sparse factor search residual diagnosis
+test biomechanics::inertia::implicit::tests::full_rig_symmetric_material_operator_profile ... ignored, manual full-rig material operator parity and paired timing
+test biomechanics::inertia::implicit::tests::prepared_material_moduli_profile ... ignored, manual prepared material operator ABBA timing
+test biomechanics::prescribed_surface::inactive_domain_tests::inactive_domain_benchmark ... ignored, manual inactive-domain comparison; no timing threshold
+test biomechanics::prescribed_surface::inactive_path_tests::full_mesh_inactive_path_profile ... ignored, manual full-mesh disabled-domain path paired timing
+test biomechanics::prescribed_surface::index_tests::near_machine_precision_barrier_partition_diagnostic ... ignored, diagnostic extreme endpoint gaps; reports actual refinement admission
+test biomechanics::prescribed_surface::instantaneous_pose_tests::instantaneous_pose_microbenchmark ... ignored, manual instantaneous-pose preparation benchmark
+test biomechanics::prescribed_surface::normal_pruning_tests::normal_pruning_microbenchmark ... ignored, manual normal-pruning microbenchmark
+test biomechanics::prescribed_surface::path_topology_admission_tests::benchmark_admitted_path_topology_against_legacy ... ignored, native bounded topology validation benchmark; not full-rig speed qualification
+test biomechanics::prescribed_surface::path_topology_admission_tests::benchmark_second_endpoint_admission ... ignored, isolated endpoint admission benchmark; not full-rig throughput
+test biomechanics::prescribed_surface::query_scratch_profile::active_contact_query_scratch_profile ... ignored, manual active-contact scratch paired timing; not full-rig speed
+test biomechanics::surface_contact::pruning_tests::frozen_wall_pruning_work_and_time ... ignored, requires VOXY_CONTACT_BENCH_OBJ frozen OBJ fixture
+test biomechanics::testicular::testicular_tests::sustained_pair_contact_preserves_energy_gap_and_momentum ... ignored, manual sustained nonlinear contact qualification and timing
+test hair::contact::continuous::hierarchy_tests::captured_full_groom_hierarchy_matches_original_sweep ... ignored, paired broad-phase benchmark requires a captured VJR1 motion
+test hair::contact::unique_pair_tests::owner_filter_profile ... ignored, paired broad-phase benchmark
+test hair::contact::velocity_contacts::captured_component_tests::captured_contact_component_replays_without_full_model_warmup ... ignored, requires an actual captured contact component binary
+test hair::contact::velocity_contacts::captured_position_tests::captured_body_contact_nonlinear_surface_replay ... ignored, requires captured anatomical collider binary for nonlinear replay
+test hair::contact::velocity_contacts::dense_active_set::tests::captured_projection_retains_all_inequality_gates ... ignored, requires an exported VQP1 projection fixture
+test hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission ... ignored, requires a captured joint-root motion fixture
+test hair::contact::velocity_contacts::safe_motion::tests::captured_witness_sampling_matches_before_change_reference ... ignored, requires a captured joint-root motion fixture
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry ... ignored, qualification of corrected geometry on historical rejected capture
+test hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission ... ignored, requires rejected complete-step admission capture
+test hair::contact_replay::tests::captured_full_groom_mesh_sweep ... ignored, requires all captured full-model guide motions
+test hair::contact_replay::tests::captured_interior_gradient_matches_translation_derivative ... ignored, requires full-model captured contact geometry
+test hair::contact_replay::tests::captured_mesh_sweep_matches_exhaustive_faces ... ignored, requires full-model captured moving mesh
+test hair::contact_replay::tests::captured_strand_refresh_matches_reference_and_profiles ... ignored, paired broad-phase benchmark on actual full-density capture
+test hair::contact_replay::tests::export_captured_structural_batch ... ignored, exports original full-density systems from a diagnostic capture
+test hair::contact_replay::tests::replay_rejected_contact_geometry ... ignored, requires actual rejected nonlinear contact capture
+test hair::contact_response_system::square_root_fixture_tests::captured_original_load_defect_is_corrected_without_relaxing_admission ... ignored, requires an exact captured VQI1 joint response fixture
+test hair::contact_response_system::square_root_qr::tests::captured_active_contacts_retain_original_clearance ... ignored, requires a captured VQC1 contact input
+test hair::contact_response_system::square_root_qr::tests::captured_coordinate_reconstruction_layout_experiment ... ignored, requires a captured VQC1 input; does not change production arithmetic
+test hair::contact_response_system::square_root_qr::tests::captured_guarded_append_order_retains_original_physical_admission ... ignored, requires a captured VQC1 operator and original physical loads
+test hair::contact_response_system::square_root_qr::tests::captured_prefix_reuse_matches_reference_and_reports_paired_time ... ignored, paired timing requires a captured VQC1 physical contact input
+test moisture::vapor::adaptive::preparation_benchmark::prepared_network_benchmark ... ignored, manual prepared-network comparison; no timing threshold
+test skin::shell::objective_tests::benchmark_objective_evaluations ... ignored, manual release performance measurement
+test triangle_index::cached_scale_tests::benchmark_cached_conservative_padding ... ignored, manual microbenchmark; candidate equivalence has a separate test
+test stiff_cyclic_transport_cost ... ignored, controlled transport timing comparison
+test concave_fold_accumulates_film_by_capillarity_without_mass_loss ... ignored, expensive anisotropic fold convergence study
+test gravity_substep_reuse_benchmark ... ignored, paired release benchmark for internal gravity reuse
+test repeated_binding_vs_reused_point_location ... ignored, controlled point-location preparation comparison; no timing threshold

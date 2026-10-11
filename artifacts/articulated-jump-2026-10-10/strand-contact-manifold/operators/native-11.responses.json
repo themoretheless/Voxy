@@ -1,0 +1,110 @@
+{
+  "comparison": {
+    "absolute_physical_tolerance": 1.9999999999999997e-9,
+    "angular_response_unit": "rad/s",
+    "coordinates": 36,
+    "linear_response_unit": "m/s",
+    "maximum_angular_response_component_difference": 1.8207657603852567e-14,
+    "maximum_linear_response_component_difference": 1.8207657603852567e-14,
+    "maximum_reaction_difference": 2.879912020664621e-20,
+    "native_fallback_used": false,
+    "response_quantity": "velocity",
+    "rows": 2,
+    "scope": "same complete captured physical operator; not whole trajectory",
+    "systems": 2
+  },
+  "gpu_reactions": [
+    0.0,
+    6.048358540299441e-6
+  ],
+  "gpu_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.006317308029354994,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.5756429992498646,
+      -1.5885969173256103,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.025349052671242614,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.7688695804873129,
+      0.7974571126774919,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "limits": "Original captured operator response only; global rod ordering requires input sidecar. Not a full-state trajectory replay.",
+  "native_reactions": [
+    0.0,
+    6.04835854029947e-6
+  ],
+  "native_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.006317308029354994,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.5756429992498828,
+      -1.5885969173256285,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.025349052671242985,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.7688695804873212,
+      0.7974571126775005,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "schema": "voxy-same-input-responses-v1"
+}

@@ -1,0 +1,33 @@
+    Blocking waiting for file lock on build directory
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 7.83s
+     Running unittests src/lib.rs (target/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+captured QR rows=46 width=2142, paired original/cached seconds=[(0.02907125, 0.010925125), (0.02872775, 0.009271875), (0.029453291, 0.009243542), (0.028892333, 0.009431125), (0.028676166, 0.0091955), (0.029009833, 0.0092705), (0.028827958, 0.009225292)]
+captured exact gap dense/sparse seconds=[(0.005504666, 0.004006333), (0.005382125, 0.004050959), (0.0055465, 0.004032959), (0.005438625, 0.003924458), (0.005403875, 0.003969792), (0.005442375, 0.003939958), (0.005426416, 0.003936125)]
+test hair::contact_response_system::square_root_qr::tests::captured_prefix_reuse_matches_reference_and_reports_paired_time ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 356 filtered out; finished in 0.34s
+

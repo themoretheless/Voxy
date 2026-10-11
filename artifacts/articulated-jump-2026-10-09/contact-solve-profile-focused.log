@@ -1,0 +1,350 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 14.20s
+     Running unittests src/lib.rs (target/release/deps/physics-b8ab5053a74b0b10)
+
+running 28 tests
+test hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission ... ignored, requires a captured joint-root motion fixture
+test hair::contact::velocity_contacts::safe_motion::tests::captured_witness_sampling_matches_before_change_reference ... ignored, requires a captured joint-root motion fixture
+test hair::contact::velocity_contacts::safe_motion::line_certificate::tests::overflow_never_certifies_clearance ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::localized_witness_finds_captured_penetration_between_coarse_samples ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::shifted_witness_cannot_reopen_a_previously_constrained_crossing ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::early_witness_residual_and_gradient_remain_in_physical_metres ... ok
+test hair::contact::velocity_contacts::safe_motion::line_certificate::tests::continuous_line_bound_rejects_tunnel_and_unknown_parallel_lines ... ok
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::affine_cut_includes_prescribed_root_and_time_interpolation ... ok
+test hair::contact::velocity_contacts::safe_motion::line_certificate::fixture_tests::nominal_frame3_restrictions_are_continuously_clear ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::reduced_free_motion_cannot_hide_prescribed_root_compression ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::interval_planes_do_not_admit_a_tunnel_or_exhausted_query ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::angular_trust_region_is_local_to_the_contact_component ... ok
+HAIR SWEPT INITIAL PENETRATION gap_m=-0.00004799991200153518 start_a=[[-6.000116002062718e-6, 0.0019999999999878223, 0.0], [-3.000058001031359e-5, 0.009999999999939111, 0.0]] start_b=[[2e-5, 0.0, 0.0], [5.000058001017179e-5, 0.009999999999925981, 0.0]]
+HAIR SWEPT PAIR REJECT a=(0,0) b=(1,0) reason=swept strand motion starts in penetration
+HAIR SWEPT REFINEMENT count=1 cuts=1 constraints=1 fraction=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.539083 initial_projection_ms=0.021375 initial_admission_ms=0.10483299999999998 refinements=test hair::contact::velocity_contacts::safe_motion::tests::opening_pair_above_initial_band_does_not_return_zero_progress ... ok
+1 cuts=1 constraints=1 groups=1 minimum_scale=1
+test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::angular_trust_collision_is_found_on_the_path_that_will_be_admitted ... ok
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0test hair::contact::velocity_contacts::safe_motion::tests::follicle_corner_permission_keeps_distal_crossings_visible ... ok
+21041 initial_projection_ms=0.016833 initial_admission_ms=0.003999999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1test hair::contact::velocity_contacts::safe_motion::swept_constraints::tests::swept_cut_keeps_the_first_contact_side_after_candidate_crosses ... ok
+
+test hair::contact::velocity_contacts::safe_motion::tests::initial_plane_allows_opening_and_sliding_but_bounds_closing ... ok
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.029584test hair::contact::velocity_contacts::safe_motion::tests::penetrating_start_and_invalid_modes_roll_back_complete_runtime_state ... ok
+ initial_projection_ms=test hair::contact::velocity_contacts::safe_motion::tests::checked_scale_search_merges_new_neighbors_and_preserves_independent_motion ... ok
+0.024791999999999998 initial_admission_ms=0.004208000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+test hair::contact::velocity_contacts::safe_motion::tests::root_and_free_motion_are_admitted_as_one_path ... ok
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.010417000000000001 initial_projection_ms=0.008749999999999999 initial_admission_ms=test hair::contact::velocity_contacts::safe_motion::tests::stopped_new_collision_enters_the_next_contact_active_set ... ok
+0.0015000000000000013 refinements=0 cuts=0test hair::contact::velocity_contacts::safe_motion::tests::reducing_one_group_rechecks_and_merges_a_new_neighbor_collision ... ok
+ constraints=0 groups=0 minimum_scale=test hair::contact::velocity_contacts::safe_motion::tests::safe_newton_segments_do_not_certify_the_chord_of_one_physical_interval ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::contact_group_does_not_slow_an_independent_guide ... ok
+1
+test hair::contact::velocity_contacts::safe_motion::tests::collision_limited_low_strain_step_activates_reactions_before_publication ... ok
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0test hair::contact::velocity_contacts::safe_motion::tests::parallel_pair_queries_preserve_order_and_first_rejection ... ok
+1275 initial_projection_ms=0.010542 initial_admission_ms=0.002041000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009833999999999999 initial_projection_ms=0.008042 initial_admission_ms=0.0016249999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.011292 initial_projection_ms=0.009375 initial_admission_ms=0.001667 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007833 initial_projection_ms=0.006625 initial_admission_ms=0.0010829999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.011708 initial_projection_ms=0.010042 initial_admission_ms=0.0014579999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008959 initial_projection_ms=0.00775 initial_admission_ms=0.001125000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009167 initial_projection_ms=0.007917 initial_admission_ms=0.0011659999999999986 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008875000000000001 initial_projection_ms=0.007666999999999999 initial_admission_ms=0.0010829999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009041 initial_projection_ms=0.007833 initial_admission_ms=0.0011249999999999993 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007209 initial_projection_ms=0.006084 initial_admission_ms=0.0010410000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00825 initial_projection_ms=0.006917 initial_admission_ms=0.0012079999999999981 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006833 initial_projection_ms=0.005708 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.010708 initial_projection_ms=0.0095 initial_admission_ms=0.0010830000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0095 initial_projection_ms=0.007708 initial_admission_ms=0.0016250000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007209 initial_projection_ms=0.006125 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009334 initial_projection_ms=0.007584 initial_admission_ms=0.0015830000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007292 initial_projection_ms=0.006208 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008833 initial_projection_ms=0.007458 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007333 initial_projection_ms=0.00625 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009082999999999999 initial_projection_ms=0.007542 initial_admission_ms=0.0014159999999999989 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006958 initial_projection_ms=0.005875 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006916 initial_projection_ms=0.005791 initial_admission_ms=0.0010419999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007042 initial_projection_ms=0.006042 initial_admission_ms=0.0009160000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007834 initial_projection_ms=0.006375 initial_admission_ms=0.001334000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008333 initial_projection_ms=0.007167 initial_admission_ms=0.0010830000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008291999999999999 initial_projection_ms=0.006959 initial_admission_ms=0.0012500000000000011 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007166 initial_projection_ms=0.006 initial_admission_ms=0.0010829999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006833 initial_projection_ms=0.00575 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007917 initial_projection_ms=0.006792 initial_admission_ms=0.0010409999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006834 initial_projection_ms=0.005791999999999999 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008334 initial_projection_ms=0.007125 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008333 initial_projection_ms=0.007041 initial_admission_ms=0.0011669999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008042 initial_projection_ms=0.006792 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007708 initial_projection_ms=0.006666 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007458 initial_projection_ms=0.006166 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008208 initial_projection_ms=0.006875 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008708 initial_projection_ms=0.007583 initial_admission_ms=0.0010419999999999987 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00825 initial_projection_ms=0.006917 initial_admission_ms=0.0012079999999999981 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006875 initial_projection_ms=0.005833 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0067079999999999996 initial_projection_ms=0.005666 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006916 initial_projection_ms=0.005833 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006583 initial_projection_ms=0.005542 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008333 initial_projection_ms=0.007125 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008542000000000001 initial_projection_ms=0.007167 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008291999999999999 initial_projection_ms=0.007084 initial_admission_ms=0.0010830000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007500000000000001 initial_projection_ms=0.006291000000000001 initial_admission_ms=0.0011249999999999993 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007458 initial_projection_ms=0.006417 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006584 initial_projection_ms=0.005542 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006916 initial_projection_ms=0.005915999999999999 initial_admission_ms=0.0009170000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006416 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006958 initial_projection_ms=0.005917 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006458 initial_projection_ms=0.005417 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006833 initial_projection_ms=0.005791 initial_admission_ms=0.0009169999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.005458 initial_admission_ms=0.0009169999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007083 initial_projection_ms=0.006042 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006917 initial_projection_ms=0.005542 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008042 initial_projection_ms=0.006875 initial_admission_ms=0.001083999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008083 initial_projection_ms=0.00675 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008208 initial_projection_ms=0.006958 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008541 initial_projection_ms=0.007208 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.014333 initial_projection_ms=0.011083 initial_admission_ms=0.002999999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.010166000000000001 initial_projection_ms=0.008457999999999999 initial_admission_ms=0.0016250000000000014 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009167 initial_projection_ms=0.007833 initial_admission_ms=0.0012090000000000017 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008291000000000001 initial_projection_ms=0.006958 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008457999999999999 initial_projection_ms=0.007375 initial_admission_ms=0.0010000000000000009 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008291999999999999 initial_projection_ms=0.007042 initial_admission_ms=0.0011660000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007666000000000001 initial_projection_ms=0.006625 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006875 initial_projection_ms=0.005833 initial_admission_ms=0.0009170000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006917 initial_projection_ms=0.005875 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006459 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0077919999999999994 initial_projection_ms=0.006667 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008124999999999999 initial_projection_ms=0.006833 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008167 initial_projection_ms=0.006834 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008167 initial_projection_ms=0.006875 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00675 initial_projection_ms=0.005708 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006791 initial_projection_ms=0.00575 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.005458 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008417 initial_projection_ms=0.007125 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009042000000000001 initial_projection_ms=0.007458 initial_admission_ms=0.0014170000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00675 initial_projection_ms=0.005667 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006792 initial_projection_ms=0.005708 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006583 initial_projection_ms=0.005458 initial_admission_ms=0.0010419999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006667 initial_projection_ms=0.0055 initial_admission_ms=0.0010420000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008083 initial_projection_ms=0.00675 initial_admission_ms=0.0012080000000000016 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008459 initial_projection_ms=0.007209 initial_admission_ms=0.0011660000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006625 initial_projection_ms=0.0055 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006834 initial_projection_ms=0.005667 initial_admission_ms=0.0010829999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006542 initial_projection_ms=0.005458 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.0055 initial_admission_ms=0.0009160000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006583 initial_projection_ms=0.005541 initial_admission_ms=0.0009170000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008291999999999999 initial_projection_ms=0.007 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008 initial_projection_ms=0.0067079999999999996 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008167 initial_projection_ms=0.006917 initial_admission_ms=0.0011659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007375 initial_projection_ms=0.006333 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007500000000000001 initial_projection_ms=0.006459 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008457999999999999 initial_projection_ms=0.007167 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0085 initial_projection_ms=0.00725 initial_admission_ms=0.0011659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008166 initial_projection_ms=0.006833 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008542000000000001 initial_projection_ms=0.007333 initial_admission_ms=0.0011249999999999984 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008042 initial_projection_ms=0.006709 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008417 initial_projection_ms=0.007208 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00825 initial_projection_ms=0.006916 initial_admission_ms=0.0012089999999999983 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0085 initial_projection_ms=0.00725 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006958 initial_projection_ms=0.005875 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00675 initial_projection_ms=0.005708 initial_admission_ms=0.0009169999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006667 initial_projection_ms=0.005584 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007375 initial_projection_ms=0.006333 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008375 initial_projection_ms=0.007042 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00825 initial_projection_ms=0.007042 initial_admission_ms=0.001125000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008124999999999999 initial_projection_ms=0.006792 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008459 initial_projection_ms=0.00725 initial_admission_ms=0.0011250000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008 initial_projection_ms=0.006709 initial_admission_ms=0.0011660000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008334 initial_projection_ms=0.007125 initial_admission_ms=0.0010840000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00825 initial_projection_ms=0.006917 initial_admission_ms=0.0012079999999999981 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0085 initial_projection_ms=0.00725 initial_admission_ms=0.0011659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008042 initial_projection_ms=0.00675 initial_admission_ms=0.0012080000000000016 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008583 initial_projection_ms=0.007416 initial_admission_ms=0.0010840000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00675 initial_projection_ms=0.005625000000000001 initial_admission_ms=0.0010419999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006625 initial_projection_ms=0.005541 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006625 initial_projection_ms=0.005542 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006583 initial_projection_ms=0.0055 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005334 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008375 initial_projection_ms=0.007083 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008457999999999999 initial_projection_ms=0.007125 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008209000000000001 initial_projection_ms=0.007 initial_admission_ms=0.0011249999999999984 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007166 initial_projection_ms=0.006083 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008084 initial_projection_ms=0.006875 initial_admission_ms=0.001083999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.016834 initial_projection_ms=0.01575 initial_admission_ms=0.000958999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006583 initial_projection_ms=0.005542 initial_admission_ms=0.0009160000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00775 initial_projection_ms=0.006334 initial_admission_ms=0.0012909999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007417 initial_projection_ms=0.006417 initial_admission_ms=0.0009169999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008833 initial_projection_ms=0.007542 initial_admission_ms=0.0011660000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008333 initial_projection_ms=0.007167 initial_admission_ms=0.0010830000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008459 initial_projection_ms=0.007084 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006417 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006958 initial_projection_ms=0.005833 initial_admission_ms=0.0010420000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008624999999999999 initial_projection_ms=0.007208 initial_admission_ms=0.0012920000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006583 initial_projection_ms=0.005416000000000001 initial_admission_ms=0.001083999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.013292 initial_projection_ms=0.010625 initial_admission_ms=0.0024589999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008291999999999999 initial_projection_ms=0.006875 initial_admission_ms=0.001334000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00975 initial_projection_ms=0.007916 initial_admission_ms=0.0017090000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008957999999999999 initial_projection_ms=0.007375 initial_admission_ms=0.0015000000000000013 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00825 initial_projection_ms=0.006875 initial_admission_ms=0.0012909999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009000000000000001 initial_projection_ms=0.007709000000000001 initial_admission_ms=0.001207999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0085 initial_projection_ms=0.006917 initial_admission_ms=0.001458 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009333000000000001 initial_projection_ms=0.00775 initial_admission_ms=0.0014999999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.010832999999999999 initial_projection_ms=0.009000000000000001 initial_admission_ms=0.0016249999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008624999999999999 initial_projection_ms=0.007417 initial_admission_ms=0.001125000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00775 initial_projection_ms=0.006375 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.022375 initial_projection_ms=0.02075 initial_admission_ms=0.0014999999999999979 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009000000000000001 initial_projection_ms=0.007375 initial_admission_ms=0.0015410000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007084 initial_projection_ms=0.006 initial_admission_ms=0.001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006875 initial_projection_ms=0.00575 initial_admission_ms=0.0010420000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007709000000000001 initial_projection_ms=0.006667 initial_admission_ms=0.0009579999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006833 initial_projection_ms=0.005708 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007208 initial_projection_ms=0.006083 initial_admission_ms=0.0010420000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006834 initial_projection_ms=0.005791999999999999 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007125 initial_projection_ms=0.005958000000000001 initial_admission_ms=0.0010419999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0067079999999999996 initial_projection_ms=0.005625000000000001 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007125 initial_projection_ms=0.006041 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0067079999999999996 initial_projection_ms=0.005625000000000001 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.013916 initial_projection_ms=0.011375 initial_admission_ms=0.002333 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006541 initial_projection_ms=0.0055 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.021542000000000002 initial_projection_ms=0.008667 initial_admission_ms=0.012125000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.010667 initial_projection_ms=0.008749999999999999 initial_admission_ms=0.0017920000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006709 initial_projection_ms=0.005625000000000001 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.009208000000000001 initial_projection_ms=0.007416 initial_admission_ms=0.0016250000000000006 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007917 initial_projection_ms=0.006792 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006625 initial_projection_ms=0.0055 initial_admission_ms=0.0010410000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006625 initial_projection_ms=0.005582999999999999 initial_admission_ms=0.0009590000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007542 initial_projection_ms=0.006167000000000001 initial_admission_ms=0.0012499999999999994 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008208 initial_projection_ms=0.006917 initial_admission_ms=0.0011659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.005416000000000001 initial_admission_ms=0.0009999999999999992 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006666 initial_projection_ms=0.005582999999999999 initial_admission_ms=0.0009580000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008333 initial_projection_ms=0.007 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008666 initial_projection_ms=0.007500000000000001 initial_admission_ms=0.0010829999999999998 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008749999999999999 initial_projection_ms=0.007292 initial_admission_ms=0.0013749999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007708 initial_projection_ms=0.006583 initial_admission_ms=0.0010419999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00825 initial_projection_ms=0.006917 initial_admission_ms=0.0011669999999999988 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007291 initial_projection_ms=0.006 initial_admission_ms=0.0012079999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0095 initial_projection_ms=0.007458 initial_admission_ms=0.0018329999999999987 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008375 initial_projection_ms=0.007042 initial_admission_ms=0.0012080000000000007 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008124999999999999 initial_projection_ms=0.0065 initial_admission_ms=0.0014580000000000018 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006625 initial_projection_ms=0.005582999999999999 initial_admission_ms=0.0009170000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007167 initial_projection_ms=0.005875 initial_admission_ms=0.0011669999999999996 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008541 initial_projection_ms=0.00725 initial_admission_ms=0.0011659999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008749999999999999 initial_projection_ms=0.007292 initial_admission_ms=0.0013329999999999991 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008083 initial_projection_ms=0.006833 initial_admission_ms=0.0011670000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0085 initial_projection_ms=0.007125 initial_admission_ms=0.0012500000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007375 initial_projection_ms=0.006333 initial_admission_ms=0.0009589999999999998 refinements=0 cuts=test hair::contact::velocity_contacts::safe_motion::tests::runtime_moving_roots_remain_exact_and_elastic_nodes_follow ... ok
+0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007167 initial_projection_ms=0.006042 initial_admission_ms=0.0010410000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005458 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.008583 initial_projection_ms=0.007375 initial_admission_ms=0.001082999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006625 initial_projection_ms=0.005667 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006417 initial_projection_ms=0.0054589999999999994 initial_admission_ms=0.0008750000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005416000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005458 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006334 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006417 initial_projection_ms=0.005458 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006166 initial_projection_ms=0.0052499999999999995 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006333 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00625 initial_projection_ms=0.005292000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00625 initial_projection_ms=0.0052499999999999995 initial_admission_ms=0.0008750000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006209 initial_projection_ms=0.005292000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006042 initial_projection_ms=0.005125 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006 initial_projection_ms=0.005083000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00625 initial_projection_ms=0.005292000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006 initial_projection_ms=0.005 initial_admission_ms=0.0009170000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006042 initial_projection_ms=0.005125 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006 initial_projection_ms=0.005083000000000001 initial_admission_ms=0.0008329999999999987 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006 initial_projection_ms=0.005083000000000001 initial_admission_ms=0.0008329999999999987 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006 initial_projection_ms=0.005083000000000001 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006041 initial_projection_ms=0.005083000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.005582999999999999 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006459 initial_projection_ms=0.005542 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.005541 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006416 initial_projection_ms=0.005416000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006208 initial_projection_ms=0.0052499999999999995 initial_admission_ms=0.0008750000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.005582999999999999 initial_admission_ms=0.0008340000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006333 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0009160000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006292 initial_projection_ms=0.005334 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006458 initial_projection_ms=0.0055 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006292 initial_projection_ms=0.005334 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005417 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006208 initial_projection_ms=0.005292000000000001 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006042 initial_projection_ms=0.005125 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.005958000000000001 initial_projection_ms=0.0050420000000000005 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006084 initial_projection_ms=0.005125 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006083 initial_projection_ms=0.005125 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006084 initial_projection_ms=0.005167 initial_admission_ms=0.0007920000000000002 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006042 initial_projection_ms=0.005125 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006125 initial_projection_ms=0.0051660000000000005 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006042 initial_projection_ms=0.005125 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006083 initial_projection_ms=0.005167 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006084 initial_projection_ms=0.005125 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006125 initial_projection_ms=0.005208 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006666 initial_projection_ms=0.005708 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006334 initial_projection_ms=0.005417 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006291000000000001 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006292 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005417 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006458 initial_projection_ms=0.0055 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006333 initial_projection_ms=0.005417 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006416 initial_projection_ms=0.005458 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005416000000000001 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005458 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005458 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.005542 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006083 initial_projection_ms=0.005125 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006083 initial_projection_ms=0.0051660000000000005 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.005958000000000001 initial_projection_ms=0.0050409999999999995 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006167000000000001 initial_projection_ms=0.005208999999999999 initial_admission_ms=0.0008750000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006 initial_projection_ms=0.005083000000000001 initial_admission_ms=0.0008329999999999987 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006208 initial_projection_ms=0.005292000000000001 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006083 initial_projection_ms=0.005125 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006292 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.005915999999999999 initial_projection_ms=0.004958 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.005915999999999999 initial_projection_ms=0.005 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006 initial_projection_ms=0.005083000000000001 initial_admission_ms=0.0008329999999999987 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006208 initial_projection_ms=0.005291 initial_admission_ms=0.0008340000000000005 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006541 initial_projection_ms=0.005582999999999999 initial_admission_ms=0.0008750000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006458 initial_projection_ms=0.0055 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.00625 initial_projection_ms=0.005334 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005417 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005417 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006292 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006666 initial_projection_ms=0.005666 initial_admission_ms=0.0009170000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.005458 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006333 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.0065 initial_projection_ms=0.0055 initial_admission_ms=0.0008749999999999999 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.0054589999999999994 initial_admission_ms=0.0008750000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006291000000000001 initial_projection_ms=0.0053750000000000004 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.005959 initial_projection_ms=0.0050420000000000005 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006041 initial_projection_ms=0.005125 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006125 initial_projection_ms=0.005208 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006166 initial_projection_ms=0.0052499999999999995 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006084 initial_projection_ms=0.005084 initial_admission_ms=0.0009160000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006042 initial_projection_ms=0.005125 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006375 initial_projection_ms=0.0054589999999999994 initial_admission_ms=0.0008750000000000008 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.005958000000000001 initial_projection_ms=0.0050420000000000005 initial_admission_ms=0.0008329999999999995 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006042 initial_projection_ms=0.005125 initial_admission_ms=0.0008339999999999997 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.007125 initial_projection_ms=0.005959 initial_admission_ms=0.0010410000000000003 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.005875 initial_projection_ms=0.004958 initial_admission_ms=0.0008330000000000004 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+HAIR SWEPT SOLVE PROFILE elapsed_ms=0.006084 initial_projection_ms=0.005084 initial_admission_ms=0.0009160000000000001 refinements=0 cuts=0 constraints=0 groups=0 minimum_scale=1
+test hair::contact::velocity_contacts::safe_motion::tests::runtime_swept_mode_uses_response_backend_and_preserves_exact_roots ... ok
+
+test result: ok. 26 passed; 0 failed; 2 ignored; 0 measured; 330 filtered out; finished in 0.02s
+

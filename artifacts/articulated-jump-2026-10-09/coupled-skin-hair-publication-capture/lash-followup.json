@@ -1,0 +1,10 @@
+{
+  "files_sha256": {
+    "crates/voxy_app/src/female_features.rs": "71d75a06f8ce98f5b10521e8923584385a8387729e4db872dc53148dea75bda2",
+    "crates/voxy_app/src/female_demo.rs": "a05feb7dd2d05c8fddf474aaa705fc072f3cdcabc5e4b5a9bcd2eafbaa81aa03"
+  },
+  "lash_regression_passed": 1,
+  "cadence_session": 21655,
+  "cadence_progress": "180 display frames / six seconds / 720 physical steps passed; 120 display frame variant still live",
+  "remaining_atomicity": "Secondary springs, volume regions and later film still need whole-substep/frame transaction audit."
+}

@@ -1,0 +1,9 @@
+{
+  "source_sha256": {
+    "crates/voxy_app/src/female_demo.rs": "a77787e1f358747e8c93f771e9776e38078c444407bfabb4609943391f2a1aca",
+    "crates/voxy_app/src/female_rig.rs": "75613161fdc957621e96940e9ed64ae3f8d251e4447a359e25c16e41d60a221e",
+    "crates/voxy_app/src/jump_rig_tests.rs": "e4c64f474a9d2160a6c44200bfa650e6930b8c511ba5fc840900e900234d149c"
+  },
+  "scope": "Exact film substrate/render positions across tested modes and parameter changes; physical clock checks; articulated jump CPU and Metal six samples. Geometry timings measured rig-only, not rendered FPS. Full dynamic hair trajectory and >160 FPS not qualified. Full hair run observed ReadbackBudget fallback.",
+  "rollback_check": "passed: both physical modes, all 469 hair guides, exact retry against fresh step"
+}

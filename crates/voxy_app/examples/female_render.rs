@@ -37,6 +37,9 @@ mod female_hair;
 #[path = "../src/female_rig.rs"]
 mod female_rig;
 #[allow(dead_code)]
+#[path = "../src/jump_motion.rs"]
+mod jump_motion;
+#[allow(dead_code)]
 #[path = "../src/female_transmission.rs"]
 mod female_transmission;
 #[allow(dead_code)]
@@ -87,8 +90,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     model.show_complexion = !std::env::args().any(|a| a == "--bare");
     let secondary_motion = arguments.iter().any(|a| a == "--secondary-motion");
+    let jump_sequence = arguments.iter().any(|a| a == "--jump-sequence");
+    if jump_sequence && secondary_motion {return Err("--jump-sequence inspects the rig; use --secondary-motion for physical simulation".into());}
     model.secondary_only = secondary_motion;
     model.animation_only = !secondary_motion;
+    if jump_sequence {
+        model.secondary_only=true;
+        model.rig_pose_only=true;
+        model.animation_only=false;
+        model.simulate_hair=false;
+        println!("JUMP RIG SEQUENCE: actual model skinning; secondary state is not advanced");
+    }
     let simulation_seconds = option_path("--simulation-seconds")?
         .map(str::parse::<f64>).transpose()?.unwrap_or(0.25);
     if !simulation_seconds.is_finite() || !(0.0..=60.0).contains(&simulation_seconds) {
@@ -278,8 +290,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let chest = arguments.iter().any(|a| a == "--chest");
     let side = std::env::args().any(|a| a == "--side");
     let framing_scale = model.body_parameters.height_cm / 164.;
-    let framing_center = Vec3::new(0., 0.82 * (framing_scale - 1.), 0.);
-    let whole_body_eye = framing_center + Vec3::new(0.4, 0.1, 2.4) * framing_scale;
+    let framing_center = Vec3::new(0., 0.82 * (framing_scale - 1.)
+        + if jump_sequence {0.12*framing_scale} else {0.}, 0.);
+    let whole_body_eye = framing_center + if jump_sequence {
+        Vec3::new(1.8,0.1,2.7)*framing_scale
+    } else {Vec3::new(0.4, 0.1, 2.4) * framing_scale};
     model.preview_camera_eye = Some(if chest {
         Vec3::new(0.10, 0.36, 0.65)
     } else if torso {
@@ -300,7 +315,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         "/tmp/voxy-rig-frames"
     });
-    let sequence = std::env::args().any(|a| a == "--sequence");
+    let sequence = jump_sequence || std::env::args().any(|a| a == "--sequence");
     if sequence {
         std::fs::create_dir_all(directory)?;
     }

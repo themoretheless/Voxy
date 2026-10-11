@@ -1,0 +1,38 @@
+--- a/crates/physics/src/hair/contact_square_root_qr.rs
++++ b/crates/physics/src/hair/contact_square_root_qr.rs
+@@ -174,7 +174,13 @@
+ }
+ pub(super) fn unilateral_accelerated(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,
+     backend:&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>)->Option<(Vec<f64>,Vec<f64>)> {
+-    unilateral_with_equality_backend(columns,bounds,tolerance,false,true,true,Some(backend),None)
++    if let Some(output)=unilateral_with_equality_backend(columns,bounds,tolerance,false,true,true,Some(&mut *backend),None) {
++        return Some(output);
++    }
++    // Match the guarded native owner: restart from zero dual with canonical
++    // sorted active rows. Every equality still uses the same accelerator;
++    // all original constraints and admission gates remain in force.
++    unilateral_with_equality_backend(columns,bounds,tolerance,true,true,true,Some(backend),None)
+ }
+ pub(super) fn unilateral_seeded_accelerated(columns:&[Vec<f64>],bounds:&[f64],tolerance:f64,seeds:&[f64],
+     backend:&mut dyn FnMut(&[Vec<f64>],&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>)->Option<(Vec<f64>,Vec<f64>)> {
+@@ -330,6 +336,20 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    #[test]
++    fn accelerated_rejection_retries_sorted_active_rows_from_zero_dual() {
++        let columns=vec![vec![1.,0.,0.],vec![0.,1.,0.],vec![0.,0.,1.]];
++        let bounds=[1.,2.,3.];let mut rejected=0;let mut calls=0;
++        let result=unilateral_accelerated(&columns,&bounds,1e-12,&mut |selected,targets,tolerance| {
++            calls+=1;
++            let ids:Vec<_>=selected.iter().map(|c|columns.iter().position(|original|original==c).unwrap()).collect();
++            if ids.windows(2).any(|pair|pair[0]>pair[1]) {rejected+=1;return None;}
++            equality_with_reactions(selected,targets,tolerance)
++        }).unwrap();
++        assert_eq!(result,(vec![1.,2.,3.],vec![1.,2.,3.]));
++        assert_eq!(rejected,1);assert_eq!(calls,5);
++    }
++
+     #[test]
+     fn seeded_active_set_reconstructs_current_operator_and_retries_bad_hints() {
+         let solve = |columns: &[Vec<f64>], bounds: &[f64], seeds: &[f64]| {

@@ -1,0 +1,44 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.03s
+     Running unittests src/lib.rs (/tmp/voxy-physics-diagnostics-20261010/debug/deps/physics-74c936782d895dfe)
+
+running 1 test
+test hair::contact::query_tests::nearby_geometric_planes_do_not_replace_distinct_contacts ... FAILED
+
+failures:
+
+---- hair::contact::query_tests::nearby_geometric_planes_do_not_replace_distinct_contacts stdout ----
+
+thread 'hair::contact::query_tests::nearby_geometric_planes_do_not_replace_distinct_contacts' (73703590) panicked at crates/physics/src/hair/contact.rs:1543:9:
+nearby contact replaced a plane that excludes the probe
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    hair::contact::query_tests::nearby_geometric_planes_do_not_replace_distinct_contacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 386 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --lib`

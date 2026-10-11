@@ -1,0 +1,72 @@
+{
+  "comparison": {
+    "absolute_physical_tolerance": 1e-9,
+    "angular_response_unit": "rad/s",
+    "coordinates": 18,
+    "linear_response_unit": "m/s",
+    "maximum_angular_response_component_difference": 1.4210854715202004e-13,
+    "maximum_linear_response_component_difference": 5.773159728050814e-15,
+    "maximum_reaction_difference": 9.529120656610879e-22,
+    "native_fallback_used": false,
+    "response_quantity": "velocity",
+    "rows": 3,
+    "scope": "same complete captured physical operator; not whole trajectory",
+    "systems": 1
+  },
+  "gpu_reactions": [
+    0.0,
+    0.0,
+    1.3863291377710738e-7
+  ],
+  "gpu_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.983922245654069e-6,
+      0.0,
+      -16.666403550978764,
+      0.0,
+      0.0,
+      0.0,
+      0.6666653386925799,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "limits": "Original captured operator response only; global rod ordering requires input sidecar. Not a full-state trajectory replay.",
+  "native_reactions": [
+    0.0,
+    0.0,
+    1.3863291377710834e-7
+  ],
+  "native_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.98392224568136e-6,
+      0.0,
+      -16.666403550978906,
+      0.0,
+      0.0,
+      0.0,
+      0.6666653386925857,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "schema": "voxy-same-input-responses-v1"
+}

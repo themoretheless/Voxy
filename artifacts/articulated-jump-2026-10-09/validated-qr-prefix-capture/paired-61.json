@@ -1,0 +1,82 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "comparison": "fresh QR versus validated identical-prefix reuse; full readback, grouped passes and support compaction in both; no dual hints",
+  "concurrent_system_load_controlled": false,
+  "coordinates": 2646,
+  "maximum_reaction_difference": 0.0,
+  "maximum_response_difference": 0.0,
+  "median_fresh_qr_seconds": 0.208266333,
+  "median_prefix_qr_seconds": 0.120416917,
+  "native_fallback_used": false,
+  "pairs": [
+    {
+      "baseline_qr_columns_reused": 0,
+      "candidate_qr_columns_reused": 624,
+      "fresh_equality_dispatches": 103,
+      "fresh_qr_seconds": 0.205751625,
+      "pair": 0,
+      "prefix_equality_dispatches": 103,
+      "prefix_qr_seconds": 0.125205708
+    },
+    {
+      "baseline_qr_columns_reused": 0,
+      "candidate_qr_columns_reused": 624,
+      "fresh_equality_dispatches": 103,
+      "fresh_qr_seconds": 0.205994208,
+      "pair": 1,
+      "prefix_equality_dispatches": 103,
+      "prefix_qr_seconds": 0.119914833
+    },
+    {
+      "baseline_qr_columns_reused": 0,
+      "candidate_qr_columns_reused": 624,
+      "fresh_equality_dispatches": 103,
+      "fresh_qr_seconds": 0.221150042,
+      "pair": 2,
+      "prefix_equality_dispatches": 103,
+      "prefix_qr_seconds": 0.120416917
+    },
+    {
+      "baseline_qr_columns_reused": 0,
+      "candidate_qr_columns_reused": 624,
+      "fresh_equality_dispatches": 103,
+      "fresh_qr_seconds": 0.208266333,
+      "pair": 3,
+      "prefix_equality_dispatches": 103,
+      "prefix_qr_seconds": 0.115543708
+    },
+    {
+      "baseline_qr_columns_reused": 0,
+      "candidate_qr_columns_reused": 624,
+      "fresh_equality_dispatches": 103,
+      "fresh_qr_seconds": 0.197887292,
+      "pair": 4,
+      "prefix_equality_dispatches": 103,
+      "prefix_qr_seconds": 0.116513958
+    },
+    {
+      "baseline_qr_columns_reused": 0,
+      "candidate_qr_columns_reused": 624,
+      "fresh_equality_dispatches": 103,
+      "fresh_qr_seconds": 0.2111895,
+      "pair": 5,
+      "prefix_equality_dispatches": 103,
+      "prefix_qr_seconds": 0.1248455
+    },
+    {
+      "baseline_qr_columns_reused": 0,
+      "candidate_qr_columns_reused": 624,
+      "fresh_equality_dispatches": 103,
+      "fresh_qr_seconds": 0.216890458,
+      "pair": 6,
+      "prefix_equality_dispatches": 103,
+      "prefix_qr_seconds": 0.137458
+    }
+  ],
+  "rendered_fps_measured": false,
+  "rows": 61,
+  "scope": "complete original physical projection, warmed shaders, seven alternating pairs; excludes device creation, fixture load, rendering and extra post-timing validation",
+  "speedup": 1.7295438065400728,
+  "systems": 21,
+  "whole_animation_benchmark": false
+}

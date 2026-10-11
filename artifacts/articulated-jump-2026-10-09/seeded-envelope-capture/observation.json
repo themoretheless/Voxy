@@ -1,0 +1,18 @@
+{
+  "session": 30653,
+  "cargo_pid": 13754,
+  "test_pid": 14417,
+  "observed_live": true,
+  "completed": false,
+  "fps_measured": false,
+  "superseded_runs": {
+    "island-workers-capture": {
+      "test_pid": 99395,
+      "reason": "current production seeded candidate envelope and balanced hierarchy are absent"
+    },
+    "scale-space-capture": {
+      "test_pid": 60907,
+      "reason": "current guarded QR, scoped workers and seeded candidate envelope are absent"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "scope": "native correction responses to two different captured velocity inputs, not final absolute velocities or a same-input accelerator error",
+  "maximum_linear_correction_difference_m_s": 1.979770514193291e-12,
+  "maximum_angular_correction_difference_rad_s": 1.113802383656548e-10,
+  "limits": "One-system captures select rod 227 by observer filter. Row correspondence and frame/substep are not established by filenames alone; free velocities are encoded into shifted bounds but not saved as a full-state replay."
+}

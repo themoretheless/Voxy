@@ -1,0 +1,55 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 19.45s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(9.15e-5, 9.9166e-5), (8.8792e-5, 8.9667e-5), (8.8625e-5, 8.8834e-5), (8.9125e-5, 8.875e-5), (8.8667e-5, 8.9334e-5), (9.8709e-5, 8.9625e-5), (8.9834e-5, 9.6833e-5)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(8.2625e-5, 4.791e-6), (8.0917e-5, 4.583e-6), (8.1625e-5, 4.541e-6), (9.0916e-5, 4.5e-6), (0.000103083, 4.667e-6), (8.0875e-5, 4.5e-6), (8.0542e-5, 4.459e-6)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(0.002512, 0.000398167), (0.002378417, 0.000380583), (0.002411916, 0.000380084), (0.002387041, 0.000377584), (0.0023805, 0.000380792), (0.002383708, 0.000379542), (0.002420833, 0.00038025)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000293584, 0.002077959), (0.000297875, 0.002083667), (0.00029275, 0.002072875), (0.000302416, 0.002117208), (0.00029125, 0.002072417), (0.000290583, 0.002072042), (0.000290209, 0.002075042)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(9.0292e-5, 8.8791e-5), (8.8e-5, 8.85e-5), (8.7709e-5, 8.85e-5), (8.8459e-5, 8.8583e-5), (8.8042e-5, 8.8291e-5), (0.000103458, 8.8375e-5), (8.7958e-5, 8.9125e-5)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(8.325e-5, 5.084e-6), (8.2709e-5, 5e-6), (8.2416e-5, 4.75e-6), (8.2458e-5, 4.833e-6), (8.2417e-5, 4.916e-6), (8.2542e-5, 4.959e-6), (8.2083e-5, 4.833e-6)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(8.8584e-5, 8.8875e-5), (8.7375e-5, 8.8042e-5), (8.775e-5, 8.8458e-5), (8.8209e-5, 8.8042e-5), (8.775e-5, 8.825e-5), (8.7792e-5, 8.8333e-5), (9.9542e-5, 9.4375e-5)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(8.3875e-5, 5e-6), (8.3458e-5, 4.958e-6), (8.3e-5, 4.791e-6), (8.3667e-5, 4.959e-6), (8.3375e-5, 5.209e-6), (8.3959e-5, 4.834e-6), (8.3375e-5, 4.834e-6)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(0.005096583, 0.000403792), (0.0050405, 0.000402958), (0.005014416, 0.000405959), (0.005052, 0.000406417), (0.005074708, 0.000405542), (0.005012209, 0.000398292), (0.00503225, 0.000399166)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000314667, 0.004727625), (0.00032025, 0.004654375), (0.000313334, 0.004748875), (0.000324292, 0.004660334), (0.000316417, 0.004661459), (0.000320417, 0.004666833), (0.000316458, 0.004686792)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(0.004937709, 0.000309833), (0.005132042, 0.000307833), (0.004920833, 0.000308083), (0.004928125, 0.000312291), (0.004939083, 0.000325833), (0.004920042, 0.000304459), (0.004942625, 0.000305291)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000225208, 0.004667708), (0.000230292, 0.004732), (0.000223583, 0.004639667), (0.000229833, 0.004656042), (0.000225834, 0.004677584), (0.000227542, 0.004643625), (0.000224125, 0.004684125)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(8.7667e-5, 8.8458e-5), (8.675e-5, 8.9458e-5), (8.6708e-5, 8.7083e-5), (8.65e-5, 8.7292e-5), (8.6667e-5, 8.7209e-5), (8.7125e-5, 8.7708e-5), (8.7083e-5, 8.7292e-5)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(8.2083e-5, 4.75e-6), (8.1333e-5, 4.542e-6), (8.1208e-5, 4.625e-6), (8.175e-5, 4.5e-6), (8.1166e-5, 4.375e-6), (8.1625e-5, 4.458e-6), (8.1292e-5, 4.583e-6)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(8.7e-5, 8.6875e-5), (8.6709e-5, 8.7084e-5), (8.6709e-5, 8.7125e-5), (8.6583e-5, 8.7459e-5), (8.65e-5, 8.6958e-5), (8.6834e-5, 8.7084e-5), (8.7542e-5, 8.8e-5)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(8.1708e-5, 4.583e-6), (8.2167e-5, 4.459e-6), (8.1166e-5, 4.583e-6), (8.0916e-5, 4.5e-6), (8.05e-5, 4.541e-6), (8.1625e-5, 4.542e-6), (8.1792e-5, 4.542e-6)]
+CAPTURED SELECTIVE PAIR fraction=1 original_selective_seconds=[(8.7875e-5, 0.000106917), (0.000109292, 9.0791e-5), (9e-5, 8.9417e-5), (0.000103125, 8.9208e-5), (8.9125e-5, 8.9208e-5), (8.875e-5, 8.85e-5), (8.9209e-5, 8.8417e-5)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(8.3792e-5, 4.75e-6), (8.2458e-5, 4.541e-6), (8.3083e-5, 4.584e-6), (8.35e-5, 4.584e-6), (8.2834e-5, 4.5e-6), (8.2542e-5, 4.583e-6), (8.2208e-5, 4.5e-6)]
+CAPTURED SELECTIVE PAIR fraction=0.8682213116833652 original_selective_seconds=[(0.00307525, 0.003065959), (0.00306, 0.003061167), (0.003059625, 0.003072416), (0.003060208, 0.003062333), (0.003053875, 0.003180666), (0.00307575, 0.003065375), (0.00323, 0.0031355)]
+CAPTURED PAIR KERNEL admitted=false certificate_sweep_seconds=[(0.003055792, 0.0001135), (0.003138292, 0.000113083), (0.003082666, 0.000113708), (0.00305675, 0.000113), (0.00307175, 0.000113167), (0.0030645, 0.000112333), (0.003062583, 0.000113584)]
+CAPTURED SELECTIVE PAIR fraction=0.0011498410546968468 original_selective_seconds=[(0.004594125, 0.004577875), (0.004580041, 0.004632542), (0.004648125, 0.004630083), (0.00465275, 0.004575791), (0.004566584, 0.004611417), (0.004636666, 0.004637458), (0.004601875, 0.004636917)]
+CAPTURED PAIR KERNEL admitted=false certificate_sweep_seconds=[(0.003038125, 0.001494166), (0.003065458, 0.001492416), (0.003029834, 0.001495292), (0.003078083, 0.001492958), (0.003039542, 0.001494416), (0.003028292, 0.001492875), (0.003092834, 0.001540042)]
+CAPTURED SELECTIVE PAIR fraction=0.00000023690747032371622 original_selective_seconds=[(0.003069791, 0.003051041), (0.003053709, 0.00307725), (0.003054542, 0.0030805), (0.003040791, 0.003053958), (0.003184417, 0.0030785), (0.003075625, 0.003035708), (0.003075417, 0.00333675)]
+CAPTURED PAIR KERNEL admitted=false certificate_sweep_seconds=[(0.003039292, 5.042e-6), (0.003097125, 4.667e-6), (0.00301925, 5.334e-6), (0.003020709, 4.709e-6), (0.00305925, 5.583e-6), (0.00306, 4.833e-6), (0.003016125, 5.334e-6)]
+test hair::contact::velocity_contacts::safe_motion::line_certificate::fixture_tests::nominal_frame3_restrictions_are_continuously_clear ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 362 filtered out; finished in 0.42s
+

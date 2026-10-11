@@ -1,0 +1,65 @@
+{
+  "native-02": {
+    "bound": [
+      0.01799684297827866
+    ],
+    "endpoint_weights": [
+      0.44528968506942695,
+      0.5547103149305732
+    ],
+    "fraction": 0.5547103149305731,
+    "same_input_comparison": {
+      "absolute_physical_tolerance": 1e-09,
+      "angular_response_unit": "rad/s",
+      "coordinates": 126,
+      "linear_response_unit": "m/s",
+      "maximum_angular_response_component_difference": 2.0539125955565396e-15,
+      "maximum_linear_response_component_difference": 2.0816681711721685e-17,
+      "maximum_reaction_difference": 9.098986738083304e-24,
+      "native_fallback_used": false,
+      "response_quantity": "velocity",
+      "rows": 1,
+      "scope": "same complete captured physical operator; not whole trajectory",
+      "systems": 1
+    }
+  },
+  "external-02": {
+    "bound": [
+      0.025151745695812126
+    ],
+    "endpoint_weights": [
+      0.2544684766907117,
+      0.7455315233092883
+    ],
+    "fraction": 0.7455315233092883,
+    "same_input_comparison": {
+      "absolute_physical_tolerance": 1e-09,
+      "angular_response_unit": "rad/s",
+      "coordinates": 126,
+      "linear_response_unit": "m/s",
+      "maximum_angular_response_component_difference": 6.217248937900877e-15,
+      "maximum_linear_response_component_difference": 3.469446951953614e-17,
+      "maximum_reaction_difference": 2.9778502051908996e-23,
+      "native_fallback_used": false,
+      "response_quantity": "velocity",
+      "rows": 1,
+      "scope": "same complete captured physical operator; not whole trajectory",
+      "systems": 1
+    }
+  },
+  "different_input_native_correction_difference": {
+    "maximum_linear_m_per_s": 0.006429914137280475,
+    "maximum_angular_rad_per_s": 0.5205112569382263
+  },
+  "historical_finished_contacts": [
+    {
+      "backend": "native",
+      "contact": "HairContactDiagnostic { source: Mesh(0), segment: 4, fraction: 0.5547103149305731, normal: [-0.1161286937990159, 0.6446167286234779, -0.7556344351968749], target: [-0.012369510366376086, 0.7902284192234398, -0.022694737289314388], surface_velocity: [0.0, -0.07512331008911133, 5.498528480529785e-5], metric_scale: 1.0, trajectory_time: None, gap_m: -9.765762872264055e-14 }"
+    },
+    {
+      "backend": "external",
+      "contact": "HairContactDiagnostic { source: Mesh(0), segment: 4, fraction: 0.7455315233092883, normal: [-0.1161287017303169, 0.6446164043825279, -0.7556347105813579], target: [-0.012613384781100362, 0.788269434724437, -0.024328428535154874], surface_velocity: [0.0, -0.07512331008911133, 5.498528480529786e-5], metric_scale: 1.0, trajectory_time: None, gap_m: 8.06635481537682e-18 }"
+    }
+  ],
+  "limits": "Correction difference for two differing captured inputs, not same-input GPU error or absolute final velocity. Historical contacts are from a separate pre-fix run. Current corrected full run still live."
+}

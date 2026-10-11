@@ -1,0 +1,26 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "frames": [
+    {
+      "frame": 1,
+      "max_position_error_m": 5.120668715712529e-09,
+      "max_quaternion_component_error": 2.0715367776702465e-07
+    },
+    {
+      "frame": 2,
+      "max_position_error_m": 6.8175398821592684e-09,
+      "max_quaternion_component_error": 2.0715367776702465e-07
+    },
+    {
+      "frame": 3,
+      "max_position_error_m": 2.237955187502083e-05,
+      "max_quaternion_component_error": 0.0014415222793381366
+    }
+  ],
+  "worst_rod": 463,
+  "worst_point": 16,
+  "elapsed_seconds": 756.78,
+  "cpu_fallback_log_count": 0,
+  "limits": "Frozen paired GPU run predates strand endpoint manifold, conservative pressure history transfer, and long-segment overflow correction. Not current-source or FPS qualification."
+}

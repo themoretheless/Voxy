@@ -1,0 +1,29 @@
+{
+  "schema": "voxy-original-row-load-audit-v1",
+  "operator": {
+    "path": "artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/operators/native-00.vqc",
+    "sha256": "55f1004eb3d67d9f019f211c9fc9472a5291acf26697619587c8c7164519c477",
+    "rows": 2,
+    "coordinates": 36,
+    "refinement": 0,
+    "tolerance": 1e-11,
+    "layouts": [
+      [
+        18,
+        9,
+        6,
+        15
+      ],
+      [
+        18,
+        9,
+        6,
+        15
+      ]
+    ]
+  },
+  "metadata": "artifacts/articulated-jump-2026-10-10/original-contact-row-provenance/operators/native-00.metadata.json",
+  "checked_load_scalars": 72,
+  "exact_original_load_reconstruction": true,
+  "limits": "Snapshot-local original row ordering and raw non-root loads only. Fixed-root gradients, mobilities and original bounds are not independently encoded in VQC1; only their metadata shape/finiteness is checked. No persistent contact identity, response quantity, solver accuracy, whole trajectory or FPS claim."
+}

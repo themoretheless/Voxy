@@ -1,0 +1,7 @@
+
+running 1 test
+JOINT PHYSICAL ISLAND GPU BATCH frames=4 guides=4 equality_dispatches=319 submissions=102 exact_serial_pose_and_rotation=true native_fallbacks=0 scope=small_physical_scene_not_full_model_or_fps
+test gpu_hair_solver::joint::tests::gpu_independent_physical_islands_batch_without_state_drift ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 333 filtered out; finished in 0.75s
+

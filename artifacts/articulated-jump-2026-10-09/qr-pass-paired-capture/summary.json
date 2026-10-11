@@ -1,0 +1,28 @@
+[
+  {
+    "input": "paired-54.json",
+    "grouped_faster_pairs": 5,
+    "pairs": 7,
+    "median_paired_ratio": 1.0506566334061127,
+    "minimum_paired_ratio": 0.44694350356920054,
+    "maximum_paired_ratio": 2.696641407069626,
+    "median_separate_seconds": 0.16130775,
+    "median_grouped_seconds": 0.153530416,
+    "full_trajectory_qualified": false,
+    "rendered_fps_measured": false,
+    "concurrent_load_controlled": false
+  },
+  {
+    "input": "paired-61.json",
+    "grouped_faster_pairs": 7,
+    "pairs": 7,
+    "median_paired_ratio": 1.1917560863272458,
+    "minimum_paired_ratio": 1.0666834765547502,
+    "maximum_paired_ratio": 1.3842885027463094,
+    "median_separate_seconds": 0.301075375,
+    "median_grouped_seconds": 0.251522292,
+    "full_trajectory_qualified": false,
+    "rendered_fps_measured": false,
+    "concurrent_load_controlled": false
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "created_utc": "2026-10-10T06:57:14.742610+00:00",
+  "scope": "469-guide 720-frame original-gate native/actual-GPU paired trajectory. Not rendered FPS.",
+  "binary": "/tmp/voxy-mesh-feature-normal-gpu-tests",
+  "binary_sha256": "5efe452db57e3f12c28adea70fd6b0784296c2dc7a9837a686f9ffe921872315",
+  "source_sha256": {
+    "crates/physics/src/hair/contact.rs": "67de8d80ac7aeb1a661786ef3a084c1458164d953b66877713860e9341d4396e",
+    "crates/physics/src/hair/contact_square_root_projection.rs": "67dbef32a1f8b546aff59a1925509180ea9878f34e0ea5e25d3ec10476a330ec",
+    "crates/voxy_app/src/female_hair.rs": "28169491ffea9515948a233221e800401b9dc577f336e9b4295d30d2da221d27",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "1a6689316d91fb1488bddea1e43d476d18043f547db52a7ca22a33d798cc4e89",
+    "artifacts/articulated-jump-2026-10-10/mesh-feature-normal-batched-full-capture/run.sh": "198b0faaf83ac3bddeab5b13e794c9cf2802695a7f3359d051429794808e70f7"
+  },
+  "environment_overrides": {
+    "VOXY_HAIR_JOINT_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_EARLY_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_DUAL_HINTS": "1",
+    "VOXY_HAIR_JOINT_QR_PREFIX_REUSE": "1",
+    "VOXY_HAIR_ISLAND_INPUT_ROD": "20",
+    "VOXY_HAIR_ISLAND_INPUT_MIN_TOLERANCE": "0",
+    "VOXY_HAIR_ISLAND_INPUT_SKIP": "1024",
+    "VOXY_HAIR_ISLAND_INPUT_LIMIT": "1024",
+    "VOXY_HAIR_ISLAND_INPUT_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/mesh-feature-normal-batched-full-capture/operators",
+    "VOXY_HAIR_PHASE_TRACE_ROD": "20",
+    "VOXY_HAIR_PHASE_TRACE_FRAME": "1",
+    "VOXY_HAIR_PHASE_TRACE_END_FRAME": "5"
+  },
+  "capture_limits": "Mixed physical operators. v2 sidecars identify original rows, not quantity. Skip is per-backend observation ordinal, not a physical frame or substep.",
+  "launch_reason": "Qualified new geometric face-gradient production correction; prior strand-feature run PID28997 remains live and preserved.",
+  "exec_session": 15732,
+  "test_pid": 44853,
+  "last_observed_utc": "2026-10-10T06:57:35.104004+00:00",
+  "runtime_confirmation": [
+    "HYBRID JOINT COORDINATE BATCHES true",
+    "HYBRID JOINT QR PREFIX REUSE true",
+    "HYBRID JOINT QR true",
+    "HYBRID CONTACT CASE full",
+    "HYBRID TEST BACKEND cpu_control=false native_only=false perturbation=0"
+  ]
+}

@@ -1,0 +1,270 @@
+{
+  "frame": 64,
+  "iterations": [
+    {
+      "iteration": 0.0,
+      "before": 0.003641188068620127,
+      "full": 0.00041915059657273503,
+      "accepted": 0.00041915059657273503,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 1.0,
+      "before": 0.00041915059657273503,
+      "full": 9.164101143002183e-05,
+      "accepted": 9.164101143002183e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 2.0,
+      "before": 9.164101143002183e-05,
+      "full": 5.9225788503113e-05,
+      "accepted": 5.9225788503113e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 3.0,
+      "before": 5.9225788503113e-05,
+      "full": 6.789184145960755e-05,
+      "accepted": 4.588292390844646e-05,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 4.0,
+      "before": 4.588292390844646e-05,
+      "full": 4.469406903306235e-05,
+      "accepted": 4.469406903306235e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 5.0,
+      "before": 4.469406903306235e-05,
+      "full": 5.166367279592774e-05,
+      "accepted": 4.4037978985596005e-05,
+      "scale": 0.0625,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 6.0,
+      "before": 4.4037978985596005e-05,
+      "full": 4.7929957788289484e-05,
+      "accepted": 4.4025623897084426e-05,
+      "scale": 0.0009765625,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 7.0,
+      "before": 4.4025623897084426e-05,
+      "full": 4.7945975326469764e-05,
+      "accepted": 4.7945975326469764e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 8.0,
+      "before": 4.7945975326469764e-05,
+      "full": 4.0601908932707345e-05,
+      "accepted": 4.0601908932707345e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 9.0,
+      "before": 4.0601908932707345e-05,
+      "full": 3.026767537960527e-05,
+      "accepted": 3.026767537960527e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 10.0,
+      "before": 3.026767537960527e-05,
+      "full": 3.9860604985038426e-05,
+      "accepted": 1.9529796334636906e-05,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 11.0,
+      "before": 1.9529796334636906e-05,
+      "full": 1.4721866143440834e-05,
+      "accepted": 1.4721866143440834e-05,
+      "scale": 1.0,
+      "tangent_complete": true
+    },
+    {
+      "iteration": 12.0,
+      "before": 1.4721866143440834e-05,
+      "full": 1.687884058612631e-05,
+      "accepted": 1.4384562724847756e-05,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 13.0,
+      "before": 1.4384562724847756e-05,
+      "full": 1.3440114461286808e-05,
+      "accepted": 1.3440114461286808e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 14.0,
+      "before": 1.3440114461286808e-05,
+      "full": 1.0772860245878601e-05,
+      "accepted": 1.0772860245878601e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 15.0,
+      "before": 1.0772860245878601e-05,
+      "full": 1.6832797449581938e-05,
+      "accepted": 1.0656088028663749e-05,
+      "scale": 0.125,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 16.0,
+      "before": 1.0656088028663749e-05,
+      "full": 1.2499124247785256e-05,
+      "accepted": 1.2499124247785256e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 17.0,
+      "before": 1.2499124247785256e-05,
+      "full": 2.2561179007651695e-05,
+      "accepted": 1.2233592770069872e-05,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 18.0,
+      "before": 1.2233592770069872e-05,
+      "full": 1.695854711312134e-05,
+      "accepted": 1.2172050530834897e-05,
+      "scale": 0.015625,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 19.0,
+      "before": 1.2172050530834897e-05,
+      "full": 1.7016668032828566e-05,
+      "accepted": 1.2157093835600222e-05,
+      "scale": 0.00390625,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 20.0,
+      "before": 1.2157093835600222e-05,
+      "full": 1.695067413966754e-05,
+      "accepted": 1.2155319153007107e-05,
+      "scale": 0.00048828125,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 21.0,
+      "before": 1.2155319153007107e-05,
+      "full": 1.694227629804385e-05,
+      "accepted": 1.694227629804385e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 22.0,
+      "before": 1.694227629804385e-05,
+      "full": 1.8808735495010097e-05,
+      "accepted": 1.6801744692328965e-05,
+      "scale": 0.0078125,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 23.0,
+      "before": 1.6801744692328965e-05,
+      "full": 1.88614877468487e-05,
+      "accepted": 1.6732356195563454e-05,
+      "scale": 0.00390625,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 24.0,
+      "before": 1.6732356195563454e-05,
+      "full": 1.8833012146796665e-05,
+      "accepted": 1.8833012146796665e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 25.0,
+      "before": 1.8833012146796665e-05,
+      "full": 2.5646167039541976e-05,
+      "accepted": 1.4835539739353837e-05,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 26.0,
+      "before": 1.4835539739353837e-05,
+      "full": 1.13728114438114e-05,
+      "accepted": 1.13728114438114e-05,
+      "scale": 1.0,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 27.0,
+      "before": 1.13728114438114e-05,
+      "full": 1.8001173604007925e-05,
+      "accepted": 1.1233351941122903e-05,
+      "scale": 0.0625,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 28.0,
+      "before": 1.1233351941122903e-05,
+      "full": 4.3354961134380206e-05,
+      "accepted": 1.0540105682527305e-05,
+      "scale": 0.125,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 29.0,
+      "before": 1.0540105682527305e-05,
+      "full": 1.1244893057093557e-05,
+      "accepted": 1.02568337010901e-05,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 30.0,
+      "before": 1.02568337010901e-05,
+      "full": 1.3729517311496957e-05,
+      "accepted": 1.0177482370772645e-05,
+      "scale": 0.125,
+      "tangent_complete": false
+    },
+    {
+      "iteration": 31.0,
+      "before": 1.0177482370772645e-05,
+      "full": 1.3896988642473123e-05,
+      "accepted": 9.570393279471111e-06,
+      "scale": 0.5,
+      "tangent_complete": false
+    }
+  ],
+  "increasing_accepted_iterations": [
+    7,
+    16,
+    21,
+    24
+  ],
+  "initial_merit": 0.003641188068620127,
+  "final_merit": 9.570393279471111e-06,
+  "remaining_scope": "native-only, no completed jump or GPU/FPS qualification"
+}

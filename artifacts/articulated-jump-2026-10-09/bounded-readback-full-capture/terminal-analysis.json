@@ -1,0 +1,40 @@
+{
+  "observed_at": "2026-10-10T04:36:47.432472+00:00",
+  "state": "terminal_failed",
+  "pid_missing": 49956,
+  "terminal_evidence": [
+    "HYBRID HAIR FRAME frame=6 max_position_error_m=0.000009198564197523962 max_quaternion_component_error=0.00019551939762246784",
+    "",
+    "thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (70379190) panicked at crates/voxy_app/src/female_hair.rs:1085:13:",
+    "frame 6: GPU position drift 0.000009198564197523962; worst rod=227 point=7",
+    "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED",
+    "",
+    "failures:",
+    "",
+    "failures:",
+    "    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts",
+    "",
+    "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 329 filtered out; finished in 2417.98s",
+    "",
+    "error: test failed, to rerun pass `-p voxy_app --lib`"
+  ],
+  "completed_frame_lines": [
+    "HYBRID HAIR FRAME frame=1 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.00000037886909751150277",
+    "HYBRID HAIR FRAME frame=2 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.0000004995456141521082",
+    "HYBRID HAIR FRAME frame=3 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.0000005947447965226615",
+    "HYBRID HAIR FRAME frame=4 max_position_error_m=0.00000002671080669147674 max_quaternion_component_error=0.0000006630638842153314",
+    "HYBRID HAIR FRAME frame=5 max_position_error_m=0.00000007790279298904024 max_quaternion_component_error=0.0000009357562374967543",
+    "HYBRID HAIR FRAME frame=6 max_position_error_m=0.000009198564197523962 max_quaternion_component_error=0.00019551939762246784"
+  ],
+  "fallback_lines_observed": 0,
+  "selected_rod_227_velocity_phase_lines": [
+    "HAIR PHASE INERTIAL COMPARISON frame=5 index=21 phase=rod-velocities substep=0 iteration=6 predicted_position_error_m=0.000000000000008177486465754669 velocity_error_m_s=0.0000000000016324441798332145 angular_velocity_error_rad_s=0.00000000005709388517516345",
+    "HAIR PHASE INERTIAL COMPARISON frame=5 index=23 phase=finished substep=0 iteration=6 predicted_position_error_m=0.000000000000008177486465754669 velocity_error_m_s=0.0000000000016309924331242565 angular_velocity_error_rad_s=0.000000000057413629406255495",
+    "HAIR PHASE INERTIAL COMPARISON frame=5 index=45 phase=rod-velocities substep=1 iteration=6 predicted_position_error_m=0.000000000000013532577836095072 velocity_error_m_s=0.000018696671609669258 angular_velocity_error_rad_s=0.000541124502002388",
+    "HAIR PHASE INERTIAL COMPARISON frame=5 index=47 phase=finished substep=1 iteration=6 predicted_position_error_m=0.000000000000013532577836095072 velocity_error_m_s=0.006426419173272311 angular_velocity_error_rad_s=0.5204105800101444",
+    "HAIR PHASE INERTIAL COMPARISON frame=6 index=0 phase=predicted substep=0 iteration=0 predicted_position_error_m=0.000026473668398422495 velocity_error_m_s=0.006357175379984885 angular_velocity_error_rad_s=0.5191111784887918"
+  ],
+  "interpretation": "ReadbackBudget fallback eliminated in this frozen run, but original full-trajectory position/quaternion gates fail at frame 6. Selected rod velocity discrepancy grows after final contact velocity projection at frame 5 and enters the next inertial target. This localizes a precursor, not its root cause; inputs already differ. No same-input numerical failure is proven.",
+  "scope": "Frozen bounded-readback pre-pooling/pre-packed-gather executable. Full 720 steps, rendered FPS and current transport not qualified."
+}

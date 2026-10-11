@@ -1,0 +1,51 @@
+    Blocking waiting for file lock on build directory
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib) generated 2 warnings
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 22.60s
+     Running tests/hair.rs (/tmp/voxy-release-120fps-20261007/release/deps/hair-ba8380f1b14b6ffd)
+
+running 20 tests
+test invalid_step_does_not_change_positions_or_frames ... ok
+test native_numerical_failure_rolls_back_pose_and_next_step_state ... ok
+test original_matrix_residual_refinement_preserves_fixed_degrees_of_freedom ... ok
+test rigid_rotation_of_root_rotates_follicle_frame_and_free_end_has_inertia ... ok
+test surface_refit_invalidates_clearance_from_previous_step ... ok
+test incompatible_joint_position_contacts_rollback_pose_and_future_dynamics ... ok
+test joint_contact_failure_rolls_back_pose_and_future_dynamics ... ok
+test terminal_contact_accelerator_failure_rolls_back_reconciled_state ... ok
+test linear_system_capture_preserves_dynamic_state_and_next_step ... ok
+test crossing_segments_separate_without_shared_particles ... ok
+test external_failures_rollback_all_substeps_and_hidden_state ... ok
+test segment_contact_detects_plane_between_particles ... ok
+test external_batches_preserve_native_contact_order_and_dynamic_state ... ok
+test constitutive_units_and_rest_equilibrium ... ok
+test axial_root_rotation_transmits_material_twist_without_bending_straight_fiber ... ok
+test parallel_guides_match_serial_solver_with_surface_contacts ... ok
+test timestep_refinement_preserves_gravity_response ... ok
+test gravity_sag_is_material_dependent_and_lengths_remain_bounded ... ok
+test joint_position_contacts_preserve_worker_and_accelerator_equivalence ... ok
+test small_deflection_cantilever_matches_beam_law ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.18s
+

@@ -1,0 +1,79 @@
+{
+  "scope": "actual production pair_fraction vs retained test-only original on12 captured frame3 pairs; 7 alternating runs x100; black_box inputs; concurrent load",
+  "bitwise_fraction_agreement": true,
+  "pairs": [
+    {
+      "pair": 0,
+      "original_seconds_100": 8.2e-05,
+      "production_seconds_100": 8.2292e-05,
+      "ratio": 0.9964516599426432
+    },
+    {
+      "pair": 1,
+      "original_seconds_100": 0.002263584,
+      "production_seconds_100": 0.000360417,
+      "ratio": 6.280458468940145
+    },
+    {
+      "pair": 2,
+      "original_seconds_100": 8.3333e-05,
+      "production_seconds_100": 8.3125e-05,
+      "ratio": 1.0025022556390977
+    },
+    {
+      "pair": 3,
+      "original_seconds_100": 8.5917e-05,
+      "production_seconds_100": 8.5e-05,
+      "ratio": 1.0107882352941175
+    },
+    {
+      "pair": 4,
+      "original_seconds_100": 0.004801041,
+      "production_seconds_100": 0.000384375,
+      "ratio": 12.490513170731706
+    },
+    {
+      "pair": 5,
+      "original_seconds_100": 0.004766708,
+      "production_seconds_100": 0.000296833,
+      "ratio": 16.058551441382864
+    },
+    {
+      "pair": 6,
+      "original_seconds_100": 8.4167e-05,
+      "production_seconds_100": 8.4625e-05,
+      "ratio": 0.9945878877400295
+    },
+    {
+      "pair": 7,
+      "original_seconds_100": 8.4458e-05,
+      "production_seconds_100": 8.4833e-05,
+      "ratio": 0.995579550410807
+    },
+    {
+      "pair": 8,
+      "original_seconds_100": 8.5333e-05,
+      "production_seconds_100": 8.5292e-05,
+      "ratio": 1.0004807015898327
+    },
+    {
+      "pair": 9,
+      "original_seconds_100": 0.002977,
+      "production_seconds_100": 0.002968583,
+      "ratio": 1.0028353594964332
+    },
+    {
+      "pair": 10,
+      "original_seconds_100": 0.004392875,
+      "production_seconds_100": 0.004403792,
+      "ratio": 0.9975210000835644
+    },
+    {
+      "pair": 11,
+      "original_seconds_100": 0.002937333,
+      "production_seconds_100": 0.002951625,
+      "ratio": 0.9951579214839283
+    }
+  ],
+  "full_animation_or_fps_proof": false
+}

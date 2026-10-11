@@ -1,0 +1,17 @@
+
+running 8 tests
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... ignored, native GPU full-model dynamics qualification
+test female_rig::jump_rig_tests::gpu_jump_matches_actual_body_and_rigid_trailing_hair ... ignored, requires an actual GPU; complete body DQ skinning and displacement readback
+test female_rig::tests::gesture_holds_and_loop_have_no_visible_velocity_jump ... ok
+test jump_motion::tests::launch_flight_landing_are_continuous_and_ballistic ... ok
+test gravity_demo::tests::planet_showcase_walks_inverted_and_jumps ... ok
+JUMP RIG actual_planted_vertices=8280 maximum_knee_motion_m=0.18173385
+test female_rig::jump_rig_tests::jump_legs_plant_feet_bend_knees_and_keep_bone_lengths ... ok
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+test female_demo::tests::jump_excitation_matches_visible_root_and_stops_during_settling ... ok
+test tissue_demo::tests::body_walk_jump_and_settle ... ok
+
+test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 326 filtered out; finished in 11.68s
+

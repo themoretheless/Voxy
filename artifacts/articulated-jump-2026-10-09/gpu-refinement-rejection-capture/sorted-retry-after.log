@@ -1,0 +1,515 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: field `weak_refs` is never read
+  --> crates/voxy_assets/src/lib.rs:22:5
+   |
+18 | pub struct AssetCache {
+   |            ---------- field in this struct
+...
+22 |     weak_refs: HashMap<String, usize>,
+   |     ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/voxy_assets/src/lib.rs:18:1
+   |
+18 | / pub struct AssetCache {
+19 | |     /// In-memory cached assets (strong refs)
+20 | |     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
+21 | |     /// Weak references to prevent premature collection
+22 | |     weak_refs: HashMap<String, usize>,
+23 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `voxy_assets` (lib) generated 2 warnings
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:70:19
+   |
+63 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+70 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics_voxel)
+   Compiling voxy_cuda v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_cuda)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_rush v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_rush)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gpu)
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_runtime)
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `physics` (lib) generated 3 warnings
+warning: `voxy_editor` (lib) generated 6 warnings
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: function `start_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:21:15
+   |
+21 | pub(crate) fn start_refinement_diagnostics() {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `take_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:24:15
+   |
+24 | pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `body_volumes_m3` is never used
+   --> crates/voxy_app/src/tissue_demo.rs:535:19
+    |
+268 | impl TissueDemo {
+    | --------------- method in this implementation
+...
+535 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets`, `advance_hair`, `set_strain_fixture`, and `orbit` are never used
+    --> crates/voxy_app/src/female_demo.rs:200:19
+     |
+ 196 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 200 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+ 754 |     fn advance_hair(&mut self, h: f64, time: f64, head: glam::Mat4) -> Result<(), &'static str> {
+     |        ^^^^^^^^^^^^
+...
+1030 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1148 |     pub(crate) fn orbit(&mut self, x: f32, y: f32) {
+     |                   ^^^^^
+
+warning: method `append_lod` is never used
+   --> crates/voxy_app/src/female_hair.rs:342:12
+    |
+ 21 | impl FemaleHair {
+    | --------------- method in this implementation
+...
+342 |     pub fn append_lod(
+    |            ^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib test) generated 6 warnings
+    Finished `release` profile [optimized] target(s) in 1m 29s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f)
+
+running 1 test
+JOINT FAILURE REPLAY ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(26), Some(28), Some(30), Some(32), Some(33), Some(34), Some(35)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=15 defect=-1.1248597539537109e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(26), Some(28), Some(30), Some(32), Some(33), Some(34), Some(35), Some(39)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=20 defect=4.391018798566293e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=20 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(30), Some(32), Some(33), Some(34), Some(35), Some(39)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=2 defect=9.215718466126788e-19 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=0 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(30), Some(32), Some(33), Some(34), Some(35), Some(39), Some(41)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=5 defect=9.75781955236954e-19 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=19 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(30), Some(32), Some(33), Some(34), Some(35), Some(39), Some(41), Some(38)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=5 defect=1.4094628242311558e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=1 worst_row=17 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(30), Some(32), Some(33), Some(34), Some(39), Some(41), Some(38)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=18 defect=1.8973538018496328e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=0 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(30), Some(32), Some(33), Some(34), Some(39), Some(41), Some(38), Some(46)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=18 defect=1.9786689647860456e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=1 worst_row=0 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(30), Some(32), Some(33), Some(39), Some(41), Some(38), Some(46)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=2 defect=9.215718466126788e-19 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=5 defect=5.421010862427522e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(30), Some(32), Some(33), Some(39), Some(41), Some(38), Some(46), Some(44)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=11 defect=1.1248597539537109e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(32), Some(33), Some(39), Some(41), Some(38), Some(46), Some(44)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=2 defect=9.75781955236954e-19 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=5 defect=5.421010862427522e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(32), Some(33), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=2 defect=9.75781955236954e-19 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=1 worst_row=19 defect=1.0842021724855044e-19 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=18 defect=-5.7462715141731735e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=3 defect=-5.421010862427522e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(22), Some(23), Some(28), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=18 defect=-5.7462715141731735e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=1 worst_row=8 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(21), Some(23), Some(28), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=17 defect=-5.7462715141731735e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=18 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(23), Some(28), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=16 defect=-5.7462715141731735e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=17 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(19), Some(23), Some(28), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37), Some(36)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=16 defect=-6.396792817664476e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=17 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(23), Some(28), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37), Some(36)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=15 defect=-4.336808689942018e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=16 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(23), Some(28), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37), Some(36), Some(42)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=15 defect=-4.336808689942018e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=16 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(23), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37), Some(36), Some(42)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=14 defect=-4.9873299934333204e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=15 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(23), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37), Some(36), Some(42), Some(7)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=14 defect=-4.228388472693467e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=20 defect=-5.421010862427522e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(8), Some(10), Some(12), Some(16), Some(23), Some(32), Some(39), Some(41), Some(38), Some(46), Some(44), Some(45), Some(37), Some(36), Some(42), Some(7), Some(9)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=5 defect=-2.9286684297309684e-12 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=1 worst_row=14 defect=-1.8693803015973343e-12 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=2 worst_row=14 defect=-1.6839617807823393e-12 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=3 worst_row=14 defect=-1.0393381034284888e-12 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=4 worst_row=14 defect=-5.614591907718292e-13 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=5 worst_row=5 defect=-3.412769741285848e-13 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=6 worst_row=14 defect=-3.3830067653478624e-13 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=7 worst_row=14 defect=-3.284772627509813e-13 precise=false
+JOINT EQUALITY SELECTED original_rows=[Some(46)]
+JOINT EQUALITY REFINEMENT rows=1 width=1512 refinement=0 worst_row=0 defect=1.1709383462843448e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=1 width=1512 refinement=1 worst_row=0 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6)]
+JOINT EQUALITY REFINEMENT rows=2 width=1512 refinement=0 worst_row=0 defect=7.589415207398531e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3)]
+JOINT EQUALITY REFINEMENT rows=3 width=1512 refinement=0 worst_row=0 defect=7.589415207398531e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(43)]
+JOINT EQUALITY REFINEMENT rows=4 width=1512 refinement=0 worst_row=0 defect=7.697835424647081e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(43), Some(0)]
+JOINT EQUALITY REFINEMENT rows=5 width=1512 refinement=0 worst_row=0 defect=1.0408340855860843e-17 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(43), Some(0), Some(44)]
+JOINT EQUALITY REFINEMENT rows=6 width=1512 refinement=0 worst_row=0 defect=1.0083080204115191e-17 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(43), Some(0), Some(44), Some(39)]
+JOINT EQUALITY REFINEMENT rows=7 width=1512 refinement=0 worst_row=0 defect=1.7564075194265172e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=7 width=1512 refinement=1 worst_row=3 defect=5.421010862427522e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39)]
+JOINT EQUALITY REFINEMENT rows=6 width=1512 refinement=0 worst_row=0 defect=1.5287250632045613e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=6 width=1512 refinement=1 worst_row=5 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16)]
+JOINT EQUALITY REFINEMENT rows=7 width=1512 refinement=0 worst_row=0 defect=1.4203048459560108e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=7 width=1512 refinement=1 worst_row=6 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12)]
+JOINT EQUALITY REFINEMENT rows=8 width=1512 refinement=0 worst_row=0 defect=1.4203048459560108e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=8 width=1512 refinement=1 worst_row=7 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32)]
+JOINT EQUALITY REFINEMENT rows=9 width=1512 refinement=0 worst_row=0 defect=1.4094628242311558e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=9 width=1512 refinement=1 worst_row=4 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33)]
+JOINT EQUALITY REFINEMENT rows=10 width=1512 refinement=0 worst_row=0 defect=1.3986208025063007e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=10 width=1512 refinement=1 worst_row=4 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28)]
+JOINT EQUALITY REFINEMENT rows=11 width=1512 refinement=0 worst_row=0 defect=1.431146867680866e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=11 width=1512 refinement=1 worst_row=0 defect=-1.0842021724855044e-19 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41)]
+JOINT EQUALITY REFINEMENT rows=12 width=1512 refinement=0 worst_row=0 defect=1.3986208025063007e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=12 width=1512 refinement=1 worst_row=11 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38)]
+JOINT EQUALITY REFINEMENT rows=13 width=1512 refinement=0 worst_row=0 defect=1.485356976305141e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=13 width=1512 refinement=1 worst_row=8 defect=6.776263578034403e-21 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37)]
+JOINT EQUALITY REFINEMENT rows=14 width=1512 refinement=0 worst_row=0 defect=1.3227266504323154e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=14 width=1512 refinement=1 worst_row=4 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37), Some(10)]
+JOINT EQUALITY REFINEMENT rows=15 width=1512 refinement=0 worst_row=0 defect=1.3227266504323154e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=15 width=1512 refinement=1 worst_row=13 defect=-1.3552527156068805e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4)]
+JOINT EQUALITY REFINEMENT rows=16 width=1512 refinement=0 worst_row=0 defect=1.3227266504323154e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=16 width=1512 refinement=1 worst_row=3 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(18)]
+JOINT EQUALITY REFINEMENT rows=17 width=1512 refinement=0 worst_row=0 defect=1.1926223897340549e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=17 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(18), Some(1)]
+JOINT EQUALITY REFINEMENT rows=18 width=1512 refinement=0 worst_row=0 defect=1.1926223897340549e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=18 width=1512 refinement=1 worst_row=17 defect=1.3552527156068805e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(18), Some(1), Some(23)]
+JOINT EQUALITY REFINEMENT rows=19 width=1512 refinement=0 worst_row=0 defect=1.4094628242311558e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=19 width=1512 refinement=1 worst_row=7 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(18), Some(1), Some(23), Some(2)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=0 defect=1.4094628242311558e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(33), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(18), Some(1), Some(23), Some(2), Some(45)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=0 defect=1.3660947373317356e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(18), Some(1), Some(23), Some(2), Some(45)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=0 defect=1.3010426069826053e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(18), Some(1), Some(23), Some(2), Some(45), Some(36)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=0 defect=1.3660947373317356e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(1), Some(23), Some(2), Some(45), Some(36)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=0 defect=1.2468324983583301e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(28), Some(41), Some(38), Some(37), Some(10), Some(4), Some(1), Some(23), Some(2), Some(45), Some(36), Some(42)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=0 defect=1.3227266504323154e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(41), Some(38), Some(37), Some(10), Some(4), Some(1), Some(23), Some(2), Some(45), Some(36), Some(42)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=0 defect=1.6588293239028218e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=7 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(41), Some(38), Some(37), Some(10), Some(4), Some(1), Some(23), Some(2), Some(45), Some(36), Some(42), Some(8)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=0 defect=1.5504091066542713e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=1 defect=5.421010862427522e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(46), Some(6), Some(3), Some(0), Some(44), Some(39), Some(16), Some(12), Some(32), Some(41), Some(38), Some(37), Some(10), Some(4), Some(1), Some(23), Some(2), Some(45), Some(36), Some(42), Some(8), Some(9)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=0 defect=-9.611351135547369e-11 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=1 worst_row=0 defect=-7.629029667114567e-11 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=2 worst_row=0 defect=-6.092627671903245e-11 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=3 worst_row=0 defect=-4.693778189474723e-11 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=4 worst_row=0 defect=-3.769402368361541e-11 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=5 worst_row=0 defect=-2.973405224294956e-11 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=6 worst_row=0 defect=-2.3765948519056945e-11 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=7 worst_row=0 defect=-1.848687533351906e-11 precise=false
+JOINT EQUALITY SELECTED original_rows=[Some(46)]
+JOINT EQUALITY REFINEMENT rows=1 width=1512 refinement=0 worst_row=0 defect=1.1709383462843448e-17 precise=false
+JOINT EQUALITY REFINEMENT rows=1 width=1512 refinement=1 worst_row=0 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(6), Some(46)]
+JOINT EQUALITY REFINEMENT rows=2 width=1512 refinement=0 worst_row=0 defect=5.963111948670274e-19 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(3), Some(6), Some(46)]
+JOINT EQUALITY REFINEMENT rows=3 width=1512 refinement=0 worst_row=0 defect=-1.3552527156068805e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(3), Some(6), Some(43), Some(46)]
+JOINT EQUALITY REFINEMENT rows=4 width=1512 refinement=0 worst_row=2 defect=1.3010426069826053e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(43), Some(46)]
+JOINT EQUALITY REFINEMENT rows=5 width=1512 refinement=0 worst_row=1 defect=2.8731357570865868e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(43), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=6 width=1512 refinement=0 worst_row=1 defect=2.8189256484623115e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(39), Some(43), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=7 width=1512 refinement=0 worst_row=4 defect=2.7647155398380363e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(39), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=6 width=1512 refinement=0 worst_row=0 defect=-7.860465750519907e-19 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(16), Some(39), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=7 width=1512 refinement=0 worst_row=6 defect=3.2526065174565133e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(12), Some(16), Some(39), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=8 width=1512 refinement=0 worst_row=7 defect=3.2526065174565133e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(12), Some(16), Some(32), Some(39), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=9 width=1512 refinement=0 worst_row=6 defect=3.9302328752599536e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=9 width=1512 refinement=1 worst_row=8 defect=1.0842021724855044e-19 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(12), Some(16), Some(32), Some(33), Some(39), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=10 width=1512 refinement=0 worst_row=1 defect=2.8731357570865868e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(12), Some(16), Some(28), Some(32), Some(33), Some(39), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=11 width=1512 refinement=0 worst_row=9 defect=2.0599841277224584e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(12), Some(16), Some(28), Some(32), Some(33), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=12 width=1512 refinement=0 worst_row=10 defect=2.0599841277224584e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(12), Some(16), Some(28), Some(32), Some(33), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=13 width=1512 refinement=0 worst_row=1 defect=2.8731357570865868e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(12), Some(16), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=14 width=1512 refinement=0 worst_row=1 defect=2.3852447794681098e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=14 width=1512 refinement=1 worst_row=13 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(6), Some(10), Some(12), Some(16), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=15 width=1512 refinement=0 worst_row=1 defect=2.927345865710862e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=15 width=1512 refinement=1 worst_row=14 defect=0e0 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=16 width=1512 refinement=0 worst_row=1 defect=2.0057740190981832e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=16 width=1512 refinement=1 worst_row=14 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(18), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=17 width=1512 refinement=0 worst_row=16 defect=4.0115480381963664e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=17 width=1512 refinement=1 worst_row=0 defect=2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(18), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=18 width=1512 refinement=0 worst_row=17 defect=4.0115480381963664e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=18 width=1512 refinement=1 worst_row=0 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(18), Some(23), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=19 width=1512 refinement=0 worst_row=17 defect=-2.3310346708438345e-18 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(18), Some(23), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(46)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=19 defect=2.168404344971009e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=18 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(18), Some(23), Some(28), Some(32), Some(33), Some(37), Some(38), Some(39), Some(41), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=20 defect=1.1926223897340549e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=18 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(18), Some(23), Some(28), Some(32), Some(37), Some(38), Some(39), Some(41), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=15 defect=4.336808689942018e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=17 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(18), Some(23), Some(28), Some(32), Some(36), Some(37), Some(38), Some(39), Some(41), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=16 defect=4.119968255444917e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=18 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(23), Some(28), Some(32), Some(36), Some(37), Some(38), Some(39), Some(41), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=15 defect=4.038653092508504e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=19 defect=-1.0842021724855044e-19 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(23), Some(28), Some(32), Some(36), Some(37), Some(38), Some(39), Some(41), Some(42), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=15 defect=3.903127820947816e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=18 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(10), Some(12), Some(16), Some(23), Some(32), Some(36), Some(37), Some(38), Some(39), Some(41), Some(42), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=0 worst_row=19 defect=6.179952383167375e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=20 width=1512 refinement=1 worst_row=17 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(8), Some(10), Some(12), Some(16), Some(23), Some(32), Some(36), Some(37), Some(38), Some(39), Some(41), Some(42), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=0 worst_row=13 defect=1.043544591017298e-18 precise=false
+JOINT EQUALITY REFINEMENT rows=21 width=1512 refinement=1 worst_row=18 defect=-2.710505431213761e-20 precise=true
+JOINT EQUALITY SELECTED original_rows=[Some(0), Some(1), Some(2), Some(3), Some(4), Some(6), Some(8), Some(9), Some(10), Some(12), Some(16), Some(23), Some(32), Some(36), Some(37), Some(38), Some(39), Some(41), Some(42), Some(44), Some(45), Some(46)]
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=0 worst_row=21 defect=-2.169339120193731e-7 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=1 worst_row=21 defect=-2.515773150037941e-7 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=2 worst_row=21 defect=-2.9175463213241843e-7 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=3 worst_row=21 defect=-3.38344567493579e-7 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=4 worst_row=21 defect=-3.9237848326652974e-7 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=5 worst_row=21 defect=-4.5504280341305756e-7 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=6 worst_row=21 defect=-5.277135163985836e-7 precise=false
+JOINT EQUALITY REFINEMENT rows=22 width=1512 refinement=7 worst_row=21 defect=-6.119888473876244e-7 precise=false
+JOINT FAILURE REPLAY rows=47 width=1512 seeds=47 submissions=159 error=Some("original GPU equality refinement did not converge")
+
+thread 'gpu_hair_solver::joint::tests::replay_rejected_gpu_joint_coordinates' (58260741) panicked at crates/voxy_app/src/gpu_hair_joint.rs:213:44:
+called `Result::unwrap()` on an `Err` value: "original GPU equality refinement did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::joint::tests::replay_rejected_gpu_joint_coordinates ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::joint::tests::replay_rejected_gpu_joint_coordinates
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 322 filtered out; finished in 0.25s
+
+error: test failed, to rerun pass `-p voxy_app --lib`

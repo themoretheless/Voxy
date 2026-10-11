@@ -1,0 +1,28 @@
+[
+  {
+    "iteration": 8,
+    "connected_rods": [
+      446
+    ],
+    "pair_count": 0,
+    "rod446_own_increment_max_m": [
+      3.80991902226846e-06,
+      19,
+      0
+    ],
+    "pairs_debug": "[] }"
+  },
+  {
+    "iteration": 9,
+    "connected_rods": [
+      446
+    ],
+    "pair_count": 0,
+    "rod446_own_increment_max_m": [
+      3.9181187483361413e-07,
+      20,
+      1
+    ],
+    "pairs_debug": "[] }"
+  }
+]

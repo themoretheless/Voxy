@@ -1,0 +1,21 @@
+{
+  "scope": "Isolated weighted-coordinate reconstruction on captured input columns, includes allocation; not orthogonalization, total QR, physics, GPU or FPS; no whole-frame extrapolation",
+  "observations": [
+    {
+      "rows": 46,
+      "width": 2142,
+      "original_median_seconds": 0.011685708,
+      "contiguous_median_seconds": 0.003974625,
+      "ratio": 2.940078120577413,
+      "bitwise_match": true
+    },
+    {
+      "rows": 100,
+      "width": 882,
+      "original_median_seconds": 0.00908,
+      "contiguous_median_seconds": 0.003473875,
+      "ratio": 2.6137958331834046,
+      "bitwise_match": true
+    }
+  ]
+}

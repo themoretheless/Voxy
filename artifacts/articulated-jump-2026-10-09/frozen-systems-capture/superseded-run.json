@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-10-09T20:18:07.944785+00:00",
+  "reason": "Validated exact sparse-basis production QR; not an observation timeout",
+  "old_session": 58922,
+  "old_pid": 46034,
+  "replacement_session": 90191,
+  "replacement_pid": 52315,
+  "completed_paired_frames": [
+    {
+      "frame": 1,
+      "native_ms": 11367.971667000002,
+      "cpu_control_ms": 9420.19925
+    },
+    {
+      "frame": 2,
+      "native_ms": 40667.640417,
+      "cpu_control_ms": 41737.7575
+    },
+    {
+      "frame": 3,
+      "native_ms": 85496.288208,
+      "cpu_control_ms": 96709.413084
+    }
+  ],
+  "requested_frames": 720,
+  "completed": false,
+  "scope": "Old CPU physics diagnostics; not latest optimization or FPS"
+}

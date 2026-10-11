@@ -1,0 +1,14 @@
+{
+  "selected_frame": 4,
+  "matching_captures": 3,
+  "native_worker_counts": [
+    1,
+    2,
+    4
+  ],
+  "all_metadata_frames_match": true,
+  "all_raw_loads_reconstructed_exactly": true,
+  "excluded_frame": 5,
+  "excluded_captures": 0,
+  "physical_result": "300 independent islands retain original gate and identical serial/parallel state/reactions with and without capture selection"
+}

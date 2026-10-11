@@ -1,0 +1,39 @@
+{
+  "constraints": 319,
+  "free_position_coordinates": 1101,
+  "original_tolerance_m": 1e-11,
+  "lp_status": 2,
+  "lp_message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+  "scope": "Original tangent inequalities only; not implicit equilibrium, nonlinear contact, strain or motion qualification.",
+  "captured_original_max_violation_m": "0.0001599999999998656447055399284440674475398979642509128197420398877700588834149808548090732074342668646",
+  "captured_complementarity_residual_m": "0.0001599999999998656447055399284440674475398979642509128197420398877700588834149808548090732074342668646",
+  "gram_max_asymmetry": 7.450580596923828e-09,
+  "gram_min_eigenvalue": -8.602542935538587e-09,
+  "exact_opposite_tangent_rows": [
+    {
+      "a": 74,
+      "b": 68,
+      "exact_sum_bounds": "0.000079999999999940578712664951410715730162337422370910644531250000",
+      "coordinates": [
+        {
+          "rod": 86,
+          "point": 19,
+          "axis": 0,
+          "gradient": 0.0799685860008253
+        },
+        {
+          "rod": 86,
+          "point": 19,
+          "axis": 1,
+          "gradient": -0.8233266342536458
+        },
+        {
+          "rod": 86,
+          "point": 19,
+          "axis": 2,
+          "gradient": -0.561905933926304
+        }
+      ]
+    }
+  ]
+}

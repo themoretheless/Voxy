@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-10-09T20:12:54.816431+00:00",
+  "scope": "One bounded 1-second sample, not full-frame percentages or performance comparison",
+  "top_physics_symbols": [
+    {
+      "symbol": "_RNvMNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qrNtB2_10EqualityQr5solve",
+      "samples": 491
+    },
+    {
+      "symbol": "_RNCNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsuless3_0B9_",
+      "samples": 302
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair7contact12segment_pair",
+      "samples": 249
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsules",
+      "samples": 130
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair6direct20solve_lower_factored",
+      "samples": 118
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10polynomial5split",
+      "samples": 61
+    },
+    {
+      "symbol": "_RNvNtNtNtNtCs7KDHeV3lXiN_7physics4hair7contact17velocity_contacts11safe_motion13pair_fraction",
+      "samples": 47
+    },
+    {
+      "symbol": "_RNvNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous11bound_pairs5visit",
+      "samples": 26
+    },
+    {
+      "symbol": "_RNvMNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_systemNtB2_18HairResponseSystem36solve_joint_load_inequalities_native",
+      "samples": 21
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qr27accurate_column_combination",
+      "samples": 20
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous13motion_bounds",
+      "samples": 20
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10polynomial19certify_nonnegative",
+      "samples": 18
+    }
+  ]
+}

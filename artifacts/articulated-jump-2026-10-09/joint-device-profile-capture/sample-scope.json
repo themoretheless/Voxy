@@ -1,0 +1,12 @@
+{
+  "scope": "two-second live sample of the paired full-density jump test; not full-cycle or rendering performance",
+  "pid": 52287,
+  "sampling_interval_ms": 1,
+  "test_thread_samples": 1450,
+  "joint_accelerated_samples": 1349,
+  "joint_equality_device_poll_samples": 894,
+  "device_poll_fraction": 0.616551724137931,
+  "binary_scope": "existing exact-face-intersection run predates submission-scoped wait and validated-tail changes",
+  "concurrent_load_controlled": false,
+  "rendered_fps_measured": false
+}

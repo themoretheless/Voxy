@@ -1,0 +1,2 @@
+QR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+QR columns=17 coordinates=129 resident_mgs2=true orthogonality=1.3211653993039363e-14 reconstruction=6.328271240363392e-15 squared_norm_error=0e0 squared_norm_reference_checked=false gpu_normalization=true serial_norm_kernel=false cpu_orchestration=true physical_solution=false

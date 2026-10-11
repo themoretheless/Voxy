@@ -1,0 +1,68 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "comparison": "full snapshot versus validated tail; exact-zero support compaction enabled in both",
+  "concurrent_system_load_controlled": false,
+  "coordinates": 2646,
+  "maximum_reaction_difference": 0.0,
+  "maximum_response_difference": 0.0,
+  "median_full_readback_seconds": 0.405597917,
+  "median_tail_readback_seconds": 0.366851292,
+  "native_fallback_used": false,
+  "pairs": [
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.405597917,
+      "pair": 0,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.4277875
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.421592958,
+      "pair": 1,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.430302125
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.388573167,
+      "pair": 2,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.3205405
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.3900055,
+      "pair": 3,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.366851292
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.283341875,
+      "pair": 4,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.307566167
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.410753708,
+      "pair": 5,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.301579709
+    },
+    {
+      "full_equality_dispatches": 103,
+      "full_readback_seconds": 0.56863,
+      "pair": 6,
+      "tail_equality_dispatches": 103,
+      "tail_readback_seconds": 0.508829375
+    }
+  ],
+  "rendered_fps_measured": false,
+  "rows": 61,
+  "scope": "complete original physical projection, warmed shaders, seven alternating pairs; excludes device creation, fixture load, rendering and extra post-timing validation",
+  "speedup": 1.105619431756015,
+  "systems": 21,
+  "whole_animation_benchmark": false
+}

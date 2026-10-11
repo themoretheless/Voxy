@@ -1,0 +1,21 @@
+{
+  "source": "crates/physics/src/hair/velocity_contacts.rs::constrained_newton_increment",
+  "native_path": {
+    "condition": "solver.is_none()",
+    "primary": "square_root_projection::solve",
+    "recovery": "solve_projection on original free increment after square-root error"
+  },
+  "external_linear_solver_path": {
+    "condition": "solver.is_some()",
+    "linear_loads": "response_batches::prepare_with_free via supplied backend",
+    "coupled_contact_projection": "solve_projection on CPU, not GPU QR",
+    "projected_sweep_budget": 4096
+  },
+  "verified_gpu_scope": "4 captured linear systems / 8 complete contact responses on Metal only",
+  "unverified": [
+    "coupled GPU active-set solver",
+    "CPU/GPU full contact trajectory equivalence",
+    "CUDA coupled solver",
+    "160 rendered FPS"
+  ]
+}

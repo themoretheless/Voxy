@@ -1,0 +1,14 @@
+{
+  "candidates": 1428,
+  "verified_pinned_records": 1428,
+  "mechanism_integrity": {
+    "manifests": 6,
+    "verified_sources": 28
+  },
+  "accepted_engine_identities": 500,
+  "derived_engine_identities": 52,
+  "review_depth_counts": {
+    "root_and_readme_only": 1428
+  },
+  "scope": "Saved identity/evidence integrity; not build, runtime or architectural parity proof."
+}

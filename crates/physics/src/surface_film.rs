@@ -101,8 +101,34 @@ impl Default for BridgeConfig {
     }
 }
 #[derive(Clone, Debug)]
+pub(crate) struct FilmTopology {
+    // Shared interior edges: (a, b, cell0, cell1)
+    pub(crate) edges: Vec<(usize, usize, usize, usize)>,
+}
+impl FilmTopology {
+    pub(crate) fn new(triangles: &[[usize; 3]]) -> Result<Self, &'static str> {
+        let mut owners = BTreeMap::<(usize, usize), Vec<usize>>::new();
+        for (i, t) in triangles.iter().enumerate() {
+            for (a, b) in [(t[0], t[1]), (t[1], t[2]), (t[2], t[0])] {
+                owners.entry((a.min(b), a.max(b))).or_default().push(i);
+            }
+        }
+        let mut edges = Vec::new();
+        for ((a, b), cells) in owners {
+            if cells.len() > 2 {
+                return Err("nonmanifold surface");
+            }
+            if cells.len() == 2 {
+                edges.push((a, b, cells[0], cells[1]));
+            }
+        }
+        Ok(Self { edges })
+    }
+}
+#[derive(Clone, Debug)]
 pub struct SurfaceFilm {
     triangles: Vec<[usize; 3]>,
+    topology: FilmTopology,
     area: Vec<f64>,
     center: Vec<[f64; 3]>,
     edges: Vec<(usize, usize, f64, f64)>,
@@ -188,9 +214,16 @@ impl SurfaceFilm {
         {
             return Err("invalid film material or mesh");
         }
+        for t in &triangles {
+            if t.iter().any(|&v| v >= points.len()) {
+                return Err("invalid triangle index");
+            }
+        }
+        let topology = FilmTopology::new(&triangles)?;
         let mut film = Self {
             volume: vec![0.; triangles.len()],
             triangles,
+            topology,
             area: Vec::new(),
             center: Vec::new(),
             edges: Vec::new(),
@@ -360,12 +393,12 @@ impl SurfaceFilm {
         if points.iter().flatten().any(|p| !p.is_finite()) {
             return Err("nonfinite surface");
         }
-        let mut geometry = Vec::new();
-        let mut normals = Vec::new();
-        let mut area = Vec::new();
-        let mut center = Vec::new();
-        let mut owners = BTreeMap::<(usize, usize), Vec<usize>>::new();
-        for (i, t) in self.triangles.iter().enumerate() {
+        let n_tri = self.triangles.len();
+        let mut geometry = Vec::with_capacity(n_tri);
+        let mut normals = Vec::with_capacity(n_tri);
+        let mut area = Vec::with_capacity(n_tri);
+        let mut center = Vec::with_capacity(n_tri);
+        for t in &self.triangles {
             if t.iter().any(|&v| v >= points.len()) {
                 return Err("invalid triangle index");
             }
@@ -387,46 +420,38 @@ impl SurfaceFilm {
             center.push(std::array::from_fn(|k| {
                 t.iter().map(|&v| points[v][k] / 3.).sum::<f64>()
             }));
-            for (a, b) in [(t[0], t[1]), (t[1], t[2]), (t[2], t[0])] {
-                owners.entry((a.min(b), a.max(b))).or_default().push(i);
-            }
         }
-        let mut edges = Vec::new();
-        let mut edge_conormals = Vec::new();
-        for ((a, b), cells) in owners {
-            if cells.len() > 2 {
-                return Err("nonmanifold surface");
+        let mut edges = Vec::with_capacity(self.topology.edges.len());
+        let mut edge_conormals = Vec::with_capacity(self.topology.edges.len());
+        for &(a, b, cell0, cell1) in &self.topology.edges {
+            let length = norm(sub(points[a], points[b]));
+            // Unfold the two facets around their shared edge. A triangle's
+            // centroid is one third of its altitude from that edge, so the
+            // cross-edge centroid separation is 2(Aa+Ab)/(3*length).
+            // This is an uncorrected normal-distance scheme: tangential
+            // cross-diffusion on skew cells still requires reconstruction.
+            let distance = 2. * (area[cell0] + area[cell1]) / (3. * length);
+            if distance < 1e-12 || !distance.is_finite() {
+                return Err("invalid cross-edge distance");
             }
-            if cells.len() == 2 {
-                let length = norm(sub(points[a], points[b]));
-                // Unfold the two facets around their shared edge. A triangle's
-                // centroid is one third of its altitude from that edge, so the
-                // cross-edge centroid separation is 2(Aa+Ab)/(3*length).
-                // This is an uncorrected normal-distance scheme: tangential
-                // cross-diffusion on skew cells still requires reconstruction.
-                let distance = 2. * (area[cells[0]] + area[cells[1]]) / (3. * length);
-                if distance < 1e-12 || !distance.is_finite() {
-                    return Err("invalid cross-edge distance");
-                }
-                let tangent = sub(points[b], points[a]).map(|v| v / length);
-                let midpoint = std::array::from_fn(|k| (points[a][k] + points[b][k]) * 0.5);
-                let conormal = |cell: usize| {
-                    let to_edge = sub(midpoint, center[cell]);
-                    let along = dot(to_edge, tangent);
-                    let perpendicular: [f64; 3] =
-                        std::array::from_fn(|k| to_edge[k] - along * tangent[k]);
-                    let altitude = norm(perpendicular);
-                    perpendicular.map(|v| v / altitude)
-                };
-                let ca = conormal(cells[0]);
-                let cb = conormal(cells[1]);
-                let direction = std::array::from_fn(|k| (ca[k] - cb[k]) * 0.5);
-                if direction.iter().any(|v: &f64| !v.is_finite()) {
-                    return Err("invalid edge conormal");
-                }
-                edge_conormals.push(direction);
-                edges.push((cells[0], cells[1], length, distance));
+            let tangent = sub(points[b], points[a]).map(|v| v / length);
+            let midpoint = std::array::from_fn(|k| (points[a][k] + points[b][k]) * 0.5);
+            let conormal = |cell: usize| {
+                let to_edge = sub(midpoint, center[cell]);
+                let along = dot(to_edge, tangent);
+                let perpendicular: [f64; 3] =
+                    std::array::from_fn(|k| to_edge[k] - along * tangent[k]);
+                let altitude = norm(perpendicular);
+                perpendicular.map(|v| v / altitude)
+            };
+            let ca = conormal(cell0);
+            let cb = conormal(cell1);
+            let direction = std::array::from_fn(|k| (ca[k] - cb[k]) * 0.5);
+            if direction.iter().any(|v: &f64| !v.is_finite()) {
+                return Err("invalid edge conormal");
             }
+            edge_conormals.push(direction);
+            edges.push((cell0, cell1, length, distance));
         }
         // Cotangent position Laplacian with barycentric vertex areas. Projecting
         // onto the area-weighted normal gives signed twice-mean curvature.

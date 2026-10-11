@@ -1,0 +1,515 @@
+{
+  "scope": "observed per-rod phases only; not whole-model qualification",
+  "first_nonzero": {
+    "frame": 1,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 1,
+    "rod": 53,
+    "maximum_position_error_m": 1.312805197883904e-09,
+    "point": 20,
+    "axis": 1
+  },
+  "first_over_position_gate": {
+    "frame": 1,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 3,
+    "rod": 53,
+    "maximum_position_error_m": 2.416795403886729e-06,
+    "point": 20,
+    "axis": 0
+  },
+  "phases": [
+    {
+      "frame": 1,
+      "phase": "initial-contact-admission",
+      "substep": 0,
+      "iteration": 0,
+      "rod": 53,
+      "maximum_position_error_m": 0.0,
+      "point": 20,
+      "axis": 2
+    },
+    {
+      "frame": 1,
+      "phase": "predicted",
+      "substep": 0,
+      "iteration": 0,
+      "rod": 53,
+      "maximum_position_error_m": 0.0,
+      "point": 20,
+      "axis": 2
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 0,
+      "rod": 53,
+      "maximum_position_error_m": 0.0,
+      "point": 20,
+      "axis": 2
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 1,
+      "rod": 53,
+      "maximum_position_error_m": 0.0,
+      "point": 20,
+      "axis": 2
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 1,
+      "rod": 53,
+      "maximum_position_error_m": 1.312805197883904e-09,
+      "point": 20,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 1,
+      "rod": 53,
+      "maximum_position_error_m": 9.205984759230734e-11,
+      "point": 20,
+      "axis": 2
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 2,
+      "rod": 53,
+      "maximum_position_error_m": 9.205984759230734e-11,
+      "point": 20,
+      "axis": 2
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 2,
+      "rod": 53,
+      "maximum_position_error_m": 1.0704701569608233e-09,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 2,
+      "rod": 53,
+      "maximum_position_error_m": 2.333377935315184e-11,
+      "point": 19,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 3,
+      "rod": 53,
+      "maximum_position_error_m": 2.333377935315184e-11,
+      "point": 19,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 3,
+      "rod": 53,
+      "maximum_position_error_m": 2.416795403886729e-06,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 3,
+      "rod": 53,
+      "maximum_position_error_m": 1.2704871732438505e-07,
+      "point": 20,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 4,
+      "rod": 53,
+      "maximum_position_error_m": 1.2704871732438505e-07,
+      "point": 20,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 4,
+      "rod": 53,
+      "maximum_position_error_m": 0.00010790991979095152,
+      "point": 20,
+      "axis": 2
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 4,
+      "rod": 53,
+      "maximum_position_error_m": 4.298148239878508e-06,
+      "point": 19,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 5,
+      "rod": 53,
+      "maximum_position_error_m": 4.298148239878508e-06,
+      "point": 19,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 5,
+      "rod": 53,
+      "maximum_position_error_m": 1.3959880633351851e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 5,
+      "rod": 53,
+      "maximum_position_error_m": 6.158957579494029e-07,
+      "point": 20,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 6.158957579494029e-07,
+      "point": 20,
+      "axis": 1
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 1.615601648533027e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "continuous-mesh-admission",
+      "substep": 0,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 1.615601648533027e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "before-finish",
+      "substep": 0,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 1.615601648533027e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "rod-velocities",
+      "substep": 0,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 1.615601648533027e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "strand-friction",
+      "substep": 0,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 1.615601648533027e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "finished",
+      "substep": 0,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 1.615601648533027e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "predicted",
+      "substep": 1,
+      "iteration": 0,
+      "rod": 53,
+      "maximum_position_error_m": 1.615601648533027e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 0,
+      "rod": 53,
+      "maximum_position_error_m": 3.026752805977695e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 1,
+      "rod": 53,
+      "maximum_position_error_m": 3.026752805977695e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 1,
+      "rod": 53,
+      "maximum_position_error_m": 3.326345253854002e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 1,
+      "rod": 53,
+      "maximum_position_error_m": 3.055445099851839e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 2,
+      "rod": 53,
+      "maximum_position_error_m": 3.055445099851839e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 2,
+      "rod": 53,
+      "maximum_position_error_m": 3.326509126941324e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 2,
+      "rod": 53,
+      "maximum_position_error_m": 3.326609788556478e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 3,
+      "rod": 53,
+      "maximum_position_error_m": 3.326609788556478e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 3,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611332502005e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 3,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611474191443e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 4,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611474191443e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 4,
+      "rod": 53,
+      "maximum_position_error_m": 3.3266114797730895e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 4,
+      "rod": 53,
+      "maximum_position_error_m": 3.3266114801186464e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 5,
+      "rod": 53,
+      "maximum_position_error_m": 3.3266114801186464e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 5,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611480107544e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 5,
+      "rod": 53,
+      "maximum_position_error_m": 3.3266114801366875e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 3.3266114801366875e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611480120034e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "continuous-mesh-admission",
+      "substep": 1,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611480120034e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "before-finish",
+      "substep": 1,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611480120034e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "rod-velocities",
+      "substep": 1,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611480120034e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "strand-friction",
+      "substep": 1,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611480120034e-05,
+      "point": 20,
+      "axis": 0
+    },
+    {
+      "frame": 1,
+      "phase": "finished",
+      "substep": 1,
+      "iteration": 6,
+      "rod": 53,
+      "maximum_position_error_m": 3.326611480120034e-05,
+      "point": 20,
+      "axis": 0
+    }
+  ]
+}

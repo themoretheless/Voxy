@@ -1,0 +1,38 @@
+{
+  "scope": "two-condition degree2/0 certificate, 7 alternating series x100, concurrent full qualifier load",
+  "results": [
+    {
+      "epsilon": -1e-08,
+      "dynamic_seconds_100": 0.000588583,
+      "fixed_seconds_100": 0.000774125,
+      "fixed_over_dynamic": 1.3152350645533424
+    },
+    {
+      "epsilon": 0.0,
+      "dynamic_seconds_100": 0.000564084,
+      "fixed_seconds_100": 0.0007665,
+      "fixed_over_dynamic": 1.3588401727402304
+    },
+    {
+      "epsilon": 1e-15,
+      "dynamic_seconds_100": 2.5209e-05,
+      "fixed_seconds_100": 2.925e-05,
+      "fixed_over_dynamic": 1.1602998928953945
+    },
+    {
+      "epsilon": 1e-10,
+      "dynamic_seconds_100": 2.6291e-05,
+      "fixed_seconds_100": 2.8833e-05,
+      "fixed_over_dynamic": 1.0966870792286334
+    },
+    {
+      "epsilon": 0.001,
+      "dynamic_seconds_100": 2.5125e-05,
+      "fixed_seconds_100": 2.8833e-05,
+      "fixed_over_dynamic": 1.1475820895522388
+    }
+  ],
+  "admission_agreement": true,
+  "decision": "Rejected and reverted fixed-array path: measured regression on all five cases. Existing dynamic arithmetic/storage retained.",
+  "full_run_affected": false
+}

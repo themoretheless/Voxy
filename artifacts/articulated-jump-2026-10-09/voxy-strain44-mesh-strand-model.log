@@ -1,0 +1,43 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 13.92s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+HAIR NONLINEAR MERIT iteration=0 before=4.773945524005579e-5 full=1.499115456785666e-7 accepted=1.499115456785666e-7 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=1 added_rows=656 before=1.499115456785666e-7 rejected=3.6911479544410443e-6
+HAIR NONLINEAR MERIT iteration=2 before=1.499115456785666e-7 full=3.1634140123171934e-10 accepted=3.1634140123171934e-10 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=3 added_rows=324 before=3.1634140123171934e-10 rejected=6.935864213181608e-6
+HAIR CONTACT MODEL iteration=4 added_rows=62 before=3.1634140123171934e-10 rejected=2.501802271938886e-8
+HAIR NONLINEAR MERIT iteration=5 before=3.1634140123171934e-10 full=2.6588165847574116e-16 accepted=2.6588165847574116e-16 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=6 added_rows=43 before=2.6588165847574116e-16 rejected=2.924055014358094e-7
+HAIR CONTACT MODEL iteration=7 added_rows=7 before=2.6588165847574116e-16 rejected=3.141429373932084e-13
+HAIR NONLINEAR MERIT iteration=8 before=2.6588165847574116e-16 full=3.498752737677226e-23 accepted=3.498752737677226e-23 scale=1e0 tangent_complete=true
+HAIR CONTACT MODEL iteration=9 added_rows=7 before=3.498752737677226e-23 rejected=7.756928832943117e-17
+HAIR NONLINEAR MERIT iteration=10 before=3.498752737677226e-23 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+ELASTIC CONTACT REPLAY iteration=0 maximum_strain=6.534658988633479e-3
+test hair::contact_replay::tests::captured_elastic_contact_preserves_strain_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 335 filtered out; finished in 2.45s
+

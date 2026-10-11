@@ -16,7 +16,7 @@ fn add_cut(
     time: f64,
     radius: f64,
     scales: [f64;2],
-) -> Result<bool, &'static str> {
+) -> Result<(), &'static str> {
     if !time.is_finite() || time <= 0. || time > 1. {
         return Err("invalid swept contact time");
     }
@@ -36,13 +36,16 @@ fn add_cut(
     // At tau: (1-tau)*old + tau*(staged + J*scaled_free) >= diameter.
     // Staged includes the exact prescribed-root endpoint contribution;
     // pinned DOFs are removed only from J, never from this affine bound.
-    let bound = (2. * radius - (1. - time) * old) / time - staged;
-    let ea = entries(a, i, s, mul(pair.normal,scales[0]), &rods[a]);
-    let eb = entries(b, j, t, mul(pair.normal, -scales[1]), &rods[b]);
-    let before: Vec<_> = constraints.iter().map(|c| c.bound).collect();
-    let index = add_constraint(constraints, [ea[0], ea[1], eb[0], eb[1]], bound)?
+    // Keep the physical space-time row, including its time Jacobian.
+    // Dividing by a very early witness time changes the force multiplier and
+    // turns a physical residual into an endpoint residual with another unit
+    // scale. FMA avoids cancellation in the affine prescribed-root term.
+    let bound = time.mul_add(old-staged,2.*radius-old);
+    let ea = entries(a, i, s, mul(pair.normal,time*scales[0]), &rods[a]);
+    let eb = entries(b, j, t, mul(pair.normal, -time*scales[1]), &rods[b]);
+    add_constraint(constraints, [ea[0], ea[1], eb[0], eb[1]], bound)?
         .ok_or("swept contact has no movable endpoint")?;
-    Ok(index >= before.len() || constraints[index].bound > before[index])
+    Ok(())
 }
 
 pub(super) struct Cut {
@@ -75,6 +78,20 @@ pub(super) fn activate(
     cuts: &mut Vec<Cut>,
     radius: f64,
 ) -> Result<bool, &'static str> {
+    activate_with_workers(constraints,rods,start,increment,groups,base,cuts,radius,None)
+}
+
+pub(super) fn activate_with_workers(
+    constraints: &mut Vec<Constraint>,
+    rods: &[HairRod],
+    start: &[HairRod],
+    increment: &PositionIncrement,
+    groups: &mut Vec<StrandResponse>,
+    base: &[StrandResponse],
+    cuts: &mut Vec<Cut>,
+    radius: f64,
+    workers:Option<usize>,
+) -> Result<bool, &'static str> {
     let mut motions = Vec::new();
     let mut ids = Vec::new();
     let (_,scales)=trust_components(rods,increment,groups)?;
@@ -91,12 +108,15 @@ pub(super) fn activate(
             });
         }
     }
-    let mut changed = false;
-    for (a, b) in swept_capsule_pairs(&motions, 1e-10)? {
+    let pairs=swept_capsule_pairs(&motions,1e-10)?;
+    // Captured witness assembly has not established a stable parallel win.
+    // Keep production serial; explicit worker counts qualify the experiment.
+    let workers=workers.unwrap_or(1);
+    let witnesses=ordered_query_results(&pairs,workers,|&(a,b)| {
         let (ra, ia) = ids[a];
         let (rb, ib) = ids[b];
         if ra == rb && ia.abs_diff(ib) <= 2 {
-            continue;
+            return Ok(None);
         }
         let mut worst: Option<(f64, f64, StrandResponse, f64, f64)> = None;
         let mut times: Vec<_> = (1..=32).map(|step| step as f64 / 32.).collect();
@@ -108,6 +128,7 @@ pub(super) fn activate(
         } else {
             vec![(motions[a], motions[b])]
         };
+        let mut may_intersect=false;
         for (ma, mb) in regions {
             if !matches!(
                 sweep_capsules(
@@ -120,12 +141,16 @@ pub(super) fn activate(
                 )?,
                 CapsuleSweep::Clear
             ) {
+                may_intersect=true;
                 let time = localized_minimum_time(ma, mb);
                 if time > 0. {
                     times.push(time);
                 }
             }
         }
+        // Clear is a full continuous certificate, not an endpoint/sample
+        // estimate. Only unresolved regions need counterexample sampling.
+        if !may_intersect {return Ok(None);}
         times.sort_by(f64::total_cmp);
         times.dedup();
         for time in times {
@@ -241,9 +266,14 @@ pub(super) fn activate(
             // feature belongs to the witnessed collision. Reusing the first
             // feature would constrain a different point after sliding.
             pair.normal = mul(delta, 1. / distance);
-            changed |= retain_cut(cuts, pair, time, [scales[ra],scales[rb]]);
+            return Ok(Some((pair,time,[scales[ra],scales[rb]])));
         }
-    }
+        Ok(None)
+    })?;
+    // Geometry is read-only in workers. Publish cuts canonically only after
+    // every query succeeds, then rebuild the same physical constraint owner.
+    let mut changed=false;
+    for (pair,time,scales) in witnesses {changed|=retain_cut(cuts,pair,time,scales);}
     if changed {
         // Rebuild from the canonical base and all witnessed affine planes.
         // add_constraint retains its canonical coalescing and strongest bound.
@@ -304,6 +334,46 @@ fn localized_minimum_time(a: CapsuleMotion, b: CapsuleMotion) -> f64 {
 mod tests {
     use super::*;
     #[test]
+    fn captured_blocking_pair_locator_retains_short_intersection() {
+        let a = CapsuleMotion {start:[[-0.10571503383239862, 0.5353139616408988, 0.017056329341362284], [-0.10806919706770535, 0.5299472118400107, 0.023043577335470203]],end:[[-0.10577149379928885, 0.5351591661098012, 0.01705744597213609], [-0.10812570262070621, 0.5297880864893493, 0.02304079376955749]],radius:4e-5};
+        let b = CapsuleMotion {start:[[-0.10800291278035071, 0.5311111101854139, 0.022075529636794787], [-0.1083593551281725, 0.5185706833323395, 0.03356630216649008]],end:[[-0.10806758277419319, 0.5309456355605204, 0.022085131983851477], [-0.10842155264723373, 0.5183892560338552, 0.03355856313709558]],radius:4e-5};
+        let distance=|time:f64| {
+            let at=|m:CapsuleMotion| std::array::from_fn::<_,2,_>(|i|add(m.start[i],mul(sub(m.end[i],m.start[i]),time)));
+            let aa=at(a);let bb=at(b);
+            let (_,_,p,q)=super::super::super::super::segment_pair(aa[0],aa[1],bb[0],bb[1]);
+            len(sub(p,q))
+        };
+        let located=localized_minimum_time(a,b);
+        let sampled=(0..=4096).map(|i| {let t=i as f64/4096.;(t,distance(t))}).min_by(|a,b|a.1.total_cmp(&b.1)).unwrap();
+        eprintln!("BLOCKING PAIR located_time={located} located_distance={} sampled={sampled:?}",distance(located));
+        eprintln!("BLOCKING PAIR certificates line={} planes={:?} sweep={:?} admitted_fraction={:?}",super::super::line_certificate::clear(a,b,512),super::super::interval_planes_clear(a,b,32768),sweep_capsules(a,b,CapsuleSweepOptions {tolerance_m:5e-11,..Default::default()}),super::super::pair_fraction(a,b,CapsuleSweepOptions {tolerance_m:5e-11,..Default::default()}));
+        assert!(distance(located)<=sampled.1+1e-14,"locator missed a shorter interior feature");
+        assert!(super::super::line_certificate::clear(a,b,512),"finite endpoint feature must certify the complete captured path");
+        assert_eq!(super::super::pair_fraction(a,b,CapsuleSweepOptions {tolerance_m:5e-11,..Default::default()}).unwrap(),1.);
+    }
+    #[test]
+    fn early_witness_residual_and_gradient_remain_in_physical_metres() {
+        let make=|x|HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],crate::hair::HairMaterial::default()).unwrap();
+        let start=vec![make(0.),make(80e-6+3e-10)];
+        let mut staged=start.clone();staged[0].x[0][0]+=1e-5;staged[0].x[1][0]+=4e-5;
+        let pair=StrandResponse {a:(0,0,0.5),b:(1,0,0.5),normal:[-1.,0.,0.],impulse:0.};
+        let scales=[0.25,0.5];
+        let mut free=PositionIncrement {linear:vec![vec![[0.;3];3];2],angular:vec![vec![[0.;3];2];2]};
+        free.linear[0][1]=[2e-5,0.,0.];free.linear[1][1]=[-1e-5,0.,0.];
+        for time in [1e-8,0.25,0.5,1.] {
+            let mut rows=Vec::new();add_cut(&mut rows,&staged,&start,&pair,time,40e-6,scales).unwrap();
+            let at=|r:usize|add(mul(point(&start[r].x,0,0.5),1.-time),mul(
+                add(point(&staged[r].x,0,0.5),mul(free.linear[r][1],0.5*scales[r])),time));
+            let actual=dot(sub(at(0),at(1)),pair.normal)-80e-6;
+            assert!((rows[0].speed(&free)-rows[0].bound-actual).abs()<1e-18);
+            for entry in rows[0].entries.iter().filter(|entry|entry.point!=0) {
+                let sign=if entry.rod==0 {-1.} else {1.};
+                assert_eq!(entry.gradient,[sign*time*scales[entry.rod]*0.5,0.,0.]);
+            }
+            assert!(rows[0].entries.iter().all(|e|e.point!=0 || e.gradient==[0.;3]));
+        }
+    }
+    #[test]
     fn angular_trust_collision_is_found_on_the_path_that_will_be_admitted() {
         let make=|x| HairRod::new(vec![[x,0.,0.],[x,0.01,0.],[x,0.02,0.]],
             crate::hair::HairMaterial::default()).unwrap();
@@ -335,7 +405,7 @@ mod tests {
                 mul(point(&start[r].x,segment,fraction),1.-cut.time),
                 mul(point(&restricted[r],segment,fraction),cut.time));
             let actual=dot(sub(at(a,i,s),at(b,j,t)),cut.pair.normal)-80e-6;
-            assert!((cut.time*(row[0].speed(&free)-row[0].bound)-actual).abs()<1e-15,
+            assert!(((row[0].speed(&free)-row[0].bound)-actual).abs()<1e-15,
                 "affine load must include the same clocks and prescribed roots as geometry");
         }
     }
@@ -542,7 +612,7 @@ mod tests {
         );
         let actual = 0.5 * old + 0.5 * end - 80e-6;
         assert!(
-            (0.5 * (constraints[0].speed(&free) - constraints[0].bound) - actual).abs() < 1e-15
+            ((constraints[0].speed(&free) - constraints[0].bound) - actual).abs() < 1e-15
         );
         assert!(
             constraints[0]
@@ -551,4 +621,202 @@ mod tests {
                 .all(|e| e.point != 0 || e.gradient == [0.; 3])
         );
     }
+}
+
+#[cfg(test)]
+pub(super) fn activate_reference(
+    constraints: &mut Vec<Constraint>,
+    rods: &[HairRod],
+    start: &[HairRod],
+    increment: &PositionIncrement,
+    groups: &mut Vec<StrandResponse>,
+    base: &[StrandResponse],
+    cuts: &mut Vec<Cut>,
+    radius: f64,
+) -> Result<bool, &'static str> {
+    let mut motions = Vec::new();
+    let mut ids = Vec::new();
+    let (_,scales)=trust_components(rods,increment,groups)?;
+    for (r, rod) in rods.iter().enumerate() {
+        for i in 0..rod.x.len() - 1 {
+            ids.push((r, i));
+            motions.push(CapsuleMotion {
+                start: [start[r].x[i], start[r].x[i + 1]],
+                end: [
+                    add(rod.x[i], mul(increment.linear[r][i],scales[r])),
+                    add(rod.x[i + 1], mul(increment.linear[r][i + 1],scales[r])),
+                ],
+                radius,
+            });
+        }
+    }
+    let mut changed = false;
+    for (a, b) in swept_capsule_pairs(&motions, 1e-10)? {
+        let (ra, ia) = ids[a];
+        let (rb, ib) = ids[b];
+        if ra == rb && ia.abs_diff(ib) <= 2 {
+            continue;
+        }
+        let mut worst: Option<(f64, f64, StrandResponse, f64, f64)> = None;
+        let mut times: Vec<_> = (1..=32).map(|step| step as f64 / 32.).collect();
+        let regions = if ia == 0 && ib == 0 {
+            vec![
+                (trim(motions[a]), motions[b]),
+                (motions[a], trim(motions[b])),
+            ]
+        } else {
+            vec![(motions[a], motions[b])]
+        };
+        for (ma, mb) in regions {
+            if !matches!(
+                sweep_capsules(
+                    ma,
+                    mb,
+                    CapsuleSweepOptions {
+                        tolerance_m: 5e-11,
+                        ..Default::default()
+                    }
+                )?,
+                CapsuleSweep::Clear
+            ) {
+                let time = localized_minimum_time(ma, mb);
+                if time > 0. {
+                    times.push(time);
+                }
+            }
+        }
+        times.sort_by(f64::total_cmp);
+        times.dedup();
+        for time in times {
+            let at = |m: CapsuleMotion| {
+                std::array::from_fn::<_, 2, _>(|p| {
+                    add(m.start[p], mul(sub(m.end[p], m.start[p]), time))
+                })
+            };
+            let aa = at(motions[a]);
+            let bb = at(motions[b]);
+            let regions = if ia == 0 && ib == 0 {
+                vec![
+                    (
+                        trim(CapsuleMotion {
+                            start: aa,
+                            end: aa,
+                            radius,
+                        })
+                        .start,
+                        bb,
+                        0.2,
+                        0.,
+                    ),
+                    (
+                        aa,
+                        trim(CapsuleMotion {
+                            start: bb,
+                            end: bb,
+                            radius,
+                        })
+                        .start,
+                        0.,
+                        0.2,
+                    ),
+                ]
+            } else {
+                vec![(aa, bb, 0., 0.)]
+            };
+            for (aa, bb, offset_a, offset_b) in regions {
+                let (s, t, p, q) = super::super::super::segment_pair(aa[0], aa[1], bb[0], bb[1]);
+                let delta = sub(p, q);
+                let distance = len(delta);
+                if distance >= 2. * radius - 1e-10 {
+                    continue;
+                }
+                let s = offset_a + (1. - offset_a) * s;
+                let t = offset_b + (1. - offset_b) * t;
+                let normal = if distance > 1e-12 {
+                    mul(delta, 1. / distance)
+                } else {
+                    let old = sub(point(&start[ra].x, ia, s), point(&start[rb].x, ib, t));
+                    if len(old) <= 1e-12 {
+                        return Err("swept contact has no separating direction");
+                    }
+                    unit(old)
+                };
+                if worst.as_ref().is_none_or(|w| distance < w.0) {
+                    worst = Some((
+                        distance,
+                        time,
+                        StrandResponse {
+                            a: (ra, ia, s),
+                            b: (rb, ib, t),
+                            normal,
+                            impulse: 0.,
+                        },
+                        offset_a,
+                        offset_b,
+                    ));
+                }
+            }
+        }
+        if let Some((_, time, mut pair, offset_a, offset_b)) = worst {
+            let ma = if offset_a > 0. {
+                trim(motions[a])
+            } else {
+                motions[a]
+            };
+            let mb = if offset_b > 0. {
+                trim(motions[b])
+            } else {
+                motions[b]
+            };
+            let first = match sweep_capsules(
+                ma,
+                mb,
+                CapsuleSweepOptions {
+                    tolerance_m: 5e-11,
+                    ..Default::default()
+                },
+            )? {
+                CapsuleSweep::Clear => {
+                    return Err("sampled intersection contradicts capsule sweep");
+                }
+                CapsuleSweep::InitialContact { .. } => 0.,
+                CapsuleSweep::Approach { fraction, .. }
+                | CapsuleSweep::IterationLimit { fraction, .. } => fraction,
+            };
+            let at = |m: CapsuleMotion| {
+                std::array::from_fn::<_, 2, _>(|p| {
+                    add(m.start[p], mul(sub(m.end[p], m.start[p]), first))
+                })
+            };
+            let aa = at(ma);
+            let bb = at(mb);
+            let (_, _, p, q) = super::super::super::segment_pair(aa[0], aa[1], bb[0], bb[1]);
+            let delta = sub(p, q);
+            let distance = len(delta);
+            if distance <= 1e-12 {
+                return Err("first swept contact has no separating direction");
+            }
+            // The side comes from first approach, but the barycentric
+            // feature belongs to the witnessed collision. Reusing the first
+            // feature would constrain a different point after sliding.
+            pair.normal = mul(delta, 1. / distance);
+            changed |= retain_cut(cuts, pair, time, [scales[ra],scales[rb]]);
+        }
+    }
+    if changed {
+        // Rebuild from the canonical base and all witnessed affine planes.
+        // add_constraint retains its canonical coalescing and strongest bound.
+        *constraints = position_constraints(rods, base, radius)?.0;
+        *groups = base.to_vec();
+        groups.extend(cuts.iter().map(|cut|cut.pair.clone()));
+        let (_,scales)=trust_components(rods,increment,groups)?;
+        for cut in cuts {
+            // Contact connectivity may change the common angular clock.
+            // Relinearize every retained feature on that same current path;
+            // obsolete clock paths are not extra physical constraints.
+            cut.scales=[scales[cut.pair.a.0],scales[cut.pair.b.0]];
+            let _ = add_cut(constraints, rods, start, &cut.pair, cut.time, radius, cut.scales)?;
+        }
+    }
+    Ok(changed)
 }

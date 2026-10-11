@@ -1,0 +1,1 @@
+Confirmed live child 54088 stopped explicitly with SIGINT. Superseded by checked Newton scale-space search with dynamic contact-component merging. The same captured proposed motion now passes full original-clock admission. This stop is not a terminal mathematical failure or full trajectory qualification. Preserve all existing evidence.

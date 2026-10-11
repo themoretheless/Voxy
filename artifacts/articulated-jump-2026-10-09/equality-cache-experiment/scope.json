@@ -1,0 +1,5 @@
+{
+  "decision": "Do not adopt: cached triangular intermediates produced exact storage bits but slower submission/readback times for 61,133,256,257 rows. Only original production shader remains.",
+  "profiling": "2-second live sample of pid49956: 592/1447 test-thread samples in device.poll, 587 waiting on Metal; narrow concurrent diagnostic window, not GPU time or rendered FPS.",
+  "baseline_shader_sha256": "49adec6c9753cdaa41761d889f6037432dffe9e8ce94afb1291a2131ddc12349"
+}

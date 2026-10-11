@@ -415,8 +415,10 @@ fn concave_fold_accumulates_film_by_capillarity_without_mass_loss() {
     let fine_difference = (accumulation[2] - accumulation[1]).abs();
     assert!(fine_difference < coarse_difference, "{accumulation:?}");
     assert!(fine_difference / accumulation[2] < 0.02, "{accumulation:?}");
-    let path =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/film-fold-retention.csv");
+    let path = std::env::var_os("VOXY_FILM_FOLD_REPORT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../docs/film-fold-retention.csv"));
     std::fs::write(path,format!("columns,triangles,surface_tension_N_per_m,dt_seconds,steps,central_volume_fraction,relative_mass_error\n{}\n",report.join("\n"))).unwrap();
 }
 

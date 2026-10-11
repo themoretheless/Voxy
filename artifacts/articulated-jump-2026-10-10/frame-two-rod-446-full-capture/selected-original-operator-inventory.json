@@ -1,0 +1,27 @@
+{
+  "observed_complete_operators": 908,
+  "selected": [
+    {
+      "file": "native-407.vqc",
+      "rows": 174,
+      "coordinates": 1764,
+      "systems": 14,
+      "tolerance": 1e-14
+    },
+    {
+      "file": "native-406.vqc",
+      "rows": 173,
+      "coordinates": 1764,
+      "systems": 14,
+      "tolerance": 1e-14
+    },
+    {
+      "file": "native-405.vqc",
+      "rows": 172,
+      "coordinates": 1764,
+      "systems": 14,
+      "tolerance": 1e-14
+    }
+  ],
+  "limits": "Selected snapshots complete at observation. Count is not terminal. No quantity is inferred from tolerance or dimensions."
+}

@@ -1,0 +1,58 @@
+{
+  "scope": "captured failed coordinate input plus complete original physical operator; full trajectory remains running",
+  "original_failure": {
+    "rows": 47,
+    "coordinates": 1512,
+    "tolerance": 1e-14,
+    "seeded_replay": "FAIL before fix",
+    "complete_physical_operator": "FAIL GPU admission before fix; native recovery succeeded"
+  },
+  "unsuccessful_probes": {
+    "refinement_limit_128": "FAIL stagnated; production remains8",
+    "sorted_retry": "FAIL; production probe removed; preserved as sorted-retry-probe.patch"
+  },
+  "conditioning": "conditioning.json is an estimate/packing diagnostic, not a rank certificate",
+  "fix": {
+    "type": "explicit ReleaseDirection distinct from Solution",
+    "ownership": "physics validates direction shape/finite negative reactions, releases one active constraint, reconstructs primal from original columns and updated nonnegative duals, then requires unchanged final KKT and original physical admission",
+    "publication": "direction itself cannot publish an equality solution",
+    "default_enabled": false,
+    "environment": "VOXY_HAIR_JOINT_RELEASE_DIRECTIONS=1",
+    "refinement_limit": 8
+  },
+  "coordinate_replay_after": {
+    "passed": true,
+    "equality_submissions": 52,
+    "release_directions": 1,
+    "physical_publication_proved": false
+  },
+  "complete_physical_operator_after": {
+    "passed": true,
+    "systems": 12,
+    "rows": 47,
+    "coordinates": 1512,
+    "equality_submissions": 63,
+    "release_directions": 1,
+    "native_fallbacks": 0,
+    "maximum_translation_difference_m": 1.1167282376600696e-17,
+    "maximum_angular_increment_difference_rad": 5.789639601072594e-16,
+    "maximum_reaction_difference": 1.5818795239310963e-21
+  },
+  "validation": {
+    "physics_library_passed": 335,
+    "physics_library_ignored": 39,
+    "hair_integration_passed": 20,
+    "differential_coupled_cases": 512,
+    "gpu_controls": [
+      "54-row operator",
+      "61-row operator with one-storage binding limits"
+    ],
+    "invalid_proposals": "wrong shape, nonfinite and nonnegative-only release vectors reject"
+  },
+  "full_run": {
+    "session": 21452,
+    "test_pid": 63918,
+    "status": "running;720requested"
+  },
+  "remaining": "all-frame admission, zero native fallback across full trajectory, rendered>160FPS, other hardware and broader engine requirements remain unproved"
+}

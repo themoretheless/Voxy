@@ -1,0 +1,6 @@
+{
+  "exec_session": 91429,
+  "cargo_pid": 86588,
+  "test_pid": 86606,
+  "live_observation": "  PID  PPID ELAPSED STAT COMMAND\n86588 75162   00:12 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo test -p voxy_app --release --lib gpu_linear_solver_tracks_full_model_jump_with_contacts -- --ignored --nocapture\n86606 86588   00:12 R    /tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f gpu_linear_solver_tracks_full_model_jump_with_contacts --ignored --nocapture\n"
+}

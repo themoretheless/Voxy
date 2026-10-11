@@ -1,0 +1,21 @@
+{
+  "scope": "synthetic log-validator regression cases only; no physical trajectory evidence",
+  "valid_batched_case": true,
+  "valid_scalar_case_when_not_required": true,
+  "rejected_cases": [
+    "scalar_runtime",
+    "missing_runtime",
+    "duplicate_runtime",
+    "wrong_density",
+    "missing_model_summary",
+    "negative_position",
+    "negative_rotation",
+    "nonfinite_position",
+    "missing_frame",
+    "native_fallback",
+    "unadmitted_call",
+    "no_gpu_calls",
+    "duplicate_terminal",
+    "missing_terminal"
+  ]
+}

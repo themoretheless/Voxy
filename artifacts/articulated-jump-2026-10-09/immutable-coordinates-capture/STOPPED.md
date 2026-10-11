@@ -1,0 +1,1 @@
+Confirmed live child 68765 explicitly stopped with SIGINT after guarded appended ordering became the native default and passed full physical owners on both archived/current-jump inputs. Superseded mathematical strategy, not observation timeout, terminal mathematical failure or completed trajectory. Older scale-space session90348 remains untouched.

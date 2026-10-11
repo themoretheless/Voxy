@@ -3,6 +3,10 @@
 mod accumulation;
 pub use accumulation::{RadianceAccumulationFrame, RadianceAccumulator};
 mod backend;
+mod joint_contact_dot;
+pub use joint_contact_dot::{JointContactDotInput,JointDotError,JOINT_CONTACT_DOT_SHADER,JOINT_CONTACT_NORMALIZE_SHADER,JOINT_CONTACT_NORMALIZE_SERIAL_SHADER};
+pub use joint_contact_dot::{ResidentContactQrInput,ResidentContactQrOutput,JOINT_CONTACT_QR_SHADER};
+pub use joint_contact_dot::{ResidentContactEqualityInput,ResidentContactEqualityOutput,ValidatedResidentContactEquality,ResidentContactQrPrefix,JOINT_CONTACT_EQUALITY_SHADER};
 mod banded_solve;
 mod banded_transfer;
 pub use banded_transfer::BandedTransferProgram;
@@ -281,6 +285,8 @@ pub use surface_light_diffusion::{SurfaceLightDiffusion, SurfaceLightEdge};
 
 mod surface_deformation;
 pub use surface_deformation::{SurfaceDeformation, SurfaceDeformationWeight};
+mod surface_rigid_skinning;
+pub use surface_rigid_skinning::SurfaceRigidSkinWeight;
 
 mod surface_normal_transport;
 

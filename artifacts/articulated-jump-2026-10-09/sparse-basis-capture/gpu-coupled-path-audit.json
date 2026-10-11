@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-10-09T20:20:58.024769+00:00",
+  "scope": "Inspected current source, not runtime performance qualification",
+  "gpu_owner": {
+    "file": "crates/voxy_app/src/gpu_hair_solver.rs",
+    "function": "solve_responses_checked",
+    "work": "Independent banded structural load responses, residual correction and original force validation"
+  },
+  "gpu_dispatch": {
+    "file": "crates/voxy_app/src/gpu_hair_response_dispatch.rs",
+    "function": "dispatch_response_waves",
+    "work": "Resident factors, RHS waves and CPU readback"
+  },
+  "cpu_coupled_owner": {
+    "file": "crates/physics/src/hair/velocity_contacts.rs",
+    "function": "constrained_newton_increment_prepared",
+    "work": "Native QR or external-response Gram projection; GPU response dispatch alone does not solve coupled unilateral contact"
+  },
+  "invariant": {
+    "file": "crates/physics/src/hair/mod.rs",
+    "function": "HairLinearSystem::validate_shape",
+    "active": "6..rhs.len()-3",
+    "effect": "Grouping GPU requests by coordinate width also fixes active range; do not invent mixed-active bug"
+  },
+  "missing": [
+    "GPU unilateral coupled contact solve with original physical admission",
+    "GPU continuous strand/body collision pipeline",
+    "End-to-end rendered >160 FPS qualification"
+  ],
+  "next_action": "Define coupled backend input/output ownership before adding GPU kernels; retain original bounds, reactions, roots, force residual and CCD/strain gates"
+}

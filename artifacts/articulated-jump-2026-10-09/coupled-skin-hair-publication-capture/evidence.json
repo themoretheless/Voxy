@@ -1,0 +1,16 @@
+{
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "578105cae2009ea2a93af914b1e7780f1b7db300d3f6b464aa4ba7c50f3ddddd",
+    "crates/physics/src/skin/adaptive.rs": "d131e149f37c1a5d8bab1975e13522528973b9d6485f0de47cce5cc8016a1924",
+    "crates/voxy_app/src/female_hair.rs": "7de8c8068ec1ab56c130efd189f9bf06d9b3e77e58dae5193c549b70f2eb2f9b",
+    "crates/voxy_app/src/female_demo.rs": "97f532359f7059988ab7ece15e7f1aeaa27ae2cb34e6d84894a54f9d958fb6a1",
+    "crates/physics/tests/hair.rs": "b2c4a8534bea4b41738204c85354f28b014c669ae141bf45d32ab1af79a95be7"
+  },
+  "physics_library_passed": 338,
+  "hair_integration_passed": 21,
+  "skin_integration_passed": 20,
+  "application_accelerator_rejection_passed": 1,
+  "cadence_repeat_session": 21655,
+  "scope": "Skin and hair publication coupled after both candidates succeed; no claim of full demo rollback for regions, secondary state, lashes or film.",
+  "cadence_old_failure": "Actual six-second trajectory succeeded then stale assertion expected 180 physical steps instead of 720; corrected test checks 720 at both display cadences. Repeat remains running."
+}

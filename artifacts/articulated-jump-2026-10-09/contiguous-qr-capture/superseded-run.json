@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-10-09T20:12:17.058599+00:00",
+  "reason": "Validated production lazy frozen-pose matrix reuse and shared exact QR support; not timeout",
+  "old_session": 38935,
+  "old_pid": 39009,
+  "replacement_session": 58922,
+  "replacement_pid": 46034,
+  "completed_paired_frames": [
+    {
+      "frame": 1,
+      "native_ms": 14124.148583,
+      "cpu_control_ms": 9697.604667
+    },
+    {
+      "frame": 2,
+      "native_ms": 41772.126916,
+      "cpu_control_ms": 45057.959375000006
+    },
+    {
+      "frame": 3,
+      "native_ms": 83577.662167,
+      "cpu_control_ms": 85991.924458
+    }
+  ],
+  "requested_frames": 720,
+  "completed": false,
+  "scope": "CPU physics diagnostics only, not FPS; old timing excludes latest optimizations"
+}

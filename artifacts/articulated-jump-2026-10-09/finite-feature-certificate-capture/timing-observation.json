@@ -1,0 +1,52 @@
+{
+  "completed_frame_timings": [
+    {
+      "frame": 1,
+      "native_ms": 28032.228792,
+      "control_ms": 20994.628667
+    },
+    {
+      "frame": 2,
+      "native_ms": 59626.903874999996,
+      "control_ms": 62207.785375
+    },
+    {
+      "frame": 3,
+      "native_ms": 112416.78725,
+      "control_ms": 107240.94354099999
+    },
+    {
+      "frame": 4,
+      "native_ms": 112598.124583,
+      "control_ms": 111712.185791
+    }
+  ],
+  "paired_errors": [
+    {
+      "frame": 1,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 2,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 3,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 4,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    }
+  ],
+  "requested_frames": 720,
+  "timing_scope": "CPU physics only; render and later verification excluded",
+  "includes_latest_sparse_qr_residual_change": false,
+  "fps_qualified": false,
+  "completion_proven": false,
+  "process_status_requires_live_handle_check": true
+}

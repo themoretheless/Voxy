@@ -1,0 +1,42 @@
+    Blocking waiting for file lock on package cache
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 12.77s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+ENVELOPE TRANSLATION rod=51 segment=7 fraction=0.7838762199930922 gap=-0.0015501816464851275 gradient=[0.00018634804572097502, -0.0012354416404918578, -0.0008961631701984163]
+ENVELOPE TRANSLATION endpoint=None epsilon=1e-6 derivative=[0.00018688967224917558, -0.0012358989322398817, -0.0008964709180070765] expected=[0.00018634804572097502, -0.0012354416404918578, -0.0008961631701984163] error=0.0000007727766511719292
+ENVELOPE TRANSLATION endpoint=None epsilon=1e-7 derivative=[0.00018682368044080355, -0.0012361853012586577, -0.0008963191452070196] expected=[0.00018634804572097502, -0.0012354416404918578, -0.0008961631701984163] error=0.0000008964306588312105
+ENVELOPE TRANSLATION endpoint=None epsilon=1e-8 derivative=[0.0001875489347158421, -0.0012354040858884863, -0.0008975483659252881] expected=[0.00018634804572097502, -0.0012354416404918578, -0.0008961631701984163] error=0.0000018336607995949383
+ENVELOPE TRANSLATION endpoint=Some(7) epsilon=1e-6 derivative=[4.035637763636496e-5, -0.00026712843579929785, -0.0001937213512433894] expected=[4.02742440381172e-5, -0.00026700831732103555, -0.0001936821718462556] error=0.00000015069638993997715
+ENVELOPE TRANSLATION endpoint=Some(7) epsilon=1e-7 derivative=[4.04359737967569e-5, -0.00026698111711860595, -0.000193960432567572] expected=[4.02742440381172e-5, -0.00026700831732103555, -0.0001936821718462556] error=0.00000032299441925424954
+ENVELOPE TRANSLATION endpoint=Some(7) epsilon=1e-8 derivative=[4.196042385079535e-5, -0.0002689704253593106, -0.00019225597676364448] expected=[4.02742440381172e-5, -0.00026700831732103555, -0.0001936821718462556] error=0.000002954167010886655
+ENVELOPE TRANSLATION endpoint=Some(8) epsilon=1e-6 derivative=[0.00014650868181403237, -0.0009688149846167476, -0.0007027092778109575] expected=[0.00014607380168285783, -0.0009684333231708222, -0.0007024809983521607] error=0.0000006220110120446697
+ENVELOPE TRANSLATION endpoint=Some(8) epsilon=1e-7 derivative=[0.00014656390467590596, -0.0009686463903115644, -0.000702441146699026] expected=[0.00014607380168285783, -0.0009684333231708222, -0.0007024809983521607] error=0.0000005358980355593361
+ENVELOPE TRANSLATION endpoint=Some(8) epsilon=1e-8 derivative=[0.00014525291776659732, -0.0009671373619492274, -0.0007009705207776384] expected=[0.00014607380168285783, -0.0009684333231708222, -0.0007024809983521607] error=0.000002152883739310481
+test hair::contact_replay::tests::captured_interior_gradient_matches_translation_derivative ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 308 filtered out; finished in 0.18s
+

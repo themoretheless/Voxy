@@ -1,0 +1,80 @@
+{
+  "scope": "Two bounded 1-second CPU stack samples, not whole-run percentages or FPS; blocked system threads excluded from ranking",
+  "samples": [
+    {
+      "file": "live-cpu-sample.txt",
+      "top_physics_symbols": [
+        {
+          "symbol": "_RNvMNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qrNtB2_10EqualityQr5solve",
+          "samples": 602
+        },
+        {
+          "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair7contact12segment_pair",
+          "samples": 200
+        },
+        {
+          "symbol": "_RNCNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsuless3_0B9_",
+          "samples": 187
+        },
+        {
+          "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair6direct20solve_lower_factored",
+          "samples": 97
+        },
+        {
+          "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsules",
+          "samples": 94
+        },
+        {
+          "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10polynomial5split",
+          "samples": 70
+        },
+        {
+          "symbol": "_RNvXs_NtNtCs7CMGwZ9BQm0_5alloc3vec21spec_from_iter_nestedINtB6_3VecdEINtB4_18SpecFromIterNesteddINtNtNtNtCsfIBWXedyoEb_4core4iter8adapters3map3MapINtNtNtB1F_3ops5range5RangejENCNvMNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qrNtB2S_10EqualityQr5solves4_0EE9from_iterB2Y_",
+          "samples": 41
+        },
+        {
+          "symbol": "_RINvNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qr17accurate_productsINtNtNtNtCsfIBWXedyoEb_4core4iter8adapters3map3MapINtNtNtB1G_5slice4iter4IterjENCNCNvB2_20unilateral_supporteds6_00EEB8_",
+          "samples": 23
+        }
+      ]
+    },
+    {
+      "file": "live-cpu-sample-2.txt",
+      "top_physics_symbols": [
+        {
+          "symbol": "_RNvMNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qrNtB2_10EqualityQr5solve",
+          "samples": 635
+        },
+        {
+          "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair7contact12segment_pair",
+          "samples": 293
+        },
+        {
+          "symbol": "_RNCNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsuless3_0B9_",
+          "samples": 235
+        },
+        {
+          "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsules",
+          "samples": 100
+        },
+        {
+          "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair6direct20solve_lower_factored",
+          "samples": 84
+        },
+        {
+          "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10polynomial5split",
+          "samples": 73
+        },
+        {
+          "symbol": "_RNvXs_NtNtCs7CMGwZ9BQm0_5alloc3vec21spec_from_iter_nestedINtB6_3VecdEINtB4_18SpecFromIterNesteddINtNtNtNtCsfIBWXedyoEb_4core4iter8adapters3map3MapINtNtNtB1F_3ops5range5RangejENCNvMNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qrNtB2S_10EqualityQr5solves4_0EE9from_iterB2Y_",
+          "samples": 71
+        },
+        {
+          "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10polynomial7product",
+          "samples": 23
+        }
+      ]
+    }
+  ],
+  "next_action": "Investigate equality QR coordinate reconstruction and orthogonalization without changing product order or physical admission"
+}

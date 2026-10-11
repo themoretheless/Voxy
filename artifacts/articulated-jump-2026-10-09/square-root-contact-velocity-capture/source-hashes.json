@@ -1,0 +1,4 @@
+{
+  "crates/physics/src/hair/velocity_contacts.rs": "2312e1f261d724e31a6dd0ea3cb5f183f84c04f8912ee3d02ca0807fc4736d6d",
+  "crates/voxy_app/src/gpu_hair_joint.rs": "3e0079723eb4f31df6b50af98e3224641f5a92fc98a888dceb789607cd48e642"
+}

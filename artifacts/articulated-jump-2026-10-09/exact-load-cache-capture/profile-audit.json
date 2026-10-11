@@ -1,0 +1,27 @@
+{
+  "session": 58786,
+  "pid": 7118,
+  "sample_duration_seconds": 1,
+  "source": "live-cpu-sample.txt",
+  "metric": "collapsed top-of-stack sample counts; not frame-time percentages",
+  "counts": {
+    "EqualityQr.solve": 175,
+    "segment_pair": 153,
+    "polynomial.split": 141,
+    "continuous.gap": 125,
+    "polynomial.product": 73,
+    "PreparedNativeJoint.solve": 42
+  },
+  "first_frame": {
+    "native_physics_ms": 9766.469333,
+    "cpu_control_physics_ms": 8130.566333000001,
+    "position_error": 0,
+    "quaternion_error": 0
+  },
+  "limits": [
+    "First frame overlapped run replacement; no controlled before-after speed claim.",
+    "One-second samples may observe different phases; no causal percentage comparison to previous sample.",
+    "CPU-only physics diagnostic, excludes rendering;720 incomplete."
+  ],
+  "next_inspection": "Polynomial continuous-certificate subdivision and interval coefficient construction, preserving outward rounding, degree limits and unknown-on-budget-exhaustion."
+}

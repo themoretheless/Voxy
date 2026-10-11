@@ -1,0 +1,79 @@
+{
+  "scope": "12 captured pairs, bitwise final fraction agreement; isolated CPU diagnostic; concurrent load",
+  "measurements": [
+    {
+      "pair": 0,
+      "original_seconds_100": 0.000145833,
+      "selective_seconds_100": 0.000148375,
+      "ratio": 0.9828677337826454
+    },
+    {
+      "pair": 1,
+      "original_seconds_100": 0.00424425,
+      "selective_seconds_100": 0.00060925,
+      "ratio": 6.966352072219943
+    },
+    {
+      "pair": 2,
+      "original_seconds_100": 0.00017175,
+      "selective_seconds_100": 0.000167958,
+      "ratio": 1.0225770728396384
+    },
+    {
+      "pair": 3,
+      "original_seconds_100": 0.000112208,
+      "selective_seconds_100": 0.000117875,
+      "ratio": 0.9519236479321314
+    },
+    {
+      "pair": 4,
+      "original_seconds_100": 0.011876917,
+      "selective_seconds_100": 0.000954125,
+      "ratio": 12.447967509498232
+    },
+    {
+      "pair": 5,
+      "original_seconds_100": 0.007928375,
+      "selective_seconds_100": 0.000428959,
+      "ratio": 18.482827030089123
+    },
+    {
+      "pair": 6,
+      "original_seconds_100": 0.000143958,
+      "selective_seconds_100": 0.000120917,
+      "ratio": 1.1905521969615522
+    },
+    {
+      "pair": 7,
+      "original_seconds_100": 0.000110917,
+      "selective_seconds_100": 0.00011725,
+      "ratio": 0.9459872068230276
+    },
+    {
+      "pair": 8,
+      "original_seconds_100": 0.000112709,
+      "selective_seconds_100": 0.000158667,
+      "ratio": 0.7103493480055714
+    },
+    {
+      "pair": 9,
+      "original_seconds_100": 0.005144166,
+      "selective_seconds_100": 0.010922416,
+      "ratio": 0.4709732718475473
+    },
+    {
+      "pair": 10,
+      "original_seconds_100": 0.008465208,
+      "selective_seconds_100": 0.0154295,
+      "ratio": 0.5486378690171425
+    },
+    {
+      "pair": 11,
+      "original_seconds_100": 0.005332583,
+      "selective_seconds_100": 0.005171292,
+      "ratio": 1.0311896910868696
+    }
+  ],
+  "caveat": "Candidate now uses black_box input as reference does; updated source rerun pending. Preliminary figures are not accepted production evidence.",
+  "production_changed": false
+}

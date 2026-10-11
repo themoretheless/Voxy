@@ -1,0 +1,57 @@
+[
+  {
+    "native_row": 0,
+    "closest_external_row": 0,
+    "maximum_load_difference": 1.2778667013435552e-13
+  },
+  {
+    "native_row": 1,
+    "closest_external_row": 1,
+    "maximum_load_difference": 7.005507285384738e-14
+  },
+  {
+    "native_row": 2,
+    "closest_external_row": 2,
+    "maximum_load_difference": 2.4950153054703605e-11
+  },
+  {
+    "native_row": 3,
+    "closest_external_row": 3,
+    "maximum_load_difference": 0.007224171668400781
+  },
+  {
+    "native_row": 4,
+    "closest_external_row": 4,
+    "maximum_load_difference": 0.0022558804219645623
+  },
+  {
+    "native_row": 5,
+    "closest_external_row": 5,
+    "maximum_load_difference": 0.0007279890802464745
+  },
+  {
+    "native_row": 6,
+    "closest_external_row": 6,
+    "maximum_load_difference": 2.3987710782991112e-08
+  },
+  {
+    "native_row": 7,
+    "closest_external_row": 7,
+    "maximum_load_difference": 0.019212863179141535
+  },
+  {
+    "native_row": 8,
+    "closest_external_row": 8,
+    "maximum_load_difference": 0.009568975675490213
+  },
+  {
+    "native_row": 9,
+    "closest_external_row": 9,
+    "maximum_load_difference": 0.04720415577494119
+  },
+  {
+    "native_row": 10,
+    "closest_external_row": 10,
+    "maximum_load_difference": 5.294407402420265e-08
+  }
+]

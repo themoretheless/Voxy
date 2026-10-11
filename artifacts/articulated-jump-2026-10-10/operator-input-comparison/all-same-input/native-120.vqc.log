@@ -1,0 +1,25 @@
+
+running 1 test
+JOINT BACKEND ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+JOINT BACKEND storage_limit=8
+JOINT NATIVE COMPARISON {"absolute_physical_tolerance":1e-14,"coordinates":126,"maximum_angular_increment_difference_rad":1.5612511283791264e-17,"maximum_reaction_difference":4.8467614016778965e-26,"maximum_translation_difference_m":5.149960319306146e-19,"native_fallback_used":false,"rows":5,"scope":"same complete captured physical operator; not whole trajectory","systems":1}
+JOINT GPU WORKSPACE creations=1 reuses=0 scope=original_physical_operator_not_full_model_or_fps
+JOINT RELEASE DIRECTIONS 0 early=0
+JOINT BACKEND ORIGINAL systems=1 rows=5 width=126 tolerance=1e-14 coordinate_calls=1 equality_dispatches=1 admitted=1 fallbacks=0
+JOINT EXACT REUSE physically_admitted=true additional_equality_submissions=0 cache_hits=1
+JOINT EXACT INVALIDATION bounds=changed physically_admitted=true equality_submissions=1
+JOINT EXACT INVALIDATION bounds=restored physically_admitted=true equality_submissions=1
+JOINT EXACT REUSE DISABLED physically_admitted=true retained_cache=false
+
+thread 'gpu_hair_solver::joint::tests::gpu_joint_backend_admits_captured_original_physics' (73249625) panicked at crates/voxy_app/src/gpu_hair_joint.rs:908:13:
+fixture did not exercise prefix reuse
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::joint::tests::gpu_joint_backend_admits_captured_original_physics ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::joint::tests::gpu_joint_backend_admits_captured_original_physics
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 331 filtered out; finished in 0.04s
+

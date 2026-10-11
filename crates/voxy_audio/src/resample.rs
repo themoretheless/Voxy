@@ -73,13 +73,7 @@ impl Clip {
             // Fast path: contiguous interior samples without saturating arithmetic or clamping.
             let (sum0, sum1) = if center >= 32 && center + 32 < input_len {
                 let window = &self.frames[center - 32..=center + 32];
-                let mut s0 = 0.0f64;
-                let mut s1 = 0.0f64;
-                for (frame, &weight) in window.iter().zip(kernel.iter()) {
-                    s0 += f64::from(frame[0]) * weight;
-                    s1 += f64::from(frame[1]) * weight;
-                }
-                (s0, s1)
+                dot_product_stereo_65(window, &kernel)
             } else {
                 let mut s0 = 0.0f64;
                 let mut s1 = 0.0f64;
@@ -181,6 +175,43 @@ fn compute_filter_weights(fraction: f64, cutoff: f64) -> [f64; 65] {
         *w *= inv_norm;
     }
     weights
+}
+
+#[inline(always)]
+fn dot_product_stereo_65(window: &[[f32; 2]], kernel: &[f64; 65]) -> (f64, f64) {
+    debug_assert_eq!(window.len(), 65);
+    let mut s0_0 = 0.0f64;
+    let mut s0_1 = 0.0f64;
+    let mut s0_2 = 0.0f64;
+    let mut s0_3 = 0.0f64;
+
+    let mut s1_0 = 0.0f64;
+    let mut s1_1 = 0.0f64;
+    let mut s1_2 = 0.0f64;
+    let mut s1_3 = 0.0f64;
+
+    let frames_chunks = window[..64].chunks_exact(4);
+    let weights_chunks = kernel[..64].chunks_exact(4);
+
+    for (f, w) in frames_chunks.zip(weights_chunks) {
+        s0_0 += f64::from(f[0][0]) * w[0];
+        s1_0 += f64::from(f[0][1]) * w[0];
+
+        s0_1 += f64::from(f[1][0]) * w[1];
+        s1_1 += f64::from(f[1][1]) * w[1];
+
+        s0_2 += f64::from(f[2][0]) * w[2];
+        s1_2 += f64::from(f[2][1]) * w[2];
+
+        s0_3 += f64::from(f[3][0]) * w[3];
+        s1_3 += f64::from(f[3][1]) * w[3];
+    }
+
+    let rem_f = window[64];
+    let rem_w = kernel[64];
+    let s0 = (s0_0 + s0_1) + (s0_2 + s0_3) + f64::from(rem_f[0]) * rem_w;
+    let s1 = (s1_0 + s1_1) + (s1_2 + s1_3) + f64::from(rem_f[1]) * rem_w;
+    (s0, s1)
 }
 
 #[cfg(test)]

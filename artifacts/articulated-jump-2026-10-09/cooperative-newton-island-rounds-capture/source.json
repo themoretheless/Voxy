@@ -1,0 +1,9 @@
+{
+  "sha256": {
+    "crates/physics/src/hair/contact_square_root_projection.rs": "2694b65eb10e9adb92d1d254dac955a03bce5f4d7e269d3978449d187378ca50",
+    "crates/physics/src/hair/contact_response_system.rs": "777be475d7dd0cedd2e5ae1b6a9d10f5807a0ac51f6255679717f54fb6a713d7",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "4e44728f78e23d03b6a20b0158939deae8cd37fee1e639e2c24efeb6fbec9f61",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "4de19c5c68f8d6f2546e205742358e09dbbec0992205e248705d7be0a042a65c"
+  },
+  "scope": "Cooperative outer Newton island rounds; inner whitening/load corrections remain scalar. Full trajectory and FPS unqualified."
+}

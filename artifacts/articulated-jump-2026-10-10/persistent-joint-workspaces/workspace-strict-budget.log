@@ -1,0 +1,7 @@
+
+running 1 test
+GPU WORKSPACE STRICT BUDGET bytes=220 creations=1 reuses=5 oversized_rejection_preserves_pool=true oversized_backing_uses_payload_snapshot=true explicit_retirement=true
+test gpu_hair_solver::joint::tests::gpu_workspace_reuses_larger_storage_and_preserves_budget_after_rejection ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 332 filtered out; finished in 0.05s
+

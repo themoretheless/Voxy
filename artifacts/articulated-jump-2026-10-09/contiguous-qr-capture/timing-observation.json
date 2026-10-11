@@ -1,0 +1,49 @@
+{
+  "observed_at": "2026-10-09T20:05:35.861445+00:00",
+  "session": 38935,
+  "pid": 39009,
+  "requested_frames": 720,
+  "completed_paired_frames": [
+    {
+      "frame": 1,
+      "native_ms": 14124.148583,
+      "cpu_control_ms": 9697.604667
+    }
+  ],
+  "scope": "CPU physics with diagnostic overhead; not rendering/GPU/FPS. Frame1 overlapped old-run replacement, not controlled before/after benchmark",
+  "profile_top_physics_symbols": [
+    {
+      "symbol": "_RNvMNtNtNtCs7KDHeV3lXiN_7physics4hair23contact_response_system14square_root_qrNtB2_10EqualityQr5solve",
+      "samples": 380
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair7contact12segment_pair",
+      "samples": 353
+    },
+    {
+      "symbol": "_RNCNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsuless3_0B9_",
+      "samples": 325
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10continuous14sweep_capsules",
+      "samples": 127
+    },
+    {
+      "symbol": "_RNvNtNtCs7KDHeV3lXiN_7physics4hair6direct20solve_lower_factored",
+      "samples": 99
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10polynomial5split",
+      "samples": 93
+    },
+    {
+      "symbol": "_RNvNtNtNtNtCs7KDHeV3lXiN_7physics4hair7contact17velocity_contacts11safe_motion13pair_fraction",
+      "samples": 50
+    },
+    {
+      "symbol": "_RNvNtNtNtCs7KDHeV3lXiN_7physics4hair7contact10polynomial7product",
+      "samples": 33
+    }
+  ],
+  "complete": false
+}

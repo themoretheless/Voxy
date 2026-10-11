@@ -1,0 +1,33 @@
+{
+  "timed_frames": [
+    {
+      "frame": 1,
+      "native_ms": 15568.834541,
+      "external_ms": 13852.147
+    },
+    {
+      "frame": 2,
+      "native_ms": 55472.587833,
+      "external_ms": 54947.82675
+    },
+    {
+      "frame": 3,
+      "native_ms": 107056.352375,
+      "external_ms": 101412.26437500001
+    },
+    {
+      "frame": 4,
+      "native_ms": 120380.138209,
+      "external_ms": 119804.372708
+    }
+  ],
+  "verified_completed_frames": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "complete": false,
+  "rendered_fps": null,
+  "scope": "paired native CPU hair physics, diagnostics on, excludes rendering/verification"
+}

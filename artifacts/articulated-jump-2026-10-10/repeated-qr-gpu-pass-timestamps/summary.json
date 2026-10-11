@@ -1,0 +1,22 @@
+{
+  "scope": "nine selected ordered QR GPU pass intervals; not full-model throughput or FPS",
+  "gpu_timestamp_period_ns": 1,
+  "samples_ns": [
+    28167.0,
+    27750.0,
+    26458.0,
+    27666.0,
+    27167.0,
+    27083.0,
+    26833.0,
+    26000.0,
+    27167.0
+  ],
+  "exact_unprofiled_qr_snapshots": true,
+  "render_unit_tests_passed": 212,
+  "render_unit_tests_ignored": 34,
+  "disabled_feature_preflight_test_passed": true,
+  "actual_gpu_test_passed": true,
+  "concurrent_system_load_controlled": false,
+  "rendered_fps_measured": false
+}

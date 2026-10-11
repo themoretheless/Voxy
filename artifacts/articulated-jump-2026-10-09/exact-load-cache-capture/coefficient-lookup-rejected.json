@@ -1,0 +1,9 @@
+{
+  "scope": "10000 degree6 Bernstein transforms x7 alternating pairs; black_box input/degree/output; exact original loop reference; concurrent full qualifier load",
+  "original_median_seconds": 0.001860333,
+  "lookup_median_seconds": 0.002480042,
+  "lookup_over_original": 1.3331172429882177,
+  "numeric_bounds_bitwise_equal": true,
+  "decision": "Rejected and reverted production lookup table and experiment test code; logs retained.",
+  "live_full_run_affected": false
+}

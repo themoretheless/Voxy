@@ -1,0 +1,35 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 15.74s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+captured QR rows=46 width=2142, paired original/cached seconds=[(0.029200834, 0.008788), (0.029388375, 0.00908775), (0.029911875, 0.009851584), (0.029276291, 0.008746458), (0.030604916, 0.008578416), (0.029959625, 0.008883875), (0.029113208, 0.008773542)]
+captured exact gap dense/sparse seconds=[(0.004797083, 0.003335), (0.004763292, 0.003322542), (0.004869542, 0.003224833), (0.0049095, 0.003332625), (0.004767167, 0.00320125), (0.004825834, 0.003181334), (0.004753, 0.00334575)]
+captured orthogonalization dense/sparse basis seconds=[(0.003385084, 0.002353667), (0.003266625, 0.002390708), (0.003163041, 0.002272417), (0.003237375, 0.002478542), (0.003223459, 0.002371583), (0.003271583, 0.002412416), (0.00324625, 0.002400834)]
+captured QR residual 100 evaluations dense/sparse seconds=[(0.005955083, 0.000514416), (0.00584175, 0.000547625), (0.005937291, 0.000456125), (0.005834834, 0.000455542), (0.005857, 0.000454208), (0.005939, 0.000452958), (0.0058785, 0.000466875)]
+test hair::contact_response_system::square_root_qr::tests::captured_prefix_reuse_matches_reference_and_reports_paired_time ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 361 filtered out; finished in 0.42s
+

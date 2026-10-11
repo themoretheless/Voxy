@@ -1,0 +1,438 @@
+{
+  "binary_sha256": "436bbdf7e0d21f35e2d01dce777b5f210c6c70975ec70b1735fd2ced69be9aee",
+  "results": [
+    {
+      "fixture": "native-00.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 1.2732925824820995e-11,
+        "maximum_linear_response_component_difference": 1.1102230246251565e-16,
+        "maximum_reaction_difference": 1.7763568394002505e-15,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-01.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 3.092281986027956e-11,
+        "maximum_linear_response_component_difference": 3.219646771412954e-15,
+        "maximum_reaction_difference": 4.0245584642661925e-16,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-02.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 8.549250196665525e-11,
+        "maximum_linear_response_component_difference": 9.769962616701378e-15,
+        "maximum_reaction_difference": 3.7192471324942744e-15,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 4,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-03.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 5.4569682106375694e-11,
+        "maximum_linear_response_component_difference": 6.8833827526759706e-15,
+        "maximum_reaction_difference": 1.609823385706477e-15,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 3,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-04.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 1.2860823517257813e-12,
+        "maximum_linear_response_component_difference": 1.3100631690576847e-14,
+        "maximum_reaction_difference": 3.903127820947816e-17,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-05.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 1.2221335055073723e-12,
+        "maximum_linear_response_component_difference": 1.199040866595169e-14,
+        "maximum_reaction_difference": 2.9116757561866574e-21,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 3,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-06.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 1.4779288903810084e-12,
+        "maximum_linear_response_component_difference": 1.9539925233402755e-14,
+        "maximum_reaction_difference": 4.5102810375396984e-17,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 4,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-07.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 5.115907697472721e-13,
+        "maximum_linear_response_component_difference": 5.10702591327572e-15,
+        "maximum_reaction_difference": 3.705769144237564e-22,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-08.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 7.105427357601002e-15,
+        "maximum_linear_response_component_difference": 1.1657341758564144e-14,
+        "maximum_reaction_difference": 4.2012834183813297e-19,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-09.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 2.1094237467877974e-14,
+        "maximum_linear_response_component_difference": 2.1094237467877974e-14,
+        "maximum_reaction_difference": 7.792703114739563e-20,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-10.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 3.9968028886505635e-15,
+        "maximum_linear_response_component_difference": 2.6645352591003757e-15,
+        "maximum_reaction_difference": 1.2874900798265365e-19,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 4,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-11.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 1.8207657603852567e-14,
+        "maximum_linear_response_component_difference": 1.8207657603852567e-14,
+        "maximum_reaction_difference": 2.879912020664621e-20,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-12.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 2.864908310584724e-11,
+        "maximum_linear_response_component_difference": 2.55351295663786e-15,
+        "maximum_reaction_difference": 3.885780586188048e-15,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-13.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 9.458744898438454e-11,
+        "maximum_linear_response_component_difference": 1.2212453270876722e-14,
+        "maximum_reaction_difference": 2.0816681711721685e-15,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 3,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-14.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 5.4569682106375694e-11,
+        "maximum_linear_response_component_difference": 7.105427357601002e-15,
+        "maximum_reaction_difference": 3.0721952759549254e-15,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 5,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-15.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 2.7284841053187847e-11,
+        "maximum_linear_response_component_difference": 2.55351295663786e-15,
+        "maximum_reaction_difference": 8.881784197001252e-16,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-16.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 8.810729923425242e-13,
+        "maximum_linear_response_component_difference": 7.216449660063518e-15,
+        "maximum_reaction_difference": 2.6020852139652106e-18,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 3,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-17.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 5.684341886080801e-13,
+        "maximum_linear_response_component_difference": 4.440892098500626e-15,
+        "maximum_reaction_difference": 2.1705219273391446e-21,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 4,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-18.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 4.973799150320701e-13,
+        "maximum_linear_response_component_difference": 6.8833827526759706e-15,
+        "maximum_reaction_difference": 2.5153490401663703e-17,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 6,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-19.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1.9999999999999997e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 6.110667527536862e-13,
+        "maximum_linear_response_component_difference": 7.327471962526033e-15,
+        "maximum_reaction_difference": 7.940933880509066e-22,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-20.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 3.1086244689504383e-15,
+        "maximum_linear_response_component_difference": 2.220446049250313e-15,
+        "maximum_reaction_difference": 1.0842021724855044e-19,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 3,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-21.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 8.659739592076221e-15,
+        "maximum_linear_response_component_difference": 6.8833827526759706e-15,
+        "maximum_reaction_difference": 6.776263578034403e-20,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 4,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-22.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 5.551115123125783e-15,
+        "maximum_linear_response_component_difference": 6.217248937900877e-15,
+        "maximum_reaction_difference": 1.2197274440461925e-19,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 6,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-23.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 2e-09,
+        "angular_response_unit": "rad/s",
+        "coordinates": 36,
+        "linear_response_unit": "m/s",
+        "maximum_angular_response_component_difference": 3.1086244689504383e-15,
+        "maximum_linear_response_component_difference": 2.4424906541753444e-15,
+        "maximum_reaction_difference": 1.5246593050577406e-20,
+        "native_fallback_used": false,
+        "response_quantity": "velocity",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    }
+  ],
+  "limits": "Same-input Metal/native captured two-rod physical velocity operators. Not full model, whole trajectory, rendered hair motion, or FPS."
+}

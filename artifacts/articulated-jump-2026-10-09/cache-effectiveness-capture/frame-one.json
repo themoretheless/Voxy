@@ -1,0 +1,13 @@
+{
+  "scope": "first full-density paired jump frame, existing positive-rank binary",
+  "coordinate_calls": 9099,
+  "equality_submissions": 89078,
+  "exact_result_cache_hits": 0,
+  "admitted": 9099,
+  "native_fallbacks": 0,
+  "maximum_position_difference_m": 4.0513562366006894e-09,
+  "maximum_quaternion_component_difference": 1.6032926627995714e-07,
+  "whole_trajectory_complete": false,
+  "rendered_fps_measured": false,
+  "production_decision": "single-entry exact result reuse disabled by default; opt-in remains"
+}

@@ -1,0 +1,112 @@
+{
+  "comparison": {
+    "absolute_physical_tolerance": 1.9999999999999997e-9,
+    "angular_response_unit": "rad/s",
+    "coordinates": 36,
+    "linear_response_unit": "m/s",
+    "maximum_angular_response_component_difference": 1.2221335055073723e-12,
+    "maximum_linear_response_component_difference": 1.199040866595169e-14,
+    "maximum_reaction_difference": 2.9116757561866574e-21,
+    "native_fallback_used": false,
+    "response_quantity": "velocity",
+    "rows": 3,
+    "scope": "same complete captured physical operator; not whole trajectory",
+    "systems": 2
+  },
+  "gpu_reactions": [
+    1.7773091577826938e-7,
+    0.0,
+    3.5547379774656346e-7
+  ],
+  "gpu_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.000036188527527595404,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      199.9902654415994,
+      -1.9999612842916206,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.00003871570836760496,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      99.99138755102987,
+      0.9999638114724619,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "limits": "Original captured operator response only; global rod ordering requires input sidecar. Not a full-state trajectory replay.",
+  "native_reactions": [
+    1.7773091577827134e-7,
+    0.0,
+    3.5547379774656637e-7
+  ],
+  "native_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.00003618852752725019,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      199.99026544160063,
+      -1.9999612842916326,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.00003871570836760496,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      99.99138755103094,
+      0.9999638114724727,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "schema": "voxy-same-input-responses-v1"
+}

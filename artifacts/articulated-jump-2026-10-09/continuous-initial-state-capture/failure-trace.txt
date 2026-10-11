@@ -1,0 +1,4 @@
+error: joint square-root inequality residual failed
+phases: []
+projections: []
+friction: []

@@ -893,9 +893,9 @@ impl Skin {
                     let row = &b.h[row_start..row_start + b.g.len()];
                     let mut value = out[vertex][a];
                     for (&other, coefficients) in b.ids.iter().zip(row.chunks_exact(3)) {
-                        for c in 0..3 {
-                            value += coefficients[c] * x[other][c];
-                        }
+                        value += coefficients[0] * x[other][0];
+                        value += coefficients[1] * x[other][1];
+                        value += coefficients[2] * x[other][2];
                     }
                     out[vertex][a] = value;
                 }
@@ -914,14 +914,18 @@ impl Skin {
     }
     fn cg(&self, e: &Evaluation, g: &[Point], shift: f64, limit: usize) -> Option<Vec<Point>> {
         let mut x = vec![[0.0; 3]; g.len()];
-        let mut r: Vec<Point> = g.iter().map(|&v| mul(v, -1.0)).collect();
-        let precondition = |r: &[Point]| {
-            r.iter()
-                .enumerate()
-                .map(|(i, v)| std::array::from_fn(|a| v[a] / (e.diagonal[i][a] + shift).max(1e-9)))
-                .collect::<Vec<Point>>()
-        };
-        let mut z = precondition(&r);
+        let mut r = Vec::with_capacity(g.len());
+        for &v in g {
+            r.push([-v[0], -v[1], -v[2]]);
+        }
+        let mut z = Vec::with_capacity(g.len());
+        for (i, v) in r.iter().enumerate() {
+            z.push([
+                v[0] / (e.diagonal[i][0] + shift).max(1e-9),
+                v[1] / (e.diagonal[i][1] + shift).max(1e-9),
+                v[2] / (e.diagonal[i][2] + shift).max(1e-9),
+            ]);
+        }
         let mut d = z.clone();
         let mut rz = vector_dot(&r, &z);
         let tolerance = vector_dot(&r, &r) * 1e-8;
@@ -936,9 +940,11 @@ impl Skin {
                 return None;
             }
             let alpha = rz / denom;
-            for i in 0..x.len() {
-                x[i] = add(x[i], mul(d[i], alpha));
-                r[i] = sub(r[i], mul(ad[i], alpha));
+            for (xi, di) in x.iter_mut().zip(&d) {
+                *xi = add(*xi, mul(*di, alpha));
+            }
+            for (ri, adi) in r.iter_mut().zip(&ad) {
+                *ri = sub(*ri, mul(*adi, alpha));
             }
             if vector_dot(&r, &r) <= tolerance {
                 return Some(x);
@@ -949,8 +955,8 @@ impl Skin {
             }
             let next = vector_dot(&r, &z);
             let beta = next / rz;
-            for i in 0..d.len() {
-                d[i] = add(z[i], mul(d[i], beta));
+            for (di, &zi) in d.iter_mut().zip(&z) {
+                *di = add(zi, mul(*di, beta));
             }
             rz = next;
         }
@@ -1106,12 +1112,11 @@ impl Skin {
                 if let Some(direction) = self.cg(&e, &g, shift, config.max_cg) {
                     let slope = vector_dot(&g, &direction);
                     let mut fraction = 1.0;
+                    let mut trial = vec![[0.0; 3]; p.len()];
                     for _ in 0..32 {
-                        let trial: Vec<Point> = p
-                            .iter()
-                            .zip(&direction)
-                            .map(|(&v, &d)| add(v, mul(d, fraction)))
-                            .collect();
+                        for (t, (&v, &d)) in trial.iter_mut().zip(p.iter().zip(&direction)) {
+                            *t = add(v, mul(d, fraction));
+                        }
                         if !safe_path(
                             &p,
                             &trial,
@@ -1154,7 +1159,22 @@ impl Skin {
     }
 }
 fn vector_dot(a: &[Point], b: &[Point]) -> f64 {
-    a.iter().zip(b).map(|(&a, &b)| dot(a, b)).sum()
+    debug_assert_eq!(a.len(), b.len());
+    let mut sum = 0.0;
+    let chunks_a = a.chunks_exact(4);
+    let chunks_b = b.chunks_exact(4);
+    let rem_a = chunks_a.remainder();
+    let rem_b = chunks_b.remainder();
+    for (ca, cb) in chunks_a.zip(chunks_b) {
+        sum += (ca[0][0] * cb[0][0] + ca[0][1] * cb[0][1] + ca[0][2] * cb[0][2])
+            + (ca[1][0] * cb[1][0] + ca[1][1] * cb[1][1] + ca[1][2] * cb[1][2])
+            + (ca[2][0] * cb[2][0] + ca[2][1] * cb[2][1] + ca[2][2] * cb[2][2])
+            + (ca[3][0] * cb[3][0] + ca[3][1] * cb[3][1] + ca[3][2] * cb[3][2]);
+    }
+    for (va, vb) in rem_a.iter().zip(rem_b) {
+        sum += va[0] * vb[0] + va[1] * vb[1] + va[2] * vb[2];
+    }
+    sum
 }
 #[cfg(test)]
 mod objective_tests {

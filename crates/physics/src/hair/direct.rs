@@ -4,6 +4,8 @@ use super::{HairRod, math::*};
 pub(super) const BAND: usize = 9;
 #[path = "contact_active_set.rs"]
 mod contact_active_set;
+#[path = "direct_energy.rs"]
+mod energy;
 
 #[cfg(test)]
 mod tests {
@@ -320,7 +322,7 @@ pub(super) fn assemble(rod: &mut HairRod, dt: f64) -> Result<(Vec<f64>, Vec<f64>
     let mut planes=Vec::new();
     for contact in &rod.contacts {
         let i=contact.segment;let t=contact.fraction;
-        let normal=contact.normal;
+        let normal=mul(contact.normal,contact.metric_scale);
         let position=add(mul(rod.x[i],1.-t),mul(rod.x[i+1],t));
         let gap=dot(sub(position,contact.target),normal);
         if gap<=1e-10 {
@@ -348,32 +350,88 @@ pub(super) fn assemble(rod: &mut HairRod, dt: f64) -> Result<(Vec<f64>, Vec<f64>
 pub(super) fn solve(rod: &mut HairRod, dt: f64) -> Result<(), &'static str> {
     let n = rod.x.len() * 6;
     let (mut matrix, mut rhs) = assemble(rod, dt)?;
+    let gradient = rhs.clone();
     // Root DOFs are fixed and uncoupled; the final station has no segment frame.
     cholesky(&mut matrix, &mut rhs, 6..n - 3);
-    apply_correction(rod, &rhs);
+    apply_correction(rod, &rhs, dt, &gradient)?;
     rod.solve_matrix = matrix;
     rod.solve_rhs = rhs;
     Ok(())
 }
-pub(super) fn apply_correction(rod: &mut HairRod, rhs: &[f64]) {
+pub(super) fn apply_correction(
+    rod: &mut HairRod,
+    rhs: &[f64],
+    dt: f64,
+    gradient: &[f64],
+) -> Result<(), &'static str> {
     let max_angle = (1..rod.q.len())
         .map(|i| len([rhs[i * 6 + 3], rhs[i * 6 + 4], rhs[i * 6 + 5]]))
         .fold(0., f64::max);
-    let scale = if max_angle > 0.35 {
+    let mut scale = if max_angle > 0.35 {
         0.35 / max_angle
     } else {
         1.
     };
-    for i in 1..rod.x.len() {
-        rod.x[i] = add(
-            rod.x[i],
-            mul([rhs[i * 6], rhs[i * 6 + 1], rhs[i * 6 + 2]], scale),
-        );
-        if i < rod.q.len() {
-            apply(
-                &mut rod.q[i],
-                mul([rhs[i * 6 + 3], rhs[i * 6 + 4], rhs[i * 6 + 5]], scale),
-            );
-        }
+    // A proposal at arithmetic roundoff scale cannot reliably reduce energy. Avoid
+    // re-normalizing resting frames and creating artificial roundoff motion.
+    let unresolvable = (1..rod.x.len()).all(|i| {
+        let magnitude = rod.x[i]
+            .iter()
+            .map(|v| v.abs())
+            .fold(rod.lengths[i - 1], f64::max);
+        (0..3).all(|axis| rhs[i * 6 + axis].abs() <= 32. * f64::EPSILON * magnitude)
+    }) && max_angle <= 32. * f64::EPSILON;
+    if unresolvable {
+        return Ok(());
     }
+    let before = energy::implicit(rod, dt)?;
+    let before_noise = energy::noise_floor(rod, dt)?;
+    let slope = -(6..rhs.len() - 3)
+        .map(|i| gradient[i] * rhs[i])
+        .sum::<f64>();
+    if !slope.is_finite() || slope > 0. {
+        return Err("hair elastic correction is not descent");
+    }
+    let x = rod.x.clone();
+    let q = rod.q.clone();
+    for _ in 0..24 {
+        rod.x.clone_from(&x);
+        rod.q.clone_from(&q);
+        for i in 1..rod.x.len() {
+            rod.x[i] = add(
+                rod.x[i],
+                mul([rhs[i * 6], rhs[i * 6 + 1], rhs[i * 6 + 2]], scale),
+            );
+            if i < rod.q.len() {
+                apply(
+                    &mut rod.q[i],
+                    mul([rhs[i * 6 + 3], rhs[i * 6 + 4], rhs[i * 6 + 5]], scale),
+                );
+            }
+        }
+        let trial = match energy::implicit(rod, dt) {
+            Ok(value) => value,
+            Err(_) => {
+                scale *= 0.5;
+                continue;
+            }
+        };
+        let noise = energy::noise_floor(rod, dt)?.max(before_noise);
+        let rounding = 8. * f64::EPSILON * (before.abs() + trial.abs())
+            + 2. * noise.sqrt() * (before.sqrt() + trial.sqrt())
+            + 2. * noise;
+        if trial <= before + 1e-4 * scale * slope + rounding {
+            return Ok(());
+        }
+        scale *= 0.5;
+    }
+    rod.x = x;
+    rod.q = q;
+    if std::env::var_os("VOXY_HAIR_ENERGY_FAILURE_TRACE").is_some() {
+        let max_linear = (1..rod.x.len())
+            .map(|i| len([rhs[i * 6], rhs[i * 6 + 1], rhs[i * 6 + 2]]))
+            .fold(0., f64::max);
+        eprintln!("HAIR ENERGY LINE FAILURE before={before:e} slope={slope:e} max_linear={max_linear:e} max_angle={max_angle:e}");
+    }
+    Err("hair elastic line search failed")
 }

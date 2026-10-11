@@ -1,0 +1,23 @@
+{
+  "physics_unit_passed": 360,
+  "physics_unit_ignored": 39,
+  "hair_integration_passed": 21,
+  "selected_metal_scene": {
+    "guides": 4,
+    "frames": 4,
+    "native_fallbacks": 0
+  },
+  "selected_same_input_displacement_operators_passed": 3,
+  "full_qualification": {
+    "directory": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/coincident-normal-batched-full-capture",
+    "last_observed_frames": [
+      "HYBRID HAIR FRAME frame=1 max_position_error_m=0.00000000943649073525878 max_quaternion_component_error=0.00000040542126998610595",
+      "HYBRID HAIR FRAME frame=2 max_position_error_m=0.00000001220284874779438 max_quaternion_component_error=0.00000040542126998610595",
+      "HYBRID HAIR FRAME frame=3 max_position_error_m=0.0000000932012919757641 max_quaternion_component_error=0.0000010239046492332982",
+      "HYBRID HAIR FRAME frame=4 max_position_error_m=0.0000375444231857508 max_quaternion_component_error=0.0019722464648502247"
+    ],
+    "status": "failed at frame 4",
+    "terminal_analysis": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/coincident-normal-batched-full-capture/terminal-analysis.json"
+  },
+  "rendered_fps_qualified": false
+}

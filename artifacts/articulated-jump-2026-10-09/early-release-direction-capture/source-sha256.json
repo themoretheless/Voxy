@@ -1,0 +1,6 @@
+{
+  "crates/voxy_app/src/gpu_hair_joint.rs": "539727b4cc80f63c109c3511166ef3b6cae6df4892f6baa2adb7edfd65f039ea",
+  "crates/voxy_app/src/gpu_hair_solver.rs": "72ac2ca705611ed63c6da3a40907d67af9ae6a2ee514a0fb3dfb83da9f715f50",
+  "crates/voxy_app/src/female_hair.rs": "16803dc28e26f97f12caf513de01f5bc939f75d389ab39206326b08260b3dbfa",
+  "crates/physics/src/hair/contact_square_root_qr.rs": "c89bb6dd707a5e4273f99c550ddfc39eca923cc19b3447ae0969bd5bd8d47496"
+}

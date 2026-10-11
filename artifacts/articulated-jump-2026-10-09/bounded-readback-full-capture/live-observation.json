@@ -1,0 +1,12 @@
+{
+  "observed_at": "2026-10-10T04:18:27.265150+00:00",
+  "confirmed_live_pid": 49956,
+  "completed_frame_lines": [
+    "HYBRID HAIR FRAME frame=1 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.00000037886909751150277",
+    "HYBRID HAIR FRAME frame=2 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.0000004995456141521082",
+    "HYBRID HAIR FRAME frame=3 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.0000005947447965226615",
+    "HYBRID HAIR FRAME frame=4 max_position_error_m=0.00000002671080669147674 max_quaternion_component_error=0.0000006630638842153314"
+  ],
+  "fallback_lines_observed": 0,
+  "scope": "Live partial observation, not full 720-frame terminal qualification or rendered FPS. Frozen pre-pooling binary."
+}

@@ -1,0 +1,34 @@
+{
+  "observed_at": "2026-10-09T20:04:32.144841+00:00",
+  "reason": "Validated production QR coordinate traversal optimization; not a timeout restart",
+  "old_session": 66222,
+  "old_pid": 29392,
+  "replacement_session": 38935,
+  "replacement_pid": 39009,
+  "replacement_log": "../contiguous-qr-capture/qualification.log",
+  "completed_paired_frames": [
+    {
+      "frame": 1,
+      "native_ms": 9534.782958,
+      "cpu_control_ms": 10070.027333
+    },
+    {
+      "frame": 2,
+      "native_ms": 42227.060458,
+      "cpu_control_ms": 41614.406791999994
+    },
+    {
+      "frame": 3,
+      "native_ms": 79655.05604099999,
+      "cpu_control_ms": 83150.139584
+    },
+    {
+      "frame": 4,
+      "native_ms": 95753.93487499999,
+      "cpu_control_ms": 104430.55375
+    }
+  ],
+  "scope": "Old CPU physics diagnostics, not new optimization or rendered FPS",
+  "requested_frames": 720,
+  "completed": false
+}

@@ -1,0 +1,9 @@
+{
+  "crates/physics/src/hair/mod.rs": "f1ce90de6897ad80e7494e3b1858749882d6bdea71ab38ddd84b92d0d9cdff5a",
+  "crates/physics/src/hair/contact_square_root_projection.rs": "926329b4d5a9dad781cd47c13b8d89dd7db174b5535adde707e8080abe0d0539",
+  "crates/physics/src/hair/contact_square_root_qr.rs": "5ec1b14b223b91791a950a965f5d5c6a084ae7a9d085ad5e1b4e8487122bb4f1",
+  "crates/physics/src/hair/contact_response_system.rs": "754e10ab3dff91f35f3bec4f103b80f0f2707235bd0848373570bedd76c9928d",
+  "crates/voxy_app/src/gpu_hair_solver.rs": "8daea7fccb43b179328d7b8d3f76e851b49b028f1493c5f86616070a39943ca0",
+  "crates/voxy_app/src/gpu_hair_joint.rs": "d4977c4daa949de128557adf467a6fa279f36c74f019c6f79547e83b18fa672c",
+  "crates/voxy_app/src/female_hair.rs": "9c30b864b893f06bdde9fab69ef69bf81d6f61a76a232f4512e227ad059a999c"
+}

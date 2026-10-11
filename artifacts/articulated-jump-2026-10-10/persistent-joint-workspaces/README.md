@@ -1,0 +1,9 @@
+# Solver-owned GPU joint workspaces
+
+Completed storage jobs now remain in their device/solver owner across coordinate calls. The cache retains at most 32 jobs / 8 MiB, fully uploads fresh input on every acquire, and does not retain numerical QR prefixes across calls. Explicit clear drops cached handles; configured device retirement still owns storage lifetime accounting.
+
+Actual GPU regression changes columns and bounds repeatedly, requires bitwise agreement with a fresh GPU owner, checks original inequalities at 1e-12, confirms no new compatible warm allocations, preserves cache/submissions on invalid input, and recomputes after explicit clearing. The first test incorrectly required bitwise analytic values; a 1.8e-15 GPU rounding difference caused its saved failure. Corrected regression compares fresh GPU bits and unchanged physical bounds instead.
+
+Small physical GPU scene passes exact serial pose/orientation gates without native fallback. Captured original physical operator passes with one storage binding, original tolerances and cooperative batching; host stage profile is saved. Allocation counters are deterministic evidence for selected work only; uncontrolled concurrent wall timings do not establish a speedup or rendered FPS. Current full trajectory runs predate this cache lifetime change and do not qualify it.
+
+Additional real GPU owner-level strict-budget regression passes: initial cache fits exactly the managed storage budget, smaller payload reuses larger storage, oversized call fails without altering cache/accounting/submission counts, valid retry succeeds, explicit public clear retires the handle, charge remains until the configured queue retirement ticket is observed, and a subsequent call allocates fresh storage. No readback quarantine occurs. The 220-byte budget covers managed storage buffers only, not all VRAM or shader resources.

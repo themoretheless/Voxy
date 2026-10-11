@@ -1,0 +1,9 @@
+{
+  "observed_utc": "2026-10-10T04:53:41.545466+00:00",
+  "pid": 9227,
+  "test": "joint_position_contacts_preserve_worker_and_accelerator_equivalence",
+  "status_at_observation": "live",
+  "scope": "one-second stack sample; contact compatibility projector iteration observed; neither failure nor performance qualification",
+  "integration_session": 46538,
+  "gpu_physical_session": 19117
+}

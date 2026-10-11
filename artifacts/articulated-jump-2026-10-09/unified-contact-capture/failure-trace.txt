@@ -1,0 +1,4 @@
+error: swept strand motion starts in penetration
+phases: []
+projections: []
+friction: []

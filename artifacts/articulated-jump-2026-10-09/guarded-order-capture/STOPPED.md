@@ -1,0 +1,1 @@
+Verified live child85321 explicitly stopped with SIGINT after scoped native island workers and exact-nonzero owner grouping passed validation. Material execution/ownership change; not observation timeout, mathematical failure or completed trajectory. Retain all logs. Older scale-space control session90348 remains intact.

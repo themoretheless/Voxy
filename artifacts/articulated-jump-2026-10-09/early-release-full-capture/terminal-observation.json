@@ -1,0 +1,16 @@
+{
+  "observed_process_pid": 47617,
+  "process_missing": true,
+  "terminal_test_result": "FAILED",
+  "failed_frame": 6,
+  "position_error_m": 9.198537073512592e-06,
+  "quaternion_component_error": 0.00019552032000652586,
+  "original_limits": {
+    "position_m": 1e-06,
+    "quaternion_component": 5e-05
+  },
+  "coordinate_calls": 534558,
+  "admitted": 534558,
+  "native_fallbacks": 0,
+  "scope": "Older launch binary; not the current cooperative batching source. No restart."
+}

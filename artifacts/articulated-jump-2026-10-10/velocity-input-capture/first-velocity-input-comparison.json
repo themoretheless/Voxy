@@ -1,0 +1,75 @@
+{
+  "schema": "voxy-vqc-input-comparison-v1",
+  "left": {
+    "path": "artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/native-00.vqc",
+    "sha256": "d7fc8386545a8817ce8b32b090a957523843f3df8a98456320ac6d6a90f783e7",
+    "rows": 1,
+    "coordinates": 126,
+    "refinement": 0,
+    "tolerance": 1e-09,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "right": {
+    "path": "artifacts/articulated-jump-2026-10-10/velocity-input-capture/operators/external-00.vqc",
+    "sha256": "b642e6394ebe5daff05c7570c5e009855f9c3327ae8fb4f437f56be55045c677",
+    "rows": 1,
+    "coordinates": 126,
+    "refinement": 0,
+    "tolerance": 1e-09,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "same_stored_layout": true,
+  "sections": {
+    "bounds": {
+      "bitwise_equal": false,
+      "changed_scalars": 1,
+      "maximum_absolute_difference": 1.304512053934559e-15,
+      "difference_overflow": false
+    },
+    "effective_bounds": {
+      "bitwise_equal": false,
+      "changed_scalars": 1,
+      "maximum_absolute_difference": 1.304512053934559e-15,
+      "difference_overflow": false
+    },
+    "columns": {
+      "bitwise_equal": false,
+      "changed_scalars": 99,
+      "maximum_absolute_difference": 9.040945769811515e-09,
+      "difference_overflow": false
+    },
+    "system_0_matrix": {
+      "bitwise_equal": false,
+      "changed_scalars": 554,
+      "maximum_absolute_difference": 2.7755575615628914e-17,
+      "difference_overflow": false
+    },
+    "system_0_rhs": {
+      "bitwise_equal": true,
+      "changed_scalars": 0,
+      "maximum_absolute_difference": 0.0,
+      "difference_overflow": false
+    },
+    "system_0_loads": {
+      "bitwise_equal": false,
+      "changed_scalars": 6,
+      "maximum_absolute_difference": 4.118927421359331e-14,
+      "difference_overflow": false
+    }
+  },
+  "limits": "Stored-order comparison only. Matching dimensions do not prove semantic rod or row correspondence. No solver accuracy, conditioning, trajectory admission or FPS proof."
+}

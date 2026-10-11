@@ -1,0 +1,82 @@
+
+running 323 tests
+test body_parameters::cold_response_tests::invalid_input_is_atomic_and_extreme_steps_remain_bounded ... ok
+test body_parameters::segment_tests::segment_proportions_preserve_stature_and_joint_continuity ... ok
+test body_parameters::cold_response_tests::integration_is_independent_of_time_partition_and_recovers ... ok
+test body_parameters::detail_tests::default_projecting_relief_survives_on_both_sides_and_cold_adds_height ... ok
+test body_parameters::tests::height_and_soles_follow_parameters ... ok
+test body_parameters::asymmetry_tests::unilateral_morph_changes_only_selected_side ... ok
+test body_parameters::detail_tests::nipple_sides_change_independently_and_combined_dimensions_are_bounded ... ok
+test camera_motion::tests::camera_response_is_continuous_monotone_and_frame_rate_independent ... ok
+test camera_motion::tests::held_input_stops_on_release_and_external_view_change_resynchronizes ... ok
+test body_parameters::tests::json_rejects_bad_inputs ... ok
+test body_parameters::asymmetry_tests::cold_response_is_local_and_validated ... ok
+test body_parameters::areola_side_tests::sides_are_independent_and_combined_radius_is_bounded ... ok
+test body_parameters::tests::local_sizes_and_limb_lengths_change_geometry ... ok
+test female_complexion::tests::atlas_parallel_matches_serial ... ignored, compares full atlas bytes and reports serial/parallel elapsed time
+test face_parameters::tests::rejects_invalid_patch_atomically ... ok
+test body_parameters::segment_tests::each_new_parameter_changes_its_region_and_roundtrips ... ok
+test body_parameters::detail_tests::detail_types_have_opposite_relief_and_leave_remote_surface_alone ... ok
+test body_parameters::areola_tests::pigment_radius_changes_colour_without_changing_geometry ... ok
+test face_parameters::tests::reference_identity_locality_and_independent_controls ... ok
+test female_complexion::tests::freckle_search_is_continuous_at_cell_boundaries ... ok
+test female_complexion::tests::blemishes_have_signed_relief ... ok
+test female_complexion::tests::neutral_surface_and_nonface_mapping_are_untouched ... ok
+test female_complexion::tests::real_atlas_background_polling ... ignored, builds real background skin atlas and measures polling latency
+test female_complexion::tests::pores_cross_cell_edges_without_clipping ... ok
+test female_complexion::tests::makeup_regions_are_independent ... ok
+test female_complexion::tests::lipstick_color_preserves_relief_and_finish_and_respects_zero_intensity ... ok
+test face_parameters::tests::side_controls_preserve_opposite_side_and_midline ... ok
+test female_complexion::tests::atlas_update_does_not_wait_and_discards_stale_results ... ok
+test fem_surface::tissue_surface_tests::current_layered_tissue_surface_tracks_solver_pose_without_mutating_it ... ok
+test body_parameters::detail_tests::imported_surface_contains_vertices_changed_by_detail_morphs ... ok
+test face_parameters::tests::local_feature_masks_preserve_remote_anatomy_on_the_actual_mesh ... ok
+test face_parameters::tests::catalog_matches_ui_and_every_shape_control_changes_real_surface ... ok
+test female_complexion::tests::parameterized_creases_preserve_pigmentation_and_change_microheight ... ok
+test female_complexion::tests::skin_finish_controls_preserve_pigment_relief_and_alpha ... ok
+test biomechanics_demo::tests::renders_loaded_specimens_without_inversion ... ok
+test female_complexion::tests::layer_controls_change_atlas_without_changing_eye_pigment ... ok
+test female_complexion::tests::all_layers_have_independent_visible_effects ... ok
+test female_demo::male_asset_tests::male_source_has_complete_bindings_and_advances ... ok
+test female_demo::morphology_tests::face_live_reload_keeps_last_valid_preset ... ok
+test female_demo::morphology_tests::face_constructor_preserves_animated_topology_and_attachment_density ... ok
+test female_demo::nipple_refinement_tests::response_uses_integrated_solver_time_instead_of_unconsumed_frame_time ... ok
+test female_demo::parameter_skin_rebase_tests::pupil_parameter_changes_only_eye_metadata_not_geometry_or_skin ... ok
+test female_demo::nipple_refinement_tests::refined_landmarks_have_complete_bindings_and_visible_cold_deformation ... ok
+test female_demo::presentation_receipts::tests::film_request_is_correlated_and_checkpoint_is_not_overwritten ... ok
+test female_demo::presentation_receipts::tests::saved_parameters_are_distinguished_from_presented_parameters ... ok
+test female_demo::repaired_pose_export_tests::export_repaired_body_pose_surfaces ... ignored, exports actual repaired render surface for static posed collision audit
+test female_demo::nipple_refinement_tests::response_advances_with_animation_time_and_survives_target_changes ... ok
+test female_demo::morphology_tests::parameters_preserve_real_model_topology_and_motion ... ok
+test female_demo::skin_light_diffusion::benchmark::actual_body_diffusion_profile ... ignored, release profiling on the imported body
+test female_demo::skin_light_diffusion::tests::constant_light_and_invalid_inputs ... ok
+test female_demo::skin_light_diffusion::tests::independent_matrix_rows_match_canonical_scatter_bit_for_bit ... ok
+test female_demo::skin_light_diffusion::tests::nonlocal_transport_preserves_energy_and_channel_order ... ok
+test female_demo::skin_light_diffusion::tests::spatial_units_and_area_weighted_energy_are_consistent ... ok
+test female_demo::skin_light_diffusion::tests::unused_render_vertices_do_not_change_the_surface_solution ... ok
+test female_demo::skin_light_diffusion::tests::warm_start_reconverges_for_changed_shape_and_light ... ok
+test female_demo::model_selection_tests::source_switch_rebuilds_bindings_and_preserves_view_controls ... ok
+test female_demo::surface_normals::tests::actual_body_transport_profile ... ignored, release performance measurement on actual body
+test female_demo::surface_normals::tests::cached_actual_body_matches_uncached_transport ... ok
+test female_demo::surface_normals::tests::follows_rotation_and_nonuniform_affine_stretch ... ok
+test female_demo::surface_normals::tests::preserves_authored_normals_at_rest_after_nonuniform_refinement ... ok
+test female_demo::parameter_reload_tests::watched_file_updates_and_invalid_json_keeps_last_body ... ok
+test female_demo::tests::audit_lash_skin_crossings ... ignored, exports actual lash centerlines and strict skin crossings
+test biomechanics_demo::tests::all_load_stages_reach_equilibrium ... ok
+test female_demo::tests::animation_preview_uses_elapsed_time_without_skin_solver ... ok
+test female_demo::tests::camera_gaze_converges_from_both_eye_centers ... ok
+test female_demo::tests::export_hair_linear_systems ... ignored, export full-model native systems for GPU qualification
+test female_demo::parameter_skin_rebase_tests::parameter_edit_rebases_shell_without_accumulating_morphs ... ok
+test female_demo::parameterized_hair_tests::edited_groom_and_collider_advance_in_the_same_space ... ok
+test female_demo::tests::complexion_follows_face_animation_and_leaves_eyes_untinted ... ok
+test female_demo::parameter_skin_rebase_tests::skin_material_coordinates_stay_attached_across_morph_and_animation ... ok
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time has been running for over 60 seconds
+test female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface has been running for over 60 seconds
+test female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds has been running for over 60 seconds
+test female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface has been running for over 60 seconds
+test female_demo::film_state_capture_tests::viewer_callback_exports_actual_film_once_for_the_requested_frame has been running for over 60 seconds
+test female_demo::film_tests::actual_model_accepts_film_and_advances_a_frame has been running for over 60 seconds
+test female_demo::model_selection_tests::source_switch_transfers_existing_fluid_without_mass_loss has been running for over 60 seconds
+test female_demo::tests::forehead_wrinkle_relief_follows_brow_pose_without_reapplying_mask ... ok
+test female_demo::tests::full_secondary_demo_advances_skin_and_all_volume_regions ... ok
+test female_demo::tests::gpu_body_stream_preserves_every_non_hair_vertex ... ok

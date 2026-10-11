@@ -1,0 +1,63 @@
+{
+  "iteration": 0,
+  "mesh_contact_count": 183,
+  "actual_before_merit_all_contacts": 1.7522810769070946e-05,
+  "actual_full_merit_all_contacts": 3.289172777727188e-05,
+  "frozen_mesh_initial_merit": 2.1219508437561467e-05,
+  "frozen_mesh_directional_derivative": -7.37692405049998e-06,
+  "frozen_mesh_trials": [
+    {
+      "scale": 1.0,
+      "merit": 1.599027088667875e-05
+    },
+    {
+      "scale": 0.5,
+      "merit": 1.8400760648363506e-05
+    },
+    {
+      "scale": 0.25,
+      "merit": 1.9739606482697954e-05
+    },
+    {
+      "scale": 0.125,
+      "merit": 2.0442954638453613e-05
+    },
+    {
+      "scale": 0.0625,
+      "merit": 2.0812815556843267e-05
+    },
+    {
+      "scale": 0.03125,
+      "merit": 2.1009314462011967e-05
+    },
+    {
+      "scale": 0.015625,
+      "merit": 2.1111281196726025e-05
+    },
+    {
+      "scale": 0.0078125,
+      "merit": 2.1163830399720886e-05
+    },
+    {
+      "scale": 0.00390625,
+      "merit": 2.1191180873315187e-05
+    },
+    {
+      "scale": 0.001953125,
+      "merit": 2.1205222519106827e-05
+    },
+    {
+      "scale": 0.0009765625,
+      "merit": 2.1212334944251272e-05
+    },
+    {
+      "scale": 0.00048828125,
+      "merit": 2.121591405738565e-05
+    },
+    {
+      "scale": 0.000244140625,
+      "merit": 2.1217709339093377e-05
+    }
+  ],
+  "scope": "Frozen mesh planes only; excludes strand gaps and newly discovered mesh features."
+}

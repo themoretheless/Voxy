@@ -1,0 +1,54 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.05s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+captured physical clock scale=1 workers=2 serial_seconds=0.003628583 cached_serial_seconds=0.001694458 parallel_cached_seconds=0.000898833
+captured physical clock scale=1 workers=4 serial_seconds=0.003628583 cached_serial_seconds=0.00140175 parallel_cached_seconds=0.000679792
+captured physical clock scale=1 workers=8 serial_seconds=0.003628583 cached_serial_seconds=0.001385625 parallel_cached_seconds=0.000963917
+captured physical clock scale=0.5 workers=2 serial_seconds=0.003661292 cached_serial_seconds=0.001321375 parallel_cached_seconds=0.000959208
+captured physical clock scale=0.5 workers=4 serial_seconds=0.003661292 cached_serial_seconds=0.001263542 parallel_cached_seconds=0.000594167
+captured physical clock scale=0.5 workers=8 serial_seconds=0.003661292 cached_serial_seconds=0.001309375 parallel_cached_seconds=0.000569666
+captured physical clock scale=0.25 workers=2 serial_seconds=0.003606542 cached_serial_seconds=0.001297584 parallel_cached_seconds=0.000874125
+captured physical clock scale=0.25 workers=4 serial_seconds=0.003606542 cached_serial_seconds=0.001227208 parallel_cached_seconds=0.000590708
+captured physical clock scale=0.25 workers=8 serial_seconds=0.003606542 cached_serial_seconds=0.001328625 parallel_cached_seconds=0.000486833
+captured physical clock scale=0.125 workers=2 serial_seconds=0.003690375 cached_serial_seconds=0.001233709 parallel_cached_seconds=0.000854667
+captured physical clock scale=0.125 workers=4 serial_seconds=0.003690375 cached_serial_seconds=0.00124 parallel_cached_seconds=0.000576333
+captured physical clock scale=0.125 workers=8 serial_seconds=0.003690375 cached_serial_seconds=0.001308125 parallel_cached_seconds=0.000490959
+captured physical clock scale=0.0625 workers=2 serial_seconds=0.003579167 cached_serial_seconds=0.001357 parallel_cached_seconds=0.000805625
+captured physical clock scale=0.0625 workers=4 serial_seconds=0.003579167 cached_serial_seconds=0.001328292 parallel_cached_seconds=0.000611416
+captured physical clock scale=0.0625 workers=8 serial_seconds=0.003579167 cached_serial_seconds=0.001309042 parallel_cached_seconds=0.000578291
+captured physical clock scale=0.03125 workers=2 serial_seconds=0.003645708 cached_serial_seconds=0.001339666 parallel_cached_seconds=0.000846125
+captured physical clock scale=0.03125 workers=4 serial_seconds=0.003645708 cached_serial_seconds=0.001271333 parallel_cached_seconds=0.000590125
+captured physical clock scale=0.03125 workers=8 serial_seconds=0.003645708 cached_serial_seconds=0.001307125 parallel_cached_seconds=0.000464292
+captured physical clock scale=0.00001 workers=2 serial_seconds=0.003738708 cached_serial_seconds=0.001372542 parallel_cached_seconds=0.000801833
+captured physical clock scale=0.00001 workers=4 serial_seconds=0.003738708 cached_serial_seconds=0.00124025 parallel_cached_seconds=0.000561333
+captured physical clock scale=0.00001 workers=8 serial_seconds=0.003738708 cached_serial_seconds=0.001305833 parallel_cached_seconds=0.000455708
+captured physical clock scale=0 workers=2 serial_seconds=0.003491084 cached_serial_seconds=0.001316125 parallel_cached_seconds=0.000771292
+captured physical clock scale=0 workers=4 serial_seconds=0.003491084 cached_serial_seconds=0.001223083 parallel_cached_seconds=0.0005325
+captured physical clock scale=0 workers=8 serial_seconds=0.003491084 cached_serial_seconds=0.001238292 parallel_cached_seconds=0.000461458
+test hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 363 filtered out; finished in 0.09s
+

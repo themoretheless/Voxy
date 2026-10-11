@@ -1,0 +1,6 @@
+{
+  "crates/physics/src/hair/velocity_contacts.rs": "d820a8ba1d806f6ba90dd3bd492625696db3d4c96aa46f52c64e4f1feeaa1393",
+  "crates/physics/src/hair/contact_model.rs": "2dfcc6f7254fbb0ee909bd5e1697aca84cdebcbc61aae6a9e87f6ec152401130",
+  "crates/physics/src/hair/mod.rs": "3de4154255bb344135f5b237bd6d452741987a0bc9da8b707dbcbc5361a7b59e",
+  "crates/physics/src/hair/contact.rs": "e3c725be74606c74ab27a7563bd7e5bb77ab773e60b06e3b20d733a2c665333f"
+}

@@ -1,0 +1,27 @@
+{
+  "scope": "optional seeded coordinate owner; not enabled in production jump or GPU solver",
+  "library": {
+    "passed": 333,
+    "failed": 0,
+    "ignored": 39
+  },
+  "differential_cases": 512,
+  "checks": [
+    "current-column primal reconstruction",
+    "changed bounds and dual release",
+    "invalid hints cold retry",
+    "dependent seeded active set cold retry",
+    "infeasible original constraints reject",
+    "all original gaps and complementarity",
+    "stationarity against current columns"
+  ],
+  "performance_scope": "one synthetic 3-row case: one equality callback seeded versus three cold; not FPS evidence",
+  "full_physics_regression": {
+    "terminal_exit_code": 0,
+    "passed": 1881,
+    "failed": 0,
+    "ignored": 43,
+    "result_blocks": 219,
+    "scope": "seeded foundation before physics-owned trait integration; separate integrated-physics-lib.log covers updated library"
+  }
+}

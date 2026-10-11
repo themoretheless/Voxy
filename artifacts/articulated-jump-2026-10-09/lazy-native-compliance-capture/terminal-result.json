@@ -1,0 +1,14 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "completed_paired_frames": 6,
+  "failed_frame": 7,
+  "error": "joint hair contact position linearization did not converge",
+  "duration_seconds": 1350.66,
+  "completed_frames_position_error_m": 0,
+  "completed_frames_quaternion_component_error": 0,
+  "qualification_complete": false,
+  "fps_qualified": false,
+  "diagnostic_replay": "frame7-replay.log",
+  "replay_is_full_animation_checkpoint": false
+}

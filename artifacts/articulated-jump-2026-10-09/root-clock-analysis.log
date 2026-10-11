@@ -1,0 +1,112 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 13.03s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+HAIR CAPTURE SCALE 0 limits=Ok((0, None))
+HAIR CAPTURE SCALE 0.000001 limits=Ok((0, None))
+HAIR CAPTURE SCALE 0.00001 limits=Ok((0, None))
+HAIR CAPTURE SCALE 0.001 limits=Ok((12, Some((205, 212, 0.0031336888333759623))))
+HAIR CAPTURE SCALE 0.1 limits=Ok((30, Some((2, 12, 0.00010048437989045282))))
+HAIR CAPTURE SCALE 0.5 limits=Ok((42, Some((2, 12, 1.796577431047885e-5))))
+HAIR CAPTURE SCALE 1 limits=Ok((46, Some((2, 12, 8.945558641430202e-6))))
+HAIR COMPONENT CLOCK iteration=0 minimum_scale=1 limits=46 first=Some((2, 12, 8.945558641430202e-6))
+HAIR COMPONENT CLOCK iteration=1 minimum_scale=1 limits=46 first=Some((2, 12, 8.945558641430202e-6))
+HAIR COMPONENT CLOCK iteration=2 minimum_scale=0.000008051002777287182 limits=3 first=Some((415, 446, 0.6905892888199546))
+HAIR COMPONENT CLOCK iteration=3 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.8071178651256867))
+HAIR COMPONENT CLOCK iteration=4 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.8520342045657929))
+HAIR COMPONENT CLOCK iteration=5 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.8824585243113526))
+HAIR COMPONENT CLOCK iteration=6 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9043226344722898))
+HAIR COMPONENT CLOCK iteration=7 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9207142680938519))
+HAIR COMPONENT CLOCK iteration=8 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9333966752908123))
+HAIR COMPONENT CLOCK iteration=9 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9434489086834444))
+HAIR COMPONENT CLOCK iteration=10 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9515741616122589))
+HAIR COMPONENT CLOCK iteration=11 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9582414553161883))
+HAIR COMPONENT CLOCK iteration=12 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9637836677253735))
+HAIR COMPONENT CLOCK iteration=13 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9684414468978675))
+HAIR COMPONENT CLOCK iteration=14 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.972387652817244))
+HAIR COMPONENT CLOCK iteration=15 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.975757528421165))
+HAIR COMPONENT CLOCK iteration=16 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9786537533016846))
+HAIR COMPONENT CLOCK iteration=17 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9811566490395488))
+HAIR COMPONENT CLOCK iteration=18 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.983331748794974))
+HAIR COMPONENT CLOCK iteration=19 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9852266852077244))
+HAIR COMPONENT CLOCK iteration=20 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9868848605712733))
+HAIR COMPONENT CLOCK iteration=21 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9883404353714831))
+HAIR COMPONENT CLOCK iteration=22 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9896217019831806))
+HAIR COMPONENT CLOCK iteration=23 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9907522823743212))
+HAIR COMPONENT CLOCK iteration=24 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9917520428008567))
+HAIR COMPONENT CLOCK iteration=25 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9926378006339441))
+HAIR COMPONENT CLOCK iteration=26 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9934238766689434))
+HAIR COMPONENT CLOCK iteration=27 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9941225309760818))
+HAIR COMPONENT CLOCK iteration=28 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9947443102319717))
+HAIR COMPONENT CLOCK iteration=29 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9952983268737641))
+HAIR COMPONENT CLOCK iteration=30 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9957924852601447))
+HAIR COMPONENT CLOCK iteration=31 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.996233666446565))
+HAIR COMPONENT CLOCK iteration=32 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9966278799612938))
+HAIR COMPONENT CLOCK iteration=33 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9969803896161453))
+HAIR COMPONENT CLOCK iteration=34 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9972958182966986))
+HAIR COMPONENT CLOCK iteration=35 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9975782356131059))
+HAIR COMPONENT CLOCK iteration=36 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9978312320000681))
+HAIR COMPONENT CLOCK iteration=37 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9980579812234066))
+HAIR COMPONENT CLOCK iteration=38 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9982612938287609))
+HAIR COMPONENT CLOCK iteration=39 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9984436625475182))
+HAIR COMPONENT CLOCK iteration=40 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9986073014968242))
+HAIR COMPONENT CLOCK iteration=41 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.998754179911283))
+HAIR COMPONENT CLOCK iteration=42 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9988860512124795))
+HAIR COMPONENT CLOCK iteration=43 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9990044783756492))
+HAIR COMPONENT CLOCK iteration=44 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9991108559200951))
+HAIR COMPONENT CLOCK iteration=45 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.99920642914446))
+HAIR COMPONENT CLOCK iteration=46 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.999292310990117))
+HAIR COMPONENT CLOCK iteration=47 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9993694967731304))
+HAIR COMPONENT CLOCK iteration=48 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9994388771736485))
+HAIR COMPONENT CLOCK iteration=49 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9995012497156093))
+HAIR COMPONENT CLOCK iteration=50 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.999557328884296))
+HAIR COMPONENT CLOCK iteration=51 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9996077550386263))
+HAIR COMPONENT CLOCK iteration=52 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9996531023834061))
+HAIR COMPONENT CLOCK iteration=53 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9996938859340889))
+HAIR COMPONENT CLOCK iteration=54 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.999730567836717))
+HAIR COMPONENT CLOCK iteration=55 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9997635629053557))
+HAIR COMPONENT CLOCK iteration=56 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9997932435624244))
+HAIR COMPONENT CLOCK iteration=57 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9998199442276003))
+HAIR COMPONENT CLOCK iteration=58 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9998439653390799))
+HAIR COMPONENT CLOCK iteration=59 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9998655767604183))
+HAIR COMPONENT CLOCK iteration=60 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9998850210460226))
+HAIR COMPONENT CLOCK iteration=61 minimum_scale=0.000008051002777287182 limits=2 first=Some((286, 344, 0.9999025161407279))
+HAIR COMPONENT CLOCK iteration=62 minimum_scale=0.000008051002777287182 limits=1 first=Some((286, 344, 0.9999182579697212))
+HAIR COMPONENT CLOCK iteration=63 minimum_scale=0.000008051002777287182 limits=1 first=Some((286, 344, 0.9999324226546666))
+
+thread 'hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission' (34457076) panicked at crates/physics/src/hair/contact_safe_motion.rs:712:14:
+captured joint root motion must admit a full checked path: "swept strand component admission did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission ... FAILED
+
+failures:
+
+failures:
+    hair::contact::velocity_contacts::safe_motion::tests::captured_joint_root_motion_admission
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 344 filtered out; finished in 0.36s
+
+error: test failed, to rerun pass `-p physics --lib`

@@ -1,0 +1,14 @@
+{
+  "frame": 1,
+  "scope": "first admitted frame only;720 requested",
+  "coordinate_calls": 9099,
+  "equality_submissions": 28998,
+  "qr_columns_reused": 116499,
+  "hint_attempts": 7767,
+  "native_fallbacks": 0,
+  "position_error_m": 2.229036395740014e-08,
+  "quaternion_component_error": 3.788691004674716e-07,
+  "matches_frozen_hint_control_errors": true,
+  "whole_trajectory_qualified": false,
+  "rendered_fps_measured": false
+}

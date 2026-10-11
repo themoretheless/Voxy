@@ -1,0 +1,42 @@
+[
+  {
+    "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/exact-contact-aliases-batched-full-capture/qualification.log",
+    "expected_frames": 720,
+    "completed_frame_count": 1,
+    "last_completed_frame": 1,
+    "complete_ordered_frame_sequence": false,
+    "observed_frames_within_original_error_limits": true,
+    "observed_frames_have_gpu_admission_without_native_fallback": true,
+    "terminal_test_result": null,
+    "expected_guides": 469,
+    "terminal_model_and_frame_counts_match": false,
+    "coordinate_batches_required": true,
+    "coordinate_batches_runtime": true,
+    "runtime_mode_matches_requirement": true,
+    "complete_paired_trajectory_log_checks_pass": false,
+    "maximum_observed_position_error_m": 5.120668715712529e-09,
+    "maximum_observed_quaternion_error": 2.0715367776702465e-07,
+    "scope": "Log evidence only; verify launch/source/model and live process separately. Does not establish physical hardware coverage or rendered FPS.",
+    "rendered_fps_measured": false
+  },
+  {
+    "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/exact-contact-aliases-full-capture/qualification.log",
+    "expected_frames": 720,
+    "completed_frame_count": 0,
+    "last_completed_frame": null,
+    "complete_ordered_frame_sequence": false,
+    "observed_frames_within_original_error_limits": false,
+    "observed_frames_have_gpu_admission_without_native_fallback": false,
+    "terminal_test_result": null,
+    "expected_guides": 469,
+    "terminal_model_and_frame_counts_match": false,
+    "coordinate_batches_required": true,
+    "coordinate_batches_runtime": false,
+    "runtime_mode_matches_requirement": false,
+    "complete_paired_trajectory_log_checks_pass": false,
+    "maximum_observed_position_error_m": null,
+    "maximum_observed_quaternion_error": null,
+    "scope": "Log evidence only; verify launch/source/model and live process separately. Does not establish physical hardware coverage or rendered FPS.",
+    "rendered_fps_measured": false
+  }
+]

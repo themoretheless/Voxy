@@ -1,0 +1,200 @@
+{
+  "header": [
+    4,
+    54,
+    6,
+    51
+  ],
+  "tolerance": 1e-08,
+  "scope": "Independent Python reconstruction of captured packed operator and codec residual; not original physical solution or hardware qualification",
+  "systems": [
+    {
+      "system": 0,
+      "status": 0,
+      "maximum_gpu_vs_packed_f64_coordinate_difference": 5.877938190269844e-31,
+      "worst_rows": [
+        {
+          "row": 17,
+          "relative_residual": 8.938723391277426e-09,
+          "absolute_residual": 8.938723391277426e-39,
+          "scale": 2.117908684077117e-31,
+          "rhs": 4.5842035303594215e-35,
+          "gpu_coordinate": 3.69572632099444e-32
+        },
+        {
+          "row": 23,
+          "relative_residual": 6.1221028834018185e-09,
+          "absolute_residual": 6.122102883401819e-39,
+          "scale": 6.128872683443354e-32,
+          "rhs": -4.318452692899044e-36,
+          "gpu_coordinate": 3.063948359810958e-32
+        },
+        {
+          "row": 35,
+          "relative_residual": 2.7016087229370853e-09,
+          "absolute_residual": 2.7016087229370854e-39,
+          "scale": 4.5263684579250284e-32,
+          "rhs": -1.5612867428604636e-35,
+          "gpu_coordinate": 2.2615359325357006e-32
+        },
+        {
+          "row": 41,
+          "relative_residual": 2.4157209009001134e-09,
+          "absolute_residual": 2.4157209009001137e-39,
+          "scale": 4.102460743696306e-32,
+          "rhs": 5.6056837848735594e-36,
+          "gpu_coordinate": 2.0510804198154692e-32
+        },
+        {
+          "row": 47,
+          "relative_residual": 1.4383496721759053e-09,
+          "absolute_residual": 1.4383496721759054e-39,
+          "scale": 2.7910286096189855e-32,
+          "rhs": -6.584836138835648e-36,
+          "gpu_coordinate": 1.394640293278148e-32
+        }
+      ]
+    },
+    {
+      "system": 1,
+      "status": 0,
+      "maximum_gpu_vs_packed_f64_coordinate_difference": 5.438826162949554e-31,
+      "worst_rows": [
+        {
+          "row": 23,
+          "relative_residual": 2.2795332568250115e-08,
+          "absolute_residual": 2.2795332568250115e-38,
+          "scale": 9.996950592396177e-31,
+          "rhs": -5.115705497871295e-35,
+          "gpu_coordinate": -4.99847262666898e-31
+        },
+        {
+          "row": 29,
+          "relative_residual": 1.2437721937279172e-08,
+          "absolute_residual": 1.2437721937279172e-38,
+          "scale": 8.472666141029488e-31,
+          "rhs": 3.230534803008371e-35,
+          "gpu_coordinate": -4.236004569461424e-31
+        },
+        {
+          "row": 41,
+          "relative_residual": 7.239465657611466e-09,
+          "absolute_residual": 7.239465657611466e-39,
+          "scale": 6.705938527710651e-31,
+          "rhs": 3.446457437723388e-36,
+          "gpu_coordinate": -3.3529309506216285e-31
+        },
+        {
+          "row": 35,
+          "relative_residual": 3.9083145814545035e-09,
+          "absolute_residual": 3.908314581454504e-39,
+          "scale": 7.394480221994911e-31,
+          "rhs": -9.924136477772604e-36,
+          "gpu_coordinate": -3.6972348916695677e-31
+        },
+        {
+          "row": 47,
+          "relative_residual": 2.089978963121763e-09,
+          "absolute_residual": 2.089978963121763e-39,
+          "scale": 4.562024121151947e-31,
+          "rhs": -1.2539093579524179e-36,
+          "gpu_coordinate": -2.281007056061591e-31
+        }
+      ]
+    },
+    {
+      "system": 2,
+      "status": 0,
+      "maximum_gpu_vs_packed_f64_coordinate_difference": 5.662234036498473e-31,
+      "worst_rows": [
+        {
+          "row": 41,
+          "relative_residual": 8.861438418674671e-09,
+          "absolute_residual": 8.861438418674672e-39,
+          "scale": 2.2988404734197208e-32,
+          "rhs": 1.5986579678220363e-36,
+          "gpu_coordinate": -1.1492581985326972e-32
+        },
+        {
+          "row": 47,
+          "relative_residual": 5.4075018033640215e-09,
+          "absolute_residual": 5.407501803364022e-39,
+          "scale": 1.5636815186859763e-32,
+          "rhs": 8.874760925334027e-36,
+          "gpu_coordinate": -7.809510595703103e-33
+        },
+        {
+          "row": 23,
+          "relative_residual": 2.2870305065852037e-09,
+          "absolute_residual": 2.287030506585204e-39,
+          "scale": 3.440668755445317e-32,
+          "rhs": -2.2754923806130728e-35,
+          "gpu_coordinate": -1.7203209948754448e-32
+        },
+        {
+          "row": 17,
+          "relative_residual": 1.99545467860444e-09,
+          "absolute_residual": 1.9954546786044402e-39,
+          "scale": 4.271356353859476e-32,
+          "rhs": 3.620856411687104e-35,
+          "gpu_coordinate": -2.0725279019933973e-32
+        },
+        {
+          "row": 35,
+          "relative_residual": 7.581878238765964e-10,
+          "absolute_residual": 7.581878238765965e-40,
+          "scale": 2.5376528294667483e-32,
+          "rhs": -5.8236825986674734e-36,
+          "gpu_coordinate": -1.2688241941737616e-32
+        }
+      ]
+    },
+    {
+      "system": 3,
+      "status": 0,
+      "maximum_gpu_vs_packed_f64_coordinate_difference": 5.169195970735341e-31,
+      "worst_rows": [
+        {
+          "row": 41,
+          "relative_residual": 8.36250392871289e-09,
+          "absolute_residual": 8.362503928712892e-39,
+          "scale": 2.2453574692243864e-31,
+          "rhs": -9.799565726032297e-36,
+          "gpu_coordinate": 1.1225694809180402e-31
+        },
+        {
+          "row": 35,
+          "relative_residual": 8.247196289162267e-09,
+          "absolute_residual": 8.247196289162267e-39,
+          "scale": 2.4756529144582645e-31,
+          "rhs": 1.6028103264002197e-35,
+          "gpu_coordinate": 1.237815887468138e-31
+        },
+        {
+          "row": 23,
+          "relative_residual": 6.449725569391043e-09,
+          "absolute_residual": 6.449725569391043e-39,
+          "scale": 3.3447340691414835e-31,
+          "rhs": 2.5412433154636933e-35,
+          "gpu_coordinate": 1.6723634702241848e-31
+        },
+        {
+          "row": 47,
+          "relative_residual": 5.852067164855707e-09,
+          "absolute_residual": 5.8520671648557073e-39,
+          "scale": 1.5276753352167065e-31,
+          "rhs": 1.439458951308502e-35,
+          "gpu_coordinate": 7.638268252095158e-32
+        },
+        {
+          "row": 17,
+          "relative_residual": 4.384356360833281e-09,
+          "absolute_residual": 4.3843563608332816e-39,
+          "scale": 4.177405600844926e-31,
+          "rhs": 4.933001625002802e-35,
+          "gpu_coordinate": 2.0143412255012817e-31
+        }
+      ]
+    }
+  ]
+}

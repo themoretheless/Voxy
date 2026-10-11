@@ -1,0 +1,41 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.06s
+     Running unittests src/lib.rs (/tmp/voxy-physics-diagnostics-20261010/debug/deps/physics-74c936782d895dfe)
+
+running 1 test
+
+thread 'hair::contact::tessellated_flat_face_retains_support_across_both_triangles' (75347783) panicked at crates/physics/src/hair/contact.rs:2187:17:
+lost surface support at 0.25: [RodContact { segment: 1, fraction: 0.5, normal: [0.0, 0.0, 0.9999999999999999], target: [0.0, 0.0, 4e-5], source: Mesh(0), surface_velocity: [0.0, 0.0, 0.0], metric_scale: 1.0, trajectory_time: None }, RodContact { segment: 1, fraction: 0.75, normal: [0.0, 0.0, 0.9999999999999999], target: [1.0, 0.0, 4e-5], source: Mesh(0), surface_velocity: [0.0, 0.0, 0.0], metric_scale: 1.0, trajectory_time: None }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::tessellated_flat_face_retains_support_across_both_triangles ... FAILED
+
+failures:
+
+failures:
+    hair::contact::tessellated_flat_face_retains_support_across_both_triangles
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 389 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --lib`

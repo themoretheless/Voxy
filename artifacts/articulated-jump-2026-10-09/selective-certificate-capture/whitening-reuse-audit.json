@@ -1,0 +1,25 @@
+{
+  "sources": [
+    "crates/physics/src/hair/contact_square_root_projection.rs",
+    "crates/physics/src/hair/contact_response_system.rs"
+  ],
+  "verified_current_behavior": [
+    "FrozenSystems retains immutable rod matrix assembly only, not Cholesky factors or whitened loads.",
+    "Every cut refinement rebuilds requests with fresh exact physical loads.",
+    "solve_joint_load_inequalities_with_coordinates factors each request and whitens every load again.",
+    "solve_island_increment can repeat complete preparation for up to eight corrected bounds, even though requests remain borrowed immutable."
+  ],
+  "required_reuse_identity": [
+    "immutable rod pose and timestep owner",
+    "same original matrix and active DOF range",
+    "exact load coordinate bits and order, without epsilon matching"
+  ],
+  "must_preserve": [
+    "request validation before reused preparation",
+    "original physical load/force balance",
+    "original constraint bound and free+response rounding admission",
+    "sorted retry and unpublished failure semantics"
+  ],
+  "next_implementation": "Introduce scoped prepared joint operator passed to existing physical admission owner. Cache rod-local factors and exact whitened loads inside FrozenSystems; do not share cache across mutable geometry.",
+  "implemented": false
+}

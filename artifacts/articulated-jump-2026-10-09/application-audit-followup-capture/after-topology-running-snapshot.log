@@ -1,0 +1,337 @@
+
+running 323 tests
+test body_parameters::cold_response_tests::invalid_input_is_atomic_and_extreme_steps_remain_bounded ... ok
+test body_parameters::cold_response_tests::integration_is_independent_of_time_partition_and_recovers ... ok
+test body_parameters::tests::height_and_soles_follow_parameters ... ok
+test body_parameters::segment_tests::segment_proportions_preserve_stature_and_joint_continuity ... ok
+test body_parameters::tests::json_rejects_bad_inputs ... ok
+test body_parameters::asymmetry_tests::unilateral_morph_changes_only_selected_side ... ok
+test body_parameters::tests::local_sizes_and_limb_lengths_change_geometry ... ok
+test body_parameters::detail_tests::detail_types_have_opposite_relief_and_leave_remote_surface_alone ... ok
+test camera_motion::tests::camera_response_is_continuous_monotone_and_frame_rate_independent ... ok
+test body_parameters::segment_tests::each_new_parameter_changes_its_region_and_roundtrips ... ok
+test body_parameters::areola_side_tests::sides_are_independent_and_combined_radius_is_bounded ... ok
+test body_parameters::detail_tests::default_projecting_relief_survives_on_both_sides_and_cold_adds_height ... ok
+test body_parameters::areola_tests::pigment_radius_changes_colour_without_changing_geometry ... ok
+test body_parameters::asymmetry_tests::cold_response_is_local_and_validated ... ok
+test body_parameters::detail_tests::nipple_sides_change_independently_and_combined_dimensions_are_bounded ... ok
+test camera_motion::tests::held_input_stops_on_release_and_external_view_change_resynchronizes ... ok
+test female_complexion::tests::atlas_parallel_matches_serial ... ignored, compares full atlas bytes and reports serial/parallel elapsed time
+test face_parameters::tests::rejects_invalid_patch_atomically ... ok
+test face_parameters::tests::reference_identity_locality_and_independent_controls ... ok
+test female_complexion::tests::blemishes_have_signed_relief ... ok
+test face_parameters::tests::side_controls_preserve_opposite_side_and_midline ... ok
+test female_complexion::tests::freckle_search_is_continuous_at_cell_boundaries ... ok
+test female_complexion::tests::lipstick_color_preserves_relief_and_finish_and_respects_zero_intensity ... ok
+test female_complexion::tests::makeup_regions_are_independent ... ok
+test female_complexion::tests::real_atlas_background_polling ... ignored, builds real background skin atlas and measures polling latency
+test female_complexion::tests::neutral_surface_and_nonface_mapping_are_untouched ... ok
+test female_complexion::tests::pores_cross_cell_edges_without_clipping ... ok
+test fem_surface::tissue_surface_tests::current_layered_tissue_surface_tracks_solver_pose_without_mutating_it ... ok
+test female_complexion::tests::atlas_update_does_not_wait_and_discards_stale_results ... ok
+test face_parameters::tests::local_feature_masks_preserve_remote_anatomy_on_the_actual_mesh ... ok
+test body_parameters::detail_tests::imported_surface_contains_vertices_changed_by_detail_morphs ... ok
+test face_parameters::tests::catalog_matches_ui_and_every_shape_control_changes_real_surface ... ok
+test female_complexion::tests::parameterized_creases_preserve_pigmentation_and_change_microheight ... ok
+test female_complexion::tests::skin_finish_controls_preserve_pigment_relief_and_alpha ... ok
+test biomechanics_demo::tests::renders_loaded_specimens_without_inversion ... ok
+test female_complexion::tests::layer_controls_change_atlas_without_changing_eye_pigment ... ok
+test female_complexion::tests::all_layers_have_independent_visible_effects ... ok
+test female_demo::male_asset_tests::male_source_has_complete_bindings_and_advances ... ok
+test female_demo::morphology_tests::face_live_reload_keeps_last_valid_preset ... ok
+test female_demo::morphology_tests::face_constructor_preserves_animated_topology_and_attachment_density ... ok
+test female_demo::nipple_refinement_tests::response_uses_integrated_solver_time_instead_of_unconsumed_frame_time ... ok
+test female_demo::morphology_tests::parameters_preserve_real_model_topology_and_motion ... ok
+test female_demo::parameter_skin_rebase_tests::pupil_parameter_changes_only_eye_metadata_not_geometry_or_skin ... ok
+test female_demo::presentation_receipts::tests::film_request_is_correlated_and_checkpoint_is_not_overwritten ... ok
+test female_demo::presentation_receipts::tests::saved_parameters_are_distinguished_from_presented_parameters ... ok
+test female_demo::repaired_pose_export_tests::export_repaired_body_pose_surfaces ... ignored, exports actual repaired render surface for static posed collision audit
+test female_demo::nipple_refinement_tests::refined_landmarks_have_complete_bindings_and_visible_cold_deformation ... ok
+test female_demo::nipple_refinement_tests::response_advances_with_animation_time_and_survives_target_changes ... ok
+test female_demo::skin_light_diffusion::benchmark::actual_body_diffusion_profile ... ignored, release profiling on the imported body
+test female_demo::skin_light_diffusion::tests::constant_light_and_invalid_inputs ... ok
+test female_demo::skin_light_diffusion::tests::independent_matrix_rows_match_canonical_scatter_bit_for_bit ... ok
+test female_demo::skin_light_diffusion::tests::nonlocal_transport_preserves_energy_and_channel_order ... ok
+test female_demo::skin_light_diffusion::tests::spatial_units_and_area_weighted_energy_are_consistent ... ok
+test female_demo::skin_light_diffusion::tests::unused_render_vertices_do_not_change_the_surface_solution ... ok
+test female_demo::skin_light_diffusion::tests::warm_start_reconverges_for_changed_shape_and_light ... ok
+test female_demo::parameter_reload_tests::watched_file_updates_and_invalid_json_keeps_last_body ... ok
+test female_demo::surface_normals::tests::actual_body_transport_profile ... ignored, release performance measurement on actual body
+test female_demo::surface_normals::tests::cached_actual_body_matches_uncached_transport ... ok
+test female_demo::surface_normals::tests::follows_rotation_and_nonuniform_affine_stretch ... ok
+test female_demo::surface_normals::tests::preserves_authored_normals_at_rest_after_nonuniform_refinement ... ok
+test female_demo::model_selection_tests::source_switch_rebuilds_bindings_and_preserves_view_controls ... ok
+test female_demo::tests::audit_lash_skin_crossings ... ignored, exports actual lash centerlines and strict skin crossings
+test biomechanics_demo::tests::all_load_stages_reach_equilibrium ... ok
+test female_demo::tests::animation_preview_uses_elapsed_time_without_skin_solver ... ok
+test female_demo::tests::camera_gaze_converges_from_both_eye_centers ... ok
+test female_demo::tests::export_hair_linear_systems ... ignored, export full-model native systems for GPU qualification
+test female_demo::parameterized_hair_tests::edited_groom_and_collider_advance_in_the_same_space ... ok
+test female_demo::parameter_skin_rebase_tests::parameter_edit_rebases_shell_without_accumulating_morphs ... ok
+test female_demo::parameter_skin_rebase_tests::skin_material_coordinates_stay_attached_across_morph_and_animation ... ok
+test female_demo::tests::complexion_follows_face_animation_and_leaves_eyes_untinted ... ok
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time has been running for over 60 seconds
+test female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface has been running for over 60 seconds
+test female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds has been running for over 60 seconds
+test female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface has been running for over 60 seconds
+test female_demo::film_state_capture_tests::viewer_callback_exports_actual_film_once_for_the_requested_frame has been running for over 60 seconds
+test female_demo::film_tests::actual_model_accepts_film_and_advances_a_frame has been running for over 60 seconds
+test female_demo::model_selection_tests::source_switch_transfers_existing_fluid_without_mass_loss has been running for over 60 seconds
+test female_demo::tests::full_secondary_demo_advances_skin_and_all_volume_regions ... ok
+test female_demo::tests::forehead_wrinkle_relief_follows_brow_pose_without_reapplying_mask ... ok
+test female_demo::tests::full_character_follows_elapsed_frame_time ... FAILED
+test female_demo::tests::gpu_body_stream_preserves_every_non_hair_vertex ... ok
+test female_demo::tests::delayed_full_model_frame_matches_six_fixed_physics_steps ... ok
+test female_demo::film_tests::actual_model_accepts_film_and_advances_a_frame ... ok
+test female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface ... FAILED
+test female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface ... FAILED
+test female_demo::film_state_capture_tests::viewer_callback_exports_actual_film_once_for_the_requested_frame ... ok
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time ... ok
+test female_demo::tests::jump_excitation_matches_visible_root_and_stops_during_settling ... ok
+test female_demo::tissue_diagnostics::tests::affine_surface_measures_and_invalid_geometry_are_reported ... ok
+test female_demo::view_settings::tests::mode_validation_and_roundtrip ... ok
+test female_demo::warm_light_tests::actual_blink_warm_light_matches_cold ... ignored, checks warm/cold lighting on real posed render geometry
+test female_eyes::tests::equator_keeps_a_single_material_and_continuous_sclera_coordinates ... ok
+test female_eyes::tests::fibers_close_across_angular_seam ... ok
+test female_eyes::tests::pupil_iris_and_sclera_have_distinct_materials ... ok
+test female_eyes::tests::refinement_preserves_globe_radius_and_valid_topology ... ok
+test female_face::tests::audit_lid_globe_coverage ... ignored, writes sampled actual-globe/skin depth visibility
+test female_face::tests::audit_lid_self_intersections ... ignored, writes strict transverse skin intersection measurements
+test female_face::tests::audit_lid_triangle_orientation ... ignored, writes the bind/posed triangle audit for manual inspection
+test female_face::tests::blink_sides_are_bounded_offset_and_manually_close_together ... ok
+test female_face::tests::expression_channels_have_distinct_timing_and_gaze_holds ... ok
+test female_face::tests::expressions_are_local_and_neutral_is_identity ... ok
+test female_face::tests::forehead_moves_with_brows_and_restores_without_accumulation ... ok
+test female_face::tests::frown_draws_inner_brows_inward_without_changing_neutral_or_outer_points ... ok
+test female_face::tests::gaze_preserves_eyeball_shape ... ok
+test female_face::tests::jaw_opens_lower_lip_without_folding_it_or_dragging_upper_lip ... ok
+test female_face::tests::loop_is_continuous_and_blinks_close_then_reopen ... ok
+test female_face::tests::source_aperture_contour_tracks_both_rims_and_preserves_lid_band ... ok
+test female_face::tests::tension_ignores_rigid_motion_and_stretch_and_measures_compression ... ok
+test female_face::tests::transverse_intersection_diagnostic_rejects_touches_and_separation ... ok
+test female_features::inertial_lash_regression::lashes_respond_to_acceleration_and_settle_without_moving_the_attachment ... ok
+test female_demo::tests::parallel_full_secondary_preserves_skin_and_hair_contacts ... ok
+test female_features::tests::actual_follicles_have_distributed_surface_anchors ... ok
+test female_features::tests::actual_lash_curls_never_reverse_the_open_lid_root_tangent ... ok
+test female_features::tests::actual_upper_lash_tips_point_down_at_full_closure ... ok
+test female_demo::tests::physical_skin_preserves_forearm_surface ... FAILED
+test female_features::tests::blink_rotates_lash_shape_without_shortening_it ... ok
+test female_features::tests::buccal_aperture_keeps_upper_edge_and_corners_fixed ... ok
+test female_features::tests::buccal_lining_and_pharynx_share_the_same_boundary ... ok
+test female_features::tests::closed_lash_rotation_limits_fold_twist_and_preserves_head_motion ... ok
+test female_features::tests::crown_contact_excludes_fissure_space_but_keeps_cusps_and_cervical_face ... ok
+test female_features::tests::curved_seam_intersection_is_shared_by_both_lip_boundaries ... ok
+test female_features::tests::follicle_projection_handles_surface_edges_and_degenerate_triangles ... ok
+test female_features::tests::gingival_arch_is_closed_connected_and_faces_outward ... ok
+test female_features::tests::incisor_has_broad_cutting_edge_and_enamel_material ... ok
+test female_features::tests::lash_attachment_frame_tracks_rigid_motion_and_rejects_collapsed_skin ... ok
+test female_features::tests::lash_contact_preserves_root_and_clears_a_plane_with_its_radius ... ok
+test female_features::tests::neutral_lip_split_preserves_original_surface_area ... ok
+test female_features::tests::opening_preserves_the_rest_of_the_source_mesh ... ok
+test female_features::tests::oral_anatomy_keeps_topology_and_moves_lower_jaw ... ok
+test female_features::tests::posterior_crowns_have_inward_fissures_and_mirrored_cutting_faces ... ok
+test female_features::tests::attachments_follow_surface_and_topology_is_stable ... ok
+test female_features::tests::split_upper_lip_does_not_inherit_posterior_lower_lip_roll ... ok
+test female_features::tests::tongue_motion_preserves_topology_and_closed_mouth_rest ... ok
+test female_demo::tests::secondary_face_and_hair_colliders_share_the_rendered_head_pose ... ok
+test female_demo::same_source_film_morph_tests::appearance_only_edit_preserves_live_physics_and_film has been running for over 60 seconds
+test female_features::tests::rendered_follicle_follows_animated_triangle_without_vertex_snapping ... ok
+test female_demo::tests::surface_light_control_changes_irradiance_without_rebuilding_diffusion_or_geometry ... ok
+test female_demo::same_source_film_morph_tests::morphed_film_updates_immediately_without_resetting_time_or_mass has been running for over 60 seconds
+test female_demo::source_switch_geometry_tests::switched_film_uses_morphed_geometry_in_the_first_frame has been running for over 60 seconds
+test female_features::tests::actual_closed_lash_contact_does_not_form_sharp_segment_reversals ... ok
+test female_demo::tests::secondary_motion_changes_actual_model_vertices ... ok
+test female_hair::tests::export_hair_contact_replay_rest_curve ... ignored, export stress-free guide metadata for captured contact replay
+test female_hair::tests::authored_fringe_respects_requested_arc_length ... ok
+test female_demo::tests::real_mesh_loads_and_skin_deforms_rendered_surface ... FAILED
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... ignored, native GPU full-model dynamics qualification
+test female_demo::tests::probe_contacts_actual_surface_and_retracts ... FAILED
+test female_demo::tests::ordinary_gesture_keeps_rendered_feet_at_their_support_height ... ok
+test female_hair::tests::cache_order_retains_every_full_resolution_triangle ... ok
+test female_hair::tests::accelerator_failure_preserves_targets_collider_and_guides ... ok
+test female_lids::tests::audit_adaptive_closure_faces ... ignored, manual exterior seam face-normal audit
+test female_lids::tests::audit_exterior_seam_normals ... ignored, manual exterior seam face-normal audit
+test female_lids::tests::audit_globe_support_displacement ... ignored, manual neutral globe-support displacement audit
+test female_lids::tests::audit_replacement_boundary_subdivision ... ignored, manual replacement boundary topology audit
+test female_lids::tests::canthal_tissue_keeps_topology_and_stays_behind_closed_lids ... ok
+test female_lids::tests::closed_surface_occludes_the_globe_front_over_the_iris_region ... ok
+test female_hair::tests::collider_preserves_lower_body_surface ... ok
+test female_lids::tests::continuous_lids_keep_borders_and_close_on_one_shared_edge ... ok
+test female_lids::tests::added_neutral_lid_nodes_follow_source_depth ... ok
+test female_lids::tests::skin_region_subtraction_preserves_area_for_both_windings_and_corner_cells ... ok
+test female_rig::jump_rig_tests::gpu_jump_matches_actual_body_and_rigid_trailing_hair ... ignored, requires an actual GPU; complete body DQ skinning and displacement readback
+test female_lids::tests::outer_transition_row_follows_the_source_skin_profile ... ok
+test female_rig::jump_rig_tests::jump_legs_plant_feet_bend_knees_and_keep_bone_lengths ... ok
+test female_rig::tests::actual_model_bind_pose_loop_and_arm_motion ... ok
+test female_rig::tests::anatomical_joint_axes_are_orthonormal_palmar_and_mirrored ... ok
+test female_rig::tests::arms_do_not_pull_torso_or_opposite_limbs ... ok
+test female_rig::tests::cylinder_grasp_joint_search ... ignored, Offline search for feasible cylinder grasp joint targets
+test female_rig::tests::actual_model_hips_knees_and_ankles_move_independently ... ok
+test female_rig::tests::every_finger_joint_articulates_actual_mesh_without_moving_other_hand ... ok
+test female_rig::tests::gesture_holds_and_loop_have_no_visible_velocity_jump ... ok
+test female_rig::tests::full_cycle_surface_quality ... ok
+test female_hair::tests::full_resolution_basis_transport_matches_quaternion_reference ... ok
+test female_rig::tests::grasp_closure_preserves_surface_and_moves_fingertips ... ok
+test female_hair::tests::fitted_prepared_groom_has_valid_initial_state ... ok
+test female_rig::tests::imported_grasp_mesh_bvh_classification_matches_winding ... ok
+test female_rig::tests::imported_grasp_mesh_rejects_open_inverted_and_nonmanifold_surfaces ... ok
+test female_rig::tests::imported_grasp_mesh_welds_position_seams_and_preserves_cavities ... ok
+test female_hair::tests::guide_surface_normals_preserve_full_geometry_and_frame_orientation ... ok
+test female_hair::tests::resting_groom_contacts_preserve_lengths ... ok
+test female_lids::tests::replacement_body_preserves_source_positions_and_constant_indices ... ok
+test female_rig::tests::proximal_thumb_follows_thumb_bones_in_both_hands ... ok
+test female_rig::tests::stronger_thumb_contact_search ... ignored, Offline stronger thumb articulation search
+test female_rig::tests::thumb_contact_envelope_diagnostic ... ignored, Offline thumb contact envelope diagnostic
+test female_rig::tests::thumb_mesh_weight_optimization_diagnostic ... ignored, Offline mesh-based proximal thumb weight optimization
+test female_rig::tests::thumb_web_area_only_diagnostic ... ignored, Offline area-only skin correction diagnostic
+test female_demo::tests::grasp_preset_switch_preserves_pose_and_failed_load_keeps_target has been running for over 60 seconds
+test female_demo::same_source_film_morph_tests::appearance_only_edit_preserves_live_physics_and_film ... ok
+test female_rig::tests::thumb_web_edge_only_diagnostic ... ignored, Offline edge-only skin correction diagnostic
+test female_rig::tests::thumb_web_uncorrected_crease_diagnostic ... ignored, Offline skinning-versus-surface-correction diagnostic
+test female_rig::tests::isolated_grasp_keeps_wrists_fixed_while_fingers_close ... ok
+test female_transmission::tests::spectral_profile_is_finite_and_decays_with_thickness ... ok
+test film_settings::tests::diagnostic_display_roundtrips_and_rejects_unknown_modes ... ok
+test film_settings::tests::patch_validates_units_and_rejects_unknown_keys ... ok
+test film_settings::tests::self_contact_settings_are_bounded_and_preserved ... ok
+test full_model_worker::tests::disconnected_worker_reports_once_and_keeps_diagnostic ... ok
+test full_model_worker::tests::invalid_pose_metadata_is_rejected_before_publication ... ok
+test full_model_worker::tests::preparation_failure_emits_no_replacement_pose_and_reports_once ... ok
+test gpu_hair_solver::joint::tests::gpu_joint_backend_admits_captured_original_physics ... ignored, requires Metal/Vulkan hardware and original VQC1 physical contact fixture
+test gpu_hair_solver::joint::tests::gpu_seeded_joint_releases_and_retries_dependent_hints ... ignored, requires an actual GPU; seeded QR retry and current-operator admission
+test gpu_hair_solver::joint::tests::joint_result_cache_requires_exact_operator_and_is_bounded ... ok
+test gpu_hair_solver::joint::tests::original_support_products_match_dense_cancellation_and_tiny_terms ... ok
+test gpu_hair_solver::joint::tests::replay_rejected_gpu_joint_coordinates ... ignored, requires an actual GPU and VOXY_HAIR_JOINT_FAILURE_FIXTURE exact captured coordinate input
+test gpu_hair_solver::tests::gpu_captured_body_contact_responses ... ignored, requires real GPU and exported captured contact matrices
+test gpu_hair_solver::tests::gpu_captured_full_structural_batch ... ignored, requires actual GPU and exported full captured structural batch
+test gpu_hair_solver::tests::gpu_captured_rejected_response_batch ... ignored, requires real GPU and a captured rejected response batch
+test gpu_hair_solver::tests::gpu_captured_strain_admission_correction ... ignored, requires actual GPU and captured rejected guide linear system
+test gpu_hair_solver::tests::gpu_factor_reuse_matches_fresh_factorization_on_rod_compliance ... ignored, requires a real GPU for factor-reuse qualification
+test gpu_hair_solver::tests::gpu_shared_response_batches_preserve_mixed_shapes_and_load_order ... ignored, requires a real GPU for ragged compliance batch qualification
+test gpu_hair_solver::tests::gpu_transport_benchmark_full_guide_count ... ignored, requires a real GPU; transport benchmark is not render FPS
+test gravity_demo::tests::planet_showcase_walks_inverted_and_jumps ... ok
+test gravity_demo::tests::showcase_runs_both_modes_with_stable_mesh_capacity ... ok
+test jump_motion::tests::launch_flight_landing_are_continuous_and_ballistic ... ok
+test liquid_demo::tests::both_reservoirs_spread_and_surface_stays_within_reserved_capacity ... ok
+test liquid_demo::tests::corrupted_finite_source_mass_rejects_before_publishing_fluid ... ok
+test liquid_demo::tests::corrupted_mass_inventory_rejects_entire_nominal_frame ... ok
+test liquid_demo::tests::finite_source_impacts_preserve_species_ledgers_and_exhaustion_is_atomic ... ok
+test liquid_demo::tests::finite_source_visual_demo_emits_recoils_and_preserves_failed_frame ... ok
+test liquid_demo::tests::measure_native_liquid_transaction_cost ... ignored, manual timing control; no performance threshold
+test female_rig::tests::prepared_grasp_interpolation_preserves_contact ... ok
+test liquid_demo::tests::native_liquid_failure_preserves_both_reservoirs_and_clock ... ok
+test liquid_demo::tests::optical_film_conversion_omits_only_zero_quantized_height ... ok
+test model_presentation::tests::film_request_is_correlated_and_checkpoint_is_not_overwritten ... ok
+test model_presentation::tests::saved_parameters_are_distinguished_from_presented_parameters ... ok
+test rig_skinning::tests::blended_rotation_preserves_joint_radius ... ok
+test rig_skinning::tests::fully_folded_hinge_has_a_finite_descent_direction ... ok
+test rig_skinning::tests::hinge_gradient_mirrors_as_a_position_displacement ... ok
+test rig_skinning::tests::rigid_translation_and_antipodal_quaternions_agree ... ok
+test rush_physics::tests::touching_box_allows_moving_away_and_parallel_but_blocks_approach ... ok
+test scene_input::tests::held_repeats_focus_and_custom_bindings ... ok
+test scene_rush::diagnostic_tests::panel_keeps_stack_and_reports_recovery_without_repeating_the_error ... ok
+test scene_rush::tests::live_fixed_loop_resolves_collisions_and_delivers_contacts_to_script ... ok
+test female_demo::tests::preview_has_visible_soft_region_motion_and_settles has been running for over 60 seconds
+test liquid_demo::tests::native_jets_spray_deposit_and_preserve_mass_and_reset_mode ... ok
+test surface_film_preview::atomic_frame_profile::actual_body_atomic_frame_profile ... ignored, paired release full-body geometry/source/transport benchmark
+test strands_demo::tests::animated_mesh_keeps_its_capacity_over_ten_seconds ... ok
+test surface_film_preview::body_remap_tests::current_refined_body_transfer_preserves_wet_foot_source_history ... ignored, requires generated unadopted refinement assets; full-model transfer check
+test surface_film_preview::body_remap_tests::refinement_transfer_welds_seams_and_preserves_volume_history ... ok
+test female_hair::tests::real_surface_contacts_and_moving_root_keep_mesh_capacity ... ok
+test female_rig::thumb_tip_contact_tests::closed_thumb_tip_contacts_cylinder_and_sphere ... ok
+test surface_film_preview::checkpoint_restore_tests::malformed_restore_does_not_change_existing_state ... ok
+test surface_film_preview::checkpoint_restore_tests::restore_actual_native_body_capture ... ignored, requires a preserved actual native film capture path
+test surface_film_preview::checkpoint_restore_tests::serialized_restore_preserves_state_and_continuation ... ok
+test surface_film_preview::invalid_advance_tests::failed_contact_preserves_film_and_source_receipts ... ok
+test surface_film_preview::invalid_advance_tests::invalid_contact_receipt_rolls_back_successful_geometry_and_source_candidate ... ok
+test surface_film_preview::invalid_advance_tests::invalid_source_inventory_rejects_before_moving_substrate_or_adding_liquid ... ok
+test surface_film_preview::invalid_advance_tests::invalid_timestep_and_substrate_preserve_geometry_mass_and_sources ... ok
+test surface_film_preview::tests::body_deformation_with_sources_preserves_mass_budget ... ignored, full body moving-surface source mass-budget study
+test surface_film_preview::tests::body_gravity_transport_spatial_refinement ... ignored, expensive full-body spatial refinement study
+test surface_film_preview::tests::body_mesh_temporal_convergence_and_mass_budget ... ignored, full body temporal convergence study; writes measured report
+test surface_film_preview::tests::body_morph_surface_area_quality_matrix ... ok
+test surface_film_preview::tests::clipped_brush_distribution_converges_under_refinement ... ok
+test surface_film_preview::tests::configured_contact_angle_changes_potential_without_seeding_mass ... ok
+test surface_film_preview::tests::independent_sources_add_the_sum_of_their_mass_inputs ... ok
+test surface_film_preview::tests::layer_uses_solver_thickness_and_preserves_substrate ... ok
+test surface_film_preview::tests::moving_source_retains_existing_liquid_and_changes_only_new_input ... ok
+test surface_film_preview::tests::preview_self_contact_moves_liquid_and_stops_after_separation ... ok
+test surface_film_preview::tests::snapshot_contains_current_geometry_distribution_and_source_history ... ok
+test surface_film_preview::tests::source_distribution_is_invariant_under_local_refinement ... ok
+test female_hair::tests::complete_rig_loop_preserves_hair_and_scalp_bindings has been running for over 60 seconds
+test female_rig::tests::grasp_distal_fingers_do_not_cross has been running for over 60 seconds
+test female_rig::tests::grasp_fingertip_surface_follows_distal_bones has been running for over 60 seconds
+test female_rig::tests::grasp_skin_surface_stays_outside_object has been running for over 60 seconds
+test female_rig::tests::object_contact_limits_each_finger_without_penetration has been running for over 60 seconds
+test female_rig::tests::thumb_web_does_not_form_a_sharp_new_crease has been running for over 60 seconds
+test female_demo::source_switch_geometry_tests::switched_film_uses_morphed_geometry_in_the_first_frame ... ok
+test tissue_demo::assembly::contact_tests::arbitrary_volume_offset_diagnostics_use_mass_without_assuming_supports_or_center ... ok
+test tissue_demo::assembly::contact_tests::authored_convex_volume_uses_complete_physical_skin_and_existing_controller ... ok
+test tissue_demo::assembly::contact_tests::authored_material_and_variable_supports_drive_shared_mechanical_thermal_owner ... ok
+test tissue_demo::assembly::contact_tests::authored_region_union_rejects_overlap_without_relying_on_skin_samples ... ok
+test tissue_demo::assembly::contact_tests::blended_support_weights_drive_prescribed_motion_and_keep_energy_and_rollback ... ok
+test tissue_demo::assembly::contact_tests::missing_region_attachment_rejects_complete_frame_without_partial_update ... ok
+test tissue_demo::assembly::contact_tests::multi_bone_supports_drive_one_continuum_and_reject_bad_palettes_atomically ... ok
+test tissue_demo::assembly::contact_tests::nonconvex_lattice_volume_drives_existing_skin_and_energy_owner ... ok
+test tissue_demo::assembly::contact_tests::nonradial_volume_boundary_normals_ignore_internal_faces_and_cell_order ... ok
+test tissue_demo::assembly::contact_tests::physical_render_skin_contact_drives_fem_and_books_obstacle_work_once ... ok
+test tissue_demo::assembly::contact_tests::projective_support_palettes_reject_atomically_for_rigid_blended_and_free_volumes ... ok
+test tissue_demo::assembly::contact_tests::unsupported_authored_volume_rejects_nonfinite_joint_atomically_in_both_owners ... ok
+test tissue_demo::assembly::skin_tests::assembled_skin_uses_each_joint_once_and_transfers_all_regional_displacements ... ok
+test tissue_demo::assembly::skin_tests::source_reference_contact_rejects_separated_aliases_before_commit ... ok
+test tissue_demo::assembly::skin_tests::source_reference_extends_affine_skin_to_free_interior_nodes ... ok
+test tissue_demo::assembly::skin_tests::source_reference_nodes_transfer_nonrigid_pose_and_reject_alias_separation ... ok
+test tissue_demo::assembly::skin_tests::source_reference_supports_follow_native_nonrigid_pose_and_book_work ... ok
+test tissue_demo::assembly::skin_tests::strict_energy_budget_bounds_a_moving_source_support_frame ... ok
+test tissue_demo::assembly::tests::assembled_controller_drives_all_regional_supports_in_one_owner ... ok
+test tissue_demo::assembly::tests::assembled_controller_rejects_rebound_surface_and_last_joint_atomically ... ok
+test tissue_demo::assembly::tests::energy_budget_policy_is_atomic_and_survives_global_assembly ... ok
+test tissue_demo::search_backend_selection_tests::cuda_backend_failure_stops_refinement_and_preserves_physical_owner ... ok
+test tissue_demo::search_backend_selection_tests::cuda_failure_in_second_frame_rolls_back_clock_and_every_region ... ok
+test tissue_demo::search_backend_selection_tests::incompatible_owner_rejects_before_changing_any_regional_selection ... ok
+test tissue_demo::search_backend_selection_tests::selected_backend_reaches_regional_and_assembled_owners_without_mutation_on_error ... ok
+test tissue_demo::tests::adaptive_surface_motion_books_work_and_crossing_rolls_back ... ok
+test surface_film_preview::unsupported_body_remap_tests::unsupported_wet_surface_rejects_without_dropping_mass ... ok
+test tissue_demo::tests::bound_skin_follows_physical_node_and_keeps_exterior_vertices ... ok
+test tissue_demo::tests::conduction_changes_heat_distribution_without_changing_mechanics ... ok
+test tissue_demo::tests::contact_fixture_roundtrip_preserves_ccd_and_does_not_mutate_body ... ok
+test tissue_demo::tests::demo_runs_ten_seconds ... ok
+test tissue_demo::tests::distinct_regional_contact_domains_commit_together_and_reject_swaps ... ok
+test tissue_demo::tests::external_palette_failure_preserves_frame_clock_and_shifted_reference ... ok
+test tissue_demo::tests::failed_last_bone_keeps_all_tissue_states ... ok
+test tissue_demo::tests::failed_rejection_observation_preserves_error_and_state ... ok
+test tissue_demo::tests::failed_second_refinement_child_rolls_back_successful_first_child ... ok
+test tissue_demo::tests::frame_surface_binding_and_motion_are_atomic ... ok
+test tissue_demo::tests::identity_bone_preserves_fem_attachment_precision ... ok
+test surface_film_preview::body_remap_tests::actual_body_correspondence_preserves_mass_in_both_directions has been running for over 60 seconds
+test surface_film_preview::body_remap_tests::repaired_body_correspondence_runs_in_actual_solver has been running for over 60 seconds
+test surface_film_preview::body_remap_tests::repaired_preview_transfer_preserves_running_source_counters has been running for over 60 seconds
+test tissue_demo::tests::body_walk_jump_and_settle ... ok
+test tissue_demo::tests::invalid_frame_duration_preserves_clock_and_all_modes ... ok
+test tissue_demo::tests::mannequin_regions_have_si_dimensions_and_volume_derived_mass ... ok
+test tissue_demo::tests::parallel_contact_second_frame_failure_preserves_clock_and_all_regions ... ok
+test tissue_demo::tests::parallel_regions_match_serial_state_and_preserve_error_order_and_rollback ... ok
+test tissue_demo::tests::physical_boundary_binds_without_shrinkage_and_follows_affine_motion ... ok
+test surface_film_preview::body_remap_tests::actual_body_correspondence_preserves_mass_in_both_directions ... ok
+test tissue_demo::tests::second_substep_failure_rolls_back_complete_frame_and_recovers ... ok
+test tissue_demo::tests::skeletal_limbs_move_and_child_pivots_remain_connected ... ok
+test tissue_demo::tests::skin_binding_rejects_overlap_reassigned_joint_and_singular_pose ... ok
+test tissue_demo::tests::smooth_boundary_normals_are_outward_and_rotation_covariant ... ok
+test tissue_demo::tests::wide_supports_keep_sub_render_scale_motion ... ok
+test tissue_diagnostics::tests::affine_surface_measures_and_invalid_geometry_are_reported ... ok
+test touch::tests::cancellation_and_secondary_fingers_do_not_trigger_actions ... ok
+test touch::tests::tap_toggles_pause_but_drag_does_not ... ok
+test view_settings::tests::mode_validation_and_roundtrip ... ok
+test volume_regions::collider_rebase_regression::fixed_mass_height_changes_keep_torso_proxy_outside_pins ... ok
+test volume_regions::gpu_transfer_regression::sparse_gpu_weights_match_existing_region_transfer_after_dynamics ... ok
+test volume_regions::parameterized_tests::rebuilding_cages_changes_physical_rest_geometry_and_preserves_unloaded_surface ... ok
+test volume_regions::parameterized_tests::tiny_height_edit_keeps_cage_inertia_continuous ... ok
+test tissue_demo::tests::rotating_bones_drive_pins_and_free_tissue_response ... ok
+test volume_regions::tests::real_model_regions_preserve_volume_and_recover_after_load ... ok
+test xray_demo::tests::imported_body_is_used_as_shell_and_ring_is_scaled_into_pelvis ... ok
+test xray_demo::tests::local_reveal_masks_only_part_of_the_ring ... ok
+test xray_demo::tests::contraction_deforms_surface_without_changing_topology ... ok
+test surface_film_preview::body_remap_tests::repaired_preview_transfer_preserves_running_source_counters ... ok
+test female_demo::tests::preview_has_visible_soft_region_motion_and_settles ... ok
+test female_demo::model_selection_tests::source_switch_transfers_existing_fluid_without_mass_loss ... ok
+test female_hair::tests::complete_rig_loop_preserves_hair_and_scalp_bindings ... ok
+test tissue_demo::tests::imported_rig_support_motion_refines_without_weakening_admission has been running for over 60 seconds

@@ -1,0 +1,188 @@
+{
+  "rest_length_m": 0.00874902968486552,
+  "frame": 40,
+  "rod": 9,
+  "segment": 14,
+  "phases": [
+    {
+      "phase": "predicted",
+      "substep": 0,
+      "iteration": 0,
+      "segment14_strain": 9.073621828048495e-05
+    },
+    {
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 0,
+      "segment14_strain": 1.065338271599714e-06
+    },
+    {
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 1,
+      "segment14_strain": 6.933304270706486e-07
+    },
+    {
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 2,
+      "segment14_strain": 3.7683940656840775e-07
+    },
+    {
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 3,
+      "segment14_strain": 3.7522783724597275e-07
+    },
+    {
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 4,
+      "segment14_strain": 3.7522783724597275e-07
+    },
+    {
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 4,
+      "segment14_strain": 3.7522783724597275e-07
+    },
+    {
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 4,
+      "segment14_strain": 3.77356993652711e-07
+    },
+    {
+      "phase": "structural",
+      "substep": 0,
+      "iteration": 5,
+      "segment14_strain": 3.795208747270351e-07
+    },
+    {
+      "phase": "structural-mesh",
+      "substep": 0,
+      "iteration": 6,
+      "segment14_strain": 3.795208747270351e-07
+    },
+    {
+      "phase": "contact-positions",
+      "substep": 0,
+      "iteration": 6,
+      "segment14_strain": 3.795208747270351e-07
+    },
+    {
+      "phase": "before-finish",
+      "substep": 0,
+      "iteration": 6,
+      "segment14_strain": 3.795208747270351e-07
+    },
+    {
+      "phase": "rod-velocities",
+      "substep": 0,
+      "iteration": 6,
+      "segment14_strain": 3.795208747270351e-07
+    },
+    {
+      "phase": "strand-friction",
+      "substep": 0,
+      "iteration": 6,
+      "segment14_strain": 3.795208747270351e-07
+    },
+    {
+      "phase": "finished",
+      "substep": 0,
+      "iteration": 6,
+      "segment14_strain": 3.795208747270351e-07
+    },
+    {
+      "phase": "predicted",
+      "substep": 1,
+      "iteration": 0,
+      "segment14_strain": 6.793625376899648e-05
+    },
+    {
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 0,
+      "segment14_strain": 0.0009407647653405515
+    },
+    {
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 1,
+      "segment14_strain": 0.00014382399793944067
+    },
+    {
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 2,
+      "segment14_strain": -6.047751295978898e-06
+    },
+    {
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 3,
+      "segment14_strain": -9.631134495480254e-07
+    },
+    {
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 4,
+      "segment14_strain": -0.06117017998375229
+    },
+    {
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 4,
+      "segment14_strain": -0.06117017998375229
+    },
+    {
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 4,
+      "segment14_strain": -2.2849190082219195e-06
+    },
+    {
+      "phase": "structural",
+      "substep": 1,
+      "iteration": 5,
+      "segment14_strain": -2.2143554876397076e-06
+    },
+    {
+      "phase": "structural-mesh",
+      "substep": 1,
+      "iteration": 6,
+      "segment14_strain": -0.060928133801394724
+    },
+    {
+      "phase": "contact-positions",
+      "substep": 1,
+      "iteration": 6,
+      "segment14_strain": -0.060928133801394724
+    },
+    {
+      "phase": "before-finish",
+      "substep": 1,
+      "iteration": 6,
+      "segment14_strain": -0.060928133801394724
+    },
+    {
+      "phase": "rod-velocities",
+      "substep": 1,
+      "iteration": 6,
+      "segment14_strain": -0.060928133801394724
+    },
+    {
+      "phase": "strand-friction",
+      "substep": 1,
+      "iteration": 6,
+      "segment14_strain": -0.060928133801394724
+    },
+    {
+      "phase": "finished",
+      "substep": 1,
+      "iteration": 6,
+      "segment14_strain": -0.060928133801394724
+    }
+  ]
+}

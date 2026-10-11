@@ -1,0 +1,12 @@
+{
+  "status": "running",
+  "session": 45514,
+  "native_only": true,
+  "scoped_island_workers": true,
+  "guarded_appended_order": true,
+  "clear_pair_witness_optimization": true,
+  "full_jump_qualified": false,
+  "fps_qualified": false,
+  "completed_paired_frames": 2,
+  "contains_balanced_pair_traversal": false
+}

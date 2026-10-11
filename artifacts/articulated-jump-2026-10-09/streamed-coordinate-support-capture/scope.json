@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-10-10T04:02:50.846679+00:00",
+  "sha256": {
+    "crates/voxy_render/src/joint_contact_dot.rs": "321f7d44be86f4c55d508c2d3c3f1717e33101c0890ba9cd8c7a9c6bb528f034",
+    "artifacts/articulated-jump-2026-10-09/exact-load-cache-capture/slow-contact-input.vqc": "8bb597c5469677c5af1d81ef1faa3f37b6f88314bf5459c6b9b2984a1036ca8f"
+  },
+  "scope": "Exact structural support discovery only. Same ascending IDs, signed zeros excluded, all finite nonzero magnitudes retained. Captured 61x2646 operator paired 12x64 trials, median 296.705 -> 40.115 us sparse; 6.206 -> 2.416 us first-column dense. Includes allocation and equality assertions; concurrent diagnostic timing, not full packing/physics/frame performance. Eleven render codec/shader/support tests pass. Hardware physical fixture verification pending.",
+  "hardware_physics": "PASS on Apple M4 Max Metal, one-storage transport, captured 21 physical systems / 61 rows / 2646 coordinates. Original tolerance 1e-14, no native fallback. Four cooperative coordinate operators match serial exactly; translation difference from native 5.590417451878382e-19 m."
+}

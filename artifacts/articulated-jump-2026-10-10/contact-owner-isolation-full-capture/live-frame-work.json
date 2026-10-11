@@ -1,0 +1,32 @@
+{
+  "schema": "voxy-hair-frame-work-v1",
+  "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/contact-owner-isolation-full-capture/qualification.log",
+  "scope": "completed per-frame solver wall times and counter deltas; excludes rendering; not GPU timestamps or FPS",
+  "frames": [
+    {
+      "frame": 1,
+      "native_solver_wall_ms": 59675.805416,
+      "external_solver_wall_ms": 279062.547833,
+      "coordinate_calls": 6093,
+      "equality_dispatches": 83033,
+      "cache_hits": 0,
+      "admitted": 6093,
+      "native_fallbacks": 0,
+      "submissions": 35058
+    },
+    {
+      "frame": 2,
+      "native_solver_wall_ms": 58357.210666,
+      "external_solver_wall_ms": 815562.422083,
+      "coordinate_calls": 14900,
+      "equality_dispatches": 277444,
+      "cache_hits": 0,
+      "admitted": 14900,
+      "native_fallbacks": 0,
+      "submissions": 103720
+    }
+  ],
+  "pending_workload_frames": [],
+  "rendered_fps_measured": false,
+  "qualification_pass_inferred": false
+}

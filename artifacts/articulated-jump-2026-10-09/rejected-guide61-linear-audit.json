@@ -1,0 +1,9 @@
+{
+  "guide": 18,
+  "dt": 0.004166666666666667,
+  "max_scaled_exact_linear_residual": 1.378117083084468e-16,
+  "original_linear_tolerance": 1e-08,
+  "all_linear_rows_admitted": true,
+  "max_linear_correction_m": 0.0037614996820855037,
+  "max_angular_correction_rad": 0.31150130620715
+}

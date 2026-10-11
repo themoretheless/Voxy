@@ -607,28 +607,29 @@ impl Liquid {
             };
             // Harmonic pair mass makes curvature exchange symmetric for unequal masses.
             let curvature = surface * correction * (2.0 * a.mass * b.mass / (a.mass + b.mass));
-            let curvature_normal: f64 = sub(normals[i], normals[j])
-                .iter()
-                .zip(direction)
-                .map(|(v, n)| v * n)
-                .sum();
-            let relative_normal: f64 = sub(b.velocity, a.velocity)
-                .iter()
-                .zip(direction)
-                .map(|(v, n)| v * n)
-                .sum();
+            let dn = sub(normals[i], normals[j]);
+            let curvature_normal = dn[0] * direction[0] + dn[1] * direction[1] + dn[2] * direction[2];
+            let dv = sub(b.velocity, a.velocity);
+            let relative_normal = dv[0] * direction[0] + dv[1] * direction[1] + dv[2] * direction[2];
             let interface_force = self.interface_force(a, b, r);
-            for axis in 0..3 {
-                let force = (pressure_force - cohesion + interface_force) * direction[axis]
-                    - curvature * curvature_normal * direction[axis]
-                    + if self.viscous_heating {
-                        0.0
-                    } else {
-                        viscosity * relative_normal * direction[axis]
-                    };
-                acceleration[i][axis] += force / a.mass;
-                acceleration[j][axis] -= force / b.mass;
-            }
+            let radial = pressure_force - cohesion + interface_force - curvature * curvature_normal;
+            let visc = if self.viscous_heating {
+                0.0
+            } else {
+                viscosity * relative_normal
+            };
+            let total_mag = radial + visc;
+            let f0 = total_mag * direction[0];
+            let f1 = total_mag * direction[1];
+            let f2 = total_mag * direction[2];
+            let inv_a = 1.0 / a.mass;
+            let inv_b = 1.0 / b.mass;
+            acceleration[i][0] += f0 * inv_a;
+            acceleration[i][1] += f1 * inv_a;
+            acceleration[i][2] += f2 * inv_a;
+            acceleration[j][0] -= f0 * inv_b;
+            acceleration[j][1] -= f1 * inv_b;
+            acceleration[j][2] -= f2 * inv_b;
         }
         self.add_image_forces(
             particles,
@@ -679,10 +680,12 @@ fn pairs(
     budget: usize,
     check_budget: usize,
 ) -> Result<Vec<(usize, usize)>, Error> {
-    let mut grid: BTreeMap<[i64; 3], Vec<usize>> = BTreeMap::new();
+    let mut grid: std::collections::HashMap<[i64; 3], Vec<usize>> =
+        std::collections::HashMap::with_capacity(particles.len());
     for (i, p) in particles.iter().enumerate() {
         grid.entry(cell(p.position, h)?).or_default().push(i);
     }
+    let h2 = h * h;
     let mut result = Vec::new();
     let mut checks = 0;
     for (i, p) in particles.iter().enumerate() {
@@ -699,7 +702,9 @@ fn pairs(
                                 return Err(Error::NeighborBudget);
                             }
                             checks += 1;
-                            if norm(sub(p.position, particles[j].position)) < h {
+                            let d = sub(p.position, particles[j].position);
+                            let dist2 = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+                            if dist2 < h2 {
                                 if result.len() >= budget {
                                     return Err(Error::PairBudget);
                                 }

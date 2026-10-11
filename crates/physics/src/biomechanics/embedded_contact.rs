@@ -110,19 +110,18 @@ impl EmbeddedTriangleContact {
     ) -> Result<EmbeddedContactResponse, &'static str> {
         let skin = self.positions(pose)?;
         let response = obstacle.response_admitted_skin(&skin, &self.faces)?;
-        let force: Vec<_> = response
-            .body_gradient_n
-            .into_iter()
-            .map(|g| g.map(|x| -x))
-            .collect();
+        let mut force = response.body_gradient_n;
+        for g in &mut force {
+            *g = g.map(|x| -x);
+        }
+        let mut obstacle_forces_n = response.obstacle_gradient_n;
+        for g in &mut obstacle_forces_n {
+            *g = g.map(|x| -x);
+        }
         Ok(EmbeddedContactResponse {
             potential_j: response.potential_j,
-            skin_loads: self.embedding.relative_loads(&force)?,
-            obstacle_forces_n: response
-                .obstacle_gradient_n
-                .into_iter()
-                .map(|g| g.map(|x| -x))
-                .collect(),
+            skin_loads: self.embedding.relative_loads_owned(force)?,
+            obstacle_forces_n,
         })
     }
     /// Apply W^T M W for the frozen-feature PSD normal contact metric.
@@ -205,17 +204,15 @@ impl EmbeddedTriangleContact {
         for _ in 0..32 {
             let path = obstacle.prepare_path_partition(next, &knots)?;
             let average = path.response(&x0, &x1, &self.faces)?;
-            let forces: Vec<_> = average
-                .body_gradient_n
-                .into_iter()
-                .map(|g| g.map(|x| -x))
-                .collect();
-            let loads = self.embedding.relative_loads(&forces)?;
-            let obstacle_forces: Vec<_> = average
-                .obstacle_gradient_n
-                .into_iter()
-                .map(|g| g.map(|x| -x))
-                .collect();
+            let mut forces = average.body_gradient_n;
+            for g in &mut forces {
+                *g = g.map(|x| -x);
+            }
+            let loads = self.embedding.relative_loads_owned(forces)?;
+            let mut obstacle_forces = average.obstacle_gradient_n;
+            for g in &mut obstacle_forces {
+                *g = g.map(|x| -x);
+            }
             let body_work: f64 = loads
                 .nodal_forces_n()
                 .iter()
@@ -554,11 +551,20 @@ impl Body {
         let Some(contact) = contact else {
             return Ok(0.);
         };
-        let response = contact.response(positions)?;
-        for (g, f) in gradient
-            .iter_mut()
-            .zip(response.skin_loads.nodal_forces_n())
-        {
+        let skin = contact.contact.positions(contact.pose(positions))?;
+        let response = contact
+            .obstacle
+            .response_admitted_skin(&skin, &contact.contact.faces)?;
+        let mut force = response.body_gradient_n;
+        for g in &mut force {
+            *g = g.map(|x| -x);
+        }
+        let mut nodal = vec![[0.; 3]; contact.contact.embedding.vertex_count()];
+        contact
+            .contact
+            .embedding
+            .accumulate_forces_into(&force, &mut nodal)?;
+        for (g, f) in gradient.iter_mut().zip(&nodal) {
             for a in 0..3 {
                 g[a] -= f[a];
             }

@@ -1,0 +1,12 @@
+{
+  "source_sha256": "9462328dc9cda133a92887ed1661ee6c54d0ab40680594198830e770ac5bf36d",
+  "checks_passed": [
+    "exact identity",
+    "signed zero distinguished from positive zero",
+    "truncated payload rejected",
+    "trailing data rejected",
+    "unknown schema rejected",
+    "nonfinite tolerance rejected"
+  ],
+  "scope": "parser and stored-order comparison checks, not physical solver admission"
+}

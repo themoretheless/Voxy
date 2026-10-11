@@ -1,0 +1,66 @@
+{
+  "binary_sha256": "7b5f9e2df245a256ea7bc3ea2e1524e245343b641b683aa2d6a958b8602aef1f",
+  "results": [
+    {
+      "fixture": "native-00.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1e-11,
+        "angular_response_unit": "rad",
+        "coordinates": 36,
+        "linear_response_unit": "m",
+        "maximum_angular_increment_difference_rad": 1.632938309678147e-17,
+        "maximum_angular_response_component_difference": 1.632938309678147e-17,
+        "maximum_linear_response_component_difference": 6.776263578034403e-21,
+        "maximum_reaction_difference": 2.2234614865425384e-21,
+        "maximum_translation_difference_m": 6.776263578034403e-21,
+        "native_fallback_used": false,
+        "response_quantity": "displacement",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-01.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1e-11,
+        "angular_response_unit": "rad",
+        "coordinates": 36,
+        "linear_response_unit": "m",
+        "maximum_angular_increment_difference_rad": 1.632938309678147e-17,
+        "maximum_angular_response_component_difference": 1.632938309678147e-17,
+        "maximum_linear_response_component_difference": 6.776263578034403e-21,
+        "maximum_reaction_difference": 2.2234614865425384e-21,
+        "maximum_translation_difference_m": 6.776263578034403e-21,
+        "native_fallback_used": false,
+        "response_quantity": "displacement",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    },
+    {
+      "fixture": "native-02.vqc",
+      "exit_code": 0,
+      "comparison": {
+        "absolute_physical_tolerance": 1e-11,
+        "angular_response_unit": "rad",
+        "coordinates": 36,
+        "linear_response_unit": "m",
+        "maximum_angular_increment_difference_rad": 1.9489908857448847e-17,
+        "maximum_angular_response_component_difference": 1.9489908857448847e-17,
+        "maximum_linear_response_component_difference": 1.3552527156068805e-20,
+        "maximum_reaction_difference": 2.4352197233561135e-21,
+        "maximum_translation_difference_m": 1.3552527156068805e-20,
+        "native_fallback_used": false,
+        "response_quantity": "displacement",
+        "rows": 2,
+        "scope": "same complete captured physical operator; not whole trajectory",
+        "systems": 2
+      }
+    }
+  ],
+  "limits": "Three complete original displacement operators for coincident parallel free segments. Not full-body trajectory or FPS."
+}

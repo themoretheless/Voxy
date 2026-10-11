@@ -1,0 +1,17 @@
+
+running 1 test
+JOINT BACKEND ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+JOINT BACKEND storage_limit=8
+JOINT NATIVE COMPARISON {"absolute_physical_tolerance":1e-14,"coordinates":2016,"maximum_angular_increment_difference_rad":9.974659986866641e-17,"maximum_reaction_difference":1.1632227364026952e-24,"maximum_translation_difference_m":8.199278929421627e-19,"native_fallback_used":false,"rows":53,"scope":"same complete captured physical operator; not whole trajectory","systems":16}
+JOINT GPU WORKSPACE creations=24 reuses=9 scope=original_physical_operator_not_full_model_or_fps
+JOINT RELEASE DIRECTIONS 5 early=5
+JOINT BACKEND ORIGINAL systems=16 rows=53 width=2016 tolerance=1e-14 coordinate_calls=1 equality_dispatches=50 admitted=1 fallbacks=0
+JOINT EXACT REUSE physically_admitted=true additional_equality_submissions=0 cache_hits=1
+JOINT EXACT INVALIDATION bounds=changed physically_admitted=true equality_submissions=50
+JOINT EXACT INVALIDATION bounds=restored physically_admitted=true equality_submissions=50
+JOINT EXACT REUSE DISABLED physically_admitted=true retained_cache=false
+JOINT QR PREFIX REUSE physically_admitted=true reused_columns=1136
+test gpu_hair_solver::joint::tests::gpu_joint_backend_admits_captured_original_physics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 331 filtered out; finished in 0.19s
+

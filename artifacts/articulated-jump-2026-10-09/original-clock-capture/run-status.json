@@ -1,0 +1,9 @@
+{
+  "observed_at_utc": "2026-10-09T17:03:14.522927+00:00",
+  "status_at_last_observation": "running",
+  "verified_session_id": 3776,
+  "completed_paired_frames_at_observation": 1,
+  "native_only": true,
+  "whole_jump_qualified": false,
+  "rendered_fps_measured": false
+}

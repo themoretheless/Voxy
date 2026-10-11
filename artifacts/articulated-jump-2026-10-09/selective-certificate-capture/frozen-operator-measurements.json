@@ -1,0 +1,8 @@
+{
+  "scope": "complete immutable contact projection on3 rods with1 closing contact;100 evaluations x7 alternating pairs; warmed cache; concurrent full qualifier load; includes matrix reuse, load cache, QR, original admission, output checks",
+  "fresh_median_seconds_100": 0.000562042,
+  "cached_median_seconds_100": 0.000395625,
+  "ratio": 1.4206432859399685,
+  "bitwise_coordinates_and_reactions": true,
+  "full_groom_or_fps_proof": false
+}

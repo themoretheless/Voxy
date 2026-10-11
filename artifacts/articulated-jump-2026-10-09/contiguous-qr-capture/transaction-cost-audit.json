@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-10-09T20:06:21.629483+00:00",
+  "scope": "Cumulative completed diagnostic transactions from both paired CPU copies; excludes in-flight transaction. Not per-frame FPS. Profile times overlap their contained QR work and must not be summed together.",
+  "completed_transactions": 320,
+  "total_transaction_ms": 114946.491331,
+  "total_initial_projection_ms": 4302.27771,
+  "total_initial_admission_ms": 13397.035548,
+  "total_cut_refinements": 2507,
+  "max_constraints": 1228,
+  "qr_profile_calls": 2124,
+  "qr_profile_total_ms": 31243.957597,
+  "qr_profile_median_ms": 14.2174585
+}

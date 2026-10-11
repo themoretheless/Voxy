@@ -1,0 +1,11 @@
+{
+  "skin_integration_passed": 21,
+  "failed": 0,
+  "regression": "A deformed candidate is discarded, source poses/velocities/energy remain unchanged, then eight future steps match untouched control bitwise including stored energy. Default laminated material includes Maxwell relaxation branches.",
+  "test_source_sha256": "54bd3bba8a516ce26f5759f55f3f658e02ad1bdd67e8d15ce69f410963840cd2",
+  "whole_application_suite_session": 80634,
+  "whole_application_suite_status": "live at last authoritative poll; not declared passed",
+  "early_gpu_full_process": 47617,
+  "last_completed_frames": 3,
+  "whole_gpu_trajectory_qualified": false
+}

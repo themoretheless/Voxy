@@ -1,0 +1,35 @@
+{
+  "frames_requested": 720,
+  "full_model": true,
+  "features": [
+    "original_column_velocity_projection",
+    "cooperative_outer_newton",
+    "cooperative_inner_physical",
+    "cooperative_gpu_equalities",
+    "power_two_rhs_normalization",
+    "release_directions",
+    "early_release_directions",
+    "frozen_dual_hints",
+    "validated_qr_prefix"
+  ],
+  "phase_trace": {
+    "rod": 227,
+    "first_frame": 4,
+    "last_frame": 6,
+    "inertial_targets_and_speeds": true
+  },
+  "sha256": {
+    "crates/physics/src/hair/velocity_contacts.rs": "2312e1f261d724e31a6dd0ea3cb5f183f84c04f8912ee3d02ca0807fc4736d6d",
+    "crates/physics/src/hair/contact_safe_motion.rs": "f836a87073ba2fd803972834d95fe24e7fc21c1023f2be538078209540555f9e",
+    "crates/physics/src/hair/phase_diagnostics.rs": "6a8864c79a2944284c58bfd64648223527c5f35c40645ac3066048f8df9ed63e",
+    "crates/physics/src/hair/contact_response_system.rs": "ab12a0bf3ef949d712e7932e978152621880cc568f8c0b1f007200f0f1818bf1",
+    "crates/physics/src/hair/contact_square_root_projection.rs": "1fcf7a74699952a12d85dd7d5fbe4b3e47f01f3c5ee4887591520ccf75fafe7c",
+    "crates/physics/src/hair/contact_square_root_qr.rs": "96668723cd0e6f4fd88519e659c092c01ed67f650500a29cf1e96a4cc88e5fd2",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "3e0079723eb4f31df6b50af98e3224641f5a92fc98a888dceb789607cd48e642",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "cdbde71b223cad37e9ba1f77a883bd1d54456d527823bfc6aa23ea71c1307807",
+    "crates/voxy_app/src/female_hair.rs": "334a2dce1c67cd938463f08f009bacc62d7d45c019cab4961e91f61172ad7c9f",
+    "artifacts/articulated-jump-2026-10-09/run_gpu_joint_jump.sh": "9e228971c2a2159ce7ccace30a1df6a258881eaa8fdc5b4ca5b3284172457ded",
+    "/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f": "4ccb2ac0843545886e412a122a21dd409d53f6a451df9b18f905305dc998f504"
+  },
+  "scope": "Separate numerical-method experiment after velocity precursor localization. Original full density and trajectory limits, no extra same-input native audit. Existing frozen processes preserved; not rendered FPS."
+}

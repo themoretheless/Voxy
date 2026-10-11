@@ -1,0 +1,13 @@
+{
+  "scope": "source snapshot after actual test child 97515 started; test-only tiny-pivot cases added after launch do not change production arithmetic",
+  "process_id": 97515,
+  "exec_session": 6884,
+  "frames_requested": 720,
+  "source_sha256": {
+    "crates/voxy_render/src/joint_contact_qr.wgsl": "7d81a4544ac9eb038e5cb7c3c40fce0026c351319e011f89d08d76ceb2fb03ce",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "f8a90238f67485a51365e5d38ac4551743602a2a081dff91d6570d9ca7afe7d6",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "85ac5cb0ea88a3adf3f656938458dbc94049c1c3eb9ea83c825e1ae0da2aca87",
+    "crates/voxy_render/src/joint_contact_dot.rs": "dde392b97a3f4f0365235cb01d2160335bb5bcf492f7873a6727443104bf9874"
+  },
+  "rendered_fps_measured": false
+}

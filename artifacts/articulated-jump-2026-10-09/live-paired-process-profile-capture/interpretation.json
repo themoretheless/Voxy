@@ -1,0 +1,37 @@
+{
+  "pid": 47617,
+  "sample_seconds": 1,
+  "observed_stacks": [
+    "native EqualityQr::solve/unilateral_appended",
+    "solve_with_workers_prepared worker join",
+    "safe_motion strand_limits_cached/ordered_query_results"
+  ],
+  "limits": [
+    "One second in a paired test containing both native and external work.",
+    "No controlled system load or rendered FPS.",
+    "Cannot identify GPU allocation as dominant from this sample.",
+    "No existing qualification run restarted."
+  ],
+  "frame_timings": [
+    {
+      "frame": 1,
+      "native_ms": 29981.018500000002,
+      "external_ms": 93230.153292
+    },
+    {
+      "frame": 2,
+      "native_ms": 146918.542291,
+      "external_ms": 326688.51050000003
+    },
+    {
+      "frame": 3,
+      "native_ms": 125614.84629100001,
+      "external_ms": 423290.069666
+    },
+    {
+      "frame": 4,
+      "native_ms": 145529.400042,
+      "external_ms": 692414.276416
+    }
+  ]
+}

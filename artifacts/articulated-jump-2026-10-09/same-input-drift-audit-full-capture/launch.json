@@ -1,0 +1,27 @@
+{
+  "frames_requested": 720,
+  "full_model": true,
+  "features": [
+    "release_directions",
+    "early_release_directions",
+    "frozen_dual_hints",
+    "validated_qr_prefix",
+    "same_input_difference_audit"
+  ],
+  "phase_trace": {
+    "rod": 227,
+    "first_frame": 5,
+    "last_frame": 6
+  },
+  "sha256": {
+    "crates/physics/src/hair/contact_response_system.rs": "4324d6283f919670b888e05c060db6976a32079601879d6af2bd8f87336fcab3",
+    "crates/physics/src/hair/contact_square_root_qr.rs": "96668723cd0e6f4fd88519e659c092c01ed67f650500a29cf1e96a4cc88e5fd2",
+    "crates/physics/src/hair/contact_square_root_diagnostics.rs": "fb58e47c3ae61c29077f8664ff85d04a0e7756bccabcaef73069032cd5e7d546",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "8b670a5c4902bed61d285696ad7d0aa454a9e0c68209bf0eec96ada387f2ed76",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "72ac2ca705611ed63c6da3a40907d67af9ae6a2ee514a0fb3dfb83da9f715f50",
+    "crates/voxy_app/src/female_hair.rs": "7de8c8068ec1ab56c130efd189f9bf06d9b3e77e58dae5193c549b70f2eb2f9b",
+    "artifacts/articulated-jump-2026-10-09/run_gpu_joint_jump.sh": "9e228971c2a2159ce7ccace30a1df6a258881eaa8fdc5b4ca5b3284172457ded",
+    "/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f": "309aa2f486f03ddf15882aadab4a39d0d73de270dad1bcb63f6897dc1314f297"
+  },
+  "scope": "Diagnostic paired full trajectory; extra native audit is not an FPS benchmark. Cooperative GPU batching remains unwired."
+}

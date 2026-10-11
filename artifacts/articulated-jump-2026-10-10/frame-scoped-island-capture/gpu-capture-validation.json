@@ -1,0 +1,79 @@
+{
+  "actual_metal": true,
+  "selected_frame": 4,
+  "captured_operators": [
+    {
+      "file": "external-00.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-01.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-02.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-03.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-04.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-05.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-06.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-07.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-08.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    },
+    {
+      "file": "external-09.metadata.json",
+      "frame": 4,
+      "rows": 7,
+      "systems": 1,
+      "checked_load_scalars": 378
+    }
+  ],
+  "exact_serial_pose_and_rotation": true,
+  "native_fallbacks": 0,
+  "limits": "4-guide 4-frame selected physical scene; no full-scene or FPS qualification"
+}

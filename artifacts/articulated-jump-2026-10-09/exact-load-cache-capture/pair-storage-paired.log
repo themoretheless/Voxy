@@ -1,0 +1,36 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 21.86s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+INTERVAL STORAGE epsilon=-0.00000001 admitted=false dynamic_fixed_seconds=[(0.000661834, 0.00080375), (0.000593208, 0.000791333), (0.000587958, 0.000775041), (0.000587416, 0.000770292), (0.000585083, 0.000773583), (0.000588583, 0.000771208), (0.000588792, 0.000774125)] evaluations=100
+INTERVAL STORAGE epsilon=0 admitted=false dynamic_fixed_seconds=[(0.000612125, 0.000768292), (0.000591208, 0.000781583), (0.0005635, 0.00076775), (0.00056275, 0.000763709), (0.000564084, 0.000764584), (0.000564667, 0.0007665), (0.000560791, 0.000766125)] evaluations=100
+INTERVAL STORAGE epsilon=0.000000000000001 admitted=true dynamic_fixed_seconds=[(2.5209e-5, 2.925e-5), (2.475e-5, 2.8583e-5), (2.5375e-5, 2.9417e-5), (2.5209e-5, 2.9041e-5), (2.5166e-5, 2.925e-5), (2.9375e-5, 0.000100708), (2.5625e-5, 2.8542e-5)] evaluations=100
+INTERVAL STORAGE epsilon=0.0000000001 admitted=true dynamic_fixed_seconds=[(2.7208e-5, 2.8875e-5), (2.6709e-5, 2.875e-5), (2.6042e-5, 2.8792e-5), (2.5958e-5, 2.8833e-5), (2.5875e-5, 2.8875e-5), (2.6375e-5, 2.8541e-5), (2.6291e-5, 2.9042e-5)] evaluations=100
+INTERVAL STORAGE epsilon=0.001 admitted=true dynamic_fixed_seconds=[(2.5125e-5, 3.0375e-5), (2.5125e-5, 2.8708e-5), (2.55e-5, 2.8833e-5), (2.55e-5, 2.8458e-5), (2.6166e-5, 2.8833e-5), (2.4459e-5, 2.8959e-5), (2.4459e-5, 2.8875e-5)] evaluations=100
+test hair::contact::polynomial::pair_storage_tests::paired_interval_storage_timing ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 367 filtered out; finished in 0.02s
+

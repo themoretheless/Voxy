@@ -1,0 +1,36 @@
+{
+  "scope": "two complete captured original physical operators, seven alternating warmed pairs; not whole trajectory or rendered FPS",
+  "default_enabled": false,
+  "qualification_environment": "VOXY_HAIR_JOINT_QR_PREFIX_REUSE=1",
+  "ownership": "one coordinate active-set solve; validated QR snapshot; matching packed input prefix, exact column scales and identical compact coordinate map; unmatched suffix recomputed",
+  "retained_snapshot_payload_limit_bytes": 2097152,
+  "hardware": "Apple M4 Max Metal;61-row case uses emulated one-storage binding limit",
+  "cases": {
+    "paired-54": {
+      "median_fresh_seconds": 0.064400541,
+      "median_prefix_seconds": 0.040703708,
+      "faster_pairs": 7,
+      "pairs": 7,
+      "reused_columns_per_projection": 389,
+      "equality_submissions": 59,
+      "physical_outputs_bitwise_equal": true
+    },
+    "paired-61": {
+      "median_fresh_seconds": 0.208266333,
+      "median_prefix_seconds": 0.120416917,
+      "faster_pairs": 7,
+      "pairs": 7,
+      "reused_columns_per_projection": 624,
+      "equality_submissions": 103,
+      "physical_outputs_bitwise_equal": true
+    }
+  },
+  "concurrent_load_controlled": false,
+  "validation": {
+    "codec_units_passed": 10,
+    "library_passed": 334,
+    "hair_integrations_passed": 20,
+    "actual_gpu_prefix_append_release_and_complete_reuse": "passed bitwise full workspace equality; changed scale/mapping and invalid status rejection"
+  },
+  "remaining": "full trajectory diverges in earlier unseeded control at frame3; seeded frame2 has one native fallback; investigate captured rejection/phase traces; FPS unproved"
+}

@@ -1,0 +1,19 @@
+{
+  "synthetic_counter_delta_checks": true,
+  "partial_live_block_check": true,
+  "rejected_cases": [
+    "nonfinite_time",
+    "negative_time",
+    "duplicate",
+    "frame_gap",
+    "counter_reset",
+    "submission_reset",
+    "outcomes_missing",
+    "dispatch_disagreement",
+    "cpu_control",
+    "invalid_integer",
+    "missing_interior"
+  ],
+  "actual_frame_2_delta_checked": true,
+  "scope": "counter parsing only; no physics or FPS qualification"
+}

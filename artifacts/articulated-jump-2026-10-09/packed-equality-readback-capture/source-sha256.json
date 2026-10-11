@@ -1,0 +1,5 @@
+{
+  "crates/voxy_render/src/compute.rs": "2131e13d50087d749c6436bd13daed52cf990064fcc19b9a0aa8dc1912054499",
+  "crates/voxy_app/src/gpu_hair_joint.rs": "8566c73a0f79ce7248c3513cc4edbee0689b768ee4f7ab3cdd928f841edfbb4a",
+  "tools/summarize_hair_joint_stages.py": "4b86500aaee9a8dffe5d707e2f8ad7fab120d3463162173923aae01a8b9451e5"
+}

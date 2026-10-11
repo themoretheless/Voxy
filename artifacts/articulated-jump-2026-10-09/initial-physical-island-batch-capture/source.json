@@ -1,0 +1,12 @@
+{
+  "sha256": {
+    "crates/physics/src/hair/contact_response_system.rs": "777be475d7dd0cedd2e5ae1b6a9d10f5807a0ac51f6255679717f54fb6a713d7",
+    "crates/physics/src/hair/contact_square_root_projection.rs": "5c27b34f0646b5e582671a0bcc238a05517a6747d54af6192ff75c56a6816933",
+    "crates/physics/src/hair/mod.rs": "cc8c7a898f3a4f604939cca9da109f4b480584f78d88be0b2a3338afb3d3140c",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "4de19c5c68f8d6f2546e205742358e09dbbec0992205e248705d7be0a042a65c",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "4e44728f78e23d03b6a20b0158939deae8cd37fee1e639e2c24efeb6fbec9f61",
+    "crates/voxy_app/src/female_hair.rs": "3b87c4d666557d2edf590e9696a9b478a2eb559e74d5c8aadbcc94258de65d2c",
+    "/tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f": "f130472c652d43b2e95ccdac5425f3bca8af0baacb5868bc83c3b7e413fefed7"
+  },
+  "scope": "Opt-in initial physical-island coordinate batching and structural RHS range correction; no full-model trajectory or FPS qualification."
+}

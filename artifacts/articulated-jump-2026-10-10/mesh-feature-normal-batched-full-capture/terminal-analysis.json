@@ -1,0 +1,15 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "elapsed_seconds": 422.91,
+  "first_failing_frame": 2,
+  "worst_rod": 446,
+  "worst_point": 19,
+  "maximum_position_error_m": 3.955094080576593e-06,
+  "maximum_quaternion_component_error": 0.0002665447427230294,
+  "frames": [
+    "HYBRID HAIR FRAME frame=1 max_position_error_m=0.000000003898660463907966 max_quaternion_component_error=0.00000009078353542524287",
+    "HYBRID HAIR FRAME frame=2 max_position_error_m=0.000003955094080576593 max_quaternion_component_error=0.0002665447427230294"
+  ],
+  "limits": "Concrete geometric normal regressions and selected GPU scenes pass, but whole-scene CPU/GPU trajectory does not. Frozen run predates frame-scoped diagnostic filter."
+}

@@ -1,0 +1,179 @@
+{
+  "rows": [
+    {
+      "scale": 1.0,
+      "workers": 2.0,
+      "serial_seconds": 0.004971458,
+      "cached_serial_seconds": 0.002678791,
+      "parallel_cached_seconds": 0.001977792
+    },
+    {
+      "scale": 1.0,
+      "workers": 4.0,
+      "serial_seconds": 0.004971458,
+      "cached_serial_seconds": 0.002547917,
+      "parallel_cached_seconds": 0.001225042
+    },
+    {
+      "scale": 1.0,
+      "workers": 8.0,
+      "serial_seconds": 0.004971458,
+      "cached_serial_seconds": 0.002483334,
+      "parallel_cached_seconds": 0.00091375
+    },
+    {
+      "scale": 0.5,
+      "workers": 2.0,
+      "serial_seconds": 0.004766792,
+      "cached_serial_seconds": 0.002783417,
+      "parallel_cached_seconds": 0.002038583
+    },
+    {
+      "scale": 0.5,
+      "workers": 4.0,
+      "serial_seconds": 0.004766792,
+      "cached_serial_seconds": 0.002672667,
+      "parallel_cached_seconds": 0.001276917
+    },
+    {
+      "scale": 0.5,
+      "workers": 8.0,
+      "serial_seconds": 0.004766792,
+      "cached_serial_seconds": 0.00268325,
+      "parallel_cached_seconds": 0.000930208
+    },
+    {
+      "scale": 0.25,
+      "workers": 2.0,
+      "serial_seconds": 0.005174625,
+      "cached_serial_seconds": 0.00278525,
+      "parallel_cached_seconds": 0.001988083
+    },
+    {
+      "scale": 0.25,
+      "workers": 4.0,
+      "serial_seconds": 0.005174625,
+      "cached_serial_seconds": 0.0027585,
+      "parallel_cached_seconds": 0.001243833
+    },
+    {
+      "scale": 0.25,
+      "workers": 8.0,
+      "serial_seconds": 0.005174625,
+      "cached_serial_seconds": 0.002709,
+      "parallel_cached_seconds": 0.000819625
+    },
+    {
+      "scale": 0.125,
+      "workers": 2.0,
+      "serial_seconds": 0.005403667,
+      "cached_serial_seconds": 0.00308375,
+      "parallel_cached_seconds": 0.002258542
+    },
+    {
+      "scale": 0.125,
+      "workers": 4.0,
+      "serial_seconds": 0.005403667,
+      "cached_serial_seconds": 0.00306725,
+      "parallel_cached_seconds": 0.001285084
+    },
+    {
+      "scale": 0.125,
+      "workers": 8.0,
+      "serial_seconds": 0.005403667,
+      "cached_serial_seconds": 0.003023708,
+      "parallel_cached_seconds": 0.00092275
+    },
+    {
+      "scale": 0.0625,
+      "workers": 2.0,
+      "serial_seconds": 0.005155292,
+      "cached_serial_seconds": 0.002917,
+      "parallel_cached_seconds": 0.002164292
+    },
+    {
+      "scale": 0.0625,
+      "workers": 4.0,
+      "serial_seconds": 0.005155292,
+      "cached_serial_seconds": 0.002821792,
+      "parallel_cached_seconds": 0.001286958
+    },
+    {
+      "scale": 0.0625,
+      "workers": 8.0,
+      "serial_seconds": 0.005155292,
+      "cached_serial_seconds": 0.00283475,
+      "parallel_cached_seconds": 0.000914416
+    },
+    {
+      "scale": 0.03125,
+      "workers": 2.0,
+      "serial_seconds": 0.005108208,
+      "cached_serial_seconds": 0.002879167,
+      "parallel_cached_seconds": 0.002179167
+    },
+    {
+      "scale": 0.03125,
+      "workers": 4.0,
+      "serial_seconds": 0.005108208,
+      "cached_serial_seconds": 0.002825208,
+      "parallel_cached_seconds": 0.0013165
+    },
+    {
+      "scale": 0.03125,
+      "workers": 8.0,
+      "serial_seconds": 0.005108208,
+      "cached_serial_seconds": 0.002805042,
+      "parallel_cached_seconds": 0.000975917
+    },
+    {
+      "scale": 1e-05,
+      "workers": 2.0,
+      "serial_seconds": 0.00474475,
+      "cached_serial_seconds": 0.00246925,
+      "parallel_cached_seconds": 0.001945583
+    },
+    {
+      "scale": 1e-05,
+      "workers": 4.0,
+      "serial_seconds": 0.00474475,
+      "cached_serial_seconds": 0.002557875,
+      "parallel_cached_seconds": 0.001144458
+    },
+    {
+      "scale": 1e-05,
+      "workers": 8.0,
+      "serial_seconds": 0.00474475,
+      "cached_serial_seconds": 0.002589,
+      "parallel_cached_seconds": 0.000908041
+    },
+    {
+      "scale": 0.0,
+      "workers": 2.0,
+      "serial_seconds": 0.004860667,
+      "cached_serial_seconds": 0.002563166,
+      "parallel_cached_seconds": 0.001987375
+    },
+    {
+      "scale": 0.0,
+      "workers": 4.0,
+      "serial_seconds": 0.004860667,
+      "cached_serial_seconds": 0.002541542,
+      "parallel_cached_seconds": 0.001163
+    },
+    {
+      "scale": 0.0,
+      "workers": 8.0,
+      "serial_seconds": 0.004860667,
+      "cached_serial_seconds": 0.002519792,
+      "parallel_cached_seconds": 0.000893792
+    }
+  ],
+  "eight_worker_selected_scale_medians": {
+    "serial_seconds": 0.0050398330000000005,
+    "cached_serial_seconds": 0.0026961249999999997,
+    "parallel_cached_seconds": 0.000914083
+  },
+  "rendered_fps": null,
+  "full_trajectory_complete": false
+}

@@ -1,0 +1,14 @@
+{
+  "source_sha256": "4df9ab547e33902b5a1db8bafa55f2fcbdc5a982cbe3e49292ba94a33bfaa7d9",
+  "change": "Recycle discarded Q/R suffix vectors within one immutable EqualityQr owner; copy original column bits and clear reused R rows.",
+  "physics_library_passed": 338,
+  "ignored": 39,
+  "hair_integration_passed": 21,
+  "validation": "Independent uncached arithmetic oracle remains bitwise equal for dense/sparse basis, append/release/reordering and changed bounds; pointer check confirms discarded storage reused. Stored vector counts bounded by operator column count.",
+  "timing_measured": false,
+  "whole_animation_qualified": false,
+  "existing_processes_preserved": [
+    47617,
+    63918
+  ]
+}

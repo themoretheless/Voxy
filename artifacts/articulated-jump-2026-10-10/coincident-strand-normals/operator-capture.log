@@ -1,0 +1,9 @@
+
+running 1 test
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/coincident-strand-normals/operators/native-00.vqc" systems=2 rows=2 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/coincident-strand-normals/operators/native-01.vqc" systems=2 rows=2 refinement=0
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/coincident-strand-normals/operators/native-02.vqc" systems=2 rows=2 refinement=0
+test hair::contact::coincident_free_segments_separate_transversely_without_axial_sliding ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 398 filtered out; finished in 0.02s
+

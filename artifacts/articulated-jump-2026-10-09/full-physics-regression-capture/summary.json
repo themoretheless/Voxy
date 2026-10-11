@@ -1,0 +1,15 @@
+{
+  "command": "CARGO_TARGET_DIR=/tmp/voxy-release-120fps-20261007 cargo test -p physics --release",
+  "exit_code": 0,
+  "result_blocks": 219,
+  "unit_passed": 331,
+  "unit_ignored": 39,
+  "integration_suites": 217,
+  "integration_passed": 1549,
+  "integration_ignored": 4,
+  "doc_tests": 0,
+  "total_passed": 1880,
+  "total_failed": 0,
+  "total_ignored": 43,
+  "scope": "default-feature physics crate tests in current worktree; not every engine crate, ignored qualification, full trajectory, all physical hardware or FPS"
+}

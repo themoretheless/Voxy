@@ -1,0 +1,19 @@
+{
+  "live_process": "  PID ELAPSED STAT COMMAND\n13189   04:30 R    /tmp/voxy-release-120fps-20261007/release/deps/voxy_app-1c1560a10812259f gpu_linear_solver_tracks_full_model_jump_with_contacts --ignored --nocapture\n",
+  "frames": [
+    [
+      "1",
+      "0.00000002229036381862226",
+      "0.00000037886909751150277"
+    ]
+  ],
+  "frame_timings": [
+    [
+      "1",
+      "23949.368458999998",
+      "37719.170417"
+    ]
+  ],
+  "terminal": [],
+  "scope": "Live frozen original-column velocity experiment; no FPS measurement; does not include later membership/storage optimization."
+}

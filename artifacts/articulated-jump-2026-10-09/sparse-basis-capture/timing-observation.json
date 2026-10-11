@@ -1,0 +1,74 @@
+{
+  "observed_at": "2026-10-09T20:32:35.893184+00:00",
+  "session": 90191,
+  "pid": 52315,
+  "requested_frames": 720,
+  "completed_paired_frames": [
+    {
+      "frame": 1,
+      "native_ms": 13496.118916,
+      "cpu_control_ms": 9249.861334000001
+    },
+    {
+      "frame": 2,
+      "native_ms": 46357.306166999995,
+      "cpu_control_ms": 37752.601875
+    },
+    {
+      "frame": 3,
+      "native_ms": 70742.500292,
+      "cpu_control_ms": 70520.70175000001
+    },
+    {
+      "frame": 4,
+      "native_ms": 93268.725417,
+      "cpu_control_ms": 102303.14025
+    },
+    {
+      "frame": 5,
+      "native_ms": 98366.868667,
+      "cpu_control_ms": 112596.798333
+    },
+    {
+      "frame": 6,
+      "native_ms": 104249.122708,
+      "cpu_control_ms": 101819.19229199999
+    }
+  ],
+  "paired_errors": [
+    {
+      "frame": 1,
+      "max_position_error_m": 0.0,
+      "max_quaternion_component_error": 0.0
+    },
+    {
+      "frame": 2,
+      "max_position_error_m": 0.0,
+      "max_quaternion_component_error": 0.0
+    },
+    {
+      "frame": 3,
+      "max_position_error_m": 0.0,
+      "max_quaternion_component_error": 0.0
+    },
+    {
+      "frame": 4,
+      "max_position_error_m": 0.0,
+      "max_quaternion_component_error": 0.0
+    },
+    {
+      "frame": 5,
+      "max_position_error_m": 0.0,
+      "max_quaternion_component_error": 0.0
+    },
+    {
+      "frame": 6,
+      "max_position_error_m": 0.0,
+      "max_quaternion_component_error": 0.0
+    }
+  ],
+  "scope": "Native CPU versus native CPU control, diagnostic overhead, excludes rendering. Frame1 overlaps old-process replacement; not controlled speed comparison/GPU/FPS",
+  "complete": false,
+  "completed_contact_transactions": 264,
+  "completed_qr_profile_calls": 797
+}

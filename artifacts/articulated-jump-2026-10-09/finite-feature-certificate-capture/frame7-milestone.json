@@ -1,0 +1,83 @@
+{
+  "previous_failure_frame": 7,
+  "frame7_completed": true,
+  "paired_cpu_frames": [
+    {
+      "frame": 1,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 2,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 3,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 4,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 5,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 6,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    },
+    {
+      "frame": 7,
+      "position_error_m": 0.0,
+      "quaternion_component_error": 0.0
+    }
+  ],
+  "physics_timings": [
+    {
+      "frame": 1,
+      "native_ms": 28032.228792,
+      "control_ms": 20994.628667
+    },
+    {
+      "frame": 2,
+      "native_ms": 59626.903874999996,
+      "control_ms": 62207.785375
+    },
+    {
+      "frame": 3,
+      "native_ms": 112416.78725,
+      "control_ms": 107240.94354099999
+    },
+    {
+      "frame": 4,
+      "native_ms": 112598.124583,
+      "control_ms": 111712.185791
+    },
+    {
+      "frame": 5,
+      "native_ms": 131685.048459,
+      "control_ms": 137135.302
+    },
+    {
+      "frame": 6,
+      "native_ms": 115531.96149999999,
+      "control_ms": 117501.03104199999
+    },
+    {
+      "frame": 7,
+      "native_ms": 108639.291083,
+      "control_ms": 110163.967625
+    }
+  ],
+  "requested_frames": 720,
+  "all_frames_qualified": false,
+  "rendered_fps_qualified": false,
+  "includes_latest_sparse_qr_or_frozen_free_optimizations": false,
+  "is_resumable_checkpoint": false
+}

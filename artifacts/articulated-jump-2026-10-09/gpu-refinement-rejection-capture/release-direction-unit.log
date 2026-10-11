@@ -1,0 +1,54 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+   --> crates/physics/src/hair/contact_response_system.rs:361:1
+    |
+361 | / pub enum HairContactEqualityProposal {
+362 | |     Solution(Vec<f64>,Vec<f64>),
+363 | |     ReleaseDirection(Vec<f64>),
+364 | | }
+    | |_^
+    |
+    = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `physics` (lib test) generated 3 warnings
+    Finished `release` profile [optimized] target(s) in 34.32s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+
+thread 'hair::contact_response_system::square_root_qr::tests::release_only_directions_require_negative_dual_and_restore_original_stationarity' (59004246) panicked at crates/physics/src/hair/contact_square_root_qr.rs:356:9:
+assertion `left == right` failed
+  left: ([1.4999999999999998, 1.4999999999999998], [0.0, 1.4999999999999998])
+ right: ([1.5, 1.5], [0.0, 1.5])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact_response_system::square_root_qr::tests::release_only_directions_require_negative_dual_and_restore_original_stationarity ... FAILED
+
+failures:
+
+failures:
+    hair::contact_response_system::square_root_qr::tests::release_only_directions_require_negative_dual_and_restore_original_stationarity
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 373 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --lib`

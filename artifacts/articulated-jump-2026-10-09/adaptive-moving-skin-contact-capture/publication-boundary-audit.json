@@ -1,0 +1,20 @@
+{
+  "scope": "source inspection, not injected failure reproduction",
+  "full_character_clock": {
+    "session": 93456,
+    "cargo_pid": 38983,
+    "child_pid": 41936,
+    "verified_live": true
+  },
+  "finding": {
+    "source": "crates/voxy_app/src/female_demo.rs",
+    "secondary_branch": "skin.step_adaptive and hair.advance independently publish before joined errors are returned",
+    "full_branch": "skin.step_adaptive_with_contacts and hair.advance independently publish before joined errors are returned",
+    "remaining": "Couple staged skin/hair publication and other substep state under one transaction without cloning immutable render assets."
+  },
+  "trajectory_runs": {
+    "early_pid": 47617,
+    "late_pid": 63918,
+    "preserved": true
+  }
+}

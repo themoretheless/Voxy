@@ -1,0 +1,11 @@
+{
+  "scope": "same saved original fixture and selected diagnostic profile options; allocation counts only, not speedup",
+  "profiled_calls": 486,
+  "equality_dispatches": 968,
+  "submissions": 792,
+  "before_workspace_creations": 362,
+  "after_workspace_creations": 28,
+  "before_workspace_reuses": 232,
+  "after_workspace_reuses": 566,
+  "limits": "Timing runs were concurrent and uncontrolled. Full trajectories predate persistent workspace lifetime."
+}

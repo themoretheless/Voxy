@@ -1,0 +1,11 @@
+{
+  "pid": 20418,
+  "scope": "one-second live stack sample in actual full cooperative trajectory; not GPU timestamp or throughput measurement",
+  "observations": [
+    "solve_joint_coordinates_batch observed",
+    "run_equality_tasks observed",
+    "wgpu Device.poll observed",
+    "EqualityTask input preparation observed"
+  ],
+  "limits": "Single concurrent window. Cannot infer full-run stage percentages or rendered FPS."
+}

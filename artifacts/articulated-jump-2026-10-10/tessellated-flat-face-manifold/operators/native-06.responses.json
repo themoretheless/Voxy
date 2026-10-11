@@ -1,0 +1,72 @@
+{
+  "comparison": {
+    "absolute_physical_tolerance": 1e-9,
+    "angular_response_unit": "rad/s",
+    "coordinates": 18,
+    "linear_response_unit": "m/s",
+    "maximum_angular_response_component_difference": 4.718447854656915e-16,
+    "maximum_linear_response_component_difference": 2.886579864025407e-15,
+    "maximum_reaction_difference": 2.371692252312041e-19,
+    "native_fallback_used": false,
+    "response_quantity": "velocity",
+    "rows": 3,
+    "scope": "same complete captured physical operator; not whole trajectory",
+    "systems": 1
+  },
+  "gpu_reactions": [
+    0.00006020960118811941,
+    0.0,
+    0.0
+  ],
+  "gpu_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -4.2910494759905954e-13,
+      0.0,
+      0.3201826574580516,
+      0.0,
+      -0.1684642029548185,
+      0.0,
+      -7.896037172268369e-13,
+      0.0,
+      1.0394520276258505,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "limits": "Original captured operator response only; global rod ordering requires input sidecar. Not a full-state trajectory replay.",
+  "native_reactions": [
+    0.000060209601188119644,
+    0.0,
+    0.0
+  ],
+  "native_responses": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -4.2910494759905823e-13,
+      0.0,
+      0.32018265745805075,
+      0.0,
+      -0.16846420295481804,
+      0.0,
+      -7.896037172268342e-13,
+      0.0,
+      1.0394520276258477,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "schema": "voxy-same-input-responses-v1"
+}

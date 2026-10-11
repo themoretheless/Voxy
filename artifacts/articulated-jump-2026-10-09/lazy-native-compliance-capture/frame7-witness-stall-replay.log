@@ -1,0 +1,559 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:70:19
+   |
+63 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+70 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 3 warnings (2 duplicates)
+    Finished `release` profile [optimized] target(s) in 49.59s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+REPLAY MERIT captured=0e0 rebuilt=0e0 rods=469 meshes=1
+HAIR SWEPT REFINEMENT count=1 cuts=221 constraints=307 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=420 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=393 constraints=479 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=424 constraints=510 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=445 constraints=531 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=456 constraints=542 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=461 constraints=547 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=463 constraints=549 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=939968
+HAIR SWEPT WITNESS STALLED cuts=463 constraints=549 groups=478
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.0005093815348917203
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1375.7203339999999 initial_projection_ms=14.436667 initial_admission_ms=41.609958000000006 refinements=8 cuts=463 constraints=549 groups=478 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=0 added_rows=188 before=0e0 rejected=6.715203979451261e-7
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=493 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=608 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=669 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=702 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=725 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=738 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=746 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=749 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=750 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=752 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=752 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=2065.5420000000004 initial_projection_ms=18.801583 initial_admission_ms=52.058708 refinements=10 cuts=478 constraints=752 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=1 added_rows=43 before=0e0 rejected=1.7621412486232483e-12
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=536 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=651 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=712 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=745 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=768 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=781 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=789 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=792 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=793 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=795 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=795 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1849.492583 initial_projection_ms=15.958083000000002 initial_admission_ms=63.426084 refinements=10 cuts=478 constraints=795 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=2 added_rows=30 before=0e0 rejected=7.187036866406593e-14
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=566 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=681 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=742 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=775 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=798 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=811 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=819 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=822 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=823 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=825 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=825 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1685.706208 initial_projection_ms=13.949542000000001 initial_admission_ms=39.794916 refinements=10 cuts=478 constraints=825 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=3 added_rows=22 before=0e0 rejected=3.3699817579458386e-15
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=588 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=703 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=764 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=797 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=820 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=833 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=841 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=844 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=845 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=847 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=847 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1848.2433330000001 initial_projection_ms=14.87425 initial_admission_ms=41.309833 refinements=10 cuts=478 constraints=847 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=4 added_rows=7 before=0e0 rejected=1.2232593414818499e-16
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=595 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=710 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=771 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=804 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=827 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=840 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=848 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=851 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=852 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=854 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=854 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1941.2467920000001 initial_projection_ms=17.078625 initial_admission_ms=58.93670900000001 refinements=10 cuts=478 constraints=854 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=5 added_rows=5 before=0e0 rejected=3.6765860036295776e-18
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=600 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=715 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=776 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=809 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=832 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=845 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=853 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=856 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=859 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=859 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1967.436958 initial_projection_ms=13.785375 initial_admission_ms=43.25366699999999 refinements=10 cuts=478 constraints=859 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=6 added_rows=2 before=0e0 rejected=1.4501247459026414e-19
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=602 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=717 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=778 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=811 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=834 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=847 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=855 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=858 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=859 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=861 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=861 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1846.151125 initial_projection_ms=17.02875 initial_admission_ms=47.49020899999999 refinements=10 cuts=478 constraints=861 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR CONTACT MODEL iteration=7 added_rows=1 before=0e0 rejected=4.078537056455168e-22
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=603 fraction=0.0000000000003454354946915954
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=718 fraction=0.000000000043333636713011315
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=779 fraction=0.00000000004358101952431854
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=812 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=835 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=848 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=856 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=859 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=862 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=862 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633056122126 maximum_accepted_translation_m=0.00000782933511244079
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1860.060209 initial_projection_ms=14.46975 initial_admission_ms=45.07154200000001 refinements=10 cuts=478 constraints=862 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=8 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=8 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3374300612967294e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354911767273
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250449212477411
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633042508636 maximum_accepted_translation_m=0.000000023843267293957516
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1697.375959 initial_projection_ms=16.009625 initial_admission_ms=61.482667000000006 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=9 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=9 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2437266976892514e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354773054183
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363531395427
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.000000000043581016604018106
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.001081463302190211 maximum_accepted_translation_m=0.00000002142227884835854
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1976.680792 initial_projection_ms=23.449917 initial_admission_ms=58.95370799999999 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=10 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=10 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377807935513175e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354841077439
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250449718712086
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.001081463301064538 maximum_accepted_translation_m=0.000000021390023954857832
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1615.582625 initial_projection_ms=15.815791999999998 initial_admission_ms=42.74570800000001 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=11 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=11 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435153997104256e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354692654409
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363313000912
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000063979368592908084
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814633005257455 maximum_accepted_translation_m=0.000000021387091700571376
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1516.099417 initial_projection_ms=13.882709 initial_admission_ms=37.329041000000004 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=12 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=12 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377829161482274e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543546178703725
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250449283640737
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632987527304 maximum_accepted_translation_m=0.000000021386806009730346
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1547.34825 initial_projection_ms=13.163541 initial_admission_ms=39.13699999999999 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=13 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=13 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435159480886703e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354523780965
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363697313591
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.000000006397936977706058
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632973887405 maximum_accepted_translation_m=0.00000002138677757199509
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1604.217333 initial_projection_ms=13.927833 initial_admission_ms=36.6 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=14 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=14 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377842161777724e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354522164618
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250449271477873
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632951920912 maximum_accepted_translation_m=0.000000021386774686242703
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1801.1826250000001 initial_projection_ms=15.178083 initial_admission_ms=44.135875 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=15 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=15 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435134496661053e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354390004218
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363419857977
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.000000006397936623281239
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632941979097 maximum_accepted_translation_m=0.000000021386774428615485
+HAIR SWEPT SOLVE PROFILE elapsed_ms=2106.282416 initial_projection_ms=19.224 initial_admission_ms=56.793249999999986 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=16 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=16 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377942635680447e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454354348297909
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250449266225404
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000007450580596923828
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632931574677 maximum_accepted_translation_m=0.000000021386774391625937
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1823.912958 initial_projection_ms=18.666542 initial_admission_ms=50.45312499999999 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000007450580596923828
+HAIR NONLINEAR MERIT iteration=17 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=17 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435140996808787e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000002850988831211732
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363184390762
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.00000000004358101315228233
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632851160074 maximum_accepted_translation_m=0.000000021386774387407925
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1700.7654169999998 initial_projection_ms=15.394124999999999 initial_admission_ms=42.370042 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=18 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=18 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377942635680447e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543539855714166
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250448925018196
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632838706058 maximum_accepted_translation_m=0.00000002138677437308466
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1647.617 initial_projection_ms=14.260542 initial_admission_ms=39.060541 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=19 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=19 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435140996808787e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543538842222394
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363426055422
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.00000000004358101227027683
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.001081463283089084 maximum_accepted_translation_m=0.000000021386774329922594
+HAIR SWEPT SOLVE PROFILE elapsed_ms=2118.3975840000003 initial_projection_ms=16.151584 initial_admission_ms=44.294833000000004 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=20 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=20 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377938877423938e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454353853698721
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250448150980453
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632814327182 maximum_accepted_translation_m=0.00000002138677434279887
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1690.6263749999998 initial_projection_ms=16.315832999999998 initial_admission_ms=46.026250000000005 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=21 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=21 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435138254917564e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543537675114756
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363196344917
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.00000000004358100762347644
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632784467528 maximum_accepted_translation_m=0.00000002138677436012069
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1637.30225 initial_projection_ms=14.056709000000001 initial_admission_ms=38.908500000000004 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=22 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=22 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377942635680447e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543536413984537
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250448525010746
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.001081463278399467 maximum_accepted_translation_m=0.000000021386774347198612
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1618.949333 initial_projection_ms=14.727041999999999 initial_admission_ms=39.413041 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=23 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435140996808787e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454353607572046
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.00000000004333363108262892
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.00000000004358100822204656
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632761386713 maximum_accepted_translation_m=0.000000021386774330130415
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1689.790625 initial_projection_ms=14.427292 initial_admission_ms=39.159915999999996 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=24 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=24 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377938877423938e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454353643956028
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250447915065343
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632754509975 maximum_accepted_translation_m=0.000000021386774343062616
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1727.172417 initial_projection_ms=15.281167 initial_admission_ms=42.69158300000001 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=25 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=25 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435140996808787e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543534842530593
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.000000000043333630101846014
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.00000000004358101198013247
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632725028176 maximum_accepted_translation_m=0.000000021386774392542738
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1730.966375 initial_projection_ms=15.521 initial_admission_ms=43.000625 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=26 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=26 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377945377571665e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454353473356413
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250447990062244
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632730810293 maximum_accepted_translation_m=0.000000021386774389523366
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1739.70175 initial_projection_ms=15.188125 initial_admission_ms=43.621249999999996 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=27 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=27 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.243514099680879e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543533821848353
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.000000000043333625327166075
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000000435809982185315
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632711918053 maximum_accepted_translation_m=0.00000002138677439815003
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1820.674458 initial_projection_ms=16.03475 initial_admission_ms=42.691833 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=28 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=28 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377942635680447e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454353256469934
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250448267291675
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.0010814632695650588 maximum_accepted_translation_m=0.00000002138677439861668
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1783.3541670000002 initial_projection_ms=15.872084000000001 initial_admission_ms=43.287458 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=29 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=29 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435140996808787e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.0000000000003454353223270308
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.000000000043333621440285735
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.000000000043581003778152975
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.0000000009313225746154785
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.001081463267759929 maximum_accepted_translation_m=0.000000021386774333325708
+HAIR SWEPT SOLVE PROFILE elapsed_ms=2146.0455 initial_projection_ms=18.264417 initial_admission_ms=60.22154199999999 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.0000000009313225746154785
+HAIR NONLINEAR MERIT iteration=30 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=30 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.3377939893789229e-11)
+HAIR SWEPT REFINEMENT count=1 cuts=219 constraints=604 fraction=0.00000000000034543531629367906
+HAIR SWEPT REFINEMENT count=2 cuts=334 constraints=719 fraction=0.0000000005250447743342124
+HAIR SWEPT REFINEMENT count=3 cuts=395 constraints=780 fraction=0.0000000009313225746154785
+HAIR SWEPT REFINEMENT count=4 cuts=428 constraints=813 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=5 cuts=451 constraints=836 fraction=0.000000003725290298461914
+HAIR SWEPT REFINEMENT count=6 cuts=464 constraints=849 fraction=0.000000007450580596923828
+HAIR SWEPT REFINEMENT count=7 cuts=472 constraints=857 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=8 cuts=475 constraints=860 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=9 cuts=476 constraints=861 fraction=0.000000001862645149230957
+HAIR SWEPT REFINEMENT count=10 cuts=478 constraints=863 fraction=0.000000001862645149230957
+HAIR ROOT MOTION FAILURE EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-09/lazy-native-compliance-capture/stalled-root-motion.vjr" rods=469 bytes=940088
+HAIR SWEPT WITNESS STALLED cuts=478 constraints=863 groups=493
+HAIR SWEPT COMPLETION collision_limited=true elastic_limited=false minimum_trust=1 maximum_free_translation_m=0.001081463266594386 maximum_accepted_translation_m=0.000000021386774324629184
+HAIR SWEPT SOLVE PROFILE elapsed_ms=1835.0655 initial_projection_ms=16.420709 initial_admission_ms=44.770708 refinements=10 cuts=478 constraints=863 groups=493 minimum_scale=0.000000001862645149230957
+HAIR NONLINEAR MERIT iteration=31 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=31 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-1.2435034022758528e-11)
+HAIR NONLINEAR MERIT HISTORY [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+HAIR NONLINEAR CONTACT NONCONVERGENCE first_gap_m=0 worst=(rod,segment,fraction,gap,source,root,a,b,normal,target) Some((282, 4, 0.7697915111460133, -1.2435034022758528e-11, Mesh(0), [0.013135581277310848, 0.8146510422229767, 0.019977065734565258], [0.026595523896309498, 0.7863789454573491, -0.02054525927504229], [0.028897586363639323, 0.7748800222791431, -0.027522198109143046], [0.292947348168175, 0.538157549024722, -0.7902963391215588], [0.02836763204543066, 0.7775271720141379, -0.025916047573145393]))
+REPLAY RESULT Err("joint hair contact position linearization did not converge")
+
+thread 'hair::contact_replay::tests::captured_contact_reaches_feasible_geometry' (38930165) panicked at crates/physics/src/hair/contact_replay.rs:605:20:
+corrected captured geometry must converge: "joint hair contact position linearization did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry ... FAILED
+
+failures:
+
+failures:
+    hair::contact_replay::tests::captured_contact_reaches_feasible_geometry
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 357 filtered out; finished in 59.08s
+
+error: test failed, to rerun pass `-p physics --lib`

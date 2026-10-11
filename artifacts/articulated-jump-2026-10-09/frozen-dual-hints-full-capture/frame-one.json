@@ -1,0 +1,19 @@
+{
+  "scope": "first admitted frame only; full720-frame run remains live",
+  "frame": 1,
+  "coordinate_calls": 9099,
+  "equality_dispatches": 28998,
+  "exact_cache_hits": 0,
+  "admitted": 9099,
+  "native_fallbacks": 0,
+  "hint_attempts": 7767,
+  "maximum_position_error_m": 2.229036395740014e-08,
+  "maximum_quaternion_component_error": 3.788691004674716e-07,
+  "unchanged_position_gate_m": 1e-06,
+  "unchanged_quaternion_gate": 5e-05,
+  "control_dispatches": 89078,
+  "control_coordinate_calls": 9099,
+  "dispatches_avoided": 60080,
+  "fraction_fewer_dispatches": 0.6744650755517636,
+  "timing_scope": "concurrent uncontrolled full qualification; no rendered FPS or speedup claim"
+}

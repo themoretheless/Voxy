@@ -1,0 +1,41 @@
+{
+  "created_utc": "2026-10-10T07:06:12.900556+00:00",
+  "scope": "469-guide 720-frame original-gate native/actual-GPU paired trajectory. Not rendered FPS.",
+  "binary": "/tmp/voxy-frame-scoped-gpu-tests",
+  "binary_sha256": "37da6f0ceb868f2dad64823106440c2458d86e938c157e015c15d059a02c763a",
+  "source_sha256": {
+    "crates/physics/src/hair/contact.rs": "67de8d80ac7aeb1a661786ef3a084c1458164d953b66877713860e9341d4396e",
+    "crates/physics/src/hair/phase_diagnostics.rs": "bcf4997fe1f03c8d42f8d817ceb1273b8047bc150d50e9d82973e575ccc189d8",
+    "crates/physics/src/hair/contact_square_root_projection.rs": "f54eb88ef2c4e4ff1d3281148196604d635a854b0233dcf08ac47a94d7e0f4e8",
+    "crates/voxy_app/src/female_hair.rs": "074eaa7be47479d716d6fddc1f017949dead6e6a1879b9002530b19bc3bc3084",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "1f3ad524252f35f9eb54d3ad40c3ca1a1c3a036ba29258bb46d0c63d6e986a1e",
+    "artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture/run.sh": "7ed6db2ce1be57553df59e936d035456a8dd0e459f6b4a775886c8f66a1f0ef5"
+  },
+  "environment_overrides": {
+    "VOXY_HAIR_JOINT_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_EARLY_RELEASE_DIRECTIONS": "1",
+    "VOXY_HAIR_JOINT_DUAL_HINTS": "1",
+    "VOXY_HAIR_JOINT_QR_PREFIX_REUSE": "1",
+    "VOXY_HAIR_ISLAND_INPUT_ROD": "446",
+    "VOXY_HAIR_ISLAND_INPUT_MIN_TOLERANCE": "0",
+    "VOXY_HAIR_ISLAND_INPUT_SKIP": "0",
+    "VOXY_HAIR_ISLAND_INPUT_LIMIT": "1024",
+    "VOXY_HAIR_ISLAND_INPUT_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture/operators",
+    "VOXY_HAIR_PHASE_TRACE_ROD": "446",
+    "VOXY_HAIR_PHASE_TRACE_FRAME": "1",
+    "VOXY_HAIR_PHASE_TRACE_END_FRAME": "2",
+    "VOXY_HAIR_ISLAND_INPUT_FRAME": "2"
+  },
+  "capture_limits": "Selected physical frame2, rod446. v2 metadata includes exact frame and original row/point bits. Observation ordinal is not iteration identity or physical quantity.",
+  "launch_reason": "Previous full run terminated frame2 rod446 point19. New caller-owned frame scope captures that precise frame without a production physics change. This is not a restart on timeout.",
+  "exec_session": 6320,
+  "test_pid": 53604,
+  "last_observed_utc": "2026-10-10T07:07:07.527028+00:00",
+  "runtime_confirmation": [
+    "HYBRID JOINT COORDINATE BATCHES true",
+    "HYBRID JOINT QR PREFIX REUSE true",
+    "HYBRID JOINT QR true",
+    "HYBRID CONTACT CASE full",
+    "HYBRID TEST BACKEND cpu_control=false native_only=false perturbation=0"
+  ]
+}

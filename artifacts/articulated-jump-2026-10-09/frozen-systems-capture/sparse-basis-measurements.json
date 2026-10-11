@@ -1,0 +1,19 @@
+{
+  "scope": "Full unilateral QR on two captured compact systems, 7 alternating pairs; includes exact support construction and finite-state scans; not full physics/GPU/FPS",
+  "observations": [
+    {
+      "rows": 46,
+      "dense_median_seconds": 0.00324625,
+      "sparse_median_seconds": 0.002390708,
+      "speedup": 1.3578613532058286,
+      "bitwise_match": true
+    },
+    {
+      "rows": 100,
+      "dense_median_seconds": 0.000485417,
+      "sparse_median_seconds": 0.000461167,
+      "speedup": 1.052583988013019,
+      "bitwise_match": true
+    }
+  ]
+}

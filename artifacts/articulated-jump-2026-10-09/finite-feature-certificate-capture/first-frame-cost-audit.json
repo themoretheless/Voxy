@@ -1,0 +1,10 @@
+{
+  "scope": "completed contact transactions before first paired frame timing; both CPU copies; diagnostic overhead included",
+  "transactions": 76,
+  "total_transaction_ms": 46306.808331,
+  "initial_projection_ms": 2041.365246,
+  "initial_admission_ms": 5142.035416,
+  "refinements": 556.0,
+  "maximum_constraints": 311.0,
+  "does_not_measure_rendered_fps": true
+}

@@ -1,0 +1,10 @@
+{
+  "diagnostic_only": true,
+  "rod": 414,
+  "segment": 19,
+  "gap_start_m": 2.2786370019171236e-10,
+  "gap_end_m": 7.504599139126429e-07,
+  "gap_midpoint_m": 1.7971677785975573e-07,
+  "sampled_minimum_time": 0.02,
+  "sampled_minimum_gap_m": -9.979625205234393e-11
+}

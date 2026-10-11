@@ -18,6 +18,11 @@ pub(crate) struct FemaleHair {
     render_offsets: Vec<Vec<Vec3>>,
     render_indices: Vec<u32>,
 }
+// Only mutable simulation state travels through preparation. Groom/render data
+// remains owned by FemaleHair and is never copied for a coupled transaction.
+pub(crate) struct PreparedHairStep {
+    system:HairSystem,collider:TriangleMesh,targets:Vec<Vec3>,
+}
 impl FemaleHair {
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
         Self::new_parameterized(body, indices, Default::default())
@@ -80,7 +85,9 @@ impl FemaleHair {
             .map(|t| [t[0] as usize, t[1] as usize, t[2] as usize])
             .collect();
         let mut collider = TriangleMesh::new(&positions, &triangles)?;
-        let _ = collider.enable_closed_feature_normals();
+        // Guide fitting requires a closed oriented collider; retain its actual
+        // topology error instead of failing later with missing feature normals.
+        collider.enable_closed_feature_normals()?;
         let mut rods = Vec::with_capacity(roots.len());
         for (i, root) in roots.iter().enumerate() {
             // A short front fringe stays above the eyes after gravitational
@@ -178,6 +185,7 @@ impl FemaleHair {
                     }
                 }
             }
+            points = collider.fit_authored_guide(&points,0.001)?;
             rods.push(HairRod::new(points, HairMaterial::default())?);
         }
         for (root, (vertex, offset)) in roots.iter_mut().zip(&mut root_bindings) {
@@ -294,19 +302,26 @@ impl FemaleHair {
         self.advance_impl(dt,time,head,body,Some(solver))
     }
     fn advance_impl(&mut self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex],solver:Option<&mut dyn physics::hair::HairLinearSolver>)->Result<(), &'static str> {
+        let staged=self.prepare_impl(dt,time,head,body,solver)?;
+        self.publish_prepared(staged);
+        Ok(())
+    }
+    pub(crate) fn prepare_advance(&self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex])->Result<PreparedHairStep,&'static str> {
+        self.prepare_impl(dt,time,head,body,None)
+    }
+    fn prepare_impl(&self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex],solver:Option<&mut dyn physics::hair::HairLinearSolver>)->Result<PreparedHairStep,&'static str> {
         let rotation = Quat::from_mat4(&head).normalize().to_array().map(f64::from);
         if self.root_bindings.iter().any(|(i, _)| *i >= body.len()) {
             return Err("missing scalp binding vertex");
         }
-        self.targets = self
+        let targets: Vec<_> = self
             .root_bindings
             .iter()
             .map(|(i, offset)| {
                 Vec3::from_array(body[*i].position) + head.transform_vector3(*offset)
             })
             .collect();
-        let roots: Vec<_> = self
-            .targets
+        let roots: Vec<_> = targets
             .iter()
             .map(|target| RootPose {
                 position: target.to_array().map(f64::from),
@@ -314,23 +329,36 @@ impl FemaleHair {
             })
             .collect();
         let positions: Vec<_> = body.iter().map(|v| v.position.map(f64::from)).collect();
-        self.collider.refit_with_timestep(&positions,dt)?;
+        let mut collider = self.collider.clone();
+        collider.refit_with_timestep(&positions,dt)?;
         // Keep the physical substep unchanged when the render cadence varies.
-        self.system.substeps = (dt * 240.0).ceil().clamp(2.0, 32.0) as usize;
         let gravity=[0.,-9.81,0.];
         let air=[0.05*(time*1.7).sin(),0.,0.02*(time*2.3).sin()];
-        let meshes=std::slice::from_ref(&self.collider);
+        let meshes=std::slice::from_ref(&collider);
         #[cfg(test)]
         let meshes=if self.skip_mesh_contacts {&[]} else {meshes};
-        if let Some(solver)=solver {
-            self.system.step_with_solver(dt,&roots,gravity,air,meshes,solver)?;
-        } else {self.system.step(dt,&roots,gravity,air,meshes)?;}
+        // HairSystem already enforces at least 240 Hz internally. Its single
+        // staged solve owns publication; no second clone of guide state is needed.
+        let system=self.system.prepare_validated(dt,&roots,gravity,air,meshes,solver, |system| {
+            let substeps=system.substeps.max((dt*240.).ceil() as usize);
+            Self::verify_system_at_timestep(system, &targets, Some(dt/substeps as f64))
+        })?;
+        Ok(PreparedHairStep {system,collider,targets})
+    }
+    pub(crate) fn publish_prepared(&mut self,staged:PreparedHairStep) {
+        self.system=staged.system;
+        self.targets=staged.targets;
+        self.collider=staged.collider;
         if self.system.profiling {
             let profile = self.system.last_profile;
             eprintln!("HAIR PHASES structural_worker_ms={:.3} mesh_contact_worker_ms={:.3} self_contact_wall_ms={:.3}",
                 profile.structural_ms, profile.mesh_contacts_ms, profile.self_contacts_ms);
         }
-        Ok(())
+    }
+    pub(crate) fn exchange_prepared(&mut self,staged:&mut PreparedHairStep) {
+        std::mem::swap(&mut self.system,&mut staged.system);
+        std::mem::swap(&mut self.collider,&mut staged.collider);
+        std::mem::swap(&mut self.targets,&mut staged.targets);
     }
     /// Static render LOD: retain every guide/follower and simplify only its
     /// polygonal sampling. Bounds both centre/section position and prelit colour.
@@ -499,13 +527,34 @@ impl FemaleHair {
         indices.extend(self.render_indices.iter().map(|index| mesh_base + index));
     }
     pub fn verify(&self, _head: Mat4) -> Result<(), &'static str> {
-        for (rod, target) in self.system.rods().iter().zip(&self.targets) {
+        Self::verify_system(&self.system, &self.targets)
+    }
+    fn verify_system(system:&HairSystem, targets:&[Vec3])->Result<(), &'static str> {
+        Self::verify_system_at_timestep(system,targets,None)
+    }
+    fn verify_system_at_timestep(system:&HairSystem, targets:&[Vec3], step_dt:Option<f64>)->Result<(), &'static str> {
+        if system.rods().len() != targets.len() {return Err("hair target count differs from guides");}
+        for (guide,(rod, target)) in system.rods().iter().zip(targets).enumerate() {
+            if !target.is_finite() || rod.positions().iter().flatten().any(|x| !x.is_finite()) {
+                return Err("hair admission has nonfinite coordinates");
+            }
             let actual = Vec3::from_array(rod.positions()[0].map(|x| x as f32));
-            if target.distance(actual) > 1e-5
-                || rod.positions().iter().flatten().any(|x| !x.is_finite())
-                || rod.max_relative_stretch() > 0.05
-            {
-                return Err("hair lost its scalp attachment, over-stretched or became nonfinite");
+            if !actual.is_finite() || target.distance(actual) > 1e-5 {
+                return Err("hair root differs from scalp target");
+            }
+            if rod.max_relative_stretch() > 0.05 {
+                if let Some(path)=std::env::var_os("VOXY_HAIR_REJECTED_GUIDE_EXPORT") {
+                    let strains:Vec<_>=rod.positions().windows(2).zip(rod.rest_lengths()).map(|(p,l)| {
+                        ((0..3).map(|k|(p[1][k]-p[0][k]).powi(2)).sum::<f64>()).sqrt()/l-1.
+                    }).collect();
+                    let linear=step_dt.map(|h|rod.linear_system(h).map(|s| {
+                        let correction=s.solve_native();
+                        serde_json::json!({"dt":h,"active_start":s.active.start,"active_end":s.active.end,"band_width":s.band_width,"rhs":s.rhs,"matrix":s.matrix,"native_correction":correction.as_ref().ok(),"native_correction_error":correction.err()})
+                    })).transpose();
+                    let data=serde_json::json!({"guide":guide,"signed_strains":strains,"positions":rod.positions(),"rest_positions":rod.rest_positions(),"rest_lengths":rod.rest_lengths(),"orientations":rod.orientations(),"contacts":format!("{:?}",rod.contact_diagnostics()),"strain_limit":0.05,"candidate_linear_system":linear.as_ref().ok().and_then(|v|v.as_ref()),"candidate_linear_error":linear.err()});
+                    if let Err(error)=std::fs::write(path,serde_json::to_vec_pretty(&data).expect("finite rejected guide")) {eprintln!("HAIR REJECTED GUIDE EXPORT ERROR {error}");}
+                }
+                return Err("hair axial strain exceeds admission limit");
             }
         }
         Ok(())
@@ -514,6 +563,42 @@ impl FemaleHair {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn fitted_prepared_groom_has_valid_initial_state() {
+        let body=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
+        let hair=FemaleHair::new(body.mesh.vertices(),body.mesh.indices()).unwrap();
+        assert_eq!(hair.system.rods().len(),469,"guide density changed");
+        hair.verify(Mat4::IDENTITY).unwrap();
+        for rod in hair.system.rods() {
+            assert_eq!(rod.positions().len(),21,"guide resolution changed");
+            for (i,p) in rod.rest_positions().windows(2).enumerate() {
+                let start=if i==0 {std::array::from_fn(|k|0.85*p[0][k]+0.15*p[1][k])} else {p[0]};
+                assert!(hair.collider.first_segment_hit(start,p[1]).unwrap().is_none(),"authored rest segment traverses body");
+            }
+        }
+    }
+    #[test]
+    fn accelerator_failure_preserves_targets_collider_and_guides() {
+        struct Reject;
+        impl physics::hair::HairLinearSolver for Reject {
+            fn solve(&mut self,_:&[physics::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
+                Err("injected accelerator failure")
+            }
+        }
+        let asset=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
+        let mut hair=FemaleHair::new(asset.mesh.vertices(),asset.mesh.indices()).unwrap();
+        let targets=hair.targets.clone();
+        let probe=targets[0].to_array().map(f64::from);
+        let surface=hair.collider.closest_surface(probe).unwrap();
+        let system=format!("{:?}",hair.system);
+        let mut moved=asset.mesh.vertices().to_vec();
+        for vertex in &mut moved {vertex.position[1]+=0.01;}
+        let result=hair.advance_with_solver(1./120.,0.1,Mat4::from_translation(Vec3::Y*0.01),&moved,&mut Reject);
+        assert_eq!(result,Err("injected accelerator failure"));
+        assert_eq!(hair.targets,targets);
+        assert_eq!(hair.collider.closest_surface(probe).unwrap(),surface);
+        assert_eq!(format!("{:?}",hair.system),system);
+    }
     #[test]
     fn full_resolution_basis_transport_matches_quaternion_reference() {
         let asset = voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -737,7 +822,15 @@ mod tests {
         let path=std::env::var("VOXY_HAIR_REPLAY_REST_FILE").expect("absolute replay metadata output path");
         assert!(std::path::Path::new(&path).is_absolute());
         let rod=hair.system.rods().get(index).expect("guide index outside groom");
-        let output=serde_json::json!({"rod":index,"preserve_follicles":preserve,"rest_positions":rod.rest_positions(),"rest_curves":hair.system.rods().iter().map(|rod|rod.rest_positions()).collect::<Vec<_>>(),"material":"HairMaterial::default()"});
+        let crossings = |initialized:bool| hair.system.rods().iter().enumerate().flat_map(|(guide,rod)| {
+            let points=if initialized {rod.positions()} else {rod.rest_positions()};
+            points.windows(2).enumerate().filter_map(|(segment,p)| {
+                let start=if segment==0 {std::array::from_fn(|k| 0.85*p[0][k]+0.15*p[1][k])} else {p[0]};
+                hair.collider.first_segment_hit(start,p[1]).unwrap()
+                    .map(|(fraction,position,normal)|serde_json::json!({"guide":guide,"segment":segment,"fraction":if segment==0 {0.15+0.85*fraction} else {fraction},"position":position,"normal":normal}))
+            }).collect::<Vec<_>>()
+        }).collect::<Vec<_>>();
+        let output=serde_json::json!({"rod":index,"preserve_follicles":preserve,"rest_positions":rod.rest_positions(),"rest_curves":hair.system.rods().iter().map(|rod|rod.rest_positions()).collect::<Vec<_>>(),"initialized_positions":rod.positions(),"initialized_max_relative_strain":rod.max_relative_stretch(),"all_initialized_max_relative_strains":hair.system.rods().iter().map(HairRod::max_relative_stretch).collect::<Vec<_>>(),"rest_body_intersections":crossings(false),"initialized_body_intersections":crossings(true),"material":"HairMaterial::default()"});
         std::fs::write(path,serde_json::to_vec_pretty(&output).unwrap()).unwrap();
         if let Ok(path)=std::env::var("VOXY_HAIR_CONTACT_REPLAY_COLLIDER") {
             assert!(std::path::Path::new(&path).is_absolute());
@@ -775,6 +868,14 @@ mod tests {
             native.system.iterations=iterations;gpu.system.iterations=iterations;
         }
         eprintln!("HYBRID STRUCTURAL ITERATIONS {}",native.system.iterations);
+        // Qualification-only temporal refinement: keep density, force/strain
+        // gates and the same sampled collider trajectory unchanged.
+        if let Ok(value)=std::env::var("VOXY_HAIR_QUALIFICATION_SUBSTEPS") {
+            let substeps=value.parse::<usize>().unwrap();
+            assert!((2..=32).contains(&substeps),"qualification substeps must be in 2..32");
+            native.system.substeps=substeps;gpu.system.substeps=substeps;
+        }
+        eprintln!("HYBRID TEMPORAL SUBSTEPS {}",native.system.substeps);
         let joint_velocities=std::env::var_os("VOXY_HAIR_JOINT_CONTACT_VELOCITIES").is_some();
         native.system.joint_contact_velocities=joint_velocities;gpu.system.joint_contact_velocities=joint_velocities;
         eprintln!("HYBRID JOINT CONTACT VELOCITIES {joint_velocities}");
@@ -790,12 +891,17 @@ mod tests {
         let sampled_motion=std::env::var_os("VOXY_HAIR_SAMPLE_COLLIDER_MOTION").is_some();
         native.system.sample_collider_motion=sampled_motion;gpu.system.sample_collider_motion=sampled_motion;
         eprintln!("HYBRID SAMPLED COLLIDER MOTION {sampled_motion}");
+        let continuous_mesh=std::env::var_os("VOXY_HAIR_CONTINUOUS_MESH_ADMISSION").is_some();
+        native.system.continuous_mesh_admission=continuous_mesh;gpu.system.continuous_mesh_admission=continuous_mesh;
+        eprintln!("HYBRID CONTINUOUS MESH ADMISSION {continuous_mesh}");
         if let Ok(value)=std::env::var("VOXY_HAIR_TERMINAL_CONTACT_ITERATIONS") {
             let iterations=value.parse::<usize>().unwrap();assert!(iterations<=32);
             native.system.terminal_contact_iterations=iterations;gpu.system.terminal_contact_iterations=iterations;
         }
         eprintln!("HYBRID TERMINAL CONTACT ITERATIONS {}",native.system.terminal_contact_iterations);
         let rig=crate::female_rig::FemaleRig::new(body.mesh.vertices()).unwrap();
+        let articulated_jump=std::env::var_os("VOXY_HAIR_ARTICULATED_JUMP").is_some();
+        eprintln!("HYBRID ARTICULATED JUMP {articulated_jump}");
         let instance=voxy_render::GraphicsOptions::default().create_instance();
         let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
         eprintln!("HYBRID HAIR ADAPTER {:?}",adapter.get_info());
@@ -811,6 +917,20 @@ mod tests {
         assert!(solver.contact_residual_refinements.is_none_or(|value|value<=3));
         solver.reuse_refinement_factors=std::env::var_os("VOXY_HAIR_REUSE_REFINEMENT_FACTORS").is_some();
         solver.contact_response_batches=std::env::var_os("VOXY_HAIR_CONTACT_RESPONSE_BATCHES").is_some();
+        solver.joint_contact_qr=std::env::var_os("VOXY_HAIR_JOINT_QR").is_some();
+        solver.joint_coordinate_batches=std::env::var_os("VOXY_HAIR_JOINT_COORDINATE_BATCHES").is_some();
+        eprintln!("HYBRID JOINT COORDINATE BATCHES {}",solver.joint_coordinate_batches);
+        assert!(!solver.joint_coordinate_batches || solver.joint_contact_qr,"coordinate batching qualification requires the GPU joint backend");
+        solver.joint_result_reuse=std::env::var_os("VOXY_HAIR_JOINT_RESULT_REUSE").is_some();
+        solver.joint_dual_hints=std::env::var_os("VOXY_HAIR_JOINT_DUAL_HINTS").is_some();
+        solver.joint_qr_prefix_reuse=std::env::var_os("VOXY_HAIR_JOINT_QR_PREFIX_REUSE").is_some();
+        solver.joint_release_directions=std::env::var_os("VOXY_HAIR_JOINT_RELEASE_DIRECTIONS").is_some();
+        solver.joint_early_release_directions=std::env::var_os("VOXY_HAIR_JOINT_EARLY_RELEASE_DIRECTIONS").is_some();
+        eprintln!("HYBRID JOINT RELEASE DIRECTIONS {} early={}",solver.joint_release_directions,solver.joint_early_release_directions);
+        eprintln!("HYBRID JOINT QR PREFIX REUSE {}",solver.joint_qr_prefix_reuse);
+        eprintln!("HYBRID JOINT PHYSICS OWNED DUAL HINTS {}",solver.joint_dual_hints);
+        eprintln!("HYBRID JOINT EXACT RESULT REUSE {}",solver.joint_result_reuse);
+        eprintln!("HYBRID JOINT QR {}",solver.joint_contact_qr);
         solver.batch_response_waves=std::env::var_os("VOXY_HAIR_BATCH_RESPONSE_WAVES").is_some();
         solver.compact_response_readback=std::env::var_os("VOXY_HAIR_COMPACT_RESPONSE_READBACK").is_some();
         solver.gpu_response_transport=std::env::var_os("VOXY_HAIR_GPU_RESPONSE_TRANSPORT").is_some();
@@ -838,6 +958,7 @@ mod tests {
         eprintln!("HYBRID CONTACT CASE {contact_case}");
         let cpu_control=std::env::var_os("VOXY_HAIR_CPU_CONTROL").is_some();
         let native_only=std::env::var_os("VOXY_HAIR_NATIVE_ONLY").is_some();
+        assert!(!solver.joint_contact_qr || (!native_only && !cpu_control),"joint GPU qualification requires the actual GPU backend");
         assert!(!native_only||cpu_control,"native-only qualification requires explicit CPU control");
         let perturbation=std::env::var("VOXY_HAIR_CPU_SCALE_PERTURBATION").ok().map(|v|v.parse::<f64>().unwrap()).unwrap_or(0.);
         assert!(perturbation.is_finite() && perturbation.abs()<=1e-9);
@@ -849,7 +970,7 @@ mod tests {
         let mut first_divergence_reported=false;
         let frames=std::env::var("VOXY_HAIR_QUALIFICATION_FRAMES").ok().map(|value|value.parse::<usize>().unwrap()).unwrap_or(30);
         assert!((30..=720).contains(&frames),"qualification frames must be in 30..720");
-        let expected_calls=if swept {0} else {frames*2*(native.system.iterations+native.system.terminal_contact_iterations)};
+        let expected_calls=if native_only || swept {0} else {frames*native.system.substeps.max(2)*(native.system.iterations+native.system.terminal_contact_iterations)};
         let phase_trace_rod=std::env::var("VOXY_HAIR_PHASE_TRACE_ROD").ok().map(|value|value.parse::<usize>().expect("invalid phase trace rod"));
         let phase_trace_frame=std::env::var("VOXY_HAIR_PHASE_TRACE_FRAME").ok().map(|value|value.parse::<usize>().expect("invalid phase trace frame")).unwrap_or(57);
         let phase_trace_end=std::env::var("VOXY_HAIR_PHASE_TRACE_END_FRAME").ok().map(|value|value.parse::<usize>().expect("invalid phase trace end frame")).unwrap_or(phase_trace_frame);
@@ -857,19 +978,54 @@ mod tests {
         for frame in 1..=frames {
             let trace=phase_trace_rod.filter(|_|(phase_trace_frame..=phase_trace_end).contains(&frame));
             native.system.set_trace_rod(trace).unwrap();gpu.system.set_trace_rod(trace).unwrap();
-            let time=frame as f64/120.;let bob=0.08*(std::f64::consts::TAU*time).sin().powi(2) as f32;
-            let head=Mat4::from_translation(Vec3::Y*bob)*rig.head_matrix(time as f32);
-            let mut posed=body.mesh.vertices().to_vec();rig.deform(&mut posed,time as f32);
+            let time=frame as f64/120.;
+            let bob=if articulated_jump {crate::jump_motion::sample(time).height as f32}
+                else {0.08*(std::f64::consts::TAU*time).sin().powi(2) as f32};
+            let head=Mat4::from_translation(Vec3::Y*bob)*if articulated_jump {rig.jump_head_matrix(time)} else {rig.head_matrix(time as f32)};
+            let mut posed=body.mesh.vertices().to_vec();
+            if articulated_jump {rig.deform_jump(&mut posed,time);} else {rig.deform(&mut posed,time as f32);}
             for vertex in &mut posed {vertex.position[1]+=bob;}
-            let started=std::time::Instant::now();native.advance(1./120.,time,head,&posed).unwrap_or_else(|error|panic!("native frame {frame}: {error}"));native_ms+=started.elapsed().as_secs_f64()*1000.;
+            if std::env::var_os("VOXY_HAIR_SWEPT_INCREMENT_TRACE_ROD").is_some() {eprintln!("HAIR SWEPT INCREMENT OWNER frame={frame} backend=native");}
+            let started=std::time::Instant::now();physics::hair::observe_contact_frame(frame,||native.advance(1./120.,time,head,&posed)).unwrap_or_else(|error|panic!("native frame {frame}: {error}"));
+            let native_frame_ms=started.elapsed().as_secs_f64()*1000.;native_ms+=native_frame_ms;
             let started=std::time::Instant::now();
+            if std::env::var_os("VOXY_HAIR_SWEPT_INCREMENT_TRACE_ROD").is_some() {eprintln!("HAIR SWEPT INCREMENT OWNER frame={frame} backend=external");}
+            physics::hair::observe_contact_frame(frame,|| {
             if native_only {
                 gpu.advance(1./120.,time,head,&posed).unwrap_or_else(|error|panic!("native-only paired frame {frame}: {error}"));
             } else if cpu_control {
                 gpu.advance_with_solver(1./120.,time,head,&posed,&mut control).unwrap();
             } else {gpu.advance_with_solver(1./120.,time,head,&posed,&mut solver).unwrap_or_else(|error|panic!("frame {frame}: {error}, {:?}",solver.last_error));}
-            gpu_ms+=started.elapsed().as_secs_f64()*1000.;
+            });
+            let external_frame_ms=started.elapsed().as_secs_f64()*1000.;gpu_ms+=external_frame_ms;
+            // Solver wall time only: this excludes rendering and verification.
+            // Log individual frames so a slow solve cannot hide in the total.
+            eprintln!("HYBRID HAIR FRAME TIMING frame={frame} native_ms={native_frame_ms} external_ms={external_frame_ms} native_only={native_only} cpu_control={cpu_control}");
+            if solver.joint_contact_qr {
+                // Emit before trajectory assertions: a failed first frame must
+                // still expose actual GPU admission versus native recovery.
+                eprintln!("HYBRID JOINT FRAME COUNTERS frame={frame} coordinate_calls={} equality_dispatches={} cache_hits={} admitted={} native_fallbacks={}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_result_cache_hits,solver.joint_admitted,solver.joint_native_fallbacks);
+                eprintln!("HYBRID JOINT SUBMISSION FRAME COUNTERS frame={frame} submissions={} equality_dispatches={}",solver.joint_equality_submissions,solver.joint_equality_dispatches);
+                eprintln!("HYBRID JOINT HINT FRAME COUNTERS frame={frame} attempts={}",solver.joint_dual_hint_attempts);
+                eprintln!("HYBRID JOINT QR PREFIX FRAME COUNTERS frame={frame} reused_columns={}",solver.joint_qr_columns_reused);
+                eprintln!("HYBRID JOINT RELEASE FRAME COUNTERS frame={frame} directions={} early={}",solver.joint_release_direction_calls,solver.joint_early_release_direction_calls);
+            }
             if trace.is_some() {
+                let a=native.system.step_trace();
+                let b=gpu.system.step_trace();
+                for (index,(a,b)) in a.iter().zip(b).enumerate() {
+                    // A phase mismatch must not be mistaken for numerical drift.
+                    if (a.phase,a.substep,a.iteration,a.rod)!=(b.phase,b.substep,b.iteration,b.rod) {
+                        eprintln!("HAIR PHASE ALIGNMENT FAILURE frame={frame} index={index} native=({}, {}, {}, {}) external=({}, {}, {}, {})",a.phase,a.substep,a.iteration,a.rod,b.phase,b.substep,b.iteration,b.rod);
+                        break;
+                    }
+                    let error=a.positions.iter().zip(&b.positions).flat_map(|(a,b)|(0..3).map(move |axis|(a[axis]-b[axis]).abs())).fold(0f64,f64::max);
+                    eprintln!("HAIR PHASE COMPARISON frame={frame} index={index} phase={} substep={} iteration={} position_error_m={error} native_contacts={} external_contacts={}",a.phase,a.substep,a.iteration,a.contacts.len(),b.contacts.len());
+                    let maximum=|a:&[[f64;3]],b:&[[f64;3]]|a.iter().zip(b).flat_map(|(a,b)|(0..3).map(move |axis|(a[axis]-b[axis]).abs())).fold(0f64,f64::max);
+                    eprintln!("HAIR PHASE INERTIAL COMPARISON frame={frame} index={index} phase={} substep={} iteration={} predicted_position_error_m={} velocity_error_m_s={} angular_velocity_error_rad_s={}",a.phase,a.substep,a.iteration,
+                        maximum(&a.predicted_positions,&b.predicted_positions),maximum(&a.velocities,&b.velocities),maximum(&a.angular_velocities,&b.angular_velocities));
+                }
+                if a.len()!=b.len() {eprintln!("HAIR PHASE COUNT MISMATCH frame={frame} native={} external={}",a.len(),b.len());}
                 for (label,hair) in [("native",&native),("external",&gpu)] {
                     for entry in hair.system.contact_projection_trace() {eprintln!("HAIR PROJECTION TRACE frame={frame} {label} {entry:?}");}
                     for entry in hair.system.step_trace() {eprintln!("HAIR PHASE TRACE frame={frame} {label} {entry:?}");}
@@ -925,12 +1081,24 @@ mod tests {
                 }
             }
             eprintln!("HYBRID HAIR FRAME frame={} max_position_error_m={} max_quaternion_component_error={}",frame,position_error,rotation_error);
+            // These maxima are cumulative: a later frame cannot repair a
+            // failed trajectory comparison. Preserve the diagnostics above
+            // and reject immediately using the same final acceptance gates.
+            assert!(position_error<1e-6,"frame {frame}: GPU position drift {position_error}; worst rod={} point={}",worst.1,worst.2);
+            assert!(rotation_error<5e-5,"frame {frame}: GPU rotation drift {rotation_error}");
         }
         eprintln!("HYBRID FULL HAIR guides={} frames={} calls={} position_error_m={} quaternion_component_error={} native_ms={} hybrid_ms={} solver_bridge_ms={}",gpu.system.rods().len(),frames,solver.calls,position_error,rotation_error,native_ms,gpu_ms,solver.elapsed_ms);
         eprintln!("HYBRID LINEAR AUDIT max_errors={:?} packing_errors={:?} stage_errors={:?} enabled={}",solver.max_linear_error,solver.max_packing_error,solver.max_stage_error,solver.reference_audit);
         eprintln!("HYBRID RESIDUAL REFINEMENT DISPATCHES {}",solver.refinement_dispatches);
         eprintln!("HYBRID REUSED FACTOR DISPATCHES {}",solver.reused_factor_dispatches);
         eprintln!("HYBRID CONTACT RESPONSE CALLS {} DISPATCHES {} SUBMISSIONS {}",solver.response_calls,solver.response_dispatches,solver.response_submissions);
+        eprintln!("HYBRID JOINT CONTACT CALLS {} EQUALITY DISPATCHES {} CACHE HITS {} ADMITTED {} NATIVE FALLBACKS {}",solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_result_cache_hits,solver.joint_admitted,solver.joint_native_fallbacks);
+        eprintln!("HYBRID JOINT HINT ATTEMPTS {}",solver.joint_dual_hint_attempts);
+        eprintln!("HYBRID JOINT QR COLUMNS REUSED {}",solver.joint_qr_columns_reused);
+        eprintln!("HYBRID JOINT RELEASE DIRECTION CALLS {} early={}",solver.joint_release_direction_calls,solver.joint_early_release_direction_calls);
+        if solver.joint_contact_qr {assert!(solver.joint_coordinate_calls>0 && solver.joint_admitted>0,"joint qualification did not admit GPU contact output");}
+        if solver.joint_coordinate_batches {assert!(solver.joint_equality_submissions<solver.joint_equality_dispatches,
+            "coordinate batching qualification never combined independent GPU jobs");}
         assert_eq!(gpu.system.rods().len(),469);assert_eq!(if cpu_control {control.calls} else {solver.calls},expected_calls);
         if swept && !cpu_control {assert!(solver.response_calls>0,"swept structural motion must exercise the response backend");}
         assert!(position_error<1e-6,"GPU position drift {position_error}");

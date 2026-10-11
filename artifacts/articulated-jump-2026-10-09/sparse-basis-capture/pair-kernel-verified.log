@@ -1,0 +1,43 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 33.40s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000310667, 5.5e-6), (0.000103916, 4.833e-6), (0.000284208, 1.25e-5), (0.000294625, 1.1875e-5), (0.000282333, 1.2291e-5), (0.000237334, 1.175e-5), (0.000104541, 5.208e-6)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000419291, 0.002627958), (0.000533917, 0.002618167), (0.000388084, 0.005562375), (0.000396375, 0.005645291), (0.000384584, 0.003348417), (0.000385208, 0.004881125), (0.000745833, 0.005239708)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000135708, 5.542e-6), (0.000780542, 5.458e-6), (0.000290667, 6.709e-6), (0.001122458, 5.917e-6), (0.000211125, 6.208e-6), (0.000203542, 5.917e-6), (0.000221166, 1.325e-5)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000104417, 5.75e-6), (0.000103708, 5.75e-6), (0.000103917, 5.917e-6), (0.000103916, 5.75e-6), (0.000103458, 5.792e-6), (0.000104292, 5.542e-6), (0.000103666, 6e-6)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000581208, 0.012522042), (0.000654708, 0.007262625), (0.000414708, 0.008443875), (0.000946333, 0.0122105), (0.001624, 0.008071833), (0.0004225, 0.009597292), (0.000957166, 0.006452083)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000294208, 0.006255417), (0.000705959, 0.007637375), (0.00150225, 0.008258291), (0.000693708, 0.008335667), (0.000712208, 0.009449542), (0.00030175, 0.006482792), (0.000290917, 0.014879625)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000106708, 4.875e-6), (0.000104958, 4.833e-6), (0.000105042, 4.584e-6), (0.000105375, 4.75e-6), (0.000105583, 4.625e-6), (0.0001055, 4.708e-6), (0.000104542, 5.125e-6)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000104959, 4.542e-6), (0.000104708, 4.583e-6), (0.000104, 4.583e-6), (0.000103625, 5.208e-6), (0.000104625, 4.584e-6), (0.000104667, 4.5e-6), (0.000104709, 4.459e-6)]
+CAPTURED PAIR KERNEL admitted=true certificate_sweep_seconds=[(0.000106333, 4.458e-6), (0.000105375, 5.458e-6), (0.00010525, 4.583e-6), (0.000104917, 4.583e-6), (0.000104875, 4.542e-6), (0.000105708, 4.417e-6), (0.000105833, 4.375e-6)]
+CAPTURED PAIR KERNEL admitted=false certificate_sweep_seconds=[(0.004533708, 0.000138458), (0.004457583, 0.000137292), (0.005750583, 0.000315625), (0.00376175, 0.000135709), (0.005823042, 0.00013825), (0.013001083, 0.000137042), (0.009804709, 0.000149125)]
+CAPTURED PAIR KERNEL admitted=false certificate_sweep_seconds=[(0.003751042, 0.003863584), (0.004743708, 0.002687542), (0.005027125, 0.003514625), (0.009903916, 0.002313792), (0.005311542, 0.001830833), (0.005616, 0.001949375), (0.005469291, 0.001857875)]
+CAPTURED PAIR KERNEL admitted=false certificate_sweep_seconds=[(0.003683209, 4.792e-6), (0.005442875, 4.583e-6), (0.004444958, 5.791e-6), (0.003693541, 4.375e-6), (0.003689708, 4.458e-6), (0.003802333, 4.5e-6), (0.00367425, 5.666e-6)]
+test hair::contact::velocity_contacts::safe_motion::line_certificate::fixture_tests::nominal_frame3_restrictions_are_continuously_clear ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 361 filtered out; finished in 0.32s
+

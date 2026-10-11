@@ -1,0 +1,17 @@
+{
+  "pid": 96352,
+  "session": 62714,
+  "sample_seconds": 1,
+  "source": "live-cpu-sample.txt",
+  "metric": "collapsed top-of-stack samples, not percentages or frame timing",
+  "observed": {
+    "EqualityQr.solve": 396,
+    "solve_lower_factored": 144,
+    "segment_pair": 124,
+    "polynomial.split": 112,
+    "continuous.gap": 92
+  },
+  "next_inspection": "Repeated whitening of unchanged contact columns inside frozen-operator cut refinement. Any reuse must belong to the same immutable rod matrices and identical physical load; changed geometry or load must invalidate it.",
+  "controlled_before_after_comparison": false,
+  "rendered_fps_proof": false
+}

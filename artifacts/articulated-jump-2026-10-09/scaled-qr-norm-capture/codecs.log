@@ -1,0 +1,16 @@
+
+running 11 tests
+test joint_contact_dot::tests::gpu_resident_qr_keeps_small_positive_pivot_and_rejects_zero_pivot ... ignored, requires an actual GPU; positive tiny QR pivot and exact dependence
+test joint_contact_dot::tests::equality_rhs_update_preserves_operator_and_rejects_bad_bounds ... ok
+test joint_contact_dot::tests::rescaling_recovers_finite_values_after_intermediate_range_loss ... ok
+test joint_contact_dot::tests::validated_equality_tail_keeps_result_and_publication_gates ... ok
+test joint_contact_dot::tests::numeric_range_and_every_row_publication_are_checked ... ok
+test joint_contact_dot::tests::resident_qr_compacts_only_exact_zero_axes ... ok
+test joint_contact_dot::tests::qr_projection_layout_preserves_original_coordinate_order ... ok
+test joint_contact_dot::tests::shader_validates_and_codec_rejects_missing_or_changed_outputs ... ok
+test joint_contact_dot::tests::resident_equality_shader_and_transport_gates ... ok
+test joint_contact_dot::tests::resident_qr_shader_and_publication_gates ... ok
+test joint_contact_dot::tests::normalization_shader_and_zero_range_gates ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 227 filtered out; finished in 0.01s
+

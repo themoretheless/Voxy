@@ -1,0 +1,866 @@
+[
+  {
+    "frame": 5,
+    "phase": "predicted",
+    "substep": 0,
+    "iteration": 0,
+    "position_vector_error_m": 1.4304896245381992e-17,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 2.220446049250313e-16
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 0,
+    "position_vector_error_m": 9.931154308929222e-14,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 2.290612144406623e-12
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 1,
+    "position_vector_error_m": 9.931154308929222e-14,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 2.290612144406623e-12
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 1,
+    "position_vector_error_m": 5.838942646431065e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3578027591165664e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 1,
+    "position_vector_error_m": 5.836699030428261e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3594680936535042e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 2,
+    "position_vector_error_m": 5.836699030428261e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3594680936535042e-13
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 2,
+    "position_vector_error_m": 5.8857234924982e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3558598688234724e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 2,
+    "position_vector_error_m": 5.835117284830351e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3627987627273797e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 3,
+    "position_vector_error_m": 5.835117284830351e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3627987627273797e-13
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 3,
+    "position_vector_error_m": 5.7980266641168764e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3627987627273797e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 3,
+    "position_vector_error_m": 5.834031600858065e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.360300760921973e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 4,
+    "position_vector_error_m": 5.834031600858065e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.360300760921973e-13
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 4,
+    "position_vector_error_m": 5.785278084874087e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3600232051658168e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 4,
+    "position_vector_error_m": 5.843854714323678e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3614109839465982e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 5,
+    "position_vector_error_m": 5.843854714323678e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3614109839465982e-13
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 5,
+    "position_vector_error_m": 5.834197947968734e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3600232051658168e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 5,
+    "position_vector_error_m": 5.787539035132135e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3586354263850353e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 5.787539035132135e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3586354263850353e-13
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 5.835946240022345e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3605783166781293e-13
+  },
+  {
+    "frame": 5,
+    "phase": "continuous-mesh-admission",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 5.835946240022345e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3605783166781293e-13
+  },
+  {
+    "frame": 5,
+    "phase": "before-finish",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 5.835946240022345e-15,
+    "velocity_vector_error_m_s": 1.988630765926468e-12,
+    "orientation_component_error": 1.3605783166781293e-13
+  },
+  {
+    "frame": 5,
+    "phase": "rod-velocities",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 5.835946240022345e-15,
+    "velocity_vector_error_m_s": 1.3999889366767618e-12,
+    "orientation_component_error": 1.3605783166781293e-13
+  },
+  {
+    "frame": 5,
+    "phase": "strand-friction",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 5.835946240022345e-15,
+    "velocity_vector_error_m_s": 1.3999889366767618e-12,
+    "orientation_component_error": 1.3605783166781293e-13
+  },
+  {
+    "frame": 5,
+    "phase": "finished",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 5.835946240022345e-15,
+    "velocity_vector_error_m_s": 1.3991122775162295e-12,
+    "orientation_component_error": 1.3605783166781293e-13
+  },
+  {
+    "frame": 5,
+    "phase": "predicted",
+    "substep": 1,
+    "iteration": 0,
+    "position_vector_error_m": 5.835946240022345e-15,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 1.3605783166781293e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 0,
+    "position_vector_error_m": 1.0082675607747124e-13,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 1.512290292993157e-12
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 1,
+    "position_vector_error_m": 1.0082675607747124e-13,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 1.512290292993157e-12
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 1,
+    "position_vector_error_m": 9.267809159776742e-15,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 1.5545897902313754e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 1,
+    "position_vector_error_m": 9.373031841393613e-15,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 1.6173173911226968e-13
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 2,
+    "position_vector_error_m": 9.373031841393613e-15,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 1.6173173911226968e-13
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 2,
+    "position_vector_error_m": 1.6753023254735026e-10,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 2.3528028414432356e-09
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 2,
+    "position_vector_error_m": 1.1775515743334501e-11,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 3.8602887553196297e-10
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 3,
+    "position_vector_error_m": 1.1775515743334501e-11,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 3.8602887553196297e-10
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 3,
+    "position_vector_error_m": 1.6754693079666515e-10,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 2.353016614886627e-09
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 3,
+    "position_vector_error_m": 8.756564912998789e-05,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 0.0029936990659991114
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 4,
+    "position_vector_error_m": 8.756564912998789e-05,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 0.0029936990659991114
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 4,
+    "position_vector_error_m": 7.942392096242521e-08,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 9.381210996917133e-07
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 4,
+    "position_vector_error_m": 8.756628406033994e-05,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 0.0029937380437987104
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 5,
+    "position_vector_error_m": 8.756628406033994e-05,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 0.0029937380437987104
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 5,
+    "position_vector_error_m": 7.925608561936106e-08,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 9.357561364109479e-07
+  },
+  {
+    "frame": 5,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 5,
+    "position_vector_error_m": 8.756627670862713e-05,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 0.002993737657381479
+  },
+  {
+    "frame": 5,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 8.756627670862713e-05,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 0.002993737657381479
+  },
+  {
+    "frame": 5,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 7.942358389732512e-08,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 9.381090731452879e-07
+  },
+  {
+    "frame": 5,
+    "phase": "continuous-mesh-admission",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 7.942358389732512e-08,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 9.381090731452879e-07
+  },
+  {
+    "frame": 5,
+    "phase": "before-finish",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 7.942358389732512e-08,
+    "velocity_vector_error_m_s": 1.3840327208788297e-12,
+    "orientation_component_error": 9.381090731452879e-07
+  },
+  {
+    "frame": 5,
+    "phase": "rod-velocities",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 7.942358389732512e-08,
+    "velocity_vector_error_m_s": 1.9061661084777424e-05,
+    "orientation_component_error": 9.381090731452879e-07
+  },
+  {
+    "frame": 5,
+    "phase": "strand-friction",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 7.942358389732512e-08,
+    "velocity_vector_error_m_s": 1.9061661084777424e-05,
+    "orientation_component_error": 9.381090731452879e-07
+  },
+  {
+    "frame": 5,
+    "phase": "finished",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 7.942358389732512e-08,
+    "velocity_vector_error_m_s": 0.008425331375443948,
+    "orientation_component_error": 9.381090731452879e-07
+  },
+  {
+    "frame": 6,
+    "phase": "predicted",
+    "substep": 0,
+    "iteration": 0,
+    "position_vector_error_m": 7.942358389732512e-08,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 9.381090731452879e-07
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 0,
+    "position_vector_error_m": 2.1805944873101783e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029677868744693026
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 1,
+    "position_vector_error_m": 2.1805944873101783e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029677868744693026
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 1,
+    "position_vector_error_m": 8.48139605722084e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00018595254451925225
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 1,
+    "position_vector_error_m": 2.1260516811686365e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029452035777405294
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 2,
+    "position_vector_error_m": 2.1260516811686365e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029452035777405294
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 2,
+    "position_vector_error_m": 8.481392672935965e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.0001859523542338537
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 2,
+    "position_vector_error_m": 2.126051695766016e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029452036358496025
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 3,
+    "position_vector_error_m": 2.126051695766016e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029452036358496025
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 3,
+    "position_vector_error_m": 8.48143684926252e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00018595335004684133
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 3,
+    "position_vector_error_m": 2.1260516372207847e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.000294520360280881
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 4,
+    "position_vector_error_m": 2.1260516372207847e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.000294520360280881
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 4,
+    "position_vector_error_m": 8.481392675430358e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00018595235427126822
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 4,
+    "position_vector_error_m": 2.1260516981915122e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.0002945203639715399
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 5,
+    "position_vector_error_m": 2.1260516981915122e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.0002945203639715399
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 5,
+    "position_vector_error_m": 8.48143684835595e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00018595335005056057
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 0,
+    "iteration": 5,
+    "position_vector_error_m": 2.1260516393192516e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029452036061455855
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 2.1260516393192516e-05,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00029452036061455855
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 8.481392673797353e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00018595235427926182
+  },
+  {
+    "frame": 6,
+    "phase": "continuous-mesh-admission",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 8.481392673797353e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00018595235427926182
+  },
+  {
+    "frame": 6,
+    "phase": "before-finish",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 8.481392673797353e-06,
+    "velocity_vector_error_m_s": 0.008334549574816054,
+    "orientation_component_error": 0.00018595235427926182
+  },
+  {
+    "frame": 6,
+    "phase": "rod-velocities",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 8.481392673797353e-06,
+    "velocity_vector_error_m_s": 0.002035883675811206,
+    "orientation_component_error": 0.00018595235427926182
+  },
+  {
+    "frame": 6,
+    "phase": "strand-friction",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 8.481392673797353e-06,
+    "velocity_vector_error_m_s": 0.002035883675811206,
+    "orientation_component_error": 0.00018595235427926182
+  },
+  {
+    "frame": 6,
+    "phase": "finished",
+    "substep": 0,
+    "iteration": 6,
+    "position_vector_error_m": 8.481392673797353e-06,
+    "velocity_vector_error_m_s": 0.002035883675811206,
+    "orientation_component_error": 0.00018595235427926182
+  },
+  {
+    "frame": 6,
+    "phase": "predicted",
+    "substep": 1,
+    "iteration": 0,
+    "position_vector_error_m": 8.481392673797353e-06,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00018595235427926182
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 0,
+    "position_vector_error_m": 1.0990010136414648e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.0001746927721394953
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 1,
+    "position_vector_error_m": 1.0990010136414648e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.0001746927721394953
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 1,
+    "position_vector_error_m": 1.036358504353688e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.0001955208297558797
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 1,
+    "position_vector_error_m": 1.0889743857938376e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580311195632
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 2,
+    "position_vector_error_m": 1.0889743857938376e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580311195632
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 2,
+    "position_vector_error_m": 1.0363547769965636e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.0001955203200062483
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 2,
+    "position_vector_error_m": 1.0889744813034192e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580815442276
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 3,
+    "position_vector_error_m": 1.0889744813034192e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580815442276
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 3,
+    "position_vector_error_m": 1.036354776997154e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.0001955203200076916
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 3,
+    "position_vector_error_m": 1.0889744812277006e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580842376287
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 4,
+    "position_vector_error_m": 1.0889744812277006e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580842376287
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 4,
+    "position_vector_error_m": 1.0363547769965892e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00019552032000969
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 4,
+    "position_vector_error_m": 1.0889744814756459e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580826427933
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 5,
+    "position_vector_error_m": 1.0889744814756459e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580826427933
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 5,
+    "position_vector_error_m": 1.0363547770001821e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00019552032000885733
+  },
+  {
+    "frame": 6,
+    "phase": "structural",
+    "substep": 1,
+    "iteration": 5,
+    "position_vector_error_m": 1.0889744814291528e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580841088428
+  },
+  {
+    "frame": 6,
+    "phase": "structural-mesh",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 1.0889744814291528e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00017408580841088428
+  },
+  {
+    "frame": 6,
+    "phase": "contact-positions",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 1.0363547769995096e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00019552032000652586
+  },
+  {
+    "frame": 6,
+    "phase": "continuous-mesh-admission",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 1.0363547769995096e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00019552032000652586
+  },
+  {
+    "frame": 6,
+    "phase": "before-finish",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 1.0363547769995096e-05,
+    "velocity_vector_error_m_s": 0.002013947305866423,
+    "orientation_component_error": 0.00019552032000652586
+  },
+  {
+    "frame": 6,
+    "phase": "rod-velocities",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 1.0363547769995096e-05,
+    "velocity_vector_error_m_s": 0.0008901827461498005,
+    "orientation_component_error": 0.00019552032000652586
+  },
+  {
+    "frame": 6,
+    "phase": "strand-friction",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 1.0363547769995096e-05,
+    "velocity_vector_error_m_s": 0.0008901827461498005,
+    "orientation_component_error": 0.00019552032000652586
+  },
+  {
+    "frame": 6,
+    "phase": "finished",
+    "substep": 1,
+    "iteration": 6,
+    "position_vector_error_m": 1.0363547769995096e-05,
+    "velocity_vector_error_m_s": 0.0008901827461498005,
+    "orientation_component_error": 0.00019552032000652586
+  }
+]

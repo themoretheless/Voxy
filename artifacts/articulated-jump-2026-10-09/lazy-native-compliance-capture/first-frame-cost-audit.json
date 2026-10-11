@@ -1,0 +1,12 @@
+{
+  "paired_first_frame_contact_transactions": 76,
+  "summed_transaction_ms": 23051.345626,
+  "summed_initial_projection_ms": 956.68242,
+  "summed_initial_admission_ms": 1741.479251,
+  "total_cut_refinements": 556.0,
+  "max_constraints": 311.0,
+  "frame_timings": [
+    "HYBRID HAIR FRAME TIMING frame=1 native_ms=12249.602958000001 external_ms=12085.081041000001 native_only=true cpu_control=true"
+  ],
+  "scope": "two CPU copies; diagnostic overhead/contention; not rendered FPS or controlled before/after benchmark"
+}

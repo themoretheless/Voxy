@@ -252,11 +252,17 @@ impl EmbeddedSurface {
         positions: &[Point],
         output: &mut [Point],
     ) -> Result<(), &'static str> {
-        if positions.len() != self.vertex_count
-            || output.len() != self.bindings.len()
-            || positions.iter().flatten().any(|v| !v.is_finite())
-        {
+        if positions.len() != self.vertex_count || output.len() != self.bindings.len() {
             return Err("invalid deformed embedding positions");
+        }
+        let mut may_overflow = false;
+        for &v in positions.iter().flatten() {
+            if !v.is_finite() {
+                return Err("invalid deformed embedding positions");
+            }
+            if v.abs() > 1e300 {
+                may_overflow = true;
+            }
         }
         let evaluate = |binding: &Option<Binding>| -> Point {
             let Some(binding) = binding else {
@@ -268,9 +274,11 @@ impl EmbeddedSurface {
                     .sum()
             })
         };
-        for binding in &self.bindings {
-            if evaluate(binding).iter().any(|x| !x.is_finite()) {
-                return Err("embedding overflow");
+        if may_overflow {
+            for binding in &self.bindings {
+                if evaluate(binding).iter().any(|x| !x.is_finite()) {
+                    return Err("embedding overflow");
+                }
             }
         }
         for (binding, point) in self.bindings.iter().zip(output) {
@@ -296,14 +304,22 @@ impl EmbeddedSurface {
             || positions.len() != self.vertex_count
             || surface_reference.len() != self.bindings.len()
             || output.len() != self.bindings.len()
-            || reference
-                .iter()
-                .chain(positions)
-                .chain(surface_reference)
-                .flatten()
-                .any(|x| !x.is_finite())
         {
             return Err("invalid relative embedding positions");
+        }
+        let mut may_overflow = false;
+        for &x in reference
+            .iter()
+            .chain(positions)
+            .chain(surface_reference)
+            .flatten()
+        {
+            if !x.is_finite() {
+                return Err("invalid relative embedding positions");
+            }
+            if x.abs() > 1e300 {
+                may_overflow = true;
+            }
         }
         let evaluate = |binding: &Option<Binding>, base: Point| -> Point {
             let Some(binding) = binding else {
@@ -319,9 +335,11 @@ impl EmbeddedSurface {
                 base[axis] + displacement
             })
         };
-        for (binding, &base) in self.bindings.iter().zip(surface_reference) {
-            if evaluate(binding, base).iter().any(|x| !x.is_finite()) {
-                return Err("relative embedding overflow");
+        if may_overflow {
+            for (binding, &base) in self.bindings.iter().zip(surface_reference) {
+                if evaluate(binding, base).iter().any(|x| !x.is_finite()) {
+                    return Err("relative embedding overflow");
+                }
             }
         }
         for ((binding, &base), point) in self.bindings.iter().zip(surface_reference).zip(output) {
@@ -342,33 +360,48 @@ impl EmbeddedSurface {
         surface_forces: &[Point],
         nodal_forces: &mut [Point],
     ) -> Result<(), &'static str> {
-        if surface_forces.len() != self.bindings.len()
-            || nodal_forces.len() != self.vertex_count
-            || surface_forces
-                .iter()
-                .chain(nodal_forces.iter())
-                .flatten()
-                .any(|x| !x.is_finite())
-        {
+        if surface_forces.len() != self.bindings.len() || nodal_forces.len() != self.vertex_count {
             return Err("invalid embedded surface forces");
         }
-        // Shared nodes receive several contributions; a private candidate makes
-        // publication atomic even when only the final contribution overflows.
-        let mut candidate = nodal_forces.to_vec();
-        for (binding, force) in self.bindings.iter().zip(surface_forces) {
-            let Some(binding) = binding else {
-                continue;
-            };
-            for (&node, &weight) in binding.indices.iter().zip(&binding.weights) {
-                for (value, &component) in candidate[node].iter_mut().zip(force) {
-                    *value = weight.mul_add(component, *value);
-                    if !value.is_finite() {
-                        return Err("embedded force accumulation overflow");
+        let mut may_overflow = false;
+        for &x in surface_forces.iter().chain(nodal_forces.iter()).flatten() {
+            if !x.is_finite() {
+                return Err("invalid embedded surface forces");
+            }
+            if x.abs() > 1e290 {
+                may_overflow = true;
+            }
+        }
+        if may_overflow {
+            // Shared nodes receive several contributions; a private candidate makes
+            // publication atomic even when only the final contribution overflows.
+            let mut candidate = nodal_forces.to_vec();
+            for (binding, force) in self.bindings.iter().zip(surface_forces) {
+                let Some(binding) = binding else {
+                    continue;
+                };
+                for (&node, &weight) in binding.indices.iter().zip(&binding.weights) {
+                    for (value, &component) in candidate[node].iter_mut().zip(force) {
+                        *value = weight.mul_add(component, *value);
+                        if !value.is_finite() {
+                            return Err("embedded force accumulation overflow");
+                        }
+                    }
+                }
+            }
+            nodal_forces.copy_from_slice(&candidate);
+        } else {
+            for (binding, force) in self.bindings.iter().zip(surface_forces) {
+                let Some(binding) = binding else {
+                    continue;
+                };
+                for (&node, &weight) in binding.indices.iter().zip(&binding.weights) {
+                    for (value, &component) in nodal_forces[node].iter_mut().zip(force) {
+                        *value = weight.mul_add(component, *value);
                     }
                 }
             }
         }
-        nodal_forces.copy_from_slice(&candidate);
         Ok(())
     }
     /// Complete force chain rule for relative skin composition. Reference loads
@@ -379,13 +412,22 @@ impl EmbeddedSurface {
         &self,
         surface_forces: &[Point],
     ) -> Result<RelativeSurfaceLoads, &'static str> {
+        self.relative_loads_owned(surface_forces.to_vec())
+    }
+    pub(crate) fn vertex_count(&self) -> usize {
+        self.vertex_count
+    }
+    pub(crate) fn relative_loads_owned(
+        &self,
+        surface_forces: Vec<Point>,
+    ) -> Result<RelativeSurfaceLoads, &'static str> {
         let mut nodal = vec![[0.; 3]; self.vertex_count];
-        self.accumulate_forces_into(surface_forces, &mut nodal)?;
+        self.accumulate_forces_into(&surface_forces, &mut nodal)?;
         let reference = nodal.iter().map(|p| p.map(|x| -x)).collect();
         Ok(RelativeSurfaceLoads {
             nodal,
             reference,
-            base: surface_forces.to_vec(),
+            base: surface_forces,
         })
     }
 }

@@ -1,0 +1,1330 @@
+{
+  "scope": "Matched local projection counters only; differing connected sets and unmatched iterations are explicit, not resynchronized. No persistent operator identity or whole-scene success claim.",
+  "native_events": 61,
+  "external_events": 55,
+  "unmatched_native_events": 6,
+  "unmatched_external_events": 0,
+  "first_own_amplification_over_1um": null,
+  "events": [
+    {
+      "substep": 0,
+      "structural_iteration": 1,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 2.42488029655874e-10,
+      "rod_after_error_m": 2.387576802931335e-10,
+      "component_before_max": [
+        2.42488029655874e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.387576802931335e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 1,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.387576802931335e-10,
+      "rod_after_error_m": 2.4620683269915844e-10,
+      "component_before_max": [
+        2.387576802931335e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4620683269915844e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 1,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 2.4620683269915844e-10,
+      "rod_after_error_m": 2.4340041093751097e-10,
+      "component_before_max": [
+        2.4620683269915844e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4340041093751097e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 1,
+      "contact_iteration": 7,
+      "rod": 446,
+      "rod_before_error_m": 2.4340041093751097e-10,
+      "rod_after_error_m": 2.3561175233055565e-10,
+      "component_before_max": [
+        2.4340041093751097e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3561175233055565e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 2,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 2.449144220761923e-10,
+      "rod_after_error_m": 2.393162334968224e-10,
+      "component_before_max": [
+        2.449144220761923e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.393162334968224e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 2,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.393162334968224e-10,
+      "rod_after_error_m": 2.6122837226694173e-10,
+      "component_before_max": [
+        2.393162334968224e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.6122837226694173e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 2,
+      "contact_iteration": 3,
+      "rod": 446,
+      "rod_before_error_m": 2.6122837226694173e-10,
+      "rod_after_error_m": 2.3604884713535057e-10,
+      "component_before_max": [
+        2.6122837226694173e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3604884713535057e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 2,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 2.3604884713535057e-10,
+      "rod_after_error_m": 2.2146395828315235e-10,
+      "component_before_max": [
+        2.3604884713535057e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.2146395828315235e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 2,
+      "contact_iteration": 6,
+      "rod": 446,
+      "rod_before_error_m": 2.2146395828315235e-10,
+      "rod_after_error_m": 2.495295081672566e-10,
+      "component_before_max": [
+        2.2146395828315235e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.495295081672566e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 3,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 2.448667935084359e-10,
+      "rod_after_error_m": 2.4451940472403066e-10,
+      "component_before_max": [
+        2.448667935084359e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4451940472403066e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 3,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.4451940472403066e-10,
+      "rod_after_error_m": 2.488133032940709e-10,
+      "component_before_max": [
+        2.4451940472403066e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.488133032940709e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 3,
+      "contact_iteration": 3,
+      "rod": 446,
+      "rod_before_error_m": 2.488133032940709e-10,
+      "rod_after_error_m": 2.431058687690779e-10,
+      "component_before_max": [
+        2.488133032940709e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.431058687690779e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 3,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 2.431058687690779e-10,
+      "rod_after_error_m": 2.3375112956358635e-10,
+      "component_before_max": [
+        2.431058687690779e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3375112956358635e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 3,
+      "contact_iteration": 6,
+      "rod": 446,
+      "rod_before_error_m": 2.3375112956358635e-10,
+      "rod_after_error_m": 2.3629498357990997e-10,
+      "component_before_max": [
+        2.3375112956358635e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3629498357990997e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 4,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 2.4492041728052527e-10,
+      "rod_after_error_m": 2.4049817692883835e-10,
+      "component_before_max": [
+        2.4492041728052527e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4049817692883835e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 4,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.4049817692883835e-10,
+      "rod_after_error_m": 2.4024671141376075e-10,
+      "component_before_max": [
+        2.4049817692883835e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4024671141376075e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 4,
+      "contact_iteration": 3,
+      "rod": 446,
+      "rod_before_error_m": 2.4024671141376075e-10,
+      "rod_after_error_m": 2.4334056991648367e-10,
+      "component_before_max": [
+        2.4024671141376075e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4334056991648367e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 4,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 2.4334056991648367e-10,
+      "rod_after_error_m": 2.4730950620721615e-10,
+      "component_before_max": [
+        2.4334056991648367e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4730950620721615e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 4,
+      "contact_iteration": 6,
+      "rod": 446,
+      "rod_before_error_m": 2.4730950620721615e-10,
+      "rod_after_error_m": 2.329033632619826e-10,
+      "component_before_max": [
+        2.4730950620721615e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.329033632619826e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 5,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 2.44977482743991e-10,
+      "rod_after_error_m": 2.342716021175306e-10,
+      "component_before_max": [
+        2.44977482743991e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.342716021175306e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 5,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.342716021175306e-10,
+      "rod_after_error_m": 2.3720969632989863e-10,
+      "component_before_max": [
+        2.342716021175306e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3720969632989863e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 5,
+      "contact_iteration": 3,
+      "rod": 446,
+      "rod_before_error_m": 2.3720969632989863e-10,
+      "rod_after_error_m": 2.3105228841302505e-10,
+      "component_before_max": [
+        2.3720969632989863e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3105228841302505e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 5,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 2.3105228841302505e-10,
+      "rod_after_error_m": 2.396692844186532e-10,
+      "component_before_max": [
+        2.3105228841302505e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.396692844186532e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 5,
+      "contact_iteration": 6,
+      "rod": 446,
+      "rod_before_error_m": 2.396692844186532e-10,
+      "rod_after_error_m": 2.4377566631983427e-10,
+      "component_before_max": [
+        2.396692844186532e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4377566631983427e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 6,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 2.448993230430574e-10,
+      "rod_after_error_m": 2.4154278577270816e-10,
+      "component_before_max": [
+        2.448993230430574e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.4154278577270816e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 6,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.4154278577270816e-10,
+      "rod_after_error_m": 2.544121580072556e-10,
+      "component_before_max": [
+        2.4154278577270816e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.544121580072556e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 6,
+      "contact_iteration": 3,
+      "rod": 446,
+      "rod_before_error_m": 2.544121580072556e-10,
+      "rod_after_error_m": 2.3202351151496714e-10,
+      "component_before_max": [
+        2.544121580072556e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3202351151496714e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 6,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 2.3202351151496714e-10,
+      "rod_after_error_m": 2.3004569082996085e-10,
+      "component_before_max": [
+        2.3202351151496714e-10,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        2.3004569082996085e-10,
+        446,
+        20,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 0,
+      "structural_iteration": 6,
+      "contact_iteration": 6,
+      "rod": 446,
+      "rod_before_error_m": 2.3004569082996085e-10,
+      "rod_after_error_m": 2.543795174503316e-10,
+      "component_before_max": [
+        2.3004569082996085e-10,
+        446,
+        20,
+        0
+      ],
+      "component_after_max": [
+        2.543795174503316e-10,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 1,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 3.3436444672046983e-10,
+      "rod_after_error_m": 2.267940835132265e-10,
+      "component_before_max": [
+        3.3436444672046983e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        2.267940835132265e-10,
+        446,
+        18,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 1,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.267940835132265e-10,
+      "rod_after_error_m": 1.7849140091300009e-10,
+      "component_before_max": [
+        2.267940835132265e-10,
+        446,
+        18,
+        0
+      ],
+      "component_after_max": [
+        1.7849140091300009e-10,
+        446,
+        19,
+        2
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 1,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 1.7849140091300009e-10,
+      "rod_after_error_m": 2.376460690560467e-10,
+      "component_before_max": [
+        1.4833277384163068e-09,
+        454,
+        17,
+        0
+      ],
+      "component_after_max": [
+        1.4804197034923305e-09,
+        454,
+        17,
+        0
+      ],
+      "component_native_rods": 7,
+      "component_external_rods": 7,
+      "native_pair_count": 7,
+      "external_pair_count": 7
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 1,
+      "contact_iteration": 6,
+      "rod": 446,
+      "rod_before_error_m": 2.376460690560467e-10,
+      "rod_after_error_m": 2.2863956474633573e-10,
+      "component_before_max": [
+        2.376460690560467e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        2.2863956474633573e-10,
+        446,
+        19,
+        2
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 1,
+      "contact_iteration": 7,
+      "rod": 446,
+      "rod_before_error_m": 2.2863956474633573e-10,
+      "rod_after_error_m": 1.5149467236241776e-09,
+      "component_before_max": [
+        2.2863956474633573e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        1.5149467236241776e-09,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 1,
+      "contact_iteration": 10,
+      "rod": 446,
+      "rod_before_error_m": 1.5149467236241776e-09,
+      "rod_after_error_m": 1.8788505473654737e-10,
+      "component_before_max": [
+        1.5149467236241776e-09,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        1.8788505473654737e-10,
+        446,
+        18,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 2,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 3.579717303830998e-10,
+      "rod_after_error_m": 2.3401965478300757e-10,
+      "component_before_max": [
+        3.579717303830998e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        2.3401965478300757e-10,
+        446,
+        19,
+        2
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 2,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.3401965478300757e-10,
+      "rod_after_error_m": 3.6435692267119957e-10,
+      "component_before_max": [
+        2.3401965478300757e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        3.6435692267119957e-10,
+        446,
+        19,
+        2
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 2,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 3.6435692267119957e-10,
+      "rod_after_error_m": 1.8987274252868502e-10,
+      "component_before_max": [
+        3.6435692267119957e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        1.8987274252868502e-10,
+        446,
+        18,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 2,
+      "contact_iteration": 7,
+      "rod": 446,
+      "rod_before_error_m": 1.8987274252868502e-10,
+      "rod_after_error_m": 3.267444834663402e-10,
+      "component_before_max": [
+        1.8987274252868502e-10,
+        446,
+        18,
+        0
+      ],
+      "component_after_max": [
+        3.267444834663402e-10,
+        446,
+        19,
+        2
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 3,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 3.681772777278103e-10,
+      "rod_after_error_m": 2.9982304139419824e-10,
+      "component_before_max": [
+        3.681772777278103e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        2.9982304139419824e-10,
+        446,
+        20,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 3,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.9982304139419824e-10,
+      "rod_after_error_m": 1.3602043935634356e-09,
+      "component_before_max": [
+        1.4815798865530638e-09,
+        454,
+        17,
+        0
+      ],
+      "component_after_max": [
+        1.8598429046834397e-09,
+        454,
+        17,
+        0
+      ],
+      "component_native_rods": 3,
+      "component_external_rods": 3,
+      "native_pair_count": 2,
+      "external_pair_count": 2
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 3,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 1.3602043935634356e-09,
+      "rod_after_error_m": 3.1785189757993493e-10,
+      "component_before_max": [
+        1.3602043935634356e-09,
+        446,
+        19,
+        1
+      ],
+      "component_after_max": [
+        3.1785189757993493e-10,
+        446,
+        20,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 3,
+      "contact_iteration": 7,
+      "rod": 446,
+      "rod_before_error_m": 3.1785189757993493e-10,
+      "rod_after_error_m": 2.287953268682863e-10,
+      "component_before_max": [
+        1.4822038318929032e-09,
+        454,
+        17,
+        0
+      ],
+      "component_after_max": [
+        1.481189004781669e-09,
+        454,
+        17,
+        0
+      ],
+      "component_native_rods": 7,
+      "component_external_rods": 7,
+      "native_pair_count": 6,
+      "external_pair_count": 6
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 4,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 3.649424005179591e-10,
+      "rod_after_error_m": 2.5996912565370844e-10,
+      "component_before_max": [
+        3.649424005179591e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        2.5996912565370844e-10,
+        446,
+        19,
+        2
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 4,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 2.5996912565370844e-10,
+      "rod_after_error_m": 2.3615785021968705e-10,
+      "component_before_max": [
+        1.4778015894334473e-09,
+        454,
+        17,
+        0
+      ],
+      "component_after_max": [
+        1.4784843765935918e-09,
+        454,
+        17,
+        0
+      ],
+      "component_native_rods": 7,
+      "component_external_rods": 7,
+      "native_pair_count": 6,
+      "external_pair_count": 6
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 4,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 2.3615785021968705e-10,
+      "rod_after_error_m": 3.42992201481096e-10,
+      "component_before_max": [
+        1.4784843765935918e-09,
+        454,
+        17,
+        0
+      ],
+      "component_after_max": [
+        1.518597719796233e-09,
+        454,
+        17,
+        0
+      ],
+      "component_native_rods": 6,
+      "component_external_rods": 6,
+      "native_pair_count": 5,
+      "external_pair_count": 5
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 4,
+      "contact_iteration": 7,
+      "rod": 446,
+      "rod_before_error_m": 3.42992201481096e-10,
+      "rod_after_error_m": 1.4640011425370858e-09,
+      "component_before_max": [
+        3.42992201481096e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        1.4640011425370858e-09,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 5,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 1.4871475350480834e-06,
+      "rod_after_error_m": 3.5249723445707204e-08,
+      "component_before_max": [
+        1.4871475350480834e-06,
+        446,
+        20,
+        0
+      ],
+      "component_after_max": [
+        3.5249723445707204e-08,
+        446,
+        20,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 5,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 3.5249723445707204e-08,
+      "rod_after_error_m": 1.7680776745465643e-08,
+      "component_before_max": [
+        2.125414763215483e-07,
+        463,
+        16,
+        0
+      ],
+      "component_after_max": [
+        2.0151574593729737e-07,
+        463,
+        16,
+        0
+      ],
+      "component_native_rods": 7,
+      "component_external_rods": 7,
+      "native_pair_count": 6,
+      "external_pair_count": 6
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 5,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 1.7680776745465643e-08,
+      "rod_after_error_m": 4.830983707689029e-10,
+      "component_before_max": [
+        2.0151574593729737e-07,
+        463,
+        16,
+        0
+      ],
+      "component_after_max": [
+        2.126072956576408e-09,
+        463,
+        16,
+        0
+      ],
+      "component_native_rods": 6,
+      "component_external_rods": 6,
+      "native_pair_count": 5,
+      "external_pair_count": 5
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 5,
+      "contact_iteration": 7,
+      "rod": 446,
+      "rod_before_error_m": 4.830983707689029e-10,
+      "rod_after_error_m": 1.3666190401551148e-09,
+      "component_before_max": [
+        4.830983707689029e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        1.3666190401551148e-09,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 6,
+      "contact_iteration": 0,
+      "rod": 446,
+      "rod_before_error_m": 1.487149401971366e-06,
+      "rod_after_error_m": 3.526679311083303e-08,
+      "component_before_max": [
+        1.487149401971366e-06,
+        446,
+        20,
+        0
+      ],
+      "component_after_max": [
+        3.526679311083303e-08,
+        446,
+        20,
+        0
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 6,
+      "contact_iteration": 2,
+      "rod": 446,
+      "rod_before_error_m": 3.526679311083303e-08,
+      "rod_after_error_m": 1.7693084233827427e-08,
+      "component_before_max": [
+        2.126946224006998e-07,
+        463,
+        16,
+        0
+      ],
+      "component_after_max": [
+        2.0157651529906229e-07,
+        463,
+        16,
+        0
+      ],
+      "component_native_rods": 7,
+      "component_external_rods": 7,
+      "native_pair_count": 6,
+      "external_pair_count": 6
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 6,
+      "contact_iteration": 5,
+      "rod": 446,
+      "rod_before_error_m": 1.7693084233827427e-08,
+      "rod_after_error_m": 4.834460362417026e-10,
+      "component_before_max": [
+        2.0157651529906229e-07,
+        463,
+        16,
+        0
+      ],
+      "component_after_max": [
+        2.043870558909866e-09,
+        463,
+        16,
+        0
+      ],
+      "component_native_rods": 6,
+      "component_external_rods": 6,
+      "native_pair_count": 5,
+      "external_pair_count": 5
+    },
+    {
+      "substep": 1,
+      "structural_iteration": 6,
+      "contact_iteration": 7,
+      "rod": 446,
+      "rod_before_error_m": 4.834460362417026e-10,
+      "rod_after_error_m": 1.3725844905110307e-09,
+      "component_before_max": [
+        4.834460362417026e-10,
+        446,
+        19,
+        2
+      ],
+      "component_after_max": [
+        1.3725844905110307e-09,
+        446,
+        19,
+        1
+      ],
+      "component_native_rods": 1,
+      "component_external_rods": 1,
+      "native_pair_count": 0,
+      "external_pair_count": 0
+    }
+  ]
+}

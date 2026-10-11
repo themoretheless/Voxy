@@ -1,0 +1,36 @@
+{
+  "status": "failed",
+  "elapsed_seconds": 5384.68,
+  "frames": [
+    "HYBRID HAIR FRAME frame=1 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.00000037886909751150277",
+    "HYBRID HAIR FRAME frame=2 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.0000004995456141521082",
+    "HYBRID HAIR FRAME frame=3 max_position_error_m=0.00000002229036381862226 max_quaternion_component_error=0.0000005948975635439169",
+    "HYBRID HAIR FRAME frame=4 max_position_error_m=0.000000026696428151451457 max_quaternion_component_error=0.0000006635868054494232",
+    "HYBRID HAIR FRAME frame=5 max_position_error_m=0.00000006798612306110896 max_quaternion_component_error=0.0000009151470569401798",
+    "HYBRID HAIR FRAME frame=6 max_position_error_m=0.00000012418188220439386 max_quaternion_component_error=0.0000012812540080009427",
+    "HYBRID HAIR FRAME frame=7 max_position_error_m=0.00000015973073053121567 max_quaternion_component_error=0.0000016417575869898116",
+    "HYBRID HAIR FRAME frame=8 max_position_error_m=0.0000001750216931037385 max_quaternion_component_error=0.0000016417575869898116",
+    "HYBRID HAIR FRAME frame=9 max_position_error_m=0.00000018657376842090567 max_quaternion_component_error=0.0000029855980034909635",
+    "HYBRID HAIR FRAME frame=10 max_position_error_m=0.00018540370752624658 max_quaternion_component_error=0.002712951886454318"
+  ],
+  "joint_fallback_lines": 376888,
+  "terminal_log": [
+    "HAIR DIVERGENCE NEIGHBOR external point=20 position=[0.0974031759229156, 0.4405325049128899, -0.07563515319730131] body_distance_m=0.0000399999999999937 body_normal=[0.1860747626918507, 0.06781026316068192, -0.9801928131236479]",
+    "HYBRID HAIR FRAME frame=10 max_position_error_m=0.00018540370752624658 max_quaternion_component_error=0.002712951886454318",
+    "",
+    "thread 'female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts' (68599053) panicked at crates/voxy_app/src/female_hair.rs:1080:13:",
+    "frame 10: GPU position drift 0.00018540370752624658; worst rod=409 point=20",
+    "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+    "test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... FAILED",
+    "",
+    "failures:",
+    "",
+    "failures:",
+    "    female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts",
+    "",
+    "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 324 filtered out; finished in 5384.68s",
+    "",
+    "error: test failed, to rerun pass `-p voxy_app --lib`"
+  ],
+  "scope": "historical frozen binary before bounded and packed transport; not current GPU-only qualification"
+}

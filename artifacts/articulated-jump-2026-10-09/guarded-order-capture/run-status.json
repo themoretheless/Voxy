@@ -1,0 +1,10 @@
+{
+  "status": "stopped_superseded",
+  "session": 12057,
+  "completed_paired_frames": 2,
+  "guarded_appended_order": true,
+  "contains_clear_pair_witness_optimization": false,
+  "contains_prepared_retry_reuse": false,
+  "full_jump_qualified": false,
+  "fps_qualified": false
+}

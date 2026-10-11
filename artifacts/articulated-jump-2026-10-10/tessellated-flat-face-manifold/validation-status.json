@@ -1,0 +1,44 @@
+{
+  "physics_units": {
+    "passed": 351,
+    "failed": 0,
+    "ignored": 39,
+    "scope": "Broader run before adding moving-surface test; same production geometry change."
+  },
+  "moving_surface_focused_test": {
+    "passed": 1,
+    "failed": 0
+  },
+  "hair_integration": {
+    "passed": 21,
+    "failed": 0
+  },
+  "metal_physical_scene": {
+    "passed": true,
+    "guides": 4,
+    "frames": 4,
+    "exact_serial_pose_and_rotation": true,
+    "fallbacks": 0
+  },
+  "same_input_gpu_velocity_operators": {
+    "static_passed": 24,
+    "moving_passed": 2,
+    "failed": 0,
+    "fallbacks": 0
+  },
+  "full_current_trajectory": {
+    "status": "failed",
+    "session_id": 12994,
+    "path": "../tessellated-manifold-batched-full-capture/",
+    "test_pid": 53792,
+    "cargo_pid": 52281,
+    "runtime_coordinate_batches": true
+  },
+  "previous_single_face_full_trajectory": {
+    "status": "failed",
+    "test_pid": 42024,
+    "session_id": 5578
+  },
+  "rendered_fps": "unqualified",
+  "observed_utc": "2026-10-10T06:00:17.739601+00:00"
+}

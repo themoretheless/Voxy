@@ -1,0 +1,33 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:893:7
+    |
+893 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running unittests src/lib.rs (/tmp/voxy-release-120fps-20261007/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+captured QR rows=46 width=2142, paired original/cached seconds=[(0.029307459, 0.009388208), (0.029202375, 0.009707583), (0.029112625, 0.008580125), (0.028909625, 0.008485375), (0.028945792, 0.008637916), (0.028963333, 0.008802042), (0.028926542, 0.0088065)]
+captured exact gap dense/sparse seconds=[(0.004727084, 0.003165417), (0.00482575, 0.003242541), (0.004794292, 0.003273625), (0.004742458, 0.003253792), (0.004821333, 0.003275416), (0.004694833, 0.00341725), (0.004822041, 0.003378417)]
+captured QR residual 100 evaluations dense/sparse seconds=[(0.006011125, 0.000470125), (0.0060865, 0.000467916), (0.005932167, 0.000456), (0.005944125, 0.00045675), (0.005935209, 0.000448625), (0.00595375, 0.000445708), (0.006038333, 0.00045875)]
+test hair::contact_response_system::square_root_qr::tests::captured_prefix_reuse_matches_reference_and_reports_paired_time ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 361 filtered out; finished in 0.37s
+

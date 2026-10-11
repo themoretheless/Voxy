@@ -133,20 +133,15 @@ impl InertialBody {
             surface_gradient: Vec::new(),
             embedded_skin_work: super::super::EmbeddedSkinWork::default(),
         };
+        let mut world = vec![[0.; 3]; self.masses.len()];
         for (sample_index, &(time, weight)) in nodes.iter().enumerate() {
-            let world: Vec<Vec3> = self
-                .body
-                .positions
-                .iter()
-                .enumerate()
-                .map(|(node, old)| {
-                    if self.body.pinned[node] {
-                        super::super::surface_distance::trajectory_point(*old, end[node], time)
-                    } else {
-                        std::array::from_fn(|axis| old[axis] + (2. * time) * points[node][axis])
-                    }
-                })
-                .collect();
+            for (node, (dst, &old)) in world.iter_mut().zip(&self.body.positions).enumerate() {
+                *dst = if self.body.pinned[node] {
+                    super::super::surface_distance::trajectory_point(old, end[node], time)
+                } else {
+                    std::array::from_fn(|axis| old[axis] + (2. * time) * points[node][axis])
+                };
+            }
             let value = if let Some((next, samples)) = skin_motion {
                 let sample = &samples[sample_index];
                 let value = evaluate(
@@ -257,7 +252,7 @@ impl InertialBody {
         // An adaptive caller can reduce time after a failed nonlinear solve.
         // Keep the original contact rescue policy whenever any authored pair is
         // eligible. Pure-material path quadrature still refines on its own error.
-        let contact_free = !next.may_contact_faces(&self.body.surface())
+        let contact_free = !next.may_contact_faces(self.body.surface_faces())
             && self
                 .body
                 .stationary_embedded_contact()
@@ -387,7 +382,7 @@ impl InertialBody {
         if weight.iter().any(|v| !v.is_finite() || *v <= 0.) {
             return Err("implicit inertia overflow");
         }
-        let faces = self.body.surface();
+        let faces = self.body.surface_faces();
         let prepared_path = current.prepare_path_partition(&next, knots)?;
         // Contact is sensitive to sub-ULP world displacements near the barrier.
         // Preserve the solver displacement in a frame at the initial body pose.
@@ -446,6 +441,8 @@ impl InertialBody {
         } else {
             None
         };
+        let rest_moduli = (contact_free && search_operation.is_none())
+            .then(|| rest_material_moduli(&self.body));
         let prepared_motion = current.prepare_motion(&next)?;
         let world_endpoint = |points: &[Vec3]| -> Vec<Vec3> {
             points
@@ -775,13 +772,14 @@ impl InertialBody {
                 return Err("implicit search metric overflow");
             }
             let base_direction = |r: &[Vec3]| {
-                try_coupled_contact_direction_with_material(
+                try_coupled_contact_direction_with_material_prepared(
                     &weight,
                     &diagonal,
                     &blocks,
                     &self.body.pinned,
                     r,
                     contact_free.then_some(&self.body),
+                    rest_moduli.as_deref(),
                     search_operation.as_deref(),
                 )
             };
@@ -1528,6 +1526,9 @@ impl InertialBody {
             return Err("implicit support preconditioner overflow");
         }
         let search_operation = self.prepare_tissue_search(&weight)?;
+        let rest_moduli = search_operation
+            .is_none()
+            .then(|| rest_material_moduli(&self.body));
         let inverse_material = |g: &[Vec3]| {
             try_preconditioned_direction(
                 &self.body.pinned,
@@ -1540,7 +1541,12 @@ impl InertialBody {
                             &self.body.pinned,
                         )
                     } else {
-                        Ok(rest_material_action(&self.body, &weight, v))
+                        Ok(rest_material_action_prepared(
+                            &self.body,
+                            &weight,
+                            v,
+                            rest_moduli.as_deref(),
+                        ))
                     }
                 },
                 |r| {
@@ -1721,7 +1727,6 @@ fn relative_midpoint_endpoint(
 // coupling between vertices and axes. This is a search metric, not the full
 // material/geometric Hessian; nonlinear admission still checks the real model.
 #[cfg(test)]
-#[cfg(test)]
 fn coupled_contact_direction(
     weight: &[f64],
     diagonal: &[Vec3],
@@ -1746,6 +1751,7 @@ fn coupled_contact_direction_with_material(
     )
     .unwrap()
 }
+#[cfg(test)]
 fn try_coupled_contact_direction_with_material(
     weight: &[f64],
     diagonal: &[Vec3],
@@ -1753,6 +1759,21 @@ fn try_coupled_contact_direction_with_material(
     pinned: &[bool],
     residual: &[Vec3],
     body: Option<&super::super::Body>,
+    operation: Option<&dyn super::super::TissueSearchOperation>,
+) -> Result<Vec<Vec3>, &'static str> {
+    try_coupled_contact_direction_with_material_prepared(
+        weight, diagonal, blocks, pinned, residual, body, None, operation,
+    )
+}
+#[allow(clippy::too_many_arguments)]
+fn try_coupled_contact_direction_with_material_prepared(
+    weight: &[f64],
+    diagonal: &[Vec3],
+    blocks: &[super::super::PrescribedContactStencil],
+    pinned: &[bool],
+    residual: &[Vec3],
+    body: Option<&super::super::Body>,
+    moduli: Option<&[(f64, f64)]>,
     operation: Option<&dyn super::super::TissueSearchOperation>,
 ) -> Result<Vec<Vec3>, &'static str> {
     let apply = |v: &[Vec3]| {
@@ -1763,7 +1784,7 @@ fn try_coupled_contact_direction_with_material(
             if let Some(operation) = operation {
                 super::super::search_snapshot::checked_search_action(operation, v, pinned)?
             } else {
-                rest_material_action(body, weight, v)
+                rest_material_action_prepared(body, weight, v, moduli)
             }
         } else {
             v.iter()
@@ -1804,7 +1825,6 @@ fn try_coupled_contact_direction_with_material(
 
 // Rest isotropic elasticity plus inertia is only a search metric. Nonlinear
 // forces, anisotropy, memory and endpoint work remain in the real evaluator.
-#[cfg(test)]
 fn rest_material_moduli(body: &super::super::Body) -> Vec<(f64, f64)> {
     body.elements
         .iter()
@@ -1867,13 +1887,16 @@ fn rest_material_action_prepared(
             }
         }
         let trace = h[0][0] + h[1][1] + h[2][2];
-        let stress: [[f64; 3]; 3] = std::array::from_fn(|a| {
-            std::array::from_fn(|b| {
+        let mut stress = [[0.; 3]; 3];
+        for a in 0..3 {
+            for b in a..3 {
                 let sym = 0.5 * (h[a][b] + h[b][a]);
                 let dev = if a == b { sym - trace / 3. } else { sym };
-                2. * mu * dev + if a == b { bulk * trace } else { 0. }
-            })
-        });
+                let value = 2. * mu * dev + if a == b { bulk * trace } else { 0. };
+                stress[a][b] = value;
+                stress[b][a] = value;
+            }
+        }
         for corner in 0..4 {
             let node = e.nodes[corner];
             if !body.pinned[node] {

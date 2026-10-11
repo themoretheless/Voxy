@@ -1,0 +1,9 @@
+{
+  "slow_call_counts_by_refinement": {
+    "0": 7938
+  },
+  "summed_profiled_call_ms_by_refinement": {
+    "0": 189272.21090200005
+  },
+  "caution": "Only calls selected by the >=10 ms profiler; concurrent durations overlap, not whole-frame CPU time."
+}
