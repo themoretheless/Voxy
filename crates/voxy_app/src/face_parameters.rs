@@ -2666,8 +2666,7 @@ impl FaceParameters {
             let mut delta = Vec3::ZERO;
             for active_ctrl in &active {
                 // Anatomical left is positive X in this bind-space model.
-                if (active_ctrl.is_left && point.x <= 0.)
-                    || (active_ctrl.is_right && point.x >= 0.)
+                if (active_ctrl.is_left && point.x <= 0.) || (active_ctrl.is_right && point.x >= 0.)
                 {
                     continue;
                 }

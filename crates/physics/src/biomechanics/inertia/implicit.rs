@@ -441,8 +441,8 @@ impl InertialBody {
         } else {
             None
         };
-        let rest_moduli = (contact_free && search_operation.is_none())
-            .then(|| rest_material_moduli(&self.body));
+        let rest_moduli =
+            (contact_free && search_operation.is_none()).then(|| rest_material_moduli(&self.body));
         let prepared_motion = current.prepare_motion(&next)?;
         let world_endpoint = |points: &[Vec3]| -> Vec<Vec3> {
             points

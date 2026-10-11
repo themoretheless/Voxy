@@ -132,14 +132,15 @@ impl GpuLightingProgram {
             cache: None,
         });
 
-        let pipeline_step_light = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-            label: Some("lighting step light"),
-            layout: Some(&pipeline_layout),
-            module: &shader,
-            entry_point: Some("cs_step_light"),
-            compilation_options: wgpu::PipelineCompilationOptions::default(),
-            cache: None,
-        });
+        let pipeline_step_light =
+            device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("lighting step light"),
+                layout: Some(&pipeline_layout),
+                module: &shader,
+                entry_point: Some("cs_step_light"),
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
+                cache: None,
+            });
 
         let pipeline_pack = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("lighting pack"),
@@ -190,30 +191,38 @@ impl GpuLightingProgram {
             _pad1: 0,
         };
 
-        let config_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("lighting config buffer"),
-            contents: bytemuck::bytes_of(&config_sky),
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-        });
+        let config_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("lighting config buffer"),
+                contents: bytemuck::bytes_of(&config_sky),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            });
 
-        let opaque_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("lighting opaque buffer"),
-            contents: bytemuck::cast_slice(&opaque_words),
-            usage: wgpu::BufferUsages::STORAGE,
-        });
+        let opaque_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("lighting opaque buffer"),
+                contents: bytemuck::cast_slice(&opaque_words),
+                usage: wgpu::BufferUsages::STORAGE,
+            });
 
         // Buffers A and B for ping-pong
         let buffer_a = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("lighting buffer A"),
             size: (PADDED_VOLUME * 4) as u64,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::COPY_DST
+                | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: false,
         });
 
         let buffer_b = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("lighting buffer B"),
             size: (PADDED_VOLUME * 4) as u64,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::COPY_DST
+                | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: false,
         });
 
@@ -323,9 +332,11 @@ impl GpuLightingProgram {
             ],
         });
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("cellular lighting encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("cellular lighting encoder"),
+            });
 
         // Step 1: Skylight seeding and 15 iterations of CA
         {
@@ -363,16 +374,24 @@ impl GpuLightingProgram {
         }
 
         // Save sky light into sky_final_buffer
-        encoder.copy_buffer_to_buffer(&buffer_a, 0, &sky_final_buffer, 0, (PADDED_VOLUME * 4) as u64);
+        encoder.copy_buffer_to_buffer(
+            &buffer_a,
+            0,
+            &sky_final_buffer,
+            0,
+            (PADDED_VOLUME * 4) as u64,
+        );
 
         // Step 2: Block light propagation
         if has_emission {
             encoder.copy_buffer_to_buffer(
-                &self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                    label: Some("emission upload"),
-                    contents: bytemuck::cast_slice(&emission_words),
-                    usage: wgpu::BufferUsages::COPY_SRC,
-                }),
+                &self
+                    .device
+                    .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                        label: Some("emission upload"),
+                        contents: bytemuck::cast_slice(&emission_words),
+                        usage: wgpu::BufferUsages::COPY_SRC,
+                    }),
                 0,
                 &buffer_a,
                 0,
@@ -473,15 +492,18 @@ mod tests {
     #[test]
     fn gpu_lighting_skylight_unobstructed() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return,
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let program = pollster::block_on(GpuLightingProgram::new(&device)).unwrap();
 
@@ -504,15 +526,18 @@ mod tests {
     #[test]
     fn gpu_lighting_block_emission_spreads() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return,
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let program = pollster::block_on(GpuLightingProgram::new(&device)).unwrap();
 
@@ -523,7 +548,9 @@ mod tests {
         let center_idx = 16 + 16 * 34 + 16 * 1156;
         emission[center_idx] = 14;
 
-        let result = program.propagate(&queue, &opaque, &emission, false).unwrap();
+        let result = program
+            .propagate(&queue, &opaque, &emission, false)
+            .unwrap();
         assert_eq!(result.len(), CHUNK_VOLUME);
 
         // Center voxel (local 15, 15, 15)

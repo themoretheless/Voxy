@@ -29,15 +29,19 @@ impl AssetCache {
             weak_refs: HashMap::new(),
         }
     }
-    
+
     /// Cache-lookup-then-load pattern for repeated assets
-    pub fn load_or_cache<T: 'static + Clone>(&self, path: &str, loader: impl FnOnce() -> Result<T, String>) -> Result<T, String> {
+    pub fn load_or_cache<T: 'static + Clone>(
+        &self,
+        path: &str,
+        loader: impl FnOnce() -> Result<T, String>,
+    ) -> Result<T, String> {
         let mut cache = self.strong_cache.lock().unwrap();
         if let Some(cached) = cache.get(path) {
             // Return cloned copy
             return Ok(cached.downcast_ref::<T>().unwrap().clone());
         }
-        
+
         // Load and cache
         let value = loader()?;
         let arc = Arc::new(value.clone());
@@ -68,9 +72,7 @@ pub use watch_worker::{PollWorkerError, SourcePollWorker};
 
 use std::{
     collections::BTreeMap,
-    sync::{
-        atomic::{AtomicU64, Ordering},
-    },
+    sync::atomic::{AtomicU64, Ordering},
 };
 static NEXT_CATALOG: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

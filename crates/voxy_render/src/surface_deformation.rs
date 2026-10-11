@@ -178,26 +178,62 @@ impl SurfaceDeformation {
     /// Skin immutable source positions on the GPU before adding physical
     /// displacements. A trailing rigid joint avoids per-fibre weight storage.
     /// Normal transport still follows the final displaced surface.
-    pub fn enable_rigid_skinning(&mut self, device: &wgpu::Device,
-        normals: &[[f32; 3]], weights: &[crate::SurfaceRigidSkinWeight],
-        joints: u32, trailing_joint: Option<u32>) -> Result<(), SceneError> {
-        if self.rigid_skin.is_some() || normals.len()!=self.count as usize {
+    pub fn enable_rigid_skinning(
+        &mut self,
+        device: &wgpu::Device,
+        normals: &[[f32; 3]],
+        weights: &[crate::SurfaceRigidSkinWeight],
+        joints: u32,
+        trailing_joint: Option<u32>,
+    ) -> Result<(), SceneError> {
+        if self.rigid_skin.is_some() || normals.len() != self.count as usize {
             return Err(SceneError::InvalidGeometry);
         }
-        let skin=crate::surface_rigid_skinning::SurfaceRigidSkinning::new(device,&self._inputs[1],
-            normals,&self.geometry,weights,joints,trailing_joint,self.maximum_rest_position)?;
-        let buffers:[&wgpu::Buffer;6]=[&self._inputs[0],&skin.posed,&self._inputs[2],&self._inputs[3],
-            &self.controls,self.geometry.deformation_vertices()];
-        let entries:Vec<_>=buffers.iter().enumerate().map(|(binding,b)|wgpu::BindGroupEntry {
-            binding:binding as u32,resource:b.as_entire_binding(),
-        }).collect();
-        let group=device.create_bind_group(&wgpu::BindGroupDescriptor {label:Some("skinned surface displacement"),
-            layout:&self.pipeline.get_bind_group_layout(0),entries:&entries});
-        self.group=group;self.rigid_skin=Some(skin);Ok(())
+        let skin = crate::surface_rigid_skinning::SurfaceRigidSkinning::new(
+            device,
+            &self._inputs[1],
+            normals,
+            &self.geometry,
+            weights,
+            joints,
+            trailing_joint,
+            self.maximum_rest_position,
+        )?;
+        let buffers: [&wgpu::Buffer; 6] = [
+            &self._inputs[0],
+            &skin.posed,
+            &self._inputs[2],
+            &self._inputs[3],
+            &self.controls,
+            self.geometry.deformation_vertices(),
+        ];
+        let entries: Vec<_> = buffers
+            .iter()
+            .enumerate()
+            .map(|(binding, b)| wgpu::BindGroupEntry {
+                binding: binding as u32,
+                resource: b.as_entire_binding(),
+            })
+            .collect();
+        let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("skinned surface displacement"),
+            layout: &self.pipeline.get_bind_group_layout(0),
+            entries: &entries,
+        });
+        self.group = group;
+        self.rigid_skin = Some(skin);
+        Ok(())
     }
     /// Upload a validated rigid palette; vertex deformation stays resident.
-    pub fn upload_rigid_pose(&self, queue:&wgpu::Queue, matrices:&[glam::Mat4])->Result<(),SceneError> {
-        self.rigid_skin.as_ref().ok_or(SceneError::InvalidTransform)?.upload(queue,matrices)
+    pub fn upload_rigid_pose(
+        &self,
+        queue: &wgpu::Queue,
+        matrices: &[glam::Mat4],
+    ) -> Result<(), SceneError> {
+        self.rigid_skin
+            .as_ref()
+            .ok_or(SceneError::InvalidTransform)?
+            .upload(queue, matrices)
     }
     /// Upload only simulation-control displacements, in metres.
     /// Positions are computed from the immutable rest mesh on every encode.
@@ -244,7 +280,9 @@ impl SurfaceDeformation {
         if !self.initialized {
             return Err(SceneError::InvalidGeometry);
         }
-        if let Some(skin)=&self.rigid_skin {skin.encode(encoder)?;}
+        if let Some(skin) = &self.rigid_skin {
+            skin.encode(encoder)?;
+        }
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("surface displacement transfer"),
             timestamp_writes: None,

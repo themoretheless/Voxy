@@ -318,16 +318,27 @@ impl ComputeJob {
     /// Switch a resident storage job to another plain-storage pipeline without
     /// copying or reallocating its buffer. Rejection leaves the job unchanged.
     /// The caller owns shader storage-ABI compatibility and command ordering.
-    pub fn use_program(&mut self,program:&ComputeProgram)->Result<(),ComputeError> {
-        if self.device!=program.device {return Err(ComputeError::DeviceMismatch);}
-        if program.scene_inputs || program.additional_layout.is_some() {return Err(ComputeError::InvalidBuffer);}
-        let bind_group=self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label:Some("resident compute pipeline switch"),layout:&program.layout,
-            entries:&[wgpu::BindGroupEntry {binding:0,resource:self.storage.as_entire_binding()}],
+    pub fn use_program(&mut self, program: &ComputeProgram) -> Result<(), ComputeError> {
+        if self.device != program.device {
+            return Err(ComputeError::DeviceMismatch);
+        }
+        if program.scene_inputs || program.additional_layout.is_some() {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("resident compute pipeline switch"),
+            layout: &program.layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: self.storage.as_entire_binding(),
+            }],
         });
-        self.pipeline=program.pipeline.clone();self.bind_group=bind_group;
-        self.max_workgroups=program.max_workgroups;self.entry_point=program.entry_point.clone();
-        self.revision=program.revision;self.requires_additional_binding=false;
+        self.pipeline = program.pipeline.clone();
+        self.bind_group = bind_group;
+        self.max_workgroups = program.max_workgroups;
+        self.entry_point = program.entry_point.clone();
+        self.revision = program.revision;
+        self.requires_additional_binding = false;
         Ok(())
     }
     /// Selected entry point retained when this job was created.
@@ -367,9 +378,12 @@ impl ComputeJob {
     /// Rejects zero repetitions, invalid workgroups or an additional-binding ABI
     /// before recording a pass.
     pub fn encode_repeated_steps(
-        &self, encoder:&mut wgpu::CommandEncoder, workgroups:[u32;3], repetitions:u32,
-    )->Result<(),ComputeError> {
-        self.encode_repeated_step_options(encoder,workgroups,None,None,repetitions)
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        workgroups: [u32; 3],
+        repetitions: u32,
+    ) -> Result<(), ComputeError> {
+        self.encode_repeated_step_options(encoder, workgroups, None, None, repetitions)
     }
     /// Profile an ordered group of resident dispatches as one GPU pass.
     /// The caller owns and resolves the query set. The interval includes pass
@@ -379,10 +393,13 @@ impl ComputeJob {
     /// dimensions before recording a pass. Query ownership/type/indices remain
     /// subject to wgpu validation, as for `encode_step_with_timestamps`.
     pub fn encode_repeated_steps_with_timestamps(
-        &self, encoder:&mut wgpu::CommandEncoder, workgroups:[u32;3], repetitions:u32,
-        timestamps:wgpu::ComputePassTimestampWrites<'_>,
-    )->Result<(),ComputeError> {
-        self.encode_repeated_step_options(encoder,workgroups,None,Some(timestamps),repetitions)
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        workgroups: [u32; 3],
+        repetitions: u32,
+        timestamps: wgpu::ComputePassTimestampWrites<'_>,
+    ) -> Result<(), ComputeError> {
+        self.encode_repeated_step_options(encoder, workgroups, None, Some(timestamps), repetitions)
     }
     /// Profile one resident dispatch using pass-boundary GPU timestamps.
     pub fn encode_step_with_timestamps(
@@ -408,15 +425,25 @@ impl ComputeJob {
         additional: Option<&wgpu::BindGroup>,
         timestamps: Option<wgpu::ComputePassTimestampWrites<'_>>,
     ) -> Result<(), ComputeError> {
-        self.encode_repeated_step_options(encoder,workgroups,additional,timestamps,1)
+        self.encode_repeated_step_options(encoder, workgroups, additional, timestamps, 1)
     }
     fn encode_repeated_step_options(
-        &self, encoder:&mut wgpu::CommandEncoder, workgroups:[u32;3],
-        additional:Option<&wgpu::BindGroup>, timestamps:Option<wgpu::ComputePassTimestampWrites<'_>>,
-        repetitions:u32,
-    )->Result<(),ComputeError> {
-        if repetitions==0 {return Err(ComputeError::InvalidDispatch);}
-        if timestamps.is_some() && !self.device.features().contains(wgpu::Features::TIMESTAMP_QUERY) {
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        workgroups: [u32; 3],
+        additional: Option<&wgpu::BindGroup>,
+        timestamps: Option<wgpu::ComputePassTimestampWrites<'_>>,
+        repetitions: u32,
+    ) -> Result<(), ComputeError> {
+        if repetitions == 0 {
+            return Err(ComputeError::InvalidDispatch);
+        }
+        if timestamps.is_some()
+            && !self
+                .device
+                .features()
+                .contains(wgpu::Features::TIMESTAMP_QUERY)
+        {
             return Err(ComputeError::Unsupported);
         }
         if additional.is_some() != self.requires_additional_binding {
@@ -505,27 +532,52 @@ impl ComputeDispatch {
     /// before allocating staging or recording any copy.
     /// # Errors
     /// Rejects invalid ranges/usages, device size limits and staging exhaustion.
-    pub fn gather_buffers(device:&wgpu::Device,encoder:&mut wgpu::CommandEncoder,
-        ranges:&[(&wgpu::Buffer,u64,u64,u64)],size:u64)->Result<Self,ComputeError> {
-        if size>device.limits().max_buffer_size || ranges.iter().any(|(source,_,_,_)|
-            !source.usage().contains(wgpu::BufferUsages::COPY_SRC)) {return Err(ComputeError::InvalidBuffer);}
-        validate_multi_gather_ranges(ranges.iter().map(|(source,offset,target,length)|
-            (source.size(),*offset,*target,*length)),size)?;
-        let readback=ComputeReadbackPool::for_device(device).acquire(size)?;
-        for &(source,offset,target,length) in ranges {
-            encoder.copy_buffer_to_buffer(source,offset,readback.buffer(),target,length);
+    pub fn gather_buffers(
+        device: &wgpu::Device,
+        encoder: &mut wgpu::CommandEncoder,
+        ranges: &[(&wgpu::Buffer, u64, u64, u64)],
+        size: u64,
+    ) -> Result<Self, ComputeError> {
+        if size > device.limits().max_buffer_size
+            || ranges
+                .iter()
+                .any(|(source, _, _, _)| !source.usage().contains(wgpu::BufferUsages::COPY_SRC))
+        {
+            return Err(ComputeError::InvalidBuffer);
         }
-        Ok(Self {readback})
+        validate_multi_gather_ranges(
+            ranges
+                .iter()
+                .map(|(source, offset, target, length)| (source.size(), *offset, *target, *length)),
+            size,
+        )?;
+        let readback = ComputeReadbackPool::for_device(device).acquire(size)?;
+        for &(source, offset, target, length) in ranges {
+            encoder.copy_buffer_to_buffer(source, offset, readback.buffer(), target, length);
+        }
+        Ok(Self { readback })
     }
     /// Gather ordered source ranges into one complete staging snapshot.
     /// Destination ranges must be contiguous, aligned and cover `size` exactly.
     /// Validates every range before allocating or recording commands.
-    pub fn gather_buffer(device:&wgpu::Device,encoder:&mut wgpu::CommandEncoder,source:&wgpu::Buffer,ranges:&[(u64,u64,u64)],size:u64)->Result<Self,ComputeError> {
-        if !source.usage().contains(wgpu::BufferUsages::COPY_SRC) || size>device.limits().max_buffer_size {return Err(ComputeError::InvalidBuffer);}
-        validate_gather_ranges(source.size(),ranges,size)?;
-        let readback=ComputeReadbackPool::for_device(device).acquire(size)?;
-        for &(offset,target,length) in ranges {encoder.copy_buffer_to_buffer(source,offset,readback.buffer(),target,length);}
-        Ok(Self {readback})
+    pub fn gather_buffer(
+        device: &wgpu::Device,
+        encoder: &mut wgpu::CommandEncoder,
+        source: &wgpu::Buffer,
+        ranges: &[(u64, u64, u64)],
+        size: u64,
+    ) -> Result<Self, ComputeError> {
+        if !source.usage().contains(wgpu::BufferUsages::COPY_SRC)
+            || size > device.limits().max_buffer_size
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        validate_gather_ranges(source.size(), ranges, size)?;
+        let readback = ComputeReadbackPool::for_device(device).acquire(size)?;
+        for &(offset, target, length) in ranges {
+            encoder.copy_buffer_to_buffer(source, offset, readback.buffer(), target, length);
+        }
+        Ok(Self { readback })
     }
     /// Records a bounded copy from caller-owned storage for one-shot readback.
     /// The source must belong to this device and permit `COPY_SRC`. Submit the
@@ -624,40 +676,69 @@ mod tests {
     use super::*;
     #[test]
     fn timestamp_dispatches_reject_disabled_feature_without_recording_a_pass() {
-        let (device,_queue)=wgpu::Device::noop(&Default::default());
+        let (device, _queue) = wgpu::Device::noop(&Default::default());
         assert!(!device.features().contains(wgpu::Features::TIMESTAMP_QUERY));
-        let scope=device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let program=pollster::block_on(ComputeProgram::new(&device,"@compute @workgroup_size(1) fn cs_main() {}")).unwrap();
-        let job=program.create_job(&device,&[0;4]).unwrap();
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let program = pollster::block_on(ComputeProgram::new(
+            &device,
+            "@compute @workgroup_size(1) fn cs_main() {}",
+        ))
+        .unwrap();
+        let job = program.create_job(&device, &[0; 4]).unwrap();
         // A disabled device cannot create a timestamp query set. An ordinary
         // set suffices to prove preflight returns before wgpu sees the pass.
-        let queries=device.create_query_set(&wgpu::QuerySetDescriptor {label:None,ty:wgpu::QueryType::Occlusion,count:2});
-        let writes=||wgpu::ComputePassTimestampWrites {query_set:&queries,beginning_of_pass_write_index:Some(0),end_of_pass_write_index:Some(1)};
-        let mut encoder=device.create_command_encoder(&Default::default());
-        assert_eq!(job.encode_step_with_timestamps(&mut encoder,[1,1,1],writes()),Err(ComputeError::Unsupported));
-        assert_eq!(job.encode_repeated_steps_with_timestamps(&mut encoder,[1,1,1],3,writes()),Err(ComputeError::Unsupported));
-        job.encode_repeated_steps(&mut encoder,[1,1,1],3).unwrap();
-        let _=encoder.finish();
-        assert!(pollster::block_on(scope.pop()).is_none(),"rejected profiling request recorded an invalid pass");
+        let queries = device.create_query_set(&wgpu::QuerySetDescriptor {
+            label: None,
+            ty: wgpu::QueryType::Occlusion,
+            count: 2,
+        });
+        let writes = || wgpu::ComputePassTimestampWrites {
+            query_set: &queries,
+            beginning_of_pass_write_index: Some(0),
+            end_of_pass_write_index: Some(1),
+        };
+        let mut encoder = device.create_command_encoder(&Default::default());
+        assert_eq!(
+            job.encode_step_with_timestamps(&mut encoder, [1, 1, 1], writes()),
+            Err(ComputeError::Unsupported)
+        );
+        assert_eq!(
+            job.encode_repeated_steps_with_timestamps(&mut encoder, [1, 1, 1], 3, writes()),
+            Err(ComputeError::Unsupported)
+        );
+        job.encode_repeated_steps(&mut encoder, [1, 1, 1], 3)
+            .unwrap();
+        let _ = encoder.finish();
+        assert!(
+            pollster::block_on(scope.pop()).is_none(),
+            "rejected profiling request recorded an invalid pass"
+        );
     }
     #[test]
     fn resident_pipeline_switch_preserves_allocation_and_rejects_foreign_owner() {
-        let (owner,_owner_queue)=wgpu::Device::noop(&Default::default());
-        let (other,_other_queue)=wgpu::Device::noop(&Default::default());
-        let source="@compute @workgroup_size(1) fn cs_main() {}";
-        let first=pollster::block_on(ComputeProgram::new(&owner,source)).unwrap();
-        let second=pollster::block_on(ComputeProgram::with_entry_point(&owner,"@compute @workgroup_size(1) fn next() {}","next")).unwrap();
-        let foreign=pollster::block_on(ComputeProgram::new(&other,source)).unwrap();
-        let mut job=first.create_job(&owner,&[0;4]).unwrap();
-        let stats=ComputeMemoryBudget::for_device(&owner).stats();
-        let buffer=job.buffer().clone();
-        assert_eq!(job.use_program(&foreign),Err(ComputeError::DeviceMismatch));
-        assert_eq!(job.entry_point(),"cs_main");
+        let (owner, _owner_queue) = wgpu::Device::noop(&Default::default());
+        let (other, _other_queue) = wgpu::Device::noop(&Default::default());
+        let source = "@compute @workgroup_size(1) fn cs_main() {}";
+        let first = pollster::block_on(ComputeProgram::new(&owner, source)).unwrap();
+        let second = pollster::block_on(ComputeProgram::with_entry_point(
+            &owner,
+            "@compute @workgroup_size(1) fn next() {}",
+            "next",
+        ))
+        .unwrap();
+        let foreign = pollster::block_on(ComputeProgram::new(&other, source)).unwrap();
+        let mut job = first.create_job(&owner, &[0; 4]).unwrap();
+        let stats = ComputeMemoryBudget::for_device(&owner).stats();
+        let buffer = job.buffer().clone();
+        assert_eq!(job.use_program(&foreign), Err(ComputeError::DeviceMismatch));
+        assert_eq!(job.entry_point(), "cs_main");
         job.use_program(&second).unwrap();
-        assert_eq!(job.entry_point(),"next");assert_eq!(job.buffer(),&buffer);
-        assert_eq!(ComputeMemoryBudget::for_device(&owner).stats(),stats);
-        let mut encoder=owner.create_command_encoder(&Default::default());
-        job.encode_step(&mut encoder,[1,1,1]).unwrap();let _=encoder.finish();
+        assert_eq!(job.entry_point(), "next");
+        assert_eq!(job.buffer(), &buffer);
+        assert_eq!(ComputeMemoryBudget::for_device(&owner).stats(), stats);
+        let mut encoder = owner.create_command_encoder(&Default::default());
+        job.encode_step(&mut encoder, [1, 1, 1]).unwrap();
+        let _ = encoder.finish();
     }
 
     #[test]
@@ -718,17 +799,45 @@ mod tests {
     }
 }
 
-fn validate_gather_ranges(source_size:u64,ranges:&[(u64,u64,u64)],size:u64)->Result<(),ComputeError> {
-    validate_multi_gather_ranges(ranges.iter().map(|&(source,target,length)|(source_size,source,target,length)),size)
+fn validate_gather_ranges(
+    source_size: u64,
+    ranges: &[(u64, u64, u64)],
+    size: u64,
+) -> Result<(), ComputeError> {
+    validate_multi_gather_ranges(
+        ranges
+            .iter()
+            .map(|&(source, target, length)| (source_size, source, target, length)),
+        size,
+    )
 }
-fn validate_multi_gather_ranges(ranges:impl Iterator<Item=(u64,u64,u64,u64)>,size:u64)->Result<(),ComputeError> {
-    if size==0 || !size.is_multiple_of(4) {return Err(ComputeError::InvalidBuffer);}
-    let mut end=0;
-    for (source_size,source,target,length) in ranges {
-        if target!=end || length==0 || !source.is_multiple_of(4) || !length.is_multiple_of(4) || source.checked_add(length).is_none_or(|value|value>source_size) {return Err(ComputeError::InvalidBuffer);}
-        end=target.checked_add(length).filter(|value|*value<=size).ok_or(ComputeError::InvalidBuffer)?;
+fn validate_multi_gather_ranges(
+    ranges: impl Iterator<Item = (u64, u64, u64, u64)>,
+    size: u64,
+) -> Result<(), ComputeError> {
+    if size == 0 || !size.is_multiple_of(4) {
+        return Err(ComputeError::InvalidBuffer);
     }
-    if end!=size {return Err(ComputeError::InvalidBuffer);}
+    let mut end = 0;
+    for (source_size, source, target, length) in ranges {
+        if target != end
+            || length == 0
+            || !source.is_multiple_of(4)
+            || !length.is_multiple_of(4)
+            || source
+                .checked_add(length)
+                .is_none_or(|value| value > source_size)
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        end = target
+            .checked_add(length)
+            .filter(|value| *value <= size)
+            .ok_or(ComputeError::InvalidBuffer)?;
+    }
+    if end != size {
+        return Err(ComputeError::InvalidBuffer);
+    }
     Ok(())
 }
 #[cfg(test)]
@@ -736,49 +845,106 @@ mod gather_range_tests {
     use super::*;
     #[test]
     fn multiple_source_ranges_validate_each_source_before_publication() {
-        assert!(validate_multi_gather_ranges([(16,4,0,8),(12,8,8,4)].into_iter(),12).is_ok());
-        for ranges in [vec![],vec![(16,4,0,8),(8,8,8,4)],
-            vec![(16,4,0,8),(12,8,4,4)],vec![(16,4,0,8),(12,8,12,4)],
-            vec![(16,4,0,8),(12,9,8,4)],vec![(16,4,0,8),(12,8,8,0)],
-            vec![(16,4,0,8),(u64::MAX,u64::MAX-3,8,8)]] {
-            assert!(validate_multi_gather_ranges(ranges.into_iter(),12).is_err());
+        assert!(
+            validate_multi_gather_ranges([(16, 4, 0, 8), (12, 8, 8, 4)].into_iter(), 12).is_ok()
+        );
+        for ranges in [
+            vec![],
+            vec![(16, 4, 0, 8), (8, 8, 8, 4)],
+            vec![(16, 4, 0, 8), (12, 8, 4, 4)],
+            vec![(16, 4, 0, 8), (12, 8, 12, 4)],
+            vec![(16, 4, 0, 8), (12, 9, 8, 4)],
+            vec![(16, 4, 0, 8), (12, 8, 8, 0)],
+            vec![(16, 4, 0, 8), (u64::MAX, u64::MAX - 3, 8, 8)],
+        ] {
+            assert!(validate_multi_gather_ranges(ranges.into_iter(), 12).is_err());
         }
     }
     #[test]
     #[ignore = "requires GPU; heterogeneous sources share a single bounded staging lease"]
     fn gpu_multiple_sources_use_one_readback_and_invalid_tail_preserves_pool() {
         use wgpu::util::DeviceExt;
-        let instance=crate::GraphicsOptions::default().create_instance();
-        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-        let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
-        let pool=ComputeReadbackPool::configure(&device,crate::ComputeReadbackLimits {max_bytes:12,max_buffers:1}).unwrap();
-        let a=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:None,
-            contents:bytemuck::cast_slice(&[11u32,22,33,44]),usage:wgpu::BufferUsages::COPY_SRC});
-        let b=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:None,
-            contents:bytemuck::cast_slice(&[55u32,66,77]),usage:wgpu::BufferUsages::COPY_SRC});
-        let mut encoder=device.create_command_encoder(&Default::default());
-        let dispatch=ComputeDispatch::gather_buffers(&device,&mut encoder,&[(&a,4,0,8),(&b,8,8,4)],12).unwrap();
-        let submission=queue.submit([encoder.finish()]);let mut read=dispatch.begin_read();
-        device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();
-        let bytes=read.try_read().unwrap().unwrap();
-        assert_eq!(bytes,bytemuck::cast_slice::<u32,u8>(&[22,33,77]));
-        assert_eq!(pool.stats().allocated_buffers,1);assert_eq!(pool.stats().quarantined_buffers,0);
-        assert_eq!(pool.available_capacity(),pool.limits());
-        let before=pool.stats();
-        let mut encoder=device.create_command_encoder(&Default::default());
-        assert!(ComputeDispatch::gather_buffers(&device,&mut encoder,&[(&a,4,0,8),(&b,12,8,4)],12).is_err());
+        let instance = crate::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let pool = ComputeReadbackPool::configure(
+            &device,
+            crate::ComputeReadbackLimits {
+                max_bytes: 12,
+                max_buffers: 1,
+            },
+        )
+        .unwrap();
+        let a = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: None,
+            contents: bytemuck::cast_slice(&[11u32, 22, 33, 44]),
+            usage: wgpu::BufferUsages::COPY_SRC,
+        });
+        let b = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: None,
+            contents: bytemuck::cast_slice(&[55u32, 66, 77]),
+            usage: wgpu::BufferUsages::COPY_SRC,
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        let dispatch = ComputeDispatch::gather_buffers(
+            &device,
+            &mut encoder,
+            &[(&a, 4, 0, 8), (&b, 8, 8, 4)],
+            12,
+        )
+        .unwrap();
+        let submission = queue.submit([encoder.finish()]);
+        let mut read = dispatch.begin_read();
+        device
+            .poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: None,
+            })
+            .unwrap();
+        let bytes = read.try_read().unwrap().unwrap();
+        assert_eq!(bytes, bytemuck::cast_slice::<u32, u8>(&[22, 33, 77]));
+        assert_eq!(pool.stats().allocated_buffers, 1);
+        assert_eq!(pool.stats().quarantined_buffers, 0);
+        assert_eq!(pool.available_capacity(), pool.limits());
+        let before = pool.stats();
+        let mut encoder = device.create_command_encoder(&Default::default());
+        assert!(
+            ComputeDispatch::gather_buffers(
+                &device,
+                &mut encoder,
+                &[(&a, 4, 0, 8), (&b, 12, 8, 4)],
+                12
+            )
+            .is_err()
+        );
         drop(encoder);
-        assert_eq!(pool.stats(),before,"invalid later source leased staging or recorded an abandoned copy");
+        assert_eq!(
+            pool.stats(),
+            before,
+            "invalid later source leased staging or recorded an abandoned copy"
+        );
     }
     #[test]
     fn gathering_rejects_gaps_overlap_alignment_overflow_and_bounds() {
-        assert!(validate_gather_ranges(100,&[(0,0,16),(80,16,20)],36).is_ok());
-        for (ranges,size) in [
-            (vec![],4),(vec![(0,0,0)],4),(vec![(0,0,4)],0),
-            (vec![(0,0,4)],8),(vec![(0,0,8)],4),
-            (vec![(0,0,4),(8,8,4)],12),(vec![(0,0,8),(8,4,4)],12),
-            (vec![(1,0,4)],4),(vec![(0,0,5)],8),
-            (vec![(100,0,4)],4),(vec![(u64::MAX-3,0,4)],4),
-        ] {assert!(validate_gather_ranges(100,&ranges,size).is_err(),"admitted {ranges:?}");}
+        assert!(validate_gather_ranges(100, &[(0, 0, 16), (80, 16, 20)], 36).is_ok());
+        for (ranges, size) in [
+            (vec![], 4),
+            (vec![(0, 0, 0)], 4),
+            (vec![(0, 0, 4)], 0),
+            (vec![(0, 0, 4)], 8),
+            (vec![(0, 0, 8)], 4),
+            (vec![(0, 0, 4), (8, 8, 4)], 12),
+            (vec![(0, 0, 8), (8, 4, 4)], 12),
+            (vec![(1, 0, 4)], 4),
+            (vec![(0, 0, 5)], 8),
+            (vec![(100, 0, 4)], 4),
+            (vec![(u64::MAX - 3, 0, 4)], 4),
+        ] {
+            assert!(
+                validate_gather_ranges(100, &ranges, size).is_err(),
+                "admitted {ranges:?}"
+            );
+        }
     }
 }

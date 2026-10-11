@@ -13,18 +13,18 @@ impl GpuHairLinearSolver {
         if self.gpu_response_transport && !self.compact_response_readback {
             return Err("GPU response transport requires compact readback".into());
         }
-        let limits=self.device.limits();
+        let limits = self.device.limits();
         // Ordered GPU copies preserve RHS/status bits on devices that cannot
         // bind both transport buffers or dispatch the gather shader.
-        let shader_transport=self.gpu_response_transport
-            && limits.max_storage_buffers_per_shader_stage>=2
-            && limits.max_compute_workgroup_size_x>=64
-            && limits.max_compute_invocations_per_workgroup>=64
+        let shader_transport = self.gpu_response_transport
+            && limits.max_storage_buffers_per_shader_stage >= 2
+            && limits.max_compute_workgroup_size_x >= 64
+            && limits.max_compute_invocations_per_workgroup >= 64
             && inputs.iter().all(|input| {
-                let size=input.compact_output_size();
-                input.bytes().len() as u64<=limits.max_storage_buffer_binding_size
-                    && size<=limits.max_storage_buffer_binding_size
-                    && (size/4).div_ceil(64)<=limits.max_compute_workgroups_per_dimension as u64
+                let size = input.compact_output_size();
+                input.bytes().len() as u64 <= limits.max_storage_buffer_binding_size
+                    && size <= limits.max_storage_buffer_binding_size
+                    && (size / 4).div_ceil(64) <= limits.max_compute_workgroups_per_dimension as u64
             });
         if shader_transport {
             if self.rhs_transfer_program.is_none() {
@@ -72,12 +72,17 @@ impl GpuHairLinearSolver {
                 } else {
                     inputs[end].bytes().len() as u64
                 };
-                if size > capacity.max_bytes - bytes { break; }
+                if size > capacity.max_bytes - bytes {
+                    break;
+                }
                 bytes += size;
                 end += 1;
             }
             if end == start {
-                return Err(format!("hair response staging capacity exhausted before encoding: {capacity:?}").into());
+                return Err(format!(
+                    "hair response staging capacity exhausted before encoding: {capacity:?}"
+                )
+                .into());
             }
             let job = self.resident.as_ref().unwrap();
             let mut encoder = self.device.create_command_encoder(&Default::default());
@@ -161,13 +166,16 @@ impl GpuHairLinearSolver {
                     uploads.push(compact);
                 }
             }
-            let submission=self.queue.submit([encoder.finish()]);
+            let submission = self.queue.submit([encoder.finish()]);
             self.response_submissions += 1;
             let mut reads = snapshots
                 .into_iter()
                 .map(|snapshot| snapshot.begin_read())
                 .collect::<Vec<_>>();
-            self.device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None})?;
+            self.device.poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: None,
+            })?;
             for (input, read) in inputs[start..end].iter().zip(&mut reads) {
                 let bytes = read
                     .try_read()?
@@ -195,55 +203,98 @@ mod tests {
         for compact in [false, true] {
             for byte_limited in [false, true] {
                 let instance = voxy_render::GraphicsOptions::default().create_instance();
-                let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-                let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+                let adapter =
+                    pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+                let (device, queue) =
+                    pollster::block_on(adapter.request_device(&Default::default())).unwrap();
                 let curve = (0..=8).map(|i| [0., i as f64 * 0.01, 0.]).collect();
-                let mut system = physics::hair::HairRod::new(curve, Default::default()).unwrap().linear_system(1./240.).unwrap();
-                for value in &mut system.matrix { *value *= (1./240.)*(1./240.); }
+                let mut system = physics::hair::HairRod::new(curve, Default::default())
+                    .unwrap()
+                    .linear_system(1. / 240.)
+                    .unwrap();
+                for value in &mut system.matrix {
+                    *value *= (1. / 240.) * (1. / 240.);
+                }
                 system.rhs.fill(0.);
-                let loads: Vec<Vec<f64>> = (0..11).map(|i| {
-                    let mut load = system.rhs.clone();
-                    load[6 + (i%7)*6] = (i+1) as f64 * 1e-7;
-                    load
-                }).collect();
-                let rows = [BandedSystem { matrix: &system.matrix, rhs: &loads[0] }];
-                let first = BandedSolveInput::new_with_underflow_tolerance(&rows, system.active.clone(), 1e-40).unwrap();
+                let loads: Vec<Vec<f64>> = (0..11)
+                    .map(|i| {
+                        let mut load = system.rhs.clone();
+                        load[6 + (i % 7) * 6] = (i + 1) as f64 * 1e-7;
+                        load
+                    })
+                    .collect();
+                let rows = [BandedSystem {
+                    matrix: &system.matrix,
+                    rhs: &loads[0],
+                }];
+                let first = BandedSolveInput::new_with_underflow_tolerance(
+                    &rows,
+                    system.active.clone(),
+                    1e-40,
+                )
+                .unwrap();
                 let mut inputs = Vec::new();
-                for load in &loads { inputs.push(first.with_rhs(&[load.as_slice()], 1e-40).unwrap()); }
-                let size = if compact { first.compact_output_size() } else { first.bytes().len() as u64 };
-                let pool = voxy_render::ComputeReadbackPool::configure(&device, voxy_render::ComputeReadbackLimits {
-                    max_bytes: size * if byte_limited {2} else {8},
-                    max_buffers: if byte_limited {8} else {2},
-                }).unwrap();
-                let mut gpu = pollster::block_on(GpuHairLinearSolver::new(&device,&queue)).unwrap();
+                for load in &loads {
+                    inputs.push(first.with_rhs(&[load.as_slice()], 1e-40).unwrap());
+                }
+                let size = if compact {
+                    first.compact_output_size()
+                } else {
+                    first.bytes().len() as u64
+                };
+                let pool = voxy_render::ComputeReadbackPool::configure(
+                    &device,
+                    voxy_render::ComputeReadbackLimits {
+                        max_bytes: size * if byte_limited { 2 } else { 8 },
+                        max_buffers: if byte_limited { 8 } else { 2 },
+                    },
+                )
+                .unwrap();
+                let mut gpu =
+                    pollster::block_on(GpuHairLinearSolver::new(&device, &queue)).unwrap();
                 gpu.compact_response_readback = compact;
                 if compact && byte_limited {
-                    assert!(first.bytes().len() as u64 + first.compact_output_size() > pool.limits().max_bytes);
+                    assert!(
+                        first.bytes().len() as u64 + first.compact_output_size()
+                            > pool.limits().max_bytes
+                    );
                     gpu.reference_audit = true;
-                    assert!(gpu.dispatch_input(&first,None).is_err());
-                    assert_eq!(pool.stats().quarantined_buffers,0);
-                    assert_eq!(pool.available_capacity(),pool.limits());
+                    assert!(gpu.dispatch_input(&first, None).is_err());
+                    assert_eq!(pool.stats().quarantined_buffers, 0);
+                    assert_eq!(pool.available_capacity(), pool.limits());
                     gpu.reference_audit = false;
-                    gpu.dispatch_input(&first,None).unwrap();
+                    gpu.dispatch_input(&first, None).unwrap();
                 }
                 // Exercise both ordered-copy and gather-shader transports.
                 for transport in [false, true].into_iter().filter(|&t| compact || !t) {
                     gpu.gpu_response_transport = transport;
                     let mut expected = Vec::new();
-                    for input in &inputs { expected.push(gpu.dispatch_response_waves(std::slice::from_ref(input),false).unwrap().pop().unwrap()); }
-                    for reuse in [false,true] {
+                    for input in &inputs {
+                        expected.push(
+                            gpu.dispatch_response_waves(std::slice::from_ref(input), false)
+                                .unwrap()
+                                .pop()
+                                .unwrap(),
+                        );
+                    }
+                    for reuse in [false, true] {
                         let before = gpu.response_submissions;
-                        let actual = gpu.dispatch_response_waves(&inputs,reuse).unwrap();
-                        assert_eq!(actual,expected,"wave arithmetic/order changed: compact={compact} transport={transport} reuse={reuse}");
-                        assert_eq!(gpu.response_submissions-before,6);
+                        let actual = gpu.dispatch_response_waves(&inputs, reuse).unwrap();
+                        assert_eq!(
+                            actual, expected,
+                            "wave arithmetic/order changed: compact={compact} transport={transport} reuse={reuse}"
+                        );
+                        assert_eq!(gpu.response_submissions - before, 6);
                         for (load, response) in loads.iter().zip(&actual) {
-                            system.validate_load_correction(&response[0],load).unwrap();
+                            system.validate_load_correction(&response[0], load).unwrap();
                         }
-                        assert_eq!(pool.stats().quarantined_buffers,0);
-                        assert_eq!(pool.available_capacity(),pool.limits());
+                        assert_eq!(pool.stats().quarantined_buffers, 0);
+                        assert_eq!(pool.available_capacity(), pool.limits());
                     }
                 }
-                eprintln!("GPU BOUNDED RESPONSE compact={compact} byte_limited={byte_limited} loads=11 original_residuals=true exact_serial=true factor_reuse=true quarantine=0");
+                eprintln!(
+                    "GPU BOUNDED RESPONSE compact={compact} byte_limited={byte_limited} loads=11 original_residuals=true exact_serial=true factor_reuse=true quarantine=0"
+                );
             }
         }
     }

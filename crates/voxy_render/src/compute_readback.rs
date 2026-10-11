@@ -155,7 +155,8 @@ impl ComputeReadbackPool {
         let cached_bytes: u64 = state.free.iter().map(wgpu::Buffer::size).sum();
         ComputeReadbackLimits {
             max_bytes: self.0.limits.max_bytes - (state.stats.allocated_bytes - cached_bytes),
-            max_buffers: self.0.limits.max_buffers - (state.stats.allocated_buffers - state.free.len()),
+            max_buffers: self.0.limits.max_buffers
+                - (state.stats.allocated_buffers - state.free.len()),
         }
     }
     /// Current staging allocation and reuse counters.
@@ -233,7 +234,12 @@ impl ComputeReadbackPool {
             }
             // Admission and allocation are serialized across all program owners.
             let mut usage = wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ;
-            if self.0.device.features().contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS) {
+            if self
+                .0
+                .device
+                .features()
+                .contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
+            {
                 usage |= wgpu::BufferUsages::STORAGE;
             }
             let buffer = self.0.device.create_buffer(&wgpu::BufferDescriptor {
@@ -307,17 +313,40 @@ mod tests {
     #[test]
     fn available_capacity_excludes_live_and_quarantined_but_includes_cache() {
         let (device, _) = wgpu::Device::noop(&Default::default());
-        let pool = ComputeReadbackPool::configure(&device, ComputeReadbackLimits {
-            max_bytes: 16, max_buffers: 2,
-        }).unwrap();
+        let pool = ComputeReadbackPool::configure(
+            &device,
+            ComputeReadbackLimits {
+                max_bytes: 16,
+                max_buffers: 2,
+            },
+        )
+        .unwrap();
         let first = pool.acquire(4).unwrap();
         let second = pool.acquire(8).unwrap();
-        assert_eq!(pool.available_capacity(), ComputeReadbackLimits { max_bytes: 4, max_buffers: 0 });
+        assert_eq!(
+            pool.available_capacity(),
+            ComputeReadbackLimits {
+                max_bytes: 4,
+                max_buffers: 0
+            }
+        );
         first.unmapped(); // Simulate a successfully completed map/unmap.
         drop(first);
-        assert_eq!(pool.available_capacity(), ComputeReadbackLimits { max_bytes: 8, max_buffers: 1 });
+        assert_eq!(
+            pool.available_capacity(),
+            ComputeReadbackLimits {
+                max_bytes: 8,
+                max_buffers: 1
+            }
+        );
         drop(second); // Unconfirmed storage remains charged.
-        assert_eq!(pool.available_capacity(), ComputeReadbackLimits { max_bytes: 8, max_buffers: 1 });
+        assert_eq!(
+            pool.available_capacity(),
+            ComputeReadbackLimits {
+                max_bytes: 8,
+                max_buffers: 1
+            }
+        );
         pool.discard_quarantine().unwrap();
         assert_eq!(pool.available_capacity(), pool.limits());
     }

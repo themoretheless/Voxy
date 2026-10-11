@@ -28,20 +28,20 @@ mod rig_skinning;
 #[path = "../src/female_demo.rs"]
 mod female_demo;
 #[allow(dead_code)]
-#[path = "../src/full_model_worker.rs"]
-mod full_model_worker;
-#[allow(dead_code)]
 #[path = "../src/female_hair.rs"]
 mod female_hair;
 #[allow(dead_code)]
 #[path = "../src/female_rig.rs"]
 mod female_rig;
 #[allow(dead_code)]
-#[path = "../src/jump_motion.rs"]
-mod jump_motion;
-#[allow(dead_code)]
 #[path = "../src/female_transmission.rs"]
 mod female_transmission;
+#[allow(dead_code)]
+#[path = "../src/full_model_worker.rs"]
+mod full_model_worker;
+#[allow(dead_code)]
+#[path = "../src/jump_motion.rs"]
+mod jump_motion;
 #[allow(dead_code)]
 #[path = "../src/surface_film_preview.rs"]
 mod surface_film_preview;
@@ -91,18 +91,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     model.show_complexion = !std::env::args().any(|a| a == "--bare");
     let secondary_motion = arguments.iter().any(|a| a == "--secondary-motion");
     let jump_sequence = arguments.iter().any(|a| a == "--jump-sequence");
-    if jump_sequence && secondary_motion {return Err("--jump-sequence inspects the rig; use --secondary-motion for physical simulation".into());}
+    if jump_sequence && secondary_motion {
+        return Err(
+            "--jump-sequence inspects the rig; use --secondary-motion for physical simulation"
+                .into(),
+        );
+    }
     model.secondary_only = secondary_motion;
     model.animation_only = !secondary_motion;
     if jump_sequence {
-        model.secondary_only=true;
-        model.rig_pose_only=true;
-        model.animation_only=false;
-        model.simulate_hair=false;
+        model.secondary_only = true;
+        model.rig_pose_only = true;
+        model.animation_only = false;
+        model.simulate_hair = false;
         println!("JUMP RIG SEQUENCE: actual model skinning; secondary state is not advanced");
     }
     let simulation_seconds = option_path("--simulation-seconds")?
-        .map(str::parse::<f64>).transpose()?.unwrap_or(0.25);
+        .map(str::parse::<f64>)
+        .transpose()?
+        .unwrap_or(0.25);
     if !simulation_seconds.is_finite() || !(0.0..=60.0).contains(&simulation_seconds) {
         return Err("--simulation-seconds must be finite and in 0..60".into());
     }
@@ -290,11 +297,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let chest = arguments.iter().any(|a| a == "--chest");
     let side = std::env::args().any(|a| a == "--side");
     let framing_scale = model.body_parameters.height_cm / 164.;
-    let framing_center = Vec3::new(0., 0.82 * (framing_scale - 1.)
-        + if jump_sequence {0.12*framing_scale} else {0.}, 0.);
-    let whole_body_eye = framing_center + if jump_sequence {
-        Vec3::new(1.8,0.1,2.7)*framing_scale
-    } else {Vec3::new(0.4, 0.1, 2.4) * framing_scale};
+    let framing_center = Vec3::new(
+        0.,
+        0.82 * (framing_scale - 1.)
+            + if jump_sequence {
+                0.12 * framing_scale
+            } else {
+                0.
+            },
+        0.,
+    );
+    let whole_body_eye = framing_center
+        + if jump_sequence {
+            Vec3::new(1.8, 0.1, 2.7) * framing_scale
+        } else {
+            Vec3::new(0.4, 0.1, 2.4) * framing_scale
+        };
     model.preview_camera_eye = Some(if chest {
         Vec3::new(0.10, 0.36, 0.65)
     } else if torso {
@@ -365,52 +383,99 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // streams but uses a separate opaque anisotropic material and index partition.
     let dedicated_hair = secondary_motion && !arguments.iter().any(|a| a == "--film");
     let gpu_hair_render = arguments.iter().any(|a| a == "--gpu-hair-render");
-    if gpu_hair_render && (!dedicated_hair || model.face_parameters != face_parameters::FaceParameters::default()) {
-        return Err("--gpu-hair-render requires physical secondary motion without film or face morphs".into());
+    if gpu_hair_render
+        && (!dedicated_hair || model.face_parameters != face_parameters::FaceParameters::default())
+    {
+        return Err(
+            "--gpu-hair-render requires physical secondary motion without film or face morphs"
+                .into(),
+        );
     }
     let (mut geometry, mut hair_geometry) = if gpu_hair_render {
-        let (_,hair)=full_model_worker::partition_hair(&mesh)?;
-        let mut initial=mesh.clone();
+        let (_, hair) = full_model_worker::partition_hair(&mesh)?;
+        let mut initial = mesh.clone();
         if arguments.iter().any(|a| a == "--poison-cpu-hair") {
-            let mut vertices=initial.vertices().to_vec();
-            for v in &mut vertices { if v.uv[0]==-7. { v.position=[100.;3]; } }
-            initial=voxy_render::SceneMesh::new(vertices,initial.indices().to_vec())?
-                .with_normals(mesh.authored_normals().ok_or("missing initial hair normals")?.to_vec())?;
+            let mut vertices = initial.vertices().to_vec();
+            for v in &mut vertices {
+                if v.uv[0] == -7. {
+                    v.position = [100.; 3];
+                }
+            }
+            initial = voxy_render::SceneMesh::new(vertices, initial.indices().to_vec())?
+                .with_normals(
+                    mesh.authored_normals()
+                        .ok_or("missing initial hair normals")?
+                        .to_vec(),
+                )?;
         }
-        let mut hair_geometry=renderer.upload_compute_mesh(&device,&initial)?;
-        hair_geometry.update_index_partition(&queue,&hair)?;
-        pollster::block_on(renderer.set_geometry_opaque_shader(&device,&mut hair_geometry,
-            include_str!("../src/female_hair_material.wgsl")))?;
-        let body=model.mesh_without_hair()?;
-        (renderer.upload_mesh(&device,&body)?,Some(hair_geometry))
+        let mut hair_geometry = renderer.upload_compute_mesh(&device, &initial)?;
+        hair_geometry.update_index_partition(&queue, &hair)?;
+        pollster::block_on(renderer.set_geometry_opaque_shader(
+            &device,
+            &mut hair_geometry,
+            include_str!("../src/female_hair_material.wgsl"),
+        ))?;
+        let body = model.mesh_without_hair()?;
+        (renderer.upload_mesh(&device, &body)?, Some(hair_geometry))
     } else if dedicated_hair {
         let (body, hair) = full_model_worker::partition_hair(&mesh)?;
         let mut partitions = if gpu_hair_render {
             renderer.upload_compute_shared_mesh_partitions(&device, &mesh)?
-        } else { renderer.upload_shared_mesh_partitions(&device, &mesh)? };
+        } else {
+            renderer.upload_shared_mesh_partitions(&device, &mesh)?
+        };
         let mut hair_geometry = partitions.pop().ok_or("missing hair partition")?;
         let mut body_geometry = partitions.pop().ok_or("missing body partition")?;
         body_geometry.update_index_partition(&queue, &body)?;
         hair_geometry.update_index_partition(&queue, &hair)?;
         pollster::block_on(renderer.set_geometry_opaque_shader(
-            &device, &mut hair_geometry, include_str!("../src/female_hair_material.wgsl"),
+            &device,
+            &mut hair_geometry,
+            include_str!("../src/female_hair_material.wgsl"),
         ))?;
         (body_geometry, Some(hair_geometry))
     } else {
         (renderer.upload_mesh(&device, &mesh)?, None)
     };
     let mut resident_hair = if gpu_hair_render {
-        let input=model.gpu_hair_surface_input()?;
-        let base=mesh.vertices().iter().position(|v| v.uv[0]==-7.).ok_or("no hair surface")?;
-        let program=pollster::block_on(voxy_render::ComputeProgram::new(&device,voxy_render::FIBER_SURFACE_SHADER))?;
-        let job=program.create_job(&device,input.bytes())?;
-        if pollster::block_on(voxy_render::FiberSurfaceTransfer::new(&device,hair_geometry.as_ref().ok_or("missing resident hair geometry")?,job.buffer(),&input,u32::MAX)).is_ok() {
+        let input = model.gpu_hair_surface_input()?;
+        let base = mesh
+            .vertices()
+            .iter()
+            .position(|v| v.uv[0] == -7.)
+            .ok_or("no hair surface")?;
+        let program = pollster::block_on(voxy_render::ComputeProgram::new(
+            &device,
+            voxy_render::FIBER_SURFACE_SHADER,
+        ))?;
+        let job = program.create_job(&device, input.bytes())?;
+        if pollster::block_on(voxy_render::FiberSurfaceTransfer::new(
+            &device,
+            hair_geometry
+                .as_ref()
+                .ok_or("missing resident hair geometry")?,
+            job.buffer(),
+            &input,
+            u32::MAX,
+        ))
+        .is_ok()
+        {
             return Err("out-of-capacity fibre transfer admitted".into());
         }
-        let hair=hair_geometry.as_ref().ok_or("missing resident hair geometry")?;
-        let transfer=pollster::block_on(voxy_render::FiberSurfaceTransfer::new(&device,hair,job.buffer(),&input,base as u32))?;
-        Some((input,job,transfer))
-    } else { None };
+        let hair = hair_geometry
+            .as_ref()
+            .ok_or("missing resident hair geometry")?;
+        let transfer = pollster::block_on(voxy_render::FiberSurfaceTransfer::new(
+            &device,
+            hair,
+            job.buffer(),
+            &input,
+            base as u32,
+        ))?;
+        Some((input, job, transfer))
+    } else {
+        None
+    };
     if arguments.iter().any(|a| a == "--geometry-bench") {
         let mut shifted = mesh.vertices().to_vec();
         for vertex in &mut shifted {
@@ -592,8 +657,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             while model.simulation_time() + 1.0 / 120.0 <= target_time + 1e-9 {
                 model.advance(1.0 / 120.0)?;
             }
-            println!("SECONDARY SAMPLE: frame={frame} simulated_s={:.6} advance_ms={:.3}",
-                model.simulation_time(), started.elapsed().as_secs_f64() * 1000.);
+            println!(
+                "SECONDARY SAMPLE: frame={frame} simulated_s={:.6} advance_ms={:.3}",
+                model.simulation_time(),
+                started.elapsed().as_secs_f64() * 1000.
+            );
         } else {
             model.preview_pose(if sequence {
                 frame as f64 * 0.05
@@ -604,10 +672,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             });
         }
         let started = std::time::Instant::now();
-        let mesh = if gpu_hair_render { model.mesh_without_hair()? } else { model.mesh()? };
+        let mesh = if gpu_hair_render {
+            model.mesh_without_hair()?
+        } else {
+            model.mesh()?
+        };
         if gpu_hair_render {
-            if mesh.vertices().iter().any(|v| v.uv[0]==-7.) { return Err("CPU hair emitted in resident GPU path".into()); }
-            println!("GPU BODY STREAM: vertices={} cpu_hair_vertices=0",mesh.vertices().len());
+            if mesh.vertices().iter().any(|v| v.uv[0] == -7.) {
+                return Err("CPU hair emitted in resident GPU path".into());
+            }
+            println!(
+                "GPU BODY STREAM: vertices={} cpu_hair_vertices=0",
+                mesh.vertices().len()
+            );
         }
         if arguments.iter().any(|a| a == "--gpu-hair-check") {
             if !secondary_motion || model.animation_only {
@@ -616,32 +693,52 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let input = model.gpu_hair_surface_input()?;
             // Full-density qualification reads one large result. This explicit
             // diagnostic budget does not change interactive readback defaults.
-            let _readback_pool = voxy_render::ComputeReadbackPool::configure(&device,
-                voxy_render::ComputeReadbackLimits { max_bytes: input.bytes().len() as u64, max_buffers: 1 })?;
-            let program = pollster::block_on(voxy_render::ComputeProgram::new(&device,voxy_render::FIBER_SURFACE_SHADER))?;
-            let job = program.create_job(&device,input.bytes())?;
+            let _readback_pool = voxy_render::ComputeReadbackPool::configure(
+                &device,
+                voxy_render::ComputeReadbackLimits {
+                    max_bytes: input.bytes().len() as u64,
+                    max_buffers: 1,
+                },
+            )?;
+            let program = pollster::block_on(voxy_render::ComputeProgram::new(
+                &device,
+                voxy_render::FIBER_SURFACE_SHADER,
+            ))?;
+            let job = program.create_job(&device, input.bytes())?;
             let mut encoder = device.create_command_encoder(&Default::default());
-            let dispatch = job.encode(&mut encoder,[input.vertex_count().div_ceil(64),1,1])?;
+            let dispatch = job.encode(&mut encoder, [input.vertex_count().div_ceil(64), 1, 1])?;
             queue.submit([encoder.finish()]);
             let mut pending = dispatch.begin_read();
             device.poll(wgpu::PollType::wait_indefinitely())?;
             let bytes = pending.try_read()?.ok_or("hair GPU readback pending")?;
             let result = input.output(&bytes)?;
-            let cpu:Vec<_> = mesh.vertices().iter().filter(|v| v.uv[0]==-7.).collect();
-            if cpu.len()!=input.vertex_count() as usize { return Err("GPU hair density mismatch".into()); }
-            let mut maximum_error=0.0_f32;
-            for (row,reference) in result.chunks_exact(48).zip(cpu) {
-                let words:Vec<f32> = row.chunks_exact(4).map(|b| f32::from_ne_bytes(b.try_into().unwrap())).collect();
-                let p=Vec3::new(words[0],words[1],words[2]);
-                maximum_error=maximum_error.max(p.distance(Vec3::from_array(reference.position)));
-                if words[3..5]!=reference.uv || words[5..9]!=reference.color
+            let cpu: Vec<_> = mesh.vertices().iter().filter(|v| v.uv[0] == -7.).collect();
+            if cpu.len() != input.vertex_count() as usize {
+                return Err("GPU hair density mismatch".into());
+            }
+            let mut maximum_error = 0.0_f32;
+            for (row, reference) in result.chunks_exact(48).zip(cpu) {
+                let words: Vec<f32> = row
+                    .chunks_exact(4)
+                    .map(|b| f32::from_ne_bytes(b.try_into().unwrap()))
+                    .collect();
+                let p = Vec3::new(words[0], words[1], words[2]);
+                maximum_error = maximum_error.max(p.distance(Vec3::from_array(reference.position)));
+                if words[3..5] != reference.uv
+                    || words[5..9] != reference.color
                     || words.iter().any(|v| !v.is_finite())
-                    || (Vec3::new(words[9],words[10],words[11]).length()-1.).abs()>1e-4 {
+                    || (Vec3::new(words[9], words[10], words[11]).length() - 1.).abs() > 1e-4
+                {
                     return Err("GPU hair surface stream differs from CPU reference".into());
                 }
             }
-            if maximum_error>4e-7 { return Err(format!("GPU hair position error {maximum_error} m").into()); }
-            println!("GPU HAIR PASS: vertices={} maximum_position_error_m={maximum_error:.9} full_density=true",input.vertex_count());
+            if maximum_error > 4e-7 {
+                return Err(format!("GPU hair position error {maximum_error} m").into());
+            }
+            println!(
+                "GPU HAIR PASS: vertices={} maximum_position_error_m={maximum_error:.9} full_density=true",
+                input.vertex_count()
+            );
         }
         let mesh = if let Some(path) = option_path("--hand-pose-csv")? {
             if snapshot.is_none() || !hands {
@@ -786,24 +883,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             mesh
         };
-        geometry.update(&queue,&mesh)?;
+        geometry.update(&queue, &mesh)?;
         if !gpu_hair_render {
-            if let Some(hair_geometry)=&mut hair_geometry {
-                let (body,hair)=full_model_worker::partition_hair(&mesh)?;
-                geometry.update_index_partition(&queue,&body)?;
-                hair_geometry.update_index_partition(&queue,&hair)?;
+            if let Some(hair_geometry) = &mut hair_geometry {
+                let (body, hair) = full_model_worker::partition_hair(&mesh)?;
+                geometry.update_index_partition(&queue, &body)?;
+                hair_geometry.update_index_partition(&queue, &hair)?;
             }
         }
         mesh_ms.push(started.elapsed().as_secs_f64() * 1000.);
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-        if let Some((input,job,transfer))=&mut resident_hair {
-            let frames=model.gpu_hair_surface_frames();
-            let bytes=input.replace_frames(&frames)?;
-            let uploaded=bytes.len();
-            queue.write_buffer(job.buffer(),32,bytes);
-            job.encode_step(&mut encoder,[input.vertex_count().div_ceil(64),1,1])?;
+        if let Some((input, job, transfer)) = &mut resident_hair {
+            let frames = model.gpu_hair_surface_frames();
+            let bytes = input.replace_frames(&frames)?;
+            let uploaded = bytes.len();
+            queue.write_buffer(job.buffer(), 32, bytes);
+            job.encode_step(&mut encoder, [input.vertex_count().div_ceil(64), 1, 1])?;
             transfer.encode(&mut encoder);
-            println!("GPU HAIR DRAW: vertices={} frame_upload_bytes={uploaded} no_geometry_readback=true cpu_hair_poisoned={}",input.vertex_count(),arguments.iter().any(|a| a == "--poison-cpu-hair"));
+            println!(
+                "GPU HAIR DRAW: vertices={} frame_upload_bytes={uploaded} no_geometry_readback=true cpu_hair_poisoned={}",
+                input.vertex_count(),
+                arguments.iter().any(|a| a == "--poison-cpu-hair")
+            );
         }
         let colour_view = opaque_scene
             .as_ref()
@@ -824,8 +925,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }];
         if let Some(hair_geometry) = &hair_geometry {
             draws.push(SceneDraw {
-                geometry: hair_geometry, texture: &texture,
-                transform: &transform, overlay: false,
+                geometry: hair_geometry,
+                texture: &texture,
+                transform: &transform,
+                overlay: false,
             });
         }
         if model.diagnostic_legend_visible() {
