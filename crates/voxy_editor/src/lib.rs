@@ -1200,12 +1200,14 @@ impl App {
         let elapsed = self.play.simulation_time.elapsed().as_secs_f64();
         self.play.simulation_time = Instant::now();
         self.advance_game(elapsed)?;
+        // Interpolated ancestor matrices are shared across the instances of one frame.
+        let render_world_cache = std::cell::RefCell::new(voxy_scene::RenderWorldCache::default());
         voxy_scene::extraction_schedule()?
             .run_scene(&mut self.scene, |_, access| {
                 let render_world = |scene: &voxy_scene::SceneGraph, owner| {
                     if let Some(simulation) = &self.play.simulation {
                         simulation
-                            .render_world(scene, owner)
+                            .render_world_cached(scene, &mut render_world_cache.borrow_mut(), owner)
                             .map_err(|error| match error {
                                 voxy_scene::SimulationError::Scene(error) => error,
                                 _ => voxy_scene::SceneGraphError::InvalidNode,

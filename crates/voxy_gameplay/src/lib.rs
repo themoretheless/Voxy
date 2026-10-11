@@ -494,6 +494,8 @@ pub struct CharacterPhysics {
     depenetration: bool,
     angular_iterations: usize,
     trajectory_queries: usize,
+    /// Scene structure revision the last full validation passed for.
+    validated_structure: Option<u64>,
 }
 impl CharacterPhysics {
     #[must_use]
@@ -505,6 +507,7 @@ impl CharacterPhysics {
             max_colliders,
             depenetration: false,
             angular_iterations: 256,
+            validated_structure: None,
             trajectory_queries: 65_536,
         }
     }
@@ -552,6 +555,36 @@ impl CharacterPhysics {
     pub fn validate(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
         self.validate_scene(scene)?;
         validate_behavior_descriptors(scene).map_err(|_| PhysicsError::InvalidMotion)?;
+        self.validate_descriptors(scene)
+    }
+
+    /// Full validation unless the scene's structure revision is unchanged since
+    /// the last pass, in which case only the transform-dependent checks run.
+    /// Structural checks depend solely on hierarchy and components, which every
+    /// scene mutation of those bumps; transforms are re-checked every call.
+    fn validate_cached(&mut self, scene: &SceneGraph) -> Result<(), PhysicsError> {
+        let revision = scene.structure_revision();
+        if self.validated_structure == Some(revision) {
+            self.validate_scene(scene)?;
+            return self.validate_transforms(scene);
+        }
+        self.validate(scene)?;
+        self.validated_structure = Some(revision);
+        Ok(())
+    }
+
+    fn validate_transforms(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
+        for (owner, body) in scene.components::<CharacterBody>() {
+            translation(scene, owner)?;
+            affine_box(scene, owner, body.half_extents)?;
+        }
+        for (owner, collider) in scene.components::<BoxCollider>() {
+            affine_box(scene, owner, collider.half_extents)?;
+        }
+        Ok(())
+    }
+
+    fn validate_descriptors(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
         if scene.components::<CharacterBody>().count() > self.max_bodies
             || scene.components::<BoxCollider>().count() > self.max_colliders
         {
@@ -936,7 +969,7 @@ impl CharacterPhysics {
         ),
         PhysicsError,
     > {
-        self.validate(scene)?;
+        self.validate_cached(scene)?;
         let mut requested_paths = HashMap::with_capacity(paths.len());
         let mut total_spans = 0_usize;
         for path in paths {
@@ -1643,6 +1676,68 @@ fn center_of(body: AnchoredAabb) -> Result<Vec3, PhysicsError> {
         return Err(PhysicsError::CoordinateRange);
     }
     Ok(Vec3::from_array(position.map(|value| value as f32)))
+}
+
+#[cfg(test)]
+mod cached_validation_tests {
+    use super::*;
+    use voxy_scene::Transform;
+
+    #[test]
+    fn structure_revision_invalidates_cached_physics_validation() {
+        let mut scene = SceneGraph::new(8);
+        let body = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                body,
+                CharacterBody {
+                    half_extents: [0.3, 0.9, 0.3],
+                    ..CharacterBody::default()
+                },
+            )
+            .unwrap();
+        let floor = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                floor,
+                BoxCollider {
+                    half_extents: [4.0, 0.5, 4.0],
+                },
+            )
+            .unwrap();
+        let mut physics = CharacterPhysics::new(&scene, 4, 4);
+        let before = scene.structure_revision();
+        physics.validate_cached(&scene).unwrap();
+        assert_eq!(physics.validated_structure, Some(before));
+        physics.validate_cached(&scene).unwrap();
+        // A collider on a body is structural and must be caught after the cache filled.
+        scene
+            .insert_component(
+                body,
+                BoxCollider {
+                    half_extents: [0.1, 0.1, 0.1],
+                },
+            )
+            .unwrap();
+        assert_ne!(scene.structure_revision(), before);
+        assert_eq!(
+            physics.validate_cached(&scene).unwrap_err(),
+            PhysicsError::InvalidBody
+        );
+        scene.remove_component::<BoxCollider>(body).unwrap();
+        physics.validate_cached(&scene).unwrap();
+        // Transform problems are re-checked every call even with a warm cache.
+        scene
+            .set_local(
+                floor,
+                Transform {
+                    scale: glam::Vec3::splat(1e30),
+                    ..Transform::default()
+                },
+            )
+            .unwrap();
+        assert!(physics.validate_cached(&scene).is_err());
+    }
 }
 
 #[cfg(test)]

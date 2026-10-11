@@ -28,6 +28,10 @@ impl ShadowDrawMask {
     }
 }
 
+/// What one shadow raster depended on: geometry identity and revision plus the
+/// light clip-from-model transform bits.
+type ShadowKey = (u64, u64, [u32; 16]);
+
 #[derive(Debug)]
 pub struct ShadowMap {
     device: wgpu::Device,
@@ -35,6 +39,8 @@ pub struct ShadowMap {
     view: wgpu::TextureView,
     layout: wgpu::BindGroupLayout,
     pipeline: wgpu::RenderPipeline,
+    /// Keys of the draws the retained depth texture currently holds.
+    encoded: std::sync::Mutex<Vec<ShadowKey>>,
 }
 /// Immutable light-camera snapshot borrowing the current opaque geometry.
 #[derive(Debug)]
@@ -42,6 +48,7 @@ pub struct ShadowDraw<'a> {
     device: wgpu::Device,
     geometry: &'a SceneGeometry,
     bindings: wgpu::BindGroup,
+    key: ShadowKey,
 }
 impl ShadowMap {
     pub(crate) fn belongs_to(&self, device: &wgpu::Device) -> bool {
@@ -131,6 +138,7 @@ impl ShadowMap {
             view,
             layout,
             pipeline,
+            encoded: std::sync::Mutex::new(Vec::new()),
         })
     }
     /// Prepare an opaque draw with a finite light clip-from-model matrix.
@@ -163,10 +171,16 @@ impl ShadowMap {
                 resource: uniform.as_entire_binding(),
             }],
         });
+        let (identity, revision) = geometry.shadow_key();
         Ok(ShadowDraw {
             device: self.device.clone(),
             geometry,
             bindings,
+            key: (
+                identity,
+                revision,
+                clip_from_model.to_cols_array().map(f32::to_bits),
+            ),
         })
     }
     /// Clear and rasterize all supplied opaque triangles. Encode before map consumers.
@@ -181,8 +195,15 @@ impl ShadowMap {
         if draws.iter().any(|draw| draw.device != self.device) {
             return Err(SceneError::DeviceMismatch);
         }
-        // OPTIMIZATION #41: Skip shadow raster if ALL geometries are static (none dirty)
-        if !draws.is_empty() && draws.iter().all(|draw| !draw.geometry.shadow_dirty()) {
+        // The depth texture is retained, so an identical draw list (same geometry
+        // allocations, no vertex/index writes since, same light transforms) already
+        // holds this raster and the pass is skipped.
+        let keys: Vec<ShadowKey> = draws.iter().map(|draw| draw.key).collect();
+        let mut encoded = self
+            .encoded
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if !keys.is_empty() && *encoded == keys {
             return Ok(());
         }
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -203,8 +224,8 @@ impl ShadowMap {
             pass.set_bind_group(0, &draw.bindings, &[]);
             draw.geometry.encode_shadow_geometry(&mut pass);
         }
-        // Mark shadow as clean after encoding (caller will mark dirty on transform change)
-        // Note: In production, this would use per-dirty tracking via ShadowDrawMask reference
+        drop(pass);
+        *encoded = keys;
         Ok(())
     }
     #[must_use]

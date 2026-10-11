@@ -369,7 +369,8 @@ impl SceneSkinner {
                 opaque_shader: base.opaque_shader.clone(),
                 partitioned_indices: false,
                 partition_cache: Vec::new(),
-                shadow_dirty: true,
+                identity: crate::scene::next_geometry_identity(),
+                revision: 0,
             },
         })
     }

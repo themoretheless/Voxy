@@ -4,6 +4,7 @@ pub use fog::{FogBounds, FogError, FogVolume};
 
 mod simulation;
 pub use simulation::{
+    RenderWorldCache,
     SceneSimulation, SimulationError, SimulationFrame, SimulationLimits, SimulationStepError,
 };
 mod extraction;
@@ -218,8 +219,23 @@ pub struct SceneGraph {
     free: Vec<usize>,
     capacity: usize,
     count: usize,
+    /// Bumped by every mutation that can change descriptors or hierarchy (spawn,
+    /// reparent, removal, activity, component insert/mutate/remove); transform
+    /// and name edits do not bump it.
+    structure_revision: u64,
 }
 impl SceneGraph {
+    /// Counter that changes whenever hierarchy, activity or components change, so
+    /// per-tick validators can skip structural re-scans while it is unchanged.
+    #[must_use]
+    pub const fn structure_revision(&self) -> u64 {
+        self.structure_revision
+    }
+
+    fn bump_structure(&mut self) {
+        self.structure_revision = self.structure_revision.wrapping_add(1);
+    }
+
     /// Explicit bound prevents unrestricted object growth.
     ///
     /// # Panics
@@ -235,6 +251,7 @@ impl SceneGraph {
             free: Vec::new(),
             capacity,
             count: 0,
+            structure_revision: 0,
         }
     }
 
@@ -280,6 +297,7 @@ impl SceneGraph {
         parent: Option<NodeId>,
         local: Transform,
     ) -> Result<NodeId, SceneGraphError> {
+        self.bump_structure();
         local.matrix()?;
         if let Some(parent) = parent {
             self.node(parent)?;
@@ -360,6 +378,7 @@ impl SceneGraph {
     /// # Errors
     /// Rejects stale or foreign handles.
     pub fn set_active(&mut self, id: NodeId, active: bool) -> Result<(), SceneGraphError> {
+        self.bump_structure();
         if self.node(id)?.active != active {
             self.node_mut(id)?.active = active;
             self.refresh_subtree(id)?;
@@ -433,6 +452,7 @@ impl SceneGraph {
         id: NodeId,
         value: T,
     ) -> Result<Option<T>, SceneGraphError> {
+        self.bump_structure();
         let old = self.node_mut(id)?.components.insert(
             TypeId::of::<T>(),
             Component(Box::new(value), next_component_revision()),
@@ -481,6 +501,7 @@ impl SceneGraph {
         &mut self,
         id: NodeId,
     ) -> Result<Option<&mut T>, SceneGraphError> {
+        self.bump_structure();
         let Some(value) = self.node_mut(id)?.components.get_mut(&TypeId::of::<T>()) else {
             return Ok(None);
         };
@@ -495,6 +516,7 @@ impl SceneGraph {
         &mut self,
         id: NodeId,
     ) -> Result<Option<T>, SceneGraphError> {
+        self.bump_structure();
         Ok(self
             .node_mut(id)?
             .components
@@ -675,6 +697,7 @@ impl SceneGraph {
     /// # Errors
     /// Rejects stale/foreign handles and cycles without changing the hierarchy.
     pub fn reparent(&mut self, id: NodeId, parent: Option<NodeId>) -> Result<(), SceneGraphError> {
+        self.bump_structure();
         let old_parent = self.node(id)?.parent;
         let mut ancestor = parent;
         while let Some(current) = ancestor {
@@ -738,6 +761,7 @@ impl SceneGraph {
     /// # Errors
     /// Rejects invalid handles before mutation.
     pub fn remove_subtree(&mut self, root: NodeId) -> Result<usize, SceneGraphError> {
+        self.bump_structure();
         let parent = self.node(root)?.parent;
         if let Some(parent) = parent {
             self.node_mut(parent)?.children.retain(|&id| id != root);
