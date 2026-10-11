@@ -58,9 +58,10 @@ impl Frame {
             return Err("invalid full-model frame timing".into());
         }
         if let Some(frames) = &self.hair_frames
-            && (frames.is_empty() || self.mesh.vertices().iter().any(|v| v.uv[0] == -7.)) {
-                return Err("invalid separated GPU hair publication".into());
-            }
+            && (frames.is_empty() || self.mesh.vertices().iter().any(|v| v.uv[0] == -7.))
+        {
+            return Err("invalid separated GPU hair publication".into());
+        }
         Ok(())
     }
 }

@@ -360,9 +360,9 @@ impl AffineBox {
                 && !points
                     .iter()
                     .any(|old: &DVec3| (*old - point).abs().max_element() <= tolerance)
-                {
-                    points.push(point);
-                }
+            {
+                points.push(point);
+            }
         };
         for point in va.into_iter().chain(vb) {
             admit(point);

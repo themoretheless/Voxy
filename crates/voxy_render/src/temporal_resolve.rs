@@ -141,9 +141,9 @@ impl TemporalResolve {
                     inputs.history_depth,
                 ]
                 .contains(&output))
-            {
-                return Err(ComputeError::InvalidBuffer);
-            }
+        {
+            return Err(ComputeError::InvalidBuffer);
+        }
         let output = retained_output.cloned().unwrap_or_else(|| {
             self.device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("reprojected HDR"),

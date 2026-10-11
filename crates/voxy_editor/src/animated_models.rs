@@ -355,11 +355,15 @@ impl AnimatedModels {
             )
             .map_err(|e| format!("{e:?}"))?;
         if level > 0 && !state.lod_levels.contains_key(&level) {
-            let geometry = if let (Some(skinner), Primitive::Skin { instance, .. }) = (&self.skinner, &state.primitives[0]) { LodGeometry::Gpu(
-                skinner
-                    .create_lod_level(instance, source, level, live, budget)
-                    .map_err(|e| e.to_string())?,
-            ) } else {
+            let geometry = if let (Some(skinner), Primitive::Skin { instance, .. }) =
+                (&self.skinner, &state.primitives[0])
+            {
+                LodGeometry::Gpu(
+                    skinner
+                        .create_lod_level(instance, source, level, live, budget)
+                        .map_err(|e| e.to_string())?,
+                )
+            } else {
                 let local = source
                     .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
                     .map_err(|e| e.to_string())?;

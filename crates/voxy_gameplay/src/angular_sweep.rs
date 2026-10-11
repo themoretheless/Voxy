@@ -856,7 +856,8 @@ fn sweep_rigid_approximation_with_axis_errors(
     {
         return Err(PhysicsError::InvalidMotion);
     }
-    if coordinate_certificate.is_some_and(|proof| !std::ptr::eq(proof.path(), &raw const approximation.path))
+    if coordinate_certificate
+        .is_some_and(|proof| !std::ptr::eq(proof.path(), &raw const approximation.path))
     {
         return Err(PhysicsError::InvalidMotion);
     }
@@ -1329,28 +1330,29 @@ fn sweep_rigid_path_with_bounds(
                     if (clearance == 0.
                         || coordinate_certificate.is_some()
                         || exact_numeric_projection)
-                        && let Some(cache) = enclosed_path {
-                            // The whole field is monotone away from this plane;
-                            // exact initial touching is safe throughout it.
-                            if invariant_projection_separates(
-                                center,
-                                rest_edges.map(|e| rotate_vector(orientation, e)),
-                                obstacle,
-                                normal,
-                                orientation,
-                                basis,
-                                scale,
-                                cache,
-                                if clearance == 0. || exact_numeric_projection {
-                                    None
-                                } else {
-                                    coordinate_certificate
-                                },
-                            )? {
-                                separated = true;
-                                break;
-                            }
+                        && let Some(cache) = enclosed_path
+                    {
+                        // The whole field is monotone away from this plane;
+                        // exact initial touching is safe throughout it.
+                        if invariant_projection_separates(
+                            center,
+                            rest_edges.map(|e| rotate_vector(orientation, e)),
+                            obstacle,
+                            normal,
+                            orientation,
+                            basis,
+                            scale,
+                            cache,
+                            if clearance == 0. || exact_numeric_projection {
+                                None
+                            } else {
+                                coordinate_certificate
+                            },
+                        )? {
+                            separated = true;
+                            break;
                         }
+                    }
                     if clearance > 0. || initial_points.is_some() {
                         // Every point moves at most speed_bound over this unit
                         // interval. Reject only if the certified initial gap

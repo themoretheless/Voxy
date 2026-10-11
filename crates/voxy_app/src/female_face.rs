@@ -253,10 +253,10 @@ impl LidContour {
                 if let (Some(&a), Some(&b)) = (
                     local.get(&(edge[0] as usize)),
                     local.get(&(edge[1] as usize)),
-                )
-                    && a != b {
-                        unique.insert([a.min(b), a.max(b)]);
-                    }
+                ) && a != b
+                {
+                    unique.insert([a.min(b), a.max(b)]);
+                }
             }
         }
         Self {

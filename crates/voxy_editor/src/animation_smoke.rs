@@ -890,7 +890,8 @@ impl App {
                         .animated
                         .as_ref()
                         .ok_or("missing target rig")?
-                        .animations.is_empty()
+                        .animations
+                        .is_empty()
                     {
                         return Err("native retarget target must have no clips".into());
                     }

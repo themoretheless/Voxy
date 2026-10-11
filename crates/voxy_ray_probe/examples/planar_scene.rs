@@ -6,7 +6,14 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use voxy_render::{SceneMesh, SceneVertex, SceneSurface, RayScene, SceneTexture, GgxRayLightingPipeline, PlanarTemporalPipeline, TemporalHistory, TextureBlit, ReconstructionGuideMesh, ReflectionSpatialPipeline, GraphicsBackend, GraphicsOptions, SurfaceOutput, RendererError, RasterRayFrame, RasterRayOptions, SurfacePointLight, SurfaceReflectionOptions, ReconstructionMaterial, PreviousReflectionTriangle, PlanarReflectionCameras, TemporalResolveOptions, ReflectionSpatialOptions, RadianceComposition, RenderOutcome};
+use voxy_render::{
+    GgxRayLightingPipeline, GraphicsBackend, GraphicsOptions, PlanarReflectionCameras,
+    PlanarTemporalPipeline, PreviousReflectionTriangle, RadianceComposition, RasterRayFrame,
+    RasterRayOptions, RayScene, ReconstructionGuideMesh, ReconstructionMaterial,
+    ReflectionSpatialOptions, ReflectionSpatialPipeline, RenderOutcome, RendererError, SceneMesh,
+    SceneSurface, SceneTexture, SceneVertex, SurfaceOutput, SurfacePointLight,
+    SurfaceReflectionOptions, TemporalHistory, TemporalResolveOptions, TextureBlit,
+};
 use winit::{
     application::ApplicationHandler,
     event::{ElementState, WindowEvent},
@@ -678,10 +685,11 @@ impl ApplicationHandler for App {
         self.reset();
         self.size = [0; 2];
         if let Some(host) = &mut self.host
-            && let Err(error) = host.resize(0, 0) {
-                self.failure = Some(error.to_string());
-                event_loop.exit();
-            }
+            && let Err(error) = host.resize(0, 0)
+        {
+            self.failure = Some(error.to_string());
+            event_loop.exit();
+        }
         event_loop.set_control_flow(ControlFlow::Wait);
     }
     fn window_event(&mut self, event_loop: &ActiveEventLoop, id: WindowId, event: WindowEvent) {

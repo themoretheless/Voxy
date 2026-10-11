@@ -531,9 +531,10 @@ fn ray_shade(
     if smooth_lids {
         for (vertex, normal) in mesh.vertices().iter().zip(&mut normals) {
             if skin(vertex)
-                && let Some(&smooth) = skin_normals.get(&position_key(vertex.position)?) {
-                    *normal = smooth;
-                }
+                && let Some(&smooth) = skin_normals.get(&position_key(vertex.position)?)
+            {
+                *normal = smooth;
+            }
         }
     }
     let scene = RayScene::new(device, &triangles)?;

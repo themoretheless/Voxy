@@ -228,21 +228,24 @@ impl ApplicationHandler for App {
                 }
                 WindowEvent::RedrawRequested => {
                     self.draw()?;
-                    if self.smoke && self.frames == 10
-                        && let Some(window) = &self.window {
-                            let _ =
-                                window.request_inner_size(winit::dpi::PhysicalSize::new(800, 600));
-                        }
+                    if self.smoke
+                        && self.frames == 10
+                        && let Some(window) = &self.window
+                    {
+                        let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(800, 600));
+                    }
                     if self.smoke && self.frames == 20 {
                         self.paused = true;
                     }
                     if self.smoke && self.frames == 30 {
                         self.paused = false;
                     }
-                    if self.smoke && self.frames == 40
-                        && let Some(resources) = &mut self.resources {
-                            resources.reset()?;
-                        }
+                    if self.smoke
+                        && self.frames == 40
+                        && let Some(resources) = &mut self.resources
+                    {
+                        resources.reset()?;
+                    }
                     if self.smoke && self.frames >= 60 {
                         if self.steps != 200 || !self.resized {
                             return Err(format!(

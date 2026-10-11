@@ -166,7 +166,11 @@ impl PreparedOwnerFade {
             && Arc::ptr_eq(&self.animation_model, &owner.animation_model)
             && self.settings == owner.settings
             && self.retarget_profile == owner.retarget_profile
-            && self.feet_settings.as_ref() == owner.feet.as_ref().map(super::foot_placement::FootRuntime::settings)
+            && self.feet_settings.as_ref()
+                == owner
+                    .feet
+                    .as_ref()
+                    .map(super::foot_placement::FootRuntime::settings)
             && owner
                 .root_reference
                 .is_some_and(|reference| self.reference.matches(&reference))
@@ -489,7 +493,12 @@ impl AnimationRuntime {
             .component::<crate::ModelFootPlacement>(owner)
             .map_err(|e| e.to_string())?
             .filter(|feet| !feet.feet.is_empty());
-        if feet != state.feet.as_ref().map(super::foot_placement::FootRuntime::settings) {
+        if feet
+            != state
+                .feet
+                .as_ref()
+                .map(super::foot_placement::FootRuntime::settings)
+        {
             return Err("animation selection foot binding changed".into());
         }
         if let Some(feet) = feet {
@@ -556,13 +565,18 @@ impl AnimationRuntime {
                 || !Arc::ptr_eq(model, &state.model)
                 || profile != state.retarget_profile.as_ref()
                 || state.retarget_binding.is_some()
-                || feet != state.feet.as_ref().map(super::foot_placement::FootRuntime::settings)
+                || feet
+                    != state
+                        .feet
+                        .as_ref()
+                        .map(super::foot_placement::FootRuntime::settings)
             {
                 continue;
             }
             candidate = candidate.stage_owner_selection(scene, models, owner, model)?;
             let state = &candidate.owners[&owner];
-            if state.root_reference.is_some() && state.playback.has_transition()
+            if state.root_reference.is_some()
+                && state.playback.has_transition()
                 && let Some(fade) = candidate.prepare_owner_fade(
                     scene,
                     models,
@@ -572,9 +586,10 @@ impl AnimationRuntime {
                     origin_tolerance,
                     angular_tolerance,
                     max_spans,
-                )? {
-                    prepared.push(fade);
-                }
+                )?
+            {
+                prepared.push(fade);
+            }
         }
         Ok((candidate, prepared))
     }
@@ -1121,17 +1136,14 @@ impl AnimationRuntime {
                 |_, frame, path| Ok((frame.clone(), path.cloned())),
             )?;
             if let Some(binding) = &binding
-                && let Some(path) = trajectory.as_ref() {
-                    trajectory = Some(
-                        binding
-                            .apply_root_path(
-                                path,
-                                frame.root_motion_joint,
-                                settings.root_motion_axes,
-                            )
-                            .map_err(|e| e.to_string())?,
-                    );
-                }
+                && let Some(path) = trajectory.as_ref()
+            {
+                trajectory = Some(
+                    binding
+                        .apply_root_path(path, frame.root_motion_joint, settings.root_motion_axes)
+                        .map_err(|e| e.to_string())?,
+                );
+            }
             let (displayed, extracted_displacement) =
                 prepare_displayed_frame(frame, model, &settings, binding.as_ref())?;
             frame = displayed;

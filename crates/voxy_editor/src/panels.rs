@@ -948,37 +948,36 @@ impl Panels {
                     }
                     if !playing
                         && let Some(deleted) = self.collection_deleted_items.get(&list.key).cloned()
+                    {
+                        let pages = deleted.len().div_ceil(3).max(1);
+                        let page = self.deleted_page % pages;
+                        self.text(
+                            &mut batch,
+                            &format!("Deleted {}/{} (next)", page + 1, pages),
+                            Vec2::new(rx + 10.0, 568.0),
+                            right - 16.0,
+                            size,
+                        )?;
+                        self.regions.push((
+                            [rx + 4.0, 550.0, right - 8.0, 24.0],
+                            Action::CollectionDeletedPage,
+                        ));
+                        for (row, (id, label)) in deleted.iter().skip(page * 3).take(3).enumerate()
                         {
-                            let pages = deleted.len().div_ceil(3).max(1);
-                            let page = self.deleted_page % pages;
+                            let y = 576.0 + row as f32 * 26.0;
                             self.text(
                                 &mut batch,
-                                &format!("Deleted {}/{} (next)", page + 1, pages),
-                                Vec2::new(rx + 10.0, 568.0),
+                                &format!("Restore {label}"),
+                                Vec2::new(rx + 10.0, y + 18.0),
                                 right - 16.0,
                                 size,
                             )?;
                             self.regions.push((
-                                [rx + 4.0, 550.0, right - 8.0, 24.0],
-                                Action::CollectionDeletedPage,
+                                [rx + 4.0, y, right - 8.0, 24.0],
+                                Action::CollectionRestoreItem(list.key, *id),
                             ));
-                            for (row, (id, label)) in
-                                deleted.iter().skip(page * 3).take(3).enumerate()
-                            {
-                                let y = 576.0 + row as f32 * 26.0;
-                                self.text(
-                                    &mut batch,
-                                    &format!("Restore {label}"),
-                                    Vec2::new(rx + 10.0, y + 18.0),
-                                    right - 16.0,
-                                    size,
-                                )?;
-                                self.regions.push((
-                                    [rx + 4.0, y, right - 8.0, 24.0],
-                                    Action::CollectionRestoreItem(list.key, *id),
-                                ));
-                            }
                         }
+                    }
                 } else {
                     self.text(
                         &mut batch,

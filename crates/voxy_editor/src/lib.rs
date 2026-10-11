@@ -1502,8 +1502,8 @@ impl App {
                     .transpose()?
                     .flatten();
                 if let Some(mesh) = &mesh {
-                    let bytes = (std::mem::size_of_val(mesh.vertices())
-                        + mesh.indices().len() * 4) as u64;
+                    let bytes =
+                        (std::mem::size_of_val(mesh.vertices()) + mesh.indices().len() * 4) as u64;
                     if graphics.geometry_bytes().saturating_add(bytes)
                         > graphics.residency_cache.geometry_budget
                     {
@@ -1895,10 +1895,10 @@ impl App {
             let present_start = profile_start.map(|_| Instant::now());
             if styles.fog.is_empty()
                 && let Some(fog) = &mut graphics.fog
-                    && fog.deactivate(graphics.host.device())?
-                {
-                    graphics.fog = None;
-                }
+                && fog.deactivate(graphics.host.device())?
+            {
+                graphics.fog = None;
+            }
             if std::env::var_os("VOXY_WINDOW_PIXEL_PROBE").is_some() {
                 if let Some((frame, pixel)) = graphics.host.take_pixel_probe() {
                     println!("WINDOW PIXEL frame={frame} rgba_storage={pixel:?}");
@@ -4494,10 +4494,7 @@ impl ApplicationHandler for App {
                 } else if self
                     .cursor
                     .is_some_and(|cursor| !self.standalone && self.cursor_in_viewport(cursor))
-                    && self
-                        .panels
-                        .as_ref()
-                        .is_none_or(panels::Panels::input_ready)
+                    && self.panels.as_ref().is_none_or(panels::Panels::input_ready)
                 {
                     let cursor = self.cursor.unwrap();
                     let size = self.window.as_ref().map(|w| w.inner_size()).unwrap();
@@ -4518,10 +4515,7 @@ impl ApplicationHandler for App {
             } => self.finish_drag(false).and_then(|()| {
                 self.camera_drag = None;
                 if state == ElementState::Pressed
-                    && self
-                        .panels
-                        .as_ref()
-                        .is_none_or(panels::Panels::input_ready)
+                    && self.panels.as_ref().is_none_or(panels::Panels::input_ready)
                     && let Some(cursor) = self
                         .cursor
                         .filter(|cursor| !self.standalone && self.cursor_in_viewport(*cursor))

@@ -345,10 +345,11 @@ fn trajectory_events_counted(
                 Err(_) => return Err(Error::CollisionBackend),
             };
             if let GeometryHit::Contact { fraction, .. } = hit.contact.geometry
-                && fraction < earliest {
-                    earliest = fraction;
-                    result = hit;
-                }
+                && fraction < earliest
+            {
+                earliest = fraction;
+                result = hit;
+            }
         }
     }
     Ok(result)

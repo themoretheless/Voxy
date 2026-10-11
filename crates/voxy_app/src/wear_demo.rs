@@ -5,7 +5,11 @@ use physics_voxel::{VoxelWear, VoxelWearSuspension};
 use std::{collections::BTreeMap, sync::Arc};
 use voxy_core::WorldEpoch;
 use voxy_render::{SceneMesh, SceneVertex};
-use voxy_world::{World, BlockRegistry, BlockDef, ResourceKey, RenderKind, Occlusion, CollisionShape, MaterialId, WorldLimits, GeneratedChunk, ChunkPos, ChunkData, PalettedBlocks, BlockStateId, EditTxn, EditSource, VoxelView, VoxelWrite, VoxelPos};
+use voxy_world::{
+    BlockDef, BlockRegistry, BlockStateId, ChunkData, ChunkPos, CollisionShape, EditSource,
+    EditTxn, GeneratedChunk, MaterialId, Occlusion, PalettedBlocks, RenderKind, ResourceKey,
+    VoxelPos, VoxelView, VoxelWrite, World, WorldLimits,
+};
 
 #[derive(Debug)]
 pub(crate) struct WearDemo {
@@ -156,7 +160,10 @@ impl WearDemo {
             return Err("wear scene did not finish 80 fixed steps");
         }
         let grains = self.coupled.suspension().grains();
-        let mass: f64 = grains.iter().map(physics::suspension::Particle::mass_kg).sum();
+        let mass: f64 = grains
+            .iter()
+            .map(physics::suspension::Particle::mass_kg)
+            .sum();
         if (mass + self.coupled.binding().remaining_mass_kg() - 0.002).abs() > 1e-14 {
             return Err("wear scene mass balance failure");
         }

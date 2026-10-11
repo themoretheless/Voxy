@@ -419,7 +419,9 @@ impl ModelGraphics {
             || bytes(&asset.mesh),
             |certificate| {
                 SceneRenderer::certified_lod_mesh_allocation_bytes(&asset.mesh, certificate)
-                    .map_or(u64::MAX, |_| SceneRenderer::mesh_allocation_bytes(&asset.mesh))
+                    .map_or(u64::MAX, |_| {
+                        SceneRenderer::mesh_allocation_bytes(&asset.mesh)
+                    })
                     .saturating_add(
                         selection_outline(&asset.mesh)
                             .ok()

@@ -53,9 +53,10 @@ pub(crate) fn validate(
         (weights.len() as u64 * 8).max(8),
         u64::from(control_count) * 16,
     ];
-    if sizes.iter().any(|s| {
-        *s > limits.max_storage_buffer_binding_size || *s > limits.max_buffer_size
-    }) {
+    if sizes
+        .iter()
+        .any(|s| *s > limits.max_storage_buffer_binding_size || *s > limits.max_buffer_size)
+    {
         return Err(SceneError::GeometryCapacityExceeded);
     }
     Ok(())

@@ -523,10 +523,13 @@ impl FemaleDemo {
                 &self.body_parameters.to_json(),
                 self.time,
                 frame,
-                self.film.as_ref().map(super::surface_film_preview::FilmPreview::state_snapshot),
-            ) {
-                eprintln!("Film state capture failed: {error}");
-            }
+                self.film
+                    .as_ref()
+                    .map(super::surface_film_preview::FilmPreview::state_snapshot),
+            )
+        {
+            eprintln!("Film state capture failed: {error}");
+        }
         if self
             .last_presentation_receipt
             .is_some_and(|t| t.elapsed().as_secs_f64() < 0.5)
@@ -1311,66 +1314,70 @@ impl FemaleDemo {
         }
         if let Some(path) = &self.face_parameter_file
             && let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified())
-                && self.face_parameter_revision != Some(revision) {
-                    match std::fs::read_to_string(path)
-                        .map_err(|e| e.to_string())
-                        .and_then(|text| crate::face_parameters::FaceParameters::from_json(&text))
-                    {
-                        Ok(parameters) => {
-                            self.face_parameters = parameters;
-                            eprintln!("Face preset applied: {}", path.display());
-                        }
-                        Err(error) => eprintln!("Face parameter reload rejected: {error}"),
-                    }
-                    self.face_parameter_revision = Some(revision);
+            && self.face_parameter_revision != Some(revision)
+        {
+            match std::fs::read_to_string(path)
+                .map_err(|e| e.to_string())
+                .and_then(|text| crate::face_parameters::FaceParameters::from_json(&text))
+            {
+                Ok(parameters) => {
+                    self.face_parameters = parameters;
+                    eprintln!("Face preset applied: {}", path.display());
                 }
+                Err(error) => eprintln!("Face parameter reload rejected: {error}"),
+            }
+            self.face_parameter_revision = Some(revision);
+        }
         if let Some(path) = &self.parameter_file
             && let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified())
-                && self.parameter_revision != Some(revision) {
-                    match std::fs::read_to_string(path)
+            && self.parameter_revision != Some(revision)
+        {
+            match std::fs::read_to_string(path)
+                .map_err(|e| e.to_string())
+                .and_then(|text| {
+                    crate::body_parameters::BodyParameters::from_json(&text)
                         .map_err(|e| e.to_string())
-                        .and_then(|text| {
-                            crate::body_parameters::BodyParameters::from_json(&text)
-                                .map_err(|e| e.to_string())
-                        }) {
-                        Ok(parameters) => {
-                            if let Err(error) = self.set_body_parameters(parameters) {
-                                eprintln!("Body geometry rebuild rejected: {error}");
-                            }
-                        }
-                        Err(error) => eprintln!("Body parameter reload rejected: {error}"),
+                }) {
+                Ok(parameters) => {
+                    if let Err(error) = self.set_body_parameters(parameters) {
+                        eprintln!("Body geometry rebuild rejected: {error}");
                     }
-                    self.parameter_revision = Some(revision);
                 }
+                Err(error) => eprintln!("Body parameter reload rejected: {error}"),
+            }
+            self.parameter_revision = Some(revision);
+        }
 
         if let Some(body_path) = &self.parameter_file {
             let path = view_settings::path(body_path);
             if let Ok(revision) = std::fs::metadata(&path).and_then(|m| m.modified())
-                && self.view_revision != Some(revision) {
-                    match view_settings::ViewSettings::read(&path) {
-                        Ok(settings) => {
-                            self.show_strain = settings.mode == "strain";
-                            self.show_skin = settings.mode == "displacement";
-                        }
-                        Err(error) => eprintln!("View reload rejected: {error}"),
+                && self.view_revision != Some(revision)
+            {
+                match view_settings::ViewSettings::read(&path) {
+                    Ok(settings) => {
+                        self.show_strain = settings.mode == "strain";
+                        self.show_skin = settings.mode == "displacement";
                     }
-                    self.view_revision = Some(revision);
+                    Err(error) => eprintln!("View reload rejected: {error}"),
                 }
+                self.view_revision = Some(revision);
+            }
         }
         if let (Some(body_path), Some(film)) = (&self.parameter_file, &mut self.film) {
             let path = crate::film_settings::path(body_path);
             if let Ok(revision) = std::fs::metadata(&path).and_then(|m| m.modified())
-                && self.film_revision != Some(revision) {
-                    match crate::film_settings::FilmSettings::read(&path) {
-                        Ok(settings) => {
-                            if let Err(error) = film.configure(settings) {
-                                eprintln!("Film settings rejected: {error}");
-                            }
+                && self.film_revision != Some(revision)
+            {
+                match crate::film_settings::FilmSettings::read(&path) {
+                    Ok(settings) => {
+                        if let Err(error) = film.configure(settings) {
+                            eprintln!("Film settings rejected: {error}");
                         }
-                        Err(error) => eprintln!("Film settings reload rejected: {error}"),
                     }
-                    self.film_revision = Some(revision);
+                    Err(error) => eprintln!("Film settings reload rejected: {error}"),
                 }
+                self.film_revision = Some(revision);
+            }
         }
         if !dt.is_finite() || dt < 0.0 {
             return Err("invalid animation timestep");

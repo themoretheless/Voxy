@@ -1026,8 +1026,10 @@ impl CharacterPhysics {
             let path = requested_rigid
                 .get(&request.owner)
                 .ok_or(PhysicsError::InvalidMotion)?;
-            if !std::ptr::eq(path.trajectory, &raw const request.fade.approximation().path)
-                || path.trajectory.duration() != dt
+            if !std::ptr::eq(
+                path.trajectory,
+                &raw const request.fade.approximation().path,
+            ) || path.trajectory.duration() != dt
                 || request.coordinate_axis >= 3
                 || !request.evaluation_radius.is_finite()
                 || request.evaluation_radius < 0.
