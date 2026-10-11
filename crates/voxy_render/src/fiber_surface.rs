@@ -26,7 +26,7 @@ impl FiberSurfaceInput {
             .len()
             .checked_mul(followers as usize)
             .and_then(|n| n.checked_mul(4))
-            .filter(|n| *n > 0 && *n <= u32::MAX as usize)
+            .filter(|n| *n > 0 && u32::try_from(*n).is_ok())
             .ok_or(SceneError::GeometryCapacityExceeded)?;
         if followers == 0
             || offsets.len() != count / 4
@@ -79,7 +79,7 @@ impl FiberSurfaceInput {
                     .checked_mul(12)
                     .ok_or(SceneError::GeometryCapacityExceeded)?,
             )
-            .filter(|n| *n <= u32::MAX as usize)
+            .filter(|n| u32::try_from(*n).is_ok())
             .ok_or(SceneError::GeometryCapacityExceeded)?;
         let mut words = Vec::new();
         words
@@ -104,9 +104,11 @@ impl FiberSurfaceInput {
             vertex_count: count as u32,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn vertex_count(&self) -> u32 {
         self.vertex_count
     }

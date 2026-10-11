@@ -78,7 +78,7 @@ pub(crate) fn mouth_seam(x: f32) -> f32 {
     0.6465 + 0.0007 * shoulder - 0.0002 * notch - 0.0015 * (x / 0.026).powi(2)
 }
 /// Lower-lip opening tapers to zero at the mouth corners. The surface is split
-/// at this same seam by FaceFeatures, so upper and lower boundary weights differ.
+/// at this same seam by `FaceFeatures`, so upper and lower boundary weights differ.
 pub(crate) fn jaw_weight(point: Vec3) -> f32 {
     if point.y >= mouth_seam(point.x) {
         return 0.;
@@ -253,11 +253,10 @@ impl LidContour {
                 if let (Some(&a), Some(&b)) = (
                     local.get(&(edge[0] as usize)),
                     local.get(&(edge[1] as usize)),
-                ) {
-                    if a != b {
+                )
+                    && a != b {
                         unique.insert([a.min(b), a.max(b)]);
                     }
-                }
             }
         }
         Self {

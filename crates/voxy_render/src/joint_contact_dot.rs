@@ -24,7 +24,7 @@ pub struct JointContactDotInput {
 }
 fn pack(value: f64) -> Result<[u32; 2], JointDotError> {
     let hi = value as f32;
-    let lo = (value - hi as f64) as f32;
+    let lo = (value - f64::from(hi)) as f32;
     if !hi.is_finite() || !lo.is_finite() || (value != 0. && hi == 0. && lo == 0.) {
         return Err(JointDotError::NumericRange);
     }
@@ -71,7 +71,7 @@ fn rescale(value: f64, a: f64, b: f64) -> f64 {
     result.copysign(value)
 }
 impl JointContactDotInput {
-    /// For JOINT_CONTACT_NORMALIZE_SHADER only. Readback is [norm, unit vector].
+    /// For `JOINT_CONTACT_NORMALIZE_SHADER` only. Readback is [norm, unit vector].
     /// Uses one 64-lane workgroup; no whole-solver speed claim is implied.
     pub fn normalization(vector: &[f64]) -> Result<Self, JointDotError> {
         if vector.is_empty() || vector.iter().any(|v| !v.is_finite()) {
@@ -90,7 +90,7 @@ impl JointContactDotInput {
         let total = rows
             .checked_mul(3)
             .and_then(|n| output.checked_add(n))
-            .filter(|&n| n <= u32::MAX as usize)
+            .filter(|&n| u32::try_from(n).is_ok())
             .ok_or(JointDotError::Capacity)?;
         let mut words = Vec::new();
         words
@@ -105,7 +105,7 @@ impl JointContactDotInput {
             }
             let pair = pack(normalized)?;
             packing_error = packing_error.max(
-                (normalized - (f32::from_bits(pair[0]) as f64 + f32::from_bits(pair[1]) as f64))
+                (normalized - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
                     .abs(),
             );
             words.extend(pair);
@@ -123,7 +123,7 @@ impl JointContactDotInput {
             packing_error,
         })
     }
-    /// Encode v - sum_j(q_j * alpha_j), one GPU invocation per coordinate.
+    /// Encode v - `sum_j(q_j` * `alpha_j`), one GPU invocation per coordinate.
     /// Basis columns are immutable. This is a QR vector-update stage only;
     /// callers must still validate the original physical joint solution.
     pub fn projection(
@@ -180,7 +180,7 @@ impl JointContactDotInput {
         let total = rows
             .checked_mul(3)
             .and_then(|n| output.checked_add(n))
-            .filter(|&n| n <= u32::MAX as usize)
+            .filter(|&n| u32::try_from(n).is_ok())
             .ok_or(JointDotError::Capacity)?;
         let mut words = Vec::new();
         words
@@ -214,7 +214,7 @@ impl JointContactDotInput {
                 let pair = pack(normalized)?;
                 packing_error = packing_error.max(
                     (normalized
-                        - (f32::from_bits(pair[0]) as f64 + f32::from_bits(pair[1]) as f64))
+                        - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
                         .abs(),
                 );
                 words.extend(pair);
@@ -227,7 +227,7 @@ impl JointContactDotInput {
             }
             let pair = pack(normalized)?;
             packing_error = packing_error.max(
-                (normalized - (f32::from_bits(pair[0]) as f64 + f32::from_bits(pair[1]) as f64))
+                (normalized - (f64::from(f32::from_bits(pair[0])) + f64::from(f32::from_bits(pair[1]))))
                     .abs(),
             );
             words.extend(pair);
@@ -243,9 +243,11 @@ impl JointContactDotInput {
             packing_error,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn dispatch(&self) -> (u32, u32, u32) {
         (
             if self.words[2] == 1 {
@@ -257,6 +259,7 @@ impl JointContactDotInput {
             1,
         )
     }
+    #[must_use]
     pub fn packing_error(&self) -> f64 {
         self.packing_error
     }
@@ -276,8 +279,8 @@ impl JointContactDotInput {
             if words[self.output + self.rows * 2 + row] != 0 {
                 return Err(JointDotError::Output);
             }
-            let hi = f32::from_bits(words[self.output + row * 2]) as f64;
-            let lo = f32::from_bits(words[self.output + row * 2 + 1]) as f64;
+            let hi = f64::from(f32::from_bits(words[self.output + row * 2]));
+            let lo = f64::from(f32::from_bits(words[self.output + row * 2 + 1]));
             let value = rescale(hi + lo, self.scales[row], self.vector_scale);
             if !hi.is_finite() || !lo.is_finite() || !value.is_finite() {
                 return Err(JointDotError::Output);
@@ -345,6 +348,7 @@ impl ValidatedResidentContactEquality {
     pub fn update_bounds(&mut self, bounds: &[f64]) -> Result<(), JointDotError> {
         self.input.update_bounds(bounds)
     }
+    #[must_use]
     pub fn equality_update(&self) -> (u64, &[u8]) {
         self.input.equality_update()
     }
@@ -398,7 +402,7 @@ impl ResidentContactEqualityInput {
             .ok_or(JointDotError::Capacity)?;
         let total = rhs
             .checked_add(additional)
-            .filter(|&n| n <= u32::MAX as usize)
+            .filter(|&n| u32::try_from(n).is_ok())
             .ok_or(JointDotError::Capacity)?;
         let mut words = qr.words.clone();
         words
@@ -422,9 +426,11 @@ impl ResidentContactEqualityInput {
             output,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn columns(&self) -> usize {
         self.qr.count
     }
@@ -499,6 +505,7 @@ impl ResidentContactEqualityInput {
         Ok(())
     }
     /// Upload this range only, retaining original columns, completed Q and R.
+    #[must_use]
     pub fn equality_update(&self) -> (u64, &[u8]) {
         (
             (self.rhs * 4) as u64,
@@ -544,8 +551,8 @@ impl ResidentContactEqualityInput {
             return Err(JointDotError::Output);
         }
         let pair = |offset: usize| -> Result<f64, JointDotError> {
-            let hi = f32::from_bits(words[offset]) as f64;
-            let lo = f32::from_bits(words[offset + 1]) as f64;
+            let hi = f64::from(f32::from_bits(words[offset]));
+            let lo = f64::from(f32::from_bits(words[offset + 1]));
             if !hi.is_finite() || !lo.is_finite() {
                 return Err(JointDotError::Output);
             }
@@ -653,7 +660,7 @@ impl ResidentContactQrInput {
             .and_then(|n| n.checked_mul(2))
             .and_then(|n| matrix.checked_mul(2).and_then(|m| m.checked_add(n)))
             .and_then(|n| n.checked_add(4))
-            .filter(|&n| n <= u32::MAX as usize)
+            .filter(|&n| u32::try_from(n).is_ok())
             .ok_or(JointDotError::Capacity)?;
         let mut words = Vec::new();
         words
@@ -688,9 +695,11 @@ impl ResidentContactQrInput {
             input_end,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn columns(&self) -> usize {
         self.count
     }
@@ -710,8 +719,8 @@ impl ResidentContactQrInput {
             return Err(JointDotError::Output);
         }
         let pair = |offset: usize| -> Result<f64, JointDotError> {
-            let hi = f32::from_bits(words[offset]) as f64;
-            let lo = f32::from_bits(words[offset + 1]) as f64;
+            let hi = f64::from(f32::from_bits(words[offset]));
+            let lo = f64::from(f32::from_bits(words[offset + 1]));
             if !hi.is_finite() || !lo.is_finite() {
                 return Err(JointDotError::Output);
             }
@@ -734,7 +743,7 @@ impl ResidentContactQrInput {
     pub fn decode(&self, bytes: &[u8]) -> Result<ResidentContactQrOutput, JointDotError> {
         let words = self.checked_words(bytes)?;
         let pair = |offset: usize| {
-            f32::from_bits(words[offset]) as f64 + f32::from_bits(words[offset + 1]) as f64
+            f64::from(f32::from_bits(words[offset])) + f64::from(f32::from_bits(words[offset + 1]))
         };
         let mut basis = Vec::with_capacity(self.count);
         let mut triangular_columns = Vec::with_capacity(self.count);

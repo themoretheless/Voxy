@@ -303,6 +303,7 @@ pub struct AppliedCharacterMotion {
 /// Source coordinate corresponding exactly to a world coordinate through the
 /// fixed actor and root basis. None means a directional certificate cannot be
 /// selected structurally; no near-zero rotation-matrix tolerance is used.
+#[must_use]
 pub fn rigid_source_coordinate_axis(
     orientation: glam::DQuat,
     basis: glam::DQuat,
@@ -353,7 +354,7 @@ pub struct CharacterCertifiedFadeMotion<'a> {
     /// None uses the additional radius on every axis. Bounds must not exceed it.
     pub evaluation_axes: Option<[f64; 3]>,
 }
-/// A STEP collision may have path_fraction=1 without completing the final event.
+/// A STEP collision may have `path_fraction=1` without completing the final event.
 /// Use `complete`, `completed_spans` and `span_fraction` for exact admission.
 #[derive(Clone, Copy, Debug)]
 pub struct AppliedCharacterTrajectoryMotion {
@@ -376,6 +377,7 @@ impl AppliedCharacterTrajectoryMotion {
     /// World-axis and L1 discrepancy for the accepted sweep proposal against
     /// its canonical field. Covers the whole affine body before ground snap,
     /// relocation and f32 scene publication; not a uniform trajectory bound.
+    #[must_use]
     pub fn proposal_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.proposal_evaluation_error
     }
@@ -384,6 +386,7 @@ impl AppliedCharacterTrajectoryMotion {
     /// grounding and relocation against the accepted canonical prefix. Ground
     /// correction is included as displacement, not merely numerical error.
     /// This certifies this accepted pose, not every trajectory time.
+    #[must_use]
     pub fn physical_pose_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.physical_evaluation_error
     }
@@ -391,14 +394,16 @@ impl AppliedCharacterTrajectoryMotion {
     /// World-axis and L1 discrepancy of the whole published affine body
     /// against the accepted canonical prefix. Includes grounding, relocation
     /// and composed f32 scene matrix; this is not a uniform trajectory bound.
+    #[must_use]
     pub fn published_pose_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.published_evaluation_error
     }
 
     /// Identity admission within the lifetime of the borrowed rigid request.
     /// The address is never dereferenced and is not a persistent asset ID.
+    #[must_use]
     pub fn matches_rigid_trajectory(&self, path: &voxy_animation::RootRigidPath) -> bool {
-        self.rigid_identity == Some(path as *const _ as usize)
+        self.rigid_identity == Some(std::ptr::from_ref(path) as usize)
     }
 }
 
@@ -802,7 +807,7 @@ impl CharacterPhysics {
     /// Sweeps each requested translation, then its complete fixed-center rotation
     /// against active static boxes. Input/gravity runs first. Contact-limited arcs
     /// return their accepted fraction; winding is not discarded at equal endpoints.
-    /// Active authored AngularMotion also produces receipts; a simultaneous nonzero
+    /// Active authored `AngularMotion` also produces receipts; a simultaneous nonzero
     /// explicit angular request is rejected rather than applied by two writers.
     /// # Errors
     /// Invalid requests and sweep-budget failure preserve all scene/body/input state.
@@ -822,7 +827,7 @@ impl CharacterPhysics {
     /// budgets never reset at key boundaries. Input/gravity precedes translation;
     /// grounding is refreshed once after the accepted rotation.
     /// # Errors
-    /// Invalid/duplicate/inactive requests, conflicting AngularMotion, aggregate
+    /// Invalid/duplicate/inactive requests, conflicting `AngularMotion`, aggregate
     /// capacity and solver-budget failure preserve scene, all body state and input.
     pub fn fixed_step_with_trajectory_motion(
         &mut self,
@@ -1021,7 +1026,7 @@ impl CharacterPhysics {
             let path = requested_rigid
                 .get(&request.owner)
                 .ok_or(PhysicsError::InvalidMotion)?;
-            if !std::ptr::eq(path.trajectory, &request.fade.approximation().path)
+            if !std::ptr::eq(path.trajectory, &raw const request.fade.approximation().path)
                 || path.trajectory.duration() != dt
                 || request.coordinate_axis >= 3
                 || !request.evaluation_radius.is_finite()
@@ -1271,7 +1276,7 @@ impl CharacterPhysics {
                     position += hit.displacement;
                     angular_fraction = hit.path_fraction;
                     accepted_path = Some(AppliedCharacterTrajectoryMotion {
-                        rigid_identity: Some(path.trajectory as *const _ as usize),
+                        rigid_identity: Some(std::ptr::from_ref(path.trajectory) as usize),
                         owner,
                         displacement: Vec3::ZERO,
                         rotation: hit.rotation,

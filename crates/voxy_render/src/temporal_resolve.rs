@@ -91,7 +91,7 @@ impl TemporalResolve {
         self.prepare_inner(inputs, options, true, None)
     }
     /// Resolve into a retained caller-owned target without allocating a texture.
-    /// Target must be a distinct single-mip RGBA32Float storage texture with the input size.
+    /// Target must be a distinct single-mip `RGBA32Float` storage texture with the input size.
     /// All resources must belong to this device; wgpu validates ownership.
     /// # Errors
     /// Rejects incompatible output, feedback aliases or invalid inputs/settings.
@@ -124,8 +124,8 @@ impl TemporalResolve {
         {
             return Err(ComputeError::InvalidDispatch);
         }
-        if let Some(output) = retained_output {
-            if output.size() != size
+        if let Some(output) = retained_output
+            && (output.size() != size
                 || output.format() != wgpu::TextureFormat::Rgba32Float
                 || output.dimension() != wgpu::TextureDimension::D2
                 || output.sample_count() != 1
@@ -140,11 +140,10 @@ impl TemporalResolve {
                     inputs.expected_previous_depth,
                     inputs.history_depth,
                 ]
-                .contains(&output)
+                .contains(&output))
             {
                 return Err(ComputeError::InvalidBuffer);
             }
-        }
         let output = retained_output.cloned().unwrap_or_else(|| {
             self.device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("reprojected HDR"),

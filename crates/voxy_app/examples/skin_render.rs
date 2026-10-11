@@ -330,12 +330,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "/tmp/voxy-skin-probe-preview.png"
         } else if side {
             "/tmp/voxy-skin-side-preview.png"
+        } else if strain {
+            "/tmp/voxy-skin-strain-preview.png"
         } else {
-            if strain {
-                "/tmp/voxy-skin-strain-preview.png"
-            } else {
-                "/tmp/voxy-skin-preview.png"
-            }
+            "/tmp/voxy-skin-preview.png"
         },
         &pixels,
         1152,

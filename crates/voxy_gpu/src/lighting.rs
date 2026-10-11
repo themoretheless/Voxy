@@ -180,13 +180,13 @@ impl GpuLightingProgram {
             return Err(GpuLightingError::InvalidInput);
         }
 
-        let opaque_words: Vec<u32> = opaque.iter().map(|&b| if b { 1 } else { 0 }).collect();
+        let opaque_words: Vec<u32> = opaque.iter().map(|&b| u32::from(b)).collect();
         let emission_words: Vec<u32> = emission.iter().map(|&e| u32::from(e)).collect();
         let has_emission = emission.iter().any(|&e| e > 0);
 
         let config_sky = LightingConfig {
             preserve_direct_down: 1,
-            sky_from_above: if sky_from_above { 1 } else { 0 },
+            sky_from_above: u32::from(sky_from_above),
             _pad0: 0,
             _pad1: 0,
         };

@@ -149,7 +149,7 @@ impl LiquidDemo {
             Ok(emitter)
         };
         let liquids = [make(Material::WATER)?, make(Material::OIL)?];
-        let initial_liquid_mass = liquids.each_ref().map(|liquid| liquid.mass());
+        let initial_liquid_mass = liquids.each_ref().map(physics::liquid::Liquid::mass);
         Ok(Self {
             liquids,
             initial_liquid_mass,
@@ -281,7 +281,7 @@ impl LiquidDemo {
         let (water, water_film) = make(Material::WATER)?;
         let (oil, oil_film) = make(Material::OIL)?;
         demo.liquids = [water, oil];
-        demo.initial_liquid_mass = demo.liquids.each_ref().map(|liquid| liquid.mass());
+        demo.initial_liquid_mass = demo.liquids.each_ref().map(physics::liquid::Liquid::mass);
         demo.films = Some([water_film, oil_film]);
         for emitter in &mut demo.emitters {
             emitter.template.field = Some(LiquidField {
@@ -758,8 +758,8 @@ impl LiquidDemo {
             // A contrasting reference grid makes background refraction visible.
             for y in 0..10 {
                 for x in 0..20 {
-                    let x0 = -1.0 + x as f64 * 0.1;
-                    let y0 = y as f64 * 0.1;
+                    let x0 = -1.0 + f64::from(x) * 0.1;
+                    let y0 = f64::from(y) * 0.1;
                     for quad in [
                         [
                             [x0, y0, -0.3],
@@ -846,9 +846,8 @@ impl LiquidDemo {
                         points,
                             world_thickness,
                         material,
-                    ).map_err(|error| {
+                    ).inspect_err(|&error| {
                         eprintln!("OPTICAL FILM rejected group={group} cell={cell} thickness_m={h} points={points:?}: {error}");
-                        error
                     })?);
                 }
             }

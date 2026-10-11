@@ -72,7 +72,7 @@ impl BandedSolveInput {
         let total = stride
             .checked_mul(systems.len())
             .and_then(|v| v.checked_add(4))
-            .filter(|v| *v <= u32::MAX as usize)
+            .filter(|v| u32::try_from(*v).is_ok())
             .ok_or(BandedSolveError::Capacity)?;
         let mut words = Vec::new();
         words
@@ -106,7 +106,7 @@ impl BandedSolveInput {
             }
             let mut push = |value: f64, kind: usize| -> Result<(), BandedSolveError> {
                 let hi = value as f32;
-                let lo = (value - hi as f64) as f32;
+                let lo = (value - f64::from(hi)) as f32;
                 if !value.is_finite()
                     || !hi.is_finite()
                     || !lo.is_finite()
@@ -115,7 +115,7 @@ impl BandedSolveInput {
                     return Err(BandedSolveError::NumericRange);
                 }
                 packing_error[kind] =
-                    packing_error[kind].max(((hi as f64 + lo as f64) - value).abs());
+                    packing_error[kind].max(((f64::from(hi) + f64::from(lo)) - value).abs());
                 words.extend([hi.to_bits(), lo.to_bits()]);
                 Ok(())
             };
@@ -164,7 +164,7 @@ impl BandedSolveInput {
             for (i, (&value, &scale)) in values.iter().zip(scales).enumerate() {
                 let normalized = value * scale;
                 let hi = normalized as f32;
-                let lo = (normalized - hi as f64) as f32;
+                let lo = (normalized - f64::from(hi)) as f32;
                 if !normalized.is_finite()
                     || !hi.is_finite()
                     || !lo.is_finite()
@@ -172,7 +172,7 @@ impl BandedSolveInput {
                 {
                     return Err(BandedSolveError::NumericRange);
                 }
-                rhs_error = rhs_error.max(((hi as f64 + lo as f64) - normalized).abs());
+                rhs_error = rhs_error.max(((f64::from(hi) + f64::from(lo)) - normalized).abs());
                 words[base + i * 2] = hi.to_bits();
                 words[base + i * 2 + 1] = lo.to_bits();
             }
@@ -188,17 +188,19 @@ impl BandedSolveInput {
     }
     /// Maximum absolute hi/lo round-trip error in equilibrated matrix/RHS units.
     /// This measures input representation only, not correction or trajectory error.
+    #[must_use]
     pub fn packing_error(&self) -> [f64; 2] {
         self.packing_error
     }
     /// Decode one immutable input system for an independent arithmetic audit.
     /// Multiplying a solved normalized correction by `scales` restores its units.
+    #[must_use]
     pub fn packed_reference(&self, index: usize) -> Option<BandedPackedReference> {
         let scales = self.scales.get(index)?.clone();
         let base = 4 + index * (self.n * 20 + 1);
         let read = |offset: usize| {
-            f32::from_bits(self.words[offset]) as f64
-                + f32::from_bits(self.words[offset + 1]) as f64
+            f64::from(f32::from_bits(self.words[offset]))
+                + f64::from(f32::from_bits(self.words[offset + 1]))
         };
         Some(BandedPackedReference {
             matrix: (0..self.n * 9).map(|i| read(base + i * 2)).collect(),
@@ -208,6 +210,7 @@ impl BandedSolveInput {
             scales,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
@@ -228,7 +231,7 @@ impl BandedSolveInput {
             if self.words[base..rhs] != factored_input.words[base..rhs] {
                 return Err(BandedSolveError::InvalidInput);
             }
-            let mut payload = self.words[rhs..rhs + self.n * 2 + 1].to_vec();
+            let mut payload = self.words[rhs..=(rhs + self.n * 2)].to_vec();
             // Shader consumes this command and publishes normal status zero.
             payload[self.n * 2] = 2;
             updates.push((rhs as u64 * 4, bytemuck::cast_slice(&payload).to_vec()));
@@ -236,10 +239,12 @@ impl BandedSolveInput {
         Ok(updates)
     }
     /// Only the immutable header and solved RHS/status need host transfer.
+    #[must_use]
     pub fn compact_output_size(&self) -> u64 {
         16 + self.scales.len() as u64 * (self.n as u64 * 2 + 1) * 4
     }
     /// Ordered source/destination byte ranges for a complete compact snapshot.
+    #[must_use]
     pub fn compact_output_ranges(&self) -> Vec<(u64, u64, u64)> {
         let mut ranges = vec![(0, 0, 16)];
         for system in 0..self.scales.len() {
@@ -257,6 +262,7 @@ impl BandedSolveInput {
     ) -> Result<Vec<Vec<f64>>, BandedSolveError> {
         self.decode_output(bytes, tolerance, true)
     }
+    #[must_use]
     pub fn dispatch(&self) -> [u32; 3] {
         [(self.scales.len() as u32).div_ceil(32), 1, 1]
     }
@@ -291,7 +297,7 @@ impl BandedSolveInput {
             return Err(BandedSolveError::InvalidOutput);
         }
         let read = |data: &[u32], index: usize| {
-            f32::from_bits(data[index]) as f64 + f32::from_bits(data[index + 1]) as f64
+            f64::from(f32::from_bits(data[index])) + f64::from(f32::from_bits(data[index + 1]))
         };
         let mut result = Vec::new();
         for (system, scales) in self.scales.iter().enumerate() {

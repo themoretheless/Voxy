@@ -62,7 +62,7 @@ impl PlanarTemporalPipeline {
     /// frame. Do not use this path for curved/rough surfaces or direct lighting.
     /// `clip_history` uses the existing current-neighborhood clipping policy.
     /// Encode after ray production, display output, then finish with the actual
-    /// host RenderOutcome. No preparation/submission alone commits history.
+    /// host `RenderOutcome`. No preparation/submission alone commits history.
     /// # Errors
     /// Rejects foreign devices, invalid correspondence/guides or resolve inputs.
     pub fn prepare<'a>(

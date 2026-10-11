@@ -87,7 +87,7 @@ pub(crate) fn sample(time: f64) -> JumpSample {
     } else if t < TAKEOFF {
         0.25 - 0.85 * ease((t - 0.38) / (TAKEOFF - 0.38))
     } else if let Some(flight) = flight {
-        -0.6 + 0.2 * (std::f32::consts::PI * flight).sin().powi(2) as f64
+        -0.6 + 0.2 * f64::from((std::f32::consts::PI * flight).sin().powi(2))
     } else if t < 1.26 {
         -0.6 + 0.75 * ease((t - LANDING) / (1.26 - LANDING))
     } else {

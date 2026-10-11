@@ -576,7 +576,7 @@ impl SceneGeometry {
             return Ok(false);
         }
         if indices.len() > self.index_capacity
-            || indices.len() % 3 != 0
+            || !indices.len().is_multiple_of(3)
             || indices.iter().any(|i| *i as usize >= self.vertex_capacity)
         {
             return Err(SceneError::InvalidGeometry);
@@ -684,7 +684,7 @@ impl SceneTransform {
     pub fn allocation_bytes(&self) -> u64 {
         self.buffer.size()
     }
-    /// Set the positive world half-space for planar_reflection_pbr_clip_shader.
+    /// Set the positive world half-space for `planar_reflection_pbr_clip_shader`.
     /// Preserves world/tint/light/view/PBR. Reapply after MVP or motion updates,
     /// which overwrite this plane in the previous-MVP slot.
     /// # Errors
@@ -707,7 +707,7 @@ impl SceneTransform {
         );
         Ok(())
     }
-    /// Set world transform, tint and clipping plane for PLANAR_REFLECTION_CLIP_SHADER.
+    /// Set world transform, tint and clipping plane for `PLANAR_REFLECTION_CLIP_SHADER`.
     /// Keep the positive half-space, including the plane. Uses the point-light slot;
     /// this is a dedicated unlit capture material, not a point-light shader setting.
     /// # Errors
@@ -738,7 +738,7 @@ impl SceneTransform {
         queue.write_buffer(&self.buffer, 144, bytemuck::cast_slice(&values));
         Ok(())
     }
-    /// Set display MVP and reflected-camera MVP for PLANAR_REFLECTION_SURFACE_SHADER.
+    /// Set display MVP and reflected-camera MVP for `PLANAR_REFLECTION_SURFACE_SHADER`.
     /// Both matrices include this mesh's world transform. The second matrix replaces
     /// motion history; use a separate transform for a motion-vector pass.
     /// # Errors
@@ -2830,7 +2830,7 @@ impl SceneRenderer {
                     let msaa = self
                         .msaa_pipelines
                         .as_ref()
-                        .is_some_and(|p| std::ptr::eq(pipelines.0, &p.0));
+                        .is_some_and(|p| std::ptr::eq(pipelines.0, &raw const p.0));
                     pass.set_pipeline(
                         draw.geometry
                             .opaque_shader
@@ -2966,7 +2966,7 @@ pub(crate) fn smooth_normals(mesh: &SceneMesh) -> Vec<[f32; 3]> {
 
 /// Deterministic multiply/xor-shift hasher for the welded 96-bit position key.
 ///
-/// The randomized SipHash default dominated per-frame normal welding on large
+/// The randomized `SipHash` default dominated per-frame normal welding on large
 /// meshes; the fold below mixes the float bit patterns well enough for open
 /// addressing and never affects results, only the lookup cost.
 #[derive(Clone, Copy, Debug, Default)]

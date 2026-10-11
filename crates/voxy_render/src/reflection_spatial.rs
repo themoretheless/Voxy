@@ -85,7 +85,7 @@ impl ReflectionSpatialPipeline {
             options,
         )
     }
-    /// Same-device, row-major primary 32-byte and ReflectionHit 48-byte buffers.
+    /// Same-device, row-major primary 32-byte and `ReflectionHit` 48-byte buffers.
     /// Producers must complete before this job; wgpu validates raw device ownership.
     /// # Errors
     /// Rejects format, storage capacities, dimensions and nonfinite settings.

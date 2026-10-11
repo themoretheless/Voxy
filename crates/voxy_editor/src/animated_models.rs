@@ -355,35 +355,32 @@ impl AnimatedModels {
             )
             .map_err(|e| format!("{e:?}"))?;
         if level > 0 && !state.lod_levels.contains_key(&level) {
-            let geometry = match (&self.skinner, &state.primitives[0]) {
-                (Some(skinner), Primitive::Skin { instance, .. }) => LodGeometry::Gpu(
-                    skinner
-                        .create_lod_level(instance, source, level, live, budget)
-                        .map_err(|e| e.to_string())?,
-                ),
-                _ => {
-                    let local = source
-                        .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
-                        .map_err(|e| e.to_string())?;
-                    let mesh = local
-                        .posed_scene_mesh(level, state.model.primitives[0].color)
-                        .map_err(|e| e.to_string())?
-                        .with_material_coordinates(
-                            source
-                                .mesh()
-                                .vertices()
-                                .iter()
-                                .map(|v| v.position)
-                                .collect(),
-                        )
-                        .map_err(|e| e.to_string())?;
-                    admit(live, SceneRenderer::mesh_allocation_bytes(&mesh), budget)?;
-                    LodGeometry::Cpu(
-                        renderer
-                            .upload_mesh(device, &mesh)
-                            .map_err(|e| e.to_string())?,
+            let geometry = if let (Some(skinner), Primitive::Skin { instance, .. }) = (&self.skinner, &state.primitives[0]) { LodGeometry::Gpu(
+                skinner
+                    .create_lod_level(instance, source, level, live, budget)
+                    .map_err(|e| e.to_string())?,
+            ) } else {
+                let local = source
+                    .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
+                    .map_err(|e| e.to_string())?;
+                let mesh = local
+                    .posed_scene_mesh(level, state.model.primitives[0].color)
+                    .map_err(|e| e.to_string())?
+                    .with_material_coordinates(
+                        source
+                            .mesh()
+                            .vertices()
+                            .iter()
+                            .map(|v| v.position)
+                            .collect(),
                     )
-                }
+                    .map_err(|e| e.to_string())?;
+                admit(live, SceneRenderer::mesh_allocation_bytes(&mesh), budget)?;
+                LodGeometry::Cpu(
+                    renderer
+                        .upload_mesh(device, &mesh)
+                        .map_err(|e| e.to_string())?,
+                )
             };
             state.lod_levels.insert(level, geometry);
         }

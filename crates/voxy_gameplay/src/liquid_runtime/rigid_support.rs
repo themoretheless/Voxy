@@ -80,7 +80,7 @@ impl FeatureKey {
         if self.first > MASK || self.second > MASK {
             return Err(Error::CollisionBudget);
         }
-        Ok((self.axis.code() as u64) | ((self.first as u64) << 8) | ((self.second as u64) << 36))
+        Ok(u64::from(self.axis.code()) | ((self.first as u64) << 8) | ((self.second as u64) << 36))
     }
     pub fn decode(token: u64) -> Result<Self, Error> {
         Ok(Self {

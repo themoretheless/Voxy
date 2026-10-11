@@ -367,7 +367,7 @@ pub(crate) fn sweep_spin_path_static(
     })
 }
 
-/// Sweep the admitted cubic COM path and SpinPath together. A returned normal
+/// Sweep the admitted cubic COM path and `SpinPath` together. A returned normal
 /// still means possible contact under a floating model envelope, not an impact.
 pub(crate) fn sweep_rigid_motion_static(
     path: &physics::rigid_motion::RigidMotion,

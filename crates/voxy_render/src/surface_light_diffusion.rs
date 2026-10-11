@@ -68,7 +68,7 @@ impl SurfaceLightDiffusion {
         let limits = device.limits();
         if n == 0
             || n > u32::MAX as usize
-            || n as u64 > u64::from(limits.max_storage_buffer_binding_size) / 16
+            || n as u64 > limits.max_storage_buffer_binding_size / 16
             || offsets.len() != n + 1
             || offsets[0] != 0
             || offsets[n] as usize != edges.len()
@@ -135,7 +135,7 @@ impl SurfaceLightDiffusion {
             (n * 16) as u64,
         ];
         if sizes.iter().any(|s| {
-            *s > limits.max_storage_buffer_binding_size as u64 || *s > limits.max_buffer_size
+            *s > limits.max_storage_buffer_binding_size || *s > limits.max_buffer_size
         }) {
             return Err(crate::SceneError::InvalidGeometry);
         }

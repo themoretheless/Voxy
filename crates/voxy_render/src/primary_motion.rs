@@ -324,7 +324,7 @@ impl PrimaryMotionPass {
     }
     /// Previous-camera NDC depth at current primary coverage, including supplied
     /// affine/deformation correspondence. Invalid/reset/background writes zero.
-    /// R32Float normally; OpenGL uses renderable R16Float with half precision.
+    /// `R32Float` normally; OpenGL uses renderable `R16Float` with half precision.
     #[must_use]
     pub fn previous_depth(&self) -> &wgpu::Texture {
         &self.previous_depth

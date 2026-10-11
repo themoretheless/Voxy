@@ -189,8 +189,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let target = arguments
             .windows(2)
             .find(|p| p[0] == "--grasp-object")
-            .map(|p| p[1].as_str())
-            .unwrap_or("cylinder");
+            .map_or("cylinder", |p| p[1].as_str());
         let offset = if let Some(value) = option_path("--grasp-offset")? {
             let coordinates = value
                 .split(',')
@@ -255,13 +254,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let target = arguments
             .get(index + 1)
             .ok_or("--switch-body-model requires female or male")?;
-        let before = model.film.as_ref().map(|f| f.measurements());
+        let before = model.film.as_ref().map(surface_film_preview::FilmPreview::measurements);
         let source = model.body_parameters.body_model.as_str();
         let parameters = model
             .body_parameters
             .patched(&serde_json::json!({"body_model":target}))?;
         model.set_body_parameters(parameters)?;
-        let proof = serde_json::json!({"source":source,"target":target,"before":before,"after":model.film.as_ref().map(|f|f.measurements()),"parameters":model.body_parameters.to_json()});
+        let proof = serde_json::json!({"source":source,"target":target,"before":before,"after":model.film.as_ref().map(surface_film_preview::FilmPreview::measurements),"parameters":model.body_parameters.to_json()});
         if let Some(index) = arguments.iter().position(|a| a == "--switch-proof") {
             std::fs::write(
                 arguments
@@ -647,9 +646,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let target_time = if snapshot.is_some() {
                 simulation_seconds
             } else if sequence {
-                frame as f64 * 0.05
+                f64::from(frame) * 0.05
             } else {
-                frame as f64 * simulation_seconds
+                f64::from(frame) * simulation_seconds
             };
             // Advance the authoritative skin, volume and strand solvers. Setting only
             // the pose time would show an uncomputed state and freeze secondary motion.
@@ -664,11 +663,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
         } else {
             model.preview_pose(if sequence {
-                frame as f64 * 0.05
+                f64::from(frame) * 0.05
             } else if face {
                 [0., 0.9, 3.][frame as usize]
             } else {
-                frame as f64 * 3.
+                f64::from(frame) * 3.
             });
         }
         let started = std::time::Instant::now();
@@ -884,13 +883,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             mesh
         };
         geometry.update(&queue, &mesh)?;
-        if !gpu_hair_render {
-            if let Some(hair_geometry) = &mut hair_geometry {
+        if !gpu_hair_render
+            && let Some(hair_geometry) = &mut hair_geometry {
                 let (body, hair) = full_model_worker::partition_hair(&mesh)?;
                 geometry.update_index_partition(&queue, &body)?;
                 hair_geometry.update_index_partition(&queue, &hair)?;
             }
-        }
         mesh_ms.push(started.elapsed().as_secs_f64() * 1000.);
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
         if let Some((input, job, transfer)) = &mut resident_hair {

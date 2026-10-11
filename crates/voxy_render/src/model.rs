@@ -80,6 +80,7 @@ fn fail(message: impl Into<String>) -> ModelError {
 
 impl ModelAsset {
     /// Original authored node names, in skeleton order. Unnamed nodes have no stable name.
+    #[must_use]
     pub fn joint_names(&self) -> &[Option<Arc<str>>] {
         &self.joint_names
     }
@@ -576,7 +577,7 @@ impl ModelAsset {
                         track.translations = times
                             .iter()
                             .zip(values)
-                            .map(|(&time, value)| Vec3Key { time, value: value })
+                            .map(|(&time, value)| Vec3Key { time, value })
                             .collect();
                     }
                     ReadOutputs::Scales(values) => {
@@ -587,7 +588,7 @@ impl ModelAsset {
                         track.scales = times
                             .iter()
                             .zip(values)
-                            .map(|(&time, value)| Vec3Key { time, value: value })
+                            .map(|(&time, value)| Vec3Key { time, value })
                             .collect();
                     }
                     ReadOutputs::Rotations(values) => {
