@@ -1469,7 +1469,7 @@ impl SceneApp {
         {
             &draws[..draws.len() - 1]
         } else {
-            &draws[..]
+            draws
         };
         let mut xray_draws = Vec::new();
         let draws = if let Some(internal) = &r.internal {
@@ -2104,7 +2104,6 @@ impl ApplicationHandler for SceneApp {
                         if let Some(female) = &mut self.female {
                             if let Err(error) = female.adjust_grasp(delta) {
                                 self.fail(event_loop, &error);
-                                return;
                             }
                         }
                     }

@@ -296,6 +296,7 @@ pub(crate) struct SpinPathHit {
 }
 /// Shape is attached to the principal Spin frame around the center of mass.
 /// Translation is constant velocity here; no implicit COM/pivot substitution.
+#[allow(dead_code)]
 pub(crate) fn sweep_spin_path_static(
     path: &physics::spin_path::SpinPath,
     origin: DVec3,
@@ -369,6 +370,7 @@ pub(crate) fn sweep_spin_path_static(
 
 /// Sweep the admitted cubic COM path and `SpinPath` together. A returned normal
 /// still means possible contact under a floating model envelope, not an impact.
+#[allow(dead_code)]
 pub(crate) fn sweep_rigid_motion_static(
     path: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,
@@ -486,6 +488,7 @@ pub(crate) fn sweep_rigid_motion_static(
 
 /// Reciprocal prepared trajectories. Shapes use their own principal COM frames.
 /// Returns only a possible-contact prefix, with the normal in world coordinates.
+#[allow(dead_code)]
 pub(crate) fn sweep_rigid_motions(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,
@@ -725,6 +728,7 @@ fn sweep_rigid_motions_impl(
 /// Geometric contact on the admitted numerical trajectory. Model orbit error
 /// remains explicit; this is not a certified contact on the exact physical orbit.
 #[derive(Clone, Copy, Debug)]
+#[allow(dead_code)]
 pub(crate) struct RigidTrajectoryContact {
     pub feature: crate::convex::AxisFeature,
     pub time_s: f64,

@@ -118,7 +118,7 @@ fn separating_velocity_is_unchanged_and_invalid_constraints_are_rejected() {
     assert_eq!(r.dissipated_j, 0.);
     assert!(
         inertia
-            .normal_impact(&velocity, &vec![0.; 20], [0., 0., 1.], 0.)
+            .normal_impact(&velocity, &[0.; 20], [0., 0., 1.], 0.)
             .is_err()
     );
     assert!(

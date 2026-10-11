@@ -121,7 +121,7 @@ fn captured_contact_component_replays_without_full_model_warmup() {
     let radius = scalar(&mut input);
     assert_eq!(dt, 1. / 240.);
     assert_eq!(radius, 40e-6);
-    let mut snapshots = vec![snapshot(&mut input), snapshot(&mut input)];
+    let mut snapshots = [snapshot(&mut input), snapshot(&mut input)];
     assert_eq!(input.position(), input.get_ref().len() as u64);
     struct Capture {
         requests: Vec<HairResponseSystem>,

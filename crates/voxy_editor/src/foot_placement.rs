@@ -232,6 +232,7 @@ impl FootRuntime {
     pub(super) fn matches(&self, settings: &ModelFootPlacement) -> bool {
         self.settings.as_ref() == settings
     }
+    #[allow(dead_code)]
     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
         Self::new_with_clips(model, settings, &model.animations)
     }

@@ -4169,6 +4169,7 @@ mod inverse_bind_validation_tests {
         assert!(rig(overflow).is_err());
     }
     #[test]
+    #[allow(deprecated)]
     fn invalid_inverse_bind_is_rejected_before_palette_publication() {
         for matrix in [
             Mat4::ZERO,

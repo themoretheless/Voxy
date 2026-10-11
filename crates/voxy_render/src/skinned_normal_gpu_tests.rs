@@ -55,7 +55,7 @@ fn gpu_legacy_normal_transport_matches_inverse_transpose() {
     let source = format!(
         "{}\n{}",
         include_str!("skinned.wgsl"),
-        r#"
+        r"
 struct Probe { world: mat4x4<f32>, normal: vec4<f32> }
 @group(0) @binding(1) var<storage, read> probes: array<Probe>;
 @group(0) @binding(2) var<storage, read_write> results: array<vec4<f32>>;
@@ -63,7 +63,7 @@ struct Probe { world: mat4x4<f32>, normal: vec4<f32> }
 fn probe(@builtin(global_invocation_id) id: vec3<u32>) {
     results[id.x] = vec4<f32>(transported_normal(probes[id.x].world, probes[id.x].normal.xyz), 0.);
 }
-"#
+"
     );
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: None,

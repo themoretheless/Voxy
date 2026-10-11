@@ -885,6 +885,7 @@ fn face_gap_range(
 /// Changing material points still require a different reaction point model.
 /// Acceptance uses the emitting geometry witness plus floating pose evaluation
 /// allowance, never a user-chosen rest speed, position snap or force clamp.
+#[allow(dead_code)]
 pub(super) fn admit_motion(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,

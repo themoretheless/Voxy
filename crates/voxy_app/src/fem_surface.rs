@@ -43,6 +43,7 @@ pub fn fem_surface_scene_mesh(
 
 /// Render the current exposed surface of a finite-deformation tissue body.
 /// The display transform never mutates solver coordinates or velocities.
+#[allow(dead_code)]
 pub fn tissue_surface_scene_mesh(
     body: &physics::biomechanics::Body,
     origin_m: [f64; 3],

@@ -14,6 +14,7 @@ pub(super) struct PreparedNormals {
     triangles: Vec<Triangle>,
 }
 impl PreparedNormals {
+    #[allow(dead_code)]
     pub(super) fn geometric(&self, posed: &[SceneVertex], fallback: &[Vec3]) -> Vec<Vec3> {
         let mut sums = vec![Vec3::ZERO; posed.len()];
         for triangle in &self.triangles {

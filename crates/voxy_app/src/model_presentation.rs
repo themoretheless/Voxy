@@ -33,6 +33,7 @@ pub fn record(
     Ok(())
 }
 /// Fresh receipts certify render presentation submission, not monitor scanout or a screenshot.
+#[allow(dead_code)]
 pub fn status(parameters: &Path, current: &Value) -> Value {
     let receipt = std::fs::read(receipt_path(parameters))
         .ok()
@@ -79,6 +80,7 @@ fn film_state_path(parameters: &Path, id: &str) -> Result<std::path::PathBuf, &'
     }
     Ok(parameters.with_extension(format!("film-state-{id}.json")))
 }
+#[allow(dead_code)]
 fn atomic_json(path: &Path, value: &Value) -> Result<(), Box<dyn std::error::Error>> {
     let temporary = path.with_extension(format!("{}.tmp", std::process::id()));
     let result = (|| {
@@ -92,6 +94,7 @@ fn atomic_json(path: &Path, value: &Value) -> Result<(), Box<dyn std::error::Err
     result
 }
 /// Request one numerical checkpoint from the next acknowledged viewer frame.
+#[allow(dead_code)]
 pub fn request_film_state(parameters: &Path) -> Result<Value, Box<dyn std::error::Error>> {
     let id = format!(
         "{}-{}",
@@ -147,6 +150,7 @@ pub fn publish_film_state(
         Err(error) => Err(error.into()),
     }
 }
+#[allow(dead_code)]
 pub fn film_state_status(parameters: &Path, id: &str) -> Result<Value, Box<dyn std::error::Error>> {
     let output = film_state_path(parameters, id)?;
     if !output.exists() {

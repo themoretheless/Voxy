@@ -29,6 +29,7 @@ pub(crate) struct FaceFeatures {
     lash_skin_vertices: Vec<usize>,
     lash_skin_triangles: Vec<[usize; 3]>,
 }
+#[allow(dead_code)]
 impl FaceFeatures {
     pub(crate) fn advance_lashes(
         &mut self,

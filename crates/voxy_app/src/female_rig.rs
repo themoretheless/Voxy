@@ -2557,7 +2557,7 @@ mod tests {
                     .collect()
             })
             .collect();
-        let hinges: Vec<_> = rig.thumb_web_hinges.iter().copied().collect();
+        let hinges: Vec<_> = rig.thumb_web_hinges.to_vec();
         let mut adjacent = vec![Vec::new(); rest.len()];
         for (h, (ids, _)) in hinges.iter().enumerate() {
             for &id in ids {

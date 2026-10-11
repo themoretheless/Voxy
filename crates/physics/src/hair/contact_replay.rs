@@ -372,7 +372,7 @@ mod tests {
         ));
         save(
             &path,
-            &[rod.clone()],
+            std::slice::from_ref(&rod),
             &[mesh.clone()],
             1. / 240.,
             40e-6,

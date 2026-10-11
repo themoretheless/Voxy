@@ -89,6 +89,7 @@ impl TriangleMesh {
             self.feature_normals.is_some(),
         )
     }
+    #[allow(dead_code)] // Replay support kept for the hair contact diagnostics tooling.
     pub(super) fn restore_replay_motion(&mut self, previous: &[V], velocity: &[V]) {
         self.motion_bounds.take();
         for t in &mut self.triangles {

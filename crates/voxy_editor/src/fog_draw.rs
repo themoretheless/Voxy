@@ -153,6 +153,7 @@ impl FogDraw {
         self.retire(device)?;
         Ok(self.submitted.is_empty())
     }
+    #[allow(dead_code)]
     pub fn prepare_targets(
         &mut self,
         device: &wgpu::Device,

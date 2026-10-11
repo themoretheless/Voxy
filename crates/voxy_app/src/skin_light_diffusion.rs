@@ -2,11 +2,13 @@
 
 #[derive(Debug)]
 struct Timings {
+    #[allow(dead_code)]
     assembly_ms: f64,
     solve_ms: f64,
     iterations: [usize; 3],
 }
 
+#[allow(dead_code)]
 pub(super) fn diffuse(
     points: &[[f32; 3]],
     triangles: &[[usize; 3]],
@@ -66,6 +68,7 @@ pub(super) fn diffuse_with_initial(
     diffuse_measured_initial(points, triangles, source, radii_m, true, initial).map(|(v, _)| v)
 }
 
+#[allow(dead_code)]
 fn diffuse_measured(
     points: &[[f32; 3]],
     triangles: &[[usize; 3]],
@@ -74,6 +77,7 @@ fn diffuse_measured(
 ) -> Result<(Vec<[f64; 3]>, Timings), &'static str> {
     diffuse_measured_with_parallel(points, triangles, source, radii_m, true)
 }
+#[allow(dead_code)]
 fn diffuse_measured_with_parallel(
     points: &[[f32; 3]],
     triangles: &[[usize; 3]],

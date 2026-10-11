@@ -6,6 +6,7 @@ use voxy_render::{
     ComputeProgram, GraphicsOptions, JOINT_CONTACT_EQUALITY_SHADER, JOINT_CONTACT_QR_SHADER,
     ResidentContactEqualityInput,
 };
+#[allow(dead_code)]
 fn dot(a: &[f64], b: &[f64]) -> f64 {
     let mut sum = 0f64;
     let mut correction = 0f64;

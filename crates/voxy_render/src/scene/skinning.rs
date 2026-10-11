@@ -132,7 +132,7 @@ impl SceneSkinner {
     ) -> Result<Arc<SceneSkinSource>, SceneSkinError> {
         let bytes = mesh.vertices().len() as u64 * 64;
         admit(live, bytes, budget)?;
-        if bytes > u64::from(self.device.limits().max_storage_buffer_binding_size)
+        if bytes > self.device.limits().max_storage_buffer_binding_size
             || mesh.vertices().len().div_ceil(64)
                 > self.device.limits().max_compute_workgroups_per_dimension as usize
         {

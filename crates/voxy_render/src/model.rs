@@ -1116,6 +1116,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn imported_inverse_binds_are_canonical_and_invalid_binds_reject() {
         let (json, source) = fixture();
         let mut document: serde_json::Value = serde_json::from_str(&json).unwrap();
