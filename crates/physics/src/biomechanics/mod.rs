@@ -455,6 +455,8 @@ impl Body {
     /// Signed pressure difference (inside minus outside) on a closed boundary.
     /// Negative values produce an inward follower load through potential -p V.
     /// This is a prescribed pressure difference, not a fluid-flow model.
+    /// # Errors
+    /// Rejects an unknown cavity index or a nonfinite pressure.
     pub fn set_gauge_pressure(
         &mut self,
         index: usize,
@@ -468,6 +470,10 @@ impl Body {
     }
     /// Install a closed outward-oriented boundary with a signed pressure difference.
     /// Retains the topology and geometry validation of `add_cavity`.
+    /// # Errors
+    /// Propagates `add_cavity` validation failures.
+    /// # Panics
+    /// Panics if `add_cavity` succeeds without installing a cavity (internal invariant).
     pub fn add_gauge_pressure_cavity(&mut self, mut cavity: Cavity) -> Result<(), &'static str> {
         let pressure = cavity.pressure_pa;
         cavity.pressure_pa = pressure.abs();
