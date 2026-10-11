@@ -3749,13 +3749,13 @@ mod texture_memory_tests {
         // Independently read the GPU's three uploaded sRGB mip texels after
         // failed admission. End-point primary colours decode exactly to 0/1.
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("mip budget readback"), source: wgpu::ShaderSource::Wgsl(r#"
+            label: Some("mip budget readback"), source: wgpu::ShaderSource::Wgsl(r"
                 @group(0) @binding(0) var image: texture_2d<f32>;
                 @group(0) @binding(1) var<storage, read_write> colors: array<vec4<f32>, 3>;
                 @compute @workgroup_size(1) fn main() {
                     for (var i = 0u; i < 3u; i++) { colors[i] = textureLoad(image, vec2<i32>(0), i32(i)); }
                 }
-            "#.into()),
+            ".into()),
         });
         let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: None,

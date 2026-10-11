@@ -291,6 +291,7 @@ impl LiquidDemo {
         }
         Ok(demo)
     }
+    #[allow(dead_code)]
     pub(crate) fn restart(&self) -> Result<Self, physics::liquid::Error> {
         if self.finite_sources.is_some() && self.films.is_some() {
             Self::new_finite_impacts()

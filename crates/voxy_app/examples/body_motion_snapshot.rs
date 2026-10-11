@@ -38,6 +38,7 @@ fn cuda_tissue_selection(arguments: &[String]) -> Result<Option<(usize, usize)>,
         _ => Err("CUDA tissue selection requires both device and byte budget"),
     }
 }
+#[allow(dead_code)]
 fn displayed_meshes(
     demo: &tissue_demo::TissueDemo,
     model: Option<&ModelAsset>,
@@ -160,6 +161,7 @@ fn contact_positions(
     }
     Ok((positions, faces))
 }
+#[allow(dead_code)]
 fn contact_positions64(
     model: &ModelAsset,
     phase: f64,
@@ -202,6 +204,7 @@ fn imported_pose64(
         .try_sample_phase64_with_startup(&model.skeleton, phase, startup_seconds)
         .map_err(|e| voxy_render::ModelError(e.to_string()))
 }
+#[allow(dead_code)]
 fn imported_contact_sample64(
     model: &ModelAsset,
     reference: &[DMat4],

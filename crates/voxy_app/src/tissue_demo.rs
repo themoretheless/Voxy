@@ -1,8 +1,10 @@
 //! Abstract tissue samples using the shared CPU solver and scene renderer.
 use glam::{DMat4, DVec3, Mat4, Quat, Vec3};
+#[cfg(test)]
+use physics::biomechanics::Body;
 use physics::biomechanics::{
-    Body, InertialBody, Material, MaxwellBranch, OgdenTerm, PrescribedTriangleSurface,
-    SolidFilmBinding, SupportTarget, ViscoelasticOgden,
+    InertialBody, Material, MaxwellBranch, OgdenTerm, PrescribedTriangleSurface, SolidFilmBinding,
+    SupportTarget, ViscoelasticOgden,
 };
 #[cfg(test)]
 use physics::tissue::ellipsoid;
@@ -18,9 +20,11 @@ thread_local! {
     static REFINEMENT_REJECTIONS: std::cell::RefCell<Option<BTreeMap<(&'static str, usize), u64>>> =
         const { std::cell::RefCell::new(None) };
 }
+#[allow(dead_code)]
 pub(crate) fn start_refinement_diagnostics() {
     REFINEMENT_REJECTIONS.with(|counts| *counts.borrow_mut() = Some(BTreeMap::new()));
 }
+#[allow(dead_code)]
 pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
     REFINEMENT_REJECTIONS.with(|counts| counts.borrow_mut().take().unwrap_or_default())
 }
@@ -100,6 +104,7 @@ enum DemoTissue {
         ledger: EnergyLedger,
         preferred_depth: usize,
         energy_budget_rate_j_s: f64,
+        #[allow(dead_code)]
         initial_energy_j: f64,
         dynamics: InertialBody,
         thermal_binding: Arc<SolidFilmBinding>,
@@ -114,6 +119,7 @@ impl DemoTissue {
             Self::Continuum { dynamics, .. } => dynamics.body().positions(),
         }
     }
+    #[allow(dead_code)]
     fn volumes(&self) -> Vec<f64> {
         match self {
             Self::Xpbd(body) => body.volumes(),
@@ -155,6 +161,7 @@ impl DemoTissue {
     }
 }
 #[derive(Debug)]
+#[allow(dead_code)]
 struct SkinRegionBinding {
     body: usize,
     joint: usize,
@@ -165,11 +172,13 @@ struct SkinRegionBinding {
 }
 /// Reference-space membership is fixed at binding, never selected from an animated pose.
 #[derive(Debug)]
+#[allow(dead_code)]
 pub(crate) struct TissueSkinBinding {
     regions: Vec<SkinRegionBinding>,
     vertex_count: usize,
     global: Option<Arc<assembly::GlobalSkinBinding>>,
 }
+#[allow(dead_code)]
 impl TissueSkinBinding {
     /// Immutable posed reference nodes; the same map is used by render and contact.
     pub(crate) fn posed_reference_nodes(
@@ -265,6 +274,7 @@ pub(crate) struct TissueDemo {
     time: f64,
     accumulator: f64,
 }
+#[allow(dead_code)]
 impl TissueDemo {
     /// Select the implicit rest-material search backend on the existing continuum owners.
     /// Validate all owners before changing any regional configuration.

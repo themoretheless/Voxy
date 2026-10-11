@@ -2,6 +2,7 @@
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct JumpSample {
     pub height: f64,
+    #[allow(dead_code)]
     pub velocity: f64,
     pub acceleration: f64,
     pub compression: f32,

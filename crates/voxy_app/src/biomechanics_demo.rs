@@ -11,6 +11,7 @@ pub(crate) struct BiomechanicsDemo {
     hold: f64,
 }
 impl BiomechanicsDemo {
+    #[allow(dead_code)]
     pub(crate) fn new() -> Result<Self, &'static str> {
         let mut bodies: Vec<_> = penile_chambers()?.into_iter().collect();
         bodies.push(sphincter_layers()?);

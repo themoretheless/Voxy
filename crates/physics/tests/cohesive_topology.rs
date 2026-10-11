@@ -24,7 +24,7 @@ fn points() -> Vec<[f64; 3]> {
 fn shared_face_is_bonded_then_breaks_into_two_independent_cells() {
     let mesh = Body::with_cohesive_faces(
         &points(),
-        &vec![([0, 1, 2, 3], solid()), ([2, 0, 1, 4], solid())],
+        &[([0, 1, 2, 3], solid()), ([2, 0, 1, 4], solid())],
         bond(),
     )
     .unwrap();
@@ -77,12 +77,12 @@ fn shared_face_is_bonded_then_breaks_into_two_independent_cells() {
 #[test]
 fn boundary_faces_are_unpaired_and_invalid_topologies_fail() {
     let single =
-        Body::with_cohesive_faces(&points()[..4], &vec![([0, 1, 2, 3], solid())], bond()).unwrap();
+        Body::with_cohesive_faces(&points()[..4], &[([0, 1, 2, 3], solid())], bond()).unwrap();
     assert!(single.body.interface_reports().unwrap().is_empty());
     assert!(
         Body::with_cohesive_faces(
             &points(),
-            &vec![
+            &[
                 ([0, 1, 2, 3], solid()),
                 ([0, 1, 2, 4], solid()),
                 ([0, 1, 2, 3], solid())
@@ -96,8 +96,7 @@ fn boundary_faces_are_unpaired_and_invalid_topologies_fail() {
             .is_err()
     );
     assert!(
-        Body::with_cohesive_faces(&points()[..4], &vec![([0, 1, 2, 3], solid()); 2], bond())
-            .is_err()
+        Body::with_cohesive_faces(&points()[..4], &[([0, 1, 2, 3], solid()); 2], bond()).is_err()
     );
 }
 

@@ -12,6 +12,7 @@ impl Default for ViewSettings {
     }
 }
 impl ViewSettings {
+    #[allow(dead_code)]
     pub fn to_json(&self) -> Value {
         json!({"mode":self.mode})
     }

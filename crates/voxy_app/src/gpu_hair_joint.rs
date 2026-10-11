@@ -278,7 +278,7 @@ impl<'a> EqualityTask<'a> {
         let supports = &self.supports;
         let reactions = &mut self.reactions;
         let coordinates = &mut self.coordinates;
-        let rhs: Vec<f64>;
+
         let output = if refinement == 0 {
             let (state,output)=self.initial.take().unwrap().into_validated(&bytes).map_err(|error| {
                             let header:Vec<_>=bytes.iter().copied().take(16).collect::<Vec<_>>().chunks_exact(4)
@@ -336,7 +336,7 @@ impl<'a> EqualityTask<'a> {
                 )),
             ));
         }
-        rhs = columns
+        let rhs: Vec<f64> = columns
             .iter()
             .zip(supports)
             .zip(bounds)
@@ -783,7 +783,7 @@ impl GpuHairLinearSolver {
             tolerance,
             seeds,
             |columns, bounds, tolerance| {
-                let result = (|| -> Result<_, Box<dyn std::error::Error>> {
+                let result = {
                     if refinement_trace {
                         let rows: Vec<_> = columns
                             .iter()
@@ -836,7 +836,7 @@ impl GpuHairLinearSolver {
                     self.joint_release_direction_calls += stats.release;
                     self.joint_early_release_direction_calls += stats.early_release;
                     output
-                })();
+                };
                 match result {
                     Ok(output) => Some(output),
                     Err(reason) => {

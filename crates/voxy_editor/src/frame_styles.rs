@@ -14,6 +14,7 @@ pub(super) struct FrameStyles {
     pub fog: Vec<(NodeId, voxy_scene::FogVolume, voxy_scene::FogBounds)>,
 }
 impl FrameStyles {
+    #[allow(dead_code)]
     pub fn prepare(
         access: &SceneSystemAccess<'_>,
         camera: &EditorCamera,

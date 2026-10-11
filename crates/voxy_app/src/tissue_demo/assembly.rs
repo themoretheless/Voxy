@@ -5,6 +5,7 @@ use std::ops::Range;
 #[derive(Clone, Debug)]
 pub(super) struct AssembledRegions {
     pub(super) node_ranges: Vec<Range<usize>>,
+    #[allow(dead_code)]
     pub(super) cell_ranges: Vec<Range<usize>>,
     source_contacts: Vec<Option<PrescribedTriangleSurface>>,
 }
@@ -13,6 +14,7 @@ impl TissueDemo {
     /// Replace regional dynamics with one global owner, retaining authored
     /// attachment indices through immutable regional ranges. No source owner
     /// continues to simulate after publication.
+    #[allow(dead_code)]
     pub(crate) fn assemble_regions(&mut self) -> Result<(), &'static str> {
         if self.assembled_regions.is_some()
             || !self.body_mode
@@ -385,6 +387,7 @@ struct SourceReferenceNodes {
 }
 
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 pub(super) struct GlobalSkinBinding {
     embedding: Arc<EmbeddedSurface>,
     owners: Vec<Option<usize>>,
@@ -398,6 +401,7 @@ pub(super) struct GlobalSkinBinding {
     pub(super) bound_count: usize,
 }
 impl GlobalSkinBinding {
+    #[allow(dead_code)]
     pub(super) fn tissue_owned_vertices(&self) -> Vec<usize> {
         self.owners
             .iter()
@@ -406,6 +410,7 @@ impl GlobalSkinBinding {
             .collect()
     }
 }
+#[allow(dead_code)]
 impl TissueDemo {
     pub(super) fn bind_assembled_skin(
         &self,
@@ -1042,6 +1047,7 @@ impl GlobalSkinBinding {
 impl TissueDemo {
     /// Choose imported skin as the physical boundary; disable the native FEM
     /// envelope so the same body is not charged a second contact potential.
+    #[allow(dead_code)]
     pub(crate) fn bind_skin_contact(
         &mut self,
         binding: &TissueSkinBinding,
@@ -1333,7 +1339,8 @@ mod contact_tests {
                 .with_contact_faces(domain)
                 .unwrap(),
         );
-        demo.bind_contact_surfaces(&[source.clone()]).unwrap();
+        demo.bind_contact_surfaces(std::slice::from_ref(&source))
+            .unwrap();
         demo.assemble_regions().unwrap();
         let binding = demo.bind_skin(&model_points).unwrap();
         assert_eq!(binding.bound_vertex_count(), 8);

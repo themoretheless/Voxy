@@ -203,6 +203,7 @@ pub(super) struct AnimationRuntime {
         f64,
     )>,
 }
+#[allow(dead_code)]
 impl AnimationRuntime {
     /// Captures a caller-selected authored reference at a known body pose.
     /// A live reference cannot be silently reset by another clip switch.

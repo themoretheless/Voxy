@@ -1,4 +1,5 @@
 use voxy_render::ComputeProgram;
+#[allow(dead_code)]
 pub fn qualify(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

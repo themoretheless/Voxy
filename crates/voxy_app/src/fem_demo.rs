@@ -97,6 +97,7 @@ impl FemDemo {
         self.elapsed_s = (self.elapsed_s + interval).min(0.04);
         Ok(())
     }
+    #[allow(dead_code)]
     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
         Ok((
             self.dynamics

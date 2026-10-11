@@ -342,6 +342,7 @@ impl FilmPreview {
     }
     /// Restore into the same canonical body chart. The body pose/solver is separate.
     /// All validation precedes replacement, so a malformed checkpoint is atomic.
+    #[allow(dead_code)]
     pub fn restore_snapshot(&mut self, snapshot: &serde_json::Value) -> Result<(), &'static str> {
         use physics::surface_film::{SurfaceFilmState, Wetting};
         if snapshot["format"] != "voxy.surface-film-state.v1" || snapshot["units"] != "SI" {

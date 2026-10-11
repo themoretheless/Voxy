@@ -173,6 +173,7 @@ impl Region {
         }
         Ok(regions)
     }
+    #[allow(dead_code)]
     pub(crate) fn step(&mut self, dt: f64, bob: f64) -> Result<(), &'static str> {
         *self = self.prepare_step(dt, bob)?;
         Ok(())

@@ -148,9 +148,9 @@ mod tests {
         body.pinned[0] = false;
         body.elements[0].viscoelastic = None;
         let changed = body.tissue_search_snapshot(&[1., 2., 3., 4.]).unwrap();
-        assert_eq!(snapshot.pinned()[0], true);
+        assert!(snapshot.pinned()[0]);
         assert_eq!(snapshot.elements()[0].shear_pa, 800.);
-        assert_eq!(changed.pinned()[0], false);
+        assert!(!changed.pinned()[0]);
         assert_ne!(changed.elements()[0].shear_pa, 800.);
     }
     #[test]

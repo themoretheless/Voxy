@@ -19,6 +19,20 @@ missing_debug_implementations = "warn"
 [lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
+# Mirrors the workspace allow list for the stylistic lints this crate trips;
+# the crate keeps its own table because it needs `unsafe_code = "deny"`.
+cast_possible_truncation = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+float_cmp = "allow"
+too_many_lines = "allow"
+too_many_arguments = "allow"
+unreadable_literal = "allow"
+many_single_char_names = "allow"
+default_trait_access = "allow"
+struct_excessive_bools = "allow"
+unnecessary_wraps = "allow"
+if_same_then_else = "allow"
 
 [target.'cfg(target_os = "linux")'.dev-dependencies]
 ash = "0.38.0"

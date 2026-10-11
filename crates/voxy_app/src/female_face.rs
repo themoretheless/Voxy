@@ -104,6 +104,7 @@ pub(crate) fn mouth_displacement(p: Vec3, jaw: f32) -> Vec3 {
     )
 }
 /// Applied before skeletal skinning, so all offsets follow the animated head.
+#[allow(dead_code)]
 pub(crate) fn deform(vertices: &mut [SceneVertex], body_vertices: usize, pose: FacePose) {
     deform_with_contour(vertices, body_vertices, pose, None);
 }

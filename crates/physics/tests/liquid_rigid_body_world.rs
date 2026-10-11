@@ -598,7 +598,7 @@ fn point_load_world_matches_prepared_motion_and_work_and_rejects_atomically() {
             1,
             rotation(),
             &[Default::default()],
-            &[points.clone()],
+            std::slice::from_ref(&points),
         )
         .unwrap();
     assert_eq!(bodies[0], reference.end());

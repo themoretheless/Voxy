@@ -509,7 +509,7 @@ mod tests {
 
         // 34x34x34 volume filled with air (0) except for one single voxel at local (0, 0, 0) -> padded (1, 1, 1)
         let mut voxels = vec![0u32; PADDED_CHUNK_VOLUME];
-        let idx = 1 + 1 * 34 + 1 * 1156;
+        let idx = 1 + 34 + 1156;
         voxels[idx] = 42; // solid block with material ID 42
 
         let result = mesher.mesh_chunk(&queue, &voxels, 1024).unwrap();

@@ -2567,6 +2567,7 @@ impl FaceParameters {
         .expect("compiled control schema")
     }
     /// Applies all deltas from the same reference point, preventing ordering drift.
+    #[allow(dead_code)]
     pub(crate) fn apply(&self, vertices: &mut [SceneVertex], head: Mat4) {
         self.apply_filtered(vertices, head, None);
     }

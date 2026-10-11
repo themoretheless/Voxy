@@ -176,6 +176,7 @@ impl PreparedModelFade {
         })
     }
 
+    #[allow(dead_code)]
     pub(crate) fn bind_motion(
         self,
         owner: voxy_scene::NodeId,
@@ -334,6 +335,7 @@ impl PreparedModelFadeMotion {
         }
     }
 }
+#[allow(dead_code)]
 impl ModelPlayback {
     pub(crate) fn reference_at_current_phase(
         &self,

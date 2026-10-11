@@ -14,12 +14,19 @@ mod manifest;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
-/// Global asset cache with reference counting
+/// Global asset cache sharing loaded values by path.
 pub struct AssetCache {
     /// In-memory cached assets (strong refs)
     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
-    /// Weak references to prevent premature collection
-    weak_refs: HashMap<String, usize>,
+}
+
+impl std::fmt::Debug for AssetCache {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let entries = self.strong_cache.lock().map_or(0, |cache| cache.len());
+        f.debug_struct("AssetCache")
+            .field("entries", &entries)
+            .finish()
+    }
 }
 
 impl Default for AssetCache {
@@ -33,7 +40,6 @@ impl AssetCache {
     pub fn new() -> Self {
         Self {
             strong_cache: Mutex::new(HashMap::new()),
-            weak_refs: HashMap::new(),
         }
     }
 

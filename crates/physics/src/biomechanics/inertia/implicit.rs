@@ -2187,7 +2187,7 @@ mod tests {
         assert_eq!(zero.actions, 0);
         let weights: Vec<_> = (0..96).map(|i| 10_f64.powf(i as f64 / 12.)).collect();
         let limited = try_preconditioned_direction_report::<std::convert::Infallible>(
-            &vec![false; 96],
+            &[false; 96],
             &vec![[1.; 3]; 96],
             |v| {
                 Ok(v.iter()
@@ -2920,7 +2920,7 @@ mod tests {
         )
         .unwrap();
         let weight = [2.; 4];
-        let expected = vec![[0.; 3], [0.2, 0., 0.], [0.4, -0.1, 0.], [0., 0., 0.3]];
+        let expected = [[0.; 3], [0.2, 0., 0.], [0.4, -0.1, 0.], [0., 0., 0.3]];
         let block = PrescribedContactStencil {
             body_face: [0, 1, 2],
             obstacle_face_index: 0,

@@ -218,6 +218,7 @@ mod repaired_pose_export_tests {
         println!("{report}");
     }
 }
+#[allow(dead_code)]
 impl FemaleDemo {
     pub(crate) fn new() -> Result<Self, Box<dyn std::error::Error>> {
         Self::from_assets(BODY, EYES, PATCH)

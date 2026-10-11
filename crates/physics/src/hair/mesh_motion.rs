@@ -259,7 +259,7 @@ mod tests {
         }];
         let mut discrete = system();
         discrete
-            .step(dt, &roots, [0.; 3], [0.; 3], &[mesh.clone()])
+            .step(dt, &roots, [0.; 3], [0.; 3], std::slice::from_ref(&mesh))
             .unwrap();
         assert!(discrete.rods[0].max_relative_stretch() < 1e-10);
         let mut continuous = system();

@@ -780,7 +780,7 @@ mod tests {
             };
             for k in 0..3 {
                 let mut pair = [key(p[k]), key(p[(k + 1) % 3])];
-                pair.sort();
+                pair.sort_unstable();
                 edges.entry(pair).or_default().push((
                     index >= split,
                     n,

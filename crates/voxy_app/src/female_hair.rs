@@ -25,6 +25,7 @@ pub(crate) struct PreparedHairStep {
     collider: TriangleMesh,
     targets: Vec<Vec3>,
 }
+#[allow(dead_code)]
 impl FemaleHair {
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
         Self::new_parameterized(body, indices, Default::default())

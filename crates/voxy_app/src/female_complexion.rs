@@ -567,7 +567,7 @@ mod tests {
                 assert_eq!(signature, changed.material_signature());
                 break pixels;
             }
-            assert!(start.elapsed() < std::time::Duration::from_secs(120));
+            assert!(start.elapsed() < std::time::Duration::from_mins(2));
             std::thread::sleep(std::time::Duration::from_millis(1));
         };
         let elapsed = start.elapsed();
