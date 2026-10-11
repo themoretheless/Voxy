@@ -53,12 +53,18 @@ impl Region {
             let anterior = i < 2 || i == 4;
             let center = if i == 4 {
                 [0.0, 0.12, 0.10]
-            } else { [
-                if i % 2 == 0 { -0.10 } else { 0.10 },
-                if i < 2 { 0.36 } else { -0.10 },
-                if i < 2 { 0.10 } else { -0.11 },
-            ] };
-            let radii = if i == 4 { [0.14, 0.20, 0.12] } else { [0.16, 0.18, 0.16] };
+            } else {
+                [
+                    if i % 2 == 0 { -0.10 } else { 0.10 },
+                    if i < 2 { 0.36 } else { -0.10 },
+                    if i < 2 { 0.10 } else { -0.11 },
+                ]
+            };
+            let radii = if i == 4 {
+                [0.14, 0.20, 0.12]
+            } else {
+                [0.16, 0.18, 0.16]
+            };
             let mut rest = vec![center];
             for axis in 0..3 {
                 for sign in [1.0, -1.0] {
@@ -168,10 +174,10 @@ impl Region {
         Ok(regions)
     }
     pub(crate) fn step(&mut self, dt: f64, bob: f64) -> Result<(), &'static str> {
-        *self=self.prepare_step(dt,bob)?;
+        *self = self.prepare_step(dt, bob)?;
         Ok(())
     }
-    pub(crate) fn prepare_step(&self, dt:f64, bob:f64)->Result<Self,&'static str> {
+    pub(crate) fn prepare_step(&self, dt: f64, bob: f64) -> Result<Self, &'static str> {
         if !dt.is_finite() || dt <= 0.0 || dt > 0.1 || !bob.is_finite() {
             return Err("invalid volume region step");
         }

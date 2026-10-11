@@ -4,8 +4,8 @@ pub use fog::{FogBounds, FogError, FogVolume};
 
 mod simulation;
 pub use simulation::{
-    RenderWorldCache,
-    SceneSimulation, SimulationError, SimulationFrame, SimulationLimits, SimulationStepError,
+    RenderWorldCache, SceneSimulation, SimulationError, SimulationFrame, SimulationLimits,
+    SimulationStepError,
 };
 mod extraction;
 pub use extraction::{

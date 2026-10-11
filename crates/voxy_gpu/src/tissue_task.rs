@@ -1,7 +1,9 @@
 //! Cross-platform GPU rest-material search backend using WGSL compute shaders.
 //! Physical force/energy admission and nonlinear Newton steps remain native.
 
-use physics::biomechanics::{TissueSearchBackend, TissueSearchOperation, TissueSearchSnapshot, Vec3};
+use physics::biomechanics::{
+    TissueSearchBackend, TissueSearchOperation, TissueSearchSnapshot, Vec3,
+};
 use std::sync::Arc;
 use voxy_render::ComputeError;
 use wgpu::util::DeviceExt;
@@ -44,18 +46,12 @@ fn layout(n: usize, e: usize, limit: usize) -> Result<(usize, usize, usize), Gpu
         .ok_or(GpuTissueError::Budget)?;
 
     let e12 = e.checked_mul(12).ok_or(GpuTissueError::Budget)?;
-    let output_base = force_base
-        .checked_add(e12)
-        .ok_or(GpuTissueError::Budget)?;
+    let output_base = force_base.checked_add(e12).ok_or(GpuTissueError::Budget)?;
 
     let n3 = n.checked_mul(3).ok_or(GpuTissueError::Budget)?;
-    let total_words = output_base
-        .checked_add(n3)
-        .ok_or(GpuTissueError::Budget)?;
+    let total_words = output_base.checked_add(n3).ok_or(GpuTissueError::Budget)?;
 
-    let total_bytes = total_words
-        .checked_mul(4)
-        .ok_or(GpuTissueError::Budget)?;
+    let total_bytes = total_words.checked_mul(4).ok_or(GpuTissueError::Budget)?;
 
     if total_bytes > limit {
         return Err(GpuTissueError::Budget);
@@ -131,10 +127,7 @@ fn pack(
     Ok((data, output_base))
 }
 
-fn decode(
-    snapshot: &TissueSearchSnapshot,
-    words: &[f32],
-) -> Result<Vec<[f64; 3]>, GpuTissueError> {
+fn decode(snapshot: &TissueSearchSnapshot, words: &[f32]) -> Result<Vec<[f64; 3]>, GpuTissueError> {
     let n = snapshot.pinned().len();
     if words.len() != n * 3 || words.iter().any(|x| !x.is_finite()) {
         return Err(GpuTissueError::NumericalOverflow);
@@ -145,7 +138,11 @@ fn decode(
         if is_pinned {
             result.push([0.0, 0.0, 0.0]);
         } else {
-            result.push([f64::from(chunk[0]), f64::from(chunk[1]), f64::from(chunk[2])]);
+            result.push([
+                f64::from(chunk[0]),
+                f64::from(chunk[1]),
+                f64::from(chunk[2]),
+            ]);
         }
     }
     Ok(result)
@@ -172,7 +169,10 @@ impl GpuTissueProgram {
     /// Creates a program with an explicit buffer allocation budget limit.
     /// # Errors
     /// Returns validation or compilation errors.
-    pub async fn with_budget(device: &wgpu::Device, max_bytes: usize) -> Result<Self, GpuTissueError> {
+    pub async fn with_budget(
+        device: &wgpu::Device,
+        max_bytes: usize,
+    ) -> Result<Self, GpuTissueError> {
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("tissue rest-material search"),
@@ -246,11 +246,13 @@ impl GpuTissueProgram {
         let output_byte_offset = (output_base * 4) as u64;
         let output_bytes_len = (n * 3 * 4) as u64;
 
-        let storage_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("tissue compute storage"),
-            contents: bytemuck::cast_slice(&packed),
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
-        });
+        let storage_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("tissue compute storage"),
+                contents: bytemuck::cast_slice(&packed),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            });
 
         let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("tissue compute bind group"),
@@ -338,10 +340,7 @@ impl GpuTissueProgram {
 
     /// Adapts this GPU program into an explicit [`TissueSearchBackend`].
     #[must_use]
-    pub fn into_backend(
-        self: Arc<Self>,
-        queue: Arc<wgpu::Queue>,
-    ) -> Arc<dyn TissueSearchBackend> {
+    pub fn into_backend(self: Arc<Self>, queue: Arc<wgpu::Queue>) -> Arc<dyn TissueSearchBackend> {
         Arc::new(GpuTissueSearchBackend {
             program: self,
             queue,
@@ -461,15 +460,18 @@ mod tests {
     #[test]
     fn gpu_tissue_search_on_device() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return, // Skip test if no GPU adapter is present in test environment
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let program = Arc::new(pollster::block_on(GpuTissueProgram::new(&device)).unwrap());
         let queue = Arc::new(queue);
@@ -482,7 +484,9 @@ mod tests {
             let direction: Vec<_> = (0..n).map(|i| [i as f64 * 0.001, 0.2, -0.1]).collect();
 
             let expected = body.tissue_search_action(&weights, &direction).unwrap();
-            let actual = program.tissue_search_action(&queue, &snapshot, &direction).unwrap();
+            let actual = program
+                .tissue_search_action(&queue, &snapshot, &direction)
+                .unwrap();
 
             assert_eq!(actual.len(), expected.len());
             for (act, exp) in actual.iter().zip(&expected) {
@@ -502,15 +506,18 @@ mod tests {
     #[test]
     fn gpu_tissue_backend_implicit_stepping() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return,
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let program = Arc::new(pollster::block_on(GpuTissueProgram::new(&device)).unwrap());
         let backend = program.into_backend(Arc::new(queue));
@@ -537,18 +544,28 @@ mod tests {
         )
         .unwrap();
 
-        let pins = body.tissue_search_snapshot(&[2.; 5]).unwrap().pinned().to_vec();
+        let pins = body
+            .tissue_search_snapshot(&[2.; 5])
+            .unwrap()
+            .pinned()
+            .to_vec();
         let velocity = pins
             .iter()
             .map(|&p| if p { [0.; 3] } else { [0.1, -0.2, 0.3] })
             .collect();
 
-        let mut gpu_body = physics::biomechanics::InertialBody::new_with_fixed_supports(body, &[6.; 2], velocity).unwrap();
+        let mut gpu_body =
+            physics::biomechanics::InertialBody::new_with_fixed_supports(body, &[6.; 2], velocity)
+                .unwrap();
         gpu_body.set_uniform_acceleration([0., -2., 0.]).unwrap();
         gpu_body.set_tissue_search_backend(Some(backend));
 
         let result = gpu_body.step_implicit_with_supports(None, 0.001, 1e-6);
-        assert!(result.is_ok(), "GPU implicit step failed: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "GPU implicit step failed: {:?}",
+            result.err()
+        );
 
         let positions = gpu_body.body().positions();
         // Fixed pins remain fixed

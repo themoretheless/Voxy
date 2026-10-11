@@ -608,9 +608,11 @@ impl Liquid {
             // Harmonic pair mass makes curvature exchange symmetric for unequal masses.
             let curvature = surface * correction * (2.0 * a.mass * b.mass / (a.mass + b.mass));
             let dn = sub(normals[i], normals[j]);
-            let curvature_normal = dn[0] * direction[0] + dn[1] * direction[1] + dn[2] * direction[2];
+            let curvature_normal =
+                dn[0] * direction[0] + dn[1] * direction[1] + dn[2] * direction[2];
             let dv = sub(b.velocity, a.velocity);
-            let relative_normal = dv[0] * direction[0] + dv[1] * direction[1] + dv[2] * direction[2];
+            let relative_normal =
+                dv[0] * direction[0] + dv[1] * direction[1] + dv[2] * direction[2];
             let interface_force = self.interface_force(a, b, r);
             let radial = pressure_force - cohesion + interface_force - curvature * curvature_normal;
             let visc = if self.viscous_heating {

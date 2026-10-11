@@ -901,12 +901,21 @@ impl Pose {
 
     /// Updates one local translation, preserving its rotation and scale.
     /// Invalid joints or nonfinite translations leave the pose unchanged.
-    pub fn set_joint_translation(&mut self, index: usize, translation: Vec3) -> Result<(), AnimationError> {
+    pub fn set_joint_translation(
+        &mut self,
+        index: usize,
+        translation: Vec3,
+    ) -> Result<(), AnimationError> {
         let Some(current) = self.local.get(index).copied() else {
             return Err(AnimationError::InvalidPose(index));
         };
-        let replacement = Transform { translation, ..current };
-        if !replacement.is_valid() { return Err(AnimationError::InvalidPose(index)); }
+        let replacement = Transform {
+            translation,
+            ..current
+        };
+        if !replacement.is_valid() {
+            return Err(AnimationError::InvalidPose(index));
+        }
         self.local[index] = replacement;
         Ok(())
     }
@@ -2427,10 +2436,20 @@ mod tests {
         let child = rig.joints()[1].bind_local.translation;
         let expected = translation + rotation * child;
         let before = pose.skin_matrices(&rig).unwrap();
-        let child_rest = rig.joints()[1].inverse_bind.inverse().transform_point3(Vec3::ZERO);
-        assert!(before[1].transform_point3(child_rest).abs_diff_eq(expected, 1e-6));
+        let child_rest = rig.joints()[1]
+            .inverse_bind
+            .inverse()
+            .transform_point3(Vec3::ZERO);
+        assert!(
+            before[1]
+                .transform_point3(child_rest)
+                .abs_diff_eq(expected, 1e-6)
+        );
         assert_eq!(pose.local()[0].rotation, rotation);
-        assert!(pose.set_joint_translation(0, Vec3::splat(f32::NAN)).is_err());
+        assert!(
+            pose.set_joint_translation(0, Vec3::splat(f32::NAN))
+                .is_err()
+        );
         assert!(pose.set_joint_translation(999, Vec3::ZERO).is_err());
         assert_eq!(pose.skin_matrices(&rig).unwrap(), before);
     }

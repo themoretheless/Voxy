@@ -251,7 +251,9 @@ impl InertialBody {
         let mut candidate = self.clone();
         candidate.body.add_tissue_bonds(pairs)?;
         let change = candidate.diagnostics()?.potential_j - before;
-        if !change.is_finite() { return Err("tissue bond potential overflow"); }
+        if !change.is_finite() {
+            return Err("tissue bond potential overflow");
+        }
         *self = candidate;
         Ok(change)
     }
@@ -259,13 +261,16 @@ impl InertialBody {
     /// Replace tissue contact groups at fixed positions and return the potential
     /// change. Invalid controls or a closed gap preserve the entire dynamic state.
     pub fn set_surface_contacts(
-        &mut self, contacts: Vec<super::TissueSurfaceContact>,
+        &mut self,
+        contacts: Vec<super::TissueSurfaceContact>,
     ) -> Result<f64, &'static str> {
         let before = self.diagnostics()?.potential_j;
         let mut candidate = self.clone();
         candidate.body.set_surface_contacts(contacts)?;
         let change = candidate.diagnostics()?.potential_j - before;
-        if !change.is_finite() { return Err("surface contact potential overflow"); }
+        if !change.is_finite() {
+            return Err("surface contact potential overflow");
+        }
         *self = candidate;
         Ok(change)
     }

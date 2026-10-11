@@ -1184,15 +1184,31 @@ mod objective_tests {
     #[test]
     fn contiguous_hessian_rows_preserve_operator_bits() {
         let skin = patch(5, 5, 0.01, SkinMaterial::default()).unwrap();
-        let posed: Vec<_> = skin.rest.iter()
-            .map(|p| [1.02 * p[0], 0.98 * p[1], 0.003 * (20. * p[0]).sin()]).collect();
-        let e = skin.evaluate(&posed, Some((&skin.rest, 1. / 120.)),
-            1. / 120., &[], &ContactScene::default()).unwrap();
-        let x: Vec<_> = posed.iter().enumerate()
-            .map(|(i, p)| [p[0] - 0.01, p[1] + 0.002, (i as f64 * 0.7).sin()]).collect();
+        let posed: Vec<_> = skin
+            .rest
+            .iter()
+            .map(|p| [1.02 * p[0], 0.98 * p[1], 0.003 * (20. * p[0]).sin()])
+            .collect();
+        let e = skin
+            .evaluate(
+                &posed,
+                Some((&skin.rest, 1. / 120.)),
+                1. / 120.,
+                &[],
+                &ContactScene::default(),
+            )
+            .unwrap();
+        let x: Vec<_> = posed
+            .iter()
+            .enumerate()
+            .map(|(i, p)| [p[0] - 0.01, p[1] + 0.002, (i as f64 * 0.7).sin()])
+            .collect();
         for shift in [0., 0.001, 100.] {
-            let mut expected: Vec<_> = x.iter().enumerate()
-                .map(|(i, &v)| mul(v, e.inertia[i] + shift)).collect();
+            let mut expected: Vec<_> = x
+                .iter()
+                .enumerate()
+                .map(|(i, &v)| mul(v, e.inertia[i] + shift))
+                .collect();
             for b in &e.blocks {
                 for (i, &vertex) in b.ids.iter().enumerate() {
                     for a in 0..3 {
@@ -1205,7 +1221,9 @@ mod objective_tests {
                     }
                 }
             }
-            for &i in skin.pins.keys() { expected[i] = [0.; 3]; }
+            for &i in skin.pins.keys() {
+                expected[i] = [0.; 3];
+            }
             let mut actual = vec![[0.; 3]; x.len()];
             skin.apply_into(&e, &x, shift, &mut actual);
             for (actual, expected) in actual.iter().flatten().zip(expected.iter().flatten()) {

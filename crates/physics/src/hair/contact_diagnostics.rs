@@ -13,9 +13,9 @@ pub struct HairContactDiagnostic {
     /// Effective surface velocity of this contact linearization.
     pub surface_velocity: V,
     /// Physical residual per unit-normal plane residual.
-    pub metric_scale:f64,
+    pub metric_scale: f64,
     /// Normalized time of a past trajectory constraint; None is endpoint geometry.
-    pub trajectory_time:Option<f64>,
+    pub trajectory_time: Option<f64>,
     /// Current physical signed contact residual, in metres.
     pub gap_m: f64,
 }
@@ -35,8 +35,8 @@ impl HairRod {
                     normal: contact.normal,
                     target: contact.target,
                     surface_velocity: contact.surface_velocity,
-                    metric_scale:contact.metric_scale,
-                    trajectory_time:contact.trajectory_time,
+                    metric_scale: contact.metric_scale,
+                    trajectory_time: contact.trajectory_time,
                     gap_m: contact.physical_gap(position),
                 }
             })
@@ -66,9 +66,9 @@ mod tests {
         assert_eq!(contact.surface_velocity, [0.25, 0., 0.]);
         rod.x[1][0] = -0.00002;
         assert_eq!(rod.contact_diagnostics()[0].gap_m, -0.00002);
-        rod.contacts[0].metric_scale=0.25;
-        let scaled=rod.contact_diagnostics();
-        assert_eq!(scaled[0].metric_scale,0.25);
-        assert_eq!(scaled[0].gap_m,-0.000005);
+        rod.contacts[0].metric_scale = 0.25;
+        let scaled = rod.contact_diagnostics();
+        assert_eq!(scaled[0].metric_scale, 0.25);
+        assert_eq!(scaled[0].gap_m, -0.000005);
     }
 }
