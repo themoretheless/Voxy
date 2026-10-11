@@ -89,6 +89,19 @@ struct Pose {
     active: bool,
 }
 type PoseMap = HashMap<NodeId, Pose, crate::FastHashBuilder>;
+
+/// Per-frame memo of interpolated world matrices, indexed by node slot.
+#[derive(Debug, Default)]
+pub struct RenderWorldCache {
+    worlds: Vec<Option<(u64, Mat4)>>,
+}
+
+impl RenderWorldCache {
+    /// Forgets every memoised matrix; call once per frame before extraction.
+    pub fn clear(&mut self) {
+        self.worlds.clear();
+    }
+}
 fn poses(scene: &SceneGraph) -> PoseMap {
     scene
         .nodes()
@@ -334,33 +347,8 @@ impl SceneSimulation {
         let mut chain = Vec::new();
         let mut cursor = Some(owner);
         while let Some(id) = cursor {
-            let local = scene.local(id)?;
-            let parent = scene.parent(id)?;
-            let pose = Pose {
-                local,
-                parent,
-                active: scene.active_in_hierarchy(id)?,
-            };
-            let mut rendered = local;
-            if !self.stopped
-                && self.current.get(&id) == Some(&pose)
-                && let Some(previous) = self.previous.get(&id)
-                && previous.parent == parent
-                && previous.active == pose.active
-                && previous.local != local
-            {
-                rendered.translation = previous
-                    .local
-                    .translation
-                    .lerp(local.translation, self.alpha);
-                rendered.scale = previous.local.scale.lerp(local.scale, self.alpha);
-                rendered.rotation = previous
-                    .local
-                    .rotation
-                    .slerp(local.rotation, self.alpha)
-                    .normalize();
-            }
-            chain.push(rendered.matrix()?);
+            let (rendered, parent) = self.rendered_local(scene, id)?;
+            chain.push(rendered);
             cursor = parent;
         }
         let world = chain
@@ -371,6 +359,84 @@ impl SceneSimulation {
             return Err(SceneGraphError::WorldOverflow.into());
         }
         Ok(world)
+    }
+
+    /// [`Self::render_world`] with ancestor matrices memoised in `cache` so one
+    /// extraction pass walks each ancestor once instead of once per descendant.
+    /// The cache is only valid within one frame: clear it after every `advance`,
+    /// reset or scene edit. Results are identical to the uncached call.
+    /// # Errors
+    /// Same as [`Self::render_world`].
+    pub fn render_world_cached(
+        &self,
+        scene: &SceneGraph,
+        cache: &mut RenderWorldCache,
+        owner: NodeId,
+    ) -> Result<Mat4, SimulationError> {
+        self.validate(scene)?;
+        self.render_world_memo(scene, cache, owner)
+    }
+
+    fn render_world_memo(
+        &self,
+        scene: &SceneGraph,
+        cache: &mut RenderWorldCache,
+        owner: NodeId,
+    ) -> Result<Mat4, SimulationError> {
+        if let Some(Some((generation, world))) = cache.worlds.get(owner.slot)
+            && *generation == owner.generation
+        {
+            return Ok(*world);
+        }
+        let (rendered, parent) = self.rendered_local(scene, owner)?;
+        // Same association as the uncached fold: ((I * root) * child) * ...
+        let world = match parent {
+            Some(parent) => self.render_world_memo(scene, cache, parent)? * rendered,
+            None => Mat4::IDENTITY * rendered,
+        };
+        if !world.is_finite() {
+            return Err(SceneGraphError::WorldOverflow.into());
+        }
+        if cache.worlds.len() <= owner.slot {
+            cache.worlds.resize(owner.slot + 1, None);
+        }
+        cache.worlds[owner.slot] = Some((owner.generation, world));
+        Ok(world)
+    }
+
+    /// Interpolated local matrix of one node and its parent.
+    fn rendered_local(
+        &self,
+        scene: &SceneGraph,
+        id: NodeId,
+    ) -> Result<(Mat4, Option<NodeId>), SimulationError> {
+        let local = scene.local(id)?;
+        let parent = scene.parent(id)?;
+        let pose = Pose {
+            local,
+            parent,
+            active: scene.active_in_hierarchy(id)?,
+        };
+        let mut rendered = local;
+        if !self.stopped
+            && self.current.get(&id) == Some(&pose)
+            && let Some(previous) = self.previous.get(&id)
+            && previous.parent == parent
+            && previous.active == pose.active
+            && previous.local != local
+        {
+            rendered.translation = previous
+                .local
+                .translation
+                .lerp(local.translation, self.alpha);
+            rendered.scale = previous.local.scale.lerp(local.scale, self.alpha);
+            rendered.rotation = previous
+                .local
+                .rotation
+                .slerp(local.rotation, self.alpha)
+                .normalize();
+        }
+        Ok((rendered.matrix()?, parent))
     }
     /// Dispatches disable/destroy and discards queued changes at Stop.
     /// # Errors
@@ -765,5 +831,50 @@ mod tests {
             );
             assert_eq!(result.unwrap().time.steps, 0);
         }
+    }
+
+    #[test]
+    fn cached_render_world_matches_uncached_across_a_chain() {
+        let mut scene = SceneGraph::new(64);
+        let mut ids = Vec::new();
+        let mut parent = None;
+        for depth in 0..6 {
+            let id = scene
+                .spawn(
+                    parent,
+                    Transform {
+                        translation: glam::Vec3::new(depth as f32, 0.5, -1.0),
+                        rotation: glam::Quat::from_rotation_y(0.3 * depth as f32),
+                        scale: glam::Vec3::splat(1.0 + 0.1 * depth as f32),
+                    },
+                )
+                .unwrap();
+            ids.push(id);
+            parent = Some(id);
+        }
+        let mut simulation = SceneSimulation::new(
+            &scene,
+            SimulationLimits {
+                fixed_step: 0.02,
+                max_steps: 8,
+                max_behaviors: 8,
+                max_commands: 2,
+            },
+        )
+        .unwrap();
+        for id in &ids {
+            simulation.attach(&mut scene, *id, Move).unwrap();
+        }
+        simulation.advance(&mut scene, 0.03).unwrap();
+        simulation.advance(&mut scene, 0.007).unwrap();
+        let mut cache = RenderWorldCache::default();
+        for id in ids.iter().rev() {
+            let cached = simulation
+                .render_world_cached(&scene, &mut cache, *id)
+                .unwrap();
+            let direct = simulation.render_world(&scene, *id).unwrap();
+            assert_eq!(cached.to_cols_array(), direct.to_cols_array(), "{id:?}");
+        }
+        assert!(cache.worlds.iter().flatten().count() >= ids.len());
     }
 }

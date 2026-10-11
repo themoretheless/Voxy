@@ -1021,10 +1021,10 @@ impl SceneSurface {
         E: From<RendererError>,
     {
         self.check_device()?;
-        // Consume pending uploads even when suspension or acquisition skips
-        // presentation; otherwise write_buffer staging allocations accumulate.
-        self.queue.submit([]);
+        // A presented frame flushes pending uploads with its own submission;
+        // skipped frames flush explicitly so write_buffer staging does not accumulate.
         if self.state == SurfaceState::Suspended {
+            self.queue.submit([]);
             return Ok(RenderOutcome::Suspended);
         }
         let frame_id = self
@@ -1035,17 +1035,26 @@ impl SceneSurface {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
             wgpu::CurrentSurfaceTexture::Lost => {
+                self.queue.submit([]);
                 self.invalidate_temporal_history();
                 return Err(RendererError::SurfaceLost.into());
             }
             wgpu::CurrentSurfaceTexture::Outdated => {
+                self.queue.submit([]);
                 self.surface.configure(&self.device, &self.config);
                 self.invalidate_temporal_history();
                 return Ok(RenderOutcome::Reconfigured);
             }
-            wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
-            wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
+            wgpu::CurrentSurfaceTexture::Timeout => {
+                self.queue.submit([]);
+                return Ok(RenderOutcome::SkippedTimeout);
+            }
+            wgpu::CurrentSurfaceTexture::Occluded => {
+                self.queue.submit([]);
+                return Ok(RenderOutcome::SkippedOccluded);
+            }
             wgpu::CurrentSurfaceTexture::Validation => {
+                self.queue.submit([]);
                 self.invalidate_temporal_history();
                 return Ok(RenderOutcome::SkippedValidation);
             }
@@ -1367,10 +1376,10 @@ impl SceneSurface {
         ) -> Result<(), RendererError>,
     {
         self.check_device()?;
-        // Consume pending uploads even when suspension or acquisition skips
-        // presentation; otherwise write_buffer staging allocations accumulate.
-        self.queue.submit([]);
+        // A presented frame flushes pending uploads with its own submission;
+        // skipped frames flush explicitly so write_buffer staging does not accumulate.
         if self.state == SurfaceState::Suspended {
+            self.queue.submit([]);
             return Ok(RenderOutcome::Suspended);
         }
         let frame_id = self
@@ -1381,17 +1390,26 @@ impl SceneSurface {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
             wgpu::CurrentSurfaceTexture::Lost => {
+                self.queue.submit([]);
                 self.invalidate_temporal_history();
                 return Err(RendererError::SurfaceLost);
             }
             wgpu::CurrentSurfaceTexture::Outdated => {
+                self.queue.submit([]);
                 self.surface.configure(&self.device, &self.config);
                 self.invalidate_temporal_history();
                 return Ok(RenderOutcome::Reconfigured);
             }
-            wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
-            wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
+            wgpu::CurrentSurfaceTexture::Timeout => {
+                self.queue.submit([]);
+                return Ok(RenderOutcome::SkippedTimeout);
+            }
+            wgpu::CurrentSurfaceTexture::Occluded => {
+                self.queue.submit([]);
+                return Ok(RenderOutcome::SkippedOccluded);
+            }
             wgpu::CurrentSurfaceTexture::Validation => {
+                self.queue.submit([]);
                 self.invalidate_temporal_history();
                 return Ok(RenderOutcome::SkippedValidation);
             }

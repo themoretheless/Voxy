@@ -74,6 +74,21 @@ of a per-tick B-tree. The dead `cfg(feature = "nightly")` SIMD module in
 `female_rig.rs` that broke `cargo test -p voxy_app` off the author's machine was made
 relative.
 
+## Follow-up increment (not benchmarked on this host)
+
+- `ShadowMap::encode` now skips the raster when the draw list is identical to the
+  one the retained depth texture already holds: each `SceneGeometry` carries a
+  process-unique identity and a revision bumped on every vertex/index write, and the
+  key includes the light transform bits. The previous flag could never clear.
+- `SceneSurface` flushes pending uploads with an empty submit only on skipped frames;
+  a presented frame's own submission already flushes them.
+- `SceneSimulation::render_world_cached` memoises interpolated ancestor matrices per
+  frame (test: bit-identical to `render_world`); the editor extraction uses it.
+- `CharacterPhysics` re-runs structural validation only when
+  `SceneGraph::structure_revision` changed (bumped by spawn/reparent/remove,
+  activity and component insert/mutate/remove); transform checks still run every
+  tick (test covers both invalidation paths).
+
 ## Limitations
 
 See `report.json`: shared 4-vCPU host, no GPU (render changes measured on CPU parts),

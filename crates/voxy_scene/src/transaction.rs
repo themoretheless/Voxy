@@ -23,6 +23,7 @@ impl SceneGraph {
             id: self.id,
             capacity: self.capacity,
             count: self.count,
+            structure_revision: self.structure_revision,
             free: self.free.clone(),
             slots: self
                 .slots

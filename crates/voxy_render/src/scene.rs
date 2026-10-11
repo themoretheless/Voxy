@@ -424,8 +424,16 @@ pub struct SceneGeometry {
     )>,
     partitioned_indices: bool,
     partition_cache: Vec<u32>,
-    /// OPTIMIZATION #41: Shadow dirty flag for lazy updates
-    shadow_dirty: bool,
+    /// Process-unique identity so shadow consumers can recognise the same allocation.
+    identity: u64,
+    /// Bumped on every GPU write of vertices or indices; part of the shadow key.
+    revision: u64,
+}
+
+static NEXT_GEOMETRY_IDENTITY: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+
+pub(crate) fn next_geometry_identity() -> u64 {
+    NEXT_GEOMETRY_IDENTITY.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
 }
 
 /// Additional resource owners publish with their geometry after one admission.
@@ -453,21 +461,16 @@ impl SceneGeometry {
         pass.draw_indexed(0..self.index_count, 0, 0..1);
     }
 
-    /// OPTIMIZATION #41: Check if shadow needs recomputation
+    /// Identity and revision of the geometry's current GPU contents. Two equal keys
+    /// mean the same allocation with no vertex/index writes in between.
     #[must_use]
-    pub(crate) fn shadow_dirty(&self) -> bool {
-        self.shadow_dirty
+    pub(crate) fn shadow_key(&self) -> (u64, u64) {
+        (self.identity, self.revision)
     }
 
-    /// OPTIMIZATION #41: Mark geometry as needing shadow update
+    /// Records a GPU write of vertex or index data.
     pub(crate) fn mark_shadow_dirty(&mut self) {
-        self.shadow_dirty = true;
-    }
-
-    /// OPTIMIZATION #41: Mark geometry as static (skip shadow on next frame)
-    #[allow(dead_code)]
-    pub(crate) fn mark_shadow_clean(&mut self) {
-        self.shadow_dirty = false;
+        self.revision = self.revision.wrapping_add(1);
     }
 
     pub fn set_depth_mode(&mut self, mode: SceneDepthMode) {
@@ -508,7 +511,6 @@ impl SceneGeometry {
         if mesh.vertices.len() > self.vertex_capacity || mesh.indices.len() > self.index_capacity {
             return Err(SceneError::GeometryCapacityExceeded);
         }
-        // OPTIMIZATION #41: Mark shadows dirty on geometry update
         self.mark_shadow_dirty();
 
         // One index comparison serves partition retention, the index upload
@@ -583,6 +585,7 @@ impl SceneGeometry {
         if !indices.is_empty() {
             queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(indices));
         }
+        self.mark_shadow_dirty();
         self.partition_cache.clear();
         self.partition_cache.extend_from_slice(indices);
         self.index_count = count;
@@ -1615,7 +1618,8 @@ impl SceneRenderer {
                     partition_cache: Vec::new(),
                     vertex_capacity: mesh.vertices.len(),
                     index_capacity: source.len(),
-                    shadow_dirty: true,
+                    identity: next_geometry_identity(),
+                    revision: 0,
                 }
             })
             .collect();
@@ -1707,7 +1711,8 @@ impl SceneRenderer {
             partition_cache: Vec::new(),
             vertex_capacity,
             index_capacity,
-            shadow_dirty: true,
+            identity: next_geometry_identity(),
+            revision: 0,
         })
     }
 
