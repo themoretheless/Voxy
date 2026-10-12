@@ -126,11 +126,7 @@ const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[
 ];
 
 /// Dev-dependency cycles (a crate's tests build a crate that depends on it).
-const KNOWN_DEV_CYCLES: &[(&str, &str, &str)] = &[(
-    "voxy_render",
-    "voxy_editor",
-    "D2: render smoke tests move out of render",
-)];
+const KNOWN_DEV_CYCLES: &[(&str, &str, &str)] = &[];
 
 /// Crates that must stay free of the platform/GPU shell (invariant 9).
 const PLATFORM_FREE: &[&str] = &[
