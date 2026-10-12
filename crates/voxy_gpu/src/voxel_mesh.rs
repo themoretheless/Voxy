@@ -5,7 +5,7 @@
 use voxy_render::ComputeError;
 
 /// Size of a padded chunk volume: 32 + 2 boundary slices along each axis = 34^3.
-pub const PADDED_CHUNK_VOLUME: usize = 34 * 34 * 34;
+pub const PADDED_CHUNK_VOLUME: usize = voxy_core::PADDED_VOLUME;
 
 /// Compact GPU vertex representation (32 bytes).
 #[repr(C)]

@@ -4,12 +4,10 @@ use std::collections::VecDeque;
 use std::fmt;
 use std::sync::Arc;
 
-use voxy_core::{CHUNK_EDGE, CHUNK_VOLUME, CancelToken, LocalIndex};
+use voxy_core::{CHUNK_EDGE, CHUNK_VOLUME, CancelToken, LocalIndex, PADDED_EDGE, PADDED_VOLUME};
 use voxy_world::{BlockRegistry, BlockStateId, ChunkRevision, ChunkSnapshot, Occlusion};
 
 const EDGE: usize = 32;
-const PADDED_EDGE: usize = 34;
-const PADDED_VOLUME: usize = PADDED_EDGE * PADDED_EDGE * PADDED_EDGE;
 const STRIDE_Z: usize = PADDED_EDGE;
 const STRIDE_Y: usize = PADDED_EDGE * PADDED_EDGE;
 const MAX_LIGHT: u8 = 15;
