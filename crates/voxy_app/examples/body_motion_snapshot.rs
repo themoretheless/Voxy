@@ -1,8 +1,5 @@
 //! GPU snapshots of the existing neutral skeleton and volumetric tissue demo.
-#[path = "../src/biomechanics_demo.rs"]
-mod biomechanics_demo;
-#[path = "../src/tissue_demo.rs"]
-mod tissue_demo;
+use voxy_app::tissue_demo;
 #[path = "body_motion_snapshot/tissue_regions.rs"]
 mod tissue_regions;
 use glam::{DMat4, Mat4, Vec3};

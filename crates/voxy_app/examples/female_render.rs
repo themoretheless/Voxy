@@ -1,54 +1,14 @@
-#[allow(dead_code)]
-#[path = "../src/body_parameters.rs"]
-mod body_parameters;
-#[path = "../src/diagnostic_legend.rs"]
-mod diagnostic_legend;
-#[allow(dead_code)]
-#[path = "../src/face_parameters.rs"]
-mod face_parameters;
-#[allow(dead_code)]
-#[path = "../src/female_complexion.rs"]
-mod female_complexion;
-#[allow(dead_code)]
-#[path = "../src/female_eyes.rs"]
-mod female_eyes;
-#[allow(dead_code)]
-#[path = "../src/female_face.rs"]
-mod female_face;
-#[allow(dead_code)]
-#[path = "../src/female_features.rs"]
-mod female_features;
-#[allow(dead_code)]
-#[path = "../src/film_settings.rs"]
-mod film_settings;
-#[path = "../src/rig_skinning.rs"]
-mod rig_skinning;
+use voxy_app::body_parameters;
+use voxy_app::diagnostic_legend;
+use voxy_app::face_parameters;
+use voxy_app::female_complexion;
+use voxy_app::female_eyes;
+use voxy_app::film_settings;
 // Renders the imported adult mannequin through the native renderer for visual inspection.
-#[allow(dead_code)]
-#[path = "../src/female_demo.rs"]
-mod female_demo;
-#[allow(dead_code)]
-#[path = "../src/female_hair.rs"]
-mod female_hair;
-#[allow(dead_code)]
-#[path = "../src/female_rig.rs"]
-mod female_rig;
-#[allow(dead_code)]
-#[path = "../src/female_transmission.rs"]
-mod female_transmission;
-#[allow(dead_code)]
-#[path = "../src/full_model_worker.rs"]
-mod full_model_worker;
-#[allow(dead_code)]
-#[path = "../src/jump_motion.rs"]
-mod jump_motion;
-#[allow(dead_code)]
-#[path = "../src/surface_film_preview.rs"]
-mod surface_film_preview;
-#[allow(dead_code)]
-#[path = "../src/volume_regions.rs"]
-mod volume_regions;
 use glam::Vec3;
+use voxy_app::female_demo;
+use voxy_app::full_model_worker;
+use voxy_app::surface_film_preview;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
 #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]

@@ -12,14 +12,14 @@ use voxy_world::{
 };
 
 #[derive(Debug)]
-pub(crate) struct WearDemo {
+pub struct WearDemo {
     world: World,
     coupled: VoxelWearSuspension,
     accumulator: f64,
-    pub(crate) steps: u64,
+    pub steps: u64,
 }
 impl WearDemo {
-    pub(crate) fn new() -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         let registry = Arc::new(BlockRegistry::new(vec![
             BlockDef {
                 key: ResourceKey::parse("voxy:air")?,
@@ -120,7 +120,7 @@ impl WearDemo {
             steps: 0,
         })
     }
-    pub(crate) fn advance(&mut self, dt: f64) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), Box<dyn std::error::Error>> {
         if !dt.is_finite() || dt < 0. {
             return Err("invalid wear scene interval".into());
         }
@@ -155,7 +155,7 @@ impl WearDemo {
         }
         Ok(())
     }
-    pub(crate) fn verify(&self) -> Result<(), &'static str> {
+    pub fn verify(&self) -> Result<(), &'static str> {
         if self.steps != 80 {
             return Err("wear scene did not finish 80 fixed steps");
         }
@@ -199,7 +199,7 @@ impl WearDemo {
         }
         Ok(())
     }
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
+    pub fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
         let mut triangle = |points: [[f64; 3]; 3], color: [f32; 4]| {

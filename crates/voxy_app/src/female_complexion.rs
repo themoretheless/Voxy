@@ -5,11 +5,11 @@ use std::sync::OnceLock;
 
 /// One in-flight atlas; the caller supplies the latest settings each frame.
 #[derive(Debug, Default)]
-pub(crate) struct AtlasUpdate {
+pub struct AtlasUpdate {
     job: Option<(Vec<f32>, std::thread::JoinHandle<Vec<u8>>)>,
 }
 impl AtlasUpdate {
-    pub(crate) fn poll(
+    pub fn poll(
         &mut self,
         applied: &[f32],
         parameters: &crate::face_parameters::FaceParameters,
@@ -35,11 +35,11 @@ impl AtlasUpdate {
     }
 }
 
-pub(crate) const SIZE: u32 = 2048;
-pub(crate) const WIDTH: u32 = SIZE * 2;
-pub(crate) const WHITE_UV: [f32; 2] = [0., 0.];
+pub const SIZE: u32 = 2048;
+pub const WIDTH: u32 = SIZE * 2;
+pub const WHITE_UV: [f32; 2] = [0., 0.];
 #[derive(Clone, Copy, Debug)]
-pub(crate) struct SkinLayers {
+pub struct SkinLayers {
     pub pigmentation: f32,
     pub pores: f32,
     pub pimples: f32,
@@ -73,8 +73,8 @@ impl Default for SkinLayers {
         }
     }
 }
-#[derive(Clone, Copy)]
-pub(crate) struct Surface {
+#[derive(Clone, Copy, Debug)]
+pub struct Surface {
     pub tint: Vec3,
     pub height: f32,
     pub microheight: f32,
@@ -167,7 +167,7 @@ fn freckles(p: Vec2) -> f32 {
 fn tint(surface: &mut Surface, color: Vec3, amount: f32) {
     surface.tint = surface.tint.lerp(color, amount.clamp(0., 1.));
 }
-pub(crate) fn sample(p: Vec2, layers: SkinLayers) -> Surface {
+pub fn sample(p: Vec2, layers: SkinLayers) -> Surface {
     let mut out = Surface {
         tint: Vec3::ONE,
         height: 0.,
@@ -341,7 +341,7 @@ fn fine_lines(out: &mut Surface, p: Vec2, layers: SkinLayers) {
         }
     }
 }
-pub(crate) fn uv(p: Vec3) -> [f32; 2] {
+pub fn uv(p: Vec3) -> [f32; 2] {
     if p.z < 0.09 || p.x.abs() >= 0.1 || !(0.59..=0.81).contains(&p.y) {
         return WHITE_UV;
     }
@@ -351,7 +351,7 @@ pub(crate) fn uv(p: Vec3) -> [f32; 2] {
     ]
 }
 /// Bind texture coordinates and relief to the original surface, before animation.
-pub(crate) fn apply(vertices: &mut [voxy_render::SceneVertex], normals: &[Vec3]) {
+pub fn apply(vertices: &mut [voxy_render::SceneVertex], normals: &[Vec3]) {
     assert_eq!(vertices.len(), normals.len());
     for (vertex, normal) in vertices.iter_mut().zip(normals) {
         let p = Vec3::from_array(vertex.position);
@@ -368,7 +368,7 @@ pub(crate) fn apply(vertices: &mut [voxy_render::SceneVertex], normals: &[Vec3])
     clippy::cast_possible_truncation,
     clippy::cast_sign_loss
 )] // 2048-pixel coordinates and clamped byte colors.
-pub(crate) fn atlas() -> &'static [u8] {
+pub fn atlas() -> &'static [u8] {
     static ATLAS: OnceLock<Vec<u8>> = OnceLock::new();
     ATLAS.get_or_init(|| build_atlas(SkinLayers::default()))
 }
@@ -433,7 +433,7 @@ fn build_atlas_with_workers(layers: SkinLayers, workers: usize) -> Vec<u8> {
     pixels
 }
 /// Adds parameterized crease microheight while retaining the cached pigmentation.
-pub(crate) fn atlas_for_parameters(parameters: &crate::face_parameters::FaceParameters) -> Vec<u8> {
+pub fn atlas_for_parameters(parameters: &crate::face_parameters::FaceParameters) -> Vec<u8> {
     let layers = SkinLayers {
         pores: parameters.value("skin_pores").unwrap_or(1.),
         makeup: parameters.value("skin_makeup").unwrap_or(1.),

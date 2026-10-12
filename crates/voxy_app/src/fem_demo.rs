@@ -45,16 +45,16 @@ fn coupon() -> (QuadraticBody, Vec<bool>, [usize; 6], [usize; 6]) {
 }
 
 #[derive(Debug)]
-pub(crate) struct FemDemo {
+pub struct FemDemo {
     dynamics: QuadraticDynamics,
     initial: QuadraticEnergy,
     elapsed_s: f64,
-    pub(crate) steps: usize,
+    pub steps: usize,
     energy_defect: f64,
     interface_error: f64,
 }
 impl FemDemo {
-    pub(crate) fn new() -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         let (body, upper, _, _) = coupon();
         let velocities = upper
             .iter()
@@ -71,7 +71,7 @@ impl FemDemo {
             interface_error: 0.,
         })
     }
-    pub(crate) fn advance(&mut self, wall_dt_s: f64) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn advance(&mut self, wall_dt_s: f64) -> Result<(), Box<dyn std::error::Error>> {
         if !wall_dt_s.is_finite() || wall_dt_s < 0. {
             return Err("invalid FEM frame time".into());
         }
@@ -98,7 +98,7 @@ impl FemDemo {
         Ok(())
     }
     #[allow(dead_code)]
-    pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    pub fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
         Ok((
             self.dynamics
                 .body()
@@ -107,7 +107,7 @@ impl FemDemo {
             self.dynamics.fragments()?.len(),
         ))
     }
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
+    pub fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         crate::fem_surface::fem_surface_scene_mesh(
             self.dynamics.body(),
             2,
@@ -125,7 +125,7 @@ impl FemDemo {
             },
         )
     }
-    pub(crate) fn verify(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn verify(&self) -> Result<(), Box<dyn std::error::Error>> {
         let final_energy = self.dynamics.energy()?;
         if self.elapsed_s < 0.04 - 1e-12
             || self.dynamics.fragments()?.len() != 2

@@ -77,7 +77,7 @@ struct ImpactFilm {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct LiquidDemo {
+pub struct LiquidDemo {
     liquids: [Liquid; 2],
     emitters: [PulsedEmitter; 2],
     finite_sources: Option<[(physics::liquid::TranslatingBody, f64); 2]>,
@@ -89,10 +89,10 @@ pub(crate) struct LiquidDemo {
     emitted_source_momentum: [[f64; 3]; 2],
     films: Option<[ImpactFilm; 2]>,
     accumulator: f64,
-    pub(crate) steps: u64,
+    pub steps: u64,
 }
 impl LiquidDemo {
-    pub(crate) fn new() -> Result<Self, physics::liquid::Error> {
+    pub fn new() -> Result<Self, physics::liquid::Error> {
         let make = |material: Material| {
             let mut particles = Vec::new();
             let spacing: f64 = 0.08;
@@ -165,7 +165,7 @@ impl LiquidDemo {
             steps: 0,
         })
     }
-    pub(crate) fn new_finite_sources() -> Result<Self, physics::liquid::Error> {
+    pub fn new_finite_sources() -> Result<Self, physics::liquid::Error> {
         let mut demo = Self::new()?;
         demo.enable_finite_sources(1000.);
         Ok(demo)
@@ -192,14 +192,14 @@ impl LiquidDemo {
             .map(|(body, _)| body.mass);
         self.initial_source_energy_j = [energy_j; 2];
     }
-    pub(crate) fn new_finite_impacts() -> Result<Self, physics::liquid::Error> {
+    pub fn new_finite_impacts() -> Result<Self, physics::liquid::Error> {
         let mut demo = Self::new_impacts()?;
         // The source contains 10 kg liquid at 300 K plus mechanical energy.
         let reserve = 10. * TransportMaterial::default().specific_heat * 300. + 1000.;
         demo.enable_finite_sources(reserve);
         Ok(demo)
     }
-    pub(crate) fn new_impacts() -> Result<Self, physics::liquid::Error> {
+    pub fn new_impacts() -> Result<Self, physics::liquid::Error> {
         let mut demo = Self::new()?;
         let make = |material: Material| -> Result<(Liquid, ImpactFilm), physics::liquid::Error> {
             let mut liquid = Liquid::new(
@@ -292,7 +292,7 @@ impl LiquidDemo {
         Ok(demo)
     }
     #[allow(dead_code)]
-    pub(crate) fn restart(&self) -> Result<Self, physics::liquid::Error> {
+    pub fn restart(&self) -> Result<Self, physics::liquid::Error> {
         if self.finite_sources.is_some() && self.films.is_some() {
             Self::new_finite_impacts()
         } else if self.finite_sources.is_some() {
@@ -303,7 +303,7 @@ impl LiquidDemo {
             Self::new()
         }
     }
-    pub(crate) fn advance(&mut self, dt: f64) -> Result<(), physics::liquid::Error> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), physics::liquid::Error> {
         if !dt.is_finite() || dt < 0.0 {
             return Err(physics::liquid::Error::InvalidTimeStep);
         }
@@ -593,7 +593,7 @@ impl LiquidDemo {
                 - self.emitted_source_momentum[index][axis]
         }))
     }
-    pub(crate) fn verify(&self) -> Result<(), &'static str> {
+    pub fn verify(&self) -> Result<(), &'static str> {
         if self.steps < 120 {
             return Err("liquid smoke did not advance enough fixed steps");
         }
@@ -740,7 +740,7 @@ impl LiquidDemo {
     }
     #[allow(clippy::cast_possible_truncation)]
     /// Optical snapshots borrow the simulation; they never create or remove liquid mass.
-    pub(crate) fn optical_scene(
+    pub fn optical_scene(
         &self,
     ) -> Result<(SceneMesh, Vec<voxy_render::FluidRenderParticle>), Box<dyn std::error::Error>>
     {
@@ -813,7 +813,7 @@ impl LiquidDemo {
     }
 
     /// Borrow exact per-cell film thickness; never mutate physical inventories.
-    pub(crate) fn optical_film_triangles(
+    pub fn optical_film_triangles(
         &self,
     ) -> Result<Vec<voxy_render::FluidRenderFilmTriangle>, &'static str> {
         let mut result = Vec::new();
@@ -856,7 +856,7 @@ impl LiquidDemo {
         Ok(result)
     }
 
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
+    pub fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
         let mut triangle = |points: [[f64; 3]; 3], color: [f32; 4]| {

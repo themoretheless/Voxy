@@ -2451,7 +2451,7 @@ const CONTROLS: &[Control] = &[
     },
 ];
 
-pub(crate) fn wrinkle_profile(key: &str, p: Vec3) -> f32 {
+pub fn wrinkle_profile(key: &str, p: Vec3) -> f32 {
     let line = |distance: f32, width: f32| (-(distance / width).powi(2)).exp();
     let x = p.x.abs();
     match key {
@@ -2491,7 +2491,7 @@ pub(crate) fn wrinkle_profile(key: &str, p: Vec3) -> f32 {
         _ => 0.,
     }
 }
-pub(crate) fn wrinkle_microprofile(key: &str, p: Vec3) -> f32 {
+pub fn wrinkle_microprofile(key: &str, p: Vec3) -> f32 {
     let base = wrinkle_profile(key, p).powi(4);
     let x = p.x.abs();
     let line = |d: f32| (-(d / 0.00022).powi(2)).exp();
@@ -2568,16 +2568,16 @@ impl FaceParameters {
     }
     /// Applies all deltas from the same reference point, preventing ordering drift.
     #[allow(dead_code)]
-    pub(crate) fn apply(&self, vertices: &mut [SceneVertex], head: Mat4) {
+    pub fn apply(&self, vertices: &mut [SceneVertex], head: Mat4) {
         self.apply_filtered(vertices, head, None);
     }
-    pub(crate) fn apply_wrinkles(&self, vertices: &mut [SceneVertex]) {
+    pub fn apply_wrinkles(&self, vertices: &mut [SceneVertex]) {
         self.apply_filtered(vertices, Mat4::IDENTITY, Some(true));
     }
-    pub(crate) fn apply_shape(&self, vertices: &mut [SceneVertex], head: Mat4) {
+    pub fn apply_shape(&self, vertices: &mut [SceneVertex], head: Mat4) {
         self.apply_filtered(vertices, head, Some(false));
     }
-    pub(crate) fn material_creases(&self) -> Vec<(&'static str, Vec3, Vec3, f32)> {
+    pub fn material_creases(&self) -> Vec<(&'static str, Vec3, Vec3, f32)> {
         CONTROLS
             .iter()
             .filter(|c| c.mode == 3)
@@ -2591,7 +2591,7 @@ impl FaceParameters {
             })
             .collect()
     }
-    pub(crate) fn material_signature(&self) -> Vec<f32> {
+    pub fn material_signature(&self) -> Vec<f32> {
         let mut signature: Vec<_> = self.material_creases().iter().map(|c| c.3).collect();
         signature.push(self.values["skin_roughness_scale"]);
         signature.push(self.values["skin_oil_scale"]);

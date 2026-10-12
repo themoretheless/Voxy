@@ -11,7 +11,7 @@ use physics::{
 };
 use voxy_render::SceneMesh;
 #[derive(Clone, Debug)]
-pub(crate) struct WetFemPreview {
+pub struct WetFemPreview {
     dynamics: FiniteQuadraticDynamics,
     water: Body,
     sources: physics::surface_film::FilmMixture,
@@ -25,7 +25,7 @@ pub(crate) struct WetFemPreview {
     )>,
 }
 impl WetFemPreview {
-    pub(crate) fn new() -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         Self::with_preload(0.0125)
     }
     fn with_preload(opening: f64) -> Result<Self, Box<dyn std::error::Error>> {
@@ -121,7 +121,7 @@ impl WetFemPreview {
             sources,
         })
     }
-    pub(crate) fn wet(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn wet(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         self.wet_with_expected_fragments(2)
     }
     fn wet_with_expected_fragments(
@@ -174,7 +174,7 @@ impl WetFemPreview {
         Ok(())
     }
     /// Finite isothermal drying; broken interface history must remain broken.
-    pub(crate) fn dry(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn dry(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         use physics::moisture::{VaporLink, VaporReservoir};
         let mut next = self.clone();
         let before: f64 = next.water.cells().iter().map(|c| c.water_kg).sum();
@@ -228,7 +228,7 @@ impl WetFemPreview {
         Ok(())
     }
     /// Diagnostic heat-only weakening through the production thermal/motion transaction.
-    pub(crate) fn heat(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn heat(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         use physics::{
             liquid::SaturationCurve,
             moisture::{
@@ -322,7 +322,7 @@ impl WetFemPreview {
         Ok(())
     }
     /// Separate already broken pieces with explicit, balanced physical loads.
-    pub(crate) fn separate(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn separate(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         use physics::plasticity::mesh::QuadraticAdvanceLimits;
         let mut next = self.clone();
         let before = next.dynamics.fragments()?;
@@ -396,7 +396,7 @@ impl WetFemPreview {
         *self = next;
         Ok(())
     }
-    pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    pub fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
         Ok((
             self.dynamics
                 .body()
@@ -405,7 +405,7 @@ impl WetFemPreview {
             self.dynamics.fragments()?.len(),
         ))
     }
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
+    pub fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         crate::fem_surface::fem_surface_scene_mesh(
             self.dynamics.body(),
             2,

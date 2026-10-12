@@ -76,7 +76,7 @@ fn row_mesh(labels: [&str; 3]) -> Result<SceneMesh, voxy_render::SceneError> {
     SceneMesh::new(vertices, indices)
 }
 
-pub(crate) fn mesh(rows: &[[&str; 3]]) -> Result<SceneMesh, voxy_render::SceneError> {
+pub fn mesh(rows: &[[&str; 3]]) -> Result<SceneMesh, voxy_render::SceneError> {
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
     for (row, labels) in rows.iter().enumerate() {

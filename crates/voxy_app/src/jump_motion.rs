@@ -1,6 +1,6 @@
 //! One clock for jump root motion, grounded leg IK and secondary excitation.
 #[derive(Clone, Copy, Debug)]
-pub(crate) struct JumpSample {
+pub struct JumpSample {
     pub height: f64,
     #[allow(dead_code)]
     pub velocity: f64,
@@ -41,7 +41,7 @@ fn segment(t: f64, duration: f64, from: [f64; 3], to: [f64; 3]) -> [f64; 3] {
     ]
 }
 
-pub(crate) fn sample(time: f64) -> JumpSample {
+pub fn sample(time: f64) -> JumpSample {
     let cycle = time.rem_euclid(6.);
     let t = cycle.rem_euclid(2.);
     let speed = GRAVITY * FLIGHT * 0.5;

@@ -6,7 +6,7 @@ use physics::{
 };
 use voxy_render::SceneVertex;
 #[derive(Clone, Debug)]
-pub(crate) struct Region {
+pub struct Region {
     body: Tissue,
     rest: Vec<[f64; 3]>,
     binding: EmbeddedSurface,
@@ -17,11 +17,11 @@ pub(crate) struct Region {
     lumped_mass_kg: Vec<f64>,
 }
 impl Region {
-    pub(crate) fn mass_kg(&self) -> f64 {
+    pub fn mass_kg(&self) -> f64 {
         self.lumped_mass_kg.iter().sum()
     }
     /// Deformation relative to the moving rest cage, excluding rigid root motion.
-    pub(crate) fn maximum_local_displacement(&self, bob: f64) -> f64 {
+    pub fn maximum_local_displacement(&self, bob: f64) -> f64 {
         self.body
             .positions()
             .iter()
@@ -34,13 +34,13 @@ impl Region {
             })
             .fold(0., f64::max)
     }
-    pub(crate) fn volume_m3(&self) -> f64 {
+    pub fn volume_m3(&self) -> f64 {
         self.body.volumes().iter().map(|v| v.abs()).sum()
     }
-    pub(crate) fn build(mesh: &[SceneVertex]) -> Result<Vec<Self>, &'static str> {
+    pub fn build(mesh: &[SceneVertex]) -> Result<Vec<Self>, &'static str> {
         Self::build_parameterized(mesh, crate::body_parameters::BodyParameters::default())
     }
-    pub(crate) fn build_parameterized(
+    pub fn build_parameterized(
         mesh: &[SceneVertex],
         parameters: crate::body_parameters::BodyParameters,
     ) -> Result<Vec<Self>, &'static str> {
@@ -174,11 +174,11 @@ impl Region {
         Ok(regions)
     }
     #[allow(dead_code)]
-    pub(crate) fn step(&mut self, dt: f64, bob: f64) -> Result<(), &'static str> {
+    pub fn step(&mut self, dt: f64, bob: f64) -> Result<(), &'static str> {
         *self = self.prepare_step(dt, bob)?;
         Ok(())
     }
-    pub(crate) fn prepare_step(&self, dt: f64, bob: f64) -> Result<Self, &'static str> {
+    pub fn prepare_step(&self, dt: f64, bob: f64) -> Result<Self, &'static str> {
         if !dt.is_finite() || dt <= 0.0 || dt > 0.1 || !bob.is_finite() {
             return Err("invalid volume region step");
         }
@@ -202,7 +202,7 @@ impl Region {
         self.body
             .step_with_contact(dt, [0.0, -2.0, 0.0], &[collider], 32, 0.35)
     }
-    pub(crate) fn gpu_displacement_weights(
+    pub fn gpu_displacement_weights(
         &self,
         base: u32,
         rows: &mut [Vec<voxy_render::SurfaceDeformationWeight>],
@@ -222,7 +222,7 @@ impl Region {
             }
         }
     }
-    pub(crate) fn gpu_displacements(&self, bob: f64) -> Vec<[f32; 4]> {
+    pub fn gpu_displacements(&self, bob: f64) -> Vec<[f32; 4]> {
         self.body
             .positions()
             .iter()
@@ -237,7 +237,7 @@ impl Region {
             })
             .collect()
     }
-    pub(crate) fn apply(&self, _rest: &[SceneVertex], mesh: &mut [SceneVertex], bob: f64) {
+    pub fn apply(&self, _rest: &[SceneVertex], mesh: &mut [SceneVertex], bob: f64) {
         let points = self
             .binding
             .deform(self.body.positions())

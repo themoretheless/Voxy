@@ -21,7 +21,7 @@ struct Strand {
     bind_frame: Quat,
 }
 #[derive(Debug)]
-pub(crate) struct FaceFeatures {
+pub struct FaceFeatures {
     strands: Vec<Strand>,
     lash_motion: Vec<physics::secondary_motion::SecondaryMotion>,
     seams: Vec<([u32; 3], [Vec3; 3])>,
@@ -31,16 +31,12 @@ pub(crate) struct FaceFeatures {
 }
 #[allow(dead_code)]
 impl FaceFeatures {
-    pub(crate) fn advance_lashes(
-        &mut self,
-        dt: f64,
-        acceleration: [f64; 3],
-    ) -> Result<(), &'static str> {
+    pub fn advance_lashes(&mut self, dt: f64, acceleration: [f64; 3]) -> Result<(), &'static str> {
         let candidate = self.prepare_lashes(dt, acceleration)?;
         self.publish_lashes(candidate);
         Ok(())
     }
-    pub(crate) fn prepare_lashes(
+    pub fn prepare_lashes(
         &self,
         dt: f64,
         acceleration: [f64; 3],
@@ -53,13 +49,10 @@ impl FaceFeatures {
         }
         Ok(candidate)
     }
-    pub(crate) fn publish_lashes(
-        &mut self,
-        candidate: Vec<physics::secondary_motion::SecondaryMotion>,
-    ) {
+    pub fn publish_lashes(&mut self, candidate: Vec<physics::secondary_motion::SecondaryMotion>) {
         self.lash_motion = candidate;
     }
-    pub(crate) fn exchange_lashes(
+    pub fn exchange_lashes(
         &mut self,
         candidate: &mut Vec<physics::secondary_motion::SecondaryMotion>,
     ) {
@@ -685,7 +678,7 @@ fn is_seal(points: [Vec3; 3]) -> bool {
 /// Remove sealed lip triangles for replacement with two clipped lip surfaces.
 /// The bind-pose replacement covers the same surface; source OBJ stays intact.
 /// The topology is chosen once, so opening the jaw does not resize GPU buffers.
-pub(crate) fn open_mouth_surface(vertices: &[SceneVertex], indices: &mut Vec<u32>) -> usize {
+pub fn open_mouth_surface(vertices: &[SceneVertex], indices: &mut Vec<u32>) -> usize {
     let before = indices.len();
     let mut kept = Vec::with_capacity(before);
     for triangle in indices.chunks_exact(3) {
