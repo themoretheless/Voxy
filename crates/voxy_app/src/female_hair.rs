@@ -6,7 +6,7 @@ use voxy_render::SceneVertex;
 const FOLLOWERS: usize = 60;
 
 #[derive(Debug)]
-pub(crate) struct FemaleHair {
+pub struct FemaleHair {
     system: HairSystem,
     #[cfg(test)]
     skip_mesh_contacts: bool,
@@ -20,10 +20,18 @@ pub(crate) struct FemaleHair {
 }
 // Only mutable simulation state travels through preparation. Groom/render data
 // remains owned by FemaleHair and is never copied for a coupled transaction.
-pub(crate) struct PreparedHairStep {
+pub struct PreparedHairStep {
     system: HairSystem,
     collider: TriangleMesh,
     targets: Vec<Vec3>,
+}
+
+impl std::fmt::Debug for PreparedHairStep {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PreparedHairStep")
+            .field("targets", &self.targets.len())
+            .finish_non_exhaustive()
+    }
 }
 #[allow(dead_code)]
 impl FemaleHair {
@@ -39,7 +47,7 @@ impl FemaleHair {
     }
     /// Candidate authoring retains both follicle coordinates. Native contact
     /// qualification is required before selecting it in the normal demo.
-    pub(crate) fn new_parameterized_with_groom(
+    pub fn new_parameterized_with_groom(
         body: &[SceneVertex],
         indices: &[u32],
         parameters: crate::body_parameters::BodyParameters,
@@ -310,7 +318,7 @@ impl FemaleHair {
         })
     }
     #[cfg(test)]
-    pub(crate) fn qualification_systems(
+    pub fn qualification_systems(
         &self,
         dt: f64,
     ) -> Result<Vec<physics::hair::HairLinearSystem>, &'static str> {
@@ -329,7 +337,7 @@ impl FemaleHair {
     ) -> Result<(), &'static str> {
         self.advance_impl(dt, time, head, body, None)
     }
-    pub(crate) fn advance_with_solver(
+    pub fn advance_with_solver(
         &mut self,
         dt: f64,
         time: f64,
@@ -351,7 +359,7 @@ impl FemaleHair {
         self.publish_prepared(staged);
         Ok(())
     }
-    pub(crate) fn prepare_advance(
+    pub fn prepare_advance(
         &self,
         dt: f64,
         time: f64,
@@ -409,7 +417,7 @@ impl FemaleHair {
             targets,
         })
     }
-    pub(crate) fn publish_prepared(&mut self, staged: PreparedHairStep) {
+    pub fn publish_prepared(&mut self, staged: PreparedHairStep) {
         self.system = staged.system;
         self.targets = staged.targets;
         self.collider = staged.collider;
@@ -421,7 +429,7 @@ impl FemaleHair {
             );
         }
     }
-    pub(crate) fn exchange_prepared(&mut self, staged: &mut PreparedHairStep) {
+    pub fn exchange_prepared(&mut self, staged: &mut PreparedHairStep) {
         std::mem::swap(&mut self.system, &mut staged.system);
         std::mem::swap(&mut self.collider, &mut staged.collider);
         std::mem::swap(&mut self.targets, &mut staged.targets);

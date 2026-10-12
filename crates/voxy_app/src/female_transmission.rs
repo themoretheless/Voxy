@@ -3,7 +3,7 @@
 use glam::{Mat4, Vec3};
 use voxy_render::SceneVertex;
 
-pub(crate) fn key_direction() -> Vec3 {
+pub fn key_direction() -> Vec3 {
     if std::env::var("VOXY_FACE_DIAGNOSTIC_BACKLIGHT").as_deref() == Ok("1") {
         Vec3::new(0.5, 0.3, -1.).normalize()
     } else {
@@ -28,11 +28,11 @@ fn profile(thickness: f64) -> [f32; 3] {
     })
 }
 #[derive(Debug, Default)]
-pub(crate) struct Cache {
+pub struct Cache {
     triangles: Vec<[usize; 3]>,
     surface: Option<physics::hair::TriangleMesh>,
 }
-pub(crate) fn apply(
+pub fn apply(
     vertices: &mut [SceneVertex],
     indices: &[u32],
     rest: &[SceneVertex],

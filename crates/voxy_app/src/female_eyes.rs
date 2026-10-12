@@ -1,15 +1,15 @@
 //! Eye pigmentation in bind coordinates, separate from lighting and gaze.
 use glam::{Vec2, Vec3};
 
-pub(crate) const MATERIAL_SHADER: &str = include_str!("female_material.wgsl");
-pub(crate) fn center(x: f32) -> Vec3 {
+pub const MATERIAL_SHADER: &str = include_str!("female_material.wgsl");
+pub fn center(x: f32) -> Vec3 {
     if x > 0. {
         Vec3::new(0.032_892_3, 0.712_416, 0.121_601)
     } else {
         Vec3::new(-0.032_848_5, 0.712_416, 0.121_413)
     }
 }
-pub(crate) fn uv(point: Vec3) -> [f32; 2] {
+pub fn uv(point: Vec3) -> [f32; 2] {
     let mut offset = point - center(point.x);
     if offset.z < 0. {
         // Keep the same material/normal encoding across the equator. Posterior
@@ -26,7 +26,7 @@ pub(crate) fn uv(point: Vec3) -> [f32; 2] {
         0.004 + 0.04 * (0.5 - offset.y / 0.024).clamp(0., 1.),
     ]
 }
-pub(crate) fn is_eye_uv(uv: [f32; 2]) -> bool {
+pub fn is_eye_uv(uv: [f32; 2]) -> bool {
     (0.1..=0.3).contains(&uv[0]) && (0.004..=0.044).contains(&uv[1])
 }
 fn smooth(a: f32, b: f32, value: f32) -> f32 {
@@ -50,7 +50,7 @@ fn scleral_pigment(p: Vec2) -> Vec3 {
     }
     Vec3::new(0.78, 0.79, 0.75).lerp(Vec3::new(0.78, 0.30, 0.28), vessels * 0.08)
 }
-pub(crate) fn pigment(uv: Vec2) -> Vec3 {
+pub fn pigment(uv: Vec2) -> Vec3 {
     let p = Vec2::new((uv.x - 0.1) / 0.2 - 0.5, 0.5 - (uv.y - 0.004) / 0.04) * 0.024;
     let radius = p.length();
     let sclera = scleral_pigment(p);
@@ -98,9 +98,7 @@ pub(crate) fn pigment(uv: Vec2) -> Vec3 {
     Vec3::new(0.0015, 0.002, 0.0025).lerp(color, smooth(0.0019, 0.00215, radius))
 }
 /// Refine the globe before animation so vertex ray visibility has finer support.
-pub(crate) fn refined_globe(
-    mesh: &voxy_render::SceneMesh,
-) -> (Vec<voxy_render::SceneVertex>, Vec<u32>) {
+pub fn refined_globe(mesh: &voxy_render::SceneMesh) -> (Vec<voxy_render::SceneVertex>, Vec<u32>) {
     let mut vertices = mesh.vertices().to_vec();
     let mut indices = mesh.indices().to_vec();
     let origin = center(vertices[0].position[0]);

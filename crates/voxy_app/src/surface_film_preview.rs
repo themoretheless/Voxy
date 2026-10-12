@@ -3,7 +3,7 @@ use glam::Vec3;
 use physics::surface_film::{Material, SurfaceFilm};
 use voxy_render::SceneVertex;
 #[derive(Debug)]
-pub(crate) struct FilmPreview {
+pub struct FilmPreview {
     film: SurfaceFilm,
     render_to_solver: Vec<usize>,
     representatives: Vec<usize>,
@@ -20,7 +20,7 @@ pub(crate) struct FilmPreview {
 impl FilmPreview {
     /// Transfer through prepared body charts. Unsupported wet mouth edits reject
     /// the operation rather than dropping or relocating their liquid.
-    pub(crate) fn remapped_body(
+    pub fn remapped_body(
         &self,
         vertices: &[SceneVertex],
         indices: &[u32],
@@ -49,7 +49,7 @@ impl FilmPreview {
         };
         self.remapped_reference(vertices, indices, source_mesh, target_mesh, map)
     }
-    pub(crate) fn remapped_reference(
+    pub fn remapped_reference(
         &self,
         vertices: &[SceneVertex],
         indices: &[u32],
@@ -153,7 +153,7 @@ impl FilmPreview {
         result.self_contact_error = self.self_contact_error;
         Ok(result)
     }
-    pub(crate) fn rebound_same_body(
+    pub fn rebound_same_body(
         &self,
         vertices: &[SceneVertex],
         indices: &[u32],
@@ -220,7 +220,7 @@ impl FilmPreview {
         result.self_contact_error = self.self_contact_error;
         Ok(result)
     }
-    pub(crate) fn thickness_view_enabled(&self) -> bool {
+    pub fn thickness_view_enabled(&self) -> bool {
         self.settings.thickness_view
     }
     pub fn new(
@@ -475,7 +475,7 @@ impl FilmPreview {
         Ok(())
     }
     /// Check source-adjusted conservation; contact transfer stays within this film.
-    pub(crate) fn verify_mass_balance(&self, relative_tolerance: f64) -> Result<f64, &'static str> {
+    pub fn verify_mass_balance(&self, relative_tolerance: f64) -> Result<f64, &'static str> {
         if !relative_tolerance.is_finite() || relative_tolerance <= 0. {
             return Err("invalid film mass tolerance");
         }
@@ -507,10 +507,7 @@ impl FilmPreview {
             "maximumCellThicknessM":self.film.thickness().into_iter().fold(0.,f64::max),
             "settings":self.settings.to_json(),"calibratedPhysiology":false})
     }
-    pub(crate) fn update_substrate(
-        &mut self,
-        vertices: &[SceneVertex],
-    ) -> Result<(), &'static str> {
+    pub fn update_substrate(&mut self, vertices: &[SceneVertex]) -> Result<(), &'static str> {
         let points = self
             .representatives
             .iter()

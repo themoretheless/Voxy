@@ -449,7 +449,7 @@ impl BodyParameters {
         }
         value
     }
-    pub(crate) fn areola_radius_at(&self, x: f32) -> f32 {
+    pub fn areola_radius_at(&self, x: f32) -> f32 {
         let t = ((x + 0.04) / 0.08).clamp(0., 1.);
         let blend = t * t * (3. - 2. * t);
         self.areola_radius_mm
@@ -457,7 +457,7 @@ impl BodyParameters {
     }
     /// Illustrative reference-space pigmentation, independent of projection and cold stimulus.
     #[cfg(test)]
-    pub(crate) fn areola_tint(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
+    pub fn areola_tint(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
         let smooth = |a: f32, b: f32, value: f32| {
             let t = ((value - a) / (b - a)).clamp(0., 1.);
             t * t * (3. - 2. * t)
@@ -485,7 +485,7 @@ impl BodyParameters {
         }
         Self::from_json(&merged.to_string())
     }
-    pub(crate) fn transform(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
+    pub fn transform(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
         fn band(y: f32, center: f32, radius: f32) -> f32 {
             let t = ((y - center) / radius).abs().min(1.);
             (1. - t * t).powi(2)
@@ -697,7 +697,7 @@ impl BodyParameters {
         )
     }
 
-    pub(crate) fn apply(&self, vertices: &mut [SceneVertex]) {
+    pub fn apply(&self, vertices: &mut [SceneVertex]) {
         if *self == Self::default() {
             return;
         }

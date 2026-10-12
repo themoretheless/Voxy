@@ -10,7 +10,7 @@ mod jump_rig_tests;
 
 /// Object in the canonical left hand's rest frame. Meshes must be closed and outward wound.
 #[derive(Debug)]
-pub(crate) enum GraspObject {
+pub enum GraspObject {
     Sphere {
         center: Vec3,
         radius: f32,
@@ -30,10 +30,7 @@ impl GraspObject {
     /// Validates surface topology after welding OBJ position seams.
     /// Shells must be closed and manifold, with normals pointing out of material.
     /// Nested void walls have the opposite orientation from outer shells.
-    pub(crate) fn from_mesh(
-        vertices: &[SceneVertex],
-        indices: &[u32],
-    ) -> Result<Self, &'static str> {
+    pub fn from_mesh(vertices: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
         if vertices.is_empty()
             || indices.is_empty()
             || !indices.len().is_multiple_of(3)
@@ -293,12 +290,12 @@ fn solid_angle(face: [Vec3; 3], point: Vec3) -> f64 {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct PreparedGrasp {
+pub struct PreparedGrasp {
     object: Option<std::sync::Arc<GraspObject>>,
     samples: Option<std::sync::Arc<Vec<[[Quat; 3]; 5]>>>,
 }
 #[derive(Debug)]
-pub(crate) struct FemaleRig {
+pub struct FemaleRig {
     pub skeleton: Skeleton,
     clip: AnimationClip,
     grasp_clip: AnimationClip,
@@ -562,7 +559,7 @@ impl FemaleRig {
         })
     }
     /// Continuous hand closure: zero is the existing relaxed pose, one is a power grip.
-    pub(crate) fn set_grasp(&mut self, amount: f32) -> Result<(), &'static str> {
+    pub fn set_grasp(&mut self, amount: f32) -> Result<(), &'static str> {
         if !amount.is_finite() || !(0. ..=1.).contains(&amount) {
             return Err("grasp must be in 0..1");
         }
@@ -570,7 +567,7 @@ impl FemaleRig {
         self.grasp_cycle = false;
         Ok(())
     }
-    pub(crate) fn set_grasp_object(&mut self, object: Option<std::sync::Arc<GraspObject>>) {
+    pub fn set_grasp_object(&mut self, object: Option<std::sync::Arc<GraspObject>>) {
         self.grasp_samples = object.as_ref().map(|object| {
             let adduction: [Quat; 5] = std::array::from_fn(|finger| {
                 if finger == 0 {
@@ -714,29 +711,29 @@ impl FemaleRig {
         });
         self.grasp_object = object;
     }
-    pub(crate) fn prepared_grasp(&self) -> PreparedGrasp {
+    pub fn prepared_grasp(&self) -> PreparedGrasp {
         PreparedGrasp {
             object: self.grasp_object.clone(),
             samples: self.grasp_samples.clone(),
         }
     }
-    pub(crate) fn apply_prepared_grasp(&mut self, prepared: &PreparedGrasp) {
+    pub fn apply_prepared_grasp(&mut self, prepared: &PreparedGrasp) {
         self.grasp_object = prepared.object.clone();
         self.grasp_samples = prepared.samples.clone();
     }
-    pub(crate) fn copy_grasp_target_from(&mut self, source: &Self) {
+    pub fn copy_grasp_target_from(&mut self, source: &Self) {
         self.grasp_object = source.grasp_object.clone();
         self.grasp_samples = source.grasp_samples.clone();
     }
-    pub(crate) fn set_grasp_cycle(&mut self, enabled: bool) {
+    pub fn set_grasp_cycle(&mut self, enabled: bool) {
         self.set_grasp(0.).expect("valid neutral grasp");
         self.grasp_cycle = enabled;
     }
-    pub(crate) fn set_body_motion(&mut self, enabled: bool) {
+    pub fn set_body_motion(&mut self, enabled: bool) {
         self.body_motion = enabled;
     }
     /// Bind surface edges used by the grasp skin corrective. The wrist stays anchored.
-    pub(crate) fn bind_hand_surface(
+    pub fn bind_hand_surface(
         &mut self,
         vertices: &[SceneVertex],
         indices: &[u32],
@@ -933,7 +930,7 @@ impl FemaleRig {
             }
         }
     }
-    pub(crate) fn grasp_amount(&self, time: f32) -> f32 {
+    pub fn grasp_amount(&self, time: f32) -> f32 {
         if self.grasp_cycle {
             gesture_envelope(time.rem_euclid(6.) - 0.20)
         } else {
@@ -976,7 +973,7 @@ impl FemaleRig {
         }
         posed
     }
-    pub(crate) fn hand_matrix(&self, time: f32, right: bool) -> Mat4 {
+    pub fn hand_matrix(&self, time: f32, right: bool) -> Mat4 {
         self.pose(time)
             .skin_matrices(&self.skeleton)
             .expect("valid hand pose")[if right { 12 } else { 6 }]
@@ -1052,15 +1049,15 @@ impl FemaleRig {
         }
         pose
     }
-    pub(crate) fn jump_palette(&self, time: f64) -> Vec<Mat4> {
+    pub fn jump_palette(&self, time: f64) -> Vec<Mat4> {
         self.jump_pose(time)
             .skin_matrices(&self.skeleton)
             .expect("validated jump pose")
     }
-    pub(crate) fn jump_head_matrix(&self, time: f64) -> Mat4 {
+    pub fn jump_head_matrix(&self, time: f64) -> Mat4 {
         self.jump_palette(time)[3]
     }
-    pub(crate) fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
+    pub fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
         self.weights
             .iter()
             .map(|row| voxy_render::SurfaceRigidSkinWeight {
@@ -1069,7 +1066,7 @@ impl FemaleRig {
             })
             .collect()
     }
-    pub(crate) fn deform_jump(&self, vertices: &mut [SceneVertex], time: f64) {
+    pub fn deform_jump(&self, vertices: &mut [SceneVertex], time: f64) {
         let palette: Vec<_> = self
             .jump_palette(time)
             .into_iter()
@@ -1089,7 +1086,7 @@ impl FemaleRig {
             .to_array();
         }
     }
-    pub(crate) fn jump_pose_points(&self, points: &[[f64; 3]], time: f64) -> Vec<[f64; 3]> {
+    pub fn jump_pose_points(&self, points: &[[f64; 3]], time: f64) -> Vec<[f64; 3]> {
         let palette: Vec<_> = self
             .jump_palette(time)
             .into_iter()
@@ -1115,7 +1112,7 @@ impl FemaleRig {
             .collect()
     }
     /// Apply the same procedural skeleton to reduced physical-shell points.
-    pub(crate) fn pose_points(&self, points: &[[f64; 3]], time: f32) -> Vec<[f64; 3]> {
+    pub fn pose_points(&self, points: &[[f64; 3]], time: f32) -> Vec<[f64; 3]> {
         let mut vertices: Vec<_> = points
             .iter()
             .map(|p| SceneVertex {

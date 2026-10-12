@@ -4,7 +4,7 @@ use glam::{Quat, Vec3};
 use voxy_render::SceneVertex;
 
 #[derive(Clone, Copy, Debug, Default)]
-pub(crate) struct FacePose {
+pub struct FacePose {
     pub blink: f32,
     pub blink_offsets: [f32; 2],
     pub smile: f32,
@@ -72,14 +72,14 @@ fn region(p: Vec3, center: Vec3, radius: Vec3) -> f32 {
     (1. - q.length_squared()).max(0.).powi(2)
 }
 /// Bind-space line of lip contact, shared by clipping and jaw deformation.
-pub(crate) fn mouth_seam(x: f32) -> f32 {
+pub fn mouth_seam(x: f32) -> f32 {
     let shoulder = (-((x.abs() - 0.007) / 0.005).powi(2)).exp();
     let notch = (-(x / 0.003).powi(2)).exp();
     0.6465 + 0.0007 * shoulder - 0.0002 * notch - 0.0015 * (x / 0.026).powi(2)
 }
 /// Lower-lip opening tapers to zero at the mouth corners. The surface is split
 /// at this same seam by `FaceFeatures`, so upper and lower boundary weights differ.
-pub(crate) fn jaw_weight(point: Vec3) -> f32 {
+pub fn jaw_weight(point: Vec3) -> f32 {
     if point.y >= mouth_seam(point.x) {
         return 0.;
     }
@@ -89,7 +89,7 @@ pub(crate) fn jaw_weight(point: Vec3) -> f32 {
     smooth(0.592, 0.625, point.y) * (jaw_width * (1. - lip_band) + lip_width * lip_band)
 }
 /// Shared jaw and posterior-lip displacement before the front mask.
-pub(crate) fn mouth_displacement(p: Vec3, jaw: f32) -> Vec3 {
+pub fn mouth_displacement(p: Vec3, jaw: f32) -> Vec3 {
     let jaw = jaw.clamp(0., 1.);
     let lower = jaw_weight(p);
     let inner_lip = smooth(0.632, 0.637, p.y)
@@ -105,7 +105,7 @@ pub(crate) fn mouth_displacement(p: Vec3, jaw: f32) -> Vec3 {
 }
 /// Applied before skeletal skinning, so all offsets follow the animated head.
 #[allow(dead_code)]
-pub(crate) fn deform(vertices: &mut [SceneVertex], body_vertices: usize, pose: FacePose) {
+pub fn deform(vertices: &mut [SceneVertex], body_vertices: usize, pose: FacePose) {
     deform_with_contour(vertices, body_vertices, pose, None);
 }
 
@@ -155,7 +155,7 @@ const LID_SAMPLES: usize = 129;
 
 /// Bind-space aperture samples from triangle/vertical-plane intersections.
 #[derive(Debug)]
-pub(crate) struct LidContour {
+pub struct LidContour {
     edges: [[[f32; 2]; LID_SAMPLES]; 2],
     aperture: [[[f32; 2]; LID_SAMPLES]; 2],
     forehead_vertices: Vec<usize>,
@@ -267,10 +267,10 @@ impl LidContour {
             forehead_edges: unique.into_iter().collect(),
         }
     }
-    pub(crate) fn at(&self, x: f32) -> [f32; 2] {
+    pub fn at(&self, x: f32) -> [f32; 2] {
         Self::sample_edges(&self.edges, x)
     }
-    pub(crate) fn aperture_at(&self, x: f32) -> [f32; 2] {
+    pub fn aperture_at(&self, x: f32) -> [f32; 2] {
         Self::sample_edges(&self.aperture, x)
     }
     fn sample_edges(samples: &[[[f32; 2]; LID_SAMPLES]; 2], x: f32) -> [f32; 2] {
@@ -281,7 +281,7 @@ impl LidContour {
         std::array::from_fn(|axis| edges[index][axis] * (1. - t) + edges[index + 1][axis] * t)
     }
 }
-pub(crate) fn deform_with_contour(
+pub fn deform_with_contour(
     vertices: &mut [SceneVertex],
     body_vertices: usize,
     pose: FacePose,
@@ -473,7 +473,7 @@ pub(crate) fn deform_with_contour(
 }
 
 #[cfg(test)]
-pub(crate) mod tests {
+pub mod tests {
     #[test]
     fn tension_ignores_rigid_motion_and_stretch_and_measures_compression() {
         let edge = Vec3::new(0.001, 0.002, 0.0003);
@@ -685,11 +685,7 @@ pub(crate) mod tests {
 
     // Strict transverse intersection only: excludes shared edges, endpoint
     // touches and coplanar overlap. f64 keeps metre-scale predicates stable.
-    pub(crate) fn segment_crosses_triangle(
-        a: glam::DVec3,
-        b: glam::DVec3,
-        tri: [glam::DVec3; 3],
-    ) -> bool {
+    pub fn segment_crosses_triangle(a: glam::DVec3, b: glam::DVec3, tri: [glam::DVec3; 3]) -> bool {
         let direction = b - a;
         let e1 = tri[1] - tri[0];
         let e2 = tri[2] - tri[0];
@@ -709,7 +705,7 @@ pub(crate) mod tests {
         let epsilon = 1e-7;
         u > epsilon && v > epsilon && u + v < 1. - epsilon && t > epsilon && t < 1. - epsilon
     }
-    pub(crate) fn triangles_cross(a: [Vec3; 3], b: [Vec3; 3]) -> bool {
+    pub fn triangles_cross(a: [Vec3; 3], b: [Vec3; 3]) -> bool {
         for axis in 0..3 {
             let bounds = |t: [Vec3; 3]| {
                 (

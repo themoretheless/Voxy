@@ -34,20 +34,20 @@ const PATCH: &str = include_str!(
     "../../../assets/characters/blender-female/prepared/body-forehead-refined-skin.json"
 );
 #[derive(Debug)]
-pub(crate) struct FemaleDemo {
+pub struct FemaleDemo {
     rig: crate::female_rig::FemaleRig,
     grasp_mesh: Option<SceneMesh>,
     grasp_cache:
         std::collections::HashMap<String, (SceneMesh, Vec<Vec3>, crate::female_rig::PreparedGrasp)>,
     grasp_normals: Vec<Vec3>,
-    pub(crate) hand_focus: bool,
+    pub hand_focus: bool,
     features: crate::female_features::FaceFeatures,
     lid_contour: Option<crate::female_face::LidContour>,
     hair: crate::female_hair::FemaleHair,
-    pub(crate) film: Option<crate::surface_film_preview::FilmPreview>,
-    pub(crate) simulate_hair: bool,
-    pub(crate) show_hair: bool,
-    pub(crate) surface_diffusion_enabled: bool,
+    pub film: Option<crate::surface_film_preview::FilmPreview>,
+    pub simulate_hair: bool,
+    pub show_hair: bool,
+    pub surface_diffusion_enabled: bool,
     transmission_cache: std::cell::RefCell<crate::female_transmission::Cache>,
     surface_light_guess: std::cell::RefCell<Option<Vec<[f64; 3]>>>,
     surface_light_input: std::cell::RefCell<Option<SurfaceLightInput>>,
@@ -65,7 +65,7 @@ pub(crate) struct FemaleDemo {
     min_area_ratio: f64,
     last_step_ms: f64,
     /// Elapsed solver time in milliseconds, skin then hair (they run concurrently).
-    pub(crate) solver_ms: [f64; 2],
+    pub solver_ms: [f64; 2],
     skin: Skin,
     skin_reference_rest: Vec<[f64; 3]>,
     attachments: Vec<Attachment>,
@@ -73,35 +73,35 @@ pub(crate) struct FemaleDemo {
     probe_center: [f64; 3],
     probe_depth: f64,
     probe_force: f64,
-    pub(crate) probe_enabled: bool,
-    pub(crate) yaw: f32,
-    pub(crate) pitch: f32,
-    pub(crate) distance: f32,
-    pub(crate) pressing: bool,
-    pub(crate) show_skin: bool,
-    pub(crate) show_complexion: bool,
-    pub(crate) preview_camera_eye: Option<Vec3>,
-    pub(crate) preview_expression: Option<crate::female_face::FacePose>,
-    pub(crate) show_strain: bool,
-    pub(crate) parameter_file: Option<std::path::PathBuf>,
+    pub probe_enabled: bool,
+    pub yaw: f32,
+    pub pitch: f32,
+    pub distance: f32,
+    pub pressing: bool,
+    pub show_skin: bool,
+    pub show_complexion: bool,
+    pub preview_camera_eye: Option<Vec3>,
+    pub preview_expression: Option<crate::female_face::FacePose>,
+    pub show_strain: bool,
+    pub parameter_file: Option<std::path::PathBuf>,
     parameter_revision: Option<std::time::SystemTime>,
     film_revision: Option<std::time::SystemTime>,
     view_revision: Option<std::time::SystemTime>,
     last_presentation_receipt: Option<std::time::Instant>,
-    pub(crate) face_parameters: crate::face_parameters::FaceParameters,
-    pub(crate) face_parameter_file: Option<std::path::PathBuf>,
+    pub face_parameters: crate::face_parameters::FaceParameters,
+    pub face_parameter_file: Option<std::path::PathBuf>,
     face_parameter_revision: Option<std::time::SystemTime>,
-    pub(crate) body_parameters: crate::body_parameters::BodyParameters,
+    pub body_parameters: crate::body_parameters::BodyParameters,
     cold_response: Option<crate::body_parameters::ColdResponse>,
-    pub(crate) secondary_only: bool,
-    pub(crate) rig_pose_only: bool,
-    pub(crate) animation_only: bool,
+    pub secondary_only: bool,
+    pub rig_pose_only: bool,
+    pub animation_only: bool,
     regions: Vec<crate::volume_regions::Region>,
     secondary: [SecondaryMotion; 4],
     animation_time: f64,
     time: f64,
     accumulator: f64,
-    pub(crate) steps: usize,
+    pub steps: usize,
     max_displacement: f64,
 }
 // Own only mutable substep candidates, never clone immutable model/groom data.
@@ -220,16 +220,16 @@ mod repaired_pose_export_tests {
 }
 #[allow(dead_code)]
 impl FemaleDemo {
-    pub(crate) fn new() -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         Self::from_assets(BODY, EYES, PATCH)
     }
-    pub(crate) fn female_from_assets(
+    pub fn female_from_assets(
         body_source: &str,
         patch: &str,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         Self::from_assets(body_source, EYES, patch)
     }
-    pub(crate) fn new_male() -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new_male() -> Result<Self, Box<dyn std::error::Error>> {
         Self::male_from_assets(
             include_str!(
                 "../../../assets/characters/blender-male/body-repaired-render-candidate.obj"
@@ -239,7 +239,7 @@ impl FemaleDemo {
             ),
         )
     }
-    pub(crate) fn male_from_assets(
+    pub fn male_from_assets(
         body_source: &str,
         patch: &str,
     ) -> Result<Self, Box<dyn std::error::Error>> {
@@ -513,7 +513,7 @@ impl FemaleDemo {
             max_displacement: 0.0,
         })
     }
-    pub(crate) fn record_presentation(&mut self, frame: u64, size: [u32; 2]) {
+    pub fn record_presentation(&mut self, frame: u64, size: [u32; 2]) {
         let Some(path) = &self.parameter_file else {
             return;
         };
@@ -567,7 +567,7 @@ impl FemaleDemo {
     }
     /// Enable visual response dynamics without rebasing the tissue solver per frame.
     /// The saved body response remains the stimulus target, not the current response.
-    pub(crate) fn enable_cold_response(
+    pub fn enable_cold_response(
         &mut self,
         initial: f64,
         onset: f64,
@@ -601,7 +601,7 @@ impl FemaleDemo {
             state.apply(self.body_parameters)
         })
     }
-    pub(crate) fn set_body_parameters(
+    pub fn set_body_parameters(
         &mut self,
         parameters: crate::body_parameters::BodyParameters,
     ) -> Result<(), &'static str> {
@@ -765,7 +765,7 @@ impl FemaleDemo {
         }
         Ok(())
     }
-    pub(crate) fn enable_film(
+    pub fn enable_film(
         &mut self,
         center: [f64; 3],
         radius: f64,
@@ -878,13 +878,10 @@ impl FemaleDemo {
     }
     /// Samples a rig pose for offscreen inspection without advancing the physical solver.
     #[allow(dead_code)] // Also compiled directly into the offscreen render example.
-    pub(crate) fn set_grasp_target(
-        &mut self,
-        shape: &str,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn set_grasp_target(&mut self, shape: &str) -> Result<(), Box<dyn std::error::Error>> {
         self.set_grasp_target_with_offset(shape, Vec3::ZERO)
     }
-    pub(crate) fn set_grasp_target_with_offset(
+    pub fn set_grasp_target_with_offset(
         &mut self,
         shape: &str,
         offset: Vec3,
@@ -1043,22 +1040,22 @@ impl FemaleDemo {
         self.grasp_mesh = Some(mesh);
         Ok(())
     }
-    pub(crate) fn prepare_grasp_presets(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn prepare_grasp_presets(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         for shape in ["cylinder", "sphere", "handle"] {
             self.set_grasp_target(shape)?;
         }
         Ok(())
     }
-    pub(crate) fn set_grasp_cycle(&mut self, enabled: bool) {
+    pub fn set_grasp_cycle(&mut self, enabled: bool) {
         self.rig.set_grasp_cycle(enabled);
         self.skin_rig.set_grasp_cycle(enabled);
     }
-    pub(crate) fn set_hand_focus(&mut self, enabled: bool) {
+    pub fn set_hand_focus(&mut self, enabled: bool) {
         self.hand_focus = enabled;
         self.rig.set_body_motion(!enabled);
         self.skin_rig.set_body_motion(!enabled);
     }
-    pub(crate) fn adjust_grasp(&mut self, delta: f32) -> Result<(), &'static str> {
+    pub fn adjust_grasp(&mut self, delta: f32) -> Result<(), &'static str> {
         if !delta.is_finite() {
             return Err("grasp adjustment must be finite");
         }
@@ -1068,7 +1065,7 @@ impl FemaleDemo {
         Ok(())
     }
     /// Prescribed engineering strain fixture for offscreen diagnostic validation.
-    pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+    pub fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
         if !x_stretch.is_finite() || !(0.5..=1.5).contains(&x_stretch) {
             return Err("invalid diagnostic stretch");
         }
@@ -1081,21 +1078,21 @@ impl FemaleDemo {
         self.skin
             .set_state(positions, vec![[0.; 3]; self.skin.positions().len()])
     }
-    pub(crate) fn gpu_hair_surface_frames(&self) -> Vec<voxy_render::FiberSurfaceFrame> {
+    pub fn gpu_hair_surface_frames(&self) -> Vec<voxy_render::FiberSurfaceFrame> {
         self.hair.gpu_surface_frames()
     }
-    pub(crate) fn gpu_hair_surface_input(
+    pub fn gpu_hair_surface_input(
         &self,
     ) -> Result<voxy_render::FiberSurfaceInput, voxy_render::SceneError> {
         self.hair.gpu_surface_input()
     }
-    pub(crate) fn simulation_time(&self) -> f64 {
+    pub fn simulation_time(&self) -> f64 {
         self.time
     }
-    pub(crate) fn preview_pose(&mut self, time: f64) {
+    pub fn preview_pose(&mut self, time: f64) {
         self.time = time;
     }
-    pub(crate) fn title(&self) -> String {
+    pub fn title(&self) -> String {
         let mut legend = String::new();
         if self.show_strain {
             legend.push_str("Strain magnitude: blue 0%, green 5%, red >=10% | ");
@@ -1111,7 +1108,7 @@ impl FemaleDemo {
         }
         format!("{legend}{}", self.base_title())
     }
-    pub(crate) fn diagnostic_legend_labels(&self) -> Vec<[&'static str; 3]> {
+    pub fn diagnostic_legend_labels(&self) -> Vec<[&'static str; 3]> {
         let mut rows = Vec::new();
         if self.show_strain {
             rows.push(["0%", "5%", "10%+"]);
@@ -1127,7 +1124,7 @@ impl FemaleDemo {
         }
         rows
     }
-    pub(crate) fn diagnostic_legend_visible(&self) -> bool {
+    pub fn diagnostic_legend_visible(&self) -> bool {
         self.show_strain
             || self.show_skin
             || self
@@ -1168,7 +1165,7 @@ impl FemaleDemo {
             self.last_step_ms
         )
     }
-    pub(crate) fn focus(&self) -> Vec3 {
+    pub fn focus(&self) -> Vec3 {
         if self.hand_focus {
             self.rig
                 .hand_matrix(self.time as f32, false)
@@ -1179,7 +1176,7 @@ impl FemaleDemo {
             Vec3::ZERO
         }
     }
-    pub(crate) fn eye(&self) -> Vec3 {
+    pub fn eye(&self) -> Vec3 {
         let focus = self.focus();
         focus
             + Vec3::new(
@@ -1188,11 +1185,11 @@ impl FemaleDemo {
                 self.yaw.cos() * self.pitch.cos() * self.distance,
             )
     }
-    pub(crate) fn orbit(&mut self, x: f32, y: f32) {
+    pub fn orbit(&mut self, x: f32, y: f32) {
         self.yaw += x;
         self.pitch = (self.pitch + y).clamp(-1.2, 1.2);
     }
-    pub(crate) fn zoom(&mut self, amount: f32) {
+    pub fn zoom(&mut self, amount: f32) {
         let (minimum, step) = if self.hand_focus {
             (0.18, 0.2)
         } else {
@@ -1231,7 +1228,7 @@ impl FemaleDemo {
         }
         offset
     }
-    pub(crate) fn background_view_replica(&self) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn background_view_replica(&self) -> Result<Self, Box<dyn std::error::Error>> {
         if !self.secondary_only
             || self.animation_only
             || self.rig_pose_only
@@ -1309,7 +1306,7 @@ impl FemaleDemo {
         }
         result
     }
-    pub(crate) fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
         if self.rig_pose_only {
             return Err("pose-only rig preview cannot advance physical state");
         }
@@ -1716,7 +1713,7 @@ impl FemaleDemo {
         Ok(())
     }
     #[allow(clippy::cast_possible_truncation)]
-    pub(crate) fn gpu_secondary_binding(
+    pub fn gpu_secondary_binding(
         &self,
         count: usize,
     ) -> Result<(Vec<u32>, Vec<voxy_render::SurfaceDeformationWeight>, u32), voxy_render::SceneError>
@@ -1767,17 +1764,17 @@ impl FemaleDemo {
         }
         Ok((offsets, weights, 5 + self.regions.len() as u32 * 7))
     }
-    pub(crate) fn gpu_secondary_body_vertices(&self) -> u32 {
+    pub fn gpu_secondary_body_vertices(&self) -> u32 {
         self.body_vertices as u32
     }
-    pub(crate) fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
+    pub fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
         self.rig.gpu_jump_weights()
     }
-    pub(crate) fn gpu_jump_palette(&self) -> Vec<glam::Mat4> {
+    pub fn gpu_jump_palette(&self) -> Vec<glam::Mat4> {
         self.rig
             .jump_palette(if self.animation_only { 5. } else { self.time })
     }
-    pub(crate) fn gpu_secondary_controls(&self) -> Vec<[f32; 4]> {
+    pub fn gpu_secondary_controls(&self) -> Vec<[f32; 4]> {
         let bob = self.root_bob(self.time);
         let mut controls = vec![[0., bob as f32, 0., 0.]];
         controls.extend(
@@ -1790,13 +1787,13 @@ impl FemaleDemo {
         }
         controls
     }
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         self.mesh_with_hair(self.show_hair)
     }
-    pub(crate) fn mesh_with_full_hair(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn mesh_with_full_hair(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         self.mesh_with_hair(true)
     }
-    pub(crate) fn mesh_without_hair(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn mesh_without_hair(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         self.mesh_with_hair(false)
     }
     fn posed_surface_vertices(&self) -> Vec<SceneVertex> {
@@ -2256,7 +2253,7 @@ impl FemaleDemo {
             Ok(mesh)
         }
     }
-    pub(crate) fn verify(&self) -> Result<(), &'static str> {
+    pub fn verify(&self) -> Result<(), &'static str> {
         if self.steps < 8
             || self.max_displacement < 1e-6
             || self.embedding.bindings().len() != self.body_vertices

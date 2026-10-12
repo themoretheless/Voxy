@@ -3,7 +3,7 @@ use physics::biomechanics::{Body, Equilibrium, penile_chambers, sphincter_layers
 use std::sync::Arc;
 use voxy_render::{SceneMesh, SceneVertex};
 #[derive(Clone, Debug)]
-pub(crate) struct BiomechanicsDemo {
+pub struct BiomechanicsDemo {
     bodies: Vec<Body>,
     surfaces: Arc<[Vec<[usize; 3]>]>,
     reports: Vec<Equilibrium>,
@@ -12,7 +12,7 @@ pub(crate) struct BiomechanicsDemo {
 }
 impl BiomechanicsDemo {
     #[allow(dead_code)]
-    pub(crate) fn new() -> Result<Self, &'static str> {
+    pub fn new() -> Result<Self, &'static str> {
         let mut bodies: Vec<_> = penile_chambers()?.into_iter().collect();
         bodies.push(sphincter_layers()?);
         let surfaces = bodies.iter().map(Body::surface).collect::<Vec<_>>().into();
@@ -28,7 +28,7 @@ impl BiomechanicsDemo {
             hold: 0.,
         })
     }
-    pub(crate) fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
         self.hold += dt.clamp(0., 0.1);
         if self.hold > 2. && self.reports.iter().all(|r| r.converged) {
             self.phase = (self.phase + 1) % 4;
@@ -65,7 +65,7 @@ impl BiomechanicsDemo {
         }
         Ok(())
     }
-    pub(crate) fn title(&self) -> String {
+    pub fn title(&self) -> String {
         let residual = self.reports.iter().map(|r| r.residual_n).fold(0., f64::max);
         let converged = self.reports.iter().all(|r| r.converged);
         format!(
@@ -81,7 +81,7 @@ impl BiomechanicsDemo {
         )
     }
     #[allow(clippy::cast_possible_truncation)]
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
         for (i, b) in self.bodies.iter().enumerate() {

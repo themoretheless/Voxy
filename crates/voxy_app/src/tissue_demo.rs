@@ -21,11 +21,11 @@ thread_local! {
         const { std::cell::RefCell::new(None) };
 }
 #[allow(dead_code)]
-pub(crate) fn start_refinement_diagnostics() {
+pub fn start_refinement_diagnostics() {
     REFINEMENT_REJECTIONS.with(|counts| *counts.borrow_mut() = Some(BTreeMap::new()));
 }
 #[allow(dead_code)]
-pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+pub fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
     REFINEMENT_REJECTIONS.with(|counts| counts.borrow_mut().take().unwrap_or_default())
 }
 fn record_refinement_rejection(error: &'static str, depth: usize) {
@@ -173,7 +173,7 @@ struct SkinRegionBinding {
 /// Reference-space membership is fixed at binding, never selected from an animated pose.
 #[derive(Debug)]
 #[allow(dead_code)]
-pub(crate) struct TissueSkinBinding {
+pub struct TissueSkinBinding {
     regions: Vec<SkinRegionBinding>,
     vertex_count: usize,
     global: Option<Arc<assembly::GlobalSkinBinding>>,
@@ -181,7 +181,7 @@ pub(crate) struct TissueSkinBinding {
 #[allow(dead_code)]
 impl TissueSkinBinding {
     /// Immutable posed reference nodes; the same map is used by render and contact.
-    pub(crate) fn posed_reference_nodes(
+    pub fn posed_reference_nodes(
         &self,
         palette: &[DMat4],
         source_skin: &[[f64; 3]],
@@ -191,7 +191,7 @@ impl TissueSkinBinding {
             .ok_or("source reference requires assembled tissue")?
             .posed_reference(palette, Some(source_skin))
     }
-    pub(crate) fn tissue_owned_vertices(&self) -> Vec<usize> {
+    pub fn tissue_owned_vertices(&self) -> Vec<usize> {
         if let Some(global) = &self.global {
             return global.tissue_owned_vertices();
         }
@@ -207,7 +207,7 @@ impl TissueSkinBinding {
             .filter_map(|(vertex, &bound)| bound.then_some(vertex))
             .collect()
     }
-    pub(crate) fn bound_vertex_count(&self) -> usize {
+    pub fn bound_vertex_count(&self) -> usize {
         if let Some(global) = &self.global {
             return global.bound_count;
         }
@@ -215,7 +215,7 @@ impl TissueSkinBinding {
     }
 }
 #[derive(Clone, Debug)]
-pub(crate) struct TissueRegionSpec {
+pub struct TissueRegionSpec {
     pub mesh: physics::biomechanics::TetraMesh,
     pub supports: Vec<usize>,
     pub joint: usize,
@@ -229,7 +229,7 @@ pub(crate) struct TissueRegionSpec {
     pub temperature_kelvin: f64,
 }
 impl TissueRegionSpec {
-    pub(crate) fn illustrative(
+    pub fn illustrative(
         mesh: physics::biomechanics::TetraMesh,
         supports: Vec<usize>,
         joint: usize,
@@ -262,7 +262,7 @@ struct TissueAttachment {
     overrides: BTreeMap<usize, Vec<(usize, f64)>>,
 }
 #[derive(Debug)]
-pub(crate) struct TissueDemo {
+pub struct TissueDemo {
     bodies: Vec<DemoTissue>,
     surfaces: Vec<EmbeddedSurface>,
     attachments: Vec<TissueAttachment>,
@@ -274,11 +274,17 @@ pub(crate) struct TissueDemo {
     time: f64,
     accumulator: f64,
 }
+impl Default for TissueDemo {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[allow(dead_code)]
 impl TissueDemo {
     /// Select the implicit rest-material search backend on the existing continuum owners.
     /// Validate all owners before changing any regional configuration.
-    pub(crate) fn set_tissue_search_backend(
+    pub fn set_tissue_search_backend(
         &mut self,
         backend: Arc<dyn physics::biomechanics::TissueSearchBackend>,
     ) -> Result<(), &'static str> {
@@ -293,7 +299,7 @@ impl TissueDemo {
         Ok(())
     }
 
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         let kinds = [
             TissueKind::Skin,
             TissueKind::Buttock,
@@ -323,19 +329,19 @@ impl TissueDemo {
             accumulator: 0.0,
         }
     }
-    pub(crate) fn biomechanics() -> Result<Self, &'static str> {
+    pub fn biomechanics() -> Result<Self, &'static str> {
         let mut demo = Self::new();
         demo.bodies.clear();
         demo.biomechanics = Some(crate::biomechanics_demo::BiomechanicsDemo::new()?);
         Ok(demo)
     }
-    pub(crate) fn biomechanics_title(&self) -> Option<String> {
+    pub fn biomechanics_title(&self) -> Option<String> {
         self.biomechanics.as_ref().map(|b| b.title())
     }
-    pub(crate) fn body() -> Self {
+    pub fn body() -> Self {
         Self::body_at_centers(std::array::from_fn(Self::center), [0, 0, 3, 7])
     }
-    pub(crate) fn body_at_centers(centers: [[f64; 3]; 4], joints: [usize; 4]) -> Self {
+    pub fn body_at_centers(centers: [[f64; 3]; 4], joints: [usize; 4]) -> Self {
         let regions = [
             [0.08, 0.065, 0.05],
             [0.08, 0.065, 0.05],
@@ -358,7 +364,7 @@ impl TissueDemo {
     /// Authored volumes use the same controller, thermal storage and assembly as
     /// the neutral mannequin. Mesh topology and explicit three-node supports are
     /// admitted before publication. Material constants remain illustrative.
-    pub(crate) fn body_from_regions(
+    pub fn body_from_regions(
         regions: Vec<(physics::biomechanics::TetraMesh, [usize; 3], usize)>,
     ) -> Result<Self, &'static str> {
         Self::build_region_specs(
@@ -373,9 +379,7 @@ impl TissueDemo {
     }
     /// Caller-authored SI parameters are validated by the shared material and
     /// inertia owners; no anatomical calibration or support placement is inferred.
-    pub(crate) fn body_from_region_specs(
-        regions: Vec<TissueRegionSpec>,
-    ) -> Result<Self, &'static str> {
+    pub fn body_from_region_specs(regions: Vec<TissueRegionSpec>) -> Result<Self, &'static str> {
         Self::build_region_specs(regions, true)
     }
     // The legacy illustrative pads can overlap and are not admitted anatomy.
@@ -538,11 +542,11 @@ impl TissueDemo {
         }
         triangles.into_iter().flatten().collect()
     }
-    pub(crate) fn is_body(&self) -> bool {
+    pub fn is_body(&self) -> bool {
         self.body_mode
     }
     /// Sum of absolute tetrahedral cell volumes, in cubic metres.
-    pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    pub fn body_volumes_m3(&self) -> Vec<f64> {
         self.bodies
             .iter()
             .map(|body| body.volumes().iter().map(|v| v.abs()).sum())
@@ -551,7 +555,7 @@ impl TissueDemo {
     /// Numerical energy admission per simulated second, shared by all owned
     /// continuum regions. This is a solver policy, not a material property.
     /// Setting it validates the complete owner set before changing any state.
-    pub(crate) fn set_energy_budget_rate(&mut self, rate_j_s: f64) -> Result<(), &'static str> {
+    pub fn set_energy_budget_rate(&mut self, rate_j_s: f64) -> Result<(), &'static str> {
         if !rate_j_s.is_finite()
             || rate_j_s <= 0.
             || !self.body_mode
@@ -577,7 +581,7 @@ impl TissueDemo {
     }
     /// Change in total mechanical energy, support work, released heat and
     /// independently accumulated numerical defect, all in joules.
-    pub(crate) fn body_energy_receipts(&self) -> Result<Vec<[f64; 4]>, &'static str> {
+    pub fn body_energy_receipts(&self) -> Result<Vec<[f64; 4]>, &'static str> {
         self.bodies
             .iter()
             .map(|body| {
@@ -601,7 +605,7 @@ impl TissueDemo {
             .collect()
     }
     /// Complete continuum state for independent trajectory comparisons.
-    pub(crate) fn continuum_node_state(&self) -> Result<Vec<([f64; 3], [f64; 3])>, &'static str> {
+    pub fn continuum_node_state(&self) -> Result<Vec<([f64; 3], [f64; 3])>, &'static str> {
         let mut nodes = Vec::new();
         for body in &self.bodies {
             let DemoTissue::Continuum { dynamics, .. } = body else {
@@ -619,7 +623,7 @@ impl TissueDemo {
         Ok(nodes)
     }
     /// Committed accepted/rejected trial counts and deepest temporal refinement.
-    pub(crate) fn body_step_counts(&self) -> Vec<(u64, u64, usize)> {
+    pub fn body_step_counts(&self) -> Vec<(u64, u64, usize)> {
         self.bodies
             .iter()
             .filter_map(|body| {
@@ -636,7 +640,7 @@ impl TissueDemo {
             .collect()
     }
     /// Minimum/maximum cell Kelvin temperature and total stored heat, joules.
-    pub(crate) fn body_thermal_diagnostics(&self) -> Result<Vec<(f64, f64, f64)>, &'static str> {
+    pub fn body_thermal_diagnostics(&self) -> Result<Vec<(f64, f64, f64)>, &'static str> {
         self.bodies
             .iter()
             .map(|body| {
@@ -663,17 +667,17 @@ impl TissueDemo {
             .collect()
     }
     /// Mass-weighted displacement from regional rigid references, in world metres.
-    pub(crate) fn body_secondary_offsets(&self) -> Result<Vec<[f64; 3]>, &'static str> {
+    pub fn body_secondary_offsets(&self) -> Result<Vec<[f64; 3]>, &'static str> {
         self.secondary_offsets_for_palette(&self.body_palette())
     }
-    pub(crate) fn secondary_offsets_for_palette(
+    pub fn secondary_offsets_for_palette(
         &self,
         palette: &[Mat4],
     ) -> Result<Vec<[f64; 3]>, &'static str> {
         let wide = Self::widen_attachment_palette(palette)?;
         self.secondary_offsets_for_palette64(&wide)
     }
-    pub(crate) fn secondary_offsets_for_palette64(
+    pub fn secondary_offsets_for_palette64(
         &self,
         palette: &[DMat4],
     ) -> Result<Vec<[f64; 3]>, &'static str> {
@@ -741,7 +745,7 @@ impl TissueDemo {
                 .collect())
         }
     }
-    pub(crate) fn body_motion_title(&self) -> Option<String> {
+    pub fn body_motion_title(&self) -> Option<String> {
         if !self.body_mode {
             return None;
         }
@@ -788,12 +792,12 @@ impl TissueDemo {
         }
     }
     /// Publishes a complete display frame only after every substep succeeds.
-    pub(crate) fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
         self.advance_with_body_step(dt, |candidate, time| {
             candidate.step_body(&candidate.body_palette_at(time))
         })
     }
-    pub(crate) fn advance_with_palette(
+    pub fn advance_with_palette(
         &mut self,
         dt: f64,
         mut palette_at: impl FnMut(f64) -> Result<Vec<Mat4>, &'static str>,
@@ -803,13 +807,13 @@ impl TissueDemo {
         })
     }
     /// Install the same finite obstacle on every continuum region atomically.
-    pub(crate) fn bind_contact_surface(
+    pub fn bind_contact_surface(
         &mut self,
         surface: Arc<PrescribedTriangleSurface>,
     ) -> Result<(), &'static str> {
         self.bind_contact_surfaces(&vec![surface; self.bodies.len()])
     }
-    pub(crate) fn bind_contact_surfaces(
+    pub fn bind_contact_surfaces(
         &mut self,
         surfaces: &[Arc<PrescribedTriangleSurface>],
     ) -> Result<(), &'static str> {
@@ -834,7 +838,7 @@ impl TissueDemo {
         self.bodies = candidate;
         Ok(())
     }
-    pub(crate) fn advance_with_palette_and_surface(
+    pub fn advance_with_palette_and_surface(
         &mut self,
         dt: f64,
         mut sample: impl FnMut(f64) -> Result<(Vec<Mat4>, Arc<PrescribedTriangleSurface>), &'static str>,
@@ -848,7 +852,7 @@ impl TissueDemo {
             )
         })
     }
-    pub(crate) fn advance_with_palette_and_surfaces(
+    pub fn advance_with_palette_and_surfaces(
         &mut self,
         dt: f64,
         mut sample: impl FnMut(
@@ -862,7 +866,7 @@ impl TissueDemo {
         })
     }
     /// Imported physics keeps supports and obstacle geometry on the same f64 clock.
-    pub(crate) fn advance_with_palette64_and_surfaces(
+    pub fn advance_with_palette64_and_surfaces(
         &mut self,
         dt: f64,
         mut sample: impl FnMut(
@@ -879,7 +883,7 @@ impl TissueDemo {
     }
     /// Bind only contained skin vertices. Exterior vertices retain skeletal motion.
     /// Overlapping ownership and invalid geometry are explicit errors.
-    pub(crate) fn bind_skin(&self, skin: &[[f64; 3]]) -> Result<TissueSkinBinding, &'static str> {
+    pub fn bind_skin(&self, skin: &[[f64; 3]]) -> Result<TissueSkinBinding, &'static str> {
         if self.assembled_regions.is_some() {
             return self.bind_assembled_skin(skin);
         }
@@ -931,7 +935,7 @@ impl TissueDemo {
         })
     }
     /// Compose physical displacement with already posed skin; returns one atomic result.
-    pub(crate) fn deform_skin(
+    pub fn deform_skin(
         &self,
         binding: &TissueSkinBinding,
         palette: &[DMat4],
@@ -994,7 +998,7 @@ impl TissueDemo {
         Ok(output)
     }
     /// World-space FEM surfaces, without the procedural mannequin display.
-    pub(crate) fn tissue_mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn tissue_mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
         for (body, surface) in self.bodies.iter().zip(&self.surfaces) {
@@ -1131,7 +1135,7 @@ impl TissueDemo {
         Ok(())
     }
     #[allow(clippy::cast_possible_truncation)]
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         if let Some(b) = &self.biomechanics {
             return b.mesh();
         }
@@ -1211,7 +1215,7 @@ impl TissueDemo {
         };
         self.step_body_with_contact64_workers(palette, conductivity_w_m_k, next_surfaces, workers)
     }
-    pub(crate) fn step_body_with_contact64_workers(
+    pub fn step_body_with_contact64_workers(
         &mut self,
         palette: &[DMat4],
         conductivity_w_m_k: f64,

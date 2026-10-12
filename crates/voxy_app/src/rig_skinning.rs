@@ -11,10 +11,10 @@ fn signed_hinge_angle(p: [Vec3; 4]) -> Option<f32> {
     let angle = edge.dot(a.cross(b)).atan2(a.dot(b));
     angle.is_finite().then_some(angle)
 }
-pub(crate) fn hinge_angle(p: [Vec3; 4]) -> Option<f32> {
+pub fn hinge_angle(p: [Vec3; 4]) -> Option<f32> {
     signed_hinge_angle(p).map(f32::abs)
 }
-pub(crate) fn hinge_angle_gradient(p: [Vec3; 4], epsilon: f32) -> Option<(f32, [Vec3; 4])> {
+pub fn hinge_angle_gradient(p: [Vec3; 4], epsilon: f32) -> Option<(f32, [Vec3; 4])> {
     if !epsilon.is_finite() || epsilon <= 0.0 {
         return None;
     }
@@ -38,8 +38,8 @@ pub(crate) fn hinge_angle_gradient(p: [Vec3; 4], epsilon: f32) -> Option<(f32, [
     Some((angle.abs(), gradients))
 }
 
-#[derive(Clone, Copy)]
-pub(crate) struct RigidSkinTransform {
+#[derive(Clone, Copy, Debug)]
+pub struct RigidSkinTransform {
     real: Quat,
     dual: Quat,
 }
@@ -51,11 +51,7 @@ impl RigidSkinTransform {
         Self { real, dual }
     }
 }
-pub(crate) fn deform_point(
-    p: Vec3,
-    weights: &[(usize, f32)],
-    palette: &[RigidSkinTransform],
-) -> Vec3 {
+pub fn deform_point(p: Vec3, weights: &[(usize, f32)], palette: &[RigidSkinTransform]) -> Vec3 {
     let reference = palette[weights
         .iter()
         .max_by(|a, b| a.1.total_cmp(&b.1))

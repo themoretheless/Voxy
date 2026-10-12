@@ -3,10 +3,10 @@ use super::*;
 use std::ops::Range;
 
 #[derive(Clone, Debug)]
-pub(super) struct AssembledRegions {
-    pub(super) node_ranges: Vec<Range<usize>>,
+pub struct AssembledRegions {
+    pub node_ranges: Vec<Range<usize>>,
     #[allow(dead_code)]
-    pub(super) cell_ranges: Vec<Range<usize>>,
+    pub cell_ranges: Vec<Range<usize>>,
     source_contacts: Vec<Option<PrescribedTriangleSurface>>,
 }
 
@@ -15,7 +15,7 @@ impl TissueDemo {
     /// attachment indices through immutable regional ranges. No source owner
     /// continues to simulate after publication.
     #[allow(dead_code)]
-    pub(crate) fn assemble_regions(&mut self) -> Result<(), &'static str> {
+    pub fn assemble_regions(&mut self) -> Result<(), &'static str> {
         if self.assembled_regions.is_some()
             || !self.body_mode
             || self.bodies.len() != self.attachments.len()
@@ -83,7 +83,7 @@ impl TissueDemo {
         self.assembled_regions = Some(Arc::new(layout));
         Ok(())
     }
-    pub(super) fn step_assembled_regions(
+    pub fn step_assembled_regions(
         &mut self,
         palette: &[DMat4],
         conductivity: f64,
@@ -388,7 +388,7 @@ struct SourceReferenceNodes {
 
 #[derive(Clone, Debug)]
 #[allow(dead_code)]
-pub(super) struct GlobalSkinBinding {
+pub struct GlobalSkinBinding {
     embedding: Arc<EmbeddedSurface>,
     owners: Vec<Option<usize>>,
     skin_reference: Vec<[f64; 3]>,
@@ -398,11 +398,11 @@ pub(super) struct GlobalSkinBinding {
     node_ranges: Vec<Range<usize>>,
     joints: Vec<usize>,
     vertex_count: usize,
-    pub(super) bound_count: usize,
+    pub bound_count: usize,
 }
 impl GlobalSkinBinding {
     #[allow(dead_code)]
-    pub(super) fn tissue_owned_vertices(&self) -> Vec<usize> {
+    pub fn tissue_owned_vertices(&self) -> Vec<usize> {
         self.owners
             .iter()
             .enumerate()
@@ -412,7 +412,7 @@ impl GlobalSkinBinding {
 }
 #[allow(dead_code)]
 impl TissueDemo {
-    pub(super) fn bind_assembled_skin(
+    pub fn bind_assembled_skin(
         &self,
         skin: &[[f64; 3]],
     ) -> Result<TissueSkinBinding, &'static str> {
@@ -473,7 +473,7 @@ impl TissueDemo {
     /// Exact coincident source vertices remain distinct and must stay coincident
     /// in every supplied pose. No nearest-node fallback or skinning copy is used.
     /// Interior nodes without a matching source require a different authored map.
-    pub(crate) fn bind_skin_source_reference(
+    pub fn bind_skin_source_reference(
         &self,
         skin: &[[f64; 3]],
     ) -> Result<TissueSkinBinding, &'static str> {
@@ -521,7 +521,7 @@ impl TissueDemo {
         });
         Ok(binding)
     }
-    pub(super) fn deform_assembled_skin(
+    pub fn deform_assembled_skin(
         &self,
         binding: &GlobalSkinBinding,
         palette: &[DMat4],
@@ -984,7 +984,7 @@ mod skin_tests {
 }
 
 impl GlobalSkinBinding {
-    pub(super) fn posed_reference(
+    pub fn posed_reference(
         &self,
         palette: &[DMat4],
         source_skin: Option<&[[f64; 3]]>,
@@ -1048,7 +1048,7 @@ impl TissueDemo {
     /// Choose imported skin as the physical boundary; disable the native FEM
     /// envelope so the same body is not charged a second contact potential.
     #[allow(dead_code)]
-    pub(crate) fn bind_skin_contact(
+    pub fn bind_skin_contact(
         &mut self,
         binding: &TissueSkinBinding,
     ) -> Result<usize, &'static str> {

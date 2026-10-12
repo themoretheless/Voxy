@@ -8,7 +8,7 @@ use std::sync::{
 };
 use voxy_render::SceneMesh;
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub(crate) struct Controls {
+pub struct Controls {
     pub view: [f32; 3],
     pub paused: bool,
     pub pressing: bool,
@@ -33,7 +33,7 @@ impl Controls {
     }
 }
 #[derive(Debug)]
-pub(crate) struct Frame {
+pub struct Frame {
     pub mesh: SceneMesh,
     pub body_indices: Vec<u32>,
     pub hair_indices: Vec<u32>,
@@ -66,7 +66,7 @@ impl Frame {
     }
 }
 #[derive(Debug)]
-pub(crate) struct FullModelWorker {
+pub struct FullModelWorker {
     controls: Arc<Mutex<Controls>>,
     stopped: Arc<AtomicBool>,
     receiver: mpsc::Receiver<Result<Frame, String>>,
@@ -241,7 +241,7 @@ impl PartitionCache {
     }
 }
 
-pub(crate) fn partition_hair(mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), String> {
+pub fn partition_hair(mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), String> {
     let mut body = Vec::with_capacity(mesh.indices().len());
     let mut hair = Vec::new();
     for tri in mesh.indices().chunks_exact(3) {

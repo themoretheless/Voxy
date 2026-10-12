@@ -1,6 +1,6 @@
 //! Shared native platform shell for general 2D/3D scenes.
 mod camera_motion;
-mod full_model_worker;
+pub mod full_model_worker;
 mod gravity_demo;
 mod scene_app;
 mod touch;
@@ -8,36 +8,36 @@ pub use scene_app::SceneApp;
 
 mod strands_demo;
 
-mod tissue_demo;
+pub mod tissue_demo;
 
-mod liquid_demo;
-mod wear_demo;
+pub mod liquid_demo;
+pub mod wear_demo;
 
 mod xray_demo;
 
-mod biomechanics_demo;
+pub mod biomechanics_demo;
 
-mod female_demo;
+pub mod female_demo;
 
-mod female_rig;
-mod jump_motion;
+pub mod female_rig;
+pub mod jump_motion;
 
-mod female_hair;
+pub mod female_hair;
 pub mod gpu_hair_solver;
 
-mod rig_skinning;
+pub mod rig_skinning;
 
-mod female_face;
+pub mod female_face;
 mod female_lids;
 
-mod female_complexion;
+pub mod female_complexion;
 
-mod volume_regions;
+pub mod volume_regions;
 
-mod female_features;
+pub mod female_features;
 
-mod female_eyes;
-mod female_transmission;
+pub mod female_eyes;
+pub mod female_transmission;
 
 mod face_preview;
 pub use face_preview::FacePreview;
@@ -49,7 +49,7 @@ pub mod face_parameters;
 mod scene_input;
 pub use scene_input::{SceneInput, SceneInputActions};
 
-mod surface_film_preview;
+pub mod surface_film_preview;
 
 pub mod model_presentation;
 
@@ -61,7 +61,7 @@ pub mod tissue_diagnostics;
 
 pub mod view_settings;
 
-mod diagnostic_legend;
+pub mod diagnostic_legend;
 
 mod scene_rush;
 
@@ -70,5 +70,6 @@ mod rush_physics;
 mod rush_diagnostics;
 
 pub mod fem_surface;
+pub mod wet_fem_preview;
 
-mod fem_demo;
+pub mod fem_demo;
