@@ -1,13 +1,7 @@
 //! Principal-axis rigid rotation, with inertial angular momentum.
 use crate::astrophysics::Error;
+pub(crate) use crate::math::cross;
 type Vector = [f64; 3];
-pub(crate) fn cross(a: Vector, b: Vector) -> Vector {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
 fn multiply(a: [f64; 4], b: [f64; 4]) -> [f64; 4] {
     let c = cross([a[0], a[1], a[2]], [b[0], b[1], b[2]]);
     [

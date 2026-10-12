@@ -417,20 +417,6 @@ fn solve_dense(mut a: Vec<Vec<f64>>, mut b: Vec<f64>) -> Result<Vec<f64>, &'stat
     }
     Ok(b)
 }
-fn sub(a: Vec3, b: Vec3) -> Vec3 {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn dot(a: Vec3, b: Vec3) -> f64 {
-    a.iter().zip(b).map(|(x, y)| x * y).sum()
-}
-fn cross(a: Vec3, b: Vec3) -> Vec3 {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-
 pub use quadratic::{QuadraticWork, QuadraticWorkEquilibrium};
 
 pub use quadratic::{CoupledQuadraticWork, CoupledWorkEquilibrium, InterfaceWork};
@@ -455,4 +441,7 @@ pub use quadratic::QuadraticFragmentImpactConstraint;
 
 pub use quadratic::{QuadraticAutomaticMultiImpact, QuadraticDetectedFragmentContact};
 
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 pub use quadratic::{QuadraticSurfaceTriangle, QuadraticSurfaceVertex};

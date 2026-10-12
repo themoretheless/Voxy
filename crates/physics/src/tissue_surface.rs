@@ -3,10 +3,8 @@
 type Point = [f64; 3];
 use std::sync::Arc;
 mod search;
+use crate::math::sub;
 pub use search::TetrahedralEmbedding;
-fn sub(a: Point, b: Point) -> Point {
-    std::array::from_fn(|i| a[i] - b[i])
-}
 fn determinant(a: Point, b: Point, c: Point) -> f64 {
     a[0] * (b[1] * c[2] - b[2] * c[1]) - a[1] * (b[0] * c[2] - b[2] * c[0])
         + a[2] * (b[0] * c[1] - b[1] * c[0])

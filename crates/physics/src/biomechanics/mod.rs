@@ -84,29 +84,12 @@ pub use stress::{ElementStress, Stress};
 pub type Vec3 = [f64; 3];
 pub type Matrix = [[f64; 3]; 3];
 pub const IDENTITY: Matrix = [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
-fn add(a: Vec3, b: Vec3) -> Vec3 {
-    std::array::from_fn(|i| a[i] + b[i])
-}
-fn sub(a: Vec3, b: Vec3) -> Vec3 {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn scale(a: Vec3, s: f64) -> Vec3 {
-    a.map(|x| x * s)
-}
 fn dot(a: Vec3, b: Vec3) -> f64 {
     // === OPTIMIZATION #4-5: Manual SIMD unrolling для dot product ===
     // Eliminate iterator overhead, direct FMA fusion
     a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 }
 
-fn cross(a: Vec3, b: Vec3) -> Vec3 {
-    // === OPTIMIZATION #6-7: Precompute cross products, unrolled ===
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
 fn transpose(a: Matrix) -> Matrix {
     std::array::from_fn(|i| std::array::from_fn(|j| a[j][i]))
 }
@@ -905,4 +888,8 @@ impl Body {
 }
 
 mod calibration;
+use crate::math::add;
+use crate::math::cross;
+use crate::math::scale;
+use crate::math::sub;
 pub use calibration::{FitError, TensilePoint, fit_tensile, tensile_error, tensile_stress};

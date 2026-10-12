@@ -1,4 +1,7 @@
 //! Root-anchored Verlet strands with position constraints. Use a fixed timestep.
+use crate::math::add;
+use crate::math::scale;
+use crate::math::sub;
 #[derive(Clone, Copy, Debug)]
 pub struct StrandConfig {
     /// Velocity retained per second, in 0..=1.
@@ -30,15 +33,6 @@ pub struct Strand {
     rest: Vec<[f64; 3]>,
     lengths: Vec<f64>,
     config: StrandConfig,
-}
-fn add(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    std::array::from_fn(|i| a[i] + b[i])
-}
-fn sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn scale(a: [f64; 3], s: f64) -> [f64; 3] {
-    a.map(|v| v * s)
 }
 fn length(a: [f64; 3]) -> f64 {
     a.iter().map(|v| v * v).sum::<f64>().sqrt()

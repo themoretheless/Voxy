@@ -1,5 +1,6 @@
 //! Prescribed stationary-surface impact response; not a splash or contact-angle model.
 use super::{Liquid, finite, sub};
+use crate::math::dot;
 use crate::surface_film::SurfaceFilm;
 pub(super) fn sphere_contact(
     start: [f64; 3],
@@ -14,9 +15,6 @@ pub(super) fn sphere_contact(
         return Err("initial film sphere penetration");
     }
     Ok(Some(hit))
-}
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a.iter().zip(b).map(|(a, b)| a * b).sum()
 }
 /// Prescribed impact coefficients; neither is inferred from material or wetting.
 #[derive(Clone, Copy, Debug, PartialEq)]

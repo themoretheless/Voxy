@@ -18,7 +18,10 @@
 | C2 `voxy_demos` | сделано | 34 демо-модуля (≈45k строк) в `crates/voxy_demos`; `voxy_app` = shell (`scene_app`, `scene_rush`, controls, `main.rs`); `voxy_ray_probe` зависит от `voxy_demos`; остаётся `voxy_mobile -> voxy_app` (нужен общий shell-crate для `SceneApp`, шаг C2b) |
 | D3 `voxy_gpu_core` | сделано | `ComputeError`, `ComputeProgram`, memory budget, readback pool, `GraphicsOptions`, `GpuIndirectMesh` живут ниже render; `voxy_gpu` больше не зависит от `voxy_render` (ratchet: нарушение снято) |
 | D5 render↔animation | пересмотрено | render-ный `model.rs` сам вычисляет позы импортированных моделей (`Pose`, `MAX_JOINTS`) — это потребитель анимации, а не утечка; ребро остаётся задокументированным нарушением до решения о выносе pose-evaluation из render |
-| B1–B4, C3, C4, D4 | не начато | |
+| B1 `physics::math` | сделано (идентичные копии) | 74 локальных `dot/cross/add/sub/scale/norm` в 37 файлах заменены импортами `crate::math`; взяты только копии с байт-идентичным телом (проверено нормализацией тела и unit-тестом), поэтому результаты не меняются; оставлены отличающиеся версии (unrolled-FMA `dot` в biomechanics, `dot(a,a).sqrt()`-нормы, `&[f64]`-варианты) |
+| B2–B4, C3, C4, D4 | не начато | |
+
+После B1: `cargo test -p physics --lib` 369, все 217 integration-бинарей physics — 1551 тест, 0 падений.
 
 Полный прогон тестов `voxy_app` lib на ветке: 343 теста, все прошли.
 `female_demo` (63 теста) гонялся по одному; три теста не укладываются в

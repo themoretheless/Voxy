@@ -2,6 +2,9 @@
 //! `mu = G * (primary_mass + secondary_mass)` for relative motion. Perturbed
 //! multi-body motion belongs to `gravity`; these conics assume an isolated pair.
 
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::norm as length;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct OrbitalState {
     pub position: [f64; 3],
@@ -75,19 +78,6 @@ pub fn gravity_gradient_torque(
         return Err(Error::NumericalOverflow);
     }
     Ok(torque)
-}
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a.into_iter().zip(b).map(|(x, y)| x * y).sum()
-}
-fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-fn length(a: [f64; 3]) -> f64 {
-    a[0].hypot(a[1]).hypot(a[2])
 }
 fn validate(state: OrbitalState, mu: f64) -> Result<(), Error> {
     if !mu.is_finite()

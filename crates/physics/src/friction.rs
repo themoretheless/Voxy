@@ -2,6 +2,7 @@
 //! Traction is an energy-gradient sign: force on the plus side is its negative.
 use crate::biomechanics::Matrix;
 mod slider;
+use crate::math::dot;
 pub use slider::SliderStep;
 pub type Vec3 = [f64; 3];
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -235,7 +236,4 @@ fn kinematics(jump: Vec3, normal: Vec3) -> Result<(f64, Vec3), &'static str> {
         return Err("friction kinematics overflow");
     }
     Ok((gap, tangent))
-}
-fn dot(a: Vec3, b: Vec3) -> f64 {
-    a.iter().zip(b).map(|(x, y)| x * y).sum()
 }

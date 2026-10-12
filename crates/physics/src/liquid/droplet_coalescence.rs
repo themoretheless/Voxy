@@ -1,5 +1,6 @@
 //! Prescribed force-frozen swept-sphere coalescence, separate from substrate impacts.
 use super::{DropletMergeReport, Error, Liquid, norm, positive};
+use crate::math::dot;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DropletCoalescenceControl {
     pub dt: f64,
@@ -15,9 +16,6 @@ pub struct DropletCoalescenceReport {
     pub released_polymer_energy: f64,
     pub unresolved_kinetic_energy: f64,
     pub unresolved_angular_momentum: [f64; 3],
-}
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a.iter().zip(b).map(|(a, b)| a * b).sum()
 }
 fn contact(
     a: [f64; 3],

@@ -33,19 +33,6 @@ pub struct NormalImpulse {
 fn finite(v: Vector) -> bool {
     v.iter().all(|v| v.is_finite())
 }
-fn dot(a: Vector, b: Vector) -> f64 {
-    (0..3).map(|k| a[k] * b[k]).sum()
-}
-fn cross(a: Vector, b: Vector) -> Vector {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-fn sub(a: Vector, b: Vector) -> Vector {
-    std::array::from_fn(|k| a[k] - b[k])
-}
 impl ContactBody {
     fn validate(self) -> Result<(), Error> {
         if !self.motion.mass.is_finite()
@@ -598,4 +585,7 @@ fn solve_normal_network_constraints_with_bounds(
     Err(Error::Budget)
 }
 
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 pub(crate) use reaction::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};

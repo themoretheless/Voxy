@@ -1,6 +1,7 @@
 //! Bilinear energy-regularized cohesive interface with optional Coulomb crack closure.
 //! Fixed unit normal, small sliding. Equal mode-I/II stiffness and fracture energy.
 use crate::biomechanics::Matrix;
+use crate::math::dot;
 pub type Vec3 = [f64; 3];
 #[derive(Clone, Copy, Debug)]
 pub struct Material {
@@ -274,10 +275,6 @@ impl Material {
         ))
     }
 }
-fn dot(a: Vec3, b: Vec3) -> f64 {
-    a.iter().zip(b).map(|(x, y)| x * y).sum()
-}
-
 impl Material {
     /// Migrate accepted history to a changed cohesive law with unchanged friction parameters at fixed
     /// pose. Preserves accumulated fracture work using a history offset and

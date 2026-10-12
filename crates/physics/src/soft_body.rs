@@ -1,19 +1,9 @@
 //! Small CPU XPBD tetrahedral bodies. Discrete vertex/sphere contact; no self-contact.
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 use std::collections::BTreeSet;
 type V = [f64; 3];
-fn sub(a: V, b: V) -> V {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn cross(a: V, b: V) -> V {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-fn dot(a: V, b: V) -> f64 {
-    (0..3).map(|i| a[i] * b[i]).sum()
-}
 fn volume(p: &[V], t: [usize; 4]) -> f64 {
     dot(
         sub(p[t[1]], p[t[0]]),

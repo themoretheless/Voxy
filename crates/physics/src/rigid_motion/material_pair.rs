@@ -3,6 +3,7 @@ use super::{
     Config, ContactBody, Error, MaterialPointForce, MaterialPointMotion, MotionLoad, MotionWork,
     RigidMotion, TorquePolynomial,
 };
+use crate::math::norm;
 
 /// Equal and opposite affine forces at the first body's own material point.
 /// Independent external COM forces and torques may also be supplied. Magnitudes are supplied by
@@ -32,10 +33,6 @@ impl MaterialPairImpact {
         })
     }
 }
-fn norm(v: [f64; 3]) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
-}
-
 impl MaterialForcePair {
     pub fn prepare(
         first: ContactBody,
