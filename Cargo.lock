@@ -2649,7 +2649,6 @@ dependencies = [
  "voxy_animation",
  "voxy_assets",
  "voxy_core",
- "voxy_editor",
  "voxy_lighting",
  "voxy_mesher",
  "voxy_scene",
