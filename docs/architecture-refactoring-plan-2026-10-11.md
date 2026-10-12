@@ -19,7 +19,8 @@
 | D3 `voxy_gpu_core` | сделано | `ComputeError`, `ComputeProgram`, memory budget, readback pool, `GraphicsOptions`, `GpuIndirectMesh` живут ниже render; `voxy_gpu` больше не зависит от `voxy_render` (ratchet: нарушение снято) |
 | D5 render↔animation | пересмотрено | render-ный `model.rs` сам вычисляет позы импортированных моделей (`Pose`, `MAX_JOINTS`) — это потребитель анимации, а не утечка; ребро остаётся задокументированным нарушением до решения о выносе pose-evaluation из render |
 | B1 `physics::math` | сделано (идентичные копии) | 74 локальных `dot/cross/add/sub/scale/norm` в 37 файлах заменены импортами `crate::math`; взяты только копии с байт-идентичным телом (проверено нормализацией тела и unit-тестом), поэтому результаты не меняются; оставлены отличающиеся версии (unrolled-FMA `dot` в biomechanics, `dot(a,a).sqrt()`-нормы, `&[f64]`-варианты) |
-| B2–B4, C3, C4, D4 | не начато | |
+| B2 слоение physics (часть) | сделано | 19 `astrophysics_*.rs` → `astrophysics/`, 4 `gravity*.rs` → `gravity/`; старые пути сохранены фасадами `pub use astrophysics::x as astrophysics_x` (0 правок у потребителей) |
+| B3, B4, C3, C4, D4 | не начато | |
 
 После B1: `cargo test -p physics --lib` 369, все 217 integration-бинарей physics — 1551 тест, 0 падений.
 

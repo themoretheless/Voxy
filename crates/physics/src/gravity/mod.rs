@@ -2,6 +2,10 @@
 //! Velocity Verlet is symplectic at a constant timestep. Point masses require
 //! either nonzero softening or a collision policy before coincident positions.
 
+pub mod character;
+pub mod field;
+pub mod spheres;
+
 pub const SI_GRAVITATIONAL_CONSTANT: f64 = 6.67430e-11;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
