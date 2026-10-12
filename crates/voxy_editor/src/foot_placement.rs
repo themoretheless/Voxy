@@ -1,4 +1,5 @@
 //! Authored rig bindings; contact and palettes are staged against accepted physics.
+use crate::EditorError;
 mod contact_events;
 use glam::{DMat3, DMat4, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
@@ -44,7 +45,7 @@ impl FootBinding {
     pub(super) fn contact_keys(
         &self,
         clip_name: Option<&str>,
-    ) -> Result<&[FootContactKey], String> {
+    ) -> Result<&[FootContactKey], EditorError> {
         if self.clip_contact_curves.is_empty() {
             return Ok(&self.contact_curve);
         }
@@ -60,7 +61,10 @@ struct ContactBlendState {
     frozen: Option<(Arc<voxy_animation::Pose>, f32)>,
 }
 impl ContactBlendState {
-    fn snapshot_weight(&mut self, snapshot: &Arc<voxy_animation::Pose>) -> Result<f32, String> {
+    fn snapshot_weight(
+        &mut self,
+        snapshot: &Arc<voxy_animation::Pose>,
+    ) -> Result<f32, EditorError> {
         if self
             .frozen
             .as_ref()
@@ -81,7 +85,7 @@ impl ContactBlendState {
         clip_name: Option<&str>,
         phase: Option<f64>,
         blend: Option<voxy_animation::PoseBlendPhases<'_>>,
-    ) -> Result<f32, String> {
+    ) -> Result<f32, EditorError> {
         let target = contact_weight(binding.contact_keys(clip_name)?, phase)?;
         let weight = match blend
             .and_then(|blend| blend.source.map(|source| (source, blend.target_weight)))
@@ -112,7 +116,7 @@ impl ContactBlendState {
         Ok(weight)
     }
 }
-fn contact_weight(keys: &[FootContactKey], phase: Option<f64>) -> Result<f32, String> {
+fn contact_weight(keys: &[FootContactKey], phase: Option<f64>) -> Result<f32, EditorError> {
     if keys.is_empty() {
         return Ok(1.);
     }
@@ -152,7 +156,7 @@ fn crossed_swing(
 }
 impl ModelFootPlacement {
     /// Validates authored values before rig-dependent admission.
-    pub fn validate(&self) -> Result<(), String> {
+    pub fn validate(&self) -> Result<(), EditorError> {
         if self.feet.len() > 8 {
             return Err("foot binding capacity exceeded".into());
         }
@@ -208,7 +212,7 @@ impl ModelFootPlacement {
                     return Err("invalid foot contact curve".into());
                 }
             }
-            foot.contact.validate().map_err(|e| e.to_string())?;
+            foot.contact.validate()?;
         }
         Ok(())
     }
@@ -233,14 +237,17 @@ impl FootRuntime {
         self.settings.as_ref() == settings
     }
     #[allow(dead_code)]
-    pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    pub(super) fn new(
+        model: &ModelAsset,
+        settings: ModelFootPlacement,
+    ) -> Result<Self, EditorError> {
         Self::new_with_clips(model, settings, &model.animations)
     }
     pub(super) fn new_with_clips(
         model: &ModelAsset,
         settings: ModelFootPlacement,
         clips: &[Arc<voxy_animation::AnimationClip>],
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         settings.validate()?;
         let mut feet = Vec::new();
         for foot in &settings.feet {
@@ -250,15 +257,9 @@ impl FootRuntime {
                 }
             }
             let joints = [
-                model
-                    .resolve_joint_name(&foot.bones[0])
-                    .map_err(|e| e.to_string())?,
-                model
-                    .resolve_joint_name(&foot.bones[1])
-                    .map_err(|e| e.to_string())?,
-                model
-                    .resolve_joint_name(&foot.bones[2])
-                    .map_err(|e| e.to_string())?,
+                model.resolve_joint_name(&foot.bones[0])?,
+                model.resolve_joint_name(&foot.bones[1])?,
+                model.resolve_joint_name(&foot.bones[2])?,
             ];
             // Sequential solves must not move another foot's ancestors or chain.
             for previous in &feet {
@@ -273,7 +274,7 @@ impl FootRuntime {
             }
             feet.push(BoundFoot {
                 joints,
-                chain: TwoBoneChain::new(&model.skeleton, joints).map_err(|e| e.to_string())?,
+                chain: TwoBoneChain::new(&model.skeleton, joints)?,
                 state: FootContactState::default(),
                 blend: ContactBlendState::default(),
             });
@@ -292,7 +293,7 @@ impl FootRuntime {
         grounded: bool,
         preview: &CharacterTickPreview,
         budget: &mut SupportQueryBudget,
-    ) -> Result<AnimatorFrame, String> {
+    ) -> Result<AnimatorFrame, EditorError> {
         self.correct_at_phase(
             model, frame, actor, grounded, preview, budget, None, None, None, None, None, None,
         )
@@ -311,7 +312,7 @@ impl FootRuntime {
         blend: Option<voxy_animation::PoseBlendPhases<'_>>,
         source_interval: Option<&crate::model_playback::SourceContactInterval>,
         frozen_tick: Option<&(Arc<voxy_animation::Pose>, f64)>,
-    ) -> Result<AnimatorFrame, String> {
+    ) -> Result<AnimatorFrame, EditorError> {
         let inverse = actor.inverse();
         if !inverse.is_finite() {
             return Err("foot actor frame is singular".into());
@@ -393,20 +394,17 @@ impl FootRuntime {
             let offset =
                 matrix.transform_vector3(DVec3::from_array(binding.sole_offset.map(f64::from)));
             let sole = actor.transform_point3(matrix.w_axis.truncate() + offset);
-            let mut candidate = foot
-                .state
-                .prepare(
-                    &preview.support,
-                    binding.contact,
-                    FootContactInput {
-                        sole,
-                        up: DVec3::Y,
-                        grounded,
-                        plant: binding.plant && weight > 0.,
-                    },
-                    budget,
-                )
-                .map_err(|e| e.to_string())?;
+            let mut candidate = foot.state.prepare(
+                &preview.support,
+                binding.contact,
+                FootContactInput {
+                    sole,
+                    up: DVec3::Y,
+                    grounded,
+                    plant: binding.plant && weight > 0.,
+                },
+                budget,
+            )?;
             if let Some(contact) = candidate.contact {
                 let normal = DMat3::from_mat4(actor).transpose() * contact.normal;
                 let current_up = matrix
@@ -423,22 +421,19 @@ impl FootRuntime {
                 let delta = DQuat::from_rotation_arc(current_up.normalize(), normal.normalize());
                 let target = inverse.transform_point3(contact.position) - delta * offset;
                 let rotation = (delta * rotations[tip]).normalize();
-                let (corrected, report) = frame
-                    .clone()
-                    .with_two_bone_ik(
-                        &model.skeleton,
-                        &foot.chain,
-                        TwoBoneTarget {
-                            position: target.as_vec3(),
-                            pole: glam::Vec3::from_array(binding.pole),
-                            rotation: Some(
-                                glam::Quat::from_array(rotation.to_array().map(|v| v as f32))
-                                    .normalize(),
-                            ),
-                            weight,
-                        },
-                    )
-                    .map_err(|e| e.to_string())?;
+                let (corrected, report) = frame.clone().with_two_bone_ik(
+                    &model.skeleton,
+                    &foot.chain,
+                    TwoBoneTarget {
+                        position: target.as_vec3(),
+                        pole: glam::Vec3::from_array(binding.pole),
+                        rotation: Some(
+                            glam::Quat::from_array(rotation.to_array().map(|v| v as f32))
+                                .normalize(),
+                        ),
+                        weight,
+                    },
+                )?;
                 if report.reach_clamped {
                     candidate.state = candidate.state.release_until_swing();
                 } else {

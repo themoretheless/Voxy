@@ -1,4 +1,5 @@
 //! Fixed-tick animation authority. Rendering receives immutable accepted frames.
+use crate::EditorError;
 use crate::{ModelAnimation, ModelInstance, ModelPart, model_playback::ModelPlayback};
 use std::{
     collections::{BTreeMap, HashMap, HashSet},
@@ -99,7 +100,7 @@ impl PreparedOwnerFade {
         &'a self,
         scene: &SceneGraph,
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
-    ) -> Result<AdmittedOwnerFade<'a>, String> {
+    ) -> Result<AdmittedOwnerFade<'a>, EditorError> {
         self.validate_scene(scene, models)?;
         Ok(AdmittedOwnerFade { prepared: self })
     }
@@ -107,13 +108,12 @@ impl PreparedOwnerFade {
         &self,
         scene: &SceneGraph,
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         if scene.identity() != self.scene {
             return Err("staged fade scene changed".into());
         }
         let instance = scene
-            .component::<ModelInstance>(self.owner)
-            .map_err(|e| e.to_string())?
+            .component::<ModelInstance>(self.owner)?
             .ok_or("fade model instance disappeared")?;
         if instance.asset != self.asset
             || !models
@@ -123,22 +123,19 @@ impl PreparedOwnerFade {
             return Err("staged fade scene asset changed".into());
         }
         if scene
-            .component::<ModelPart>(self.owner)
-            .map_err(|e| e.to_string())?
+            .component::<ModelPart>(self.owner)?
             .is_some_and(|part| part.node != u32::MAX)
         {
             return Err("staged fade owner became a hierarchy part".into());
         }
         let profile = scene
-            .component::<crate::ModelRetarget>(self.owner)
-            .map_err(|e| e.to_string())?
+            .component::<crate::ModelRetarget>(self.owner)?
             .cloned();
         if profile != self.retarget_profile {
             return Err("staged fade scene retarget profile changed".into());
         }
         let mut settings = scene
-            .component::<ModelAnimation>(self.owner)
-            .map_err(|e| e.to_string())?
+            .component::<ModelAnimation>(self.owner)?
             .cloned()
             .unwrap_or(ModelAnimation {
                 clip: (!self.animation_model.animations.is_empty()).then_some(0),
@@ -150,8 +147,7 @@ impl PreparedOwnerFade {
         )?;
         settings.clip = settings.resolve_clip(&self.animation_model)?;
         let feet = scene
-            .component::<crate::ModelFootPlacement>(self.owner)
-            .map_err(|e| e.to_string())?
+            .component::<crate::ModelFootPlacement>(self.owner)?
             .filter(|feet| !feet.feet.is_empty());
         if feet != self.feet_settings.as_ref() {
             return Err("staged fade scene foot binding changed".into());
@@ -213,9 +209,8 @@ impl AnimationRuntime {
         expected_model: &Arc<ModelAsset>,
         body_to_world: voxy_animation::RootRigidTransform,
         authored_to_body: voxy_animation::RootRigidEnclosure,
-    ) -> Result<(), String> {
-        let body_to_world = voxy_animation::RootRigidEnclosure::from_transform(body_to_world)
-            .map_err(|error| error.to_string())?;
+    ) -> Result<(), EditorError> {
+        let body_to_world = voxy_animation::RootRigidEnclosure::from_transform(body_to_world)?;
         let state = self
             .owners
             .get_mut(&owner)
@@ -243,7 +238,7 @@ impl AnimationRuntime {
         expected_model: &Arc<ModelAsset>,
         body_to_world: voxy_animation::RootRigidTransform,
         current_root_to_body: voxy_animation::RootRigidEnclosure,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         self.initialize_root_reference_at_scaled_phase(
             owner,
             expected_model,
@@ -260,7 +255,7 @@ impl AnimationRuntime {
         body_to_world: voxy_animation::RootRigidTransform,
         current_root_to_body: voxy_animation::RootRigidEnclosure,
         scale: voxy_animation::RootUniformScaleEnclosure,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         let state = self
             .owners
             .get(&owner)
@@ -297,7 +292,7 @@ impl AnimationRuntime {
         expected_model: &Arc<ModelAsset>,
         current_root_to_body: voxy_animation::RootRigidEnclosure,
         scale: f64,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         self.capture_owner_reference_with_similarity(
             scene,
             models,
@@ -305,8 +300,7 @@ impl AnimationRuntime {
             owner,
             expected_model,
             current_root_to_body,
-            voxy_animation::RootUniformScaleEnclosure::from_scale(scale)
-                .map_err(|e| e.to_string())?,
+            voxy_animation::RootUniformScaleEnclosure::from_scale(scale)?,
         )
     }
 
@@ -319,10 +313,9 @@ impl AnimationRuntime {
         expected_model: &Arc<ModelAsset>,
         current_root_to_body: voxy_animation::RootRigidEnclosure,
         scale: voxy_animation::RootUniformScaleEnclosure,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let pose = physics
-            .accepted_pose(scene, owner)
-            .map_err(|e| e.to_string())?
+            .accepted_pose(scene, owner)?
             .ok_or("root reference needs a current accepted body pose")?;
         let mut candidate = self.stage_owner_selection(scene, models, owner, expected_model)?;
         candidate.initialize_root_reference_at_scaled_phase(
@@ -345,7 +338,7 @@ impl AnimationRuntime {
         physics: &voxy_gameplay::CharacterPhysics,
         owner: NodeId,
         expected_model: &Arc<ModelAsset>,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let candidate = self.stage_owner_selection(scene, models, owner, expected_model)?;
         let state = &candidate.owners[&owner];
         if state.retarget_binding.is_some() {
@@ -378,7 +371,7 @@ impl AnimationRuntime {
         origin_tolerance: f64,
         angular_tolerance: f64,
         max_spans: usize,
-    ) -> Result<Option<PreparedOwnerFade>, String> {
+    ) -> Result<Option<PreparedOwnerFade>, EditorError> {
         let state = self.owners.get(&owner).ok_or("fade owner disappeared")?;
         if !Arc::ptr_eq(expected_model, &state.model) {
             return Err("fade target model changed".into());
@@ -405,8 +398,7 @@ impl AnimationRuntime {
                     max_spans,
                 )?;
                 let asset = scene
-                    .component::<ModelInstance>(owner)
-                    .map_err(|e| e.to_string())?
+                    .component::<ModelInstance>(owner)?
                     .ok_or("fade model instance disappeared")?
                     .asset
                     .clone();
@@ -436,7 +428,7 @@ impl AnimationRuntime {
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
         owner: NodeId,
         expected_model: &Arc<ModelAsset>,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         if self.scene != Some(scene.identity()) {
             return Err("animation selection scene changed".into());
         }
@@ -445,8 +437,7 @@ impl AnimationRuntime {
             .get(&owner)
             .ok_or("animation selection owner disappeared")?;
         let instance = scene
-            .component::<ModelInstance>(owner)
-            .map_err(|e| e.to_string())?
+            .component::<ModelInstance>(owner)?
             .ok_or("animation selection model disappeared")?;
         if !Arc::ptr_eq(expected_model, &state.model)
             || !models
@@ -455,10 +446,7 @@ impl AnimationRuntime {
         {
             return Err("animation selection model changed".into());
         }
-        let profile = scene
-            .component::<crate::ModelRetarget>(owner)
-            .map_err(|e| e.to_string())?
-            .cloned();
+        let profile = scene.component::<crate::ModelRetarget>(owner)?.cloned();
         let animation_model = match &profile {
             Some(profile) => models
                 .get(&AssetId(profile.source.clone()))
@@ -471,15 +459,13 @@ impl AnimationRuntime {
             return Err("animation selection binding changed".into());
         }
         if scene
-            .component::<ModelPart>(owner)
-            .map_err(|e| e.to_string())?
+            .component::<ModelPart>(owner)?
             .is_some_and(|part| part.node != u32::MAX)
         {
             return Err("animation selection owner became a hierarchy part".into());
         }
         let mut settings = scene
-            .component::<ModelAnimation>(owner)
-            .map_err(|e| e.to_string())?
+            .component::<ModelAnimation>(owner)?
             .cloned()
             .unwrap_or(ModelAnimation {
                 clip: (!animation_model.animations.is_empty()).then_some(0),
@@ -491,8 +477,7 @@ impl AnimationRuntime {
         )?;
         settings.clip = settings.resolve_clip(animation_model)?;
         let feet = scene
-            .component::<crate::ModelFootPlacement>(owner)
-            .map_err(|e| e.to_string())?
+            .component::<crate::ModelFootPlacement>(owner)?
             .filter(|feet| !feet.feet.is_empty());
         if feet
             != state
@@ -540,7 +525,7 @@ impl AnimationRuntime {
         origin_tolerance: f64,
         angular_tolerance: f64,
         max_spans: usize,
-    ) -> Result<(Self, Vec<PreparedOwnerFade>), String> {
+    ) -> Result<(Self, Vec<PreparedOwnerFade>), EditorError> {
         let mut candidate = self.clone();
         let mut prepared = Vec::new();
         for (owner, instance) in scene.active_components::<ModelInstance>() {
@@ -555,12 +540,9 @@ impl AnimationRuntime {
             };
             // Asset/binding changes belong to ordinary preparation, which resets
             // the retained reference before another certified plan is admitted.
-            let profile = scene
-                .component::<crate::ModelRetarget>(owner)
-                .map_err(|error| error.to_string())?;
+            let profile = scene.component::<crate::ModelRetarget>(owner)?;
             let feet = scene
-                .component::<crate::ModelFootPlacement>(owner)
-                .map_err(|error| error.to_string())?
+                .component::<crate::ModelFootPlacement>(owner)?
                 .filter(|settings| !settings.feet.is_empty());
             if !state.settings.root_motion_rotation
                 || !Arc::ptr_eq(model, &state.model)
@@ -604,7 +586,7 @@ impl AnimationRuntime {
         physics: &mut voxy_gameplay::CharacterPhysics,
         input: &mut voxy_input::InputMap,
         dt: f64,
-    ) -> Result<Self, voxy_gameplay::CharacterTickError<String>> {
+    ) -> Result<Self, voxy_gameplay::CharacterTickError<EditorError>> {
         use voxy_gameplay::CharacterTickError;
         // Approximation quality targets in the common body/world frame. These
         // bound field approximation; numerical evaluation is derived by physics.
@@ -621,17 +603,9 @@ impl AnimationRuntime {
         let requests = plans
             .iter()
             .map(|plan| {
-                let orientation = match physics
-                    .accepted_pose(scene, plan.owner)
-                    .map_err(|error| error.to_string())?
-                {
+                let orientation = match physics.accepted_pose(scene, plan.owner)? {
                     Some(pose) => pose.physical_rotation,
-                    None => scene
-                        .local(plan.owner)
-                        .map_err(|error| error.to_string())?
-                        .rotation
-                        .as_dquat()
-                        .normalize(),
+                    None => scene.local(plan.owner)?.rotation.as_dquat().normalize(),
                 };
                 let preferred = voxy_gameplay::rigid_source_coordinate_axis(
                     orientation,
@@ -647,7 +621,7 @@ impl AnimationRuntime {
                     },
                 ))
             })
-            .collect::<Result<Vec<_>, String>>()
+            .collect::<Result<Vec<_>, EditorError>>()
             .map_err(CharacterTickError::Preparation)?;
         let (_, accepted) =
             candidate.fixed_step_owner_fades(scene, models, physics, input, dt, &requests)?;
@@ -669,7 +643,7 @@ impl AnimationRuntime {
         frames: &BTreeMap<NodeId, OwnerFadeAdmission>,
     ) -> Result<
         (Vec<voxy_gameplay::AppliedCharacterTrajectoryMotion>, Self),
-        voxy_gameplay::CharacterTickError<String>,
+        voxy_gameplay::CharacterTickError<EditorError>,
     > {
         let (candidate, plans) = self
             .prepare_scene_fades(
@@ -688,7 +662,7 @@ impl AnimationRuntime {
                     .get(&plan.owner)
                     .copied()
                     .map(|frame| (plan, frame))
-                    .ok_or_else(|| "fade evaluation frame is missing".to_string())
+                    .ok_or_else(|| EditorError::from("fade evaluation frame is missing"))
             })
             .collect::<Result<Vec<_>, _>>()
             .map_err(voxy_gameplay::CharacterTickError::Preparation)?;
@@ -712,7 +686,7 @@ impl AnimationRuntime {
         fades: &[(&PreparedOwnerFade, OwnerFadeAdmission)],
     ) -> Result<
         (Vec<voxy_gameplay::AppliedCharacterTrajectoryMotion>, Self),
-        voxy_gameplay::CharacterTickError<String>,
+        voxy_gameplay::CharacterTickError<EditorError>,
     > {
         use voxy_gameplay::CharacterTickError;
         let admitted = fades
@@ -727,7 +701,7 @@ impl AnimationRuntime {
                 }
                 prepared.admit_scene(scene, models)
             })
-            .collect::<Result<Vec<_>, String>>()
+            .collect::<Result<Vec<_>, EditorError>>()
             .map_err(CharacterTickError::Preparation)?;
         let requests = admitted
             .iter()
@@ -784,7 +758,7 @@ impl AnimationRuntime {
         owner: NodeId,
         clip: usize,
         events: Vec<voxy_animation::ClipEvent>,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         self.owners
             .get_mut(&owner)
             .ok_or("animation event owner is not loaded")?
@@ -841,7 +815,7 @@ impl AnimationRuntime {
         mut self,
         preview: &voxy_gameplay::CharacterTickPreview,
         budget: &mut voxy_gameplay::SupportQueryBudget,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         for accepted in &preview.characters {
             let Some(owner) = self.owners.get_mut(&accepted.owner) else {
                 continue;
@@ -852,21 +826,18 @@ impl AnimationRuntime {
                         translation: accepted.physical_center,
                         rotation: accepted.physical_rotation,
                     },
-                )
-                .map_err(|error| error.to_string())?;
+                )?;
                 reference.authored_to_body = reference
                     .authored_to_body
-                    .transported_body_reference(&reference.body_to_world, &body)
-                    .map_err(|error| error.to_string())?;
+                    .transported_body_reference(&reference.body_to_world, &body)?;
                 reference.body_to_world = body;
             } else if owner.settings.root_motion_rotation && owner.settings.clip.is_some() {
                 let root = owner
                     .settings
                     .resolve_motion_joint(&owner.animation_model)?;
                 let (axes, frame, scale) = if let Some(binding) = &owner.retarget_binding {
-                    let similarity = binding
-                        .root_similarity_enclosure(root, owner.settings.root_motion_axes)
-                        .map_err(|e| e.to_string())?;
+                    let similarity =
+                        binding.root_similarity_enclosure(root, owner.settings.root_motion_axes)?;
                     let profile = owner
                         .retarget_profile
                         .as_ref()
@@ -882,9 +853,7 @@ impl AnimationRuntime {
                         similarity.target_joint,
                         |_, joint| Ok(joint.bind_local),
                     )?;
-                    let similarity = similarity
-                        .in_parent(parent, parent_scale)
-                        .map_err(|e| e.to_string())?;
+                    let similarity = similarity.in_parent(parent, parent_scale)?;
                     (similarity.source_axes, similarity.frame, similarity.scale)
                 } else {
                     let (frame, scale) = constant_parent_similarity_enclosure(&owner.model, root)?;
@@ -898,8 +867,7 @@ impl AnimationRuntime {
                         translation: accepted.physical_center,
                         rotation: accepted.physical_rotation,
                     },
-                )
-                .map_err(|error| error.to_string())?;
+                )?;
                 owner.root_reference = Some(RootReference {
                     scale,
                     body_to_world,
@@ -939,7 +907,7 @@ impl AnimationRuntime {
         admitted: &AdmittedOwnerFade<'_>,
         receipt: &voxy_gameplay::AppliedCharacterTrajectoryMotion,
         accepted_pose: &voxy_gameplay::AcceptedCharacterPose,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let staged = admitted.prepared;
         let owner = self
             .owners
@@ -990,7 +958,7 @@ impl AnimationRuntime {
         let state = self.owners.get(&owner)?;
         Arc::ptr_eq(&state.model, model).then(|| state.frame.clone())
     }
-    pub(super) fn synchronize(&mut self, scene: &SceneGraph) -> Result<(), String> {
+    pub(super) fn synchronize(&mut self, scene: &SceneGraph) -> Result<(), EditorError> {
         if self.scene.is_some_and(|id| id != scene.identity()) {
             return Err("foreign animation scene".into());
         }
@@ -1014,7 +982,7 @@ impl AnimationRuntime {
         scene: &SceneGraph,
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
         dt: f32,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         self.prepare_wall(scene, models, f64::from(dt))
     }
 
@@ -1023,7 +991,7 @@ impl AnimationRuntime {
         scene: &SceneGraph,
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
         dt: f64,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         self.prepare_deferred(scene, models, dt, &HashSet::new())
     }
 
@@ -1033,7 +1001,7 @@ impl AnimationRuntime {
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
         dt: f64,
         deferred: &HashSet<NodeId>,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         if !dt.is_finite() || dt <= 0.0 || dt > f64::from(0.1_f32) {
             return Err("invalid fixed animation timestep".into());
         }
@@ -1064,8 +1032,7 @@ impl AnimationRuntime {
                 continue;
             }
             if scene
-                .component::<ModelPart>(owner)
-                .map_err(|e| e.to_string())?
+                .component::<ModelPart>(owner)?
                 .is_some_and(|part| part.node != u32::MAX)
             {
                 continue;
@@ -1073,10 +1040,7 @@ impl AnimationRuntime {
             let Some(model) = models.get(&instance.asset) else {
                 continue;
             };
-            let profile = scene
-                .component::<crate::ModelRetarget>(owner)
-                .map_err(|e| e.to_string())?
-                .cloned();
+            let profile = scene.component::<crate::ModelRetarget>(owner)?.cloned();
             let animation_model = if let Some(profile) = &profile {
                 models
                     .get(&AssetId(profile.source.clone()))
@@ -1101,8 +1065,7 @@ impl AnimationRuntime {
                 None
             };
             let mut settings = scene
-                .component::<ModelAnimation>(owner)
-                .map_err(|e| e.to_string())?
+                .component::<ModelAnimation>(owner)?
                 .cloned()
                 .unwrap_or(ModelAnimation {
                     clip: (!animation_model.animations.is_empty()).then_some(0),
@@ -1118,12 +1081,10 @@ impl AnimationRuntime {
                 prepare_playback_selection(current, animation_model, &settings, same_binding)?;
             let source_axes = if settings.root_motion_rotation {
                 if let Some(binding) = &binding {
-                    binding
-                        .source_root_motion_axes(
-                            settings.resolve_motion_joint(animation_model)?,
-                            settings.root_motion_axes,
-                        )
-                        .map_err(|e| e.to_string())?
+                    binding.source_root_motion_axes(
+                        settings.resolve_motion_joint(animation_model)?,
+                        settings.root_motion_axes,
+                    )?
                 } else {
                     settings.root_motion_axes
                 }
@@ -1139,11 +1100,11 @@ impl AnimationRuntime {
             if let Some(binding) = &binding
                 && let Some(path) = trajectory.as_ref()
             {
-                trajectory = Some(
-                    binding
-                        .apply_root_path(path, frame.root_motion_joint, settings.root_motion_axes)
-                        .map_err(|e| e.to_string())?,
-                );
+                trajectory = Some(binding.apply_root_path(
+                    path,
+                    frame.root_motion_joint,
+                    settings.root_motion_axes,
+                )?);
             }
             let (displayed, extracted_displacement) =
                 prepare_displayed_frame(frame, model, &settings, binding.as_ref())?;
@@ -1152,8 +1113,7 @@ impl AnimationRuntime {
                 || settings.root_motion_axes.into_iter().any(|axis| axis)
             {
                 if scene
-                    .component::<voxy_gameplay::CharacterBody>(owner)
-                    .map_err(|error| error.to_string())?
+                    .component::<voxy_gameplay::CharacterBody>(owner)?
                     .is_none()
                 {
                     return Err("root motion requires a CharacterBody on the model owner".into());
@@ -1170,9 +1130,7 @@ impl AnimationRuntime {
                     constant_parent_basis(model, &settings, frame.root_motion_joint)?
                 };
                 let displacement = extracted_displacement;
-                let world = scene
-                    .world_matrix(owner)
-                    .map_err(|error| error.to_string())?;
+                let world = scene.world_matrix(owner)?;
                 let displacement = world.transform_vector3(basis.transform_vector3(displacement));
                 if !basis.is_finite() || !displacement.is_finite() {
                     return Err("root motion coordinate conversion overflow".into());
@@ -1200,13 +1158,11 @@ impl AnimationRuntime {
                 }
             }
             let feet = if let Some(foot_settings) = scene
-                .component::<crate::ModelFootPlacement>(owner)
-                .map_err(|e| e.to_string())?
+                .component::<crate::ModelFootPlacement>(owner)?
                 .filter(|settings| !settings.feet.is_empty())
             {
                 if scene
-                    .component::<voxy_gameplay::CharacterBody>(owner)
-                    .map_err(|e| e.to_string())?
+                    .component::<voxy_gameplay::CharacterBody>(owner)?
                     .is_none()
                 {
                     return Err("foot placement requires a CharacterBody on the model owner".into());
@@ -1273,7 +1229,7 @@ fn prepare_playback_selection(
     animation_model: &Arc<ModelAsset>,
     settings: &ModelAnimation,
     same_binding: bool,
-) -> Result<(ModelPlayback, bool, bool, bool), String> {
+) -> Result<(ModelPlayback, bool, bool, bool), EditorError> {
     let named_identity = current.is_some_and(|old| {
         !settings.clip_name.is_empty() && old.settings.clip_name == settings.clip_name
     });
@@ -1344,7 +1300,7 @@ pub(super) fn prepare_displayed_frame(
     model: &ModelAsset,
     settings: &ModelAnimation,
     binding: Option<&voxy_animation::RetargetBinding>,
-) -> Result<(AnimatorFrame, glam::Vec3), String> {
+) -> Result<(AnimatorFrame, glam::Vec3), EditorError> {
     let extracted =
         settings.root_motion_rotation || settings.root_motion_axes.into_iter().any(|axis| axis);
     if let Some(binding) = binding {
@@ -1352,18 +1308,14 @@ pub(super) fn prepare_displayed_frame(
             binding.apply_frame(&frame)
         } else {
             binding.apply_pose_frame(&frame)
-        }
-        .map_err(|error| error.to_string())?;
+        }?;
     }
     let mut displacement = glam::Vec3::ZERO;
     if extracted {
-        (frame, displacement) = frame
-            .into_in_place_translation(&model.skeleton, settings.root_motion_axes)
-            .map_err(|error| error.to_string())?;
+        (frame, displacement) =
+            frame.into_in_place_translation(&model.skeleton, settings.root_motion_axes)?;
         if settings.root_motion_rotation {
-            frame = frame
-                .without_root_rotation(&model.skeleton)
-                .map_err(|error| error.to_string())?;
+            frame = frame.without_root_rotation(&model.skeleton)?;
         }
     }
     Ok((frame, displacement))
@@ -1377,7 +1329,7 @@ fn retarget_parent_basis(
     profile: &crate::ModelRetarget,
     root: u16,
     rotation: bool,
-) -> Result<(glam::Mat4, glam::DQuat, f64), String> {
+) -> Result<(glam::Mat4, glam::DQuat, f64), EditorError> {
     validate_retarget_motion_parents(target, source, profile, root)?;
     constant_parent_basis(
         target,
@@ -1395,20 +1347,12 @@ fn validate_retarget_motion_parents(
     source: &ModelAsset,
     profile: &crate::ModelRetarget,
     root: u16,
-) -> Result<(), String> {
+) -> Result<(), EditorError> {
     let mut parent = target.skeleton.joints()[usize::from(root)].parent;
     while let Some(index) = parent {
         for mapping in &profile.joints {
-            if target
-                .resolve_joint_name(&mapping.target)
-                .map_err(|e| e.to_string())?
-                == index
-            {
-                let source_index = usize::from(
-                    source
-                        .resolve_joint_name(&mapping.source)
-                        .map_err(|e| e.to_string())?,
-                );
+            if target.resolve_joint_name(&mapping.target)? == index {
+                let source_index = usize::from(source.resolve_joint_name(&mapping.source)?);
                 if source
                     .animations
                     .iter()
@@ -1462,7 +1406,7 @@ fn static_parent_similarity_enclosure(
     mut transform_at: impl FnMut(
         usize,
         &voxy_animation::Joint,
-    ) -> Result<voxy_animation::Transform, String>,
+    ) -> Result<voxy_animation::Transform, EditorError>,
 ) -> Result<
     (
         voxy_animation::RootRigidEnclosure,
@@ -1482,7 +1426,7 @@ fn static_parent_similarity_enclosure(
     while let Some(index) = parent {
         let index = usize::from(index);
         let joint = &model.skeleton.joints()[index];
-        let transform = transform_at(index, joint)?;
+        let transform = transform_at(index, joint).map_err(|e| e.to_string())?;
         let magnitude = transform.scale.abs();
         if magnitude.x == 0. || magnitude.x != magnitude.y || magnitude.x != magnitude.z {
             return Err("root parent reference requires nonzero uniform scale".into());
@@ -1533,7 +1477,7 @@ fn constant_parent_basis(
     model: &ModelAsset,
     settings: &ModelAnimation,
     root: u16,
-) -> Result<(glam::Mat4, glam::DQuat, f64), String> {
+) -> Result<(glam::Mat4, glam::DQuat, f64), EditorError> {
     let mut matrix = glam::Mat4::IDENTITY;
     let mut rotation = glam::DQuat::IDENTITY;
     let mut uniform_scale = 1_f64;

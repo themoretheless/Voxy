@@ -1,4 +1,5 @@
 //! Native showcase using the same finite-body simulation as physics clients.
+use crate::DemoError;
 use physics::gravity::{Body, Gravity};
 use physics::gravity_spheres::{Simulation, Sphere};
 use voxy_render::{SceneMesh, SceneVertex};
@@ -126,7 +127,7 @@ impl GravityDemo {
     pub fn planet_verified(&self) -> bool {
         self.proof.inverted && self.proof.jumped && self.proof.landed
     }
-    pub fn advance(&mut self, dt: f64) -> Result<(), String> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), DemoError> {
         const STEP: f64 = 1.0 / 240.0;
         self.accumulator += dt.min(0.1);
         while self.accumulator >= STEP {

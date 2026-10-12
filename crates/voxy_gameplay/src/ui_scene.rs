@@ -1,5 +1,6 @@
 //! Saved screen-space UI and owned layout. Scene transforms remain 3D-owned;
 //! normalized UI rectangles compose through the nearest UI ancestor instead.
+use crate::GameplayError;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use voxy_scene::{NodeId, SceneGraph};
@@ -89,7 +90,7 @@ pub fn extract_scene_ui(
     scene: &SceneGraph,
     viewport: [f32; 2],
     capacity: usize,
-) -> Result<SceneUiSnapshot, String> {
+) -> Result<SceneUiSnapshot, GameplayError> {
     if viewport
         .iter()
         .any(|x| !x.is_finite() || *x <= 0.0 || *x > 16384.0)
@@ -124,10 +125,7 @@ pub fn extract_scene_ui(
         let Some(descriptor) = descriptors.get(&owner) else {
             continue;
         };
-        if !scene
-            .active_in_hierarchy(owner)
-            .map_err(|error| error.to_string())?
-        {
+        if !scene.active_in_hierarchy(owner)? {
             continue;
         }
         let mut chain = Vec::new();
@@ -136,7 +134,7 @@ pub fn extract_scene_ui(
             if let Some(element) = descriptors.get(&node) {
                 chain.push(*element);
             }
-            current = scene.parent(node).map_err(|error| error.to_string())?;
+            current = scene.parent(node)?;
         }
         let mut rect = viewport_rect;
         let mut clip = Some(viewport_rect);
@@ -297,6 +295,7 @@ pub(crate) mod tests {
         assert!(
             extract_scene_ui(&scene, [1000.0, 800.0], 17)
                 .unwrap_err()
+                .to_string()
                 .contains("text capacity")
         );
     }

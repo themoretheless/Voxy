@@ -1,5 +1,6 @@
 //! Play-session audio owner with optional native output.
 use super::prefab_authoring::AuthoringProject;
+use crate::EditorError;
 use voxy_assets::{AssetCatalog, AssetId, ImportedAsset};
 use voxy_audio::Clip;
 use voxy_gameplay::{SceneAudioRuntime, extract_scene_audio, synchronize_audio_assets};
@@ -38,7 +39,7 @@ pub(super) struct AudioBudget {
     frames: usize,
 }
 impl AudioBudget {
-    pub(super) fn admit(&mut self, input_bytes: usize, frames: usize) -> Result<(), String> {
+    pub(super) fn admit(&mut self, input_bytes: usize, frames: usize) -> Result<(), EditorError> {
         let next_bytes = self
             .input_bytes
             .checked_add(input_bytes)
@@ -59,7 +60,7 @@ impl AudioBudget {
     }
 }
 type AudioRecipes = std::collections::BTreeMap<AssetId, Option<String>>;
-fn recipes(scene: &SceneGraph) -> Result<AudioRecipes, String> {
+fn recipes(scene: &SceneGraph) -> Result<AudioRecipes, EditorError> {
     let snapshot = extract_scene_audio(scene, 128)?;
     let mut result = AudioRecipes::new();
     for source in snapshot.sources {
@@ -94,24 +95,24 @@ impl AudioPreparation {
         scene: &SceneGraph,
         project: &AuthoringProject,
         rate: u32,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let recipes = recipes(scene)?;
         Ok(Self {
             worker: project.audio_worker(rate, recipes.clone())?,
             queue: recipes.keys().cloned().collect(),
             recipes,
-            catalog: AssetCatalog::new(128, 128).map_err(|e| e.to_string())?,
+            catalog: AssetCatalog::new(128, 128)?,
             budget: AudioBudget::default(),
             observations: std::collections::BTreeMap::new(),
             pending: false,
         })
     }
-    pub(super) fn matches(&self, scene: &SceneGraph) -> Result<bool, String> {
+    pub(super) fn matches(&self, scene: &SceneGraph) -> Result<bool, EditorError> {
         Ok(self.recipes == recipes(scene)?)
     }
-    pub(super) fn poll(&mut self) -> Result<bool, String> {
+    pub(super) fn poll(&mut self) -> Result<bool, EditorError> {
         if self.pending {
-            let Some(completion) = self.worker.try_result().map_err(|e| e.to_string())? else {
+            let Some(completion) = self.worker.try_result()? else {
                 return Ok(false);
             };
             self.pending = false;
@@ -139,13 +140,11 @@ impl AudioPreparation {
                 }
                 self.observations.insert(id.clone(), input.clone());
             }
-            self.catalog
-                .complete(&completion.ticket, Ok(imported))
-                .map_err(|e| e.to_string())?;
+            self.catalog.complete(&completion.ticket, Ok(imported))?;
         }
         if let Some(id) = self.queue.pop_front() {
-            let ticket = self.catalog.request(id).map_err(|e| e.to_string())?;
-            self.worker.submit(&ticket).map_err(|e| e.to_string())?;
+            let ticket = self.catalog.request(id)?;
+            self.worker.submit(&ticket)?;
             self.pending = true;
             Ok(false)
         } else {
@@ -159,13 +158,10 @@ impl AudioPreparation {
         self,
         connection: voxy_audio_device::OutputConnection,
         project: &AuthoringProject,
-    ) -> Result<AudioPlay, String> {
+    ) -> Result<AudioPlay, EditorError> {
         let rate = connection.sample_rate();
-        let output = Some((
-            connection,
-            voxy_audio_device::PcmPump::new(256).map_err(|e| e.to_string())?,
-        ));
-        let runtime = SceneAudioRuntime::new(rate, 128, 16).map_err(|e| e.to_string())?;
+        let output = Some((connection, voxy_audio_device::PcmPump::new(256)?));
+        let runtime = SceneAudioRuntime::new(rate, 128, 16)?;
         let reload = super::audio_reload::AudioReload::new(
             project,
             self.worker,
@@ -203,7 +199,7 @@ impl AudioPlay {
         scene: &SceneGraph,
         project: &AuthoringProject,
         connection: Option<voxy_audio_device::OutputConnection>,
-    ) -> Result<Option<Self>, String> {
+    ) -> Result<Option<Self>, EditorError> {
         let snapshot = extract_scene_audio(scene, 128)?;
         if snapshot.sources.is_empty() {
             return Ok(None);
@@ -217,12 +213,11 @@ impl AudioPlay {
         }
         let output = connection
             .map(|connection| voxy_audio_device::PcmPump::new(256).map(|pump| (connection, pump)))
-            .transpose()
-            .map_err(|e| e.to_string())?;
+            .transpose()?;
         let rate = output
             .as_ref()
             .map_or(48000, |(connection, _)| connection.sample_rate());
-        let mut catalog = AssetCatalog::new(128, 128).map_err(|e| e.to_string())?;
+        let mut catalog = AssetCatalog::new(128, 128)?;
         let mut budget = AudioBudget::default();
         let mut recipes = std::collections::BTreeMap::new();
         for source in &snapshot.sources {
@@ -236,7 +231,7 @@ impl AudioPlay {
             if catalog.snapshot(&id).is_some() {
                 continue;
             }
-            let ticket = catalog.request(id.clone()).map_err(|e| e.to_string())?;
+            let ticket = catalog.request(id.clone())?;
             let imported =
                 project.import_audio(&id.0, rate, source.descriptor.import_settings.as_deref())?;
             let input_bytes =
@@ -251,9 +246,7 @@ impl AudioPlay {
                             .ok_or_else(|| String::from("audio input budget overflow"))
                     })?;
             budget.admit(input_bytes, imported.value().frame_count())?;
-            catalog
-                .complete(&ticket, Ok(imported))
-                .map_err(|e| e.to_string())?;
+            catalog.complete(&ticket, Ok(imported))?;
         }
         let reload = super::audio_reload::AudioReload::new(
             project,
@@ -264,7 +257,7 @@ impl AudioPlay {
         Ok(Some(Self {
             reload: Some(reload),
             catalog,
-            runtime: SceneAudioRuntime::new(rate, 128, 16).map_err(|e| e.to_string())?,
+            runtime: SceneAudioRuntime::new(rate, 128, 16)?,
             output,
             rate,
             remainder: 0,
@@ -272,7 +265,7 @@ impl AudioPlay {
             peak: 0.,
         }))
     }
-    pub(super) fn poll_reload(&mut self, scene: &SceneGraph) -> Result<(), String> {
+    pub(super) fn poll_reload(&mut self, scene: &SceneGraph) -> Result<(), EditorError> {
         if let Some(reload) = &mut self.reload {
             reload.poll(&mut self.catalog)?;
         }
@@ -281,6 +274,7 @@ impl AudioPlay {
             &extract_scene_audio(scene, 128)?,
             &self.catalog,
         )
+        .map_err(Into::into)
     }
     pub(super) fn close(mut self) -> Vec<std::thread::JoinHandle<()>> {
         self.reload
@@ -326,13 +320,11 @@ impl AudioPlay {
         &mut self,
         access: voxy_scene::SceneSystemAccess<'_>,
         steps: usize,
-    ) -> Result<(), String> {
-        access
-            .require_write("audio.playback")
-            .map_err(|e| e.to_string())?;
-        self.advance(access.read().map_err(|e| e.to_string())?, steps)
+    ) -> Result<(), EditorError> {
+        access.require_write("audio.playback")?;
+        self.advance(access.read()?, steps)
     }
-    pub(super) fn advance(&mut self, scene: &SceneGraph, steps: usize) -> Result<(), String> {
+    pub(super) fn advance(&mut self, scene: &SceneGraph, steps: usize) -> Result<(), EditorError> {
         synchronize_audio_assets(
             &mut self.runtime,
             &extract_scene_audio(scene, 128)?,
@@ -342,13 +334,12 @@ impl AudioPlay {
             let frames = self
                 .remainder
                 .checked_add(
-                    u64::try_from(steps)
-                        .map_err(|e| e.to_string())?
+                    u64::try_from(steps)?
                         .checked_mul(u64::from(self.rate))
                         .ok_or("audio step overflow")?,
                 )
                 .ok_or("audio step overflow")?;
-            let budget = usize::try_from(frames / 60).map_err(|e| e.to_string())?;
+            let budget = usize::try_from(frames / 60)?;
             self.remainder = frames % 60;
             let report = pump.pump(connection.sender(), budget, |block| {
                 self.runtime.render(block);

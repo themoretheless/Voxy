@@ -1,8 +1,9 @@
 //! Bounded, volume-preserving particle geometry from an immutable accepted fluid state.
+use crate::EditorError;
 use physics::liquid::Liquid;
 use voxy_render::{SceneMesh, SceneVertex};
 
-pub(super) fn mesh(liquid: &Liquid) -> Result<Option<SceneMesh>, String> {
+pub(super) fn mesh(liquid: &Liquid) -> Result<Option<SceneMesh>, EditorError> {
     if liquid.particles().is_empty() {
         return Ok(None);
     }
@@ -58,7 +59,7 @@ pub(super) fn mesh(liquid: &Liquid) -> Result<Option<SceneMesh>, String> {
     }
     SceneMesh::new(vertices, indices)
         .map(Some)
-        .map_err(|e| e.to_string())
+        .map_err(EditorError::from)
 }
 
 #[cfg(test)]
@@ -124,7 +125,12 @@ mod tests {
                 physics::liquid::Config::default(),
             )
             .unwrap();
-            assert!(mesh(&liquid).unwrap_err().contains("not representable"));
+            assert!(
+                mesh(&liquid)
+                    .unwrap_err()
+                    .to_string()
+                    .contains("not representable")
+            );
             assert_eq!(liquid.particles().len(), 2);
         }
     }
@@ -575,7 +581,7 @@ mod gpu_tests {
 pub(super) fn optical_particles(
     liquid: &Liquid,
     optics: &[Option<[f32; 4]>],
-) -> Result<Option<Vec<voxy_render::FluidRenderParticle>>, String> {
+) -> Result<Option<Vec<voxy_render::FluidRenderParticle>>, EditorError> {
     if optics.is_empty() || optics.iter().any(Option::is_none) {
         return Ok(None);
     }

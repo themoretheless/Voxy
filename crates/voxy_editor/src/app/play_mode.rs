@@ -57,9 +57,9 @@ impl App {
                 |system, mut access, dt| {
                     if system == "angular.step" {
                         if let Some(motion) = &mut self.play.angular_motion {
-                            motion
-                                .fixed_scoped(access, dt)
-                                .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                            motion.fixed_scoped(access, dt).map_err(|e| {
+                                voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                            })?;
                         }
                     } else if system == "character.step" {
                         access.require_write("liquid.world").map_err(|e| {
@@ -75,7 +75,9 @@ impl App {
                                     dt,
                                     None,
                                 )
-                                .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                                .map_err(|e| {
+                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                })?;
                         }
                         access
                             .require_write("animation.playback")
@@ -105,7 +107,7 @@ impl App {
                                         voxy_gameplay::GameplayFixedError::Physics(error)
                                     }
                                     voxy_gameplay::CharacterTickError::Preparation(error) => {
-                                        voxy_gameplay::GameplayFixedError::Motion(error)
+                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
                                     }
                                 })?
                         } else {
@@ -119,7 +121,9 @@ impl App {
                                     &models,
                                     dt,
                                 )
-                                .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                                .map_err(|e| {
+                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                })?;
                             if candidate.requires_pose_preparation()
                                 || !candidate.motions().is_empty()
                                 || !candidate.trajectories().is_empty()
@@ -139,7 +143,9 @@ impl App {
                                 .publish_body_pose(access.write().map_err(|e| {
                                     voxy_gameplay::GameplayFixedError::Motion(e.to_string())
                                 })?)
-                                .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                                .map_err(|e| {
+                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                })?;
                         }
                         self.play.animations = candidate;
                         self.play.liquid = liquid;
@@ -169,11 +175,9 @@ impl App {
             }
             let frame = frame_result?;
             if let Some(audio) = self.audio.play_mut() {
-                audio_play::schedule()?
-                    .run_scene(&mut self.scene, |_, access| {
-                        audio.advance_scoped(access, frame.time.steps)
-                    })
-                    .map_err(|error| error.to_string())?;
+                audio_play::schedule()?.run_scene(&mut self.scene, |_, access| {
+                    audio.advance_scoped(access, frame.time.steps)
+                })?;
             }
             self.play.simulation_ticks = self
                 .play
@@ -277,7 +281,8 @@ impl App {
             actions.register("voxy.ui.hide".into(), |_, event, commands| {
                 commands
                     .push(voxy_scene::SceneCommand::SetActive(event.owner, false))
-                    .map_err(|error| error.to_string())
+                    .map_err(EditorError::from)
+                    .map_err(|e| e.to_string().into())
             })?;
             if let Some(setup) = &mut self.ui_action_setup {
                 setup.configure(&mut actions)?;

@@ -719,7 +719,7 @@ impl VoxyApp {
                     if result.is_ok() {
                         self.cuda_collision_ticks += 1;
                     }
-                    result
+                    result.map_err(|error| error.to_string())
                 } else if self.cuda_character_motion {
                     let Some(compute) = &self.motion_compute else {
                         return;
@@ -1059,7 +1059,9 @@ impl VoxyApp {
                             config,
                             self.cuda_vehicle_motion,
                         )
-                        .map_err(voxy_demos::cuda_motion::MotionError::Collision)
+                        .map_err(|error| {
+                            voxy_demos::cuda_motion::MotionError::Collision(error.to_string())
+                        })
                     } else {
                         voxy_demos::cuda_motion::step_character(
                             compute,

@@ -1,4 +1,5 @@
 //! Persisted, explicit retarget authoring data; compiled rig bindings stay immutable.
+use crate::EditorError;
 use std::sync::Arc;
 use voxy_animation::{RetargetBinding, RetargetJoint, Skeleton};
 
@@ -29,7 +30,7 @@ pub struct ModelRetarget {
 }
 impl ModelRetarget {
     /// Validates authored data even while asynchronous model imports are pending.
-    pub fn validate(&self) -> Result<(), String> {
+    pub fn validate(&self) -> Result<(), EditorError> {
         let valid_name =
             |name: &str| !name.is_empty() && name.len() <= 1024 && !name.contains('\0');
         if !valid_name(&self.source)
@@ -64,18 +65,14 @@ impl ModelRetarget {
         &self,
         source: &voxy_render::ModelAsset,
         target: &voxy_render::ModelAsset,
-    ) -> Result<RetargetBinding, String> {
+    ) -> Result<RetargetBinding, EditorError> {
         self.validate()?;
         let mapping = self
             .joints
             .iter()
             .map(|joint| {
-                let source_index = source
-                    .resolve_joint_name(&joint.source)
-                    .map_err(|error| error.to_string())?;
-                let target_index = target
-                    .resolve_joint_name(&joint.target)
-                    .map_err(|error| error.to_string())?;
+                let source_index = source.resolve_joint_name(&joint.source)?;
+                let target_index = target.resolve_joint_name(&joint.target)?;
                 Ok(RetargetJoint {
                     source: source.skeleton.joints()[usize::from(source_index)]
                         .name
@@ -88,11 +85,15 @@ impl ModelRetarget {
                     translation_scale: joint.translation_scale,
                 })
             })
-            .collect::<Result<Vec<_>, String>>()?;
+            .collect::<Result<Vec<_>, EditorError>>()?;
         RetargetBinding::new(&source.skeleton, &target.skeleton, &mapping)
-            .map_err(|error| error.to_string())
+            .map_err(EditorError::from)
     }
-    pub fn compile(&self, source: &Skeleton, target: &Skeleton) -> Result<RetargetBinding, String> {
+    pub fn compile(
+        &self,
+        source: &Skeleton,
+        target: &Skeleton,
+    ) -> Result<RetargetBinding, EditorError> {
         self.validate()?;
         let mapping: Vec<_> = self
             .joints
@@ -105,7 +106,7 @@ impl ModelRetarget {
                 translation_scale: joint.translation_scale,
             })
             .collect();
-        RetargetBinding::new(source, target, &mapping).map_err(|error| error.to_string())
+        RetargetBinding::new(source, target, &mapping).map_err(EditorError::from)
     }
 }
 #[cfg(test)]

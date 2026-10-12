@@ -3965,6 +3965,7 @@ fn authored_rigid_owners_rotate_publish_persist_pause_and_rollback() {
         runtime
             .tick_and_publish(&mut scene, 0.03, None)
             .unwrap_err()
+            .to_string()
             .contains("CollisionBudget")
     );
     assert_eq!(runtime, before);
@@ -4102,7 +4103,7 @@ fn explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback() {
         0,
     )
     .unwrap_err();
-    assert!(error.contains("requires a liquid body owner"));
+    assert!(error.to_string().contains("requires a liquid body owner"));
 }
 #[test]
 fn authored_point_loads_tick_publish_pause_and_rollback_with_original_phase() {
@@ -4214,6 +4215,7 @@ fn authored_point_loads_tick_publish_pause_and_rollback_with_original_phase() {
         runtime
             .tick_and_publish_with_dynamics(&mut scene, 0.02, None, elastic_rigid(), rigid_config())
             .unwrap_err()
+            .to_string()
             .contains("rebind")
     );
     assert_eq!(runtime, saved);
