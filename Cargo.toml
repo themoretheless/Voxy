@@ -33,6 +33,7 @@ members = [
     "crates/voxy_gpu",
     "crates/voxy_xr",
     "crates/voxy_streamline",
+    "crates/voxy_depgraph",
 ]
 
 [workspace.package]
