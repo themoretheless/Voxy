@@ -99,7 +99,7 @@ fn managed_scene_indices(
     indices: &[u32],
 ) -> Result<std::sync::Arc<crate::ComputeStorage>, SceneError> {
     let [buffer] = crate::ComputeMemoryBudget::for_device(device)
-        .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+        .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
             label: "scene LOD indices",
             size: indices.len() as u64 * 4,
             contents: Some(bytemuck::cast_slice(indices)),
@@ -365,7 +365,7 @@ fn geometry_sizes(
 pub struct SceneTexture {
     device: wgpu::Device,
     bind_group: wgpu::BindGroup,
-    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+    texture: std::sync::Arc<voxy_gpu_core::ManagedTexture>,
     sampler: wgpu::Sampler,
 }
 impl SceneTexture {
@@ -1253,9 +1253,9 @@ impl SceneRenderer {
         mesh: &SceneMesh,
         variants: &[&[u32]],
         additional_vertex_usage: wgpu::BufferUsages,
-        additional_buffers: &[crate::compute_memory::ManagedBufferDescriptor<'_>],
+        additional_buffers: &[voxy_gpu_core::ManagedBufferDescriptor<'_>],
     ) -> Result<UploadedGeometryBatch, SceneError> {
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let device = self.resource_device(device)?;
         mesh.validate_for_upload()?;
         if variants.is_empty() {
@@ -1375,7 +1375,7 @@ impl SceneRenderer {
     ) -> Result<SceneGeometry, SceneError> {
         let device = self.resource_device(device)?;
         let (vertex_bytes, index_bytes) = geometry_sizes(device, vertex_capacity, index_capacity)?;
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let vertex_usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
         let parameters = [1.333_f32, 0.2, 0.08, 0.04];
         let sizes = [
@@ -1689,7 +1689,7 @@ impl SceneRenderer {
     pub(crate) fn bind_image(
         &self,
         device: &wgpu::Device,
-        texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+        texture: std::sync::Arc<voxy_gpu_core::ManagedTexture>,
         sampling: TextureSampling,
         mip_levels: u32,
     ) -> Result<SceneTexture, SceneError> {
@@ -1753,7 +1753,7 @@ impl SceneRenderer {
         uniform.extend([0.; 4]);
         let contents = bytemuck::cast_slice(&uniform);
         let [buffer] = crate::ComputeMemoryBudget::for_device(device)
-            .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+            .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene MVP and material view",
                 size: contents.len() as u64,
                 contents: Some(contents),

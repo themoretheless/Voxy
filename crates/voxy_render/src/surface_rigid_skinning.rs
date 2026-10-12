@@ -31,7 +31,7 @@ impl SurfaceRigidSkinning {
         trailing: Option<u32>,
         maximum_position: f64,
     ) -> Result<Self, SceneError> {
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let count = normals.len();
         let limits = device.limits();
         if count == 0

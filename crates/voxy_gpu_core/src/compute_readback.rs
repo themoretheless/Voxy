@@ -209,7 +209,7 @@ impl ComputeReadbackPool {
         Ok(())
     }
 
-    pub(crate) fn acquire(&self, size: u64) -> Result<Arc<ReadbackLease>, ComputeError> {
+    pub fn acquire(&self, size: u64) -> Result<Arc<ReadbackLease>, ComputeError> {
         if size == 0 || !size.is_multiple_of(4) || size > self.0.device.limits().max_buffer_size {
             return Err(ComputeError::InvalidBuffer);
         }
@@ -264,26 +264,26 @@ impl ComputeReadbackPool {
 /// 0 encoded/unconfirmed, 1 mapping, 2 successfully mapped, 3 unmapped,
 /// 4 mapping/range failure. The callback holds a lease until completion.
 #[derive(Debug)]
-pub(crate) struct ReadbackLease {
+pub struct ReadbackLease {
     owner: Arc<Inner>,
     buffer: Option<wgpu::Buffer>,
     state: AtomicU8,
 }
 impl ReadbackLease {
-    pub(crate) fn buffer(&self) -> &wgpu::Buffer {
+    pub fn buffer(&self) -> &wgpu::Buffer {
         self.buffer.as_ref().expect("live lease")
     }
-    pub(crate) fn mapping_started(&self) {
+    pub fn mapping_started(&self) {
         self.state.store(1, Ordering::Release);
     }
-    pub(crate) fn mapping_finished(&self, success: bool) {
+    pub fn mapping_finished(&self, success: bool) {
         self.state
             .store(if success { 2 } else { 4 }, Ordering::Release);
     }
-    pub(crate) fn unmapped(&self) {
+    pub fn unmapped(&self) {
         self.state.store(3, Ordering::Release);
     }
-    pub(crate) fn failed(&self) {
+    pub fn failed(&self) {
         self.state.store(4, Ordering::Release);
     }
 }

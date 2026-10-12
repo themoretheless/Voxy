@@ -193,7 +193,7 @@ impl FiberSurfaceTransfer {
         input: &FiberSurfaceInput,
         vertex_base: u32,
     ) -> Result<Self, crate::ComputeError> {
-        use crate::{ComputeError, compute_memory::ManagedBufferDescriptor};
+        use crate::{ComputeError, ManagedBufferDescriptor};
         let end = vertex_base
             .checked_add(input.vertex_count)
             .ok_or(ComputeError::InvalidBuffer)?;

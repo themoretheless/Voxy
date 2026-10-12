@@ -160,7 +160,7 @@ pub struct AcceptedMediumImage {
 /// Shared-budget HDR source usable by the existing `TextureBlit` pass.
 #[derive(Debug)]
 pub struct MediumImage {
-    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+    texture: std::sync::Arc<voxy_gpu_core::ManagedTexture>,
     view: wgpu::TextureView,
 }
 impl MediumImage {

@@ -2,7 +2,6 @@
 
 mod accumulation;
 pub use accumulation::{RadianceAccumulationFrame, RadianceAccumulator};
-mod backend;
 mod joint_contact_dot;
 pub use joint_contact_dot::{
     JOINT_CONTACT_DOT_SHADER, JOINT_CONTACT_NORMALIZE_SERIAL_SHADER,
@@ -32,16 +31,14 @@ pub use planar_capture::{
 mod camera_lod;
 pub use camera_lod::SceneLodBounds;
 mod certified_lod;
-mod compute;
-mod compute_memory;
-pub use compute_memory::{
-    ComputeMemoryBudget, ComputeMemoryStats, ComputeStorage, PendingComputeRetirement,
-};
-mod compute_readback;
 pub use certified_lod::{
     CertifiedLodError, CertifiedLodIndexSet, CertifiedLodSubdivisionVariant, CertifiedLodVariant,
 };
-pub use compute_readback::{ComputeReadbackLimits, ComputeReadbackPool, ComputeReadbackStats};
+pub use voxy_gpu_core::{
+    ComputeMemoryBudget, ComputeMemoryStats, ComputeStorage, GpuIndirectMesh,
+    ManagedBufferDescriptor, PendingComputeRetirement,
+};
+pub use voxy_gpu_core::{ComputeReadbackLimits, ComputeReadbackPool, ComputeReadbackStats};
 mod depth_motion;
 mod depth_sample;
 mod direct_lighting;
@@ -116,7 +113,6 @@ mod surface_lighting;
 mod surface_reflection;
 mod xr;
 
-pub use backend::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
 pub use blit::{ProcessedColorTarget, StorageColorBlit, StorageColorView, TextureBlit};
 pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
 pub use model::{
@@ -124,10 +120,10 @@ pub use model::{
     ModelTexture,
 };
 pub use renderer::{
-    CameraView, GpuIndirectMesh, GpuQuad, RenderOutcome, Renderer, RendererError,
-    SkinnedMotionOutput, SurfaceState,
+    CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };
 pub use skinned::{SkinnedMesh, SkinnedMeshError, SkinnedUploadError, SkinnedVertex};
+pub use voxy_gpu_core::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
 mod skinned_lod;
 pub use skinned_lod::{PreparedSkinnedLod, SkinnedLodError, SkinnedLodMesh};
 mod skinned_lod_gpu;
@@ -143,7 +139,7 @@ pub use scene::{
 
 pub use camera::{InvalidSceneCamera, SceneCamera, SceneProjection};
 
-pub use compute::{
+pub use voxy_gpu_core::{
     ComputeDispatch, ComputeError, ComputeJob, ComputeProgram, PendingComputeReadback,
 };
 

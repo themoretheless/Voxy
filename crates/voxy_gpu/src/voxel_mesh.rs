@@ -2,7 +2,7 @@
 //! Transforms 34x34x34 padded voxel chunks into compacted triangle vertices and
 //! generates `DrawIndirectArgs` on GPU with zero host readback overhead.
 
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 
 /// Size of a padded chunk volume: 32 + 2 boundary slices along each axis = 34^3.
 pub const PADDED_CHUNK_VOLUME: usize = voxy_core::PADDED_VOLUME;
@@ -64,7 +64,7 @@ pub struct GpuMeshResult {
     pub max_quads: u32,
 }
 
-impl From<GpuMeshResult> for voxy_render::GpuIndirectMesh {
+impl From<GpuMeshResult> for voxy_gpu_core::GpuIndirectMesh {
     fn from(res: GpuMeshResult) -> Self {
         Self {
             vertex_buffer: res.vertex_buffer,
@@ -76,7 +76,7 @@ impl From<GpuMeshResult> for voxy_render::GpuIndirectMesh {
 impl GpuMeshResult {
     /// Converts directly into renderer indirect mesh with zero host readback.
     #[must_use]
-    pub fn into_indirect_mesh(self) -> voxy_render::GpuIndirectMesh {
+    pub fn into_indirect_mesh(self) -> voxy_gpu_core::GpuIndirectMesh {
         self.into()
     }
     /// Read back vertex and indirect parameters to CPU memory for test or fallback processing.
@@ -479,7 +479,7 @@ impl GpuVoxelPipeline {
         queue: &wgpu::Queue,
         padded_voxels: &[u32],
         max_quads: u32,
-    ) -> Result<voxy_render::GpuIndirectMesh, GpuVoxelPipelineError> {
+    ) -> Result<voxy_gpu_core::GpuIndirectMesh, GpuVoxelPipelineError> {
         let result = self.mesher.mesh_chunk(queue, padded_voxels, max_quads)?;
         Ok(result.into_indirect_mesh())
     }

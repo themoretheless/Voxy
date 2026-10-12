@@ -2592,9 +2592,19 @@ dependencies = [
  "pollster",
  "voxy_core",
  "voxy_cuda",
- "voxy_render",
+ "voxy_gpu_core",
  "voxy_runtime",
  "voxy_world",
+ "wgpu",
+]
+
+[[package]]
+name = "voxy_gpu_core"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "pollster",
+ "raw-window-handle",
  "wgpu",
 ]
 
@@ -2668,6 +2678,7 @@ dependencies = [
  "voxy_animation",
  "voxy_assets",
  "voxy_core",
+ "voxy_gpu_core",
  "voxy_lighting",
  "voxy_mesher",
  "voxy_scene",

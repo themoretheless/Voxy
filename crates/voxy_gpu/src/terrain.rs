@@ -6,9 +6,9 @@ use std::sync::Mutex;
 #[cfg(not(target_arch = "wasm32"))]
 use std::time::Duration;
 use voxy_core::{CHUNK_VOLUME, CancelToken, ChunkPos, LocalPos, join_voxel};
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 #[cfg(not(target_arch = "wasm32"))]
-use voxy_render::{GraphicsCapabilities, GraphicsOptions};
+use voxy_gpu_core::{GraphicsCapabilities, GraphicsOptions};
 use voxy_world::{
     BlockStateId, ChunkData, GeneratedChunk, GenerationError, PalettedBlocks, TerrainPalette,
     WorldSeed,

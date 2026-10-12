@@ -65,6 +65,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "physics_voxel",
             "voxy_core",
             "voxy_cuda",
+            "voxy_gpu_core",
             "voxy_world",
         ],
     ),
@@ -73,7 +74,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ("voxy_ray_probe", &["voxy_demos", "voxy_render"]),
     (
         "voxy_render",
-        &["voxy_core", "voxy_lighting", "voxy_mesher"],
+        &["voxy_core", "voxy_gpu_core", "voxy_lighting", "voxy_mesher"],
     ),
     (
         "voxy_runtime",
@@ -120,11 +121,6 @@ const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[
         "voxy_mobile",
         "voxy_app",
         "C2b: the mobile shell needs a shared SceneApp crate, not the app binary",
-    ),
-    (
-        "voxy_gpu",
-        "voxy_render",
-        "D3: shared device utilities move below render",
     ),
     (
         "voxy_render",

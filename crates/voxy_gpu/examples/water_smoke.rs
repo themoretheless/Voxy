@@ -641,13 +641,13 @@ fn verify_pending(
     assert!(matches!(
         success.try_result(),
         Err(WaterComputeError::Compute(
-            voxy_render::ComputeError::Consumed
+            voxy_gpu_core::ComputeError::Consumed
         ))
     ));
     assert!(matches!(
         failed.try_result(),
         Err(WaterComputeError::Compute(
-            voxy_render::ComputeError::Consumed
+            voxy_gpu_core::ComputeError::Consumed
         ))
     ));
     let mut abandoned =

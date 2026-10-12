@@ -70,7 +70,7 @@ impl SurfaceDeformation {
         weights: &[SurfaceDeformationWeight],
         control_count: u32,
     ) -> Result<Self, SceneError> {
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let count = mesh.vertices().len() as u32;
         let parameters = [count, control_count, 0, 0];
         let padding = [SurfaceDeformationWeight {
