@@ -1,6 +1,17 @@
 # План оптимизации структуры и архитектуры Voxy
 
-Дата: 2026-10-11. Статус: предложение, ничего из плана ещё не реализовано.
+Дата: 2026-10-11, обновлено 2026-10-12. Статус: выполняется на ветке
+`claude/practical-cori-0uhz8k`.
+
+| Шаг | Статус | Commit / результат |
+|---|---|---|
+| A1 граф-тест | сделано | `crates/voxy_depgraph`: 4 теста, 4 известных нарушения + 1 dev-цикл в ratchet-списке |
+| A2 lint-политика | сделано | workspace `unsafe_code = "deny"`, 6 crates на `[lints] workspace = true` |
+| A3 core-примитивы | сделано | `voxy_core::{PADDED_EDGE, PADDED_VOLUME, FastHasher, FastHashBuilder, SeededFastHashBuilder}`; хэши байт-идентичны |
+| A4 thiserror | отклонено | см. примечание в фазе A |
+| C6 тесты из god files | сделано | liquid_runtime 6698→2430, angular_sweep 2810→1488, animation/lib 4200→1816, render/scene 3965→3004, app/main 2389→2123, editor/lib 7254→5183 строк |
+| C1 `#[path]` в examples | сделано | 0 includes; 24 модуля `pub mod`, 247 `pub(crate)`→`pub` |
+| B1–B4, C2–C5, D1–D5, E | не начато | |
 
 Цель плана: привести фактическую структуру workspace к инвариантам
 `docs/architecture.md` §3–4 (явное направление зависимостей, composition root
@@ -118,10 +129,12 @@ Oracle: существующие тесты lighting/mesher/scene + unit-тес�
 старой и новой реализации на 10⁶ случайных ключей (хэш участвует в
 детерминизме порядка обхода).
 
-**A4. `thiserror`.** Перевести ручные `impl Display for *Error` в библиотечных
-crates (`voxy_world`, `voxy_storage`, `voxy_scene`, `voxy_render`, `voxy_gpu`)
-на `#[derive(thiserror::Error)]`. Сообщения — те же строки (тест на `to_string()`
-до/после для каждого варианта). App-слой — см. C3.
+**A4. `thiserror`.** Отклонено после осмотра: в voxel-слое (`voxy_core`,
+`voxy_world`, `voxy_lighting`, `voxy_mesher`, `voxy_runtime`) каждый error-enum
+имеет ровно один двухстрочный `Display` вида `"invalid chunk: {self:?}"` —
+это сознательный стиль, derive его не сокращает, а `voxy_core` и `voxy_world`
+потеряли бы статус dependency-free. Для app-слоя унификация типов ошибок
+остаётся в C3.
 
 ### Фаза B — physics: слой математики и слоение доменов (3–5 PR, средний риск)
 
