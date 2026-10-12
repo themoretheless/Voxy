@@ -10,6 +10,7 @@ default = []
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
 
 [dependencies]
+voxy_shell = { path = "../voxy_shell" }
 voxy_demos = { path = "../voxy_demos" }
 wgpu = { version = "30.0.1", features = ["noop"] }
 voxy_core = { path = "../voxy_core" }

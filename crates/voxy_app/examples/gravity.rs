@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
-    let app = voxy_app::SceneApp::new(smoke)?;
+    let app = voxy_shell::SceneApp::new(smoke)?;
     let app = if planet {
         app.with_gravity_planet()
     } else {

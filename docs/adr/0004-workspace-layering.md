@@ -41,10 +41,11 @@ had grown to 33 crates. Four edges contradict the documented direction
   options, indirect mesh handle) sits below `voxy_render`; `voxy_gpu` no
   longer depends on `voxy_render`.
 - `voxy_render` no longer dev-depends on `voxy_editor`.
-- Remaining listed violations: `voxy_mobile -> voxy_app` (needs a shared
-  shell crate for `SceneApp`) and `voxy_render -> voxy_animation` (render's
-  model module evaluates poses; a narrower boundary is a design decision,
-  not a move).
+- `voxy_shell` holds `SceneApp`, scene input, touch and the rush scene;
+  `voxy_mobile`, the examples and the `voxy_app` binary depend on it.
+- Remaining listed violation: `voxy_render -> voxy_animation` (render's model
+  module evaluates poses; a narrower boundary is a design decision, not a
+  move).
 
 ## Consequences
 

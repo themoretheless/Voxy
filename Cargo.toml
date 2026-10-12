@@ -26,6 +26,7 @@ members = [
     "crates/voxy_web",
     "crates/voxy_ray_probe",
     "crates/voxy_app",
+    "crates/voxy_shell",
     "crates/voxy_demos",
     "crates/voxy_editor",
     "crates/voxy_mobile",
