@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
-    let mut app = voxy_app::SceneApp::new(false)?.with_female_secondary()?;
+    let mut app = voxy_shell::SceneApp::new(false)?.with_female_secondary()?;
     let mut arguments: Vec<_> = std::env::args().skip(1).collect();
     // LaunchServices app bundles do not supply command-line arguments.
     if arguments.is_empty()

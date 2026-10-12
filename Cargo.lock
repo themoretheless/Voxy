@@ -2467,6 +2467,7 @@ dependencies = [
  "voxy_runtime",
  "voxy_rush",
  "voxy_scene",
+ "voxy_shell",
  "voxy_text",
  "voxy_world",
  "wgpu",
@@ -2632,7 +2633,7 @@ dependencies = [
 name = "voxy_mobile"
 version = "0.1.0"
 dependencies = [
- "voxy_app",
+ "voxy_shell",
  "winit",
 ]
 
@@ -2727,6 +2728,23 @@ dependencies = [
  "voxy_input",
  "voxy_navigation",
  "voxy_time",
+]
+
+[[package]]
+name = "voxy_shell"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "physics",
+ "pollster",
+ "voxy_demos",
+ "voxy_input",
+ "voxy_render",
+ "voxy_runtime",
+ "voxy_rush",
+ "voxy_scene",
+ "voxy_text",
+ "winit",
 ]
 
 [[package]]

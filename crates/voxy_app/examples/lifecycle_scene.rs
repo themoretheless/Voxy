@@ -53,7 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => return Err("lifecycle_scene [--smoke]; V toggles objects, Space pauses".into()),
     };
     let counts = Arc::new(Mutex::new(Counts::default()));
-    voxy_app::SceneApp::new(smoke)?
+    voxy_shell::SceneApp::new(smoke)?
         .with_lifecycle_smoke()
         .with_object_behavior(Spin {
             angle: 0.0,
