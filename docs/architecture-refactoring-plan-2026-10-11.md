@@ -15,7 +15,8 @@
 | D2 dev-цикл render↔editor | сделано | `asset_window` переехал в `voxy_editor/examples`; список dev-циклов пуст |
 | C5 общие утилиты | частично | orbit-константы общие (`camera_motion::{ORBIT_PITCH_LIMIT, ORBIT_MAX_DISTANCE, zoom_range}`); `ui_text` в editor уже строится на gameplay (не дубль); KeyCode-маппинги семантически разные (не дубль); JSON-helpers остаются на C3 |
 | E документация | частично | §4 перегенерирован из `cargo metadata`, ADR 0004 |
-| B1–B4, C2–C4, D3–D5 | не начато | |
+| C2 `voxy_demos` | сделано | 34 демо-модуля (≈45k строк) в `crates/voxy_demos`; `voxy_app` = shell (`scene_app`, `scene_rush`, controls, `main.rs`); `voxy_ray_probe` зависит от `voxy_demos`; остаётся `voxy_mobile -> voxy_app` (нужен общий shell-crate для `SceneApp`, шаг C2b) |
+| B1–B4, C3, C4, D3–D5 | не начато | |
 
 Полный прогон тестов `voxy_app` lib на ветке: 343 теста, все прошли.
 `female_demo` (63 теста) гонялся по одному; три теста не укладываются в

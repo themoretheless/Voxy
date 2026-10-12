@@ -11,22 +11,22 @@ struct PlanetProof {
 }
 
 #[derive(Debug)]
-pub(crate) struct GravityDemo {
+pub struct GravityDemo {
     bodies: Vec<Sphere>,
     solver: Simulation,
     previous: Vec<[f64; 3]>,
     trails: Vec<std::collections::VecDeque<[f64; 3]>>,
     accumulator: f64,
-    pub(crate) contacts: usize,
-    pub(crate) steps: usize,
+    pub contacts: usize,
+    pub steps: usize,
     collision: bool,
     walker: Option<physics::gravity_character::State>,
     jump_pending: bool,
-    pub(crate) planet_steps: usize,
+    pub planet_steps: usize,
     proof: PlanetProof,
 }
 impl GravityDemo {
-    pub(crate) fn new(collision: bool) -> Self {
+    pub fn new(collision: bool) -> Self {
         let mut bodies = vec![
             Sphere {
                 body: Body {
@@ -82,17 +82,17 @@ impl GravityDemo {
             proof: PlanetProof::default(),
         }
     }
-    pub(crate) fn reset(&mut self, collision: bool) {
+    pub fn reset(&mut self, collision: bool) {
         *self = Self::new(collision);
     }
-    pub(crate) fn restart(&mut self) {
+    pub fn restart(&mut self) {
         if self.walker.is_some() {
             self.planet();
         } else {
             self.reset(self.collision);
         }
     }
-    pub(crate) fn planet(&mut self) {
+    pub fn planet(&mut self) {
         use physics::gravity_character::State;
         self.reset(false);
         self.bodies[0].body = Body {
@@ -120,13 +120,13 @@ impl GravityDemo {
             grounded: true,
         });
     }
-    pub(crate) fn jump(&mut self) {
+    pub fn jump(&mut self) {
         self.jump_pending = true;
     }
-    pub(crate) fn planet_verified(&self) -> bool {
+    pub fn planet_verified(&self) -> bool {
         self.proof.inverted && self.proof.jumped && self.proof.landed
     }
-    pub(crate) fn advance(&mut self, dt: f64) -> Result<(), String> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), String> {
         const STEP: f64 = 1.0 / 240.0;
         self.accumulator += dt.min(0.1);
         while self.accumulator >= STEP {
@@ -198,7 +198,7 @@ impl GravityDemo {
         }
         Ok(())
     }
-    pub(crate) fn title(&self) -> String {
+    pub fn title(&self) -> String {
         format!(
             "Voxy gravity | {} | contacts {} | 1: orbit  2: collision  3: planet  J: jump  R: reset  Space: pause",
             if self.walker.is_some() {
@@ -211,7 +211,7 @@ impl GravityDemo {
             self.contacts
         )
     }
-    pub(crate) fn camera_distance(&self, aspect: f32) -> f32 {
+    pub fn camera_distance(&self, aspect: f32) -> f32 {
         #[allow(clippy::cast_possible_truncation)]
         let extent = self
             .bodies
@@ -221,7 +221,7 @@ impl GravityDemo {
         (extent * 1.3 / (27.5_f32.to_radians().tan() * aspect.min(1.0))).max(9.0)
     }
     #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
         let colors = [[0.25, 0.65, 1.0, 1.0], [1.0, 0.55, 0.15, 1.0]];

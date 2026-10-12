@@ -2,14 +2,20 @@
 use physics::strand::{SphereCollider, Strand, StrandConfig};
 use voxy_render::{SceneMesh, SceneVertex};
 #[derive(Debug)]
-pub(crate) struct StrandsDemo {
+pub struct StrandsDemo {
     strands: Vec<Strand>,
     roots: Vec<[f64; 3]>,
     time: f64,
     accumulator: f64,
 }
+impl Default for StrandsDemo {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl StrandsDemo {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         let mut strands = Vec::new();
         let mut roots = Vec::new();
         for i in 0..80 {
@@ -72,7 +78,7 @@ impl StrandsDemo {
             },
         ]
     }
-    pub(crate) fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
+    pub fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
         self.accumulator += dt.min(0.1);
         while self.accumulator >= 1.0 / 240.0 {
             self.time += 1.0 / 240.0;
@@ -95,7 +101,7 @@ impl StrandsDemo {
         Ok(())
     }
     #[allow(clippy::cast_possible_truncation)]
-    pub(crate) fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
         let mut quad = |points: [[f64; 3]; 4], color: [f32; 4]| {

@@ -1,14 +1,6 @@
 //! Frame-rate independent camera response; input changes a target, never the view directly.
 
-/// Pitch is clamped symmetrically so the orbit never flips over the poles.
-pub(crate) const ORBIT_PITCH_LIMIT: f32 = 1.2;
-/// Farthest orbit distance any viewer allows.
-pub(crate) const ORBIT_MAX_DISTANCE: f32 = 5.0;
-
-/// `(minimum distance, zoom step scale)` for the hand close-up versus the whole body.
-pub(crate) const fn zoom_range(hand: bool) -> (f32, f32) {
-    if hand { (0.18, 0.2) } else { (0.7, 1.0) }
-}
+use voxy_demos::orbit::{ORBIT_MAX_DISTANCE, ORBIT_PITCH_LIMIT, zoom_range};
 #[derive(Debug, Default)]
 pub(crate) struct CameraMotion {
     state: Option<Motion>,

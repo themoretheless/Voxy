@@ -1,6 +1,6 @@
 //! Renders initial, active-jet and settled native geometry using GPU readback.
 use glam::Vec3;
-use voxy_app::liquid_demo;
+use voxy_demos::liquid_demo;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 #[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {

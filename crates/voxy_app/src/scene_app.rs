@@ -43,7 +43,7 @@ struct Resources {
     internal: Option<SceneGeometry>,
     texture: SceneTexture,
     material_creases: Vec<f32>,
-    atlas_update: crate::female_complexion::AtlasUpdate,
+    atlas_update: voxy_demos::female_complexion::AtlasUpdate,
     world_transform: SceneTransform,
     last_view_position: Option<Vec3>,
     last_world_motion: Option<voxy_render::MotionMatrices>,
@@ -63,19 +63,19 @@ enum MotionMode {
 /// Shared native scene shell for desktop and mobile entrypoints.
 #[derive(Debug)]
 pub struct SceneApp {
-    female: Option<crate::female_demo::FemaleDemo>,
+    female: Option<voxy_demos::female_demo::FemaleDemo>,
     orbit_drag: bool,
     camera_motion: crate::camera_motion::CameraMotion,
-    full_model_worker: Option<crate::full_model_worker::FullModelWorker>,
+    full_model_worker: Option<voxy_demos::full_model_worker::FullModelWorker>,
     cursor: Option<(f64, f64)>,
-    liquids: Option<crate::liquid_demo::LiquidDemo>,
+    liquids: Option<voxy_demos::liquid_demo::LiquidDemo>,
     liquid_optics: bool,
-    wear: Option<crate::wear_demo::WearDemo>,
-    fem: Option<crate::fem_demo::FemDemo>,
-    gravity: Option<crate::gravity_demo::GravityDemo>,
-    strands: Option<crate::strands_demo::StrandsDemo>,
-    tissues: Option<crate::tissue_demo::TissueDemo>,
-    xray: Option<crate::xray_demo::XrayDemo>,
+    wear: Option<voxy_demos::wear_demo::WearDemo>,
+    fem: Option<voxy_demos::fem_demo::FemDemo>,
+    gravity: Option<voxy_demos::gravity_demo::GravityDemo>,
+    strands: Option<voxy_demos::strands_demo::StrandsDemo>,
+    tissues: Option<voxy_demos::tissue_demo::TissueDemo>,
+    xray: Option<voxy_demos::xray_demo::XrayDemo>,
     graphics: voxy_render::GraphicsOptions,
     window: Option<Arc<Window>>,
     resources: Option<Resources>,
@@ -172,7 +172,7 @@ impl SceneApp {
         self.female = None;
         self.wear = None;
         self.fem = None;
-        self.liquids = Some(crate::liquid_demo::LiquidDemo::new()?);
+        self.liquids = Some(voxy_demos::liquid_demo::LiquidDemo::new()?);
         self.gravity = None;
         self.xray = None;
         self.tissues = None;
@@ -182,21 +182,21 @@ impl SceneApp {
     /// Shows finite point sources with mass depletion and energy-accounted recoil.
     pub fn with_finite_liquid_sources(mut self) -> Result<Self, Box<dyn std::error::Error>> {
         self = self.with_liquids()?;
-        self.liquids = Some(crate::liquid_demo::LiquidDemo::new_finite_sources()?);
+        self.liquids = Some(voxy_demos::liquid_demo::LiquidDemo::new_finite_sources()?);
         self.liquid_optics = false;
         Ok(self)
     }
     /// Shows jets, impact spray and surface-film deposition for water and oil.
     pub fn with_liquid_impacts(mut self) -> Result<Self, Box<dyn std::error::Error>> {
         self = self.with_liquids()?;
-        self.liquids = Some(crate::liquid_demo::LiquidDemo::new_impacts()?);
+        self.liquids = Some(voxy_demos::liquid_demo::LiquidDemo::new_impacts()?);
         self.liquid_optics = true;
         Ok(self)
     }
     /// Finite energy/mass sources with recoil, impact spray and deposited film.
     pub fn with_finite_liquid_impacts(mut self) -> Result<Self, Box<dyn std::error::Error>> {
         self = self.with_liquids()?;
-        self.liquids = Some(crate::liquid_demo::LiquidDemo::new_finite_impacts()?);
+        self.liquids = Some(voxy_demos::liquid_demo::LiquidDemo::new_finite_impacts()?);
         self.liquid_optics = true;
         Ok(self)
     }
@@ -212,7 +212,7 @@ impl SceneApp {
         self.liquids = None;
         self.wear = None;
         self.fem = None;
-        self.wear = Some(crate::wear_demo::WearDemo::new()?);
+        self.wear = Some(voxy_demos::wear_demo::WearDemo::new()?);
         Ok(self)
     }
     /// Dynamic cohesive fracture with current FEM geometry uploaded each frame.
@@ -220,7 +220,7 @@ impl SceneApp {
         self = self.with_liquids()?;
         self.liquids = None;
         self.wear = None;
-        self.fem = Some(crate::fem_demo::FemDemo::new()?);
+        self.fem = Some(voxy_demos::fem_demo::FemDemo::new()?);
         Ok(self)
     }
     /// Shows simulated grass and hair instead of the rotating cube.
@@ -233,7 +233,7 @@ impl SceneApp {
         self.xray = None;
         self.tissues = None;
         self.gravity = None;
-        self.strands = Some(crate::strands_demo::StrandsDemo::new());
+        self.strands = Some(voxy_demos::strands_demo::StrandsDemo::new());
         self
     }
     /// Shows six abstract soft-tissue specimens, left to right:
@@ -247,7 +247,7 @@ impl SceneApp {
         self.fem = None;
         self.gravity = None;
         self.strands = None;
-        self.tissues = Some(crate::tissue_demo::TissueDemo::new());
+        self.tissues = Some(voxy_demos::tissue_demo::TissueDemo::new());
         self
     }
     /// Shows load-controlled finite-element biomechanics specimens.
@@ -255,7 +255,7 @@ impl SceneApp {
     /// Returns invalid material or mesh construction errors.
     pub fn with_biomechanics(mut self) -> Result<Self, Box<dyn std::error::Error>> {
         self = self.with_tissues();
-        self.tissues = Some(crate::tissue_demo::TissueDemo::biomechanics()?);
+        self.tissues = Some(voxy_demos::tissue_demo::TissueDemo::biomechanics()?);
         Ok(self)
     }
     #[must_use]
@@ -266,7 +266,7 @@ impl SceneApp {
         self.fem = None;
         self.gravity = None;
         self.strands = None;
-        self.tissues = Some(crate::tissue_demo::TissueDemo::body());
+        self.tissues = Some(voxy_demos::tissue_demo::TissueDemo::body());
         self
     }
     /// Shows finite spheres under mutual Newtonian gravity.
@@ -279,7 +279,7 @@ impl SceneApp {
         self.strands = None;
         self.xray = None;
         self.tissues = None;
-        self.gravity = Some(crate::gravity_demo::GravityDemo::new(collision));
+        self.gravity = Some(voxy_demos::gravity_demo::GravityDemo::new(collision));
         self
     }
     /// Starts the gravity-relative planet walking demonstration.
@@ -302,7 +302,7 @@ impl SceneApp {
         self.gravity = None;
         self.strands = None;
         self.tissues = None;
-        self.xray = Some(crate::xray_demo::XrayDemo::new());
+        self.xray = Some(voxy_demos::xray_demo::XrayDemo::new());
         self
     }
     /// Uses the imported Blender body as the X-ray shell, with illustrative internals.
@@ -310,7 +310,7 @@ impl SceneApp {
     /// Rejects invalid OBJ geometry or asset budgets.
     pub fn with_xray_model(self) -> Result<Self, Box<dyn std::error::Error>> {
         let mut app = self.with_xray();
-        app.xray = Some(crate::xray_demo::XrayDemo::with_model()?);
+        app.xray = Some(voxy_demos::xray_demo::XrayDemo::with_model()?);
         Ok(app)
     }
     /// Shows Blender Studio's CC0 anatomical female mesh and its nonlinear skin patch.
@@ -324,7 +324,7 @@ impl SceneApp {
         self.strands = None;
         self.tissues = None;
         self.xray = None;
-        self.female = Some(crate::female_demo::FemaleDemo::new()?);
+        self.female = Some(voxy_demos::female_demo::FemaleDemo::new()?);
         Ok(self)
     }
     /// Shows skeletal animation without advancing the expensive physical shell solver.
@@ -371,7 +371,7 @@ impl SceneApp {
     /// Sets continuous body proportions for the imported character.
     pub fn with_body_parameters(
         mut self,
-        parameters: crate::body_parameters::BodyParameters,
+        parameters: voxy_demos::body_parameters::BodyParameters,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         parameters.validate()?;
         let female = self
@@ -402,8 +402,9 @@ impl SceneApp {
         path: impl Into<std::path::PathBuf>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let path = path.into();
-        let parameters =
-            crate::body_parameters::BodyParameters::from_json(&std::fs::read_to_string(&path)?)?;
+        let parameters = voxy_demos::body_parameters::BodyParameters::from_json(
+            &std::fs::read_to_string(&path)?,
+        )?;
         self = self.with_body_parameters(parameters)?;
         self.female.as_mut().unwrap().parameter_file = Some(path);
         Ok(self)
@@ -414,8 +415,9 @@ impl SceneApp {
         path: impl Into<std::path::PathBuf>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let path = path.into();
-        let parameters =
-            crate::face_parameters::FaceParameters::from_json(&std::fs::read_to_string(&path)?)?;
+        let parameters = voxy_demos::face_parameters::FaceParameters::from_json(
+            &std::fs::read_to_string(&path)?,
+        )?;
         let female = self
             .female
             .as_mut()
@@ -609,13 +611,13 @@ impl SceneApp {
         let mut scene = host.create_scene_renderer();
         if self.female.is_some() {
             pollster::block_on(
-                scene.reload_shader(host.device(), crate::female_eyes::MATERIAL_SHADER),
+                scene.reload_shader(host.device(), voxy_demos::female_eyes::MATERIAL_SHADER),
             )?;
         }
         let use_gpu_hair = std::env::var_os("VOXY_ASYNC_FULL").is_some()
             && std::env::var_os("VOXY_DISABLE_GPU_HAIR").is_none()
             && self.female.as_ref().is_some_and(|f| {
-                f.face_parameters == crate::face_parameters::FaceParameters::default()
+                f.face_parameters == voxy_demos::face_parameters::FaceParameters::default()
                     && f.film.is_none()
                     && f.simulate_hair
             });
@@ -651,8 +653,8 @@ impl SceneApp {
                 .female
                 .as_ref()
                 .ok_or("resident hair requires full model")?;
-            let (_, indices) =
-                crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
+            let (_, indices) = voxy_demos::full_model_worker::partition_hair(&mesh)
+                .map_err(std::io::Error::other)?;
             let mut hair = scene.upload_compute_mesh(host.device(), &mesh)?;
             hair.update_index_partition(
                 host.queue(),
@@ -661,7 +663,7 @@ impl SceneApp {
             pollster::block_on(scene.set_geometry_opaque_shader(
                 host.device(),
                 &mut hair,
-                include_str!("female_hair_material.wgsl"),
+                voxy_demos::FEMALE_HAIR_MATERIAL_SHADER,
             ))?;
             let input = female.gpu_hair_surface_input()?;
             let base = mesh
@@ -695,8 +697,8 @@ impl SceneApp {
             hair_geometry = Some(hair);
             scene.upload_mesh(host.device(), &female.mesh_without_hair()?)?
         } else if std::env::var_os("VOXY_ASYNC_FULL").is_some() {
-            let (body, hair) =
-                crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
+            let (body, hair) = voxy_demos::full_model_worker::partition_hair(&mesh)
+                .map_err(std::io::Error::other)?;
             let mut partitions = scene.upload_shared_mesh_partitions(host.device(), &mesh)?;
             let mut hair_owner = partitions.pop().unwrap();
             let mut body_owner = partitions.pop().unwrap();
@@ -705,7 +707,7 @@ impl SceneApp {
             pollster::block_on(scene.set_geometry_opaque_shader(
                 host.device(),
                 &mut hair_owner,
-                include_str!("female_hair_material.wgsl"),
+                voxy_demos::FEMALE_HAIR_MATERIAL_SHADER,
             ))?;
             hair_geometry = Some(hair_owner);
             body_owner
@@ -770,7 +772,7 @@ impl SceneApp {
             .map(|xray| scene.upload_mesh(host.device(), &xray.internal()?))
             .transpose()?;
         let overlay_mesh = if self.female.is_some() {
-            crate::diagnostic_legend::mesh(
+            voxy_demos::diagnostic_legend::mesh(
                 &self.female.as_ref().unwrap().diagnostic_legend_labels(),
             )?
         } else {
@@ -790,9 +792,9 @@ impl SceneApp {
             scene.upload_texture_with_sampling(
                 host.device(),
                 host.queue(),
-                crate::female_complexion::WIDTH,
-                crate::female_complexion::SIZE,
-                &crate::female_complexion::atlas_for_parameters(&female.face_parameters),
+                voxy_demos::female_complexion::WIDTH,
+                voxy_demos::female_complexion::SIZE,
+                &voxy_demos::female_complexion::atlas_for_parameters(&female.face_parameters),
                 voxy_render::TextureSampling {
                     min_filter: voxy_render::TextureFilter::Linear,
                     mag_filter: voxy_render::TextureFilter::Linear,
@@ -911,8 +913,8 @@ impl SceneApp {
                 .take()
                 .ok_or("background full model requires female example")?;
             let view = simulation.background_view_replica()?;
-            let controls = crate::full_model_worker::Controls::capture(&view, self.paused);
-            self.full_model_worker = Some(crate::full_model_worker::FullModelWorker::new(
+            let controls = voxy_demos::full_model_worker::Controls::capture(&view, self.paused);
+            self.full_model_worker = Some(voxy_demos::full_model_worker::FullModelWorker::new(
                 simulation,
                 controls,
                 self.resources
@@ -1173,8 +1175,8 @@ impl SceneApp {
                 r.texture = r.scene.upload_texture_with_sampling(
                     r.host.device(),
                     r.host.queue(),
-                    crate::female_complexion::WIDTH,
-                    crate::female_complexion::SIZE,
+                    voxy_demos::female_complexion::WIDTH,
+                    voxy_demos::female_complexion::SIZE,
                     &pixels,
                     voxy_render::TextureSampling {
                         min_filter: voxy_render::TextureFilter::Linear,
@@ -1210,7 +1212,7 @@ impl SceneApp {
                 r.last_view_position = Some(view_position);
             }
             let prepared_mesh = if let Some(worker) = &mut self.full_model_worker {
-                let result = worker.poll(crate::full_model_worker::Controls::capture(
+                let result = worker.poll(voxy_demos::full_model_worker::Controls::capture(
                     female,
                     self.paused,
                 ));
@@ -1393,8 +1395,10 @@ impl SceneApp {
         if let Some(female) = &self.female {
             let labels = female.diagnostic_legend_labels();
             if labels != r.legend_labels {
-                r.overlay
-                    .update(r.host.queue(), &crate::diagnostic_legend::mesh(&labels)?)?;
+                r.overlay.update(
+                    r.host.queue(),
+                    &voxy_demos::diagnostic_legend::mesh(&labels)?,
+                )?;
                 r.legend_labels = labels;
             }
         }
@@ -2162,7 +2166,7 @@ impl ApplicationHandler for SceneApp {
                     }
                     PhysicalKey::Code(KeyCode::KeyR) => {
                         if self.fem.is_some() {
-                            match crate::fem_demo::FemDemo::new() {
+                            match voxy_demos::fem_demo::FemDemo::new() {
                                 Ok(demo) => self.fem = Some(demo),
                                 Err(error) => {
                                     self.fail(event_loop, &error);
@@ -2171,7 +2175,7 @@ impl ApplicationHandler for SceneApp {
                             }
                         }
                         if self.wear.is_some() {
-                            match crate::wear_demo::WearDemo::new() {
+                            match voxy_demos::wear_demo::WearDemo::new() {
                                 Ok(demo) => self.wear = Some(demo),
                                 Err(error) => {
                                     self.fail(event_loop, &error);

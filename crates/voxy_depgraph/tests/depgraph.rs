@@ -17,6 +17,19 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ("voxy_audio_device", &["voxy_audio"]),
     ("voxy_cuda", &["physics"]),
     (
+        "voxy_demos",
+        &[
+            "physics",
+            "physics_voxel",
+            "voxy_animation",
+            "voxy_core",
+            "voxy_cuda",
+            "voxy_gpu",
+            "voxy_render",
+            "voxy_world",
+        ],
+    ),
+    (
         "voxy_editor",
         &[
             "physics",
@@ -57,7 +70,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ),
     ("voxy_lighting", &["voxy_core", "voxy_world"]),
     ("voxy_mesher", &["voxy_core", "voxy_world"]),
-    ("voxy_ray_probe", &["voxy_render"]),
+    ("voxy_ray_probe", &["voxy_demos", "voxy_render"]),
     (
         "voxy_render",
         &["voxy_core", "voxy_lighting", "voxy_mesher"],
@@ -104,14 +117,9 @@ const COMPOSITION_ROOTS: &[&str] = &["voxy_app"];
 /// removes them. Remove an entry here in the same change that removes the edge.
 const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[
     (
-        "voxy_ray_probe",
-        "voxy_app",
-        "C2: demos move out of the composition root",
-    ),
-    (
         "voxy_mobile",
         "voxy_app",
-        "C2: demos move out of the composition root",
+        "C2b: the mobile shell needs a shared SceneApp crate, not the app binary",
     ),
     (
         "voxy_gpu",

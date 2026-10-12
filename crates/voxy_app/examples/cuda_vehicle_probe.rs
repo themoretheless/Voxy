@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             config(),
             |chassis, input, dt, config| {
                 if tick % 2 == 0 {
-                    voxy_app::cuda_motion::step_character_collision(
+                    voxy_demos::cuda_motion::step_character_collision(
                         &compute,
                         &scene.world,
                         scene.world.registry(),
@@ -76,9 +76,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         config,
                         true,
                     )
-                    .map_err(voxy_app::cuda_motion::MotionError::Collision)
+                    .map_err(voxy_demos::cuda_motion::MotionError::Collision)
                 } else {
-                    voxy_app::cuda_motion::step_character(
+                    voxy_demos::cuda_motion::step_character(
                         &compute,
                         &scene.world,
                         scene.world.registry(),

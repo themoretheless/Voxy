@@ -1,7 +1,7 @@
 //! GPU snapshot of current layered paired-tissue FEM surfaces, before/after dynamics.
 use glam::Vec3;
 use physics::biomechanics::{InertialBody, Material, TesticularGeometry};
-use voxy_app::fem_surface;
+use voxy_demos::fem_surface;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 #[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -52,7 +52,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut geometry = renderer.reserve_geometry(&device, 60_024, 60_024)?;
     let negative_coordinate_control =
         std::env::args().any(|arg| arg == "--negative-coordinate-control");
-    let source = include_str!("../src/tissue_surface_material.wgsl");
+    let source = voxy_demos::TISSUE_SURFACE_MATERIAL_SHADER;
     let source = if negative_coordinate_control {
         source.replace("out.reference=reference;", "out.reference=position;")
     } else {
