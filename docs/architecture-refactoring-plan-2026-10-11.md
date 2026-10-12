@@ -23,7 +23,8 @@
 | C4 editor `App` | сделано (механически) | 50 методов `impl App` разнесены по `src/app/{authoring,inspector,audio_control,viewport,picking_drag,game_ui,play_mode,residency}.rs` с теми же телами; `lib.rs` 5183→1740 строк; тесты editor 182/182 |
 | B4 hair contact | частично | тесты вынесены из `hair/contact.rs` (3929→2057 строк) в `hair/contact/*_tests.rs`; разрез решателя по фазам не делался — он требует сверки replay-наборов и остаётся отдельным PR |
 | D4 контракт бэкендов | пересмотрено | gravity в `voxy_gpu` (wgpu command encoding), `voxy_cuda` (синхронный `step`/`read`) и `voxy_vulkan` (interop-буфер) — разные модели исполнения, общий trait стал бы адаптером, а не снятием дублирования; общие только POD-структуры тел/параметров |
-| B3, C3 | не начато | B3 (facade/fixtures) и C3 (единый error-тип app-слоя) — следующие PR |
+| B3 фасад physics | частично | `physics/src/lib.rs` получил карту модулей по группам ответственности (math / rigid+contact / gravity+astrophysics / tissue+biomechanics / fluids / physiology); общие test-builders не добавлялись — 230 файлов `tests/` используют собственные fixtures, миграция без потребителя не даёт выигрыша |
+| C3 ошибки app-слоя | пересмотрено | `Result<_, String>`: editor 102, gameplay 52, demos 7, shell 15 сайтов; это изменение публичных сигнатур (в т.ч. `SceneApp::new`, который использует `voxy_mobile`) и отдельный PR с договорённостью о типах; новые модули этого батча (`voxy_depgraph`, `voxy_gpu_core`, `voxy_core::hash`) типизированных ошибок не нарушают |
 
 После B1: `cargo test -p physics --lib` 369, все 217 integration-бинарей physics — 1551 тест, 0 падений.
 

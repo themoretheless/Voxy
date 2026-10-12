@@ -1,4 +1,26 @@
 //! Geometry-independent mechanics. No renderer, voxel world or ECS dependencies.
+//!
+//! Module map (plan step B3). Paths are stable; the groups below are the
+//! responsibility boundaries the crate graph test and the refactoring plan
+//! refer to:
+//!
+//! - **Shared math**: [`math`] (`[f64; 3]` helpers every domain uses).
+//! - **Rigid bodies and contact**: [`contact`], [`rigid_motion`], [`spin_path`],
+//!   [`mass_properties`], [`friction`], [`cohesive`], [`planar`], the character
+//!   controller re-exported at the root, and the [`CollisionWorld`] port.
+//! - **Gravity and astrophysics**: [`gravity`] (field, spheres, character) and
+//!   [`astrophysics`] (binary, spin, equation of state, nuclear, radiation,
+//!   spherical models); the flat `astrophysics_*`/`gravity_*` names are kept as
+//!   re-exports.
+//! - **Deformable tissue and biomechanics**: [`tissue`], [`tissue_surface`],
+//!   [`soft_body`], [`biomechanics`], [`plasticity`], [`skin`], [`strand`],
+//!   [`hair`], [`secondary_motion`].
+//! - **Fluids and films**: [`liquid`], [`surface_film`], [`suspension`],
+//!   [`moisture`], [`wear`].
+//! - **Physiology**: [`respiration`], [`circulation`], [`lymph`].
+//!
+//! Private helpers (`symmetric_eigen`, `triangle_index`, `spatial_bounds`,
+//! `positive_transport`, `heat_exchange`, contact glue) stay crate-internal.
 pub mod astrophysics;
 pub use astrophysics::atmosphere as astrophysics_atmosphere;
 pub use astrophysics::binary as astrophysics_binary;
