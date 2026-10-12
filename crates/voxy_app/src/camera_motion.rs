@@ -1,4 +1,14 @@
 //! Frame-rate independent camera response; input changes a target, never the view directly.
+
+/// Pitch is clamped symmetrically so the orbit never flips over the poles.
+pub(crate) const ORBIT_PITCH_LIMIT: f32 = 1.2;
+/// Farthest orbit distance any viewer allows.
+pub(crate) const ORBIT_MAX_DISTANCE: f32 = 5.0;
+
+/// `(minimum distance, zoom step scale)` for the hand close-up versus the whole body.
+pub(crate) const fn zoom_range(hand: bool) -> (f32, f32) {
+    if hand { (0.18, 0.2) } else { (0.7, 1.0) }
+}
 #[derive(Debug, Default)]
 pub(crate) struct CameraMotion {
     state: Option<Motion>,
@@ -24,12 +34,12 @@ impl CameraMotion {
     pub(crate) fn orbit(&mut self, current: [f32; 3], x: f32, y: f32) {
         let s = self.state(current);
         s.target[0] += x;
-        s.target[1] = (s.target[1] + y).clamp(-1.2, 1.2);
+        s.target[1] = (s.target[1] + y).clamp(-ORBIT_PITCH_LIMIT, ORBIT_PITCH_LIMIT);
     }
     pub(crate) fn zoom(&mut self, current: [f32; 3], amount: f32, hand: bool) {
         let s = self.state(current);
-        let (minimum, scale) = if hand { (0.18, 0.2) } else { (0.7, 1.0) };
-        s.target[2] = (s.target[2] + amount * scale).clamp(minimum, 5.0);
+        let (minimum, scale) = zoom_range(hand);
+        s.target[2] = (s.target[2] + amount * scale).clamp(minimum, ORBIT_MAX_DISTANCE);
     }
     pub(crate) fn advance(&mut self, current: [f32; 3], dt: f32, hand: bool) -> [f32; 3] {
         // A suspension must not turn held input into a large camera jump.

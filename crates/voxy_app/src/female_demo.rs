@@ -1186,16 +1186,14 @@ impl FemaleDemo {
             )
     }
     pub fn orbit(&mut self, x: f32, y: f32) {
+        use crate::camera_motion::ORBIT_PITCH_LIMIT;
         self.yaw += x;
-        self.pitch = (self.pitch + y).clamp(-1.2, 1.2);
+        self.pitch = (self.pitch + y).clamp(-ORBIT_PITCH_LIMIT, ORBIT_PITCH_LIMIT);
     }
     pub fn zoom(&mut self, amount: f32) {
-        let (minimum, step) = if self.hand_focus {
-            (0.18, 0.2)
-        } else {
-            (0.7, 1.0)
-        };
-        self.distance = (self.distance + amount * step).clamp(minimum, 5.0);
+        let (minimum, step) = crate::camera_motion::zoom_range(self.hand_focus);
+        self.distance = (self.distance + amount * step)
+            .clamp(minimum, crate::camera_motion::ORBIT_MAX_DISTANCE);
     }
     fn support_offset(&self, rest: [f64; 3], time: f64) -> f64 {
         self.support_offset_with_secondary(rest, time, &self.secondary)

@@ -11,7 +11,16 @@
 | A4 thiserror | отклонено | см. примечание в фазе A |
 | C6 тесты из god files | сделано | liquid_runtime 6698→2430, angular_sweep 2810→1488, animation/lib 4200→1816, render/scene 3965→3004, app/main 2389→2123, editor/lib 7254→5183 строк |
 | C1 `#[path]` в examples | сделано | 0 includes; 24 модуля `pub mod`, 247 `pub(crate)`→`pub` |
-| B1–B4, C2–C5, D1–D5, E | не начато | |
+| D1 render: CPU-геометрия отдельно | сделано | `scene/geometry.rs` (390 строк, без wgpu), `scene.rs` 3004→2620 |
+| D2 dev-цикл render↔editor | сделано | `asset_window` переехал в `voxy_editor/examples`; список dev-циклов пуст |
+| C5 общие утилиты | частично | orbit-константы общие (`camera_motion::{ORBIT_PITCH_LIMIT, ORBIT_MAX_DISTANCE, zoom_range}`); `ui_text` в editor уже строится на gameplay (не дубль); KeyCode-маппинги семантически разные (не дубль); JSON-helpers остаются на C3 |
+| E документация | частично | §4 перегенерирован из `cargo metadata`, ADR 0004 |
+| B1–B4, C2–C4, D3–D5 | не начато | |
+
+Полный прогон тестов `voxy_app` lib на ветке: 343 теста, все прошли.
+`female_demo` (63 теста) гонялся по одному; три теста не укладываются в
+debug-профиль на 4 vCPU (один >2 ч) и прошли в `--release` (9 мин, 78 с), как
+и документирует `docs/body-development-status.md` для тяжёлых тестов.
 
 Цель плана: привести фактическую структуру workspace к инвариантам
 `docs/architecture.md` §3–4 (явное направление зависимостей, composition root
