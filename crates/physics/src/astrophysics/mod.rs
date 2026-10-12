@@ -2,6 +2,25 @@
 //! `mu = G * (primary_mass + secondary_mass)` for relative motion. Perturbed
 //! multi-body motion belongs to `gravity`; these conics assume an isolated pair.
 
+pub mod atmosphere;
+pub mod binary;
+pub mod column;
+pub mod eos;
+pub mod equilibrium;
+pub mod evolution;
+pub mod gas;
+pub mod gas_gravity;
+pub mod nuclear;
+pub mod opacity;
+pub mod radhydro;
+pub mod radiation;
+pub mod reaclib;
+pub mod spherical;
+pub mod spherical_radiation;
+pub mod spin;
+pub mod star;
+pub mod thermal;
+
 use crate::math::cross;
 use crate::math::dot;
 use crate::math::norm as length;
