@@ -63,21 +63,94 @@ V1 хранит `BlockStateId` на ячейку. Это подходит для
 
 ```mermaid
 flowchart BT
-    core[voxy_core]
-    world[voxy_world] --> core
-    storage[voxy_storage] --> world
-    storage --> core
-    mesher[voxy_mesher] --> world
-    mesher --> core
-    runtime[voxy_runtime] --> world
-    runtime --> storage
-    runtime --> mesher
-    runtime --> core
-    render[voxy_render] --> mesher
-    render --> core
-    app[voxy_app] --> runtime
-    app --> render
+    physics_voxel --> physics
+    physics_voxel --> voxy_core
+    physics_voxel --> voxy_world
+    voxy_app --> physics
+    voxy_app --> physics_voxel
+    voxy_app --> voxy_animation
+    voxy_app --> voxy_assets
+    voxy_app --> voxy_core
+    voxy_app --> voxy_cuda
+    voxy_app --> voxy_editor
+    voxy_app --> voxy_gpu
+    voxy_app --> voxy_input
+    voxy_app --> voxy_render
+    voxy_app --> voxy_runtime
+    voxy_app --> voxy_rush
+    voxy_app --> voxy_scene
+    voxy_app --> voxy_text
+    voxy_app --> voxy_world
+    voxy_audio_device --> voxy_audio
+    voxy_cuda --> physics
+    voxy_editor --> physics
+    voxy_editor --> voxy_animation
+    voxy_editor --> voxy_assets
+    voxy_editor --> voxy_audio
+    voxy_editor --> voxy_audio_device
+    voxy_editor --> voxy_gameplay
+    voxy_editor --> voxy_input
+    voxy_editor --> voxy_render
+    voxy_editor --> voxy_scene
+    voxy_editor --> voxy_text
+    voxy_editor --> voxy_ui
+    voxy_gameplay --> physics
+    voxy_gameplay --> voxy_animation
+    voxy_gameplay --> voxy_assets
+    voxy_gameplay --> voxy_audio
+    voxy_gameplay --> voxy_input
+    voxy_gameplay --> voxy_scene
+    voxy_gameplay --> voxy_text
+    voxy_gameplay --> voxy_ui
+    voxy_gpu --> physics
+    voxy_gpu --> physics_voxel
+    voxy_gpu --> voxy_core
+    voxy_gpu --> voxy_cuda
+    voxy_gpu -.-> voxy_render
+    voxy_gpu --> voxy_world
+    voxy_lighting --> voxy_core
+    voxy_lighting --> voxy_world
+    voxy_mesher --> voxy_core
+    voxy_mesher --> voxy_world
+    voxy_mobile -.-> voxy_app
+    voxy_ray_probe -.-> voxy_app
+    voxy_ray_probe --> voxy_render
+    voxy_render -.-> voxy_animation
+    voxy_render --> voxy_core
+    voxy_render --> voxy_lighting
+    voxy_render --> voxy_mesher
+    voxy_runtime --> physics_voxel
+    voxy_runtime --> voxy_core
+    voxy_runtime --> voxy_lighting
+    voxy_runtime --> voxy_mesher
+    voxy_runtime --> voxy_storage
+    voxy_runtime --> voxy_time
+    voxy_runtime --> voxy_world
+    voxy_rush --> physics
+    voxy_rush --> voxy_input
+    voxy_rush --> voxy_scene
+    voxy_scene --> voxy_core
+    voxy_scene --> voxy_time
+    voxy_storage --> voxy_core
+    voxy_storage --> voxy_world
+    voxy_streamline --> voxy_render
+    voxy_ui_winit --> voxy_ui
+    voxy_vulkan --> voxy_cuda
+    voxy_web --> physics
+    voxy_web --> physics_voxel
+    voxy_web --> voxy_core
+    voxy_web --> voxy_gpu
+    voxy_web --> voxy_mesher
+    voxy_web --> voxy_render
+    voxy_web --> voxy_runtime
+    voxy_web --> voxy_world
+    voxy_world --> voxy_core
+    voxy_xr --> voxy_ui
 ```
+
+Пунктирные рёбра — известные нарушения слоёв, которые снимает
+`docs/architecture-refactoring-plan-2026-10-11.md` (C2, D3, D5); граф
+проверяется тестом `cargo test -p voxy_depgraph` (ADR 0004).
 
 | Crate | Ответственность | Не должен знать |
 |---|---|---|
