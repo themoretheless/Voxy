@@ -1,17 +1,12 @@
 //! Linear material guide render targets for temporal ray reconstruction.
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("ray reconstruction guide error: {self:?}")]
 pub enum ReconstructionGuideError {
     InvalidDimensions,
     UnsupportedFormats,
     AttachmentLimits,
 }
-impl std::fmt::Display for ReconstructionGuideError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ray reconstruction guide error: {self:?}")
-    }
-}
-impl std::error::Error for ReconstructionGuideError {}
 
 /// Input-resolution guides; contents must come from the matching ray/material pass.
 /// Normals are normalized world-space XYZ with linear roughness in alpha;

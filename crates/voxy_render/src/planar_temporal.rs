@@ -6,7 +6,8 @@ use crate::{
     TemporalResolve, TemporalResolveFrame, TemporalResolveOptions,
 };
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("planar temporal error: {self:?}")]
 pub enum PlanarTemporalError {
     Ray(RaySceneError),
     Compute(ComputeError),
@@ -22,12 +23,6 @@ impl From<ComputeError> for PlanarTemporalError {
         Self::Compute(e)
     }
 }
-impl std::fmt::Display for PlanarTemporalError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "planar temporal error: {self:?}")
-    }
-}
-impl std::error::Error for PlanarTemporalError {}
 #[derive(Debug)]
 pub struct PlanarTemporalPipeline {
     device: wgpu::Device,

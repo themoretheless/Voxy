@@ -55,18 +55,13 @@ pub struct FogBounds {
     pub origin: [f64; 3],
     pub extent: [f64; 3],
 }
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("fog volume error: {self:?}")]
 pub enum FogError {
     InvalidCalibration,
     UnsupportedTransform,
     UnrepresentableBounds,
 }
-impl std::fmt::Display for FogError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "fog volume error: {self:?}")
-    }
-}
-impl std::error::Error for FogError {}
 impl FogVolume {
     pub fn validate(&self) -> Result<(), FogError> {
         if self.size.iter().any(|v| !v.is_finite() || *v <= 0.)

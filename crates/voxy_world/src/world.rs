@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::fmt;
 use std::sync::Arc;
 
 use voxy_core::{ChunkPos, LocalPos, TickId, VoxelPos, WorldEpoch, split_voxel};
@@ -513,7 +512,8 @@ fn invalidated_neighbors(pos: ChunkPos, writes: &[(LocalPos, VoxelWrite)]) -> Bo
         .collect()
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("world commit failed: {self:?}")]
 pub enum CommitError {
     EmptyTransaction,
     TooManyWrites(usize),
@@ -537,14 +537,6 @@ pub enum CommitError {
         requested: TickId,
     },
 }
-
-impl fmt::Display for CommitError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "world commit failed: {self:?}")
-    }
-}
-
-impl std::error::Error for CommitError {}
 
 #[cfg(test)]
 mod tests {

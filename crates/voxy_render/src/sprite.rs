@@ -95,19 +95,14 @@ impl Default for Sprite {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("sprite batch error: {self:?}")]
 pub enum SpriteBatchError {
     InvalidSprite,
     Capacity,
     Empty,
     Geometry(SceneError),
 }
-impl std::fmt::Display for SpriteBatchError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "sprite batch error: {self:?}")
-    }
-}
-impl std::error::Error for SpriteBatchError {}
 
 #[derive(Debug)]
 pub struct SpriteBatch {

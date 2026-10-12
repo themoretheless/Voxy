@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::fmt;
 use std::sync::Arc;
 
 use voxy_core::{CHUNK_VOLUME, CancelToken, ChunkPos, LocalPos, VoxelPos, join_voxel};
@@ -140,7 +139,8 @@ fn splitmix64(mut value: u64) -> u64 {
     value ^ (value >> 31)
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("generation failed: {self:?}")]
 pub enum GenerationError {
     Cancelled,
     CoordinateOverflow,
@@ -148,14 +148,6 @@ pub enum GenerationError {
     /// An explicitly selected generation backend failed; no fallback was applied.
     BackendFailure,
 }
-
-impl fmt::Display for GenerationError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "generation failed: {self:?}")
-    }
-}
-
-impl std::error::Error for GenerationError {}
 
 #[cfg(test)]
 mod tests {

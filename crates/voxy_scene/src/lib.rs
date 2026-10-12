@@ -114,7 +114,8 @@ impl Transform {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("scene graph error: {self:?}")]
 pub enum SceneGraphError {
     InvalidNode,
     InvalidTransform,
@@ -122,12 +123,6 @@ pub enum SceneGraphError {
     Capacity,
     WorldOverflow,
 }
-impl std::fmt::Display for SceneGraphError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene graph error: {self:?}")
-    }
-}
-impl std::error::Error for SceneGraphError {}
 
 /// Opaque change token. Compare for equality; it is not a durable document identity.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

@@ -6,7 +6,8 @@ use voxy_world::{BlockRegistry, VoxelView};
 /// Local velocity and displacement supplied by a chassis integrator.
 pub type ChassisMotion = ([f64; 3], [f64; 3]);
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("GPU vehicle step: {self:?}")]
 pub enum VehicleGpuError {
     Vehicle(VehicleError),
     Character(physics::CharacterError<CharacterGpuQueryError>),
@@ -19,12 +20,6 @@ impl From<VehicleError> for VehicleGpuError {
         Self::Vehicle(value)
     }
 }
-impl std::fmt::Display for VehicleGpuError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "GPU vehicle step: {self:?}")
-    }
-}
-impl std::error::Error for VehicleGpuError {}
 
 /// Retains the original vehicle until all chassis contacts complete.
 #[derive(Debug)]

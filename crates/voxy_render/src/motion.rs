@@ -18,14 +18,9 @@ pub struct MotionHistory {
     presented: Option<Mat4>,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("motion matrix must contain only finite values")]
 pub struct InvalidMotionMatrix;
-impl std::fmt::Display for InvalidMotionMatrix {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str("motion matrix must contain only finite values")
-    }
-}
-impl std::error::Error for InvalidMotionMatrix {}
 
 impl MotionHistory {
     /// Prepares an object's current and previous unjittered model-view-projection.

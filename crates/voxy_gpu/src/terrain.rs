@@ -23,7 +23,8 @@ const COLUMN_COUNT: usize = 1024;
 const BLOCK_OFFSET: usize = HEADER_WORDS + COLUMN_WORDS * COLUMN_COUNT;
 const TOTAL_WORDS: usize = BLOCK_OFFSET + CHUNK_VOLUME;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("GPU terrain error: {self:?}")]
 pub enum GpuTerrainError {
     Adapter(wgpu::RequestAdapterError),
     Device(wgpu::RequestDeviceError),
@@ -33,12 +34,6 @@ pub enum GpuTerrainError {
     Poisoned,
     InvalidOutput,
 }
-impl std::fmt::Display for GpuTerrainError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "GPU terrain error: {self:?}")
-    }
-}
-impl std::error::Error for GpuTerrainError {}
 
 #[cfg(not(target_arch = "wasm32"))]
 #[derive(Debug)]

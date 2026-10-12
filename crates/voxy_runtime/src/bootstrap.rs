@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::fmt;
 use std::sync::Arc;
 
 use voxy_core::{CancelToken, ChunkPos, LocalPos, WorldEpoch};
@@ -485,7 +484,8 @@ fn definition(
     })
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("bootstrap scene failed: {self:?}")]
 pub enum BootstrapError {
     Registry(RegistryError),
     Generation(GenerationError),
@@ -535,14 +535,6 @@ impl From<voxy_core::InvalidLocalPos> for BootstrapError {
         Self::Local(error)
     }
 }
-
-impl fmt::Display for BootstrapError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "bootstrap scene failed: {self:?}")
-    }
-}
-
-impl std::error::Error for BootstrapError {}
 
 #[cfg(test)]
 mod tests {

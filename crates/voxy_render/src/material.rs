@@ -1,4 +1,3 @@
-use std::fmt;
 use std::sync::Arc;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -143,7 +142,8 @@ impl MaterialSet {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("invalid material pack: {self:?}")]
 pub enum MaterialError {
     InvalidDimensions {
         width: u32,
@@ -157,14 +157,6 @@ pub enum MaterialError {
     },
     SizeOverflow,
 }
-
-impl fmt::Display for MaterialError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "invalid material pack: {self:?}")
-    }
-}
-
-impl std::error::Error for MaterialError {}
 
 #[cfg(test)]
 mod tests {

@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::fmt;
 use std::sync::Arc;
 
 use voxy_core::{CHUNK_VOLUME, ChunkPos, LocalIndex};
@@ -380,18 +379,11 @@ pub struct ChunkSnapshot {
     pub data: Arc<ChunkData>,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("invalid chunk: {self:?}")]
 pub enum ChunkError {
     InvalidCellCount(usize),
 }
-
-impl fmt::Display for ChunkError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "invalid chunk: {self:?}")
-    }
-}
-
-impl std::error::Error for ChunkError {}
 
 #[cfg(test)]
 mod tests {

@@ -28,7 +28,8 @@ impl Default for GravityBudget {
         }
     }
 }
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("GPU gravity error: {self:?}")]
 pub enum GravityComputeError {
     InvalidInput,
     Budget,
@@ -36,12 +37,6 @@ pub enum GravityComputeError {
     NumericalOverflow,
     Compute(ComputeError),
 }
-impl std::fmt::Display for GravityComputeError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "GPU gravity error: {self:?}")
-    }
-}
-impl std::error::Error for GravityComputeError {}
 
 #[derive(Debug)]
 pub struct GravityProgram {

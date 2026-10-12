@@ -1,4 +1,4 @@
-use std::{fmt, sync::Arc};
+use std::sync::Arc;
 
 use bytemuck::{Pod, Zeroable};
 use glam::Mat4;
@@ -250,7 +250,8 @@ impl SkinnedMesh {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("skinned mesh error: {self:?}")]
 pub enum SkinnedMeshError {
     InvalidGeometry,
     InvalidJointCount(u16),
@@ -259,14 +260,6 @@ pub enum SkinnedMeshError {
     InvalidJoint(usize),
     InvalidIndex,
 }
-
-impl fmt::Display for SkinnedMeshError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "skinned mesh error: {self:?}")
-    }
-}
-
-impl std::error::Error for SkinnedMeshError {}
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
@@ -491,7 +484,8 @@ pub(crate) fn validate_palette(
     Ok(())
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("skinned upload error: {self:?}")]
 pub enum SkinnedUploadError {
     /// Prepared temporal snapshot no longer matches this history generation.
     StaleHistory,
@@ -501,14 +495,6 @@ pub enum SkinnedUploadError {
     NonFiniteMatrix,
     TooManyIndices,
 }
-
-impl fmt::Display for SkinnedUploadError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "skinned upload error: {self:?}")
-    }
-}
-
-impl std::error::Error for SkinnedUploadError {}
 
 #[cfg(test)]
 mod tests {

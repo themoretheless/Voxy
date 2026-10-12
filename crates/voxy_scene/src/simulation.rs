@@ -5,7 +5,8 @@ use glam::Mat4;
 use std::collections::HashMap;
 use voxy_time::{SimulationClock, TimeDrop, TimeFrame};
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, thiserror::Error)]
+#[error("scene simulation error: {self:?}")]
 pub enum SimulationError {
     Stopped,
     InvalidConfiguration,
@@ -17,12 +18,6 @@ impl From<SceneGraphError> for SimulationError {
         Self::Scene(error)
     }
 }
-impl std::fmt::Display for SimulationError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene simulation error: {self:?}")
-    }
-}
-impl std::error::Error for SimulationError {}
 /// A fixed-system failure consumes the scheduled frame. Completed ticks and
 /// earlier behavior mutations remain committed; callers must recover or Stop.
 #[derive(Debug)]

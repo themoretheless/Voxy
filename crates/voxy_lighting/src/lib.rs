@@ -1,7 +1,6 @@
 //! Deterministic derived voxel lighting with revision-stamped inputs.
 
 use std::collections::VecDeque;
-use std::fmt;
 use std::sync::Arc;
 
 use voxy_core::{CHUNK_EDGE, CHUNK_VOLUME, CancelToken, LocalIndex, PADDED_EDGE, PADDED_VOLUME};
@@ -479,7 +478,8 @@ fn padded_index(pos: [i64; 3]) -> usize {
     (y * PADDED_EDGE + z) * PADDED_EDGE + x
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("lighting error: {self:?}")]
 pub enum LightingError {
     InvalidBudget,
     StampMismatch,
@@ -487,14 +487,6 @@ pub enum LightingError {
     BudgetExceeded,
     Cancelled,
 }
-
-impl fmt::Display for LightingError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "lighting error: {self:?}")
-    }
-}
-
-impl std::error::Error for LightingError {}
 
 #[cfg(test)]
 mod tests {
