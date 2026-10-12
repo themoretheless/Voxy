@@ -1,10 +1,10 @@
 use glam::Vec3;
-use voxy_app::female_complexion;
+use voxy_demos::female_complexion;
 #[allow(dead_code)]
 // Renders the supplied full-body physical skin and its displacement map offscreen.
 // Run with VOXY_SKIN_ONLY=1 to isolate skin from optional hair dynamics.
-use voxy_app::female_demo;
-use voxy_app::female_eyes;
+use voxy_demos::female_demo;
+use voxy_demos::female_eyes;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
 #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]

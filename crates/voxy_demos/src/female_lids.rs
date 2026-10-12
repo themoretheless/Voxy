@@ -69,7 +69,7 @@ fn subtract_quad(poly: Vec<SceneVertex>, mut quad: [Vec3; 4]) -> Vec<Vec<SceneVe
 }
 
 #[derive(Debug)]
-pub(crate) struct LidSurface {
+pub struct LidSurface {
     outer: [[Vec3; COLUMNS]; 4],
     free: [[Vec3; COLUMNS]; 4],
     seam: [[Vec3; COLUMNS]; 2],

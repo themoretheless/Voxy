@@ -628,7 +628,7 @@ impl VoxyApp {
                         let Some(compute) = &self.motion_compute else {
                             return;
                         };
-                        match voxy_app::cuda_motion::character_motion(
+                        match voxy_demos::cuda_motion::character_motion(
                             compute, character, input, dt, config,
                         ) {
                             Ok(motion) => Some(motion),
@@ -706,7 +706,7 @@ impl VoxyApp {
                     let Some(compute) = &self.motion_compute else {
                         return;
                     };
-                    let result = voxy_app::cuda_motion::step_character_collision(
+                    let result = voxy_demos::cuda_motion::step_character_collision(
                         compute,
                         world,
                         registry,
@@ -724,7 +724,7 @@ impl VoxyApp {
                     let Some(compute) = &self.motion_compute else {
                         return;
                     };
-                    voxy_app::cuda_motion::step_character(
+                    voxy_demos::cuda_motion::step_character(
                         compute, world, registry, character, input, dt, config,
                     )
                     .map_err(|error| error.to_string())
@@ -1015,7 +1015,7 @@ impl VoxyApp {
                         .motion_compute
                         .as_ref()
                         .ok_or_else(|| "CUDA compute unavailable".to_string())?;
-                    voxy_app::cuda_motion::character_motion(compute, state, input, dt, config)
+                    voxy_demos::cuda_motion::character_motion(compute, state, input, dt, config)
                         .map(|motion| Some((motion.velocity, motion.displacement)))
                         .map_err(|error| error.to_string())
                 },
@@ -1034,7 +1034,7 @@ impl VoxyApp {
                     self.pending_vehicle = None;
                     return false;
                 }
-                Err(error) => Err(voxy_app::cuda_motion::MotionError::Collision(
+                Err(error) => Err(voxy_demos::cuda_motion::MotionError::Collision(
                     error.to_string(),
                 )),
             }
@@ -1049,7 +1049,7 @@ impl VoxyApp {
                 config,
                 |chassis, input, dt, config| {
                     if self.cuda_collisions {
-                        voxy_app::cuda_motion::step_character_collision(
+                        voxy_demos::cuda_motion::step_character_collision(
                             compute,
                             world,
                             world.registry(),
@@ -1059,9 +1059,9 @@ impl VoxyApp {
                             config,
                             self.cuda_vehicle_motion,
                         )
-                        .map_err(voxy_app::cuda_motion::MotionError::Collision)
+                        .map_err(voxy_demos::cuda_motion::MotionError::Collision)
                     } else {
-                        voxy_app::cuda_motion::step_character(
+                        voxy_demos::cuda_motion::step_character(
                             compute,
                             world,
                             world.registry(),
@@ -1082,7 +1082,7 @@ impl VoxyApp {
                 f64::from(dt),
                 config,
             )
-            .map_err(voxy_app::cuda_motion::MotionError::from)
+            .map_err(voxy_demos::cuda_motion::MotionError::from)
         };
         let step = match step {
             Ok(step) => step,

@@ -1,6 +1,6 @@
 //! Renders physical voxel wear before/after 80 accepted steps with GPU readback.
 use glam::Vec3;
-use voxy_app::wear_demo;
+use voxy_demos::wear_demo;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 #[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {

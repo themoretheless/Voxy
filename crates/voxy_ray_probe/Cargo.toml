@@ -7,10 +7,10 @@ rust-version.workspace = true
 
 [features]
 default = ["face-demo"]
-face-demo = ["dep:voxy_app"]
+face-demo = ["dep:voxy_demos"]
 
 [dependencies]
-voxy_app = { path = "../voxy_app", optional = true }
+voxy_demos = { path = "../voxy_demos", optional = true }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 voxy_render = { path = "../voxy_render" }
 wgpu = "30.0.1"

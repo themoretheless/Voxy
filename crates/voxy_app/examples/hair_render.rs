@@ -1,8 +1,8 @@
 //! Head close-up before and after one second of actual Cosserat hair simulation.
 use glam::Vec3;
-use voxy_app::female_complexion;
-use voxy_app::female_demo;
-use voxy_app::female_eyes;
+use voxy_demos::female_complexion;
+use voxy_demos::female_demo;
+use voxy_demos::female_eyes;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut model = female_demo::FemaleDemo::new()?;

@@ -3,7 +3,7 @@ use physics::{
     cohesive::Material as Bond,
     plasticity::{Material, mesh::QuadraticBody},
 };
-use voxy_app::fem_surface;
+use voxy_demos::fem_surface;
 fn coupon() -> Result<QuadraticBody, Box<dyn std::error::Error>> {
     let m = Material::new(1e6, 0.3, 1e9, 0.)?;
     let mut body = QuadraticBody::from_linear(

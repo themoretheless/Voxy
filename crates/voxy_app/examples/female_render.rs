@@ -1,14 +1,14 @@
-use voxy_app::body_parameters;
-use voxy_app::diagnostic_legend;
-use voxy_app::face_parameters;
-use voxy_app::female_complexion;
-use voxy_app::female_eyes;
-use voxy_app::film_settings;
+use voxy_demos::body_parameters;
+use voxy_demos::diagnostic_legend;
+use voxy_demos::face_parameters;
+use voxy_demos::female_complexion;
+use voxy_demos::female_eyes;
+use voxy_demos::film_settings;
 // Renders the imported adult mannequin through the native renderer for visual inspection.
 use glam::Vec3;
-use voxy_app::female_demo;
-use voxy_app::full_model_worker;
-use voxy_app::surface_film_preview;
+use voxy_demos::female_demo;
+use voxy_demos::full_model_worker;
+use voxy_demos::surface_film_preview;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
 #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
@@ -375,7 +375,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         pollster::block_on(renderer.set_geometry_opaque_shader(
             &device,
             &mut hair_geometry,
-            include_str!("../src/female_hair_material.wgsl"),
+            voxy_demos::FEMALE_HAIR_MATERIAL_SHADER,
         ))?;
         let body = model.mesh_without_hair()?;
         (renderer.upload_mesh(&device, &body)?, Some(hair_geometry))
@@ -393,7 +393,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         pollster::block_on(renderer.set_geometry_opaque_shader(
             &device,
             &mut hair_geometry,
-            include_str!("../src/female_hair_material.wgsl"),
+            voxy_demos::FEMALE_HAIR_MATERIAL_SHADER,
         ))?;
         (body_geometry, Some(hair_geometry))
     } else {

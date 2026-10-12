@@ -4,7 +4,7 @@ use physics::tissue::{Tissue, TissueKind, sample};
 use voxy_render::{SceneError, SceneMesh, SceneVertex};
 
 #[derive(Debug)]
-pub(crate) struct XrayDemo {
+pub struct XrayDemo {
     ring: Tissue,
     model: Option<voxy_render::ObjAsset>,
     pub closeup: bool,
@@ -15,6 +15,12 @@ pub(crate) struct XrayDemo {
     pub slow: bool,
     pub local: bool,
 }
+impl Default for XrayDemo {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl XrayDemo {
     pub fn new() -> Self {
         Self {

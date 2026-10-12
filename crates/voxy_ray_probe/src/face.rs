@@ -10,9 +10,9 @@ pub fn render(
     queue: &wgpu::Queue,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let mut preview = voxy_app::FacePreview::new()?;
+    let mut preview = voxy_demos::FacePreview::new()?;
     let arguments: Vec<_> = std::env::args().collect();
-    let mut base_parameters = voxy_app::face_parameters::FaceParameters::default();
+    let mut base_parameters = voxy_demos::face_parameters::FaceParameters::default();
     if let Some(index) = arguments.iter().position(|a| a == "--face-preset") {
         if arguments.iter().any(|a| a == "--lid-surface") {
             return Err("face presets require the integrated face preview".into());
@@ -20,13 +20,14 @@ pub fn render(
         let path = arguments
             .get(index + 1)
             .ok_or("--face-preset requires a JSON path")?;
-        let parameters =
-            voxy_app::face_parameters::FaceParameters::from_json(&std::fs::read_to_string(path)?)?;
+        let parameters = voxy_demos::face_parameters::FaceParameters::from_json(
+            &std::fs::read_to_string(path)?,
+        )?;
         base_parameters = parameters;
         preview.set_parameters(base_parameters.clone());
     }
     let mut renderer = SceneRenderer::new_msaa4(device, wgpu::TextureFormat::Rgba8UnormSrgb);
-    let mut shader = voxy_app::FacePreview::material_shader().to_owned();
+    let mut shader = voxy_demos::FacePreview::material_shader().to_owned();
     if std::env::var("VOXY_FACE_DIAGNOSTIC_BACKLIGHT").as_deref() == Ok("1") {
         shader = shader.replace("vec3<f32>(-0.5,0.7,1.0)", "vec3<f32>(0.5,0.3,-1.0)");
     }
@@ -252,11 +253,11 @@ pub fn render(
         let tongue = std::env::args().any(|a| a == "--tongue");
         let mesh = if lid_surface {
             if std::env::args().any(|a| a == "--lid-head") {
-                voxy_app::FacePreview::lid_surface_with_head([0., 0.5, 1.][frame])?
+                voxy_demos::FacePreview::lid_surface_with_head([0., 0.5, 1.][frame])?
             } else if std::env::args().any(|a| a == "--lid-globes") {
-                voxy_app::FacePreview::lid_surface_with_eyes([0., 0.5, 1.][frame])?
+                voxy_demos::FacePreview::lid_surface_with_eyes([0., 0.5, 1.][frame])?
             } else {
-                voxy_app::FacePreview::lid_surface([0., 0.5, 1.][frame])?
+                voxy_demos::FacePreview::lid_surface([0., 0.5, 1.][frame])?
             }
         } else if age_transition {
             preview.sample_blink(time, camera.eye, 0.)?
