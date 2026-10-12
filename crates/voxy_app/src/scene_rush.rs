@@ -440,7 +440,8 @@ mod diagnostic_tests {
         let file =
             std::env::temp_dir().join(format!("rush-diagnostic-cache-{}.r", std::process::id()));
         std::fs::write(&file, "fn update(delta) { }").unwrap();
-        let mut scene = SceneGraph::new(1);
+        // `enable_character` spawns a floor node, so the graph needs a second slot.
+        let mut scene = SceneGraph::new(2);
         let owner = scene.spawn(None, Default::default()).unwrap();
         let mut runtime = SceneRush::new(&mut scene, owner, &file, vec![]).unwrap();
         let initial = runtime.panel_text().to_owned();
