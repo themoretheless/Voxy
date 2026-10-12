@@ -21,7 +21,9 @@
 | B1 `physics::math` | сделано (идентичные копии) | 74 локальных `dot/cross/add/sub/scale/norm` в 37 файлах заменены импортами `crate::math`; взяты только копии с байт-идентичным телом (проверено нормализацией тела и unit-тестом), поэтому результаты не меняются; оставлены отличающиеся версии (unrolled-FMA `dot` в biomechanics, `dot(a,a).sqrt()`-нормы, `&[f64]`-варианты) |
 | B2 слоение physics (часть) | сделано | 19 `astrophysics_*.rs` → `astrophysics/`, 4 `gravity*.rs` → `gravity/`; старые пути сохранены фасадами `pub use astrophysics::x as astrophysics_x` (0 правок у потребителей) |
 | C4 editor `App` | сделано (механически) | 50 методов `impl App` разнесены по `src/app/{authoring,inspector,audio_control,viewport,picking_drag,game_ui,play_mode,residency}.rs` с теми же телами; `lib.rs` 5183→1740 строк; тесты editor 182/182 |
-| B3, B4, C3, D4 | не начато | |
+| B4 hair contact | частично | тесты вынесены из `hair/contact.rs` (3929→2057 строк) в `hair/contact/*_tests.rs`; разрез решателя по фазам не делался — он требует сверки replay-наборов и остаётся отдельным PR |
+| D4 контракт бэкендов | пересмотрено | gravity в `voxy_gpu` (wgpu command encoding), `voxy_cuda` (синхронный `step`/`read`) и `voxy_vulkan` (interop-буфер) — разные модели исполнения, общий trait стал бы адаптером, а не снятием дублирования; общие только POD-структуры тел/параметров |
+| B3, C3 | не начато | B3 (facade/fixtures) и C3 (единый error-тип app-слоя) — следующие PR |
 
 После B1: `cargo test -p physics --lib` 369, все 217 integration-бинарей physics — 1551 тест, 0 падений.
 

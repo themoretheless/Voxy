@@ -33,6 +33,19 @@ had grown to 33 crates. Four edges contradict the documented direction
 5. Examples use the library API (`use voxy_app::module`), never `#[path]`
    includes of library sources.
 
+## Status of the graph after the first refactoring batch (2026-10-12)
+
+- `voxy_demos` holds the character/tissue/liquid demos; `voxy_app` is the
+  shell and binary only; `voxy_ray_probe` depends on `voxy_demos`.
+- `voxy_gpu_core` (compute program, memory budget, readback pool, backend
+  options, indirect mesh handle) sits below `voxy_render`; `voxy_gpu` no
+  longer depends on `voxy_render`.
+- `voxy_render` no longer dev-depends on `voxy_editor`.
+- Remaining listed violations: `voxy_mobile -> voxy_app` (needs a shared
+  shell crate for `SceneApp`) and `voxy_render -> voxy_animation` (render's
+  model module evaluates poses; a narrower boundary is a design decision,
+  not a move).
+
 ## Consequences
 
 - Adding a dependency edge is a reviewed change to `ALLOWED` and to §4.
