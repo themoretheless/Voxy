@@ -259,14 +259,6 @@ pub(super) fn viscous_kick(
     }
     Ok((total, work))
 }
-fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-
 impl Rotation {
     fn mobility(self, impulse: [f64; 3]) -> [f64; 3] {
         self.tensor.map_or_else(
@@ -281,4 +273,5 @@ impl Rotation {
 }
 #[path = "tensor.rs"]
 mod tensor;
+use crate::math::cross;
 pub use tensor::TensorBody;

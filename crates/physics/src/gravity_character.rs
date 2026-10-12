@@ -1,14 +1,10 @@
 //! Spherical kinematic character with gravity-relative locomotion and arbitrary
 //! surface normals. Coordinate anchors and query budgets are independent of voxels.
+use crate::math::dot;
+use crate::math::norm;
 use crate::{Origin, gravity, gravity_field::GravityField};
 
 type Vector = [f64; 3];
-fn dot(a: Vector, b: Vector) -> f64 {
-    a.into_iter().zip(b).map(|(x, y)| x * y).sum()
-}
-fn norm(v: Vector) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
-}
 fn add(a: &mut Vector, b: Vector) {
     for k in 0..3 {
         a[k] += b[k];

@@ -758,13 +758,6 @@ fn positive(x: f64) -> bool {
 fn finite(v: [f64; 3]) -> bool {
     v.into_iter().all(f64::is_finite)
 }
-fn sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn norm(v: [f64; 3]) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
-}
-
 /// Static collision response and limits, applied per particle per fluid substep.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ContactConfig {
@@ -1315,4 +1308,6 @@ pub use droplet_gas_evaporation::{SpatialVaporExchangeReport, SpatialVaporTransp
 
 #[path = "liquid/droplet_optics.rs"]
 mod droplet_optics;
+use crate::math::norm;
+use crate::math::sub;
 pub use droplet_optics::{DirectionalScatteringLight, DropletExtinctionGrid};

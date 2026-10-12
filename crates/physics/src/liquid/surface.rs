@@ -1,5 +1,6 @@
 //! Bounded marching-tetrahedra reconstruction of the particle volume fraction field.
 use super::{Error, Liquid, finite, positive, sub};
+use crate::math::cross;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct SurfaceConfig {
@@ -242,11 +243,4 @@ impl Liquid {
             checks,
         })
     }
-}
-fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
 }

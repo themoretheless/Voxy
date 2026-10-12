@@ -2,6 +2,9 @@
 //! Gravity uses kick-drift-kick splitting; during each drift, contacts are solved
 //! at their analytic time of impact. Use a fixed step small enough for the orbit.
 use crate::gravity::{Body, Error as GravityError, Gravity};
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Sphere {
@@ -51,19 +54,6 @@ pub struct StepReport {
     pub contacts: usize,
 }
 
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a.into_iter().zip(b).map(|(x, y)| x * y).sum()
-}
-fn sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    std::array::from_fn(|k| a[k] - b[k])
-}
-fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
 fn finite(spheres: &[Sphere]) -> bool {
     spheres.iter().all(|s| {
         s.body

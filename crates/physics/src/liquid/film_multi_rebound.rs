@@ -1,14 +1,12 @@
 //! Bounded sequential finite-radius impacts with a stationary triangle substrate.
 use super::{FilmRebound, FilmReboundReport, Liquid, finite, sub};
+use crate::math::dot;
 use crate::surface_film::SurfaceFilm;
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct FilmMultiReboundReport {
     /// Counts particles that received at least one impact, with summed ledgers.
     pub rebound: FilmReboundReport,
     pub contacts: usize,
-}
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a.iter().zip(b).map(|(a, b)| a * b).sum()
 }
 impl Liquid {
     /// Resweeps every reflected path remainder until no closing contact remains.

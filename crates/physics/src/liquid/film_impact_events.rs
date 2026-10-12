@@ -3,6 +3,7 @@ use super::{
     DepositingImpact, DepositingImpactReport, DropletSplit, ExchangeTotals, FilmCapture,
     FilmMixtureCapture, ImpactSprayReport, Liquid, finite, norm, positive, sub,
 };
+use crate::math::dot;
 use crate::surface_film::FilmMixture;
 #[derive(Clone, Copy, Debug)]
 pub struct FilmImpactControl {
@@ -66,9 +67,6 @@ struct Path {
     radius: f64,
     contacts: usize,
     accelerated: bool,
-}
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a.iter().zip(b).map(|(a, b)| a * b).sum()
 }
 fn ballistic_end(p: super::Particle, a: [f64; 3], dt: f64) -> [f64; 3] {
     std::array::from_fn(|k| p.position[k] + p.velocity[k] * dt + 0.5 * a[k] * dt * dt)

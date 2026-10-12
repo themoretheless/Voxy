@@ -3,26 +3,14 @@ use super::{
     contact::{closest, safe_path, sphere_in_range},
     dual::{D, cross as dcross, dot as ddot, sub as dsub},
 };
+use crate::math::add;
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 use std::collections::{BTreeMap, BTreeSet};
 pub type Point = [f64; 3];
-fn add(a: Point, b: Point) -> Point {
-    std::array::from_fn(|i| a[i] + b[i])
-}
-fn sub(a: Point, b: Point) -> Point {
-    std::array::from_fn(|i| a[i] - b[i])
-}
 fn mul(a: Point, s: f64) -> Point {
     a.map(|v| v * s)
-}
-fn dot(a: Point, b: Point) -> f64 {
-    a.into_iter().zip(b).map(|(a, b)| a * b).sum()
-}
-fn cross(a: Point, b: Point) -> Point {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
 }
 fn finite(p: Point) -> bool {
     p.iter().all(|v| v.is_finite())

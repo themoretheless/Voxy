@@ -1,24 +1,14 @@
 //! Isolated binary: monopole + permanent quadrupoles + constant-time-lag tides.
 //! In the barycentric rest frame, spin/orbit reactions conserve total angular
 //! momentum. Dissipative mechanical work is deposited as heat in each body.
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::norm as length;
 use crate::{
     astrophysics::{Error, OrbitalState},
     astrophysics_spin::Spin,
 };
 type Vector = [f64; 3];
-fn dot(a: Vector, b: Vector) -> f64 {
-    a.into_iter().zip(b).map(|(x, y)| x * y).sum()
-}
-fn cross(a: Vector, b: Vector) -> Vector {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-fn length(v: Vector) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
-}
 fn matrix_vector(matrix: [[f64; 3]; 3], v: Vector) -> Vector {
     matrix.map(|row| dot(row, v))
 }

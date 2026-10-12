@@ -1,5 +1,6 @@
 //! Constant-acceleration sphere sweep: quadratic faces and quartic edge/vertex contacts.
 use super::{SphereFilmHit, SurfaceFilm, dot, norm, sub};
+use crate::math::cross;
 fn evaluate(c: &[f64], t: f64) -> f64 {
     c.iter().rev().fold(0.0, |v, c| v * t + c)
 }
@@ -91,13 +92,6 @@ fn sphere_roots(w: [f64; 3], d: [f64; 3], q: [f64; 3], r: f64) -> Result<Vec<f64
         2.0 * dot(d, q),
         dot(q, q),
     ])
-}
-fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
 }
 fn inside(p: [f64; 3], tri: &[[f64; 3]; 3], n: [f64; 3]) -> bool {
     (0..3).all(|k| {

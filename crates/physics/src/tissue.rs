@@ -3,27 +3,15 @@
 use crate::strand::SphereCollider;
 #[path = "tissue_geometry.rs"]
 mod geometry;
+use crate::math::add;
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 pub use geometry::ellipsoid;
 // Conventional scalar constraint notation follows the XPBD equations.
 type V = [f64; 3];
-fn add(a: V, b: V) -> V {
-    std::array::from_fn(|i| a[i] + b[i])
-}
-fn sub(a: V, b: V) -> V {
-    std::array::from_fn(|i| a[i] - b[i])
-}
 fn mul(a: V, s: f64) -> V {
     a.map(|v| v * s)
-}
-fn dot(a: V, b: V) -> f64 {
-    (0..3).map(|i| a[i] * b[i]).sum()
-}
-fn cross(a: V, b: V) -> V {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
 }
 fn finite(a: V) -> bool {
     a.iter().all(|v| v.is_finite())
