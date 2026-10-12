@@ -2687,6 +2687,7 @@ dependencies = [
  "serde",
  "serde_json",
  "voxy_assets",
+ "voxy_core",
  "voxy_input",
  "voxy_navigation",
  "voxy_time",

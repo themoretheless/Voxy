@@ -4,8 +4,7 @@
 use voxy_render::ComputeError;
 use wgpu::util::DeviceExt;
 
-pub const PADDED_VOLUME: usize = 34 * 34 * 34;
-pub const CHUNK_VOLUME: usize = 32 * 32 * 32;
+pub use voxy_core::{CHUNK_VOLUME, PADDED_VOLUME};
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]

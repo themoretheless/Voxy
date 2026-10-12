@@ -2931,8 +2931,8 @@ impl NormalCache {
 // Weld coincident OBJ seam vertices for area-weighted smooth shading. Rebuilt
 // after every geometry update, including morphs and displaced liquid layers.
 pub(crate) fn smooth_normals(mesh: &SceneMesh) -> Vec<[f32; 3]> {
-    let mut lookup: std::collections::HashMap<(u64, u32), usize, WeldHasherBuilder> =
-        std::collections::HashMap::with_capacity_and_hasher(mesh.vertices.len(), WeldHasherBuilder);
+    let mut lookup: std::collections::HashMap<(u64, u32), usize, voxy_core::SeededFastHashBuilder> =
+        std::collections::HashMap::with_capacity_and_hasher(mesh.vertices.len(), WELD_HASHER);
     let mut mapping = Vec::with_capacity(mesh.vertices.len());
     let mut sums = Vec::<glam::Vec3>::with_capacity(mesh.vertices.len());
     for vertex in &mesh.vertices {
@@ -2964,51 +2964,11 @@ pub(crate) fn smooth_normals(mesh: &SceneMesh) -> Vec<[f32; 3]> {
     mapping.iter().map(|&i| sums[i].to_array()).collect()
 }
 
-/// Deterministic multiply/xor-shift hasher for the welded 96-bit position key.
-///
-/// The randomized `SipHash` default dominated per-frame normal welding on large
-/// meshes; the fold below mixes the float bit patterns well enough for open
-/// addressing and never affects results, only the lookup cost.
-#[derive(Clone, Copy, Debug, Default)]
-struct WeldHasherBuilder;
-
-impl std::hash::BuildHasher for WeldHasherBuilder {
-    type Hasher = WeldHasher;
-    fn build_hasher(&self) -> WeldHasher {
-        WeldHasher(0x9E37_79B9_7F4A_7C15)
-    }
-}
-
-#[derive(Debug)]
-struct WeldHasher(u64);
-
-impl WeldHasher {
-    fn mix(&mut self, value: u64) {
-        let mut x = (self.0 ^ value).wrapping_mul(0xBF58_476D_1CE4_E5B9);
-        x ^= x >> 31;
-        self.0 = x;
-    }
-}
-
-impl std::hash::Hasher for WeldHasher {
-    fn finish(&self) -> u64 {
-        let x = self.0.wrapping_mul(0x94D0_49BB_1331_11EB);
-        x ^ (x >> 29)
-    }
-    fn write(&mut self, bytes: &[u8]) {
-        for chunk in bytes.chunks(8) {
-            let mut word = [0_u8; 8];
-            word[..chunk.len()].copy_from_slice(chunk);
-            self.mix(u64::from_le_bytes(word));
-        }
-    }
-    fn write_u32(&mut self, value: u32) {
-        self.mix(u64::from(value));
-    }
-    fn write_u64(&mut self, value: u64) {
-        self.mix(value);
-    }
-}
+/// Seeded [`voxy_core::FastHasher`] for the welded 96-bit position key; the
+/// randomized `SipHash` default dominated per-frame normal welding on large
+/// meshes, and the deterministic fold never affects results, only lookup cost.
+const WELD_HASHER: voxy_core::SeededFastHashBuilder =
+    voxy_core::SeededFastHashBuilder(0x9E37_79B9_7F4A_7C15);
 
 #[cfg(test)]
 mod weld_hasher_tests {

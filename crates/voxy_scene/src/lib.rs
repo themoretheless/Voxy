@@ -167,45 +167,8 @@ struct Node {
 /// multiply/xor fold in [`FastHasher`] replaces the randomized `SipHash` default
 /// that dominated every component lookup on the fixed-tick paths.
 pub(crate) type ComponentMap = HashMap<TypeId, Component, FastHashBuilder>;
-pub(crate) type FastHashBuilder = std::hash::BuildHasherDefault<FastHasher>;
+pub(crate) use voxy_core::FastHashBuilder;
 
-/// Deterministic multiply/xor-shift hasher for `TypeId` and [`NodeId`] keys.
-#[derive(Debug, Default)]
-pub(crate) struct FastHasher(u64);
-
-impl FastHasher {
-    fn mix(&mut self, value: u64) {
-        let mut x = (self.0 ^ value).wrapping_mul(0xBF58_476D_1CE4_E5B9);
-        x ^= x >> 31;
-        self.0 = x;
-    }
-}
-
-impl std::hash::Hasher for FastHasher {
-    fn finish(&self) -> u64 {
-        let x = self.0.wrapping_mul(0x94D0_49BB_1331_11EB);
-        x ^ (x >> 29)
-    }
-    fn write(&mut self, bytes: &[u8]) {
-        for chunk in bytes.chunks(8) {
-            let mut word = [0_u8; 8];
-            word[..chunk.len()].copy_from_slice(chunk);
-            self.mix(u64::from_le_bytes(word));
-        }
-    }
-    fn write_u64(&mut self, value: u64) {
-        self.mix(value);
-    }
-    fn write_usize(&mut self, value: usize) {
-        self.mix(value as u64);
-    }
-    fn write_u128(&mut self, value: u128) {
-        let [low, high] = [value & u128::from(u64::MAX), value >> 64]
-            .map(|half| u64::try_from(half).unwrap_or(0));
-        self.mix(low);
-        self.mix(high);
-    }
-}
 #[derive(Debug)]
 struct Slot {
     generation: u64,
