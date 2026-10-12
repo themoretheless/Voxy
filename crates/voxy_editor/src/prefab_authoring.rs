@@ -56,7 +56,8 @@ impl AuthoringProject {
     pub(super) fn liquid_runtime(
         &self,
         scene: &voxy_scene::SceneGraph,
-    ) -> Result<Option<(voxy_gameplay::SceneLiquidRuntime, Vec<Option<[f32; 4]>>)>, String> {
+    ) -> Result<Option<(voxy_gameplay::SceneLiquidRuntime, Vec<Option<[f32; 4]>>)>, EditorError>
+    {
         #[derive(serde::Deserialize)]
         #[serde(deny_unknown_fields)]
         struct MaterialFile {
@@ -82,14 +83,11 @@ impl AuthoringProject {
             return Err("liquid material budget exceeded".into());
         }
         let mut inputs = ImportInputs::new(129, 128 * 65536 + 65536);
-        let locations = self
-            .project_locations(&mut inputs)
-            .map_err(|e| e.to_string())?;
+        let locations = self.project_locations(&mut inputs)?;
         let mut materials = Vec::new();
         let mut optics = Vec::new();
         for name in names {
-            let source = Self::resolve_project_input(&name, locations.as_ref())
-                .map_err(|e| e.to_string())?;
+            let source = Self::resolve_project_input(&name, locations.as_ref())?;
             let bytes = inputs
                 .read(source.observation_id(), |id, limit| {
                     self.provider.read(id, limit.min(65536))
@@ -102,7 +100,7 @@ impl AuthoringProject {
                     || value[..3].iter().any(|v| *v < 0.)
                     || value[3] < 1.)
             {
-                return Err(format!("invalid liquid optics: {name}"));
+                return Err(format!("invalid liquid optics: {name}").into());
             }
             optics.push(m.optics);
             materials.push((
@@ -133,7 +131,7 @@ impl AuthoringProject {
             128,
         )
         .map(|runtime| Some((runtime, admitted.value().1.clone())))
-        .map_err(|e| e.to_string())
+        .map_err(EditorError::from)
     }
 
     pub(super) fn worker_project(&self) -> Result<Self, EditorError> {

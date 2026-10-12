@@ -37,11 +37,8 @@ impl App {
                 &self.camera,
                 scene_limits::OBJECTS,
                 render_world,
-            )
-            .map_err(|e| e.to_string())?;
-            self.extraction
-                .refresh_scoped_with(access, render_world)
-                .map_err(|e| e.to_string())?;
+            )?;
+            self.extraction.refresh_scoped_with(access, render_world)?;
             self.frame_styles = Some(styles);
             Ok::<(), EditorError>(())
         })?;
