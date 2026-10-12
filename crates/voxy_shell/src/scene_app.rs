@@ -497,10 +497,12 @@ impl SceneApp {
         path: impl AsRef<std::path::Path>,
         selected: Vec<String>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        self.rush = Some(
-            crate::scene_rush::SceneRush::new(&mut self.graph, self.object, path, selected)
-                .map_err(std::io::Error::other)?,
-        );
+        self.rush = Some(crate::scene_rush::SceneRush::new(
+            &mut self.graph,
+            self.object,
+            path,
+            selected,
+        )?);
         Ok(self)
     }
 
@@ -1061,15 +1063,13 @@ impl SceneApp {
                 if self.rush_smoke {
                     rush.smoke_input(self.frames);
                 }
-                rush.begin_frame(&mut self.graph)
-                    .map_err(std::io::Error::other)?;
+                rush.begin_frame(&mut self.graph)?;
             }
             let fixed_seconds = self.frame_loop.fixed_seconds();
             for _ in 0..frame_work.fixed.steps {
                 self.behaviors.fixed_update(&mut self.graph, fixed_seconds);
                 if let Some(rush) = &mut self.rush {
-                    rush.fixed_update(&mut self.graph, fixed_seconds)
-                        .map_err(std::io::Error::other)?;
+                    rush.fixed_update(&mut self.graph, fixed_seconds)?;
                 }
             }
             self.behaviors.update(&mut self.graph, delta);
@@ -1823,8 +1823,7 @@ impl SceneApp {
                 }
                 if self.rush_smoke {
                     let rush = self.rush.as_mut().ok_or("missing Rush smoke runtime")?;
-                    rush.verify_smoke(&self.graph)
-                        .map_err(std::io::Error::other)?;
+                    rush.verify_smoke(&self.graph)?;
                     if r.script_transforms.len() != 2 {
                         return Err("spawned Rush cube was not submitted for rendering".into());
                     }

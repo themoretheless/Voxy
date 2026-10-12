@@ -32,36 +32,64 @@ struct PanelKey {
     selected_message: usize,
     line_offset: usize,
 }
+/// Why the rush scene could not start, step or verify (plan step C3): each
+/// variant keeps the typed source instead of flattening it to a string.
+#[derive(Debug, thiserror::Error)]
+pub enum RushError {
+    /// The script manager reports its failures as text.
+    #[error("rush script: {0}")]
+    Script(String),
+    #[error("rush scene graph: {0}")]
+    SceneGraph(#[from] voxy_scene::SceneGraphError),
+    #[error("rush scene mutation: {0}")]
+    Mutation(#[from] voxy_scene::MutationError),
+    #[error("rush input: {0}")]
+    Input(#[from] voxy_input::InputError),
+    #[error("rush character: {0}")]
+    Character(#[from] physics::CharacterError<std::convert::Infallible>),
+    #[error("Rush did not receive real physics contacts")]
+    NoContacts,
+    #[error("Rush gameplay smoke failed: {transform:?}, errors={failed}")]
+    Smoke {
+        transform: voxy_scene::Transform,
+        failed: bool,
+    },
+}
+
+impl From<String> for RushError {
+    fn from(message: String) -> Self {
+        Self::Script(message)
+    }
+}
+
 impl SceneRush {
     pub fn new(
         scene: &mut SceneGraph,
         owner: NodeId,
         path: impl AsRef<std::path::Path>,
         selected: Vec<String>,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, RushError> {
         let mut scripts = ScriptManager::new(1024, 1024);
         scripts.attach(scene, owner, path, selected)?;
-        let initial = scene.local(owner).map_err(|e| e.to_string())?.translation;
+        let initial = scene.local(owner)?.translation;
         let mut input = InputMap::new(3, 4);
         for (name, keys) in [
             ("move", vec![(KeyCode::KeyD, 1.0), (KeyCode::KeyA, -1.0)]),
             ("spawn", vec![(KeyCode::KeyF, 1.0)]),
             ("reward", vec![(KeyCode::KeyE, 1.0)]),
         ] {
-            input
-                .bind(
-                    name,
-                    keys.into_iter()
-                        .map(|(key, scale)| Binding {
-                            control: Control {
-                                device: 0,
-                                code: key as u32,
-                            },
-                            scale,
-                        })
-                        .collect(),
-                )
-                .map_err(|e| e.to_string())?;
+            input.bind(
+                name,
+                keys.into_iter()
+                    .map(|(key, scale)| Binding {
+                        control: Control {
+                            device: 0,
+                            code: key as u32,
+                        },
+                        scale,
+                    })
+                    .collect(),
+            )?;
         }
         Ok(Self {
             scripts,
@@ -95,20 +123,18 @@ impl SceneRush {
             panel_cache: None,
         })
     }
-    pub fn enable_character(&mut self, scene: &mut SceneGraph) -> Result<(), String> {
+    pub fn enable_character(&mut self, scene: &mut SceneGraph) -> Result<(), RushError> {
         if self.physics_enabled {
             return Ok(());
         }
-        scene
-            .apply_atomic(&[voxy_scene::SceneMutation::SpawnNamed(
-                "floor".into(),
-                voxy_scene::Transform {
-                    translation: glam::Vec3::new(0.0, -1.0, 0.0),
-                    scale: glam::Vec3::new(14.0, 1.0, 10.0),
-                    ..Default::default()
-                },
-            )])
-            .map_err(|e| e.to_string())?;
+        scene.apply_atomic(&[voxy_scene::SceneMutation::SpawnNamed(
+            "floor".into(),
+            voxy_scene::Transform {
+                translation: glam::Vec3::new(0.0, -1.0, 0.0),
+                scale: glam::Vec3::new(14.0, 1.0, 10.0),
+                ..Default::default()
+            },
+        )])?;
         self.physics_enabled = true;
         Ok(())
     }
@@ -150,7 +176,7 @@ impl SceneRush {
             );
         }
     }
-    pub fn begin_frame(&mut self, scene: &mut SceneGraph) -> Result<(), String> {
+    pub fn begin_frame(&mut self, scene: &mut SceneGraph) -> Result<(), RushError> {
         self.scripts
             .set_input(&self.input, &["move", "spawn", "reward"])?;
         if self.input.state("reward").is_some_and(|s| s.pressed) {
@@ -165,7 +191,7 @@ impl SceneRush {
         }
         Ok(())
     }
-    pub fn fixed_update(&mut self, scene: &mut SceneGraph, delta: f64) -> Result<(), String> {
+    pub fn fixed_update(&mut self, scene: &mut SceneGraph, delta: f64) -> Result<(), RushError> {
         self.scripts.fixed_update(scene, delta)?;
         if !self.physics_enabled {
             return Ok(());
@@ -217,8 +243,7 @@ impl SceneRush {
                 step_height: 0.0,
                 ..Default::default()
             },
-        )
-        .map_err(|e| e.to_string())?;
+        )?;
         let origin = [
             candidate.body.anchor.x as f64,
             candidate.body.anchor.y as f64,
@@ -227,9 +252,7 @@ impl SceneRush {
         transform.translation = glam::Vec3::from_array(std::array::from_fn(|i| {
             (origin[i] + (candidate.body.min[i] + candidate.body.max[i]) * 0.5) as f32
         }));
-        scene
-            .apply_atomic(&[voxy_scene::SceneMutation::SetLocal(self.owner, transform)])
-            .map_err(|e| e.to_string())?;
+        scene.apply_atomic(&[voxy_scene::SceneMutation::SetLocal(self.owner, transform)])?;
         self.character = candidate;
         self.contacts += step.contacts.len();
         self.scripts
@@ -311,11 +334,11 @@ impl SceneRush {
             _ => {}
         }
     }
-    pub fn verify_smoke(&mut self, scene: &SceneGraph) -> Result<(), String> {
-        let transform = scene.local(self.owner).map_err(|e| e.to_string())?;
+    pub fn verify_smoke(&mut self, scene: &SceneGraph) -> Result<(), RushError> {
+        let transform = scene.local(self.owner)?;
         let state = self.scripts.save(self.owner)?;
         if !matches!(state.get("contacts"),Some(StateValue::Number(n)) if *n>0.0) {
-            return Err("Rush did not receive real physics contacts".into());
+            return Err(RushError::NoContacts);
         }
         if self.failed
             || self.scripts.paused(self.owner)
@@ -324,10 +347,10 @@ impl SceneRush {
             || transform.scale != glam::Vec3::splat(2.0)
             || scene.find_named("crate").count() != 1
         {
-            return Err(format!(
-                "Rush gameplay smoke failed: {transform:?}, errors={}",
-                self.failed
-            ));
+            return Err(RushError::Smoke {
+                transform,
+                failed: self.failed,
+            });
         }
         Ok(())
     }

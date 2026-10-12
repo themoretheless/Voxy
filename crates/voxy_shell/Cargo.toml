@@ -7,6 +7,7 @@ publish = false
 description = "Native platform shell (winit ApplicationHandler, scene input, touch, rush scene) shared by the desktop binary, mobile entry point and examples"
 
 [dependencies]
+thiserror = "2"
 voxy_demos = { path = "../voxy_demos" }
 voxy_input = { path = "../voxy_input" }
 physics = { path = "../physics" }
