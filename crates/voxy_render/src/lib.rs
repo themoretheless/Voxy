@@ -2,15 +2,24 @@
 
 mod accumulation;
 pub use accumulation::{RadianceAccumulationFrame, RadianceAccumulator};
-mod backend;
 mod joint_contact_dot;
-pub use joint_contact_dot::{JointContactDotInput,JointDotError,JOINT_CONTACT_DOT_SHADER,JOINT_CONTACT_NORMALIZE_SHADER,JOINT_CONTACT_NORMALIZE_SERIAL_SHADER};
-pub use joint_contact_dot::{ResidentContactQrInput,ResidentContactQrOutput,JOINT_CONTACT_QR_SHADER};
-pub use joint_contact_dot::{ResidentContactEqualityInput,ResidentContactEqualityOutput,ValidatedResidentContactEquality,ResidentContactQrPrefix,JOINT_CONTACT_EQUALITY_SHADER};
+pub use joint_contact_dot::{
+    JOINT_CONTACT_DOT_SHADER, JOINT_CONTACT_NORMALIZE_SERIAL_SHADER,
+    JOINT_CONTACT_NORMALIZE_SHADER, JointContactDotInput, JointDotError,
+};
+pub use joint_contact_dot::{
+    JOINT_CONTACT_EQUALITY_SHADER, ResidentContactEqualityInput, ResidentContactEqualityOutput,
+    ResidentContactQrPrefix, ValidatedResidentContactEquality,
+};
+pub use joint_contact_dot::{
+    JOINT_CONTACT_QR_SHADER, ResidentContactQrInput, ResidentContactQrOutput,
+};
 mod banded_solve;
 mod banded_transfer;
+pub use banded_solve::{
+    BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
+};
 pub use banded_transfer::BandedTransferProgram;
-pub use banded_solve::{BandedSystem,BandedSolveInput,BandedSolveError,BandedPackedReference,BANDED_SOLVE_SHADER};
 mod blit;
 mod camera;
 mod planar_capture;
@@ -22,16 +31,14 @@ pub use planar_capture::{
 mod camera_lod;
 pub use camera_lod::SceneLodBounds;
 mod certified_lod;
-mod compute;
-mod compute_memory;
-pub use compute_memory::{
-    ComputeMemoryBudget, ComputeMemoryStats, ComputeStorage, PendingComputeRetirement,
-};
-mod compute_readback;
 pub use certified_lod::{
     CertifiedLodError, CertifiedLodIndexSet, CertifiedLodSubdivisionVariant, CertifiedLodVariant,
 };
-pub use compute_readback::{ComputeReadbackLimits, ComputeReadbackPool, ComputeReadbackStats};
+pub use voxy_gpu_core::{
+    ComputeMemoryBudget, ComputeMemoryStats, ComputeStorage, GpuIndirectMesh,
+    ManagedBufferDescriptor, PendingComputeRetirement,
+};
+pub use voxy_gpu_core::{ComputeReadbackLimits, ComputeReadbackPool, ComputeReadbackStats};
 mod depth_motion;
 mod depth_sample;
 mod direct_lighting;
@@ -106,7 +113,6 @@ mod surface_lighting;
 mod surface_reflection;
 mod xr;
 
-pub use backend::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
 pub use blit::{ProcessedColorTarget, StorageColorBlit, StorageColorView, TextureBlit};
 pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
 pub use model::{
@@ -114,10 +120,10 @@ pub use model::{
     ModelTexture,
 };
 pub use renderer::{
-    CameraView, GpuIndirectMesh, GpuQuad, RenderOutcome, Renderer, RendererError,
-    SkinnedMotionOutput, SurfaceState,
+    CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };
 pub use skinned::{SkinnedMesh, SkinnedMeshError, SkinnedUploadError, SkinnedVertex};
+pub use voxy_gpu_core::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
 mod skinned_lod;
 pub use skinned_lod::{PreparedSkinnedLod, SkinnedLodError, SkinnedLodMesh};
 mod skinned_lod_gpu;
@@ -133,7 +139,7 @@ pub use scene::{
 
 pub use camera::{InvalidSceneCamera, SceneCamera, SceneProjection};
 
-pub use compute::{
+pub use voxy_gpu_core::{
     ComputeDispatch, ComputeError, ComputeJob, ComputeProgram, PendingComputeReadback,
 };
 
@@ -291,4 +297,6 @@ pub use surface_rigid_skinning::SurfaceRigidSkinWeight;
 mod surface_normal_transport;
 
 mod fiber_surface;
-pub use fiber_surface::{FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer, FIBER_SURFACE_SHADER};
+pub use fiber_surface::{
+    FIBER_SURFACE_SHADER, FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer,
+};

@@ -570,7 +570,7 @@ fn animated_lod_views_budget_and_cpu_fallback() {
             Arc::new(mesh.clone()),
             vec![voxy_render::CertifiedLodVariant {
                 indices,
-                source_to_variant: vec![witness.clone(), witness.clone()],
+                source_to_variant: vec![witness, witness],
                 variant_to_source: vec![witness],
             }],
         )
@@ -972,7 +972,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     assert!(Arc::ptr_eq(&runtime.owners[&owner].model, &model));
     assert_eq!(runtime.owners[&owner].ticks, 0);
     assert_eq!(
-        runtime.texture(owner, 0).unwrap() as *const _,
+        std::ptr::from_ref(runtime.texture(owner, 0).unwrap()),
         weak_red.as_ptr()
     );
     assert!(weak_storage.upgrade().is_some());
@@ -991,7 +991,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     );
     assert!(Arc::ptr_eq(&runtime.owners[&owner].model, &revised));
     assert_eq!(
-        runtime.texture(owner, 0).unwrap() as *const _,
+        std::ptr::from_ref(runtime.texture(owner, 0).unwrap()),
         Arc::as_ptr(&blue)
     );
     assert!(weak_storage.upgrade().is_none());

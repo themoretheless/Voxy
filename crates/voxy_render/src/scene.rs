@@ -82,42 +82,12 @@ impl std::fmt::Display for SceneShaderError {
     }
 }
 impl std::error::Error for SceneShaderError {}
-use bytemuck::{Pod, Zeroable};
 use glam::Mat4;
 
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
-pub struct SceneVertex {
-    pub position: [f32; 3],
-    pub uv: [f32; 2],
-    /// Linear RGBA, with straight alpha.
-    pub color: [f32; 4],
-}
+mod geometry;
+pub(crate) use geometry::{NormalCache, smooth_normals};
+pub use geometry::{SceneError, SceneMesh, SceneVertex};
 
-#[derive(Clone, Debug)]
-pub struct SceneMesh {
-    vertices: Vec<SceneVertex>,
-    indices: Vec<u32>,
-    // Private immutable buffers preserve the constructor's validation.
-    validated: bool,
-    material_coordinates: Option<Vec<[f32; 3]>>,
-    authored_normals: Option<Vec<[f32; 3]>>,
-    material_parameters: [f32; 4],
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum SceneError {
-    InvalidGeometry,
-    NonFiniteVertex,
-    InvalidIndex,
-    InvalidTexture,
-    InvalidTransform,
-    GeometryCapacityExceeded,
-    MemoryBudget,
-    MultisamplingNotEnabled,
-    TimestampQueriesNotEnabled,
-    DeviceMismatch,
-}
 fn scene_memory_error(error: crate::ComputeError) -> SceneError {
     match error {
         crate::ComputeError::MemoryBudget => SceneError::MemoryBudget,
@@ -129,7 +99,7 @@ fn managed_scene_indices(
     indices: &[u32],
 ) -> Result<std::sync::Arc<crate::ComputeStorage>, SceneError> {
     let [buffer] = crate::ComputeMemoryBudget::for_device(device)
-        .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+        .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
             label: "scene LOD indices",
             size: indices.len() as u64 * 4,
             contents: Some(bytemuck::cast_slice(indices)),
@@ -138,257 +108,6 @@ fn managed_scene_indices(
         .map_err(scene_memory_error)?;
     Ok(std::sync::Arc::new(buffer))
 }
-impl std::fmt::Display for SceneError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene resource error: {self:?}")
-    }
-}
-impl std::error::Error for SceneError {}
-
-impl SceneMesh {
-    #[must_use]
-    pub fn vertices(&self) -> &[SceneVertex] {
-        &self.vertices
-    }
-    #[must_use]
-    pub fn indices(&self) -> &[u32] {
-        &self.indices
-    }
-    /// Explicit normal stream, including zero normals that request geometric
-    /// flat shading in supporting scene shaders.
-    #[must_use]
-    pub fn authored_normals(&self) -> Option<&[[f32; 3]]> {
-        self.authored_normals.as_deref()
-    }
-    /// Split a shader-tagged triangle layer, preserving vertex IDs, bind-space
-    /// coordinates and optical parameters in both outputs. Returns None if absent.
-    /// # Errors
-    /// Rejects nonfinite tags, mixed-tag faces and a layer without an opaque substrate.
-    // UV tags are exact shader identifiers, rather than measured coordinates.
-    #[allow(clippy::float_cmp)]
-    pub fn split_material_layer(
-        &self,
-        tag: f32,
-        replacement: f32,
-    ) -> Result<Option<(Self, Self)>, SceneError> {
-        if !tag.is_finite() || !replacement.is_finite() {
-            return Err(SceneError::NonFiniteVertex);
-        }
-        let mut layer = Vec::new();
-        let mut opaque = Vec::new();
-        for face in self.indices.chunks_exact(3) {
-            let count = face
-                .iter()
-                .filter(|&&i| self.vertices[i as usize].uv[0] == tag)
-                .count();
-            match count {
-                0 => opaque.extend_from_slice(face),
-                3 => layer.extend_from_slice(face),
-                _ => return Err(SceneError::InvalidGeometry),
-            }
-        }
-        if layer.is_empty() {
-            return Ok(None);
-        }
-        if opaque.is_empty() {
-            return Err(SceneError::InvalidGeometry);
-        }
-        let mut body = self.clone();
-        body.indices = opaque;
-        let mut film = self.clone();
-        film.indices = layer;
-        for vertex in &mut film.vertices {
-            if vertex.uv[0] == tag {
-                vertex.uv[0] = replacement;
-            }
-        }
-        Ok(Some((body, film)))
-    }
-
-    /// # Errors
-    /// Rejects empty/non-triangular geometry, non-finite attributes and invalid indices.
-    pub fn new(vertices: Vec<SceneVertex>, indices: Vec<u32>) -> Result<Self, SceneError> {
-        Self::validate(&vertices, &indices)?;
-        Ok(Self {
-            vertices,
-            indices,
-            validated: true,
-            material_coordinates: None,
-            authored_normals: None,
-            material_parameters: [1.333, 0.2, 0.08, 0.04],
-        })
-    }
-    /// Preserve authored/deformed normals instead of regenerating welded
-    /// geometry normals. Rejects mismatched counts and nonfinite values.
-    pub fn with_normals(mut self, normals: Vec<[f32; 3]>) -> Result<Self, SceneError> {
-        if normals.len() != self.vertices.len() {
-            return Err(SceneError::InvalidGeometry);
-        }
-        if normals.iter().flatten().any(|value| !value.is_finite()) {
-            return Err(SceneError::NonFiniteVertex);
-        }
-        self.authored_normals = Some(normals);
-        Ok(self)
-    }
-    /// Four per-draw shader values supplied at vertex location 4. Existing
-    /// shaders may ignore this stream. Rejects nonfinite values before mutation.
-    /// # Errors
-    /// Rejects nonfinite parameters with `SceneError::NonFiniteVertex`.
-    pub fn with_material_parameters(mut self, values: [f32; 4]) -> Result<Self, SceneError> {
-        if values.iter().any(|v| !v.is_finite()) {
-            return Err(SceneError::NonFiniteVertex);
-        }
-        self.material_parameters = values;
-        Ok(self)
-    }
-    /// Bind coordinates for procedural materials at vertex location 5.
-    /// # Errors
-    /// Rejects a mismatched count or nonfinite coordinates.
-    pub fn with_material_coordinates(
-        mut self,
-        coordinates: Vec<[f32; 3]>,
-    ) -> Result<Self, SceneError> {
-        if coordinates.len() != self.vertices.len() {
-            return Err(SceneError::InvalidGeometry);
-        }
-        if coordinates.iter().flatten().any(|v| !v.is_finite()) {
-            return Err(SceneError::NonFiniteVertex);
-        }
-        self.material_coordinates = Some(coordinates);
-        Ok(self)
-    }
-    /// Canonical procedural material coordinates, when explicitly provided.
-    #[must_use]
-    pub fn explicit_material_coordinates(&self) -> Option<&[[f32; 3]]> {
-        self.material_coordinates.as_deref()
-    }
-    /// Prepares identical default normal and coordinate streams on a worker thread.
-    /// This avoids geometric welding and allocations during native frame submission.
-    #[must_use]
-    pub fn with_prepared_upload_streams(mut self) -> Self {
-        if self.authored_normals.is_none() { self.authored_normals = Some(smooth_normals(&self)); }
-        if self.material_coordinates.is_none() {
-            self.material_coordinates = Some(self.vertices.iter().map(|v| v.position).collect());
-        }
-        self
-    }
-    fn material_coordinates(&self) -> std::borrow::Cow<'_, [[f32; 3]]> {
-        match &self.material_coordinates {
-            Some(coordinates) => std::borrow::Cow::Borrowed(coordinates),
-            None => std::borrow::Cow::Owned(self.vertices.iter().map(|v| v.position).collect()),
-        }
-    }
-    fn validate_for_upload(&self) -> Result<(), SceneError> {
-        if self.validated {
-            Ok(())
-        } else {
-            Self::validate(&self.vertices, &self.indices)
-        }
-    }
-
-    fn validate(vertices: &[SceneVertex], indices: &[u32]) -> Result<(), SceneError> {
-        if vertices.is_empty()
-            || indices.is_empty()
-            || !indices.len().is_multiple_of(3)
-            || u32::try_from(indices.len()).is_err()
-        {
-            return Err(SceneError::InvalidGeometry);
-        }
-        if vertices.iter().any(|v| {
-            !(v.position[0].is_finite()
-                && v.position[1].is_finite()
-                && v.position[2].is_finite()
-                && v.uv[0].is_finite()
-                && v.uv[1].is_finite()
-                && v.color[0].is_finite()
-                && v.color[1].is_finite()
-                && v.color[2].is_finite()
-                && v.color[3].is_finite())
-        }) {
-            return Err(SceneError::NonFiniteVertex);
-        }
-        if indices
-            .iter()
-            .any(|&i| usize::try_from(i).map_or(true, |i| i >= vertices.len()))
-        {
-            return Err(SceneError::InvalidIndex);
-        }
-        Ok(())
-    }
-
-    /// Stable triangle-centroid ordering for straight-alpha geometry.
-    /// Pass an affine model-to-view matrix, with the camera looking down -Z.
-    /// This does not resolve intersecting triangles or sort separate meshes.
-    /// # Errors
-    /// Rejects non-affine, singular, nonfinite or overflowing transforms without mutation.
-    pub fn sort_back_to_front(&mut self, local_to_view: Mat4) -> Result<(), SceneError> {
-        if !local_to_view.is_finite()
-            || local_to_view.row(3) != glam::Vec4::W
-            || !local_to_view.determinant().is_finite()
-            || local_to_view.determinant() == 0.0
-        {
-            return Err(SceneError::InvalidTransform);
-        }
-        let mut triangles = Vec::with_capacity(self.indices.len() / 3);
-        for ids in self.indices.chunks_exact(3) {
-            let depth = ids
-                .iter()
-                .map(|i| {
-                    local_to_view
-                        .transform_point3(glam::Vec3::from_array(
-                            self.vertices[*i as usize].position,
-                        ))
-                        .z
-                        / 3.0
-                })
-                .sum::<f32>();
-            if !depth.is_finite() {
-                return Err(SceneError::InvalidTransform);
-            }
-            triangles.push(([ids[0], ids[1], ids[2]], depth));
-        }
-        triangles.sort_by(|a, b| a.1.total_cmp(&b.1));
-        for (destination, (ids, _)) in self.indices.chunks_exact_mut(3).zip(triangles) {
-            destination.copy_from_slice(&ids);
-        }
-        Ok(())
-    }
-
-    /// Unit quad in XY, usable as a transformed sprite or 3D plane.
-    #[must_use]
-    pub fn quad(color: [f32; 4]) -> Self {
-        Self {
-            validated: color.iter().all(|component| component.is_finite()),
-            material_coordinates: None,
-            authored_normals: None,
-            material_parameters: [1.333, 0.2, 0.08, 0.04],
-            vertices: vec![
-                SceneVertex {
-                    position: [-0.5, -0.5, 0.0],
-                    uv: [0.0, 1.0],
-                    color,
-                },
-                SceneVertex {
-                    position: [0.5, -0.5, 0.0],
-                    uv: [1.0, 1.0],
-                    color,
-                },
-                SceneVertex {
-                    position: [0.5, 0.5, 0.0],
-                    uv: [1.0, 0.0],
-                    color,
-                },
-                SceneVertex {
-                    position: [-0.5, 0.5, 0.0],
-                    uv: [0.0, 0.0],
-                    color,
-                },
-            ],
-            indices: vec![0, 1, 2, 0, 2, 3],
-        }
-    }
-}
-
 /// Depth policy for ordinary geometry, ghost shells and revealed internal layers.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum SceneDepthMode {
@@ -414,11 +133,24 @@ pub struct SceneGeometry {
     vertex_capacity: usize,
     index_capacity: usize,
     depth_mode: SceneDepthMode,
-    opaque_shader: Option<(u64, wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::RenderPipeline)>,
+    opaque_shader: Option<(
+        u64,
+        wgpu::BindGroupLayout,
+        wgpu::RenderPipeline,
+        wgpu::RenderPipeline,
+    )>,
     partitioned_indices: bool,
     partition_cache: Vec<u32>,
-    /// OPTIMIZATION #41: Shadow dirty flag for lazy updates
-    shadow_dirty: bool,
+    /// Process-unique identity so shadow consumers can recognise the same allocation.
+    identity: u64,
+    /// Bumped on every GPU write of vertices or indices; part of the shadow key.
+    revision: u64,
+}
+
+static NEXT_GEOMETRY_IDENTITY: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+
+pub(crate) fn next_geometry_identity() -> u64 {
+    NEXT_GEOMETRY_IDENTITY.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
 }
 
 /// Additional resource owners publish with their geometry after one admission.
@@ -428,7 +160,9 @@ struct UploadedGeometryBatch {
 }
 
 impl SceneGeometry {
-    pub(crate) fn deformation_vertex_capacity(&self) -> usize { self.vertex_capacity }
+    pub(crate) fn deformation_vertex_capacity(&self) -> usize {
+        self.vertex_capacity
+    }
     pub(crate) fn deformation_normals(&self) -> &wgpu::Buffer {
         &self.normals
     }
@@ -444,21 +178,16 @@ impl SceneGeometry {
         pass.draw_indexed(0..self.index_count, 0, 0..1);
     }
 
-    /// OPTIMIZATION #41: Check if shadow needs recomputation
+    /// Identity and revision of the geometry's current GPU contents. Two equal keys
+    /// mean the same allocation with no vertex/index writes in between.
     #[must_use]
-    pub(crate) fn shadow_dirty(&self) -> bool {
-        self.shadow_dirty
+    pub(crate) fn shadow_key(&self) -> (u64, u64) {
+        (self.identity, self.revision)
     }
 
-    /// OPTIMIZATION #41: Mark geometry as needing shadow update
+    /// Records a GPU write of vertex or index data.
     pub(crate) fn mark_shadow_dirty(&mut self) {
-        self.shadow_dirty = true;
-    }
-
-    /// OPTIMIZATION #41: Mark geometry as static (skip shadow on next frame)
-    #[allow(dead_code)]
-    pub(crate) fn mark_shadow_clean(&mut self) {
-        self.shadow_dirty = false;
+        self.revision = self.revision.wrapping_add(1);
     }
 
     pub fn set_depth_mode(&mut self, mode: SceneDepthMode) {
@@ -481,24 +210,34 @@ impl SceneGeometry {
     /// the mesh topology is unchanged. A topology change restores the full mesh;
     /// callers must then install their new material partitions before drawing.
     /// Submit prior draws before updating the shared allocation.
-    pub fn update_shared_vertex_streams(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh) -> Result<(), SceneError> {
+    pub fn update_shared_vertex_streams(
+        &mut self,
+        queue: &wgpu::Queue,
+        mesh: &SceneMesh,
+    ) -> Result<(), SceneError> {
         self.update_mesh(queue, mesh, true)
     }
 
-    fn update_mesh(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh, preserve_partition: bool) -> Result<(), SceneError> {
+    fn update_mesh(
+        &mut self,
+        queue: &wgpu::Queue,
+        mesh: &SceneMesh,
+        preserve_partition: bool,
+    ) -> Result<(), SceneError> {
         mesh.validate_for_upload()?;
         if mesh.vertices.len() > self.vertex_capacity || mesh.indices.len() > self.index_capacity {
             return Err(SceneError::GeometryCapacityExceeded);
         }
-        // OPTIMIZATION #41: Mark shadows dirty on geometry update
         self.mark_shadow_dirty();
-        
+
+        // One index comparison serves partition retention, the index upload
+        // decision and the normal cache refresh below.
+        let indices_equal = self.normal_cache.indices == mesh.indices;
         let retain_partition = preserve_partition
             && self.partitioned_indices
-            && self.normal_cache.indices == mesh.indices
+            && indices_equal
             && self.normal_cache.positions.len() == mesh.vertices.len();
-        let indices_changed = !retain_partition
-            && (self.partitioned_indices || self.normal_cache.indices != mesh.indices);
+        let indices_changed = !retain_partition && (self.partitioned_indices || !indices_equal);
         let coordinates = mesh.material_coordinates();
         if coordinates.as_ref() != self.coordinate_cache.as_slice() {
             queue.write_buffer(
@@ -510,7 +249,7 @@ impl SceneGeometry {
         }
         let count = u32::try_from(mesh.indices.len()).map_err(|_| SceneError::InvalidGeometry)?;
         queue.write_buffer(&self.vertices, 0, bytemuck::cast_slice(&mesh.vertices));
-        if self.normal_cache.refresh(mesh) {
+        if self.normal_cache.refresh_with(mesh, indices_equal) {
             queue.write_buffer(
                 &self.normals,
                 0,
@@ -534,20 +273,36 @@ impl SceneGeometry {
     }
 
     #[must_use]
-    pub fn update_index_partition(&mut self, queue: &wgpu::Queue, indices: &[u32]) -> Result<(), SceneError> {
-        self.update_index_partition_if_changed(queue, indices).map(|_| ())
+    pub fn update_index_partition(
+        &mut self,
+        queue: &wgpu::Queue,
+        indices: &[u32],
+    ) -> Result<(), SceneError> {
+        self.update_index_partition_if_changed(queue, indices)
+            .map(|_| ())
     }
 
     /// Returns whether the index allocation changed. Exact validated cache hits
     /// retain the existing GPU stream; full-mesh updates invalidate this cache.
-    pub fn update_index_partition_if_changed(&mut self, queue: &wgpu::Queue, indices: &[u32]) -> Result<bool, SceneError> {
+    pub fn update_index_partition_if_changed(
+        &mut self,
+        queue: &wgpu::Queue,
+        indices: &[u32],
+    ) -> Result<bool, SceneError> {
         if self.partitioned_indices && self.partition_cache == indices {
             return Ok(false);
         }
-        if indices.len() > self.index_capacity || indices.len() % 3 != 0
-            || indices.iter().any(|i| *i as usize >= self.vertex_capacity) { return Err(SceneError::InvalidGeometry); }
+        if indices.len() > self.index_capacity
+            || !indices.len().is_multiple_of(3)
+            || indices.iter().any(|i| *i as usize >= self.vertex_capacity)
+        {
+            return Err(SceneError::InvalidGeometry);
+        }
         let count = u32::try_from(indices.len()).map_err(|_| SceneError::InvalidGeometry)?;
-        if !indices.is_empty() { queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(indices)); }
+        if !indices.is_empty() {
+            queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(indices));
+        }
+        self.mark_shadow_dirty();
         self.partition_cache.clear();
         self.partition_cache.extend_from_slice(indices);
         self.index_count = count;
@@ -610,7 +365,7 @@ fn geometry_sizes(
 pub struct SceneTexture {
     device: wgpu::Device,
     bind_group: wgpu::BindGroup,
-    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+    texture: std::sync::Arc<voxy_gpu_core::ManagedTexture>,
     sampler: wgpu::Sampler,
 }
 impl SceneTexture {
@@ -646,7 +401,7 @@ impl SceneTransform {
     pub fn allocation_bytes(&self) -> u64 {
         self.buffer.size()
     }
-    /// Set the positive world half-space for planar_reflection_pbr_clip_shader.
+    /// Set the positive world half-space for `planar_reflection_pbr_clip_shader`.
     /// Preserves world/tint/light/view/PBR. Reapply after MVP or motion updates,
     /// which overwrite this plane in the previous-MVP slot.
     /// # Errors
@@ -669,7 +424,7 @@ impl SceneTransform {
         );
         Ok(())
     }
-    /// Set world transform, tint and clipping plane for PLANAR_REFLECTION_CLIP_SHADER.
+    /// Set world transform, tint and clipping plane for `PLANAR_REFLECTION_CLIP_SHADER`.
     /// Keep the positive half-space, including the plane. Uses the point-light slot;
     /// this is a dedicated unlit capture material, not a point-light shader setting.
     /// # Errors
@@ -700,7 +455,7 @@ impl SceneTransform {
         queue.write_buffer(&self.buffer, 144, bytemuck::cast_slice(&values));
         Ok(())
     }
-    /// Set display MVP and reflected-camera MVP for PLANAR_REFLECTION_SURFACE_SHADER.
+    /// Set display MVP and reflected-camera MVP for `PLANAR_REFLECTION_SURFACE_SHADER`.
     /// Both matrices include this mesh's world transform. The second matrix replaces
     /// motion history; use a separate transform for a motion-vector pass.
     /// # Errors
@@ -1358,25 +1113,74 @@ impl SceneRenderer {
 
     /// # Errors
     /// Rejects a foreign device or invalid geometry, including primitive helper input.
-    pub fn upload_shared_mesh_partitions(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<Vec<SceneGeometry>,SceneError> {
-        self.upload_mesh_index_variants(device, mesh, &[mesh.indices(), mesh.indices()], wgpu::BufferUsages::empty())
+    pub fn upload_shared_mesh_partitions(
+        &self,
+        device: &wgpu::Device,
+        mesh: &SceneMesh,
+    ) -> Result<Vec<SceneGeometry>, SceneError> {
+        self.upload_mesh_index_variants(
+            device,
+            mesh,
+            &[mesh.indices(), mesh.indices()],
+            wgpu::BufferUsages::empty(),
+        )
     }
     /// Shared draw streams that may be updated by admitted compute transfers.
-    pub fn upload_compute_shared_mesh_partitions(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<Vec<SceneGeometry>,SceneError> {
-        self.upload_mesh_index_variants(device, mesh, &[mesh.indices(), mesh.indices()], wgpu::BufferUsages::STORAGE)
+    pub fn upload_compute_shared_mesh_partitions(
+        &self,
+        device: &wgpu::Device,
+        mesh: &SceneMesh,
+    ) -> Result<Vec<SceneGeometry>, SceneError> {
+        self.upload_mesh_index_variants(
+            device,
+            mesh,
+            &[mesh.indices(), mesh.indices()],
+            wgpu::BufferUsages::STORAGE,
+        )
     }
-    pub async fn set_geometry_opaque_shader(&self, device: &wgpu::Device, geometry: &mut SceneGeometry, source: &str) -> Result<(),SceneShaderError> {
+    pub async fn set_geometry_opaque_shader(
+        &self,
+        device: &wgpu::Device,
+        geometry: &mut SceneGeometry,
+        source: &str,
+    ) -> Result<(), SceneShaderError> {
         if device != &self.device || device != &geometry.device {
             return Err(SceneShaderError("geometry material device mismatch".into()));
         }
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor { label:Some("geometry opaque shader"), source:wgpu::ShaderSource::Wgsl(source.into()) });
-        let one = Self::create_shader_pipelines(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,1,
-            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout));
-        let four = Self::create_shader_pipelines(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,4,
-            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout));
-        if let Some(error) = scope.pop().await { return Err(SceneShaderError(error.to_string())); }
-        geometry.opaque_shader = Some((self.shader_revision,self.transform_layout.clone(),one.0,four.0));
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("geometry opaque shader"),
+            source: wgpu::ShaderSource::Wgsl(source.into()),
+        });
+        let one = Self::create_shader_pipelines(
+            device,
+            self.color_format,
+            &self.transform_layout,
+            &self.texture_layout,
+            &shader,
+            1,
+            self.shadow.as_ref().map(|s| &s.layout),
+            self.environment.as_ref().map(|e| &e.layout),
+        );
+        let four = Self::create_shader_pipelines(
+            device,
+            self.color_format,
+            &self.transform_layout,
+            &self.texture_layout,
+            &shader,
+            4,
+            self.shadow.as_ref().map(|s| &s.layout),
+            self.environment.as_ref().map(|e| &e.layout),
+        );
+        if let Some(error) = scope.pop().await {
+            return Err(SceneShaderError(error.to_string()));
+        }
+        geometry.opaque_shader = Some((
+            self.shader_revision,
+            self.transform_layout.clone(),
+            one.0,
+            four.0,
+        ));
         Ok(())
     }
     pub fn upload_mesh(
@@ -1388,7 +1192,11 @@ impl SceneRenderer {
     }
 
     /// Fixed topology with vertex and normal storage writable by admitted compute work.
-    pub fn upload_compute_mesh(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<SceneGeometry, SceneError> {
+    pub fn upload_compute_mesh(
+        &self,
+        device: &wgpu::Device,
+        mesh: &SceneMesh,
+    ) -> Result<SceneGeometry, SceneError> {
         self.upload_mesh_with_usage(device, mesh, wgpu::BufferUsages::STORAGE)
     }
 
@@ -1445,9 +1253,9 @@ impl SceneRenderer {
         mesh: &SceneMesh,
         variants: &[&[u32]],
         additional_vertex_usage: wgpu::BufferUsages,
-        additional_buffers: &[crate::compute_memory::ManagedBufferDescriptor<'_>],
+        additional_buffers: &[voxy_gpu_core::ManagedBufferDescriptor<'_>],
     ) -> Result<UploadedGeometryBatch, SceneError> {
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let device = self.resource_device(device)?;
         mesh.validate_for_upload()?;
         if variants.is_empty() {
@@ -1527,7 +1335,8 @@ impl SceneRenderer {
                     partition_cache: Vec::new(),
                     vertex_capacity: mesh.vertices.len(),
                     index_capacity: source.len(),
-                    shadow_dirty: true,
+                    identity: next_geometry_identity(),
+                    revision: 0,
                 }
             })
             .collect();
@@ -1566,7 +1375,7 @@ impl SceneRenderer {
     ) -> Result<SceneGeometry, SceneError> {
         let device = self.resource_device(device)?;
         let (vertex_bytes, index_bytes) = geometry_sizes(device, vertex_capacity, index_capacity)?;
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let vertex_usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
         let parameters = [1.333_f32, 0.2, 0.08, 0.04];
         let sizes = [
@@ -1619,7 +1428,8 @@ impl SceneRenderer {
             partition_cache: Vec::new(),
             vertex_capacity,
             index_capacity,
-            shadow_dirty: true,
+            identity: next_geometry_identity(),
+            revision: 0,
         })
     }
 
@@ -1879,7 +1689,7 @@ impl SceneRenderer {
     pub(crate) fn bind_image(
         &self,
         device: &wgpu::Device,
-        texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+        texture: std::sync::Arc<voxy_gpu_core::ManagedTexture>,
         sampling: TextureSampling,
         mip_levels: u32,
     ) -> Result<SceneTexture, SceneError> {
@@ -1943,7 +1753,7 @@ impl SceneRenderer {
         uniform.extend([0.; 4]);
         let contents = bytemuck::cast_slice(&uniform);
         let [buffer] = crate::ComputeMemoryBudget::for_device(device)
-            .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+            .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene MVP and material view",
                 size: contents.len() as u64,
                 contents: Some(contents),
@@ -2734,8 +2544,17 @@ impl SceneRenderer {
                 draw_stage == stage
             }) {
                 if stage == 0 {
-                    let msaa = self.msaa_pipelines.as_ref().is_some_and(|p| std::ptr::eq(pipelines.0, &p.0));
-                    pass.set_pipeline(draw.geometry.opaque_shader.as_ref().filter(|p| p.0 == self.shader_revision && p.1 == self.transform_layout).map_or(pipelines.0, |p| if msaa { &p.3 } else { &p.2 }));
+                    let msaa = self
+                        .msaa_pipelines
+                        .as_ref()
+                        .is_some_and(|p| std::ptr::eq(pipelines.0, &raw const p.0));
+                    pass.set_pipeline(
+                        draw.geometry
+                            .opaque_shader
+                            .as_ref()
+                            .filter(|p| p.0 == self.shader_revision && p.1 == self.transform_layout)
+                            .map_or(pipelines.0, |p| if msaa { &p.3 } else { &p.2 }),
+                    );
                 }
                 if let Some(shadow) = &self.shadow {
                     pass.set_bind_group(2, &shadow.group, &[]);
@@ -2774,545 +2593,13 @@ fn validate_view_regions(size: [u32; 2], views: &[SceneView<'_>]) -> Result<(), 
     Ok(())
 }
 
-#[derive(Debug, Default)]
-struct NormalCache {
-    authored: bool,
-    positions: Vec<[f32; 3]>,
-    indices: Vec<u32>,
-    normals: Vec<[f32; 3]>,
-}
-impl NormalCache {
-    fn from_mesh(mesh: &SceneMesh) -> Self {
-        let mut cache = Self::default();
-        cache.refresh(mesh);
-        cache
-    }
-    // UV/colour updates do not change normals. Compare exact current geometry;
-    // Geometry or authored normal changes refresh the stream; generated normals
-    // rebuild the weld map only when no authored stream is supplied.
-    #[allow(clippy::float_cmp)] // Exact geometry equality is the cache invalidation contract.
-    fn refresh(&mut self, mesh: &SceneMesh) -> bool {
-        let geometry_changed = self.indices != mesh.indices
-            || self.positions.len() != mesh.vertices.len()
-            || !self.positions.iter().zip(&mesh.vertices).all(|(p,v)| *p == v.position);
-        let changed = match &mesh.authored_normals {
-            Some(normals) => self.normals != *normals,
-            None => self.authored || geometry_changed,
-        };
-        if changed {
-            if let Some(normals) = &mesh.authored_normals {
-                self.normals.clone_from(normals);
-            } else {
-                self.normals = smooth_normals(mesh);
-            }
-        }
-        self.authored = mesh.authored_normals.is_some();
-        if geometry_changed {
-            self.positions.clear();
-            self.positions.extend(mesh.vertices.iter().map(|v| v.position));
-            self.indices.clone_from(&mesh.indices);
-        }
-        changed
-    }
-}
-
-// Weld coincident OBJ seam vertices for area-weighted smooth shading. Rebuilt
-// after every geometry update, including morphs and displaced liquid layers.
-pub(crate) fn smooth_normals(mesh: &SceneMesh) -> Vec<[f32; 3]> {
-    let mut lookup = std::collections::HashMap::with_capacity(mesh.vertices.len());
-    let mut mapping = Vec::with_capacity(mesh.vertices.len());
-    let mut sums = Vec::<glam::Vec3>::with_capacity(mesh.vertices.len());
-    for vertex in &mesh.vertices {
-        let key = vertex
-            .position
-            .map(|x| if x == 0. { 0 } else { x.to_bits() });
-        // An injective 96-bit key avoids array hashing's length prefix while
-        // retaining the randomized standard hasher and exact seam identity.
-        let key = (u64::from(key[0]) << 32 | u64::from(key[1]), key[2]);
-        let id = *lookup.entry(key).or_insert_with(|| {
-            let id = sums.len();
-            sums.push(glam::Vec3::ZERO);
-            id
-        });
-        mapping.push(id);
-    }
-    for triangle in mesh.indices.chunks_exact(3) {
-        let [a, b, c]: [u32; 3] = triangle.try_into().unwrap();
-        let p = |i: u32| glam::Vec3::from_array(mesh.vertices[i as usize].position);
-        let normal = (p(b) - p(a)).cross(p(c) - p(a));
-        for i in [a, b, c] {
-            sums[mapping[i as usize]] += normal;
-        }
-    }
-    // Normalize each welded fan once, then scatter to render seam vertices.
-    for sum in &mut sums {
-        *sum = sum.normalize_or_zero();
-    }
-    mapping.iter().map(|&i| sums[i].to_array()).collect()
-}
-
 #[cfg(test)]
 #[path = "scene/multi_view_tests.rs"]
 mod multi_view_tests;
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn disjoint_views_validate_regions_and_record_shared_geometry() {
-        let empty = [];
-        let regions = |rects: &[[u32; 4]]| {
-            rects
-                .iter()
-                .map(|&viewport| SceneView {
-                    viewport,
-                    draws: &empty,
-                })
-                .collect::<Vec<_>>()
-        };
-        assert!(
-            validate_view_regions([64, 32], &regions(&[[0, 0, 32, 32], [32, 0, 32, 32],])).is_ok()
-        );
-        for rects in [
-            vec![[0, 0, 0, 32]],
-            vec![[0, 0, 32, 0]],
-            vec![[33, 0, 32, 32]],
-            vec![[u32::MAX, 0, 2, 1]],
-            vec![[0, 0, 33, 32], [32, 0, 32, 32]],
-            vec![[0, 0, 64, 32], [1, 1, 1, 1]],
-        ] {
-            assert_eq!(
-                validate_view_regions([64, 32], &regions(&rects)),
-                Err(SceneError::InvalidGeometry)
-            );
-        }
-        let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
-        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-        let geometry = renderer
-            .upload_mesh(&device, &SceneMesh::quad([1.; 4]))
-            .unwrap();
-        let texture = renderer
-            .upload_texture(&device, &queue, 1, 1, &[255; 4])
-            .unwrap();
-        let left_transform = renderer.create_transform(&device, Mat4::IDENTITY).unwrap();
-        let right_transform = renderer
-            .create_transform(&device, Mat4::from_scale(glam::Vec3::splat(0.5)))
-            .unwrap();
-        let left = [SceneDraw {
-            geometry: &geometry,
-            texture: &texture,
-            transform: &left_transform,
-            overlay: false,
-        }];
-        let right = [SceneDraw {
-            geometry: &geometry,
-            texture: &texture,
-            transform: &right_transform,
-            overlay: false,
-        }];
-        let target = |format| {
-            device
-                .create_texture(&wgpu::TextureDescriptor {
-                    label: Some("disjoint views test"),
-                    size: wgpu::Extent3d {
-                        width: 64,
-                        height: 32,
-                        depth_or_array_layers: 1,
-                    },
-                    mip_level_count: 1,
-                    sample_count: 1,
-                    dimension: wgpu::TextureDimension::D2,
-                    format,
-                    usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-                    view_formats: &[],
-                })
-                .create_view(&wgpu::TextureViewDescriptor::default())
-        };
-        let color = target(wgpu::TextureFormat::Rgba8Unorm);
-        let depth = target(wgpu::TextureFormat::Depth32Float);
-        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-        assert_eq!(
-            renderer.encode_views(
-                &mut encoder,
-                &color,
-                &depth,
-                wgpu::Color::BLACK,
-                &regions(&[[0, 0, 33, 32], [32, 0, 32, 32]])
-            ),
-            Err(SceneError::InvalidGeometry)
-        );
-        assert_eq!(
-            renderer.encode_views_msaa4(
-                &mut encoder,
-                &color,
-                &depth,
-                &color,
-                wgpu::Color::BLACK,
-                &[]
-            ),
-            Err(SceneError::MultisamplingNotEnabled)
-        );
-        assert_eq!(
-            renderer.encode_view_frame(
-                &mut encoder,
-                &color,
-                &depth,
-                wgpu::Color::BLACK,
-                &[],
-                &left
-            ),
-            Err(SceneError::InvalidGeometry)
-        );
-        renderer
-            .encode_views(
-                &mut encoder,
-                &color,
-                &depth,
-                wgpu::Color::BLACK,
-                &[
-                    SceneView {
-                        viewport: [0, 0, 32, 32],
-                        draws: &left,
-                    },
-                    SceneView {
-                        viewport: [32, 0, 32, 32],
-                        draws: &right,
-                    },
-                ],
-            )
-            .unwrap();
-        queue.submit([encoder.finish()]);
-    }
-
-    #[test]
-    fn material_layer_split_preserves_binding_coordinates_and_parameters() {
-        let vertices = (0..6)
-            .map(|i| SceneVertex {
-                position: [
-                    if i % 3 == 1 { 1. } else { 0. },
-                    if i % 3 == 2 { 1. } else { 0. },
-                    (i / 3) as f32 * 0.001,
-                ],
-                uv: [if i < 3 { 0. } else { -2. }, 0.00001],
-                color: [1.; 4],
-            })
-            .collect();
-        let coordinates = vec![[0.123, 0.456, 0.789]; 6];
-        let mesh = SceneMesh::new(vertices, vec![0, 1, 2, 3, 4, 5])
-            .unwrap()
-            .with_material_coordinates(coordinates.clone())
-            .unwrap()
-            .with_material_parameters([1.44, 0.3, 0.2, 0.1])
-            .unwrap();
-        let (opaque, film) = mesh.split_material_layer(-2., -6.).unwrap().unwrap();
-        assert_eq!(opaque.indices(), &[0, 1, 2]);
-        assert_eq!(film.indices(), &[3, 4, 5]);
-        for output in [&opaque, &film] {
-            assert_eq!(
-                output.explicit_material_coordinates(),
-                Some(coordinates.as_slice())
-            );
-            assert_eq!(output.material_parameters, mesh.material_parameters);
-            assert_eq!(
-                output
-                    .vertices()
-                    .iter()
-                    .map(|v| v.position)
-                    .collect::<Vec<_>>(),
-                mesh.vertices()
-                    .iter()
-                    .map(|v| v.position)
-                    .collect::<Vec<_>>()
-            );
-        }
-        assert_eq!(mesh.vertices()[3].uv[0], -2.);
-        assert_eq!(film.vertices()[3].uv[0], -6.);
-    }
-    #[test]
-    fn material_layer_split_rejects_ambiguous_faces_and_clears_absent_layer() {
-        let mut mesh = SceneMesh::quad([1.; 4]);
-        assert!(mesh.split_material_layer(-2., -6.).unwrap().is_none());
-        mesh.vertices[0].uv[0] = -2.;
-        assert_eq!(
-            mesh.split_material_layer(-2., -6.).unwrap_err(),
-            SceneError::InvalidGeometry
-        );
-        assert_eq!(
-            mesh.split_material_layer(f32::NAN, -6.).unwrap_err(),
-            SceneError::NonFiniteVertex
-        );
-    }
-    #[test]
-    fn explicit_material_coordinates_survive_geometry_deformation() {
-        let mut mesh = SceneMesh::quad([1.; 4]);
-        let coordinates = mesh.material_coordinates().into_owned();
-        assert!(
-            mesh.clone()
-                .with_material_coordinates(vec![[0.; 3]; 1])
-                .is_err()
-        );
-        let mut invalid = coordinates.clone();
-        invalid[0][0] = f32::NAN;
-        assert!(mesh.clone().with_material_coordinates(invalid).is_err());
-        mesh = mesh.with_material_coordinates(coordinates.clone()).unwrap();
-        for v in &mut mesh.vertices {
-            v.position[0] *= 1.5;
-            v.position[1] += 0.2;
-        }
-        assert_eq!(mesh.material_coordinates().as_ref(), coordinates.as_slice());
-        assert_ne!(
-            mesh.vertices.iter().map(|v| v.position).collect::<Vec<_>>(),
-            coordinates
-        );
-    }
-
-    #[test]
-    fn cancelling_and_degenerate_fans_have_finite_zero_normals() {
-        let v = |position| super::SceneVertex {
-            position,
-            uv: [0.; 2],
-            color: [1.; 4],
-        };
-        let mesh = super::SceneMesh::new(
-            vec![v([0., 0., 0.]), v([1., 0., 0.]), v([0., 1., 0.])],
-            vec![0, 1, 2, 0, 2, 1, 0, 0, 0],
-        )
-        .unwrap();
-        assert!(super::smooth_normals(&mesh).iter().all(|n| *n == [0.; 3]));
-    }
-    #[test]
-    fn smooth_normals_weld_seams_and_follow_deformation() {
-        let v = |position| super::SceneVertex {
-            position,
-            uv: [0., 0.],
-            color: [1.; 4],
-        };
-        let vertices = vec![
-            v([0., 0., 0.]),
-            v([1., 0., 0.]),
-            v([0., 1., 0.]),
-            v([-0., 0., 0.]),
-            v([0., 1., 0.]),
-            v([0., 0., 1.]),
-        ];
-        let mesh = super::SceneMesh::new(vertices.clone(), vec![0, 1, 2, 3, 4, 5]).unwrap();
-        let mut cache = super::NormalCache::from_mesh(&mesh);
-        assert!(!cache.refresh(&mesh));
-        let mut recolored = vertices.clone();
-        recolored[0].color = [0.2; 4];
-        recolored[0].uv = [0.4, 0.8];
-        let recolored = super::SceneMesh::new(recolored, vec![0, 1, 2, 3, 4, 5]).unwrap();
-        assert!(!cache.refresh(&recolored));
-        let normals = super::smooth_normals(&mesh);
-        assert_eq!(normals[0], normals[3]);
-        assert_eq!(normals[2], normals[4]);
-        let expected = glam::Vec3::new(1., 0., 1.).normalize();
-        assert!((glam::Vec3::from_array(normals[0]) - expected).length() < 1e-6);
-        let mut changed = vertices;
-        changed[5].position = [0., 0., 2.];
-        let mesh = super::SceneMesh::new(changed, vec![0, 1, 2, 3, 4, 5]).unwrap();
-        assert!(cache.refresh(&mesh));
-        assert!(!cache.refresh(&mesh));
-        let expected = glam::Vec3::new(2., 0., 1.).normalize();
-        assert!(
-            (glam::Vec3::from_array(super::smooth_normals(&mesh)[0]) - expected).length() < 1e-6
-        );
-    }
-    use super::*;
-
-    #[test]
-    fn mesh_admission_rejects_every_nonfinite_vertex_lane() {
-        let base = SceneVertex {
-            position: [0.; 3],
-            uv: [0.; 2],
-            color: [1.; 4],
-        };
-        for lane in 0..9 {
-            for value in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
-                let mut v = base;
-                match lane {
-                    0..=2 => v.position[lane] = value,
-                    3..=4 => v.uv[lane - 3] = value,
-                    _ => v.color[lane - 5] = value,
-                }
-                assert!(matches!(
-                    SceneMesh::new(vec![v; 3], vec![0, 1, 2]),
-                    Err(SceneError::NonFiniteVertex)
-                ));
-            }
-        }
-        let v = SceneVertex {
-            position: [f32::from_bits(1), -0., f32::MAX],
-            uv: [0.; 2],
-            color: [1.; 4],
-        };
-        assert!(SceneMesh::new(vec![v; 3], vec![0, 1, 2]).is_ok());
-    }
-
-    #[test]
-    fn rejects_malformed_mesh_and_non_finite_helper_input() {
-        let valid = SceneMesh::quad([1.0; 4]);
-        assert_eq!(
-            SceneMesh::new(valid.vertices.clone(), vec![0, 1, 9]).unwrap_err(),
-            SceneError::InvalidIndex
-        );
-        assert_eq!(
-            SceneMesh::new(valid.vertices.clone(), vec![0, 1]).unwrap_err(),
-            SceneError::InvalidGeometry
-        );
-        let invalid = SceneMesh::quad([f32::NAN; 4]);
-        assert_eq!(
-            SceneMesh::validate(&invalid.vertices, &invalid.indices),
-            Err(SceneError::NonFiniteVertex)
-        );
-    }
-
-    #[test]
-    fn alpha_sort_tracks_camera_and_rejects_bad_transforms_atomically() {
-        let near = SceneMesh::quad([1.0; 4]);
-        let mut vertices = near.vertices.clone();
-        vertices.extend(near.vertices.iter().map(|v| SceneVertex {
-            position: [v.position[0], v.position[1], -2.0],
-            ..*v
-        }));
-        let mut mesh = SceneMesh::new(vertices, vec![0, 1, 2, 4, 5, 6]).unwrap();
-        mesh.sort_back_to_front(Mat4::IDENTITY).unwrap();
-        assert_eq!(mesh.indices, [4, 5, 6, 0, 1, 2]);
-        mesh.sort_back_to_front(Mat4::from_rotation_y(std::f32::consts::PI))
-            .unwrap();
-        assert_eq!(mesh.indices, [0, 1, 2, 4, 5, 6]);
-        let before = mesh.indices.clone();
-        for invalid in [
-            Mat4::ZERO,
-            Mat4::from_cols_array(&[f32::NAN; 16]),
-            Mat4::from_cols(
-                glam::Vec4::new(1.0, 0.0, 0.0, 1.0),
-                glam::Vec4::Y,
-                glam::Vec4::Z,
-                glam::Vec4::W,
-            ),
-        ] {
-            assert_eq!(
-                mesh.sort_back_to_front(invalid),
-                Err(SceneError::InvalidTransform)
-            );
-            assert_eq!(mesh.indices, before);
-        }
-    }
-
-    #[test]
-    fn resource_validation_precedes_gpu_upload() {
-        let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
-        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-        for wrap in [TextureWrap::Clamp, TextureWrap::Repeat, TextureWrap::Mirror] {
-            for filter in [TextureFilter::Nearest, TextureFilter::Linear] {
-                renderer
-                    .upload_texture_with_sampling(
-                        &device,
-                        &queue,
-                        1,
-                        1,
-                        &[255; 4],
-                        TextureSampling {
-                            wrap_u: wrap,
-                            wrap_v: wrap,
-                            min_filter: filter,
-                            mag_filter: filter,
-                            ..TextureSampling::default()
-                        },
-                    )
-                    .unwrap();
-            }
-        }
-        assert!(matches!(
-            renderer.upload_texture_with_sampling(
-                &device,
-                &queue,
-                1,
-                1,
-                &[255; 4],
-                TextureSampling {
-                    anisotropy: 2,
-                    mipmap_filter: Some(TextureFilter::Nearest),
-                    ..TextureSampling::default()
-                },
-            ),
-            Err(SceneError::InvalidTexture)
-        ));
-        let image = renderer
-            .upload_texture(&device, &queue, 1, 1, &[255; 4])
-            .unwrap();
-        let rebound = renderer
-            .texture_binding(
-                &device,
-                &image,
-                TextureSampling {
-                    min_filter: TextureFilter::Nearest,
-                    ..TextureSampling::default()
-                },
-                1,
-            )
-            .unwrap();
-        assert_eq!(image.texture(), rebound.texture());
-        for count in [0, 2] {
-            assert!(matches!(
-                renderer.texture_binding(&device, &image, TextureSampling::default(), count),
-                Err(SceneError::InvalidTexture)
-            ));
-        }
-        let (foreign, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
-        assert!(matches!(
-            renderer.texture_binding(&foreign, &image, TextureSampling::default(), 1),
-            Err(SceneError::DeviceMismatch)
-        ));
-        for (vertices, indices) in [(0, 3), (4, 0), (usize::MAX, 3), (4, usize::MAX)] {
-            assert!(matches!(
-                renderer.reserve_geometry(&device, vertices, indices),
-                Err(SceneError::GeometryCapacityExceeded)
-            ));
-        }
-        let mut reserved = renderer.reserve_geometry(&device, 8, 12).unwrap();
-        assert_eq!(reserved.capacity(), (8, 12));
-        assert_eq!(reserved.index_count, 0);
-        let mesh = SceneMesh::quad([1.0; 4]);
-        let mut geometry = renderer.upload_mesh(&device, &mesh).unwrap();
-        let triangle = SceneMesh::new(mesh.vertices.clone(), vec![0, 1, 2]).unwrap();
-        reserved.update(&queue, &triangle).unwrap();
-        reserved.clear();
-        reserved.update(&queue, &mesh).unwrap();
-        assert_eq!(reserved.index_count(), 6);
-        geometry.update(&queue, &triangle).unwrap();
-        assert_eq!(geometry.index_count(), 3);
-        let oversized =
-            SceneMesh::new(mesh.vertices.clone(), vec![0, 1, 2, 0, 2, 3, 0, 1, 2]).unwrap();
-        assert_eq!(
-            geometry.update(&queue, &oversized),
-            Err(SceneError::GeometryCapacityExceeded)
-        );
-        assert_eq!(geometry.index_count(), 3);
-        assert_eq!(
-            geometry.update(&queue, &SceneMesh::quad([f32::NAN; 4])),
-            Err(SceneError::NonFiniteVertex)
-        );
-        assert_eq!(geometry.index_count(), 3);
-        for (width, height, rgba) in [
-            (0, 1, &[][..]),
-            (1, 1, &[255; 3][..]),
-            (u32::MAX, u32::MAX, &[][..]),
-        ] {
-            assert!(matches!(
-                renderer.upload_texture(&device, &queue, width, height, rgba),
-                Err(SceneError::InvalidTexture)
-            ));
-        }
-        assert!(matches!(
-            renderer.create_transform(&device, Mat4::from_cols_array(&[f32::NAN; 16])),
-            Err(SceneError::InvalidTransform)
-        ));
-        assert!(pollster::block_on(scope.pop()).is_none());
-    }
-}
 mod lod_geometry;
+#[cfg(test)]
+mod tests;
 pub use lod_geometry::{SceneLodGeometry, SceneLodHistory};
 mod skinning;
 pub use skinning::{
@@ -3321,408 +2608,17 @@ pub use skinning::{
 };
 
 #[cfg(test)]
-mod memory_tests {
-    use super::*;
-    use crate::{ComputeError, ComputeMemoryBudget, LodIndexSet};
-
-    fn read_vertices(
-        device: &wgpu::Device,
-        queue: &wgpu::Queue,
-        geometry: &SceneGeometry,
-    ) -> Vec<u8> {
-        let size = geometry.vertices.size();
-        let readback = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("budget regression readback"),
-            size,
-            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-            mapped_at_creation: false,
-        });
-        let mut encoder = device.create_command_encoder(&Default::default());
-        encoder.copy_buffer_to_buffer(&geometry.vertices, 0, &readback, 0, size);
-        queue.submit([encoder.finish()]);
-        let (tx, rx) = std::sync::mpsc::channel();
-        readback
-            .slice(..)
-            .map_async(wgpu::MapMode::Read, move |result| {
-                tx.send(result).unwrap();
-            });
-        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-        rx.recv().unwrap().unwrap();
-        let data = readback.slice(..).get_mapped_range().unwrap().to_vec();
-        readback.unmap();
-        data
-    }
-
-    #[test]
-    #[ignore = "requires physical GPU; shared mesh budget and retirement qualification"]
-    fn gpu_shared_mesh_budget_preserves_replacement_and_lod_owners() {
-        let instance = crate::GraphicsOptions::default().create_instance();
-        let adapter = pollster::block_on(instance.request_adapter(&Default::default()))
-            .expect("physical GPU required for mesh budget qualification");
-        eprintln!("mesh budget adapter: {:?}", adapter.get_info());
-        let (device, queue) =
-            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
-        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let mesh = SceneMesh::quad([1.; 4]);
-        let bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
-        let variants = LodIndexSet::new(
-            mesh.vertices.len(),
-            vec![(0., mesh.indices.clone()), (0.01, mesh.indices.clone())],
-        )
-        .unwrap();
-        let bundle_bytes = SceneRenderer::lod_mesh_allocation_bytes(&mesh, &variants).unwrap();
-        let budget = ComputeMemoryBudget::configure(&device, bundle_bytes + 20).unwrap();
-        let compute = budget
-            .allocate_storage("shared compute owner", &[0; 4])
-            .unwrap();
-        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-        // Extra copy usage only for independent GPU-byte verification.
-        let mut geometry = renderer
-            .upload_mesh_with_usage(&device, &mesh, wgpu::BufferUsages::COPY_SRC)
-            .unwrap();
-        geometry.set_depth_mode(SceneDepthMode::Xray);
-        assert_eq!(budget.stats().allocated_bytes, bytes + 4);
-        let expected = bytemuck::cast_slice::<SceneVertex, u8>(&mesh.vertices).to_vec();
-        assert_eq!(read_vertices(&device, &queue, &geometry), expected);
-        let before = budget.stats();
-        assert_eq!(
-            renderer.replace_mesh(&device, &mut geometry, &mesh),
-            Err(SceneError::MemoryBudget)
-        );
-        assert_eq!(geometry.depth_mode(), SceneDepthMode::Xray);
-        assert_eq!(budget.stats(), before);
-        assert_eq!(read_vertices(&device, &queue, &geometry), expected);
-        // Enough room for early individual buffers, but not a complete bundle:
-        // failed upload must neither allocate nor retire a partial candidate.
-        assert!(matches!(
-            renderer.upload_lod_mesh(&device, &mesh, &variants),
-            Err(SceneError::MemoryBudget)
-        ));
-        assert!(matches!(
-            renderer.reserve_geometry(&device, mesh.vertices.len(), mesh.indices.len()),
-            Err(SceneError::MemoryBudget)
-        ));
-        assert_eq!(budget.stats(), before);
-        let spare = budget
-            .allocate_storage("no partial budget leak", &[0; 16])
-            .unwrap();
-        drop(spare);
-        drop(compute);
-        drop(geometry);
-        assert_eq!(budget.stats().allocated_bytes, bytes + 20);
-        budget.discard_retired().unwrap();
-        assert_eq!(budget.stats().allocated_bytes, 0);
-
-        let mut bundle = renderer.upload_lod_mesh(&device, &mesh, &variants).unwrap();
-        assert_eq!(budget.stats().allocated_bytes, bundle_bytes);
-        assert_eq!(budget.stats().allocated_buffers, 6); // Four shared streams, two indices.
-        let vertex_owner = bundle.level(1).unwrap().vertices.clone();
-        let shared_bytes = vertex_owner.size();
-        assert_eq!(
-            renderer.replace_lod_mesh(&device, &mut bundle, &mesh, &variants),
-            Err(SceneError::MemoryBudget)
-        );
-        assert_eq!(budget.stats().allocated_bytes, bundle_bytes);
-        assert_eq!(budget.stats().retired_buffers, 0);
-        drop(bundle);
-        assert_eq!(budget.stats().retired_buffers, 5);
-        budget.discard_retired().unwrap();
-        assert_eq!(budget.stats().allocated_bytes, shared_bytes);
-        assert_eq!(budget.stats().allocated_buffers, 1);
-        drop(vertex_owner);
-        assert_eq!(budget.stats().retired_buffers, 1);
-        budget.discard_retired().unwrap();
-        assert_eq!(budget.stats().allocated_bytes, 0);
-        let reserved = renderer
-            .reserve_geometry(&device, mesh.vertices.len(), mesh.indices.len())
-            .unwrap();
-        assert_eq!(budget.stats().allocated_bytes, bytes);
-        assert_eq!(reserved.index_count, 0);
-        drop(reserved);
-        budget.discard_retired().unwrap();
-        assert_eq!(budget.stats().allocated_bytes, 0);
-        assert!(pollster::block_on(scope.pop()).is_none());
-        assert!(matches!(
-            budget.allocate_storage("exhaustion", &vec![0; (bundle_bytes + 24) as usize]),
-            Err(ComputeError::MemoryBudget)
-        ));
-    }
-}
+mod memory_tests;
 
 #[cfg(test)]
-mod texture_memory_tests {
-    use super::*;
-    #[test]
-    #[ignore = "requires physical GPU; shared colour mip/HDR admission and lifetime"]
-    fn gpu_image_hdr_budget_shares_views_and_preserves_uploaded_mips() {
-        let gpu = crate::GraphicsOptions::default().create_instance();
-        let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
-        eprintln!("texture budget adapter: {:?}", adapter.get_info());
-        let (device, queue) =
-            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
-        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let mesh = SceneMesh::quad([1.; 4]);
-        let mesh_bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
-        let budget =
-            crate::ComputeMemoryBudget::configure(&device, mesh_bytes + 44 + 56 + 4).unwrap();
-        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-        let geometry = renderer.upload_mesh(&device, &mesh).unwrap();
-        let compute = budget.allocate_storage("shared compute", &[0; 4]).unwrap();
-        let base = [255, 0, 0, 255].repeat(8);
-        let middle = [0, 255, 0, 255].repeat(2);
-        let tail = [0, 0, 255, 255];
-        let image = renderer
-            .upload_texture_levels(
-                &device,
-                &queue,
-                &[(4, 2, &base), (2, 1, &middle), (1, 1, &tail)],
-                TextureSampling::default(),
-            )
-            .unwrap();
-        assert_eq!(image.allocation_bytes(), 44);
-        let alias = renderer
-            .texture_binding(&device, &image, TextureSampling::default(), 1)
-            .unwrap();
-        let before = budget.stats();
-        assert_eq!(before.allocated_textures, 1);
-        assert!(matches!(
-            renderer.texture_binding(&device, &image, TextureSampling::default(), 4),
-            Err(SceneError::InvalidTexture)
-        ));
-        assert_eq!(budget.stats(), before);
-        let hdr = crate::HdrMipPyramid::new(&device, 3, 2).unwrap();
-        assert_eq!(hdr.allocation_bytes(), 56);
-        let hdr_alias = renderer
-            .bind_image(
-                &device,
-                hdr.managed_texture(),
-                TextureSampling::default(),
-                2,
-            )
-            .unwrap();
-        assert_eq!(hdr_alias.allocation_bytes(), 56);
-        assert_eq!(budget.stats().allocated_bytes, mesh_bytes + 104);
-        assert_eq!(budget.stats().allocated_textures, 2);
-        assert_eq!(budget.stats().allocated_buffers, 6);
-        let full = budget.stats();
-        assert!(matches!(
-            renderer.upload_texture(&device, &queue, 1, 1, &[255; 4]),
-            Err(SceneError::MemoryBudget)
-        ));
-        assert!(matches!(
-            renderer.create_sampled_color(&device, 1, 1),
-            Err(SceneError::MemoryBudget)
-        ));
-        assert!(matches!(
-            crate::HdrMipPyramid::new(&device, 1, 1),
-            Err(crate::RendererError::Scene(SceneError::MemoryBudget))
-        ));
-        assert_eq!(budget.stats(), full);
-
-        // Independently read the GPU's three uploaded sRGB mip texels after
-        // failed admission. End-point primary colours decode exactly to 0/1.
-        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("mip budget readback"), source: wgpu::ShaderSource::Wgsl(r#"
-                @group(0) @binding(0) var image: texture_2d<f32>;
-                @group(0) @binding(1) var<storage, read_write> colors: array<vec4<f32>, 3>;
-                @compute @workgroup_size(1) fn main() {
-                    for (var i = 0u; i < 3u; i++) { colors[i] = textureLoad(image, vec2<i32>(0), i32(i)); }
-                }
-            "#.into()),
-        });
-        let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-            label: None,
-            layout: None,
-            module: &shader,
-            entry_point: Some("main"),
-            compilation_options: Default::default(),
-            cache: None,
-        });
-        let result = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 48,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
-            mapped_at_creation: false,
-        });
-        let staging = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 48,
-            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        let view = image.texture().create_view(&Default::default());
-        let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: None,
-            layout: &pipeline.get_bind_group_layout(0),
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(&view),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: result.as_entire_binding(),
-                },
-            ],
-        });
-        let mut encoder = device.create_command_encoder(&Default::default());
-        {
-            let mut pass = encoder.begin_compute_pass(&Default::default());
-            pass.set_pipeline(&pipeline);
-            pass.set_bind_group(0, &binding, &[]);
-            pass.dispatch_workgroups(1, 1, 1);
-        }
-        encoder.copy_buffer_to_buffer(&result, 0, &staging, 0, 48);
-        queue.submit([encoder.finish()]);
-        let (tx, rx) = std::sync::mpsc::channel();
-        staging.slice(..).map_async(wgpu::MapMode::Read, move |r| {
-            tx.send(r).unwrap();
-        });
-        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-        rx.recv().unwrap().unwrap();
-        let mapped = staging.slice(..).get_mapped_range().unwrap();
-        assert_eq!(
-            bytemuck::cast_slice::<u8, [f32; 4]>(&mapped),
-            &[[1., 0., 0., 1.], [0., 1., 0., 1.], [0., 0., 1., 1.]]
-        );
-        drop(mapped);
-        staging.unmap();
-        drop((view, binding, pipeline));
-        drop(image);
-        drop(hdr);
-        assert_eq!(budget.stats().retired_textures, 0);
-        drop(alias);
-        drop(hdr_alias);
-        drop(geometry);
-        drop(compute);
-        assert_eq!(budget.stats().retired_textures, 2);
-        assert_eq!(budget.stats().retired_buffers, 6);
-        let mut ticket = budget.begin_retirement(&queue);
-        assert_eq!(budget.stats().allocated_bytes, mesh_bytes + 104);
-        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-        assert!(ticket.try_finish().unwrap());
-        assert!(ticket.try_finish().unwrap());
-        assert_eq!(budget.stats(), crate::ComputeMemoryStats::default());
-        let replacement = renderer.create_sampled_color(&device, 1, 1).unwrap();
-        assert_eq!(replacement.allocation_bytes(), 4);
-        drop(replacement);
-        budget.discard_retired().unwrap();
-        assert_eq!(budget.stats(), crate::ComputeMemoryStats::default());
-        assert!(pollster::block_on(scope.pop()).is_none());
-        eprintln!(
-            "TEXTURE_DEVICE_BUDGET_PASS image_mips_bytes=44 hdr_npot_mips_bytes=56 views_share_owner=true uploaded_mips_survive_rejection=true final_charged_bytes=0"
-        );
-    }
-}
+mod texture_memory_tests;
 
 #[cfg(test)]
 #[path = "scene/transform_memory_tests.rs"]
 mod transform_memory_tests;
 
 #[cfg(test)]
-mod background_upload_regression {
-    use super::*;
-    #[test]
-    fn authored_normal_cache_tracks_geometry_without_duplicate_streams() {
-        let mut mesh = SceneMesh::quad([1.;4]).with_normals(vec![[0.,0.,1.];4]).unwrap();
-        let mut cache = NormalCache::from_mesh(&mesh);
-        let allocation = cache.normals.as_ptr();
-        mesh.vertices[2].position[2] = 0.25;
-        assert!(!cache.refresh(&mesh), "unchanged authored normals need no GPU upload");
-        assert_eq!(cache.normals.as_ptr(), allocation);
-        assert_eq!(cache.positions[2], mesh.vertices[2].position);
-        mesh.authored_normals.as_mut().unwrap()[2] = [0.,1.,0.];
-        assert!(cache.refresh(&mesh));
-        assert_eq!(cache.normals, *mesh.authored_normals.as_ref().unwrap());
-        mesh.authored_normals = None;
-        assert!(cache.refresh(&mesh), "dropping authored normals regenerates from current geometry");
-        assert_eq!(cache.normals, smooth_normals(&mesh));
-        assert!(!cache.refresh(&mesh));
-    }
-    #[test]
-    fn packed_weld_keys_preserve_seams_and_signed_zero() {
-        let mut mesh = SceneMesh::quad([1.;4]);
-        mesh.vertices[2].position[2] = 0.15;
-        let mut duplicate = mesh.vertices.clone();
-        for v in &mut duplicate {
-            if v.position[2] == 0.0 { v.position[2] = -0.0; }
-        }
-        mesh.vertices.extend(duplicate);
-        mesh.indices.extend([4,5,6,4,6,7]);
-        let mut lookup = std::collections::HashMap::new();
-        let mut mapping = Vec::new();
-        let mut sums = Vec::<glam::Vec3>::new();
-        for vertex in &mesh.vertices {
-            let key = vertex.position.map(|x| if x == 0. {0} else {x.to_bits()});
-            let id = *lookup.entry(key).or_insert_with(|| {
-                let id = sums.len(); sums.push(glam::Vec3::ZERO); id
-            });
-            mapping.push(id);
-        }
-        for tri in mesh.indices.chunks_exact(3) {
-            let p = |i: u32| glam::Vec3::from_array(mesh.vertices[i as usize].position);
-            let n = (p(tri[1])-p(tri[0])).cross(p(tri[2])-p(tri[0]));
-            for &i in tri { sums[mapping[i as usize]] += n; }
-        }
-        for n in &mut sums { *n = n.normalize_or_zero(); }
-        let reference: Vec<_> = mapping.iter().map(|&i| sums[i].to_array()).collect();
-        assert_eq!(smooth_normals(&mesh), reference);
-    }
-    #[test]
-    fn worker_preparation_preserves_default_welded_shading_and_authored_streams() {
-        let mut mesh = SceneMesh::quad([0.7,0.4,0.2,1.]);
-        mesh.vertices[2].position[2] = 0.3;
-        let fallback = NormalCache::from_mesh(&mesh);
-        let coordinates = mesh.material_coordinates().into_owned();
-        let ready = mesh.clone().with_prepared_upload_streams();
-        let prepared = NormalCache::from_mesh(&ready);
-        assert_eq!(fallback.normals, prepared.normals);
-        assert_eq!(coordinates, ready.material_coordinates().as_ref());
-        assert_eq!(mesh.indices, ready.indices);
-        let normals = vec![[0.,0.,1.]; mesh.vertices.len()];
-        let authored = mesh.with_normals(normals.clone()).unwrap().with_material_coordinates(coordinates.clone()).unwrap().with_prepared_upload_streams();
-        assert_eq!(authored.authored_normals.as_ref(), Some(&normals));
-        assert_eq!(authored.material_coordinates.as_ref(), Some(&coordinates));
-    }
-}
+mod background_upload_regression;
 
 #[cfg(test)]
-mod opaque_partition_regression {
-    use super::*;
-    #[test]
-    fn shared_partitions_keep_vertex_owners_and_reject_invalid_replacement() {
-        let (device,queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
-        let scene = SceneRenderer::new(&device,wgpu::TextureFormat::Rgba8Unorm);
-        let mesh = SceneMesh::quad([1.;4]);
-        let mut parts = scene.upload_shared_mesh_partitions(&device,&mesh).unwrap();
-        assert!(std::sync::Arc::ptr_eq(&parts[0].vertices,&parts[1].vertices));
-        assert!(std::sync::Arc::ptr_eq(&parts[0].normals,&parts[1].normals));
-        assert!(parts[0].update_index_partition_if_changed(&queue,&mesh.indices()[..3]).unwrap());
-        parts[1].update_index_partition(&queue,&mesh.indices()[3..]).unwrap();
-        let cached = parts[0].partition_cache.as_ptr();
-        assert!(!parts[0].update_index_partition_if_changed(&queue,&mesh.indices()[..3]).unwrap());
-        assert_eq!(parts[0].partition_cache.as_ptr(), cached);
-        assert_eq!(parts[0].partition_cache, mesh.indices()[..3]);
-        assert_eq!(parts[0].index_count(),3);
-        assert_eq!(parts[1].index_count(),3);
-        let mut deformed = mesh.clone();
-        deformed.vertices[0].position[2] = 0.1;
-        parts[0].update_shared_vertex_streams(&queue, &deformed).unwrap();
-        assert_eq!(parts[0].index_count(), 3);
-        assert!(parts[0].partitioned_indices);
-        assert_eq!(parts[0].partition_cache, mesh.indices()[..3]);
-        deformed.indices.truncate(3);
-        parts[0].update_shared_vertex_streams(&queue, &deformed).unwrap();
-        assert_eq!(parts[0].index_count(), 3);
-        assert!(!parts[0].partitioned_indices);
-        assert!(parts[0].partition_cache.is_empty());
-        parts[0].update_index_partition(&queue, &mesh.indices()[..3]).unwrap();
-        parts[0].update(&queue, &mesh).unwrap();
-        assert_eq!(parts[0].index_count(), 6);
-        assert!(parts[0].update_index_partition(&queue,&[0,1,999]).is_err());
-        assert_eq!(parts[0].index_count(),6);
-        let invalid = pollster::block_on(scene.set_geometry_opaque_shader(&device,&mut parts[0],"invalid wgsl"));
-        assert!(invalid.is_err());
-        assert!(parts[0].opaque_shader.is_none());
-    }
-}
+mod opaque_partition_regression;

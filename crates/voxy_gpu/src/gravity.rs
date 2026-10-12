@@ -1,4 +1,4 @@
-use voxy_render::{ComputeDispatch, ComputeError, PendingComputeReadback};
+use voxy_gpu_core::{ComputeDispatch, ComputeError, PendingComputeReadback};
 
 /// Explicit f32 hardware representation; CPU f64 solvers are not implicitly
 /// replaced or silently downgraded. Mass must be positive and data finite.
@@ -28,7 +28,8 @@ impl Default for GravityBudget {
         }
     }
 }
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("GPU gravity error: {self:?}")]
 pub enum GravityComputeError {
     InvalidInput,
     Budget,
@@ -36,18 +37,12 @@ pub enum GravityComputeError {
     NumericalOverflow,
     Compute(ComputeError),
 }
-impl std::fmt::Display for GravityComputeError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "GPU gravity error: {self:?}")
-    }
-}
-impl std::error::Error for GravityComputeError {}
 
 #[derive(Debug)]
 pub struct GravityProgram {
     device: wgpu::Device,
-    readback_pool: voxy_render::ComputeReadbackPool,
-    memory_budget: voxy_render::ComputeMemoryBudget,
+    readback_pool: voxy_gpu_core::ComputeReadbackPool,
+    memory_budget: voxy_gpu_core::ComputeMemoryBudget,
     layout: wgpu::BindGroupLayout,
     pipelines: [wgpu::ComputePipeline; 3],
     budget: GravityBudget,
@@ -111,8 +106,8 @@ impl GravityProgram {
         }
         Ok(Self {
             device: device.clone(),
-            readback_pool: voxy_render::ComputeReadbackPool::for_device(device),
-            memory_budget: voxy_render::ComputeMemoryBudget::for_device(device),
+            readback_pool: voxy_gpu_core::ComputeReadbackPool::for_device(device),
+            memory_budget: voxy_gpu_core::ComputeMemoryBudget::for_device(device),
             layout,
             pipelines,
             budget,
@@ -214,8 +209,8 @@ impl GravityProgram {
 #[derive(Debug)]
 pub struct GravityJob {
     // Keep the shared staging cache alive even after the program is dropped.
-    _readback_pool: voxy_render::ComputeReadbackPool,
-    storage: voxy_render::ComputeStorage,
+    _readback_pool: voxy_gpu_core::ComputeReadbackPool,
+    storage: voxy_gpu_core::ComputeStorage,
     binding: wgpu::BindGroup,
     pipelines: [wgpu::ComputePipeline; 3],
     count: u32,

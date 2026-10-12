@@ -142,7 +142,7 @@ impl SupportWorld {
     }
     /// Finds the nearest physical surface. An unwalkable nearest hit blocks
     /// support below it; rays never look through an occluding steep surface.
-    /// Strictly interior origins have no support. Equal-distance ties use NodeId order.
+    /// Strictly interior origins have no support. Equal-distance ties use `NodeId` order.
     /// # Errors
     /// Rejects invalid probes, exhausted aggregate budgets or unstable arithmetic.
     /// Budget failure never returns a previously found partial hit.

@@ -283,7 +283,7 @@ mod tests {
         for mesh in &meshes {
             // Clone while cold; never query this template. Each later clone
             // has the original uncached full-density geometry and topology.
-            let cold_template=mesh.clone();
+            let cold_template = mesh.clone();
             let start = std::time::Instant::now();
             let contacts = mesh
                 .swept_capsule_contacts(&motions, Default::default())
@@ -310,16 +310,28 @@ mod tests {
             assert!(!contacts.is_empty());
             if std::env::var_os("VOXY_HAIR_MESH_BOUNDS_BENCHMARK").is_some() {
                 for repeat in 0..7 {
-                    let cold=cold_template.clone();
-                    let timed=|candidate:&TriangleMesh| {
-                        let start=std::time::Instant::now();
-                        let found=candidate.swept_capsule_contacts(&motions,Default::default()).unwrap();
-                        let elapsed=start.elapsed();
-                        assert_eq!(found,contacts,"cache changed a full-density contact query");
-                        elapsed.as_secs_f64()*1000.
+                    let cold = cold_template.clone();
+                    let timed = |candidate: &TriangleMesh| {
+                        let start = std::time::Instant::now();
+                        let found = candidate
+                            .swept_capsule_contacts(&motions, Default::default())
+                            .unwrap();
+                        let elapsed = start.elapsed();
+                        assert_eq!(
+                            found, contacts,
+                            "cache changed a full-density contact query"
+                        );
+                        elapsed.as_secs_f64() * 1000.
                     };
-                    let (cold_ms,warm_ms)=if repeat%2==0 {(timed(&cold),timed(mesh))} else {let warm=timed(mesh);(timed(&cold),warm)};
-                    eprintln!("MESH BOUNDS CACHE PAIR repeat={repeat} cold_ms={cold_ms} warm_ms={warm_ms}");
+                    let (cold_ms, warm_ms) = if repeat % 2 == 0 {
+                        (timed(&cold), timed(mesh))
+                    } else {
+                        let warm = timed(mesh);
+                        (timed(&cold), warm)
+                    };
+                    eprintln!(
+                        "MESH BOUNDS CACHE PAIR repeat={repeat} cold_ms={cold_ms} warm_ms={warm_ms}"
+                    );
                 }
             }
             for (index, face, query) in contacts {
@@ -360,7 +372,7 @@ mod tests {
         ));
         save(
             &path,
-            &[rod.clone()],
+            std::slice::from_ref(&rod),
             &[mesh.clone()],
             1. / 240.,
             40e-6,
@@ -464,27 +476,38 @@ mod tests {
     #[test]
     #[ignore = "requires rejected complete-step admission capture"]
     fn captured_elastic_contact_preserves_strain_admission() {
-        let (dt, radius, expected, self_collision, mut rods, mut meshes, continuous_mesh) = load_replay_with_mode();
+        let (dt, radius, expected, self_collision, mut rods, mut meshes, continuous_mesh) =
+            load_replay_with_mode();
         // Legacy admission captures saved full-frame collider endpoints while
         // rod.old_x belonged to the LAST substep. This explicit diagnostic
         // correction is only for a capture with a verified source substep count.
-        if let Ok(value)=std::env::var("VOXY_HAIR_ADMISSION_CAPTURE_FRAME_SUBSTEPS") {
-            assert!(continuous_mesh,"time normalization requires continuous capture");
-            let count:usize=value.parse().unwrap();assert!((2..=32).contains(&count));
-            let start=(count-1) as f64/count as f64;
+        if let Ok(value) = std::env::var("VOXY_HAIR_ADMISSION_CAPTURE_FRAME_SUBSTEPS") {
+            assert!(
+                continuous_mesh,
+                "time normalization requires continuous capture"
+            );
+            let count: usize = value.parse().unwrap();
+            assert!((2..=32).contains(&count));
+            let start = (count - 1) as f64 / count as f64;
             for mesh in &mut meshes {
-                let (current,previous,velocity,_,_)=mesh.replay_geometry();
-                let previous:Vec<_>=previous.iter().zip(&current).map(|(a,b)|add(mul(*a,1.-start),mul(*b,start))).collect();
-                mesh.restore_replay_motion(&previous,&velocity);
+                let (current, previous, velocity, _, _) = mesh.replay_geometry();
+                let previous: Vec<_> = previous
+                    .iter()
+                    .zip(&current)
+                    .map(|(a, b)| add(mul(*a, 1. - start), mul(*b, start)))
+                    .collect();
+                mesh.restore_replay_motion(&previous, &velocity);
             }
-            eprintln!("ADMISSION CAPTURE LAST SUBSTEP start_fraction={start} verified_substeps={count}");
+            eprintln!(
+                "ADMISSION CAPTURE LAST SUBSTEP start_fraction={start} verified_substeps={count}"
+            );
         }
         let roots: Vec<_> = rods.iter().map(|rod| rod.x[0]).collect();
         let mut history = Vec::new();
         if self_collision {
             history = contact::refresh_strand_responses(&mut rods, radius, &[]);
         }
-        HairSystem::refresh_mesh_geometry(&mut rods,&meshes,radius,continuous_mesh).unwrap();
+        HairSystem::refresh_mesh_geometry(&mut rods, &meshes, radius, continuous_mesh).unwrap();
         let actual = HairSystem::contact_merit(&rods, &history, radius).unwrap();
         assert!(
             (actual - expected).abs() <= 1e-12 * expected.max(1e-20),
@@ -494,8 +517,18 @@ mod tests {
             rods.iter().any(|rod| rod.max_relative_stretch() > 0.05),
             "capture must reproduce rejected strain"
         );
-        if let Some(path)=std::env::var_os("VOXY_HAIR_NORMALIZED_ADMISSION_REPLAY_EXPORT") {
-            super::save(std::path::Path::new(&path),&rods,&meshes,dt,radius,self_collision,actual,continuous_mesh).unwrap();
+        if let Some(path) = std::env::var_os("VOXY_HAIR_NORMALIZED_ADMISSION_REPLAY_EXPORT") {
+            super::save(
+                std::path::Path::new(&path),
+                &rods,
+                &meshes,
+                dt,
+                radius,
+                self_collision,
+                actual,
+                continuous_mesh,
+            )
+            .unwrap();
         }
         for iteration in 0..64 {
             for rod in &mut rods {
@@ -503,8 +536,15 @@ mod tests {
                 direct::solve(rod, dt).expect("captured elastic correction");
             }
             HairSystem::reconcile_positions_mode(
-                &mut rods, &meshes, dt, radius, self_collision,
-                &mut history, None, None, continuous_mesh,
+                &mut rods,
+                &meshes,
+                dt,
+                radius,
+                self_collision,
+                &mut history,
+                None,
+                None,
+                continuous_mesh,
             )
             .expect("captured contact correction");
             let strain = rods
@@ -513,19 +553,42 @@ mod tests {
                 .fold(0., f64::max);
             eprintln!("ELASTIC CONTACT REPLAY iteration={iteration} maximum_strain={strain:e}");
             if strain <= 0.05 {
-                if let Some(path)=std::env::var_os("VOXY_HAIR_ELASTIC_FINAL_REPLAY_EXPORT") {
-                    let pairs=if self_collision {contact::refresh_strand_responses(&mut rods,radius,&[])} else {Vec::new()};
-                    HairSystem::refresh_mesh_geometry(&mut rods,&meshes,radius,continuous_mesh).unwrap();
-                    let merit=HairSystem::contact_merit(&rods,&pairs,radius).unwrap();
-                    super::save(std::path::Path::new(&path),&rods,&meshes,dt,radius,self_collision,merit,continuous_mesh).unwrap();
+                if let Some(path) = std::env::var_os("VOXY_HAIR_ELASTIC_FINAL_REPLAY_EXPORT") {
+                    let pairs = if self_collision {
+                        contact::refresh_strand_responses(&mut rods, radius, &[])
+                    } else {
+                        Vec::new()
+                    };
+                    HairSystem::refresh_mesh_geometry(&mut rods, &meshes, radius, continuous_mesh)
+                        .unwrap();
+                    let merit = HairSystem::contact_merit(&rods, &pairs, radius).unwrap();
+                    super::save(
+                        std::path::Path::new(&path),
+                        &rods,
+                        &meshes,
+                        dt,
+                        radius,
+                        self_collision,
+                        merit,
+                        continuous_mesh,
+                    )
+                    .unwrap();
                 }
-                if self_collision && std::env::var_os("VOXY_HAIR_ELASTIC_STRAND_SWEEP_AUDIT").is_some() {
-                    let end:Vec<_>=rods.iter().map(|rod|rod.x.clone()).collect();
-                    let mut start=rods.clone();
-                    for rod in &mut start {rod.x.clone_from(&rod.old_x);}
-                    let fraction=contact::strand_fraction(&start,&end,radius).expect("captured whole-step strand motion must admit");
+                if self_collision
+                    && std::env::var_os("VOXY_HAIR_ELASTIC_STRAND_SWEEP_AUDIT").is_some()
+                {
+                    let end: Vec<_> = rods.iter().map(|rod| rod.x.clone()).collect();
+                    let mut start = rods.clone();
+                    for rod in &mut start {
+                        rod.x.clone_from(&rod.old_x);
+                    }
+                    let fraction = contact::strand_fraction(&start, &end, radius)
+                        .expect("captured whole-step strand motion must admit");
                     eprintln!("ELASTIC CONTACT REPLAY WHOLE STRAND SWEEP fraction={fraction}");
-                    assert_eq!(fraction,1.,"feasible endpoints alone cannot qualify strand trajectories");
+                    assert_eq!(
+                        fraction, 1.,
+                        "feasible endpoints alone cannot qualify strand trajectories"
+                    );
                 }
                 for (rod, root) in rods.iter().zip(&roots) {
                     assert_eq!(rod.x[0], *root);
@@ -616,9 +679,12 @@ mod tests {
                 Err("joint hair contact direction has no descending geometry step")
             );
         }
-        if let Some(path)=std::env::var_os("VOXY_HAIR_REPLAY_FINAL_STATE_EXPORT") {
-            let mut out=std::io::BufWriter::new(std::fs::File::create(path).unwrap());
-            for rod in &rods {vectors(&mut out,&rod.x).unwrap();vectors(&mut out,&rod.q).unwrap();}
+        if let Some(path) = std::env::var_os("VOXY_HAIR_REPLAY_FINAL_STATE_EXPORT") {
+            let mut out = std::io::BufWriter::new(std::fs::File::create(path).unwrap());
+            for rod in &rods {
+                vectors(&mut out, &rod.x).unwrap();
+                vectors(&mut out, &rod.q).unwrap();
+            }
             out.flush().unwrap();
         }
     }

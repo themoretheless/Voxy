@@ -94,10 +94,7 @@ impl Clip {
             };
 
             #[allow(clippy::cast_possible_truncation)] // Explicit clipping of filter overshoot.
-            frames.push([
-                sum0.clamp(-1.0, 1.0) as f32,
-                sum1.clamp(-1.0, 1.0) as f32,
-            ]);
+            frames.push([sum0.clamp(-1.0, 1.0) as f32, sum1.clamp(-1.0, 1.0) as f32]);
         }
         Self::new(target_rate, frames)
     }

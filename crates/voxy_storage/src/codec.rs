@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::fmt;
 use std::sync::Arc;
 
 use voxy_core::{CHUNK_VOLUME, ChunkPos, LocalIndex};
@@ -361,7 +360,8 @@ impl<'a> Reader<'a> {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("chunk codec error: {self:?}")]
 pub enum CodecError {
     UnknownBlockId(u32),
     UnknownResourceKey(ResourceKey),
@@ -384,13 +384,6 @@ pub enum CodecError {
     DuplicateMetadataIndex,
     TrailingBytes,
 }
-
-impl fmt::Display for CodecError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "chunk codec error: {self:?}")
-    }
-}
-impl std::error::Error for CodecError {}
 
 #[cfg(test)]
 pub(crate) mod tests {

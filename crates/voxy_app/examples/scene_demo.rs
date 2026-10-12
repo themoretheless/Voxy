@@ -29,7 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             _ => return Err(format!("unknown argument: {arg}").into()),
         }
     }
-    voxy_app::SceneApp::new(smoke)?
+    voxy_shell::SceneApp::new(smoke)?
         .with_graphics(options)
         .with_motion_vectors(motion)
         .run(winit::event_loop::EventLoop::new()?)

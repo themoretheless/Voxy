@@ -7,19 +7,14 @@ use voxy_world::{
     ProceduralTerrainGenerator, TerrainPalette, WorldSeed,
 };
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("CUDA terrain error: {self:?}")]
 pub enum CudaTerrainError {
     Cuda(CudaError),
     Terrain(GpuTerrainError),
     Generation(GenerationError),
     Poisoned,
 }
-impl std::fmt::Display for CudaTerrainError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "CUDA terrain error: {self:?}")
-    }
-}
-impl std::error::Error for CudaTerrainError {}
 
 /// Exact CUDA procedural terrain through the runtime's existing generator ABI.
 /// Uses an explicit CUDA device ordinal, private buffers, cached compiled code

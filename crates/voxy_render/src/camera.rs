@@ -28,14 +28,9 @@ pub struct SceneCamera {
     pub projection: SceneProjection,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("invalid camera: expected a finite view and non-degenerate projection")]
 pub struct InvalidSceneCamera;
-impl std::fmt::Display for InvalidSceneCamera {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str("invalid camera: expected a finite view and non-degenerate projection")
-    }
-}
-impl std::error::Error for InvalidSceneCamera {}
 
 impl SceneCamera {
     /// World-space origin and unit direction through a pixel center. Pixels use

@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         vec![]
     };
-    let app = voxy_app::SceneApp::new(smoke)?
+    let app = voxy_shell::SceneApp::new(smoke)?
         .with_script(path, selected)?
         .with_script_character()?;
     let app = if smoke && custom.is_none() {

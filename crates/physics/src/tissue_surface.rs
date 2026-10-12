@@ -3,10 +3,8 @@
 type Point = [f64; 3];
 use std::sync::Arc;
 mod search;
+use crate::math::sub;
 pub use search::TetrahedralEmbedding;
-fn sub(a: Point, b: Point) -> Point {
-    std::array::from_fn(|i| a[i] - b[i])
-}
 fn determinant(a: Point, b: Point, c: Point) -> f64 {
     a[0] * (b[1] * c[2] - b[2] * c[1]) - a[1] * (b[0] * c[2] - b[2] * c[0])
         + a[2] * (b[0] * c[1] - b[1] * c[0])
@@ -208,8 +206,12 @@ impl EmbeddedSurface {
     }
     /// Immutable sparse displacement map for resident renderers. Prescribed
     /// vertices have no tissue coefficients; no simulation state is exported.
-    pub fn displacement_bindings(&self) -> impl ExactSizeIterator<Item = Option<([usize; 4], [f64; 4])>> + '_ {
-        self.bindings.iter().map(|b| b.as_ref().map(|b| (b.indices, b.weights)))
+    pub fn displacement_bindings(
+        &self,
+    ) -> impl ExactSizeIterator<Item = Option<([usize; 4], [f64; 4])>> + '_ {
+        self.bindings
+            .iter()
+            .map(|b| b.as_ref().map(|b| (b.indices, b.weights)))
     }
     /// Produces new render positions; caller-owned buffers remain unchanged on failure.
     /// Vertex order/count must match rest geometry. Normals must be recomputed by renderer.

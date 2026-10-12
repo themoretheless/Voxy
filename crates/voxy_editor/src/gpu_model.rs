@@ -360,7 +360,7 @@ fn model_texture(
             let texture = Arc::new(texture);
             textures.push(CachedTexture {
                 image: image_index,
-                sampling: sampling,
+                sampling,
                 mips: use_mips,
                 texture: Arc::clone(&texture),
             });
@@ -419,8 +419,9 @@ impl ModelGraphics {
             || bytes(&asset.mesh),
             |certificate| {
                 SceneRenderer::certified_lod_mesh_allocation_bytes(&asset.mesh, certificate)
-                    .map(|_| SceneRenderer::mesh_allocation_bytes(&asset.mesh))
-                    .unwrap_or(u64::MAX)
+                    .map_or(u64::MAX, |_| {
+                        SceneRenderer::mesh_allocation_bytes(&asset.mesh)
+                    })
                     .saturating_add(
                         selection_outline(&asset.mesh)
                             .ok()

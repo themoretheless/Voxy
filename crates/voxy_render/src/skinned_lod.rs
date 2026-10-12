@@ -1,5 +1,5 @@
 //! Pose-specific quality bounds over one immutable skeletal vertex domain.
-use std::{fmt, sync::Arc};
+use std::sync::Arc;
 
 use glam::{Mat4, Vec3};
 
@@ -50,17 +50,12 @@ pub struct PreparedSkinnedLod {
     max: Vec3,
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("skinned LOD error: {self:?}")]
 pub enum SkinnedLodError {
     Certificate(CertifiedLodError),
     Skin(SkinnedUploadError),
 }
-impl fmt::Display for SkinnedLodError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "skinned LOD error: {self:?}")
-    }
-}
-impl std::error::Error for SkinnedLodError {}
 
 impl SkinnedLodMesh {
     /// Validates complete bidirectional witnesses and monotonically decreasing

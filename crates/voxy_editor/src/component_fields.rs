@@ -1038,7 +1038,7 @@ impl crate::App {
                 .enumerate()
                 .find_map(|(index, field)| {
                     field
-                        .bind(object, &registry)
+                        .bind(object, registry)
                         .ok()
                         .filter(|current| {
                             current.identity() == binding.identity()

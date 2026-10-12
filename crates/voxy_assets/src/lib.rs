@@ -14,30 +14,47 @@ mod manifest;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
-/// Global asset cache with reference counting
+/// Global asset cache sharing loaded values by path.
 pub struct AssetCache {
     /// In-memory cached assets (strong refs)
     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
-    /// Weak references to prevent premature collection
-    weak_refs: HashMap<String, usize>,
+}
+
+impl std::fmt::Debug for AssetCache {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let entries = self.strong_cache.lock().map_or(0, |cache| cache.len());
+        f.debug_struct("AssetCache")
+            .field("entries", &entries)
+            .finish()
+    }
+}
+
+impl Default for AssetCache {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl AssetCache {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             strong_cache: Mutex::new(HashMap::new()),
-            weak_refs: HashMap::new(),
         }
     }
-    
+
     /// Cache-lookup-then-load pattern for repeated assets
-    pub fn load_or_cache<T: 'static + Clone>(&self, path: &str, loader: impl FnOnce() -> Result<T, String>) -> Result<T, String> {
+    pub fn load_or_cache<T: 'static + Clone>(
+        &self,
+        path: &str,
+        loader: impl FnOnce() -> Result<T, String>,
+    ) -> Result<T, String> {
         let mut cache = self.strong_cache.lock().unwrap();
         if let Some(cached) = cache.get(path) {
             // Return cloned copy
             return Ok(cached.downcast_ref::<T>().unwrap().clone());
         }
-        
+
         // Load and cache
         let value = loader()?;
         let arc = Arc::new(value.clone());
@@ -68,9 +85,7 @@ pub use watch_worker::{PollWorkerError, SourcePollWorker};
 
 use std::{
     collections::BTreeMap,
-    sync::{
-        atomic::{AtomicU64, Ordering},
-    },
+    sync::atomic::{AtomicU64, Ordering},
 };
 static NEXT_CATALOG: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

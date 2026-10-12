@@ -32,7 +32,8 @@ impl RaySegment {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("ray scene error: {self:?}")]
 pub enum RaySceneError {
     DeviceMismatch,
     Unsupported,
@@ -40,12 +41,6 @@ pub enum RaySceneError {
     InvalidTransform,
     Capacity,
 }
-impl std::fmt::Display for RaySceneError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ray scene error: {self:?}")
-    }
-}
-impl std::error::Error for RaySceneError {}
 
 #[derive(Debug)]
 pub struct RayScene {

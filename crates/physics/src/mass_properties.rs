@@ -1,4 +1,6 @@
 //! Explicit additive mass distributions, independent of overlapping contact geometry.
+use crate::math::cross;
+use crate::math::dot;
 type Vector = [f64; 3];
 type Matrix = [[f64; 3]; 3];
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -18,16 +20,6 @@ pub struct MassProperties {
     pub principal_moments: Vector,
     /// Right-handed orthonormal principal axes in columns.
     pub principal_axes: Matrix,
-}
-fn cross(a: Vector, b: Vector) -> Vector {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-fn dot(a: Vector, b: Vector) -> f64 {
-    (0..3).map(|k| a[k] * b[k]).sum()
 }
 fn finite(v: Vector) -> bool {
     v.iter().all(|v| v.is_finite())

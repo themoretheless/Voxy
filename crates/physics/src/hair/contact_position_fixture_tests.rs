@@ -347,8 +347,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 18,
                     fraction: 0.3815395440265171,
                     normal: [0.176295873446737, 0.06559644006775432, -0.9821491088709948],
@@ -365,8 +365,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 19,
                     fraction: 0.5085151825732986,
                     normal: [
@@ -623,8 +623,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 18,
                     fraction: 0.3815395432840315,
                     normal: [0.1762958733103478, 0.06559643765456333, -0.9821491090566506],
@@ -641,8 +641,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 19,
                     fraction: 0.5085151836496786,
                     normal: [
@@ -899,8 +899,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 18,
                     fraction: 0.3814402909939825,
                     normal: [
@@ -921,8 +921,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 19,
                     fraction: 0.5084818891869181,
                     normal: [
@@ -1179,8 +1179,8 @@ fn fixture(index: usize) -> HairRod {
             .to_vec();
             rod.contacts = vec![
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 18,
                     fraction: 0.3814402903923969,
                     normal: [0.17633053305007323, 0.0662103041217679, -0.9821016947049731],
@@ -1197,8 +1197,8 @@ fn fixture(index: usize) -> HairRod {
                     source: ContactSource::Mesh(0),
                 },
                 RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                    metric_scale: 1.,
+                    trajectory_time: None,
                     segment: 19,
                     fraction: 0.5084818904230192,
                     normal: [
@@ -1262,8 +1262,14 @@ fn captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes()
         // Capture the original H/J loads independently of motion projection.
         // A response-only backend does not implement coordinate projection;
         // the production QR owner must not call it merely for observation.
-        prepare_implicit_response_with_solver(&mut constraints,&rods,1./240.,Some(&mut capture)).unwrap();
-        let mut requests=std::mem::take(&mut capture.requests);
+        prepare_implicit_response_with_solver(
+            &mut constraints,
+            &rods,
+            1. / 240.,
+            Some(&mut capture),
+        )
+        .unwrap();
+        let mut requests = std::mem::take(&mut capture.requests);
         assert!(
             reconcile_contact_positions_with_solver(
                 &mut rods,
@@ -1286,7 +1292,10 @@ fn captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes()
             );
             assert!(dot(sub(point, contact.target), contact.normal) >= -1e-11);
         }
-        assert!(capture.requests.is_empty(),"native coordinate owner called an unsupported response-only backend");
+        assert!(
+            capture.requests.is_empty(),
+            "native coordinate owner called an unsupported response-only backend"
+        );
         assert_eq!(requests.len(), 1);
         assert_eq!(requests[0].loads.len(), 2);
         eprintln!(

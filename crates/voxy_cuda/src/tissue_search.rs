@@ -595,6 +595,7 @@ struct CudaTissueSearchOperation {
 }
 /// CUDA infrastructure/readback failures cannot be repaired by temporal subdivision.
 /// Kept alongside the adapter's legacy string error mapping until solver errors are typed.
+#[must_use]
 pub fn is_tissue_search_backend_failure(error: &str) -> bool {
     matches!(
         error,

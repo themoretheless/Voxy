@@ -1,6 +1,6 @@
 //! Validated deterministic phase plans. Execution is serial until scoped access
 //! enforcement for other resources and worker dispatch are implemented.
-//! run_scene enforces the scene grant; other declarations describe intent.
+//! `run_scene` enforces the scene grant; other declarations describe intent.
 use std::collections::{BTreeMap, BTreeSet};
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SystemAccess {
@@ -14,18 +14,13 @@ pub struct SystemSpec {
     pub after: Vec<String>,
     pub access: Vec<SystemAccess>,
 }
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("schedule error: {self:?}")]
 pub enum ScheduleError {
     Invalid(String),
     Cycle,
     Execution { system: String, reason: String },
 }
-impl std::fmt::Display for ScheduleError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "schedule error: {self:?}")
-    }
-}
-impl std::error::Error for ScheduleError {}
 /// A typed failure retains both the system identity and its original error.
 #[derive(Debug)]
 pub struct SystemFailure<E> {
@@ -45,14 +40,9 @@ pub struct SceneSystemAccess<'a> {
     scene: &'a mut crate::SceneGraph,
     grants: &'a BTreeMap<String, bool>,
 }
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("system has no declared scene access for this operation")]
 pub struct SceneAccessDenied;
-impl std::fmt::Display for SceneAccessDenied {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str("system has no declared scene access for this operation")
-    }
-}
-impl std::error::Error for SceneAccessDenied {}
 /// Domain access rejection; no resource mutation is authorized by this error.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ResourceAccessDenied {
@@ -116,7 +106,7 @@ impl SceneSystemAccess<'_> {
 }
 /// Systems in a batch are dependency-independent and have no declared write
 /// conflicts. Batches are ordered barriers; lower phases always finish first.
-/// Scene declarations grant capabilities only through run_scene. Other resource
+/// Scene declarations grant capabilities only through `run_scene`. Other resource
 /// declarations and the legacy run methods do not enforce borrowing.
 #[derive(Clone, Debug)]
 pub struct SchedulePlan {

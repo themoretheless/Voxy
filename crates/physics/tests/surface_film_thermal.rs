@@ -62,7 +62,7 @@ fn late_invalid_substrate_rolls_back_both_owners_and_dry_cells_insulate() {
         .unwrap();
     assert_eq!(substrate[0], saved[0]);
     assert_eq!(film.temperatures().unwrap()[0], None);
-    assert!(substrate[1] != saved[1]);
+    assert_ne!(substrate[1], saved[1]);
 }
 #[test]
 fn conduction_on_four_cells_refines_and_preserves_global_heat_and_bounds() {

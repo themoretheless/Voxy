@@ -1,8 +1,5 @@
 //! GPU snapshots of the existing neutral skeleton and volumetric tissue demo.
-#[path = "../src/biomechanics_demo.rs"]
-mod biomechanics_demo;
-#[path = "../src/tissue_demo.rs"]
-mod tissue_demo;
+use voxy_demos::tissue_demo;
 #[path = "body_motion_snapshot/tissue_regions.rs"]
 mod tissue_regions;
 use glam::{DMat4, Mat4, Vec3};
@@ -38,6 +35,7 @@ fn cuda_tissue_selection(arguments: &[String]) -> Result<Option<(usize, usize)>,
         _ => Err("CUDA tissue selection requires both device and byte budget"),
     }
 }
+#[allow(dead_code)]
 fn displayed_meshes(
     demo: &tissue_demo::TissueDemo,
     model: Option<&ModelAsset>,
@@ -160,6 +158,7 @@ fn contact_positions(
     }
     Ok((positions, faces))
 }
+#[allow(dead_code)]
 fn contact_positions64(
     model: &ModelAsset,
     phase: f64,
@@ -202,6 +201,7 @@ fn imported_pose64(
         .try_sample_phase64_with_startup(&model.skeleton, phase, startup_seconds)
         .map_err(|e| voxy_render::ModelError(e.to_string()))
 }
+#[allow(dead_code)]
 fn imported_contact_sample64(
     model: &ModelAsset,
     reference: &[DMat4],
@@ -370,7 +370,7 @@ fn replay_contact_geometry(
     let end = start.with_positions(points("surface_end")?)?;
     let mut samples = Vec::new();
     for index in 0..=32 {
-        let t = index as f64 / 32.;
+        let t = f64::from(index) / 32.;
         let position = |a: [f64; 3], b: [f64; 3]| {
             std::array::from_fn(|axis| {
                 if t <= 0.5 {
@@ -712,8 +712,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let startup_seconds = authored.as_ref().map_or(0., |a| a.value().startup_seconds);
     let reference_clip = authored
         .as_ref()
-        .map(|a| a.value().reference.clip())
-        .unwrap_or(Some(0));
+        .map_or(Some(0), |a| a.value().reference.clip());
     let reference = imported
         .as_ref()
         .map(|model| {

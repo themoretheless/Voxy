@@ -3480,6 +3480,7 @@ fn accepted_fade_prefix_keeps_precise_clocks_and_never_mutates_staged_tick() {
 }
 
 #[test]
+#[allow(clippy::approx_constant)]
 fn moving_linear_source_field_keeps_pivot_loops_and_fade_completion() {
     let (_, clip) = clip(
         Vec3::X * 2.,

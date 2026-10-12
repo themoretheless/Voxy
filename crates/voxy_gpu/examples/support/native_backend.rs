@@ -1,4 +1,4 @@
-use voxy_render::{GraphicsBackend, GraphicsOptions};
+use voxy_gpu_core::{GraphicsBackend, GraphicsOptions};
 
 #[derive(Debug)]
 pub struct NativeSelection {

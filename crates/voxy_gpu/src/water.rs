@@ -1,4 +1,4 @@
-use voxy_render::{ComputeError, ComputeProgram, PendingComputeReadback};
+use voxy_gpu_core::{ComputeError, ComputeProgram, PendingComputeReadback};
 
 /// Local adjacency graph; None amount is an impermeable registered block.
 /// Missing indices are errors only when the ordered solver actually reads them.

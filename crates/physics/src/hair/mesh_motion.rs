@@ -133,26 +133,62 @@ mod tests {
     use super::*;
     #[test]
     fn continuous_mode_admits_imported_overlaps_before_starting_its_clock() {
-        let rods:Vec<_>=[-1.,1.].into_iter().map(|side|HairRod::new(
-            vec![[side*0.5e-3,0.,0.],[side*0.25e-3,0.,0.1],[0.,0.,0.2]],HairMaterial::default()).unwrap()).collect();
-        let rest_lengths:Vec<_>=rods.iter().map(|rod|rod.lengths.clone()).collect();
-        let roots:Vec<_>=rods.iter().map(|rod|RootPose {position:rod.x[0],rotation:[0.,0.,0.,1.]}).collect();
-        let mut system=HairSystem::new(rods).unwrap();
-        system.substeps=1;system.iterations=4;system.joint_contact_positions=true;
-        system.continuous_mesh_admission=true;system.trace_rod=Some(0);
-        let initial=contact::refresh_strand_responses(&mut system.rods,system.contact_radius,&[]);
-        assert!(!contact::strand_geometry_admitted(&system.rods,&initial,system.contact_radius).unwrap());
-        let vertices=[[-1.,-1.,-1.],[-1.,1.,-1.],[-1.,0.,1.]];
-        let mut mesh=TriangleMesh::new(&vertices,&[[0,1,2]]).unwrap();
-        mesh.refit_with_timestep(&vertices.map(|p|add(p,[0.1,0.,0.])),1./240.).unwrap();
-        system.step(1./240.,&roots,[0.;3],[0.;3],&[mesh]).unwrap();
+        let rods: Vec<_> = [-1., 1.]
+            .into_iter()
+            .map(|side| {
+                HairRod::new(
+                    vec![
+                        [side * 0.5e-3, 0., 0.],
+                        [side * 0.25e-3, 0., 0.1],
+                        [0., 0., 0.2],
+                    ],
+                    HairMaterial::default(),
+                )
+                .unwrap()
+            })
+            .collect();
+        let rest_lengths: Vec<_> = rods.iter().map(|rod| rod.lengths.clone()).collect();
+        let roots: Vec<_> = rods
+            .iter()
+            .map(|rod| RootPose {
+                position: rod.x[0],
+                rotation: [0., 0., 0., 1.],
+            })
+            .collect();
+        let mut system = HairSystem::new(rods).unwrap();
+        system.substeps = 1;
+        system.iterations = 4;
+        system.joint_contact_positions = true;
+        system.continuous_mesh_admission = true;
+        system.trace_rod = Some(0);
+        let initial =
+            contact::refresh_strand_responses(&mut system.rods, system.contact_radius, &[]);
+        assert!(
+            !contact::strand_geometry_admitted(&system.rods, &initial, system.contact_radius)
+                .unwrap()
+        );
+        let vertices = [[-1., -1., -1.], [-1., 1., -1.], [-1., 0., 1.]];
+        let mut mesh = TriangleMesh::new(&vertices, &[[0, 1, 2]]).unwrap();
+        mesh.refit_with_timestep(&vertices.map(|p| add(p, [0.1, 0., 0.])), 1. / 240.)
+            .unwrap();
+        system
+            .step(1. / 240., &roots, [0.; 3], [0.; 3], &[mesh])
+            .unwrap();
         assert!(system.swept_strand_initialized);
-        assert!(system.last_trace.iter().any(|trace|trace.phase=="initial-contact-admission"));
-        contact::admit_staged_strands(&system.rods,system.contact_radius).unwrap();
-        for ((rod,root),lengths) in system.rods.iter().zip(&roots).zip(&rest_lengths) {
-            assert_eq!(rod.x[0],root.position);
-            assert_eq!(&rod.lengths,lengths,"initial admission cannot rewrite stress-free material lengths");
-            assert!(rod.max_relative_stretch()<0.05);
+        assert!(
+            system
+                .last_trace
+                .iter()
+                .any(|trace| trace.phase == "initial-contact-admission")
+        );
+        contact::admit_staged_strands(&system.rods, system.contact_radius).unwrap();
+        for ((rod, root), lengths) in system.rods.iter().zip(&roots).zip(&rest_lengths) {
+            assert_eq!(rod.x[0], root.position);
+            assert_eq!(
+                &rod.lengths, lengths,
+                "initial admission cannot rewrite stress-free material lengths"
+            );
+            assert!(rod.max_relative_stretch() < 0.05);
         }
     }
     #[test]
@@ -223,7 +259,7 @@ mod tests {
         }];
         let mut discrete = system();
         discrete
-            .step(dt, &roots, [0.; 3], [0.; 3], &[mesh.clone()])
+            .step(dt, &roots, [0.; 3], [0.; 3], std::slice::from_ref(&mesh))
             .unwrap();
         assert!(discrete.rods[0].max_relative_stretch() < 1e-10);
         let mut continuous = system();

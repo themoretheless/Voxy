@@ -4,10 +4,11 @@ use physics_voxel::{
     AnchoredAabb, SweepConfig, SweepError, SweepResult, sweep_aabb, sweep_candidate_bounds,
 };
 use voxy_core::VoxelPos;
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 use voxy_world::{BlockRegistry, VoxelView};
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("GPU sweep error: {self:?}")]
 pub enum GpuSweepError {
     Sweep(SweepError),
     Compute(ComputeError),
@@ -23,12 +24,6 @@ impl From<SweepError> for GpuSweepError {
         Self::Sweep(error)
     }
 }
-impl std::fmt::Display for GpuSweepError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "GPU sweep error: {self:?}")
-    }
-}
-impl std::error::Error for GpuSweepError {}
 
 #[derive(Debug)]
 pub struct PendingVoxelSweep {

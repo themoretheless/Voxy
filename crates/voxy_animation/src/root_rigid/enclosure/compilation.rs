@@ -1030,6 +1030,7 @@ mod slerp_branch_tests {
 
 /// glam 0.33.7 positive acos minimax evaluation versus mathematical acos.
 /// Fixed stored input only; source-key dot and hemisphere selection are separate.
+#[allow(clippy::approx_constant)]
 pub(super) fn stored_slerp_acos_error(input: f32) -> Result<([f64; 2], f64), AnimationError> {
     let ideal = super::linear_source::positive_acos_point(f64::from(input))?;
     if input == 1. {

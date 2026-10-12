@@ -56,16 +56,18 @@ impl TissueSurfaceContact {
                 (i, lo, hi)
             })
             .collect();
-        
+
         // Sort by X coordinate only (sweep line optimization)
         bounds.sort_unstable_by(|a, b| a.1[0].total_cmp(&b.1[0]));
-        
+
         let mut pairs = Vec::new();
         for (i, &(a, lo_a, hi_a)) in bounds.iter().enumerate() {
             for &(b, lo_b, hi_b) in &bounds[i + 1..] {
-                if lo_b[0] > hi_a[0] { break; }
-                if lo_a[1] > hi_b[1] || lo_b[1] > hi_a[1]
-                    || lo_a[2] > hi_b[2] || lo_b[2] > hi_a[2] {
+                if lo_b[0] > hi_a[0] {
+                    break;
+                }
+                if lo_a[1] > hi_b[1] || lo_b[1] > hi_a[1] || lo_a[2] > hi_b[2] || lo_b[2] > hi_a[2]
+                {
                     continue;
                 }
                 if !self.faces[a].iter().any(|v| self.faces[b].contains(v)) {
@@ -427,8 +429,11 @@ impl Body {
     pub fn minimum_surface_contact_distance(&self) -> Result<Option<f64>, &'static str> {
         let mut minimum = f64::INFINITY;
         for contact in &self.surface_contacts {
-            let prepared: Vec<_> = contact.faces.iter()
-                .map(|face| PreparedTriangle::new(face.map(|i| self.positions[i]))).collect();
+            let prepared: Vec<_> = contact
+                .faces
+                .iter()
+                .map(|face| PreparedTriangle::new(face.map(|i| self.positions[i])))
+                .collect();
             for (i, a) in contact.faces.iter().enumerate() {
                 for (offset, b) in contact.faces[i + 1..].iter().enumerate() {
                     if a.iter().any(|v| b.contains(v)) {
@@ -593,29 +598,47 @@ mod pruning_tests {
         for i in 0..100 {
             let start = x.len();
             let offset = (i % 9) as f64 * 0.001;
-            x.extend([[offset,0.,0.], [offset+0.002,0.,0.], [offset,0.002,0.]]);
-            faces.push([start,start+1,start+2]);
+            x.extend([
+                [offset, 0., 0.],
+                [offset + 0.002, 0., 0.],
+                [offset, 0.002, 0.],
+            ]);
+            faces.push([start, start + 1, start + 2]);
         }
-        let contact = TissueSurfaceContact {faces, minimum_distance_m: 0.0001,
-            activation_gap_m: 0.001, pair_stiffness_n_m: 1.};
+        let contact = TissueSurfaceContact {
+            faces,
+            minimum_distance_m: 0.0001,
+            activation_gap_m: 0.001,
+            pair_stiffness_n_m: 1.,
+        };
         let margin = 0.001;
         let mut expected = Vec::new();
         for a in 0..contact.faces.len() {
-            for b in a+1..contact.faces.len() {
+            for b in a + 1..contact.faces.len() {
                 let overlaps = (0..3).all(|axis| {
-                    let range = |face: [usize;3]| {
-                        let lo = face.iter().map(|&i| x[i][axis]).fold(f64::INFINITY,f64::min) - margin*0.5;
-                        let hi = face.iter().map(|&i| x[i][axis]).fold(f64::NEG_INFINITY,f64::max) + margin*0.5;
-                        (lo,hi)
+                    let range = |face: [usize; 3]| {
+                        let lo = face
+                            .iter()
+                            .map(|&i| x[i][axis])
+                            .fold(f64::INFINITY, f64::min)
+                            - margin * 0.5;
+                        let hi = face
+                            .iter()
+                            .map(|&i| x[i][axis])
+                            .fold(f64::NEG_INFINITY, f64::max)
+                            + margin * 0.5;
+                        (lo, hi)
                     };
-                    let (al,ah) = range(contact.faces[a]);
-                    let (bl,bh) = range(contact.faces[b]);
+                    let (al, ah) = range(contact.faces[a]);
+                    let (bl, bh) = range(contact.faces[b]);
                     al <= bh && bl <= ah
                 });
-                if overlaps { expected.push((a,b)); }
+                if overlaps {
+                    expected.push((a, b));
+                }
             }
         }
-        assert_eq!(contact.candidates(&x,None,margin), expected);
+        assert_eq!(contact.candidates(&x, None, margin), expected);
     }
 
     #[test]

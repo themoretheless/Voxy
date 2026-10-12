@@ -925,7 +925,7 @@ mod tests {
         let state = invalid.clone();
         let before = b.particles().to_vec();
         assert!(invalid.advance(&mut b, 1.).is_err());
-        assert!(invalid.elapsed() == state.elapsed());
+        assert_eq!(invalid.elapsed(), state.elapsed());
         assert_eq!(before, b.particles());
         invalid.source_velocity = [f64::MAX, 0., 0.];
         invalid.direction = [1., 0., 0.];

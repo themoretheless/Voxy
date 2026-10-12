@@ -168,7 +168,12 @@ impl TriangleMesh {
             let mut scale = motion.radius;
             let mut min_p = motion.start[0];
             let mut max_p = motion.start[0];
-            for p in [motion.start[0], motion.start[1], motion.end[0], motion.end[1]] {
+            for p in [
+                motion.start[0],
+                motion.start[1],
+                motion.end[0],
+                motion.end[1],
+            ] {
                 for axis in 0..3 {
                     min_p[axis] = min_p[axis].min(p[axis]);
                     max_p[axis] = max_p[axis].max(p[axis]);
@@ -575,12 +580,24 @@ pub fn sweep_capsule_triangle(
         return Err("invalid capsule triangle sweep");
     }
     let mut coordinate_scale = capsule.radius;
-    for p in [capsule.start[0], capsule.start[1], capsule.end[0], capsule.end[1]] {
+    for p in [
+        capsule.start[0],
+        capsule.start[1],
+        capsule.end[0],
+        capsule.end[1],
+    ] {
         for axis in 0..3 {
             coordinate_scale = coordinate_scale.max(p[axis].abs());
         }
     }
-    for p in [triangle.start[0], triangle.start[1], triangle.start[2], triangle.end[0], triangle.end[1], triangle.end[2]] {
+    for p in [
+        triangle.start[0],
+        triangle.start[1],
+        triangle.start[2],
+        triangle.end[0],
+        triangle.end[1],
+        triangle.end[2],
+    ] {
         for axis in 0..3 {
             coordinate_scale = coordinate_scale.max(p[axis].abs());
         }
@@ -589,8 +606,15 @@ pub fn sweep_capsule_triangle(
     if options.tolerance_m < roundoff {
         return Err("triangle sweep tolerance is below coordinate precision; recenter the query");
     }
-    let va: [V; 2] = [sub(capsule.end[0], capsule.start[0]), sub(capsule.end[1], capsule.start[1])];
-    let vb: [V; 3] = [sub(triangle.end[0], triangle.start[0]), sub(triangle.end[1], triangle.start[1]), sub(triangle.end[2], triangle.start[2])];
+    let va: [V; 2] = [
+        sub(capsule.end[0], capsule.start[0]),
+        sub(capsule.end[1], capsule.start[1]),
+    ];
+    let vb: [V; 3] = [
+        sub(triangle.end[0], triangle.start[0]),
+        sub(triangle.end[1], triangle.start[1]),
+        sub(triangle.end[2], triangle.start[2]),
+    ];
     let mut max_speed2 = 0.0f64;
     for a in &va {
         for b in &vb {

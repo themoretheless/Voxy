@@ -10,3 +10,7 @@ voxy_core = { path = "../voxy_core" }
 voxy_world = { path = "../voxy_world" }
 [lints]
 workspace = true
+
+[[bench]]
+name = "voxel_queries"
+harness = false

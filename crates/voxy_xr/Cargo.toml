@@ -12,9 +12,5 @@ openxr = { version = "0.22.0", default-features = false, features = ["loaded"] }
 [target.'cfg(target_os = "android")'.dependencies]
 android-activity = { version = "0.6.1", features = ["native-activity"] }
 
-[lints.rust]
-unsafe_code = "deny"
-missing_debug_implementations = "warn"
-[lints.clippy]
-all = { level = "warn", priority = -1 }
-pedantic = { level = "warn", priority = -1 }
+[lints]
+workspace = true

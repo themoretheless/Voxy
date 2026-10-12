@@ -1,23 +1,11 @@
 //! Static triangle proximity for thin-film bridges; not continuous collision detection.
+use crate::math::add;
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 type V = [f64; 3];
-fn sub(a: V, b: V) -> V {
-    std::array::from_fn(|k| a[k] - b[k])
-}
-fn add(a: V, b: V) -> V {
-    std::array::from_fn(|k| a[k] + b[k])
-}
 fn mul(a: V, b: f64) -> V {
     a.map(|v| v * b)
-}
-fn dot(a: V, b: V) -> f64 {
-    (0..3).map(|k| a[k] * b[k]).sum()
-}
-fn cross(a: V, b: V) -> V {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
 }
 fn segment_point(p: V, a: V, b: V) -> f64 {
     let e = sub(b, a);

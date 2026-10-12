@@ -1,25 +1,10 @@
-use physics::{
-    astrophysics_spin::Spin,
-    contact::{
-        ContactBody, Error, ManifoldConfig, NormalContact, resolve_normal_impact,
-        resolve_normal_manifold,
-    },
-    gravity::Body,
+use physics::contact::{
+    ContactBody, Error, ManifoldConfig, NormalContact, resolve_normal_impact,
+    resolve_normal_manifold,
 };
-fn body(position: [f64; 3], velocity: [f64; 3], z: f64) -> ContactBody {
-    ContactBody {
-        motion: Body {
-            mass: 1.,
-            position,
-            velocity,
-        },
-        spin: Some(Spin {
-            orientation: [0., 0., 0., 1.],
-            angular_momentum: [0., 0., z],
-            inertia: [1.; 3],
-        }),
-    }
-}
+#[path = "support/rigid.rs"]
+mod support_rigid;
+use support_rigid::body;
 fn config() -> ManifoldConfig {
     ManifoldConfig {
         max_sweeps: 100,

@@ -20,18 +20,13 @@ pub struct XrView {
     pub orientation_valid: bool,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("XR view error: {self:?}")]
 pub enum XrViewError {
     TrackingUnavailable,
     InvalidPose,
     InvalidFrustum,
 }
-impl std::fmt::Display for XrViewError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "XR view error: {self:?}")
-    }
-}
-impl std::error::Error for XrViewError {}
 
 impl XrFov {
     /// Asymmetric right-handed projection with 0..1 depth, for per-eye rendering.

@@ -1,6 +1,7 @@
 //! Coupled maximum-dissipation impulse solve with consistent (restricted) mass.
 use super::super::ConsistentInertia;
 use super::{QuadraticBody, QuadraticPlaneContact, Vec3, dot, evaluate_faces_with};
+use crate::math::norm;
 #[derive(Clone, Copy, Debug)]
 pub struct QuadraticPlaneCoulomb {
     coefficient: f64,
@@ -61,9 +62,6 @@ struct Point {
 fn tangent(v: Vec3, normal: Vec3) -> Vec3 {
     let component = dot(v, normal) / dot(normal, normal);
     std::array::from_fn(|axis| v[axis] - component * normal[axis])
-}
-fn norm(v: Vec3) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
 }
 fn project(v: Vec3, radius: f64) -> Vec3 {
     let magnitude = norm(v);

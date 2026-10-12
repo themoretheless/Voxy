@@ -2,7 +2,7 @@
 mod support;
 use voxy_core::{CancelToken, ChunkPos};
 use voxy_gpu::{GpuTerrainError, TerrainProgram};
-use voxy_render::{ComputeError, GraphicsOptions};
+use voxy_gpu_core::{ComputeError, GraphicsOptions};
 use voxy_world::{ChunkGenerator, GenerationError, ProceduralTerrainGenerator, WorldSeed};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

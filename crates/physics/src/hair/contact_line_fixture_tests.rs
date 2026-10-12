@@ -602,7 +602,8 @@ fn measured_clear(a: CapsuleMotion, b: CapsuleMotion) -> bool {
     let admitted = clear(a, b, 512);
     if std::env::var_os("VOXY_HAIR_PAIR_KERNEL_BENCH").is_some() {
         let options = crate::hair::CapsuleSweepOptions {
-            tolerance_m: 5e-11, ..Default::default()
+            tolerance_m: 5e-11,
+            ..Default::default()
         };
         let reference = crate::hair::sweep_capsules(a, b, options)
             .expect("captured sweep must retain valid input");
@@ -617,44 +618,66 @@ fn measured_clear(a: CapsuleMotion, b: CapsuleMotion) -> bool {
             let measure = |selective: bool| {
                 let began = std::time::Instant::now();
                 for _ in 0..100 {
-                    let value = if selective { candidate() } else {
-                        super::super::pair_fraction_reference(std::hint::black_box(a), std::hint::black_box(b), options)
-                    }.unwrap();
+                    let value = if selective {
+                        candidate()
+                    } else {
+                        super::super::pair_fraction_reference(
+                            std::hint::black_box(a),
+                            std::hint::black_box(b),
+                            options,
+                        )
+                    }
+                    .unwrap();
                     assert_eq!(value.to_bits(), original.to_bits());
                     std::hint::black_box(value);
                 }
                 began.elapsed().as_secs_f64()
             };
             let times = if round % 2 == 0 {
-                let original = measure(false); (original, measure(true))
+                let original = measure(false);
+                (original, measure(true))
             } else {
-                let selective = measure(true); (measure(false), selective)
+                let selective = measure(true);
+                (measure(false), selective)
             };
             candidate_pairs.push(times);
         }
-        eprintln!("CAPTURED SELECTIVE PAIR fraction={original} original_selective_seconds={candidate_pairs:?}");
+        eprintln!(
+            "CAPTURED SELECTIVE PAIR fraction={original} original_selective_seconds={candidate_pairs:?}"
+        );
         let mut paired = Vec::new();
         for round in 0..7 {
             let certificate = || {
                 let began = std::time::Instant::now();
                 for _ in 0..100 {
-                    assert_eq!(clear(std::hint::black_box(a), std::hint::black_box(b), 512), admitted);
+                    assert_eq!(
+                        clear(std::hint::black_box(a), std::hint::black_box(b), 512),
+                        admitted
+                    );
                 }
                 began.elapsed().as_secs_f64()
             };
             let sweep = || {
                 let began = std::time::Instant::now();
                 for _ in 0..100 {
-                    assert_eq!(crate::hair::sweep_capsules(
-                        std::hint::black_box(a), std::hint::black_box(b), options,
-                    ).expect("captured sweep must retain valid input"), reference);
+                    assert_eq!(
+                        crate::hair::sweep_capsules(
+                            std::hint::black_box(a),
+                            std::hint::black_box(b),
+                            options,
+                        )
+                        .expect("captured sweep must retain valid input"),
+                        reference
+                    );
                 }
                 began.elapsed().as_secs_f64()
             };
             let (cert, advance) = if round % 2 == 0 {
-                let cert = certificate(); (cert, sweep())
+                let cert = certificate();
+                (cert, sweep())
             } else {
-                let advance = sweep(); (certificate(), advance)
+                let advance = sweep();
+                (certificate(), advance)
             };
             paired.push((cert, advance));
         }
