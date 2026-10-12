@@ -262,9 +262,7 @@ pub fn render(
             preview.sample_blink(time, camera.eye, 0.)?
         } else if lid_close_transition {
             preview.sample_blink(time, camera.eye, [0., 0.5, 1.][frame])?
-        } else if skin_depth_transition {
-            preview.sample_brow(time, camera.eye, 1.)?
-        } else if skin_finish_transition && skin_closeup {
+        } else if skin_depth_transition || (skin_finish_transition && skin_closeup) {
             preview.sample_brow(time, camera.eye, 1.)?
         } else if brow_transition {
             preview.sample_brow(time, camera.eye, [-1., 0., 1.][frame])?
