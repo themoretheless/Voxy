@@ -1,4 +1,5 @@
 //! Shared input provenance and asset publication integration for scene audio.
+use crate::GameplayError;
 use crate::{SceneAudioRuntime, SceneAudioSnapshot};
 use std::collections::HashMap;
 use voxy_assets::{AssetCatalog, AssetId, ImportInputs, ImportedAsset};
@@ -23,11 +24,11 @@ impl AudioImportConfig {
     /// Decodes a bounded versioned settings document and validates engine caps.
     /// # Errors
     /// Rejects documents over 4096 bytes, unknown fields/versions and invalid limits.
-    pub fn from_json(bytes: &[u8]) -> Result<Self, String> {
+    pub fn from_json(bytes: &[u8]) -> Result<Self, GameplayError> {
         if bytes.len() > 4096 {
             return Err("audio settings document byte limit exceeded".into());
         }
-        let config: Self = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        let config: Self = serde_json::from_slice(bytes)?;
         config.settings(48000)?;
         Ok(config)
     }
@@ -36,14 +37,14 @@ impl AudioImportConfig {
     /// # Errors
     /// Rejects invalid settings and filesystem failures, preserving the old file
     /// for every failure before successful rename.
-    pub fn save_file(self, path: &std::path::Path) -> Result<(), String> {
+    pub fn save_file(self, path: &std::path::Path) -> Result<(), GameplayError> {
         self.settings(48000)?;
-        let bytes = serde_json::to_vec_pretty(&self).map_err(|e| e.to_string())?;
-        voxy_assets::save_atomic_file(path, &bytes, 4096).map_err(|e| e.to_string())
+        let bytes = serde_json::to_vec_pretty(&self)?;
+        voxy_assets::save_atomic_file(path, &bytes, 4096).map_err(GameplayError::from)
     }
     /// # Errors
     /// Rejects unknown versions, invalid values or settings exceeding engine caps.
-    pub fn settings(self, target_rate: u32) -> Result<AudioImportSettings, String> {
+    pub fn settings(self, target_rate: u32) -> Result<AudioImportSettings, GameplayError> {
         if self.version != 1
             || self.max_input_bytes == 0
             || self.max_input_bytes > 8 * 1024 * 1024
@@ -69,7 +70,7 @@ pub fn import_wav_asset(
     source: AssetId,
     settings: AudioImportSettings,
     mut read: impl FnMut(&AssetId, usize) -> Result<Vec<u8>, String>,
-) -> Result<ImportedAsset<Clip>, String> {
+) -> Result<ImportedAsset<Clip>, GameplayError> {
     import_wav_with_inputs(
         ImportInputs::new(1, settings.max_input_bytes),
         source,
@@ -85,7 +86,7 @@ pub fn import_wav_with_inputs(
     source: AssetId,
     settings: AudioImportSettings,
     mut read: impl FnMut(&AssetId, usize) -> Result<Vec<u8>, String>,
-) -> Result<ImportedAsset<Clip>, String> {
+) -> Result<ImportedAsset<Clip>, GameplayError> {
     import_wav_cached(inputs, source, settings, None, &mut read)
 }
 /// Imports through the common artifact cache; invalid cached PCM falls back to WAV.
@@ -97,9 +98,12 @@ pub fn import_wav_cached(
     settings: AudioImportSettings,
     cache: Option<&voxy_assets::ArtifactCache>,
     mut read: impl FnMut(&AssetId, usize) -> Result<Vec<u8>, String>,
-) -> Result<ImportedAsset<Clip>, String> {
+) -> Result<ImportedAsset<Clip>, GameplayError> {
     let clip = decode_wav_observed(&mut inputs, source, settings, cache, &mut read)?;
-    inputs.finish(clip, &mut read).map_err(|e| format!("{e:?}"))
+    inputs
+        .finish(clip, &mut read)
+        .map_err(|e| format!("{e:?}"))
+        .map_err(Into::into)
 }
 
 /// Decodes a WAV within the caller's observed import transaction.
@@ -112,7 +116,7 @@ pub fn decode_wav_observed(
     settings: AudioImportSettings,
     cache: Option<&voxy_assets::ArtifactCache>,
     mut read: impl FnMut(&AssetId, usize) -> Result<Vec<u8>, String>,
-) -> Result<Clip, String> {
+) -> Result<Clip, GameplayError> {
     let observed = inputs
         .read(source, &mut read)
         .map_err(|e| format!("{e:?}"))?;
@@ -125,11 +129,7 @@ pub fn decode_wav_observed(
         settings.max_frames,
         settings.max_filter_evaluations,
     ] {
-        options.extend_from_slice(
-            &u64::try_from(limit)
-                .map_err(|e| e.to_string())?
-                .to_le_bytes(),
-        );
+        options.extend_from_slice(&u64::try_from(limit)?.to_le_bytes());
     }
     let key = inputs
         .build_key("voxy.wav", "1", "pcm1-filtered65", &options)
@@ -141,16 +141,14 @@ pub fn decode_wav_observed(
     {
         return Ok(clip);
     }
-    let decoded = decode_wav(&observed.bytes, settings.max_frames).map_err(|e| e.to_string())?;
-    let clip = decoded
-        .resample_filtered(
-            settings.target_rate,
-            settings.max_frames,
-            settings.max_filter_evaluations,
-        )
-        .map_err(|e| e.to_string())?;
+    let decoded = decode_wav(&observed.bytes, settings.max_frames)?;
+    let clip = decoded.resample_filtered(
+        settings.target_rate,
+        settings.max_frames,
+        settings.max_filter_evaluations,
+    )?;
     if let Some(cache) = cache {
-        let bytes = clip.to_pcm_bytes().map_err(|e| e.to_string())?;
+        let bytes = clip.to_pcm_bytes()?;
         if let Err(error) = cache.store(&key, &bytes) {
             eprintln!("audio cache write: {error}");
         }
@@ -165,7 +163,7 @@ pub fn synchronize_audio_assets(
     runtime: &mut SceneAudioRuntime,
     snapshot: &SceneAudioSnapshot,
     catalog: &AssetCatalog<ImportedAsset<Clip>>,
-) -> Result<(), String> {
+) -> Result<(), GameplayError> {
     let mut publications = HashMap::new();
     for source in &snapshot.sources {
         let id = &source.descriptor.asset;
@@ -240,6 +238,7 @@ mod tests {
                     None,
                     |source, limit| provider.read(source, limit),
                 )
+                .map_err(|e| e.to_string())
             },
         )
         .unwrap();
@@ -421,7 +420,8 @@ mod tests {
         catalog
             .complete(
                 &ticket,
-                import_wav_asset(source.clone(), settings, |_, _| Ok(wav(8192))),
+                import_wav_asset(source.clone(), settings, |_, _| Ok(wav(8192)))
+                    .map_err(|e| e.to_string()),
             )
             .unwrap();
         let revision = catalog.snapshot_with_revision(&id).unwrap().0;
@@ -449,7 +449,8 @@ mod tests {
         catalog
             .complete(
                 &broken,
-                import_wav_asset(source.clone(), settings, |_, _| Ok(vec![0; 8])),
+                import_wav_asset(source.clone(), settings, |_, _| Ok(vec![0; 8]))
+                    .map_err(|e| e.to_string()),
             )
             .unwrap();
         assert_eq!(catalog.snapshot_with_revision(&id).unwrap().0, revision);
@@ -461,7 +462,8 @@ mod tests {
         catalog
             .complete(
                 &replacement,
-                import_wav_asset(source.clone(), settings, |_, _| Ok(wav(16384))),
+                import_wav_asset(source.clone(), settings, |_, _| Ok(wav(16384)))
+                    .map_err(|e| e.to_string()),
             )
             .unwrap();
         assert_ne!(catalog.snapshot_with_revision(&id).unwrap().0, revision);

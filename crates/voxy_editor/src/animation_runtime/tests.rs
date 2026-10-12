@@ -190,6 +190,7 @@ fn motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors() {
         runtime
             .prepare(&scene, &models, 1. / 60.)
             .unwrap_err()
+            .to_string()
             .contains("parent")
     );
 }
@@ -403,6 +404,7 @@ fn hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic() {
             runtime
                 .prepare(&scene, &models, 1. / 60.)
                 .unwrap_err()
+                .to_string()
                 .contains("capacity")
         );
         assert_eq!(runtime.serial(), 1);
@@ -684,7 +686,7 @@ fn clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks() {
         .unwrap();
     assert_eq!(
         runtime.prepare(&scene, &models, 0.1).err().unwrap(),
-        "foot placement requires a CharacterBody on the model owner"
+        "foot placement requires a CharacterBody on the model owner".into()
     );
     assert!(Arc::ptr_eq(&held, &runtime.frame(owner, &asset).unwrap()));
     scene
@@ -699,7 +701,7 @@ fn clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks() {
         .unwrap();
     assert_eq!(
         runtime.prepare(&scene, &models, 0.1).err().unwrap(),
-        "foot placement requires a CharacterBody on the model owner"
+        "foot placement requires a CharacterBody on the model owner".into()
     );
     assert!(Arc::ptr_eq(&held, &runtime.frame(owner, &asset).unwrap()));
     scene
@@ -2286,7 +2288,10 @@ fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
         &[(owner, Vec3::X * 0.25)],
         &[],
         |preview, budget| {
-            let candidate = runtime.clone().prepare_accepted_pose(preview, budget)?;
+            let candidate = runtime
+                .clone()
+                .prepare_accepted_pose(preview, budget)
+                .map_err(|e| e.to_string())?;
             assert!(candidate.owners[&owner].root_reference.is_some());
             Err::<AnimationRuntime, String>("late retarget preparation rejection".into())
         },
@@ -2428,7 +2433,10 @@ fn first_accepted_pose_bootstraps_root_reference_atomically_without_feet() {
         &[(owner, Vec3::X * 0.25)],
         &[],
         |preview, budget| {
-            let candidate = runtime.clone().prepare_accepted_pose(preview, budget)?;
+            let candidate = runtime
+                .clone()
+                .prepare_accepted_pose(preview, budget)
+                .map_err(|e| e.to_string())?;
             assert!(candidate.owners[&owner].root_reference.is_some());
             Err::<AnimationRuntime, String>("reject after root initialization".into())
         },

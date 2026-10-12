@@ -1439,7 +1439,8 @@ fn custom_ui_setup_recreates_callback_state_per_play_and_rejects_failed_start() 
             local.translation.x = count as f32;
             commands
                 .push(voxy_scene::SceneCommand::SetLocal(event.owner, local))
-                .map_err(|error| error.to_string())
+                .map_err(EditorError::from)
+                .map_err(|e| e.to_string().into())
         })
     }));
     for _ in 0..2 {

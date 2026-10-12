@@ -19,33 +19,32 @@ impl App {
         self.advance_game(elapsed)?;
         // Interpolated ancestor matrices are shared across the instances of one frame.
         let render_world_cache = std::cell::RefCell::new(voxy_scene::RenderWorldCache::default());
-        voxy_scene::extraction_schedule()?
-            .run_scene(&mut self.scene, |_, access| {
-                let render_world = |scene: &voxy_scene::SceneGraph, owner| {
-                    if let Some(simulation) = &self.play.simulation {
-                        simulation
-                            .render_world_cached(scene, &mut render_world_cache.borrow_mut(), owner)
-                            .map_err(|error| match error {
-                                voxy_scene::SimulationError::Scene(error) => error,
-                                _ => voxy_scene::SceneGraphError::InvalidNode,
-                            })
-                    } else {
-                        scene.world_matrix(owner)
-                    }
-                };
-                let styles = frame_styles::FrameStyles::prepare_with_world(
-                    &access,
-                    &self.camera,
-                    scene_limits::OBJECTS,
-                    render_world,
-                )?;
-                self.extraction
-                    .refresh_scoped_with(access, render_world)
-                    .map_err(|error| error.to_string())?;
-                self.frame_styles = Some(styles);
-                Ok::<(), String>(())
-            })
-            .map_err(|error| error.to_string())?;
+        voxy_scene::extraction_schedule()?.run_scene(&mut self.scene, |_, access| {
+            let render_world = |scene: &voxy_scene::SceneGraph, owner| {
+                if let Some(simulation) = &self.play.simulation {
+                    simulation
+                        .render_world_cached(scene, &mut render_world_cache.borrow_mut(), owner)
+                        .map_err(|error| match error {
+                            voxy_scene::SimulationError::Scene(error) => error,
+                            _ => voxy_scene::SceneGraphError::InvalidNode,
+                        })
+                } else {
+                    scene.world_matrix(owner)
+                }
+            };
+            let styles = frame_styles::FrameStyles::prepare_with_world(
+                &access,
+                &self.camera,
+                scene_limits::OBJECTS,
+                render_world,
+            )
+            .map_err(|e| e.to_string())?;
+            self.extraction
+                .refresh_scoped_with(access, render_world)
+                .map_err(|e| e.to_string())?;
+            self.frame_styles = Some(styles);
+            Ok::<(), EditorError>(())
+        })?;
         if let Some(window) = &self.window
             && self.panels.is_some()
         {

@@ -1,5 +1,6 @@
 //! Scene-owner playback and deformation. Immutable attributes are shared by revision;
 //! clocks, palettes and posed geometry are owned by generational scene handles.
+use crate::EditorError;
 use crate::model_playback::ModelAnimation;
 use std::{
     collections::{HashMap, HashSet},
@@ -94,17 +95,17 @@ pub(super) struct Request {
     pub texture_storage: Vec<Arc<voxy_render::SceneTexture>>,
 }
 
-fn admit(live: u64, additional: u64, budget: u64) -> Result<(), String> {
+fn admit(live: u64, additional: u64, budget: u64) -> Result<(), EditorError> {
     if live > budget || additional > budget.saturating_sub(live) {
         Err(format!(
             "animation geometry budget exceeded: live={live} additional={additional} budget={budget}"
-        ))
+        ).into())
     } else {
         Ok(())
     }
 }
-fn rigid_mesh(model: &ModelAsset, pose: &Pose, mesh: &SceneMesh) -> Result<SceneMesh, String> {
-    let transform = model.mesh_transform(pose).map_err(|e| e.to_string())?;
+fn rigid_mesh(model: &ModelAsset, pose: &Pose, mesh: &SceneMesh) -> Result<SceneMesh, EditorError> {
+    let transform = model.mesh_transform(pose)?;
     SceneMesh::new(
         mesh.vertices()
             .iter()
@@ -117,7 +118,7 @@ fn rigid_mesh(model: &ModelAsset, pose: &Pose, mesh: &SceneMesh) -> Result<Scene
             .collect(),
         mesh.indices().to_vec(),
     )
-    .map_err(|e| e.to_string())
+    .map_err(EditorError::from)
 }
 impl AnimatedModels {
     pub(super) fn texture(
@@ -128,11 +129,11 @@ impl AnimatedModels {
         self.owners.get(&owner)?.textures.get(primitive)?.as_deref()
     }
 
-    pub(super) fn new(renderer: &SceneRenderer) -> Result<Self, String> {
+    pub(super) fn new(renderer: &SceneRenderer) -> Result<Self, EditorError> {
         let skinner = match SceneSkinner::new(renderer) {
             Ok(s) => Some(s),
             Err(SceneSkinError::Unsupported) => None,
-            Err(e) => return Err(e.to_string()),
+            Err(e) => return Err(e.to_string().into()),
         };
         Ok(Self {
             skinner,
@@ -140,7 +141,10 @@ impl AnimatedModels {
             sources: HashMap::new(),
         })
     }
-    pub(super) fn pose_signature(&self, owner: NodeId) -> Result<Option<Vec<[u32; 16]>>, String> {
+    pub(super) fn pose_signature(
+        &self,
+        owner: NodeId,
+    ) -> Result<Option<Vec<[u32; 16]>>, EditorError> {
         let Some(owner) = self.owners.get(&owner) else {
             return Ok(None);
         };
@@ -166,7 +170,7 @@ impl AnimatedModels {
         &self,
         owner: NodeId,
         world: glam::Mat4,
-    ) -> Result<Option<(glam::Vec3, glam::Vec3)>, String> {
+    ) -> Result<Option<(glam::Vec3, glam::Vec3)>, EditorError> {
         let Some(state) = self.owners.get(&owner) else {
             return Ok(None);
         };
@@ -174,9 +178,7 @@ impl AnimatedModels {
             return Ok(None);
         };
         let frame = &state.frame;
-        let posed = source
-            .prepare(&frame.skin_matrices, world)
-            .map_err(|e| e.to_string())?;
+        let posed = source.prepare(&frame.skin_matrices, world)?;
         let mut min = glam::Vec3::splat(f32::INFINITY);
         let mut max = glam::Vec3::splat(f32::NEG_INFINITY);
         for position in posed.positions() {
@@ -317,7 +319,7 @@ impl AnimatedModels {
         viewport: [u32; 2],
         other_live: u64,
         budget: u64,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         let Some(camera) = camera else {
             return Ok(());
         };
@@ -334,11 +336,7 @@ impl AnimatedModels {
         let candidate = if state.prepared_lod.as_ref().is_none_or(|posed| {
             posed.model() != world || posed.joints() != frame.skin_matrices.as_slice()
         }) {
-            Some(
-                source
-                    .prepare(&frame.skin_matrices, world)
-                    .map_err(|e| e.to_string())?,
-            )
+            Some(source.prepare(&frame.skin_matrices, world)?)
         } else {
             None
         };
@@ -358,18 +356,11 @@ impl AnimatedModels {
             let geometry = if let (Some(skinner), Primitive::Skin { instance, .. }) =
                 (&self.skinner, &state.primitives[0])
             {
-                LodGeometry::Gpu(
-                    skinner
-                        .create_lod_level(instance, source, level, live, budget)
-                        .map_err(|e| e.to_string())?,
-                )
+                LodGeometry::Gpu(skinner.create_lod_level(instance, source, level, live, budget)?)
             } else {
-                let local = source
-                    .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
-                    .map_err(|e| e.to_string())?;
+                let local = source.prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)?;
                 let mesh = local
-                    .posed_scene_mesh(level, state.model.primitives[0].color)
-                    .map_err(|e| e.to_string())?
+                    .posed_scene_mesh(level, state.model.primitives[0].color)?
                     .with_material_coordinates(
                         source
                             .mesh()
@@ -377,14 +368,9 @@ impl AnimatedModels {
                             .iter()
                             .map(|v| v.position)
                             .collect(),
-                    )
-                    .map_err(|e| e.to_string())?;
+                    )?;
                 admit(live, SceneRenderer::mesh_allocation_bytes(&mesh), budget)?;
-                LodGeometry::Cpu(
-                    renderer
-                        .upload_mesh(device, &mesh)
-                        .map_err(|e| e.to_string())?,
-                )
+                LodGeometry::Cpu(renderer.upload_mesh(device, &mesh)?)
             };
             state.lod_levels.insert(level, geometry);
         }
@@ -405,7 +391,7 @@ impl AnimatedModels {
         ticks: u64,
         other_live: u64,
         budget: u64,
-    ) -> Vec<(NodeId, String)> {
+    ) -> Vec<(NodeId, EditorError)> {
         let active: HashSet<_> = requests.iter().map(|r| r.owner).collect();
         self.owners.retain(|owner, _| active.contains(owner));
         self.sources
@@ -452,17 +438,12 @@ impl AnimatedModels {
         ticks: u64,
         other_live: u64,
         budget: u64,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         let frame = frame.ok_or("waiting for an accepted fixed-tick animation frame")?;
         // Playback selection belongs to the accepted owner and may use a separate
         // source rig. Rendering admits descriptor values and the target-bound frame.
         settings.validate(None, None)?;
-        if frame.skin_matrices
-            != frame
-                .pose
-                .skin_matrices(&model.skeleton)
-                .map_err(|e| e.to_string())?
-        {
+        if frame.skin_matrices != frame.pose.skin_matrices(&model.skeleton)? {
             return Err("animation frame palette differs from pose".into());
         }
         if !textures.is_empty() && textures.len() != model.primitives.len() {
@@ -508,11 +489,7 @@ impl AnimatedModels {
             {
                 return Err("skeletal LOD source differs from animation model".into());
             }
-            Some(
-                source
-                    .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
-                    .map_err(|e| e.to_string())?,
-            )
+            Some(source.prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)?)
         } else {
             None
         };
@@ -539,9 +516,7 @@ impl AnimatedModels {
                     let source = if let Some(source) = source {
                         source
                     } else {
-                        let source = skinner
-                            .upload_source(Arc::new(mesh.clone()), live, budget)
-                            .map_err(|e| e.to_string())?;
+                        let source = skinner.upload_source(Arc::new(mesh.clone()), live, budget)?;
                         live += source.allocation_bytes();
                         self.sources.insert(
                             key,
@@ -552,16 +527,14 @@ impl AnimatedModels {
                         );
                         source
                     };
-                    let instance = skinner
-                        .create_instance(
-                            renderer,
-                            source.clone(),
-                            &frame.skin_matrices,
-                            primitive.color,
-                            live,
-                            budget,
-                        )
-                        .map_err(|e| e.to_string())?;
+                    let instance = skinner.create_instance(
+                        renderer,
+                        source.clone(),
+                        &frame.skin_matrices,
+                        primitive.color,
+                        live,
+                        budget,
+                    )?;
                     live += instance.allocation_bytes();
                     Primitive::Skin { instance, source }
                 }
@@ -587,14 +560,10 @@ impl AnimatedModels {
                             source.vertices().iter().map(|v| v.position).collect()
                         }
                     };
-                    let mesh = mesh
-                        .with_material_coordinates(coordinates)
-                        .map_err(|e| e.to_string())?;
+                    let mesh = mesh.with_material_coordinates(coordinates)?;
                     let bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
                     admit(live, bytes, budget)?;
-                    let geometry = renderer
-                        .upload_mesh(device, &mesh)
-                        .map_err(|e| e.to_string())?;
+                    let geometry = renderer.upload_mesh(device, &mesh)?;
                     live += bytes;
                     Primitive::Baked(geometry)
                 }
@@ -618,17 +587,11 @@ impl AnimatedModels {
                     .or_else(|| primitives.map(|p| &p[i]))
                     .ok_or("missing animated primitive")?;
                 if let Primitive::Skin { instance, .. } = primitive {
-                    prepared.push(
-                        skinner
-                            .prepare_pose(instance, &frame.skin_matrices)
-                            .map_err(|e| e.to_string())?,
-                    );
+                    prepared.push(skinner.prepare_pose(instance, &frame.skin_matrices)?);
                 }
             }
             for pose in &prepared {
-                skinner
-                    .encode_prepared_pose(queue, &mut encoder, pose)
-                    .map_err(|e| e.to_string())?;
+                skinner.encode_prepared_pose(queue, &mut encoder, pose)?;
             }
         }
         queue.submit([encoder.finish()]);

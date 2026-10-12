@@ -1,5 +1,6 @@
 //! Owned presentation inputs; no scene borrowing survives preparation.
 use super::{DirectionalLight, EditorCamera, ModelInstance, ModelPart, SceneMaterial};
+use crate::EditorError;
 use std::collections::{HashMap, HashSet};
 use voxy_scene::{NodeId, SceneSystemAccess};
 #[derive(Debug)]
@@ -19,7 +20,7 @@ impl FrameStyles {
         access: &SceneSystemAccess<'_>,
         camera: &EditorCamera,
         capacity: usize,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         Self::prepare_with_world(access, camera, capacity, |scene, owner| {
             scene.world_matrix(owner)
         })
@@ -29,14 +30,12 @@ impl FrameStyles {
         camera: &EditorCamera,
         capacity: usize,
         world: F,
-    ) -> Result<Self, String>
+    ) -> Result<Self, EditorError>
     where
         F: Fn(&voxy_scene::SceneGraph, NodeId) -> Result<glam::Mat4, voxy_scene::SceneGraphError>,
     {
-        access
-            .require_write("render.extraction")
-            .map_err(|e| e.to_string())?;
-        let scene = access.read().map_err(|e| e.to_string())?;
+        access.require_write("render.extraction")?;
+        let scene = access.read()?;
         if !camera.valid() {
             return Err("invalid presentation camera".into());
         }
@@ -50,8 +49,7 @@ impl FrameStyles {
         }
         let shadow = if let Some((owner, light)) = selected_light {
             scene
-                .component::<crate::DirectionalShadow>(owner)
-                .map_err(|e| e.to_string())?
+                .component::<crate::DirectionalShadow>(owner)?
                 .copied()
                 .map(|s| {
                     s.validate().map_err(str::to_owned)?;
@@ -76,16 +74,14 @@ impl FrameStyles {
         }
         let mut fog = Vec::new();
         for (owner, volume) in scene.active_components::<voxy_scene::FogVolume>() {
-            volume.validate().map_err(|e| e.to_string())?;
+            volume.validate()?;
             if !volume.enabled {
                 continue;
             }
             if fog.len() >= capacity {
                 return Err("presentation fog capacity exceeded".into());
             }
-            let bounds = volume
-                .world_bounds(world(scene, owner).map_err(|e| e.to_string())?)
-                .map_err(|e| e.to_string())?;
+            let bounds = volume.world_bounds(world(scene, owner)?)?;
             fog.push((owner, *volume, bounds));
         }
         let mut materials = HashMap::new();
@@ -95,18 +91,14 @@ impl FrameStyles {
                 return Err("presentation material capacity exceeded".into());
             }
             let material = scene
-                .component::<SceneMaterial>(owner)
-                .map_err(|e| e.to_string())?
+                .component::<SceneMaterial>(owner)?
                 .copied()
                 .unwrap_or_default();
             if !material.valid() {
                 return Err("invalid presentation material".into());
             }
             materials.insert(owner, material);
-            if let Some(part) = scene
-                .component::<ModelPart>(owner)
-                .map_err(|e| e.to_string())?
-            {
+            if let Some(part) = scene.component::<ModelPart>(owner)? {
                 parts.insert(owner, part.node);
             }
         }
@@ -155,14 +147,13 @@ mod tests {
             extraction_schedule()
                 .unwrap()
                 .run_scene(scene, |_, access| {
-                    result = Some(FrameStyles::prepare(
-                        &access,
-                        &EditorCamera::default(),
-                        capacity,
-                    )?);
-                    Ok::<(), String>(())
+                    result = Some(
+                        FrameStyles::prepare(&access, &EditorCamera::default(), capacity)
+                            .map_err(|e| e.to_string())?,
+                    );
+                    Ok::<(), EditorError>(())
                 })?;
-            Ok::<_, voxy_scene::SystemFailure<String>>(result.unwrap())
+            Ok::<_, voxy_scene::SystemFailure<EditorError>>(result.unwrap())
         };
         let first = capture(&mut scene, 1).unwrap();
         // Disabled input is still visible; scene activity controls visibility.
@@ -215,8 +206,8 @@ mod tests {
         extraction_schedule()
             .unwrap()
             .run_scene(&mut scene, |_, access| {
-                first = Some(FrameStyles::prepare(&access, &camera, 1)?);
-                Ok::<(), String>(())
+                first = Some(FrameStyles::prepare(&access, &camera, 1).map_err(|e| e.to_string())?);
+                Ok::<(), EditorError>(())
             })
             .unwrap();
         let first = first.unwrap();
@@ -236,12 +227,12 @@ mod tests {
         extraction_schedule()
             .unwrap()
             .run_scene(&mut scene, |_, access| {
-                let next = FrameStyles::prepare(&access, &camera, 1)?;
+                let next = FrameStyles::prepare(&access, &camera, 1).map_err(|e| e.to_string())?;
                 assert!(next.light.is_none());
                 assert_eq!(next.parts[&model], 9);
                 assert_eq!(next.camera.distance, 10.);
                 assert!(FrameStyles::prepare(&access, &camera, 0).is_err());
-                Ok::<(), String>(())
+                Ok::<(), EditorError>(())
             })
             .unwrap();
         scene
@@ -291,12 +282,11 @@ mod tests {
             extraction_schedule()
                 .unwrap()
                 .run_scene(scene, |_, access| {
-                    result = Some(FrameStyles::prepare(
-                        &access,
-                        &EditorCamera::default(),
-                        capacity,
-                    )?);
-                    Ok::<(), String>(())
+                    result = Some(
+                        FrameStyles::prepare(&access, &EditorCamera::default(), capacity)
+                            .map_err(|e| e.to_string())?,
+                    );
+                    Ok::<(), EditorError>(())
                 })
                 .map_err(|e| format!("{e:?}"))?;
             Ok::<_, String>(result.unwrap())
@@ -316,9 +306,10 @@ mod tests {
                         Ok(glam::Mat4::from_translation(glam::Vec3::new(10., 0., 0.))
                             * scene.world_matrix(owner)?)
                     },
-                )?;
+                )
+                .map_err(|e| e.to_string())?;
                 assert_eq!(resolved.fog[0].2.origin, [13., 4., 5.]);
-                Ok::<(), String>(())
+                Ok::<(), EditorError>(())
             })
             .unwrap();
         assert!(capture(&mut scene, 0).is_err());
@@ -442,8 +433,11 @@ mod shadow_snapshot_tests {
             extraction_schedule()
                 .unwrap()
                 .run_scene(scene, |_, access| {
-                    result = Some(FrameStyles::prepare(&access, &EditorCamera::default(), 8)?);
-                    Ok::<(), String>(())
+                    result = Some(
+                        FrameStyles::prepare(&access, &EditorCamera::default(), 8)
+                            .map_err(|e| e.to_string())?,
+                    );
+                    Ok::<(), EditorError>(())
                 })
                 .unwrap();
             result.unwrap()

@@ -1,4 +1,5 @@
 //! Durable, explicitly opaque shadow inputs; renderer resources stay session-owned.
+use crate::EditorError;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -78,7 +79,7 @@ impl DirectionalShadow {
     pub fn settings(
         self,
         light: crate::DirectionalLight,
-    ) -> Result<voxy_render::ShadowSettings, String> {
+    ) -> Result<voxy_render::ShadowSettings, EditorError> {
         self.validate()?;
         if !light.valid() {
             return Err("invalid shadow light".into());
@@ -104,7 +105,7 @@ impl DirectionalShadow {
                 far: self.extent[2],
             },
         };
-        let light_from_world = camera.view_projection().map_err(|e| e.to_string())?;
+        let light_from_world = camera.view_projection()?;
         let det = light_from_world.determinant();
         if !det.is_finite() || det == 0. || !light_from_world.inverse().is_finite() {
             return Err("unrepresentable shadow projection".into());
@@ -134,25 +135,18 @@ impl Default for OpaqueShadowCaster {
     }
 }
 
-pub(crate) fn validate_scene(scene: &voxy_scene::SceneGraph) -> Result<(), String> {
+pub(crate) fn validate_scene(scene: &voxy_scene::SceneGraph) -> Result<(), EditorError> {
     for (owner, shadow) in scene.components::<DirectionalShadow>() {
         shadow.validate()?;
         let light = scene
-            .component::<crate::DirectionalLight>(owner)
-            .map_err(|e| e.to_string())?
+            .component::<crate::DirectionalLight>(owner)?
             .copied()
             .ok_or("directional shadow requires a directional light on its owner")?;
         shadow.settings(light)?;
     }
     for (owner, _) in scene.components::<OpaqueShadowCaster>() {
-        if scene
-            .component::<crate::ModelInstance>(owner)
-            .map_err(|e| e.to_string())?
-            .is_none()
-            && scene
-                .component::<String>(owner)
-                .map_err(|e| e.to_string())?
-                .is_none()
+        if scene.component::<crate::ModelInstance>(owner)?.is_none()
+            && scene.component::<String>(owner)?.is_none()
         {
             return Err("opaque shadow caster requires a model on its owner".into());
         }

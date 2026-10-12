@@ -3191,6 +3191,7 @@ fn durable_point_loads_reload_without_runtime_state_and_reject_silent_play() {
     assert!(
         voxy_gameplay::validate_game_descriptors(&restored.graph, 4)
             .unwrap_err()
+            .to_string()
             .contains("point-load")
     );
     let mut malformed = payload;

@@ -1,4 +1,5 @@
 //! Scene binding for the existing platform-neutral pointer and focus routers.
+use crate::GameplayError;
 use crate::{SceneUiSnapshot, extract_scene_ui};
 use std::collections::{BTreeMap, HashMap};
 use voxy_scene::{NodeId, SceneGraph};
@@ -47,7 +48,7 @@ impl SceneUiRuntime {
     /// Callers must handle failure before drawing/dispatching a deleted old owner.
     /// # Errors
     /// Returns bounded extraction, monotonic identity exhaustion or router errors.
-    pub fn refresh(&mut self, scene: &SceneGraph, viewport: [f32; 2]) -> Result<(), String> {
+    pub fn refresh(&mut self, scene: &SceneGraph, viewport: [f32; 2]) -> Result<(), GameplayError> {
         let snapshot = extract_scene_ui(scene, viewport, self.capacity)?;
         let mut identities = HashMap::new();
         let mut bindings = BTreeMap::new();
@@ -84,12 +85,8 @@ impl SceneUiRuntime {
         }
         // Extraction guarantees finite clipped geometry and unique live owners.
         // Both lists fit the same capacity, so router admission is prevalidated.
-        self.pointer
-            .set_regions(&regions)
-            .map_err(|error| error.to_string())?;
-        self.focus
-            .set_order(&order)
-            .map_err(|error| error.to_string())?;
+        self.pointer.set_regions(&regions)?;
+        self.focus.set_order(&order)?;
         self.identities = identities;
         self.bindings = bindings;
         self.next = next;
@@ -102,15 +99,13 @@ impl SceneUiRuntime {
     /// Disabled visual regions still consume/occlude pointer presses.
     /// # Errors
     /// Reports an inconsistent focus target; successful refresh prevalidates it.
-    pub fn pointer_press(&mut self) -> Result<bool, String> {
+    pub fn pointer_press(&mut self) -> Result<bool, GameplayError> {
         let result = self.pointer.press();
         let target = match result.action {
             PointerAction::Press(id) => Some(id),
             _ => None,
         };
-        self.focus
-            .focus_to(target)
-            .map_err(|error| error.to_string())?;
+        self.focus.focus_to(target)?;
         Ok(result.consumed)
     }
     fn event(&self, id: WidgetId) -> Option<UiActionEvent> {

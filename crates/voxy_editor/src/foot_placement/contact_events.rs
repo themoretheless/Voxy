@@ -1,5 +1,6 @@
 //! Intersections of zero-valued contact windows in common fixed-tick coordinates.
 use super::{FootContactKey, contact_weight};
+use crate::EditorError;
 use voxy_animation::AnimationPhaseInterval;
 
 #[derive(Clone, Copy)]
@@ -14,7 +15,7 @@ pub(super) enum SourceTravel<'a> {
         active_fraction: f64,
     },
 }
-fn spend(budget: &mut voxy_gameplay::SupportQueryBudget) -> Result<(), String> {
+fn spend(budget: &mut voxy_gameplay::SupportQueryBudget) -> Result<(), EditorError> {
     budget
         .charge_work(1)
         .map_err(|_| "contact event budget exceeded".into())
@@ -24,7 +25,7 @@ fn zero_windows(
     phase: AnimationPhaseInterval,
     fraction: f64,
     budget: &mut voxy_gameplay::SupportQueryBudget,
-) -> Result<Vec<[f64; 2]>, String> {
+) -> Result<Vec<[f64; 2]>, EditorError> {
     if !phase.start.is_finite()
         || !phase.end.is_finite()
         || !(0. ..=1.).contains(&phase.start)
@@ -93,7 +94,7 @@ pub(super) fn mixed_swing(
     source: Option<SourceTravel<'_>>,
     source_continues: bool,
     budget: &mut voxy_gameplay::SupportQueryBudget,
-) -> Result<bool, String> {
+) -> Result<bool, EditorError> {
     let Some(source) = source else {
         // The ordinary single-clip case needs no loop enumeration.
         budget
@@ -164,9 +165,8 @@ mod tests {
         phase: AnimationPhaseInterval,
         source: Option<SourceTravel<'_>>,
         limit: usize,
-    ) -> Result<bool, String> {
-        let mut budget =
-            voxy_gameplay::SupportQueryBudget::new(limit).map_err(|e| e.to_string())?;
+    ) -> Result<bool, EditorError> {
+        let mut budget = voxy_gameplay::SupportQueryBudget::new(limit)?;
         super::mixed_swing(target, phase, source, false, &mut budget)
     }
 

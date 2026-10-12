@@ -1,5 +1,6 @@
 //! Bounded background preparation for the full secondary-motion example.
 //! The render thread never waits for a physics result or builds a model mesh.
+use crate::DemoError;
 use crate::female_demo::FemaleDemo;
 use std::sync::{
     Arc, Mutex,
@@ -47,7 +48,7 @@ pub struct Frame {
     pub solver_ms: [f64; 2],
 }
 impl Frame {
-    fn validate_publication(&self) -> Result<(), String> {
+    fn validate_publication(&self) -> Result<(), DemoError> {
         if !self.simulation_time.is_finite()
             || self.simulation_time < 0.
             || !self.work_ms.is_finite()
@@ -69,7 +70,7 @@ impl Frame {
 pub struct FullModelWorker {
     controls: Arc<Mutex<Controls>>,
     stopped: Arc<AtomicBool>,
-    receiver: mpsc::Receiver<Result<Frame, String>>,
+    receiver: mpsc::Receiver<Result<Frame, DemoError>>,
     thread: Option<std::thread::JoinHandle<()>>,
     pub title: String,
     pub failure: Option<String>,
@@ -118,14 +119,14 @@ impl FullModelWorker {
                     let advance_ms = advance_started.elapsed().as_secs_f64() * 1000.;
                     let mesh_started = std::time::Instant::now();
                     let result = advance
-                        .map_err(str::to_owned)
+                        .map_err(DemoError::from)
                         .and_then(|()| {
                             if gpu_hair {
                                 simulation.mesh_without_hair()
                             } else {
                                 simulation.mesh()
                             }
-                            .map_err(|e| e.to_string())
+                            .map_err(|e| DemoError::from(e.to_string()))
                         })
                         .and_then(|mesh| {
                             let mesh_ms = mesh_started.elapsed().as_secs_f64() * 1000.;
@@ -133,7 +134,7 @@ impl FullModelWorker {
                             let (body_indices, hair_indices) = if gpu_hair {
                                 (mesh.indices().to_vec(), Vec::new())
                             } else {
-                                partition.partition(&mesh)?
+                                partition.partition(&mesh).map_err(|e| e.to_string())?
                             };
                             let hair_frames =
                                 gpu_hair.then(|| simulation.gpu_hair_surface_frames());
@@ -179,7 +180,7 @@ impl FullModelWorker {
             failure: None,
         })
     }
-    pub fn poll(&mut self, controls: Controls) -> Result<Option<Frame>, String> {
+    pub fn poll(&mut self, controls: Controls) -> Result<Option<Frame>, DemoError> {
         *self.controls.lock().unwrap() = controls;
         if self.failure.is_some() {
             return Ok(None);
@@ -197,9 +198,9 @@ impl FullModelWorker {
             Err(mpsc::TryRecvError::Disconnected) => self.fail("full-model worker stopped".into()),
         }
     }
-    fn fail(&mut self, error: String) -> Result<Option<Frame>, String> {
+    fn fail(&mut self, error: DemoError) -> Result<Option<Frame>, DemoError> {
         self.title = format!("Physics preparation stopped | {error}");
-        self.failure = Some(error.clone());
+        self.failure = Some(error.to_string());
         Err(error)
     }
 }
@@ -227,7 +228,7 @@ struct PartitionCache {
 
 impl PartitionCache {
     #[allow(clippy::float_cmp)] // The hair tag is an exact sentinel value, as in `partition_hair`.
-    fn partition(&mut self, mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), String> {
+    fn partition(&mut self, mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), DemoError> {
         let tags: Vec<bool> = mesh.vertices().iter().map(|v| v.uv[0] == -7.).collect();
         if self.indices != mesh.indices() || self.hair_tags != tags {
             let (body, hair) = partition_hair(mesh)?;
@@ -241,7 +242,7 @@ impl PartitionCache {
     }
 }
 
-pub fn partition_hair(mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), String> {
+pub fn partition_hair(mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), DemoError> {
     let mut body = Vec::with_capacity(mesh.indices().len());
     let mut hair = Vec::new();
     for tri in mesh.indices().chunks_exact(3) {
@@ -264,7 +265,7 @@ mod tests {
 
     fn fixture() -> (
         FullModelWorker,
-        mpsc::SyncSender<Result<Frame, String>>,
+        mpsc::SyncSender<Result<Frame, DemoError>>,
         Controls,
     ) {
         let controls = Controls {
@@ -314,7 +315,7 @@ mod tests {
         sender.send(Err("non-finite tissue state".into())).unwrap();
         assert_eq!(
             worker.poll(controls).unwrap_err(),
-            "non-finite tissue state"
+            "non-finite tissue state".into()
         );
         drop(sender);
         assert!(worker.poll(controls).unwrap().is_none());
@@ -344,7 +345,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             worker.poll(controls).unwrap_err(),
-            "invalid full-model frame timing"
+            "invalid full-model frame timing".into()
         );
         assert_ne!(worker.title, "Invalid replacement");
         assert!(worker.poll(controls).unwrap().is_none());
@@ -356,7 +357,7 @@ mod tests {
         drop(sender);
         assert_eq!(
             worker.poll(controls).unwrap_err(),
-            "full-model worker stopped"
+            "full-model worker stopped".into()
         );
         let diagnostic = worker.title.clone();
         let mut camera_controls = controls;

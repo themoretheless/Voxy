@@ -492,6 +492,7 @@ fn signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject(
             prepared
                 .prepare(&scene, &BTreeMap::from([(id.clone(), unsupported)]), 0.1)
                 .unwrap_err()
+                .to_string()
                 .contains(message)
         );
         assert_eq!(prepared.serial(), 1);

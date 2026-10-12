@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+thiserror = "2"
 physics = { path = "../physics" }
 voxy_animation = { path = "../voxy_animation" }
 getrandom = "0.3.4"

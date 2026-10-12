@@ -1,4 +1,5 @@
 //! Real anatomical CC0 mesh with a nonlinear full-body skin shell bound to its rendered surface.
+use crate::DemoError;
 use glam::Vec3;
 use physics::secondary_motion::{Config as SecondaryConfig, ContactPlane, SecondaryMotion};
 #[path = "skin_light_diffusion.rs"]
@@ -1313,7 +1314,7 @@ impl FemaleDemo {
             && self.face_parameter_revision != Some(revision)
         {
             match std::fs::read_to_string(path)
-                .map_err(|e| e.to_string())
+                .map_err(DemoError::from)
                 .and_then(|text| crate::face_parameters::FaceParameters::from_json(&text))
             {
                 Ok(parameters) => {
@@ -1329,10 +1330,10 @@ impl FemaleDemo {
             && self.parameter_revision != Some(revision)
         {
             match std::fs::read_to_string(path)
-                .map_err(|e| e.to_string())
+                .map_err(DemoError::from)
                 .and_then(|text| {
                     crate::body_parameters::BodyParameters::from_json(&text)
-                        .map_err(|e| e.to_string())
+                        .map_err(|e| DemoError::Message(e.to_string()))
                 }) {
                 Ok(parameters) => {
                     if let Err(error) = self.set_body_parameters(parameters) {

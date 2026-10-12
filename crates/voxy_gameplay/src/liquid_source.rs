@@ -109,6 +109,7 @@ mod tests {
         assert!(
             crate::validate_game_descriptors(&scene, 1)
                 .unwrap_err()
+                .to_string()
                 .contains("attached scene liquid runtime")
         );
         let encoded = serde_json::to_string(&source).unwrap();

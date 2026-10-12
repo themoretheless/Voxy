@@ -1,4 +1,5 @@
 //! Detailed continuous face morphology in bind coordinates; reference defaults are identity.
+use crate::DemoError;
 use glam::{Mat4, Vec3};
 use std::collections::BTreeMap;
 use voxy_render::SceneVertex;
@@ -2534,7 +2535,7 @@ impl FaceParameters {
     /// Atomically validates a partial object; omitted values preserve the current preset.
     /// # Errors
     /// Rejects unknown controls, nonnumeric values, nonfinite values and out-of-range values.
-    pub fn patched(&self, patch: &serde_json::Value) -> Result<Self, String> {
+    pub fn patched(&self, patch: &serde_json::Value) -> Result<Self, DemoError> {
         let object = patch.as_object().ok_or("expected face parameter object")?;
         let mut result = self.clone();
         for (key, value) in object {
@@ -2546,7 +2547,7 @@ impl FaceParameters {
                 .as_f64()
                 .ok_or_else(|| format!("{key}: expected number"))? as f32;
             if !number.is_finite() || !(control.min..=control.max).contains(&number) {
-                return Err(format!("{key}: allowed {}..{}", control.min, control.max));
+                return Err(format!("{key}: allowed {}..{}", control.min, control.max).into());
             }
             result.values.insert(key.clone(), number);
         }
@@ -2554,8 +2555,8 @@ impl FaceParameters {
     }
     /// # Errors
     /// Rejects malformed JSON and invalid controls.
-    pub fn from_json(text: &str) -> Result<Self, String> {
-        Self::default().patched(&serde_json::from_str(text).map_err(|e| e.to_string())?)
+    pub fn from_json(text: &str) -> Result<Self, DemoError> {
+        Self::default().patched(&serde_json::from_str(text)?)
     }
     pub fn to_json(&self) -> serde_json::Value {
         serde_json::json!(self.values)

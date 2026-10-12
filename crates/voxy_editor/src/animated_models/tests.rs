@@ -1,4 +1,5 @@
 // Test-only frame producers; the production renderer receives accepted frames.
+use crate::EditorError;
 fn test_frame(
     model: &Arc<ModelAsset>,
     settings: ModelAnimation,
@@ -35,7 +36,7 @@ impl std::ops::DerefMut for FrameFixture {
     }
 }
 impl FrameFixture {
-    fn new(renderer: &SceneRenderer) -> Result<Self, String> {
+    fn new(renderer: &SceneRenderer) -> Result<Self, EditorError> {
         Ok(Self {
             render: AnimatedModels::new(renderer)?,
             clocks: HashMap::new(),
@@ -50,7 +51,7 @@ impl FrameFixture {
         ticks: u64,
         live: u64,
         budget: u64,
-    ) -> Vec<(NodeId, String)> {
+    ) -> Vec<(NodeId, EditorError)> {
         let active: HashSet<_> = requests.iter().map(|request| request.owner).collect();
         self.clocks.retain(|owner, _| active.contains(owner));
         let mut candidates = Vec::new();
