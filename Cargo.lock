@@ -2459,6 +2459,7 @@ dependencies = [
  "voxy_assets",
  "voxy_core",
  "voxy_cuda",
+ "voxy_demos",
  "voxy_editor",
  "voxy_gpu",
  "voxy_input",
@@ -2509,6 +2510,24 @@ dependencies = [
  "ash",
  "cudarc",
  "physics",
+]
+
+[[package]]
+name = "voxy_demos"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "physics",
+ "physics_voxel",
+ "pollster",
+ "serde_json",
+ "voxy_animation",
+ "voxy_core",
+ "voxy_cuda",
+ "voxy_gpu",
+ "voxy_render",
+ "voxy_world",
+ "wgpu",
 ]
 
 [[package]]
@@ -2621,7 +2640,7 @@ dependencies = [
  "image",
  "pollster",
  "serde_json",
- "voxy_app",
+ "voxy_demos",
  "voxy_render",
  "voxy_runtime",
  "voxy_ui",
