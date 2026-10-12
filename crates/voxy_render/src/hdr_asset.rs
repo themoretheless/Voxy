@@ -58,7 +58,7 @@ impl HdrImageAsset {
     }
     /// Decode Radiance .hdr RGBE bytes into linear RGB32F; EXR is not accepted.
     /// Header exposure/color correction metadata is not applied; values are stored radiance.
-    /// ImageLimits bounds source, dimensions and combined decoded/conversion buffers.
+    /// `ImageLimits` bounds source, dimensions and combined decoded/conversion buffers.
     /// # Errors
     /// Rejects unsupported/corrupt input or exceeded limits.
     pub fn decode(bytes: &[u8], limits: ImageLimits) -> Result<Self, HdrImageError> {

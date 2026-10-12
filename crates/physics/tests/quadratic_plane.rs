@@ -70,7 +70,7 @@ fn impact(dt: f64, steps: usize) -> f64 {
         0.
     );
     let initial = body.energy().unwrap();
-    let mut old = initial.clone();
+    let mut old = initial;
     let mut impulse = 0.;
     let mut worst = 0_f64;
     let mut peak = 0_f64;

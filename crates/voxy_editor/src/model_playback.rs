@@ -176,6 +176,7 @@ impl PreparedModelFade {
         })
     }
 
+    #[allow(dead_code)]
     pub(crate) fn bind_motion(
         self,
         owner: voxy_scene::NodeId,
@@ -334,6 +335,7 @@ impl PreparedModelFadeMotion {
         }
     }
 }
+#[allow(dead_code)]
 impl ModelPlayback {
     pub(crate) fn reference_at_current_phase(
         &self,
@@ -447,33 +449,30 @@ impl ModelPlayback {
         )?;
         settings.clip = settings.resolve_clip(&model)?;
         let root_motion_joint = settings.resolve_motion_joint(&model)?;
-        let animator = match settings.clip {
-            Some(index) => {
-                let clip = model
-                    .animations
-                    .get(index)
-                    .ok_or("invalid model animation clip")?;
-                if !clip.is_compatible_with(&model.skeleton) {
-                    return Err("animation clip belongs to an incompatible rig".into());
-                }
-                let mut animator =
-                    Animator::try_new(clip.clone()).map_err(|error| error.to_string())?;
-                animator
-                    .set_speed(settings.speed)
-                    .map_err(|error| error.to_string())?;
-                animator
-                    .set_root_motion_joint(root_motion_joint)
-                    .map_err(|error| error.to_string())?;
-                Some(animator)
+        let animator = if let Some(index) = settings.clip {
+            let clip = model
+                .animations
+                .get(index)
+                .ok_or("invalid model animation clip")?;
+            if !clip.is_compatible_with(&model.skeleton) {
+                return Err("animation clip belongs to an incompatible rig".into());
             }
-            None => {
-                model
-                    .skeleton
-                    .bind_pose()
-                    .skin_matrices(&model.skeleton)
-                    .map_err(|error| error.to_string())?;
-                None
-            }
+            let mut animator =
+                Animator::try_new(clip.clone()).map_err(|error| error.to_string())?;
+            animator
+                .set_speed(settings.speed)
+                .map_err(|error| error.to_string())?;
+            animator
+                .set_root_motion_joint(root_motion_joint)
+                .map_err(|error| error.to_string())?;
+            Some(animator)
+        } else {
+            model
+                .skeleton
+                .bind_pose()
+                .skin_matrices(&model.skeleton)
+                .map_err(|error| error.to_string())?;
+            None
         };
         let mut playback = Self {
             model,

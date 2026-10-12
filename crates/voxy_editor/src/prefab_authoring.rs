@@ -93,13 +93,12 @@ impl AuthoringProject {
                 .map_err(|e| format!("liquid material input: {e:?}"))?;
             let m: MaterialFile = serde_json::from_slice(&bytes.bytes)
                 .map_err(|e| format!("liquid material {name}: {e}"))?;
-            if let Some(value) = m.optics {
-                if value.iter().any(|v| !v.is_finite())
+            if let Some(value) = m.optics
+                && (value.iter().any(|v| !v.is_finite())
                     || value[..3].iter().any(|v| *v < 0.)
-                    || value[3] < 1.
-                {
-                    return Err(format!("invalid liquid optics: {name}"));
-                }
+                    || value[3] < 1.)
+            {
+                return Err(format!("invalid liquid optics: {name}"));
             }
             optics.push(m.optics);
             materials.push((
@@ -755,7 +754,7 @@ fn export_linked_subtree(
 ) -> Result<PrefabSceneDocument, Box<dyn std::error::Error>> {
     let baseline =
         snapshot.source.instance_baseline(
-            &registry,
+            registry,
             PrefabLimits {
                 max_objects: scene_limits::OBJECTS,
                 max_instances: 128,
@@ -770,7 +769,7 @@ fn export_linked_subtree(
     let mut source =
         snapshot
             .source
-            .capture_edits(&baseline, edited, &registry, scene_limits::OBJECTS)?;
+            .capture_edits(&baseline, edited, registry, scene_limits::OBJECTS)?;
     let authored: std::collections::BTreeSet<_> = snapshot
         .source
         .objects

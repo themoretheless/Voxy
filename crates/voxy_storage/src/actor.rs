@@ -1,4 +1,3 @@
-use std::fmt;
 use std::path::Path;
 use std::sync::Arc;
 use std::sync::mpsc::{self, Receiver, RecvTimeoutError, SyncSender, TryRecvError, TrySendError};
@@ -73,7 +72,8 @@ pub enum JournalSubmitError {
     ActorStopped(PersistCommit),
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("storage error: {self:?}")]
 pub enum StoreError {
     Wal(WalError),
     ActorStopped,
@@ -81,30 +81,15 @@ pub enum StoreError {
     FenceUnavailable { required: u64, next_sequence: u64 },
 }
 
-impl fmt::Display for StoreError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "storage error: {self:?}")
-    }
-}
-
-impl std::error::Error for StoreError {}
-
 impl From<WalError> for StoreError {
     fn from(error: WalError) -> Self {
         Self::Wal(error)
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("storage actor panicked")]
 pub struct ActorJoinError;
-
-impl fmt::Display for ActorJoinError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.write_str("storage actor panicked")
-    }
-}
-
-impl std::error::Error for ActorJoinError {}
 
 #[derive(Debug)]
 enum Request {

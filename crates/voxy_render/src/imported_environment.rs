@@ -3,19 +3,14 @@ use crate::{
     DiffuseEnvironmentConvolution, GgxDfgLut, GgxEnvironmentPrefilter, HdrImageAsset,
     HdrImageError, ImageLimits, RendererError, SceneRenderer, SceneShaderError,
 };
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("environment import error: {self:?}")]
 pub enum ImportedEnvironmentError {
     Image(HdrImageError),
     Renderer(RendererError),
-    /// RGBA16Float cannot store radiance above 65504 without infinity.
+    /// `RGBA16Float` cannot store radiance above 65504 without infinity.
     HalfFloatRange,
 }
-impl std::fmt::Display for ImportedEnvironmentError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "environment import error: {self:?}")
-    }
-}
-impl std::error::Error for ImportedEnvironmentError {}
 impl From<HdrImageError> for ImportedEnvironmentError {
     fn from(e: HdrImageError) -> Self {
         Self::Image(e)
@@ -35,7 +30,7 @@ pub struct ImportedEnvironment {
 }
 impl ImportedEnvironment {
     /// Resample and upload a panorama. Encode the retained producers before consuming outputs.
-    /// CPU limits include source RGB32F, resampled faces and packed RGBA16Float faces.
+    /// CPU limits include source RGB32F, resampled faces and packed `RGBA16Float` faces.
     /// Queue must belong to device (wgpu validation). Radiance is never tone mapped.
     /// # Errors
     /// Rejects CPU limits, nonrepresentable half radiance and device dimensions.

@@ -1188,6 +1188,7 @@ fn verify_single_scattering(
     Ok(())
 }
 
+#[allow(deprecated)]
 fn verify_solid_shadow_scattering(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -1492,6 +1493,7 @@ fn verify_solid_shadow_scattering(
 }
 
 #[allow(clippy::too_many_arguments)]
+#[allow(deprecated)]
 fn verify_shadow_setting_updates(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

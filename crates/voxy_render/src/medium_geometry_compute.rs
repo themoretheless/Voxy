@@ -1,4 +1,4 @@
-//! Metric medium/opaque geometry through the existing ComputeProgram owner.
+//! Metric medium/opaque geometry through the existing `ComputeProgram` owner.
 use crate::{ComputeError, CpuMediumTransportScene, OpticalMediumId};
 
 pub const MEDIUM_GEOMETRY_SHADER: &str = concat!(
@@ -73,7 +73,7 @@ pub struct MediumGeometryComputeInput {
 }
 impl MediumGeometryComputeInput {
     /// Pack a borrowed immutable scene. Budget covers the storage ABI including
-    /// outputs; ComputeProgram separately admits device storage/readback budgets.
+    /// outputs; `ComputeProgram` separately admits device storage/readback budgets.
     /// Medium IDs remain u64 on CPU and map to dense snapshot-local GPU indices.
     /// # Errors
     /// Invalid/empty rays, ABI/memory/work capacity or geometry unrepresentable in f32.
@@ -140,9 +140,11 @@ impl MediumGeometryComputeInput {
             hit_offset,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn workgroups(&self) -> [u32; 3] {
         [(self.rays as u32).div_ceil(64), 1, 1]
     }

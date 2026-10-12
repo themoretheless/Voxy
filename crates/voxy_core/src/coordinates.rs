@@ -2,6 +2,11 @@ use core::fmt;
 
 pub const CHUNK_EDGE: i64 = 32;
 pub const CHUNK_VOLUME: usize = 32 * 32 * 32;
+/// Edge of a chunk padded by one neighbour slice on each side, as lighting and
+/// meshing kernels consume it.
+pub const PADDED_EDGE: usize = 34;
+/// Cell count of a padded chunk volume (`PADDED_EDGE` cubed).
+pub const PADDED_VOLUME: usize = PADDED_EDGE * PADDED_EDGE * PADDED_EDGE;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct VoxelPos {

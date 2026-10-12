@@ -1,10 +1,10 @@
 //! Layered, anisotropic, nonlinear, viscoelastic skin shell in SI units.
 //! Material energies are differentiated exactly and solved implicitly.
+mod adaptive;
 mod contact;
 mod dual;
 mod material;
 mod shell;
-mod adaptive;
 pub use contact::*;
 pub use material::*;
 pub use shell::*;

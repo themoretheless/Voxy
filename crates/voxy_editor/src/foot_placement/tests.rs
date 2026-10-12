@@ -18,14 +18,14 @@ fn model_bytes() -> Vec<u8> {
     ]);
     json["skins"][0]["joints"] = serde_json::json!([0, 1, 2]);
     json["animations"] = serde_json::json!([]);
-    let bytes = gltf::binary::Glb {
+
+    gltf::binary::Glb {
         header: original.header,
         json: serde_json::to_vec(&json).unwrap().into(),
         bin: original.bin,
     }
     .to_vec()
-    .unwrap();
-    bytes
+    .unwrap()
 }
 fn model() -> Arc<ModelAsset> {
     Arc::new(ModelAsset::parse(&model_bytes(), &[], voxy_render::ModelLimits::default()).unwrap())

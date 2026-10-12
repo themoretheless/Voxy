@@ -83,13 +83,13 @@ impl PlanarReflectionPipeline {
         )
     }
 
-    /// `hits` contains row-major ReflectionHit records; previous_positions has
-    /// matching WORLD XYZ/W validity from ReflectionCorrespondenceJob. Encode
+    /// `hits` contains row-major `ReflectionHit` records; `previous_positions` has
+    /// matching WORLD XYZ/W validity from `ReflectionCorrespondenceJob`. Encode
     /// after both producers. All resources and encoder must share this device.
     /// Works for zero-roughness opaque planar mirrors with matching unjittered
     /// primary coverage; curved/rough surfaces require a different reprojection.
-    /// Motion/expected depth feed TemporalResolve; commit current virtual depth
-    /// via TemporalHistory::encode_depth after resolving reflection radiance.
+    /// Motion/expected depth feed `TemporalResolve`; commit current virtual depth
+    /// via `TemporalHistory::encode_depth` after resolving reflection radiance.
     /// This reflection history must be separate from primary/direct lighting.
     /// # Errors
     /// Rejects sizes/usages, invalid cameras/nonunit planes and dispatch limits.
@@ -131,7 +131,7 @@ impl PlanarReflectionPipeline {
         let mut words = options
             .cameras
             .iter()
-            .flat_map(|m| m.to_cols_array())
+            .flat_map(glam::Mat4::to_cols_array)
             .collect::<Vec<_>>();
         // Normalize tolerated unit-normal roundoff, including signed offset.
         for p in options.planes {
@@ -222,7 +222,7 @@ impl PlanarReflectionJob {
         );
     }
     #[must_use]
-    /// Backward UV in XY: RGBA32Float on GL, RG32Float on other backends.
+    /// Backward UV in XY: `RGBA32Float` on GL, `RG32Float` on other backends.
     /// Inspect the format when copying/readback; unused ZW are zero.
     pub fn motion(&self) -> &wgpu::Texture {
         &self.motion

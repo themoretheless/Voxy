@@ -89,6 +89,7 @@ pub struct PendingMediumImage {
 }
 impl EncodedMediumImage {
     /// Call only after successful submission of its encoder on the device queue.
+    #[must_use]
     pub fn submitted(self) -> PendingMediumImage {
         PendingMediumImage {
             input: self.input,
@@ -100,10 +101,10 @@ impl EncodedMediumImage {
     }
 }
 impl PendingMediumImage {
-    /// Caller polls the original device with PollType::Poll (or the browser loop).
+    /// Caller polls the original device with `PollType::Poll` (or the browser loop).
     /// Stale results are drained, then rejected before allocation or queue writes.
     /// Only replace the current image on Ok(Some(image)). No blocking wait occurs.
-    /// MemoryBudget retains the admitted snapshot for retry after retirement.
+    /// `MemoryBudget` retains the admitted snapshot for retry after retirement.
     /// Changed frame keys discard retained snapshots before another upload.
     pub fn try_upload(
         &mut self,
@@ -156,19 +157,22 @@ pub struct AcceptedMediumImage {
     size: [u32; 2],
     rgba16: Vec<u16>,
 }
-/// Shared-budget HDR source usable by the existing TextureBlit pass.
+/// Shared-budget HDR source usable by the existing `TextureBlit` pass.
 #[derive(Debug)]
 pub struct MediumImage {
-    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+    texture: std::sync::Arc<voxy_gpu_core::ManagedTexture>,
     view: wgpu::TextureView,
 }
 impl MediumImage {
+    #[must_use]
     pub fn view(&self) -> &wgpu::TextureView {
         &self.view
     }
+    #[must_use]
     pub fn texture(&self) -> &wgpu::Texture {
         &self.texture
     }
+    #[must_use]
     pub fn allocation_bytes(&self) -> u64 {
         self.texture.allocation_bytes()
     }
@@ -344,9 +348,11 @@ impl MediumPathComputeInput {
             triangles,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn workgroups(&self) -> [u32; 3] {
         // Two-dimensional dispatch keeps full-window ray batches below the
         // portable per-dimension limit without another submission owner.
@@ -354,7 +360,7 @@ impl MediumPathComputeInput {
         [columns, (self.rays as u32).div_ceil(columns), 1]
     }
     /// Record computation and bounded snapshot copy in the caller's encoder.
-    /// Reuse a program compiled with MEDIUM_PATH_SHADER; unrelated/reloaded
+    /// Reuse a program compiled with `MEDIUM_PATH_SHADER`; unrelated/reloaded
     /// shaders are rejected before job allocation or command encoding.
     pub fn encode_image(
         self,

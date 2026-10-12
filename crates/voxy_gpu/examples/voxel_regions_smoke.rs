@@ -157,7 +157,7 @@ fn check_pending(
         }
         assert!(matches!(
             pending.try_result(),
-            Err(voxy_render::ComputeError::Consumed)
+            Err(voxy_gpu_core::ComputeError::Consumed)
         ));
     }
     println!("PASS: concurrent nonblocking voxel regions, consumed and dropped readback recovery");
@@ -495,7 +495,7 @@ fn check_sweep_validation(
             SweepConfig::default()
         ),
         Err(voxy_gpu::GpuSweepError::Compute(
-            voxy_render::ComputeError::InvalidBuffer
+            voxy_gpu_core::ComputeError::InvalidBuffer
         ))
     ));
     println!("PASS: invalid GPU sweeps reject before world reads or dispatch");
@@ -662,7 +662,7 @@ fn check_character_stale(
     assert!(matches!(
         stale.try_step(program, queue, &scene.world),
         Err(CharacterError::Sweep(CharacterGpuQueryError::Gpu(
-            GpuSweepError::Compute(voxy_render::ComputeError::Consumed)
+            GpuSweepError::Compute(voxy_gpu_core::ComputeError::Consumed)
         )))
     ));
     drop(stale);

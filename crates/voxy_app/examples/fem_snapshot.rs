@@ -1,10 +1,9 @@
 //! GPU readback of current FEM geometry before/after accepted cohesive fracture.
-#[path = "../src/fem_surface.rs"]
-mod fem_surface;
 use physics::{
     cohesive::Material as Bond,
     plasticity::{Material, mesh::QuadraticBody},
 };
+use voxy_demos::fem_surface;
 fn coupon() -> Result<QuadraticBody, Box<dyn std::error::Error>> {
     let m = Material::new(1e6, 0.3, 1e9, 0.)?;
     let mut body = QuadraticBody::from_linear(

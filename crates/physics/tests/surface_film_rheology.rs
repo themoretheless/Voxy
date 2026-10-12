@@ -117,7 +117,10 @@ fn opposed_pressure_and_shear_select_interior_extremum_at_interface() {
     let low = m.flow_rate(0.01, -20.0, 1.0).unwrap();
     let high = m.flow_rate(0.1, -20.0, 1.0).unwrap();
     assert!((rare - low.min(high)).abs() < 1e-15);
-    assert!(m.interface_flow(0.0, 0.0, -20.0, normal, stress).unwrap() == 0.0);
+    assert_eq!(
+        m.interface_flow(0.0, 0.0, -20.0, normal, stress).unwrap(),
+        0.0
+    );
 }
 #[test]
 fn zero_yield_newtonian_limit_matches_existing_mesh_transport_for_pure_loads() {

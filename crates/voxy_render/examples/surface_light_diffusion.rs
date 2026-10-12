@@ -188,7 +188,10 @@ async fn body_gate(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         let values: &[[f32; 4]] = bytemuck::cast_slice(&data[..size as usize]);
         let gpu_ms = queries.as_ref().and_then(|_| {
             let times: &[u64] = bytemuck::cast_slice(&data[size as usize..]);
-            times[1].checked_sub(times[0]).filter(|ticks| *ticks > 0).map(|ticks| ticks as f64 * f64::from(queue.get_timestamp_period()) / 1e6)
+            times[1]
+                .checked_sub(times[0])
+                .filter(|ticks| *ticks > 0)
+                .map(|ticks| ticks as f64 * f64::from(queue.get_timestamp_period()) / 1e6)
         });
         let mut error = 0f64;
         let mut rhs_norm = 0f64;

@@ -13,12 +13,8 @@ cuda = ["dep:cudarc"]
 physics = { path = "../physics" }
 cudarc = { version = "0.19.9", optional = true, default-features = false, features = ["std", "driver", "nvrtc", "dynamic-loading", "cuda-12000"] }
 
-[lints.rust]
-unsafe_code = "deny"
-missing_debug_implementations = "warn"
-[lints.clippy]
-all = { level = "warn", priority = -1 }
-pedantic = { level = "warn", priority = -1 }
+[lints]
+workspace = true
 
 [target.'cfg(target_os = "linux")'.dev-dependencies]
 ash = "0.38.0"

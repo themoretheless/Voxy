@@ -23,7 +23,7 @@ impl SurfaceNormalTransport {
         mesh: &SceneMesh,
         geometry: &SceneGeometry,
     ) -> Result<Self, SceneError> {
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let mut triangles = Vec::new();
         let mut adjacency = vec![Vec::new(); mesh.vertices().len()];
         for ids in mesh.indices().chunks_exact(3) {
@@ -79,9 +79,9 @@ impl SurfaceNormalTransport {
             bytemuck::cast_slice(&triangles),
         ];
         if device.limits().max_storage_buffers_per_shader_stage < 6
-            || data.iter().any(|d| {
-                d.len() as u64 > u64::from(device.limits().max_storage_buffer_binding_size)
-            })
+            || data
+                .iter()
+                .any(|d| d.len() as u64 > device.limits().max_storage_buffer_binding_size)
         {
             return Err(SceneError::GeometryCapacityExceeded);
         }

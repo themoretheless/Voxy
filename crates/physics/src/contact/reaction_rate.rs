@@ -2,6 +2,7 @@
 //! Rates are signed on loaded branches; zero-pressure branches remain unilateral.
 use super::super::solve_normal_network_constraints_with_bounds;
 use super::*;
+use crate::math::scale;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct SupportMotion {
@@ -30,9 +31,6 @@ pub struct NetworkReactionRate {
     /// Earliest zero pressure in the linear strength model; infinity if none.
     /// This is a branch limit, not a geometry or nonlinear interval certificate.
     pub positive_until_s: f64,
-}
-fn scale(v: Vector, a: f64) -> Vector {
-    v.map(|x| x * a)
 }
 fn normal_motion(
     first: ContactBody,

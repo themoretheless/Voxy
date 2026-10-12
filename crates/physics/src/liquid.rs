@@ -608,9 +608,11 @@ impl Liquid {
             // Harmonic pair mass makes curvature exchange symmetric for unequal masses.
             let curvature = surface * correction * (2.0 * a.mass * b.mass / (a.mass + b.mass));
             let dn = sub(normals[i], normals[j]);
-            let curvature_normal = dn[0] * direction[0] + dn[1] * direction[1] + dn[2] * direction[2];
+            let curvature_normal =
+                dn[0] * direction[0] + dn[1] * direction[1] + dn[2] * direction[2];
             let dv = sub(b.velocity, a.velocity);
-            let relative_normal = dv[0] * direction[0] + dv[1] * direction[1] + dv[2] * direction[2];
+            let relative_normal =
+                dv[0] * direction[0] + dv[1] * direction[1] + dv[2] * direction[2];
             let interface_force = self.interface_force(a, b, r);
             let radial = pressure_force - cohesion + interface_force - curvature * curvature_normal;
             let visc = if self.viscous_heating {
@@ -756,13 +758,6 @@ fn positive(x: f64) -> bool {
 fn finite(v: [f64; 3]) -> bool {
     v.into_iter().all(f64::is_finite)
 }
-fn sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn norm(v: [f64; 3]) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
-}
-
 /// Static collision response and limits, applied per particle per fluid substep.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ContactConfig {
@@ -1313,4 +1308,6 @@ pub use droplet_gas_evaporation::{SpatialVaporExchangeReport, SpatialVaporTransp
 
 #[path = "liquid/droplet_optics.rs"]
 mod droplet_optics;
+use crate::math::norm;
+use crate::math::sub;
 pub use droplet_optics::{DirectionalScatteringLight, DropletExtinctionGrid};

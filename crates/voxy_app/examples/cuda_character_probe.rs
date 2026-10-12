@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             dt,
             config,
         )?;
-        let actual = voxy_app::cuda_motion::step_character(
+        let actual = voxy_demos::cuda_motion::step_character(
             &compute,
             &scene.world,
             scene.world.registry(),

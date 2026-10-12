@@ -1,4 +1,4 @@
-//! GPU-only bit transport; coefficient ownership stays in BandedSolveInput.
+//! GPU-only bit transport; coefficient ownership stays in `BandedSolveInput`.
 use crate::{BandedSolveInput, ComputeError};
 #[derive(Debug)]
 pub struct BandedTransferProgram {
@@ -83,7 +83,7 @@ impl BandedTransferProgram {
             return Err(ComputeError::InvalidBuffer);
         }
         let groups = (compact.size() / 4).div_ceil(64);
-        if groups == 0 || groups > limits.max_compute_workgroups_per_dimension as u64 {
+        if groups == 0 || groups > u64::from(limits.max_compute_workgroups_per_dimension) {
             return Err(ComputeError::InvalidDispatch);
         }
         let binding = self.device.create_bind_group(&wgpu::BindGroupDescriptor {

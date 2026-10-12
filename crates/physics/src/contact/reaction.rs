@@ -54,9 +54,6 @@ pub struct NormalReaction {
     /// instantaneous constraint power, not integrated work or dissipated heat.
     pub instantaneous_power: f64,
 }
-fn add(a: Vector, b: Vector) -> Vector {
-    std::array::from_fn(|k| a[k] + b[k])
-}
 fn free_rates(body: ContactBody, wrench: ContactWrench) -> Result<(Vector, Vector, Vector), Error> {
     body.validate()?;
     if !finite(wrench.force)
@@ -436,4 +433,5 @@ pub use rate::{
     resolve_normal_reaction_rate_network,
 };
 
+use crate::math::add;
 pub(crate) use rate::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};

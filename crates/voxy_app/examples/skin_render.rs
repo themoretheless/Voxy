@@ -1,50 +1,10 @@
+use glam::Vec3;
+use voxy_demos::female_complexion;
 #[allow(dead_code)]
-#[path = "../src/body_parameters.rs"]
-mod body_parameters;
-#[allow(dead_code)]
-#[path = "../src/face_parameters.rs"]
-mod face_parameters;
-#[allow(dead_code)]
-#[path = "../src/female_complexion.rs"]
-mod female_complexion;
-#[allow(dead_code)]
-#[path = "../src/female_eyes.rs"]
-mod female_eyes;
-#[allow(dead_code)]
-#[path = "../src/female_face.rs"]
-mod female_face;
-#[allow(dead_code)]
-#[path = "../src/female_features.rs"]
-mod female_features;
-#[allow(dead_code)]
-#[path = "../src/film_settings.rs"]
-mod film_settings;
-#[path = "../src/rig_skinning.rs"]
-mod rig_skinning;
 // Renders the supplied full-body physical skin and its displacement map offscreen.
 // Run with VOXY_SKIN_ONLY=1 to isolate skin from optional hair dynamics.
-#[allow(dead_code)]
-#[path = "../src/female_demo.rs"]
-mod female_demo;
-#[allow(dead_code)]
-#[path = "../src/female_hair.rs"]
-mod female_hair;
-#[allow(dead_code)]
-#[path = "../src/female_rig.rs"]
-mod female_rig;
-#[allow(dead_code)]
-#[path = "../src/jump_motion.rs"]
-mod jump_motion;
-#[allow(dead_code)]
-#[path = "../src/female_transmission.rs"]
-mod female_transmission;
-#[allow(dead_code)]
-#[path = "../src/surface_film_preview.rs"]
-mod surface_film_preview;
-#[allow(dead_code)]
-#[path = "../src/volume_regions.rs"]
-mod volume_regions;
-use glam::Vec3;
+use voxy_demos::female_demo;
+use voxy_demos::female_eyes;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
 #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
@@ -330,12 +290,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "/tmp/voxy-skin-probe-preview.png"
         } else if side {
             "/tmp/voxy-skin-side-preview.png"
+        } else if strain {
+            "/tmp/voxy-skin-strain-preview.png"
         } else {
-            if strain {
-                "/tmp/voxy-skin-strain-preview.png"
-            } else {
-                "/tmp/voxy-skin-preview.png"
-            }
+            "/tmp/voxy-skin-preview.png"
         },
         &pixels,
         1152,

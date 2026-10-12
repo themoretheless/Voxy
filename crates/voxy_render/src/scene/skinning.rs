@@ -4,7 +4,8 @@ use super::*;
 use crate::{SkinnedMesh, SkinnedUploadError};
 use std::sync::Arc;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("scene skinning error: {self:?}")]
 pub enum SceneSkinError {
     Scene(SceneError),
     Pose(SkinnedUploadError),
@@ -17,12 +18,6 @@ pub enum SceneSkinError {
         budget: u64,
     },
 }
-impl std::fmt::Display for SceneSkinError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene skinning error: {self:?}")
-    }
-}
-impl std::error::Error for SceneSkinError {}
 
 #[derive(Debug)]
 pub struct SceneSkinner {
@@ -132,7 +127,7 @@ impl SceneSkinner {
     ) -> Result<Arc<SceneSkinSource>, SceneSkinError> {
         let bytes = mesh.vertices().len() as u64 * 64;
         admit(live, bytes, budget)?;
-        if bytes > u64::from(self.device.limits().max_storage_buffer_binding_size)
+        if bytes > self.device.limits().max_storage_buffer_binding_size
             || mesh.vertices().len().div_ceil(64)
                 > self.device.limits().max_compute_workgroups_per_dimension as usize
         {
@@ -148,7 +143,7 @@ impl SceneSkinner {
         }
         let [buffer] = self
             .memory_budget
-            .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+            .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
                 label: "shared scene skin source",
                 size: bytes,
                 contents: Some(bytemuck::cast_slice(&packed)),
@@ -199,13 +194,13 @@ impl SceneSkinner {
         params.extend((mesh.vertices().len() as u32).to_le_bytes());
         params.extend([0; 12]);
         let descriptors = [
-            crate::compute_memory::ManagedBufferDescriptor {
+            voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene instance palette",
                 size: joints.len() as u64 * 64,
                 contents: Some(bytemuck::cast_slice(joints)),
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             },
-            crate::compute_memory::ManagedBufferDescriptor {
+            voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene instance skin parameters",
                 size: params.len() as u64,
                 contents: Some(&params),
@@ -369,7 +364,8 @@ impl SceneSkinner {
                 opaque_shader: base.opaque_shader.clone(),
                 partitioned_indices: false,
                 partition_cache: Vec::new(),
-                shadow_dirty: true,
+                identity: crate::scene::next_geometry_identity(),
+                revision: 0,
             },
         })
     }

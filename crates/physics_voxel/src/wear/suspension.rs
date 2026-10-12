@@ -41,9 +41,11 @@ impl VoxelWearSuspension {
         })
     }
     /// Geometry and collision consumers use this same accepted recession state.
+    #[must_use]
     pub fn binding(&self) -> &VoxelWear {
         &self.binding
     }
+    #[must_use]
     pub fn suspension(&self) -> &WearSuspension {
         &self.suspension
     }

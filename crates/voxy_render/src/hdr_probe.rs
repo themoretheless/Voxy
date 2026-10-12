@@ -26,7 +26,7 @@ impl HdrPixelProbe {
         }
     }
     /// Copy one pixel once. Source must be RGBA16/32Float or RGBA/BGRA8
-    /// with COPY_SRC on the same device. Eight-bit values are normalized storage
+    /// with `COPY_SRC` on the same device. Eight-bit values are normalized storage
     /// values; sRGB sources are not converted to linear light.
     /// # Errors
     /// Rejects invalid source format or coordinates before encoding.
@@ -128,6 +128,7 @@ impl HdrPixelProbe {
             });
     }
     /// Retrieve the mapped result once; browser callbacks progress asynchronously.
+    #[must_use]
     pub fn take_result(&self) -> Option<ProbeResult> {
         self.result.lock().expect("HDR probe result lock").take()
     }

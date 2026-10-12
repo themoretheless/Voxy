@@ -149,25 +149,67 @@ pub(in crate::hair) fn certify_nonnegative(input: &[(Poly, usize, bool)], budget
 
 /// Each temporal interval must satisfy one complete sufficient certificate.
 /// Different intervals may use different separating features.
-pub(in crate::hair) fn certify_alternatives(input:&[Vec<(Poly,usize,bool)>],budget:usize)->bool {
-    let initial:Vec<Vec<_>>=input.iter().map(|rows|rows.iter().map(|(p,d,s)|(bernstein(*p,*d),*d,*s)).collect()).collect();
-    let mut stack=vec![(initial,0usize)];let mut visited=0;
-    while let Some((alternatives,depth))=stack.pop() {
-        visited+=1;if visited>budget {return false;}
-        let finite=|p:&Poly,d:usize|p[..=d].iter().all(|b|b.lo.is_finite()&&b.hi.is_finite());
-        if alternatives.iter().any(|rows| !rows.is_empty() && rows.iter().all(|(p,d,strict)|finite(p,*d)&&p[..=*d].iter().all(|b|if *strict {b.lo>0.} else {b.lo>=0.}))) {continue;}
-        if depth>=48 {return false;}
-        let mut left=Vec::new();let mut right=Vec::new();
+pub(in crate::hair) fn certify_alternatives(
+    input: &[Vec<(Poly, usize, bool)>],
+    budget: usize,
+) -> bool {
+    let initial: Vec<Vec<_>> = input
+        .iter()
+        .map(|rows| {
+            rows.iter()
+                .map(|(p, d, s)| (bernstein(*p, *d), *d, *s))
+                .collect()
+        })
+        .collect();
+    let mut stack = vec![(initial, 0usize)];
+    let mut visited = 0;
+    while let Some((alternatives, depth)) = stack.pop() {
+        visited += 1;
+        if visited > budget {
+            return false;
+        }
+        let finite =
+            |p: &Poly, d: usize| p[..=d].iter().all(|b| b.lo.is_finite() && b.hi.is_finite());
+        if alternatives.iter().any(|rows| {
+            !rows.is_empty()
+                && rows.iter().all(|(p, d, strict)| {
+                    finite(p, *d)
+                        && p[..=*d]
+                            .iter()
+                            .all(|b| if *strict { b.lo > 0. } else { b.lo >= 0. })
+                })
+        }) {
+            continue;
+        }
+        if depth >= 48 {
+            return false;
+        }
+        let mut left = Vec::new();
+        let mut right = Vec::new();
         for rows in alternatives {
             // A nonfinite or wholly negative required row makes this feature
             // unavailable throughout this interval; another feature may prove it.
-            if rows.iter().any(|(p,d,_)|!finite(p,*d)||p[..=*d].iter().all(|b|b.hi<0.)) {continue;}
-            let mut l=Vec::new();let mut r=Vec::new();
-            for (p,d,s) in rows {let (a,b)=split(p,d);l.push((a,d,s));r.push((b,d,s));}
-            left.push(l);right.push(r);
+            if rows
+                .iter()
+                .any(|(p, d, _)| !finite(p, *d) || p[..=*d].iter().all(|b| b.hi < 0.))
+            {
+                continue;
+            }
+            let mut l = Vec::new();
+            let mut r = Vec::new();
+            for (p, d, s) in rows {
+                let (a, b) = split(p, d);
+                l.push((a, d, s));
+                r.push((b, d, s));
+            }
+            left.push(l);
+            right.push(r);
         }
-        if left.is_empty() {return false;}
-        stack.push((right,depth+1));stack.push((left,depth+1));
+        if left.is_empty() {
+            return false;
+        }
+        stack.push((right, depth + 1));
+        stack.push((left, depth + 1));
     }
     true
 }

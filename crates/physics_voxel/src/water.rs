@@ -167,65 +167,40 @@ pub fn step_liquid(
             limit: budget.max_active,
         });
     }
-    let mut sample_count = 0_usize;
-    let mut initial = BTreeMap::new();
-    let mut amounts = BTreeMap::new();
-    let mut touched = BTreeSet::new();
+    // One map holds each sampled cell's initial and current level; cells whose level
+    // changed are the writes, so no separate `touched` set is needed. The chunk cursor
+    // resolves each chunk once for runs of neighbouring samples.
+    let mut sampler = Sampler {
+        cursor: crate::chunk_cursor::ChunkCursor::new(view),
+        registry,
+        states,
+        cells: BTreeMap::new(),
+        samples: 0,
+        limit: budget.max_samples,
+    };
     for position in active {
-        let sampled = get_amount(
-            view,
-            registry,
-            states,
-            position,
-            &mut initial,
-            &mut amounts,
-            &mut sample_count,
-            budget.max_samples,
-        )?;
-        let Some(mut amount) = sampled else {
+        let Some(mut amount) = sampler.current(position)? else {
             continue;
         };
         if amount == 0 {
             continue;
         }
         let below = offset(position, 0, -1, 0)?;
-        let below_amount = get_amount(
-            view,
-            registry,
-            states,
-            below,
-            &mut initial,
-            &mut amounts,
-            &mut sample_count,
-            budget.max_samples,
-        )?;
-        if let Some(below_amount) = below_amount {
+        if let Some(below_amount) = sampler.current(below)? {
             let transfer = amount.min(MAX_LEVEL - below_amount).min(flow.max_downward);
             if transfer > 0 {
                 amount -= transfer;
-                amounts.insert(position, Some(amount));
-                amounts.insert(below, Some(below_amount + transfer));
-                touched.insert(position);
-                touched.insert(below);
+                sampler.set(below, below_amount + transfer);
             }
         }
         if amount == 0 {
+            sampler.set(position, amount);
             continue;
         }
         let mut horizontal_transferred = 0;
         for (dx, dz) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
             let neighbor = offset(position, dx, 0, dz)?;
-            let Some(neighbor_amount) = get_amount(
-                view,
-                registry,
-                states,
-                neighbor,
-                &mut initial,
-                &mut amounts,
-                &mut sample_count,
-                budget.max_samples,
-            )?
-            else {
+            let Some(neighbor_amount) = sampler.current(neighbor)? else {
                 continue;
             };
             if horizontal_transferred < flow.max_horizontal
@@ -234,18 +209,16 @@ pub fn step_liquid(
             {
                 horizontal_transferred += 1;
                 amount -= 1;
-                amounts.insert(position, Some(amount));
-                amounts.insert(neighbor, Some(neighbor_amount + 1));
-                touched.insert(position);
-                touched.insert(neighbor);
+                sampler.set(neighbor, neighbor_amount + 1);
             }
         }
+        sampler.set(position, amount);
     }
-    let mut writes = touched
+    let initial = sampler.cells;
+    let mut writes = initial
         .iter()
-        .filter_map(|position| {
-            let before = initial.get(position).copied().flatten()?;
-            let after = amounts.get(position).copied().flatten()?;
+        .filter_map(|(position, cell)| {
+            let (before, after) = (cell.initial?, cell.current?);
             (before != after).then_some(VoxelWrite {
                 pos: *position,
                 block: states.state(after),
@@ -301,39 +274,65 @@ pub fn step_liquid(
     })
 }
 
-#[allow(clippy::too_many_arguments)]
-fn get_amount(
-    view: &impl VoxelView,
-    registry: &BlockRegistry,
-    states: WaterStates,
-    position: VoxelPos,
-    initial: &mut BTreeMap<VoxelPos, Option<u8>>,
-    amounts: &mut BTreeMap<VoxelPos, Option<u8>>,
-    samples: &mut usize,
-    limit: usize,
-) -> Result<Option<u8>, WaterError> {
-    if let Some(&amount) = amounts.get(&position) {
-        return Ok(amount);
-    }
-    let amount = sample_amount(view, registry, states, position, samples, limit)?;
-    initial.insert(position, amount);
-    amounts.insert(position, amount);
-    Ok(amount)
+/// A sampled cell: the level the world holds now and the level after planned transfers.
+#[derive(Clone, Copy)]
+struct LiquidCell {
+    initial: Option<u8>,
+    current: Option<u8>,
 }
 
-fn sample_amount(
-    view: &impl VoxelView,
+struct Sampler<'a, V: VoxelView> {
+    cursor: crate::chunk_cursor::ChunkCursor<'a, V>,
+    registry: &'a BlockRegistry,
+    states: WaterStates,
+    cells: BTreeMap<VoxelPos, LiquidCell>,
+    samples: usize,
+    limit: usize,
+}
+
+impl<V: VoxelView> Sampler<'_, V> {
+    /// Current planned level of a cell, sampling the world on first use.
+    fn current(&mut self, position: VoxelPos) -> Result<Option<u8>, WaterError> {
+        if let Some(cell) = self.cells.get(&position) {
+            return Ok(cell.current);
+        }
+        self.samples = self
+            .samples
+            .checked_add(1)
+            .ok_or(WaterError::SampleOverflow)?;
+        if self.samples > self.limit {
+            return Err(WaterError::SampleBudgetExceeded { limit: self.limit });
+        }
+        let amount = classify_sample(
+            &self.cursor.sample(position),
+            self.registry,
+            self.states,
+            position,
+        )?;
+        self.cells.insert(
+            position,
+            LiquidCell {
+                initial: amount,
+                current: amount,
+            },
+        );
+        Ok(amount)
+    }
+
+    fn set(&mut self, position: VoxelPos, amount: u8) {
+        if let Some(cell) = self.cells.get_mut(&position) {
+            cell.current = Some(amount);
+        }
+    }
+}
+
+fn classify_sample(
+    sample: &Sample<BlockStateId>,
     registry: &BlockRegistry,
     states: WaterStates,
     position: VoxelPos,
-    samples: &mut usize,
-    limit: usize,
 ) -> Result<Option<u8>, WaterError> {
-    *samples = samples.checked_add(1).ok_or(WaterError::SampleOverflow)?;
-    if *samples > limit {
-        return Err(WaterError::SampleBudgetExceeded { limit });
-    }
-    match view.sample(position) {
+    match *sample {
         Sample::Loaded(BlockStateId::AIR) => Ok(Some(0)),
         Sample::Loaded(block) => {
             if let Some(level) = states.level(block) {

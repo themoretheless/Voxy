@@ -55,18 +55,13 @@ pub struct PickRay {
     direction: Vec3,
     max_distance: f32,
 }
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("picking error: {self:?}")]
 pub enum PickError {
     InvalidRay,
     InvalidBounds,
     Scene(SceneGraphError),
 }
-impl std::fmt::Display for PickError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "picking error: {self:?}")
-    }
-}
-impl std::error::Error for PickError {}
 #[derive(Clone, Copy, Debug)]
 pub struct PickHit {
     pub node: NodeId,

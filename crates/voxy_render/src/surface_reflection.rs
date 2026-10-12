@@ -2,8 +2,8 @@
 use crate::{PrimarySurfaceJob, RayScene, RaySceneError, ReconstructionMaterial};
 use wgpu::util::DeviceExt;
 /// One row-major reflected opaque triangle correspondence record (48 bytes).
-/// Validity is explicit: barycentrics_valid.w = 1 for a hit, 0 for miss/skipped
-/// samples. World XYZ and ray distance are in position_distance. Identity is
+/// Validity is explicit: `barycentrics_valid.w` = 1 for a hit, 0 for miss/skipped
+/// samples. World XYZ and ray distance are in `position_distance`. Identity is
 /// [instance index, instance custom data, geometry index, primitive index].
 /// XY barycentrics describe vertices 1/2; vertex 0 has weight 1-X-Y.
 /// Instance indices are frame-local; retain stable scene identity separately
@@ -374,7 +374,7 @@ impl SurfaceReflectionJob {
         }
         Ok(())
     }
-    /// Row-major ReflectionHit records written by this job's GPU dispatch.
+    /// Row-major `ReflectionHit` records written by this job's GPU dispatch.
     /// Encode readers after this job; match identity against the same scene epoch.
     #[must_use]
     pub fn hits(&self) -> &wgpu::Buffer {

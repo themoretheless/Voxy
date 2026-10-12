@@ -1,7 +1,7 @@
 //! Nonblocking terrain jobs for native command queues and browser event loops.
 use crate::terrain::{GpuTerrainError, decode, prepare};
 use voxy_core::{CancelToken, ChunkPos};
-use voxy_render::{
+use voxy_gpu_core::{
     ComputeDispatch, ComputeError, ComputeJob, ComputeProgram, PendingComputeReadback,
 };
 use voxy_world::{BlockStateId, GeneratedChunk, GenerationError, TerrainPalette, WorldSeed};
