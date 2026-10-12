@@ -5,7 +5,7 @@ use physics::biomechanics::{
     TissueSearchBackend, TissueSearchOperation, TissueSearchSnapshot, Vec3,
 };
 use std::sync::Arc;
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 use wgpu::util::DeviceExt;
 
 #[derive(Debug)]

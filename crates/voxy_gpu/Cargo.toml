@@ -15,7 +15,7 @@ physics_voxel = { path = "../physics_voxel" }
 voxy_cuda = { path = "../voxy_cuda" }
 voxy_core = { path = "../voxy_core" }
 voxy_world = { path = "../voxy_world" }
-voxy_render = { path = "../voxy_render" }
+voxy_gpu_core = { path = "../voxy_gpu_core" }
 wgpu = "30.0.1"
 pollster = "1.0.1"
 bytemuck = "1.25.2"

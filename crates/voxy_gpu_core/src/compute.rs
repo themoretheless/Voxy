@@ -1,28 +1,10 @@
 //! Portable compute with explicit command submission and nonblocking readback.
-use crate::compute_readback::{ComputeReadbackPool, ReadbackLease};
 use crate::{ComputeMemoryBudget, ComputeStorage};
+use crate::{ComputeReadbackPool, ReadbackLease};
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, TryRecvError};
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum ComputeError {
-    Unsupported,
-    InvalidBuffer,
-    ReadbackBudget,
-    MemoryBudget,
-    WorkBudget,
-    InvalidDispatch,
-    DeviceMismatch,
-    Validation(String),
-    Mapping(String),
-    Consumed,
-}
-impl std::fmt::Display for ComputeError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "compute error: {self:?}")
-    }
-}
-impl std::error::Error for ComputeError {}
+use crate::ComputeError;
 
 /// WGSL compute entry point (default `cs_main`), group 0 binding 0: read/write storage buffer.
 /// The shader must guard its own out-of-range invocations. Use one device owner
@@ -67,7 +49,7 @@ impl ComputeProgram {
     ) -> Result<Self, ComputeError> {
         Self::with_layout(device, source, "cs_main", true, None).await
     }
-    pub(crate) async fn with_scene_binding_layout(
+    pub async fn with_scene_binding_layout(
         device: &wgpu::Device,
         source: &str,
         additional: &wgpu::BindGroupLayout,
@@ -202,7 +184,7 @@ impl ComputeProgram {
         self.revision
     }
 
-    pub(crate) fn matches_shader(&self, source: &str, entry_point: &str) -> bool {
+    pub fn matches_shader(&self, source: &str, entry_point: &str) -> bool {
         self.source == source
             && self.entry_point.as_ref() == entry_point
             && !self.scene_inputs
@@ -410,7 +392,7 @@ impl ComputeJob {
     ) -> Result<(), ComputeError> {
         self.encode_step_options(encoder, workgroups, None, Some(timestamps))
     }
-    pub(crate) fn encode_step_with_binding(
+    pub fn encode_step_with_binding(
         &self,
         encoder: &mut wgpu::CommandEncoder,
         workgroups: [u32; 3],

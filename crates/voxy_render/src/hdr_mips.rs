@@ -2,7 +2,7 @@
 use crate::RendererError;
 #[derive(Debug)]
 pub struct HdrMipPyramid {
-    texture: std::sync::Arc<crate::compute_memory::ManagedTexture>,
+    texture: std::sync::Arc<voxy_gpu_core::ManagedTexture>,
     views: Vec<wgpu::TextureView>,
     groups: Vec<wgpu::BindGroup>,
     pipeline: wgpu::RenderPipeline,
@@ -126,7 +126,7 @@ impl HdrMipPyramid {
     pub fn texture(&self) -> &wgpu::Texture {
         &self.texture
     }
-    pub(crate) fn managed_texture(&self) -> std::sync::Arc<crate::compute_memory::ManagedTexture> {
+    pub(crate) fn managed_texture(&self) -> std::sync::Arc<voxy_gpu_core::ManagedTexture> {
         self.texture.clone()
     }
     #[must_use]

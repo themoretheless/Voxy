@@ -2,7 +2,7 @@
 use crate::{PendingVoxelRegions, VoxelClass, VoxelRegion, VoxelRegionProgram};
 use std::{collections::BTreeMap, sync::Arc};
 use voxy_core::{ChunkPos, VoxelPos, split_voxel};
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 use voxy_world::{BlockRegistry, ChunkSnapshot, CollisionShape, VoxelView};
 
 /// Keeps integer world coordinates and chunk identities beside the GPU input.

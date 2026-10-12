@@ -32,6 +32,7 @@ members = [
     "crates/voxy_cuda",
     "crates/voxy_vulkan",
     "crates/voxy_gpu",
+    "crates/voxy_gpu_core",
     "crates/voxy_xr",
     "crates/voxy_streamline",
     "crates/voxy_depgraph",

@@ -16,7 +16,9 @@
 | C5 общие утилиты | частично | orbit-константы общие (`camera_motion::{ORBIT_PITCH_LIMIT, ORBIT_MAX_DISTANCE, zoom_range}`); `ui_text` в editor уже строится на gameplay (не дубль); KeyCode-маппинги семантически разные (не дубль); JSON-helpers остаются на C3 |
 | E документация | частично | §4 перегенерирован из `cargo metadata`, ADR 0004 |
 | C2 `voxy_demos` | сделано | 34 демо-модуля (≈45k строк) в `crates/voxy_demos`; `voxy_app` = shell (`scene_app`, `scene_rush`, controls, `main.rs`); `voxy_ray_probe` зависит от `voxy_demos`; остаётся `voxy_mobile -> voxy_app` (нужен общий shell-crate для `SceneApp`, шаг C2b) |
-| B1–B4, C3, C4, D3–D5 | не начато | |
+| D3 `voxy_gpu_core` | сделано | `ComputeError`, `ComputeProgram`, memory budget, readback pool, `GraphicsOptions`, `GpuIndirectMesh` живут ниже render; `voxy_gpu` больше не зависит от `voxy_render` (ratchet: нарушение снято) |
+| D5 render↔animation | пересмотрено | render-ный `model.rs` сам вычисляет позы импортированных моделей (`Pose`, `MAX_JOINTS`) — это потребитель анимации, а не утечка; ребро остаётся задокументированным нарушением до решения о выносе pose-evaluation из render |
+| B1–B4, C3, C4, D4 | не начато | |
 
 Полный прогон тестов `voxy_app` lib на ветке: 343 теста, все прошли.
 `female_demo` (63 теста) гонялся по одному; три теста не укладываются в

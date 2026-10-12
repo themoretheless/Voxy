@@ -1,7 +1,7 @@
 //! GPU Cellular Automata Voxel Lighting Pipeline.
 //! Executes 3D stencil light propagation on 34x34x34 padded volume entirely on hardware.
 
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 use wgpu::util::DeviceExt;
 
 pub use voxy_core::{CHUNK_VOLUME, PADDED_VOLUME};

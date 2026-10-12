@@ -148,7 +148,7 @@ impl SceneSkinner {
         }
         let [buffer] = self
             .memory_budget
-            .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+            .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
                 label: "shared scene skin source",
                 size: bytes,
                 contents: Some(bytemuck::cast_slice(&packed)),
@@ -199,13 +199,13 @@ impl SceneSkinner {
         params.extend((mesh.vertices().len() as u32).to_le_bytes());
         params.extend([0; 12]);
         let descriptors = [
-            crate::compute_memory::ManagedBufferDescriptor {
+            voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene instance palette",
                 size: joints.len() as u64 * 64,
                 contents: Some(bytemuck::cast_slice(joints)),
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             },
-            crate::compute_memory::ManagedBufferDescriptor {
+            voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene instance skin parameters",
                 size: params.len() as u64,
                 contents: Some(&params),

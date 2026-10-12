@@ -23,7 +23,7 @@ impl SurfaceNormalTransport {
         mesh: &SceneMesh,
         geometry: &SceneGeometry,
     ) -> Result<Self, SceneError> {
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let mut triangles = Vec::new();
         let mut adjacency = vec![Vec::new(); mesh.vertices().len()];
         for ids in mesh.indices().chunks_exact(3) {

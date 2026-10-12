@@ -24,12 +24,7 @@ pub struct GpuQuad {
     pub chunk_slot: [u16; 2],
 }
 
-/// Hardware indirect voxel mesh buffers directly produced by GPU compute mesher.
-#[derive(Debug)]
-pub struct GpuIndirectMesh {
-    pub vertex_buffer: wgpu::Buffer,
-    pub indirect_buffer: wgpu::Buffer,
-}
+pub use voxy_gpu_core::GpuIndirectMesh;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]

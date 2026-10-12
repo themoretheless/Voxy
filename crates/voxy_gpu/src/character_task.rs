@@ -97,7 +97,7 @@ impl PendingGpuCharacter {
     > {
         if self.consumed {
             return Err(CharacterError::Sweep(CharacterGpuQueryError::Gpu(
-                voxy_render::ComputeError::Consumed.into(),
+                voxy_gpu_core::ComputeError::Consumed.into(),
             )));
         }
         if self.queries.iter().any(|q| !q.pending.is_current(view)) {
@@ -193,7 +193,7 @@ impl<V: VoxelView> CollisionWorld for Replay<'_, V> {
             || query.budget != budget
         {
             return Err(CharacterGpuQueryError::Gpu(
-                voxy_render::ComputeError::InvalidBuffer.into(),
+                voxy_gpu_core::ComputeError::InvalidBuffer.into(),
             ));
         }
         if query.result.is_none() {

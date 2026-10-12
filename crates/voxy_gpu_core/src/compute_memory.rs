@@ -4,8 +4,8 @@ use std::sync::{Arc, Mutex, Weak};
 use wgpu::util::DeviceExt;
 
 /// A batch is admitted in full before any of its GPU buffers are created.
-#[derive(Clone, Copy)]
-pub(crate) struct ManagedBufferDescriptor<'a> {
+#[derive(Clone, Copy, Debug)]
+pub struct ManagedBufferDescriptor<'a> {
     pub label: &'a str,
     pub size: u64,
     pub contents: Option<&'a [u8]>,
@@ -230,7 +230,7 @@ impl ComputeMemoryBudget {
         Ok(storage)
     }
 
-    pub(crate) fn allocate_buffers<const N: usize>(
+    pub fn allocate_buffers<const N: usize>(
         &self,
         descriptors: [ManagedBufferDescriptor<'_>; N],
     ) -> Result<[ComputeStorage; N], ComputeError> {
@@ -240,7 +240,7 @@ impl ComputeMemoryBudget {
             .expect("batch preserves descriptor count"))
     }
 
-    pub(crate) fn allocate_buffer_batch(
+    pub fn allocate_buffer_batch(
         &self,
         descriptors: &[ManagedBufferDescriptor<'_>],
     ) -> Result<Vec<ComputeStorage>, ComputeError> {
@@ -298,7 +298,7 @@ impl ComputeMemoryBudget {
             .collect())
     }
     /// Managed 2D colour allocation; all mip/layer payloads share device capacity.
-    pub(crate) fn allocate_texture(
+    pub fn allocate_texture(
         &self,
         descriptor: &wgpu::TextureDescriptor<'_>,
     ) -> Result<Arc<ManagedTexture>, ComputeError> {
@@ -471,13 +471,13 @@ impl Drop for ComputeStorage {
 
 /// Retains one shared colour allocation across material and HDR mip views.
 #[derive(Debug)]
-pub(crate) struct ManagedTexture {
+pub struct ManagedTexture {
     owner: Arc<Inner>,
     texture: Option<wgpu::Texture>,
     bytes: u64,
 }
 impl ManagedTexture {
-    pub(crate) fn allocation_bytes(&self) -> u64 {
+    pub fn allocation_bytes(&self) -> u64 {
         self.bytes
     }
 }

@@ -1,5 +1,5 @@
 use crate::{GravityComputeError, GravityJob};
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 
 /// Draws committed resident bodies as small squares in clip space.
 #[derive(Debug)]
