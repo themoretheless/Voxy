@@ -1,17 +1,7 @@
 use physics::liquid::{Config, DropletGas, Liquid, Material, Particle};
-fn fluid() -> Liquid {
-    Liquid::new(
-        vec![Particle {
-            position: [0.0; 3],
-            velocity: [3.0, 0.0, 0.0],
-            mass: 2.0,
-            material: 0,
-        }],
-        vec![Material::WATER],
-        Config::default(),
-    )
-    .unwrap()
-}
+#[path = "support/fluid.rs"]
+mod support_fluid;
+use support_fluid::fluid;
 #[test]
 fn analytical_drag_and_moving_gas_energy_momentum_balance() {
     for velocity in [[0.0; 3], [10.0, 0.0, 0.0], [-1.0, 2.0, 0.0]] {

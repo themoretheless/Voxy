@@ -1,13 +1,15 @@
 use physics::{
     astrophysics_spin::Spin,
     contact::ContactBody,
-    gravity::Body,
     liquid::{
         BodyGeometryHit, Config, ContactConfig, ContactWitness, DynamicWorldConfig, Error,
         GeometryHit, Liquid, LiquidBodyWorld, Material, Particle, TranslatingBody,
     },
     spin_path,
 };
+#[path = "support/rigid.rs"]
+mod support_rigid;
+use support_rigid::body;
 fn rotation() -> spin_path::Config {
     spin_path::Config {
         max_angular_error_rad: 1e-5,
@@ -36,20 +38,6 @@ fn fluid(particles: Vec<Particle>) -> Liquid {
         },
     )
     .unwrap()
-}
-fn body(position: [f64; 3], velocity: [f64; 3], z: f64) -> ContactBody {
-    ContactBody {
-        motion: Body {
-            mass: 1.,
-            position,
-            velocity,
-        },
-        spin: Some(Spin {
-            orientation: [0., 0., 0., 1.],
-            angular_momentum: [0., 0., z],
-            inertia: [1.; 3],
-        }),
-    }
 }
 /// Controlled affine face event: first face at x=center+half; second face at x=0.
 /// Initial orientations are identity. After impact the faces separate over this

@@ -1,12 +1,7 @@
 use physics::surface_film::{Material, SurfaceFilm};
-fn film() -> SurfaceFilm {
-    SurfaceFilm::new(
-        &[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]],
-        vec![[0, 1, 2]],
-        Material::default(),
-    )
-    .unwrap()
-}
+#[path = "support/film.rs"]
+mod support_film;
+use support_film::film;
 #[test]
 fn curved_face_impact_is_found_when_endpoint_chord_misses() {
     let f = film();
