@@ -6,17 +6,12 @@ use physics::{
 use std::cell::{Cell, RefCell};
 use voxy_world::{BlockRegistry, VoxelView};
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("GPU character query: {self:?}")]
 pub enum CharacterGpuQueryError {
     Pending,
     Gpu(GpuSweepError),
 }
-impl std::fmt::Display for CharacterGpuQueryError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "GPU character query: {self:?}")
-    }
-}
-impl std::error::Error for CharacterGpuQueryError {}
 #[derive(Debug)]
 struct Query {
     body: physics::AnchoredAabb,

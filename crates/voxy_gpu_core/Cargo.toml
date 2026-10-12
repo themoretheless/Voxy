@@ -7,6 +7,7 @@ publish = false
 description = "Device-level GPU utilities shared by the renderer and the compute backends"
 
 [dependencies]
+thiserror = "2"
 wgpu = { version = "30.0.1", features = ["noop"] }
 raw-window-handle = "0.6.2"
 

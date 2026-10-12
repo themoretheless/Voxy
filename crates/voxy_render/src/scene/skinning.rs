@@ -4,7 +4,8 @@ use super::*;
 use crate::{SkinnedMesh, SkinnedUploadError};
 use std::sync::Arc;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("scene skinning error: {self:?}")]
 pub enum SceneSkinError {
     Scene(SceneError),
     Pose(SkinnedUploadError),
@@ -17,12 +18,6 @@ pub enum SceneSkinError {
         budget: u64,
     },
 }
-impl std::fmt::Display for SceneSkinError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene skinning error: {self:?}")
-    }
-}
-impl std::error::Error for SceneSkinError {}
 
 #[derive(Debug)]
 pub struct SceneSkinner {

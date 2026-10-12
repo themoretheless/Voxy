@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+thiserror = "2"
 voxy_core = { path = "../voxy_core" }
 voxy_time = { path = "../voxy_time" }
 glam = "0.33.6"

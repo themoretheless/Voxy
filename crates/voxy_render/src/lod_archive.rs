@@ -124,18 +124,13 @@ fn decode_proposal(bytes: &[u8], limits: LodArchiveLimits) -> Result<Proposal, L
     })
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("skeletal LOD archive error: {self:?}")]
 pub enum SkinnedLodArchiveError {
     Archive(LodArchiveError),
     SourceMismatch,
     Quality(crate::SkinnedLodError),
 }
-impl std::fmt::Display for SkinnedLodArchiveError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "skeletal LOD archive error: {self:?}")
-    }
-}
-impl std::error::Error for SkinnedLodArchiveError {}
 
 /// Uses the same bounded archive parser, retaining verified coverage for future
 /// poses. Exact rest-position bits and base indices must match the skeletal mesh.

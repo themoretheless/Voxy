@@ -10,6 +10,7 @@ default = []
 cuda = ["voxy_cuda/cuda"]
 
 [dependencies]
+thiserror = "2"
 physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
 voxy_cuda = { path = "../voxy_cuda" }

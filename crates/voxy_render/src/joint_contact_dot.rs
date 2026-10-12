@@ -1,18 +1,13 @@
 //! Codec for a rectangular contact operator, never a compliance Gram.
 //! Decoding checks transport only; physics must admit ORIGINAL loads/bounds.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+#[error("joint contact dot: {self:?}")]
 pub enum JointDotError {
     Shape,
     Capacity,
     NumericRange,
     Output,
 }
-impl std::fmt::Display for JointDotError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "joint contact dot: {self:?}")
-    }
-}
-impl std::error::Error for JointDotError {}
 #[derive(Debug)]
 pub struct JointContactDotInput {
     words: Vec<u32>,

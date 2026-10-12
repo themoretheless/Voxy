@@ -7,7 +7,8 @@ use std::{
     sync::atomic::{AtomicU64, Ordering},
 };
 static NEXT_SAVE: AtomicU64 = AtomicU64::new(1);
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("scene file error: {self:?}")]
 pub enum SceneFileError {
     Document(DocumentError),
     TooLarge,
@@ -17,12 +18,6 @@ pub enum SceneFileError {
         error: std::io::Error,
     },
 }
-impl std::fmt::Display for SceneFileError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene file error: {self:?}")
-    }
-}
-impl std::error::Error for SceneFileError {}
 impl From<DocumentError> for SceneFileError {
     fn from(e: DocumentError) -> Self {
         Self::Document(e)

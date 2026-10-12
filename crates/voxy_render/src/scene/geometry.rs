@@ -24,7 +24,8 @@ pub struct SceneMesh {
     pub(super) material_parameters: [f32; 4],
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("scene resource error: {self:?}")]
 pub enum SceneError {
     InvalidGeometry,
     NonFiniteVertex,
@@ -37,12 +38,6 @@ pub enum SceneError {
     TimestampQueriesNotEnabled,
     DeviceMismatch,
 }
-impl std::fmt::Display for SceneError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene resource error: {self:?}")
-    }
-}
-impl std::error::Error for SceneError {}
 
 impl SceneMesh {
     #[must_use]

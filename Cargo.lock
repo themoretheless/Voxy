@@ -2591,6 +2591,7 @@ dependencies = [
  "physics",
  "physics_voxel",
  "pollster",
+ "thiserror 2.0.20",
  "voxy_core",
  "voxy_cuda",
  "voxy_gpu_core",
@@ -2606,6 +2607,7 @@ dependencies = [
  "bytemuck",
  "pollster",
  "raw-window-handle",
+ "thiserror 2.0.20",
  "wgpu",
 ]
 
@@ -2617,6 +2619,7 @@ version = "0.1.0"
 name = "voxy_lighting"
 version = "0.1.0"
 dependencies = [
+ "thiserror 2.0.20",
  "voxy_core",
  "voxy_world",
 ]
@@ -2625,6 +2628,7 @@ dependencies = [
 name = "voxy_mesher"
 version = "0.1.0"
 dependencies = [
+ "thiserror 2.0.20",
  "voxy_core",
  "voxy_world",
 ]
@@ -2676,6 +2680,7 @@ dependencies = [
  "pollster",
  "raw-window-handle",
  "serde_json",
+ "thiserror 2.0.20",
  "voxy_animation",
  "voxy_assets",
  "voxy_core",
@@ -2696,6 +2701,7 @@ name = "voxy_runtime"
 version = "0.1.0"
 dependencies = [
  "physics_voxel",
+ "thiserror 2.0.20",
  "voxy_core",
  "voxy_lighting",
  "voxy_mesher",
@@ -2723,6 +2729,7 @@ dependencies = [
  "glam",
  "serde",
  "serde_json",
+ "thiserror 2.0.20",
  "voxy_assets",
  "voxy_core",
  "voxy_input",
@@ -2751,6 +2758,7 @@ dependencies = [
 name = "voxy_storage"
 version = "0.1.0"
 dependencies = [
+ "thiserror 2.0.20",
  "voxy_core",
  "voxy_world",
 ]
@@ -2830,6 +2838,7 @@ dependencies = [
 name = "voxy_world"
 version = "0.1.0"
 dependencies = [
+ "thiserror 2.0.20",
  "voxy_core",
 ]
 

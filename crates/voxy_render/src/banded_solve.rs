@@ -4,7 +4,8 @@ pub struct BandedSystem<'a> {
     pub matrix: &'a [f64],
     pub rhs: &'a [f64],
 }
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, thiserror::Error)]
+#[error("banded solve: {self:?}")]
 pub enum BandedSolveError {
     InvalidInput,
     Capacity,
@@ -13,12 +14,6 @@ pub enum BandedSolveError {
     Factorization { system: usize, status: u32 },
     Residual { system: usize },
 }
-impl std::fmt::Display for BandedSolveError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "banded solve: {self:?}")
-    }
-}
-impl std::error::Error for BandedSolveError {}
 /// Immutable normalized input as represented by the shader's hi/lo words.
 /// Consumers own reference solving; this codec does not implement another solver.
 #[derive(Debug)]

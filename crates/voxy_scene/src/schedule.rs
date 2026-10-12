@@ -14,18 +14,13 @@ pub struct SystemSpec {
     pub after: Vec<String>,
     pub access: Vec<SystemAccess>,
 }
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("schedule error: {self:?}")]
 pub enum ScheduleError {
     Invalid(String),
     Cycle,
     Execution { system: String, reason: String },
 }
-impl std::fmt::Display for ScheduleError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "schedule error: {self:?}")
-    }
-}
-impl std::error::Error for ScheduleError {}
 /// A typed failure retains both the system identity and its original error.
 #[derive(Debug)]
 pub struct SystemFailure<E> {
@@ -45,14 +40,9 @@ pub struct SceneSystemAccess<'a> {
     scene: &'a mut crate::SceneGraph,
     grants: &'a BTreeMap<String, bool>,
 }
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("system has no declared scene access for this operation")]
 pub struct SceneAccessDenied;
-impl std::fmt::Display for SceneAccessDenied {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str("system has no declared scene access for this operation")
-    }
-}
-impl std::error::Error for SceneAccessDenied {}
 /// Domain access rejection; no resource mutation is authorized by this error.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ResourceAccessDenied {

@@ -22,7 +22,8 @@ impl Default for XrayStyle {
         }
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
+#[error("X-ray error: {self:?}")]
 pub enum XrayError {
     InvalidStyle,
     InvalidDelta,
@@ -31,12 +32,6 @@ pub enum XrayError {
     InvalidTransform,
     InvalidMesh,
 }
-impl std::fmt::Display for XrayError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "X-ray error: {self:?}")
-    }
-}
-impl std::error::Error for XrayError {}
 
 /// A sphere in caller-chosen model/world coordinates. Feather lies inside its radius.
 #[derive(Clone, Copy, Debug, PartialEq)]

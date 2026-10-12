@@ -1,4 +1,3 @@
-use std::fmt;
 use std::num::NonZeroU8;
 use std::sync::Arc;
 
@@ -814,20 +813,13 @@ fn finish_mesh(quads: Vec<Quad>) -> ChunkMesh {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("meshing failed: {self:?}")]
 pub enum MeshError {
     Cancelled,
     OutputLimit,
     Invariant,
 }
-
-impl fmt::Display for MeshError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "meshing failed: {self:?}")
-    }
-}
-
-impl std::error::Error for MeshError {}
 
 #[cfg(test)]
 mod tests {

@@ -14,7 +14,8 @@ pub use compute_memory::*;
 pub use compute_readback::*;
 
 /// Failure classes of portable compute: capability, budget, validation, lifecycle.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("compute error: {self:?}")]
 pub enum ComputeError {
     Unsupported,
     InvalidBuffer,
@@ -27,12 +28,6 @@ pub enum ComputeError {
     Mapping(String),
     Consumed,
 }
-impl std::fmt::Display for ComputeError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "compute error: {self:?}")
-    }
-}
-impl std::error::Error for ComputeError {}
 
 /// Hardware indirect voxel mesh buffers directly produced by GPU compute mesher.
 #[derive(Debug)]

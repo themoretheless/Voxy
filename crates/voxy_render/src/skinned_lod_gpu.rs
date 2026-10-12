@@ -1,10 +1,11 @@
 //! Optional skeletal index residency; vertex, palette and object streams are shared.
 use crate::skinned::{GpuSkinnedMesh, ObjectUniform, upload_skinned};
 use crate::{PreparedSkinnedLod, SkinnedLodError, SkinnedMesh, SkinnedUploadError};
-use std::{fmt, sync::Arc};
+use std::sync::Arc;
 use wgpu::util::DeviceExt;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("skinned LOD GPU error: {self:?}")]
 pub enum SkinnedLodGpuError {
     Policy(crate::LodError),
     InvalidLevel,
@@ -17,12 +18,6 @@ pub enum SkinnedLodGpuError {
     Skin(SkinnedUploadError),
     Pose(SkinnedLodError),
 }
-impl fmt::Display for SkinnedLodGpuError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "skinned LOD GPU error: {self:?}")
-    }
-}
-impl std::error::Error for SkinnedLodGpuError {}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct SkinnedLodResidency {

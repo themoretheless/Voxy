@@ -3,19 +3,14 @@ use crate::{
     DiffuseEnvironmentConvolution, GgxDfgLut, GgxEnvironmentPrefilter, HdrImageAsset,
     HdrImageError, ImageLimits, RendererError, SceneRenderer, SceneShaderError,
 };
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("environment import error: {self:?}")]
 pub enum ImportedEnvironmentError {
     Image(HdrImageError),
     Renderer(RendererError),
     /// `RGBA16Float` cannot store radiance above 65504 without infinity.
     HalfFloatRange,
 }
-impl std::fmt::Display for ImportedEnvironmentError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "environment import error: {self:?}")
-    }
-}
-impl std::error::Error for ImportedEnvironmentError {}
 impl From<HdrImageError> for ImportedEnvironmentError {
     fn from(e: HdrImageError) -> Self {
         Self::Image(e)
