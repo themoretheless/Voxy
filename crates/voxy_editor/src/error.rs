@@ -7,6 +7,9 @@ pub enum EditorError {
     /// A free-form failure message.
     #[error("{0}")]
     Message(String),
+    /// Scoped render extraction could not refresh.
+    #[error(transparent)]
+    ScopedExtraction(#[from] voxy_scene::ScopedExtractionError),
     /// The scene graph rejected a node lookup or edit.
     #[error(transparent)]
     SceneGraph(#[from] voxy_scene::SceneGraphError),

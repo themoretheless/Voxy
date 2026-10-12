@@ -2128,7 +2128,7 @@ impl SceneLiquidRuntime {
             Vec<usize>,
             Vec<physics::contact::ContactBody>,
         ),
-        String,
+        GameplayError,
     > {
         let mut geometry = SceneGeometry(
             crate::static_world(scene).map_err(|e| format!("liquid collider: {e:?}"))?,
@@ -2150,7 +2150,7 @@ impl SceneLiquidRuntime {
                     shapes.push(if let Some(principal) = &body.principal_templates {
                         principal[slot]
                     } else {
-                        collider_template(body, collider).map_err(|e| e.to_string())?
+                        collider_template(body, collider)?
                     });
                 }
             }

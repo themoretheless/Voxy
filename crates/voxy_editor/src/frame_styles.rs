@@ -147,10 +147,11 @@ mod tests {
             extraction_schedule()
                 .unwrap()
                 .run_scene(scene, |_, access| {
-                    result = Some(
-                        FrameStyles::prepare(&access, &EditorCamera::default(), capacity)
-                            .map_err(|e| e.to_string())?,
-                    );
+                    result = Some(FrameStyles::prepare(
+                        &access,
+                        &EditorCamera::default(),
+                        capacity,
+                    )?);
                     Ok::<(), EditorError>(())
                 })?;
             Ok::<_, voxy_scene::SystemFailure<EditorError>>(result.unwrap())
@@ -206,7 +207,7 @@ mod tests {
         extraction_schedule()
             .unwrap()
             .run_scene(&mut scene, |_, access| {
-                first = Some(FrameStyles::prepare(&access, &camera, 1).map_err(|e| e.to_string())?);
+                first = Some(FrameStyles::prepare(&access, &camera, 1)?);
                 Ok::<(), EditorError>(())
             })
             .unwrap();
@@ -227,7 +228,7 @@ mod tests {
         extraction_schedule()
             .unwrap()
             .run_scene(&mut scene, |_, access| {
-                let next = FrameStyles::prepare(&access, &camera, 1).map_err(|e| e.to_string())?;
+                let next = FrameStyles::prepare(&access, &camera, 1)?;
                 assert!(next.light.is_none());
                 assert_eq!(next.parts[&model], 9);
                 assert_eq!(next.camera.distance, 10.);
@@ -282,10 +283,11 @@ mod tests {
             extraction_schedule()
                 .unwrap()
                 .run_scene(scene, |_, access| {
-                    result = Some(
-                        FrameStyles::prepare(&access, &EditorCamera::default(), capacity)
-                            .map_err(|e| e.to_string())?,
-                    );
+                    result = Some(FrameStyles::prepare(
+                        &access,
+                        &EditorCamera::default(),
+                        capacity,
+                    )?);
                     Ok::<(), EditorError>(())
                 })
                 .map_err(|e| format!("{e:?}"))?;
@@ -306,8 +308,7 @@ mod tests {
                         Ok(glam::Mat4::from_translation(glam::Vec3::new(10., 0., 0.))
                             * scene.world_matrix(owner)?)
                     },
-                )
-                .map_err(|e| e.to_string())?;
+                )?;
                 assert_eq!(resolved.fog[0].2.origin, [13., 4., 5.]);
                 Ok::<(), EditorError>(())
             })
@@ -433,10 +434,7 @@ mod shadow_snapshot_tests {
             extraction_schedule()
                 .unwrap()
                 .run_scene(scene, |_, access| {
-                    result = Some(
-                        FrameStyles::prepare(&access, &EditorCamera::default(), 8)
-                            .map_err(|e| e.to_string())?,
-                    );
+                    result = Some(FrameStyles::prepare(&access, &EditorCamera::default(), 8)?);
                     Ok::<(), EditorError>(())
                 })
                 .unwrap();

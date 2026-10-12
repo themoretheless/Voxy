@@ -1379,7 +1379,7 @@ fn constant_parent_similarity_enclosure(
         voxy_animation::RootRigidEnclosure,
         voxy_animation::RootUniformScaleEnclosure,
     ),
-    String,
+    EditorError,
 > {
     static_parent_similarity_enclosure(model, root, |index, joint| {
         let transform = model
@@ -1412,7 +1412,7 @@ fn static_parent_similarity_enclosure(
         voxy_animation::RootRigidEnclosure,
         voxy_animation::RootUniformScaleEnclosure,
     ),
-    String,
+    EditorError,
 > {
     use voxy_animation::{RootRigidEnclosure, RootRigidTransform, RootUniformScaleEnclosure};
     let mut frame = RootRigidEnclosure::IDENTITY;
@@ -1426,7 +1426,7 @@ fn static_parent_similarity_enclosure(
     while let Some(index) = parent {
         let index = usize::from(index);
         let joint = &model.skeleton.joints()[index];
-        let transform = transform_at(index, joint).map_err(|e| e.to_string())?;
+        let transform = transform_at(index, joint)?;
         let magnitude = transform.scale.abs();
         if magnitude.x == 0. || magnitude.x != magnitude.y || magnitude.x != magnitude.z {
             return Err("root parent reference requires nonzero uniform scale".into());
@@ -1446,25 +1446,16 @@ fn static_parent_similarity_enclosure(
         let authored = RootRigidEnclosure::from_transform(RootRigidTransform {
             translation: transform.translation.as_dvec3(),
             rotation: glam::DQuat::from_array(transform.rotation.to_array().map(f64::from)),
-        })
-        .map_err(|e| e.to_string())?;
+        })?;
         let reflection = RootRigidEnclosure::from_transform(RootRigidTransform {
             rotation: reflection,
             ..RootRigidTransform::IDENTITY
-        })
-        .map_err(|e| e.to_string())?;
-        let outer = authored.compose(&reflection).map_err(|e| e.to_string())?;
+        })?;
+        let outer = authored.compose(&reflection)?;
         let outer_scale =
-            RootUniformScaleEnclosure::from_scale(f64::from(magnitude.x) * f64::from(determinant))
-                .map_err(|e| e.to_string())?;
-        frame = outer
-            .compose(
-                &frame
-                    .with_translation_scale_enclosed(outer_scale)
-                    .map_err(|e| e.to_string())?,
-            )
-            .map_err(|e| e.to_string())?;
-        scale = outer_scale.multiplied(scale).map_err(|e| e.to_string())?;
+            RootUniformScaleEnclosure::from_scale(f64::from(magnitude.x) * f64::from(determinant))?;
+        frame = outer.compose(&frame.with_translation_scale_enclosed(outer_scale)?)?;
+        scale = outer_scale.multiplied(scale)?;
         parent = joint.parent;
     }
     Ok((frame, scale))

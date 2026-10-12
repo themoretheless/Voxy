@@ -289,7 +289,7 @@ impl AudioPlay {
             AssetId,
             Result<voxy_assets::InputSnapshot, voxy_assets::InputError>,
         >,
-        String,
+        EditorError,
     > {
         let mut observations = std::collections::BTreeMap::new();
         for (_, source) in scene.components::<voxy_gameplay::AudioSource>() {
