@@ -10,6 +10,38 @@ pub struct DropletExtinctionGrid {
     pub outside_droplets: usize,
 }
 impl DropletExtinctionGrid {
+    /// Wraps an externally computed extinction field (1/m) on a Cartesian grid.
+    /// # Errors
+    /// Shape/field mismatch, nonpositive spacing or negative/nonfinite values.
+    pub fn from_field(
+        origin: [f64; 3],
+        spacing: [f64; 3],
+        shape: [usize; 3],
+        extinction_m_inverse: Vec<f64>,
+    ) -> Result<Self, Error> {
+        let count = shape
+            .iter()
+            .try_fold(1usize, |a, &b| a.checked_mul(b))
+            .ok_or(Error::InvalidConfig)?;
+        if !finite(origin)
+            || spacing.iter().any(|v| !positive(*v))
+            || count == 0
+            || extinction_m_inverse.len() != count
+            || extinction_m_inverse
+                .iter()
+                .any(|v| !v.is_finite() || *v < 0.)
+        {
+            return Err(Error::InvalidConfig);
+        }
+        Ok(Self {
+            origin,
+            spacing,
+            shape,
+            extinction_m_inverse,
+            included_droplets: 0,
+            outside_droplets: 0,
+        })
+    }
     pub fn extinction_m_inverse(&self) -> &[f64] {
         &self.extinction_m_inverse
     }

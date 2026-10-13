@@ -79,6 +79,11 @@ impl FiniteDropletGasGrid {
     pub fn cells(&self) -> &[VaporCell] {
         &self.cells
     }
+    /// Mutable cells for external momentum sources (e.g. species buoyancy).
+    /// Callers must keep mass, temperature and volume valid.
+    pub fn cells_mut(&mut self) -> &mut [VaporCell] {
+        &mut self.cells
+    }
     pub fn origin(&self) -> [f64; 3] {
         self.origin
     }
