@@ -118,7 +118,9 @@ pub use renderer::{
     CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };
 pub use skinned::{SkinnedMesh, SkinnedMeshError, SkinnedUploadError, SkinnedVertex};
-pub use voxy_gpu_core::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
+pub use voxy_gpu_core::{
+    GraphicsBackend, GraphicsCapabilities, GraphicsOptions, PresentPreference,
+};
 mod skinned_lod;
 pub use skinned_lod::{PreparedSkinnedLod, SkinnedLodError, SkinnedLodMesh};
 mod skinned_lod_gpu;
