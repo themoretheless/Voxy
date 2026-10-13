@@ -45,7 +45,11 @@ booked explicitly so a caller can audit it.
 
 ## Not yet done
 
-- Piece–piece contact and hull–voxel-world contact (only a plane ground).
+- Hull–voxel-world contact (only a plane ground). Piece–piece contact landed
+  2026-10-14: separating-axis test over both hulls' face normals (edge–edge
+  axes not tested), support-patch centroid contact point, shared inelastic
+  impulse with Coulomb friction and mass-split push-out; stacked cubes rest and
+  head-on cubes conserve momentum in `src/debris/tests.rs`.
 - Coupling the dust particles into the participating-media solver (plan B1
   sources) and rendering debris inventories.
 - A demo scene (`voxy_demos`) that fractures, releases, removes voxels and drops

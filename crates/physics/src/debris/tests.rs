@@ -161,3 +161,60 @@ fn invalid_input_is_rejected() {
     singular.inertia_kg_m2 = [[0.; 3]; 3];
     assert!(DebrisBody::new(singular).is_err());
 }
+
+#[test]
+fn stacked_cubes_rest_on_each_other_and_head_on_cubes_conserve_momentum() {
+    let gravity = [0., -9.81, 0.];
+    // A cube resting on another on the ground: the upper one stays up.
+    let mut stack = vec![
+        DebrisBody::new(cube([0., 0.5, 0.], [0.; 3], [0.; 3])).unwrap(),
+        DebrisBody::new(cube([0., 1.6, 0.], [0.; 3], [0.; 3])).unwrap(),
+    ];
+    let mut ledger = DebrisStepReport::default();
+    let initial = stack
+        .iter()
+        .map(|b| b.kinetic_j() + 9.81 * b.position_m[1])
+        .sum::<f64>();
+    for _ in 0..1500 {
+        step_debris(&mut stack, 1e-3, gravity, &ground(0.6), &mut ledger).unwrap();
+        let total = audit(&ledger);
+        assert!(
+            (total - initial).abs() < 1e-9 * initial,
+            "ledger drift {}",
+            total - initial
+        );
+    }
+    assert!(
+        (stack[0].position_m[1] - 0.5).abs() < 2e-3,
+        "{}",
+        stack[0].position_m[1]
+    );
+    assert!(
+        (stack[1].position_m[1] - 1.5).abs() < 5e-3,
+        "{}",
+        stack[1].position_m[1]
+    );
+    assert!(stack.iter().all(|b| norm(b.velocity_m_s) < 1e-2));
+    // Two cubes sliding head-on without gravity: momentum is conserved and
+    // the inelastic impact removes the approach velocity.
+    let mut pair = vec![
+        DebrisBody::new(cube([-1., 0.5, 0.], [1., 0., 0.], [0.; 3])).unwrap(),
+        DebrisBody::new(cube([1., 0.5, 0.], [-1., 0., 0.], [0.; 3])).unwrap(),
+    ];
+    let mut ledger = DebrisStepReport::default();
+    for _ in 0..1200 {
+        step_debris(&mut pair, 1e-3, [0.; 3], &ground(0.0), &mut ledger).unwrap();
+    }
+    let momentum: f64 = pair
+        .iter()
+        .map(|b| b.velocity_m_s[0] * b.piece.mass_kg)
+        .sum();
+    assert!(momentum.abs() < 1e-9, "{momentum}");
+    assert!(
+        pair.iter().all(|b| b.velocity_m_s[0].abs() < 1e-6),
+        "{:?}",
+        pair.iter().map(|b| b.velocity_m_s).collect::<Vec<_>>()
+    );
+    assert!(pair[1].position_m[0] - pair[0].position_m[0] >= 1. - 1e-3);
+    assert!(ledger.dissipated_j > 0.9, "{}", ledger.dissipated_j);
+}

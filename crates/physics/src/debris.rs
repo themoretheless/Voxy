@@ -232,6 +232,82 @@ pub fn step_debris(
             ledger.correction_j += body.piece.mass_kg * depth * -dot(gravity, normal);
         }
     }
+    // Piece-piece contact: the deepest hull vertex of one piece inside the
+    // other's hull is resolved with a shared inelastic normal impulse, Coulomb
+    // friction and a mass-split positional push-out.
+    for i in 0..bodies.len() {
+        for j in i + 1..bodies.len() {
+            let hull_i = bodies[i].world_hull();
+            let hull_j = bodies[j].world_hull();
+            // Normal points from piece `j` toward piece `i` (the push direction for `i`).
+            let Some((point, depth, normal)) = sat_contact(
+                &hull_i,
+                &bodies[i].piece.hull_faces,
+                &hull_j,
+                &bodies[j].piece.hull_faces,
+            ) else {
+                continue;
+            };
+            let (penetrating, penetrated) = (i, j);
+            contacts += 1;
+            let (first, second) = bodies.split_at_mut(penetrated.max(penetrating));
+            let (a, b) = if penetrating < penetrated {
+                (&mut first[penetrating], &mut second[0])
+            } else {
+                (&mut second[0], &mut first[penetrated])
+            };
+            let before = a.kinetic_j() + b.kinetic_j();
+            let ra = sub(point, a.position_m);
+            let rb = sub(point, b.position_m);
+            let inv_a = a.inverse_inertia_world();
+            let inv_b = b.inverse_inertia_world();
+            let generalized = |direction: Vec3| {
+                let ca = cross(ra, direction);
+                let cb = cross(rb, direction);
+                1. / a.piece.mass_kg
+                    + 1. / b.piece.mass_kg
+                    + dot(ca, mat_vec(inv_a, ca))
+                    + dot(cb, mat_vec(inv_b, cb))
+            };
+            let velocity = sub(
+                add(a.velocity_m_s, cross(a.angular_velocity_rad_s, ra)),
+                add(b.velocity_m_s, cross(b.angular_velocity_rad_s, rb)),
+            );
+            let vn = dot(velocity, normal);
+            let mut impulse = [0.; 3];
+            let mut normal_impulse = 0.;
+            if vn < 0. {
+                normal_impulse = -vn / generalized(normal);
+                impulse = scale(normal, normal_impulse);
+            }
+            let tangential = sub(velocity, scale(normal, vn));
+            let speed = norm(tangential);
+            if speed > 0. && normal_impulse > 0. {
+                let direction = scale(tangential, 1. / speed);
+                let stopping = speed / generalized(direction);
+                impulse = sub(
+                    impulse,
+                    scale(direction, stopping.min(ground.friction * normal_impulse)),
+                );
+            }
+            a.velocity_m_s = add(a.velocity_m_s, scale(impulse, 1. / a.piece.mass_kg));
+            a.angular_velocity_rad_s =
+                add(a.angular_velocity_rad_s, mat_vec(inv_a, cross(ra, impulse)));
+            b.velocity_m_s = sub(b.velocity_m_s, scale(impulse, 1. / b.piece.mass_kg));
+            b.angular_velocity_rad_s =
+                sub(b.angular_velocity_rad_s, mat_vec(inv_b, cross(rb, impulse)));
+            ledger.dissipated_j += before - (a.kinetic_j() + b.kinetic_j());
+            // Push-out split by inverse mass; booked as potential energy change.
+            let total = 1. / a.piece.mass_kg + 1. / b.piece.mass_kg;
+            let share_a = (1. / a.piece.mass_kg) / total;
+            let move_a = scale(normal, depth * share_a);
+            let move_b = scale(normal, -depth * (1. - share_a));
+            a.position_m = add(a.position_m, move_a);
+            b.position_m = add(b.position_m, move_b);
+            ledger.correction_j +=
+                a.piece.mass_kg * -dot(gravity, move_a) + b.piece.mass_kg * -dot(gravity, move_b);
+        }
+    }
     let mut kinetic = 0.;
     let mut potential = 0.;
     for body in bodies.iter() {
@@ -250,6 +326,74 @@ pub fn step_debris(
     ledger.potential_j = potential;
     ledger.contacts = contacts;
     Ok(())
+}
+
+/// Separating-axis contact between two convex hulls over their face normals
+/// (edge–edge axes are not tested). Returns the support patch centroid of
+/// hull `a` along the minimal-overlap axis, the overlap depth, and the unit
+/// normal pointing from `b` toward `a`. Coincident faces of aligned boxes resolve
+/// along the axis of least overlap instead of a zero-distance side plane.
+fn sat_contact(
+    a: &[Vec3],
+    faces_a: &[[usize; 3]],
+    b: &[Vec3],
+    faces_b: &[[usize; 3]],
+) -> Option<(Vec3, f64, Vec3)> {
+    let mut best: Option<(f64, Vec3)> = None;
+    let project = |points: &[Vec3], n: Vec3| {
+        points
+            .iter()
+            .fold((f64::INFINITY, f64::NEG_INFINITY), |(lo, hi), p| {
+                let d = dot(*p, n);
+                (lo.min(d), hi.max(d))
+            })
+    };
+    for (hull, faces) in [(a, faces_a), (b, faces_b)] {
+        for &[p, q, r] in faces {
+            let n = cross(sub(hull[q], hull[p]), sub(hull[r], hull[p]));
+            let length = norm(n);
+            if length == 0. {
+                continue;
+            }
+            let n = scale(n, 1. / length);
+            let (lo_a, hi_a) = project(a, n);
+            let (lo_b, hi_b) = project(b, n);
+            if hi_a <= lo_b || hi_b <= lo_a {
+                return None;
+            }
+            // Overlap when `a` sits below `b` along `n`, and the reverse.
+            let below = hi_a - lo_b;
+            let above = hi_b - lo_a;
+            let (overlap, direction) = if below < above {
+                (below, scale(n, -1.))
+            } else {
+                (above, n)
+            };
+            if best.is_none_or(|(d, _)| overlap < d) {
+                best = Some((overlap, direction));
+            }
+        }
+    }
+    let (depth, normal) = best?;
+    // Contact patch: the centroid of `a`'s support vertices against the push
+    // direction (within the overlap), so a face landing flat exerts no torque.
+    let lowest = a
+        .iter()
+        .map(|p| dot(*p, normal))
+        .fold(f64::INFINITY, f64::min);
+    let tolerance = depth.max(1e-9 * (1. + lowest.abs()));
+    let mut sum = [0.; 3];
+    let mut count = 0.;
+    for p in a {
+        if dot(*p, normal) <= lowest + tolerance {
+            sum = add(sum, *p);
+            count += 1.;
+        }
+    }
+    if count == 0. {
+        return None;
+    }
+    Some((scale(sum, 1. / count), depth, normal))
 }
 
 fn mat_vec(m: Mat3, v: Vec3) -> Vec3 {
