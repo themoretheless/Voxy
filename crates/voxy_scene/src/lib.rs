@@ -391,12 +391,39 @@ impl SceneGraph {
     pub fn active_components_with<A: Any + Send + Sync, B: Any + Send + Sync>(
         &self,
     ) -> impl Iterator<Item = (NodeId, &A, &B)> + '_ {
-        self.active_components::<A>().filter_map(|(owner, first)| {
-            self.component::<B>(owner)
-                .ok()
-                .flatten()
-                .map(|second| (owner, first, second))
-        })
+        self.active_components_with_revisions::<A, B>()
+            .map(|(owner, first, _, second, _)| (owner, first, second))
+    }
+
+    /// Active nodes holding both `A` and `B`, with each component's revision, in slot
+    /// order. One slot scan resolves both components from the same node, so callers
+    /// that reuse derived rows by revision need no further lookups per owner.
+    pub fn active_components_with_revisions<A: Any + Send + Sync, B: Any + Send + Sync>(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, &A, ComponentRevision, &B, ComponentRevision)> + '_ {
+        let second_key = TypeId::of::<B>();
+        self.slot_components::<A>()
+            .filter(|(_, node, _)| node.effective_active)
+            .filter_map(move |(owner, node, first)| {
+                let first_revision = node.components.get(&TypeId::of::<A>())?.1;
+                let second = node.components.get(&second_key)?;
+                let value = second.0.downcast_ref::<B>()?;
+                Some((owner, first, first_revision, value, second.1))
+            })
+    }
+
+    /// Revisions of `A` and `B` on one node, validating the handle once.
+    /// # Errors
+    /// Rejects stale or foreign handles; a missing component yields `None`.
+    pub fn component_revisions<A: Any + Send + Sync, B: Any + Send + Sync>(
+        &self,
+        id: NodeId,
+    ) -> Result<(Option<ComponentRevision>, Option<ComponentRevision>), SceneGraphError> {
+        let components = &self.node(id)?.components;
+        Ok((
+            components.get(&TypeId::of::<A>()).map(|value| value.1),
+            components.get(&TypeId::of::<B>()).map(|value| value.1),
+        ))
     }
 
     /// Attaches one value per Rust type; replacing a component returns its old value.
