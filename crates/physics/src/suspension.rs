@@ -62,6 +62,10 @@ impl Particle {
     pub fn mass_kg(&self) -> f64 {
         self.mass_kg
     }
+    #[must_use]
+    pub fn radius_m(&self) -> f64 {
+        self.radius_m
+    }
     /// Incompressible spherical solid volume, in cubic metres.
     #[must_use]
     pub fn volume_m3(&self) -> f64 {
@@ -369,6 +373,8 @@ impl Particle {
     }
 }
 
+mod optics;
+pub use optics::{suspension_extinction_grid, turbidity_extinction_m_inverse};
 mod cloud;
 pub use cloud::{
     CloudExchange, exchange_drag_cloud, exchange_forced_cloud, exchange_gravity_cloud,

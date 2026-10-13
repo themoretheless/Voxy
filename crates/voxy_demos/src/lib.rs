@@ -39,6 +39,7 @@ pub mod gpu_hair_solver;
 pub mod gravity_demo;
 pub mod jump_motion;
 pub mod liquid_demo;
+pub mod medium_optics;
 pub mod model_presentation;
 pub mod rig_skinning;
 pub mod strands_demo;
