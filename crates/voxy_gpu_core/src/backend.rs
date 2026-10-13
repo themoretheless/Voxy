@@ -32,6 +32,8 @@ pub struct GraphicsOptions {
     pub backend: GraphicsBackend,
     pub power_preference: wgpu::PowerPreference,
     pub force_fallback_adapter: bool,
+    /// Requested presentation pacing; the surface's default when unsupported.
+    pub present: PresentPreference,
 }
 
 impl Default for GraphicsOptions {
@@ -40,6 +42,35 @@ impl Default for GraphicsOptions {
             backend: GraphicsBackend::Auto,
             power_preference: wgpu::PowerPreference::HighPerformance,
             force_fallback_adapter: false,
+            present: PresentPreference::Default,
+        }
+    },
+    ..Default::default()
+}
+
+/// How presented frames are paced against the display.
+///
+/// `Default` keeps the surface's default (vertical sync). `Mailbox` and
+/// `Immediate` let the frame rate exceed the display rate where the driver
+/// offers them; a mode the surface does not support falls back to the default.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum PresentPreference {
+    #[default]
+    Default,
+    Fifo,
+    Mailbox,
+    Immediate,
+}
+
+impl PresentPreference {
+    /// The wgpu present mode this preference asks for, if it asks for one.
+    #[must_use]
+    pub fn mode(self) -> Option<wgpu::PresentMode> {
+        match self {
+            Self::Default => None,
+            Self::Fifo => Some(wgpu::PresentMode::Fifo),
+            Self::Mailbox => Some(wgpu::PresentMode::Mailbox),
+            Self::Immediate => Some(wgpu::PresentMode::Immediate),
         }
     }
 }
