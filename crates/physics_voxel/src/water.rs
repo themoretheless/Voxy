@@ -1,5 +1,6 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeSet, HashMap};
 use std::fmt;
+use voxy_core::FastHashBuilder;
 
 use voxy_core::split_voxel;
 use voxy_world::{
@@ -174,7 +175,7 @@ pub fn step_liquid(
         cursor: crate::chunk_cursor::ChunkCursor::new(view),
         registry,
         states,
-        cells: BTreeMap::new(),
+        cells: HashMap::with_hasher(FastHashBuilder::default()),
         samples: 0,
         limit: budget.max_samples,
     };
@@ -285,7 +286,9 @@ struct Sampler<'a, V: VoxelView> {
     cursor: crate::chunk_cursor::ChunkCursor<'a, V>,
     registry: &'a BlockRegistry,
     states: WaterStates,
-    cells: BTreeMap<VoxelPos, LiquidCell>,
+    // Lookup only: the plan sorts its writes and collects chunks into a set, so the
+    // map's iteration order never reaches the result.
+    cells: HashMap<VoxelPos, LiquidCell, FastHashBuilder>,
     samples: usize,
     limit: usize,
 }
