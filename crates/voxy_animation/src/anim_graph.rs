@@ -6,9 +6,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use glam::{Mat4, Vec3};
+use glam::{Mat4, Vec2, Vec3};
 
-use crate::{AnimationClip, AnimationError, BlendSpace1D, BoneMask, Pose, Skeleton, rigs_match};
+use crate::{
+    AnimationClip, AnimationError, BlendSpace1D, BlendSpace2D, BoneMask, Pose, Skeleton, rigs_match,
+};
 
 /// Upper bound on nodes per compiled graph.
 pub const MAX_GRAPH_NODES: usize = 1024;
@@ -60,6 +62,12 @@ pub enum GraphNode {
         space: Arc<BlendSpace1D>,
         parameter: FloatInput,
     },
+    /// Phase-synchronized 2D blend space with its own normalized phase clock.
+    BlendSpace2D {
+        space: Arc<BlendSpace2D>,
+        x: FloatInput,
+        y: FloatInput,
+    },
     /// Linear blend `a -> b` by weight in `[0, 1]`.
     Blend {
         a: NodeId,
@@ -86,20 +94,23 @@ pub enum GraphNode {
 impl GraphNode {
     fn children(&self) -> [Option<NodeId>; 2] {
         match self {
-            Self::Clip { .. } | Self::BlendSpace1D { .. } => [None, None],
+            Self::Clip { .. } | Self::BlendSpace1D { .. } | Self::BlendSpace2D { .. } => {
+                [None, None]
+            }
             Self::Blend { a, b, .. } => [Some(*a), Some(*b)],
             Self::Layer { base, overlay, .. } => [Some(*base), Some(*overlay)],
             Self::Additive { base, additive, .. } => [Some(*base), Some(*additive)],
         }
     }
 
-    fn float_inputs(&self) -> [Option<FloatInput>; 1] {
+    fn float_inputs(&self) -> [Option<FloatInput>; 2] {
         match self {
-            Self::Clip { speed, .. } => [Some(*speed)],
-            Self::BlendSpace1D { parameter, .. } => [Some(*parameter)],
+            Self::Clip { speed, .. } => [Some(*speed), None],
+            Self::BlendSpace1D { parameter, .. } => [Some(*parameter), None],
+            Self::BlendSpace2D { x, y, .. } => [Some(*x), Some(*y)],
             Self::Blend { weight, .. }
             | Self::Layer { weight, .. }
-            | Self::Additive { weight, .. } => [Some(*weight)],
+            | Self::Additive { weight, .. } => [Some(*weight), None],
         }
     }
 }
@@ -195,6 +206,10 @@ impl AnimGraph {
             let compatible = match node {
                 GraphNode::Clip { clip, .. } => clip.is_compatible_with(skeleton),
                 GraphNode::BlendSpace1D { space, .. } => space
+                    .samples()
+                    .iter()
+                    .all(|s| s.clip.is_compatible_with(skeleton)),
+                GraphNode::BlendSpace2D { space, .. } => space
                     .samples()
                     .iter()
                     .all(|s| s.clip.is_compatible_with(skeleton)),
@@ -423,6 +438,14 @@ impl GraphPlayer {
                     let duration = f64::from(space.cycle_duration(parameter)?);
                     let phase = (clocks[index].0 + dt / duration).rem_euclid(1.0);
                     let pose = space.evaluate(&skeleton, parameter, phase)?;
+                    clocks[index] = NodeClock(phase);
+                    (pose, Vec3::ZERO)
+                }
+                GraphNode::BlendSpace2D { space, x, y } => {
+                    let p = Vec2::new(self.float(*x), self.float(*y));
+                    let duration = f64::from(space.cycle_duration(p)?);
+                    let phase = (clocks[index].0 + dt / duration).rem_euclid(1.0);
+                    let pose = space.evaluate(&skeleton, p, phase)?;
                     clocks[index] = NodeClock(phase);
                     (pose, Vec3::ZERO)
                 }

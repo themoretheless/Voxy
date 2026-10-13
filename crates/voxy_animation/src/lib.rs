@@ -46,6 +46,8 @@ pub use root_rotation::{
     RootRotationCurve, RootRotationPath, RootRotationSpan,
 };
 mod anim_graph;
+mod blend_space2d;
+pub use blend_space2d::{BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D};
 mod graph;
 pub use anim_graph::{
     AnimGraph, FloatInput, GraphDesc, GraphFrame, GraphNode, GraphPlayer, MAX_GRAPH_NODES, NodeId,
