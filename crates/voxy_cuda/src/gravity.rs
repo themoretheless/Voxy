@@ -1,12 +1,7 @@
 use crate::{CudaCompute, CudaError};
 
 /// Explicit double-precision CUDA body, retaining the CPU solver's f64 inputs.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct CudaGravityBody {
-    pub mass: f64,
-    pub position: [f64; 3],
-    pub velocity: [f64; 3],
-}
+pub type CudaGravityBody = voxy_gpu_core::GravityBody<f64>;
 /// Sticky device failure; snapshots still expose the last committed finite state.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CudaGravityFailure {
@@ -18,13 +13,8 @@ pub struct CudaGravitySnapshot {
     pub bodies: Vec<CudaGravityBody>,
     pub failure: Option<CudaGravityFailure>,
 }
-#[derive(Clone, Copy, Debug)]
-pub struct CudaGravityParameters {
-    pub constant: f64,
-    pub softening: f64,
-    pub uniform_acceleration: [f64; 3],
-    pub dt: f64,
-}
+/// Integration constants at double precision.
+pub type CudaGravityParameters = voxy_gpu_core::GravityParameters<f64>;
 #[derive(Clone, Copy, Debug)]
 pub struct CudaGravityBudget {
     pub max_bodies: u32,
@@ -664,5 +654,26 @@ mod tests {
             }
         }
         maximum_error
+    }
+}
+
+impl voxy_gpu_core::GravitySolver for CudaGravityJob {
+    type Scalar = f64;
+    type Error = CudaError;
+    fn body_count(&self) -> u32 {
+        #[cfg(feature = "cuda")]
+        {
+            self.count
+        }
+        #[cfg(not(feature = "cuda"))]
+        {
+            0
+        }
+    }
+    fn step(&mut self, steps: u32) -> Result<(), CudaError> {
+        CudaGravityJob::step(self, steps)
+    }
+    fn read(&mut self) -> Result<Vec<CudaGravityBody>, CudaError> {
+        CudaGravityJob::read(self)
     }
 }

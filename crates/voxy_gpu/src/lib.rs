@@ -13,8 +13,8 @@ pub use terrain_task::{PendingTerrain, TerrainDispatch, TerrainJob, TerrainProgr
 
 mod gravity;
 pub use gravity::{
-    GravityBody, GravityBudget, GravityComputeError, GravityJob, GravityParameters, GravityProgram,
-    GravityReadback, PendingGravity,
+    BlockingGravityJob, GravityBody, GravityBudget, GravityComputeError, GravityJob,
+    GravityParameters, GravityProgram, GravityReadback, PendingGravity,
 };
 
 mod gravity_view;

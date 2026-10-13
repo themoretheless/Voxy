@@ -15,7 +15,7 @@ use std::process::Command;
 const ALLOWED: &[(&str, &[&str])] = &[
     ("physics_voxel", &["physics", "voxy_core", "voxy_world"]),
     ("voxy_audio_device", &["voxy_audio"]),
-    ("voxy_cuda", &["physics"]),
+    ("voxy_cuda", &["physics", "voxy_gpu_core"]),
     (
         "voxy_demos",
         &[
