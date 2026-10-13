@@ -542,10 +542,10 @@ impl SceneGraph {
     /// # Errors
     /// Rejects invalid handles and invalid transforms before mutation.
     pub fn set_local(&mut self, id: NodeId, local: Transform) -> Result<(), SceneGraphError> {
-        local.matrix()?;
+        let matrix = local.matrix()?;
         if self.node(id)?.local != local {
             self.node_mut(id)?.local = local;
-            self.refresh_subtree(id)?;
+            self.refresh_subtree_with(id, Some(matrix))?;
         }
         Ok(())
     }
@@ -714,10 +714,28 @@ impl SceneGraph {
     // Eager propagation preserves constant-time queries for every consumer.
     // Iterative traversal supports deep hierarchies without stack recursion.
     fn refresh_subtree(&mut self, root: NodeId) -> Result<(), SceneGraphError> {
+        self.refresh_subtree_with(root, None)
+    }
+
+    /// Recomputes world matrices and effective activity below `root`; `root_matrix`
+    /// is the root's already validated local matrix when the caller has it.
+    fn refresh_subtree_with(
+        &mut self,
+        root: NodeId,
+        root_matrix: Option<Mat4>,
+    ) -> Result<(), SceneGraphError> {
+        // Leaves, the common case for per-behavior edits, need no traversal stack.
+        if self.node(root)?.children.is_empty() {
+            return self.refresh_node(root, root_matrix);
+        }
         let mut pending = vec![root];
+        let mut root_matrix = root_matrix;
         while let Some(id) = pending.pop() {
             let node = self.node(id)?;
-            let local = node.local.matrix()?;
+            let local = match root_matrix.take() {
+                Some(matrix) if id == root => matrix,
+                _ => node.local.matrix()?,
+            };
             let active = node.active;
             let (world, effective_active) = if let Some(parent) = node.parent {
                 let parent = self.node(parent)?;
@@ -735,6 +753,31 @@ impl SceneGraph {
             node.effective_active = effective_active;
             pending.extend(node.children.iter().copied());
         }
+        Ok(())
+    }
+
+    /// Recomputes one childless node's world matrix and effective activity.
+    fn refresh_node(&mut self, id: NodeId, matrix: Option<Mat4>) -> Result<(), SceneGraphError> {
+        let node = self.node(id)?;
+        let local = match matrix {
+            Some(matrix) => matrix,
+            None => node.local.matrix()?,
+        };
+        let active = node.active;
+        let (world, effective_active) = if let Some(parent) = node.parent {
+            let parent = self.node(parent)?;
+            (
+                parent
+                    .world
+                    .and_then(|matrix| checked_world(matrix * local)),
+                active && parent.effective_active,
+            )
+        } else {
+            (Ok(local), active)
+        };
+        let node = self.node_mut(id)?;
+        node.world = world;
+        node.effective_active = effective_active;
         Ok(())
     }
 

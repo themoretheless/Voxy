@@ -135,7 +135,7 @@ impl std::error::Error for CoordinateOverflow {}
 pub fn split_voxel(pos: VoxelPos) -> (ChunkPos, LocalPos) {
     // CHUNK_EDGE is a power of two, so the Euclidean quotient is an arithmetic shift
     // and the Euclidean remainder a mask, for negative coordinates too.
-    const { assert!(CHUNK_EDGE.is_power_of_two()) };
+    const { assert!(CHUNK_EDGE > 0 && CHUNK_EDGE & (CHUNK_EDGE - 1) == 0) };
     const SHIFT: u32 = CHUNK_EDGE.trailing_zeros();
     const MASK: i64 = CHUNK_EDGE - 1;
     let chunk = ChunkPos {
