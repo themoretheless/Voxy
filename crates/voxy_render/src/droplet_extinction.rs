@@ -26,7 +26,7 @@ pub struct DropletExtinctionComputeInput {
 }
 impl DropletExtinctionComputeInput {
     /// Pack one immutable extinction snapshot and finite line segments; budget includes ABI storage.
-    /// Device compute/readback budgets are still admitted by ComputeProgram::create_job.
+    /// Device compute/readback budgets are still admitted by `ComputeProgram::create_job`.
     pub fn new(
         grid: ExtinctionGridView<'_>,
         rays: &[([f64; 3], [f64; 3])],
@@ -110,9 +110,11 @@ impl DropletExtinctionComputeInput {
             rays: rays.len(),
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn workgroups(&self) -> [u32; 3] {
         [(self.rays as u32).div_ceil(64), 1, 1]
     }
@@ -186,9 +188,11 @@ impl DropletExtinctionCompositeInput {
             words,
         })
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn workgroups(&self) -> [u32; 3] {
         self.rays.workgroups()
     }
@@ -467,14 +471,17 @@ impl DropletExtinctionSceneInput {
         ]);
         Ok(self)
     }
+    #[must_use]
     pub fn bytes(&self) -> &[u8] {
         bytemuck::cast_slice(&self.words)
     }
+    #[must_use]
     pub fn workgroups(&self) -> [u32; 3] {
         [self.size[0].div_ceil(8), self.size[1].div_ceil(8), 1]
     }
     /// Borrow the compute job's output for direct linear-color composition.
     /// The job must have completed its scene dispatch before the graphics pass.
+    #[must_use]
     pub fn color_output<'a>(&self, buffer: &'a wgpu::Buffer) -> crate::StorageColorView<'a> {
         crate::StorageColorView {
             buffer,
@@ -749,9 +756,11 @@ impl DropletExtinctionFrame {
             )
             .await
     }
+    #[must_use]
     pub fn output(&self) -> &wgpu::Texture {
         self.output.texture()
     }
+    #[must_use]
     pub fn allocation_bytes(&self) -> u64 {
         self.job.buffer().size()
             + u64::from(self.size[0]) * u64::from(self.size[1]) * 8

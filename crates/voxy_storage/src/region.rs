@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::fmt;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
@@ -515,7 +514,8 @@ impl<'a> Reader<'a> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("region error: {self:?}")]
 pub enum RegionError {
     Io(std::io::Error),
     Codec(CodecError),
@@ -550,12 +550,6 @@ impl From<CodecError> for RegionError {
         Self::Codec(error)
     }
 }
-impl fmt::Display for RegionError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "region error: {self:?}")
-    }
-}
-impl std::error::Error for RegionError {}
 
 #[cfg(test)]
 mod tests {

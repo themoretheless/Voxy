@@ -7,11 +7,14 @@ rust-version.workspace = true
 
 [features]
 default = []
-experimental-strand-fraction-reuse = ["physics/experimental-strand-fraction-reuse"]
-experimental-reusable-query-workers = ["physics/experimental-reusable-query-workers"]
-cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
+experimental-strand-fraction-reuse = ["physics/experimental-strand-fraction-reuse", "voxy_demos/experimental-strand-fraction-reuse"]
+experimental-reusable-query-workers = ["physics/experimental-reusable-query-workers", "voxy_demos/experimental-reusable-query-workers"]
+cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda", "voxy_demos/cuda"]
 
 [dependencies]
+voxy_model = { path = "../voxy_model" }
+voxy_shell = { path = "../voxy_shell" }
+voxy_demos = { path = "../voxy_demos" }
 wgpu = { version = "30.0.1", features = ["noop"] }
 voxy_core = { path = "../voxy_core" }
 voxy_editor = { path = "../voxy_editor" }

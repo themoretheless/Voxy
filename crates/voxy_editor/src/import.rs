@@ -1,4 +1,5 @@
 //! Project-scoped model import; external reads enter dependency observations.
+use crate::EditorError;
 use glam::{Mat4, Vec3};
 use voxy_assets::{AssetId, FileInputs, ImportInputs, SourcePath};
 use voxy_render::{
@@ -24,7 +25,7 @@ pub(crate) struct ImportedNode {
 pub(crate) struct EditorAsset {
     pub mesh: SceneMesh,
     pub lod: Option<std::sync::Arc<voxy_render::CertifiedLodIndexSet>>,
-    pub animated: Option<std::sync::Arc<voxy_render::ModelAsset>>,
+    pub animated: Option<std::sync::Arc<voxy_model::ModelAsset>>,
     pub skinned_lod: Option<std::sync::Arc<voxy_render::SkinnedLodMesh>>,
     pub nodes: Vec<ImportedNode>,
     pub images: Vec<ImageAsset>,
@@ -49,7 +50,7 @@ impl EditorAsset {
         }
     }
 }
-fn external(source: &SourcePath, uri: &str) -> Result<AssetId, String> {
+fn external(source: &SourcePath, uri: &str) -> Result<AssetId, EditorError> {
     if uri.contains(':') || uri.contains('%') || uri.contains('\\') {
         return Err("unsupported glTF URI".into());
     }
@@ -59,21 +60,20 @@ fn external(source: &SourcePath, uri: &str) -> Result<AssetId, String> {
         .to_owned();
     let path = parent.join(uri);
     let name = path.to_str().ok_or("non-UTF8 glTF URI")?;
-    Ok(SourcePath::new(name.to_owned())
-        .map_err(|e| e.to_string())?
-        .observation_id())
+    Ok(SourcePath::new(name.to_owned())?.observation_id())
 }
 fn observe(
     provider: &FileInputs,
     inputs: &mut ImportInputs,
     id: AssetId,
-) -> Result<Vec<u8>, String> {
+) -> Result<Vec<u8>, EditorError> {
     inputs
         .read(id, |id, limit| {
             provider.read(id, limit.min(16 * 1024 * 1024))
         })
         .map(|snapshot| snapshot.bytes.to_vec())
         .map_err(|e| format!("{e:?}"))
+        .map_err(Into::into)
 }
 /// Bounded import: static material nodes/textures or explicit skeletal/clip data
 /// through the renderer's model parser. Skeletal previews use the bind pose;
@@ -83,7 +83,7 @@ pub(crate) fn load(
     source: &SourcePath,
     provider: &FileInputs,
     inputs: &mut ImportInputs,
-) -> Result<EditorAsset, String> {
+) -> Result<EditorAsset, EditorError> {
     let bytes = observe(provider, inputs, source.observation_id())?;
     let id = source.observation_id();
     let extension = std::path::Path::new(&id.0)
@@ -96,7 +96,7 @@ pub(crate) fn load(
     }
     if extension == "obj" {
         return ObjAsset::parse(
-            std::str::from_utf8(&bytes).map_err(|e| e.to_string())?,
+            std::str::from_utf8(&bytes)?,
             ObjLimits {
                 source_bytes: 16 * 1024 * 1024,
                 attributes: 65_536,
@@ -105,12 +105,12 @@ pub(crate) fn load(
             },
         )
         .map(Into::into)
-        .map_err(|e| e.to_string());
+        .map_err(EditorError::from);
     }
     if extension != "gltf" && extension != "glb" {
         return Err("expected OBJ, glTF, GLB or VMODEL".into());
     }
-    let gltf = gltf::Gltf::from_slice(&bytes).map_err(|e| e.to_string())?;
+    let gltf = gltf::Gltf::from_slice(&bytes)?;
     if gltf.extensions_required().next().is_some() {
         return Err("required glTF extensions unsupported".into());
     }
@@ -161,7 +161,7 @@ pub(crate) fn load(
             .images()
             .all(|image| matches!(image.source(), gltf::image::Source::View { .. }))
     {
-        voxy_render::ModelAsset::decode_embedded_images(
+        voxy_model::ModelAsset::decode_embedded_images(
             &bytes,
             ImageLimits {
                 source_bytes: 16 * 1024 * 1024,
@@ -169,8 +169,7 @@ pub(crate) fn load(
                 pixel_bytes: 32 * 1024 * 1024,
             },
             16,
-        )
-        .map_err(|error| error.to_string())?
+        )?
     } else {
         let mut images = Vec::new();
         for image in gltf.images() {
@@ -182,24 +181,20 @@ pub(crate) fn load(
                     observe(provider, inputs, external(source, uri)?)?
                 }
             };
-            images.push(
-                ImageAsset::decode(
-                    &data,
-                    ImageLimits {
-                        source_bytes: 16 * 1024 * 1024,
-                        dimension: 2048,
-                        pixel_bytes: 32 * 1024 * 1024
-                            - u64::try_from(
-                                images
-                                    .iter()
-                                    .map(|image: &ImageAsset| image.rgba().len())
-                                    .sum::<usize>(),
-                            )
-                            .map_err(|e| e.to_string())?,
-                    },
-                )
-                .map_err(|e| e.to_string())?,
-            );
+            images.push(ImageAsset::decode(
+                &data,
+                ImageLimits {
+                    source_bytes: 16 * 1024 * 1024,
+                    dimension: 2048,
+                    pixel_bytes: 32 * 1024 * 1024
+                        - u64::try_from(
+                            images
+                                .iter()
+                                .map(|image: &ImageAsset| image.rgba().len())
+                                .sum::<usize>(),
+                        )?,
+                },
+            )?);
         }
         images
     };
@@ -399,9 +394,7 @@ pub(crate) fn load(
                 {
                     return Err("glTF index budget exceeded".into());
                 }
-                part.mesh = Some(
-                    SceneMesh::new(vertices.clone(), indices.clone()).map_err(|e| e.to_string())?,
-                );
+                part.mesh = Some(SceneMesh::new(vertices.clone(), indices.clone())?);
                 let base = all_vertices.len() as u32;
                 all_vertices.extend(vertices.into_iter().map(|vertex| {
                     SceneVertex {
@@ -426,7 +419,7 @@ pub(crate) fn load(
     }
     nodes.extend(primitive_nodes);
     Ok(EditorAsset {
-        mesh: SceneMesh::new(all_vertices, all_indices).map_err(|e| e.to_string())?,
+        mesh: SceneMesh::new(all_vertices, all_indices)?,
         lod: None,
         animated: None,
         skinned_lod: None,
@@ -439,12 +432,12 @@ fn load_animated_model(
     bytes: &[u8],
     buffers: &[Vec<u8>],
     images: Vec<ImageAsset>,
-) -> Result<EditorAsset, String> {
+) -> Result<EditorAsset, EditorError> {
     let buffers: Vec<_> = buffers.iter().map(Vec::as_slice).collect();
-    let model = voxy_render::ModelAsset::parse(
+    let model = voxy_model::ModelAsset::parse(
         bytes,
         &buffers,
-        voxy_render::ModelLimits {
+        voxy_model::ModelLimits {
             bytes: 32 * 1024 * 1024,
             vertices: 65_536,
             indices: 196_608,
@@ -456,14 +449,12 @@ fn load_animated_model(
         return Err("animated primitive budget exceeded".into());
     }
     let pose = model.skeleton.bind_pose();
-    let meshes = model
-        .scene_meshes(&pose)
-        .map_err(|error| error.to_string())?;
+    let meshes = model.scene_meshes(&pose)?;
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
     let mut normals = Vec::new();
     for mesh in meshes {
-        let offset = u32::try_from(vertices.len()).map_err(|error| error.to_string())?;
+        let offset = u32::try_from(vertices.len())?;
         vertices.extend_from_slice(mesh.vertices());
         if let Some(stream) = mesh.authored_normals() {
             normals.extend_from_slice(stream);
@@ -473,9 +464,7 @@ fn load_animated_model(
         indices.extend(mesh.indices().iter().map(|index| index + offset));
     }
     Ok(EditorAsset {
-        mesh: SceneMesh::new(vertices, indices)
-            .and_then(|mesh| mesh.with_normals(normals))
-            .map_err(|error| error.to_string())?,
+        mesh: SceneMesh::new(vertices, indices).and_then(|mesh| mesh.with_normals(normals))?,
         animated: Some(std::sync::Arc::new(model)),
         skinned_lod: None,
         lod: None,
@@ -497,11 +486,11 @@ fn load_lod_model(
     provider: &FileInputs,
     inputs: &mut ImportInputs,
     bytes: &[u8],
-) -> Result<EditorAsset, String> {
+) -> Result<EditorAsset, EditorError> {
     if bytes.len() > 4096 {
         return Err("model recipe byte budget exceeded".into());
     }
-    let recipe: LodModelRecipe = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+    let recipe: LodModelRecipe = serde_json::from_slice(bytes)?;
     if recipe.version != 1 {
         return Err("unsupported model recipe version".into());
     }
@@ -514,7 +503,7 @@ fn load_lod_model(
     if !matches!(extension.as_str(), "obj" | "gltf" | "glb") {
         return Err("LOD model base must be OBJ, glTF or GLB".into());
     }
-    let base_source = SourcePath::new(base_id.0).map_err(|e| e.to_string())?;
+    let base_source = SourcePath::new(base_id.0)?;
     let mut asset = load(&base_source, provider, inputs)?;
     let certificate = observe(provider, inputs, external(source, &recipe.certificate)?)?;
     let limits = voxy_render::LodArchiveLimits {
@@ -528,7 +517,7 @@ fn load_lod_model(
         if model.primitives.len() != 1 {
             return Err("skeletal LOD requires one primitive".into());
         }
-        let voxy_render::ModelGeometry::Skinned(mesh) = &model.primitives[0].geometry else {
+        let voxy_model::ModelGeometry::Skinned(mesh) = &model.primitives[0].geometry else {
             return Err("animated LOD requires a skinned primitive".into());
         };
         let source = voxy_render::decode_skinned_lod_archive(
@@ -538,12 +527,8 @@ fn load_lod_model(
         )
         .map_err(|error| format!("skeletal LOD verification: {error}"))?;
         // Validate the bind palette now, before source/dependency publication.
-        let palette = model
-            .skin_matrices(&model.skeleton.bind_pose())
-            .map_err(|error| error.to_string())?;
-        source
-            .prepare(&palette, Mat4::IDENTITY)
-            .map_err(|error| error.to_string())?;
+        let palette = model.skin_matrices(&model.skeleton.bind_pose())?;
+        source.prepare(&palette, Mat4::IDENTITY)?;
         asset.skinned_lod = Some(std::sync::Arc::new(source));
         return Ok(asset);
     }
@@ -639,6 +624,7 @@ mod lod_model_tests {
         assert!(
             load(&source, &provider, &mut ImportInputs::new(3, 32 * 1024))
                 .unwrap_err()
+                .to_string()
                 .contains("LOD base identity")
         );
         std::fs::write(

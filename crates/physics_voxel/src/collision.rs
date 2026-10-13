@@ -126,6 +126,7 @@ pub fn sweep_aabb_with_bounds(
     let (min_voxel, max_voxel) = sweep_candidate_bounds(aabb, displacement, config)?;
 
     let mut best: Option<Contact> = None;
+    let mut cursor = crate::chunk_cursor::ChunkCursor::new(view);
     for x in min_voxel[0]..=max_voxel[0] {
         for y in min_voxel[1]..=max_voxel[1] {
             for z in min_voxel[2]..=max_voxel[2] {
@@ -146,7 +147,7 @@ pub fn sweep_aabb_with_bounds(
                         .checked_add(z)
                         .ok_or(SweepError::CoordinateOverflow)?,
                 };
-                let obstacle = match view.sample(pos) {
+                let obstacle = match cursor.sample(pos) {
                     Sample::Loaded(block) => {
                         let definition =
                             registry.get(block).ok_or(SweepError::UnknownBlock(block))?;

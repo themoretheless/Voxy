@@ -10,9 +10,9 @@ pub fn render(
     queue: &wgpu::Queue,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let mut preview = voxy_app::FacePreview::new()?;
+    let mut preview = voxy_demos::FacePreview::new()?;
     let arguments: Vec<_> = std::env::args().collect();
-    let mut base_parameters = voxy_app::face_parameters::FaceParameters::default();
+    let mut base_parameters = voxy_demos::face_parameters::FaceParameters::default();
     if let Some(index) = arguments.iter().position(|a| a == "--face-preset") {
         if arguments.iter().any(|a| a == "--lid-surface") {
             return Err("face presets require the integrated face preview".into());
@@ -20,13 +20,14 @@ pub fn render(
         let path = arguments
             .get(index + 1)
             .ok_or("--face-preset requires a JSON path")?;
-        let parameters =
-            voxy_app::face_parameters::FaceParameters::from_json(&std::fs::read_to_string(path)?)?;
+        let parameters = voxy_demos::face_parameters::FaceParameters::from_json(
+            &std::fs::read_to_string(path)?,
+        )?;
         base_parameters = parameters;
         preview.set_parameters(base_parameters.clone());
     }
     let mut renderer = SceneRenderer::new_msaa4(device, wgpu::TextureFormat::Rgba8UnormSrgb);
-    let mut shader = voxy_app::FacePreview::material_shader().to_owned();
+    let mut shader = voxy_demos::FacePreview::material_shader().to_owned();
     if std::env::var("VOXY_FACE_DIAGNOSTIC_BACKLIGHT").as_deref() == Ok("1") {
         shader = shader.replace("vec3<f32>(-0.5,0.7,1.0)", "vec3<f32>(0.5,0.3,-1.0)");
     }
@@ -252,19 +253,17 @@ pub fn render(
         let tongue = std::env::args().any(|a| a == "--tongue");
         let mesh = if lid_surface {
             if std::env::args().any(|a| a == "--lid-head") {
-                voxy_app::FacePreview::lid_surface_with_head([0., 0.5, 1.][frame])?
+                voxy_demos::FacePreview::lid_surface_with_head([0., 0.5, 1.][frame])?
             } else if std::env::args().any(|a| a == "--lid-globes") {
-                voxy_app::FacePreview::lid_surface_with_eyes([0., 0.5, 1.][frame])?
+                voxy_demos::FacePreview::lid_surface_with_eyes([0., 0.5, 1.][frame])?
             } else {
-                voxy_app::FacePreview::lid_surface([0., 0.5, 1.][frame])?
+                voxy_demos::FacePreview::lid_surface([0., 0.5, 1.][frame])?
             }
         } else if age_transition {
             preview.sample_blink(time, camera.eye, 0.)?
         } else if lid_close_transition {
             preview.sample_blink(time, camera.eye, [0., 0.5, 1.][frame])?
-        } else if skin_depth_transition {
-            preview.sample_brow(time, camera.eye, 1.)?
-        } else if skin_finish_transition && skin_closeup {
+        } else if skin_depth_transition || (skin_finish_transition && skin_closeup) {
             preview.sample_brow(time, camera.eye, 1.)?
         } else if brow_transition {
             preview.sample_brow(time, camera.eye, [-1., 0., 1.][frame])?
@@ -508,7 +507,7 @@ fn ray_shade(
             normals[i as usize] += n;
         }
         if smooth_lids {
-            let p = p.map(|p| p.as_dvec3());
+            let p = p.map(glam::Vec3::as_dvec3);
             if let Some(unit) = (p[1] - p[0]).cross(p[2] - p[0]).try_normalize() {
                 for (corner, &i) in face.iter().enumerate() {
                     let vertex = &mesh.vertices()[i as usize];
@@ -530,10 +529,10 @@ fn ray_shade(
     }
     if smooth_lids {
         for (vertex, normal) in mesh.vertices().iter().zip(&mut normals) {
-            if skin(vertex) {
-                if let Some(&smooth) = skin_normals.get(&position_key(vertex.position)?) {
-                    *normal = smooth;
-                }
+            if skin(vertex)
+                && let Some(&smooth) = skin_normals.get(&position_key(vertex.position)?)
+            {
+                *normal = smooth;
             }
         }
     }

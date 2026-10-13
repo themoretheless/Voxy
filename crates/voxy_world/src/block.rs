@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::fmt;
 use std::sync::Arc;
 
 #[repr(transparent)]
@@ -166,7 +165,8 @@ impl BlockRegistry {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("invalid block registry: {self:?}")]
 pub enum RegistryError {
     InvalidKey(Arc<str>),
     MissingAir,
@@ -175,14 +175,6 @@ pub enum RegistryError {
     InvalidEmission { key: ResourceKey, emission: u8 },
     TooManyDefinitions,
 }
-
-impl fmt::Display for RegistryError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "invalid block registry: {self:?}")
-    }
-}
-
-impl std::error::Error for RegistryError {}
 
 #[cfg(test)]
 pub(crate) fn test_registry() -> BlockRegistry {

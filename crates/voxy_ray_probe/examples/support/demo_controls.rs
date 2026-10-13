@@ -1,6 +1,9 @@
 //! Three icon controls rendered after tone mapping through the common scene API.
 use glam::{Mat4, Vec2};
-use voxy_render::*;
+use voxy_render::{
+    SceneDraw, SceneGeometry, SceneRenderer, SceneSurface, SceneTexture, SceneTransform, Sprite,
+    SpriteBatch,
+};
 use voxy_ui::{HitRegion, WidgetId};
 
 pub struct DemoControls {

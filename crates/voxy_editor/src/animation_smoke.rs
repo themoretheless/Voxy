@@ -116,7 +116,7 @@ impl App {
                     .find(|name| name.starts_with("b_Hip_01"))
                     .or_else(|| model.joint_names().get(1).and_then(Option::as_ref))
                     .filter(|name| model.resolve_joint_name(name).is_ok())
-                    .map(|name| name.to_string());
+                    .map(std::string::ToString::to_string);
                 if self
                     .graphics
                     .as_ref()
@@ -882,7 +882,7 @@ impl App {
                         }
                         return Ok(false);
                     }
-                    if self
+                    if !self
                         .catalog
                         .snapshot(&self.id)
                         .unwrap()
@@ -891,8 +891,7 @@ impl App {
                         .as_ref()
                         .ok_or("missing target rig")?
                         .animations
-                        .len()
-                        != 0
+                        .is_empty()
                     {
                         return Err("native retarget target must have no clips".into());
                     }

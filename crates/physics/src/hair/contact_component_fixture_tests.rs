@@ -66,8 +66,8 @@ fn snapshot(input: &mut Cursor<Vec<u8>>) -> Snapshot {
             assert!(segment < n - 1 && (0.0..=1.0).contains(&fraction));
             assert!((len(normal) - 1.).abs() < 1e-5);
             rod.contacts.push(RodContact {
-                metric_scale:1.,
-                    trajectory_time:None,
+                metric_scale: 1.,
+                trajectory_time: None,
                 segment,
                 fraction,
                 normal,
@@ -121,7 +121,7 @@ fn captured_contact_component_replays_without_full_model_warmup() {
     let radius = scalar(&mut input);
     assert_eq!(dt, 1. / 240.);
     assert_eq!(radius, 40e-6);
-    let mut snapshots = vec![snapshot(&mut input), snapshot(&mut input)];
+    let mut snapshots = [snapshot(&mut input), snapshot(&mut input)];
     assert_eq!(input.position(), input.get_ref().len() as u64);
     struct Capture {
         requests: Vec<HairResponseSystem>,

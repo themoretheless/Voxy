@@ -67,7 +67,7 @@ impl PendingWaterPlan {
             PendingPlanState::Settled => Ok(Some(WaterPlan::Settled)),
             PendingPlanState::Consumed => {
                 return Err(WaterSnapshotError::Compute(WaterComputeError::Compute(
-                    voxy_render::ComputeError::Consumed,
+                    voxy_gpu_core::ComputeError::Consumed,
                 )));
             }
             PendingPlanState::Work(work) => {

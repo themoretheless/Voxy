@@ -1,5 +1,5 @@
 //! Actual prepared-body skin binding parity; not a full-game FPS benchmark.
-#[path = "../../voxy_app/src/surface_normals.rs"]
+#[path = "../../voxy_demos/src/surface_normals.rs"]
 mod surface_normals;
 use voxy_render::{SceneRenderer, SurfaceDeformationWeight};
 fn main() -> Result<(), Box<dyn std::error::Error>> {

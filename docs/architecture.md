@@ -63,21 +63,138 @@ V1 хранит `BlockStateId` на ячейку. Это подходит для
 
 ```mermaid
 flowchart BT
-    core[voxy_core]
-    world[voxy_world] --> core
-    storage[voxy_storage] --> world
-    storage --> core
-    mesher[voxy_mesher] --> world
-    mesher --> core
-    runtime[voxy_runtime] --> world
-    runtime --> storage
-    runtime --> mesher
-    runtime --> core
-    render[voxy_render] --> mesher
-    render --> core
-    app[voxy_app] --> runtime
-    app --> render
+    physics_voxel --> physics
+    physics_voxel --> voxy_core
+    physics_voxel --> voxy_world
+    voxy_app --> physics
+    voxy_app --> physics_voxel
+    voxy_app --> voxy_animation
+    voxy_app --> voxy_assets
+    voxy_app --> voxy_core
+    voxy_app --> voxy_cuda
+    voxy_app --> voxy_demos
+    voxy_app --> voxy_editor
+    voxy_app --> voxy_gpu
+    voxy_app --> voxy_input
+    voxy_app --> voxy_model
+    voxy_app --> voxy_render
+    voxy_app --> voxy_runtime
+    voxy_app --> voxy_rush
+    voxy_app --> voxy_scene
+    voxy_app --> voxy_shell
+    voxy_app --> voxy_text
+    voxy_app --> voxy_world
+    voxy_audio -.-> voxy_assets
+    voxy_audio -.-> voxy_scene
+    voxy_audio_device --> voxy_audio
+    voxy_cuda --> physics
+    voxy_demos --> physics
+    voxy_demos --> physics_voxel
+    voxy_demos --> voxy_animation
+    voxy_demos --> voxy_core
+    voxy_demos --> voxy_cuda
+    voxy_demos --> voxy_gpu
+    voxy_demos --> voxy_model
+    voxy_demos --> voxy_render
+    voxy_demos --> voxy_world
+    voxy_editor --> physics
+    voxy_editor --> voxy_animation
+    voxy_editor --> voxy_assets
+    voxy_editor --> voxy_audio
+    voxy_editor --> voxy_audio_device
+    voxy_editor --> voxy_gameplay
+    voxy_editor --> voxy_input
+    voxy_editor --> voxy_model
+    voxy_editor --> voxy_render
+    voxy_editor --> voxy_scene
+    voxy_editor --> voxy_text
+    voxy_editor --> voxy_ui
+    voxy_gameplay --> physics
+    voxy_gameplay --> voxy_animation
+    voxy_gameplay --> voxy_assets
+    voxy_gameplay --> voxy_audio
+    voxy_gameplay --> voxy_input
+    voxy_gameplay --> voxy_scene
+    voxy_gameplay --> voxy_text
+    voxy_gameplay --> voxy_ui
+    voxy_gameplay -.-> voxy_audio_device
+    voxy_gpu --> physics
+    voxy_gpu --> physics_voxel
+    voxy_gpu --> voxy_core
+    voxy_gpu --> voxy_cuda
+    voxy_gpu --> voxy_gpu_core
+    voxy_gpu --> voxy_world
+    voxy_gpu -.-> voxy_runtime
+    voxy_lighting --> voxy_core
+    voxy_lighting --> voxy_world
+    voxy_mesher --> voxy_core
+    voxy_mesher --> voxy_world
+    voxy_mobile --> voxy_shell
+    voxy_model --> voxy_animation
+    voxy_model --> voxy_render
+    voxy_model -.-> voxy_gpu_core
+    voxy_ray_probe --> voxy_demos
+    voxy_ray_probe --> voxy_render
+    voxy_ray_probe -.-> voxy_runtime
+    voxy_ray_probe -.-> voxy_ui
+    voxy_ray_probe -.-> voxy_ui_winit
+    voxy_render --> voxy_core
+    voxy_render --> voxy_gpu_core
+    voxy_render --> voxy_lighting
+    voxy_render --> voxy_mesher
+    voxy_render -.-> physics
+    voxy_render -.-> physics_voxel
+    voxy_render -.-> voxy_assets
+    voxy_render -.-> voxy_scene
+    voxy_render -.-> voxy_text
+    voxy_render -.-> voxy_ui
+    voxy_render -.-> voxy_ui_winit
+    voxy_render -.-> voxy_world
+    voxy_runtime --> physics_voxel
+    voxy_runtime --> voxy_core
+    voxy_runtime --> voxy_lighting
+    voxy_runtime --> voxy_mesher
+    voxy_runtime --> voxy_storage
+    voxy_runtime --> voxy_time
+    voxy_runtime --> voxy_world
+    voxy_rush --> physics
+    voxy_rush --> voxy_input
+    voxy_rush --> voxy_scene
+    voxy_scene --> voxy_core
+    voxy_scene --> voxy_time
+    voxy_scene -.-> voxy_assets
+    voxy_scene -.-> voxy_input
+    voxy_scene -.-> voxy_navigation
+    voxy_shell --> physics
+    voxy_shell --> voxy_demos
+    voxy_shell --> voxy_input
+    voxy_shell --> voxy_render
+    voxy_shell --> voxy_runtime
+    voxy_shell --> voxy_rush
+    voxy_shell --> voxy_scene
+    voxy_shell --> voxy_text
+    voxy_storage --> voxy_core
+    voxy_storage --> voxy_world
+    voxy_streamline --> voxy_render
+    voxy_ui_winit --> voxy_ui
+    voxy_vulkan --> voxy_cuda
+    voxy_vulkan -.-> voxy_gpu
+    voxy_vulkan -.-> voxy_render
+    voxy_web --> physics
+    voxy_web --> physics_voxel
+    voxy_web --> voxy_core
+    voxy_web --> voxy_gpu
+    voxy_web --> voxy_mesher
+    voxy_web --> voxy_render
+    voxy_web --> voxy_runtime
+    voxy_web --> voxy_world
+    voxy_world --> voxy_core
+    voxy_xr --> voxy_ui
 ```
+
+Пунктирные рёбра — известные нарушения слоёв, которые снимает
+`docs/architecture-refactoring-plan-2026-10-11.md` (C2, D3, D5); граф
+проверяется тестом `cargo test -p voxy_depgraph` (ADR 0004).
 
 | Crate | Ответственность | Не должен знать |
 |---|---|---|
@@ -87,7 +204,10 @@ flowchart BT
 | `voxy_mesher` | pure neighborhood-to-quads transformation | GPU objects, mutable world, disk |
 | `voxy_runtime` | fixed ticks, authoritative world, streaming coordinator, job dispatch, renderer-neutral mesh publications | `winit`, `wgpu`, surface/swapchain |
 | `voxy_render` | `wgpu` device/queue/surface lifecycle, mesh residency, passes, culling | world mutation, save files |
-| `voxy_app` | `winit::ApplicationHandler`, input/lifecycle glue, composition root | canonical domain logic |
+| `voxy_shell` | `winit::ApplicationHandler` (`SceneApp`), scene input, touch, rush scene; shared by desktop, mobile and examples | canonical domain logic, voxel terrain game |
+| `voxy_demos` | character/tissue/liquid/material demos, face preview, body/face parameters | window, event loop |
+| `voxy_gpu_core` | compute program, memory budget, readback pool, backend options, indirect mesh handle | scene, passes, world |
+| `voxy_app` | desktop binary: voxel terrain game on the shell, composition root | canonical domain logic |
 
 Правило зависимостей проверяется не интерфейсами ради интерфейсов, а crate graph. Traits вводятся только на настоящих заменяемых границах: generator, storage actor backend, clock/test executor. В hot path используются concrete types и generics, а не повсеместный `dyn Trait`.
 

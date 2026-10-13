@@ -1,0 +1,28 @@
+{
+  "local_parent": "35ee2bf6d",
+  "remote_parent": "a7cc4ccfcc1652675d9d485da05dcbcfd4fba01f",
+  "resolution": "Preserve local physical and GPU solver work in the upstream voxy_demos/voxy_shell/voxy_model architecture. Keep GPU-core resource ownership and upstream mesher optimizations. Move the added model integration test into voxy_model and gait analysis example into voxy_app. Remove duplicated moved sources.",
+  "library_suites": 10,
+  "passed": 1659,
+  "failed": 0,
+  "ignored": 202,
+  "logs": {
+    "workspace_check": {
+      "path": "/tmp/voxy-merge-final-check.log",
+      "sha256": "02c6fcc13a0f18e93aa6d73ba3a1f6dea70b6fdb8349afa138d821cdd314f475"
+    },
+    "library_tests": {
+      "path": "/tmp/voxy-merge-tests.log",
+      "sha256": "d3cd53cc451c8b25aa5f333b53f8320f92a062f1e665a38e16dd3c860a15d980"
+    },
+    "experimental_feature_check": {
+      "path": "/tmp/voxy-merge-features-check.log",
+      "sha256": "b3b6f65b5621ea4a7c99f8018f66fc55403b163931eee32bdc96bc63d16ff45e"
+    }
+  },
+  "limits": [
+    "Ignored hardware and long-running qualification tests were not run by this regular library gate.",
+    "The experimental original-physical triple-GPU contact sequence with 100 constraints remains unresolved; no production or FPS qualification is claimed.",
+    "Large generated artifacts remain local; see 2026-10-13-local-artifacts.json."
+  ]
+}

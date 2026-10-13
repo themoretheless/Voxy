@@ -1,5 +1,5 @@
 //! Pose-specific quality bounds over one immutable skeletal vertex domain.
-use std::{fmt, sync::Arc};
+use std::sync::Arc;
 
 use glam::{Mat4, Vec3};
 
@@ -50,17 +50,12 @@ pub struct PreparedSkinnedLod {
     max: Vec3,
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("skinned LOD error: {self:?}")]
 pub enum SkinnedLodError {
     Certificate(CertifiedLodError),
     Skin(SkinnedUploadError),
 }
-impl fmt::Display for SkinnedLodError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "skinned LOD error: {self:?}")
-    }
-}
-impl std::error::Error for SkinnedLodError {}
 
 impl SkinnedLodMesh {
     /// Validates complete bidirectional witnesses and monotonically decreasing
@@ -230,46 +225,10 @@ impl SkinnedLodMesh {
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use crate::{
-        LOD_BARYCENTRIC_DENOMINATOR as D, LodTriangleWitness, SceneProjection, SkinnedVertex,
-    };
+    use crate::SceneProjection;
 
     pub(crate) fn source() -> SkinnedLodMesh {
-        let mesh = SkinnedMesh::new(
-            [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.], [0., 0., 0.]]
-                .into_iter()
-                .enumerate()
-                .map(|(index, position)| SkinnedVertex {
-                    position,
-                    normal: [0., 0., 1.],
-                    uv: [0.; 2],
-                    joints: [u16::from(index == 3), 0, 0, 0],
-                    weights: [u16::MAX, 0, 0, 0],
-                })
-                .collect(),
-            vec![0, 1, 2, 0, 1, 3],
-            2,
-        )
-        .unwrap();
-        let identity = LodTriangleWitness {
-            target_triangle: 0,
-            weights: [[D, 0, 0], [0, D, 0], [0, 0, D]],
-        };
-        SkinnedLodMesh::new(
-            Arc::new(mesh),
-            vec![CertifiedLodVariant {
-                indices: vec![0, 1, 2],
-                source_to_variant: vec![
-                    identity,
-                    LodTriangleWitness {
-                        target_triangle: 0,
-                        weights: [[D, 0, 0], [0, D, 0], [D / 4, D / 4, D / 2]],
-                    },
-                ],
-                variant_to_source: vec![identity],
-            }],
-        )
-        .unwrap()
+        super::test_source()
     }
 
     #[test]
@@ -654,4 +613,46 @@ impl PreparedSkinnedLod {
                 .map_err(|_| SceneError::InvalidGeometry)?,
         )
     }
+}
+
+/// Four-vertex, two-level skinned LOD fixture shared with downstream integration tests.
+#[doc(hidden)]
+#[must_use]
+pub fn test_source() -> SkinnedLodMesh {
+    use crate::{LOD_BARYCENTRIC_DENOMINATOR as D, LodTriangleWitness, SkinnedVertex};
+    let mesh = SkinnedMesh::new(
+        [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.], [0., 0., 0.]]
+            .into_iter()
+            .enumerate()
+            .map(|(index, position)| SkinnedVertex {
+                position,
+                normal: [0., 0., 1.],
+                uv: [0.; 2],
+                joints: [u16::from(index == 3), 0, 0, 0],
+                weights: [u16::MAX, 0, 0, 0],
+            })
+            .collect(),
+        vec![0, 1, 2, 0, 1, 3],
+        2,
+    )
+    .unwrap();
+    let identity = LodTriangleWitness {
+        target_triangle: 0,
+        weights: [[D, 0, 0], [0, D, 0], [0, 0, D]],
+    };
+    SkinnedLodMesh::new(
+        Arc::new(mesh),
+        vec![CertifiedLodVariant {
+            indices: vec![0, 1, 2],
+            source_to_variant: vec![
+                identity,
+                LodTriangleWitness {
+                    target_triangle: 0,
+                    weights: [[D, 0, 0], [0, D, 0], [D / 4, D / 4, D / 2]],
+                },
+            ],
+            variant_to_source: vec![identity],
+        }],
+    )
+    .unwrap()
 }

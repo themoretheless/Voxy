@@ -1,4 +1,5 @@
 // Test-only frame producers; the production renderer receives accepted frames.
+use crate::EditorError;
 fn test_frame(
     model: &Arc<ModelAsset>,
     settings: ModelAnimation,
@@ -35,7 +36,7 @@ impl std::ops::DerefMut for FrameFixture {
     }
 }
 impl FrameFixture {
-    fn new(renderer: &SceneRenderer) -> Result<Self, String> {
+    fn new(renderer: &SceneRenderer) -> Result<Self, EditorError> {
         Ok(Self {
             render: AnimatedModels::new(renderer)?,
             clocks: HashMap::new(),
@@ -50,7 +51,7 @@ impl FrameFixture {
         ticks: u64,
         live: u64,
         budget: u64,
-    ) -> Vec<(NodeId, String)> {
+    ) -> Vec<(NodeId, EditorError)> {
         let active: HashSet<_> = requests.iter().map(|request| request.owner).collect();
         self.clocks.retain(|owner, _| active.contains(owner));
         let mut candidates = Vec::new();
@@ -121,7 +122,7 @@ fn fixture() -> Arc<ModelAsset> {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     )
@@ -482,7 +483,7 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let mut model = (*fixture()).clone();
     let bind = model.scene_meshes(&model.skeleton.bind_pose()).unwrap();
-    model.primitives.push(voxy_render::ModelPrimitive {
+    model.primitives.push(voxy_model::ModelPrimitive {
         geometry: ModelGeometry::Static(bind[0].clone()),
         color: [1.; 4],
         base_color_texture: None,
@@ -570,7 +571,7 @@ fn animated_lod_views_budget_and_cpu_fallback() {
             Arc::new(mesh.clone()),
             vec![voxy_render::CertifiedLodVariant {
                 indices,
-                source_to_variant: vec![witness.clone(), witness.clone()],
+                source_to_variant: vec![witness, witness],
                 variant_to_source: vec![witness],
             }],
         )
@@ -914,7 +915,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let mut model = (*fixture()).clone();
-    model.primitives[0].base_color_texture = Some(voxy_render::ModelTexture {
+    model.primitives[0].base_color_texture = Some(voxy_model::ModelTexture {
         image: 0,
         sampling: voxy_render::TextureSampling::default(),
         use_mips: false,
@@ -972,7 +973,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     assert!(Arc::ptr_eq(&runtime.owners[&owner].model, &model));
     assert_eq!(runtime.owners[&owner].ticks, 0);
     assert_eq!(
-        runtime.texture(owner, 0).unwrap() as *const _,
+        std::ptr::from_ref(runtime.texture(owner, 0).unwrap()),
         weak_red.as_ptr()
     );
     assert!(weak_storage.upgrade().is_some());
@@ -991,7 +992,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     );
     assert!(Arc::ptr_eq(&runtime.owners[&owner].model, &revised));
     assert_eq!(
-        runtime.texture(owner, 0).unwrap() as *const _,
+        std::ptr::from_ref(runtime.texture(owner, 0).unwrap()),
         Arc::as_ptr(&blue)
     );
     assert!(weak_storage.upgrade().is_none());
@@ -1153,7 +1154,7 @@ fn rig_trajectory_gpu(composed: bool) {
                     .as_slice()
             },
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -1341,7 +1342,7 @@ fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
     let mut model = ModelAsset::parse(
         include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb"),
         &[],
-        voxy_render::ModelLimits::default(),
+        voxy_model::ModelLimits::default(),
     )
     .unwrap();
     if retarget {
@@ -1460,7 +1461,7 @@ fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
         .to_vec()
         .unwrap();
         let source =
-            Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+            Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
         models.insert(voxy_assets::AssetId("source".into()), source);
         scene
             .insert_component(

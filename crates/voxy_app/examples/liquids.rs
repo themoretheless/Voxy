@@ -3,7 +3,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let smoke = std::env::args().any(|arg| arg == "--smoke");
     let finite = std::env::args().any(|arg| arg == "--finite-source");
     let impacts = std::env::args().any(|arg| arg == "--impacts");
-    let app = voxy_app::SceneApp::new(smoke)?;
+    let app = voxy_shell::SceneApp::new(smoke)?;
     let app = if finite && impacts {
         app.with_finite_liquid_impacts()?
     } else if finite {

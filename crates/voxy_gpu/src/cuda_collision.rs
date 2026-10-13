@@ -2,17 +2,12 @@
 use crate::{GpuSweepError, VoxelRegion, VoxelRegionSnapshot};
 use voxy_cuda::{CudaCompute, CudaError};
 use voxy_world::{BlockRegistry, VoxelView};
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("CUDA collision error: {self:?}")]
 pub enum CudaCollisionError {
     World(GpuSweepError),
     Cuda(CudaError),
 }
-impl std::fmt::Display for CudaCollisionError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "CUDA collision error: {self:?}")
-    }
-}
-impl std::error::Error for CudaCollisionError {}
 /// Native synchronous collision adapter. CUDA classifies all broadphase cells;
 /// nonempty and unavailable regions run local f64 contact queries on CUDA.
 #[derive(Debug)]

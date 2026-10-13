@@ -13,8 +13,8 @@ pub use terrain_task::{PendingTerrain, TerrainDispatch, TerrainJob, TerrainProgr
 
 mod gravity;
 pub use gravity::{
-    GravityBody, GravityBudget, GravityComputeError, GravityJob, GravityParameters, GravityProgram,
-    GravityReadback, PendingGravity,
+    BlockingGravityJob, GravityBody, GravityBudget, GravityComputeError, GravityJob,
+    GravityParameters, GravityProgram, GravityReadback, PendingGravity,
 };
 
 mod gravity_view;
@@ -53,9 +53,7 @@ mod vehicle_task;
 pub use vehicle_task::{ChassisMotion, PendingGpuVehicle, VehicleGpuError};
 
 mod tissue_task;
-pub use tissue_task::{
-    is_gpu_tissue_search_failure, GpuTissueError, GpuTissueProgram,
-};
+pub use tissue_task::{GpuTissueError, GpuTissueProgram, is_gpu_tissue_search_failure};
 
 mod voxel_mesh;
 pub use voxel_mesh::{

@@ -40,18 +40,13 @@ pub struct SceneDocument {
     pub version: u32,
     pub objects: Vec<SceneObject>,
 }
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("scene document error: {self:?}")]
 pub enum DocumentError {
     Json(serde_json::Error),
     Scene(SceneGraphError),
     Invalid(String),
 }
-impl std::fmt::Display for DocumentError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene document error: {self:?}")
-    }
-}
-impl std::error::Error for DocumentError {}
 impl From<serde_json::Error> for DocumentError {
     fn from(e: serde_json::Error) -> Self {
         Self::Json(e)

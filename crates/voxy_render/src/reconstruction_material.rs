@@ -1,14 +1,9 @@
 //! Linear metallic/roughness material values for Ray Reconstruction guides.
 use glam::Vec3;
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("invalid reconstruction material or surface sample")]
 pub struct ReconstructionMaterialError;
-impl std::fmt::Display for ReconstructionMaterialError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str("invalid reconstruction material or surface sample")
-    }
-}
-impl std::error::Error for ReconstructionMaterialError {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ReconstructionMaterial {

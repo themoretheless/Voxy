@@ -98,27 +98,27 @@ pub(super) fn try_secant_direction<E>(
     inverse: impl FnOnce(&[Vec3]) -> Result<Vec<Vec3>, E>,
 ) -> Result<Vec<Vec3>, E> {
     let mut q = gradient.to_vec();
-    
+
     // Preallocate alphas with exact capacity (no reallocations)
     let mut alphas: Vec<f64> = Vec::with_capacity(history.len());
-    
+
     for (s, y, rho) in history.iter().rev() {
         let alpha = rho * inner(s, &q);
         alphas.push(alpha);
-        
+
         // In-place vector subtraction (daxpy)
         daxpy(-alpha, y, &mut q);
     }
-    
+
     let mut r = inverse(&q)?;
-    
+
     // Reuse allocation for beta computation with in-place FMA (daxpy)
     for ((s, y, rho), alpha) in history.iter().zip(alphas.into_iter().rev()) {
         let beta = rho * inner(y, &r);
         let gamma = alpha - beta;
         daxpy(gamma, s, &mut r);
     }
-    
+
     for ri in &mut r {
         ri[0] = -ri[0];
         ri[1] = -ri[1];

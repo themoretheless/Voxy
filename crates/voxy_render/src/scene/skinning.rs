@@ -4,7 +4,8 @@ use super::*;
 use crate::{SkinnedMesh, SkinnedUploadError};
 use std::sync::Arc;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("scene skinning error: {self:?}")]
 pub enum SceneSkinError {
     Scene(SceneError),
     Pose(SkinnedUploadError),
@@ -17,32 +18,34 @@ pub enum SceneSkinError {
         budget: u64,
     },
 }
-impl std::fmt::Display for SceneSkinError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene skinning error: {self:?}")
-    }
-}
-impl std::error::Error for SceneSkinError {}
 
 #[derive(Debug)]
 pub struct SceneSkinner {
-    device: wgpu::Device,
-    memory_budget: crate::ComputeMemoryBudget,
-    pipeline: wgpu::ComputePipeline,
-    identity: Arc<()>,
+    #[doc(hidden)]
+    pub device: wgpu::Device,
+    #[doc(hidden)]
+    pub memory_budget: crate::ComputeMemoryBudget,
+    #[doc(hidden)]
+    pub pipeline: wgpu::ComputePipeline,
+    #[doc(hidden)]
+    pub identity: Arc<()>,
 }
 #[derive(Debug)]
 pub struct SceneSkinSource {
     device: wgpu::Device,
-    mesh: Arc<SkinnedMesh>,
+    #[doc(hidden)]
+    pub mesh: Arc<SkinnedMesh>,
     buffer: crate::ComputeStorage,
 }
 #[derive(Debug)]
 pub struct SceneSkinInstance {
     owner: Arc<()>,
-    source: Arc<SceneSkinSource>,
-    geometry: SceneGeometry,
-    palette: Arc<crate::ComputeStorage>,
+    #[doc(hidden)]
+    pub source: Arc<SceneSkinSource>,
+    #[doc(hidden)]
+    pub geometry: SceneGeometry,
+    #[doc(hidden)]
+    pub palette: Arc<crate::ComputeStorage>,
     binding: wgpu::BindGroup,
     parameters: Arc<crate::ComputeStorage>,
 }
@@ -69,7 +72,8 @@ pub struct SceneSkinPose<'a> {
 /// Keep the owner instance alive while updating/rendering this level.
 #[derive(Debug)]
 pub struct SceneSkinLodLevel {
-    geometry: SceneGeometry,
+    #[doc(hidden)]
+    pub geometry: SceneGeometry,
 }
 impl SceneSkinLodLevel {
     pub fn geometry(&self) -> &SceneGeometry {
@@ -132,7 +136,7 @@ impl SceneSkinner {
     ) -> Result<Arc<SceneSkinSource>, SceneSkinError> {
         let bytes = mesh.vertices().len() as u64 * 64;
         admit(live, bytes, budget)?;
-        if bytes > u64::from(self.device.limits().max_storage_buffer_binding_size)
+        if bytes > self.device.limits().max_storage_buffer_binding_size
             || mesh.vertices().len().div_ceil(64)
                 > self.device.limits().max_compute_workgroups_per_dimension as usize
         {
@@ -148,7 +152,7 @@ impl SceneSkinner {
         }
         let [buffer] = self
             .memory_budget
-            .allocate_buffers([crate::compute_memory::ManagedBufferDescriptor {
+            .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
                 label: "shared scene skin source",
                 size: bytes,
                 contents: Some(bytemuck::cast_slice(&packed)),
@@ -199,13 +203,13 @@ impl SceneSkinner {
         params.extend((mesh.vertices().len() as u32).to_le_bytes());
         params.extend([0; 12]);
         let descriptors = [
-            crate::compute_memory::ManagedBufferDescriptor {
+            voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene instance palette",
                 size: joints.len() as u64 * 64,
                 contents: Some(bytemuck::cast_slice(joints)),
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             },
-            crate::compute_memory::ManagedBufferDescriptor {
+            voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene instance skin parameters",
                 size: params.len() as u64,
                 contents: Some(&params),
@@ -409,7 +413,8 @@ impl SceneSkinner {
                 opaque_shader: base.opaque_shader.clone(),
                 partitioned_indices: false,
                 partition_cache: Vec::new(),
-                shadow_dirty: true,
+                identity: crate::scene::next_geometry_identity(),
+                revision: 0,
             },
         })
     }
@@ -463,6 +468,3 @@ impl SceneSkinInstance {
         self.geometry.allocation_bytes() + self.palette.size() + self.parameters.size()
     }
 }
-
-#[cfg(test)]
-mod tests;

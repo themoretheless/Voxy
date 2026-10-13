@@ -29,7 +29,7 @@ impl DielectricBoundarySample {
     }
     /// Weights for radiance returning from the reflected/transmitted branches
     /// toward a viewer in the incident medium. Camera rays travel away from that
-    /// viewer: transmitted branch radiance scales by (n_incident/n_transmitted)^2.
+    /// viewer: transmitted branch radiance scales by (`n_incident/n_transmitted)^2`.
     /// These are deterministic branch weights, not BSDF values or PDF weights.
     /// # Errors
     /// An unrepresentable transmission radiance multiplier.

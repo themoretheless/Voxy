@@ -1671,7 +1671,7 @@ mod index_tests {
     fn compensated_path_objective_gradient_matches_moving_oblique_surface_force() {
         for origin in [0., 1e6] {
             let shift = |p: Vec3| p.map(|x| x + origin);
-            let obstacle = vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]];
+            let obstacle = [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]];
             let surface = PrescribedTriangleSurface::new(
                 obstacle.iter().map(|p| shift(*p)).collect(),
                 vec![[0, 1, 2]],

@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+thiserror = "2"
 voxy_animation = { path = "../voxy_animation" }
 voxy_assets = { path = "../voxy_assets" }
 voxy_audio = { path = "../voxy_audio" }

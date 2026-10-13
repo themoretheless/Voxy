@@ -1,5 +1,5 @@
 //! Integer broadphase classification; continuous swept collision remains external.
-use voxy_render::{ComputeError, ComputeProgram, PendingComputeReadback};
+use voxy_gpu_core::{ComputeError, ComputeProgram, PendingComputeReadback};
 
 #[derive(Clone, Copy, Debug)]
 pub enum VoxelClass {

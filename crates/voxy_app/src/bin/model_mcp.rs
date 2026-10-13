@@ -4,7 +4,7 @@ use std::{
     io::{self, BufRead, Write},
     path::{Path, PathBuf},
 };
-use voxy_app::body_parameters::BodyParameters;
+use voxy_demos::body_parameters::BodyParameters;
 
 const PROTOCOL: &str = "2025-06-18";
 fn parameter_schema() -> Value {
@@ -125,11 +125,13 @@ fn read(path: &Path) -> Result<BodyParameters, Box<dyn std::error::Error>> {
 }
 fn application_status(path: &Path) -> Result<Value, Box<dyn std::error::Error>> {
     let saved = read(path)?;
-    let mut status = voxy_app::model_presentation::status(path, &saved.to_json());
-    let view = voxy_app::view_settings::ViewSettings::read(&voxy_app::view_settings::path(path))?
-        .to_json();
-    let film = voxy_app::film_settings::FilmSettings::read(&voxy_app::film_settings::path(path))?
-        .to_json();
+    let mut status = voxy_demos::model_presentation::status(path, &saved.to_json());
+    let view =
+        voxy_demos::view_settings::ViewSettings::read(&voxy_demos::view_settings::path(path))?
+            .to_json();
+    let film =
+        voxy_demos::film_settings::FilmSettings::read(&voxy_demos::film_settings::path(path))?
+            .to_json();
     let fresh = status["fresh"] == true;
     let applied_view = &status["receipt"]["measurements"]["view"];
     let applied_film = &status["receipt"]["measurements"]["fluid"]["settings"];
@@ -216,29 +218,29 @@ fn call(path: &Path, params: &Value) -> Result<Value, Box<dyn std::error::Error>
         return Err("unknown tool argument".into());
     }
     let value = match name {
-        "film_state_request" => voxy_app::model_presentation::request_film_state(path)?,
-        "film_state_get" => voxy_app::model_presentation::film_state_status(
+        "film_state_request" => voxy_demos::model_presentation::request_film_state(path)?,
+        "film_state_get" => voxy_demos::model_presentation::film_state_status(
             path,
             args["requestId"].as_str().ok_or("requestId is required")?,
         )?,
         "view_get" => {
-            voxy_app::view_settings::ViewSettings::read(&voxy_app::view_settings::path(path))?
+            voxy_demos::view_settings::ViewSettings::read(&voxy_demos::view_settings::path(path))?
                 .to_json()
         }
         "view_update" => {
-            let path = voxy_app::view_settings::path(path);
-            let next = voxy_app::view_settings::ViewSettings::read(&path)?
+            let path = voxy_demos::view_settings::path(path);
+            let next = voxy_demos::view_settings::ViewSettings::read(&path)?
                 .patched(args.get("settings").ok_or("missing settings")?)?;
             save_json(&path, &next.to_json())?;
             next.to_json()
         }
         "film_get" => {
-            voxy_app::film_settings::FilmSettings::read(&voxy_app::film_settings::path(path))?
+            voxy_demos::film_settings::FilmSettings::read(&voxy_demos::film_settings::path(path))?
                 .to_json()
         }
         "film_update" => {
-            let path = voxy_app::film_settings::path(path);
-            let next = voxy_app::film_settings::FilmSettings::read(&path)?
+            let path = voxy_demos::film_settings::path(path);
+            let next = voxy_demos::film_settings::FilmSettings::read(&path)?
                 .patched(args.get("settings").ok_or("missing settings")?)?;
             save_json(&path, &next.to_json())?;
             next.to_json()
@@ -286,7 +288,8 @@ fn call(path: &Path, params: &Value) -> Result<Value, Box<dyn std::error::Error>
 }
 fn snapshot(path: &Path, include_film: bool) -> Result<Value, Box<dyn std::error::Error>> {
     let parameters = read(path)?;
-    let view = voxy_app::view_settings::ViewSettings::read(&voxy_app::view_settings::path(path))?;
+    let view =
+        voxy_demos::view_settings::ViewSettings::read(&voxy_demos::view_settings::path(path))?;
     let renderer = std::env::current_exe()?
         .parent()
         .ok_or("missing executable directory")?
@@ -306,8 +309,8 @@ fn snapshot(path: &Path, include_film: bool) -> Result<Value, Box<dyn std::error
     let output = directory.join("snapshot.png");
     save(&preset, parameters)?;
     let film_settings = if include_film {
-        Some(voxy_app::film_settings::FilmSettings::read(
-            &voxy_app::film_settings::path(path),
+        Some(voxy_demos::film_settings::FilmSettings::read(
+            &voxy_demos::film_settings::path(path),
         )?)
     } else {
         None
@@ -458,7 +461,7 @@ mod tests {
             call(&path, &arguments).unwrap()["structuredContent"]["status"],
             "pending"
         );
-        voxy_app::model_presentation::publish_film_state(
+        voxy_demos::model_presentation::publish_film_state(
             &path,
             id,
             &BodyParameters::default().to_json(),
@@ -533,7 +536,7 @@ mod tests {
         save(&path, parameters).unwrap();
         assert!(application_status(&path).unwrap()["coldTargetApplied"].is_null());
         let measurement = json!({"coldResponse":{"enabled":true,"target":1.,"current":0.4,"solverCoupled":false}});
-        voxy_app::model_presentation::record(
+        voxy_demos::model_presentation::record(
             &path,
             &parameters.to_json(),
             2.,
@@ -563,7 +566,7 @@ mod tests {
             application_status(&path).unwrap()["coldTargetApplied"],
             false
         );
-        let receipt_path = voxy_app::model_presentation::receipt_path(&path);
+        let receipt_path = voxy_demos::model_presentation::receipt_path(&path);
         let valid: Value = serde_json::from_slice(&std::fs::read(&receipt_path).unwrap()).unwrap();
         for (key, value) in [
             ("current", json!(1.1)),
@@ -600,10 +603,10 @@ mod tests {
         let parameters = BodyParameters::default();
         save(&path, parameters).unwrap();
         assert!(application_status(&path).unwrap()["viewApplied"].is_null());
-        let view = voxy_app::view_settings::ViewSettings::default().to_json();
-        let film = voxy_app::film_settings::FilmSettings::default().to_json();
+        let view = voxy_demos::view_settings::ViewSettings::default().to_json();
+        let film = voxy_demos::film_settings::FilmSettings::default().to_json();
         let measurements = json!({"view":view,"fluid":{"settings":film}});
-        voxy_app::model_presentation::record(
+        voxy_demos::model_presentation::record(
             &path,
             &parameters.to_json(),
             1.,
@@ -616,15 +619,15 @@ mod tests {
         assert_eq!(status["viewApplied"], true);
         assert_eq!(status["filmSettingsApplied"], true);
         assert_eq!(status["filmEnabled"], true);
-        let view_path = voxy_app::view_settings::path(&path);
-        let film_path = voxy_app::film_settings::path(&path);
+        let view_path = voxy_demos::view_settings::path(&path);
+        let film_path = voxy_demos::film_settings::path(&path);
         save_json(&view_path, &json!({"mode":"strain"})).unwrap();
         save_json(&film_path, &json!({"density":2000.})).unwrap();
         let status = application_status(&path).unwrap();
         assert_eq!(status["liveApplied"], true);
         assert_eq!(status["viewApplied"], false);
         assert_eq!(status["filmSettingsApplied"], false);
-        voxy_app::model_presentation::record(
+        voxy_demos::model_presentation::record(
             &path,
             &parameters.to_json(),
             2.,
@@ -636,7 +639,7 @@ mod tests {
         let status = application_status(&path).unwrap();
         assert_eq!(status["filmEnabled"], false);
         assert!(status["filmSettingsApplied"].is_null());
-        let receipt_path = voxy_app::model_presentation::receipt_path(&path);
+        let receipt_path = voxy_demos::model_presentation::receipt_path(&path);
         let mut receipt: Value =
             serde_json::from_slice(&std::fs::read(&receipt_path).unwrap()).unwrap();
         receipt["presentedAtUnixSeconds"] = json!(
@@ -692,7 +695,7 @@ mod tests {
         );
         assert_eq!(before, std::fs::read(&path).unwrap());
         call(&path,&json!({"name":"film_update","arguments":{"settings":{"density":2000,"source_rate_m3_s":1e-9}}})).unwrap();
-        let film_path = voxy_app::film_settings::path(&path);
+        let film_path = voxy_demos::film_settings::path(&path);
         let film_before = std::fs::read(&film_path).unwrap();
         assert!(
             call(

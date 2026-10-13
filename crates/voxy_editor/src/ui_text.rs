@@ -1,5 +1,6 @@
 //! One bounded decoder shared by headless preparation and asynchronous import.
 use super::prefab_authoring::AuthoringProject;
+use crate::EditorError;
 use std::collections::{BTreeMap, BTreeSet};
 use voxy_assets::{AssetId, ImportInputs, InputError, InputSnapshot};
 use voxy_gameplay::{PreparedUiText, UiElement};
@@ -17,7 +18,7 @@ impl UiTextPreparation {
         scene: &SceneGraph,
         project: &AuthoringProject,
         viewport: [f32; 2],
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let plan = UiTextPlan::new(scene, viewport)?;
         let mut inputs = ImportInputs::new(9, 16 * 1024 * 1024);
         let prepared = Self::decode(&plan, project, &mut inputs)?;
@@ -28,18 +29,15 @@ impl UiTextPreparation {
         scene: &SceneGraph,
         project: &AuthoringProject,
         viewport: [f32; 2],
-    ) -> Result<std::sync::Arc<voxy_assets::ImportedAsset<Self>>, String> {
+    ) -> Result<std::sync::Arc<voxy_assets::ImportedAsset<Self>>, EditorError> {
         let mut worker = UiTextPlan::new(scene, viewport)?.worker(project)?;
         let result = (|| {
-            let mut catalog =
-                voxy_assets::AssetCatalog::new(1, 1).map_err(|error| error.to_string())?;
-            let ticket = catalog
-                .request(AssetId("game-ui-text".into()))
-                .map_err(|error| error.to_string())?;
-            worker.submit(&ticket).map_err(|error| error.to_string())?;
+            let mut catalog = voxy_assets::AssetCatalog::new(1, 1)?;
+            let ticket = catalog.request(AssetId("game-ui-text".into()))?;
+            worker.submit(&ticket)?;
             let deadline = std::time::Instant::now() + std::time::Duration::from_mins(3);
             let completion = loop {
-                if let Some(completion) = worker.try_result().map_err(|error| error.to_string())? {
+                if let Some(completion) = worker.try_result()? {
                     break completion;
                 }
                 if std::time::Instant::now() >= deadline {
@@ -48,9 +46,7 @@ impl UiTextPreparation {
                 std::thread::sleep(std::time::Duration::from_millis(1));
             };
             let imported = completion.result.map_err(|failed| failed.error)?;
-            catalog
-                .complete(&completion.ticket, Ok(imported))
-                .map_err(|error| error.to_string())?;
+            catalog.complete(&completion.ticket, Ok(imported))?;
             catalog
                 .snapshot(ticket.asset())
                 .ok_or_else(|| "missing prepared UI publication".into())
@@ -65,7 +61,7 @@ impl UiTextPreparation {
         plan: &UiTextPlan,
         project: &AuthoringProject,
         inputs: &mut ImportInputs,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let mut fonts = BTreeMap::new();
         for id in &plan.fonts {
             let font = project.decode_ui_font(&id.0, inputs)?;
@@ -90,7 +86,7 @@ pub(super) struct UiTextPlan {
     fonts: BTreeSet<AssetId>,
 }
 impl UiTextPlan {
-    pub(super) fn new(scene: &SceneGraph, viewport: [f32; 2]) -> Result<Self, String> {
+    pub(super) fn new(scene: &SceneGraph, viewport: [f32; 2]) -> Result<Self, EditorError> {
         let snapshot = voxy_gameplay::extract_scene_ui(scene, viewport, 128)?;
         Self::from_snapshot(scene, snapshot)
     }
@@ -98,7 +94,7 @@ impl UiTextPlan {
     pub(super) fn from_snapshot(
         scene: &SceneGraph,
         snapshot: voxy_gameplay::SceneUiSnapshot,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let fonts: BTreeSet<_> = scene
             .components::<UiElement>()
             .filter_map(|(_, ui)| ui.text.as_ref().map(|text| AssetId(text.font.clone())))
@@ -111,15 +107,18 @@ impl UiTextPlan {
     pub(super) fn worker(
         self,
         project: &AuthoringProject,
-    ) -> Result<voxy_assets::AssetImportWorker<UiTextPreparation>, String> {
+    ) -> Result<voxy_assets::AssetImportWorker<UiTextPreparation>, EditorError> {
         let decoder_project = project.worker_project()?;
         voxy_assets::AssetImportWorker::new(
             project.input_provider()?,
             9,
             16 * 1024 * 1024,
-            move |_, _, inputs| UiTextPreparation::decode(&self, &decoder_project, inputs),
+            move |_, _, inputs| {
+                UiTextPreparation::decode(&self, &decoder_project, inputs)
+                    .map_err(|e| e.to_string())
+            },
         )
-        .map_err(|error| error.to_string())
+        .map_err(EditorError::from)
     }
 }
 
@@ -240,6 +239,7 @@ mod tests {
         assert!(
             UiTextPreparation::prepare(&scene, &project, [1000.0, 800.0])
                 .unwrap_err()
+                .to_string()
                 .contains("font count budget")
         );
     }
@@ -313,6 +313,7 @@ mod budget_tests {
         assert!(
             UiTextPreparation::prepare(&scene, &project, [1000.0, 800.0])
                 .unwrap_err()
+                .to_string()
                 .contains("font input")
         );
         std::fs::remove_dir_all(root).unwrap();

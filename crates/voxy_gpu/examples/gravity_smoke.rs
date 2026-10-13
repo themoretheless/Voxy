@@ -5,7 +5,7 @@ use physics::gravity::{Body, Gravity};
 use voxy_gpu::{
     GravityBody, GravityBudget, GravityComputeError, GravityParameters, GravityProgram,
 };
-use voxy_render::{ComputeDispatch, ComputeError};
+use voxy_gpu_core::{ComputeDispatch, ComputeError};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let options = native_backend::parse(std::env::args().skip(1))?;

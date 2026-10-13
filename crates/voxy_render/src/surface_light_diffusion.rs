@@ -73,9 +73,10 @@ impl SurfaceLightDiffusion {
             (edges.len() * 8).max(8) as u64,
             (n * 16) as u64,
         ];
-        if sizes.iter().any(|s| {
-            *s > limits.max_storage_buffer_binding_size as u64 || *s > limits.max_buffer_size
-        }) {
+        if sizes
+            .iter()
+            .any(|s| *s > limits.max_storage_buffer_binding_size || *s > limits.max_buffer_size)
+        {
             return Err(crate::SceneError::InvalidGeometry);
         }
         let params = Parameters {

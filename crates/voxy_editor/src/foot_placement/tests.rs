@@ -18,17 +18,17 @@ fn model_bytes() -> Vec<u8> {
     ]);
     json["skins"][0]["joints"] = serde_json::json!([0, 1, 2]);
     json["animations"] = serde_json::json!([]);
-    let bytes = gltf::binary::Glb {
+
+    gltf::binary::Glb {
         header: original.header,
         json: serde_json::to_vec(&json).unwrap().into(),
         bin: original.bin,
     }
     .to_vec()
-    .unwrap();
-    bytes
+    .unwrap()
 }
 fn model() -> Arc<ModelAsset> {
-    Arc::new(ModelAsset::parse(&model_bytes(), &[], voxy_render::ModelLimits::default()).unwrap())
+    Arc::new(ModelAsset::parse(&model_bytes(), &[], voxy_model::ModelLimits::default()).unwrap())
 }
 fn settings() -> ModelFootPlacement {
     ModelFootPlacement {
@@ -968,7 +968,7 @@ fn contact_key_budget_is_shared_between_named_clips_and_legacy_curve() {
         .insert("jump".into(), keys(2049));
     assert_eq!(
         authored.validate().unwrap_err(),
-        "aggregate foot contact key budget exceeded"
+        "aggregate foot contact key budget exceeded".to_string()
     );
     authored.feet[0]
         .clip_contact_curves
@@ -976,7 +976,7 @@ fn contact_key_budget_is_shared_between_named_clips_and_legacy_curve() {
     authored.feet[0].contact_curve = keys(2);
     assert_eq!(
         authored.validate().unwrap_err(),
-        "aggregate foot contact key budget exceeded"
+        "aggregate foot contact key budget exceeded".to_string()
     );
     authored.feet[0]
         .clip_contact_curves
@@ -1847,6 +1847,7 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
         named
             .resolve_clip(&duplicate)
             .unwrap_err()
+            .to_string()
             .contains("ambiguous")
     );
     let accepted = runtime.frame(owner, &model).unwrap();
@@ -1856,6 +1857,7 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
         runtime
             .prepare(&scene, &models, 1. / 60.)
             .unwrap_err()
+            .to_string()
             .contains("ambiguous")
     );
     assert_eq!(runtime.serial(), serial);
@@ -1867,7 +1869,13 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
         clip_name: "missing".into(),
         ..Default::default()
     };
-    assert!(absent.resolve_clip(&model).unwrap_err().contains("missing"));
+    assert!(
+        absent
+            .resolve_clip(&model)
+            .unwrap_err()
+            .to_string()
+            .contains("missing")
+    );
 }
 
 #[test]
@@ -1887,7 +1895,7 @@ fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry
     }
     .to_vec()
     .unwrap();
-    let mut source = ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+    let mut source = ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap();
     for (name, speed) in [("walk", 0.2), ("run", 0.4)] {
         let mut tracks =
             vec![voxy_animation::JointTrack::default(); source.skeleton.joints().len()];
@@ -2179,7 +2187,7 @@ fn authored_ankle_roll_publishes_with_the_physical_tick_and_retries_rejected_pre
             let serial = runtime.serial();
             let rejected = physics.fixed_step_with_preparation(&mut scene,&mut input,dt,
                 &[(owner,Vec3::X * 0.005)],&[],|preview,budget| {
-                    let _prepared = candidate.clone().prepare_accepted_pose(preview,budget)?;
+                    let _prepared = candidate.clone().prepare_accepted_pose(preview,budget).map_err(|e|e.to_string())?;
                     Err::<crate::animation_runtime::AnimationRuntime,String>("later stage rejection".into())
                 });
             assert!(rejected.is_err());
@@ -2208,7 +2216,7 @@ fn generated_quaternius_contact_candidates_bind_to_real_clips_and_preserve_loop_
     let mut model=ModelAsset::parse(
         include_bytes!("../../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
         &[include_bytes!("../../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],
-        voxy_render::ModelLimits::default(),
+        voxy_model::ModelLimits::default(),
     ).unwrap();
     let jog=model.animations.iter().position(|c|c.name()=="Jog_Fwd_Loop").unwrap();
     model.animations[jog]=Arc::new(model.animations[jog].append_loop_frame(&model.skeleton,1./24.).unwrap());

@@ -215,9 +215,15 @@ mod tests {
         .unwrap();
         rod.x[1][0] += 0.0007;
         apply(&mut rod.q[1], [0.03, -0.02, 0.01]);
-        let target=add(rod.x[1],[0.001,0.,0.]);
-        let c=rod.record_contact(1,0.,[1.,0.,0.],target,crate::hair::ContactSource::Mesh(0));
-        rod.contacts[c].metric_scale=0.2;
+        let target = add(rod.x[1], [0.001, 0., 0.]);
+        let c = rod.record_contact(
+            1,
+            0.,
+            [1., 0., 0.],
+            target,
+            crate::hair::ContactSource::Mesh(0),
+        );
+        rod.contacts[c].metric_scale = 0.2;
         let (_, rhs) = super::super::assemble(&mut rod, 1. / 240.).unwrap();
         for dof in 6..rhs.len() - 3 {
             let h = if dof % 6 < 3 { 1e-8 } else { 1e-6 };

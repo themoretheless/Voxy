@@ -8,17 +8,21 @@ std::thread_local! {
 /// Label opt-in contact snapshots during a caller-owned frame. This diagnostic
 /// scope never changes timestep, contact selection or physical admission.
 /// Nested scopes and unwinding restore the previous thread-local label.
-pub fn observe_contact_frame<T>(frame:usize, run:impl FnOnce()->T)->T {
-    assert!(frame>0,"contact observation frames are one-based");
-    with_observation_frame(Some(frame),run)
+pub fn observe_contact_frame<T>(frame: usize, run: impl FnOnce() -> T) -> T {
+    assert!(frame > 0, "contact observation frames are one-based");
+    with_observation_frame(Some(frame), run)
 }
-pub(super) fn observation_frame()->Option<usize> {CONTACT_OBSERVATION_FRAME.get()}
-pub(super) fn with_observation_frame<T>(frame:Option<usize>,run:impl FnOnce()->T)->T {
+pub(super) fn observation_frame() -> Option<usize> {
+    CONTACT_OBSERVATION_FRAME.get()
+}
+pub(super) fn with_observation_frame<T>(frame: Option<usize>, run: impl FnOnce() -> T) -> T {
     struct Restore(Option<usize>);
     impl Drop for Restore {
-        fn drop(&mut self) {CONTACT_OBSERVATION_FRAME.set(self.0);}
+        fn drop(&mut self) {
+            CONTACT_OBSERVATION_FRAME.set(self.0);
+        }
     }
-    let _restore=Restore(CONTACT_OBSERVATION_FRAME.replace(frame));
+    let _restore = Restore(CONTACT_OBSERVATION_FRAME.replace(frame));
     run()
 }
 #[derive(Clone, Debug)]
@@ -72,9 +76,12 @@ impl HairPhaseDiagnostic {
             velocities: rod.velocity.clone(),
             orientations: rod.q.clone(),
             contacts: rod.contact_diagnostics(),
-            relative_strains: rod.x.windows(2).zip(rod.rest_lengths()).map(|(p, length)| {
-                super::math::len(super::math::sub(p[1], p[0])) / length - 1.
-            }).collect(),
+            relative_strains: rod
+                .x
+                .windows(2)
+                .zip(rod.rest_lengths())
+                .map(|(p, length)| super::math::len(super::math::sub(p[1], p[0])) / length - 1.)
+                .collect(),
             predicted_positions: rod.predicted_x.clone(),
             angular_velocities: rod.omega.clone(),
         }
@@ -115,25 +122,43 @@ mod tests {
     use crate::hair::RootPose;
     #[test]
     fn rejected_candidate_preserves_complete_state_and_next_step() {
-        let rod=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],Default::default()).unwrap();
-        let mut hair=HairSystem::new(vec![rod]).unwrap();
-        hair.self_collision=false;
+        let rod = HairRod::new(
+            vec![[0., 0., 0.], [0., 0.01, 0.], [0., 0.02, 0.]],
+            Default::default(),
+        )
+        .unwrap();
+        let mut hair = HairSystem::new(vec![rod]).unwrap();
+        hair.self_collision = false;
         hair.set_trace_rod(Some(0)).unwrap();
-        let before=format!("{hair:?}");
-        let mut reference=hair.clone();
-        let roots=[RootPose {position:[0.;3],rotation:[0.,0.,0.,1.]}];
-        let mut observed=false;
-        let result=hair.step_validated(1./240.,&roots,[0.,-9.81,0.],[0.;3],&[],None,|candidate| {
-            observed=true;
-            assert!(!candidate.step_trace().is_empty());
-            Err("application rejected candidate")
-        });
+        let before = format!("{hair:?}");
+        let mut reference = hair.clone();
+        let roots = [RootPose {
+            position: [0.; 3],
+            rotation: [0., 0., 0., 1.],
+        }];
+        let mut observed = false;
+        let result = hair.step_validated(
+            1. / 240.,
+            &roots,
+            [0., -9.81, 0.],
+            [0.; 3],
+            &[],
+            None,
+            |candidate| {
+                observed = true;
+                assert!(!candidate.step_trace().is_empty());
+                Err("application rejected candidate")
+            },
+        );
         assert!(observed);
-        assert_eq!(result,Err("application rejected candidate"));
-        assert_eq!(format!("{hair:?}"),before);
-        hair.step(1./240.,&roots,[0.,-9.81,0.],[0.;3],&[]).unwrap();
-        reference.step(1./240.,&roots,[0.,-9.81,0.],[0.;3],&[]).unwrap();
-        assert_eq!(format!("{hair:?}"),format!("{reference:?}"));
+        assert_eq!(result, Err("application rejected candidate"));
+        assert_eq!(format!("{hair:?}"), before);
+        hair.step(1. / 240., &roots, [0., -9.81, 0.], [0.; 3], &[])
+            .unwrap();
+        reference
+            .step(1. / 240., &roots, [0., -9.81, 0.], [0.; 3], &[])
+            .unwrap();
+        assert_eq!(format!("{hair:?}"), format!("{reference:?}"));
     }
     #[test]
     fn parallel_structural_observation_is_complete_and_preserves_motion() {
@@ -251,22 +276,32 @@ mod observation_scope_tests {
     use super::*;
     #[test]
     fn frame_scope_restores_nested_panics_and_does_not_leak_to_other_threads() {
-        assert_eq!(observation_frame(),None);
-        observe_contact_frame(4,|| {
-            assert_eq!(observation_frame(),Some(4));
-            let failed=std::panic::catch_unwind(||observe_contact_frame(5,|| {
-                assert_eq!(observation_frame(),Some(5));
-                panic!("intentional diagnostic scope unwind");
-            }));
-            assert!(failed.is_err());assert_eq!(observation_frame(),Some(4));
-            std::thread::scope(|scope|scope.spawn(|| {
-                assert_eq!(observation_frame(),None);
-                with_observation_frame(Some(4),||assert_eq!(observation_frame(),Some(4)));
-                assert_eq!(observation_frame(),None);
-            }).join().unwrap());
+        assert_eq!(observation_frame(), None);
+        observe_contact_frame(4, || {
+            assert_eq!(observation_frame(), Some(4));
+            let failed = std::panic::catch_unwind(|| {
+                observe_contact_frame(5, || {
+                    assert_eq!(observation_frame(), Some(5));
+                    panic!("intentional diagnostic scope unwind");
+                })
+            });
+            assert!(failed.is_err());
+            assert_eq!(observation_frame(), Some(4));
+            std::thread::scope(|scope| {
+                scope
+                    .spawn(|| {
+                        assert_eq!(observation_frame(), None);
+                        with_observation_frame(Some(4), || {
+                            assert_eq!(observation_frame(), Some(4))
+                        });
+                        assert_eq!(observation_frame(), None);
+                    })
+                    .join()
+                    .unwrap()
+            });
         });
-        assert_eq!(observation_frame(),None);
-        assert!(std::panic::catch_unwind(||observe_contact_frame(0,||())).is_err());
-        assert_eq!(observation_frame(),None);
+        assert_eq!(observation_frame(), None);
+        assert!(std::panic::catch_unwind(|| observe_contact_frame(0, || ())).is_err());
+        assert_eq!(observation_frame(), None);
     }
 }

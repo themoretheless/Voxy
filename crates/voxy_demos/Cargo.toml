@@ -1,0 +1,38 @@
+[package]
+name = "voxy_demos"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Character, tissue, liquid and material demos used by the native shell, examples and probes"
+
+[features]
+default = []
+experimental-strand-fraction-reuse = ["physics/experimental-strand-fraction-reuse"]
+experimental-reusable-query-workers = ["physics/experimental-reusable-query-workers"]
+cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
+
+[dependencies]
+voxy_editor = { path = "../voxy_editor" }
+voxy_gameplay = { path = "../voxy_gameplay" }
+voxy_scene = { path = "../voxy_scene" }
+voxy_input = { path = "../voxy_input" }
+blake3 = "1.8"
+serde = { version = "1.0", features = ["derive"] }
+voxy_model = { path = "../voxy_model" }
+thiserror = "2"
+wgpu = { version = "30.0.1", features = ["noop"] }
+voxy_core = { path = "../voxy_core" }
+serde_json = { version = "1.0", features = ["float_roundtrip"] }
+physics = { path = "../physics" }
+physics_voxel = { path = "../physics_voxel" }
+pollster = "1.0.1"
+glam = "0.33.6"
+voxy_animation = { path = "../voxy_animation" }
+voxy_render = { path = "../voxy_render" }
+voxy_gpu = { path = "../voxy_gpu" }
+voxy_cuda = { path = "../voxy_cuda" }
+voxy_world = { path = "../voxy_world" }
+
+[lints]
+workspace = true

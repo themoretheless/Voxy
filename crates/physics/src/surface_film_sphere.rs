@@ -1,5 +1,6 @@
 //! Linear sphere sweep against both sides and all features of stationary triangles.
 use super::{SurfaceFilm, dot, norm, sub};
+use crate::math::cross;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct SphereFilmHit {
@@ -12,13 +13,6 @@ pub struct SphereFilmHit {
     pub normal: [f64; 3],
     /// Initial overlap depth; zero for an ordinary entry contact.
     pub penetration: f64,
-}
-fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
 }
 fn inside(p: [f64; 3], tri: &[[f64; 3]; 3], n: [f64; 3]) -> Result<bool, &'static str> {
     for k in 0..3 {

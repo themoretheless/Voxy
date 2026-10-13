@@ -1,5 +1,6 @@
 //! Bounded global closest-point search on a current quadratic triangle.
 use super::{QuadraticFace, Vec3, dot, sub};
+use crate::math::norm;
 use std::{cmp::Ordering, collections::BinaryHeap};
 #[derive(Clone, Copy, Debug)]
 pub struct QuadraticClosestLimits {
@@ -41,9 +42,6 @@ impl Ord for Patch {
     fn cmp(&self, rhs: &Self) -> Ordering {
         rhs.lower.total_cmp(&self.lower)
     }
-}
-fn norm(v: Vec3) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
 }
 fn midpoint(a: Vec3, b: Vec3) -> Vec3 {
     std::array::from_fn(|i| a[i].midpoint(b[i]))

@@ -1,5 +1,5 @@
 //! Single-scattering split-sum GGX BRDF integration lookup.
-//! Coordinates are (NdotV, perceptual roughness); RG stores A,B for F0*A+B.
+//! Coordinates are (`NdotV`, perceptual roughness); RG stores A,B for F0*A+B.
 use crate::RendererError;
 use wgpu::util::DeviceExt;
 #[derive(Debug)]
@@ -11,7 +11,7 @@ pub struct GgxDfgLut {
     pipeline: wgpu::RenderPipeline,
 }
 impl GgxDfgLut {
-    /// Allocate a square RGBA16Float LUT. Default integration budget is 256.
+    /// Allocate a square `RGBA16Float` LUT. Default integration budget is 256.
     /// Encode once before sampling; no submission or resource allocation in encode.
     /// # Errors
     /// Rejects zero/excessive dimensions.

@@ -1,13 +1,8 @@
 use physics::liquid::{Config, FilmRebound, Liquid, Material as LiquidMaterial, Particle};
+#[path = "support/film.rs"]
+mod support_film;
 use physics::surface_film::{Material, SurfaceFilm};
-fn film() -> SurfaceFilm {
-    SurfaceFilm::new(
-        &[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]],
-        vec![[0, 1, 2]],
-        Material::default(),
-    )
-    .unwrap()
-}
+use support_film::film;
 fn near(a: f64, b: f64) {
     assert!((a - b).abs() < 1e-12, "{a} != {b}");
 }

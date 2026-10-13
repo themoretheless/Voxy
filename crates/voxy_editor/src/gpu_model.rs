@@ -360,7 +360,7 @@ fn model_texture(
             let texture = Arc::new(texture);
             textures.push(CachedTexture {
                 image: image_index,
-                sampling: sampling,
+                sampling,
                 mips: use_mips,
                 texture: Arc::clone(&texture),
             });
@@ -391,7 +391,7 @@ impl ModelGraphics {
     }
     fn preview_meshes(
         asset: &EditorAsset,
-    ) -> Result<Vec<voxy_render::SceneMesh>, voxy_render::ModelError> {
+    ) -> Result<Vec<voxy_render::SceneMesh>, voxy_model::ModelError> {
         match &asset.animated {
             Some(model) if model.primitives.len() > 1 => {
                 model.scene_meshes(&model.skeleton.bind_pose())
@@ -419,8 +419,9 @@ impl ModelGraphics {
             || bytes(&asset.mesh),
             |certificate| {
                 SceneRenderer::certified_lod_mesh_allocation_bytes(&asset.mesh, certificate)
-                    .map(|_| SceneRenderer::mesh_allocation_bytes(&asset.mesh))
-                    .unwrap_or(u64::MAX)
+                    .map_or(u64::MAX, |_| {
+                        SceneRenderer::mesh_allocation_bytes(&asset.mesh)
+                    })
                     .saturating_add(
                         selection_outline(&asset.mesh)
                             .ok()
@@ -701,10 +702,10 @@ mod tests {
         use super::*;
         let bytes = include_bytes!("../../voxy_render/examples/assets/fox/Fox.glb");
         let gltf = gltf::Gltf::from_slice(bytes).unwrap();
-        let mut model = voxy_render::ModelAsset::parse(
+        let mut model = voxy_model::ModelAsset::parse(
             bytes,
             &[gltf.blob.as_deref().unwrap()],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap();
         let original = model.primitives[0].clone();

@@ -4,7 +4,8 @@ pub use fog::{FogBounds, FogError, FogVolume};
 
 mod simulation;
 pub use simulation::{
-    SceneSimulation, SimulationError, SimulationFrame, SimulationLimits, SimulationStepError,
+    RenderWorldCache, SceneSimulation, SimulationError, SimulationFrame, SimulationLimits,
+    SimulationStepError,
 };
 mod extraction;
 pub use extraction::{
@@ -113,7 +114,8 @@ impl Transform {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("scene graph error: {self:?}")]
 pub enum SceneGraphError {
     InvalidNode,
     InvalidTransform,
@@ -121,12 +123,6 @@ pub enum SceneGraphError {
     Capacity,
     WorldOverflow,
 }
-impl std::fmt::Display for SceneGraphError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "scene graph error: {self:?}")
-    }
-}
-impl std::error::Error for SceneGraphError {}
 
 /// Opaque change token. Compare for equality; it is not a durable document identity.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -157,8 +153,17 @@ struct Node {
     effective_active: bool,
     parent: Option<NodeId>,
     children: Vec<NodeId>,
-    components: HashMap<TypeId, Component>,
+    components: ComponentMap,
 }
+
+/// Per-node component storage keyed by `TypeId`.
+///
+/// `TypeId` values are already well-distributed hashes, so the deterministic
+/// multiply/xor fold in [`FastHasher`] replaces the randomized `SipHash` default
+/// that dominated every component lookup on the fixed-tick paths.
+pub(crate) type ComponentMap = HashMap<TypeId, Component, FastHashBuilder>;
+pub(crate) use voxy_core::FastHashBuilder;
+
 #[derive(Debug)]
 struct Slot {
     generation: u64,
@@ -172,8 +177,23 @@ pub struct SceneGraph {
     free: Vec<usize>,
     capacity: usize,
     count: usize,
+    /// Bumped by every mutation that can change descriptors or hierarchy (spawn,
+    /// reparent, removal, activity, component insert/mutate/remove); transform
+    /// and name edits do not bump it.
+    structure_revision: u64,
 }
 impl SceneGraph {
+    /// Counter that changes whenever hierarchy, activity or components change, so
+    /// per-tick validators can skip structural re-scans while it is unchanged.
+    #[must_use]
+    pub const fn structure_revision(&self) -> u64 {
+        self.structure_revision
+    }
+
+    fn bump_structure(&mut self) {
+        self.structure_revision = self.structure_revision.wrapping_add(1);
+    }
+
     /// Explicit bound prevents unrestricted object growth.
     ///
     /// # Panics
@@ -189,6 +209,7 @@ impl SceneGraph {
             free: Vec::new(),
             capacity,
             count: 0,
+            structure_revision: 0,
         }
     }
 
@@ -234,6 +255,7 @@ impl SceneGraph {
         parent: Option<NodeId>,
         local: Transform,
     ) -> Result<NodeId, SceneGraphError> {
+        self.bump_structure();
         local.matrix()?;
         if let Some(parent) = parent {
             self.node(parent)?;
@@ -275,7 +297,7 @@ impl SceneGraph {
             effective_active,
             parent,
             children: Vec::new(),
-            components: HashMap::new(),
+            components: ComponentMap::default(),
         });
         if let Some(parent) = parent {
             self.node_mut(parent)?.children.push(id);
@@ -314,6 +336,7 @@ impl SceneGraph {
     /// # Errors
     /// Rejects stale or foreign handles.
     pub fn set_active(&mut self, id: NodeId, active: bool) -> Result<(), SceneGraphError> {
+        self.bump_structure();
         if self.node(id)?.active != active {
             self.node_mut(id)?.active = active;
             self.refresh_subtree(id)?;
@@ -333,8 +356,32 @@ impl SceneGraph {
     pub fn active_components<T: Any + Send + Sync>(
         &self,
     ) -> impl Iterator<Item = (NodeId, &T)> + '_ {
-        self.components::<T>()
-            .filter(|(id, _)| self.active_in_hierarchy(*id) == Ok(true))
+        self.slot_components::<T>()
+            .filter(|(_, node, _)| node.effective_active)
+            .map(|(id, _, value)| (id, value))
+    }
+
+    /// Live nodes holding `T`, in slot order, without re-validating each handle.
+    fn slot_components<T: Any + Send + Sync>(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, &Node, &T)> + '_ {
+        let key = TypeId::of::<T>();
+        self.slots
+            .iter()
+            .enumerate()
+            .filter_map(move |(slot, entry)| {
+                let node = entry.node.as_ref()?;
+                let value = node.components.get(&key)?.0.downcast_ref::<T>()?;
+                Some((
+                    NodeId {
+                        scene: self.id,
+                        slot,
+                        generation: entry.generation,
+                    },
+                    node,
+                    value,
+                ))
+            })
     }
 
     /// Visits effectively active owners containing both required component types.
@@ -363,6 +410,7 @@ impl SceneGraph {
         id: NodeId,
         value: T,
     ) -> Result<Option<T>, SceneGraphError> {
+        self.bump_structure();
         let old = self.node_mut(id)?.components.insert(
             TypeId::of::<T>(),
             Component(Box::new(value), next_component_revision()),
@@ -411,6 +459,7 @@ impl SceneGraph {
         &mut self,
         id: NodeId,
     ) -> Result<Option<&mut T>, SceneGraphError> {
+        self.bump_structure();
         let Some(value) = self.node_mut(id)?.components.get_mut(&TypeId::of::<T>()) else {
             return Ok(None);
         };
@@ -425,6 +474,7 @@ impl SceneGraph {
         &mut self,
         id: NodeId,
     ) -> Result<Option<T>, SceneGraphError> {
+        self.bump_structure();
         Ok(self
             .node_mut(id)?
             .components
@@ -435,12 +485,8 @@ impl SceneGraph {
 
     /// Visits nodes with a component in stable slot order.
     pub fn components<T: Any + Send + Sync>(&self) -> impl Iterator<Item = (NodeId, &T)> + '_ {
-        self.nodes().filter_map(|(id, _, _)| {
-            self.component::<T>(id)
-                .ok()
-                .flatten()
-                .map(|value| (id, value))
-        })
+        self.slot_components::<T>()
+            .map(|(id, _, value)| (id, value))
     }
 
     /// Enumerates live nodes in slot order, with local transforms and parents.
@@ -494,6 +540,72 @@ impl SceneGraph {
             self.node(id)?;
             local.matrix()?;
         }
+        // Sparse batches (the editor's per-tick case) avoid scene-sized scratch
+        // vectors: edits are ordered by slot (stable, so the last write to a slot still
+        // wins) and dirty ancestry is tested by binary search. Dense batches keep the
+        // linear scratch path, which is cheaper once most slots are edited anyway.
+        let roots = if edits.len().saturating_mul(8) < self.slots.len() {
+            self.dirty_roots_sparse(edits)?
+        } else {
+            self.dirty_roots_dense(edits)?
+        };
+        for root in roots {
+            self.refresh_subtree(root)?;
+        }
+        Ok(())
+    }
+
+    /// Applies a sparse batch and returns the dirty subtree roots in edit order.
+    fn dirty_roots_sparse(
+        &mut self,
+        edits: &[(NodeId, Transform)],
+    ) -> Result<Vec<NodeId>, SceneGraphError> {
+        let mut ordered: Vec<(usize, usize)> = edits
+            .iter()
+            .enumerate()
+            .map(|(index, (id, _))| (id.slot, index))
+            .collect();
+        ordered.sort_by_key(|&(slot, _)| slot);
+        let mut dirty_slots = Vec::with_capacity(ordered.len());
+        let mut unique = Vec::with_capacity(ordered.len());
+        let mut position = 0;
+        while position < ordered.len() {
+            let slot = ordered[position].0;
+            let mut last = position;
+            while last + 1 < ordered.len() && ordered[last + 1].0 == slot {
+                last += 1;
+            }
+            let (id, local) = edits[ordered[last].1];
+            position = last + 1;
+            if self.node(id)?.local != local {
+                self.node_mut(id)?.local = local;
+                dirty_slots.push(slot);
+                unique.push(id);
+            }
+        }
+        let mut roots = Vec::new();
+        for id in unique {
+            let mut ancestor = self.node(id)?.parent;
+            let mut covered = false;
+            while let Some(parent) = ancestor {
+                if dirty_slots.binary_search(&parent.slot).is_ok() {
+                    covered = true;
+                    break;
+                }
+                ancestor = self.node(parent)?.parent;
+            }
+            if !covered {
+                roots.push(id);
+            }
+        }
+        Ok(roots)
+    }
+
+    /// Applies a dense batch with slot-indexed scratch and returns the dirty roots.
+    fn dirty_roots_dense(
+        &mut self,
+        edits: &[(NodeId, Transform)],
+    ) -> Result<Vec<NodeId>, SceneGraphError> {
         let mut values = vec![None; self.slots.len()];
         let mut unique = Vec::with_capacity(edits.len());
         for &(id, local) in edits {
@@ -529,10 +641,7 @@ impl SceneGraph {
                 roots.push(id);
             }
         }
-        for root in roots {
-            self.refresh_subtree(root)?;
-        }
-        Ok(())
+        Ok(roots)
     }
 
     /// Returns the immediate parent of a live scene node.
@@ -546,6 +655,7 @@ impl SceneGraph {
     /// # Errors
     /// Rejects stale/foreign handles and cycles without changing the hierarchy.
     pub fn reparent(&mut self, id: NodeId, parent: Option<NodeId>) -> Result<(), SceneGraphError> {
+        self.bump_structure();
         let old_parent = self.node(id)?.parent;
         let mut ancestor = parent;
         while let Some(current) = ancestor {
@@ -609,6 +719,7 @@ impl SceneGraph {
     /// # Errors
     /// Rejects invalid handles before mutation.
     pub fn remove_subtree(&mut self, root: NodeId) -> Result<usize, SceneGraphError> {
+        self.bump_structure();
         let parent = self.node(root)?.parent;
         if let Some(parent) = parent {
             self.node_mut(parent)?.children.retain(|&id| id != root);

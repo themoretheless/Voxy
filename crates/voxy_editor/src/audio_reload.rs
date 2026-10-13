@@ -1,5 +1,6 @@
 //! Common observed import/watch pipeline owned by one play session.
 use super::{audio_play::AudioBudget, prefab_authoring::AuthoringProject};
+use crate::EditorError;
 use std::{
     collections::BTreeSet,
     time::{Duration, Instant},
@@ -25,7 +26,7 @@ impl AudioReload {
         worker: AssetImportWorker<Clip>,
         outputs: BTreeSet<AssetId>,
         catalog: &AssetCatalog<ImportedAsset<Clip>>,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         let mut sources = SourceDependencies::new(128, 768);
         let mut observations = std::collections::BTreeMap::new();
         for id in &outputs {
@@ -41,13 +42,11 @@ impl AudioReload {
                 }
                 observations.insert(source.clone(), input.clone());
             }
-            sources
-                .record(
-                    id.clone(),
-                    asset.inputs(),
-                    voxy_assets::ImportOutcome::Published,
-                )
-                .map_err(|e| e.to_string())?;
+            sources.record(
+                id.clone(),
+                asset.inputs(),
+                voxy_assets::ImportOutcome::Published,
+            )?;
         }
         Ok(Self {
             worker,
@@ -63,16 +62,16 @@ impl AudioReload {
     pub(super) fn poll(
         &mut self,
         catalog: &mut AssetCatalog<ImportedAsset<Clip>>,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         // Known invalidations always precede accepting a candidate.
-        if let Some(changes) = self.watcher.try_result().map_err(|e| e.to_string())? {
+        if let Some(changes) = self.watcher.try_result()? {
             self.scanning = false;
             let affected = self.sources.affected(changes);
-            catalog.invalidate(&affected).map_err(|e| e.to_string())?;
+            catalog.invalidate(&affected)?;
             self.queued.extend(affected);
         }
         if self.importing
-            && let Some(mut completion) = self.worker.try_result().map_err(|e| e.to_string())?
+            && let Some(mut completion) = self.worker.try_result()?
         {
             self.importing = false;
             if let Ok(candidate) = &completion.result
@@ -81,7 +80,7 @@ impl AudioReload {
             {
                 completion.result = completion
                     .result
-                    .and_then(|candidate| Err(candidate.into_failed(error)));
+                    .and_then(|candidate| Err(candidate.into_failed(error.to_string())));
             }
             if let Err(failure) = &completion.result {
                 eprintln!(
@@ -98,14 +97,14 @@ impl AudioReload {
                 Ok(())
                 | Err(voxy_assets::PublicationError::Asset(voxy_assets::AssetError::StaleTicket)) =>
                     {}
-                Err(error) => return Err(error.to_string()),
+                Err(error) => return Err(error.to_string().into()),
             }
         }
         if !self.importing
             && let Some(id) = self.queued.pop_first()
         {
-            let ticket = catalog.request(id).map_err(|e| e.to_string())?;
-            self.worker.submit(&ticket).map_err(|e| e.to_string())?;
+            let ticket = catalog.request(id)?;
+            self.worker.submit(&ticket)?;
             self.importing = true;
         }
         if !self.scanning
@@ -113,9 +112,7 @@ impl AudioReload {
                 .last_scan
                 .is_none_or(|last| last.elapsed() >= Duration::from_millis(200))
         {
-            self.watcher
-                .request(&self.sources, 768)
-                .map_err(|e| e.to_string())?;
+            self.watcher.request(&self.sources, 768)?;
             self.scanning = true;
             self.last_scan = Some(Instant::now());
         }
@@ -130,7 +127,7 @@ fn admit_replacement(
     catalog: &AssetCatalog<ImportedAsset<Clip>>,
     replacing: &AssetId,
     candidate: &ImportedAsset<Clip>,
-) -> Result<(), String> {
+) -> Result<(), EditorError> {
     let mut resident = AudioBudget::default();
     let mut old_frames = 0_usize;
     for id in outputs {
@@ -153,7 +150,7 @@ fn admit_replacement(
     resident.admit(input_bytes(candidate)?, candidate.value().frame_count())
 }
 
-fn input_bytes(asset: &ImportedAsset<Clip>) -> Result<usize, String> {
+fn input_bytes(asset: &ImportedAsset<Clip>) -> Result<usize, EditorError> {
     asset
         .inputs()
         .observations()
@@ -196,7 +193,7 @@ mod tests {
         let candidate = imported(240_001);
         let error = admit_replacement(&outputs, &catalog, &a, &candidate).unwrap_err();
         let ticket = catalog.request(a.clone()).unwrap();
-        catalog.complete(&ticket, Err(error)).unwrap();
+        catalog.complete(&ticket, Err(error.to_string())).unwrap();
         let after = catalog.snapshot_with_revision(&a).unwrap();
         assert_eq!(after.0, retained.0);
         assert!(std::sync::Arc::ptr_eq(&after.1, &retained.1));

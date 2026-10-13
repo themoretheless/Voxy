@@ -242,11 +242,12 @@ impl SceneRenderer {
             vertex_capacity: base.vertex_capacity,
             index_capacity: indices.len(),
             depth_mode: base.depth_mode,
-                opaque_shader: base.opaque_shader.clone(),
-                partitioned_indices: false,
-                partition_cache: Vec::new(),
+            opaque_shader: base.opaque_shader.clone(),
+            partitioned_indices: false,
+            partition_cache: Vec::new(),
             indices: buffer,
-            shadow_dirty: true,
+            identity: crate::scene::next_geometry_identity(),
+            revision: 0,
         };
         target.allocation_bytes += geometry.indices.size();
         target.levels[index] = Some(geometry);

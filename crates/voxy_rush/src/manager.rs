@@ -112,7 +112,7 @@ fn vector(value: &Value<'_>, n: usize) -> Result<Vec<f32>, String> {
     values
         .iter()
         .map(|v| match v {
-            Value::Number(v) if v.is_finite() && v.abs() <= f32::MAX as f64 => Ok(*v as f32),
+            Value::Number(v) if v.is_finite() && v.abs() <= f64::from(f32::MAX) => Ok(*v as f32),
             _ => Err("Invalid transform component".into()),
         })
         .collect()
@@ -143,7 +143,7 @@ fn registrations(context: &Rc<RefCell<Context>>) -> Vec<HostRegistration> {
                 Ok(Value::List(
                     values
                         .into_iter()
-                        .map(|v| Value::Number(v as f64))
+                        .map(|v| Value::Number(f64::from(v)))
                         .collect(),
                 ))
             },
@@ -162,7 +162,7 @@ fn registrations(context: &Rc<RefCell<Context>>) -> Vec<HostRegistration> {
                     0 => t.translation = Vec3::new(v[0], v[1], v[2]),
                     1 => t.rotation = Quat::from_xyzw(v[0], v[1], v[2], v[3]),
                     _ => t.scale = Vec3::new(v[0], v[1], v[2]),
-                };
+                }
                 t.matrix().map_err(|e| e.to_string())?;
                 c.push(Command::Transform(id, t))?;
                 c.nodes.get_mut(&id).unwrap().1 = t;
@@ -262,7 +262,7 @@ struct Entry {
     paused: bool,
     destroyed: bool,
 }
-/// Own on the scene thread. Call fixed_update for each physics tick and update
+/// Own on the scene thread. Call `fixed_update` for each physics tick and update
 /// once per frame. Each successful hook commits at a command barrier.
 pub struct ScriptManager {
     context: Rc<RefCell<Context>>,
@@ -274,6 +274,7 @@ pub struct ScriptManager {
     max_instances: usize,
 }
 impl ScriptManager {
+    #[must_use]
     pub fn new(max_instances: usize, max_commands: usize) -> Self {
         Self {
             context: Rc::new(RefCell::new(Context {
@@ -490,14 +491,14 @@ impl ScriptManager {
             .map(|name| {
                 input
                     .state(name)
-                    .map(|s| ((*name).into(), (s.value as f64, s.pressed)))
+                    .map(|s| ((*name).into(), (f64::from(s.value), s.pressed)))
                     .ok_or_else(|| format!("Unknown input action: {name}"))
             })
             .collect::<Result<HashMap<_, _>, _>>()?;
         self.context.borrow_mut().input = values;
         Ok(())
     }
-    /// Physics/scene adapters supply typed data as an on_event record.
+    /// Physics/scene adapters supply typed data as an `on_event` record.
     pub fn event(&mut self, scene: &mut SceneGraph, event: ScriptEvent) -> Result<(), String> {
         self.validate_scene(scene)?;
         let payload = event.payload.to_value()?;
@@ -519,7 +520,7 @@ impl ScriptManager {
                     self.invoke(i, scene, "start", &[]);
                 }
                 if !self.entries[i].destroyed && scene.local(self.entries[i].owner).is_ok() {
-                    self.invoke(i, scene, "on_event", &[record.clone()]);
+                    self.invoke(i, scene, "on_event", std::slice::from_ref(&record));
                 }
             }
         }
@@ -605,6 +606,7 @@ impl ScriptManager {
         }
         errors
     }
+    #[must_use]
     pub fn paused(&self, owner: NodeId) -> bool {
         self.entries.iter().any(|e| e.owner == owner && e.paused)
     }
@@ -727,7 +729,7 @@ impl ScriptManager {
                                     contact
                                         .normal
                                         .iter()
-                                        .map(|n| rush::StateValue::Number(*n as f64))
+                                        .map(|n| rush::StateValue::Number(f64::from(*n)))
                                         .collect(),
                                 ),
                             ),

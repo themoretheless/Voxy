@@ -1,4 +1,5 @@
 use super::{Error, FloatingBody, Liquid, Particle, StepStats, finite, norm, positive, sub};
+use crate::math::dot;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct BodyContactConfig {
     pub restitution: f64,
@@ -240,7 +241,4 @@ fn impact(first: Node, second: Node, remaining: f64) -> Result<Option<f64>, Erro
         return Err(Error::NumericalFailure);
     }
     Ok((time >= 0.0 && time <= remaining).then_some(time))
-}
-fn dot(first: [f64; 3], second: [f64; 3]) -> f64 {
-    first.into_iter().zip(second).map(|(a, b)| a * b).sum()
 }

@@ -2,7 +2,7 @@
 
 #[cfg(any(target_os = "android", target_os = "ios"))]
 fn run(event_loop: winit::event_loop::EventLoop<()>) {
-    let result = voxy_app::SceneApp::new(false).and_then(|app| app.run(event_loop));
+    let result = voxy_shell::SceneApp::new(false).and_then(|app| app.run(event_loop));
     if let Err(error) = result {
         eprintln!("Voxy mobile error: {error}");
     }
