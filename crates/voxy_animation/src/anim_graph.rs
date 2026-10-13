@@ -10,13 +10,18 @@ use std::sync::Arc;
 
 use glam::{Mat4, Vec2, Vec3};
 
+use crate::events::ClipEvents;
 use crate::state_machine::{
     ActiveFade, CompiledState, MachineState, MachineStatus, PhaseSync, StateId, StateMachine,
     StateMachineDesc,
 };
 use crate::{
-    AnimationClip, AnimationError, BlendSpace1D, BlendSpace2D, BoneMask, Pose, Skeleton, rigs_match,
+    AnimationClip, AnimationError, AnimationPhaseInterval, BlendSpace1D, BlendSpace2D, BoneMask,
+    Playback, Pose, Skeleton, rigs_match,
 };
+
+/// Default per-clip event budget per tick.
+pub const DEFAULT_EVENT_BUDGET: usize = 16;
 
 /// Upper bound on nodes per compiled graph.
 pub const MAX_GRAPH_NODES: usize = 1024;
@@ -130,6 +135,8 @@ pub struct GraphDesc {
     pub nodes: Vec<GraphNode>,
     pub params: Vec<(Arc<str>, ParamValue)>,
     pub root: Option<NodeId>,
+    /// Event tracks attached to clip nodes, by node index.
+    pub events: Vec<(NodeId, Arc<ClipEvents>)>,
 }
 
 impl GraphDesc {
@@ -144,6 +151,22 @@ impl GraphDesc {
         let id = NodeId(self.nodes.len() as u16);
         self.nodes.push(node);
         Ok(id)
+    }
+
+    /// Attaches an event track to a clip node; compile checks the clip matches.
+    ///
+    /// # Errors
+    /// Rejects a second track on the same node.
+    pub fn attach_events(
+        &mut self,
+        node: NodeId,
+        events: Arc<ClipEvents>,
+    ) -> Result<(), AnimationError> {
+        if self.events.iter().any(|(n, _)| *n == node) {
+            return Err(AnimationError::InvalidGraphNode(usize::from(node.0)));
+        }
+        self.events.push((node, events));
+        Ok(())
     }
 
     /// Declares a named parameter and returns its id.
@@ -184,6 +207,7 @@ pub struct AnimGraph {
     root: NodeId,
     params: Arc<[(Arc<str>, ParamValue)]>,
     by_name: Arc<HashMap<Arc<str>, ParamId>>,
+    events: Arc<[Option<Arc<ClipEvents>>]>,
 }
 
 impl AnimGraph {
@@ -245,6 +269,16 @@ impl AnimGraph {
             }
         }
         let order = topological_order(&desc.nodes, root)?;
+        let mut events: Vec<Option<Arc<ClipEvents>>> = vec![None; count];
+        for (node, track) in &desc.events {
+            let index = usize::from(node.0);
+            match desc.nodes.get(index) {
+                Some(GraphNode::Clip { clip, .. }) if track.matches_clip(clip) => {
+                    events[index] = Some(track.clone());
+                }
+                _ => return Err(AnimationError::InvalidGraphNode(index)),
+            }
+        }
         let nodes = desc
             .nodes
             .iter()
@@ -268,6 +302,7 @@ impl AnimGraph {
             root,
             params: desc.params.into(),
             by_name: Arc::new(by_name),
+            events: events.into(),
         })
     }
 
@@ -392,6 +427,29 @@ pub struct GraphFrame {
     /// Root-joint translation displacement over the tick, blended with the
     /// same weights as the pose.
     pub root_motion: Vec3,
+    /// Clip events crossed this tick, in evaluation order then phase order.
+    pub events: Vec<GraphEvent>,
+    /// Event windows containing the end phase of each contributing clip.
+    pub active_windows: Vec<ActiveWindow>,
+}
+
+/// A clip event crossed by one clip node.
+#[derive(Clone, Debug, PartialEq)]
+pub struct GraphEvent {
+    pub name: Arc<str>,
+    /// Unwrapped normalized phase relative to the clip's cycle.
+    pub phase: f64,
+    pub node: NodeId,
+    /// Product of blend weights from the clip node up to the root.
+    pub weight: f32,
+}
+
+/// An event window active at the end of the tick.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ActiveWindow {
+    pub name: Arc<str>,
+    pub node: NodeId,
+    pub weight: f32,
 }
 
 /// Per-node runtime state. Clips store clip time; blend spaces store
@@ -408,6 +466,9 @@ pub struct GraphPlayer {
     graph: Arc<AnimGraph>,
     states: Vec<NodeState>,
     params: Vec<ParamValue>,
+    event_budget: usize,
+    /// Clip nodes at or below this path weight emit nothing.
+    min_event_weight: f32,
 }
 
 impl GraphPlayer {
@@ -421,6 +482,8 @@ impl GraphPlayer {
             states: graph.nodes.iter().map(initial_state).collect(),
             params: graph.params.iter().map(|(_, value)| *value).collect(),
             graph,
+            event_budget: DEFAULT_EVENT_BUDGET,
+            min_event_weight: 0.0,
         };
         let mut probe = player.clone();
         probe.advance(0.0)?;
@@ -430,6 +493,23 @@ impl GraphPlayer {
     #[must_use]
     pub fn graph(&self) -> &Arc<AnimGraph> {
         &self.graph
+    }
+
+    /// Per-clip event budget per tick; exceeding it fails the tick.
+    pub fn set_event_budget(&mut self, budget: usize) {
+        self.event_budget = budget;
+    }
+
+    /// Clip nodes whose path weight is at or below this emit no events.
+    ///
+    /// # Errors
+    /// Rejects a nonfinite threshold.
+    pub fn set_min_event_weight(&mut self, weight: f32) -> Result<(), AnimationError> {
+        if !weight.is_finite() {
+            return Err(AnimationError::InvalidBlendWeight);
+        }
+        self.min_event_weight = weight;
+        Ok(())
     }
 
     /// # Errors
@@ -505,8 +585,10 @@ impl GraphPlayer {
             joints: self.graph.joints.clone(),
         };
         let graph = &self.graph;
-        let ticks = self.activate(staged, dt)?;
+        let (ticks, weights) = self.activate(staged, dt)?;
         let mut results: Vec<Option<(Pose, Vec3)>> = vec![None; graph.nodes.len()];
+        let mut events = Vec::new();
+        let mut active_windows = Vec::new();
         for &id in graph.order.iter() {
             let index = usize::from(id.0);
             let Some(dt) = ticks[index] else {
@@ -514,7 +596,39 @@ impl GraphPlayer {
             };
             let value = match &graph.nodes[index] {
                 CompiledNode::Plain(node) => {
-                    self.evaluate_plain(node, index, &skeleton, staged, &mut results, dt)?
+                    let (pose, motion, interval) =
+                        self.evaluate_plain(node, index, &skeleton, staged, &mut results, dt)?;
+                    if let (Some(track), Some(interval)) = (&graph.events[index], interval)
+                        && weights[index] > self.min_event_weight
+                    {
+                        let found = track
+                            .collect_interval(
+                                interval.start,
+                                interval.end,
+                                interval.looping,
+                                self.event_budget,
+                            )
+                            .map_err(|_| AnimationError::EventBudget)?;
+                        events.extend(found.into_iter().map(|e| GraphEvent {
+                            name: e.name,
+                            phase: e.phase,
+                            node: id,
+                            weight: weights[index],
+                        }));
+                        let end_phase = if interval.looping {
+                            interval.end.rem_euclid(1.0)
+                        } else {
+                            interval.end
+                        };
+                        active_windows.extend(track.active_windows(end_phase).map(|w| {
+                            ActiveWindow {
+                                name: w.name.clone(),
+                                node: id,
+                                weight: weights[index],
+                            }
+                        }));
+                    }
+                    (pose, motion)
                 }
                 CompiledNode::Machine(machine) => {
                     evaluate_machine(machine, index, staged, &mut results, dt)?
@@ -530,42 +644,81 @@ impl GraphPlayer {
             pose,
             skin_matrices,
             root_motion,
+            events,
+            active_windows,
         })
     }
 
     /// Top-down pass: decides machine transitions, then assigns each active
     /// node its tick. Fading source subtrees receive only the remaining fade
     /// time, as in [`Animator`](crate::Animator).
-    fn activate(&self, staged: &mut Staged, dt: f64) -> Result<Vec<Option<f64>>, AnimationError> {
+    #[allow(clippy::type_complexity)]
+    fn activate(
+        &self,
+        staged: &mut Staged,
+        dt: f64,
+    ) -> Result<(Vec<Option<f64>>, Vec<f32>), AnimationError> {
         let graph = &self.graph;
         let mut ticks: Vec<Option<f64>> = vec![None; graph.nodes.len()];
+        // Path weight: sum over parents of parent weight × edge weight.
+        let mut weights: Vec<f32> = vec![0.0; graph.nodes.len()];
         ticks[usize::from(graph.root.0)] = Some(dt);
-        let mut children = Vec::new();
-        let assign = |ticks: &mut [Option<f64>], node: NodeId, dt: f64| {
-            let slot = &mut ticks[usize::from(node.0)];
-            *slot = Some(slot.map_or(dt, |old| old.max(dt)));
-        };
+        weights[usize::from(graph.root.0)] = 1.0;
+        let assign =
+            |ticks: &mut [Option<f64>], weights: &mut [f32], node: NodeId, dt: f64, w: f32| {
+                let slot = &mut ticks[usize::from(node.0)];
+                *slot = Some(slot.map_or(dt, |old| old.max(dt)));
+                weights[usize::from(node.0)] += w;
+            };
         for &id in graph.order.iter().rev() {
             let index = usize::from(id.0);
             let Some(dt) = ticks[index] else {
                 continue;
             };
+            let weight = weights[index];
             match &graph.nodes[index] {
-                CompiledNode::Plain(node) => {
-                    node.children(&mut children);
-                    for &child in &children {
-                        assign(&mut ticks, child, dt);
+                CompiledNode::Plain(node) => match node {
+                    GraphNode::Clip { .. }
+                    | GraphNode::BlendSpace1D { .. }
+                    | GraphNode::BlendSpace2D { .. }
+                    | GraphNode::StateMachine(_) => {}
+                    GraphNode::Blend { a, b, weight: w } => {
+                        let w = float_param(&staged.params, *w).clamp(0.0, 1.0);
+                        assign(&mut ticks, &mut weights, *a, dt, weight * (1.0 - w));
+                        assign(&mut ticks, &mut weights, *b, dt, weight * w);
                     }
-                }
+                    GraphNode::Layer {
+                        base,
+                        overlay,
+                        weight: w,
+                        ..
+                    }
+                    | GraphNode::Additive {
+                        base,
+                        additive: overlay,
+                        weight: w,
+                        ..
+                    } => {
+                        let w = float_param(&staged.params, *w).clamp(0.0, 1.0);
+                        assign(&mut ticks, &mut weights, *base, dt, weight);
+                        assign(&mut ticks, &mut weights, *overlay, dt, weight * w);
+                    }
+                },
                 CompiledNode::Machine(machine) => {
                     self.decide_transition(machine, index, staged)?;
                     let NodeState::Machine(state) = &staged.states[index] else {
                         return Err(AnimationError::InvalidGraphNode(index));
                     };
+                    let target_weight = state.fade.as_ref().map_or(1.0, |fade| {
+                        let elapsed = (fade.elapsed + dt).min(fade.duration);
+                        fade.curve.weight(elapsed / fade.duration) as f32
+                    });
                     assign(
                         &mut ticks,
+                        &mut weights,
                         machine.states[usize::from(state.current.0)].node,
                         dt,
+                        weight * target_weight,
                     );
                     if let Some(fade) = &state.fade
                         && fade.frozen.is_none()
@@ -573,14 +726,16 @@ impl GraphPlayer {
                         let fade_dt = dt.min((fade.duration - fade.elapsed).max(0.0));
                         assign(
                             &mut ticks,
+                            &mut weights,
                             machine.states[usize::from(fade.source.0)].node,
                             fade_dt,
+                            weight * (1.0 - target_weight),
                         );
                     }
                 }
             }
         }
-        Ok(ticks)
+        Ok((ticks, weights))
     }
 
     fn leaf_phase(&self, node: NodeId, staged: &Staged) -> Option<f64> {
@@ -678,20 +833,13 @@ impl GraphPlayer {
         staged: &mut Staged,
         results: &mut [Option<(Pose, Vec3)>],
         dt: f64,
-    ) -> Result<(Pose, Vec3), AnimationError> {
-        let float = |input: FloatInput| match input {
-            FloatInput::Const(v) => v,
-            FloatInput::Param(id) => match staged.params[usize::from(id.0)] {
-                ParamValue::Float(v) => v,
-                // Compile guarantees float kind.
-                ParamValue::Bool(_) | ParamValue::Int(_) => 0.0,
-            },
-        };
+    ) -> Result<(Pose, Vec3, Option<AnimationPhaseInterval>), AnimationError> {
+        let float = |input: FloatInput| float_param(&staged.params, input);
         let clock = |staged: &Staged| match staged.states[index] {
             NodeState::Clock(time) => time,
             NodeState::Machine(_) => 0.0,
         };
-        Ok(match node {
+        let plain: Result<(Pose, Vec3), AnimationError> = Ok(match node {
             GraphNode::Clip { clip, speed } => {
                 let speed = f64::from(float(*speed));
                 if !speed.is_finite() {
@@ -709,7 +857,19 @@ impl GraphPlayer {
                 }
                 let pose = clip.try_sample_clock(skeleton, new_time)?;
                 staged.states[index] = NodeState::Clock(clip.phase(new_time));
-                (pose, root_motion)
+                // Same interval as `Animator::phase_interval_wall`.
+                let duration = f64::from(clip.duration);
+                let looping = clip.playback == Playback::Loop;
+                let interval = AnimationPhaseInterval {
+                    start: old_time / duration,
+                    end: if looping {
+                        new_time / duration
+                    } else {
+                        new_time.min(duration) / duration
+                    },
+                    looping,
+                };
+                return Ok((pose, root_motion, Some(interval)));
             }
             GraphNode::BlendSpace1D { space, parameter } => {
                 let parameter = float(*parameter);
@@ -759,7 +919,19 @@ impl GraphPlayer {
                 (Pose::apply_additive(&pb, &pa, reference, &mask)?, mb)
             }
             GraphNode::StateMachine(_) => return Err(AnimationError::InvalidGraphNode(index)),
-        })
+        });
+        plain.map(|(pose, motion)| (pose, motion, None))
+    }
+}
+
+fn float_param(params: &[ParamValue], input: FloatInput) -> f32 {
+    match input {
+        FloatInput::Const(v) => v,
+        FloatInput::Param(id) => match params[usize::from(id.0)] {
+            ParamValue::Float(v) => v,
+            // Compile guarantees float kind.
+            ParamValue::Bool(_) | ParamValue::Int(_) => 0.0,
+        },
     }
 }
 

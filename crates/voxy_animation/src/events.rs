@@ -7,10 +7,28 @@ pub struct ClipEvent {
     /// Normalized authored phase, inclusive endpoints 0 and 1.
     pub phase: f64,
 }
+/// Named phase range; `start > end` wraps across the loop seam.
+#[derive(Clone, Debug, PartialEq)]
+pub struct EventWindow {
+    pub name: Arc<str>,
+    pub start: f64,
+    pub end: f64,
+}
+impl EventWindow {
+    #[must_use]
+    pub fn contains(&self, phase: f64) -> bool {
+        if self.start <= self.end {
+            (self.start..=self.end).contains(&phase)
+        } else {
+            phase >= self.start || phase <= self.end
+        }
+    }
+}
 #[derive(Clone, Debug)]
 pub struct ClipEvents {
     clip: Arc<AnimationClip>,
     events: Vec<ClipEvent>,
+    windows: Vec<EventWindow>,
 }
 #[derive(Clone, Debug, PartialEq)]
 pub struct ClipEventOccurrence {
@@ -61,11 +79,50 @@ impl ClipEvents {
             return Err("invalid clip event");
         }
         events.sort_by(|a, b| a.phase.total_cmp(&b.phase));
-        Ok(Self { clip, events })
+        Ok(Self {
+            clip,
+            events,
+            windows: Vec::new(),
+        })
+    }
+    /// Adds phase windows (e.g. "left foot planted") queried per tick.
+    ///
+    /// # Errors
+    /// Rejects an empty name or an endpoint outside `[0, 1]`.
+    pub fn with_windows(mut self, windows: Vec<EventWindow>) -> Result<Self, &'static str> {
+        if windows.iter().any(|w| {
+            w.name.is_empty()
+                || !w.start.is_finite()
+                || !w.end.is_finite()
+                || !(0.0..=1.0).contains(&w.start)
+                || !(0.0..=1.0).contains(&w.end)
+        }) {
+            return Err("invalid event window");
+        }
+        self.windows = windows;
+        Ok(self)
+    }
+    #[must_use]
+    pub fn clip(&self) -> &Arc<AnimationClip> {
+        &self.clip
+    }
+    #[must_use]
+    pub fn events(&self) -> &[ClipEvent] {
+        &self.events
+    }
+    #[must_use]
+    pub fn windows(&self) -> &[EventWindow] {
+        &self.windows
+    }
+    /// Windows containing the normalized `phase`.
+    pub fn active_windows(&self, phase: f64) -> impl Iterator<Item = &EventWindow> {
+        self.windows.iter().filter(move |w| w.contains(phase))
+    }
+    pub(crate) fn matches_clip(&self, clip: &Arc<AnimationClip>) -> bool {
+        Arc::ptr_eq(&self.clip, clip) || self.clip.has_same_authored_animation(clip)
     }
     pub fn matches_target(&self, animator: &Animator) -> bool {
-        Arc::ptr_eq(&self.clip, &animator.current)
-            || self.clip.has_same_authored_animation(&animator.current)
+        self.matches_clip(&animator.current)
     }
     /// Collects target-clip events in (start,end], without changing clocks.
     /// Paused ticks emit none. Loop seams preserve end events before next-cycle
@@ -82,16 +139,22 @@ impl ClipEvents {
         let interval = animator
             .phase_interval_wall(dt)
             .map_err(|_| "invalid event tick")?;
-        if self.events.is_empty() || interval.end == interval.start {
+        self.collect_interval(interval.start, interval.end, interval.looping, budget)
+    }
+    /// Events in the unwrapped normalized interval `(start, end]`.
+    pub(crate) fn collect_interval(
+        &self,
+        start: f64,
+        end: f64,
+        looping: bool,
+        budget: usize,
+    ) -> Result<Vec<ClipEventOccurrence>, &'static str> {
+        if self.events.is_empty() || end == start {
             return Ok(Vec::new());
         }
-        let first = interval.start.floor();
-        let last = if interval.looping {
-            interval.end.floor()
-        } else {
-            0.
-        };
-        if !interval.end.is_finite() || last - first > budget as f64 + 1. {
+        let first = start.floor();
+        let last = if looping { end.floor() } else { 0. };
+        if !end.is_finite() || last - first > budget as f64 + 1. {
             return Err("animation event budget");
         }
         let mut found = Vec::new();
@@ -99,7 +162,7 @@ impl ClipEvents {
             let base = first + cycle as f64;
             for event in &self.events {
                 let phase = base + event.phase;
-                if phase > interval.start && phase <= interval.end {
+                if phase > start && phase <= end {
                     if found.len() == budget {
                         return Err("animation event budget");
                     }
