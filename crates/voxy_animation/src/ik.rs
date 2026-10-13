@@ -30,6 +30,12 @@ impl TwoBoneChain {
         &self.rig
     }
 
+    /// Root, middle and tip joint indices.
+    #[must_use]
+    pub fn joint_indices(&self) -> [usize; 3] {
+        self.joints
+    }
+
     /// Compiles topology once; does not retain mutable playback state.
     /// # Errors
     /// Requires distinct, directly connected parent-before-child joints.
@@ -527,6 +533,7 @@ impl AnimatorFrame {
 #[cfg(test)]
 mod chain_tests;
 pub mod fabrik;
+pub mod full_body;
 pub mod limits;
 pub mod look_at;
 #[cfg(test)]

@@ -26,6 +26,7 @@ pub use blend_phase::{
 };
 
 pub use ik::fabrik::{FabrikResult, FabrikSettings, IkChain};
+pub use ik::full_body::{Effector, FullBodyResult, FullBodyRig, FullBodySettings};
 pub use ik::limits::{JointLimit, swing_twist_angles};
 pub use ik::look_at::{LookAtChain, look_at_error};
 pub use ik::{PlantedLegsResult, TwoBoneChain, TwoBoneResult, TwoBoneTarget};
@@ -50,8 +51,12 @@ pub use root_rotation::{
 };
 mod anim_graph;
 mod blend_space2d;
+mod gait;
 mod state_machine;
 pub use blend_space2d::{BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D};
+pub use gait::{
+    FlatGround, GaitController, GaitFeet, GaitFrame, GaitSettings, GroundProbe, ankle_positions,
+};
 pub use state_machine::{
     Condition, FadeCurve, MachineStatus, PhaseSync, StateId, StateMachine, StateMachineDesc,
     StateTransition,
