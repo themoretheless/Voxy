@@ -8,7 +8,7 @@ pub use contact_bake::{
 };
 pub use precision::{Pose64, Transform64};
 mod events;
-pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError};
+pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError, EventWindow};
 mod exact_quaternion;
 mod root_clock;
 mod root_curve;
@@ -1965,6 +1965,7 @@ pub enum AnimationError {
     InvalidGraphNode(usize),
     InvalidGraphParam,
     InvalidStateMachine,
+    EventBudget,
 }
 
 impl fmt::Display for AnimationError {

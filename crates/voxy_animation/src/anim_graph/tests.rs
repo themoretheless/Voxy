@@ -437,3 +437,185 @@ fn blend_space_2d_node_tracks_two_parameters() {
         .unwrap();
     assert_eq!(frame.pose.local(), expected.local());
 }
+
+mod events {
+    use super::*;
+    use crate::{ClipEvent, ClipEvents, EventWindow};
+
+    fn track(clip: &Arc<AnimationClip>) -> Arc<ClipEvents> {
+        Arc::new(
+            ClipEvents::new(
+                clip.clone(),
+                vec![
+                    ClipEvent {
+                        name: "start".into(),
+                        phase: 0.0,
+                    },
+                    ClipEvent {
+                        name: "step".into(),
+                        phase: 0.5,
+                    },
+                    ClipEvent {
+                        name: "end".into(),
+                        phase: 1.0,
+                    },
+                ],
+            )
+            .unwrap()
+            .with_windows(vec![EventWindow {
+                name: "planted".into(),
+                start: 0.8,
+                end: 0.2,
+            }])
+            .unwrap(),
+        )
+    }
+
+    #[test]
+    fn single_clip_events_match_animator_preview() {
+        let rig = rig();
+        for playback in [Playback::Loop, Playback::Clamp] {
+            let clip = clip(&rig, "walk", 0.7, 1.0, playback);
+            let track = track(&clip);
+            let mut animator = Animator::new(clip.clone());
+            animator.set_speed(1.5).unwrap();
+            let mut desc = GraphDesc::default();
+            let node = desc
+                .add_node(GraphNode::Clip {
+                    clip,
+                    speed: FloatInput::Const(1.5),
+                })
+                .unwrap();
+            desc.attach_events(node, track.clone()).unwrap();
+            desc.root = Some(node);
+            let graph = Arc::new(AnimGraph::compile(desc, &rig).unwrap());
+            let mut player = GraphPlayer::new(graph).unwrap();
+            let mut total = 0;
+            for step in 0..200 {
+                let dt = 0.011 + f64::from(step % 5) * 0.03;
+                let (_, expected) = animator
+                    .advance_wall_with_events(&rig, dt, &track, 16)
+                    .unwrap();
+                let frame = player.advance(dt).unwrap();
+                let actual: Vec<_> = frame
+                    .events
+                    .iter()
+                    .map(|e| crate::ClipEventOccurrence {
+                        name: e.name.clone(),
+                        phase: e.phase,
+                    })
+                    .collect();
+                assert_eq!(actual, expected, "step {step}");
+                assert!(
+                    frame
+                        .events
+                        .iter()
+                        .all(|e| e.weight == 1.0 && e.node == node)
+                );
+                total += actual.len();
+            }
+            assert!(total > 0);
+        }
+    }
+
+    #[test]
+    fn blend_weights_propagate_and_windows_wrap_the_seam() {
+        let rig = rig();
+        let a = clip(&rig, "a", 1.0, 1.0, Playback::Loop);
+        let b = clip(&rig, "b", 1.0, 2.0, Playback::Loop);
+        let mut desc = GraphDesc::default();
+        let w = desc.add_param("w", ParamValue::Float(0.3)).unwrap();
+        let na = desc
+            .add_node(GraphNode::Clip {
+                clip: a.clone(),
+                speed: FloatInput::Const(1.0),
+            })
+            .unwrap();
+        let nb = desc
+            .add_node(GraphNode::Clip {
+                clip: b.clone(),
+                speed: FloatInput::Const(1.0),
+            })
+            .unwrap();
+        desc.attach_events(na, track(&a)).unwrap();
+        desc.attach_events(nb, track(&b)).unwrap();
+        let root = desc
+            .add_node(GraphNode::Blend {
+                a: na,
+                b: nb,
+                weight: FloatInput::Param(w),
+            })
+            .unwrap();
+        desc.root = Some(root);
+        let graph = Arc::new(AnimGraph::compile(desc, &rig).unwrap());
+        let mut player = GraphPlayer::new(graph).unwrap();
+        let frame = player.advance(0.6).unwrap();
+        let steps: Vec<(NodeId, f32)> = frame
+            .events
+            .iter()
+            .filter(|e| e.name.as_ref() == "step")
+            .map(|e| (e.node, e.weight))
+            .collect();
+        assert_eq!(steps.len(), 2);
+        assert!(steps.contains(&(na, 0.7)) && steps.contains(&(nb, 0.3)));
+        assert!(frame.active_windows.is_empty());
+        // Phase 0.9 lies in the wrapped window [0.8, 1] ∪ [0, 0.2].
+        let frame = player.advance(0.3).unwrap();
+        let windows: Vec<_> = frame
+            .active_windows
+            .iter()
+            .map(|w| (w.node, w.weight))
+            .collect();
+        assert_eq!(windows, vec![(na, 0.7), (nb, 0.3)]);
+        // Phase 0.1 after the seam still lies in the window.
+        let frame = player.advance(0.2).unwrap();
+        assert_eq!(frame.active_windows.len(), 2);
+        assert!(frame.events.iter().any(|e| e.name.as_ref() == "end"));
+        // Fully faded-out clips emit nothing by default.
+        player.set_param(w, ParamValue::Float(1.0)).unwrap();
+        let frame = player.advance(0.5).unwrap();
+        assert!(frame.events.iter().all(|e| e.node == nb));
+        player.set_min_event_weight(0.5).unwrap();
+        player.set_param(w, ParamValue::Float(0.4)).unwrap();
+        let frame = player.advance(0.5).unwrap();
+        assert!(frame.events.iter().all(|e| e.node == na));
+        assert!(player.set_min_event_weight(f32::NAN).is_err());
+    }
+
+    #[test]
+    fn budget_failure_preserves_clock_and_foreign_track_is_rejected() {
+        let rig = rig();
+        let clip = clip(&rig, "walk", 0.1, 1.0, Playback::Loop);
+        let mut desc = GraphDesc::default();
+        let node = desc
+            .add_node(GraphNode::Clip {
+                clip: clip.clone(),
+                speed: FloatInput::Const(1.0),
+            })
+            .unwrap();
+        desc.attach_events(node, track(&clip)).unwrap();
+        assert!(desc.attach_events(node, track(&clip)).is_err());
+        desc.root = Some(node);
+        let graph = Arc::new(AnimGraph::compile(desc, &rig).unwrap());
+        let mut player = GraphPlayer::new(graph).unwrap();
+        player.set_event_budget(2);
+        player.advance(0.05).unwrap();
+        assert_eq!(player.advance(1.0).err(), Some(AnimationError::EventBudget));
+        assert_eq!(player.clock(node), Some(0.05));
+
+        let other = super::clip(&rig, "other", 0.1, 1.0, Playback::Loop);
+        let mut desc = GraphDesc::default();
+        let node = desc
+            .add_node(GraphNode::Clip {
+                clip,
+                speed: FloatInput::Const(1.0),
+            })
+            .unwrap();
+        desc.attach_events(node, track(&other)).unwrap();
+        desc.root = Some(node);
+        assert_eq!(
+            AnimGraph::compile(desc, &rig).err(),
+            Some(AnimationError::InvalidGraphNode(0))
+        );
+    }
+}
