@@ -243,3 +243,113 @@ fn extinction_grid_sums_species_and_mist_matches_droplet_cross_sections() {
     assert_eq!(fast.advance(1., tight).err(), Some(Error::SubstepBudget));
     let _ = GasGridBoundary::Reflecting;
 }
+
+#[test]
+fn film_drying_moves_solvent_mass_into_the_containing_gas_cell() {
+    use crate::liquid::{
+        SaturationCurve, SolutionVaporInterface, VaporExchangeAccuracy, VaporInterface,
+    };
+    use crate::surface_film::{FilmMixture, Material, SurfaceFilm, ThermalFilmMixture};
+    let mut surface = SurfaceFilm::new(
+        &[[0., 0., 0.], [1., 0., 0.], [0., 0., 1.]],
+        vec![[0, 1, 2]],
+        Material {
+            density: 1.,
+            ..Material::default()
+        },
+    )
+    .unwrap();
+    surface.deposit(0, 1.).unwrap();
+    let mut film = ThermalFilmMixture::new(
+        FilmMixture::new(
+            surface,
+            vec!["solvent".into(), "residue".into()],
+            vec![vec![0.7, 0.3]],
+        )
+        .unwrap(),
+        vec![2., 3.],
+        &[10.],
+    )
+    .unwrap();
+    let model = SolutionVaporInterface {
+        interface: VaporInterface {
+            curve: SaturationCurve {
+                reference_temperature: 10.,
+                reference_pressure: 10.,
+                latent_heat: 100.,
+                vapor_gas_constant: 1.,
+                min_temperature: 5.,
+                max_temperature: 20.,
+            },
+            area: 0.1,
+            accommodation: 0.01,
+        },
+        solvent: 0,
+        molar_masses: vec![1., 1.],
+    };
+    // Dry gas at the film temperature: the solvent evaporates into it.
+    let volume = 1.;
+    let gas = FiniteDropletGasGrid::new(
+        [0.; 3],
+        [1.; 3],
+        [2, 1, 1],
+        vec![
+            VaporCell {
+                mass: 1e-9,
+                volume,
+                temperature: 10.,
+                velocity: [0.; 3],
+                specific_heat_cv: 1.,
+            };
+            2
+        ],
+    )
+    .unwrap();
+    let mut medium = ParticipatingMedium::new(gas, vec![species(MediumSpecies::Mist)]).unwrap();
+    let film_mass_before: f64 = film.mixture().component_masses().unwrap().iter().sum();
+    let gas_before: f64 = medium.gas().cells().iter().map(|c| c.mass).sum();
+    let mut velocity = [0.; 3];
+    let exchange = medium
+        .exchange_film_vapor(
+            &mut film,
+            0,
+            &mut velocity,
+            [1.5, 0.5, 0.5],
+            &model,
+            0.1,
+            VaporExchangeAccuracy::default(),
+        )
+        .unwrap()
+        .unwrap();
+    assert_eq!(exchange.cell, 1);
+    assert!(exchange.transferred_kg > 0., "{exchange:?}");
+    let film_mass_after: f64 = film.mixture().component_masses().unwrap().iter().sum();
+    let gas_after: f64 = medium.gas().cells().iter().map(|c| c.mass).sum();
+    assert!((film_mass_before - film_mass_after - exchange.transferred_kg).abs() < 1e-12);
+    assert!((gas_after - gas_before - exchange.transferred_kg).abs() < 1e-12);
+    assert_eq!(
+        medium.gas().cells()[0].mass,
+        1e-9,
+        "the other cell is untouched"
+    );
+    // Outside the grid nothing happens.
+    let untouched = film.clone();
+    assert!(
+        medium
+            .exchange_film_vapor(
+                &mut film,
+                0,
+                &mut velocity,
+                [9., 9., 9.],
+                &model,
+                0.1,
+                VaporExchangeAccuracy::default()
+            )
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(
+        film.mixture().component_masses().unwrap(),
+        untouched.mixture().component_masses().unwrap()
+    );
+}
