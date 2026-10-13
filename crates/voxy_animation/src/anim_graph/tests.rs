@@ -290,7 +290,7 @@ fn failed_tick_preserves_clocks() {
         player.advance(f64::NAN).err(),
         Some(AnimationError::InvalidAnimationTimeStep)
     );
-    assert_eq!(player.clocks, before.clocks);
+    assert_eq!(player.clock(NodeId(0)), before.clock(NodeId(0)));
 }
 
 #[test]

@@ -1,13 +1,19 @@
 //! Compiled pose graph: a flat arena of nodes evaluated bottom-up in a fixed
 //! topological order. Leaves own clocks; interior nodes are pure functions of
-//! their inputs. A tick stages all clocks and publishes them only on success,
-//! matching [`Animator`](crate::Animator) transactional semantics.
+//! their inputs. A tick stages all clocks and parameters and publishes them
+//! only on success, matching [`Animator`](crate::Animator) transactional
+//! semantics. State machines activate only their current (and fading) state
+//! subtrees; inactive subtrees keep their clocks.
 
 use std::collections::HashMap;
 use std::sync::Arc;
 
 use glam::{Mat4, Vec2, Vec3};
 
+use crate::state_machine::{
+    ActiveFade, CompiledState, MachineState, MachineStatus, PhaseSync, StateId, StateMachine,
+    StateMachineDesc,
+};
 use crate::{
     AnimationClip, AnimationError, BlendSpace1D, BlendSpace2D, BoneMask, Pose, Skeleton, rigs_match,
 };
@@ -89,17 +95,19 @@ pub enum GraphNode {
         mask: Arc<BoneMask>,
         weight: FloatInput,
     },
+    /// Named states over subtrees with parameter-driven crossfades.
+    StateMachine(StateMachineDesc),
 }
 
 impl GraphNode {
-    fn children(&self) -> [Option<NodeId>; 2] {
+    fn children(&self, out: &mut Vec<NodeId>) {
+        out.clear();
         match self {
-            Self::Clip { .. } | Self::BlendSpace1D { .. } | Self::BlendSpace2D { .. } => {
-                [None, None]
-            }
-            Self::Blend { a, b, .. } => [Some(*a), Some(*b)],
-            Self::Layer { base, overlay, .. } => [Some(*base), Some(*overlay)],
-            Self::Additive { base, additive, .. } => [Some(*base), Some(*additive)],
+            Self::Clip { .. } | Self::BlendSpace1D { .. } | Self::BlendSpace2D { .. } => {}
+            Self::Blend { a, b, .. } => out.extend([*a, *b]),
+            Self::Layer { base, overlay, .. } => out.extend([*base, *overlay]),
+            Self::Additive { base, additive, .. } => out.extend([*base, *additive]),
+            Self::StateMachine(desc) => out.extend(desc.states.iter().map(|(_, n)| *n)),
         }
     }
 
@@ -111,6 +119,7 @@ impl GraphNode {
             Self::Blend { weight, .. }
             | Self::Layer { weight, .. }
             | Self::Additive { weight, .. } => [Some(*weight), None],
+            Self::StateMachine(_) => [None, None],
         }
     }
 }
@@ -158,11 +167,19 @@ impl GraphDesc {
     }
 }
 
+/// Compiled node: authored kind plus resolved machine data.
+#[derive(Clone, Debug)]
+enum CompiledNode {
+    Plain(GraphNode),
+    Machine(StateMachine),
+}
+
 /// Validated, immutable graph shared by any number of players.
 #[derive(Clone, Debug)]
 pub struct AnimGraph {
     joints: Arc<[crate::Joint]>,
-    nodes: Arc<[GraphNode]>,
+    nodes: Arc<[CompiledNode]>,
+    /// Reachable nodes, children before parents.
     order: Arc<[NodeId]>,
     root: NodeId,
     params: Arc<[(Arc<str>, ParamValue)]>,
@@ -175,7 +192,7 @@ impl AnimGraph {
     ///
     /// # Errors
     /// Rejects a missing root, dangling node/param ids, a non-float input,
-    /// clips/spaces/masks/poses for another rig, or a cycle.
+    /// clips/spaces/masks/poses for another rig, invalid machines, or a cycle.
     pub fn compile(desc: GraphDesc, skeleton: &Skeleton) -> Result<Self, AnimationError> {
         let root = desc
             .root
@@ -185,11 +202,11 @@ impl AnimGraph {
             return Err(AnimationError::GraphNodeBudget);
         }
         let joint_count = skeleton.joints().len();
+        let mut children = Vec::new();
         for (index, node) in desc.nodes.iter().enumerate() {
-            for child in node.children().into_iter().flatten() {
-                if usize::from(child.0) >= count {
-                    return Err(AnimationError::InvalidGraphNode(index));
-                }
+            node.children(&mut children);
+            if children.iter().any(|c| usize::from(c.0) >= count) {
+                return Err(AnimationError::InvalidGraphNode(index));
             }
             for input in node.float_inputs().into_iter().flatten() {
                 match input {
@@ -213,7 +230,7 @@ impl AnimGraph {
                     .samples()
                     .iter()
                     .all(|s| s.clip.is_compatible_with(skeleton)),
-                GraphNode::Blend { .. } => true,
+                GraphNode::Blend { .. } | GraphNode::StateMachine(_) => true,
                 GraphNode::Layer { mask, .. } => mask.weights().len() == joint_count,
                 GraphNode::Additive {
                     mask, reference, ..
@@ -228,6 +245,16 @@ impl AnimGraph {
             }
         }
         let order = topological_order(&desc.nodes, root)?;
+        let nodes = desc
+            .nodes
+            .iter()
+            .map(|node| match node {
+                GraphNode::StateMachine(machine) => {
+                    compile_machine(machine, &desc.nodes, &desc.params).map(CompiledNode::Machine)
+                }
+                other => Ok(CompiledNode::Plain(other.clone())),
+            })
+            .collect::<Result<Vec<_>, _>>()?;
         let by_name = desc
             .params
             .iter()
@@ -236,7 +263,7 @@ impl AnimGraph {
             .collect();
         Ok(Self {
             joints: skeleton.joints.clone(),
-            nodes: desc.nodes.into(),
+            nodes: nodes.into(),
             order: order.into(),
             root,
             params: desc.params.into(),
@@ -259,9 +286,66 @@ impl AnimGraph {
     pub fn evaluation_order(&self) -> &[NodeId] {
         &self.order
     }
+
+    /// Compiled machine of a state-machine node.
+    #[must_use]
+    pub fn state_machine(&self, node: NodeId) -> Option<&StateMachine> {
+        match self.nodes.get(usize::from(node.0))? {
+            CompiledNode::Machine(machine) => Some(machine),
+            CompiledNode::Plain(_) => None,
+        }
+    }
 }
 
-// Iterative DFS from the root: only reachable nodes get clocks and evaluation.
+fn compile_machine(
+    desc: &StateMachineDesc,
+    nodes: &[GraphNode],
+    params: &[(Arc<str>, ParamValue)],
+) -> Result<StateMachine, AnimationError> {
+    if desc.states.is_empty() {
+        return Err(AnimationError::InvalidStateMachine);
+    }
+    let entry = desc.entry.ok_or(AnimationError::InvalidStateMachine)?;
+    if usize::from(entry.0) >= desc.states.len() {
+        return Err(AnimationError::InvalidStateMachine);
+    }
+    let states = desc
+        .states
+        .iter()
+        .map(|(name, node)| {
+            // A state may not contain the machine itself; the graph-level
+            // cycle check already rejects that, so this DFS terminates.
+            let subtree = topological_order(nodes, *node)?;
+            Ok(CompiledState {
+                name: name.clone(),
+                node: *node,
+                subtree: subtree.into(),
+            })
+        })
+        .collect::<Result<Vec<_>, AnimationError>>()?;
+    for transition in &desc.transitions {
+        let valid_state = |id: StateId| usize::from(id.0) < states.len();
+        if !valid_state(transition.to) || transition.from.is_some_and(|f| !valid_state(f)) {
+            return Err(AnimationError::InvalidStateMachine);
+        }
+        if !transition.duration.is_finite() || !(0.0..=60.0).contains(&transition.duration) {
+            return Err(AnimationError::InvalidTransitionDuration);
+        }
+        if let PhaseSync::At(phase) = transition.sync
+            && (!phase.is_finite() || !(0.0..=1.0).contains(&phase))
+        {
+            return Err(AnimationError::InvalidAnimationPhase);
+        }
+        transition.condition.validate(params)?;
+    }
+    Ok(StateMachine {
+        states: states.into(),
+        transitions: desc.transitions.clone().into(),
+        entry,
+    })
+}
+
+// Iterative DFS from `root`: only reachable nodes get clocks and evaluation.
 fn topological_order(nodes: &[GraphNode], root: NodeId) -> Result<Vec<NodeId>, AnimationError> {
     #[derive(Clone, Copy, PartialEq)]
     enum Mark {
@@ -271,24 +355,23 @@ fn topological_order(nodes: &[GraphNode], root: NodeId) -> Result<Vec<NodeId>, A
     }
     let mut marks = vec![Mark::Unvisited; nodes.len()];
     let mut order = Vec::with_capacity(nodes.len());
-    let mut stack: Vec<(NodeId, u8)> = vec![(root, 0)];
+    let mut stack: Vec<(NodeId, usize)> = vec![(root, 0)];
     marks[usize::from(root.0)] = Mark::OnStack;
+    let mut children = Vec::new();
     while let Some(&mut (node, ref mut next)) = stack.last_mut() {
-        let children = nodes[usize::from(node.0)].children();
+        nodes[usize::from(node.0)].children(&mut children);
         let mut descended = false;
-        while usize::from(*next) < children.len() {
-            let slot = *next;
+        while *next < children.len() {
+            let child = children[*next];
             *next += 1;
-            if let Some(child) = children[usize::from(slot)] {
-                match marks[usize::from(child.0)] {
-                    Mark::OnStack => return Err(AnimationError::GraphCycle),
-                    Mark::Done => {}
-                    Mark::Unvisited => {
-                        marks[usize::from(child.0)] = Mark::OnStack;
-                        stack.push((child, 0));
-                        descended = true;
-                        break;
-                    }
+            match marks[usize::from(child.0)] {
+                Mark::OnStack => return Err(AnimationError::GraphCycle),
+                Mark::Done => {}
+                Mark::Unvisited => {
+                    marks[usize::from(child.0)] = Mark::OnStack;
+                    stack.push((child, 0));
+                    descended = true;
+                    break;
                 }
             }
         }
@@ -311,26 +394,31 @@ pub struct GraphFrame {
     pub root_motion: Vec3,
 }
 
-/// Per-node clock. Clips store clip time; blend spaces store normalized phase.
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-struct NodeClock(f64);
+/// Per-node runtime state. Clips store clip time; blend spaces store
+/// normalized phase; machines store their current state and fade.
+#[derive(Clone, Debug)]
+enum NodeState {
+    Clock(f64),
+    Machine(MachineState),
+}
 
 /// Mutable playback state over a shared [`AnimGraph`].
 #[derive(Clone, Debug)]
 pub struct GraphPlayer {
     graph: Arc<AnimGraph>,
-    clocks: Vec<NodeClock>,
+    states: Vec<NodeState>,
     params: Vec<ParamValue>,
 }
 
 impl GraphPlayer {
-    /// Starts every clock at zero with the declared parameter defaults.
+    /// Starts every clock at zero and every machine at its entry state, with
+    /// the declared parameter defaults.
     ///
     /// # Errors
     /// Rejects a graph whose initial pose or palette is invalid.
     pub fn new(graph: Arc<AnimGraph>) -> Result<Self, AnimationError> {
         let player = Self {
-            clocks: vec![NodeClock::default(); graph.nodes.len()],
+            states: graph.nodes.iter().map(initial_state).collect(),
             params: graph.params.iter().map(|(_, value)| *value).collect(),
             graph,
         };
@@ -371,11 +459,30 @@ impl GraphPlayer {
     /// Clip time or normalized blend-space phase of a leaf node.
     #[must_use]
     pub fn clock(&self, node: NodeId) -> Option<f64> {
-        self.clocks.get(usize::from(node.0)).map(|c| c.0)
+        match self.states.get(usize::from(node.0))? {
+            NodeState::Clock(time) => Some(*time),
+            NodeState::Machine(_) => None,
+        }
     }
 
-    /// Advances every reachable leaf by `dt` seconds and evaluates the root.
-    /// Any error leaves clocks and parameters unchanged.
+    /// Current state and fade of a state-machine node.
+    #[must_use]
+    pub fn machine_status(&self, node: NodeId) -> Option<MachineStatus> {
+        match self.states.get(usize::from(node.0))? {
+            NodeState::Machine(state) => Some(MachineStatus {
+                current: state.current,
+                fading_from: state.fade.as_ref().map(|f| f.source),
+                weight: state
+                    .fade
+                    .as_ref()
+                    .map_or(1.0, |f| f.curve.weight(f.elapsed / f.duration) as f32),
+            }),
+            NodeState::Clock(_) => None,
+        }
+    }
+
+    /// Advances every active leaf by `dt` seconds and evaluates the root.
+    /// Any error leaves clocks, machines and parameters unchanged.
     ///
     /// # Errors
     /// Rejects `dt` outside `[0, 1]` or nonfinite, and any sampling/blend error.
@@ -383,102 +490,34 @@ impl GraphPlayer {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err(AnimationError::InvalidAnimationTimeStep);
         }
-        let mut clocks = self.clocks.clone();
-        let frame = self.evaluate(&mut clocks, dt)?;
-        self.clocks = clocks;
+        let mut staged = Staged {
+            states: self.states.clone(),
+            params: self.params.clone(),
+        };
+        let frame = self.evaluate(&mut staged, dt)?;
+        self.states = staged.states;
+        self.params = staged.params;
         Ok(frame)
     }
 
-    fn float(&self, input: FloatInput) -> f32 {
-        match input {
-            FloatInput::Const(v) => v,
-            FloatInput::Param(id) => match self.params[usize::from(id.0)] {
-                ParamValue::Float(v) => v,
-                // Compile guarantees float kind.
-                ParamValue::Bool(_) | ParamValue::Int(_) => 0.0,
-            },
-        }
-    }
-
-    fn evaluate(&self, clocks: &mut [NodeClock], dt: f64) -> Result<GraphFrame, AnimationError> {
+    fn evaluate(&self, staged: &mut Staged, dt: f64) -> Result<GraphFrame, AnimationError> {
         let skeleton = Skeleton {
             joints: self.graph.joints.clone(),
         };
         let graph = &self.graph;
+        let ticks = self.activate(staged, dt)?;
         let mut results: Vec<Option<(Pose, Vec3)>> = vec![None; graph.nodes.len()];
         for &id in graph.order.iter() {
             let index = usize::from(id.0);
-            let take = |results: &mut [Option<(Pose, Vec3)>], child: NodeId| {
-                results[usize::from(child.0)]
-                    .take()
-                    .ok_or(AnimationError::InvalidGraphNode(usize::from(child.0)))
+            let Some(dt) = ticks[index] else {
+                continue;
             };
             let value = match &graph.nodes[index] {
-                GraphNode::Clip { clip, speed } => {
-                    let speed = f64::from(self.float(*speed));
-                    if !speed.is_finite() {
-                        return Err(AnimationError::InvalidPlaybackSpeed);
-                    }
-                    // Same clock reduction order as `Animator::advance_candidate_wall`.
-                    let old_time = clip.phase(clocks[index].0);
-                    let new_time = old_time + dt * speed;
-                    let root_motion = clip
-                        .root_curve
-                        .integral(old_time, new_time, 1., 1.)
-                        .as_vec3();
-                    if !new_time.is_finite() || !root_motion.is_finite() {
-                        return Err(AnimationError::NumericalOverflow);
-                    }
-                    let pose = clip.try_sample_clock(&skeleton, new_time)?;
-                    clocks[index] = NodeClock(clip.phase(new_time));
-                    (pose, root_motion)
+                CompiledNode::Plain(node) => {
+                    self.evaluate_plain(node, index, &skeleton, staged, &mut results, dt)?
                 }
-                GraphNode::BlendSpace1D { space, parameter } => {
-                    let parameter = self.float(*parameter);
-                    let duration = f64::from(space.cycle_duration(parameter)?);
-                    let phase = (clocks[index].0 + dt / duration).rem_euclid(1.0);
-                    let pose = space.evaluate(&skeleton, parameter, phase)?;
-                    clocks[index] = NodeClock(phase);
-                    (pose, Vec3::ZERO)
-                }
-                GraphNode::BlendSpace2D { space, x, y } => {
-                    let p = Vec2::new(self.float(*x), self.float(*y));
-                    let duration = f64::from(space.cycle_duration(p)?);
-                    let phase = (clocks[index].0 + dt / duration).rem_euclid(1.0);
-                    let pose = space.evaluate(&skeleton, p, phase)?;
-                    clocks[index] = NodeClock(phase);
-                    (pose, Vec3::ZERO)
-                }
-                GraphNode::Blend { a, b, weight } => {
-                    let (pa, ma) = take(&mut results, *a)?;
-                    let (pb, mb) = take(&mut results, *b)?;
-                    let w = self.float(*weight);
-                    let pose = Pose::blend(&pa, &pb, w)?;
-                    let w = w.clamp(0.0, 1.0);
-                    (pose, ma + (mb - ma) * w)
-                }
-                GraphNode::Layer {
-                    base,
-                    overlay,
-                    mask,
-                    weight,
-                } => {
-                    let (pb, mb) = take(&mut results, *base)?;
-                    let (po, _) = take(&mut results, *overlay)?;
-                    let mask = mask.scaled(self.float(*weight))?;
-                    (Pose::blend_masked(&pb, &po, &mask)?, mb)
-                }
-                GraphNode::Additive {
-                    base,
-                    additive,
-                    reference,
-                    mask,
-                    weight,
-                } => {
-                    let (pb, mb) = take(&mut results, *base)?;
-                    let (pa, _) = take(&mut results, *additive)?;
-                    let mask = mask.scaled(self.float(*weight))?;
-                    (Pose::apply_additive(&pb, &pa, reference, &mask)?, mb)
+                CompiledNode::Machine(machine) => {
+                    evaluate_machine(machine, index, staged, &mut results, dt)?
                 }
             };
             results[index] = Some(value);
@@ -493,6 +532,301 @@ impl GraphPlayer {
             root_motion,
         })
     }
+
+    /// Top-down pass: decides machine transitions, then assigns each active
+    /// node its tick. Fading source subtrees receive only the remaining fade
+    /// time, as in [`Animator`](crate::Animator).
+    fn activate(&self, staged: &mut Staged, dt: f64) -> Result<Vec<Option<f64>>, AnimationError> {
+        let graph = &self.graph;
+        let mut ticks: Vec<Option<f64>> = vec![None; graph.nodes.len()];
+        ticks[usize::from(graph.root.0)] = Some(dt);
+        let mut children = Vec::new();
+        let assign = |ticks: &mut [Option<f64>], node: NodeId, dt: f64| {
+            let slot = &mut ticks[usize::from(node.0)];
+            *slot = Some(slot.map_or(dt, |old| old.max(dt)));
+        };
+        for &id in graph.order.iter().rev() {
+            let index = usize::from(id.0);
+            let Some(dt) = ticks[index] else {
+                continue;
+            };
+            match &graph.nodes[index] {
+                CompiledNode::Plain(node) => {
+                    node.children(&mut children);
+                    for &child in &children {
+                        assign(&mut ticks, child, dt);
+                    }
+                }
+                CompiledNode::Machine(machine) => {
+                    self.decide_transition(machine, index, staged)?;
+                    let NodeState::Machine(state) = &staged.states[index] else {
+                        return Err(AnimationError::InvalidGraphNode(index));
+                    };
+                    assign(
+                        &mut ticks,
+                        machine.states[usize::from(state.current.0)].node,
+                        dt,
+                    );
+                    if let Some(fade) = &state.fade
+                        && fade.frozen.is_none()
+                    {
+                        let fade_dt = dt.min((fade.duration - fade.elapsed).max(0.0));
+                        assign(
+                            &mut ticks,
+                            machine.states[usize::from(fade.source.0)].node,
+                            fade_dt,
+                        );
+                    }
+                }
+            }
+        }
+        Ok(ticks)
+    }
+
+    fn leaf_phase(&self, node: NodeId, staged: &Staged) -> Option<f64> {
+        let index = usize::from(node.0);
+        match (&self.graph.nodes[index], &staged.states[index]) {
+            (CompiledNode::Plain(GraphNode::Clip { clip, .. }), NodeState::Clock(time)) => {
+                Some(clip.phase(*time) / f64::from(clip.duration))
+            }
+            (
+                CompiledNode::Plain(
+                    GraphNode::BlendSpace1D { .. } | GraphNode::BlendSpace2D { .. },
+                ),
+                NodeState::Clock(phase),
+            ) => Some(*phase),
+            _ => None,
+        }
+    }
+
+    fn set_leaf_phase(&self, node: NodeId, phase: f64, staged: &mut Staged) {
+        let index = usize::from(node.0);
+        let value = match &self.graph.nodes[index] {
+            CompiledNode::Plain(GraphNode::Clip { clip, .. }) => phase * f64::from(clip.duration),
+            CompiledNode::Plain(
+                GraphNode::BlendSpace1D { .. } | GraphNode::BlendSpace2D { .. },
+            ) => phase,
+            _ => return,
+        };
+        staged.states[index] = NodeState::Clock(value);
+    }
+
+    fn decide_transition(
+        &self,
+        machine: &StateMachine,
+        index: usize,
+        staged: &mut Staged,
+    ) -> Result<(), AnimationError> {
+        let NodeState::Machine(state) = &staged.states[index] else {
+            return Err(AnimationError::InvalidGraphNode(index));
+        };
+        let current = state.current;
+        let fading = state.fade.is_some();
+        let displayed = state.displayed.clone();
+        let phase = self.leaf_phase(machine.states[usize::from(current.0)].node, staged);
+        let chosen = machine
+            .transitions
+            .iter()
+            .filter(|t| t.from.is_none_or(|from| from == current) && t.to != current)
+            .filter(|t| !fading || t.interruptible)
+            .filter(|t| t.condition.holds(&staged.params, phase))
+            .max_by_key(|t| t.priority);
+        let Some(transition) = chosen else {
+            return Ok(());
+        };
+        transition.condition.consume_triggers(&mut staged.params);
+        let target = &machine.states[usize::from(transition.to.0)];
+        // Entering a state restarts its subtree unless phase is carried over.
+        for &node in target.subtree.iter() {
+            let i = usize::from(node.0);
+            staged.states[i] = initial_state(&self.graph.nodes[i]);
+        }
+        match transition.sync {
+            PhaseSync::Restart => {}
+            PhaseSync::Preserve => {
+                if let Some(phase) = phase {
+                    self.set_leaf_phase(target.node, phase, staged);
+                }
+            }
+            PhaseSync::At(phase) => self.set_leaf_phase(target.node, phase, staged),
+        }
+        let fade = if transition.duration == 0.0 {
+            None
+        } else {
+            Some(ActiveFade {
+                source: current,
+                // Interrupting a fade continues from the displayed blend.
+                frozen: if fading { displayed.clone() } else { None },
+                elapsed: 0.0,
+                duration: f64::from(transition.duration),
+                curve: transition.curve,
+            })
+        };
+        staged.states[index] = NodeState::Machine(MachineState {
+            current: transition.to,
+            fade,
+            displayed,
+        });
+        Ok(())
+    }
+
+    fn evaluate_plain(
+        &self,
+        node: &GraphNode,
+        index: usize,
+        skeleton: &Skeleton,
+        staged: &mut Staged,
+        results: &mut [Option<(Pose, Vec3)>],
+        dt: f64,
+    ) -> Result<(Pose, Vec3), AnimationError> {
+        let float = |input: FloatInput| match input {
+            FloatInput::Const(v) => v,
+            FloatInput::Param(id) => match staged.params[usize::from(id.0)] {
+                ParamValue::Float(v) => v,
+                // Compile guarantees float kind.
+                ParamValue::Bool(_) | ParamValue::Int(_) => 0.0,
+            },
+        };
+        let clock = |staged: &Staged| match staged.states[index] {
+            NodeState::Clock(time) => time,
+            NodeState::Machine(_) => 0.0,
+        };
+        Ok(match node {
+            GraphNode::Clip { clip, speed } => {
+                let speed = f64::from(float(*speed));
+                if !speed.is_finite() {
+                    return Err(AnimationError::InvalidPlaybackSpeed);
+                }
+                // Same clock reduction order as `Animator::advance_candidate_wall`.
+                let old_time = clip.phase(clock(staged));
+                let new_time = old_time + dt * speed;
+                let root_motion = clip
+                    .root_curve
+                    .integral(old_time, new_time, 1., 1.)
+                    .as_vec3();
+                if !new_time.is_finite() || !root_motion.is_finite() {
+                    return Err(AnimationError::NumericalOverflow);
+                }
+                let pose = clip.try_sample_clock(skeleton, new_time)?;
+                staged.states[index] = NodeState::Clock(clip.phase(new_time));
+                (pose, root_motion)
+            }
+            GraphNode::BlendSpace1D { space, parameter } => {
+                let parameter = float(*parameter);
+                let duration = f64::from(space.cycle_duration(parameter)?);
+                let phase = (clock(staged) + dt / duration).rem_euclid(1.0);
+                let pose = space.evaluate(skeleton, parameter, phase)?;
+                staged.states[index] = NodeState::Clock(phase);
+                (pose, Vec3::ZERO)
+            }
+            GraphNode::BlendSpace2D { space, x, y } => {
+                let p = Vec2::new(float(*x), float(*y));
+                let duration = f64::from(space.cycle_duration(p)?);
+                let phase = (clock(staged) + dt / duration).rem_euclid(1.0);
+                let pose = space.evaluate(skeleton, p, phase)?;
+                staged.states[index] = NodeState::Clock(phase);
+                (pose, Vec3::ZERO)
+            }
+            GraphNode::Blend { a, b, weight } => {
+                let (pa, ma) = take(results, *a)?;
+                let (pb, mb) = take(results, *b)?;
+                let w = float(*weight);
+                let pose = Pose::blend(&pa, &pb, w)?;
+                let w = w.clamp(0.0, 1.0);
+                (pose, ma + (mb - ma) * w)
+            }
+            GraphNode::Layer {
+                base,
+                overlay,
+                mask,
+                weight,
+            } => {
+                let (pb, mb) = take(results, *base)?;
+                let (po, _) = take(results, *overlay)?;
+                let mask = mask.scaled(float(*weight))?;
+                (Pose::blend_masked(&pb, &po, &mask)?, mb)
+            }
+            GraphNode::Additive {
+                base,
+                additive,
+                reference,
+                mask,
+                weight,
+            } => {
+                let (pb, mb) = take(results, *base)?;
+                let (pa, _) = take(results, *additive)?;
+                let mask = mask.scaled(float(*weight))?;
+                (Pose::apply_additive(&pb, &pa, reference, &mask)?, mb)
+            }
+            GraphNode::StateMachine(_) => return Err(AnimationError::InvalidGraphNode(index)),
+        })
+    }
+}
+
+/// Staged copy of mutable player state for one tick.
+struct Staged {
+    states: Vec<NodeState>,
+    params: Vec<ParamValue>,
+}
+
+fn initial_state(node: &CompiledNode) -> NodeState {
+    match node {
+        CompiledNode::Plain(_) => NodeState::Clock(0.0),
+        CompiledNode::Machine(machine) => NodeState::Machine(MachineState {
+            current: machine.entry,
+            fade: None,
+            displayed: None,
+        }),
+    }
+}
+
+fn take(
+    results: &mut [Option<(Pose, Vec3)>],
+    child: NodeId,
+) -> Result<(Pose, Vec3), AnimationError> {
+    results[usize::from(child.0)]
+        .take()
+        .ok_or(AnimationError::InvalidGraphNode(usize::from(child.0)))
+}
+
+fn evaluate_machine(
+    machine: &StateMachine,
+    index: usize,
+    staged: &mut Staged,
+    results: &mut [Option<(Pose, Vec3)>],
+    dt: f64,
+) -> Result<(Pose, Vec3), AnimationError> {
+    let NodeState::Machine(state) = &mut staged.states[index] else {
+        return Err(AnimationError::InvalidGraphNode(index));
+    };
+    let (target, target_motion) = take(results, machine.states[usize::from(state.current.0)].node)?;
+    let Some(fade) = &mut state.fade else {
+        let shared = Arc::new(target);
+        state.displayed = Some(shared.clone());
+        return Ok(((*shared).clone(), target_motion));
+    };
+    let start = fade.curve.weight(fade.elapsed / fade.duration);
+    fade.elapsed = (fade.elapsed + dt).min(fade.duration);
+    let end = fade.curve.weight(fade.elapsed / fade.duration);
+    let complete = fade.elapsed >= fade.duration;
+    let (source, source_motion) = match &fade.frozen {
+        Some(frozen) => ((**frozen).clone(), Vec3::ZERO),
+        None => take(results, machine.states[usize::from(fade.source.0)].node)?,
+    };
+    // Trapezoidal weighting of each subtree's displacement over the tick.
+    let mean = ((start + end) * 0.5) as f32;
+    let root_motion = source_motion + (target_motion - source_motion) * mean;
+    let pose = if complete {
+        target
+    } else {
+        Pose::blend(&source, &target, end as f32)?
+    };
+    if complete {
+        state.fade = None;
+    }
+    let shared = Arc::new(pose);
+    state.displayed = Some(shared.clone());
+    Ok(((*shared).clone(), root_motion))
 }
 
 #[cfg(test)]
