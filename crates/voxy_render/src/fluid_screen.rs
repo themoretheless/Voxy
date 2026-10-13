@@ -142,7 +142,7 @@ fn validate_device_limits(
         || limits.max_sampled_textures_per_shader_stage < 6
         || limits.max_samplers_per_shader_stage < 1
         || limits.max_uniform_buffers_per_shader_stage < 1
-        || u64::from(limits.max_uniform_buffer_binding_size) < size_of::<CameraUniform>() as u64
+        || limits.max_uniform_buffer_binding_size < size_of::<CameraUniform>() as u64
     {
         return Err("fluid renderer device binding limits are insufficient");
     }
@@ -474,7 +474,7 @@ impl ScreenSpaceFluidRenderer {
             entries: &[
                 uniform(0),
                 texture_entry(2, wgpu::TextureSampleType::Depth),
-                depth_sampler_entry.clone(),
+                depth_sampler_entry,
             ],
         });
         let filter_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {

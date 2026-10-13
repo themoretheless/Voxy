@@ -2,10 +2,10 @@
 //! Transforms 34x34x34 padded voxel chunks into compacted triangle vertices and
 //! generates `DrawIndirectArgs` on GPU with zero host readback overhead.
 
-use voxy_render::ComputeError;
+use voxy_gpu_core::ComputeError;
 
 /// Size of a padded chunk volume: 32 + 2 boundary slices along each axis = 34^3.
-pub const PADDED_CHUNK_VOLUME: usize = 34 * 34 * 34;
+pub const PADDED_CHUNK_VOLUME: usize = voxy_core::PADDED_VOLUME;
 
 /// Compact GPU vertex representation (32 bytes).
 #[repr(C)]
@@ -64,7 +64,7 @@ pub struct GpuMeshResult {
     pub max_quads: u32,
 }
 
-impl From<GpuMeshResult> for voxy_render::GpuIndirectMesh {
+impl From<GpuMeshResult> for voxy_gpu_core::GpuIndirectMesh {
     fn from(res: GpuMeshResult) -> Self {
         Self {
             vertex_buffer: res.vertex_buffer,
@@ -76,7 +76,7 @@ impl From<GpuMeshResult> for voxy_render::GpuIndirectMesh {
 impl GpuMeshResult {
     /// Converts directly into renderer indirect mesh with zero host readback.
     #[must_use]
-    pub fn into_indirect_mesh(self) -> voxy_render::GpuIndirectMesh {
+    pub fn into_indirect_mesh(self) -> voxy_gpu_core::GpuIndirectMesh {
         self.into()
     }
     /// Read back vertex and indirect parameters to CPU memory for test or fallback processing.
@@ -94,7 +94,8 @@ impl GpuMeshResult {
             mapped_at_creation: false,
         });
 
-        let vertex_bytes_len = u64::from(self.max_quads) * 6 * std::mem::size_of::<GpuVoxelVertex>() as u64;
+        let vertex_bytes_len =
+            u64::from(self.max_quads) * 6 * std::mem::size_of::<GpuVoxelVertex>() as u64;
         let vertex_staging = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("vertex staging"),
             size: vertex_bytes_len,
@@ -117,14 +118,18 @@ impl GpuMeshResult {
         let submission = queue.submit([encoder.finish()]);
 
         let (tx1, rx1) = std::sync::mpsc::channel();
-        indirect_staging.slice(..).map_async(wgpu::MapMode::Read, move |res| {
-            let _ = tx1.send(res);
-        });
+        indirect_staging
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |res| {
+                let _ = tx1.send(res);
+            });
 
         let (tx2, rx2) = std::sync::mpsc::channel();
-        vertex_staging.slice(..).map_async(wgpu::MapMode::Read, move |res| {
-            let _ = tx2.send(res);
-        });
+        vertex_staging
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |res| {
+                let _ = tx2.send(res);
+            });
 
         device
             .poll(wgpu::PollType::Wait {
@@ -334,7 +339,8 @@ impl GpuVoxelMesher {
             mapped_at_creation: false,
         });
 
-        let vertex_bytes_len = u64::from(max_quads) * 6 * std::mem::size_of::<GpuVoxelVertex>() as u64;
+        let vertex_bytes_len =
+            u64::from(max_quads) * 6 * std::mem::size_of::<GpuVoxelVertex>() as u64;
         let vertex_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("voxel mesh vertices"),
             size: vertex_bytes_len,
@@ -367,9 +373,11 @@ impl GpuVoxelMesher {
             ],
         });
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("voxel mesher encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("voxel mesher encoder"),
+            });
 
         // Pass 1: Reset indirect arguments
         {
@@ -471,7 +479,7 @@ impl GpuVoxelPipeline {
         queue: &wgpu::Queue,
         padded_voxels: &[u32],
         max_quads: u32,
-    ) -> Result<voxy_render::GpuIndirectMesh, GpuVoxelPipelineError> {
+    ) -> Result<voxy_gpu_core::GpuIndirectMesh, GpuVoxelPipelineError> {
         let result = self.mesher.mesh_chunk(queue, padded_voxels, max_quads)?;
         Ok(result.into_indirect_mesh())
     }
@@ -484,21 +492,24 @@ mod tests {
     #[test]
     fn gpu_voxel_mesh_single_voxel() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return,
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let mesher = pollster::block_on(GpuVoxelMesher::new(&device)).unwrap();
 
         // 34x34x34 volume filled with air (0) except for one single voxel at local (0, 0, 0) -> padded (1, 1, 1)
         let mut voxels = vec![0u32; PADDED_CHUNK_VOLUME];
-        let idx = 1 + 1 * 34 + 1 * 1156;
+        let idx = 1 + 34 + 1156;
         voxels[idx] = 42; // solid block with material ID 42
 
         let result = mesher.mesh_chunk(&queue, &voxels, 1024).unwrap();
@@ -518,15 +529,18 @@ mod tests {
     #[test]
     fn gpu_voxel_mesh_solid_cube() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return,
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let mesher = pollster::block_on(GpuVoxelMesher::new(&device)).unwrap();
 
@@ -554,15 +568,18 @@ mod tests {
     #[test]
     fn gpu_voxel_pipeline_end_to_end() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return,
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let pipeline = pollster::block_on(GpuVoxelPipeline::new(&device)).unwrap();
         let mut voxels = vec![0u32; PADDED_CHUNK_VOLUME];

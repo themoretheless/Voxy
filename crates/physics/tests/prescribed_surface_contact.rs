@@ -1684,8 +1684,8 @@ fn regional_body_domains_match_separate_contact_laws_and_path_work() {
         .collect();
     let next = global.with_positions(obstacle_end.clone()).unwrap();
     let path = global.path_response(&next, &points, &end, &faces).unwrap();
-    let mut body_sum = vec![[0.; 3]; 6];
-    let mut obstacle_sum = vec![[0.; 3]; 6];
+    let mut body_sum = [[0.; 3]; 6];
+    let mut obstacle_sum = [[0.; 3]; 6];
     for i in 0..2 {
         let next = separate[i].with_positions(obstacle_end.clone()).unwrap();
         let p = separate[i]

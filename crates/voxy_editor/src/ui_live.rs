@@ -97,12 +97,11 @@ impl UiLive {
             && self
                 .last_scan
                 .is_none_or(|last| last.elapsed() >= std::time::Duration::from_millis(200))
+            && let Some(sources) = &self.sources
         {
-            if let Some(sources) = &self.sources {
-                watcher.request(sources, 32)?;
-                self.scanning = true;
-                self.last_scan = Some(std::time::Instant::now());
-            }
+            watcher.request(sources, 32)?;
+            self.scanning = true;
+            self.last_scan = Some(std::time::Instant::now());
         }
         Ok(())
     }

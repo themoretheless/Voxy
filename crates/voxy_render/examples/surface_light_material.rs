@@ -122,7 +122,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
         let cpu_mesh = SceneMesh::new(cpu_vertices, indices)?.with_normals(normals)?;
         let mut gpu_draw = renderer.upload_compute_mesh(&device, &gpu_mesh)?;
         let mut cpu_draw = renderer.upload_mesh(&device, &cpu_mesh)?;
-        let material = include_str!("../../voxy_app/src/female_material.wgsl");
+        let material = include_str!("../../voxy_demos/src/female_material.wgsl");
         renderer
             .set_geometry_opaque_shader(&device, &mut gpu_draw, material)
             .await?;

@@ -1,9 +1,11 @@
 //! Bounded UI events feed application callbacks and the existing scene barrier.
+use crate::GameplayError;
 use crate::{UiActionEvent, UiElement};
 use std::collections::{BTreeMap, VecDeque};
 use voxy_scene::{SceneCommands, SceneGraph, SceneId};
-type Handler =
-    Box<dyn FnMut(&SceneGraph, &UiActionEvent, &mut SceneCommands) -> Result<(), String> + Send>;
+type Handler = Box<
+    dyn FnMut(&SceneGraph, &UiActionEvent, &mut SceneCommands) -> Result<(), GameplayError> + Send,
+>;
 
 pub struct UiActionHandlers {
     scene: SceneId,
@@ -48,10 +50,14 @@ impl UiActionHandlers {
     pub fn register(
         &mut self,
         action: String,
-        handler: impl FnMut(&SceneGraph, &UiActionEvent, &mut SceneCommands) -> Result<(), String>
+        handler: impl FnMut(
+            &SceneGraph,
+            &UiActionEvent,
+            &mut SceneCommands,
+        ) -> Result<(), GameplayError>
         + Send
         + 'static,
-    ) -> Result<(), String> {
+    ) -> Result<(), GameplayError> {
         if action.is_empty() || action.len() > 128 || action.chars().any(char::is_control) {
             return Err("invalid UI action name".into());
         }
@@ -69,39 +75,36 @@ impl UiActionHandlers {
     pub fn handles(&self, action: &str) -> bool {
         self.handlers.contains_key(action)
     }
-    fn valid(scene: &SceneGraph, event: &UiActionEvent) -> Result<bool, String> {
-        if !scene
-            .active_in_hierarchy(event.owner)
-            .map_err(|e| e.to_string())?
-        {
+    fn valid(scene: &SceneGraph, event: &UiActionEvent) -> Result<bool, GameplayError> {
+        if !scene.active_in_hierarchy(event.owner)? {
             return Ok(false);
         }
-        let Some(element) = scene
-            .component::<UiElement>(event.owner)
-            .map_err(|e| e.to_string())?
-        else {
+        let Some(element) = scene.component::<UiElement>(event.owner)? else {
             return Ok(false);
         };
         if !element.valid() || !element.enabled || element.action.as_ref() != Some(&event.action) {
             return Ok(false);
         }
-        let mut parent = scene.parent(event.owner).map_err(|e| e.to_string())?;
+        let mut parent = scene.parent(event.owner)?;
         while let Some(owner) = parent {
             if scene
-                .component::<UiElement>(owner)
-                .map_err(|e| e.to_string())?
+                .component::<UiElement>(owner)?
                 .is_some_and(|element| !element.valid() || !element.enabled)
             {
                 return Ok(false);
             }
-            parent = scene.parent(owner).map_err(|e| e.to_string())?;
+            parent = scene.parent(owner)?;
         }
         Ok(true)
     }
     /// Queues an activation for the owning scene barrier.
     /// # Errors
     /// Rejects a foreign scene, invalid/disabled target or event capacity overflow.
-    pub fn enqueue(&mut self, scene: &SceneGraph, event: UiActionEvent) -> Result<(), String> {
+    pub fn enqueue(
+        &mut self,
+        scene: &SceneGraph,
+        event: UiActionEvent,
+    ) -> Result<(), GameplayError> {
         if scene.identity() != self.scene {
             return Err("UI events belong to another scene".into());
         }
@@ -125,7 +128,7 @@ impl UiActionHandlers {
         &mut self,
         scene: &SceneGraph,
         commands: &mut SceneCommands,
-    ) -> Result<Vec<Result<(), String>>, String> {
+    ) -> Result<Vec<Result<(), GameplayError>>, GameplayError> {
         if scene.identity() != self.scene {
             return Err("UI events belong to another scene".into());
         }
@@ -144,7 +147,7 @@ impl UiActionHandlers {
                     .ok_or_else(|| format!("unhandled UI action: {}", event.action))?;
                 let mut staged = SceneCommands::new(scene, self.command_capacity);
                 handler(scene, &event, &mut staged)?;
-                commands.append(&mut staged).map_err(|e| e.to_string())
+                commands.append(&mut staged).map_err(GameplayError::from)
             })();
             results.push(result);
         }
@@ -189,7 +192,7 @@ mod tests {
             .register("hide".into(), |_, event, commands| {
                 commands
                     .push(SceneCommand::SetActive(event.owner, false))
-                    .map_err(|e| e.to_string())
+                    .map_err(GameplayError::from)
             })
             .unwrap();
         assert!(actions.register("hide".into(), |_, _, _| Ok(())).is_err());
@@ -226,7 +229,7 @@ mod tests {
                 captured.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
                 commands
                     .push(SceneCommand::SetActive(event.owner, false))
-                    .map_err(|error| error.to_string())
+                    .map_err(GameplayError::from)
             })
             .unwrap();
         actions.enqueue(&scene, event.clone()).unwrap();
@@ -250,9 +253,7 @@ mod tests {
             let mut actions = UiActionHandlers::new(&scene, 1, 1, 2);
             actions
                 .register("hide".into(), move |_, event, commands| {
-                    commands
-                        .push(SceneCommand::SetActive(event.owner, false))
-                        .map_err(|e| e.to_string())?;
+                    commands.push(SceneCommand::SetActive(event.owner, false))?;
                     if fail {
                         Err("application failure".into())
                     } else {
@@ -271,7 +272,7 @@ mod tests {
 
 /// Creates fresh application handlers for each Play session. Captured configuration
 /// persists; state captured by newly registered callbacks belongs to that session.
-pub struct UiActionSetup(Box<dyn FnMut(&mut UiActionHandlers) -> Result<(), String> + Send>);
+pub struct UiActionSetup(Box<dyn FnMut(&mut UiActionHandlers) -> Result<(), GameplayError> + Send>);
 impl std::fmt::Debug for UiActionSetup {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("UiActionSetup").finish_non_exhaustive()
@@ -279,11 +280,11 @@ impl std::fmt::Debug for UiActionSetup {
 }
 impl UiActionSetup {
     pub fn new(
-        setup: impl FnMut(&mut UiActionHandlers) -> Result<(), String> + Send + 'static,
+        setup: impl FnMut(&mut UiActionHandlers) -> Result<(), GameplayError> + Send + 'static,
     ) -> Self {
         Self(Box::new(setup))
     }
-    pub fn configure(&mut self, handlers: &mut UiActionHandlers) -> Result<(), String> {
+    pub fn configure(&mut self, handlers: &mut UiActionHandlers) -> Result<(), GameplayError> {
         (self.0)(handlers)
     }
 }

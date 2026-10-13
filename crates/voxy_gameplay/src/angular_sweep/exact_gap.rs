@@ -2,7 +2,7 @@
 //! Products occupy bits 0..4195 in units 2^-2148. At most 24 signed products
 //! enter one gap, requiring <=4201 bits; 66 limbs provide 4224 bits. No rounding,
 //! transcendental assumptions, heap allocation or arbitrary contact epsilon.
-use super::*;
+use super::{AffineBox, DVec3, PhysicsError};
 use std::cmp::Ordering;
 const LIMBS: usize = 66;
 #[derive(Clone, Copy)]

@@ -996,13 +996,13 @@ the worker is available. Failed imports retain the previous GPU geometry and sho
 a failure title; corrected input replaces it. The external real-file smoke harness
 observed publication at frame 0, failure at frame 21 with last_good=true, recovery
 at frame 93 and a successful exit after 94 presented native frames. Worker joins
-run after the event loop exits. Run with `cargo run -p voxy_render --example
+run after the event loop exits. Run with `cargo run -p voxy_editor --example
 asset_window -- /absolute/path/model.obj`. OBJ inputs are limited to 4096 bytes
 and 64 attributes/vertices/triangles. This is a native renderer example, not the
 procedural voxy_app world's model integration; GPU upload occurs in the frame loop
 and has no measured latency budget. Native window screenshots were not captured.
 
-Native example checks: `cargo clippy -p voxy_render --example asset_window
+Native example checks: `cargo clippy -p voxy_editor --example asset_window
 --no-deps -- -D warnings` passes, as does strict all-target voxy_assets Clippy.
 This focused renderer check excludes dependency linting; the broader renderer
 strict check retains the separately documented dependency failures.

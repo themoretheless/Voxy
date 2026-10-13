@@ -1,24 +1,12 @@
 //! Small f64 vector/quaternion operations; quaternion layout is [x,y,z,w].
+pub use crate::math::add;
+pub use crate::math::cross;
+pub use crate::math::dot;
+pub use crate::math::sub;
 pub type V = [f64; 3];
 pub type Q = [f64; 4];
-pub fn add(a: V, b: V) -> V {
-    std::array::from_fn(|i| a[i] + b[i])
-}
-pub fn sub(a: V, b: V) -> V {
-    std::array::from_fn(|i| a[i] - b[i])
-}
 pub fn mul(a: V, s: f64) -> V {
     a.map(|x| x * s)
-}
-pub fn dot(a: V, b: V) -> f64 {
-    a.iter().zip(b).map(|(x, y)| x * y).sum()
-}
-pub fn cross(a: V, b: V) -> V {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
 }
 pub fn len(a: V) -> f64 {
     dot(a, a).sqrt()

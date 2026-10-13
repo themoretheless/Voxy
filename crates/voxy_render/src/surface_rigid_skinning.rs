@@ -31,7 +31,7 @@ impl SurfaceRigidSkinning {
         trailing: Option<u32>,
         maximum_position: f64,
     ) -> Result<Self, SceneError> {
-        use crate::compute_memory::ManagedBufferDescriptor;
+        use voxy_gpu_core::ManagedBufferDescriptor;
         let count = normals.len();
         let limits = device.limits();
         if count == 0
@@ -98,7 +98,7 @@ impl SurfaceRigidSkinning {
         if descriptors.iter().any(|d| {
             d.size > limits.max_buffer_size
                 || (d.usage.contains(wgpu::BufferUsages::STORAGE)
-                    && d.size > u64::from(limits.max_storage_buffer_binding_size))
+                    && d.size > limits.max_storage_buffer_binding_size)
         }) {
             return Err(SceneError::GeometryCapacityExceeded);
         }
@@ -178,8 +178,8 @@ impl SurfaceRigidSkinning {
                 || !rotation.is_normalized()
                 || !Mat4::from_rotation_translation(rotation, translation)
                     .abs_diff_eq(*matrix, 1e-4)
-                || self.maximum_position * 4. + translation.abs().max_element() as f64
-                    > f32::MAX as f64 * 0.25
+                || self.maximum_position * 4. + f64::from(translation.abs().max_element())
+                    > f64::from(f32::MAX) * 0.25
             {
                 return Err(SceneError::InvalidTransform);
             }

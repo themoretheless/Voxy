@@ -56,6 +56,30 @@ impl TerrainBackend {
     }
 }
 
+/// Shares the selected ordinal with terrain without requiring CUDA terrain.
+pub fn motion_device(args: impl IntoIterator<Item = String>) -> Result<Option<usize>, String> {
+    let args: Vec<_> = args.into_iter().collect();
+    TerrainBackend::parse(args.clone())?;
+    if !args.iter().any(|arg| {
+        arg == "--cuda-projectiles"
+            || arg == "--cuda-character-motion"
+            || arg == "--cuda-vehicle-motion"
+            || arg == "--cuda-collisions"
+            || arg == "--cuda-water"
+    }) {
+        return Ok(None);
+    }
+    let ordinal = args
+        .windows(2)
+        .find(|pair| pair[0] == "--cuda-device")
+        .map_or(Ok(0), |pair| {
+            pair[1]
+                .parse::<usize>()
+                .map_err(|_| "invalid CUDA device ordinal".to_owned())
+        })?;
+    Ok(Some(ordinal))
+}
+
 #[cfg(test)]
 mod tests {
     use super::TerrainBackend;
@@ -141,28 +165,4 @@ mod tests {
             assert!(parse(&args).is_err(), "{args:?}");
         }
     }
-}
-
-/// Shares the selected ordinal with terrain without requiring CUDA terrain.
-pub fn motion_device(args: impl IntoIterator<Item = String>) -> Result<Option<usize>, String> {
-    let args: Vec<_> = args.into_iter().collect();
-    TerrainBackend::parse(args.clone())?;
-    if !args.iter().any(|arg| {
-        arg == "--cuda-projectiles"
-            || arg == "--cuda-character-motion"
-            || arg == "--cuda-vehicle-motion"
-            || arg == "--cuda-collisions"
-            || arg == "--cuda-water"
-    }) {
-        return Ok(None);
-    }
-    let ordinal = args
-        .windows(2)
-        .find(|pair| pair[0] == "--cuda-device")
-        .map_or(Ok(0), |pair| {
-            pair[1]
-                .parse::<usize>()
-                .map_err(|_| "invalid CUDA device ordinal".to_owned())
-        })?;
-    Ok(Some(ordinal))
 }

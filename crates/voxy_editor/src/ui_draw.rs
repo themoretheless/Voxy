@@ -1,5 +1,6 @@
 //! CPU overlay geometry; device upload/publication stays with the graphics owner.
 #![allow(clippy::cast_precision_loss)]
+use crate::EditorError;
 use glam::Vec2;
 use std::{collections::HashMap, sync::Arc};
 use voxy_gameplay::{PreparedUiText, SceneUiSnapshot};
@@ -21,7 +22,7 @@ pub(super) struct FocusRing {
     pub(super) clip: [f32; 4],
 }
 impl FocusRing {
-    pub(super) fn mesh(&self) -> Result<UiDrawMesh, String> {
+    pub(super) fn mesh(&self) -> Result<UiDrawMesh, EditorError> {
         let [x, y, width, height] = self.clip;
         if self.clip.iter().any(|value| !value.is_finite()) || width <= 0.0 || height <= 0.0 {
             return Err("invalid UI focus clip".into());
@@ -40,21 +41,16 @@ impl FocusRing {
             if size[0] <= 0.0 || size[1] <= 0.0 {
                 continue;
             }
-            batch
-                .push(
-                    Sprite::from_logical_rect(
-                        Vec2::from_array(origin),
-                        Vec2::from_array(size),
-                        Vec2::from_array(self.viewport),
-                        [1.0, 0.85, 0.15, 1.0],
-                    )
-                    .map_err(|error| error.to_string())?,
-                )
-                .map_err(|error| error.to_string())?;
+            batch.push(Sprite::from_logical_rect(
+                Vec2::from_array(origin),
+                Vec2::from_array(size),
+                Vec2::from_array(self.viewport),
+                [1.0, 0.85, 0.15, 1.0],
+            )?)?;
         }
         Ok(UiDrawMesh {
             owner: self.owner,
-            mesh: batch.mesh().map_err(|error| error.to_string())?,
+            mesh: batch.mesh()?,
             atlas: None,
         })
     }
@@ -62,7 +58,7 @@ impl FocusRing {
 pub(super) fn build(
     snapshot: &SceneUiSnapshot,
     text: &[PreparedUiText],
-) -> Result<Vec<UiDrawMesh>, String> {
+) -> Result<Vec<UiDrawMesh>, EditorError> {
     if snapshot.elements.len() > 128 || text.len() > 128 {
         return Err("UI mesh element capacity".into());
     }
@@ -79,20 +75,15 @@ pub(super) fn build(
         };
         if element.descriptor.color[3] > 0.0 {
             let mut batch = SpriteBatch::new(1);
-            batch
-                .push(
-                    Sprite::from_logical_rect(
-                        Vec2::new(clip[0], clip[1]),
-                        Vec2::new(clip[2], clip[3]),
-                        viewport,
-                        element.descriptor.color,
-                    )
-                    .map_err(|error| error.to_string())?,
-                )
-                .map_err(|error| error.to_string())?;
+            batch.push(Sprite::from_logical_rect(
+                Vec2::new(clip[0], clip[1]),
+                Vec2::new(clip[2], clip[3]),
+                viewport,
+                element.descriptor.color,
+            )?)?;
             draws.push(UiDrawMesh {
                 owner: element.owner,
-                mesh: batch.mesh().map_err(|error| error.to_string())?,
+                mesh: batch.mesh()?,
                 atlas: None,
             });
         }
@@ -131,20 +122,13 @@ pub(super) fn build(
                         .as_ref()
                         .ok_or("missing UI text")?
                         .color,
-                )
-                .map_err(|error| error.to_string())?;
+                )?;
                 let atlas_size = Vec2::new(dimensions[0] as f32, dimensions[1] as f32);
                 sprite.uv_min =
                     Vec2::new(glyph.region.origin[0] as f32, glyph.region.origin[1] as f32)
                         / atlas_size;
                 sprite.uv_max = sprite.uv_min + size / atlas_size;
-                batch
-                    .push(
-                        sprite
-                            .cropped((start - origin) / size, (end - origin) / size)
-                            .map_err(|error| error.to_string())?,
-                    )
-                    .map_err(|error| error.to_string())?;
+                batch.push(sprite.cropped((start - origin) / size, (end - origin) / size)?)?;
                 visible += 1;
                 glyphs += 1;
                 if glyphs > 8192 {
@@ -154,7 +138,7 @@ pub(super) fn build(
             if visible > 0 {
                 draws.push(UiDrawMesh {
                     owner: element.owner,
-                    mesh: batch.mesh().map_err(|error| error.to_string())?,
+                    mesh: batch.mesh()?,
                     atlas: Some(Arc::clone(&label.run)),
                 });
             }
@@ -166,7 +150,7 @@ pub(super) fn build(
 fn validate_labels<'a>(
     snapshot: &SceneUiSnapshot,
     text: &'a [PreparedUiText],
-) -> Result<HashMap<NodeId, &'a PreparedUiText>, String> {
+) -> Result<HashMap<NodeId, &'a PreparedUiText>, EditorError> {
     let mut labels = HashMap::new();
     for label in text {
         if labels.insert(label.owner, label).is_some() {
@@ -290,6 +274,7 @@ mod tests {
         assert!(
             build(&changed, &labels)
                 .unwrap_err()
+                .to_string()
                 .contains("recipe changed")
         );
         scene.remove_subtree(owner).unwrap();
@@ -312,6 +297,7 @@ mod tests {
         assert!(
             build(&replacement, &labels)
                 .unwrap_err()
+                .to_string()
                 .contains("stale UI text owner")
         );
         assert_eq!(draws[0].owner, owner);

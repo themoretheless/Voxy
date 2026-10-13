@@ -6,7 +6,14 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use voxy_render::*;
+use voxy_render::{
+    GgxRayLightingPipeline, GraphicsBackend, GraphicsOptions, PlanarReflectionCameras,
+    PlanarTemporalPipeline, PreviousReflectionTriangle, RadianceComposition, RasterRayFrame,
+    RasterRayOptions, RayScene, ReconstructionGuideMesh, ReconstructionMaterial,
+    ReflectionSpatialOptions, ReflectionSpatialPipeline, RenderOutcome, RendererError, SceneMesh,
+    SceneSurface, SceneTexture, SceneVertex, SurfaceOutput, SurfacePointLight,
+    SurfaceReflectionOptions, TemporalHistory, TemporalResolveOptions, TextureBlit,
+};
 use winit::{
     application::ApplicationHandler,
     event::{ElementState, WindowEvent},
@@ -348,7 +355,7 @@ impl App {
         self.host = Some(host);
         self.retry = None;
         self.deadline
-            .get_or_insert(Instant::now() + Duration::from_secs(60));
+            .get_or_insert(Instant::now() + Duration::from_mins(1));
         self.reset();
         if self.always_on_top {
             window.set_window_level(winit::window::WindowLevel::AlwaysOnTop);
@@ -677,11 +684,11 @@ impl ApplicationHandler for App {
         self.retry = None;
         self.reset();
         self.size = [0; 2];
-        if let Some(host) = &mut self.host {
-            if let Err(error) = host.resize(0, 0) {
-                self.failure = Some(error.to_string());
-                event_loop.exit();
-            }
+        if let Some(host) = &mut self.host
+            && let Err(error) = host.resize(0, 0)
+        {
+            self.failure = Some(error.to_string());
+            event_loop.exit();
         }
         event_loop.set_control_flow(ControlFlow::Wait);
     }

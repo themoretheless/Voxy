@@ -218,27 +218,46 @@ mod tests {
     }
     #[test]
     fn distinct_rejected_planes_survive_tangent_model_installation() {
-        let mut rod=HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],HairMaterial::default()).unwrap();
-        rod.record_contact(1,0.,[1.,0.,0.],[1e-8,0.,0.01],ContactSource::Mesh(0));
+        let mut rod = HairRod::new(
+            vec![[0., 0., 0.], [0., 0., 0.01], [0., 0., 0.02]],
+            HairMaterial::default(),
+        )
+        .unwrap();
+        rod.record_contact(
+            1,
+            0.,
+            [1., 0., 0.],
+            [1e-8, 0., 0.01],
+            ContactSource::Mesh(0),
+        );
         // Install distinct authored rows directly to isolate model ownership
         // from the separate geometric contact recorder.
-        let mut second=rod.contacts[0].clone();second.normal=[1.,5e-13,0.];
+        let mut second = rod.contacts[0].clone();
+        second.normal = [1., 5e-13, 0.];
         rod.contacts.push(second);
-        let original=rod.contacts.clone();
-        let mut model=ContactModel::new(1);
+        let original = rod.contacts.clone();
+        let mut model = ContactModel::new(1);
         model.observe_rejected_candidate(std::slice::from_ref(&rod));
-        rod.contacts.clear();model.install(std::slice::from_mut(&mut rod));
+        rod.contacts.clear();
+        model.install(std::slice::from_mut(&mut rod));
         // At this independent probe the first plane admits the point, while
         // the second excludes it. They cannot share a model row.
-        let probe=[1e-8,-1000.,0.01];
-        assert_eq!(original[0].physical_gap(probe),0.);
-        assert!(original[1].physical_gap(probe)< -1e-10);
+        let probe = [1e-8, -1000., 0.01];
+        assert_eq!(original[0].physical_gap(probe), 0.);
+        assert!(original[1].physical_gap(probe) < -1e-10);
         for expected in original {
-            assert!(rod.contacts.iter().any(|row|row.normal==expected.normal
-                && row.target==expected.target),"tangent model discarded a distinct rejected plane");
+            assert!(
+                rod.contacts
+                    .iter()
+                    .any(|row| row.normal == expected.normal && row.target == expected.target),
+                "tangent model discarded a distinct rejected plane"
+            );
         }
-        assert_eq!(model.observe_rejected_candidate(std::slice::from_ref(&rod)),0,
-            "exact repeated probes must not duplicate the model");
+        assert_eq!(
+            model.observe_rejected_candidate(std::slice::from_ref(&rod)),
+            0,
+            "exact repeated probes must not duplicate the model"
+        );
     }
     #[test]
     fn discovered_future_contact_blocks_free_motion_without_publishing_probe_pose() {
@@ -417,9 +436,7 @@ impl ContactModel {
                 if let Some(existing) = rows.iter_mut().find(|row| {
                     row.source == contact.source
                         && row.segment == contact.segment
-                        && (0..2).all(|end| {
-                            jacobian(row, end) == jacobian(contact, end)
-                        })
+                        && (0..2).all(|end| jacobian(row, end) == jacobian(contact, end))
                 }) {
                     let offset = |c: &RodContact| c.metric_scale * dot(c.normal, c.target);
                     if offset(contact) > offset(existing) + 1e-12 {

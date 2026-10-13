@@ -1,18 +1,8 @@
 //! Discrete triangle/sphere contact used by volumetric tissues.
+use crate::math::cross;
+use crate::math::dot;
+use crate::math::sub;
 type V = [f64; 3];
-fn sub(a: V, b: V) -> V {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn dot(a: V, b: V) -> f64 {
-    a.into_iter().zip(b).map(|(x, y)| x * y).sum()
-}
-fn cross(a: V, b: V) -> V {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
 fn closest(p: [V; 3], q: V) -> ([f64; 3], V) {
     let a = sub(p[1], p[0]);
     let b = sub(p[2], p[0]);

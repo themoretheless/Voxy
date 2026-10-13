@@ -1,4 +1,5 @@
 //! Bounded adaptive paths over the existing Spin midpoint integrator.
+use crate::math::norm;
 use crate::{
     astrophysics::Error,
     astrophysics_spin::{ArcTorque, RotatingArmForce, Spin, SpinArc, TorquePolynomial, rotate},
@@ -37,9 +38,6 @@ pub struct SpinPath {
     /// Converts the joint attitude/momentum majorant to momentum units.
     momentum_error_per_rad: f64,
     source_momentum_error: f64,
-}
-fn norm(v: [f64; 3]) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
 }
 fn local_bound(arc: SpinArc, feedback_rate: f64) -> Result<(f64, f64), PathError> {
     let dt = arc.duration();

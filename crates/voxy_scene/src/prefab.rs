@@ -55,17 +55,12 @@ impl PrefabNode {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("prefab error: {self:?}")]
 pub enum PrefabError {
     InvalidParent { node: usize, parent: usize },
     Scene(SceneGraphError),
 }
-impl std::fmt::Display for PrefabError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "prefab error: {self:?}")
-    }
-}
-impl std::error::Error for PrefabError {}
 impl From<SceneGraphError> for PrefabError {
     fn from(value: SceneGraphError) -> Self {
         Self::Scene(value)

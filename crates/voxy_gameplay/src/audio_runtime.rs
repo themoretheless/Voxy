@@ -1,4 +1,5 @@
 //! Scene-to-mixer ownership bridge. No device callback or asset registry here.
+use crate::GameplayError;
 use crate::{AudioSource, SceneAudioSnapshot};
 use std::collections::{HashMap, HashSet};
 use voxy_audio::{AudioError, Clip, Mixer, VoiceId, spatial_gains};
@@ -40,8 +41,8 @@ impl SceneAudioRuntime {
     pub fn synchronize(
         &mut self,
         snapshot: &SceneAudioSnapshot,
-        resolve: impl FnMut(&str) -> Result<Clip, String>,
-    ) -> Result<(), String> {
+        resolve: impl FnMut(&str) -> Result<Clip, GameplayError>,
+    ) -> Result<(), GameplayError> {
         self.synchronize_published(snapshot, |_| Ok(0), resolve)
     }
     /// Uses immutable publication revisions from the caller's existing asset owner.
@@ -53,9 +54,9 @@ impl SceneAudioRuntime {
     pub fn synchronize_published(
         &mut self,
         snapshot: &SceneAudioSnapshot,
-        mut revision: impl FnMut(&str) -> Result<u64, String>,
-        mut resolve: impl FnMut(&str) -> Result<Clip, String>,
-    ) -> Result<(), String> {
+        mut revision: impl FnMut(&str) -> Result<u64, GameplayError>,
+        mut resolve: impl FnMut(&str) -> Result<Clip, GameplayError>,
+    ) -> Result<(), GameplayError> {
         if snapshot.sources.len() > self.capacity {
             return Err("scene audio capacity exceeded".into());
         }
@@ -79,8 +80,7 @@ impl SceneAudioRuntime {
                             d.far,
                         )
                     })
-                    .transpose()
-                    .map_err(|e| e.to_string())?
+                    .transpose()?
                     .unwrap_or([0.; 2])
             } else {
                 [1.; 2]
@@ -113,8 +113,7 @@ impl SceneAudioRuntime {
                 let d = &source.descriptor;
                 let voice = self
                     .mixer
-                    .play(clip, usize::from(d.bus), d.gain, d.looping)
-                    .map_err(|e| e.to_string())?;
+                    .play(clip, usize::from(d.bus), d.gain, d.looping)?;
                 self.sources.insert(
                     source.owner,
                     SourceVoice {
@@ -134,14 +133,11 @@ impl SceneAudioRuntime {
                     !source.active || (source.descriptor.spatial && snapshot.listener.is_none()),
                 ) {
                     Err(AudioError::InvalidVoice) => entry.voice = None,
-                    Err(e) => return Err(e.to_string()),
+                    Err(e) => return Err(e.into()),
                     Ok(()) => {
                         self.mixer
-                            .ramp_voice_gain(voice, source.descriptor.gain, 0)
-                            .map_err(|e| e.to_string())?;
-                        self.mixer
-                            .ramp_channel_gains(voice, gains, 0)
-                            .map_err(|e| e.to_string())?;
+                            .ramp_voice_gain(voice, source.descriptor.gain, 0)?;
+                        self.mixer.ramp_channel_gains(voice, gains, 0)?;
                     }
                 }
             }
@@ -149,7 +145,10 @@ impl SceneAudioRuntime {
         }
         Ok(())
     }
-    fn validate_buses(&self, snapshot: &SceneAudioSnapshot) -> Result<HashSet<usize>, String> {
+    fn validate_buses(
+        &self,
+        snapshot: &SceneAudioSnapshot,
+    ) -> Result<HashSet<usize>, GameplayError> {
         let mut authored_buses = HashSet::new();
         for bus in &snapshot.buses {
             if !bus.valid()
@@ -165,22 +164,19 @@ impl SceneAudioRuntime {
         &mut self,
         snapshot: &SceneAudioSnapshot,
         authored_buses: HashSet<usize>,
-    ) -> Result<(), String> {
+    ) -> Result<(), GameplayError> {
         // All assets and descriptors were preflighted before modifying any gain.
         for bus in self.authored_buses.difference(&authored_buses) {
-            self.mixer
-                .ramp_bus_gain(*bus, 1., 0)
-                .map_err(|e| e.to_string())?;
+            self.mixer.ramp_bus_gain(*bus, 1., 0)?;
         }
         for bus in &snapshot.buses {
             self.mixer
-                .ramp_bus_gain(usize::from(bus.bus), bus.gain, 0)
-                .map_err(|e| e.to_string())?;
+                .ramp_bus_gain(usize::from(bus.bus), bus.gain, 0)?;
         }
         self.authored_buses = authored_buses;
         Ok(())
     }
-    fn remove_absent_sources(&mut self, owners: &HashSet<NodeId>) -> Result<(), String> {
+    fn remove_absent_sources(&mut self, owners: &HashSet<NodeId>) -> Result<(), GameplayError> {
         let removed: Vec<_> = self
             .sources
             .keys()
@@ -194,10 +190,10 @@ impl SceneAudioRuntime {
         }
         Ok(())
     }
-    fn stop_voice(&mut self, voice: Option<VoiceId>) -> Result<(), String> {
+    fn stop_voice(&mut self, voice: Option<VoiceId>) -> Result<(), GameplayError> {
         match voice.map(|id| self.mixer.stop(id)) {
             None | Some(Ok(()) | Err(AudioError::InvalidVoice)) => Ok(()),
-            Some(Err(e)) => Err(e.to_string()),
+            Some(Err(e)) => Err(e.into()),
         }
     }
     pub fn render(&mut self, output: &mut [[f32; 2]]) {

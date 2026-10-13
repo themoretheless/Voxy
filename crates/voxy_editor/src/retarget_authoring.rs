@@ -14,7 +14,7 @@ pub(super) struct BonePicker {
     binding: crate::component_fields::BoundComponentField,
     profile: serde_json::Value,
     target: bool,
-    model: std::sync::Arc<voxy_render::ModelAsset>,
+    model: std::sync::Arc<voxy_model::ModelAsset>,
     pub choices: Vec<String>,
     pub page: usize,
 }
@@ -22,7 +22,7 @@ impl App {
     fn retarget_bone_model(
         &self,
         target: bool,
-    ) -> Result<std::sync::Arc<voxy_render::ModelAsset>, Box<dyn std::error::Error>> {
+    ) -> Result<std::sync::Arc<voxy_model::ModelAsset>, Box<dyn std::error::Error>> {
         let draft = self
             .retarget_draft
             .as_ref()

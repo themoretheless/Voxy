@@ -75,7 +75,7 @@ impl ReflectionCorrespondencePipeline {
             reset,
         )
     }
-    /// Prepare from row-major ReflectionHit storage on this device. The caller
+    /// Prepare from row-major `ReflectionHit` storage on this device. The caller
     /// must preserve hit/table scene identity and encode after the hit producer.
     /// wgpu validates raw-buffer device ownership during binding.
     /// # Errors

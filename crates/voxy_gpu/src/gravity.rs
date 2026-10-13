@@ -1,20 +1,10 @@
-use voxy_render::{ComputeDispatch, ComputeError, PendingComputeReadback};
+use voxy_gpu_core::{ComputeDispatch, ComputeError, GravitySolver, PendingComputeReadback};
 
 /// Explicit f32 hardware representation; CPU f64 solvers are not implicitly
 /// replaced or silently downgraded. Mass must be positive and data finite.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct GravityBody {
-    pub mass: f32,
-    pub position: [f32; 3],
-    pub velocity: [f32; 3],
-}
-#[derive(Clone, Copy, Debug)]
-pub struct GravityParameters {
-    pub constant: f32,
-    pub softening: f32,
-    pub uniform_acceleration: [f32; 3],
-    pub dt: f32,
-}
+pub type GravityBody = voxy_gpu_core::GravityBody<f32>;
+/// Integration constants at the hardware's f32 precision.
+pub type GravityParameters = voxy_gpu_core::GravityParameters<f32>;
 #[derive(Clone, Copy, Debug)]
 pub struct GravityBudget {
     pub max_bodies: u32,
@@ -28,7 +18,8 @@ impl Default for GravityBudget {
         }
     }
 }
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("GPU gravity error: {self:?}")]
 pub enum GravityComputeError {
     InvalidInput,
     Budget,
@@ -36,18 +27,12 @@ pub enum GravityComputeError {
     NumericalOverflow,
     Compute(ComputeError),
 }
-impl std::fmt::Display for GravityComputeError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "GPU gravity error: {self:?}")
-    }
-}
-impl std::error::Error for GravityComputeError {}
 
 #[derive(Debug)]
 pub struct GravityProgram {
     device: wgpu::Device,
-    readback_pool: voxy_render::ComputeReadbackPool,
-    memory_budget: voxy_render::ComputeMemoryBudget,
+    readback_pool: voxy_gpu_core::ComputeReadbackPool,
+    memory_budget: voxy_gpu_core::ComputeMemoryBudget,
     layout: wgpu::BindGroupLayout,
     pipelines: [wgpu::ComputePipeline; 3],
     budget: GravityBudget,
@@ -111,8 +96,8 @@ impl GravityProgram {
         }
         Ok(Self {
             device: device.clone(),
-            readback_pool: voxy_render::ComputeReadbackPool::for_device(device),
-            memory_budget: voxy_render::ComputeMemoryBudget::for_device(device),
+            readback_pool: voxy_gpu_core::ComputeReadbackPool::for_device(device),
+            memory_budget: voxy_gpu_core::ComputeMemoryBudget::for_device(device),
             layout,
             pipelines,
             budget,
@@ -214,8 +199,8 @@ impl GravityProgram {
 #[derive(Debug)]
 pub struct GravityJob {
     // Keep the shared staging cache alive even after the program is dropped.
-    _readback_pool: voxy_render::ComputeReadbackPool,
-    storage: voxy_render::ComputeStorage,
+    _readback_pool: voxy_gpu_core::ComputeReadbackPool,
+    storage: voxy_gpu_core::ComputeStorage,
     binding: wgpu::BindGroup,
     pipelines: [wgpu::ComputePipeline; 3],
     count: u32,
@@ -342,6 +327,77 @@ impl PendingGravity {
             return Err(GravityComputeError::NumericalOverflow);
         }
         Ok(Some(bodies))
+    }
+}
+
+impl GravityJob {
+    /// Binds the job to its device and queue so it can be driven synchronously through
+    /// the shared [`GravitySolver`] contract (plan step D4).
+    #[must_use]
+    pub fn blocking(self, device: wgpu::Device, queue: wgpu::Queue) -> BlockingGravityJob {
+        BlockingGravityJob {
+            job: self,
+            device,
+            queue,
+        }
+    }
+}
+
+/// A [`GravityJob`] driven synchronously: each step submits its own command buffer and
+/// each read waits for the readback to map.
+#[derive(Debug)]
+pub struct BlockingGravityJob {
+    job: GravityJob,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+}
+impl BlockingGravityJob {
+    /// The asynchronous job underneath, for callers that also encode their own passes.
+    #[must_use]
+    pub fn job(&self) -> &GravityJob {
+        &self.job
+    }
+}
+impl GravitySolver for BlockingGravityJob {
+    type Scalar = f32;
+    type Error = GravityComputeError;
+    fn body_count(&self) -> u32 {
+        self.job.body_count()
+    }
+    fn step(&mut self, steps: u32) -> Result<(), GravityComputeError> {
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        self.job.encode_steps(&mut encoder, steps)?;
+        self.queue.submit([encoder.finish()]);
+        Ok(())
+    }
+    fn read(&mut self) -> Result<Vec<GravityBody>, GravityComputeError> {
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        let readback = self.job.encode_readback(&self.device, &mut encoder)?;
+        let submission = self.queue.submit([encoder.finish()]);
+        let mut pending = readback.begin_read();
+        self.device
+            .poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: None,
+            })
+            .map_err(|failure| {
+                GravityComputeError::Compute(ComputeError::Mapping(failure.to_string()))
+            })?;
+        for _ in 0..1024 {
+            if let Some(bodies) = pending.try_read()? {
+                return Ok(bodies);
+            }
+            self.device.poll(wgpu::PollType::Poll).map_err(|failure| {
+                GravityComputeError::Compute(ComputeError::Mapping(failure.to_string()))
+            })?;
+        }
+        Err(GravityComputeError::Compute(ComputeError::Mapping(
+            "gravity readback did not map".into(),
+        )))
     }
 }
 

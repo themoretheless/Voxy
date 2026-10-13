@@ -1,7 +1,8 @@
 //! Playback state belongs to a model owner, never to the shared imported asset.
+use crate::EditorError;
 use std::sync::Arc;
 use voxy_animation::{Animator, AnimatorFrame};
-use voxy_render::ModelAsset;
+use voxy_model::ModelAsset;
 
 /// Marker on the selected clip's normalized authored timeline.
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, PartialEq)]
@@ -52,7 +53,7 @@ impl Default for ModelAnimation {
 }
 
 impl ModelAnimation {
-    pub(crate) fn resolve_clip(&self, model: &ModelAsset) -> Result<Option<usize>, String> {
+    pub(crate) fn resolve_clip(&self, model: &ModelAsset) -> Result<Option<usize>, EditorError> {
         if self.clip_name.is_empty() {
             return Ok(self.clip);
         }
@@ -67,13 +68,13 @@ impl ModelAnimation {
         }
         Ok(Some(index))
     }
-    pub(crate) fn resolve_motion_joint(&self, model: &ModelAsset) -> Result<u16, String> {
+    pub(crate) fn resolve_motion_joint(&self, model: &ModelAsset) -> Result<u16, EditorError> {
         if self.root_motion_bone.is_empty() {
             Ok(self.root_motion_joint)
         } else {
             model
                 .resolve_joint_name(&self.root_motion_bone)
-                .map_err(|error| error.to_string())
+                .map_err(EditorError::from)
         }
     }
 
@@ -158,17 +159,14 @@ impl PreparedModelFade {
         origin_tolerance: f64,
         angular_tolerance: f64,
         max_spans: usize,
-    ) -> Result<PreparedModelFadeMotion, String> {
-        let motion = self
-            .plan
-            .integrate_original_sources_common_similarity(
-                common,
-                scale,
-                origin_tolerance,
-                angular_tolerance,
-                max_spans,
-            )
-            .map_err(|error| error.to_string())?;
+    ) -> Result<PreparedModelFadeMotion, EditorError> {
+        let motion = self.plan.integrate_original_sources_common_similarity(
+            common,
+            scale,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )?;
         Ok(PreparedModelFadeMotion {
             owner,
             prepared: self,
@@ -176,6 +174,7 @@ impl PreparedModelFade {
         })
     }
 
+    #[allow(dead_code)]
     pub(crate) fn bind_motion(
         self,
         owner: voxy_scene::NodeId,
@@ -184,17 +183,14 @@ impl PreparedModelFade {
         origin_tolerance: f64,
         angular_tolerance: f64,
         max_spans: usize,
-    ) -> Result<PreparedModelFadeMotion, String> {
-        let motion = self
-            .plan
-            .integrate_certified_tick(
-                source_frame,
-                target_frame,
-                origin_tolerance,
-                angular_tolerance,
-                max_spans,
-            )
-            .map_err(|error| error.to_string())?;
+    ) -> Result<PreparedModelFadeMotion, EditorError> {
+        let motion = self.plan.integrate_certified_tick(
+            source_frame,
+            target_frame,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )?;
         Ok(PreparedModelFadeMotion {
             owner,
             prepared: self,
@@ -205,7 +201,7 @@ impl PreparedModelFade {
         &self,
         current: &ModelPlayback,
         accepted_wall_seconds: f64,
-    ) -> Result<(Animator, AnimatorFrame), String> {
+    ) -> Result<(Animator, AnimatorFrame), EditorError> {
         let animator = current
             .animator
             .as_ref()
@@ -215,7 +211,7 @@ impl PreparedModelFade {
         }
         self.plan
             .prepare_accepted_frame(&self.model.skeleton, accepted_wall_seconds)
-            .map_err(|error| error.to_string())
+            .map_err(EditorError::from)
     }
 }
 #[derive(Debug)]
@@ -231,34 +227,28 @@ impl PreparedModelFadeMotion {
         &self,
         current: &ModelPlayback,
         receipt: &voxy_gameplay::AppliedCharacterTrajectoryMotion,
-    ) -> Result<(ModelPlayback, AnimatorFrame), String> {
+    ) -> Result<(ModelPlayback, AnimatorFrame), EditorError> {
         let (animator, frame) = self.accepted_frame(current, receipt)?;
-        let wall = self
-            .motion
-            .accepted_wall_time(
-                receipt.completed_spans,
-                receipt.span_fraction,
-                receipt.complete,
-            )
-            .map_err(|error| error.to_string())?;
+        let wall = self.motion.accepted_wall_time(
+            receipt.completed_spans,
+            receipt.span_fraction,
+            receipt.complete,
+        )?;
         let initial = current
             .animator
             .as_ref()
             .ok_or("fade animator disappeared")?;
-        let contact_interval = initial
-            .phase_interval_wall(wall)
-            .map_err(|error| error.to_string())?;
-        let source = initial
-            .source_phase_interval_wall(wall)
-            .map_err(|error| error.to_string())?
-            .map(|source| SourceContactInterval {
-                clip: source.clip.clone(),
-                phase: source.phase,
-                active_tick_fraction: source.active_tick_fraction,
-            });
+        let contact_interval = initial.phase_interval_wall(wall)?;
+        let source =
+            initial
+                .source_phase_interval_wall(wall)?
+                .map(|source| SourceContactInterval {
+                    clip: source.clip.clone(),
+                    phase: source.phase,
+                    active_tick_fraction: source.active_tick_fraction,
+                });
         let frozen = initial
-            .frozen_source_tick_wall(wall)
-            .map_err(|error| error.to_string())?
+            .frozen_source_tick_wall(wall)?
             .map(|source| (source.snapshot.clone(), source.active_tick_fraction));
         let mut candidate = current.clone();
         candidate
@@ -275,36 +265,29 @@ impl PreparedModelFadeMotion {
         &self,
         current: &ModelPlayback,
         receipt: &voxy_gameplay::AppliedCharacterTrajectoryMotion,
-    ) -> Result<(Animator, AnimatorFrame), String> {
+    ) -> Result<(Animator, AnimatorFrame), EditorError> {
         if receipt.owner != self.owner
             || !receipt.matches_rigid_trajectory(&self.motion.approximation().path)
         {
             return Err("accepted fade receipt belongs to another motion".into());
         }
-        let time = self
-            .motion
-            .accepted_wall_time(
-                receipt.completed_spans,
-                receipt.span_fraction,
-                receipt.complete,
-            )
-            .map_err(|error| error.to_string())?;
+        let time = self.motion.accepted_wall_time(
+            receipt.completed_spans,
+            receipt.span_fraction,
+            receipt.complete,
+        )?;
         self.prepared.accepted_frame(current, time)
     }
     pub(crate) fn automatic_coordinate_axis(
         &self,
         preferred: Option<usize>,
-    ) -> Result<usize, String> {
+    ) -> Result<usize, EditorError> {
         if let Some(axis) = preferred {
             return Ok(axis);
         }
         let mut best = None;
         for axis in [1, 0, 2] {
-            if let Some(proof) = self
-                .motion
-                .coordinate_certificate(axis, 4096)
-                .map_err(|error| error.to_string())?
-            {
+            if let Some(proof) = self.motion.coordinate_certificate(axis, 4096)? {
                 let error = proof.error_bound();
                 if best.is_none_or(|(_, old)| error < old) {
                     best = Some((axis, error));
@@ -334,37 +317,30 @@ impl PreparedModelFadeMotion {
         }
     }
 }
+#[allow(dead_code)]
 impl ModelPlayback {
     pub(crate) fn reference_at_current_phase(
         &self,
         axes: [bool; 3],
         current_root_to_body: voxy_animation::RootRigidEnclosure,
         scale: voxy_animation::RootUniformScaleEnclosure,
-    ) -> Result<voxy_animation::RootRigidEnclosure, String> {
+    ) -> Result<voxy_animation::RootRigidEnclosure, EditorError> {
         let animator = self
             .animator
             .as_ref()
             .ok_or("root reference needs a playing clip")?;
-        let factor = match animator
-            .root_rigid_source_phase_factor_enclosure(axes)
-            .map_err(|e| e.to_string())?
-        {
+        let factor = match animator.root_rigid_source_phase_factor_enclosure(axes)? {
             Some(source) => source,
             // Ordinary playback retains unsupported STEP channels. Such moving
             // channels cannot enter the original-source fade compiler.
             None => voxy_animation::RootRigidEnclosure::from_transform(
-                animator
-                    .root_rigid_phase_factor(axes)
-                    .map_err(|e| e.to_string())?,
-            )
-            .map_err(|e| e.to_string())?,
+                animator.root_rigid_phase_factor(axes)?,
+            )?,
         };
-        let factor = factor
-            .with_translation_scale_enclosed(scale)
-            .map_err(|e| e.to_string())?;
+        let factor = factor.with_translation_scale_enclosed(scale)?;
         current_root_to_body
-            .compose(&factor.inverse().map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())
+            .compose(&factor.inverse()?)
+            .map_err(EditorError::from)
     }
 
     pub(crate) fn prepare_certified_fade(
@@ -372,7 +348,7 @@ impl ModelPlayback {
         dt: f32,
         axes: [bool; 3],
         max_spans: usize,
-    ) -> Result<Option<PreparedModelFade>, String> {
+    ) -> Result<Option<PreparedModelFade>, EditorError> {
         self.prepare_certified_fade_wall(f64::from(dt), axes, max_spans)
     }
     pub(crate) fn prepare_certified_fade_wall(
@@ -380,15 +356,14 @@ impl ModelPlayback {
         dt: f64,
         axes: [bool; 3],
         max_spans: usize,
-    ) -> Result<Option<PreparedModelFade>, String> {
+    ) -> Result<Option<PreparedModelFade>, EditorError> {
         let plan = self
             .animator
             .as_ref()
             .map(|animator| {
                 animator.prepare_root_rigid_fade_wall(&self.model.skeleton, dt, axes, max_spans)
             })
-            .transpose()
-            .map_err(|error| error.to_string())?
+            .transpose()?
             .flatten();
         Ok(plan.map(|plan| PreparedModelFade {
             model: self.model.clone(),
@@ -427,7 +402,7 @@ impl ModelPlayback {
     /// Replaces resource identity while retaining original clip sources/clocks.
     /// Different clip revisions may subsequently enter a validated transition,
     /// but an authored skeleton change requires construction of new playback.
-    pub(crate) fn rebind(&mut self, model: Arc<ModelAsset>) -> Result<(), String> {
+    pub(crate) fn rebind(&mut self, model: Arc<ModelAsset>) -> Result<(), EditorError> {
         if Arc::ptr_eq(&self.model, &model) {
             return Ok(());
         }
@@ -440,40 +415,28 @@ impl ModelPlayback {
     pub(crate) fn new(
         model: Arc<ModelAsset>,
         mut settings: ModelAnimation,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, EditorError> {
         settings.validate(
             Some(model.animations.len()),
             Some(model.skeleton.joints().len()),
         )?;
         settings.clip = settings.resolve_clip(&model)?;
         let root_motion_joint = settings.resolve_motion_joint(&model)?;
-        let animator = match settings.clip {
-            Some(index) => {
-                let clip = model
-                    .animations
-                    .get(index)
-                    .ok_or("invalid model animation clip")?;
-                if !clip.is_compatible_with(&model.skeleton) {
-                    return Err("animation clip belongs to an incompatible rig".into());
-                }
-                let mut animator =
-                    Animator::try_new(clip.clone()).map_err(|error| error.to_string())?;
-                animator
-                    .set_speed(settings.speed)
-                    .map_err(|error| error.to_string())?;
-                animator
-                    .set_root_motion_joint(root_motion_joint)
-                    .map_err(|error| error.to_string())?;
-                Some(animator)
+        let animator = if let Some(index) = settings.clip {
+            let clip = model
+                .animations
+                .get(index)
+                .ok_or("invalid model animation clip")?;
+            if !clip.is_compatible_with(&model.skeleton) {
+                return Err("animation clip belongs to an incompatible rig".into());
             }
-            None => {
-                model
-                    .skeleton
-                    .bind_pose()
-                    .skin_matrices(&model.skeleton)
-                    .map_err(|error| error.to_string())?;
-                None
-            }
+            let mut animator = Animator::try_new(clip.clone())?;
+            animator.set_speed(settings.speed)?;
+            animator.set_root_motion_joint(root_motion_joint)?;
+            Some(animator)
+        } else {
+            model.skeleton.bind_pose().skin_matrices(&model.skeleton)?;
+            None
         };
         let mut playback = Self {
             model,
@@ -489,7 +452,10 @@ impl ModelPlayback {
         Ok(playback)
     }
 
-    pub(crate) fn bind_authored_events(&mut self, settings: &ModelAnimation) -> Result<(), String> {
+    pub(crate) fn bind_authored_events(
+        &mut self,
+        settings: &ModelAnimation,
+    ) -> Result<(), EditorError> {
         let track = settings
             .clip
             .map(|index| {
@@ -524,7 +490,7 @@ impl ModelPlayback {
         &mut self,
         index: usize,
         events: Vec<voxy_animation::ClipEvent>,
-    ) -> Result<(), String> {
+    ) -> Result<(), EditorError> {
         let clip = self
             .model
             .animations
@@ -538,7 +504,10 @@ impl ModelPlayback {
     pub(crate) fn take_events(&mut self) -> Vec<voxy_animation::ClipEventOccurrence> {
         std::mem::take(&mut self.pending_events)
     }
-    fn preview_events(&self, dt: f64) -> Result<Vec<voxy_animation::ClipEventOccurrence>, String> {
+    fn preview_events(
+        &self,
+        dt: f64,
+    ) -> Result<Vec<voxy_animation::ClipEventOccurrence>, EditorError> {
         match self.animator.as_ref().and_then(|animator| {
             self.event_tracks
                 .values()
@@ -551,18 +520,17 @@ impl ModelPlayback {
                     dt,
                     4096_usize.saturating_sub(self.pending_events.len()),
                 )
-                .map_err(str::to_string),
+                .map_err(str::to_string)
+                .map_err(Into::into),
             None => Ok(Vec::new()),
         }
     }
-    pub(crate) fn set_root_motion_joint(&mut self, joint: u16) -> Result<(), String> {
+    pub(crate) fn set_root_motion_joint(&mut self, joint: u16) -> Result<(), EditorError> {
         if usize::from(joint) >= self.model.skeleton.joints().len() {
             return Err("invalid model animation motion joint".into());
         }
         if let Some(animator) = &mut self.animator {
-            animator
-                .set_root_motion_joint(joint)
-                .map_err(|error| error.to_string())?;
+            animator.set_root_motion_joint(joint)?;
         }
         self.root_motion_joint = joint;
         Ok(())
@@ -578,7 +546,7 @@ impl ModelPlayback {
             .is_some_and(|animator| animator.pose_blend_phases().source.is_some())
     }
 
-    pub(crate) fn reload_clip(&mut self, index: usize, duration: f32) -> Result<(), String> {
+    pub(crate) fn reload_clip(&mut self, index: usize, duration: f32) -> Result<(), EditorError> {
         let clip = self
             .model
             .animations
@@ -590,10 +558,14 @@ impl ModelPlayback {
             .ok_or("bind pose has no reload phase")?;
         animator
             .transition_to_at_phase(clip.clone(), duration, animator.normalized_phase())
-            .map_err(|error| error.to_string())
+            .map_err(EditorError::from)
     }
 
-    pub(crate) fn transition_to_clip(&mut self, index: usize, duration: f32) -> Result<(), String> {
+    pub(crate) fn transition_to_clip(
+        &mut self,
+        index: usize,
+        duration: f32,
+    ) -> Result<(), EditorError> {
         let clip = self
             .model
             .animations
@@ -603,7 +575,7 @@ impl ModelPlayback {
             .as_mut()
             .ok_or("bind pose has no playing transition source")?
             .transition_to(clip.clone(), duration)
-            .map_err(|e| e.to_string())
+            .map_err(EditorError::from)
     }
 
     pub(crate) fn frozen_source_tick(&self) -> Option<&(Arc<voxy_animation::Pose>, f64)> {
@@ -620,14 +592,12 @@ impl ModelPlayback {
         self.animator.as_ref().map(Animator::normalized_phase)
     }
 
-    pub(crate) fn set_speed(&mut self, speed: f32) -> Result<(), String> {
+    pub(crate) fn set_speed(&mut self, speed: f32) -> Result<(), EditorError> {
         if !speed.is_finite() || !(0.0..=8.0).contains(&speed) {
             return Err("invalid model animation speed".into());
         }
         if let Some(animator) = &mut self.animator {
-            animator
-                .set_speed(speed)
-                .map_err(|error| error.to_string())?;
+            animator.set_speed(speed)?;
         }
         Ok(())
     }
@@ -638,8 +608,8 @@ impl ModelPlayback {
     pub(crate) fn advance_with<T>(
         &mut self,
         dt: f32,
-        publish: impl FnOnce(&ModelAsset, &AnimatorFrame) -> Result<T, String>,
-    ) -> Result<T, String> {
+        publish: impl FnOnce(&ModelAsset, &AnimatorFrame) -> Result<T, EditorError>,
+    ) -> Result<T, EditorError> {
         self.advance_with_motion(dt, false, [false; 3], |model, frame, _| {
             publish(model, frame)
         })
@@ -654,8 +624,8 @@ impl ModelPlayback {
             &ModelAsset,
             &AnimatorFrame,
             Option<&voxy_animation::RootRigidPath>,
-        ) -> Result<T, String>,
-    ) -> Result<T, String> {
+        ) -> Result<T, EditorError>,
+    ) -> Result<T, EditorError> {
         self.advance_with_motion_wall(f64::from(dt), rotation, axes, publish)
     }
 
@@ -668,8 +638,8 @@ impl ModelPlayback {
             &ModelAsset,
             &AnimatorFrame,
             Option<&voxy_animation::RootRigidPath>,
-        ) -> Result<T, String>,
-    ) -> Result<T, String> {
+        ) -> Result<T, EditorError>,
+    ) -> Result<T, EditorError> {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err("invalid model animation timestep".into());
         }
@@ -677,14 +647,12 @@ impl ModelPlayback {
             .animator
             .as_ref()
             .map(|animator| animator.phase_interval_wall(dt))
-            .transpose()
-            .map_err(|error| error.to_string())?;
+            .transpose()?;
         let source_interval = self
             .animator
             .as_ref()
             .map(|animator| animator.source_phase_interval_wall(dt))
-            .transpose()
-            .map_err(|error| error.to_string())?
+            .transpose()?
             .flatten()
             .map(|source| SourceContactInterval {
                 clip: source.clip.clone(),
@@ -695,8 +663,7 @@ impl ModelPlayback {
             .animator
             .as_ref()
             .map(|animator| animator.frozen_source_tick_wall(dt))
-            .transpose()
-            .map_err(|e| e.to_string())?
+            .transpose()?
             .flatten()
             .map(|source| (source.snapshot.clone(), source.active_tick_fraction));
         let events = self.preview_events(dt)?;
@@ -704,26 +671,20 @@ impl ModelPlayback {
         let mut path = None;
         let frame = if let Some(animator) = &mut candidate {
             if rotation {
-                let (frame, rotation) = animator
-                    .advance_with_root_rigid_motion_wall(
-                        &self.model.skeleton,
-                        dt,
-                        axes,
-                        voxy_animation::MAX_ROOT_ROTATION_SPANS,
-                    )
-                    .map_err(|error| error.to_string())?;
+                let (frame, rotation) = animator.advance_with_root_rigid_motion_wall(
+                    &self.model.skeleton,
+                    dt,
+                    axes,
+                    voxy_animation::MAX_ROOT_ROTATION_SPANS,
+                )?;
                 path = Some(rotation);
                 frame
             } else {
-                animator
-                    .advance_wall(&self.model.skeleton, dt)
-                    .map_err(|error| error.to_string())?
+                animator.advance_wall(&self.model.skeleton, dt)?
             }
         } else {
             let pose = self.model.skeleton.bind_pose();
-            let skin_matrices = pose
-                .skin_matrices(&self.model.skeleton)
-                .map_err(|error| error.to_string())?;
+            let skin_matrices = pose.skin_matrices(&self.model.skeleton)?;
             AnimatorFrame {
                 pose,
                 skin_matrices,
@@ -770,7 +731,7 @@ mod tests {
     }
     fn model() -> Arc<ModelAsset> {
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
-        Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap())
+        Arc::new(ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap())
     }
     #[test]
     fn shared_asset_has_independent_owner_clocks_and_failed_publication_retries() {
@@ -806,7 +767,7 @@ mod tests {
             ModelAsset::parse(
                 include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
                 &[],
-                voxy_render::ModelLimits::default(),
+                voxy_model::ModelLimits::default(),
             )
             .unwrap(),
         );
@@ -822,7 +783,7 @@ mod tests {
         let positions = |model: &ModelAsset, frame: &AnimatorFrame| {
             assert_eq!(frame.skin_matrices.len(), model.skeleton.joints().len());
             assert!(frame.skin_matrices.iter().all(|matrix| matrix.is_finite()));
-            let meshes = model.scene_meshes(&frame.pose).map_err(|e| e.to_string())?;
+            let meshes = model.scene_meshes(&frame.pose)?;
             let vertices: Vec<_> = meshes
                 .iter()
                 .flat_map(|mesh| mesh.vertices().iter().map(|vertex| vertex.position))
@@ -895,7 +856,9 @@ mod tests {
             ModelPlayback::new(asset, ModelAnimation::default())
                 .err()
                 .unwrap(),
-            voxy_animation::AnimationError::InvalidPose(0).to_string()
+            voxy_animation::AnimationError::InvalidPose(0)
+                .to_string()
+                .into()
         );
     }
 
@@ -920,7 +883,9 @@ mod tests {
         Arc::make_mut(&mut asset).skeleton = voxy_animation::Skeleton::new(joints).unwrap();
         assert_eq!(
             ModelPlayback::new(asset, settings).err().unwrap(),
-            voxy_animation::AnimationError::InvalidPose(0).to_string()
+            voxy_animation::AnimationError::InvalidPose(0)
+                .to_string()
+                .into()
         );
     }
 
@@ -1237,7 +1202,7 @@ mod accepted_fade_tests {
     fn asset_bound_fade_rejects_rebind_and_changed_clock_before_pose_preparation() {
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
         let asset =
-            Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap());
+            Arc::new(ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap());
         let mut playback = ModelPlayback::new(asset.clone(), ModelAnimation::default()).unwrap();
         playback.transition_to_clip(0, 0.125).unwrap();
         let staged = playback
@@ -1250,7 +1215,7 @@ mod accepted_fade_tests {
         changed.set_speed(0.5).unwrap();
         assert!(staged.accepted_frame(&changed, 0.0625).is_err());
         let replacement =
-            Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap());
+            Arc::new(ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap());
         changed = playback.clone();
         changed.rebind(replacement).unwrap();
         assert!(staged.accepted_frame(&changed, 0.0625).is_err());
@@ -1278,7 +1243,7 @@ mod physical_fade_receipt_tests {
         use voxy_gameplay::{CharacterBody, CharacterPhysics, CharacterTickError, player_input};
         use voxy_scene::{SceneGraph, Transform};
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
-        let mut model = ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap();
+        let mut model = ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap();
         if original_sources {
             use voxy_animation::{
                 AnimationClip, Interpolation, JointTangents, JointTrack, Playback, QuatKey,
@@ -1425,7 +1390,9 @@ mod physical_fade_receipt_tests {
             f64::from(dt),
             &[request],
             |preview, _| {
-                let (mut rejected, _) = staged.accepted_playback(&playback, &preview.motions[0])?;
+                let (mut rejected, _) = staged
+                    .accepted_playback(&playback, &preview.motions[0])
+                    .map_err(|e| e.to_string())?;
                 assert_eq!(rejected.take_events().len(), 1);
                 assert!(
                     other

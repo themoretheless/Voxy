@@ -1,4 +1,6 @@
-use std::{fmt, sync::Arc};
+/// Joint budget of a skinned mesh; `voxy_model` checks it equals the animation rig budget.
+pub const MAX_SKIN_JOINTS: usize = 256;
+use std::sync::Arc;
 
 use bytemuck::{Pod, Zeroable};
 use glam::Mat4;
@@ -39,7 +41,7 @@ impl SkinnedMesh {
         if vertices.is_empty() || indices.is_empty() || !indices.len().is_multiple_of(3) {
             return Err(SkinnedMeshError::InvalidGeometry);
         }
-        if joint_count == 0 || usize::from(joint_count) > voxy_animation::MAX_JOINTS {
+        if joint_count == 0 || usize::from(joint_count) > MAX_SKIN_JOINTS {
             return Err(SkinnedMeshError::InvalidJointCount(joint_count));
         }
         for (index, vertex) in vertices.iter().enumerate() {
@@ -153,15 +155,18 @@ impl SkinnedMesh {
 
     /// Validate the complete world-space deformation before any legacy GPU writes.
     /// Positions alone can remain finite when a blended normal matrix collapses.
-    pub(crate) fn validate_render_pose(
+    #[doc(hidden)]
+    pub fn validate_render_pose(
         &self,
         joints: &[Mat4],
         model: Mat4,
     ) -> Result<(), SkinnedUploadError> {
         validate_temporal_palette(self, joints, model)?;
         for vertex in self.vertices.iter() {
-            skinned_position(vertex, joints, model)?;
-            skinned_normal(vertex, joints, model)?;
+            // The blended palette is identical for the position and normal tests.
+            let skin = blended_skin(vertex, joints);
+            skinned_position_with(vertex, skin, model)?;
+            skinned_normal_with(vertex, skin, model)?;
         }
         Ok(())
     }
@@ -176,7 +181,8 @@ impl SkinnedMesh {
         Ok(())
     }
 
-    pub(crate) fn posed_normals(
+    #[doc(hidden)]
+    pub fn posed_normals(
         &self,
         joints: &[Mat4],
         model: Mat4,
@@ -200,7 +206,8 @@ impl SkinnedMesh {
         Ok(())
     }
 
-    pub(crate) fn posed_positions(
+    #[doc(hidden)]
+    pub fn posed_positions(
         &self,
         joints: &[Mat4],
         model: Mat4,
@@ -248,7 +255,8 @@ impl SkinnedMesh {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("skinned mesh error: {self:?}")]
 pub enum SkinnedMeshError {
     InvalidGeometry,
     InvalidJointCount(u16),
@@ -258,14 +266,6 @@ pub enum SkinnedMeshError {
     InvalidIndex,
 }
 
-impl fmt::Display for SkinnedMeshError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "skinned mesh error: {self:?}")
-    }
-}
-
-impl std::error::Error for SkinnedMeshError {}
-
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub(crate) struct ObjectUniform {
@@ -274,7 +274,8 @@ pub(crate) struct ObjectUniform {
 }
 
 #[derive(Debug)]
-pub(crate) struct GpuSkinnedMesh {
+#[doc(hidden)]
+pub struct GpuSkinnedMesh {
     pub vertex: wgpu::Buffer,
     pub index: wgpu::Buffer,
     pub index_count: u32,
@@ -322,7 +323,7 @@ pub(crate) fn object_uniform(model: Mat4, material_layer: u32) -> ObjectUniform 
     }
 }
 
-pub(crate) fn create_skin_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+pub fn create_skin_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
     device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
         label: Some("Voxy skin layout"),
         entries: &[
@@ -418,7 +419,8 @@ pub(crate) fn create_skinned_pipeline(
     })
 }
 
-pub(crate) fn upload_skinned(
+#[doc(hidden)]
+pub fn upload_skinned(
     device: &wgpu::Device,
     layout: &wgpu::BindGroupLayout,
     mesh: &SkinnedMesh,
@@ -489,7 +491,8 @@ pub(crate) fn validate_palette(
     Ok(())
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("skinned upload error: {self:?}")]
 pub enum SkinnedUploadError {
     /// Prepared temporal snapshot no longer matches this history generation.
     StaleHistory,
@@ -499,14 +502,6 @@ pub enum SkinnedUploadError {
     NonFiniteMatrix,
     TooManyIndices,
 }
-
-impl fmt::Display for SkinnedUploadError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "skinned upload error: {self:?}")
-    }
-}
-
-impl std::error::Error for SkinnedUploadError {}
 
 #[cfg(test)]
 mod tests {
@@ -651,15 +646,27 @@ fn validate_temporal_palette(
     }
     Ok(())
 }
+fn blended_skin(vertex: &SkinnedVertex, joints: &[Mat4]) -> Mat4 {
+    let mut skin = Mat4::ZERO;
+    for (joint, weight) in vertex.joints.into_iter().zip(vertex.weights) {
+        skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
+    }
+    skin
+}
+
 fn skinned_position(
     vertex: &SkinnedVertex,
     joints: &[Mat4],
     model: Mat4,
 ) -> Result<[f32; 3], SkinnedUploadError> {
-    let mut skin = Mat4::ZERO;
-    for (joint, weight) in vertex.joints.into_iter().zip(vertex.weights) {
-        skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
-    }
+    skinned_position_with(vertex, blended_skin(vertex, joints), model)
+}
+
+fn skinned_position_with(
+    vertex: &SkinnedVertex,
+    skin: Mat4,
+    model: Mat4,
+) -> Result<[f32; 3], SkinnedUploadError> {
     let world = model * skin * glam::Vec3::from_array(vertex.position).extend(1.0);
     if !world.is_finite() {
         return Err(SkinnedUploadError::NonFiniteMatrix);
@@ -672,10 +679,14 @@ fn skinned_normal(
     joints: &[Mat4],
     model: Mat4,
 ) -> Result<[f32; 3], SkinnedUploadError> {
-    let mut skin = Mat4::ZERO;
-    for (joint, weight) in vertex.joints.into_iter().zip(vertex.weights) {
-        skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
-    }
+    skinned_normal_with(vertex, blended_skin(vertex, joints), model)
+}
+
+fn skinned_normal_with(
+    vertex: &SkinnedVertex,
+    skin: Mat4,
+    model: Mat4,
+) -> Result<[f32; 3], SkinnedUploadError> {
     let mut linear = glam::Mat3::from_mat4(model * skin);
     let scale = linear
         .to_cols_array()
@@ -719,7 +730,3 @@ fn skinned_normal(
     }
     Ok((transformed / max).normalize().to_array())
 }
-
-#[cfg(test)]
-#[path = "skinned_normal_gpu_tests.rs"]
-mod normal_tests;

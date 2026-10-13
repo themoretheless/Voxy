@@ -2,15 +2,24 @@
 
 mod accumulation;
 pub use accumulation::{RadianceAccumulationFrame, RadianceAccumulator};
-mod backend;
 mod joint_contact_dot;
-pub use joint_contact_dot::{JointContactDotInput,JointDotError,JOINT_CONTACT_DOT_SHADER,JOINT_CONTACT_NORMALIZE_SHADER,JOINT_CONTACT_NORMALIZE_SERIAL_SHADER};
-pub use joint_contact_dot::{ResidentContactQrInput,ResidentContactQrOutput,JOINT_CONTACT_QR_SHADER};
-pub use joint_contact_dot::{ResidentContactEqualityInput,ResidentContactEqualityOutput,ValidatedResidentContactEquality,ResidentContactQrPrefix,JOINT_CONTACT_EQUALITY_SHADER};
+pub use joint_contact_dot::{
+    JOINT_CONTACT_DOT_SHADER, JOINT_CONTACT_NORMALIZE_SERIAL_SHADER,
+    JOINT_CONTACT_NORMALIZE_SHADER, JointContactDotInput, JointDotError,
+};
+pub use joint_contact_dot::{
+    JOINT_CONTACT_EQUALITY_SHADER, ResidentContactEqualityInput, ResidentContactEqualityOutput,
+    ResidentContactQrPrefix, ValidatedResidentContactEquality,
+};
+pub use joint_contact_dot::{
+    JOINT_CONTACT_QR_SHADER, ResidentContactQrInput, ResidentContactQrOutput,
+};
 mod banded_solve;
 mod banded_transfer;
+pub use banded_solve::{
+    BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
+};
 pub use banded_transfer::BandedTransferProgram;
-pub use banded_solve::{BandedSystem,BandedSolveInput,BandedSolveError,BandedPackedReference,BANDED_SOLVE_SHADER};
 mod blit;
 mod camera;
 mod planar_capture;
@@ -22,16 +31,14 @@ pub use planar_capture::{
 mod camera_lod;
 pub use camera_lod::SceneLodBounds;
 mod certified_lod;
-mod compute;
-mod compute_memory;
-pub use compute_memory::{
-    ComputeMemoryBudget, ComputeMemoryStats, ComputeStorage, PendingComputeRetirement,
-};
-mod compute_readback;
 pub use certified_lod::{
     CertifiedLodError, CertifiedLodIndexSet, CertifiedLodSubdivisionVariant, CertifiedLodVariant,
 };
-pub use compute_readback::{ComputeReadbackLimits, ComputeReadbackPool, ComputeReadbackStats};
+pub use voxy_gpu_core::{
+    ComputeMemoryBudget, ComputeMemoryStats, ComputeStorage, GpuIndirectMesh,
+    ManagedBufferDescriptor, PendingComputeRetirement,
+};
+pub use voxy_gpu_core::{ComputeReadbackLimits, ComputeReadbackPool, ComputeReadbackStats};
 mod depth_motion;
 mod depth_sample;
 mod direct_lighting;
@@ -77,7 +84,6 @@ pub use lod_subdivision::{
     LodSubdivisionWitness, LodSubdivisionWitnesses, certify_subdivided_lod_error,
     generate_subdivided_lod_witnesses,
 };
-mod model;
 mod motion;
 mod obj;
 mod previous_position;
@@ -106,18 +112,13 @@ mod surface_lighting;
 mod surface_reflection;
 mod xr;
 
-pub use backend::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
 pub use blit::{ProcessedColorTarget, StorageColorBlit, StorageColorView, TextureBlit};
 pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
-pub use model::{
-    ModelAsset, ModelError, ModelGeometry, ModelLimits, ModelPrimitive, ModelSurface64,
-    ModelTexture,
-};
 pub use renderer::{
-    CameraView, GpuIndirectMesh, GpuQuad, RenderOutcome, Renderer, RendererError,
-    SkinnedMotionOutput, SurfaceState,
+    CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };
 pub use skinned::{SkinnedMesh, SkinnedMeshError, SkinnedUploadError, SkinnedVertex};
+pub use voxy_gpu_core::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
 mod skinned_lod;
 pub use skinned_lod::{PreparedSkinnedLod, SkinnedLodError, SkinnedLodMesh};
 mod skinned_lod_gpu;
@@ -133,7 +134,7 @@ pub use scene::{
 
 pub use camera::{InvalidSceneCamera, SceneCamera, SceneProjection};
 
-pub use compute::{
+pub use voxy_gpu_core::{
     ComputeDispatch, ComputeError, ComputeJob, ComputeProgram, PendingComputeReadback,
 };
 
@@ -297,7 +298,9 @@ pub use surface_rigid_skinning::SurfaceRigidSkinWeight;
 mod surface_normal_transport;
 
 mod fiber_surface;
-pub use fiber_surface::{FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer, FIBER_SURFACE_SHADER};
+pub use fiber_surface::{
+    FIBER_SURFACE_SHADER, FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer,
+};
 
 mod surface_light_transfer;
 pub use surface_light_transfer::{SurfaceLightTransfer, SurfaceLightVertexBinding};
@@ -305,35 +308,71 @@ mod surface_light_frame;
 pub use surface_light_frame::{SurfaceLightFrame, SurfaceLightFrameSettings};
 
 mod surface_color_transfer;
-pub use surface_color_transfer::{SurfaceColorBinding,SurfaceColorTransfer};
+pub use surface_color_transfer::{SurfaceColorBinding, SurfaceColorTransfer};
 
-pub use joint_contact_dot::{ExperimentalResidentContactBatch,ExperimentalResidentContactInput,EXPERIMENTAL_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,experimental_seeded_resident_contact_shader};
+pub use joint_contact_dot::{
+    EXPERIMENTAL_RESIDENT_CONTACT_SHADER, EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,
+    EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER, ExperimentalResidentContactBatch,
+    ExperimentalResidentContactInput, experimental_seeded_resident_contact_shader,
+};
 
 mod liquid_density;
-pub use liquid_density::{LiquidDensityParticle,LiquidDensityKernel,LiquidDensityInput,LiquidDensityError,LIQUID_DENSITY_SHADER,
-    LiquidDensityCompute,LiquidDensityDispatch,PendingLiquidDensity,LiquidDensityReadError};
+pub use liquid_density::{
+    LIQUID_DENSITY_SHADER, LiquidDensityCompute, LiquidDensityDispatch, LiquidDensityError,
+    LiquidDensityInput, LiquidDensityKernel, LiquidDensityParticle, LiquidDensityReadError,
+    PendingLiquidDensity,
+};
 
 mod liquid_pair_forces;
-pub use liquid_pair_forces::{LiquidPreparedPairForcesInput,LiquidPairForceParameters,LiquidPairForceCandidate,LiquidPairForcesInput,LIQUID_PAIR_FORCES_SHADER};
+pub use liquid_pair_forces::{
+    LIQUID_PAIR_FORCES_SHADER, LiquidPairForceCandidate, LiquidPairForceParameters,
+    LiquidPairForcesInput, LiquidPreparedPairForcesInput,
+};
 
 mod liquid_normals;
-pub use liquid_normals::{LiquidNormalParticle,LiquidNormalsInput,LIQUID_NORMALS_SHADER};
+pub use liquid_normals::{LIQUID_NORMALS_SHADER, LiquidNormalParticle, LiquidNormalsInput};
 
 mod liquid_accumulation;
-pub use liquid_accumulation::{LiquidAccumulationInput,LiquidAccumulationCandidate,LIQUID_ACCUMULATION_SHADER};
+pub use liquid_accumulation::{
+    LIQUID_ACCUMULATION_SHADER, LiquidAccumulationCandidate, LiquidAccumulationInput,
+};
 
 mod liquid_force_pipeline;
-pub use liquid_force_pipeline::{LiquidForcePipeline,LiquidForcePipelineInput,LiquidForcePipelineCandidate,LiquidForcePipelineDispatch,PendingLiquidForcePipeline,LiquidForcePipelineError};
+pub use liquid_force_pipeline::{
+    LiquidForcePipeline, LiquidForcePipelineCandidate, LiquidForcePipelineDispatch,
+    LiquidForcePipelineError, LiquidForcePipelineInput, PendingLiquidForcePipeline,
+};
 
 mod compute_chain;
 
 mod liquid_density_normal_pipeline;
-pub use liquid_density_normal_pipeline::{LiquidPressureParameters,LiquidDensityNormalPipeline,LiquidDensityNormalInput,LiquidDensityNormalCandidate,LiquidDensityNormalDispatch,PendingLiquidDensityNormal};
+pub use liquid_density_normal_pipeline::{
+    LiquidDensityNormalCandidate, LiquidDensityNormalDispatch, LiquidDensityNormalInput,
+    LiquidDensityNormalPipeline, LiquidPressureParameters, PendingLiquidDensityNormal,
+};
 
 mod liquid_pipeline;
-pub use liquid_pipeline::{LiquidPipelineWorkspace,LiquidPipeline,LiquidPipelineInput,LiquidPipelineCandidate,LiquidPipelineDispatch,PendingLiquidPipeline};
+pub use liquid_pipeline::{
+    LiquidPipeline, LiquidPipelineCandidate, LiquidPipelineDispatch, LiquidPipelineInput,
+    LiquidPipelineWorkspace, PendingLiquidPipeline,
+};
 
 mod liquid_topology;
 pub use liquid_topology::LiquidPairTopology;
 
-pub use joint_contact_dot::{ExperimentalTripleContactInput,ExperimentalTripleActiveContactInput,ExperimentalTripleActiveFactors,ExperimentalTripleActiveContactBatch,ExperimentalTripleCompletedFactorReadback,ExperimentalTripleExpansion,ExperimentalTripleExpandedCandidate};
+pub use joint_contact_dot::{
+    ExperimentalTripleActiveContactBatch, ExperimentalTripleActiveContactInput,
+    ExperimentalTripleActiveFactors, ExperimentalTripleCompletedFactorReadback,
+    ExperimentalTripleContactInput, ExperimentalTripleExpandedCandidate,
+    ExperimentalTripleExpansion,
+};
+
+pub use skinned::MAX_SKIN_JOINTS;
+
+/// Helpers for integration tests of downstream crates (not part of the rendering API).
+#[doc(hidden)]
+pub mod test_support {
+    pub use crate::scene::{NormalCache, smooth_normals};
+    pub use crate::skinned::{GpuSkinnedMesh, create_skin_layout, upload_skinned};
+    pub use crate::skinned_lod::test_source as skinned_lod_source;
+}

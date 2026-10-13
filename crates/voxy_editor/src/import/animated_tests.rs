@@ -1,5 +1,6 @@
 use super::*;
-use voxy_render::{LodArchiveLimits, LodSurface, ModelAsset, ModelGeometry, ModelLimits};
+use voxy_model::{ModelAsset, ModelGeometry, ModelLimits};
+use voxy_render::{LodArchiveLimits, LodSurface};
 
 #[test]
 fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
@@ -140,7 +141,15 @@ fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
     }
     let retained = app.catalog.snapshot(&app.id).unwrap();
     assert!(std::sync::Arc::ptr_eq(&before, &retained));
-    assert!(retained.value().animated.as_ref().unwrap().animations.len() > 0);
+    assert!(
+        !retained
+            .value()
+            .animated
+            .as_ref()
+            .unwrap()
+            .animations
+            .is_empty()
+    );
     std::fs::write(root.join("proof.lod"), &certificate).unwrap();
     while std::sync::Arc::ptr_eq(&before, &app.catalog.snapshot(&app.id).unwrap()) {
         app.tick().unwrap();

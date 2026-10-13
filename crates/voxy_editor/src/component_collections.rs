@@ -134,20 +134,19 @@ impl crate::App {
             }
             for instance in &snapshot.source.instances {
                 for (local, overrides) in &instance.overrides {
-                    if voxy_scene::instance_object_id(&instance.id, local) == object.id {
-                        if let Some(changes) = overrides
+                    if voxy_scene::instance_object_id(&instance.id, local) == object.id
+                        && let Some(changes) = overrides
                             .component_collections
                             .get(list.schema)
                             .and_then(|changes| changes.get(list.path))
-                        {
-                            candidates.extend(
-                                changes
-                                    .removed
-                                    .iter()
-                                    .filter(|id| item_key(id) == target)
-                                    .cloned(),
-                            );
-                        }
+                    {
+                        candidates.extend(
+                            changes
+                                .removed
+                                .iter()
+                                .filter(|id| item_key(id) == target)
+                                .cloned(),
+                        );
                     }
                 }
             }
@@ -290,17 +289,16 @@ impl crate::App {
             }
             for instance in &snapshot.source.instances {
                 for (local, overrides) in &instance.overrides {
-                    if voxy_scene::instance_object_id(&instance.id, local) == object.id {
-                        if let Some(changes) = overrides
+                    if voxy_scene::instance_object_id(&instance.id, local) == object.id
+                        && let Some(changes) = overrides
                             .component_collections
                             .get(list.schema)
                             .and_then(|changes| changes.get(list.path))
-                        {
-                            for id in &changes.removed {
-                                deleted
-                                    .entry(id.clone())
-                                    .or_insert_with(|| id.chars().take(40).collect());
-                            }
+                    {
+                        for id in &changes.removed {
+                            deleted
+                                .entry(id.clone())
+                                .or_insert_with(|| id.chars().take(40).collect());
                         }
                     }
                 }

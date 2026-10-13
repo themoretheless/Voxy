@@ -6,17 +6,27 @@ pub(super) const BAND: usize = 9;
 mod contact_active_set;
 #[path = "direct_energy.rs"]
 mod energy;
-pub(super) fn structural_energy(rod:&HairRod,dt:f64)->Result<f64, &'static str> {
-    energy::structural(rod,dt)
+pub(super) fn structural_energy(rod: &HairRod, dt: f64) -> Result<f64, &'static str> {
+    energy::structural(rod, dt)
 }
 
-pub(super) fn structural_delta(rod:&HairRod,x:&[V],q:&[Q],dt:f64)->Result<f64, &'static str> {
-    energy::structural_delta(rod,x,q,dt)
+pub(super) fn structural_delta(
+    rod: &HairRod,
+    x: &[V],
+    q: &[Q],
+    dt: f64,
+) -> Result<f64, &'static str> {
+    energy::structural_delta(rod, x, q, dt)
 }
 
 #[cfg(test)]
-pub(super) fn structural_delta_parts(rod:&HairRod,x:&[V],q:&[Q],dt:f64)->Result<[f64;2], &'static str> {
-    energy::structural_delta_parts(rod,x,q,dt)
+pub(super) fn structural_delta_parts(
+    rod: &HairRod,
+    x: &[V],
+    q: &[Q],
+    dt: f64,
+) -> Result<[f64; 2], &'static str> {
+    energy::structural_delta_parts(rod, x, q, dt)
 }
 
 #[cfg(test)]
@@ -24,83 +34,170 @@ mod tests {
     use super::*;
     #[test]
     fn lower_factored_retains_small_response_between_large_terms() {
-        let mut factor=vec![0.;3*BAND];for i in 0..3 {factor[i*BAND]=1.;}
-        factor[2*BAND+2]=1e16;factor[2*BAND+1]=-1e16;
-        let mut response=vec![1.,1.,1.];
-        solve_lower_factored(&factor,&mut response,0..3);
-        assert_eq!(response,vec![1.,1.,1.]);
+        let mut factor = vec![0.; 3 * BAND];
+        for i in 0..3 {
+            factor[i * BAND] = 1.;
+        }
+        factor[2 * BAND + 2] = 1e16;
+        factor[2 * BAND + 1] = -1e16;
+        let mut response = vec![1., 1., 1.];
+        solve_lower_factored(&factor, &mut response, 0..3);
+        assert_eq!(response, vec![1., 1., 1.]);
     }
 
     #[test]
     fn upper_factored_retains_small_response_between_large_terms() {
-        let mut factor=vec![0.;3*BAND];for i in 0..3 {factor[i*BAND]=1.;}
-        factor[BAND+1]=1e16;factor[2*BAND+2]=-1e16;
-        let mut response=vec![1.,1.,1.];
-        solve_upper_factored(&factor,&mut response,0..3);
-        assert_eq!(response,vec![1.,1.,1.]);
+        let mut factor = vec![0.; 3 * BAND];
+        for i in 0..3 {
+            factor[i * BAND] = 1.;
+        }
+        factor[BAND + 1] = 1e16;
+        factor[2 * BAND + 2] = -1e16;
+        let mut response = vec![1., 1., 1.];
+        solve_upper_factored(&factor, &mut response, 0..3);
+        assert_eq!(response, vec![1., 1., 1.]);
     }
-
 
     #[test]
     fn separated_contact_within_active_tolerance_has_no_attractive_force() {
-        let rest=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],super::super::HairMaterial::default()).unwrap();
-        let (baseline_matrix,baseline_rhs)=assemble(&mut rest.clone(),1./240.).unwrap();
-        let mut separated=rest.clone();
-        separated.record_point_contact(1,[1.,0.,0.],[-5e-11,0.01,0.],super::super::ContactSource::Mesh(0));
-        let (matrix,rhs)=assemble(&mut separated,1./240.).unwrap();
-        assert_eq!(rhs,baseline_rhs,"separated contact introduced an attractive force");
-        let mut penetrating=rest.clone();
-        penetrating.record_point_contact(1,[1.,0.,0.],[5e-11,0.01,0.],super::super::ContactSource::Mesh(0));
-        let (penetrating_matrix,penetrating_rhs)=assemble(&mut penetrating,1./240.).unwrap();
-        assert_eq!(matrix,baseline_matrix,"a separated resting contact must release its stiffness");
-        assert!(penetrating_matrix[6*BAND]>baseline_matrix[6*BAND],"penetrating contact stiffness must remain enabled");
-        assert!(penetrating_rhs[6]>baseline_rhs[6],"penetration must generate an outward force");
+        let rest = HairRod::new(
+            vec![[0., 0., 0.], [0., 0.01, 0.], [0., 0.02, 0.]],
+            super::super::HairMaterial::default(),
+        )
+        .unwrap();
+        let (baseline_matrix, baseline_rhs) = assemble(&mut rest.clone(), 1. / 240.).unwrap();
+        let mut separated = rest.clone();
+        separated.record_point_contact(
+            1,
+            [1., 0., 0.],
+            [-5e-11, 0.01, 0.],
+            super::super::ContactSource::Mesh(0),
+        );
+        let (matrix, rhs) = assemble(&mut separated, 1. / 240.).unwrap();
+        assert_eq!(
+            rhs, baseline_rhs,
+            "separated contact introduced an attractive force"
+        );
+        let mut penetrating = rest.clone();
+        penetrating.record_point_contact(
+            1,
+            [1., 0., 0.],
+            [5e-11, 0.01, 0.],
+            super::super::ContactSource::Mesh(0),
+        );
+        let (penetrating_matrix, penetrating_rhs) = assemble(&mut penetrating, 1. / 240.).unwrap();
+        assert_eq!(
+            matrix, baseline_matrix,
+            "a separated resting contact must release its stiffness"
+        );
+        assert!(
+            penetrating_matrix[6 * BAND] > baseline_matrix[6 * BAND],
+            "penetrating contact stiffness must remain enabled"
+        );
+        assert!(
+            penetrating_rhs[6] > baseline_rhs[6],
+            "penetration must generate an outward force"
+        );
     }
     #[test]
     fn boundary_contact_releases_opening_motion_and_resists_closing_motion() {
-        for predicted in [-1e-4,1e-4] {
-            let mut free=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],super::super::HairMaterial::default()).unwrap();
-            free.predicted_x[1][0]=predicted;
-            let mut contact=free.clone();contact.record_point_contact(1,[1.,0.,0.],[0.,0.01,0.],super::super::ContactSource::Mesh(0));
-            let (mut free_matrix,mut free_rhs)=assemble(&mut free,1./240.).unwrap();
-            let (mut matrix,mut rhs)=assemble(&mut contact,1./240.).unwrap();
-            if predicted>0. {
-                assert_eq!(matrix,free_matrix,"opening contact retained adhesive stiffness");
-                assert_eq!(rhs,free_rhs);
+        for predicted in [-1e-4, 1e-4] {
+            let mut free = HairRod::new(
+                vec![[0., 0., 0.], [0., 0.01, 0.], [0., 0.02, 0.]],
+                super::super::HairMaterial::default(),
+            )
+            .unwrap();
+            free.predicted_x[1][0] = predicted;
+            let mut contact = free.clone();
+            contact.record_point_contact(
+                1,
+                [1., 0., 0.],
+                [0., 0.01, 0.],
+                super::super::ContactSource::Mesh(0),
+            );
+            let (mut free_matrix, mut free_rhs) = assemble(&mut free, 1. / 240.).unwrap();
+            let (mut matrix, mut rhs) = assemble(&mut contact, 1. / 240.).unwrap();
+            if predicted > 0. {
+                assert_eq!(
+                    matrix, free_matrix,
+                    "opening contact retained adhesive stiffness"
+                );
+                assert_eq!(rhs, free_rhs);
             }
-            let end=rhs.len()-3;
-            cholesky(&mut free_matrix,&mut free_rhs,6..end);
-            cholesky(&mut matrix,&mut rhs,6..end);
-            if predicted<0. {
-                assert!(rhs[6]>free_rhs[6],"closing contact failed to resist penetration");
-                assert!(rhs[6]<=0.,"nonadhesive plane pushed beyond the free opening side");
-            } else {assert_eq!(rhs,free_rhs);}
+            let end = rhs.len() - 3;
+            cholesky(&mut free_matrix, &mut free_rhs, 6..end);
+            cholesky(&mut matrix, &mut rhs, 6..end);
+            if predicted < 0. {
+                assert!(
+                    rhs[6] > free_rhs[6],
+                    "closing contact failed to resist penetration"
+                );
+                assert!(
+                    rhs[6] <= 0.,
+                    "nonadhesive plane pushed beyond the free opening side"
+                );
+            } else {
+                assert_eq!(rhs, free_rhs);
+            }
         }
     }
     #[test]
     fn independent_surfaces_keep_two_normal_constraints_without_cross_axis_stiffness() {
-        let mut free=HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],super::super::HairMaterial::default()).unwrap();
-        free.predicted_x[1][0]=-1e-4;free.predicted_x[1][1]=-2e-4;
-        let mut contact=free.clone();
-        contact.record_point_contact(1,[1.,0.,0.],[0.,0.,0.01],super::super::ContactSource::Mesh(0));
-        contact.record_point_contact(1,[0.,1.,0.],[0.,0.,0.01],super::super::ContactSource::Mesh(1));
-        let (baseline,_)=assemble(&mut free,1./240.).unwrap();
-        let (matrix,_)=assemble(&mut contact,1./240.).unwrap();
-        assert!(matrix[6*BAND]>baseline[6*BAND]);
-        assert!(matrix[7*BAND]>baseline[7*BAND]);
-        assert_eq!(matrix[7*BAND+1],baseline[7*BAND+1],"two surfaces were averaged into an artificial diagonal plane");
+        let mut free = HairRod::new(
+            vec![[0., 0., 0.], [0., 0., 0.01], [0., 0., 0.02]],
+            super::super::HairMaterial::default(),
+        )
+        .unwrap();
+        free.predicted_x[1][0] = -1e-4;
+        free.predicted_x[1][1] = -2e-4;
+        let mut contact = free.clone();
+        contact.record_point_contact(
+            1,
+            [1., 0., 0.],
+            [0., 0., 0.01],
+            super::super::ContactSource::Mesh(0),
+        );
+        contact.record_point_contact(
+            1,
+            [0., 1., 0.],
+            [0., 0., 0.01],
+            super::super::ContactSource::Mesh(1),
+        );
+        let (baseline, _) = assemble(&mut free, 1. / 240.).unwrap();
+        let (matrix, _) = assemble(&mut contact, 1. / 240.).unwrap();
+        assert!(matrix[6 * BAND] > baseline[6 * BAND]);
+        assert!(matrix[7 * BAND] > baseline[7 * BAND]);
+        assert_eq!(
+            matrix[7 * BAND + 1],
+            baseline[7 * BAND + 1],
+            "two surfaces were averaged into an artificial diagonal plane"
+        );
     }
     #[test]
     fn interior_segment_contact_couples_both_endpoint_positions() {
-        let mut free=HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],super::super::HairMaterial::default()).unwrap();
-        free.predicted_x[1][0]=-1e-4;free.predicted_x[2][0]=-1e-4;
-        let stiffness=free.material.young_modulus*free.material.area()/0.01*100.;
-        let mut contact=free.clone();
-        contact.record_contact(1,0.5,[1.,0.,0.],[0.,0.,0.015],super::super::ContactSource::Mesh(0));
-        let (baseline,_)=assemble(&mut free,1./240.).unwrap();
-        let (matrix,_)=assemble(&mut contact,1./240.).unwrap();
-        for index in [6*BAND,12*BAND,12*BAND+6] {
-            assert!(((matrix[index]-baseline[index])-stiffness*0.25).abs()<stiffness*1e-12,"segment shape weights missing at {index}");
+        let mut free = HairRod::new(
+            vec![[0., 0., 0.], [0., 0., 0.01], [0., 0., 0.02]],
+            super::super::HairMaterial::default(),
+        )
+        .unwrap();
+        free.predicted_x[1][0] = -1e-4;
+        free.predicted_x[2][0] = -1e-4;
+        let stiffness = free.material.young_modulus * free.material.area() / 0.01 * 100.;
+        let mut contact = free.clone();
+        contact.record_contact(
+            1,
+            0.5,
+            [1., 0., 0.],
+            [0., 0., 0.015],
+            super::super::ContactSource::Mesh(0),
+        );
+        let (baseline, _) = assemble(&mut free, 1. / 240.).unwrap();
+        let (matrix, _) = assemble(&mut contact, 1. / 240.).unwrap();
+        for index in [6 * BAND, 12 * BAND, 12 * BAND + 6] {
+            assert!(
+                ((matrix[index] - baseline[index]) - stiffness * 0.25).abs() < stiffness * 1e-12,
+                "segment shape weights missing at {index}"
+            );
         }
     }
     #[test]
@@ -218,39 +315,58 @@ pub(super) fn cholesky(matrix: &mut [f64], rhs: &mut [f64], active: std::ops::Ra
             };
         }
     }
-    solve_factored(matrix,rhs,active);
+    solve_factored(matrix, rhs, active);
 }
 pub(super) fn solve_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
-    solve_lower_factored(matrix,rhs,active.clone());
-    solve_upper_factored(matrix,rhs,active);
+    solve_lower_factored(matrix, rhs, active.clone());
+    solve_upper_factored(matrix, rhs, active);
 }
 /// Forward half of the same canonical Cholesky response, L*w=load.
-pub(super) fn solve_lower_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
-    let first=active.start;let end=active.end;
+pub(super) fn solve_lower_factored(
+    matrix: &[f64],
+    rhs: &mut [f64],
+    active: std::ops::Range<usize>,
+) {
+    let first = active.start;
+    let end = active.end;
     for i in first..end {
-        rhs[i]=subtract_factored_products(rhs[i],
-            (i.saturating_sub(BAND-1).max(first)..i).map(|j|(matrix[i*BAND+i-j],rhs[j])))
-            /matrix[i*BAND];
+        rhs[i] = subtract_factored_products(
+            rhs[i],
+            (i.saturating_sub(BAND - 1).max(first)..i).map(|j| (matrix[i * BAND + i - j], rhs[j])),
+        ) / matrix[i * BAND];
     }
 }
 // Both triangular halves use the same compensated original-equation residual.
-fn subtract_factored_products(initial:f64,products:impl Iterator<Item=(f64,f64)>)->f64 {
-    let mut sum=initial;let mut correction=0.;
-    for (axis,value) in products {
-        let product= -axis*value;let next=sum+product;
-        correction+=if sum.abs()>=product.abs() {(sum-next)+product} else {(product-next)+sum};
-        correction+=(-axis).mul_add(value,-product);sum=next;
+fn subtract_factored_products(initial: f64, products: impl Iterator<Item = (f64, f64)>) -> f64 {
+    let mut sum = initial;
+    let mut correction = 0.;
+    for (axis, value) in products {
+        let product = -axis * value;
+        let next = sum + product;
+        correction += if sum.abs() >= product.abs() {
+            (sum - next) + product
+        } else {
+            (product - next) + sum
+        };
+        correction += (-axis).mul_add(value, -product);
+        sum = next;
     }
-    sum+correction
+    sum + correction
 }
-pub(super) fn solve_upper_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
-    let first=active.start;let end=active.end;
+pub(super) fn solve_upper_factored(
+    matrix: &[f64],
+    rhs: &mut [f64],
+    active: std::ops::Range<usize>,
+) {
+    let first = active.start;
+    let end = active.end;
     for i in (first..end).rev() {
         // Retain cancellation in the original triangular equation before
         // rounding the response; contact clearances can be below a dot ulp.
-        rhs[i]=subtract_factored_products(rhs[i],
-            (i+1..(i+BAND).min(end)).map(|j|(matrix[j*BAND+j-i],rhs[j])))
-            /matrix[i*BAND];
+        rhs[i] = subtract_factored_products(
+            rhs[i],
+            (i + 1..(i + BAND).min(end)).map(|j| (matrix[j * BAND + j - i], rhs[j])),
+        ) / matrix[i * BAND];
     }
 }
 pub(super) fn assemble(rod: &mut HairRod, dt: f64) -> Result<(Vec<f64>, Vec<f64>), &'static str> {
@@ -359,29 +475,44 @@ pub(super) fn assemble(rod: &mut HairRod, dt: f64) -> Result<(Vec<f64>, Vec<f64>
     }
     // Resolve the entire coupled unilateral set, including contacts whose
     // opening/closing direction changes in response to another contact.
-    let mut planes=Vec::new();
+    let mut planes = Vec::new();
     for contact in &rod.contacts {
-        let i=contact.segment;let t=contact.fraction;
-        let normal=mul(contact.normal,contact.metric_scale);
-        let position=add(mul(rod.x[i],1.-t),mul(rod.x[i+1],t));
-        let gap=dot(sub(position,contact.target),normal);
-        if gap<=1e-10 {
+        let i = contact.segment;
+        let t = contact.fraction;
+        let normal = mul(contact.normal, contact.metric_scale);
+        let position = add(mul(rod.x[i], 1. - t), mul(rod.x[i + 1], t));
+        let gap = dot(sub(position, contact.target), normal);
+        if gap <= 1e-10 {
             planes.push(contact_active_set::Plane {
-                jacobian:std::array::from_fn(|slot| {
-                    let axis=slot%3;
-                    let point=if slot<3 {i} else {i+1};
-                    let weight=if slot<3 {1.-t} else {t};
-                    if point==0 {(6+axis,0.)} else {(point*6+axis,weight*normal[axis])}
+                jacobian: std::array::from_fn(|slot| {
+                    let axis = slot % 3;
+                    let point = if slot < 3 { i } else { i + 1 };
+                    let weight = if slot < 3 { 1. - t } else { t };
+                    if point == 0 {
+                        (6 + axis, 0.)
+                    } else {
+                        (point * 6 + axis, weight * normal[axis])
+                    }
                 }),
                 gap,
-                stiffness:ea*100.*((1.-t)/rod.lengths[i.saturating_sub(1)]+t/rod.lengths[i]),
+                stiffness: ea
+                    * 100.
+                    * ((1. - t) / rod.lengths[i.saturating_sub(1)] + t / rod.lengths[i]),
             });
         }
     }
     if !planes.is_empty() {
-        let solution=contact_active_set::solve_contact_set(&matrix,&rhs,6..n-3,&planes)?;
-        for (plane,active) in planes.iter().zip(solution.active) {
-            if active {constraint(&mut matrix,&mut rhs,&plane.jacobian,plane.gap,plane.stiffness);}
+        let solution = contact_active_set::solve_contact_set(&matrix, &rhs, 6..n - 3, &planes)?;
+        for (plane, active) in planes.iter().zip(solution.active) {
+            if active {
+                constraint(
+                    &mut matrix,
+                    &mut rhs,
+                    &plane.jacobian,
+                    plane.gap,
+                    plane.stiffness,
+                );
+            }
         }
     }
     Ok((matrix, rhs))
@@ -471,7 +602,9 @@ pub(super) fn apply_correction(
         let max_linear = (1..rod.x.len())
             .map(|i| len([rhs[i * 6], rhs[i * 6 + 1], rhs[i * 6 + 2]]))
             .fold(0., f64::max);
-        eprintln!("HAIR ENERGY LINE FAILURE before={before:e} slope={slope:e} max_linear={max_linear:e} max_angle={max_angle:e}");
+        eprintln!(
+            "HAIR ENERGY LINE FAILURE before={before:e} slope={slope:e} max_linear={max_linear:e} max_angle={max_angle:e}"
+        );
     }
     Err("hair elastic line search failed")
 }

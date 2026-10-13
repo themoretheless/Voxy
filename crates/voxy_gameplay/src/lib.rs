@@ -3,6 +3,8 @@
 //! Characters collide with active static boxes, not with each other. Physics owns
 //! translations during ticks. A character may rotate; its scale and ancestor
 //! rotation/scale must be identity. Static boxes support affine transforms.
+mod error;
+pub use error::GameplayError;
 mod rigid_frame;
 pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
 mod point_loads;
@@ -196,7 +198,7 @@ pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), Docum
 /// Physics-specific shape/ownership checks remain with the physics owner.
 /// # Errors
 /// Rejects invalid descriptor values or extraction budgets without changing scene.
-pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), String> {
+pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), GameplayError> {
     if scene.components::<RigidPointLoads>().next().is_some() {
         return Err("rigid point loads require a point-load contact runtime".into());
     }
@@ -224,12 +226,15 @@ pub fn validate_game_descriptors_with_liquid_runtime(
     scene: &SceneGraph,
     capacity: usize,
     runtime: &SceneLiquidRuntime,
-) -> Result<(), String> {
+) -> Result<(), GameplayError> {
     runtime.validate_bindings(scene)?;
     validate_common_game_descriptors(scene, capacity)
 }
 
-fn validate_common_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), String> {
+fn validate_common_game_descriptors(
+    scene: &SceneGraph,
+    capacity: usize,
+) -> Result<(), GameplayError> {
     validate_behavior_descriptors(scene)?;
     extract_scene_audio(scene, capacity)?;
     extract_scene_ui(scene, [1.0, 1.0], capacity)?;
@@ -303,6 +308,7 @@ pub struct AppliedCharacterMotion {
 /// Source coordinate corresponding exactly to a world coordinate through the
 /// fixed actor and root basis. None means a directional certificate cannot be
 /// selected structurally; no near-zero rotation-matrix tolerance is used.
+#[must_use]
 pub fn rigid_source_coordinate_axis(
     orientation: glam::DQuat,
     basis: glam::DQuat,
@@ -353,7 +359,7 @@ pub struct CharacterCertifiedFadeMotion<'a> {
     /// None uses the additional radius on every axis. Bounds must not exceed it.
     pub evaluation_axes: Option<[f64; 3]>,
 }
-/// A STEP collision may have path_fraction=1 without completing the final event.
+/// A STEP collision may have `path_fraction=1` without completing the final event.
 /// Use `complete`, `completed_spans` and `span_fraction` for exact admission.
 #[derive(Clone, Copy, Debug)]
 pub struct AppliedCharacterTrajectoryMotion {
@@ -376,6 +382,7 @@ impl AppliedCharacterTrajectoryMotion {
     /// World-axis and L1 discrepancy for the accepted sweep proposal against
     /// its canonical field. Covers the whole affine body before ground snap,
     /// relocation and f32 scene publication; not a uniform trajectory bound.
+    #[must_use]
     pub fn proposal_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.proposal_evaluation_error
     }
@@ -384,6 +391,7 @@ impl AppliedCharacterTrajectoryMotion {
     /// grounding and relocation against the accepted canonical prefix. Ground
     /// correction is included as displacement, not merely numerical error.
     /// This certifies this accepted pose, not every trajectory time.
+    #[must_use]
     pub fn physical_pose_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.physical_evaluation_error
     }
@@ -391,14 +399,16 @@ impl AppliedCharacterTrajectoryMotion {
     /// World-axis and L1 discrepancy of the whole published affine body
     /// against the accepted canonical prefix. Includes grounding, relocation
     /// and composed f32 scene matrix; this is not a uniform trajectory bound.
+    #[must_use]
     pub fn published_pose_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.published_evaluation_error
     }
 
     /// Identity admission within the lifetime of the borrowed rigid request.
     /// The address is never dereferenced and is not a persistent asset ID.
+    #[must_use]
     pub fn matches_rigid_trajectory(&self, path: &voxy_animation::RootRigidPath) -> bool {
-        self.rigid_identity == Some(path as *const _ as usize)
+        self.rigid_identity == Some(std::ptr::from_ref(path) as usize)
     }
 }
 
@@ -494,6 +504,8 @@ pub struct CharacterPhysics {
     depenetration: bool,
     angular_iterations: usize,
     trajectory_queries: usize,
+    /// Scene structure revision the last full validation passed for.
+    validated_structure: Option<u64>,
 }
 impl CharacterPhysics {
     #[must_use]
@@ -505,6 +517,7 @@ impl CharacterPhysics {
             max_colliders,
             depenetration: false,
             angular_iterations: 256,
+            validated_structure: None,
             trajectory_queries: 65_536,
         }
     }
@@ -552,6 +565,36 @@ impl CharacterPhysics {
     pub fn validate(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
         self.validate_scene(scene)?;
         validate_behavior_descriptors(scene).map_err(|_| PhysicsError::InvalidMotion)?;
+        self.validate_descriptors(scene)
+    }
+
+    /// Full validation unless the scene's structure revision is unchanged since
+    /// the last pass, in which case only the transform-dependent checks run.
+    /// Structural checks depend solely on hierarchy and components, which every
+    /// scene mutation of those bumps; transforms are re-checked every call.
+    fn validate_cached(&mut self, scene: &SceneGraph) -> Result<(), PhysicsError> {
+        let revision = scene.structure_revision();
+        if self.validated_structure == Some(revision) {
+            self.validate_scene(scene)?;
+            return self.validate_transforms(scene);
+        }
+        self.validate(scene)?;
+        self.validated_structure = Some(revision);
+        Ok(())
+    }
+
+    fn validate_transforms(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
+        for (owner, body) in scene.components::<CharacterBody>() {
+            translation(scene, owner)?;
+            affine_box(scene, owner, body.half_extents)?;
+        }
+        for (owner, collider) in scene.components::<BoxCollider>() {
+            affine_box(scene, owner, collider.half_extents)?;
+        }
+        Ok(())
+    }
+
+    fn validate_descriptors(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
         if scene.components::<CharacterBody>().count() > self.max_bodies
             || scene.components::<BoxCollider>().count() > self.max_colliders
         {
@@ -769,7 +812,7 @@ impl CharacterPhysics {
     /// Sweeps each requested translation, then its complete fixed-center rotation
     /// against active static boxes. Input/gravity runs first. Contact-limited arcs
     /// return their accepted fraction; winding is not discarded at equal endpoints.
-    /// Active authored AngularMotion also produces receipts; a simultaneous nonzero
+    /// Active authored `AngularMotion` also produces receipts; a simultaneous nonzero
     /// explicit angular request is rejected rather than applied by two writers.
     /// # Errors
     /// Invalid requests and sweep-budget failure preserve all scene/body/input state.
@@ -789,7 +832,7 @@ impl CharacterPhysics {
     /// budgets never reset at key boundaries. Input/gravity precedes translation;
     /// grounding is refreshed once after the accepted rotation.
     /// # Errors
-    /// Invalid/duplicate/inactive requests, conflicting AngularMotion, aggregate
+    /// Invalid/duplicate/inactive requests, conflicting `AngularMotion`, aggregate
     /// capacity and solver-budget failure preserve scene, all body state and input.
     pub fn fixed_step_with_trajectory_motion(
         &mut self,
@@ -936,7 +979,7 @@ impl CharacterPhysics {
         ),
         PhysicsError,
     > {
-        self.validate(scene)?;
+        self.validate_cached(scene)?;
         let mut requested_paths = HashMap::with_capacity(paths.len());
         let mut total_spans = 0_usize;
         for path in paths {
@@ -988,8 +1031,10 @@ impl CharacterPhysics {
             let path = requested_rigid
                 .get(&request.owner)
                 .ok_or(PhysicsError::InvalidMotion)?;
-            if !std::ptr::eq(path.trajectory, &request.fade.approximation().path)
-                || path.trajectory.duration() != dt
+            if !std::ptr::eq(
+                path.trajectory,
+                &raw const request.fade.approximation().path,
+            ) || path.trajectory.duration() != dt
                 || request.coordinate_axis >= 3
                 || !request.evaluation_radius.is_finite()
                 || request.evaluation_radius < 0.
@@ -1238,7 +1283,7 @@ impl CharacterPhysics {
                     position += hit.displacement;
                     angular_fraction = hit.path_fraction;
                     accepted_path = Some(AppliedCharacterTrajectoryMotion {
-                        rigid_identity: Some(path.trajectory as *const _ as usize),
+                        rigid_identity: Some(std::ptr::from_ref(path.trajectory) as usize),
                         owner,
                         displacement: Vec3::ZERO,
                         rotation: hit.rotation,
@@ -1643,6 +1688,68 @@ fn center_of(body: AnchoredAabb) -> Result<Vec3, PhysicsError> {
         return Err(PhysicsError::CoordinateRange);
     }
     Ok(Vec3::from_array(position.map(|value| value as f32)))
+}
+
+#[cfg(test)]
+mod cached_validation_tests {
+    use super::*;
+    use voxy_scene::Transform;
+
+    #[test]
+    fn structure_revision_invalidates_cached_physics_validation() {
+        let mut scene = SceneGraph::new(8);
+        let body = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                body,
+                CharacterBody {
+                    half_extents: [0.3, 0.9, 0.3],
+                    ..CharacterBody::default()
+                },
+            )
+            .unwrap();
+        let floor = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                floor,
+                BoxCollider {
+                    half_extents: [4.0, 0.5, 4.0],
+                },
+            )
+            .unwrap();
+        let mut physics = CharacterPhysics::new(&scene, 4, 4);
+        let before = scene.structure_revision();
+        physics.validate_cached(&scene).unwrap();
+        assert_eq!(physics.validated_structure, Some(before));
+        physics.validate_cached(&scene).unwrap();
+        // A collider on a body is structural and must be caught after the cache filled.
+        scene
+            .insert_component(
+                body,
+                BoxCollider {
+                    half_extents: [0.1, 0.1, 0.1],
+                },
+            )
+            .unwrap();
+        assert_ne!(scene.structure_revision(), before);
+        assert_eq!(
+            physics.validate_cached(&scene).unwrap_err(),
+            PhysicsError::InvalidBody
+        );
+        scene.remove_component::<BoxCollider>(body).unwrap();
+        physics.validate_cached(&scene).unwrap();
+        // Transform problems are re-checked every call even with a warm cache.
+        scene
+            .set_local(
+                floor,
+                Transform {
+                    scale: glam::Vec3::splat(1e30),
+                    ..Transform::default()
+                },
+            )
+            .unwrap();
+        assert!(physics.validate_cached(&scene).is_err());
+    }
 }
 
 #[cfg(test)]

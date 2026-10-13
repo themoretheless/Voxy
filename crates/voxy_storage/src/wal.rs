@@ -1,4 +1,3 @@
-use std::fmt;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
@@ -327,7 +326,8 @@ impl<'a> Reader<'a> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("WAL error: {self:?}")]
 pub enum WalError {
     Io(std::io::Error),
     Codec(CodecError),
@@ -352,14 +352,6 @@ impl From<CodecError> for WalError {
         Self::Codec(error)
     }
 }
-
-impl fmt::Display for WalError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "WAL error: {self:?}")
-    }
-}
-
-impl std::error::Error for WalError {}
 
 #[cfg(test)]
 mod tests {

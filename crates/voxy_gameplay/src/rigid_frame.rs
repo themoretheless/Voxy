@@ -29,7 +29,7 @@ impl RigidBodyFrame {
     /// Properties use the admitted root-relative, initial world-oriented frame.
     pub fn new(pose: Transform, properties: MassProperties) -> Result<Self, PhysicsError> {
         pose.matrix()?;
-        if pose.scale.to_array().iter().any(|v| *v == 0.)
+        if pose.scale.to_array().contains(&0.)
             || !properties.mass.is_finite()
             || properties.mass <= 0.
             || properties.center.iter().any(|v| !v.is_finite())
@@ -247,7 +247,7 @@ pub struct RigidPoseEdit {
     pub radius_m: f64,
     pub max_point_error_m: f64,
 }
-/// Prepare all root poses, then use the existing atomic SceneGraph batch.
+/// Prepare all root poses, then use the existing atomic `SceneGraph` batch.
 /// Callers retain ownership/binding validation and commit mechanical states only
 /// after success. A later pose failure leaves every scene transform unchanged.
 pub fn publish_rigid_poses(

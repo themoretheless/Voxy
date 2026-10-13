@@ -152,12 +152,6 @@ pub struct SurfaceFilmState {
     pub material: Material,
     pub wetting: Option<Wetting>,
 }
-fn sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    std::array::from_fn(|k| a[k] - b[k])
-}
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    (0..3).map(|k| a[k] * b[k]).sum()
-}
 fn norm(a: [f64; 3]) -> f64 {
     dot(a, a).sqrt()
 }
@@ -1379,4 +1373,6 @@ pub use free_surface::FilmFreeSurface;
 
 #[path = "surface_film_thermal.rs"]
 mod thermal;
+use crate::math::dot;
+use crate::math::sub;
 pub use thermal::{FilmSubstrateHeat, ThermalFilmMixture, ThermalFilmWithdrawal};

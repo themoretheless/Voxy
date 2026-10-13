@@ -15,7 +15,7 @@ fn run()->Result<(),String> {
     let info=adapter.get_info();
     if info.device_type==wgpu::DeviceType::Cpu {return Err("GPU adapter required".into());}
     let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).map_err(|e|e.to_string())?;
-    let mut backend=pollster::block_on(voxy_app::GpuLiquidBackend::new(&device,&queue)).map_err(|e|format!("{e:?}"))?;
+    let mut backend=pollster::block_on(voxy_demos::gpu_liquid::GpuLiquidBackend::new(&device,&queue)).map_err(|e|format!("{e:?}"))?;
     let particles=(0..count).map(|i|Particle {position:[i as f64*0.01,0.,0.],velocity:[0.01*i as f64,0.,0.],mass:0.1,material:0}).collect();
     let mut actual=Liquid::new(particles,vec![Material {rest_density:1.,sound_speed:1.,viscosity:0.01}],Config {smoothing_radius:1.,gravity:[0.;3],..Config::default()}).map_err(|e|format!("{e:?}"))?;
     let mut native=actual.clone();let mut admitted=0;let mut fallbacks=0;

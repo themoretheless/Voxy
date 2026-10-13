@@ -165,17 +165,21 @@ impl GpuMorphProgram {
             head_transform: head_transform.to_cols_array_2d(),
         };
 
-        let uniform_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("morph uniform"),
-            contents: bytemuck::bytes_of(&uniform),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
+        let uniform_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("morph uniform"),
+                contents: bytemuck::bytes_of(&uniform),
+                usage: wgpu::BufferUsages::UNIFORM,
+            });
 
-        let in_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("morph in vertices"),
-            contents: bytemuck::cast_slice(&in_vec4),
-            usage: wgpu::BufferUsages::STORAGE,
-        });
+        let in_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("morph in vertices"),
+                contents: bytemuck::cast_slice(&in_vec4),
+                usage: wgpu::BufferUsages::STORAGE,
+            });
 
         let dummy_ctrl = GpuMorphControl {
             center: [0.0; 3],
@@ -193,11 +197,13 @@ impl GpuMorphProgram {
             controls
         };
 
-        let ctrl_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("morph controls"),
-            contents: bytemuck::cast_slice(ctrl_data),
-            usage: wgpu::BufferUsages::STORAGE,
-        });
+        let ctrl_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("morph controls"),
+                contents: bytemuck::cast_slice(ctrl_data),
+                usage: wgpu::BufferUsages::STORAGE,
+            });
 
         let out_bytes = u64::from(vertex_count) * 16;
         let out_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
@@ -237,9 +243,11 @@ impl GpuMorphProgram {
             ],
         });
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("morph encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("morph encoder"),
+            });
 
         {
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
@@ -256,9 +264,11 @@ impl GpuMorphProgram {
         let submission = queue.submit([encoder.finish()]);
 
         let (tx, rx) = std::sync::mpsc::channel();
-        staging.slice(..).map_async(wgpu::MapMode::Read, move |res| {
-            let _ = tx.send(res);
-        });
+        staging
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |res| {
+                let _ = tx.send(res);
+            });
 
         self.device
             .poll(wgpu::PollType::Wait {
@@ -291,15 +301,18 @@ mod tests {
     #[test]
     fn gpu_morph_deform_on_device() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default())) {
+        let adapter = match pollster::block_on(
+            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
+        ) {
             Ok(adapter) => adapter,
             Err(_) => return,
         };
 
-        let (device, queue) = match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-            Ok(pair) => pair,
-            Err(_) => return,
-        };
+        let (device, queue) =
+            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
+                Ok(pair) => pair,
+                Err(_) => return,
+            };
 
         let morph_program = pollster::block_on(GpuMorphProgram::new(&device))
             .expect("Morph program compilation failed");

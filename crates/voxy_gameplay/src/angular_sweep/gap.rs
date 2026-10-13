@@ -1,6 +1,6 @@
 //! Directed projection gap for an arbitrary exact stored separating axis.
 //! Generated axes need not be mathematically unit: normalize the distance bound.
-use super::*;
+use super::{AffineBox, DVec3, PhysicsError, PointBoxes, exact_gap, query};
 #[derive(Clone, Copy)]
 struct Interval(f64, f64);
 impl Interval {

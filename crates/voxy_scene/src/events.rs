@@ -9,19 +9,14 @@ pub struct EventCursor {
     channel: u64,
     next: u64,
 }
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
+#[error("event error: {self:?}")]
 pub enum EventError {
     ZeroCapacity,
     ForeignCursor,
     SequenceExhausted,
     ChannelExhausted,
 }
-impl std::fmt::Display for EventError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "event error: {self:?}")
-    }
-}
-impl std::error::Error for EventError {}
 #[derive(Debug)]
 pub struct EventChannel<T> {
     id: u64,

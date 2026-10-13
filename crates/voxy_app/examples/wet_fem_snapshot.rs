@@ -1,9 +1,6 @@
 //! GPU readback of current FEM geometry before/after accepted cohesive fracture.
-#[path = "../src/fem_surface.rs"]
-mod fem_surface;
-#[path = "../src/wet_fem_preview.rs"]
-mod wet_fem_preview;
 use glam::Vec3;
+use voxy_demos::wet_fem_preview;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 #[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {

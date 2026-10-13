@@ -85,7 +85,7 @@ fn gpu_transform_budget_preserves_independent_uniforms_after_exhaustion() {
     // A separate GPU program reads the actual uniform bindings, without a CPU mirror.
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("independent transform readback"),
-        source: wgpu::ShaderSource::Wgsl(r#"
+        source: wgpu::ShaderSource::Wgsl(r"
             struct Uniform { values: array<vec4<f32>,16> }
             @group(0) @binding(0) var<uniform> first: Uniform;
             @group(0) @binding(1) var<uniform> second: Uniform;
@@ -93,7 +93,7 @@ fn gpu_transform_budget_preserves_independent_uniforms_after_exhaustion() {
             @compute @workgroup_size(1) fn main() {
                 for(var i=0u;i<16u;i++) { output[i]=first.values[i]; output[i+16u]=second.values[i]; }
             }
-        "#.into()),
+        ".into()),
     });
     let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
         label: None,

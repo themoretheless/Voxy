@@ -1,4 +1,5 @@
 //! Durable scene audio descriptors and immutable extraction for the audio owner.
+use crate::GameplayError;
 use glam::Vec3;
 use serde::{Deserialize, Serialize};
 use voxy_scene::{NodeId, SceneGraph};
@@ -74,16 +75,13 @@ pub struct SceneAudioSnapshot {
 pub fn extract_scene_audio(
     scene: &SceneGraph,
     max_sources: usize,
-) -> Result<SceneAudioSnapshot, String> {
+) -> Result<SceneAudioSnapshot, GameplayError> {
     let mut buses = Vec::new();
     for (owner, descriptor) in scene.components::<AudioBus>() {
         if !descriptor.valid() {
             return Err("invalid scene audio bus".into());
         }
-        if scene
-            .active_in_hierarchy(owner)
-            .map_err(|e| e.to_string())?
-        {
+        if scene.active_in_hierarchy(owner)? {
             if buses.iter().any(|old: &AudioBus| old.bus == descriptor.bus) {
                 return Err("multiple active owners of audio bus".into());
             }
@@ -93,22 +91,24 @@ pub fn extract_scene_audio(
     let mut listeners = scene.active_components::<AudioListener>();
     let listener = listeners
         .next()
-        .map(|(owner, _)| -> Result<AudioListenerSnapshot, String> {
-            let world = scene.world_matrix(owner).map_err(|e| e.to_string())?;
-            let position = world.transform_point3(Vec3::ZERO);
-            let right = world.transform_vector3(Vec3::X);
-            if !position.is_finite()
-                || !right.is_finite()
-                || !right.length_squared().is_finite()
-                || right.length_squared() <= 1e-12
-            {
-                return Err("invalid audio listener geometry".into());
-            }
-            Ok(AudioListenerSnapshot {
-                position: position.to_array(),
-                right: right.normalize().to_array(),
-            })
-        })
+        .map(
+            |(owner, _)| -> Result<AudioListenerSnapshot, GameplayError> {
+                let world = scene.world_matrix(owner)?;
+                let position = world.transform_point3(Vec3::ZERO);
+                let right = world.transform_vector3(Vec3::X);
+                if !position.is_finite()
+                    || !right.is_finite()
+                    || !right.length_squared().is_finite()
+                    || right.length_squared() <= 1e-12
+                {
+                    return Err("invalid audio listener geometry".into());
+                }
+                Ok(AudioListenerSnapshot {
+                    position: position.to_array(),
+                    right: right.normalize().to_array(),
+                })
+            },
+        )
         .transpose()?;
     if listeners.next().is_some() {
         return Err("multiple active audio listeners".into());
@@ -119,21 +119,16 @@ pub fn extract_scene_audio(
             return Err("scene audio source capacity exceeded".into());
         }
         if !descriptor.valid() {
-            return Err(format!("invalid audio source {owner:?}"));
+            return Err(format!("invalid audio source {owner:?}").into());
         }
-        let position = scene
-            .world_matrix(owner)
-            .map_err(|e| e.to_string())?
-            .transform_point3(Vec3::ZERO);
+        let position = scene.world_matrix(owner)?.transform_point3(Vec3::ZERO);
         if !position.is_finite() {
             return Err("invalid audio source geometry".into());
         }
         sources.push(AudioSourceSnapshot {
             owner,
             descriptor: descriptor.clone(),
-            active: scene
-                .active_in_hierarchy(owner)
-                .map_err(|e| e.to_string())?,
+            active: scene.active_in_hierarchy(owner)?,
             position: position.to_array(),
         });
     }
@@ -161,6 +156,7 @@ mod tests {
         assert!(
             extract_scene_audio(&scene, 2)
                 .unwrap_err()
+                .to_string()
                 .contains("multiple")
         );
         scene.set_active(second, false).unwrap();

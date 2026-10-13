@@ -1,6 +1,9 @@
 //! Objective matched T6 cohesive face with six-point reference-area integration.
 use super::{Vec3, dot};
 use crate::cohesive::{Material, Response, State};
+use crate::math::cross;
+use crate::math::norm;
+use crate::math::sub;
 const COHESIVE_RULE: [(f64, f64, f64); 2] = [
     (
         0.445_948_490_915_965,
@@ -35,19 +38,6 @@ pub struct QuadraticCohesiveTrial {
     pub friction_released_j: f64,
     /// Candidate history. Publish only after the containing solve is accepted.
     pub candidate: QuadraticCohesiveFace,
-}
-fn sub(a: Vec3, b: Vec3) -> Vec3 {
-    std::array::from_fn(|i| a[i] - b[i])
-}
-fn cross(a: Vec3, b: Vec3) -> Vec3 {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-fn norm(a: Vec3) -> f64 {
-    a[0].hypot(a[1]).hypot(a[2])
 }
 pub(super) fn basis(l: Vec3) -> ([f64; 6], [f64; 6], [f64; 6]) {
     (

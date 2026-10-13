@@ -1,4 +1,5 @@
 //! Native pointer adapter. Revalidate live ownership before both activation edges.
+use crate::EditorError;
 use voxy_gameplay::{SceneUiRuntime, UiActionEvent};
 use voxy_scene::SceneGraph;
 use winit::{event::ElementState, keyboard::KeyCode};
@@ -27,12 +28,12 @@ impl GameUiInput {
         scene: &SceneGraph,
         viewport: [f32; 2],
         presented: Option<&voxy_gameplay::SceneUiSnapshot>,
-    ) -> Result<bool, String> {
+    ) -> Result<bool, EditorError> {
         let current = match voxy_gameplay::extract_scene_ui(scene, viewport, 128) {
             Ok(snapshot) => snapshot,
             Err(error) => {
                 self.cancel();
-                return Err(error);
+                return Err(error.into());
             }
         };
         let admitted = presented == Some(&current);
@@ -71,13 +72,13 @@ impl GameUiInput {
         state: ElementState,
         repeat: bool,
         reverse: bool,
-    ) -> Result<(bool, Option<UiActionEvent>), String> {
+    ) -> Result<(bool, Option<UiActionEvent>), EditorError> {
         if !matches!(key, KeyCode::Tab | KeyCode::Enter | KeyCode::Space) {
             return Ok((false, None));
         }
         if let Err(error) = self.runtime.refresh(scene, viewport) {
             self.cancel();
-            return Err(error);
+            return Err(error.into());
         }
         let pressed = state == ElementState::Pressed;
         if key == KeyCode::Tab {
@@ -118,11 +119,11 @@ impl GameUiInput {
         viewport: [f32; 2],
         cursor: [f32; 2],
         pressed: bool,
-    ) -> Result<Option<UiActionEvent>, String> {
+    ) -> Result<Option<UiActionEvent>, EditorError> {
         if let Err(error) = self.runtime.refresh(scene, viewport) {
             // Retained visuals must never authorize stale input after failed admission.
             self.cancel();
-            return Err(error);
+            return Err(error.into());
         }
         self.runtime.pointer_move(Some(cursor));
         if pressed {

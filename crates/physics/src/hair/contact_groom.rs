@@ -8,7 +8,7 @@ impl TriangleMesh {
     pub fn fit_authored_guide(&self, points: &[V], margin: f64) -> Result<Vec<V>, &'static str> {
         if points.len() < 2
             || !points.iter().copied().all(finite)
-            || points.windows(2).any(|p| len(sub(p[1],p[0])) <= 1e-12)
+            || points.windows(2).any(|p| len(sub(p[1], p[0])) <= 1e-12)
             || !margin.is_finite()
             || margin <= 0.
         {
