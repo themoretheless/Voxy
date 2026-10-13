@@ -55,12 +55,10 @@ impl<A: Any + Send + Sync, B: Any + Send + Sync, T> AssociatedData<A, B, T> {
         mut build: impl FnMut(NodeId, &A, &B, Option<&T>) -> Result<T, E>,
     ) -> Result<(), TableBuildError<E>> {
         let force = self.force_rebuild;
-        self.rows
-            .rebuild_active_with::<A, B, E>(scene, |owner, first, second, old| {
-                let revisions = (
-                    scene.component_revision::<A>(owner).ok().flatten(),
-                    scene.component_revision::<B>(owner).ok().flatten(),
-                );
+        self.rows.rebuild_active_with_revisions::<A, B, E>(
+            scene,
+            |owner, first, first_revision, second, second_revision, old| {
+                let revisions = (Some(first_revision), Some(second_revision));
                 let value = if let Some(previous) =
                     old.filter(|row| !force && row.revisions == revisions)
                 {
@@ -74,7 +72,8 @@ impl<A: Any + Send + Sync, B: Any + Send + Sync, T> AssociatedData<A, B, T> {
                     )?)
                 };
                 Ok(Row { revisions, value })
-            })?;
+            },
+        )?;
         self.force_rebuild = false;
         Ok(())
     }
@@ -96,10 +95,7 @@ impl<A: Any + Send + Sync, B: Any + Send + Sync, T> AssociatedData<A, B, T> {
                     return None;
                 }
                 // The dense query already validated the owner and inherited activity.
-                let revisions = (
-                    scene.component_revision::<A>(owner).ok().flatten(),
-                    scene.component_revision::<B>(owner).ok().flatten(),
-                );
+                let revisions = scene.component_revisions::<A, B>(owner).ok()?;
                 (revisions.0.is_some() && revisions.1.is_some() && row.revisions == revisions)
                     .then_some((owner, row.value.as_ref()))
             }))
@@ -119,10 +115,7 @@ impl<A: Any + Send + Sync, B: Any + Send + Sync, T> AssociatedData<A, B, T> {
         if self.force_rebuild || !scene.active_in_hierarchy(owner)? {
             return Ok(None);
         }
-        let revisions = (
-            scene.component_revision::<A>(owner)?,
-            scene.component_revision::<B>(owner)?,
-        );
+        let revisions = scene.component_revisions::<A, B>(owner)?;
         Ok(row
             .filter(|row| {
                 revisions.0.is_some() && revisions.1.is_some() && row.revisions == revisions
