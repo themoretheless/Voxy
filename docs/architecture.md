@@ -93,9 +93,13 @@ flowchart BT
     voxy_demos --> voxy_animation
     voxy_demos --> voxy_core
     voxy_demos --> voxy_cuda
+    voxy_demos --> voxy_editor
+    voxy_demos --> voxy_gameplay
     voxy_demos --> voxy_gpu
+    voxy_demos --> voxy_input
     voxy_demos --> voxy_model
     voxy_demos --> voxy_render
+    voxy_demos --> voxy_scene
     voxy_demos --> voxy_world
     voxy_editor --> physics
     voxy_editor --> voxy_animation
@@ -120,6 +124,7 @@ flowchart BT
     voxy_gameplay -.-> voxy_audio_device
     voxy_gpu --> physics
     voxy_gpu --> physics_voxel
+    voxy_gpu --> voxy_animation
     voxy_gpu --> voxy_core
     voxy_gpu --> voxy_cuda
     voxy_gpu --> voxy_gpu_core

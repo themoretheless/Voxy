@@ -52,6 +52,13 @@ pub use root_rotation::{
 mod anim_graph;
 mod blend_space2d;
 mod compressed;
+mod crowd;
+pub use crowd::{CrowdEvaluator, CrowdLod, CrowdOutcome, CrowdPalettes};
+mod gpu_layout;
+pub use gpu_layout::{
+    GPU_NO_PARENT, GpuBlendJob, GpuClipTable, GpuJointKey, GpuSkeletonLayout,
+    cpu_reference_palette, nlerp,
+};
 mod gait;
 mod ragdoll;
 pub use compressed::{CompressedClip, CompressionReport, CompressionSettings};
