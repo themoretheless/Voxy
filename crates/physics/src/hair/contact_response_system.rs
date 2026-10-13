@@ -1145,6 +1145,25 @@ impl HairResponseSystem {
             })
             .collect()
     }
+    /// Prepare two-component load coordinates without discarding their low parts.
+    /// This is an explicit backend input; legacy f64 backends remain unchanged.
+    pub fn whiten_loads_expanded(
+        &self,
+    ) -> Result<Vec<Vec<super::HairResponseCoefficient>>, &'static str> {
+        self.validate()?;
+        let factor = self.factor_native()?;
+        self.loads
+            .iter()
+            .map(|load| {
+                let mut values = load
+                    .iter()
+                    .map(|&v| super::HairResponseCoefficient::from_f64(v))
+                    .collect::<Result<Vec<_>, _>>()?;
+                super::contact_expanded::lower(&factor, &mut values, self.system.active.clone())?;
+                Ok(values)
+            })
+            .collect()
+    }
     /// Square-root compliance columns L^-1*load for H=L*L^T. Retaining
     /// these columns lets a contact QR solve avoid squaring its condition
     /// number through J*H^-1*J^T. This prepares coordinates, not poses.
@@ -1778,3 +1797,7 @@ impl NativeLoadCache {
         Ok((self.factor.clone(), local))
     }
 }
+
+#[cfg(test)]
+#[path = "contact_expanded_backtransform_tests.rs"]
+mod expanded_backtransform_tests;
