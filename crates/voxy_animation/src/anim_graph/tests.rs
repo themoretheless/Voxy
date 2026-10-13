@@ -394,3 +394,46 @@ fn unreachable_nodes_are_not_evaluated() {
     player.advance(0.5).unwrap();
     assert_eq!(player.clock(orphan), Some(0.0));
 }
+
+#[test]
+fn blend_space_2d_node_tracks_two_parameters() {
+    let rig = rig();
+    let make = |x: f32, y: f32, d: f32| crate::BlendSample2D {
+        parameter: glam::Vec2::new(x, y),
+        clip: clip(&rig, "s", d, x + y, Playback::Loop),
+    };
+    let space = Arc::new(
+        crate::BlendSpace2D::new(
+            vec![
+                make(0.0, 0.0, 1.0),
+                make(2.0, 0.0, 0.5),
+                make(0.0, 2.0, 0.5),
+            ],
+            &rig,
+        )
+        .unwrap(),
+    );
+    let mut desc = GraphDesc::default();
+    let x = desc.add_param("x", ParamValue::Float(0.0)).unwrap();
+    let y = desc.add_param("y", ParamValue::Float(0.0)).unwrap();
+    let node = desc
+        .add_node(GraphNode::BlendSpace2D {
+            space: space.clone(),
+            x: FloatInput::Param(x),
+            y: FloatInput::Param(y),
+        })
+        .unwrap();
+    desc.root = Some(node);
+    let graph = Arc::new(AnimGraph::compile(desc, &rig).unwrap());
+    let mut player = GraphPlayer::new(graph).unwrap();
+    player.advance(0.25).unwrap();
+    player.set_param(x, ParamValue::Float(1.0)).unwrap();
+    player.set_param(y, ParamValue::Float(1.0)).unwrap();
+    let frame = player.advance(0.25).unwrap();
+    let phase = player.clock(node).unwrap();
+    assert!((phase - 0.75).abs() < 1e-9, "{phase}");
+    let expected = space
+        .evaluate(&rig, glam::Vec2::new(1.0, 1.0), phase)
+        .unwrap();
+    assert_eq!(frame.pose.local(), expected.local());
+}
