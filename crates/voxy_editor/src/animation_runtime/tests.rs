@@ -10,7 +10,7 @@ fn fixture() -> (
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -110,7 +110,7 @@ fn motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors() {
             ModelAsset::parse(
                 &serde_json::to_vec(doc).unwrap(),
                 &[&bytes],
-                voxy_render::ModelLimits::default(),
+                voxy_model::ModelLimits::default(),
             )
             .unwrap(),
         )
@@ -747,7 +747,7 @@ fn retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_fram
     .to_vec()
     .unwrap();
     let target =
-        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
     let source_id = AssetId("source".into());
     let models = BTreeMap::from([
         (AssetId("rig".into()), target.clone()),
@@ -852,7 +852,7 @@ fn partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomi
     }
     .to_vec()
     .unwrap();
-    let mut source = ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+    let mut source = ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap();
     let target = Arc::new(source.clone());
     let mut tracks = vec![voxy_animation::JointTrack::default(); source.skeleton.joints().len()];
     tracks[1].translations = vec![
@@ -1036,7 +1036,7 @@ fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
             ModelAsset::parse(
                 include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
                 &[],
-                voxy_render::ModelLimits::default(),
+                voxy_model::ModelLimits::default(),
             )
             .unwrap(),
         );
@@ -1253,7 +1253,7 @@ fn root_reference_initialization_rejects_stale_model_invalid_pose_and_reset() {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -1361,7 +1361,7 @@ fn root_reference_lifetime_tracks_asset_and_extraction_identity() {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -1603,8 +1603,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
         }
         .to_vec()
         .unwrap();
-        let mut asset =
-            ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+        let mut asset = ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap();
         let mut tracks = vec![JointTrack::default(); asset.skeleton.joints().len()];
         tracks[0].translations = vec![
             Vec3Key {
@@ -2158,7 +2157,7 @@ fn root_parent_capture_encloses_nested_reflections_and_rejects_moving_frames() {
         }
         .to_vec()
         .unwrap();
-        ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap()
+        ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap()
     };
     let model = parse(&json);
     let root = model.resolve_joint_name("root").unwrap();
@@ -2235,7 +2234,7 @@ fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
     .to_vec()
     .unwrap();
     let target =
-        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
     let models = BTreeMap::from([
         (AssetId("rig".into()), target.clone()),
         (AssetId("source".into()), source),
@@ -2370,7 +2369,7 @@ fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
     .to_vec()
     .unwrap();
     let moving_source =
-        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
     let mut changed_models = models.clone();
     changed_models.insert(AssetId("source".into()), moving_source);
     let profile = scene
@@ -3039,7 +3038,7 @@ fn authored_events_round_trip_rebind_and_remove_without_replaying() {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );

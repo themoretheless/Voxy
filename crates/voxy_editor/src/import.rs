@@ -25,7 +25,7 @@ pub(crate) struct ImportedNode {
 pub(crate) struct EditorAsset {
     pub mesh: SceneMesh,
     pub lod: Option<std::sync::Arc<voxy_render::CertifiedLodIndexSet>>,
-    pub animated: Option<std::sync::Arc<voxy_render::ModelAsset>>,
+    pub animated: Option<std::sync::Arc<voxy_model::ModelAsset>>,
     pub skinned_lod: Option<std::sync::Arc<voxy_render::SkinnedLodMesh>>,
     pub nodes: Vec<ImportedNode>,
     pub images: Vec<ImageAsset>,
@@ -161,7 +161,7 @@ pub(crate) fn load(
             .images()
             .all(|image| matches!(image.source(), gltf::image::Source::View { .. }))
     {
-        voxy_render::ModelAsset::decode_embedded_images(
+        voxy_model::ModelAsset::decode_embedded_images(
             &bytes,
             ImageLimits {
                 source_bytes: 16 * 1024 * 1024,
@@ -434,10 +434,10 @@ fn load_animated_model(
     images: Vec<ImageAsset>,
 ) -> Result<EditorAsset, EditorError> {
     let buffers: Vec<_> = buffers.iter().map(Vec::as_slice).collect();
-    let model = voxy_render::ModelAsset::parse(
+    let model = voxy_model::ModelAsset::parse(
         bytes,
         &buffers,
-        voxy_render::ModelLimits {
+        voxy_model::ModelLimits {
             bytes: 32 * 1024 * 1024,
             vertices: 65_536,
             indices: 196_608,
@@ -517,7 +517,7 @@ fn load_lod_model(
         if model.primitives.len() != 1 {
             return Err("skeletal LOD requires one primitive".into());
         }
-        let voxy_render::ModelGeometry::Skinned(mesh) = &model.primitives[0].geometry else {
+        let voxy_model::ModelGeometry::Skinned(mesh) = &model.primitives[0].geometry else {
             return Err("animated LOD requires a skinned primitive".into());
         };
         let source = voxy_render::decode_skinned_lod_archive(

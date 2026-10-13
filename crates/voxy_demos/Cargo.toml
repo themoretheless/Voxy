@@ -7,6 +7,7 @@ publish = false
 description = "Character, tissue, liquid and material demos used by the native shell, examples and probes"
 
 [dependencies]
+voxy_model = { path = "../voxy_model" }
 thiserror = "2"
 wgpu = { version = "30.0.1", features = ["noop"] }
 voxy_core = { path = "../voxy_core" }

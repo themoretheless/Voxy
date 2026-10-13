@@ -1,5 +1,6 @@
 use super::*;
-use voxy_render::{LodArchiveLimits, LodSurface, ModelAsset, ModelGeometry, ModelLimits};
+use voxy_model::{ModelAsset, ModelGeometry, ModelLimits};
+use voxy_render::{LodArchiveLimits, LodSurface};
 
 #[test]
 fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {

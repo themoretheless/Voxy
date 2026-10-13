@@ -2,7 +2,7 @@
 use crate::EditorError;
 use std::sync::Arc;
 use voxy_animation::{Animator, AnimatorFrame};
-use voxy_render::ModelAsset;
+use voxy_model::ModelAsset;
 
 /// Marker on the selected clip's normalized authored timeline.
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, PartialEq)]
@@ -731,7 +731,7 @@ mod tests {
     }
     fn model() -> Arc<ModelAsset> {
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
-        Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap())
+        Arc::new(ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap())
     }
     #[test]
     fn shared_asset_has_independent_owner_clocks_and_failed_publication_retries() {
@@ -767,7 +767,7 @@ mod tests {
             ModelAsset::parse(
                 include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
                 &[],
-                voxy_render::ModelLimits::default(),
+                voxy_model::ModelLimits::default(),
             )
             .unwrap(),
         );
@@ -1202,7 +1202,7 @@ mod accepted_fade_tests {
     fn asset_bound_fade_rejects_rebind_and_changed_clock_before_pose_preparation() {
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
         let asset =
-            Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap());
+            Arc::new(ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap());
         let mut playback = ModelPlayback::new(asset.clone(), ModelAnimation::default()).unwrap();
         playback.transition_to_clip(0, 0.125).unwrap();
         let staged = playback
@@ -1215,7 +1215,7 @@ mod accepted_fade_tests {
         changed.set_speed(0.5).unwrap();
         assert!(staged.accepted_frame(&changed, 0.0625).is_err());
         let replacement =
-            Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap());
+            Arc::new(ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap());
         changed = playback.clone();
         changed.rebind(replacement).unwrap();
         assert!(staged.accepted_frame(&changed, 0.0625).is_err());
@@ -1243,7 +1243,7 @@ mod physical_fade_receipt_tests {
         use voxy_gameplay::{CharacterBody, CharacterPhysics, CharacterTickError, player_input};
         use voxy_scene::{SceneGraph, Transform};
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
-        let mut model = ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap();
+        let mut model = ModelAsset::parse(glb, &[], voxy_model::ModelLimits::default()).unwrap();
         if original_sources {
             use voxy_animation::{
                 AnimationClip, Interpolation, JointTangents, JointTrack, Playback, QuatKey,

@@ -7,7 +7,7 @@ use std::{
 };
 use voxy_animation::AnimatorFrame;
 use voxy_assets::AssetId;
-use voxy_render::ModelAsset;
+use voxy_model::ModelAsset;
 use voxy_scene::{NodeId, SceneGraph, SceneId};
 
 pub(super) const MAX_OWNERS: usize = 128;

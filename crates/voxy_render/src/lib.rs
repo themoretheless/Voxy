@@ -84,7 +84,6 @@ pub use lod_subdivision::{
     LodSubdivisionWitness, LodSubdivisionWitnesses, certify_subdivided_lod_error,
     generate_subdivided_lod_witnesses,
 };
-mod model;
 mod motion;
 mod obj;
 mod previous_position;
@@ -115,10 +114,6 @@ mod xr;
 
 pub use blit::{ProcessedColorTarget, StorageColorBlit, StorageColorView, TextureBlit};
 pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
-pub use model::{
-    ModelAsset, ModelError, ModelGeometry, ModelLimits, ModelPrimitive, ModelSurface64,
-    ModelTexture,
-};
 pub use renderer::{
     CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };
@@ -300,3 +295,13 @@ mod fiber_surface;
 pub use fiber_surface::{
     FIBER_SURFACE_SHADER, FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer,
 };
+
+pub use skinned::MAX_SKIN_JOINTS;
+
+/// Helpers for integration tests of downstream crates (not part of the rendering API).
+#[doc(hidden)]
+pub mod test_support {
+    pub use crate::scene::{NormalCache, smooth_normals};
+    pub use crate::skinned::{GpuSkinnedMesh, create_skin_layout, upload_skinned};
+    pub use crate::skinned_lod::test_source as skinned_lod_source;
+}

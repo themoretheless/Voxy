@@ -19,6 +19,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     (
         "voxy_demos",
         &[
+            "voxy_model",
             "physics",
             "physics_voxel",
             "voxy_animation",
@@ -32,6 +33,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     (
         "voxy_editor",
         &[
+            "voxy_model",
             "physics",
             "voxy_animation",
             "voxy_assets",
@@ -86,6 +88,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ),
     ("voxy_mesher", &["voxy_core", "voxy_world"]),
     ("voxy_ray_probe", &["voxy_demos", "voxy_render"]),
+    ("voxy_model", &["voxy_animation", "voxy_render"]),
     (
         "voxy_render",
         &["voxy_core", "voxy_gpu_core", "voxy_lighting", "voxy_mesher"],
@@ -130,11 +133,7 @@ const COMPOSITION_ROOTS: &[&str] = &["voxy_app"];
 
 /// Normal-dependency edges the plan still has to remove, with the step that
 /// removes them. Remove an entry here in the same change that removes the edge.
-const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[(
-    "voxy_render",
-    "voxy_animation",
-    "D5: render sees only a skin palette",
-)];
+const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[];
 
 /// Dev-dependency cycles (a crate's tests build a crate that depends on it).
 const KNOWN_DEV_CYCLES: &[(&str, &str, &str)] = &[];

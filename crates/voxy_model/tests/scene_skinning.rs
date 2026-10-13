@@ -1,4 +1,7 @@
-use super::*;
+use glam::Mat4;
+use std::sync::Arc;
+use voxy_render::test_support::*;
+use voxy_render::*;
 
 #[test]
 #[ignore = "requires GPU; scene ABI deformation readback"]
@@ -11,13 +14,13 @@ fn gpu_scene_skinning_independent_instances_and_last_good_pose() {
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let skinner = SceneSkinner::new(&renderer).unwrap();
-    let asset = crate::ModelAsset::parse(
-        include_bytes!("../../../examples/assets/animated-triangle.glb"),
+    let asset = voxy_model::ModelAsset::parse(
+        include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb"),
         &[],
-        crate::ModelLimits::default(),
+        voxy_model::ModelLimits::default(),
     )
     .unwrap();
-    let crate::ModelGeometry::Skinned(mesh) = &asset.primitives[0].geometry else {
+    let voxy_model::ModelGeometry::Skinned(mesh) = &asset.primitives[0].geometry else {
         panic!("skin required")
     };
     let source = skinner
@@ -269,7 +272,7 @@ fn gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission() {
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let skinner = SceneSkinner::new(&renderer).unwrap();
-    let lod = crate::skinned_lod::tests::source();
+    let lod = skinned_lod_source();
     let source = skinner
         .upload_source(Arc::new(lod.mesh().clone()), 0, 8192)
         .unwrap();
@@ -323,9 +326,10 @@ fn gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission() {
     ));
     let mut changed_vertices = lod.mesh().vertices().to_vec();
     changed_vertices[0].position[0] += 0.1;
-    let changed = crate::SkinnedLodMesh::new(
+    let changed = voxy_render::SkinnedLodMesh::new(
         Arc::new(
-            crate::SkinnedMesh::new(changed_vertices, lod.mesh().indices().to_vec(), 2).unwrap(),
+            voxy_render::SkinnedMesh::new(changed_vertices, lod.mesh().indices().to_vec(), 2)
+                .unwrap(),
         ),
         vec![],
     )
@@ -380,7 +384,7 @@ fn gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission() {
 #[ignore = "requires GPU; upstream 19-bone rig and host timing diagnostics"]
 fn gpu_reference_rig_full_clip_matches_cpu_positions() {
     reference_rig_gpu_acceptance(
-        include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb"),
+        include_bytes!("../../voxy_render/examples/assets/rigged-figure/RiggedFigure.glb"),
         "reference-rig",
         370,
         22,
@@ -392,7 +396,7 @@ fn gpu_reference_rig_full_clip_matches_cpu_positions() {
 #[ignore = "requires GPU; 24-bone Fox with Survey, Walk and Run"]
 fn gpu_fox_all_clips_match_cpu_and_render() {
     reference_rig_gpu_acceptance(
-        include_bytes!("../../../examples/assets/fox/Fox.glb"),
+        include_bytes!("../../voxy_render/examples/assets/fox/Fox.glb"),
         "fox",
         1728,
         26,
@@ -404,7 +408,7 @@ fn gpu_fox_all_clips_match_cpu_and_render() {
 #[ignore = "requires GPU; STEP interpolation through the skeletal renderer"]
 fn gpu_reference_rig_step_clips_match_cpu_and_render() {
     let glb = step_glb(include_bytes!(
-        "../../../examples/assets/rigged-figure/RiggedFigure.glb"
+        "../../voxy_render/examples/assets/rigged-figure/RiggedFigure.glb"
     ));
     reference_rig_gpu_acceptance(&glb, "reference-rig-step", 370, 22, 1);
 }
@@ -412,14 +416,17 @@ fn gpu_reference_rig_step_clips_match_cpu_and_render() {
 #[test]
 #[ignore = "requires GPU; intermediate STEP keys in Survey, Walk and Run"]
 fn gpu_fox_step_clips_match_cpu_and_render() {
-    let glb = step_glb(include_bytes!("../../../examples/assets/fox/Fox.glb"));
+    let glb = step_glb(include_bytes!(
+        "../../voxy_render/examples/assets/fox/Fox.glb"
+    ));
     reference_rig_gpu_acceptance(&glb, "fox", 1728, 26, 3);
 }
 
 #[test]
 #[ignore = "requires GPU; cubic rig pose and normal comparison"]
 fn gpu_reference_rig_cubic_clips_match_cpu_and_render() {
-    let original = include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb");
+    let original =
+        include_bytes!("../../voxy_render/examples/assets/rigged-figure/RiggedFigure.glb");
     let source = gltf::Gltf::from_slice(original).unwrap();
     let mut binary = source.blob.unwrap();
     let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
@@ -495,7 +502,8 @@ fn gpu_reference_rig_cubic_clips_match_cpu_and_render() {
 #[test]
 #[ignore = "requires GPU; mirrored bind hierarchy and animated negative scale"]
 fn gpu_mirrored_rig_matches_cpu_positions_normals_and_render() {
-    let original = include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb");
+    let original =
+        include_bytes!("../../voxy_render/examples/assets/rigged-figure/RiggedFigure.glb");
     let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
     for animated in [false, true] {
         let mut document: serde_json::Value =
@@ -590,10 +598,11 @@ fn reference_rig_gpu_acceptance(
     joints: usize,
     clips: usize,
 ) {
-    let asset = crate::ModelAsset::parse(bytes, &[], crate::ModelLimits::default()).unwrap();
+    let asset =
+        voxy_model::ModelAsset::parse(bytes, &[], voxy_model::ModelLimits::default()).unwrap();
     assert_eq!(asset.animations.len(), clips);
     assert_eq!(asset.primitives.len(), 1);
-    let crate::ModelGeometry::Skinned(mesh) = &asset.primitives[0].geometry else {
+    let voxy_model::ModelGeometry::Skinned(mesh) = &asset.primitives[0].geometry else {
         panic!("skin required");
     };
     assert_eq!(mesh.vertices().len(), vertices);
@@ -634,10 +643,9 @@ fn reference_rig_gpu_acceptance(
         wgpu::TextureFormat::Rgba8Unorm
     };
     let mut renderer = SceneRenderer::new(&device, color_format);
-    pollster::block_on(renderer.reload_shader(
-        &device,
-        include_str!("../../../../voxy_editor/src/material.wgsl"),
-    ))
+    pollster::block_on(
+        renderer.reload_shader(&device, include_str!("../../voxy_editor/src/material.wgsl")),
+    )
     .unwrap();
     let transform = renderer.create_transform(&device, Mat4::IDENTITY).unwrap();
     transform
@@ -659,9 +667,9 @@ fn reference_rig_gpu_acceptance(
             panic!("embedded image required");
         };
         let blob = gltf.blob.as_ref().unwrap();
-        let image = crate::ImageAsset::decode(
+        let image = voxy_render::ImageAsset::decode(
             &blob[view.offset()..view.offset() + view.length()],
-            crate::ImageLimits::default(),
+            voxy_render::ImageLimits::default(),
         )
         .unwrap();
         if material.use_mips {
@@ -1019,17 +1027,16 @@ fn gpu_skin_normals_follow_inverse_transpose_and_keep_last_good() {
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let mut renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-    pollster::block_on(renderer.reload_shader(
-        &device,
-        include_str!("../../../../voxy_editor/src/material.wgsl"),
-    ))
+    pollster::block_on(
+        renderer.reload_shader(&device, include_str!("../../voxy_editor/src/material.wgsl")),
+    )
     .unwrap();
     let skinner = SceneSkinner::new(&renderer).unwrap();
     let normal = glam::Vec3::ONE.normalize();
-    let mesh = crate::SkinnedMesh::new(
+    let mesh = voxy_render::SkinnedMesh::new(
         [[0., 0., 0.], [1., -1., 0.], [1., 1., -2.]]
             .into_iter()
-            .map(|position| crate::SkinnedVertex {
+            .map(|position| voxy_render::SkinnedVertex {
                 position,
                 normal: normal.to_array(),
                 uv: [0.; 2],
@@ -1146,7 +1153,7 @@ fn gpu_skin_normals_follow_inverse_transpose_and_keep_last_good() {
     assert!(matches!(
         skinner.prepare_pose(&instance, &collapsed),
         Err(SceneSkinError::Pose(
-            crate::SkinnedUploadError::SingularNormalMatrix
+            voxy_render::SkinnedUploadError::SingularNormalMatrix
         ))
     ));
     assert_eq!(read(None), accepted);
@@ -1354,12 +1361,12 @@ fn lit_normal_comparison(
 #[test]
 #[ignore = "requires physical GPU; atomic shared skeletal memory admission"]
 fn gpu_skeletal_device_budget_admits_whole_instances_and_retains_source() {
-    let gpu = crate::GraphicsOptions::default().create_instance();
+    let gpu = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
     eprintln!("skeletal budget adapter: {:?}", adapter.get_info());
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let lod = crate::skinned_lod::tests::source();
+    let lod = skinned_lod_source();
     let mesh = Arc::new(lod.mesh().clone());
     let mut joints = vec![Mat4::IDENTITY; usize::from(mesh.joint_count())];
     let color = [0.25, 0.5, 0.75, 1.];
@@ -1370,7 +1377,7 @@ fn gpu_skeletal_device_budget_admits_whole_instances_and_retains_source() {
     let instance_bytes =
         SceneRenderer::mesh_allocation_bytes(&preview) + joints.len() as u64 * 64 + 32;
     let budget =
-        crate::ComputeMemoryBudget::configure(&device, source_bytes + 2 * instance_bytes + 4)
+        voxy_render::ComputeMemoryBudget::configure(&device, source_bytes + 2 * instance_bytes + 4)
             .unwrap();
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let skinner = SceneSkinner::new(&renderer).unwrap();
