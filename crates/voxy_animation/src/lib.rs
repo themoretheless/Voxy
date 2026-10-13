@@ -51,8 +51,10 @@ pub use root_rotation::{
 };
 mod anim_graph;
 mod blend_space2d;
+mod compressed;
 mod gait;
 mod ragdoll;
+pub use compressed::{CompressedClip, CompressionReport, CompressionSettings};
 pub use ragdoll::{
     ContactManifold, MotorSettings, PlaneEnvironment, Ragdoll, RagdollBody, RagdollDesc,
     RagdollEnvironment, RagdollJoint, RagdollState, powered_blend,
