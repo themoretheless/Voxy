@@ -52,6 +52,11 @@ pub use root_rotation::{
 mod anim_graph;
 mod blend_space2d;
 mod gait;
+mod ragdoll;
+pub use ragdoll::{
+    ContactManifold, MotorSettings, PlaneEnvironment, Ragdoll, RagdollBody, RagdollDesc,
+    RagdollEnvironment, RagdollJoint, RagdollState, powered_blend,
+};
 mod state_machine;
 pub use blend_space2d::{BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D};
 pub use gait::{
@@ -1975,6 +1980,7 @@ pub enum AnimationError {
     InvalidStateMachine,
     EventBudget,
     InvalidJointLimit,
+    InvalidRagdoll,
 }
 
 impl fmt::Display for AnimationError {
