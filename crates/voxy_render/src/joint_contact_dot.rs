@@ -1438,10 +1438,19 @@ mod tests {
     }
 }
 
-#[path="joint_contact_active.rs"]
+#[path = "joint_contact_active.rs"]
 mod active;
-pub use active::{ExperimentalResidentContactBatch,ExperimentalResidentContactInput,EXPERIMENTAL_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,experimental_seeded_resident_contact_shader};
+pub use active::{
+    EXPERIMENTAL_RESIDENT_CONTACT_SHADER, EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,
+    EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER, ExperimentalResidentContactBatch,
+    ExperimentalResidentContactInput, experimental_seeded_resident_contact_shader,
+};
 
-#[path="joint_contact_triple.rs"]
+#[path = "joint_contact_triple.rs"]
 mod triple;
-pub use triple::{ExperimentalTripleContactInput,ExperimentalTripleActiveContactInput,ExperimentalTripleActiveFactors,ExperimentalTripleActiveContactBatch,ExperimentalTripleCompletedFactorReadback,ExperimentalTripleExpansion,ExperimentalTripleExpandedCandidate};
+pub use triple::{
+    ExperimentalTripleActiveContactBatch, ExperimentalTripleActiveContactInput,
+    ExperimentalTripleActiveFactors, ExperimentalTripleCompletedFactorReadback,
+    ExperimentalTripleContactInput, ExperimentalTripleExpandedCandidate,
+    ExperimentalTripleExpansion,
+};

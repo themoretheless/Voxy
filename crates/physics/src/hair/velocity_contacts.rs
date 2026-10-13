@@ -15,9 +15,10 @@ mod safe_motion;
 mod square_root_projection;
 pub(in crate::hair) use feasibility_restoration::restore_candidate;
 pub(in crate::hair) use feasibility_restoration::restore_second_order_candidate;
+#[cfg(test)]
+pub(in crate::hair) use safe_motion::advance_contacts as reconcile_swept_contact_owners;
 pub(in crate::hair) use safe_motion::{
     admit_staged_strands, advance as advance_swept_strands,
-    advance_contacts as reconcile_swept_contact_owners,
     advance_contacts_with_pairs as reconcile_swept_contact_owners_with_pairs, strand_fraction,
 };
 

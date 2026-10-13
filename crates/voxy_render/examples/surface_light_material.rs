@@ -1,5 +1,5 @@
 //! Actual body-surface material pixels: CPU reference versus resident GPU light.
-use glam::{Mat4, Vec3};
+use glam::Vec3;
 use voxy_render::{
     SceneDraw, SceneMesh, SceneRenderer, SceneVertex, SceneView, SurfaceLightAdmission,
     SurfaceLightGeometry, SurfaceLightPcg, SurfaceLightTransfer, SurfaceLightVertexBinding,
@@ -175,8 +175,8 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
         let size = max - min;
         let half_height = (size.y * 0.55).max(size.x * 0.55 * 1.5);
         let eye = center + Vec3::Z * (size.length() * 2.);
-        let view = Mat4::look_at_rh(eye, center, Vec3::Y);
-        let projection = Mat4::orthographic_rh(
+        let view = glam::camera::rh::view::look_at_mat4(eye, center, Vec3::Y);
+        let projection = glam::camera::rh::proj::directx::orthographic(
             -half_height / 1.5,
             half_height / 1.5,
             -half_height,

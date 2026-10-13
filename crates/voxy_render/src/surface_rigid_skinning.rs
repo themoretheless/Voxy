@@ -54,7 +54,10 @@ impl SurfaceRigidSkinning {
             weights.len() as u32,
             joints,
             trailing.unwrap_or(u32::MAX),
-            0,0,0,0,
+            0,
+            0,
+            0,
+            0,
         ];
         let padding = [SurfaceRigidSkinWeight {
             joints: [0; 4],
@@ -153,14 +156,20 @@ impl SurfaceRigidSkinning {
             initialized: std::sync::atomic::AtomicBool::new(false),
         })
     }
-    pub fn replace_source_bound(&mut self, maximum:f64) {
-        self.maximum_position=maximum;
-        self.initialized.store(false,std::sync::atomic::Ordering::Release);
+    pub fn replace_source_bound(&mut self, maximum: f64) {
+        self.maximum_position = maximum;
+        self.initialized
+            .store(false, std::sync::atomic::Ordering::Release);
     }
     pub fn upload(&self, queue: &wgpu::Queue, matrices: &[Mat4]) -> Result<(), SceneError> {
-        self.upload_with_offset(queue,matrices,glam::Vec3::ZERO)
+        self.upload_with_offset(queue, matrices, glam::Vec3::ZERO)
     }
-    pub fn upload_with_offset(&self, queue: &wgpu::Queue, matrices: &[Mat4], offset: glam::Vec3) -> Result<(), SceneError> {
+    pub fn upload_with_offset(
+        &self,
+        queue: &wgpu::Queue,
+        matrices: &[Mat4],
+        offset: glam::Vec3,
+    ) -> Result<(), SceneError> {
         if !offset.is_finite() || offset.abs().max_element() as f64 > f32::MAX as f64 * 0.125 {
             return Err(SceneError::InvalidTransform);
         }
@@ -191,7 +200,11 @@ impl SurfaceRigidSkinning {
             values.push(dual.to_array());
         }
         queue.write_buffer(&self.palette, 0, bytemuck::cast_slice(&values));
-        queue.write_buffer(&self._inputs[0],16,bytemuck::cast_slice(&offset.extend(0.).to_array()));
+        queue.write_buffer(
+            &self._inputs[0],
+            16,
+            bytemuck::cast_slice(&offset.extend(0.).to_array()),
+        );
         self.initialized
             .store(true, std::sync::atomic::Ordering::Release);
         Ok(())

@@ -1399,8 +1399,11 @@ fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
                     bones: ["hip".into(), "knee".into(), "foot".into()],
                     sole_offset: [0., -0.1, 0.],
                     sole_up: [0., 1., 0.],
-                    orientation: if roll { crate::FootOrientation::Authored }
-                        else { crate::FootOrientation::AlignSupport },
+                    orientation: if roll {
+                        crate::FootOrientation::Authored
+                    } else {
+                        crate::FootOrientation::AlignSupport
+                    },
                     pole: [1., 0., 0.],
                     plant: true,
                     weight: 1.,
@@ -1543,9 +1546,13 @@ fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
     // In the roll case the initial sole pivot has z=-.1*sin(.3), and the
     // authored triangle rolls about it. No solved pose, palette or CPU skinning
     // helper enters this reference.
-    let reference_point = |x: f32, y: f32| if roll {
-        [x, y * 0.3f32.cos(), (y - 0.1) * 0.3f32.sin()]
-    } else { [x,y,0.] };
+    let reference_point = |x: f32, y: f32| {
+        if roll {
+            [x, y * 0.3f32.cos(), (y - 0.1) * 0.3f32.sin()]
+        } else {
+            [x, y, 0.]
+        }
+    };
     let mesh = voxy_render::SceneMesh::new(
         vec![
             voxy_render::SceneVertex {

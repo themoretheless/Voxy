@@ -1,5 +1,5 @@
 //! Contiguous typed storage for batch simulation, separate from authoring metadata.
-use crate::{NodeId, SceneGraph, SceneGraphError};
+use crate::{ComponentRevision, NodeId, SceneGraph, SceneGraphError};
 use std::any::Any;
 
 /// Failure before publication of a replacement associated-data table.
@@ -59,14 +59,54 @@ impl<T> ComponentTable<T> {
         A: Any + Send + Sync,
         B: Any + Send + Sync,
     {
+        self.rebuild_active_with_revisions::<A, B, E>(scene, |owner, first, _, second, _, old| {
+            build(owner, first, second, old)
+        })
+    }
+
+    /// [`Self::rebuild_active_with`] whose factory also receives both component
+    /// revisions, resolved by the same slot scan that finds the owners.
+    /// # Errors
+    /// Rejects foreign scenes before invoking the factory, or returns its first error.
+    pub fn rebuild_active_with_revisions<A, B, E>(
+        &mut self,
+        scene: &SceneGraph,
+        mut build: impl FnMut(
+            NodeId,
+            &A,
+            ComponentRevision,
+            &B,
+            ComponentRevision,
+            Option<&T>,
+        ) -> Result<T, E>,
+    ) -> Result<(), TableBuildError<E>>
+    where
+        A: Any + Send + Sync,
+        B: Any + Send + Sync,
+    {
         if scene.id != self.scene {
             return Err(TableBuildError::ForeignScene);
         }
-        let mut staged = Self::new(scene);
-        for (owner, first, second) in scene.active_components_with::<A, B>() {
+        // The replacement usually holds about as many rows as the current table.
+        let mut staged = Self {
+            scene: scene.id,
+            owners: Vec::with_capacity(self.owners.len()),
+            values: Vec::with_capacity(self.values.len()),
+            sparse: Vec::with_capacity(self.sparse.len()),
+        };
+        for (owner, first, first_revision, second, second_revision) in
+            scene.active_components_with_revisions::<A, B>()
+        {
             let previous = self.row(owner).map(|row| &self.values[row]);
-            let value = build(owner, first, second, previous)
-                .map_err(|error| TableBuildError::Build { owner, error })?;
+            let value = build(
+                owner,
+                first,
+                first_revision,
+                second,
+                second_revision,
+                previous,
+            )
+            .map_err(|error| TableBuildError::Build { owner, error })?;
             // Owners come from this immutable scene borrow and cannot become stale.
             staged.push_row(owner, value);
         }

@@ -391,12 +391,39 @@ impl SceneGraph {
     pub fn active_components_with<A: Any + Send + Sync, B: Any + Send + Sync>(
         &self,
     ) -> impl Iterator<Item = (NodeId, &A, &B)> + '_ {
-        self.active_components::<A>().filter_map(|(owner, first)| {
-            self.component::<B>(owner)
-                .ok()
-                .flatten()
-                .map(|second| (owner, first, second))
-        })
+        self.active_components_with_revisions::<A, B>()
+            .map(|(owner, first, _, second, _)| (owner, first, second))
+    }
+
+    /// Active nodes holding both `A` and `B`, with each component's revision, in slot
+    /// order. One slot scan resolves both components from the same node, so callers
+    /// that reuse derived rows by revision need no further lookups per owner.
+    pub fn active_components_with_revisions<A: Any + Send + Sync, B: Any + Send + Sync>(
+        &self,
+    ) -> impl Iterator<Item = (NodeId, &A, ComponentRevision, &B, ComponentRevision)> + '_ {
+        let second_key = TypeId::of::<B>();
+        self.slot_components::<A>()
+            .filter(|(_, node, _)| node.effective_active)
+            .filter_map(move |(owner, node, first)| {
+                let first_revision = node.components.get(&TypeId::of::<A>())?.1;
+                let second = node.components.get(&second_key)?;
+                let value = second.0.downcast_ref::<B>()?;
+                Some((owner, first, first_revision, value, second.1))
+            })
+    }
+
+    /// Revisions of `A` and `B` on one node, validating the handle once.
+    /// # Errors
+    /// Rejects stale or foreign handles; a missing component yields `None`.
+    pub fn component_revisions<A: Any + Send + Sync, B: Any + Send + Sync>(
+        &self,
+        id: NodeId,
+    ) -> Result<(Option<ComponentRevision>, Option<ComponentRevision>), SceneGraphError> {
+        let components = &self.node(id)?.components;
+        Ok((
+            components.get(&TypeId::of::<A>()).map(|value| value.1),
+            components.get(&TypeId::of::<B>()).map(|value| value.1),
+        ))
     }
 
     /// Attaches one value per Rust type; replacing a component returns its old value.
@@ -515,10 +542,10 @@ impl SceneGraph {
     /// # Errors
     /// Rejects invalid handles and invalid transforms before mutation.
     pub fn set_local(&mut self, id: NodeId, local: Transform) -> Result<(), SceneGraphError> {
-        local.matrix()?;
+        let matrix = local.matrix()?;
         if self.node(id)?.local != local {
             self.node_mut(id)?.local = local;
-            self.refresh_subtree(id)?;
+            self.refresh_subtree_with(id, Some(matrix))?;
         }
         Ok(())
     }
@@ -687,10 +714,28 @@ impl SceneGraph {
     // Eager propagation preserves constant-time queries for every consumer.
     // Iterative traversal supports deep hierarchies without stack recursion.
     fn refresh_subtree(&mut self, root: NodeId) -> Result<(), SceneGraphError> {
+        self.refresh_subtree_with(root, None)
+    }
+
+    /// Recomputes world matrices and effective activity below `root`; `root_matrix`
+    /// is the root's already validated local matrix when the caller has it.
+    fn refresh_subtree_with(
+        &mut self,
+        root: NodeId,
+        root_matrix: Option<Mat4>,
+    ) -> Result<(), SceneGraphError> {
+        // Leaves, the common case for per-behavior edits, need no traversal stack.
+        if self.node(root)?.children.is_empty() {
+            return self.refresh_node(root, root_matrix);
+        }
         let mut pending = vec![root];
+        let mut root_matrix = root_matrix;
         while let Some(id) = pending.pop() {
             let node = self.node(id)?;
-            let local = node.local.matrix()?;
+            let local = match root_matrix.take() {
+                Some(matrix) if id == root => matrix,
+                _ => node.local.matrix()?,
+            };
             let active = node.active;
             let (world, effective_active) = if let Some(parent) = node.parent {
                 let parent = self.node(parent)?;
@@ -708,6 +753,31 @@ impl SceneGraph {
             node.effective_active = effective_active;
             pending.extend(node.children.iter().copied());
         }
+        Ok(())
+    }
+
+    /// Recomputes one childless node's world matrix and effective activity.
+    fn refresh_node(&mut self, id: NodeId, matrix: Option<Mat4>) -> Result<(), SceneGraphError> {
+        let node = self.node(id)?;
+        let local = match matrix {
+            Some(matrix) => matrix,
+            None => node.local.matrix()?,
+        };
+        let active = node.active;
+        let (world, effective_active) = if let Some(parent) = node.parent {
+            let parent = self.node(parent)?;
+            (
+                parent
+                    .world
+                    .and_then(|matrix| checked_world(matrix * local)),
+                active && parent.effective_active,
+            )
+        } else {
+            (Ok(local), active)
+        };
+        let node = self.node_mut(id)?;
+        node.world = world;
+        node.effective_active = effective_active;
         Ok(())
     }
 

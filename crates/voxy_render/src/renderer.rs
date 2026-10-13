@@ -253,12 +253,12 @@ impl Renderer {
         {
             required_features |= wgpu::Features::MAPPABLE_PRIMARY_BUFFERS;
         }
-        if adapter
-            .features()
-            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
-        {
-            required_features |= wgpu::Features::EXPERIMENTAL_RAY_QUERY;
-        }
+        // Ray query is an experimental wgpu feature: requesting it is refused unless the
+        // device also opts into experimental features, which needs `unsafe` and is not
+        // something this crate does. Requesting it here made device creation fail on
+        // every adapter that advertises it (llvmpipe and current desktop GPUs), so the
+        // renderer only reports the capability through `has_ray_query` when a caller
+        // created the device with the opt-in; the ray probe crate does that itself.
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("Voxy device"),

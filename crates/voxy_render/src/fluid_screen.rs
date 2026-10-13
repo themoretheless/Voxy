@@ -1094,8 +1094,7 @@ impl ScreenSpaceFluidRenderer {
     }
 
     /// WGSL source for the single-pass compute bilateral filter (Optimization #42-50).
-    pub const FLUID_FILTER_COMPUTE_SHADER: &'static str =
-        include_str!("fluid_filter_compute.wgsl");
+    pub const FLUID_FILTER_COMPUTE_SHADER: &'static str = include_str!("fluid_filter_compute.wgsl");
 
     /// Creates a compute pipeline, bind group, and storage output buffer (`vec2f` per pixel)
     /// for single-pass bilateral depth filtering on devices supporting compute storage buffers.
@@ -1112,7 +1111,7 @@ impl ScreenSpaceFluidRenderer {
             .and_then(|pixels| pixels.checked_mul(8))
             .ok_or("fluid compute filter buffer size overflow")?;
         if limits.max_storage_buffers_per_shader_stage < 1
-            || output_bytes > u64::from(limits.max_storage_buffer_binding_size)
+            || output_bytes > limits.max_storage_buffer_binding_size
             || output_bytes > limits.max_buffer_size
             || limits.max_compute_workgroup_size_x < 8
             || limits.max_compute_workgroup_size_y < 8
@@ -1171,11 +1170,7 @@ impl ScreenSpaceFluidRenderer {
         });
         pass.set_pipeline(pipeline);
         pass.set_bind_group(0, bind_group, &[]);
-        pass.dispatch_workgroups(
-            self.size[0].div_ceil(8),
-            self.size[1].div_ceil(8),
-            1,
-        );
+        pass.dispatch_workgroups(self.size[0].div_ceil(8), self.size[1].div_ceil(8), 1);
     }
 }
 

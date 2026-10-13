@@ -39,7 +39,7 @@ pub(super) fn trajectory_contact_oriented(
     if sweep_capsule_triangle(capsule, triangle, options)? == CapsuleSweep::Clear {
         return Ok(None);
     }
-    trajectory_contact_after_nonclear_sweep(capsule,triangle,options,closed)
+    trajectory_contact_after_nonclear_sweep(capsule, triangle, options, closed)
 }
 
 // The batch query has already validated this exact motion and evaluated its
@@ -133,11 +133,18 @@ pub(super) fn trajectory_contact_after_nonclear_sweep(
     // Match closest_points' interpolation exactly. Endpoint witnesses must
     // keep their topological identity when published on adjacent segments.
     let points: [V; 2] = std::array::from_fn(|i| {
-        add(capsule.start[i],mul(sub(capsule.end[i],capsule.start[i]),time))
+        add(
+            capsule.start[i],
+            mul(sub(capsule.end[i], capsule.start[i]), time),
+        )
     });
     let direction = sub(points[1], points[0]);
     let squared = dot(direction, direction);
-    let fraction = if p == points[0] {0.} else if p == points[1] {1.} else if squared > 0. {
+    let fraction = if p == points[0] {
+        0.
+    } else if p == points[1] {
+        1.
+    } else if squared > 0. {
         (dot(sub(p, points[0]), direction) / squared).clamp(0., 1.)
     } else {
         0.
@@ -145,7 +152,10 @@ pub(super) fn trajectory_contact_after_nonclear_sweep(
     let distance = len(sub(p, q));
     let oriented_face_normal = if closed {
         let vertices: [V; 3] = std::array::from_fn(|i| {
-            add(triangle.start[i],mul(sub(triangle.end[i],triangle.start[i]),time))
+            add(
+                triangle.start[i],
+                mul(sub(triangle.end[i], triangle.start[i]), time),
+            )
         });
         let n = cross(sub(vertices[1], vertices[0]), sub(vertices[2], vertices[0]));
         if !finite(n) || len(n) < 1e-14 {
@@ -169,17 +179,24 @@ pub(super) fn trajectory_contact_after_nonclear_sweep(
             super::super::ClosestFeature::Face
         ) {
             Some(n)
-        } else {None}
-    } else {None};
-    let normal = if let Some(n)=oriented_face_normal {
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+    let normal = if let Some(n) = oriented_face_normal {
         // Unsigned discovery may select a point just behind a closed face.
         // Its physical row must differentiate the signed outward branch,
         // including nonzero separation, just like endpoint mesh geometry.
-        gap=dot(sub(p,q),n)-capsule.radius;
+        gap = dot(sub(p, q), n) - capsule.radius;
         n
     } else if distance <= 1e-12 {
-        return Err(if closed {"trajectory edge crossing needs oriented feature activation"}
-            else {"trajectory surface crossing needs oriented contact activation"});
+        return Err(if closed {
+            "trajectory edge crossing needs oriented feature activation"
+        } else {
+            "trajectory surface crossing needs oriented contact activation"
+        });
     } else {
         mul(sub(p, q), 1. / distance)
     };
@@ -212,27 +229,71 @@ mod tests {
         // Binary64 geometry captured from the full groom at rod 9, segment 19.
         // Keep this regression self-contained so ordinary test runs exercise it.
         let values: [f64; 32] = [
-            -0.10430728662467607, 0.5338032657791152, -0.051681571706334216,
-            -0.10314318741700262, 0.5092151503238094, -0.06804549049180765,
-            -0.1044070294389939, 0.5338818581579452, -0.05190695914890549,
-            -0.1032849720564701, 0.5093398225337193, -0.06834283946726445,
-            -0.097025066614151, 0.5243496298789978, -0.0603339821100235,
-            -0.10848993062973022, 0.5205245018005371, -0.05877222865819931,
-            -0.10236699134111404, 0.5275492072105408, -0.05627758428454399,
-            -0.09693187847733498, 0.5242734253406525, -0.06077761296182871,
-            -0.10839556157588959, 0.5204505175352097, -0.059224497992545366,
-            -0.10227613802999258, 0.5274754464626312, -0.0567256142385304,
-            4e-05, 1e-10
+            -0.10430728662467607,
+            0.5338032657791152,
+            -0.051681571706334216,
+            -0.10314318741700262,
+            0.5092151503238094,
+            -0.06804549049180765,
+            -0.1044070294389939,
+            0.5338818581579452,
+            -0.05190695914890549,
+            -0.1032849720564701,
+            0.5093398225337193,
+            -0.06834283946726445,
+            -0.097025066614151,
+            0.5243496298789978,
+            -0.0603339821100235,
+            -0.10848993062973022,
+            0.5205245018005371,
+            -0.05877222865819931,
+            -0.10236699134111404,
+            0.5275492072105408,
+            -0.05627758428454399,
+            -0.09693187847733498,
+            0.5242734253406525,
+            -0.06077761296182871,
+            -0.10839556157588959,
+            0.5204505175352097,
+            -0.059224497992545366,
+            -0.10227613802999258,
+            0.5274754464626312,
+            -0.0567256142385304,
+            4e-05,
+            1e-10,
         ];
-        let p=|i:usize|[values[i],values[i+1],values[i+2]];
-        let capsule=CapsuleMotion {start:[p(0),p(3)],end:[p(6),p(9)],radius:values[30]};
-        let triangle=TriangleMotion {start:[p(12),p(15),p(18)],end:[p(21),p(24),p(27)]};
-        for closed in [false,true] {
-            let witness=trajectory_contact_after_nonclear_sweep(capsule,triangle,CapsuleSweepOptions {tolerance_m:values[31],..Default::default()},closed).unwrap();
-            eprintln!("CAPTURED INTERIOR ACTIVATION closed={closed} witness={witness:?} endpoint_gap={:?}",witness.map(|w|w.endpoint_gap(capsule.end)));
-            let witness=witness.expect("exactly proven interior violation must produce a trajectory constraint");
-            assert!(witness.time>0. && witness.time<1.);
-            assert!(witness.endpoint_gap(capsule.end)< -values[31],"published endpoint row must retain the discovered physical violation");
+        let p = |i: usize| [values[i], values[i + 1], values[i + 2]];
+        let capsule = CapsuleMotion {
+            start: [p(0), p(3)],
+            end: [p(6), p(9)],
+            radius: values[30],
+        };
+        let triangle = TriangleMotion {
+            start: [p(12), p(15), p(18)],
+            end: [p(21), p(24), p(27)],
+        };
+        for closed in [false, true] {
+            let witness = trajectory_contact_after_nonclear_sweep(
+                capsule,
+                triangle,
+                CapsuleSweepOptions {
+                    tolerance_m: values[31],
+                    ..Default::default()
+                },
+                closed,
+            )
+            .unwrap();
+            eprintln!(
+                "CAPTURED INTERIOR ACTIVATION closed={closed} witness={witness:?} endpoint_gap={:?}",
+                witness.map(|w| w.endpoint_gap(capsule.end))
+            );
+            let witness = witness
+                .expect("exactly proven interior violation must produce a trajectory constraint");
+            assert!(witness.time > 0. && witness.time < 1.);
+            assert!(
+                witness.endpoint_gap(capsule.end) < -values[31],
+                "published endpoint row must retain the discovered physical violation"
+            );
         }
     }
     #[test]
@@ -240,66 +301,181 @@ mod tests {
         // Frozen rod355/segment17: a sub-ULP trial used to change the endpoint
         // fraction from 1 to 0.9999999999999998, double-counting its merit on
         // adjacent segments after mesh_motion canonicalized only exact ends.
-        let start=[[0.06610006941656807,0.5629035967858032,-0.04080877476566326],
-            [0.06721148923222399,0.5521830670396227,-0.04430061978701083]];
-        let triangle=TriangleMotion {
-            start:[[0.06893501058220863,0.5549008548259735,-0.040359847247600555],
-                [0.06924695521593094,0.5477399528026581,-0.04907388798892498],
-                [0.06404399126768112,0.5535735785961151,-0.04350353591144085]],
-            end:[[0.06908527202904224,0.5547468513250351,-0.04111059941351414],
-                [0.0694073811173439,0.547576442360878,-0.049811783246695995],
-                [0.06419733911752701,0.5534168034791946,-0.04425608832389116]]};
+        let start = [
+            [
+                0.06610006941656807,
+                0.5629035967858032,
+                -0.04080877476566326,
+            ],
+            [
+                0.06721148923222399,
+                0.5521830670396227,
+                -0.04430061978701083,
+            ],
+        ];
+        let triangle = TriangleMotion {
+            start: [
+                [
+                    0.06893501058220863,
+                    0.5549008548259735,
+                    -0.040359847247600555,
+                ],
+                [
+                    0.06924695521593094,
+                    0.5477399528026581,
+                    -0.04907388798892498,
+                ],
+                [
+                    0.06404399126768112,
+                    0.5535735785961151,
+                    -0.04350353591144085,
+                ],
+            ],
+            end: [
+                [
+                    0.06908527202904224,
+                    0.5547468513250351,
+                    -0.04111059941351414,
+                ],
+                [0.0694073811173439, 0.547576442360878, -0.049811783246695995],
+                [
+                    0.06419733911752701,
+                    0.5534168034791946,
+                    -0.04425608832389116,
+                ],
+            ],
+        };
         for end in [
-            [[0.0663130843200608,0.5624728499108836,-0.04137759931645231],
-                [0.06753421349474432,0.5518720774621811,-0.04518424406802109]],
-            [[0.06631308432006078,0.5624728499108836,-0.04137759931645229],
-                [0.06753421349474431,0.5518720774621811,-0.04518424406802117]],
+            [
+                [0.0663130843200608, 0.5624728499108836, -0.04137759931645231],
+                [
+                    0.06753421349474432,
+                    0.5518720774621811,
+                    -0.04518424406802109,
+                ],
+            ],
+            [
+                [
+                    0.06631308432006078,
+                    0.5624728499108836,
+                    -0.04137759931645229,
+                ],
+                [
+                    0.06753421349474431,
+                    0.5518720774621811,
+                    -0.04518424406802117,
+                ],
+            ],
         ] {
-            let capsule=CapsuleMotion {start,end,radius:40e-6};
-            let witness=trajectory_contact_oriented(capsule,triangle,Default::default(),true).unwrap().unwrap();
-            assert!(witness.time>0.02 && witness.time<0.03);
-            assert_eq!(witness.fraction,1.,"endpoint changed segment identity");
-            assert!((witness.endpoint_gap(end)-witness.gap).abs()<1e-14);
+            let capsule = CapsuleMotion {
+                start,
+                end,
+                radius: 40e-6,
+            };
+            let witness = trajectory_contact_oriented(capsule, triangle, Default::default(), true)
+                .unwrap()
+                .unwrap();
+            assert!(witness.time > 0.02 && witness.time < 0.03);
+            assert_eq!(witness.fraction, 1., "endpoint changed segment identity");
+            assert!((witness.endpoint_gap(end) - witness.gap).abs() < 1e-14);
         }
     }
     #[test]
     fn rounded_edge_projection_does_not_select_face_plane_metric() {
-        let vertices=[[0.09425839595496655,0.472492553293705,-0.07590783201158047],
-            [0.09931213222444057,0.4624982252717018,-0.07562194764614105],
-            [0.09137955494225025,0.4575122892856598,-0.07773331552743912]];
-        let end=[[0.0984715757252889,0.4703294935312507,-0.07520405043636896],
-            [0.09760007508564893,0.4541119440432464,-0.07672627344947909]];
-        let normal=unit(cross(sub(vertices[1],vertices[0]),sub(vertices[2],vertices[0])));
-        let capsule=CapsuleMotion {start:end.map(|p|add(p,mul(normal,0.001))),end,radius:40e-6};
-        let triangle=TriangleMotion {start:vertices,end:vertices};
-        let witness=trajectory_contact_oriented(capsule,triangle,Default::default(),true).unwrap().unwrap();
-        assert_eq!(witness.time,1.);
-        let p=add(mul(end[0],1.-witness.fraction),mul(end[1],witness.fraction));
-        let face=Triangle {ids:[0,1,2],p:vertices,previous_p:vertices,velocity:[[0.;3];3],normal,min:[0.;3],max:[0.;3]};
-        let (q,feature)=super::super::super::closest_triangle_feature(p,&face);
-        assert!(matches!(feature,super::super::super::ClosestFeature::Edge(0,1)));
-        let expected=len(sub(p,q))-capsule.radius;
-        assert!((witness.gap-expected).abs()<1e-14,"edge witness used face-plane distance: {} vs {expected}",witness.gap);
-        assert!((witness.endpoint_gap(end)-expected).abs()<1e-14);
+        let vertices = [
+            [0.09425839595496655, 0.472492553293705, -0.07590783201158047],
+            [
+                0.09931213222444057,
+                0.4624982252717018,
+                -0.07562194764614105,
+            ],
+            [
+                0.09137955494225025,
+                0.4575122892856598,
+                -0.07773331552743912,
+            ],
+        ];
+        let end = [
+            [0.0984715757252889, 0.4703294935312507, -0.07520405043636896],
+            [
+                0.09760007508564893,
+                0.4541119440432464,
+                -0.07672627344947909,
+            ],
+        ];
+        let normal = unit(cross(
+            sub(vertices[1], vertices[0]),
+            sub(vertices[2], vertices[0]),
+        ));
+        let capsule = CapsuleMotion {
+            start: end.map(|p| add(p, mul(normal, 0.001))),
+            end,
+            radius: 40e-6,
+        };
+        let triangle = TriangleMotion {
+            start: vertices,
+            end: vertices,
+        };
+        let witness = trajectory_contact_oriented(capsule, triangle, Default::default(), true)
+            .unwrap()
+            .unwrap();
+        assert_eq!(witness.time, 1.);
+        let p = add(
+            mul(end[0], 1. - witness.fraction),
+            mul(end[1], witness.fraction),
+        );
+        let face = Triangle {
+            ids: [0, 1, 2],
+            p: vertices,
+            previous_p: vertices,
+            velocity: [[0.; 3]; 3],
+            normal,
+            min: [0.; 3],
+            max: [0.; 3],
+        };
+        let (q, feature) = super::super::super::closest_triangle_feature(p, &face);
+        assert!(matches!(
+            feature,
+            super::super::super::ClosestFeature::Edge(0, 1)
+        ));
+        let expected = len(sub(p, q)) - capsule.radius;
+        assert!(
+            (witness.gap - expected).abs() < 1e-14,
+            "edge witness used face-plane distance: {} vs {expected}",
+            witness.gap
+        );
+        assert!((witness.endpoint_gap(end) - expected).abs() < 1e-14);
     }
     #[test]
     fn nonzero_backside_face_witness_uses_closed_outward_branch() {
-        for reversed in [false,true] {
-            let mut vertices=[[-1.,-1.,0.],[1.,-1.,0.],[0.,1.,0.]];
-            if reversed {vertices.swap(1,2);}
-            let sign=if reversed {-1.} else {1.};
-            let triangle=TriangleMotion {start:vertices,end:vertices};
-            let capsule=CapsuleMotion {start:[[-0.1,0.,-0.1*sign],[0.1,0.,-0.1*sign]],
-                end:[[-0.1,0.,-20e-6*sign],[0.1,0.,-20e-6*sign]],radius:40e-6};
-            let unsigned=trajectory_contact(capsule,triangle,Default::default()).unwrap().unwrap();
-            let signed=trajectory_contact_oriented(capsule,triangle,Default::default(),true).unwrap().unwrap();
-            assert_eq!(signed.time,1.);
-            assert_eq!(signed.normal,[0.,0.,sign]);
-            assert!(dot(unsigned.normal,[0.,0.,-sign])>1.-1e-12);
-            assert!((signed.gap+60e-6).abs()<1e-15);
-            assert!((signed.endpoint_gap(capsule.end)-signed.gap).abs()<1e-15);
-            let corrected=capsule.end.map(|p|add(p,mul(signed.normal,60e-6)));
-            assert!(signed.endpoint_gap(corrected).abs()<1e-15);
+        for reversed in [false, true] {
+            let mut vertices = [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]];
+            if reversed {
+                vertices.swap(1, 2);
+            }
+            let sign = if reversed { -1. } else { 1. };
+            let triangle = TriangleMotion {
+                start: vertices,
+                end: vertices,
+            };
+            let capsule = CapsuleMotion {
+                start: [[-0.1, 0., -0.1 * sign], [0.1, 0., -0.1 * sign]],
+                end: [[-0.1, 0., -20e-6 * sign], [0.1, 0., -20e-6 * sign]],
+                radius: 40e-6,
+            };
+            let unsigned = trajectory_contact(capsule, triangle, Default::default())
+                .unwrap()
+                .unwrap();
+            let signed = trajectory_contact_oriented(capsule, triangle, Default::default(), true)
+                .unwrap()
+                .unwrap();
+            assert_eq!(signed.time, 1.);
+            assert_eq!(signed.normal, [0., 0., sign]);
+            assert!(dot(unsigned.normal, [0., 0., -sign]) > 1. - 1e-12);
+            assert!((signed.gap + 60e-6).abs() < 1e-15);
+            assert!((signed.endpoint_gap(capsule.end) - signed.gap).abs() < 1e-15);
+            let corrected = capsule.end.map(|p| add(p, mul(signed.normal, 60e-6)));
+            assert!(signed.endpoint_gap(corrected).abs() < 1e-15);
         }
     }
     use crate::hair::{ContactSource, HairMaterial, HairRod};
