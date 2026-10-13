@@ -21,23 +21,31 @@ pub enum SceneSkinError {
 
 #[derive(Debug)]
 pub struct SceneSkinner {
-    device: wgpu::Device,
-    memory_budget: crate::ComputeMemoryBudget,
-    pipeline: wgpu::ComputePipeline,
-    identity: Arc<()>,
+    #[doc(hidden)]
+    pub device: wgpu::Device,
+    #[doc(hidden)]
+    pub memory_budget: crate::ComputeMemoryBudget,
+    #[doc(hidden)]
+    pub pipeline: wgpu::ComputePipeline,
+    #[doc(hidden)]
+    pub identity: Arc<()>,
 }
 #[derive(Debug)]
 pub struct SceneSkinSource {
     device: wgpu::Device,
-    mesh: Arc<SkinnedMesh>,
+    #[doc(hidden)]
+    pub mesh: Arc<SkinnedMesh>,
     buffer: crate::ComputeStorage,
 }
 #[derive(Debug)]
 pub struct SceneSkinInstance {
     owner: Arc<()>,
-    source: Arc<SceneSkinSource>,
-    geometry: SceneGeometry,
-    palette: Arc<crate::ComputeStorage>,
+    #[doc(hidden)]
+    pub source: Arc<SceneSkinSource>,
+    #[doc(hidden)]
+    pub geometry: SceneGeometry,
+    #[doc(hidden)]
+    pub palette: Arc<crate::ComputeStorage>,
     binding: wgpu::BindGroup,
     parameters: Arc<crate::ComputeStorage>,
 }
@@ -64,7 +72,8 @@ pub struct SceneSkinPose<'a> {
 /// Keep the owner instance alive while updating/rendering this level.
 #[derive(Debug)]
 pub struct SceneSkinLodLevel {
-    geometry: SceneGeometry,
+    #[doc(hidden)]
+    pub geometry: SceneGeometry,
 }
 impl SceneSkinLodLevel {
     pub fn geometry(&self) -> &SceneGeometry {
@@ -419,6 +428,3 @@ impl SceneSkinInstance {
         self.geometry.allocation_bytes() + self.palette.size() + self.parameters.size()
     }
 }
-
-#[cfg(test)]
-mod tests;

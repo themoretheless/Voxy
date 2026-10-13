@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         handlers.register("app.hide".into(), |_, event, commands| {
             commands
                 .push(voxy_scene::SceneCommand::SetActive(event.owner, false))
-                .map_err(|error| error.to_string())
+                .map_err(|error| voxy_gameplay::GameplayError::from(error.to_string()))
         })
     });
     voxy_editor::run_model_viewport_with_ui_actions(

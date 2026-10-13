@@ -1,4 +1,5 @@
 //! Hybrid CUDA integration with authoritative CPU voxel collision.
+use crate::DemoError;
 use physics_voxel::{
     CharacterConfig, CharacterError, CharacterInput, CharacterState, CharacterStep, VehicleError,
 };
@@ -107,7 +108,7 @@ pub fn step_character_collision(
     dt: f64,
     config: CharacterConfig,
     cuda_motion: bool,
-) -> Result<CharacterStep, String> {
+) -> Result<CharacterStep, DemoError> {
     let mut general = physics::CharacterState {
         body: physics::AnchoredAabb {
             anchor: physics::Origin {
@@ -127,8 +128,7 @@ pub fn step_character_collision(
         registry,
     };
     let report = if cuda_motion {
-        let motion =
-            character_motion(compute, state, input, dt, config).map_err(|e| e.to_string())?;
+        let motion = character_motion(compute, state, input, dt, config)?;
         physics::step_character_with_motion(
             &world,
             &mut general,
@@ -140,8 +140,7 @@ pub fn step_character_collision(
         )
     } else {
         physics::step_character(&world, &mut general, input, dt, config)
-    }
-    .map_err(|e| e.to_string())?;
+    }?;
     *state = CharacterState {
         body: physics_voxel::AnchoredAabb {
             anchor: voxy_world::VoxelPos {

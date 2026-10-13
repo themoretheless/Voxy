@@ -1,6 +1,6 @@
 //! Authoring-only immutable pose preview; no game clock or event queue.
 use std::sync::Arc;
-use voxy_render::ModelAsset;
+use voxy_model::ModelAsset;
 use voxy_scene::NodeId;
 #[derive(Debug)]
 pub(super) struct Preview {

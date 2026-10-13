@@ -7,10 +7,8 @@ use std::{
     path::Path,
     time::Instant,
 };
-use voxy_render::{
-    LodArchiveLimits, LodPolicy, ModelAsset, ModelGeometry, ModelLimits, SceneCamera,
-    SceneProjection,
-};
+use voxy_model::{ModelAsset, ModelGeometry, ModelLimits};
+use voxy_render::{LodArchiveLimits, LodPolicy, SceneCamera, SceneProjection};
 fn read(path: &Path, cap: u64) -> Result<Vec<u8>, Box<dyn Error>> {
     let mut data = Vec::new();
     std::fs::File::open(path)?

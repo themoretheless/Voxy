@@ -4,8 +4,9 @@ use voxy_demos::tissue_demo;
 mod tissue_regions;
 use glam::{DMat4, Mat4, Vec3};
 use std::io::Write;
+use voxy_model::{ModelAsset, ModelLimits};
+use voxy_render::SceneMesh;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
-use voxy_render::{ModelAsset, ModelLimits, SceneMesh};
 fn cuda_tissue_selection(arguments: &[String]) -> Result<Option<(usize, usize)>, &'static str> {
     let devices: Vec<_> = arguments
         .iter()
@@ -190,16 +191,16 @@ fn imported_pose64(
     model: &ModelAsset,
     phase: f64,
     startup_seconds: f64,
-) -> Result<voxy_animation::Pose64, voxy_render::ModelError> {
+) -> Result<voxy_animation::Pose64, voxy_model::ModelError> {
     if startup_seconds == 0. {
         return model.sample_pose_phase64(Some(0), phase);
     }
     model
         .animations
         .first()
-        .ok_or_else(|| voxy_render::ModelError("missing imported clip".into()))?
+        .ok_or_else(|| voxy_model::ModelError("missing imported clip".into()))?
         .try_sample_phase64_with_startup(&model.skeleton, phase, startup_seconds)
-        .map_err(|e| voxy_render::ModelError(e.to_string()))
+        .map_err(|e| voxy_model::ModelError(e.to_string()))
 }
 #[allow(dead_code)]
 fn imported_contact_sample64(
@@ -719,7 +720,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             model
                 .sample_pose_phase(reference_clip, 0.)?
                 .skin_matrices(&model.skeleton)
-                .map_err(|error| voxy_render::ModelError(error.to_string()))
+                .map_err(|error| voxy_model::ModelError(error.to_string()))
         })
         .transpose()?;
     let palette_at = |time: f64| -> Result<Vec<Mat4>, &'static str> {
@@ -741,7 +742,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             model
                 .sample_pose_phase64(reference_clip, 0.)?
                 .skin_matrices(&model.skeleton)
-                .map_err(|error| voxy_render::ModelError(error.to_string()))
+                .map_err(|error| voxy_model::ModelError(error.to_string()))
         })
         .transpose()?;
     let limits: Vec<_> = remaining

@@ -624,7 +624,7 @@ pub(super) fn load(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use voxy_render::ModelLimits;
+    use voxy_model::ModelLimits;
     const MODEL: &[u8] = include_bytes!("../../../../assets/animation/cesium-man/CesiumMan.glb");
     fn hash(bytes: &[u8]) -> String {
         let mut inputs = ImportInputs::new(1, bytes.len());

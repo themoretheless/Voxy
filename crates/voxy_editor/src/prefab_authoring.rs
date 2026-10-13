@@ -1,4 +1,5 @@
 //! Scene composition uses the same bounded source observations as model import.
+use crate::EditorError;
 #[cfg(test)]
 use crate::model_registry;
 use crate::{InputRecipe, scene_limits};
@@ -55,7 +56,8 @@ impl AuthoringProject {
     pub(super) fn liquid_runtime(
         &self,
         scene: &voxy_scene::SceneGraph,
-    ) -> Result<Option<(voxy_gameplay::SceneLiquidRuntime, Vec<Option<[f32; 4]>>)>, String> {
+    ) -> Result<Option<(voxy_gameplay::SceneLiquidRuntime, Vec<Option<[f32; 4]>>)>, EditorError>
+    {
         #[derive(serde::Deserialize)]
         #[serde(deny_unknown_fields)]
         struct MaterialFile {
@@ -98,7 +100,7 @@ impl AuthoringProject {
                     || value[..3].iter().any(|v| *v < 0.)
                     || value[3] < 1.)
             {
-                return Err(format!("invalid liquid optics: {name}"));
+                return Err(format!("invalid liquid optics: {name}").into());
             }
             optics.push(m.optics);
             materials.push((
@@ -129,58 +131,63 @@ impl AuthoringProject {
             128,
         )
         .map(|runtime| Some((runtime, admitted.value().1.clone())))
+        .map_err(EditorError::from)
     }
 
-    pub(super) fn worker_project(&self) -> Result<Self, String> {
+    pub(super) fn worker_project(&self) -> Result<Self, EditorError> {
         Ok(Self {
             registry: self.registry.clone(),
             root: self.root.clone(),
-            provider: FileInputs::new(&self.root).map_err(|error| error.to_string())?,
+            provider: FileInputs::new(&self.root)?,
             manifest: self.manifest.clone(),
         })
     }
-    pub(super) fn input_provider(&self) -> Result<FileInputs, String> {
-        FileInputs::new(&self.root).map_err(|error| error.to_string())
+    pub(super) fn input_provider(&self) -> Result<FileInputs, EditorError> {
+        FileInputs::new(&self.root).map_err(EditorError::from)
     }
     pub(super) fn decode_ui_font(
         &self,
         asset: &str,
         inputs: &mut ImportInputs,
-    ) -> Result<voxy_text::TextFont, String> {
+    ) -> Result<voxy_text::TextFont, EditorError> {
         let locations = self.project_locations(inputs)?;
         let source = Self::resolve_project_input(asset, locations.as_ref())?;
         voxy_gameplay::decode_ui_font_observed(inputs, source.observation_id(), |id, limit| {
             self.provider.read(id, limit.min(4 * 1024 * 1024))
         })
+        .map_err(Into::into)
     }
     #[cfg(test)]
-    pub(super) fn validate_import_inputs(&self, inputs: &ImportInputs) -> Result<(), String> {
+    pub(super) fn validate_import_inputs(&self, inputs: &ImportInputs) -> Result<(), EditorError> {
         inputs
             .validate(|id, limit| self.provider.read(id, limit))
             .map_err(|error| format!("project inputs changed: {error:?}"))
+            .map_err(Into::into)
     }
     #[cfg(test)]
     pub(super) fn import_ui_font(
         &self,
         asset: &str,
-    ) -> Result<ImportedAsset<voxy_text::TextFont>, String> {
+    ) -> Result<ImportedAsset<voxy_text::TextFont>, EditorError> {
         let mut inputs = ImportInputs::new(2, 4 * 1024 * 1024 + 65_536);
         let font = self.decode_ui_font(asset, &mut inputs)?;
         inputs
             .finish(font, |id, limit| self.provider.read(id, limit))
             .map_err(|error| format!("UI font inputs: {error:?}"))
+            .map_err(Into::into)
     }
     pub(super) fn import_audio(
         &self,
         asset: &str,
         target_rate: u32,
         settings_asset: Option<&str>,
-    ) -> Result<ImportedAsset<voxy_audio::Clip>, String> {
+    ) -> Result<ImportedAsset<voxy_audio::Clip>, EditorError> {
         let mut inputs = ImportInputs::new(3, 8 * 1024 * 1024);
         let clip = self.decode_audio(asset, target_rate, settings_asset, &mut inputs)?;
         inputs
             .finish(clip, |id, limit| self.provider.read(id, limit))
             .map_err(|e| format!("audio inputs: {e:?}"))
+            .map_err(Into::into)
     }
     pub(super) fn audio_watcher(
         &self,
@@ -188,7 +195,7 @@ impl AuthoringProject {
             AssetId,
             Result<voxy_assets::InputSnapshot, voxy_assets::InputError>,
         >,
-    ) -> Result<voxy_assets::SourcePollWorker, String> {
+    ) -> Result<voxy_assets::SourcePollWorker, EditorError> {
         self.source_watcher(observations, 768, 8 * 1024 * 1024)
     }
     pub(super) fn source_watcher(
@@ -199,31 +206,33 @@ impl AuthoringProject {
         >,
         capacity: usize,
         max_bytes: usize,
-    ) -> Result<voxy_assets::SourcePollWorker, String> {
+    ) -> Result<voxy_assets::SourcePollWorker, EditorError> {
         voxy_assets::SourcePollWorker::new_with_observations(
-            FileInputs::new(&self.root).map_err(|e| e.to_string())?,
+            FileInputs::new(&self.root)?,
             capacity,
             max_bytes,
             observations,
         )
-        .map_err(|e| e.to_string())
+        .map_err(EditorError::from)
     }
     pub(super) fn audio_worker(
         &self,
         rate: u32,
         recipes: std::collections::BTreeMap<AssetId, Option<String>>,
-    ) -> Result<voxy_assets::AssetImportWorker<voxy_audio::Clip>, String> {
+    ) -> Result<voxy_assets::AssetImportWorker<voxy_audio::Clip>, EditorError> {
         let project = self.worker_project()?;
         voxy_assets::AssetImportWorker::new(
-            FileInputs::new(&self.root).map_err(|e| e.to_string())?,
+            FileInputs::new(&self.root)?,
             3,
             8 * 1024 * 1024,
             move |id, _, inputs| {
                 let settings = recipes.get(id).ok_or("missing audio import recipe")?;
-                project.decode_audio(&id.0, rate, settings.as_deref(), inputs)
+                project
+                    .decode_audio(&id.0, rate, settings.as_deref(), inputs)
+                    .map_err(|e| e.to_string())
             },
         )
-        .map_err(|e| e.to_string())
+        .map_err(EditorError::from)
     }
     fn decode_audio(
         &self,
@@ -231,7 +240,7 @@ impl AuthoringProject {
         target_rate: u32,
         settings_asset: Option<&str>,
         inputs: &mut ImportInputs,
-    ) -> Result<voxy_audio::Clip, String> {
+    ) -> Result<voxy_audio::Clip, EditorError> {
         let locations = self.project_locations(inputs)?;
         let resolve = |id: &str| Self::resolve_project_input(id, locations.as_ref());
         let source = resolve(asset)?;
@@ -259,26 +268,24 @@ impl AuthoringProject {
             cache.as_ref(),
             |id, limit| self.provider.read(id, limit),
         )
+        .map_err(Into::into)
     }
     fn project_locations(
         &self,
         inputs: &mut ImportInputs,
-    ) -> Result<Option<AssetLocations>, String> {
+    ) -> Result<Option<AssetLocations>, EditorError> {
         let locations = if let Some(manifest) = &self.manifest {
             let observed = inputs
                 .read(manifest.clone(), |id, limit| {
                     self.provider.read(id, limit.min(65_536))
                 })
                 .map_err(|e| format!("project manifest: {e:?}"))?;
-            Some(
-                AssetLocations::from_json(
-                    std::str::from_utf8(&observed.bytes).map_err(|e| e.to_string())?,
-                    128,
-                    65_536,
-                    65_536,
-                )
-                .map_err(|e| e.to_string())?,
-            )
+            Some(AssetLocations::from_json(
+                std::str::from_utf8(&observed.bytes)?,
+                128,
+                65_536,
+                65_536,
+            )?)
         } else {
             None
         };
@@ -287,20 +294,21 @@ impl AuthoringProject {
     fn resolve_project_input(
         id: &str,
         locations: Option<&AssetLocations>,
-    ) -> Result<SourcePath, String> {
+    ) -> Result<SourcePath, EditorError> {
         if let Some(locations) = locations {
             locations
                 .source(&AssetId(id.into()))
                 .cloned()
                 .ok_or_else(|| format!("unknown project input {id}"))
+                .map_err(Into::into)
         } else {
-            SourcePath::new(id).map_err(|e| e.to_string())
+            SourcePath::new(id).map_err(EditorError::from)
         }
     }
     pub(super) fn audio_settings_draft(
         &self,
         id: &str,
-    ) -> Result<super::audio_settings::AudioSettingsDraft, String> {
+    ) -> Result<super::audio_settings::AudioSettingsDraft, EditorError> {
         let mut inputs = ImportInputs::new(2, 69_632);
         let locations = self.project_locations(&mut inputs)?;
         let source = Self::resolve_project_input(id, locations.as_ref())?.observation_id();
@@ -326,7 +334,7 @@ impl AuthoringProject {
                         .digest,
                 ))
             })
-            .collect::<Result<_, String>>()?;
+            .collect::<Result<_, EditorError>>()?;
         Ok(super::audio_settings::AudioSettingsDraft {
             config,
             source: source.0,
@@ -337,7 +345,7 @@ impl AuthoringProject {
         &self,
         draft: &super::audio_settings::AudioSettingsDraft,
         written: &std::collections::BTreeMap<String, [u8; 32]>,
-    ) -> Result<[u8; 32], String> {
+    ) -> Result<[u8; 32], EditorError> {
         draft.config.settings(48000)?;
         if !draft.observations.iter().any(|(id, _)| id == &draft.source) {
             return Err("missing settings observation".into());
@@ -353,18 +361,15 @@ impl AuthoringProject {
             if blake3::hash(&bytes).as_bytes() != expected {
                 return Err(format!(
                     "import settings input {id} changed externally; reopen settings"
-                ));
+                )
+                .into());
             }
         }
-        let path = self
-            .root
-            .join(&draft.source)
-            .canonicalize()
-            .map_err(|e| e.to_string())?;
+        let path = self.root.join(&draft.source).canonicalize()?;
         if !path.starts_with(&self.root) {
             return Err("settings path escapes project".into());
         }
-        let bytes = serde_json::to_vec_pretty(&draft.config).map_err(|e| e.to_string())?;
+        let bytes = serde_json::to_vec_pretty(&draft.config)?;
         let digest = *blake3::hash(&bytes).as_bytes();
         draft.config.save_file(&path)?;
         Ok(digest)
@@ -426,12 +431,12 @@ impl AuthoringProject {
                         })
                         .map_err(|error| format!("prefab manifest: {error:?}"))?;
                     AssetLocations::from_json(
-                        std::str::from_utf8(&snapshot.bytes).map_err(|error| error.to_string())?,
+                        std::str::from_utf8(&snapshot.bytes)?,
                         128,
                         65_536,
                         65_536,
                     )
-                    .map_err(|error| error.to_string())
+                    .map_err(EditorError::from)
                 })
                 .transpose()?
         };
@@ -490,13 +495,8 @@ impl AuthoringProject {
                 let input = inputs
                     .read(manifest.clone(), |id, limit| self.provider.read(id, limit))
                     .map_err(|error| format!("prefab manifest: {error:?}"))?;
-                AssetLocations::from_json(
-                    std::str::from_utf8(&input.bytes).map_err(|error| error.to_string())?,
-                    128,
-                    65_536,
-                    65_536,
-                )
-                .map_err(|error| error.to_string())
+                AssetLocations::from_json(std::str::from_utf8(&input.bytes)?, 128, 65_536, 65_536)
+                    .map_err(EditorError::from)
             })
             .transpose()?;
         let candidate = self.prepare(source.clone(), None)?;
@@ -623,13 +623,8 @@ impl AuthoringProject {
                         self.provider.read(id, limit.min(65_536))
                     })
                     .map_err(|error| format!("prefab manifest: {error:?}"))?;
-                AssetLocations::from_json(
-                    std::str::from_utf8(&input.bytes).map_err(|error| error.to_string())?,
-                    128,
-                    65_536,
-                    65_536,
-                )
-                .map_err(|error| error.to_string())
+                AssetLocations::from_json(std::str::from_utf8(&input.bytes)?, 128, 65_536, 65_536)
+                    .map_err(EditorError::from)
             })
             .transpose()?;
         for (asset, expected) in &snapshot.dependencies {

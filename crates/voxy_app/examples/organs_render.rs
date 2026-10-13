@@ -1,7 +1,8 @@
 //! Renders the imported female reference organ assembly through the native renderer for visual inspection.
 use glam::Vec3;
+use voxy_model::{ModelAsset, ModelLimits};
+use voxy_render::SceneMesh;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
-use voxy_render::{ModelAsset, ModelLimits, SceneMesh};
 
 #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {

@@ -76,7 +76,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         config,
                         true,
                     )
-                    .map_err(voxy_demos::cuda_motion::MotionError::Collision)
+                    .map_err(|error| {
+                        voxy_demos::cuda_motion::MotionError::Collision(error.to_string())
+                    })
                 } else {
                     voxy_demos::cuda_motion::step_character(
                         &compute,

@@ -6,7 +6,7 @@ fn model() -> Arc<ModelAsset> {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/root-pivot-turn.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     )
@@ -81,7 +81,7 @@ fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -492,6 +492,7 @@ fn signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject(
             prepared
                 .prepare(&scene, &BTreeMap::from([(id.clone(), unsupported)]), 0.1)
                 .unwrap_err()
+                .to_string()
                 .contains(message)
         );
         assert_eq!(prepared.serial(), 1);
@@ -579,7 +580,7 @@ fn retargeted_pivot_turn_uses_target_origin_and_collision_acceptance() {
     .to_vec()
     .unwrap();
     let target =
-        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
     let models = BTreeMap::from([
         (AssetId("turn".into()), target.clone()),
         (AssetId("source".into()), source),

@@ -1,3 +1,5 @@
+/// Joint budget of a skinned mesh; `voxy_model` checks it equals the animation rig budget.
+pub const MAX_SKIN_JOINTS: usize = 256;
 use std::sync::Arc;
 
 use bytemuck::{Pod, Zeroable};
@@ -39,7 +41,7 @@ impl SkinnedMesh {
         if vertices.is_empty() || indices.is_empty() || !indices.len().is_multiple_of(3) {
             return Err(SkinnedMeshError::InvalidGeometry);
         }
-        if joint_count == 0 || usize::from(joint_count) > voxy_animation::MAX_JOINTS {
+        if joint_count == 0 || usize::from(joint_count) > MAX_SKIN_JOINTS {
             return Err(SkinnedMeshError::InvalidJointCount(joint_count));
         }
         for (index, vertex) in vertices.iter().enumerate() {
@@ -153,7 +155,8 @@ impl SkinnedMesh {
 
     /// Validate the complete world-space deformation before any legacy GPU writes.
     /// Positions alone can remain finite when a blended normal matrix collapses.
-    pub(crate) fn validate_render_pose(
+    #[doc(hidden)]
+    pub fn validate_render_pose(
         &self,
         joints: &[Mat4],
         model: Mat4,
@@ -178,7 +181,8 @@ impl SkinnedMesh {
         Ok(())
     }
 
-    pub(crate) fn posed_normals(
+    #[doc(hidden)]
+    pub fn posed_normals(
         &self,
         joints: &[Mat4],
         model: Mat4,
@@ -202,7 +206,8 @@ impl SkinnedMesh {
         Ok(())
     }
 
-    pub(crate) fn posed_positions(
+    #[doc(hidden)]
+    pub fn posed_positions(
         &self,
         joints: &[Mat4],
         model: Mat4,
@@ -269,7 +274,8 @@ pub(crate) struct ObjectUniform {
 }
 
 #[derive(Debug)]
-pub(crate) struct GpuSkinnedMesh {
+#[doc(hidden)]
+pub struct GpuSkinnedMesh {
     pub vertex: wgpu::Buffer,
     pub index: wgpu::Buffer,
     pub index_count: u32,
@@ -317,7 +323,7 @@ pub(crate) fn object_uniform(model: Mat4, material_layer: u32) -> ObjectUniform 
     }
 }
 
-pub(crate) fn create_skin_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+pub fn create_skin_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
     device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
         label: Some("Voxy skin layout"),
         entries: &[
@@ -413,7 +419,8 @@ pub(crate) fn create_skinned_pipeline(
     })
 }
 
-pub(crate) fn upload_skinned(
+#[doc(hidden)]
+pub fn upload_skinned(
     device: &wgpu::Device,
     layout: &wgpu::BindGroupLayout,
     mesh: &SkinnedMesh,
@@ -723,7 +730,3 @@ fn skinned_normal_with(
     }
     Ok((transformed / max).normalize().to_array())
 }
-
-#[cfg(test)]
-#[path = "skinned_normal_gpu_tests.rs"]
-mod normal_tests;

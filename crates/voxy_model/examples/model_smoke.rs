@@ -1,11 +1,12 @@
 //! Imports a GLB, skins two poses, renders on a real GPU and checks pixel motion.
 use glam::{Mat4, Vec3};
-use voxy_render::{GraphicsOptions, ModelAsset, ModelLimits, SceneDraw, SceneRenderer};
+use voxy_model::{ModelAsset, ModelLimits};
+use voxy_render::{GraphicsOptions, SceneDraw, SceneRenderer};
 
 #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let asset = ModelAsset::parse(
-        include_bytes!("assets/animated-triangle.glb"),
+        include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb"),
         &[],
         ModelLimits::default(),
     )?;

@@ -286,14 +286,17 @@ impl SceneMesh {
 }
 
 #[derive(Debug, Default)]
-pub(crate) struct NormalCache {
+#[doc(hidden)]
+pub struct NormalCache {
     pub(super) authored: bool,
     pub(super) positions: Vec<[f32; 3]>,
     pub(super) indices: Vec<u32>,
-    pub(super) normals: Vec<[f32; 3]>,
+    #[doc(hidden)]
+    pub normals: Vec<[f32; 3]>,
 }
 impl NormalCache {
-    pub(super) fn from_mesh(mesh: &SceneMesh) -> Self {
+    #[doc(hidden)]
+    pub fn from_mesh(mesh: &SceneMesh) -> Self {
         let mut cache = Self::default();
         cache.refresh(mesh);
         cache
@@ -302,7 +305,8 @@ impl NormalCache {
     // Geometry or authored normal changes refresh the stream; generated normals
     // rebuild the weld map only when no authored stream is supplied.
     #[allow(clippy::float_cmp)] // Exact geometry equality is the cache invalidation contract.
-    pub(super) fn refresh(&mut self, mesh: &SceneMesh) -> bool {
+    #[doc(hidden)]
+    pub fn refresh(&mut self, mesh: &SceneMesh) -> bool {
         let indices_equal = self.indices == mesh.indices;
         self.refresh_with(mesh, indices_equal)
     }
@@ -339,7 +343,8 @@ impl NormalCache {
 
 // Weld coincident OBJ seam vertices for area-weighted smooth shading. Rebuilt
 // after every geometry update, including morphs and displaced liquid layers.
-pub(crate) fn smooth_normals(mesh: &SceneMesh) -> Vec<[f32; 3]> {
+#[doc(hidden)]
+pub fn smooth_normals(mesh: &SceneMesh) -> Vec<[f32; 3]> {
     let mut lookup: std::collections::HashMap<(u64, u32), usize, voxy_core::SeededFastHashBuilder> =
         std::collections::HashMap::with_capacity_and_hasher(mesh.vertices.len(), WELD_HASHER);
     let mut mapping = Vec::with_capacity(mesh.vertices.len());

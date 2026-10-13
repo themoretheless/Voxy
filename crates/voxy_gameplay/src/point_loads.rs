@@ -1,4 +1,5 @@
 //! Durable authored loads; no runtime velocity or solver state is serialized.
+use crate::GameplayError;
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -20,7 +21,7 @@ impl RigidPointLoads {
         frame: crate::RigidBodyFrame,
         elapsed_s: f64,
         max_points: usize,
-    ) -> Result<Vec<physics::rigid_motion::MaterialPointForce>, String> {
+    ) -> Result<Vec<physics::rigid_motion::MaterialPointForce>, GameplayError> {
         if self.points.len() > max_points || !elapsed_s.is_finite() || elapsed_s < 0. {
             return Err("invalid point-load time or point budget".into());
         }
@@ -35,7 +36,7 @@ impl RigidPointLoads {
                     )
                     .map_err(|e| format!("point-load frame: {e:?}"))?
                     .shifted(elapsed_s)
-                    .map_err(|e| format!("point-load phase: {e:?}"))
+                    .map_err(|e| format!("point-load phase: {e:?}").into())
             })
             .collect()
     }

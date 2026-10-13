@@ -1,4 +1,5 @@
 //! Scene-owned liquid world. Authored names bind once; particles and clocks live here.
+use crate::GameplayError;
 use crate::LiquidSource;
 use physics::liquid::{BodyGeometryHit, ContactWitness, RigidGeometryHit};
 mod rigid_support;
@@ -37,7 +38,7 @@ struct ColliderOwner {
     collider: crate::BoxCollider,
     path: Vec<(NodeId, voxy_scene::Transform)>,
 }
-fn body_colliders(scene: &SceneGraph, root: NodeId) -> Result<Vec<ColliderOwner>, String> {
+fn body_colliders(scene: &SceneGraph, root: NodeId) -> Result<Vec<ColliderOwner>, GameplayError> {
     let mut result = Vec::new();
     for (node, collider) in scene.components::<crate::BoxCollider>() {
         let mut current = Some(node);
@@ -92,7 +93,7 @@ fn body_colliders(scene: &SceneGraph, root: NodeId) -> Result<Vec<ColliderOwner>
 fn collider_template(
     body: &BodyOwner,
     collider: &ColliderOwner,
-) -> Result<crate::convex::AffineBox, String> {
+) -> Result<crate::convex::AffineBox, GameplayError> {
     fn matrix(pose: voxy_scene::Transform, translation: glam::DVec3) -> glam::DMat4 {
         glam::DMat4::from_scale_rotation_translation(
             pose.scale.as_dvec3(),
@@ -158,7 +159,7 @@ pub struct SceneSupportedLiquidStep {
     pub support: Option<physics::liquid::SupportedWorldReport>,
 }
 
-fn position(scene: &SceneGraph, node: NodeId) -> Result<[f64; 3], String> {
+fn position(scene: &SceneGraph, node: NodeId) -> Result<[f64; 3], GameplayError> {
     let p = scene
         .world_matrix(node)
         .map_err(|e| format!("liquid source transform: {e:?}"))?
@@ -177,7 +178,7 @@ impl SceneGeometry {
         radius: f64,
         displacement: [f64; 3],
         max_candidates: usize,
-    ) -> Result<BodyGeometryHit, String> {
+    ) -> Result<BodyGeometryHit, GameplayError> {
         use physics::liquid::GeometryHit;
         if self.0.0.len() > max_candidates {
             return Err("liquid collider budget exceeded".into());
@@ -222,14 +223,14 @@ impl SceneGeometry {
 }
 
 impl physics::liquid::LiquidGeometry for SceneGeometry {
-    type Error = String;
+    type Error = GameplayError;
     fn sweep(
         &self,
         center: [f64; 3],
         radius: f64,
         displacement: [f64; 3],
         max_candidates: usize,
-    ) -> Result<physics::liquid::GeometryHit, String> {
+    ) -> Result<physics::liquid::GeometryHit, GameplayError> {
         self.sweep_contact(center, radius, displacement, max_candidates)
             .map(|hit| hit.geometry)
     }
@@ -1718,7 +1719,7 @@ impl SceneLiquidRuntime {
         materials: Vec<(String, Material)>,
         config: Config,
         max_sources: usize,
-    ) -> Result<Self, String> {
+    ) -> Result<Self, GameplayError> {
         let mut slots = BTreeMap::new();
         for (slot, (name, _)) in materials.iter().enumerate() {
             if name.is_empty() || slots.insert(name.clone(), slot).is_some() {
@@ -1757,7 +1758,7 @@ impl SceneLiquidRuntime {
                         .iter()
                         .any(|v| !v.is_finite())
                 {
-                    return Err("invalid liquid body mass/velocity".to_string());
+                    return Err("invalid liquid body mass/velocity".into());
                 }
                 if scene
                     .parent(*node)
@@ -1860,12 +1861,12 @@ impl SceneLiquidRuntime {
                                     edges: shape.edges.map(|edge| inverse * edge),
                                 })
                             })
-                            .collect::<Result<Vec<_>, String>>()?,
+                            .collect::<Result<Vec<_>, GameplayError>>()?,
                     );
                 }
                 Ok(owner)
             })
-            .collect::<Result<Vec<_>, String>>()?;
+            .collect::<Result<Vec<_>, GameplayError>>()?;
         let liquid = Liquid::new(
             Vec::new(),
             materials.into_iter().map(|(_, m)| m).collect(),
@@ -1913,7 +1914,7 @@ impl SceneLiquidRuntime {
     /// Validate the runtime belongs to this scene and still owns its admitted sources.
     /// # Errors
     /// Foreign scenes, source addition/removal or descriptor edits require rebind.
-    pub fn validate_bindings(&self, scene: &SceneGraph) -> Result<(), String> {
+    pub fn validate_bindings(&self, scene: &SceneGraph) -> Result<(), GameplayError> {
         if scene.identity() != self.scene {
             return Err("foreign scene liquid runtime".into());
         }
@@ -2002,7 +2003,7 @@ impl SceneLiquidRuntime {
         scene: &mut SceneGraph,
         dt: f64,
         container: Option<Container>,
-    ) -> Result<SceneLiquidStep, String> {
+    ) -> Result<SceneLiquidStep, GameplayError> {
         self.tick_and_publish_with_dynamics(
             scene,
             dt,
@@ -2023,7 +2024,7 @@ impl SceneLiquidRuntime {
         container: Option<Container>,
         dynamics: physics::liquid::DynamicWorldConfig,
         rotation: physics::spin_path::Config,
-    ) -> Result<SceneLiquidStep, String> {
+    ) -> Result<SceneLiquidStep, GameplayError> {
         let mut candidate = self.clone();
         let report = candidate.tick_with_dynamics(scene, dt, container, dynamics, rotation)?;
         candidate.publish_body_pose(scene)?;
@@ -2034,7 +2035,7 @@ impl SceneLiquidRuntime {
     /// Publish an already prepared body pose after the host's other preparation succeeds.
     /// # Errors
     /// Foreign/edited scene bindings or unrepresentable pose reject before mutation.
-    pub fn publish_body_pose(&mut self, scene: &mut SceneGraph) -> Result<(), String> {
+    pub fn publish_body_pose(&mut self, scene: &mut SceneGraph) -> Result<(), GameplayError> {
         self.validate_bindings(scene)?;
         let poses = self
             .body
@@ -2063,7 +2064,7 @@ impl SceneLiquidRuntime {
                     .map_err(|e| format!("liquid body publication: {e:?}"))?;
                 Ok((body.node, pose))
             })
-            .collect::<Result<Vec<_>, String>>()?;
+            .collect::<Result<Vec<_>, GameplayError>>()?;
         scene
             .set_locals(&poses)
             .map_err(|e| format!("liquid body publication: {e:?}"))?;
@@ -2127,7 +2128,7 @@ impl SceneLiquidRuntime {
             Vec<usize>,
             Vec<physics::contact::ContactBody>,
         ),
-        String,
+        GameplayError,
     > {
         let mut geometry = SceneGeometry(
             crate::static_world(scene).map_err(|e| format!("liquid collider: {e:?}"))?,
@@ -2179,7 +2180,7 @@ impl SceneLiquidRuntime {
         additional: &[(NodeId, physics::contact::ContactWrench)],
         limits: physics::liquid::DynamicWorldConfig,
         config: physics::contact::ReactionConfig,
-    ) -> Result<SceneSupportReactions, String> {
+    ) -> Result<SceneSupportReactions, GameplayError> {
         self.validate_bindings(scene)?;
         let (world, active, states) = self.mechanical_world(scene)?;
         let owners: Vec<_> = active.iter().map(|i| self.body[*i].node).collect();
@@ -2251,7 +2252,7 @@ impl SceneLiquidRuntime {
         scene: &SceneGraph,
         dt: f64,
         container: Option<Container>,
-    ) -> Result<SceneLiquidStep, String> {
+    ) -> Result<SceneLiquidStep, GameplayError> {
         self.tick_with_dynamics(
             scene,
             dt,
@@ -2271,7 +2272,7 @@ impl SceneLiquidRuntime {
         container: Option<Container>,
         dynamics: physics::liquid::DynamicWorldConfig,
         rotation: physics::spin_path::Config,
-    ) -> Result<SceneLiquidStep, String> {
+    ) -> Result<SceneLiquidStep, GameplayError> {
         self.tick_impl(scene, dt, container, dynamics, rotation, None)
             .map(|report| report.step)
     }
@@ -2289,7 +2290,7 @@ impl SceneLiquidRuntime {
         dynamics: physics::liquid::DynamicWorldConfig,
         rotation: physics::spin_path::Config,
         supports: physics::liquid::SupportedWorldConfig,
-    ) -> Result<SceneSupportedLiquidStep, String> {
+    ) -> Result<SceneSupportedLiquidStep, GameplayError> {
         supports
             .validate()
             .map_err(|e| format!("supported liquid config: {e:?}"))?;
@@ -2309,7 +2310,7 @@ impl SceneLiquidRuntime {
         dynamics: physics::liquid::DynamicWorldConfig,
         rotation: physics::spin_path::Config,
         supports: Option<physics::liquid::SupportedWorldConfig>,
-    ) -> Result<SceneSupportedLiquidStep, String> {
+    ) -> Result<SceneSupportedLiquidStep, GameplayError> {
         self.validate_bindings(scene)?;
         if !dt.is_finite() || dt <= 0. {
             return Err("invalid liquid fixed interval".into());
@@ -2351,7 +2352,7 @@ impl SceneLiquidRuntime {
                     )
                 })
             })
-            .collect::<Result<Vec<_>, String>>()?;
+            .collect::<Result<Vec<_>, GameplayError>>()?;
         let has_points = point_loads.iter().any(|points| !points.is_empty());
         let mut support_report = None;
         let (physics, dynamics) = if states.is_empty() {

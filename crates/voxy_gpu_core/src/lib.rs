@@ -7,11 +7,13 @@ mod backend;
 mod compute;
 mod compute_memory;
 mod compute_readback;
+mod gravity;
 
 pub use backend::*;
 pub use compute::*;
 pub use compute_memory::*;
 pub use compute_readback::*;
+pub use gravity::*;
 
 /// Failure classes of portable compute: capability, budget, validation, lifecycle.
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]

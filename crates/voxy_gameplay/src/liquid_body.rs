@@ -1,4 +1,5 @@
 //! Authored finite translating body; scene pose is published by the liquid owner.
+use crate::GameplayError;
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -26,7 +27,7 @@ impl LiquidMassDistribution {
         &self,
         mass: f64,
         pose: voxy_scene::Transform,
-    ) -> Result<physics::mass_properties::MassProperties, String> {
+    ) -> Result<physics::mass_properties::MassProperties, GameplayError> {
         if self.parts.is_empty() || self.parts.len() > 128 {
             return Err("mass distribution budget".into());
         }

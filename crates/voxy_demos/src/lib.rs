@@ -14,6 +14,8 @@ pub mod orbit {
     }
 }
 
+mod error;
+pub use error::DemoError;
 pub mod biomechanics_demo;
 pub mod body_parameters;
 pub mod cuda_motion;
