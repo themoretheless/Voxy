@@ -1269,6 +1269,8 @@ pub use reflecting_box::{ReflectingBox, ReflectingDiagnostics, ReflectingViscous
 
 #[path = "liquid/reservoir.rs"]
 mod reservoir;
+mod wall_heat;
+pub use wall_heat::{WallHeatReport, WallThermal};
 
 #[path = "liquid/rheology.rs"]
 mod rheology;
