@@ -272,9 +272,17 @@ impl Renderer {
         device.set_device_lost_callback(move |reason, message| {
             let _ = failure_callback.set(format!("{reason:?}: {message}"));
         });
-        let config = surface
+        let mut config = surface
             .get_default_config(&adapter, width.max(1), height.max(1))
             .ok_or(RendererError::UnsupportedSurface)?;
+        if let Some(mode) = options.present.mode()
+            && surface
+                .get_capabilities(&adapter)
+                .present_modes
+                .contains(&mode)
+        {
+            config.present_mode = mode;
+        }
         // This device is still private to initialization, so error scopes cannot
         // capture another caller's resource operations. Unsupported shader/limit
         // combinations and allocations must return errors rather than panic.
