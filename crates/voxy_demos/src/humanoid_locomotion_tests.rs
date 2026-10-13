@@ -696,3 +696,66 @@ fn prepared_quaternius_jog_closes_the_cycle_and_preserves_original_motion_and_ot
         "PREPARED_JOG raw_ankle_gap_m={raw_gap} prepared_ankle_gap_m={closed_gap} duration_s={new_duration} original_samples=241"
     );
 }
+
+#[test]
+fn graph_locomotion_matches_grounded_playback_at_rest_and_blends_gaits_by_speed() {
+    use crate::humanoid_locomotion::{
+        GraphLocomotion, GroundedPlayback, JOG_SPEED_M_S, WALK_SPEED_M_S,
+    };
+    let body = voxy_render::ObjAsset::parse(
+        include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+        ),
+        voxy_render::ObjLimits::default(),
+    )
+    .unwrap();
+    let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+    let source = std::sync::Arc::new(voxy_model::ModelAsset::parse(
+        include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
+        &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],voxy_model::ModelLimits::default()).unwrap());
+    let library = VoxyHumanoidLocomotion::new(source.clone(), &rig.skeleton).unwrap();
+    // Idle through the graph is the single-clip Animator path, bit for bit.
+    let mut graph = GraphLocomotion::new(&library, 0.25).unwrap();
+    let mut grounded = GroundedPlayback::new(&library, LocomotionClip::Idle).unwrap();
+    for _ in 0..30 {
+        graph.advance(1. / 60.).unwrap();
+        grounded.advance(1. / 60.).unwrap();
+        let (a, _) = graph.pose_in_place(&library, &rig.skeleton).unwrap();
+        let (b, _) = grounded.pose_in_place(&library, &rig.skeleton).unwrap();
+        assert_eq!(a.local(), b.local());
+    }
+    // Walking: after the crossfade the moving state plays the walk clip at
+    // the shared gait phase.
+    graph.set_speed(WALK_SPEED_M_S).unwrap();
+    for _ in 0..40 {
+        graph.advance(1. / 60.).unwrap();
+    }
+    let status = graph.status().unwrap();
+    assert_eq!(status.fading_from, None);
+    let phase = graph.gait_phase().unwrap();
+    let (pose, _) = graph.pose_in_place(&library, &rig.skeleton).unwrap();
+    let (walk, _) = library
+        .pose_phase_in_place(LocomotionClip::Walk, phase, &rig.skeleton)
+        .unwrap();
+    for (a, b) in pose.local().iter().zip(walk.local()) {
+        assert!((a.translation - b.translation).length() < 1e-5);
+        assert!(a.rotation.angle_between(b.rotation) < 1e-4);
+    }
+    // Speeding up to a jog keeps the phase continuous and changes the pose.
+    let before = graph.gait_phase().unwrap();
+    graph.set_speed(JOG_SPEED_M_S).unwrap();
+    graph.advance(1. / 60.).unwrap();
+    let after = graph.gait_phase().unwrap();
+    assert!((after - before).rem_euclid(1.) < 0.1, "{before} -> {after}");
+    let (jog_pose, _) = graph.pose_in_place(&library, &rig.skeleton).unwrap();
+    assert_ne!(jog_pose.local(), pose.local());
+    // Stopping fades back to idle.
+    graph.set_speed(0.).unwrap();
+    graph.advance(1. / 60.).unwrap();
+    assert!(graph.status().unwrap().fading_from.is_some());
+    for _ in 0..40 {
+        graph.advance(1. / 60.).unwrap();
+    }
+    assert_eq!(graph.status().unwrap().current, voxy_animation::StateId(0));
+    assert!(graph.set_speed(f32::NAN).is_err());
+}
