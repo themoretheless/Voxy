@@ -9,7 +9,7 @@ use voxy_gameplay::{
     CharacterTickPreview, FootContactInput, FootContactSettings, FootContactState,
     SupportQueryBudget,
 };
-use voxy_render::ModelAsset;
+use voxy_model::ModelAsset;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

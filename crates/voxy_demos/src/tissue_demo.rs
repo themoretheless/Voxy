@@ -2863,10 +2863,10 @@ mod tests {
     }
     #[test]
     fn imported_rig_support_motion_refines_without_weakening_admission() {
-        let model = voxy_render::ModelAsset::parse(
+        let model = voxy_model::ModelAsset::parse(
             include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap();
         let mut demo = TissueDemo::body();

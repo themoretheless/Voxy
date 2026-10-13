@@ -63,8 +63,8 @@ impl ModelRetarget {
     /// Resolves public imported bone names before binding canonical skeleton names.
     pub fn compile_models(
         &self,
-        source: &voxy_render::ModelAsset,
-        target: &voxy_render::ModelAsset,
+        source: &voxy_model::ModelAsset,
+        target: &voxy_model::ModelAsset,
     ) -> Result<RetargetBinding, EditorError> {
         self.validate()?;
         let mapping = self

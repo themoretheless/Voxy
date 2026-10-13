@@ -7,9 +7,10 @@ use std::{
     sync::{Arc, Weak},
 };
 use voxy_animation::Pose;
+use voxy_model::{ModelAsset, ModelGeometry};
 use voxy_render::{
-    ModelAsset, ModelGeometry, SceneGeometry, SceneMesh, SceneRenderer, SceneSkinError,
-    SceneSkinInstance, SceneSkinSource, SceneSkinner,
+    SceneGeometry, SceneMesh, SceneRenderer, SceneSkinError, SceneSkinInstance, SceneSkinSource,
+    SceneSkinner,
 };
 use voxy_scene::NodeId;
 

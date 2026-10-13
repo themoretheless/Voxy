@@ -69,7 +69,7 @@ pub enum EditorError {
     Gltf(#[from] gltf::Error),
     /// A glTF model could not be imported.
     #[error(transparent)]
-    Model(#[from] voxy_render::ModelError),
+    Model(#[from] voxy_model::ModelError),
     /// A skinned LOD archive was invalid.
     #[error(transparent)]
     SkinnedLod(#[from] voxy_render::SkinnedLodError),

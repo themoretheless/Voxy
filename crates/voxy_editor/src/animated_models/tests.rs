@@ -122,7 +122,7 @@ fn fixture() -> Arc<ModelAsset> {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     )
@@ -483,7 +483,7 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let mut model = (*fixture()).clone();
     let bind = model.scene_meshes(&model.skeleton.bind_pose()).unwrap();
-    model.primitives.push(voxy_render::ModelPrimitive {
+    model.primitives.push(voxy_model::ModelPrimitive {
         geometry: ModelGeometry::Static(bind[0].clone()),
         color: [1.; 4],
         base_color_texture: None,
@@ -915,7 +915,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let mut model = (*fixture()).clone();
-    model.primitives[0].base_color_texture = Some(voxy_render::ModelTexture {
+    model.primitives[0].base_color_texture = Some(voxy_model::ModelTexture {
         image: 0,
         sampling: voxy_render::TextureSampling::default(),
         use_mips: false,
@@ -1154,7 +1154,7 @@ fn rig_trajectory_gpu(composed: bool) {
                     .as_slice()
             },
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -1337,7 +1337,7 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
     let mut model = ModelAsset::parse(
         include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb"),
         &[],
-        voxy_render::ModelLimits::default(),
+        voxy_model::ModelLimits::default(),
     )
     .unwrap();
     if retarget {
@@ -1447,7 +1447,7 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
         .to_vec()
         .unwrap();
         let source =
-            Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+            Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
         models.insert(voxy_assets::AssetId("source".into()), source);
         scene
             .insert_component(

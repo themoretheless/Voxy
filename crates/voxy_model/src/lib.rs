@@ -1,4 +1,5 @@
-//! Explicit-buffer glTF import. No filesystem or network access is performed.
+//! Explicit-buffer glTF import into renderer meshes and animation rigs: the one crate that
+//! knows both `voxy_render` and `voxy_animation`. No filesystem or network access is performed.
 use std::sync::Arc;
 
 use glam::{DMat4, DVec3, Mat4, Quat, Vec3};
@@ -8,7 +9,7 @@ use voxy_animation::{
     TrackInterpolation, Transform, Vec3Key,
 };
 
-use crate::{SceneMesh, SceneVertex, SkinnedMesh, SkinnedVertex};
+use voxy_render::{SceneMesh, SceneVertex, SkinnedMesh, SkinnedVertex};
 
 #[derive(Clone, Debug)]
 pub enum ModelGeometry {
@@ -19,7 +20,7 @@ pub enum ModelGeometry {
 #[derive(Clone, Copy, Debug)]
 pub struct ModelTexture {
     pub image: usize,
-    pub sampling: crate::TextureSampling,
+    pub sampling: voxy_render::TextureSampling,
     pub use_mips: bool,
 }
 
@@ -110,9 +111,9 @@ impl ModelAsset {
     /// Invalid GLB, external resources, out-of-bounds views or exceeded budgets.
     pub fn decode_embedded_images(
         source: &[u8],
-        limits: crate::ImageLimits,
+        limits: voxy_render::ImageLimits,
         max_images: usize,
-    ) -> Result<Vec<crate::ImageAsset>, ModelError> {
+    ) -> Result<Vec<voxy_render::ImageAsset>, ModelError> {
         if source.len() > limits.source_bytes {
             return Err(fail("model image source budget exceeded"));
         }
@@ -146,9 +147,9 @@ impl ModelAsset {
             let bytes = blob
                 .get(view.offset()..end)
                 .ok_or_else(|| fail("model image view outside buffer"))?;
-            let decoded = crate::ImageAsset::decode(
+            let decoded = voxy_render::ImageAsset::decode(
                 bytes,
-                crate::ImageLimits {
+                voxy_render::ImageLimits {
                     pixel_bytes: remaining,
                     ..limits
                 },
@@ -353,9 +354,11 @@ impl ModelAsset {
                     }
                     let sampler = info.texture().sampler();
                     let wrap = |mode| match mode {
-                        gltf::texture::WrappingMode::ClampToEdge => crate::TextureWrap::Clamp,
-                        gltf::texture::WrappingMode::Repeat => crate::TextureWrap::Repeat,
-                        gltf::texture::WrappingMode::MirroredRepeat => crate::TextureWrap::Mirror,
+                        gltf::texture::WrappingMode::ClampToEdge => voxy_render::TextureWrap::Clamp,
+                        gltf::texture::WrappingMode::Repeat => voxy_render::TextureWrap::Repeat,
+                        gltf::texture::WrappingMode::MirroredRepeat => {
+                            voxy_render::TextureWrap::Mirror
+                        }
                     };
                     Ok(ModelTexture {
                         image: info.texture().source().index(),
@@ -366,7 +369,7 @@ impl ModelAsset {
                                     | gltf::texture::MinFilter::Linear
                             )
                         ),
-                        sampling: crate::TextureSampling {
+                        sampling: voxy_render::TextureSampling {
                             wrap_u: wrap(sampler.wrap_s()),
                             wrap_v: wrap(sampler.wrap_t()),
                             min_filter: if matches!(
@@ -377,16 +380,16 @@ impl ModelAsset {
                                         | gltf::texture::MinFilter::NearestMipmapLinear
                                 )
                             ) {
-                                crate::TextureFilter::Nearest
+                                voxy_render::TextureFilter::Nearest
                             } else {
-                                crate::TextureFilter::Linear
+                                voxy_render::TextureFilter::Linear
                             },
                             mag_filter: if sampler.mag_filter()
                                 == Some(gltf::texture::MagFilter::Nearest)
                             {
-                                crate::TextureFilter::Nearest
+                                voxy_render::TextureFilter::Nearest
                             } else {
-                                crate::TextureFilter::Linear
+                                voxy_render::TextureFilter::Linear
                             },
                             mipmap_filter: Some(
                                 if matches!(
@@ -396,9 +399,9 @@ impl ModelAsset {
                                             | gltf::texture::MinFilter::LinearMipmapNearest
                                     )
                                 ) {
-                                    crate::TextureFilter::Nearest
+                                    voxy_render::TextureFilter::Nearest
                                 } else {
-                                    crate::TextureFilter::Linear
+                                    voxy_render::TextureFilter::Linear
                                 },
                             ),
                             anisotropy: 1,
@@ -889,7 +892,7 @@ fn quantize_weights(weights: [f32; 4]) -> Result<[u16; 4], ModelError> {
 mod tests {
     #[test]
     fn imported_fox_selects_animated_hip_instead_of_static_container() {
-        let bytes = include_bytes!("../examples/assets/fox/Fox.glb");
+        let bytes = include_bytes!("../../voxy_render/examples/assets/fox/Fox.glb");
         let gltf = gltf::Gltf::from_slice(bytes).unwrap();
         let asset = ModelAsset::parse(
             bytes,
@@ -1368,7 +1371,7 @@ mod phase_preview_tests {
     #[test]
     fn imported_model_preview_validates_phase_and_builds_skin_palette() {
         let model = ModelAsset::parse(
-            include_bytes!("../examples/assets/animated-triangle.glb"),
+            include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
             ModelLimits::default(),
         )
@@ -1407,7 +1410,8 @@ mod cesium_character_tests {
     fn embedded_character_images_are_bounded_and_keep_material_indices() {
         let source = include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb");
         let images =
-            ModelAsset::decode_embedded_images(source, crate::ImageLimits::default(), 16).unwrap();
+            ModelAsset::decode_embedded_images(source, voxy_render::ImageLimits::default(), 16)
+                .unwrap();
         assert!(!images.is_empty());
         let model = ModelAsset::parse(source, &[], ModelLimits::default()).unwrap();
         for texture in model.primitives.iter().filter_map(|p| p.base_color_texture) {
@@ -1421,18 +1425,19 @@ mod cesium_character_tests {
             );
         }
         assert!(
-            ModelAsset::decode_embedded_images(source, crate::ImageLimits::default(), 0).is_err()
+            ModelAsset::decode_embedded_images(source, voxy_render::ImageLimits::default(), 0)
+                .is_err()
         );
         for limits in [
-            crate::ImageLimits {
+            voxy_render::ImageLimits {
                 source_bytes: source.len() - 1,
                 ..Default::default()
             },
-            crate::ImageLimits {
+            voxy_render::ImageLimits {
                 dimension: 1,
                 ..Default::default()
             },
-            crate::ImageLimits {
+            voxy_render::ImageLimits {
                 pixel_bytes: 1,
                 ..Default::default()
             },
@@ -1465,7 +1470,7 @@ mod cesium_character_tests {
         assert!(
             ModelAsset::decode_embedded_images(
                 &rebuild(&external),
-                crate::ImageLimits::default(),
+                voxy_render::ImageLimits::default(),
                 16
             )
             .unwrap_err()
@@ -1478,15 +1483,16 @@ mod cesium_character_tests {
         assert!(
             ModelAsset::decode_embedded_images(
                 &rebuild(&invalid),
-                crate::ImageLimits::default(),
+                voxy_render::ImageLimits::default(),
                 16
             )
             .is_err()
         );
-        let image = ModelAsset::decode_embedded_images(source, crate::ImageLimits::default(), 16)
-            .unwrap()
-            .remove(0);
-        let limits = crate::ImageLimits {
+        let image =
+            ModelAsset::decode_embedded_images(source, voxy_render::ImageLimits::default(), 16)
+                .unwrap()
+                .remove(0);
+        let limits = voxy_render::ImageLimits {
             pixel_bytes: image.rgba().len() as u64 * 2,
             ..Default::default()
         };
@@ -1615,5 +1621,14 @@ mod wide_geometry_tests {
         assert!(model.scene_surfaces64(&foreign.bind_pose64()).is_err());
         assert!(model.sample_pose_phase64(Some(usize::MAX), 0.).is_err());
         assert!(model.sample_pose_phase64(None, f64::NAN).is_err());
+    }
+}
+
+#[cfg(test)]
+mod joint_budget {
+    /// The renderer's skin palette budget and the animation rig budget must agree.
+    #[test]
+    fn renderer_and_animation_joint_limits_agree() {
+        assert_eq!(voxy_render::MAX_SKIN_JOINTS, voxy_animation::MAX_JOINTS);
     }
 }

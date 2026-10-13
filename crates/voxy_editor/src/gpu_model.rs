@@ -391,7 +391,7 @@ impl ModelGraphics {
     }
     fn preview_meshes(
         asset: &EditorAsset,
-    ) -> Result<Vec<voxy_render::SceneMesh>, voxy_render::ModelError> {
+    ) -> Result<Vec<voxy_render::SceneMesh>, voxy_model::ModelError> {
         match &asset.animated {
             Some(model) if model.primitives.len() > 1 => {
                 model.scene_meshes(&model.skeleton.bind_pose())
@@ -702,10 +702,10 @@ mod tests {
         use super::*;
         let bytes = include_bytes!("../../voxy_render/examples/assets/fox/Fox.glb");
         let gltf = gltf::Gltf::from_slice(bytes).unwrap();
-        let mut model = voxy_render::ModelAsset::parse(
+        let mut model = voxy_model::ModelAsset::parse(
             bytes,
             &[gltf.blob.as_deref().unwrap()],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap();
         let original = model.primitives[0].clone();

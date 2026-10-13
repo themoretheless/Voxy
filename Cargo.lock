@@ -2463,6 +2463,7 @@ dependencies = [
  "voxy_editor",
  "voxy_gpu",
  "voxy_input",
+ "voxy_model",
  "voxy_render",
  "voxy_runtime",
  "voxy_rush",
@@ -2527,6 +2528,7 @@ dependencies = [
  "voxy_core",
  "voxy_cuda",
  "voxy_gpu",
+ "voxy_model",
  "voxy_render",
  "voxy_world",
  "wgpu",
@@ -2558,6 +2560,7 @@ dependencies = [
  "voxy_audio_device",
  "voxy_gameplay",
  "voxy_input",
+ "voxy_model",
  "voxy_render",
  "voxy_scene",
  "voxy_text",
@@ -2645,6 +2648,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "voxy_model"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "glam",
+ "gltf",
+ "image",
+ "pollster",
+ "serde_json",
+ "voxy_animation",
+ "voxy_gpu_core",
+ "voxy_render",
+ "wgpu",
+]
+
+[[package]]
 name = "voxy_navigation"
 version = "0.1.0"
 
@@ -2684,7 +2703,6 @@ dependencies = [
  "raw-window-handle",
  "serde_json",
  "thiserror 2.0.20",
- "voxy_animation",
  "voxy_assets",
  "voxy_core",
  "voxy_gpu_core",

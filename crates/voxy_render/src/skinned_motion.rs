@@ -89,7 +89,8 @@ impl PreparedSkinnedFrame {
 }
 
 impl SkinnedMotionHistory {
-    pub(crate) fn mesh(&self) -> &SkinnedMesh {
+    #[doc(hidden)]
+    pub fn mesh(&self) -> &SkinnedMesh {
         &self.mesh
     }
 

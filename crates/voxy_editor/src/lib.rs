@@ -204,7 +204,7 @@ struct ModelGraphics {
     parts: BTreeMap<u32, PartGraphics>,
     animated_textures: Vec<Option<Arc<SceneTexture>>>,
     animated_preview: Vec<SceneGeometry>,
-    animated_model: Option<Arc<voxy_render::ModelAsset>>,
+    animated_model: Option<Arc<voxy_model::ModelAsset>>,
     animated_lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
     _images: Vec<Arc<SceneTexture>>,
 }

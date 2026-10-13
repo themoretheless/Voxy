@@ -28,7 +28,7 @@ fn model_bytes() -> Vec<u8> {
     .unwrap()
 }
 fn model() -> Arc<ModelAsset> {
-    Arc::new(ModelAsset::parse(&model_bytes(), &[], voxy_render::ModelLimits::default()).unwrap())
+    Arc::new(ModelAsset::parse(&model_bytes(), &[], voxy_model::ModelLimits::default()).unwrap())
 }
 fn settings() -> ModelFootPlacement {
     ModelFootPlacement {
@@ -1885,7 +1885,7 @@ fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry
     }
     .to_vec()
     .unwrap();
-    let mut source = ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+    let mut source = ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap();
     for (name, speed) in [("walk", 0.2), ("run", 0.4)] {
         let mut tracks =
             vec![voxy_animation::JointTrack::default(); source.skeleton.joints().len()];
