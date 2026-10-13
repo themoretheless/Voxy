@@ -67,5 +67,13 @@ pub use lighting::{GpuLightingError, GpuLightingProgram};
 mod morph;
 pub use morph::{GpuMorphControl, GpuMorphError, GpuMorphProgram};
 
+mod pose_eval;
+pub use pose_eval::{GpuClipSet, GpuPoseEvalError, GpuPoseEvalProgram};
+
+mod medium_solver;
+pub use medium_solver::{
+    GpuMediumError, GpuMediumProgram, MediumTransportJob, MediumTransportResult,
+};
+
 mod residency;
 pub use residency::body_chunks;

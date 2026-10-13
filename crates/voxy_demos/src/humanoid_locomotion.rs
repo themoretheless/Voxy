@@ -484,3 +484,199 @@ pub fn prepare_quaternius_gait_source(
     }
     Ok(source)
 }
+
+/// Nominal blend-space speeds (m/s) of the grounded gait clips. They are
+/// authoring parameters for the blend space, not measured root velocities.
+pub const WALK_SPEED_M_S: f32 = 1.5;
+pub const JOG_SPEED_M_S: f32 = 3.0;
+pub const SPRINT_SPEED_M_S: f32 = 6.0;
+/// Speed below which the state machine returns to idle.
+pub const IDLE_SPEED_M_S: f32 = 0.1;
+
+/// Graph-driven grounded locomotion: an idle state and a moving state whose
+/// walk/jog/sprint blend space shares one phase, with crossfades between
+/// them. The same retarget and in-place contract as [`GroundedPlayback`].
+#[derive(Clone, Debug)]
+pub struct GraphLocomotion {
+    source: Arc<ModelAsset>,
+    player: voxy_animation::GraphPlayer,
+    speed: voxy_animation::ParamId,
+    machine: voxy_animation::NodeId,
+    moving: voxy_animation::NodeId,
+    frame: Pose,
+}
+
+impl GraphLocomotion {
+    /// Compiles the graph against the library's source skeleton.
+    /// # Errors
+    /// Propagates graph compilation and initial sampling failures.
+    pub fn new(
+        library: &VoxyHumanoidLocomotion,
+        crossfade_s: f32,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        use voxy_animation::{
+            BlendSample, BlendSpace1D, Condition, FadeCurve, FloatInput, GraphDesc, GraphNode,
+            ParamValue, PhaseSync, StateMachineDesc, StateTransition,
+        };
+        let clip = |c: LocomotionClip| library.source.animations[library.clips[c.slot()]].clone();
+        let skeleton = &library.source.skeleton;
+        let mut desc = GraphDesc::default();
+        let speed = desc.add_param("speed", ParamValue::Float(0.0))?;
+        let idle = desc.add_node(GraphNode::Clip {
+            clip: clip(LocomotionClip::Idle),
+            speed: FloatInput::Const(1.0),
+        })?;
+        let space = BlendSpace1D::new(
+            vec![
+                BlendSample {
+                    parameter: WALK_SPEED_M_S,
+                    clip: clip(LocomotionClip::Walk),
+                },
+                BlendSample {
+                    parameter: JOG_SPEED_M_S,
+                    clip: clip(LocomotionClip::Jog),
+                },
+                BlendSample {
+                    parameter: SPRINT_SPEED_M_S,
+                    clip: clip(LocomotionClip::Sprint),
+                },
+            ],
+            skeleton,
+        )?;
+        let moving = desc.add_node(GraphNode::BlendSpace1D {
+            space: Arc::new(space),
+            parameter: FloatInput::Param(speed),
+        })?;
+        let mut machine = StateMachineDesc::default();
+        let idle_state = machine.add_state("idle", idle)?;
+        let moving_state = machine.add_state("moving", moving)?;
+        machine.entry = Some(idle_state);
+        let edge = |from, to, condition| StateTransition {
+            from: Some(from),
+            to,
+            condition,
+            duration: crossfade_s,
+            curve: FadeCurve::SmoothStep,
+            sync: PhaseSync::Restart,
+            interruptible: true,
+            priority: 0,
+        };
+        machine.transitions = vec![
+            edge(
+                idle_state,
+                moving_state,
+                Condition::FloatGt(speed, IDLE_SPEED_M_S),
+            ),
+            edge(
+                moving_state,
+                idle_state,
+                Condition::FloatLt(speed, IDLE_SPEED_M_S),
+            ),
+        ];
+        let machine = desc.add_node(GraphNode::StateMachine(machine))?;
+        desc.root = Some(machine);
+        let graph = Arc::new(voxy_animation::AnimGraph::compile(desc, skeleton)?);
+        let mut player = voxy_animation::GraphPlayer::new(graph)?;
+        let frame = player.advance(0.)?.pose;
+        Ok(Self {
+            source: library.source.clone(),
+            player,
+            speed,
+            machine,
+            moving,
+            frame,
+        })
+    }
+
+    /// Requested planar speed in m/s; the state machine reacts on the next tick.
+    /// # Errors
+    /// Rejects a nonfinite speed.
+    pub fn set_speed(&mut self, speed_m_s: f32) -> Result<(), Box<dyn std::error::Error>> {
+        self.player
+            .set_param(self.speed, voxy_animation::ParamValue::Float(speed_m_s))?;
+        Ok(())
+    }
+
+    #[must_use]
+    pub fn status(&self) -> Option<voxy_animation::MachineStatus> {
+        self.player.machine_status(self.machine)
+    }
+
+    /// Shared normalized phase of the walk/jog/sprint blend space.
+    #[must_use]
+    pub fn gait_phase(&self) -> Option<f64> {
+        self.player.clock(self.moving)
+    }
+
+    /// Failed ticks preserve the graph state and the displayed pose.
+    /// # Errors
+    /// Propagates graph evaluation failures.
+    pub fn advance(&mut self, dt: f64) -> Result<(), Box<dyn std::error::Error>> {
+        self.frame = self.player.advance(dt)?.pose;
+        Ok(())
+    }
+
+    /// Same contract as [`GroundedPlayback::pose_in_place`].
+    /// # Errors
+    /// Rejects another source revision or retarget failures.
+    pub fn pose_in_place(
+        &self,
+        library: &VoxyHumanoidLocomotion,
+        target: &Skeleton,
+    ) -> Result<(Pose, Vec3), Box<dyn std::error::Error>> {
+        if !Arc::ptr_eq(&self.source, &library.source) {
+            return Err("graph locomotion belongs to another source revision".into());
+        }
+        library.in_place_pose(library.retarget_source_pose(&self.frame)?, target)
+    }
+}
+
+impl VoxyHumanoidLocomotion {
+    /// Bakes an in-place retargeted gait clip onto the target rig at
+    /// `keys_per_second`, so target-rig consumers (blend spaces, the gait
+    /// controller) can run without the source asset. The pelvis stays at its
+    /// bind translation, as in [`Self::pose_phase_in_place`].
+    /// # Errors
+    /// Rejects a nonpositive rate and propagates sampling/retarget failures.
+    pub fn bake_in_place_clip(
+        &self,
+        clip: LocomotionClip,
+        keys_per_second: f32,
+        target: &Skeleton,
+    ) -> Result<voxy_animation::AnimationClip, Box<dyn std::error::Error>> {
+        use voxy_animation::{JointTrack, Playback, QuatKey, Vec3Key};
+        if !keys_per_second.is_finite() || keys_per_second <= 0. {
+            return Err("invalid bake rate".into());
+        }
+        let duration = self.duration(clip);
+        let samples = ((duration * keys_per_second).ceil() as usize).max(1) + 1;
+        let mut tracks = vec![JointTrack::default(); target.joints().len()];
+        for s in 0..samples {
+            let phase = s as f64 / (samples - 1) as f64;
+            let time = (phase * f64::from(duration)) as f32;
+            let (pose, _) = self.pose_phase_in_place(clip, phase, target)?;
+            for (track, local) in tracks.iter_mut().zip(pose.local()) {
+                track.translations.push(Vec3Key {
+                    time,
+                    value: local.translation,
+                });
+                track.rotations.push(QuatKey {
+                    time,
+                    value: local.rotation,
+                });
+                track.scales.push(Vec3Key {
+                    time,
+                    value: local.scale,
+                });
+            }
+        }
+        let name = format!("{clip:?}");
+        Ok(voxy_animation::AnimationClip::new(
+            name,
+            duration,
+            Playback::Loop,
+            tracks,
+            target,
+        )?)
+    }
+}

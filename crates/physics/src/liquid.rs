@@ -160,6 +160,8 @@ pub struct Liquid {
     carrier_droplet_stage: bool,
     arrhenius_viscosity: Vec<Option<ArrheniusViscosity>>,
     gas_equations: Vec<Option<IdealGas>>,
+    /// Admitted tension magnitude for the pressure law; `None` clamps at zero.
+    tensile_floor_pa: Option<f64>,
 }
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct StepStats {
@@ -264,6 +266,7 @@ impl Liquid {
             yield_stresses: vec![0.0; materials.len()],
             arrhenius_viscosity: vec![None; materials.len()],
             gas_equations: vec![None; materials.len()],
+            tensile_floor_pa: None,
             transport: None,
             viscous_heating: false,
             viscous_integrator: ViscousIntegrator::Sequential,
@@ -281,6 +284,23 @@ impl Liquid {
             materials,
             config,
         })
+    }
+    /// Admits negative (tensile) pressure down to `-floor_pa` for every liquid
+    /// material; `None` restores the historic clamp at zero. Tension lets a
+    /// stretched neighbourhood pull back instead of separating freely; the
+    /// floor bounds the tensile instability. Gas materials are unaffected.
+    /// # Errors
+    /// Rejects a nonfinite or negative floor.
+    pub fn set_tensile_pressure_floor(&mut self, floor_pa: Option<f64>) -> Result<(), Error> {
+        if floor_pa.is_some_and(|f| !f.is_finite() || f < 0.) {
+            return Err(Error::InvalidMaterial);
+        }
+        self.tensile_floor_pa = floor_pa;
+        Ok(())
+    }
+    #[must_use]
+    pub fn tensile_pressure_floor(&self) -> Option<f64> {
+        self.tensile_floor_pa
     }
     /// Sets the numerical cohesion/curvature strength of one material (zero disables it).
     /// This discretization coefficient is not calibrated SI surface tension.
@@ -649,6 +669,7 @@ impl Liquid {
                             sound_speed: m.sound_speed,
                             heat_capacity_ratio: self.gas_equations[p.material]
                                 .map(|gas| gas.heat_capacity_ratio),
+                            tensile_floor_pa: self.tensile_floor_pa,
                         })
                         .collect::<Vec<_>>()
                 });
@@ -1248,6 +1269,8 @@ pub use reflecting_box::{ReflectingBox, ReflectingDiagnostics, ReflectingViscous
 
 #[path = "liquid/reservoir.rs"]
 mod reservoir;
+mod wall_heat;
+pub use wall_heat::{WallHeatReport, WallThermal};
 
 #[path = "liquid/rheology.rs"]
 mod rheology;

@@ -19,6 +19,8 @@ pub use collision::{
     sweep_candidate_bounds,
 };
 pub use destruction::{DestructionError, DestructionPlan, Explosion, plan_explosion};
+mod fracture;
+pub use fracture::{FractureFrame, FracturePlan, VoxelChunkPiece, plan_fracture};
 pub use projectile::{
     ProjectileConfig, ProjectileError, ProjectileOutcome, ProjectileState, plan_impact_explosion,
     spawn_projectile, step_projectile, step_projectile_in_field, step_projectile_with_motion,

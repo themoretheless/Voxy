@@ -7,6 +7,8 @@ use glam::Quat;
 use std::sync::Arc;
 mod model_rotations;
 pub use model_rotations::ModelRotationRetarget;
+mod profile;
+pub use profile::{BoneRole, HumanoidProfile, Side};
 
 /// Axis corrections are authored, never inferred from bone names or lengths.
 #[derive(Clone, Debug)]

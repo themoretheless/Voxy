@@ -6,6 +6,7 @@ mod dynamics;
 mod interfaces;
 mod quadratic;
 pub use quadratic::QuadraticNormalImpact;
+pub use quadratic::{DebrisPiece, DebrisRelease, convex_hull, hull_signed_distance};
 pub use quadratic::{
     QuadraticClosestLimits, QuadraticClosestPoint, QuadraticCohesiveFace, QuadraticCohesiveMesh,
     QuadraticCohesiveTrial, QuadraticFragment,

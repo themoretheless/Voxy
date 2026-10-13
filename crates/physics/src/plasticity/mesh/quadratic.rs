@@ -9,6 +9,8 @@ mod contact;
 pub use contact::{QuadraticSurfaceContact, QuadraticSurfaceContactEvaluation};
 mod cohesive;
 pub use closest::{QuadraticClosestLimits, QuadraticClosestPoint};
+mod debris;
+pub use debris::{DebrisPiece, DebrisRelease, convex_hull, hull_signed_distance};
 mod fragments;
 mod topology;
 pub use topology::QuadraticCohesiveMesh;
