@@ -44,8 +44,7 @@ impl Default for GraphicsOptions {
             force_fallback_adapter: false,
             present: PresentPreference::Default,
         }
-    },
-    ..Default::default()
+    }
 }
 
 /// How presented frames are paced against the display.
