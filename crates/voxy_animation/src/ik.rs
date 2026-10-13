@@ -306,14 +306,21 @@ pub struct PlantedLegsResult {
 // The inner radius matters for unequal links; clamping only maximum extension
 // can otherwise select a pelvis position from which a foot cannot be reached.
 fn restrict_reach(
-    intervals: &[(f64, f64)], hip: DVec3, target: DVec3,
-    upper: f64, lower: f64, up: DVec3, extension_margin: f64,
+    intervals: &[(f64, f64)],
+    hip: DVec3,
+    target: DVec3,
+    upper: f64,
+    lower: f64,
+    up: DVec3,
+    extension_margin: f64,
 ) -> Vec<(f64, f64)> {
     let delta = hip - target;
     let axial = delta.dot(up);
     let lateral = (delta - up * axial).length_squared();
     let outer = upper + lower - extension_margin;
-    if lateral > outer * outer { return Vec::new(); }
+    if lateral > outer * outer {
+        return Vec::new();
+    }
     let outer_radius = (outer * outer - lateral).max(0.).sqrt();
     let lo = -axial - outer_radius;
     let hi = -axial + outer_radius;
@@ -321,15 +328,25 @@ fn restrict_reach(
     let hole = if lateral < inner * inner {
         let radius = (inner * inner - lateral).sqrt();
         Some((-axial - radius, -axial + radius))
-    } else { None };
+    } else {
+        None
+    };
     let mut result = Vec::new();
     for &(a, b) in intervals {
         let (a, b) = (a.max(lo), b.min(hi));
-        if a > b { continue; }
+        if a > b {
+            continue;
+        }
         if let Some((hlo, hhi)) = hole {
-            if a <= hlo { result.push((a, b.min(hlo))); }
-            if b >= hhi { result.push((a.max(hhi), b)); }
-        } else { result.push((a, b)); }
+            if a <= hlo {
+                result.push((a, b.min(hlo)));
+            }
+            if b >= hhi {
+                result.push((a.max(hhi), b));
+            }
+        } else {
+            result.push((a, b));
+        }
     }
     result
 }
@@ -345,8 +362,11 @@ impl Pose {
     /// a missing common reachable offset within `max_offset` model units.
     /// Pose publication remains atomic; this source pose is immutable.
     pub fn solve_planted_legs(
-        &self, chains: &[TwoBoneChain; 2], targets: [TwoBoneTarget; 2],
-        up: Vec3, max_offset: f32,
+        &self,
+        chains: &[TwoBoneChain; 2],
+        targets: [TwoBoneTarget; 2],
+        up: Vec3,
+        max_offset: f32,
     ) -> Result<(Self, PlantedLegsResult), AnimationError> {
         self.solve_planted_legs_with_extension_margin(chains, targets, up, max_offset, 0.)
     }
@@ -358,8 +378,12 @@ impl Pose {
     /// Rejects invalid margins, an empty reachable shell or insufficient pelvis
     /// travel, in addition to the checks of `solve_planted_legs`.
     pub fn solve_planted_legs_with_extension_margin(
-        &self, chains: &[TwoBoneChain; 2], targets: [TwoBoneTarget; 2],
-        up: Vec3, max_offset: f32, extension_margin: f32,
+        &self,
+        chains: &[TwoBoneChain; 2],
+        targets: [TwoBoneTarget; 2],
+        up: Vec3,
+        max_offset: f32,
+        extension_margin: f32,
     ) -> Result<(Self, PlantedLegsResult), AnimationError> {
         if !extension_margin.is_finite() || extension_margin < 0. {
             return Err(AnimationError::InvalidIkTarget);
@@ -368,29 +392,44 @@ impl Pose {
             return Err(AnimationError::InvalidIkTarget);
         }
         for (index, chain) in chains.iter().enumerate() {
-            if !rigs_match(&self.rig, &chain.rig) { return Err(AnimationError::SkeletonMismatch); }
-            if chain.joints.contains(&0) { return Err(AnimationError::InvalidIkChain); }
+            if !rigs_match(&self.rig, &chain.rig) {
+                return Err(AnimationError::SkeletonMismatch);
+            }
+            if chain.joints.contains(&0) {
+                return Err(AnimationError::InvalidIkChain);
+            }
             let mut cursor = Some(chain.joints[0]);
             let mut rooted = false;
             while let Some(joint) = cursor {
-                if chains[1-index].joints.contains(&joint) { return Err(AnimationError::InvalidIkChain); }
+                if chains[1 - index].joints.contains(&joint) {
+                    return Err(AnimationError::InvalidIkChain);
+                }
                 rooted |= joint == 0;
                 cursor = self.rig[joint].parent.map(usize::from);
             }
-            if !rooted { return Err(AnimationError::InvalidIkChain); }
+            if !rooted {
+                return Err(AnimationError::InvalidIkChain);
+            }
             parent_basis(self, chain.joints[2])?;
         }
-        let rig = Skeleton { joints: self.rig.clone() };
+        let rig = Skeleton {
+            joints: self.rig.clone(),
+        };
         self.skin_matrices(&rig)?;
         let world = globals(self)?;
         let up = up.as_dvec3().normalize();
         let mut intervals = vec![(-f64::from(max_offset), f64::from(max_offset))];
         for (chain, target) in chains.iter().zip(targets) {
-            if !target.position.is_finite() || !target.pole.is_finite() || target.weight != 1.
-                || target.rotation.is_some_and(|q| !q.is_finite() || !q.is_normalized()) {
+            if !target.position.is_finite()
+                || !target.pole.is_finite()
+                || target.weight != 1.
+                || target
+                    .rotation
+                    .is_some_and(|q| !q.is_finite() || !q.is_normalized())
+            {
                 return Err(AnimationError::InvalidIkTarget);
             }
-            let [hip, knee, ankle] = chain.joints.map(|i|world[i].w_axis.truncate());
+            let [hip, knee, ankle] = chain.joints.map(|i| world[i].w_axis.truncate());
             let (a, b) = (hip.distance(knee), knee.distance(ankle));
             if !a.is_finite() || !b.is_finite() || a == 0. || b == 0. {
                 return Err(AnimationError::DegenerateIkChain);
@@ -398,10 +437,20 @@ impl Pose {
             if f64::from(extension_margin) >= 2. * a.min(b) {
                 return Err(AnimationError::InvalidIkTarget);
             }
-            intervals = restrict_reach(&intervals, hip, target.position.as_dvec3(), a, b, up, f64::from(extension_margin));
+            intervals = restrict_reach(
+                &intervals,
+                hip,
+                target.position.as_dvec3(),
+                a,
+                b,
+                up,
+                f64::from(extension_margin),
+            );
         }
-        let offset = intervals.iter().map(|&(lo, hi)|0f64.clamp(lo, hi))
-            .min_by(|a,b|a.abs().total_cmp(&b.abs()))
+        let offset = intervals
+            .iter()
+            .map(|&(lo, hi)| 0f64.clamp(lo, hi))
+            .min_by(|a, b| a.abs().total_cmp(&b.abs()))
             .ok_or(AnimationError::UnreachableFootPlant)?;
         let mut pose = self.clone();
         let before = pose.local[0].translation;
@@ -409,7 +458,13 @@ impl Pose {
         let actual_offset = pose.local[0].translation - before;
         let (pose, first) = pose.solve_two_bone(&chains[0], targets[0])?;
         let (pose, second) = pose.solve_two_bone(&chains[1], targets[1])?;
-        Ok((pose, PlantedLegsResult { pelvis_offset: actual_offset, legs: [first, second] }))
+        Ok((
+            pose,
+            PlantedLegsResult {
+                pelvis_offset: actual_offset,
+                legs: [first, second],
+            },
+        ))
     }
 }
 impl AnimatorFrame {
@@ -418,11 +473,17 @@ impl AnimatorFrame {
     /// # Errors
     /// Rejects foreign rigs and all planted-leg validation/reach failures.
     pub fn with_planted_legs(
-        mut self, skeleton: &Skeleton, chains: &[TwoBoneChain; 2],
-        targets: [TwoBoneTarget; 2], up: Vec3, max_offset: f32,
+        mut self,
+        skeleton: &Skeleton,
+        chains: &[TwoBoneChain; 2],
+        targets: [TwoBoneTarget; 2],
+        up: Vec3,
+        max_offset: f32,
     ) -> Result<(Self, PlantedLegsResult), AnimationError> {
         self.pose.skin_matrices(skeleton)?;
-        let (pose, report) = self.pose.solve_planted_legs(chains, targets, up, max_offset)?;
+        let (pose, report) = self
+            .pose
+            .solve_planted_legs(chains, targets, up, max_offset)?;
         let palette = pose.skin_matrices(skeleton)?;
         self.pose = pose;
         self.skin_matrices = palette;

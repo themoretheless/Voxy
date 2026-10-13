@@ -14,7 +14,9 @@ use voxy_animation::{
     AnimationClip, AnimationUpdateJob, AnimationUpdateQueue, Joint, JointTrack, Playback, Pose,
     QuatKey, Skeleton, SoaPose, Transform, Vec3Key,
 };
-use voxy_assets::{AssetCatalog, AssetId, AsyncAssetStreamer, LodStreamingPolicy, StreamingPriority};
+use voxy_assets::{
+    AssetCatalog, AssetId, AsyncAssetStreamer, LodStreamingPolicy, StreamingPriority,
+};
 use voxy_render::SceneSurface;
 
 fn build_64_joint_skeleton() -> Skeleton {
@@ -101,11 +103,7 @@ fn bench_animation_soa_vs_aos() {
         let w = (i % 100) as f32 * 0.01;
         SoaPose::blend_into(black_box(&soa_a), black_box(&soa_b), w, &mut soa_out).unwrap();
         soa_out
-            .skin_matrices_into(
-                black_box(&soa_skeleton),
-                &mut global_scratch,
-                &mut skin_out,
-            )
+            .skin_matrices_into(black_box(&soa_skeleton), &mut global_scratch, &mut skin_out)
             .unwrap();
         black_box(&skin_out);
     }
@@ -167,8 +165,7 @@ fn bench_command_partitioning() {
     let dummy_ids: Vec<u32> = (0..4_096).collect();
     let start = Instant::now();
     for _ in 0..1_000 {
-        let slices =
-            voxy_render::SceneSurface::partition_draw_slices(&[], 8);
+        let slices = voxy_render::SceneSurface::partition_draw_slices(&[], 8);
         black_box(slices);
         black_box(dummy_ids.chunks(512).count());
     }

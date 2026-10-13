@@ -1191,6 +1191,10 @@ pub(in crate::hair) fn advance(
 }
 // Contact-only corrections share the same swept proof and active-set owner,
 // while structural advance retains unconstrained elastic motion for all rods.
+#[allow(
+    dead_code,
+    reason = "contact-only advance of the swept path, kept for the in-progress solver"
+)]
 pub(in crate::hair) fn advance_contacts(
     rods: &mut [HairRod],
     dt: f64,

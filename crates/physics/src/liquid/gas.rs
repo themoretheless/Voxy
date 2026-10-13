@@ -175,8 +175,12 @@ impl Liquid {
         material: Material,
         density: f64,
     ) -> Result<f64, Error> {
-        super::LiquidPressureLaw {rest_density:material.rest_density,sound_speed:material.sound_speed,
-            heat_capacity_ratio:self.gas_equations[index].map(|gas|gas.heat_capacity_ratio)}.evaluate_native(density)
+        super::LiquidPressureLaw {
+            rest_density: material.rest_density,
+            sound_speed: material.sound_speed,
+            heat_capacity_ratio: self.gas_equations[index].map(|gas| gas.heat_capacity_ratio),
+        }
+        .evaluate_native(density)
     }
 }
 

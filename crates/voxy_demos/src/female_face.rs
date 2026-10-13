@@ -290,8 +290,11 @@ pub fn deform_with_contour(
     deform_with_contour_impl(vertices, body_vertices, pose, contour, true);
 }
 fn deform_with_contour_impl(
-    vertices: &mut [SceneVertex], body_vertices: usize, pose: FacePose,
-    contour: Option<&LidContour>, skip_zero_influence: bool,
+    vertices: &mut [SceneVertex],
+    body_vertices: usize,
+    pose: FacePose,
+    contour: Option<&LidContour>,
+    skip_zero_influence: bool,
 ) {
     let smile = pose.smile.clamp(0., 1.);
     let jaw = pose.jaw.clamp(0., 1.);
@@ -489,38 +492,98 @@ pub mod tests {
     #[test]
     #[ignore = "actual body and eyes exact expression optimization qualification"]
     fn zero_influence_rejection_matches_full_expression_bitwise() {
-        let body=ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),ObjLimits::default()).unwrap();
-        let body_count=body.mesh.vertices().len();
-        let mut rest=body.mesh.vertices().to_vec();
-        for source in [include_str!("../../../assets/characters/blender-female/eye-l.obj"),include_str!("../../../assets/characters/blender-female/eye-r.obj")] {
-            rest.extend_from_slice(ObjAsset::parse(source,ObjLimits::default()).unwrap().mesh.vertices());
+        let body = ObjAsset::parse(
+            include_str!(
+                "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+            ),
+            ObjLimits::default(),
+        )
+        .unwrap();
+        let body_count = body.mesh.vertices().len();
+        let mut rest = body.mesh.vertices().to_vec();
+        for source in [
+            include_str!("../../../assets/characters/blender-female/eye-l.obj"),
+            include_str!("../../../assets/characters/blender-female/eye-r.obj"),
+        ] {
+            rest.extend_from_slice(
+                ObjAsset::parse(source, ObjLimits::default())
+                    .unwrap()
+                    .mesh
+                    .vertices(),
+            );
         }
-        let contour=LidContour::new(body.mesh.vertices(),body.mesh.indices());
-        let skipped=rest[..body_count].iter().filter(|v|smooth(0.08,0.12,v.position[2])==0.).count();
-        assert!(skipped>1000,"fixture must exercise a substantial zero-influence domain");
-        let poses=[FacePose::default(),FacePose {blink:1.,..Default::default()},
-            FacePose {blink:0.5,blink_offsets:[-0.3,0.4],squint:0.5,..Default::default()},
-            FacePose {smile:1.,jaw:1.,brow:1.,gaze:[0.3,-0.2],..Default::default()},
-            FacePose {brow:-1.,jaw:0.5,gaze_offsets:[[0.1,0.2],[-0.2,-0.1]],..Default::default()},
-            FacePose::sample(1.6),FacePose::sample(3.5)];
-        let mut reference_ms=0.;let mut candidate_ms=0.;
-        for profile in [None,Some(&contour)] {
-            for (index,pose) in poses.into_iter().enumerate() {
-                let mut reference=rest.clone();let mut candidate=rest.clone();
-                let start=std::time::Instant::now();
-                deform_with_contour_impl(&mut reference,body_count,pose,profile,false);
-                reference_ms+=start.elapsed().as_secs_f64()*1000.;
-                let start=std::time::Instant::now();
-                deform_with_contour_impl(&mut candidate,body_count,pose,profile,true);
-                candidate_ms+=start.elapsed().as_secs_f64()*1000.;
-                for (vertex,(a,b)) in candidate.iter().zip(&reference).enumerate() {
-                    assert_eq!((a.position.map(f32::to_bits),a.uv.map(f32::to_bits),a.color.map(f32::to_bits)),
-                        (b.position.map(f32::to_bits),b.uv.map(f32::to_bits),b.color.map(f32::to_bits)),
-                        "profile={} pose={index} vertex={vertex}",profile.is_some());
+        let contour = LidContour::new(body.mesh.vertices(), body.mesh.indices());
+        let skipped = rest[..body_count]
+            .iter()
+            .filter(|v| smooth(0.08, 0.12, v.position[2]) == 0.)
+            .count();
+        assert!(
+            skipped > 1000,
+            "fixture must exercise a substantial zero-influence domain"
+        );
+        let poses = [
+            FacePose::default(),
+            FacePose {
+                blink: 1.,
+                ..Default::default()
+            },
+            FacePose {
+                blink: 0.5,
+                blink_offsets: [-0.3, 0.4],
+                squint: 0.5,
+                ..Default::default()
+            },
+            FacePose {
+                smile: 1.,
+                jaw: 1.,
+                brow: 1.,
+                gaze: [0.3, -0.2],
+                ..Default::default()
+            },
+            FacePose {
+                brow: -1.,
+                jaw: 0.5,
+                gaze_offsets: [[0.1, 0.2], [-0.2, -0.1]],
+                ..Default::default()
+            },
+            FacePose::sample(1.6),
+            FacePose::sample(3.5),
+        ];
+        let mut reference_ms = 0.;
+        let mut candidate_ms = 0.;
+        for profile in [None, Some(&contour)] {
+            for (index, pose) in poses.into_iter().enumerate() {
+                let mut reference = rest.clone();
+                let mut candidate = rest.clone();
+                let start = std::time::Instant::now();
+                deform_with_contour_impl(&mut reference, body_count, pose, profile, false);
+                reference_ms += start.elapsed().as_secs_f64() * 1000.;
+                let start = std::time::Instant::now();
+                deform_with_contour_impl(&mut candidate, body_count, pose, profile, true);
+                candidate_ms += start.elapsed().as_secs_f64() * 1000.;
+                for (vertex, (a, b)) in candidate.iter().zip(&reference).enumerate() {
+                    assert_eq!(
+                        (
+                            a.position.map(f32::to_bits),
+                            a.uv.map(f32::to_bits),
+                            a.color.map(f32::to_bits)
+                        ),
+                        (
+                            b.position.map(f32::to_bits),
+                            b.uv.map(f32::to_bits),
+                            b.color.map(f32::to_bits)
+                        ),
+                        "profile={} pose={index} vertex={vertex}",
+                        profile.is_some()
+                    );
                 }
             }
         }
-        eprintln!("FACE EXACT SUPPORT body_vertices={body_count} all_vertices={} skipped={skipped} poses={} contour_modes=2 reference_total_ms={reference_ms} candidate_total_ms={candidate_ms}",rest.len(),poses.len());
+        eprintln!(
+            "FACE EXACT SUPPORT body_vertices={body_count} all_vertices={} skipped={skipped} poses={} contour_modes=2 reference_total_ms={reference_ms} candidate_total_ms={candidate_ms}",
+            rest.len(),
+            poses.len()
+        );
     }
 
     #[test]

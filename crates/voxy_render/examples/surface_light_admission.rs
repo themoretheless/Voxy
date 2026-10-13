@@ -230,7 +230,10 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                     "admitted candidate failed independent CPU error gate {error}"
                 );
                 assert_eq!(&published[..bytes as usize], &data[..bytes as usize]);
-                assert_eq!(&published[bytes as usize..], bytemuck::cast_slice::<[f32; 4], u8>(&source));
+                assert_eq!(
+                    &published[bytes as usize..],
+                    bytemuck::cast_slice::<[f32; 4], u8>(&source)
+                );
                 generation += 1;
                 assert_eq!(header[3], generation);
                 assert_eq!(header[2], 1);

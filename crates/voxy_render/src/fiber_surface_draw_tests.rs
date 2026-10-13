@@ -120,42 +120,94 @@ fn fibre_scatter_preserves_draw_streams_and_neighbouring_geometry() {
 #[test]
 fn fibre_director_scatter_tracks_pose_and_preserves_neighbours() {
     pollster::block_on(async {
-        let instance=GraphicsOptions::default().create_instance();
-        let adapter=instance.request_adapter(&Default::default()).await.expect("GPU required");
-        let (device,queue)=adapter.request_device(&Default::default()).await.unwrap();
-        let frame=FiberSurfaceFrame { position_arc:[0.,0.8,0.,0.5],u_red:[1.,0.,0.,0.1],v_green:[0.,1.,0.,0.2],w_blue:[0.,0.,1.,0.3] };
-        let mut input=FiberSurfaceInput::new(&[frame],2,&[[0.,0.,0.,1.];2],0.0003,0.6).unwrap();
-        let count=input.vertex_count() as usize;
-        let mesh=SceneMesh::new(vec![SceneVertex { position:[0.;3],uv:[0.;2],color:[1.;4] };count+6],vec![0,1,2]).unwrap();
-        let renderer=SceneRenderer::new(&device,wgpu::TextureFormat::Rgba8Unorm);
-        let sentinel=[0.,1.,0.,-1.];
-        let geometry=renderer.upload_compute_tangent_mesh(&device,&mesh,&vec![sentinel;count+6]).unwrap();
-        let plain=renderer.upload_compute_mesh(&device,&mesh).unwrap();
-        let program=ComputeProgram::new(&device,FIBER_SURFACE_SHADER).await.unwrap();
-        let job=program.create_job(&device,input.bytes()).unwrap();
-        assert!(FiberSurfaceTransfer::new_with_tangents(&device,&plain,job.buffer(),&input,3).await.is_err());
-        assert!(FiberSurfaceTransfer::new_with_tangents(&device,&geometry,job.buffer(),&input,7).await.is_err());
-        let transfer=FiberSurfaceTransfer::new_with_tangents(&device,&geometry,job.buffer(),&input,3).await.unwrap();
-        for angle in [0.37,-0.81] {
+        let instance = GraphicsOptions::default().create_instance();
+        let adapter = instance
+            .request_adapter(&Default::default())
+            .await
+            .expect("GPU required");
+        let (device, queue) = adapter.request_device(&Default::default()).await.unwrap();
+        let frame = FiberSurfaceFrame {
+            position_arc: [0., 0.8, 0., 0.5],
+            u_red: [1., 0., 0., 0.1],
+            v_green: [0., 1., 0., 0.2],
+            w_blue: [0., 0., 1., 0.3],
+        };
+        let mut input =
+            FiberSurfaceInput::new(&[frame], 2, &[[0., 0., 0., 1.]; 2], 0.0003, 0.6).unwrap();
+        let count = input.vertex_count() as usize;
+        let mesh = SceneMesh::new(
+            vec![
+                SceneVertex {
+                    position: [0.; 3],
+                    uv: [0.; 2],
+                    color: [1.; 4]
+                };
+                count + 6
+            ],
+            vec![0, 1, 2],
+        )
+        .unwrap();
+        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+        let sentinel = [0., 1., 0., -1.];
+        let geometry = renderer
+            .upload_compute_tangent_mesh(&device, &mesh, &vec![sentinel; count + 6])
+            .unwrap();
+        let plain = renderer.upload_compute_mesh(&device, &mesh).unwrap();
+        let program = ComputeProgram::new(&device, FIBER_SURFACE_SHADER)
+            .await
+            .unwrap();
+        let job = program.create_job(&device, input.bytes()).unwrap();
+        assert!(
+            FiberSurfaceTransfer::new_with_tangents(&device, &plain, job.buffer(), &input, 3)
+                .await
+                .is_err()
+        );
+        assert!(
+            FiberSurfaceTransfer::new_with_tangents(&device, &geometry, job.buffer(), &input, 7)
+                .await
+                .is_err()
+        );
+        let transfer =
+            FiberSurfaceTransfer::new_with_tangents(&device, &geometry, job.buffer(), &input, 3)
+                .await
+                .unwrap();
+        for angle in [0.37, -0.81] {
             // Nonuniform affine pose exercises normalization and w=0 translation exclusion.
-            let pose=glam::Mat4::from_scale_rotation_translation(glam::Vec3::new(0.7,1.3,0.9),glam::Quat::from_rotation_y(angle),glam::Vec3::new(3.,-4.,2.));
-            let offset=input.transform_byte_offset();
-            queue.write_buffer(job.buffer(),offset,input.replace_transform(pose).unwrap());
-            let mut encoder=device.create_command_encoder(&Default::default());
-            job.encode_step(&mut encoder,[1,1,1]).unwrap();transfer.encode(&mut encoder);
-            let size=((count+6)*16) as u64;
-            let dispatch=ComputeDispatch::gather_buffers(&device,&mut encoder,&[(geometry.deformation_tangents().unwrap(),0,0,size)],size).unwrap();
+            let pose = glam::Mat4::from_scale_rotation_translation(
+                glam::Vec3::new(0.7, 1.3, 0.9),
+                glam::Quat::from_rotation_y(angle),
+                glam::Vec3::new(3., -4., 2.),
+            );
+            let offset = input.transform_byte_offset();
+            queue.write_buffer(job.buffer(), offset, input.replace_transform(pose).unwrap());
+            let mut encoder = device.create_command_encoder(&Default::default());
+            job.encode_step(&mut encoder, [1, 1, 1]).unwrap();
+            transfer.encode(&mut encoder);
+            let size = ((count + 6) * 16) as u64;
+            let dispatch = ComputeDispatch::gather_buffers(
+                &device,
+                &mut encoder,
+                &[(geometry.deformation_tangents().unwrap(), 0, 0, size)],
+                size,
+            )
+            .unwrap();
             queue.submit([encoder.finish()]);
-            let mut pending=dispatch.begin_read();device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-            let bytes=pending.try_read().unwrap().unwrap();
-            let values:&[[f32;4]]=bytemuck::cast_slice(&bytes);
-            let expected=pose.transform_vector3(glam::Vec3::Z).normalize();
-            for (i,value) in values.iter().enumerate() {
-                if (3..count+3).contains(&i) {
-                    assert!(glam::Vec3::from_slice(value).distance(expected)<3e-7,"director {i}: {value:?}");
-                    assert!((glam::Vec3::from_slice(value).length()-1.).abs()<3e-7);
-                    assert_eq!(value[3],1.);
-                } else {assert_eq!(*value,sentinel,"neighbour {i}");}
+            let mut pending = dispatch.begin_read();
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            let bytes = pending.try_read().unwrap().unwrap();
+            let values: &[[f32; 4]] = bytemuck::cast_slice(&bytes);
+            let expected = pose.transform_vector3(glam::Vec3::Z).normalize();
+            for (i, value) in values.iter().enumerate() {
+                if (3..count + 3).contains(&i) {
+                    assert!(
+                        glam::Vec3::from_slice(value).distance(expected) < 3e-7,
+                        "director {i}: {value:?}"
+                    );
+                    assert!((glam::Vec3::from_slice(value).length() - 1.).abs() < 3e-7);
+                    assert_eq!(value[3], 1.);
+                } else {
+                    assert_eq!(*value, sentinel, "neighbour {i}");
+                }
             }
         }
     });

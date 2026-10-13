@@ -50,9 +50,13 @@ pub fn log(mut q: Q) -> V {
 pub fn apply(q: &mut Q, v: V) {
     // The identity update must not renormalize an already admitted state.
     // Repeated normalization is not bitwise idempotent in binary64.
-    if v==[0.;3] {return;}
-    let candidate=qm(exp(v),*q);
-    if candidate!=*q {*q=qunit(candidate);}
+    if v == [0.; 3] {
+        return;
+    }
+    let candidate = qm(exp(v), *q);
+    if candidate != *q {
+        *q = qunit(candidate);
+    }
 }
 
 #[cfg(test)]
@@ -60,17 +64,25 @@ mod identity_update_tests {
     use super::*;
     #[test]
     fn zero_and_unrepresentable_rotations_preserve_the_admitted_orientation() {
-        let original=qunit([0.1,0.2,0.3,0.4]);
-        assert_ne!(original,qunit(original),"fixture exposes normalization drift");
-        for increment in [[0.;3],[f64::MIN_POSITIVE,0.,0.]] {
-            let mut actual=original;apply(&mut actual,increment);
-            assert_eq!(actual.map(f64::to_bits),original.map(f64::to_bits));
+        let original = qunit([0.1, 0.2, 0.3, 0.4]);
+        assert_ne!(
+            original,
+            qunit(original),
+            "fixture exposes normalization drift"
+        );
+        for increment in [[0.; 3], [f64::MIN_POSITIVE, 0., 0.]] {
+            let mut actual = original;
+            apply(&mut actual, increment);
+            assert_eq!(actual.map(f64::to_bits), original.map(f64::to_bits));
         }
-        let mut signed_zero=[-0.,0.,0.,1.];let bits=signed_zero.map(f64::to_bits);
-        apply(&mut signed_zero,[0.;3]);assert_eq!(signed_zero.map(f64::to_bits),bits);
-        let mut rotated=original;apply(&mut rotated,[0.1,-0.2,0.3]);
-        assert_ne!(rotated,original);
-        assert!((rotated.iter().map(|x|x*x).sum::<f64>()-1.).abs()<1e-15);
+        let mut signed_zero = [-0., 0., 0., 1.];
+        let bits = signed_zero.map(f64::to_bits);
+        apply(&mut signed_zero, [0.; 3]);
+        assert_eq!(signed_zero.map(f64::to_bits), bits);
+        let mut rotated = original;
+        apply(&mut rotated, [0.1, -0.2, 0.3]);
+        assert_ne!(rotated, original);
+        assert!((rotated.iter().map(|x| x * x).sum::<f64>() - 1.).abs() < 1e-15);
     }
 }
 pub fn from_z(v: V) -> Q {

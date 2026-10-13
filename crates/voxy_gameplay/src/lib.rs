@@ -22,8 +22,8 @@ mod foot_contact;
 mod staged_tick;
 mod support;
 pub use foot_contact::{
-    FootContactCandidate, FootContactInput, FootContactSettings, FootContactState, FootPivotTransfer,
-    FootContactStatus,
+    FootContactCandidate, FootContactInput, FootContactSettings, FootContactState,
+    FootContactStatus, FootPivotTransfer,
 };
 pub use staged_tick::{AcceptedCharacterPose, CharacterTickError, CharacterTickPreview};
 pub use support::{SupportAnchor, SupportContact, SupportProbe, SupportQueryBudget, SupportWorld};

@@ -126,12 +126,22 @@ impl Liquid {
         neighbors: &[(usize, usize, f64)],
         density: &mut [f64],
     ) {
-        self.visit_boundary_density(properties,neighbors,|i,x|density[i]+=x);
+        self.visit_boundary_density(properties, neighbors, |i, x| density[i] += x);
     }
-    pub(super) fn visit_boundary_density(&self,properties:&[Material],neighbors:&[(usize,usize,f64)],mut emit:impl FnMut(usize,f64)) {
-        let support=self.config.smoothing_radius;
-        for &(i,j,radius) in neighbors {
-            emit(i,properties[i].rest_density*self.boundaries[j].volume*super::density_kernel(self.formulation,support,radius));
+    pub(super) fn visit_boundary_density(
+        &self,
+        properties: &[Material],
+        neighbors: &[(usize, usize, f64)],
+        mut emit: impl FnMut(usize, f64),
+    ) {
+        let support = self.config.smoothing_radius;
+        for &(i, j, radius) in neighbors {
+            emit(
+                i,
+                properties[i].rest_density
+                    * self.boundaries[j].volume
+                    * super::density_kernel(self.formulation, support, radius),
+            );
         }
     }
     pub(super) fn add_boundary_pressure(
