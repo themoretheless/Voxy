@@ -133,15 +133,20 @@ impl std::error::Error for CoordinateOverflow {}
 #[must_use]
 #[allow(clippy::cast_possible_truncation)]
 pub fn split_voxel(pos: VoxelPos) -> (ChunkPos, LocalPos) {
+    // CHUNK_EDGE is a power of two, so the Euclidean quotient is an arithmetic shift
+    // and the Euclidean remainder a mask, for negative coordinates too.
+    const { assert!(CHUNK_EDGE.is_power_of_two()) };
+    const SHIFT: u32 = CHUNK_EDGE.trailing_zeros();
+    const MASK: i64 = CHUNK_EDGE - 1;
     let chunk = ChunkPos {
-        x: pos.x.div_euclid(CHUNK_EDGE),
-        y: pos.y.div_euclid(CHUNK_EDGE),
-        z: pos.z.div_euclid(CHUNK_EDGE),
+        x: pos.x >> SHIFT,
+        y: pos.y >> SHIFT,
+        z: pos.z >> SHIFT,
     };
     let local = LocalPos {
-        x: pos.x.rem_euclid(CHUNK_EDGE) as u8,
-        y: pos.y.rem_euclid(CHUNK_EDGE) as u8,
-        z: pos.z.rem_euclid(CHUNK_EDGE) as u8,
+        x: (pos.x & MASK) as u8,
+        y: (pos.y & MASK) as u8,
+        z: (pos.z & MASK) as u8,
     };
     (chunk, local)
 }
