@@ -619,3 +619,89 @@ mod events {
         );
     }
 }
+
+#[test]
+fn ik_node_applies_solver_to_input_with_vec3_param() {
+    let rig = rig();
+    let c = clip(&rig, "walk", 1.0, 0.0, Playback::Loop);
+    let chain = Arc::new(crate::IkChain::new(&rig, 0, 2).unwrap());
+    let mut desc = GraphDesc::default();
+    let target = desc
+        .add_param("target", ParamValue::Vec3(Vec3::new(0.3, 1.5, 0.2)))
+        .unwrap();
+    let weight = desc.add_param("w", ParamValue::Float(1.0)).unwrap();
+    let input = desc
+        .add_node(GraphNode::Clip {
+            clip: c.clone(),
+            speed: FloatInput::Const(1.0),
+        })
+        .unwrap();
+    let root = desc
+        .add_node(GraphNode::Ik {
+            input,
+            solver: IkSolver::Fabrik {
+                chain: chain.clone(),
+                settings: crate::FabrikSettings::default(),
+            },
+            target: Vec3Input::Param(target),
+            weight: FloatInput::Param(weight),
+        })
+        .unwrap();
+    desc.root = Some(root);
+    let graph = Arc::new(AnimGraph::compile(desc, &rig).unwrap());
+    let mut player = GraphPlayer::new(graph).unwrap();
+    let frame = player.advance(0.2).unwrap();
+    let expected = c
+        .try_sample_clock(&rig, 0.2)
+        .unwrap()
+        .solve_fabrik(
+            &chain,
+            Vec3::new(0.3, 1.5, 0.2),
+            None,
+            crate::FabrikSettings::default(),
+        )
+        .unwrap()
+        .0;
+    assert_eq!(frame.pose.local(), expected.local());
+    assert_eq!(
+        frame.root_motion,
+        c.root_curve.integral(0.0, 0.2, 1., 1.).as_vec3()
+    );
+    player.set_param(weight, ParamValue::Float(0.0)).unwrap();
+    let frame = player.advance(0.2).unwrap();
+    assert_eq!(
+        frame.pose.local(),
+        c.try_sample_clock(&rig, 0.4).unwrap().local()
+    );
+    assert!(
+        player
+            .set_param(target, ParamValue::Vec3(Vec3::NAN))
+            .is_err()
+    );
+    assert!(player.set_param(target, ParamValue::Float(1.0)).is_err());
+    // A float param cannot feed a vec3 input.
+    let mut desc = GraphDesc::default();
+    let bad = desc.add_param("bad", ParamValue::Float(1.0)).unwrap();
+    let input = desc
+        .add_node(GraphNode::Clip {
+            clip: c,
+            speed: FloatInput::Const(1.0),
+        })
+        .unwrap();
+    let root = desc
+        .add_node(GraphNode::Ik {
+            input,
+            solver: IkSolver::Fabrik {
+                chain,
+                settings: crate::FabrikSettings::default(),
+            },
+            target: Vec3Input::Param(bad),
+            weight: FloatInput::Const(1.0),
+        })
+        .unwrap();
+    desc.root = Some(root);
+    assert_eq!(
+        AnimGraph::compile(desc, &rig).err(),
+        Some(AnimationError::InvalidGraphParam)
+    );
+}

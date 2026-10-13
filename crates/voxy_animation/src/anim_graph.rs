@@ -17,7 +17,7 @@ use crate::state_machine::{
 };
 use crate::{
     AnimationClip, AnimationError, AnimationPhaseInterval, BlendSpace1D, BlendSpace2D, BoneMask,
-    Playback, Pose, Skeleton, rigs_match,
+    FabrikSettings, IkChain, LookAtChain, Playback, Pose, Skeleton, TwoBoneChain, rigs_match,
 };
 
 /// Default per-clip event budget per tick.
@@ -40,6 +40,7 @@ pub enum ParamValue {
     Float(f32),
     Bool(bool),
     Int(i32),
+    Vec3(Vec3),
 }
 
 impl ParamValue {
@@ -49,6 +50,7 @@ impl ParamValue {
             (Self::Float(_), Self::Float(_))
                 | (Self::Bool(_), Self::Bool(_))
                 | (Self::Int(_), Self::Int(_))
+                | (Self::Vec3(_), Self::Vec3(_))
         )
     }
 }
@@ -58,6 +60,29 @@ impl ParamValue {
 pub enum FloatInput {
     Const(f32),
     Param(ParamId),
+}
+
+/// Model-space vector input: a constant or a `Vec3` parameter.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Vec3Input {
+    Const(Vec3),
+    Param(ParamId),
+}
+
+/// IK solver applied by an [`GraphNode::Ik`] node.
+#[derive(Clone, Debug)]
+pub enum IkSolver {
+    TwoBone {
+        chain: Arc<TwoBoneChain>,
+        pole: Vec3Input,
+    },
+    Fabrik {
+        chain: Arc<IkChain>,
+        settings: FabrikSettings,
+    },
+    LookAt {
+        chain: Arc<LookAtChain>,
+    },
 }
 
 /// Node kinds. Interior nodes reference children by [`NodeId`].
@@ -102,6 +127,13 @@ pub enum GraphNode {
     },
     /// Named states over subtrees with parameter-driven crossfades.
     StateMachine(StateMachineDesc),
+    /// IK post-process over `input`, blended by `weight`.
+    Ik {
+        input: NodeId,
+        solver: IkSolver,
+        target: Vec3Input,
+        weight: FloatInput,
+    },
 }
 
 impl GraphNode {
@@ -113,6 +145,19 @@ impl GraphNode {
             Self::Layer { base, overlay, .. } => out.extend([*base, *overlay]),
             Self::Additive { base, additive, .. } => out.extend([*base, *additive]),
             Self::StateMachine(desc) => out.extend(desc.states.iter().map(|(_, n)| *n)),
+            Self::Ik { input, .. } => out.push(*input),
+        }
+    }
+
+    fn vec3_inputs(&self) -> [Option<Vec3Input>; 2] {
+        match self {
+            Self::Ik {
+                target,
+                solver: IkSolver::TwoBone { pole, .. },
+                ..
+            } => [Some(*target), Some(*pole)],
+            Self::Ik { target, .. } => [Some(*target), None],
+            _ => [None, None],
         }
     }
 
@@ -123,7 +168,8 @@ impl GraphNode {
             Self::BlendSpace2D { x, y, .. } => [Some(*x), Some(*y)],
             Self::Blend { weight, .. }
             | Self::Layer { weight, .. }
-            | Self::Additive { weight, .. } => [Some(*weight), None],
+            | Self::Additive { weight, .. }
+            | Self::Ik { weight, .. } => [Some(*weight), None],
             Self::StateMachine(_) => [None, None],
         }
     }
@@ -244,8 +290,25 @@ impl AnimGraph {
                     FloatInput::Const(_) => {}
                 }
             }
+            for input in node.vec3_inputs().into_iter().flatten() {
+                match input {
+                    Vec3Input::Const(value) if !value.is_finite() => {
+                        return Err(AnimationError::InvalidGraphParam);
+                    }
+                    Vec3Input::Param(id) => match desc.params.get(usize::from(id.0)) {
+                        Some((_, ParamValue::Vec3(_))) => {}
+                        _ => return Err(AnimationError::InvalidGraphParam),
+                    },
+                    Vec3Input::Const(_) => {}
+                }
+            }
             let compatible = match node {
                 GraphNode::Clip { clip, .. } => clip.is_compatible_with(skeleton),
+                GraphNode::Ik { solver, .. } => match solver {
+                    IkSolver::TwoBone { chain, .. } => rigs_match(chain.rig(), &skeleton.joints),
+                    IkSolver::Fabrik { chain, .. } => rigs_match(chain.rig(), &skeleton.joints),
+                    IkSolver::LookAt { chain } => rigs_match(chain.rig(), &skeleton.joints),
+                },
                 GraphNode::BlendSpace1D { space, .. } => space
                     .samples()
                     .iter()
@@ -522,9 +585,12 @@ impl GraphPlayer {
         if !slot.same_kind(value) {
             return Err(AnimationError::InvalidGraphParam);
         }
-        if let ParamValue::Float(v) = value
-            && !v.is_finite()
-        {
+        let finite = match value {
+            ParamValue::Float(v) => v.is_finite(),
+            ParamValue::Vec3(v) => v.is_finite(),
+            ParamValue::Bool(_) | ParamValue::Int(_) => true,
+        };
+        if !finite {
             return Err(AnimationError::InvalidGraphParam);
         }
         *slot = value;
@@ -682,6 +748,9 @@ impl GraphPlayer {
                     | GraphNode::BlendSpace1D { .. }
                     | GraphNode::BlendSpace2D { .. }
                     | GraphNode::StateMachine(_) => {}
+                    GraphNode::Ik { input, .. } => {
+                        assign(&mut ticks, &mut weights, *input, dt, weight);
+                    }
                     GraphNode::Blend { a, b, weight: w } => {
                         let w = float_param(&staged.params, *w).clamp(0.0, 1.0);
                         assign(&mut ticks, &mut weights, *a, dt, weight * (1.0 - w));
@@ -918,9 +987,58 @@ impl GraphPlayer {
                 let mask = mask.scaled(float(*weight))?;
                 (Pose::apply_additive(&pb, &pa, reference, &mask)?, mb)
             }
+            GraphNode::Ik {
+                input,
+                solver,
+                target,
+                weight,
+            } => {
+                let (pose, motion) = take(results, *input)?;
+                let weight = float(*weight).clamp(0.0, 1.0);
+                let target = vec3_param(&staged.params, *target);
+                let solved = match solver {
+                    IkSolver::TwoBone { chain, pole } => {
+                        pose.solve_two_bone(
+                            chain,
+                            crate::TwoBoneTarget {
+                                position: target,
+                                pole: vec3_param(&staged.params, *pole),
+                                rotation: None,
+                                weight,
+                            },
+                        )?
+                        .0
+                    }
+                    IkSolver::Fabrik { chain, settings } => {
+                        pose.solve_fabrik(
+                            chain,
+                            target,
+                            None,
+                            FabrikSettings {
+                                weight: settings.weight * weight,
+                                ..*settings
+                            },
+                        )?
+                        .0
+                    }
+                    IkSolver::LookAt { chain } => pose.solve_look_at(chain, target, weight)?,
+                };
+                (solved, motion)
+            }
             GraphNode::StateMachine(_) => return Err(AnimationError::InvalidGraphNode(index)),
         });
         plain.map(|(pose, motion)| (pose, motion, None))
+    }
+}
+
+fn vec3_param(params: &[ParamValue], input: Vec3Input) -> Vec3 {
+    match input {
+        Vec3Input::Const(v) => v,
+        Vec3Input::Param(id) => match params[usize::from(id.0)] {
+            ParamValue::Vec3(v) => v,
+            // Compile guarantees vec3 kind.
+            _ => Vec3::ZERO,
+        },
     }
 }
 
@@ -930,7 +1048,7 @@ fn float_param(params: &[ParamValue], input: FloatInput) -> f32 {
         FloatInput::Param(id) => match params[usize::from(id.0)] {
             ParamValue::Float(v) => v,
             // Compile guarantees float kind.
-            ParamValue::Bool(_) | ParamValue::Int(_) => 0.0,
+            _ => 0.0,
         },
     }
 }
