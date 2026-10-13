@@ -359,7 +359,9 @@ fn accumulation_backend_rejects_whole_corrupt_batch_and_preserves_late_failure()
                     result.accelerations.last_mut().unwrap()[0] = f64::NAN;
                 }
                 3 => {
-                    result.viscous_rates.last_mut().map(|v| *v = -1.);
+                    if let Some(rate) = result.viscous_rates.last_mut() {
+                        *rate = -1.;
+                    }
                 }
                 4 => {
                     result.accelerations.last_mut().unwrap()[0] += 1.;
