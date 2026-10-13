@@ -963,7 +963,7 @@ impl App {
                             contact_curve: vec![],
                             clip_contact_curves: Default::default(),
                             clip_pivot_keys: Default::default(),
-                    support_geometry: None,
+                            support_geometry: None,
                         }],
                     },
                 )?;

@@ -254,9 +254,13 @@ impl VoxyHumanoidLocomotion {
         phase: f64,
         target: &Skeleton,
     ) -> Result<(Pose, Vec3), Box<dyn std::error::Error>> {
-        self.in_place_pose(self.pose_phase(clip, phase)?,target)
+        self.in_place_pose(self.pose_phase(clip, phase)?, target)
     }
-    fn in_place_pose(&self,pose:Pose,target:&Skeleton)->Result<(Pose,Vec3),Box<dyn std::error::Error>> {
+    fn in_place_pose(
+        &self,
+        pose: Pose,
+        target: &Skeleton,
+    ) -> Result<(Pose, Vec3), Box<dyn std::error::Error>> {
         let index = usize::from(self.pelvis);
         let bind = target
             .joints()
@@ -354,7 +358,7 @@ impl VoxyHumanoidLocomotion {
             .sample_pose_phase(Some(self.clips[clip.slot()]), phase)?;
         self.retarget_source_pose(&source)
     }
-    fn retarget_source_pose(&self,source:&Pose)->Result<Pose,Box<dyn std::error::Error>> {
+    fn retarget_source_pose(&self, source: &Pose) -> Result<Pose, Box<dyn std::error::Error>> {
         let mut pose = self.binding.apply_pose(source)?;
         // This humanoid preset transfers motion, not source character dimensions.
         // Keep the target physical bone metric, including any authored target
@@ -369,69 +373,114 @@ impl VoxyHumanoidLocomotion {
 /// One source clock and one blended pose for every consumer of a grounded actor.
 /// Target bindings are read-only consumers; this owner does not move the actor
 /// or infer foot contacts from a clip name/normalized phase.
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct GroundedPlayback {
-    source:Arc<ModelAsset>,
-    clips:[Arc<voxy_animation::AnimationClip>;4],
-    animator:voxy_animation::Animator,
-    frame:Pose,
-    selected:LocomotionClip,
+    source: Arc<ModelAsset>,
+    clips: [Arc<voxy_animation::AnimationClip>; 4],
+    animator: voxy_animation::Animator,
+    frame: Pose,
+    selected: LocomotionClip,
 }
 impl GroundedPlayback {
-    pub fn new(library:&VoxyHumanoidLocomotion,clip:LocomotionClip)->Result<Self,Box<dyn std::error::Error>> {
+    pub fn new(
+        library: &VoxyHumanoidLocomotion,
+        clip: LocomotionClip,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
         Self::grounded(clip)?;
-        let clips=std::array::from_fn(|i|library.source.animations[library.clips[i]].clone());
-        let mut animator=voxy_animation::Animator::try_new(clips[clip.slot()].clone())?;
-        let frame=animator.advance_wall(&library.source.skeleton,0.)?.pose;
-        Ok(Self {source:library.source.clone(),clips,animator,frame,selected:clip})
+        let clips = std::array::from_fn(|i| library.source.animations[library.clips[i]].clone());
+        let mut animator = voxy_animation::Animator::try_new(clips[clip.slot()].clone())?;
+        let frame = animator.advance_wall(&library.source.skeleton, 0.)?.pose;
+        Ok(Self {
+            source: library.source.clone(),
+            clips,
+            animator,
+            frame,
+            selected: clip,
+        })
     }
-    fn grounded(clip:LocomotionClip)->Result<(),Box<dyn std::error::Error>> {
-        if clip.slot()>=4 {return Err("grounded playback requires idle, walk, jog or sprint".into());}
+    fn grounded(clip: LocomotionClip) -> Result<(), Box<dyn std::error::Error>> {
+        if clip.slot() >= 4 {
+            return Err("grounded playback requires idle, walk, jog or sprint".into());
+        }
         Ok(())
     }
-    pub fn selected(&self)->LocomotionClip {self.selected}
-    pub fn normalized_phase(&self)->f64 {self.animator.normalized_phase()}
+    pub fn selected(&self) -> LocomotionClip {
+        self.selected
+    }
+    pub fn normalized_phase(&self) -> f64 {
+        self.animator.normalized_phase()
+    }
     /// Contact consumers must use these source/target/frozen-pose identities,
     /// rather than assigning an interrupted source a guessed gait phase.
-    pub fn pose_blend_phases(&self)->voxy_animation::PoseBlendPhases<'_> {
+    pub fn pose_blend_phases(&self) -> voxy_animation::PoseBlendPhases<'_> {
         self.animator.pose_blend_phases()
     }
     /// A repeated selection preserves the existing transition and both clocks.
     /// Interrupted fades reuse Animator's frozen displayed source pose.
-    pub fn transition_to(&mut self,clip:LocomotionClip,duration:f32)->Result<(),Box<dyn std::error::Error>> {
+    pub fn transition_to(
+        &mut self,
+        clip: LocomotionClip,
+        duration: f32,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         Self::grounded(clip)?;
-        let mut candidate=self.animator.clone();
-        let phase=if matches!(clip,LocomotionClip::Idle) {0.} else {candidate.normalized_phase()};
-        candidate.transition_to_at_phase(self.clips[clip.slot()].clone(),duration,phase)?;
-        if clip==self.selected {return Ok(());}
-        let frame=candidate.advance_wall(&self.source.skeleton,0.)?.pose;
-        self.animator=candidate;self.frame=frame;self.selected=clip;
+        let mut candidate = self.animator.clone();
+        let phase = if matches!(clip, LocomotionClip::Idle) {
+            0.
+        } else {
+            candidate.normalized_phase()
+        };
+        candidate.transition_to_at_phase(self.clips[clip.slot()].clone(), duration, phase)?;
+        if clip == self.selected {
+            return Ok(());
+        }
+        let frame = candidate.advance_wall(&self.source.skeleton, 0.)?.pose;
+        self.animator = candidate;
+        self.frame = frame;
+        self.selected = clip;
         Ok(())
     }
     /// Failed sampling preserves the previous clock, transition and source pose.
-    pub fn advance(&mut self,dt:f64)->Result<(),Box<dyn std::error::Error>> {
-        let frame=self.animator.advance_wall(&self.source.skeleton,dt)?.pose;
-        self.frame=frame;
+    pub fn advance(&mut self, dt: f64) -> Result<(), Box<dyn std::error::Error>> {
+        let frame = self.animator.advance_wall(&self.source.skeleton, dt)?.pose;
+        self.frame = frame;
         Ok(())
     }
     /// Both render and physical-shell bindings read this exact same source pose.
     /// Returns the authored pelvis offset separately; it is not a motion delta.
-    pub fn pose_in_place(&self,library:&VoxyHumanoidLocomotion,target:&Skeleton)->Result<(Pose,Vec3),Box<dyn std::error::Error>> {
-        if !Arc::ptr_eq(&self.source,&library.source) {return Err("grounded playback belongs to another source revision".into());}
-        library.in_place_pose(library.retarget_source_pose(&self.frame)?,target)
+    pub fn pose_in_place(
+        &self,
+        library: &VoxyHumanoidLocomotion,
+        target: &Skeleton,
+    ) -> Result<(Pose, Vec3), Box<dyn std::error::Error>> {
+        if !Arc::ptr_eq(&self.source, &library.source) {
+            return Err("grounded playback belongs to another source revision".into());
+        }
+        library.in_place_pose(library.retarget_source_pose(&self.frame)?, target)
     }
 }
 
 /// Explicit preparation recipe for the pinned Quaternius source pack. Original
 /// assets stay untouched; only Jog gains a one-frame, 24 Hz closing interval.
 /// Other immutable clip allocations are shared unchanged.
-pub fn prepare_quaternius_gait_source(mut source: ModelAsset) -> Result<ModelAsset, Box<dyn std::error::Error>> {
-    let indices: Vec<_> = source.animations.iter().enumerate().filter(|(_,clip)|clip.name()=="Jog_Fwd_Loop").map(|(i,_)|i).collect();
-    if indices.len()!=1 {return Err("Quaternius preparation requires one uniquely named Jog_Fwd_Loop".into());}
-    let index=indices[0];
-    let clip=&source.animations[index];
-    if clip.try_sample_phase(&source.skeleton,0.)? != clip.try_sample_phase(&source.skeleton,1.)? {
-        source.animations[index]=Arc::new(clip.append_loop_frame(&source.skeleton,1. / 24.)?);
+pub fn prepare_quaternius_gait_source(
+    mut source: ModelAsset,
+) -> Result<ModelAsset, Box<dyn std::error::Error>> {
+    let indices: Vec<_> = source
+        .animations
+        .iter()
+        .enumerate()
+        .filter(|(_, clip)| clip.name() == "Jog_Fwd_Loop")
+        .map(|(i, _)| i)
+        .collect();
+    if indices.len() != 1 {
+        return Err("Quaternius preparation requires one uniquely named Jog_Fwd_Loop".into());
+    }
+    let index = indices[0];
+    let clip = &source.animations[index];
+    if clip.try_sample_phase(&source.skeleton, 0.)?
+        != clip.try_sample_phase(&source.skeleton, 1.)?
+    {
+        source.animations[index] = Arc::new(clip.append_loop_frame(&source.skeleton, 1. / 24.)?);
     }
     Ok(source)
 }

@@ -41,10 +41,7 @@ impl SurfaceColorTransfer {
             || !target.usage().contains(wgpu::BufferUsages::STORAGE)
             || [target.size(), std::mem::size_of_val(mapping) as u64]
                 .iter()
-                .any(|s| {
-                    *s > limits.max_buffer_size
-                        || *s > u64::from(limits.max_storage_buffer_binding_size)
-                })
+                .any(|s| *s > limits.max_buffer_size || *s > limits.max_storage_buffer_binding_size)
             || mapping.iter().any(|m| {
                 m.target < source_count
                     || m.target as usize >= geometry.deformation_vertex_capacity()

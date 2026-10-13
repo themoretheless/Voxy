@@ -47,10 +47,7 @@ impl SurfaceLightTransfer {
                 admission.accepted_buffer().size(),
             ]
             .iter()
-            .any(|s| {
-                *s > limits.max_buffer_size
-                    || *s > u64::from(limits.max_storage_buffer_binding_size)
-            })
+            .any(|s| *s > limits.max_buffer_size || *s > limits.max_storage_buffer_binding_size)
             || mapping.iter().any(|m| {
                 m.vertex as usize >= geometry.deformation_vertex_capacity()
                     || m.vertex > (u32::MAX - 8) / 9
