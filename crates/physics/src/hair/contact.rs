@@ -21,9 +21,8 @@ pub(super) use velocity_contacts::restore_second_order_candidate;
 pub(super) use velocity_contacts::{
     admit_staged_strands, advance_swept_strands, reconcile_contact_positions,
     reconcile_contact_positions_with_solver, reconcile_elastic_contact_positions_with_solver,
-    reconcile_swept_contact_owners, reconcile_swept_contact_owners_with_pairs,
-    recover_friction_pressure, stabilize_contact_velocities,
-    stabilize_contact_velocities_with_solver, strand_fraction,
+    reconcile_swept_contact_owners_with_pairs, recover_friction_pressure,
+    stabilize_contact_velocities, stabilize_contact_velocities_with_solver, strand_fraction,
 };
 /// An exact surface query bounds clearance inside the ball around its query point.
 /// The distance function is 1-Lipschitz; the certificate expires at the next step.

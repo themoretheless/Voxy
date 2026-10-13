@@ -302,9 +302,15 @@ impl Liquid {
         images: &[ImagePair],
         density: &mut [f64],
     ) {
-        self.visit_image_density(particles,properties,images,|i,x|density[i]+=x);
+        self.visit_image_density(particles, properties, images, |i, x| density[i] += x);
     }
-    pub(super) fn visit_image_density(&self,particles:&[Particle],properties:&[Material],images:&[ImagePair],mut emit:impl FnMut(usize,f64)) {
+    pub(super) fn visit_image_density(
+        &self,
+        particles: &[Particle],
+        properties: &[Material],
+        images: &[ImagePair],
+        mut emit: impl FnMut(usize, f64),
+    ) {
         for pair in images {
             let i = pair.particle;
             let j = pair.image.owner;
@@ -313,9 +319,12 @@ impl Liquid {
             } else {
                 properties[i].rest_density / properties[j].rest_density
             };
-            emit(i,ratio
-                * particles[j].mass
-                * density_kernel(self.formulation, self.config.smoothing_radius, pair.radius));
+            emit(
+                i,
+                ratio
+                    * particles[j].mass
+                    * density_kernel(self.formulation, self.config.smoothing_radius, pair.radius),
+            );
         }
     }
     pub(super) fn add_image_pressure(
