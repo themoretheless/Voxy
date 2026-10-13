@@ -19,7 +19,10 @@ pub use foot_support::{FootSupportPoint, FootSupportPoints, MAX_FOOT_SUPPORT_POI
 mod foot_plant;
 pub use foot_plant::FootPlant;
 mod retarget;
-pub use retarget::{ModelRotationRetarget, RetargetBinding, RetargetJoint, RetargetRootSimilarity};
+pub use retarget::{
+    BoneRole, HumanoidProfile, ModelRotationRetarget, RetargetBinding, RetargetJoint,
+    RetargetRootSimilarity, Side,
+};
 mod blend_phase;
 pub use blend_phase::{
     ClipPhase, FrozenSourceTick, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval,
