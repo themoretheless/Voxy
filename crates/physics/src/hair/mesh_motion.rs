@@ -1,7 +1,10 @@
 //! Whole staged-step admission for time-aligned mesh/guide trajectories.
 use super::*;
 
-pub(super) fn guide_motions(rods: &[HairRod], radius: f64) -> (Vec<CapsuleMotion>, Vec<(usize, usize)>) {
+pub(super) fn guide_motions(
+    rods: &[HairRod],
+    radius: f64,
+) -> (Vec<CapsuleMotion>, Vec<(usize, usize)>) {
     let mut motions = Vec::new();
     let mut ids = Vec::new();
     for (r, rod) in rods.iter().enumerate() {
@@ -196,27 +199,49 @@ mod tests {
     }
     #[test]
     fn nearby_trajectory_planes_survive_refresh_and_exact_repeats_do_not_grow() {
-        let mut rod=HairRod::new(vec![[0.1,0.,0.],[0.1,0.1,0.],[0.1,0.2,0.]],HairMaterial::default()).unwrap();
-        for p in &mut rod.x {p[0]=20e-6;}
-        let mesh=TriangleMesh::new(&[[0.,-1.,-1.],[0.,1.,-1.],[0.,0.,1.]],&[[0,1,2]]).unwrap();
-        let mut rods=vec![rod];
-        refresh(&mut rods,std::slice::from_ref(&mesh),40e-6).unwrap();
-        let exact=rods[0].contacts.clone();assert!(!exact.is_empty());
+        let mut rod = HairRod::new(
+            vec![[0.1, 0., 0.], [0.1, 0.1, 0.], [0.1, 0.2, 0.]],
+            HairMaterial::default(),
+        )
+        .unwrap();
+        for p in &mut rod.x {
+            p[0] = 20e-6;
+        }
+        let mesh = TriangleMesh::new(&[[0., -1., -1.], [0., 1., -1.], [0., 0., 1.]], &[[0, 1, 2]])
+            .unwrap();
+        let mut rods = vec![rod];
+        refresh(&mut rods, std::slice::from_ref(&mesh), 40e-6).unwrap();
+        let exact = rods[0].contacts.clone();
+        assert!(!exact.is_empty());
         for row in &mut rods[0].contacts {
-            row.normal=unit(add(row.normal,[0.,5e-7,0.]));
+            row.normal = unit(add(row.normal, [0., 5e-7, 0.]));
         }
-        assert!(rods[0].contacts.iter().zip(&exact).all(|(a,b)|
-            a.normal!=b.normal && dot(a.normal,b.normal)>1.-1e-12));
-        refresh(&mut rods,std::slice::from_ref(&mesh),40e-6).unwrap();
+        assert!(
+            rods[0]
+                .contacts
+                .iter()
+                .zip(&exact)
+                .all(|(a, b)| a.normal != b.normal && dot(a.normal, b.normal) > 1. - 1e-12)
+        );
+        refresh(&mut rods, std::slice::from_ref(&mesh), 40e-6).unwrap();
         for row in &exact {
-            assert!(rods[0].contacts.iter().any(|c|c.normal==row.normal && c.target==row.target
-                && c.segment==row.segment && c.fraction==row.fraction && c.trajectory_time==row.trajectory_time),
-                "nearby old plane must not suppress a freshly discovered physical constraint");
+            assert!(
+                rods[0].contacts.iter().any(|c| c.normal == row.normal
+                    && c.target == row.target
+                    && c.segment == row.segment
+                    && c.fraction == row.fraction
+                    && c.trajectory_time == row.trajectory_time),
+                "nearby old plane must not suppress a freshly discovered physical constraint"
+            );
         }
-        assert!(rods[0].contacts.len()>exact.len());
-        let count=rods[0].contacts.len();
-        refresh(&mut rods,std::slice::from_ref(&mesh),40e-6).unwrap();
-        assert_eq!(rods[0].contacts.len(),count,"identical discovery must remain idempotent");
+        assert!(rods[0].contacts.len() > exact.len());
+        let count = rods[0].contacts.len();
+        refresh(&mut rods, std::slice::from_ref(&mesh), 40e-6).unwrap();
+        assert_eq!(
+            rods[0].contacts.len(),
+            count,
+            "identical discovery must remain idempotent"
+        );
     }
     #[test]
     fn past_contact_does_not_impose_an_endpoint_velocity_constraint() {
