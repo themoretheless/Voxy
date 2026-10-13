@@ -1,7 +1,7 @@
 //! Priority-queued asynchronous asset and LOD streaming (Optimizations #81-85).
 
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, BTreeSet};
+use std::collections::{BTreeSet, BinaryHeap};
 use std::sync::mpsc::{self, Receiver, Sender};
 
 use crate::{AssetCatalog, AssetError, AssetId, AssetTicket};

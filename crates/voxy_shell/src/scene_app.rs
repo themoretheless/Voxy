@@ -785,8 +785,8 @@ impl SceneApp {
                 .female
                 .as_ref()
                 .ok_or("resident hair requires full model")?;
-            let (_, indices) =
-                voxy_demos::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
+            let (_, indices) = voxy_demos::full_model_worker::partition_hair(&mesh)
+                .map_err(std::io::Error::other)?;
             let mut hair = scene.upload_compute_tangent_mesh(
                 host.device(),
                 &mesh,
@@ -838,8 +838,8 @@ impl SceneApp {
                 scene.upload_mesh(host.device(), &female.mesh_without_hair()?)?
             }
         } else if std::env::var_os("VOXY_ASYNC_FULL").is_some() {
-            let (body, hair) =
-                voxy_demos::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
+            let (body, hair) = voxy_demos::full_model_worker::partition_hair(&mesh)
+                .map_err(std::io::Error::other)?;
             let mut partitions = if use_gpu_surface_light {
                 scene.upload_compute_shared_mesh_partitions(host.device(), &mesh)?
             } else {

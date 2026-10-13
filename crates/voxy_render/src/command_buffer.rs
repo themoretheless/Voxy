@@ -71,10 +71,8 @@ impl ParallelCommandRecorder {
         if passes.len() == 1 || self.max_threads <= 1 {
             let mut buffers = Vec::with_capacity(passes.len());
             for (label, record) in passes {
-                let mut encoder =
-                    device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                        label: Some(label),
-                    });
+                let mut encoder = device
+                    .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some(label) });
                 record(&mut encoder)?;
                 buffers.push(encoder.finish());
             }
@@ -95,7 +93,11 @@ impl ParallelCommandRecorder {
                 }));
             }
             for handle in handles {
-                results.push(handle.join().expect("parallel command encoder worker panicked"));
+                results.push(
+                    handle
+                        .join()
+                        .expect("parallel command encoder worker panicked"),
+                );
             }
         });
 
