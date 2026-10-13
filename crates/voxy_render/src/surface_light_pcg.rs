@@ -83,10 +83,9 @@ impl SurfaceLightPcg {
             count as u64 * 16,
         ];
         if limits.max_storage_buffers_per_shader_stage < 8
-            || sizes.iter().any(|s| {
-                *s > limits.max_buffer_size
-                    || *s > u64::from(limits.max_storage_buffer_binding_size)
-            })
+            || sizes
+                .iter()
+                .any(|s| *s > limits.max_buffer_size || *s > limits.max_storage_buffer_binding_size)
         {
             return Err(SceneError::InvalidGeometry);
         }

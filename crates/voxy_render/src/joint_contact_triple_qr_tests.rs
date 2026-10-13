@@ -210,11 +210,11 @@ fn dispatch_shader(words: &[u32], source: &str) -> Vec<u32> {
         })
         .unwrap();
     let bytes = read.try_read().unwrap().unwrap();
-    let output = bytes
+
+    bytes
         .chunks_exact(4)
         .map(|v| u32::from_le_bytes(v.try_into().unwrap()))
-        .collect::<Vec<_>>();
-    output
+        .collect::<Vec<_>>()
 }
 
 #[test]

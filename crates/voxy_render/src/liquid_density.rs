@@ -287,6 +287,7 @@ pub enum LiquidDensityReadError {
     Compute(crate::ComputeError),
     Candidate(LiquidDensityError),
 }
+#[derive(Debug)]
 pub struct PendingLiquidDensity {
     input: LiquidDensityInput,
     read: crate::PendingComputeReadback,

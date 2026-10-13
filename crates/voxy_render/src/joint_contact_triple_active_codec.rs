@@ -266,7 +266,8 @@ impl ExperimentalTripleActiveContactBatch {
     }
     /// Immutable table followed by each operator's independently audited ranges.
     pub fn compact_readback_ranges(&self) -> Vec<std::ops::Range<u64>> {
-        let mut ranges = vec![0..((self.inputs.len() + 2) * 4) as u64];
+        let mut ranges = Vec::with_capacity(4);
+        ranges.push(0..((self.inputs.len() + 2) * 4) as u64);
         for (i, input) in self.inputs.iter().enumerate() {
             let base = (self.offsets[i] * 4) as u64;
             ranges.extend(
@@ -516,7 +517,8 @@ impl ExperimentalTripleActiveContactInput {
         let q = self.layout.immutable;
         let r = q + 3 * self.rows * self.width;
         let metadata = self.layout.state - 3 * self.rows;
-        let mut ranges = vec![(q * 4) as u64..((q + 3 * selected * self.width) * 4) as u64];
+        let mut ranges = Vec::with_capacity(4);
+        ranges.push((q * 4) as u64..((q + 3 * selected * self.width) * 4) as u64);
         for column in 0..selected {
             let start = r + 3 * column * self.rows;
             ranges.push((start * 4) as u64..((start + 3 * selected) * 4) as u64);
@@ -662,7 +664,8 @@ impl ExperimentalTripleActiveContactInput {
             .chunks_exact(3)
             .filter(|v| v[0] == 1f32.to_bits())
             .count();
-        let mut ranges = vec![0..((self.layout.immutable + 3 * selected * self.width) * 4) as u64];
+        let mut ranges = Vec::with_capacity(4);
+        ranges.push(0..((self.layout.immutable + 3 * selected * self.width) * 4) as u64);
         let r = self.layout.immutable + 3 * self.rows * self.width;
         for column in 0..selected {
             let range = ((r + 3 * column * self.rows) * 4) as u64

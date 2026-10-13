@@ -20,6 +20,7 @@ pub struct FemaleHair {
 }
 // Only mutable simulation state travels through preparation. Groom/render data
 // remains owned by FemaleHair and is never copied for a coupled transaction.
+#[derive(Debug)]
 pub struct PreparedHairStep {
     system: HairSystem,
     collider: TriangleMesh,
