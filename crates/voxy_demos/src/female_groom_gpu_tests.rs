@@ -165,8 +165,9 @@ fn resident_groom_draw_matches_cpu_on_two_poses() {
             let transform = renderer
                 .create_transform(
                     &device,
-                    Mat4::orthographic_rh(-0.28, 0.28, -0.28, 0.28, 0.01, 3.)
-                        * Mat4::look_at_rh(eye, center, Vec3::Y),
+                    glam::camera::rh::proj::directx::orthographic(
+                        -0.28, 0.28, -0.28, 0.28, 0.01, 3.,
+                    ) * glam::camera::rh::view::look_at_mat4(eye, center, Vec3::Y),
                 )
                 .unwrap();
             transform.update_view_position(&queue, eye).unwrap();
@@ -940,8 +941,8 @@ fn compare_body_pixels(
     let transform = renderer
         .create_transform(
             device,
-            Mat4::orthographic_rh(-0.65, 0.65, -0.8, 0.8, 0.01, 5.)
-                * Mat4::look_at_rh(eye, center, Vec3::Y),
+            glam::camera::rh::proj::directx::orthographic(-0.65, 0.65, -0.8, 0.8, 0.01, 5.)
+                * glam::camera::rh::view::look_at_mat4(eye, center, Vec3::Y),
         )
         .unwrap();
     transform.update_view_position(queue, eye).unwrap();
@@ -1241,10 +1242,10 @@ fn resident_body_preserves_actual_facial_details_on_two_poses() {
                         let reference=palette[row.joints[anchor] as usize].0;
                         let mut real=glam::Quat::from_xyzw(0.,0.,0.,0.);let mut dual=real;
                         for k in 0..4 {let w=row.weights[k];if w==0. {continue;}
-                            let(r,d)=palette[row.joints[k] as usize];let w=if reference.dot(r)<0. {-w}else{w};real=real+r*w;dual=dual+d*w;
+                            let(r,d)=palette[row.joints[k] as usize];let w=if reference.dot(r)<0. {-w}else{w};real += r*w;dual += d*w;
                         }
                         let accumulated_real=real.to_array();let accumulated_dual=dual.to_array();let length=real.length();
-                        real=real/length;dual=dual/length;dual=dual-real*real.dot(dual);
+                        real /= length;dual /= length;dual=dual-real*real.dot(dual);
                         let translation=dual*real.conjugate()*2.;let rotated=real*Vec3::from_array(source[id].position);
                         serde_json::json!({"vertex":id,"source":source[id].position,"joints":row.joints,"weights":row.weights,"accumulated_real":accumulated_real,"accumulated_dual":accumulated_dual,"length":length,"normalized_real":real.to_array(),"orthogonalized_dual":dual.to_array(),"translation":translation.to_array(),"rotated":rotated.to_array(),"cpu_rigid":cpu_rigid[id].position})
                     }).collect();
@@ -1276,8 +1277,9 @@ fn resident_body_preserves_actual_facial_details_on_two_poses() {
                 std::fs::write(directory.join(format!("mesh-{tick}.indices")), indices).unwrap();
                 let center = Vec3::new(0., 0.2, 0.);
                 let eye = center + Vec3::new(0.6, 0.1, 2.);
-                let mvp = Mat4::orthographic_rh(-0.65, 0.65, -0.8, 0.8, 0.01, 5.)
-                    * Mat4::look_at_rh(eye, center, Vec3::Y);
+                let mvp =
+                    glam::camera::rh::proj::directx::orthographic(-0.65, 0.65, -0.8, 0.8, 0.01, 5.)
+                        * glam::camera::rh::view::look_at_mat4(eye, center, Vec3::Y);
                 let metadata = serde_json::json!({"tick":tick,"mvp_columns":mvp.to_cols_array(),"viewport":[512,512],"vertex_stride":36,"base_vertices":count});
                 std::fs::write(
                     directory.join(format!("capture-{tick}.json")),

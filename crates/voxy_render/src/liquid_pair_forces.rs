@@ -98,7 +98,7 @@ impl LiquidPairForcesInput {
                 LiquidDensityKernel::VolumePoly6 => 1,
                 LiquidDensityKernel::VolumeWendland => 2,
             };
-            words.push(mode | u32::from(p.gas_pressure) * 4 | u32::from(p.viscous_heating) * 8);
+            words.push(mode | (u32::from(p.gas_pressure) * 4) | (u32::from(p.viscous_heating) * 8));
         }
         assert_eq!(words.len(), output);
         words.resize(total, u32::MAX);

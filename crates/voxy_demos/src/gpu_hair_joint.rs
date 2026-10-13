@@ -87,7 +87,7 @@ impl JointResultCache {
 // Complete coordinate candidates only. Original physical admission remains mandatory.
 #[cfg(test)]
 #[derive(Debug, Default)]
-pub(super) struct ResidentCandidateCache {
+pub(crate) struct ResidentCandidateCache {
     entries: Vec<JointResultCache>,
     bytes: usize,
 }
@@ -308,6 +308,10 @@ impl Drop for ResidentStageProfile {
         );
     }
 }
+#[allow(
+    dead_code,
+    reason = "experimental toggle, read only by the resident-column tests"
+)]
 fn experimental_resident_columns() -> bool {
     #[cfg(test)]
     {
@@ -610,7 +614,7 @@ impl<'a> EqualityTask<'a> {
         let tolerance = self.tolerance;
         let reactions = &mut self.reactions;
         let coordinates = &mut self.coordinates;
-        let rhs: Vec<f64>;
+
         let output = if refinement == 0 {
             let (state,output)=self.initial.take().unwrap().into_validated(&bytes).map_err(|error| {
                             let header:Vec<_>=bytes.iter().copied().take(16).collect::<Vec<_>>().chunks_exact(4)
@@ -674,7 +678,7 @@ impl<'a> EqualityTask<'a> {
         let supports = self
             .supports
             .get_or_insert_with(|| columns.iter().map(|c| original_support(c)).collect());
-        rhs = columns
+        let rhs: Vec<f64> = columns
             .iter()
             .zip(supports.iter())
             .zip(bounds)
@@ -2047,7 +2051,7 @@ impl GpuHairLinearSolver {
             tolerance,
             seeds,
             |columns, bounds, tolerance| {
-                let result = (|| -> Result<_, Box<dyn std::error::Error>> {
+                let result = {
                     if refinement_trace {
                         let rows: Vec<_> = columns
                             .iter()
@@ -2125,7 +2129,7 @@ impl GpuHairLinearSolver {
                     self.joint_release_direction_calls += stats.release;
                     self.joint_early_release_direction_calls += stats.early_release;
                     output
-                })();
+                };
                 match result {
                     Ok(output) => Some(output),
                     Err(reason) => {

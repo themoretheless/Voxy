@@ -339,6 +339,10 @@ pub struct FootRuntime {
     settings: Arc<ModelFootPlacement>,
     feet: Vec<BoundFoot>,
 }
+#[allow(
+    dead_code,
+    reason = "constructors and pivot requests of the in-progress foot placement path"
+)]
 impl FootRuntime {
     /// Reads only the published support anchor and accepted ankle-local pivot.
     /// Pending proposals are excluded. The supplied physics snapshot owns

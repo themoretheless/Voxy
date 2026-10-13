@@ -92,7 +92,7 @@ impl ExperimentalResidentContactInput {
             .ok_or(JointDotError::Capacity)?;
         let total = status
             .checked_add(1)
-            .filter(|&n| n <= 16 * 1024 * 1024 && n <= u32::MAX as usize)
+            .filter(|&n| n <= 16 * 1024 * 1024 && u32::try_from(n).is_ok())
             .ok_or(JointDotError::Capacity)?;
         let column_scale = columns.iter().flatten().map(|v| v.abs()).fold(0., f64::max);
         let bound_scale = bounds.iter().map(|v| v.abs()).fold(tolerance, f64::max);

@@ -66,10 +66,7 @@ impl SurfaceLightAdmission {
                 count as u64 * 64,
             ]
             .iter()
-            .any(|s| {
-                *s > limits.max_buffer_size
-                    || *s > u64::from(limits.max_storage_buffer_binding_size)
-            })
+            .any(|s| *s > limits.max_buffer_size || *s > limits.max_storage_buffer_binding_size)
         {
             return Err(SceneError::InvalidGeometry);
         }

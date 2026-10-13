@@ -1111,7 +1111,7 @@ impl ScreenSpaceFluidRenderer {
             .and_then(|pixels| pixels.checked_mul(8))
             .ok_or("fluid compute filter buffer size overflow")?;
         if limits.max_storage_buffers_per_shader_stage < 1
-            || output_bytes > u64::from(limits.max_storage_buffer_binding_size)
+            || output_bytes > limits.max_storage_buffer_binding_size
             || output_bytes > limits.max_buffer_size
             || limits.max_compute_workgroup_size_x < 8
             || limits.max_compute_workgroup_size_y < 8

@@ -128,9 +128,10 @@ impl SurfaceLightGeometry {
             neighbors.len() as u64 * 8,
             4,
         ];
-        if sizes.iter().any(|s| {
-            *s > limits.max_buffer_size || *s > u64::from(limits.max_storage_buffer_binding_size)
-        }) {
+        if sizes
+            .iter()
+            .any(|s| *s > limits.max_buffer_size || *s > limits.max_storage_buffer_binding_size)
+        {
             return Err(SceneError::InvalidGeometry);
         }
         let input = |label, contents: &[u8], usage| {

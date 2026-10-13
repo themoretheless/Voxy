@@ -17,7 +17,7 @@ fn binary_scale(value: f64) -> f64 {
     if exponent != 0 {
         f64::from_bits(exponent)
     } else {
-        f64::from_bits(1u64 << (63 - bits.leading_zeros()))
+        f64::from_bits(1u64 << bits.ilog2())
     }
 }
 fn pack_exact(value: f64) -> Result<[u32; 3], JointDotError> {
@@ -236,7 +236,7 @@ mod arithmetic_tests {
         format!(
             "{}\n{}",
             EXPERIMENTAL_TRIPLE_CONTACT_ARITHMETIC,
-            r#"
+            r"
 @group(0) @binding(0) var<storage,read_write> words:array<u32>;
 @compute @workgroup_size(64)
 fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
@@ -247,7 +247,7 @@ fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
     let sum=triple_add(a,b);let product=triple_mul(a,b);let quotient=triple_div(a,b);var magnitude=a;if a.x<0.0 {magnitude=-a;}let root=triple_sqrt(magnitude);
     for(var i=0u;i<3u;i++) {words[base+6u+i]=bitcast<u32>(sum[i]);words[base+9u+i]=bitcast<u32>(product[i]);words[base+12u+i]=bitcast<u32>(quotient[i]);words[base+15u+i]=bitcast<u32>(root[i]);}
 }
-"#
+"
         )
     }
     #[test]
@@ -410,7 +410,7 @@ fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
         let shader = format!(
             "{}\n{}",
             EXPERIMENTAL_TRIPLE_CONTACT_ARITHMETIC,
-            r#"
+            r"
 @group(0) @binding(0) var<storage,read_write> words:array<u32>;
 fn load_triple(offset:u32)->vec3<f32> {
  return vec3<f32>(bitcast<f32>(words[offset]),bitcast<f32>(words[offset+1u]),bitcast<f32>(words[offset+2u]));
@@ -426,7 +426,7 @@ fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
  let norm=triple_sqrt(squared);let offset=2u+3u*rows*width+3u*id.x;
  for(var part=0u;part<3u;part++) {words[offset+part]=bitcast<u32>(norm[part]);}
 }
-"#
+"
         );
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
