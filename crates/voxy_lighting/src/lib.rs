@@ -410,7 +410,9 @@ fn propagate(
             let Some(neighbor) = neighbor else {
                 continue;
             };
-            if !opaque[neighbor] && candidate > light[neighbor] {
+            // The level test fails for most already-lit neighbors, so it goes first and
+            // the opaque flag is only read when a raise is actually possible.
+            if candidate > light[neighbor] && !opaque[neighbor] {
                 light[neighbor] = candidate;
                 if candidate > 1 {
                     queue.push_back(neighbor);

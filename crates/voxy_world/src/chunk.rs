@@ -110,13 +110,7 @@ impl PalettedBlocks {
                 bits_per_index,
                 palette,
                 words,
-            } => {
-                let mut indices = Vec::with_capacity(CHUNK_VOLUME);
-                for_each_packed(words, *bits_per_index, |slot| {
-                    indices.push(u16::try_from(slot).unwrap_or(0));
-                });
-                (palette.to_vec(), indices)
-            }
+            } => (palette.to_vec(), unpack_indices(words, *bits_per_index)),
             Self::Direct(blocks) => {
                 let mut palette = blocks.to_vec();
                 palette.sort_unstable();
@@ -259,6 +253,32 @@ fn for_each_packed(words: &[u64], bits: u8, mut visit: impl FnMut(usize)) {
         visit(slot);
         true
     });
+}
+
+/// Expands every packed palette slot into one `u16` per block, in index order.
+///
+/// Palette slots never exceed `CHUNK_VOLUME`, so they fit `u16`. Widths that divide
+/// a word never straddle two words, which makes the common case a plain shift loop.
+fn unpack_indices(words: &[u64], bits: u8) -> Vec<u16> {
+    let width = usize::from(bits);
+    let mask = (1_u64 << width) - 1;
+    let mut indices = Vec::with_capacity(CHUNK_VOLUME);
+    if width > 0 && 64 % width == 0 {
+        let per_word = 64 / width;
+        let mut remaining = CHUNK_VOLUME;
+        for &word in words {
+            if remaining == 0 {
+                break;
+            }
+            let count = per_word.min(remaining);
+            indices.extend((0..count).map(|slot| ((word >> (slot * width)) & mask) as u16));
+            remaining -= count;
+        }
+        indices.resize(CHUNK_VOLUME, 0);
+        return indices;
+    }
+    for_each_packed(words, bits, |slot| indices.push(slot as u16));
+    indices
 }
 
 /// Visits palette slots in index order until the visitor returns `false`.
