@@ -94,7 +94,7 @@ fn controller(rig: &Skeleton, settings: GaitSettings) -> GaitController {
         poles: [Vec3::new(0.0, 0.0, 1.0); 2],
         up: Vec3::Y,
     };
-    GaitController::new(space, feet, settings).unwrap()
+    GaitController::new(GaitSpace::planar(space), feet, settings).unwrap()
 }
 
 #[test]
@@ -239,5 +239,5 @@ fn invalid_input_leaves_state_unchanged_and_settings_are_validated() {
         )
         .unwrap(),
     );
-    assert!(GaitController::new(any_space, feet, bad).is_err());
+    assert!(GaitController::new(GaitSpace::planar(any_space), feet, bad).is_err());
 }

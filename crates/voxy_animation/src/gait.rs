@@ -10,8 +10,8 @@ use glam::{DQuat, Mat4, Vec2, Vec3};
 
 use crate::ik::rotate;
 use crate::{
-    AnimationError, BlendSpace2D, BlendSpace2DPlayer, PlantedLegsResult, Pose, Skeleton,
-    TwoBoneChain, TwoBoneTarget,
+    AnimationError, BlendSpace1D, BlendSpace1DPlayer, BlendSpace2D, BlendSpace2DPlayer,
+    PlantedLegsResult, Pose, Skeleton, TwoBoneChain, TwoBoneTarget,
 };
 
 /// Model-space ground query. Returns the hit point and surface normal.
@@ -30,6 +30,47 @@ impl GroundProbe for FlatGround {
     fn probe(&self, from: Vec3, _down: Vec3) -> Option<(Vec3, Vec3)> {
         let along = from.dot(self.up);
         Some((from - self.up * (along - self.height), self.up))
+    }
+}
+
+/// The cycle source: a 1D space keyed by forward speed, or a 2D space keyed
+/// by (strafe, forward) velocity.
+#[derive(Clone, Debug)]
+pub enum GaitSpace {
+    Forward(BlendSpace1DPlayer),
+    Planar(BlendSpace2DPlayer),
+}
+
+impl GaitSpace {
+    #[must_use]
+    pub fn forward(space: Arc<BlendSpace1D>) -> Self {
+        Self::Forward(BlendSpace1DPlayer::new(space, 0.0))
+    }
+
+    #[must_use]
+    pub fn planar(space: Arc<BlendSpace2D>) -> Self {
+        Self::Planar(BlendSpace2DPlayer::new(space, Vec2::ZERO))
+    }
+
+    fn phase(&self) -> f64 {
+        match self {
+            Self::Forward(p) => p.phase(),
+            Self::Planar(p) => p.phase(),
+        }
+    }
+
+    fn advance(&mut self, velocity: Vec2, dt: f32) -> Result<(), AnimationError> {
+        match self {
+            Self::Forward(p) => p.advance(velocity.y, dt),
+            Self::Planar(p) => p.advance(velocity, dt),
+        }
+    }
+
+    fn pose(&self, skeleton: &Skeleton) -> Result<Pose, AnimationError> {
+        match self {
+            Self::Forward(p) => p.pose(skeleton),
+            Self::Planar(p) => p.pose(skeleton),
+        }
     }
 }
 
@@ -86,7 +127,7 @@ pub struct GaitFrame {
 
 #[derive(Clone, Debug)]
 pub struct GaitController {
-    player: BlendSpace2DPlayer,
+    player: GaitSpace,
     feet: GaitFeet,
     settings: GaitSettings,
     /// Model-space locked ankle position and ground normal per foot.
@@ -99,7 +140,7 @@ impl GaitController {
     /// # Errors
     /// Rejects nonfinite settings, a non-normalized up axis or chains sharing joints.
     pub fn new(
-        space: Arc<BlendSpace2D>,
+        space: GaitSpace,
         feet: GaitFeet,
         settings: GaitSettings,
     ) -> Result<Self, AnimationError> {
@@ -121,7 +162,7 @@ impl GaitController {
             return Err(AnimationError::InvalidIkTarget);
         }
         Ok(Self {
-            player: BlendSpace2DPlayer::new(space, Vec2::ZERO),
+            player: space,
             feet,
             settings,
             locked: [None, None],
@@ -133,6 +174,11 @@ impl GaitController {
     #[must_use]
     pub fn phase(&self) -> f64 {
         self.player.phase()
+    }
+
+    #[must_use]
+    pub fn feet(&self) -> &GaitFeet {
+        &self.feet
     }
 
     #[must_use]

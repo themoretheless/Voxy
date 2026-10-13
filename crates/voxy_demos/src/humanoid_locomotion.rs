@@ -630,3 +630,53 @@ impl GraphLocomotion {
         library.in_place_pose(library.retarget_source_pose(&self.frame)?, target)
     }
 }
+
+impl VoxyHumanoidLocomotion {
+    /// Bakes an in-place retargeted gait clip onto the target rig at
+    /// `keys_per_second`, so target-rig consumers (blend spaces, the gait
+    /// controller) can run without the source asset. The pelvis stays at its
+    /// bind translation, as in [`Self::pose_phase_in_place`].
+    /// # Errors
+    /// Rejects a nonpositive rate and propagates sampling/retarget failures.
+    pub fn bake_in_place_clip(
+        &self,
+        clip: LocomotionClip,
+        keys_per_second: f32,
+        target: &Skeleton,
+    ) -> Result<voxy_animation::AnimationClip, Box<dyn std::error::Error>> {
+        use voxy_animation::{JointTrack, Playback, QuatKey, Vec3Key};
+        if !keys_per_second.is_finite() || keys_per_second <= 0. {
+            return Err("invalid bake rate".into());
+        }
+        let duration = self.duration(clip);
+        let samples = ((duration * keys_per_second).ceil() as usize).max(1) + 1;
+        let mut tracks = vec![JointTrack::default(); target.joints().len()];
+        for s in 0..samples {
+            let phase = s as f64 / (samples - 1) as f64;
+            let time = (phase * f64::from(duration)) as f32;
+            let (pose, _) = self.pose_phase_in_place(clip, phase, target)?;
+            for (track, local) in tracks.iter_mut().zip(pose.local()) {
+                track.translations.push(Vec3Key {
+                    time,
+                    value: local.translation,
+                });
+                track.rotations.push(QuatKey {
+                    time,
+                    value: local.rotation,
+                });
+                track.scales.push(Vec3Key {
+                    time,
+                    value: local.scale,
+                });
+            }
+        }
+        let name = format!("{clip:?}");
+        Ok(voxy_animation::AnimationClip::new(
+            name,
+            duration,
+            Playback::Loop,
+            tracks,
+            target,
+        )?)
+    }
+}
