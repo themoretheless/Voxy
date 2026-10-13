@@ -50,3 +50,19 @@ booked explicitly so a caller can audit it.
   sources) and rendering debris inventories.
 - A demo scene (`voxy_demos`) that fractures, releases, removes voxels and drops
   the pieces in one loop.
+
+## Update 2026-10-14
+
+- `voxy_demos::destruction_demo::DestructionDemo` runs the whole chain in one
+  object (fracture release → `plan_fracture` commit → `step_debris` landing with
+  a closed ledger → `fracture_dust` → `ParticipatingMedium` extinction); its
+  test removes >100 voxels, lands both pieces at rest and keeps dust mass
+  conserved apart from floor settling.
+- Medium transport backends: `voxy_gpu::GpuMediumProgram` (wgpu, oracle test
+  `tests/medium_reference.rs`: max cell difference 3e-8 vs the CPU reference,
+  settled mass matched) and `voxy_cuda::CudaCompute::medium_transport` on the
+  same packed word ABI (`pack_medium_job`/`unpack_medium_result`). The CUDA
+  oracle test is gated on `--features cuda`; it has not been executed on this
+  host (no NVIDIA device), only type-checked.
+- Drying: `ParticipatingMedium::exchange_film_vapor` moves film solvent into the
+  containing gas cell with exact mass bookkeeping.
