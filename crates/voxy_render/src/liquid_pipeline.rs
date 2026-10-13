@@ -444,6 +444,7 @@ mod tests {
                 rest_density: p.rest_density,
                 sound_speed: p.sound_speed,
                 heat_capacity_ratio: None,
+                tensile_floor_pa: None,
             })
             .collect::<Vec<_>>();
         let gpu_particles = particles

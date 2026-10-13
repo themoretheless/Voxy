@@ -690,6 +690,7 @@ fn original_pressure_laws_cover_compression_gas_and_current_density_admission() 
         rest_density: 1000.,
         sound_speed: 10.,
         heat_capacity_ratio: None,
+        tensile_floor_pa: None,
     };
     let gas = LiquidPressureLaw {
         heat_capacity_ratio: Some(1.4),
@@ -865,6 +866,7 @@ fn supported_pipeline_rejects_nonfinite_native_reference_with_loose_candidate_de
         rest_density: 1.,
         sound_speed: 1e154,
         heat_capacity_ratio: Some(1.4),
+        tensile_floor_pa: None,
     };
     let owner = LiquidDensityNormalOperator {
         fluid: LiquidDensityOperator {
