@@ -222,3 +222,189 @@ fn look_at_aligns_head_and_respects_weight_and_limits() {
     assert!(LookAtChain::new(&rig, &[1, 2], &[0.8, 0.8], Vec3::Y, Vec3::Z).is_err());
     assert!(pose.solve_look_at(&chain, Vec3::NAN, 1.0).is_err());
 }
+
+mod full_body {
+    use super::*;
+    use crate::{Effector, FullBodyRig, FullBodySettings};
+
+    /// pelvis(0) with two legs: l_hip(1)→l_knee(2)→l_ankle(3), r_hip(4)→r_knee(5)→r_ankle(6).
+    fn biped() -> Skeleton {
+        let joint = |name: &str, parent, t: Vec3| Joint {
+            name: Arc::from(name),
+            parent,
+            bind_local: Transform {
+                translation: t,
+                ..Transform::IDENTITY
+            },
+            inverse_bind: Mat4::IDENTITY,
+        };
+        Skeleton::new(vec![
+            joint("pelvis", None, Vec3::new(0.0, 1.0, 0.0)),
+            joint("l_hip", Some(0), Vec3::new(-0.1, 0.0, 0.0)),
+            joint("l_knee", Some(1), Vec3::new(0.0, -0.5, 0.0)),
+            joint("l_ankle", Some(2), Vec3::new(0.0, -0.5, 0.0)),
+            joint("r_hip", Some(0), Vec3::new(0.1, 0.0, 0.0)),
+            joint("r_knee", Some(4), Vec3::new(0.0, -0.5, 0.0)),
+            joint("r_ankle", Some(5), Vec3::new(0.0, -0.5, 0.0)),
+        ])
+        .unwrap()
+    }
+
+    fn full_rig(rig: &Skeleton) -> FullBodyRig {
+        FullBodyRig::new(
+            rig,
+            0,
+            vec![
+                IkChain::new(rig, 1, 3).unwrap(),
+                IkChain::new(rig, 4, 6).unwrap(),
+            ],
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn reachable_leg_effectors_match_planted_legs_without_pelvis_motion() {
+        let rig = biped();
+        let full = full_rig(&rig);
+        let pose = rig.bind_pose();
+        let chains = [
+            TwoBoneChain::new(&rig, [1, 2, 3]).unwrap(),
+            TwoBoneChain::new(&rig, [4, 5, 6]).unwrap(),
+        ];
+        let targets = [Vec3::new(-0.2, 0.2, 0.3), Vec3::new(0.15, 0.1, -0.2)];
+        let (_, planted) = pose
+            .solve_planted_legs(
+                &chains,
+                [
+                    TwoBoneTarget {
+                        position: targets[0],
+                        pole: Vec3::Z,
+                        rotation: None,
+                        weight: 1.0,
+                    },
+                    TwoBoneTarget {
+                        position: targets[1],
+                        pole: Vec3::Z,
+                        rotation: None,
+                        weight: 1.0,
+                    },
+                ],
+                Vec3::Y,
+                0.5,
+            )
+            .unwrap();
+        assert_eq!(planted.pelvis_offset, Vec3::ZERO);
+        let effectors = [
+            Effector {
+                chain: 0,
+                position: targets[0],
+                rotation: None,
+                weight: 1.0,
+            },
+            Effector {
+                chain: 1,
+                position: targets[1],
+                rotation: None,
+                weight: 1.0,
+            },
+        ];
+        let (solved, result) = pose
+            .solve_full_body(&full, &effectors, FullBodySettings::default())
+            .unwrap();
+        assert_eq!(result.pelvis_offset, Vec3::ZERO);
+        for (i, leg) in planted.legs.iter().enumerate() {
+            assert!((tip_position(&solved, &rig, [3, 6][i]) - leg.tip_position).length() < 1e-4);
+            assert!(result.residuals[i] < 1e-4, "{result:?}");
+        }
+    }
+
+    #[test]
+    fn unreachable_effector_pulls_pelvis_until_reached_within_bound() {
+        let rig = biped();
+        let full = full_rig(&rig);
+        let pose = rig.bind_pose();
+        // Left ankle 1.3 below the hip: 0.3 beyond the leg length.
+        let target = Vec3::new(-0.1, -0.3, 0.0);
+        let effectors = [Effector {
+            chain: 0,
+            position: target,
+            rotation: None,
+            weight: 1.0,
+        }];
+        let (solved, result) = pose
+            .solve_full_body(&full, &effectors, FullBodySettings::default())
+            .unwrap();
+        assert!(result.residuals[0] < 1e-3, "{result:?}");
+        assert!((result.pelvis_offset.y + 0.3).abs() < 1e-3, "{result:?}");
+        assert!((tip_position(&solved, &rig, 3) - target).length() < 1e-3);
+        let bounded = FullBodySettings {
+            max_pelvis_offset: 0.1,
+            ..FullBodySettings::default()
+        };
+        let (_, result) = pose.solve_full_body(&full, &effectors, bounded).unwrap();
+        assert!((result.pelvis_offset.length() - 0.1).abs() < 1e-6);
+        assert!((result.residuals[0] - 0.2).abs() < 1e-3, "{result:?}");
+        assert_eq!(result.iterations, bounded.iterations);
+    }
+
+    #[test]
+    fn rig_and_effector_validation() {
+        let rig = biped();
+        assert!(FullBodyRig::new(&rig, 0, vec![]).is_err());
+        assert!(
+            FullBodyRig::new(
+                &rig,
+                0,
+                vec![
+                    IkChain::new(&rig, 1, 3).unwrap(),
+                    IkChain::new(&rig, 1, 3).unwrap()
+                ]
+            )
+            .is_err()
+        );
+        assert!(FullBodyRig::new(&rig, 0, vec![IkChain::new(&rig, 0, 3).unwrap()]).is_err());
+        let full = full_rig(&rig);
+        let pose = rig.bind_pose();
+        let bad = [Effector {
+            chain: 5,
+            position: Vec3::ZERO,
+            rotation: None,
+            weight: 1.0,
+        }];
+        assert!(
+            pose.solve_full_body(&full, &bad, FullBodySettings::default())
+                .is_err()
+        );
+        let dup = [
+            Effector {
+                chain: 0,
+                position: Vec3::ZERO,
+                rotation: None,
+                weight: 1.0,
+            },
+            Effector {
+                chain: 0,
+                position: Vec3::ZERO,
+                rotation: None,
+                weight: 1.0,
+            },
+        ];
+        assert!(
+            pose.solve_full_body(&full, &dup, FullBodySettings::default())
+                .is_err()
+        );
+        let (same, _) = pose
+            .solve_full_body(
+                &full,
+                &[Effector {
+                    chain: 0,
+                    position: Vec3::new(5.0, 5.0, 5.0),
+                    rotation: None,
+                    weight: 0.0,
+                }],
+                FullBodySettings::default(),
+            )
+            .unwrap();
+        assert_eq!(same.local(), pose.local());
+    }
+}
