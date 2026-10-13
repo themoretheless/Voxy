@@ -1,5 +1,5 @@
 //! Validate native graphics selection before creating a window or driver.
-use voxy_render::{GraphicsBackend, GraphicsOptions};
+use voxy_render::{GraphicsBackend, GraphicsOptions, PresentPreference};
 
 pub fn parse(args: impl IntoIterator<Item = String>) -> Result<GraphicsOptions, String> {
     let mut args = args.into_iter();
@@ -20,6 +20,15 @@ pub fn parse(args: impl IntoIterator<Item = String>) -> Result<GraphicsOptions, 
                     Some("vulkan") => GraphicsBackend::Vulkan,
                     Some("gl") => GraphicsBackend::OpenGl,
                     _ => return Err("--backend expects auto|metal|dx12|vulkan|gl".into()),
+                };
+            }
+            "--present-mode" => {
+                options.present = match args.next().as_deref() {
+                    Some("auto") => PresentPreference::Default,
+                    Some("fifo") => PresentPreference::Fifo,
+                    Some("mailbox") => PresentPreference::Mailbox,
+                    Some("immediate") => PresentPreference::Immediate,
+                    _ => return Err("--present-mode expects auto|fifo|mailbox|immediate".into()),
                 };
             }
             _ => {}
@@ -49,6 +58,12 @@ mod tests {
             assert!(!selected.force_fallback_adapter);
         }
         assert!(options(&["--fallback"]).unwrap().force_fallback_adapter);
+        assert_eq!(
+            options(&["--present-mode", "immediate"]).unwrap().present,
+            PresentPreference::Immediate
+        );
+        assert_eq!(options(&[]).unwrap().present, PresentPreference::Default);
+        assert!(options(&["--present-mode", "fast"]).is_err());
     }
     #[test]
     fn invalid_or_duplicate_selection_precedes_window_initialization() {
