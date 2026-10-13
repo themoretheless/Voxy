@@ -45,7 +45,14 @@ pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
     RootRotationCurve, RootRotationPath, RootRotationSpan,
 };
+mod anim_graph;
+mod graph;
+pub use anim_graph::{
+    AnimGraph, FloatInput, GraphDesc, GraphFrame, GraphNode, GraphPlayer, MAX_GRAPH_NODES, NodeId,
+    ParamId, ParamValue,
+};
 mod soa;
+pub use graph::{BlendSample, BlendSegment, BlendSpace1D, BlendSpace1DPlayer, BoneMask};
 pub use soa::{
     AnimationUpdateJob, AnimationUpdateQueue, CompletedAnimationUpdate, SOA_NO_PARENT, SoaPose,
     SoaSkeleton,
@@ -1946,6 +1953,10 @@ pub enum AnimationError {
     InvalidAnimationTimeStep,
     InvalidAnimationPhase,
     NumericalOverflow,
+    GraphCycle,
+    GraphNodeBudget,
+    InvalidGraphNode(usize),
+    InvalidGraphParam,
 }
 
 impl fmt::Display for AnimationError {
