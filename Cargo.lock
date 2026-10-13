@@ -2512,6 +2512,7 @@ dependencies = [
  "ash",
  "cudarc",
  "physics",
+ "voxy_gpu_core",
 ]
 
 [[package]]
