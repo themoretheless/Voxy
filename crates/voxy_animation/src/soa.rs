@@ -6,7 +6,10 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use glam::{Mat4, Quat, Vec3};
 
-use crate::{AnimationClip, AnimationError, Joint, Pose, Skeleton, Transform, lerp_vec3, rigs_match, usable_linear};
+use crate::{
+    AnimationClip, AnimationError, Joint, Pose, Skeleton, Transform, lerp_vec3, rigs_match,
+    usable_linear,
+};
 
 /// Sentinel parent index for root joints in [`SoaSkeleton`].
 pub const SOA_NO_PARENT: u16 = u16::MAX;
@@ -427,8 +430,9 @@ impl AnimationUpdateQueue {
         let worker_count = std::thread::available_parallelism()
             .map_or(2, usize::from)
             .min(self.jobs.len());
-        let mut worker_batches: Vec<Result<Vec<(usize, CompletedAnimationUpdate)>, AnimationError>> =
-            Vec::with_capacity(worker_count);
+        let mut worker_batches: Vec<
+            Result<Vec<(usize, CompletedAnimationUpdate)>, AnimationError>,
+        > = Vec::with_capacity(worker_count);
 
         std::thread::scope(|scope| {
             let mut handles = Vec::with_capacity(worker_count);
@@ -563,9 +567,8 @@ mod tests {
                 scales: vec![],
             },
         ];
-        let clip = Arc::new(
-            AnimationClip::new("walk", 1.0, Playback::Loop, tracks, &skeleton).unwrap(),
-        );
+        let clip =
+            Arc::new(AnimationClip::new("walk", 1.0, Playback::Loop, tracks, &skeleton).unwrap());
         let mut queue = AnimationUpdateQueue::with_capacity(8);
         for i in 0..8 {
             queue.push(AnimationUpdateJob {

@@ -786,9 +786,7 @@ impl FemaleRig {
         });
         Ok(())
     }
-    pub fn grounded_binding(
-        &self,
-    ) -> Option<&crate::humanoid_locomotion::VoxyHumanoidLocomotion> {
+    pub fn grounded_binding(&self) -> Option<&crate::humanoid_locomotion::VoxyHumanoidLocomotion> {
         match &self.authored_motion {
             Some(AuthoredMotion::Grounded { library, .. }) => Some(library),
             _ => None,

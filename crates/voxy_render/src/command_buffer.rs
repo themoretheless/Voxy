@@ -46,7 +46,7 @@ impl ParallelCommandRecorder {
     }
 
     #[must_use]
-    pub const fn max_threads(&self) -> usize {
+    pub const fn max_threads(self) -> usize {
         self.max_threads
     }
 
@@ -57,7 +57,7 @@ impl ParallelCommandRecorder {
     /// If any pass closure returns `Err(E)`, returns the first error in pass order before
     /// submitting any work to the GPU queue.
     pub fn record_passes<F, E>(
-        &self,
+        self,
         device: &wgpu::Device,
         passes: Vec<(&str, F)>,
     ) -> Result<Vec<wgpu::CommandBuffer>, E>
@@ -71,10 +71,8 @@ impl ParallelCommandRecorder {
         if passes.len() == 1 || self.max_threads <= 1 {
             let mut buffers = Vec::with_capacity(passes.len());
             for (label, record) in passes {
-                let mut encoder =
-                    device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                        label: Some(label),
-                    });
+                let mut encoder = device
+                    .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some(label) });
                 record(&mut encoder)?;
                 buffers.push(encoder.finish());
             }
@@ -95,7 +93,11 @@ impl ParallelCommandRecorder {
                 }));
             }
             for handle in handles {
-                results.push(handle.join().expect("parallel command encoder worker panicked"));
+                results.push(
+                    handle
+                        .join()
+                        .expect("parallel command encoder worker panicked"),
+                );
             }
         });
 
@@ -112,7 +114,7 @@ impl ParallelCommandRecorder {
     /// # Errors
     /// Propagates any error returned by a pass closure without submitting to `queue`.
     pub fn record_and_submit<F, E>(
-        &self,
+        self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         passes: Vec<(&str, F)>,

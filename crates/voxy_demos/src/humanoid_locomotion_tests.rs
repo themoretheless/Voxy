@@ -329,91 +329,174 @@ fn actual_body_accepts_quaternius_locomotion_profile_and_keeps_leg_lengths() {
 
 #[test]
 fn grounded_preview_drives_actual_body_and_head_from_the_same_authored_pose() {
-    let body=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
-    let mut rig=FemaleRig::new(body.mesh.vertices()).unwrap();
+    let body = voxy_render::ObjAsset::parse(
+        include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+        ),
+        voxy_render::ObjLimits::default(),
+    )
+    .unwrap();
+    let mut rig = FemaleRig::new(body.mesh.vertices()).unwrap();
     let source=std::sync::Arc::new(voxy_model::ModelAsset::parse(
         include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
         &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],voxy_model::ModelLimits::default()).unwrap());
-    let library=std::sync::Arc::new(VoxyHumanoidLocomotion::new(source.clone(),&rig.skeleton).unwrap());
-    for clip in [LocomotionClip::Walk,LocomotionClip::Jog,LocomotionClip::Sprint] {
-        rig.install_authored_gait(library.clone(),clip).unwrap();
+    let library =
+        std::sync::Arc::new(VoxyHumanoidLocomotion::new(source.clone(), &rig.skeleton).unwrap());
+    for clip in [
+        LocomotionClip::Walk,
+        LocomotionClip::Jog,
+        LocomotionClip::Sprint,
+    ] {
+        rig.install_authored_gait(library.clone(), clip).unwrap();
         assert!(rig.authored_jump_source().is_none());
-        assert!(std::sync::Arc::ptr_eq(&rig.authored_gait_source().unwrap().0,&source));
-        let time=library.duration(clip)*0.25;
-        let expected=library.pose_phase_in_place(clip,f64::from(time)/f64::from(library.duration(clip)),&rig.skeleton).unwrap().0;
-        rig.publish_grounded_pose(expected.clone(),clip);
-        assert_eq!(rig.pose(time).local(),expected.local());
-        let palette=expected.skin_matrices(&rig.skeleton).unwrap();
-        assert_eq!(rig.head_matrix(time),palette[3]);
-        let mut vertices=body.mesh.vertices().to_vec();rig.deform(&mut vertices,time);
-        assert!(vertices.iter().all(|v|v.position.iter().all(|x|x.is_finite())));
-        assert!(vertices.iter().zip(body.mesh.vertices()).any(|(a,b)|Vec3::from_array(a.position).distance(Vec3::from_array(b.position))>0.01));
-        let before=rig.pose(time);
-        assert!(rig.install_authored_gait(library.clone(),LocomotionClip::JumpLoop).is_err());
-        assert_eq!(rig.pose(time).local(),before.local(),"invalid selection must preserve the admitted gait");
+        assert!(std::sync::Arc::ptr_eq(
+            &rig.authored_gait_source().unwrap().0,
+            &source
+        ));
+        let time = library.duration(clip) * 0.25;
+        let expected = library
+            .pose_phase_in_place(
+                clip,
+                f64::from(time) / f64::from(library.duration(clip)),
+                &rig.skeleton,
+            )
+            .unwrap()
+            .0;
+        rig.publish_grounded_pose(expected.clone(), clip);
+        assert_eq!(rig.pose(time).local(), expected.local());
+        let palette = expected.skin_matrices(&rig.skeleton).unwrap();
+        assert_eq!(rig.head_matrix(time), palette[3]);
+        let mut vertices = body.mesh.vertices().to_vec();
+        rig.deform(&mut vertices, time);
+        assert!(
+            vertices
+                .iter()
+                .all(|v| v.position.iter().all(|x| x.is_finite()))
+        );
+        assert!(vertices.iter().zip(body.mesh.vertices()).any(|(a, b)| {
+            Vec3::from_array(a.position).distance(Vec3::from_array(b.position)) > 0.01
+        }));
+        let before = rig.pose(time);
+        assert!(
+            rig.install_authored_gait(library.clone(), LocomotionClip::JumpLoop)
+                .is_err()
+        );
+        assert_eq!(
+            rig.pose(time).local(),
+            before.local(),
+            "invalid selection must preserve the admitted gait"
+        );
     }
 }
 
 #[test]
 fn shared_grounded_playback_preserves_pose_across_interrupted_fades_and_errors() {
     use crate::humanoid_locomotion::GroundedPlayback;
-    let body=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
-    let rig=FemaleRig::new(body.mesh.vertices()).unwrap();
+    let body = voxy_render::ObjAsset::parse(
+        include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+        ),
+        voxy_render::ObjLimits::default(),
+    )
+    .unwrap();
+    let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
     let source=std::sync::Arc::new(voxy_model::ModelAsset::parse(
         include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
         &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],voxy_model::ModelLimits::default()).unwrap());
-    let library=VoxyHumanoidLocomotion::new(source.clone(),&rig.skeleton).unwrap();
-    let mut scaled=body.mesh.vertices().to_vec();
-    for vertex in &mut scaled {vertex.position=vertex.position.map(|x|x*1.1);}
-    let second=FemaleRig::new(&scaled).unwrap();
-    let shell=VoxyHumanoidLocomotion::new(source,&second.skeleton).unwrap();
-    let mut player=GroundedPlayback::new(&library,LocomotionClip::Walk).unwrap();
+    let library = VoxyHumanoidLocomotion::new(source.clone(), &rig.skeleton).unwrap();
+    let mut scaled = body.mesh.vertices().to_vec();
+    for vertex in &mut scaled {
+        vertex.position = vertex.position.map(|x| x * 1.1);
+    }
+    let second = FemaleRig::new(&scaled).unwrap();
+    let shell = VoxyHumanoidLocomotion::new(source, &second.skeleton).unwrap();
+    let mut player = GroundedPlayback::new(&library, LocomotionClip::Walk).unwrap();
     player.advance(0.173).unwrap();
-    let close=|a:&Pose,b:&Pose| {
-        let a=a.skin_matrices(&rig.skeleton).unwrap();let b=b.skin_matrices(&rig.skeleton).unwrap();
-        assert!(a.iter().zip(b).all(|(a,b)|a.abs_diff_eq(b,1e-5)),"displayed pose jumped at a transition boundary");
+    let close = |a: &Pose, b: &Pose| {
+        let a = a.skin_matrices(&rig.skeleton).unwrap();
+        let b = b.skin_matrices(&rig.skeleton).unwrap();
+        assert!(
+            a.iter().zip(b).all(|(a, b)| a.abs_diff_eq(b, 1e-5)),
+            "displayed pose jumped at a transition boundary"
+        );
     };
-    let before=player.pose_in_place(&library,&rig.skeleton).unwrap().0;
-    let phase=player.normalized_phase();
-    player.transition_to(LocomotionClip::Jog,0.3).unwrap();
-    assert!((player.normalized_phase()-phase).abs()<1e-12);
-    close(&before,&player.pose_in_place(&library,&rig.skeleton).unwrap().0);
+    let before = player.pose_in_place(&library, &rig.skeleton).unwrap().0;
+    let phase = player.normalized_phase();
+    player.transition_to(LocomotionClip::Jog, 0.3).unwrap();
+    assert!((player.normalized_phase() - phase).abs() < 1e-12);
+    close(
+        &before,
+        &player.pose_in_place(&library, &rig.skeleton).unwrap().0,
+    );
     player.advance(0.1).unwrap();
-    let before=player.pose_in_place(&library,&rig.skeleton).unwrap().0;
-    player.transition_to(LocomotionClip::Sprint,0.2).unwrap();
-    assert!(matches!(player.pose_blend_phases().source,Some(voxy_animation::PoseBlendSource::FrozenPose(_))));
-    close(&before,&player.pose_in_place(&library,&rig.skeleton).unwrap().0);
-    let phase=player.normalized_phase();
-    player.transition_to(LocomotionClip::Sprint,0.2).unwrap();
-    assert!(player.transition_to(LocomotionClip::Sprint,f32::NAN).is_err());
-    close(&before,&player.pose_in_place(&library,&rig.skeleton).unwrap().0);
-    player.pose_in_place(&shell,&second.skeleton).unwrap();
-    assert_eq!(player.normalized_phase(),phase,"another consumer advanced the shared clock");
-    for (clip,duration) in [(LocomotionClip::Walk,-1.),(LocomotionClip::JumpLoop,0.2)] {
-        assert!(player.transition_to(clip,duration).is_err());
-        close(&before,&player.pose_in_place(&library,&rig.skeleton).unwrap().0);
-        assert_eq!(player.selected(),LocomotionClip::Sprint);
-        assert_eq!(player.normalized_phase(),phase);
+    let before = player.pose_in_place(&library, &rig.skeleton).unwrap().0;
+    player.transition_to(LocomotionClip::Sprint, 0.2).unwrap();
+    assert!(matches!(
+        player.pose_blend_phases().source,
+        Some(voxy_animation::PoseBlendSource::FrozenPose(_))
+    ));
+    close(
+        &before,
+        &player.pose_in_place(&library, &rig.skeleton).unwrap().0,
+    );
+    let phase = player.normalized_phase();
+    player.transition_to(LocomotionClip::Sprint, 0.2).unwrap();
+    assert!(
+        player
+            .transition_to(LocomotionClip::Sprint, f32::NAN)
+            .is_err()
+    );
+    close(
+        &before,
+        &player.pose_in_place(&library, &rig.skeleton).unwrap().0,
+    );
+    player.pose_in_place(&shell, &second.skeleton).unwrap();
+    assert_eq!(
+        player.normalized_phase(),
+        phase,
+        "another consumer advanced the shared clock"
+    );
+    for (clip, duration) in [(LocomotionClip::Walk, -1.), (LocomotionClip::JumpLoop, 0.2)] {
+        assert!(player.transition_to(clip, duration).is_err());
+        close(
+            &before,
+            &player.pose_in_place(&library, &rig.skeleton).unwrap().0,
+        );
+        assert_eq!(player.selected(), LocomotionClip::Sprint);
+        assert_eq!(player.normalized_phase(), phase);
     }
     assert!(player.advance(f64::NAN).is_err());
-    assert_eq!(player.normalized_phase(),phase);
-    close(&before,&player.pose_in_place(&library,&rig.skeleton).unwrap().0);
+    assert_eq!(player.normalized_phase(), phase);
+    close(
+        &before,
+        &player.pose_in_place(&library, &rig.skeleton).unwrap().0,
+    );
     player.advance(0.5).unwrap();
-    let (pose,_)=player.pose_in_place(&library,&rig.skeleton).unwrap();
-    let expected=library.pose_phase_in_place(LocomotionClip::Sprint,player.normalized_phase(),&rig.skeleton).unwrap().0;
-    close(&pose,&expected);
+    let (pose, _) = player.pose_in_place(&library, &rig.skeleton).unwrap();
+    let expected = library
+        .pose_phase_in_place(
+            LocomotionClip::Sprint,
+            player.normalized_phase(),
+            &rig.skeleton,
+        )
+        .unwrap()
+        .0;
+    close(&pose, &expected);
 }
 
 /// Real authored poses must admit exact, explicitly requested double stance.
 /// This is IK qualification, not automatic stance classification for swing legs.
 #[test]
 fn actual_authored_gaits_admit_support_relative_plants_without_changing_bone_metric() {
-    use voxy_animation::{FootPlant, RootRigidTransform, TwoBoneChain};
     use glam::{DQuat, DVec3};
+    use voxy_animation::{FootPlant, RootRigidTransform, TwoBoneChain};
     let body = voxy_render::ObjAsset::parse(
-        include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),
+        include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+        ),
         voxy_render::ObjLimits::default(),
-    ).unwrap();
+    )
+    .unwrap();
     let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
     let source = std::sync::Arc::new(voxy_model::ModelAsset::parse(
         include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
@@ -421,53 +504,111 @@ fn actual_authored_gaits_admit_support_relative_plants_without_changing_bone_met
         voxy_model::ModelLimits::default(),
     ).unwrap());
     let library = VoxyHumanoidLocomotion::new(source, &rig.skeleton).unwrap();
-    let index = |name: &str| rig.skeleton.joints().iter().position(|j| j.name.as_ref() == name).unwrap();
-    let indices = ["left", "right"].map(|side| ["thigh", "shin", "foot"].map(|part| index(&format!("{side}_{part}"))));
+    let index = |name: &str| {
+        rig.skeleton
+            .joints()
+            .iter()
+            .position(|j| j.name.as_ref() == name)
+            .unwrap()
+    };
+    let indices = ["left", "right"]
+        .map(|side| ["thigh", "shin", "foot"].map(|part| index(&format!("{side}_{part}"))));
     let chains = indices.map(|j| TwoBoneChain::new(&rig.skeleton, j.map(|i| i as u16)).unwrap());
-    let bind = rig.skeleton.bind_pose64().global_matrices(&rig.skeleton).unwrap();
-    let support = RootRigidTransform { translation: DVec3::new(1e8, 0., -1e8), rotation: DQuat::IDENTITY };
+    let bind = rig
+        .skeleton
+        .bind_pose64()
+        .global_matrices(&rig.skeleton)
+        .unwrap();
+    let support = RootRigidTransform {
+        translation: DVec3::new(1e8, 0., -1e8),
+        rotation: DQuat::IDENTITY,
+    };
     let actor_at_capture = support;
     let pivot = DVec3::new(0., -0.02, 0.04);
     let ankles = indices.map(|j| bind[j[2]].w_axis.truncate() + DVec3::Y * 0.04);
-    let plants = ankles.map(|p| FootPlant::capture_pivot(RootRigidTransform {
-        translation: actor_at_capture.translation + p, rotation: DQuat::IDENTITY,
-    }, pivot, support).unwrap());
+    let plants = ankles.map(|p| {
+        FootPlant::capture_pivot(
+            RootRigidTransform {
+                translation: actor_at_capture.translation + p,
+                rotation: DQuat::IDENTITY,
+            },
+            pivot,
+            support,
+        )
+        .unwrap()
+    });
     let mut maximum_error = 0f64;
-    for clip in [LocomotionClip::Idle, LocomotionClip::Walk, LocomotionClip::Jog, LocomotionClip::Sprint] {
+    for clip in [
+        LocomotionClip::Idle,
+        LocomotionClip::Walk,
+        LocomotionClip::Jog,
+        LocomotionClip::Sprint,
+    ] {
         for sample in 0..=120 {
             let phase = f64::from(sample) / 120.;
-            let pose = library.pose_phase_in_place(clip, phase, &rig.skeleton).unwrap().0;
+            let pose = library
+                .pose_phase_in_place(clip, phase, &rig.skeleton)
+                .unwrap()
+                .0;
             // Move the actor relative to the captured support, using the same
             // support-local authority instead of recapturing every frame.
-            let actor = RootRigidTransform { translation: support.translation + DVec3::X * (0.03 * phase), rotation: DQuat::from_rotation_y(0.04 * phase) };
-            let targets = std::array::from_fn(|side| plants[side].target(support, actor,
-                Vec3::new(if side == 0 {-0.2} else {0.2}, 0.5, 1.), 1.).unwrap());
-            let (solved, report) = pose.solve_planted_legs_with_extension_margin(
-                &chains, targets, Vec3::Y, 0.35, 0.005,
-            ).unwrap_or_else(|e| panic!("{clip:?} phase {phase}: {e}"));
+            let actor = RootRigidTransform {
+                translation: support.translation + DVec3::X * (0.03 * phase),
+                rotation: DQuat::from_rotation_y(0.04 * phase),
+            };
+            let targets = std::array::from_fn(|side| {
+                plants[side]
+                    .target(
+                        support,
+                        actor,
+                        Vec3::new(if side == 0 { -0.2 } else { 0.2 }, 0.5, 1.),
+                        1.,
+                    )
+                    .unwrap()
+            });
+            let (solved, report) = pose
+                .solve_planted_legs_with_extension_margin(&chains, targets, Vec3::Y, 0.35, 0.005)
+                .unwrap_or_else(|e| panic!("{clip:?} phase {phase}: {e}"));
             let world = solved.skin_matrices(&rig.skeleton).unwrap();
             for side in 0..2 {
-                let ankle = world[indices[side][2]].transform_point3(bind[indices[side][2]].w_axis.truncate().as_vec3());
-                let expected = (actor.rotation.conjugate() * ((support.translation - actor.translation) + ankles[side])).as_vec3();
+                let ankle = world[indices[side][2]]
+                    .transform_point3(bind[indices[side][2]].w_axis.truncate().as_vec3());
+                let expected = (actor.rotation.conjugate()
+                    * ((support.translation - actor.translation) + ankles[side]))
+                    .as_vec3();
                 let error = f64::from(ankle.distance(expected));
                 maximum_error = maximum_error.max(error);
                 assert!(error < 3e-6, "{clip:?} phase {phase} side {side}: {error}m");
                 assert!(!report.legs[side].reach_clamped);
-                let sole_axis = actor.rotation * world[indices[side][2]].transform_vector3(Vec3::Y).as_dvec3();
+                let sole_axis = actor.rotation
+                    * world[indices[side][2]]
+                        .transform_vector3(Vec3::Y)
+                        .as_dvec3();
                 assert!(sole_axis.normalize().distance(DVec3::Y) < 3e-6);
                 let contact_in_actor = world[indices[side][2]].transform_point3(
-                    bind[indices[side][2]].w_axis.truncate().as_vec3() + pivot.as_vec3());
+                    bind[indices[side][2]].w_axis.truncate().as_vec3() + pivot.as_vec3(),
+                );
                 let contact_in_support = (actor.translation - support.translation)
                     + actor.rotation * contact_in_actor.as_dvec3();
                 assert!(contact_in_support.distance(ankles[side] + pivot) < 3e-6);
-                for pair in [[indices[side][0], indices[side][1]], [indices[side][1], indices[side][2]]] {
-                    let points = pair.map(|i| world[i].transform_point3(bind[i].w_axis.truncate().as_vec3()));
-                    let length = bind[pair[0]].w_axis.truncate().distance(bind[pair[1]].w_axis.truncate());
+                for pair in [
+                    [indices[side][0], indices[side][1]],
+                    [indices[side][1], indices[side][2]],
+                ] {
+                    let points = pair
+                        .map(|i| world[i].transform_point3(bind[i].w_axis.truncate().as_vec3()));
+                    let length = bind[pair[0]]
+                        .w_axis
+                        .truncate()
+                        .distance(bind[pair[1]].w_axis.truncate());
                     assert!((f64::from(points[0].distance(points[1])) - length).abs() < 3e-6);
                 }
             }
             for joint in 1..pose.local().len() {
-                assert_eq!(solved.local()[joint].translation, pose.local()[joint].translation);
+                assert_eq!(
+                    solved.local()[joint].translation,
+                    pose.local()[joint].translation
+                );
                 assert_eq!(solved.local()[joint].scale, pose.local()[joint].scale);
             }
         }
@@ -483,33 +624,75 @@ fn prepared_quaternius_jog_closes_the_cycle_and_preserves_original_motion_and_ot
         &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],
         voxy_model::ModelLimits::default(),
     ).unwrap();
-    let prepared=prepare_quaternius_gait_source(original.clone()).unwrap();
-    let index=original.animations.iter().position(|c|c.name()=="Jog_Fwd_Loop").unwrap();
-    let joint=usize::from(original.resolve_joint_name("DEF-foot.L").unwrap());
-    let globals=|asset: &voxy_model::ModelAsset,phase|asset.sample_pose_phase64(Some(index),phase).unwrap().global_matrices(&asset.skeleton).unwrap();
-    let raw_gap=globals(&original,0.)[joint].w_axis.distance(globals(&original,1.)[joint].w_axis);
-    let closed_gap=globals(&prepared,0.)[joint].w_axis.distance(globals(&prepared,1.)[joint].w_axis);
-    assert!(raw_gap>0.02);assert!(closed_gap<1e-12);
-    let old_duration=f64::from(original.animations[index].duration());
-    let new_duration=f64::from(prepared.animations[index].duration());
-    assert!((new_duration-old_duration-1./24.).abs()<1e-7);
+    let prepared = prepare_quaternius_gait_source(original.clone()).unwrap();
+    let index = original
+        .animations
+        .iter()
+        .position(|c| c.name() == "Jog_Fwd_Loop")
+        .unwrap();
+    let joint = usize::from(original.resolve_joint_name("DEF-foot.L").unwrap());
+    let globals = |asset: &voxy_model::ModelAsset, phase| {
+        asset
+            .sample_pose_phase64(Some(index), phase)
+            .unwrap()
+            .global_matrices(&asset.skeleton)
+            .unwrap()
+    };
+    let raw_gap = globals(&original, 0.)[joint]
+        .w_axis
+        .distance(globals(&original, 1.)[joint].w_axis);
+    let closed_gap = globals(&prepared, 0.)[joint]
+        .w_axis
+        .distance(globals(&prepared, 1.)[joint].w_axis);
+    assert!(raw_gap > 0.02);
+    assert!(closed_gap < 1e-12);
+    let old_duration = f64::from(original.animations[index].duration());
+    let new_duration = f64::from(prepared.animations[index].duration());
+    assert!((new_duration - old_duration - 1. / 24.).abs() < 1e-7);
     for sample in 0..=240 {
-        let phase=f64::from(sample)/240.;
-        let after=prepared.animations[index].try_sample_time64(&prepared.skeleton,phase*old_duration).unwrap().global_matrices(&prepared.skeleton).unwrap();
-        for (a,b) in globals(&original,phase).iter().zip(after) {
-            assert!(a.abs_diff_eq(b,1e-11),"source motion changed at {phase}");
+        let phase = f64::from(sample) / 240.;
+        let after = prepared.animations[index]
+            .try_sample_time64(&prepared.skeleton, phase * old_duration)
+            .unwrap()
+            .global_matrices(&prepared.skeleton)
+            .unwrap();
+        for (a, b) in globals(&original, phase).iter().zip(after) {
+            assert!(a.abs_diff_eq(b, 1e-11), "source motion changed at {phase}");
         }
     }
-    for (i,(a,b)) in original.animations.iter().zip(&prepared.animations).enumerate() {
-        assert_eq!(std::sync::Arc::ptr_eq(a,b),i!=index);
+    for (i, (a, b)) in original
+        .animations
+        .iter()
+        .zip(&prepared.animations)
+        .enumerate()
+    {
+        assert_eq!(std::sync::Arc::ptr_eq(a, b), i != index);
     }
-    let again=prepare_quaternius_gait_source(prepared.clone()).unwrap();
-    assert!(std::sync::Arc::ptr_eq(&again.animations[index],&prepared.animations[index]));
-    let body=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
-    let rig=FemaleRig::new(body.mesh.vertices()).unwrap();
-    let library=VoxyHumanoidLocomotion::new(std::sync::Arc::new(prepared),&rig.skeleton).unwrap();
-    let start=library.pose_phase_in_place(LocomotionClip::Jog,0.,&rig.skeleton).unwrap().0;
-    let end=library.pose_phase_in_place(LocomotionClip::Jog,1.,&rig.skeleton).unwrap().0;
-    assert_eq!(start.local(),end.local());
-    eprintln!("PREPARED_JOG raw_ankle_gap_m={raw_gap} prepared_ankle_gap_m={closed_gap} duration_s={new_duration} original_samples=241");
+    let again = prepare_quaternius_gait_source(prepared.clone()).unwrap();
+    assert!(std::sync::Arc::ptr_eq(
+        &again.animations[index],
+        &prepared.animations[index]
+    ));
+    let body = voxy_render::ObjAsset::parse(
+        include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+        ),
+        voxy_render::ObjLimits::default(),
+    )
+    .unwrap();
+    let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+    let library =
+        VoxyHumanoidLocomotion::new(std::sync::Arc::new(prepared), &rig.skeleton).unwrap();
+    let start = library
+        .pose_phase_in_place(LocomotionClip::Jog, 0., &rig.skeleton)
+        .unwrap()
+        .0;
+    let end = library
+        .pose_phase_in_place(LocomotionClip::Jog, 1., &rig.skeleton)
+        .unwrap()
+        .0;
+    assert_eq!(start.local(), end.local());
+    eprintln!(
+        "PREPARED_JOG raw_ankle_gap_m={raw_gap} prepared_ankle_gap_m={closed_gap} duration_s={new_duration} original_samples=241"
+    );
 }

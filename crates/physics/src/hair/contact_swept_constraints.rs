@@ -205,6 +205,10 @@ fn retain_cut(cuts: &mut Vec<Cut>, pair: StrandResponse, time: f64, scales: [f64
     true
 }
 
+#[allow(
+    dead_code,
+    reason = "single-threaded activation kept beside the worker variant"
+)]
 pub(super) fn activate(
     constraints: &mut Vec<Constraint>,
     rods: &[HairRod],
@@ -228,6 +232,10 @@ pub(super) fn activate(
     )
 }
 
+#[allow(
+    dead_code,
+    reason = "worker activation of the swept path, kept for the in-progress solver"
+)]
 pub(super) fn activate_with_workers(
     constraints: &mut Vec<Constraint>,
     rods: &[HairRod],

@@ -356,7 +356,7 @@ pub(super) fn validate_surface(
     let limits = device.limits();
     if n == 0
         || n > u32::MAX as usize
-        || n as u64 > u64::from(limits.max_storage_buffer_binding_size) / 16
+        || n as u64 > limits.max_storage_buffer_binding_size / 16
         || offsets.len() != n + 1
         || offsets[0] != 0
         || offsets[n] as usize != edges.len()

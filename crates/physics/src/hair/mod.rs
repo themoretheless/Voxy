@@ -2914,12 +2914,9 @@ mod contact_merit_tests {
         let merit = vec![0.; 9];
         let energy = vec![Some(-1e-25); 9]; // Hidden by subtraction from an8e-5J total.
         assert!(HairSystem::nonlinear_progress(&merit, &energy));
-        assert!(!HairSystem::nonlinear_progress(&merit, &vec![Some(0.); 9]));
-        assert!(!HairSystem::nonlinear_progress(
-            &merit,
-            &vec![Some(1e-25); 9]
-        ));
-        assert!(!HairSystem::nonlinear_progress(&merit, &vec![None; 9]));
+        assert!(!HairSystem::nonlinear_progress(&merit, &[Some(0.); 9]));
+        assert!(!HairSystem::nonlinear_progress(&merit, &[Some(1e-25); 9]));
+        assert!(!HairSystem::nonlinear_progress(&merit, &[None; 9]));
         let mut cancelling = vec![Some(0.); 9];
         cancelling[1] = Some(-1.);
         cancelling[2] = Some(-1e-25);

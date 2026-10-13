@@ -84,8 +84,8 @@ impl SurfaceLightFrame {
             || normals.size() < count as u64 * 12
             || count.div_ceil(64) > limits.max_compute_workgroups_per_dimension as usize
             || bytes > limits.max_buffer_size
-            || bytes > u64::from(limits.max_storage_buffer_binding_size)
-            || normals.size() > u64::from(limits.max_storage_buffer_binding_size)
+            || bytes > limits.max_storage_buffer_binding_size
+            || normals.size() > limits.max_storage_buffer_binding_size
             || !normals.usage().contains(wgpu::BufferUsages::STORAGE)
             || [settings.ambient, settings.key_weight, settings.fill_weight]
                 .iter()

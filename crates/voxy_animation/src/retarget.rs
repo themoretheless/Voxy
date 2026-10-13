@@ -124,7 +124,7 @@ impl RetargetBinding {
         Ok(Self {
             source: source.joints.clone(),
             target: target.joints.clone(),
-            target_reference: target.joints.iter().map(|joint|joint.bind_local).collect(),
+            target_reference: target.joints.iter().map(|joint| joint.bind_local).collect(),
             joints,
         })
     }
@@ -137,10 +137,21 @@ impl RetargetBinding {
     /// # Errors
     /// Rejects foreign/invalid poses and edited translations or scales.
     pub fn with_target_reference_pose(mut self, pose: &Pose) -> Result<Self, AnimationError> {
-        if !rigs_match(&pose.rig, &self.target) { return Err(AnimationError::SkeletonMismatch); }
-        pose.skin_matrices(&Skeleton { joints: self.target.clone() })?;
-        if pose.local.iter().zip(self.target.iter()).any(|(local, joint)|
-            local.translation != joint.bind_local.translation || local.scale != joint.bind_local.scale) {
+        if !rigs_match(&pose.rig, &self.target) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        pose.skin_matrices(&Skeleton {
+            joints: self.target.clone(),
+        })?;
+        if pose
+            .local
+            .iter()
+            .zip(self.target.iter())
+            .any(|(local, joint)| {
+                local.translation != joint.bind_local.translation
+                    || local.scale != joint.bind_local.scale
+            })
+        {
             return Err(AnimationError::InvalidRetargetBinding);
         }
         self.target_reference = pose.local.clone().into();
@@ -150,7 +161,8 @@ impl RetargetBinding {
                 joint.rotation_basis,
                 self.source[joint.source].bind_local.rotation,
                 joint.translation_basis,
-            ).then(||exact_basis::rotation_nonzero(joint.translation_basis));
+            )
+            .then(|| exact_basis::rotation_nonzero(joint.translation_basis));
         }
         Ok(self)
     }
@@ -1988,56 +2000,130 @@ mod reference_pose_tests {
     use glam::{Mat4, Vec3};
     fn rig(name: &str) -> Skeleton {
         Skeleton::new(vec![
-            Joint { name: name.into(), parent: None, bind_local: Transform::IDENTITY, inverse_bind: Mat4::IDENTITY },
-            Joint { name: "unmapped".into(), parent: Some(0), bind_local: Transform {translation: Vec3::Y, ..Transform::IDENTITY}, inverse_bind: Mat4::from_translation(-Vec3::Y) },
-        ]).unwrap()
+            Joint {
+                name: name.into(),
+                parent: None,
+                bind_local: Transform::IDENTITY,
+                inverse_bind: Mat4::IDENTITY,
+            },
+            Joint {
+                name: "unmapped".into(),
+                parent: Some(0),
+                bind_local: Transform {
+                    translation: Vec3::Y,
+                    ..Transform::IDENTITY
+                },
+                inverse_bind: Mat4::from_translation(-Vec3::Y),
+            },
+        ])
+        .unwrap()
     }
     fn binding(source: &Skeleton, target: &Skeleton) -> RetargetBinding {
-        RetargetBinding::new(source, target, &[RetargetJoint {
-            source: "source".into(), target: "target".into(), rotation_basis: Quat::IDENTITY,
-            translation_basis: Quat::IDENTITY, translation_scale: 1.,
-        }]).unwrap()
+        RetargetBinding::new(
+            source,
+            target,
+            &[RetargetJoint {
+                source: "source".into(),
+                target: "target".into(),
+                rotation_basis: Quat::IDENTITY,
+                translation_basis: Quat::IDENTITY,
+                translation_scale: 1.,
+            }],
+        )
+        .unwrap()
     }
     #[test]
     fn calibration_preserves_rig_ownership_and_recomputes_root_eligibility() {
-        let source = rig("source"); let target = rig("target");
+        let source = rig("source");
+        let target = rig("target");
         let original = binding(&source, &target);
         assert!(original.root_similarity_enclosure(0, [true; 3]).is_ok());
         let mut reference = target.bind_pose();
-        reference.set_joint_rotation(0, Quat::from_rotation_z(0.7)).unwrap();
-        reference.set_joint_rotation(1, Quat::from_rotation_x(0.2)).unwrap();
-        let calibrated = original.clone().with_target_reference_pose(&reference).unwrap();
-        assert!(calibrated.root_similarity_enclosure(0, [true; 3]).is_err(), "calibration must invalidate an incoherent rigid basis");
+        reference
+            .set_joint_rotation(0, Quat::from_rotation_z(0.7))
+            .unwrap();
+        reference
+            .set_joint_rotation(1, Quat::from_rotation_x(0.2))
+            .unwrap();
+        let calibrated = original
+            .clone()
+            .with_target_reference_pose(&reference)
+            .unwrap();
+        assert!(
+            calibrated.root_similarity_enclosure(0, [true; 3]).is_err(),
+            "calibration must invalidate an incoherent rigid basis"
+        );
         let mut input = source.bind_pose();
-        input.set_joint_rotation(0, Quat::from_rotation_x(0.4)).unwrap();
+        input
+            .set_joint_rotation(0, Quat::from_rotation_x(0.4))
+            .unwrap();
         let output = calibrated.apply_pose(&input).unwrap();
         let expected = reference.local()[0].rotation * input.local()[0].rotation;
         assert!(output.local()[0].rotation.abs_diff_eq(expected, 1e-6));
         let (_, enclosure) = calibrated.joint_rigid_pose_enclosure(&input, 0).unwrap();
         let ideal = reference.local()[0].rotation.as_dquat().normalize()
             * input.local()[0].rotation.as_dquat().normalize();
-        for (component, bounds) in ideal.to_array().into_iter().zip(enclosure.rotation_bounds()) {
-            assert!(bounds[0] <= component && component <= bounds[1], "calibrated pose enclosure missed {component}: {bounds:?}");
+        for (component, bounds) in ideal
+            .to_array()
+            .into_iter()
+            .zip(enclosure.rotation_bounds())
+        {
+            assert!(
+                bounds[0] <= component && component <= bounds[1],
+                "calibrated pose enclosure missed {component}: {bounds:?}"
+            );
         }
-        assert_eq!(output.local()[1], target.bind_pose().local()[1], "unmapped joints retain canonical bind values");
+        assert_eq!(
+            output.local()[1],
+            target.bind_pose().local()[1],
+            "unmapped joints retain canonical bind values"
+        );
         output.skin_matrices(&target).unwrap();
         assert_eq!(target.joints()[0].bind_local, Transform::IDENTITY);
-        assert!(original.root_similarity_enclosure(0, [true; 3]).is_ok(), "original immutable binding changed");
-        let disabled = original.clone().with_target_reference_pose(&target.bind_pose()).unwrap();
-        assert_eq!(original.apply_pose(&input).unwrap(), disabled.apply_pose(&input).unwrap());
+        assert!(
+            original.root_similarity_enclosure(0, [true; 3]).is_ok(),
+            "original immutable binding changed"
+        );
+        let disabled = original
+            .clone()
+            .with_target_reference_pose(&target.bind_pose())
+            .unwrap();
+        assert_eq!(
+            original.apply_pose(&input).unwrap(),
+            disabled.apply_pose(&input).unwrap()
+        );
         assert!(disabled.root_similarity_enclosure(0, [true; 3]).is_ok());
     }
     #[test]
     fn reference_pose_rejects_foreign_rigs_and_proportion_edits() {
-        let source = rig("source"); let target = rig("target");
+        let source = rig("source");
+        let target = rig("target");
         let original = binding(&source, &target);
-        assert!(original.clone().with_target_reference_pose(&source.bind_pose()).is_err());
+        assert!(
+            original
+                .clone()
+                .with_target_reference_pose(&source.bind_pose())
+                .is_err()
+        );
         let mut translated = target.bind_pose();
         translated.set_joint_translation(0, Vec3::X).unwrap();
-        assert!(original.clone().with_target_reference_pose(&translated).is_err());
+        assert!(
+            original
+                .clone()
+                .with_target_reference_pose(&translated)
+                .is_err()
+        );
         let mut scaled = target.bind_pose();
         scaled.local[0].scale = Vec3::splat(2.);
-        assert!(original.clone().with_target_reference_pose(&scaled).is_err());
-        assert_eq!(original.apply_pose(&source.bind_pose()).unwrap(), target.bind_pose());
+        assert!(
+            original
+                .clone()
+                .with_target_reference_pose(&scaled)
+                .is_err()
+        );
+        assert_eq!(
+            original.apply_pose(&source.bind_pose()).unwrap(),
+            target.bind_pose()
+        );
     }
 }

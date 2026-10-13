@@ -5003,6 +5003,10 @@ mod authored_jump_integration_tests {
         physical_stance_full_mesh_samples(&[1, 31, 61, 91, 121, 151]);
     }
 
+    #[allow(
+        clippy::await_holding_refcell_ref,
+        reason = "single-threaded test: the input is only borrowed immutably while the GPU work awaits"
+    )]
     fn physical_stance_full_mesh_samples(ticks: &[usize]) {
         let mut demo = FemaleDemo::new().unwrap();
         demo.enable_physical_stance().unwrap();
@@ -5047,6 +5051,10 @@ mod authored_jump_integration_tests {
 
     #[test]
     #[ignore = "actual full-character GPU incident-light source parity"]
+    #[allow(
+        clippy::await_holding_refcell_ref,
+        reason = "single-threaded test: the input is only borrowed immutably while the GPU work awaits"
+    )]
     fn physical_stance_gpu_incident_matches_cpu_equation() {
         pollster::block_on(async {
             let mut demo = FemaleDemo::new().unwrap();
