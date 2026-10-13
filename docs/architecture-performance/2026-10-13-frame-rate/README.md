@@ -44,12 +44,44 @@ percent of the instructions, resolution barely matters, and presentation pacing 
 count by less than 10%. On a hardware GPU the same loop will be bounded by vertical sync
 unless an uncapped present mode is chosen, which is what the new option provides.
 
+## Per-tick work in the frame handler
+
+A second callgrind run collected only inside the app's window-event handler (40 frames,
+599 fixed ticks, 7 water ticks) and ranked the app's own per-frame work: the skinned pose
+validation that runs every fixed tick (30%), the water planner's sampled-cell lookups
+(25%), then the character step, the vehicle step and the world commit.
+
+- `SkinnedMesh::validate_render_pose` multiplied the model matrix by each vertex's blended
+  skin twice (position test, normal test); the product is computed once and both tests
+  read it, bitwise the same result.
+- The water planner's sampled-cell map was a B-tree keyed by voxel position although only
+  lookups reach it: the plan sorts its writes and collects touched chunks into a set, so
+  the map's order never reaches the result. It is now a hash map with the workspace's
+  deterministic hasher.
+
+Paired (same harness, same binary flags; callgrind instruction counts are deterministic,
+frame counts are two runs each):
+
+| measurement | before | after | ratio |
+| --- | ---: | ---: | ---: |
+| frame handler, instructions over the run | 141.3 M | 106.3 M | 0.75 |
+| `validate_render_pose` (599 calls) | 43.4 M | 39.3 M | 0.91 |
+| `step_liquid` (7 calls) | 47.6 M | 16.6 M | 0.35 |
+| `Sampler::current` | 36.0 M | 9.4 M | 0.26 |
+| `voxel_queries` water_tick (5 rounds, before binary from `be884bf7`) | 3.30 ms | 1.42 ms | 0.43 |
+| presented frames per 10 s, 640×360, surface default | 811 / 835 / 840 / 845 / 882 | 1151 / 1213 | ~1.40 |
+
+`voxel_queries` checksums (raycast, sweep, water) are identical before and after;
+physics_voxel tests 43 and voxy_render lib tests 211 pass.
+
 ## What changed
 
 - `GraphicsOptions::present` (`PresentPreference::{Default, Fifo, Mailbox, Immediate}`)
   applied at surface configuration when the surface supports it; the app parses
   `--present-mode auto|fifo|mailbox|immediate`. Default behaviour is unchanged.
 - The ray-query request at device creation is gone (startup fix above).
+- One model-times-skin product per vertex in the per-tick pose validation; hashed
+  water sampler cells (above).
 
 ## Gates
 
