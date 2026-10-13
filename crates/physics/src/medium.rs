@@ -418,3 +418,57 @@ impl ParticipatingMedium {
 
 #[cfg(test)]
 mod tests;
+
+/// Drying into the medium (plan step C2): a wet film cell exchanges solvent
+/// vapor with the gas cell that contains `point`, so film mass loss equals
+/// the gas cell's mass gain and the humidity field is the medium's own.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct FilmVaporExchange {
+    /// Solvent mass moved from the film into the gas (negative for condensation).
+    pub transferred_kg: f64,
+    pub cell: usize,
+}
+
+impl ParticipatingMedium {
+    /// Runs `ThermalFilmMixture::exchange_solution_vapor` against the gas
+    /// cell containing `point`. Nothing changes when the point is outside the
+    /// grid (`Ok(None)`); on any error the film, velocity and gas are unchanged.
+    /// # Errors
+    /// Nonfinite point, or the film vapor solver's own failures.
+    pub fn exchange_film_vapor(
+        &mut self,
+        film: &mut crate::surface_film::ThermalFilmMixture,
+        film_cell: usize,
+        film_velocity: &mut [f64; 3],
+        point: [f64; 3],
+        model: &crate::liquid::SolutionVaporInterface,
+        dt: f64,
+        accuracy: crate::liquid::VaporExchangeAccuracy,
+    ) -> Result<Option<FilmVaporExchange>, &'static str> {
+        let Some(cell) = self
+            .gas
+            .cell_index(point)
+            .map_err(|_| "invalid film vapor point")?
+        else {
+            return Ok(None);
+        };
+        let mut vapor = self.gas.cells()[cell];
+        let mut candidate_film = film.clone();
+        let mut candidate_velocity = *film_velocity;
+        let transferred = candidate_film.exchange_solution_vapor(
+            film_cell,
+            &mut candidate_velocity,
+            &mut vapor,
+            model,
+            dt,
+            accuracy,
+        )?;
+        *film = candidate_film;
+        *film_velocity = candidate_velocity;
+        self.gas.cells_mut()[cell] = vapor;
+        Ok(Some(FilmVaporExchange {
+            transferred_kg: transferred,
+            cell,
+        }))
+    }
+}
