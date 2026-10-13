@@ -8,7 +8,7 @@ pub use contact_bake::{
 };
 pub use precision::{Pose64, Transform64};
 mod events;
-pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError};
+pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError, EventWindow};
 mod exact_quaternion;
 mod root_clock;
 mod root_curve;
@@ -19,12 +19,19 @@ pub use foot_support::{FootSupportPoint, FootSupportPoints, MAX_FOOT_SUPPORT_POI
 mod foot_plant;
 pub use foot_plant::FootPlant;
 mod retarget;
-pub use retarget::{ModelRotationRetarget, RetargetBinding, RetargetJoint, RetargetRootSimilarity};
+pub use retarget::{
+    BoneRole, HumanoidProfile, ModelRotationRetarget, RetargetBinding, RetargetJoint,
+    RetargetRootSimilarity, Side,
+};
 mod blend_phase;
 pub use blend_phase::{
     ClipPhase, FrozenSourceTick, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval,
 };
 
+pub use ik::fabrik::{FabrikResult, FabrikSettings, IkChain};
+pub use ik::full_body::{Effector, FullBodyResult, FullBodyRig, FullBodySettings};
+pub use ik::limits::{JointLimit, swing_twist_angles};
+pub use ik::look_at::{LookAtChain, look_at_error};
 pub use ik::{PlantedLegsResult, TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
 pub use rigid_fade::RootRigidFadePlan;
@@ -45,7 +52,40 @@ pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
     RootRotationCurve, RootRotationPath, RootRotationSpan,
 };
+mod anim_graph;
+mod blend_space2d;
+mod compressed;
+mod crowd;
+pub use crowd::{CrowdEvaluator, CrowdLod, CrowdOutcome, CrowdPalettes};
+mod gpu_layout;
+pub use gpu_layout::{
+    GPU_NO_PARENT, GpuBlendJob, GpuClipTable, GpuJointKey, GpuSkeletonLayout,
+    cpu_reference_palette, nlerp,
+};
+mod gait;
+mod ragdoll;
+pub use compressed::{CompressedClip, CompressionReport, CompressionSettings};
+pub use ragdoll::{
+    ContactManifold, MotorSettings, PlaneEnvironment, Ragdoll, RagdollBody, RagdollDesc,
+    RagdollEnvironment, RagdollJoint, RagdollState, powered_blend,
+};
+mod state_machine;
+pub use blend_space2d::{BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D};
+pub use gait::{
+    FlatGround, GaitController, GaitFeet, GaitFrame, GaitSettings, GaitSpace, GroundProbe,
+    ankle_positions,
+};
+pub use state_machine::{
+    Condition, FadeCurve, MachineStatus, PhaseSync, StateId, StateMachine, StateMachineDesc,
+    StateTransition,
+};
+mod graph;
+pub use anim_graph::{
+    ActiveWindow, AnimGraph, DEFAULT_EVENT_BUDGET, FloatInput, GraphDesc, GraphEvent, GraphFrame,
+    GraphNode, GraphPlayer, IkSolver, MAX_GRAPH_NODES, NodeId, ParamId, ParamValue, Vec3Input,
+};
 mod soa;
+pub use graph::{BlendSample, BlendSegment, BlendSpace1D, BlendSpace1DPlayer, BoneMask};
 pub use soa::{
     AnimationUpdateJob, AnimationUpdateQueue, CompletedAnimationUpdate, SOA_NO_PARENT, SoaPose,
     SoaSkeleton,
@@ -1946,6 +1986,14 @@ pub enum AnimationError {
     InvalidAnimationTimeStep,
     InvalidAnimationPhase,
     NumericalOverflow,
+    GraphCycle,
+    GraphNodeBudget,
+    InvalidGraphNode(usize),
+    InvalidGraphParam,
+    InvalidStateMachine,
+    EventBudget,
+    InvalidJointLimit,
+    InvalidRagdoll,
 }
 
 impl fmt::Display for AnimationError {

@@ -1361,6 +1361,9 @@ pub use squeeze::{SqueezePressureControl, SqueezePressureReport, SqueezeTranspor
 #[path = "surface_film_squeeze_body.rs"]
 mod squeeze_body;
 pub use squeeze_body::SqueezeBodyReport;
+#[path = "surface_film_smear.rs"]
+mod smear;
+pub use smear::{SmearContact, SmearRegime, SmearReport};
 #[path = "surface_film_sphere.rs"]
 mod sphere;
 pub use sphere::SphereFilmHit;

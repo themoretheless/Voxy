@@ -15,6 +15,7 @@ pub enum CudaError {
     InvalidProjectileInput,
     InvalidVoxelInput,
     InvalidWaterInput,
+    InvalidMediumInput,
     InvalidTissueSearchInput,
     SingularPair,
     NumericalOverflow,
@@ -91,6 +92,8 @@ pub struct CudaCompute {
     box_sweep: std::sync::Mutex<Option<cudarc::driver::CudaFunction>>,
     #[cfg(feature = "cuda")]
     water: std::sync::Mutex<Option<cudarc::driver::CudaFunction>>,
+    #[cfg(feature = "cuda")]
+    medium: std::sync::Mutex<Option<cudarc::driver::CudaFunction>>,
     #[cfg(feature = "cuda")]
     tissue_search: std::sync::Mutex<Option<[cudarc::driver::CudaFunction; 2]>>,
 }
@@ -285,6 +288,7 @@ impl CudaCompute {
                 voxel_regions: std::sync::Mutex::new(None),
                 box_sweep: std::sync::Mutex::new(None),
                 water: std::sync::Mutex::new(None),
+                medium: std::sync::Mutex::new(None),
                 tissue_search: std::sync::Mutex::new(None),
             })
         }
@@ -601,7 +605,9 @@ mod voxel_regions;
 mod box_sweep;
 pub use box_sweep::{CudaBoxContact, CudaBoxSweep};
 
+mod medium;
 mod water;
+pub use medium::{MEDIUM_HEADER_WORDS, MEDIUM_MAX_CELLS, pack_medium_job, unpack_medium_result};
 
 #[cfg(any(feature = "cuda", test))]
 mod budget;

@@ -64,6 +64,14 @@ pub struct Response {
 impl Material {
     /// # Errors
     /// Positive finite penalty stiffnesses and finite mu >= 0 are required.
+    #[must_use]
+    pub fn normal_stiffness(&self) -> f64 {
+        self.normal_stiffness
+    }
+    #[must_use]
+    pub fn coefficient(&self) -> f64 {
+        self.coefficient
+    }
     pub fn new(
         normal_pa_m: f64,
         tangential_pa_m: f64,

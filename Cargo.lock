@@ -2683,6 +2683,7 @@ dependencies = [
  "physics_voxel",
  "pollster",
  "thiserror 2.0.20",
+ "voxy_animation",
  "voxy_core",
  "voxy_cuda",
  "voxy_gpu_core",

@@ -161,6 +161,8 @@ impl Layer {
 
 mod column;
 mod dust;
+mod fracture_dust;
+pub use fracture_dust::{FractureDust, FractureDustSettings, fracture_dust};
 mod suspension;
 pub use column::{
     Column, ColumnRemoval, MassProperties, MovingInventory, RigidMotion, RigidRemoval, Stratum,

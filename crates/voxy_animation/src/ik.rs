@@ -26,6 +26,16 @@ pub struct TwoBoneResult {
     pub reach_clamped: bool,
 }
 impl TwoBoneChain {
+    pub(crate) fn rig(&self) -> &Arc<[Joint]> {
+        &self.rig
+    }
+
+    /// Root, middle and tip joint indices.
+    #[must_use]
+    pub fn joint_indices(&self) -> [usize; 3] {
+        self.joints
+    }
+
     /// Compiles topology once; does not retain mutable playback state.
     /// # Errors
     /// Requires distinct, directly connected parent-before-child joints.
@@ -45,7 +55,7 @@ impl TwoBoneChain {
         })
     }
 }
-fn globals(pose: &Pose) -> Result<Vec<DMat4>, AnimationError> {
+pub(super) fn globals(pose: &Pose) -> Result<Vec<DMat4>, AnimationError> {
     let mut result: Vec<DMat4> = Vec::with_capacity(pose.local.len());
     for (i, (local, joint)) in pose.local.iter().zip(pose.rig.iter()).enumerate() {
         if !local.is_valid() {
@@ -71,7 +81,7 @@ pub(super) fn sign_basis(scale: Vec3) -> DQuat {
     let signs = scale.signum().as_dvec3();
     DQuat::from_mat3(&DMat3::from_diagonal(signs * signs.x * signs.y * signs.z)).normalize()
 }
-fn parent_basis(pose: &Pose, joint: usize) -> Result<DQuat, AnimationError> {
+pub(super) fn parent_basis(pose: &Pose, joint: usize) -> Result<DQuat, AnimationError> {
     let mut result = DQuat::IDENTITY;
     let mut parent = pose.rig[joint].parent;
     while let Some(index) = parent {
@@ -87,7 +97,7 @@ fn parent_basis(pose: &Pose, joint: usize) -> Result<DQuat, AnimationError> {
     }
     Ok(result)
 }
-fn perpendicular(direction: DVec3, preferred: DVec3) -> DVec3 {
+pub(super) fn perpendicular(direction: DVec3, preferred: DVec3) -> DVec3 {
     let transverse = preferred - direction * direction.dot(preferred);
     if transverse.length() > 1e-12 * preferred.length() {
         return transverse.normalize();
@@ -101,7 +111,7 @@ fn perpendicular(direction: DVec3, preferred: DVec3) -> DVec3 {
     };
     (axis - direction * axis.dot(direction)).normalize()
 }
-fn between(from: DVec3, to: DVec3, plane: DVec3) -> Result<DQuat, AnimationError> {
+pub(super) fn between(from: DVec3, to: DVec3, plane: DVec3) -> Result<DQuat, AnimationError> {
     if !from.is_finite() || !to.is_finite() || from.length() == 0. || to.length() == 0. {
         return Err(AnimationError::NumericalOverflow);
     }
@@ -123,7 +133,7 @@ fn between(from: DVec3, to: DVec3, plane: DVec3) -> Result<DQuat, AnimationError
     }
     Ok(rotation)
 }
-fn rotate(pose: &mut Pose, joint: usize, delta: DQuat) -> Result<(), AnimationError> {
+pub(super) fn rotate(pose: &mut Pose, joint: usize, delta: DQuat) -> Result<(), AnimationError> {
     let parent = parent_basis(pose, joint)?;
     let old = DQuat::from_array(pose.local[joint].rotation.to_array().map(f64::from)).normalize();
     let rotation = (parent.conjugate() * delta * parent * old).normalize();
@@ -520,5 +530,11 @@ impl AnimatorFrame {
         Ok((self, report))
     }
 }
+#[cfg(test)]
+mod chain_tests;
+pub mod fabrik;
+pub mod full_body;
+pub mod limits;
+pub mod look_at;
 #[cfg(test)]
 mod tests;

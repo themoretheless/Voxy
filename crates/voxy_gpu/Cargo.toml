@@ -15,6 +15,7 @@ physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
 voxy_cuda = { path = "../voxy_cuda" }
 voxy_core = { path = "../voxy_core" }
+voxy_animation = { path = "../voxy_animation" }
 voxy_world = { path = "../voxy_world" }
 voxy_gpu_core = { path = "../voxy_gpu_core" }
 wgpu = "30.0.1"
