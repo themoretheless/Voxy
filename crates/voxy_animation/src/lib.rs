@@ -25,6 +25,9 @@ pub use blend_phase::{
     ClipPhase, FrozenSourceTick, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval,
 };
 
+pub use ik::fabrik::{FabrikResult, FabrikSettings, IkChain};
+pub use ik::limits::{JointLimit, swing_twist_angles};
+pub use ik::look_at::{LookAtChain, look_at_error};
 pub use ik::{PlantedLegsResult, TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
 pub use rigid_fade::RootRigidFadePlan;
@@ -55,8 +58,8 @@ pub use state_machine::{
 };
 mod graph;
 pub use anim_graph::{
-    AnimGraph, FloatInput, GraphDesc, GraphFrame, GraphNode, GraphPlayer, MAX_GRAPH_NODES, NodeId,
-    ParamId, ParamValue,
+    ActiveWindow, AnimGraph, DEFAULT_EVENT_BUDGET, FloatInput, GraphDesc, GraphEvent, GraphFrame,
+    GraphNode, GraphPlayer, IkSolver, MAX_GRAPH_NODES, NodeId, ParamId, ParamValue, Vec3Input,
 };
 mod soa;
 pub use graph::{BlendSample, BlendSegment, BlendSpace1D, BlendSpace1DPlayer, BoneMask};
@@ -1966,6 +1969,7 @@ pub enum AnimationError {
     InvalidGraphParam,
     InvalidStateMachine,
     EventBudget,
+    InvalidJointLimit,
 }
 
 impl fmt::Display for AnimationError {
