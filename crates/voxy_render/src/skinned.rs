@@ -163,10 +163,11 @@ impl SkinnedMesh {
     ) -> Result<(), SkinnedUploadError> {
         validate_temporal_palette(self, joints, model)?;
         for vertex in self.vertices.iter() {
-            // The blended palette is identical for the position and normal tests.
-            let skin = blended_skin(vertex, joints);
-            skinned_position_with(vertex, skin, model)?;
-            skinned_normal_with(vertex, skin, model)?;
+            // The blended palette is identical for the position and normal tests, and
+            // so is its product with the model matrix: both tests read the same product.
+            let world = model * blended_skin(vertex, joints);
+            skinned_position_in(vertex, world)?;
+            skinned_normal_in(vertex, world)?;
         }
         Ok(())
     }
@@ -667,7 +668,15 @@ fn skinned_position_with(
     skin: Mat4,
     model: Mat4,
 ) -> Result<[f32; 3], SkinnedUploadError> {
-    let world = model * skin * glam::Vec3::from_array(vertex.position).extend(1.0);
+    skinned_position_in(vertex, model * skin)
+}
+
+/// Position under an already multiplied model-times-skin matrix.
+fn skinned_position_in(
+    vertex: &SkinnedVertex,
+    world: Mat4,
+) -> Result<[f32; 3], SkinnedUploadError> {
+    let world = world * glam::Vec3::from_array(vertex.position).extend(1.0);
     if !world.is_finite() {
         return Err(SkinnedUploadError::NonFiniteMatrix);
     }
@@ -687,7 +696,12 @@ fn skinned_normal_with(
     skin: Mat4,
     model: Mat4,
 ) -> Result<[f32; 3], SkinnedUploadError> {
-    let mut linear = glam::Mat3::from_mat4(model * skin);
+    skinned_normal_in(vertex, model * skin)
+}
+
+/// Normal under an already multiplied model-times-skin matrix.
+fn skinned_normal_in(vertex: &SkinnedVertex, world: Mat4) -> Result<[f32; 3], SkinnedUploadError> {
+    let mut linear = glam::Mat3::from_mat4(world);
     let scale = linear
         .to_cols_array()
         .into_iter()
