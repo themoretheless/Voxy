@@ -179,6 +179,7 @@ impl Liquid {
             rest_density: material.rest_density,
             sound_speed: material.sound_speed,
             heat_capacity_ratio: self.gas_equations[index].map(|gas| gas.heat_capacity_ratio),
+            tensile_floor_pa: self.tensile_floor_pa,
         }
         .evaluate_native(density)
     }

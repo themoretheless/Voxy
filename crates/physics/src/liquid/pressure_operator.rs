@@ -5,6 +5,9 @@ pub struct LiquidPressureLaw {
     pub rest_density: f64,
     pub sound_speed: f64,
     pub heat_capacity_ratio: Option<f64>,
+    /// Largest admitted tension (negative pressure) magnitude, Pa. `None`
+    /// keeps the historic `max(ρ − ρ₀, 0)` clamp.
+    pub tensile_floor_pa: Option<f64>,
 }
 impl LiquidPressureLaw {
     pub fn evaluate_native(self, density: f64) -> Result<f64, Error> {
@@ -16,15 +19,20 @@ impl LiquidPressureLaw {
             || self
                 .heat_capacity_ratio
                 .is_some_and(|x| !x.is_finite() || x <= 1.)
+            || self
+                .tensile_floor_pa
+                .is_some_and(|x| !x.is_finite() || x < 0.)
         {
             return Err(Error::InvalidMaterial);
         }
         let pressure = if let Some(gamma) = self.heat_capacity_ratio {
             density * (self.sound_speed.powi(2) / gamma)
+        } else if let Some(floor) = self.tensile_floor_pa {
+            (self.sound_speed.powi(2) * (density - self.rest_density)).max(-floor)
         } else {
             self.sound_speed.powi(2) * (density - self.rest_density).max(0.)
         };
-        if !pressure.is_finite() || pressure < 0. {
+        if !pressure.is_finite() || pressure < -self.tensile_floor_pa.unwrap_or(0.) {
             return Err(Error::NumericalFailure);
         }
         Ok(pressure)
@@ -55,12 +63,12 @@ impl LiquidPressureOperator<'_> {
         {
             return Err(Error::InvalidConfig);
         }
-        for (&a, b) in candidate.iter().zip(self.evaluate_native()?) {
+        for ((&a, b), law) in candidate.iter().zip(self.evaluate_native()?).zip(self.laws) {
             let error = (a - b).abs();
             if !a.is_finite()
-                || a < 0.
+                || a < -law.tensile_floor_pa.unwrap_or(0.)
                 || !error.is_finite()
-                || (error > absolute && (b == 0. || error / b > relative))
+                || (error > absolute && (b == 0. || error / b.abs() > relative))
             {
                 return Err(Error::NumericalFailure);
             }
