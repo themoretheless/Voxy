@@ -759,3 +759,149 @@ fn graph_locomotion_matches_grounded_playback_at_rest_and_blends_gaits_by_speed(
     assert_eq!(graph.status().unwrap().current, voxy_animation::StateId(0));
     assert!(graph.set_speed(f32::NAN).is_err());
 }
+
+#[test]
+fn humanoid_profiles_reproduce_the_hand_authored_quaternius_mapping() {
+    use voxy_animation::{BoneRole, HumanoidProfile, RetargetBinding, Side};
+    let body = voxy_render::ObjAsset::parse(
+        include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+        ),
+        voxy_render::ObjLimits::default(),
+    )
+    .unwrap();
+    let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+    let source = std::sync::Arc::new(voxy_model::ModelAsset::parse(
+        include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
+        &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],voxy_model::ModelLimits::default()).unwrap());
+    let library = VoxyHumanoidLocomotion::new(source.clone(), &rig.skeleton).unwrap();
+    let mut pairs: Vec<(BoneRole, String, String)> = vec![
+        (BoneRole::Hips, "DEF-hips".into(), "pelvis".into()),
+        (BoneRole::Spine, "DEF-spine.001".into(), "spine".into()),
+        (BoneRole::Chest, "DEF-spine.003".into(), "chest".into()),
+        (BoneRole::Head, "DEF-head".into(), "head".into()),
+    ];
+    for (side, suffix, prefix) in [(Side::Left, "L", "left"), (Side::Right, "R", "right")] {
+        for (role, part) in [
+            (BoneRole::UpperArm(side), "upper_arm"),
+            (BoneRole::Forearm(side), "forearm"),
+            (BoneRole::Hand(side), "hand"),
+            (BoneRole::Thigh(side), "thigh"),
+            (BoneRole::Shin(side), "shin"),
+            (BoneRole::Foot(side), "foot"),
+        ] {
+            pairs.push((
+                role,
+                format!("DEF-{part}.{suffix}"),
+                format!("{prefix}_{part}"),
+            ));
+        }
+        for (finger, part) in ["thumb", "f_index", "f_middle", "f_ring", "f_pinky"]
+            .into_iter()
+            .enumerate()
+        {
+            for segment in 0..3 {
+                pairs.push((
+                    BoneRole::Custom(format!("{prefix}_finger_{finger}_{segment}").into()),
+                    format!("DEF-{part}.{:02}.{suffix}", segment + 1),
+                    format!("{prefix}_finger_{finger}_{segment}"),
+                ));
+            }
+        }
+    }
+    // Authored glTF names resolve to the imported skeleton's joint names.
+    let source_names: Vec<std::sync::Arc<str>> = pairs
+        .iter()
+        .map(|(_, s, _)| {
+            source.skeleton.joints()[usize::from(source.resolve_joint_name(s).unwrap())]
+                .name
+                .clone()
+        })
+        .collect();
+    let source_roles: Vec<(BoneRole, &str)> = pairs
+        .iter()
+        .zip(&source_names)
+        .map(|((r, _, _), name)| (r.clone(), name.as_ref()))
+        .collect();
+    let target_roles: Vec<(BoneRole, &str)> = pairs
+        .iter()
+        .map(|(r, _, t)| (r.clone(), t.as_str()))
+        .collect();
+    let source_profile = HumanoidProfile::new(&source.skeleton, &source_roles).unwrap();
+    let target_profile = HumanoidProfile::new(&rig.skeleton, &target_roles).unwrap();
+    let binding = RetargetBinding::from_profiles(
+        &source_profile,
+        &target_profile,
+        &source.skeleton,
+        &rig.skeleton,
+    )
+    .unwrap();
+    // The same authored reference pose and model-rotation compile as the preset.
+    let index = |name: &str| {
+        rig.skeleton
+            .joints()
+            .iter()
+            .position(|j| j.name.as_ref() == name)
+            .unwrap()
+    };
+    let mut reference = rig.skeleton.bind_pose();
+    for (side, sign) in [("left", 1.), ("right", -1.)] {
+        let upper = index(&format!("{side}_upper_arm"));
+        let forearm = index(&format!("{side}_forearm"));
+        let hand = index(&format!("{side}_hand"));
+        let a = rig.skeleton.joints()[forearm].bind_local.translation;
+        let b = rig.skeleton.joints()[hand].bind_local.translation;
+        let theta_upper = (-a.y).atan2(sign * a.x);
+        let theta_forearm = (-b.y).atan2(sign * b.x);
+        let theta_hand = 0.12f32.atan2(0.02);
+        for (joint, angle) in [
+            (upper, theta_upper),
+            (forearm, theta_forearm - theta_upper),
+            (hand, theta_hand - theta_forearm),
+        ] {
+            reference
+                .set_joint_rotation(joint, glam::Quat::from_rotation_z(sign * angle))
+                .unwrap();
+        }
+    }
+    let compiled = binding
+        .with_target_reference_pose(&reference)
+        .unwrap()
+        .compile_model_rotations(glam::Quat::IDENTITY)
+        .unwrap();
+    for clip in [
+        LocomotionClip::Idle,
+        LocomotionClip::Walk,
+        LocomotionClip::Sprint,
+    ] {
+        for sample in 0..=24 {
+            let phase = f64::from(sample) / 24.;
+            let expected = library.pose_phase(clip, phase).unwrap();
+            let source_pose = source
+                .sample_pose_phase(Some(library_clip_index(&source, clip)), phase)
+                .unwrap();
+            let mut actual = compiled.apply_pose(&source_pose).unwrap();
+            for (joint, j) in rig.skeleton.joints().iter().enumerate() {
+                actual.set_joint_scale(joint, j.bind_local.scale).unwrap();
+            }
+            assert_eq!(actual.local(), expected.local(), "{clip:?} phase {phase}");
+        }
+    }
+}
+
+fn library_clip_index(source: &voxy_model::ModelAsset, clip: LocomotionClip) -> usize {
+    let name = match clip {
+        LocomotionClip::Idle => "Idle_Loop",
+        LocomotionClip::Walk => "Walk_Loop",
+        LocomotionClip::Jog => "Jog_Fwd_Loop",
+        LocomotionClip::Sprint => "Sprint_Loop",
+        LocomotionClip::JumpStart => "Jump_Start",
+        LocomotionClip::JumpLoop => "Jump_Loop",
+        LocomotionClip::JumpLand => "Jump_Land",
+    };
+    source
+        .animations
+        .iter()
+        .position(|c| c.name() == name)
+        .unwrap()
+}
