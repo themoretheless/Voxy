@@ -46,6 +46,7 @@ pub mod gravity;
 pub use gravity::character as gravity_character;
 pub use gravity::field as gravity_field;
 pub use gravity::spheres as gravity_spheres;
+pub mod debris;
 pub mod mass_properties;
 pub mod moisture;
 pub mod planar;
