@@ -19,6 +19,7 @@ pub use error::DemoError;
 pub mod biomechanics_demo;
 pub mod body_parameters;
 pub mod cuda_motion;
+pub mod destruction_demo;
 pub mod diagnostic_legend;
 pub mod face_parameters;
 pub mod face_preview;
