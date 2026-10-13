@@ -27,8 +27,23 @@ fn inside(p: [f64; 3], tri: &[[f64; 3]; 3], n: [f64; 3]) -> Result<bool, &'stati
     }
     Ok(true)
 }
+/// Up to two entry times, in the order they are found; no allocation per feature.
+#[derive(Clone, Copy, Debug, Default)]
+struct Entries {
+    times: [f64; 2],
+    len: usize,
+}
+impl Entries {
+    fn push(&mut self, time: f64) {
+        self.times[self.len] = time;
+        self.len += 1;
+    }
+    fn iter(&self) -> impl Iterator<Item = f64> + '_ {
+        self.times[..self.len].iter().copied()
+    }
+}
 // Stable roots of |w+t*v|²=r², scaled before forming the discriminant.
-fn entries(w: [f64; 3], v: [f64; 3], r: f64) -> Result<Vec<f64>, &'static str> {
+fn entries(w: [f64; 3], v: [f64; 3], r: f64) -> Result<Entries, &'static str> {
     let scale = w.iter().chain(&v).fold(r, |s, x| s.max(x.abs()));
     let w = w.map(|x| x / scale);
     let v = v.map(|x| x / scale);
@@ -39,7 +54,7 @@ fn entries(w: [f64; 3], v: [f64; 3], r: f64) -> Result<Vec<f64>, &'static str> {
     if ![a, b, c].iter().all(|x| x.is_finite()) {
         return Err("sphere film sweep overflow");
     }
-    let mut result = Vec::new();
+    let mut result = Entries::default();
     if c <= 0.0 {
         result.push(0.0);
     }
@@ -178,7 +193,7 @@ impl SurfaceFilm {
             }
             for k in 0..3 {
                 let a = tri[k];
-                for time in entries(sub(start, a), direction, radius)? {
+                for time in entries(sub(start, a), direction, radius)?.iter() {
                     consider(time, a)?;
                 }
                 let edge = sub(tri[(k + 1) % 3], a);
@@ -189,7 +204,7 @@ impl SurfaceFilm {
                 let along_speed = dot(direction, unit);
                 let w = std::array::from_fn(|i| offset[i] - along * unit[i]);
                 let v = std::array::from_fn(|i| direction[i] - along_speed * unit[i]);
-                for time in entries(w, v, radius)? {
+                for time in entries(w, v, radius)?.iter() {
                     let position = along + time * along_speed;
                     if position >= 0.0 && position <= length {
                         consider(time, std::array::from_fn(|i| a[i] + position * unit[i]))?;
