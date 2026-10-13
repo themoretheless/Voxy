@@ -905,3 +905,184 @@ fn library_clip_index(source: &voxy_model::ModelAsset, clip: LocomotionClip) -> 
         .position(|c| c.name() == name)
         .unwrap()
 }
+
+/// The gait controller on the real rig: baked in-place walk/jog/sprint clips
+/// drive a speed blend space, feet are locked while planted and the actor
+/// moves, so planted ankles stay put in the world.
+#[test]
+fn gait_controller_locks_planted_feet_on_the_real_rig_across_walk_and_jog() {
+    use crate::humanoid_locomotion::{JOG_SPEED_M_S, SPRINT_SPEED_M_S, WALK_SPEED_M_S};
+    use voxy_animation::{
+        BlendSample, BlendSpace1D, FlatGround, GaitController, GaitFeet, GaitSettings, GaitSpace,
+        TwoBoneChain, ankle_positions,
+    };
+    let body = voxy_render::ObjAsset::parse(
+        include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
+        ),
+        voxy_render::ObjLimits::default(),
+    )
+    .unwrap();
+    let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+    let source = std::sync::Arc::new(voxy_model::ModelAsset::parse(
+        include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
+        &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],voxy_model::ModelLimits::default()).unwrap());
+    let library = VoxyHumanoidLocomotion::new(source, &rig.skeleton).unwrap();
+    let baked = |clip| {
+        std::sync::Arc::new(
+            library
+                .bake_in_place_clip(clip, 30., &rig.skeleton)
+                .unwrap(),
+        )
+    };
+    let space = std::sync::Arc::new(
+        BlendSpace1D::new(
+            vec![
+                BlendSample {
+                    parameter: WALK_SPEED_M_S,
+                    clip: baked(LocomotionClip::Walk),
+                },
+                BlendSample {
+                    parameter: JOG_SPEED_M_S,
+                    clip: baked(LocomotionClip::Jog),
+                },
+                BlendSample {
+                    parameter: SPRINT_SPEED_M_S,
+                    clip: baked(LocomotionClip::Sprint),
+                },
+            ],
+            &rig.skeleton,
+        )
+        .unwrap(),
+    );
+    let index = |name: &str| {
+        rig.skeleton
+            .joints()
+            .iter()
+            .position(|j| j.name.as_ref() == name)
+            .unwrap() as u16
+    };
+    let chains = ["left", "right"].map(|side| {
+        TwoBoneChain::new(
+            &rig.skeleton,
+            ["thigh", "shin", "foot"].map(|part| index(&format!("{side}_{part}"))),
+        )
+        .unwrap()
+    });
+    let feet = GaitFeet {
+        chains: chains.clone(),
+        poles: [glam::Vec3::new(0., -0.4, 1.); 2],
+        up: glam::Vec3::Y,
+    };
+    // Ground at the lowest authored ankle height of the walk cycle.
+    let mut lowest = f32::INFINITY;
+    for s in 0..=60 {
+        let pose = space
+            .evaluate(&rig.skeleton, WALK_SPEED_M_S, f64::from(s) / 60.)
+            .unwrap();
+        for a in ankle_positions(&pose, &rig.skeleton, &feet).unwrap() {
+            lowest = lowest.min(a.y);
+        }
+    }
+    let ground = FlatGround {
+        up: glam::Vec3::Y,
+        height: lowest - 0.005,
+    };
+    // Authored stride speed: the lower (stance) ankle slides backwards along
+    // -z in the in-place clip while the character travels +z.
+    let authored_speed = |parameter: f32| {
+        let samples = 120;
+        let mut travel = 0.;
+        let mut previous: Option<[glam::Vec3; 2]> = None;
+        for s in 0..=samples {
+            let phase = f64::from(s) / f64::from(samples);
+            let pose = space.evaluate(&rig.skeleton, parameter, phase).unwrap();
+            let ankles = ankle_positions(&pose, &rig.skeleton, &feet).unwrap();
+            if let Some(prev) = previous {
+                let lower = if ankles[0].y < ankles[1].y { 0 } else { 1 };
+                travel += prev[lower].z - ankles[lower].z;
+            }
+            previous = Some(ankles);
+        }
+        travel / space.cycle_duration(parameter).unwrap()
+    };
+    let walk_speed = authored_speed(WALK_SPEED_M_S);
+    let jog_speed = authored_speed(JOG_SPEED_M_S);
+    eprintln!("GAIT authored speeds: walk {walk_speed} m/s, jog {jog_speed} m/s");
+    assert!(walk_speed > 0.3 && jog_speed > walk_speed);
+    let mut gait = GaitController::new(
+        GaitSpace::forward(space),
+        feet,
+        GaitSettings {
+            contact_height: 0.06,
+            release_height: 0.08,
+            max_pelvis_offset: 0.25,
+            ..GaitSettings::default()
+        },
+    )
+    .unwrap();
+    let dt = 1. / 60.;
+    let mut actor = glam::Vec3::ZERO;
+    let mut world_locked: [Option<glam::Vec3>; 2] = [None, None];
+    let mut stance = [0usize; 2];
+    let mut worst_slide = 0f32;
+    for (tick, (parameter, speed)) in (0..360).map(|t| {
+        (
+            t,
+            if t < 180 {
+                (WALK_SPEED_M_S, walk_speed)
+            } else {
+                (JOG_SPEED_M_S, jog_speed)
+            },
+        )
+    }) {
+        let delta = glam::Vec3::new(0., 0., speed * dt);
+        actor += delta;
+        let frame = gait
+            .advance(
+                &rig.skeleton,
+                glam::Vec2::new(0., parameter),
+                delta,
+                dt,
+                &ground,
+            )
+            .unwrap();
+        assert!(
+            frame
+                .pose
+                .skin_matrices(&rig.skeleton)
+                .unwrap()
+                .iter()
+                .all(|m| m.is_finite())
+        );
+        assert!(
+            frame.legs.pelvis_offset.length() <= 0.25 + 1e-6,
+            "tick {tick}: {:?}",
+            frame.legs.pelvis_offset
+        );
+        let ankles = ankle_positions(&frame.pose, &rig.skeleton, gait_feet_of(&gait)).unwrap();
+        for foot in 0..2 {
+            if frame.contacts[foot] {
+                let world = ankles[foot] + actor;
+                if let Some(previous) = world_locked[foot] {
+                    worst_slide = worst_slide.max((world - previous).length());
+                }
+                world_locked[foot] = Some(world);
+                stance[foot] += 1;
+            } else {
+                world_locked[foot] = None;
+            }
+        }
+    }
+    eprintln!("GAIT real rig: stance ticks {stance:?}, worst planted slide {worst_slide:e} m");
+    assert!(stance.iter().all(|&s| s > 30), "{stance:?}");
+    assert!(
+        stance.iter().all(|&s| s < 330),
+        "feet never swing: {stance:?}"
+    );
+    assert!(worst_slide < 2e-3, "planted foot slid {worst_slide}");
+}
+
+fn gait_feet_of(gait: &voxy_animation::GaitController) -> &voxy_animation::GaitFeet {
+    gait.feet()
+}
