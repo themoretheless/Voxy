@@ -26,7 +26,18 @@ probe crate does that). After the fix the autopilot passes.
 | callgrind, whole process | app code 3.3% of instructions; llvmpipe + LLVM JIT + JIT'd code 95% |
 | strace `-c`, whole process | 97% of syscall time in `futex` (main thread waiting on driver threads) |
 
-PROBES
+Probes of the driver bound:
+
+| probe | frames per 10 s |
+| --- | ---: |
+| 160×90 window | 814 |
+| 640×360, `LP_NUM_THREADS=1` | 437 |
+| 640×360, `LP_NUM_THREADS=2` | 743 |
+| 640×360, four driver threads | 811 to 882 |
+
+The count does not depend on resolution but does scale with the driver's thread count,
+so the per-frame cost is the software driver's fixed per-pass work, not pixels and not
+the app.
 
 The frame rate is set by the software driver, not by the app: the app's own code is a few
 percent of the instructions, resolution barely matters, and presentation pacing moves the
