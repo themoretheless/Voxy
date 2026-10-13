@@ -72,17 +72,31 @@ flowchart BT
     voxy_app --> voxy_assets
     voxy_app --> voxy_core
     voxy_app --> voxy_cuda
+    voxy_app --> voxy_demos
     voxy_app --> voxy_editor
     voxy_app --> voxy_gpu
     voxy_app --> voxy_input
+    voxy_app --> voxy_model
     voxy_app --> voxy_render
     voxy_app --> voxy_runtime
     voxy_app --> voxy_rush
     voxy_app --> voxy_scene
+    voxy_app --> voxy_shell
     voxy_app --> voxy_text
     voxy_app --> voxy_world
+    voxy_audio -.-> voxy_assets
+    voxy_audio -.-> voxy_scene
     voxy_audio_device --> voxy_audio
     voxy_cuda --> physics
+    voxy_demos --> physics
+    voxy_demos --> physics_voxel
+    voxy_demos --> voxy_animation
+    voxy_demos --> voxy_core
+    voxy_demos --> voxy_cuda
+    voxy_demos --> voxy_gpu
+    voxy_demos --> voxy_model
+    voxy_demos --> voxy_render
+    voxy_demos --> voxy_world
     voxy_editor --> physics
     voxy_editor --> voxy_animation
     voxy_editor --> voxy_assets
@@ -90,6 +104,7 @@ flowchart BT
     voxy_editor --> voxy_audio_device
     voxy_editor --> voxy_gameplay
     voxy_editor --> voxy_input
+    voxy_editor --> voxy_model
     voxy_editor --> voxy_render
     voxy_editor --> voxy_scene
     voxy_editor --> voxy_text
@@ -102,23 +117,39 @@ flowchart BT
     voxy_gameplay --> voxy_scene
     voxy_gameplay --> voxy_text
     voxy_gameplay --> voxy_ui
+    voxy_gameplay -.-> voxy_audio_device
     voxy_gpu --> physics
     voxy_gpu --> physics_voxel
     voxy_gpu --> voxy_core
     voxy_gpu --> voxy_cuda
-    voxy_gpu -.-> voxy_render
+    voxy_gpu --> voxy_gpu_core
     voxy_gpu --> voxy_world
+    voxy_gpu -.-> voxy_runtime
     voxy_lighting --> voxy_core
     voxy_lighting --> voxy_world
     voxy_mesher --> voxy_core
     voxy_mesher --> voxy_world
-    voxy_mobile -.-> voxy_app
-    voxy_ray_probe -.-> voxy_app
+    voxy_mobile --> voxy_shell
+    voxy_model --> voxy_animation
+    voxy_model --> voxy_render
+    voxy_model -.-> voxy_gpu_core
+    voxy_ray_probe --> voxy_demos
     voxy_ray_probe --> voxy_render
-    voxy_render -.-> voxy_animation
+    voxy_ray_probe -.-> voxy_runtime
+    voxy_ray_probe -.-> voxy_ui
+    voxy_ray_probe -.-> voxy_ui_winit
     voxy_render --> voxy_core
+    voxy_render --> voxy_gpu_core
     voxy_render --> voxy_lighting
     voxy_render --> voxy_mesher
+    voxy_render -.-> physics
+    voxy_render -.-> physics_voxel
+    voxy_render -.-> voxy_assets
+    voxy_render -.-> voxy_scene
+    voxy_render -.-> voxy_text
+    voxy_render -.-> voxy_ui
+    voxy_render -.-> voxy_ui_winit
+    voxy_render -.-> voxy_world
     voxy_runtime --> physics_voxel
     voxy_runtime --> voxy_core
     voxy_runtime --> voxy_lighting
@@ -131,11 +162,24 @@ flowchart BT
     voxy_rush --> voxy_scene
     voxy_scene --> voxy_core
     voxy_scene --> voxy_time
+    voxy_scene -.-> voxy_assets
+    voxy_scene -.-> voxy_input
+    voxy_scene -.-> voxy_navigation
+    voxy_shell --> physics
+    voxy_shell --> voxy_demos
+    voxy_shell --> voxy_input
+    voxy_shell --> voxy_render
+    voxy_shell --> voxy_runtime
+    voxy_shell --> voxy_rush
+    voxy_shell --> voxy_scene
+    voxy_shell --> voxy_text
     voxy_storage --> voxy_core
     voxy_storage --> voxy_world
     voxy_streamline --> voxy_render
     voxy_ui_winit --> voxy_ui
     voxy_vulkan --> voxy_cuda
+    voxy_vulkan -.-> voxy_gpu
+    voxy_vulkan -.-> voxy_render
     voxy_web --> physics
     voxy_web --> physics_voxel
     voxy_web --> voxy_core

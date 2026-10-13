@@ -3,6 +3,8 @@
 //! Characters collide with active static boxes, not with each other. Physics owns
 //! translations during ticks. A character may rotate; its scale and ancestor
 //! rotation/scale must be identity. Static boxes support affine transforms.
+mod error;
+pub use error::GameplayError;
 mod rigid_frame;
 pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
 mod point_loads;
@@ -196,7 +198,7 @@ pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), Docum
 /// Physics-specific shape/ownership checks remain with the physics owner.
 /// # Errors
 /// Rejects invalid descriptor values or extraction budgets without changing scene.
-pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), String> {
+pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), GameplayError> {
     if scene.components::<RigidPointLoads>().next().is_some() {
         return Err("rigid point loads require a point-load contact runtime".into());
     }
@@ -224,12 +226,15 @@ pub fn validate_game_descriptors_with_liquid_runtime(
     scene: &SceneGraph,
     capacity: usize,
     runtime: &SceneLiquidRuntime,
-) -> Result<(), String> {
+) -> Result<(), GameplayError> {
     runtime.validate_bindings(scene)?;
     validate_common_game_descriptors(scene, capacity)
 }
 
-fn validate_common_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), String> {
+fn validate_common_game_descriptors(
+    scene: &SceneGraph,
+    capacity: usize,
+) -> Result<(), GameplayError> {
     validate_behavior_descriptors(scene)?;
     extract_scene_audio(scene, capacity)?;
     extract_scene_ui(scene, [1.0, 1.0], capacity)?;

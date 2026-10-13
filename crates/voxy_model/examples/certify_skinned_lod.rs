@@ -1,10 +1,8 @@
 //! Offline shared-vertex skeletal GLB LOD certification.
 //! Usage: certify_skinned_lod BASE.glb VARIANT_INDICES.txt OUTPUT.lod [depth]
 use std::{error::Error, path::Path};
-use voxy_render::{
-    CertifiedLodSubdivisionVariant, LodArchiveLimits, LodSurface, ModelAsset, ModelGeometry,
-    ModelLimits,
-};
+use voxy_model::{ModelAsset, ModelGeometry, ModelLimits};
+use voxy_render::{CertifiedLodSubdivisionVariant, LodArchiveLimits, LodSurface};
 fn read(path: &Path, cap: u64) -> Result<Vec<u8>, Box<dyn Error>> {
     use std::io::Read;
     let mut bytes = Vec::new();

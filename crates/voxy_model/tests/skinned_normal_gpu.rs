@@ -1,4 +1,7 @@
-use super::*;
+use glam::Mat4;
+use voxy_render::test_support::*;
+use voxy_render::*;
+use wgpu::util::DeviceExt;
 
 #[test]
 #[ignore = "requires GPU; production vertex-shader normal transport readback"]
@@ -54,7 +57,7 @@ fn gpu_legacy_normal_transport_matches_inverse_transpose() {
     // Compile the actual production function, keeping all vertex/fragment source.
     let source = format!(
         "{}\n{}",
-        include_str!("skinned.wgsl"),
+        include_str!("../../voxy_render/src/skinned.wgsl"),
         r"
 struct Probe { world: mat4x4<f32>, normal: vec4<f32> }
 @group(0) @binding(1) var<storage, read> probes: array<Probe>;
@@ -189,7 +192,7 @@ fn legacy_render_admission_rejects_collapsed_blends_and_keeps_history() {
     );
     let huge = Mat4::from_scale(glam::Vec3::splat(1e30));
     assert!(mesh.validate_render_pose(&[huge; 2], huge).is_err());
-    let mut history = crate::SkinnedMotionHistory::new(mesh.clone());
+    let mut history = voxy_render::SkinnedMotionHistory::new(mesh.clone());
     history.presented(&good, Mat4::IDENTITY).unwrap();
     assert!(
         history
@@ -223,21 +226,22 @@ fn profile_legacy_render_admission_reference_rigs() {
     for (label, bytes) in [
         (
             "Fox",
-            include_bytes!("../examples/assets/fox/Fox.glb").as_slice(),
+            include_bytes!("../../voxy_render/examples/assets/fox/Fox.glb").as_slice(),
         ),
         (
             "RiggedFigure",
-            include_bytes!("../examples/assets/rigged-figure/RiggedFigure.glb").as_slice(),
+            include_bytes!("../../voxy_render/examples/assets/rigged-figure/RiggedFigure.glb")
+                .as_slice(),
         ),
     ] {
         let gltf = gltf::Gltf::from_slice(bytes).unwrap();
-        let asset = crate::ModelAsset::parse(
+        let asset = voxy_model::ModelAsset::parse(
             bytes,
             &[gltf.blob.as_deref().unwrap()],
-            crate::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap();
-        let crate::ModelGeometry::Skinned(mesh) = &asset.primitives[0].geometry else {
+        let voxy_model::ModelGeometry::Skinned(mesh) = &asset.primitives[0].geometry else {
             panic!("skinned fixture required")
         };
         let model = Mat4::from_scale(glam::Vec3::new(0.8, 1.2, 0.7));

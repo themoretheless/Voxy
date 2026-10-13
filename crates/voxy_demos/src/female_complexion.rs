@@ -1,5 +1,6 @@
 //! Deterministic facial tint atlas and small bind-space blemish relief.
 //! Pore micro-shading is baked into the tint, not a physical skin BRDF.
+use crate::DemoError;
 use glam::{Vec2, Vec3};
 use std::sync::OnceLock;
 
@@ -13,7 +14,7 @@ impl AtlasUpdate {
         &mut self,
         applied: &[f32],
         parameters: &crate::face_parameters::FaceParameters,
-    ) -> Result<Option<(Vec<f32>, Vec<u8>)>, String> {
+    ) -> Result<Option<(Vec<f32>, Vec<u8>)>, DemoError> {
         let latest = parameters.material_signature();
         if self.job.as_ref().is_some_and(|(_, job)| job.is_finished()) {
             let (signature, job) = self.job.take().unwrap();

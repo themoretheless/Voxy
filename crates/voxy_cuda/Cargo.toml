@@ -11,6 +11,7 @@ cuda = ["dep:cudarc"]
 
 [dependencies]
 physics = { path = "../physics" }
+voxy_gpu_core = { path = "../voxy_gpu_core" }
 cudarc = { version = "0.19.9", optional = true, default-features = false, features = ["std", "driver", "nvrtc", "dynamic-loading", "cuda-12000"] }
 
 [lints]

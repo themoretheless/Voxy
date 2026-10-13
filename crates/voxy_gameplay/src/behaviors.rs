@@ -1,4 +1,5 @@
 //! Durable behavior configuration binds to the existing simulation lifecycle.
+use crate::GameplayError;
 use crate::{BoxCollider, CharacterBody};
 use glam::{Quat, Vec3};
 use serde::{Deserialize, Serialize};
@@ -76,7 +77,7 @@ pub struct AngularMotionBatch {
 impl AngularMotionBatch {
     /// # Errors
     /// Rejects invalid/physics-owned motion and capture capacity overflow.
-    pub fn new(scene: &SceneGraph, capacity: usize) -> Result<Self, String> {
+    pub fn new(scene: &SceneGraph, capacity: usize) -> Result<Self, GameplayError> {
         validate_behavior_descriptors(scene)?;
         let mut motions = Vec::new();
         for (owner, motion) in scene.components::<AngularMotion>() {
@@ -97,7 +98,7 @@ impl AngularMotionBatch {
     /// Reconciles runtime component changes before a fixed step.
     /// # Errors
     /// Invalid descriptors, foreign scenes and capacity overflow retain prior admission.
-    pub fn reconcile(&mut self, scene: &SceneGraph) -> Result<(), String> {
+    pub fn reconcile(&mut self, scene: &SceneGraph) -> Result<(), GameplayError> {
         if scene.identity() != self.scene {
             return Err("foreign angular motion scene".into());
         }
@@ -116,7 +117,7 @@ impl AngularMotionBatch {
     /// Rejects foreign scenes, invalid ticks or invalid transform publication.
     /// Deleted owners are skipped; inactive owners retain their captured motion.
     #[allow(clippy::cast_possible_truncation)]
-    pub fn fixed_step(&mut self, scene: &mut SceneGraph, delta: f64) -> Result<(), String> {
+    pub fn fixed_step(&mut self, scene: &mut SceneGraph, delta: f64) -> Result<(), GameplayError> {
         if scene.identity() != self.scene || !delta.is_finite() || delta <= 0.0 || delta > 0.1 {
             return Err("invalid angular motion scene/tick".into());
         }
@@ -124,14 +125,11 @@ impl AngularMotionBatch {
         self.edits.clear();
         for (owner, motion) in &self.motions {
             if !scene.active_in_hierarchy(*owner).unwrap_or(false)
-                || scene
-                    .component::<CharacterBody>(*owner)
-                    .map_err(|e| e.to_string())?
-                    .is_some()
+                || scene.component::<CharacterBody>(*owner)?.is_some()
             {
                 continue;
             }
-            let mut local = scene.local(*owner).map_err(|e| e.to_string())?;
+            let mut local = scene.local(*owner)?;
             let mut angle = (motion.radians_per_second * delta).rem_euclid(std::f64::consts::TAU);
             if angle > std::f64::consts::PI {
                 angle -= std::f64::consts::TAU;
@@ -142,7 +140,7 @@ impl AngularMotionBatch {
                     .normalize();
             self.edits.push((*owner, local));
         }
-        scene.set_locals(&self.edits).map_err(|e| e.to_string())
+        scene.set_locals(&self.edits).map_err(GameplayError::from)
     }
     /// # Errors
     /// Rejects missing scene/domain writes before preparing any edits.
@@ -150,11 +148,9 @@ impl AngularMotionBatch {
         &mut self,
         mut access: voxy_scene::SceneSystemAccess<'_>,
         delta: f64,
-    ) -> Result<(), String> {
-        access
-            .require_write("angular.motion")
-            .map_err(|e| e.to_string())?;
-        self.fixed_step(access.write().map_err(|e| e.to_string())?, delta)
+    ) -> Result<(), GameplayError> {
+        access.require_write("angular.motion")?;
+        self.fixed_step(access.write()?, delta)
     }
 }
 /// # Errors
@@ -189,7 +185,7 @@ pub fn gameplay_schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_sce
 }
 /// # Errors
 /// Rejects malformed configurations and rotation of physics-owned hierarchies.
-pub fn validate_behavior_descriptors(scene: &SceneGraph) -> Result<(), String> {
+pub fn validate_behavior_descriptors(scene: &SceneGraph) -> Result<(), GameplayError> {
     for (_, motion) in scene.components::<AngularMotion>() {
         if !motion.valid() {
             return Err("invalid game.angular-motion.v1 axis/rate".into());
@@ -203,25 +199,15 @@ pub fn validate_behavior_descriptors(scene: &SceneGraph) -> Result<(), String> {
         let mut current = Some(node);
         while let Some(owner) = current {
             let character_self = owner == node
-                && scene
-                    .component::<CharacterBody>(node)
-                    .map_err(|e| e.to_string())?
-                    .is_some()
-                && scene
-                    .component::<BoxCollider>(node)
-                    .map_err(|e| e.to_string())?
-                    .is_none();
-            if !character_self
-                && scene
-                    .component::<AngularMotion>(owner)
-                    .map_err(|error| error.to_string())?
-                    .is_some()
-            {
+                && scene.component::<CharacterBody>(node)?.is_some()
+                && scene.component::<BoxCollider>(node)?.is_none();
+            if !character_self && scene.component::<AngularMotion>(owner)?.is_some() {
                 return Err(format!(
                     "game.angular-motion.v1 rotates physics-owned hierarchy at {owner:?}"
-                ));
+                )
+                .into());
             }
-            current = scene.parent(owner).map_err(|error| error.to_string())?;
+            current = scene.parent(owner)?;
         }
     }
     Ok(())
@@ -232,16 +218,14 @@ pub fn validate_behavior_descriptors(scene: &SceneGraph) -> Result<(), String> {
 pub fn bind_authored_behaviors(
     scene: &mut SceneGraph,
     simulation: &mut SceneSimulation,
-) -> Result<(), String> {
+) -> Result<(), GameplayError> {
     validate_behavior_descriptors(scene)?;
     let motions: Vec<_> = scene
         .components::<AngularMotion>()
         .map(|(node, motion)| (node, *motion))
         .collect();
     for (node, motion) in motions {
-        simulation
-            .attach(scene, node, motion)
-            .map_err(|error| error.to_string())?;
+        simulation.attach(scene, node, motion)?;
     }
     Ok(())
 }
@@ -489,6 +473,7 @@ mod tests {
         assert!(
             validate_behavior_descriptors(&scene)
                 .unwrap_err()
+                .to_string()
                 .contains("physics-owned")
         );
         simulation.stop(&mut scene).unwrap();

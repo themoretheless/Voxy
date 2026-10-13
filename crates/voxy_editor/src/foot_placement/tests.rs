@@ -28,7 +28,7 @@ fn model_bytes() -> Vec<u8> {
     .unwrap()
 }
 fn model() -> Arc<ModelAsset> {
-    Arc::new(ModelAsset::parse(&model_bytes(), &[], voxy_render::ModelLimits::default()).unwrap())
+    Arc::new(ModelAsset::parse(&model_bytes(), &[], voxy_model::ModelLimits::default()).unwrap())
 }
 fn settings() -> ModelFootPlacement {
     ModelFootPlacement {
@@ -958,7 +958,7 @@ fn contact_key_budget_is_shared_between_named_clips_and_legacy_curve() {
         .insert("jump".into(), keys(2049));
     assert_eq!(
         authored.validate().unwrap_err(),
-        "aggregate foot contact key budget exceeded"
+        "aggregate foot contact key budget exceeded".into()
     );
     authored.feet[0]
         .clip_contact_curves
@@ -966,7 +966,7 @@ fn contact_key_budget_is_shared_between_named_clips_and_legacy_curve() {
     authored.feet[0].contact_curve = keys(2);
     assert_eq!(
         authored.validate().unwrap_err(),
-        "aggregate foot contact key budget exceeded"
+        "aggregate foot contact key budget exceeded".into()
     );
     authored.feet[0]
         .clip_contact_curves
@@ -1837,6 +1837,7 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
         named
             .resolve_clip(&duplicate)
             .unwrap_err()
+            .to_string()
             .contains("ambiguous")
     );
     let accepted = runtime.frame(owner, &model).unwrap();
@@ -1846,6 +1847,7 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
         runtime
             .prepare(&scene, &models, 1. / 60.)
             .unwrap_err()
+            .to_string()
             .contains("ambiguous")
     );
     assert_eq!(runtime.serial(), serial);
@@ -1857,7 +1859,13 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
         clip_name: "missing".into(),
         ..Default::default()
     };
-    assert!(absent.resolve_clip(&model).unwrap_err().contains("missing"));
+    assert!(
+        absent
+            .resolve_clip(&model)
+            .unwrap_err()
+            .to_string()
+            .contains("missing")
+    );
 }
 
 #[test]
@@ -1877,7 +1885,7 @@ fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry
     }
     .to_vec()
     .unwrap();
-    let mut source = ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+    let mut source = ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap();
     for (name, speed) in [("walk", 0.2), ("run", 0.4)] {
         let mut tracks =
             vec![voxy_animation::JointTrack::default(); source.skeleton.joints().len()];

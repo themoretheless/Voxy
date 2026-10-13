@@ -85,7 +85,8 @@ impl std::error::Error for SceneShaderError {}
 use glam::Mat4;
 
 mod geometry;
-pub(crate) use geometry::{NormalCache, smooth_normals};
+#[doc(hidden)]
+pub use geometry::{NormalCache, smooth_normals};
 pub use geometry::{SceneError, SceneMesh, SceneVertex};
 
 fn scene_memory_error(error: crate::ComputeError) -> SceneError {
@@ -122,13 +123,18 @@ pub enum SceneDepthMode {
 #[derive(Debug)]
 pub struct SceneGeometry {
     device: wgpu::Device,
-    vertices: std::sync::Arc<crate::ComputeStorage>,
-    normals: std::sync::Arc<crate::ComputeStorage>,
+    #[doc(hidden)]
+    pub vertices: std::sync::Arc<crate::ComputeStorage>,
+    #[doc(hidden)]
+    pub normals: std::sync::Arc<crate::ComputeStorage>,
     normal_cache: NormalCache,
-    material_coordinates: std::sync::Arc<crate::ComputeStorage>,
+    #[doc(hidden)]
+    pub material_coordinates: std::sync::Arc<crate::ComputeStorage>,
     coordinate_cache: Vec<[f32; 3]>,
-    material_parameters: std::sync::Arc<crate::ComputeStorage>,
-    indices: std::sync::Arc<crate::ComputeStorage>,
+    #[doc(hidden)]
+    pub material_parameters: std::sync::Arc<crate::ComputeStorage>,
+    #[doc(hidden)]
+    pub indices: std::sync::Arc<crate::ComputeStorage>,
     index_count: u32,
     vertex_capacity: usize,
     index_capacity: usize,

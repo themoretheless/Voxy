@@ -9,6 +9,8 @@ mod app {
     mod residency;
     mod viewport;
 }
+mod error;
+pub use error::EditorError;
 mod animation_preview;
 mod audio_play;
 mod audio_reload;
@@ -202,7 +204,7 @@ struct ModelGraphics {
     parts: BTreeMap<u32, PartGraphics>,
     animated_textures: Vec<Option<Arc<SceneTexture>>>,
     animated_preview: Vec<SceneGeometry>,
-    animated_model: Option<Arc<voxy_render::ModelAsset>>,
+    animated_model: Option<Arc<voxy_model::ModelAsset>>,
     animated_lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
     _images: Vec<Arc<SceneTexture>>,
 }
@@ -440,7 +442,7 @@ impl App {
             move |asset, provider, inputs| {
                 let source_path = match &recipe {
                     InputRecipe::Direct => {
-                        SourcePath::new(asset.0.clone()).map_err(|error| error.to_string())?
+                        SourcePath::new(asset.0.clone()).map_err(|e| e.to_string())?
                     }
                     InputRecipe::Manifest(manifest) => {
                         let snapshot = inputs
@@ -458,7 +460,7 @@ impl App {
                             .ok_or("logical resource not found in manifest")?
                     }
                 };
-                import::load(&source_path, provider, inputs)
+                import::load(&source_path, provider, inputs).map_err(|e| e.to_string())
             },
         )?;
         let mut scene = SceneGraph::new(scene_limits::OBJECTS);

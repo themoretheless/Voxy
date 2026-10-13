@@ -10,7 +10,7 @@ fn fixture() -> (
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -110,7 +110,7 @@ fn motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors() {
             ModelAsset::parse(
                 &serde_json::to_vec(doc).unwrap(),
                 &[&bytes],
-                voxy_render::ModelLimits::default(),
+                voxy_model::ModelLimits::default(),
             )
             .unwrap(),
         )
@@ -190,6 +190,7 @@ fn motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors() {
         runtime
             .prepare(&scene, &models, 1. / 60.)
             .unwrap_err()
+            .to_string()
             .contains("parent")
     );
 }
@@ -403,6 +404,7 @@ fn hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic() {
             runtime
                 .prepare(&scene, &models, 1. / 60.)
                 .unwrap_err()
+                .to_string()
                 .contains("capacity")
         );
         assert_eq!(runtime.serial(), 1);
@@ -684,7 +686,7 @@ fn clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks() {
         .unwrap();
     assert_eq!(
         runtime.prepare(&scene, &models, 0.1).err().unwrap(),
-        "foot placement requires a CharacterBody on the model owner"
+        "foot placement requires a CharacterBody on the model owner".into()
     );
     assert!(Arc::ptr_eq(&held, &runtime.frame(owner, &asset).unwrap()));
     scene
@@ -699,7 +701,7 @@ fn clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks() {
         .unwrap();
     assert_eq!(
         runtime.prepare(&scene, &models, 0.1).err().unwrap(),
-        "foot placement requires a CharacterBody on the model owner"
+        "foot placement requires a CharacterBody on the model owner".into()
     );
     assert!(Arc::ptr_eq(&held, &runtime.frame(owner, &asset).unwrap()));
     scene
@@ -745,7 +747,7 @@ fn retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_fram
     .to_vec()
     .unwrap();
     let target =
-        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
     let source_id = AssetId("source".into());
     let models = BTreeMap::from([
         (AssetId("rig".into()), target.clone()),
@@ -850,7 +852,7 @@ fn partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomi
     }
     .to_vec()
     .unwrap();
-    let mut source = ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+    let mut source = ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap();
     let target = Arc::new(source.clone());
     let mut tracks = vec![voxy_animation::JointTrack::default(); source.skeleton.joints().len()];
     tracks[1].translations = vec![
@@ -1034,7 +1036,7 @@ fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
             ModelAsset::parse(
                 include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
                 &[],
-                voxy_render::ModelLimits::default(),
+                voxy_model::ModelLimits::default(),
             )
             .unwrap(),
         );
@@ -1251,7 +1253,7 @@ fn root_reference_initialization_rejects_stale_model_invalid_pose_and_reset() {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -1359,7 +1361,7 @@ fn root_reference_lifetime_tracks_asset_and_extraction_identity() {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );
@@ -1601,8 +1603,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
         }
         .to_vec()
         .unwrap();
-        let mut asset =
-            ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+        let mut asset = ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap();
         let mut tracks = vec![JointTrack::default(); asset.skeleton.joints().len()];
         tracks[0].translations = vec![
             Vec3Key {
@@ -2156,7 +2157,7 @@ fn root_parent_capture_encloses_nested_reflections_and_rejects_moving_frames() {
         }
         .to_vec()
         .unwrap();
-        ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap()
+        ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap()
     };
     let model = parse(&json);
     let root = model.resolve_joint_name("root").unwrap();
@@ -2233,7 +2234,7 @@ fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
     .to_vec()
     .unwrap();
     let target =
-        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
     let models = BTreeMap::from([
         (AssetId("rig".into()), target.clone()),
         (AssetId("source".into()), source),
@@ -2286,7 +2287,10 @@ fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
         &[(owner, Vec3::X * 0.25)],
         &[],
         |preview, budget| {
-            let candidate = runtime.clone().prepare_accepted_pose(preview, budget)?;
+            let candidate = runtime
+                .clone()
+                .prepare_accepted_pose(preview, budget)
+                .map_err(|e| e.to_string())?;
             assert!(candidate.owners[&owner].root_reference.is_some());
             Err::<AnimationRuntime, String>("late retarget preparation rejection".into())
         },
@@ -2365,7 +2369,7 @@ fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
     .to_vec()
     .unwrap();
     let moving_source =
-        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_model::ModelLimits::default()).unwrap());
     let mut changed_models = models.clone();
     changed_models.insert(AssetId("source".into()), moving_source);
     let profile = scene
@@ -2428,7 +2432,10 @@ fn first_accepted_pose_bootstraps_root_reference_atomically_without_feet() {
         &[(owner, Vec3::X * 0.25)],
         &[],
         |preview, budget| {
-            let candidate = runtime.clone().prepare_accepted_pose(preview, budget)?;
+            let candidate = runtime
+                .clone()
+                .prepare_accepted_pose(preview, budget)
+                .map_err(|e| e.to_string())?;
             assert!(candidate.owners[&owner].root_reference.is_some());
             Err::<AnimationRuntime, String>("reject after root initialization".into())
         },
@@ -3031,7 +3038,7 @@ fn authored_events_round_trip_rebind_and_remove_without_replaying() {
         ModelAsset::parse(
             include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
             &[],
-            voxy_render::ModelLimits::default(),
+            voxy_model::ModelLimits::default(),
         )
         .unwrap(),
     );

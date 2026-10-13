@@ -893,9 +893,10 @@ impl HairLinearSolver for GpuHairLinearSolver {
                     let capture = serde_json::json!({"scope":"Rejected original f64 response batch; no trajectory qualification",
                         "response_call":self.response_calls,"error":error.to_string(),"requests":requests});
                     match serde_json::to_vec(&capture)
-                        .map_err(|e| e.to_string())
-                        .and_then(|bytes| std::fs::write(&path, bytes).map_err(|e| e.to_string()))
-                    {
+                        .map_err(crate::DemoError::from)
+                        .and_then(|bytes| {
+                            std::fs::write(&path, bytes).map_err(crate::DemoError::from)
+                        }) {
                         Ok(()) => eprintln!(
                             "HAIR RESPONSE FAILURE EXPORT {:?} call={}",
                             path, self.response_calls

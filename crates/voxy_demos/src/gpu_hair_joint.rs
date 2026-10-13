@@ -1,5 +1,6 @@
 //! Resident GPU equality backend under physics-owned active-set selection.
 use super::*;
+use crate::DemoError;
 use voxy_render::{
     JOINT_CONTACT_EQUALITY_SHADER, JOINT_CONTACT_QR_SHADER, ResidentContactEqualityInput,
 };
@@ -552,10 +553,13 @@ fn run_equality_tasks(
                 Err(error.to_string())
             } else {
                 read.try_read()
-                    .map_err(|error| error.to_string())
+                    .map_err(DemoError::from)
                     .and_then(|bytes| {
-                        bytes.ok_or_else(|| "pending GPU joint contact readback".to_owned())
+                        bytes
+                            .ok_or_else(|| "pending GPU joint contact readback".to_owned())
+                            .map_err(Into::into)
                     })
+                    .map_err(|e| e.to_string())
             };
             for (i, _, target, size) in dispatches {
                 let result = match &bytes {

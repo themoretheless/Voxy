@@ -1,4 +1,5 @@
 //! Unicode run preparation reuses the existing shaper/rasterizer and input owner.
+use crate::GameplayError;
 use crate::{SceneUiSnapshot, UiText};
 use std::{collections::BTreeMap, sync::Arc};
 use voxy_assets::{AssetId, ImportInputs};
@@ -12,7 +13,7 @@ pub fn decode_ui_font_observed(
     inputs: &mut ImportInputs,
     source: AssetId,
     mut provider: impl FnMut(&AssetId, usize) -> Result<Vec<u8>, String>,
-) -> Result<TextFont, String> {
+) -> Result<TextFont, GameplayError> {
     let observed = inputs
         .read(source, |id, limit| provider(id, limit.min(4 * 1024 * 1024)))
         .map_err(|error| format!("UI font input: {error:?}"))?;
@@ -25,6 +26,7 @@ pub fn decode_ui_font_observed(
         },
     )
     .map_err(|error| format!("UI font: {error}"))
+    .map_err(Into::into)
 }
 #[derive(Debug)]
 pub struct PreparedUiText {
@@ -43,7 +45,7 @@ pub struct PreparedUiText {
 pub fn prepare_ui_text<'a>(
     snapshot: &SceneUiSnapshot,
     mut font: impl FnMut(&str) -> Option<&'a TextFont>,
-) -> Result<Vec<PreparedUiText>, String> {
+) -> Result<Vec<PreparedUiText>, GameplayError> {
     if snapshot.elements.len() > 128 {
         return Err("UI text element budget".into());
     }
