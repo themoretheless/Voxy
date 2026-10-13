@@ -3049,3 +3049,6 @@ mod mesh_motion;
 #[cfg(test)]
 #[path = "substep_clock_tests.rs"]
 mod substep_clock_tests;
+
+mod contact_expanded;
+pub use contact_expanded::HairResponseCoefficient;
