@@ -54,6 +54,7 @@ impl SurfaceRigidSkinning {
             weights.len() as u32,
             joints,
             trailing.unwrap_or(u32::MAX),
+            0,0,0,0,
         ];
         let padding = [SurfaceRigidSkinWeight {
             joints: [0; 4],
@@ -76,7 +77,7 @@ impl SurfaceRigidSkinning {
                 size: data.len() as u64,
                 contents: Some(data),
                 usage: if i == 0 {
-                    wgpu::BufferUsages::UNIFORM
+                    wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST
                 } else {
                     wgpu::BufferUsages::STORAGE
                 },
@@ -92,7 +93,7 @@ impl SurfaceRigidSkinning {
             label: "rigid posed surface",
             size: count as u64 * 36,
             contents: None,
-            usage: wgpu::BufferUsages::STORAGE,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
         });
         if descriptors.iter().any(|d| {
             d.size > limits.max_buffer_size
@@ -152,7 +153,17 @@ impl SurfaceRigidSkinning {
             initialized: std::sync::atomic::AtomicBool::new(false),
         })
     }
+    pub fn replace_source_bound(&mut self, maximum:f64) {
+        self.maximum_position=maximum;
+        self.initialized.store(false,std::sync::atomic::Ordering::Release);
+    }
     pub fn upload(&self, queue: &wgpu::Queue, matrices: &[Mat4]) -> Result<(), SceneError> {
+        self.upload_with_offset(queue,matrices,glam::Vec3::ZERO)
+    }
+    pub fn upload_with_offset(&self, queue: &wgpu::Queue, matrices: &[Mat4], offset: glam::Vec3) -> Result<(), SceneError> {
+        if !offset.is_finite() || offset.abs().max_element() as f64 > f32::MAX as f64 * 0.125 {
+            return Err(SceneError::InvalidTransform);
+        }
         if matrices.len() != self.joints as usize {
             return Err(SceneError::InvalidTransform);
         }
@@ -172,12 +183,15 @@ impl SurfaceRigidSkinning {
             {
                 return Err(SceneError::InvalidTransform);
             }
+            // Match the native rigid palette constructor before forming the dual part.
+            let rotation = rotation.normalize();
             let dual =
                 Quat::from_xyzw(translation.x, translation.y, translation.z, 0.) * rotation * 0.5;
             values.push(rotation.to_array());
             values.push(dual.to_array());
         }
         queue.write_buffer(&self.palette, 0, bytemuck::cast_slice(&values));
+        queue.write_buffer(&self._inputs[0],16,bytemuck::cast_slice(&offset.extend(0.).to_array()));
         self.initialized
             .store(true, std::sync::atomic::Ordering::Release);
         Ok(())

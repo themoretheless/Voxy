@@ -5,6 +5,7 @@ mod direct;
 mod math;
 mod contact_replay;
 mod contact_model;
+mod ordered_queries;
 pub use contact::{TriangleMotion,sweep_capsule_triangle,TriangleMesh,CapsuleMotion,CapsuleSweepOptions,CapsuleSweep,sweep_capsules,swept_capsule_pairs,swept_capsule_contacts};
 use math::*;
 
@@ -442,6 +443,7 @@ pub struct HairSystem {
     /// Independent guide solves run before deterministic shared contacts.
     pub workers: usize,
     pub substeps: usize,
+    last_step_substeps: usize,
     pub contact_radius: f64,
     pub self_collision: bool,
     /// Experimental joint normal-velocity projection. Full-model stretch and
@@ -481,6 +483,7 @@ impl HairSystem {
             iterations: 16,
             workers: 1,
             substeps: 4,
+            last_step_substeps: 0,
             contact_radius: 40e-6,
             self_collision: true,
             joint_contact_velocities: false,
@@ -524,6 +527,8 @@ impl HairSystem {
         system.profiling = self.profiling;
         Ok(system)
     }
+    /// Effective substeps of the last admitted step, including contact retries.
+    pub fn last_step_substeps(&self) -> usize {self.last_step_substeps}
     pub fn rods(&self) -> &[HairRod] {
         &self.rods
     }
@@ -574,11 +579,19 @@ impl HairSystem {
                             let h=dt/substeps as f64;
                             // Completed rods retain the LAST substep's old_x.
                             // Match its collider interval, not the full frame.
-                            let sampled=if staged.continuous_mesh_admission {
+                            let sampled=if staged.sample_collider_motion || staged.continuous_mesh_admission {
                                 let start=(substeps-1) as f64/substeps as f64;
                                 Some(meshes.iter().map(|mesh|mesh.motion_interval(start,1.)).collect::<Result<Vec<_>,_>>().map_err(str::to_owned)?)
                             } else {None};
                             let capture_meshes=sampled.as_deref().unwrap_or(meshes);
+                            // Captures rebuild the spatial hierarchy on load.
+                            // Cached nearest triangle indices and clearance bounds
+                            // belong to the live sampled collider; do not use them
+                            // to certify the serialized geometry's contact merit.
+                            for rod in &mut staged.rods {
+                                rod.nearest_cache.clear();
+                                rod.clearance_cache.clear();
+                            }
                             let pairs=if staged.self_collision {contact::refresh_strand_responses(&mut staged.rods,staged.contact_radius,&[])} else {Vec::new()};
                             Self::refresh_mesh_geometry(&mut staged.rods,capture_meshes,staged.contact_radius,staged.continuous_mesh_admission).map_err(str::to_owned)?;
                             let merit=Self::contact_merit(&staged.rods,&pairs,staged.contact_radius).map_err(str::to_owned)?;
@@ -626,20 +639,154 @@ impl HairSystem {
         if continuous {mesh_motion::refresh(rods,meshes,radius)?;}
         Ok(())
     }
-    fn reconcile_positions_mode(rods:&mut [HairRod],meshes:&[TriangleMesh],dt:f64,radius:f64,self_collision:bool,history:&mut Vec<contact::StrandResponse>,mut solver:Option<&mut dyn HairLinearSolver>,mut trace:Option<HairProjectionTrace<'_>>,continuous_mesh:bool)->Result<(), &'static str> {
+    fn reconcile_positions_mode(rods:&mut [HairRod],meshes:&[TriangleMesh],dt:f64,radius:f64,self_collision:bool,history:&mut Vec<contact::StrandResponse>,solver:Option<&mut dyn HairLinearSolver>,trace:Option<HairProjectionTrace<'_>>,continuous_mesh:bool)->Result<(), &'static str> {
+        Self::reconcile_positions_mode_with_first_stage_limit(rods,meshes,dt,radius,self_collision,history,solver,trace,continuous_mesh,32)
+    }
+    fn reconcile_positions_mode_with_first_stage_limit(rods:&mut [HairRod],meshes:&[TriangleMesh],dt:f64,radius:f64,self_collision:bool,history:&mut Vec<contact::StrandResponse>,mut solver:Option<&mut dyn HairLinearSolver>,mut trace:Option<HairProjectionTrace<'_>>,continuous_mesh:bool,first_stage_limit:usize)->Result<(), &'static str> {
+        if !(1..=128).contains(&first_stage_limit) {return Err("invalid initial contact work budget");}
+        let original_history_len=history.len();
+        // Keep the original pose for fixed roots. An infeasible pose is not an
+        // objective-descent reference; minimization starts at the admitted
+        // restoration proposal, never at an exhausted Newton iterate.
+        let recovery_origin=(continuous_mesh && self_collision).then(||rods.to_vec());
+        let mut feasible_reference:Option<Vec<(Vec<V>,Vec<Q>)>>=None;
+        if recovery_origin.is_some() {
+            if let Some(path)=std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT") {
+                let path=std::path::Path::new(&path).with_extension("recovery-entry.vhr");
+                match contact_replay::save_measured(&path,rods,meshes,dt,radius,true,true) {
+                    Ok(())=>eprintln!("HAIR CONTACT ENTRY EXPORT path={}",path.display()),
+                    Err(error)=>eprintln!("HAIR CONTACT ENTRY EXPORT ERROR {error}"),
+                }
+            }
+        }
+        for attempt in 0..2 {
+            // A bounded first stage hands difficult continuous self-contact
+            // to verified restoration instead of spending the entire native
+            // budget on short updates. The resumed solve keeps its full budget
+            // and must establish ordinary tangent and physical admission.
+            let accepted_step_limit=if attempt==0 && continuous_mesh && self_collision {first_stage_limit} else {128};
+            let current_trace=trace.as_mut().map(|trace|HairProjectionTrace {
+                rod:trace.rod,substep:trace.substep,structural_iteration:trace.structural_iteration,
+                output:&mut *trace.output,
+            });
+            let result=match solver.as_mut() {
+                Some(backend)=>Self::reconcile_positions_attempt(rods,meshes,dt,radius,self_collision,history,Some(&mut **backend),current_trace,continuous_mesh,accepted_step_limit),
+                None=>Self::reconcile_positions_attempt(rods,meshes,dt,radius,self_collision,history,None,current_trace,continuous_mesh,accepted_step_limit),
+            };
+            match result {
+                Ok(())=>{
+                    if attempt!=0 {
+                        let origin=recovery_origin.as_ref().unwrap();
+                        let reference=feasible_reference.as_ref().unwrap();
+                        // Native convergence is necessary, but the complete
+                        // minimization must retain the admitted feasible
+                        // reference and complete physical trajectory admission.
+                        if Self::elastic_energy_change(rods,reference,dt)?>0. {
+                            return Err("contact recovery increased feasible-reference potential");
+                        }
+                        if rods.iter().zip(origin).any(|(rod,start)|rod.x[0]!=start.x[0]) {
+                            return Err("contact recovery moved a prescribed root");
+                        }
+                        contact::admit_staged_strands(rods,radius)?;
+                        mesh_motion::admit(rods,meshes,radius)?;
+                    }
+                    return Ok(());
+                }
+                Err(error)=>{
+                    if attempt!=0 || !continuous_mesh || !self_collision
+                        || error!="joint hair contact position linearization did not converge" {return Err(error);}
+                    if let Some(path)=std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT") {
+                        let path=std::path::Path::new(&path);
+                        for (extension,state) in [
+                            ("recovery-input.vhr",recovery_origin.as_ref().unwrap().as_slice()),
+                            ("recovery-terminal.vhr",&*rods),
+                        ] {
+                            if let Err(export_error)=contact_replay::save_measured(&path.with_extension(extension),state,meshes,dt,radius,true,true) {
+                                eprintln!("HAIR CONTACT RECOVERY EXPORT ERROR {extension}: {export_error}");
+                            }
+                        }
+                    }
+                    let mut candidate=recovery_origin.as_ref().unwrap().clone();
+                    let restored=match solver.as_mut() {
+                        Some(backend)=>contact::restore_candidate(&mut candidate,meshes,dt,radius,Some(&mut **backend)),
+                        None=>contact::restore_candidate(&mut candidate,meshes,dt,radius,None),
+                    };
+                    match restored {
+                        Ok(true)=>{
+                            feasible_reference=Some(candidate.iter().map(|rod|(rod.x.clone(),rod.q.clone())).collect::<Vec<_>>());
+                            if let Some(path)=std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT") {
+                                let path=std::path::Path::new(&path).with_extension("recovery-proposal.vhr");
+                                // Recovery already measured zero contact merit
+                                // and admitted both complete physical paths.
+                                if let Err(export_error)=contact_replay::save(&path,&candidate,meshes,dt,radius,true,0.,true) {
+                                    eprintln!("HAIR CONTACT RECOVERY EXPORT ERROR proposal: {export_error}");
+                                }
+                            }
+                            rods.clone_from_slice(&candidate);
+                            // Failed-attempt reactions must not leak into the
+                            // resumed solve. A proposal is never completion.
+                            history.truncate(original_history_len);
+                            if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {
+                                eprintln!("HAIR CONTACT RECOVERY admitted=true native_reconciliation_required=true");
+                            }
+                        }
+                        Ok(false)=>{
+                            if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {
+                                eprintln!("HAIR CONTACT RECOVERY admitted=false bounded_proposal_exhausted=true");
+                            }
+                            return Err(error);
+                        }
+                        Err(recovery_error)=>{
+                            if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {
+                                eprintln!("HAIR CONTACT RECOVERY admitted=false error={recovery_error:?}");
+                            }
+                            return Err(error);
+                        }
+                    }
+                }
+            }
+        }
+        unreachable!("bounded native contact attempts return inside loop")
+    }
+    fn reconcile_positions_attempt(rods:&mut [HairRod],meshes:&[TriangleMesh],dt:f64,radius:f64,self_collision:bool,history:&mut Vec<contact::StrandResponse>,mut solver:Option<&mut dyn HairLinearSolver>,mut trace:Option<HairProjectionTrace<'_>>,continuous_mesh:bool,accepted_step_limit:usize)->Result<(), &'static str> {
         let mut last_worst=None;
         let mut first_gap=0.;
         let mut merit_history=Vec::with_capacity(128);
+        let mut energy_change_history=Vec::with_capacity(128);
         let mut model=contact_model::ContactModel::new(rods.len());
         let motion_start=(continuous_mesh && self_collision).then(|| {
             let mut start=rods.to_vec();
             for rod in &mut start {rod.x.clone_from(&rod.old_x);rod.q.clone_from(&rod.old_q);}
             start
         });
-        for iteration in 0..128 {
-            let mut current=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
-            Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
+        let mut work=contact_model::ContactWorkBudget::with_accepted_step_limit(accepted_step_limit)
+            .ok_or("invalid hair contact work budget")?;
+        // This attempt owns immutable meshes, radius, collision modes and rod
+        // topology. A rollback can prepare the next fixed-pose query once.
+        let mut refinement_geometry=contact_model::TrialGeometry::default();
+        while let Some(iteration)=work.next_attempt() {
+            let mut current=if let Some(pairs)=refinement_geometry.restore(rods) {pairs} else {
+                let pairs=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
+                Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
+                pairs
+            };
             let merit=Self::contact_merit(rods,&current,radius)?;
+            let feasible_energies=if merit==0. {
+                Some(rods.iter().map(|rod|direct::structural_energy(rod,dt)).collect::<Result<Vec<_>,_>>()?)
+            } else {None};
+            let feasible_energy=feasible_energies.as_ref().map(|values|values.iter().sum::<f64>());
+            let energy_trace=std::env::var_os("VOXY_HAIR_ELASTIC_DESCENT_TRACE").is_some();
+            let energy_gradients=if energy_trace && merit==0. {
+                if let Some(start)=&motion_start {
+                    let end:Vec<_>=rods.iter().map(|rod|rod.x.clone()).collect();
+                    let path=contact::strand_fraction(start,&end,radius);
+                    eprintln!("HAIR ELASTIC ORIGIN PATH iteration={iteration} endpoint_merit={merit:e} strand_fraction={path:?}");
+                }
+                Some(rods.iter().map(|rod| {
+                    let mut staged=rod.clone();staged.contacts.clear();
+                    direct::assemble(&mut staged,dt).map(|(_,rhs)|rhs)
+                }).collect::<Result<Vec<_>,_>>()?)
+            } else {None};
             if std::env::var_os("VOXY_HAIR_CONTACT_PARTS_TRACE").is_some() {Self::trace_contact_parts(rods,&current,radius,iteration,0.)?;}
             let before:Vec<_>=rods.iter().map(|rod|(rod.x.clone(),rod.q.clone())).collect();
             let direction_export=std::env::var_os("VOXY_HAIR_REJECTED_CONTACT_DIRECTION_EXPORT");
@@ -649,7 +796,7 @@ impl HairSystem {
             if continuous_mesh {model.install(rods);}
             let projection=if let Some(start)=&motion_start {
                 let mut reactions=Vec::new();
-                let result=if let Some(backend)=solver.as_mut() {contact::reconcile_swept_contact_owners(rods,dt,radius,Some(&mut **backend),&mut reactions,Some(start))} else {contact::reconcile_swept_contact_owners(rods,dt,radius,None,&mut reactions,Some(start))};
+                let result=if let Some(backend)=solver.as_mut() {contact::reconcile_swept_contact_owners_with_pairs(rods,dt,radius,Some(&mut **backend),&mut reactions,Some(start),model.strand_rows())} else {contact::reconcile_swept_contact_owners_with_pairs(rods,dt,radius,None,&mut reactions,Some(start),model.strand_rows())};
                 current=reactions;
                 result.map(|fraction|fraction==1.)
             } else if continuous_mesh {
@@ -675,20 +822,61 @@ impl HairSystem {
             let mut fresh=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
             Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
             let full_merit=Self::contact_merit(rods,&fresh,radius)?;
+            let full_merit=if continuous_mesh && self_collision && complete && merit==0. && full_merit>0.
+                {
+                // Retain the feasible pre-step energy reference,
+                // repair the complete trial, then re-query every physical gate.
+                // Failure leaves the ordinary full trial and backtracking intact.
+                let mut candidate=rods.to_vec();
+                let restored=match solver.as_mut() {
+                    Some(backend)=>contact::restore_second_order_candidate(&mut candidate,meshes,dt,radius,&before,Some(&mut **backend)),
+                    None=>contact::restore_second_order_candidate(&mut candidate,meshes,dt,radius,&before,None),
+                };
+                match restored {
+                    Ok(true)=> {
+                        rods.clone_from_slice(&candidate);
+                        fresh=contact::refresh_strand_responses(rods,radius,&[]);
+                        Self::refresh_mesh_geometry(rods,meshes,radius,true)?;
+                        let corrected=Self::contact_merit(rods,&fresh,radius)?;
+                        if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {eprintln!("HAIR CONTACT SOC iteration={iteration} admitted=true uncorrected_merit={full_merit:e} corrected_merit={corrected:e}");}
+                        corrected
+                    }
+                    result=> {
+                        if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {eprintln!("HAIR CONTACT SOC iteration={iteration} admitted=false result={result:?}");}
+                        full_merit
+                    }
+                }
+            } else {full_merit};
+            if let Some(gradients)=&energy_gradients {
+                let mut slope=0.;
+                let mut max_translation_m=0f64;
+                let mut max_rotation_rad=0f64;
+                for ((rod,(x,q)),rhs) in rods.iter().zip(&before).zip(gradients) {
+                    for i in 1..rod.x.len() {
+                        let delta=sub(rod.x[i],x[i]);
+                        max_translation_m=max_translation_m.max(len(delta));
+                        for axis in 0..3 {slope-=rhs[i*6+axis]*delta[axis];}
+                    }
+                    for i in 1..rod.q.len() {
+                        let delta=log(qm(rod.q[i],conj(q[i])));
+                        max_rotation_rad=max_rotation_rad.max(len(delta));
+                        for axis in 0..3 {slope-=rhs[i*6+3+axis]*delta[axis];}
+                    }
+                }
+                eprintln!("HAIR ELASTIC DIRECTION iteration={iteration} energy_j={:?} slope_j={slope:e} full_merit={full_merit:e} max_translation_m={max_translation_m:e} max_rotation_rad={max_rotation_rad:e} max_velocity_change_m_s={:e} max_angular_velocity_change_rad_s={:e}",feasible_energy,max_translation_m/dt,max_rotation_rad/dt);
+            }
             if std::env::var_os("VOXY_HAIR_CONTACT_PARTS_TRACE").is_some() {Self::trace_contact_parts(rods,&fresh,radius,iteration,1.)?;}
-            if continuous_mesh && full_merit>merit {
-                let added=model.observe_rejected_candidate(rods);
-                if added>0 {
-                    // The rejected candidate supplies model rows only. Keep
-                    // the pose and all reactions uncommitted, then solve the
-                    // enlarged model under the same H at this frozen pose.
-                    for (rod,(x,q)) in rods.iter_mut().zip(&before) {rod.x.clone_from(x);rod.q.clone_from(q);}
-                    Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
-                    if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {eprintln!("HAIR CONTACT MODEL iteration={iteration} added_rows={added} before={merit:e} rejected={full_merit:e}");}
-                    continue;
+            let mut accepted_scale=1.;
+            // Audit the full step separately from shortened trials, as in
+            // IPC's feasibility/energy diagnostics. This is observation only:
+            // constrained optimality must be established before changing the
+            // completion gate, especially after initial overlap restoration.
+            if energy_trace && full_merit==0. {
+                if let Some(before_energy)=feasible_energy {
+                    let energy=rods.iter().map(|rod|direct::structural_energy(rod,dt)).collect::<Result<Vec<_>,_>>()?.iter().sum::<f64>();
+                    eprintln!("HAIR ELASTIC FULL iteration={iteration} before_j={before_energy:e} trial_j={energy:e} delta_j={:e}",energy-before_energy);
                 }
             }
-            let mut accepted_scale=1.;
             if full_merit>merit {
                 let full:Vec<_>=rods.iter().map(|rod|(rod.x.clone(),rod.q.clone())).collect();
                 let mut slope=0.;
@@ -722,24 +910,128 @@ impl HairSystem {
                 let mut scale=backtrack_scale(1.,full_merit);
                 let mut last_trial_scale=scale;
                 let mut accepted=None;
+                let mut nearby_counterexample=None;
+                let mut nearby_pair_counterexample=None;
+                let mut trial_geometry=contact_model::TrialGeometry::default();
                 // Closest features can change at different scales. Search the
                 // actual refreshed geometry rather than testing only one half step.
-                for _backtrack in 1..=12 {
+                // Twelve halvings can stop before a representable feasible
+                // prefix exists (captured frame4 still had1.84nm excess).
+                // Bound work by binary64 precision, not an arbitrary scale
+                // floor; stop earlier when rounding leaves the pose unchanged.
+                for _backtrack in 1..=f64::MANTISSA_DIGITS {
                     last_trial_scale=scale;
                     for ((rod,(x,q)),(full_x,full_q)) in rods.iter_mut().zip(&before).zip(&full) {
                         for i in 1..rod.x.len() {rod.x[i]=add(x[i],mul(sub(full_x[i],x[i]),scale));}
                         for i in 1..rod.q.len() {
-                            rod.q[i]=qunit(qm(exp(mul(log(qm(full_q[i],conj(q[i]))),scale)),q[i]));
+                            rod.q[i]=q[i];
+                            apply(&mut rod.q[i],mul(log(qm(full_q[i],conj(q[i]))),scale));
                         }
                     }
-                    let trial_pairs=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
-                    Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
+                    if rods.iter().zip(&before).all(|(rod,(x,q))|rod.x==*x && rod.q==*q) {
+                        break;
+                    }
+                    let trial_pairs=if let Some(pairs)=trial_geometry.restore(rods) {
+                        if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {eprintln!("HAIR CONTACT TRIAL GEOMETRY iteration={iteration} scale={scale:e} reused=true");}
+                        pairs
+                    } else {
+                        let pairs=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
+                        Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
+                        trial_geometry.store(rods,&pairs);pairs
+                    };
                     let trial_merit=Self::contact_merit(rods,&trial_pairs,radius)?;
                     if std::env::var_os("VOXY_HAIR_CONTACT_PARTS_TRACE").is_some() {Self::trace_contact_parts(rods,&trial_pairs,radius,iteration,scale)?;}
-                    if trial_merit<merit && trial_merit<full_merit {
+                    // Feasibility has no strictly decreasing direction once
+                    // its merit is zero. Continue the actual implicit elastic
+                    // minimization, while preserving exactly zero excess.
+                    let elastic_descent=if trial_merit==0. {
+                        if let Some(before_energy)=feasible_energy {
+                            let residual_delta=Self::elastic_energy_change(rods,&before,dt)?;
+                            if energy_trace {
+                                let energies=rods.iter().map(|rod|direct::structural_energy(rod,dt)).collect::<Result<Vec<_>,_>>()?;
+                                let energy=energies.iter().sum::<f64>();
+                                let delta=energies.iter().zip(feasible_energies.as_ref().unwrap()).map(|(a,b)|a-b).sum::<f64>();
+                                eprintln!("HAIR ELASTIC TRIAL iteration={iteration} scale={scale:e} before_j={before_energy:e} trial_j={energy:e} global_delta_j={:e} rod_delta_sum_j={delta:e} residual_delta_j={residual_delta:e}",energy-before_energy);
+                            }
+                            residual_delta<0.
+                        } else {false}
+                    } else {false};
+                    if (trial_merit<merit || elastic_descent) && trial_merit<full_merit {
                         accepted=Some((scale,trial_pairs));break;
                     }
+                    if continuous_mesh {
+                        // Keep only the nearest rejected trial, and only
+                        // planes that admit the frozen pose. This supplies
+                        // approaching contacts without importing a far-side
+                        // plane that already excludes the pose being solved.
+                        let rows=rods.iter().zip(&before).map(|(rod,(x,_))| {
+                            rod.contacts.iter().filter(|c|matches!(c.source,ContactSource::Mesh(_)))
+                                .filter_map(|c| {
+                                    if merit==0. {
+                                        contact_model::ContactModel::approaching_mesh_row(c,&rod.x,x)
+                                    } else {
+                                        let p=add(mul(rod.x[c.segment],1.-c.fraction),mul(rod.x[c.segment+1],c.fraction));
+                                        let origin=add(mul(x[c.segment],1.-c.fraction),mul(x[c.segment+1],c.fraction));
+                                        (c.physical_gap(p)< -1e-10 && c.physical_gap(origin)>= -1e-10).then(||c.clone())
+                                    }
+                                }).collect::<Vec<_>>()
+                        }).collect::<Vec<_>>();
+                        // A smaller failed trial may contain only the already
+                        // violated origin rows. It is not a counterexample to
+                        // the approaching-contact model and must not erase
+                        // the nearest trial that actually supplied one.
+                        if rows.iter().any(|rows|!rows.is_empty()) {
+                            nearby_counterexample=Some(rows);
+                        }
+                    }
+                    if continuous_mesh && self_collision {
+                        let rows:Vec<_>=trial_pairs.iter().filter(|pair| {
+                            let (a,i,u)=pair.a;let (b,j,v)=pair.b;
+                            let point=|positions:&[V],segment:usize,t:f64|add(mul(positions[segment],1.-t),mul(positions[segment+1],t));
+                            let trial=sub(point(&rods[a].x,i,u),point(&rods[b].x,j,v));
+                            let origin=sub(point(&before[a].0,i,u),point(&before[b].0,j,v));
+                            len(trial)<2.*radius-1e-10 && dot(origin,pair.normal)>=2.*radius-(if merit==0. {0.} else {1e-10})
+                        }).cloned().collect();
+                        if !rows.is_empty() {nearby_pair_counterexample=Some(rows);}
+                    }
                     scale=backtrack_scale(scale,trial_merit);
+                }
+                let added_pairs=nearby_pair_counterexample.as_ref().map_or(0,|rows|model.observe_strands(rows));
+                let added_mesh=nearby_counterexample.as_ref().map_or(0,|rows|model.observe_rows(rows));
+                // A fully certified feasible descent changes the nonlinear pose.
+                // Rejected larger-step probe planes belong to the preceding
+                // pose and are invalidated below after this accepted move.
+                // A newly discovered plane pinned to the feasible origin
+                // must participate in the next tangent solve. Accepting an
+                // infinitesimal prefix here would immediately discard it and
+                // repeat the same blocked direction at the next pose.
+                let origin_tangent=added_mesh>0 && nearby_counterexample.as_ref().is_some_and(|rows| {
+                    rows.iter().zip(&before).any(|(rows,(x,_))|rows.iter().any(|c| {
+                        let p=add(mul(x[c.segment],1.-c.fraction),mul(x[c.segment+1],c.fraction));
+                        c.physical_gap(p)==0.
+                    }))
+                });
+                let certified_prefix=if added_mesh+added_pairs>0 && merit==0. && !origin_tangent {
+                    if let Some((_,pairs))=&accepted {
+                        Self::contact_merit(rods,pairs,radius)?==0.
+                            && Self::feasible_elastic_prefix_admitted(rods,meshes,&before,dt,radius,self_collision)?
+                    } else {false}
+                } else {false};
+                if certified_prefix && std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {
+                    eprintln!("HAIR CONTACT FEASIBLE PREFIX iteration={iteration} probe_rows={} probe_pairs={} tangent_complete=false",added_mesh,added_pairs);
+                }
+                if added_mesh+added_pairs>0 && !certified_prefix {
+                    for (rod,(x,q)) in rods.iter_mut().zip(&before) {
+                        rod.x.clone_from(x);rod.q.clone_from(q);
+                    }
+                    // Preserve fresh-query ordering: strand rows, then mesh rows.
+                    let rollback_pairs=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
+                    Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
+                    refinement_geometry.store(rods,&rollback_pairs);
+                    if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {
+                        eprintln!("HAIR CONTACT APPROACH MODEL iteration={iteration} added_rows={added_mesh} added_pairs={added_pairs} descent_found={}",accepted.is_some());
+                    }
+                    continue;
                 }
                 if let Some((scale,pairs))=accepted {
                     fresh=pairs;
@@ -747,6 +1039,30 @@ impl HairSystem {
                     for response in &mut current {response.impulse*=scale;}
                     complete=false;
                 } else {
+                    // Try local geometry descent before enriching the tangent
+                    // model. A far rejected candidate can lie across another
+                    // surface feature; its outward plane is not a global
+                    // halfspace valid at the original pose. Only the final
+                    // nearby failed trial supplies a local counterexample.
+                    if continuous_mesh {
+                        let trial_merit=Self::contact_merit(rods,&[],radius)?;
+                        let added=if merit==0. {
+                            model.observe_rejected_candidate_admitting_origin(rods,before.iter().map(|(x,_)|x.as_slice()))
+                        } else {model.observe_rejected_candidate(rods)};
+                        if added>0 {
+                            for (rod,(x,q)) in rods.iter_mut().zip(&before) {
+                                rod.x.clone_from(x);rod.q.clone_from(q);
+                            }
+                            // Preserve fresh-query ordering: strand rows, then mesh rows.
+                            let rollback_pairs=if self_collision {contact::refresh_strand_responses(rods,radius,&[])} else {Vec::new()};
+                            Self::refresh_mesh_geometry(rods,meshes,radius,continuous_mesh)?;
+                            refinement_geometry.store(rods,&rollback_pairs);
+                            if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {
+                                eprintln!("HAIR CONTACT LOCAL MODEL iteration={iteration} added_rows={added} before={merit:e} rejected_mesh={trial_merit:e} trial_scale={last_trial_scale:e}");
+                            }
+                            continue;
+                        }
+                    }
                     // Do not publish a known worsening increment or its
                     // reactions. The enclosing step transaction preserves all
                     // public state; retain the pre-increment staged pose too.
@@ -763,6 +1079,8 @@ impl HairSystem {
                         }
                         let bx:Vec<_>=before.iter().map(|pose|&pose.0).collect();
                         let fx:Vec<_>=full.iter().map(|pose|&pose.0).collect();
+                        let bq:Vec<_>=before.iter().map(|pose|&pose.1).collect();
+                        let fq:Vec<_>=full.iter().map(|pose|&pose.1).collect();
                         let mut trial_rows=Vec::new();
                         for (r,rod) in rods.iter().enumerate() {
                             for c in rod.contacts.iter().filter(|c|matches!(c.source,ContactSource::Mesh(_))) {
@@ -771,7 +1089,7 @@ impl HairSystem {
                                 trial_rows.push(format!("{{\"rod\":{r},\"segment\":{i},\"fraction\":{t:?},\"gap\":{:?},\"metric_scale\":{:?},\"normal\":{:?}}}",c.physical_gap(p),c.metric_scale,c.normal));
                             }
                         }
-                        let payload=format!("{{\"iteration\":{iteration},\"before_merit\":{merit:?},\"full_merit\":{full_merit:?},\"before_positions\":{bx:?},\"full_positions\":{fx:?},\"mesh_contacts\":[{}],\"smallest_trial_scale\":{last_trial_scale:?},\"smallest_trial_mesh_contacts\":[{}]}}",rows.join(","),trial_rows.join(","));
+                        let payload=format!("{{\"iteration\":{iteration},\"before_merit\":{merit:?},\"full_merit\":{full_merit:?},\"before_positions\":{bx:?},\"full_positions\":{fx:?},\"before_orientations\":{bq:?},\"full_orientations\":{fq:?},\"mesh_contacts\":[{}],\"smallest_trial_scale\":{last_trial_scale:?},\"smallest_trial_mesh_contacts\":[{}]}}",rows.join(","),trial_rows.join(","));
                         if let Err(error)=std::fs::write(path,payload) {eprintln!("HAIR CONTACT DIRECTION EXPORT ERROR: {error}");}
                     }
                     for (rod,(x,q)) in rods.iter_mut().zip(before) {rod.x=x;rod.q=q;}
@@ -791,7 +1109,21 @@ impl HairSystem {
                 let accepted_merit=Self::contact_merit(rods,&fresh,radius)?;
                 eprintln!("HAIR NONLINEAR MERIT iteration={iteration} before={merit:e} full={full_merit:e} accepted={accepted_merit:e} scale={accepted_scale:e} tangent_complete={complete}");
             }
-            merit_history.push(Self::contact_merit(rods,&fresh,radius)?);
+            // Speculative contact planes describe the preceding frozen pose.
+            // Carrying them across an accepted nonlinear move can combine
+            // opposing sides of the same surface into an invalid tangent
+            // model. Fresh geometry and whole-path CCD rediscover obstacles.
+            if rods.iter().zip(&before).any(|(rod,(x,q))|rod.x!=*x || rod.q!=*q) {
+                model.invalidate_after_pose_change();
+            }
+            let accepted_merit=Self::contact_merit(rods,&fresh,radius)?;
+            work.accepted_step();
+            merit_history.push(accepted_merit);
+            // Store signed transition energies, not rounded total energies.
+            // The progress window then tests actual work over its eight moves.
+            energy_change_history.push(if accepted_merit==0. && feasible_energy.is_some() {
+                Some(Self::elastic_energy_change(rods,&before,dt)?)
+            } else {None});
             // The common trust scale preserves paired reactions. Re-query all
             // geometry before the next nonlinear increment rather than fixing
             // one strand to the other's preceding position.
@@ -825,12 +1157,11 @@ impl HairSystem {
             if complete && !unresolved {if continuous_mesh {mesh_motion::admit(rods,meshes,radius)?;} return Ok(());}
             if iteration==0 {first_gap=worst.as_ref().map_or(0.,|value|value.3);}
             last_worst=worst;
-            // Spend more nonlinear work only while the actual refreshed
-            // penetration merit contracts over an eight-increment window.
-            // This changes a computational budget, never feasibility gates.
+            // Once contact excess is zero, actual elastic energy owns progress.
+            // Zero contact merit cannot contract further. This is only a work
+            // budget: tangent completion and every physical gate remain above.
             if iteration>=31 {
-                let end=merit_history.len()-1;
-                if end>=8 && !(merit_history[end-8]>0. && merit_history[end]<=0.9*merit_history[end-8]) {break;}
+                if !Self::nonlinear_progress(&merit_history,&energy_change_history) {break;}
             }
         }
         if let Some(path)=std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT") {
@@ -839,16 +1170,51 @@ impl HairSystem {
                 if let Err(error)=contact_replay::save(std::path::Path::new(&path),rods,meshes,dt,radius,self_collision,merit,continuous_mesh) {eprintln!("HAIR CONTACT REPLAY EXPORT ERROR: {error}");}
             }
         }
-        if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {eprintln!("HAIR NONLINEAR MERIT HISTORY {merit_history:?}");}
+        if std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some() {
+            let (attempts,accepted_steps,attempts_at_pose)=work.counts();
+            eprintln!("HAIR NONLINEAR WORK BUDGET attempts={attempts} accepted_steps={accepted_steps} attempts_at_pose={attempts_at_pose} accepted_step_limit={accepted_step_limit} fixed_pose_attempt_limit=128");
+            eprintln!("HAIR NONLINEAR MERIT HISTORY {merit_history:?}");
+        }
         eprintln!("HAIR NONLINEAR CONTACT NONCONVERGENCE first_gap_m={first_gap} worst=(rod,segment,fraction,gap,source,root,a,b,normal,target) {last_worst:?}");
         Err("joint hair contact position linearization did not converge")
     }
+    fn feasible_elastic_prefix_admitted(rods:&[HairRod],meshes:&[TriangleMesh],before:&[(Vec<V>,Vec<Q>)],dt:f64,radius:f64,self_collision:bool)->Result<bool,&'static str> {
+        let trace=std::env::var_os("VOXY_HAIR_NONLINEAR_MERIT_TRACE").is_some();
+        if rods.len()!=before.len() || rods.iter().zip(before).any(|(rod,(x,q))|rod.x[0]!=x[0] || rod.q[0]!=q[0]) {
+            if trace {eprintln!("HAIR CONTACT PREFIX CHECK admitted=false gate=prescribed_roots");}return Ok(false);
+        }
+        let stretch=rods.iter().map(HairRod::max_relative_stretch).try_fold(0f64,|a,b|b.is_finite().then_some(a.max(b)));
+        if stretch.is_none_or(|value|value>0.05) {
+            if trace {eprintln!("HAIR CONTACT PREFIX CHECK admitted=false gate=stretch stretch={stretch:?}");}return Ok(false);
+        }
+        let change=Self::elastic_energy_change(rods,before,dt)?;
+        if !change.is_finite() || change>=0. {
+            if trace {eprintln!("HAIR CONTACT PREFIX CHECK admitted=false gate=energy change_j={change:e}");}return Ok(false);
+        }
+        if self_collision {if let Err(error)=contact::admit_staged_strands(rods,radius) {
+            if trace {eprintln!("HAIR CONTACT PREFIX CHECK admitted=false gate=strand_path change_j={change:e} error={error:?}");}return Ok(false);
+        }}
+        if let Err(error)=mesh_motion::admit(rods,meshes,radius) {
+            if trace {eprintln!("HAIR CONTACT PREFIX CHECK admitted=false gate=mesh_path change_j={change:e} error={error:?}");}return Ok(false);
+        }
+        if trace {
+            let translation=rods.iter().zip(before).flat_map(|(rod,(x,_))|rod.x.iter().zip(x).map(|(a,b)|len(sub(*a,*b)))).fold(0f64,f64::max);
+            let rotation=rods.iter().zip(before).flat_map(|(rod,(_,q))|rod.q.iter().zip(q).map(|(a,b)|len(log(qm(*a,conj(*b)))))).fold(0f64,f64::max);
+            eprintln!("HAIR CONTACT PREFIX CHECK admitted=true gate=complete change_j={change:e} max_translation_m={translation:e} max_rotation_rad={rotation:e}");
+        }
+        Ok(true)
+    }
+
     fn trace_contact_parts(rods:&[HairRod],pairs:&[contact::StrandResponse],radius:f64,iteration:usize,scale:f64)->Result<(), &'static str> {
         let mut mesh_merit=0.;let mut worst=None;
+        let trace_rows=std::env::var_os("VOXY_HAIR_CONTACT_ROWS_TRACE").is_some();
         for (r,rod) in rods.iter().enumerate() {
             for c in rod.contacts.iter().filter(|c|matches!(c.source,ContactSource::Mesh(_))) {
                 let p=add(mul(rod.x[c.segment],1.-c.fraction),mul(rod.x[c.segment+1],c.fraction));
                 let gap=c.physical_gap(p);
+                if trace_rows {
+                    eprintln!("HAIR CONTACT ROW {{\"iteration\":{iteration},\"scale\":{scale:?},\"rod\":{r},\"segment\":{},\"fraction\":{:?},\"time\":{},\"gap\":{gap:?},\"normal\":{:?},\"target\":{:?}}}",c.segment,c.fraction,c.trajectory_time.map_or("null".to_owned(),|t|format!("{t:?}")),c.normal,c.target);
+                }
                 mesh_merit+=gap.min(0.).powi(2);
                 if gap<worst.as_ref().map_or(0.,|v:&(usize,usize,f64,f64,V,V)|v.3) {worst=Some((r,c.segment,c.fraction,gap,c.normal,c.target));}
             }
@@ -863,6 +1229,36 @@ impl HairSystem {
         if !(mesh_merit+strand_merit).is_finite() {return Err("contact merit diagnostic overflow");}
         eprintln!("HAIR CONTACT PARTS iteration={iteration} scale={scale:e} mesh_raw={mesh_merit:e} strand={strand_merit:e} worst_mesh={worst:?}");
         Ok(())
+    }
+    fn elastic_energy_change(rods:&[HairRod],before:&[(Vec<V>,Vec<Q>)],dt:f64)->Result<f64, &'static str> {
+        if rods.len()!=before.len() {return Err("hair energy pose count mismatch");}
+        let (sum,correction)=rods.iter().zip(before).try_fold((0f64,0f64),|(sum,correction),(rod,(x,q))| {
+            let term=direct::structural_delta(rod,x,q,dt)?;
+            let next=sum+term;
+            let roundoff=if sum.abs()>=term.abs() {(sum-next)+term} else {(term-next)+sum};
+            Ok::<_, &'static str>((next,correction+roundoff))
+        })?;
+        let delta=sum+correction;
+        if !delta.is_finite() {return Err("joint hair elastic energy difference overflow");}
+        Ok(delta)
+    }
+    fn nonlinear_progress(merits:&[f64],changes:&[Option<f64>])->bool {
+        if changes.len()!=merits.len() {return false;}
+        if merits.len()<9 {return true;}
+        let end=merits.len()-1;let begin=end-8;
+        if merits[begin]>0. {return merits[end]<=0.9*merits[begin];}
+        if !merits[begin..=end].iter().all(|value|*value==0.) {return false;}
+        let mut sum=0f64;let mut correction=0f64;
+        // Entry i is the move into pose i; exclude the move into the first
+        // pose of the window. No monotonic decrease of every move is assumed.
+        for change in &changes[begin+1..=end] {
+            let Some(change)=change.filter(|value|value.is_finite()) else {return false;};
+            let next=sum+change;
+            correction+=if sum.abs()>=change.abs() {(sum-next)+change} else {(change-next)+sum};
+            sum=next;
+        }
+        let change=sum+correction;
+        change.is_finite() && change<0.
     }
     fn contact_merit(rods:&[HairRod],pairs:&[contact::StrandResponse],radius:f64)->Result<f64, &'static str> {
         let mut merit=0.;
@@ -925,6 +1321,7 @@ impl HairSystem {
             return Err("collider motion duration differs from hair step");
         }
         let mut sampled_meshes=(timed_sampling && (self.continuous_mesh_admission || meshes.iter().any(|mesh|mesh.motion_duration().is_some()))).then(||meshes.to_vec());
+        let mut sampled_vertices=sampled_meshes.as_ref().map(|sampled|vec![Vec::new();sampled.len()]);
         self.last_trace.clear();
         self.last_friction_trace.clear();
         self.last_projection_trace.clear();
@@ -938,6 +1335,7 @@ impl HairSystem {
             }
         }
         let substeps = self.substeps.max((dt * 240.0).ceil() as usize);
+        self.last_step_substeps=substeps;
         let dt = dt / substeps as f64;
         if (self.swept_strand_positions || (self.continuous_mesh_admission && self.self_collision)) && !self.swept_strand_initialized {
             // Authored guide curves are not necessarily collision-free. Admit
@@ -963,8 +1361,8 @@ impl HairSystem {
         }
         for substep in 0..substeps {
             let meshes=if let Some(sampled)=&mut sampled_meshes {
-                for (sample,source) in sampled.iter_mut().zip(meshes) {
-                    *sample=source.motion_interval(substep as f64/substeps as f64,(substep+1) as f64/substeps as f64)?;
+                for ((sample,source),vertices) in sampled.iter_mut().zip(meshes).zip(sampled_vertices.as_mut().expect("sampled collider scratch")) {
+                    sample.sample_motion_interval(source,substep as f64/substeps as f64,(substep+1) as f64/substeps as f64,vertices)?;
                 }
                 for rod in &mut self.rods {for cache in &mut rod.clearance_cache {cache.fill(None);}}
                 sampled.as_slice()
@@ -1167,7 +1565,54 @@ impl HairSystem {
 
 #[cfg(test)]
 mod contact_merit_tests {
+    #[test]
+    fn feasible_prefix_requires_descent_fixed_roots_and_physical_stretch() {
+        // Resolve an inertia-dominated microstep so the small lateral move
+        // is an actual elastic-objective descent, not just a geometric move.
+        let dt=1e-6;let radius=40e-6;
+        let mut rod=super::HairRod::new(vec![[0.,0.,0.],[0.,0.,0.01],[0.,0.,0.02]],Default::default()).unwrap();
+        for i in 1..rod.x.len() {rod.predicted_x[i][0]=1e-4;}
+        let before=vec![(rod.x.clone(),rod.q.clone())];
+        assert!(!super::HairSystem::feasible_elastic_prefix_admitted(&[rod.clone()],&[],&before,dt,radius,true).unwrap());
+        for i in 1..rod.x.len() {rod.x[i][0]=5e-5;}
+        assert!(super::HairSystem::feasible_elastic_prefix_admitted(&[rod.clone()],&[],&before,dt,radius,true).unwrap());
+        let mut moved_root=rod.clone();moved_root.x[0][0]=1e-5;
+        assert!(!super::HairSystem::feasible_elastic_prefix_admitted(&[moved_root],&[],&before,dt,radius,true).unwrap());
+        rod.x[2][0]=0.1;
+        assert!(!super::HairSystem::feasible_elastic_prefix_admitted(&[rod],&[],&before,dt,radius,true).unwrap());
+    }
+    #[test]
+    fn feasible_prefix_rejects_a_clear_endpoint_reached_through_a_surface() {
+        let dt=1e-6;let radius=40e-6;
+        let mut rod=super::HairRod::new(vec![[-1e-3,0.,0.],[-1e-3,0.,0.01],[-1e-3,0.,0.02]],Default::default()).unwrap();
+        let before=vec![(rod.x.clone(),rod.q.clone())];
+        for i in 1..rod.x.len() {rod.predicted_x[i][0]=2e-3;rod.x[i][0]=1e-3;}
+        assert!(super::HairSystem::feasible_elastic_prefix_admitted(&[rod.clone()],&[],&before,dt,radius,true).unwrap(),"fixture must decrease energy while preserving roots and stretch");
+        let mesh=super::TriangleMesh::new(&[[0.,-1.,0.012],[0.,1.,0.012],[0.,0.,0.03]],&[[0,1,2]]).unwrap();
+        let mut endpoint=rod.clone();endpoint.old_x.clone_from(&endpoint.x);
+        assert!(super::mesh_motion::admit(&[endpoint],std::slice::from_ref(&mesh),radius).is_ok(),"the final geometry must be clear independently of the crossing path");
+        assert!(!super::HairSystem::feasible_elastic_prefix_admitted(&[rod],&[mesh],&before,dt,radius,true).unwrap(),"a descending clear endpoint cannot admit a path through the triangle");
+    }
     use super::*;
+    #[test]
+    fn feasible_elastic_progress_is_not_zero_contact_stagnation() {
+        let merit=vec![0.;9];
+        let energy=vec![Some(-1e-25);9]; // Hidden by subtraction from an8e-5J total.
+        assert!(HairSystem::nonlinear_progress(&merit,&energy));
+        assert!(!HairSystem::nonlinear_progress(&merit,&vec![Some(0.);9]));
+        assert!(!HairSystem::nonlinear_progress(&merit,&vec![Some(1e-25);9]));
+        assert!(!HairSystem::nonlinear_progress(&merit,&vec![None;9]));
+        let mut cancelling=vec![Some(0.);9];
+        cancelling[1]=Some(-1.);cancelling[2]=Some(-1e-25);cancelling[3]=Some(1.);
+        assert!(HairSystem::nonlinear_progress(&merit,&cancelling),"small net work survives large cancelling moves");
+        cancelling[4]=Some(f64::NAN);
+        assert!(!HairSystem::nonlinear_progress(&merit,&cancelling));
+        assert!(!HairSystem::nonlinear_progress(&merit,&[]));
+        let mut penetrating=vec![1.;9];penetrating[8]=0.95;
+        assert!(!HairSystem::nonlinear_progress(&penetrating,&energy));
+        penetrating[8]=0.8;
+        assert!(HairSystem::nonlinear_progress(&penetrating,&energy));
+    }
     #[test]
     fn continuous_joint_step_activates_an_unseen_pair_and_admits_its_entire_path() {
         let radius=40e-6;
@@ -1217,3 +1662,7 @@ mod contact_merit_tests {
 
 #[path="mesh_motion.rs"]
 mod mesh_motion;
+
+#[cfg(test)]
+#[path="substep_clock_tests.rs"]
+mod substep_clock_tests;

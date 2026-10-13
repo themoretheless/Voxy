@@ -10,7 +10,10 @@ fn jump_legs_plant_feet_bend_knees_and_keep_bone_lengths() {
     )
     .unwrap();
     let rig = FemaleRig::new(asset.mesh.vertices()).unwrap();
-    for time in [0., 0.20, 0.38, 0.48, 0.56, 0.81, 1.06, 1.18, 1.26, 1.65, 5.] {
+    // Check the full loop as well as exact event/peak times: support ownership
+    // changes at takeoff/landing, not just at a few representative poses.
+    for time in [0., 0.20, 0.38, 0.48, 0.56, 0.81, 1.06, 1.18, 1.26, 1.65, 5.]
+        .into_iter().chain((0..=720).map(|frame| frame as f64 / 120.)) {
         let motion = crate::jump_motion::sample(time);
         let palette = rig.jump_palette(time);
         for (hip, knee, foot, sign) in [(7, 8, 9, 1.), (13, 14, 15, -1.)] {
@@ -87,6 +90,14 @@ fn jump_legs_plant_feet_bend_knees_and_keep_bone_lengths() {
 #[test]
 #[ignore = "requires an actual GPU; complete body DQ skinning and displacement readback"]
 fn gpu_jump_matches_actual_body_and_rigid_trailing_hair() {
+    gpu_body_skinning_parity(false);
+}
+#[test]
+#[ignore = "requires an actual GPU; accepted character stance palette and full body readback"]
+fn gpu_physical_stance_matches_accepted_cpu_body() {
+    gpu_body_skinning_parity(true);
+}
+fn gpu_body_skinning_parity(physical: bool) {
     let asset = voxy_render::ObjAsset::parse(
         include_str!(
             "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"
@@ -139,9 +150,22 @@ fn gpu_jump_matches_actual_body_and_rigid_trailing_hair() {
     .unwrap();
     job.set_deforming_normal_prefix(body as u32).unwrap();
     let mut maximum_error = 0f32;
-    for time in [0., 0.38, 0.81, 1.26, 5., 0.38] {
-        let palette = rig.jump_palette(time);
-        let bob = crate::jump_motion::sample(time).height as f32;
+    let mut stance = physical.then(|| crate::female_physical_stance::PhysicalStance::new(
+        &rig, asset.mesh.vertices()).unwrap());
+    let mut physical_tick = 0usize;
+    let times: [f64; 6] = if physical { [0., 0.25, 0.5, 0.75, 1., 1.25] }
+        else { [0., 0.38, 0.81, 1.26, 5., 0.38] };
+    for time in times {
+        let palette = if let Some(stance) = &mut stance {
+            let target_tick = (time * 120.).round() as usize + 1;
+            while physical_tick < target_tick {
+                physical_tick += 1;
+                stance.step(&rig, physical_tick as f64 / 120.).unwrap();
+            }
+            let actor = Mat4::from_translation(stance.offset.as_vec3());
+            stance.palette.iter().map(|m|actor * *m).collect()
+        } else { rig.jump_palette(time) };
+        let bob = if physical { 0. } else { crate::jump_motion::sample(time).height as f32 };
         job.upload_rigid_pose(&queue, &palette).unwrap();
         let mut invalid = palette.clone();
         invalid[0] *= Mat4::from_scale(Vec3::splat(2.));
@@ -190,7 +214,12 @@ fn gpu_jump_matches_actual_body_and_rigid_trailing_hair() {
         drop(raw);
         staging.unmap();
         let mut expected = asset.mesh.vertices().to_vec();
-        rig.deform_jump(&mut expected, time);
+        if let Some(stance) = &stance {
+            rig.deform_pose(&mut expected, time as f32, &stance.pose);
+            for vertex in &mut expected {
+                vertex.position = (Vec3::from_array(vertex.position).as_dvec3() + stance.offset).as_vec3().to_array();
+            }
+        } else { rig.deform_jump(&mut expected, time); }
         for (i, vertex) in actual.iter().enumerate() {
             let p = if i < body {
                 Vec3::from_array(expected[i].position)
@@ -201,12 +230,12 @@ fn gpu_jump_matches_actual_body_and_rigid_trailing_hair() {
             maximum_error = maximum_error.max(error);
             assert!(
                 error < 2e-6,
-                "GPU jump differs at time={time} vertex={i}: {error}"
+                "GPU body differs physical={physical} time={time} vertex={i}: {error}"
             );
             assert_eq!(vertex.uv, mesh.vertices()[i].uv);
             assert_eq!(vertex.color, mesh.vertices()[i].color);
         }
     }
     assert!(pollster::block_on(scope.pop()).is_none());
-    eprintln!("JUMP GPU body_vertices={body} samples=6 maximum_position_error_m={maximum_error}");
+    eprintln!("BODY GPU physical={physical} body_vertices={body} samples=6 maximum_position_error_m={maximum_error}");
 }

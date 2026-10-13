@@ -180,3 +180,30 @@ ModelAnimation.clip_name is an optional exact unique name; empty preserves legac
 ## Native named clip reorder and inspector history (2026-10-03)
 
 The watched-file driver now supports --motion --reorder: a temporary GLB starts with [move,other] (other has an independent constant negative hip translation), then changes to [other,move] while revising move duration and motion. Native Play explicitly selects move by name; acceptance verifies the resolved index is 1 and the actual target clip is still move, checks the analytic hip pose and accepted GPU palette, then verifies the original sole anchor. Fade weight .16666667 was observed; at frame 69 / tick 37, phase .3666666858 produced hip (.055000003,.5183333,0) and sole (.0049999915,0,0). Stop at frame 72 restored authoring and freed animated GPU bytes; exit 0. Inspector regression also checks rejected unknown names without history mutation, named edit undo/redo and scene JSON round trip. All 128 editor CPU tests passed. Evidence: `artifacts/rig-native-clip-reorder-2026-10-03/`. Different-rig retargeting, angular root trajectory fades and broader hardware evidence remain open.
+
+## Authored ankle orientation around a locked sole pivot (2026-10-11)
+
+`FootBinding.orientation` separates ankle orientation from support acquisition and
+pivot locking. The default `align_support` retains existing behavior, including
+old documents that omit the field. `authored` keeps the current sampled ankle
+orientation and computes its target translation from the retained support point
+minus the rotated/scaled sole offset. Thus heel/toe roll can rotate around an
+explicit authored pivot without flattening the foot to the support normal. The
+same accepted-character-tick transaction, contact curves, reach release and
+resource publication remain authoritative. Invalid serialized policies fail
+admission before authoring history changes.
+
+This follows the independent leg IK / ankle aim controls in the pinned ozz foot
+sample; it does not add a second contact state machine. A fixed pivot is still
+caller-authored: this option does not choose heel versus toe, transport the actor
+with a platform, prevent the remainder of the foot from crossing geometry, or
+supply missing gait contact timing.
+
+CPU tests compare independently composed ankle axes and retained support pivots
+through multiple authored rotations and actor translations. An accepted physical
+step regression rejects a later preparation stage after IK, verifies retained
+scene/frame/serial, and retries at the same animation time. The slope test covers
+both policies with reflected ancestors and a nonuniform reflected tip. The GPU
+fixture rolls a triangle around the independently specified pivot and compares
+pixels against direct analytic world points on Apple M4 Max/Metal; this is not a
+native presented-frame or full-character walking qualification.

@@ -3,6 +3,33 @@
 use physics::hair::{HairLinearSolver, HairLinearSystem, HairResponseSystem};
 use voxy_render::{BandedSolveInput,BandedSystem,ComputeJob,ComputeProgram,BANDED_SOLVE_SHADER};
 use wgpu::util::DeviceExt;
+/// Explicit capabilities for ignored GPU qualification fixtures only.
+#[cfg(test)]
+pub(crate) fn qualification_device_descriptor(adapter:&wgpu::Adapter)->wgpu::DeviceDescriptor<'static> {
+    let mut descriptor=wgpu::DeviceDescriptor::default();
+    if let Ok(value)=std::env::var("VOXY_HAIR_RESIDENT_WORKGROUP_LANES") {
+        let lanes=value.parse::<u32>().expect("workgroup lane count must be an integer");
+        let limits=adapter.limits();
+        assert!(lanes>0 && lanes<=limits.max_compute_workgroup_size_x
+            && lanes<=limits.max_compute_invocations_per_workgroup,"requested lane count unavailable");
+        descriptor.required_limits.max_compute_workgroup_size_x=lanes;
+        descriptor.required_limits.max_compute_invocations_per_workgroup=lanes;
+        // 1024 contact flags and active IDs plus the 1024-lane reduction
+        // exceed the default 16 KiB. Request the storage explicitly so the
+        // selected built-in shader and qualification fixtures have the same ABI.
+        if lanes>=1024 {
+            assert!(limits.max_compute_workgroup_storage_size>=16640,
+                "requested resident workgroup storage unavailable");
+            descriptor.required_limits.max_compute_workgroup_storage_size=16640;
+        }
+    }
+    if std::env::var_os("VOXY_HAIR_RESIDENT_GPU_TIMESTAMPS").is_some()
+        ||std::env::var("VOXY_HAIR_TRIPLE_GPU_TIMESTAMPS").as_deref()==Ok("1") {
+        assert!(adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY),"GPU timestamps unavailable");
+        descriptor.required_features|=wgpu::Features::TIMESTAMP_QUERY;
+    }
+    descriptor
+}
 #[path="gpu_hair_response_dispatch.rs"]
 mod response_dispatch;
 #[path="gpu_hair_joint.rs"]
@@ -17,6 +44,26 @@ pub struct GpuHairLinearSolver {
     pub(super) joint_full_refinement_readback:bool,
     #[cfg(test)]
     pub(super) joint_separate_qr_passes:bool,
+    #[cfg(test)]
+    pub(super) joint_resident_qr_columns:bool,
+    #[cfg(test)]
+    joint_profile_operator:Option<(Vec<Vec<f64>>,Vec<f64>,f64)>,
+    #[cfg(test)]
+    joint_resident_active_program:Option<ComputeProgram>,
+    #[cfg(test)]
+    joint_triple_active_program:Option<ComputeProgram>,
+    #[cfg(test)]
+    joint_triple_factors:Vec<voxy_render::ExperimentalTripleActiveFactors>,
+    #[cfg(test)]
+    joint_triple_factor_reuses:usize,
+    #[cfg(test)]
+    pub(super) joint_resident_workspace_reuse:bool,
+    #[cfg(test)]
+    pub(super) joint_resident_operator_reuse:bool,
+    #[cfg(test)]
+    pub(super) joint_resident_batch_dedup:bool,
+    #[cfg(test)]
+    pub(super) joint_resident_candidates:joint::ResidentCandidateCache,
     joint_programs:Option<(ComputeProgram,ComputeProgram)>,
     joint_result_cache:Option<joint::JointResultCache>,
     joint_workspaces:joint::EqualityWorkspacePool,
@@ -58,6 +105,8 @@ pub struct GpuHairLinearSolver {
     pub compact_response_readback:bool,
     pub gpu_response_transport:bool,
     rhs_transfer_program:Option<voxy_render::BandedTransferProgram>,
+    response_transport_scratch:Option<wgpu::Buffer>,
+    pub response_transport_workspace_creations:usize,
     pub response_transfer_dispatches:usize,
     pub response_submissions:usize,
     pub response_calls:usize,
@@ -141,6 +190,70 @@ impl GpuHairLinearSolver {
     pub async fn new(device:&wgpu::Device,queue:&wgpu::Queue)->Result<Self,voxy_render::ComputeError> {
         Self::new_with_extra_division_refinement(device,queue,false).await
     }
+    /// Coupled full-model backend. Original f64 residual admission still owns
+    /// acceptance; refinement reuses the same immutable physical factors.
+    pub async fn new_coupled(device:&wgpu::Device,queue:&wgpu::Queue)->Result<Self,voxy_render::ComputeError> {
+        let mut solver=Self::new(device,queue).await?;
+        solver.residual_refinements=1;
+        // Use the canonical square-root contact owner rather than the legacy
+        // shared-response projection selected by coordinate-disabled backends.
+        // GPU candidates still pass original admission or use native fallback.
+        solver.joint_contact_qr=true;
+        solver.joint_coordinate_batches=true;
+        // Reuse only a validated identical prefix within one immutable
+        // coordinate operator; changed columns/support invalidate the prefix.
+        solver.joint_qr_prefix_reuse=true;
+        // Seeds come only from admitted exact rows in the frozen physical
+        // owner. They are guesses: dependent or invalid seeds retry cold.
+        solver.joint_dual_hints=true;
+        // A negative dual direction can update the active set before refining
+        // an equality problem which will be discarded. It cannot publish a
+        // physical solution; original KKT/admission still owns completion.
+        solver.joint_release_directions=true;
+        solver.joint_early_release_directions=true;
+        #[cfg(test)]
+        if std::env::var("VOXY_HAIR_JOINT_RESIDENT_ACTIVE_SET").as_deref()==Ok("1") {
+            let warm=std::env::var("VOXY_HAIR_RESIDENT_WARM_START").as_deref()==Ok("1");
+            let shader_path=if warm {std::env::var_os("VOXY_HAIR_RESIDENT_SEEDED_SHADER_FIXTURE")}
+                else {std::env::var_os("VOXY_HAIR_RESIDENT_ACTIVE_SHADER_FIXTURE")};
+            let source=shader_path.map(|path|std::fs::read_to_string(path).expect("read resident active-set qualification shader"));
+            solver.joint_resident_active_program=Some(ComputeProgram::new(
+                device,source.as_deref().unwrap_or(if warm {
+                    voxy_render::experimental_seeded_resident_contact_shader(&device.limits())
+                        .ok_or(voxy_render::ComputeError::Unsupported)?
+                }
+                    else {voxy_render::EXPERIMENTAL_RESIDENT_CONTACT_SHADER})).await?);
+            solver.joint_resident_operator_reuse=std::env::var("VOXY_HAIR_RESIDENT_OPERATOR_REUSE").as_deref()==Ok("1");
+            solver.joint_resident_batch_dedup=std::env::var("VOXY_HAIR_RESIDENT_BATCH_DEDUP").as_deref()==Ok("1");
+            solver.joint_resident_workspace_reuse=std::env::var("VOXY_HAIR_RESIDENT_WORKSPACE_REUSE").as_deref()==Ok("1");
+            solver.joint_workspaces.prefer_large_completed=
+                std::env::var("VOXY_HAIR_RESIDENT_PREFER_LARGE_WORKSPACE").as_deref()==Ok("1");
+        }
+        #[cfg(test)]
+        if std::env::var("VOXY_HAIR_TRIPLE_ACTIVE_SET").as_deref()==Ok("1") {
+            let source=if std::env::var("VOXY_HAIR_TRIPLE_SINGLE_DISPATCH").as_deref()==Ok("1") {
+                voxy_render::ExperimentalTripleActiveContactBatch::shader_source()
+            } else if std::env::var("VOXY_HAIR_TRIPLE_PARALLEL").as_deref()==Ok("1") {
+                voxy_render::ExperimentalTripleActiveContactInput::parallel_shader_source()
+            } else {voxy_render::ExperimentalTripleActiveContactInput::shader_source()};
+            solver.joint_triple_active_program=Some(ComputeProgram::new(device,&source).await?);
+            solver.joint_resident_operator_reuse=std::env::var("VOXY_HAIR_TRIPLE_OPERATOR_REUSE").as_deref()==Ok("1");
+            solver.joint_resident_batch_dedup=std::env::var("VOXY_HAIR_TRIPLE_BATCH_DEDUP").as_deref()==Ok("1");
+        }
+        // Test-only full-groom qualification of the resident-column kernel.
+        // Production keeps the admitted built-in program until that gate passes.
+        #[cfg(test)]
+        if std::env::var_os("VOXY_HAIR_JOINT_QR_RESIDENT_COLUMNS").is_some() {
+            let path=std::env::var_os("VOXY_HAIR_JOINT_QR_SHADER_FIXTURE")
+                .expect("resident coupled qualification requires a shader fixture");
+            let source=std::fs::read_to_string(path).expect("read resident QR qualification fixture");
+            solver.joint_programs=Some((
+                ComputeProgram::new(device,&source).await?,
+                ComputeProgram::new(device,voxy_render::JOINT_CONTACT_EQUALITY_SHADER).await?));
+            solver.joint_resident_qr_columns=true;
+        }
+        Ok(solver)
+    }
     /// Qualify a second compensated division residual update. This changes
     /// arithmetic accuracy only; the physical matrices and residual gates stay fixed.
     pub async fn new_with_extra_division_refinement(device:&wgpu::Device,queue:&wgpu::Queue,extra:bool)->Result<Self,voxy_render::ComputeError> {
@@ -161,7 +274,7 @@ impl GpuHairLinearSolver {
             }
         }
         let program=ComputeProgram::new(device,&source).await?;
-        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,joint_contact_qr:false,joint_coordinate_batches:false,joint_support_compaction:true,#[cfg(test)] joint_full_refinement_readback:true,#[cfg(test)] joint_separate_qr_passes:false,joint_programs:None,joint_result_cache:None,joint_workspaces:Default::default(),joint_result_reuse:false,joint_dual_hints:false,joint_dual_hint_attempts:0,joint_qr_prefix_reuse:false,joint_qr_columns_reused:0,joint_release_directions:false,joint_release_direction_calls:0,joint_early_release_directions:false,joint_early_release_direction_calls:0,joint_result_cache_hits:0,joint_coordinate_calls:0,joint_equality_dispatches:0,joint_equality_submissions:0,joint_workspace_creations:0,joint_workspace_reuses:0,joint_admitted:0,joint_native_fallbacks:0,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
+        Ok(Self {device:device.clone(),queue:queue.clone(),program,resident:None,joint_contact_qr:false,joint_coordinate_batches:false,joint_support_compaction:true,#[cfg(test)] joint_full_refinement_readback:true,#[cfg(test)] joint_separate_qr_passes:false,#[cfg(test)] joint_resident_qr_columns:false,#[cfg(test)] joint_profile_operator:None,#[cfg(test)] joint_resident_active_program:None,#[cfg(test)] joint_triple_active_program:None,#[cfg(test)] joint_triple_factors:Vec::new(),#[cfg(test)] joint_triple_factor_reuses:0,#[cfg(test)] joint_resident_workspace_reuse:false,#[cfg(test)] joint_resident_operator_reuse:false,#[cfg(test)] joint_resident_batch_dedup:false,#[cfg(test)] joint_resident_candidates:Default::default(),joint_programs:None,joint_result_cache:None,joint_workspaces:Default::default(),joint_result_reuse:false,joint_dual_hints:false,joint_dual_hint_attempts:0,joint_qr_prefix_reuse:false,joint_qr_columns_reused:0,joint_release_directions:false,joint_release_direction_calls:0,joint_early_release_directions:false,joint_early_release_direction_calls:0,joint_result_cache_hits:0,joint_coordinate_calls:0,joint_equality_dispatches:0,joint_equality_submissions:0,joint_workspace_creations:0,joint_workspace_reuses:0,joint_admitted:0,joint_native_fallbacks:0,reference_audit:false,max_linear_error:[0.;2],max_packing_error:[0.;2],max_stage_error:[[0.;2];3],residual_refinements:0,contact_residual_refinements:None,refinement_dispatches:0,reuse_refinement_factors:true,reused_factor_dispatches:0,contact_response_batches:false,batch_response_waves:false,compact_response_readback:false,gpu_response_transport:false,rhs_transfer_program:None,response_transport_scratch:None,response_transport_workspace_creations:0,response_transfer_dispatches:0,response_submissions:0,response_calls:0,response_dispatches:0,calls:0,elapsed_ms:0.,last_error:None})
     }
     fn solve_checked(&mut self,systems:&[HairLinearSystem])->Result<Vec<Vec<f64>>,Box<dyn std::error::Error>> {
         if self.residual_refinements>3 {return Err("hair residual refinements must be in 0..3".into());}
@@ -411,6 +524,7 @@ impl HairLinearSolver for GpuHairLinearSolver {
     }
     fn joint_contact_result(&mut self,accelerated:bool) {
         if accelerated {self.joint_admitted+=1;} else {
+            #[cfg(test)] {self.joint_resident_candidates=Default::default();self.joint_triple_factors.clear();}
             self.joint_native_fallbacks+=1;
             if self.last_error.is_none() {self.last_error=Some("GPU joint candidate rejected by original physical admission".into());}
             if std::env::var_os("VOXY_HAIR_QR_PROFILE").is_some() {

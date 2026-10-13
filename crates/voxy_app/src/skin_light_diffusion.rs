@@ -142,6 +142,34 @@ fn assemble_surface(
     }
     Ok((mass, edges))
 }
+
+/// Export the actual active surface equation for the independent GPU parity gate.
+#[cfg(test)]
+pub(super) fn gpu_parity_fixture(
+    points: &[[f32; 3]],
+    triangles: &[[usize; 3]],
+    source: &[[f64; 3]],
+    reference: &[[f64; 3]],
+) -> Result<serde_json::Value, &'static str> {
+    if points.len() != source.len() || points.len() != reference.len() {
+        return Err("invalid diffusion fixture dimensions");
+    }
+    let mut used = vec![false; points.len()];
+    for &index in triangles.iter().flatten() {
+        *used.get_mut(index).ok_or("invalid diffusion triangle")? = true;
+    }
+    let active: Vec<_> = (0..points.len()).filter(|&i| used[i]).collect();
+    let mut remap = vec![usize::MAX; points.len()];
+    for (compact, &original) in active.iter().enumerate() { remap[original] = compact; }
+    let points: Vec<_> = active.iter().map(|&i| points[i]).collect();
+    let triangles: Vec<_> = triangles.iter().map(|t| t.map(|i| remap[i])).collect();
+    let (mass, edges) = assemble_surface(&points, &triangles)?;
+    let source: Vec<_> = active.iter().map(|&i| source[i]).collect();
+    let reference: Vec<_> = active.iter().map(|&i| reference[i]).collect();
+    Ok(serde_json::json!({"points":points,"triangles":triangles,"mass":mass,"edges":edges,"source":source,
+        "reference":reference,"radii":[0.002,0.001,0.0005],
+        "scope":"Accepted physical stance runtime surface; active triangle vertices only"}))
+}
 // Canonical rows retain each edge's original arithmetic direction and order.
 // Independent rows avoid repeatedly scattering both endpoints into the output vector.
 #[derive(Clone, Copy, Default)]

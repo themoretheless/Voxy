@@ -19,30 +19,52 @@ def require(condition, message):
 def audit_mechanisms(root):
     manifests = 0
     sources = 0
-    for path in sorted((root / 'mechanisms').glob('*/sources.json')):
+    unique_sources = {}
+    repository_sources = collections.Counter()
+    paths = list((root / 'mechanisms').glob('*/sources.json'))
+    paths += list((root / 'mechanisms').glob('*/sources/**/source-manifest.json'))
+    for path in sorted(paths):
         manifest = json.loads(path.read_text())
-        repository, commit = manifest['repository'], manifest['commit']
-        require(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository),
-                f'invalid mechanism repository: {path}')
-        require(re.fullmatch('[0-9a-f]{40}', commit), f'unpinned mechanism: {path}')
+        if isinstance(manifest, list):
+            records = [(s['repo'], s['sha'], s['local'], s) for s in manifest]
+        else:
+            repository = manifest['repository'].removeprefix('https://github.com/')
+            entries = manifest.get('sources', manifest.get('files', []))
+            records = [(repository, manifest['commit'], s.get('file', s['path']), s)
+                       for s in entries]
         seen = set()
-        require(manifest['sources'], f'empty source manifest: {path}')
-        for source in manifest['sources']:
-            name = source['file']
-            require(pathlib.PurePath(name).name == name and name not in {'.', '..'},
+        require(records, f'empty source manifest: {path}')
+        for repository, commit, name, source in records:
+            require(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository),
+                    f'invalid mechanism repository: {path}')
+            require(re.fullmatch('[0-9a-f]{40}', commit), f'unpinned mechanism: {path}')
+            local = pathlib.PurePosixPath(name)
+            require(not local.is_absolute() and '..' not in local.parts and name not in {'.', ''}
+                    and (path.parent / name).resolve().is_relative_to(path.parent.resolve()),
                     f'unsafe mechanism filename: {name}')
             require(name not in seen, f'duplicate mechanism source: {name}')
             seen.add(name)
             remote = pathlib.PurePosixPath(source['path'])
             require(not remote.is_absolute() and '..' not in remote.parts,
                     f'unsafe remote source path: {remote}')
-            require(source['url'] == f"https://raw.githubusercontent.com/{repository}/{commit}/{source['path']}",
+            require(source['url'] in {
+                f"https://raw.githubusercontent.com/{repository}/{commit}/{source['path']}",
+                f"https://github.com/{repository}/blob/{commit}/{source['path']}"},
                     f'unpinned mechanism URL: {name}')
             require(hashlib.sha256((path.parent / name).read_bytes()).hexdigest() == source['sha256'],
                     f'mechanism digest mismatch: {name}')
+            identity = (repository, commit, source['path'])
+            require(identity not in unique_sources or unique_sources[identity] == source['sha256'],
+                    f'conflicting copies of pinned source: {repository}@{commit}/{source["path"]}')
+            if identity not in unique_sources:
+                repository_sources[repository] += 1
+            unique_sources[identity] = source['sha256']
             sources += 1
         manifests += 1
-    return dict(manifests=manifests, verified_sources=sources)
+    return dict(manifests=manifests, verified_sources=sources,
+                unique_pinned_sources=len(unique_sources), duplicate_source_records=sources-len(unique_sources),
+                repositories_with_saved_sources=len(repository_sources),
+                repository_source_counts=dict(sorted(repository_sources.items())))
 
 
 def audit(root):

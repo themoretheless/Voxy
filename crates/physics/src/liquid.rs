@@ -26,6 +26,32 @@ pub use water_equilibrium::{
     water_equilibrium_from_entropy, water_equilibrium_response,
 };
 
+#[path = "liquid/density_operator.rs"]
+mod density_operator;
+#[path = "liquid/pair_forces.rs"]
+mod pair_forces;
+#[path = "liquid/normal_operator.rs"]
+mod normal_operator;
+#[path = "liquid/density_normal_operator.rs"]
+mod density_normal_operator;
+#[path = "liquid/pipeline_operator.rs"]
+mod pipeline_operator;
+pub use pipeline_operator::{LiquidPipelineOperator,LiquidPipelineResult};
+#[path = "liquid/pressure_operator.rs"]
+mod pressure_operator;
+pub use pressure_operator::{LiquidPressureLaw,LiquidPressureOperator};
+pub use density_normal_operator::{LiquidDensityNormalOperator,LiquidDensityNormalResult};
+#[path = "liquid/accumulation_operator.rs"]
+mod accumulation_operator;
+#[path = "liquid/force_pipeline_operator.rs"]
+mod force_pipeline_operator;
+pub use force_pipeline_operator::{LiquidForcePipelineOperator,LiquidForcePipelineResult};
+pub use accumulation_operator::{LiquidAccumulationOperator,LiquidAccumulationResult};
+pub use normal_operator::LiquidNormalOperator;
+pub use pair_forces::{LiquidPairForceInput,LiquidPairForceResult};
+pub use density_operator::{LiquidDensityOperator,LiquidDensityBackend,LiquidDensityStats};
+pub use density_operator::{LiquidDensityBackend as LiquidComputeBackend,LiquidDensityStats as LiquidComputeStats};
+
 /// Material coefficients in a consistent unit system (normally SI).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Material {
@@ -338,10 +364,10 @@ impl Liquid {
             && self.maxwell_fluids.iter().all(Option::is_none)
             && self.transport.as_ref().is_none_or(|t| t.species.is_none())
         {
-            return self.advance_with_mover_inner(dt, container, move_particles);
+            return self.advance_with_mover_inner(dt, container, move_particles, &mut density_operator::NativeDensity);
         }
         let mut candidate = self.clone();
-        let stats = candidate.advance_with_mover_inner(dt, container, &mut move_particles)?;
+        let stats = candidate.advance_with_mover_inner(dt, container, &mut move_particles, &mut density_operator::NativeDensity)?;
         *self = candidate;
         Ok(stats)
     }
@@ -350,6 +376,7 @@ impl Liquid {
         dt: f64,
         container: Option<Container>,
         mut move_particles: impl FnMut(&mut Self, &mut [Particle], f64) -> Result<(), Error>,
+        density_backend: &mut impl LiquidDensityBackend,
     ) -> Result<StepStats, Error> {
         if !positive(dt) || dt > 0.1 {
             return Err(Error::InvalidTimeStep);
@@ -377,8 +404,10 @@ impl Liquid {
             )?;
             self.retain_carrier_pairs(&mut pairs);
             let properties = self.evaluate_materials(&next, transport.as_ref())?;
+            let operator=self.particle_density_operator(&next,&pairs,&properties);
+            let density_candidate=if density_backend.supports_pipeline() || density_backend.supports_density_normals() {None} else {density_backend.candidate(&operator)};
             let (density, mut acceleration, viscous_rate) =
-                self.forces(&next, &pairs, &properties)?;
+                self.forces_with_density(&next, &pairs, &properties,density_candidate,Some(density_backend))?;
             if let Some(walls) = container {
                 self.apply_wall_adhesion(&next, walls, &mut acceleration)?;
             }
@@ -517,33 +546,16 @@ impl Liquid {
         pairs: &[(usize, usize)],
         properties: &[Material],
     ) -> Vec<f64> {
-        let h = self.config.smoothing_radius;
-        let self_kernel = density_kernel(self.formulation, h, 0.0);
-        let mut density: Vec<_> = particles.iter().map(|p| p.mass * self_kernel).collect();
-        for &(i, j) in pairs {
-            let r = norm(sub(particles[i].position, particles[j].position));
-            let w = density_kernel(self.formulation, h, r);
-            let ratio = match self.formulation {
-                Formulation::MassDensity => 1.0,
-                Formulation::RestVolume | Formulation::RestVolumeWendland => {
-                    properties[i].rest_density / properties[j].rest_density
-                }
-            };
-            density[i] += particles[j].mass * w * ratio;
-            density[j] += particles[i].mass * w / ratio;
+        self.particle_density_operator(particles,pairs,properties).evaluate_validated()
+    }
+
+    fn particle_density_operator<'a>(&'a self,particles:&'a [Particle],pairs:&'a [(usize,usize)],
+        properties:&'a [Material])->LiquidDensityOperator<'a> {
+        LiquidDensityOperator {
+            particles, pairs, properties, formulation: self.formulation,
+            smoothing_radius: self.config.smoothing_radius,
+            carrier_droplets: if self.carrier_droplet_stage {self.droplet_population.as_deref()} else {None},
         }
-        if self.carrier_droplet_stage {
-            for (i, rho) in density.iter_mut().enumerate() {
-                if self
-                    .droplet_population
-                    .as_ref()
-                    .is_some_and(|flags| flags[i])
-                {
-                    *rho = properties[i].rest_density;
-                }
-            }
-        }
-        density
     }
 
     fn forces(
@@ -552,85 +564,63 @@ impl Liquid {
         pairs: &[(usize, usize)],
         properties: &[Material],
     ) -> Result<ForceState, Error> {
+        self.forces_with_density(particles,pairs,properties,None,None)
+    }
+
+    fn forces_with_density(
+        &self,
+        particles: &[Particle],
+        pairs: &[(usize, usize)],
+        properties: &[Material],
+        density_candidate: Option<Vec<f64>>,
+        mut pair_backend: Option<&mut dyn LiquidDensityBackend>,
+    ) -> Result<ForceState, Error> {
         self.validate_gas_geometry()?;
-        let h = self.config.smoothing_radius;
-        let mut density = self.particle_densities(particles, pairs, properties);
-        let boundary_pairs = self.boundary_pairs(particles, pairs.len())?;
-        self.add_boundary_density(properties, &boundary_pairs, &mut density);
-        let images = self.image_pairs(particles, pairs.len())?;
-        self.image_density(particles, properties, &images, &mut density);
-        let pressure: Vec<_> = particles
+        let whole=pair_backend.as_ref().is_some_and(|backend|backend.supports_pipeline());
+        let combined=whole || pair_backend.as_ref().is_some_and(|backend|backend.supports_density_normals());
+        let mut density=density_candidate.unwrap_or_else(||if combined {Vec::new()} else {self.particle_densities(particles,pairs,properties)});
+        let boundary_pairs=self.boundary_pairs(particles,pairs.len())?;
+        if !combined {self.add_boundary_density(properties,&boundary_pairs,&mut density);}
+        let images=self.image_pairs(particles,pairs.len())?;
+        let mut normal_override=None;
+        let mut pressure_override=None;
+        let mut force_override=None;
+        if combined {
+            let mut support=Vec::new();
+            self.visit_boundary_density(properties,&boundary_pairs,|i,x|support.push((i,x)));
+            self.visit_image_density(particles,properties,&images,|i,x|support.push((i,x)));
+            let pressure_laws=pair_backend.as_ref().filter(|backend|whole || backend.supports_density_normal_pressure()).map(|_| {
+                particles.iter().zip(properties).map(|(p,m)|LiquidPressureLaw {rest_density:m.rest_density,sound_speed:m.sound_speed,
+                    heat_capacity_ratio:self.gas_equations[p.material].map(|gas|gas.heat_capacity_ratio)}).collect::<Vec<_>>()
+            });
+            let operator=LiquidDensityNormalOperator {fluid:self.particle_density_operator(particles,pairs,properties),support:&support,pressure_laws:pressure_laws.as_deref()};
+            let candidate=if whole {
+                let inputs=pairs.iter().map(|&(i,j)|self.particle_pair_force_input(particles[i],particles[j],properties[i],properties[j],
+                    [1.;2],[0.;2],[0.;3])).collect::<Vec<_>>();
+                let owner=LiquidPipelineOperator {fields:operator,inputs:&inputs,gravity:self.config.gravity};
+                pair_backend.as_mut().and_then(|backend|backend.pipeline_candidate(&owner)).map(|candidate| {
+                    force_override=Some(candidate.forces.accumulation);candidate.fields
+                })
+            } else {pair_backend.as_mut().and_then(|backend|backend.density_normal_candidate(&operator))};
+            if let Some(candidate)=candidate {
+                density=candidate.densities;normal_override=Some(candidate.normals);pressure_override=candidate.pressures;
+            } else {
+                density=self.particle_densities(particles,pairs,properties);
+                self.add_boundary_density(properties,&boundary_pairs,&mut density);
+                self.image_density(particles,properties,&images,&mut density);
+            }
+        } else {self.image_density(particles,properties,&images,&mut density);}
+        let pressure: Vec<_> = if let Some(pressure)=pressure_override {pressure} else {particles
             .iter()
             .zip(properties)
             .zip(&density)
             .map(|((particle, material), rho)| {
                 self.material_pressure(particle.material, *material, *rho)
             })
-            .collect::<Result<_, _>>()?;
-        let normals = color_normals(particles, pairs, &density, h);
-        let mut acceleration = vec![self.config.gravity; particles.len()];
-        let mut viscous_rates = vec![0.0_f64; particles.len()];
-        for &(i, j) in pairs {
-            let a = particles[i];
-            let b = particles[j];
-            let delta = sub(a.position, b.position);
-            let r = norm(delta);
-            let direction = if r > 1e-12 {
-                delta.map(|x| x / r)
-            } else {
-                [1.0, 0.0, 0.0]
-            };
-            let pressure_force = self.thermodynamic_pressure_magnitude(
-                [a.mass, b.mass],
-                [density[i], density[j]],
-                [pressure[i], pressure[j]],
-                [properties[i].rest_density, properties[j].rest_density],
-                [h, r],
-                [a.material, b.material],
-            );
-            let mu = 0.5 * (properties[i].viscosity + properties[j].viscosity);
-            let viscosity =
-                viscous_conductance([a.mass, b.mass], mu, [density[i], density[j]], r, h);
-            viscous_rates[i] += viscosity / a.mass;
-            viscous_rates[j] += viscosity / b.mass;
-            let surface = if a.material == b.material {
-                self.surface_strengths[a.material]
-            } else {
-                0.0
-            };
-            let correction = (properties[i].rest_density + properties[j].rest_density)
-                / (density[i] + density[j]);
-            let cohesion = if r > 1e-12 {
-                surface * a.mass * b.mass * correction * cohesion_kernel(r, h)
-            } else {
-                0.0
-            };
-            // Harmonic pair mass makes curvature exchange symmetric for unequal masses.
-            let curvature = surface * correction * (2.0 * a.mass * b.mass / (a.mass + b.mass));
-            let dn = sub(normals[i], normals[j]);
-            let curvature_normal = dn[0] * direction[0] + dn[1] * direction[1] + dn[2] * direction[2];
-            let dv = sub(b.velocity, a.velocity);
-            let relative_normal = dv[0] * direction[0] + dv[1] * direction[1] + dv[2] * direction[2];
-            let interface_force = self.interface_force(a, b, r);
-            let radial = pressure_force - cohesion + interface_force - curvature * curvature_normal;
-            let visc = if self.viscous_heating {
-                0.0
-            } else {
-                viscosity * relative_normal
-            };
-            let total_mag = radial + visc;
-            let f0 = total_mag * direction[0];
-            let f1 = total_mag * direction[1];
-            let f2 = total_mag * direction[2];
-            let inv_a = 1.0 / a.mass;
-            let inv_b = 1.0 / b.mass;
-            acceleration[i][0] += f0 * inv_a;
-            acceleration[i][1] += f1 * inv_a;
-            acceleration[i][2] += f2 * inv_a;
-            acceleration[j][0] -= f0 * inv_b;
-            acceleration[j][1] -= f1 * inv_b;
-            acceleration[j][2] -= f2 * inv_b;
-        }
+            .collect::<Result<_, _>>()?};
+        let (mut acceleration, mut viscous_rates) = if let Some(candidate)=force_override {
+            (candidate.accelerations,candidate.viscous_rates)
+        } else {self.particle_pair_forces(particles, pairs, properties, &density, &pressure, normal_override, pair_backend)};
         self.add_image_forces(
             particles,
             properties,

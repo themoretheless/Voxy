@@ -65,6 +65,13 @@ impl SkinEmbedding {
     pub fn bindings(&self) -> &[SurfaceBinding] {
         &self.bindings
     }
+    /// Immutable shell topology addressed by the validated surface bindings.
+    /// Consumers may compile their own transfer layout without duplicating
+    /// the embedding search or becoming owners of the physical shell state.
+    #[must_use]
+    pub fn shell_triangles(&self) -> &[[usize; 3]] {
+        &self.triangles
+    }
     /// Apply shell-minus-reference displacement to an independently posed render
     /// mesh. For animated attachments, reference is the posed skeleton surface,
     /// so skeleton motion is not added twice. No output is published on failure.

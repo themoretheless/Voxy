@@ -7,6 +7,9 @@ use voxy_render::SceneVertex;
 #[cfg(test)]
 #[path = "jump_rig_tests.rs"]
 mod jump_rig_tests;
+#[cfg(test)]
+#[path = "humanoid_locomotion_tests.rs"]
+mod humanoid_locomotion_tests;
 
 /// Object in the canonical left hand's rest frame. Meshes must be closed and outward wound.
 #[derive(Debug)]
@@ -297,6 +300,11 @@ pub(crate) struct PreparedGrasp {
     object: Option<std::sync::Arc<GraspObject>>,
     samples: Option<std::sync::Arc<Vec<[[Quat; 3]; 5]>>>,
 }
+#[derive(Clone,Debug)]
+enum AuthoredMotion {
+    Jump(std::sync::Arc<crate::humanoid_locomotion::VoxyHumanoidLocomotion>),
+    Grounded {library:std::sync::Arc<crate::humanoid_locomotion::VoxyHumanoidLocomotion>,clip:crate::humanoid_locomotion::LocomotionClip,pose:Pose},
+}
 #[derive(Debug)]
 pub(crate) struct FemaleRig {
     pub skeleton: Skeleton,
@@ -306,6 +314,8 @@ pub(crate) struct FemaleRig {
     grasp_cycle: bool,
     body_motion: bool,
     jump_chains: [voxy_animation::TwoBoneChain; 2],
+    jump_plants: [voxy_animation::FootPlant; 2],
+    authored_motion: Option<AuthoredMotion>,
     grasp_object: Option<std::sync::Arc<GraspObject>>,
     grasp_samples: Option<std::sync::Arc<Vec<[[Quat; 3]; 5]>>>,
     hand_edges: Vec<(usize, usize, f32)>,
@@ -317,6 +327,89 @@ pub(crate) struct FemaleRig {
     finger_contact_skin: [Vec<(Vec3, Box<[(usize, f32)]>)>; 5],
 }
 impl FemaleRig {
+    /// Loads the offline reference hulls in this rig's actual ankle frames.
+    /// No stance labels or physical projection tolerance are inferred here.
+    pub(crate) fn foot_support_geometry(
+        &self, vertices: &[SceneVertex], max_projection_distance: f64,
+    ) -> Result<Vec<(u16, voxy_editor::FootSupportGeometry)>, String> {
+        #[derive(serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Asset { feet: Vec<Foot> }
+        #[derive(serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Foot { bone: String, points: Vec<[f64; 3]>, source_geometry_blake3: String }
+        if vertices.len() != self.weights.len() || !max_projection_distance.is_finite()
+            || !(0. ..=1e6).contains(&max_projection_distance) {
+            return Err("invalid reference foot binding inputs".into());
+        }
+        let asset: Asset = serde_json::from_str(include_str!(
+            "../../../assets/characters/blender-female/prepared/foot-support-reference.json"))
+            .map_err(|e| e.to_string())?;
+        if asset.feet.len() != 2 { return Err("expected two reference feet".into()); }
+        let globals = self.skeleton.bind_pose64().global_matrices(&self.skeleton)
+            .map_err(|e| e.to_string())?;
+        let mut result = Vec::new();
+        for (foot, expected) in asset.feet.into_iter().zip(["left_foot", "right_foot"]) {
+            if foot.bone != expected { return Err("reference foot identity mismatch".into()); }
+            let bone = self.skeleton.joints().iter().position(|j| j.name.as_ref()==expected)
+                .ok_or("reference foot bone missing")?;
+            let inverse = globals[bone].inverse();
+            let candidates: Vec<_> = vertices.iter().zip(&self.weights)
+                .filter(|(_, weights)| weights.iter().any(|&(joint, weight)| joint==bone && weight>=0.5))
+                .map(|(v, _)| inverse.transform_point3(Vec3::from_array(v.position).as_dvec3()))
+                .collect();
+            let mut source_hash = blake3::Hasher::new();
+            source_hash.update(b"voxy-foot-reference-v1\0");
+            source_hash.update(expected.as_bytes());
+            source_hash.update(&[0]);
+            source_hash.update(&(candidates.len() as u64).to_le_bytes());
+            for point in &candidates {
+                for value in point.to_array() {
+                    source_hash.update(&value.to_bits().to_le_bytes());
+                }
+            }
+            if source_hash.finalize().to_hex().as_str() != foot.source_geometry_blake3 {
+                return Err("reference foot source geometry fingerprint mismatch".into());
+            }
+            voxy_animation::FootSupportPoints::new(foot.points.iter().copied()
+                .map(glam::DVec3::from_array).collect()).map_err(|e|e.to_string())?;
+            if foot.points.iter().any(|point| !candidates.contains(&glam::DVec3::from_array(*point))) {
+                return Err("reference hull does not match current foot mesh and bind frame".into());
+            }
+            result.push((bone as u16, voxy_editor::FootSupportGeometry {
+                points: foot.points, max_projection_distance,
+            }));
+        }
+        Ok(result)
+    }
+    /// Prepares the shared foot owner for explicitly requested fixed stance.
+    /// Walking/running contact intent must come from a qualified gait owner.
+    pub(crate) fn fixed_stance_foot_runtime(
+        &self, vertices: &[SceneVertex], contact: voxy_gameplay::FootContactSettings,
+        max_projection: f64, stance: [bool; 2],
+    ) -> Result<voxy_editor::FootRuntime, String> {
+        let geometry = self.foot_support_geometry(vertices, max_projection)?;
+        let globals = self.skeleton.bind_pose64().global_matrices(&self.skeleton)
+            .map_err(|e| e.to_string())?;
+        let mut feet = Vec::new();
+        for ((bone, geometry), plant) in geometry.into_iter().zip(stance) {
+            let knee = self.skeleton.joints()[usize::from(bone)].parent.ok_or("missing foot knee")?;
+            let hip = self.skeleton.joints()[usize::from(knee)].parent.ok_or("missing foot hip")?;
+            let points = voxy_animation::FootSupportPoints::new(geometry.points.iter()
+                .copied().map(glam::DVec3::from_array).collect()).map_err(|e|e.to_string())?;
+            let selected = points.support(glam::DMat3::from_mat4(globals[usize::from(bone)]),
+                glam::DVec3::Y).map_err(|e|e.to_string())?;
+            let pole = globals[usize::from(knee)].w_axis.truncate() + glam::DVec3::Z * 0.5;
+            feet.push(voxy_editor::FootBinding {
+                bones: [hip, knee, bone].map(|joint|self.skeleton.joints()[usize::from(joint)].name.to_string()),
+                sole_offset: selected.local.as_vec3().to_array(), sole_up: [0., 1., 0.],
+                orientation: voxy_editor::FootOrientation::Authored, pole: pole.as_vec3().to_array(),
+                plant, weight: 1., contact, contact_curve: vec![], clip_contact_curves: Default::default(),
+                clip_pivot_keys: Default::default(), support_geometry: Some(geometry),
+            });
+        }
+        voxy_editor::FootRuntime::from_skeleton(&self.skeleton, voxy_editor::ModelFootPlacement { feet }, &[])
+    }
     pub fn new(vertices: &[SceneVertex]) -> Result<Self, voxy_animation::AnimationError> {
         let mut bones = vec![
             (
@@ -542,6 +635,14 @@ impl FemaleRig {
             voxy_animation::TwoBoneChain::new(&skeleton, [7, 8, 9])?,
             voxy_animation::TwoBoneChain::new(&skeleton, [13, 14, 15])?,
         ];
+        let plant = |sign: f32| voxy_animation::FootPlant::capture(
+            voxy_animation::RootRigidTransform {
+                translation: Vec3::new(sign * 0.10, -0.74, 0.).as_dvec3(),
+                rotation: glam::DQuat::IDENTITY,
+            },
+            voxy_animation::RootRigidTransform::IDENTITY,
+        );
+        let jump_plants = [plant(1.)?, plant(-1.)?];
         Ok(Self {
             skeleton,
             clip,
@@ -550,6 +651,8 @@ impl FemaleRig {
             grasp_cycle: false,
             body_motion: true,
             jump_chains,
+            jump_plants,
+            authored_motion: None,
             grasp_object: None,
             grasp_samples: None,
             hand_edges: Vec::new(),
@@ -560,6 +663,30 @@ impl FemaleRig {
             finger_weights,
             finger_contact_skin,
         })
+    }
+    pub(crate) fn authored_jump_source(&self) -> Option<std::sync::Arc<voxy_render::ModelAsset>> {
+        match &self.authored_motion {Some(AuthoredMotion::Jump(library))=>Some(library.source_asset()),_=>None}
+    }
+    pub(crate) fn install_authored_jump(&mut self, library: std::sync::Arc<crate::humanoid_locomotion::VoxyHumanoidLocomotion>) {
+        self.authored_motion = Some(AuthoredMotion::Jump(library));
+    }
+    pub(crate) fn authored_gait_source(&self)->Option<(std::sync::Arc<voxy_render::ModelAsset>,crate::humanoid_locomotion::LocomotionClip)> {
+        match &self.authored_motion {Some(AuthoredMotion::Grounded {library,clip,..})=>Some((library.source_asset(),*clip)),_=>None}
+    }
+    pub(crate) fn install_authored_gait(&mut self,library:std::sync::Arc<crate::humanoid_locomotion::VoxyHumanoidLocomotion>,clip:crate::humanoid_locomotion::LocomotionClip)->Result<(),Box<dyn std::error::Error>> {
+        use crate::humanoid_locomotion::LocomotionClip::{Idle,Walk,Jog,Sprint};
+        if !matches!(clip,Idle|Walk|Jog|Sprint) {return Err("grounded preview requires idle, walk, jog or sprint".into());}
+        let pose=library.pose_phase_in_place(clip,0.,&self.skeleton)?.0;
+        self.authored_motion=Some(AuthoredMotion::Grounded {library,clip,pose});
+        Ok(())
+    }
+    pub(crate) fn grounded_binding(&self)->Option<&crate::humanoid_locomotion::VoxyHumanoidLocomotion> {
+        match &self.authored_motion {Some(AuthoredMotion::Grounded {library,..})=>Some(library),_=>None}
+    }
+    /// Called only after both target poses have passed their binding admission.
+    pub(crate) fn publish_grounded_pose(&mut self,frame:Pose,selected:crate::humanoid_locomotion::LocomotionClip) {
+        let Some(AuthoredMotion::Grounded {pose,clip,..})=&mut self.authored_motion else {unreachable!("grounded binding was prepared before publication")};
+        *pose=frame;*clip=selected;
     }
     /// Continuous hand closure: zero is the existing relaxed pose, one is a power grip.
     pub(crate) fn set_grasp(&mut self, amount: f32) -> Result<(), &'static str> {
@@ -942,6 +1069,7 @@ impl FemaleRig {
     }
     fn pose(&self, time: f32) -> Pose {
         let body_time = if self.body_motion { time } else { 0. };
+        if let Some(AuthoredMotion::Grounded {pose,..})=&self.authored_motion {return pose.clone();}
         let relaxed = self.clip.sample(&self.skeleton, body_time);
         let amount = self.grasp_amount(time);
         if amount == 0. {
@@ -989,6 +1117,9 @@ impl FemaleRig {
     /// Planted ankle targets are expressed before the shared vertical root
     /// displacement. IK preserves segment lengths during the squat and landing.
     fn jump_pose(&self, time: f64) -> Pose {
+        if let Some(AuthoredMotion::Jump(library)) = &self.authored_motion {
+            return self.authored_jump_pose(library, time).expect("admitted authored jump support");
+        }
         let motion = crate::jump_motion::sample(time);
         let mut pose = self.skeleton.bind_pose();
         if motion.height == 0. && motion.flight.is_none() && motion.limb_weight == 0. { return pose; }
@@ -1001,24 +1132,40 @@ impl FemaleRig {
         pose.set_joint_rotation(1, Quat::from_rotation_x(-0.03 * motion.compression)).expect("jump spine");
         pose.set_joint_rotation(3, Quat::from_rotation_x(-0.12 * motion.compression)).expect("level jump gaze");
         let tuck = motion.flight.map_or(0., |phase| (std::f32::consts::PI * phase).sin().powi(2));
-        for (side, sign) in [1f32, -1.].into_iter().enumerate() {
-            let ankle = if motion.flight.is_some() {
-                Vec3::new(sign * 0.10, -0.74 + 0.10 * tuck, -0.04 * tuck)
+        let actor = voxy_animation::RootRigidTransform {
+            translation: glam::DVec3::Y * motion.height,
+            rotation: glam::DQuat::IDENTITY,
+        };
+        let targets: [voxy_animation::TwoBoneTarget; 2] = std::array::from_fn(|side| {
+            let sign = if side == 0 {1.} else {-1.};
+            let bend = if motion.flight.is_some() { tuck } else { motion.compression };
+            let w = smooth(0., 0.1, bend);
+            let pole = Vec3::new(sign * (0.10 + 0.30 * (1. - w)), -0.42, 0.70 * w);
+            if motion.flight.is_some() {
+                voxy_animation::TwoBoneTarget {
+                    position: Vec3::new(sign * 0.10, -0.74 + 0.10 * tuck, -0.04 * tuck),
+                    pole, rotation: Some(Quat::from_rotation_x(0.20 * tuck)), weight: 1.,
+                }
             } else {
-                Vec3::new(sign * 0.10, -0.74 - motion.height as f32, 0.)
-            };
-            let (solved, result) = pose.solve_two_bone(&self.jump_chains[side], voxy_animation::TwoBoneTarget {
-                position: ankle,
-                pole: {
-                    let bend = if motion.flight.is_some() { tuck } else { motion.compression };
-                    let w = smooth(0., 0.1, bend);
-                    Vec3::new(sign * (0.10 + 0.30 * (1. - w)), -0.42, 0.70 * w)
-                },
-                rotation: Some(Quat::from_rotation_x(0.20 * tuck)),
-                weight: 1.,
-            }).expect("validated jump leg chain");
-            debug_assert!(result.tip_position.distance(ankle) < 2e-5, "jump leg target unreachable");
+                self.jump_plants[side].target(voxy_animation::RootRigidTransform::IDENTITY,
+                    actor, pole, 1.).expect("validated jump support")
+            }
+        });
+        if motion.flight.is_none() {
+            let (solved, result) = pose.solve_planted_legs(&self.jump_chains, targets, Vec3::Y, 0.10)
+                .expect("reachable shared jump stance");
+            for (leg, target) in result.legs.iter().zip(targets) {
+                debug_assert!(leg.tip_position.distance(target.position) < 2e-5, "jump support unreachable");
+            }
             pose = solved;
+        } else {
+            for (chain, target) in self.jump_chains.iter().zip(targets) {
+                let (solved, result) = pose.solve_two_bone(chain, target).expect("validated airborne leg chain");
+                debug_assert!(result.tip_position.distance(target.position) < 2e-5, "jump leg target unreachable");
+                pose = solved;
+            }
+        }
+        for (side, sign) in [1f32, -1.].into_iter().enumerate() {
             let arm = if side == 0 { 4 } else { 10 };
             let lower = Quat::from_rotation_z(-sign * 0.48 * motion.limb_weight);
             pose.set_joint_rotation(arm, Quat::from_rotation_x(motion.arm_swing) * lower).expect("jump arm swing");
@@ -1026,6 +1173,44 @@ impl FemaleRig {
             pose.set_joint_rotation(arm + 1, Quat::from_axis_angle(elbow_axis, 0.35 * motion.limb_weight)).expect("jump elbow");
         }
         pose
+    }
+    /// Resolves authored poses against the same support and actor clock as the
+    /// physical demo. The airborne preparation uses the future flat support,
+    /// without adding actor height a second time to the animation.
+    pub(crate) fn authored_jump_pose(
+        &self,
+        library: &crate::humanoid_locomotion::VoxyHumanoidLocomotion,
+        time: f64,
+    ) -> Result<Pose, Box<dyn std::error::Error>> {
+        let pose = library.jump_pose(time, &self.skeleton)?;
+        let motion = crate::jump_motion::sample(time);
+        if motion.limb_weight == 0. && motion.height == 0. && motion.flight.is_none() { return Ok(pose); }
+        let contact_weight = if let Some(phase) = motion.flight {
+            let ease = |x: f32| {
+                let x = x.clamp(0., 1.);
+                x * x * x * (10. + x * (-15. + 6. * x))
+            };
+            (1. - ease(phase / 0.20)).max(ease((phase - 0.80) / 0.20))
+        } else { 1. };
+        if contact_weight == 0. { return Ok(pose); }
+        let palette = pose.skin_matrices(&self.skeleton)?;
+        let actor = voxy_animation::RootRigidTransform {
+            translation: glam::DVec3::Y * motion.height * if motion.flight.is_none() { 1. } else { f64::from(contact_weight) },
+            rotation: glam::DQuat::IDENTITY,
+        };
+        let targets = [8usize, 14].map(|knee| {
+            let rest = self.skeleton.joints()[knee].inverse_bind.inverse().transform_point3(Vec3::ZERO);
+            let pole = palette[knee].transform_point3(rest);
+            self.jump_plants[if knee == 8 {0} else {1}].target(
+                voxy_animation::RootRigidTransform::IDENTITY, actor, pole, 1.)
+        });
+        let targets = [targets[0].clone()?, targets[1].clone()?];
+        // Motion-Matching's 15 mm extension buffer motivates conditioning
+        // the knee. Move the pelvis inside the safe shell instead of clamping
+        // the planted target as that demo does.
+        let (supported, _) = pose.solve_planted_legs_with_extension_margin(
+            &self.jump_chains, targets, Vec3::Y, 0.10, 0.015 * motion.limb_weight)?;
+        Ok(Pose::blend(&pose, &supported, contact_weight)?)
     }
     pub(crate) fn jump_palette(&self, time: f64) -> Vec<Mat4> {
         self.jump_pose(time).skin_matrices(&self.skeleton).expect("validated jump pose")
@@ -1077,6 +1262,11 @@ impl FemaleRig {
             .is_some_and(|samples| samples[120][0][1].y < 0.)
     }
     pub fn deform(&self, vertices: &mut [SceneVertex], time: f32) {
+        self.deform_pose(vertices, time, &self.pose(time));
+    }
+    /// Deforms the mesh from an already accepted pose without resampling the
+    /// animation clock and thereby losing physical IK corrections.
+    pub(crate) fn deform_pose(&self, vertices: &mut [SceneVertex], time: f32, pose: &Pose) {
         let hand_sides: Vec<_> = if self.inward_cylinder() {
             vertices
                 .iter()
@@ -1085,10 +1275,7 @@ impl FemaleRig {
         } else {
             Vec::new()
         };
-        let palette = self
-            .pose(time)
-            .skin_matrices(&self.skeleton)
-            .expect("validated rig");
+        let palette = pose.skin_matrices(&self.skeleton).expect("validated rig");
         let left_hand_inverse = palette[6].inverse();
         let right_hand_inverse = palette[12].inverse();
         let finger_palette: Vec<_> = palette
@@ -3992,4 +4179,364 @@ mod thumb_tip_contact_tests {
             }
         }
     }
+    #[test]
+    fn actual_body_foot_surface_candidates_use_dominant_skin_weights() {
+        let body = voxy_render::ObjAsset::parse(include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),
+            voxy_render::ObjLimits::default()).unwrap();
+        let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+        let bound = rig.foot_support_geometry(body.mesh.vertices(), 0.001).unwrap();
+        assert_eq!(bound.len(), 2);
+        assert_eq!(bound[0].1.points.len(), 629);
+        assert_eq!(bound[1].1.points.len(), 650);
+        assert_eq!(rig.skeleton.joints()[usize::from(bound[0].0)].name.as_ref(), "left_foot");
+        assert_eq!(rig.skeleton.joints()[usize::from(bound[1].0)].name.as_ref(), "right_foot");
+        assert!(rig.foot_support_geometry(&[], 0.001).is_err());
+        assert!(rig.foot_support_geometry(body.mesh.vertices(), f64::NAN).is_err());
+        let mut shifted = body.mesh.vertices().to_vec();
+        for vertex in &mut shifted { vertex.position[0] += 10.; }
+        assert!(rig.foot_support_geometry(&shifted, 0.001).is_err());
+        let globals = rig.skeleton.bind_pose64().global_matrices(&rig.skeleton).unwrap();
+        let bone = usize::from(bound[0].0);
+        let inverse = globals[bone].inverse();
+        let interior = body.mesh.vertices().iter().zip(&rig.weights).position(|(vertex, weights)| {
+            weights.iter().any(|&(joint, weight)| joint == bone && weight >= 0.5)
+                && !bound[0].1.points.contains(&inverse.transform_point3(
+                    Vec3::from_array(vertex.position).as_dvec3()).to_array())
+        }).unwrap();
+        let mut changed_interior = body.mesh.vertices().to_vec();
+        changed_interior[interior].position[0] += 0.001;
+        let error = rig.foot_support_geometry(&changed_interior, 0.001).unwrap_err();
+        assert!(error.contains("fingerprint mismatch"), "{error}");
+        for side in ["left", "right"] {
+            let name = format!("{side}_foot");
+            let bone = rig.skeleton.joints().iter().position(|j| j.name.as_ref()==name).unwrap();
+            let inverse = globals[bone].inverse();
+            let points: Vec<_> = body.mesh.vertices().iter().zip(&rig.weights)
+                .filter(|(_, weights)| weights.iter().any(|&(joint,weight)| joint==bone && weight>=0.5))
+                .map(|(v,_)| inverse.transform_point3(Vec3::from_array(v.position).as_dvec3())).collect();
+            assert!(!points.is_empty(), "missing dominant foot geometry: {side}");
+            let minimum = points.iter().copied().fold(glam::DVec3::splat(f64::INFINITY),glam::DVec3::min);
+            let maximum = points.iter().copied().fold(glam::DVec3::splat(f64::NEG_INFINITY),glam::DVec3::max);
+            assert!(minimum.is_finite() && maximum.is_finite());
+            eprintln!("FOOT_REFERENCE_POINTS {}",serde_json::json!({"side":side,
+                "points":points.iter().map(|point|point.to_array()).collect::<Vec<_>>() }));
+            // An inspected lower-surface band, not an automatically admitted pivot.
+            let band = minimum.y + 0.005;
+            let sole: Vec<_> = points.iter().filter(|p| p.y<=band).collect();
+            let heel = **sole.iter().min_by(|a,b| a.z.total_cmp(&b.z)).unwrap();
+            let toe = **sole.iter().max_by(|a,b| a.z.total_cmp(&b.z)).unwrap();
+            assert!(toe.z >= heel.z);
+            eprintln!("FOOT_SURFACE side={side} bone={bone} vertices={} lower_band_vertices={} ankle_local_min={minimum:?} ankle_local_max={maximum:?} heel_candidate={heel:?} toe_candidate={toe:?}",points.len(),sole.len());
+            let flat = *points.iter().min_by(|a,b| a.y.total_cmp(&b.y)).unwrap();
+            let mut touched_front = false;
+            let mut touched_rear = false;
+            for step in -12..=12 {
+                let angle = f64::from(step) * 0.05;
+                let rotation = glam::DQuat::from_rotation_x(angle);
+                let pivot = *points.iter().min_by(|a,b|
+                    (rotation * **a).y.total_cmp(&(rotation * **b).y)).unwrap();
+                let support_height = (rotation * pivot).y;
+                let clearance = points.iter().map(|&point|
+                    (rotation * (point - pivot)).y).fold(f64::INFINITY,f64::min);
+                assert!(clearance >= -1e-12, "reference foot proxy penetrates at {side}/{angle}");
+                let fixed_pivot_penetration = ((rotation * flat).y-support_height).max(0.);
+                touched_front |= pivot.z > (minimum.z + maximum.z) * 0.5;
+                touched_rear |= pivot.z < (minimum.z + maximum.z) * 0.5;
+                eprintln!("FOOT_ROLL {}",serde_json::json!({"side":side,"angle_rad":angle,
+                    "reference_local_pivot":pivot.to_array(),"minimum_clearance_m":clearance,
+                    "flat_pivot_penetration_m":fixed_pivot_penetration,
+                    "rigid_reference_proxy_only":true}));
+            }
+            assert!(touched_front && touched_rear,"angle sweep misses one foot region: {side}");
+
+        }
+    }
+
+    #[test]
+    fn actual_two_foot_owner_stages_contact_pose_and_skin_in_one_tick() {
+        actual_two_foot_support_sweep(0);
+    }
+    #[test]
+    fn actual_two_foot_owner_tracks_moving_rotating_platform() {
+        actual_two_foot_support_sweep(1);
+    }
+    #[test]
+    fn actual_two_foot_owner_releases_and_reacquires_after_platform_drop() {
+        actual_two_foot_support_sweep(2);
+    }
+    fn actual_two_foot_support_sweep(mode: u8) {
+        let moving = mode == 1;
+        let body = voxy_render::ObjAsset::parse(include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"), voxy_render::ObjLimits::default()).unwrap();
+        let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+        let bindings = rig.foot_support_geometry(body.mesh.vertices(), 0.02).unwrap();
+        let globals = rig.skeleton.bind_pose64().global_matrices(&rig.skeleton).unwrap();
+        let mut minimum = f64::INFINITY;
+        for (bone, geometry) in &bindings {
+            for point in &geometry.points {
+                minimum = minimum.min(globals[usize::from(*bone)].transform_point3(glam::DVec3::from_array(*point)).y);
+            }
+        }
+        let mut scene = voxy_scene::SceneGraph::new(2);
+        let floor_y = (minimum + 0.01 - 0.1) as f32;
+        let floor = scene.spawn(None, voxy_scene::Transform {
+            translation: Vec3::Y * floor_y, ..Default::default() }).unwrap();
+        scene.insert_component(floor, voxy_gameplay::BoxCollider { half_extents: [4., 0.1, 4.] }).unwrap();
+        let floor_top = f64::from(floor_y) + f64::from(0.1f32);
+        let center = Vec3::Y * (floor_top + 0.5) as f32;
+        let owner = scene.spawn(None, voxy_scene::Transform { translation: center, ..Default::default() }).unwrap();
+        scene.insert_component(owner, voxy_gameplay::CharacterBody {
+            half_extents: [0.2, 0.5, 0.2], gravity: -9.81, ..Default::default() }).unwrap();
+        let mut physics = voxy_gameplay::CharacterPhysics::new(&scene, 1, 1).with_depenetration(true);
+        let mut input = voxy_input::InputMap::new(8, 8);
+        let mut feet = rig.fixed_stance_foot_runtime(body.mesh.vertices(),
+            voxy_gameplay::FootContactSettings::default(), 0.02, [true, true]).unwrap();
+        let pose = rig.skeleton.bind_pose();
+        let source = voxy_animation::AnimatorFrame { skin_matrices: pose.skin_matrices(&rig.skeleton).unwrap(), pose,
+            root_motion: Vec3::ZERO, root_motion_joint: 0, transition_weight: 1. };
+        let mut airborne_ticks = 0;
+        let mut landing_count = 0;
+        let mut was_grounded = true;
+        for tick in 0..121 {
+            let phase = tick as f32 / 120.;
+            let angle = 0.25 * (std::f32::consts::TAU * phase).sin();
+            if moving {
+                scene.set_local(floor, voxy_scene::Transform {
+                    translation: Vec3::new(0.03 * (std::f32::consts::TAU * phase).sin(), floor_y, 0.),
+                    rotation: Quat::from_rotation_y(0.2 * (std::f32::consts::TAU * phase).sin()),
+                    ..Default::default()
+                }).unwrap();
+            }
+            let current_floor_y = if mode == 2 && (30..80).contains(&tick) { floor_y - 0.05 } else { floor_y };
+            if mode == 2 {
+                scene.set_local(floor, voxy_scene::Transform {
+                    translation: Vec3::Y * current_floor_y, ..Default::default()
+                }).unwrap();
+            }
+            let current_floor_top = f64::from(current_floor_y) + f64::from(0.1f32);
+            let compression = 0.05 * (std::f32::consts::PI * phase).sin().powi(2);
+            let mut source = source.clone();
+            let pelvis = source.pose.local()[0].translation - Vec3::Y * compression;
+            source.pose.set_joint_translation(0, pelvis).unwrap();
+            for (side, (bone, _)) in bindings.iter().enumerate() {
+                source.pose.set_joint_rotation(usize::from(*bone),
+                    Quat::from_rotation_x(if side == 0 { angle } else { -angle })).unwrap();
+            }
+            source.skin_matrices = source.pose.skin_matrices(&rig.skeleton).unwrap();
+            let (_, (staged, corrected, offset, locks, grounded)) = physics.fixed_step_with_preparation(
+                &mut scene, &mut input, 1. / 120., &[], &[], |preview, budget| {
+                    let accepted = preview.characters.iter().find(|p| p.owner == owner).ok_or("missing accepted character")?;
+                    if mode != 2 && !accepted.grounded { return Err("missing physical grounding".to_string()); }
+                    let offset = accepted.physical_center - center.as_dvec3();
+                    let mut staged = feet.clone();
+                    let corrected = staged.correct_fixed_stance(source.clone(),
+                        glam::DMat4::from_translation(offset), accepted.grounded, preview, budget)?;
+                    let mut locks = Vec::new();
+                    for index in 0..2 {
+                        let lock = staged.support_lock(index)?;
+                        if !accepted.grounded {
+                            if lock.is_some() { return Err("airborne foot retained a lock".to_string()); }
+                            continue;
+                        }
+                        let (anchor, pivot) = lock.ok_or("missing accepted foot lock")?;
+                        if anchor.owner() != floor { return Err("foot lock changed support owner".to_string()); }
+                        let contact = preview.support.resolve(anchor, budget).map_err(|e|e.to_string())?
+                            .ok_or("accepted foot support disappeared")?;
+                        locks.push((pivot, contact.position));
+                    }
+                    Ok((staged, corrected, offset, locks, accepted.grounded))
+                }).unwrap();
+            feet = staged;
+            if !grounded {
+                airborne_ticks += 1;
+                assert_eq!(corrected.pose.local(), source.pose.local());
+            } else if !was_grounded { landing_count += 1; }
+            was_grounded = grounded;
+            eprintln!("ACTUAL_PLATFORM_CONTACT_STATE {}", serde_json::json!({
+                "mode":mode,"tick":tick,"grounded":grounded,"locks":locks.len()}));
+            assert_eq!(corrected.root_motion, source.root_motion);
+            let mut deformed = body.mesh.vertices().to_vec();
+            rig.deform_pose(&mut deformed, 0., &corrected.pose);
+            let mut matrices: Vec<glam::DMat4> = Vec::new();
+            for (local, joint) in corrected.pose.local().iter().zip(rig.skeleton.joints()) {
+                let matrix = glam::DMat4::from_scale_rotation_translation(local.scale.as_dvec3(),
+                    local.rotation.as_dquat(), local.translation.as_dvec3());
+                matrices.push(joint.parent.map_or(matrix, |p| matrices[usize::from(p)] * matrix));
+            }
+            for ((bone, _), (pivot, contact)) in bindings.iter().zip(&locks) {
+                let pivot_error = (offset + matrices[usize::from(*bone)].transform_point3(*pivot)).distance(*contact);
+                assert!(pivot_error < 3e-6, "moving support pivot error {pivot_error} at tick {tick}");
+                let mut clearance = f64::INFINITY;
+                for (vertex, weights) in deformed.iter().zip(&rig.weights) {
+                    if weights.iter().any(|&(joint, weight)|joint==usize::from(*bone)&&weight>=0.5) {
+                        clearance = clearance.min(f64::from(vertex.position[1])+offset.y-current_floor_top);
+                    }
+                }
+                eprintln!("ACTUAL_TWO_FOOT_TICK {}",serde_json::json!({"tick":tick,
+                    "bone":rig.skeleton.joints()[usize::from(*bone)].name.as_ref(),
+                    "skin_minimum_clearance_m":clearance,"foot_pitch_rad":angle,
+                    "pelvis_compression_m":compression,"moving_platform":moving,"mode":mode,"pivot_error_m":pivot_error}));
+                assert!(clearance.abs() < 3e-6, "two-foot skin clearance {clearance} at tick {tick}");
+            }
+        }
+        if mode == 2 {
+            assert!(airborne_ticks > 0, "drop fixture must exercise physical airborne state");
+            assert!(landing_count > 0, "drop fixture must exercise physical re-landing");
+        }
+    }
+    #[test]
+    fn actual_reference_feet_solve_against_accepted_physical_support() {
+        use voxy_gameplay::{FootContactInput, FootContactSettings, FootContactState};
+        let body = voxy_render::ObjAsset::parse(include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"), voxy_render::ObjLimits::default()).unwrap();
+        let rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+        let bindings = rig.foot_support_geometry(body.mesh.vertices(), 0.02).unwrap();
+        let source = rig.skeleton.bind_pose();
+        let globals = rig.skeleton.bind_pose64().global_matrices(&rig.skeleton).unwrap();
+        for (bone, geometry) in bindings {
+            let bone = usize::from(bone);
+            let points = voxy_animation::FootSupportPoints::new(geometry.points.iter()
+                .copied().map(glam::DVec3::from_array).collect()).unwrap();
+            let selected = points.support(glam::DMat3::from_mat4(globals[bone]), glam::DVec3::Y).unwrap();
+            let sole = globals[bone].transform_point3(selected.local);
+            let mut scene = voxy_scene::SceneGraph::new(2);
+            let floor = scene.spawn(None, voxy_scene::Transform {
+                translation: Vec3::new(0., (sole.y + 0.01 - 0.1) as f32, 0.), ..Default::default()
+            }).unwrap();
+            scene.insert_component(floor, voxy_gameplay::BoxCollider { half_extents: [4., 0.1, 4.] }).unwrap();
+            let initial_center = Vec3::new(0., (sole.y + 0.01 + 0.5) as f32, 0.);
+            let owner = scene.spawn(None, voxy_scene::Transform {
+                translation: initial_center, ..Default::default()
+            }).unwrap();
+            scene.insert_component(owner, voxy_gameplay::CharacterBody {
+                half_extents: [0.2, 0.5, 0.2], gravity: -9.81, ..Default::default()
+            }).unwrap();
+            let mut physics = voxy_gameplay::CharacterPhysics::new(&scene, 1, 1).with_depenetration(true);
+            let mut input = voxy_input::InputMap::new(8, 8);
+            let state = FootContactState::default();
+            let knee = rig.skeleton.joints()[bone].parent.unwrap();
+            let hip = rig.skeleton.joints()[usize::from(knee)].parent.unwrap();
+            let chain = voxy_animation::TwoBoneChain::new(&rig.skeleton, [hip, knee, bone as u16]).unwrap();
+            let (_, (solved, report, candidate, actor_offset)) = physics.fixed_step_with_preparation(
+                &mut scene, &mut input, 1. / 120., &[], &[], |preview, budget| {
+                    let actor = preview.characters.iter().find(|p| p.owner == owner).ok_or("missing accepted actor")?;
+                    if !actor.grounded { return Err("physical actor is not grounded"); }
+                    let offset = actor.physical_center - initial_center.as_dvec3();
+                    let candidate = state.prepare(&preview.support, FootContactSettings::default(), FootContactInput {
+                        sole: sole + offset, up: glam::DVec3::Y, grounded: actor.grounded, plant: true,
+                    }, budget).map_err(|_| "physical contact failed")?;
+                    let contact = candidate.contact.ok_or("missing physical foot support")?;
+                    let target = contact.position - offset - globals[bone].transform_vector3(selected.local);
+                    let (solved, report) = source.solve_two_bone(&chain, voxy_animation::TwoBoneTarget {
+                        position: target.as_vec3(), pole: Vec3::new(0., -0.4, 1.),
+                        rotation: Some(Quat::IDENTITY), weight: 1.,
+                    }).map_err(|_| "physical leg IK failed")?;
+                    if report.reach_clamped { return Err("physical leg IK unreachable"); }
+                    Ok((solved, report, candidate, offset))
+                }).unwrap();
+            let contact = candidate.contact.unwrap();
+            assert!((contact.position.y - sole.y - 0.01).abs() < 1e-6);
+            assert!(!report.reach_clamped);
+            let mut matrices: Vec<glam::DMat4> = Vec::new();
+            for (local, joint) in solved.local().iter().zip(rig.skeleton.joints()) {
+                let m = glam::DMat4::from_scale_rotation_translation(local.scale.as_dvec3(),
+                    local.rotation.as_dquat(), local.translation.as_dvec3());
+                matrices.push(joint.parent.map_or(m, |p| matrices[usize::from(p)] * m));
+            }
+            let final_pivot = actor_offset + matrices[bone].transform_point3(selected.local);
+            let error = final_pivot.distance(contact.position);
+            assert!(error < 3e-6, "actual foot support error: {error}");
+            let palette = solved.skin_matrices(&rig.skeleton).unwrap();
+            assert!(palette.iter().all(|m| m.is_finite()));
+            let mut deformed = body.mesh.vertices().to_vec();
+            rig.deform_pose(&mut deformed, 0., &solved);
+            let mut movement = 0f64;
+            let mut clearance = f64::INFINITY;
+            for ((current, rest), weights) in deformed.iter().zip(body.mesh.vertices()).zip(&rig.weights) {
+                if weights.iter().any(|&(joint, weight)| joint == bone && weight >= 0.5) {
+                    let position = Vec3::from_array(current.position).as_dvec3();
+                    assert!(position.is_finite());
+                    clearance = clearance.min(position.y+actor_offset.y-contact.position.y);
+                    movement = movement.max(position.distance(Vec3::from_array(rest.position).as_dvec3()));
+                }
+            }
+            assert!(movement > 0.005, "accepted IK must reach actual skin deformation");
+            assert!(clearance.is_finite());
+            assert!(state.anchor().is_none(), "prepare must preserve prior owner");
+            assert!(candidate.state.anchor().is_some());
+            let published_matrix = scene.world_matrix(owner).unwrap();
+            let published_body = physics.state(&scene, owner).unwrap();
+            let rejected = physics.fixed_step_with_preparation(
+                &mut scene, &mut input, 1. / 120., &[(owner, Vec3::X * 0.1)], &[],
+                |preview, budget| -> Result<(), &str> {
+                    let actor = preview.characters.iter().find(|p| p.owner == owner).unwrap();
+                    assert!(actor.physical_center.x > 0.09);
+                    candidate.state.prepare(&preview.support, FootContactSettings::default(),
+                        FootContactInput { sole: contact.position, up: glam::DVec3::Y,
+                            grounded: actor.grounded, plant: true }, budget).unwrap();
+                    Err("pose preparation deliberately rejected")
+                });
+            assert!(matches!(rejected, Err(voxy_gameplay::CharacterTickError::Preparation(
+                "pose preparation deliberately rejected"))));
+            assert_eq!(scene.world_matrix(owner).unwrap(), published_matrix);
+            assert_eq!(physics.state(&scene, owner).unwrap(), published_body);
+            eprintln!("ACTUAL_FOOT_PHYSICAL_SUPPORT {}", serde_json::json!({
+                "bone":rig.skeleton.joints()[bone].name.as_ref(),
+                "reference_points":geometry.points.len(),"support_correction_m":contact.position.y-sole.y,
+                "pivot_error_m":error,"reach_clamped":report.reach_clamped,
+                "dominant_skin_minimum_clearance_m":clearance,"maximum_skin_movement_m":movement}));
+        }
+    }
+    #[test]
+    fn real_gait_skin_foot_envelope_compares_actual_deformation_to_rigid_reference() {
+        use crate::humanoid_locomotion::{LocomotionClip, VoxyHumanoidLocomotion, prepare_quaternius_gait_source};
+        let body = voxy_render::ObjAsset::parse(include_str!(
+            "../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
+        let mut rig = FemaleRig::new(body.mesh.vertices()).unwrap();
+        let source = voxy_render::ModelAsset::parse(include_bytes!(
+            "../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
+            &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],voxy_render::ModelLimits::default()).unwrap();
+        let source = std::sync::Arc::new(prepare_quaternius_gait_source(source).unwrap());
+        let library = std::sync::Arc::new(VoxyHumanoidLocomotion::new(source,&rig.skeleton).unwrap());
+        let rest = rig.skeleton.bind_pose64().global_matrices(&rig.skeleton).unwrap();
+        let mut feet = Vec::new();
+        for name in ["left_foot","right_foot"] {
+            let bone = rig.skeleton.joints().iter().position(|j| j.name.as_ref()==name).unwrap();
+            let inverse = rest[bone].inverse();
+            let selected: Vec<_> = body.mesh.vertices().iter().zip(&rig.weights).enumerate()
+                .filter(|(_,(_,weights))|weights.iter().any(|&(joint,weight)|joint==bone&&weight>=0.5))
+                .map(|(index,(v,_))|(index,inverse.transform_point3(Vec3::from_array(v.position).as_dvec3()))).collect();
+            assert!(!selected.is_empty());feet.push((name,bone,selected));
+        }
+        rig.install_authored_gait(library.clone(),LocomotionClip::Idle).unwrap();
+        let mut changed = false;
+        for clip in [LocomotionClip::Idle,LocomotionClip::Walk,LocomotionClip::Jog,LocomotionClip::Sprint] {
+            for sample in 0..=24 {
+                let phase = sample as f64 / 24.;
+                let pose = library.pose_phase_in_place(clip,phase,&rig.skeleton).unwrap().0;
+                let mut globals: Vec<glam::DMat4> = Vec::new();
+                for (local,joint) in pose.local().iter().zip(rig.skeleton.joints()) {
+                    let local = glam::DMat4::from_scale_rotation_translation(local.scale.as_dvec3(),local.rotation.as_dquat().normalize(),local.translation.as_dvec3());
+                    globals.push(joint.parent.map_or(local,|parent|globals[usize::from(parent)]*local));
+                }
+                rig.publish_grounded_pose(pose,clip);
+                let mut deformed = body.mesh.vertices().to_vec();rig.deform(&mut deformed,0.);
+                for (name,bone,selected) in &feet {
+                    let inverse = globals[*bone].inverse();
+                    let rigid_low = selected.iter().map(|(_,point)|globals[*bone].transform_point3(*point).y).fold(f64::INFINITY,f64::min);
+                    let actual_low = selected.iter().map(|(index,_)|f64::from(deformed[*index].position[1])).fold(f64::INFINITY,f64::min);
+                    let drift = selected.iter().map(|(index,point)|inverse.transform_point3(Vec3::from_array(deformed[*index].position).as_dvec3()).distance(*point)).fold(0f64,f64::max);
+                    assert!(rigid_low.is_finite()&&actual_low.is_finite()&&drift.is_finite());
+                    changed |= drift>1e-4;
+                    eprintln!("GAIT_FOOT_SKIN {}",serde_json::json!({"clip":format!("{clip:?}"),"phase":phase,"foot":name,
+                        "rigid_reference_low_y":rigid_low,"actual_skin_low_y":actual_low,
+                        "skin_below_proxy_m":(rigid_low-actual_low).max(0.),"max_ankle_local_drift_m":drift,
+                        "physical_contact_inferred":false}));
+                }
+            }
+        }
+        assert!(changed,"fixture failed to exercise mixed skin deformation");
+    }
+
 }

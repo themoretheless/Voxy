@@ -11,9 +11,9 @@ pub(crate) struct JumpSample {
 }
 
 const GRAVITY: f64 = 9.81;
-const TAKEOFF: f64 = 0.56;
-const FLIGHT: f64 = 0.50;
-const LANDING: f64 = TAKEOFF + FLIGHT;
+pub(crate) const TAKEOFF: f64 = 0.56;
+pub(crate) const FLIGHT: f64 = 0.50;
+pub(crate) const LANDING: f64 = TAKEOFF + FLIGHT;
 
 fn ease(t: f64) -> f64 {
     let t = t.clamp(0., 1.);

@@ -18,8 +18,10 @@ mod xray_demo;
 mod biomechanics_demo;
 
 mod female_demo;
+mod female_physical_stance;
 
 mod female_rig;
+pub mod humanoid_locomotion;
 mod jump_motion;
 
 mod female_hair;
@@ -72,3 +74,6 @@ mod rush_diagnostics;
 pub mod fem_surface;
 
 mod fem_demo;
+
+mod gpu_liquid;
+pub use gpu_liquid::{GpuLiquidBackend,GpuLiquidError,GpuLiquidStats,GpuLiquidTimings};

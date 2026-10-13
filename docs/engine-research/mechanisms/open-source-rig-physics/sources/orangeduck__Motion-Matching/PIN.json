@@ -1,0 +1,32 @@
+{
+  "repo": "orangeduck/Motion-Matching",
+  "sha": "57b7250e0d34a4e456a34d47e24c2f05fdcc711e",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "b365a56d8b82ef890d1934e1e5ec9d60880b0a8f21819a7cd136bde99d24dae0",
+      "bytes": 1070
+    },
+    {
+      "path": "README.md",
+      "sha256": "4d27d6d8269e5afd5226829a9e0c1de6df9ec236fd8efd0e0d3ffbe8a5fd9a8c",
+      "bytes": 3419
+    },
+    {
+      "path": "controller.cpp",
+      "sha256": "e52bb8998210d7fa8cc5807f42a358cfe202d62097ac605b6f6120e6d655a8a8",
+      "bytes": 90602
+    },
+    {
+      "path": "spring.h",
+      "sha256": "b514bf7c80c49280c784ead654b6dfa1ce709a5c944754f9da6b997e6e906e19",
+      "bytes": 5374
+    },
+    {
+      "path": "quat.h",
+      "sha256": "e7905477cf5b938c5906d43705af867d161f6398dc811ef5c5bc52294de3332e",
+      "bytes": 7008
+    }
+  ],
+  "scope": "Source code only; no motion database or restricted training data downloaded"
+}

@@ -28,7 +28,7 @@ impl Liquid {
         }
         Ok(())
     }
-    fn interface_coefficient(&self, a: Particle, b: Particle) -> f64 {
+    pub(super) fn interface_coefficient(&self, a: Particle, b: Particle) -> f64 {
         let strength = self
             .interface_penalties
             .get(&(a.material.min(b.material), a.material.max(b.material)))
@@ -40,11 +40,6 @@ impl Liquid {
         strength * a.mass * b.mass * 45.0 / (PI * self.config.smoothing_radius.powi(7))
     }
 
-    pub(super) fn interface_force(&self, a: Particle, b: Particle, radius: f64) -> f64 {
-        self.interface_coefficient(a, b)
-            * radius
-            * (self.config.smoothing_radius - radius).max(0.0).powi(2)
-    }
     /// Potential energy of the configured overlap penalties, independent of density.
     /// Pressure, cohesion and thermal energy are not included.
     /// # Errors

@@ -1,6 +1,16 @@
 //! Diagnostic nonlinear replay. Spatial acceleration caches are rebuilt.
 use super::*;
 use std::io::{self, Write};
+/// Diagnostic capture with freshly measured geometry; does not change the
+/// caller's pose, contact state or acceleration caches.
+pub(super) fn save_measured(path:&std::path::Path,rods:&[HairRod],meshes:&[TriangleMesh],
+    dt:f64,radius:f64,self_collision:bool,continuous_mesh:bool)->io::Result<()> {
+    let mut measured=rods.to_vec();
+    let pairs=if self_collision {contact::refresh_strand_responses(&mut measured,radius,&[])} else {Vec::new()};
+    HairSystem::refresh_mesh_geometry(&mut measured,meshes,radius,continuous_mesh).map_err(io::Error::other)?;
+    let merit=HairSystem::contact_merit(&measured,&pairs,radius).map_err(io::Error::other)?;
+    save(path,rods,meshes,dt,radius,self_collision,merit,continuous_mesh)
+}
 fn number(w: &mut impl Write, x: f64) -> io::Result<()> {
     w.write_all(&x.to_le_bytes())
 }
@@ -80,7 +90,7 @@ pub(super) fn save(
     w.flush()
 }
 #[cfg(test)]
-mod tests {
+pub(in crate::hair) mod tests {
     use super::*;
     use std::io::Read;
     fn n(r: &mut impl Read) -> f64 {
@@ -384,11 +394,11 @@ mod tests {
         );
         (dt, radius, merit, collision, rods, meshes)
     }
-    fn load_replay_with_mode() -> (f64, f64, f64, bool, Vec<HairRod>, Vec<TriangleMesh>, bool) {
+    pub(in crate::hair) fn load_replay_with_mode() -> (f64, f64, f64, bool, Vec<HairRod>, Vec<TriangleMesh>, bool) {
         let path = std::env::var("VOXY_HAIR_CONTACT_REPLAY_FILE").unwrap();
         read_replay(path)
     }
-    fn read_replay(
+    pub(in crate::hair) fn read_replay(
         path: impl AsRef<std::path::Path>,
     ) -> (f64, f64, f64, bool, Vec<HairRod>, Vec<TriangleMesh>, bool) {
         let mut reader = std::io::BufReader::new(std::fs::File::open(path).unwrap());
@@ -488,7 +498,7 @@ mod tests {
         let actual = HairSystem::contact_merit(&rods, &history, radius).unwrap();
         assert!(
             (actual - expected).abs() <= 1e-12 * expected.max(1e-20),
-            "admission replay geometry changed"
+            "admission replay geometry changed: expected={expected:e} actual={actual:e}"
         );
         assert!(
             rods.iter().any(|rod| rod.max_relative_stretch() > 0.05),
@@ -534,6 +544,28 @@ mod tests {
             }
         }
         panic!("coupled elastic/contact solve must satisfy unchanged strain admission");
+    }
+    #[test]
+    #[ignore = "diagnostic structural response of a rod from a full admission capture"]
+    fn captured_rejected_rod_structural_response() {
+        let (dt, _, _, _, rods, _, _) = load_replay_with_mode();
+        let selected: usize = std::env::var("VOXY_HAIR_DIAGNOSTIC_ROD").unwrap().parse().unwrap();
+        let mut rod = rods.get(selected).expect("captured rod index").clone();
+        let root = rod.x[0];
+        let root_rotation = rod.q[0];
+        // Isolation only: removing contact terms is not an admissible production
+        // update. Keep captured rest, prediction, inertia and physical timestep.
+        rod.contacts.clear();
+        eprintln!("STRUCTURAL ISOLATION rod={selected} dt={dt:e} initial_strain={:e}",rod.max_relative_stretch());
+        for iteration in 0..64 {
+            let before=rod.x.clone();
+            direct::solve(&mut rod,dt).expect("captured structural correction");
+            let delta=rod.x.iter().zip(&before).map(|(a,b)|((0..3).map(|k|(a[k]-b[k]).powi(2)).sum::<f64>()).sqrt()).fold(0.,f64::max);
+            assert_eq!(rod.x[0],root);
+            assert_eq!(rod.q[0],root_rotation);
+            assert!(rod.x.iter().flatten().all(|x|x.is_finite()));
+            eprintln!("STRUCTURAL ISOLATION iteration={iteration} strain={:e} delta_m={delta:e}",rod.max_relative_stretch());
+        }
     }
     fn run_replay(require_feasible: bool) {
         let (dt, radius, expected, self_collision, mut rods, meshes, continuous_mesh) =
@@ -589,7 +621,11 @@ mod tests {
             );
         }
         let roots: Vec<_> = rods.iter().map(|rod| rod.x[0]).collect();
-        let result = HairSystem::reconcile_positions_mode(
+        // Test-only experiment: production policy remains independent of env.
+        let first_stage_limit=std::env::var("VOXY_HAIR_REPLAY_FIRST_STAGE_LIMIT")
+            .map(|v|v.parse::<usize>().expect("initial work budget must be an integer"))
+            .unwrap_or(32);
+        let result = HairSystem::reconcile_positions_mode_with_first_stage_limit(
             &mut rods,
             &meshes,
             dt,
@@ -599,6 +635,7 @@ mod tests {
             None,
             None,
             continuous_mesh,
+            first_stage_limit,
         );
         eprintln!("REPLAY RESULT {result:?}");
         if require_feasible {

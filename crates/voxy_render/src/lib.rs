@@ -282,6 +282,12 @@ pub use droplet_extinction::{
 
 mod surface_light_diffusion;
 pub use surface_light_diffusion::{SurfaceLightDiffusion, SurfaceLightEdge};
+mod surface_light_pcg;
+pub use surface_light_pcg::SurfaceLightPcg;
+mod surface_light_geometry;
+pub use surface_light_geometry::SurfaceLightGeometry;
+mod surface_light_admission;
+pub use surface_light_admission::SurfaceLightAdmission;
 
 mod surface_deformation;
 pub use surface_deformation::{SurfaceDeformation, SurfaceDeformationWeight};
@@ -292,3 +298,42 @@ mod surface_normal_transport;
 
 mod fiber_surface;
 pub use fiber_surface::{FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer, FIBER_SURFACE_SHADER};
+
+mod surface_light_transfer;
+pub use surface_light_transfer::{SurfaceLightTransfer, SurfaceLightVertexBinding};
+mod surface_light_frame;
+pub use surface_light_frame::{SurfaceLightFrame, SurfaceLightFrameSettings};
+
+mod surface_color_transfer;
+pub use surface_color_transfer::{SurfaceColorBinding,SurfaceColorTransfer};
+
+pub use joint_contact_dot::{ExperimentalResidentContactBatch,ExperimentalResidentContactInput,EXPERIMENTAL_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,experimental_seeded_resident_contact_shader};
+
+mod liquid_density;
+pub use liquid_density::{LiquidDensityParticle,LiquidDensityKernel,LiquidDensityInput,LiquidDensityError,LIQUID_DENSITY_SHADER,
+    LiquidDensityCompute,LiquidDensityDispatch,PendingLiquidDensity,LiquidDensityReadError};
+
+mod liquid_pair_forces;
+pub use liquid_pair_forces::{LiquidPreparedPairForcesInput,LiquidPairForceParameters,LiquidPairForceCandidate,LiquidPairForcesInput,LIQUID_PAIR_FORCES_SHADER};
+
+mod liquid_normals;
+pub use liquid_normals::{LiquidNormalParticle,LiquidNormalsInput,LIQUID_NORMALS_SHADER};
+
+mod liquid_accumulation;
+pub use liquid_accumulation::{LiquidAccumulationInput,LiquidAccumulationCandidate,LIQUID_ACCUMULATION_SHADER};
+
+mod liquid_force_pipeline;
+pub use liquid_force_pipeline::{LiquidForcePipeline,LiquidForcePipelineInput,LiquidForcePipelineCandidate,LiquidForcePipelineDispatch,PendingLiquidForcePipeline,LiquidForcePipelineError};
+
+mod compute_chain;
+
+mod liquid_density_normal_pipeline;
+pub use liquid_density_normal_pipeline::{LiquidPressureParameters,LiquidDensityNormalPipeline,LiquidDensityNormalInput,LiquidDensityNormalCandidate,LiquidDensityNormalDispatch,PendingLiquidDensityNormal};
+
+mod liquid_pipeline;
+pub use liquid_pipeline::{LiquidPipelineWorkspace,LiquidPipeline,LiquidPipelineInput,LiquidPipelineCandidate,LiquidPipelineDispatch,PendingLiquidPipeline};
+
+mod liquid_topology;
+pub use liquid_topology::LiquidPairTopology;
+
+pub use joint_contact_dot::{ExperimentalTripleContactInput,ExperimentalTripleActiveContactInput,ExperimentalTripleActiveFactors,ExperimentalTripleActiveContactBatch,ExperimentalTripleCompletedFactorReadback,ExperimentalTripleExpansion,ExperimentalTripleExpandedCandidate};

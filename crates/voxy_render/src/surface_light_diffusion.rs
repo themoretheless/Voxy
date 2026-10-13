@@ -66,68 +66,7 @@ impl SurfaceLightDiffusion {
     ) -> Result<Self, crate::SceneError> {
         let n = mass.len();
         let limits = device.limits();
-        if n == 0
-            || n > u32::MAX as usize
-            || n as u64 > u64::from(limits.max_storage_buffer_binding_size) / 16
-            || offsets.len() != n + 1
-            || offsets[0] != 0
-            || offsets[n] as usize != edges.len()
-            || offsets.windows(2).any(|p| p[0] > p[1])
-            || mass.iter().any(|v| !v.is_finite() || *v < 0.)
-            || radii
-                .iter()
-                .any(|v| !v.is_finite() || *v < 0. || !v.powi(2).is_finite())
-            || edges
-                .iter()
-                .any(|e| e.neighbor as usize >= n || !e.weight.is_finite() || e.weight < 0.)
-            || mass
-                .iter()
-                .enumerate()
-                .any(|(i, m)| *m == 0. && offsets[i] != offsets[i + 1])
-            || limits.max_storage_buffers_per_shader_stage < 7
-            || limits.max_compute_workgroup_size_x < 64
-            || limits.max_compute_invocations_per_workgroup < 64
-            || n.div_ceil(64) > limits.max_compute_workgroups_per_dimension as usize
-        {
-            return Err(crate::SceneError::InvalidGeometry);
-        }
-        // Check symmetry before GPU admission; immutable topology is checked once.
-        let mut entries = std::collections::BTreeMap::new();
-        for i in 0..n {
-            for e in &edges[offsets[i] as usize..offsets[i + 1] as usize] {
-                if e.neighbor as usize == i
-                    || entries.insert((i, e.neighbor as usize), e.weight).is_some()
-                {
-                    return Err(crate::SceneError::InvalidGeometry);
-                }
-            }
-        }
-        if entries
-            .iter()
-            .any(|(&(a, b), &w)| entries.get(&(b, a)) != Some(&w))
-        {
-            return Err(crate::SceneError::InvalidGeometry);
-        }
-        let mut delta = [0_f64; 3];
-        for i in 0..n {
-            let degree: f64 = edges[offsets[i] as usize..offsets[i + 1] as usize]
-                .iter()
-                .map(|e| f64::from(e.weight))
-                .sum();
-            if degree > f64::from(f32::MAX)
-                || radii.iter().any(|r| {
-                    f64::from(mass[i]) + f64::from(r.powi(2)) * degree > f64::from(f32::MAX)
-                })
-            {
-                return Err(crate::SceneError::InvalidGeometry);
-            }
-            for c in 0..3 {
-                let laplace = f64::from(radii[c].powi(2)) * degree;
-                if mass[i] > 0. {
-                    delta[c] = delta[c].max(laplace / (f64::from(mass[i]) + laplace));
-                }
-            }
-        }
+        let delta = validate_surface(device, mass, offsets, edges, radii)?;
         let sizes = [
             (n * 4) as u64,
             (offsets.len() * 4) as u64,
@@ -402,4 +341,79 @@ impl SurfaceLightDiffusion {
     pub fn allocation_bytes(&self) -> u64 {
         self.bytes
     }
+}
+
+/// Shared admission for the immutable symmetric surface operator.
+pub(super) fn validate_surface(
+    device: &wgpu::Device,
+    mass: &[f32],
+    offsets: &[u32],
+    edges: &[SurfaceLightEdge],
+    radii: [f32; 3],
+) -> Result<[f64; 3], crate::SceneError> {
+    let n = mass.len();
+    let limits = device.limits();
+    if n == 0
+        || n > u32::MAX as usize
+        || n as u64 > u64::from(limits.max_storage_buffer_binding_size) / 16
+        || offsets.len() != n + 1
+        || offsets[0] != 0
+        || offsets[n] as usize != edges.len()
+        || offsets.windows(2).any(|p| p[0] > p[1])
+        || mass.iter().any(|v| !v.is_finite() || *v < 0.)
+        || radii
+            .iter()
+            .any(|v| !v.is_finite() || *v < 0. || !v.powi(2).is_finite())
+        || edges
+            .iter()
+            .any(|e| e.neighbor as usize >= n || !e.weight.is_finite() || e.weight < 0.)
+        || mass
+            .iter()
+            .enumerate()
+            .any(|(i, m)| *m == 0. && offsets[i] != offsets[i + 1])
+        || limits.max_storage_buffers_per_shader_stage < 7
+        || limits.max_compute_workgroup_size_x < 64
+        || limits.max_compute_invocations_per_workgroup < 64
+        || n.div_ceil(64) > limits.max_compute_workgroups_per_dimension as usize
+    {
+        return Err(crate::SceneError::InvalidGeometry);
+    }
+    // Check symmetry before GPU admission; immutable topology is checked once.
+    let mut entries = std::collections::BTreeMap::new();
+    for i in 0..n {
+        for e in &edges[offsets[i] as usize..offsets[i + 1] as usize] {
+            if e.neighbor as usize == i
+                || entries.insert((i, e.neighbor as usize), e.weight).is_some()
+            {
+                return Err(crate::SceneError::InvalidGeometry);
+            }
+        }
+    }
+    if entries
+        .iter()
+        .any(|(&(a, b), &w)| entries.get(&(b, a)) != Some(&w))
+    {
+        return Err(crate::SceneError::InvalidGeometry);
+    }
+    let mut delta = [0_f64; 3];
+    for i in 0..n {
+        let degree: f64 = edges[offsets[i] as usize..offsets[i + 1] as usize]
+            .iter()
+            .map(|e| f64::from(e.weight))
+            .sum();
+        if degree > f64::from(f32::MAX)
+            || radii
+                .iter()
+                .any(|r| f64::from(mass[i]) + f64::from(r.powi(2)) * degree > f64::from(f32::MAX))
+        {
+            return Err(crate::SceneError::InvalidGeometry);
+        }
+        for c in 0..3 {
+            let laplace = f64::from(radii[c].powi(2)) * degree;
+            if mass[i] > 0. {
+                delta[c] = delta[c].max(laplace / (f64::from(mass[i]) + laplace));
+            }
+        }
+    }
+    Ok(delta)
 }

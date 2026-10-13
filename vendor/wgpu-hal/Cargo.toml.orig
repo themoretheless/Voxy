@@ -43,6 +43,8 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 [lib]
 
 [features]
+# Voxy native numerical compute policy; no effect on render stages or other backends.
+metal-safe-compute = []
 ########################
 ### Backend Features ###
 ########################

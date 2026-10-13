@@ -29,7 +29,7 @@ mod gpu_model;
 mod model_playback;
 mod retarget_authoring;
 mod retarget_profile;
-pub use foot_placement::{FootBinding, FootContactKey, ModelFootPlacement};
+pub use foot_placement::{FootBinding, FootRuntime, FootSupportGeometry, FootContactKey, FootPivotKey, FootOrientation, ModelFootPlacement};
 pub use retarget_profile::{ModelRetarget, RetargetJointProfile};
 mod animated_models;
 mod animation_smoke;

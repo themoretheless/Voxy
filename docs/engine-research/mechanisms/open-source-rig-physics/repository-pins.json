@@ -1,0 +1,127 @@
+[
+  {
+    "repo": "GPUOpen-Effects/TressFX",
+    "sha": "ba0bdacdfb964e38522fda812bf23169bc5fa603",
+    "declared_license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "selected_paths": [
+      "license.txt",
+      "src/Shaders/TressFXSDFCollision.hlsl",
+      "src/Shaders/TressFXSimulation.hlsl",
+      "src/TressFX/TressFXSDFCollision.cpp",
+      "src/TressFX/TressFXSDFCollision.h"
+    ]
+  },
+  {
+    "repo": "InteractiveComputerGraphics/PositionBasedDynamics",
+    "sha": "10a70bc146a97873dc3c8fef372f5217e010542e",
+    "declared_license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "selected_paths": [
+      "Demos/FluidDemo/TimeStepFluidModel.cpp",
+      "Demos/FluidDemo/TimeStepFluidModel.h",
+      "LICENSE",
+      "PositionBasedDynamics/PositionBasedElasticRods.cpp",
+      "Simulation/CubicSDFCollisionDetection.cpp",
+      "Simulation/CubicSDFCollisionDetection.h",
+      "Simulation/TimeStep.cpp",
+      "Simulation/TimeStep.h",
+      "Simulation/TimeStepController.cpp",
+      "Simulation/TimeStepController.h",
+      "extern/glfw/LICENSE.md",
+      "extern/happly/LICENSE",
+      "extern/imgui/LICENSE.txt",
+      "extern/imgui/backends/imgui_impl_glfw.cpp",
+      "extern/imgui/backends/imgui_impl_glfw.h",
+      "extern/imgui/backends/imgui_impl_opengl3.cpp",
+      "extern/imgui/backends/imgui_impl_opengl3.h",
+      "extern/imgui/backends/imgui_impl_opengl3_loader.h",
+      "extern/pybind/LICENSE",
+      "pyPBD/TimeStepModule.cpp"
+    ]
+  },
+  {
+    "repo": "guillaumeblanc/ozz-animation",
+    "sha": "744eb9d99f606eda849acb0b1204f7a3dc20bca1",
+    "declared_license": {
+      "key": "other",
+      "name": "Other",
+      "spdx_id": "NOASSERTION",
+      "url": null,
+      "node_id": "MDc6TGljZW5zZTA="
+    },
+    "selected_paths": [
+      "LICENSE.md",
+      "build-utils/internal/format_license.py",
+      "extern/glfw/LICENSE.md",
+      "extern/jsoncpp/LICENSE",
+      "src/animation/runtime/ik_two_bone_job.cc"
+    ]
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "declared_license": {
+      "key": "apache-2.0",
+      "name": "Apache License 2.0",
+      "spdx_id": "Apache-2.0",
+      "url": "https://api.github.com/licenses/apache-2.0",
+      "node_id": "MDc6TGljZW5zZTI="
+    },
+    "selected_paths": [
+      ".github/workflows/scripts/verify-image-backends.sh",
+      "LICENSE",
+      "addon_host_tests/_native_gpu_backend_.py",
+      "blender_addon/core/backends.py",
+      "blender_addon/debug/scenarios/rig_backend_cleared_midflight.py",
+      "build-linux-native/scripts/backend-path.sh",
+      "build-mac-native/scripts/backend-path.sh",
+      "build-win-native/scripts/test_backend_e2e.py",
+      "build-win-native/scripts/test_backend_unit.py",
+      "crates/ppf-cts-compute/cuda/backend/backend.cu",
+      "crates/ppf-cts-compute/metal/backend/backend.mm",
+      "crates/ppf-cts-compute/rocm/backend/backend.hip",
+      "crates/ppf-cts-solver/src/backend.rs",
+      "crates/ppf-cts-solver/src/kernels/backend/contract.md",
+      "crates/ppf-cts-solver/src/kernels/seam/backend_abi.h",
+      "docs/blender_addon/images/tour/backend_communicator.png",
+      "frontend/_backends_.py",
+      "frontend/tests/_backend_resolution_.py"
+    ]
+  },
+  {
+    "repo": "newton-physics/newton",
+    "sha": "a6e1649b112e3d962b35f7dad66780dc55150588",
+    "declared_license": {
+      "key": "apache-2.0",
+      "name": "Apache License 2.0",
+      "spdx_id": "Apache-2.0",
+      "url": "https://api.github.com/licenses/apache-2.0",
+      "node_id": "MDc6TGljZW5zZTI="
+    },
+    "selected_paths": [
+      ".agents/skills/release-audit/scripts/license_audit.py",
+      ".agents/skills/release-audit/scripts/test_license_audit.py",
+      ".github/workflows/pr_license_check.yml",
+      ".licenserc-docs.yaml",
+      ".licenserc.yaml",
+      "LICENSE.md",
+      "changelog/+plotting-file-backend-d7ab391e.fixed.md",
+      "newton/_src/solvers/vbd/solver_vbd.py",
+      "newton/licenses/CC-BY-4.0.txt",
+      "newton/licenses/unittest-parallel-LICENSE.txt",
+      "newton/licenses/viser_and_inter-font-family.txt",
+      "newton/tests/test_solver_vbd.py"
+    ]
+  }
+]

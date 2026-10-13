@@ -1,0 +1,25 @@
+{
+  "repository": "InteractiveComputerGraphics/PositionBasedDynamics",
+  "commit": "10a70bc146a97873dc3c8fef372f5217e010542e",
+  "scope": "source review only; not integrated or performance qualified",
+  "files": [
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/InteractiveComputerGraphics/PositionBasedDynamics/10a70bc146a97873dc3c8fef372f5217e010542e/LICENSE",
+      "sha256": "825d46292692c501a88ddd745cddf69e2198b8354f44ae1f192627d79bad2ae7",
+      "bytes": 1111
+    },
+    {
+      "path": "PositionBasedDynamics/XPBD.cpp",
+      "url": "https://raw.githubusercontent.com/InteractiveComputerGraphics/PositionBasedDynamics/10a70bc146a97873dc3c8fef372f5217e010542e/PositionBasedDynamics/XPBD.cpp",
+      "sha256": "884158fcf17cbc7498f5ca0e8f52f936f1dbc33906d1cb4723807889c671b791",
+      "bytes": 8407
+    },
+    {
+      "path": "PositionBasedDynamics/PositionBasedDynamics.cpp",
+      "url": "https://raw.githubusercontent.com/InteractiveComputerGraphics/PositionBasedDynamics/10a70bc146a97873dc3c8fef372f5217e010542e/PositionBasedDynamics/PositionBasedDynamics.cpp",
+      "sha256": "9eab9c633258bb58bab99f9ed979da0ac9eb1499d86829b7637d28650eb84a52",
+      "bytes": 39674
+    }
+  ]
+}

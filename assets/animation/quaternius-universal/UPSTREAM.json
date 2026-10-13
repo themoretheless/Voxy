@@ -1,0 +1,32 @@
+{
+  "author": "Quaternius",
+  "author_source": "https://quaternius.com/packs/universalanimationlibrary.html",
+  "mirror": "J-Ponzo/gltf-universal-animation-library",
+  "revision": "e24c23cf2a1323488a3faa226ea7ea21f644b73e",
+  "files": [
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/J-Ponzo/gltf-universal-animation-library/e24c23cf2a1323488a3faa226ea7ea21f644b73e/LICENSE",
+      "bytes": 7048,
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    {
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/J-Ponzo/gltf-universal-animation-library/e24c23cf2a1323488a3faa226ea7ea21f644b73e/README.md",
+      "bytes": 1051,
+      "sha256": "370e6ff244ef43b269f936be7d630a77a3eb7ed8bbc3315ffcae5b327b814fcb"
+    },
+    {
+      "path": "glTF/AnimationLibrary_Godot_Standard.gltf",
+      "url": "https://raw.githubusercontent.com/J-Ponzo/gltf-universal-animation-library/e24c23cf2a1323488a3faa226ea7ea21f644b73e/glTF/AnimationLibrary_Godot_Standard.gltf",
+      "bytes": 2459987,
+      "sha256": "0ff075c7ad6855c5c2c37a171592ee8f0d6ab2f58259e2be77a9b63dd8027765"
+    },
+    {
+      "path": "glTF/AnimationLibrary_Godot_Standard.bin",
+      "url": "https://raw.githubusercontent.com/J-Ponzo/gltf-universal-animation-library/e24c23cf2a1323488a3faa226ea7ea21f644b73e/glTF/AnimationLibrary_Godot_Standard.bin",
+      "bytes": 1587224,
+      "sha256": "6e65377d81558333c4093dbb144a48fd19019343d82b1a3a7992a98ec0e0543c"
+    }
+  ]
+}

@@ -13,8 +13,7 @@ struct Camera {
 
 @group(0) @binding(0) var<uniform> camera: Camera;
 @group(0) @binding(1) var input_depth: texture_2d<f32>;
-@group(0) @binding(2) var output_depth: texture_2d<f32>;
-@group(0) @binding(3) var depth_sampler: sampler;
+@group(0) @binding(2) var<storage, read_write> output_depth: array<vec2f>;
 
 fn pixel_index(pixel: vec2f) -> vec2i { 
     return clamp(vec2i(pixel), vec2i(0), vec2i(camera.viewport.xy) - 1); 
@@ -43,33 +42,34 @@ fn bilateral_filter(input_pixel: vec2f) -> vec2f {
     var total_y = 0.0; var weight_y = 0.0;
     
     for (var i = -extent; i <= extent; i++) {
+        let spatial = exp(-2.0 * f32(i * i) / f32(extent * extent));
+
         // Horizontal sample
-        let q_x = clamp(index + vec2i(i, 0), vec2i(0), vec2i(camera.viewport.xy)-1);
+        let q_x = clamp(index + vec2i(i, 0), vec2i(0), vec2i(camera.viewport.xy) - 1);
         let sample_x = textureLoad(input_depth, q_x, 0).xy;
-        if (sample_x.x <= 0.0 || abs(sample_x.x - centre.x) > range) { continue; }
-        let spatial_x = exp(-2.0 * f32(i*i) / f32(extent*extent));
-        let delta_x = (sample_x.x - centre.x) / range;
-        let w_x = spatial_x * exp(-4.0 * delta_x * delta_x);
-        total_x += sample_x.x * w_x; weight_x += w_x;
+        if (sample_x.x > 0.0 && abs(sample_x.x - centre.x) <= range) {
+            let delta_x = (sample_x.x - centre.x) / range;
+            let w_x = spatial * exp(-4.0 * delta_x * delta_x);
+            total_x += sample_x.x * w_x;
+            weight_x += w_x;
+        }
         
-        // Vertical sample (same footprint, axis=0,1)
-        let q_y = clamp(index + vec2i(0, i), vec2i(0), vec2i(camera.viewport.xy)-1);
+        // Vertical sample
+        let q_y = clamp(index + vec2i(0, i), vec2i(0), vec2i(camera.viewport.xy) - 1);
         let sample_y = textureLoad(input_depth, q_y, 0).xy;
-        if (sample_y.x <= 0.0 || abs(sample_y.x - centre.x) > range) { continue; }
-        let spatial_y = exp(-2.0 * f32(i*i) / f32(extent*extent));
-        let delta_y = (sample_y.x - centre.x) / range;
-        let w_y = spatial_y * exp(-4.0 * delta_y * delta_y);
-        total_y += sample_y.x * w_y; weight_y += w_y;
+        if (sample_y.x > 0.0 && abs(sample_y.x - centre.x) <= range) {
+            let delta_y = (sample_y.x - centre.x) / range;
+            let w_y = spatial * exp(-4.0 * delta_y * delta_y);
+            total_y += sample_y.x * w_y;
+            weight_y += w_y;
+        }
     }
     
-    // Clamp results with different bounds per axis
-    let value_x = total_x / max(weight_x, 0.00001);
-    let value_y = total_y / max(weight_y, 0.00001);
-    
-    return vec2f(
-        clamp(value_x, centre.x - centre.y * 0.25, centre.x + centre.y * 0.25),
-        clamp(value_y, centre.x - centre.y * 0.25, centre.x + centre.y * 0.25)
-    ).y; // Return smoothed depth (radius unchanged from centre.y)
+    let combined_total = total_x + total_y;
+    let combined_weight = max(weight_x + weight_y, 0.00001);
+    let value = combined_total / combined_weight;
+    let smoothed = clamp(value, centre.x - centre.y * 0.25, centre.x + centre.y * 0.25);
+    return vec2f(smoothed, centre.y);
 }
 
 @compute @workgroup_size(8, 8)
@@ -82,5 +82,5 @@ fn cs_main(@builtin(global_invocation_id) id: vec3u) {
     let uv = vec2f(id.xy) + 0.5;
     let filtered = bilateral_filter(uv);
     
-    textureStore(output_depth, id.xy, vec4f(filtered, 0.0, 1.0));
+    output_depth[id.y * width + id.x] = filtered;
 }

@@ -11,7 +11,11 @@ mod square_root_projection;
 mod response_batches;
 #[path="contact_safe_motion.rs"]
 mod safe_motion;
-pub(in crate::hair) use safe_motion::{advance as advance_swept_strands,advance_contacts as reconcile_swept_contact_owners,strand_fraction,admit_staged_strands};
+#[path="contact_feasibility_restoration.rs"]
+mod feasibility_restoration;
+pub(in crate::hair) use feasibility_restoration::restore_candidate;
+pub(in crate::hair) use feasibility_restoration::restore_second_order_candidate;
+pub(in crate::hair) use safe_motion::{advance as advance_swept_strands,advance_contacts as reconcile_swept_contact_owners,advance_contacts_with_pairs as reconcile_swept_contact_owners_with_pairs,strand_fraction,admit_staged_strands};
 
 #[derive(Clone, Copy)]
 struct Entry {
@@ -114,20 +118,34 @@ fn add_constraint(
     let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
     let mut packed=[zero;4];let mut count=0;
     for entry in entries {
-        if dot(entry.gradient,entry.gradient)==0. {continue;}
+        if entry.gradient.iter().all(|&v|v==0.) {continue;}
         if count>0 && packed[count-1].rod==entry.rod && packed[count-1].point==entry.point {
             packed[count-1].gradient=add(packed[count-1].gradient,entry.gradient);
         } else {packed[count]=entry;count+=1;}
     }
     let entries=packed;
-    let diagonal = entries
+    if entries.iter().any(|entry| !finite(entry.gradient)
+        || !entry.mobility.is_finite() || entry.mobility < 0.) {
+        return Err("invalid shared contact velocity constraint");
+    }
+    let mut diagonal = entries
         .iter()
         .map(|entry| entry.mobility * dot(entry.gradient, entry.gradient))
         .sum::<f64>();
+    // Avoid premature overflow/underflow in g*g when sqrt(mobility)*g
+    // still has a representable weighted norm. Preserve ordinary arithmetic.
+    if diagonal==0. || !diagonal.is_finite() {
+        let norm=entries.iter().flat_map(|e|e.gradient.map(|g|e.mobility.sqrt()*g))
+            .fold(0f64,|norm,value|norm.hypot(value));
+        diagonal=norm*norm;
+    }
     if !diagonal.is_finite() || !bound.is_finite() {
         return Err("invalid shared contact velocity constraint");
     }
-    if diagonal > 1e-30 {
+    if diagonal == 0. && entries.iter().any(|entry|entry.mobility>0. && entry.gradient.iter().any(|&v|v!=0.)) {
+        return Err("contact constraint diagonal underflow");
+    }
+    if diagonal > 0. {
         // Only identical physical Jacobians are aliases. A small angular
         // difference can produce a residual larger than solve tolerance when
         // multiplied by the free state; never discard that original row.
@@ -163,7 +181,7 @@ fn prepare_implicit_response_with_solver(constraints:&mut [Constraint],rods:&[Ha
     let mut required = vec![false; rods.len()];
     for constraint in constraints.iter() {
         for entry in constraint.entries {
-            if dot(entry.gradient, entry.gradient) > 0. {
+            if entry.gradient.iter().any(|&value| value != 0.) {
                 required[entry.rod] = true;
             }
         }
@@ -193,7 +211,7 @@ fn prepare_implicit_response_with_solver(constraints:&mut [Constraint],rods:&[Ha
         let mut indices: Vec<_> = constraint
             .entries
             .iter()
-            .filter(|entry| dot(entry.gradient, entry.gradient) > 0.)
+            .filter(|entry| entry.gradient.iter().any(|&value| value != 0.))
             .map(|entry| entry.rod)
             .collect();
         indices.sort_unstable();
@@ -509,6 +527,15 @@ fn reconcile_position_increment(rods:&mut [HairRod],responses:&mut [StrandRespon
 }
 // Reuse exactly the geometry and alias ownership of positional projection.
 fn position_constraints(rods:&[HairRod],responses:&[StrandResponse],radius:f64)->Result<(Vec<Constraint>,Vec<Option<usize>>), &'static str> {
+    position_constraints_on_clock(rods,responses,radius,None)
+}
+fn position_constraints_on_clock(rods:&[HairRod],responses:&[StrandResponse],radius:f64,
+    scales:Option<&[f64]>,
+)->Result<(Vec<Constraint>,Vec<Option<usize>>), &'static str> {
+    if scales.is_some_and(|s|s.len()!=rods.len() || s.iter().any(|v|!v.is_finite()||*v<=0.||*v>1.)) {
+        return Err("invalid contact trajectory scales");
+    }
+    let scale=|rod:usize|scales.map_or(1.,|s|s[rod]);
     let mut constraints=Vec::new();
     for (index,rod) in rods.iter().enumerate() {
         for contact in &rod.contacts {
@@ -522,7 +549,7 @@ fn position_constraints(rods:&[HairRod],responses:&[StrandResponse],radius:f64)-
                 return Err("invalid contact physical metric");
             }
             let gap=contact.physical_gap(position);
-            let pair=entries(index,i,t,mul(contact.normal,contact.metric_scale),rod);
+            let pair=entries(index,i,t,mul(contact.normal,contact.metric_scale*scale(index)),rod);
             let zero=Entry {rod:index,point:0,gradient:[0.;3],mobility:0.};
             add_constraint(&mut constraints,[pair[0],pair[1],zero,zero],-gap)?;
         }
@@ -532,8 +559,8 @@ fn position_constraints(rods:&[HairRod],responses:&[StrandResponse],radius:f64)-
         let (ra,ia,s)=response.a;let (rb,ib,t)=response.b;
         let pa=add(mul(rods[ra].x[ia],1.-s),mul(rods[ra].x[ia+1],s));
         let pb=add(mul(rods[rb].x[ib],1.-t),mul(rods[rb].x[ib+1],t));
-        let a=entries(ra,ia,s,response.normal,&rods[ra]);
-        let b=entries(rb,ib,t,mul(response.normal,-1.),&rods[rb]);
+        let a=entries(ra,ia,s,mul(response.normal,scale(ra)),&rods[ra]);
+        let b=entries(rb,ib,t,mul(response.normal,-scale(rb)),&rods[rb]);
         pair_constraints.push(add_constraint(&mut constraints,[a[0],a[1],b[0],b[1]],2.*radius-dot(sub(pa,pb),response.normal))?);
     }
     Ok((constraints,pair_constraints))
@@ -783,6 +810,34 @@ mod tests {
             crate::hair::HairMaterial::default(),
         )
         .unwrap()
+    }
+    #[test]
+    fn small_contact_rows_are_preserved_or_explicitly_rejected() {
+        let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
+        for (gradient,mobility,expected) in [
+            (1e-20,1.,1e-40), (1e-200,1e200,1e-200),
+            (1e200,1e-200,1e200),
+        ] {
+            let mut rows=Vec::new();
+            let entry=Entry {rod:0,point:1,gradient:[gradient,0.,0.],mobility};
+            assert_eq!(add_constraint(&mut rows,[entry,zero,zero,zero],1.),Ok(Some(0)));
+            assert_eq!(rows[0].entries[0].gradient[0].to_bits(),gradient.to_bits());
+            assert!((rows[0].diagonal/expected-1.).abs()<1e-14);
+        }
+        let mut rows=Vec::new();
+        let entry=Entry {rod:0,point:1,gradient:[1e-200,0.,0.],mobility:1.};
+        assert_eq!(add_constraint(&mut rows,[entry,zero,zero,zero],1.),
+            Err("contact constraint diagonal underflow"));
+        assert!(rows.is_empty());
+        for entry in [zero,Entry {point:0,..entry},Entry {mobility:0.,..entry}] {
+            assert_eq!(add_constraint(&mut rows,[entry,zero,zero,zero],1.),Ok(None));
+        }
+        let opposite=Entry {gradient:[-1e-200,0.,0.],..entry};
+        assert_eq!(add_constraint(&mut rows,[entry,opposite,zero,zero],1.),Ok(None));
+        for mobility in [-1.,f64::NAN,f64::INFINITY] {
+            assert!(add_constraint(&mut rows,[Entry {mobility,..entry},zero,zero,zero],1.).is_err());
+        }
+        assert!(rows.is_empty());
     }
     #[test]
     fn near_parallel_contacts_retain_both_original_inequalities() {
@@ -1276,6 +1331,63 @@ mod tests {
         assert!(energy > 0., "coupled rod compliance lost positive energy");
     }
     #[test]
+    fn small_contact_loads_retain_physical_response_in_both_paths() {
+        use crate::hair::{HairLinearSolver,HairLinearSystem,HairResponseSystem};
+        struct Backend;
+        impl HairLinearSolver for Backend {
+            fn solve(&mut self,_:&[HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
+                panic!("unexpected structural solve")
+            }
+            fn solve_responses(&mut self,batch:&[HairResponseSystem])->Result<Vec<Vec<Vec<f64>>>, &'static str> {
+                assert_eq!(batch.len(),1);
+                batch.iter().map(HairResponseSystem::solve_native).collect()
+            }
+        }
+        let rods=vec![rod(0.)];
+        let make=|scale| {
+            let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
+            let mut rows=Vec::new();
+            let entry=Entry {rod:0,point:1,gradient:[scale,0.,0.],mobility:rods[0].inv_mass[1]};
+            assert_eq!(add_constraint(&mut rows,[entry,zero,zero,zero],0.),Ok(Some(0)));
+            rows
+        };
+        let system=response_batches::request_for_rod(&rods[0],1./240.,false).unwrap().system;
+        let mut unit_load=vec![0.;rods[0].x.len()*6];unit_load[6]=1.;
+        let mut unit=make(1.);
+        prepare_implicit_response(&mut unit,&rods,1./240.).unwrap();
+        for scale in [1e-20,1e-155] {
+            let mut native=make(scale);let mut batched=make(scale);
+            prepare_implicit_response(&mut native,&rods,1./240.).unwrap();
+            prepare_implicit_response_with_solver(&mut batched,&rods,1./240.,Some(&mut Backend)).unwrap();
+            for row in [&native[0],&batched[0]] {
+                assert_eq!(row.response.len(),1);
+                assert!((row.diagonal/(unit[0].diagonal*scale*scale)-1.).abs()<1e-8);
+                // Normalize before residual admission: the tiny load must not
+                // disappear beneath the validator's absolute scale floor.
+                let mut normalized=vec![0.;unit_load.len()];
+                for (point,value) in row.response[0].linear.iter().enumerate() {
+                    for axis in 0..3 {normalized[point*6+axis]=value[axis]/scale;}
+                }
+                for (point,value) in row.response[0].angular.iter().enumerate() {
+                    for axis in 0..3 {normalized[point*6+3+axis]=value[axis]/scale;}
+                }
+                system.validate_load_correction(&normalized,&unit_load).unwrap();
+                // Cancellation can leave roundoff in a component whose unit-load
+                // reference is zero. Measure error against the complete response.
+                let response_scale=unit[0].response[0].linear.iter().chain(&unit[0].response[0].angular)
+                    .flat_map(|value|value.iter()).fold(0f64,|largest,value|largest.max(value.abs()))*scale;
+                for (response,reference) in row.response[0].linear.iter().chain(&row.response[0].angular)
+                    .zip(unit[0].response[0].linear.iter().chain(&unit[0].response[0].angular)) {
+                    for axis in 0..3 {
+                        let expected=reference[axis]*scale;
+                        assert!((response[axis]-expected).abs()<=response_scale*1e-8+f64::MIN_POSITIVE,
+                            "scale={scale:e} actual={:e} expected={expected:e} response_scale={response_scale:e}",response[axis]);
+                    }
+                }
+            }
+        }
+    }
+    #[test]
     fn contact_backend_batches_match_native_and_reject_partial_results() {
         use crate::hair::{HairLinearSolver,HairLinearSystem,HairResponseSystem};
         struct Backend {calls:usize,corrupt:bool}
@@ -1406,3 +1518,7 @@ mod contact_owner_isolation_tests {
         assert_eq!(rods[0].x[0],[0.;3]);assert_eq!(rods[1].x[0],free.x[0]);
     }
 }
+
+#[cfg(test)]
+#[path = "contact_second_order_tests.rs"]
+mod second_order_tests;

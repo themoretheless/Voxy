@@ -1,0 +1,182 @@
+[
+  {
+    "repo": "GPUOpen-Effects/TressFX",
+    "sha": "ba0bdacdfb964e38522fda812bf23169bc5fa603",
+    "path": "license.txt",
+    "url": "https://github.com/GPUOpen-Effects/TressFX/blob/ba0bdacdfb964e38522fda812bf23169bc5fa603/license.txt",
+    "local": "sources/GPUOpen-Effects__TressFX/license.txt",
+    "bytes": 1094,
+    "sha256": "e008031a95f6f655def9eaf914118531c9e1055b8ea201eb98b9f95f1af9bec4"
+  },
+  {
+    "repo": "GPUOpen-Effects/TressFX",
+    "sha": "ba0bdacdfb964e38522fda812bf23169bc5fa603",
+    "path": "src/Shaders/TressFXSimulation.hlsl",
+    "url": "https://github.com/GPUOpen-Effects/TressFX/blob/ba0bdacdfb964e38522fda812bf23169bc5fa603/src/Shaders/TressFXSimulation.hlsl",
+    "local": "sources/GPUOpen-Effects__TressFX/src/Shaders/TressFXSimulation.hlsl",
+    "bytes": 45388,
+    "sha256": "c8f09bf49a3b30ebf4e2b2cc11d753b42baee811e3b6d12bd5cac06ba62eb734"
+  },
+  {
+    "repo": "GPUOpen-Effects/TressFX",
+    "sha": "ba0bdacdfb964e38522fda812bf23169bc5fa603",
+    "path": "src/Shaders/TressFXSDFCollision.hlsl",
+    "url": "https://github.com/GPUOpen-Effects/TressFX/blob/ba0bdacdfb964e38522fda812bf23169bc5fa603/src/Shaders/TressFXSDFCollision.hlsl",
+    "local": "sources/GPUOpen-Effects__TressFX/src/Shaders/TressFXSDFCollision.hlsl",
+    "bytes": 26132,
+    "sha256": "fbe949965e7d3c41ee4e9f0af1bd237559c1ff7cc2c50f558ad50f58fd0f9d6e"
+  },
+  {
+    "repo": "GPUOpen-Effects/TressFX",
+    "sha": "ba0bdacdfb964e38522fda812bf23169bc5fa603",
+    "path": "src/TressFX/TressFXSimulation.cpp",
+    "url": "https://github.com/GPUOpen-Effects/TressFX/blob/ba0bdacdfb964e38522fda812bf23169bc5fa603/src/TressFX/TressFXSimulation.cpp",
+    "local": "sources/GPUOpen-Effects__TressFX/src/TressFX/TressFXSimulation.cpp",
+    "bytes": 5216,
+    "sha256": "737d7c0d18bd911ec191671c1e9fe3244a336975f272cae30a8b66da6560510b"
+  },
+  {
+    "repo": "InteractiveComputerGraphics/PositionBasedDynamics",
+    "sha": "10a70bc146a97873dc3c8fef372f5217e010542e",
+    "path": "LICENSE",
+    "url": "https://github.com/InteractiveComputerGraphics/PositionBasedDynamics/blob/10a70bc146a97873dc3c8fef372f5217e010542e/LICENSE",
+    "local": "sources/InteractiveComputerGraphics__PositionBasedDynamics/LICENSE",
+    "bytes": 1111,
+    "sha256": "825d46292692c501a88ddd745cddf69e2198b8354f44ae1f192627d79bad2ae7"
+  },
+  {
+    "repo": "InteractiveComputerGraphics/PositionBasedDynamics",
+    "sha": "10a70bc146a97873dc3c8fef372f5217e010542e",
+    "path": "PositionBasedDynamics/PositionBasedElasticRods.cpp",
+    "url": "https://github.com/InteractiveComputerGraphics/PositionBasedDynamics/blob/10a70bc146a97873dc3c8fef372f5217e010542e/PositionBasedDynamics/PositionBasedElasticRods.cpp",
+    "local": "sources/InteractiveComputerGraphics__PositionBasedDynamics/PositionBasedDynamics/PositionBasedElasticRods.cpp",
+    "bytes": 44688,
+    "sha256": "2e0fca926ff386445cc9252b4f651904d3f60e8567143db963b6383a5ac46751"
+  },
+  {
+    "repo": "InteractiveComputerGraphics/PositionBasedDynamics",
+    "sha": "10a70bc146a97873dc3c8fef372f5217e010542e",
+    "path": "Simulation/TimeStepController.cpp",
+    "url": "https://github.com/InteractiveComputerGraphics/PositionBasedDynamics/blob/10a70bc146a97873dc3c8fef372f5217e010542e/Simulation/TimeStepController.cpp",
+    "local": "sources/InteractiveComputerGraphics__PositionBasedDynamics/Simulation/TimeStepController.cpp",
+    "bytes": 13408,
+    "sha256": "2c1e7fb2fac9bca142c4c3695e3b01d784c6e44b06d1781a994c25dff55c7311"
+  },
+  {
+    "repo": "guillaumeblanc/ozz-animation",
+    "sha": "744eb9d99f606eda849acb0b1204f7a3dc20bca1",
+    "path": "LICENSE.md",
+    "url": "https://github.com/guillaumeblanc/ozz-animation/blob/744eb9d99f606eda849acb0b1204f7a3dc20bca1/LICENSE.md",
+    "local": "sources/guillaumeblanc__ozz-animation/LICENSE.md",
+    "bytes": 1183,
+    "sha256": "3ddd93e9888fe70b9d61675ceb1c4278a579dc67171678f015de114efe815852"
+  },
+  {
+    "repo": "guillaumeblanc/ozz-animation",
+    "sha": "744eb9d99f606eda849acb0b1204f7a3dc20bca1",
+    "path": "src/animation/runtime/ik_two_bone_job.cc",
+    "url": "https://github.com/guillaumeblanc/ozz-animation/blob/744eb9d99f606eda849acb0b1204f7a3dc20bca1/src/animation/runtime/ik_two_bone_job.cc",
+    "local": "sources/guillaumeblanc__ozz-animation/src/animation/runtime/ik_two_bone_job.cc",
+    "bytes": 16492,
+    "sha256": "c528e016951e507589c661fa8a03b9d478022a0c63fc710bb0e6c6851888ccaa"
+  },
+  {
+    "repo": "guillaumeblanc/ozz-animation",
+    "sha": "744eb9d99f606eda849acb0b1204f7a3dc20bca1",
+    "path": "samples/foot_ik/sample_foot_ik.cc",
+    "url": "https://github.com/guillaumeblanc/ozz-animation/blob/744eb9d99f606eda849acb0b1204f7a3dc20bca1/samples/foot_ik/sample_foot_ik.cc",
+    "local": "sources/guillaumeblanc__ozz-animation/samples/foot_ik/sample_foot_ik.cc",
+    "bytes": 28061,
+    "sha256": "a09fcb135c88d834381c0b598362bccca47856eaf711e0c2dbddf6bf718d135e"
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "path": "LICENSE",
+    "url": "https://github.com/st-tech/ppf-contact-solver/blob/618f85b667b7f211f762908690bc46f65b578ae0/LICENSE",
+    "local": "sources/st-tech__ppf-contact-solver/LICENSE",
+    "bytes": 11355,
+    "sha256": "c62fb5b48472c366001bd2c39e6338dd5152c88624a1425ceacf0b17a164f9aa"
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "path": "crates/ppf-cts-solver/src/kernels/backend/contract.md",
+    "url": "https://github.com/st-tech/ppf-contact-solver/blob/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/kernels/backend/contract.md",
+    "local": "sources/st-tech__ppf-contact-solver/crates/ppf-cts-solver/src/kernels/backend/contract.md",
+    "bytes": 11559,
+    "sha256": "d29c1781a4033f421d308a2cb356c4c83d6ed2f873aa8908b054fca36b05a073"
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "path": "crates/ppf-cts-solver/src/driver/pcg.rs",
+    "url": "https://github.com/st-tech/ppf-contact-solver/blob/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/driver/pcg.rs",
+    "local": "sources/st-tech__ppf-contact-solver/crates/ppf-cts-solver/src/driver/pcg.rs",
+    "bytes": 183940,
+    "sha256": "1570af01f902e27e8ab07679f218e22be56b496452859fd19728438c236e8ccf"
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "path": "crates/ppf-cts-solver/src/driver/collision_window.rs",
+    "url": "https://github.com/st-tech/ppf-contact-solver/blob/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/driver/collision_window.rs",
+    "local": "sources/st-tech__ppf-contact-solver/crates/ppf-cts-solver/src/driver/collision_window.rs",
+    "bytes": 31069,
+    "sha256": "d4d162e3200891e45bd4439b5707df78abae05981bc5fb3327c6788e691fdc56"
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "path": "crates/ppf-cts-solver/src/kernels/strainlimiting/rod_strain.kernel.cpp",
+    "url": "https://github.com/st-tech/ppf-contact-solver/blob/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/kernels/strainlimiting/rod_strain.kernel.cpp",
+    "local": "sources/st-tech__ppf-contact-solver/crates/ppf-cts-solver/src/kernels/strainlimiting/rod_strain.kernel.cpp",
+    "bytes": 11182,
+    "sha256": "df5d5a946fd490174440062bd822ee96d8ce33621ce354840fcd00c89a263652"
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "path": "crates/ppf-cts-solver/src/kernels/solver/pcg.kernel.cpp",
+    "url": "https://github.com/st-tech/ppf-contact-solver/blob/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/kernels/solver/pcg.kernel.cpp",
+    "local": "sources/st-tech__ppf-contact-solver/crates/ppf-cts-solver/src/kernels/solver/pcg.kernel.cpp",
+    "bytes": 39785,
+    "sha256": "7626a7a09f7646f21e5415619b2a8af478c72470aa20486bc4ecb92635198c0e"
+  },
+  {
+    "repo": "st-tech/ppf-contact-solver",
+    "sha": "618f85b667b7f211f762908690bc46f65b578ae0",
+    "path": "crates/ppf-cts-compute/metal/backend/backend.mm",
+    "url": "https://github.com/st-tech/ppf-contact-solver/blob/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-compute/metal/backend/backend.mm",
+    "local": "sources/st-tech__ppf-contact-solver/crates/ppf-cts-compute/metal/backend/backend.mm",
+    "bytes": 53406,
+    "sha256": "8e48f25f2206966943fc246a9136ca8a3c0d35f3dc995e29e947553d04b4fbd1"
+  },
+  {
+    "repo": "newton-physics/newton",
+    "sha": "a6e1649b112e3d962b35f7dad66780dc55150588",
+    "path": "LICENSE.md",
+    "url": "https://github.com/newton-physics/newton/blob/a6e1649b112e3d962b35f7dad66780dc55150588/LICENSE.md",
+    "local": "sources/newton-physics__newton/LICENSE.md",
+    "bytes": 10173,
+    "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+  },
+  {
+    "repo": "newton-physics/newton",
+    "sha": "a6e1649b112e3d962b35f7dad66780dc55150588",
+    "path": "newton/_src/solvers/vbd/solver_vbd.py",
+    "url": "https://github.com/newton-physics/newton/blob/a6e1649b112e3d962b35f7dad66780dc55150588/newton/_src/solvers/vbd/solver_vbd.py",
+    "local": "sources/newton-physics__newton/newton/_src/solvers/vbd/solver_vbd.py",
+    "bytes": 248718,
+    "sha256": "750f3a8a7a70b2bf24d692c9ba404403df049fbe6859a5e6f7bd0a7bc122ca24"
+  },
+  {
+    "repo": "newton-physics/newton",
+    "sha": "a6e1649b112e3d962b35f7dad66780dc55150588",
+    "path": "newton/tests/test_solver_vbd.py",
+    "url": "https://github.com/newton-physics/newton/blob/a6e1649b112e3d962b35f7dad66780dc55150588/newton/tests/test_solver_vbd.py",
+    "local": "sources/newton-physics__newton/newton/tests/test_solver_vbd.py",
+    "bytes": 326418,
+    "sha256": "30b4247a78ad5af9280bb1ec8d637b884e16d34a0e32ea633d07e0bb57e6eb4f"
+  }
+]

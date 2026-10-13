@@ -8,6 +8,8 @@ pub struct SurfaceDeformationWeight {
 }
 #[derive(Debug)]
 pub struct SurfaceDeformation {
+    device: wgpu::Device,
+    topology: Vec<u32>,
     geometry: SceneGeometry,
     pipeline: wgpu::ComputePipeline,
     group: wgpu::BindGroup,
@@ -95,6 +97,8 @@ impl SurfaceDeformation {
                 contents: Some(data),
                 usage: if i == 0 {
                     wgpu::BufferUsages::UNIFORM
+                } else if i == 1 {
+                    wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST
                 } else {
                     wgpu::BufferUsages::STORAGE
                 },
@@ -161,6 +165,8 @@ impl SurfaceDeformation {
             .map(|v| f64::from(v).abs())
             .fold(0_f64, f64::max);
         Ok(Self {
+            device: device.clone(),
+            topology: mesh.indices().to_vec(),
             geometry,
             pipeline,
             group,
@@ -174,6 +180,34 @@ impl SurfaceDeformation {
             normals,
             rigid_skin: None,
         })
+    }
+    /// Replace the unskinned source without rebuilding resident topology or
+    /// bind-space normal data. Re-upload pose and controls before encoding.
+    pub fn upload_source_mesh(&mut self, queue:&wgpu::Queue, source:&SceneMesh)->Result<(),SceneError> {
+        if source.vertices().len()!=self.count as usize || source.indices()!=self.topology.as_slice() {
+            return Err(SceneError::InvalidGeometry);
+        }
+        let maximum=source.vertices().iter().flat_map(|v|v.position).map(|v|f64::from(v).abs()).fold(0f64,f64::max);
+        if !maximum.is_finite() || maximum>f32::MAX as f64*0.015625 {
+            return Err(SceneError::InvalidGeometry);
+        }
+        queue.write_buffer(&self._inputs[1],0,bytemuck::cast_slice(source.vertices()));
+        self.maximum_rest_position=maximum;
+        self.initialized=false;
+        if let Some(skin)=&mut self.rigid_skin { skin.replace_source_bound(maximum); }
+        Ok(())
+    }
+    /// Set the bind-space surface used to transport authored normals.
+    /// Position skinning may start from a facially deformed source while normals
+    /// must retain the original reference. Replacement is atomic on admission.
+    pub fn set_normal_reference(&mut self, device: &wgpu::Device, reference: &SceneMesh) -> Result<(), SceneError> {
+        if *device != self.device || reference.vertices().len() != self.count as usize
+            || reference.indices() != self.topology.as_slice() {
+            return Err(SceneError::InvalidGeometry);
+        }
+        let normals = crate::surface_normal_transport::SurfaceNormalTransport::new(device, reference, &self.geometry)?;
+        self.normals = normals;
+        Ok(())
     }
     /// Skin immutable source positions on the GPU before adding physical
     /// displacements. A trailing rigid joint avoids per-fibre weight storage.
@@ -196,6 +230,15 @@ impl SurfaceDeformation {
         self.group=group;self.rigid_skin=Some(skin);Ok(())
     }
     /// Upload a validated rigid palette; vertex deformation stays resident.
+    /// Upload a local bone palette followed by actor translation. All inputs
+    /// are admitted before either GPU buffer is updated.
+    /// Intermediate rigid positions, before physical-shell displacement.
+    pub fn rigid_vertex_buffer(&self)->Option<&wgpu::Buffer> {
+        self.rigid_skin.as_ref().map(|skin| &*skin.posed)
+    }
+    pub fn upload_rigid_pose_with_offset(&self, queue:&wgpu::Queue, matrices:&[glam::Mat4], offset:glam::Vec3)->Result<(),SceneError> {
+        self.rigid_skin.as_ref().ok_or(SceneError::InvalidTransform)?.upload_with_offset(queue,matrices,offset)
+    }
     pub fn upload_rigid_pose(&self, queue:&wgpu::Queue, matrices:&[glam::Mat4])->Result<(),SceneError> {
         self.rigid_skin.as_ref().ok_or(SceneError::InvalidTransform)?.upload(queue,matrices)
     }

@@ -319,6 +319,45 @@ impl SceneSkinner {
         );
         Ok(())
     }
+
+    /// Pre-fetches and uploads multiple preflighted palettes, then encodes all
+    /// skeletal deformations inside a single compute pass with one pipeline bind.
+    ///
+    /// # Errors
+    /// Rejects foreign skinners before writing any GPU buffers.
+    pub fn encode_prepared_poses_batch(
+        &self,
+        queue: &wgpu::Queue,
+        encoder: &mut wgpu::CommandEncoder,
+        poses: &[SceneSkinPose<'_>],
+    ) -> Result<(), SceneSkinError> {
+        if poses.is_empty() {
+            return Ok(());
+        }
+        for pose in poses {
+            if !Arc::ptr_eq(&self.identity, &pose.instance.owner) {
+                return Err(SceneSkinError::ForeignSkinner);
+            }
+        }
+        for pose in poses {
+            queue.write_buffer(&pose.instance.palette, 0, bytemuck::cast_slice(pose.joints));
+        }
+        let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+            label: Some("scene skin pose batch"),
+            timestamp_writes: None,
+        });
+        pass.set_pipeline(&self.pipeline);
+        for pose in poses {
+            let instance = pose.instance;
+            pass.set_bind_group(0, &instance.binding, &[]);
+            pass.dispatch_workgroups(
+                instance.source.mesh.vertices().len().div_ceil(64) as u32,
+                1,
+                1,
+            );
+        }
+        Ok(())
+    }
     /// Uploads only a certified source's chosen index variant. Vertex, normal,
     /// material-coordinate and material-parameter streams remain shared with
     /// the owner's base geometry. Pose-specific error certification and camera
@@ -357,6 +396,7 @@ impl SceneSkinner {
                 device: self.device.clone(),
                 vertices: base.vertices.clone(),
                 normals: base.normals.clone(),
+                tangents: base.tangents.clone(),
                 normal_cache: NormalCache::default(),
                 material_coordinates: base.material_coordinates.clone(),
                 coordinate_cache: Vec::new(),

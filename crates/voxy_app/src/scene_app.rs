@@ -22,6 +22,37 @@ struct ResidentHair {
     indices: Vec<u32>,
     dirty: bool,
 }
+/// Optional asynchronous tail audit; absent from the normal rendering path.
+#[derive(Debug)]
+struct SurfaceLightAudit {
+    buffer: wgpu::Buffer,
+    pending: Option<std::sync::mpsc::Receiver<Result<(),wgpu::BufferAsyncError>>>,
+}
+impl SurfaceLightAudit {
+    fn poll(&mut self, device:&wgpu::Device) -> Result<(),Box<dyn std::error::Error>> {
+        device.poll(wgpu::PollType::Poll)?;
+        if let Some(receiver)=&self.pending {
+            match receiver.try_recv() {
+                Ok(result)=> {
+                    result?;
+                    let data=self.buffer.slice(..).get_mapped_range()?;
+                    let h:[u32;8]=std::array::from_fn(|i|u32::from_le_bytes(data[i*4..i*4+4].try_into().expect("four header bytes")));
+                    eprintln!("GPU SURFACE LIGHT AUDIT geometry={} admitted={} has_accepted={} generation={} error_estimate={:.8} relative_squared={:.8e}",
+                        h[0],h[1],h[2],h[3],f32::from_bits(h[4]),f32::from_bits(h[5]));
+                    drop(data);self.buffer.unmap();self.pending=None;
+                }
+                Err(std::sync::mpsc::TryRecvError::Empty)=>{},
+                Err(error)=>return Err(error.into()),
+            }
+        }
+        Ok(())
+    }
+    fn begin(&mut self) {
+        let (tx,rx)=std::sync::mpsc::channel();
+        self.buffer.slice(..).map_async(wgpu::MapMode::Read,move|result|{let _=tx.send(result);});
+        self.pending=Some(rx);
+    }
+}
 #[derive(Debug)]
 struct Resources {
     host: Renderer,
@@ -31,6 +62,10 @@ struct Resources {
     hair_geometry: Option<SceneGeometry>,
     gpu_hair: Option<ResidentHair>,
     gpu_secondary: Option<voxy_render::SurfaceDeformation>,
+    gpu_body: Option<crate::female_demo::resident_body::ResidentBody>,
+    gpu_surface_light: Option<voxy_render::SurfaceLightFrame>,
+    gpu_surface_colors: Option<voxy_render::SurfaceColorTransfer>,
+    gpu_surface_light_audit: Option<SurfaceLightAudit>,
     gpu_secondary_reference: Vec<[f32; 4]>,
     gpu_secondary_last_controls: Vec<[f32; 4]>,
     gpu_jump_last_palette: Vec<Mat4>,
@@ -67,6 +102,7 @@ pub struct SceneApp {
     orbit_drag: bool,
     camera_motion: crate::camera_motion::CameraMotion,
     full_model_worker: Option<crate::full_model_worker::FullModelWorker>,
+    hair_solver:Option<crate::gpu_hair_solver::GpuHairLinearSolver>,
     cursor: Option<(f64, f64)>,
     liquids: Option<crate::liquid_demo::LiquidDemo>,
     liquid_optics: bool,
@@ -120,6 +156,7 @@ impl SceneApp {
             orbit_drag: false,
             camera_motion: Default::default(),
             full_model_worker: None,
+            hair_solver:None,
             cursor: None,
             liquids: None,
             liquid_optics: false,
@@ -335,6 +372,22 @@ impl SceneApp {
         }
         Ok(app)
     }
+    /// Shows fixed stance with accepted character physics and geometric foot IK.
+    /// Hair and nonlinear tissue simulation are not advanced by this diagnostic.
+    pub fn with_female_physical_stance(self) -> Result<Self, Box<dyn std::error::Error>> {
+        let mut app = self.with_female_animation()?;
+        if let Some(female) = &mut app.female { female.enable_physical_stance()?; }
+        Ok(app)
+    }
+    /// Shows an authored grounded gait in place on the actual character rig.
+    /// This preview does not advance the nonlinear physical shell solver.
+    /// # Errors
+    /// Rejects invalid assets and clips outside idle/walk/jog/sprint.
+    pub fn with_female_locomotion(self,clip:crate::humanoid_locomotion::LocomotionClip)->Result<Self,Box<dyn std::error::Error>> {
+        let mut app=self.with_female_animation()?;
+        if let Some(female)=&mut app.female {female.enable_authored_gait(clip)?;}
+        Ok(app)
+    }
     /// Opens a close view of skeletal hand closure around a cylinder, sphere, or OBJ mesh.
     /// # Errors
     /// Rejects invalid character or object assets.
@@ -359,6 +412,9 @@ impl SceneApp {
         let mut app = self.with_female()?;
         if let Some(female) = &mut app.female {
             female.secondary_only = true;
+            if std::env::var("VOXY_AUTHORED_JUMP").as_deref() == Ok("1") {
+                female.enable_authored_jump()?;
+            }
             female.yaw = 1.1;
             female.distance = 2.1;
             female.pressing = false;
@@ -603,18 +659,43 @@ impl SceneApp {
                 std::env::var_os("VOXY_GPU_SECONDARY_MSAA").is_some()
             );
         }
+        // The render host owns the device; physics receives its existing backend.
+        // Keep qualification explicit until coupled dynamic GPU admission passes.
+        if self.female.is_some() && std::env::var_os("VOXY_GPU_HAIR_PHYSICS").is_some() {
+            self.hair_solver=Some(pollster::block_on(crate::gpu_hair_solver::GpuHairLinearSolver::new_coupled(host.device(),host.queue()))?);
+        }
         let mut scene = host.create_scene_renderer();
         if self.female.is_some() {
             pollster::block_on(
                 scene.reload_shader(host.device(), crate::female_eyes::MATERIAL_SHADER),
             )?;
         }
-        let use_gpu_hair=std::env::var_os("VOXY_ASYNC_FULL").is_some()
+        let use_gpu_body=std::env::var_os("VOXY_GPU_BODY").is_some();
+        if use_gpu_body && (self.female.is_none() || std::env::var_os("VOXY_ASYNC_FULL").is_some()
+            || std::env::var_os("VOXY_GPU_SECONDARY").is_some() || std::env::var_os("VOXY_GPU_SURFACE_LIGHT").is_some()) {
+            return Err("GPU body currently requires synchronous physical stance with CPU surface lighting".into());
+        }
+        let use_gpu_surface_light = std::env::var_os("VOXY_GPU_SURFACE_LIGHT").is_some();
+        if use_gpu_surface_light && self.female.is_none() {
+            return Err("GPU surface lighting requires a character model".into());
+        }
+        if use_gpu_surface_light && (std::env::var_os("VOXY_ASYNC_FULL").is_some() || std::env::var_os("VOXY_GPU_SECONDARY").is_some()) {
+            return Err("authored light-normal frame ownership for async/GPU-secondary combinations is not qualified yet".into());
+        }
+        if use_gpu_surface_light && std::env::var("VOXY_FACE_EXPERIMENTAL_TRANSMISSION").as_deref()==Ok("1") {
+            return Err("GPU surface lighting additive experimental transmission is not qualified yet".into());
+        }
+        let use_gpu_hair=(use_gpu_body || std::env::var_os("VOXY_ASYNC_FULL").is_some()
+            || std::env::var_os("VOXY_RESIDENT_HAIR").is_some())
             && std::env::var_os("VOXY_DISABLE_GPU_HAIR").is_none()
             && self.female.as_ref().is_some_and(|f| f.face_parameters==crate::face_parameters::FaceParameters::default()
                 && f.film.is_none() && f.simulate_hair);
+        let mut inherited_colors=Vec::new();
         let mesh = if let Some(female) = &self.female {
-            if use_gpu_hair { female.mesh_with_full_hair()? } else { female.mesh()? }
+            if use_gpu_surface_light {
+                let (mesh,bindings)=female.mesh_with_gpu_light_bindings(female.show_hair || use_gpu_hair)?;
+                inherited_colors=bindings;mesh
+            } else if use_gpu_hair { female.mesh_with_full_hair()? } else { female.mesh()? }
         } else if let Some(xray) = &self.xray {
             xray.shell(Vec3::new(0.0, 0.2, 3.0))?
         } else if let Some(fem) = &self.fem {
@@ -639,22 +720,24 @@ impl SceneApp {
         let cube = if use_gpu_hair {
             let female=self.female.as_ref().ok_or("resident hair requires full model")?;
             let (_,indices)=crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
-            let mut hair=scene.upload_compute_mesh(host.device(),&mesh)?;
+            let mut hair=scene.upload_compute_tangent_mesh(host.device(),&mesh,&female.gpu_hair_vertex_tangents(&mesh)?)?;
             hair.update_index_partition(host.queue(),if female.show_hair { &indices } else { &[] })?;
-            pollster::block_on(scene.set_geometry_opaque_shader(host.device(),&mut hair,include_str!("female_hair_material.wgsl")))?;
+            pollster::block_on(scene.set_geometry_opaque_shader(host.device(),&mut hair,include_str!("female_hair_material_tangent.wgsl")))?;
             let input=female.gpu_hair_surface_input()?;
             let base=mesh.vertices().iter().position(|v| v.uv[0]==-7.).ok_or("missing full hair surface")?;
             let program=pollster::block_on(voxy_render::ComputeProgram::new(host.device(),voxy_render::FIBER_SURFACE_SHADER))?;
             let job=program.create_job(host.device(),input.bytes())?;
-            let transfer=pollster::block_on(voxy_render::FiberSurfaceTransfer::new(host.device(),&hair,job.buffer(),&input,base as u32))?;
+            let transfer=pollster::block_on(voxy_render::FiberSurfaceTransfer::new_with_tangents(host.device(),&hair,job.buffer(),&input,base as u32))?;
             eprintln!("FULL MODEL GPU HAIR initialized vertices={} resident=true",input.vertex_count());
             gpu_hair=Some(ResidentHair { input,job,transfer,indices,dirty:true });
             hair_geometry=Some(hair);
-            scene.upload_mesh(host.device(),&female.mesh_without_hair()?)?
+            if use_gpu_surface_light || use_gpu_body { scene.upload_compute_mesh(host.device(),&female.mesh_without_hair()?)? }
+            else { scene.upload_mesh(host.device(),&female.mesh_without_hair()?)? }
         } else if std::env::var_os("VOXY_ASYNC_FULL").is_some() {
             let (body, hair) =
                 crate::full_model_worker::partition_hair(&mesh).map_err(std::io::Error::other)?;
-            let mut partitions = scene.upload_shared_mesh_partitions(host.device(), &mesh)?;
+            let mut partitions = if use_gpu_surface_light {scene.upload_compute_shared_mesh_partitions(host.device(), &mesh)?}
+                else {scene.upload_shared_mesh_partitions(host.device(), &mesh)?};
             let mut hair_owner = partitions.pop().unwrap();
             let mut body_owner = partitions.pop().unwrap();
             body_owner.update_index_partition(host.queue(), &body)?;
@@ -672,9 +755,18 @@ impl SceneApp {
             let mut geometry = scene.reserve_geometry(host.device(), 60_024, 60_024)?;
             geometry.update(host.queue(), &mesh)?;
             geometry
+        } else if use_gpu_surface_light || use_gpu_body {
+            scene.upload_compute_mesh(host.device(), &mesh)?
         } else {
             scene.upload_mesh(host.device(), &mesh)?
         };
+        let gpu_body=if use_gpu_body {
+            let demo=self.female.as_ref().ok_or("GPU body requires character")?;
+            let separated=if use_gpu_hair {Some(demo.mesh_without_hair()?)} else {None};
+            let body=crate::female_demo::resident_body::ResidentBody::new(host.device(),host.queue(),&scene,demo,separated.as_ref().unwrap_or(&mesh),&cube)?;
+            eprintln!("FULL MODEL GPU BODY initialized: resident rig + shell; CPU face details and physics retained");
+            Some(body)
+        } else {None};
         let (gpu_secondary, gpu_secondary_reference) = if std::env::var_os("VOXY_GPU_SECONDARY")
             .is_some()
         {
@@ -705,6 +797,32 @@ impl SceneApp {
         } else {
             (None, Vec::new())
         };
+        let gpu_surface_light = if use_gpu_surface_light {
+            let female=self.female.as_ref().ok_or("GPU surface lighting requires a character")?;
+            let count=female.gpu_secondary_body_vertices() as usize;
+            let triangles:Vec<_>=mesh.indices().chunks_exact(3)
+                .filter(|t|t.iter().all(|i|(*i as usize)<count)).map(|t|[t[0],t[1],t[2]]).collect();
+            let settings=voxy_render::SurfaceLightFrameSettings {
+                key_direction:crate::female_transmission::key_direction().to_array(),key_weight:0.6,
+                fill_direction:[0.8,0.2,0.5],fill_weight:0.2,ambient:0.2,
+                albedo:[0.72,0.46,0.34,1.],surface_fraction:female.face_parameters.value("skin_surface_light").unwrap_or(0.35),
+                radii:[0.002,0.001,0.0005],
+            };
+            let target=gpu_secondary.as_ref().map_or(&cube,|gpu|gpu.geometry());
+            let light=pollster::block_on(voxy_render::SurfaceLightFrame::new_with_reference_normals(host.device(),target,&triangles,settings,&female.surface_light_normals()))?;
+            eprintln!("GPU SURFACE LIGHT initialized vertices={count} triangles={} CPU_authored_normals=true CPU_reference_retained={}",triangles.len(),std::env::var_os("VOXY_GPU_SURFACE_LIGHT_CPU_REFERENCE").is_some());
+            Some(light)
+        } else { None };
+        let gpu_surface_colors = if use_gpu_surface_light && !inherited_colors.is_empty() {
+            let female=self.female.as_ref().ok_or("missing inherited-color source model")?;
+            let transfer=pollster::block_on(voxy_render::SurfaceColorTransfer::new(host.device(),&cube,female.gpu_secondary_body_vertices(),&inherited_colors))?;
+            eprintln!("GPU SURFACE COLORS inherited_bindings={}",inherited_colors.len());Some(transfer)
+        } else {None};
+        let gpu_surface_light_audit = if gpu_surface_light.is_some() && std::env::var_os("VOXY_GPU_SURFACE_LIGHT_AUDIT").is_some() {
+            Some(SurfaceLightAudit {buffer:host.device().create_buffer(&wgpu::BufferDescriptor {
+                label:Some("surface light tail audit"),size:32,usage:wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::MAP_READ,
+                mapped_at_creation:false}),pending:None})
+        } else {None};
         let rush_floor = self
             .rush
             .as_ref()
@@ -811,6 +929,10 @@ impl SceneApp {
             hair_geometry,
             gpu_hair,
             gpu_secondary,
+            gpu_body,
+            gpu_surface_light,
+            gpu_surface_colors,
+            gpu_surface_light_audit,
             gpu_secondary_last_controls: vec![[0.; 4]; gpu_secondary_reference.len()],
             gpu_jump_last_palette: Vec::new(),
             gpu_secondary_reference,
@@ -862,7 +984,7 @@ impl SceneApp {
             let view = simulation.background_view_replica()?;
             let controls = crate::full_model_worker::Controls::capture(&view, self.paused);
             self.full_model_worker = Some(crate::full_model_worker::FullModelWorker::new(
-                simulation, controls, self.resources.as_ref().is_some_and(|r| r.gpu_hair.is_some()),
+                simulation, controls, self.resources.as_ref().is_some_and(|r| r.gpu_hair.is_some()), self.hair_solver.take(),
             )?);
             self.female = Some(view);
         }
@@ -913,11 +1035,11 @@ impl SceneApp {
         if !self.paused {
             if let Some(female) = &mut self.female {
                 if self.full_model_worker.is_none() {
-                    female.advance(if self.smoke {
-                        1.0 / 60.0
-                    } else {
-                        f64::from(elapsed)
-                    })?;
+                    let step=if self.smoke {1.0/60.0} else {f64::from(elapsed)};
+                    match self.hair_solver.as_mut() {
+                        Some(solver)=>female.advance_with_hair_solver(step,solver)?,
+                        None=>female.advance(step)?,
+                    }
                 }
             } else if let Some(xray) = &mut self.xray {
                 if self.smoke {
@@ -1047,6 +1169,12 @@ impl SceneApp {
         let Some(r) = &mut self.resources else {
             return Ok(());
         };
+        if let Some(female)=&mut self.female {
+            female.resident_surface_light = r.gpu_surface_light.as_ref()
+                .is_some_and(|light|female.can_use_resident_surface_light(light.surface_fraction()))
+                && std::env::var_os("VOXY_GPU_SURFACE_LIGHT_CPU_REFERENCE").is_none();
+        }
+        if let Some(audit)=&mut r.gpu_surface_light_audit {audit.poll(r.host.device())?;}
         // Native window size may change before its Resized event is dispatched.
         // Synchronize all render targets before deriving camera matrices.
         if r.host.configured_size() != (size.width, size.height)
@@ -1177,6 +1305,9 @@ impl SceneApp {
                         let uploaded=bytes.len();
                         r.cube.update(r.host.queue(),&frame.mesh)?;
                         r.host.queue().write_buffer(gpu.job.buffer(),32,bytes);
+                        let offset=gpu.input.transform_byte_offset();
+                        let pose=gpu.input.replace_transform(frame.hair_transform)?;
+                        r.host.queue().write_buffer(gpu.job.buffer(),offset,pose);
                         gpu.dirty=true;
                         if let Some(hair)=&mut r.hair_geometry {
                             hair.update_index_partition(r.host.queue(),if frame.hair_visible { &gpu.indices } else { &[] })?;
@@ -1196,6 +1327,18 @@ impl SceneApp {
                     }
                 }
                 None
+            } else if let Some(gpu)=&mut r.gpu_hair {
+                let frames=female.gpu_hair_surface_frames();
+                let bytes=gpu.input.replace_frames(&frames)?;
+                r.host.queue().write_buffer(gpu.job.buffer(),32,bytes);
+                let offset=gpu.input.transform_byte_offset();
+                let pose=gpu.input.replace_transform(female.gpu_hair_surface_transform())?;
+                r.host.queue().write_buffer(gpu.job.buffer(),offset,pose);
+                gpu.dirty=true;
+                if let Some(hair)=&mut r.hair_geometry {
+                    hair.update_index_partition(r.host.queue(),if female.show_hair {&gpu.indices} else {&[]})?;
+                }
+                Some(female.mesh_without_hair()?)
             } else if r.gpu_secondary.is_none() {
                 Some(female.mesh()?)
             } else {
@@ -1215,9 +1358,13 @@ impl SceneApp {
                     }
                 } else {
                     r.film_layer = None;
-                    r.cube.update(r.host.queue(), &mesh)?;
+                    if let Some(body)=&mut r.gpu_body {
+                        r.cube.update_after_deforming_prefix(r.host.queue(),&mesh,body.base_vertices())?;
+                        body.refresh(r.host.queue(),female,&mesh)?;
+                    } else {r.cube.update(r.host.queue(),&mesh)?;}
                 }
             }
+            if let Some(light)=&r.gpu_surface_light {light.upload_reference_normals(r.host.queue(),&female.surface_light_normals())?;}
             if trace {
                 eprintln!(
                     "FACE FRAME {} mesh_ready_ms={:.3}",
@@ -1339,6 +1486,7 @@ impl SceneApp {
             r.last_overlay_mvp = Some(overlay_mvp);
         }
         let expect_temporal_reset = r.host.temporal_frame().is_none();
+        let mut surface_light_audit_encoded=false;
         let mut temporal_candidate = None;
         let mut temporal_submitted = None;
         let mut draw_list = Vec::new();
@@ -1509,6 +1657,7 @@ impl SceneApp {
                 &active_draws,
                 &refractive_layers,
                 |queue, encoder| {
+                    if let Some(body)=&mut r.gpu_body {body.encode(encoder).map_err(voxy_render::RendererError::Scene)?;}
                     if let Some(hair)=&mut r.gpu_hair {
                         if hair.dirty {
                             hair.job.encode_step(encoder,[hair.input.vertex_count().div_ceil(64),1,1])
@@ -1527,6 +1676,18 @@ impl SceneApp {
                             .map_err(voxy_render::RendererError::Scene)?;
                         gpu.encode(encoder)
                             .map_err(voxy_render::RendererError::Scene)?;
+                    }
+                    if let Some(light)=&mut r.gpu_surface_light {
+                        if self.female.as_ref().is_some_and(|f|f.can_use_resident_surface_light(light.surface_fraction())) {
+                            light.encode(encoder,64).map_err(voxy_render::RendererError::Scene)?;
+                            if let Some(colors)=&r.gpu_surface_colors {colors.encode(encoder);}
+                            if let Some(audit)=&r.gpu_surface_light_audit {
+                                if audit.pending.is_none() {
+                                    encoder.copy_buffer_to_buffer(light.admission().header_buffer(),0,&audit.buffer,0,32);
+                                    surface_light_audit_encoded=true;
+                                }
+                            }
+                        }
                     }
                     Ok(())
                 },
@@ -1550,12 +1711,6 @@ impl SceneApp {
             RenderOutcome::SkippedOccluded | RenderOutcome::SkippedTimeout
         ) {
             self.defer_redraw_until = Some(Instant::now() + std::time::Duration::from_millis(16));
-        } else if self.female.is_some()
-            && r.gpu_secondary.is_none()
-            && self.full_model_worker.is_none()
-        {
-            // Let native input/accessibility run between expensive full-model frames.
-            self.defer_redraw_until = Some(Instant::now() + std::time::Duration::from_millis(16));
         } else {
             self.defer_redraw_until = None;
         }
@@ -1567,6 +1722,7 @@ impl SceneApp {
             );
         }
         if outcome == RenderOutcome::Presented {
+            if surface_light_audit_encoded {if let Some(audit)=&mut r.gpu_surface_light_audit {audit.begin();}}
             if !refractive_layers.is_empty() || (self.liquid_optics && self.liquids.is_some()) {
                 r.optical_frames += 1;
             }
@@ -1938,6 +2094,20 @@ impl ApplicationHandler for SceneApp {
                             eprintln!("SCENE SMOKE EXIT: Escape at frame {}", self.frames);
                         }
                         event_loop.exit();
+                    }
+                    PhysicalKey::Code(KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3 | KeyCode::Digit4)
+                        if self.female.as_ref().is_some_and(|f| f.has_grounded_playback()) =>
+                    {
+                        use crate::humanoid_locomotion::LocomotionClip;
+                        let clip=match event.physical_key {
+                            PhysicalKey::Code(KeyCode::Digit1)=>LocomotionClip::Idle,
+                            PhysicalKey::Code(KeyCode::Digit2)=>LocomotionClip::Walk,
+                            PhysicalKey::Code(KeyCode::Digit3)=>LocomotionClip::Jog,
+                            _=>LocomotionClip::Sprint,
+                        };
+                        if let Some(female)=&mut self.female {
+                            if let Err(error)=female.select_grounded_gait(clip) {eprintln!("Gait selection rejected: {error}");}
+                        }
                     }
                     PhysicalKey::Code(KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3)
                         if self.female.as_ref().is_some_and(|f| f.hand_focus) =>

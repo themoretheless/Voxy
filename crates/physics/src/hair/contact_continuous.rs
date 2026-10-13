@@ -54,10 +54,17 @@ pub fn swept_capsule_pairs(
     Ok(bound_pairs(&motion_bounds(motions,tolerance_m)?))
 }
 fn motion_bounds(motions:&[CapsuleMotion],tolerance_m:f64)->Result<Vec<(V,V)>, &'static str> {
+    let mut bounds=Vec::with_capacity(motions.len());
+    motion_bounds_into(motions,tolerance_m,&mut bounds)?;
+    Ok(bounds)
+}
+// Output is scratch only; callers publish an envelope after complete validation.
+fn motion_bounds_into(motions:&[CapsuleMotion],tolerance_m:f64,bounds:&mut Vec<(V,V)>)->Result<(), &'static str> {
     if !tolerance_m.is_finite() || tolerance_m <= 0. {
         return Err("invalid swept capsule bounds tolerance");
     }
-    let mut bounds = Vec::with_capacity(motions.len());
+    bounds.clear();
+    bounds.reserve(motions.len());
     for motion in motions {
         if !motion.radius.is_finite()
             || motion.radius <= 0.
@@ -106,7 +113,7 @@ fn motion_bounds(motions:&[CapsuleMotion],tolerance_m:f64)->Result<Vec<(V,V)>, &
         }
         bounds.push((min, max));
     }
-    Ok(bounds)
+    Ok(())
 }
 
 // Solve-local candidate reuse. Current padded bounds are always validated and
@@ -115,6 +122,8 @@ fn motion_bounds(motions:&[CapsuleMotion],tolerance_m:f64)->Result<Vec<(V,V)>, &
 pub(in crate::hair) struct SweptPairCache {
     envelope:Vec<(V,V)>,
     pairs:Vec<(usize,usize)>,
+    filtered:Vec<(usize,usize)>,
+    bounds_scratch:Vec<(V,V)>,
     #[cfg(test)]
     rebuilds:usize,
 }
@@ -132,17 +141,21 @@ impl SweptPairCache {
         #[cfg(test)] {self.rebuilds+=1;}
         Ok(())
     }
-    pub(in crate::hair) fn query(&mut self,motions:&[CapsuleMotion],tolerance:f64)->Result<Vec<(usize,usize)>, &'static str> {
-        let bounds=motion_bounds(motions,tolerance)?;
+    pub(in crate::hair) fn query(&mut self,motions:&[CapsuleMotion],tolerance:f64)->Result<&[(usize,usize)], &'static str> {
+        motion_bounds_into(motions,tolerance,&mut self.bounds_scratch)?;
+        let bounds=&self.bounds_scratch;
         let contained=self.envelope.len()==bounds.len() && bounds.iter().zip(&self.envelope).all(|(b,e)|
             (0..3).all(|axis|b.0[axis]>=e.0[axis]&&b.1[axis]<=e.1[axis]));
         if !contained {
             #[cfg(test)] {self.rebuilds+=1;}
-            self.pairs=bound_pairs(&bounds);self.envelope=bounds;
-            return Ok(self.pairs.clone());
+            self.pairs=bound_pairs(bounds);
+            std::mem::swap(&mut self.envelope,&mut self.bounds_scratch);
+            return Ok(&self.pairs);
         }
-        Ok(self.pairs.iter().copied().filter(|&(a,b)|
-            (0..3).all(|axis|bounds[a].0[axis]<=bounds[b].1[axis]&&bounds[b].0[axis]<=bounds[a].1[axis])).collect())
+        self.filtered.clear();
+        self.filtered.extend(self.pairs.iter().copied().filter(|&(a,b)|
+            (0..3).all(|axis|bounds[a].0[axis]<=bounds[b].1[axis]&&bounds[b].0[axis]<=bounds[a].1[axis])));
+        Ok(&self.filtered)
     }
 }
 
@@ -868,6 +881,40 @@ mod hierarchy_tests {
         let sequence:Vec<Vec<_>>=[1.,0.5,0.25,0.125,0.0625,0.03125,0.015625,0.0078125].into_iter().map(|scale|
             motions.iter().zip(&staged).map(|(motion,stage)|CapsuleMotion {start:motion.start,
                 end:std::array::from_fn(|p|add(stage[p],mul(sub(motion.end[p],stage[p]),scale))),radius:motion.radius}).collect()).collect();
+        // Paired ownership benchmark: preserve the previous allocating query
+        // implementation, including bounds checks, filtering and rebuild order.
+        if std::env::var_os("VOXY_HAIR_PAIR_OWNERSHIP_BENCHMARK").is_some() {
+            let reference=|cache:&mut SweptPairCache,motions:&[CapsuleMotion]| {
+                let bounds=motion_bounds(motions,tolerance).unwrap();
+                let contained=cache.envelope.len()==bounds.len() && bounds.iter().zip(&cache.envelope).all(|(b,e)|
+                    (0..3).all(|axis|b.0[axis]>=e.0[axis]&&b.1[axis]<=e.1[axis]));
+                if !contained {
+                    cache.pairs=bound_pairs(&bounds);cache.envelope=bounds;
+                    return cache.pairs.clone();
+                }
+                cache.pairs.iter().copied().filter(|&(a,b)|
+                    (0..3).all(|axis|bounds[a].0[axis]<=bounds[b].1[axis]&&bounds[b].0[axis]<=bounds[a].1[axis])).collect::<Vec<_>>()
+            };
+            let zero:Vec<_>=motions.iter().zip(&staged).map(|(motion,stage)|CapsuleMotion {
+                start:motion.start,end:*stage,radius:motion.radius}).collect();
+            let mut owned=SweptPairCache::default();let mut borrowed=SweptPairCache::default();
+            owned.seed(&zero,&motions,tolerance).unwrap();borrowed.seed(&zero,&motions,tolerance).unwrap();
+            for motion in &sequence {assert_eq!(reference(&mut owned,motion),borrowed.query(motion,tolerance).unwrap());}
+            let mut paired=Vec::new();
+            for round in 0..12 {
+                let mut run=|copy:bool| {
+                    let begin=std::time::Instant::now();
+                    for _ in 0..8 {for motion in &sequence {
+                        if copy {std::hint::black_box(reference(&mut owned,std::hint::black_box(motion)));}
+                        else {std::hint::black_box(borrowed.query(std::hint::black_box(motion),tolerance).unwrap());}
+                    }}
+                    begin.elapsed().as_secs_f64()*1000.
+                };
+                let pair=if round%2==0 {let old=run(true);(old,run(false))} else {let new=run(false);(run(true),new)};
+                paired.push(pair);
+            }
+            eprintln!("PAIR OWNERSHIP original_owned/borrowed query ms per64queries={paired:?}");
+        }
         let mut cache_timings=Vec::new();
         for _ in 0..3 {
             let began=std::time::Instant::now();
@@ -877,7 +924,7 @@ mod hierarchy_tests {
             let zero:Vec<_>=motions.iter().zip(&staged).map(|(motion,stage)|CapsuleMotion {
                 start:motion.start,end:*stage,radius:motion.radius}).collect();
             cache.seed(&zero,&motions,tolerance).unwrap();
-            let cached:Vec<_>=sequence.iter().map(|m|cache.query(m,tolerance).unwrap()).collect();
+            let cached:Vec<_>=sequence.iter().map(|m|cache.query(m,tolerance).unwrap().to_vec()).collect();
             let cached_seconds=began.elapsed().as_secs_f64();assert_eq!(fresh,cached);
             cache_timings.push((fresh_seconds,cached_seconds,cache.rebuilds));
         }
@@ -902,6 +949,20 @@ mod hierarchy_tests {
         assert_eq!(cache.query(&motions,1e-10).unwrap(),swept_capsule_pairs(&motions,1e-10).unwrap());
         motions.pop();
         assert_eq!(cache.query(&motions,1e-9).unwrap(),swept_capsule_pairs(&motions,1e-9).unwrap());
+        // A late invalid primitive leaves partially written scratch. It must
+        // neither publish that envelope nor contaminate the next valid query.
+        let envelope=cache.envelope.clone();
+        let saved=motions[1];
+        motions[1].end[1][0]=f64::NAN;
+        assert!(cache.query(&motions,1e-9).is_err());
+        assert_eq!(cache.envelope,envelope);
+        motions[1]=saved;
+        assert_eq!(cache.query(&motions,1e-9).unwrap(),swept_capsule_pairs(&motions,1e-9).unwrap());
+        let capacity=cache.bounds_scratch.capacity();
+        let pointer=cache.bounds_scratch.as_ptr();
+        assert_eq!(cache.query(&motions,1e-9).unwrap(),swept_capsule_pairs(&motions,1e-9).unwrap());
+        assert_eq!(cache.bounds_scratch.capacity(),capacity);
+        assert_eq!(cache.bounds_scratch.as_ptr(),pointer);
         motions[0].radius=0.;assert!(cache.query(&motions,1e-10).is_err());
         motions.clear();assert!(cache.query(&motions,1e-10).unwrap().is_empty());
     }

@@ -1,0 +1,22 @@
+{
+  "repository": "https://github.com/ipc-sim/IPC",
+  "commit": "573d2c7e04104d3f9baf526bdaee7745891a571a",
+  "scope": "Newton stopping and line-search audit only",
+  "files": [
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/ipc-sim/IPC/573d2c7e04104d3f9baf526bdaee7745891a571a/LICENSE",
+      "sha256": "c490dd10c8c07cb29590ca8cdbb2734a4233fc0a5f57a1dbc9af8a2d7d655da3"
+    },
+    {
+      "path": "src/TimeStepper/Optimizer.cpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/IPC/573d2c7e04104d3f9baf526bdaee7745891a571a/src/TimeStepper/Optimizer.cpp",
+      "sha256": "06ffd6fd56a24acbd12c27b42a2c6b8d1ae810d62279dbe257a581348cdb2e15"
+    },
+    {
+      "path": "src/TimeStepper/Optimizer.hpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/IPC/573d2c7e04104d3f9baf526bdaee7745891a571a/src/TimeStepper/Optimizer.hpp",
+      "sha256": "ef8b9dbbb6bb189b20db3ae41782429495f91a91de43dfc8c86fdebe0aa96666"
+    }
+  ]
+}

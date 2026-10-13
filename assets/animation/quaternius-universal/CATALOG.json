@@ -1,0 +1,248 @@
+{
+  "schema": "voxy-upstream-animation-catalog-v1",
+  "source_document": "glTF/AnimationLibrary_Godot_Standard.gltf",
+  "clips": [
+    {
+      "name": "A_TPose",
+      "channels": 159
+    },
+    {
+      "name": "Crouch_Fwd_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Crouch_Idle_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Dance_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Death01",
+      "channels": 159
+    },
+    {
+      "name": "Driving_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Fixing_Kneeling",
+      "channels": 159
+    },
+    {
+      "name": "Hit_Chest",
+      "channels": 159
+    },
+    {
+      "name": "Hit_Head",
+      "channels": 159
+    },
+    {
+      "name": "Idle_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Idle_Talking_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Idle_Torch_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Interact",
+      "channels": 159
+    },
+    {
+      "name": "Jog_Fwd_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Jump_Land",
+      "channels": 159
+    },
+    {
+      "name": "Jump_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Jump_Start",
+      "channels": 159
+    },
+    {
+      "name": "PickUp_Table",
+      "channels": 159
+    },
+    {
+      "name": "Pistol_Aim_Down",
+      "channels": 159
+    },
+    {
+      "name": "Pistol_Aim_Neutral",
+      "channels": 159
+    },
+    {
+      "name": "Pistol_Aim_Up",
+      "channels": 159
+    },
+    {
+      "name": "Pistol_Idle_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Pistol_Reload",
+      "channels": 159
+    },
+    {
+      "name": "Pistol_Shoot",
+      "channels": 159
+    },
+    {
+      "name": "Punch_Cross",
+      "channels": 159
+    },
+    {
+      "name": "Punch_Enter",
+      "channels": 159
+    },
+    {
+      "name": "Punch_Jab",
+      "channels": 159
+    },
+    {
+      "name": "Push_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Roll",
+      "channels": 159
+    },
+    {
+      "name": "Roll_RM",
+      "channels": 159
+    },
+    {
+      "name": "Sitting_Enter",
+      "channels": 159
+    },
+    {
+      "name": "Sitting_Exit",
+      "channels": 159
+    },
+    {
+      "name": "Sitting_Idle_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Sitting_Talking_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Spell_Simple_Enter",
+      "channels": 159
+    },
+    {
+      "name": "Spell_Simple_Exit",
+      "channels": 159
+    },
+    {
+      "name": "Spell_Simple_Idle_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Spell_Simple_Shoot",
+      "channels": 159
+    },
+    {
+      "name": "Sprint_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Swim_Fwd_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Swim_Idle_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Sword_Attack",
+      "channels": 159
+    },
+    {
+      "name": "Sword_Attack_RM",
+      "channels": 159
+    },
+    {
+      "name": "Sword_Idle",
+      "channels": 159
+    },
+    {
+      "name": "Walk_Formal_Loop",
+      "channels": 159
+    },
+    {
+      "name": "Walk_Loop",
+      "channels": 159
+    }
+  ],
+  "source_nodes": [
+    "DEF-head",
+    "DEF-neck",
+    "DEF-f_index.03.L",
+    "DEF-f_index.02.L",
+    "DEF-f_index.01.L",
+    "DEF-f_middle.03.L",
+    "DEF-f_middle.02.L",
+    "DEF-f_middle.01.L",
+    "DEF-f_pinky.03.L",
+    "DEF-f_pinky.02.L",
+    "DEF-f_pinky.01.L",
+    "DEF-f_ring.03.L",
+    "DEF-f_ring.02.L",
+    "DEF-f_ring.01.L",
+    "DEF-thumb.03.L",
+    "DEF-thumb.02.L",
+    "DEF-thumb.01.L",
+    "DEF-hand.L",
+    "DEF-forearm.L",
+    "DEF-upper_arm.L",
+    "DEF-shoulder.L",
+    "DEF-f_index.03.R",
+    "DEF-f_index.02.R",
+    "DEF-f_index.01.R",
+    "DEF-f_middle.03.R",
+    "DEF-f_middle.02.R",
+    "DEF-f_middle.01.R",
+    "DEF-f_pinky.03.R",
+    "DEF-f_pinky.02.R",
+    "DEF-f_pinky.01.R",
+    "DEF-f_ring.03.R",
+    "DEF-f_ring.02.R",
+    "DEF-f_ring.01.R",
+    "DEF-thumb.03.R",
+    "DEF-thumb.02.R",
+    "DEF-thumb.01.R",
+    "DEF-hand.R",
+    "DEF-forearm.R",
+    "DEF-upper_arm.R",
+    "DEF-shoulder.R",
+    "DEF-spine.003",
+    "DEF-spine.002",
+    "DEF-spine.001",
+    "DEF-toe.L",
+    "DEF-foot.L",
+    "DEF-shin.L",
+    "DEF-thigh.L",
+    "DEF-toe.R",
+    "DEF-foot.R",
+    "DEF-shin.R",
+    "DEF-thigh.R",
+    "DEF-hips",
+    "root",
+    "Mannequin",
+    "Rig"
+  ],
+  "scope": "source inventory; does not define contact events, playback policy or retarget corrections"
+}

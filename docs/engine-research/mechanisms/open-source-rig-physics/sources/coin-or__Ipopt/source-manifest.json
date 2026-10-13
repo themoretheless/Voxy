@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/coin-or/Ipopt",
+  "commit": "cc3307136498793f38d51f7a02f70652d724083a",
+  "files": [
+    {
+      "path": "src/Algorithm/IpFilterLSAcceptor.cpp",
+      "url": "https://raw.githubusercontent.com/coin-or/Ipopt/cc3307136498793f38d51f7a02f70652d724083a/src/Algorithm/IpFilterLSAcceptor.cpp",
+      "sha256": "e73bbd7b969e83f9065cfa47a44bc05578e246d925405a9a3178c9afabb6ae57"
+    },
+    {
+      "path": "src/Algorithm/IpBacktrackingLineSearch.cpp",
+      "url": "https://raw.githubusercontent.com/coin-or/Ipopt/cc3307136498793f38d51f7a02f70652d724083a/src/Algorithm/IpBacktrackingLineSearch.cpp",
+      "sha256": "619d985767bd9b7fc8e06538bc31ecf7f0ef2330c91a8496e3d4a1de5d693109"
+    },
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/coin-or/Ipopt/cc3307136498793f38d51f7a02f70652d724083a/LICENSE",
+      "sha256": "0becf16567beb77fa252b7664631dd177c8f9a1889e48995b45379c7130e5303"
+    }
+  ]
+}

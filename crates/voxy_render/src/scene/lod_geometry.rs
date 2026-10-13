@@ -233,6 +233,7 @@ impl SceneRenderer {
             device: device.clone(),
             vertices: base.vertices.clone(),
             normals: base.normals.clone(),
+                tangents: base.tangents.clone(),
             normal_cache: NormalCache::default(),
             material_coordinates: base.material_coordinates.clone(),
             coordinate_cache: Vec::new(),

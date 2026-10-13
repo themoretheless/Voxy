@@ -13,7 +13,9 @@ pub use continuous::{CapsuleMotion,CapsuleSweepOptions,CapsuleSweep,sweep_capsul
 mod features;
 #[path = "velocity_contacts.rs"]
 mod velocity_contacts;
-pub(super) use velocity_contacts::{admit_staged_strands,reconcile_elastic_contact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,strand_fraction,recover_friction_pressure,stabilize_contact_velocities,reconcile_contact_positions,stabilize_contact_velocities_with_solver,reconcile_contact_positions_with_solver};
+pub(super) use velocity_contacts::restore_candidate;
+pub(super) use velocity_contacts::restore_second_order_candidate;
+pub(super) use velocity_contacts::{admit_staged_strands,reconcile_elastic_contact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_fraction,recover_friction_pressure,stabilize_contact_velocities,reconcile_contact_positions,stabilize_contact_velocities_with_solver,reconcile_contact_positions_with_solver};
 /// An exact surface query bounds clearance inside the ball around its query point.
 /// The distance function is 1-Lipschitz; the certificate expires at the next step.
 #[derive(Clone, Copy, Debug)]
@@ -507,10 +509,46 @@ impl TriangleMesh {
     }
     // Always sample authoritative endpoints, never the preceding sampled pose.
     pub(super) fn sample_motion(&mut self, source: &Self, fraction: f64) -> Result<(), &'static str> {
+        self.sample_motion_with_vertices(source,fraction,&mut Vec::new())
+    }
+    /// Refit a workspace cloned from this same collider topology. Rejection
+    /// preserves its previous geometry; scratch vertices are not published state.
+    pub(super) fn sample_motion_interval(&mut self,source:&Self,start:f64,end:f64,vertices:&mut Vec<V>)->Result<(), &'static str> {
+        if !start.is_finite() || !end.is_finite() || start<0. || end>1. || start>=end {
+            return Err("invalid collider motion interval");
+        }
+        if self.triangles.len()!=source.triangles.len()
+            || self.triangles.iter().zip(&source.triangles).any(|(a,b)|a.ids!=b.ids)
+            || self.feature_normals.is_some()!=source.feature_normals.is_some() {
+            return Err("collider motion workspace topology differs");
+        }
+        let Some(duration)=source.motion_dt else {
+            *self=source.motion_interval(start,end)?;
+            return Ok(());
+        };
+        let h=duration*(end-start);
+        if !h.is_finite() || h<=0. {return Err("invalid collider motion interval duration");}
+        // Check the starting face before refitting the endpoint, so a rejected
+        // intermediate collapse cannot partially mutate the reusable workspace.
+        for face in &source.triangles {
+            let positions=std::array::from_fn::<_,3,_>(|i|add(mul(face.previous_p[i],1.-start),mul(face.p[i],start)));
+            if positions.iter().any(|p|!finite(*p)) || len(cross(sub(positions[1],positions[0]),sub(positions[2],positions[0])))<1e-14 {
+                return Err("collider motion degenerates an intermediate face");
+            }
+        }
+        self.sample_motion_with_vertices(source,end,vertices)?;
+        for (sample,face) in self.triangles.iter_mut().zip(&source.triangles) {
+            sample.previous_p=std::array::from_fn(|i|add(mul(face.previous_p[i],1.-start),mul(face.p[i],start)));
+        }
+        self.motion_dt=Some(h);
+        Ok(())
+    }
+    fn sample_motion_with_vertices(&mut self, source: &Self, fraction: f64,vertices:&mut Vec<V>) -> Result<(), &'static str> {
         if source.motion_dt.is_none() {return Ok(());}
         if !fraction.is_finite() || !(0. ..=1.).contains(&fraction) {return Err("invalid collider motion fraction");}
         let count=source.triangles.iter().flat_map(|t|t.ids).max().unwrap()+1;
-        let mut vertices=vec![[0.;3];count];
+        vertices.resize(count,[0.;3]);
+        vertices.fill([0.;3]);
         for triangle in &source.triangles {
             let positions=std::array::from_fn::<_,3,_>(|i|add(mul(triangle.previous_p[i],1.-fraction),mul(triangle.p[i],fraction)));
             if positions.iter().any(|p|!finite(*p)) || len(cross(sub(positions[1],positions[0]),sub(positions[2],positions[0])))<1e-14 {
@@ -518,7 +556,7 @@ impl TriangleMesh {
             }
             for (id,position) in triangle.ids.into_iter().zip(positions) {vertices[id]=position;}
         }
-        self.refit(&vertices)?;
+        self.refit(vertices)?;
         for (sample,original) in self.triangles.iter_mut().zip(&source.triangles) {
             sample.previous_p=original.previous_p;
             sample.velocity=original.velocity;
@@ -1517,6 +1555,50 @@ mod query_tests {
             assert!(source.motion_interval(lo,hi).is_err());
         }
         assert_eq!(format!("{source:?}"),before);
+    }
+    #[test]
+    fn reused_motion_intervals_match_fresh_feature_colliders_exactly() {
+        let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]];
+        let faces=[[0,2,1],[0,1,3],[0,3,2],[1,2,3]];
+        let mut source=TriangleMesh::new(&points,&faces).unwrap();
+        source.enable_closed_feature_normals().unwrap();
+        let mut sample=source.clone();
+        let triangle_storage=sample.triangles.as_ptr();
+        let node_storage=sample.nodes.as_ptr();
+        let mut vertices=Vec::new();
+        let mut vertex_storage=None;
+        for frame in 1..=16 {
+            let t=frame as f64/16.;
+            source.refit_with_timestep(&points.map(|p|[
+                p[0]*(1.+0.1*t)+0.2*t,p[1]*(1.-0.05*t)-0.3*t,p[2]+0.4*t,
+            ]),1./120.).unwrap();
+            let original=format!("{source:?}");
+            for step in 0..8 {
+                let start=step as f64/8.;let end=(step+1) as f64/8.;
+                let fresh=source.motion_interval(start,end).unwrap();
+                sample.sample_motion_interval(&source,start,end,&mut vertices).unwrap();
+                assert_eq!(format!("{sample:?}"),format!("{fresh:?}"),"frame={frame} interval={step}");
+                assert_eq!(sample.triangles.as_ptr(),triangle_storage);
+                assert_eq!(sample.nodes.as_ptr(),node_storage);
+                assert_eq!(vertices.as_ptr(),*vertex_storage.get_or_insert(vertices.as_ptr()));
+            }
+            assert_eq!(format!("{source:?}"),original);
+        }
+    }
+    #[test]
+    fn reused_motion_interval_rejection_preserves_workspace() {
+        let points=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.]];
+        let mut source=TriangleMesh::new(&points,&[[0,1,2]]).unwrap();
+        source.refit_with_timestep(&[[0.,0.,0.],[-1.,0.,0.],[0.,-1.,0.]],0.5).unwrap();
+        let mut sample=source.clone();let mut vertices=Vec::new();
+        let original=format!("{sample:?}");
+        for (start,end) in [(0.5,0.75),(0.25,0.5),(0.5,0.5),(f64::NAN,1.)] {
+            assert!(sample.sample_motion_interval(&source,start,end,&mut vertices).is_err());
+            assert_eq!(format!("{sample:?}"),original);
+        }
+        let stationary=TriangleMesh::new(&points,&[[0,1,2]]).unwrap();
+        sample.sample_motion_interval(&stationary,0.,1.,&mut vertices).unwrap();
+        assert_eq!(format!("{sample:?}"),format!("{:?}",stationary.motion_interval(0.,1.).unwrap()));
     }
     #[test]
     fn untimed_refit_is_stationary_in_continuous_queries() {
@@ -2574,5 +2656,89 @@ fn triangle_feature_gradient_matches_face_edge_and_vertex_distance_derivatives()
             let derivative=(distance(hi)-distance(lo))/(2.*dt);
             assert!((gradient[axis]-derivative).abs()<1e-9,"feature metric derivative changed: {feature:?}, axis={axis}");
         }
+    }
+}
+
+#[cfg(test)]
+mod terminal_side_replay_tests {
+    use super::*;
+    #[test]
+    #[ignore = "requires saved no-descent replay and rod409 trial coordinates"]
+    fn captured_static_contact_refresh_precision_probe() {
+        let (_,radius,_,_,rods,meshes,_)=crate::hair::contact_replay::tests::load_replay_with_mode();
+        let mut rod=rods[409].clone();
+        let bytes=std::fs::read(std::env::var_os("VOXY_HAIR_CONTACT_PROBE_POSITIONS").unwrap()).unwrap();
+        assert_eq!(bytes.len(),rod.x.len()*24);
+        for trial in 0..3 {
+            if trial==2 {
+                for (point,chunk) in rod.x.iter_mut().zip(bytes.chunks_exact(24)) {
+                    *point=std::array::from_fn(|i|f64::from_le_bytes(chunk[i*8..i*8+8].try_into().unwrap()));
+                }
+            }
+            refresh_mesh_constraints(&mut rod,&meshes,radius);
+            crate::hair::mesh_motion::refresh(std::slice::from_mut(&mut rod),&meshes,radius).unwrap();
+            for c in rod.contacts.iter().filter(|c|c.segment==19) {
+                let p=add(mul(rod.x[c.segment],1.-c.fraction),mul(rod.x[c.segment+1],c.fraction));
+                let mut nearest=(f64::INFINITY,0,[0.;3]);meshes[0].nearest(p,0,&mut nearest);
+                let (q,feature)=closest_triangle_feature(p,&meshes[0].triangles[nearest.1]);
+                let (signed,_)=meshes[0].signed_distance_closed(p).unwrap();
+                eprintln!("STATIC PRECISION trial={trial} fraction={:?} gap={:?} metric={:?} time={:?} normal={:?} nearest_face={} feature={feature:?} true_point_gap={:?} closest={q:?}",c.fraction,c.physical_gap(p),c.metric_scale,c.trajectory_time,c.normal,nearest.1,signed-radius);
+            }
+        }
+    }
+    #[test]
+    #[ignore = "requires failed rod199 full nonlinear contact replay"]
+    fn captured_terminal_trajectory_side_probe() {
+        let (_,radius,_,_,rods,meshes,continuous)=crate::hair::contact_replay::tests::load_replay_with_mode();
+        assert!(continuous);
+        let selected=std::env::var("VOXY_HAIR_CONTACT_PROBE_ROD").ok().map(|v|v.parse::<usize>().unwrap()).unwrap_or(199);
+        let mut rod=rods[selected].clone();
+        let overlay=std::env::var_os("VOXY_HAIR_CONTACT_PROBE_POSITIONS");
+        if let Some(path)=&overlay {
+            let bytes=std::fs::read(path).unwrap();
+            assert_eq!(bytes.len(),rod.x.len()*24);
+            for (point,chunk) in rod.x.iter_mut().zip(bytes.chunks_exact(24)) {
+                *point=std::array::from_fn(|i|f64::from_le_bytes(chunk[i*8..i*8+8].try_into().unwrap()));
+            }
+        }
+        let segment=std::env::var("VOXY_HAIR_CONTACT_PROBE_SEGMENT").ok()
+            .map(|v|v.parse::<usize>().unwrap()).unwrap_or(rod.x.len()-2);
+        let motion=CapsuleMotion {start:[rod.old_x[segment],rod.old_x[segment+1]],
+            end:[rod.x[segment],rod.x[segment+1]],radius};
+        let mesh=&meshes[0];
+        let mut nearest=(f64::INFINITY,0,[0.;3]);
+        mesh.nearest(motion.end[1],0,&mut nearest);
+        let outward=mesh.contact_normal(nearest.1,motion.end[1]);
+        eprintln!("TERMINAL ENDPOINT face={} point={:?} closest={:?} outward={outward:?}",nearest.1,motion.end[1],nearest.2);
+        let contacts=mesh.trajectory_constraints(&[motion],Default::default()).unwrap();
+        let mut opposite=0;
+        eprintln!("TERMINAL REFRESHED WITNESSES count={}",contacts.len());
+        let captured_endpoint_normal=[-0.5794205418314663,0.6508392085295825,-0.49059164316600085];
+        for (_,witness) in contacts {
+                let alignment=dot(witness.normal,captured_endpoint_normal);
+                eprintln!("TERMINAL REFRESHED witness={witness:?} alignment={alignment:e}");
+                if witness.time==1. && witness.fraction==1. && alignment< -0.99 {
+                    opposite+=1;
+                    let surface=sub(witness.target,mul(witness.normal,radius));
+                    let mut nearest=(f64::INFINITY,0,[0.;3]);
+                    mesh.nearest(surface,0,&mut nearest);
+                    eprintln!("TERMINAL OPPOSITE nearest_face={} face_normal={:?} witness={witness:?} surface={surface:?} closest={:?}",nearest.1,mesh.triangles[nearest.1].normal,nearest.2);
+                }
+        }
+        for (_,face,_) in mesh.swept_capsule_contacts(&[motion],Default::default()).unwrap() {
+            if let Some(witness)=triangle_sweep::trajectory_side_probe(motion,mesh.face_motion(face).unwrap(),Default::default(),true).unwrap() {
+                let original=mesh.triangles.iter().find(|tri|tri.ids==face).unwrap();
+                let face_motion=mesh.face_motion(face).unwrap();
+                let mut tri=original.clone();
+                tri.p=std::array::from_fn(|i|add(mul(face_motion.start[i],1.-witness.time),mul(face_motion.end[i],witness.time)));
+                tri.normal=unit(cross(sub(tri.p[1],tri.p[0]),sub(tri.p[2],tri.p[0])));
+                let points:[V;2]=std::array::from_fn(|i|add(mul(motion.start[i],1.-witness.time),mul(motion.end[i],witness.time)));
+                let point=add(mul(points[0],1.-witness.fraction),mul(points[1],witness.fraction));
+                let (closest,feature)=closest_triangle_feature(point,&tri);
+                eprintln!("TERMINAL FACE ids={face:?} feature={feature:?} face_normal={:?} normal_dot={} witness={witness:?} signed_plane={} metric_gap={} closest={closest:?} triangle={:?}",tri.normal,dot(tri.normal,witness.normal),dot(sub(point,closest),tri.normal),len(sub(point,closest))-radius,tri.p);
+            }
+        }
+        eprintln!("TERMINAL REFRESHED OPPOSITE count={opposite}");
+        if overlay.is_none() && selected==199 {assert_eq!(motion.end[1],[-0.04229129839037451,0.7933419633250849,-0.008502289929426726],"requires the exact failed frame4 pose");}
     }
 }

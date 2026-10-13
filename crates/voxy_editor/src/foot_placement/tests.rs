@@ -36,12 +36,15 @@ fn settings() -> ModelFootPlacement {
             bones: ["hip".into(), "knee".into(), "foot".into()],
             sole_offset: [0., -0.1, 0.],
             sole_up: [0., 1., 0.],
+            orientation: Default::default(),
             pole: [1., 0., 0.],
             plant: true,
             weight: 1.,
             contact: FootContactSettings::default(),
             contact_curve: vec![],
             clip_contact_curves: Default::default(),
+            clip_pivot_keys: Default::default(),
+                    support_geometry: None,
         }],
     }
 }
@@ -248,46 +251,52 @@ fn slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface()
         transition_weight: 0.4,
     };
     let actor = Mat4::from_translation(Vec3::Y * 1.1);
-    let mut runtime = FootRuntime::new(&model, settings()).unwrap();
-    let solved = runtime
-        .correct(
-            &model,
-            frame.clone(),
-            actor.as_dmat4(),
-            true,
-            &preview,
-            &mut SupportQueryBudget::new(100).unwrap(),
-        )
-        .unwrap();
-    let contact = preview
-        .support
-        .resolve(
-            runtime.feet[0].state.anchor().unwrap(),
-            &mut SupportQueryBudget::new(100).unwrap(),
-        )
-        .unwrap()
-        .unwrap();
-    assert!(
-        sole(&model, &solved, actor)
-            .as_dvec3()
-            .abs_diff_eq(contact.position, 4e-6)
-    );
-    let tip = solved.skin_matrices[2];
-    let normal = tip
-        .inverse()
-        .transpose()
-        .transform_vector3(Vec3::Y)
-        .normalize();
-    assert!(
-        normal.as_dvec3().abs_diff_eq(contact.normal, 4e-6),
-        "{normal:?} {:?}",
-        contact.normal
-    );
-    assert_eq!(solved.root_motion, frame.root_motion);
-    assert_eq!(solved.transition_weight, frame.transition_weight);
-    for (a, b) in frame.pose.local().iter().zip(solved.pose.local()) {
-        assert_eq!(a.translation, b.translation);
-        assert_eq!(a.scale, b.scale);
+    for orientation in [FootOrientation::AlignSupport, FootOrientation::Authored] {
+        let mut config = settings();
+        config.feet[0].orientation = orientation;
+        let mut runtime = FootRuntime::new(&model, config).unwrap();
+        let solved = runtime
+            .correct(
+                &model,
+                frame.clone(),
+                actor.as_dmat4(),
+                true,
+                &preview,
+                &mut SupportQueryBudget::new(100).unwrap(),
+            )
+            .unwrap();
+        let contact = preview
+            .support
+            .resolve(
+                runtime.feet[0].state.anchor().unwrap(),
+                &mut SupportQueryBudget::new(100).unwrap(),
+            )
+            .unwrap()
+            .unwrap();
+        assert!(
+            sole(&model, &solved, actor)
+                .as_dvec3()
+                .abs_diff_eq(contact.position, 4e-6)
+        );
+        let tip = solved.skin_matrices[2];
+        let normal = tip
+            .inverse()
+            .transpose()
+            .transform_vector3(Vec3::Y)
+            .normalize();
+        let expected_normal = match orientation {
+            FootOrientation::AlignSupport => contact.normal,
+            FootOrientation::Authored => frame.skin_matrices[2].inverse().transpose()
+                .transform_vector3(Vec3::Y).normalize().as_dvec3(),
+        };
+        assert!(normal.as_dvec3().abs_diff_eq(expected_normal, 4e-6),
+            "{orientation:?}: {normal:?} != {expected_normal:?}");
+        assert_eq!(solved.root_motion, frame.root_motion);
+        assert_eq!(solved.transition_weight, frame.transition_weight);
+        for (a, b) in frame.pose.local().iter().zip(solved.pose.local()) {
+            assert_eq!(a.translation, b.translation);
+            assert_eq!(a.scale, b.scale);
+        }
     }
 }
 
@@ -366,6 +375,7 @@ fn ordinary_app_play_applies_foot_ik_and_stop_restores_authored_settings() {
         ("/feet/0/contact/release_distance", "0.01"),
         ("/feet/0/contact/probe_lift", "-1"),
         ("/feet/0/bones/2", "missing-foot"),
+        ("/feet/0/orientation", "unknown"),
     ] {
         let field = members
             .iter()
@@ -2080,4 +2090,425 @@ fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry
     }
     assert_eq!(runtime.frame(owner, &target).unwrap().transition_weight, 1.);
     assert!(scene.local(owner).unwrap().translation.x > anchor.x + 0.03);
+}
+
+#[test]
+fn authored_ankle_roll_keeps_the_support_pivot_and_legacy_alignment_is_default() {
+    let model = model();
+    let mut scene = SceneGraph::new(2);
+    let floor = scene.spawn(None, Transform { translation: -Vec3::Y * 0.1, ..Default::default() }).unwrap();
+    scene.insert_component(floor, BoxCollider { half_extents: [4., 0.1, 4.] }).unwrap();
+    let preview = CharacterTickPreview { motions: vec![], characters: vec![],
+        support: voxy_gameplay::SupportWorld::from_scene(&scene, 1).unwrap() };
+    let mut legacy = serde_json::to_value(settings()).unwrap();
+    legacy["feet"][0].as_object_mut().unwrap().remove("orientation");
+    let decoded: ModelFootPlacement = serde_json::from_value(legacy.clone()).unwrap();
+    assert_eq!(decoded.feet[0].orientation, FootOrientation::AlignSupport);
+    legacy["feet"][0]["orientation"] = serde_json::json!("unknown");
+    assert!(serde_json::from_value::<ModelFootPlacement>(legacy).is_err());
+    for policy in [FootOrientation::Authored, FootOrientation::AlignSupport] {
+        let mut config = settings();
+        config.feet[0].orientation = policy;
+        let mut runtime = FootRuntime::new(&model, config.clone()).unwrap();
+        assert_eq!(serde_json::from_slice::<ModelFootPlacement>(&serde_json::to_vec(&config).unwrap()).unwrap(), config);
+        let mut anchor = None;
+        for (step, angle) in [0.3f32, 0.6, -0.2].into_iter().enumerate() {
+            let mut pose = model.skeleton.bind_pose();
+            pose.set_joint_rotation(2, glam::Quat::from_rotation_x(angle)).unwrap();
+            let frame = AnimatorFrame { skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
+                pose, root_motion: Vec3::X * 0.17, root_motion_joint: 0, transition_weight: 0.4 };
+            let actor = Mat4::from_translation(Vec3::new(step as f32 * 0.03, 1., 0.));
+            let solved = runtime.correct(&model, frame.clone(), actor.as_dmat4(), true,
+                &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+            let current = runtime.feet[0].state.anchor().unwrap();
+            if let Some(held) = anchor { assert_eq!(current, held); } else { anchor = Some(current); }
+            let contact = preview.support.resolve(current, &mut SupportQueryBudget::new(100).unwrap()).unwrap().unwrap();
+            assert!(sole(&model, &solved, actor).as_dvec3().distance(contact.position) < 3e-6);
+            // Independently compose locals: no IK result or palette is used for
+            // the expected authored ankle axis / final rotation comparison.
+            let matrix = |pose: &voxy_animation::Pose| pose.local()[0].matrix()
+                * pose.local()[1].matrix() * pose.local()[2].matrix();
+            let expected = match policy {
+                FootOrientation::Authored => matrix(&frame.pose).transform_vector3(Vec3::Y).normalize(),
+                FootOrientation::AlignSupport => Vec3::Y,
+            };
+            let actual = matrix(&solved.pose).transform_vector3(Vec3::Y).normalize();
+            assert!(actual.distance(expected) < 3e-6, "{policy:?} step {step}: {actual:?}");
+            assert_eq!(solved.root_motion, frame.root_motion);
+            assert_eq!(solved.transition_weight, frame.transition_weight);
+            for (a,b) in frame.pose.local().iter().zip(solved.pose.local()) {
+                assert_eq!(a.translation,b.translation); assert_eq!(a.scale,b.scale);
+            }
+        }
+    }
+}
+
+#[test]
+fn authored_ankle_roll_publishes_with_the_physical_tick_and_retries_rejected_preparation() {
+    use voxy_animation::{AnimationClip, JointTrack, Playback, QuatKey};
+    let mut model = (*model()).clone();
+    let mut tracks = vec![JointTrack::default(); model.skeleton.joints().len()];
+    tracks[2].rotations = [(0.,0.3),(0.2,0.6),(0.4,-0.2)].map(|(time,angle)| QuatKey {
+        time, value: glam::Quat::from_rotation_x(angle),
+    }).to_vec();
+    model.animations = vec![Arc::new(AnimationClip::new("toe roll", 0.4, Playback::Clamp,
+        tracks, &model.skeleton).unwrap())];
+    let model = Arc::new(model);
+    let asset = AssetId("rolling-foot".into());
+    let mut scene = SceneGraph::new(8);
+    let owner = scene.spawn(None, Transform { translation: Vec3::Y, ..Default::default() }).unwrap();
+    scene.insert_component(owner, crate::ModelInstance { asset: asset.clone() }).unwrap();
+    scene.insert_component(owner, crate::ModelAnimation { clip: Some(0), ..Default::default() }).unwrap();
+    let mut config = settings();
+    config.feet[0].orientation = FootOrientation::Authored;
+    scene.insert_component(owner, config).unwrap();
+    scene.insert_component(owner, CharacterBody { half_extents: [0.1,1.,0.1], ..Default::default() }).unwrap();
+    let floor = scene.spawn(None, Transform { translation: -Vec3::Y * 0.1, ..Default::default() }).unwrap();
+    scene.insert_component(floor, BoxCollider { half_extents: [4.,0.1,4.] }).unwrap();
+    let models = BTreeMap::from([(asset, model.clone())]);
+    let mut runtime = crate::animation_runtime::AnimationRuntime::default();
+    let mut physics = CharacterPhysics::new(&scene,4,4);
+    let mut input = player_input().unwrap();
+    let dt: f64 = 1. / 60.;
+    let mut first_sole = None;
+    for tick in 0..18 {
+        let candidate = runtime.prepare_wall(&scene,&models,dt).unwrap();
+        if tick == 8 {
+            let before = scene.local(owner).unwrap();
+            let held = runtime.frame(owner,&model).unwrap();
+            let serial = runtime.serial();
+            let rejected = physics.fixed_step_with_preparation(&mut scene,&mut input,dt,
+                &[(owner,Vec3::X * 0.005)],&[],|preview,budget| {
+                    let _prepared = candidate.clone().prepare_accepted_pose(preview,budget)?;
+                    Err::<crate::animation_runtime::AnimationRuntime,String>("later stage rejection".into())
+                });
+            assert!(rejected.is_err());
+            assert_eq!(scene.local(owner).unwrap(),before);
+            assert_eq!(runtime.serial(),serial);
+            assert!(Arc::ptr_eq(&held,&runtime.frame(owner,&model).unwrap()));
+        }
+        let (_,accepted) = physics.fixed_step_with_preparation(&mut scene,&mut input,dt,
+            &[(owner,Vec3::X * 0.005)],&[],|preview,budget| candidate.clone().prepare_accepted_pose(preview,budget)).unwrap();
+        runtime = accepted;
+        let frame = runtime.frame(owner,&model).unwrap();
+        let actual_sole = sole(&model,&frame,scene.world_matrix(owner).unwrap());
+        if let Some(expected) = first_sole { assert!(actual_sole.distance(expected) < 4e-6); }
+        else { first_sole = Some(actual_sole); }
+        let phase = f64::from(tick+1) * dt / f64::from(model.animations[0].duration());
+        let authored = model.sample_pose_phase(Some(0),phase).unwrap();
+        let compose = |p: &voxy_animation::Pose| p.local()[0].matrix() * p.local()[1].matrix() * p.local()[2].matrix();
+        let normal = compose(&frame.pose).transform_vector3(Vec3::Y).normalize();
+        let expected = compose(&authored).transform_vector3(Vec3::Y).normalize();
+        assert!(normal.distance(expected) < 4e-6, "tick {tick}: {normal:?} != {expected:?}");
+    }
+}
+
+#[test]
+fn generated_quaternius_contact_candidates_bind_to_real_clips_and_preserve_loop_events() {
+    let mut model=ModelAsset::parse(
+        include_bytes!("../../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
+        &[include_bytes!("../../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],
+        voxy_render::ModelLimits::default(),
+    ).unwrap();
+    let jog=model.animations.iter().position(|c|c.name()=="Jog_Fwd_Loop").unwrap();
+    model.animations[jog]=Arc::new(model.animations[jog].append_loop_frame(&model.skeleton,1./24.).unwrap());
+    for data in [
+        include_str!("../../../../assets/animation/quaternius-universal/GAIT_CONTACT_CANDIDATES.json"),
+        include_str!("../../../../assets/animation/quaternius-universal/GAIT_TOE_CONTACT_CANDIDATES.json"),
+    ] {
+        let document:serde_json::Value=serde_json::from_str(data).unwrap();
+        assert_eq!(document["physical_contacts_verified"],false);
+        let mut config=settings();
+        let template=config.feet[0].clone();
+        config.feet=[("left","L"),("right","R")].map(|(side,suffix)| {
+            let mut foot=template.clone();
+            foot.bones=["thigh","shin","foot"].map(|name|format!("DEF-{name}.{suffix}"));
+            foot.clip_contact_curves=serde_json::from_value(document["curves"][side].clone()).unwrap();
+            foot
+        }).to_vec();
+        config.validate().unwrap();
+        FootRuntime::new(&model,config.clone()).unwrap();
+        for foot in &config.feet {
+            assert!(foot.contact_keys(Some("Jump_Loop")).is_err());
+            for (name,keys) in &foot.clip_contact_curves {
+                assert_eq!(keys[0].weight,keys.last().unwrap().weight);
+                for key in keys {
+                    assert_eq!(contact_weight(keys,Some(f64::from(key.phase))).unwrap(),key.weight);
+                }
+                let interval=Some(voxy_animation::AnimationPhaseInterval {start:0.,end:2.5,looping:true});
+                if name=="Idle_Loop" {assert!(!crossed_swing(keys,interval));}
+                else {assert!(crossed_swing(keys,interval));}
+            }
+        }
+        let roundtrip:ModelFootPlacement=serde_json::from_slice(&serde_json::to_vec(&config).unwrap()).unwrap();
+        assert_eq!(roundtrip,config);
+    }
+}
+
+#[test]
+fn queued_pivot_transfer_publishes_after_ik_and_persists_across_frames() {
+    let model = model();
+    let mut scene = SceneGraph::new(2);
+    let floor = scene.spawn(None, Transform { translation: -Vec3::Y * 0.1, ..Default::default() }).unwrap();
+    scene.insert_component(floor, BoxCollider { half_extents: [4., 0.1, 4.] }).unwrap();
+    let preview = CharacterTickPreview { motions: vec![], characters: vec![], support: voxy_gameplay::SupportWorld::from_scene(&scene, 1).unwrap() };
+    let mut runtime = FootRuntime::new(&model, settings()).unwrap();
+    let pose = model.skeleton.bind_pose();
+    let frame = AnimatorFrame { skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(), pose,
+        root_motion: Vec3::X * 0.2, root_motion_joint: 0, transition_weight: 0.3 };
+    let actor = Mat4::from_translation(Vec3::Y).as_dmat4();
+    runtime.correct(&model, frame.clone(), actor, true, &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    let pivot = DVec3::new(0., -0.1, 0.1);
+    let geometry = voxy_animation::FootSupportPoints::new(vec![DVec3::Y, pivot]).unwrap();
+    let previous_pending = runtime.feet[0].pending_pivot;
+    assert!(runtime.request_geometry_pivot(0, &geometry, &model, &frame, DMat4::ZERO,
+        &preview, &mut SupportQueryBudget::new(100).unwrap(), 0.001).is_err());
+    assert_eq!(runtime.feet[0].pending_pivot, previous_pending);
+    runtime.request_geometry_pivot(0, &geometry, &model, &frame, actor,
+        &preview, &mut SupportQueryBudget::new(100).unwrap(), 0.001).unwrap();
+    assert_eq!(runtime.feet[0].pending_pivot.unwrap().0, pivot);
+    let pending = runtime.feet[0].pending_pivot;
+    let state = runtime.feet[0].state;
+    let large = voxy_animation::FootSupportPoints::new(vec![DVec3::Y; 128]).unwrap();
+    let mut insufficient = SupportQueryBudget::new(100).unwrap();
+    assert!(runtime.request_geometry_pivot(0, &large, &model, &frame, actor,
+        &preview, &mut insufficient, 0.001).is_err());
+    assert_eq!(runtime.feet[0].pending_pivot, pending);
+    assert_eq!(runtime.feet[0].state, state);
+    // Failed geometry reservation leaves the work already spent resolving support.
+    assert!(insufficient.remaining() < 100);
+    assert!(insufficient.remaining() > 0);
+    let mut enough = SupportQueryBudget::new(1000).unwrap();
+    let mut resolve_only = SupportQueryBudget::new(1000).unwrap();
+    preview.support.resolve(state.anchor().unwrap(), &mut resolve_only).unwrap();
+    runtime.request_geometry_pivot(0, &geometry, &model, &frame, actor,
+        &preview, &mut enough, 0.001).unwrap();
+    assert_eq!(resolve_only.remaining() - enough.remaining(),
+        frame.pose.local().len() + geometry.point_count());
+    for _ in 0..3 {
+        let solved = runtime.correct(&model, frame.clone(), actor, true, &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+        assert_eq!(runtime.feet[0].pivot, pivot);
+        assert!(runtime.feet[0].pending_pivot.is_none());
+        let local = solved.pose.local();
+        let matrix = local[0].matrix() * local[1].matrix() * local[2].matrix();
+        let point = actor.transform_point3(matrix.transform_point3(pivot.as_vec3()).as_dvec3());
+        let contact = preview.support.resolve(runtime.feet[0].state.anchor().unwrap(), &mut SupportQueryBudget::new(100).unwrap()).unwrap().unwrap();
+        assert!(point.distance(contact.position) < 3e-6);
+        assert_eq!(solved.root_motion, frame.root_motion);
+    }
+    let held = runtime.feet[0].state;
+    runtime.request_pivot_transfer(0, DVec3::Y, 0.001).unwrap();
+    runtime.correct(&model, frame.clone(), actor, true, &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    assert_eq!(runtime.feet[0].state, held);
+    assert_eq!(runtime.feet[0].pivot, pivot);
+    assert!(runtime.feet[0].pending_pivot.is_some());
+}
+
+#[test]
+fn pending_pivot_is_canceled_by_airborne_and_cannot_cross_landing() {
+    let model = model();
+    let mut scene = SceneGraph::new(2);
+    let floor = scene.spawn(None, Transform { translation: -Vec3::Y * 0.1, ..Default::default() }).unwrap();
+    scene.insert_component(floor, BoxCollider { half_extents: [4.,0.1,4.] }).unwrap();
+    let preview = CharacterTickPreview { motions: vec![], characters: vec![], support: voxy_gameplay::SupportWorld::from_scene(&scene,1).unwrap() };
+    let mut runtime = FootRuntime::new(&model, settings()).unwrap();
+    assert!(runtime.request_pivot_transfer(0,DVec3::ZERO,0.01).is_err());
+    let pose = model.skeleton.bind_pose();
+    let frame = AnimatorFrame { skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),pose,
+        root_motion: Vec3::ZERO,root_motion_joint:0,transition_weight:1. };
+    let actor = Mat4::from_translation(Vec3::Y).as_dmat4();
+    runtime.correct(&model,frame.clone(),actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    runtime.request_pivot_transfer(0,DVec3::Y,0.01).unwrap();
+    runtime.correct(&model,frame.clone(),actor,false,&preview,&mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    assert!(runtime.feet[0].pending_pivot.is_none());
+    assert!(runtime.feet[0].state.anchor().is_none());
+    assert_eq!(runtime.feet[0].pivot,DVec3::from_array(settings().feet[0].sole_offset.map(f64::from)));
+    runtime.correct(&model,frame,actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    assert!(runtime.feet[0].state.anchor().is_some());
+    assert!(runtime.feet[0].pending_pivot.is_none());
+}
+
+#[test]
+fn pivot_and_contact_rollback_when_skipped_swing_exhausts_query_budget() {
+    let model = model();
+    let mut scene = SceneGraph::new(2);
+    let floor = scene.spawn(None, Transform { translation:-Vec3::Y*0.1,..Default::default() }).unwrap();
+    scene.insert_component(floor,BoxCollider { half_extents:[4.,0.1,4.] }).unwrap();
+    let preview = CharacterTickPreview { motions:vec![],characters:vec![],support:voxy_gameplay::SupportWorld::from_scene(&scene,1).unwrap() };
+    let mut runtime = FootRuntime::new(&model,settings()).unwrap();
+    let pose = model.skeleton.bind_pose();
+    let frame = AnimatorFrame { skin_matrices:pose.skin_matrices(&model.skeleton).unwrap(),pose,
+        root_motion:Vec3::ZERO,root_motion_joint:0,transition_weight:1. };
+    let actor = Mat4::from_translation(Vec3::Y).as_dmat4();
+    runtime.correct(&model,frame.clone(),actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    runtime.request_pivot_transfer(0,DVec3::Y,0.01).unwrap();
+    Arc::make_mut(&mut runtime.settings).feet[0].contact_curve = vec![
+        FootContactKey { phase:0.,weight:1. },FootContactKey { phase:0.3,weight:0. },
+        FootContactKey { phase:0.5,weight:0. },FootContactKey { phase:0.7,weight:1. },
+        FootContactKey { phase:1.,weight:1. }];
+    let before = runtime.feet[0].clone();
+    let interval = Some(voxy_animation::AnimationPhaseInterval { start:0.,end:0.8,looping:true });
+    let mut exhausted = SupportQueryBudget::new(5).unwrap();
+    assert!(runtime.correct_at_phase(&model,frame.clone(),actor,true,&preview,&mut exhausted,
+        None,Some(0.8),interval,None,None,None).is_err());
+    assert_eq!(exhausted.remaining(),0);
+    assert_eq!(runtime.feet[0].state,before.state);
+    assert_eq!(runtime.feet[0].pivot,before.pivot);
+    assert_eq!(runtime.feet[0].pending_pivot,before.pending_pivot);
+    runtime.correct_at_phase(&model,frame,actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap(),
+        None,Some(0.8),interval,None,None,None).unwrap();
+    assert!(runtime.feet[0].pending_pivot.is_none());
+    assert!(runtime.feet[0].state.anchor().is_some());
+}
+
+#[test]
+fn authored_pivot_keys_round_trip_validate_and_reject_unknown_clips() {
+    let mut config = settings();
+    let mut legacy = serde_json::to_value(&config).unwrap();
+    legacy["feet"][0].as_object_mut().unwrap().remove("clip_pivot_keys");
+    assert!(serde_json::from_value::<ModelFootPlacement>(legacy).unwrap().feet[0].clip_pivot_keys.is_empty());
+    let heel = FootPivotKey { phase:0.,pivot:[0.,-0.1,-0.04],max_projection_distance:0.01 };
+    let toe = FootPivotKey { phase:0.6,pivot:[0.,-0.1,0.14],max_projection_distance:0.02 };
+    config.feet[0].clip_pivot_keys.insert("Walk".into(),vec![heel,toe,FootPivotKey { phase:1.,..heel }]);
+    config.validate().unwrap();
+    assert_eq!(serde_json::from_slice::<ModelFootPlacement>(&serde_json::to_vec(&config).unwrap()).unwrap(),config);
+    assert!(FootRuntime::new(&model(),config.clone()).is_err());
+    for bad in [f32::NAN,-0.1,1.1,0.] {
+        let mut invalid = config.clone(); invalid.feet[0].clip_pivot_keys.get_mut("Walk").unwrap()[1].phase=bad;
+        assert!(invalid.validate().is_err());
+    }
+    let mut invalid=config.clone();invalid.feet[0].clip_pivot_keys.get_mut("Walk").unwrap()[2].pivot=toe.pivot;
+    assert!(invalid.validate().is_err());
+    let mut invalid=config.clone();invalid.feet[0].clip_pivot_keys.get_mut("Walk").unwrap()[1].max_projection_distance=f64::INFINITY;
+    assert!(invalid.validate().is_err());
+    let mut invalid=config;invalid.feet[0].clip_pivot_keys.get_mut("Walk").unwrap()[1].pivot[0]=f32::NAN;
+    assert!(invalid.validate().is_err());
+}
+
+#[test]
+fn clip_phase_drives_pivot_and_live_fade_holds_accepted_point() {
+    use voxy_animation::{AnimationClip, JointTrack, Playback, ClipPhase, PoseBlendPhases, PoseBlendSource};
+    let model = model();
+    let clip = Arc::new(AnimationClip::new("Walk",1.,Playback::Loop,
+        vec![JointTrack::default();model.skeleton.joints().len()],&model.skeleton).unwrap());
+    let mut config = settings();
+    let heel=FootPivotKey { phase:0.,pivot:[0.,-0.1,0.],max_projection_distance:0.001 };
+    let toe=FootPivotKey { phase:0.5,pivot:[0.,-0.1,0.1],max_projection_distance:0.001 };
+    config.feet[0].clip_pivot_keys.insert("Walk".into(),vec![heel,toe,FootPivotKey { phase:1.,..heel }]);
+    let mut runtime=FootRuntime::new_with_clips(&model,config,std::slice::from_ref(&clip)).unwrap();
+    let mut scene=SceneGraph::new(2);
+    let floor=scene.spawn(None,Transform { translation:-Vec3::Y*0.1,..Default::default() }).unwrap();
+    scene.insert_component(floor,BoxCollider { half_extents:[4.,0.1,4.] }).unwrap();
+    let preview=CharacterTickPreview { motions:vec![],characters:vec![],support:voxy_gameplay::SupportWorld::from_scene(&scene,1).unwrap() };
+    let pose=model.skeleton.bind_pose();
+    let frame=AnimatorFrame { skin_matrices:pose.skin_matrices(&model.skeleton).unwrap(),pose,
+        root_motion:Vec3::ZERO,root_motion_joint:0,transition_weight:1. };
+    let actor=Mat4::from_translation(Vec3::Y).as_dmat4();
+    runtime.correct_at_phase(&model,frame.clone(),actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap(),
+        Some("Walk"),Some(0.25),None,None,None,None).unwrap();
+    let blend=PoseBlendPhases { target:ClipPhase { clip:&clip,normalized_phase:0.75 },
+        source:Some(PoseBlendSource::Clip(ClipPhase { clip:&clip,normalized_phase:0.25 })),target_weight:0.5 };
+    runtime.correct_at_phase(&model,frame.clone(),actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap(),
+        Some("Walk"),Some(0.75),None,Some(blend),None,None).unwrap();
+    assert_eq!(runtime.feet[0].pivot,DVec3::from_array(heel.pivot.map(f64::from)));
+    runtime.correct_at_phase(&model,frame.clone(),actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap(),
+        Some("Walk"),Some(0.75),None,None,None,None).unwrap();
+    assert_eq!(runtime.feet[0].pivot,DVec3::from_array(toe.pivot.map(f64::from)));
+    assert!(runtime.feet[0].pending_pivot.is_none());
+    runtime.correct_at_phase(&model,frame,actor,true,&preview,&mut SupportQueryBudget::new(100).unwrap(),
+        Some("Walk"),Some(1.),None,None,None,None).unwrap();
+    assert_eq!(runtime.feet[0].pivot,DVec3::from_array(heel.pivot.map(f64::from)));
+}
+
+#[test]
+fn installed_geometry_selects_and_physically_admits_pivot_automatically() {
+    let model = model();
+    let mut scene = SceneGraph::new(2);
+    let floor = scene.spawn(None, Transform { translation: -Vec3::Y * 0.1, ..Default::default() }).unwrap();
+    scene.insert_component(floor, BoxCollider { half_extents: [4., 0.1, 4.] }).unwrap();
+    let preview = CharacterTickPreview { motions: vec![], characters: vec![], support: voxy_gameplay::SupportWorld::from_scene(&scene, 1).unwrap() };
+    let pivot = DVec3::new(0., -0.1, 0.1);
+    let geometry = voxy_animation::FootSupportPoints::new(vec![pivot, DVec3::Y]).unwrap();
+    let mut config = settings();
+    let mut invalid = FootRuntime::new(&model, config.clone()).unwrap();
+    assert!(invalid.set_support_geometry(0, geometry.clone(), 0.001).is_err());
+    config.feet[0].orientation = FootOrientation::Authored;
+    config.feet[0].support_geometry = Some(FootSupportGeometry {
+        points: vec![pivot.to_array(), DVec3::Y.to_array()], max_projection_distance: 0.001,
+    });
+    let saved = serde_json::to_vec(&config).unwrap();
+    let loaded: ModelFootPlacement = serde_json::from_slice(&saved).unwrap();
+    assert_eq!(loaded, config);
+    let mut native = loaded;
+    for foot in &mut native.feet {
+        for name in &mut foot.bones {
+            let joint = model.resolve_joint_name(name).unwrap();
+            *name = model.skeleton.joints()[usize::from(joint)].name.to_string();
+        }
+    }
+    let mut runtime = FootRuntime::from_skeleton(&model.skeleton, native, &model.animations).unwrap();
+    let pose = model.skeleton.bind_pose();
+    let frame = AnimatorFrame { skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(), pose,
+        root_motion: Vec3::X * 0.2, root_motion_joint: 0, transition_weight: 0.3 };
+    let actor = Mat4::from_translation(Vec3::Y).as_dmat4();
+    // The first landing already selects and admits the geometric support point.
+    runtime.correct_fixed_stance(frame.clone(), actor, true, &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    assert_eq!(runtime.feet[0].pivot, pivot);
+    let old = runtime.feet[0].state;
+    let mut no_work = SupportQueryBudget::new(0).unwrap();
+    assert!(runtime.correct_fixed_stance(frame.clone(), actor, true, &preview, &mut no_work).is_err());
+    assert_eq!(runtime.feet[0].state, old);
+    assert_eq!(runtime.feet[0].pivot, pivot);
+    for _ in 0..3 {
+        let solved = runtime.correct_fixed_stance(frame.clone(), actor, true, &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+        assert_eq!(runtime.feet[0].pivot, pivot);
+        assert!(runtime.feet[0].pending_pivot.is_none());
+        let local = solved.pose.local();
+        let matrix = local[0].matrix() * local[1].matrix() * local[2].matrix();
+        let actual = actor.transform_point3(matrix.transform_point3(pivot.as_vec3()).as_dvec3());
+        let contact = preview.support.resolve(runtime.feet[0].state.anchor().unwrap(), &mut SupportQueryBudget::new(100).unwrap()).unwrap().unwrap();
+        assert!(actual.distance(contact.position) < 3e-6);
+        assert_eq!(solved.root_motion, frame.root_motion);
+    }
+    let held = runtime.feet[0].state;
+    runtime.set_support_geometry(0,
+        voxy_animation::FootSupportPoints::new(vec![DVec3::Y]).unwrap(), 0.001).unwrap();
+    runtime.correct_fixed_stance(frame.clone(), actor, true, &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    assert_eq!(runtime.feet[0].state, held);
+    assert_eq!(runtime.feet[0].pivot, pivot);
+    assert!(runtime.feet[0].pending_pivot.is_none());
+    runtime.correct_fixed_stance(frame, actor, false, &preview, &mut SupportQueryBudget::new(100).unwrap()).unwrap();
+    assert!(runtime.feet[0].state.anchor().is_none());
+    assert!(runtime.feet[0].pending_pivot.is_none());
+}
+
+#[test]
+fn support_geometry_schema_preserves_legacy_and_rejects_invalid_assets() {
+    let model = model();
+    let legacy = settings();
+    let encoded = serde_json::to_value(&legacy).unwrap();
+    assert!(encoded["feet"][0].get("support_geometry").is_none());
+    let loaded: ModelFootPlacement = serde_json::from_value(encoded).unwrap();
+    assert_eq!(loaded, legacy);
+    for points in [vec![], vec![[f64::NAN, 0., 0.]],
+        vec![[0.; 3]; voxy_animation::MAX_FOOT_SUPPORT_POINTS + 1]] {
+        let mut config = settings();
+        config.feet[0].orientation = FootOrientation::Authored;
+        config.feet[0].support_geometry = Some(FootSupportGeometry {
+            points, max_projection_distance: 0.001 });
+        assert!(config.validate().is_err());
+        assert!(FootRuntime::new(&model, config).is_err());
+    }
+    let mut config = settings();
+    config.feet[0].support_geometry = Some(FootSupportGeometry {
+        points: vec![[0.; 3]], max_projection_distance: 0.001 });
+    assert!(config.validate().is_err());
+    config.feet[0].orientation = FootOrientation::Authored;
+    config.feet[0].support_geometry.as_mut().unwrap().max_projection_distance = f64::INFINITY;
+    assert!(config.validate().is_err());
+    config.feet[0].support_geometry.as_mut().unwrap().max_projection_distance = 0.001;
+    config.validate().unwrap();
+    let mut encoded = serde_json::to_value(config).unwrap();
+    encoded["feet"][0]["support_geometry"]["unexpected"] = serde_json::json!(true);
+    assert!(serde_json::from_value::<ModelFootPlacement>(encoded).is_err());
 }

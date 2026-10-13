@@ -1,4 +1,9 @@
 //! Head close-up before and after one second of actual Cosserat hair simulation.
+#[path = "../src/female_physical_stance.rs"]
+mod female_physical_stance;
+#[allow(dead_code)]
+#[path = "../src/humanoid_locomotion.rs"]
+mod humanoid_locomotion;
 #[allow(dead_code)]
 #[path = "../src/body_parameters.rs"]
 mod body_parameters;

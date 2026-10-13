@@ -1,0 +1,16 @@
+{
+  "repo": "godotengine/godot",
+  "sha": "232e6b14abf6e590b41d60f11704e42de22bff72",
+  "files": [
+    {
+      "path": "scene/3d/retarget_modifier_3d.cpp",
+      "sha256": "a837389eaab399af1ba7b942c0a0f090dedb52e399ae0b8db60bf9ea28544b43",
+      "bytes": 20262
+    },
+    {
+      "path": "LICENSE.txt",
+      "sha256": "b0435e3b3e4e55238f05f4b306f30524a1b2e20147810d436eaa554fa6855c80",
+      "bytes": 1149
+    }
+  ]
+}

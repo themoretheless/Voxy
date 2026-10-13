@@ -6,6 +6,12 @@ use super::{Triangle, TriangleMesh, closest_triangle, segment_pair, segment_tria
 use crate::hair::math::*;
 #[path = "contact_trajectory.rs"]
 mod trajectory;
+#[cfg(test)]
+pub(super) fn trajectory_side_probe(capsule:CapsuleMotion,triangle:TriangleMotion,
+    options:CapsuleSweepOptions,closed:bool)
+    ->Result<Option<trajectory::TrajectoryContact>, &'static str> {
+    trajectory::trajectory_contact_oriented(capsule,triangle,options,closed)
+}
 pub(in crate::hair) use trajectory::trajectory_contact;
 
 #[derive(Clone, Copy, Debug)]
@@ -133,7 +139,7 @@ impl TriangleMesh {
         let mut result = Vec::new();
         for (i, face, _) in self.swept_capsule_queries(motions, options)? {
             let face = &self.triangles[face];
-            if let Some(contact) = trajectory::trajectory_contact_oriented(
+            if let Some(contact) = trajectory::trajectory_contact_after_nonclear_sweep(
                 motions[i],
                 TriangleMotion {
                     start: face.previous_p,
@@ -148,23 +154,20 @@ impl TriangleMesh {
         Ok(result)
     }
     fn swept_capsule_queries(
-        &self,
-        motions: &[CapsuleMotion],
-        options: CapsuleSweepOptions,
-    ) -> Result<Vec<(usize, usize, CapsuleSweep)>, &'static str> {
-        for &motion in motions {
-            validate_capsule(motion, options)?;
-        }
-        if !options.tolerance_m.is_finite()
-            || options.tolerance_m <= 0.
-            || options.max_iterations == 0
-        {
+        &self,motions:&[CapsuleMotion],options:CapsuleSweepOptions,
+    )->Result<Vec<(usize,usize,CapsuleSweep)>, &'static str> {
+        self.swept_capsule_queries_with_workers(motions,options,None)
+    }
+    fn swept_capsule_queries_with_workers(
+        &self,motions:&[CapsuleMotion],options:CapsuleSweepOptions,workers:Option<usize>,
+    )->Result<Vec<(usize,usize,CapsuleSweep)>, &'static str> {
+        for &motion in motions {validate_capsule(motion,options)?;}
+        if !options.tolerance_m.is_finite() || options.tolerance_m<=0. || options.max_iterations==0 {
             return Err("invalid capsule triangle sweep");
         }
-        let MotionBounds { faces, nodes } = self.cached_motion_bounds();
-        let mut result = Vec::new();
-        let mut stack = Vec::with_capacity(64);
-        for (index, &motion) in motions.iter().enumerate() {
+        let MotionBounds {faces,nodes}=self.cached_motion_bounds();
+        let mut candidates=Vec::new();let mut stack=Vec::with_capacity(64);let mut bounds_error=None;
+        for (index,&motion) in motions.iter().enumerate() {
             let mut scale = motion.radius;
             let mut min_p = motion.start[0];
             let mut max_p = motion.start[0];
@@ -179,7 +182,7 @@ impl TriangleMesh {
             let lo: V = [min_p[0] - margin, min_p[1] - margin, min_p[2] - margin];
             let hi: V = [max_p[0] + margin, max_p[1] + margin, max_p[2] + margin];
             if !finite(lo) || !finite(hi) {
-                return Err("triangle sweep bounds overflow");
+                bounds_error=Some("triangle sweep bounds overflow");break;
             }
             let intersects =
                 |(a, b): (V, V)| (0..3).all(|axis| lo[axis] <= b[axis] && hi[axis] >= a[axis]);
@@ -195,22 +198,26 @@ impl TriangleMesh {
                     continue;
                 }
                 for face in node.range.clone().filter(|&face| intersects(faces[face])) {
-                    let triangle = &self.triangles[face];
-                    let query = sweep_capsule_triangle(
-                        motion,
-                        TriangleMotion {
-                            start: triangle.previous_p,
-                            end: triangle.p,
-                        },
-                        options,
-                    )?;
-                    if query != CapsuleSweep::Clear {
-                        result.push((index, face, query));
-                    }
+                    candidates.push((index,face));
                 }
             }
         }
-        result.sort_by_key(|(index, face, _)| (*index, *face));
+        let workers=workers.unwrap_or_else(||if candidates.len()>=1024 {
+            std::thread::available_parallelism().map_or(1,usize::from).min(8)
+        } else {1});
+        // Broad phase retains serial traversal and one reusable stack. Exact
+        // narrow-phase tasks borrow immutable data and join in that same order.
+        let mut result=crate::hair::ordered_queries::ordered_query_results(&candidates,workers,|&(index,face)| {
+            let triangle=&self.triangles[face];
+            let query=sweep_capsule_triangle(motions[index],TriangleMotion {
+                start:triangle.previous_p,end:triangle.p,
+            },options)?;
+            Ok((query!=CapsuleSweep::Clear).then_some((index,face,query)))
+        })?;
+        // Earlier narrow-phase errors precede a later bounds overflow, exactly
+        // as in the original interleaved serial traversal.
+        if let Some(error)=bounds_error {return Err(error);}
+        result.sort_by_key(|(index,face,_)|(*index,*face));
         Ok(result)
     }
 }
@@ -620,6 +627,11 @@ pub fn sweep_capsule_triangle(
             ))
     {
         Ok(CapsuleSweep::Clear)
+    } else if matches!(query, CapsuleSweep::InitialContact { .. })
+        && exact_reference::discovery::certifies(capsule, triangle, options.tolerance_m, options.max_iterations)
+    {
+        // Exact polynomial proof, never a sampled clearance or a larger tolerance.
+        Ok(CapsuleSweep::Clear)
     } else {
         Ok(query)
     }
@@ -741,6 +753,21 @@ mod tests {
         expected.sort_by_key(|(index, face, _)| (*index, *face));
         assert_eq!(actual, expected);
         assert_eq!(actual.len(), 2);
+        // An unoriented exact surface crossing is rejected on both routes.
+        assert_eq!(mesh.trajectory_constraints(&motions,Default::default()).unwrap_err(),
+            "trajectory surface crossing needs oriented contact activation");
+        let approach_mesh=TriangleMesh::new(&face(0.),&[[0,1,2]]).unwrap();
+        let approach=CapsuleMotion {start:capsule(0.02),end:capsule(0.005),radius:0.01};
+        let contacts=approach_mesh.trajectory_constraints(&[approach],Default::default()).unwrap();
+        let reference=trajectory::trajectory_contact_oriented(approach,
+            TriangleMotion {start:face(0.),end:face(0.)},Default::default(),false).unwrap().unwrap();
+        assert_eq!(contacts.len(),1);
+        assert_eq!(contacts[0].0,0);
+        let bits=|c:&trajectory::TrajectoryContact| {
+            [c.time,c.fraction,c.gap,c.normal[0],c.normal[1],c.normal[2],
+                c.target[0],c.target[1],c.target[2]].map(f64::to_bits)
+        };
+        assert_eq!(bits(&contacts[0].1),bits(&reference),"reuse must preserve the exact witness");
         assert!(
             actual
                 .iter()
@@ -1261,5 +1288,64 @@ mod tests {
             .unwrap(),
             CapsuleSweep::IterationLimit { .. }
         ));
+    }
+}
+
+
+#[cfg(test)]
+#[test]
+#[ignore = "actual frame4 initial-touch certificate diagnostic; unknown is not admission"]
+fn captured_frame4_initial_touch_certificate_budget() {
+    let capsule=CapsuleMotion {start:[[-0.10430728662467607,0.5338032657791152,-0.051681571706334216],[-0.10314318741700262,0.5092151503238094,-0.06804549049180765]],end:[[-0.10440702943899448,0.5338818581579465,-0.051906959148906966],[-0.10328497205647108,0.5093398225337213,-0.06834283946726707]],radius:4e-05};
+    let triangle=TriangleMotion {start:[[-0.097025066614151,0.5243496298789978,-0.0603339821100235],[-0.10848993062973022,0.5205245018005371,-0.05877222865819931],[-0.10236699134111404,0.5275492072105408,-0.05627758428454399]],end:[[-0.09693187847733498,0.5242734253406525,-0.06077761296182871],[-0.10839556157588959,0.5204505175352097,-0.059224497992545366],[-0.10227613802999258,0.5274754464626312,-0.0567256142385304]]};
+    for budget in [1024,4096,16384] {
+        let began=std::time::Instant::now();
+        let query=sweep_capsule_triangle(capsule,triangle,CapsuleSweepOptions {max_iterations:budget,..Default::default()}).unwrap();
+        eprintln!("INITIAL TOUCH CERTIFICATE budget={budget} result={query:?} elapsed_s={} scope=single_primitive_not_full_mesh_or_step",began.elapsed().as_secs_f64());
+    }
+}
+
+#[path = "contact_triangle_exact.rs"]
+mod exact_reference;
+
+#[test]
+fn parallel_mesh_queries_preserve_canonical_results_and_validation() {
+    let mesh=TriangleMesh::new(&[[-2.,-2.,0.],[2.,-2.,0.],[0.,2.,0.]],&[[0,1,2]]).unwrap();
+    let motions:Vec<_>=(0..96).map(|i|CapsuleMotion {
+        start:[[-0.1,0.,1.],[0.1,0.,1.]],
+        end:if i%2==0 {[[-0.1,0.,-1.],[0.1,0.,-1.]]} else {[[-0.1,0.,2.],[0.1,0.,2.]]},
+        radius:0.01,
+    }).collect();
+    let options=CapsuleSweepOptions::default();
+    let reference=mesh.swept_capsule_queries_with_workers(&motions,options,Some(1)).unwrap();
+    assert_eq!(reference.len(),48);
+    for workers in [2,4,8] {
+        assert_eq!(mesh.swept_capsule_queries_with_workers(&motions,options,Some(workers)).unwrap(),reference);
+        let mut invalid=motions.clone();invalid[43].radius=f64::NAN;
+        assert_eq!(mesh.swept_capsule_queries_with_workers(&invalid,options,Some(workers)),
+            mesh.swept_capsule_queries_with_workers(&invalid,options,Some(1)));
+        assert!(mesh.swept_capsule_queries_with_workers(&motions,CapsuleSweepOptions {max_iterations:0,..options},Some(workers)).is_err());
+    }
+    assert!(mesh.swept_capsule_queries_with_workers(&[],options,Some(8)).unwrap().is_empty());
+}
+
+#[test]
+#[ignore = "requires full-density VHR capture; serial/parallel mesh batch parity"]
+fn captured_parallel_mesh_query_batch_preserves_serial_results() {
+    let (_,radius,_,_,rods,meshes,_)=crate::hair::contact_replay::tests::load_replay_with_mode();
+    let (motions,_)=crate::hair::mesh_motion::guide_motions(&rods,radius);
+    assert_eq!(rods.len(),469);assert_eq!(motions.len(),469*20);
+    for (index,mesh) in meshes.iter().enumerate() {
+        let options=CapsuleSweepOptions::default();
+        let began=std::time::Instant::now();
+        let serial=mesh.swept_capsule_queries_with_workers(&motions,options,Some(1));
+        let serial_ms=began.elapsed().as_secs_f64()*1000.;
+        for workers in [2,4,8] {
+            let began=std::time::Instant::now();
+            let parallel=mesh.swept_capsule_queries_with_workers(&motions,options,Some(workers));
+            let parallel_ms=began.elapsed().as_secs_f64()*1000.;
+            assert_eq!(parallel,serial,"canonical contact outcomes and errors must match exactly");
+            eprintln!("CAPTURED MESH BATCH index={index} motions={} workers={workers} serial_ms={serial_ms} parallel_ms={parallel_ms} ratio={} scope=single_batch_not_frame_or_FPS",motions.len(),serial_ms/parallel_ms);
+        }
     }
 }

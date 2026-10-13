@@ -1,5 +1,40 @@
 //! Native GPU parity gate for screened surface irradiance diffusion.
-use voxy_render::{SurfaceLightDiffusion, SurfaceLightEdge};
+use voxy_render::{SurfaceLightDiffusion, SurfaceLightEdge, SurfaceLightPcg};
+
+enum Solver {
+    Chebyshev(SurfaceLightDiffusion),
+    Pcg(SurfaceLightPcg),
+}
+impl Solver {
+    fn update_source(
+        &mut self,
+        q: &wgpu::Queue,
+        s: &[[f32; 4]],
+    ) -> Result<(), voxy_render::SceneError> {
+        match self {
+            Self::Chebyshev(x) => x.update_source(q, s),
+            Self::Pcg(x) => x.update_source(q, s),
+        }
+    }
+    fn encode_timed(
+        &mut self,
+        e: &mut wgpu::CommandEncoder,
+        n: u32,
+        t: Option<(&wgpu::QuerySet, u32, u32)>,
+    ) -> Result<(), voxy_render::SceneError> {
+        match self {
+            Self::Chebyshev(x) => x.encode_timed(e, n, t),
+            Self::Pcg(x) => x.encode_timed(e, n, t),
+        }
+    }
+    fn output(&self) -> &wgpu::Buffer {
+        match self {
+            Self::Chebyshev(x) => x.output(),
+            Self::Pcg(x) => x.output(),
+        }
+    }
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(path) = std::env::args().nth(1) {
         return pollster::block_on(body_gate(&path));
@@ -89,6 +124,41 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
         drop(data);
         readback.unmap();
+        assert!(
+            SurfaceLightPcg::new(&device, &[1.; 3], &[0, 2, 4, 6], &edges[..5], [1.; 3]).is_err()
+        );
+        assert!(
+            SurfaceLightPcg::new(&device, &[1.; 3], &[0, 2, 4, 6], &asymmetric, [1.; 3]).is_err()
+        );
+        let mut pcg = SurfaceLightPcg::new(&device, &[1.; 3], &[0, 2, 4, 6], &edges, [1., 1., 0.])?;
+        let mut encoder = device.create_command_encoder(&Default::default());
+        assert!(pcg.encode_timed(&mut encoder, 1, None).is_err());
+        pcg.update_source(
+            &queue,
+            &[[1., 0.7, 0.3, 1.], [0., 0.7, 0.4, 1.], [0., 0.7, 0.9, 1.]],
+        )?;
+        assert!(pcg.update_source(&queue, &[[f32::NAN; 4]; 3]).is_err());
+        assert!(pcg.encode_timed(&mut encoder, 0, None).is_err());
+        pcg.encode_timed(&mut encoder, 3, None)?;
+        pcg.encode_timed(&mut encoder, 5, None)?;
+        encoder.copy_buffer_to_buffer(pcg.output(), 0, &readback, 0, 48);
+        queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        readback.slice(..).map_async(wgpu::MapMode::Read, move |r| {
+            let _ = tx.send(r);
+        });
+        device.poll(wgpu::PollType::wait_indefinitely())?;
+        rx.recv()??;
+        let data = readback.slice(..).get_mapped_range()?;
+        let values: &[[f32; 4]] = bytemuck::cast_slice(&data);
+        for (i, expected) in [0.5, 0.25, 0.25].into_iter().enumerate() {
+            assert!((values[i][0] - expected).abs() < 1e-6);
+            assert!((values[i][1] - 0.7).abs() < 1e-6);
+            assert_eq!(values[i][2], [0.3, 0.4, 0.9][i]);
+        }
+        println!("SURFACE LIGHT PCG GPU PASS rgba={values:?} split_dispatch_continuation=true");
+        drop(data);
+        readback.unmap();
         Ok(())
     })
 }
@@ -144,13 +214,25 @@ async fn body_gate(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         usage: wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: false,
     });
-    let mut diffusion = SurfaceLightDiffusion::new_accelerated(
-        &device,
-        &mass.iter().map(|m| *m as f32).collect::<Vec<_>>(),
-        &offsets,
-        &csr,
-        radii.map(|r| r as f32),
-    )?;
+    let pcg = std::env::args().nth(3).as_deref() == Some("pcg");
+    let mass_gpu: Vec<_> = mass.iter().map(|m| *m as f32).collect();
+    let mut diffusion = if pcg {
+        Solver::Pcg(SurfaceLightPcg::new(
+            &device,
+            &mass_gpu,
+            &offsets,
+            &csr,
+            radii.map(|r| r as f32),
+        )?)
+    } else {
+        Solver::Chebyshev(SurfaceLightDiffusion::new_accelerated(
+            &device,
+            &mass_gpu,
+            &offsets,
+            &csr,
+            radii.map(|r| r as f32),
+        )?)
+    };
     let source_gpu: Vec<[f32; 4]> = source
         .iter()
         .map(|s| [s[0] as f32, s[1] as f32, s[2] as f32, 1.])
@@ -163,7 +245,11 @@ async fn body_gate(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         mapped_at_creation: false,
     });
     let mut reports = Vec::new();
-    for iterations in [16, 32, 64, 128, 256, 512] {
+    for iterations in if pcg {
+        [8, 16, 32, 40, 48, 64]
+    } else {
+        [16, 32, 64, 128, 256, 512]
+    } {
         diffusion.update_source(&queue, &source_gpu)?;
         let start = std::time::Instant::now();
         let mut encoder = device.create_command_encoder(&Default::default());
@@ -188,7 +274,10 @@ async fn body_gate(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         let values: &[[f32; 4]] = bytemuck::cast_slice(&data[..size as usize]);
         let gpu_ms = queries.as_ref().and_then(|_| {
             let times: &[u64] = bytemuck::cast_slice(&data[size as usize..]);
-            times[1].checked_sub(times[0]).filter(|ticks| *ticks > 0).map(|ticks| ticks as f64 * f64::from(queue.get_timestamp_period()) / 1e6)
+            times[1]
+                .checked_sub(times[0])
+                .filter(|ticks| *ticks > 0)
+                .map(|ticks| ticks as f64 * f64::from(queue.get_timestamp_period()) / 1e6)
         });
         let mut error = 0f64;
         let mut rhs_norm = 0f64;
@@ -216,7 +305,7 @@ async fn body_gate(path: &str) -> Result<(), Box<dyn std::error::Error>> {
             .flat_map(|v| &v[..3])
             .copied()
             .fold(f32::INFINITY, f32::min);
-        let report = serde_json::json!({"gpu_compute_ms":gpu_ms, "method":"Chebyshev", "minimum_irradiance":minimum, "iterations":iterations,"max_absolute_error":error,"squared_l2_equation_residual_ratio":residual_ratio,"encode_submit_wait_readback_and_audit_wall_ms":wall_ms,"qualified":error<1e-3 && residual_ratio<1e-6 && minimum>=0.});
+        let report = serde_json::json!({"gpu_compute_ms":gpu_ms, "method":if pcg {"Jacobi PCG"}else{"Chebyshev"}, "minimum_irradiance":minimum, "iterations":iterations,"max_absolute_error":error,"squared_l2_equation_residual_ratio":residual_ratio,"encode_submit_wait_readback_and_audit_wall_ms":wall_ms,"qualified":error<1e-3 && residual_ratio<1e-6 && minimum>=0.});
         println!("FULL BODY GPU DIFFUSION {report}");
         let qualified = report["qualified"] == true;
         reports.push(report);
@@ -226,7 +315,7 @@ async fn body_gate(path: &str) -> Result<(), Box<dyn std::error::Error>> {
             break;
         }
     }
-    let report = serde_json::json!({"adapter":format!("{:?}",adapter.get_info()),"vertices":mass.len(),"undirected_edges":edges.len(),"reports":reports,"native_character_integrated":false,"target_120fps_achieved":false,"scope":"Static original body against CPU f64 reference; wall times include CPU encoding, readback and equation audit, not GPU timestamps."});
+    let report = serde_json::json!({"adapter":format!("{:?}",adapter.get_info()),"vertices":mass.len(),"undirected_edges":edges.len(),"reports":reports,"native_character_integrated":false,"target_120fps_achieved":false,"input_scope":input.get("scope"),"scope":"Supplied surface equation against CPU f64 reference; wall times include CPU encoding, readback and equation audit. GPU timestamps are reported separately when supported."});
     if let Some(path) = std::env::args().nth(2) {
         std::fs::write(path, serde_json::to_vec_pretty(&report)?)?;
     }

@@ -319,3 +319,260 @@ fn signed_nonuniform_tip_scale_keeps_proper_target_orientation_without_affecting
         preserve(&pose, &solved);
     }
 }
+
+#[test]
+fn soft_extension_is_monotone_c1_and_bounded() {
+    let length = 1.8;
+    for ratio in [0., 0.5, 0.9, 0.999] {
+        let boundary = length * ratio;
+        let h = (length - boundary) * 1e-6;
+        assert_eq!(soft_distance(boundary, length, ratio), boundary);
+        let right = (soft_distance(boundary + h, length, ratio) - boundary) / h;
+        assert!((right - 1.).abs() < 2e-6, "boundary slope {right}");
+        let mut previous = boundary;
+        for step in 1..=1000 {
+            let distance = boundary + (length - boundary) * step as f64 / 100.;
+            let actual = soft_distance(distance, length, ratio);
+            assert!(actual >= previous && actual <= length && actual <= distance);
+            previous = actual;
+        }
+    }
+    for distance in [0., 0.2, 1.8, 100.] {
+        assert_eq!(soft_distance(distance, length, 1.), distance);
+    }
+}
+
+#[test]
+fn softened_ik_preserves_exact_mode_lengths_and_geometric_reach_report() {
+    let rig = make_rig(Vec3::ONE, 0.8);
+    let chain = TwoBoneChain::new(&rig, [1, 2, 3]).unwrap();
+    let pose = rig.bind_pose();
+    let start = point(&pose, &rig, 1);
+    let length = point(&pose, &rig, 2).distance(start)
+        + point(&pose, &rig, 3).distance(point(&pose, &rig, 2));
+    for distance in [0., 0.1, 1., 1.7, 2.5] {
+        let target = TwoBoneTarget {
+            position: start + Vec3::Y * distance,
+            pole: start + Vec3::Z,
+            rotation: None,
+            weight: 1.,
+        };
+        let (exact, exact_report) = pose.solve_two_bone(&chain, target).unwrap();
+        let (disabled, disabled_report) = pose.solve_two_bone_softened(&chain, target, 1.).unwrap();
+        assert_eq!(exact_report, disabled_report);
+        for (a, b) in exact.local().iter().zip(disabled.local()) {
+            assert_eq!(a.rotation, b.rotation);
+        }
+        let (soft, report) = pose.solve_two_bone_softened(&chain, target, 0.8).unwrap();
+        preserve(&pose, &soft);
+        assert_eq!(report.reach_clamped, exact_report.reach_clamped);
+        let expected = soft_distance(f64::from(distance), f64::from(length), f64::from(0.8f32))
+            .clamp(0.2, f64::from(length)) as f32;
+        assert!((report.tip_position.distance(start) - expected).abs() < 2e-5);
+    }
+    let target = TwoBoneTarget {position: start, pole: Vec3::Z, rotation: None, weight: 1.};
+    for ratio in [f32::NAN, f32::INFINITY, -0.1, 1.1] {
+        assert!(pose.solve_two_bone_softened(&chain, target, ratio).is_err());
+    }
+}
+
+#[test]
+fn softened_frame_rebuilds_palette_without_modifying_extracted_motion() {
+    for scale in [Vec3::ONE, Vec3::new(-2., 2., 2.), Vec3::splat(-0.5)] {
+        let rig = make_rig(scale, 0.8);
+        let chain = TwoBoneChain::new(&rig, [1, 2, 3]).unwrap();
+        let pose = rig.bind_pose();
+        let start = point(&pose, &rig, 1);
+        let length = point(&pose, &rig, 2).distance(start)
+            + point(&pose, &rig, 3).distance(point(&pose, &rig, 2));
+        let frame = AnimatorFrame {
+            skin_matrices: pose.skin_matrices(&rig).unwrap(), pose,
+            root_motion: Vec3::new(0.1, -0.2, 0.3), root_motion_joint: 1,
+            transition_weight: 0.45,
+        };
+        let target = TwoBoneTarget {
+            position: start + Vec3::Y * length * 0.98,
+            pole: start + Vec3::Z, rotation: Some(Quat::from_rotation_z(0.4)), weight: 1.,
+        };
+        let (next, report) = frame.clone().with_softened_two_bone_ik(&rig, &chain, target, 0.8).unwrap();
+        assert_eq!(next.root_motion, frame.root_motion);
+        assert_eq!(next.root_motion_joint, frame.root_motion_joint);
+        assert_eq!(next.transition_weight, frame.transition_weight);
+        assert_eq!(next.skin_matrices, next.pose.skin_matrices(&rig).unwrap());
+        assert!(report.tip_position.distance(start) < target.position.distance(start));
+        assert!(!report.reach_clamped);
+        preserve(&frame.pose, &next.pose);
+        let knee = point(&next.pose, &rig, 2);
+        assert!((knee.distance(start) - length / 1.8).abs() < 2e-5);
+        assert!((report.tip_position.distance(knee) - length * 0.8 / 1.8).abs() < 2e-5);
+        let foreign = make_rig(scale, 0.9);
+        assert!(frame.clone().with_softened_two_bone_ik(&foreign, &chain, target, 0.8).is_err());
+        assert!(frame.with_softened_two_bone_ik(&rig, &chain, target, f32::NAN).is_err());
+    }
+}
+
+#[test]
+fn planted_ankle_stays_on_support_through_actor_motion_and_exact_ik() {
+    use crate::{FootPlant, RootRigidTransform};
+    let rig = make_rig(Vec3::ONE, 0.8);
+    let chain = TwoBoneChain::new(&rig, [1, 2, 3]).unwrap();
+    let pose = rig.bind_pose();
+    let start = point(&pose, &rig, 1);
+    let anchor = RootRigidTransform {
+        translation: (start + Vec3::Y * 1.2).as_dvec3(),
+        rotation: DQuat::from_rotation_z(0.3),
+    };
+    let support = RootRigidTransform::IDENTITY;
+    let plant = FootPlant::capture(anchor, support).unwrap();
+    for step in 0..60 {
+        let actor = RootRigidTransform {
+            translation: DVec3::new(0.05 * (step as f64 * 0.1).sin(), 0., 0.),
+            rotation: DQuat::from_rotation_y(0.05 * (step as f64 * 0.1).cos()),
+        };
+        let target = plant.target(support, actor, start + Vec3::Z, 1.).unwrap();
+        let (solved, report) = pose.solve_two_bone(&chain, target).unwrap();
+        assert!(!report.reach_clamped);
+        assert!(actor.transform_point(report.tip_position.as_dvec3()).unwrap()
+            .distance(anchor.translation) < 3e-6);
+        preserve(&pose, &solved);
+        let global_rotation = globals(&solved).unwrap()[3].to_scale_rotation_translation().1;
+        assert!((actor.rotation * global_rotation).dot(anchor.rotation).abs() > 1. - 1e-6);
+    }
+}
+
+fn planted_rig() -> (Skeleton, [TwoBoneChain; 2]) {
+    let mut joints = vec![Joint { name: Arc::from("pelvis"), parent: None,
+        bind_local: Transform { translation: Vec3::Y * 1.5, ..Transform::IDENTITY }, inverse_bind: Mat4::IDENTITY }];
+    for (side, x) in [-0.2, 0.2].into_iter().enumerate() {
+        let base = joints.len() as u16;
+        for (part, parent, translation) in [
+            ("hip", 0, Vec3::X * x), ("knee", base, -Vec3::Y * 0.8),
+            ("ankle", base + 1, -Vec3::Y * 0.6),
+        ] {
+            joints.push(Joint { name: Arc::from(format!("{side}_{part}")), parent: Some(parent),
+                bind_local: Transform { translation, ..Transform::IDENTITY }, inverse_bind: Mat4::IDENTITY });
+        }
+    }
+    let rig = Skeleton::new(joints).unwrap();
+    let chains = [TwoBoneChain::new(&rig, [1,2,3]).unwrap(), TwoBoneChain::new(&rig, [4,5,6]).unwrap()];
+    (rig, chains)
+}
+
+#[test]
+fn shared_pelvis_reaches_both_uneven_plants_with_bounded_offset() {
+    let (rig, chains) = planted_rig();
+    let pose = rig.bind_pose();
+    let targets = [-0.2, 0.2].map(|x|TwoBoneTarget {
+        position: Vec3::new(x, if x < 0. {0.} else {0.2}, 0.),
+        pole: Vec3::new(x, 0.8, 1.), rotation: Some(Quat::IDENTITY), weight: 1.,
+    });
+    let (solved, report) = pose.solve_planted_legs(&chains, targets, Vec3::Y, 0.3).unwrap();
+    assert!(report.pelvis_offset.abs_diff_eq(-Vec3::Y * 0.1, 2e-6));
+    for side in 0..2 {
+        assert!(report.legs[side].tip_position.distance(targets[side].position) < 3e-6);
+        let [hip, knee, ankle] = chains[side].joints.map(|i|point(&solved, &rig, i));
+        assert!((hip.distance(knee) - 0.8).abs() < 2e-6);
+        assert!((knee.distance(ankle) - 0.6).abs() < 2e-6);
+    }
+    for joint in 1..pose.local().len() {
+        assert_eq!(pose.local()[joint].translation, solved.local()[joint].translation);
+        assert_eq!(pose.local()[joint].scale, solved.local()[joint].scale);
+    }
+    assert_eq!(pose.solve_planted_legs(&chains, targets, Vec3::Y, 0.05).unwrap_err(), AnimationError::UnreachableFootPlant);
+    assert_eq!(pose, rig.bind_pose());
+}
+
+#[test]
+fn pelvis_reach_accounts_for_fold_limit_and_invalid_contact_jobs() {
+    let (rig, chains) = planted_rig();
+    let pose = rig.bind_pose();
+    let targets = [-0.2, 0.2].map(|x|TwoBoneTarget {
+        position: Vec3::new(x, 1.5, 0.), pole: Vec3::new(x, 0.8, 1.), rotation: None, weight: 1.,
+    });
+    let (_, report) = pose.solve_planted_legs(&chains, targets, Vec3::Y, 0.5).unwrap();
+    assert!((report.pelvis_offset.length() - 0.2).abs() < 2e-6);
+    for (leg, target) in report.legs.iter().zip(targets) {
+        assert!(leg.tip_position.distance(target.position) < 3e-6);
+    }
+    assert!(pose.solve_planted_legs(&[chains[0].clone(), chains[0].clone()], targets, Vec3::Y, 0.5).is_err());
+    assert!(pose.solve_planted_legs(&chains, targets, Vec3::ZERO, 0.5).is_err());
+    assert!(pose.solve_planted_legs(&chains, targets, Vec3::Y, f32::NAN).is_err());
+    let mut blended = targets; blended[0].weight = 0.5;
+    assert!(pose.solve_planted_legs(&chains, blended, Vec3::Y, 0.5).is_err());
+    // An already feasible stance must not add pelvis motion.
+    let targets = [3,6].map(|joint|TwoBoneTarget {position: point(&pose, &rig, joint), pole: Vec3::Z, rotation: None, weight: 1.});
+    let (_, report) = pose.solve_planted_legs(&chains, targets, Vec3::Y, 0.5).unwrap();
+    assert_eq!(report.pelvis_offset, Vec3::ZERO);
+}
+
+#[test]
+fn planted_frame_correction_does_not_become_actor_root_motion() {
+    let (rig, chains) = planted_rig();
+    let pose = rig.bind_pose();
+    let frame = AnimatorFrame {
+        skin_matrices: pose.skin_matrices(&rig).unwrap(), pose,
+        root_motion: Vec3::new(0.3, 0., 0.2), root_motion_joint: 0, transition_weight: 0.6,
+    };
+    let targets = [-0.2, 0.2].map(|x|TwoBoneTarget {
+        position: Vec3::new(x, 0., 0.), pole: Vec3::Z, rotation: None, weight: 1.,
+    });
+    let previous = frame.clone();
+    let (next, report) = frame.with_planted_legs(&rig, &chains, targets, Vec3::Y, 0.3).unwrap();
+    assert!(report.pelvis_offset.y < 0.);
+    assert_eq!(next.root_motion, previous.root_motion);
+    assert_eq!(next.root_motion_joint, previous.root_motion_joint);
+    assert_eq!(next.transition_weight, previous.transition_weight);
+    assert_eq!(next.skin_matrices, next.pose.skin_matrices(&rig).unwrap());
+}
+
+#[test]
+fn exact_ik_preserves_toe_contact_during_animated_foot_roll() {
+    use crate::{FootPlant,RootRigidTransform};
+    let rig = make_rig(Vec3::ONE,0.8);
+    let chain = TwoBoneChain::new(&rig,[1,2,3]).unwrap();
+    let pose = rig.bind_pose();
+    let start = point(&pose,&rig,1);
+    let initial = RootRigidTransform {translation:(start+Vec3::Y*1.2).as_dvec3(),rotation:DQuat::IDENTITY};
+    let pivot = DVec3::new(0.,-0.05,0.12);
+    let support = RootRigidTransform::IDENTITY;
+    let plant = FootPlant::capture_pivot(initial,pivot,support).unwrap();
+    let contact = initial.transform_point(pivot).unwrap();
+    for step in 0..60 {
+        let actor = RootRigidTransform {translation:DVec3::X*(step as f64*0.1).sin()*0.05,
+            rotation:DQuat::from_rotation_y(0.03)};
+        let rotation = DQuat::from_rotation_x(step as f64*0.01);
+        let target = plant.target_with_rotation(support,actor,rotation,Vec3::Z,1.).unwrap();
+        let (solved,report) = pose.solve_two_bone(&chain,target).unwrap();
+        assert!(!report.reach_clamped);
+        let foot = globals(&solved).unwrap()[3];
+        let actual = actor.transform_point(foot.transform_point3(pivot)).unwrap();
+        assert!(actual.distance(contact)<3e-6,"toe drift at {step}: {actual:?} != {contact:?}");
+    }
+}
+
+#[test]
+fn extension_margin_conditions_knees_without_sliding_planted_feet() {
+    let (rig, chains) = planted_rig();
+    let pose = rig.bind_pose();
+    let targets = [3,6].map(|foot| TwoBoneTarget {
+        position: point(&pose, &rig, foot), pole: Vec3::Z,
+        rotation: Some(Quat::IDENTITY), weight: 1.,
+    });
+    let (solved, report) = pose.solve_planted_legs_with_extension_margin(
+        &chains, targets, Vec3::Y, 0.1, 0.015).unwrap();
+    assert!((report.pelvis_offset.y + 0.015).abs() < 2e-6);
+    for (chain, target) in chains.iter().zip(targets) {
+        let [hip, knee, ankle] = chain.joints.map(|j| point(&solved,&rig,j));
+        assert!(ankle.distance(target.position) < 3e-6);
+        assert!(hip.distance(ankle) <= 1.385 + 2e-6);
+        assert!((hip.distance(knee) - 0.8).abs() < 2e-6);
+        assert!((knee.distance(ankle) - 0.6).abs() < 2e-6);
+    }
+    let zero = pose.solve_planted_legs_with_extension_margin(&chains, targets, Vec3::Y, 0.1, 0.).unwrap();
+    assert_eq!(zero.0, pose.solve_planted_legs(&chains, targets, Vec3::Y, 0.1).unwrap().0);
+    for margin in [f32::NAN,-0.01,1.21] {
+        assert_eq!(pose.solve_planted_legs_with_extension_margin(&chains,targets,Vec3::Y,0.1,margin).unwrap_err(),AnimationError::InvalidIkTarget);
+    }
+    assert_eq!(pose.solve_planted_legs_with_extension_margin(&chains,targets,Vec3::Y,0.005,0.015).unwrap_err(),AnimationError::UnreachableFootPlant);
+    assert_eq!(pose, rig.bind_pose());
+}

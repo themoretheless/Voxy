@@ -50,6 +50,8 @@ targets = [
 ignored = ["cfg_aliases"]
 
 [features]
+# Voxy native numerical compute policy; no effect on render stages or other backends.
+metal-safe-compute = []
 device_lost_panic = []
 dx12 = [
     "dep:arrayvec",
