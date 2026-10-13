@@ -1,9 +1,11 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
-mod precision;
-mod loop_closure;
 mod contact_bake;
-pub use contact_bake::{bake_periodic_foot_contacts, BakedFootContacts, ContactBakeSettings, MAX_CONTACT_BAKE_SAMPLES};
+mod loop_closure;
+mod precision;
+pub use contact_bake::{
+    BakedFootContacts, ContactBakeSettings, MAX_CONTACT_BAKE_SAMPLES, bake_periodic_foot_contacts,
+};
 pub use precision::{Pose64, Transform64};
 mod events;
 pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError};
@@ -11,9 +13,9 @@ mod exact_quaternion;
 mod root_clock;
 mod root_curve;
 pub use root_clock::{RootCyclePhase, enclose_root_cycle_phase};
-mod ik;
 mod foot_support;
-pub use foot_support::{FootSupportPoints, FootSupportPoint, MAX_FOOT_SUPPORT_POINTS};
+mod ik;
+pub use foot_support::{FootSupportPoint, FootSupportPoints, MAX_FOOT_SUPPORT_POINTS};
 mod foot_plant;
 pub use foot_plant::FootPlant;
 mod retarget;
@@ -918,7 +920,11 @@ impl AnimationClip {
     ///
     /// # Errors
     /// Rejects non-finite time, mismatched rig layouts, and invalid interpolated TRS.
-    pub fn try_sample_soa(&self, skeleton: &Skeleton, time: f32) -> Result<SoaPose, AnimationError> {
+    pub fn try_sample_soa(
+        &self,
+        skeleton: &Skeleton,
+        time: f32,
+    ) -> Result<SoaPose, AnimationError> {
         if !time.is_finite() {
             return Err(AnimationError::InvalidSampleTime);
         }
@@ -1038,7 +1044,9 @@ impl Pose {
             return Err(AnimationError::InvalidPose(index));
         };
         let replacement = Transform { scale, ..current };
-        if !replacement.is_valid() { return Err(AnimationError::InvalidPose(index)); }
+        if !replacement.is_valid() {
+            return Err(AnimationError::InvalidPose(index));
+        }
         self.local[index] = replacement;
         Ok(())
     }
