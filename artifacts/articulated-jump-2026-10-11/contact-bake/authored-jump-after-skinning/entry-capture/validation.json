@@ -1,0 +1,13 @@
+{
+  "change": "Opt-in VOXY_HAIR_QR_ENTRY_INPUT_EXPORT captures latest original operator before solve_coordinates",
+  "focused_tests_passed": 31,
+  "ignored": 6,
+  "physical_contact_capture_test": "passed; VQC1 2 rows 36 coordinates",
+  "captured_replay": "passed bitwise reference comparison",
+  "numerical_algorithm": "unchanged",
+  "limits": [
+    "Current full-jump process uses earlier binary and cannot use new capture yet",
+    "Heavy second-step input has not been captured",
+    "No performance or full jump admission claim"
+  ]
+}

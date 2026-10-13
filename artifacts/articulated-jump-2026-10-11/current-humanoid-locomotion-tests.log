@@ -1,0 +1,199 @@
+
+running 1 test
+LOCOMOTION source_left_arm_bind=[DVec3(0.1918999152309411, 1.4408006925632155, -0.06540020962009824), DVec3(0.4663000293790315, 1.4408007602177346, -0.07010016659823358), DVec3(0.7389001881708841, 1.4408005243741495, -0.0654001534028034)]
+LOCOMOTION actual_body=Idle samples=121 vertices=60866 maximum_bind_displacement_m=0.31479058
+LOCOMOTION actual_body=Walk samples=121 vertices=60866 maximum_bind_displacement_m=0.37744513
+LOCOMOTION actual_body=Jog samples=121 vertices=60866 maximum_bind_displacement_m=0.7921348
+LOCOMOTION actual_body=Sprint samples=121 vertices=60866 maximum_bind_displacement_m=0.61701846
+LOCOMOTION actual_body=JumpStart samples=121 vertices=60866 maximum_bind_displacement_m=0.6125599
+LOCOMOTION actual_body=JumpLoop samples=121 vertices=60866 maximum_bind_displacement_m=0.5546736
+LOCOMOTION actual_body=JumpLand samples=121 vertices=60866 maximum_bind_displacement_m=0.758451
+AUTHORED_JUMP_SEAM from=Idle to=JumpStart mesh_gap_m=0.43599334 pelvis_gap_m=0.28068048 from_duration_s=2.5 to_duration_s=1.3333334
+AUTHORED_JUMP_SEAM from=JumpStart to=JumpLoop mesh_gap_m=0 pelvis_gap_m=0 from_duration_s=1.3333334 to_duration_s=2.5
+AUTHORED_JUMP_SEAM from=JumpLoop to=JumpLand mesh_gap_m=0.31723776 pelvis_gap_m=0.044993516 from_duration_s=2.5 to_duration_s=1.25
+AUTHORED_JUMP_SEAM from=JumpLand to=Idle mesh_gap_m=0.076379724 pelvis_gap_m=0.0018443835 from_duration_s=1.25 to_duration_s=2.5
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=false joint=0 left_rad_s=0 right_rad_s=0.00042675717658774995 jump_rad_s=0.00042675717658774995 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=false joint=7 left_rad_s=0 right_rad_s=0.002574330594856441 jump_rad_s=0.002574330594856441 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=false joint=8 left_rad_s=0 right_rad_s=0.0029504475919191774 jump_rad_s=0.0029504475919191774 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=false joint=13 left_rad_s=0 right_rad_s=0.0018097082875989528 jump_rad_s=0.0018097082875989528 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=false joint=14 left_rad_s=0 right_rad_s=0.0032902544175946865 jump_rad_s=0.0032902544175946865 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=true joint=0 left_rad_s=0 right_rad_s=0.00042675717658774995 jump_rad_s=0.00042675717658774995 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.00251035505457475 jump_rad_s=0.00251035505457475 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.005162000853768351 jump_rad_s=0.005162000853768351 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.0014598153573202037 jump_rad_s=0.0014598153573202037 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.0028349943869309968 jump_rad_s=0.0028349943869309968 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=false joint=8 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=false joint=14 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.007448433381154036 jump_rad_s=0.007448433381154036 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.015890408241744387 jump_rad_s=0.015890408241744387 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.007452380441135462 jump_rad_s=0.007452380441135462 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.0001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.015897981735034053 jump_rad_s=0.015897981735034053 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=false joint=8 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=false joint=14 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.07450378802829759 jump_rad_s=0.07450378802829759 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.1589414182498261 jump_rad_s=0.1589414182498261 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.0745038278183521 jump_rad_s=0.0745038278183521 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0 step_s=0.00001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.15894148646122824 jump_rad_s=0.15894148646122824 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=false joint=0 left_rad_s=0.00003353207892730206 right_rad_s=0 jump_rad_s=0.00003353207892730206 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=false joint=7 left_rad_s=0.000029257669946913207 right_rad_s=0.000060167178292568956 jump_rad_s=0.0000888852650285389 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=false joint=8 left_rad_s=0.00007496073692439687 right_rad_s=0.0001732677875936542 jump_rad_s=0.00009839146124261196 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=false joint=13 left_rad_s=0 right_rad_s=0.000023451863601785857 jump_rad_s=0.000023451863601785857 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=false joint=14 left_rad_s=0.00005563128659488762 right_rad_s=0 jump_rad_s=0.00005563128659488762 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=true joint=0 left_rad_s=0.00003353207892730206 right_rad_s=0 jump_rad_s=0.00003353207892730206 pelvis_velocity_jump_m_s=0.009782612323760986
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0.009782612323760986
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=true joint=7 left_rad_s=0.09314423588337414 right_rad_s=0.09312427699382106 jump_rad_s=0.00720694621923209 pelvis_velocity_jump_m_s=0.009782612323760986
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=true joint=8 left_rad_s=0.18458558118447255 right_rad_s=0.18109589952986035 jump_rad_s=0.012745214790681891 pelvis_velocity_jump_m_s=0.009782612323760986
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=true joint=13 left_rad_s=0.11607096734012418 right_rad_s=0.11540169424047778 jump_rad_s=0.0006945016486891055 pelvis_velocity_jump_m_s=0.009782612323760986
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.001 resolved=true joint=14 left_rad_s=0.2360928238739871 right_rad_s=0.23509218699310963 jump_rad_s=0.0010199433871032559 pelvis_velocity_jump_m_s=0.009782612323760986
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=false joint=0 left_rad_s=0.0003353207892730206 right_rad_s=0.0007615250531718175 jump_rad_s=0.0005677958394913568 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=false joint=7 left_rad_s=0.00029257669946913204 right_rad_s=0 jump_rad_s=0.00029257669946913204 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=false joint=8 left_rad_s=0.0007496073692439686 right_rad_s=0.0005867873530038816 jump_rad_s=0.0008439336382408269 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=false joint=14 left_rad_s=0.0005563128659488762 right_rad_s=0 jump_rad_s=0.0005563128659488762 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=true joint=0 left_rad_s=0.0003353207892730206 right_rad_s=0.0007615250531718175 jump_rad_s=0.0005677958394913568 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=true joint=7 left_rad_s=0.09278272085131745 right_rad_s=0.09317804811255201 jump_rad_s=0.0008474157104357388 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=true joint=8 left_rad_s=0.1843100972097755 right_rad_s=0.186215299720476 jump_rad_s=0.0020757608193805155 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=true joint=13 left_rad_s=0.1155623644272249 right_rad_s=0.1158027600957944 jump_rad_s=0.0003782237515136897 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.0001 resolved=true joint=14 left_rad_s=0.23490072983186822 right_rad_s=0.23412661040699662 jump_rad_s=0.0009432190241126183 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=false joint=0 left_rad_s=0.003353207892730206 right_rad_s=0.007615250531718175 jump_rad_s=0.0056779583949135674 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=false joint=7 left_rad_s=0.0029257669946913204 right_rad_s=0 jump_rad_s=0.0029257669946913204 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=false joint=8 left_rad_s=0.007496073692439686 right_rad_s=0.005867873530038816 jump_rad_s=0.008439336382408267 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=false joint=14 left_rad_s=0.005563128659488761 right_rad_s=0 jump_rad_s=0.005563128659488761 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=true joint=0 left_rad_s=0.003353207892730206 right_rad_s=0.007615250531718175 jump_rad_s=0.0056779583949135674 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=true joint=7 left_rad_s=0.0881063108070706 right_rad_s=0.09271608840142456 jump_rad_s=0.008373394107649687 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=true joint=8 left_rad_s=0.18326554895684558 right_rad_s=0.19795941869054978 jump_rad_s=0.0151125503654312 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=true joint=13 left_rad_s=0.11332086359970044 right_rad_s=0.11590058557053794 jump_rad_s=0.004143946172607767 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=0.56 step_s=0.00001 resolved=true joint=14 left_rad_s=0.22807802825142157 right_rad_s=0.22235845233337836 jump_rad_s=0.01132539698169209 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=false joint=0 left_rad_s=0.0019057631841535216 right_rad_s=0 jump_rad_s=0.0019057631841535216 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=false joint=7 left_rad_s=0.0037133087283261795 right_rad_s=0.00018439015512051676 jump_rad_s=0.0038319039163908363 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=false joint=8 left_rad_s=0.014947817593650626 right_rad_s=0.000306881825613943 jump_rad_s=0.015253754258714499 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=false joint=13 left_rad_s=0.0010328587493411096 right_rad_s=0.00019079286485170708 jump_rad_s=0.0009492485139813835 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=false joint=14 left_rad_s=0.0009269921585780258 right_rad_s=0.0004113621347633927 jump_rad_s=0.0013078555391459492 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=true joint=0 left_rad_s=0.0019057631841535216 right_rad_s=0 jump_rad_s=0.0019057631841535216 pelvis_velocity_jump_m_s=0.00988692045211792
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0.00988692045211792
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=true joint=7 left_rad_s=0.14356982393205986 right_rad_s=0.1424357442034896 jump_rad_s=0.0015149004964820545 pelvis_velocity_jump_m_s=0.00988692045211792
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=true joint=8 left_rad_s=0.26416690450807967 right_rad_s=0.2640132429975633 jump_rad_s=0.0034095457243932094 pelvis_velocity_jump_m_s=0.00988692045211792
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=true joint=13 left_rad_s=0.1909141288749917 right_rad_s=0.19224591013027742 jump_rad_s=0.001891023136706209 pelvis_velocity_jump_m_s=0.00988692045211792
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.001 resolved=true joint=14 left_rad_s=0.3943431406830221 right_rad_s=0.3904036064042204 jump_rad_s=0.0048247484380551636 pelvis_velocity_jump_m_s=0.00988692045211792
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=false joint=8 left_rad_s=0.0004592307992445633 right_rad_s=0.0005761312568598089 jump_rad_s=0.0003371600390285622 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=false joint=14 left_rad_s=0.0005599230323274151 right_rad_s=0 jump_rad_s=0.0005599230323274151 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=true joint=7 left_rad_s=0.14174258305241844 right_rad_s=0.14215249250831344 jump_rad_s=0.0008217249691386693 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=true joint=8 left_rad_s=0.2630732170417156 right_rad_s=0.26372103182036527 jump_rad_s=0.000782054144122284 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=true joint=13 left_rad_s=0.19205040327976214 right_rad_s=0.19197055556560402 jump_rad_s=0.00009147628079110603 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.0001 resolved=true joint=14 left_rad_s=0.38977570016395047 right_rad_s=0.38985993714324463 jump_rad_s=0.0005959974143239605 pelvis_velocity_jump_m_s=0.0005960464477539063
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=false joint=8 left_rad_s=0.0058881434974381594 right_rad_s=0.005761312568598088 jump_rad_s=0.004568621990719464 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=false joint=14 left_rad_s=0.004663361672566156 right_rad_s=0 jump_rad_s=0.004663361672566156 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=true joint=7 left_rad_s=0.141431332766959 right_rad_s=0.14076366408382748 jump_rad_s=0.0017547841983114652 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=true joint=8 left_rad_s=0.26067923911642055 right_rad_s=0.26245254638364324 jump_rad_s=0.004094785091231808 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=true joint=13 left_rad_s=0.19270140659997698 right_rad_s=0.19204535391999458 jump_rad_s=0.0013509538441262873 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=1.06 step_s=0.00001 resolved=true joint=14 left_rad_s=0.3912528732846547 right_rad_s=0.3890746380131972 jump_rad_s=0.014603455336044329 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=false joint=0 left_rad_s=0 right_rad_s=0.00042675717658774995 jump_rad_s=0.00042675717658774995 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=false joint=7 left_rad_s=0 right_rad_s=0.002574330594856441 jump_rad_s=0.002574330594856441 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=false joint=8 left_rad_s=0 right_rad_s=0.0029504475919191774 jump_rad_s=0.0029504475919191774 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=false joint=13 left_rad_s=0 right_rad_s=0.0018097082875989528 jump_rad_s=0.0018097082875989528 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=false joint=14 left_rad_s=0 right_rad_s=0.0032902544175946865 jump_rad_s=0.0032902544175946865 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=true joint=0 left_rad_s=0 right_rad_s=0.00042675717658774995 jump_rad_s=0.00042675717658774995 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.00251035505457475 jump_rad_s=0.00251035505457475 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.005162000853768351 jump_rad_s=0.005162000853768351 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.0014598153573202037 jump_rad_s=0.0014598153573202037 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.0028349943869309968 jump_rad_s=0.0028349943869309968 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=false joint=8 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=false joint=14 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.007448433381154036 jump_rad_s=0.007448433381154036 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.015890408241744387 jump_rad_s=0.015890408241744387 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.007452380441135462 jump_rad_s=0.007452380441135462 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.0001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.015897981735034053 jump_rad_s=0.015897981735034053 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=false joint=8 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=false joint=14 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.07450378802829759 jump_rad_s=0.07450378802829759 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.1589414182498261 jump_rad_s=0.1589414182498261 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.0745038278183521 jump_rad_s=0.0745038278183521 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=2 step_s=0.00001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.15894148646122824 jump_rad_s=0.15894148646122824 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=false joint=0 left_rad_s=0 right_rad_s=0.00042675717658774995 jump_rad_s=0.00042675717658774995 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=false joint=7 left_rad_s=0 right_rad_s=0.002574330594856441 jump_rad_s=0.002574330594856441 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=false joint=8 left_rad_s=0 right_rad_s=0.0029504475919191774 jump_rad_s=0.0029504475919191774 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=false joint=13 left_rad_s=0 right_rad_s=0.0018097082875989528 jump_rad_s=0.0018097082875989528 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=false joint=14 left_rad_s=0 right_rad_s=0.0032902544175946865 jump_rad_s=0.0032902544175946865 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=true joint=0 left_rad_s=0 right_rad_s=0.00042675717658774995 jump_rad_s=0.00042675717658774995 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.00251035505457475 jump_rad_s=0.00251035505457475 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.005162000853768351 jump_rad_s=0.005162000853768351 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.0014598153573202037 jump_rad_s=0.0014598153573202037 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.0028349943869309968 jump_rad_s=0.0028349943869309968 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=false joint=8 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=false joint=14 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.007448433381154036 jump_rad_s=0.007448433381154036 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.015890408241744387 jump_rad_s=0.015890408241744387 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.007452380441135462 jump_rad_s=0.007452380441135462 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.0001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.015897981735034053 jump_rad_s=0.015897981735034053 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=false joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=false joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=false joint=7 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=false joint=8 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=false joint=13 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=false joint=14 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=true joint=0 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=true joint=1 left_rad_s=0 right_rad_s=0 jump_rad_s=0 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=true joint=7 left_rad_s=0 right_rad_s=0.07450378802829759 jump_rad_s=0.07450378802829759 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=true joint=8 left_rad_s=0 right_rad_s=0.1589414182498261 jump_rad_s=0.1589414182498261 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=true joint=13 left_rad_s=0 right_rad_s=0.0745038278183521 jump_rad_s=0.0745038278183521 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_DERIVATIVE event_s=6 step_s=0.00001 resolved=true joint=14 left_rad_s=0 right_rad_s=0.15894148646122824 jump_rad_s=0.15894148646122824 pelvis_velocity_jump_m_s=0
+AUTHORED_JUMP_SOLES vertices=8280 samples=721 floor_y_m=-0.82004285 grounded_tolerance_m=0.000004 floor_tolerance_m=0.000003
+test female_rig::humanoid_locomotion_tests::actual_body_accepts_quaternius_locomotion_profile_and_keeps_leg_lengths ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 338 filtered out; finished in 0.36s
+

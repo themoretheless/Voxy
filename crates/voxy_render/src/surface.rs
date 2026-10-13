@@ -1,4 +1,7 @@
 //! General scene presentation without voxel/skinning resource requirements.
+#[path = "command_buffer.rs"]
+pub mod command_buffer;
+
 use crate::{
     GraphicsOptions, RenderOutcome, RendererError, SceneDraw, SceneRenderer, SurfaceState,
 };
@@ -1265,21 +1268,6 @@ impl SceneSurface {
         Ok(())
     }
 
-    fn present_overlays(
-        &self,
-        scene: &SceneRenderer,
-        draws: &[SceneDraw<'_>],
-        view: &wgpu::TextureView,
-    ) {
-        if self.motion.is_some() && draws.iter().any(|draw| draw.overlay) {
-            let mut encoder = self
-                .device
-                .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-            scene.encode_overlays(&mut encoder, view, &self.depth_view, draws);
-            self.queue.submit([encoder.finish()]);
-        }
-    }
-
     /// Encode temporal preparation, then run native work after submission and
     /// before presentation. Both callbacks use the same candidate frame inputs.
     /// The submitted callback receives device, queue and presentation target view;
@@ -1422,16 +1410,25 @@ impl SceneSurface {
             self.invalidate_temporal_history();
             return Err(error);
         }
-        self.present_overlays(scene, draws, &view);
-        if self
+        let has_overlays = self.motion.is_some() && draws.iter().any(|draw| draw.overlay);
+        let has_probe = self
             .pixel_probe
             .as_ref()
-            .is_some_and(|(_, _, id)| id.is_none())
-        {
-            let mut probe_encoder = self.device.create_command_encoder(&Default::default());
-            self.encode_pixel_probe(&mut probe_encoder, &frame.texture)?;
-            self.queue.submit([probe_encoder.finish()]);
-            self.submit_pixel_probe(frame_id);
+            .is_some_and(|(_, _, id)| id.is_none());
+        if has_overlays || has_probe {
+            let mut post_encoder = self
+                .device
+                .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+            if has_overlays {
+                scene.encode_overlays(&mut post_encoder, &view, &self.depth_view, draws);
+            }
+            if has_probe {
+                self.encode_pixel_probe(&mut post_encoder, &frame.texture)?;
+            }
+            self.queue.submit([post_encoder.finish()]);
+            if has_probe {
+                self.submit_pixel_probe(frame_id);
+            }
         }
         self.queue.present(frame);
         self.presented_frames = frame_id;
@@ -1444,6 +1441,51 @@ impl SceneSurface {
             self.surface.configure(&self.device, &self.config);
         }
         Ok(RenderOutcome::Presented)
+    }
+
+    /// Partitions a slice of [`SceneDraw`] items into balanced contiguous slices for parallel
+    /// command buffer recording (Optimization #76-80).
+    #[must_use]
+    pub fn partition_draw_slices<'a>(
+        draws: &'a [SceneDraw<'a>],
+        max_partitions: usize,
+    ) -> Vec<&'a [SceneDraw<'a>]> {
+        command_buffer::partition_work_slices(draws, max_partitions)
+    }
+
+    /// Records multiple independent GPU passes on thread-local command encoders and submits
+    /// them in deterministic order via a single `queue.submit` call (Optimization #76-80).
+    ///
+    /// # Errors
+    /// Propagates the first pass recording error before submitting any work to the queue.
+    pub fn record_parallel_passes<F, E>(&self, passes: Vec<(&str, F)>) -> Result<usize, E>
+    where
+        F: FnOnce(&mut wgpu::CommandEncoder) -> Result<(), E> + Send,
+        E: Send,
+    {
+        let recorder = command_buffer::ParallelCommandRecorder::new();
+        self.record_parallel_passes_with_threads(recorder.max_threads(), passes)
+    }
+
+    /// Records multiple independent GPU passes capped at `max_threads` worker threads and
+    /// submits them in deterministic order via a single `queue.submit` call.
+    ///
+    /// # Errors
+    /// Propagates the first pass recording error before submitting any work to the queue.
+    pub fn record_parallel_passes_with_threads<F, E>(
+        &self,
+        max_threads: usize,
+        passes: Vec<(&str, F)>,
+    ) -> Result<usize, E>
+    where
+        F: FnOnce(&mut wgpu::CommandEncoder) -> Result<(), E> + Send,
+        E: Send,
+    {
+        command_buffer::ParallelCommandRecorder::with_max_threads(max_threads).record_and_submit(
+            &self.device,
+            &self.queue,
+            passes,
+        )
     }
 }
 fn validate_size(device: &wgpu::Device, width: u32, height: u32) -> Result<(), RendererError> {

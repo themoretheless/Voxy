@@ -10,6 +10,27 @@ pub(super) fn export_input(requests:&[HairResponseSystem],columns:&[Vec<f64>],
     export_input_to(&path,requests,columns,bounds,effective,tolerance,refinement,false);
 }
 
+/// Opt-in last-entered operator capture, before a potentially expensive solve.
+/// Unlike slow-result capture this remains available while QR is still working.
+/// Serialization shares the capture lock and never changes the input operator.
+pub(super) fn export_entry_input(requests:&[HairResponseSystem],columns:&[Vec<f64>],
+    bounds:&[f64],effective:&[f64],tolerance:f64,refinement:usize) {
+    let Some(path)=std::env::var_os("VOXY_HAIR_QR_ENTRY_INPUT_EXPORT") else {return;};
+    let width=columns.first().map_or(0,Vec::len);
+    let minimum=|name|std::env::var(name).ok().and_then(|v|v.parse::<usize>().ok()).unwrap_or(0);
+    if width<minimum("VOXY_HAIR_QR_ENTRY_MIN_COORDINATES")||columns.len()<minimum("VOXY_HAIR_QR_ENTRY_MIN_ROWS") {return;}
+
+    // External profilers must see a complete operator, never a half-written one.
+    static ENTRY_LOCK:std::sync::Mutex<()>=std::sync::Mutex::new(());
+    let _entry=ENTRY_LOCK.lock().unwrap_or_else(|e|e.into_inner());
+    let mut pending=path.clone();pending.push(".pending");
+    if export_input_to(&pending,requests,columns,bounds,effective,tolerance,refinement,false) {
+        if let Err(error)=std::fs::rename(&pending,&path) {
+            eprintln!("HAIR QR ENTRY INPUT PUBLISH ERROR {error}");
+        }
+    }
+}
+
 /// Capture the first slow operator once; retain immutable physical loads and
 /// original/effective bounds, not only the compressed QR matrix.
 pub(super) fn export_profile_input(requests:&[HairResponseSystem],columns:&[Vec<f64>],

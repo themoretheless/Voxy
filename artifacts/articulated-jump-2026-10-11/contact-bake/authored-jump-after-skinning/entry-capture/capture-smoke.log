@@ -1,0 +1,7 @@
+
+running 1 test
+HAIR QR INPUT EXPORT "/tmp/voxy-qr-entry-smoke.vqc" systems=2 rows=2 refinement=0
+test hair::contact::velocity_contacts::tests::joint_position_projection_resolves_wall_and_pair_without_moving_roots_or_velocities ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 438 filtered out; finished in 0.00s
+

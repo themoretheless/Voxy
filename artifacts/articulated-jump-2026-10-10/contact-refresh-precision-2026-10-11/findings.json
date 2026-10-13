@@ -1,0 +1,14 @@
+{
+  "rod": 409,
+  "segment": 19,
+  "nearest_face": 59447,
+  "nearest_feature": "Edge(1,2)",
+  "static_same_pose_repeat_stable": true,
+  "unstable_row_trajectory_time": 1.0,
+  "before_maximum_depth_m": 6.337812851367722e-08,
+  "trial_maximum_depth_m": 6.362593451281586e-08,
+  "trial_static_depth_m": 6.337811861097068e-08,
+  "trial_point_distance_depth_m": 6.337811863083004e-08,
+  "scope": "native static/trajectory discrepancy reproduced; offending trajectory face and closest-point/feature branch consistency require next inspection",
+  "oss_reference": "IPC Toolkit pinned distance_type.cpp, edge_edge.cpp, line_line.cpp; source review only, no runtime or parity claim"
+}

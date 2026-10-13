@@ -1,0 +1,24 @@
+{
+  "status": "lazy exact feature reuse correctness qualified",
+  "change": "Triangle normal and edge directions shared within each exact time query; squared edge lengths and normal length cached lazily with local OnceCell. Segment pair endpoint projections reuse the directions and squared lengths already computed for interior candidates.",
+  "oracle": "Original world-coordinate feature functions retained only under cfg(test), independently compared at 33 captured times and 108 translated moving/static/degenerate queries.",
+  "targeted_passed": 28,
+  "ordinary_passed": 407,
+  "ordinary_ignored": 60,
+  "non_test_release_check": "passed with 7 existing warnings",
+  "direction_audit": {
+    "passed": true,
+    "descending_feasible_samples": 2
+  },
+  "benchmark": {
+    "reference_median_ms": 186.405875,
+    "prepared_median_ms": 172.647833,
+    "ratio": 1.0796884719659354,
+    "scope": "33 exact axis queries; alternating order in one process, five warm samples; large load outliers; not a stable full-certificate/frame/FPS speed claim"
+  },
+  "initial_benchmark": "Eager feature preparation had no measured gain (ratio 0.97063); retained log for qualification history.",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_triangle_exact_discovery.rs": "eaf06c23281e144ce7ff363aec42760014e48d228de2f221e1dd6a3f8de8766e"
+  },
+  "limits": "Live full wrapper predates relative/triangle reuse. It remains active and rejects SOC candidates; full cycle convergence and FPS remain unqualified."
+}

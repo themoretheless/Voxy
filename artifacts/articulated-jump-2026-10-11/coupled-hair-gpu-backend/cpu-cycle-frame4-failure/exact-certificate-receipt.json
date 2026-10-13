@@ -1,0 +1,15 @@
+{
+  "status": "single-primitive continuous certificate independently verified",
+  "method": "Exact rational power-to-Bernstein builder; independent direct Bernstein product/elevation verifier",
+  "intervals": 17,
+  "visited_intervals": 33,
+  "max_depth": 16,
+  "builder_seconds": 0.232756791,
+  "files": {
+    "rational_polynomial_certificate.py": "2131db8f9b87183b46071367d3d109281e47e5555d7245fbb0d66792b1709a16",
+    "verify_rational_certificate.py": "9b2a8058a9a0b39553e5c51643008fbe84934bfb21ed9c267a162ae31ec1a733",
+    "rational-polynomial-certificate.json": "5e4d010fc876c46a1700cfc675ab7b694d89944b90cd32acf29988ffbdae7d5f",
+    "rational-certificate-verification.json": "bfd86d72783c3dc86c15982cd16fc452770c21cb64663721516e104441651dba"
+  },
+  "limits": "Original radius/tolerance and entire exact affine path for one segment/face; no production Rust implementation, whole-mesh/groom, tangent completion, frame or FPS qualification"
+}

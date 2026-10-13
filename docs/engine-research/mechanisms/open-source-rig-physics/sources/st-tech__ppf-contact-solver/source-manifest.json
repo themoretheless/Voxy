@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/st-tech/ppf-contact-solver",
+  "commit": "618f85b667b7f211f762908690bc46f65b578ae0",
+  "files": [
+    {
+      "path": "crates/ppf-cts-solver/src/driver/step.rs",
+      "url": "https://raw.githubusercontent.com/st-tech/ppf-contact-solver/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/driver/step.rs",
+      "sha256": "4755779c5aa1f661efda28108d08771a947625d7d276ba3442607800f06c3529"
+    },
+    {
+      "path": "crates/ppf-cts-solver/src/kernels/energy/model/rod_bend.kernel.cpp",
+      "url": "https://raw.githubusercontent.com/st-tech/ppf-contact-solver/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/kernels/energy/model/rod_bend.kernel.cpp",
+      "sha256": "adc939e99b44dbc302ab906e5d24ef718ba9c5d130d57c327068aeeb56a97b63"
+    },
+    {
+      "path": "crates/ppf-cts-solver/src/kernels/energy/rod_force.kernel.cpp",
+      "url": "https://raw.githubusercontent.com/st-tech/ppf-contact-solver/618f85b667b7f211f762908690bc46f65b578ae0/crates/ppf-cts-solver/src/kernels/energy/rod_force.kernel.cpp",
+      "sha256": "d00b802f66202fb8e85d7ae89e90aa3bad0796dd9466d08639f135d0c7d96d38"
+    }
+  ]
+}

@@ -7,6 +7,8 @@ rust-version.workspace = true
 
 [features]
 default = []
+experimental-strand-fraction-reuse = ["physics/experimental-strand-fraction-reuse"]
+experimental-reusable-query-workers = ["physics/experimental-reusable-query-workers"]
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
 
 [dependencies]
@@ -15,6 +17,8 @@ voxy_core = { path = "../voxy_core" }
 voxy_editor = { path = "../voxy_editor" }
 voxy_assets = { path = "../voxy_assets" }
 voxy_input = { path = "../voxy_input" }
+blake3 = "1.8"
+serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["float_roundtrip"] }
 physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
@@ -23,6 +27,7 @@ glam = "0.33.6"
 voxy_animation = { path = "../voxy_animation" }
 voxy_text = { path = "../voxy_text" }
 voxy_rush = { path = "../voxy_rush", features = ["physics-events"] }
+voxy_gameplay = { path = "../voxy_gameplay" }
 voxy_scene = { path = "../voxy_scene" }
 voxy_render = { path = "../voxy_render" }
 voxy_gpu = { path = "../voxy_gpu" }

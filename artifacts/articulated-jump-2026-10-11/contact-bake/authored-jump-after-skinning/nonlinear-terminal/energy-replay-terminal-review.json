@@ -1,0 +1,23 @@
+{
+  "status": "terminal reproduced nonconvergence",
+  "pid": 84580,
+  "session": 65841,
+  "exit": 101,
+  "elapsed_seconds": 1671.78,
+  "work_budgets": [
+    {
+      "line": 6397,
+      "attempts": 1024,
+      "accepted_steps": 128,
+      "attempts_at_pose": 0,
+      "accepted_step_limit": 128,
+      "fixed_pose_attempt_limit": 128
+    }
+  ],
+  "energy_trials": 1144,
+  "residual_descents_hidden_by_total_energy": 351,
+  "replay_sha256": "4ecf1f958be9b181ac6ef9df10ab4096dbdddd3e9d4524b621fe0ffafaca98c6",
+  "scope": "saved terminal pose reproduces same error category; caches/model history rebuilt, not bitwise original full trajectory",
+  "next_requirement": "correct constrained nonlinear direction and independently qualify energy, geometry, trajectory, strain and full coupled cycle",
+  "physical_fix_verified": false
+}

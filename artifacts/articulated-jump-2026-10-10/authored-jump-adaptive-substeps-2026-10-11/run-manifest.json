@@ -1,0 +1,13 @@
+{
+  "binary_sha256": "0bd9e03205e44d7d5dabc6a140bfabafb3b2090605f2cb068723beb4969c29b4",
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "aa56a1d474ae1061f48564c852a6d7cf891a5f0fc2140712f8f930ee1b4576cf",
+    "crates/voxy_app/src/female_hair.rs": "137913add689c14a3651546dc119a39196771bbe0139e5171f8ad99dab6b297c",
+    "crates/physics/src/hair/contact_swept_constraints.rs": "409032df3aba5ce045c25772ebc7b2eae20ad542a1f09c43071196ceba2d6736",
+    "crates/physics/src/hair/contact_safe_motion.rs": "05300096bd1cef67400d905bd494ddc1573a3c7f73e67dc9dde46d787f5c434d",
+    "crates/physics/src/hair/velocity_contacts.rs": "c41f19879918f7ee93a0708b68aa1ffc1a2f583f9cc21324e915a77c2a3d1021",
+    "crates/physics/src/hair/contact_response_batches.rs": "6ef67297cd781f6ca24ce4a70567a64065742f819c0b1f35bab182dac5e6cd92"
+  },
+  "scope": "actual 720-frame coupled CPU qualification with bounded temporal refinement and parallel witnesses; no FPS claim",
+  "frozen_binary_path": "/tmp/voxy-adaptive-contact-qualified-runtime.bin"
+}

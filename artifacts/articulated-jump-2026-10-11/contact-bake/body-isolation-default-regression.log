@@ -1,0 +1,14 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=1 occupied=53807 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=1 base_vertices=78278 appended_vertices=93217 max_u8_error=0 skeletal_diagnostic=false zero_actor_diagnostic=false
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=31 occupied=52999 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=31 base_vertices=78278 appended_vertices=93217 max_u8_error=0 skeletal_diagnostic=false zero_actor_diagnostic=false
+CPU NORMAL RESTORE vertices=171495 bitwise=true
+test female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 363 filtered out; finished in 3.83s
+

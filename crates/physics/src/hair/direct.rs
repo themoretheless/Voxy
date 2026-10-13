@@ -6,10 +6,40 @@ pub(super) const BAND: usize = 9;
 mod contact_active_set;
 #[path = "direct_energy.rs"]
 mod energy;
+pub(super) fn structural_energy(rod:&HairRod,dt:f64)->Result<f64, &'static str> {
+    energy::structural(rod,dt)
+}
+
+pub(super) fn structural_delta(rod:&HairRod,x:&[V],q:&[Q],dt:f64)->Result<f64, &'static str> {
+    energy::structural_delta(rod,x,q,dt)
+}
+
+#[cfg(test)]
+pub(super) fn structural_delta_parts(rod:&HairRod,x:&[V],q:&[Q],dt:f64)->Result<[f64;2], &'static str> {
+    energy::structural_delta_parts(rod,x,q,dt)
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn lower_factored_retains_small_response_between_large_terms() {
+        let mut factor=vec![0.;3*BAND];for i in 0..3 {factor[i*BAND]=1.;}
+        factor[2*BAND+2]=1e16;factor[2*BAND+1]=-1e16;
+        let mut response=vec![1.,1.,1.];
+        solve_lower_factored(&factor,&mut response,0..3);
+        assert_eq!(response,vec![1.,1.,1.]);
+    }
+
+    #[test]
+    fn upper_factored_retains_small_response_between_large_terms() {
+        let mut factor=vec![0.;3*BAND];for i in 0..3 {factor[i*BAND]=1.;}
+        factor[BAND+1]=1e16;factor[2*BAND+2]=-1e16;
+        let mut response=vec![1.,1.,1.];
+        solve_upper_factored(&factor,&mut response,0..3);
+        assert_eq!(response,vec![1.,1.,1.]);
+    }
+
 
     #[test]
     fn separated_contact_within_active_tolerance_has_no_attractive_force() {
@@ -198,19 +228,29 @@ pub(super) fn solve_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::
 pub(super) fn solve_lower_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
     let first=active.start;let end=active.end;
     for i in first..end {
-        for j in i.saturating_sub(BAND - 1).max(first)..i {
-            rhs[i] -= matrix[i * BAND + i - j] * rhs[j];
-        }
-        rhs[i] /= matrix[i * BAND];
+        rhs[i]=subtract_factored_products(rhs[i],
+            (i.saturating_sub(BAND-1).max(first)..i).map(|j|(matrix[i*BAND+i-j],rhs[j])))
+            /matrix[i*BAND];
     }
+}
+// Both triangular halves use the same compensated original-equation residual.
+fn subtract_factored_products(initial:f64,products:impl Iterator<Item=(f64,f64)>)->f64 {
+    let mut sum=initial;let mut correction=0.;
+    for (axis,value) in products {
+        let product= -axis*value;let next=sum+product;
+        correction+=if sum.abs()>=product.abs() {(sum-next)+product} else {(product-next)+sum};
+        correction+=(-axis).mul_add(value,-product);sum=next;
+    }
+    sum+correction
 }
 pub(super) fn solve_upper_factored(matrix: &[f64], rhs: &mut [f64], active: std::ops::Range<usize>) {
     let first=active.start;let end=active.end;
     for i in (first..end).rev() {
-        for j in i + 1..(i + BAND).min(end) {
-            rhs[i] -= matrix[j * BAND + j - i] * rhs[j];
-        }
-        rhs[i] /= matrix[i * BAND];
+        // Retain cancellation in the original triangular equation before
+        // rounding the response; contact clearances can be below a dot ulp.
+        rhs[i]=subtract_factored_products(rhs[i],
+            (i+1..(i+BAND).min(end)).map(|j|(matrix[j*BAND+j-i],rhs[j])))
+            /matrix[i*BAND];
     }
 }
 pub(super) fn assemble(rod: &mut HairRod, dt: f64) -> Result<(Vec<f64>, Vec<f64>), &'static str> {

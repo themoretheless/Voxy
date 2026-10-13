@@ -1,0 +1,3 @@
+{
+  "scope": "After explicit turn interruption: prior tool handles missing and process inventory has no prior executable; no terminal result exists. Original log retained through iteration79. Not a test pass or numerical failure."
+}

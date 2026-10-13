@@ -1,0 +1,12 @@
+                effective_bounds[i] = if accumulated {
+                    // Experimental residual correction of the complete physical
+                    // map, including coordinate decode and triangular rounding.
+                    // Slack inactive constraints must not become equalities.
+                    if reaction>0.||gap<0. {square_root_qr::accurate_products([(previous_effective,1.),(-gap,1.)].into_iter())}
+                    else {previous_effective}
+                } else {
+                    square_root_qr::accurate_products(
+                        requests.iter().zip(&responses).flat_map(|(r,x)|r.loads[i].iter().copied().zip(x.iter().copied()).map(|(a,b)|(-a,b)))
+                        .chain(columns[i].iter().copied().zip(coordinates.iter().copied()))
+                        .chain(std::iter::once((bounds[i],1.))))
+                };

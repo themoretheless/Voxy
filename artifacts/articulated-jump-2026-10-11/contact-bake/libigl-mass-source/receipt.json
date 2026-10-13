@@ -1,0 +1,16 @@
+{
+  "repository": "libigl/libigl",
+  "commit": "7100764c2a2833284a8bdfa9b948d2b3bf124624",
+  "files": [
+    {
+      "path": "include/igl/massmatrix_intrinsic.cpp",
+      "url": "https://raw.githubusercontent.com/libigl/libigl/7100764c2a2833284a8bdfa9b948d2b3bf124624/include/igl/massmatrix_intrinsic.cpp",
+      "sha256": "860c2d7727029b1187b83f08fce4c1c8c16762f0471ef8395b3363b73af4451a"
+    },
+    {
+      "path": "LICENSE.MPL2",
+      "url": "https://raw.githubusercontent.com/libigl/libigl/7100764c2a2833284a8bdfa9b948d2b3bf124624/LICENSE.MPL2",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    }
+  ]
+}

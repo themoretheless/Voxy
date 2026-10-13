@@ -1,0 +1,47 @@
+{
+  "scope": "single-host geometric witness activation; three alternating repeats per capture under concurrent load; no total FPS claim",
+  "captures": [
+    {
+      "capture": 0,
+      "serial_median_seconds": 0.076949792,
+      "parallel_median_seconds": 0.01660025,
+      "median_speedup": 4.635459827412237,
+      "paired_parallel_wins": 3
+    },
+    {
+      "capture": 1,
+      "serial_median_seconds": 0.1063445,
+      "parallel_median_seconds": 0.054464916,
+      "median_speedup": 1.952532158499978,
+      "paired_parallel_wins": 1
+    },
+    {
+      "capture": 2,
+      "serial_median_seconds": 0.187426917,
+      "parallel_median_seconds": 0.100086916,
+      "median_speedup": 1.8726415448748566,
+      "paired_parallel_wins": 2
+    },
+    {
+      "capture": 3,
+      "serial_median_seconds": 0.194453,
+      "parallel_median_seconds": 0.059420125,
+      "median_speedup": 3.272510786539072,
+      "paired_parallel_wins": 3
+    },
+    {
+      "capture": 4,
+      "serial_median_seconds": 0.094575375,
+      "parallel_median_seconds": 0.029626584,
+      "median_speedup": 3.1922470373229666,
+      "paired_parallel_wins": 2
+    },
+    {
+      "capture": 5,
+      "serial_median_seconds": 0.065840542,
+      "parallel_median_seconds": 0.049422167,
+      "median_speedup": 1.332206699880238,
+      "paired_parallel_wins": 3
+    }
+  ]
+}

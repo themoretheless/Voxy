@@ -1,0 +1,6 @@
+{
+  "pid": 57242,
+  "command": "/tmp/voxy-frame4-prefix-gates-99c9c50fc9c8/physics-replay captured_contact_reaches_feasible_geometry --ignored --nocapture",
+  "reason": "replace diagnostic with endpoint residual preservation fix; preserve logs and baseline comparison",
+  "requested_unix_s": 1791765446.27826
+}

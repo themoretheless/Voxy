@@ -1,0 +1,407 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+HAIR NONLINEAR MERIT iteration=0 before=2.5140254486524193e-10 full=6.621420131241089e-11 accepted=6.621420131241089e-11 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=false unresolved=true worst_gap_m=Some(-3.4115950847186008e-6)
+HAIR NONLINEAR MERIT iteration=1 before=6.621420131241089e-11 full=6.617383489299978e-15 accepted=6.617383489299978e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=false unresolved=true worst_gap_m=Some(-3.34089444362762e-8)
+HAIR NONLINEAR MERIT iteration=2 before=6.617383489299978e-15 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-5.436698061379631e-13)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.3571801034100644e-7 full=5.81061124059049e-14 accepted=5.81061124059049e-14 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.411305326990999e-7)
+HAIR CONTACT APPROACH MODEL iteration=1 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=2 before=5.81061124059049e-14 full=4.116400244871332e-19 accepted=4.116400244871332e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.415917896038985e-10)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=4 before=4.116400244871332e-19 full=4.1784205225881566e-22 accepted=4.1784205225881566e-22 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=4 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.2044118519701868e-10)
+HAIR NONLINEAR MERIT iteration=5 before=4.1784205225881566e-22 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-2.679902066619893e-16)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.946195504891046e-6 full=9.277249797812733e-10 accepted=9.277249797812733e-10 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.045867503858321e-5)
+HAIR NONLINEAR MERIT iteration=1 before=9.277249797812733e-10 full=3.9757726125330275e-13 accepted=3.9757726125330275e-13 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.306290367213073e-7)
+HAIR NONLINEAR MERIT iteration=2 before=3.9757726125330275e-13 full=4.1176193652479025e-19 accepted=4.1176193652479025e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.416867900500915e-10)
+HAIR NONLINEAR MERIT iteration=3 before=4.1176193652479025e-19 full=4.2056441014520467e-22 accepted=4.2056441014520467e-22 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.2050766710635817e-10)
+HAIR NONLINEAR MERIT iteration=4 before=4.2056441014520467e-22 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=4 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.0780689837591195e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.955104194681679e-6 full=9.277222793860321e-10 accepted=9.277222793860321e-10 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.0458630709569107e-5)
+HAIR NONLINEAR MERIT iteration=1 before=9.277222793860321e-10 full=3.974400507377532e-13 accepted=3.974400507377532e-13 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.305202212385158e-7)
+HAIR NONLINEAR MERIT iteration=2 before=3.974400507377532e-13 full=4.1188389118746066e-19 accepted=4.1188389118746066e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.417818096420781e-10)
+HAIR NONLINEAR MERIT iteration=3 before=4.1188389118746066e-19 full=4.1858155737684217e-22 accepted=4.1858155737684217e-22 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.2045926580737545e-10)
+HAIR NONLINEAR MERIT iteration=4 before=4.1858155737684217e-22 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=4 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.2476292557566e-16)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.9538946499796645e-6 full=9.277222791125697e-10 accepted=9.277222791125697e-10 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.0458630705079995e-5)
+HAIR NONLINEAR MERIT iteration=1 before=9.277222791125697e-10 full=3.9748050328759297e-13 accepted=3.9748050328759297e-13 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.305523042207819e-7)
+HAIR NONLINEAR MERIT iteration=2 before=3.9748050328759297e-13 full=4.1174427402641633e-19 accepted=4.1174427402641633e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.416730273483656e-10)
+HAIR NONLINEAR MERIT iteration=3 before=4.1174427402641633e-19 full=4.2168205505141214e-22 accepted=4.2168205505141214e-22 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.2053489846703441e-10)
+HAIR NONLINEAR MERIT iteration=4 before=4.2168205505141214e-22 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=4 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.1149309053784808e-16)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.954021284447673e-6 full=9.277222782197455e-10 accepted=9.277222782197455e-10 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.045863069042363e-5)
+HAIR NONLINEAR MERIT iteration=1 before=9.277222782197455e-10 full=3.9743805503913533e-13 accepted=3.9743805503913533e-13 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.305186384045291e-7)
+HAIR NONLINEAR MERIT iteration=2 before=3.9743805503913533e-13 full=4.1188389118746066e-19 accepted=4.1188389118746066e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.417818096420781e-10)
+HAIR NONLINEAR MERIT iteration=3 before=4.1188389118746066e-19 full=4.185815778067553e-22 accepted=4.185815778067553e-22 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.204592663066581e-10)
+HAIR NONLINEAR MERIT iteration=4 before=4.185815778067553e-22 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=4 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.2366458070927533e-16)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.954007628041795e-6 full=9.277222794595417e-10 accepted=9.277222794595417e-10 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.04586307107758e-5)
+HAIR NONLINEAR MERIT iteration=1 before=9.277222794595417e-10 full=3.974408726748169e-13 accepted=3.974408726748169e-13 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.30520873361754e-7)
+HAIR NONLINEAR MERIT iteration=2 before=3.974408726748169e-13 full=4.1176193932412995e-19 accepted=4.1176193932412995e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.416867922313268e-10)
+HAIR NONLINEAR MERIT iteration=3 before=4.1176193932412995e-19 full=4.205643067335854e-22 accepted=4.205643067335854e-22 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.2050766458506637e-10)
+HAIR NONLINEAR MERIT iteration=4 before=4.205643067335854e-22 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=4 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-2.2065469388118423e-16)
+test female_demo::authored_jump_integration_tests::authored_jump_full_coupled_cycle_qualification has been running for over 60 seconds
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=8.861843661466313e-7 full=4.07496454701501e-8 accepted=4.07496454701501e-8 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.00020186030778117988)
+HAIR NONLINEAR MERIT iteration=1 before=4.07496454701501e-8 full=4.426101816140008e-9 accepted=4.426101816140008e-9 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-5.310049950119355e-5)
+HAIR NONLINEAR MERIT iteration=2 before=4.426101816140008e-9 full=4.07768877978172e-8 accepted=4.31222561991103e-9 scale=1.0731499245782165e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-4.7402561078874996e-5)
+HAIR NONLINEAR MERIT iteration=3 before=4.31222561991103e-9 full=3.51707735194746e-17 accepted=3.51707735194746e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.029487164095073e-9)
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=5 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=6 before=3.51707735194746e-17 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=6 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-2.7073172561212576e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=3.980419786231647e-8 full=2.1817650354791746e-12 accepted=2.1817650354791746e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.4768379083603476e-6)
+HAIR NONLINEAR MERIT iteration=1 before=2.1817650354791746e-12 full=6.454746597642213e-12 accepted=1.2185328694793862e-12 scale=2.5262975219171063e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.1037206779982464e-6)
+HAIR NONLINEAR MERIT iteration=2 before=1.2185328694793862e-12 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-2.697615972201777e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=3.980649837035602e-8 full=6.455757025540888e-12 accepted=6.455757025540888e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.5407193361211574e-6)
+HAIR NONLINEAR MERIT iteration=1 before=6.455757025540888e-12 full=2.1870278284364994e-12 accepted=2.1870278284364994e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.4789603140379754e-6)
+HAIR CONTACT APPROACH MODEL iteration=2 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=3 before=2.1870278284364994e-12 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-3.26487918626091e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=3.539190169345703e-8 full=6.4547537228116035e-12 accepted=6.4547537228116035e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.5407193554339546e-6)
+HAIR NONLINEAR MERIT iteration=1 before=6.4547537228116035e-12 full=2.1870278295372922e-12 accepted=2.1870278295372922e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.4789603144101515e-6)
+HAIR NONLINEAR MERIT iteration=2 before=2.1870278295372922e-12 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-3.264892718596824e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=3.539190169485413e-8 full=6.454753723104858e-12 accepted=6.454753723104858e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.54071935549174e-6)
+HAIR NONLINEAR MERIT iteration=1 before=6.454753723104858e-12 full=2.1870278291525793e-12 accepted=2.1870278291525793e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.4789603142800807e-6)
+HAIR NONLINEAR MERIT iteration=2 before=2.1870278291525793e-12 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-3.264892980485822e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=3.539190169081074e-8 full=6.454753722794211e-12 accepted=6.454753722794211e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.5407193554305317e-6)
+HAIR NONLINEAR MERIT iteration=1 before=6.454753722794211e-12 full=2.1870278294621993e-12 accepted=2.1870278294621993e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.4789603143847628e-6)
+HAIR NONLINEAR MERIT iteration=2 before=2.1870278294621993e-12 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-3.2648812007660537e-11)
+AUTHORED FULL CYCLE frame=1/720 time_s=0.008333333333333333 elapsed_ms=57412.504 skin_ms=261.825 hair_ms=57406.690
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.852761320999652e-7 full=7.977801325475958e-7 accepted=1.634392116050757e-7 scale=2.6698468497716366e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-0.0002654012073995264)
+HAIR NONLINEAR MERIT iteration=1 before=1.634392116050757e-7 full=1.98070938869709e-10 accepted=1.98070938869709e-10 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.394610513145946e-5)
+HAIR CONTACT APPROACH MODEL iteration=2 added_rows=13 added_pairs=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=3 before=1.98070938869709e-10 full=4.169714361268553e-15 accepted=4.169714361268553e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-5.656321000529269e-8)
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=5 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=6 before=4.169714361268553e-15 full=1.8883906300834262e-17 accepted=1.8883906300834262e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=6 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.6201557052420684e-9)
+HAIR CONTACT APPROACH MODEL iteration=7 added_rows=1 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=8 before=1.8883906300834262e-17 full=3.142856667929421e-19 accepted=3.142856667929421e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=8 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.6061186822341e-10)
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=3 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=10 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=11 before=3.142856667929421e-19 full=4.2396397947628664e-21 accepted=4.2396397947628664e-21 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=11 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.6511251642167477e-10)
+HAIR CONTACT APPROACH MODEL iteration=12 added_rows=2 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=14 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=16 before=4.2396397947628664e-21 full=8.328439198923094e-21 accepted=8.964058202837162e-24 scale=4.201112470857438e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=16 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.0299400370788635e-10)
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=19 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=20 before=8.964058202837162e-24 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=20 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-4.71637033943051e-14)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=8.8770056088402e-7 full=1.4206353780310622e-7 accepted=1.4206353780310622e-7 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.0003404213588656246)
+HAIR NONLINEAR MERIT iteration=1 before=1.4206353780310622e-7 full=1.7375480182578862e-7 accepted=7.668609576380764e-8 scale=4.5111619842856376e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-0.00018680176573253375)
+HAIR NONLINEAR MERIT iteration=2 before=7.668609576380764e-8 full=3.8721541190657495e-12 accepted=3.8721541190657495e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.9579196457855552e-6)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=7 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=3.8721541190657495e-12 full=1.831740023813879e-15 accepted=1.831740023813879e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.865073686029432e-8)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=7 before=1.831740023813879e-15 full=9.382700828051081e-17 accepted=9.382700828051081e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=7 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-9.640529892113661e-9)
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=10 before=9.382700828051081e-17 full=5.341234801697072e-18 accepted=5.341234801697072e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=10 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.406551226946953e-9)
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=12 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=14 before=5.341234801697072e-18 full=2.5105081607723445e-19 accepted=2.5105081607723445e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=14 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.010497141773802e-10)
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=2 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=16 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=19 before=2.5105081607723445e-19 full=1.1174471047463482e-20 accepted=1.1174471047463482e-20 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=19 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.930781619392848e-10)
+HAIR CONTACT APPROACH MODEL iteration=20 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=22 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=23 before=1.1174471047463482e-20 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.735960370200222e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=8.874355840618495e-7 full=1.4206827644247275e-7 accepted=1.4206827644247275e-7 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.00034042962279260997)
+HAIR NONLINEAR MERIT iteration=1 before=1.4206827644247275e-7 full=1.736751105631929e-7 accepted=7.667034250155255e-8 scale=4.512359486457656e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-0.00018676539315169062)
+HAIR NONLINEAR MERIT iteration=2 before=7.667034250155255e-8 full=3.870499278289151e-12 accepted=3.870499278289151e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.957479577164921e-6)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=7 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=3.870499278289151e-12 full=1.831656178204319e-15 accepted=1.831656178204319e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.864814417206084e-8)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=7 before=1.831656178204319e-15 full=9.380133659328263e-17 accepted=9.380133659328263e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=7 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-9.639163120339108e-9)
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=10 before=9.380133659328263e-17 full=5.339466893897831e-18 accepted=5.339466893897831e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=10 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.4061673820298153e-9)
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=12 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=14 before=5.339466893897831e-18 full=2.5106560588703135e-19 accepted=2.5106560588703135e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=14 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.010644727847219e-10)
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=2 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=16 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=19 before=2.5106560588703135e-19 full=1.1169524558162956e-20 accepted=1.1169524558162956e-20 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=19 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.9304566630903384e-10)
+HAIR CONTACT APPROACH MODEL iteration=20 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=22 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=23 before=1.1169524558162956e-20 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.7356633359923688e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=8.874359236407162e-7 full=1.4206863503680737e-7 accepted=1.4206863503680737e-7 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.0003404213666958376)
+HAIR NONLINEAR MERIT iteration=1 before=1.4206863503680737e-7 full=1.7367511364843227e-7 accepted=7.667035506921252e-8 scale=4.512760874907526e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-0.00018674730498037452)
+HAIR NONLINEAR MERIT iteration=2 before=7.667035506921252e-8 full=3.8723881593414516e-12 accepted=3.8723881593414516e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.9579605344638186e-6)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=6 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=3.8723881593414516e-12 full=1.8313720372609452e-15 accepted=1.8313720372609452e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.8644495998747706e-8)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=7 before=1.8313720372609452e-15 full=9.380102258193222e-17 accepted=9.380102258193222e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=7 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-9.638945707665225e-9)
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=10 before=9.380102258193222e-17 full=5.338874251362782e-18 accepted=5.338874251362782e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=10 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.406038891196299e-9)
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=12 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=14 before=5.338874251362782e-18 full=2.5106183964895265e-19 accepted=2.5106183964895265e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=14 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.010607145336308e-10)
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=2 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=16 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=19 before=2.5106183964895265e-19 full=1.1151492569413436e-20 accepted=1.1151492569413436e-20 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=19 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.9297421255988033e-10)
+HAIR CONTACT APPROACH MODEL iteration=20 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=22 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=23 before=1.1151492569413436e-20 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.7354677914571787e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=8.874355582930775e-7 full=1.420682765257516e-7 accepted=1.420682765257516e-7 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.00034042962274621387)
+HAIR NONLINEAR MERIT iteration=1 before=1.420682765257516e-7 full=1.7367511050487595e-7 accepted=7.667020478094886e-8 scale=4.5127548535152473e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-0.0001867519249310342)
+HAIR NONLINEAR MERIT iteration=2 before=7.667020478094886e-8 full=3.870541373772083e-12 accepted=3.870541373772083e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.957489716000276e-6)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=6 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=3.870541373772083e-12 full=1.831486579181166e-15 accepted=1.831486579181166e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.864554996312915e-8)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=7 before=1.831486579181166e-15 full=9.380564954609534e-17 accepted=9.380564954609534e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=7 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-9.639228616001436e-9)
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=10 before=9.380564954609534e-17 full=5.33863468847167e-18 accepted=5.33863468847167e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=10 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.40598696079064e-9)
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=12 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=14 before=5.33863468847167e-18 full=2.507951612594695e-19 accepted=2.507951612594695e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=14 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.007945299815778e-10)
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=2 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=16 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=19 before=2.507951612594695e-19 full=1.1164464957721979e-20 accepted=1.1164464957721979e-20 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=19 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.9302614270275552e-10)
+HAIR CONTACT APPROACH MODEL iteration=20 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=22 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=23 before=1.1164464957721979e-20 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.7357006468873862e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=8.874359326069135e-7 full=1.420686348513864e-7 accepted=1.420686348513864e-7 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.00034042136682827775)
+HAIR NONLINEAR MERIT iteration=1 before=1.420686348513864e-7 full=1.736751136988762e-7 accepted=7.66704927369902e-8 scale=4.5123655115022676e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-0.00018676077270651358)
+HAIR NONLINEAR MERIT iteration=2 before=7.66704927369902e-8 full=3.87234675650854e-12 accepted=3.87234675650854e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.9579505671101732e-6)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=7 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=3.87234675650854e-12 full=1.8314561443628125e-15 accepted=1.8314561443628125e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.8645321325645575e-8)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=7 before=1.8314561443628125e-15 full=9.380507416337199e-17 accepted=9.380507416337199e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=7 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-9.639357397002925e-9)
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=10 before=9.380507416337199e-17 full=5.338864730145788e-18 accepted=5.338864730145788e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=10 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.4060368239910675e-9)
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=12 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=14 before=5.338864730145788e-18 full=2.5106148904544045e-19 accepted=2.5106148904544045e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=14 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-6.010603646722023e-10)
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=2 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=16 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=19 before=2.5106148904544045e-19 full=1.1176421301655757e-20 accepted=1.1176421301655757e-20 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=19 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.930887253668339e-10)
+HAIR CONTACT APPROACH MODEL iteration=20 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=22 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=23 before=1.1176421301655757e-20 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.7356819490461368e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=9.754170333181749e-7 full=4.700892214531376e-8 accepted=4.700892214531376e-8 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.00012401575716369692)
+HAIR NONLINEAR MERIT iteration=1 before=4.700892214531376e-8 full=1.731186463600566e-7 accepted=3.633192752890644e-8 scale=2.1894670127628998e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-9.685531968604294e-5)
+HAIR NONLINEAR MERIT iteration=2 before=3.633192752890644e-8 full=5.523219924513356e-13 accepted=5.523219924513356e-13 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.28039840535912e-7)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=9 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=6 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=5 added_rows=0 added_pairs=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=6 before=5.523219924513356e-13 full=3.769322418713409e-12 accepted=4.239368448179246e-13 scale=1.278206264009069e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=6 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-6.37830917454788e-7)
+HAIR CONTACT APPROACH MODEL iteration=7 added_rows=4 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=4 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=9 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=10 before=4.239368448179246e-13 full=1.0780551227427578e-13 accepted=1.0780551227427578e-13 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=10 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.873604582086387e-7)
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=8 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=12 added_rows=5 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=13 before=1.0780551227427578e-13 full=1.539271977910469e-15 accepted=1.539271977910469e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=13 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.868698760248326e-8)
+HAIR CONTACT APPROACH MODEL iteration=14 added_rows=9 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=15 before=1.539271977910469e-15 full=9.322465466530592e-17 accepted=9.322465466530592e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=15 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-9.629031541786211e-9)
+HAIR CONTACT APPROACH MODEL iteration=16 added_rows=3 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=3 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=19 before=9.322465466530592e-17 full=5.4336950463687625e-18 accepted=5.4336950463687625e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=19 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.4031858336049673e-9)
+HAIR CONTACT APPROACH MODEL iteration=20 added_rows=4 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=4 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=22 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=23 before=5.4336950463687625e-18 full=1.92115694159953e-18 accepted=1.92115694159953e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.3874857372419344e-9)
+HAIR CONTACT APPROACH MODEL iteration=24 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=25 added_rows=8 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=26 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=27 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=28 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=29 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=30 before=1.92115694159953e-18 full=1.7936595501147903e-18 accepted=1.7936595501147903e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=30 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.435226314349309e-9)
+HAIR CONTACT APPROACH MODEL iteration=31 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=32 added_rows=5 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=33 added_rows=8 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=34 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=35 before=1.7936595501147903e-18 full=1.906827154364951e-19 accepted=1.906827154364951e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=35 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.920889895561874e-10)
+HAIR CONTACT APPROACH MODEL iteration=36 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=37 added_rows=5 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=38 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=39 before=1.906827154364951e-19 full=2.199781621489874e-20 accepted=2.199781621489874e-20 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=39 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.999244274182623e-10)
+HAIR CONTACT APPROACH MODEL iteration=40 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=41 added_rows=3 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=42 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=43 before=2.199781621489874e-20 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=43 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-2.2341736323241902e-11)
+HAIR CONTACT ENTRY EXPORT path=/tmp/voxy-authored-jump-entry-capture-1791743327898.recovery-entry.vhr
+HAIR NONLINEAR MERIT iteration=0 before=2.1571581179534922e-7 full=6.693297624895321e-8 accepted=6.693297624895321e-8 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.00015215166255410392)
+HAIR NONLINEAR MERIT iteration=1 before=6.693297624895321e-8 full=7.42156354991386e-8 accepted=3.434968084955499e-8 scale=4.776373914804981e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-7.929749103333506e-5)
+HAIR NONLINEAR MERIT iteration=2 before=3.434968084955499e-8 full=1.1245667754031484e-11 accepted=1.1245667754031484e-11 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.343543640447479e-6)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=6 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=3 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=1.1245667754031484e-11 full=5.657056791225641e-9 accepted=9.111611337019429e-12 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-3.009556372240464e-6)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=9 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=7 added_rows=2 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=9 before=9.111611337019429e-12 full=5.067609510071695e-15 accepted=5.067609510071695e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=9 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-5.202891394089319e-8)
+HAIR CONTACT APPROACH MODEL iteration=10 added_rows=14 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=3 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=12 before=5.067609510071695e-15 full=2.915897296663031e-16 accepted=2.915897296663031e-16 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=12 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.1787240354180402e-8)
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=7 added_pairs=0 descent_found=true

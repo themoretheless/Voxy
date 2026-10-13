@@ -1,0 +1,14 @@
+{
+  "change": "Include exhausted joint contact nonlinear linearization in existing transactional temporal refinement, up to unchanged32 substeps",
+  "regression": "accelerator_failure_preserves_targets_collider_and_guides extended with exact reason and expected5 attempts",
+  "status": "failure regression and production check passed",
+  "source_sha256": "11e3aa35ac84437687073486c6aaf1340f59be34fe43f43d35572d72b2402b34",
+  "limits": "Partial-step regression isolates orchestration with geometry/self-contact disabled; errors injected. Actual authored full-cycle geometric convergence remains unqualified.",
+  "regression_session": 48457,
+  "regression_log": "/tmp/voxy-nonlinear-temporal-retry-regression.log",
+  "regression_result": "new nonlinear reason triggers5 bounded attempts; targets/collider/system preserved",
+  "partial_step_control": "existing swept-contact error after one structural substep retries original state and exactly matches direct finer-step native control",
+  "production_check": "passed",
+  "diff_check": "passed",
+  "partial_step_new_reason": "passed: nonlinear and swept-contact errors injected after first structural substep, retry exactly matches direct4-substep native rods/targets and preserves original configuration"
+}

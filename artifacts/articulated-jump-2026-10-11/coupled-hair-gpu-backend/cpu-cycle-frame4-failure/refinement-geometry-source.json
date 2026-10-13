@@ -1,0 +1,8 @@
+{
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "59c5cd106cd65ddbdb7be4053b4fc561c5cb98cd6467521558137d870a3d7132",
+    "crates/physics/src/hair/contact_model.rs": "2c7ba1f1dc4dc494373ea2a8dc06819235cb36bdebfed31e7f9bbc7afa5e7e69",
+    "crates/physics/src/hair/contact_replay.rs": "61d3f34f3cbf912b99e44e6571b8fa2d02ba70d44a36dc8d4c52835b3f1aaf40"
+  },
+  "scope": "source snapshot for frozen refinement-geometry physics test binary"
+}

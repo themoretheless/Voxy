@@ -1,0 +1,33 @@
+
+running 1 test
+DIRECTION ENERGY original_assembly_slope_j=-1.5489033034730647e-12
+DIRECTION ENERGY scale=1e0 changed_blocks=4773 original_potential_change_j=-1.5480995884271895e-12 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=1e0 merit=7.945649691586805e-21 strain=2.223142271788614e-2 strand_path=true mesh_path=false descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=5e-1 changed_blocks=4719 original_potential_change_j=-7.742507230956517e-13 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=5e-1 merit=1.4406370854534465e-21 strain=2.223142271788614e-2 strand_path=true mesh_path=false descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=6.25e-2 changed_blocks=4514 original_potential_change_j=-9.680331746093052e-14 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=6.25e-2 merit=1.9038619384423967e-23 strain=2.223142271788614e-2 strand_path=true mesh_path=false descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=3.90625e-3 changed_blocks=4156 original_potential_change_j=-6.050370815634237e-15 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=3.90625e-3 merit=7.292478495864662e-26 strain=2.223142271788614e-2 strand_path=true mesh_path=false descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=1.52587890625e-5 changed_blocks=2871 original_potential_change_j=-2.362624600890961e-17 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=1.52587890625e-5 merit=1.256495827830137e-30 strain=2.223142271788614e-2 strand_path=true mesh_path=false descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=5.960464477539063e-8 changed_blocks=1177 original_potential_change_j=-8.3670218873932e-20 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=5.960464477539063e-8 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=true scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=3.725290298461914e-9 changed_blocks=489 original_potential_change_j=-6.574140999869473e-21 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=3.725290298461914e-9 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=true scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=2.3283064365386963e-10 changed_blocks=137 original_potential_change_j=1.0339950154437822e-21 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=2.3283064365386963e-10 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=1.4551915228366852e-11 changed_blocks=19 original_potential_change_j=2.710316748929676e-23 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=1.4551915228366852e-11 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=9.094947017729282e-13 changed_blocks=2 original_potential_change_j=9.432322403254356e-30 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=9.094947017729282e-13 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=5.684341886080802e-14 changed_blocks=0 original_potential_change_j=0e0 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=5.684341886080802e-14 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=3.552713678800501e-15 changed_blocks=0 original_potential_change_j=0e0 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=3.552713678800501e-15 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=false scope=direction_only_not_tangent_completion
+DIRECTION ENERGY scale=2.220446049250313e-16 changed_blocks=0 original_potential_change_j=0e0 scope=energy_only_not_geometry_or_convergence
+DIRECTION GEOMETRY scale=2.220446049250313e-16 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=false scope=direction_only_not_tangent_completion
+test hair::contact::velocity_contacts::second_order_tests::captured_direction_energy_curve ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 460 filtered out; finished in 27.09s
+

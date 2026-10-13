@@ -1,0 +1,8 @@
+
+running 1 test
+captured eight-scale fresh/cached candidate-query seconds and rebuilds=[(0.04154925, 0.007676125, 1), (0.03763175, 0.006459041, 1), (0.037712708, 0.007569667, 1)]
+full-groom broad phase segments=9380 pairs=13931 one-sided/balanced hierarchy seconds=[(0.005493125, 0.005240458), (0.005361, 0.005199667), (0.00543, 0.005135792), (0.005371042, 0.005268541), (0.005338834, 0.005232709), (0.005139583, 0.005104167), (0.005321334, 0.004952667)]
+test hair::contact::continuous::hierarchy_tests::captured_full_groom_hierarchy_matches_original_sweep ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 433 filtered out; finished in 0.23s
+

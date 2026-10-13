@@ -1,0 +1,20 @@
+{
+  "binary": "/tmp/voxy-expanded-coordinate-transport-20261013-render-tests",
+  "binary_sha256": "2d9208fdd409487e1ca2841372c5aef31310a6b6166e723c80498ccce9325aa8",
+  "source_hashes": {
+    "crates/voxy_render/src/joint_contact_triple_active_codec.rs": "8956d6dc78bf17fca54fc705dac89501ade1acd10ef464e6f1e5effa542865ee",
+    "crates/voxy_render/src/joint_contact_triple_qr_tests.rs": "c1fb139e27621ebc13ef7f3483a4a2c6d4c4eae4063b1b5a126ab7a3163946b0",
+    "crates/voxy_render/src/joint_contact_triple.rs": "1777231cb8a77d83c59685df2af546c38a9eb5d5bcc2e59b94087d6256bd72f0",
+    "crates/voxy_render/src/joint_contact_dot.rs": "20b5caea8348d6f3c155e4e500a8e8683311670a7699fcaa1eaa8e993d548cc1",
+    "crates/voxy_render/src/lib.rs": "96059b36f74d3815e3482ffde1b69c4059333c7bfd93d83791989b5afcc98a30"
+  },
+  "capture_fixture_directory": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures",
+  "regular_renderer_checks": 21,
+  "legacy_actual_gpu_checks": 9,
+  "captured_gpu_snapshots_replayed": 8,
+  "regular_app_checks": 5,
+  "expanded_coordinate_gate_passes": 8,
+  "legacy_rounded_coordinate_gate_failures": 4,
+  "native_physical_precision_integration": false,
+  "physical_case100_fixed": false
+}

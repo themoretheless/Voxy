@@ -1,0 +1,14 @@
+{
+  "status": "original_physical_operator_and_single_owner_cold_retry_passed",
+  "binary_sha256": "1ea7a7c26dfc9c0aaf471a3a269c0e68778e980c0e620caa1253d4acbbf39a5b",
+  "checks": [
+    "14_original_physical_systems",
+    "changed_bounds",
+    "strict_1e-14_admission",
+    "dependent_hint_cold_retry_two_submissions"
+  ],
+  "mixed_owner_retry_status": "passed",
+  "scope": "original operators only; no coupled frame, whole cycle or FPS proof",
+  "mixed_owner_binary_sha256": "8fb3d6d5c1f8f09921c32ad821dbf0aec1f1c9edba756f93e65ff794a4536f9e",
+  "ordinary_render_tests_passed": 221
+}

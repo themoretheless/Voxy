@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "rows": 513,
+  "baseline_admitted": false,
+  "candidate_admitted": true,
+  "candidate_coordinates": "exactly 1.0",
+  "candidate_reactions": "exactly 1.0",
+  "production_change": "iteration limit max(512, number_of_rows + 1)",
+  "scope": "feasible independent inequalities, not frame4 authored-cycle qualification",
+  "sha256": {
+    "baseline.rs": "4860118feb37b1138a0630149e057ff9d7a597a994521c7160d243cf8d24590a",
+    "candidate.rs": "b841e82e909cb580c984d1c3dce8ba55745483df206ec0a6ecfbe82e676e2b2f",
+    "probe.rs": "4e4e9a0a6b6a8ca71092339469e2095a1eb779f5312afed85284250c1b768a01",
+    "probe-candidate.rs": "be378731bc9b5c19a06046175546f6999a6f8e7f54492aa0b7e2c67cae102e37"
+  },
+  "boundary_cases": [
+    {
+      "rows": 511,
+      "baseline": true
+    },
+    {
+      "rows": 512,
+      "baseline": false,
+      "candidate": true
+    },
+    {
+      "rows": 513,
+      "baseline": false,
+      "candidate": true
+    }
+  ],
+  "physics_tests": {
+    "passed": 372,
+    "failed": 0,
+    "ignored": 41
+  }
+}

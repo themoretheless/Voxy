@@ -1,0 +1,38 @@
+{
+  "decision": "Enable existing validated identical-prefix reuse in the opt-in coupled GPU factory",
+  "invalidation_test": "passed GPU append/release changed-column/support cases",
+  "paired_actual_frame2_operator": {
+    "rows": 101,
+    "coordinates": 2016,
+    "systems": 16,
+    "pairs": 7,
+    "median_fresh_s": 0.30603,
+    "median_reuse_s": 0.169098125,
+    "maximum_response_difference": 0.0,
+    "maximum_reaction_difference": 0.0,
+    "native_fallback": false,
+    "scope": "Warmed actual captured physical projection under concurrent host/GPU work; not whole animation FPS"
+  },
+  "full_original_groom_first_frame": {
+    "result": "passed",
+    "continuous_contacts": true,
+    "guides": 469,
+    "segments": 20,
+    "coordinate_calls": 9708,
+    "dispatches": 99992,
+    "submissions": 34139,
+    "qr_columns_reused": 455937,
+    "admitted": 9708,
+    "native_fallbacks": 0,
+    "diagnostic_elapsed_s": 82.470459667
+  },
+  "production_check": {
+    "result": "passed",
+    "elapsed_s": 4.14
+  },
+  "remaining": "Full720-frame GPU cycle, rendering FPS, geometry/skin hardware migration and CUDA unqualified",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_solver.rs": "fb6fce1a3af22a35c528056ba0695acce925777fddd33c1468f1ce99cc3e2ff0",
+    "crates/voxy_app/src/female_demo.rs": "e7879130c4dbb3823f5cdcfd7ff1bd66e8671d2ffb96bb59a0e7f1d625e57b4b"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "binary": "/tmp/voxy-hair-inprocess-replay-tests",
+  "sha256": {
+    "/tmp/voxy-hair-inprocess-replay-tests": "c8edaafd7ea82924184d262161b16c39557082d9be6393cc42b358cc59b6d3cf",
+    "crates/voxy_app/src/female_hair.rs": "a7d2d76b44a7c2f7fce3c02319ee1fdfe870c9ae48cb6daf68c3dfc4e8cabcd7"
+  },
+  "checkpoint_restore_test_passed": true,
+  "full_model_failure_replay_executed": false,
+  "full_trajectory_qualified": false,
+  "rendered_fps_measured": false,
+  "final_current_source_checkpoint_test_passed": true
+}

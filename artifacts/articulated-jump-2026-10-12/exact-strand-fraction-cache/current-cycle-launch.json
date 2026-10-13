@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "pid": 96620,
+  "command": [
+    "/tmp/voxy-fraction-cache-recoveries-1791774242635260000/physics-tests",
+    "captured_contact_reaches_feasible_geometry",
+    "--ignored",
+    "--nocapture"
+  ],
+  "directory": "/tmp/voxy-fraction-cache-recoveries-1791774242635260000/current-cycle",
+  "binary_sha256": "ba2c4f57c6e970d2fed2f711a2af27fa6c945007c795bf6e0d4741f3ff3dfd36",
+  "input_sha256": "b5ea6425e244bca837608d37d302584b795325baff4d416517ecd1411bef0b39",
+  "expected_final_state_sha256": "d821122767147873299bc15ab6f96bf272e7dd919b99c97f2c31a45a38e14775",
+  "strand_fraction_reuse": true,
+  "first_stage_limit": 32,
+  "scope": "complete captured recovery with unchanged physical gates; not authored cycle or FPS",
+  "exit_code": 0,
+  "elapsed_seconds": 357.30037903785706,
+  "final_state_sha256": "d821122767147873299bc15ab6f96bf272e7dd919b99c97f2c31a45a38e14775",
+  "state_identical": true
+}

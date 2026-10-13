@@ -1,0 +1,11 @@
+{
+  "session": 50178,
+  "status": "passed",
+  "log": "direction-energy-curve.log",
+  "pose_binary": "direction-poses.vdp",
+  "source_sha256": "2ec8c90a9a4c7cf04186f3be640f81162e0b1ed844f6af7257651b98064f8470",
+  "scope": "Original implicit potential and physical assembly slope along exact full proposal and original shortened-position/quaternion interpolation; signed forward/reverse energy equality at 13 scales",
+  "limits": "Energy diagnostic only, no contact geometry, KKT convergence, full frame or FPS qualification",
+  "elapsed_seconds": 0.55,
+  "observation": "Original assembly slope agrees with actual potential decrease at resolved scales; energy changes positive at small quantized scales, then exact zero when pose stops changing"
+}

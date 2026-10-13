@@ -1,0 +1,17 @@
+{
+  "passed": 187,
+  "failed": 0,
+  "ignored": 17,
+  "scope": "stance lifetime of pending pivot requests",
+  "regression": [
+    "unanchored request rejected",
+    "airborne cancels request",
+    "landing does not replay stale request"
+  ],
+  "automatic_clip_events": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "3e2b7b06535859cf3491f2bb2e593442ec73c0d317adb9ea2d400f20f607c2a8",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "b391c2faf224f835a74e22abcff833e57c8427a3a491830a081384fd680398e7",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/pivot-cancel-tests.log": "ec6ede4e89674e23226768e2c8c220a2c6371c5fedcf8cd28f085fc98945e6b9"
+  }
+}

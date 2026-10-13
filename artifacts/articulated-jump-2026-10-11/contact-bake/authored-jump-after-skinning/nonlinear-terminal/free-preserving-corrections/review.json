@@ -1,0 +1,257 @@
+{
+  "scope": "original structural free load scaled per trial, frozen compliance, refreshed total-step rows; not full Ipopt KKT SOC",
+  "all_candidates_rejected": true,
+  "trials": [
+    {
+      "scale": 1e-05,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 3.837292566198681e-19,
+          "work_j": -1.423679528775912e-14,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 4.6856396917803347e-17,
+          "work_j": -1.626710327574531e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 3.1447573651011044e-21,
+          "work_j": -1.7693549622955764e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 4.6757106790435156e-17,
+          "work_j": -1.533850991572296e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": true,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 1.3630399004746747e-19,
+          "work_j": -1.7796863234453516e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.001,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 2.1792349622431147e-14,
+          "work_j": -1.4229995905746064e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 4.030056219835204e-13,
+          "work_j": -1.720264183459883e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 9.801085984665053e-14,
+          "work_j": -1.1636701304810253e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 6.444593659825426e-15,
+          "work_j": -1.0381481834956418e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 1.0008879268376519e-14,
+          "work_j": -1.1271159085397608e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.03125,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 4.860916582182781e-11,
+          "work_j": -4.381478534415218e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 1.1718478414946713e-09,
+          "work_j": -4.921665191068981e-10,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 5.902535709804943e-10,
+          "work_j": -3.5166547844799644e-10,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 2.5755053579427207e-10,
+          "work_j": -2.6298460364768796e-10,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 4.2582132068136503e-10,
+          "work_j": -2.7011070711065044e-10,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.125,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 9.71053029912856e-10,
+          "work_j": -1.6599999861904293e-10,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 2.8527137343372845e-08,
+          "work_j": -1.8755759649588734e-09,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 2.4409009896461743e-08,
+          "work_j": -1.1608302683010562e-09,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 1.5736912979398037e-08,
+          "work_j": -1.527958880011705e-09,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 2.1803639505927646e-08,
+          "work_j": -1.6169171433251636e-09,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 1.0,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 8.423545862892212e-08,
+          "work_j": 4.305095338637243e-09,
+          "strain": 0.0001876561431302104,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 5.413618286039014e-07,
+          "work_j": 1.1371011468895764e-07,
+          "strain": 0.0005876748800353049,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 4.850390918591149e-07,
+          "work_j": 1.429733232360399e-07,
+          "strain": 0.0005927335178701476,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 4.2716750049443803e-07,
+          "work_j": 8.27867079026239e-08,
+          "strain": 0.0005928193587594333,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 1.8074342676916908e-07,
+          "work_j": 1.224750120535868e-07,
+          "strain": 0.0005911143899410831,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    }
+  ],
+  "decision": "better energy descent at small scales does not overcome trajectory/geometry failure; no runtime adoption"
+}

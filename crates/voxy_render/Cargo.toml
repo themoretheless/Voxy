@@ -40,3 +40,9 @@ pollster = "1.0.1"
 
 [lints]
 workspace = true
+
+# Use the vendored backend's explicit numerical policy only on Apple hosts.
+# WGSL compute supplies geometry/physics data; relaxed contraction can change
+# MSAA coverage even when world-space errors are below a micrometre.
+[target.'cfg(target_vendor = "apple")'.dependencies]
+wgpu-hal = { version = "30.0.1", default-features = false, features = ["metal-safe-compute"] }

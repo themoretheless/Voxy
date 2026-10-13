@@ -1,0 +1,20 @@
+{
+  "scope": "Actual Metal draw-storage transfer regression. Native full-character rendering, all backends and FPS not qualified.",
+  "result": "passed",
+  "checks": [
+    "sparse nonidentity mapping",
+    "different diffuse and incident CPU material parity",
+    "initial no-publication no-op",
+    "corrupted incident preserves accepted colors bitwise",
+    "position UV normals and neighbouring vertices preserved",
+    "duplicate and out-of-range mappings rejected"
+  ],
+  "files": {
+    "crates/voxy_render/src/surface_light_transfer.rs": "17099952560bb4069edc22826f4ae27102b8530c24cee739456bf8b4e8671a66",
+    "crates/voxy_render/src/surface_light_transfer.wgsl": "c7d1de37b60df9b853f986c94ca7edc6e757a1573aa2c9f082ac15b2e3c2a957",
+    "crates/voxy_render/src/surface_light_transfer_tests.rs": "3c1f61e76923997b8083cad1fa8265cbbb175c9fbcfd78a5b730f72a847980bd",
+    "crates/voxy_render/src/surface_light_admission.rs": "2c038a476cc5f448e1f2d3d37cfb9d211a3b424cb1ae3ff68b32465369383548",
+    "crates/voxy_render/src/surface_light_admission.wgsl": "ec5f90bbde38e2c4346707a912e2b5a2a7e377095aad4cce6ede26141df7cacc",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-material-transfer-test.log": "266ff1bc69b0c70691fa838bb158bde9d7208882d19dbc721c358dd65fd6cccb"
+  }
+}

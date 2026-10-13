@@ -1,0 +1,4 @@
+
+thread 'main' (7209839) panicked at crates/voxy_render/examples/surface_light_material.rs:281:9:
+CPU/GPU skin material pixel error 13
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

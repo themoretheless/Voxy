@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "GPU_resident_interval": "pair forces to ordered accumulation",
+  "submission_count_per_chain": 1,
+  "staging_leases_per_chain": 1,
+  "intermediate_CPU_reads": 0,
+  "fixture_particles": 70,
+  "fixture_pairs": 2415,
+  "formulations": 3,
+  "integrated_steps": 9,
+  "native_chain_fallbacks": 0,
+  "native_tests_passed": 143,
+  "native_suites": 14,
+  "render_tests_passed": 229,
+  "render_tests_ignored": 41,
+  "whole_chain_admission": "all original force laws, then original accumulation using those forces",
+  "dynamic_input_audit": "copied force words exactly match validated upstream snapshot; remaining prefix immutable",
+  "resources": "both jobs retained and charged through normal read completion; hardware asserted",
+  "remaining": [
+    "GPU density/normal/pressure staging in the same chain",
+    "resident particle state across timesteps",
+    "production application backend wiring",
+    "performance and CUDA qualification"
+  ],
+  "fps_measured": false,
+  "sha256": {
+    "crates/physics/src/liquid.rs": "56c1e79ebdc7bb32871f3bed29225e3eb3a3574ade6bb62d78ac1d1ec7d235e6",
+    "crates/physics/src/liquid/force_pipeline_operator.rs": "325aa03e808a04bf46aaa9b0b575592e439b7e60c9c62e68ccc2a77acef6c291",
+    "crates/physics/src/liquid/density_operator.rs": "f981b0d5fdc845640b1c0ed0d3339162417fa89de7498eef9198bad53ba7454e",
+    "crates/physics/src/liquid/pair_forces.rs": "7b693421b8c37fbca841404765f0f4a06dd8de22a5c57ff57a3a51e7a806b6ad",
+    "crates/physics/tests/liquid_density_operator.rs": "f83b73b49a2e8e3246d7c3d7a7bc227551f9bcb0d1091dff1a236d7e1d71102b",
+    "crates/voxy_render/src/liquid_force_pipeline.rs": "4bceec42b4d1ce0d8e397f128998416bed01df3ce73c52bbac5f956d5c03d715",
+    "crates/voxy_render/src/liquid_pair_forces.rs": "902e9e6767a5c09a68385f5f27c04e3cd6b2472dae2d2287ab10687530dd1b6a",
+    "crates/voxy_render/src/liquid_accumulation.rs": "8eb634d228ce1a93b03b96db7f11dd7266dee55e5d0c5819576a1e14568429f0",
+    "crates/voxy_render/src/lib.rs": "c47c19c38f5aaa480cea9302566c8676e781106cac3f0f8d9f222811944f1c95"
+  }
+}

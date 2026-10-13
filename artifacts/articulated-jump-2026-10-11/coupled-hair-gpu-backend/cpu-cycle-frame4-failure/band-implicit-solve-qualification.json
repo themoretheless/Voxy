@@ -1,0 +1,7 @@
+{
+  "ordinary_tests_passed": 412,
+  "ignored": 60,
+  "failed": 0,
+  "native_solver_comparison": "unloaded origin preserved; inward free comparison violates plane; constrained comparison blocks it; prescribed root fixed",
+  "scope": "native temporal-band constraint regression; not full groom convergence or FPS"
+}

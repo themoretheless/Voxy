@@ -1,0 +1,110 @@
+{
+  "status": "both_original_runtime_entries_qualified_full_cycle_running",
+  "ordinary_tests": {
+    "passed": 398,
+    "failed": 0,
+    "ignored": 54
+  },
+  "feasible_continuation": {
+    "passed": true,
+    "native_iteration": 8,
+    "full_scale": 1.0,
+    "endpoint_merit": 0.0,
+    "mesh_and_strand_paths_admitted": true,
+    "roots_and_strain_admitted": true,
+    "feasible_reference_potential_change_j": -2.204038692522928e-08,
+    "infeasible_original_potential_change_j": 7.478047532760771e-08,
+    "terminal_sha256": "7dd2d1d46b9ad74c01af960643e3686b2d211dab2197eaf47916bf4f5ad74295",
+    "wall_seconds": 16.13,
+    "timing_scope": "diagnostic with concurrent work; no FPS claim"
+  },
+  "full_cycle_qualified": false,
+  "fps_qualified": false,
+  "sources": {
+    "crates/physics/src/hair/mod.rs": "edc396a26a3146fba9a70649d436504959987b13274419e7e93096ca7f553780",
+    "crates/physics/src/hair/contact.rs": "eb904f30f1afbd38e1be39a8a46fd5f3e9c54b7cb3503883347e80d74ff6d950",
+    "crates/physics/src/hair/velocity_contacts.rs": "863c006bf4522bdb345df4266202172ec1da77ba804d78fb431e732377f17821",
+    "crates/physics/src/hair/contact_feasibility_restoration.rs": "1d0f01334522bb2e1eb9c3079d2ecce3c45a467c48fe7d33816798ce3822461c",
+    "crates/physics/src/hair/contact_safe_motion.rs": "8dbd8bec9f4439a2bced0bd6ae865fc3afc11e414b6d576105b61450222b6fc5",
+    "crates/physics/src/hair/contact_second_order_tests.rs": "cab234af79040f672acab44bcbbbd6b43726965df8149ac31eceb8dc042e2890"
+  },
+  "first_runtime_entry": {
+    "passed": true,
+    "wall_seconds": 151.718302792,
+    "scope": "complete wrapper plus independent root/strain/whole-mesh/whole-strand checks; no FPS claim"
+  },
+  "next_runtime_entry": {
+    "passed": true,
+    "wall_seconds": 207.236080834,
+    "scope": "complete wrapper plus independent root/strain/whole-mesh/whole-strand checks; no FPS claim"
+  },
+  "app_build_passed": true,
+  "captures": {
+    "next-recovery-input.vhr": "9019bb54972cf269533dc791b55d83273a82b694976ce272000a5cea39e58bbf",
+    "next-recovery-terminal.vhr": "0f8e08274e4248c705f63ce7d0bb554f67b5c2e3c9a5ab57f643d3d29c09fbcc",
+    "next-recovery-proposal.vhr": "a1263a2ed6f9fcc46b6bb9d2eaa3c2c2954b7d872704c751f4e5566afd40a9ba"
+  },
+  "bad_accelerator_regression": {
+    "passed": true,
+    "scope": "invalid coordinate callback exercised and rejected; native fallback independently admitted; no hardware performance claim",
+    "wall_seconds": 69.33
+  },
+  "full_cycle_live_snapshot": {
+    "attempted_frame": 1,
+    "authored_jump": true,
+    "completed_frames": 1,
+    "continuous_contacts": true,
+    "error": null,
+    "guide_count": 469,
+    "required_frames": 720,
+    "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+    "segments_per_guide": 20,
+    "simulated_seconds": 0.008333333333333333,
+    "status": "running",
+    "steps": [
+      {
+        "elapsed_ms": 32024.548791,
+        "frame": 1,
+        "hair_ms": 32019.450249999998,
+        "skin_ms": 136.673875,
+        "time_s": 0.008333333333333333
+      }
+    ]
+  },
+  "terminal_full_cycle_result": {
+    "attempted_frame": 4,
+    "authored_jump": true,
+    "completed_frames": 3,
+    "continuous_contacts": true,
+    "error": "joint hair contact direction has no descending geometry step",
+    "guide_count": 469,
+    "required_frames": 720,
+    "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+    "segments_per_guide": 20,
+    "simulated_seconds": 0.025,
+    "status": "failed",
+    "steps": [
+      {
+        "elapsed_ms": 32024.548791,
+        "frame": 1,
+        "hair_ms": 32019.450249999998,
+        "skin_ms": 136.673875,
+        "time_s": 0.008333333333333333
+      },
+      {
+        "elapsed_ms": 1183041.2345,
+        "frame": 2,
+        "hair_ms": 1183037.0727080002,
+        "skin_ms": 99.96504200000001,
+        "time_s": 0.016666666666666666
+      },
+      {
+        "elapsed_ms": 239995.688334,
+        "frame": 3,
+        "hair_ms": 239992.55962500002,
+        "skin_ms": 123.568,
+        "time_s": 0.025
+      }
+    ]
+  }
+}

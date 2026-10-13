@@ -1,0 +1,19 @@
+{
+  "runtime_correction_adopted": false,
+  "scope": "single original full-density nonlinear failure capture, two-phase proposal then unmodified native reconciliation",
+  "original_input_sha256": "4ecf1f958be9b181ac6ef9df10ab4096dbdddd3e9d4524b621fe0ffafaca98c6",
+  "candidate_sha256": "3c235f5fb947e39a211e7f12836235c8abcf0a6451eb1c7dce60e8cbfa1ab2b7",
+  "native_reconciliation": "Ok",
+  "tangent_complete": true,
+  "native_final_attempt": 8,
+  "final_merit": 0,
+  "final_original_work_j": -1.423967764910977e-09,
+  "final_strain": 9.594265621970521e-07,
+  "final_strand_path": true,
+  "final_mesh_path": true,
+  "roots_exact": true,
+  "independent_post_native_gates": true,
+  "qualification_replay_wall_seconds": 19.52,
+  "full720_frame_jump_qualified": false,
+  "FPS_qualified": false
+}

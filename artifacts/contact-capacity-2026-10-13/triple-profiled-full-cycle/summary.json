@@ -1,0 +1,38 @@
+{
+  "attempted_frame": 2,
+  "authored_jump": true,
+  "completed_frames": 1,
+  "continuous_contacts": true,
+  "error": null,
+  "gpu_hair_backend": true,
+  "guide_count": 469,
+  "phase": "preparing",
+  "process_id": 80014,
+  "required_frames": 720,
+  "scope": "actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.008333333333333333,
+  "status": "running",
+  "steps": [
+    {
+      "elapsed_ms": 642144.6788329999,
+      "frame": 1,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 9815,
+        "joint_coordinate_calls": 9815,
+        "joint_equality_dispatches": 4116,
+        "joint_equality_submissions": 559,
+        "joint_result_cache_hits": 5699,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0,
+        "workspace_creations": 0,
+        "workspace_reuses": 0
+      },
+      "hair_ms": 642140.4900410001,
+      "skin_ms": 71.32249999999999,
+      "time_s": 0.008333333333333333
+    }
+  ],
+  "updated_unix_ms": 1791853320902
+}

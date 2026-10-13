@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "render_tests_passed": 222,
+  "render_ignored": 36,
+  "app_test_targets_release_check": "passed",
+  "selection": "minimum of enabled x dimension and enabled invocation count; 1024 then64 thenNone",
+  "boundary_cases": 7,
+  "scope": "dispatch lane selection only; other capability validation remains pipeline owner; no new hardware coverage"
+}

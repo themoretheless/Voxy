@@ -1,0 +1,6 @@
+{
+  "exit_code": 101,
+  "scope": "configuration rejection before frame simulation",
+  "reason": "fixture requires 30..720 requested frames; requested 3",
+  "physical_replay_executed": false
+}

@@ -1,0 +1,36 @@
+
+running 13 tests
+HAIR: 462 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::authored_fringe_respects_requested_arc_length ... ok
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::accelerator_failure_preserves_targets_collider_and_guides ... ok
+HAIR: 462 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::cache_order_retains_every_full_resolution_triangle ... ok
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::collider_preserves_lower_body_surface ... ok
+HAIR: 462 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::diagnostic_checkpoint_restores_caches_and_repeats_next_step_exactly ... ok
+test female_hair::tests::export_hair_contact_replay_rest_curve ... ignored, export stress-free guide metadata for captured contact replay
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::fitted_prepared_groom_has_valid_initial_state ... ok
+HAIR: 462 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::full_resolution_basis_transport_matches_quaternion_reference ... ok
+test female_hair::tests::gpu_linear_solver_tracks_full_model_jump_with_contacts ... ignored, native GPU full-model dynamics qualification
+HAIR: 462 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::guide_surface_normals_preserve_full_geometry_and_frame_orientation ... ok
+HAIR: 462 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_hair::tests::complete_rig_loop_preserves_hair_and_scalp_bindings has been running for over 60 seconds
+test female_hair::tests::real_surface_contacts_and_moving_root_keep_mesh_capacity has been running for over 60 seconds
+HAIR BENCH: 462 guides, 525.83 ms/frame including animated BVH and contacts
+test female_hair::tests::real_surface_contacts_and_moving_root_keep_mesh_capacity ... ok
+HAIR: 462 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+GROOM DIAG mesh=false self=false: stretch=0.000001, 213.6 ms
+GROOM DIAG mesh=true self=false: stretch=0.000001, 112.0 ms
+GROOM DIAG mesh=true self=true: stretch=0.001270, 606.8 ms
+test female_hair::tests::resting_groom_contacts_preserve_lengths ... ok
+FULL RIG HAIR LOOP: 360 steps, max strain 0.037631, 1919.96 ms/step
+test female_hair::tests::complete_rig_loop_preserves_hair_and_scalp_bindings ... ok
+
+test result: ok. 11 passed; 0 failed; 2 ignored; 0 measured; 322 filtered out; finished in 698.33s
+

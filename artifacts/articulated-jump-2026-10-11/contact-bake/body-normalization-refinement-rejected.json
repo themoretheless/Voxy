@@ -1,0 +1,107 @@
+{
+  "experiments": {
+    "div": [
+      {
+        "tick": 51,
+        "maximum_u8_error": 5
+      },
+      {
+        "tick": 107,
+        "maximum_u8_error": 10
+      },
+      {
+        "tick": 132,
+        "maximum_u8_error": 6
+      },
+      {
+        "tick": 221,
+        "maximum_u8_error": 2
+      },
+      {
+        "tick": 353,
+        "maximum_u8_error": 15
+      },
+      {
+        "tick": 358,
+        "maximum_u8_error": 6
+      },
+      {
+        "tick": 406,
+        "maximum_u8_error": 15
+      },
+      {
+        "tick": 448,
+        "maximum_u8_error": 2
+      },
+      {
+        "tick": 470,
+        "maximum_u8_error": 11
+      },
+      {
+        "tick": 642,
+        "maximum_u8_error": 25
+      },
+      {
+        "tick": 689,
+        "maximum_u8_error": 2
+      },
+      {
+        "tick": 691,
+        "maximum_u8_error": 2
+      }
+    ],
+    "sqrt": [
+      {
+        "tick": 51,
+        "maximum_u8_error": 5
+      },
+      {
+        "tick": 107,
+        "maximum_u8_error": 10
+      },
+      {
+        "tick": 132,
+        "maximum_u8_error": 6
+      },
+      {
+        "tick": 221,
+        "maximum_u8_error": 2
+      },
+      {
+        "tick": 353,
+        "maximum_u8_error": 15
+      },
+      {
+        "tick": 358,
+        "maximum_u8_error": 6
+      },
+      {
+        "tick": 406,
+        "maximum_u8_error": 15
+      },
+      {
+        "tick": 448,
+        "maximum_u8_error": 2
+      },
+      {
+        "tick": 470,
+        "maximum_u8_error": 11
+      },
+      {
+        "tick": 642,
+        "maximum_u8_error": 25
+      },
+      {
+        "tick": 689,
+        "maximum_u8_error": 2
+      },
+      {
+        "tick": 691,
+        "maximum_u8_error": 2
+      }
+    ]
+  },
+  "result": "All 12 remaining maxima unchanged for both trials; both source changes reverted",
+  "reference": "https://gpuweb.github.io/gpuweb/wgsl/#floating-point-accuracy",
+  "limits": "No inference of exact internal arithmetic from unchanged final pixel maxima; no full-sequence rerun for rejected variants"
+}

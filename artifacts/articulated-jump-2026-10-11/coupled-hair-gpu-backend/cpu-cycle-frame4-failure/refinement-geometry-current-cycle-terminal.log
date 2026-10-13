@@ -1,0 +1,1121 @@
+
+running 1 test
+REPLAY MERIT captured=3.5251601074852774e-7 rebuilt=3.5251601074852774e-7 rods=469 meshes=1
+HAIR NONLINEAR MERIT iteration=0 before=3.5251601074852774e-7 full=4.364565889411243e-8 accepted=4.364565889411243e-8 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-0.0001162345650764994)
+HAIR NONLINEAR MERIT iteration=1 before=4.364565889411243e-8 full=5.82602397773393e-8 accepted=2.3953344823997224e-8 scale=4.3212906761079584e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-6.598457364730432e-5)
+HAIR NONLINEAR MERIT iteration=2 before=2.3953344823997224e-8 full=1.3186368003274822e-11 accepted=1.3186368003274822e-11 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.6209366731529537e-6)
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=12 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=1.3186368003274822e-11 full=5.608081279243535e-9 accepted=1.0683728875097335e-11 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-3.259204761526784e-6)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=15 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=7 added_rows=4 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=9 before=1.0683728875097335e-11 full=5.255732005124612e-15 accepted=5.255732005124612e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=9 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-5.3905686355354765e-8)
+HAIR CONTACT APPROACH MODEL iteration=10 added_rows=6 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=4 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=12 before=5.255732005124612e-15 full=1.9842887513282752e-11 accepted=4.641959459840795e-15 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=12 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-4.861366383398227e-8)
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=5 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=14 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=0 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=16 before=4.641959459840795e-15 full=5.497254889012976e-11 accepted=3.7654595602828646e-15 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=16 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-4.3875303655313036e-8)
+HAIR CONTACT APPROACH MODEL iteration=17 added_rows=5 added_pairs=3 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=19 added_rows=0 added_pairs=1 descent_found=true
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry has been running for over 60 seconds
+HAIR NONLINEAR MERIT iteration=20 before=3.7654595602828646e-15 full=7.822591265843299e-11 accepted=3.1284500009713503e-15 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=20 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-3.9597681796422784e-8)
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=5 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=22 added_rows=2 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=23 before=3.1284500009713503e-15 full=1.4341565275603587e-16 accepted=1.4341565275603587e-16 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=23 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-9.872968417642915e-9)
+HAIR CONTACT APPROACH MODEL iteration=24 added_rows=7 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=25 added_rows=6 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=26 before=1.4341565275603587e-16 full=1.0384188953247881e-17 accepted=1.0384188953247881e-17 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=26 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-2.193524484239049e-9)
+HAIR CONTACT APPROACH MODEL iteration=27 added_rows=4 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=28 added_rows=9 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=29 before=1.0384188953247881e-17 full=3.1878705888060135e-19 accepted=3.1878705888060135e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=29 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-4.4230592689133383e-10)
+HAIR CONTACT APPROACH MODEL iteration=30 added_rows=6 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=31 added_rows=7 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=32 added_rows=3 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=33 before=3.1878705888060135e-19 full=2.8292207272959727e-15 accepted=2.3964227924374383e-19 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=33 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-3.994629176807702e-10)
+HAIR CONTACT APPROACH MODEL iteration=34 added_rows=7 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=35 added_rows=3 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=36 added_rows=1 added_pairs=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=37 before=2.3964227924374383e-19 full=3.805683246310673e-15 accepted=1.8019451972414818e-19 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=37 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-3.6029186986466246e-10)
+HAIR CONTACT APPROACH MODEL iteration=38 added_rows=4 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=39 added_rows=3 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=40 added_rows=1 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=41 before=1.8019451972414818e-19 full=8.396133500219745e-18 accepted=1.3417840184900536e-19 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=41 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-3.2546232559462917e-10)
+HAIR CONTACT APPROACH MODEL iteration=42 added_rows=5 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=43 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=44 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=45 before=1.3417840184900536e-19 full=5.297705907888675e-18 accepted=9.858305322642825e-20 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=45 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-2.939699075112967e-10)
+HAIR CONTACT APPROACH MODEL iteration=46 added_rows=7 added_pairs=3 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=47 added_rows=2 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=48 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=49 before=9.858305322642825e-20 full=2.8377375032273614e-18 accepted=7.114127067085053e-20 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=49 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-2.6509055338696715e-10)
+HAIR CONTACT APPROACH MODEL iteration=50 added_rows=11 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=51 added_rows=1 added_pairs=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=52 before=7.114127067085053e-20 full=1.7559565565508547e-18 accepted=5.027822969163183e-20 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=52 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-2.390543069779632e-10)
+HAIR CONTACT APPROACH MODEL iteration=53 added_rows=7 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=54 added_rows=4 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=55 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=56 before=5.027822969163183e-20 full=1.11610273368901e-18 accepted=3.4510303548386926e-20 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=56 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-2.155906559244419e-10)
+HAIR CONTACT APPROACH MODEL iteration=57 added_rows=9 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=58 added_rows=2 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=59 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=60 before=3.4510303548386926e-20 full=6.68737925981646e-19 accepted=2.2801772471648043e-20 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=60 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.9444177753118754e-10)
+HAIR CONTACT APPROACH MODEL iteration=61 added_rows=8 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=62 added_rows=3 added_pairs=3 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=63 added_rows=1 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=64 added_rows=0 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=65 before=2.2801772471648043e-20 full=4.463297444945385e-18 accepted=1.4304855171276193e-20 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=65 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.7537756086616554e-10)
+HAIR CONTACT APPROACH MODEL iteration=66 added_rows=8 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=67 added_rows=5 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=68 added_rows=0 added_pairs=3 descent_found=true
+HAIR NONLINEAR MERIT iteration=69 before=1.4304855171276193e-20 full=1.3309423751356928e-18 accepted=8.357142006770738e-21 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=69 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.5840845156620605e-10)
+HAIR CONTACT APPROACH MODEL iteration=70 added_rows=7 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=71 added_rows=3 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=72 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=73 before=8.357142006770738e-21 full=5.2335679896757435e-18 accepted=4.356700384817906e-21 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=73 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.4304716655746074e-10)
+HAIR CONTACT APPROACH MODEL iteration=74 added_rows=7 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=75 added_rows=1 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=76 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=77 before=4.356700384817906e-21 full=7.650307598265356e-18 accepted=1.871779969757138e-21 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=77 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.2918235545881125e-10)
+HAIR CONTACT APPROACH MODEL iteration=78 added_rows=7 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=79 added_rows=5 added_pairs=0 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=80 added_rows=1 added_pairs=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=81 before=1.871779969757138e-21 full=8.871739554531339e-18 accepted=5.489050203685561e-22 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=81 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.1666141612197386e-10)
+HAIR CONTACT APPROACH MODEL iteration=82 added_rows=9 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=83 added_rows=2 added_pairs=2 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=84 added_rows=1 added_pairs=0 descent_found=true
+HAIR NONLINEAR MERIT iteration=85 before=5.489050203685561e-22 full=1.4503430241314338e-17 accepted=5.238467635027415e-23 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=85 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-1.0534936005399636e-10)
+HAIR CONTACT APPROACH MODEL iteration=86 added_rows=10 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=87 added_rows=1 added_pairs=1 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=88 added_rows=1 added_pairs=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=89 before=5.238467635027415e-23 full=9.408159420141692e-18 accepted=0e0 scale=1e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=89 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-9.458111538264524e-11)
+HAIR RECOVERY TIMING event=begin phase=recovery iteration=None backtrack=None
+HAIR RECOVERY TIMING event=begin phase=initial_refresh iteration=None backtrack=None
+HAIR RECOVERY TIMING event=end phase=initial_refresh iteration=None backtrack=None elapsed_ms=102.2515 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(0) backtrack=None elapsed_ms=0.027375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(0) backtrack=None elapsed_ms=9.758667 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=1.1723103067898275e-7 work_j=4.880690999916016e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(0) backtrack=None elapsed_ms=0.034959000000000004 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(0) backtrack=None elapsed_ms=141.097541 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(0) backtrack=Some(0) elapsed_ms=48.011458 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(0) backtrack=Some(0) elapsed_ms=11.161709 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(0) backtrack=Some(0) elapsed_ms=71.438084 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(0) backtrack=None elapsed_ms=225.7315 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(1) backtrack=None elapsed_ms=0.024209 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(1) backtrack=None elapsed_ms=8.008750000000001 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=5.280086958586282e-12 work_j=8.95788014126062e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(1) backtrack=None elapsed_ms=0.0285 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(1) backtrack=None elapsed_ms=44.1745 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(1) backtrack=Some(0) elapsed_ms=56.9905 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(1) backtrack=Some(0) elapsed_ms=7.758166 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(1) backtrack=Some(0) elapsed_ms=74.70575 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(1) backtrack=None elapsed_ms=129.501125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(2) backtrack=None elapsed_ms=0.022583 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(2) backtrack=None elapsed_ms=8.289 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=9.451919020077943e-14 work_j=8.960118954806409e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(2) backtrack=None elapsed_ms=0.02325 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(2) backtrack=None elapsed_ms=21.486375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(2) backtrack=Some(0) elapsed_ms=53.062875000000005 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(2) backtrack=Some(0) elapsed_ms=10.00825 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(2) backtrack=Some(0) elapsed_ms=73.55499999999999 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(2) backtrack=None elapsed_ms=108.028459 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(3) backtrack=None elapsed_ms=0.029666 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(3) backtrack=None elapsed_ms=9.907792 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=5.889459323494394e-15 work_j=8.961063677660194e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(3) backtrack=None elapsed_ms=0.027666 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(3) backtrack=None elapsed_ms=33.102458 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(3) backtrack=Some(0) elapsed_ms=46.716292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(3) backtrack=Some(0) elapsed_ms=8.634667 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(3) backtrack=Some(0) elapsed_ms=65.174416 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(3) backtrack=None elapsed_ms=112.409917 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(4) backtrack=None elapsed_ms=0.023375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(4) backtrack=None elapsed_ms=11.001375000000001 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=3.64800147101778e-16 work_j=8.961534178018162e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(4) backtrack=None elapsed_ms=0.042792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(4) backtrack=None elapsed_ms=23.383458 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(4) backtrack=Some(0) elapsed_ms=35.006166 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(4) backtrack=Some(0) elapsed_ms=8.353 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(4) backtrack=Some(0) elapsed_ms=53.368084 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(4) backtrack=None elapsed_ms=91.11325000000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(5) backtrack=None elapsed_ms=0.0265 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(5) backtrack=None elapsed_ms=8.655708 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.206042965978959e-17 work_j=8.961767955097365e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(5) backtrack=None elapsed_ms=0.027667 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(5) backtrack=None elapsed_ms=18.231375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(5) backtrack=Some(0) elapsed_ms=36.358334 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(5) backtrack=Some(0) elapsed_ms=10.46125 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(5) backtrack=Some(0) elapsed_ms=57.084417 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(5) backtrack=None elapsed_ms=87.266708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(6) backtrack=None elapsed_ms=0.022459 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(6) backtrack=None elapsed_ms=9.273750000000001 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=1.2071517213870413e-18 work_j=8.961882802247036e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(6) backtrack=None elapsed_ms=0.0235 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(6) backtrack=None elapsed_ms=24.151791999999997 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(6) backtrack=Some(0) elapsed_ms=34.279166 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(6) backtrack=Some(0) elapsed_ms=9.480583000000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(6) backtrack=Some(0) elapsed_ms=54.026792 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(6) backtrack=None elapsed_ms=89.98062499999999 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(7) backtrack=None elapsed_ms=0.022584 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(7) backtrack=None elapsed_ms=8.545499999999999 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=3.9832425415996696e-20 work_j=8.961942830648189e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(7) backtrack=None elapsed_ms=0.025041 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(7) backtrack=None elapsed_ms=22.491625000000003 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(7) backtrack=Some(0) elapsed_ms=19.795625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(7) backtrack=Some(0) elapsed_ms=22.162208 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(7) backtrack=Some(0) elapsed_ms=52.013166 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(7) backtrack=None elapsed_ms=85.95958300000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(8) backtrack=None elapsed_ms=0.023167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(8) backtrack=None elapsed_ms=16.534 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=8.96197141817251e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(8) backtrack=None elapsed_ms=0.029917 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(8) backtrack=None elapsed_ms=20.964750000000002 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=recovery iteration=None backtrack=None elapsed_ms=1066.64175 admission=unclassified
+HAIR CONTACT SOC iteration=90 admitted=false result=Ok(false)
+HAIR CONTACT PREFIX CHECK admitted=true gate=complete change_j=-4.0736042427856735e-15 max_translation_m=3.930004451687485e-10 max_rotation_rad=3.8256224441140556e-8
+HAIR CONTACT FEASIBLE PREFIX iteration=90 probe_rows=4 probe_pairs=1 tangent_complete=false
+HAIR NONLINEAR MERIT iteration=90 before=0e0 full=1.1723103067898275e-7 accepted=0e0 scale=1.9073486328125e-6 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=90 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-9.458087877634509e-11)
+HAIR RECOVERY TIMING event=begin phase=recovery iteration=None backtrack=None
+HAIR RECOVERY TIMING event=begin phase=initial_refresh iteration=None backtrack=None
+HAIR RECOVERY TIMING event=end phase=initial_refresh iteration=None backtrack=None elapsed_ms=96.08575 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(0) backtrack=None elapsed_ms=0.033708999999999996 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(0) backtrack=None elapsed_ms=9.572584 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=1.1220669660518084e-7 work_j=1.8864802646989932e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(0) backtrack=None elapsed_ms=0.040667 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(0) backtrack=None elapsed_ms=143.416083 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(0) backtrack=Some(0) elapsed_ms=70.138167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(0) backtrack=Some(0) elapsed_ms=8.944374999999999 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(0) backtrack=Some(0) elapsed_ms=88.15762500000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(0) backtrack=None elapsed_ms=245.186125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(1) backtrack=None elapsed_ms=0.026 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(1) backtrack=None elapsed_ms=7.382874999999999 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=5.624342768608565e-12 work_j=8.556987050221015e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(1) backtrack=None elapsed_ms=0.027708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(1) backtrack=None elapsed_ms=53.865625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(1) backtrack=Some(0) elapsed_ms=84.597833 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(1) backtrack=Some(0) elapsed_ms=10.648249999999999 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(1) backtrack=Some(0) elapsed_ms=106.4385 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(1) backtrack=None elapsed_ms=170.94320800000003 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(2) backtrack=None elapsed_ms=0.026333 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(2) backtrack=None elapsed_ms=12.515625 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=9.461883389824766e-14 work_j=8.55942834256783e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(2) backtrack=None elapsed_ms=0.026833 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(2) backtrack=None elapsed_ms=30.357667000000003 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(2) backtrack=Some(0) elapsed_ms=67.418167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(2) backtrack=Some(0) elapsed_ms=11.590541 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(2) backtrack=Some(0) elapsed_ms=90.26041699999999 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(2) backtrack=None elapsed_ms=137.400125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(3) backtrack=None elapsed_ms=0.026291 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(3) backtrack=None elapsed_ms=11.943 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=5.895630345434789e-15 work_j=8.560401195249825e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(3) backtrack=None elapsed_ms=0.0255 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(3) backtrack=None elapsed_ms=40.477625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(3) backtrack=Some(0) elapsed_ms=56.003 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(3) backtrack=Some(0) elapsed_ms=12.455834000000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(3) backtrack=Some(0) elapsed_ms=83.89395900000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(3) backtrack=None elapsed_ms=139.8195 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(4) backtrack=None elapsed_ms=0.026791000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(4) backtrack=None elapsed_ms=11.674792 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=3.6512384332911017e-16 work_j=8.560885360796219e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(4) backtrack=None elapsed_ms=0.027708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(4) backtrack=None elapsed_ms=27.824583 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(4) backtrack=Some(0) elapsed_ms=91.233708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(4) backtrack=Some(0) elapsed_ms=15.815333 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(4) backtrack=Some(0) elapsed_ms=130.27095799999998 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(4) backtrack=None elapsed_ms=173.338084 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(5) backtrack=None elapsed_ms=0.025707999999999998 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(5) backtrack=None elapsed_ms=27.324292 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.2062878143192412e-17 work_j=8.561126428570318e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(5) backtrack=None elapsed_ms=0.026875 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(5) backtrack=None elapsed_ms=37.652416 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(5) backtrack=Some(0) elapsed_ms=31.897624999999998 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(5) backtrack=Some(0) elapsed_ms=7.713292 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(5) backtrack=Some(0) elapsed_ms=51.912417000000005 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(5) backtrack=None elapsed_ms=121.144083 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(6) backtrack=None elapsed_ms=0.026333 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(6) backtrack=None elapsed_ms=11.771459 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=1.2068735455892306e-18 work_j=8.561244977267912e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(6) backtrack=None elapsed_ms=0.024958 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(6) backtrack=None elapsed_ms=22.938 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(6) backtrack=Some(0) elapsed_ms=31.00275 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(6) backtrack=Some(0) elapsed_ms=9.269834 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(6) backtrack=Some(0) elapsed_ms=57.305208 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(6) backtrack=None elapsed_ms=98.67883400000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(7) backtrack=None elapsed_ms=0.025917 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(7) backtrack=None elapsed_ms=23.296999999999997 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=3.980787603413144e-20 work_j=8.561305005550468e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(7) backtrack=None elapsed_ms=0.022167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(7) backtrack=None elapsed_ms=21.27325 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(7) backtrack=Some(0) elapsed_ms=11.122125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(7) backtrack=Some(0) elapsed_ms=16.572958 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(7) backtrack=Some(0) elapsed_ms=42.279125 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(7) backtrack=None elapsed_ms=89.616 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(8) backtrack=None elapsed_ms=0.026083000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(8) backtrack=None elapsed_ms=14.634917000000002 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=8.561333584257284e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(8) backtrack=None elapsed_ms=0.022958 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(8) backtrack=None elapsed_ms=17.410042 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=recovery iteration=None backtrack=None elapsed_ms=1302.111167 admission=unclassified
+HAIR CONTACT SOC iteration=91 admitted=false result=Ok(false)
+HAIR CONTACT PREFIX CHECK admitted=true gate=complete change_j=-1.6948276010997713e-15 max_translation_m=1.9649983119209515e-10 max_rotation_rad=1.568074378372045e-8
+HAIR CONTACT FEASIBLE PREFIX iteration=91 probe_rows=2 probe_pairs=1 tangent_complete=false
+HAIR NONLINEAR MERIT iteration=91 before=0e0 full=1.1220669660518084e-7 accepted=0e0 scale=9.5367431640625e-7 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=91 tangent_complete=false strand_admitted=true unresolved=false worst_gap_m=Some(-9.458076393355505e-11)
+HAIR RECOVERY TIMING event=begin phase=recovery iteration=None backtrack=None
+HAIR RECOVERY TIMING event=begin phase=initial_refresh iteration=None backtrack=None
+HAIR RECOVERY TIMING event=end phase=initial_refresh iteration=None backtrack=None elapsed_ms=100.390167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(0) backtrack=None elapsed_ms=0.023041 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(0) backtrack=None elapsed_ms=10.512917 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=8.09051796740342e-8 work_j=1.5674533491935488e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(0) backtrack=None elapsed_ms=0.039333 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(0) backtrack=None elapsed_ms=132.22275 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(0) backtrack=Some(0) elapsed_ms=73.159125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(0) backtrack=Some(0) elapsed_ms=12.81275 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(0) backtrack=Some(0) elapsed_ms=98.58975000000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(0) backtrack=None elapsed_ms=244.816167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(1) backtrack=None elapsed_ms=0.027208 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(1) backtrack=None elapsed_ms=9.005374999999999 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=3.82795903947582e-12 work_j=8.267079677464775e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(1) backtrack=None elapsed_ms=0.027 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(1) backtrack=None elapsed_ms=51.468333 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(1) backtrack=Some(0) elapsed_ms=83.38166700000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(1) backtrack=Some(0) elapsed_ms=9.656375 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(1) backtrack=Some(0) elapsed_ms=102.700208 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(1) backtrack=None elapsed_ms=167.738292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(2) backtrack=None elapsed_ms=0.023125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(2) backtrack=None elapsed_ms=7.875167 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=9.757551396818158e-14 work_j=8.269368352736172e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(2) backtrack=None elapsed_ms=0.022167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(2) backtrack=None elapsed_ms=21.070209 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(2) backtrack=Some(0) elapsed_ms=77.30912500000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(2) backtrack=Some(0) elapsed_ms=9.9555 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(2) backtrack=Some(0) elapsed_ms=97.477791 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(2) backtrack=None elapsed_ms=128.968125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(3) backtrack=None elapsed_ms=0.029042000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(3) backtrack=None elapsed_ms=9.519791999999999 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=6.058586640535638e-15 work_j=8.270347335441478e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(3) backtrack=None elapsed_ms=0.023333 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(3) backtrack=None elapsed_ms=34.61325 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(3) backtrack=Some(0) elapsed_ms=58.474208 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(3) backtrack=Some(0) elapsed_ms=10.167166 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(3) backtrack=Some(0) elapsed_ms=78.881709 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(3) backtrack=None elapsed_ms=126.62695800000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(4) backtrack=None elapsed_ms=0.022542 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(4) backtrack=None elapsed_ms=7.939375 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=3.748820977530839e-16 work_j=8.270833988364567e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(4) backtrack=None elapsed_ms=0.0285 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(4) backtrack=None elapsed_ms=27.201249999999998 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(4) backtrack=Some(0) elapsed_ms=56.204291000000005 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(4) backtrack=Some(0) elapsed_ms=12.546375 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(4) backtrack=Some(0) elapsed_ms=78.4575 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(4) backtrack=None elapsed_ms=116.895416 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(5) backtrack=None elapsed_ms=0.026459 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(5) backtrack=None elapsed_ms=9.135417 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.2583835973947138e-17 work_j=8.27107599694108e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(5) backtrack=None elapsed_ms=0.023375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(5) backtrack=None elapsed_ms=29.124792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(5) backtrack=Some(0) elapsed_ms=33.237292000000004 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(5) backtrack=Some(0) elapsed_ms=8.214667 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(5) backtrack=Some(0) elapsed_ms=51.526625 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(5) backtrack=None elapsed_ms=92.69975 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(6) backtrack=None elapsed_ms=0.028249999999999997 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(6) backtrack=None elapsed_ms=7.522041 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=1.2188211754926786e-18 work_j=8.271194927251488e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(6) backtrack=None elapsed_ms=0.033 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(6) backtrack=None elapsed_ms=19.088875 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(6) backtrack=Some(0) elapsed_ms=33.390375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(6) backtrack=Some(0) elapsed_ms=8.022417 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(6) backtrack=Some(0) elapsed_ms=54.929041999999995 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(6) backtrack=None elapsed_ms=84.980833 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(7) backtrack=None elapsed_ms=0.6847500000000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(7) backtrack=None elapsed_ms=8.201292 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=3.9853523641322785e-20 work_j=8.271255703947777e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(7) backtrack=None elapsed_ms=0.051625000000000004 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(7) backtrack=None elapsed_ms=20.424208 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(7) backtrack=Some(0) elapsed_ms=11.293707999999999 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(7) backtrack=Some(0) elapsed_ms=17.712791 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(7) backtrack=Some(0) elapsed_ms=38.672041 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(7) backtrack=None elapsed_ms=71.799166 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(8) backtrack=None elapsed_ms=0.02275 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(8) backtrack=None elapsed_ms=16.548582999999997 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=8.271284289400049e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(8) backtrack=None elapsed_ms=0.027375 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(8) backtrack=None elapsed_ms=19.710917000000002 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=recovery iteration=None backtrack=None elapsed_ms=1170.210625 admission=unclassified
+HAIR CONTACT SOC iteration=92 admitted=false result=Ok(false)
+HAIR CONTACT APPROACH MODEL iteration=92 added_rows=1 added_pairs=1 descent_found=true
+HAIR RECOVERY TIMING event=begin phase=recovery iteration=None backtrack=None
+HAIR RECOVERY TIMING event=begin phase=initial_refresh iteration=None backtrack=None
+HAIR RECOVERY TIMING event=end phase=initial_refresh iteration=None backtrack=None elapsed_ms=90.63020900000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(0) backtrack=None elapsed_ms=0.028625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(0) backtrack=None elapsed_ms=10.077417 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=7.62190560967004e-8 work_j=6.51897482444127e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(0) backtrack=None elapsed_ms=0.022458000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(0) backtrack=None elapsed_ms=151.574375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(0) backtrack=Some(0) elapsed_ms=64.4125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(0) backtrack=Some(0) elapsed_ms=8.701458 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(0) backtrack=Some(0) elapsed_ms=83.67425 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(0) backtrack=None elapsed_ms=248.052208 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(1) backtrack=None elapsed_ms=0.026125000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(1) backtrack=None elapsed_ms=7.918708 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=2.3216315995864725e-12 work_j=7.887905575099913e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(1) backtrack=None elapsed_ms=0.023125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(1) backtrack=None elapsed_ms=61.942249999999994 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(1) backtrack=Some(0) elapsed_ms=83.650958 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(1) backtrack=Some(0) elapsed_ms=9.932583 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(1) backtrack=Some(0) elapsed_ms=103.690125 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(1) backtrack=None elapsed_ms=176.166667 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(2) backtrack=None elapsed_ms=0.021917 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(2) backtrack=None elapsed_ms=8.615499999999999 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=3.4491051814594406e-15 work_j=7.888332908758294e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(2) backtrack=None elapsed_ms=0.02325 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(2) backtrack=None elapsed_ms=23.852874999999997 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(2) backtrack=Some(0) elapsed_ms=85.945375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(2) backtrack=Some(0) elapsed_ms=11.974416 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(2) backtrack=Some(0) elapsed_ms=110.0205 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(2) backtrack=None elapsed_ms=145.360667 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(3) backtrack=None elapsed_ms=0.026083000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(3) backtrack=None elapsed_ms=9.794125000000001 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.8521212859753857e-16 work_j=7.88839137314179e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(3) backtrack=None elapsed_ms=0.030375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(3) backtrack=None elapsed_ms=33.963791 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(3) backtrack=Some(0) elapsed_ms=59.955084 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(3) backtrack=Some(0) elapsed_ms=22.138916000000002 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(3) backtrack=Some(0) elapsed_ms=104.94437500000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(3) backtrack=None elapsed_ms=154.403083 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(4) backtrack=None elapsed_ms=0.022125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(4) backtrack=None elapsed_ms=17.948833 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=1.0848024520530497e-17 work_j=7.888419423659925e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(4) backtrack=None elapsed_ms=0.026917 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(4) backtrack=None elapsed_ms=39.995958 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(4) backtrack=Some(0) elapsed_ms=56.530541 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(4) backtrack=Some(0) elapsed_ms=7.8125420000000005 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(4) backtrack=Some(0) elapsed_ms=73.175708 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(4) backtrack=None elapsed_ms=134.425375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(5) backtrack=None elapsed_ms=0.022417 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(5) backtrack=None elapsed_ms=7.870458 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=5.400578617786784e-19 work_j=7.88843305597676e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(5) backtrack=None elapsed_ms=0.028583 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(5) backtrack=None elapsed_ms=19.901 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(5) backtrack=Some(0) elapsed_ms=37.532667 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(5) backtrack=Some(0) elapsed_ms=8.824584 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(5) backtrack=Some(0) elapsed_ms=59.781541 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(5) backtrack=None elapsed_ms=91.1875 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(6) backtrack=None elapsed_ms=0.025917 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(6) backtrack=None elapsed_ms=26.049875 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=1.1748494079725137e-20 work_j=7.888439844280144e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(6) backtrack=None elapsed_ms=0.023584 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(6) backtrack=None elapsed_ms=21.329500000000003 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(6) backtrack=Some(0) elapsed_ms=18.080875 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(6) backtrack=Some(0) elapsed_ms=31.427207999999997 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(6) backtrack=Some(0) elapsed_ms=67.312291 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(6) backtrack=None elapsed_ms=117.893 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(7) backtrack=None elapsed_ms=0.022542 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(7) backtrack=None elapsed_ms=19.402208 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=0e0 work_j=7.888440599280071e-8
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(7) backtrack=None elapsed_ms=0.029042000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(7) backtrack=None elapsed_ms=22.497833 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=recovery iteration=None backtrack=None elapsed_ms=1193.352458 admission=unclassified
+HAIR CONTACT SOC iteration=93 admitted=false result=Ok(false)
+HAIR CONTACT APPROACH MODEL iteration=93 added_rows=3 added_pairs=1 descent_found=true
+HAIR RECOVERY TIMING event=begin phase=recovery iteration=None backtrack=None
+HAIR RECOVERY TIMING event=begin phase=initial_refresh iteration=None backtrack=None
+HAIR RECOVERY TIMING event=end phase=initial_refresh iteration=None backtrack=None elapsed_ms=82.20025 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(0) backtrack=None elapsed_ms=0.025541 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(0) backtrack=None elapsed_ms=9.270209 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=4.260360754166642e-8 work_j=6.85975919591716e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(0) backtrack=None elapsed_ms=0.023708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(0) backtrack=None elapsed_ms=93.295875 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(0) backtrack=Some(0) elapsed_ms=55.002416 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(0) backtrack=Some(0) elapsed_ms=10.283125 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(0) backtrack=Some(0) elapsed_ms=75.747625 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(0) backtrack=None elapsed_ms=181.036375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(1) backtrack=None elapsed_ms=0.030917000000000004 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(1) backtrack=None elapsed_ms=10.296 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=6.268706515623524e-13 work_j=4.715175028236261e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(1) backtrack=None elapsed_ms=0.023167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(1) backtrack=None elapsed_ms=47.692166 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(1) backtrack=Some(0) elapsed_ms=78.549792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(1) backtrack=Some(0) elapsed_ms=9.065625 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(1) backtrack=Some(0) elapsed_ms=97.118584 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(1) backtrack=None elapsed_ms=158.182333 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(2) backtrack=None elapsed_ms=0.022167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(2) backtrack=None elapsed_ms=9.089458 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.655326419803194e-14 work_j=4.721255492910145e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(2) backtrack=None elapsed_ms=0.023583 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(2) backtrack=None elapsed_ms=55.897083 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(2) backtrack=Some(0) elapsed_ms=85.252542 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(2) backtrack=Some(0) elapsed_ms=9.285708 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(2) backtrack=Some(0) elapsed_ms=105.897791 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(2) backtrack=None elapsed_ms=173.656916 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(3) backtrack=None elapsed_ms=0.022292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(3) backtrack=None elapsed_ms=11.693709 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.626746892443341e-15 work_j=4.723597010645299e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(3) backtrack=None elapsed_ms=0.023209 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(3) backtrack=None elapsed_ms=66.206958 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(3) backtrack=Some(0) elapsed_ms=61.595792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(3) backtrack=Some(0) elapsed_ms=10.274709 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(3) backtrack=Some(0) elapsed_ms=84.024208 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(3) backtrack=None elapsed_ms=165.402583 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(4) backtrack=None elapsed_ms=0.023292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(4) backtrack=None elapsed_ms=8.28375 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=9.9999537052023e-17 work_j=4.724855195125362e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(4) backtrack=None elapsed_ms=0.023708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(4) backtrack=None elapsed_ms=40.967375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(4) backtrack=Some(0) elapsed_ms=53.700708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(4) backtrack=Some(0) elapsed_ms=9.2655 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(4) backtrack=Some(0) elapsed_ms=73.741875 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(4) backtrack=None elapsed_ms=126.16466700000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(5) backtrack=None elapsed_ms=0.022291000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(5) backtrack=None elapsed_ms=8.468375 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=5.846087421730496e-18 work_j=4.725429901522227e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(5) backtrack=None elapsed_ms=0.027916 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(5) backtrack=None elapsed_ms=54.145582999999995 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(5) backtrack=Some(0) elapsed_ms=36.035458999999996 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(5) backtrack=Some(0) elapsed_ms=9.284958 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(5) backtrack=Some(0) elapsed_ms=55.10225 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(5) backtrack=None elapsed_ms=125.44675 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(6) backtrack=None elapsed_ms=0.037375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(6) backtrack=None elapsed_ms=11.309 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=2.793734225426004e-19 work_j=4.7257259255918266e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(6) backtrack=None elapsed_ms=0.056459 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(6) backtrack=None elapsed_ms=54.135333 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(6) backtrack=Some(0) elapsed_ms=63.819916000000006 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(6) backtrack=Some(0) elapsed_ms=15.013583 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(6) backtrack=Some(0) elapsed_ms=91.645459 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(6) backtrack=None elapsed_ms=160.802792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(7) backtrack=None elapsed_ms=0.026458 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(7) backtrack=None elapsed_ms=19.073875 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=4.454581707271e-21 work_j=4.725849299794252e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(7) backtrack=None elapsed_ms=0.027 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(7) backtrack=None elapsed_ms=46.649291000000005 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(7) backtrack=Some(0) elapsed_ms=10.393292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(7) backtrack=Some(0) elapsed_ms=13.487458 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(7) backtrack=Some(0) elapsed_ms=33.283667 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(7) backtrack=None elapsed_ms=103.971916 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(8) backtrack=None elapsed_ms=0.027834 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(8) backtrack=None elapsed_ms=13.736917 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=4.7259348157867514e-9
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(8) backtrack=None elapsed_ms=0.027625 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(8) backtrack=None elapsed_ms=16.810667000000002 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=recovery iteration=None backtrack=None elapsed_ms=1306.322541 admission=unclassified
+HAIR CONTACT SOC iteration=94 admitted=false result=Ok(false)
+HAIR CONTACT APPROACH MODEL iteration=94 added_rows=3 added_pairs=1 descent_found=true
+HAIR RECOVERY TIMING event=begin phase=recovery iteration=None backtrack=None
+HAIR RECOVERY TIMING event=begin phase=initial_refresh iteration=None backtrack=None
+HAIR RECOVERY TIMING event=end phase=initial_refresh iteration=None backtrack=None elapsed_ms=48.357791999999996 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(0) backtrack=None elapsed_ms=0.027458 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(0) backtrack=None elapsed_ms=10.512084 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=4.85651758492859e-9 work_j=-9.033184989057515e-11
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(0) backtrack=None elapsed_ms=0.026833 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(0) backtrack=None elapsed_ms=120.12599999999999 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(0) backtrack=Some(0) elapsed_ms=46.237167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(0) backtrack=Some(0) elapsed_ms=11.6635 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(0) backtrack=Some(0) elapsed_ms=69.308958 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(0) backtrack=None elapsed_ms=203.311083 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(1) backtrack=None elapsed_ms=0.025625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(1) backtrack=None elapsed_ms=9.372208 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=5.087094607448248e-13 work_j=1.1620458656919397e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(1) backtrack=None elapsed_ms=0.027375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(1) backtrack=None elapsed_ms=54.429375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(1) backtrack=Some(0) elapsed_ms=87.575917 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(1) backtrack=Some(0) elapsed_ms=12.122833 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(1) backtrack=Some(0) elapsed_ms=113.618 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(1) backtrack=None elapsed_ms=180.723125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(2) backtrack=None elapsed_ms=0.026041 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(2) backtrack=None elapsed_ms=8.387666 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.6659678340150828e-14 work_j=1.2112726060036182e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(2) backtrack=None elapsed_ms=0.02225 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(2) backtrack=None elapsed_ms=51.999833 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(2) backtrack=Some(0) elapsed_ms=76.546792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(2) backtrack=Some(0) elapsed_ms=9.643125000000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(2) backtrack=Some(0) elapsed_ms=97.329916 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(2) backtrack=None elapsed_ms=160.362125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(3) backtrack=None elapsed_ms=0.028792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(3) backtrack=None elapsed_ms=8.526041999999999 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.6612062052328038e-15 work_j=1.233564657603254e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(3) backtrack=None elapsed_ms=0.023625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(3) backtrack=None elapsed_ms=48.375833 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(3) backtrack=Some(0) elapsed_ms=78.663167 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(3) backtrack=Some(0) elapsed_ms=9.344792 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(3) backtrack=Some(0) elapsed_ms=97.89675000000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(3) backtrack=None elapsed_ms=157.913625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(4) backtrack=None elapsed_ms=0.025667 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(4) backtrack=None elapsed_ms=11.561125 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=1.0211010305766493e-16 work_j=1.244725046318658e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(4) backtrack=None elapsed_ms=0.045334000000000006 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(4) backtrack=None elapsed_ms=51.5745 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(4) backtrack=Some(0) elapsed_ms=76.338417 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(4) backtrack=Some(0) elapsed_ms=8.708250000000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(4) backtrack=Some(0) elapsed_ms=97.216166 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(4) backtrack=None elapsed_ms=163.998625 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(5) backtrack=None elapsed_ms=0.025292000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(5) backtrack=None elapsed_ms=10.096167 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=5.965355078520475e-18 work_j=1.2503566696092613e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(5) backtrack=None elapsed_ms=0.024791999999999998 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(5) backtrack=None elapsed_ms=33.023833 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(5) backtrack=Some(0) elapsed_ms=41.943875 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(5) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(5) backtrack=Some(0) elapsed_ms=8.3 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(5) backtrack=Some(0) elapsed_ms=59.824208 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(5) backtrack=None elapsed_ms=105.63729199999999 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(6) backtrack=None elapsed_ms=0.023042 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(6) backtrack=None elapsed_ms=8.152542 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=2.856103741059928e-19 work_j=1.2531541786002532e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(6) backtrack=None elapsed_ms=0.022542 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(6) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(6) backtrack=None elapsed_ms=41.480375 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(6) backtrack=Some(0) elapsed_ms=60.957499999999996 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(6) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(6) backtrack=Some(0) elapsed_ms=9.494375 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(6) backtrack=Some(0) elapsed_ms=80.14716700000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(6) backtrack=None elapsed_ms=132.4205 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(7) backtrack=None elapsed_ms=0.032042 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(7) backtrack=None elapsed_ms=10.241625 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=4.667263650542699e-21 work_j=1.254409430418302e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(7) backtrack=None elapsed_ms=0.027834 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(7) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(7) backtrack=None elapsed_ms=28.327499999999997 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(7) backtrack=Some(0) elapsed_ms=11.686250000000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(7) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(7) backtrack=Some(0) elapsed_ms=29.363375 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(7) backtrack=Some(0) elapsed_ms=51.148332999999994 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(7) backtrack=None elapsed_ms=92.946666 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(8) backtrack=None elapsed_ms=0.025833000000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(8) backtrack=None elapsed_ms=18.688 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=1.2551355870508435e-10
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(8) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(8) backtrack=None elapsed_ms=0.02775 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(8) backtrack=None elapsed_ms=22.547042 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=recovery iteration=None backtrack=None elapsed_ms=1284.444375 admission=unclassified
+HAIR CONTACT SOC iteration=95 admitted=false result=Ok(false)
+HAIR CONTACT APPROACH MODEL iteration=95 added_rows=1 added_pairs=1 descent_found=true
+HAIR RECOVERY TIMING event=begin phase=recovery iteration=None backtrack=None
+HAIR RECOVERY TIMING event=begin phase=initial_refresh iteration=None backtrack=None
+HAIR RECOVERY TIMING event=end phase=initial_refresh iteration=None backtrack=None elapsed_ms=26.208833000000002 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(0) backtrack=None elapsed_ms=0.033583 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(0) backtrack=None elapsed_ms=10.041417000000001 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=5.841154425185646e-13 work_j=-3.5538662846357746e-11
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(0) backtrack=None elapsed_ms=0.033459 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(0) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(0) backtrack=None elapsed_ms=12.117292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(0) backtrack=Some(0) elapsed_ms=22.399417 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(0) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(0) backtrack=Some(0) elapsed_ms=11.614875 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(0) backtrack=Some(0) elapsed_ms=46.096958 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(0) backtrack=None elapsed_ms=71.07062499999999 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(1) backtrack=None elapsed_ms=0.040083999999999995 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(1) backtrack=None elapsed_ms=12.653834 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=4.751352156081554e-16 work_j=-3.549656930332865e-11
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(1) backtrack=None elapsed_ms=0.033292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(1) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(1) backtrack=None elapsed_ms=11.233875000000001 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(1) backtrack=Some(0) elapsed_ms=19.408624999999997 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(1) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(1) backtrack=Some(0) elapsed_ms=8.315375 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(1) backtrack=Some(0) elapsed_ms=37.492708 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(1) backtrack=None elapsed_ms=64.149125 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(2) backtrack=None elapsed_ms=0.039583 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(2) backtrack=None elapsed_ms=9.044041 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.8902714599925466e-17 work_j=-3.549414642561498e-11
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(2) backtrack=None elapsed_ms=0.033292 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(2) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(2) backtrack=None elapsed_ms=11.074083 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(2) backtrack=Some(0) elapsed_ms=19.166334 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(2) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(2) backtrack=Some(0) elapsed_ms=7.867000000000001 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(2) backtrack=Some(0) elapsed_ms=36.810500000000005 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(2) backtrack=None elapsed_ms=60.504875 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(3) backtrack=None elapsed_ms=0.039291 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(3) backtrack=None elapsed_ms=8.183792 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.611087585354645e-18 work_j=-3.5492933008323206e-11
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(3) backtrack=None elapsed_ms=0.033374999999999995 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(3) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(3) backtrack=None elapsed_ms=12.747708 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(3) backtrack=Some(0) elapsed_ms=22.466416 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(3) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(3) backtrack=Some(0) elapsed_ms=9.779291 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(3) backtrack=Some(0) elapsed_ms=42.289334 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(3) backtrack=None elapsed_ms=66.475917 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(4) backtrack=None elapsed_ms=0.032083 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(4) backtrack=None elapsed_ms=10.14325 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=5.874830225998579e-20 work_j=-3.5492325810889196e-11
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(4) backtrack=None elapsed_ms=0.040459 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=direction_projection iteration=Some(4) backtrack=None
+HAIR RECOVERY TIMING event=end phase=direction_projection iteration=Some(4) backtrack=None elapsed_ms=21.187 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=backtrack iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=begin phase=trial_refresh iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_refresh iteration=Some(4) backtrack=Some(0) elapsed_ms=13.667792 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=trial_model iteration=Some(4) backtrack=Some(0)
+HAIR RECOVERY TIMING event=end phase=trial_model iteration=Some(4) backtrack=Some(0) elapsed_ms=15.451292 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=backtrack iteration=Some(4) backtrack=Some(0) elapsed_ms=39.177333000000004 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(4) backtrack=None elapsed_ms=73.971084 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=geometry_iteration iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=begin phase=iteration_refresh iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=iteration_refresh iteration=Some(5) backtrack=None elapsed_ms=0.036334 admission=unclassified
+HAIR RECOVERY TIMING event=begin phase=restoration_model iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=restoration_model iteration=Some(5) backtrack=None elapsed_ms=13.333083 admission=unclassified
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=0e0 work_j=-3.549202204879966e-11
+HAIR RECOVERY TIMING event=begin phase=whole_motion_admission iteration=Some(5) backtrack=None
+HAIR RECOVERY TIMING event=end phase=whole_motion_admission iteration=Some(5) backtrack=None elapsed_ms=13.800334 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=geometry_iteration iteration=Some(5) backtrack=None elapsed_ms=30.60825 admission=unclassified
+HAIR RECOVERY TIMING event=end phase=recovery iteration=None backtrack=None elapsed_ms=404.22333399999997 admission=unclassified
+HAIR CONTACT SOC iteration=96 admitted=true uncorrected_merit=5.841154425185646e-13 corrected_merit=0e0
+HAIR NONLINEAR MERIT iteration=96 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=96 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-2.3498629263463483e-15)
+REPLAY RESULT Ok(())
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 477 filtered out; finished in 188.47s
+

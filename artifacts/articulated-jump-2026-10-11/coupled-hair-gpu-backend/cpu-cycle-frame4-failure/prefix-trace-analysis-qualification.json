@@ -1,0 +1,14 @@
+{
+  "status": "8 evidence-tool tests passed",
+  "change": "Parse certified-prefix events separately, correlate only the immediate following accepted merit event at the same attempt, preserve unmatched events as pending, reject contradictory tangent/merit data. Prefixes do not establish final convergence or publication.",
+  "source_sha256": {
+    "tools/analyze_hair_refinement_trace.py": "92b13868e0b64f46e35520eb96ca874f8df86f6c4f20adeff4b7d9576883cd54",
+    "tools/test_hair_contact_evidence.py": "82c0bbf9aac0481db252e05d01be2200c9b4657ca6c3f1a09f59e77111273c15"
+  },
+  "snapshots": [
+    "prefix-refinement-snapshot.json",
+    "baseline-refinement-snapshot.json"
+  ],
+  "limits": "Different-age concurrent runs, not a performance comparison; neither snapshot proves full cycle or FPS.",
+  "observed_unix_s": 1791763864.004653
+}

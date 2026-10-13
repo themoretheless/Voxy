@@ -1,0 +1,8 @@
+
+running 1 test
+FACTOR REUSE ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FACTOR REUSE QUALIFIED batches=12 systems=3 reused_dispatches=24 corrections=bitwise fresh_ms=293.3573760000001 cached_ms=64.643416
+test gpu_hair_solver::tests::gpu_factor_reuse_matches_fresh_factorization_on_rod_compliance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 367 filtered out; finished in 0.52s
+

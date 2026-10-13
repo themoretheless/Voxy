@@ -1,0 +1,24 @@
+{
+  "status": "first_coupled_frame_passed",
+  "pid": 61308,
+  "binary_sha256": "8a0904f275bc70d5caaa24c75c8cf7cf5639c55b8bb832fc698aeedd0090ffe9",
+  "features": [
+    "experimental-strand-fraction-reuse",
+    "experimental-reusable-query-workers"
+  ],
+  "env_overrides": {
+    "VOXY_HAIR_RESIDENT_COMPACT_READBACK": "1",
+    "VOXY_HAIR_RESIDENT_PREFER_LARGE_WORKSPACE": "1",
+    "VOXY_HAIR_JOINT_RESIDENT_ACTIVE_SET": "1",
+    "VOXY_HAIR_RESIDENT_OPERATOR_REUSE": "1",
+    "VOXY_HAIR_RESIDENT_WORKSPACE_REUSE": "1",
+    "VOXY_HAIR_STRAND_FRACTION_REUSE": "1",
+    "VOXY_HAIR_JOINT_STAGE_PROFILE": "1",
+    "VOXY_HAIR_RESIDENT_WORKGROUP_LANES": "1024",
+    "VOXY_HAIR_RESIDENT_ACTIVE_SHADER_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-12/gpu-source-audit/active-lanes-1024.wgsl"
+  },
+  "log": "/tmp/voxy-combined-query-coupled-frame.log",
+  "scope": "one coupled frame with matching workload profiles; uncontrolled timings; not whole cycle or FPS",
+  "matching_ordered_workloads": 559,
+  "readback_payload_bytes": 704514688
+}

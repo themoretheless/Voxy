@@ -1,0 +1,6 @@
+{
+  "pairs": 8,
+  "fresh_median_ms": 12.8053335,
+  "reuse_median_ms": 7.7126045,
+  "scope": "one 91-row operator, allocation/upload/dispatch/readback wall time, fixed precompiled pipeline, concurrent full simulations, not FPS or trajectory speedup"
+}

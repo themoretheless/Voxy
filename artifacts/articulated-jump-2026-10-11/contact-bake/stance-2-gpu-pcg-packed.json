@@ -1,0 +1,51 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "input_scope": "Accepted physical stance runtime surface; active triangle vertices only",
+  "native_character_integrated": false,
+  "reports": [
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 8.3285,
+      "gpu_compute_ms": null,
+      "iterations": 8,
+      "max_absolute_error": 0.2649888908262118,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.19798389077186584,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 1.284063836487711e-7
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 4.405917,
+      "gpu_compute_ms": 1.258958,
+      "iterations": 16,
+      "max_absolute_error": 0.07561846727083765,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.19926537573337555,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 1.4958511071723906e-8
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 6.570541,
+      "gpu_compute_ms": 2.375584,
+      "iterations": 32,
+      "max_absolute_error": 0.003607711731897223,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.19999542832374573,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 1.7369432870322995e-11
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 7.737875,
+      "gpu_compute_ms": 4.6005,
+      "iterations": 40,
+      "max_absolute_error": 0.0008034324045046448,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.19999860227108002,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 1.2162688827471965e-12
+    }
+  ],
+  "scope": "Supplied surface equation against CPU f64 reference; wall times include CPU encoding, readback and equation audit. GPU timestamps are reported separately when supported.",
+  "target_120fps_achieved": false,
+  "undirected_edges": 182204,
+  "vertices": 60814
+}

@@ -1,0 +1,17 @@
+{
+  "base_vertices": 78278,
+  "actual_appended_vertices": 93217,
+  "ticks": [
+    1,
+    31
+  ],
+  "tail_vertices_and_normals": "bitwise unchanged after GPU base deformation on both poses",
+  "full_image_max_u8_errors": [
+    29,
+    11
+  ],
+  "gate": 1,
+  "status": "failed; native activation not admitted",
+  "source_findings": "mesh_without_hair returns no authored normals; renderer generates geometric normals, while isolated GPU body uses transported authored normals",
+  "limits": "tail preservation proved; root cause of all image errors not fully isolated"
+}

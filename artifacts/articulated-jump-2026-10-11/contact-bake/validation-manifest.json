@@ -1,0 +1,49 @@
+{
+  "upstream": "https://github.com/thecodebrozilla/FootContactCurves",
+  "revision": "866b7e05be3de6ee748b0c72c4e9602f9de8bf9f",
+  "license": "MIT",
+  "animation_tests": {
+    "passed": 257,
+    "failed": 0
+  },
+  "editor_tests": {
+    "passed": 185,
+    "failed": 0,
+    "ignored": 17
+  },
+  "sample_rate_hz": 24,
+  "height_threshold_m": 0.06,
+  "vertical_speed_threshold_m_s": 0.3,
+  "status": "offline_candidates_require_author_review",
+  "runtime_candidates_enabled": false,
+  "physical_contacts_verified": false,
+  "fps_measured": false,
+  "limitation": "Default source thresholds yield absent or short running stance windows. Manual per-clip calibration and physical qualification remain open.",
+  "sha256": {
+    "crates/voxy_animation/src/contact_bake.rs": "b027a7a7930e5fc0bdff5f22f88c2b2452392c40914b7b88186a1b460bdf1961",
+    "crates/voxy_render/examples/quaternius_gait_contacts.rs": "8e3ad8b3b31f3d313e4097f1e7816984465b2483bcbecd5bf6e8c212460449ab",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "cf6676aca67f8abbb5fa6c10950f86de0a4fb5b4a782b4186c43754fa681369a",
+    "assets/animation/quaternius-universal/GAIT_CONTACT_CANDIDATES.json": "0d01fc2b7b813bd4d44ed13e64081627a3b443797f53f091d8dac2c4688d9073",
+    "assets/animation/quaternius-universal/GAIT_TOE_CONTACT_CANDIDATES.json": "a91ec60372db7ff9f405ffdd30e65c4208542b4fc257f8e70922606228f70688",
+    "artifacts/articulated-jump-2026-10-11/contact-bake-animation-suite.log": "b0e442b448cfc242331507e3fc317b68e60d2bf3ac25745c44021edc8bec592f",
+    "artifacts/articulated-jump-2026-10-11/contact-bake-editor-final-tests.log": "8543dedef03158810ea447837f0cc49cbcfc0531e37956c833a74649a121ad05",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/threshold-analysis.json": "0720e047e008e73032fc3928d322d59ba95b5a9f9fc64df60e6c043b6918489b",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/threshold-analysis-audit.json": "84a764742971768353742133bbd848c2f67311eb470bc8f9145f3c36385e3e44",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/toe-kinematics.json": "5b8f14f4402211b87fa115b6c5e2a6444bb20d61713cc5cb3fcb279223cede6d",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/ankle-kinematics.json": "32ccd8ae027028f0c72f651cf827b87e169dc1abe5467e8885f006e9f0fbc93f"
+  },
+  "threshold_analysis": {
+    "records": 8,
+    "trials_per_record": 25,
+    "total_trials": 200,
+    "thresholds_selected": false,
+    "runtime_bindings_changed": false,
+    "build": "threshold-analysis-build.log"
+  },
+  "kinematic_analysis": {
+    "records": 16,
+    "trials": 400,
+    "velocity_recomputed_from_positions": true,
+    "physical_contacts_verified": false
+  }
+}

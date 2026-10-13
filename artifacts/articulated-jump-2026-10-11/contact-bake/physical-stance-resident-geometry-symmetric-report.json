@@ -1,0 +1,122 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "coefficient_readback_before_solve": false,
+  "invalid_geometry_checks": [
+    {
+      "scenario": "collapsed_triangle",
+      "status": 1
+    },
+    {
+      "scenario": "nonfinite_position",
+      "status": 1
+    },
+    {
+      "scenario": "valid_recovery",
+      "status": 0
+    }
+  ],
+  "native_renderer_integrated": false,
+  "qualified": true,
+  "resident_operator_reused": true,
+  "samples": [
+    {
+      "assembly_gpu_ms": 0.145542,
+      "bitwise_symmetric": true,
+      "edge_max_relative_error": 6.270619840923496e-7,
+      "encode_wait_readback_and_audit_wall_ms": 26.924625,
+      "geometry_status": 0,
+      "irradiance_max_absolute_error": 0.0008013462419439454,
+      "iterations": 40,
+      "mass_max_relative_error": 2.632698824266881e-7,
+      "minimum_irradiance": 0.19999851286411285,
+      "qualified": true,
+      "sample": 0,
+      "solve_gpu_ms": 5.796,
+      "squared_relative_equation_residual": 1.2096889265209065e-12,
+      "time_seconds": 0.016666666666666666
+    },
+    {
+      "assembly_gpu_ms": 0.156833,
+      "bitwise_symmetric": true,
+      "edge_max_relative_error": 3.5861041908373994e-7,
+      "encode_wait_readback_and_audit_wall_ms": 14.05375,
+      "geometry_status": 0,
+      "irradiance_max_absolute_error": 0.0008176781434843239,
+      "iterations": 40,
+      "mass_max_relative_error": 2.632698824266881e-7,
+      "minimum_irradiance": 0.19999852776527405,
+      "qualified": true,
+      "sample": 1,
+      "solve_gpu_ms": 5.781584,
+      "squared_relative_equation_residual": 1.2612454944479552e-12,
+      "time_seconds": 0.26666666666666666
+    },
+    {
+      "assembly_gpu_ms": 0.157583,
+      "bitwise_symmetric": true,
+      "edge_max_relative_error": 3.5861041908373994e-7,
+      "encode_wait_readback_and_audit_wall_ms": 14.591042,
+      "geometry_status": 0,
+      "irradiance_max_absolute_error": 0.0007971751418631712,
+      "iterations": 40,
+      "mass_max_relative_error": 2.632698824266881e-7,
+      "minimum_irradiance": 0.19999849796295166,
+      "qualified": true,
+      "sample": 2,
+      "solve_gpu_ms": 5.80825,
+      "squared_relative_equation_residual": 1.2088322435543202e-12,
+      "time_seconds": 0.5166666666666673
+    },
+    {
+      "assembly_gpu_ms": 0.1595,
+      "bitwise_symmetric": true,
+      "edge_max_relative_error": 3.5861041908373994e-7,
+      "encode_wait_readback_and_audit_wall_ms": 15.472332999999999,
+      "geometry_status": 0,
+      "irradiance_max_absolute_error": 0.000783657839705576,
+      "iterations": 40,
+      "mass_max_relative_error": 2.632698824266881e-7,
+      "minimum_irradiance": 0.19999849796295166,
+      "qualified": true,
+      "sample": 3,
+      "solve_gpu_ms": 5.762667,
+      "squared_relative_equation_residual": 1.196808393516396e-12,
+      "time_seconds": 0.7666666666666664
+    },
+    {
+      "assembly_gpu_ms": 0.157875,
+      "bitwise_symmetric": true,
+      "edge_max_relative_error": 6.270619840923496e-7,
+      "encode_wait_readback_and_audit_wall_ms": 13.470166,
+      "geometry_status": 0,
+      "irradiance_max_absolute_error": 0.0007991974697275639,
+      "iterations": 40,
+      "mass_max_relative_error": 2.632698824266881e-7,
+      "minimum_irradiance": 0.19999854266643524,
+      "qualified": true,
+      "sample": 4,
+      "solve_gpu_ms": 5.784208,
+      "squared_relative_equation_residual": 1.1956511902814374e-12,
+      "time_seconds": 1.0166666666666655
+    },
+    {
+      "assembly_gpu_ms": 0.159167,
+      "bitwise_symmetric": true,
+      "edge_max_relative_error": 3.5861041908373994e-7,
+      "encode_wait_readback_and_audit_wall_ms": 12.835790999999999,
+      "geometry_status": 0,
+      "irradiance_max_absolute_error": 0.0008196337422777811,
+      "iterations": 40,
+      "mass_max_relative_error": 2.632698824266881e-7,
+      "minimum_irradiance": 0.19999851286411285,
+      "qualified": true,
+      "sample": 5,
+      "solve_gpu_ms": 5.790458,
+      "squared_relative_equation_residual": 1.2633116600461297e-12,
+      "time_seconds": 1.2666666666666646
+    }
+  ],
+  "scope": "Dynamic resident assembly and solve on supplied accepted poses. Diagnostic tail readback only. Incident light still uploaded. No native frame/FPS qualification.",
+  "triangles": 121388,
+  "vertices": 60814
+}

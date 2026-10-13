@@ -1,0 +1,51 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "input_scope": "Accepted physical stance runtime surface; active triangle vertices only",
+  "native_character_integrated": false,
+  "reports": [
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 13.374208,
+      "gpu_compute_ms": null,
+      "iterations": 8,
+      "max_absolute_error": 0.2650372867927714,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.1980232298374176,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 1.2830788428686474e-7
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 5.4672920000000005,
+      "gpu_compute_ms": 1.244666,
+      "iterations": 16,
+      "max_absolute_error": 0.07534112385369973,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.1992834061384201,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 1.4701463988310515e-8
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 7.790208,
+      "gpu_compute_ms": 2.375834,
+      "iterations": 32,
+      "max_absolute_error": 0.003613549982087183,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.19999568164348602,
+      "qualified": false,
+      "squared_l2_equation_residual_ratio": 1.7552029921893286e-11
+    },
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 8.886375000000001,
+      "gpu_compute_ms": 4.615125,
+      "iterations": 40,
+      "max_absolute_error": 0.0007992570743723393,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.19999854266643524,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 1.1972252833653656e-12
+    }
+  ],
+  "scope": "Supplied surface equation against CPU f64 reference; wall times include CPU encoding, readback and equation audit. GPU timestamps are reported separately when supported.",
+  "target_120fps_achieved": false,
+  "undirected_edges": 182204,
+  "vertices": 60814
+}

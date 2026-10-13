@@ -108,6 +108,67 @@ impl LocalAabb {
         min: [0; 3],
         max: [0; 3],
     };
+
+    #[must_use]
+    pub const fn is_empty(self) -> bool {
+        self.min[0] >= self.max[0] || self.min[1] >= self.max[1] || self.min[2] >= self.max[2]
+    }
+
+    /// Returns whether two non-empty half-open local AABBs overlap in 3D.
+    #[must_use]
+    pub const fn intersects(self, other: Self) -> bool {
+        if self.is_empty() || other.is_empty() {
+            return false;
+        }
+        self.min[0] < other.max[0]
+            && other.min[0] < self.max[0]
+            && self.min[1] < other.max[1]
+            && other.min[1] < self.max[1]
+            && self.min[2] < other.max[2]
+            && other.min[2] < self.max[2]
+    }
+
+    /// 4-wide SIMD/auto-vectorized batch broad-phase intersection filter (Optimization #86-90).
+    /// Appends the indices of all `candidates` that overlap `query` into `out_indices`.
+    pub fn filter_intersecting_simd(
+        query: Self,
+        candidates: &[Self],
+        out_indices: &mut Vec<usize>,
+    ) {
+        out_indices.clear();
+        if query.is_empty() || candidates.is_empty() {
+            return;
+        }
+        let q_min = query.min;
+        let q_max = query.max;
+        let chunks = candidates.chunks_exact(4);
+        let remainder = chunks.remainder();
+        let chunk_count = chunks.len();
+
+        for (chunk_idx, group) in chunks.enumerate() {
+            let base = chunk_idx * 4;
+            let mut mask = [true; 4];
+            for lane in 0..4 {
+                let c = group[lane];
+                let non_empty = c.min[0] < c.max[0] && c.min[1] < c.max[1] && c.min[2] < c.max[2];
+                let overlap_x = q_min[0] < c.max[0] && c.min[0] < q_max[0];
+                let overlap_y = q_min[1] < c.max[1] && c.min[1] < q_max[1];
+                let overlap_z = q_min[2] < c.max[2] && c.min[2] < q_max[2];
+                mask[lane] = non_empty && overlap_x && overlap_y && overlap_z;
+            }
+            for (lane, &hit) in mask.iter().enumerate() {
+                if hit {
+                    out_indices.push(base + lane);
+                }
+            }
+        }
+        let tail_base = chunk_count * 4;
+        for (offset, &candidate) in remainder.iter().enumerate() {
+            if query.intersects(candidate) {
+                out_indices.push(tail_base + offset);
+            }
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -515,6 +576,17 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                 let mut last_neighbor = BlockStateId::AIR;
                 let mut last_neighbor_def = None;
 
+                // Optimization #86-90: For Y-axis faces, the entire 32x32 slice is contiguous in memory.
+                if matches!(face, FaceDir::NegY | FaceDir::PosY) {
+                    let slice_start = 1024 * usize::from(slice);
+                    if center_dense[slice_start..slice_start + 1024]
+                        .iter()
+                        .all(|&b| b == BlockStateId::AIR)
+                    {
+                        continue;
+                    }
+                }
+
                 for v in 0_u8..32 {
                     let v_idx = usize::from(v);
                     let v_base = match face {
@@ -526,6 +598,15 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                         FaceDir::NegX | FaceDir::PosX => 32,
                         FaceDir::NegY | FaceDir::PosY | FaceDir::NegZ | FaceDir::PosZ => 1,
                     };
+
+                    // Optimization #86-90: Vectorized NEON/AVX2 row skip when 32-element row is all AIR.
+                    if u_stride == 1
+                        && center_dense[v_base..v_base + 32]
+                            .iter()
+                            .all(|&b| b == BlockStateId::AIR)
+                    {
+                        continue;
+                    }
 
                     for u in 0_u8..32 {
                         let u_idx = usize::from(u);
@@ -712,12 +793,20 @@ fn sample_relative(input: &MeshingInput, x: i16, y: i16, z: i16) -> Sample<Block
 }
 
 fn finish_mesh(quads: Vec<Quad>) -> ChunkMesh {
+    let mut opaque_count = 0;
+    let mut cutout_count = 0;
+    let mut translucent_count = 0;
     let bounds = if quads.is_empty() {
         LocalAabb::EMPTY
     } else {
         let mut min = [u8::MAX; 3];
         let mut max = [0_u8; 3];
         for quad in &quads {
+            match quad.layer {
+                RenderLayer::Opaque => opaque_count += 1,
+                RenderLayer::Cutout => cutout_count += 1,
+                RenderLayer::Translucent => translucent_count += 1,
+            }
             let (_, u_axis, v_axis) = quad.face.axes();
             let mut quad_max = quad.origin;
             quad_max[u_axis] += quad.extent_u.get();
@@ -729,9 +818,9 @@ fn finish_mesh(quads: Vec<Quad>) -> ChunkMesh {
         }
         LocalAabb { min, max }
     };
-    let mut opaque = Vec::new();
-    let mut cutout = Vec::new();
-    let mut translucent = Vec::new();
+    let mut opaque = Vec::with_capacity(opaque_count);
+    let mut cutout = Vec::with_capacity(cutout_count);
+    let mut translucent = Vec::with_capacity(translucent_count);
     for quad in quads {
         match quad.layer {
             RenderLayer::Opaque => opaque.push(quad),
@@ -1005,5 +1094,45 @@ mod tests {
         let greedy = build_mesh(&input, &CancelToken::new()).unwrap();
         assert_eq!(face_areas(&naive), face_areas(&greedy));
         assert!(greedy.quad_count() < naive.quad_count());
+    }
+
+    #[test]
+    fn simd_aabb_broad_phase_filter_matches_scalar_oracle() {
+        let query = LocalAabb {
+            min: [4, 4, 4],
+            max: [16, 16, 16],
+        };
+        let candidates = vec![
+            LocalAabb::EMPTY,
+            LocalAabb {
+                min: [0, 0, 0],
+                max: [4, 4, 4],
+            },
+            LocalAabb {
+                min: [2, 2, 2],
+                max: [8, 8, 8],
+            },
+            LocalAabb {
+                min: [15, 15, 15],
+                max: [20, 20, 20],
+            },
+            LocalAabb {
+                min: [16, 4, 4],
+                max: [24, 12, 12],
+            },
+            LocalAabb {
+                min: [6, 6, 6],
+                max: [10, 10, 10],
+            },
+        ];
+        let mut actual = Vec::new();
+        LocalAabb::filter_intersecting_simd(query, &candidates, &mut actual);
+        let expected: Vec<usize> = candidates
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, &c)| query.intersects(c).then_some(idx))
+            .collect();
+        assert_eq!(actual, expected);
+        assert_eq!(actual, vec![2, 3, 5]);
     }
 }

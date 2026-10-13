@@ -1,0 +1,64 @@
+{
+  "scope": "one original physical operator; alternating wall-clock measurements; not full trajectory or FPS",
+  "runs": [
+    {
+      "index": 0,
+      "cooperative_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 114.06275000000001,
+      "log": "triple-cooperative_gap-comparison-0.log"
+    },
+    {
+      "index": 1,
+      "cooperative_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 107.496709,
+      "log": "triple-cooperative_gap-comparison-1.log"
+    },
+    {
+      "index": 2,
+      "cooperative_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 96.974458,
+      "log": "triple-cooperative_gap-comparison-2.log"
+    },
+    {
+      "index": 3,
+      "cooperative_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 113.464,
+      "log": "triple-cooperative_gap-comparison-3.log"
+    },
+    {
+      "index": 4,
+      "cooperative_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 112.87633299999999,
+      "log": "triple-cooperative_gap-comparison-4.log"
+    },
+    {
+      "index": 5,
+      "cooperative_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 96.05387499999999,
+      "log": "triple-cooperative_gap-comparison-5.log"
+    },
+    {
+      "index": 6,
+      "cooperative_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 95.175042,
+      "log": "triple-cooperative_gap-comparison-6.log"
+    },
+    {
+      "index": 7,
+      "cooperative_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 111.75699999999999,
+      "log": "triple-cooperative_gap-comparison-7.log"
+    }
+  ],
+  "before_median_ms": 113.1701665,
+  "after_median_ms": 96.51416649999999,
+  "speedup": 1.1725757016199276
+}

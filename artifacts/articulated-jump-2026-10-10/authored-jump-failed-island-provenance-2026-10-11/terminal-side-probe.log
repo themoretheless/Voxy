@@ -1,0 +1,35 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 42.77s
+     Running unittests src/lib.rs (target/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+TERMINAL ENDPOINT face=91349 point=[-0.04229129839037451, 0.7933419633250849, -0.008502289929426726] closest=[-0.042224150311804376, 0.7932417089355104, -0.008423237226056523] outward=[-0.4654859267110884, 0.6949864900336558, -0.5480115242443525]
+TERMINAL REFRESHED WITNESSES count=1
+TERMINAL REFRESHED witness=TrajectoryContact { time: 1.0, fraction: -0.0, normal: [-0.4816923096304027, 0.6794275356107021, -0.5534896048679654], target: [-0.04124410967035932, 0.7954348325363663, -0.006557954969699139], gap: -5.801526065065303e-6 } alignment=9.928378732996481e-1
+TERMINAL REFRESHED OPPOSITE count=0
+test hair::contact::terminal_side_replay_tests::captured_terminal_trajectory_side_probe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 419 filtered out; finished in 0.32s
+

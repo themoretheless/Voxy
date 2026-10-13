@@ -721,3 +721,11 @@ mod tests {
         assert!(JointContactDotInput::new(&[vec![f64::NAN]],&[1.]).is_err());
     }
 }
+
+#[path="joint_contact_active.rs"]
+mod active;
+pub use active::{ExperimentalResidentContactBatch,ExperimentalResidentContactInput,EXPERIMENTAL_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER,EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,experimental_seeded_resident_contact_shader};
+
+#[path="joint_contact_triple.rs"]
+mod triple;
+pub use triple::{ExperimentalTripleContactInput,ExperimentalTripleActiveContactInput,ExperimentalTripleActiveFactors,ExperimentalTripleActiveContactBatch,ExperimentalTripleCompletedFactorReadback,ExperimentalTripleExpansion,ExperimentalTripleExpandedCandidate};

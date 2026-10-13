@@ -1,0 +1,12 @@
+{
+  "status": "launched_not_yet_qualified",
+  "session_id": 70737,
+  "timestamp_utc": "2026-10-12T19:20:22.064580+00:00",
+  "binary": "/tmp/voxy-large-workspace-20261012/app-tests",
+  "binary_sha256": "4ee600061e8726bdabdd5a220592f6ac989d729c3364fd353233264d8b5a2c35",
+  "log": "/tmp/voxy-large-workspace-20261012/two-frame.log",
+  "test": "coupled_authored_jump_real_gpu_hair_two_frames",
+  "workgroup_lanes": 1024,
+  "prefer_large_completed": true,
+  "scope": "two coupled frames; no full-cycle or rendered FPS proof"
+}

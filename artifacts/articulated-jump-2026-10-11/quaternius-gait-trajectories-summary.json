@@ -1,0 +1,94 @@
+{
+  "scope": "Imported model-space trajectory measurements; no physical ground or inferred stance",
+  "samples_per_clip": 241,
+  "clips": [
+    {
+      "name": "Idle_Loop",
+      "duration_s": 2.5,
+      "endpoint_position_gap_m": {
+        "DEF-hips": 0.0001175879595349594,
+        "DEF-foot.L": 3.129638352374514e-07,
+        "DEF-toe.L": 3.127180664047605e-07,
+        "DEF-foot.R": 4.819013930112834e-07,
+        "DEF-toe.R": 4.2550757656102137e-07
+      },
+      "toe_y_range_m": {
+        "left": [
+          0.014629902482932278,
+          0.01464754423623052
+        ],
+        "right": [
+          0.015179969776089902,
+          0.015198831985465053
+        ]
+      }
+    },
+    {
+      "name": "Walk_Loop",
+      "duration_s": 1.3333333730697632,
+      "endpoint_position_gap_m": {
+        "DEF-hips": 0.0,
+        "DEF-foot.L": 0.0,
+        "DEF-toe.L": 0.0,
+        "DEF-foot.R": 0.0,
+        "DEF-toe.R": 0.0
+      },
+      "toe_y_range_m": {
+        "left": [
+          0.014270808794077924,
+          0.18759794161542248
+        ],
+        "right": [
+          0.014109035000807763,
+          0.17268900211902113
+        ]
+      }
+    },
+    {
+      "name": "Jog_Fwd_Loop",
+      "duration_s": 0.9166666865348816,
+      "endpoint_position_gap_m": {
+        "DEF-hips": 0.02303650483723305,
+        "DEF-foot.L": 0.024500310224795725,
+        "DEF-toe.L": 0.024371436807108807,
+        "DEF-foot.R": 0.005080394651160353,
+        "DEF-toe.R": 0.007266565479469898
+      },
+      "toe_y_range_m": {
+        "left": [
+          -0.005286490849623016,
+          0.3898838077914365
+        ],
+        "right": [
+          -0.008957864640495389,
+          0.39281928584686276
+        ]
+      }
+    },
+    {
+      "name": "Sprint_Loop",
+      "duration_s": 0.6666666865348816,
+      "endpoint_position_gap_m": {
+        "DEF-hips": 0.0,
+        "DEF-foot.L": 0.0,
+        "DEF-toe.L": 0.0,
+        "DEF-foot.R": 0.0,
+        "DEF-toe.R": 0.0
+      },
+      "toe_y_range_m": {
+        "left": [
+          -0.04351948425881555,
+          0.3965595124505419
+        ],
+        "right": [
+          -0.026686922306401517,
+          0.2645547003800849
+        ]
+      }
+    }
+  ],
+  "sha256": {
+    "artifacts/articulated-jump-2026-10-11/quaternius-gait-trajectories.json": "1b0617637fe2ac0fce29fc5d43a2898fcfb83116088d77029d4228d9855141f6",
+    "crates/voxy_render/examples/quaternius_gait_contacts.rs": "da318118ff6dd08295934a10e378c5ebf51d403474eaeae2f2349b4788a5894d"
+  }
+}

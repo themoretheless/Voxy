@@ -1,0 +1,15 @@
+
+running 1 test
+
+thread 'joint_contact_dot::triple::qr_tests::gpu_triple_seeded_original_operator' (91433918) panicked at crates/voxy_render/src/joint_contact_triple_qr_tests.rs:192:145:
+assertion failed: gap.abs() <= tolerance
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test joint_contact_dot::triple::qr_tests::gpu_triple_seeded_original_operator ... FAILED
+
+failures:
+
+failures:
+    joint_contact_dot::triple::qr_tests::gpu_triple_seeded_original_operator
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 299 filtered out; finished in 0.58s
+

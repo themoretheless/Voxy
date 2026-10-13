@@ -1,0 +1,12 @@
+
+running 1 test
+SECOND ORDER ORIGIN merit=0e0 mesh_path=true
+SECOND ORDER ORIGINAL CANDIDATE swept_fraction=1 trial_scale=1
+CONTACT DIRECTION AUDIT epsilon_m=1e-7 baseline=8.423545862892212e-8 frozen_derivative=2.4811236858421575e-5 refreshed_derivative=2.6830383922430948e-5 frozen_minus=8.423307137177874e-8 frozen_plus=8.423803361915042e-8 refreshed_minus=8.423279291135193e-8 refreshed_plus=8.423815898813641e-8
+CONTACT DIRECTION AUDIT epsilon_m=1e-8 baseline=8.423545862892212e-8 frozen_derivative=2.4705011653999243e-5 refreshed_derivative=2.6710051672726516e-5 frozen_minus=8.423521965640043e-8 frozen_plus=8.423571375663351e-8 refreshed_minus=8.423519167647984e-8 refreshed_plus=8.423572587751329e-8
+CONTACT DIRECTION AUDIT epsilon_m=1e-9 baseline=8.423545862892212e-8 frozen_derivative=2.4694803247329647e-5 refreshed_derivative=2.669991868507645e-5 frozen_minus=8.423543472864829e-8 frozen_plus=8.423548411825478e-8 refreshed_minus=8.423543193035697e-8 refreshed_plus=8.423548533019434e-8
+CONTACT DIRECTION AUDIT epsilon_m=1e-10 baseline=8.423545862892212e-8 frozen_derivative=2.4694381537418478e-5 refreshed_derivative=2.6696689008005574e-5 frozen_minus=8.423545623884121e-8 frozen_plus=8.423546117771752e-8 refreshed_minus=8.423545595906601e-8 refreshed_plus=8.423546129840381e-8
+test hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 439 filtered out; finished in 0.63s
+

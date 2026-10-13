@@ -1,0 +1,140 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:17:127
+   |
+17 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib test) generated 3 warnings (run `cargo fix --lib -p physics --tests` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 40.99s
+     Running unittests src/lib.rs (/tmp/voxy-face-refit-20261011/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+HAIR CONTACT RECOVERY zero_free=false iteration=0 merit=5.527677977203148e-8 work_j=8.699938635962193e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=1 merit=5.524889014339668e-8 work_j=8.695414205163159e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=2 merit=9.700572567834435e-9 work_j=9.102855980784647e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=3 merit=9.633771061585736e-9 work_j=9.027039409080991e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=4 merit=1.1185572683647459e-14 work_j=9.96029663047596e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=5 merit=1.1185530031278094e-14 work_j=9.960256194826639e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=6 merit=1.1185516870949598e-14 work_j=9.96009698528767e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=7 merit=1.118543805039388e-14 work_j=9.960017537103903e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=8 merit=1.1185306882358658e-14 work_j=9.959702472028636e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=9 merit=1.114162761441881e-14 work_j=9.91961489217269e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=10 merit=1.1098119210408194e-14 work_j=9.87968687070001e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=11 merit=1.0925781767633559e-14 work_j=9.721956440998062e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=12 merit=1.0924445899838609e-14 work_j=9.720729276358374e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=13 merit=1.0881783182443128e-14 work_j=9.681575975459507e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=14 merit=1.088161685402605e-14 work_j=9.681423196462881e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=15 merit=1.0881596074284834e-14 work_j=9.68140409916431e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=16 merit=1.088158568250604e-14 work_j=9.681394550445302e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=17 merit=1.0881580469718528e-14 work_j=9.681389776167153e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=18 merit=1.0881579177502685e-14 work_j=9.681388582561176e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=19 merit=1.0881578538217382e-14 work_j=9.681387985837686e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=20 merit=1.0881578214875883e-14 work_j=9.681387687394547e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=21 merit=1.0881578198797801e-14 work_j=9.68138767797077e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=22 merit=1.0881578186525137e-14 work_j=9.681387668555453e-8
+HAIR CONTACT RECOVERY zero_free=false iteration=23 merit=1.0881578184266661e-14 work_j=9.681387659264301e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=1.0881578184266661e-14 work_j=9.681387659264301e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=4.535525830935342e-16 work_j=9.681684065928132e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.5729299166464337e-17 work_j=9.681900792979217e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.3679913362843199e-18 work_j=9.682008670254397e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=4.4050709973376324e-20 work_j=9.682060966796489e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=0e0 work_j=9.682086225285116e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=0e0 work_j=9.682086225285083e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=0e0 work_j=9.682086225285064e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=9.682086225285035e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=9 merit=0e0 work_j=9.68208622528501e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=10 merit=0e0 work_j=9.682086225284986e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=11 merit=0e0 work_j=9.682086225284977e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=12 merit=0e0 work_j=9.682086225284947e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=13 merit=0e0 work_j=9.682086225284927e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=14 merit=0e0 work_j=9.682086225284898e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=15 merit=0e0 work_j=9.682086225284884e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=16 merit=0e0 work_j=9.68208622528485e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=17 merit=0e0 work_j=9.682086225284821e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=18 merit=0e0 work_j=9.682086225284792e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=19 merit=0e0 work_j=9.682086225284772e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=20 merit=0e0 work_j=9.68208622528476e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=21 merit=0e0 work_j=9.68208622528473e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=22 merit=0e0 work_j=9.682086225284706e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=23 merit=0e0 work_j=9.68208622528468e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=24 merit=0e0 work_j=9.682086225284662e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=25 merit=0e0 work_j=9.682086225284641e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=26 merit=0e0 work_j=9.682086225284613e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=27 merit=0e0 work_j=9.682086225284593e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=28 merit=0e0 work_j=9.682086225284563e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=29 merit=0e0 work_j=9.68208622528454e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=30 merit=0e0 work_j=9.68208622528451e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=31 merit=0e0 work_j=9.682086225284487e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=32 merit=0e0 work_j=9.682086225284467e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=33 merit=0e0 work_j=9.682086225284445e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=34 merit=0e0 work_j=9.68208622528442e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=35 merit=0e0 work_j=9.682086225284395e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=36 merit=0e0 work_j=9.682086225284371e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=37 merit=0e0 work_j=9.682086225284351e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=38 merit=0e0 work_j=9.682086225284327e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=39 merit=0e0 work_j=9.682086225284303e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=40 merit=0e0 work_j=9.682086225284276e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=41 merit=0e0 work_j=9.68208622528426e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=42 merit=0e0 work_j=9.68208622528423e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=43 merit=0e0 work_j=9.682086225284201e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=44 merit=0e0 work_j=9.682086225284174e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=45 merit=0e0 work_j=9.682086225284158e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=46 merit=0e0 work_j=9.682086225284137e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=47 merit=0e0 work_j=9.682086225284105e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=48 merit=0e0 work_j=9.682086225284084e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=49 merit=0e0 work_j=9.682086225284059e-8
+test hair::contact::velocity_contacts::second_order_tests::captured_restoration_preserves_clear_strand_trajectory has been running for over 60 seconds
+HAIR CONTACT RECOVERY zero_free=true iteration=50 merit=0e0 work_j=9.682086225284036e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=51 merit=0e0 work_j=9.682086225284019e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=52 merit=0e0 work_j=9.682086225283988e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=53 merit=0e0 work_j=9.682086225283974e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=54 merit=0e0 work_j=9.682086225283942e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=55 merit=0e0 work_j=9.682086225283916e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=56 merit=0e0 work_j=9.682086225283888e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=57 merit=0e0 work_j=9.682086225283869e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=58 merit=0e0 work_j=9.682086225283844e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=59 merit=0e0 work_j=9.68208622528382e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=60 merit=0e0 work_j=9.6820862252838e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=61 merit=0e0 work_j=9.682086225283769e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=62 merit=0e0 work_j=9.682086225283754e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=63 merit=0e0 work_j=9.68208622528372e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=64 merit=0e0 work_j=9.682086225283699e-8
+FEASIBLE STRAND RESTORATION elapsed_s=67.544883375 result=Ok(false)
+
+thread 'hair::contact::velocity_contacts::second_order_tests::captured_restoration_preserves_clear_strand_trajectory' (18886531) panicked at crates/physics/src/hair/contact_second_order_tests.rs:155:5:
+feasible-strand recovery did not establish a proposal
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::velocity_contacts::second_order_tests::captured_restoration_preserves_clear_strand_trajectory ... FAILED
+
+failures:
+
+failures:
+    hair::contact::velocity_contacts::second_order_tests::captured_restoration_preserves_clear_strand_trajectory
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 448 filtered out; finished in 68.12s
+
+error: test failed, to rerun pass `-p physics --lib`

@@ -1,0 +1,13 @@
+{
+  "binary": "/tmp/voxy-coupled-zero-merit-replay.bin",
+  "binary_sha256": "9841f296ad5b7077dc3571051c77d98ccf703169ad2bc428edf420b381814d18",
+  "fixture": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/authored-jump-strand-counterexamples-captured/failed-contact.vhr",
+  "fixture_sha256": "f359aba0cdfc8b1707598bf0515c7696935c12da3be9768ac05b978499a2a55b",
+  "source_sha256": {
+    "mod.rs": "d356c30b477c4e1051c25dfa75b34a75baf0fbec3802e0d2820e64359f7f4296",
+    "contact_model.rs": "55ec99b2401b26d966882769179432e4a596260fba5f847a389f15230e2e8f74",
+    "contact_response_system.rs": "5bd32de65356d3506b98dd76b1ecad078be2a0f79387532dd7f8af5cbcede48f",
+    "contact_safe_motion.rs": "3a1396c5c488f8ae55ad5bbf6f0c210a7f7b375559426f11f4e5dceeb2a15f6c"
+  },
+  "scope": "new actual coupled frame2 failure with zero final penetration merit"
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "one original strict coupled frame; full cycle not completed; concurrent load prevents speed-ratio inference",
+  "frame": {
+    "elapsed_ms": 86632.757583,
+    "frame": 1,
+    "gpu_counts": {
+      "coordinate_batches": true,
+      "joint_admitted": 9711,
+      "joint_coordinate_calls": 9711,
+      "joint_equality_dispatches": 552,
+      "joint_equality_submissions": 552,
+      "native_contact_fallbacks": 0,
+      "structural_calls": 0
+    },
+    "hair_ms": 86606.84208399999,
+    "skin_ms": 174.767583,
+    "time_s": 0.008333333333333333
+  }
+}

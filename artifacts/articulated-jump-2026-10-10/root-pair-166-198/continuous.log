@@ -1,0 +1,5 @@
+pair166198 scale=0 segments=0,2 query=IterationLimit { fraction: 0.10145739859385224, gap_m: 1.4941970926068797e-9, iterations: 1024 }
+pair166198 scale=0 clear=400 approach=0 initial=0 exhausted=1
+pair166198 scale=1 segments=0,2 query=IterationLimit { fraction: 0.2295262400636074, gap_m: 8.510716964663459e-8, iterations: 1024 }
+pair166198 scale=1 segments=3,4 query=IterationLimit { fraction: 0.051305300444218584, gap_m: 1.1365970959222906e-8, iterations: 1024 }
+pair166198 scale=1 clear=399 approach=0 initial=0 exhausted=2

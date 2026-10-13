@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "pid": 25695,
+  "command": [
+    "/tmp/voxy-interval-dyadic-1791768997652868000/physics-tests",
+    "captured_contact_reaches_feasible_geometry",
+    "--ignored",
+    "--nocapture"
+  ],
+  "directory": "/tmp/voxy-interval-dyadic-1791768997652868000",
+  "source_sha256": "47e9be31d364ad9d9e4f92c097414717c898a7f94d8d4ec2a5bca933ff4e4c37",
+  "input_sha256": "5828b477d9e4d8da77b75626750b43c13cf04458559d9a364d9eace173b768df",
+  "binary_sha256": "8d49c0cac1e0d91af0df95f304f52786b32ff3b11784f92c1df54a241b5804fb",
+  "expected_final_state_sha256": "06d6ad9cb820fa9aa7e759c8c2754359292c16440d483b4221013c8f4144ad81",
+  "scope": "captured whole-groom recovery; not authored cycle or FPS",
+  "exit_code": 0,
+  "elapsed_seconds": 43.76347804069519,
+  "final_state_sha256": "06d6ad9cb820fa9aa7e759c8c2754359292c16440d483b4221013c8f4144ad81",
+  "state_identical": true
+}

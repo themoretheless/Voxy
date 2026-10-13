@@ -1,0 +1,9 @@
+{
+  "status": 0,
+  "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "scope": "linear inequalities only; no energy optimality, force balance or swept-motion admission",
+  "exact_rational_minimum_gap": 9.987970350998758e-11,
+  "exact_rational_all_original_inequalities_satisfied": true,
+  "max_coordinate": 1485491.7003336526,
+  "nonzero_coordinates": 52
+}

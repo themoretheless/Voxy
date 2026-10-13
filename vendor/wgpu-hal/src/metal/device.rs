@@ -271,12 +271,28 @@ impl super::Device {
 
                 let options = MTLCompileOptions::new();
                 options.setLanguageVersion(self.shared.private_caps.msl_version);
+                // Voxy's explicit native compute policy: preserve numerical geometry
+                // and solver arithmetic. Render-stage compilation remains unchanged.
+                // The compatibility setter supports older Metal deployment targets.
+                #[cfg(feature = "metal-safe-compute")]
+                if stage_bit == wgt::ShaderStages::COMPUTE {
+                    #[allow(deprecated)]
+                    options.setFastMathEnabled(false);
+                }
 
                 // https://developer.apple.com/documentation/metal/mtlcompileoptions/preserveinvariance
                 if available!(macos = 11.0, ios = 13.0, tvos = 14.0, visionos = 1.0) {
                     options.setPreserveInvariance(true);
                 }
 
+                // Safe math still permits contraction within an expression. Native
+                // geometry kernels specify fused operations explicitly when needed.
+                #[cfg(feature = "metal-safe-compute")]
+                let source = if stage_bit == wgt::ShaderStages::COMPUTE {
+                    format!("#pragma STDC FP_CONTRACT OFF\n{source}")
+                } else {
+                    source
+                };
                 let library = self
                     .shared
                     .device

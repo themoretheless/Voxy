@@ -1,0 +1,27 @@
+{
+  "attempted_frame": 2,
+  "authored_jump": true,
+  "completed_frames": 1,
+  "continuous_contacts": true,
+  "error": null,
+  "gpu_hair_backend": false,
+  "guide_count": 469,
+  "phase": "preparing",
+  "process_id": 93481,
+  "required_frames": 720,
+  "scope": "actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.008333333333333333,
+  "status": "running",
+  "steps": [
+    {
+      "elapsed_ms": 41301.708833,
+      "frame": 1,
+      "gpu_counts": null,
+      "hair_ms": 41281.809582999995,
+      "skin_ms": 161.781542,
+      "time_s": 0.008333333333333333
+    }
+  ],
+  "updated_unix_ms": 1791766843018
+}

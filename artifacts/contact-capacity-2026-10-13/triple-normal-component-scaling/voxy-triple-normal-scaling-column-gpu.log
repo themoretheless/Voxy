@@ -1,0 +1,7 @@
+
+running 1 test
+TRIPLE COLUMN NORMS rows=91 width=882 worst_relative_to_compensated_f64=0.00000000000000019135856487296877 input_unchanged=true scope=norm_only_not_QR_or_physical_admission
+test joint_contact_dot::triple::arithmetic_tests::gpu_triple_original_column_norms ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 308 filtered out; finished in 0.29s
+

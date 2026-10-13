@@ -1,0 +1,7 @@
+
+running 1 test
+test hair::contact_response_system::square_root_qr::tests::captured_coordinate_reconstruction_layout_experiment ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 438 filtered out; finished in 0.49s
+
+coordinate reconstruction rows=101 width=2016 100 evaluations original/streaming seconds=[(0.061224583, 0.017352125), (0.057402417, 0.017331792), (0.05797925, 0.01730875), (0.059594209, 0.017303542), (0.048954041, 0.013256167), (0.049643041, 0.013263625), (0.050027042, 0.011954125)]

@@ -1,0 +1,403 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:16:127
+   |
+16 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:70:19
+   |
+63 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+70 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `advance_contacts` is never used
+   --> crates/physics/src/hair/contact_safe_motion.rs:579:24
+    |
+579 | pub(in crate::hair) fn advance_contacts(
+    |                        ^^^^^^^^^^^^^^^^
+
+warning: function `activate` is never used
+  --> crates/physics/src/hair/contact_swept_constraints.rs:71:15
+   |
+71 | pub(super) fn activate(
+   |               ^^^^^^^^
+
+warning: function `activate_with_workers` is never used
+  --> crates/physics/src/hair/contact_swept_constraints.rs:84:15
+   |
+84 | pub(super) fn activate_with_workers(
+   |               ^^^^^^^^^^^^^^^^^^^^^
+
+warning: `physics` (lib) generated 7 warnings (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: field `weak_refs` is never read
+  --> crates/voxy_assets/src/lib.rs:22:5
+   |
+18 | pub struct AssetCache {
+   |            ---------- field in this struct
+...
+22 |     weak_refs: HashMap<String, usize>,
+   |     ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/voxy_assets/src/lib.rs:18:1
+   |
+18 | / pub struct AssetCache {
+19 | |     /// In-memory cached assets (strong refs)
+20 | |     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
+21 | |     /// Weak references to prevent premature collection
+22 | |     weak_refs: HashMap<String, usize>,
+23 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `voxy_assets` (lib) generated 2 warnings
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated items `new`, `request_pivot_transfer`, `set_support_geometry`, and `request_geometry_pivot` are never used
+   --> crates/voxy_editor/src/foot_placement.rs:324:19
+    |
+310 | impl FootRuntime {
+    | ---------------- associated items in this implementation
+...
+324 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+...
+393 |     pub(super) fn request_pivot_transfer(&mut self, foot: usize, pivot: DVec3, max_projection: f64) -> Result<(), String> {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+405 |     pub(super) fn set_support_geometry(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+419 |     pub(super) fn request_geometry_pivot(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 6 warnings
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: function `start_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:21:15
+   |
+21 | pub(crate) fn start_refinement_diagnostics() {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `take_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:24:15
+   |
+24 | pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `body_volumes_m3` is never used
+   --> crates/voxy_app/src/tissue_demo.rs:535:19
+    |
+268 | impl TissueDemo {
+    | --------------- method in this implementation
+...
+535 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets`, `advance_hair`, `set_strain_fixture`, and `orbit` are never used
+    --> crates/voxy_app/src/female_demo.rs:212:19
+     |
+ 208 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 212 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+ 831 |     fn advance_hair(&mut self, h: f64, time: f64, head: glam::Mat4) -> Result<(), &'static str> {
+     |        ^^^^^^^^^^^^
+...
+1107 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1228 |     pub(crate) fn orbit(&mut self, x: f32, y: f32) {
+     |                   ^^^^^
+
+warning: method `append_lod` is never used
+   --> crates/voxy_app/src/female_hair.rs:412:12
+    |
+ 26 | impl FemaleHair {
+    | --------------- method in this implementation
+...
+412 |     pub fn append_lod(
+    |            ^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib test) generated 6 warnings
+    Finished `release` profile [optimized] target(s) in 25.81s
+     Running unittests src/lib.rs (target/release/deps/voxy_app-a1217e6a021c95ce)
+
+running 1 test
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":0}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.0,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0,"pivot_error_m":2.298294894094444e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":0}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.0,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0,"pivot_error_m":2.4458922038426804e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":0}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":1}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.013083990663290024,"mode":2,"moving_platform":false,"pelvis_compression_m":0.00003426164039410651,"pivot_error_m":2.0528791638390757e-8,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":1}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.013083990663290024,"mode":2,"moving_platform":false,"pelvis_compression_m":0.00003426164039410651,"pivot_error_m":3.007880167140228e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":1}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":2}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.026132117956876755,"mode":2,"moving_platform":false,"pelvis_compression_m":0.00013695265806745738,"pivot_error_m":2.512568277217313e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":2}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.026132117956876755,"mode":2,"moving_platform":false,"pelvis_compression_m":0.00013695265806745738,"pivot_error_m":2.4370602751373026e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":2}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":3}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.03910861909389496,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0003077915171161294,"pivot_error_m":2.6067367301125188e-8,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":3}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.03910861909389496,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0003077915171161294,"pivot_error_m":2.7533866271991677e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":3}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":4}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.05197792872786522,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0005463100387714803,"pivot_error_m":3.451187965924369e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":4}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.05197792872786522,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0005463100387714803,"pivot_error_m":2.260820157905958e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":4}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":5}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.0647047609090805,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0008518543909303844,"pivot_error_m":3.945096963521951e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":5}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.0647047609090805,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0008518543909303844,"pivot_error_m":2.7492341317901512e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":5}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":6}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.07725425064563751,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0012235873145982623,"pivot_error_m":1.067542032435168e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":6}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.07725425064563751,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0012235873145982623,"pivot_error_m":2.5284627580084262e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":6}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":7}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.08959198743104935,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0016604893608018756,"pivot_error_m":1.1658844843207603e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":7}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.08959198743104935,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0016604893608018756,"pivot_error_m":3.366948257674036e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":7}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":8}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.10168416798114777,"mode":2,"moving_platform":false,"pelvis_compression_m":0.002161364071071148,"pivot_error_m":2.9004985144831417e-8,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":8}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.10168416798114777,"mode":2,"moving_platform":false,"pelvis_compression_m":0.002161364071071148,"pivot_error_m":2.5838539130714888e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":8}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":9}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.11349763721227646,"mode":2,"moving_platform":false,"pelvis_compression_m":0.002724837511777878,"pivot_error_m":6.798986387911603e-9,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":9}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.11349763721227646,"mode":2,"moving_platform":false,"pelvis_compression_m":0.002724837511777878,"pivot_error_m":2.173273698579436e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":9}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":10}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.125,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0033493649680167437,"pivot_error_m":4.4562715820526334e-8,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":10}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.125,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0033493649680167437,"pivot_error_m":3.0088051198276534e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":10}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":11}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.1361597627401352,"mode":2,"moving_platform":false,"pelvis_compression_m":0.004033236298710108,"pivot_error_m":1.6223812445338143e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":11}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.1361597627401352,"mode":2,"moving_platform":false,"pelvis_compression_m":0.004033236298710108,"pivot_error_m":2.7926529321435154e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":11}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":12}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.14694631099700928,"mode":2,"moving_platform":false,"pelvis_compression_m":0.004774575587362051,"pivot_error_m":4.401262083206887e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":12}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.14694631099700928,"mode":2,"moving_platform":false,"pelvis_compression_m":0.004774575587362051,"pivot_error_m":2.4334126556700005e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":12}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":13}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.15733009576797485,"mode":2,"moving_platform":false,"pelvis_compression_m":0.005571351852267981,"pivot_error_m":1.1014118717274842e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":13}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.15733009576797485,"mode":2,"moving_platform":false,"pelvis_compression_m":0.005571351852267981,"pivot_error_m":3.934197117194779e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":13}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":14}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.16728265583515167,"mode":2,"moving_platform":false,"pelvis_compression_m":0.006421379279345274,"pivot_error_m":5.2867548913586624e-8,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":14}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.16728265583515167,"mode":2,"moving_platform":false,"pelvis_compression_m":0.006421379279345274,"pivot_error_m":2.1488656691423288e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":14}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":15}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.1767766922712326,"mode":2,"moving_platform":false,"pelvis_compression_m":0.007322331424802542,"pivot_error_m":1.2530685207722062e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":15}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.1767766922712326,"mode":2,"moving_platform":false,"pelvis_compression_m":0.007322331424802542,"pivot_error_m":4.159333559427042e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":15}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":16}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.18578621745109558,"mode":2,"moving_platform":false,"pelvis_compression_m":0.008271736092865467,"pivot_error_m":6.34566119033978e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":16}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.18578621745109558,"mode":2,"moving_platform":false,"pelvis_compression_m":0.008271736092865467,"pivot_error_m":9.900153154063617e-9,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":16}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":17}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.1942864954471588,"mode":2,"moving_platform":false,"pelvis_compression_m":0.009266991168260574,"pivot_error_m":4.026409830872904e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":17}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.1942864954471588,"mode":2,"moving_platform":false,"pelvis_compression_m":0.009266991168260574,"pivot_error_m":3.370435508317057e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":17}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":18}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.2022542655467987,"mode":2,"moving_platform":false,"pelvis_compression_m":0.010305371135473251,"pivot_error_m":4.986642688774232e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":18}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.2022542655467987,"mode":2,"moving_platform":false,"pelvis_compression_m":0.010305371135473251,"pivot_error_m":7.85006061577873e-9,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":18}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":19}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.2096676528453827,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0113840252161026,"pivot_error_m":4.9077777145413795e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":19}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.2096676528453827,"mode":2,"moving_platform":false,"pelvis_compression_m":0.0113840252161026,"pivot_error_m":2.806874271227071e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":19}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":20}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.21650636196136475,"mode":2,"moving_platform":false,"pelvis_compression_m":0.012500000186264515,"pivot_error_m":3.091085584509941e-8,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":20}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.21650636196136475,"mode":2,"moving_platform":false,"pelvis_compression_m":0.012500000186264515,"pivot_error_m":2.553874122842135e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":20}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":21}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.22275163233280182,"mode":2,"moving_platform":false,"pelvis_compression_m":0.013650237582623959,"pivot_error_m":8.254131654141496e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":21}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.22275163233280182,"mode":2,"moving_platform":false,"pelvis_compression_m":0.013650237582623959,"pivot_error_m":1.2151017416766117e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":21}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":22}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.22838637232780457,"mode":2,"moving_platform":false,"pelvis_compression_m":0.014831584878265858,"pivot_error_m":1.8015426951245836e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":22}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.22838637232780457,"mode":2,"moving_platform":false,"pelvis_compression_m":0.014831584878265858,"pivot_error_m":1.9998033969255893e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":22}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":23}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.23339509963989258,"mode":2,"moving_platform":false,"pelvis_compression_m":0.016040802001953125,"pivot_error_m":7.436953385759253e-8,"skin_minimum_clearance_m":-8.940696716308594e-8,"tick":23}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.23339509963989258,"mode":2,"moving_platform":false,"pelvis_compression_m":0.016040802001953125,"pivot_error_m":6.1932180298968265e-9,"skin_minimum_clearance_m":-1.4901161193847656e-7,"tick":23}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":24}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.2377641350030899,"mode":2,"moving_platform":false,"pelvis_compression_m":0.01727457530796528,"pivot_error_m":6.75555568146558e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":24}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.2377641350030899,"mode":2,"moving_platform":false,"pelvis_compression_m":0.01727457530796528,"pivot_error_m":3.11991456415766e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":24}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":25}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.2414814531803131,"mode":2,"moving_platform":false,"pelvis_compression_m":0.01852952502667904,"pivot_error_m":7.281402586306018e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":25}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.2414814531803131,"mode":2,"moving_platform":false,"pelvis_compression_m":0.01852952502667904,"pivot_error_m":4.1076695315436436e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":25}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":26}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.24453690648078918,"mode":2,"moving_platform":false,"pelvis_compression_m":0.019802207127213478,"pivot_error_m":1.6583627223866326e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":26}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.24453690648078918,"mode":2,"moving_platform":false,"pelvis_compression_m":0.019802207127213478,"pivot_error_m":1.4641027494664262e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":26}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":27}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.2469220906496048,"mode":2,"moving_platform":false,"pelvis_compression_m":0.021089138463139534,"pivot_error_m":1.7602151332223752e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":27}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.2469220906496048,"mode":2,"moving_platform":false,"pelvis_compression_m":0.021089138463139534,"pivot_error_m":4.419286033175369e-8,"skin_minimum_clearance_m":8.940696716308594e-8,"tick":27}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":28}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.24863047897815704,"mode":2,"moving_platform":false,"pelvis_compression_m":0.022386789321899414,"pivot_error_m":7.070908664868333e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":28}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.24863047897815704,"mode":2,"moving_platform":false,"pelvis_compression_m":0.022386789321899414,"pivot_error_m":1.2855271669377395e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":28}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":29}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.24965737760066986,"mode":2,"moving_platform":false,"pelvis_compression_m":0.023691600188612938,"pivot_error_m":7.756511910984429e-8,"skin_minimum_clearance_m":-2.9802322387695312e-8,"tick":29}
+ACTUAL_TWO_FOOT_TICK {"bone":"right_foot","foot_pitch_rad":0.24965737760066986,"mode":2,"moving_platform":false,"pelvis_compression_m":0.023691600188612938,"pivot_error_m":3.471166568864881e-8,"skin_minimum_clearance_m":2.9802322387695312e-8,"tick":29}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":30}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":31}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":32}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":33}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":34}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":35}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":36}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":37}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":38}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":39}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":false,"locks":0,"mode":2,"tick":40}
+ACTUAL_PLATFORM_CONTACT_STATE {"grounded":true,"locks":2,"mode":2,"tick":41}
+ACTUAL_TWO_FOOT_TICK {"bone":"left_foot","foot_pitch_rad":0.2096676379442215,"mode":2,"moving_platform":false,"pelvis_compression_m":0.03861597925424576,"pivot_error_m":1.0816246846925303e-8,"skin_minimum_clearance_m":-0.008724123239517212,"tick":41}
+
+thread 'female_rig::thumb_tip_contact_tests::actual_two_foot_owner_releases_and_reacquires_after_platform_drop' (6868013) panicked at crates/voxy_app/src/female_rig.rs:4380:17:
+two-foot skin clearance -0.008724123239517212 at tick 41
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_rig::thumb_tip_contact_tests::actual_two_foot_owner_releases_and_reacquires_after_platform_drop ... FAILED
+
+failures:
+
+failures:
+    female_rig::thumb_tip_contact_tests::actual_two_foot_owner_releases_and_reacquires_after_platform_drop
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 349 filtered out; finished in 0.13s
+
+error: test failed, to rerun pass `-p voxy_app --lib`

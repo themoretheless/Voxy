@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/tmp/voxy-triple-decode-quantization-20261013-app-tests",
+    "gpu_triple_active_admits_captured_original_physics",
+    "--ignored",
+    "--nocapture"
+  ],
+  "env_overrides": {
+    "VOXY_HAIR_SAFEGUARDED_PHYSICAL_DEFECT": "1",
+    "VOXY_HAIR_TRIPLE_SINGLE_DISPATCH": "1",
+    "VOXY_HAIR_TRIPLE_PARALLEL": "1",
+    "VOXY_HAIR_TRIPLE_COMPACT_READBACK": "1",
+    "VOXY_HAIR_QR_INPUT_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/safeguarded-physical-defect/sequence100-step1-derived-original-input.bin",
+    "VOXY_HAIR_TRIPLE_DECODE_AUDIT_DIR": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures",
+    "VOXY_HAIR_PHYSICAL_RESIDUAL_TRACE": "1"
+  },
+  "exit_code": 101,
+  "binary_sha256": "7aa16569ec3fd3433178bf29369d8ecf4e4aeefb1a98fc32fe63f3c02c8bd845",
+  "source_hashes": {
+    "crates/voxy_app/src/gpu_hair_joint.rs": "bafcb57d5093f4ff9aeaac6a1a510b0098230030dfd7defecc317ae03e54b05c",
+    "crates/physics/src/hair/contact_response_system.rs": "217a3cc4fe191fa27fdd3a58e8db3050dcedc98c78248d87ed85d3880d2a6936",
+    "crates/physics/src/hair/direct.rs": "fa0abf06417755576c9c74de2f60187b2594c51780e7ecc412f461a066b411da",
+    "crates/voxy_render/src/joint_contact_triple_parallel.wgsl": "397222e33b114dcce0ea149e8dcdf21800fca01243f6c363907b416524221fa7",
+    "crates/voxy_render/src/joint_contact_triple_active_codec.rs": "9f966241dd32463735cec80b2a56551b2f4659e35fcf28f99914e706ff53a8a5",
+    "crates/voxy_render/src/joint_contact_triple.wgsl": "b1eca57baa0757514623d8b103495440312c073e00017673d058e656ce280d02"
+  },
+  "capture_files": 8,
+  "scope": "failed original physical admission; opaque intermediate transport audit, not a passed simulation"
+}

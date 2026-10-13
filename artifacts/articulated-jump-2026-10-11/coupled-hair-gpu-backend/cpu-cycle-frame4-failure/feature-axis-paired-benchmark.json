@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "general_median_ms": 220.75245800000002,
+  "feature_median_ms": 39.018457999999995,
+  "ratio": 5.657641775592466,
+  "design": "Five measured alternating-order pairs after warmup; one complete original captured certificate per run",
+  "limits": "One primitive and concurrent load; not whole solver, full frame or FPS"
+}

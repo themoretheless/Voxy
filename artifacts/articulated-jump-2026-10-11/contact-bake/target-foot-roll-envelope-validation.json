@@ -1,0 +1,21 @@
+{
+  "focused_tests_passed": 1,
+  "filtered_out": 344,
+  "angle_samples": 50,
+  "pitch_range_rad": [
+    -0.6,
+    0.6
+  ],
+  "max_fixed_pivot_penetration_m": {
+    "left": 0.07730327614641483,
+    "right": 0.07688086883979404
+  },
+  "scope": "rigid reference proxy built from actual dominant-foot vertices",
+  "animated_skin_collision_verified": false,
+  "runtime_profile_enabled": false,
+  "sha256": {
+    "crates/voxy_app/src/female_rig.rs": "a79dfcbec2a4a4c633303c387c3f378651c036ca3caba57d1bb742d3987363b9",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/target-foot-roll-envelope-tests.log": "ba4f40d02b78dd834019098e87aa27e93aaa355ad4ade36314cc89e12ca2d2c3",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/target-foot-roll-envelope.json": "ecae647a44118d0681b74b1508bbe8b4419386a5b69faa8ba7de02b21a35c27c"
+  }
+}

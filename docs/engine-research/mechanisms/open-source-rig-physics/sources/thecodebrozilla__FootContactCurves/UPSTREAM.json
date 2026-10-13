@@ -1,0 +1,31 @@
+{
+  "repo": "https://github.com/thecodebrozilla/FootContactCurves.git",
+  "revision": "866b7e05be3de6ee748b0c72c4e9602f9de8bf9f",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "11347c0f5f69243429796cd818086bef6d197432f176d1f295ea6f465d9c78ff"
+    },
+    {
+      "path": "README.md",
+      "sha256": "481f9abf09680335a2fef16e61158b6757798d8677e7fbe16e41d94033698b8e"
+    },
+    {
+      "path": "Source/FootContactCurves/Private/FootContactCurves.cpp",
+      "sha256": "123f48b4b2c75db4da0892b6e94e274bc2a198529cb8a80c5774500eba2f1141"
+    },
+    {
+      "path": "Source/FootContactCurves/Private/FootContactCurvesModifier.cpp",
+      "sha256": "63d85cfcb7c62716ee8947b7d625b77612d3f527009a760890cb2b6fd44d5d0c"
+    },
+    {
+      "path": "Source/FootContactCurves/Public/FootContactCurves.h",
+      "sha256": "718eeb776d94353b9ca280f0b8ead6956adffd8c687a34ee675b07e412c80896"
+    },
+    {
+      "path": "Source/FootContactCurves/Public/FootContactCurvesModifier.h",
+      "sha256": "7628841ef1a16ab12a8ea10772359ecc8d907bc8abb644637add49bef5029b80"
+    }
+  ],
+  "temporary_fetch": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-foot-contact-source-38u1g8d1"
+}

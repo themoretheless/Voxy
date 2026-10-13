@@ -1,0 +1,32 @@
+{
+  "scope": "Actual rig first-contact geometry selection and reacquisition after 5cm platform snapshot drop",
+  "original_failure": {
+    "tick": 41,
+    "skin_clearance_m": -0.008724123239517212
+  },
+  "drop_airborne_ticks": 11,
+  "landing_ticks": [
+    41
+  ],
+  "three_scenarios_passed": 3,
+  "editor_tests": {
+    "passed": 192,
+    "failed": 0,
+    "ignored": 17
+  },
+  "skin_measurements": 704,
+  "maximum_absolute_grounded_skin_clearance_m": 2.086162567138672e-07,
+  "grounded_skin_gate_m": 3e-06,
+  "airborne_skin_collision_verified": false,
+  "continuous_platform_dynamics_verified": false,
+  "demo_window_connected": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "80f88a09751cbecb2d3585fe6b8eaffc9499675cc2919e4ddeb65dcac79008b0",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "2ebb079e3a01dc592ffaa663c4a8f07a611835ada292e90beba2646527fd480c",
+    "crates/voxy_app/src/female_rig.rs": "38c0468b2d428a63d64abfe47315bc9769e17e3806566aa8ee3d6a2efb33c415",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/actual-platform-landing-fixed-tests.log": "51fc17056c78aa08352fe0c08f9c2c78940840f38526e69ba90ca6a77dfbbed8",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/landing-geometry-editor-tests.log": "23f305e338b0bfb13b54305990fb8e787fc7431d5733050d37b42503b95e6bd4",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/actual-platform-drop-tests.log": "865edae09567e5f9ccd841cf59f6b1676c6febb54ab85c844e31c47346ee28b9"
+  }
+}

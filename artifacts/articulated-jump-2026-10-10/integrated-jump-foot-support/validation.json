@@ -1,0 +1,31 @@
+{
+  "jump_suite": {
+    "passed": 6,
+    "ignored": 2,
+    "grounded_leg_sampling": "721 uniform samples over six seconds plus 11 event/peak times"
+  },
+  "coupled_skin_hair": {
+    "passed": 1,
+    "full_density_steps": 8
+  },
+  "gpu_body": {
+    "passed": 1,
+    "adapter": "Apple M4 Max Metal",
+    "vertices": 60866,
+    "samples": 6,
+    "maximum_position_error_m": 1.9687948e-07
+  },
+  "scope": "actual model stance integration and CPU/GPU skinning; not full-loop coupled physics, full GPU hair parity, rendered FPS, terrain queries or walk/run",
+  "source_sha256": {
+    "crates/voxy_app/src/female_rig.rs": "0fd98111b34f54385685b017f0bbd2280d3369546b6190f07ce811823e754b60",
+    "crates/voxy_app/src/jump_rig_tests.rs": "3680a107e96fd2ce38b57883170d21b7c7d475ccb3e290084ed66fb618ad6073",
+    "crates/voxy_animation/src/ik.rs": "ab8793164db8a6ced7e07636a540c495fdb6cad94b000e80c4fc9826eaaa4fb0",
+    "crates/voxy_animation/src/foot_plant.rs": "7ccf8a07fcdf0e356101f21c988f9fb468bee48ac0b846554cbb4d9abf11f2bb"
+  },
+  "example_build": {
+    "exit_code": 0,
+    "path": "/tmp/voxy-release-120fps-20261007/release/examples/female_motion",
+    "sha256": "afbcf77fe2cbe2ec2373ca25c3fe07d3bd9d61ec477627cbd9617ada221d08bb",
+    "launched": false
+  }
+}

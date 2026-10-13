@@ -1,0 +1,22 @@
+{
+  "without_soc": {
+    "status": "intentionally_stopped_unqualified",
+    "cargo_exit_code": 101,
+    "child_signal": "SIGTERM 15",
+    "last_approach_record": "HAIR CONTACT APPROACH MODEL iteration=626 added_rows=1 added_pairs=0 descent_found=true",
+    "reason": "alternative SOC achieved full contact completion; proceed to validate production integration rather than continue obsolete control",
+    "not_a_terminal_physical_failure": true
+  },
+  "soc_eight": {
+    "native_iteration": 8,
+    "full_scale": 1.0,
+    "contact_merit": 0,
+    "native_completion": true,
+    "signed_potential_change_from_feasible_candidate_j": -2.204038692522928e-08,
+    "signed_potential_change_from_infeasible_original_j": 7.478047532760771e-08,
+    "old_test_exit_code": 101,
+    "old_failure": "descent required relative to infeasible original reference"
+  },
+  "fps_qualified": false,
+  "timing_comparison_qualified": false
+}

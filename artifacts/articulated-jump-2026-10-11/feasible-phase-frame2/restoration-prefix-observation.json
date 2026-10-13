@@ -1,0 +1,14 @@
+{
+  "observed_at": "2026-10-11T03:03:06.241910+00:00",
+  "reference": "artifacts/articulated-jump-2026-10-11/frame2-sweep-result-reuse/qualification.log",
+  "candidate": "artifacts/articulated-jump-2026-10-11/feasible-phase-frame2/qualification.log",
+  "reference_sha256": "02eb71529a9962ab949ab84370de5685f1af103e595b6e8c5d0d8fa24ee65d53",
+  "candidate_snapshot_sha256": "7721a15d6168aed51e9dd5e032c8762cc05f2d05800bf265b8f64f1aaa4e992c",
+  "reference_events": 136,
+  "candidate_events": 106,
+  "identical_prefix_events": 106,
+  "all_observed_candidate_events_match": true,
+  "terminal_proven": false,
+  "first_reference_difference": "HAIR CONTACT APPROACH MODEL iteration=88 added_rows=7 added_pairs=1 descent_found=true",
+  "first_candidate_difference": null
+}

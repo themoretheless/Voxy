@@ -1,0 +1,9 @@
+{
+  "frame": 2,
+  "source": "/tmp/voxy-coupled-current-two-frames-1791754425286.recovery-entry.vhr",
+  "entry_exports_after_begin": 1,
+  "bytes": 10264252,
+  "sha256": "df70919f5a11097053ced2718e2a63f1e7d3d96efbbe38d8313afbe6fdd5bf38",
+  "source_log": "/tmp/voxy-coupled-current-two-frames-1791754425286.log",
+  "scope": "first contact entry of actual second coupled frame, current-source GPU backend; not convergence proof"
+}

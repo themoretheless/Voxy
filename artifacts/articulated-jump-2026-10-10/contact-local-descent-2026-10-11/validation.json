@@ -1,0 +1,17 @@
+{
+  "physics_passed": 379,
+  "physics_ignored": 42,
+  "replay_exit_code": 101,
+  "replay_seconds": 11.57,
+  "initial_accepted_scale": 0.04420399374921228,
+  "initial_merit": 2.9367614931589525e-08,
+  "accepted_merits": [
+    2.7776164467323426e-08,
+    4.795694593181563e-09
+  ],
+  "failed_rods": [
+    199
+  ],
+  "failed_rows": 7,
+  "scope": "local descent avoids initial speculative14-row failure but fresh endpoint/trajectory opposition remains; no full trajectory or performance qualification"
+}

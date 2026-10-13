@@ -1317,14 +1317,19 @@ fn rig_trajectory_gpu(composed: bool) {
 #[test]
 #[ignore = "requires a graphics adapter"]
 fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
-    planted_foot_gpu_acceptance(false);
+    planted_foot_gpu_acceptance(false, false);
 }
 #[test]
 #[ignore = "requires a graphics adapter"]
 fn retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
-    planted_foot_gpu_acceptance(true);
+    planted_foot_gpu_acceptance(true, false);
 }
-fn planted_foot_gpu_acceptance(retarget: bool) {
+#[test]
+#[ignore = "requires a graphics adapter"]
+fn authored_roll_foot_gpu_matches_independent_pivot_geometry_and_clears_resources() {
+    planted_foot_gpu_acceptance(false, true);
+}
+fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
     use glam::{Mat4, Vec3};
     use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
@@ -1341,6 +1346,11 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
     .unwrap();
     if retarget {
         model.animations.clear();
+    }
+    if roll {
+        let mut joints = model.skeleton.joints().to_vec();
+        joints[2].bind_local.rotation = glam::Quat::from_rotation_x(0.3);
+        model.skeleton = voxy_animation::Skeleton::new(joints).unwrap();
     }
     let model = Arc::new(model);
     let mut scene = voxy_scene::SceneGraph::new(4);
@@ -1388,12 +1398,16 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
                     bones: ["hip".into(), "knee".into(), "foot".into()],
                     sole_offset: [0., -0.1, 0.],
                     sole_up: [0., 1., 0.],
+                    orientation: if roll { crate::FootOrientation::Authored }
+                        else { crate::FootOrientation::AlignSupport },
                     pole: [1., 0., 0.],
                     plant: true,
                     weight: 1.,
                     contact: Default::default(),
                     contact_curve: vec![],
                     clip_contact_curves: Default::default(),
+                    clip_pivot_keys: Default::default(),
+                    support_geometry: None,
                 }],
             },
         )
@@ -1525,21 +1539,26 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
     };
     assert_eq!(source(first), source(second));
     // Independent expected world points from authored triangle and locked x=.03.
-    // No solved pose, skin palette or CPU skinning helper enters this reference.
+    // In the roll case the initial sole pivot has z=-.1*sin(.3), and the
+    // authored triangle rolls about it. No solved pose, palette or CPU skinning
+    // helper enters this reference.
+    let reference_point = |x: f32, y: f32| if roll {
+        [x, y * 0.3f32.cos(), (y - 0.1) * 0.3f32.sin()]
+    } else { [x,y,0.] };
     let mesh = voxy_render::SceneMesh::new(
         vec![
             voxy_render::SceneVertex {
-                position: [-0.22, 0., 0.],
+                position: reference_point(-0.22, 0.),
                 uv: [0., 0.],
                 color: model.primitives[0].color,
             },
             voxy_render::SceneVertex {
-                position: [0.28, 0., 0.],
+                position: reference_point(0.28, 0.),
                 uv: [0., 0.],
                 color: model.primitives[0].color,
             },
             voxy_render::SceneVertex {
-                position: [0.03, 0.4, 0.],
+                position: reference_point(0.03, 0.4),
                 uv: [0., 0.],
                 color: model.primitives[0].color,
             },
@@ -1594,6 +1613,6 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
     assert_eq!(render.counts(), (0, 0, 0));
     assert!(pollster::block_on(scope.pop()).is_none());
     println!(
-        "VOXY_FOOT_GPU retarget={retarget} cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0"
+        "VOXY_FOOT_GPU retarget={retarget} authored_roll={roll} cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0"
     );
 }

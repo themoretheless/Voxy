@@ -1,0 +1,11 @@
+
+running 1 test
+SECOND ORDER CANDIDATE correction=0 merit=5.134304599517552e-7 work_j=1.1992724392343452e-7 strain=5.701287193204951e-4 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=1 merit=4.558972685815322e-8 work_j=1.643397841418876e-7 strain=5.83244540789396e-4 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=2 merit=1.731602171185562e-8 work_j=1.7141480831699522e-7 strain=5.835780620446762e-4 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=3 merit=1.2981858529563077e-8 work_j=1.7293060431359843e-7 strain=5.840010910673765e-4 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=4 merit=3.371636132408439e-9 work_j=1.7320464462243258e-7 strain=5.840651633275407e-4 strand_path=false mesh_path=false candidate_admitted=false
+test hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 439 filtered out; finished in 0.67s
+

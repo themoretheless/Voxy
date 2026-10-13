@@ -1,0 +1,15 @@
+{
+  "status": "codec_hardware_and_original_physical_admission_passed",
+  "full_readback_bytes": 5189968,
+  "compact_readback_bytes": 2474632,
+  "removed_bytes": 2715336,
+  "operators": 7,
+  "scope": "original operator and workspace checks; coupled trajectory and FPS remain unqualified",
+  "source_sha256": "65f7145c2edb940741e7b3472f7564ed45c08a21c543aa6f726162fff5a46095",
+  "app_binary_sha256": "e290cef42df78752c6100ce98260e2f526d0bb9039b96395ac59e497806744eb",
+  "app_checks": [
+    "original_14_physical_systems_tolerance_1e-14",
+    "same_changed_restored_physical_operator",
+    "changed_shape_nan_rejection_infeasible_candidate_and_recovery"
+  ]
+}

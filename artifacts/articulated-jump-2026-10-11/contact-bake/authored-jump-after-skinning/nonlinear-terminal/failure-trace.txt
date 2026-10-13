@@ -1,0 +1,4 @@
+error: joint hair contact position linearization did not converge
+phases: []
+projections: []
+friction: []

@@ -1,0 +1,20 @@
+{
+  "baseline_median_seconds": 0.813243375,
+  "candidate_median_seconds": 0.813444792,
+  "speedup": 0.9997523900798421,
+  "candidate_faster_pairs": 4,
+  "pairs": 7,
+  "physical_response_and_reaction_bits_equal": true,
+  "zero_fallback": true,
+  "physical_tolerance": 1e-14,
+  "concurrent_load_controlled": false,
+  "full_trajectory_qualified": false,
+  "rendered_fps_measured": false,
+  "decision": "do not adopt: no measured complete-projection benefit in this loaded seven-pair comparison; production unchanged",
+  "sha256": {
+    "/tmp/voxy-resident-full-projection-tests": "32fef89acf043ed43852b605280b4cad5c420d4532f17b411b04d51f63046a98",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "929716522e34bfb176ad5e8bdd334b7f3f7afd93eaa5418cc6665f6e22ea133c",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "cd60263b211a5a0ac8deb88b2072aa7a6fb4f5de4e4af3ce88dc55c2188daa2f",
+    "artifacts/articulated-jump-2026-10-10/qr-resident-columns-experiment/qr-resident-columns.wgsl": "8fc98940b35141b7fa122ac21e721c914426301cbc13c23d99a6a554da9a4f24"
+  }
+}

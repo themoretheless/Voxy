@@ -1,4 +1,6 @@
 //! Real anatomical CC0 mesh with a nonlinear full-body skin shell bound to its rendered surface.
+#[path = "resident_body.rs"]
+pub(crate) mod resident_body;
 use glam::Vec3;
 use physics::secondary_motion::{Config as SecondaryConfig, ContactPlane, SecondaryMotion};
 #[path = "skin_light_diffusion.rs"]
@@ -48,9 +50,11 @@ pub(crate) struct FemaleDemo {
     pub(crate) simulate_hair: bool,
     pub(crate) show_hair: bool,
     pub(crate) surface_diffusion_enabled: bool,
+    pub(crate) resident_surface_light: bool,
     transmission_cache: std::cell::RefCell<crate::female_transmission::Cache>,
     surface_light_guess: std::cell::RefCell<Option<Vec<[f64; 3]>>>,
     surface_light_input: std::cell::RefCell<Option<SurfaceLightInput>>,
+    surface_light_normals: std::cell::RefCell<Vec<[f32;3]>>,
     vertices: Vec<SceneVertex>,
     indices: Vec<u32>,
     // Immutable source topology: render mouth opening must not open the collider.
@@ -96,6 +100,8 @@ pub(crate) struct FemaleDemo {
     pub(crate) secondary_only: bool,
     pub(crate) rig_pose_only: bool,
     pub(crate) animation_only: bool,
+    grounded_playback:Option<crate::humanoid_locomotion::GroundedPlayback>,
+    physical_stance: Option<crate::female_physical_stance::PhysicalStance>,
     regions: Vec<crate::volume_regions::Region>,
     secondary: [SecondaryMotion; 4],
     animation_time: f64,
@@ -213,6 +219,77 @@ impl FemaleDemo {
         patch: &str,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         Self::from_assets(body_source, EYES, patch)
+    }
+    /// Install one shared immutable source asset with separate bindings for the
+    /// render and physical-shell rig identities. Only a fresh model can switch.
+    pub(crate) fn enable_authored_jump(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        if self.steps != 0 || self.time != 0. { return Err("authored jump must be selected before simulation".into()); }
+        self.install_authored_jump_source(Self::load_authored_locomotion_source()?)
+    }
+    fn load_authored_locomotion_source()->Result<std::sync::Arc<voxy_render::ModelAsset>,Box<dyn std::error::Error>> {
+        let source = voxy_render::ModelAsset::parse(
+            include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf"),
+            &[include_bytes!("../../../assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin")],
+            voxy_render::ModelLimits::default())?;
+        Ok(std::sync::Arc::new(crate::humanoid_locomotion::prepare_quaternius_gait_source(source)?))
+    }
+    pub(crate) fn enable_authored_gait(&mut self,clip:crate::humanoid_locomotion::LocomotionClip)->Result<(),Box<dyn std::error::Error>> {
+        if self.steps!=0 || self.time!=0. || !self.animation_only {return Err("grounded preview must be selected before animation starts".into());}
+        self.install_authored_gait_source(Self::load_authored_locomotion_source()?,clip)
+    }
+    fn install_authored_gait_source(&mut self,source:std::sync::Arc<voxy_render::ModelAsset>,clip:crate::humanoid_locomotion::LocomotionClip)->Result<(),Box<dyn std::error::Error>> {
+        let render=std::sync::Arc::new(crate::humanoid_locomotion::VoxyHumanoidLocomotion::new(source.clone(),&self.rig.skeleton)?);
+        let shell=std::sync::Arc::new(crate::humanoid_locomotion::VoxyHumanoidLocomotion::new(source,&self.skin_rig.skeleton)?);
+        // Validate both identities before publishing either rig binding.
+        render.pose_phase_in_place(clip,0.,&self.rig.skeleton)?;
+        shell.pose_phase_in_place(clip,0.,&self.skin_rig.skeleton)?;
+        let player=crate::humanoid_locomotion::GroundedPlayback::new(&render,clip)?;
+        self.rig.install_authored_gait(render,clip)?;
+        self.skin_rig.install_authored_gait(shell,clip)?;
+        self.publish_grounded_player(player)?;
+        Ok(())
+    }
+    pub(crate) fn enable_physical_stance(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        if self.time != 0. || self.steps != 0 || self.grounded_playback.is_some() {
+            return Err("physical stance must be selected before playback".into());
+        }
+        if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+            return Err("physical stance palette is not connected to GPU secondary preview".into());
+        }
+        let mut stance = crate::female_physical_stance::PhysicalStance::new(&self.rig, &self.vertices)?;
+        stance.step(&self.rig, crate::female_physical_stance::STEP)?;
+        self.time = crate::female_physical_stance::STEP;
+        self.animation_time = self.time;
+        self.animation_only = true;
+        self.pressing = false;
+        self.physical_stance = Some(stance);
+        Ok(())
+    }
+    pub(crate) fn has_grounded_playback(&self)->bool {self.grounded_playback.is_some()}
+    fn publish_grounded_player(&mut self,player:crate::humanoid_locomotion::GroundedPlayback)->Result<(),Box<dyn std::error::Error>> {
+        let render=player.pose_in_place(self.rig.grounded_binding().ok_or("missing render gait binding")?,&self.rig.skeleton)?.0;
+        let shell=player.pose_in_place(self.skin_rig.grounded_binding().ok_or("missing shell gait binding")?,&self.skin_rig.skeleton)?.0;
+        let selected=player.selected();
+        self.rig.publish_grounded_pose(render,selected);
+        self.skin_rig.publish_grounded_pose(shell,selected);
+        self.grounded_playback=Some(player);
+        Ok(())
+    }
+    pub(crate) fn select_grounded_gait(&mut self,clip:crate::humanoid_locomotion::LocomotionClip)->Result<(),Box<dyn std::error::Error>> {
+        let mut candidate=self.grounded_playback.clone().ok_or("grounded preview is not enabled")?;
+        candidate.transition_to(clip,0.25)?;
+        self.publish_grounded_player(candidate)
+    }
+    fn install_authored_jump_source(&mut self, source: std::sync::Arc<voxy_render::ModelAsset>) -> Result<(), Box<dyn std::error::Error>> {
+        let render = std::sync::Arc::new(crate::humanoid_locomotion::VoxyHumanoidLocomotion::new(source.clone(), &self.rig.skeleton)?);
+        let shell = std::sync::Arc::new(crate::humanoid_locomotion::VoxyHumanoidLocomotion::new(source, &self.skin_rig.skeleton)?);
+        // Validate both before publishing either binding.
+        self.rig.authored_jump_pose(&render, 0.)?;
+        self.skin_rig.authored_jump_pose(&shell, 0.)?;
+        self.rig.install_authored_jump(render);
+        self.skin_rig.install_authored_jump(shell);
+        self.grounded_playback=None;
+        Ok(())
     }
     pub(crate) fn new_male() -> Result<Self, Box<dyn std::error::Error>> {
         Self::male_from_assets(
@@ -438,9 +515,11 @@ impl FemaleDemo {
             show_hair: true,
             simulate_hair: std::env::var("VOXY_SKIN_ONLY").as_deref() != Ok("1"),
             surface_diffusion_enabled: true,
+            resident_surface_light: false,
             transmission_cache: Default::default(),
             surface_light_guess: Default::default(),
             surface_light_input: Default::default(),
+            surface_light_normals: Default::default(),
             vertices,
             indices,
             body_collision_indices: body.mesh.indices().to_vec(),
@@ -484,6 +563,8 @@ impl FemaleDemo {
             secondary_only: false,
             rig_pose_only: false,
             animation_only: false,
+            grounded_playback:None,
+            physical_stance: None,
             secondary: std::array::from_fn(|i| {
                 SecondaryMotion::new(SecondaryConfig {
                     frequency: if i < 2 { 3.5 } else { 3.8 },
@@ -531,6 +612,8 @@ impl FemaleDemo {
                 "tissueCageMassesKg":self.regions.iter().map(|r| r.mass_kg()).collect::<Vec<_>>(),
                 "secondaryDynamics": {
                     "enabled":self.secondary_only && !self.animation_only,
+                    "authoredJump":self.rig.authored_jump_source().is_some(),
+                    "authoredGait":self.rig.authored_gait_source().map(|(_,clip)|format!("{clip:?}")),
                     "steps":self.steps,
                     "rootDisplacementM":self.root_bob(self.time),
                     "regionLocalDisplacementsM":self.regions.iter().map(|r| r.maximum_local_displacement(self.root_bob(self.time))).collect::<Vec<_>>(),
@@ -604,6 +687,13 @@ impl FemaleDemo {
                 crate::body_parameters::BodyModel::Female => Self::new(),
             }
             .map_err(|_| "cannot load requested body source")?;
+            if let Some(source) = self.rig.authored_jump_source() {
+                replacement.install_authored_jump_source(source).map_err(|_| "cannot bind authored jump to replacement model")?;
+            }
+            if let Some((source,clip))=self.rig.authored_gait_source() {
+                replacement.install_authored_gait_source(source,clip).map_err(|_|"cannot bind authored gait to replacement model")?;
+                if let Some(player)=&self.grounded_playback {replacement.publish_grounded_player(player.clone()).map_err(|_|"cannot preserve grounded playback on replacement model")?;}
+            }
             let same_source = parameters.body_model == self.body_parameters.body_model;
             replacement.animation_only = self.animation_only;
             replacement.secondary_only = self.secondary_only;
@@ -653,6 +743,7 @@ impl FemaleDemo {
             replacement.show_strain = self.show_strain;
             replacement.show_complexion = self.show_complexion;
             replacement.surface_diffusion_enabled = self.surface_diffusion_enabled;
+            replacement.resident_surface_light = self.resident_surface_light;
             replacement.animation_only = self.animation_only;
             replacement.secondary_only = self.secondary_only;
             replacement.rig_pose_only = self.rig_pose_only;
@@ -785,6 +876,9 @@ impl FemaleDemo {
         posed
     }
     fn hair_head_matrix(&self, time: f64) -> glam::Mat4 {
+        if let Some(stance) = &self.physical_stance {
+            return glam::Mat4::from_translation(stance.offset.as_vec3()) * stance.palette[3];
+        }
         let bob = self.root_bob(time) as f32;
         let head = if self.secondary_only {
             if self.animation_only {glam::Mat4::IDENTITY} else {self.rig.jump_head_matrix(time)}
@@ -1054,8 +1148,35 @@ impl FemaleDemo {
     pub(crate) fn gpu_hair_surface_frames(&self) -> Vec<voxy_render::FiberSurfaceFrame> {
         self.hair.gpu_surface_frames()
     }
+    pub(crate) fn gpu_hair_surface_transform(&self) -> glam::Mat4 {
+        if self.animation_only || !self.simulate_hair {self.hair_physics_head_matrix(self.time)}
+        else {glam::Mat4::IDENTITY}
+    }
+    /// CPU reference/init only. Live resident directors are written by GPU scatter.
+    pub(crate) fn gpu_hair_vertex_tangents(&self, mesh: &voxy_render::SceneMesh) -> Result<Vec<[f32;4]>, voxy_render::SceneError> {
+        let frames=self.gpu_hair_surface_frames();
+        let count=mesh.vertices().iter().filter(|v| v.uv[0]==-7.).count();
+        if frames.is_empty() || count==0 || !count.is_multiple_of(frames.len()) || !(count/frames.len()).is_multiple_of(4) {
+            return Err(voxy_render::SceneError::InvalidGeometry);
+        }
+        let per_frame=count/frames.len();
+        let pose=self.gpu_hair_surface_transform();
+        let mut tangents=vec![[0.,0.,1.,1.];mesh.vertices().len()];
+        let mut hair_index=0;
+        for (vertex,tangent) in mesh.vertices().iter().zip(&mut tangents) {
+            if vertex.uv[0]!=-7. {continue;}
+            let director=pose.transform_vector3(glam::Vec3::from_slice(&frames[hair_index/per_frame].w_blue));
+            if !director.is_finite() || director.length_squared()<1e-12 {return Err(voxy_render::SceneError::InvalidGeometry);}
+            let director=director.normalize();
+            *tangent=[director.x,director.y,director.z,1.];
+            hair_index+=1;
+        }
+        Ok(tangents)
+    }
     pub(crate) fn gpu_hair_surface_input(&self) -> Result<voxy_render::FiberSurfaceInput, voxy_render::SceneError> {
-        self.hair.gpu_surface_input()
+        let mut input=self.hair.gpu_surface_input()?;
+        input.replace_transform(self.gpu_hair_surface_transform())?;
+        Ok(input)
     }
     pub(crate) fn simulation_time(&self) -> f64 {
         self.time
@@ -1104,6 +1225,12 @@ impl FemaleDemo {
                 .is_some_and(|film| film.thickness_view_enabled())
     }
     fn base_title(&self) -> String {
+        if self.physical_stance.is_some() {
+            return "Voxy Physical Stance | foot support, squat and roll | Space: pause | arrows: orbit/zoom".into();
+        }
+        if let Some((_,clip))=self.rig.authored_gait_source() {
+            return format!("Voxy {clip:?} | in-place skeletal preview | 1 idle / 2 walk / 3 jog / 4 sprint | Space: pause | arrows: orbit/zoom");
+        }
         if self.hand_focus {
             return format!(
                 "Voxy hand grasp {:.0}% | 1: cylinder | 2: sphere | 3: handle | [/]: open/close | G: cycle | Space: pause | arrows: orbit/zoom",
@@ -1209,6 +1336,7 @@ impl FemaleDemo {
         // This copy is a passive UI/view facade. Only the transferred original is advanced.
         let mut view = Self::new()?;
         view.secondary_only = true;
+        if let Some(source) = self.rig.authored_jump_source() { view.install_authored_jump_source(source)?; }
         view.simulate_hair = self.simulate_hair;
         view.yaw = self.yaw;
         view.pitch = self.pitch;
@@ -1244,6 +1372,12 @@ impl FemaleDemo {
         result
     }
     pub(crate) fn advance(&mut self, dt: f64) -> Result<(), &'static str> {
+        self.advance_impl(dt,None)
+    }
+    pub(crate) fn advance_with_hair_solver(&mut self,dt:f64,solver:&mut (dyn physics::hair::HairLinearSolver+Send))->Result<(), &'static str> {
+        self.advance_impl(dt,Some(solver))
+    }
+    fn advance_impl(&mut self,dt:f64,mut hair_solver:Option<&mut (dyn physics::hair::HairLinearSolver+Send)>)->Result<(), &'static str> {
         if self.rig_pose_only {return Err("pose-only rig preview cannot advance physical state");}
         if let Some(path) = &self.face_parameter_file {
             if let Ok(revision) = std::fs::metadata(path).and_then(|m| m.modified()) {
@@ -1318,7 +1452,26 @@ impl FemaleDemo {
             return Err("invalid animation timestep");
         }
         self.solver_ms = [0.; 2];
+        if let Some(stance) = &mut self.physical_stance {
+            self.accumulator = (self.accumulator + dt.min(0.1)).min(0.1);
+            let h = crate::female_physical_stance::STEP;
+            let mut steps = 0;
+            while self.accumulator + 1e-12 >= h && steps < 6 {
+                stance.step(&self.rig, self.time + h).map_err(|_|"physical stance tick rejected")?;
+                self.time += h;
+                self.animation_time = self.time;
+                self.steps += 1;
+                self.accumulator -= h;
+                steps += 1;
+            }
+            return Ok(());
+        }
         if self.animation_only {
+            let previous_player=self.grounded_playback.clone();
+            if let Some(mut candidate)=previous_player.clone() {
+                candidate.advance(dt).map_err(|_|"grounded animation sampling failed")?;
+                self.publish_grounded_player(candidate).map_err(|_|"grounded animation binding failed")?;
+            }
             let previous = (self.time, self.animation_time, self.cold_response);
             let result = (|| {
                 self.advance_cold_response(dt)?;
@@ -1335,6 +1488,9 @@ impl FemaleDemo {
             })();
             if result.is_err() {
                 (self.time, self.animation_time, self.cold_response) = previous;
+                if let Some(player)=previous_player {
+                    self.publish_grounded_player(player).expect("previous admitted grounded bindings remain valid");
+                }
             }
             return result;
         }
@@ -1419,11 +1575,15 @@ impl FemaleDemo {
                 let body_vertices = self.body_vertices;
                 // Hair contacts use the independently posed canonical body,
                 // so neither solver reads the other solver's mutable state.
+                let backend=hair_solver.as_mut().map(|backend| &mut **backend as &mut (dyn physics::hair::HairLinearSolver+Send));
                 let (next_skin,next_hair,skin_ms,hair_ms) = std::thread::scope(|scope| {
                     let hair_step = hair_pose.as_ref().map(|posed| {
                         scope.spawn(move || {
                             let started = std::time::Instant::now();
-                            let result = hair.prepare_advance(h, time, head, &posed[..body_vertices]);
+                            let result = match backend {
+                            Some(backend)=>hair.prepare_advance_with_solver(h,time,head,&posed[..body_vertices],backend),
+                            None=>hair.prepare_advance(h,time,head,&posed[..body_vertices]),
+                        };
                             (result, started.elapsed().as_secs_f64() * 1000.)
                         })
                     });
@@ -1524,11 +1684,15 @@ impl FemaleDemo {
             let hair = &mut self.hair;
             let attachments = &next_attachments;
             let body_vertices = self.body_vertices;
+            let backend=hair_solver.as_mut().map(|backend| &mut **backend as &mut (dyn physics::hair::HairLinearSolver+Send));
             let (next_skin,next_hair,report,skin_ms,hair_ms) = std::thread::scope(|scope| {
                 let hair_step = hair_pose.as_ref().map(|posed| {
                     scope.spawn(move || {
                         let started = std::time::Instant::now();
-                        let result = hair.prepare_advance(h, time, head, &posed[..body_vertices]);
+                        let result = match backend {
+                            Some(backend)=>hair.prepare_advance_with_solver(h,time,head,&posed[..body_vertices],backend),
+                            None=>hair.prepare_advance(h,time,head,&posed[..body_vertices]),
+                        };
                         (result, started.elapsed().as_secs_f64() * 1000.)
                     })
                 });
@@ -1651,11 +1815,23 @@ impl FemaleDemo {
         }
         Ok((offsets, weights, 5 + self.regions.len() as u32 * 7))
     }
+    pub(crate) fn can_use_resident_surface_light(&self,fraction:f32)->bool {
+        !self.show_skin && !self.show_strain && self.surface_diffusion_enabled && self.film.is_none()
+            && self.face_parameters==crate::face_parameters::FaceParameters::default()
+            && self.face_parameters.value("skin_surface_light").unwrap_or(0.35)==fraction
+    }
+    pub(crate) fn surface_light_normals(&self)->std::cell::Ref<'_,Vec<[f32;3]>> {self.surface_light_normals.borrow()}
     pub(crate) fn gpu_secondary_body_vertices(&self) -> u32 {
         self.body_vertices as u32
     }
     pub(crate) fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {self.rig.gpu_jump_weights()}
-    pub(crate) fn gpu_jump_palette(&self) -> Vec<glam::Mat4> {self.rig.jump_palette(if self.animation_only {5.} else {self.time})}
+    pub(crate) fn gpu_jump_palette(&self) -> Vec<glam::Mat4> {
+        if let Some(stance) = &self.physical_stance {
+            let actor = glam::Mat4::from_translation(stance.offset.as_vec3());
+            return stance.palette.iter().map(|matrix| actor * *matrix).collect();
+        }
+        self.rig.jump_palette(if self.animation_only {5.} else {self.time})
+    }
     pub(crate) fn gpu_secondary_controls(&self) -> Vec<[f32; 4]> {
         let bob = self.root_bob(self.time);
         let mut controls = vec![[0., bob as f32, 0., 0.]];
@@ -1678,32 +1854,93 @@ impl FemaleDemo {
     pub(crate) fn mesh_without_hair(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         self.mesh_with_hair(false)
     }
-    fn posed_surface_vertices(&self)->Vec<SceneVertex> {
+    fn pre_skin_surface_vertices(&self)->Vec<SceneVertex> {
+        let mut checkpoint=std::env::var_os("VOXY_FACE_MESH_TRACE").map(|_|std::time::Instant::now());
+        let mut mark=|stage:&str| {
+            if let Some(start)=checkpoint.as_mut() {
+                eprintln!("FACE DEFORMATION t={:.3} stage={stage} ms={:.3}",self.time,start.elapsed().as_secs_f64()*1000.);
+                *start=std::time::Instant::now();
+            }
+        };
         let mut vertices = self.vertices.clone();
         self.face_parameters
             .apply_wrinkles(&mut vertices[..self.body_vertices]);
+        mark("clone_and_wrinkles");
         if self.show_complexion && !self.show_skin && !self.show_strain {
             crate::female_complexion::apply(
                 &mut vertices[..self.body_vertices],
                 &self.normals[..self.body_vertices],
             );
         }
+        mark("complexion");
         crate::female_face::deform_with_contour(
             &mut vertices,
             self.body_vertices,
             self.face_pose(),
             self.lid_contour.as_ref(),
         );
-        if self.secondary_only {
+        mark("expression");
+        vertices
+    }
+    fn posed_surface_vertices(&self)->Vec<SceneVertex> {
+        let mut vertices=self.pre_skin_surface_vertices();
+        let mut checkpoint=std::env::var_os("VOXY_FACE_MESH_TRACE").map(|_|std::time::Instant::now());
+        let mut mark=|stage:&str| {
+            if let Some(start)=checkpoint.as_mut() {
+                eprintln!("FACE DEFORMATION t={:.3} stage={stage} ms={:.3}",self.time,start.elapsed().as_secs_f64()*1000.);
+                *start=std::time::Instant::now();
+            }
+        };
+        if let Some(stance) = &self.physical_stance {
+            self.rig.deform_pose(&mut vertices, self.time as f32, &stance.pose);
+            for vertex in &mut vertices {
+                let position = Vec3::from_array(vertex.position).as_dvec3() + stance.offset;
+                vertex.position = position.as_vec3().to_array();
+            }
+        } else if self.secondary_only {
             if !self.animation_only {self.rig.deform_jump(&mut vertices, self.time);}
         } else {
             self.rig.deform(&mut vertices, self.time as f32);
         }
+        mark("rig");
         for (vertex, rest) in vertices.iter_mut().zip(&self.vertices) {
             vertex.position[1] +=
                 self.support_offset(rest.position.map(f64::from), self.time) as f32;
         }
+        mark("support");
         vertices
+    }
+    /// Sparse physical-shell transfer only. This does not replace skeletal,
+    /// facial, or region deformation and must follow an independently posed base.
+    pub(crate) fn gpu_shell_binding(&self, count: usize) -> Result<(Vec<u32>,Vec<voxy_render::SurfaceDeformationWeight>,u32),voxy_render::SceneError> {
+        use voxy_render::{SceneError,SurfaceDeformationWeight};
+        if count<self.body_vertices || count>u32::MAX as usize || self.skin.positions().len()>u32::MAX as usize {
+            return Err(SceneError::GeometryCapacityExceeded);
+        }
+        let mut rows=vec![Vec::new();count];
+        for binding in self.embedding.bindings() {
+            let ids=self.embedding.shell_triangles()[binding.triangle];
+            for (control,weight) in ids.into_iter().zip(binding.weights) {
+                rows[binding.vertex].push(SurfaceDeformationWeight {control:control as u32,weight:weight as f32});
+            }
+        }
+        let mut offsets=Vec::with_capacity(count+1);let mut weights=Vec::new();offsets.push(0);
+        for row in rows {
+            weights.extend(row);
+            offsets.push(u32::try_from(weights.len()).map_err(|_|SceneError::GeometryCapacityExceeded)?);
+        }
+        Ok((offsets,weights,self.skin.positions().len() as u32))
+    }
+    pub(crate) fn gpu_shell_controls(&self) -> Result<Vec<[f32;4]>,voxy_render::SceneError> {
+        use voxy_render::SceneError;
+        if self.skin.positions().len()!=self.targets.len() {return Err(SceneError::InvalidGeometry);}
+        self.skin.positions().iter().zip(&self.targets).map(|(shell,reference)| {
+            // Subtract in the physical solver's precision before conversion:
+            // uploading absolute f32 poses would cancel small displacements.
+            let delta=if self.rig_pose_only {[0.;3]} else {std::array::from_fn(|k|(shell[k]-reference[k]) as f32)};
+            if delta.iter().any(|v|!v.is_finite()) {return Err(SceneError::NonFiniteVertex);}
+            Ok([delta[0],delta[1],delta[2],0.])
+        }).collect()
     }
     fn surface_displacement(&self)->Result<Vec<[f64;3]>,&'static str> {
         if self.rig_pose_only {Ok(vec![[0.;3];self.body_vertices])} else {self
@@ -1733,6 +1970,14 @@ impl FemaleDemo {
         Ok(vertices)
     }
     fn mesh_with_hair(&self, include_hair: bool) -> Result<SceneMesh, voxy_render::SceneError> {
+        self.mesh_with_hair_and_bindings(include_hair,None)
+    }
+    pub(crate) fn mesh_with_gpu_light_bindings(&self,include_hair:bool)->Result<(SceneMesh,Vec<voxy_render::SurfaceColorBinding>),voxy_render::SceneError> {
+        let mut bindings=Vec::new();
+        let mesh=self.mesh_with_hair_and_bindings(include_hair,Some(&mut bindings))?;
+        Ok((mesh,bindings))
+    }
+    fn mesh_with_hair_and_bindings(&self,include_hair:bool,inherited_colors:Option<&mut Vec<voxy_render::SurfaceColorBinding>>)->Result<SceneMesh,voxy_render::SceneError> {
         let trace = std::env::var_os("VOXY_FACE_MESH_TRACE").is_some();
         let mut checkpoint = std::time::Instant::now();
         let mut mark = |stage: &str| {
@@ -1786,6 +2031,9 @@ impl FemaleDemo {
             );
             normals = direct;
         }
+        if std::env::var_os("VOXY_GPU_SURFACE_LIGHT").is_some() || cfg!(test) {
+            *self.surface_light_normals.borrow_mut()=normals[..self.body_vertices].iter().map(|n|n.to_array()).collect();
+        }
         mark("normals");
         let key = crate::female_transmission::key_direction();
         let fill = Vec3::new(0.8, 0.2, 0.5).normalize();
@@ -1794,6 +2042,7 @@ impl FemaleDemo {
             .value("skin_surface_light")
             .unwrap_or(0.35);
         let surface_light = if self.surface_diffusion_enabled
+            && !self.resident_surface_light
             && !self.show_skin
             && !self.show_strain
             && surface_fraction < 1.
@@ -1940,7 +2189,7 @@ impl FemaleDemo {
         }
         mark("vertex_lighting");
         let posed_face = vertices[..self.body_vertices].to_vec();
-        self.features.append_configured(
+        self.features.append_configured_with_bindings(
             &posed_face,
             &normals[..self.body_vertices],
             &mut vertices,
@@ -1948,6 +2197,7 @@ impl FemaleDemo {
             self.hair_head_matrix(self.time),
             self.face_pose(),
             &self.face_parameters,
+            inherited_colors,
         );
         mark("face_features");
         let hair_start = vertices.len();
@@ -2072,7 +2322,7 @@ impl FemaleDemo {
         // Weld only the much smaller non-hair surfaces. Film retains its existing
         // complete geometric normal path because it can add overlapping layers.
         // Face morphs also retain it until their Jacobian transports strand normals.
-        let authored_normals = if self.film.is_none() && include_hair
+        let authored_normals = if self.film.is_none()
             && self.face_parameters == crate::face_parameters::FaceParameters::default()
         {
             let prefix = SceneMesh::new(vertices[..hair_start].to_vec(), indices[..hair_index_start].to_vec())?
@@ -2083,6 +2333,11 @@ impl FemaleDemo {
             let suffix = SceneMesh::new(vertices[hair_end..].to_vec(), suffix_indices)?
                 .with_prepared_upload_streams();
             let mut combined = prefix.authored_normals().unwrap().to_vec();
+            // The same transported base normals already drive CPU lighting.
+            // Keep them in the draw stream whether the groom is separate or not.
+            for (output, normal) in combined.iter_mut().zip(&normals) {
+                *output = normal.to_array();
+            }
             combined.append(&mut hair_normals);
             combined.extend_from_slice(suffix.authored_normals().unwrap());
             Some(combined)
@@ -2762,7 +3017,9 @@ mod tests {
         demo.secondary_only = true;
         demo.simulate_hair = true;
         let before = demo.skin.positions().to_vec();
-        for _ in 0..4 {
+        // Cross the first crouch/contact failure observed after 0.05 s in
+        // the full example, with the complete groom and original strain gate.
+        for _ in 0..8 {
             demo.advance(1. / 120.).unwrap();
             demo.hair.verify(demo.hair_physics_head_matrix(demo.time)).unwrap();
             assert!(demo.solver_ms.iter().all(|ms| ms.is_finite() && *ms > 0.));
@@ -2772,7 +3029,7 @@ mod tests {
         }
         assert!(demo.skin.positions().iter().zip(&before)
             .any(|(a, b)| (a[1] - b[1]).abs() > 1e-6));
-        assert_eq!(demo.steps, 4);
+        assert_eq!(demo.steps, 8);
     }
     #[test]
     fn film_substrate_matches_rendered_body_without_visual_work() {
@@ -3837,3 +4094,411 @@ mod warm_light_tests {
         println!("ACTUAL BLINK WARM/COLD max_rgb_error={maximum}");
     }
 }
+
+#[cfg(test)]
+mod authored_jump_integration_tests {
+    use super::*;
+    #[test]
+    #[ignore = "real GPU and original full-density coupled authored jump with continuous contacts"]
+    fn coupled_authored_jump_real_gpu_hair_first_frame() {
+        qualify_coupled_gpu_frames(true,1);
+    }
+    #[test]
+    #[ignore = "real GPU and original full-density coupled authored jump in default runtime contact mode"]
+    fn coupled_authored_jump_real_gpu_hair_default_first_frame() {
+        qualify_coupled_gpu_frames(false,1);
+    }
+    #[test]
+    #[ignore = "real GPU, full-density continuous-contact authored jump including the difficult second frame"]
+    fn coupled_authored_jump_real_gpu_hair_two_frames() {
+        qualify_coupled_gpu_frames(true,2);
+    }
+    fn qualify_coupled_gpu_frames(continuous:bool,frames:usize) {
+        assert!((1..=2).contains(&frames));
+        let instance=voxy_render::GraphicsOptions::default().create_instance();
+        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let info=adapter.get_info();assert_ne!(info.device_type,wgpu::DeviceType::Cpu);
+        eprintln!("COUPLED HAIR GPU adapter={info:?}");
+        let (device,queue)=pollster::block_on(adapter.request_device(&crate::gpu_hair_solver::qualification_device_descriptor(&adapter))).unwrap();
+        let mut solver=pollster::block_on(crate::gpu_hair_solver::GpuHairLinearSolver::new_coupled(&device,&queue)).unwrap();
+        let mut demo=FemaleDemo::new().unwrap();
+        demo.secondary_only=true;demo.simulate_hair=true;
+        demo.enable_authored_jump().unwrap();
+        if continuous {demo.hair.qualify_continuous_contacts();}
+        assert_eq!(demo.hair.gpu_surface_frames().len(),469*21);
+        for frame in 1..=frames {
+            eprintln!("COUPLED HAIR GPU BEGIN frame={frame} bounded_frames={frames} required_full_cycle=720");
+            let before=(solver.calls,solver.joint_equality_dispatches);
+            let began=std::time::Instant::now();
+            demo.advance_with_hair_solver(1./120.,&mut solver)
+                .unwrap_or_else(|error|panic!("coupled GPU preparation: {error}; backend={:?}",solver.last_error));
+            // The swept Newton owner keeps structural factors native and may use
+            // only GPU contact coordinates. Count actual equality dispatches,
+            // not just callback attempts which could all choose native fallback.
+            assert!(solver.calls>before.0 || solver.joint_equality_dispatches>before.1,
+                "coupled physical step bypassed all GPU dispatch paths");
+            assert_eq!(demo.steps,frame);
+            demo.hair.verify(demo.hair_physics_head_matrix(demo.time)).unwrap();
+            assert!(demo.skin.positions().iter().flatten().all(|v|v.is_finite()));
+            eprintln!("COUPLED HAIR GPU passed_frames={frame} bounded_frames={frames} required_full_cycle=720 continuous_contacts={continuous} elapsed_s={} structural_calls={} refinement_dispatches={} joint_coordinate_calls={} joint_equality_dispatches={} joint_equality_submissions={} coordinate_batches={} reused_qr_columns={} dual_hint_attempts={} early_release_directions={} admitted={} native_fallbacks={} scope=bounded_frames_only_no_full_cycle_or_FPS_claim",began.elapsed().as_secs_f64(),solver.calls,solver.refinement_dispatches,solver.joint_coordinate_calls,solver.joint_equality_dispatches,solver.joint_equality_submissions,solver.joint_coordinate_batches,solver.joint_qr_columns_reused,solver.joint_dual_hint_attempts,solver.joint_early_release_direction_calls,solver.joint_admitted,solver.joint_native_fallbacks);
+        }
+    }
+    #[test]
+    fn coupled_hair_backend_preserves_publication_and_native_retry() {
+        struct Backend {calls:usize,reject:bool}
+        impl physics::hair::HairLinearSolver for Backend {
+            fn solve(&mut self,systems:&[physics::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
+                self.calls+=1;
+                if self.reject {return Err("injected coupled hair backend failure");}
+                systems.iter().map(physics::hair::HairLinearSystem::solve_native).collect()
+            }
+        }
+        let guides=|demo:&FemaleDemo|demo.hair.gpu_surface_frames().into_iter()
+            .map(|frame|[frame.position_arc,frame.u_red,frame.v_green,frame.w_blue]).collect::<Vec<_>>();
+        for secondary_only in [false,true] {
+            let mut actual=FemaleDemo::new().unwrap();
+            actual.secondary_only=secondary_only;
+            actual.enable_authored_jump().unwrap();
+            let mut reference=FemaleDemo::new().unwrap();
+            reference.secondary_only=secondary_only;
+            reference.enable_authored_jump().unwrap();
+            let skin=actual.skin.positions().to_vec();let hair=guides(&actual);
+            let time=actual.time;let steps=actual.steps;
+            let mut rejected=Backend {calls:0,reject:true};
+            assert_eq!(actual.advance_with_hair_solver(1./120.,&mut rejected),Err("injected coupled hair backend failure"));
+            assert!(rejected.calls>0,"coupled simulation bypassed the injected backend");
+            assert_eq!(actual.skin.positions(),skin);assert_eq!(guides(&actual),hair);
+            assert_eq!((actual.time,actual.steps),(time,steps));
+            // Failed physical preparation retains queued time for retry.
+            let mut native=Backend {calls:0,reject:false};
+            actual.advance_with_hair_solver(0.,&mut native).unwrap();
+            reference.advance(1./120.).unwrap();
+            assert!(native.calls>0);
+            assert_eq!((actual.time,actual.steps),(reference.time,reference.steps));
+            assert_eq!(actual.skin.positions(),reference.skin.positions());
+            assert_eq!(guides(&actual),guides(&reference));
+        }
+    }
+    #[test]
+    #[ignore = "full 720-frame authored jump with original skin and 469-guide groom"]
+    fn authored_jump_full_coupled_cycle_qualification() {
+        let directory = std::path::PathBuf::from(std::env::var("VOXY_AUTHORED_JUMP_QUALIFICATION_DIR").expect("set qualification output directory"));
+        std::fs::create_dir_all(&directory).unwrap();
+        assert!(!directory.join("summary.json").exists(), "preserve existing qualification; use a new directory");
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.secondary_only = true;
+        demo.simulate_hair = true;
+        demo.enable_authored_jump().unwrap();
+        let continuous_contacts = std::env::var("VOXY_AUTHORED_JUMP_CONTINUOUS_CONTACTS").as_deref() == Ok("1");
+        if continuous_contacts { demo.hair.qualify_continuous_contacts(); }
+        let gpu_enabled=std::env::var("VOXY_AUTHORED_JUMP_GPU_HAIR").as_deref()==Ok("1");
+        let mut gpu=if gpu_enabled {
+            let instance=voxy_render::GraphicsOptions::default().create_instance();
+            let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+            let info=adapter.get_info();assert_ne!(info.device_type,wgpu::DeviceType::Cpu);
+            eprintln!("AUTHORED FULL CYCLE GPU {info:?}");
+            let (device,queue)=pollster::block_on(adapter.request_device(&crate::gpu_hair_solver::qualification_device_descriptor(&adapter))).unwrap();
+            Some(pollster::block_on(crate::gpu_hair_solver::GpuHairLinearSolver::new_coupled(&device,&queue)).unwrap())
+        } else {None};
+        assert_eq!(demo.hair.gpu_surface_frames().len(), 469 * 21);
+        let mut rows = Vec::new();
+        let write = |status: &str, phase: &str, frame: usize, error: Option<&str>, rows: &Vec<serde_json::Value>| {
+            let report = serde_json::json!({"status":status,"phase":phase,"process_id":std::process::id(),"updated_unix_ms":std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis(),"attempted_frame":frame,"completed_frames":rows.len(),"required_frames":720,"simulated_seconds":rows.len() as f64/120.,"guide_count":469,"segments_per_guide":20,"authored_jump":true,"continuous_contacts":continuous_contacts,"gpu_hair_backend":gpu_enabled,"error":error,"steps":rows,"scope":"actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim"});
+            let temporary=directory.join("summary.json.tmp");
+            std::fs::write(&temporary,serde_json::to_vec_pretty(&report).unwrap()).unwrap();
+            std::fs::rename(temporary,directory.join("summary.json")).unwrap();
+        };
+        write("running","initializing",0,None,&rows);
+        for frame in 1..=720 {
+            let previous_time=demo.time;
+            let previous_steps=demo.steps;
+            let previous_skin=demo.skin.positions().to_vec();
+            let guide_state=|demo:&FemaleDemo| demo.hair.gpu_surface_frames().into_iter()
+                .map(|f|[f.position_arc,f.u_red,f.v_green,f.w_blue]).collect::<Vec<_>>();
+            let previous_hair=guide_state(&demo);
+            let started=std::time::Instant::now();
+            write("running","preparing",frame,None,&rows);
+            eprintln!("AUTHORED FULL CYCLE BEGIN frame={frame}/720 completed={}",rows.len());
+            let advance=match gpu.as_mut() {
+                Some(solver)=>demo.advance_with_hair_solver(1./120.,solver),
+                None=>demo.advance(1./120.),
+            };
+            if let Err(error)=advance {
+                let preserved=demo.time==previous_time && demo.steps==previous_steps
+                    && demo.skin.positions()==previous_skin && guide_state(&demo)==previous_hair;
+                std::fs::write(directory.join("failure-state.json"),serde_json::to_vec_pretty(&serde_json::json!({"frame":frame,"error":error,"published_time_s":demo.time,"published_steps":demo.steps,"time_skin_guide_frames_preserved":preserved,"scope":"displayed pose state, not every internal cache"})).unwrap()).unwrap();
+                write("failed","preparing",frame,Some(error),&rows);
+                assert!(preserved,"failed coupled step changed published state");
+                panic!("authored coupled frame {frame}: {error}");
+            }
+            write("running","verifying",frame,None,&rows);
+            if let Err(error)=demo.hair.verify(demo.hair_physics_head_matrix(demo.time)) {
+                write("verification_failed","verifying",frame,Some(error),&rows);
+                panic!("authored hair admission frame {frame}: {error}");
+            }
+            if !demo.skin.positions().iter().flatten().all(|x|x.is_finite()) {
+                write("verification_failed","verifying",frame,Some("nonfinite skin position"),&rows);
+                panic!("nonfinite skin position at authored frame {frame}");
+            }
+            let elapsed=started.elapsed().as_secs_f64()*1000.;
+            let gpu_counts=gpu.as_ref().map(|solver|serde_json::json!({"structural_calls":solver.calls,"joint_coordinate_calls":solver.joint_coordinate_calls,"joint_equality_dispatches":solver.joint_equality_dispatches,"joint_equality_submissions":solver.joint_equality_submissions,"joint_result_cache_hits":solver.joint_result_cache_hits,"workspace_creations":solver.joint_workspace_creations,"workspace_reuses":solver.joint_workspace_reuses,"coordinate_batches":solver.joint_coordinate_batches,"joint_admitted":solver.joint_admitted,"native_contact_fallbacks":solver.joint_native_fallbacks}));
+            rows.push(serde_json::json!({"frame":frame,"time_s":demo.time,"elapsed_ms":elapsed,"skin_ms":demo.solver_ms[0],"hair_ms":demo.solver_ms[1],"gpu_counts":gpu_counts}));
+            write("running","completed_frame",frame,None,&rows);
+            eprintln!("AUTHORED FULL CYCLE frame={frame}/720 time_s={} elapsed_ms={elapsed:.3} skin_ms={:.3} hair_ms={:.3}",demo.time,demo.solver_ms[0],demo.solver_ms[1]);
+        }
+        assert_eq!(demo.steps,720);
+        write("passed","complete",720,None,&rows);
+    }
+
+    #[test]
+    fn authored_jump_initialization_preserves_rest_and_advances_coupled_skin_hair() {
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.secondary_only = true;
+        let skin_before = demo.skin.positions().to_vec();
+        let targets_before = demo.targets.clone();
+        demo.enable_authored_jump().unwrap();
+        let source = demo.rig.authored_jump_source().unwrap();
+        assert!(std::sync::Arc::ptr_eq(&source, &demo.skin_rig.authored_jump_source().unwrap()));
+        assert_eq!(demo.skin.positions(), skin_before);
+        for matrix in demo.gpu_jump_palette() {
+            assert!(matrix.abs_diff_eq(glam::Mat4::IDENTITY, 2e-6), "authored initialization changed render rest pose");
+        }
+        let shell = demo.skin_rig.jump_pose_points(&demo.skin_reference_rest, 0.);
+        for (a,b) in shell.iter().zip(&targets_before) {
+            assert!((0..3).all(|k| (a[k]-b[k]).abs() < 2e-6), "authored initialization changed skin targets");
+        }
+        let replica = demo.background_view_replica().unwrap();
+        assert!(std::sync::Arc::ptr_eq(&source, &replica.rig.authored_jump_source().unwrap()));
+        for time in [0.,0.38,0.81,1.26,5.] {
+            assert_eq!(demo.rig.jump_palette(time), replica.rig.jump_palette(time));
+        }
+        for _ in 0..8 {
+            demo.advance(1./120.).unwrap();
+            demo.hair.verify(demo.hair_physics_head_matrix(demo.time)).unwrap();
+            assert!(demo.skin.positions().iter().flatten().all(|x|x.is_finite()));
+            assert!(demo.solver_ms.iter().all(|ms| ms.is_finite() && *ms > 0.));
+            eprintln!("AUTHORED COUPLED step={} time_s={} skin_ms={} hair_ms={}",demo.steps,demo.time,demo.solver_ms[0],demo.solver_ms[1]);
+        }
+        assert_eq!(demo.steps,8);
+        assert!(demo.skin.positions().iter().zip(&skin_before).any(|(a,b)|a!=b));
+        assert!(demo.enable_authored_jump().is_err());
+        assert!(std::sync::Arc::ptr_eq(&source,&demo.rig.authored_jump_source().unwrap()));
+    }
+    #[test]
+    fn grounded_preview_keeps_shared_source_when_replacing_the_body() {
+        use crate::humanoid_locomotion::LocomotionClip;
+        let mut demo=FemaleDemo::new().unwrap();
+        assert!(demo.enable_authored_gait(LocomotionClip::Walk).is_err());
+        demo.animation_only=true;
+        demo.enable_authored_gait(LocomotionClip::Walk).unwrap();
+        let source=demo.rig.authored_gait_source().unwrap().0;
+        assert!(std::sync::Arc::ptr_eq(&source,&demo.skin_rig.authored_gait_source().unwrap().0));
+        demo.advance(0.1).unwrap();
+        let points=demo.skin_rig.pose_points(&demo.skin_reference_rest,demo.time as f32);
+        demo.select_grounded_gait(LocomotionClip::Jog).unwrap();
+        let transitioned=demo.skin_rig.pose_points(&demo.skin_reference_rest,demo.time as f32);
+        let maximum=points.iter().zip(transitioned).flat_map(|(a,b)|(0..3).map(move |i|(a[i]-b[i]).abs())).fold(0f64,f64::max);
+        assert!(maximum<1e-6,"render-precision transition displacement {maximum}m");
+        demo.advance(0.08).unwrap();
+        let points=demo.skin_rig.pose_points(&demo.skin_reference_rest,demo.time as f32);
+        demo.select_grounded_gait(LocomotionClip::Sprint).unwrap();
+        let interrupted=demo.skin_rig.pose_points(&demo.skin_reference_rest,demo.time as f32);
+        assert!(points.iter().zip(interrupted).all(|(a,b)|(0..3).all(|i|(a[i]-b[i]).abs()<1e-5)));
+        let phase=demo.grounded_playback.as_ref().unwrap().normalized_phase();
+        let parameters=demo.body_parameters.patched(&serde_json::json!({"body_model":"male"})).unwrap();
+        demo.set_body_parameters(parameters).unwrap();
+        assert!(demo.animation_only);
+        assert!(std::sync::Arc::ptr_eq(&source,&demo.rig.authored_gait_source().unwrap().0));
+        assert!(std::sync::Arc::ptr_eq(&source,&demo.skin_rig.authored_gait_source().unwrap().0));
+        assert!(demo.title().contains("Sprint"));
+        assert_eq!(demo.grounded_playback.as_ref().unwrap().normalized_phase(),phase);
+        demo.advance(1./120.).unwrap();
+        assert!(demo.time>0.);
+        assert_eq!(demo.steps,0,"preview must not claim a nonlinear physical step");
+        assert!(demo.enable_authored_gait(LocomotionClip::Sprint).is_err());
+    }
+
+    #[test]
+    #[ignore = "full-resolution mesh timing diagnostic; run explicitly with VOXY_FACE_MESH_TRACE=1"]
+    fn physical_stance_full_mesh_profile() {
+        physical_stance_full_mesh_samples(&[1, 2, 3, 4]);
+    }
+
+    #[test]
+    #[ignore = "full-resolution physical cycle fixtures for the independent GPU light solver gate"]
+    fn physical_stance_diffusion_cycle_fixtures() {
+        physical_stance_full_mesh_samples(&[1, 31, 61, 91, 121, 151]);
+    }
+
+    fn physical_stance_full_mesh_samples(ticks: &[usize]) {
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.enable_physical_stance().unwrap();
+        for (sample, &tick) in ticks.iter().enumerate() {
+            while demo.steps < tick {
+                demo.advance(crate::female_physical_stance::STEP).unwrap();
+            }
+            let started = std::time::Instant::now();
+            let mesh = demo.mesh_with_full_hair().unwrap();
+            assert!(mesh.vertices().len() > demo.body_vertices);
+            assert!(mesh.vertices().iter().all(|v| v.position.iter().all(|x| x.is_finite())));
+            eprintln!("PHYSICAL_STANCE_FULL_MESH sample={sample} vertices={} elapsed_ms={:.3}",
+                mesh.vertices().len(), started.elapsed().as_secs_f64() * 1000.);
+            if let Ok(directory) = std::env::var("VOXY_STANCE_DIFFUSION_FIXTURES") {
+                let input = demo.surface_light_input.borrow();
+                let input = input.as_ref().expect("full model surface light input");
+                let reference = demo.surface_light_guess.borrow();
+                let mut fixture = skin_light_diffusion::gpu_parity_fixture(&input.points,
+                    &input.triangles, &input.source, reference.as_deref().unwrap()).unwrap();
+                fixture["time_seconds"] = serde_json::json!(demo.time);
+                std::fs::create_dir_all(&directory).unwrap();
+                std::fs::write(std::path::Path::new(&directory).join(format!("stance-{sample}.json")),
+                    serde_json::to_vec(&fixture).unwrap()).unwrap();
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "actual full-character GPU incident-light source parity"]
+    fn physical_stance_gpu_incident_matches_cpu_equation() {
+        pollster::block_on(async {
+            let mut demo=FemaleDemo::new().unwrap();demo.enable_physical_stance().unwrap();
+            demo.advance(crate::female_physical_stance::STEP).unwrap();
+            let (mesh,bindings)=demo.mesh_with_gpu_light_bindings(true).unwrap();
+            assert!(!bindings.is_empty());let mut color_error=0f32;
+            for binding in &bindings {
+                let target=mesh.vertices()[binding.target as usize];
+                for c in 0..4 {
+                    let expected=(0..3).map(|i|mesh.vertices()[binding.sources[i] as usize].color[c]*binding.weights[i]).sum::<f32>();
+                    color_error=color_error.max((target.color[c]-expected).abs());
+                }
+            }
+            eprintln!("FULL MODEL INHERITED COLORS bindings={} maximum_error={color_error}",bindings.len());
+            assert!(color_error<3e-7);
+            let input_guard=demo.surface_light_input.borrow();let input=input_guard.as_ref().unwrap();
+            let instance=voxy_render::GraphicsOptions::default().create_instance();
+            let adapter=instance.request_adapter(&Default::default()).await.expect("GPU required");
+            let (device,queue)=adapter.request_device(&Default::default()).await.unwrap();
+            eprintln!("FULL MODEL INCIDENT {:?}",adapter.get_info());
+            let renderer=voxy_render::SceneRenderer::new(&device,wgpu::TextureFormat::Rgba8Unorm);
+            let geometry=renderer.upload_compute_mesh(&device,&mesh).unwrap();
+            let triangles:Vec<_>=input.triangles.iter().map(|t|t.map(|i|i as u32)).collect();
+            let settings=voxy_render::SurfaceLightFrameSettings {
+                key_direction:crate::female_transmission::key_direction().to_array(),key_weight:0.6,
+                fill_direction:[0.8,0.2,0.5],fill_weight:0.2,ambient:0.2,albedo:[0.72,0.46,0.34,1.],surface_fraction:0.35,
+                radii:[0.002,0.001,0.0005],
+            };
+            let mut light=voxy_render::SurfaceLightFrame::new_with_reference_normals(&device,&geometry,&triangles,settings,&demo.surface_light_normals()).await.unwrap();
+            let mut encoder=device.create_command_encoder(&Default::default());light.encode(&mut encoder,64).unwrap();
+            let size=demo.body_vertices as u64*16;
+            let dispatch=voxy_render::ComputeDispatch::gather_buffers(&device,&mut encoder,&[(light.incident_buffer(),0,0,size),(light.admission().accepted_buffer(),0,size,size*2),(light.admission().header_buffer(),0,size*3,32)],size*3+32).unwrap();
+            queue.submit([encoder.finish()]);let mut pending=dispatch.begin_read();device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            let bytes=pending.try_read().unwrap().unwrap();
+            let values:Vec<_>=bytes[..size as usize].chunks_exact(16).map(|row|std::array::from_fn::<f32,4,_>(|c|f32::from_le_bytes(row[c*4..c*4+4].try_into().unwrap()))).collect();
+            let mut maximum=0f64;let mut worst=0;
+            for (i,(actual,reference)) in values.iter().zip(&input.source).enumerate() {
+                assert!(actual.iter().all(|c|c.is_finite()&&*c>=0.),"invalid incident vertex {i}");
+                for c in 0..3 {let error=(f64::from(actual[c])-reference[c]).abs();if error>maximum {maximum=error;worst=i;}}
+            }
+            eprintln!("FULL MODEL INCIDENT vertices={} maximum_error={maximum} worst_vertex={worst}",values.len());
+            assert!(maximum<3e-6,"GPU direct source differs from existing CPU light equation: {maximum}");
+            let header:Vec<_>=bytes[(size*3) as usize..].chunks_exact(4).map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
+            assert_eq!(&header[..4],&[0,1,1,1]);
+            let accepted:Vec<_>=bytes[size as usize..(size*2) as usize].chunks_exact(16).map(|row|std::array::from_fn::<f32,4,_>(|c|f32::from_le_bytes(row[c*4..c*4+4].try_into().unwrap()))).collect();
+            let reference_guard=demo.surface_light_guess.borrow();let reference=reference_guard.as_ref().unwrap();
+            let mut diffuse_error=0f64;
+            for (actual,reference) in accepted.iter().zip(reference) {for c in 0..3 {diffuse_error=diffuse_error.max((f64::from(actual[c])-reference[c]).abs());}}
+            eprintln!("FULL MODEL DIFFUSE maximum_error={diffuse_error} error_estimate={}",f32::from_bits(header[4]));
+            assert!(diffuse_error<1e-3,"full-model resident light equation drift {diffuse_error}");
+            drop(reference_guard);drop(input_guard);
+            demo.resident_surface_light=true;
+            *demo.surface_light_input.borrow_mut()=None;*demo.surface_light_guess.borrow_mut()=None;
+            let started=std::time::Instant::now();let gpu_mesh=demo.mesh_with_full_hair().unwrap();
+            assert!(demo.surface_light_input.borrow().is_none() && demo.surface_light_guess.borrow().is_none(),"resident frame executed the CPU diffusion solver");
+            assert_eq!(gpu_mesh.indices(),mesh.indices());assert_eq!(gpu_mesh.authored_normals(),mesh.authored_normals());
+            assert_eq!(gpu_mesh.explicit_material_coordinates(),mesh.explicit_material_coordinates());
+            let inherited:std::collections::HashSet<_>=bindings.iter().map(|b|b.target as usize).collect();
+            for (i,(actual,original)) in gpu_mesh.vertices().iter().zip(mesh.vertices()).enumerate() {
+                assert_eq!(actual.position,original.position);assert_eq!(actual.uv,original.uv);
+                if i>=demo.body_vertices && !inherited.contains(&i) {assert_eq!(actual.color,original.color,"independent feature color changed at {i}");}
+            }
+            eprintln!("FULL MODEL CPU DIFFUSION SKIPPED vertices={} elapsed_ms={:.3} other_geometry_and_materials_preserved=true",gpu_mesh.vertices().len(),started.elapsed().as_secs_f64()*1000.);
+
+
+        });
+    }
+
+    #[test]
+    #[ignore = "full-density actual posed groom GPU geometry parity"]
+    fn physical_stance_resident_hair_matches_full_cpu_groom() {
+        pollster::block_on(async {
+            let mut demo=FemaleDemo::new().unwrap();demo.enable_physical_stance().unwrap();
+            demo.resident_surface_light=true;
+            let instance=voxy_render::GraphicsOptions::default().create_instance();
+            let adapter=instance.request_adapter(&Default::default()).await.expect("GPU required");
+            let (device,queue)=adapter.request_device(&Default::default()).await.unwrap();
+            eprintln!("ACTUAL GROOM GPU {:?}",adapter.get_info());
+            let initial_input=demo.gpu_hair_surface_input().unwrap();
+            let _pool=voxy_render::ComputeReadbackPool::configure(&device,voxy_render::ComputeReadbackLimits {
+                max_bytes:initial_input.bytes().len() as u64,max_buffers:1}).unwrap();
+            let program=voxy_render::ComputeProgram::new(&device,voxy_render::FIBER_SURFACE_SHADER).await.unwrap();
+            for tick in [1,31] {
+                while demo.steps<tick {demo.advance(crate::female_physical_stance::STEP).unwrap();}
+                let mesh=demo.mesh_with_full_hair().unwrap();
+                let cpu:Vec<_>=mesh.vertices().iter().enumerate().filter(|(_,v)|v.uv[0]==-7.).collect();
+                let input=demo.gpu_hair_surface_input().unwrap();
+                assert_eq!(cpu.len(),input.vertex_count() as usize);
+                assert_eq!(cpu.len(),2_363_760);
+                let job=program.create_job(&device,input.bytes()).unwrap();
+                let mut encoder=device.create_command_encoder(&Default::default());
+                let dispatch=job.encode(&mut encoder,[input.vertex_count().div_ceil(64),1,1]).unwrap();
+                queue.submit([encoder.finish()]);let mut pending=dispatch.begin_read();device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+                let bytes=pending.try_read().unwrap().unwrap();let output=input.output(&bytes).unwrap();
+                let normals=mesh.authored_normals().unwrap();let mut position_error=0f32;let mut normal_error=0f32;
+                for ((original_index,v),row) in cpu.iter().zip(output.chunks_exact(48)) {
+                    let values: [f32;12]=std::array::from_fn(|c|f32::from_le_bytes(row[c*4..c*4+4].try_into().unwrap()));
+                    position_error=position_error.max(Vec3::from_slice(&values[..3]).distance(Vec3::from(v.position)));
+                    normal_error=normal_error.max(Vec3::from_slice(&values[9..12]).distance(Vec3::from(normals[*original_index])));
+                    assert_eq!(&values[3..5],&v.uv);assert_eq!(&values[5..9],&v.color);
+                }
+                eprintln!("ACTUAL GROOM PARITY tick={tick} vertices={} max_position_error_m={position_error} max_normal_error={normal_error}",cpu.len());
+                assert!(position_error<3e-7 && normal_error<3e-7,"posed groom mismatch");
+                let body=demo.mesh_without_hair().unwrap();
+                let expected:Vec<_>=mesh.vertices().iter().filter(|v|v.uv[0]!=-7.).collect();
+                assert_eq!(body.vertices().len(),expected.len());
+                for (actual,expected) in body.vertices().iter().zip(expected) {assert_eq!(actual,expected);}
+            }
+        });
+    }
+
+    #[test]
+    fn physical_stance_preview_renders_the_accepted_pose() {
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.enable_physical_stance().unwrap();
+        let initial = demo.posed_surface_vertices();
+        for _ in 0..12 { demo.advance(crate::female_physical_stance::STEP).unwrap(); }
+        let vertices = demo.posed_surface_vertices();
+        let stance = demo.physical_stance.as_ref().unwrap();
+        let actor = glam::Mat4::from_translation(stance.offset.as_vec3());
+        let expected: Vec<_> = stance.pose.skin_matrices(&demo.rig.skeleton).unwrap()
+            .into_iter().map(|matrix| actor * matrix).collect();
+        assert_eq!(demo.gpu_jump_palette(), expected,
+            "GPU palette must retain accepted physical IK and actor displacement");
+        assert_eq!(demo.hair_head_matrix(demo.time), expected[3]);
+        let floor_height = stance.floor_height;
+        let lowest = vertices[..demo.body_vertices].iter().map(|v| f64::from(v.position[1]))
+            .fold(f64::INFINITY, f64::min);
+        assert!((lowest - floor_height).abs() < 3e-6,
+            "rendered physical stance floor clearance {}", lowest-floor_height);
+        assert!(vertices.iter().zip(&initial).any(|(a,b)| Vec3::from_array(a.position)
+            .distance(Vec3::from_array(b.position)) > 0.001));
+        assert_eq!(demo.steps, 12);
+        assert!(demo.enable_physical_stance().is_err());
+        eprintln!("PHYSICAL_STANCE_RENDER {}",serde_json::json!({"steps":demo.steps,
+            "body_vertices":demo.body_vertices,"floor_clearance_m":lowest-floor_height}));
+    }
+
+}
+
+#[cfg(test)]
+#[path = "female_groom_gpu_tests.rs"]
+mod resident_groom_render_tests;

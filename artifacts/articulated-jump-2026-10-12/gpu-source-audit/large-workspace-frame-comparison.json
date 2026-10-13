@@ -1,0 +1,10 @@
+{
+  "status": "first_frame_passed",
+  "records": 559,
+  "ordered_workload_shapes_and_payloads_equal": true,
+  "baseline_creations": 188,
+  "candidate_creations": 11,
+  "baseline_reuses": 371,
+  "candidate_reuses": 548,
+  "scope": "first strict coupled frame and allocation counts; not controlled timing or whole-cycle/FPS proof"
+}

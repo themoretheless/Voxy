@@ -39,6 +39,7 @@ pub(crate) struct Frame {
     pub hair_indices: Vec<u32>,
     pub hair_frames: Option<Vec<voxy_render::FiberSurfaceFrame>>,
     pub hair_visible: bool,
+    pub hair_transform: glam::Mat4,
     pub simulation_time: f64,
     pub title: String,
     pub work_ms: f64,
@@ -72,7 +73,7 @@ pub(crate) struct FullModelWorker {
     pub failure: Option<String>,
 }
 impl FullModelWorker {
-    pub fn new(mut simulation: FemaleDemo, controls: Controls, gpu_hair: bool) -> std::io::Result<Self> {
+    pub fn new(mut simulation: FemaleDemo, controls: Controls, gpu_hair: bool, mut hair_solver:Option<crate::gpu_hair_solver::GpuHairLinearSolver>) -> std::io::Result<Self> {
         let shared = Arc::new(Mutex::new(controls));
         let stopped = Arc::new(AtomicBool::new(false));
         let (sender, receiver) = mpsc::sync_channel(1);
@@ -105,7 +106,10 @@ impl FullModelWorker {
                     let advance = if settings.paused {
                         Ok(())
                     } else {
-                        simulation.advance(elapsed)
+                        match hair_solver.as_mut() {
+                            Some(solver)=>simulation.advance_with_hair_solver(elapsed,solver),
+                            None=>simulation.advance(elapsed),
+                        }
                     };
                     let advance_ms = advance_started.elapsed().as_secs_f64() * 1000.;
                     let mesh_started = std::time::Instant::now();
@@ -127,6 +131,7 @@ impl FullModelWorker {
                             body_indices,
                             hair_indices,
                             hair_frames,
+                            hair_transform: simulation.gpu_hair_surface_transform(),
                             hair_visible:simulation.show_hair,
                             simulation_time:simulation.simulation_time(),
                             title: simulation.title(),
@@ -225,7 +230,7 @@ mod tests {
         let (mut worker, sender, controls) = fixture();
         sender.send(Ok(Frame {
             mesh: SceneMesh::quad([1.; 4]), body_indices: vec![0, 1, 2],
-            hair_indices: vec![], hair_frames:None, hair_visible:true, simulation_time:0., title: "Valid pose".into(), work_ms: 1., phase_ms: [0.; 4], solver_ms: [0.; 2],
+            hair_indices: vec![], hair_frames:None, hair_visible:true,hair_transform:glam::Mat4::IDENTITY, simulation_time:0., title: "Valid pose".into(), work_ms: 1., phase_ms: [0.; 4], solver_ms: [0.; 2],
         })).unwrap();
         let retained = worker.poll(controls).unwrap().unwrap();
         assert_eq!(worker.title, "Valid pose");
@@ -245,7 +250,7 @@ mod tests {
         let (mut worker,sender,controls)=fixture();
         sender.send(Ok(Frame {
             mesh:SceneMesh::quad([1.;4]),body_indices:vec![0,1,2],hair_indices:vec![],
-            hair_frames:None,hair_visible:true,simulation_time:f64::NAN,
+            hair_frames:None,hair_visible:true,hair_transform:glam::Mat4::IDENTITY,simulation_time:f64::NAN,
             title:"Invalid replacement".into(),work_ms:1.,phase_ms:[0.;4],solver_ms:[0.;2],
         })).unwrap();
         assert_eq!(worker.poll(controls).unwrap_err(),"invalid full-model frame timing");

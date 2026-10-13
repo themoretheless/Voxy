@@ -28,6 +28,7 @@ pub(crate) struct FaceFeatures {
     rims: Vec<Vec<([usize; 3], Vec3)>>,
     lash_skin_vertices: Vec<usize>,
     lash_skin_triangles: Vec<[usize; 3]>,
+    lash_contact_cache: std::cell::RefCell<Option<physics::hair::TriangleMesh>>,
 }
 impl FaceFeatures {
     pub(crate) fn advance_lashes(
@@ -265,6 +266,7 @@ impl FaceFeatures {
             rims,
             lash_skin_vertices,
             lash_skin_triangles,
+            lash_contact_cache: Default::default(),
         }
     }
     #[allow(clippy::too_many_arguments)] // Surface attachment inputs and existing render buffers.
@@ -298,17 +300,50 @@ impl FaceFeatures {
         pose: crate::female_face::FacePose,
         parameters: &crate::face_parameters::FaceParameters,
     ) {
-        let contact = if std::env::var("VOXY_FACE_DIAGNOSTIC_NO_LASH_CONTACT").as_deref() == Ok("1")
-        {
-            None
-        } else {
-            let points: Vec<_> = self
-                .lash_skin_vertices
-                .iter()
-                .map(|&i| body[i].position.map(f64::from))
-                .collect();
-            physics::hair::TriangleMesh::new(&points, &self.lash_skin_triangles).ok()
+        self.append_configured_with_bindings(body,normals,vertices,indices,head,pose,parameters,None);
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub fn append_configured_with_bindings(
+        &self,
+        body: &[SceneVertex],
+        normals: &[Vec3],
+        vertices: &mut Vec<SceneVertex>,
+        indices: &mut Vec<u32>,
+        head: Mat4,
+        pose: crate::female_face::FacePose,
+        parameters: &crate::face_parameters::FaceParameters,
+        inherited_colors: Option<&mut Vec<voxy_render::SurfaceColorBinding>>,
+    ) {
+        let trace = std::env::var_os("VOXY_FACE_MESH_TRACE").is_some();
+        let mut checkpoint = std::time::Instant::now();
+        let mut mark = |stage| {
+            if trace {
+                eprintln!("FACE FEATURES stage={stage} ms={:.3}", checkpoint.elapsed().as_secs_f64()*1000.);
+                checkpoint = std::time::Instant::now();
+            }
         };
+        let contact_disabled = std::env::var("VOXY_FACE_DIAGNOSTIC_NO_LASH_CONTACT").as_deref() == Ok("1");
+        // Derived spatial data belongs to this feature instance, not to simulation state.
+        // Untimed refit updates current geometry and clears stale motion history.
+        let mut contact_cache = self.lash_contact_cache.borrow_mut();
+        if !contact_disabled {
+            let points: Vec<_> = self.lash_skin_vertices.iter()
+                .map(|&i| body[i].position.map(f64::from)).collect();
+            let refitted = contact_cache.as_mut().is_some_and(|mesh| mesh.refit(&points).is_ok());
+            if !refitted {
+                // Never query stale geometry when admission fails. Match the fresh-build
+                // path's no-contact behavior if the current surface cannot be constructed.
+                *contact_cache = physics::hair::TriangleMesh::new(&points, &self.lash_skin_triangles).ok();
+            }
+        }
+        let contact = if contact_disabled {None} else {contact_cache.as_ref()};
+        mark("contact_surface");
+        // Resolve named controls once per append, preserving every strand's density rule.
+        let controls = [
+            ["brow_hair_density", "brow_hair_length", "brow_hair_thickness"],
+            ["lashes_density", "lashes_length", "lashes_thickness"],
+            ["_density", "_length", "_thickness"],
+        ].map(|names| names.map(|name| parameters.value(name).unwrap_or(1.)));
         let forward = head.transform_vector3(Vec3::Z).normalize();
         let contact_normals: Vec<_> = self
             .lash_skin_vertices
@@ -321,18 +356,10 @@ impl FaceFeatures {
             if matches!(strand.kind, Kind::Lash | Kind::LowerLash) && omit_lashes {
                 continue;
             }
-            let prefix = match strand.kind {
-                Kind::Brow => "brow_hair",
-                Kind::Lash | Kind::LowerLash => "lashes",
-                Kind::Fuzz => "",
-            };
-            let control = |suffix: &str| {
-                parameters
-                    .value(&format!("{prefix}_{suffix}"))
-                    .unwrap_or(1.)
-            };
-            let visible =
-                control("density") >= 1. || ((index * 73 % 101) as f32 / 100.) < control("density");
+            let [density, length, thickness] = controls[match strand.kind {
+                Kind::Brow => 0, Kind::Lash | Kind::LowerLash => 1, Kind::Fuzz => 2,
+            }];
+            let visible = density >= 1. || ((index * 73 % 101) as f32 / 100.) < density;
             let mut n = Vec3::ZERO;
             let mut root = Vec3::ZERO;
             for component in 0..3 {
@@ -367,7 +394,7 @@ impl FaceFeatures {
                     |frame| frame * vector,
                 )
             };
-            let mut direction = strand.direction * control("length");
+            let mut direction = strand.direction * length;
             if matches!(strand.kind, Kind::Lash | Kind::LowerLash) {
                 direction = transport(direction);
             } else {
@@ -383,7 +410,7 @@ impl FaceFeatures {
             }
             if matches!(strand.kind, Kind::Lash | Kind::LowerLash) {
                 let mut bend =
-                    transport(lash_bend(strand.direction, lower, index)) * control("length");
+                    transport(lash_bend(strand.direction, lower, index)) * length;
                 if let Some(motion) = self.lash_motion.get(index) {
                     // Root stays attached; inertial bending is resolved before existing skin contacts.
                     bend +=
@@ -395,10 +422,8 @@ impl FaceFeatures {
                     root,
                     direction,
                     bend,
-                    contact
-                        .as_ref()
-                        .map(|skin| (skin, forward, contact_normals.as_slice())),
-                    strand.radius * control("thickness"),
+                    contact.map(|skin| (skin, forward, contact_normals.as_slice())),
+                    strand.radius * thickness,
                     color,
                 );
             } else {
@@ -407,11 +432,12 @@ impl FaceFeatures {
                     indices,
                     root,
                     root + direction,
-                    strand.radius * control("thickness"),
+                    strand.radius * thickness,
                     color,
                 );
             }
         }
+        mark("strands");
         for rim in &self.rims {
             if omit_rims {
                 continue;
@@ -444,8 +470,11 @@ impl FaceFeatures {
                 }
             }
         }
-        self.append_lips(body, vertices, indices, head, pose);
+        mark("rims");
+        self.append_lips_with_bindings(body, vertices, indices, head, pose, inherited_colors);
+        mark("lips");
         append_oral_anatomy_pose(vertices, indices, head, pose);
+        mark("oral_anatomy");
     }
     fn append_lips(
         &self,
@@ -454,6 +483,17 @@ impl FaceFeatures {
         indices: &mut Vec<u32>,
         head: Mat4,
         pose: crate::female_face::FacePose,
+    ) {
+        self.append_lips_with_bindings(body,vertices,indices,head,pose,None);
+    }
+    fn append_lips_with_bindings(
+        &self,
+        body: &[SceneVertex],
+        vertices: &mut Vec<SceneVertex>,
+        indices: &mut Vec<u32>,
+        head: Mat4,
+        pose: crate::female_face::FacePose,
+        mut inherited_colors: Option<&mut Vec<voxy_render::SurfaceColorBinding>>,
     ) {
         if std::env::var("VOXY_FACE_DIAGNOSTIC_NO_LIP_REPLACEMENT").as_deref() == Ok("1") {
             return;
@@ -513,6 +553,7 @@ impl FaceFeatures {
                     rest.iter().map(|p| p.z).sum::<f32>() / 3. < 0.150 && bind_normal.z < 0.35;
                 for upper in [true, false] {
                     let mut polygon = Vec::new();
+                    let mut polygon_weights = Vec::new();
                     for edge in 0..3 {
                         let next = (edge + 1) % 3;
                         let inside = if upper {
@@ -527,6 +568,7 @@ impl FaceFeatures {
                         };
                         if inside {
                             polygon.push(posed[edge]);
+                            if inherited_colors.is_some() {polygon_weights.push(weights[edge]);}
                         }
                         if inside != next_inside {
                             let t = seam_intersection(rest[edge], rest[next]);
@@ -554,6 +596,7 @@ impl FaceFeatures {
                                     a.color[i] * (1. - t) + b.color[i] * t
                                 }),
                             });
+                            if inherited_colors.is_some() {polygon_weights.push(weights[edge]*(1.-t)+weights[next]*t);}
                         }
                     }
                     if inner_lip {
@@ -571,6 +614,11 @@ impl FaceFeatures {
                         eprintln!(
                             "LIP BIND base={base} upper={upper} inner={inner_lip} rest={rest:?} normal={bind_normal:?}"
                         );
+                    }
+                    if !inner_lip && let Some(bindings)=inherited_colors.as_deref_mut() {
+                        bindings.extend(polygon_weights.iter().enumerate().map(|(i,w)|voxy_render::SurfaceColorBinding {
+                            sources:ids,target:base+i as u32,weights:w.to_array(),padding:0.,
+                        }));
                     }
                     vertices.extend_from_slice(&polygon);
                     for i in 1..polygon.len().saturating_sub(1) {
@@ -1972,6 +2020,7 @@ mod tests {
             rims: Vec::new(),
             lash_skin_vertices: Vec::new(),
             lash_skin_triangles: Vec::new(),
+            lash_contact_cache: Default::default(),
         };
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
@@ -2139,6 +2188,7 @@ mod inertial_lash_regression {
             rims: vec![],
             lash_skin_vertices: vec![],
             lash_skin_triangles: vec![],
+            lash_contact_cache: Default::default(),
         };
         let original=format!("{:?}",features.lash_motion);
         let discarded=features.prepare_lashes(1./240.,[0.,20.,0.]).unwrap();
@@ -2159,4 +2209,44 @@ mod inertial_lash_regression {
         assert_eq!(features.strands[0].roots, strand.roots);
         assert_eq!(features.strands[0].weights, strand.weights);
     }
+    #[test]
+    #[ignore = "actual full face feature cache parity across deformation and motion"]
+    fn full_face_contact_refit_matches_fresh_build_across_poses() {
+        let asset = voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/body.obj"), voxy_render::ObjLimits::default()).unwrap();
+        let rest = asset.mesh.vertices();
+        let mut cached = FaceFeatures::new(rest, asset.mesh.indices());
+        let mut fresh = FaceFeatures::new(rest, asset.mesh.indices());
+        let contour = crate::female_face::LidContour::new(rest, asset.mesh.indices());
+        let authored: Vec<_> = asset.normals.iter().map(|n| Vec3::from_array(n.unwrap_or([0.,1.,0.]))).collect();
+        let mut cached_ms = 0.; let mut fresh_ms = 0.;
+        for (sample, blink) in [0., 0.5, 1., 0.25, 0., 1., 0.].into_iter().enumerate() {
+            let pose = crate::female_face::FacePose { blink, jaw: (sample % 3) as f32 * 0.25,
+                smile: (sample % 2) as f32 * 0.5, brow: (sample % 3) as f32 * 0.2, ..Default::default() };
+            let head = Mat4::from_rotation_translation(Quat::from_rotation_y(sample as f32 * 0.12), Vec3::new(sample as f32 * 0.02, -0.03 * (sample % 2) as f32, 0.));
+            let mut body = rest.to_vec();
+            crate::female_face::deform_with_contour(&mut body, rest.len(), pose, Some(&contour));
+            for v in &mut body {v.position = head.transform_point3(Vec3::from(v.position)).to_array();}
+            let normals: Vec<_> = authored.iter().map(|n| head.transform_vector3(*n).normalize_or_zero()).collect();
+            let parameters = if sample % 2 == 0 {crate::face_parameters::FaceParameters::default()}
+                else {crate::face_parameters::FaceParameters::default().patched(&serde_json::json!({"lashes_length":1.2,"lashes_density":0.5,"brow_hair_thickness":1.3})).unwrap()};
+            cached.advance_lashes(1./120., [2., -12., 1.]).unwrap();
+            fresh.advance_lashes(1./120., [2., -12., 1.]).unwrap();
+            fresh.lash_contact_cache.borrow_mut().take();
+            let mut a = Vec::new(); let mut ai = Vec::new();
+            let mut b = Vec::new(); let mut bi = Vec::new();
+            let start = std::time::Instant::now();
+            cached.append_configured(&body, &normals, &mut a, &mut ai, head, pose, &parameters);
+            cached_ms += start.elapsed().as_secs_f64()*1000.;
+            let start = std::time::Instant::now();
+            fresh.append_configured(&body, &normals, &mut b, &mut bi, head, pose, &parameters);
+            fresh_ms += start.elapsed().as_secs_f64()*1000.;
+            assert!(cached.lash_contact_cache.borrow().is_some(), "contact fixture must be admitted");
+            assert!(a.len() > 20_000, "full facial geometry is required");
+            assert_eq!(ai, bi, "feature topology changed at sample {sample}");
+            assert_eq!(a, b, "refitted contacts changed feature geometry/material at sample {sample}");
+            eprintln!("FACE CONTACT REFIT PARITY sample={sample} blink={blink} vertices={} indices={} exact=true", a.len(), ai.len());
+        }
+        eprintln!("FACE CONTACT REFIT TIMING samples=7 cached_total_ms={cached_ms:.3} fresh_total_ms={fresh_ms:.3} scope=feature_append_only_uncontrolled_host");
+    }
+
 }

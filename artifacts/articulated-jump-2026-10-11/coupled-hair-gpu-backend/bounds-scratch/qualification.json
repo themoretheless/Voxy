@@ -1,0 +1,24 @@
+{
+  "change": "Reuse solve-local padded motion-bounds scratch; publish rebuilt envelope only after complete validation; exact existing bounds arithmetic and sorted pairs retained",
+  "source_sha256": "525d18a4aa41776f271b43f2d7f9ecdb98e4aeac4a317b59e242850db407f646",
+  "gate_session": 52469,
+  "gate_log": "physics-tests.log",
+  "status": "ordinary physics gate passed",
+  "regression": "Existing cached/fresh pair equivalence expanded with late invalid primitive, envelope preservation, valid recovery, and stable scratch allocation on repeated contained query",
+  "limits": "No measured performance benefit. Live reference and GPU qualifications predate this change.",
+  "tests": {
+    "passed": 398,
+    "failed": 0,
+    "ignored": 54
+  },
+  "binary_sha256": "abfdd8c711c8634f4c1ba6464e67886fc05e8c877a5a67b7c540292e0d22bd5e",
+  "captured_full_groom_gate": {
+    "status": "passed",
+    "segments": 9380,
+    "pairs": 13312,
+    "log": "full-groom-candidate-equivalence.log",
+    "fixture_sha256": "6b6643dfbfcb9f367a8eafc1aebe24a703cfbdb672c4ba6f083f1a57f842167e",
+    "scope": "Candidate broad-phase exact equality versus reference and cached/fresh equality across eight motion scales; not narrow-phase collision admission",
+    "limits": "Reported timings compare cached versus fresh and hierarchy variants, not before/after scratch reuse; no scratch speedup claim"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "largest captured serial active equality within 2 MiB budget; initial fresh QR/equality passes only; excludes subsequent residual/active-set iterations, transfer, CPU work and rendering",
+  "original_physical_rows": 174,
+  "selected_active_equality_rows": 39,
+  "original_coordinate_width": 1764,
+  "samples": 9,
+  "median_fresh_qr_gpu_ms": 5.566584,
+  "median_initial_equality_gpu_ms": 0.307625,
+  "physical_responses_match_prior_baseline_bits": {
+    "native_responses": true,
+    "native_reactions": true,
+    "gpu_responses": true,
+    "gpu_reactions": true
+  },
+  "native_fallbacks": 0,
+  "original_physical_tolerance": 1e-14,
+  "rendered_fps_measured": false,
+  "full_trajectory_qualified": false
+}

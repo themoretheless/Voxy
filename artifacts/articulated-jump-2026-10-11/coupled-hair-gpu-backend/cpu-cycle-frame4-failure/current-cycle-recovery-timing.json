@@ -1,0 +1,134 @@
+{
+  "scope": "completed recovery timing scopes only; no convergence, full frame or FPS claim",
+  "all_observed_scopes_closed": true,
+  "simulation_completion": "not inferred; inspect terminal test result and launch receipt",
+  "completed_root_scopes": 7,
+  "completed_root_ms": 8692.819832,
+  "open_scopes": [],
+  "completed_root_phases": {
+    "initial_refresh": {
+      "completed_scopes": 7,
+      "inclusive_ms": 606.761332,
+      "exclusive_ms": 606.761332,
+      "max_ms": 124.161833
+    },
+    "iteration_refresh": {
+      "completed_scopes": 59,
+      "inclusive_ms": 1.5492960000000002,
+      "exclusive_ms": 1.5492960000000002,
+      "max_ms": 0.051333
+    },
+    "restoration_model": {
+      "completed_scopes": 59,
+      "inclusive_ms": 720.297544,
+      "exclusive_ms": 720.297544,
+      "max_ms": 30.068125000000002
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 59,
+      "inclusive_ms": 14.010624,
+      "exclusive_ms": 14.010624,
+      "max_ms": 11.968166
+    },
+    "direction_projection": {
+      "completed_scopes": 52,
+      "inclusive_ms": 2593.9714580000004,
+      "exclusive_ms": 2593.9714580000004,
+      "max_ms": 182.38237500000002
+    },
+    "trial_refresh": {
+      "completed_scopes": 52,
+      "inclusive_ms": 2974.656957,
+      "exclusive_ms": 2974.656957,
+      "max_ms": 115.70237499999999
+    },
+    "trial_model": {
+      "completed_scopes": 52,
+      "inclusive_ms": 721.717126,
+      "exclusive_ms": 721.717126,
+      "max_ms": 58.931833000000005
+    },
+    "backtrack": {
+      "completed_scopes": 52,
+      "inclusive_ms": 4417.152795000001,
+      "exclusive_ms": 720.778712,
+      "max_ms": 227.98575
+    },
+    "geometry_iteration": {
+      "completed_scopes": 59,
+      "inclusive_ms": 7969.326539000001,
+      "exclusive_ms": 222.34482200000005,
+      "max_ms": 422.205875
+    },
+    "recovery": {
+      "completed_scopes": 7,
+      "inclusive_ms": 8692.819832,
+      "exclusive_ms": 116.73196099999973,
+      "max_ms": 1620.9919579999998
+    }
+  },
+  "phases": {
+    "trial_refresh": {
+      "completed_scopes": 52,
+      "inclusive_ms": 2974.6569569999992,
+      "exclusive_ms": 2974.6569569999992,
+      "max_ms": 115.70237499999999
+    },
+    "direction_projection": {
+      "completed_scopes": 52,
+      "inclusive_ms": 2593.971458,
+      "exclusive_ms": 2593.971458,
+      "max_ms": 182.38237500000002
+    },
+    "trial_model": {
+      "completed_scopes": 52,
+      "inclusive_ms": 721.7171259999999,
+      "exclusive_ms": 721.7171259999999,
+      "max_ms": 58.931833000000005
+    },
+    "backtrack": {
+      "completed_scopes": 52,
+      "inclusive_ms": 4417.152794999999,
+      "exclusive_ms": 720.7787119999996,
+      "max_ms": 227.98575
+    },
+    "restoration_model": {
+      "completed_scopes": 59,
+      "inclusive_ms": 720.297544,
+      "exclusive_ms": 720.297544,
+      "max_ms": 30.068125000000002
+    },
+    "initial_refresh": {
+      "completed_scopes": 7,
+      "inclusive_ms": 606.761332,
+      "exclusive_ms": 606.761332,
+      "max_ms": 124.161833
+    },
+    "geometry_iteration": {
+      "completed_scopes": 59,
+      "inclusive_ms": 7969.326539,
+      "exclusive_ms": 222.3448220000001,
+      "max_ms": 422.205875
+    },
+    "recovery": {
+      "completed_scopes": 7,
+      "inclusive_ms": 8692.819832,
+      "exclusive_ms": 116.73196099999973,
+      "max_ms": 1620.9919579999998
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 59,
+      "inclusive_ms": 14.010624,
+      "exclusive_ms": 14.010624,
+      "max_ms": 11.968166
+    },
+    "iteration_refresh": {
+      "completed_scopes": 59,
+      "inclusive_ms": 1.549296,
+      "exclusive_ms": 1.549296,
+      "max_ms": 0.051333
+    }
+  },
+  "source_text_sha256": "d425fa8e8d952519a4f4677222d9bd32fe0f5821acae226c0dd5a55333be7687",
+  "source_log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/coupled-hair-gpu-backend/cpu-cycle-frame4-failure/current-cycle-recovery-terminal.log"
+}

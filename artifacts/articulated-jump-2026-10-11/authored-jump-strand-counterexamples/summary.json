@@ -1,0 +1,14 @@
+{
+  "attempted_frame": 0,
+  "authored_jump": true,
+  "completed_frames": 0,
+  "continuous_contacts": true,
+  "error": null,
+  "guide_count": 469,
+  "required_frames": 720,
+  "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.0,
+  "status": "running",
+  "steps": []
+}

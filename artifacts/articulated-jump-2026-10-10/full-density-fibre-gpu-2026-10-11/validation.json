@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "command": "cargo test --release -p voxy_render --test fiber_surface -- --nocapture",
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "guides": 469,
+  "points_per_guide": 21,
+  "followers": 60,
+  "vertices": 2363760,
+  "max_position_error_m": 5.9606464e-08,
+  "scope": "synthetic full-size GPU extraction; not authored simulation, scatter/draw validation or FPS",
+  "source_sha256": {
+    "crates/voxy_render/tests/fiber_surface.rs": "26378f93e5129b31847effe2a76504250d66780d1e8865604e73b15167d46e3e",
+    "crates/voxy_render/src/fiber_surface.wgsl": "029cfcb2a5c5e5bb9b49c6c5325fad6d022bcae983a8b125b41d44f4aca7bb78",
+    "crates/voxy_render/src/fiber_surface.rs": "1164d85ca8d53ae2594d3af74ac93566802d593fd6bd484db3bad5699b007758"
+  }
+}

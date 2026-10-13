@@ -1,0 +1,12 @@
+{
+  "binary": "/tmp/voxy-origin-feasible-phase-physics.bin",
+  "binary_sha256": "107280a8d170b770e1b7678163f95275b0c2d964dbd638fae99304cc903b6f6a",
+  "fixture": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/authored-jump-feasible-elastic/failed-contact.vhr",
+  "fixture_sha256": "52c6c2d90137b73a467f1923877f125a73994e9320238c4e7951793fcf0a7077",
+  "source_sha256": {
+    "mod.rs": "044d21b84dc89d516090de00ff6bd4a55c5e623e52e17ab11e16621a7143e274",
+    "contact_swept_constraints.rs": "bdbf3f95c6cc6272d68142955afbc6af1e11b54f7d707f305d40a275aa9adf44",
+    "contact_safe_motion.rs": "ab585027c836b862d91df427b738ac6493a21783b2e0d999cffe8755606cec4c"
+  },
+  "scope": "full469-guide historical saved-pose regression; not full cycle/FPS"
+}

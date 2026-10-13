@@ -1,0 +1,7 @@
+
+running 1 test
+TERMINAL PRIMITIVE ids=[118, 9, 142, 16] start_gap_m=1.6558198955436395e-9 end_gap_m=-4.845670282250234e-9 sampled_minimum=(0.5, -7.999455382799722e-5) sweep=Ok(Approach { fraction: 9.773554324515954e-6, gap_m: 9.219581612637372e-11, iterations: 2 }) admitted=Ok(9.773554324515954e-6) line_clear=false
+test hair::contact::velocity_contacts::safe_motion::captured_terminal_primitive_audit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 447 filtered out; finished in 0.39s
+

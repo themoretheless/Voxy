@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/tmp/voxy-triple-cache-sequence-rejection-20261013-app-tests",
+    "gpu_triple_completed_cache_original_physical_sequence",
+    "--ignored",
+    "--nocapture"
+  ],
+  "env_overrides": {
+    "VOXY_HAIR_TRIPLE_SINGLE_DISPATCH": "1",
+    "VOXY_HAIR_TRIPLE_PARALLEL": "1",
+    "VOXY_HAIR_TRIPLE_WARM_START": "1",
+    "VOXY_HAIR_TRIPLE_FACTOR_REUSE": "1",
+    "VOXY_HAIR_TRIPLE_COMPLETED_FACTORS": "1",
+    "VOXY_HAIR_TRIPLE_WORKSPACE_REUSE": "1",
+    "VOXY_HAIR_TRIPLE_COMPACT_READBACK": "1",
+    "VOXY_HAIR_TRIPLE_SEQUENCE_STEPS": "32",
+    "VOXY_HAIR_QR_INPUT_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/hair-contact-divergence-diagnostics-2026-10-09/newton-addition-qr-input.bin",
+    "VOXY_HAIR_TRIPLE_SEQUENCE_FAILURE_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-cache-sequence-rejection/failure.json",
+    "VOXY_HAIR_ACCELERATOR_REJECTION_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-cache-sequence-rejection/first-rejected-original-input.bin",
+    "VOXY_HAIR_QR_FAILURE_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-cache-sequence-rejection/last-physical-failure.bin",
+    "VOXY_HAIR_PHYSICAL_RESIDUAL_TRACE": "1",
+    "VOXY_HAIR_JOINT_STAGE_PROFILE": "1"
+  },
+  "exit_code": 101,
+  "binary_sha256": "3551a51656ccd9aded51f4ca5f758b2066be551a463fb2dd794034461f054ec2",
+  "source_hashes": {
+    "crates/voxy_app/src/gpu_hair_joint.rs": "7e902bbc89008321133ad1dbe72b07951fe8626a26e07069d44b1c10d6323d7b",
+    "crates/voxy_render/src/joint_contact_triple_active_codec.rs": "9f966241dd32463735cec80b2a56551b2f4659e35fcf28f99914e706ff53a8a5",
+    "crates/voxy_render/src/joint_contact_triple_parallel.wgsl": "397222e33b114dcce0ea149e8dcdf21800fca01243f6c363907b416524221fa7"
+  }
+}

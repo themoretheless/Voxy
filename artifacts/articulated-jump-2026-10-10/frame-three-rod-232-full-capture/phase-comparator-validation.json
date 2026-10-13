@@ -1,0 +1,6 @@
+{
+  "predicted_and_angular_difference_detected": true,
+  "malformed_cases_rejected": 4,
+  "historical_phases_compared": 97,
+  "scope": "diagnostic parser validation only; not full trajectory proof"
+}

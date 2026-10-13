@@ -1,0 +1,23 @@
+{
+  "status": "six_density_gpu_fixtures_passed_original_owner_admission",
+  "particles": 70,
+  "pairs": 2415,
+  "formulations": [
+    "MassDensity",
+    "RestVolume",
+    "RestVolumeWendland"
+  ],
+  "smoothing_radii": [
+    0.2,
+    1.0
+  ],
+  "maximum_observed_relative_error": 2.193235462329663e-14,
+  "admission_relative_limit": 2e-11,
+  "admission_absolute_limit": 0,
+  "render_tests_passed": 224,
+  "render_ignored": 37,
+  "backend": "Metal on Apple M4 Max",
+  "binary_sha256": "0d37c2812ed874b3e1799ea86ccb2a8a6dc92648dcf4fc550b9e4946c5682587",
+  "shader_sha256": "b35fc6e6d673071333d3a400bb78ce609e742eb568d3746a702bb0ab66e1b227",
+  "scope": "complete current fluid-particle density candidate including three formulations and carrier override; boundary/image density, forces, timestep integration, GPU performance and other hardware remain unqualified"
+}

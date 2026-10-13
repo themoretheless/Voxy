@@ -1,0 +1,21 @@
+{
+  "poses": [
+    {
+      "tick": 353,
+      "normal_only_maximum_u8_error": 1,
+      "position_only_maximum_u8_error": 15
+    },
+    {
+      "tick": 415,
+      "normal_only_maximum_u8_error": 1,
+      "position_only_maximum_u8_error": 26
+    }
+  ],
+  "skeletal_and_zero_actor_diagnostic": "Both maxima remain 15/26 with contraction-off current source",
+  "conclusion": "Normal-only comparison passes 1/255; position substitution retains full maxima",
+  "limits": [
+    "Does not prove exact responsible arithmetic or hardware edge",
+    "Diagnostic physical publication temporarily differs; default path unchanged",
+    "Dynamic full-hair jump and native FPS not qualified"
+  ]
+}

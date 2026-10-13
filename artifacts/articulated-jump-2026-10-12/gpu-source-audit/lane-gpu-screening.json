@@ -1,0 +1,97 @@
+{
+  "scope": "original physical operator, complete GPU pass; six samples per lane count; no frame or FPS proof",
+  "run_order": [
+    64,
+    128,
+    256,
+    256,
+    128,
+    64
+  ],
+  "records": [
+    {
+      "log": "lane-screen-0-64.log",
+      "lanes": 64,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        210.931459,
+        206.310625,
+        205.082958
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "lane-screen-1-128.log",
+      "lanes": 128,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        127.78025,
+        129.096375,
+        124.283708
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "lane-screen-2-256.log",
+      "lanes": 256,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        80.993209,
+        77.069291,
+        78.617834
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "lane-screen-3-256.log",
+      "lanes": 256,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        77.644792,
+        78.288959,
+        78.7685
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "lane-screen-4-128.log",
+      "lanes": 128,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        124.526125,
+        123.16675,
+        121.287708
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "lane-screen-5-64.log",
+      "lanes": 64,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        203.128791,
+        198.256375,
+        200.134708
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    }
+  ],
+  "medians_ms": {
+    "64": 204.1058745,
+    "128": 124.4049165,
+    "256": 78.4533965
+  },
+  "physical_tests": "all six invocations passed with no native fallback"
+}

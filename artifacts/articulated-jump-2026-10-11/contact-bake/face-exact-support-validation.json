@@ -1,0 +1,54 @@
+{
+  "status": "exact expression support optimization qualified on production prepared asset; native visual and FPS pending unlock",
+  "previous_goal_turn": "progress: removed unconditional16ms full-model redraw delay and built native bundle",
+  "implementation": "Skip body expression work only where final front mask is exactly0; eyes remain on prior rotation path, and forehead tension pass remains after body loop. No approximate distance cutoff or geometry reduction.",
+  "parity": {
+    "passed": true,
+    "body_vertices": 60866,
+    "body_plus_eyes": 61958,
+    "skipped_body_vertices": 24442,
+    "poses": 7,
+    "contour_modes": 2,
+    "comparison": "bitwise positions, UV and RGBA against unchanged unculled expression algorithm",
+    "prepared_asset": "assets/characters/blender-female/prepared/body-forehead-refined.obj",
+    "reference_total_ms": 50.773418,
+    "candidate_total_ms": 32.290956,
+    "timing_scope": "single observational run of14 expression evaluations, not native frame/FPS or controlled performance ratio"
+  },
+  "other_validation": {
+    "original_source_asset_parity": true,
+    "face_regressions_passed": 11,
+    "face_regressions_ignored": 4,
+    "native_build": "passed",
+    "diff_check": "passed",
+    "initial_compile_failure": "test referenced unavailable bytemuck dependency; replaced with per-field f32::to_bits comparisons; retained failed log"
+  },
+  "next_profile": "FACE DEFORMATION optional trace now separates clone_and_wrinkles,complexion,expression,rig,support under existing VOXY_FACE_MESH_TRACE; no new trace collected for this revision",
+  "source_research": {
+    "ozz_receipt": "ozz-skinning-source/receipt.json",
+    "mechanism": "joint remap plus inverse-bind palette; retain existing dual-quaternion volume preservation rather than substitute linear blending",
+    "missing_full_gpu_integration": [
+      "finger-local palette layer and grasp corrections",
+      "current face and wrinkle deformation",
+      "physical shell-minus-posed-reference embedding displacement",
+      "correct ordered normal transport and facial attachment consumers"
+    ]
+  },
+  "native": {
+    "bundle": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/Voxy Face Exact Support.app",
+    "launched": false,
+    "reason": "CUA recheck reports Mac still locked; earlier unlock request pending",
+    "fps": null,
+    "visual": false
+  },
+  "sha256": {
+    "crates/voxy_app/src/female_face.rs": "3477fc8876ff666c524bc28822949618b21726979b96ce4c9750712777df6ce6",
+    "crates/voxy_app/src/female_demo.rs": "f2b5baad6f315e4b148e936cb65bdf431c787111d7982c11d95b670daa55ef35",
+    "artifacts/articulated-jump-2026-10-11/Voxy Face Exact Support.app/Contents/MacOS/VoxyFaceExactSupport": "fd12fa415b5cbb92ee2dc3c3123fdeda8921e0f7e5230afbf5d0e4ec96f2cd4a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/face-exact-support-initial-build.log": "a65a220a4b7269ee055c6e5885d785c37d0fbb91554be16f343aef5aeeb4d112",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/face-exact-support-original-asset-parity.log": "7d1fc8974ceb78cbdf55df0e95eb55b42990351dd39d4a5adb110d0cdffa99f3",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/face-exact-support-prepared-asset-parity.log": "c8b0b242ce18d4e48a2b33932878bf3edacfd52aff7e4177ca0c395f609386d4",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/face-exact-support-regressions.log": "9ee9f66e34c98fbbf1a08a6c88e45a522524ff0f0b355b1ba6da6bed46bac895",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/face-exact-support-native-build.log": "fcb24d93328b8382f2063b835cb90160ae60708cc15897e84d322a9099dc7877"
+  }
+}

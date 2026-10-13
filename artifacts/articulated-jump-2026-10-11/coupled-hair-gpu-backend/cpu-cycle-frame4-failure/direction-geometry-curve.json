@@ -1,0 +1,10 @@
+{
+  "session": 45339,
+  "status": "diagnostic test passed; no descending feasible point among sampled scales",
+  "log": "direction-geometry-curve.log",
+  "source_sha256": "55ee2506d38e2f13327d0460b6a7408817b4da19bd8cc8596c3001fba7bd691b",
+  "scope": "Same captured direction, original endpoint merit, strain and complete strand/mesh paths at 13 scales plus signed energy checks",
+  "limits": "Diagnostic curve; even a descending feasible point does not certify tangent completion or full frame",
+  "elapsed_seconds": 2.6,
+  "observation": "Whole staged mesh path rejects all 13 scales, including unchanged origin; strand path passes. Endpoint merit alone does not imply feasible-reference trajectory."
+}

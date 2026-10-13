@@ -1,0 +1,21 @@
+{
+  "original_pose": {
+    "contact_merit": 0,
+    "mesh_path_admitted": true
+  },
+  "unrestricted_retained_model_at_scale_0_03125": {
+    "excluding_origin_rows": 114,
+    "maximum_bound_m": 7.964629481759077e-06
+  },
+  "decision": "Reject runtime adoption: unrestricted retained rows exclude a feasible origin, while origin-preserving joint model fails independent path admission within 16 corrections.",
+  "retention_only_origin_filter": {
+    "0.03125": false,
+    "0.001": false,
+    "0.00001": true
+  },
+  "next": "Filter newly generated total-coordinate rows as well as retained rows before solving; qualify joint model again.",
+  "complete_origin_filter": {
+    "0.03125": false,
+    "0.00001": false
+  }
+}

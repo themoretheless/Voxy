@@ -1,0 +1,54 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^
+  |
+  = note: expected values for `feature` are: `default` and `experimental-strand-fraction-reuse`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: expected values for `feature` are: `default` and `experimental-strand-fraction-reuse`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:18:127
+   |
+18 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib test) generated 3 warnings (run `cargo fix --lib -p physics --tests` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 1m 59s
+     Running unittests src/lib.rs (/tmp/voxy-face-refit-20261011/release/deps/physics-d852306e2ed21200)
+
+running 3 tests
+test hair::contact::velocity_contacts::safe_motion::fraction_cache::exact_fraction_cache_invalidates_every_coordinate_radius_and_root_rule ... ok
+
+thread 'hair::contact::velocity_contacts::safe_motion::fraction_cache::exact_fraction_cache_shard_batches_preserve_order_errors_and_poison_bypass' (58426567) panicked at crates/physics/src/hair/contact_fraction_cache.rs:159:91:
+injected poison
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'hair::contact::velocity_contacts::safe_motion::fraction_cache::exact_fraction_cache_shard_batches_preserve_order_errors_and_poison_bypass' (58426567) panicked at crates/physics/src/hair/contact_fraction_cache.rs:159:91:
+injected poison
+
+thread 'hair::contact::velocity_contacts::safe_motion::fraction_cache::exact_fraction_cache_shard_batches_preserve_order_errors_and_poison_bypass' (58426567) panicked at crates/physics/src/hair/contact_fraction_cache.rs:159:91:
+injected poison
+test hair::contact::velocity_contacts::safe_motion::fraction_cache::exact_fraction_cache_capacity_never_drops_a_query ... ok
+
+thread 'hair::contact::velocity_contacts::safe_motion::fraction_cache::exact_fraction_cache_shard_batches_preserve_order_errors_and_poison_bypass' (58426567) panicked at crates/physics/src/hair/contact_fraction_cache.rs:159:91:
+injected poison
+test hair::contact::velocity_contacts::safe_motion::fraction_cache::exact_fraction_cache_shard_batches_preserve_order_errors_and_poison_bypass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 478 filtered out; finished in 0.00s
+

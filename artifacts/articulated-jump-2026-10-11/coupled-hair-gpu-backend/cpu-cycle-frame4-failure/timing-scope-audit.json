@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "balanced_scopes": 110,
+  "observed_phases": [
+    "backtrack",
+    "direction_projection",
+    "elastic_iteration",
+    "geometry_iteration",
+    "initial_advancement",
+    "initial_refresh",
+    "iteration_refresh",
+    "recovery",
+    "restoration_model",
+    "trial_model",
+    "trial_refresh",
+    "whole_motion_admission"
+  ],
+  "scope": "Small comparison fixture; not full-frame timing or FPS"
+}

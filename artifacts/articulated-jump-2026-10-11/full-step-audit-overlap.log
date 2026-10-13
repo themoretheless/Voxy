@@ -1,0 +1,72 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:16:127
+   |
+16 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib test) generated 3 warnings (run `cargo fix --lib -p physics --tests` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 0.09s
+     Running unittests src/lib.rs (target/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+HAIR NONLINEAR MERIT iteration=0 before=6.400112000490002e-9 full=1.0092131131489946e-12 accepted=1.0092131131489946e-12 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=false unresolved=true worst_gap_m=Some(-5.023479974947629e-7)
+HAIR NONLINEAR MERIT iteration=1 before=1.0092131131489946e-12 full=4.3066586922754085e-21 accepted=4.3066586922754085e-21 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=false unresolved=true worst_gap_m=Some(-8.281256882637969e-11)
+HAIR NONLINEAR MERIT iteration=2 before=4.3066586922754085e-21 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=2 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-2.255828379899715e-18)
+HAIR ELASTIC ORIGIN PATH iteration=0 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR MODEL ORIGIN kind=retained rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR ELASTIC DIRECTION iteration=0 energy_j=Some(1.3198587506059072e-14) slope_j=9.56844403525322e-24 full_merit=0e0 max_translation_m=9.760611334265765e-14 max_rotation_rad=9.77837648275675e-13 max_velocity_change_m_s=2.3425467202237838e-11 max_angular_velocity_change_rad_s=2.34681035586162e-10
+HAIR ELASTIC FULL iteration=0 before_j=1.3198587506059072e-14 trial_j=1.3198587515621999e-14 delta_j=9.562926880496455e-24
+HAIR NONLINEAR MERIT iteration=0 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-1.419108170995893e-20)
+HAIR ELASTIC ORIGIN PATH iteration=0 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR MODEL ORIGIN kind=retained rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR ELASTIC DIRECTION iteration=0 energy_j=Some(1.319858751562201e-14) slope_j=-4.901627691577702e-30 full_merit=0e0 max_translation_m=8.689438434992341e-21 max_rotation_rad=4.33680868994214e-19 max_velocity_change_m_s=2.085465224398162e-18 max_angular_velocity_change_rad_s=1.0408340855861136e-16
+HAIR ELASTIC FULL iteration=0 before_j=1.319858751562201e-14 trial_j=1.3198587515622005e-14 delta_j=-4.733165431326071e-30
+HAIR NONLINEAR MERIT iteration=0 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-7.231066108202475e-21)
+HAIR ELASTIC ORIGIN PATH iteration=0 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR MODEL ORIGIN kind=retained rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR ELASTIC DIRECTION iteration=0 energy_j=Some(1.319858751562201e-14) slope_j=-4.430655367816357e-30 full_merit=0e0 max_translation_m=6.835766130535432e-21 max_rotation_rad=5.421010862427675e-20 max_velocity_change_m_s=1.6405838713285038e-18 max_angular_velocity_change_rad_s=1.301042606982642e-17
+HAIR ELASTIC FULL iteration=0 before_j=1.319858751562201e-14 trial_j=1.3198587515622005e-14 delta_j=-4.733165431326071e-30
+HAIR NONLINEAR MERIT iteration=0 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-7.095540854979464e-21)
+HAIR ELASTIC ORIGIN PATH iteration=0 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR MODEL ORIGIN kind=retained rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR ELASTIC DIRECTION iteration=0 energy_j=Some(1.319858751562201e-14) slope_j=-4.443021691024844e-30 full_merit=0e0 max_translation_m=6.852465644085225e-21 max_rotation_rad=5.421010862427675e-20 max_velocity_change_m_s=1.6445917545804539e-18 max_angular_velocity_change_rad_s=1.301042606982642e-17
+HAIR ELASTIC FULL iteration=0 before_j=1.319858751562201e-14 trial_j=1.3198587515622005e-14 delta_j=-4.733165431326071e-30
+HAIR NONLINEAR MERIT iteration=0 before=0e0 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=0 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-7.095540854979464e-21)
+test hair::mesh_motion::tests::continuous_mode_admits_imported_overlaps_before_starting_its_clock ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 436 filtered out; finished in 0.00s
+

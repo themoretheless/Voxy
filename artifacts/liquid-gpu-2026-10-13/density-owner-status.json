@@ -1,0 +1,23 @@
+{
+  "status": "native_owner_and_admission_passed",
+  "tests_passed": 35,
+  "scope": "shared f64 density operator with immutable borrowed inputs, complete-candidate admission; GPU kernel and timestep integration not yet implemented",
+  "formulations": [
+    "MassDensity",
+    "RestVolume",
+    "RestVolumeWendland"
+  ],
+  "checks": [
+    "unequal mass/density analytic mixtures",
+    "carrier droplet override",
+    "stale geometry rejects exact candidate",
+    "nonfinite and partial candidates reject",
+    "duplicate reversed and out-of-bounds pairs reject",
+    "34 existing liquid force film and impact tests still pass"
+  ],
+  "source_sha256": {
+    "crates/physics/src/liquid.rs": "6192218605523fa351ca8024e274c26ef21ddad3c1402492b30fc0c6c36998e3",
+    "crates/physics/src/liquid/density_operator.rs": "0bd16899c2188479e02c7c3c497dc0f7735e8d35c07d4a1f44efbc97b545f75a",
+    "crates/physics/tests/liquid_density_operator.rs": "469379966ca495bc0971290d3a9c3739995a1431d57ade6d5ba0c460d5be617e"
+  }
+}

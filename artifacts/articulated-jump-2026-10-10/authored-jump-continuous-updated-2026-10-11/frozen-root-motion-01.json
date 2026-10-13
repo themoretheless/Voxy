@@ -1,0 +1,8 @@
+{
+  "bytes": 939176,
+  "sha256": "cc307293b46bcc97f00793174c2a6e8b21991aac891e9fe7fb4cd94bca2338d4",
+  "rods": 469,
+  "points_per_rod": 21,
+  "contact_component_edges": 379,
+  "scope": "root/free proposed geometry only; no full material inertia checkpoint; live exporter snapshot frozen after validating finite values and complete file"
+}

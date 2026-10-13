@@ -1,0 +1,6 @@
+{
+  "library_tests_passed": 248,
+  "final_reference_enclosure_tests_passed": 2,
+  "scope": "explicit target reference rotations in native retarget binding, canonical rig ownership, recalculated rigid-root eligibility and pose enclosure; not current-character walk/run integration or visual quality",
+  "source_sha256": "e31926ae29ab86bfac1e97fffe2acf5b60f163c2023a37c936447b8fec832554"
+}

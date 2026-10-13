@@ -1,0 +1,22 @@
+{
+  "decision": "reject; production shader unchanged",
+  "baseline_median_qr_ns": 5570083.0,
+  "candidate_median_qr_ns": 6331959.0,
+  "candidate_over_baseline": 1.1367800084846131,
+  "candidate_faster_pairs": 0,
+  "pairs": 9,
+  "whole_storage_bitwise_equal": true,
+  "boundary_widths": [
+    1919,
+    1920,
+    1921,
+    4096
+  ],
+  "rank_underflow_checks": true,
+  "concurrent_system_load_controlled": false,
+  "full_trajectory_qualified": false,
+  "rendered_fps_measured": false,
+  "shader_sha256": "32370149967db487eef9351ba17df573ef3a5c4a99573446ec58964147f97a0a",
+  "production_shader_sha256": "6f086b8dc15c770242f4f21463513eb8147f33ebf6bf842a543a59050aec42d1",
+  "binary_sha256": "554dc1e0622d2efbde072c5528ec0fc9756feb58de1af1120e0bf7e14a93b42b"
+}

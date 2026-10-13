@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "session": 24230,
+  "log": "/tmp/voxy-dyadic-paired-benchmark.log",
+  "source_sha256": "b079da1342e97ea8c59163068ecf6216b2a005d0b0fd275f71d666af52e4354f",
+  "design": "6 alternating-order paired runs, first pair warmup, 68 captured interval verifications per implementation per run; all original-radius proofs must pass",
+  "limits": "Concurrent system load, one primitive certificate; excludes axis discovery, full mesh/step, rendering and FPS",
+  "rational_median_ms": 956.0843329999999,
+  "dyadic_median_ms": 10.9335,
+  "ratio": 87.44540476517125
+}

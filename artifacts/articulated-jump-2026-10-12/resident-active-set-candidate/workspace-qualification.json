@@ -1,0 +1,19 @@
+{
+  "status": "captured_original_physical_and_changed_shape_regressions_passed_full_cycle_running",
+  "ordinary_app_release_check": "passed",
+  "workspace_reuse_default": false,
+  "workgroup_default": 64,
+  "qualified_candidate_lanes": 256,
+  "original_physical_tolerance": 1e-14,
+  "native_fallback_used": false,
+  "changed_shape_failure_recovery_regression": {
+    "creations": 2,
+    "reuses": 6,
+    "passed": true
+  },
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_solver.rs": "bebcf13f91766884648f573ab85418c914301c556bdeee697341e39cf0c72845",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "0241c12ea37ceec65721c5816e72c6efd512f8f04517d06a511cea6cba05f3f5"
+  },
+  "scope": "captured complete original physical operators and bounded GPU regression; not 720-frame or FPS qualification"
+}

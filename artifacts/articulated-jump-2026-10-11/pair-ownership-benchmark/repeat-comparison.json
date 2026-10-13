@@ -1,0 +1,7 @@
+{
+  "paired_samples": 60,
+  "original_median_ms": 13.143124499999999,
+  "borrowed_median_ms": 12.7190205,
+  "percent_reduction": 3.2268126197845914,
+  "scope": "Concurrent CPU cached-pair benchmark; no FPS proof"
+}

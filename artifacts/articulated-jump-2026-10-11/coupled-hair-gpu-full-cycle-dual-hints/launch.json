@@ -1,0 +1,27 @@
+{
+  "base": "/tmp/voxy-authored-jump-gpu-dual-hints-1791751834494",
+  "session": 52271,
+  "required_frames": 720,
+  "guides": 469,
+  "segments": 20,
+  "continuous_contacts": true,
+  "gpu_backend": true,
+  "factory_options": [
+    "coordinate_batches",
+    "qr_prefix_reuse",
+    "dual_hints"
+  ],
+  "cpu_control_pid": 97262,
+  "scope": "actual coupled physics, no rendered FPS claim",
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "edc396a26a3146fba9a70649d436504959987b13274419e7e93096ca7f553780",
+    "crates/physics/src/hair/contact_feasibility_restoration.rs": "bd0adb8c1a06816077c6425530a04c64d7af412f6ff119e7097eb4e1a9308a04",
+    "crates/voxy_app/src/female_demo.rs": "eedb82925f5a75ab81420d3d7ca8f7112be16a4cc5219afeac766e5f41d05c8f",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "ff5ac6c7d179cf7263fc7f2c3038d4d0dd8bdda49f2462776abef63713466455",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "b0186c5543334aea73cf7e7c3e72be8e799c554612a8df61f99209e2b99e3400"
+  },
+  "binary_sha256": "30ce8cf13254729ae06b8d7cf35fe4721df9d1b38c710a22f8fd1e602d448d88",
+  "pid": 46070,
+  "status_at_checkpoint": "running",
+  "completed_frames_at_checkpoint": 1
+}

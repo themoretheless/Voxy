@@ -1,0 +1,22 @@
+{
+  "attempted_frame": 2,
+  "authored_jump": true,
+  "completed_frames": 1,
+  "continuous_contacts": true,
+  "error": "joint hair contact position linearization did not converge",
+  "guide_count": 469,
+  "required_frames": 720,
+  "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.008333333333333333,
+  "status": "failed",
+  "steps": [
+    {
+      "elapsed_ms": 16886.302625,
+      "frame": 1,
+      "hair_ms": 16878.917166,
+      "skin_ms": 47.7455,
+      "time_s": 0.008333333333333333
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "early": {
+    "final_state_sha256": "ecbfe551b8930b1637421614f24425d00983aeb01dde3c29fcfc5baa3dfaea56",
+    "original_comparison": "bitwise identical"
+  },
+  "late": {
+    "final_state_sha256": "1049b785a079c946708aa950b3763e83ec1d27d87c5836b2cc6996543ad40f0a",
+    "original_comparison": "bitwise identical"
+  },
+  "ordinary_tests": {
+    "passed": 419,
+    "failed": 0,
+    "ignored": 63
+  },
+  "app_binary_sha256": "588277ef6ae3ea1f10fe12c6db6f931b41adb6442aa7428fe6fc7df3c789beb7",
+  "scope": "native replay equality and one coupled frame; full 720-frame cycle and rendered FPS remain unqualified",
+  "coupled_first_frame": {
+    "status": "passed",
+    "elapsed_s": 41.354323208,
+    "guides": 469,
+    "segments_per_guide": 20,
+    "joint_admitted": 9424,
+    "gpu_submissions": 535,
+    "native_contact_fallbacks": 0
+  },
+  "coupled_two_frames": {
+    "status": "passed",
+    "frame_two_elapsed_s": 1543.274313542,
+    "cumulative_contact_admissions": 200487,
+    "cumulative_gpu_submissions": 10117,
+    "native_contact_fallbacks": 0,
+    "test_elapsed_s": 1592.41,
+    "scope": "two original strict coupled frames; no full720 or FPS proof"
+  }
+}

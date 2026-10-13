@@ -175,15 +175,8 @@ impl Liquid {
         material: Material,
         density: f64,
     ) -> Result<f64, Error> {
-        let pressure = if let Some(model) = self.gas_equations[index] {
-            density * (material.sound_speed.powi(2) / model.heat_capacity_ratio)
-        } else {
-            material.sound_speed.powi(2) * (density - material.rest_density).max(0.0)
-        };
-        if !pressure.is_finite() || pressure < 0.0 {
-            return Err(Error::NumericalFailure);
-        }
-        Ok(pressure)
+        super::LiquidPressureLaw {rest_density:material.rest_density,sound_speed:material.sound_speed,
+            heat_capacity_ratio:self.gas_equations[index].map(|gas|gas.heat_capacity_ratio)}.evaluate_native(density)
     }
 }
 

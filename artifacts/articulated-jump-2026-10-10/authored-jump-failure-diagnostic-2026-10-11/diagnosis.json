@@ -1,0 +1,21 @@
+{
+  "status": "reproduced_failure",
+  "frame": 15,
+  "completed_frames": 14,
+  "required_frames": 720,
+  "guide": 66,
+  "segment": 16,
+  "signed_strain": 0.07672856851738663,
+  "strain_limit": 0.05,
+  "physical_substep_s": 0.00026041666666666666,
+  "published_pose_preserved": true,
+  "rejected_rod_contact_snapshot": "[]",
+  "contact_snapshot_scope": "endpoint rod diagnostics only; does not exclude earlier mesh or strand contact effects",
+  "fps_verified": false,
+  "full_jump_qualified": false,
+  "source_hashes": {
+    "crates/voxy_app/src/female_hair.rs": "af5765963545cb993c1307356982268ad7f54c497014e81ba7e8bb5809b123c6",
+    "crates/voxy_app/src/female_demo.rs": "676d9b6b423a1276853c5671cb8e442bf683fc564cafe2e902c92a75b4945384",
+    "crates/physics/src/hair/mod.rs": "a56fb4457365608f58d82441232031c283a385337d9ee5041867811039331568"
+  }
+}

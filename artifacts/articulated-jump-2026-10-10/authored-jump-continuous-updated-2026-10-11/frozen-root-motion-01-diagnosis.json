@@ -1,0 +1,23 @@
+{
+  "bytes": 939176,
+  "sha256": "cc307293b46bcc97f00793174c2a6e8b21991aac891e9fe7fb4cd94bca2338d4",
+  "rods": 469,
+  "points_per_rod": 21,
+  "contact_component_edges": 379,
+  "scope": "root/free proposed geometry only; no full material inertia checkpoint; live exporter snapshot frozen after validating finite values and complete file",
+  "replay_seconds": 0.8,
+  "component_admission_passed": false,
+  "limiting_pair": [
+    124,
+    166
+  ],
+  "limiting_segments": [
+    0,
+    4
+  ],
+  "initial_gap_m": 1.0042422622646985e-17,
+  "zero_correction_endpoint_gap_m": -3.596995364982139e-06,
+  "full_correction_endpoint_sample_gap_m": 5.804033551729795e-06,
+  "full_correction_trajectory_certified": false,
+  "interpretation": "staged path starts touching; reducing free correction removes needed separation; full multi-component constraint refinement required; sampled clear endpoint does not prove continuous admission"
+}

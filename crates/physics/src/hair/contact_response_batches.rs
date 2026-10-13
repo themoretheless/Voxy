@@ -42,7 +42,7 @@ fn prepare_impl(
         let mut indices: Vec<_> = constraint
             .entries
             .iter()
-            .filter(|entry| dot(entry.gradient, entry.gradient) > 0.)
+            .filter(|entry| entry.gradient.iter().any(|&value| value != 0.))
             .map(|entry| entry.rod)
             .collect();
         indices.sort_unstable();

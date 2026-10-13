@@ -1,0 +1,12 @@
+{
+  "binary": "/tmp/voxy-query-feature-physics.bin",
+  "binary_sha256": "315d7e423721d06e74b4683de338e76a795aefacd9d350dc0817476bcb987bdf",
+  "fixture": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/contact-oriented-face-direction-2026-10-11/failed-contact.vhr",
+  "fixture_sha256": "7c43bb276bec3486c44e996832e3e766f3bf93f332eee104b795599ac7852bad",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_trajectory.rs": "dc89f83a982ce9ebc68bb0cb279891e2f47d4c13006181825aa499138c920d8f",
+    "crates/physics/src/hair/mod.rs": "77c9ecd7dc18f6d5e060f8cef590c66067264f8f02d731fd6e7b19541beab1d4",
+    "crates/physics/src/hair/contact_model.rs": "ac94ea3b003b68d204b4a9068929815843c76eabbbdb3424f8ab67453e096d7b"
+  },
+  "scope": "469-guide nonlinear replay of last accepted failed pose; not full jump or FPS qualification"
+}

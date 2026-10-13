@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-11T16:21:03.705165+00:00",
+  "pid": 64240,
+  "session": 51214,
+  "status": "confirmed live at 4m21s; frame2 not yet terminal",
+  "contact_model_tests": "6 passed",
+  "nonlinear_filter_tests": "2 passed, 1 requires capture ignored",
+  "rag_index": "query succeeded; only broad overview/ADR/chat matches",
+  "rag_wiki_and_raw": "both timed out; no specific convergence guidance retrieved",
+  "physical_change": "none; waiting for same diagnostic process and failure replay",
+  "observed_events": {
+    "accepted_moves": 137,
+    "model_refinements": 188,
+    "terminal_budgets": 0
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "attempted_frame": 15,
+  "authored_jump": true,
+  "completed_frames": 14,
+  "error": "hair axial strain exceeds admission limit",
+  "guide_count": 469,
+  "required_frames": 720,
+  "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.11666666666666667,
+  "status": "failed",
+  "steps": [
+    {
+      "elapsed_ms": 460.387459,
+      "frame": 1,
+      "hair_ms": 453.145875,
+      "skin_ms": 287.809792,
+      "time_s": 0.008333333333333333
+    },
+    {
+      "elapsed_ms": 351.414625,
+      "frame": 2,
+      "hair_ms": 347.66645800000003,
+      "skin_ms": 92.683375,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "elapsed_ms": 340.412708,
+      "frame": 3,
+      "hair_ms": 336.116458,
+      "skin_ms": 110.55175,
+      "time_s": 0.025
+    },
+    {
+      "elapsed_ms": 1402.576041,
+      "frame": 4,
+      "hair_ms": 1397.766,
+      "skin_ms": 151.487334,
+      "time_s": 0.03333333333333333
+    },
+    {
+      "elapsed_ms": 485.272792,
+      "frame": 5,
+      "hair_ms": 481.967834,
+      "skin_ms": 104.296167,
+      "time_s": 0.041666666666666664
+    },
+    {
+      "elapsed_ms": 453.940291,
+      "frame": 6,
+      "hair_ms": 450.74975,
+      "skin_ms": 108.406042,
+      "time_s": 0.049999999999999996
+    },
+    {
+      "elapsed_ms": 1258.774334,
+      "frame": 7,
+      "hair_ms": 1255.432459,
+      "skin_ms": 77.425875,
+      "time_s": 0.05833333333333333
+    },
+    {
+      "elapsed_ms": 376.510917,
+      "frame": 8,
+      "hair_ms": 373.106791,
+      "skin_ms": 115.055542,
+      "time_s": 0.06666666666666667
+    },
+    {
+      "elapsed_ms": 527.357125,
+      "frame": 9,
+      "hair_ms": 524.104542,
+      "skin_ms": 94.32424999999999,
+      "time_s": 0.075
+    },
+    {
+      "elapsed_ms": 1435.1133329999998,
+      "frame": 10,
+      "hair_ms": 1426.300416,
+      "skin_ms": 106.652833,
+      "time_s": 0.08333333333333333
+    },
+    {
+      "elapsed_ms": 331.112917,
+      "frame": 11,
+      "hair_ms": 328.057958,
+      "skin_ms": 109.498375,
+      "time_s": 0.09166666666666666
+    },
+    {
+      "elapsed_ms": 1328.44275,
+      "frame": 12,
+      "hair_ms": 1324.947292,
+      "skin_ms": 120.20945800000001,
+      "time_s": 0.09999999999999999
+    },
+    {
+      "elapsed_ms": 7687.177375,
+      "frame": 13,
+      "hair_ms": 7682.0575,
+      "skin_ms": 119.553625,
+      "time_s": 0.10833333333333332
+    },
+    {
+      "elapsed_ms": 3022.155,
+      "frame": 14,
+      "hair_ms": 3017.307625,
+      "skin_ms": 119.3265,
+      "time_s": 0.11666666666666665
+    }
+  ]
+}

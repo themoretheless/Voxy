@@ -1,0 +1,6 @@
+{
+  "pid": 42401,
+  "command": "/tmp/voxy-frame4-feasible-prefix-325750f54840/physics-replay captured_contact_reaches_feasible_geometry --ignored --nocapture",
+  "reason": "replace older prefix baseline with origin-band model experiment; keep latest local-anchor comparison",
+  "requested_unix_s": 1791765948.6523101
+}

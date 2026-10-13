@@ -1,0 +1,36 @@
+{
+  "binary": "/tmp/voxy-failed-island-provenance-runtime.bin",
+  "binary_sha256": "fbe486ff12214d786e31c06dc8b030cc7117caf1a090d4ee8cbd6fe9457e2687",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_square_root_projection.rs": "a0197bb5d4b8f6aa70cf6bc5279532aaf7ee93997aa87b671ac4eaa0caa6d8fd",
+    "crates/physics/src/hair/contact_model.rs": "2dfcc6f7254fbb0ee909bd5e1697aca84cdebcbc61aae6a9e87f6ec152401130",
+    "crates/physics/src/hair/contact_safe_motion.rs": "05300096bd1cef67400d905bd494ddc1573a3c7f73e67dc9dde46d787f5c434d",
+    "crates/voxy_app/src/female_hair.rs": "8a5988e3babeb0764fbd6972cb1b2e57cf55e71add6010aa76a5b0e5188077ef"
+  },
+  "environment": {
+    "VOXY_AUTHORED_JUMP_QUALIFICATION_DIR": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/authored-jump-failed-island-provenance-2026-10-11",
+    "VOXY_AUTHORED_JUMP_CONTINUOUS_CONTACTS": "1",
+    "VOXY_HAIR_FAILED_ISLAND_CONTEXT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/authored-jump-failed-island-provenance-2026-10-11/failed-islands",
+    "VOXY_HAIR_QR_INPUT_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/authored-jump-failed-island-provenance-2026-10-11/failed-operator.vqc",
+    "VOXY_HAIR_CONTACT_REPLAY_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/authored-jump-failed-island-provenance-2026-10-11/failed-contact.vhr",
+    "VOXY_HAIR_ROOT_MOTION_FAILURE_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/authored-jump-failed-island-provenance-2026-10-11/last-root-motion.vjr",
+    "VOXY_HAIR_SWEPT_REFINEMENT_TRACE": "1",
+    "VOXY_HAIR_SWEPT_SOLVE_PROFILE": "1",
+    "VOXY_HAIR_NONLINEAR_MERIT_TRACE": "1"
+  },
+  "scope": "full-density coupled CPU jump with failed-island context; no rendering FPS claim",
+  "diagnostic_environment_audit": {
+    "active": [
+      "VOXY_HAIR_FAILED_ISLAND_CONTEXT",
+      "VOXY_HAIR_CONTACT_REPLAY_EXPORT",
+      "VOXY_HAIR_QR_INPUT_EXPORT",
+      "VOXY_HAIR_ROOT_MOTION_FAILURE_EXPORT",
+      "VOXY_HAIR_NONLINEAR_MERIT_TRACE"
+    ],
+    "unused_flags": [
+      "VOXY_HAIR_SWEPT_REFINEMENT_TRACE",
+      "VOXY_HAIR_SWEPT_SOLVE_PROFILE"
+    ],
+    "note": "Swept profile/refinement source expects VOXY_HAIR_SWEEP_REFINEMENT_TRACE. This run still captures required failed-island provenance and nonlinear model trace; do not infer stage timings from unused flags."
+  }
+}

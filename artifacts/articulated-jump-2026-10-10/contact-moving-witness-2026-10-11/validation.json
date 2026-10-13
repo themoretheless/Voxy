@@ -1,0 +1,17 @@
+{
+  "physics_tests": {
+    "passed": 382,
+    "failed": 0,
+    "ignored": 43
+  },
+  "endpoint_probe": "fraction exactly1 after fix on actual rod355 tiny trial",
+  "full_469_guide_replay": {
+    "status": "terminal",
+    "exit_code": 101,
+    "elapsed_seconds": 78.75,
+    "last_iteration": 31,
+    "last_worst_gap_m": -1.3933256041442973e-08,
+    "reason": "joint hair contact position linearization did not converge"
+  },
+  "qualification": "Not converged; full jump and FPS unproven"
+}

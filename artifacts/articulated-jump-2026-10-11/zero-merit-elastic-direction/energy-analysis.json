@@ -1,0 +1,9 @@
+{
+  "terminal": {
+    "exit_code": 101,
+    "elapsed_seconds": 41.01485275
+  },
+  "last_direction": "HAIR ELASTIC DIRECTION iteration=19 energy_j=Some(1.0787310598181447e-6) slope_j=1.4378564508942496e-11 full_merit=2.733996945146791e-18",
+  "last_trial": "HAIR ELASTIC TRIAL iteration=19 scale=2.44140625e-4 before_j=1.0787310598181447e-6 trial_j=1.0787310633336127e-6 global_delta_j=3.515467946043835e-15 rod_delta_sum_j=3.515468424154229e-15",
+  "scope": "actual energy directional and per-rod difference diagnostics; not a stationarity certificate"
+}

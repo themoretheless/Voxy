@@ -1,0 +1,35 @@
+
+running 1 test
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=0 elapsed_ms=39.235333 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=1 elapsed_ms=33.69625 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=2 elapsed_ms=32.792833 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=3 elapsed_ms=32.233167 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=4 elapsed_ms=35.079625 admitted_coordinates=true
+TRIPLE PHYSICAL rows=100 width=882 systems=7 accelerated=true submissions=5 elapsed_ms=179.371125 error=None scope=one_original_physical_operator_not_trajectory_or_FPS
+TRIPLE WARM PHYSICAL rows=100 width=882 original_admission=true elapsed_ms=35.256291000000004 scope=same_operator_hint_not_changed_trajectory_or_FPS
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/rejected-factor-reuse/physical-100-failed-coordinate.bin" systems=7 rows=100 refinement=2
+HAIR QR SORTED RETRY rows=100 reason=joint square-root active contacts did not converge
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/rejected-factor-reuse/physical-100-failed-coordinate.bin" systems=7 rows=100 refinement=1
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=1 elapsed_ms=15.732375 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=3 elapsed_ms=16.698959 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=4 elapsed_ms=14.813125 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=5 elapsed_ms=15.625957999999999 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=6 elapsed_ms=15.553291 admitted_coordinates=true
+HAIR QR PROFILE systems=7 rows=100 coordinates=882 compact_coordinates=639 refinement=7 elapsed_ms=15.692749999999998 admitted_coordinates=true
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/rejected-factor-reuse/physical-100-failed-coordinate.bin" systems=7 rows=100 refinement=2
+HAIR QR SORTED RETRY rows=100 reason=joint square-root active contacts did not converge
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/rejected-factor-reuse/physical-100-failed-coordinate.bin" systems=7 rows=100 refinement=1
+TRIPLE FACTOR FAILURE reused_error=Some("joint square-root active contacts did not converge") freshly_factored_original_physical_error=Some("joint square-root active contacts did not converge")
+
+thread 'gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics' (91674616) panicked at crates/voxy_app/src/gpu_hair_joint.rs:1577:52:
+called `Result::unwrap()` on an `Err` value: "joint square-root active contacts did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 377 filtered out; finished in 0.43s
+

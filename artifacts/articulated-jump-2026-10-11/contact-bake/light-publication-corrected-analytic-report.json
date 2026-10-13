@@ -1,0 +1,74 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "gpu_only_admission": true,
+  "native_renderer_integrated": false,
+  "rejection_and_recovery": [
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 1,
+      "geometry_status": 1,
+      "scenario": "collapsed_geometry"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 1,
+      "geometry_status": 1,
+      "scenario": "nonfinite_geometry"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 1,
+      "geometry_status": 0,
+      "scenario": "nonfinite_incident"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 1,
+      "geometry_status": 0,
+      "scenario": "negative_incident"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 1,
+      "generation": 2,
+      "geometry_status": 0,
+      "scenario": "recovery"
+    }
+  ],
+  "samples": [
+    {
+      "admission_gpu_ms": null,
+      "admitted": false,
+      "assembly_gpu_ms": 0.02975,
+      "cpu_max_error": 0.044846300567899455,
+      "generation": 0,
+      "has_accepted": 0,
+      "iterations": 1,
+      "max_error_estimate": 0.04834945499897003,
+      "sample": 0,
+      "solve_gpu_ms": 0.094459,
+      "squared_relative_residual": 0.0028374851681292057,
+      "time_seconds": null
+    },
+    {
+      "admission_gpu_ms": 0.088791,
+      "admitted": true,
+      "assembly_gpu_ms": 0.027041,
+      "cpu_max_error": 7.23770686716918e-8,
+      "generation": 1,
+      "has_accepted": 1,
+      "iterations": 40,
+      "max_error_estimate": 1.9862754925270565e-6,
+      "sample": 0,
+      "solve_gpu_ms": 2.042708,
+      "squared_relative_residual": 2.3618908952661825e-14,
+      "time_seconds": null
+    }
+  ],
+  "scope": "Independent GPU residual and max-error estimate admission, bitwise retained accepted light. CPU tail audit only. Not an interval proof, whole-model rollback or frame/FPS qualification.",
+  "vertices": 4
+}

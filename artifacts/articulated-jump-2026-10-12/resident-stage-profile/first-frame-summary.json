@@ -1,0 +1,34 @@
+{
+  "schema": "voxy-joint-host-stage-summary-v1",
+  "scope": "equality_tasks_host_wall_times_not_gpu_timestamps_or_rendered_fps",
+  "logs": [
+    "/tmp/voxy-resident-stage-frame-1791777527624170000/terminal.log"
+  ],
+  "profiled_calls": 535,
+  "owner_instances_not_unique_operators": 9424,
+  "counters": {
+    "dispatches": 535,
+    "submissions": 535,
+    "workspace_creations": 180,
+    "workspace_reuses": 355,
+    "errors": 0
+  },
+  "staging_payload_bytes_not_bus_traffic": 1368121296,
+  "wall_ms": {
+    "prepare_wall_ms": 2003.375418999999,
+    "encode_wall_ms": 261.27537099999995,
+    "submit_map_wall_ms": 190.4039290000002,
+    "wait_wall_ms": 29225.121224999977,
+    "decode_refine_wall_ms": 1396.266435000001,
+    "total_wall_ms": 33076.73979
+  },
+  "stage_percent_of_total": {
+    "prepare_wall_ms": 6.056749944883244,
+    "encode_wall_ms": 0.7899066614751149,
+    "submit_map_wall_ms": 0.5756429751204334,
+    "wait_wall_ms": 88.35550725539018,
+    "decode_refine_wall_ms": 4.221294008613661
+  },
+  "unattributed_wall_ms": 0.2974110000213841,
+  "limits": "Concurrent host wall times, including queue wait and callbacks; exclude profile log output, shader compilation, physical owner assembly/admission and rendering. Task errors can be recovered by active-set retry; they are not native fallback counts. This report does not qualify trajectory accuracy, GPU execution time or rendered FPS."
+}

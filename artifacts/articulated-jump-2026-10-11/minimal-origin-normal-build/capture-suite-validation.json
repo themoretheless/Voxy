@@ -1,0 +1,49 @@
+{
+  "all_three_original_captures_pass": true,
+  "same_binary_sha256": "de5ad44f7145eea7e6c38b1b6a82749bbae2a90bf4e4d5ef4a1a380e176c7188",
+  "cases": [
+    {
+      "directory": "minimal-origin-frame2",
+      "exit_code": 0,
+      "final_iteration": 126,
+      "tangent_complete": true,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -2.4806144695197393e-11,
+      "full_scale": 1,
+      "physical_gap_tolerance_m": 1e-10,
+      "log_sha256": "12a757f0e2cf1d18221123a44017a5f205993ae17c67bf490f35940576f16d63",
+      "scope": "one original full469-guide saved-pose test; root positions and5% strain asserted by test; not720-frame/FPS qualification",
+      "tangent_complete_semantics": "full projected linear increment admitted",
+      "nonlinear_stationarity_measured": false
+    },
+    {
+      "directory": "minimal-origin-frame4",
+      "exit_code": 0,
+      "final_iteration": 40,
+      "tangent_complete": true,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -5.113356999614773e-11,
+      "log_sha256": "89640734597c08e03ca6577f640bbf5c2c4396ea126186d1d1a6e662ee50a67d",
+      "scope": "one saved469-guide original frame4 pose, root position/5% strain asserted; not full cycle or FPS",
+      "tangent_complete_semantics": "full projected linear increment admitted",
+      "nonlinear_stationarity_measured": false
+    },
+    {
+      "directory": "minimal-origin-zero-merit",
+      "exit_code": 0,
+      "final_iteration": 42,
+      "tangent_complete": true,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -5.404093218975107e-11,
+      "log_sha256": "4a105cd0f7a8c9963d11f539097f6ceee985c8a2d6ae401d2637116eeba5e799",
+      "scope": "one actual coupled-frame2 zero-merit failure capture,469 guides; root positions/5% strain asserted; not full cycle/FPS",
+      "tangent_complete_semantics": "full projected linear increment admitted",
+      "nonlinear_stationarity_measured": false
+    }
+  ],
+  "scope": "3 saved469-guide poses only; full720-frame trajectory andFPS remain unproven",
+  "nonlinear_stationarity_measured": false
+}

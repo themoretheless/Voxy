@@ -1,5 +1,9 @@
 //! General textured triangle rendering, independent of voxel storage.
 
+#[cfg(test)]
+#[path = "fiber_surface_draw_tests.rs"]
+mod fiber_surface_draw_tests;
+
 /// Default shader and the resource/vertex ABI for custom scene shaders.
 pub const DEFAULT_SCENE_SHADER: &str = include_str!("scene.wgsl");
 
@@ -406,6 +410,7 @@ pub struct SceneGeometry {
     vertices: std::sync::Arc<crate::ComputeStorage>,
     normals: std::sync::Arc<crate::ComputeStorage>,
     normal_cache: NormalCache,
+    tangents: Option<std::sync::Arc<crate::ComputeStorage>>,
     material_coordinates: std::sync::Arc<crate::ComputeStorage>,
     coordinate_cache: Vec<[f32; 3]>,
     material_parameters: std::sync::Arc<crate::ComputeStorage>,
@@ -432,6 +437,7 @@ impl SceneGeometry {
     pub(crate) fn deformation_normals(&self) -> &wgpu::Buffer {
         &self.normals
     }
+    pub(crate) fn deformation_tangents(&self) -> Option<&wgpu::Buffer> { self.tangents.as_deref().map(|b| &**b) }
     pub(crate) fn deformation_vertices(&self) -> &wgpu::Buffer {
         &self.vertices
     }
@@ -474,7 +480,7 @@ impl SceneGeometry {
     /// # Errors
     /// Rejects invalid meshes and capacity overflow before writing either buffer.
     pub fn update(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh) -> Result<(), SceneError> {
-        self.update_mesh(queue, mesh, false)
+        self.update_mesh(queue, mesh, false, 0)
     }
 
     /// Updates shared vertex streams without restoring the full index stream when
@@ -482,13 +488,24 @@ impl SceneGeometry {
     /// callers must then install their new material partitions before drawing.
     /// Submit prior draws before updating the shared allocation.
     pub fn update_shared_vertex_streams(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh) -> Result<(), SceneError> {
-        self.update_mesh(queue, mesh, true)
+        self.update_mesh(queue, mesh, true, 0)
     }
 
-    fn update_mesh(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh, preserve_partition: bool) -> Result<(), SceneError> {
+    /// Update CPU-owned appended details while a compute owner replaces the base
+    /// vertex/normal prefix. Requires explicit normals and compute-writable streams.
+    pub fn update_after_deforming_prefix(&mut self,queue:&wgpu::Queue,mesh:&SceneMesh,prefix:usize)->Result<(),SceneError> {
+        self.update_mesh(queue,mesh,false,prefix)
+    }
+
+    fn update_mesh(&mut self, queue: &wgpu::Queue, mesh: &SceneMesh, preserve_partition: bool, prefix:usize) -> Result<(), SceneError> {
         mesh.validate_for_upload()?;
         if mesh.vertices.len() > self.vertex_capacity || mesh.indices.len() > self.index_capacity {
             return Err(SceneError::GeometryCapacityExceeded);
+        }
+        if prefix>mesh.vertices.len() || (prefix>0 && (mesh.authored_normals().is_none()
+            || !self.vertices.usage().contains(wgpu::BufferUsages::STORAGE)
+            || !self.normals.usage().contains(wgpu::BufferUsages::STORAGE))) {
+            return Err(SceneError::InvalidGeometry);
         }
         // OPTIMIZATION #41: Mark shadows dirty on geometry update
         self.mark_shadow_dirty();
@@ -509,14 +526,18 @@ impl SceneGeometry {
             self.coordinate_cache = coordinates.into_owned();
         }
         let count = u32::try_from(mesh.indices.len()).map_err(|_| SceneError::InvalidGeometry)?;
-        queue.write_buffer(&self.vertices, 0, bytemuck::cast_slice(&mesh.vertices));
-        if self.normal_cache.refresh(mesh) {
+        if prefix<mesh.vertices.len() {
+            queue.write_buffer(&self.vertices,(prefix*36) as u64,bytemuck::cast_slice(&mesh.vertices[prefix..]));
+        }
+        let normals_changed=self.normal_cache.refresh(mesh);
+        if (normals_changed || self.normal_cache.gpu_prefix_dirty) && prefix<mesh.vertices.len() {
             queue.write_buffer(
                 &self.normals,
-                0,
-                bytemuck::cast_slice(&self.normal_cache.normals),
+                (prefix*12) as u64,
+                bytemuck::cast_slice(&self.normal_cache.normals[prefix..]),
             );
         }
+        self.normal_cache.gpu_prefix_dirty=prefix>0;
         if indices_changed {
             queue.write_buffer(&self.indices, 0, bytemuck::cast_slice(&mesh.indices));
         }
@@ -564,6 +585,7 @@ impl SceneGeometry {
     #[must_use]
     pub fn allocation_bytes(&self) -> u64 {
         self.vertices.size()
+            + self.tangents.as_ref().map_or(0, |b| b.size())
             + self.indices.size()
             + self.normals.size()
             + self.material_coordinates.size()
@@ -1263,6 +1285,26 @@ impl SceneRenderer {
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
     ) {
+        Self::create_shader_pipelines_with_tangents(device, format, transform_layout, texture_layout,
+            shader, sample_count, shadow_layout, environment_layout, false)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn create_shader_pipelines_with_tangents(
+        device: &wgpu::Device,
+        format: wgpu::TextureFormat,
+        transform_layout: &wgpu::BindGroupLayout,
+        texture_layout: &wgpu::BindGroupLayout,
+        shader: &wgpu::ShaderModule,
+        sample_count: u32,
+        shadow_layout: Option<&wgpu::BindGroupLayout>,
+        environment_layout: Option<&wgpu::BindGroupLayout>,
+        has_tangents: bool,
+    ) -> (
+        wgpu::RenderPipeline,
+        wgpu::RenderPipeline,
+        wgpu::RenderPipeline,
+    ) {
         let mut layouts = vec![Some(transform_layout), Some(texture_layout)];
         if shadow_layout.is_some() || environment_layout.is_some() {
             layouts.push(shadow_layout);
@@ -1279,6 +1321,16 @@ impl SceneRenderer {
         let normal_attributes = wgpu::vertex_attr_array![3 => Float32x3];
         let coordinate_attributes = wgpu::vertex_attr_array![5 => Float32x3];
         let material_attributes = wgpu::vertex_attr_array![4 => Float32x4];
+        let tangent_attributes = wgpu::vertex_attr_array![6 => Float32x4];
+        let mut vertex_buffers = vec![
+            Some(wgpu::VertexBufferLayout { array_stride: size_of::<SceneVertex>() as u64, step_mode: wgpu::VertexStepMode::Vertex, attributes: &attributes }),
+            Some(wgpu::VertexBufferLayout { array_stride: 12, step_mode: wgpu::VertexStepMode::Vertex, attributes: &normal_attributes }),
+            Some(wgpu::VertexBufferLayout { array_stride: 16, step_mode: wgpu::VertexStepMode::Instance, attributes: &material_attributes }),
+            Some(wgpu::VertexBufferLayout { array_stride: 12, step_mode: wgpu::VertexStepMode::Vertex, attributes: &coordinate_attributes }),
+        ];
+        if has_tangents { vertex_buffers.push(Some(wgpu::VertexBufferLayout {
+            array_stride: 16, step_mode: wgpu::VertexStepMode::Vertex, attributes: &tangent_attributes,
+        })); }
         let pipeline = |overlay: bool, depth_write: bool| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some("scene pipeline"),
@@ -1287,28 +1339,7 @@ impl SceneRenderer {
                     module: shader,
                     entry_point: Some("vs_main"),
                     compilation_options: wgpu::PipelineCompilationOptions::default(),
-                    buffers: &[
-                        Some(wgpu::VertexBufferLayout {
-                            array_stride: size_of::<SceneVertex>() as u64,
-                            step_mode: wgpu::VertexStepMode::Vertex,
-                            attributes: &attributes,
-                        }),
-                        Some(wgpu::VertexBufferLayout {
-                            array_stride: 12,
-                            step_mode: wgpu::VertexStepMode::Vertex,
-                            attributes: &normal_attributes,
-                        }),
-                        Some(wgpu::VertexBufferLayout {
-                            array_stride: 16,
-                            step_mode: wgpu::VertexStepMode::Instance,
-                            attributes: &material_attributes,
-                        }),
-                        Some(wgpu::VertexBufferLayout {
-                            array_stride: 12,
-                            step_mode: wgpu::VertexStepMode::Vertex,
-                            attributes: &coordinate_attributes,
-                        }),
-                    ],
+                    buffers: &vertex_buffers,
                 },
                 primitive: wgpu::PrimitiveState::default(),
                 depth_stencil: Some(wgpu::DepthStencilState {
@@ -1371,10 +1402,10 @@ impl SceneRenderer {
         }
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor { label:Some("geometry opaque shader"), source:wgpu::ShaderSource::Wgsl(source.into()) });
-        let one = Self::create_shader_pipelines(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,1,
-            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout));
-        let four = Self::create_shader_pipelines(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,4,
-            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout));
+        let one = Self::create_shader_pipelines_with_tangents(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,1,
+            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout),geometry.tangents.is_some());
+        let four = Self::create_shader_pipelines_with_tangents(device,self.color_format,&self.transform_layout,&self.texture_layout,&shader,4,
+            self.shadow.as_ref().map(|s| &s.layout),self.environment.as_ref().map(|e| &e.layout),geometry.tangents.is_some());
         if let Some(error) = scope.pop().await { return Err(SceneShaderError(error.to_string())); }
         geometry.opaque_shader = Some((self.shader_revision,self.transform_layout.clone(),one.0,four.0));
         Ok(())
@@ -1389,7 +1420,31 @@ impl SceneRenderer {
 
     /// Fixed topology with vertex and normal storage writable by admitted compute work.
     pub fn upload_compute_mesh(&self, device: &wgpu::Device, mesh: &SceneMesh) -> Result<SceneGeometry, SceneError> {
-        self.upload_mesh_with_usage(device, mesh, wgpu::BufferUsages::STORAGE)
+        self.upload_mesh_with_usage(device, mesh, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC)
+    }
+
+    /// Upload optional, independent xyz/handedness tangents for a custom material.
+    /// Ordinary meshes allocate no tangent stream. Invalid tangents publish no geometry.
+    pub fn upload_tangent_mesh(&self, device: &wgpu::Device, mesh: &SceneMesh, tangents: &[[f32;4]]) -> Result<SceneGeometry, SceneError> {
+        self.upload_tangent_mesh_with_usage(device, mesh, tangents, wgpu::BufferUsages::empty())
+    }
+    /// Tangent/position/normal streams writable by ordered compute work.
+    pub fn upload_compute_tangent_mesh(&self, device: &wgpu::Device, mesh: &SceneMesh, tangents: &[[f32;4]]) -> Result<SceneGeometry, SceneError> {
+        self.upload_tangent_mesh_with_usage(device, mesh, tangents, wgpu::BufferUsages::STORAGE)
+    }
+    fn upload_tangent_mesh_with_usage(&self, device: &wgpu::Device, mesh: &SceneMesh, tangents: &[[f32;4]], usage: wgpu::BufferUsages) -> Result<SceneGeometry, SceneError> {
+        use crate::compute_memory::ManagedBufferDescriptor;
+        if tangents.len() != mesh.vertices().len() || tangents.iter().any(|t| {
+            t.iter().any(|v| !v.is_finite()) || (glam::Vec3::from_slice(t).length_squared()-1.).abs()>1e-4 || t[3].abs()!=1.
+        }) { return Err(SceneError::InvalidGeometry); }
+        let mut geometry = self.upload_mesh_with_usage(device, mesh, usage)?;
+        let bytes = bytemuck::cast_slice(tangents);
+        let mut buffers = crate::ComputeMemoryBudget::for_device(device).allocate_buffer_batch(&[
+            ManagedBufferDescriptor { label:"scene vertex tangents", size:bytes.len() as u64, contents:Some(bytes),
+                usage:wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC | usage }
+        ]).map_err(scene_memory_error)?;
+        geometry.tangents = Some(std::sync::Arc::new(buffers.pop().ok_or(SceneError::InvalidGeometry)?));
+        Ok(geometry)
     }
 
     /// Keep a fixed mesh and sparse displacement binding resident on the GPU.
@@ -1410,6 +1465,31 @@ impl SceneRenderer {
             wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
         )?;
         crate::SurfaceDeformation::new(device, mesh, geometry, offsets, weights, control_count)
+    }
+
+    /// Attach fixed-topology deformation to the prefix of existing compute
+    /// geometry. Shared GPU allocations retain appended facial/detail vertices.
+    /// Admission failure leaves the caller's draw geometry untouched.
+    pub fn prepare_surface_deformation_in_geometry(
+        &self, device:&wgpu::Device, mesh:&SceneMesh, target:&SceneGeometry,
+        offsets:&[u32], weights:&[crate::SurfaceDeformationWeight], controls:u32,
+    )->Result<crate::SurfaceDeformation,SceneError> {
+        crate::surface_deformation::validate(device,mesh,offsets,weights,controls)?;
+        if *device!=self.device || target.device!=*device || mesh.vertices().len()>target.vertex_capacity
+            || !target.vertices.usage().contains(wgpu::BufferUsages::STORAGE)
+            || !target.normals.usage().contains(wgpu::BufferUsages::STORAGE) {
+            return Err(SceneError::InvalidGeometry);
+        }
+        let view=SceneGeometry {
+            device:target.device.clone(),vertices:target.vertices.clone(),normals:target.normals.clone(),
+            normal_cache:NormalCache::default(),tangents:target.tangents.clone(),
+            material_coordinates:target.material_coordinates.clone(),coordinate_cache:Vec::new(),
+            material_parameters:target.material_parameters.clone(),indices:target.indices.clone(),
+            index_count:target.index_count,vertex_capacity:target.vertex_capacity,index_capacity:target.index_capacity,
+            depth_mode:target.depth_mode,opaque_shader:target.opaque_shader.clone(),
+            partitioned_indices:target.partitioned_indices,partition_cache:target.partition_cache.clone(),shadow_dirty:true,
+        };
+        crate::SurfaceDeformation::new(device,mesh,view,offsets,weights,controls)
     }
 
     fn upload_mesh_with_usage(
@@ -1516,6 +1596,7 @@ impl SceneRenderer {
                     vertices: vertices.clone(),
                     normals: normals.clone(),
                     normal_cache,
+                    tangents: None,
                     material_coordinates: material_coordinates.clone(),
                     coordinate_cache,
                     material_parameters: material_parameters.clone(),
@@ -1611,6 +1692,7 @@ impl SceneRenderer {
             material_parameters,
             indices,
             normal_cache: NormalCache::default(),
+            tangents: None,
             coordinate_cache: Vec::new(),
             index_count: 0,
             depth_mode: SceneDepthMode::Opaque,
@@ -2101,6 +2183,7 @@ impl SceneRenderer {
             pass.set_vertex_buffer(1, draw.geometry.normals.slice(..));
             pass.set_vertex_buffer(2, draw.geometry.material_parameters.slice(..));
             pass.set_vertex_buffer(3, draw.geometry.material_coordinates.slice(..));
+            if let Some(tangents) = &draw.geometry.tangents { pass.set_vertex_buffer(4, tangents.slice(..)); }
             pass.set_index_buffer(draw.geometry.indices.slice(..), wgpu::IndexFormat::Uint32);
             pass.draw_indexed(0..draw.geometry.index_count, 0, 0..1);
         }
@@ -2185,6 +2268,7 @@ impl SceneRenderer {
             pass.set_vertex_buffer(1, draw.geometry.normals.slice(..));
             pass.set_vertex_buffer(2, draw.geometry.material_parameters.slice(..));
             pass.set_vertex_buffer(3, draw.geometry.material_coordinates.slice(..));
+            if let Some(tangents) = &draw.geometry.tangents { pass.set_vertex_buffer(4, tangents.slice(..)); }
             pass.set_index_buffer(draw.geometry.indices.slice(..), wgpu::IndexFormat::Uint32);
             pass.draw_indexed(0..draw.geometry.index_count, 0, 0..1);
         }
@@ -2749,6 +2833,7 @@ impl SceneRenderer {
                 pass.set_vertex_buffer(1, draw.geometry.normals.slice(..));
                 pass.set_vertex_buffer(2, draw.geometry.material_parameters.slice(..));
                 pass.set_vertex_buffer(3, draw.geometry.material_coordinates.slice(..));
+            if let Some(tangents) = &draw.geometry.tangents { pass.set_vertex_buffer(4, tangents.slice(..)); }
                 pass.set_index_buffer(draw.geometry.indices.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..draw.geometry.index_count, 0, 0..1);
             }
@@ -2776,6 +2861,7 @@ fn validate_view_regions(size: [u32; 2], views: &[SceneView<'_>]) -> Result<(), 
 
 #[derive(Debug, Default)]
 struct NormalCache {
+    gpu_prefix_dirty: bool,
     authored: bool,
     positions: Vec<[f32; 3]>,
     indices: Vec<u32>,
@@ -3726,3 +3812,11 @@ mod opaque_partition_regression {
         assert!(parts[0].opaque_shader.is_none());
     }
 }
+
+#[cfg(test)]
+#[path = "surface_light_transfer_tests.rs"]
+mod surface_light_transfer_tests;
+
+#[cfg(test)]
+#[path = "surface_color_transfer_tests.rs"]
+mod surface_color_transfer_tests;

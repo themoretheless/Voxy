@@ -1,0 +1,5 @@
+{
+  "status": "passed",
+  "source_sha256": "6057e9fdf9599435c8f6eb98390ed9ae682f7b1a808c9c901615f1d612983708",
+  "scope": "test-only exact single-primitive discovery and penetration rejection; no production admission or FPS claim"
+}

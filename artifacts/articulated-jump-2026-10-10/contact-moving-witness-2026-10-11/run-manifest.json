@@ -1,0 +1,9 @@
+{
+  "binary": "/tmp/voxy-endpoint-identity-physics.bin",
+  "binary_sha256": "1c64060f01271c919cd4c9c2cd19d0a1bc7a60397b17b7a7aa3fa16de49b5d2d",
+  "fixture": "artifacts/articulated-jump-2026-10-10/contact-query-feature-2026-10-11/failed-contact.vhr",
+  "fixture_sha256": "1864d61e63d581532487b45dbfefbd8e4a43df791c1b28adf901705d19904459",
+  "scope": "469-guide replay of remaining failed pose; production endpoint-identity fix; binary built before adding numeric regression test",
+  "log": "/tmp/voxy-endpoint-identity-replay.log",
+  "exec_session": 47498
+}

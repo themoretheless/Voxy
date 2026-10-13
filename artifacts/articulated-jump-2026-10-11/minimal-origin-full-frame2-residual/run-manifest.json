@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/minimal-origin-normal-build/physics-tests.bin",
+    "captured_contact_reaches_feasible_geometry",
+    "--ignored",
+    "--nocapture"
+  ],
+  "binary_sha256": "de5ad44f7145eea7e6c38b1b6a82749bbae2a90bf4e4d5ef4a1a380e176c7188",
+  "fixture_sha256": "7994b8e7941c8a74d3d146f5a8672d8dfe62aa3b55c34e4ebc0cab8b15f91ca4",
+  "fixture": "artifacts/articulated-jump-2026-10-11/minimal-origin-full-coupled-cycle/failed-contact.vhr",
+  "source_manifest": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/minimal-origin-frame2/run-manifest.json",
+  "environment": {
+    "VOXY_HAIR_CONTACT_REPLAY_FILE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/minimal-origin-full-coupled-cycle/failed-contact.vhr",
+    "VOXY_HAIR_CONTACT_REPLAY_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/minimal-origin-full-frame2-residual/failed-contact.vhr",
+    "VOXY_HAIR_NONLINEAR_MERIT_TRACE": "1",
+    "VOXY_HAIR_ELASTIC_DESCENT_TRACE": "1"
+  },
+  "scope": "diagnostic saved terminal pose, not proof original full frame converges"
+}

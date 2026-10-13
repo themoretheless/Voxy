@@ -1,0 +1,6 @@
+
+running 1 test
+test female_demo::resident_groom_render_tests::gpu_rigid_blend_equal_weights_matches_cpu_hemisphere_anchor ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 362 filtered out; finished in 0.05s
+

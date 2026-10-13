@@ -1,0 +1,9 @@
+{
+  "runtime_adopted": false,
+  "orientation_queries": 243,
+  "queries_with_opposite": 0,
+  "minimum_cosine": 0.0013694984181545967,
+  "signed_plane_merit_admitted": false,
+  "signed_plane_last": "LOCAL RESTORATION iteration=31 merit=4.653283872205488e-10 work_j=-1.1313754027114032e-9 strain=3.389375442175435e-5 strand_path=false mesh_path=false admitted=false",
+  "conclusion": "No opposite normals in observed probes, but near-orthogonal first-approach normals. Signed first-approach-plane residual comparison still fails independent geometry/energy admission. Do not flip normals or weaken CCD."
+}

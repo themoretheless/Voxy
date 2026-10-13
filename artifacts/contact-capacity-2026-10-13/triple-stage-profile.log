@@ -1,0 +1,10 @@
+
+running 1 test
+HAIR JOINT STAGE PROFILE {"backend":"triple_active_set","cached_owners":0,"complete_workspace_payload_bytes":2050136,"dispatches":1,"errors":0,"incoming_positive_seed_rows":0,"incoming_valid_seeded_owners":0,"owners":1,"schema":"voxy-joint-host-stage-profile-v1","scope":"equality_tasks_host_wall_times_not_gpu_timestamps_or_rendered_fps","seeded_upload_owners":0,"stages":{"decode_refine_wall_ms":0.5127499999999999,"encode_wall_ms":0.067667,"prepare_wall_ms":1.0191670000000002,"readback_payload_bytes":2050136,"submit_map_wall_ms":0.413042,"total_wall_ms":116.509,"wait_wall_ms":114.496},"submissions":1,"submitted_operator_shapes_rows_coordinates":[[91,882]],"submitted_owners":1,"workspace_creations":1,"workspace_reuses":0}
+TRIPLE PHYSICAL rows=91 width=882 systems=7 accelerated=true submissions=1 elapsed_ms=118.534375 error=None scope=one_original_physical_operator_not_trajectory_or_FPS
+HAIR JOINT STAGE PROFILE {"backend":"triple_active_set","cached_owners":1,"complete_workspace_payload_bytes":0,"dispatches":0,"errors":0,"incoming_positive_seed_rows":0,"incoming_valid_seeded_owners":0,"owners":1,"schema":"voxy-joint-host-stage-profile-v1","scope":"equality_tasks_host_wall_times_not_gpu_timestamps_or_rendered_fps","seeded_upload_owners":0,"stages":{"decode_refine_wall_ms":0.0,"encode_wall_ms":0.0,"prepare_wall_ms":0.321125,"readback_payload_bytes":0,"submit_map_wall_ms":0.0,"total_wall_ms":0.321208,"wait_wall_ms":0.0},"submissions":0,"submitted_operator_shapes_rows_coordinates":[],"submitted_owners":0,"workspace_creations":0,"workspace_reuses":0}
+TRIPLE EXACT REUSE original_physical_admission=true additional_submissions=0 elapsed_ms=2.0092909999999997 hits=1 scope=same_original_operator_only_not_changed_trajectory_or_FPS
+test gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 376 filtered out; finished in 0.15s
+

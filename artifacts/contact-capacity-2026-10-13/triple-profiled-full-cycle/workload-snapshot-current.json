@@ -1,0 +1,1851 @@
+{
+  "scope": "snapshot of completed coordinate host scopes only; cache count includes shared aliases; errors are coordinate scope errors, not physical fallback; concurrent GPU workloads prevent isolated performance claims; no frame or FPS admission",
+  "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-profiled-full-cycle/qualification.log",
+  "snapshot_bytes": 444327,
+  "snapshot_sha256": "22007b009dbeac7e89029365eca5b50f86c72d6a5e3d0880c004b1d8184a6209",
+  "completed_host_scopes": 563,
+  "incomplete_profile_lines": 0,
+  "totals": {
+    "recorded_active_set_iterations": 0,
+    "operators_with_recorded_iterations": 0,
+    "owners": 9933,
+    "cached_owners": 5728,
+    "submitted_owners": 4205,
+    "dispatches": 4205,
+    "submissions": 563,
+    "errors": 0,
+    "complete_workspace_payload_bytes": 2171501008
+  },
+  "stage_sums": {
+    "decode_refine_wall_ms": 487.095919,
+    "encode_wall_ms": 53.915411000000006,
+    "prepare_wall_ms": 951.0617490000002,
+    "readback_payload_bytes": 2171501008,
+    "submit_map_wall_ms": 159.39301799999978,
+    "total_wall_ms": 633325.5316810008,
+    "wait_wall_ms": 631673.8204300002
+  },
+  "submitted_shapes": [
+    {
+      "rows": 1,
+      "coordinates": 252,
+      "count": 736
+    },
+    {
+      "rows": 2,
+      "coordinates": 378,
+      "count": 277
+    },
+    {
+      "rows": 1,
+      "coordinates": 126,
+      "count": 175
+    },
+    {
+      "rows": 2,
+      "coordinates": 252,
+      "count": 117
+    },
+    {
+      "rows": 3,
+      "coordinates": 378,
+      "count": 68
+    },
+    {
+      "rows": 5,
+      "coordinates": 378,
+      "count": 68
+    },
+    {
+      "rows": 4,
+      "coordinates": 504,
+      "count": 65
+    },
+    {
+      "rows": 4,
+      "coordinates": 378,
+      "count": 64
+    },
+    {
+      "rows": 26,
+      "coordinates": 630,
+      "count": 63
+    },
+    {
+      "rows": 3,
+      "coordinates": 504,
+      "count": 60
+    },
+    {
+      "rows": 4,
+      "coordinates": 630,
+      "count": 59
+    },
+    {
+      "rows": 25,
+      "coordinates": 630,
+      "count": 58
+    },
+    {
+      "rows": 24,
+      "coordinates": 630,
+      "count": 58
+    },
+    {
+      "rows": 22,
+      "coordinates": 630,
+      "count": 57
+    },
+    {
+      "rows": 3,
+      "coordinates": 252,
+      "count": 50
+    },
+    {
+      "rows": 5,
+      "coordinates": 630,
+      "count": 49
+    },
+    {
+      "rows": 6,
+      "coordinates": 504,
+      "count": 47
+    },
+    {
+      "rows": 5,
+      "coordinates": 756,
+      "count": 45
+    },
+    {
+      "rows": 7,
+      "coordinates": 756,
+      "count": 44
+    },
+    {
+      "rows": 4,
+      "coordinates": 252,
+      "count": 43
+    },
+    {
+      "rows": 21,
+      "coordinates": 882,
+      "count": 41
+    },
+    {
+      "rows": 23,
+      "coordinates": 882,
+      "count": 40
+    },
+    {
+      "rows": 22,
+      "coordinates": 882,
+      "count": 38
+    },
+    {
+      "rows": 19,
+      "coordinates": 882,
+      "count": 38
+    },
+    {
+      "rows": 8,
+      "coordinates": 504,
+      "count": 37
+    },
+    {
+      "rows": 10,
+      "coordinates": 504,
+      "count": 37
+    },
+    {
+      "rows": 12,
+      "coordinates": 504,
+      "count": 37
+    },
+    {
+      "rows": 43,
+      "coordinates": 2142,
+      "count": 37
+    },
+    {
+      "rows": 10,
+      "coordinates": 630,
+      "count": 35
+    },
+    {
+      "rows": 6,
+      "coordinates": 378,
+      "count": 35
+    },
+    {
+      "rows": 45,
+      "coordinates": 2142,
+      "count": 34
+    },
+    {
+      "rows": 27,
+      "coordinates": 630,
+      "count": 33
+    },
+    {
+      "rows": 34,
+      "coordinates": 2142,
+      "count": 33
+    },
+    {
+      "rows": 40,
+      "coordinates": 2142,
+      "count": 33
+    },
+    {
+      "rows": 2,
+      "coordinates": 126,
+      "count": 31
+    },
+    {
+      "rows": 11,
+      "coordinates": 1260,
+      "count": 30
+    },
+    {
+      "rows": 20,
+      "coordinates": 1764,
+      "count": 30
+    },
+    {
+      "rows": 18,
+      "coordinates": 630,
+      "count": 30
+    },
+    {
+      "rows": 23,
+      "coordinates": 630,
+      "count": 28
+    },
+    {
+      "rows": 9,
+      "coordinates": 882,
+      "count": 28
+    },
+    {
+      "rows": 10,
+      "coordinates": 882,
+      "count": 28
+    },
+    {
+      "rows": 19,
+      "coordinates": 630,
+      "count": 27
+    },
+    {
+      "rows": 51,
+      "coordinates": 1638,
+      "count": 27
+    },
+    {
+      "rows": 31,
+      "coordinates": 1512,
+      "count": 27
+    },
+    {
+      "rows": 9,
+      "coordinates": 756,
+      "count": 26
+    },
+    {
+      "rows": 24,
+      "coordinates": 882,
+      "count": 26
+    },
+    {
+      "rows": 46,
+      "coordinates": 1638,
+      "count": 26
+    },
+    {
+      "rows": 50,
+      "coordinates": 1638,
+      "count": 26
+    },
+    {
+      "rows": 7,
+      "coordinates": 630,
+      "count": 25
+    },
+    {
+      "rows": 7,
+      "coordinates": 882,
+      "count": 25
+    },
+    {
+      "rows": 52,
+      "coordinates": 1638,
+      "count": 25
+    },
+    {
+      "rows": 3,
+      "coordinates": 126,
+      "count": 25
+    },
+    {
+      "rows": 11,
+      "coordinates": 756,
+      "count": 25
+    },
+    {
+      "rows": 15,
+      "coordinates": 756,
+      "count": 24
+    },
+    {
+      "rows": 44,
+      "coordinates": 1638,
+      "count": 23
+    },
+    {
+      "rows": 48,
+      "coordinates": 1638,
+      "count": 23
+    },
+    {
+      "rows": 6,
+      "coordinates": 630,
+      "count": 23
+    },
+    {
+      "rows": 11,
+      "coordinates": 882,
+      "count": 23
+    },
+    {
+      "rows": 8,
+      "coordinates": 378,
+      "count": 19
+    },
+    {
+      "rows": 61,
+      "coordinates": 1764,
+      "count": 17
+    },
+    {
+      "rows": 5,
+      "coordinates": 252,
+      "count": 16
+    },
+    {
+      "rows": 9,
+      "coordinates": 630,
+      "count": 16
+    },
+    {
+      "rows": 10,
+      "coordinates": 756,
+      "count": 15
+    },
+    {
+      "rows": 20,
+      "coordinates": 882,
+      "count": 14
+    },
+    {
+      "rows": 57,
+      "coordinates": 1764,
+      "count": 14
+    },
+    {
+      "rows": 7,
+      "coordinates": 252,
+      "count": 13
+    },
+    {
+      "rows": 28,
+      "coordinates": 882,
+      "count": 13
+    },
+    {
+      "rows": 11,
+      "coordinates": 630,
+      "count": 13
+    },
+    {
+      "rows": 6,
+      "coordinates": 252,
+      "count": 12
+    },
+    {
+      "rows": 7,
+      "coordinates": 378,
+      "count": 12
+    },
+    {
+      "rows": 30,
+      "coordinates": 1764,
+      "count": 12
+    },
+    {
+      "rows": 46,
+      "coordinates": 2142,
+      "count": 11
+    },
+    {
+      "rows": 53,
+      "coordinates": 1638,
+      "count": 10
+    },
+    {
+      "rows": 8,
+      "coordinates": 126,
+      "count": 10
+    },
+    {
+      "rows": 9,
+      "coordinates": 378,
+      "count": 10
+    },
+    {
+      "rows": 62,
+      "coordinates": 1764,
+      "count": 10
+    },
+    {
+      "rows": 60,
+      "coordinates": 1764,
+      "count": 10
+    },
+    {
+      "rows": 55,
+      "coordinates": 1638,
+      "count": 9
+    },
+    {
+      "rows": 10,
+      "coordinates": 378,
+      "count": 9
+    },
+    {
+      "rows": 52,
+      "coordinates": 1764,
+      "count": 9
+    },
+    {
+      "rows": 28,
+      "coordinates": 630,
+      "count": 8
+    },
+    {
+      "rows": 46,
+      "coordinates": 2016,
+      "count": 8
+    },
+    {
+      "rows": 23,
+      "coordinates": 1638,
+      "count": 7
+    },
+    {
+      "rows": 30,
+      "coordinates": 630,
+      "count": 7
+    },
+    {
+      "rows": 58,
+      "coordinates": 1638,
+      "count": 7
+    },
+    {
+      "rows": 14,
+      "coordinates": 756,
+      "count": 7
+    },
+    {
+      "rows": 49,
+      "coordinates": 2142,
+      "count": 7
+    },
+    {
+      "rows": 26,
+      "coordinates": 882,
+      "count": 7
+    },
+    {
+      "rows": 30,
+      "coordinates": 882,
+      "count": 7
+    },
+    {
+      "rows": 54,
+      "coordinates": 1638,
+      "count": 7
+    },
+    {
+      "rows": 51,
+      "coordinates": 2016,
+      "count": 7
+    },
+    {
+      "rows": 53,
+      "coordinates": 2016,
+      "count": 7
+    },
+    {
+      "rows": 55,
+      "coordinates": 2016,
+      "count": 7
+    },
+    {
+      "rows": 56,
+      "coordinates": 2016,
+      "count": 7
+    },
+    {
+      "rows": 8,
+      "coordinates": 882,
+      "count": 6
+    },
+    {
+      "rows": 48,
+      "coordinates": 2142,
+      "count": 6
+    },
+    {
+      "rows": 32,
+      "coordinates": 630,
+      "count": 6
+    },
+    {
+      "rows": 56,
+      "coordinates": 1638,
+      "count": 6
+    },
+    {
+      "rows": 33,
+      "coordinates": 630,
+      "count": 6
+    },
+    {
+      "rows": 13,
+      "coordinates": 504,
+      "count": 6
+    },
+    {
+      "rows": 25,
+      "coordinates": 882,
+      "count": 6
+    },
+    {
+      "rows": 62,
+      "coordinates": 1638,
+      "count": 6
+    },
+    {
+      "rows": 20,
+      "coordinates": 630,
+      "count": 6
+    },
+    {
+      "rows": 12,
+      "coordinates": 630,
+      "count": 6
+    },
+    {
+      "rows": 6,
+      "coordinates": 126,
+      "count": 6
+    },
+    {
+      "rows": 47,
+      "coordinates": 2142,
+      "count": 6
+    },
+    {
+      "rows": 51,
+      "coordinates": 1764,
+      "count": 6
+    },
+    {
+      "rows": 13,
+      "coordinates": 1512,
+      "count": 6
+    },
+    {
+      "rows": 33,
+      "coordinates": 1890,
+      "count": 6
+    },
+    {
+      "rows": 18,
+      "coordinates": 882,
+      "count": 5
+    },
+    {
+      "rows": 60,
+      "coordinates": 1638,
+      "count": 5
+    },
+    {
+      "rows": 13,
+      "coordinates": 756,
+      "count": 5
+    },
+    {
+      "rows": 57,
+      "coordinates": 1638,
+      "count": 5
+    },
+    {
+      "rows": 17,
+      "coordinates": 1764,
+      "count": 5
+    },
+    {
+      "rows": 49,
+      "coordinates": 1638,
+      "count": 5
+    },
+    {
+      "rows": 36,
+      "coordinates": 2142,
+      "count": 5
+    },
+    {
+      "rows": 15,
+      "coordinates": 882,
+      "count": 5
+    },
+    {
+      "rows": 31,
+      "coordinates": 630,
+      "count": 5
+    },
+    {
+      "rows": 51,
+      "coordinates": 2142,
+      "count": 5
+    },
+    {
+      "rows": 6,
+      "coordinates": 756,
+      "count": 5
+    },
+    {
+      "rows": 12,
+      "coordinates": 126,
+      "count": 5
+    },
+    {
+      "rows": 17,
+      "coordinates": 756,
+      "count": 5
+    },
+    {
+      "rows": 20,
+      "coordinates": 756,
+      "count": 5
+    },
+    {
+      "rows": 32,
+      "coordinates": 882,
+      "count": 5
+    },
+    {
+      "rows": 33,
+      "coordinates": 882,
+      "count": 5
+    },
+    {
+      "rows": 54,
+      "coordinates": 1764,
+      "count": 5
+    },
+    {
+      "rows": 63,
+      "coordinates": 1764,
+      "count": 5
+    },
+    {
+      "rows": 66,
+      "coordinates": 1764,
+      "count": 5
+    },
+    {
+      "rows": 48,
+      "coordinates": 2016,
+      "count": 5
+    },
+    {
+      "rows": 31,
+      "coordinates": 1764,
+      "count": 5
+    },
+    {
+      "rows": 65,
+      "coordinates": 1764,
+      "count": 5
+    },
+    {
+      "rows": 6,
+      "coordinates": 882,
+      "count": 5
+    },
+    {
+      "rows": 16,
+      "coordinates": 882,
+      "count": 5
+    },
+    {
+      "rows": 47,
+      "coordinates": 2268,
+      "count": 5
+    },
+    {
+      "rows": 14,
+      "coordinates": 1638,
+      "count": 5
+    },
+    {
+      "rows": 5,
+      "coordinates": 126,
+      "count": 4
+    },
+    {
+      "rows": 8,
+      "coordinates": 630,
+      "count": 4
+    },
+    {
+      "rows": 37,
+      "coordinates": 2142,
+      "count": 4
+    },
+    {
+      "rows": 42,
+      "coordinates": 2142,
+      "count": 4
+    },
+    {
+      "rows": 17,
+      "coordinates": 882,
+      "count": 4
+    },
+    {
+      "rows": 23,
+      "coordinates": 2268,
+      "count": 4
+    },
+    {
+      "rows": 47,
+      "coordinates": 2016,
+      "count": 4
+    },
+    {
+      "rows": 64,
+      "coordinates": 1764,
+      "count": 4
+    },
+    {
+      "rows": 4,
+      "coordinates": 126,
+      "count": 4
+    },
+    {
+      "rows": 50,
+      "coordinates": 2016,
+      "count": 4
+    },
+    {
+      "rows": 70,
+      "coordinates": 1764,
+      "count": 4
+    },
+    {
+      "rows": 45,
+      "coordinates": 2016,
+      "count": 4
+    },
+    {
+      "rows": 49,
+      "coordinates": 2016,
+      "count": 4
+    },
+    {
+      "rows": 67,
+      "coordinates": 1764,
+      "count": 4
+    },
+    {
+      "rows": 71,
+      "coordinates": 1764,
+      "count": 4
+    },
+    {
+      "rows": 47,
+      "coordinates": 1764,
+      "count": 4
+    },
+    {
+      "rows": 26,
+      "coordinates": 2016,
+      "count": 4
+    },
+    {
+      "rows": 12,
+      "coordinates": 756,
+      "count": 3
+    },
+    {
+      "rows": 59,
+      "coordinates": 1638,
+      "count": 3
+    },
+    {
+      "rows": 39,
+      "coordinates": 2016,
+      "count": 3
+    },
+    {
+      "rows": 59,
+      "coordinates": 1764,
+      "count": 3
+    },
+    {
+      "rows": 34,
+      "coordinates": 1764,
+      "count": 3
+    },
+    {
+      "rows": 69,
+      "coordinates": 1764,
+      "count": 3
+    },
+    {
+      "rows": 12,
+      "coordinates": 1386,
+      "count": 3
+    },
+    {
+      "rows": 23,
+      "coordinates": 2016,
+      "count": 3
+    },
+    {
+      "rows": 44,
+      "coordinates": 2142,
+      "count": 3
+    },
+    {
+      "rows": 50,
+      "coordinates": 2268,
+      "count": 3
+    },
+    {
+      "rows": 27,
+      "coordinates": 1890,
+      "count": 3
+    },
+    {
+      "rows": 29,
+      "coordinates": 1764,
+      "count": 3
+    },
+    {
+      "rows": 38,
+      "coordinates": 2268,
+      "count": 3
+    },
+    {
+      "rows": 43,
+      "coordinates": 2268,
+      "count": 3
+    },
+    {
+      "rows": 45,
+      "coordinates": 2268,
+      "count": 3
+    },
+    {
+      "rows": 48,
+      "coordinates": 2268,
+      "count": 3
+    },
+    {
+      "rows": 35,
+      "coordinates": 630,
+      "count": 2
+    },
+    {
+      "rows": 61,
+      "coordinates": 1638,
+      "count": 2
+    },
+    {
+      "rows": 69,
+      "coordinates": 1638,
+      "count": 2
+    },
+    {
+      "rows": 63,
+      "coordinates": 1638,
+      "count": 2
+    },
+    {
+      "rows": 24,
+      "coordinates": 1386,
+      "count": 2
+    },
+    {
+      "rows": 45,
+      "coordinates": 1638,
+      "count": 2
+    },
+    {
+      "rows": 28,
+      "coordinates": 1512,
+      "count": 2
+    },
+    {
+      "rows": 5,
+      "coordinates": 504,
+      "count": 2
+    },
+    {
+      "rows": 41,
+      "coordinates": 2268,
+      "count": 2
+    },
+    {
+      "rows": 16,
+      "coordinates": 630,
+      "count": 2
+    },
+    {
+      "rows": 20,
+      "coordinates": 1386,
+      "count": 2
+    },
+    {
+      "rows": 36,
+      "coordinates": 1890,
+      "count": 2
+    },
+    {
+      "rows": 54,
+      "coordinates": 2016,
+      "count": 2
+    },
+    {
+      "rows": 44,
+      "coordinates": 2016,
+      "count": 2
+    },
+    {
+      "rows": 13,
+      "coordinates": 1260,
+      "count": 2
+    },
+    {
+      "rows": 25,
+      "coordinates": 1890,
+      "count": 2
+    },
+    {
+      "rows": 55,
+      "coordinates": 1764,
+      "count": 2
+    },
+    {
+      "rows": 29,
+      "coordinates": 882,
+      "count": 2
+    },
+    {
+      "rows": 58,
+      "coordinates": 1764,
+      "count": 2
+    },
+    {
+      "rows": 11,
+      "coordinates": 378,
+      "count": 2
+    },
+    {
+      "rows": 36,
+      "coordinates": 2268,
+      "count": 2
+    },
+    {
+      "rows": 44,
+      "coordinates": 2268,
+      "count": 2
+    },
+    {
+      "rows": 49,
+      "coordinates": 2268,
+      "count": 2
+    },
+    {
+      "rows": 15,
+      "coordinates": 1512,
+      "count": 2
+    },
+    {
+      "rows": 40,
+      "coordinates": 2016,
+      "count": 2
+    },
+    {
+      "rows": 38,
+      "coordinates": 2142,
+      "count": 2
+    },
+    {
+      "rows": 15,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 2142,
+      "count": 1
+    },
+    {
+      "rows": 52,
+      "coordinates": 2142,
+      "count": 1
+    },
+    {
+      "rows": 55,
+      "coordinates": 2142,
+      "count": 1
+    },
+    {
+      "rows": 34,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 58,
+      "coordinates": 2142,
+      "count": 1
+    },
+    {
+      "rows": 59,
+      "coordinates": 2142,
+      "count": 1
+    },
+    {
+      "rows": 8,
+      "coordinates": 252,
+      "count": 1
+    },
+    {
+      "rows": 34,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 14,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 51,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 26,
+      "coordinates": 1890,
+      "count": 1
+    },
+    {
+      "rows": 64,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 66,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 68,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 1386,
+      "count": 1
+    },
+    {
+      "rows": 38,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 22,
+      "coordinates": 1386,
+      "count": 1
+    },
+    {
+      "rows": 43,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 21,
+      "coordinates": 1386,
+      "count": 1
+    },
+    {
+      "rows": 42,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 45,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 23,
+      "coordinates": 1386,
+      "count": 1
+    },
+    {
+      "rows": 44,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 30,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 65,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 67,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 43,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 29,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 33,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 15,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 50,
+      "coordinates": 1890,
+      "count": 1
+    },
+    {
+      "rows": 7,
+      "coordinates": 504,
+      "count": 1
+    },
+    {
+      "rows": 12,
+      "coordinates": 882,
+      "count": 1
+    },
+    {
+      "rows": 19,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 61,
+      "coordinates": 1890,
+      "count": 1
+    },
+    {
+      "rows": 51,
+      "coordinates": 2268,
+      "count": 1
+    },
+    {
+      "rows": 13,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 13,
+      "coordinates": 882,
+      "count": 1
+    },
+    {
+      "rows": 22,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 65,
+      "coordinates": 1890,
+      "count": 1
+    },
+    {
+      "rows": 57,
+      "coordinates": 2268,
+      "count": 1
+    },
+    {
+      "rows": 38,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 14,
+      "coordinates": 882,
+      "count": 1
+    },
+    {
+      "rows": 23,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 59,
+      "coordinates": 2268,
+      "count": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 24,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 40,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 10,
+      "coordinates": 126,
+      "count": 1
+    },
+    {
+      "rows": 21,
+      "coordinates": 378,
+      "count": 1
+    },
+    {
+      "rows": 45,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 10,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 21,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 22,
+      "coordinates": 378,
+      "count": 1
+    },
+    {
+      "rows": 25,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 30,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 29,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 31,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 32,
+      "coordinates": 1008,
+      "count": 1
+    },
+    {
+      "rows": 41,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 1638,
+      "count": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 756,
+      "count": 1
+    },
+    {
+      "rows": 56,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 31,
+      "coordinates": 1890,
+      "count": 1
+    },
+    {
+      "rows": 68,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 52,
+      "coordinates": 2016,
+      "count": 1
+    },
+    {
+      "rows": 44,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 25,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 42,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 12,
+      "coordinates": 378,
+      "count": 1
+    },
+    {
+      "rows": 21,
+      "coordinates": 2142,
+      "count": 1
+    },
+    {
+      "rows": 14,
+      "coordinates": 1386,
+      "count": 1
+    },
+    {
+      "rows": 53,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 24,
+      "coordinates": 2268,
+      "count": 1
+    },
+    {
+      "rows": 46,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 20,
+      "coordinates": 1512,
+      "count": 1
+    },
+    {
+      "rows": 58,
+      "coordinates": 2016,
+      "count": 1
+    },
+    {
+      "rows": 59,
+      "coordinates": 2016,
+      "count": 1
+    },
+    {
+      "rows": 60,
+      "coordinates": 2016,
+      "count": 1
+    },
+    {
+      "rows": 25,
+      "coordinates": 2016,
+      "count": 1
+    },
+    {
+      "rows": 32,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 53,
+      "coordinates": 2268,
+      "count": 1
+    },
+    {
+      "rows": 55,
+      "coordinates": 2268,
+      "count": 1
+    },
+    {
+      "rows": 56,
+      "coordinates": 2268,
+      "count": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 1764,
+      "count": 1
+    },
+    {
+      "rows": 15,
+      "coordinates": 252,
+      "count": 1
+    },
+    {
+      "rows": 26,
+      "coordinates": 2394,
+      "count": 1
+    },
+    {
+      "rows": 8,
+      "coordinates": 756,
+      "count": 1
+    },
+    {
+      "rows": 11,
+      "coordinates": 1134,
+      "count": 1
+    },
+    {
+      "rows": 63,
+      "coordinates": 2016,
+      "count": 1
+    },
+    {
+      "rows": 44,
+      "coordinates": 2520,
+      "count": 1
+    },
+    {
+      "rows": 14,
+      "coordinates": 630,
+      "count": 1
+    },
+    {
+      "rows": 36,
+      "coordinates": 882,
+      "count": 1
+    },
+    {
+      "rows": 9,
+      "coordinates": 504,
+      "count": 1
+    },
+    {
+      "rows": 17,
+      "coordinates": 1134,
+      "count": 1
+    },
+    {
+      "rows": 71,
+      "coordinates": 2016,
+      "count": 1
+    },
+    {
+      "rows": 56,
+      "coordinates": 2520,
+      "count": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 882,
+      "count": 1
+    },
+    {
+      "rows": 20,
+      "coordinates": 1134,
+      "count": 1
+    },
+    {
+      "rows": 80,
+      "coordinates": 1890,
+      "count": 1
+    }
+  ],
+  "slowest_scopes": [
+    {
+      "owners": 15,
+      "submitted": 4,
+      "cached_or_shared": 11,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          64,
+          1764
+        ],
+        [
+          51,
+          2016
+        ],
+        [
+          29,
+          630
+        ],
+        [
+          31,
+          1008
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 1.250583,
+        "encode_wall_ms": 0.11687499999999999,
+        "prepare_wall_ms": 2.503,
+        "readback_payload_bytes": 6603968,
+        "submit_map_wall_ms": 0.218666,
+        "total_wall_ms": 4742.036209,
+        "wait_wall_ms": 4737.9465
+      }
+    },
+    {
+      "owners": 28,
+      "submitted": 5,
+      "cached_or_shared": 23,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          66,
+          1764
+        ],
+        [
+          47,
+          2268
+        ],
+        [
+          25,
+          630
+        ],
+        [
+          5,
+          252
+        ],
+        [
+          22,
+          882
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 1.339208,
+        "encode_wall_ms": 0.13362500000000002,
+        "prepare_wall_ms": 2.551042,
+        "readback_payload_bytes": 6464008,
+        "submit_map_wall_ms": 0.154708,
+        "total_wall_ms": 4409.866625000001,
+        "wait_wall_ms": 4405.68775
+      }
+    },
+    {
+      "owners": 17,
+      "submitted": 5,
+      "cached_or_shared": 12,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          61,
+          1764
+        ],
+        [
+          51,
+          2016
+        ],
+        [
+          25,
+          630
+        ],
+        [
+          11,
+          882
+        ],
+        [
+          23,
+          882
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 1.21425,
+        "encode_wall_ms": 0.120375,
+        "prepare_wall_ms": 2.131542,
+        "readback_payload_bytes": 6393448,
+        "submit_map_wall_ms": 0.16354100000000002,
+        "total_wall_ms": 4230.1565,
+        "wait_wall_ms": 4226.526583
+      }
+    },
+    {
+      "owners": 31,
+      "submitted": 12,
+      "cached_or_shared": 19,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          71,
+          2016
+        ],
+        [
+          56,
+          2520
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          5,
+          252
+        ],
+        [
+          16,
+          630
+        ],
+        [
+          6,
+          378
+        ],
+        [
+          39,
+          882
+        ],
+        [
+          12,
+          756
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          20,
+          1134
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          80,
+          1890
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 3.492916,
+        "encode_wall_ms": 0.296875,
+        "prepare_wall_ms": 4.813166,
+        "readback_payload_bytes": 12910392,
+        "submit_map_wall_ms": 0.26054099999999997,
+        "total_wall_ms": 4216.026417,
+        "wait_wall_ms": 4207.162458
+      }
+    },
+    {
+      "owners": 28,
+      "submitted": 5,
+      "cached_or_shared": 23,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          62,
+          1764
+        ],
+        [
+          55,
+          2268
+        ],
+        [
+          25,
+          630
+        ],
+        [
+          5,
+          252
+        ],
+        [
+          22,
+          882
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 3.186958,
+        "encode_wall_ms": 0.060375,
+        "prepare_wall_ms": 2.5539159999999996,
+        "readback_payload_bytes": 6733912,
+        "submit_map_wall_ms": 0.15187499999999998,
+        "total_wall_ms": 4077.3650000000002,
+        "wait_wall_ms": 4071.411458
+      }
+    },
+    {
+      "owners": 28,
+      "submitted": 7,
+      "cached_or_shared": 21,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          61,
+          1764
+        ],
+        [
+          53,
+          2268
+        ],
+        [
+          24,
+          630
+        ],
+        [
+          10,
+          882
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          21,
+          882
+        ],
+        [
+          6,
+          378
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 5.043708,
+        "encode_wall_ms": 0.075083,
+        "prepare_wall_ms": 2.491708,
+        "readback_payload_bytes": 6833504,
+        "submit_map_wall_ms": 0.17862499999999998,
+        "total_wall_ms": 4015.7365839999998,
+        "wait_wall_ms": 4007.946541
+      }
+    },
+    {
+      "owners": 18,
+      "submitted": 5,
+      "cached_or_shared": 13,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          61,
+          1764
+        ],
+        [
+          51,
+          2016
+        ],
+        [
+          25,
+          630
+        ],
+        [
+          11,
+          882
+        ],
+        [
+          23,
+          882
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 1.2789590000000002,
+        "encode_wall_ms": 0.176833,
+        "prepare_wall_ms": 2.215125,
+        "readback_payload_bytes": 6393448,
+        "submit_map_wall_ms": 0.19079200000000002,
+        "total_wall_ms": 3879.605667,
+        "wait_wall_ms": 3875.743625
+      }
+    },
+    {
+      "owners": 28,
+      "submitted": 7,
+      "cached_or_shared": 21,
+      "errors": 0,
+      "active_set_iterations": [],
+      "shapes": [
+        [
+          62,
+          1764
+        ],
+        [
+          45,
+          2268
+        ],
+        [
+          24,
+          630
+        ],
+        [
+          10,
+          882
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          21,
+          882
+        ],
+        [
+          6,
+          378
+        ]
+      ],
+      "stages": {
+        "decode_refine_wall_ms": 1.385208,
+        "encode_wall_ms": 0.13120800000000002,
+        "prepare_wall_ms": 2.440375,
+        "readback_payload_bytes": 6432200,
+        "submit_map_wall_ms": 0.193625,
+        "total_wall_ms": 3844.536959,
+        "wait_wall_ms": 3840.386083
+      }
+    }
+  ]
+}

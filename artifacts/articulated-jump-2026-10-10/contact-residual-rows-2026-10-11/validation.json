@@ -1,0 +1,10 @@
+{
+  "exit_code": 101,
+  "physics_tests": {
+    "passed": 381,
+    "failed": 0,
+    "ignored": 43
+  },
+  "findings": "At scale1e-7 rod367/segment17 newly activates with excess depth9.4378e-11m; at scale1e-8 rod355/segment17 activates with excess1.0484e-10m. These exceed predicted merit descent at those scales; inspect witness classification/minimum search and geometric smoothness. Root cause not yet established.",
+  "source_sha256": "8c55504864bd4af561be011c389156d9c745314e4a83fc7e8f0f10b0ecc77486"
+}

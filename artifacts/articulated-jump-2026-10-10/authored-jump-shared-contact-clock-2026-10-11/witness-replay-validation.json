@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "fixture_sha256": "6a6916b970d23b4ddfda11111ee7c85a0e665b1790ea02c7efc10394a2b206b0",
+  "binary_sha256": "9b4b29e423434783ed71825af3e52774d82c068ae5fa262fa64b776f813ed556",
+  "scope": "single captured geometric witness activation; reference vs serial vs 8 workers exact row/group equality, three repeats",
+  "not_proven": [
+    "full refinement convergence",
+    "physical operator solution",
+    "full animation",
+    "FPS"
+  ]
+}

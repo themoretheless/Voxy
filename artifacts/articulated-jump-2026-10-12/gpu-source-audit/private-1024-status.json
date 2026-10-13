@@ -1,0 +1,17 @@
+{
+  "measurement": {
+    "candidate_equality_verified": true,
+    "coordinates": 1764,
+    "gpu_pass_ms": [
+      65.975125,
+      66.001584,
+      68.075209
+    ],
+    "rows": 174,
+    "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+  },
+  "physical_qualification": "passed original operator and duplicate batch; no native fallback",
+  "shader_sha256": "4737d7149324d1367a75d6c2112fafa4bd67c81b61198a3153074e3f0b827cda",
+  "decision": "not promoted; no improvement established over unmodified 1024 kernel",
+  "scope": "single operator, not trajectory or FPS"
+}

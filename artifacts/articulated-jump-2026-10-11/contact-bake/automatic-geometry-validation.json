@@ -1,0 +1,16 @@
+{
+  "tests": {
+    "passed": 191,
+    "failed": 0,
+    "ignored": 17
+  },
+  "scope": "Installed geometry automatically proposes current support minimum through physical admission and IK; persistence, budget rollback, failed proposal discard and airborne cancellation",
+  "real_character_geometry_installed": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "05f826092fc68dd6b0dc610f48c70c74f42a4ce772cac02b44366d3c131846d9",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "3203eb75a4b8ff96403c0c1f5ec6811c926638ca97e007b00bb852aee44365e8",
+    "crates/voxy_animation/src/foot_support.rs": "d71fd401652a280a3ab98f0000a7d535eafb0faf4963977b39f10e575411389a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/automatic-geometry-final-tests.log": "226ac69ce24deabb8f643a128e97aa53ab199d96c3d718f135d9f0d24dba3c19"
+  }
+}

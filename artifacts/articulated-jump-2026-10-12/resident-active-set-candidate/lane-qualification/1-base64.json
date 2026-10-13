@@ -1,0 +1,14 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "coordinate_width": 1764,
+  "elapsed_ms": 223.741875,
+  "maximum_reaction_difference": 9.785008523991375e-12,
+  "maximum_response_component_difference": 1.0797786276217636e-14,
+  "native_fallback_used": false,
+  "response_units": "unassigned",
+  "rows": 174,
+  "scope": "one complete original physical operator, including native factor/response reconstruction and original admission; not trajectory or FPS",
+  "status": "original_physical_operator_admitted",
+  "submissions": 1,
+  "systems": 14
+}

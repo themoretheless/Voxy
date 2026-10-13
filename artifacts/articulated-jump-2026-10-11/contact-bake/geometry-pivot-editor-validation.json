@@ -1,0 +1,14 @@
+{
+  "passed": 190,
+  "failed": 0,
+  "ignored": 17,
+  "scope": "Explicit geometry selection request followed by accepted support admission and IK; three-frame persistence and invalid-frame rollback",
+  "automatic_character_geometry_selection": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "235a76876c5e9f279e1e2ff067d4871430669b5d85e9903b7a143a365c6788ee",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "5d433c060bd075fe1d149b301b6fe014ebe1084c071fd42d982966e5193ee09d",
+    "crates/voxy_animation/src/foot_support.rs": "936f7060884c59864c82fa50cfcc8d0efa4c633d2ea3c1c9f8d0fd1c71ab6c37",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/geometry-pivot-editor-tests.log": "0c185f9a61b7e89c5121232f599d7470873481d370f8290f5079cbb861faf26a"
+  }
+}

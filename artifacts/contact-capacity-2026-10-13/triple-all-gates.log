@@ -1,0 +1,17 @@
+
+running 8 tests
+test joint_contact_dot::triple::tests::triple_input_preserves_original_binary_coefficients ... ok
+test joint_contact_dot::triple::tests::triple_input_rejects_lost_small_terms_and_invalid_shapes ... ok
+test joint_contact_dot::triple::arithmetic_tests::triple_arithmetic_shader_validates ... ok
+test joint_contact_dot::triple::qr_tests::triple_qr_shader_validates ... ok
+TRIPLE ORIGINAL INPUT rows=91 width=882 bit_exact=true scope=input_only_no_GPU_arithmetic_or_physical_admission
+test joint_contact_dot::triple::tests::triple_input_preserves_captured_original_operator ... ok
+TRIPLE GPU ARITHMETIC cases=17261 power_of_two_input_scaling=true original_inputs_unchanged=true product_tail_2pow_minus104=true division_checked=true sqrt_checked=true scope=arithmetic_only_not_contact_solver_or_FPS
+test joint_contact_dot::triple::arithmetic_tests::gpu_triple_arithmetic_retains_cancellation_and_product_tail ... ok
+TRIPLE COLUMN NORMS rows=91 width=882 worst_relative_to_compensated_f64=0.00000000000000019135856487296877 input_unchanged=true scope=norm_only_not_QR_or_physical_admission
+TRIPLE ORIGINAL QR active=[2, 26, 27, 48, 53, 60] width=882 orthogonality=0.000000000000000014333628061747244 reconstruction=0.00000000000000011102230246251565 original_worst_gap=0.000000000000006043613959977323 active_equality=0.000000000000006043613959977323 min_reaction=0.0005896138885827462 tolerance=0.00000000000001 scope=fixed_active_QR_not_full_active_set_or_physical_admission
+test joint_contact_dot::triple::arithmetic_tests::gpu_triple_original_column_norms ... ok
+test joint_contact_dot::triple::qr_tests::gpu_triple_qr_original_active_operator ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 282 filtered out; finished in 1.04s
+

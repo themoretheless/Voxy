@@ -1,0 +1,16 @@
+{
+  "physics_tests": {
+    "passed": 381,
+    "failed": 0,
+    "ignored": 43
+  },
+  "actual_query_feature_probe": "passed; rounded projection no longer switches edge metric to face plane",
+  "full_469_guide_replay": {
+    "passed": false,
+    "exit_code": 101,
+    "failure_iteration": 20,
+    "reason": "joint hair contact direction has no descending geometry step",
+    "last_worst_gap_m": -1.3933336756254627e-08
+  },
+  "full_jump_and_fps": "not qualified"
+}

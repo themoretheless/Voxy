@@ -1,0 +1,19 @@
+{
+  "scope": "one original strict coupled frame; concurrent load; not whole-cycle or rendered FPS qualification",
+  "frame": {
+    "elapsed_ms": 96856.640042,
+    "frame": 1,
+    "gpu_counts": {
+      "coordinate_batches": true,
+      "joint_admitted": 9424,
+      "joint_coordinate_calls": 9424,
+      "joint_equality_dispatches": 535,
+      "joint_equality_submissions": 535,
+      "native_contact_fallbacks": 0,
+      "structural_calls": 0
+    },
+    "hair_ms": 96838.24375000001,
+    "skin_ms": 348.94954099999995,
+    "time_s": 0.008333333333333333
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "scope": "same saved469-guide pose; comparison of logged accepted merit/admission/model sequence only",
+  "reference_event_count": 136,
+  "new_event_count": 136,
+  "logged_sequences_identical": true,
+  "terminal": {
+    "exit_code": 0,
+    "elapsed_seconds": 149.87404500000002
+  },
+  "performance_comparison_valid": false
+}

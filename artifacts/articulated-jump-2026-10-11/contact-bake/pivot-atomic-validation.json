@@ -1,0 +1,19 @@
+{
+  "passed": 188,
+  "failed": 0,
+  "ignored": 17,
+  "scope": "atomic per-owner foot-state staging",
+  "regression": [
+    "skipped swing followed by support budget exhaustion",
+    "old contact pivot and pending request retained",
+    "query work remains charged",
+    "sufficient-budget retry succeeds"
+  ],
+  "fps_profiled": false,
+  "automatic_clip_pivot_events": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "0b2507a37ee42a31d7e6ff0bdc8e85d26d3d04028695cbaa6fd50fadc7932ec7",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "3a152bbe93ed552c61497dd6fa381e34d9b3afa58bcc2776a1ba3080542eb5ac",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/pivot-atomic-tests.log": "63bd371a322205b3d3c1e5e20fea831606b59ca559ff437e249351dea4b01440"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "summary_sha256": "4c15157e3d6cfcaad55b90de01f10a5d61b9f8f0dd46d2a86300609a02703f3f",
+  "completed_frames": 2,
+  "frame2": {
+    "elapsed_ms": 1174062.5075420002,
+    "frame": 2,
+    "hair_ms": 1174059.6546669998,
+    "skin_ms": 84.245625,
+    "time_s": 0.016666666666666666
+  },
+  "scope": "Full CPU coupled frame2 passed geometry/strain/root gates; remaining720-frame trajectory and nonlinear stationarity/FPS unproven"
+}

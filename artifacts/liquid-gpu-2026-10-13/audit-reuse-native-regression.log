@@ -1,0 +1,329 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^
+  |
+  = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:18:127
+   |
+18 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:72:19
+   |
+65 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+72 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `advance_contacts` is never used
+   --> crates/physics/src/hair/contact_safe_motion.rs:734:24
+    |
+734 | pub(in crate::hair) fn advance_contacts(
+    |                        ^^^^^^^^^^^^^^^^
+
+warning: function `activate` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:145:15
+    |
+145 | pub(super) fn activate(
+    |               ^^^^^^^^
+
+warning: function `activate_with_workers` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:158:15
+    |
+158 | pub(super) fn activate_with_workers(
+    |               ^^^^^^^^^^^^^^^^^^^^^
+
+warning: field `owner` is never read
+  --> crates/physics/src/hair/contact_fraction_cache.rs:70:5
+   |
+69 | pub(super) struct FractionShard<'a> {
+   |                   ------------- field in this struct
+70 |     owner:&'a FractionCache,
+   |     ^^^^^
+
+warning: `physics` (lib) generated 8 warnings (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 27.46s
+     Running tests/liquid.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid-270ee4d826237447)
+
+running 17 tests
+test failures_are_atomic_including_after_a_completed_substep ... ok
+test interface_penalty_force_matches_potential_gradient_and_separates_materials ... ok
+test interface_penalty_is_symmetric_local_and_configuration_is_atomic ... ok
+test surface_forces_do_not_attract_different_materials ... ok
+test isolated_free_fall_converges_as_time_step_is_refined ... ok
+test unequal_mass_pressure_pair_preserves_momentum ... ok
+test surface_tension_pulls_a_pair_together_and_preserves_unequal_mass_momentum ... ok
+test viscosity_damps_relative_motion_without_losing_momentum ... ok
+test volume_formulation_preserves_density_jump_for_equal_reference_volumes ... ok
+test volume_formulation_symmetric_pressure_preserves_momenta_with_unequal_masses ... ok
+test asymmetric_surface_forces_preserve_angular_momentum ... ok
+test different_materials_keep_individual_mass_and_exchange_momentum ... ok
+test gravity_and_walls_bound_particles_without_mass_loss ... ok
+test oblique_interfaces_preserve_linear_and_angular_momentum_over_time ... ok
+test volume_pressure_is_compression_energy_gradient_for_unequal_reference_volumes ... ok
+test dam_break_remains_finite_with_exact_mass_and_wall_bounds ... ok
+test stretched_drop_rounds_and_stays_more_compact_than_control ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/liquid_boundary.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_boundary-ee9ca1becab10cbf)
+
+running 43 tests
+test empty_fluid_still_advances_sampled_body_under_gravity ... ok
+test boundary_viscosity_damps_tangential_motion_and_deposits_lost_energy_as_heat ... ok
+test boundary_translation_rebuilds_index_and_preserves_surface_velocity ... ok
+test boundary_support_matches_a_mirrored_fluid_neighbor_and_reaction_balances_impulse ... ok
+test boundary_pressure_can_draw_work_from_latent_heat_on_the_plateau ... ok
+test boundary_viscosity_substep_exhaustion_restores_already_deposited_heat ... ok
+test explicit_wall_viscosity_reaction_balances_the_lost_particle_momentum ... ok
+test distant_boundary_geometry_does_not_consume_local_neighbor_budget ... ok
+test general_tensor_pressure_work_preserves_combined_energy_and_angular_momentum ... ok
+test fast_prescribed_surface_restricts_substep_displacement_and_rolls_back_on_budget ... ok
+test approaching_a_pressurized_boundary_heats_the_fluid ... ok
+test insufficient_boundary_pressure_energy_rolls_back_motion_and_fields ... ok
+test grid_search_matches_full_kernel_sum_across_cell_boundaries ... ok
+test extrapolated_static_pressure_preserves_reaction_and_thermal_work_balance ... ok
+test invalid_configuration_and_work_exhaustion_are_atomic ... ok
+test invalid_surface_velocity_is_atomic_and_geometry_replacement_resets_motion ... ok
+test invalid_tensor_and_non_unit_orientation_leave_every_state_unchanged ... ok
+test opposing_wall_velocities_heat_fluid_without_net_translation ... ok
+test prescribed_wall_motion_supplies_mechanical_work_and_viscous_heat ... ok
+test rotating_geometry_preserves_volume_and_radius_without_particles ... ok
+test rotational_failure_rolls_back_orientation_and_thermal_fields ... ok
+test off_center_sample_pressure_spins_body_and_preserves_angular_energy_balance ... ok
+test sampled_body_multimaterial_pressure_preserves_total_momentum_over_substeps ... ok
+test rotational_viscosity_transfers_spin_and_heats_with_conserved_angular_momentum ... ok
+test boundary_pressure_converts_thermal_energy_into_motion_without_energy_creation ... ok
+test sampled_body_pressure_recoils_and_moves_samples_with_body ... ok
+test asymmetric_free_rotation_preserves_energy_world_momentum_and_sample_shape ... ok
+test sampled_body_pressure_work_conserves_combined_thermal_and_kinetic_energy ... ok
+test interior_boundary_pressure_and_viscous_heat_share_one_energy_balance ... ok
+test sampled_body_pressure_work_is_invariant_under_uniform_velocity_shift ... ok
+test sampled_body_substep_failure_restores_geometry_fields_and_body ... ok
+test sampled_body_viscosity_heats_only_relative_kinetic_energy ... ok
+test tensor_mobility_respects_body_orientation_and_off_diagonal_inertia ... ok
+test support_is_local_and_does_not_change_fluid_mass_or_configuration_on_query ... ok
+test tensor_substep_failure_restores_orientation_and_sample_geometry ... ok
+test tensor_torque_free_drift_matches_euler_acceleration ... ok
+test unrepresentable_boundary_translation_preserves_geometry_index_and_velocity ... ok
+test tensor_viscous_relaxation_heats_with_conserved_energy_and_angular_momentum ... ok
+test three_dimensional_rotational_viscosity_conserves_pair_energy_and_momenta ... ok
+test wall_extrapolation_is_invariant_to_coincident_particle_mass_splitting ... ok
+test volume_wall_and_fluid_forces_differentiate_the_same_compression_energy ... ok
+test sampled_half_space_converges_to_half_the_normalized_kernel_volume ... ok
+test tensor_orientation_converges_when_time_step_is_halved ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_density_operator.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_density_operator-691521427a5d9b59)
+
+running 10 tests
+test original_pressure_laws_cover_compression_gas_and_current_density_admission ... ok
+test density_owner_admits_current_mixture_and_rejects_stale_or_corrupt_candidates ... ok
+test supported_pipeline_rejects_nonfinite_native_reference_with_loose_candidate_density ... ok
+test normal_backend_rejects_partial_corrupt_and_stale_vectors_as_a_whole ... ok
+test pair_force_backend_is_whole_batch_admitted_and_failed_step_is_atomic ... ok
+test accumulation_backend_rejects_whole_corrupt_batch_and_preserves_late_failure ... ok
+test joint_force_pipeline_never_publishes_partially_admitted_state ... ok
+test accelerated_density_step_admits_whole_results_and_preserves_failure_state ... ok
+test complete_pipeline_whole_rejection_and_late_failure_preserve_native_state ... ok
+test supported_density_normal_pipeline_preserves_wall_images_and_atomic_failure ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_dissipation.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_dissipation-a37e77db60f7a510)
+
+running 10 tests
+test exact_heated_viscosity_does_not_require_explicit_diffusion_substeps ... ok
+test failure_after_heating_rolls_back_both_velocity_and_enthalpy ... ok
+test viscous_loss_can_change_phase_fraction_without_raising_temperature ... ok
+test rigid_spin_has_no_internal_viscous_force_or_spurious_heating ... ok
+test viscosity_conserves_kinetic_plus_thermal_energy_and_pair_momentum ... ok
+test disabling_heating_retains_previous_viscosity_mode_and_requires_fields ... ok
+test explicit_oblique_viscosity_preserves_angular_momentum_without_heating ... ok
+test oblique_many_particle_viscosity_preserves_angular_momentum_and_heats ... ok
+test whipped_cream_yield_term_increases_damping_and_conserves_heat_and_momentum ... ok
+test central_viscosity_matches_interior_divergence_free_quadratic_shear ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/liquid_film_rebound.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_film_rebound-3e0ba13ce52f158f)
+
+running 4 tests
+test oblique_rebound_closes_momentum_and_kinetic_energy_ledgers ... ok
+test underside_and_miss_work_and_invalid_controls_roll_back ... ok
+test elastic_and_stopping_limits_preserve_mass_and_composition ... ok
+test zero_restitution_contact_remains_detectable_under_gravity ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_forcing.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_forcing-123d976815ddf1d6)
+
+running 3 tests
+test forcing_work_matches_kinetic_change_and_impulse_matches_momentum_change ... ok
+test wrong_counts_nonfinite_and_overflow_are_atomic ... ok
+test braking_has_negative_work_and_force_duration_scales_impulse ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_gas.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_gas-13281cd14df4dda8)
+
+running 10 tests
+test expansion_cools_and_compression_heats_with_total_energy_and_momentum_balance ... ok
+test ideal_gas_pressure_and_acoustic_speed_follow_temperature ... ok
+test incompatible_heat_capacity_and_latent_eos_are_rejected_atomically ... ok
+test gas_pressure_is_independent_of_liquid_reference_density ... ok
+test gas_wall_work_preserves_total_energy_and_fixture_force_balance ... ok
+test isolated_gas_particle_falls_ballistically_without_gravity_heating ... ok
+test gas_corner_and_face_loads_match_isentropic_internal_energy_gradients ... ok
+test gas_gravity_and_wall_pressure_refine_adiabatic_and_potential_energy_balance ... ok
+test gas_wall_adiabatic_entropy_error_decreases_under_time_refinement ... ok
+test multi_particle_gas_corner_flow_has_second_order_temperature_and_motion ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests/liquid_impact_events.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_impact_events-2973d1bf003a9338)
+
+running 10 tests
+test invalid_onset_rolls_back_liquid_and_film ... ok
+test tangential_speed_does_not_trigger_normal_splash_onset ... ok
+test chronological_index_changes_preserve_distinct_parent_composition_and_temperature ... ok
+test fragment_velocity_advances_only_after_birth_for_remaining_time ... ok
+test daughter_and_granddaughter_impacts_keep_inventory_and_energy_balances ... ok
+test parent_rebounds_twice_then_deposits_within_the_same_interval ... ok
+test onset_gate_changes_fragmentation_without_losing_mass_or_energy ... ok
+test viscous_material_suppresses_splash_for_identical_impact_and_energy_budget ... ok
+test unequal_fragment_cascade_deposits_all_mass_and_species ... ok
+test late_event_lineage_and_particle_budgets_restore_both_complete_states ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_mixture_heat.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_mixture_heat-bf89853488201979)
+
+running 3 tests
+test configuration_preserves_energy_and_invalid_configuration_is_atomic ... ok
+test reservoir_uses_actual_component_capacity_and_energy_ledger ... ok
+test diffusing_components_carry_heat_and_preserve_isothermal_state ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_mixture_properties.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_mixture_properties-0d9da890ba2ad03c)
+
+running 5 tests
+test coefficients_match_additive_volume_wood_and_viscosity_closures ... ok
+test selective_evaporation_increases_solution_density_and_viscosity ... ok
+test sources_replacement_and_configuration_conflicts_are_atomic ... ok
+test composition_changes_actual_viscous_damping_without_energy_creation ... ok
+test transported_composition_changes_mechanics_and_respects_thermal_response_order ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_pressure_work.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_pressure_work-467a930f7aaadd00)
+
+running 8 tests
+test insufficient_thermal_energy_rolls_back_pressure_kicks ... ok
+test compression_heats_and_expansion_cools_without_losing_total_energy ... ok
+test disabled_pressure_work_retains_the_previous_isothermal_mode ... ok
+test pressure_work_is_stored_in_latent_heat_on_the_phase_plateau ... ok
+test pressure_work_and_viscous_heat_conserve_energy_together_in_a_cloud ... ok
+test volume_pressure_work_uses_the_same_force_and_conserves_total_energy ... ok
+test repeated_pressure_work_conserves_energy_through_the_motion ... ok
+test thermal_conduction_and_temperature_response_keep_the_pressure_energy_balance ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_reflecting.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_reflecting-bc6c12eed6b8e90e)
+
+running 14 tests
+test crossing_a_reflecting_domain_rolls_back_motion_and_thermal_fields ... ok
+test pressure_impulses_and_torque_balance_the_stationary_fixture ... ok
+test reflected_geometry_and_budget_failures_are_atomic ... ok
+test symmetric_integrator_rejects_sampled_walls_atomically_in_both_configuration_orders ... ok
+test ordinary_step_uses_selected_symmetric_viscosity_and_advects_relaxed_velocity ... ok
+test frozen_viscous_stage_preserves_geometry_and_reports_integrated_fixture_balance ... ok
+test corner_image_relaxation_conserves_heat_and_cannot_increase_kinetic_energy ... ok
+test central_wall_self_image_damps_normal_velocity_and_deposits_exact_heat ... ok
+test viscous_fixture_loads_match_velocity_gradient_and_particle_impulses ... ok
+test reflected_corner_forces_and_face_reactions_are_energy_gradients ... ok
+test reflected_pressure_work_matches_explicit_kicks_and_balances_heat ... ok
+test mechanical_energy_error_decreases_with_time_step ... ok
+test frozen_viscous_stage_converges_under_time_refinement ... ok
+test symmetric_viscous_stage_has_second_order_frozen_time_convergence ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/liquid_surface.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_surface-4d16130c1c4c03b4)
+
+running 2 tests
+test budgets_and_empty_material_selection_do_not_mutate_simulation ... ok
+test isolated_particle_surface_is_closed_outward_and_matches_analytic_volume ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_thixotropy.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_thixotropy-ce0b01fadee922c5)
+
+running 8 tests
+test invalid_kinetics_and_failed_flow_preserve_structure_and_complete_state ... ok
+test ordinary_and_symmetric_steps_evolve_structure_without_creating_heat_at_rest ... ok
+test structural_memory_follows_survivors_and_new_sources_start_recovered ... ok
+test rest_and_rigid_spin_recover_without_regularization_induced_breakdown ... ok
+test constant_shear_structure_is_analytic_bounded_and_partition_independent ... ok
+test evolving_shear_structure_changes_damping_and_preserves_heat_and_momentum ... ok
+test advecting_pressurized_structured_flow_refines_in_all_evolved_variables ... ok
+test coupled_structure_and_viscosity_refine_toward_the_same_solution ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.59s
+
+     Running tests/liquid_transport.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_transport-10de7bb35dc61395)
+
+running 7 tests
+test overflowing_heat_capacity_is_rejected_without_publishing_fields ... ok
+test zero_conductivity_insulates_and_large_rates_do_not_overshoot ... ok
+test immiscible_groups_exchange_heat_but_keep_composition_separate ... ok
+test heat_and_dissolved_mass_are_conserved_with_unequal_capacities ... ok
+test failure_after_transport_exchange_rolls_back_fields_and_motion ... ok
+test passive_fields_advect_with_particles_without_diffusion ... ok
+test connected_cloud_converges_to_mass_weighted_mixture_without_losing_heat ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_viscoelastic.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_viscoelastic-00d8dd914d2f6ab2)
+
+running 10 tests
+test coupled_stress_accelerates_particles_and_conserves_linear_and_angular_momentum ... ok
+test exact_quiescent_relaxation_and_free_energy_to_heat ... ok
+test invalid_memory_and_late_substep_failure_are_atomic ... ok
+test coupled_mechanical_energy_error_decreases_with_time_step ... ok
+test planar_cloud_rigid_rotation_preserves_relaxed_conformation ... ok
+test rotation_is_objective_and_does_not_create_polymer_heat ... ok
+test shear_matches_analytic_oldroyd_b_with_second_order_time_refinement ... ok
+test isolated_particle_relaxation_heats_transport_without_motion ... ok
+test thin_filament_resolves_longitudinal_stress_without_spurious_rotation_strain ... ok
+test split_and_merge_preserve_memory_and_account_for_mixing_energy ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

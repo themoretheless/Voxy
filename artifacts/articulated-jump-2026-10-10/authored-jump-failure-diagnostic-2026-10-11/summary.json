@@ -1,0 +1,112 @@
+{
+  "attempted_frame": 15,
+  "authored_jump": true,
+  "completed_frames": 14,
+  "error": "hair axial strain exceeds admission limit",
+  "guide_count": 469,
+  "required_frames": 720,
+  "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.11666666666666667,
+  "status": "failed",
+  "steps": [
+    {
+      "elapsed_ms": 942.0537089999999,
+      "frame": 1,
+      "hair_ms": 911.865625,
+      "skin_ms": 549.099833,
+      "time_s": 0.008333333333333333
+    },
+    {
+      "elapsed_ms": 445.593583,
+      "frame": 2,
+      "hair_ms": 429.34920900000003,
+      "skin_ms": 131.666416,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "elapsed_ms": 820.763833,
+      "frame": 3,
+      "hair_ms": 816.620083,
+      "skin_ms": 423.376708,
+      "time_s": 0.025
+    },
+    {
+      "elapsed_ms": 1317.5999590000001,
+      "frame": 4,
+      "hair_ms": 1314.044666,
+      "skin_ms": 193.63425,
+      "time_s": 0.03333333333333333
+    },
+    {
+      "elapsed_ms": 430.53249999999997,
+      "frame": 5,
+      "hair_ms": 426.355708,
+      "skin_ms": 224.350042,
+      "time_s": 0.041666666666666664
+    },
+    {
+      "elapsed_ms": 479.846292,
+      "frame": 6,
+      "hair_ms": 475.1075,
+      "skin_ms": 233.720666,
+      "time_s": 0.049999999999999996
+    },
+    {
+      "elapsed_ms": 1650.6070419999999,
+      "frame": 7,
+      "hair_ms": 1631.2641669999998,
+      "skin_ms": 91.37745899999999,
+      "time_s": 0.05833333333333333
+    },
+    {
+      "elapsed_ms": 488.289125,
+      "frame": 8,
+      "hair_ms": 477.47841600000004,
+      "skin_ms": 158.030792,
+      "time_s": 0.06666666666666667
+    },
+    {
+      "elapsed_ms": 624.764041,
+      "frame": 9,
+      "hair_ms": 620.662,
+      "skin_ms": 127.90712500000001,
+      "time_s": 0.075
+    },
+    {
+      "elapsed_ms": 1625.7430419999998,
+      "frame": 10,
+      "hair_ms": 1622.379042,
+      "skin_ms": 336.06675,
+      "time_s": 0.08333333333333333
+    },
+    {
+      "elapsed_ms": 461.903167,
+      "frame": 11,
+      "hair_ms": 457.286292,
+      "skin_ms": 222.26195800000002,
+      "time_s": 0.09166666666666666
+    },
+    {
+      "elapsed_ms": 1334.506625,
+      "frame": 12,
+      "hair_ms": 1326.4755,
+      "skin_ms": 232.96562500000002,
+      "time_s": 0.09999999999999999
+    },
+    {
+      "elapsed_ms": 5732.234375,
+      "frame": 13,
+      "hair_ms": 5719.838624999999,
+      "skin_ms": 179.39270900000002,
+      "time_s": 0.10833333333333332
+    },
+    {
+      "elapsed_ms": 3453.155667,
+      "frame": 14,
+      "hair_ms": 3450.059209,
+      "skin_ms": 147.46858400000002,
+      "time_s": 0.11666666666666665
+    }
+  ]
+}

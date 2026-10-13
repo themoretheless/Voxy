@@ -1,0 +1,19 @@
+{
+  "tests_passed": 186,
+  "failed": 0,
+  "ignored": 17,
+  "scope": "editor explicit pending pivot request and accepted pivot persistence",
+  "checks": [
+    "admitted pivot persists for three frames",
+    "resolved support matches corrected pivot",
+    "root motion preserved",
+    "rejected request retains prior pivot and contact and remains pending"
+  ],
+  "automatic_clip_events_connected": false,
+  "full_character_verified": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "0541f4ffccd75329b4c571fd00503a2ca92373f7e19f33e71c7a11e4f0d7f945",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "e13eb752b9784b5d4b37e1f0540d85d3a7b400bc4c42bb8ec091982387430177",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/editor-pivot-persistence-tests.log": "c1887673231cca7634357b0d768301f50f2b279c66e9237a3ceede8e2c815c3c"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "status": "failed",
+  "exit_code": 101,
+  "completed_frames": 3,
+  "attempted_frame": 4,
+  "required_frames": 720,
+  "error": "joint square-root active contacts did not converge",
+  "constraints": 2359,
+  "residual": 2.6016433320517574,
+  "tolerance": 1e-14,
+  "test_seconds": 1065.96
+}

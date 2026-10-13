@@ -1,0 +1,8 @@
+{
+  "error": "swept contact refinement budget exhausted",
+  "frame": 5,
+  "published_steps": 4,
+  "published_time_s": 0.03333333333333333,
+  "scope": "displayed pose state, not every internal cache",
+  "time_skin_guide_frames_preserved": true
+}

@@ -1,0 +1,19 @@
+{
+  "status": "launched_not_qualified",
+  "pid": 67991,
+  "binary": "/tmp/voxy-triple-parallel-full-cycle-20261013-app-tests",
+  "binary_sha256": "17211689f66ea0df2bd4b0bfa16a4179c24839b5596a5df2a1ef50a1c6224a5b",
+  "env_overrides": {
+    "VOXY_HAIR_TRIPLE_ACTIVE_SET": "1",
+    "VOXY_HAIR_TRIPLE_PARALLEL": "1",
+    "VOXY_HAIR_STRAND_FRACTION_REUSE": "1",
+    "VOXY_HAIR_GUARDED_RESTORATION_PROFILE": "1",
+    "VOXY_AUTHORED_JUMP_QUALIFICATION_DIR": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-full-cycle",
+    "VOXY_AUTHORED_JUMP_CONTINUOUS_CONTACTS": "1",
+    "VOXY_AUTHORED_JUMP_GPU_HAIR": "1",
+    "VOXY_HAIR_FAILED_ISLAND_CONTEXT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-full-cycle/failed-islands"
+  },
+  "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-full-cycle/qualification.log",
+  "launched_unix": 1791851507.630594,
+  "scope": "720 frames original full density; CPU skin and physical admission; not rendered FPS; prior process preserved"
+}

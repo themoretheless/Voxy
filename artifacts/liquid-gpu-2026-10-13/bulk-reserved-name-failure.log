@@ -1,0 +1,15 @@
+
+running 1 test
+
+thread 'liquid_pipeline::tests::gpu_liquid_chain_admits_real_density_pressure_force_and_accumulation' (79502131) panicked at crates/voxy_render/src/liquid_pipeline.rs:144:71:
+called `Result::unwrap()` on an `Err` value: Validation("Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'user compute shader'\n    \nShader 'user compute shader' parsing error: name `from` is a reserved keyword\n   ┌─ wgsl:65:9\n   │\n65 │     let from=data[metadata+1u]+9u*pair;\n   │         ^^^^ definition of `from`\n\n\n")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test liquid_pipeline::tests::gpu_liquid_chain_admits_real_density_pressure_force_and_accumulation ... FAILED
+
+failures:
+
+failures:
+    liquid_pipeline::tests::gpu_liquid_chain_admits_real_density_pressure_force_and_accumulation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 279 filtered out; finished in 0.03s
+

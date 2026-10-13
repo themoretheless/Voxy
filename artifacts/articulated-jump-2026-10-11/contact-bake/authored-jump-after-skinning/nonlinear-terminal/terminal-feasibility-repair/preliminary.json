@@ -1,0 +1,18 @@
+{
+  "runtime_adopted": false,
+  "scope": "reloaded terminal pose repaired with original VHR energy reference",
+  "admitted": true,
+  "accepted_corrections": 6,
+  "merit": 0,
+  "work_j": -1.4237702427012592e-09,
+  "strain": 9.594265621970521e-07,
+  "strand_path": true,
+  "mesh_path": true,
+  "collider_current_previous_velocity_and_topology_equal": true,
+  "face_order_changed_on_reload": true,
+  "not_proved": [
+    "tangent stationarity",
+    "full720-frame jump",
+    "FPS"
+  ]
+}

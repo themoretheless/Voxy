@@ -1,0 +1,39 @@
+{
+  "status": "geometrically_feasible_energy_gate_rejected",
+  "exit_code": 101,
+  "elapsed_seconds": 67.544883375,
+  "endpoint_merit": 0,
+  "witnessed_trajectory_merit": 0,
+  "mesh_path_admitted": true,
+  "strand_path_admitted": true,
+  "original_potential_change_j": 9.68208622528372e-08,
+  "production_enabled": false,
+  "native_continuation_qualified": false,
+  "full_jump_qualified": false,
+  "ordinary_physics_tests": {
+    "passed": 398,
+    "failed": 0,
+    "ignored": 54
+  },
+  "native_continuation": {
+    "status": "still_live_at_eight_minute_snapshot",
+    "session": 58455,
+    "pid": 79019,
+    "log": "/tmp/voxy-guarded-cut-native-continuation.log",
+    "initial_original_potential_change_j": 9.682086225283699e-08,
+    "requires_original_energy_and_paths_at_finish": true
+  },
+  "energy_inventory": {
+    "signed_original_potential_change_j": 9.682086225283699e-08,
+    "inertia_change_j": 5.7058989683736096e-09,
+    "elastic_change_j": 9.111496328446338e-08,
+    "dominant_rod": 1,
+    "dominant_rod_elastic_change_j": 9.595833508624131e-08,
+    "all_469_component_rows_checked": true
+  },
+  "infeasible_reference_counterexample_test_passed": true,
+  "source_hashes": {
+    "crates/physics/src/hair/direct_energy.rs": "4205961805e6780914a68047d0685089ffc063bc6167caf9ad5daf488130a4bc",
+    "crates/physics/src/hair/contact_second_order_tests.rs": "ce5764ad3851affe3972f5f47c55d9b94f91fc3f77ff52a03df6e627bba72da0"
+  }
+}

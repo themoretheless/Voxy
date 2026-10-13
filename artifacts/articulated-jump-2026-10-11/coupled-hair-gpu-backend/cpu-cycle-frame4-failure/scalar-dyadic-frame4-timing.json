@@ -1,0 +1,134 @@
+{
+  "scope": "completed recovery timing scopes only; no convergence, full frame or FPS claim",
+  "all_observed_scopes_closed": true,
+  "simulation_completion": "not inferred; inspect terminal test result and launch receipt",
+  "completed_root_scopes": 12,
+  "completed_root_ms": 18147.154168,
+  "open_scopes": [],
+  "completed_root_phases": {
+    "initial_refresh": {
+      "completed_scopes": 12,
+      "inclusive_ms": 1512.798832,
+      "exclusive_ms": 1512.798832,
+      "max_ms": 231.25324999999998
+    },
+    "iteration_refresh": {
+      "completed_scopes": 108,
+      "inclusive_ms": 12.382080999999998,
+      "exclusive_ms": 12.382080999999998,
+      "max_ms": 8.98275
+    },
+    "restoration_model": {
+      "completed_scopes": 108,
+      "inclusive_ms": 1436.9347079999998,
+      "exclusive_ms": 1436.9347079999998,
+      "max_ms": 69.402833
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 108,
+      "inclusive_ms": 3.6651710000000004,
+      "exclusive_ms": 3.6651710000000004,
+      "max_ms": 0.07225
+    },
+    "direction_projection": {
+      "completed_scopes": 96,
+      "inclusive_ms": 3555.8740869999997,
+      "exclusive_ms": 3555.8740869999997,
+      "max_ms": 96.730584
+    },
+    "trial_refresh": {
+      "completed_scopes": 96,
+      "inclusive_ms": 8078.473545000001,
+      "exclusive_ms": 8078.473545000001,
+      "max_ms": 251.11687500000002
+    },
+    "trial_model": {
+      "completed_scopes": 96,
+      "inclusive_ms": 1464.43488,
+      "exclusive_ms": 1464.43488,
+      "max_ms": 67.831166
+    },
+    "backtrack": {
+      "completed_scopes": 96,
+      "inclusive_ms": 10911.478957999998,
+      "exclusive_ms": 1368.5705329999998,
+      "max_ms": 286.149208
+    },
+    "geometry_iteration": {
+      "completed_scopes": 108,
+      "inclusive_ms": 16416.986878,
+      "exclusive_ms": 496.651873,
+      "max_ms": 373.7035
+    },
+    "recovery": {
+      "completed_scopes": 12,
+      "inclusive_ms": 18147.154168,
+      "exclusive_ms": 217.36845800000106,
+      "max_ms": 2336.6857919999998
+    }
+  },
+  "phases": {
+    "trial_refresh": {
+      "completed_scopes": 96,
+      "inclusive_ms": 8078.473545000003,
+      "exclusive_ms": 8078.473545000003,
+      "max_ms": 251.11687500000002
+    },
+    "direction_projection": {
+      "completed_scopes": 96,
+      "inclusive_ms": 3555.874087,
+      "exclusive_ms": 3555.874087,
+      "max_ms": 96.730584
+    },
+    "initial_refresh": {
+      "completed_scopes": 12,
+      "inclusive_ms": 1512.798832,
+      "exclusive_ms": 1512.798832,
+      "max_ms": 231.25324999999998
+    },
+    "trial_model": {
+      "completed_scopes": 96,
+      "inclusive_ms": 1464.4348800000002,
+      "exclusive_ms": 1464.4348800000002,
+      "max_ms": 67.831166
+    },
+    "restoration_model": {
+      "completed_scopes": 108,
+      "inclusive_ms": 1436.9347079999998,
+      "exclusive_ms": 1436.9347079999998,
+      "max_ms": 69.402833
+    },
+    "backtrack": {
+      "completed_scopes": 96,
+      "inclusive_ms": 10911.478957999996,
+      "exclusive_ms": 1368.5705330000005,
+      "max_ms": 286.149208
+    },
+    "geometry_iteration": {
+      "completed_scopes": 108,
+      "inclusive_ms": 16416.986878000007,
+      "exclusive_ms": 496.6518730000001,
+      "max_ms": 373.7035
+    },
+    "recovery": {
+      "completed_scopes": 12,
+      "inclusive_ms": 18147.154168,
+      "exclusive_ms": 217.36845800000106,
+      "max_ms": 2336.6857919999998
+    },
+    "iteration_refresh": {
+      "completed_scopes": 108,
+      "inclusive_ms": 12.382080999999998,
+      "exclusive_ms": 12.382080999999998,
+      "max_ms": 8.98275
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 108,
+      "inclusive_ms": 3.6651709999999995,
+      "exclusive_ms": 3.6651709999999995,
+      "max_ms": 0.07225
+    }
+  },
+  "source_text_sha256": "2ba9cd25363c1380d5795cddd442e135e3c987c801258093242e53e298c55012",
+  "source_log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/coupled-hair-gpu-backend/cpu-cycle-frame4-failure/scalar-dyadic-frame4-terminal.log"
+}

@@ -1,0 +1,9 @@
+
+running 4 tests
+test female_demo::surface_normals::tests::actual_body_transport_profile ... ignored, release performance measurement on actual body
+test female_demo::surface_normals::tests::preserves_authored_normals_at_rest_after_nonuniform_refinement ... ok
+test female_demo::surface_normals::tests::follows_rotation_and_nonuniform_affine_stretch ... ok
+test female_demo::surface_normals::tests::cached_actual_body_matches_uncached_transport ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 360 filtered out; finished in 0.06s
+

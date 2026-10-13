@@ -1,0 +1,23 @@
+{
+  "scope": "identical ordered workload prefix only; both second frames incomplete; concurrent uncontrolled timings excluded",
+  "baseline_records_observed": 7588,
+  "candidate_records_observed": 2753,
+  "matching_prefix": 2753,
+  "matching_second_frame_prefix": 2194,
+  "counts": [
+    {
+      "label": "baseline",
+      "creations": 1735,
+      "reuses": 1018,
+      "payloads_above_8_mib": 293
+    },
+    {
+      "label": "candidate",
+      "creations": 307,
+      "reuses": 2446,
+      "payloads_above_8_mib": 293
+    }
+  ],
+  "baseline_prefix_sha256": "90e167ce4c1a577f967df60970b3ee53b24ffe8d91e42c5a791c7d175fcf5b5f",
+  "candidate_prefix_sha256": "439a00a0f4e6d9f1ba46e74d2b7764db505970c6a1dfe5448c567f01fd4c3987"
+}

@@ -1,0 +1,20 @@
+
+running 15 tests
+test female_face::tests::audit_lid_globe_coverage ... ignored, writes sampled actual-globe/skin depth visibility
+test female_face::tests::audit_lid_self_intersections ... ignored, writes strict transverse skin intersection measurements
+test female_face::tests::audit_lid_triangle_orientation ... ignored, writes the bind/posed triangle audit for manual inspection
+test female_face::tests::zero_influence_rejection_matches_full_expression_bitwise ... ignored, actual body and eyes exact expression optimization qualification
+test female_face::tests::tension_ignores_rigid_motion_and_stretch_and_measures_compression ... ok
+test female_face::tests::loop_is_continuous_and_blinks_close_then_reopen ... ok
+test female_face::tests::blink_sides_are_bounded_offset_and_manually_close_together ... ok
+test female_face::tests::expression_channels_have_distinct_timing_and_gaze_holds ... ok
+test female_face::tests::transverse_intersection_diagnostic_rejects_touches_and_separation ... ok
+test female_face::tests::jaw_opens_lower_lip_without_folding_it_or_dragging_upper_lip ... ok
+test female_face::tests::frown_draws_inner_brows_inward_without_changing_neutral_or_outer_points ... ok
+test female_face::tests::gaze_preserves_eyeball_shape ... ok
+test female_face::tests::expressions_are_local_and_neutral_is_identity ... ok
+test female_face::tests::forehead_moves_with_brows_and_restores_without_accumulation ... ok
+test female_face::tests::source_aperture_contour_tracks_both_rims_and_preserves_lid_band ... ok
+
+test result: ok. 11 passed; 0 failed; 4 ignored; 0 measured; 345 filtered out; finished in 0.22s
+

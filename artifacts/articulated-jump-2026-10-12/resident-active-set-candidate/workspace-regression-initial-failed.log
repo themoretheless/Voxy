@@ -1,0 +1,15 @@
+
+running 1 test
+
+thread 'gpu_hair_solver::joint::tests::gpu_resident_workspace_reuse_preserves_current_operator' (49478006) panicked at crates/voxy_app/src/gpu_hair_joint.rs:1089:126:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::joint::tests::gpu_resident_workspace_reuse_preserves_current_operator ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::joint::tests::gpu_resident_workspace_reuse_preserves_current_operator
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 369 filtered out; finished in 1.72s
+

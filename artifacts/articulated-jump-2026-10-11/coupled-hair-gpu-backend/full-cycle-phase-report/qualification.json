@@ -1,0 +1,8 @@
+{
+  "change": "Atomically report attempted frame before advance and verification; PID/time/phase; explicit nonfinite skin failure",
+  "build_session": 6565,
+  "build_log": "/tmp/voxy-full-cycle-phase-report-build.log",
+  "status": "test build passed; new full-cycle runtime not launched",
+  "source_sha256": "64533f5c5b2e4709ec8dbe62de3cfe29e94d7e04b3266525ee0db2b1de8c2302",
+  "limits": "Test-only reporting. Existing full-cycle processes retain prior binaries; no restarted cycle. Diagnostic elapsed includes checkpoint overhead, not FPS."
+}

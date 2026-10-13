@@ -1,0 +1,35 @@
+{
+  "test": "coupled_authored_jump_real_gpu_hair_two_frames",
+  "status": "first frame passed; second frame running",
+  "build_session": 70425,
+  "build_log": "/tmp/voxy-coupled-current-two-frame-build.log",
+  "bounded_frames": 2,
+  "required_full_cycle": 720,
+  "guide_count": 469,
+  "segments_per_guide": 20,
+  "continuous_contacts": true,
+  "per_frame_checks": "actual structural or equality dispatch delta; published steps; independent original hair geometry and finite skin",
+  "source_sha256": {
+    "crates/voxy_app/src/female_demo.rs": "77798d7622d20b973089920e3598b625769aba801bfc197f651b26775b63fd9a",
+    "crates/voxy_app/src/female_hair.rs": "11e3aa35ac84437687073486c6aaf1340f59be34fe43f43d35572d72b2402b34",
+    "crates/voxy_app/src/gpu_hair_solver.rs": "9d4064b31ac92f87143653a0e55e571527a9b40d4c93c5169e37b3c30e6d5edb",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "de93223ff17319cc9cc2c6b72d2e94ba1f37c0c4325e00d9e505e145a9dcc128"
+  },
+  "limits": "Bounded current-source regression, not full-cycle/FPS/CUDA qualification; existing full jobs unchanged",
+  "session": 57009,
+  "pid": 87817,
+  "base": "/tmp/voxy-coupled-current-two-frames-1791754425286",
+  "binary_sha256": "897198230c18777c94d981efdb5d6e00e3b225e91fb10563a48f230f348764f8",
+  "build": "passed",
+  "completed_frames": 1,
+  "first_frame": {
+    "elapsed_s": 90.390494459,
+    "coordinate_calls": 9815,
+    "equality_dispatches": 28296,
+    "submissions": 8743,
+    "early_releases": 5113,
+    "admitted": 9815,
+    "native_fallbacks": 0
+  },
+  "second_frame_entry_sha256": "df70919f5a11097053ced2718e2a63f1e7d3d96efbbe38d8313afbe6fdd5bf38"
+}

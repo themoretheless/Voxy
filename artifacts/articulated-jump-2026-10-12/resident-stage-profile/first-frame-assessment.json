@@ -1,0 +1,11 @@
+{
+  "scope": "one completed strict coupled frame; uncontrolled concurrent load; no FPS or speedup qualification",
+  "frame_wall_ms": 128284.569042,
+  "resident_backend_host_wall_ms": 33076.73979,
+  "resident_wait_host_wall_ms": 29225.121224999977,
+  "outside_profiled_backend_and_log_overhead_ms": 95207.829252,
+  "physically_admitted_coordinate_calls": 9424,
+  "native_contact_fallbacks": 0,
+  "full_cycle_qualified": false,
+  "baseline_readback_bytes_note": "profile logs record current payload length; baseline copied full reused allocation, potentially larger. Stage wall times remain directly measured."
+}

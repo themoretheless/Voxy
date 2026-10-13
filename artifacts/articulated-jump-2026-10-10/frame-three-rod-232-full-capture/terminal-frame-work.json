@@ -1,0 +1,43 @@
+{
+  "schema": "voxy-hair-frame-work-v1",
+  "log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/qualification.log",
+  "scope": "completed per-frame solver wall times and counter deltas; excludes rendering; not GPU timestamps or FPS",
+  "frames": [
+    {
+      "frame": 1,
+      "native_solver_wall_ms": 33832.739792,
+      "external_solver_wall_ms": 309032.04329099995,
+      "coordinate_calls": 6093,
+      "equality_dispatches": 83033,
+      "cache_hits": 0,
+      "admitted": 6093,
+      "native_fallbacks": 0,
+      "submissions": 35058
+    },
+    {
+      "frame": 2,
+      "native_solver_wall_ms": 83247.714292,
+      "external_solver_wall_ms": 725780.6971669999,
+      "coordinate_calls": 14900,
+      "equality_dispatches": 277444,
+      "cache_hits": 0,
+      "admitted": 14900,
+      "native_fallbacks": 0,
+      "submissions": 103720
+    },
+    {
+      "frame": 3,
+      "native_solver_wall_ms": 173382.9895,
+      "external_solver_wall_ms": 3489039.6541660004,
+      "coordinate_calls": 75445,
+      "equality_dispatches": 733594,
+      "cache_hits": 0,
+      "admitted": 75445,
+      "native_fallbacks": 0,
+      "submissions": 222117
+    }
+  ],
+  "pending_workload_frames": [],
+  "rendered_fps_measured": false,
+  "qualification_pass_inferred": false
+}

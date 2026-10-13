@@ -1,0 +1,5 @@
+{
+  "baseline_sha256": "326d249c507b6175cdd13e3b6bb66896945cff71d6f0bb27e3d42ff0c05a004a",
+  "candidate_sha256": "d569396af21922dcd5ba9e1ef0f289e2b91425affb3ea69238b550ccd12eb09d",
+  "scope": "shader fixture; private current column for widths <=2048, unchanged full kernel fallback above; same operations, reductions and barriers; no rows omitted"
+}

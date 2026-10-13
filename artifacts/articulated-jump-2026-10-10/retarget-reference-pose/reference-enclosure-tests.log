@@ -1,0 +1,19 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_animation/src/lib.rs:4160:19
+     |
+4160 |             Mat4::perspective_rh(1., 1., 0.1, 100.),
+     |                   ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_animation` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.20s
+     Running unittests src/lib.rs (target/debug/deps/voxy_animation-88e9daec251bcb5a)
+
+running 2 tests
+test retarget::reference_pose_tests::reference_pose_rejects_foreign_rigs_and_proportion_edits ... ok
+test retarget::reference_pose_tests::calibration_preserves_rig_ownership_and_recomputes_root_eligibility ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 246 filtered out; finished in 0.00s
+

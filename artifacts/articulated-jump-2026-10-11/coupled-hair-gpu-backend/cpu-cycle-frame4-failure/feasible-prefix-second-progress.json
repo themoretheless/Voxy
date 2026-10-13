@@ -1,0 +1,14 @@
+{
+  "status": "running",
+  "pid": 42401,
+  "observed_accepted_prefixes": [
+    "HAIR CONTACT FEASIBLE PREFIX iteration=0 probe_rows=6 probe_pairs=0 tangent_complete=false",
+    "HAIR CONTACT FEASIBLE PREFIX iteration=6 probe_rows=3 probe_pairs=0 tangent_complete=false"
+  ],
+  "observed_nonlinear_moves": [
+    "HAIR NONLINEAR MERIT iteration=0 before=0e0 full=1.231776849608642e-6 accepted=0e0 scale=7.275957614183426e-12 tangent_complete=false",
+    "HAIR NONLINEAR MERIT iteration=6 before=0e0 full=3.035365136292037e-9 accepted=0e0 scale=5.960464477539063e-8 tangent_complete=false"
+  ],
+  "scope": "staged progress only; no final tangent completion, full jump, or FPS proof",
+  "observed_unix_s": 1791763754.212857
+}

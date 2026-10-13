@@ -1,0 +1,9 @@
+
+running 1 test
+PAIR OWNERSHIP original_owned/borrowed query ms per64queries=[(13.430625, 12.734167), (13.478666, 12.661917), (14.344584000000001, 13.052667), (15.402209, 14.34225), (13.294875, 12.705084), (13.365207999999999, 12.723999999999998), (13.409583, 11.256958), (11.778958000000001, 11.240375), (11.953625, 11.272375), (11.6655, 11.400333), (11.774875, 11.674), (13.110583, 12.684459)]
+captured eight-scale fresh/cached candidate-query seconds and rebuilds=[(0.03204325, 0.005626417, 1), (0.033636, 0.006244916, 1), (0.039620292, 0.007514541, 1)]
+full-groom broad phase segments=9380 pairs=13931 one-sided/balanced hierarchy seconds=[(0.004668542, 0.004427208), (0.004763709, 0.004274375), (0.004597625, 0.004473), (0.004509541, 0.004513041), (0.004501792, 0.004318208), (0.0044225, 0.004323583), (0.004444875, 0.004154708)]
+test hair::contact::continuous::hierarchy_tests::captured_full_groom_hierarchy_matches_original_sweep ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 433 filtered out; finished in 0.52s
+

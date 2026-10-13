@@ -1,0 +1,10 @@
+{
+  "exact_original_linear_infeasibility": false,
+  "nonzero_transpose_coordinates": 3,
+  "weighted_bound": "368934881472237/9223372036854775808",
+  "weighted_bound_float": 3.9999999999788143e-05,
+  "rows": 14,
+  "capture_sha256": "9a7f84a54e50f2dd7c1cccc8e47d63aaf99a25189a2664597c320fde6182767b",
+  "witness_sha256": "6bb178ee154274ea432add186c591e29e30ab70a71c363507fb449b3db448a8e",
+  "scope": "captured linear inequalities only; no nonlinear infeasibility claim"
+}

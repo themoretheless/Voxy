@@ -1,0 +1,160 @@
+
+running 1 test
+REPLAY MERIT captured=0e0 rebuilt=0e0 rods=469 meshes=1
+HAIR ELASTIC ORIGIN PATH iteration=0 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=0 negative_gaps=0 outside_admission=0 minimum_gap_m=inf
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=1.231776849608642e-6 work_j=9.077479686556337e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=1.4013219559675068e-9 work_j=7.793941896704161e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.24621576031483e-12 work_j=7.830811509041693e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.280598527435117e-13 work_j=7.840119121506878e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=6.756416352600005e-15 work_j=7.844292425153894e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.3486425772090305e-16 work_j=7.846068690620829e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=3.1376322260817715e-18 work_j=7.846634459967941e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=7.117357941272156e-20 work_j=7.846748222400801e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=7.846756558453572e-7
+HAIR CONTACT SOC iteration=0 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=0 energy_j=Some(0.00016360669286926796) slope_j=-2.425001222251529e-7 full_merit=1.231776849608642e-6 max_translation_m=5.317408686102851e-4 max_rotation_rad=3.6725827622848435e-2 max_velocity_change_m_s=5.104712338658737e-1 max_angular_velocity_change_rad_s=3.52567945179345e1
+HAIR ELASTIC TRIAL iteration=0 scale=7.275957614183426e-12 before_j=1.6360669286926796e-4 trial_j=1.6360669286926617e-4 global_delta_j=-1.7889335846010823e-18 rod_delta_sum_j=-1.7625399056157403e-18 residual_delta_j=-1.762454014245024e-18
+HAIR CONTACT APPROACH MODEL iteration=0 added_rows=6 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=1 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=6 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=1.1659754488950892e-6 work_j=9.463421221556402e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=1.4013299595454355e-9 work_j=7.703714115548131e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.246728343151936e-12 work_j=7.740531083584012e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.2809278165402921e-13 work_j=7.749812716987889e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=6.758620485603326e-15 work_j=7.753973118639164e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.3502905383392e-16 work_j=7.755742961547142e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=3.1479702210438933e-18 work_j=7.756305515147643e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=7.117357941272156e-20 work_j=7.756421294495899e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=7.75642963054867e-7
+HAIR CONTACT SOC iteration=1 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=1 energy_j=Some(0.00016360669286926796) slope_j=-2.3179627879260269e-7 full_merit=1.1659754488950892e-6 max_translation_m=5.317408686102851e-4 max_rotation_rad=3.6725827622848435e-2 max_velocity_change_m_s=5.104712338658737e-1 max_angular_velocity_change_rad_s=3.52567945179345e1
+HAIR ELASTIC TRIAL iteration=1 scale=7.275957614183426e-12 before_j=1.6360669286926796e-4 trial_j=1.6360669286926623e-4 global_delta_j=-1.734723475976807e-18 rod_delta_sum_j=-1.6867900138405842e-18 residual_delta_j=-1.686704517541875e-18
+HAIR CONTACT APPROACH MODEL iteration=1 added_rows=4 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=2 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=10 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=1.1640164333219725e-6 work_j=9.483793245130447e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=1.4013299595454355e-9 work_j=7.693225238705539e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.246728343151936e-12 work_j=7.730042206741421e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.2809278165402921e-13 work_j=7.739323840145298e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=6.758620485603326e-15 work_j=7.743484241796573e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.3502905383392e-16 work_j=7.745254084704551e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=3.1479702210438933e-18 work_j=7.745816638305052e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=7.117357941272156e-20 work_j=7.745932417653308e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=7.745940753706079e-7
+HAIR CONTACT SOC iteration=2 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=2 energy_j=Some(0.00016360669286926796) slope_j=-2.3115751917259761e-7 full_merit=1.1640164333219725e-6 max_translation_m=5.317408686102851e-4 max_rotation_rad=3.6725827622848435e-2 max_velocity_change_m_s=5.104712338658737e-1 max_angular_velocity_change_rad_s=3.52567945179345e1
+HAIR ELASTIC TRIAL iteration=2 scale=7.275957614183426e-12 before_j=1.6360669286926796e-4 trial_j=1.6360669286926623e-4 global_delta_j=-1.734723475976807e-18 rod_delta_sum_j=-1.681747520826461e-18 residual_delta_j=-1.6817071481672251e-18
+HAIR CONTACT APPROACH MODEL iteration=2 added_rows=3 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=3 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=13 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=1.1603461208743177e-6 work_j=9.54924588042702e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=1.4013299595454355e-9 work_j=7.693651686364549e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.246728343151936e-12 work_j=7.73046865440043e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.2809278165402921e-13 work_j=7.739750287804307e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=6.758620485603326e-15 work_j=7.743910689455583e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.3502905383392e-16 work_j=7.745680532363561e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=3.1479702210438933e-18 work_j=7.746243085964061e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=7.117357941272156e-20 work_j=7.746358865312318e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=7.746367201365089e-7
+HAIR CONTACT SOC iteration=3 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=3 energy_j=Some(0.00016360669286926796) slope_j=-2.29917807766613e-7 full_merit=1.1603461208743177e-6 max_translation_m=5.317408686102851e-4 max_rotation_rad=3.6725827622848435e-2 max_velocity_change_m_s=5.104712338658737e-1 max_angular_velocity_change_rad_s=3.52567945179345e1
+HAIR ELASTIC TRIAL iteration=3 scale=7.275957614183426e-12 before_j=1.6360669286926796e-4 trial_j=1.6360669286926623e-4 global_delta_j=-1.734723475976807e-18 rod_delta_sum_j=-1.6726022119740747e-18 residual_delta_j=-1.6725633978809125e-18
+HAIR CONTACT APPROACH MODEL iteration=3 added_rows=12 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=4 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=25 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=3.7805321375512117e-7 work_j=-7.177838471132245e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=4.818939356211935e-12 work_j=1.5199988163663783e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=1.8461507176320097e-13 work_j=1.522995107990232e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.1425166781983535e-14 work_j=1.5244016933798683e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=7.029980555500526e-16 work_j=1.525097287705515e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=4.176220530754002e-17 work_j=1.5254510491131497e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=2.14862620438402e-18 work_j=1.5256221577571081e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=7.117357941272156e-20 work_j=1.525702872281832e-7
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=1.5257112083346029e-7
+HAIR CONTACT SOC iteration=4 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=4 energy_j=Some(0.00016360669286926796) slope_j=-9.529787840188388e-8 full_merit=3.7805321375512117e-7 max_translation_m=3.4696293894149674e-4 max_rotation_rad=2.6054227967395954e-2 max_velocity_change_m_s=3.3308442138383687e-1 max_angular_velocity_change_rad_s=2.5012058848700118e1
+HAIR ELASTIC TRIAL iteration=4 scale=7.275957614183426e-12 before_j=1.6360669286926796e-4 trial_j=1.6360669286926723e-4 global_delta_j=-7.318364664277155e-19 rod_delta_sum_j=-7.004830124895055e-19 residual_delta_j=-7.0044511419898e-19
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=3 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=5 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=28 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=2.7717634796982205e-7 work_j=-3.4044442106890954e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=4.812116687629167e-12 work_j=8.519662007019185e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=1.8418373175055793e-13 work_j=8.549016106535441e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.139820448251681e-14 work_j=8.562779935417806e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=7.013542740708588e-16 work_j=8.569585499407887e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=4.166660905965645e-17 work_j=8.573048129618851e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=2.144512016949869e-18 work_j=8.57474325347742e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=7.117357941272156e-20 work_j=8.575542418389333e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=8.575625778917043e-8
+HAIR CONTACT SOC iteration=5 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=5 energy_j=Some(0.00016360669286926796) slope_j=-5.710184752043415e-8 full_merit=2.7717634796982205e-7 max_translation_m=3.1517537786384666e-4 max_rotation_rad=2.6054227967395954e-2 max_velocity_change_m_s=3.025683627492928e-1 max_angular_velocity_change_rad_s=2.5012058848700118e1
+HAIR ELASTIC TRIAL iteration=5 scale=7.275957614183426e-12 before_j=1.6360669286926796e-4 trial_j=1.6360669286926753e-4 global_delta_j=-4.336808689942018e-19 rod_delta_sum_j=-4.2113419346299745e-19 residual_delta_j=-4.210526136787965e-19
+HAIR CONTACT APPROACH MODEL iteration=5 added_rows=1 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=6 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=29 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=2.2793374927312304e-7 work_j=-1.4591277563252037e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=7.266479770993612e-13 work_j=3.395629179953157e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=4.064706787286338e-14 work_j=3.417335516134453e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=2.5246092429036195e-15 work_j=3.4283389117804725e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=1.5288161643286408e-16 work_j=3.433788436266922e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=8.344597102451197e-18 work_j=3.436579027312189e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=2.746484138691575e-19 work_j=3.4379396694818017e-8
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=0e0 work_j=3.4385719554465935e-8
+HAIR CONTACT SOC iteration=6 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=6 energy_j=Some(0.00016360669286926796) slope_j=-5.009101752660635e-8 full_merit=2.2793374927312304e-7 max_translation_m=3.1517537786384666e-4 max_rotation_rad=1.7217663445613825e-2 max_velocity_change_m_s=3.025683627492928e-1 max_angular_velocity_change_rad_s=1.6528956907789272e1
+HAIR ELASTIC TRIAL iteration=6 scale=7.275957614183426e-12 before_j=1.6360669286926796e-4 trial_j=1.6360669286926758e-4 global_delta_j=-3.7947076036992655e-19 rod_delta_sum_j=-3.6712260818573495e-19 residual_delta_j=-3.6703557668854885e-19
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=6 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=7 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=35 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=3.0353650658290176e-9 work_j=1.4883869508829998e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=4.738421275334506e-13 work_j=2.93546221457127e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=2.985532209634766e-14 work_j=3.0310578237465006e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.8602078343917325e-15 work_j=3.0827564941586717e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=1.133497077734155e-16 work_j=3.108090644110014e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=6.326666995401524e-18 work_j=3.121428310922313e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=2.3320617945817538e-19 work_j=3.1277287920108344e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=2.068886932144191e-23 work_j=3.130401660051025e-9
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=3.130820054618219e-9
+HAIR CONTACT SOC iteration=7 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=7 energy_j=Some(0.00016360669286926796) slope_j=-1.888988494479172e-9 full_merit=3.0353650658290176e-9 max_translation_m=1.2435885007942987e-4 max_rotation_rad=1.3957198271195051e-2 max_velocity_change_m_s=1.1938449607625268e-1 max_angular_velocity_change_rad_s=1.339891034034725e1
+HAIR ELASTIC TRIAL iteration=7 scale=9.5367431640625e-7 before_j=1.6360669286926796e-4 trial_j=1.6360669286746648e-4 global_delta_j=-1.801483224747602e-15 rod_delta_sum_j=-1.8014892317332104e-15 residual_delta_j=-1.801489098051758e-15
+HAIR CONTACT APPROACH MODEL iteration=7 added_rows=2 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=8 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=37 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=2.9087863642835235e-11 work_j=-7.081706525631533e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=3.1540454628603256e-13 work_j=2.3449116011040833e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=1.9901380567959303e-14 work_j=2.9885114615352424e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=1.2431056500231878e-15 work_j=3.31567492592276e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=7.604367417116335e-17 work_j=3.4803826295424606e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=4.307941423802035e-18 work_j=3.563103020852347e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=1.7089947799939636e-19 work_j=3.6043288854067516e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=2.068886932144191e-23 work_j=3.624980272890231e-10
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=3.629164218562172e-10
+HAIR CONTACT SOC iteration=8 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=8 energy_j=Some(0.00016360669286926796) slope_j=-1.1795893647946568e-10 full_merit=2.9087863642835235e-11 max_translation_m=1.4768377636901096e-5 max_rotation_rad=1.9220297531194308e-3 max_velocity_change_m_s=1.4177642531425052e-2 max_angular_velocity_change_rad_s=1.8451485629946536e0
+HAIR ELASTIC TRIAL iteration=8 scale=9.5367431640625e-7 before_j=1.6360669286926796e-4 trial_j=1.6360669286915547e-4 global_delta_j=-1.1248597539537109e-16 rod_delta_sum_j=-1.1251522946491464e-16 residual_delta_j=-1.1251511586535763e-16
+HAIR CONTACT APPROACH MODEL iteration=8 added_rows=1 added_pairs=0 descent_found=true
+HAIR ELASTIC ORIGIN PATH iteration=9 endpoint_merit=0e0 strand_fraction=Ok(1.0)
+HAIR MODEL ORIGIN kind=fresh rows=91 negative_gaps=47 outside_admission=0 minimum_gap_m=-1.2432340806925768e-11
+HAIR MODEL ORIGIN kind=retained rows=38 negative_gaps=0 outside_admission=0 minimum_gap_m=1.6228097198751983e-18
+HAIR CONTACT RECOVERY zero_free=true iteration=0 merit=2.8954294352968153e-12 work_j=-1.0434415997232778e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=1 merit=1.822776846361661e-13 work_j=4.271767877480101e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=2 merit=1.1412715671841052e-14 work_j=6.913812975226199e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=3 merit=7.103167133482797e-16 work_j=8.24440270675781e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=4 merit=4.343540023255703e-17 work_j=8.911989837510401e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=5 merit=2.4730083428055686e-18 work_j=9.246400847539271e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=6 merit=1.0124297585732287e-19 work_j=9.413711776628534e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=7 merit=2.068886932144191e-23 work_j=9.497404795468323e-11
+HAIR CONTACT RECOVERY zero_free=true iteration=8 merit=0e0 work_j=9.539244252187734e-11
+HAIR CONTACT SOC iteration=9 admitted=false result=Ok(false)
+HAIR ELASTIC DIRECTION iteration=9 energy_j=Some(0.00016360669286926796) slope_j=-1.9593976102138212e-11 full_merit=2.8954294352968153e-12 max_translation_m=1.3048309576826938e-5 max_rotation_rad=1.1909633399380093e-3 max_velocity_change_m_s=1.252637719375386e-2 max_angular_velocity_change_rad_s=1.143324806340489e0

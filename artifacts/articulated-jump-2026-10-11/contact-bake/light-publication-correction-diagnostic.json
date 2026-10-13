@@ -1,0 +1,29 @@
+{
+  "scope": "CPU f64 correction diagnostic on red channel against original f64 reference operator, not GPU publication qualification",
+  "reports": [
+    {
+      "steps": 0,
+      "max_error_estimate": 0.002368346846912267
+    },
+    {
+      "steps": 1,
+      "max_error_estimate": 0.0024387167512960224
+    },
+    {
+      "steps": 2,
+      "max_error_estimate": 0.0021444781171891525
+    },
+    {
+      "steps": 4,
+      "max_error_estimate": 0.0019444291279245324
+    },
+    {
+      "steps": 8,
+      "max_error_estimate": 0.0016030613487133562
+    },
+    {
+      "steps": 16,
+      "max_error_estimate": 0.0010906014127442618
+    }
+  ]
+}

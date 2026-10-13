@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "scope": "one captured native contact solve; not complete coupled frame or FPS",
+  "input_sha256": "58f69ba17a1b0b6b3af8de01f1825f6c38beb274b72cdc4d623251aaa0fb39a8",
+  "final_state_sha256": "9455ab3485bb7e1ffcabbe3d5c5af08cdddbd37934a2786cdbbdca7d508346d2",
+  "terminal_admission": {
+    "line": 212,
+    "iteration": 67,
+    "tangent_complete": true,
+    "strand_admitted": true,
+    "unresolved": false,
+    "worst_gap_m": -1.2699995177229958e-15
+  },
+  "test_elapsed_s": 99.89,
+  "original_baseline_comparison": "passed bitwise identical",
+  "original_final_state_sha256": "9455ab3485bb7e1ffcabbe3d5c5af08cdddbd37934a2786cdbbdca7d508346d2"
+}

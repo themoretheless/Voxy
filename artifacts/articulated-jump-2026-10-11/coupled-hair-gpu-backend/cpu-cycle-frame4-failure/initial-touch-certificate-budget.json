@@ -1,0 +1,15 @@
+{
+  "session": 30638,
+  "status": "diagnostic completed; no clearance certificate at any tested budget",
+  "log": "initial-touch-certificate-budget.log",
+  "budgets": [
+    1024,
+    4096,
+    16384
+  ],
+  "source_sha256": "2153e4361a98175ba27f234978afea7ea59dc4536dbe14a6b2a672f7e627dbae",
+  "counterexample_sha256": "40be8b1644453a7b9ad450ec39aa25ea0902c857f110e109c0909fafed458d2a",
+  "scope": "Existing conservative-advance and fixed/supporting/adaptive-axis certificate on exact captured primitive; original tolerance unchanged",
+  "limits": "Diagnostic only; InitialContact or unknown remains rejected. No full-mesh or physical-step admission.",
+  "elapsed_seconds": 0.02
+}

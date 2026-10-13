@@ -1,0 +1,9 @@
+
+running 1 test
+RESIDENT PHYSICAL ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+RESIDENT ORIGINAL WORKSPACE changed_and_restored_physical_operators_admitted=true creations=2 reuses=3
+RESIDENT PHYSICAL QUALIFICATION {"absolute_physical_tolerance":1e-14,"coordinate_width":1764,"elapsed_ms":89.69824999999999,"maximum_reaction_difference":9.785008523991375e-12,"maximum_response_component_difference":1.0724060528488621e-14,"native_fallback_used":false,"response_units":"unassigned","rows":174,"scope":"one complete original physical operator, including native factor/response reconstruction and original admission; not trajectory or FPS","status":"original_physical_operator_admitted","submissions":1,"systems":14}
+test gpu_hair_solver::joint::tests::gpu_resident_active_set_admits_original_physical_operator ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 372 filtered out; finished in 0.49s
+

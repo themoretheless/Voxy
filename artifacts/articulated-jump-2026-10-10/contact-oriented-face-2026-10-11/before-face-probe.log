@@ -1,0 +1,39 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 43.28s
+     Running unittests src/lib.rs (target/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+TERMINAL ENDPOINT face=91348 point=[-0.0432143459476642, 0.7929681489485619, -0.00782467283517921] closest=[-0.04321486372995662, 0.7929687305520658, -0.007825111238113351] outward=[-0.5794205418314663, 0.6508392085295825, -0.49059164316600085]
+TERMINAL REFRESHED WITNESSES count=2
+TERMINAL REFRESHED witness=TrajectoryContact { time: 1.0, fraction: 1.0, normal: [0.5794205418495303, -0.6508392085047436, 0.4905916431776182], target: [-0.043191686908282644, 0.7929426969837257, -0.007805487572386247], gap: -3.910637912357923e-5 } alignment=-1e0
+TERMINAL OPPOSITE nearest_face=91348 face_normal=[-0.5794205418314663, 0.6508392085295825, -0.49059164316600085] witness=TrajectoryContact { time: 1.0, fraction: 1.0, normal: [0.5794205418495303, -0.6508392085047436, 0.4905916431776182], target: [-0.043191686908282644, 0.7929426969837257, -0.007805487572386247], gap: -3.910637912357923e-5 } surface=[-0.04321486372995662, 0.7929687305520658, -0.007825111238113351] closest=[-0.043214863729956636, 0.7929687305520658, -0.007825111238113363]
+TERMINAL REFRESHED witness=TrajectoryContact { time: 0.4375, fraction: 0.9780832535965597, normal: [-0.46565898376501047, 0.6952968354711256, -0.5474705667182267], target: [-0.04323263853520649, 0.793080896492645, -0.007836986371367592], gap: -4e-5 } alignment=9.909233076842796e-1
+TERMINAL FACE ids=[8320, 8334, 8837] feature=Face face_normal=[-0.5794205418314663, 0.6508392085295825, -0.49059164316600085] normal_dot=-1 witness=TrajectoryContact { time: 1.0, fraction: 1.0, normal: [0.5794205418495303, -0.6508392085047436, 0.4905916431776182], target: [-0.043191686908282644, 0.7929426969837257, -0.007805487572386247], gap: -3.910637912357923e-5 } signed_plane=-0.0000008936208764207688 closest=[-0.04321486372995662, 0.7929687305520658, -0.007825111238113351]
+TERMINAL FACE ids=[8331, 8334, 8320] feature=Edge(1, 2) face_normal=[-0.4654859267110884, 0.6949864900336558, -0.5480115242443525] normal_dot=0.9999997905509603 witness=TrajectoryContact { time: 0.4375, fraction: 0.9780832535965597, normal: [-0.46565898376501047, 0.6952968354711256, -0.5474705667182267], target: [-0.04323263853520649, 0.793080896492645, -0.007836986371367592], gap: -4e-5 } signed_plane=-0.00005502617671954943 closest=[-0.042870130984488844, 0.7931661348625552, -0.007970378223312927]
+TERMINAL REFRESHED OPPOSITE count=1
+test hair::contact::terminal_side_replay_tests::captured_terminal_trajectory_side_probe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 420 filtered out; finished in 0.37s
+

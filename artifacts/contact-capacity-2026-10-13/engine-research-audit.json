@@ -1,0 +1,30 @@
+{
+  "candidates": 1428,
+  "verified_pinned_records": 1428,
+  "mechanism_integrity": {
+    "manifests": 12,
+    "verified_sources": 72,
+    "unique_pinned_sources": 69,
+    "duplicate_source_records": 3,
+    "repositories_with_saved_sources": 11,
+    "repository_source_counts": {
+      "GPUOpen-Effects/TressFX": 4,
+      "InteractiveComputerGraphics/PositionBasedDynamics": 5,
+      "bevyengine/bevy": 5,
+      "coin-or/Ipopt": 3,
+      "godotengine/godot": 9,
+      "guillaumeblanc/ozz-animation": 3,
+      "ipc-sim/ipc-toolkit": 8,
+      "ismailivanov/TressFX-Godot": 7,
+      "newton-physics/newton": 3,
+      "st-tech/ppf-contact-solver": 10,
+      "stride3d/stride": 12
+    }
+  },
+  "accepted_engine_identities": 500,
+  "derived_engine_identities": 52,
+  "review_depth_counts": {
+    "root_and_readme_only": 1428
+  },
+  "scope": "Saved identity/evidence integrity; not build, runtime or architectural parity proof."
+}

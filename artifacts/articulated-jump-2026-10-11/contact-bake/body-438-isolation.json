@@ -1,0 +1,28 @@
+{
+  "tick": 438,
+  "pixel": [
+    184,
+    389
+  ],
+  "production_fresh_max_error": 25,
+  "production_sequential_max_error": 25,
+  "unlit_max_error": 29,
+  "solid_white_coverage": {
+    "CPU": [
+      128,
+      128,
+      128,
+      255
+    ],
+    "GPU": [
+      191,
+      191,
+      191,
+      255
+    ],
+    "interpretation": "one of four MSAA sample coverages differs; 2/4 versus 3/4 white coverage"
+  },
+  "finding": "reproduces without history and without lighting; silhouette coverage discrepancy",
+  "status": "unresolved; production gate unchanged",
+  "next": "inspect projected CPU/GPU edge positions at offending sample"
+}

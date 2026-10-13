@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "resident_geometry",
+    "exit_code": 0
+  },
+  {
+    "scenario": "analytic",
+    "exit_code": 0
+  },
+  {
+    "scenario": "pcg_regression",
+    "exit_code": 0
+  },
+  {
+    "scenario": "chebyshev_regression",
+    "exit_code": 0
+  }
+]

@@ -1,0 +1,290 @@
+{
+  "scope": "bounded feasibility-projection trials on full captured geometry; no stationarity or full-cycle proof",
+  "all_candidates_rejected": true,
+  "trials": [
+    {
+      "scale": 1e-05,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 3.837292566198681e-19,
+          "work_j": -1.423679528775912e-14,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 3.364980226670352e-17,
+          "work_j": 1.184199505215021e-14,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": true,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 0.0,
+          "work_j": 1.2919189238176451e-14,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": true,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.001,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 2.1792349622431147e-14,
+          "work_j": -1.4229995905746064e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 2.694207717285561e-15,
+          "work_j": -8.012895459531206e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 1.6476859395649202e-15,
+          "work_j": -4.55475150331538e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 1.0508707746752191e-18,
+          "work_j": -1.6363113642312076e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 2.3396869957838874e-20,
+          "work_j": -1.343053435414484e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.03125,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 4.860916582182781e-11,
+          "work_j": -4.381478534415218e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 3.276703627650689e-11,
+          "work_j": -2.3766896143359316e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 1.6622167466968852e-12,
+          "work_j": -4.124090071875532e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 1.9039666192686362e-13,
+          "work_j": 2.081994127263487e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 1.3449846198923394e-15,
+          "work_j": 4.581820770641909e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.125,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 9.71053029912856e-10,
+          "work_j": -1.6599999861904293e-10,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 6.32476179393519e-10,
+          "work_j": -8.304906181372224e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 6.864445857469373e-11,
+          "work_j": 1.5183812994722798e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 2.186272752705517e-11,
+          "work_j": 2.6307795922039683e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 2.592135535538513e-12,
+          "work_j": 5.3292846380058206e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.5,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 1.9978646735587915e-08,
+          "work_j": -2.2501279785439432e-10,
+          "strain": 4.69099356763536e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 8.71780902997342e-09,
+          "work_j": 3.912533124136481e-10,
+          "strain": 5.1369981411752974e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 1.4396845171844038e-09,
+          "work_j": 6.586914277754955e-10,
+          "strain": 5.151592729513155e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 3.732379563683083e-10,
+          "work_j": 6.988267117039506e-10,
+          "strain": 5.152380291661984e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 7.194119791412551e-11,
+          "work_j": 8.006596091038602e-10,
+          "strain": 5.1632663856437944e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 1.0,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 8.423545862892212e-08,
+          "work_j": 4.305095338637243e-09,
+          "strain": 0.0001876561431302104,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 2.6484435203413262e-08,
+          "work_j": 5.696845893435967e-08,
+          "strain": 0.0004502702453890173,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 6.221060928842014e-10,
+          "work_j": 5.791394464326093e-08,
+          "strain": 0.00045027198733760265,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 1.1263089342321716e-10,
+          "work_j": 5.798727018964046e-08,
+          "strain": 0.00045029265713658617,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 5.338078770989208e-11,
+          "work_j": 5.799403343252866e-08,
+          "strain": 0.00045029268229401787,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    }
+  ],
+  "notable": "scale1e-5 correction2 passes geometry/path gates but raises energy by1.2919189238176451e-14J",
+  "runtime_algorithm_changed": false
+}

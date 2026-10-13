@@ -1,0 +1,133 @@
+{
+  "scope": "observed projection snapshots; not operator replay or semantic row equivalence",
+  "frame": 3,
+  "substep": 0,
+  "structural_iteration": 3,
+  "records": [
+    {
+      "owner": "native",
+      "projection_iteration": 0,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "native",
+      "projection_iteration": 2,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "native",
+      "projection_iteration": 4,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "native",
+      "projection_iteration": 5,
+      "before_rods": [
+        142,
+        232
+      ],
+      "after_rods": [
+        142,
+        232
+      ],
+      "pairs": 1
+    },
+    {
+      "owner": "native",
+      "projection_iteration": 6,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "native",
+      "projection_iteration": 8,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "external",
+      "projection_iteration": 0,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "external",
+      "projection_iteration": 2,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "external",
+      "projection_iteration": 4,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    },
+    {
+      "owner": "external",
+      "projection_iteration": 6,
+      "before_rods": [
+        142,
+        232
+      ],
+      "after_rods": [
+        142,
+        232
+      ],
+      "pairs": 1
+    },
+    {
+      "owner": "external",
+      "projection_iteration": 8,
+      "before_rods": [
+        232
+      ],
+      "after_rods": [
+        232
+      ],
+      "pairs": 0
+    }
+  ]
+}

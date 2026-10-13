@@ -1,0 +1,10 @@
+test_angular_load_zero_slope_and_invalid_indices_rejected (test_hair_contact_evidence.ContactEvidenceTests) ... ok
+test_exact_opposite_positive_rows_prove_linear_infeasibility (test_hair_contact_evidence.ContactEvidenceTests) ... ok
+test_invalid_dual_weights_are_rejected (test_hair_contact_evidence.ContactEvidenceTests) ... ok
+test_known_translation_bound (test_hair_contact_evidence.ContactEvidenceTests) ... ok
+test_nearly_opposite_rows_are_not_exact_dual_certificate (test_hair_contact_evidence.ContactEvidenceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.089s
+
+OK

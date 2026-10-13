@@ -1,0 +1,9 @@
+
+running 1 test
+GPU PAIR PREPARATION particles=70 pairs=2415 formulation=MassDensity submissions=1 intermediate_cpu_reads=0 physical_forces_admitted=true upstream_fixture=synthetic
+GPU PAIR PREPARATION particles=70 pairs=2415 formulation=RestVolume submissions=1 intermediate_cpu_reads=0 physical_forces_admitted=true upstream_fixture=synthetic
+GPU PAIR PREPARATION particles=70 pairs=2415 formulation=RestVolumeWendland submissions=1 intermediate_cpu_reads=0 physical_forces_admitted=true upstream_fixture=synthetic
+test liquid_pair_forces::tests::gpu_particle_fields_prepare_pair_forces_without_host_read ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 279 filtered out; finished in 0.04s
+

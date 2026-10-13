@@ -1,0 +1,17 @@
+{
+  "status": "running",
+  "pid": 77993,
+  "directory": "/tmp/voxy-concurrent-resident-authored-1791772725732543000",
+  "binary_sha256": "10e133124e4b3a3f96c19afef56beb0d43bdc770ab030fae215811e0cddca3e9",
+  "resident_active_set": true,
+  "concurrent_operator_workgroups": true,
+  "required_frames": 720,
+  "continuous_contacts": true,
+  "scope": "complete original coupled authored jump; not rendered FPS",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_solver.rs": "2088f9f6f329b1cf72b9617b99a89a59acf1ebbed8b529d6bdf71828eb532ae4",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "a9706d3117e277c7d84b3112e8ae9852b26fad7c7e410e0972d8807ee307c658",
+    "crates/voxy_render/src/joint_contact_active.rs": "712558321624c11c406add80b592e549f80bd6db56454faebacbc51af7dafd0e",
+    "crates/voxy_render/src/joint_contact_active.wgsl": "ccbb263c1e5ba22882d0acfd1f0e0573c1ce721facfd426cac7158fb8f8c8ede"
+  }
+}

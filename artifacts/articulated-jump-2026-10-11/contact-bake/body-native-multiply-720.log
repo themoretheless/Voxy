@@ -1,0 +1,1475 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=1 occupied=53807 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=1 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=2 occupied=53808 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=2 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=3 occupied=53843 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=3 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=4 occupied=53798 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=4 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=5 occupied=53786 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=5 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=6 occupied=53745 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=6 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=7 occupied=53723 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=7 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=8 occupied=53730 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=8 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=9 occupied=53697 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=9 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=10 occupied=53671 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=10 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=11 occupied=53642 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=11 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=12 occupied=53608 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=12 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=13 occupied=53564 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=13 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=14 occupied=53556 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=14 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=15 occupied=53545 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=15 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=16 occupied=53504 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=16 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=17 occupied=53450 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=17 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=18 occupied=53434 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=18 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=19 occupied=53395 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=19 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=20 occupied=53355 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=20 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=21 occupied=53322 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=21 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=22 occupied=53296 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=22 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=23 occupied=53255 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=23 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=24 occupied=53230 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=24 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=25 occupied=53173 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=25 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=26 occupied=53152 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=26 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=27 occupied=53125 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=27 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=28 occupied=53079 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=28 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=29 occupied=53040 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=29 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=30 occupied=52997 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=30 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=31 occupied=52999 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=31 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+CPU NORMAL RESTORE vertices=171495 bitwise=true
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=32 occupied=52964 maximum_u8_error=1 differing_channels=5
+ACTUAL FACE GPU tick=32 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=33 occupied=52939 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=33 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=34 occupied=52921 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=34 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=35 occupied=52890 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=35 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=36 occupied=52877 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=36 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=37 occupied=52844 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=37 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=38 occupied=52812 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=38 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=39 occupied=52788 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=39 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=40 occupied=52759 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=40 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=41 occupied=52743 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=41 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=42 occupied=52712 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=42 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=43 occupied=52690 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=43 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=44 occupied=52687 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=44 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=45 occupied=52657 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=45 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=46 occupied=52647 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=46 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=47 occupied=52611 maximum_u8_error=15 differing_channels=4
+BODY PIXEL label=actual-facial-details x=303 y=458 CPU=[29, 19, 15, 255] GPU=[44, 29, 22, 255]
+ACTUAL FACE GPU tick=47 base_vertices=78278 appended_vertices=93217 max_u8_error=15
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=48 occupied=52595 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=48 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=49 occupied=52606 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=49 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=50 occupied=52594 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=50 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=51 occupied=52582 maximum_u8_error=5 differing_channels=5
+BODY PIXEL label=actual-facial-details x=185 y=396 CPU=[95, 66, 50, 255] GPU=[90, 62, 47, 255]
+ACTUAL FACE GPU tick=51 base_vertices=78278 appended_vertices=93217 max_u8_error=5
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=52 occupied=52573 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=52 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=53 occupied=52573 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=53 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=54 occupied=52564 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=54 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=55 occupied=52574 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=55 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=56 occupied=52581 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=56 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=57 occupied=52569 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=57 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=58 occupied=52565 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=58 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=59 occupied=52552 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=59 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=60 occupied=52563 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=60 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=61 occupied=52558 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=61 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=62 occupied=52593 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=62 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=63 occupied=52576 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=63 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=64 occupied=52582 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=64 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=65 occupied=52593 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=65 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=66 occupied=52589 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=66 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=67 occupied=52594 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=67 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=68 occupied=52615 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=68 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=69 occupied=52627 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=69 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=70 occupied=52628 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=70 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=71 occupied=52641 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=71 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=72 occupied=52665 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=72 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=73 occupied=52688 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=73 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=74 occupied=52703 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=74 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=75 occupied=52705 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=75 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=76 occupied=52731 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=76 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=77 occupied=52746 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=77 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=78 occupied=52756 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=78 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=79 occupied=52780 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=79 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=80 occupied=52799 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=80 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=81 occupied=52843 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=81 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=82 occupied=52886 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=82 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=83 occupied=52895 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=83 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=84 occupied=52933 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=84 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=85 occupied=52961 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=85 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=86 occupied=52999 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=86 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=87 occupied=53027 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=87 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=88 occupied=53047 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=88 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=89 occupied=53086 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=89 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=90 occupied=53131 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=90 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=91 occupied=53168 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=91 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=92 occupied=53171 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=92 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=93 occupied=53190 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=93 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=94 occupied=53239 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=94 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=95 occupied=53273 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=95 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=96 occupied=53303 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=96 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=97 occupied=53337 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=97 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=98 occupied=53368 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=98 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=99 occupied=53415 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=99 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=100 occupied=53447 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=100 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=101 occupied=53478 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=101 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=102 occupied=53506 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=102 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=103 occupied=53536 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=103 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=104 occupied=53553 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=104 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=105 occupied=53592 maximum_u8_error=1 differing_channels=6
+ACTUAL FACE GPU tick=105 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=106 occupied=53650 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=106 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=107 occupied=53645 maximum_u8_error=10 differing_channels=4
+BODY PIXEL label=actual-facial-details x=225 y=491 CPU=[0, 0, 0, 255] GPU=[10, 7, 5, 255]
+ACTUAL FACE GPU tick=107 base_vertices=78278 appended_vertices=93217 max_u8_error=10
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=108 occupied=53655 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=108 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=109 occupied=53697 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=109 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=110 occupied=53731 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=110 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=111 occupied=53745 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=111 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=112 occupied=53763 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=112 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=113 occupied=53776 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=113 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=114 occupied=53794 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=114 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=115 occupied=53817 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=115 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=116 occupied=53835 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=116 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=117 occupied=53827 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=117 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=118 occupied=53814 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=118 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=119 occupied=53834 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=119 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=120 occupied=53837 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=120 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=121 occupied=53807 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=121 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=122 occupied=53808 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=122 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=123 occupied=53844 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=123 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=124 occupied=53798 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=124 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=125 occupied=53785 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=125 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=126 occupied=53745 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=126 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=127 occupied=53722 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=127 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=128 occupied=53730 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=128 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=129 occupied=53697 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=129 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=130 occupied=53671 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=130 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=131 occupied=53642 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=131 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=132 occupied=53607 maximum_u8_error=6 differing_channels=4
+BODY PIXEL label=actual-facial-details x=307 y=420 CPU=[11, 7, 6, 255] GPU=[5, 3, 3, 255]
+ACTUAL FACE GPU tick=132 base_vertices=78278 appended_vertices=93217 max_u8_error=6
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=133 occupied=53564 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=133 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=134 occupied=53555 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=134 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=135 occupied=53544 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=135 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=136 occupied=53504 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=136 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=137 occupied=53448 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=137 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=138 occupied=53433 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=138 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=139 occupied=53394 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=139 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=140 occupied=53354 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=140 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=141 occupied=53321 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=141 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=142 occupied=53296 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=142 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=143 occupied=53255 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=143 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=144 occupied=53230 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=144 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=145 occupied=53173 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=145 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=146 occupied=53151 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=146 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=147 occupied=53125 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=147 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=148 occupied=53081 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=148 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=149 occupied=53040 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=149 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=150 occupied=52996 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=150 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=151 occupied=52998 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=151 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=152 occupied=52964 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=152 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=153 occupied=52938 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=153 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=154 occupied=52920 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=154 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=155 occupied=52889 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=155 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=156 occupied=52877 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=156 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=157 occupied=52844 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=157 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=158 occupied=52813 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=158 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=159 occupied=52788 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=159 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=160 occupied=52758 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=160 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=161 occupied=52742 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=161 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=162 occupied=52712 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=162 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=163 occupied=52689 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=163 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=164 occupied=52686 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=164 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=165 occupied=52657 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=165 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=166 occupied=52648 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=166 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=167 occupied=52610 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=167 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=168 occupied=52595 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=168 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=169 occupied=52606 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=169 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=170 occupied=52594 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=170 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=171 occupied=52582 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=171 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=172 occupied=52572 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=172 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=173 occupied=52574 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=173 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=174 occupied=52562 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=174 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=175 occupied=52573 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=175 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=176 occupied=52581 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=176 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=177 occupied=52569 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=177 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=178 occupied=52567 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=178 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=179 occupied=52553 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=179 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=180 occupied=52563 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=180 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=181 occupied=52558 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=181 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=182 occupied=52593 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=182 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=183 occupied=52575 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=183 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=184 occupied=52581 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=184 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=185 occupied=52594 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=185 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=186 occupied=52588 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=186 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=187 occupied=52594 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=187 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=188 occupied=52614 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=188 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=189 occupied=52627 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=189 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=190 occupied=52627 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=190 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=191 occupied=52640 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=191 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=192 occupied=52666 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=192 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=193 occupied=52688 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=193 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=194 occupied=52702 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=194 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=195 occupied=52704 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=195 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=196 occupied=52731 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=196 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=197 occupied=52745 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=197 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=198 occupied=52756 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=198 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=199 occupied=52780 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=199 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=200 occupied=52799 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=200 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=201 occupied=52843 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=201 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=202 occupied=52886 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=202 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=203 occupied=52895 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=203 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=204 occupied=52932 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=204 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=205 occupied=52962 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=205 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=206 occupied=52999 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=206 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=207 occupied=53027 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=207 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=208 occupied=53048 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=208 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=209 occupied=53086 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=209 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=210 occupied=53130 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=210 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=211 occupied=53168 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=211 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=212 occupied=53172 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=212 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=213 occupied=53191 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=213 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=214 occupied=53239 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=214 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=215 occupied=53273 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=215 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=216 occupied=53303 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=216 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=217 occupied=53338 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=217 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=218 occupied=53369 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=218 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=219 occupied=53415 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=219 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=220 occupied=53448 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=220 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=221 occupied=53480 maximum_u8_error=2 differing_channels=6
+BODY PIXEL label=actual-facial-details x=319 y=378 CPU=[12, 8, 6, 255] GPU=[13, 10, 8, 255]
+ACTUAL FACE GPU tick=221 base_vertices=78278 appended_vertices=93217 max_u8_error=2
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=222 occupied=53507 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=222 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=223 occupied=53536 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=223 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=224 occupied=53552 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=224 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=225 occupied=53591 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=225 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=226 occupied=53649 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=226 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=227 occupied=53644 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=227 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=228 occupied=53654 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=228 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=229 occupied=53696 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=229 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=230 occupied=53730 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=230 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=231 occupied=53744 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=231 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=232 occupied=53762 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=232 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=233 occupied=53776 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=233 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=234 occupied=53794 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=234 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=235 occupied=53816 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=235 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=236 occupied=53835 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=236 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=237 occupied=53827 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=237 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=238 occupied=53815 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=238 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=239 occupied=53834 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=239 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=240 occupied=53836 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=240 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=241 occupied=53807 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=241 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=242 occupied=53809 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=242 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=243 occupied=53843 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=243 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=244 occupied=53799 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=244 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=245 occupied=53786 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=245 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=246 occupied=53745 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=246 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=247 occupied=53724 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=247 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=248 occupied=53730 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=248 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=249 occupied=53698 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=249 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=250 occupied=53671 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=250 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=251 occupied=53642 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=251 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=252 occupied=53608 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=252 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=253 occupied=53564 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=253 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=254 occupied=53556 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=254 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=255 occupied=53545 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=255 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=256 occupied=53504 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=256 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=257 occupied=53449 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=257 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=258 occupied=53434 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=258 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=259 occupied=53394 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=259 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=260 occupied=53355 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=260 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=261 occupied=53322 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=261 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=262 occupied=53296 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=262 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=263 occupied=53255 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=263 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=264 occupied=53230 maximum_u8_error=15 differing_channels=3
+BODY PIXEL label=actual-facial-details x=312 y=505 CPU=[59, 39, 30, 255] GPU=[44, 29, 23, 255]
+ACTUAL FACE GPU tick=264 base_vertices=78278 appended_vertices=93217 max_u8_error=15
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=265 occupied=53174 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=265 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=266 occupied=53152 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=266 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=267 occupied=53124 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=267 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=268 occupied=53080 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=268 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=269 occupied=53039 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=269 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=270 occupied=52997 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=270 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=271 occupied=52999 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=271 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=272 occupied=52964 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=272 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=273 occupied=52938 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=273 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=274 occupied=52920 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=274 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=275 occupied=52890 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=275 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=276 occupied=52877 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=276 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=277 occupied=52844 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=277 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=278 occupied=52813 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=278 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=279 occupied=52789 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=279 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=280 occupied=52759 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=280 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=281 occupied=52742 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=281 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=282 occupied=52712 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=282 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=283 occupied=52690 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=283 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=284 occupied=52687 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=284 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=285 occupied=52657 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=285 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=286 occupied=52647 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=286 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=287 occupied=52611 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=287 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=288 occupied=52596 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=288 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=289 occupied=52606 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=289 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=290 occupied=52594 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=290 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=291 occupied=52582 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=291 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=292 occupied=52573 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=292 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=293 occupied=52573 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=293 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=294 occupied=52563 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=294 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=295 occupied=52574 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=295 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=296 occupied=52581 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=296 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+test female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses has been running for over 60 seconds
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=297 occupied=52570 maximum_u8_error=1 differing_channels=5
+ACTUAL FACE GPU tick=297 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=298 occupied=52567 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=298 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=299 occupied=52553 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=299 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=300 occupied=52563 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=300 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=301 occupied=52559 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=301 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=302 occupied=52593 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=302 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=303 occupied=52576 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=303 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=304 occupied=52582 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=304 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=305 occupied=52594 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=305 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=306 occupied=52590 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=306 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=307 occupied=52594 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=307 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=308 occupied=52614 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=308 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=309 occupied=52627 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=309 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=310 occupied=52628 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=310 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=311 occupied=52640 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=311 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=312 occupied=52665 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=312 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=313 occupied=52688 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=313 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=314 occupied=52703 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=314 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=315 occupied=52705 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=315 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=316 occupied=52731 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=316 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=317 occupied=52746 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=317 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=318 occupied=52756 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=318 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=319 occupied=52780 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=319 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=320 occupied=52799 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=320 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=321 occupied=52843 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=321 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=322 occupied=52886 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=322 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=323 occupied=52896 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=323 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=324 occupied=52932 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=324 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=325 occupied=52963 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=325 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=326 occupied=52998 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=326 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=327 occupied=53027 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=327 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=328 occupied=53048 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=328 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=329 occupied=53086 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=329 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=330 occupied=53131 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=330 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=331 occupied=53168 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=331 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=332 occupied=53172 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=332 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=333 occupied=53191 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=333 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=334 occupied=53239 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=334 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=335 occupied=53274 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=335 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=336 occupied=53303 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=336 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=337 occupied=53338 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=337 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=338 occupied=53369 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=338 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=339 occupied=53415 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=339 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=340 occupied=53448 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=340 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=341 occupied=53480 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=341 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=342 occupied=53507 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=342 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=343 occupied=53536 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=343 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=344 occupied=53552 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=344 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=345 occupied=53591 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=345 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=346 occupied=53649 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=346 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=347 occupied=53644 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=347 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=348 occupied=53655 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=348 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=349 occupied=53696 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=349 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=350 occupied=53731 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=350 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=351 occupied=53744 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=351 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=352 occupied=53762 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=352 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=353 occupied=53776 maximum_u8_error=15 differing_channels=3
+BODY PIXEL label=actual-facial-details x=224 y=505 CPU=[44, 30, 22, 255] GPU=[59, 40, 30, 255]
+ACTUAL FACE GPU tick=353 base_vertices=78278 appended_vertices=93217 max_u8_error=15
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=354 occupied=53794 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=354 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=355 occupied=53816 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=355 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=356 occupied=53835 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=356 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=357 occupied=53826 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=357 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=358 occupied=53815 maximum_u8_error=6 differing_channels=3
+BODY PIXEL label=actual-facial-details x=191 y=486 CPU=[121, 80, 61, 255] GPU=[127, 85, 64, 255]
+ACTUAL FACE GPU tick=358 base_vertices=78278 appended_vertices=93217 max_u8_error=6
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=359 occupied=53834 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=359 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=360 occupied=53836 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=360 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=361 occupied=53807 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=361 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=362 occupied=53809 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=362 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=363 occupied=53843 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=363 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=364 occupied=53798 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=364 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=365 occupied=53786 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=365 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=366 occupied=53745 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=366 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=367 occupied=53723 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=367 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=368 occupied=53731 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=368 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=369 occupied=53698 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=369 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=370 occupied=53671 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=370 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=371 occupied=53642 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=371 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=372 occupied=53608 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=372 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=373 occupied=53563 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=373 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=374 occupied=53556 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=374 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=375 occupied=53544 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=375 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=376 occupied=53504 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=376 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=377 occupied=53449 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=377 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=378 occupied=53434 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=378 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=379 occupied=53394 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=379 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=380 occupied=53355 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=380 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=381 occupied=53322 maximum_u8_error=1 differing_channels=5
+ACTUAL FACE GPU tick=381 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=382 occupied=53296 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=382 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=383 occupied=53255 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=383 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=384 occupied=53230 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=384 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=385 occupied=53174 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=385 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=386 occupied=53152 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=386 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=387 occupied=53124 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=387 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=388 occupied=53080 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=388 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=389 occupied=53039 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=389 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=390 occupied=52997 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=390 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=391 occupied=52999 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=391 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=392 occupied=52965 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=392 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=393 occupied=52940 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=393 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=394 occupied=52919 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=394 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=395 occupied=52891 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=395 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=396 occupied=52878 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=396 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=397 occupied=52844 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=397 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=398 occupied=52813 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=398 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=399 occupied=52790 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=399 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=400 occupied=52759 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=400 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=401 occupied=52742 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=401 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=402 occupied=52713 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=402 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=403 occupied=52691 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=403 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=404 occupied=52687 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=404 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=405 occupied=52658 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=405 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=406 occupied=52646 maximum_u8_error=15 differing_channels=7
+BODY PIXEL label=actual-facial-details x=312 y=497 CPU=[44, 29, 23, 255] GPU=[59, 39, 30, 255]
+BODY PIXEL label=actual-facial-details x=312 y=498 CPU=[44, 29, 23, 255] GPU=[59, 39, 30, 255]
+ACTUAL FACE GPU tick=406 base_vertices=78278 appended_vertices=93217 max_u8_error=15
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=407 occupied=52611 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=407 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=408 occupied=52596 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=408 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=409 occupied=52607 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=409 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=410 occupied=52594 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=410 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=411 occupied=52582 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=411 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=412 occupied=52572 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=412 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=413 occupied=52574 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=413 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=414 occupied=52563 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=414 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=415 occupied=52576 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=415 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=416 occupied=52582 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=416 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=417 occupied=52569 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=417 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=418 occupied=52569 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=418 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=419 occupied=52555 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=419 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=420 occupied=52565 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=420 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=421 occupied=52561 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=421 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=422 occupied=52593 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=422 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=423 occupied=52578 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=423 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=424 occupied=52584 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=424 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=425 occupied=52597 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=425 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=426 occupied=52591 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=426 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=427 occupied=52595 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=427 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=428 occupied=52615 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=428 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=429 occupied=52628 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=429 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=430 occupied=52630 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=430 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=431 occupied=52640 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=431 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=432 occupied=52666 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=432 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=433 occupied=52690 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=433 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=434 occupied=52703 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=434 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=435 occupied=52706 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=435 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=436 occupied=52732 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=436 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=437 occupied=52747 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=437 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=438 occupied=52758 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=438 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=439 occupied=52782 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=439 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=440 occupied=52801 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=440 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=441 occupied=52843 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=441 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=442 occupied=52888 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=442 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=443 occupied=52897 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=443 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=444 occupied=52931 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=444 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=445 occupied=52963 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=445 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=446 occupied=52998 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=446 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=447 occupied=53028 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=447 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=448 occupied=53049 maximum_u8_error=2 differing_channels=7
+BODY PIXEL label=actual-facial-details x=189 y=428 CPU=[108, 74, 58, 255] GPU=[106, 73, 57, 255]
+ACTUAL FACE GPU tick=448 base_vertices=78278 appended_vertices=93217 max_u8_error=2
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=449 occupied=53088 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=449 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=450 occupied=53131 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=450 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=451 occupied=53168 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=451 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=452 occupied=53175 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=452 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=453 occupied=53192 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=453 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=454 occupied=53241 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=454 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=455 occupied=53274 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=455 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=456 occupied=53303 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=456 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=457 occupied=53342 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=457 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=458 occupied=53369 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=458 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=459 occupied=53416 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=459 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=460 occupied=53448 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=460 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=461 occupied=53481 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=461 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=462 occupied=53506 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=462 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=463 occupied=53536 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=463 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=464 occupied=53553 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=464 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=465 occupied=53591 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=465 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=466 occupied=53652 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=466 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=467 occupied=53645 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=467 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=468 occupied=53656 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=468 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=469 occupied=53696 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=469 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=470 occupied=53732 maximum_u8_error=11 differing_channels=3
+BODY PIXEL label=actual-facial-details x=230 y=438 CPU=[11, 8, 6, 255] GPU=[0, 0, 0, 255]
+ACTUAL FACE GPU tick=470 base_vertices=78278 appended_vertices=93217 max_u8_error=11
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=471 occupied=53746 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=471 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=472 occupied=53763 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=472 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=473 occupied=53777 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=473 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=474 occupied=53794 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=474 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=475 occupied=53816 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=475 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=476 occupied=53835 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=476 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=477 occupied=53829 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=477 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=478 occupied=53815 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=478 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=479 occupied=53835 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=479 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=480 occupied=53836 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=480 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=481 occupied=53809 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=481 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=482 occupied=53809 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=482 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=483 occupied=53843 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=483 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=484 occupied=53798 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=484 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=485 occupied=53786 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=485 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=486 occupied=53746 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=486 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=487 occupied=53723 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=487 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=488 occupied=53730 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=488 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=489 occupied=53698 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=489 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=490 occupied=53671 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=490 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=491 occupied=53643 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=491 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=492 occupied=53610 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=492 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=493 occupied=53563 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=493 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=494 occupied=53557 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=494 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=495 occupied=53544 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=495 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=496 occupied=53505 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=496 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=497 occupied=53449 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=497 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=498 occupied=53434 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=498 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=499 occupied=53397 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=499 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=500 occupied=53356 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=500 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=501 occupied=53322 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=501 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=502 occupied=53296 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=502 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=503 occupied=53255 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=503 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=504 occupied=53230 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=504 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=505 occupied=53175 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=505 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=506 occupied=53152 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=506 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=507 occupied=53124 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=507 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=508 occupied=53081 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=508 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=509 occupied=53041 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=509 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=510 occupied=52998 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=510 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=511 occupied=52999 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=511 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=512 occupied=52965 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=512 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=513 occupied=52940 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=513 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=514 occupied=52921 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=514 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=515 occupied=52891 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=515 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=516 occupied=52878 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=516 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=517 occupied=52844 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=517 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=518 occupied=52815 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=518 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=519 occupied=52789 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=519 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=520 occupied=52758 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=520 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=521 occupied=52740 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=521 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=522 occupied=52712 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=522 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=523 occupied=52690 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=523 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=524 occupied=52688 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=524 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=525 occupied=52658 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=525 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=526 occupied=52647 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=526 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=527 occupied=52611 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=527 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=528 occupied=52596 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=528 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=529 occupied=52606 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=529 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=530 occupied=52594 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=530 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=531 occupied=52582 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=531 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=532 occupied=52572 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=532 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=533 occupied=52573 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=533 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=534 occupied=52563 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=534 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=535 occupied=52574 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=535 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=536 occupied=52582 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=536 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=537 occupied=52569 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=537 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=538 occupied=52567 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=538 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=539 occupied=52553 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=539 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=540 occupied=52563 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=540 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=541 occupied=52558 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=541 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=542 occupied=52592 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=542 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=543 occupied=52576 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=543 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=544 occupied=52582 maximum_u8_error=1 differing_channels=5
+ACTUAL FACE GPU tick=544 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=545 occupied=52594 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=545 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=546 occupied=52591 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=546 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=547 occupied=52595 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=547 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=548 occupied=52615 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=548 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=549 occupied=52627 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=549 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=550 occupied=52627 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=550 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=551 occupied=52640 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=551 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=552 occupied=52665 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=552 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=553 occupied=52688 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=553 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=554 occupied=52703 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=554 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=555 occupied=52706 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=555 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=556 occupied=52731 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=556 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=557 occupied=52746 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=557 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=558 occupied=52757 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=558 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=559 occupied=52779 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=559 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=560 occupied=52799 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=560 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=561 occupied=52843 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=561 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=562 occupied=52887 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=562 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=563 occupied=52898 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=563 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=564 occupied=52932 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=564 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=565 occupied=52964 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=565 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=566 occupied=52998 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=566 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=567 occupied=53027 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=567 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=568 occupied=53049 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=568 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=569 occupied=53086 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=569 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=570 occupied=53131 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=570 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=571 occupied=53168 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=571 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=572 occupied=53173 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=572 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=573 occupied=53191 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=573 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=574 occupied=53239 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=574 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=575 occupied=53273 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=575 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=576 occupied=53303 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=576 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=577 occupied=53339 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=577 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=578 occupied=53369 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=578 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=579 occupied=53414 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=579 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=580 occupied=53448 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=580 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=581 occupied=53480 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=581 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=582 occupied=53504 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=582 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=583 occupied=53536 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=583 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=584 occupied=53552 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=584 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=585 occupied=53591 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=585 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=586 occupied=53650 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=586 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=587 occupied=53644 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=587 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=588 occupied=53655 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=588 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=589 occupied=53696 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=589 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=590 occupied=53730 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=590 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=591 occupied=53744 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=591 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=592 occupied=53762 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=592 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=593 occupied=53777 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=593 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=594 occupied=53794 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=594 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=595 occupied=53815 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=595 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=596 occupied=53834 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=596 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=597 occupied=53827 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=597 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=598 occupied=53815 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=598 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=599 occupied=53834 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=599 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=600 occupied=53836 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=600 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=601 occupied=53808 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=601 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=602 occupied=53810 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=602 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=603 occupied=53842 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=603 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=604 occupied=53798 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=604 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=605 occupied=53786 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=605 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=606 occupied=53745 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=606 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=607 occupied=53722 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=607 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=608 occupied=53731 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=608 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=609 occupied=53698 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=609 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=610 occupied=53670 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=610 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=611 occupied=53642 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=611 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=612 occupied=53608 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=612 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=613 occupied=53563 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=613 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=614 occupied=53557 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=614 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=615 occupied=53544 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=615 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=616 occupied=53505 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=616 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=617 occupied=53449 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=617 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=618 occupied=53434 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=618 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=619 occupied=53395 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=619 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=620 occupied=53356 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=620 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=621 occupied=53322 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=621 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=622 occupied=53296 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=622 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=623 occupied=53254 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=623 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=624 occupied=53230 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=624 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=625 occupied=53174 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=625 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=626 occupied=53152 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=626 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=627 occupied=53124 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=627 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=628 occupied=53079 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=628 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=629 occupied=53039 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=629 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=630 occupied=52999 maximum_u8_error=1 differing_channels=5
+ACTUAL FACE GPU tick=630 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=631 occupied=52999 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=631 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=632 occupied=52965 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=632 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=633 occupied=52940 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=633 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=634 occupied=52921 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=634 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=635 occupied=52891 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=635 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=636 occupied=52877 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=636 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=637 occupied=52845 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=637 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=638 occupied=52813 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=638 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=639 occupied=52789 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=639 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=640 occupied=52758 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=640 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=641 occupied=52741 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=641 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=642 occupied=52712 maximum_u8_error=25 differing_channels=3
+BODY PIXEL label=actual-facial-details x=190 y=441 CPU=[104, 72, 55, 255] GPU=[79, 54, 42, 255]
+ACTUAL FACE GPU tick=642 base_vertices=78278 appended_vertices=93217 max_u8_error=25
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=643 occupied=52691 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=643 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=644 occupied=52687 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=644 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=645 occupied=52660 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=645 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=646 occupied=52646 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=646 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=647 occupied=52611 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=647 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=648 occupied=52596 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=648 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=649 occupied=52604 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=649 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=650 occupied=52594 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=650 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=651 occupied=52582 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=651 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=652 occupied=52572 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=652 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=653 occupied=52574 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=653 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=654 occupied=52563 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=654 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=655 occupied=52575 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=655 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=656 occupied=52582 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=656 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=657 occupied=52569 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=657 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=658 occupied=52567 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=658 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=659 occupied=52553 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=659 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=660 occupied=52563 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=660 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=661 occupied=52558 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=661 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=662 occupied=52592 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=662 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=663 occupied=52576 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=663 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=664 occupied=52582 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=664 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=665 occupied=52594 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=665 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=666 occupied=52591 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=666 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=667 occupied=52595 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=667 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=668 occupied=52615 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=668 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=669 occupied=52627 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=669 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=670 occupied=52627 maximum_u8_error=1 differing_channels=6
+ACTUAL FACE GPU tick=670 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=671 occupied=52640 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=671 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=672 occupied=52665 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=672 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=673 occupied=52688 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=673 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=674 occupied=52703 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=674 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=675 occupied=52706 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=675 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=676 occupied=52731 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=676 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=677 occupied=52747 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=677 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=678 occupied=52757 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=678 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=679 occupied=52779 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=679 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=680 occupied=52798 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=680 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=681 occupied=52843 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=681 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=682 occupied=52886 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=682 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=683 occupied=52898 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=683 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=684 occupied=52932 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=684 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=685 occupied=52963 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=685 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=686 occupied=52998 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=686 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=687 occupied=53026 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=687 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=688 occupied=53050 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=688 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=689 occupied=53086 maximum_u8_error=2 differing_channels=3
+BODY PIXEL label=actual-facial-details x=186 y=435 CPU=[105, 71, 54, 255] GPU=[107, 72, 55, 255]
+ACTUAL FACE GPU tick=689 base_vertices=78278 appended_vertices=93217 max_u8_error=2
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=690 occupied=53129 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=690 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=691 occupied=53169 maximum_u8_error=2 differing_channels=3
+BODY PIXEL label=actual-facial-details x=306 y=442 CPU=[65, 41, 31, 255] GPU=[67, 42, 32, 255]
+ACTUAL FACE GPU tick=691 base_vertices=78278 appended_vertices=93217 max_u8_error=2
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=692 occupied=53172 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=692 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=693 occupied=53191 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=693 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=694 occupied=53239 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=694 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=695 occupied=53273 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=695 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=696 occupied=53304 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=696 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=697 occupied=53339 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=697 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=698 occupied=53369 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=698 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=699 occupied=53414 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=699 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=700 occupied=53448 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=700 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=701 occupied=53480 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=701 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=702 occupied=53504 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=702 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=703 occupied=53537 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=703 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=704 occupied=53551 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=704 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=705 occupied=53591 maximum_u8_error=1 differing_channels=3
+ACTUAL FACE GPU tick=705 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=706 occupied=53650 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=706 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=707 occupied=53644 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=707 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=708 occupied=53655 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=708 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=709 occupied=53696 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=709 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=710 occupied=53730 maximum_u8_error=1 differing_channels=4
+ACTUAL FACE GPU tick=710 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=711 occupied=53743 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=711 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=712 occupied=53762 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=712 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=713 occupied=53777 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=713 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=714 occupied=53795 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=714 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=715 occupied=53815 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=715 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=716 occupied=53834 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=716 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=717 occupied=53827 maximum_u8_error=1 differing_channels=2
+ACTUAL FACE GPU tick=717 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=718 occupied=53816 maximum_u8_error=0 differing_channels=0
+ACTUAL FACE GPU tick=718 base_vertices=78278 appended_vertices=93217 max_u8_error=0
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=719 occupied=53834 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=719 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=720 occupied=53836 maximum_u8_error=1 differing_channels=1
+ACTUAL FACE GPU tick=720 base_vertices=78278 appended_vertices=93217 max_u8_error=1
+
+thread 'female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses' (8346703) panicked at crates/voxy_app/src/female_groom_gpu_tests.rs:497:9:
+actual facial details/body mismatch: 25
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses ... FAILED
+
+failures:
+
+failures:
+    female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 363 filtered out; finished in 133.53s
+

@@ -1,0 +1,16 @@
+
+running 1 test
+LIQUID GPU PAIR FORCES admitted=72 formulations=3 gas_branches=2 heating_branches=2 separations=6
+
+thread 'liquid_pair_forces::tests::gpu_pair_forces_admit_original_model_branches' (74810499) panicked at crates/voxy_render/src/liquid_pair_forces.rs:149:153:
+called `Result::unwrap()` on an `Err` value: InvalidConfig
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test liquid_pair_forces::tests::gpu_pair_forces_admit_original_model_branches ... FAILED
+
+failures:
+
+failures:
+    liquid_pair_forces::tests::gpu_pair_forces_admit_original_model_branches
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 263 filtered out; finished in 0.04s
+

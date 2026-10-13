@@ -1,0 +1,29 @@
+{
+  "scope": "isolated synthetic unique-row assembly using extracted current source; not full model/profile or FPS proof",
+  "source_sha256": "c41f19879918f7ee93a0708b68aa1ffc1a2f583f9cc21324e915a77c2a3d1021",
+  "harness_sha256": "7479aa3efde5a9b1741ad8c4d294e691db027b02c448cfaf129e56181a762438",
+  "rustc": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "flags": [
+    "--edition",
+    "2024",
+    "-O"
+  ],
+  "measurements": [
+    {
+      "rows": 1000,
+      "repeats": 30,
+      "assembly_ms": 0.5592777666666666
+    },
+    {
+      "rows": 1600,
+      "repeats": 30,
+      "assembly_ms": 1.0715861333333334
+    },
+    {
+      "rows": 2400,
+      "repeats": 30,
+      "assembly_ms": 2.5673889
+    }
+  ],
+  "decision": "do not redesign alias lookup based on this small measured cost; continue investigating physical refinement and trajectory admission"
+}

@@ -1,0 +1,26 @@
+{
+  "mode": "VOXY_GPU_BODY=1",
+  "entrypoint": "female_physical_stance",
+  "native_wiring": "shared cube base prefix deformation encoded before scene draw; resident groom selected without density reduction",
+  "test_owner": "same ResidentBody used by SceneApp and actual full face test",
+  "full_face_max_u8_errors": [
+    1,
+    1
+  ],
+  "build": "release example passed",
+  "ui": "Mac locked; native launch not attempted",
+  "fps": null,
+  "limits": [
+    "synchronous physical stance only",
+    "default face and body parameters, no film",
+    "async and GPU surface lighting combinations not qualified",
+    "CPU physics, face details, lighting and body reference preparation retained",
+    "not an FPS optimization claim"
+  ],
+  "sha256": {
+    "crates/voxy_app/src/resident_body.rs": "25c8ca66520fd1ed52398a5f110f7426e2107118437f265587375bae8c9b5556",
+    "crates/voxy_app/src/scene_app.rs": "22eda541bc19b55593fdeff37ca8b9e5052cc9b4bb19a76767b915e9a70f6672",
+    "crates/voxy_app/src/female_demo.rs": "8353da04a5b431b322b916843cdfcda7d1155254ad0d62798989feb70ec3b991",
+    "crates/voxy_app/src/female_groom_gpu_tests.rs": "2a61608e82c74d41a927cbaf160edf206617dc06e5b11bc7618ef10ac153e8c6"
+  }
+}

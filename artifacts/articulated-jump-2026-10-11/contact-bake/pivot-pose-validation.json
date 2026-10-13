@@ -1,0 +1,15 @@
+{
+  "tests_passed": 177,
+  "failed": 0,
+  "scope": "native IK pose and admitted replacement state staging",
+  "reachable_toe_contact_verified": true,
+  "unreachable_rejected": true,
+  "source_pose_preserved": true,
+  "full_character_verified": false,
+  "editor_publication_integrated": false,
+  "sha256": {
+    "crates/voxy_gameplay/src/foot_contact.rs": "63cb082619d2ca101653636463baf4b8209f131ed77109c5f193b427dfd02a94",
+    "crates/voxy_gameplay/src/foot_contact/tests.rs": "c5578b93690ac90734b7d95263bee93e0333582881a60d4deeb3211e0d70e6ce",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/pivot-pose-tests.log": "4c2c3859d9c7c1674ca57333f6771c86012ea8da83e959378367c0e3fb48ac1c"
+  }
+}

@@ -1,0 +1,344 @@
+{
+  "scope": "observed refinement trace only; no physical feasibility or full-cycle proof",
+  "log_sha256": "5140159383c6597f3394ab03cf49b91f82d9cba6e31f8213ff1c7c3b5077daf6",
+  "transactions": [],
+  "nonlinear_accepted_steps": [
+    {
+      "line": 29,
+      "iteration": 6,
+      "before": 0.0,
+      "full": 1.0064126926037783e-17,
+      "accepted": 0.0,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "line": 52,
+      "iteration": 12,
+      "before": 0.0,
+      "full": 1.5372590104466023e-11,
+      "accepted": 0.0,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "line": 79,
+      "iteration": 19,
+      "before": 0.0,
+      "full": 2.214413642279603e-20,
+      "accepted": 0.0,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "line": 111,
+      "iteration": 27,
+      "before": 0.0,
+      "full": 4.3523116320909894e-21,
+      "accepted": 0.0,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "line": 142,
+      "iteration": 35,
+      "before": 0.0,
+      "full": 6.952591191252753e-23,
+      "accepted": 0.0,
+      "scale": 0.5,
+      "tangent_complete": false
+    },
+    {
+      "line": 168,
+      "iteration": 42,
+      "before": 0.0,
+      "full": 0.0,
+      "accepted": 0.0,
+      "scale": 1.0,
+      "tangent_complete": true
+    }
+  ],
+  "nonlinear_model_deferrals": [
+    {
+      "line": 6,
+      "iteration": 0,
+      "added_rows": 14,
+      "added_pairs": 1,
+      "descent_found": false
+    },
+    {
+      "line": 9,
+      "iteration": 1,
+      "added_rows": 1,
+      "added_pairs": 1,
+      "descent_found": false
+    },
+    {
+      "line": 13,
+      "iteration": 2,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 17,
+      "iteration": 3,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 21,
+      "iteration": 4,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 25,
+      "iteration": 5,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 33,
+      "iteration": 7,
+      "added_rows": 12,
+      "added_pairs": 1,
+      "descent_found": false
+    },
+    {
+      "line": 36,
+      "iteration": 8,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": false
+    },
+    {
+      "line": 40,
+      "iteration": 9,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 44,
+      "iteration": 10,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 48,
+      "iteration": 11,
+      "added_rows": 5,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 56,
+      "iteration": 13,
+      "added_rows": 12,
+      "added_pairs": 0,
+      "descent_found": false
+    },
+    {
+      "line": 59,
+      "iteration": 14,
+      "added_rows": 2,
+      "added_pairs": 3,
+      "descent_found": false
+    },
+    {
+      "line": 63,
+      "iteration": 15,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 67,
+      "iteration": 16,
+      "added_rows": 2,
+      "added_pairs": 1,
+      "descent_found": true
+    },
+    {
+      "line": 71,
+      "iteration": 17,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 75,
+      "iteration": 18,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 83,
+      "iteration": 20,
+      "added_rows": 14,
+      "added_pairs": 1,
+      "descent_found": false
+    },
+    {
+      "line": 86,
+      "iteration": 21,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": false
+    },
+    {
+      "line": 90,
+      "iteration": 22,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 94,
+      "iteration": 23,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 99,
+      "iteration": 24,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 103,
+      "iteration": 25,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 107,
+      "iteration": 26,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 115,
+      "iteration": 28,
+      "added_rows": 17,
+      "added_pairs": 1,
+      "descent_found": false
+    },
+    {
+      "line": 118,
+      "iteration": 29,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": false
+    },
+    {
+      "line": 122,
+      "iteration": 30,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 126,
+      "iteration": 31,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 130,
+      "iteration": 32,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 134,
+      "iteration": 33,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 138,
+      "iteration": 34,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 146,
+      "iteration": 36,
+      "added_rows": 15,
+      "added_pairs": 1,
+      "descent_found": false
+    },
+    {
+      "line": 149,
+      "iteration": 37,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": false
+    },
+    {
+      "line": 153,
+      "iteration": 38,
+      "added_rows": 2,
+      "added_pairs": 1,
+      "descent_found": true
+    },
+    {
+      "line": 157,
+      "iteration": 39,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 161,
+      "iteration": 40,
+      "added_rows": 4,
+      "added_pairs": 2,
+      "descent_found": true
+    },
+    {
+      "line": 165,
+      "iteration": 41,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    }
+  ],
+  "model_deferrals_with_trial_descent": 25,
+  "feasible_elastic_accepted_steps": 6,
+  "completed_profile_count": 0,
+  "detailed_refinement_profile_count": 0,
+  "detailed_refinement_totals_ms": {
+    "witness_ms": 0,
+    "projection_ms": 0,
+    "admission_ms": 0
+  },
+  "profile_stage_totals_ms": {
+    "elapsed_ms": 0,
+    "initial_projection_ms": 0,
+    "initial_admission_ms": 0,
+    "refinement_and_final_check_ms": 0
+  },
+  "slowest_completed_profile": null,
+  "temporal_retries": [],
+  "temporal_admissions": [],
+  "refinement_events": 0,
+  "unpaired_cut_update": null,
+  "clock_only_events": 0,
+  "minimum_observed_trust_scale": null
+}

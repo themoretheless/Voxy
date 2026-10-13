@@ -1,0 +1,35 @@
+{
+  "scope": "Native reference-geometry support query; not runtime contact qualification",
+  "tests": {
+    "passed": 262,
+    "failed": 0
+  },
+  "feet": [
+    {
+      "side": "left",
+      "vertices": 629,
+      "directions": 1200,
+      "native_support_error_m": 5.551115123125783e-17
+    },
+    {
+      "side": "right",
+      "vertices": 650,
+      "directions": 1200,
+      "native_support_error_m": 5.551115123125783e-17
+    }
+  ],
+  "continuous_collision_verified": false,
+  "character_runtime_integrated": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_animation/src/foot_support.rs": "936f7060884c59864c82fa50cfcc8d0efa4c633d2ea3c1c9f8d0fd1c71ab6c37",
+    "crates/voxy_animation/src/lib.rs": "283b295eb0b97c4258af80ddd7b8d8e2e2d8faf9d73a8f1236a0761201c46720",
+    "tools/engine-research/foot-hull/Cargo.toml": "f0012c0e65235b06951c285ad1fde2150e1d0b9b9c98076a72751009820cdc10",
+    "tools/engine-research/foot-hull/Cargo.lock": "98015e466170e3b830fd633740fb5d89b35e47c5077701d8f5adffd5256e329f",
+    "tools/engine-research/foot-hull/src/main.rs": "99462eb76fb592c09fd22938d2d4340517a9794d2f7147421d47c070c28b48bf",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/native-foot-support.json": "6bb3f8cad1a89a3f6e12ff253117089526f7a5322fc3fd20ab816371966333eb",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/native-foot-support-build.log": "25fca68349f0d2ae71bc52a426bd417b409742b03b8985e1be7cbcfb1bdf72c2",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/foot-support-tests.log": "b8eb19eaa076b8ede3eedf98308bbc0ef0edd0ca8ccf86c0f4d4ff3621b6005a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/foot-hull-source-points.log": "79e7deaf2ec282549488d54d986704f4d4d42f3ea56a0b52b75bbcdf0a369cdf"
+  }
+}

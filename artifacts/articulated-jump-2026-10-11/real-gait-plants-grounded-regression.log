@@ -1,0 +1,8 @@
+
+running 3 tests
+test female_rig::humanoid_locomotion_tests::grounded_preview_drives_actual_body_and_head_from_the_same_authored_pose ... ok
+test female_rig::humanoid_locomotion_tests::shared_grounded_playback_preserves_pose_across_interrupted_fades_and_errors ... ok
+test female_demo::authored_jump_integration_tests::grounded_preview_keeps_shared_source_when_replacing_the_body ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 340 filtered out; finished in 20.59s
+

@@ -1,0 +1,11 @@
+{
+  "scope": "same fixture, unchanged first nine accepted events; continuation beyond old false budget rejection, not completed-pose proof",
+  "log_sha256": "8a8658e561e8e46347fd03b1073e70aef76208faeb63a368195e252ee4f16a8b",
+  "reference_accepted_events": 9,
+  "new_accepted_events": 9,
+  "reference_prefix_identical": true,
+  "iteration61_observed": true,
+  "process_present": true,
+  "process": "PID ELAPSED  %CPU\n95076   08:46  35.7",
+  "terminal_exists": false
+}

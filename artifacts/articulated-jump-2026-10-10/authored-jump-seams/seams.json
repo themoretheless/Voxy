@@ -1,0 +1,39 @@
+{
+  "scope": "Retargeted endpoint pose discontinuities, not rendered jitter or an animation quality pass",
+  "body_vertices": 60866,
+  "boundaries": [
+    {
+      "from": "Idle",
+      "to": "JumpStart",
+      "mesh_gap_m": 0.43599334,
+      "pelvis_gap_m": 0.28068048,
+      "from_duration_s": 2.5,
+      "to_duration_s": 1.3333334
+    },
+    {
+      "from": "JumpStart",
+      "to": "JumpLoop",
+      "mesh_gap_m": 0.0,
+      "pelvis_gap_m": 0.0,
+      "from_duration_s": 1.3333334,
+      "to_duration_s": 2.5
+    },
+    {
+      "from": "JumpLoop",
+      "to": "JumpLand",
+      "mesh_gap_m": 0.3172377,
+      "pelvis_gap_m": 0.044993516,
+      "from_duration_s": 2.5,
+      "to_duration_s": 1.25
+    },
+    {
+      "from": "JumpLand",
+      "to": "Idle",
+      "mesh_gap_m": 0.07637988,
+      "pelvis_gap_m": 0.0018443835,
+      "from_duration_s": 1.25,
+      "to_duration_s": 2.5
+    }
+  ],
+  "next_requirement": "Separate authored pelvis displacement from actor root trajectory; admit continuous transitions before scene integration"
+}

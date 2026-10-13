@@ -1,0 +1,246 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^
+  |
+  = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:18:127
+   |
+18 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:72:19
+   |
+65 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+72 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `advance_contacts` is never used
+   --> crates/physics/src/hair/contact_safe_motion.rs:749:24
+    |
+749 | pub(in crate::hair) fn advance_contacts(
+    |                        ^^^^^^^^^^^^^^^^
+
+warning: function `activate` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:145:15
+    |
+145 | pub(super) fn activate(
+    |               ^^^^^^^^
+
+warning: function `activate_with_workers` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:158:15
+    |
+158 | pub(super) fn activate_with_workers(
+    |               ^^^^^^^^^^^^^^^^^^^^^
+
+warning: field `owner` is never read
+  --> crates/physics/src/hair/contact_fraction_cache.rs:70:5
+   |
+69 | pub(super) struct FractionShard<'a> {
+   |                   ------------- field in this struct
+70 |     owner:&'a FractionCache,
+   |     ^^^^^
+
+warning: `physics` (lib) generated 8 warnings (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: constant `EXPERIMENTAL_TRIPLE_CONTACT_ARITHMETIC` is never used
+   --> crates/voxy_render/src/joint_contact_triple.rs:109:11
+    |
+109 | pub const EXPERIMENTAL_TRIPLE_CONTACT_ARITHMETIC:&str=include_str!("joint_contact_triple.wgsl");
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+   --> crates/voxy_render/src/liquid_density.rs:153:1
+    |
+153 | / pub struct PendingLiquidDensity {
+154 | |     input: LiquidDensityInput,
+155 | |     read: crate::PendingComputeReadback,
+...   |
+158 | | }
+    | |_^
+    |
+    = note: requested on the command line with `-W missing-debug-implementations`
+
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: `voxy_render` (lib) generated 2 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated items `new`, `request_pivot_transfer`, `set_support_geometry`, and `request_geometry_pivot` are never used
+   --> crates/voxy_editor/src/foot_placement.rs:324:19
+    |
+310 | impl FootRuntime {
+    | ---------------- associated items in this implementation
+...
+324 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+...
+393 |     pub(super) fn request_pivot_transfer(&mut self, foot: usize, pivot: DVec3, max_projection: f64) -> Result<(), String> {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+405 |     pub(super) fn set_support_geometry(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+419 |     pub(super) fn request_geometry_pivot(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 6 warnings
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/model.rs:1156:19
+     |
+1156 |             Mat4::perspective_rh(1., 1., 0.1, 100.),
+     |                   ^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_render` (lib test) generated 2 warnings (1 duplicate)
+    Finished `release` profile [optimized] target(s) in 27.97s
+     Running unittests src/lib.rs (/tmp/voxy-face-refit-20261011/release/deps/voxy_render-3c41066114dc95c2)
+
+running 2 tests
+test joint_contact_dot::triple::qr_tests::triple_qr_shader_validates ... ok
+TRIPLE ORIGINAL QR active=[2, 26, 27, 48, 53, 60] width=882 orthogonality=0.000000000000000014333628061747244 reconstruction=0.00000000000000011102230246251565 original_worst_gap=0.000000000000006043613959977323 active_equality=0.000000000000006043613959977323 min_reaction=0.0005896138885827462 tolerance=0.00000000000001 scope=fixed_active_QR_not_full_active_set_or_physical_admission
+test joint_contact_dot::triple::qr_tests::gpu_triple_qr_original_active_operator ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 288 filtered out; finished in 1.26s
+

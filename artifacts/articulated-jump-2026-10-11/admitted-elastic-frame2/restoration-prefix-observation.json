@@ -1,0 +1,11 @@
+{
+  "observed_at": "2026-10-11T03:26:54.876559+00:00",
+  "scope": "live prefix comparison only; not convergence or speed proof",
+  "reference": "artifacts/articulated-jump-2026-10-11/supporting-origin-frame2/qualification.log",
+  "candidate": "artifacts/articulated-jump-2026-10-11/admitted-elastic-frame2/qualification.log",
+  "reference_sha256": "0911341f09d7e3128e827c3fb9358e35f315de778c384a2c0eb1c6f36a42275a",
+  "candidate_snapshot_sha256": "6dae22d6b7787c6f5c88d556170f41217088c397b9283d6b81a681dbb48ed744",
+  "candidate_events": 77,
+  "identical_prefix_events": 77,
+  "all_observed_candidate_events_match": true
+}

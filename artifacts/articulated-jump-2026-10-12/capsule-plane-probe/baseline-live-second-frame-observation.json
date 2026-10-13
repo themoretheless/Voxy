@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-10-12T18:43:28.510923+00:00",
+  "pid": 481,
+  "process_verified_live": true,
+  "sample_sha256": "5500932cfc200e3a16e80110486d22a797eea2e342c9209bc4f1ad41ac23b190",
+  "sample_duration_seconds": 2,
+  "sample_interval_ms": 10,
+  "simulation_thread_samples": 176,
+  "gpu_wait_stack_samples": 122,
+  "interpretation": "At this observation the coupled simulation thread predominantly waited for Metal completion inside resident contact projection. This is a short stack sample, not a full-frame timing distribution or GPU timestamp.",
+  "next_investigation": "Capture complete contact operator dimensions and per-stage times at the later coupled-frame input before changing GPU QR or admission ownership.",
+  "full_cycle_completed": false
+}

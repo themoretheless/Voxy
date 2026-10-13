@@ -1,0 +1,28 @@
+{
+  "candidate_admitted": false,
+  "runtime_change": false,
+  "source_mechanism": "Ipopt SOC retains objective RHS and rechecks original acceptance; current test is not full SOC",
+  "trial_scale": 1e-05,
+  "preserve_free": true,
+  "final_mesh_blocker": {
+    "rod": 0,
+    "segment": 18,
+    "face": [
+      15709,
+      15713,
+      15714
+    ],
+    "witness_gap_m": -1.2546341173418725e-10
+  },
+  "other_observed_mesh_blocker": {
+    "rod": 463,
+    "segment": 18,
+    "face": [
+      45507,
+      45510,
+      45511
+    ]
+  },
+  "strand_path": false,
+  "next_requirement": "Inspect swept-contact activation and objective-preserving constrained correction against source implementations; preserve admission tolerances."
+}

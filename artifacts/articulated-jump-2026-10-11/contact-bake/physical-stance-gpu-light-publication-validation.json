@@ -1,0 +1,97 @@
+{
+  "hardware": "Apple M4 Max / Metal",
+  "accepted_cycle_samples": 6,
+  "vertices": 60814,
+  "rejected_underconverged_attempts": 12,
+  "accepted_iteration_budget_observed": 64,
+  "maximum_cpu_irradiance_error": 4.647714170191719e-06,
+  "maximum_gpu_error_estimate": 0.0003880141593981534,
+  "admission_gpu_ms_range": [
+    0.150375,
+    0.444042
+  ],
+  "admission_gpu_ms_median": 0.17775000000000002,
+  "scratch_bytes_per_vertex": 64,
+  "weighted_jacobi_error_correction_steps": 4,
+  "damping": 0.6666666666666666,
+  "unchanged_absolute_error_threshold": 0.001,
+  "unchanged_squared_relative_residual_threshold": 1e-06,
+  "gpu_only_publication": true,
+  "whole_accepted_rgba_bitwise_preserved_on_rejection": true,
+  "first_rejection_has_no_valid_publication": true,
+  "publication_generation_recovery_verified": [
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 6,
+      "geometry_status": 1,
+      "scenario": "collapsed_geometry"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 6,
+      "geometry_status": 1,
+      "scenario": "nonfinite_geometry"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 6,
+      "geometry_status": 0,
+      "scenario": "nonfinite_incident"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 6,
+      "geometry_status": 0,
+      "scenario": "negative_incident"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 0,
+      "generation": 6,
+      "geometry_status": 0,
+      "scenario": "negative_alpha"
+    },
+    {
+      "accepted_bits_preserved": true,
+      "admitted": 1,
+      "generation": 7,
+      "geometry_status": 0,
+      "scenario": "recovery"
+    }
+  ],
+  "independent_analytic_and_original_solver_regressions_passed": true,
+  "native_renderer_integrated": false,
+  "whole_model_rollback_qualified": false,
+  "interval_certificate": false,
+  "fps_qualified": false,
+  "scope": "Model-domain numerical admission and retained light only. Independent CPU tail audit verifies accepted estimates cover observed error. Geometry/incident streams still provided by diagnostic fixture uploads. GPU timing excludes uploads, readback, CPU audit and rendering; no whole-frame/FPS inference.",
+  "sha256": {
+    "crates/voxy_render/src/surface_light_admission.rs": "938cbf6309cd7870249de02dc498dc8458ded318f829a0b5c8c233a51aea8ca8",
+    "crates/voxy_render/src/surface_light_admission.wgsl": "ef93379c019134d915f00c2d573b4fcdd8c7c0fcb2ec3dfb95cc61982db87ceb",
+    "crates/voxy_render/src/surface_light_pcg.rs": "8df10c7b5354d3ac0f1eb883cc3f4fd19efc83a7b79825c39ad02f8c613ec669",
+    "crates/voxy_render/src/lib.rs": "9e28939ce1a62f2f930129810891c21ec65ef86ab3a2e324d590277d1193880f",
+    "crates/voxy_render/examples/surface_light_admission.rs": "f80be20dde579e3fdf83f5409df93754f1d34f99ad9e0909065a0fcaf8aaa3b2",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-qualified-cycle-report.json": "a706e412355322f573b9c37300aa4747f0d1e45727458ea37d34bafa9b68b213",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-qualified-analytic-report.json": "b55a12a60d95134112a509b982a4d3c1792cb0caaae83f918496286ac645daa0",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-qualified-cycle.log": "b95fac3273dbc0365cae8ad26db8681265401a5fb55fb351f5ec9c583ed6cb5d",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-qualified-analytic.log": "7c4b84a4d773c13f8a02c9b96406e86a34b6a53360f041373406d7eeebaa50d9",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-qualified-results.json": "430fd070cdbe82479775f7feb423352365c5edcbb58f059ae44e4b2d3c1e4758",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-corrected-results.json": "54f2a58ed5b2b8a77c6aeae5abc4f5b2386253b57278c570792bb87f878b1c3b",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-corrected-original_analytic.log": "022021ff67ab88c06f30e08458d9a8ef9c6df8a8eef5cccda6ce0aef5c381696",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-corrected-geometry-regression-report.json": "686dc01001dfa7ddd3c670411fcbbd2fc4ebdfa9bb0fc8df72fed396accfd22d",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-final-cycle.log": "af6a3586477a451dc4f6f34e1580df791d2475fce6203f278b48bc138e52d7ab",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-correction-diagnostic.json": "e851447135259fdd96d1687c8f0d50ad04f7495ddc7aa322e29327baf4b6f5df",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-publication-damped-correction-diagnostic.json": "d9b85da88847c67041ae4e43d15f77037e33879f407371efe490b835cb017c74",
+    "target/release/examples/surface_light_admission": "29dd15182595bfadd69a44069fcb2b70b3eb6d42bbec94e842b16c30bcea8c09",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-0.json": "064c2a03f5f8e659e32544b8df67bcb1011e0d76a7d6f28b67eb9e056d6f1739",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-1.json": "b957de86583c03eb40c419203f7ebc19e93fe4242da88f899727a1e00a4b4816",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-2.json": "0a37dd39c3490eaf5d7636d199c7b6a323662e62b285632f75d34d428a275405",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-3.json": "5fce2700645a4cc3ef9e5ec8bad774d3a4eadad17423ef643832021da7da7e74",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-4.json": "6c59f5fd59e792c8b772c3da5422323a7d07f615b4fae4971fd956f303ca0e62",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-5.json": "7be8ed82196ccb7b6d184502ee2a586618342bb66fe8f53290b2f5ed1dcd063f"
+  }
+}

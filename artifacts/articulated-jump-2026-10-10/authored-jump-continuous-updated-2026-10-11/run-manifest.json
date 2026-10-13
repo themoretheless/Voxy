@@ -1,0 +1,15 @@
+{
+  "started_utc": "2026-10-10T22:11:32.323900+00:00",
+  "binary_sha256": "5012780e70f0ac23ce8d12760b2d975461859e1b70ceab06bbf08cb364eb06f5",
+  "required_frames": 720,
+  "all_guides": 469,
+  "segments_per_guide": 20,
+  "continuous_contacts": true,
+  "root_failure_export_enabled": true,
+  "source_sha256": {
+    "crates/physics/src/hair/contact_square_root_qr.rs": "4860118feb37b1138a0630149e057ff9d7a597a994521c7160d243cf8d24590a",
+    "crates/physics/src/hair/contact_safe_motion.rs": "794fd8666f5af797ef589160bccd61ea2e688499f3ea9804e4bc70cd25b58247",
+    "crates/voxy_app/src/female_demo.rs": "f4b2c7f16000d3fdf1f61a669df5bed0b6ba28e68583ff5c6d3c157f6e888649",
+    "crates/voxy_app/src/female_hair.rs": "323fb45fe0e9f86c9316b23c141868701f11c24ed72c97c05259364e02af93ef"
+  }
+}

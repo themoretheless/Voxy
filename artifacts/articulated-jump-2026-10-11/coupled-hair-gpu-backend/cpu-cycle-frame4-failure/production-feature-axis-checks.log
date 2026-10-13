@@ -1,0 +1,66 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:18:127
+   |
+18 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib test) generated 3 warnings (run `cargo fix --lib -p physics --tests` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 58.28s
+     Running unittests src/lib.rs (/tmp/voxy-face-refit-20261011/release/deps/physics-530d4e428bd51e1b)
+
+running 23 tests
+test biomechanics::contact_precision::tests::compensated_gap_keeps_exact_closed_floor_closed ... ok
+test biomechanics::stress_memory::tests::exact_ramp_and_hold_under_refinement ... ok
+test hair::contact::query_tests::warm_start_remains_exact_after_surface_refit_and_far_motion ... ok
+test biomechanics::inertia::implicit::tests::search_report_distinguishes_exact_inverse_budget_exhaustion_and_bad_metric ... ok
+test biomechanics::inertia::diagnostic_energy_tests::free_kinetic_change_preserves_binary_exact_endpoint_difference_and_pin_exclusion ... ok
+test hair::contact::triangle_sweep::trajectory::tests::exact_face_crossing_uses_validated_closed_winding ... ok
+test hair::contact::triangle_sweep::exact_reference::dyadic::feature_axis_certificate_rejects_crossing_and_unknown_budget ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::runtime_moving_roots_remain_exact_and_elastic_nodes_follow ... ok
+test hair::contact::triangle_sweep::exact_reference::discovery::exact_axis_discovery_rejects_interior_crossing_and_accepts_clear_motion ... ok
+test hair::contact::velocity_contacts::square_root_projection::tests::frozen_dual_hints_follow_exact_rows_and_only_opt_in_backends ... ok
+test biomechanics::surface_distance::lower_bound_tests::bounds_never_exceed_exact_features_on_random_oblique_triangles ... ok
+test hair::contact_response_system::square_root_qr::tests::exact_sparse_gaps_preserve_dense_solutions_and_tiny_coefficients ... ok
+test hair::contact_response_system::square_root_qr::tests::exact_zero_reduction_preserves_tiny_directions_and_zero_load_feasibility ... ok
+test hair::contact_response_system::tests::exact_load_cache_preserves_bits_bounds_and_operator_identity ... ok
+test hair::contact_response_system::square_root_qr::tests::exact_zero_support_preserves_cancellation_subnormals_and_overflow_rejection ... ok
+test hair::mesh_motion::tests::nearby_trajectory_planes_survive_refresh_and_exact_repeats_do_not_grow ... ok
+test hair::contact::velocity_contacts::safe_motion::tests::runtime_swept_mode_uses_response_backend_and_preserves_exact_roots ... ok
+test hair::contact::triangle_sweep::exact_reference::discovery::retained_and_discarded_witnesses_have_identical_admission ... ok
+EXACT RUST CERTIFICATE intervals=17 larger_radius_rejected=true scope=one_captured_primitive_not_engine_admission
+test hair::contact::triangle_sweep::exact_reference::captured_rational_axis_witnesses_cover_complete_trajectory ... ok
+EXACT FEATURE AXES status=certified intervals=17 elapsed_s=0.272590417 scope=test_only_not_full_groom_or_FPS
+DYADIC EXACT VERIFIER intervals=17 rational_oracle_equal=true larger_radius_rejected=true scope=single_primitive_no_full_runtime_or_FPS_claim
+test hair::contact::triangle_sweep::exact_reference::dyadic::captured_dyadic_verifier_matches_rational_and_rejects_larger_radius ... ok
+NATIVE EXACT CERTIFICATE intervals=17 elapsed_s=0.480953333 scope=single_primitive_no_runtime_or_FPS_claim
+test hair::contact::triangle_sweep::exact_reference::discovery::captured_native_exact_axis_discovery_certifies_and_rejects_penetration ... ok
+trajectory_pruning samples=10000 accepted=2875 rejected=7125
+test biomechanics::surface_contact::pruning_tests::path_pruning_never_accepts_a_path_rejected_by_exact_feature_guard ... ok
+test hair::contact::triangle_sweep::exact_reference::dyadic::dyadic_operations_and_bernstein_signs_match_rational_oracle ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 439 filtered out; finished in 1.43s
+

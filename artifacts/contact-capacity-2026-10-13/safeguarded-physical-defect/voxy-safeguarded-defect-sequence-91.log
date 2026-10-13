@@ -1,0 +1,39 @@
+
+running 1 test
+TRIPLE COMPLETED SEQUENCE STEP step=1/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=0 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=2/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=1 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=3/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=4 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=4/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=6 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=5/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=7 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=6/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=10 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=7/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=11 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=8/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=12 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=9/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=15 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=10/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=16 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=11/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=20 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=12/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=21 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=13/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=23 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=14/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=25 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=15/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=26 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=16/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=27 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=17/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=28 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=18/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=31 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=19/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=32 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=20/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=33 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=21/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=35 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=22/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=37 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=23/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=38 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=24/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=39 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=25/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=40 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=26/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=45 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=27/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=46 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=28/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=47 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=29/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=48 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=30/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=49 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=31/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=50 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE STEP step=32/32 rows=91 coordinates=882 both_original_physical_admissions=true cached_factor_reuses=51 scope=changing_bounds_fixed_original_operator_not_jump_trajectory
+TRIPLE COMPLETED SEQUENCE {"all_original_physical_gates":true,"cached_compute_submissions":52,"cached_factor_reuses":51,"coordinates":882,"fresh_compute_submissions":52,"max_reaction_difference":0.0,"max_response_difference":0.0,"native_fallbacks":0,"rows":91,"scope":"bounded changing-bound sequence on fixed original matrices/loads; both paths independently pass unchanged native gates; not bit identity, full jump, timing benchmark or FPS","steps":32,"systems":7}
+test gpu_hair_solver::joint::tests::gpu_triple_completed_cache_original_physical_sequence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 379 filtered out; finished in 2.49s
+

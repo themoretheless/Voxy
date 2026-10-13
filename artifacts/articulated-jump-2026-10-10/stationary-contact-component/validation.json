@@ -1,0 +1,18 @@
+{
+  "change": "reject collision-limited fixed graph component when its rounded candidate endpoint already equals staged base for all component rods",
+  "semantics": "smaller positive scale cannot alter that endpoint; request existing constraint refinement, never admit collision or freeze accepted state",
+  "focused_passed": 29,
+  "focused_ignored": 2,
+  "full_physics_passed": 371,
+  "full_physics_ignored": 40,
+  "source_sha256": "794fd8666f5af797ef589160bccd61ea2e688499f3ea9804e4bc70cd25b58247",
+  "full_authored_trajectory_qualified": false,
+  "full_scene_speedup_measured": false,
+  "regression": "stationary_correction_cannot_admit_a_colliding_root_trajectory",
+  "captured_root_motion_candidate_passed": false,
+  "captured_root_motion_failure": "swept strand components have no admissible progress",
+  "isolated_baseline_comparison": "both reject same captured root trajectory; baseline exhausts iteration budget, candidate detects no representable progress",
+  "baseline_source_sha256": "5b0a5c18e321a9d6561667cc540d27261528d8115a8457048e6a43e6dce0aaaf",
+  "baseline_captured_root_motion_passed": false,
+  "baseline_captured_root_motion_failure": "swept strand component admission did not converge"
+}

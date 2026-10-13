@@ -1,0 +1,18 @@
+{
+  "status": "physical gates and ordinary tests qualified; full wrapper running",
+  "change": "Accept an already-found feasible elastic descent despite larger rejected-step probe rows only after whole-strand and whole-mesh path admission, unchanged prescribed roots/orientations, finite strict energy descent and <=5% stretch. After accepting the nonlinear pose, invalidate preceding probe planes; tangent completion is still mandatory for final solver success.",
+  "ordinary_passed": 408,
+  "ordinary_ignored": 60,
+  "exact_targeted_passed": 28,
+  "non_test_release_check": "passed with 7 existing warnings",
+  "regression": "Unchanged energy, moved root and excessive stretch reject; physically descending inertia-dominated microstep admits. Initial test fixture correctly rejected a geometrically small but energy-increasing move; fixture was corrected without weakening energy gate.",
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "249b3589b3993795a82a087f67dbf96493b4b8f0ad12f63740010af7c74f08e1"
+  },
+  "live_evidence": [
+    "HAIR CONTACT FEASIBLE PREFIX iteration=0 probe_rows=6 probe_pairs=0 tangent_complete=false",
+    "HAIR NONLINEAR MERIT iteration=0 before=0e0 full=1.231776849608642e-6 accepted=0e0 scale=7.275957614183426e-12 tangent_complete=false"
+  ],
+  "full_wrapper_receipt": "feasible-prefix-frame4-replay-launch.json",
+  "limits": "Accepted staged prefix is not tangent completion, full solver convergence, 720-frame jump qualification, or FPS."
+}

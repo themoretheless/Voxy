@@ -1,0 +1,9 @@
+{
+  "observed_unix": 1791868011.100233,
+  "pid": 55834,
+  "live": true,
+  "status": "running",
+  "completed_frames": 1,
+  "attempted_frame": 2,
+  "scope": "older frozen binary; no restart; not qualification of decode precision changes"
+}

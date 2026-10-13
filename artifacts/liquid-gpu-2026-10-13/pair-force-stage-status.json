@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "pair_force_execution": "native CPU; extracted original loop without changing pair order or scalar expressions",
+  "native_tests": 122,
+  "native_suites": 11,
+  "render_tests": 225,
+  "render_ignored": 37,
+  "GPU_density_steps": 9,
+  "resource_lifetime": "storage retained and charged across encode/submission/read, released when result is consumed; asserted on hardware",
+  "forces_on_GPU": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/physics/src/liquid.rs": "3282a736e8fefc77fdd46491a0ab8b5ec72eb3cfebdedcba7ea9f2dcac01c626",
+    "crates/physics/src/liquid/pair_forces.rs": "7f4f1d508aa816a2e756b62e25699cc0429b4f480bc423accd9bba7889c7366c",
+    "crates/voxy_render/src/liquid_density.rs": "093476c1eddce3d5be0696ab0443e7ca3e2238ba2f848e99001790a3f483a786"
+  }
+}

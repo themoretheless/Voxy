@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "captures": 6,
+  "repetitions_per_capture": 3,
+  "comparisons": [
+    "reference",
+    "serial",
+    "explicit_eight_workers",
+    "production_auto_workers"
+  ],
+  "physics_tests_passed": 376,
+  "physics_tests_ignored": 41,
+  "binary_sha256": "32073145174abe11e1691f81bd3ecce25aac898ddf9ac16bdce4c7b68c383377",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_swept_constraints.rs": "409032df3aba5ce045c25772ebc7b2eae20ad542a1f09c43071196ceba2d6736",
+    "crates/physics/src/hair/contact_safe_motion.rs": "05300096bd1cef67400d905bd494ddc1573a3c7f73e67dc9dde46d787f5c434d"
+  },
+  "scope": "witness equivalence and physics tests, not full animation or frame FPS"
+}

@@ -1,0 +1,66 @@
+{
+  "reports": [
+    {
+      "input": "original_f64_input",
+      "active_rows": [
+        2,
+        26,
+        27,
+        48,
+        53,
+        60
+      ],
+      "original_max_defect": "6.600000E-77",
+      "worst_row": 2,
+      "min_active_reaction": "0.00058961388858274625832896070608134102552700304566675585852392490607886435102537903",
+      "gram_condition_inf": "607279718251.66411556784596424962001532231150159146381893381383008657648356420684"
+    },
+    {
+      "input": "packed_input",
+      "active_rows": [
+        2,
+        26,
+        27,
+        48,
+        53,
+        60
+      ],
+      "original_max_defect": "4.696968901282593349484494250847123644731545103255896258279995005200000E-14",
+      "worst_row": 2,
+      "min_active_reaction": "3071435.7527153240074940559469864643596151891172150330000981930796989590856414355",
+      "gram_condition_inf": "607279718251.65939679090224222130902244775409395772472578411649243922272887692558"
+    },
+    {
+      "input": "three_floats_existing_scaling",
+      "active_rows": [
+        2,
+        26,
+        27,
+        48,
+        53,
+        60
+      ],
+      "original_max_defect": "1.84467790715853191473393543357216390329237212736478765977205177500000E-15",
+      "worst_row": 2,
+      "min_active_reaction": "3071435.7527153256859423477842669509856297482427325557768049521741467840309364504",
+      "gram_condition_inf": "607279718251.66567510603680333302641222861894501248343793227400252733466470899071"
+    },
+    {
+      "input": "three_floats_power_of_two_scaling",
+      "active_rows": [
+        2,
+        26,
+        27,
+        48,
+        53,
+        60
+      ],
+      "original_max_defect": "9.600000E-77",
+      "worst_row": 2,
+      "min_active_reaction": "1266186.1843651414846946269211442140102307896230155554633883301525842969922371341",
+      "gram_condition_inf": "607279718251.66411556784596424962001532231150159146381893381383008657648356420940"
+    }
+  ],
+  "decimal_precision": 80,
+  "scope": "offline fixed-active-set diagnosis; not nonlinear/global contact admission or runtime performance; rounded Gram is not used in production"
+}

@@ -216,6 +216,10 @@ impl FemaleHair {
                 std::slice::from_ref(&collider),
             )?;
         }
+        // Roots and the animated body must advance over the same interval.
+        // Testing every root substep against the body's final pose can crush
+        // nearby segments even when the render/physics timestep is refined.
+        system.sample_collider_motion = true;
         // Render fibres transported by each guide frame. These add visual density,
         // not independent physical degrees of freedom. Author offsets against the
         // full anatomical surface so the initial fibres stay outside the skin.
@@ -309,6 +313,9 @@ impl FemaleHair {
     pub(crate) fn prepare_advance(&self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex])->Result<PreparedHairStep,&'static str> {
         self.prepare_impl(dt,time,head,body,None)
     }
+    pub(crate) fn prepare_advance_with_solver(&self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex],solver:&mut dyn physics::hair::HairLinearSolver)->Result<PreparedHairStep,&'static str> {
+        self.prepare_impl(dt,time,head,body,Some(solver))
+    }
     fn prepare_impl(&self,dt:f64,time:f64,head:Mat4,body:&[SceneVertex],solver:Option<&mut dyn physics::hair::HairLinearSolver>)->Result<PreparedHairStep,&'static str> {
         let rotation = Quat::from_mat4(&head).normalize().to_array().map(f64::from);
         if self.root_bindings.iter().any(|(i, _)| *i >= body.len()) {
@@ -339,10 +346,39 @@ impl FemaleHair {
         let meshes=if self.skip_mesh_contacts {&[]} else {meshes};
         // HairSystem already enforces at least 240 Hz internally. Its single
         // staged solve owns publication; no second clone of guide state is needed.
-        let system=self.system.prepare_validated(dt,&roots,gravity,air,meshes,solver, |system| {
-            let substeps=system.substeps.max((dt*240.).ceil() as usize);
-            Self::verify_system_at_timestep(system, &targets, Some(dt/substeps as f64))
-        })?;
+        let mut solver=solver;
+        let mut refined=None;
+        let system=loop {
+            let source=refined.as_ref().unwrap_or(&self.system);
+            let backend=solver.as_mut().map(|backend| &mut **backend as &mut dyn physics::hair::HairLinearSolver);
+            let result=source.prepare_validated(dt,&roots,gravity,air,meshes,backend, |system| {
+                let substeps=system.last_step_substeps();
+                Self::verify_system_at_timestep(system, &targets, Some(dt/substeps as f64))
+            });
+            match result {
+                Ok(mut system)=> {
+                    if refined.is_some() {
+                        eprintln!("HAIR TEMPORAL REFINEMENT admitted substeps={} dt={dt}",system.last_step_substeps());
+                    }
+                    system.substeps=self.system.substeps;
+                    break system;
+                }
+                Err(error @ ("hair axial strain exceeds admission limit" | "swept contact refinement budget exhausted"
+                    | "joint hair contact position linearization did not converge"
+                    | "joint hair contact direction has no descending geometry step")) if source.substeps<32=> {
+                    // Retry from the original admitted state, never from the
+                    // rejected endpoint. The same roots/collider interval and
+                    // material/gates apply at the finer physical timestep.
+                    let effective=source.substeps.max((dt*240.).ceil() as usize);
+                    if effective>=32 {return Err(error);}
+                    let substeps=(effective*2).min(32);
+                    eprintln!("HAIR TEMPORAL REFINEMENT retry from={effective} to={substeps} dt={dt}");
+                    let next=refined.get_or_insert_with(||self.system.clone());
+                    next.substeps=substeps;
+                }
+                Err(error)=>return Err(error),
+            }
+        };
         Ok(PreparedHairStep {system,collider,targets})
     }
     pub(crate) fn publish_prepared(&mut self,staged:PreparedHairStep) {
@@ -354,6 +390,22 @@ impl FemaleHair {
             eprintln!("HAIR PHASES structural_worker_ms={:.3} mesh_contact_worker_ms={:.3} self_contact_wall_ms={:.3}",
                 profile.structural_ms, profile.mesh_contacts_ms, profile.self_contacts_ms);
         }
+    }
+    #[cfg(test)]
+    pub(crate) fn qualify_continuous_contacts(&mut self) {
+        // Use the existing coupled swept operator and its initial feasibility
+        // admission. Never combine it with terminal endpoint-only corrections.
+        self.system.self_collision = true;
+        self.system.joint_contact_positions = true;
+        self.system.joint_contact_velocities = true;
+        self.system.swept_strand_positions = true;
+        self.system.continuous_mesh_admission = true;
+        self.system.sample_collider_motion = true;
+        self.system.terminal_contact_iterations = 0;
+    }
+    #[cfg(test)]
+    fn diagnostic_checkpoint(&self)->PreparedHairStep {
+        PreparedHairStep {system:self.system.clone(),collider:self.collider.clone(),targets:self.targets.clone()}
     }
     pub(crate) fn exchange_prepared(&mut self,staged:&mut PreparedHairStep) {
         std::mem::swap(&mut self.system,&mut staged.system);
@@ -564,6 +616,42 @@ impl FemaleHair {
 mod tests {
     use super::*;
     #[test]
+    fn contact_refinement_retry_restarts_original_groom_and_keeps_configuration() {
+        use physics::hair::{HairLinearSolver,HairLinearSystem};
+        struct Backend {calls:usize,fail_at:Option<usize>,reason:&'static str}
+        impl HairLinearSolver for Backend {
+            fn solve(&mut self,systems:&[HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
+                self.calls+=1;
+                if self.fail_at==Some(self.calls) {
+                    return Err(self.reason);
+                }
+                systems.iter().map(HairLinearSystem::solve_native).collect()
+            }
+        }
+        let body=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
+        let mut hair=FemaleHair::new(body.mesh.vertices(),body.mesh.indices()).unwrap();
+        // Isolate orchestration from geometric convergence: inject the known
+        // contact rejection after one real structural substep has completed.
+        hair.skip_mesh_contacts=true;hair.system.self_collision=false;
+        hair.system.substeps=1;hair.system.iterations=1;
+        hair.system.substeps=4;
+        let expected=hair.prepare_impl(1./120.,0.,Mat4::IDENTITY,body.mesh.vertices(),
+            Some(&mut Backend {calls:0,fail_at:None,reason:"unused"})).unwrap();
+        hair.system.substeps=1;
+        let original=format!("{:?}",hair.system);
+        for reason in ["swept contact refinement budget exhausted",
+            "joint hair contact position linearization did not converge",
+            "joint hair contact direction has no descending geometry step"] {
+            let actual=hair.prepare_impl(1./120.,0.,Mat4::IDENTITY,body.mesh.vertices(),
+                Some(&mut Backend {calls:0,fail_at:Some(2),reason})).unwrap();
+            assert_eq!(format!("{:?}",hair.system),original);
+            assert_eq!(actual.system.substeps,1);
+            assert_eq!(actual.system.last_step_substeps(),4);
+            assert_eq!(actual.targets,expected.targets);
+            assert_eq!(format!("{:?}",actual.system.rods()),format!("{:?}",expected.system.rods()),"retry accumulated rejected state: {reason}");
+        }
+    }
+    #[test]
     fn fitted_prepared_groom_has_valid_initial_state() {
         let body=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
         let hair=FemaleHair::new(body.mesh.vertices(),body.mesh.indices()).unwrap();
@@ -579,10 +667,10 @@ mod tests {
     }
     #[test]
     fn accelerator_failure_preserves_targets_collider_and_guides() {
-        struct Reject;
+        struct Reject {calls:usize,reason:&'static str}
         impl physics::hair::HairLinearSolver for Reject {
             fn solve(&mut self,_:&[physics::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {
-                Err("injected accelerator failure")
+                self.calls+=1;Err(self.reason)
             }
         }
         let asset=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
@@ -593,11 +681,41 @@ mod tests {
         let system=format!("{:?}",hair.system);
         let mut moved=asset.mesh.vertices().to_vec();
         for vertex in &mut moved {vertex.position[1]+=0.01;}
-        let result=hair.advance_with_solver(1./120.,0.1,Mat4::from_translation(Vec3::Y*0.01),&moved,&mut Reject);
-        assert_eq!(result,Err("injected accelerator failure"));
-        assert_eq!(hair.targets,targets);
-        assert_eq!(hair.collider.closest_surface(probe).unwrap(),surface);
-        assert_eq!(format!("{:?}",hair.system),system);
+        for (reason,expected_calls) in [
+            ("injected accelerator failure",1),
+            ("swept contact refinement budget exhausted",5),
+            ("hair axial strain exceeds admission limit",5),
+            ("joint hair contact position linearization did not converge",5),
+            ("joint hair contact direction has no descending geometry step",5),
+        ] {
+            let mut backend=Reject {calls:0,reason};
+            let result=hair.advance_with_solver(1./120.,0.1,Mat4::from_translation(Vec3::Y*0.01),&moved,&mut backend);
+            assert_eq!(result,Err(reason));
+            assert_eq!(backend.calls,expected_calls,"wrong retry count for {reason}");
+            assert_eq!(hair.targets,targets);
+            assert_eq!(hair.collider.closest_surface(probe).unwrap(),surface);
+            assert_eq!(format!("{:?}",hair.system),system);
+        }
+    }
+    #[test]
+    fn diagnostic_checkpoint_restores_caches_and_repeats_next_step_exactly() {
+        let asset=voxy_render::ObjAsset::parse(include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj"),voxy_render::ObjLimits::default()).unwrap();
+        let mut hair=FemaleHair::new(asset.mesh.vertices(),asset.mesh.indices()).unwrap();
+        hair.system=HairSystem::new(hair.system.rods()[..4].to_vec()).unwrap();
+        hair.system.self_collision=false;hair.skip_mesh_contacts=true;
+        hair.root_bindings.truncate(4);hair.targets.truncate(4);hair.roots.truncate(4);
+        let moved=|offset:f32| {let mut v=asset.mesh.vertices().to_vec();for p in &mut v {p.position[1]+=offset;}v};
+        let fingerprint=|hair:&FemaleHair|format!("{:?}\n{:?}\n{:?}",hair.system,hair.collider,hair.targets);
+        hair.advance(1./240.,1./240.,Mat4::from_translation(Vec3::Y*0.0001),&moved(0.0001)).unwrap();
+        let before=fingerprint(&hair);
+        let mut checkpoint=hair.diagnostic_checkpoint();
+        let body=moved(0.0002);let head=Mat4::from_translation(Vec3::Y*0.0002);
+        hair.advance(1./240.,2./240.,head,&body).unwrap();
+        let after=fingerprint(&hair);assert_ne!(before,after);
+        hair.exchange_prepared(&mut checkpoint);
+        assert_eq!(fingerprint(&hair),before,"mutable physical state or collider cache lost");
+        hair.advance(1./240.,2./240.,head,&body).unwrap();
+        assert_eq!(fingerprint(&hair),after,"replayed step changed complete mutable state");
     }
     #[test]
     fn full_resolution_basis_transport_matches_quaternion_reference() {
@@ -978,6 +1096,8 @@ mod tests {
         for frame in 1..=frames {
             let trace=phase_trace_rod.filter(|_|(phase_trace_frame..=phase_trace_end).contains(&frame));
             native.system.set_trace_rod(trace).unwrap();gpu.system.set_trace_rod(trace).unwrap();
+            let replay_directory=std::env::var_os("VOXY_HAIR_DIVERGENCE_REPLAY_DIRECTORY");
+            let checkpoints=replay_directory.as_ref().map(|_|(native.diagnostic_checkpoint(),gpu.diagnostic_checkpoint()));
             let time=frame as f64/120.;
             let bob=if articulated_jump {crate::jump_motion::sample(time).height as f32}
                 else {0.08*(std::f64::consts::TAU*time).sin().powi(2) as f32};
@@ -1045,13 +1165,17 @@ mod tests {
                 });
             }
             let mut worst=(0f64,0usize,0usize);
+            let mut worst_rotation=(0f64,0usize);
             for (rod,(a,b)) in native.system.rods().iter().zip(gpu.system.rods()).enumerate() {
                 for (point,(a,b)) in a.positions().iter().zip(b.positions()).enumerate() {
                     let error=(0..3).map(|axis|(a[axis]-b[axis]).abs()).fold(0.,f64::max);
                     position_error=position_error.max(error);
                     if error>worst.0 {worst=(error,rod,point);}
                 }
-                for (a,b) in a.orientations().iter().zip(b.orientations()) {for axis in 0..4 {rotation_error=rotation_error.max((a[axis]-b[axis]).abs());}}
+                for (a,b) in a.orientations().iter().zip(b.orientations()) {for axis in 0..4 {
+                    let error=(a[axis]-b[axis]).abs();rotation_error=rotation_error.max(error);
+                    if error>worst_rotation.0 {worst_rotation=(error,rod);}
+                }}
             }
             if worst.0>1e-6 && !first_divergence_reported {
                 first_divergence_reported=true;
@@ -1084,6 +1208,42 @@ mod tests {
             // These maxima are cumulative: a later frame cannot repair a
             // failed trajectory comparison. Preserve the diagnostics above
             // and reject immediately using the same final acceptance gates.
+            if position_error>=1e-6 || rotation_error>=5e-5 {
+                if let (Some(directory),Some((mut native_start,mut gpu_start)))=(replay_directory,checkpoints) {
+                    let directory=std::path::PathBuf::from(directory);
+                    assert!(directory.is_absolute(),"diagnostic replay directory must be absolute");
+                    std::fs::create_dir_all(&directory).unwrap();
+                    // The exchange retains the original failed end states.
+                    // GPU workspaces are deliberately not represented as physical state.
+                    native.exchange_prepared(&mut native_start);gpu.exchange_prepared(&mut gpu_start);
+                    let replay_rod=if worst.0>=1e-6 {worst.1} else {worst_rotation.1};
+                    native.system.set_trace_rod(Some(replay_rod)).unwrap();gpu.system.set_trace_rod(Some(replay_rod)).unwrap();
+                    let a=physics::hair::observe_contact_frame(frame,||native.advance(1./120.,time,head,&posed));
+                    let b=physics::hair::observe_contact_frame(frame,|| {
+                        if native_only {gpu.advance(1./120.,time,head,&posed)}
+                        else if cpu_control {gpu.advance_with_solver(1./120.,time,head,&posed,&mut control)}
+                        else {gpu.advance_with_solver(1./120.,time,head,&posed,&mut solver)}
+                    });
+                    let mut log=String::new();
+                    for (label,hair) in [("native",&native),("external",&gpu)] {
+                        for entry in hair.system.step_trace() {log.push_str(&format!("HAIR PHASE TRACE frame={frame} {label} {entry:?}\n"));}
+                        for entry in hair.system.contact_projection_trace() {log.push_str(&format!("HAIR PROJECTION TRACE frame={frame} {label} {entry:?}\n"));}
+                    }
+                    std::fs::write(directory.join(format!("frame-{frame}-phases.log")),log).unwrap();
+                    let same_poses=|hair:&FemaleHair,end:&PreparedHairStep| {
+                        hair.system.rods().len()==end.system.rods().len() && hair.system.rods().iter().zip(end.system.rods()).all(|(a,b)| {
+                            a.positions().len()==b.positions().len() && a.orientations().len()==b.orientations().len()
+                            && a.positions().iter().flatten().zip(b.positions().iter().flatten()).all(|(x,y)|x.to_bits()==y.to_bits())
+                            && a.orientations().iter().flatten().zip(b.orientations().iter().flatten()).all(|(x,y)|x.to_bits()==y.to_bits())
+                        })
+                    };
+                    let report=serde_json::json!({"frame":frame,"rod":replay_rod,"native_result":a,"external_result":b,
+                        "native_end_poses_bitwise_equal":same_poses(&native,&native_start),"external_end_poses_bitwise_equal":same_poses(&gpu,&gpu_start),
+                        "scope":"opt-in in-process failing-frame diagnostic; all guides and original physical settings retained; GPU workspace reused, not checkpointed; end comparison covers poses only; not trajectory or FPS qualification"});
+                    std::fs::write(directory.join(format!("frame-{frame}-replay.json")),serde_json::to_vec_pretty(&report).unwrap()).unwrap();
+                    native.exchange_prepared(&mut native_start);gpu.exchange_prepared(&mut gpu_start);
+                }
+            }
             assert!(position_error<1e-6,"frame {frame}: GPU position drift {position_error}; worst rod={} point={}",worst.1,worst.2);
             assert!(rotation_error<5e-5,"frame {frame}: GPU rotation drift {rotation_error}");
         }

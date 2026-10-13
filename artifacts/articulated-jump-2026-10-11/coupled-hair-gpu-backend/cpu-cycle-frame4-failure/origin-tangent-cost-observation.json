@@ -1,0 +1,10 @@
+{
+  "scope": "seven completed recovery scopes, not full frame/FPS",
+  "completed_recoveries": 7,
+  "completed_recovery_ms": 72679.90837399999,
+  "trial_refresh_ms": 59164.25508,
+  "trial_refresh_fraction": 0.8140386580504415,
+  "direction_projection_ms": 2412.253208,
+  "snapshot_sha256": "cf680c4266da931e6a8e6f0fe11024dbcf9a8638976c2771514c9878462a2dd6",
+  "runtime_status": "live, no convergence observed"
+}

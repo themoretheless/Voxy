@@ -1092,6 +1092,91 @@ impl ScreenSpaceFluidRenderer {
     pub fn depth_radius_texture(&self) -> &wgpu::Texture {
         &self.smooth_depth.texture
     }
+
+    /// WGSL source for the single-pass compute bilateral filter (Optimization #42-50).
+    pub const FLUID_FILTER_COMPUTE_SHADER: &'static str =
+        include_str!("fluid_filter_compute.wgsl");
+
+    /// Creates a compute pipeline, bind group, and storage output buffer (`vec2f` per pixel)
+    /// for single-pass bilateral depth filtering on devices supporting compute storage buffers.
+    ///
+    /// # Errors
+    /// Rejects devices without storage buffer support or when output buffer exceeds device limits.
+    pub fn create_compute_filter(
+        &self,
+        device: &wgpu::Device,
+    ) -> Result<(wgpu::ComputePipeline, wgpu::BindGroup, wgpu::Buffer), &'static str> {
+        let limits = device.limits();
+        let output_bytes = u64::from(self.size[0])
+            .checked_mul(u64::from(self.size[1]))
+            .and_then(|pixels| pixels.checked_mul(8))
+            .ok_or("fluid compute filter buffer size overflow")?;
+        if limits.max_storage_buffers_per_shader_stage < 1
+            || output_bytes > u64::from(limits.max_storage_buffer_binding_size)
+            || output_bytes > limits.max_buffer_size
+            || limits.max_compute_workgroup_size_x < 8
+            || limits.max_compute_workgroup_size_y < 8
+        {
+            return Err("fluid compute filter requires storage buffer and 8x8 workgroup limits");
+        }
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("fluid compute bilateral filter"),
+            source: wgpu::ShaderSource::Wgsl(Self::FLUID_FILTER_COMPUTE_SHADER.into()),
+        });
+        let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some("fluid compute bilateral filter"),
+            layout: None,
+            module: &shader,
+            entry_point: Some("cs_main"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("fluid compute filter output"),
+            size: output_bytes,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("fluid compute filter group"),
+            layout: &pipeline.get_bind_group_layout(0),
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: self.camera.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::TextureView(&self.raw_depth.view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: output_buffer.as_entire_binding(),
+                },
+            ],
+        });
+        Ok((pipeline, bind_group, output_buffer))
+    }
+
+    /// Encodes the single-pass compute bilateral filter over the current viewport.
+    pub fn encode_compute_filter(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        pipeline: &wgpu::ComputePipeline,
+        bind_group: &wgpu::BindGroup,
+    ) {
+        let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+            label: Some("fluid compute bilateral filter pass"),
+            timestamp_writes: None,
+        });
+        pass.set_pipeline(pipeline);
+        pass.set_bind_group(0, bind_group, &[]);
+        pass.dispatch_workgroups(
+            self.size[0].div_ceil(8),
+            self.size[1].div_ceil(8),
+            1,
+        );
+    }
 }
 
 #[cfg(test)]
@@ -1813,6 +1898,21 @@ mod shader_portability_tests {
             }
         }
         assert_eq!(translated, 14);
+    }
+
+    #[test]
+    fn compute_bilateral_filter_shader_validates() {
+        use naga::{ShaderStage, valid};
+        let source = super::ScreenSpaceFluidRenderer::FLUID_FILTER_COMPUTE_SHADER;
+        let module = naga::front::wgsl::parse_str(source).unwrap();
+        let _info =
+            valid::Validator::new(valid::ValidationFlags::all(), valid::Capabilities::empty())
+                .validate(&module)
+                .unwrap();
+        assert_eq!(module.entry_points.len(), 1);
+        assert_eq!(module.entry_points[0].stage, ShaderStage::Compute);
+        assert_eq!(module.entry_points[0].name, "cs_main");
+        assert_eq!(module.entry_points[0].workgroup_size, [8, 8, 1]);
     }
 }
 

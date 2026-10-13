@@ -1,0 +1,7 @@
+{
+  "scope": "observed cache-lifetime diagnostics only; not admissions, frame count, or FPS",
+  "events": 696,
+  "hits": 25474646,
+  "misses": 12414821,
+  "partial": true
+}

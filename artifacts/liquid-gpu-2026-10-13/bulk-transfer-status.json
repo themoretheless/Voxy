@@ -1,0 +1,20 @@
+{
+  "jobs": 4,
+  "kernels": 6,
+  "gpu_submissions_per_substep": 1,
+  "transfer_command_count_before": "particles + pairs + 1",
+  "transfer_command_count_after": "particles + 2",
+  "benchmark_particles": 256,
+  "benchmark_steps_per_run": 10,
+  "alternating_pairs": 6,
+  "wins": 6,
+  "old_median_ms": 390.9703955,
+  "new_median_ms": 218.37883349999998,
+  "median_reduction_percent": 44.144406836552925,
+  "render_tests_passed": 233,
+  "native_owner_tests_passed": 9,
+  "gpu_step_cases_passed": 18,
+  "gpu_application_budget_rejection_recovery": "passed",
+  "rendered_fps_verified": false,
+  "cuda_verified": false
+}

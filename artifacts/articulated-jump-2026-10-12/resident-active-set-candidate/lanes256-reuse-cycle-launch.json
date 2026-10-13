@@ -1,0 +1,21 @@
+{
+  "status": "running",
+  "pid": 86269,
+  "directory": "/tmp/voxy-resident-256-reuse-authored-1791773427277798000",
+  "binary_sha256": "8cda3564b92a4a9753f1f62288ffa0fd3a51bc9348c8de8e37da89e034e56a92",
+  "resident_active_set": true,
+  "concurrent_operator_workgroups": true,
+  "workgroup_lanes": 256,
+  "workspace_reuse": true,
+  "shader": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-12/resident-active-set-candidate/active-lanes-256.wgsl",
+  "shader_sha256": "326d249c507b6175cdd13e3b6bb66896945cff71d6f0bb27e3d42ff0c05a004a",
+  "required_frames": 720,
+  "continuous_contacts": true,
+  "scope": "complete original coupled authored jump; not rendered FPS",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_solver.rs": "bebcf13f91766884648f573ab85418c914301c556bdeee697341e39cf0c72845",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "0241c12ea37ceec65721c5816e72c6efd512f8f04517d06a511cea6cba05f3f5",
+    "crates/voxy_render/src/joint_contact_active.rs": "712558321624c11c406add80b592e549f80bd6db56454faebacbc51af7dafd0e",
+    "crates/voxy_render/src/joint_contact_active.wgsl": "ccbb263c1e5ba22882d0acfd1f0e0573c1ce721facfd426cac7158fb8f8c8ede"
+  }
+}

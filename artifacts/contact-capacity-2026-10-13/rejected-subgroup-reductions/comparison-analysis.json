@@ -1,0 +1,24 @@
+[
+  {
+    "seeded": false,
+    "baseline_median_ms": 31.3748745,
+    "subgroup_median_ms": 31.0215205,
+    "paired_ratios_baseline_over_subgroup": [
+      1.0642785116369091,
+      0.936564853667786,
+      1.0573675866436132,
+      0.9826743242442686
+    ]
+  },
+  {
+    "seeded": true,
+    "baseline_median_ms": 6.373271,
+    "subgroup_median_ms": 6.0677710000000005,
+    "paired_ratios_baseline_over_subgroup": [
+      2.1187506339106323,
+      0.9978385375926525,
+      1.1578901671369655,
+      0.3888693944096117
+    ]
+  }
+]

@@ -1,0 +1,83 @@
+
+running 1 test
+SECOND ORDER ORIGIN merit=0e0 mesh_path=true
+SECOND ORDER ORIGINAL CANDIDATE swept_fraction=1 trial_scale=0.001
+SECOND ORDER OPERATOR frozen=false
+SECOND ORDER CANDIDATE correction=0 merit=2.1792349622431147e-14 work_j=-1.4229995905746064e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=0
+SECOND ORDER RETAINED ROWS count=47
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=1 merit=4.030056219835204e-13 work_j=-1.720264183459883e-11 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=33
+SECOND ORDER RETAINED ROWS count=138
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=2 merit=9.324891417042975e-14 work_j=-7.693537851839359e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=16
+SECOND ORDER RETAINED ROWS count=196
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=3 merit=1.0676306225836123e-16 work_j=-8.929813572176306e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=5
+SECOND ORDER RETAINED ROWS count=237
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=4 merit=1.0096886255321425e-14 work_j=-7.472427428667917e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=0
+SECOND ORDER RETAINED ROWS count=266
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=5 merit=1.408645237725831e-20 work_j=-8.927834832473743e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=1
+SECOND ORDER RETAINED ROWS count=295
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=6 merit=3.22112067055548e-20 work_j=-7.36829687781722e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=0
+SECOND ORDER RETAINED ROWS count=317
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=7 merit=1.4086442822585932e-20 work_j=-8.927835607193219e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=1
+SECOND ORDER RETAINED ROWS count=338
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=8 merit=3.221120156999333e-20 work_j=-7.368296634462933e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=0
+SECOND ORDER RETAINED ROWS count=353
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=9 merit=1.4086456802903192e-20 work_j=-8.927832886402464e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=1
+SECOND ORDER RETAINED ROWS count=368
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=10 merit=3.2211214365733694e-20 work_j=-7.368295549669631e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=0
+SECOND ORDER RETAINED ROWS count=381
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=11 merit=1.4086447902633158e-20 work_j=-8.927832561689834e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=1
+SECOND ORDER RETAINED ROWS count=396
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=12 merit=3.221120968509115e-20 work_j=-7.36829700528033e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=0
+SECOND ORDER RETAINED ROWS count=408
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=13 merit=1.408642991922347e-20 work_j=-8.927833857586314e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=1
+SECOND ORDER RETAINED ROWS count=420
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=14 merit=3.2211202197824896e-20 work_j=-7.368297723749317e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=0
+SECOND ORDER RETAINED ROWS count=432
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=15 merit=1.408645449485966e-20 work_j=-8.927834577150146e-12 strain=4.3151891284232136e-5 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER TRAJECTORY ROWS added=1
+SECOND ORDER RETAINED ROWS count=444
+SECOND ORDER ORIGIN ROWS excluding=0 maximum_bound_m=-1.4907779871675686e-19
+SECOND ORDER CANDIDATE correction=16 merit=3.2211199298403045e-20 work_j=-7.368295552075916e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=false candidate_admitted=false
+
+thread 'hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate' (13418133) panicked at crates/physics/src/hair/contact_second_order_tests.rs:145:9:
+captured correction failed physical and energy admission
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate ... FAILED
+
+failures:
+
+failures:
+    hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 439 filtered out; finished in 2.76s
+

@@ -1,0 +1,36 @@
+{
+  "scope": "Real FemaleRig foot contact, IK and skin preparation inside CharacterPhysics accepted fixed tick; callback rejection rolls back requested 10cm body translation",
+  "feet": [
+    {
+      "bone": "left_foot",
+      "dominant_skin_minimum_clearance_m": 0.0,
+      "maximum_skin_movement_m": 0.017315731198699023,
+      "pivot_error_m": 3.4838771821232636e-08,
+      "reach_clamped": false,
+      "reference_points": 629,
+      "support_correction_m": 0.01000002771615982
+    },
+    {
+      "bone": "right_foot",
+      "dominant_skin_minimum_clearance_m": 0.0,
+      "maximum_skin_movement_m": 0.017197498131503224,
+      "pivot_error_m": 3.4831306717455026e-08,
+      "reach_clamped": false,
+      "reference_points": 650,
+      "support_correction_m": 0.01000002771615982
+    }
+  ],
+  "focused_passed": 1,
+  "failed": 0,
+  "filtered_out": 346,
+  "fixed_dt_seconds": 0.008333333333333333,
+  "scene_and_body_rollback_verified": true,
+  "preview_ui_connected": false,
+  "full_gait_qualified": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_app/src/female_rig.rs": "62f1fe37778d097db7f9bab2d7b116d46acafe231eba2a5b4ec99d843ff1dc3d",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/real-foot-character-rollback-tests.log": "8aea79306d10fe9603b39861179f88ce4548fcf4a029c5f295452429b8261599",
+    "assets/characters/blender-female/prepared/foot-support-reference.json": "061c1776153a7fb64cce13c87dae1942685a2a17da948cb9284698eee2d7d017"
+  }
+}

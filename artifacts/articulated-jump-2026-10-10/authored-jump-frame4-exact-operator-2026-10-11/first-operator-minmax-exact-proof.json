@@ -1,0 +1,10 @@
+{
+  "exact_original_inequalities_satisfied": true,
+  "minimum_gap_numerator": "8108109483807406815403",
+  "minimum_gap_denominator": "81129638414606681695789005144064",
+  "minimum_gap_float": 9.994016542230284e-11,
+  "rows": 141,
+  "capture_sha256": "7f133fb9d00f2e97c6700d767fad4b68f9f5bb654abb0131be27d701087d36cb",
+  "coordinate_sha256": "d17b6b816c67671b1afe6321b36ffa0b3ac8f8501356707af2030365d0fcc015",
+  "scope": "exact linear feasibility only; no energy, force-balance or swept-motion admission"
+}

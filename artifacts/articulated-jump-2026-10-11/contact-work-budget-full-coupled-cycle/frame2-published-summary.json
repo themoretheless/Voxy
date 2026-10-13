@@ -1,0 +1,29 @@
+{
+  "attempted_frame": 2,
+  "authored_jump": true,
+  "completed_frames": 2,
+  "continuous_contacts": true,
+  "error": null,
+  "guide_count": 469,
+  "required_frames": 720,
+  "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.016666666666666666,
+  "status": "running",
+  "steps": [
+    {
+      "elapsed_ms": 41562.350209000004,
+      "frame": 1,
+      "hair_ms": 41559.925334,
+      "skin_ms": 51.765,
+      "time_s": 0.008333333333333333
+    },
+    {
+      "elapsed_ms": 1174062.5075420002,
+      "frame": 2,
+      "hair_ms": 1174059.6546669998,
+      "skin_ms": 84.245625,
+      "time_s": 0.016666666666666666
+    }
+  ]
+}

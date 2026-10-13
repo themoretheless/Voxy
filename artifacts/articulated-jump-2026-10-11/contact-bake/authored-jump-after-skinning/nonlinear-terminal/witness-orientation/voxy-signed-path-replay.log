@@ -1,0 +1,113 @@
+
+running 1 test
+SECOND ORDER ORIGIN merit=0e0 mesh_path=true
+SECOND ORDER ORIGINAL CANDIDATE swept_fraction=1 trial_scale=1
+LOCAL RESTORATION PARTS endpoint=8.423545862892212e-8 trajectory=-0e0
+LOCAL RESTORATION iteration=0 merit=8.423545862892212e-8 work_j=4.305095338637243e-9 strain=1.876561431302104e-4 strand_path=true mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=0 scale=1.5625e-2 merit=8.31684976523768e-8
+LOCAL RESTORATION PARTS endpoint=8.223521206639825e-8 trajectory=9.332855859785523e-10
+LOCAL RESTORATION iteration=1 merit=8.31684976523768e-8 work_j=3.5080394850107197e-9 strain=1.847546275985934e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=1 scale=1.25e-1 merit=7.341179604308621e-8
+LOCAL RESTORATION PARTS endpoint=6.71850426882955e-8 trajectory=6.226753354790699e-9
+LOCAL RESTORATION iteration=2 merit=7.341179604308621e-8 work_j=1.6551801591888052e-9 strain=1.6397741466978033e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=2 scale=1.25e-1 merit=7.1037275392706e-8
+LOCAL RESTORATION PARTS endpoint=5.7585568453149794e-8 trajectory=1.3451706939556203e-8
+LOCAL RESTORATION iteration=3 merit=7.1037275392706e-8 work_j=6.594677295349688e-10 strain=1.4535494376621827e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=3 scale=5e-1 merit=3.954363008590332e-8
+LOCAL RESTORATION PARTS endpoint=2.3873411436943226e-8 trajectory=1.56702186489601e-8
+LOCAL RESTORATION iteration=4 merit=3.954363008590332e-8 work_j=1.326489515580876e-10 strain=9.701838784681449e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=4 scale=1.25e-1 merit=3.428012206246409e-8
+LOCAL RESTORATION PARTS endpoint=1.8540841337251206e-8 trajectory=1.5739280725212887e-8
+LOCAL RESTORATION iteration=5 merit=3.428012206246409e-8 work_j=-4.229090613425429e-10 strain=8.538302372529394e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=5 scale=1e0 merit=1.4674989088132928e-8
+LOCAL RESTORATION PARTS endpoint=9.438862648394132e-10 trajectory=1.3731102823293516e-8
+LOCAL RESTORATION iteration=6 merit=1.4674989088132928e-8 work_j=3.296763579562615e-9 strain=1.2250294659343908e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=6 scale=9.765625e-4 merit=1.4674763311658474e-8
+LOCAL RESTORATION PARTS endpoint=9.42930309852045e-10 trajectory=1.3731833001806428e-8
+LOCAL RESTORATION iteration=7 merit=1.4674763311658474e-8 work_j=3.2581901673370414e-9 strain=1.2238332110792172e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=7 scale=7.8125e-3 merit=1.4654549920901736e-8
+LOCAL RESTORATION PARTS endpoint=9.299919349299633e-10 trajectory=1.3724557985971773e-8
+LOCAL RESTORATION iteration=8 merit=1.4654549920901736e-8 work_j=3.1287891009014288e-9 strain=1.2142758713862278e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=8 scale=1.5625e-2 merit=1.4607229561001303e-8
+LOCAL RESTORATION PARTS endpoint=9.064529035500219e-10 trajectory=1.3700776657451282e-8
+LOCAL RESTORATION iteration=9 merit=1.4607229561001303e-8 work_j=2.929355046380161e-9 strain=1.1953179677681725e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=9 scale=7.8125e-3 merit=1.4593528823195132e-8
+LOCAL RESTORATION PARTS endpoint=8.918930011922912e-10 trajectory=1.3701635822002841e-8
+LOCAL RESTORATION iteration=10 merit=1.4593528823195132e-8 work_j=2.8339923652873213e-9 strain=1.1860590133516702e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=10 scale=7.8125e-3 merit=1.4582923898247826e-8
+LOCAL RESTORATION PARTS endpoint=8.863648704518184e-10 trajectory=1.3696559027796007e-8
+LOCAL RESTORATION iteration=11 merit=1.4582923898247826e-8 work_j=2.741507819275187e-9 strain=1.1768711562121226e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=11 scale=3.90625e-3 merit=1.4574993783498678e-8
+LOCAL RESTORATION PARTS endpoint=8.794001735131861e-10 trajectory=1.3695593609985491e-8
+LOCAL RESTORATION iteration=12 merit=1.4574993783498678e-8 work_j=2.6982425352055687e-9 strain=1.1722932718383205e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=12 scale=3.125e-2 merit=1.4464656670764758e-8
+LOCAL RESTORATION PARTS endpoint=8.248117676696927e-10 trajectory=1.3639844903095065e-8
+LOCAL RESTORATION iteration=13 merit=1.4464656670764758e-8 work_j=2.3811311524777815e-9 strain=1.1368808551459608e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=13 scale=1.5625e-2 merit=1.4429975033684953e-8
+LOCAL RESTORATION PARTS endpoint=8.022060789079021e-10 trajectory=1.362776895477705e-8
+LOCAL RESTORATION iteration=14 merit=1.4429975033684953e-8 work_j=2.2299179088540725e-9 strain=1.1194037353967623e-4 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=14 scale=1.25e-1 merit=1.4193066767964372e-8
+LOCAL RESTORATION PARTS endpoint=6.788899141786683e-10 trajectory=1.3514176853785703e-8
+LOCAL RESTORATION iteration=15 merit=1.4193066767964372e-8 work_j=1.290505710116343e-9 strain=9.972420665338433e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=15 scale=1e0 merit=1.2750143167458118e-9
+LOCAL RESTORATION PARTS endpoint=6.367556898741727e-10 trajectory=6.38258626871639e-10
+LOCAL RESTORATION iteration=16 merit=1.2750143167458118e-9 work_j=3.0586280587437153e-10 strain=8.744221816114894e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=16 scale=4.8828125e-4 merit=1.2744768824691131e-9
+LOCAL RESTORATION PARTS endpoint=6.363991449158795e-10 trajectory=6.380777375532336e-10
+LOCAL RESTORATION iteration=17 merit=1.2744768824691131e-9 work_j=2.93429752368656e-10 strain=8.739954296665964e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=17 scale=7.8125e-3 merit=1.2657834646237178e-9
+LOCAL RESTORATION PARTS endpoint=6.300422062376496e-10 trajectory=6.357412583860681e-10
+LOCAL RESTORATION iteration=18 merit=1.2657834646237178e-9 work_j=2.3992663017118063e-10 strain=8.672183857605376e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=18 scale=3.90625e-3 merit=1.260966688856448e-9
+LOCAL RESTORATION PARTS endpoint=6.271726436384461e-10 trajectory=6.337940452180018e-10
+LOCAL RESTORATION iteration=19 merit=1.260966688856448e-9 work_j=2.1877165921754875e-10 strain=8.63830948245603e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=19 scale=7.8125e-3 merit=1.250862948712934e-9
+LOCAL RESTORATION PARTS endpoint=6.17300874166014e-10 trajectory=6.3356207454692e-10
+LOCAL RESTORATION iteration=20 merit=1.250862948712934e-9 work_j=1.848028285235783e-10 strain=8.570825837272977e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=20 scale=2.5e-1 merit=8.100435050999594e-10
+LOCAL RESTORATION PARTS endpoint=3.5607372105895907e-10 trajectory=4.5396978404100036e-10
+LOCAL RESTORATION iteration=21 merit=8.100435050999594e-10 work_j=-5.040990692618505e-10 strain=6.429108393568583e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=21 scale=1.953125e-3 merit=8.069566894998711e-10
+LOCAL RESTORATION PARTS endpoint=3.5571982459308756e-10 trajectory=4.512368649067835e-10
+LOCAL RESTORATION iteration=22 merit=8.069566894998711e-10 work_j=-5.167531035780661e-10 strain=6.416602213277223e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=22 scale=3.90625e-3 merit=8.067691908734965e-10
+LOCAL RESTORATION PARTS endpoint=3.539192974110303e-10 trajectory=4.528498934624663e-10
+LOCAL RESTORATION iteration=23 merit=8.067691908734965e-10 work_j=-5.2906667884202e-10 strain=6.391538985539569e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=23 scale=6.25e-2 merit=7.371313395422844e-10
+LOCAL RESTORATION PARTS endpoint=3.309812118267622e-10 trajectory=4.0615012771552215e-10
+LOCAL RESTORATION iteration=24 merit=7.371313395422844e-10 work_j=-6.400502169542889e-10 strain=5.992116922537427e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=24 scale=1.25e-1 merit=6.384110387238027e-10
+LOCAL RESTORATION PARTS endpoint=2.9781842244115103e-10 trajectory=3.4059261628265177e-10
+LOCAL RESTORATION iteration=25 merit=6.384110387238027e-10 work_j=-8.099057164507269e-10 strain=5.243245975838917e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=25 scale=1.25e-1 merit=6.199271831440287e-10
+LOCAL RESTORATION PARTS endpoint=2.8235145645073503e-10 trajectory=3.3757572669329364e-10
+LOCAL RESTORATION iteration=26 merit=6.199271831440287e-10 work_j=-9.424858692353647e-10 strain=4.5879804016601966e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=26 scale=1.5625e-2 merit=6.103402518508228e-10
+LOCAL RESTORATION PARTS endpoint=2.73498264845692e-10 trajectory=3.368419870051308e-10
+LOCAL RESTORATION iteration=27 merit=6.103402518508228e-10 work_j=-9.763956864003737e-10 strain=4.519535251867879e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=27 scale=2.5e-1 merit=4.6548952649393106e-10
+LOCAL RESTORATION PARTS endpoint=2.2356418924663068e-10 trajectory=2.419253372473004e-10
+LOCAL RESTORATION iteration=28 merit=4.6548952649393106e-10 work_j=-1.131050255752737e-9 strain=3.3898473536631e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=28 scale=1.220703125e-4 merit=4.653488248289651e-10
+LOCAL RESTORATION PARTS endpoint=2.2350290191683734e-10 trajectory=2.4184592291212773e-10
+LOCAL RESTORATION iteration=29 merit=4.653488248289651e-10 work_j=-1.1313353336256406e-9 strain=3.389433614886528e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=29 scale=1.9073486328125e-6 merit=4.653447368704656e-10
+LOCAL RESTORATION PARTS endpoint=2.235000843877151e-10 trajectory=2.418446524827505e-10
+LOCAL RESTORATION iteration=30 merit=4.653447368704656e-10 work_j=-1.1313397857604676e-9 strain=3.3894271522783015e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=30 scale=1.52587890625e-5 merit=4.653283872205488e-10
+LOCAL RESTORATION PARTS endpoint=2.2349363504670006e-10 trajectory=2.4183475217384874e-10
+LOCAL RESTORATION iteration=31 merit=4.653283872205488e-10 work_j=-1.1313754027114032e-9 strain=3.389375442175435e-5 strand_path=false mesh_path=false admitted=false
+LOCAL RESTORATION ACCEPT iteration=31 scale=1.220703125e-4 merit=4.651848025090705e-10
+
+thread 'hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate' (13515953) panicked at crates/physics/src/hair/contact_second_order_tests.rs:118:9:
+local restoration failed independent physical and energy admission
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate ... FAILED
+
+failures:
+
+failures:
+    hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 440 filtered out; finished in 6.29s
+

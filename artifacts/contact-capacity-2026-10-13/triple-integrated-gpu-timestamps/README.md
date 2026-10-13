@@ -1,0 +1,11 @@
+# Integrated triple GPU pass timestamp diagnostics
+
+VOXY_HAIR_TRIPLE_GPU_TIMESTAMPS=1 enables opt-in per-compute-pass timestamps in the experimental app triple bridge. The qualification descriptor explicitly requests TIMESTAMP_QUERY support. Missing support or excess query capacity returns before creating/uploading GPU jobs or submitting work. A dedicated actual GPU negative capability test passes with zero submissions, dispatches and workspace creations.
+
+Every job records its own begin/end query. Resolving happens in a separate submission after the producer completes, following Metal counter availability requirements. Timestamp byte length, period, and positive elapsed intervals are validated. Candidate decoding of the entire batch precedes resolving, and result/factor cache publication still follows successful completion. Failed candidate batches retain host failure diagnostics but do not produce successful GPU pass records. The record is a transport result, not original physical admission; physical qualification comes from each enclosing test.
+
+TRIPLE GPU PASS PROFILE lines separate GPU elapsed pass durations and raw query pairs from host timing. Query-resolution submission overhead is reported separately and is excluded from host stage breakdown; it remains in total host wall time. Contact solver dispatch/submission counters exclude this extra profiling resolve submission and the GPU record explicitly reports it. Disabled profiling creates no query sets or extra submissions.
+
+Verified: 5 regular app solver tests, actual GPU missing-feature preflight, existing app cache/retry/workspace gates with profiling on and off, four-frame independent physical scene with exact serial poses/orientations and zero native fallback, and all three original native physical captured families with changed bounds and appended inactive loads. The host-stage summarizer accepts the extended diagnostics.
+
+GPU pass timings exclude pre-pass queue waiting and host reconstruction/readback; they can still include scheduling interference during an active pass. Six full-cycle processes were concurrently active. These measurements are not isolated performance comparisons and cannot establish FPS. Full-cycle PID 55834 uses a frozen pre-diagnostics binary and remains separate from these tests.

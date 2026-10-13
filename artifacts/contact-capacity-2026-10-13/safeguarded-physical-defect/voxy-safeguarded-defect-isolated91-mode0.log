@@ -1,0 +1,16 @@
+
+running 1 test
+TRIPLE PHYSICAL rows=91 width=882 systems=7 accelerated=false submissions=8 elapsed_ms=365.008041 error=Some("GPU joint candidate rejected by original physical admission") scope=one_original_physical_operator_not_trajectory_or_FPS
+
+thread 'gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics' (96427972) panicked at crates/voxy_app/src/gpu_hair_joint.rs:1707:9:
+original physical owner rejected triple candidate: Some("GPU joint candidate rejected by original physical admission")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 379 filtered out; finished in 0.39s
+

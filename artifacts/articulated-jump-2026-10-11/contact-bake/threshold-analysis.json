@@ -1,0 +1,1827 @@
+{
+  "measurements": [
+    {
+      "clip": "Idle_Loop",
+      "duration_s": 2.5,
+      "height_m": [
+        0.014637033902465013,
+        0.014636616130440233,
+        0.014635115150545872,
+        0.01463317950673293,
+        0.01464754423623052,
+        0.01464580142029015,
+        0.014642391388608955,
+        0.014637395031200776,
+        0.014633371764327177,
+        0.01464590803848767,
+        0.014645074713200881,
+        0.014644979687413351,
+        0.014645676457525486,
+        0.014642563761295718,
+        0.014640110993758879,
+        0.01463931242038223,
+        0.014639479810949513,
+        0.014641668621630785,
+        0.014644104108115077,
+        0.014645081962901901,
+        0.014646424748017986,
+        0.014641496067190979,
+        0.014630981529522677,
+        0.01463667824989695,
+        0.014644295156168663,
+        0.014646025971430679,
+        0.014639223166969917,
+        0.014634985830231498,
+        0.014639161702886067,
+        0.014641595417865652,
+        0.014643303045039816,
+        0.014643647878735164,
+        0.014642693361713865,
+        0.014639652354924912,
+        0.014636156385930646,
+        0.01463258536838101,
+        0.014647444946685531,
+        0.014644607845266833,
+        0.014638179087290579,
+        0.014632912743204482,
+        0.014647480689043577,
+        0.014645691949864051,
+        0.014645086824343567,
+        0.014644963236742553,
+        0.014642223739778637,
+        0.014639740801144427,
+        0.014638871574873744,
+        0.014639797624293294,
+        0.014641695593174839,
+        0.014644240935534056,
+        0.014644995251236553,
+        0.0146455263690521,
+        0.0146472548022972,
+        0.014630569457501102,
+        0.014635078115715933,
+        0.014640935598308771,
+        0.014647054475701388,
+        0.014646961774253509,
+        0.014640040020975395,
+        0.014634552492941932
+      ],
+      "side": 0,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        0.000024763649979608893,
+        -0.00002302502302969911,
+        -0.00004123948448764292,
+        0.00014914902821577813,
+        0.00015146296268664372,
+        -0.00006183417145877446,
+        -0.0001008766690724916,
+        -0.00010823549138133659,
+        0.00010215608744273963,
+        0.00014043538648444986,
+        -0.000011140212891835866,
+        7.220931895257632e-6,
+        -0.000028991113411591662,
+        -0.00006678556519928991,
+        -0.00003901609096185199,
+        -7.574193712389654e-6,
+        0.00002827441498265415,
+        0.00005549156598677607,
+        0.00004096009525339506,
+        0.000027847678834902467,
+        -0.00004303074853106992,
+        -0.00018531862194370863,
+        -0.000057813807528339645,
+        0.00015976351975183212,
+        0.00011217265840474111,
+        -0.00006086387038495289,
+        -0.0001324816943901741,
+        -7.375690062039197e-7,
+        0.00007931505160985175,
+        0.000049696105844987404,
+        0.00002462953043413929,
+        -7.316199911400201e-6,
+        -0.00004794628572302173,
+        -0.00007844370939863454,
+        -0.00008480383852682571,
+        0.0001354627290586219,
+        0.00014426972262987503,
+        -0.0001111903127394287,
+        -0.00014034122474820832,
+        0.00011161922103597455,
+        0.00015335047991482664,
+        -0.00002872637640011222,
+        -8.744557457973645e-6,
+        -0.00003435701477916275,
+        -0.00006266922717751422,
+        -0.000040225978858721145,
+        6.818777864014969e-7,
+        0.00003388821961314292,
+        0.000053319734889145654,
+        0.000039595896740574066,
+        0.00001542520221653465,
+        0.000027114612727752174,
+        -0.0001794829386119745,
+        -0.00014612023897520032,
+        0.00012439368969202613,
+        0.00014371631982545985,
+        0.0000723141113368464,
+        -0.00008417345671191123,
+        -0.00014891137573891378,
+        -0.000036073422124582866
+      ]
+    },
+    {
+      "clip": "Idle_Loop",
+      "duration_s": 2.5,
+      "height_m": [
+        0.015198468539677906,
+        0.015198391364995567,
+        0.015197317780673042,
+        0.015194960345400327,
+        0.015192231725658867,
+        0.015189286389717088,
+        0.015191509320490584,
+        0.01518694524577488,
+        0.015185563085187384,
+        0.015191272027770791,
+        0.015185251755135395,
+        0.015181955445228698,
+        0.015196518175982263,
+        0.015194764872955638,
+        0.01519195152256704,
+        0.01519032011899428,
+        0.015190067790924133,
+        0.015191370554462125,
+        0.015193795639106333,
+        0.01519544349922583,
+        0.015182086579197049,
+        0.015184160916292586,
+        0.015187940075402709,
+        0.015183911307250969,
+        0.015186753126167407,
+        0.015188614259350156,
+        0.015187945647213472,
+        0.015187674661014533,
+        0.015191942285071439,
+        0.015193821045071304,
+        0.015195657866258608,
+        0.015196306104429111,
+        0.015195745991519377,
+        0.015192847740515977,
+        0.015189552923107752,
+        0.015186763006113047,
+        0.01519417383880882,
+        0.015187180301315426,
+        0.01518247843555455,
+        0.015188449163916679,
+        0.015188247119169995,
+        0.015186258024782087,
+        0.015195269338675793,
+        0.01519509003055275,
+        0.01519277108926223,
+        0.015190813453632976,
+        0.01519037867632296,
+        0.01519150670972072,
+        0.015194382874692505,
+        0.01519550060537525,
+        0.015188438967494902,
+        0.015184290059207003,
+        0.015190678040842731,
+        0.015190432219299402,
+        0.015184056003134688,
+        0.01518925965017534,
+        0.015197084676152578,
+        0.015188702829620926,
+        0.015192010753196927,
+        0.015196365507017667
+      ],
+      "side": 1,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 60,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        0.00002431029573479737,
+        -0.000013809108058371322,
+        -0.00004117223514288337,
+        -0.00006103266017010167,
+        -0.00006808746819886302,
+        -8.668862019389767e-6,
+        -0.000028093727306499616,
+        -0.00007135482363840318,
+        0.00005192138395093693,
+        -3.735960623862944e-6,
+        -0.00011179899050511866,
+        0.00013519705016240557,
+        0.00015371313272327658,
+        -0.00005479984098266666,
+        -0.00005333704753629487,
+        -0.000022604779714885392,
+        0.00001260522561413735,
+        0.0000447341781864008,
+        0.00004887533716446679,
+        -0.00014050871891141403,
+        -0.00013539099519893627,
+        0.00007024195446792003,
+        -2.9953084993983303e-6,
+        -0.000014243390823620583,
+        0.0000564354251902377,
+        0.00001431025255277385,
+        -0.000011275180027470189,
+        0.000047959654295604004,
+        0.00007375660868125244,
+        0.00004458697424603031,
+        0.000029820712293682217,
+        1.057503129231474e-6,
+        -0.00004150036695760306,
+        -0.00007431682093950176,
+        -0.00007301681283516936,
+        0.00005545098841280849,
+        5.00754242854784e-6,
+        -0.00014034483905123185,
+        0.000015226351215036349,
+        0.00006922420338534296,
+        -0.00002629366961509616,
+        0.00008426663406957413,
+        0.00010598406924794412,
+        -0.000029978992962753637,
+        -0.00005131892303728014,
+        -0.0000287089552712394,
+        8.319073052931447e-6,
+        0.00004805038043453891,
+        0.00004792674785436546,
+        -0.00007132688637123685,
+        -0.00013452655401896552,
+        0.000026868880173946952,
+        0.00007370592110877983,
+        -0.0000794644524965138,
+        -0.000014070829488732617,
+        0.00015634407621467616,
+        -6.681846652978329e-6,
+        -0.00006088707546780814,
+        0.00009195212876089709,
+        0.00007749343777174733
+      ]
+    },
+    {
+      "clip": "Walk_Loop",
+      "duration_s": 1.3333333730697632,
+      "height_m": [
+        0.08994904951089662,
+        0.07655310116697674,
+        0.05092714350790626,
+        0.02656506359399989,
+        0.015188731370450043,
+        0.01498119947903899,
+        0.014811723647369324,
+        0.01491749423413305,
+        0.015339142079054596,
+        0.015401763813013739,
+        0.015537341622032796,
+        0.015966299376005966,
+        0.016643074874104963,
+        0.016885928667612266,
+        0.017222825181042734,
+        0.017542743059709626,
+        0.017795653229057296,
+        0.01660666956590731,
+        0.019009044612628645,
+        0.03349596048502315,
+        0.06486487523472631,
+        0.10574264859378163,
+        0.14537958722240846,
+        0.17482664892421101,
+        0.18759794161542248,
+        0.16970512528177314,
+        0.13893700483965096,
+        0.11806248828341631,
+        0.1136691500845249,
+        0.10940078014822832,
+        0.10222189972745752,
+        0.09401450042225973
+      ],
+      "side": 0,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 14,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 15,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 17,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 17,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 17,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 14,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 15,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 18,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 18,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 18,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 14,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 15,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 18,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 19,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 19,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 15,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 17,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 21,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 22,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 22,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 17,
+          "transition_count": 6,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 20,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 25,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 27,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 27,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        -0.20953678481871307,
+        -0.46826285808056367,
+        -0.5998564329986074,
+        -0.4288609328684228,
+        -0.1390063652368183,
+        -0.004524092542140163,
+        -0.0007644629160885096,
+        0.006329020991603747,
+        0.005811234773379975,
+        0.002378394444856724,
+        0.006774426554013082,
+        0.013268798629424981,
+        0.011035551170390545,
+        0.006957003475918389,
+        0.007881772470273198,
+        0.006873936371315476,
+        -0.011232881590861811,
+        0.014560696168913633,
+        0.20267148498930915,
+        0.5502699510658495,
+        0.8669602314676734,
+        0.9661765150578818,
+        0.8290079792587896,
+        0.5066202376177086,
+        -0.061458281877654904,
+        -0.5839312239067517,
+        -0.6197116255114363,
+        -0.303214248025024,
+        -0.10394049452458776,
+        -0.13736700019095296,
+        -0.18463535120906086,
+        -0.14727419820961762
+      ]
+    },
+    {
+      "clip": "Walk_Loop",
+      "duration_s": 1.3333333730697632,
+      "height_m": [
+        0.017806179669715982,
+        0.01940944441050868,
+        0.02524970537196561,
+        0.037677101856009754,
+        0.06083044799549747,
+        0.09227471410528695,
+        0.12804760411229346,
+        0.15846410846882383,
+        0.17268900211902113,
+        0.1585542950258442,
+        0.13347784080453634,
+        0.1144983574079125,
+        0.10797870609565345,
+        0.10341557272810706,
+        0.09886405771862739,
+        0.09429738673815129,
+        0.09236849503257062,
+        0.07847803186292754,
+        0.05203969014731522,
+        0.026897211866347234,
+        0.015188101390181924,
+        0.014953002351163522,
+        0.014759452573993637,
+        0.014859290699113473,
+        0.015345255036853231,
+        0.015406149081071435,
+        0.015542666352167597,
+        0.015958237654944446,
+        0.016646286242352926,
+        0.016888200579073864,
+        0.017215193398087886,
+        0.01748910318765967
+      ],
+      "side": 1,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 14,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 15,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 16,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 16,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 16,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 14,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 15,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 17,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 18,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 18,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 14,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 15,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 17,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 19,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 19,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 15,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 17,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 20,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 23,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 23,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 18,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 20,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 25,
+          "transition_count": 4,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 29,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 29,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        0.02304409398742059,
+        0.08932230576498336,
+        0.21921188281298967,
+        0.4269688987577176,
+        0.6551713274656993,
+        0.8066058493628243,
+        0.7942727086912712,
+        0.5356967601157245,
+        0.0010822386519911712,
+        -0.4705339217508139,
+        -0.5286712356595498,
+        -0.3059896073873937,
+        -0.1329934121941528,
+        -0.10937577726466062,
+        -0.10941822861855192,
+        -0.07794674990968699,
+        -0.189832252845243,
+        -0.4839456442003607,
+        -0.6189698215122255,
+        -0.44221905190644484,
+        -0.1433305099106225,
+        -0.00514378564096269,
+        -0.0011245397910866926,
+        0.007029629344815851,
+        0.006562300387923759,
+        0.0023689357131726108,
+        0.006625062689033875,
+        0.013243438287538723,
+        0.01115955475697237,
+        0.006826885665362474,
+        0.0072108310881301724,
+        0.007091835048184006
+      ]
+    },
+    {
+      "clip": "Jog_Fwd_Loop",
+      "duration_s": 0.9583333730697632,
+      "height_m": [
+        0.17725001014200958,
+        0.0259264858428849,
+        0.010253253618131702,
+        0.00945664738785923,
+        0.015182155434774885,
+        0.16049490270756392,
+        0.23175462374331315,
+        0.26032585384578383,
+        0.2855454110375585,
+        0.32657321859402755,
+        0.36692329399300616,
+        0.3898837892438797,
+        0.32583994340506894,
+        0.2344448134420538,
+        0.20496966331541383,
+        0.19748145537062706,
+        0.2349127239928078,
+        0.2961588845486922,
+        0.3539195438938397,
+        0.3747966652119036,
+        0.342494391015364,
+        0.2695639653990591,
+        0.20152857643051897
+      ],
+      "side": 0,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        -2.107224999677419,
+        -2.003960995194094,
+        -0.19763805326542389,
+        0.05914681934724852,
+        1.8124589886844742,
+        2.598869511942672,
+        1.1979713639858336,
+        0.6454894207663056,
+        0.7949683440162771,
+        0.9765345549742449,
+        0.7597268162968362,
+        -0.4930001866134372,
+        -1.8652676322802653,
+        -1.450443300934534,
+        -0.443560278465293,
+        0.3593167132299832,
+        1.1841291010379336,
+        1.4280817795982563,
+        0.9436533288307997,
+        -0.13710182885690472,
+        -1.262792345393585,
+        -1.6915897048778943,
+        -1.1077674171520142
+      ]
+    },
+    {
+      "clip": "Jog_Fwd_Loop",
+      "duration_s": 0.9583333730697632,
+      "height_m": [
+        0.39281928584686276,
+        0.3413806144104091,
+        0.26230502974821646,
+        0.2061762872792493,
+        0.20391638202602416,
+        0.2559237455065857,
+        0.3209684836430986,
+        0.36587828711312337,
+        0.37298353564352904,
+        0.32752959843767493,
+        0.25710576264453794,
+        0.18888780308225986,
+        0.031242337060292988,
+        0.009467916758769263,
+        0.007604725322448824,
+        0.005570029078234284,
+        0.1460559934196283,
+        0.22282092536423695,
+        0.2571152672635735,
+        0.27988435684509516,
+        0.31808216221334706,
+        0.35992710150603935,
+        0.386965769466887
+      ],
+      "side": 1,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        -0.5470218379959658,
+        -1.5661710082438831,
+        -1.6224518583004104,
+        -0.7006637436139155,
+        0.5969694739752343,
+        1.404625161163374,
+        1.31945444456846,
+        0.6241805981240781,
+        -0.46018424502425537,
+        -1.3905332183306838,
+        -1.6637014752810952,
+        -2.7103609946282576,
+        -2.1530385466080797,
+        -0.2836513290927827,
+        -0.04677465022695093,
+        1.6614151482770685,
+        2.60701064733468,
+        1.3327112308676694,
+        0.6847611493772933,
+        0.7316027090620346,
+        0.9605128961045267,
+        0.8266032527681185,
+        0.39470619572374355
+      ]
+    },
+    {
+      "clip": "Sprint_Loop",
+      "duration_s": 0.6666666865348816,
+      "height_m": [
+        0.10017613834098642,
+        -0.0006942043997187203,
+        0.0007321864862347427,
+        -0.01249516693984154,
+        0.08229098577413427,
+        0.26467908666152007,
+        0.34097569316438664,
+        0.38121496321998116,
+        0.3965595124505419,
+        0.3809512217683142,
+        0.2974312611269933,
+        0.2078746782592498,
+        0.20797281204979498,
+        0.24434967446817185,
+        0.22120084763720677,
+        0.15793789765328264
+      ],
+      "side": 0,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 1,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        -1.9035851679047577,
+        -1.1933273866930927,
+        -0.14161154626112088,
+        0.9787055622870956,
+        3.3260909440911046,
+        3.104216396170171,
+        1.3984304770250573,
+        0.6670058115555407,
+        -0.003164897325682297,
+        -1.1895389804315588,
+        -2.0769184602117794,
+        -1.0735013569335463,
+        0.4376999414625899,
+        0.15873642231822738,
+        -1.0369412908754119,
+        -1.4522964682728365
+      ]
+    },
+    {
+      "clip": "Sprint_Loop",
+      "duration_s": 0.6666666865348816,
+      "height_m": [
+        0.26168242663368907,
+        0.25238827304832756,
+        0.23690552615176444,
+        0.20796772848880637,
+        0.20392387389592467,
+        0.22405315184275165,
+        0.2464548564442146,
+        0.21796609464248262,
+        0.15093830131611272,
+        0.09017871952540127,
+        -0.0021658588810753165,
+        0.002961699090952119,
+        0.06914493952903494,
+        0.14519684825963186,
+        0.2546667068813059,
+        0.2645547003800849
+      ],
+      "side": 1,
+      "trials": [
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.02,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.04,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.06,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.08,
+          "plant_samples": 3,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.15
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.3
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 0,
+          "transition_count": 0,
+          "vertical_speed_threshold_m_s": 0.6
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 2,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 1.2
+        },
+        {
+          "height_threshold_m": 0.12,
+          "plant_samples": 4,
+          "transition_count": 2,
+          "vertical_speed_threshold_m_s": 2.4
+        }
+      ],
+      "vertical_speed_m_s": [
+        -0.14599712363003453,
+        -0.2973227969221857,
+        -0.5330465188282301,
+        -0.39577981527491957,
+        0.19302507449474782,
+        0.5103717753692151,
+        -0.07304468422632714,
+        -1.1461986273778417,
+        -1.533448455704651,
+        -1.8372498676119435,
+        -1.0466042140221536,
+        0.8557295554185951,
+        1.7068217391569052,
+        2.226261141879499,
+        1.4322941827597433,
+        0.08418863451958142
+      ]
+    }
+  ],
+  "physical_contacts_verified": false,
+  "preparation_recipe": "voxy-quaternius-gait-source-v1",
+  "sample_rate_hz": 24.0,
+  "sampled_bones": [
+    "DEF-toe.L",
+    "DEF-toe.R"
+  ],
+  "samples_exclude_repeated_endpoint": true,
+  "schema": "voxy.contact-threshold-analysis.v1",
+  "source_revision": "e24c23cf2a1323488a3faa226ea7ea21f644b73e",
+  "thresholds_selected": false
+}

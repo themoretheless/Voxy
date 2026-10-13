@@ -1,0 +1,24 @@
+{
+  "status": "first_coupled_frame_passed_without_external_shader",
+  "pid": 88890,
+  "binary": "/tmp/voxy-bundled-seed-app-tests",
+  "binary_sha256": "e2a2717c6f6e2f96d478a1e29aeb75d655e25774e6ddc02d7520abd08589fe4c",
+  "env_overrides": {
+    "VOXY_HAIR_RESIDENT_COMPACT_READBACK": "1",
+    "VOXY_HAIR_RESIDENT_PREFER_LARGE_WORKSPACE": "1",
+    "VOXY_HAIR_JOINT_RESIDENT_ACTIVE_SET": "1",
+    "VOXY_HAIR_RESIDENT_OPERATOR_REUSE": "1",
+    "VOXY_HAIR_RESIDENT_WORKSPACE_REUSE": "1",
+    "VOXY_HAIR_STRAND_FRACTION_REUSE": "1",
+    "VOXY_HAIR_JOINT_STAGE_PROFILE": "1",
+    "VOXY_HAIR_RESIDENT_WORKGROUP_LANES": "1024",
+    "VOXY_HAIR_RESIDENT_WARM_START": "1"
+  },
+  "log": "/tmp/voxy-bundled-seed-first-frame.log",
+  "scope": "bundled shader firstframe only; no external shader paths",
+  "passed_frames": 1,
+  "elapsed_s": 29.892761,
+  "admitted": 9708,
+  "gpu_submissions": 552,
+  "native_fallbacks": 0
+}

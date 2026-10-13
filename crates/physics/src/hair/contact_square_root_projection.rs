@@ -154,7 +154,8 @@ pub(super) fn solve_accelerated_prepared(constraints:&mut [Constraint],systems:&
 }
 fn prepare_island(ids:&[usize],rows:&[usize],constraints:&[Constraint],rods:&[HairRod],dt:f64,
     free:&PositionIncrement,prepared:Option<&FrozenSystems<'_>>)->Result<(Vec<crate::hair::HairResponseSystem>,Vec<f64>),&'static str> {
-        if rows.len() > 512 {
+        if rows.len() > 1024 {
+            export_capacity_failure(ids, rows, constraints, dt, free);
             return Err("native square-root contact island exceeds capacity");
         }
         let mut requests = Vec::with_capacity(ids.len());
@@ -178,6 +179,40 @@ fn prepare_island(ids:&[usize],rows:&[usize],constraints:&[Constraint],rods:&[Ha
             .map(|&i| constraints[i].bound - constraints[i].speed(free))
             .collect();
     Ok((requests,bounds))
+}
+
+// Preflight failures happen before PreparedNativeJoint exists. Preserve their
+// original row order and free motion without allocating an oversized operator.
+fn capacity_failure_metadata(ids:&[usize],rows:&[usize],constraints:&[Constraint],dt:f64,
+    free:&PositionIncrement)->String {
+    let original_rows=rows.iter().map(|&row| {
+        let c=&constraints[row];
+        let entries=c.entries.iter().map(|e|format!(
+            "{{\"rod\":{},\"point\":{},\"gradient_bits\":{:?},\"mobility_bits\":{}}}",
+            e.rod,e.point,e.gradient.map(f64::to_bits),e.mobility.to_bits()
+        )).collect::<Vec<_>>().join(",");
+        format!("{{\"global_row\":{row},\"bound_bits\":{},\"multiplier_bits\":{},\"entries\":[{entries}]}}",
+            c.bound.to_bits(),c.multiplier.to_bits())
+    }).collect::<Vec<_>>().join(",");
+    let motion=ids.iter().map(|&id| {
+        let linear=free.linear[id].iter().map(|v|v.map(f64::to_bits)).collect::<Vec<_>>();
+        let angular=free.angular[id].iter().map(|v|v.map(f64::to_bits)).collect::<Vec<_>>();
+        format!("{{\"rod\":{id},\"linear_bits\":{linear:?},\"angular_bits\":{angular:?}}}")
+    }).collect::<Vec<_>>().join(",");
+    format!("{{\"schema\":\"voxy-contact-capacity-failure-v1\",\"limit\":1024,\"row_count\":{},\"dt_bits\":{},\"rod_ids\":{ids:?},\"original_rows\":[{original_rows}],\"free_motion\":[{motion}]}}\n",
+        rows.len(),dt.to_bits())
+}
+fn export_capacity_failure(ids:&[usize],rows:&[usize],constraints:&[Constraint],dt:f64,
+    free:&PositionIncrement) {
+    let Some(directory)=std::env::var_os("VOXY_HAIR_FAILED_ISLAND_CONTEXT") else {return;};
+    use std::sync::atomic::{AtomicUsize,Ordering};
+    static NEXT:AtomicUsize=AtomicUsize::new(0);
+    let directory=std::path::Path::new(&directory);
+    let index=NEXT.fetch_add(1,Ordering::Relaxed);
+    let result=std::fs::create_dir_all(directory).and_then(|()|std::fs::write(
+        directory.join(format!("capacity-{index:04}.metadata.json")),
+        capacity_failure_metadata(ids,rows,constraints,dt,free)));
+    if let Err(error)=result {eprintln!("HAIR CAPACITY CONTEXT ERROR {error}");}
 }
 
 type IslandSolution=(Vec<Vec<f64>>,Vec<f64>);
@@ -280,7 +315,57 @@ fn solve_island_increment(
     frozen:Option<&FrozenSystems<'_>>,backend:Option<&mut dyn crate::hair::HairLinearSolver>,
 )->Result<(Vec<Vec<f64>>,Vec<f64>), &'static str> {
     let joint=prepare_joint(requests,ids,original_bounds,tolerance,frozen)?;
-    solve_prepared_island_increment(&joint,requests,ids,rows,constraints,free,original_bounds,tolerance,frozen,backend)
+    let result=solve_prepared_island_increment(&joint,requests,ids,rows,constraints,free,original_bounds,tolerance,frozen,backend);
+    if result.is_err() {
+        export_failed_island_context(&joint,ids,rows,constraints,original_bounds,tolerance,frozen);
+    }
+    result
+}
+
+// Capture the failed owner itself, rather than guessing its rod or observation
+// ordinal in advance. This is diagnostic only and cannot publish a candidate.
+fn export_failed_island_context(
+    prepared:&crate::hair::contact_response_system::PreparedNativeJoint<'_>,
+    ids:&[usize],rows:&[usize],constraints:&[Constraint],bounds:&[f64],tolerance:f64,
+    frozen:Option<&FrozenSystems<'_>>,
+) {
+    let Some(directory)=std::env::var_os("VOXY_HAIR_FAILED_ISLAND_CONTEXT") else {return;};
+    use std::sync::atomic::{AtomicUsize,Ordering};
+    static NEXT:AtomicUsize=AtomicUsize::new(0);
+    let index=NEXT.fetch_add(1,Ordering::Relaxed);
+    let directory=std::path::Path::new(&directory);
+    if let Err(error)=std::fs::create_dir_all(directory) {
+        eprintln!("HAIR FAILED ISLAND CONTEXT ERROR {error}");return;
+    }
+    let path=directory.join(format!("failed-{index:04}.vqc"));
+    if !prepared.capture_observed_input(&path,bounds,tolerance) {return;}
+    let original_rows=rows.iter().map(|&row| {
+        let c=&constraints[row];
+        let entries=c.entries.iter().map(|e|format!(
+            "{{\"rod\":{},\"point\":{},\"gradient_bits\":{:?},\"mobility_bits\":{}}}",
+            e.rod,e.point,e.gradient.map(f64::to_bits),e.mobility.to_bits()
+        )).collect::<Vec<_>>().join(",");
+        format!("{{\"global_row\":{row},\"bound_bits\":{},\"entries\":[{entries}]}}",c.bound.to_bits())
+    }).collect::<Vec<_>>().join(",");
+    let rods=frozen.map_or_else(String::new,|frozen|ids.iter().map(|&id| {
+        let rod=&frozen.rods[id];
+        let contacts=rod.contacts.iter().map(|c| {
+            let source=match c.source {
+                ContactSource::Mesh(index)=>format!("{{\"mesh\":{index}}}"),
+                ContactSource::Strand {other_rod,other_segment}=>format!(
+                    "{{\"strand_rod\":{other_rod},\"strand_segment\":{other_segment}}}"),
+            };
+            let time=c.trajectory_time.map_or_else(||"null".to_owned(),|v|v.to_bits().to_string());
+            format!("{{\"source\":{source},\"segment\":{},\"fraction_bits\":{},\"normal_bits\":{:?},\"target_bits\":{:?},\"metric_scale_bits\":{},\"trajectory_time_bits\":{time}}}",
+                c.segment,c.fraction.to_bits(),c.normal.map(f64::to_bits),c.target.map(f64::to_bits),c.metric_scale.to_bits())
+        }).collect::<Vec<_>>().join(",");
+        let positions=rod.x.iter().map(|v|format!("{:?}",v.map(f64::to_bits))).collect::<Vec<_>>().join(",");
+        format!("{{\"rod\":{id},\"position_bits\":[{positions}],\"contacts\":[{contacts}]}}")
+    }).collect::<Vec<_>>().join(","));
+    let metadata=format!("{{\"schema\":\"voxy-failed-island-context-v1\",\"bounds_scope\":\"original island input before numerical refinement\",\"rod_ids\":{ids:?},\"original_rows\":[{original_rows}],\"frozen_rods\":[{rods}]}}\n");
+    if let Err(error)=std::fs::write(path.with_extension("metadata.json"),metadata) {
+        eprintln!("HAIR FAILED ISLAND CONTEXT ERROR {error}");
+    }
 }
 fn solve_prepared_island_increment(
     prepared:&crate::hair::contact_response_system::PreparedNativeJoint<'_>,
@@ -458,6 +543,22 @@ fn contact_islands(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn failed_island_observation_preserves_original_rods_and_rows() {
+        let mut rod=HairRod::new(vec![[0.,0.,0.],[0.,0.01,0.],[0.,0.02,0.]],Default::default()).unwrap();
+        rod.record_point_contact(2,[1.,0.,0.],[1e-4,0.02,0.],ContactSource::Mesh(7));
+        rod.record_point_contact(2,[-1.,0.,0.],[-1e-4,0.02,0.],ContactSource::Mesh(8));
+        let rods=vec![rod];let before=format!("{rods:?}");
+        let (constraints,_)=position_constraints(&rods,&[],40e-6).unwrap();
+        assert_eq!(constraints.len(),2);
+        let free=PositionIncrement {linear:vec![vec![[0.;3];3]],angular:vec![vec![[0.;3];2]]};
+        let frozen=FrozenSystems::new(&rods,1./240.);
+        let (requests,bounds)=prepare_island(&[0],&[0,1],&constraints,&rods,1./240.,&free,Some(&frozen)).unwrap();
+        let result=solve_island_increment(&requests,&[0],&[0,1],&constraints,&free,&bounds,1e-14,Some(&frozen),None);
+        assert!(result.is_err(),"incompatible planes must not publish a correction");
+        assert_eq!(format!("{rods:?}"),before);
+        assert!(constraints.iter().all(|row|row.multiplier==0.));
+    }
     #[test]
     fn independent_physical_islands_batch_initial_trials_and_preserve_admission() {
         struct Backend {mode:usize,batches:usize,admitted:Vec<bool>}
@@ -714,7 +815,13 @@ mod tests {
         let rods:Vec<_>=(0..2).map(|r|HairRod::new(vec![[r as f64,0.,0.],[r as f64,0.01,0.],[r as f64,0.02,0.]],Default::default()).unwrap()).collect();
         let zero=Entry {rod:0,point:0,gradient:[0.;3],mobility:0.};
         let row=|r|Constraint {entries:[Entry {rod:r,point:1,gradient:[1.,0.,0.],mobility:1.},zero,zero,zero],bound:1e-6,diagonal:1.,multiplier:0.25,response:Vec::new()};
-        let mut rows=vec![row(0)];rows.extend((0..513).map(|_|row(1)));
+        let free=PositionIncrement {linear:vec![vec![[0.;3];3];2],angular:vec![vec![[0.;3];2];2]};
+        for count in [513,1024] {
+            let mut accepted=(0..count).map(|_|row(1)).collect::<Vec<_>>();
+            let result=solve_with_workers(&mut accepted,&rods,1./240.,free.clone(),1e-14,2).unwrap();
+            assert!(accepted.iter().all(|c|c.residual(&result)<=1e-14));
+        }
+        let mut rows=vec![row(0)];rows.extend((0..1025).map(|_|row(1)));
         let free=PositionIncrement {linear:vec![vec![[0.;3];3];2],angular:vec![vec![[0.;3];2];2]};
         assert_eq!(solve_with_workers(&mut rows,&rods,1./240.,free.clone(),1e-14,2).err(),Some("native square-root contact island exceeds capacity"));
         struct Count {calls:usize}
@@ -722,6 +829,12 @@ mod tests {
             fn solve(&mut self,_:&[crate::hair::HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {panic!("unexpected structural solve")}
             fn solve_joint_coordinates(&mut self,_:&[Vec<f64>],_:&[f64],_:f64)->Option<(Vec<f64>,Vec<f64>)> {self.calls+=1;None}
         }
+        let captured=capacity_failure_metadata(&[1],&(1..rows.len()).collect::<Vec<_>>(),&rows,1./240.,&free);
+        assert!(captured.contains("\"row_count\":1025"));
+        assert!(captured.contains("\"rod_ids\":[1]"));
+        assert!(captured.contains(&format!("\"multiplier_bits\":{}",0.25f64.to_bits())));
+        assert_eq!(captured.matches("\"global_row\":").count(),1025);
+        assert!(captured.contains("\"global_row\":1025,"));
         let mut backend=Count {calls:0};
         assert_eq!(solve_accelerated(&mut rows,&rods,1./240.,free,1e-14,&mut backend).err(),Some("native square-root contact island exceeds capacity"));
         assert_eq!(backend.calls,0,"invalid later island launched earlier device work");

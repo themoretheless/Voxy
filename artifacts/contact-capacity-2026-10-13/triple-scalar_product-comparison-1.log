@@ -1,0 +1,7 @@
+
+running 1 test
+TRIPLE PHYSICAL rows=55 width=2142 systems=17 accelerated=true submissions=1 elapsed_ms=462.69654199999997 error=None scope=one_original_physical_operator_not_trajectory_or_FPS
+test gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 376 filtered out; finished in 0.49s
+

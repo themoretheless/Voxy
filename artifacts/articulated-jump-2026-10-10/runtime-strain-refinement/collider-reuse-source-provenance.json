@@ -1,0 +1,6 @@
+{
+  "crates/physics/src/hair/contact.rs": "07902978c1566d7fec0bf69565e9c98bc8823b169ae173e4704a7266564d93d4",
+  "crates/physics/src/hair/mod.rs": "a56fb4457365608f58d82441232031c283a385337d9ee5041867811039331568",
+  "crates/voxy_app/src/female_hair.rs": "af5765963545cb993c1307356982268ad7f54c497014e81ba7e8bb5809b123c6",
+  "crates/voxy_app/src/female_demo.rs": "9572bd2d0428959aa42b7361cd671ed5cebf917029f8d6113fd9dcbccda70e93"
+}

@@ -1,0 +1,66 @@
+{
+  "repo": "J-Ponzo/gltf-universal-animation-library",
+  "sha": "e24c23cf2a1323488a3faa226ea7ea21f644b73e",
+  "tree": {
+    "sha": "e24c23cf2a1323488a3faa226ea7ea21f644b73e",
+    "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/trees/e24c23cf2a1323488a3faa226ea7ea21f644b73e",
+    "tree": [
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bacb256109ac8282f26b41f3b676b7f410d07b8d",
+        "size": 312,
+        "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/blobs/bacb256109ac8282f26b41f3b676b7f410d07b8d"
+      },
+      {
+        "path": "LICENSE",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0e259d42c996742e9e3cba14c677129b2c1b6311",
+        "size": 7048,
+        "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/blobs/0e259d42c996742e9e3cba14c677129b2c1b6311"
+      },
+      {
+        "path": "Preview.png",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1ff3e08e25a483d3812f9cac588316e5a1d83750",
+        "size": 2424027,
+        "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/blobs/1ff3e08e25a483d3812f9cac588316e5a1d83750"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a3f34ff7c0cc8ea89e18287188daea504ec3c696",
+        "size": 1051,
+        "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/blobs/a3f34ff7c0cc8ea89e18287188daea504ec3c696"
+      },
+      {
+        "path": "glTF",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "fce14701a210bc05b57b7a7740af7703ea79e268",
+        "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/trees/fce14701a210bc05b57b7a7740af7703ea79e268"
+      },
+      {
+        "path": "glTF/AnimationLibrary_Godot_Standard.bin",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "481652b8b1571b15c254b44f4d9b9f702498f948",
+        "size": 1587224,
+        "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/blobs/481652b8b1571b15c254b44f4d9b9f702498f948"
+      },
+      {
+        "path": "glTF/AnimationLibrary_Godot_Standard.gltf",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d9e132ad1d41089f8f96488775829d220a4beb05",
+        "size": 2459987,
+        "url": "https://api.github.com/repos/J-Ponzo/gltf-universal-animation-library/git/blobs/d9e132ad1d41089f8f96488775829d220a4beb05"
+      }
+    ],
+    "truncated": false
+  }
+}

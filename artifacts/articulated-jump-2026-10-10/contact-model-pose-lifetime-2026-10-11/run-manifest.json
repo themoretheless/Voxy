@@ -1,0 +1,10 @@
+{
+  "binary": "/tmp/voxy-contact-model-lifetime-physics.bin",
+  "binary_sha256": "5d04ed042dd0fa2cce7371b69faf582a16d5e1bc7aed4e8f3ba6cfe9ee319e74",
+  "fixture_sha256": "a0ab9270ad674a849c58c4d38877950df523f21897b7879216c0011707116844",
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "5b6d19e79397d173dcae57d8c6c710fc0b2ca5253d696dd9dff782328861e93a",
+    "crates/physics/src/hair/contact_model.rs": "ac94ea3b003b68d204b4a9068929815843c76eabbbdb3424f8ab67453e096d7b"
+  },
+  "scope": "full469-guide frozen nonlinear replay with fresh geometry; not full authored cycle"
+}

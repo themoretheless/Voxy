@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "session": 22204,
+  "log": "/tmp/voxy-exact-discarded-witnesses.log",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_triangle_exact_discovery.rs": "ba65d051ed8b9df997d54accb00fd0087eeb625a052f6bdd717d144e0e4fd104",
+    "crates/physics/src/hair/contact_triangle_exact.rs": "af49f57787caad438e1b58d1b421a74cac00828d91e6f951cf3d3942861aaf00",
+    "crates/physics/src/hair/contact_triangle_sweep.rs": "c46ee62fb0d6547cd1b03382237b24758f0d3fda9920e13f8a45b9614b490775"
+  },
+  "change": "Production exact proof drops completed witnesses; test/reference path retains them. One radius-scaled axis norm per interval instead of six copies. Same proof inequalities, physical tolerance and budget.",
+  "scope": "No full-jump or FPS qualification",
+  "targeted_tests_passed": 20,
+  "ordinary_tests_passed": 400,
+  "ordinary_tests_ignored": 58,
+  "reference_intervals": 17,
+  "production_retained_interval_witnesses": 0,
+  "check_session": 69542,
+  "limits": "No controlled speedup or full solver completion claim. Prior-binary captured replay still running.",
+  "non_test_release_check": "passed"
+}

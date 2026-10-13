@@ -1,0 +1,11 @@
+{
+  "binary": "/tmp/voxy-oriented-face-physics.bin",
+  "binary_sha256": "823e707b6b7dead52228d33ef3ea079fbb8b062b2fcec563aaaa6ef66df21748",
+  "fixture_sha256": "a0ab9270ad674a849c58c4d38877950df523f21897b7879216c0011707116844",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_trajectory.rs": "991adf440394f96924dfa6e25a98d7a555240a207cb82828d30bdf6c0d469116",
+    "crates/physics/src/hair/mod.rs": "77c9ecd7dc18f6d5e060f8cef590c66067264f8f02d731fd6e7b19541beab1d4",
+    "crates/physics/src/hair/contact_model.rs": "ac94ea3b003b68d204b4a9068929815843c76eabbbdb3424f8ab67453e096d7b"
+  },
+  "scope": "same frozen binary/fixture; capture next no-descent geometry and direction, not a new solver change"
+}

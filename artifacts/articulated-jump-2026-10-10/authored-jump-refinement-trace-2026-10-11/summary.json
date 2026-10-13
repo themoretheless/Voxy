@@ -1,0 +1,36 @@
+{
+  "attempted_frame": 4,
+  "authored_jump": true,
+  "completed_frames": 3,
+  "continuous_contacts": true,
+  "error": "swept contact refinement budget exhausted",
+  "guide_count": 469,
+  "required_frames": 720,
+  "scope": "actual coupled CPU simulation, no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.025,
+  "status": "failed",
+  "steps": [
+    {
+      "elapsed_ms": 83443.03112500001,
+      "frame": 1,
+      "hair_ms": 83438.888875,
+      "skin_ms": 346.845375,
+      "time_s": 0.008333333333333333
+    },
+    {
+      "elapsed_ms": 192817.838166,
+      "frame": 2,
+      "hair_ms": 192813.80404199997,
+      "skin_ms": 82.2585,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "elapsed_ms": 220174.293625,
+      "frame": 3,
+      "hair_ms": 220170.738959,
+      "skin_ms": 101.787125,
+      "time_s": 0.025
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "status": "single captured proof passed; paired benchmark running",
+  "session": 85949,
+  "log": "/tmp/voxy-feature-axis-paired-benchmark.log",
+  "source_sha256": "dbe45baebe38dbe7840356b7b99eedae60b37b468a089abbc9c49e6737d21441",
+  "proof": "17 exact intervals cover original captured motion; each reverified independently by BigRational; +1 nm radius candidate rejects",
+  "mechanism": "Exact quadratic triangle-face and rod/triangle-edge cross-product axes. All six endpoint/vertex clearance inequalities remain. Midpoint failure only rejects candidate family, never admits motion.",
+  "limits": "Test-only candidate. No full-frame or FPS result."
+}

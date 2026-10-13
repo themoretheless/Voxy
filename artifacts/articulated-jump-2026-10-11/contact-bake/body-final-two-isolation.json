@@ -1,0 +1,24 @@
+{
+  "poses": [
+    {
+      "tick": 353,
+      "exact_base_positions": 77802,
+      "base_positions": 78278,
+      "maximum_world_error_m": 5.960464477539063e-08,
+      "nonposition_attribute_mismatches": 0
+    },
+    {
+      "tick": 415,
+      "exact_base_positions": 77589,
+      "base_positions": 78278,
+      "maximum_world_error_m": 6.143906154658885e-08,
+      "nonposition_attribute_mismatches": 0
+    }
+  ],
+  "dot3_experiment": "No change to maxima on 353/415; source reverted",
+  "limits": [
+    "Offline projection uses assumed standard MSAA samples, not hardware sample proof",
+    "Nearest candidate edge at 415 has identical endpoint positions: it does not explain image mismatch",
+    "Latest diagnostic binary still includes rejected dot3; rebuild required for current-source qualification"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "physics_tests": {
+    "passed": 374,
+    "failed": 0,
+    "ignored": 41
+  },
+  "scope": "base and swept rows share trust-restricted trajectory; full authored-cycle pending",
+  "source_sha256": {
+    "crates/physics/src/hair/velocity_contacts.rs": "2abb31f22e7acf39676d7cfdac003378f8471d766e71623ac1fc47b4ff89246c",
+    "crates/physics/src/hair/contact_swept_constraints.rs": "5f2f14f6a57974cb97b3a61559e3f63dd3d5701ade71d584b8cf30a8c568cacd"
+  },
+  "retained_clock_refresh": true,
+  "gpu_qr_test": "passed; previous shared-clock binary, coordinate backend unchanged by retained-clock refresh"
+}

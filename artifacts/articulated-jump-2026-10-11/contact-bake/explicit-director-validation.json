@@ -1,0 +1,71 @@
+{
+  "status": "partial qualification; full image gate failed",
+  "previous_goal_turn": "progress: source comparison and compilable optional tangent stream",
+  "source_mechanism": {
+    "repository": "ismailivanov/TressFX-Godot",
+    "commit": "ad3d1faad2338a386e4baf4e0b00a560aab4dd0d",
+    "path": "upstream/src/Shaders/TressFXStrands.hlsl",
+    "mechanism": "GetExpandedTressFXVert reads explicit guide vertex tangents; Voxy adapts data flow using solved Cosserat w director, not an identical geometric tangent algorithm"
+  },
+  "implementation": {
+    "stream": "optional independent Float32x4 vertex slot4 location6; unit xyz and handedness",
+    "resident_update": "GPU scatter reads raw solved frame director and final pose; CPU uploads frames and pose, no per-frame full tangent upload",
+    "density_vertices": 2363760,
+    "physics_owner": "unchanged caller-owned solved rod frames; this is not GPU physics port",
+    "legacy_shader": "retained for non-resident paths"
+  },
+  "passed": {
+    "director_and_legacy_scatter_tests": 2,
+    "lod_nonignored_tests": 5,
+    "gpu_lod_test": 1,
+    "partition_test": 1,
+    "gpu_backend": "Metal Apple M4 Max"
+  },
+  "image_gate": {
+    "passed": false,
+    "required_max_u8": 1,
+    "poses": [
+      {
+        "tick": 1,
+        "max_u8": 8,
+        "differing_channels": 8,
+        "occupied_pixels": 59971
+      },
+      {
+        "tick": 31,
+        "max_u8": 3,
+        "differing_channels": 8,
+        "occupied_pixels": 59194
+      }
+    ],
+    "poisoned_initial_positions": true,
+    "poisoned_initial_tangents": true,
+    "reference_poses_change_image": true,
+    "explicit_pose_multiplication_diagnostic": "same 8/3 errors; not adopted",
+    "cause": "not established; do not infer coverage or shading cause from counts alone"
+  },
+  "limitations": [
+    "No native visual qualification for this revision",
+    "No FPS measurement for this revision",
+    "Full jump and full GPU hair physics remain open",
+    "Cross-backend and CUDA support not qualified"
+  ],
+  "sha256": {
+    "crates/voxy_render/src/scene.rs": "273bcd0ef3cf3c09e2dd0d34d08195d80c9e6a2a44095199f12f2572109db850",
+    "crates/voxy_render/src/scene/lod_geometry.rs": "8d0d0c1580cf92d697f497c3505cad448c57cc3c64834da981bc3cf84db5e75c",
+    "crates/voxy_render/src/scene/skinning.rs": "1af8cb21d7fc15f277757651319bafddac1de9deeb713049a3ca0c199e94f69d",
+    "crates/voxy_render/src/fiber_surface.rs": "be2fc851ea5d5045cd8c39a1fac437ed95e4ea8c2bf56885c60d7bafef93b450",
+    "crates/voxy_render/src/fiber_surface_transfer_tangent.wgsl": "3f2b61b8d11814cbdb06ecea6bd15ea328f6ad9c9e6208ea787e6ba044282f92",
+    "crates/voxy_render/src/fiber_surface_draw_tests.rs": "a43d0302542aca9a5405bd14ffd59f82cbc89b94c473709799ac31d7c0c891ff",
+    "crates/voxy_app/src/female_demo.rs": "6cee01d4041bebc9299d712f9df016ad53a922aa414f1ca536e4879400c7d455",
+    "crates/voxy_app/src/scene_app.rs": "fe01524ccd0a87fe75ac0f45dc527e6398254db4d669b442088244d855a9e725",
+    "crates/voxy_app/src/female_groom_gpu_tests.rs": "c3e88b1282c3888bc16045d2351c408bbca9f9b2ceebe33aacb851295e385460",
+    "crates/voxy_app/src/female_hair_material_tangent.wgsl": "50f5ce57d92cf39877246f96d039ecf708faf8e4fc43d013c10637ad9ed39208",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/explicit-director-actual-groom-pixels.log": "5d619d13650c6aebb1a3adc1c589e3ffbc599483e81f32ae363ca7699a845d1a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/explicit-director-pose-diagnostic.log": "8368ae4e0f9662a94ffac222c1703e9973ef03f1971355d4146f7e00c5b165f4",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/explicit-director-scatter-regressions.log": "fc97c2a4bf1fed247173c11795e334ca1e315c16b3518eed8097377de475a8cd",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/explicit-director-lod-regressions.log": "d50b23eb671f1b480201b2c37e52206c2df61c3f2f598bc9253d27dad8afe857",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/explicit-director-partition-regressions.log": "430077c826a6a0de678bebba7386d38db2b0eea5792c0498b89799c5189203f9",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/explicit-director-gpu-lod-regression.log": "9080e06fd52c8f68020dd28c6179e8dec06aa474880c612bdce9d3b4d2b78315"
+  }
+}

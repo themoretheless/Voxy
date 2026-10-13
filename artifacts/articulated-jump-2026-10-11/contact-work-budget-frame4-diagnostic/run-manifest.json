@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/pair-ownership-benchmark/physics-tests.bin",
+    "hair::contact_replay::tests::captured_contact_reaches_feasible_geometry",
+    "--exact",
+    "--ignored",
+    "--nocapture"
+  ],
+  "binary_sha256": "43943b8819fbe652fc2a5a2cd6449f9122e7575f969cf2f42647b258a07eada7",
+  "fixture_sha256": "4f5f6bd0d40ecacd927c788f3d96524aa151863f12318a95ce7403393eb88757",
+  "build_manifest": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/pair-ownership-benchmark/run-manifest.json",
+  "scope": "Residual replay of failed frame4 state; not original full-frame proof"
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "scenario": "cycle",
+    "exit_code": 0
+  },
+  {
+    "scenario": "analytic",
+    "exit_code": 0
+  }
+]

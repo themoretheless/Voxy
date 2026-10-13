@@ -1,0 +1,8 @@
+{
+  "status": "first_frame_passed_inventory_only",
+  "profiles": 559,
+  "owner_instances": 9815,
+  "valid_seeded_owner_instances": 8254,
+  "positive_seed_row_instances": 37269,
+  "scope": "incoming unconsumed hints, repeated instances rather than unique operators; not GPU warm-start qualification"
+}

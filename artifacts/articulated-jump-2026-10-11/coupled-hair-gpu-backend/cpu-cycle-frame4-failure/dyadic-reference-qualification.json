@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "session": 12046,
+  "log": "/tmp/voxy-dyadic-reference.log",
+  "source_sha256": "8fa748640b163148593dc3a3dfc5b0403ea84ef3bb0948d0963f756894f629b4",
+  "scope": "Test-only exact dyadic verifier. General rational oracle remains production owner.",
+  "math": "Exact n*2^e arithmetic; Bernstein signs multiplied by positive common denominator 60 for degrees <=6. Non-dyadic inputs return unsupported; never sampled acceptance.",
+  "checks": "1000 deterministic finite-binary64 arithmetic/polynomial trials; captured 17 intervals, larger-radius rejection and reversed-axis rejection against rational oracle",
+  "limits": "Test-only candidate. Production continues to use BigRational; no controlled speedup, full solver convergence or FPS qualification.",
+  "targeted_tests_passed": 2,
+  "ordinary_tests_passed": 402,
+  "ordinary_tests_ignored": 59
+}

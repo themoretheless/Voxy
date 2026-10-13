@@ -1,0 +1,20 @@
+
+running 1 test
+REPLAY MERIT captured=2.9367614931589525e-8 rebuilt=2.9367614931589525e-8 rods=469 meshes=1
+HAIR CONTACT MODEL iteration=0 added_rows=301 before=2.9367614931589525e-8 rejected=7.725978645150874e-7
+HAIR QR INPUT EXPORT "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/contact-model-pose-lifetime-2026-10-11/failed-islands/failed-0000.vqc" systems=1 rows=14 refinement=0
+HAIR CONTACT PROJECTION NONCONVERGENCE constraints=619 residual=0.0001600000000025143 tolerance=0.00000000000001
+REPLAY RESULT Err("joint square-root active contacts did not converge")
+
+thread 'hair::contact_replay::tests::captured_contact_reaches_feasible_geometry' (88627015) panicked at crates/physics/src/hair/contact_replay.rs:627:20:
+corrected captured geometry must converge: "joint square-root active contacts did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry ... FAILED
+
+failures:
+
+failures:
+    hair::contact_replay::tests::captured_contact_reaches_feasible_geometry
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 420 filtered out; finished in 12.27s
+

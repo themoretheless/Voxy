@@ -1,0 +1,132 @@
+{
+  "scope": "completed recovery timing scopes only; no convergence, full frame or FPS claim",
+  "all_observed_scopes_closed": true,
+  "simulation_completion": "not inferred; inspect terminal test result and launch receipt",
+  "completed_root_scopes": 12,
+  "completed_root_ms": 35387.729416999995,
+  "open_scopes": [],
+  "completed_root_phases": {
+    "initial_refresh": {
+      "completed_scopes": 12,
+      "inclusive_ms": 5042.727709999999,
+      "exclusive_ms": 5042.727709999999,
+      "max_ms": 909.88375
+    },
+    "iteration_refresh": {
+      "completed_scopes": 108,
+      "inclusive_ms": 4.21996,
+      "exclusive_ms": 4.21996,
+      "max_ms": 0.18225000000000002
+    },
+    "restoration_model": {
+      "completed_scopes": 108,
+      "inclusive_ms": 1450.564286,
+      "exclusive_ms": 1450.564286,
+      "max_ms": 47.665958
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 108,
+      "inclusive_ms": 5.96221,
+      "exclusive_ms": 5.96221,
+      "max_ms": 1.480792
+    },
+    "direction_projection": {
+      "completed_scopes": 96,
+      "inclusive_ms": 3630.0249619999995,
+      "exclusive_ms": 3630.0249619999995,
+      "max_ms": 111.569208
+    },
+    "trial_refresh": {
+      "completed_scopes": 96,
+      "inclusive_ms": 21726.174336,
+      "exclusive_ms": 21726.174336,
+      "max_ms": 600.6297910000001
+    },
+    "trial_model": {
+      "completed_scopes": 96,
+      "inclusive_ms": 1367.840963,
+      "exclusive_ms": 1367.840963,
+      "max_ms": 40.583292
+    },
+    "backtrack": {
+      "completed_scopes": 96,
+      "inclusive_ms": 24584.234373,
+      "exclusive_ms": 1490.2190739999999,
+      "max_ms": 652.352125
+    },
+    "geometry_iteration": {
+      "completed_scopes": 108,
+      "inclusive_ms": 30114.352248999996,
+      "exclusive_ms": 439.34645799999987,
+      "max_ms": 716.6002500000001
+    },
+    "recovery": {
+      "completed_scopes": 12,
+      "inclusive_ms": 35387.729416999995,
+      "exclusive_ms": 230.6494580000017,
+      "max_ms": 4861.05475
+    }
+  },
+  "phases": {
+    "trial_refresh": {
+      "completed_scopes": 96,
+      "inclusive_ms": 21726.17433600002,
+      "exclusive_ms": 21726.17433600002,
+      "max_ms": 600.6297910000001
+    },
+    "initial_refresh": {
+      "completed_scopes": 12,
+      "inclusive_ms": 5042.727709999999,
+      "exclusive_ms": 5042.727709999999,
+      "max_ms": 909.88375
+    },
+    "direction_projection": {
+      "completed_scopes": 96,
+      "inclusive_ms": 3630.024962000001,
+      "exclusive_ms": 3630.024962000001,
+      "max_ms": 111.569208
+    },
+    "backtrack": {
+      "completed_scopes": 96,
+      "inclusive_ms": 24584.234373000003,
+      "exclusive_ms": 1490.2190740000003,
+      "max_ms": 652.352125
+    },
+    "restoration_model": {
+      "completed_scopes": 108,
+      "inclusive_ms": 1450.564286,
+      "exclusive_ms": 1450.564286,
+      "max_ms": 47.665958
+    },
+    "trial_model": {
+      "completed_scopes": 96,
+      "inclusive_ms": 1367.840963,
+      "exclusive_ms": 1367.840963,
+      "max_ms": 40.583292
+    },
+    "geometry_iteration": {
+      "completed_scopes": 108,
+      "inclusive_ms": 30114.352249000014,
+      "exclusive_ms": 439.34645800000004,
+      "max_ms": 716.6002500000001
+    },
+    "recovery": {
+      "completed_scopes": 12,
+      "inclusive_ms": 35387.729416999995,
+      "exclusive_ms": 230.6494580000017,
+      "max_ms": 4861.05475
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 108,
+      "inclusive_ms": 5.9622100000000025,
+      "exclusive_ms": 5.9622100000000025,
+      "max_ms": 1.480792
+    },
+    "iteration_refresh": {
+      "completed_scopes": 108,
+      "inclusive_ms": 4.2199599999999995,
+      "exclusive_ms": 4.2199599999999995,
+      "max_ms": 0.18225000000000002
+    }
+  }
+}

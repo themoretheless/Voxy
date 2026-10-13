@@ -1,0 +1,134 @@
+{
+  "scope": "completed recovery timing scopes only; no convergence, full frame or FPS claim",
+  "all_observed_scopes_closed": true,
+  "simulation_completion": "not inferred; inspect terminal test result and launch receipt",
+  "completed_root_scopes": 12,
+  "completed_root_ms": 13648.289083000003,
+  "open_scopes": [],
+  "completed_root_phases": {
+    "initial_refresh": {
+      "completed_scopes": 12,
+      "inclusive_ms": 1253.80475,
+      "exclusive_ms": 1253.80475,
+      "max_ms": 173.35441600000001
+    },
+    "iteration_refresh": {
+      "completed_scopes": 108,
+      "inclusive_ms": 3.284497,
+      "exclusive_ms": 3.284497,
+      "max_ms": 0.120583
+    },
+    "restoration_model": {
+      "completed_scopes": 108,
+      "inclusive_ms": 1046.70421,
+      "exclusive_ms": 1046.70421,
+      "max_ms": 19.641041
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 108,
+      "inclusive_ms": 3.101464,
+      "exclusive_ms": 3.101464,
+      "max_ms": 0.048917
+    },
+    "direction_projection": {
+      "completed_scopes": 96,
+      "inclusive_ms": 2605.7460859999997,
+      "exclusive_ms": 2605.7460859999997,
+      "max_ms": 70.383125
+    },
+    "trial_refresh": {
+      "completed_scopes": 96,
+      "inclusive_ms": 6322.4143699999995,
+      "exclusive_ms": 6322.4143699999995,
+      "max_ms": 132.04791699999998
+    },
+    "trial_model": {
+      "completed_scopes": 96,
+      "inclusive_ms": 944.8707530000001,
+      "exclusive_ms": 944.8707530000001,
+      "max_ms": 20.743291
+    },
+    "backtrack": {
+      "completed_scopes": 96,
+      "inclusive_ms": 8252.737594,
+      "exclusive_ms": 985.4524709999998,
+      "max_ms": 153.001208
+    },
+    "geometry_iteration": {
+      "completed_scopes": 108,
+      "inclusive_ms": 12247.328829,
+      "exclusive_ms": 335.75497799999994,
+      "max_ms": 222.072083
+    },
+    "recovery": {
+      "completed_scopes": 12,
+      "inclusive_ms": 13648.289083000003,
+      "exclusive_ms": 147.15550400000086,
+      "max_ms": 1472.78325
+    }
+  },
+  "phases": {
+    "trial_refresh": {
+      "completed_scopes": 96,
+      "inclusive_ms": 6322.414369999998,
+      "exclusive_ms": 6322.414369999998,
+      "max_ms": 132.04791699999998
+    },
+    "direction_projection": {
+      "completed_scopes": 96,
+      "inclusive_ms": 2605.7460859999983,
+      "exclusive_ms": 2605.7460859999983,
+      "max_ms": 70.383125
+    },
+    "initial_refresh": {
+      "completed_scopes": 12,
+      "inclusive_ms": 1253.80475,
+      "exclusive_ms": 1253.80475,
+      "max_ms": 173.35441600000001
+    },
+    "restoration_model": {
+      "completed_scopes": 108,
+      "inclusive_ms": 1046.70421,
+      "exclusive_ms": 1046.70421,
+      "max_ms": 19.641041
+    },
+    "backtrack": {
+      "completed_scopes": 96,
+      "inclusive_ms": 8252.737594,
+      "exclusive_ms": 985.4524709999997,
+      "max_ms": 153.001208
+    },
+    "trial_model": {
+      "completed_scopes": 96,
+      "inclusive_ms": 944.8707530000001,
+      "exclusive_ms": 944.8707530000001,
+      "max_ms": 20.743291
+    },
+    "geometry_iteration": {
+      "completed_scopes": 108,
+      "inclusive_ms": 12247.328829,
+      "exclusive_ms": 335.7549780000001,
+      "max_ms": 222.072083
+    },
+    "recovery": {
+      "completed_scopes": 12,
+      "inclusive_ms": 13648.289083000003,
+      "exclusive_ms": 147.15550400000086,
+      "max_ms": 1472.78325
+    },
+    "iteration_refresh": {
+      "completed_scopes": 108,
+      "inclusive_ms": 3.284497,
+      "exclusive_ms": 3.284497,
+      "max_ms": 0.120583
+    },
+    "whole_motion_admission": {
+      "completed_scopes": 108,
+      "inclusive_ms": 3.101464000000001,
+      "exclusive_ms": 3.101464000000001,
+      "max_ms": 0.048917
+    }
+  },
+  "source_text_sha256": "095edf845d84cb6824621bfc118dd56e51b8eecb6d2bfccad076b65a629e1b05",
+  "source_log": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/coupled-hair-gpu-backend/cpu-cycle-frame4-failure/interval-dyadic-frame4-terminal.log"
+}

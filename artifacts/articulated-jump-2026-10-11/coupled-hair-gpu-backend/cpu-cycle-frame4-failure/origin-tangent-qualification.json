@@ -1,0 +1,15 @@
+{
+  "ordinary_physics_passed": 412,
+  "ordinary_ignored": 60,
+  "captured_exact_checks_passed": 28,
+  "non_test_release_check": "passed, 7 existing warnings",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_model.rs": "f6998d7f069991761e7d288197e3bc88a769976b8f8461624a00488b5041c28b",
+    "crates/physics/src/hair/mod.rs": "37301a7941e5a8c93f8aef385a1bdaa9255053fbbb03fd08732118f00f3b2d82"
+  },
+  "live_observation": "iteration 0 installs two new approach rows and refines frozen pose instead of accepting and invalidating an infinitesimal prefix; iteration 1 reached",
+  "convergence_proven": false,
+  "full_jump_proven": false,
+  "fps_proven": false,
+  "observed_unix_s": 1791766218.851284
+}

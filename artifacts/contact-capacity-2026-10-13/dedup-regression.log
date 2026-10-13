@@ -1,0 +1,22 @@
+
+running 17 tests
+test gpu_hair_solver::joint::tests::gpu_equality_batch_splits_readback_capacity_without_changing_results ... ignored, requires actual GPU; bounded staging across many independent owners
+test gpu_hair_solver::joint::tests::gpu_equality_workspace_resets_changed_columns_bounds_and_rejected_input ... ignored, requires GPU; reused equality storage must reset the full operator
+test gpu_hair_solver::joint::tests::gpu_independent_physical_islands_batch_without_state_drift ... ignored, requires actual GPU physical island batching
+test gpu_hair_solver::joint::tests::gpu_joint_backend_admits_captured_original_physics ... ignored, requires Metal/Vulkan hardware and original VQC1 physical contact fixture
+test gpu_hair_solver::joint::tests::gpu_large_completed_workspace_keeps_retired_storage_charged ... ignored, requires GPU; strict storage budget, oversized backing and explicit retirement
+test gpu_hair_solver::joint::tests::gpu_resident_active_set_admits_original_physical_operator ... ignored, requires GPU and full original VQC1 fixture; experimental resident candidate
+test gpu_hair_solver::joint::tests::gpu_resident_batch_deduplicates_exact_cold_inputs ... ignored, requires GPU; exact duplicate operators share one workgroup
+test gpu_hair_solver::joint::tests::gpu_resident_candidate_reuse_requires_original_physical_admission ... ignored, requires GPU and original full physical fixture
+test gpu_hair_solver::joint::tests::gpu_resident_workspace_reuse_preserves_current_operator ... ignored, requires GPU; resident operator workspace freshness across changed shapes and failures
+test gpu_hair_solver::joint::tests::gpu_seeded_joint_releases_and_retries_dependent_hints ... ignored, requires an actual GPU; seeded QR retry and current-operator admission
+test gpu_hair_solver::joint::tests::gpu_solver_cache_budget_rejection_and_explicit_retirement_preserve_ownership ... ignored, requires GPU; persistent solver cache under exact managed storage budget
+test gpu_hair_solver::joint::tests::gpu_solver_workspaces_survive_calls_without_retaining_numerical_inputs ... ignored, requires GPU; solver-owned workspace reuse across changed physical inputs
+test gpu_hair_solver::joint::tests::gpu_workspace_reuses_larger_storage_and_preserves_budget_after_rejection ... ignored, requires GPU; strict storage budget, oversized backing and explicit retirement
+test gpu_hair_solver::joint::tests::replay_rejected_gpu_joint_coordinates ... ignored, requires an actual GPU and VOXY_HAIR_JOINT_FAILURE_FIXTURE exact captured coordinate input
+test gpu_hair_solver::joint::tests::resident_candidate_cache_preserves_exact_keys_order_and_budget ... ok
+test gpu_hair_solver::joint::tests::joint_result_cache_requires_exact_operator_and_is_bounded ... ok
+test gpu_hair_solver::joint::tests::original_support_products_match_dense_cancellation_and_tiny_terms ... ok
+
+test result: ok. 3 passed; 0 failed; 14 ignored; 0 measured; 358 filtered out; finished in 0.00s
+

@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-10-11T16:16:50.260881+00:00",
+  "pid": 64240,
+  "session": 51214,
+  "status": "live confirmed by pgrep and growing nonlinear trace",
+  "binary": "/tmp/voxy-face-refit-20261011/release/deps/voxy_app-f1bdfa6ab8314848",
+  "binary_sha256": "754fcbfdf0a4c03e4d5952f210204a7bbc78091945d41b196819cdca93c6b06e",
+  "output_dir": "/tmp/voxy-authored-jump-nonlinear-replay-20261011-a",
+  "log": "/tmp/voxy-authored-jump-nonlinear-replay-20261011-a.log",
+  "replay_on_failure": "/tmp/voxy-authored-jump-nonlinear-replay-20261011-a.vhr",
+  "scope": "diagnose terminal frame2 failure with unchanged physical gates; no FPS claim"
+}

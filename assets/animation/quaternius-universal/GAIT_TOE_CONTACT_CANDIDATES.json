@@ -1,0 +1,1206 @@
+{
+  "curves": {
+    "left": {
+      "Idle_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.01666666753590107,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.03333333507180214,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.05000000074505806,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.06666667014360428,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.0833333358168602,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.10000000149011612,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.11666666716337204,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.13333334028720856,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.15000000596046448,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.1666666716337204,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.18333333730697632,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.20000000298023224,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.21666666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.23333333432674408,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.25,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.2666666805744171,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.28333333134651184,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.30000001192092896,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.3166666626930237,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.3333333432674408,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.3499999940395355,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.36666667461395264,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.38333332538604736,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4000000059604645,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4166666567325592,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4333333373069763,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.44999998807907104,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.46666666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4833333194255829,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5166666507720947,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5333333611488342,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.550000011920929,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5666666626930237,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5833333134651184,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6000000238418579,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6166666746139526,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6333333253860474,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6499999761581421,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6666666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6833333373069763,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.699999988079071,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7166666388511658,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7333333492279053,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.75,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7666666507720947,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7833333611488342,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.800000011920929,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8166666626930237,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8333333134651184,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8500000238418579,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8666666746139526,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8833333253860474,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8999999761581421,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9166666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9333333373069763,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.949999988079071,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9666666388511658,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9833333492279053,
+          "weight": 1.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 1.0
+        }
+      ],
+      "Jog_Fwd_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.043478261679410934,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.08695652335882187,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.1304347813129425,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.17391304671764374,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.21739129722118378,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.260869562625885,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.30434781312942505,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.3478260934352875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.3913043439388275,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.43478259444236755,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.47826087474823,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.52173912525177,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5652173757553101,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.6086956262588501,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.6521739363670349,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.695652186870575,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.739130437374115,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.782608687877655,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.8260869383811951,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.8695651888847351,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.9130434989929199,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.95652174949646,
+          "weight": 0.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 0.0
+        }
+      ],
+      "Sprint_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.0625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.1875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.25,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.3125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.4375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.6875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.75,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.8125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.9375,
+          "weight": 0.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 0.0
+        }
+      ],
+      "Walk_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.03125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.0625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.09375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.15625,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.1875,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.21875,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.25,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.28125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.3125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.34375,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.375,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.40625,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4375,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.46875,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.53125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5625,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.59375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.65625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.6875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.71875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.75,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.78125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.8125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.84375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.90625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.9375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.96875,
+          "weight": 0.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 0.0
+        }
+      ]
+    },
+    "right": {
+      "Idle_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.01666666753590107,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.03333333507180214,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.05000000074505806,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.06666667014360428,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.0833333358168602,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.10000000149011612,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.11666666716337204,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.13333334028720856,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.15000000596046448,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.1666666716337204,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.18333333730697632,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.20000000298023224,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.21666666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.23333333432674408,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.25,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.2666666805744171,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.28333333134651184,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.30000001192092896,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.3166666626930237,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.3333333432674408,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.3499999940395355,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.36666667461395264,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.38333332538604736,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4000000059604645,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4166666567325592,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4333333373069763,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.44999998807907104,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.46666666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.4833333194255829,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5166666507720947,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5333333611488342,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.550000011920929,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5666666626930237,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.5833333134651184,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6000000238418579,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6166666746139526,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6333333253860474,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6499999761581421,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6666666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6833333373069763,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.699999988079071,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7166666388511658,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7333333492279053,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.75,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7666666507720947,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.7833333611488342,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.800000011920929,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8166666626930237,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8333333134651184,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8500000238418579,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8666666746139526,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8833333253860474,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8999999761581421,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9166666865348816,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9333333373069763,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.949999988079071,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9666666388511658,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9833333492279053,
+          "weight": 1.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 1.0
+        }
+      ],
+      "Jog_Fwd_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.043478261679410934,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.08695652335882187,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.1304347813129425,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.17391304671764374,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.21739129722118378,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.260869562625885,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.30434781312942505,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.3478260934352875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.3913043439388275,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.43478259444236755,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.47826087474823,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.52173912525177,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5652173757553101,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6086956262588501,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6521739363670349,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.695652186870575,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.739130437374115,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.782608687877655,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.8260869383811951,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.8695651888847351,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.9130434989929199,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.95652174949646,
+          "weight": 0.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 0.0
+        }
+      ],
+      "Sprint_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.0625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.1875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.25,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.3125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.4375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.6875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.75,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.8125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.9375,
+          "weight": 0.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 0.0
+        }
+      ],
+      "Walk_Loop": [
+        {
+          "phase": 0.0,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.03125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.0625,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.09375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.15625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.1875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.21875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.25,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.28125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.3125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.34375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.40625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.4375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.46875,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.53125,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.5625,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.59375,
+          "weight": 0.0
+        },
+        {
+          "phase": 0.625,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.65625,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.6875,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.71875,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.75,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.78125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.8125,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.84375,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.875,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.90625,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.9375,
+          "weight": 1.0
+        },
+        {
+          "phase": 0.96875,
+          "weight": 1.0
+        },
+        {
+          "phase": 1.0,
+          "weight": 1.0
+        }
+      ]
+    }
+  },
+  "diagnostics": [
+    {
+      "candidate_plant_percent": 100.0,
+      "clip": "Idle_Loop",
+      "duration_s": 2.5,
+      "minimum_site_height_m": 0.014630569457501102,
+      "samples_in_cycle": 60,
+      "side": "left",
+      "transition_samples": []
+    },
+    {
+      "candidate_plant_percent": 100.0,
+      "clip": "Idle_Loop",
+      "duration_s": 2.5,
+      "minimum_site_height_m": 0.015181955445228698,
+      "samples_in_cycle": 60,
+      "side": "right",
+      "transition_samples": []
+    },
+    {
+      "candidate_plant_percent": 46.875,
+      "clip": "Walk_Loop",
+      "duration_s": 1.3333333730697632,
+      "minimum_site_height_m": 0.014811723647369324,
+      "samples_in_cycle": 32,
+      "side": "left",
+      "transition_samples": [
+        4,
+        19
+      ]
+    },
+    {
+      "candidate_plant_percent": 46.875,
+      "clip": "Walk_Loop",
+      "duration_s": 1.3333333730697632,
+      "minimum_site_height_m": 0.014759452573993637,
+      "samples_in_cycle": 32,
+      "side": "right",
+      "transition_samples": [
+        3,
+        20
+      ]
+    },
+    {
+      "candidate_plant_percent": 8.695652173913043,
+      "clip": "Jog_Fwd_Loop",
+      "duration_s": 0.9583333730697632,
+      "minimum_site_height_m": 0.00945664738785923,
+      "samples_in_cycle": 23,
+      "side": "left",
+      "transition_samples": [
+        2,
+        4
+      ]
+    },
+    {
+      "candidate_plant_percent": 8.695652173913043,
+      "clip": "Jog_Fwd_Loop",
+      "duration_s": 0.9583333730697632,
+      "minimum_site_height_m": 0.005570029078234284,
+      "samples_in_cycle": 23,
+      "side": "right",
+      "transition_samples": [
+        13,
+        15
+      ]
+    },
+    {
+      "candidate_plant_percent": 6.25,
+      "clip": "Sprint_Loop",
+      "duration_s": 0.6666666865348816,
+      "minimum_site_height_m": -0.01249516693984154,
+      "samples_in_cycle": 16,
+      "side": "left",
+      "transition_samples": [
+        2,
+        3
+      ]
+    },
+    {
+      "candidate_plant_percent": 0.0,
+      "clip": "Sprint_Loop",
+      "duration_s": 0.6666666865348816,
+      "minimum_site_height_m": -0.0021658588810753165,
+      "samples_in_cycle": 16,
+      "side": "right",
+      "transition_samples": []
+    }
+  ],
+  "height_threshold_m": 0.06,
+  "physical_contacts_verified": false,
+  "preparation_recipe": "voxy-quaternius-gait-source-v1",
+  "sample_rate_hz": 24.0,
+  "sampled_bones": [
+    "DEF-toe.L",
+    "DEF-toe.R"
+  ],
+  "schema": "voxy.named-foot-contact-candidates.v1",
+  "source_revision": "e24c23cf2a1323488a3faa226ea7ea21f644b73e",
+  "status": "offline_candidates_require_author_review",
+  "up_axis": "model-space Y",
+  "vertical_speed_threshold_m_s": 0.3
+}

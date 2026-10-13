@@ -1,0 +1,49 @@
+{
+  "repository": "https://github.com/ismailivanov/TressFX-Godot",
+  "commit": "ad3d1faad2338a386e4baf4e0b00a560aab4dd0d",
+  "scope": "source review only; not integrated or benchmarked",
+  "files": [
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/ismailivanov/TressFX-Godot/ad3d1faad2338a386e4baf4e0b00a560aab4dd0d/LICENSE",
+      "sha256": "7a4f14d8a90c0e29351f148d9e97eb34dedc959c406a18761fa832eebb305ceb",
+      "bytes": 1070
+    },
+    {
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/ismailivanov/TressFX-Godot/ad3d1faad2338a386e4baf4e0b00a560aab4dd0d/README.md",
+      "sha256": "904ffa27153b2d4661c078ac986ca18e4cb9136b3228f6f1ef7448c58a92875a",
+      "bytes": 10198
+    },
+    {
+      "path": "addons/tressfx/LICENSE.md",
+      "url": "https://raw.githubusercontent.com/ismailivanov/TressFX-Godot/ad3d1faad2338a386e4baf4e0b00a560aab4dd0d/addons/tressfx/LICENSE.md",
+      "sha256": "4709503cf6d6ce9987ac11aa70321e2e96ad06c3595fe36f72db3128f1940937",
+      "bytes": 2868
+    },
+    {
+      "path": "addons/tressfx/shaders/tressfx_sim.glsl",
+      "url": "https://raw.githubusercontent.com/ismailivanov/TressFX-Godot/ad3d1faad2338a386e4baf4e0b00a560aab4dd0d/addons/tressfx/shaders/tressfx_sim.glsl",
+      "sha256": "3a6d5ac34053e45433ba5c665f148f78e622353b1ae2bf04d90823f116b463cf",
+      "bytes": 14017
+    },
+    {
+      "path": "addons/tressfx/shaders/tressfx_strand.gdshader",
+      "url": "https://raw.githubusercontent.com/ismailivanov/TressFX-Godot/ad3d1faad2338a386e4baf4e0b00a560aab4dd0d/addons/tressfx/shaders/tressfx_strand.gdshader",
+      "sha256": "b4322b256be2eb430fcb42b11aff3e962581b160d60e2b58c6c6fdb0e83dbf6f",
+      "bytes": 7278
+    },
+    {
+      "path": "upstream/src/Shaders/TressFXLighting.hlsl",
+      "url": "https://raw.githubusercontent.com/ismailivanov/TressFX-Godot/ad3d1faad2338a386e4baf4e0b00a560aab4dd0d/upstream/src/Shaders/TressFXLighting.hlsl",
+      "sha256": "f8fd4bf9d8a2d18d8328ddcee6b20c57991e134a7c7a7d5662676775968467f6",
+      "bytes": 13061
+    },
+    {
+      "path": "upstream/src/Shaders/TressFXStrands.hlsl",
+      "url": "https://raw.githubusercontent.com/ismailivanov/TressFX-Godot/ad3d1faad2338a386e4baf4e0b00a560aab4dd0d/upstream/src/Shaders/TressFXStrands.hlsl",
+      "sha256": "079b0d80252088655be1a7c78b4483e723b5f05e3e91cbb3b10b02693dfec0df",
+      "bytes": 7876
+    }
+  ]
+}

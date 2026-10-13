@@ -1,0 +1,11 @@
+{
+  "status": "starting",
+  "binary": "target/release/deps/voxy_app-1c1560a10812259f",
+  "binary_sha256": "a792506276d543ae52f6fa8994c9ccfdccf802b03d2dfd44fde7998048b13fbf",
+  "scope": "full 720-frame coupled authored jump, 469 guides, 20 segments, continuous contacts; CPU qualification, no FPS claim",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_swept_constraints.rs": "5f2f14f6a57974cb97b3a61559e3f63dd3d5701ade71d584b8cf30a8c568cacd",
+    "crates/physics/src/hair/velocity_contacts.rs": "2abb31f22e7acf39676d7cfdac003378f8471d766e71623ac1fc47b4ff89246c",
+    "crates/physics/src/hair/contact_square_root_qr.rs": "b841e82e909cb580c984d1c3dce8ba55745483df206ec0a6ecfbe82e676e2b2f"
+  }
+}

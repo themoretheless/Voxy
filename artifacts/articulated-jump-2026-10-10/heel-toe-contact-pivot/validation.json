@@ -1,0 +1,14 @@
+{
+  "library_tests_passed": 253,
+  "pivot_cases": [
+    "heel",
+    "toe"
+  ],
+  "moving_support_steps_per_pivot": 60,
+  "toe_roll_exact_ik_steps": 60,
+  "scope": "rigid support-relative heel/toe pivots and exact IK; not authored gait contact events, full-scene locomotion or FPS",
+  "source_sha256": {
+    "crates/voxy_animation/src/foot_plant.rs": "33db48511a07e98d38ab498c7a57012b396ec50c26328fd4ad4a3ba86f067197",
+    "crates/voxy_animation/src/ik/tests.rs": "8f0a9c3fac422c1e050afb97be58769811623dc56a84527ba3447ba2bbf91c29"
+  }
+}

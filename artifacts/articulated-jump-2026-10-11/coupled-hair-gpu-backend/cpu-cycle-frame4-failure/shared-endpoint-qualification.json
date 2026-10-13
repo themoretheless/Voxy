@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "session": 27229,
+  "log": "/tmp/voxy-exact-shared-endpoints.log",
+  "source_sha256": "86f6abbba9fbbbc396651044a46b8ec23b6e99b9202f51f90eaea692bf25d4c2",
+  "change": "Reuse exact same dyadic endpoint axes inside one immutable motion query; polynomial proof and budget unchanged",
+  "replay_pid": 64509,
+  "replay_scope": "Prior binary before endpoint reuse; still live at sample capture",
+  "profile": "3-second macOS sample: 1464/2200 active test-thread samples in trajectory queries, 549 in exact discovery (nested). Short-window evidence only; no full-frame profile or FPS claim.",
+  "fixture_tests_passed": 2,
+  "ordinary_tests_passed": 399,
+  "ordinary_tests_ignored": 58,
+  "certificate_intervals": 17,
+  "production_api_original": "Clear",
+  "production_api_plus_one_nm": "not Clear",
+  "limits": "No controlled performance comparison. Existing replay continues on pre-reuse binary. Full cycle and FPS not qualified."
+}

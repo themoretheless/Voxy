@@ -1,0 +1,33 @@
+{
+  "scope": "opt-in ignored physical fixture test; no production solver change",
+  "source_sha256": "4344d954a844bf7c88fed8330106dd7fa5a4b22d56787dbc5e23f5129405347e",
+  "build_log": "/tmp/voxy-resident-timestamp-build.log",
+  "build_status": "passed",
+  "runtime_verified": true,
+  "measurement": "three complete pass-boundary GPU timestamp intervals; each candidate must equal existing physically admitted operator candidate; excludes host/queue wait/readback/rendering",
+  "app_binary_sha256": "231d29573bdda2056a2f587d7336214534d9dcef17d5b246c341f6b4c4e1637f",
+  "measurements": {
+    "timestamp-baseline.log": {
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        73.049208,
+        72.638,
+        72.398125
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    "timestamp-candidate.log": {
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        74.544625,
+        74.666584,
+        75.136292
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    }
+  }
+}

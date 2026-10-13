@@ -1,0 +1,49 @@
+{
+  "status": "diagnostic_validation_passed",
+  "scope": "canonical witness inventory on two known full-density poses; validates localization and scalar accounting, not global minimum, native convergence, full jump or FPS",
+  "reports": {
+    "rejected": {
+      "fixture_sha256": "ac2bcf0ef23b6e87b7acece8f1aaab18b507372a281e1e770981884d3773635c",
+      "endpoint_merit": 9.260471482787361e-22,
+      "witnessed_trajectory_merit": 2.2708721350961753e-15,
+      "mesh_path": "Ok(())",
+      "strand_path": "Err(\"complete staged strand trajectory is not admitted\")",
+      "positive_witnesses": 14,
+      "interior_witnesses_with_clear_sampled_endpoints": 13,
+      "largest_witness": {
+        "a": [
+          278,
+          18,
+          0.6979428034489807
+        ],
+        "b": [
+          340,
+          9,
+          0.5605207513584056
+        ],
+        "time": 0.3552663651245813,
+        "distance_m": 7.995480304191292e-05,
+        "excess_m": 4.5096958087091276e-08,
+        "merit": 2.0337356287088672e-15,
+        "old_gap_m": 6.779466142818407e-07,
+        "end_gap_m": 2.3124559698338583e-06,
+        "normal": [
+          0.5237393090105668,
+          0.7183149483746596,
+          0.45795280448824044
+        ],
+        "normal_cosine": 1.0000000000000004
+      }
+    },
+    "admitted": {
+      "fixture_sha256": "0750a476bdfdb95c0992b5151a7828b41d75d7ae849fabb7e84091c4bf04d707",
+      "endpoint_merit": 0.0,
+      "witnessed_trajectory_merit": -0.0,
+      "mesh_path": "Ok(())",
+      "strand_path": "Ok(())",
+      "positive_witnesses": 0,
+      "interior_witnesses_with_clear_sampled_endpoints": 0,
+      "largest_witness": null
+    }
+  }
+}

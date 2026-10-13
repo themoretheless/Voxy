@@ -1,0 +1,19 @@
+{
+  "status": "correctness qualified; performance gain unproven",
+  "change": "Prepare exact affine relative capsule/triangle coordinates and squared clearance radius once per general discovery query. First moving triangle vertex is the exact origin.",
+  "equivalence": "33 captured dyadic times and 108 translated moving/static/degenerate queries match prior exact-world-coordinate axes including rejected queries.",
+  "targeted_passed": 28,
+  "ordinary_passed": 407,
+  "ordinary_ignored": 60,
+  "non_test_release_check": "passed with existing warnings",
+  "full_groom_direction_audit": {
+    "passed": true,
+    "descending_feasible_samples": 2,
+    "scope": "direction only, not convergence"
+  },
+  "source_sha256": {
+    "crates/physics/src/hair/contact_triangle_exact_discovery.rs": "b0cfa692a4ccf03146e86c78c8cb96d760cb04ee737b7d7117a8405b0910b579"
+  },
+  "benchmark": "relative-geometry-executable-comparison.json; no consistent before/after improvement",
+  "limits": "Live full wrapper predates this change; full cycle convergence and >160 FPS unqualified"
+}

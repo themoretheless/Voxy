@@ -1,0 +1,13 @@
+{
+  "source": "crates/physics/src/hair/contact_polynomial.rs",
+  "source_sha256": "abe5c70d9b4600cd2e5349e448eb3c4c35b824982dcd29d07efad266b2a70d17",
+  "physics_tests": {
+    "passed": 384,
+    "failed": 0,
+    "ignored": 44
+  },
+  "equivalence": "7000 seeded polynomial conversions across all degrees0..6; coefficient operation order and outward rounding unchanged; output bounds match runtime-binomial reference bits",
+  "benchmark": "Six alternating child-process pairs,2million degree-six conversions per process, runtime degree black_box, CPU user+system time",
+  "median_cpu_speedup": 1.1421338519620465,
+  "scope": "Bernstein conversion primitive only; full-cycle frozen app predates arithmetic optimizations"
+}

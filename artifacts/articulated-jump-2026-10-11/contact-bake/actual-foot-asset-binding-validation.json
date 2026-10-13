@@ -1,0 +1,24 @@
+{
+  "tests": {
+    "passed": 1,
+    "failed": 0,
+    "filtered_out": 345
+  },
+  "scope": "Real FemaleRig reference hull asset resolves exact ankle bones and checks every hull vertex against current dominant skin geometry; shifted mesh and invalid inputs reject",
+  "hull_vertices": [
+    629,
+    650
+  ],
+  "automatic_preview_physics_connected": false,
+  "full_mesh_fingerprint_verified": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_app/src/female_rig.rs": "c45d28b3db01ce8c96b69ee313778077b36c90071faf5fdc999e351d90f4889a",
+    "crates/voxy_app/Cargo.toml": "d4ae092158391909544e807780f375f389c95959516a009e4757c1e591088c1e",
+    "Cargo.lock": "1e08d3bcaaa06f99d4913b4fc0ba68d902127b719af934b65b03d166413d568a",
+    "assets/characters/blender-female/prepared/foot-support-reference.json": "abfe48eea84d91e2b43a3b6298240b14b1e8d1458fe6d9cb1e1cbb7b01d73f2c",
+    "assets/characters/blender-female/prepared/body-forehead-refined.obj": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/actual-foot-asset-binding-canonical-tests.log": "8d5c8c0af0969e0b6be14583c2c3eae8f3a640f01b043878bcf5ed70bc41e446",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/foot-asset-canonicalization.json": "4f737c7e672e62e3cf3c92efd686189a11bdd7f16308ae5d44dc356fe5d07329"
+  }
+}

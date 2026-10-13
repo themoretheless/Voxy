@@ -1,0 +1,25 @@
+{
+  "status": "physics gate passed; captured frame replay running",
+  "session": 20785,
+  "log": "/tmp/voxy-production-exact-physics.log",
+  "source_sha256": {
+    "crates/physics/Cargo.toml": "a6dceeae7e4b620a1ae10588d46e85a4c0b6754980bd071d28bd55fb8e3f05a4",
+    "crates/physics/src/hair/contact_triangle_sweep.rs": "e964926f3b48bbe9c084dc85bd11fedead957cd1fb41c61f59cd0f7bf422e0df",
+    "crates/physics/src/hair/contact_triangle_exact.rs": "1a1bcc82a92b4e2a6178e1b1359d754a6b342ed59344d51ea5927653547979d5",
+    "crates/physics/src/hair/contact_triangle_exact_discovery.rs": "ee35b0e9c5fe30d76bc9352b236b20dcf3aceaabfe3006b5d84bbc2efcb6378f"
+  },
+  "scope": "InitialContact only, after floating point certificates; original tolerance and bounded exact polynomial proof",
+  "limits": "Full physics gate pending, original frame replay pending, full jump and FPS unqualified",
+  "ordinary_tests_passed": 399,
+  "ordinary_tests_ignored": 58,
+  "primitive_result": "Clear at budgets 1024,4096,16384; original radius and tolerance",
+  "replay_session": 56894,
+  "replay_log": "/tmp/voxy-production-exact-frame4.log",
+  "non_test_release_check": "passed",
+  "replay_pid": 64509,
+  "captured_frame_replay_terminal": {
+    "status": "cancelled_superseded",
+    "pid": 64509,
+    "receipt": "superseded-frame4-cancellations.json"
+  }
+}

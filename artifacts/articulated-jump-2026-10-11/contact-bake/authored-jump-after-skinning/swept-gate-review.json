@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-11T16:26:41.668923+00:00",
+  "tests": "34 safe-motion tests passed, 2 fixture-dependent ignored",
+  "scope": "existing physics test binary; no runtime algorithm changed",
+  "preserved_gates": [
+    "full root/free trajectory",
+    "collision activation",
+    "strain admission",
+    "independent contact-component trust"
+  ],
+  "latest_local_solve": {
+    "first_line": 368,
+    "last_line": 777,
+    "first_observed_attempt": 0,
+    "last_attempt": 358,
+    "accepted_moves": 52,
+    "model_refinements": 307,
+    "minimum_accepted_scale": 9.5367431640625e-07,
+    "last_accepted_step": {
+      "line": 777,
+      "iteration": 358,
+      "before": 0.0,
+      "full": 5.333727200638831e-16,
+      "accepted": 0.0,
+      "scale": 3.814697265625e-06,
+      "tangent_complete": false
+    },
+    "last_observed_admission": {
+      "line": 778,
+      "iteration": 358,
+      "tangent_complete": false,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -9.71997637631288e-13
+    },
+    "terminal_work_budgets": []
+  },
+  "correction_requirement": "must preserve every gate and original scoped structural free load; geometric feasibility alone is insufficient"
+}

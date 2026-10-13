@@ -1,0 +1,42 @@
+[
+  {
+    "file": "candidate-0.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-0.json",
+    "sha256": "aebbd3c22763321eb7f91157ea90d94d4dfc3cfb180be8023aeb6d06ca97988c"
+  },
+  {
+    "file": "candidate-1.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-1.json",
+    "sha256": "aba45119770b55dfd21b251b9e3bd87fa7948513c9fa72d53acd79274a1dbade"
+  },
+  {
+    "file": "candidate-2.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-2.json",
+    "sha256": "0e6c41f1717a0a4decc6ffd3148b3399e4ab87ca707e04d8f7796b901d0233fc"
+  },
+  {
+    "file": "candidate-3.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-3.json",
+    "sha256": "bf34b663769bff9643ec993871b9ecf7924bb3f5f1d3f4402b4ff379b789fdf6"
+  },
+  {
+    "file": "candidate-4.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-4.json",
+    "sha256": "ecd5b6963c6a63fb6aa87b39475bf1f81c18a35bbdb44d4508b14437488c16b6"
+  },
+  {
+    "file": "candidate-5.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-5.json",
+    "sha256": "b0fdecb7b58d310bd400d9c9972deee447ac7b24c727d1e6b04c4c638e3e454b"
+  },
+  {
+    "file": "candidate-6.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-6.json",
+    "sha256": "b401e47e2fbf37eb95bd0a41b422d0991561a0cba5b712de80a601a6a228de3b"
+  },
+  {
+    "file": "candidate-7.vxe",
+    "source_metadata": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/captures/decode-12819-7.json",
+    "sha256": "642d77d9694632eb682c57c66807b4696a45579f56c61977195231acc349bba4"
+  }
+]

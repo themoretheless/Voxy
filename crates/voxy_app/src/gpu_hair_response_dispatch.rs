@@ -38,6 +38,16 @@ impl GpuHairLinearSolver {
             .iter()
             .map(|input| input.factored_rhs_updates(first))
             .collect::<Result<Vec<_>, _>>()?;
+        if shader_transport && self.response_transport_scratch.as_ref()
+            .is_none_or(|buffer|buffer.size()!=first.compact_output_size()) {
+            self.response_transport_scratch=Some(self.device.create_buffer(&wgpu::BufferDescriptor {
+                label:Some("hair resident RHS transport scratch"),
+                size:first.compact_output_size(),
+                usage:wgpu::BufferUsages::STORAGE|wgpu::BufferUsages::COPY_SRC|wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation:false,
+            }));
+            self.response_transport_workspace_creations+=1;
+        }
         if reuse {
             if self
                 .resident
@@ -83,24 +93,31 @@ impl GpuHairLinearSolver {
             let mut encoder = self.device.create_command_encoder(&Default::default());
             let mut snapshots = Vec::new();
             let mut uploads = Vec::new();
+            // One immutable upload for the entire ordered batch. Copies into
+            // the caller-owned scratch precede each solve; snapshots precede
+            // its next overwrite, so no wave aliases another wave's result.
+            let packed_upload=if shader_transport {
+                let mut payload=Vec::new();
+                for wave in start..end {
+                    payload.extend_from_slice(&inputs[wave].bytes()[..16]);
+                    for (_,bytes) in &updates[wave] {payload.extend_from_slice(bytes);}
+                }
+                Some(self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label:Some("hair packed RHS transport batch"),contents:&payload,
+                    usage:wgpu::BufferUsages::COPY_SRC,
+                }))
+            } else {None};
             for wave in start..end {
                 let compact = if shader_transport {
-                    let mut payload = inputs[wave].bytes()[..16].to_vec();
-                    for (_, bytes) in &updates[wave] {
-                        payload.extend_from_slice(bytes);
-                    }
-                    let buffer =
-                        self.device
-                            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                                label: Some("hair GPU RHS transport"),
-                                contents: &payload,
-                                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
-                            });
+                    let buffer=self.response_transport_scratch.as_ref().unwrap();
+                    encoder.copy_buffer_to_buffer(packed_upload.as_ref().unwrap(),
+                        (wave-start) as u64*inputs[wave].compact_output_size(),buffer,0,
+                        inputs[wave].compact_output_size());
                     if reuse || wave != 0 {
                         self.rhs_transfer_program.as_ref().unwrap().encode(
                             &mut encoder,
                             job.buffer(),
-                            &buffer,
+                            buffer,
                             &inputs[wave],
                             true,
                         )?;
@@ -130,7 +147,7 @@ impl GpuHairLinearSolver {
                     uploads.push(upload);
                 }
                 job.encode_step(&mut encoder, inputs[wave].dispatch())?;
-                snapshots.push(if let Some(compact) = compact.as_ref() {
+                snapshots.push(if let Some(compact) = compact {
                     self.rhs_transfer_program.as_ref().unwrap().encode(
                         &mut encoder,
                         job.buffer(),
@@ -157,9 +174,6 @@ impl GpuHairLinearSolver {
                 } else {
                     job.encode_snapshot(&mut encoder)?
                 });
-                if let Some(compact) = compact {
-                    uploads.push(compact);
-                }
             }
             let submission=self.queue.submit([encoder.finish()]);
             self.response_submissions += 1;
@@ -196,6 +210,7 @@ mod tests {
             for byte_limited in [false, true] {
                 let instance = voxy_render::GraphicsOptions::default().create_instance();
                 let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+                eprintln!("GPU RHS WORKSPACE ADAPTER {:?}",adapter.get_info());
                 let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
                 let curve = (0..=8).map(|i| [0., i as f64 * 0.01, 0.]).collect();
                 let mut system = physics::hair::HairRod::new(curve, Default::default()).unwrap().linear_system(1./240.).unwrap();
@@ -231,10 +246,16 @@ mod tests {
                     gpu.gpu_response_transport = transport;
                     let mut expected = Vec::new();
                     for input in &inputs { expected.push(gpu.dispatch_response_waves(std::slice::from_ref(input),false).unwrap().pop().unwrap()); }
+                    let workspaces=gpu.response_transport_workspace_creations;
                     for reuse in [false,true] {
                         let before = gpu.response_submissions;
                         let actual = gpu.dispatch_response_waves(&inputs,reuse).unwrap();
                         assert_eq!(actual,expected,"wave arithmetic/order changed: compact={compact} transport={transport} reuse={reuse}");
+                        assert_eq!(gpu.response_transport_workspace_creations,workspaces,
+                            "same layout must reuse the RHS transport workspace across batches and calls");
+                        if transport && gpu.response_transfer_dispatches>0 {
+                            assert_eq!(workspaces,1,"one solver owns one same-layout transport scratch");
+                        }
                         assert_eq!(gpu.response_submissions-before,6);
                         for (load, response) in loads.iter().zip(&actual) {
                             system.validate_load_correction(&response[0],load).unwrap();

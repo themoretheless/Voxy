@@ -1,0 +1,15 @@
+{
+  "session": 41155,
+  "pid": 91809,
+  "test": "captured_production_restoration_resumes_native_solver",
+  "log": "/tmp/voxy-current-second-frame-native-restoration.log",
+  "input": "second-frame-entry.vhr",
+  "input_sha256": "df70919f5a11097053ced2718e2a63f1e7d3d96efbbe38d8313afbe6fdd5bf38",
+  "native_binary_sha256": "61d4654ae12393d8446dcd62e21a646818225d50fb9ff0260e6b3cc950287b88",
+  "status": "passed",
+  "scope": "One actual contact input: canonical restoration then ordinary native solve, independent original geometry/strain/root/path and feasible-reference energy checks",
+  "experimental_normals": false,
+  "limits": "Not a full frame, full cycle or FPS proof; does not include application temporal retry",
+  "result_log": "native-entry-restoration-result.log",
+  "elapsed_seconds": 289.68
+}

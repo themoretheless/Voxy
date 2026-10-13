@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "command": "cargo test --release -p voxy_render --lib fibre_scatter_preserves_draw_streams_and_neighbouring_geometry -- --nocapture",
+  "scope": "240 generated vertices, nonzero destination base, bit-exact vertex/normal streams, untouched prefix/suffix, rejected out-of-bounds partition; not full-size draw or FPS",
+  "source_sha256": "62cf6a20f4b433f8650cd2b48c37c66b4f59cf2e0a46b86547cc82070b922757"
+}

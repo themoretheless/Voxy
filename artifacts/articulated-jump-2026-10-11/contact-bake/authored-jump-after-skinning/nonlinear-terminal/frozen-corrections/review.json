@@ -1,0 +1,239 @@
+{
+  "scope": "frozen original-pose compliance, refreshed Jacobians and nonlinear residual; not full Ipopt SOC",
+  "all_candidates_rejected": true,
+  "trials": [
+    {
+      "scale": 1e-05,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 3.837292566198681e-19,
+          "work_j": -1.423679528775912e-14,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 3.3649802618141277e-17,
+          "work_j": 1.1841994950570935e-14,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": true,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 0.0,
+          "work_j": 1.2919190165953076e-14,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": true,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.001,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 2.1792349622431147e-14,
+          "work_j": -1.4229995905746064e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 2.6942053942755753e-15,
+          "work_j": -8.012896161291425e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 1.6483829686804259e-15,
+          "work_j": -4.554566646390542e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 1.0509134791735192e-18,
+          "work_j": -1.636843372847607e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 2.3400308213179358e-20,
+          "work_j": -1.343518155480681e-13,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.03125,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 4.860916582182781e-11,
+          "work_j": -4.381478534415218e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 3.2766657012755186e-11,
+          "work_j": -2.3771337825937553e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 1.6621653894089084e-12,
+          "work_j": -4.130699550356895e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 1.9038263234607961e-13,
+          "work_j": 2.075093263287798e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 1.343418795225922e-15,
+          "work_j": 4.574781016429285e-12,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 0.125,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 9.71053029912856e-10,
+          "work_j": -1.6599999861904293e-10,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 6.324528859502155e-10,
+          "work_j": -8.436197103637573e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 6.863650208031595e-11,
+          "work_j": 1.3320589242683547e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 2.1861845557525182e-11,
+          "work_j": 2.442266091431885e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 2.5913339285481305e-12,
+          "work_j": 5.137214415502889e-11,
+          "strain": 4.3151891284232136e-05,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    },
+    {
+      "scale": 1.0,
+      "events": [
+        {
+          "correction": 0.0,
+          "merit": 8.423545862892212e-08,
+          "work_j": 4.305095338637243e-09,
+          "strain": 0.0001876561431302104,
+          "strand_path": true,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 1.0,
+          "merit": 2.4491518973770315e-08,
+          "work_j": 5.304324336469069e-08,
+          "strain": 0.00045813704213637507,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 2.0,
+          "merit": 6.201630299976585e-10,
+          "work_j": 5.2854658295240516e-08,
+          "strain": 0.0004603314624951338,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 3.0,
+          "merit": 1.1213652637143152e-10,
+          "work_j": 5.296952590248649e-08,
+          "strain": 0.0004600356566764052,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        },
+        {
+          "correction": 4.0,
+          "merit": 5.3164821441575395e-11,
+          "work_j": 5.298315024817408e-08,
+          "strain": 0.000460022861368925,
+          "strand_path": false,
+          "mesh_path": false,
+          "candidate_admitted": false
+        }
+      ]
+    }
+  ],
+  "decision": "no runtime adoption; freezing compliance alone does not remedy failure"
+}

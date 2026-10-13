@@ -1,0 +1,26 @@
+{
+  "focused_tests_passed": 17,
+  "focused_tests_ignored": 4,
+  "captured_fixture_tests_passed": 2,
+  "timings": [
+    {
+      "fixture": "qr-captured-47",
+      "median_original_seconds": 0.036781709,
+      "median_cached_seconds": 0.002359417,
+      "median_paired_ratio": 15.179568566924104,
+      "scope": "Existing implementation vs existing reference, not new optimization"
+    },
+    {
+      "fixture": "qr-captured-61",
+      "median_original_seconds": 0.155819917,
+      "median_cached_seconds": 0.011648583,
+      "median_paired_ratio": 12.459862615061972,
+      "scope": "Existing implementation vs existing reference, not new optimization"
+    }
+  ],
+  "limits": [
+    "Fixtures are earlier captured contact systems, not current authored-jump frame 2",
+    "Full jump process still active",
+    "Concurrent full simulation affects timing; no standalone benchmark or FPS claim"
+  ]
+}

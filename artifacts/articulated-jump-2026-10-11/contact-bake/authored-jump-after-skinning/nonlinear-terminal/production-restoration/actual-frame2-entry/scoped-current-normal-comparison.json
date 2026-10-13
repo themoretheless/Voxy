@@ -1,0 +1,14 @@
+{
+  "status": "rejected",
+  "scope": "test-only closest-witness normal override confined to native continuation after unchanged production restoration, exact full runtime input",
+  "fixture_sha256": "bb78208e19dfd388b0c56c92151ae71fc92387f91d5d893743eedfc39cdb80a5",
+  "restoration_original_work_j": -4.5193400116819755e-09,
+  "restoration_merit": 0,
+  "restoration_elastic_updates": 64,
+  "restoration_zero_free_updates": 11,
+  "native_error": "joint hair contact direction has no descending geometry step",
+  "last_native_iteration": 11,
+  "elapsed_seconds": 105.72,
+  "production_normal_policy_changed": false,
+  "full_cycle_completed": false
+}

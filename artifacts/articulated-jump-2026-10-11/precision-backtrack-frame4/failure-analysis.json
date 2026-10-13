@@ -1,0 +1,17 @@
+{
+  "terminal": {
+    "exit_code": 101,
+    "elapsed_seconds": 635.546638250351
+  },
+  "accepted_updates": 19,
+  "last_accepted": {
+    "iteration": "256",
+    "before": "0e0",
+    "full": "1.7135610729296708e-20",
+    "accepted": "0e0",
+    "scale": "7.450580596923828e-9",
+    "tangent_complete": "false"
+  },
+  "last_rejection": "HAIR NONLINEAR REJECT iteration=271 before=0e0 full=1.719771361737677e-20 reason=no_descent",
+  "scope": "Failed residual replay; no original-frame or full-cycle completion"
+}

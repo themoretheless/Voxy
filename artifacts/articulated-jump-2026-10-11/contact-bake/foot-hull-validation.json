@@ -1,0 +1,35 @@
+{
+  "upstream": "https://github.com/dimforge/parry",
+  "crate": "parry3d-f64",
+  "version": "0.28.0",
+  "scope": "offline exact-input convex foot proxy preparation",
+  "feet": [
+    {
+      "side": "left",
+      "source_vertices": 4441,
+      "sampled_support_directions": 1200,
+      "max_support_error_m": 0.0,
+      "max_face_outside_m": 1.3877787807814457e-17,
+      "vertices_are_original_points": true,
+      "hull_vertices": 629
+    },
+    {
+      "side": "right",
+      "source_vertices": 4441,
+      "sampled_support_directions": 1200,
+      "max_support_error_m": 0.0,
+      "max_face_outside_m": 1.3877787807814457e-17,
+      "vertices_are_original_points": true,
+      "hull_vertices": 650
+    }
+  ],
+  "runtime_profile_enabled": false,
+  "animated_skin_collision_verified": false,
+  "sha256": {
+    "tools/engine-research/foot-hull/Cargo.toml": "b3b8a29a84d88194810fd501e9dee0536e4a5e3bd114425c6c7002d1cb41a5a4",
+    "tools/engine-research/foot-hull/Cargo.lock": "e9faa39e1547f38cead40400df797f8eb94cac81ee57e4e6dcd4837cbc0eb01c",
+    "tools/engine-research/foot-hull/src/main.rs": "935f3fe4b8b51bd2fb6486aa0c2248b7daab3aaf1b455275f3a6676f19a42a66",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/foot-hulls.json": "cd186a22e4dc2ff4821ffd68d33c781a8e0136f044e7b307d25946f4c9df2b74",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/foot-hull-source-points.log": "79e7deaf2ec282549488d54d986704f4d4d42f3ea56a0b52b75bbcdf0a369cdf"
+  }
+}

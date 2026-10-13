@@ -1,0 +1,14 @@
+{
+  "binary": "/tmp/voxy-wide-coupled-20261012/app-tests",
+  "binary_sha256": "26bc862a1fcae2062ff9d1f5bb3736049550e473ce0fbbcc433efc72b59cb849",
+  "shader_sha256": "f8af10ccc84caabb84fc4054d18308e893f0076f4846cdffd832340afc227911",
+  "workgroup_lanes": 1024,
+  "test": "coupled_authored_jump_real_gpu_hair_first_frame",
+  "status": "passed",
+  "scope": "bounded original strict coupled first-frame qualification; not full cycle or FPS",
+  "elapsed_s": 36.979183292,
+  "joint_admitted": 9815,
+  "gpu_submissions": 559,
+  "native_contact_fallbacks": 0,
+  "qualification_limits": "One original strict coupled frame only; arithmetic reduction tree changes iteration path; no controlled whole-frame speed ratio, full-cycle or FPS proof"
+}

@@ -1,0 +1,7 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+test female_demo::authored_jump_integration_tests::authored_jump_full_coupled_cycle_qualification has been running for over 60 seconds
+AUTHORED FULL CYCLE frame=1/720 time_s=0.008333333333333333 elapsed_ms=70543.498 skin_ms=178.392 hair_ms=70540.058

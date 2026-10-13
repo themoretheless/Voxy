@@ -1,0 +1,16 @@
+{
+  "repository": "guillaumeblanc/ozz-animation",
+  "commit": "744eb9d99f606eda849acb0b1204f7a3dc20bca1",
+  "files": [
+    {
+      "path": "samples/skinning/sample_skinning.cc",
+      "url": "https://raw.githubusercontent.com/guillaumeblanc/ozz-animation/744eb9d99f606eda849acb0b1204f7a3dc20bca1/samples/skinning/sample_skinning.cc",
+      "sha256": "2d22611aee8eb8ea09bb6cc17a37c47d5da929409496d57c2b2fe6dcb86fbcb5"
+    },
+    {
+      "path": "LICENSE.md",
+      "url": "https://raw.githubusercontent.com/guillaumeblanc/ozz-animation/744eb9d99f606eda849acb0b1204f7a3dc20bca1/LICENSE.md",
+      "sha256": "3ddd93e9888fe70b9d61675ceb1c4278a579dc67171678f015de114efe815852"
+    }
+  ]
+}

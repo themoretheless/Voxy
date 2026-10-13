@@ -1,0 +1,24 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=353 occupied=53776 maximum_u8_error=15 differing_channels=5
+BODY PIXEL label=actual-facial-details x=224 y=505 CPU=[44, 30, 22, 255] GPU=[59, 40, 30, 255]
+ACTUAL FACE GPU tick=353 base_vertices=78278 appended_vertices=93217 max_u8_error=15 skeletal_diagnostic=false zero_actor_diagnostic=false
+FULL RIG BODY PIXELS samples=4 label=actual-facial-details tick=415 occupied=52576 maximum_u8_error=26 differing_channels=5
+BODY PIXEL label=actual-facial-details x=224 y=489 CPU=[108, 93, 77, 255] GPU=[105, 69, 51, 255]
+ACTUAL FACE GPU tick=415 base_vertices=78278 appended_vertices=93217 max_u8_error=26 skeletal_diagnostic=false zero_actor_diagnostic=false
+
+thread 'female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses' (8453603) panicked at crates/voxy_app/src/female_groom_gpu_tests.rs:507:9:
+actual facial details/body mismatch: 26
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses ... FAILED
+
+failures:
+
+failures:
+    female_demo::resident_groom_render_tests::resident_body_preserves_actual_facial_details_on_two_poses
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 363 filtered out; finished in 4.50s
+

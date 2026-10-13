@@ -1,0 +1,3392 @@
+{
+  "schema": "voxy-joint-host-stage-summary-v1",
+  "scope": "equality_tasks_host_wall_times_not_gpu_timestamps_or_rendered_fps",
+  "logs": [
+    "/tmp/voxy-warm-start-two-frame.log"
+  ],
+  "profiled_calls": 1527,
+  "coupled_frames": [
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "frame": 1,
+      "status": "completed_as_reported_by_coupled_test",
+      "profiled_calls": 552,
+      "dispatches": 552,
+      "errors": 0,
+      "profile_total_wall_ms": 7512.470046000007,
+      "profile_wait_wall_ms": 6153.277241000002,
+      "staging_payload_bytes_not_bus_traffic": 696708168,
+      "complete_workspace_payload_bytes_over_reported_calls": 1410416416,
+      "workspace_payload_reported_calls": 552
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "frame": 2,
+      "status": "incomplete",
+      "profiled_calls": 975,
+      "dispatches": 975,
+      "errors": 0,
+      "profile_total_wall_ms": 17778.888589999988,
+      "profile_wait_wall_ms": 14365.938503999985,
+      "staging_payload_bytes_not_bus_traffic": 2218263672,
+      "complete_workspace_payload_bytes_over_reported_calls": 4494079440,
+      "workspace_payload_reported_calls": 975
+    }
+  ],
+  "owner_instances_not_unique_operators": 25170,
+  "counters": {
+    "dispatches": 1527,
+    "submissions": 1527,
+    "workspace_creations": 32,
+    "workspace_reuses": 1495,
+    "errors": 0
+  },
+  "staging_payload_bytes_not_bus_traffic": 2914971840,
+  "complete_workspace_payload": {
+    "bytes_over_profiled_calls_not_peak_memory": 5904495856,
+    "profiled_calls": 1527,
+    "unreported_calls": 0,
+    "scope": "Complete packed GPU workspace payload; legacy logs remain unknown, never inferred from readback size."
+  },
+  "warm_start": {
+    "counters": {
+      "incoming_valid_seeded_owners": {
+        "instances": 21182,
+        "reported_calls": 1527,
+        "unreported_calls": 0
+      },
+      "incoming_positive_seed_rows": {
+        "instances": 143908,
+        "reported_calls": 1527,
+        "unreported_calls": 0
+      },
+      "seeded_upload_owners": {
+        "instances": 7565,
+        "reported_calls": 1527,
+        "unreported_calls": 0
+      }
+    },
+    "scope": "Input and uploaded seed instances, not unique operators or successful solver iterations. Missing legacy fields remain unknown."
+  },
+  "packed_operator_shape_instances": [
+    {
+      "rows": 1,
+      "coordinates": 126,
+      "instances": 415
+    },
+    {
+      "rows": 1,
+      "coordinates": 252,
+      "instances": 1484
+    },
+    {
+      "rows": 2,
+      "coordinates": 126,
+      "instances": 108
+    },
+    {
+      "rows": 2,
+      "coordinates": 252,
+      "instances": 246
+    },
+    {
+      "rows": 2,
+      "coordinates": 378,
+      "instances": 868
+    },
+    {
+      "rows": 3,
+      "coordinates": 126,
+      "instances": 148
+    },
+    {
+      "rows": 3,
+      "coordinates": 252,
+      "instances": 91
+    },
+    {
+      "rows": 3,
+      "coordinates": 378,
+      "instances": 159
+    },
+    {
+      "rows": 3,
+      "coordinates": 504,
+      "instances": 71
+    },
+    {
+      "rows": 4,
+      "coordinates": 126,
+      "instances": 49
+    },
+    {
+      "rows": 4,
+      "coordinates": 252,
+      "instances": 66
+    },
+    {
+      "rows": 4,
+      "coordinates": 378,
+      "instances": 134
+    },
+    {
+      "rows": 4,
+      "coordinates": 504,
+      "instances": 182
+    },
+    {
+      "rows": 4,
+      "coordinates": 630,
+      "instances": 57
+    },
+    {
+      "rows": 5,
+      "coordinates": 126,
+      "instances": 20
+    },
+    {
+      "rows": 5,
+      "coordinates": 252,
+      "instances": 31
+    },
+    {
+      "rows": 5,
+      "coordinates": 378,
+      "instances": 76
+    },
+    {
+      "rows": 5,
+      "coordinates": 504,
+      "instances": 39
+    },
+    {
+      "rows": 5,
+      "coordinates": 630,
+      "instances": 71
+    },
+    {
+      "rows": 5,
+      "coordinates": 756,
+      "instances": 45
+    },
+    {
+      "rows": 6,
+      "coordinates": 126,
+      "instances": 14
+    },
+    {
+      "rows": 6,
+      "coordinates": 252,
+      "instances": 28
+    },
+    {
+      "rows": 6,
+      "coordinates": 378,
+      "instances": 36
+    },
+    {
+      "rows": 6,
+      "coordinates": 504,
+      "instances": 55
+    },
+    {
+      "rows": 6,
+      "coordinates": 630,
+      "instances": 22
+    },
+    {
+      "rows": 6,
+      "coordinates": 756,
+      "instances": 77
+    },
+    {
+      "rows": 6,
+      "coordinates": 882,
+      "instances": 5
+    },
+    {
+      "rows": 7,
+      "coordinates": 126,
+      "instances": 12
+    },
+    {
+      "rows": 7,
+      "coordinates": 252,
+      "instances": 19
+    },
+    {
+      "rows": 7,
+      "coordinates": 378,
+      "instances": 26
+    },
+    {
+      "rows": 7,
+      "coordinates": 504,
+      "instances": 67
+    },
+    {
+      "rows": 7,
+      "coordinates": 630,
+      "instances": 125
+    },
+    {
+      "rows": 7,
+      "coordinates": 756,
+      "instances": 51
+    },
+    {
+      "rows": 7,
+      "coordinates": 882,
+      "instances": 24
+    },
+    {
+      "rows": 8,
+      "coordinates": 126,
+      "instances": 12
+    },
+    {
+      "rows": 8,
+      "coordinates": 252,
+      "instances": 1
+    },
+    {
+      "rows": 8,
+      "coordinates": 378,
+      "instances": 32
+    },
+    {
+      "rows": 8,
+      "coordinates": 504,
+      "instances": 49
+    },
+    {
+      "rows": 8,
+      "coordinates": 630,
+      "instances": 4
+    },
+    {
+      "rows": 8,
+      "coordinates": 756,
+      "instances": 9
+    },
+    {
+      "rows": 8,
+      "coordinates": 882,
+      "instances": 6
+    },
+    {
+      "rows": 8,
+      "coordinates": 1008,
+      "instances": 19
+    },
+    {
+      "rows": 9,
+      "coordinates": 126,
+      "instances": 3
+    },
+    {
+      "rows": 9,
+      "coordinates": 378,
+      "instances": 23
+    },
+    {
+      "rows": 9,
+      "coordinates": 504,
+      "instances": 69
+    },
+    {
+      "rows": 9,
+      "coordinates": 630,
+      "instances": 17
+    },
+    {
+      "rows": 9,
+      "coordinates": 756,
+      "instances": 199
+    },
+    {
+      "rows": 9,
+      "coordinates": 882,
+      "instances": 113
+    },
+    {
+      "rows": 10,
+      "coordinates": 126,
+      "instances": 5
+    },
+    {
+      "rows": 10,
+      "coordinates": 378,
+      "instances": 7
+    },
+    {
+      "rows": 10,
+      "coordinates": 504,
+      "instances": 40
+    },
+    {
+      "rows": 10,
+      "coordinates": 630,
+      "instances": 38
+    },
+    {
+      "rows": 10,
+      "coordinates": 756,
+      "instances": 48
+    },
+    {
+      "rows": 10,
+      "coordinates": 882,
+      "instances": 27
+    },
+    {
+      "rows": 10,
+      "coordinates": 1008,
+      "instances": 1
+    },
+    {
+      "rows": 11,
+      "coordinates": 126,
+      "instances": 5
+    },
+    {
+      "rows": 11,
+      "coordinates": 378,
+      "instances": 3
+    },
+    {
+      "rows": 11,
+      "coordinates": 504,
+      "instances": 3
+    },
+    {
+      "rows": 11,
+      "coordinates": 630,
+      "instances": 14
+    },
+    {
+      "rows": 11,
+      "coordinates": 756,
+      "instances": 142
+    },
+    {
+      "rows": 11,
+      "coordinates": 882,
+      "instances": 22
+    },
+    {
+      "rows": 11,
+      "coordinates": 1008,
+      "instances": 1
+    },
+    {
+      "rows": 11,
+      "coordinates": 1134,
+      "instances": 1
+    },
+    {
+      "rows": 11,
+      "coordinates": 1260,
+      "instances": 30
+    },
+    {
+      "rows": 12,
+      "coordinates": 126,
+      "instances": 6
+    },
+    {
+      "rows": 12,
+      "coordinates": 378,
+      "instances": 4
+    },
+    {
+      "rows": 12,
+      "coordinates": 504,
+      "instances": 37
+    },
+    {
+      "rows": 12,
+      "coordinates": 630,
+      "instances": 6
+    },
+    {
+      "rows": 12,
+      "coordinates": 756,
+      "instances": 143
+    },
+    {
+      "rows": 12,
+      "coordinates": 882,
+      "instances": 7
+    },
+    {
+      "rows": 12,
+      "coordinates": 1008,
+      "instances": 1
+    },
+    {
+      "rows": 12,
+      "coordinates": 1386,
+      "instances": 3
+    },
+    {
+      "rows": 13,
+      "coordinates": 126,
+      "instances": 4
+    },
+    {
+      "rows": 13,
+      "coordinates": 504,
+      "instances": 7
+    },
+    {
+      "rows": 13,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 13,
+      "coordinates": 756,
+      "instances": 145
+    },
+    {
+      "rows": 13,
+      "coordinates": 882,
+      "instances": 1
+    },
+    {
+      "rows": 13,
+      "coordinates": 1260,
+      "instances": 5
+    },
+    {
+      "rows": 13,
+      "coordinates": 1512,
+      "instances": 7
+    },
+    {
+      "rows": 14,
+      "coordinates": 126,
+      "instances": 1
+    },
+    {
+      "rows": 14,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 14,
+      "coordinates": 756,
+      "instances": 120
+    },
+    {
+      "rows": 14,
+      "coordinates": 882,
+      "instances": 4
+    },
+    {
+      "rows": 14,
+      "coordinates": 1008,
+      "instances": 88
+    },
+    {
+      "rows": 14,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 14,
+      "coordinates": 1512,
+      "instances": 24
+    },
+    {
+      "rows": 14,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 15,
+      "coordinates": 126,
+      "instances": 1
+    },
+    {
+      "rows": 15,
+      "coordinates": 252,
+      "instances": 1
+    },
+    {
+      "rows": 15,
+      "coordinates": 630,
+      "instances": 3
+    },
+    {
+      "rows": 15,
+      "coordinates": 756,
+      "instances": 136
+    },
+    {
+      "rows": 15,
+      "coordinates": 882,
+      "instances": 8
+    },
+    {
+      "rows": 15,
+      "coordinates": 1008,
+      "instances": 3
+    },
+    {
+      "rows": 15,
+      "coordinates": 1512,
+      "instances": 2
+    },
+    {
+      "rows": 15,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 16,
+      "coordinates": 630,
+      "instances": 2
+    },
+    {
+      "rows": 16,
+      "coordinates": 756,
+      "instances": 2
+    },
+    {
+      "rows": 16,
+      "coordinates": 882,
+      "instances": 8
+    },
+    {
+      "rows": 16,
+      "coordinates": 1134,
+      "instances": 2
+    },
+    {
+      "rows": 16,
+      "coordinates": 1638,
+      "instances": 9
+    },
+    {
+      "rows": 17,
+      "coordinates": 126,
+      "instances": 2
+    },
+    {
+      "rows": 17,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 17,
+      "coordinates": 756,
+      "instances": 5
+    },
+    {
+      "rows": 17,
+      "coordinates": 882,
+      "instances": 7
+    },
+    {
+      "rows": 17,
+      "coordinates": 1008,
+      "instances": 84
+    },
+    {
+      "rows": 17,
+      "coordinates": 1134,
+      "instances": 5
+    },
+    {
+      "rows": 17,
+      "coordinates": 1260,
+      "instances": 3
+    },
+    {
+      "rows": 17,
+      "coordinates": 1638,
+      "instances": 33
+    },
+    {
+      "rows": 17,
+      "coordinates": 1764,
+      "instances": 5
+    },
+    {
+      "rows": 18,
+      "coordinates": 126,
+      "instances": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 630,
+      "instances": 33
+    },
+    {
+      "rows": 18,
+      "coordinates": 756,
+      "instances": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 882,
+      "instances": 5
+    },
+    {
+      "rows": 18,
+      "coordinates": 1008,
+      "instances": 84
+    },
+    {
+      "rows": 18,
+      "coordinates": 1134,
+      "instances": 2
+    },
+    {
+      "rows": 18,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 18,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 19,
+      "coordinates": 126,
+      "instances": 1
+    },
+    {
+      "rows": 19,
+      "coordinates": 630,
+      "instances": 26
+    },
+    {
+      "rows": 19,
+      "coordinates": 882,
+      "instances": 38
+    },
+    {
+      "rows": 19,
+      "coordinates": 1008,
+      "instances": 86
+    },
+    {
+      "rows": 19,
+      "coordinates": 1260,
+      "instances": 3
+    },
+    {
+      "rows": 20,
+      "coordinates": 630,
+      "instances": 6
+    },
+    {
+      "rows": 20,
+      "coordinates": 756,
+      "instances": 5
+    },
+    {
+      "rows": 20,
+      "coordinates": 882,
+      "instances": 17
+    },
+    {
+      "rows": 20,
+      "coordinates": 1008,
+      "instances": 85
+    },
+    {
+      "rows": 20,
+      "coordinates": 1134,
+      "instances": 1
+    },
+    {
+      "rows": 20,
+      "coordinates": 1386,
+      "instances": 2
+    },
+    {
+      "rows": 20,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 20,
+      "coordinates": 1764,
+      "instances": 30
+    },
+    {
+      "rows": 21,
+      "coordinates": 378,
+      "instances": 1
+    },
+    {
+      "rows": 21,
+      "coordinates": 630,
+      "instances": 4
+    },
+    {
+      "rows": 21,
+      "coordinates": 882,
+      "instances": 54
+    },
+    {
+      "rows": 21,
+      "coordinates": 1008,
+      "instances": 85
+    },
+    {
+      "rows": 21,
+      "coordinates": 1260,
+      "instances": 3
+    },
+    {
+      "rows": 21,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 21,
+      "coordinates": 1512,
+      "instances": 17
+    },
+    {
+      "rows": 21,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 22,
+      "coordinates": 378,
+      "instances": 1
+    },
+    {
+      "rows": 22,
+      "coordinates": 630,
+      "instances": 59
+    },
+    {
+      "rows": 22,
+      "coordinates": 756,
+      "instances": 2
+    },
+    {
+      "rows": 22,
+      "coordinates": 882,
+      "instances": 37
+    },
+    {
+      "rows": 22,
+      "coordinates": 1008,
+      "instances": 86
+    },
+    {
+      "rows": 22,
+      "coordinates": 1260,
+      "instances": 3
+    },
+    {
+      "rows": 22,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 22,
+      "coordinates": 1512,
+      "instances": 2
+    },
+    {
+      "rows": 23,
+      "coordinates": 630,
+      "instances": 30
+    },
+    {
+      "rows": 23,
+      "coordinates": 882,
+      "instances": 104
+    },
+    {
+      "rows": 23,
+      "coordinates": 1008,
+      "instances": 2
+    },
+    {
+      "rows": 23,
+      "coordinates": 1260,
+      "instances": 3
+    },
+    {
+      "rows": 23,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 23,
+      "coordinates": 1638,
+      "instances": 8
+    },
+    {
+      "rows": 23,
+      "coordinates": 2016,
+      "instances": 5
+    },
+    {
+      "rows": 23,
+      "coordinates": 2268,
+      "instances": 4
+    },
+    {
+      "rows": 24,
+      "coordinates": 630,
+      "instances": 57
+    },
+    {
+      "rows": 24,
+      "coordinates": 882,
+      "instances": 26
+    },
+    {
+      "rows": 24,
+      "coordinates": 1008,
+      "instances": 2
+    },
+    {
+      "rows": 24,
+      "coordinates": 1260,
+      "instances": 3
+    },
+    {
+      "rows": 24,
+      "coordinates": 1386,
+      "instances": 2
+    },
+    {
+      "rows": 24,
+      "coordinates": 1764,
+      "instances": 16
+    },
+    {
+      "rows": 24,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 25,
+      "coordinates": 630,
+      "instances": 58
+    },
+    {
+      "rows": 25,
+      "coordinates": 882,
+      "instances": 7
+    },
+    {
+      "rows": 25,
+      "coordinates": 1008,
+      "instances": 1
+    },
+    {
+      "rows": 25,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 25,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 25,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 26,
+      "coordinates": 630,
+      "instances": 62
+    },
+    {
+      "rows": 26,
+      "coordinates": 882,
+      "instances": 14
+    },
+    {
+      "rows": 26,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 26,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 26,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 26,
+      "coordinates": 2394,
+      "instances": 1
+    },
+    {
+      "rows": 27,
+      "coordinates": 630,
+      "instances": 33
+    },
+    {
+      "rows": 27,
+      "coordinates": 882,
+      "instances": 1
+    },
+    {
+      "rows": 27,
+      "coordinates": 1512,
+      "instances": 3
+    },
+    {
+      "rows": 27,
+      "coordinates": 1764,
+      "instances": 12
+    },
+    {
+      "rows": 27,
+      "coordinates": 1890,
+      "instances": 8
+    },
+    {
+      "rows": 28,
+      "coordinates": 630,
+      "instances": 8
+    },
+    {
+      "rows": 28,
+      "coordinates": 882,
+      "instances": 13
+    },
+    {
+      "rows": 28,
+      "coordinates": 1512,
+      "instances": 2
+    },
+    {
+      "rows": 28,
+      "coordinates": 1890,
+      "instances": 39
+    },
+    {
+      "rows": 29,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 29,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 29,
+      "coordinates": 1260,
+      "instances": 1
+    },
+    {
+      "rows": 29,
+      "coordinates": 1386,
+      "instances": 2
+    },
+    {
+      "rows": 29,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 29,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 29,
+      "coordinates": 1890,
+      "instances": 40
+    },
+    {
+      "rows": 30,
+      "coordinates": 630,
+      "instances": 7
+    },
+    {
+      "rows": 30,
+      "coordinates": 882,
+      "instances": 8
+    },
+    {
+      "rows": 30,
+      "coordinates": 1008,
+      "instances": 1
+    },
+    {
+      "rows": 30,
+      "coordinates": 1260,
+      "instances": 2
+    },
+    {
+      "rows": 30,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 30,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 30,
+      "coordinates": 1764,
+      "instances": 13
+    },
+    {
+      "rows": 30,
+      "coordinates": 1890,
+      "instances": 7
+    },
+    {
+      "rows": 31,
+      "coordinates": 630,
+      "instances": 5
+    },
+    {
+      "rows": 31,
+      "coordinates": 882,
+      "instances": 64
+    },
+    {
+      "rows": 31,
+      "coordinates": 1008,
+      "instances": 1
+    },
+    {
+      "rows": 31,
+      "coordinates": 1260,
+      "instances": 1
+    },
+    {
+      "rows": 31,
+      "coordinates": 1512,
+      "instances": 30
+    },
+    {
+      "rows": 31,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 31,
+      "coordinates": 1764,
+      "instances": 2
+    },
+    {
+      "rows": 31,
+      "coordinates": 1890,
+      "instances": 12
+    },
+    {
+      "rows": 31,
+      "coordinates": 2016,
+      "instances": 1
+    },
+    {
+      "rows": 32,
+      "coordinates": 630,
+      "instances": 6
+    },
+    {
+      "rows": 32,
+      "coordinates": 882,
+      "instances": 5
+    },
+    {
+      "rows": 32,
+      "coordinates": 1008,
+      "instances": 1
+    },
+    {
+      "rows": 32,
+      "coordinates": 1386,
+      "instances": 3
+    },
+    {
+      "rows": 32,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 32,
+      "coordinates": 1764,
+      "instances": 3
+    },
+    {
+      "rows": 32,
+      "coordinates": 1890,
+      "instances": 4
+    },
+    {
+      "rows": 32,
+      "coordinates": 2016,
+      "instances": 1
+    },
+    {
+      "rows": 33,
+      "coordinates": 630,
+      "instances": 6
+    },
+    {
+      "rows": 33,
+      "coordinates": 882,
+      "instances": 21
+    },
+    {
+      "rows": 33,
+      "coordinates": 1260,
+      "instances": 1
+    },
+    {
+      "rows": 33,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 33,
+      "coordinates": 1890,
+      "instances": 11
+    },
+    {
+      "rows": 33,
+      "coordinates": 2016,
+      "instances": 1
+    },
+    {
+      "rows": 34,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 34,
+      "coordinates": 882,
+      "instances": 65
+    },
+    {
+      "rows": 34,
+      "coordinates": 1512,
+      "instances": 2
+    },
+    {
+      "rows": 34,
+      "coordinates": 1638,
+      "instances": 6
+    },
+    {
+      "rows": 34,
+      "coordinates": 1764,
+      "instances": 4
+    },
+    {
+      "rows": 34,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 34,
+      "coordinates": 2142,
+      "instances": 33
+    },
+    {
+      "rows": 35,
+      "coordinates": 630,
+      "instances": 2
+    },
+    {
+      "rows": 35,
+      "coordinates": 882,
+      "instances": 5
+    },
+    {
+      "rows": 35,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 35,
+      "coordinates": 2268,
+      "instances": 17
+    },
+    {
+      "rows": 36,
+      "coordinates": 882,
+      "instances": 85
+    },
+    {
+      "rows": 36,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 36,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 36,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 36,
+      "coordinates": 2142,
+      "instances": 5
+    },
+    {
+      "rows": 36,
+      "coordinates": 2268,
+      "instances": 4
+    },
+    {
+      "rows": 37,
+      "coordinates": 882,
+      "instances": 86
+    },
+    {
+      "rows": 37,
+      "coordinates": 1386,
+      "instances": 2
+    },
+    {
+      "rows": 37,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 37,
+      "coordinates": 2142,
+      "instances": 2
+    },
+    {
+      "rows": 38,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 38,
+      "coordinates": 882,
+      "instances": 85
+    },
+    {
+      "rows": 38,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 38,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 38,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 38,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 38,
+      "coordinates": 2142,
+      "instances": 3
+    },
+    {
+      "rows": 38,
+      "coordinates": 2268,
+      "instances": 3
+    },
+    {
+      "rows": 39,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 882,
+      "instances": 82
+    },
+    {
+      "rows": 39,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 39,
+      "coordinates": 1764,
+      "instances": 4
+    },
+    {
+      "rows": 39,
+      "coordinates": 1890,
+      "instances": 16
+    },
+    {
+      "rows": 39,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 39,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 2394,
+      "instances": 20
+    },
+    {
+      "rows": 40,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 40,
+      "coordinates": 882,
+      "instances": 4
+    },
+    {
+      "rows": 40,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 40,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 40,
+      "coordinates": 1764,
+      "instances": 4
+    },
+    {
+      "rows": 40,
+      "coordinates": 1890,
+      "instances": 4
+    },
+    {
+      "rows": 40,
+      "coordinates": 2016,
+      "instances": 1
+    },
+    {
+      "rows": 40,
+      "coordinates": 2142,
+      "instances": 33
+    },
+    {
+      "rows": 40,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 40,
+      "coordinates": 2394,
+      "instances": 17
+    },
+    {
+      "rows": 41,
+      "coordinates": 882,
+      "instances": 5
+    },
+    {
+      "rows": 41,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 41,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 41,
+      "coordinates": 1764,
+      "instances": 3
+    },
+    {
+      "rows": 41,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 41,
+      "coordinates": 2268,
+      "instances": 2
+    },
+    {
+      "rows": 41,
+      "coordinates": 2394,
+      "instances": 25
+    },
+    {
+      "rows": 42,
+      "coordinates": 882,
+      "instances": 3
+    },
+    {
+      "rows": 42,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 42,
+      "coordinates": 1764,
+      "instances": 5
+    },
+    {
+      "rows": 42,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 42,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 42,
+      "coordinates": 2142,
+      "instances": 2
+    },
+    {
+      "rows": 42,
+      "coordinates": 2394,
+      "instances": 3
+    },
+    {
+      "rows": 43,
+      "coordinates": 882,
+      "instances": 1
+    },
+    {
+      "rows": 43,
+      "coordinates": 1512,
+      "instances": 2
+    },
+    {
+      "rows": 43,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 43,
+      "coordinates": 1764,
+      "instances": 5
+    },
+    {
+      "rows": 43,
+      "coordinates": 2016,
+      "instances": 11
+    },
+    {
+      "rows": 43,
+      "coordinates": 2142,
+      "instances": 38
+    },
+    {
+      "rows": 43,
+      "coordinates": 2268,
+      "instances": 3
+    },
+    {
+      "rows": 44,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 44,
+      "coordinates": 1512,
+      "instances": 3
+    },
+    {
+      "rows": 44,
+      "coordinates": 1638,
+      "instances": 23
+    },
+    {
+      "rows": 44,
+      "coordinates": 1764,
+      "instances": 4
+    },
+    {
+      "rows": 44,
+      "coordinates": 1890,
+      "instances": 12
+    },
+    {
+      "rows": 44,
+      "coordinates": 2016,
+      "instances": 7
+    },
+    {
+      "rows": 44,
+      "coordinates": 2142,
+      "instances": 3
+    },
+    {
+      "rows": 44,
+      "coordinates": 2268,
+      "instances": 2
+    },
+    {
+      "rows": 44,
+      "coordinates": 2520,
+      "instances": 1
+    },
+    {
+      "rows": 45,
+      "coordinates": 882,
+      "instances": 1
+    },
+    {
+      "rows": 45,
+      "coordinates": 1512,
+      "instances": 2
+    },
+    {
+      "rows": 45,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 45,
+      "coordinates": 1764,
+      "instances": 7
+    },
+    {
+      "rows": 45,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 45,
+      "coordinates": 2142,
+      "instances": 32
+    },
+    {
+      "rows": 45,
+      "coordinates": 2268,
+      "instances": 3
+    },
+    {
+      "rows": 46,
+      "coordinates": 882,
+      "instances": 1
+    },
+    {
+      "rows": 46,
+      "coordinates": 1638,
+      "instances": 26
+    },
+    {
+      "rows": 46,
+      "coordinates": 1764,
+      "instances": 3
+    },
+    {
+      "rows": 46,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 46,
+      "coordinates": 2016,
+      "instances": 11
+    },
+    {
+      "rows": 46,
+      "coordinates": 2142,
+      "instances": 12
+    },
+    {
+      "rows": 47,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 47,
+      "coordinates": 1764,
+      "instances": 8
+    },
+    {
+      "rows": 47,
+      "coordinates": 2016,
+      "instances": 9
+    },
+    {
+      "rows": 47,
+      "coordinates": 2142,
+      "instances": 4
+    },
+    {
+      "rows": 47,
+      "coordinates": 2268,
+      "instances": 5
+    },
+    {
+      "rows": 47,
+      "coordinates": 2646,
+      "instances": 2
+    },
+    {
+      "rows": 48,
+      "coordinates": 1638,
+      "instances": 26
+    },
+    {
+      "rows": 48,
+      "coordinates": 2016,
+      "instances": 13
+    },
+    {
+      "rows": 48,
+      "coordinates": 2142,
+      "instances": 5
+    },
+    {
+      "rows": 48,
+      "coordinates": 2268,
+      "instances": 3
+    },
+    {
+      "rows": 48,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 49,
+      "coordinates": 1638,
+      "instances": 5
+    },
+    {
+      "rows": 49,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 49,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 49,
+      "coordinates": 2016,
+      "instances": 6
+    },
+    {
+      "rows": 49,
+      "coordinates": 2142,
+      "instances": 8
+    },
+    {
+      "rows": 49,
+      "coordinates": 2268,
+      "instances": 2
+    },
+    {
+      "rows": 50,
+      "coordinates": 1638,
+      "instances": 28
+    },
+    {
+      "rows": 50,
+      "coordinates": 1764,
+      "instances": 6
+    },
+    {
+      "rows": 50,
+      "coordinates": 1890,
+      "instances": 6
+    },
+    {
+      "rows": 50,
+      "coordinates": 2016,
+      "instances": 8
+    },
+    {
+      "rows": 50,
+      "coordinates": 2268,
+      "instances": 3
+    },
+    {
+      "rows": 50,
+      "coordinates": 2520,
+      "instances": 20
+    },
+    {
+      "rows": 51,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 51,
+      "coordinates": 1638,
+      "instances": 32
+    },
+    {
+      "rows": 51,
+      "coordinates": 1764,
+      "instances": 13
+    },
+    {
+      "rows": 51,
+      "coordinates": 1890,
+      "instances": 16
+    },
+    {
+      "rows": 51,
+      "coordinates": 2016,
+      "instances": 11
+    },
+    {
+      "rows": 51,
+      "coordinates": 2142,
+      "instances": 5
+    },
+    {
+      "rows": 51,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 51,
+      "coordinates": 2520,
+      "instances": 24
+    },
+    {
+      "rows": 52,
+      "coordinates": 1638,
+      "instances": 30
+    },
+    {
+      "rows": 52,
+      "coordinates": 1764,
+      "instances": 13
+    },
+    {
+      "rows": 52,
+      "coordinates": 1890,
+      "instances": 13
+    },
+    {
+      "rows": 52,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 52,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 52,
+      "coordinates": 2520,
+      "instances": 10
+    },
+    {
+      "rows": 53,
+      "coordinates": 1638,
+      "instances": 14
+    },
+    {
+      "rows": 53,
+      "coordinates": 1764,
+      "instances": 7
+    },
+    {
+      "rows": 53,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 53,
+      "coordinates": 2016,
+      "instances": 9
+    },
+    {
+      "rows": 53,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 53,
+      "coordinates": 2520,
+      "instances": 25
+    },
+    {
+      "rows": 54,
+      "coordinates": 1638,
+      "instances": 10
+    },
+    {
+      "rows": 54,
+      "coordinates": 1764,
+      "instances": 11
+    },
+    {
+      "rows": 54,
+      "coordinates": 2016,
+      "instances": 7
+    },
+    {
+      "rows": 54,
+      "coordinates": 2520,
+      "instances": 24
+    },
+    {
+      "rows": 55,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 55,
+      "coordinates": 1638,
+      "instances": 13
+    },
+    {
+      "rows": 55,
+      "coordinates": 1764,
+      "instances": 9
+    },
+    {
+      "rows": 55,
+      "coordinates": 2016,
+      "instances": 23
+    },
+    {
+      "rows": 55,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 55,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 55,
+      "coordinates": 2520,
+      "instances": 11
+    },
+    {
+      "rows": 56,
+      "coordinates": 1638,
+      "instances": 11
+    },
+    {
+      "rows": 56,
+      "coordinates": 1764,
+      "instances": 7
+    },
+    {
+      "rows": 56,
+      "coordinates": 1890,
+      "instances": 4
+    },
+    {
+      "rows": 56,
+      "coordinates": 2016,
+      "instances": 21
+    },
+    {
+      "rows": 56,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 56,
+      "coordinates": 2520,
+      "instances": 2
+    },
+    {
+      "rows": 57,
+      "coordinates": 1638,
+      "instances": 14
+    },
+    {
+      "rows": 57,
+      "coordinates": 1764,
+      "instances": 20
+    },
+    {
+      "rows": 57,
+      "coordinates": 1890,
+      "instances": 28
+    },
+    {
+      "rows": 57,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 57,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 57,
+      "coordinates": 2520,
+      "instances": 63
+    },
+    {
+      "rows": 58,
+      "coordinates": 1638,
+      "instances": 11
+    },
+    {
+      "rows": 58,
+      "coordinates": 1764,
+      "instances": 16
+    },
+    {
+      "rows": 58,
+      "coordinates": 1890,
+      "instances": 34
+    },
+    {
+      "rows": 58,
+      "coordinates": 2016,
+      "instances": 10
+    },
+    {
+      "rows": 58,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 58,
+      "coordinates": 2520,
+      "instances": 37
+    },
+    {
+      "rows": 59,
+      "coordinates": 1638,
+      "instances": 6
+    },
+    {
+      "rows": 59,
+      "coordinates": 1764,
+      "instances": 8
+    },
+    {
+      "rows": 59,
+      "coordinates": 1890,
+      "instances": 27
+    },
+    {
+      "rows": 59,
+      "coordinates": 2016,
+      "instances": 6
+    },
+    {
+      "rows": 59,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 59,
+      "coordinates": 2268,
+      "instances": 1
+    },
+    {
+      "rows": 59,
+      "coordinates": 2520,
+      "instances": 31
+    },
+    {
+      "rows": 59,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 60,
+      "coordinates": 1638,
+      "instances": 11
+    },
+    {
+      "rows": 60,
+      "coordinates": 1764,
+      "instances": 19
+    },
+    {
+      "rows": 60,
+      "coordinates": 1890,
+      "instances": 31
+    },
+    {
+      "rows": 60,
+      "coordinates": 2016,
+      "instances": 12
+    },
+    {
+      "rows": 60,
+      "coordinates": 2520,
+      "instances": 56
+    },
+    {
+      "rows": 60,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 61,
+      "coordinates": 1638,
+      "instances": 6
+    },
+    {
+      "rows": 61,
+      "coordinates": 1764,
+      "instances": 25
+    },
+    {
+      "rows": 61,
+      "coordinates": 1890,
+      "instances": 28
+    },
+    {
+      "rows": 61,
+      "coordinates": 2016,
+      "instances": 28
+    },
+    {
+      "rows": 61,
+      "coordinates": 2520,
+      "instances": 64
+    },
+    {
+      "rows": 61,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 62,
+      "coordinates": 1638,
+      "instances": 10
+    },
+    {
+      "rows": 62,
+      "coordinates": 1764,
+      "instances": 18
+    },
+    {
+      "rows": 62,
+      "coordinates": 1890,
+      "instances": 5
+    },
+    {
+      "rows": 62,
+      "coordinates": 2016,
+      "instances": 37
+    },
+    {
+      "rows": 62,
+      "coordinates": 2520,
+      "instances": 59
+    },
+    {
+      "rows": 63,
+      "coordinates": 1638,
+      "instances": 10
+    },
+    {
+      "rows": 63,
+      "coordinates": 1764,
+      "instances": 15
+    },
+    {
+      "rows": 63,
+      "coordinates": 1890,
+      "instances": 3
+    },
+    {
+      "rows": 63,
+      "coordinates": 2016,
+      "instances": 41
+    },
+    {
+      "rows": 63,
+      "coordinates": 2520,
+      "instances": 38
+    },
+    {
+      "rows": 64,
+      "coordinates": 1638,
+      "instances": 7
+    },
+    {
+      "rows": 64,
+      "coordinates": 1764,
+      "instances": 20
+    },
+    {
+      "rows": 64,
+      "coordinates": 2016,
+      "instances": 45
+    },
+    {
+      "rows": 64,
+      "coordinates": 2520,
+      "instances": 51
+    },
+    {
+      "rows": 64,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 65,
+      "coordinates": 1638,
+      "instances": 10
+    },
+    {
+      "rows": 65,
+      "coordinates": 1764,
+      "instances": 12
+    },
+    {
+      "rows": 65,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 65,
+      "coordinates": 2016,
+      "instances": 34
+    },
+    {
+      "rows": 65,
+      "coordinates": 2520,
+      "instances": 28
+    },
+    {
+      "rows": 65,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 66,
+      "coordinates": 1638,
+      "instances": 8
+    },
+    {
+      "rows": 66,
+      "coordinates": 1764,
+      "instances": 12
+    },
+    {
+      "rows": 66,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 66,
+      "coordinates": 2016,
+      "instances": 20
+    },
+    {
+      "rows": 66,
+      "coordinates": 2520,
+      "instances": 22
+    },
+    {
+      "rows": 67,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 67,
+      "coordinates": 1764,
+      "instances": 11
+    },
+    {
+      "rows": 67,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 67,
+      "coordinates": 2016,
+      "instances": 15
+    },
+    {
+      "rows": 67,
+      "coordinates": 2520,
+      "instances": 18
+    },
+    {
+      "rows": 67,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 68,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 68,
+      "coordinates": 1764,
+      "instances": 5
+    },
+    {
+      "rows": 68,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 68,
+      "coordinates": 2016,
+      "instances": 10
+    },
+    {
+      "rows": 68,
+      "coordinates": 2520,
+      "instances": 7
+    },
+    {
+      "rows": 68,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 69,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 69,
+      "coordinates": 1764,
+      "instances": 7
+    },
+    {
+      "rows": 69,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 69,
+      "coordinates": 2016,
+      "instances": 5
+    },
+    {
+      "rows": 69,
+      "coordinates": 2520,
+      "instances": 3
+    },
+    {
+      "rows": 69,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 70,
+      "coordinates": 1764,
+      "instances": 6
+    },
+    {
+      "rows": 70,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 70,
+      "coordinates": 2520,
+      "instances": 3
+    },
+    {
+      "rows": 70,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 71,
+      "coordinates": 1764,
+      "instances": 9
+    },
+    {
+      "rows": 71,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 71,
+      "coordinates": 2520,
+      "instances": 1
+    },
+    {
+      "rows": 71,
+      "coordinates": 2646,
+      "instances": 3
+    },
+    {
+      "rows": 72,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 72,
+      "coordinates": 2520,
+      "instances": 1
+    },
+    {
+      "rows": 72,
+      "coordinates": 2646,
+      "instances": 2
+    },
+    {
+      "rows": 73,
+      "coordinates": 1764,
+      "instances": 3
+    },
+    {
+      "rows": 73,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 73,
+      "coordinates": 2520,
+      "instances": 1
+    },
+    {
+      "rows": 73,
+      "coordinates": 2646,
+      "instances": 2
+    },
+    {
+      "rows": 74,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 74,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 74,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 74,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 75,
+      "coordinates": 1764,
+      "instances": 2
+    },
+    {
+      "rows": 75,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 75,
+      "coordinates": 2646,
+      "instances": 1
+    },
+    {
+      "rows": 76,
+      "coordinates": 1764,
+      "instances": 2
+    },
+    {
+      "rows": 76,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 77,
+      "coordinates": 1764,
+      "instances": 2
+    },
+    {
+      "rows": 77,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 77,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 78,
+      "coordinates": 1764,
+      "instances": 3
+    },
+    {
+      "rows": 78,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 78,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 79,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 79,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 80,
+      "coordinates": 1890,
+      "instances": 2
+    },
+    {
+      "rows": 80,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 81,
+      "coordinates": 2016,
+      "instances": 4
+    },
+    {
+      "rows": 82,
+      "coordinates": 2016,
+      "instances": 5
+    },
+    {
+      "rows": 83,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 83,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 84,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 84,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 84,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 85,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 86,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 86,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 87,
+      "coordinates": 2016,
+      "instances": 3
+    },
+    {
+      "rows": 88,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 89,
+      "coordinates": 2016,
+      "instances": 1
+    },
+    {
+      "rows": 90,
+      "coordinates": 2016,
+      "instances": 1
+    },
+    {
+      "rows": 92,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 94,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 98,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 99,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 100,
+      "coordinates": 2016,
+      "instances": 1
+    },
+    {
+      "rows": 101,
+      "coordinates": 2016,
+      "instances": 2
+    },
+    {
+      "rows": 103,
+      "coordinates": 2016,
+      "instances": 1
+    }
+  ],
+  "slowest_profiled_batches": [
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 1353,
+      "owners": 33,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          62,
+          2016
+        ],
+        [
+          1,
+          252
+        ],
+        [
+          59,
+          2646
+        ],
+        [
+          5,
+          252
+        ],
+        [
+          18,
+          630
+        ],
+        [
+          4,
+          378
+        ],
+        [
+          37,
+          882
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          14,
+          882
+        ],
+        [
+          19,
+          1260
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          57,
+          1638
+        ]
+      ],
+      "total_wall_ms": 92.85262499999999,
+      "wait_wall_ms": 87.868459
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 806,
+      "owners": 33,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          62,
+          2016
+        ],
+        [
+          1,
+          252
+        ],
+        [
+          60,
+          2646
+        ],
+        [
+          5,
+          252
+        ],
+        [
+          18,
+          630
+        ],
+        [
+          4,
+          378
+        ],
+        [
+          38,
+          882
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          10,
+          504
+        ],
+        [
+          14,
+          882
+        ],
+        [
+          19,
+          1260
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          59,
+          1638
+        ]
+      ],
+      "total_wall_ms": 82.904916,
+      "wait_wall_ms": 76.94850000000001
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 565,
+      "owners": 31,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          71,
+          2016
+        ],
+        [
+          56,
+          2520
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          5,
+          252
+        ],
+        [
+          16,
+          630
+        ],
+        [
+          6,
+          378
+        ],
+        [
+          39,
+          882
+        ],
+        [
+          12,
+          756
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          20,
+          1134
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          80,
+          1890
+        ]
+      ],
+      "total_wall_ms": 77.245542,
+      "wait_wall_ms": 69.631459
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 1369,
+      "owners": 15,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          65,
+          2520
+        ]
+      ],
+      "total_wall_ms": 77.07662499999999,
+      "wait_wall_ms": 74.930791
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 805,
+      "owners": 33,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          1,
+          126
+        ],
+        [
+          51,
+          2016
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          47,
+          2646
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          1,
+          252
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          15,
+          630
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          3,
+          378
+        ],
+        [
+          33,
+          882
+        ],
+        [
+          6,
+          252
+        ],
+        [
+          10,
+          756
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          9,
+          504
+        ],
+        [
+          12,
+          882
+        ],
+        [
+          17,
+          1260
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          53,
+          1638
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          1,
+          126
+        ]
+      ],
+      "total_wall_ms": 71.035375,
+      "wait_wall_ms": 65.560042
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 564,
+      "owners": 31,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          63,
+          2016
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          44,
+          2520
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          14,
+          630
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          36,
+          882
+        ],
+        [
+          11,
+          756
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          9,
+          504
+        ],
+        [
+          11,
+          756
+        ],
+        [
+          17,
+          1134
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          71,
+          1764
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          2,
+          252
+        ]
+      ],
+      "total_wall_ms": 70.545875,
+      "wait_wall_ms": 63.48925
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 495,
+      "owners": 28,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          47,
+          1764
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          41,
+          2268
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          11,
+          630
+        ],
+        [
+          22,
+          630
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          10,
+          756
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          6,
+          504
+        ],
+        [
+          7,
+          756
+        ],
+        [
+          8,
+          882
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          19,
+          882
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          4,
+          378
+        ],
+        [
+          8,
+          378
+        ]
+      ],
+      "total_wall_ms": 69.10858400000001,
+      "wait_wall_ms": 65.365209
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 526,
+      "owners": 28,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          47,
+          1764
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          38,
+          2268
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          11,
+          630
+        ],
+        [
+          22,
+          630
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          10,
+          756
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          6,
+          504
+        ],
+        [
+          7,
+          756
+        ],
+        [
+          8,
+          882
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          19,
+          882
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          4,
+          378
+        ],
+        [
+          8,
+          378
+        ]
+      ],
+      "total_wall_ms": 67.5415,
+      "wait_wall_ms": 64.16216600000001
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 76,
+      "owners": 23,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          2,
+          252
+        ],
+        [
+          49,
+          1638
+        ],
+        [
+          36,
+          2142
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          26,
+          630
+        ],
+        [
+          5,
+          630
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          6,
+          504
+        ],
+        [
+          10,
+          756
+        ],
+        [
+          3,
+          252
+        ]
+      ],
+      "total_wall_ms": 66.984667,
+      "wait_wall_ms": 62.950458
+    },
+    {
+      "log": "/tmp/voxy-warm-start-two-frame.log",
+      "line": 1352,
+      "owners": 33,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          1,
+          126
+        ],
+        [
+          52,
+          2016
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          47,
+          2646
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          1,
+          252
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          15,
+          630
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          3,
+          378
+        ],
+        [
+          34,
+          882
+        ],
+        [
+          6,
+          252
+        ],
+        [
+          10,
+          756
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          9,
+          504
+        ],
+        [
+          7,
+          378
+        ],
+        [
+          12,
+          882
+        ],
+        [
+          17,
+          1260
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          1,
+          252
+        ],
+        [
+          51,
+          1638
+        ],
+        [
+          4,
+          252
+        ],
+        [
+          5,
+          378
+        ]
+      ],
+      "total_wall_ms": 56.925291,
+      "wait_wall_ms": 52.156708
+    }
+  ],
+  "batch_attribution_limit": "Batch wall time includes all listed operators and shared queue wait; it is not an individual operator timing.",
+  "wall_ms": {
+    "prepare_wall_ms": 3440.1517289999997,
+    "encode_wall_ms": 143.5452910000002,
+    "submit_map_wall_ms": 50.31411000000013,
+    "wait_wall_ms": 20519.215745000052,
+    "decode_refine_wall_ms": 1137.4848579999996,
+    "total_wall_ms": 25291.35863600001
+  },
+  "stage_percent_of_total": {
+    "prepare_wall_ms": 13.602083535770387,
+    "encode_wall_ms": 0.5675665473964541,
+    "submit_map_wall_ms": 0.1989379484278968,
+    "wait_wall_ms": 81.13133042917183,
+    "decode_refine_wall_ms": 4.497523736747342
+  },
+  "unattributed_wall_ms": 0.6469029999607301,
+  "limits": "Concurrent host wall times, including queue wait and callbacks; exclude profile log output, shader compilation, physical owner assembly/admission and rendering. Task errors can be recovered by active-set retry; they are not native fallback counts. This report does not qualify trajectory accuracy, GPU execution time or rendered FPS."
+}

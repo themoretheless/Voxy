@@ -1,0 +1,23 @@
+{
+  "scope": "Resident normal-source lighting pipeline and optional native character integration. CPU reference and mesh reconstruction retained. Not production performance or all-hardware qualification.",
+  "hardware": "Apple M4 Max / Metal",
+  "tests": "2 passed, 0 failed",
+  "native_gpu_admissions": 68,
+  "native_last_sampled_generation": 125,
+  "observed_native_fps": 2.0664534728741235,
+  "visible_model_observed_via_CUA": true,
+  "preview_left_paused": true,
+  "post_gpu_test_change": "A checked integer byte-count multiplication replaces unchecked multiplication before invalid count rejection; final dev compile passed. GPU shader and valid-count arithmetic unchanged. Native bundle was built before this CPU-only guard hardening.",
+  "files": {
+    "crates/voxy_render/src/surface_light_frame.rs": "debe9f94402f8d3afa429ef936843139f3052ea279ab9e9485e92d1772bd4467",
+    "crates/voxy_render/src/surface_light_frame.wgsl": "6a4092a396bb7c1ae366e089502b26ac631f389ec570bf3e7bbff3d35855b7bd",
+    "crates/voxy_render/src/surface_light_transfer_tests.rs": "94de6d5f37e3ec2446858f6c8ed8f4ac71d60b76fc35fc8921b67c472aa0a01b",
+    "crates/voxy_app/src/scene_app.rs": "9940b30772cc4c0e1326edb2cfa7757e7cecc9f32b9a72f8e22b50dd1ae01a28",
+    "artifacts/articulated-jump-2026-10-11/Voxy GPU Surface Light.app/Contents/MacOS/female_physical_stance": "2b931cb7fe9779d2f92ec751681f7fb8abccb147cca90fbbb24e16cef07801b8",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/resident-light-frame-tests.log": "fe1188f3cd32f7e9b04c1a08e57d52418deff3ace0ddb3457fdff0acb16bafd3",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/native-gpu-surface-light-build.log": "9974ffc874a491d06037512da6df711d88c9f7d9410fac62698f449862685d5a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/resident-light-final-check.log": "02c8ba2787adb0d72c89ef7f686ccfee99d31ca9606dfa618974a70ca77e9e7f",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/native-gpu-surface-light-profile.json": "9b09896cb5b061448005294c476501f3be0903d5f4f23e447d7f3f7b809c36f8",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/native-gpu-surface-light-profile-snapshot.log": "98896c673817223ed8a07480e4bca6c8e74a411cdd37b42cca0b44defb134c5c"
+  }
+}

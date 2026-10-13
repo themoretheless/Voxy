@@ -1,0 +1,15 @@
+{
+  "status": "experiment retained outside production admission chain",
+  "finding": "Rounded closest-point axis interpolation fails to certify the captured near-clearance primitive; no evidence supports adding its cost to the default path.",
+  "production": "Feature certificate then unchanged exact closest-feature discovery; rounded axis walker is instantiated by tests only.",
+  "targeted_passed": 27,
+  "ordinary_passed": 406,
+  "ordinary_ignored": 60,
+  "non_test_release_check": "passed with existing warnings",
+  "candidate_full_groom_direction_audit": "passed before removing candidate from default chain; direction-only, not solver completion",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_triangle_exact_discovery.rs": "c73f4286b063af539250473214b2f6c12cbde75299e33ced57a74e8eb7ab94c0"
+  },
+  "profile": "Current frozen cubic/prepared wrapper sample: general exact discovery dominates mesh refresh; short snapshot, not full-frame percentage.",
+  "limits": "Full wrapper still active; full jump cycle and FPS unqualified"
+}

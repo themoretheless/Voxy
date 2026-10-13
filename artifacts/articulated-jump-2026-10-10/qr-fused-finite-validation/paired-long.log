@@ -1,0 +1,8 @@
+bitwise matched cases=20 successful=20 rows=86 width=1638
+paired repeat=0 baseline_ms=2870.440834 candidate_ms=2129.092541
+paired repeat=1 baseline_ms=2521.710291 candidate_ms=2140.776292
+paired repeat=2 baseline_ms=2288.862709 candidate_ms=1619.0801669999998
+paired repeat=3 baseline_ms=1271.1781250000001 candidate_ms=1061.562208
+paired repeat=4 baseline_ms=2168.208125 candidate_ms=1347.189792
+paired repeat=5 baseline_ms=1871.15375 candidate_ms=1360.5123749999998
+paired repeat=6 baseline_ms=1742.276791 candidate_ms=1269.784041

@@ -1,0 +1,8 @@
+{
+  "decision": "reverted only coordinate iterator experiment",
+  "reason": "alternating timings overlap substantially under variable host load; no repeatable benefit established",
+  "bitwise_fixture_replay": "passed 101 rows x 2016 coordinates",
+  "focused_tests": "31 passed, 6 ignored before revert",
+  "full_jump": "failed frame 2 of 720, joint hair contact position linearization did not converge",
+  "fps": "not measured"
+}

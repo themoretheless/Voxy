@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "binary": "target/release/deps/voxy_app-1c1560a10812259f",
+  "sha256": "7cbe6b3d298acb159f65a46494f0758313b9f80662d74e78be7ba79cba756d65",
+  "scope": "build only; full authored simulation unqualified"
+}

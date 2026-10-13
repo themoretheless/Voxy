@@ -1,0 +1,18 @@
+{
+  "attempted_frame": 1,
+  "authored_jump": true,
+  "completed_frames": 0,
+  "continuous_contacts": true,
+  "error": null,
+  "gpu_hair_backend": true,
+  "guide_count": 469,
+  "phase": "preparing",
+  "process_id": 83879,
+  "required_frames": 720,
+  "scope": "actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.0,
+  "status": "running",
+  "steps": [],
+  "updated_unix_ms": 1791853068539
+}

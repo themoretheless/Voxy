@@ -1,0 +1,22 @@
+{
+  "status": "candidate rejected and reverted: no captured certificate improvement",
+  "session": 83936,
+  "log": "physics-tests.log",
+  "source_sha256": "27de4410ecc2a2d3fb5d4ee492fe5fa52cb27e5326d437da25101ae687b816f9",
+  "change": "TwoSum residual-directed addition enclosures; exact sums stay singleton; overflow remains unbounded; no material or contact tolerance changes",
+  "independent_audit": "result.json",
+  "limits": "Exact-add enclosure correctness verified, but no trajectory or performance improvement established. Production source restored; diagnostic binary still maps candidate until rebuilt.",
+  "tests": {
+    "passed": 399,
+    "failed": 0,
+    "ignored": 56
+  },
+  "captured_primitive_result": "InitialContact unchanged at 1024/4096/16384",
+  "captured_log": "initial-touch.log",
+  "restored_source_sha256": "abe5c70d9b4600cd2e5349e448eb3c4c35b824982dcd29d07efad266b2a70d17",
+  "restored_non_test_check": {
+    "status": "passed",
+    "log": "restored-physics-check.log",
+    "elapsed_seconds": 15.47
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "absolute_physical_tolerance": 1e-14,
+  "comparison": "production per-column QR dispatches versus one resident ordered-column dispatch; original full physical projection, support compaction and full readback in both",
+  "concurrent_system_load_controlled": false,
+  "coordinates": 1764,
+  "maximum_reaction_difference": 0.0,
+  "maximum_response_difference": 0.0,
+  "median_baseline_seconds": 0.813243375,
+  "median_candidate_seconds": 0.813444792,
+  "native_fallback_used": false,
+  "pairs": [
+    {
+      "baseline_equality_dispatches": 119,
+      "baseline_qr_columns_reused": 0,
+      "baseline_seconds": 1.419607667,
+      "candidate_equality_dispatches": 119,
+      "candidate_qr_columns_reused": 0,
+      "candidate_seconds": 0.8327975,
+      "pair": 0
+    },
+    {
+      "baseline_equality_dispatches": 119,
+      "baseline_qr_columns_reused": 0,
+      "baseline_seconds": 0.847403666,
+      "candidate_equality_dispatches": 119,
+      "candidate_qr_columns_reused": 0,
+      "candidate_seconds": 0.813444792,
+      "pair": 1
+    },
+    {
+      "baseline_equality_dispatches": 119,
+      "baseline_qr_columns_reused": 0,
+      "baseline_seconds": 0.666090667,
+      "candidate_equality_dispatches": 119,
+      "candidate_qr_columns_reused": 0,
+      "candidate_seconds": 0.602770209,
+      "pair": 2
+    },
+    {
+      "baseline_equality_dispatches": 119,
+      "baseline_qr_columns_reused": 0,
+      "baseline_seconds": 0.575366125,
+      "candidate_equality_dispatches": 119,
+      "candidate_qr_columns_reused": 0,
+      "candidate_seconds": 0.80480025,
+      "pair": 3
+    },
+    {
+      "baseline_equality_dispatches": 119,
+      "baseline_qr_columns_reused": 0,
+      "baseline_seconds": 0.813243375,
+      "candidate_equality_dispatches": 119,
+      "candidate_qr_columns_reused": 0,
+      "candidate_seconds": 0.929308292,
+      "pair": 4
+    },
+    {
+      "baseline_equality_dispatches": 119,
+      "baseline_qr_columns_reused": 0,
+      "baseline_seconds": 0.904684292,
+      "candidate_equality_dispatches": 119,
+      "candidate_qr_columns_reused": 0,
+      "candidate_seconds": 1.364967917,
+      "pair": 5
+    },
+    {
+      "baseline_equality_dispatches": 119,
+      "baseline_qr_columns_reused": 0,
+      "baseline_seconds": 0.584694334,
+      "candidate_equality_dispatches": 119,
+      "candidate_qr_columns_reused": 0,
+      "candidate_seconds": 0.517489792,
+      "pair": 6
+    }
+  ],
+  "rendered_fps_measured": false,
+  "rows": 174,
+  "scope": "complete original physical projection, warmed shaders, seven alternating pairs; excludes device creation, fixture load, rendering and extra post-timing validation",
+  "speedup": 0.9997523900798421,
+  "systems": 14,
+  "whole_animation_benchmark": false
+}

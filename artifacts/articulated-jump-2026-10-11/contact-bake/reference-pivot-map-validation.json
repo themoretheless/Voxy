@@ -1,0 +1,17 @@
+{
+  "passed": 260,
+  "failed": 0,
+  "scope": "reference bone-local point mapping with explicit model sizing",
+  "checks": [
+    "different source target bone axes",
+    "model axis conversion",
+    "nonuniform and reflected scales",
+    "explicit size ratio",
+    "unmapped and invalid input rejection"
+  ],
+  "target_sole_geometry_verified": false,
+  "sha256": {
+    "crates/voxy_animation/src/retarget/model_rotations.rs": "e52186ee326c62bc0af429c509c22d1bd4f4e7addd4bb3006851ae058edf0586",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/reference-pivot-map-final-tests.log": "5cd292603439c2257ed3f8a73998538ccd43092193a9dc27a57db0f120dd6fb8"
+  }
+}

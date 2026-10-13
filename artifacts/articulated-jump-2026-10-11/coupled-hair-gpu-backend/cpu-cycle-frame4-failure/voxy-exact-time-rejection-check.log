@@ -1,0 +1,61 @@
+    Checking physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:18:127
+   |
+18 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:72:19
+   |
+65 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+72 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `advance_contacts` is never used
+   --> crates/physics/src/hair/contact_safe_motion.rs:705:24
+    |
+705 | pub(in crate::hair) fn advance_contacts(
+    |                        ^^^^^^^^^^^^^^^^
+
+warning: function `activate` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:145:15
+    |
+145 | pub(super) fn activate(
+    |               ^^^^^^^^
+
+warning: function `activate_with_workers` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:158:15
+    |
+158 | pub(super) fn activate_with_workers(
+    |               ^^^^^^^^^^^^^^^^^^^^^
+
+warning: `physics` (lib) generated 7 warnings (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 12.17s

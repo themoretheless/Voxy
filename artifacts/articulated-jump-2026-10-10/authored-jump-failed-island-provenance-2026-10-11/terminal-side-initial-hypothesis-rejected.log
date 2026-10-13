@@ -1,0 +1,42 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 1m 06s
+     Running unittests src/lib.rs (target/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+TERMINAL ENDPOINT face=91349 point=[-0.04229129839037451, 0.7933419633250849, -0.008502289929426726] closest=[-0.042224150311804376, 0.7932417089355104, -0.008423237226056523] outward=[-0.4654859267110884, 0.6949864900336558, -0.5480115242443525]
+
+thread 'hair::contact::terminal_side_replay_tests::captured_terminal_trajectory_side_matches_closed_surface' (88604156) panicked at crates/physics/src/hair/contact.rs:2688:9:
+fixture must expose the opposing time-one trajectory witness
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hair::contact::terminal_side_replay_tests::captured_terminal_trajectory_side_matches_closed_surface ... FAILED
+
+failures:
+
+failures:
+    hair::contact::terminal_side_replay_tests::captured_terminal_trajectory_side_matches_closed_surface
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 419 filtered out; finished in 0.47s
+
+error: test failed, to rerun pass `-p physics --lib`

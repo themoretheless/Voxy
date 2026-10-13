@@ -1,0 +1,95 @@
+{
+  "attempted_frame": 5,
+  "authored_jump": true,
+  "completed_frames": 4,
+  "continuous_contacts": true,
+  "error": "swept contact refinement budget exhausted",
+  "gpu_hair_backend": true,
+  "guide_count": 469,
+  "phase": "preparing",
+  "process_id": 5329,
+  "required_frames": 720,
+  "scope": "actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.03333333333333333,
+  "status": "failed",
+  "steps": [
+    {
+      "elapsed_ms": 22926.221459,
+      "frame": 1,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 9708,
+        "joint_coordinate_calls": 9708,
+        "joint_equality_dispatches": 552,
+        "joint_equality_submissions": 552,
+        "joint_result_cache_hits": 5661,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0,
+        "workspace_creations": 11,
+        "workspace_reuses": 541
+      },
+      "hair_ms": 22916.952875,
+      "skin_ms": 54.668665999999995,
+      "time_s": 0.008333333333333333
+    },
+    {
+      "elapsed_ms": 709535.8025,
+      "frame": 2,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 193227,
+        "joint_coordinate_calls": 193227,
+        "joint_equality_dispatches": 9676,
+        "joint_equality_submissions": 9676,
+        "joint_result_cache_hits": 129677,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0,
+        "workspace_creations": 1999,
+        "workspace_reuses": 7677
+      },
+      "hair_ms": 709533.3505,
+      "skin_ms": 56.134792000000004,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "elapsed_ms": 170520.67541700002,
+      "frame": 3,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 320955,
+        "joint_coordinate_calls": 320955,
+        "joint_equality_dispatches": 12094,
+        "joint_equality_submissions": 12094,
+        "joint_result_cache_hits": 186279,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0,
+        "workspace_creations": 3219,
+        "workspace_reuses": 8875
+      },
+      "hair_ms": 170518.322458,
+      "skin_ms": 49.802333,
+      "time_s": 0.025
+    },
+    {
+      "elapsed_ms": 6947244.18525,
+      "frame": 4,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 6776742,
+        "joint_coordinate_calls": 6776742,
+        "joint_equality_dispatches": 92849,
+        "joint_equality_submissions": 92849,
+        "joint_result_cache_hits": 2226892,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0,
+        "workspace_creations": 19232,
+        "workspace_reuses": 73617
+      },
+      "hair_ms": 6947238.7001249995,
+      "skin_ms": 33.967875,
+      "time_s": 0.03333333333333333
+    }
+  ],
+  "updated_unix_ms": 1791854283192
+}

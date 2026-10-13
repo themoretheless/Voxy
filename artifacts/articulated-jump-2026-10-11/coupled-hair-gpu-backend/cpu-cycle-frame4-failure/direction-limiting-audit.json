@@ -1,0 +1,17 @@
+{
+  "scope": "historical frozen rejected direction; distinct from live nonlinear direction",
+  "audit_passed": true,
+  "limiting_rod": 9,
+  "limiting_segment": 19,
+  "full_direction_trial_gap_m": -1.80969794431751e-10,
+  "same_plane_origin_gap_m": -8.811873524483706e-11,
+  "admission_tolerance_m": 1e-10,
+  "origin_excluding_rows_full_step": 49,
+  "origin_outside_tolerance_rows_full_step": 0,
+  "descending_feasible_scales": [
+    5.960464477539063e-08,
+    3.725290298461914e-09
+  ],
+  "conclusion": "zero-gap model-origin filter rejects approaching constraints that admit origin under existing tolerance; do not blindly retain stale planes or infer stationarity from tiny accepted steps",
+  "observed_unix_s": 1791765796.084766
+}

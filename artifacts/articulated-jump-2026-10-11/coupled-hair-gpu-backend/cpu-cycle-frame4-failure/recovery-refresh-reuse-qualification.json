@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "session": 95215,
+  "log": "/tmp/voxy-recovery-refresh-reuse.log",
+  "source_sha256": "103fa70b61281add1cae343aa8c96c64135c3e8d641afa792a653eb21924b618",
+  "change": "Carry refreshed contact pairs with accepted trial pose; invalidate after geometric advancement; caller state still transactional",
+  "reference": "Compile-time REUSE=false executes original repeated refresh path",
+  "limits": "Small fixture equivalence and call reduction only. Full-groom captured replay still on prior binary; full solver convergence and FPS not qualified.",
+  "comparison_cases": 6,
+  "refresh_calls_saved": 5,
+  "comparison": "Identical recovery results, x/q and original roots against REUSE=false",
+  "ordinary_tests_passed": 401,
+  "ordinary_tests_ignored": 58,
+  "non_test_release_check": "passed"
+}

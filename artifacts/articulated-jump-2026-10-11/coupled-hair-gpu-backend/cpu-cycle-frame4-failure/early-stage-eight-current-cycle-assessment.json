@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "pid": 32093,
+  "command": [
+    "/tmp/voxy-early-stage-eight-1791769459688179000/physics-tests",
+    "captured_contact_reaches_feasible_geometry",
+    "--ignored",
+    "--nocapture"
+  ],
+  "directory": "/tmp/voxy-early-stage-eight-1791769459688179000",
+  "first_stage_limit": 8,
+  "input_sha256": "b5ea6425e244bca837608d37d302584b795325baff4d416517ecd1411bef0b39",
+  "binary_sha256": "7185b933fb4d95b83acc2b94ea12a9cf68d80376e64cbcd39f76d5e386871822",
+  "scope": "test-only earlier restoration with original native tangent, path, strain, root and energy gates; no production policy change or FPS claim",
+  "exit_code": 0,
+  "elapsed_seconds": 373.4647099971771,
+  "final_state_sha256": "3f94da95277ba3599d5b4602d33554129aefc14e3a97537f329cad4a23bab82f",
+  "production_policy_promoted": false,
+  "reason": "passed physical gates but elapsed 373.06s versus 199.59s baseline; single background-loaded observations do not justify earlier restoration"
+}

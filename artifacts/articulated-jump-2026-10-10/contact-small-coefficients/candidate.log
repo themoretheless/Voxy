@@ -1,0 +1,3 @@
+gradient=1e-20 result=Ok(Some(0))
+gradient=1e-200 result=Err("contact constraint diagonal underflow")
+gradient=0e0 result=Ok(None)

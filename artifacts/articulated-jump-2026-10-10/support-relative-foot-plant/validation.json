@@ -1,0 +1,11 @@
+{
+  "command": "cargo test -p voxy_animation --lib",
+  "exit_code": 0,
+  "passed": 243,
+  "scope": "support-relative ankle anchors and exact-IK integration; no runtime gait state machine, terrain acquisition or rendered walk/run qualification",
+  "source_sha256": {
+    "crates/voxy_animation/src/foot_plant.rs": "7ccf8a07fcdf0e356101f21c988f9fb468bee48ac0b846554cbb4d9abf11f2bb",
+    "crates/voxy_animation/src/ik/tests.rs": "ccbb336328436ec9abff354f97a7406201b446fceb49129bffeda46e588e830d",
+    "crates/voxy_animation/src/lib.rs": "a9a5f66a52e6aade60bc4e3278e6effaa74b2241ec4eab2e28f16aa662226e42"
+  }
+}

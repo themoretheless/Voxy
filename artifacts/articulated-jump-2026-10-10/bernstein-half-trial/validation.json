@@ -1,0 +1,41 @@
+{
+  "decision": "do not promote candidate",
+  "candidate": "specialize positive half multiplication in Bernstein subdivision",
+  "bitwise_cases": 2639,
+  "tested_bounds": "normal, signed zero, subnormal, maximum finite, infinity, NaN, reversed bounds",
+  "timed_workload": "377 interval inputs, degree6, 20000 repeats per batch, alternating order",
+  "pairs": [
+    [
+      7473.900791,
+      8003.84
+    ],
+    [
+      8719.344667,
+      9078.43325
+    ],
+    [
+      7039.016416,
+      7524.356666
+    ],
+    [
+      7859.0668749999995,
+      8412.087708
+    ],
+    [
+      7356.328875,
+      8235.5865
+    ],
+    [
+      6372.843833,
+      7707.611667
+    ],
+    [
+      6667.608375000001,
+      6081.751041
+    ]
+  ],
+  "median_candidate_over_baseline": 1.0703672384770233,
+  "concurrent_machine_load_controlled": false,
+  "production_source_changed": false,
+  "production_source_sha256": "d09c2ebef23a5082a03a2320cf546fafa5d9b9a166c972fb5851a4c9dfd6099a"
+}

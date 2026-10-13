@@ -1,0 +1,14 @@
+{
+  "status": "release_check_passed",
+  "examples": [
+    "hair_render",
+    "skin_render",
+    "female_render"
+  ],
+  "source_sha256": {
+    "crates/voxy_app/examples/hair_render.rs": "14826099da518a447ee7e784150c17ff7a2cdeef495ec0f131e94eebefd6fe27",
+    "crates/voxy_app/examples/skin_render.rs": "beacfd7a858de2bd1b61576ecaf8c115f1c8f9a7b507969125cf11fc166fd944",
+    "crates/voxy_app/examples/female_render.rs": "48277f9ffc0ee22c494b043ae7e925eecd268e3ac75621174b5acfbe4b618e40"
+  },
+  "scope": "compilation check only; does not prove runtime visuals or FPS"
+}

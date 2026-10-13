@@ -1,0 +1,14 @@
+
+running 3 tests
+GPU REPEATED QR ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+GPU QR PIVOT 1e-13
+GPU QR PIVOT 1e-20
+GPU QR PIVOT 1e-30
+GPU QR PIVOT 0e0
+test joint_contact_dot::tests::gpu_resident_qr_keeps_small_positive_pivot_and_rejects_zero_pivot ... ok
+test joint_contact_dot::tests::gpu_validated_qr_prefix_matches_fresh_append_and_release ... ok
+GPU REPEATED QR TIMESTAMPS supported=true passes=9 repetitions_per_pass=3 period_ns=1 samples_ns=[57125.0, 58041.0, 57666.0, 57709.0, 57458.0, 58333.0, 58084.0, 103333.0, 58208.0] exact_unprofiled_factors=true scope=selected_QR_passes_not_full_model_or_fps
+test joint_contact_dot::tests::gpu_repeated_qr_pass_timestamps_preserve_factors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 248 filtered out; finished in 0.10s
+

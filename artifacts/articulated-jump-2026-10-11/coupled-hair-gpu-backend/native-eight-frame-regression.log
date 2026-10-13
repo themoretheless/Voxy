@@ -1,0 +1,24 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+AUTHORED COUPLED step=1 time_s=0.008333333333333333 skin_ms=46.471666 hair_ms=109.226291
+AUTHORED COUPLED step=2 time_s=0.016666666666666666 skin_ms=37.104375000000005 hair_ms=108.710875
+AUTHORED COUPLED step=3 time_s=0.025 skin_ms=49.912791999999996 hair_ms=110.545417
+HAIR TEMPORAL REFINEMENT retry from=2 to=4 dt=0.008333333333333333
+HAIR TEMPORAL REFINEMENT admitted substeps=4 dt=0.008333333333333333
+AUTHORED COUPLED step=4 time_s=0.03333333333333333 skin_ms=35.597708 hair_ms=319.976
+AUTHORED COUPLED step=5 time_s=0.041666666666666664 skin_ms=53.639167 hair_ms=127.65833300000001
+AUTHORED COUPLED step=6 time_s=0.049999999999999996 skin_ms=48.552834000000004 hair_ms=136.556625
+HAIR TEMPORAL REFINEMENT retry from=2 to=4 dt=0.008333333333333333
+HAIR TEMPORAL REFINEMENT admitted substeps=4 dt=0.008333333333333333
+AUTHORED COUPLED step=7 time_s=0.05833333333333333 skin_ms=32.826333 hair_ms=387.078292
+AUTHORED COUPLED step=8 time_s=0.06666666666666667 skin_ms=33.433125000000004 hair_ms=158.485042
+test female_demo::authored_jump_integration_tests::authored_jump_initialization_preserves_rest_and_advances_coupled_skin_hair ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 365 filtered out; finished in 6.25s
+

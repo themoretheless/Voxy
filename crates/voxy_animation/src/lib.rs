@@ -1,6 +1,9 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
 mod precision;
+mod loop_closure;
+mod contact_bake;
+pub use contact_bake::{bake_periodic_foot_contacts, BakedFootContacts, ContactBakeSettings, MAX_CONTACT_BAKE_SAMPLES};
 pub use precision::{Pose64, Transform64};
 mod events;
 pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError};
@@ -9,14 +12,18 @@ mod root_clock;
 mod root_curve;
 pub use root_clock::{RootCyclePhase, enclose_root_cycle_phase};
 mod ik;
+mod foot_support;
+pub use foot_support::{FootSupportPoints, FootSupportPoint, MAX_FOOT_SUPPORT_POINTS};
+mod foot_plant;
+pub use foot_plant::FootPlant;
 mod retarget;
-pub use retarget::{RetargetBinding, RetargetJoint, RetargetRootSimilarity};
+pub use retarget::{ModelRotationRetarget, RetargetBinding, RetargetJoint, RetargetRootSimilarity};
 mod blend_phase;
 pub use blend_phase::{
     ClipPhase, FrozenSourceTick, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval,
 };
 
-pub use ik::{TwoBoneChain, TwoBoneResult, TwoBoneTarget};
+pub use ik::{PlantedLegsResult, TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
 pub use rigid_fade::RootRigidFadePlan;
 mod root_rigid;
@@ -35,6 +42,11 @@ mod root_rotation;
 pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
     RootRotationCurve, RootRotationPath, RootRotationSpan,
+};
+mod soa;
+pub use soa::{
+    AnimationUpdateJob, AnimationUpdateQueue, CompletedAnimationUpdate, SOA_NO_PARENT, SoaPose,
+    SoaSkeleton,
 };
 
 use std::fmt;
@@ -180,6 +192,12 @@ impl Skeleton {
             rig: self.joints.clone(),
             local: self.joints.iter().map(|joint| joint.bind_local).collect(),
         }
+    }
+
+    /// Creates a Structure-of-Arrays (SoA) skeleton layout for cache-friendly pose evaluation.
+    #[must_use]
+    pub fn to_soa(&self) -> SoaSkeleton {
+        SoaSkeleton::from_skeleton(self)
     }
 }
 
@@ -885,6 +903,93 @@ impl AnimationClip {
             local,
         }
     }
+
+    /// Samples directly into a Structure-of-Arrays ([`SoaPose`]) layout without intermediate AoS allocation.
+    #[must_use]
+    pub fn sample_soa(&self, _skeleton: &Skeleton, time: f32) -> SoaPose {
+        let local_time = match self.playback {
+            Playback::Loop => time.rem_euclid(self.duration),
+            Playback::Clamp => time.clamp(0.0, self.duration),
+        };
+        self.sample_local_soa(local_time)
+    }
+
+    /// Samples and validates a [`SoaPose`] suitable for admission into a runtime or GPU palette.
+    ///
+    /// # Errors
+    /// Rejects non-finite time, mismatched rig layouts, and invalid interpolated TRS.
+    pub fn try_sample_soa(&self, skeleton: &Skeleton, time: f32) -> Result<SoaPose, AnimationError> {
+        if !time.is_finite() {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if self.tracks.len() != skeleton.joints.len() {
+            return Err(AnimationError::TrackCountMismatch {
+                expected: skeleton.joints.len(),
+                actual: self.tracks.len(),
+            });
+        }
+        if !self.is_compatible_with(skeleton) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        let local_time = match self.playback {
+            Playback::Loop => time.rem_euclid(self.duration),
+            Playback::Clamp => time.clamp(0.0, self.duration),
+        };
+        let mut pose = self.sample_local_soa(local_time);
+        for index in 0..pose.len() {
+            let transform = Transform {
+                translation: pose.translations[index],
+                rotation: pose.rotations[index],
+                scale: pose.scales[index],
+            };
+            if !transform.is_valid() {
+                return Err(AnimationError::InvalidPose(index));
+            }
+        }
+        pose.validated = true;
+        Ok(pose)
+    }
+
+    fn sample_local_soa(&self, time: f32) -> SoaPose {
+        let len = self.rig.len();
+        let mut translations = Vec::with_capacity(len);
+        let mut rotations = Vec::with_capacity(len);
+        let mut scales = Vec::with_capacity(len);
+        for index in 0..len {
+            let joint = &self.rig[index];
+            let track = &self.tracks[index];
+            let mode = &self.interpolation[index];
+            let tangents = &self.tangents[index];
+            translations.push(sample_vec3(
+                &track.translations,
+                time,
+                joint.bind_local.translation,
+                mode.translation,
+                &tangents.translation,
+            ));
+            rotations.push(sample_quat(
+                &track.rotations,
+                time,
+                joint.bind_local.rotation,
+                mode.rotation,
+                &tangents.rotation,
+            ));
+            scales.push(sample_vec3(
+                &track.scales,
+                time,
+                joint.bind_local.scale,
+                mode.scale,
+                &tangents.scale,
+            ));
+        }
+        SoaPose {
+            rig: self.rig.clone(),
+            translations,
+            rotations,
+            scales,
+            validated: false,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -899,6 +1004,12 @@ impl Pose {
         &self.local
     }
 
+    /// Converts this AoS [`Pose`] into a contiguous [`SoaPose`].
+    #[must_use]
+    pub fn to_soa(&self) -> SoaPose {
+        SoaPose::from_pose(self)
+    }
+
     /// Updates one local translation, preserving its rotation and scale.
     /// Invalid joints or nonfinite translations leave the pose unchanged.
     pub fn set_joint_translation(&mut self, index: usize, translation: Vec3) -> Result<(), AnimationError> {
@@ -906,6 +1017,18 @@ impl Pose {
             return Err(AnimationError::InvalidPose(index));
         };
         let replacement = Transform { translation, ..current };
+        if !replacement.is_valid() { return Err(AnimationError::InvalidPose(index)); }
+        self.local[index] = replacement;
+        Ok(())
+    }
+
+    /// Updates one local scale, preserving translation and rotation.
+    /// Invalid joints, nonfinite or singular scales leave the pose unchanged.
+    pub fn set_joint_scale(&mut self, index: usize, scale: Vec3) -> Result<(), AnimationError> {
+        let Some(current) = self.local.get(index).copied() else {
+            return Err(AnimationError::InvalidPose(index));
+        };
+        let replacement = Transform { scale, ..current };
         if !replacement.is_valid() { return Err(AnimationError::InvalidPose(index)); }
         self.local[index] = replacement;
         Ok(())
@@ -933,21 +1056,27 @@ impl Pose {
         Ok(())
     }
 
-    /// Produces `global_joint * inverse_bind` matrices in skeleton order.
+    /// Produces `global_joint * inverse_bind` matrices into reusable buffers.
     ///
     /// # Errors
-    ///
     /// Rejects a pose created for a different skeleton, invalid blend data,
     /// or overflowing global/palette matrices.
-    pub fn skin_matrices(&self, skeleton: &Skeleton) -> Result<Vec<Mat4>, AnimationError> {
+    pub fn skin_matrices_into(
+        &self,
+        skeleton: &Skeleton,
+        global: &mut Vec<Mat4>,
+        skin: &mut Vec<Mat4>,
+    ) -> Result<(), AnimationError> {
         if self.local.len() != skeleton.joints.len() {
             return Err(AnimationError::PoseCountMismatch);
         }
         if !rigs_match(&self.rig, &skeleton.joints) {
             return Err(AnimationError::SkeletonMismatch);
         }
-        let mut global = Vec::with_capacity(self.local.len());
-        let mut skin = Vec::with_capacity(self.local.len());
+        global.clear();
+        skin.clear();
+        global.reserve(self.local.len());
+        skin.reserve(self.local.len());
         for (index, (local, joint)) in self.local.iter().zip(skeleton.joints.iter()).enumerate() {
             if !local.is_valid() {
                 return Err(AnimationError::InvalidPose(index));
@@ -963,6 +1092,19 @@ impl Pose {
             global.push(matrix);
             skin.push(palette);
         }
+        Ok(())
+    }
+
+    /// Produces `global_joint * inverse_bind` matrices in skeleton order.
+    ///
+    /// # Errors
+    ///
+    /// Rejects a pose created for a different skeleton, invalid blend data,
+    /// or overflowing global/palette matrices.
+    pub fn skin_matrices(&self, skeleton: &Skeleton) -> Result<Vec<Mat4>, AnimationError> {
+        let mut global = Vec::with_capacity(self.local.len());
+        let mut skin = Vec::with_capacity(self.local.len());
+        self.skin_matrices_into(skeleton, &mut global, &mut skin)?;
         Ok(skin)
     }
 
@@ -1759,6 +1901,7 @@ pub enum AnimationError {
     InvalidIkTarget,
     UnsupportedIkScale,
     DegenerateIkChain,
+    UnreachableFootPlant,
     RootRigidBudget,
     RootMotionBudget,
     RootRotationBudget,
@@ -1772,6 +1915,8 @@ pub enum AnimationError {
     InvalidJointTransform(usize),
     InvalidParent { joint: usize, parent: u16 },
     InvalidClipHeader,
+    UnsupportedLoopClosure,
+    InvalidContactBake,
     TrackCountMismatch { expected: usize, actual: usize },
     InterpolationCountMismatch { expected: usize, actual: usize },
     TangentCountMismatch { expected: usize, actual: usize },

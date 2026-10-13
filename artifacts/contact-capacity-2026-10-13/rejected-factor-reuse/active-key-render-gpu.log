@@ -1,0 +1,10 @@
+
+running 1 test
+TRIPLE FACTOR APPENDED INACTIVE ROW original_coordinate_gate=true changed_R_stride=true original_state_bit_equal=true retained_bytes=127440
+TRIPLE FACTOR REUSE changed_bounds_original_coordinate_gate=true freshly_factored_result_bit_equal=true
+TRIPLE ACTIVE BASIS appended_row_enters_active_set=true cached_prefix_extends_with_new_stride=true
+TRIPLE WARM cold_iterations=11 warm_iterations=1 original_coordinate_gate=true dependent_hint_rejected=true fresh_cold_retry_valid=true scope=coordinate_candidate_only_not_physical_admission
+test joint_contact_dot::triple::qr_tests::gpu_triple_seeded_original_operator ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 303 filtered out; finished in 0.12s
+

@@ -37,8 +37,8 @@ impl<'a> EqualityQr<'a> {
     }
     fn residuals(&self,active:&[usize],bounds:&[f64],state:&[f64])->Option<Vec<f64>> {
         if state.iter().any(|value|!value.is_finite()) {return None;}
-        Some(active.iter().zip(bounds).map(|(&id,bound)|bound-accurate_products(
-            self.supports[id].iter().map(|&i|(self.columns[id][i],state[i])))).collect())
+        Some(active.iter().zip(bounds).map(|(&id,bound)|-accurate_residual(
+            self.supports[id].iter().map(|&i|(self.columns[id][i],state[i])),*bound)).collect())
     }
     fn solve(&mut self, active: &[usize], bounds: &[f64], tolerance: f64) -> Option<(Vec<f64>, Vec<f64>)> {
         let n = active.len();
@@ -68,12 +68,21 @@ impl<'a> EqualityQr<'a> {
                         accurate_products(self.q_supports[j].iter().map(|&i|(basis[i],v[i])))
                     } else {accurate_dot(basis, &v)};
                     r[j] += projection;
-                    for (value, &axis) in v.iter_mut().zip(basis) {
-                        *value = (-projection).mul_add(axis, *value);
+                    if self.sparse_basis {
+                        // Validate while writing: avoid a second traversal of
+                        // the same coordinate vector after every basis update.
+                        // Keep every FMA, including exact zero coefficients.
+                        let mut finite = true;
+                        for (value, &axis) in v.iter_mut().zip(basis) {
+                            *value = (-projection).mul_add(axis, *value);
+                            finite &= value.is_finite();
+                        }
+                        if !finite { return None; }
+                    } else {
+                        for (value, &axis) in v.iter_mut().zip(basis) {
+                            *value = (-projection).mul_add(axis, *value);
+                        }
                     }
-                    // Sparse products must never hide zero * infinity. Any
-                    // nonfinite orthogonalization state is a rejected factor.
-                    if self.sparse_basis && v.iter().any(|value|!value.is_finite()) {return None;}
                 }
             }
             let scale = v.iter().map(|x| x.abs()).fold(0., f64::max);
@@ -334,7 +343,12 @@ impl<'a> UnilateralContinuation<'a> {
         if self.failed {return None;}
         if self.done {return Some(false);}
         if self.waiting {return Some(true);}
-        while self.iteration<512 {
+        // One iteration can insert at most one inequality. Include the initial
+        // zero-state check so a feasible independent contact set is not rejected
+        // solely because it has more than 511 rows. Keep the existing small-set
+        // budget and every original residual/admission check.
+        let iteration_limit=512usize.max(self.columns.len().saturating_add(1));
+        while self.iteration<iteration_limit {
             if !self.active.is_empty() {
                 self.targets.clear();self.targets.extend(self.active.iter().map(|&i|self.bounds[i]));
                 if self.needs_selected {
@@ -413,8 +427,8 @@ impl<'a> UnilateralContinuation<'a> {
         // hide the NaN which the original dense gap computation rejected.
         if self.state.iter().any(|v|!v.is_finite()) {return None;}
         for (row,((c,b),gap)) in self.columns.iter().zip(self.bounds).zip(&mut self.gaps).enumerate() {
-            *gap=(if self.sparse {accurate_products(self.factor.supports[row].iter().map(|&i|(c[i],self.state[i])))}
-                else {accurate_dot(c,&self.state)})-b;
+            *gap=if self.sparse {accurate_residual(self.factor.supports[row].iter().map(|&i|(c[i],self.state[i])),*b)}
+                else {accurate_residual(c.iter().copied().zip(self.state.iter().copied()),*b)};
         }
         let gaps=&self.gaps;
         if gaps.iter().any(|v| !v.is_finite()) {
@@ -483,6 +497,12 @@ pub(super) fn accurate_dot(a: &[f64], b: &[f64]) -> f64 {
     accurate_products(a.iter().copied().zip(b.iter().copied()))
 }
 
+// Include the bound before the final rounding; dot-then-subtract loses
+// sub-ulp contact clearances even when the dot itself is accurately rounded.
+pub(super) fn accurate_residual(products:impl Iterator<Item=(f64,f64)>,bound:f64)->f64 {
+    accurate_products(products.chain(std::iter::once((-bound,1.))))
+}
+
 pub(super) fn accurate_products(products: impl Iterator<Item = (f64, f64)>) -> f64 {
     let mut sum = 0f64;
     let mut correction = 0f64;
@@ -503,6 +523,24 @@ pub(super) fn accurate_products(products: impl Iterator<Item = (f64, f64)>) -> f
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn residual_retains_contact_clearance_below_dot_ulp() {
+        let tiny=2f64.powi(-54);
+        assert_eq!(accurate_dot(&[1.,tiny],&[1.,1.])-1.,0.);
+        assert_eq!(accurate_residual([(1.,1.),(tiny,1.)].into_iter(),1.),tiny);
+        assert_eq!(accurate_residual([(1e16,1.),(1.,1.),(-1e16,1.)].into_iter(),1.),0.);
+    }
+
+    #[test]
+    fn independent_contacts_above_fixed_iteration_budget_are_admitted() {
+        let count=513;
+        let mut columns=vec![vec![0.;count];count];
+        for (i,row) in columns.iter_mut().enumerate() {row[i]=1.;}
+        let (state,reactions)=unilateral(&columns,&vec![1.;count],1e-14)
+            .expect("all independent contact rows must have an opportunity to enter");
+        assert_eq!(state,vec![1.;count]);
+        assert_eq!(reactions,vec![1.;count]);
+    }
     #[test]
     fn release_only_directions_require_negative_dual_and_restore_original_stationarity() {
         let columns=vec![vec![1.,0.],vec![1.,1.]];let bounds=[1.,3.];
@@ -931,7 +969,7 @@ mod tests {
         let rows = integer(&mut input); let width = integer(&mut input);
         let systems = integer(&mut input); let _refinement = integer(&mut input);
         let tolerance = scalar(&mut input);
-        assert!(rows <= 512 && width <= 65536);
+        assert!(rows <= 1024 && width <= 65536);
         let original_bounds: Vec<_> = (0..rows).map(|_| scalar(&mut input)).collect();
         let bounds: Vec<_> = (0..rows).map(|_| scalar(&mut input)).collect();
         let columns: Vec<Vec<_>> = (0..rows).map(|_| (0..width)

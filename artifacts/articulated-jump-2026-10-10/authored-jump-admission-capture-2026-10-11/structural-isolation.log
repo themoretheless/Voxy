@@ -1,0 +1,96 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `physics` (lib test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 1m 28s
+     Running unittests src/lib.rs (target/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+STRUCTURAL ISOLATION rod=66 dt=2.6041666666666666e-4 initial_strain=7.672856851738663e-2
+STRUCTURAL ISOLATION iteration=0 strain=1.6766106410979198e-3 delta_m=2.6571559070537455e-3
+STRUCTURAL ISOLATION iteration=1 strain=4.5544216268766924e-4 delta_m=1.3263189273324808e-4
+STRUCTURAL ISOLATION iteration=2 strain=2.267718765214255e-4 delta_m=7.336568638903324e-5
+STRUCTURAL ISOLATION iteration=3 strain=1.591805688652137e-4 delta_m=3.6368314890244205e-5
+STRUCTURAL ISOLATION iteration=4 strain=1.3797372110579964e-4 delta_m=2.4281317897151044e-5
+STRUCTURAL ISOLATION iteration=5 strain=1.3080940418919162e-4 delta_m=1.6241133041870583e-5
+STRUCTURAL ISOLATION iteration=6 strain=1.2784418897138217e-4 delta_m=1.076500277596894e-5
+STRUCTURAL ISOLATION iteration=7 strain=1.2682406219699516e-4 delta_m=7.111781699807451e-6
+STRUCTURAL ISOLATION iteration=8 strain=1.263003322071743e-4 delta_m=4.682523827136772e-6
+STRUCTURAL ISOLATION iteration=9 strain=1.2614898572760325e-4 delta_m=3.0786157090844888e-6
+STRUCTURAL ISOLATION iteration=10 strain=1.260409411907304e-4 delta_m=2.0218000584290098e-6
+STRUCTURAL ISOLATION iteration=11 strain=1.2602350922419348e-4 delta_m=1.3271964995046977e-6
+STRUCTURAL ISOLATION iteration=12 strain=1.259973686886795e-4 delta_m=8.709990302312748e-7
+STRUCTURAL ISOLATION iteration=13 strain=1.2599834330595527e-4 delta_m=5.716161884354652e-7
+STRUCTURAL ISOLATION iteration=14 strain=1.2599078072716985e-4 delta_m=3.751710730893409e-7
+STRUCTURAL ISOLATION iteration=15 strain=1.259927457655241e-4 delta_m=2.462869512959189e-7
+STRUCTURAL ISOLATION iteration=16 strain=1.259901718930756e-4 delta_m=1.6171807347593507e-7
+STRUCTURAL ISOLATION iteration=17 strain=1.2599130173995832e-4 delta_m=1.0621947837771218e-7
+STRUCTURAL ISOLATION iteration=18 strain=1.2599032122762033e-4 delta_m=6.978951613294256e-8
+STRUCTURAL ISOLATION iteration=19 strain=1.259908597421866e-4 delta_m=4.58701865908709e-8
+STRUCTURAL ISOLATION iteration=20 strain=1.2599046179539997e-4 delta_m=3.0160255183125034e-8
+STRUCTURAL ISOLATION iteration=21 strain=1.259907031114782e-4 delta_m=1.9838745923224803e-8
+STRUCTURAL ISOLATION iteration=22 strain=1.259905364501268e-4 delta_m=1.3055012603296726e-8
+STRUCTURAL ISOLATION iteration=23 strain=1.259906420389978e-4 delta_m=8.594756656875414e-9
+STRUCTURAL ISOLATION iteration=24 strain=1.2599057120432633e-4 delta_m=5.66098461198242e-9
+STRUCTURAL ISOLATION iteration=25 strain=1.259906169601699e-4 delta_m=3.730450707808615e-9
+STRUCTURAL ISOLATION iteration=26 strain=1.2599058665485607e-4 delta_m=2.459519135890503e-9
+STRUCTURAL ISOLATION iteration=27 strain=1.259906064052796e-4 delta_m=1.6224343323185492e-9
+STRUCTURAL ISOLATION iteration=28 strain=1.2599059338747054e-4 delta_m=1.070829489917086e-9
+STRUCTURAL ISOLATION iteration=29 strain=1.2599060190177092e-4 delta_m=7.071600693648892e-10
+STRUCTURAL ISOLATION iteration=30 strain=1.2599059630269416e-4 delta_m=4.672690644576241e-10
+STRUCTURAL ISOLATION iteration=31 strain=1.259905999702049e-4 delta_m=3.089409435100468e-10
+STRUCTURAL ISOLATION iteration=32 strain=1.2599059756523978e-4 delta_m=2.0438538603649132e-10
+STRUCTURAL ISOLATION iteration=33 strain=1.2599059913620536e-4 delta_m=1.3529963261305735e-10
+STRUCTURAL ISOLATION iteration=34 strain=1.259905980994791e-4 delta_m=8.962339968443841e-11
+STRUCTURAL ISOLATION iteration=35 strain=1.259905987804899e-4 delta_m=5.940586937808258e-11
+STRUCTURAL ISOLATION iteration=36 strain=1.2599059834261794e-4 delta_m=3.940260459704897e-11
+STRUCTURAL ISOLATION iteration=37 strain=1.2599059863482864e-4 delta_m=2.6152397275575514e-11
+STRUCTURAL ISOLATION iteration=38 strain=1.2599059843876326e-4 delta_m=1.73697061198811e-11
+STRUCTURAL ISOLATION iteration=39 strain=1.2599059856599482e-4 delta_m=1.1544387783228345e-11
+STRUCTURAL ISOLATION iteration=40 strain=1.2599059848450445e-4 delta_m=7.677983612188203e-12
+STRUCTURAL ISOLATION iteration=41 strain=1.2599059853535266e-4 delta_m=5.10998696059439e-12
+STRUCTURAL ISOLATION iteration=42 strain=1.2599059850093575e-4 delta_m=3.4032095447650277e-12
+STRUCTURAL ISOLATION iteration=43 strain=1.2599059853024563e-4 delta_m=2.268064118504569e-12
+STRUCTURAL ISOLATION iteration=44 strain=1.2599059850582073e-4 delta_m=1.5125641065600864e-12
+STRUCTURAL ISOLATION iteration=45 strain=1.2599059851536865e-4 delta_m=1.0094227141528792e-12
+STRUCTURAL ISOLATION iteration=46 strain=1.2599059851203798e-4 delta_m=6.741041843709111e-13
+STRUCTURAL ISOLATION iteration=47 strain=1.2599059852069772e-4 delta_m=4.504553699709391e-13
+STRUCTURAL ISOLATION iteration=48 strain=1.2599059851847727e-4 delta_m=3.012308596836821e-13
+STRUCTURAL ISOLATION iteration=49 strain=1.25990598517145e-4 delta_m=2.0155271621329764e-13
+STRUCTURAL ISOLATION iteration=50 strain=1.2599059851825523e-4 delta_m=1.3493204946734197e-13
+STRUCTURAL ISOLATION iteration=51 strain=1.2599059851625682e-4 delta_m=9.041852058976998e-14
+STRUCTURAL ISOLATION iteration=52 strain=1.2599059851692296e-4 delta_m=6.063148952658545e-14
+STRUCTURAL ISOLATION iteration=53 strain=1.259905985127041e-4 delta_m=4.0676885061111125e-14
+STRUCTURAL ISOLATION iteration=54 strain=1.2599059850959549e-4 delta_m=2.7285502555313275e-14
+STRUCTURAL ISOLATION iteration=55 strain=1.2599059851203798e-4 delta_m=1.8321397438191138e-14
+STRUCTURAL ISOLATION iteration=56 strain=1.2599059851403638e-4 delta_m=1.2326038321734391e-14
+STRUCTURAL ISOLATION iteration=57 strain=1.2599059851248207e-4 delta_m=8.276119726549183e-15
+STRUCTURAL ISOLATION iteration=58 strain=1.2599059851581274e-4 delta_m=5.55212117157697e-15
+STRUCTURAL ISOLATION iteration=59 strain=1.259905985191434e-4 delta_m=3.739696897365127e-15
+STRUCTURAL ISOLATION iteration=60 strain=1.2599059851425842e-4 delta_m=2.525337962501149e-15
+STRUCTURAL ISOLATION iteration=61 strain=1.2599059851692296e-4 delta_m=1.6976341092181966e-15
+STRUCTURAL ISOLATION iteration=62 strain=1.2599059852269612e-4 delta_m=1.1490942388994425e-15
+STRUCTURAL ISOLATION iteration=63 strain=1.259905985175891e-4 delta_m=7.807412038560282e-16
+test hair::contact_replay::tests::captured_rejected_rod_structural_response ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 409 filtered out; finished in 0.55s
+

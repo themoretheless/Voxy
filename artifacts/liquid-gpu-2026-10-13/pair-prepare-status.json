@@ -1,0 +1,20 @@
+{
+  "particles": 70,
+  "pairs": 2415,
+  "formulations": 3,
+  "upstream_fields": "synthetic fixture, not a real density pass",
+  "pair_preparation_and_force_submissions": 1,
+  "intermediate_cpu_reads": 0,
+  "force_admission": {
+    "absolute": 1e-12,
+    "relative": 2e-11
+  },
+  "full_physical_chain_connected": false,
+  "fps_verified": false,
+  "checks": {
+    "pair-prepare-render-suite.log": 0,
+    "pair-prepare-legacy-force.log": 0,
+    "pair-prepare-force-chain.log": 0,
+    "pair-prepare-pressure-chain.log": 0
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "/tmp/voxy-original-equality-profile-tests": "1ba3335d5b5c17c90a4d61ef6a2a3643a039bcdecfc7c299780446d47e6f54f2",
+  "crates/voxy_app/src/gpu_hair_joint.rs": "498e2c11226aad19710b9fc385f8c1be9145a1317306ae76b7eafc86b3420cb7",
+  "crates/voxy_app/src/gpu_hair_solver.rs": "75500a62c4c5ff218cae546ed433ac44adc1c26d9b92332089d16b6ff61a75cd",
+  "crates/voxy_render/src/compute.rs": "f6b788dd0ce5b7c1cfd692780855d7073b86ba9408fd2ee41990aea10059b0d4",
+  "crates/voxy_render/src/joint_contact_qr.wgsl": "6f086b8dc15c770242f4f21463513eb8147f33ebf6bf842a543a59050aec42d1",
+  "artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture/operators/native-407.vqc": "d0c294c6aa21c9d8325d5c93098ff41514f86cf10e374b7e7d009792a113c0a2"
+}

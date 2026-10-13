@@ -1,0 +1,59 @@
+{
+  "scope": "Actual FemaleRig both feet through shared FootRuntime, accepted CharacterPhysics transaction and actual skin deformation; four fixed stance ticks",
+  "records": [
+    {
+      "bone": "left_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 0
+    },
+    {
+      "bone": "right_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 0
+    },
+    {
+      "bone": "left_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 1
+    },
+    {
+      "bone": "right_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 1
+    },
+    {
+      "bone": "left_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 2
+    },
+    {
+      "bone": "right_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 2
+    },
+    {
+      "bone": "left_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 3
+    },
+    {
+      "bone": "right_foot",
+      "skin_minimum_clearance_m": -2.9802322387695312e-08,
+      "tick": 3
+    }
+  ],
+  "maximum_absolute_skin_clearance_m": 2.9802322387695312e-08,
+  "passed": 1,
+  "failed": 0,
+  "filtered_out": 347,
+  "fixed_dt_seconds": 0.008333333333333333,
+  "demo_window_connected": false,
+  "gait_qualified": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_app/src/female_rig.rs": "896b8fb3ba9542abb3ca805dd6bae7395e881d8a907206aec960183aae6d21b1",
+    "crates/voxy_editor/src/foot_placement.rs": "b97e00dd778063a05af7883b6ecd41fe4d90abdd58e5e2c1111a15d8c9289b32",
+    "assets/characters/blender-female/prepared/foot-support-reference.json": "061c1776153a7fb64cce13c87dae1942685a2a17da948cb9284698eee2d7d017",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/actual-two-foot-owner-tests.log": "a343fa1da366e011d0983050affdebc93c804cd240955daf767dcf40687029c8"
+  }
+}

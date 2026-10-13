@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-decode-quantization/audit_expansion.py", line 7, in <module>
+    if not __debug__:raise RuntimeError("Run this research audit without -O; validation assertions are required")
+RuntimeError: Run this research audit without -O; validation assertions are required

@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "shader_sha256": "55e8e2529cdd9be8560fcb96327f91066f87967dc56e3bb03ce43ae7361f544a",
+  "external_shader_paths_used": false,
+  "ordinary_render_tests_passed": 221,
+  "hardware_coordinate_fixture_passed": true,
+  "original_physical_operator_passed": true,
+  "first_coupled_frame_passed": true,
+  "scope": "packaged experimental variant only; default production unchanged, full720stillpending"
+}

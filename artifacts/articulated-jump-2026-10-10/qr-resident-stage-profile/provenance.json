@@ -1,0 +1,12 @@
+{
+  "binary": "/tmp/voxy-resident-full-projection-tests",
+  "sha256": {
+    "/tmp/voxy-resident-full-projection-tests": "32fef89acf043ed43852b605280b4cad5c420d4532f17b411b04d51f63046a98",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "929716522e34bfb176ad5e8bdd334b7f3f7afd93eaa5418cc6665f6e22ea133c",
+    "artifacts/articulated-jump-2026-10-10/frame-two-rod-446-full-capture/operators/native-407.vqc": "d0c294c6aa21c9d8325d5c93098ff41514f86cf10e374b7e7d009792a113c0a2"
+  },
+  "stage_flag": "VOXY_HAIR_JOINT_STAGE_PROFILE=1",
+  "summary_boundary": "before first JOINT BACKEND ORIGINAL marker",
+  "rendered_fps_measured": false,
+  "full_trajectory_qualified": false
+}

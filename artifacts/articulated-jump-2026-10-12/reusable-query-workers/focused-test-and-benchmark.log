@@ -1,0 +1,17 @@
+
+running 2 tests
+test ordered_queries::tests::benchmark_reusable_query_worker_scheduling ... ignored, host scheduling microbenchmark; not a physical trajectory or FPS gate
+test ordered_queries::tests::reusable_workers_keep_borrowed_inputs_and_bounded_thread_identities ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+running 1 test
+QUERY WORKER BENCH reusable=false calls=128 ordered_results_equal=true elapsed_ms=27.910500000000003 scope=scheduling_microbenchmark_not_physics_or_fps
+QUERY WORKER BENCH reusable=true calls=128 ordered_results_equal=true elapsed_ms=15.448500000000001 scope=scheduling_microbenchmark_not_physics_or_fps
+QUERY WORKER BENCH reusable=true calls=128 ordered_results_equal=true elapsed_ms=9.493834 scope=scheduling_microbenchmark_not_physics_or_fps
+QUERY WORKER BENCH reusable=false calls=128 ordered_results_equal=true elapsed_ms=28.587833 scope=scheduling_microbenchmark_not_physics_or_fps
+test ordered_queries::tests::benchmark_reusable_query_worker_scheduling ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.08s
+

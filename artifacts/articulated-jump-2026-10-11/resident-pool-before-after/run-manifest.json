@@ -1,0 +1,15 @@
+{
+  "scope": "alternating native witness microbenchmark under concurrent host load; not full step or FPS",
+  "fixture_sha256": "1e195603007bf2046a429335e2c5f55fdd407006c974418c9aafecae4b0519c5",
+  "binaries": {
+    "before": {
+      "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/resident-pool-before-after/physics-before.bin",
+      "sha256": "20ac8c3a65f0e3a4ce58ad84fe5ffa9cb33142378dbec8afff8b519f6861efa5"
+    },
+    "after": {
+      "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/resident-query-pool-build/physics-tests.bin",
+      "sha256": "5a2d9fd12141f386959c41097c19b27da5fd3adceee14f79949471719e3e1215"
+    }
+  },
+  "rounds": 4
+}

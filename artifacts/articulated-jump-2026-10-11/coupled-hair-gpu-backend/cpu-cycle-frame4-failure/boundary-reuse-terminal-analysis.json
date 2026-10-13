@@ -1,0 +1,186 @@
+{
+  "scope": "observed refinement trace only; no physical feasibility or full-cycle proof",
+  "log_sha256": "1a7532753da94c12771bcdb2a6f9ad7e8082406eaba4caa2e7efa864920ef295",
+  "transactions": [],
+  "nonlinear_accepted_steps": [
+    {
+      "line": 1817,
+      "iteration": 12,
+      "before": 0.0,
+      "full": 0.0,
+      "accepted": 0.0,
+      "scale": 1.0,
+      "tangent_complete": true
+    }
+  ],
+  "nonlinear_local_solves": [
+    {
+      "first_line": 154,
+      "last_line": 1817,
+      "first_observed_attempt": 0,
+      "last_attempt": 12,
+      "accepted_moves": 1,
+      "model_refinements": 12,
+      "minimum_accepted_scale": 1.0,
+      "last_accepted_step": {
+        "line": 1817,
+        "iteration": 12,
+        "before": 0.0,
+        "full": 0.0,
+        "accepted": 0.0,
+        "scale": 1.0,
+        "tangent_complete": true
+      },
+      "last_observed_admission": {
+        "line": 1818,
+        "iteration": 12,
+        "tangent_complete": true,
+        "strand_admitted": true,
+        "unresolved": false,
+        "worst_gap_m": -2.7432404384885014e-11
+      },
+      "terminal_work_budgets": []
+    }
+  ],
+  "nonlinear_model_deferrals": [
+    {
+      "line": 154,
+      "iteration": 0,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 305,
+      "iteration": 1,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 456,
+      "iteration": 2,
+      "added_rows": 7,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 607,
+      "iteration": 3,
+      "added_rows": 7,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 759,
+      "iteration": 4,
+      "added_rows": 9,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 910,
+      "iteration": 5,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1061,
+      "iteration": 6,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1212,
+      "iteration": 7,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1363,
+      "iteration": 8,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1514,
+      "iteration": 9,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1665,
+      "iteration": 10,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1816,
+      "iteration": 11,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    }
+  ],
+  "prefix_checks": [],
+  "prefix_rejection_gates": {
+    "prescribed_roots": 0,
+    "stretch": 0,
+    "energy": 0,
+    "strand_path": 0,
+    "mesh_path": 0
+  },
+  "observed_feasible_prefixes": [],
+  "prefixes_with_following_pose_updates": 0,
+  "prefixes_without_following_pose_update": 0,
+  "nonlinear_admissions": [
+    {
+      "line": 1818,
+      "iteration": 12,
+      "tangent_complete": true,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -2.7432404384885014e-11
+    }
+  ],
+  "nonlinear_work_budgets": [],
+  "geometry_admitted_tangent_incomplete_events": 0,
+  "elastic_directions": [],
+  "elastic_full_steps": [],
+  "elastic_trials": [],
+  "trials_with_residual_work": 0,
+  "residual_descents_hidden_by_total_energy": 0,
+  "directions_with_measured_magnitudes": 0,
+  "positive_elastic_direction_slopes": 0,
+  "observed_uphill_full_steps": 0,
+  "model_deferrals_with_trial_descent": 12,
+  "feasible_elastic_accepted_steps": 1,
+  "completed_profile_count": 0,
+  "setup_separately_measured_profile_count": 0,
+  "detailed_refinement_profile_count": 0,
+  "detailed_refinement_totals_ms": {
+    "witness_ms": 0,
+    "projection_ms": 0,
+    "admission_ms": 0
+  },
+  "profile_stage_totals_ms": {
+    "elapsed_ms": 0,
+    "initial_setup_ms": 0,
+    "initial_projection_ms": 0,
+    "initial_admission_ms": 0,
+    "refinement_and_final_check_ms": 0
+  },
+  "slowest_completed_profile": null,
+  "temporal_retries": [],
+  "temporal_admissions": [],
+  "refinement_events": 0,
+  "unpaired_cut_update": null,
+  "clock_only_events": 0,
+  "minimum_observed_trust_scale": null
+}

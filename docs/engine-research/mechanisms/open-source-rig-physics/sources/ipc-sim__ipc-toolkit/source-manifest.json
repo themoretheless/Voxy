@@ -1,0 +1,46 @@
+{
+  "repository": "https://github.com/ipc-sim/ipc-toolkit",
+  "commit": "0985885fecf157ac7c065c5f461028cc0aebe228",
+  "files": [
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/LICENSE",
+      "sha256": "b50d8e6d16f9bc060b4e424bdb1f8eaf994156ea4844184ab6b864f08f852228"
+    },
+    {
+      "path": "src/ipc/ogc/trust_region.cpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/src/ipc/ogc/trust_region.cpp",
+      "sha256": "8502dd3553b81f948e8f1fa4932df6aa81bb2895039ab5b279c7ca499d39286c"
+    },
+    {
+      "path": "src/ipc/ogc/trust_region.hpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/src/ipc/ogc/trust_region.hpp",
+      "sha256": "5a30d27b5d43eefc0269cbf540a6042090d2166130dce109c072d541ae212f2e"
+    },
+    {
+      "path": "tests/src/tests/ogc/test_trust_region.cpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/tests/src/tests/ogc/test_trust_region.cpp",
+      "sha256": "de9e8a62231a352072b6fa0200ba7db683ebd8633a4c9c74c4f6fe9d8f2b087c"
+    },
+    {
+      "path": "docs/source/tutorials/ogc.rst",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/docs/source/tutorials/ogc.rst",
+      "sha256": "8d20949de6aa6102ad263f3bc909e7c08e1861d8dda4ccc65e32deca6f01695b"
+    },
+    {
+      "path": "src/ipc/distance/edge_edge.cpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/src/ipc/distance/edge_edge.cpp",
+      "sha256": "790631c5c82699dc5937b32e3c801bea9b347994c0a1b7f86d5526ce8439cd70"
+    },
+    {
+      "path": "src/ipc/distance/line_line.cpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/src/ipc/distance/line_line.cpp",
+      "sha256": "269390a7ba5cb9086a397839b7b02d875f4600af4d4eea04f1ee31ce652737ec"
+    },
+    {
+      "path": "src/ipc/distance/distance_type.cpp",
+      "url": "https://raw.githubusercontent.com/ipc-sim/ipc-toolkit/0985885fecf157ac7c065c5f461028cc0aebe228/src/ipc/distance/distance_type.cpp",
+      "sha256": "e07ab182bef4ad774516ea28aac78665d390ea0f77f3be187ad155b2996af3d6"
+    }
+  ]
+}

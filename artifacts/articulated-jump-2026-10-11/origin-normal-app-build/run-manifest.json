@@ -1,0 +1,13 @@
+{
+  "binary": "/tmp/voxy-origin-normal-app.bin",
+  "binary_sha256": "fd234b70f7fb5c27ecdcdfb12601392c9683b30c82903e47ad5d33e93c6b911d",
+  "source_sha256": {
+    "crates/physics/src/hair/mod.rs": "044d21b84dc89d516090de00ff6bd4a55c5e623e52e17ab11e16621a7143e274",
+    "crates/physics/src/hair/contact_safe_motion.rs": "ab585027c836b862d91df427b738ac6493a21783b2e0d999cffe8755606cec4c",
+    "crates/physics/src/hair/contact_swept_constraints.rs": "33c73e240eb041e11330fa43f44aadf4ba2e8f682178a1068f56b399b9992a5f",
+    "crates/voxy_app/src/female_demo.rs": "f4b2c7f16000d3fdf1f61a669df5bed0b6ba28e68583ff5c6d3c157f6e888649",
+    "crates/voxy_app/src/female_hair.rs": "8a5988e3babeb0764fbd6972cb1b2e57cf55e71add6010aa76a5b0e5188077ef"
+  },
+  "status": "build_success_only",
+  "scope": "release library test binary; full coupled cycle pending cross-capture regressions"
+}

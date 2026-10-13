@@ -1,0 +1,17 @@
+{
+  "scope": "explicit world-space support projection correction limit",
+  "tests_passed": 175,
+  "failed": 0,
+  "cases": [
+    "4cm projection rejected by 0 and 3.9cm limits",
+    "4cm projection admitted by 4.1cm limit",
+    "invalid limits rejected before query charge"
+  ],
+  "editor_gait_integration": false,
+  "limits_total_ik_correction": false,
+  "sha256": {
+    "crates/voxy_gameplay/src/foot_contact.rs": "e2808d2ff09cb980c52e772e29cc291b22e1618071f17ccca3f7f3f428626d53",
+    "crates/voxy_gameplay/src/foot_contact/tests.rs": "45e762aec8df3f43fe4d643f32cc799f607ab4c29a2bece33f29514d2a9fa488",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/bounded-pivot-full-tests.log": "22e22b354153375ab97912000be12b03ec3b50d6a64c1f003a924a022024867a"
+  }
+}

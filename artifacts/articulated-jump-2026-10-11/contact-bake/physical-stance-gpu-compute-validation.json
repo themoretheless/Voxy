@@ -1,0 +1,19 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "tests_passed": 2,
+  "tests_failed": 0,
+  "body_vertices": 60866,
+  "samples_per_scenario": 6,
+  "physical_max_position_error_m": 2.4507767e-07,
+  "jump_max_position_error_m": 1.9687948e-07,
+  "position_gate_m": 2e-06,
+  "visible_renderer_connected": false,
+  "fps_qualified": false,
+  "sha256": {
+    "crates/voxy_app/src/jump_rig_tests.rs": "184ae0528aff6211e08abe50eb9e749296b822e6e36c6c4f71718a8b487e1445",
+    "crates/voxy_app/src/female_physical_stance.rs": "bedd2acc91b60063a328bc8f49644ccc2734ac2f0a5ddea7c1f84ac2b52ecbd5",
+    "crates/voxy_render/src/surface_rigid_skinning.wgsl": "398b8a1d14013319e450b2c1eba6a50769cb4f1d0c005f0df6cc93cbc79a237e",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/physical-and-jump-gpu-parity-tests.log": "c0feeabaf81aeb40dee3c5285dd3eb7bb7889e9f94d788baf105163d386271a8"
+  }
+}

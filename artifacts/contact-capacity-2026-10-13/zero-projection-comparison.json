@@ -1,0 +1,67 @@
+{
+  "rows": [
+    {
+      "pair": 0,
+      "version": "before",
+      "elapsed_ms": 7.0315
+    },
+    {
+      "pair": 0,
+      "version": "after",
+      "elapsed_ms": 9.405833000000001
+    },
+    {
+      "pair": 1,
+      "version": "after",
+      "elapsed_ms": 6.852917
+    },
+    {
+      "pair": 1,
+      "version": "before",
+      "elapsed_ms": 4.775792
+    },
+    {
+      "pair": 2,
+      "version": "before",
+      "elapsed_ms": 5.153124999999999
+    },
+    {
+      "pair": 2,
+      "version": "after",
+      "elapsed_ms": 4.171875
+    },
+    {
+      "pair": 3,
+      "version": "after",
+      "elapsed_ms": 4.206542
+    },
+    {
+      "pair": 3,
+      "version": "before",
+      "elapsed_ms": 4.82925
+    },
+    {
+      "pair": 4,
+      "version": "before",
+      "elapsed_ms": 5.468667
+    },
+    {
+      "pair": 4,
+      "version": "after",
+      "elapsed_ms": 4.056208000000001
+    },
+    {
+      "pair": 5,
+      "version": "after",
+      "elapsed_ms": 4.082042
+    },
+    {
+      "pair": 5,
+      "version": "before",
+      "elapsed_ms": 5.587083
+    }
+  ],
+  "before_median_ms": 5.310896,
+  "after_median_ms": 4.1892084999999994,
+  "scope": "16 orthogonal coordinate rows x1008; original KKT and batch/compact equivalence; host time with concurrent full-cycle load; not full model or FPS"
+}

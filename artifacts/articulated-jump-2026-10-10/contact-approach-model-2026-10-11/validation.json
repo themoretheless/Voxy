@@ -1,0 +1,17 @@
+{
+  "physics_tests": {
+    "passed": 382,
+    "failed": 0,
+    "ignored": 43
+  },
+  "full_469_guide_replay": {
+    "status": "terminal",
+    "exit_code": 101,
+    "failure_iteration": 32,
+    "reason": "joint hair contact direction has no descending geometry step",
+    "worst_gap_m": -1.0967059328764606e-10,
+    "required_gap_m": -1e-10,
+    "remaining_excess_m": 9.670593287646052e-12
+  },
+  "qualification": "Not converged; full jump and FPS unproven"
+}

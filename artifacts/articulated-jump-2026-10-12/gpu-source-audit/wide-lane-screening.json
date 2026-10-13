@@ -1,0 +1,100 @@
+{
+  "scope": "complete original physical operator GPU passes; not coupled frame or FPS",
+  "run_order": [
+    256,
+    512,
+    1024,
+    1024,
+    512,
+    256
+  ],
+  "records": [
+    {
+      "log": "wide-interleaved-0-256.log",
+      "lanes": 256,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        76.360417,
+        76.049458,
+        76.803416
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "wide-interleaved-1-512.log",
+      "lanes": 512,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        65.775125,
+        63.718541,
+        63.910291
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "wide-interleaved-2-1024.log",
+      "lanes": 1024,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        72.758416,
+        63.661042,
+        63.74625
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "wide-interleaved-3-1024.log",
+      "lanes": 1024,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        62.494125,
+        62.876875,
+        63.198708
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "wide-interleaved-4-512.log",
+      "lanes": 512,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        68.845292,
+        69.252542,
+        65.285541
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    },
+    {
+      "log": "wide-interleaved-5-256.log",
+      "lanes": 256,
+      "candidate_equality_verified": true,
+      "coordinates": 1764,
+      "gpu_pass_ms": [
+        78.067166,
+        78.73575,
+        78.139833
+      ],
+      "rows": 174,
+      "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering"
+    }
+  ],
+  "medians_ms": {
+    "256": 77.435291,
+    "512": 65.530333,
+    "1024": 63.429875
+  },
+  "binary_sha256": "87e678395f35213b6ba3bca1f3ae3a005f66cdecdcb187bb87af4bf82a75ec33",
+  "physical_checks": "all passed, no native fallback",
+  "workspace_changed_restored_physical_checks": "512 and 1024 passed",
+  "promotion": "not promoted; coupled model and broader numerical shape coverage pending"
+}

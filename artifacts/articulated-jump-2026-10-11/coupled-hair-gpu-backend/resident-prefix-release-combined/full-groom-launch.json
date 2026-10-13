@@ -1,0 +1,17 @@
+{
+  "session": 30624,
+  "log": "/tmp/voxy-resident-coupled-full-groom-first-frame.log",
+  "test": "coupled_authored_jump_real_gpu_hair_first_frame",
+  "continuous_contacts": true,
+  "shader_fixture": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-10/qr-resident-columns-experiment/qr-resident-columns.wgsl",
+  "status": "terminal passed",
+  "scope": "first full-groom frame only; coupled factory batching, prefix, dual hints and early release enabled",
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_solver.rs": "9d4064b31ac92f87143653a0e55e571527a9b40d4c93c5169e37b3c30e6d5edb",
+    "artifacts/articulated-jump-2026-10-10/qr-resident-columns-experiment/qr-resident-columns.wgsl": "8fc98940b35141b7fa122ac21e721c914426301cbc13c23d99a6a554da9a4f24",
+    "/tmp/voxy-face-refit-20261011/release/deps/voxy_app-f1bdfa6ab8314848": "6205eb598076673e89c55f6541bcf0e6a47234bb5d2c630e4257624e9f09d83f"
+  },
+  "pid": 61097,
+  "production_check": "passed",
+  "build": "passed"
+}

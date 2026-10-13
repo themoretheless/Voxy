@@ -1,0 +1,64 @@
+{
+  "scope": "one original physical operator; alternating wall-clock measurements; not full trajectory or FPS",
+  "runs": [
+    {
+      "index": 0,
+      "div_scalar_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 462.16066700000005,
+      "log": "triple-div_scalar-comparison-0.log"
+    },
+    {
+      "index": 1,
+      "div_scalar_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 438.22862499999997,
+      "log": "triple-div_scalar-comparison-1.log"
+    },
+    {
+      "index": 2,
+      "div_scalar_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 443.748292,
+      "log": "triple-div_scalar-comparison-2.log"
+    },
+    {
+      "index": 3,
+      "div_scalar_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 462.456166,
+      "log": "triple-div_scalar-comparison-3.log"
+    },
+    {
+      "index": 4,
+      "div_scalar_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 476.16945799999996,
+      "log": "triple-div_scalar-comparison-4.log"
+    },
+    {
+      "index": 5,
+      "div_scalar_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 439.82520800000003,
+      "log": "triple-div_scalar-comparison-5.log"
+    },
+    {
+      "index": 6,
+      "div_scalar_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 465.98612499999996,
+      "log": "triple-div_scalar-comparison-6.log"
+    },
+    {
+      "index": 7,
+      "div_scalar_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 458.111917,
+      "log": "triple-div_scalar-comparison-7.log"
+    }
+  ],
+  "before_median_ms": 462.3084165,
+  "after_median_ms": 441.78675,
+  "speedup": 1.0464515210109855
+}

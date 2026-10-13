@@ -1,0 +1,1187 @@
+{
+  "schema": "voxy-joint-host-stage-summary-v1",
+  "scope": "equality_tasks_host_wall_times_not_gpu_timestamps_or_rendered_fps",
+  "logs": [
+    "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log"
+  ],
+  "profiled_calls": 134,
+  "coupled_frames": [
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "frame": 1,
+      "status": "incomplete",
+      "profiled_calls": 134,
+      "dispatches": 134,
+      "errors": 0,
+      "profile_total_wall_ms": 28414.61049600002,
+      "profile_wait_wall_ms": 28132.685456000003,
+      "staging_payload_bytes_not_bus_traffic": 273399688,
+      "complete_workspace_payload_bytes_over_reported_calls": 406274656,
+      "workspace_payload_reported_calls": 134
+    }
+  ],
+  "owner_instances_not_unique_operators": 2298,
+  "counters": {
+    "dispatches": 134,
+    "submissions": 134,
+    "workspace_creations": 60,
+    "workspace_reuses": 74,
+    "errors": 0
+  },
+  "staging_payload_bytes_not_bus_traffic": 273399688,
+  "complete_workspace_payload": {
+    "bytes_over_profiled_calls_not_peak_memory": 406274656,
+    "profiled_calls": 134,
+    "unreported_calls": 0,
+    "scope": "Complete packed GPU workspace payload; legacy logs remain unknown, never inferred from readback size."
+  },
+  "warm_start": {
+    "counters": {
+      "incoming_valid_seeded_owners": {
+        "instances": 1780,
+        "reported_calls": 134,
+        "unreported_calls": 0
+      },
+      "incoming_positive_seed_rows": {
+        "instances": 7032,
+        "reported_calls": 134,
+        "unreported_calls": 0
+      },
+      "seeded_upload_owners": {
+        "instances": 495,
+        "reported_calls": 134,
+        "unreported_calls": 0
+      }
+    },
+    "scope": "Input and uploaded seed instances, not unique operators or successful solver iterations. Missing legacy fields remain unknown."
+  },
+  "packed_operator_shape_instances": [
+    {
+      "rows": 1,
+      "coordinates": 126,
+      "instances": 11
+    },
+    {
+      "rows": 1,
+      "coordinates": 252,
+      "instances": 183
+    },
+    {
+      "rows": 2,
+      "coordinates": 126,
+      "instances": 8
+    },
+    {
+      "rows": 2,
+      "coordinates": 252,
+      "instances": 23
+    },
+    {
+      "rows": 2,
+      "coordinates": 378,
+      "instances": 70
+    },
+    {
+      "rows": 3,
+      "coordinates": 126,
+      "instances": 4
+    },
+    {
+      "rows": 3,
+      "coordinates": 252,
+      "instances": 10
+    },
+    {
+      "rows": 3,
+      "coordinates": 378,
+      "instances": 15
+    },
+    {
+      "rows": 3,
+      "coordinates": 504,
+      "instances": 25
+    },
+    {
+      "rows": 4,
+      "coordinates": 252,
+      "instances": 5
+    },
+    {
+      "rows": 4,
+      "coordinates": 378,
+      "instances": 4
+    },
+    {
+      "rows": 4,
+      "coordinates": 504,
+      "instances": 17
+    },
+    {
+      "rows": 4,
+      "coordinates": 630,
+      "instances": 6
+    },
+    {
+      "rows": 5,
+      "coordinates": 126,
+      "instances": 1
+    },
+    {
+      "rows": 5,
+      "coordinates": 252,
+      "instances": 3
+    },
+    {
+      "rows": 5,
+      "coordinates": 378,
+      "instances": 3
+    },
+    {
+      "rows": 5,
+      "coordinates": 504,
+      "instances": 1
+    },
+    {
+      "rows": 5,
+      "coordinates": 630,
+      "instances": 12
+    },
+    {
+      "rows": 5,
+      "coordinates": 756,
+      "instances": 1
+    },
+    {
+      "rows": 6,
+      "coordinates": 252,
+      "instances": 3
+    },
+    {
+      "rows": 6,
+      "coordinates": 378,
+      "instances": 2
+    },
+    {
+      "rows": 6,
+      "coordinates": 504,
+      "instances": 15
+    },
+    {
+      "rows": 6,
+      "coordinates": 630,
+      "instances": 3
+    },
+    {
+      "rows": 6,
+      "coordinates": 756,
+      "instances": 3
+    },
+    {
+      "rows": 7,
+      "coordinates": 126,
+      "instances": 1
+    },
+    {
+      "rows": 7,
+      "coordinates": 252,
+      "instances": 3
+    },
+    {
+      "rows": 7,
+      "coordinates": 630,
+      "instances": 4
+    },
+    {
+      "rows": 7,
+      "coordinates": 756,
+      "instances": 2
+    },
+    {
+      "rows": 7,
+      "coordinates": 882,
+      "instances": 3
+    },
+    {
+      "rows": 8,
+      "coordinates": 126,
+      "instances": 2
+    },
+    {
+      "rows": 8,
+      "coordinates": 504,
+      "instances": 15
+    },
+    {
+      "rows": 8,
+      "coordinates": 630,
+      "instances": 4
+    },
+    {
+      "rows": 8,
+      "coordinates": 1008,
+      "instances": 3
+    },
+    {
+      "rows": 8,
+      "coordinates": 1134,
+      "instances": 1
+    },
+    {
+      "rows": 9,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 9,
+      "coordinates": 756,
+      "instances": 1
+    },
+    {
+      "rows": 9,
+      "coordinates": 1134,
+      "instances": 1
+    },
+    {
+      "rows": 10,
+      "coordinates": 504,
+      "instances": 15
+    },
+    {
+      "rows": 10,
+      "coordinates": 756,
+      "instances": 2
+    },
+    {
+      "rows": 10,
+      "coordinates": 1134,
+      "instances": 1
+    },
+    {
+      "rows": 11,
+      "coordinates": 630,
+      "instances": 13
+    },
+    {
+      "rows": 11,
+      "coordinates": 1134,
+      "instances": 1
+    },
+    {
+      "rows": 11,
+      "coordinates": 1260,
+      "instances": 12
+    },
+    {
+      "rows": 12,
+      "coordinates": 126,
+      "instances": 2
+    },
+    {
+      "rows": 12,
+      "coordinates": 504,
+      "instances": 15
+    },
+    {
+      "rows": 12,
+      "coordinates": 756,
+      "instances": 1
+    },
+    {
+      "rows": 12,
+      "coordinates": 1260,
+      "instances": 1
+    },
+    {
+      "rows": 12,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 12,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 13,
+      "coordinates": 504,
+      "instances": 3
+    },
+    {
+      "rows": 14,
+      "coordinates": 756,
+      "instances": 4
+    },
+    {
+      "rows": 14,
+      "coordinates": 1512,
+      "instances": 2
+    },
+    {
+      "rows": 15,
+      "coordinates": 756,
+      "instances": 1
+    },
+    {
+      "rows": 15,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 15,
+      "coordinates": 1764,
+      "instances": 1
+    },
+    {
+      "rows": 17,
+      "coordinates": 756,
+      "instances": 2
+    },
+    {
+      "rows": 17,
+      "coordinates": 1764,
+      "instances": 2
+    },
+    {
+      "rows": 18,
+      "coordinates": 630,
+      "instances": 11
+    },
+    {
+      "rows": 18,
+      "coordinates": 882,
+      "instances": 5
+    },
+    {
+      "rows": 19,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 19,
+      "coordinates": 882,
+      "instances": 3
+    },
+    {
+      "rows": 20,
+      "coordinates": 630,
+      "instances": 2
+    },
+    {
+      "rows": 20,
+      "coordinates": 756,
+      "instances": 2
+    },
+    {
+      "rows": 20,
+      "coordinates": 882,
+      "instances": 4
+    },
+    {
+      "rows": 20,
+      "coordinates": 1764,
+      "instances": 11
+    },
+    {
+      "rows": 21,
+      "coordinates": 630,
+      "instances": 11
+    },
+    {
+      "rows": 21,
+      "coordinates": 882,
+      "instances": 6
+    },
+    {
+      "rows": 22,
+      "coordinates": 630,
+      "instances": 2
+    },
+    {
+      "rows": 22,
+      "coordinates": 882,
+      "instances": 5
+    },
+    {
+      "rows": 23,
+      "coordinates": 630,
+      "instances": 11
+    },
+    {
+      "rows": 23,
+      "coordinates": 882,
+      "instances": 8
+    },
+    {
+      "rows": 24,
+      "coordinates": 630,
+      "instances": 12
+    },
+    {
+      "rows": 24,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 25,
+      "coordinates": 630,
+      "instances": 12
+    },
+    {
+      "rows": 25,
+      "coordinates": 882,
+      "instances": 3
+    },
+    {
+      "rows": 25,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 25,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 26,
+      "coordinates": 630,
+      "instances": 3
+    },
+    {
+      "rows": 26,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 26,
+      "coordinates": 1890,
+      "instances": 1
+    },
+    {
+      "rows": 28,
+      "coordinates": 630,
+      "instances": 2
+    },
+    {
+      "rows": 28,
+      "coordinates": 882,
+      "instances": 4
+    },
+    {
+      "rows": 28,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 29,
+      "coordinates": 1638,
+      "instances": 5
+    },
+    {
+      "rows": 30,
+      "coordinates": 630,
+      "instances": 3
+    },
+    {
+      "rows": 30,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 30,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 31,
+      "coordinates": 630,
+      "instances": 2
+    },
+    {
+      "rows": 31,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 32,
+      "coordinates": 630,
+      "instances": 3
+    },
+    {
+      "rows": 32,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 33,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 33,
+      "coordinates": 882,
+      "instances": 2
+    },
+    {
+      "rows": 33,
+      "coordinates": 1386,
+      "instances": 1
+    },
+    {
+      "rows": 34,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 34,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 34,
+      "coordinates": 2142,
+      "instances": 11
+    },
+    {
+      "rows": 35,
+      "coordinates": 630,
+      "instances": 1
+    },
+    {
+      "rows": 36,
+      "coordinates": 2142,
+      "instances": 2
+    },
+    {
+      "rows": 37,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 37,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 38,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 39,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 40,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 40,
+      "coordinates": 2142,
+      "instances": 11
+    },
+    {
+      "rows": 41,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 42,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 42,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 43,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 43,
+      "coordinates": 2142,
+      "instances": 13
+    },
+    {
+      "rows": 44,
+      "coordinates": 1638,
+      "instances": 6
+    },
+    {
+      "rows": 45,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 45,
+      "coordinates": 2142,
+      "instances": 12
+    },
+    {
+      "rows": 46,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 46,
+      "coordinates": 2142,
+      "instances": 3
+    },
+    {
+      "rows": 48,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 48,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 49,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 49,
+      "coordinates": 2142,
+      "instances": 2
+    },
+    {
+      "rows": 50,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 51,
+      "coordinates": 1512,
+      "instances": 1
+    },
+    {
+      "rows": 51,
+      "coordinates": 1638,
+      "instances": 5
+    },
+    {
+      "rows": 51,
+      "coordinates": 2142,
+      "instances": 2
+    },
+    {
+      "rows": 52,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 52,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 53,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 54,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 55,
+      "coordinates": 1638,
+      "instances": 4
+    },
+    {
+      "rows": 55,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 56,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 57,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 57,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 58,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 59,
+      "coordinates": 1638,
+      "instances": 3
+    },
+    {
+      "rows": 59,
+      "coordinates": 2142,
+      "instances": 1
+    },
+    {
+      "rows": 60,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 61,
+      "coordinates": 1638,
+      "instances": 2
+    },
+    {
+      "rows": 64,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 65,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 66,
+      "coordinates": 1638,
+      "instances": 1
+    },
+    {
+      "rows": 70,
+      "coordinates": 1638,
+      "instances": 1
+    }
+  ],
+  "slowest_profiled_batches": [
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 79,
+      "owners": 23,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          3,
+          252
+        ],
+        [
+          61,
+          1638
+        ],
+        [
+          43,
+          2142
+        ],
+        [
+          6,
+          378
+        ],
+        [
+          28,
+          630
+        ],
+        [
+          8,
+          504
+        ],
+        [
+          15,
+          882
+        ]
+      ],
+      "total_wall_ms": 1373.6475,
+      "wait_wall_ms": 1370.027583
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 95,
+      "owners": 16,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          55,
+          1638
+        ],
+        [
+          34,
+          2142
+        ],
+        [
+          21,
+          630
+        ],
+        [
+          8,
+          504
+        ],
+        [
+          15,
+          756
+        ]
+      ],
+      "total_wall_ms": 1030.062083,
+      "wait_wall_ms": 1027.2921669999998
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 29,
+      "owners": 16,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          51,
+          1512
+        ],
+        [
+          26,
+          1890
+        ],
+        [
+          19,
+          630
+        ],
+        [
+          4,
+          504
+        ],
+        [
+          6,
+          504
+        ],
+        [
+          8,
+          630
+        ]
+      ],
+      "total_wall_ms": 900.290167,
+      "wait_wall_ms": 897.523334
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 21,
+      "owners": 25,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          2,
+          252
+        ],
+        [
+          44,
+          1638
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          39,
+          2142
+        ],
+        [
+          4,
+          378
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          30,
+          630
+        ],
+        [
+          7,
+          630
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          4,
+          378
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          3,
+          378
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          6,
+          504
+        ],
+        [
+          12,
+          756
+        ],
+        [
+          3,
+          252
+        ],
+        [
+          2,
+          252
+        ]
+      ],
+      "total_wall_ms": 890.165542,
+      "wait_wall_ms": 886.434375
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 78,
+      "owners": 23,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          2,
+          252
+        ],
+        [
+          51,
+          1638
+        ],
+        [
+          36,
+          2142
+        ],
+        [
+          5,
+          378
+        ],
+        [
+          26,
+          630
+        ],
+        [
+          5,
+          630
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          2,
+          252
+        ],
+        [
+          6,
+          504
+        ],
+        [
+          10,
+          756
+        ],
+        [
+          3,
+          252
+        ]
+      ],
+      "total_wall_ms": 881.0859170000001,
+      "wait_wall_ms": 876.7718329999999
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 48,
+      "owners": 15,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          52,
+          1638
+        ],
+        [
+          34,
+          2142
+        ],
+        [
+          21,
+          630
+        ],
+        [
+          8,
+          504
+        ],
+        [
+          14,
+          756
+        ]
+      ],
+      "total_wall_ms": 861.2904580000001,
+      "wait_wall_ms": 858.0822919999999
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 103,
+      "owners": 16,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          44,
+          1638
+        ],
+        [
+          20,
+          1764
+        ],
+        [
+          18,
+          630
+        ],
+        [
+          5,
+          630
+        ],
+        [
+          6,
+          504
+        ],
+        [
+          8,
+          630
+        ]
+      ],
+      "total_wall_ms": 821.463583,
+      "wait_wall_ms": 818.3449579999999
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 88,
+      "owners": 17,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          51,
+          1638
+        ],
+        [
+          40,
+          2142
+        ],
+        [
+          23,
+          630
+        ],
+        [
+          10,
+          504
+        ],
+        [
+          28,
+          882
+        ]
+      ],
+      "total_wall_ms": 821.008417,
+      "wait_wall_ms": 817.762333
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 39,
+      "owners": 15,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          51,
+          1638
+        ],
+        [
+          34,
+          2142
+        ],
+        [
+          21,
+          630
+        ],
+        [
+          8,
+          504
+        ],
+        [
+          14,
+          756
+        ]
+      ],
+      "total_wall_ms": 802.59775,
+      "wait_wall_ms": 799.7175
+    },
+    {
+      "log": "artifacts/contact-capacity-2026-10-13/triple-single-dispatch-normal-scaling-full-cycle/qualification.log",
+      "line": 30,
+      "owners": 16,
+      "errors": 0,
+      "packed_operator_shapes_rows_coordinates": [
+        [
+          59,
+          1638
+        ],
+        [
+          37,
+          2142
+        ],
+        [
+          22,
+          630
+        ],
+        [
+          7,
+          630
+        ],
+        [
+          8,
+          504
+        ],
+        [
+          14,
+          756
+        ]
+      ],
+      "total_wall_ms": 789.605875,
+      "wait_wall_ms": 786.3786670000001
+    }
+  ],
+  "batch_attribution_limit": "Batch wall time includes all listed operators and shared queue wait; it is not an individual operator timing.",
+  "wall_ms": {
+    "prepare_wall_ms": 172.573042,
+    "encode_wall_ms": 5.891124000000003,
+    "submit_map_wall_ms": 13.083961000000004,
+    "wait_wall_ms": 28132.685456000003,
+    "decode_refine_wall_ms": 90.290287,
+    "total_wall_ms": 28414.61049600002
+  },
+  "stage_percent_of_total": {
+    "prepare_wall_ms": 0.607339108253106,
+    "encode_wall_ms": 0.020732728329425132,
+    "submit_map_wall_ms": 0.04604659635169681,
+    "wait_wall_ms": 99.00781662997034,
+    "decode_refine_wall_ms": 0.31776007280729873
+  },
+  "unattributed_wall_ms": 0.08662600001844112,
+  "limits": "Concurrent host wall times, including queue wait and callbacks; exclude profile log output, shader compilation, physical owner assembly/admission and rendering. Task errors can be recovered by active-set retry; they are not native fallback counts. This report does not qualify trajectory accuracy, GPU execution time or rendered FPS."
+}

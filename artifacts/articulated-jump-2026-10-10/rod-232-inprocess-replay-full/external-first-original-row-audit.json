@@ -1,0 +1,36 @@
+{
+  "schema": "voxy-original-row-load-audit-v1",
+  "operator": {
+    "path": "artifacts/articulated-jump-2026-10-10/rod-232-inprocess-replay-full/operators/external-00.vqc",
+    "sha256": "6467d07279e28d8456b3f5087cbe229e0f3756bbd10267a90423510b86d033b8",
+    "rows": 2,
+    "coordinates": 378,
+    "refinement": 0,
+    "tolerance": 1e-14,
+    "layouts": [
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ],
+      [
+        126,
+        9,
+        6,
+        123
+      ]
+    ]
+  },
+  "metadata": "artifacts/articulated-jump-2026-10-10/rod-232-inprocess-replay-full/operators/external-00.metadata.json",
+  "observation_frame": 3,
+  "checked_load_scalars": 756,
+  "exact_original_load_reconstruction": true,
+  "limits": "Snapshot-local original row ordering and raw non-root loads only. Fixed-root gradients, mobilities and original bounds are not independently encoded in VQC1; only their metadata shape/finiteness is checked. No persistent contact identity, response quantity, solver accuracy, whole trajectory or FPS claim."
+}

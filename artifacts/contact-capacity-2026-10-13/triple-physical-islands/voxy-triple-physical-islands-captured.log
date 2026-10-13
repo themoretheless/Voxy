@@ -1,0 +1,44 @@
+
+running 1 test
+HYBRID JOINT FALLBACK count=1 coordinate_calls=6 equality_dispatches=5 reason=Some("joint contact dot: NumericRange")
+HAIR QR PROFILE systems=1 rows=8 coordinates=54 compact_coordinates=39 refinement=0 elapsed_ms=10.902791 admitted_coordinates=true
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.6936670000000005
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=2.98575
+HYBRID JOINT FALLBACK count=1 coordinate_calls=8 equality_dispatches=1 reason=Some("joint contact dot: NumericRange")
+HYBRID JOINT FALLBACK count=2 coordinate_calls=8 equality_dispatches=1 reason=Some("joint contact dot: NumericRange")
+HYBRID JOINT FALLBACK count=3 coordinate_calls=8 equality_dispatches=1 reason=Some("joint contact dot: NumericRange")
+HYBRID JOINT FALLBACK count=4 coordinate_calls=8 equality_dispatches=1 reason=Some("joint contact dot: NumericRange")
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.214167
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.692875
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=9.112708000000001
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.549167
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.20049999999999998
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.24774999999999997
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.586291999999999
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.265708
+HAIR QR PROFILE systems=1 rows=7 coordinates=54 compact_coordinates=38 refinement=0 elapsed_ms=12.758500000000002 admitted_coordinates=true
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.756
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.188917
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.193625
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.554375
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.27225
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.633916
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.214875
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.20879199999999998
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=7.6061250000000005
+HAIR JOINT PHYSICAL BATCH PROFILE operators=4 refinement=0 elapsed_ms=0.335209
+
+thread 'gpu_hair_solver::joint::tests::gpu_independent_physical_islands_batch_without_state_drift' (93392483) panicked at crates/voxy_app/src/gpu_hair_joint.rs:1415:9:
+assertion `left == right` failed
+  left: 1
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::joint::tests::gpu_independent_physical_islands_batch_without_state_drift ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::joint::tests::gpu_independent_physical_islands_batch_without_state_drift
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 377 filtered out; finished in 0.45s
+

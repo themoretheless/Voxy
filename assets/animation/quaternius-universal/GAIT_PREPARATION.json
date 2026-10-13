@@ -1,0 +1,13 @@
+{
+  "recipe": "voxy-quaternius-gait-source-v1",
+  "upstream_revision": "e24c23cf2a1323488a3faa226ea7ea21f644b73e",
+  "source_files_unchanged": true,
+  "clip": "Jog_Fwd_Loop",
+  "operation": "append_first_frame_keep_channel_interpolation",
+  "tail_seconds": 0.041666666666666664,
+  "authored_frame_rate_hz": 24,
+  "preserves_original_keys_and_absolute_sample_times": true,
+  "guarantee": "matching endpoint poses; STEP channels retain authored steps",
+  "does_not_guarantee": ["matching seam derivatives", "physical contact", "cyclic root trajectory safety", "FPS"],
+  "reference": "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/Animation/UE__Anim__AnimationData__AddLoop-?application_version=5.5"
+}

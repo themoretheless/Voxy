@@ -1,0 +1,46 @@
+{
+  "surface_vertices": 78278,
+  "ticks": [
+    1,
+    31
+  ],
+  "image_size": [
+    512,
+    512
+  ],
+  "material": "female_material.wgsl",
+  "msaa4_max_u8_errors": [
+    1,
+    1
+  ],
+  "msaa4_differing_channels": [
+    3,
+    1
+  ],
+  "msaa4_occupied_pixels": [
+    53813,
+    53006
+  ],
+  "pixel_error_gate": 1,
+  "msaa4_status": "passed on two poses",
+  "single_sample_status": "failed at first pose; preserved as explicit diagnostic",
+  "single_sample_max_u8_errors": [
+    4,
+    1
+  ],
+  "native_body_activation": false,
+  "fps_verified": false,
+  "limits": [
+    "two physical stance poses",
+    "no arbitrary hand grasp qualification",
+    "single-sample parity unresolved",
+    "no all-hardware qualification"
+  ],
+  "sha256": {
+    "crates/voxy_app/src/female_groom_gpu_tests.rs": "242923eeb2ee34e65c9cdc90ed00c845db1d3ccdfec9805dddd965923810bed0",
+    "crates/voxy_render/src/surface_rigid_skinning.rs": "e7a081851453c32c7a02683178bea1f48caa7a7a3dad1b5ed3a309aed737e741",
+    "crates/voxy_render/src/surface_rigid_skinning.wgsl": "ce4b43d2d6f621d106bb10075ba6232bb4fa46a31fb246c88f5bbf63e6ec7431",
+    "crates/voxy_render/src/surface_normal_transport.wgsl": "9aec5b11621c64271acebf8bcc1b6a714c1efb0db4a57115b0efbac48e4e19ed",
+    "crates/voxy_render/src/surface_deformation.rs": "2674fac5a9ad363a362e3a5b2d972401df1d209c482a5fb59ba03cfc0219b62c"
+  }
+}

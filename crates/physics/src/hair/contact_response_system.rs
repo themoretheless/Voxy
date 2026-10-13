@@ -69,6 +69,13 @@ mod tests {
             let c=columns[0][6];let mut x=vec![0.;columns[0].len()];x[6]=bounds[0]/c;
             let reaction=x[6]/c;(x,vec![reaction])
         }
+        // A controlled first-trial coordinate error exercises refinement on
+        // representable physical bounds without relying on rounding artifacts.
+        fn first_trial(columns:&[Vec<f64>],bounds:&[f64],inject:bool)->(Vec<f64>,Vec<f64>) {
+            let (mut x,mut reactions)=candidate(columns,bounds);
+            if inject {x[6]*=1.+f64::EPSILON;reactions[0]=x[6]/columns[0][6];}
+            (x,reactions)
+        }
         struct Backend {rounds:Vec<usize>}
         impl crate::hair::HairLinearSolver for Backend {
             fn solve(&mut self,_:&[HairLinearSystem])->Result<Vec<Vec<f64>>,&'static str> {panic!("unexpected structural solve")}
@@ -80,7 +87,7 @@ mod tests {
                 ->Option<Vec<(Vec<f64>,Vec<f64>)>> {
                 self.rounds.push(requests.len());
                 if self.rounds.len()>1 {assert!(requests.iter().all(|r|r.seeds.iter().any(|&v|v>0.)));}
-                Some(requests.iter().map(|r|candidate(r.columns,r.bounds)).collect())
+                Some(requests.iter().map(|r|first_trial(r.columns,r.bounds,self.rounds.len()==1&&r.columns[0][6]!=1.)).collect())
             }
         }
         let request=|diagonal,load| {
@@ -88,11 +95,14 @@ mod tests {
             for i in 0..18 {r.system.matrix[i*direct::BAND]=1.;}
             r.system.matrix[6*direct::BAND]=diagonal;r.loads=vec![vec![0.;18]];r.loads[0][6]=load;r
         };
-        let a=[request(3.,2e-7)];let b=[request(1.,1.)];let ba=[1.1];let bb=[1.];let tolerance=1e-17;
+        // The bound must admit a representable physical response at 1e-17.
+        // With bound=1.1 the nearest f64 response has exact residual 4.77e-17;
+        // the former rounded dot-then-subtract gate incorrectly admitted it.
+        let a=[request(3.,2e-7)];let b=[request(1.,1.)];let ba=[2e-7*2f64.powi(20)];let bb=[1.];let tolerance=1e-17;
         let ja=PreparedNativeJoint::new(&a,&ba,tolerance).unwrap();
         let jb=PreparedNativeJoint::new(&b,&bb,tolerance).unwrap();
         let mut serial_calls=0;
-        let expected_a=ja.solve_accelerated(&ba,tolerance,|c,b,_| {serial_calls+=1;Some(candidate(c,b))}).unwrap();
+        let expected_a=ja.solve_accelerated(&ba,tolerance,|c,b,_| {serial_calls+=1;Some(first_trial(c,b,serial_calls==1))}).unwrap();
         assert!(serial_calls>1,"fixture missed original-load defect correction");
         let expected_b=jb.solve_accelerated(&bb,tolerance,|c,b,_|Some(candidate(c,b))).unwrap();
         let mut seeds=vec![vec![],vec![]];let mut backend=Backend {rounds:Vec::new()};
@@ -102,7 +112,7 @@ mod tests {
         for ((requests,bounds),(responses,reactions,accelerated)) in [(&a[..],&ba[..]),(&b[..],&bb[..])].into_iter().zip(&actual) {
             assert!(*accelerated);HairResponseSystem::validate_joint_solution(requests,bounds,responses,reactions,tolerance).unwrap();
         }
-        assert_eq!(ba,[1.1]);assert_eq!(bb,[1.]);
+        assert_eq!(ba,[2e-7*2f64.powi(20)]);assert_eq!(bb,[1.]);
     }
     #[test]
     fn joint_accelerator_owner_admits_original_physics_and_preserves_native_fallback() {
@@ -532,9 +542,8 @@ impl HairResponseSystem {
             request.system.validate_load_correction(response, &force)?;
         }
         for i in 0..bounds.len() {
-            let actual=square_root_qr::accurate_products(requests.iter().zip(responses)
-                .flat_map(|(request,response)|request.loads[i].iter().copied().zip(response.iter().copied())));
-            let gap=actual-bounds[i];
+            let gap=square_root_qr::accurate_residual(requests.iter().zip(responses)
+                .flat_map(|(request,response)|request.loads[i].iter().copied().zip(response.iter().copied())),bounds[i]);
             if !gap.is_finite() || if reactions[i]>0. {gap.abs()>absolute_tolerance}
                 else {gap < -absolute_tolerance} {
                 return Err("joint hair original inequality residual failed");
@@ -571,7 +580,8 @@ impl HairResponseSystem {
         solve_coordinates:&impl Fn(&square_root_qr::NonzeroCoordinates<'_>,&[f64],f64)->Option<(Vec<f64>,Vec<f64>)>,
     )->Result<(Vec<Vec<f64>>,Vec<f64>), &'static str> {
         let mut effective_bounds = bounds.to_vec();
-        // Numerical defect correction for whitening/back-transformation only.
+        let mut defect_history=Self::new_physical_defect_history(bounds.len());
+        // Numerical defect correction for the complete coordinate-to-physical map.
         // Every trial must still pass the ORIGINAL inequalities, nonnegative
         // reactions and original per-system force-balance admission.
         for refinement in 0..8 {
@@ -580,6 +590,8 @@ impl HairResponseSystem {
             } else {
                 let reduced=reduced.expect("nonempty load columns");
                 let started=std::env::var_os("VOXY_HAIR_QR_PROFILE").map(|_|std::time::Instant::now());
+                square_root_diagnostics::export_entry_input(requests,columns,bounds,
+                    &effective_bounds,absolute_tolerance,refinement);
                 let solution=solve_coordinates(reduced,&effective_bounds, absolute_tolerance);
                 if let Some(started)=started {
                     let milliseconds=started.elapsed().as_secs_f64()*1000.;
@@ -600,7 +612,7 @@ impl HairResponseSystem {
                 }
             };
             let (responses,failed)=Self::admit_prepared_joint_trial(requests,bounds,absolute_tolerance,
-                factors,columns,&coordinates,&reactions,&mut effective_bounds)?;
+                factors,columns,&coordinates,&reactions,&mut effective_bounds,&mut defect_history)?;
             if let Some(i) = failed {
                 if refinement == 7 || effective_bounds.iter().any(|v| !v.is_finite()) {
                     square_root_diagnostics::export(requests,&columns,bounds,&coordinates,
@@ -614,10 +626,13 @@ impl HairResponseSystem {
         unreachable!("bounded refinement returns on its final trial")
     }
     // One physical candidate gate, independent of coordinate scheduling.
-    // Retain the exact scalar arithmetic and original immutable load bounds.
+    // Preserve compensated residual arithmetic and original immutable load bounds.
+    fn new_physical_defect_history(rows:usize)->Vec<Option<(f64,f64)>> {
+        if std::env::var("VOXY_HAIR_SAFEGUARDED_PHYSICAL_DEFECT").as_deref()==Ok("1") {vec![None;rows]} else {Vec::new()}
+    }
     fn admit_prepared_joint_trial(
         requests:&[Self],bounds:&[f64],absolute_tolerance:f64,factors:&[Vec<f64>],columns:&[Vec<f64>],
-        coordinates:&[f64],reactions:&[f64],effective_bounds:&mut [f64],
+        coordinates:&[f64],reactions:&[f64],effective_bounds:&mut [f64],defect_history:&mut [Option<(f64,f64)>],
     )->Result<(Vec<Vec<f64>>,Option<usize>),&'static str> {
             let mut responses = Vec::with_capacity(requests.len());
             let mut offset = 0;
@@ -636,18 +651,40 @@ impl HairResponseSystem {
                 offset = end;
             }
             let mut failed = None;
+            let trace=std::env::var_os("VOXY_HAIR_PHYSICAL_RESIDUAL_TRACE").is_some();
+            let safeguarded=!defect_history.is_empty();
             for i in 0..bounds.len() {
-                let actual = square_root_qr::accurate_products(requests.iter().zip(&responses)
-                    .flat_map(|(r,x)| r.loads[i].iter().copied().zip(x.iter().copied())));
-                let gap = actual - bounds[i];
+                let gap = square_root_qr::accurate_residual(requests.iter().zip(&responses)
+                    .flat_map(|(r,x)| r.loads[i].iter().copied().zip(x.iter().copied())),bounds[i]);
                 let reaction = reactions[i];
                 if !gap.is_finite() || !reaction.is_finite() || reaction < 0.
                     || if reaction > 0. { gap.abs() > absolute_tolerance }
                         else { gap < -absolute_tolerance } {
                     failed.get_or_insert(i);
                 }
-                let whitened = square_root_qr::accurate_dot(&columns[i], &coordinates);
-                effective_bounds[i] = bounds[i] - (actual - whitened);
+                let previous_effective=effective_bounds[i];
+                // Correct the complete physical residual, including coordinate
+                // decode and triangular rounding. Never target equality for
+                // a slack inactive constraint. Original admission is unchanged.
+                effective_bounds[i] = if reaction>0.||gap<0. {
+                    square_root_qr::accurate_products([(previous_effective,1.),(-gap,1.)].into_iter())
+                } else {previous_effective};
+                // Opt-in proposal safeguard for alternating physical residuals.
+                // Keep the same original gate and eight-trial budget; a midpoint
+                // is not proof of convergence and must pass the next full trial.
+                if safeguarded&&reaction>0.&&gap.is_finite()&&gap.abs()>absolute_tolerance {
+                    if let Some((prior_bound,prior_gap))=defect_history[i] {
+                        if prior_gap.is_finite()&&prior_gap.abs()>absolute_tolerance&&(prior_gap>0.)!=(gap>0.) {
+                            let midpoint=square_root_qr::accurate_products([(previous_effective,0.5),(prior_bound,0.5)].into_iter());
+                            if midpoint>previous_effective.min(prior_bound)&&midpoint<previous_effective.max(prior_bound) {effective_bounds[i]=midpoint;}
+                        }
+                    }
+                }
+                if safeguarded {defect_history[i]=if reaction>0.&&gap.is_finite() {Some((previous_effective,gap))} else {None};}
+                if trace&&(if reaction>0. {gap.abs()>absolute_tolerance} else {gap< -absolute_tolerance}) {
+                    let coordinate_gap=square_root_qr::accurate_residual(columns[i].iter().copied().zip(coordinates.iter().copied()),previous_effective);
+                    eprintln!("HAIR PHYSICAL RESIDUAL row={i} gap={gap:e} coordinate_gap={coordinate_gap:e} tolerance={absolute_tolerance:e} reaction={reaction:e} previous_effective_bits={} next_effective_bits={} original_bound_bits={} scope=unadmitted_trial",previous_effective.to_bits(),effective_bounds[i].to_bits(),bounds[i].to_bits());
+                }
             }
             Ok((responses,failed))
     }
@@ -860,6 +897,7 @@ impl<'a> PreparedNativeJoint<'a> {
         if joints.iter().zip(&widths).any(|(joint,&width)|joint.columns.iter().any(|c|
             c.len()!=width || c.iter().any(|v|!v.is_finite()))) {return Err("invalid joint square-root coordinate map");}
         let mut effective:Vec<_>=bounds.iter().map(|b|b.to_vec()).collect();
+        let mut defect_history:Vec<_>=if std::env::var("VOXY_HAIR_SAFEGUARDED_PHYSICAL_DEFECT").as_deref()==Ok("1") {bounds.iter().map(|b|vec![None;b.len()]).collect()} else {Vec::new()};
         let mut finished:Vec<_>=(0..joints.len()).map(|_|None).collect();
         let use_hints=backend.joint_contact_hints_enabled();
         for i in 0..joints.len() {
@@ -876,6 +914,15 @@ impl<'a> PreparedNativeJoint<'a> {
                 seeds:if use_hints {&seeds[i]} else {&[]}
             }).collect();
             let started=std::env::var_os("VOXY_HAIR_QR_PROFILE").map(|_|std::time::Instant::now());
+            // Capture the largest original physical operator in this batch,
+            // not a packed coordinate-only surrogate. Existing opt-in capture
+            // publishes atomically and leaves loads/bounds unchanged.
+            if std::env::var_os("VOXY_HAIR_QR_ENTRY_INPUT_EXPORT").is_some() {
+                if let Some(&i)=ready.iter().max_by_key(|&&i|joints[i].columns.len().saturating_mul(widths[i])) {
+                    square_root_diagnostics::export_entry_input(joints[i].requests,&joints[i].columns,
+                        bounds[i],&effective[i],tolerance,refinement);
+                }
+            }
             let proposals=backend.solve_joint_coordinates_batch(&requests);
             if let Some(started)=started {
                 eprintln!("HAIR JOINT PHYSICAL BATCH PROFILE operators={} refinement={refinement} elapsed_ms={}",ready.len(),started.elapsed().as_secs_f64()*1000.);
@@ -899,7 +946,7 @@ impl<'a> PreparedNativeJoint<'a> {
                     finished[i]=Some(joints[i].recover_accelerated(bounds[i],tolerance)?);continue;
                 }
                 match HairResponseSystem::admit_prepared_joint_trial(joints[i].requests,bounds[i],tolerance,
-                    &joints[i].factors,&joints[i].columns,&coordinates,&reactions,&mut effective[i]) {
+                    &joints[i].factors,&joints[i].columns,&coordinates,&reactions,&mut effective[i],if defect_history.is_empty() {&mut []} else {&mut defect_history[i]}) {
                     Ok((responses,None))=> {
                         joints[i].observe_accelerator_difference(bounds[i],tolerance,&responses,&reactions);
                         finished[i]=Some((responses,reactions,true));
@@ -999,6 +1046,7 @@ impl<'a> PreparedNativeJoint<'a> {
 pub(super) struct NativeLoadCache {
     matrix: Vec<u64>, rhs: Vec<u64>, active: std::ops::Range<usize>, band_width: usize,
     factor: Vec<f64>, columns: std::collections::HashMap<Vec<u64>, Vec<f64>>,
+    key_scratch: Vec<u64>,
     payload_bytes: usize,
     #[cfg(test)] computed_columns: usize,
 }
@@ -1008,7 +1056,8 @@ impl NativeLoadCache {
         Ok(Self { matrix: request.system.matrix.iter().map(|v|v.to_bits()).collect(),
             rhs: request.system.rhs.iter().map(|v|v.to_bits()).collect(),
             active: request.system.active.clone(), band_width: request.system.band_width,
-            factor: request.factor_native()?, columns: Default::default(), payload_bytes: 0,
+            factor: request.factor_native()?, columns: Default::default(),
+            key_scratch:Vec::with_capacity(request.system.rhs.len()),payload_bytes: 0,
             #[cfg(test)] computed_columns: 0 })
     }
     #[cfg(test)]
@@ -1023,15 +1072,16 @@ impl NativeLoadCache {
         }
         let mut local = Vec::with_capacity(request.loads.len());
         for load in &request.loads {
-            let key: Vec<_> = load.iter().map(|v|v.to_bits()).collect();
-            if let Some(column) = self.columns.get(&key) { local.push(column.clone()); continue; }
+            self.key_scratch.clear();
+            self.key_scratch.extend(load.iter().map(|v|v.to_bits()));
+            if let Some(column) = self.columns.get(&self.key_scratch) { local.push(column.clone()); continue; }
             #[cfg(test)] { self.computed_columns += 1; }
             let mut column = load.clone();
             direct::solve_lower_factored(&self.factor, &mut column, self.active.clone());
             if column.iter().any(|v|!v.is_finite()) { return Err("hair square-root response overflow"); }
             let bytes = load.len().saturating_mul(16);
             if self.columns.len() < 128 && self.payload_bytes.saturating_add(bytes) <= 256 * 1024 {
-                self.columns.insert(key, column.clone()); self.payload_bytes += bytes;
+                self.columns.insert(self.key_scratch.clone(), column.clone()); self.payload_bytes += bytes;
             }
             local.push(column);
         }

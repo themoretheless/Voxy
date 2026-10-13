@@ -1,0 +1,20 @@
+{
+  "scope": "GPU publication retains diffuse and incident RGBA together. Real-device numerical and rejection tests only; native renderer not connected, FPS not qualified.",
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "checks": [
+    "six physical poses",
+    "analytic zero-radius and unreferenced vertex",
+    "rejected attempts preserve entire paired snapshot",
+    "five corrupt input scenarios and deterministic recovery"
+  ],
+  "files": {
+    "crates/voxy_render/src/surface_light_admission.rs": "a9606fa0bb215a638adde3c641f406e90c158245a8ff3d91126e65dd9332eee2",
+    "crates/voxy_render/src/surface_light_admission.wgsl": "ec5f90bbde38e2c4346707a912e2b5a2a7e377095aad4cce6ede26141df7cacc",
+    "crates/voxy_render/examples/surface_light_admission.rs": "268d2ebb112db0bf4eff8afaf21da3c32c46db2dfda665ef72c59abca83a9268",
+    "target/release/examples/surface_light_admission": "5b948cc45eabfa5549b3b7ce1d14cabe9e0b257c04aa0a1f7a3df51720c31f09",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-paired-publication-cycle-report.json": "7e5407c1d7abd8b9ba2cd61d5bb9053d7a5dc607d75278f5a0562766cff9afc5",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-paired-publication-analytic-report.json": "1c22df7eb15c6e56ebc90459102cb6e883c2bba2c850eb971fd1b090087ed6ee",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-paired-publication-cycle.log": "b88a5d28c9cef1f4e58d89255b5d40f4255a5b3fd6e3d605da6d981d9030af83",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/light-paired-publication-analytic.log": "8b4e56ceefe832c3021f7a1a403948ee01d181e7fa5d42bae4449a5982f05a3a"
+  }
+}

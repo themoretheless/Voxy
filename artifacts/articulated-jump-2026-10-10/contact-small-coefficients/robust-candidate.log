@@ -1,0 +1,6 @@
+gradient=1e-20 mobility=1e0 result=Ok(Some(0)) diagonal=Some(1e-40)
+gradient=1e-200 mobility=1e0 result=Err("contact constraint diagonal underflow") diagonal=None
+gradient=1e-200 mobility=1e200 result=Ok(Some(0)) diagonal=Some(1e-200)
+gradient=1e200 mobility=1e-200 result=Ok(Some(0)) diagonal=Some(1e200)
+gradient=0e0 mobility=1e0 result=Ok(None) diagonal=None
+gradient=1e-20 mobility=0e0 result=Ok(None) diagonal=None

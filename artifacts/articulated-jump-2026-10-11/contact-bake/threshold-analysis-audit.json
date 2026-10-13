@@ -1,0 +1,107 @@
+{
+  "measurement_records": 8,
+  "trials_per_record": 25,
+  "total_trials": 200,
+  "screening_only_not_stance_acceptance": true,
+  "results": [
+    {
+      "clip": "Walk_Loop",
+      "common_two_transition_trials_with_15_to_65_percent_coverage": [
+        [
+          0.02,
+          0.15
+        ],
+        [
+          0.02,
+          0.3
+        ],
+        [
+          0.02,
+          0.6
+        ],
+        [
+          0.02,
+          1.2
+        ],
+        [
+          0.02,
+          2.4
+        ],
+        [
+          0.04,
+          0.15
+        ],
+        [
+          0.04,
+          0.3
+        ],
+        [
+          0.04,
+          0.6
+        ],
+        [
+          0.04,
+          1.2
+        ],
+        [
+          0.04,
+          2.4
+        ],
+        [
+          0.06,
+          0.15
+        ],
+        [
+          0.06,
+          0.3
+        ],
+        [
+          0.06,
+          0.6
+        ],
+        [
+          0.06,
+          1.2
+        ],
+        [
+          0.06,
+          2.4
+        ]
+      ]
+    },
+    {
+      "clip": "Jog_Fwd_Loop",
+      "common_two_transition_trials_with_15_to_65_percent_coverage": [
+        [
+          0.04,
+          2.4
+        ],
+        [
+          0.06,
+          2.4
+        ],
+        [
+          0.08,
+          2.4
+        ],
+        [
+          0.12,
+          2.4
+        ]
+      ]
+    },
+    {
+      "clip": "Sprint_Loop",
+      "common_two_transition_trials_with_15_to_65_percent_coverage": [
+        [
+          0.08,
+          2.4
+        ],
+        [
+          0.12,
+          2.4
+        ]
+      ]
+    }
+  ]
+}

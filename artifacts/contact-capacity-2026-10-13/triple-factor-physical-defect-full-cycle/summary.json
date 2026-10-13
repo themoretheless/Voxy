@@ -1,0 +1,76 @@
+{
+  "attempted_frame": 4,
+  "authored_jump": true,
+  "completed_frames": 3,
+  "continuous_contacts": true,
+  "error": null,
+  "gpu_hair_backend": true,
+  "guide_count": 469,
+  "phase": "preparing",
+  "process_id": 25613,
+  "required_frames": 720,
+  "scope": "actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.025,
+  "status": "running",
+  "steps": [
+    {
+      "elapsed_ms": 227452.45750000002,
+      "frame": 1,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 9687,
+        "joint_coordinate_calls": 9687,
+        "joint_equality_dispatches": 3974,
+        "joint_equality_submissions": 551,
+        "joint_result_cache_hits": 5713,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0,
+        "workspace_creations": 0,
+        "workspace_reuses": 0
+      },
+      "hair_ms": 227449.99183400001,
+      "skin_ms": 37.599624999999996,
+      "time_s": 0.008333333333333333
+    },
+    {
+      "elapsed_ms": 13483043.903042,
+      "frame": 2,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 266818,
+        "joint_coordinate_calls": 266818,
+        "joint_equality_dispatches": 78976,
+        "joint_equality_submissions": 12305,
+        "joint_result_cache_hits": 187842,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0,
+        "workspace_creations": 0,
+        "workspace_reuses": 0
+      },
+      "hair_ms": 13483038.848125,
+      "skin_ms": 35.320375,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "elapsed_ms": 823432.974458,
+      "frame": 3,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 280281,
+        "joint_coordinate_calls": 367897,
+        "joint_equality_dispatches": 84235,
+        "joint_equality_submissions": 12827,
+        "joint_result_cache_hits": 196046,
+        "native_contact_fallbacks": 87616,
+        "structural_calls": 0,
+        "workspace_creations": 0,
+        "workspace_reuses": 0
+      },
+      "hair_ms": 823427.2627079999,
+      "skin_ms": 83.75425,
+      "time_s": 0.025
+    }
+  ],
+  "updated_unix_ms": 1791871764282
+}

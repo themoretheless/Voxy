@@ -10,3 +10,15 @@ workspace = true
 [[bench]]
 name = "sphere_contact"
 harness = false
+
+[features]
+default = []
+experimental-strand-fraction-reuse = []
+experimental-reusable-query-workers = ["dep:rayon"]
+
+[dependencies]
+num-bigint = "0.4"
+num-rational = "0.4"
+num-traits = "0.2"
+
+rayon = { version = "1.12", optional = true }

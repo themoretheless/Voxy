@@ -1,0 +1,32 @@
+{
+  "decision": "keep experimental; allocation reduction demonstrated but loaded timing is inconclusive; production defaults unchanged",
+  "cold_first_projection": {
+    "owners": 66,
+    "dispatches": 119,
+    "submissions": 119,
+    "workspace_creations": 8,
+    "workspace_reuses": 58
+  },
+  "warm_baseline_creations_per_projection": [
+    31
+  ],
+  "warm_candidate_creations_per_projection": [
+    0
+  ],
+  "baseline_median_seconds": 0.509193917,
+  "candidate_median_seconds": 0.495104458,
+  "median_speedup": 1.0284575482453038,
+  "candidate_faster_pairs": 2,
+  "pairs": 7,
+  "physical_responses_and_reactions_bitwise_equal": true,
+  "strict_budget_exact_size_retry_passed": true,
+  "fallbacks": 0,
+  "tolerance": 1e-14,
+  "concurrent_load_controlled": false,
+  "full_trajectory_qualified": false,
+  "rendered_fps_measured": false,
+  "sha256": {
+    "/tmp/voxy-geometric-workspace-tests": "d1197924d78b148d331bf210760dca68c6544e023a29d3ec5c152fc1e779fedf",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "b0186c5543334aea73cf7e7c3e72be8e799c554612a8df61f99209e2b99e3400"
+  }
+}

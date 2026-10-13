@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "scope": "GPU color normals integrated with GPU pair force arithmetic; accumulation and geometry remain native",
+  "particles": 70,
+  "pairs": 2415,
+  "pair_orders": 2,
+  "maximum_absolute_error": 1.4051260155412137e-16,
+  "normal_admission_absolute": 1e-12,
+  "normal_admission_relative": 2e-11,
+  "integrated_gpu_steps": 9,
+  "normal_native_fallbacks": 0,
+  "pair_native_fallbacks": 0,
+  "native_tests_passed": 124,
+  "render_tests_passed": 227,
+  "render_tests_ignored": 39,
+  "density_gpu_regression": "passed",
+  "fps_measured": false,
+  "sha256": {
+    "crates/physics/src/liquid.rs": "a984cab2c2b4e858ae0b1642a36efac32232bfb71fb2359db9ccf2110b0494fc",
+    "crates/physics/src/liquid/normal_operator.rs": "89b744d1b7b12ef57279d929f8817a65b08bd19dc3a8bec6442abb340c282850",
+    "crates/physics/src/liquid/density_operator.rs": "53ee4aeb8588caa56bb3cdd485e10636b74f5a755497fc3e8a5a39a0686bf8e9",
+    "crates/physics/src/liquid/pair_forces.rs": "9affa7ade955a30c3c778f4e8582bc0f9208fbd7acb4858534d68a07f96b431c",
+    "crates/physics/tests/liquid_density_operator.rs": "14e3dccf56e0d42d5f8db71ab5c3e3ec22bc723b9e3db7702382fb14e1b0239c",
+    "crates/voxy_render/src/liquid_normals.rs": "973d94590122686648ea01f88e82e0512ba11e372519a6033fbb695ec80c9a4a",
+    "crates/voxy_render/src/liquid_normals.wgsl": "cfb9ba24bacf3d037671f0cf753da5d2d283e1e47a638779c237bc42c213add5",
+    "crates/voxy_render/src/liquid_pair_forces.rs": "68b6144b1c72cf751a810d2f6383aa956f291bbb7150a34166d3202e09cc44ad"
+  }
+}

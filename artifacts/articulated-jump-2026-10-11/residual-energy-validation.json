@@ -1,0 +1,22 @@
+{
+  "scope": "physics library and hair/hair_rebase integration; no full capture/FPS proof",
+  "test_results": [
+    [
+      "394",
+      "0",
+      "44"
+    ],
+    [
+      "21",
+      "0",
+      "0"
+    ],
+    [
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "log_sha256": "94f9959f3d07637c2c8dfe7a0dcc612a95e05e64a84a3aef9fc713c733d2776b",
+  "sources_match_frozen_replay_manifest": true
+}

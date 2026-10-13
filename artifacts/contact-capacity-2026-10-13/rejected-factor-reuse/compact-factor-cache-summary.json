@@ -1,0 +1,20 @@
+{
+  "scope": "captured original physical fixture replay; retained payload excludes fixed Vec/struct overhead; reuse counts attempts not admitted physical owners",
+  "fixtures": {
+    "91": {
+      "observed_max_cache_entries": 1,
+      "observed_max_cache_payload_bytes": 1028172,
+      "reused_coordinate_attempts": 5
+    },
+    "100": {
+      "observed_max_cache_entries": 1,
+      "observed_max_cache_payload_bytes": 1123536,
+      "reused_coordinate_attempts": 3
+    },
+    "55": {
+      "observed_max_cache_entries": 1,
+      "observed_max_cache_payload_bytes": 1880940,
+      "reused_coordinate_attempts": 1
+    }
+  }
+}

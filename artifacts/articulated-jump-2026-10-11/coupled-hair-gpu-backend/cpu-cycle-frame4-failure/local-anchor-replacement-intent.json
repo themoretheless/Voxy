@@ -1,0 +1,6 @@
+{
+  "pid": 73490,
+  "command": "/tmp/voxy-frame4-local-anchor-8c22c64c79d1/physics-replay captured_contact_reaches_feasible_geometry --ignored --nocapture",
+  "reason": "origin-tangent successor completed captured wrapper successfully; preserve obsolete local-anchor comparison",
+  "requested_unix_s": 1791766599.5272
+}

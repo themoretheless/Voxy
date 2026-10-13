@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "session": 35161,
+  "log": "/tmp/voxy-production-feature-axis-checks.log",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_triangle_exact_discovery.rs": "83c88caf80895b7f035c3190eba273054d3055a3276be39caa7a8d5c5f57de61",
+    "crates/physics/src/hair/contact_triangle_dyadic.rs": "e6c8f5e74276656ff4660e89e8c8ead5a25dc76520bc13cc2fcb99e4504397dd"
+  },
+  "behavior": "Exact moving face/edge axis family first; unchanged general discovery fallback on unknown. Each family bounded by original caller budget. Physical tolerance and exact inequalities unchanged.",
+  "limits": "Paired timing is one complete primitive certificate, not a full solver/frame or FPS result. Existing frozen full solver still maps earlier binary.",
+  "targeted_tests_passed": 23,
+  "ordinary_tests_passed": 403,
+  "ordinary_tests_ignored": 59,
+  "non_test_release_check": "passed",
+  "direction_audit": {
+    "elapsed_s": 14.77,
+    "descending_feasible_samples": [
+      "DIRECTION GEOMETRY scale=5.960464477539063e-8 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=true scope=direction_only_not_tangent_completion",
+      "DIRECTION GEOMETRY scale=3.725290298461914e-9 merit=0e0 strain=2.223142271788614e-2 strand_path=true mesh_path=true descending_feasible=true scope=direction_only_not_tangent_completion"
+    ],
+    "scope": "Full captured groom direction/path samples, not tangent completion or solver convergence"
+  }
+}

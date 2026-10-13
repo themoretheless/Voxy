@@ -1,0 +1,12 @@
+{
+  "ordinary_passed": 413,
+  "ignored": 62,
+  "exact_checks_passed": 31,
+  "release_check": "passed with 7 existing warnings",
+  "cache_scope": "lazy exact basic-feature point predicates at shared dyadic boundaries within one immutable query",
+  "reference_comparison": "identical exact leaves/unknown at budgets 1,16,1024 on original and penetrating-radius fixtures; retained leaves checked by independent rational interval verifier",
+  "microbenchmark": "wide variation; clear median ratio 1.1068, initial-penetration ratio 0.9862; no stable full-groom gain claimed",
+  "full_groom_final_state_comparison": "running",
+  "source_sha256": "2e88fa43edb4ee18a9af73e0ec9c358e2480bdeed14b445038a3e8cc91547aca",
+  "observed_unix_s": 1791767359.8338518
+}

@@ -36,15 +36,17 @@ impl FiberSurfaceInput {
         }
         let offsets_word = 8usize.checked_add(frames.len().checked_mul(16).ok_or(SceneError::GeometryCapacityExceeded)?)
             .ok_or(SceneError::GeometryCapacityExceeded)?;
-        let output_word = offsets_word.checked_add(offsets.len().checked_mul(4).ok_or(SceneError::GeometryCapacityExceeded)?)
+        let transform_word = offsets_word.checked_add(offsets.len().checked_mul(4).ok_or(SceneError::GeometryCapacityExceeded)?)
             .ok_or(SceneError::GeometryCapacityExceeded)?;
+        let output_word = transform_word.checked_add(16).ok_or(SceneError::GeometryCapacityExceeded)?;
         let total = output_word.checked_add(count.checked_mul(12).ok_or(SceneError::GeometryCapacityExceeded)?)
             .filter(|n| *n <= u32::MAX as usize).ok_or(SceneError::GeometryCapacityExceeded)?;
         let mut words = Vec::new();
         words.try_reserve_exact(total).map_err(|_| SceneError::MemoryBudget)?;
-        words.extend_from_slice(&[count as u32, followers, 8, offsets_word as u32, output_word as u32, radius.to_bits(), taper.to_bits(), 0]);
+        words.extend_from_slice(&[count as u32, followers, 8, offsets_word as u32, output_word as u32, radius.to_bits(), taper.to_bits(), transform_word as u32]);
         words.extend_from_slice(bytemuck::cast_slice(frames));
         words.extend(offsets.iter().flatten().map(|x| x.to_bits()));
+        words.extend(glam::Mat4::IDENTITY.to_cols_array().map(f32::to_bits));
         words.resize(total, 0);
         Ok(Self { words, output_word, vertex_count: count as u32 })
     }
@@ -66,6 +68,19 @@ impl FiberSurfaceInput {
         }
         self.words[8..end].copy_from_slice(bytemuck::cast_slice(frames));
         Ok(bytemuck::cast_slice(&self.words[8..end]))
+    }
+
+    /// Object pose is applied after local follower/radial expansion, matching CPU order.
+    pub fn transform_byte_offset(&self) -> u64 { u64::from(self.words[7]) * 4 }
+    pub fn replace_transform(&mut self, transform: glam::Mat4) -> Result<&[u8], SceneError> {
+        let values = transform.to_cols_array();
+        let determinant = transform.determinant();
+        if !determinant.is_finite() || values.iter().any(|v| !v.is_finite()) || transform.x_axis.w != 0.
+            || transform.y_axis.w != 0. || transform.z_axis.w != 0. || transform.w_axis.w != 1.
+            || determinant.abs() < 1e-12 { return Err(SceneError::InvalidGeometry); }
+        let start = self.words[7] as usize;
+        self.words[start..start+16].copy_from_slice(bytemuck::cast_slice(&values));
+        Ok(bytemuck::cast_slice(&self.words[start..start+16]))
     }
 
     pub fn output<'a>(&self, bytes: &'a [u8]) -> Result<&'a [u8], SceneError> {
@@ -94,6 +109,15 @@ mod tests {
         assert_eq!(resident.replace_frames(&[moved]).unwrap().len(),64);
         assert_eq!(&resident.bytes()[96..],&immutable[96..]);
         assert!(FiberSurfaceInput::new(&[invalid],1,&[[0.,0.,0.,1.]],0.0003,0.6).is_err());
+        let before_pose=resident.bytes().to_vec();
+        assert!(resident.replace_transform(glam::Mat4::ZERO).is_err());
+        assert!(resident.replace_transform(glam::Mat4::from_cols_array(&[f32::NAN;16])).is_err());
+        assert_eq!(resident.bytes(),before_pose);
+        let offset=resident.transform_byte_offset() as usize;
+        let pose=glam::Mat4::from_translation(glam::Vec3::Y*0.2);
+        assert_eq!(resident.replace_transform(pose).unwrap(),bytemuck::cast_slice::<f32,u8>(&pose.to_cols_array()));
+        assert_eq!(&resident.bytes()[..offset],&before_pose[..offset]);
+        assert_eq!(&resident.bytes()[offset+64..],&before_pose[offset+64..]);
     }
 }
 
@@ -108,6 +132,15 @@ pub struct FiberSurfaceTransfer {
 impl FiberSurfaceTransfer {
     pub async fn new(device: &wgpu::Device, geometry: &crate::SceneGeometry, source: &wgpu::Buffer,
         input: &FiberSurfaceInput, vertex_base: u32) -> Result<Self, crate::ComputeError> {
+        Self::create(device, geometry, source, input, vertex_base, false).await
+    }
+    /// Scatter solved material directors into an independent draw tangent stream.
+    pub async fn new_with_tangents(device: &wgpu::Device, geometry: &crate::SceneGeometry, source: &wgpu::Buffer,
+        input: &FiberSurfaceInput, vertex_base: u32) -> Result<Self, crate::ComputeError> {
+        Self::create(device, geometry, source, input, vertex_base, true).await
+    }
+    async fn create(device: &wgpu::Device, geometry: &crate::SceneGeometry, source: &wgpu::Buffer,
+        input: &FiberSurfaceInput, vertex_base: u32, with_tangents: bool) -> Result<Self, crate::ComputeError> {
         use crate::{ComputeError, compute_memory::ManagedBufferDescriptor};
         let end = vertex_base.checked_add(input.vertex_count).ok_or(ComputeError::InvalidBuffer)?;
         let groups = input.vertex_count.div_ceil(64);
@@ -120,6 +153,13 @@ impl FiberSurfaceTransfer {
             || groups > device.limits().max_compute_workgroups_per_dimension {
             return Err(ComputeError::InvalidBuffer);
         }
+        let tangent = if with_tangents {
+            let buffer = geometry.deformation_tangents().ok_or(ComputeError::InvalidBuffer)?;
+            if !buffer.usage().contains(wgpu::BufferUsages::STORAGE) || buffer.size() < u64::from(end)*16 {
+                return Err(ComputeError::InvalidBuffer);
+            }
+            Some(buffer)
+        } else { None };
         let parameters=[input.vertex_count, input.output_word as u32, vertex_base, 0];
         let mut buffers=crate::ComputeMemoryBudget::for_device(device).allocate_buffer_batch(&[
             ManagedBufferDescriptor { label:"fibre scatter parameters",size:16,
@@ -128,18 +168,20 @@ impl FiberSurfaceTransfer {
         let parameters=buffers.pop().ok_or(ComputeError::MemoryBudget)?;
         let scope=device.push_error_scope(wgpu::ErrorFilter::Validation);
         let shader=device.create_shader_module(wgpu::ShaderModuleDescriptor { label:Some("fibre draw transfer"),
-            source:wgpu::ShaderSource::Wgsl(include_str!("fiber_surface_transfer.wgsl").into()) });
+            source:wgpu::ShaderSource::Wgsl(if with_tangents { include_str!("fiber_surface_transfer_tangent.wgsl") } else { include_str!("fiber_surface_transfer.wgsl") }.into()) });
         let pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label:Some("fibre draw transfer"),layout:None,module:&shader,entry_point:Some("cs_main"),
             compilation_options:Default::default(),cache:None,
         });
+        let mut entries=vec![
+            wgpu::BindGroupEntry { binding:0,resource:source.as_entire_binding() },
+            wgpu::BindGroupEntry { binding:1,resource:geometry.deformation_vertices().as_entire_binding() },
+            wgpu::BindGroupEntry { binding:2,resource:geometry.deformation_normals().as_entire_binding() },
+            wgpu::BindGroupEntry { binding:3,resource:parameters.as_entire_binding() },
+        ];
+        if let Some(buffer)=tangent { entries.push(wgpu::BindGroupEntry { binding:4,resource:buffer.as_entire_binding() }); }
         let group=device.create_bind_group(&wgpu::BindGroupDescriptor { label:Some("fibre draw streams"),
-            layout:&pipeline.get_bind_group_layout(0),entries:&[
-                wgpu::BindGroupEntry { binding:0,resource:source.as_entire_binding() },
-                wgpu::BindGroupEntry { binding:1,resource:geometry.deformation_vertices().as_entire_binding() },
-                wgpu::BindGroupEntry { binding:2,resource:geometry.deformation_normals().as_entire_binding() },
-                wgpu::BindGroupEntry { binding:3,resource:parameters.as_entire_binding() },
-            ] });
+            layout:&pipeline.get_bind_group_layout(0),entries:&entries });
         if let Some(error)=scope.pop().await { return Err(ComputeError::Validation(error.to_string())); }
         Ok(Self { pipeline,group,_parameters:parameters,groups })
     }

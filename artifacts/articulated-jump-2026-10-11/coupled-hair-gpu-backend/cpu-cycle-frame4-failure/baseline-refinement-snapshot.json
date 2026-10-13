@@ -1,0 +1,533 @@
+{
+  "scope": "observed refinement trace only; no physical feasibility or full-cycle proof",
+  "log_sha256": "9327de65e435f60a86fd2449e4819b2d2a190d58c94b7135eadbccffea1f06b1",
+  "transactions": [],
+  "nonlinear_accepted_steps": [
+    {
+      "line": 1529,
+      "iteration": 10,
+      "before": 0.0,
+      "full": 7.945649691586805e-21,
+      "accepted": 0.0,
+      "scale": 2.384185791015625e-07,
+      "tangent_complete": false
+    },
+    {
+      "line": 3357,
+      "iteration": 23,
+      "before": 0.0,
+      "full": 7.943636098845277e-21,
+      "accepted": 0.0,
+      "scale": 4.76837158203125e-07,
+      "tangent_complete": false
+    },
+    {
+      "line": 5202,
+      "iteration": 36,
+      "before": 0.0,
+      "full": 1.3835382939753542e-21,
+      "accepted": 0.0,
+      "scale": 0.25,
+      "tangent_complete": false
+    },
+    {
+      "line": 6728,
+      "iteration": 47,
+      "before": 0.0,
+      "full": 6.294825893704128e-21,
+      "accepted": 0.0,
+      "scale": 0.125,
+      "tangent_complete": false
+    },
+    {
+      "line": 8103,
+      "iteration": 57,
+      "before": 0.0,
+      "full": 7.586776120858648e-21,
+      "accepted": 0.0,
+      "scale": 0.03125,
+      "tangent_complete": false
+    }
+  ],
+  "nonlinear_local_solves": [
+    {
+      "first_line": 154,
+      "last_line": 8103,
+      "first_observed_attempt": 0,
+      "last_attempt": 57,
+      "accepted_moves": 5,
+      "model_refinements": 53,
+      "minimum_accepted_scale": 2.384185791015625e-07,
+      "last_accepted_step": {
+        "line": 8103,
+        "iteration": 57,
+        "before": 0.0,
+        "full": 7.586776120858648e-21,
+        "accepted": 0.0,
+        "scale": 0.03125,
+        "tangent_complete": false
+      },
+      "last_observed_admission": {
+        "line": 8104,
+        "iteration": 57,
+        "tangent_complete": false,
+        "strand_admitted": true,
+        "unresolved": false,
+        "worst_gap_m": -7.903797454458324e-12
+      },
+      "terminal_work_budgets": []
+    }
+  ],
+  "nonlinear_model_deferrals": [
+    {
+      "line": 154,
+      "iteration": 0,
+      "added_rows": 6,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 306,
+      "iteration": 1,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 457,
+      "iteration": 2,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 608,
+      "iteration": 3,
+      "added_rows": 12,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 759,
+      "iteration": 4,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 910,
+      "iteration": 5,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1044,
+      "iteration": 6,
+      "added_rows": 6,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1195,
+      "iteration": 7,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1346,
+      "iteration": 8,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1497,
+      "iteration": 9,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1681,
+      "iteration": 11,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1832,
+      "iteration": 12,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 1983,
+      "iteration": 13,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 2134,
+      "iteration": 14,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 2285,
+      "iteration": 15,
+      "added_rows": 15,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 2436,
+      "iteration": 16,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 2587,
+      "iteration": 17,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 2721,
+      "iteration": 18,
+      "added_rows": 7,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 2872,
+      "iteration": 19,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 3023,
+      "iteration": 20,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 3174,
+      "iteration": 21,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 3325,
+      "iteration": 22,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 3509,
+      "iteration": 24,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 3660,
+      "iteration": 25,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 3811,
+      "iteration": 26,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 3962,
+      "iteration": 27,
+      "added_rows": 16,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 4113,
+      "iteration": 28,
+      "added_rows": 5,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 4264,
+      "iteration": 29,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 4415,
+      "iteration": 30,
+      "added_rows": 5,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 4566,
+      "iteration": 31,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 4717,
+      "iteration": 32,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 4868,
+      "iteration": 33,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 5019,
+      "iteration": 34,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 5170,
+      "iteration": 35,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 5354,
+      "iteration": 37,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 5505,
+      "iteration": 38,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 5656,
+      "iteration": 39,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 5807,
+      "iteration": 40,
+      "added_rows": 14,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 5958,
+      "iteration": 41,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 6109,
+      "iteration": 42,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 6243,
+      "iteration": 43,
+      "added_rows": 9,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 6394,
+      "iteration": 44,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 6545,
+      "iteration": 45,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 6696,
+      "iteration": 46,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 6880,
+      "iteration": 48,
+      "added_rows": 4,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 7031,
+      "iteration": 49,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 7182,
+      "iteration": 50,
+      "added_rows": 16,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 7333,
+      "iteration": 51,
+      "added_rows": 3,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 7484,
+      "iteration": 52,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 7618,
+      "iteration": 53,
+      "added_rows": 7,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 7769,
+      "iteration": 54,
+      "added_rows": 2,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 7920,
+      "iteration": 55,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    },
+    {
+      "line": 8071,
+      "iteration": 56,
+      "added_rows": 1,
+      "added_pairs": 0,
+      "descent_found": true
+    }
+  ],
+  "observed_feasible_prefixes": [],
+  "prefixes_with_following_pose_updates": 0,
+  "prefixes_without_following_pose_update": 0,
+  "nonlinear_admissions": [
+    {
+      "line": 1530,
+      "iteration": 10,
+      "tangent_complete": false,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -1.2432340806925768e-11
+    },
+    {
+      "line": 3358,
+      "iteration": 23,
+      "tangent_complete": false,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -9.99999735702207e-11
+    },
+    {
+      "line": 5203,
+      "iteration": 36,
+      "tangent_complete": false,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -9.32426170669894e-12
+    },
+    {
+      "line": 6729,
+      "iteration": 47,
+      "tangent_complete": false,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -8.158868252375067e-12
+    },
+    {
+      "line": 8104,
+      "iteration": 57,
+      "tangent_complete": false,
+      "strand_admitted": true,
+      "unresolved": false,
+      "worst_gap_m": -7.903797454458324e-12
+    }
+  ],
+  "nonlinear_work_budgets": [],
+  "geometry_admitted_tangent_incomplete_events": 5,
+  "elastic_directions": [],
+  "elastic_full_steps": [],
+  "elastic_trials": [],
+  "trials_with_residual_work": 0,
+  "residual_descents_hidden_by_total_energy": 0,
+  "directions_with_measured_magnitudes": 0,
+  "positive_elastic_direction_slopes": 0,
+  "observed_uphill_full_steps": 0,
+  "model_deferrals_with_trial_descent": 53,
+  "feasible_elastic_accepted_steps": 5,
+  "completed_profile_count": 0,
+  "setup_separately_measured_profile_count": 0,
+  "detailed_refinement_profile_count": 0,
+  "detailed_refinement_totals_ms": {
+    "witness_ms": 0,
+    "projection_ms": 0,
+    "admission_ms": 0
+  },
+  "profile_stage_totals_ms": {
+    "elapsed_ms": 0,
+    "initial_setup_ms": 0,
+    "initial_projection_ms": 0,
+    "initial_admission_ms": 0,
+    "refinement_and_final_check_ms": 0
+  },
+  "slowest_completed_profile": null,
+  "temporal_retries": [],
+  "temporal_admissions": [],
+  "refinement_events": 0,
+  "unpaired_cut_update": null,
+  "clock_only_events": 0,
+  "minimum_observed_trust_scale": null
+}

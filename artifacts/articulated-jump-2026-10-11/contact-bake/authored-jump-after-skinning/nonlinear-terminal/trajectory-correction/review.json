@@ -1,0 +1,20 @@
+{
+  "runtime_adopted": false,
+  "candidate_admitted": false,
+  "test_only": true,
+  "density": "469 guides, 20 segments",
+  "new_trajectory_rows": [
+    0,
+    5,
+    0,
+    4
+  ],
+  "correction_4": {
+    "strand_path": true,
+    "mesh_path": false,
+    "work_j": -1.5513921700778813e-13,
+    "merit": 1.3630399004746747e-19
+  },
+  "conclusion": "Swept strand rows repair candidate strand path at corrections2 and4, but simultaneous mesh admission remains false. Rebuilt rows alternate active constraints; investigate consistent retained joint model rather than accepting alternating subsets.",
+  "source_basis": "Pinned Ipopt SOC objective-preserving correction and original acceptance recheck; current experiment is not full frozen KKT SOC."
+}

@@ -1,0 +1,1440 @@
+{
+  "scope": "Live full-character GPU surface diffusion and inherited lip colors. CPU mesh/normal work retained. Concurrent other jobs and old preview remained. Not controlled performance comparison or target-FPS qualification.",
+  "pid": 31012,
+  "warm_present_samples": 351,
+  "warm_mean_interval_ms": 261.74108096011395,
+  "observed_fps_from_mean_interval": 3.8205695350986475,
+  "CPU_diffusion_skipped_warm": true,
+  "warm_diffusion_stage_max_ms": 0.024,
+  "gpu_admissions": [
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 1,
+      "error_estimate": 0.00033254
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 3,
+      "error_estimate": 0.00043627
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 5,
+      "error_estimate": 0.0003663
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 6,
+      "error_estimate": 0.00032614
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 8,
+      "error_estimate": 0.00028679
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 9,
+      "error_estimate": 0.0003008
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 11,
+      "error_estimate": 0.00027941
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 13,
+      "error_estimate": 0.00035886
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 15,
+      "error_estimate": 0.00037372
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 17,
+      "error_estimate": 0.00046024
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 19,
+      "error_estimate": 0.00035966
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 21,
+      "error_estimate": 0.00038311
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 22,
+      "error_estimate": 0.00036047
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 24,
+      "error_estimate": 0.00031134
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 26,
+      "error_estimate": 0.00027973
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 27,
+      "error_estimate": 0.00035598
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 29,
+      "error_estimate": 0.0003353
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 31,
+      "error_estimate": 0.00030563
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 33,
+      "error_estimate": 0.00029008
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 35,
+      "error_estimate": 0.00033855
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 37,
+      "error_estimate": 0.00033147
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 39,
+      "error_estimate": 0.00037604
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 41,
+      "error_estimate": 0.00039546
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 43,
+      "error_estimate": 0.00039079
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 44,
+      "error_estimate": 0.00028838
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 46,
+      "error_estimate": 0.00032252
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 47,
+      "error_estimate": 0.0003485
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 49,
+      "error_estimate": 0.00033714
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 51,
+      "error_estimate": 0.00030383
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 52,
+      "error_estimate": 0.00031611
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 54,
+      "error_estimate": 0.00031193
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 56,
+      "error_estimate": 0.00035406
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 57,
+      "error_estimate": 0.00035281
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 59,
+      "error_estimate": 0.00039711
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 61,
+      "error_estimate": 0.00039723
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 62,
+      "error_estimate": 0.00035749
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 64,
+      "error_estimate": 0.00039009
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 66,
+      "error_estimate": 0.00039499
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 67,
+      "error_estimate": 0.00031664
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 68,
+      "error_estimate": 0.00037505
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 70,
+      "error_estimate": 0.00035276
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 72,
+      "error_estimate": 0.00038389
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 74,
+      "error_estimate": 0.00035081
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 76,
+      "error_estimate": 0.00034973
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 77,
+      "error_estimate": 0.00034982
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 79,
+      "error_estimate": 0.00038512
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 81,
+      "error_estimate": 0.00038829
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 82,
+      "error_estimate": 0.00036889
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 83,
+      "error_estimate": 0.00043408
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 85,
+      "error_estimate": 0.00035828
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 87,
+      "error_estimate": 0.00039347
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 89,
+      "error_estimate": 0.00030178
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 90,
+      "error_estimate": 0.00032797
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 92,
+      "error_estimate": 0.00033391
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 94,
+      "error_estimate": 0.00033152
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 96,
+      "error_estimate": 0.00036621
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 98,
+      "error_estimate": 0.00038471
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 100,
+      "error_estimate": 0.00039481
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 102,
+      "error_estimate": 0.00039775
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 104,
+      "error_estimate": 0.00034019
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 106,
+      "error_estimate": 0.00035807
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 108,
+      "error_estimate": 0.00031373
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 110,
+      "error_estimate": 0.0003078
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 112,
+      "error_estimate": 0.00030682
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 114,
+      "error_estimate": 0.00032139
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 115,
+      "error_estimate": 0.00034948
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 117,
+      "error_estimate": 0.00035865
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 119,
+      "error_estimate": 0.00031656
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 121,
+      "error_estimate": 0.00041931
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 123,
+      "error_estimate": 0.00036426
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 124,
+      "error_estimate": 0.00036708
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 126,
+      "error_estimate": 0.00041906
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 127,
+      "error_estimate": 0.00034799
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 129,
+      "error_estimate": 0.00035397
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 131,
+      "error_estimate": 0.00028421
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 133,
+      "error_estimate": 0.00037418
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 134,
+      "error_estimate": 0.00034837
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 136,
+      "error_estimate": 0.00034465
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 138,
+      "error_estimate": 0.00033696
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 140,
+      "error_estimate": 0.00030084
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 142,
+      "error_estimate": 0.00038213
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 144,
+      "error_estimate": 0.00037503
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 145,
+      "error_estimate": 0.00035439
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 147,
+      "error_estimate": 0.0003071
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 149,
+      "error_estimate": 0.00032138
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 151,
+      "error_estimate": 0.00031421
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 153,
+      "error_estimate": 0.00031643
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 155,
+      "error_estimate": 0.00032907
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 157,
+      "error_estimate": 0.00035184
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 159,
+      "error_estimate": 0.0003646
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 160,
+      "error_estimate": 0.00043619
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 162,
+      "error_estimate": 0.00038743
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 164,
+      "error_estimate": 0.00030257
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 165,
+      "error_estimate": 0.00035562
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 167,
+      "error_estimate": 0.00028349
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 169,
+      "error_estimate": 0.00030698
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 171,
+      "error_estimate": 0.00027394
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 173,
+      "error_estimate": 0.00036329
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 175,
+      "error_estimate": 0.00027916
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 177,
+      "error_estimate": 0.00038311
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 179,
+      "error_estimate": 0.00033023
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 181,
+      "error_estimate": 0.00036283
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 183,
+      "error_estimate": 0.00031917
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 185,
+      "error_estimate": 0.00036777
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 187,
+      "error_estimate": 0.00035674
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 189,
+      "error_estimate": 0.00035537
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 191,
+      "error_estimate": 0.00033279
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 193,
+      "error_estimate": 0.00030152
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 195,
+      "error_estimate": 0.00031683
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 197,
+      "error_estimate": 0.00034046
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 199,
+      "error_estimate": 0.00039216
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 201,
+      "error_estimate": 0.00037707
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 203,
+      "error_estimate": 0.00037733
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 204,
+      "error_estimate": 0.00039088
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 206,
+      "error_estimate": 0.00035585
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 208,
+      "error_estimate": 0.0002841
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 210,
+      "error_estimate": 0.00034022
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 212,
+      "error_estimate": 0.00036141
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 214,
+      "error_estimate": 0.00033914
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 216,
+      "error_estimate": 0.00033377
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 218,
+      "error_estimate": 0.00040879
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 220,
+      "error_estimate": 0.00034974
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 222,
+      "error_estimate": 0.00035372
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 223,
+      "error_estimate": 0.00041168
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 225,
+      "error_estimate": 0.00041175
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 226,
+      "error_estimate": 0.00035439
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 228,
+      "error_estimate": 0.00028919
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 230,
+      "error_estimate": 0.00039224
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 232,
+      "error_estimate": 0.00033557
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 234,
+      "error_estimate": 0.0002907
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 235,
+      "error_estimate": 0.00037516
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 237,
+      "error_estimate": 0.0003237
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 239,
+      "error_estimate": 0.00037891
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 241,
+      "error_estimate": 0.00032112
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 242,
+      "error_estimate": 0.00034454
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 244,
+      "error_estimate": 0.00039134
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 246,
+      "error_estimate": 0.00032145
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 247,
+      "error_estimate": 0.0003448
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 249,
+      "error_estimate": 0.00034447
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 250,
+      "error_estimate": 0.00030485
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 251,
+      "error_estimate": 0.00025484
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 253,
+      "error_estimate": 0.00032546
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 255,
+      "error_estimate": 0.00037578
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 257,
+      "error_estimate": 0.00039679
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 259,
+      "error_estimate": 0.00036811
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 261,
+      "error_estimate": 0.00040032
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 263,
+      "error_estimate": 0.00038521
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 265,
+      "error_estimate": 0.0003248
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 267,
+      "error_estimate": 0.00031848
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 269,
+      "error_estimate": 0.00033068
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 271,
+      "error_estimate": 0.00033259
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 273,
+      "error_estimate": 0.00032171
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 274,
+      "error_estimate": 0.00036268
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 276,
+      "error_estimate": 0.00038371
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 277,
+      "error_estimate": 0.0003548
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 279,
+      "error_estimate": 0.00043535
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 281,
+      "error_estimate": 0.00040943
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 283,
+      "error_estimate": 0.00038891
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 285,
+      "error_estimate": 0.00036827
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 287,
+      "error_estimate": 0.00038159
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 288,
+      "error_estimate": 0.00032515
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 289,
+      "error_estimate": 0.00031653
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 291,
+      "error_estimate": 0.00030545
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 293,
+      "error_estimate": 0.00031856
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 295,
+      "error_estimate": 0.00029234
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 297,
+      "error_estimate": 0.00041207
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 299,
+      "error_estimate": 0.00040775
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 301,
+      "error_estimate": 0.00040405
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 303,
+      "error_estimate": 0.00039657
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 304,
+      "error_estimate": 0.00043014
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 306,
+      "error_estimate": 0.00033193
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 308,
+      "error_estimate": 0.00032478
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 309,
+      "error_estimate": 0.00035927
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 311,
+      "error_estimate": 0.00029999
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 313,
+      "error_estimate": 0.00035514
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 315,
+      "error_estimate": 0.00034654
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 317,
+      "error_estimate": 0.00036804
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 318,
+      "error_estimate": 0.00037743
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 320,
+      "error_estimate": 0.00031621
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 322,
+      "error_estimate": 0.00036677
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 324,
+      "error_estimate": 0.00027422
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 326,
+      "error_estimate": 0.00031162
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 328,
+      "error_estimate": 0.00028838
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 330,
+      "error_estimate": 0.00034313
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 332,
+      "error_estimate": 0.00039348
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 334,
+      "error_estimate": 0.0003774
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 336,
+      "error_estimate": 0.00039902
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 338,
+      "error_estimate": 0.00037086
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 339,
+      "error_estimate": 0.00033309
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 341,
+      "error_estimate": 0.00038825
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 343,
+      "error_estimate": 0.0003786
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 345,
+      "error_estimate": 0.00032632
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 347,
+      "error_estimate": 0.00026319
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 349,
+      "error_estimate": 0.00034176
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 351,
+      "error_estimate": 0.00036917
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 353,
+      "error_estimate": 0.0003688
+    },
+    {
+      "geometry": 0,
+      "admitted": 1,
+      "has_accepted": 1,
+      "generation": 355,
+      "error_estimate": 0.00029771
+    }
+  ],
+  "visible_model_observed_via_CUA": true,
+  "CPU_authored_normal_upload_retained": true,
+  "warm_CPU_mesh_stages_ms": {
+    "deformation": {
+      "mean": 28.088350597609562,
+      "median": 27.87,
+      "max": 44.979
+    },
+    "normals": {
+      "mean": 8.168543824701196,
+      "median": 7.611,
+      "max": 19.719
+    },
+    "diffusion": {
+      "mean": 0.0022470119521912353,
+      "median": 0.002,
+      "max": 0.024
+    },
+    "vertex_lighting": {
+      "mean": 1.2839521912350598,
+      "median": 1.148,
+      "max": 7.516
+    },
+    "face_features": {
+      "mean": 36.00698605577689,
+      "median": 35.4825,
+      "max": 69.459
+    },
+    "hair_and_shapes": {
+      "mean": 48.886874251497005,
+      "median": 49.323,
+      "max": 229.942
+    },
+    "film_and_probe": {
+      "mean": 3.352622754491018,
+      "median": 3.013,
+      "max": 27.733
+    },
+    "transmission": {
+      "mean": 0.0025528942115768463,
+      "median": 0.002,
+      "max": 0.057
+    },
+    "mesh_validation": {
+      "mean": 64.44314171656687,
+      "median": 65.258,
+      "max": 153.008
+    }
+  },
+  "preview_left_paused": true
+}

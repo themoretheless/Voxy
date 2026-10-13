@@ -1,0 +1,35 @@
+
+running 9 tests
+TRIPLE COMPLETED BASIS cold_iterations=11 restored_iterations=1 final_order_preserved=true original_coordinate_gate=true scope=renderer_full_readback_not_native_physical_admission
+CHANGED BOUNDS freshly_factored_cold_residual=6.924504427624608e-15 freshly_factored_warm_residual=6.924504427624608e-15 tolerance=1e-14 scope=decoded_coordinate_diagnostic_not_physical_admission
+test joint_contact_dot::triple::qr_tests::gpu_triple_changed_bounds_decode_audit ... ok
+TRIPLE BATCHED CAPTURE rows=91 coordinates=882 duplicate_outputs_equal=true cold_and_seeded_original_gaps=true scope=coordinate_transport_not_original_physical_admission
+TRIPLE BATCHED GPU one_dispatch_three_workgroups=true heterogeneous_shapes=true independent_headers=true seeded_operator=true inactive_operator=true late_failure_withholds_prefix=true scope=coordinate_transport_not_original_physical_admission
+test joint_contact_dot::triple::qr_tests::gpu_triple_batched_independent_operators ... ok
+TRIPLE COLUMN NORMS rows=91 width=882 worst_relative_to_compensated_f64=0.00000000000000019135856487296877 input_unchanged=true scope=norm_only_not_QR_or_physical_admission
+test joint_contact_dot::triple::arithmetic_tests::gpu_triple_original_column_norms ... ok
+TRIPLE GPU ARITHMETIC cases=17261 power_of_two_input_scaling=true original_inputs_unchanged=true product_tail_2pow_minus104=true division_checked=true sqrt_checked=true scope=arithmetic_only_not_contact_solver_or_FPS
+test joint_contact_dot::triple::arithmetic_tests::gpu_triple_arithmetic_retains_cancellation_and_product_tail ... ok
+TRIPLE AUTOMATIC CASE name="exhaustion before work" status=14 iterations=0 scope=qualification_only
+TRIPLE FACTOR APPENDED INACTIVE ROW original_coordinate_gate=true changed_R_stride=true original_state_bit_equal=true retained_bytes=127440
+TRIPLE FACTOR REUSE changed_bounds_original_coordinate_gate=true freshly_factored_result_bit_equal=true
+TRIPLE ORIGINAL QR active=[2, 26, 27, 48, 53, 60] width=882 orthogonality=0.000000000000000014333628061747244 reconstruction=0.00000000000000011102230246251565 original_worst_gap=0.00000000000000273862489463928 active_equality=0.00000000000000273862489463928 min_reaction=0.0005896138885827462 tolerance=0.00000000000001 scope=fixed_active_QR_not_full_active_set_or_physical_admission
+test joint_contact_dot::triple::qr_tests::gpu_triple_qr_original_active_operator ... ok
+TRIPLE AUTOMATIC CASE name="exhaustion after enter" status=14 iterations=1 scope=qualification_only
+TRIPLE ACTIVE BASIS appended_row_enters_active_set=true cached_prefix_extends_with_new_stride=true
+TRIPLE AUTOMATIC status=0 iterations=11 rows=91 width=882
+TRIPLE WARM cold_iterations=11 warm_iterations=1 original_coordinate_gate=true dependent_hint_rejected=true fresh_cold_retry_valid=true scope=coordinate_candidate_only_not_physical_admission
+test joint_contact_dot::triple::qr_tests::gpu_triple_seeded_original_operator ... ok
+TRIPLE AUTOMATIC ORIGINAL active=[2, 26, 27, 48, 53, 60] worst_gap=0.00000000000000273862489463928 equality=0.00000000000000273862489463928 tolerance=0.00000000000001 scope=GPU_candidate_not_native_physical_admission_or_FPS
+test joint_contact_dot::triple::qr_tests::gpu_triple_automatic_original_operator ... ok
+TRIPLE AUTOMATIC CASE name="contradictory opposite" status=8 iterations=3 scope=qualification_only
+TRIPLE QR DEPENDENCE duplicate=reject opposite=reject zero=reject independent_angle_1e_minus12=accepted no_rank_threshold=true scope=qualification_only
+test joint_contact_dot::triple::qr_tests::gpu_triple_qr_rejects_exact_dependencies_without_rank_cutoff ... ok
+TRIPLE AUTOMATIC CASE name="violated zero row" status=2 iterations=2 scope=qualification_only
+TRIPLE AUTOMATIC CASE name="inactive constraints" status=0 iterations=1 scope=qualification_only
+TRIPLE AUTOMATIC CASE name="redundant stricter row" status=0 iterations=2 scope=qualification_only
+TRIPLE AUTOMATIC CASE name="release negative reaction" status=0 iterations=4 scope=qualification_only
+test joint_contact_dot::triple::qr_tests::gpu_triple_automatic_rejections_and_release ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 305 filtered out; finished in 3.12s
+

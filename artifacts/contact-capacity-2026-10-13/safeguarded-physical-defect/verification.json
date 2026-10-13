@@ -1,0 +1,26 @@
+{
+  "observed_unix": 1791865429.579013,
+  "binary": "/tmp/voxy-safeguarded-physical-defect-20261013-app-tests",
+  "binary_sha256": "542d01d411432d541e4dc2bc97cca39b54573f06f6362c84e979a832bdd75e0b",
+  "source_hashes": {
+    "crates/physics/src/hair/contact_response_system.rs": "217a3cc4fe191fa27fdd3a58e8db3050dcedc98c78248d87ed85d3880d2a6936",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "587dc22110fd483ae280e700f401faf4f7413b696de2bb303a1a773bd482686e"
+  },
+  "derived100_command": [
+    "/tmp/voxy-safeguarded-physical-defect-20261013-app-tests",
+    "gpu_triple_active_admits_captured_original_physics",
+    "--ignored",
+    "--nocapture"
+  ],
+  "derived100_env_overrides": {
+    "VOXY_HAIR_SAFEGUARDED_PHYSICAL_DEFECT": "1",
+    "VOXY_HAIR_TRIPLE_SINGLE_DISPATCH": "1",
+    "VOXY_HAIR_TRIPLE_PARALLEL": "1",
+    "VOXY_HAIR_TRIPLE_COMPACT_READBACK": "1",
+    "VOXY_HAIR_QR_INPUT_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/safeguarded-physical-defect/sequence100-step1-derived-original-input.bin",
+    "VOXY_HAIR_QR_FAILURE_EXPORT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/safeguarded-physical-defect/sequence100-last-physical-failure.bin",
+    "VOXY_HAIR_PHYSICAL_RESIDUAL_TRACE": "1"
+  },
+  "derived100_exit_code": 101,
+  "scope": "experimental safeguarded proposal only; 100-row GPU admission remains unproven/failed"
+}

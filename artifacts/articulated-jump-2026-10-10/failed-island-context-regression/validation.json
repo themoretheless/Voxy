@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "capture": {
+    "format": "VQC1",
+    "rows": 2,
+    "coordinates": 18,
+    "systems": 1,
+    "refinement": 0,
+    "tolerance": 1e-14,
+    "bounds_range": [
+      0.0001,
+      0.0001
+    ],
+    "effective_bounds_range": [
+      0.0001,
+      0.0001
+    ],
+    "bytes": 2092,
+    "sha256": "732bf321613ba0ce339152d783a943d6f463d9a25e43cb0bd2565d9c93111fcb",
+    "scope": "structural and finite-value audit only; no feasibility or convergence proof"
+  },
+  "metadata_rows_match_original_loads": true,
+  "mesh_source_ids_preserved": [
+    7,
+    8
+  ],
+  "frozen_positions_preserved": true,
+  "scope": "synthetic incompatible-plane capture; actual frame4 row provenance remains pending",
+  "physics_tests": {
+    "passed": 378,
+    "failed": 0,
+    "ignored": 41
+  },
+  "exact_evidence_regressions": {
+    "passed": 5,
+    "scope": "exact Farkas witness, approximate cancellation rejection, exact necessary translation bound, invalid/rotational inputs; ResourceWarning treated as error"
+  }
+}

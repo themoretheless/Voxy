@@ -1,0 +1,5 @@
+{
+  "crates/voxy_render/src/joint_contact_triple_active_codec.rs": "313a2d4ee6219a5b44f5c10e6af7fdc6cf42e4f9acb5f77f84a7818d32c426b6",
+  "crates/voxy_render/src/joint_contact_triple_parallel.wgsl": "320969a5e07536f44ba8f0a3a493e4c9c801ba816b74ae192d8be05977708b91",
+  "crates/voxy_render/src/joint_contact_triple_qr_tests.rs": "118484e7e968a1b8cc2f3c0d75e0f104e09e3392a18e4b7211fccf284298a998"
+}

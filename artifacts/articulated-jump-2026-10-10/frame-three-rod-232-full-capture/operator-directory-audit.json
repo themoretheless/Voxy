@@ -1,0 +1,4106 @@
+{
+  "schema": "voxy-island-directory-audit-v1",
+  "directory": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators",
+  "operator_count": 32,
+  "audited_count": 32,
+  "all_original_loads_verified": true,
+  "orphan_sidecars": [],
+  "errors": [],
+  "records": [
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-00.vqc",
+      "backend": "external",
+      "index": 0,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-00.vqc",
+        "sha256": "f4e92e09e7cfc4377dd2e5b53b8d03fc726cea2e3a374f2a2ce371b0c0d45a38",
+        "rows": 37,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 74592
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-01.vqc",
+      "backend": "external",
+      "index": 1,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-01.vqc",
+        "sha256": "23eb8cdbbe7ca703e606ddfd53f9f61218c288a4da20a78f6205c6d089de194b",
+        "rows": 54,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 108864
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-02.vqc",
+      "backend": "external",
+      "index": 2,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-02.vqc",
+        "sha256": "e8a15cbc28a96e0825e1ed58cb8de2c132859b5d2f002d7757e1c9893d6cb24c",
+        "rows": 67,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 135072
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-03.vqc",
+      "backend": "external",
+      "index": 3,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-03.vqc",
+        "sha256": "7ef17141edd0879646518dc38b8d9f5593735ff4f831243c494bc92ffd3eb944",
+        "rows": 71,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 143136
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-04.vqc",
+      "backend": "external",
+      "index": 4,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-04.vqc",
+        "sha256": "7ef17141edd0879646518dc38b8d9f5593735ff4f831243c494bc92ffd3eb944",
+        "rows": 71,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 143136
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-05.vqc",
+      "backend": "external",
+      "index": 5,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-05.vqc",
+        "sha256": "7ef17141edd0879646518dc38b8d9f5593735ff4f831243c494bc92ffd3eb944",
+        "rows": 71,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 143136
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-06.vqc",
+      "backend": "external",
+      "index": 6,
+      "frame": 3,
+      "rod_ids": [
+        53
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-06.vqc",
+        "sha256": "42b4714ad1e4bbbd95804cc87dd7b7421e6f895cf6e40e93029062d210c2d0f6",
+        "rows": 8,
+        "coordinates": 126,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 1008
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-07.vqc",
+      "backend": "external",
+      "index": 7,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-07.vqc",
+        "sha256": "18fc92068709b1fabd2dcb804154d7d270ad062ebffe8092679e64fdceb345a5",
+        "rows": 142,
+        "coordinates": 1764,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 250488
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-08.vqc",
+      "backend": "external",
+      "index": 8,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-08.vqc",
+        "sha256": "74ea440186d6db745742ac41b1684a130adcb451acaa26fa3c08b4e173426090",
+        "rows": 156,
+        "coordinates": 1890,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 294840
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-09.vqc",
+      "backend": "external",
+      "index": 9,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-09.vqc",
+        "sha256": "44f1d3565ac3849d086a95930acf545d62af6e743dd292d5606e5be6b67b833e",
+        "rows": 167,
+        "coordinates": 1890,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 315630
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-10.vqc",
+      "backend": "external",
+      "index": 10,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-10.vqc",
+        "sha256": "6a0ad20afde25ee0c96337e07ff1be0274a91bf629598e88d8234023d96d8476",
+        "rows": 215,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 487620
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-11.vqc",
+      "backend": "external",
+      "index": 11,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-11.vqc",
+        "sha256": "6bb61fc495cb0b5944e7d1d4f622b2805a0ae508a294acb423275a6030272409",
+        "rows": 223,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 505764
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-12.vqc",
+      "backend": "external",
+      "index": 12,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-12.vqc",
+        "sha256": "f23a59a2d7fde1154cd4330ceab541ac1a706c4972095c5af3127c9f2f12533a",
+        "rows": 227,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 514836
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-13.vqc",
+      "backend": "external",
+      "index": 13,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-13.vqc",
+        "sha256": "1db153a080c8a75a5d151a071de5be93cc3de177cbdb398a952d9b06a945263e",
+        "rows": 230,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 521640
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-14.vqc",
+      "backend": "external",
+      "index": 14,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-14.vqc",
+        "sha256": "ad5362768cdb81dbba96fb629607cb5cde7ff050bc315cb4d9ae7ad9a640c359",
+        "rows": 231,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 523908
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-15.vqc",
+      "backend": "external",
+      "index": 15,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/external-15.vqc",
+        "sha256": "f9d4782c6b557f086b72111096cd875f2a87b93410df126ab958bad9c4642fde",
+        "rows": 232,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 526176
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-00.vqc",
+      "backend": "native",
+      "index": 0,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-00.vqc",
+        "sha256": "c7741b6403f484d26b84227b408ad954d559e7ff13e506271d93a4fe7e3eaed4",
+        "rows": 37,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 74592
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-01.vqc",
+      "backend": "native",
+      "index": 1,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-01.vqc",
+        "sha256": "cdec12fad7c7d79ed85f02b71c176ba5a10ba06fae2a5a34e9435d43067e5e72",
+        "rows": 54,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 108864
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-02.vqc",
+      "backend": "native",
+      "index": 2,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-02.vqc",
+        "sha256": "0506e083850f5feb4967683f42f36f5e49c1e5c80540bf53800ef215ab8150f3",
+        "rows": 67,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 135072
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-03.vqc",
+      "backend": "native",
+      "index": 3,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-03.vqc",
+        "sha256": "b0328b1203bb3f63f0065b540343501e8bcd19a3aaa7574f418189de65031cac",
+        "rows": 71,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 143136
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-04.vqc",
+      "backend": "native",
+      "index": 4,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-04.vqc",
+        "sha256": "b0328b1203bb3f63f0065b540343501e8bcd19a3aaa7574f418189de65031cac",
+        "rows": 71,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 143136
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-05.vqc",
+      "backend": "native",
+      "index": 5,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        51,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-05.vqc",
+        "sha256": "b0328b1203bb3f63f0065b540343501e8bcd19a3aaa7574f418189de65031cac",
+        "rows": 71,
+        "coordinates": 2016,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 143136
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-06.vqc",
+      "backend": "native",
+      "index": 6,
+      "frame": 3,
+      "rod_ids": [
+        53
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-06.vqc",
+        "sha256": "259f8ad35a3c0433bfd35f440e2f6c207c4113ecb02b85e303c7862681e09667",
+        "rows": 8,
+        "coordinates": 126,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 1008
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-07.vqc",
+      "backend": "native",
+      "index": 7,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-07.vqc",
+        "sha256": "e2b04a277bcfeb2d4c3bbbdd0e208129858b19618578e08d200fdec31a469ee6",
+        "rows": 142,
+        "coordinates": 1764,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 250488
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-08.vqc",
+      "backend": "native",
+      "index": 8,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-08.vqc",
+        "sha256": "16f04caea9d9b7294a301c5b08e76151a1051a4d434fecde53afff829945db2a",
+        "rows": 156,
+        "coordinates": 1890,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 294840
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-09.vqc",
+      "backend": "native",
+      "index": 9,
+      "frame": 3,
+      "rod_ids": [
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-09.vqc",
+        "sha256": "20564665d419677002eb31d80f8ff3ea65f59824b682514afcefe0b25309f1c1",
+        "rows": 167,
+        "coordinates": 1890,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 315630
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-10.vqc",
+      "backend": "native",
+      "index": 10,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-10.vqc",
+        "sha256": "3216ada2c87ab65ad960c39814139c37407fc08b85e3ad9ce5735d0cf3b1ad7e",
+        "rows": 215,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 487620
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-11.vqc",
+      "backend": "native",
+      "index": 11,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-11.vqc",
+        "sha256": "fd6f6c3f49996bbdb68ee40ebb7f88b7bf0d78f09327d5a90a392d6fb0bbaa30",
+        "rows": 223,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 505764
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-12.vqc",
+      "backend": "native",
+      "index": 12,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-12.vqc",
+        "sha256": "8e7db9273d97c6a6d32403ae42af771a45e7fdae203cdcbe9620444de1963673",
+        "rows": 227,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 514836
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-13.vqc",
+      "backend": "native",
+      "index": 13,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-13.vqc",
+        "sha256": "48bd70f7978554b6ff38b8f0081bc7051c117f2867089b0f43ce6f936a7f4255",
+        "rows": 230,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 521640
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-14.vqc",
+      "backend": "native",
+      "index": 14,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-14.vqc",
+        "sha256": "af0e40f7030ee28b64db413dd845a4f052bebbf74059e489aa0b109508f0d008",
+        "rows": 231,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 523908
+    },
+    {
+      "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-15.vqc",
+      "backend": "native",
+      "index": 15,
+      "frame": 3,
+      "rod_ids": [
+        0,
+        1,
+        2,
+        10,
+        11,
+        12,
+        18,
+        19,
+        20,
+        26,
+        27,
+        45,
+        52,
+        53,
+        60,
+        61,
+        85,
+        86
+      ],
+      "operator": {
+        "path": "artifacts/articulated-jump-2026-10-10/frame-three-rod-232-full-capture/operators/native-15.vqc",
+        "sha256": "5aeeecfb740dbf4146900692f1b444842c0e6c8165f27c6ecaf672b19af1ff07",
+        "rows": 232,
+        "coordinates": 2268,
+        "refinement": 0,
+        "tolerance": 1e-14,
+        "layouts": [
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ],
+          [
+            126,
+            9,
+            6,
+            123
+          ]
+        ]
+      },
+      "checked_load_scalars": 526176
+    }
+  ],
+  "limits": "Run on a completed capture. Every operator is audited locally against its own v2 sidecar. Observation indices do not align backends or identify projection phases. This does not prove solver parity, trajectory admission or FPS."
+}

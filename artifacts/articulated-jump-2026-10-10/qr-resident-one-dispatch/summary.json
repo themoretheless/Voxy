@@ -1,0 +1,26 @@
+{
+  "baseline_median_qr_ns": 9673875.0,
+  "candidate_median_qr_ns": 8570459.0,
+  "baseline_over_candidate": 1.1287464300336774,
+  "candidate_faster_pairs": 9,
+  "pairs": 9,
+  "baseline_dispatches": 39,
+  "candidate_dispatches": 1,
+  "whole_storage_bitwise_equal": true,
+  "boundary_widths": [
+    1919,
+    1920,
+    1921,
+    4096
+  ],
+  "rank_underflow_checks": true,
+  "decision": "experimental; production unchanged; full projection benchmark and broader safety outstanding",
+  "load_controlled": false,
+  "full_trajectory_qualified": false,
+  "rendered_fps_measured": false,
+  "sha256": {
+    "/tmp/voxy-resident-qr-one-dispatch-tests": "45ea8d9a08f4543390f5143a9af36a0843639018277288140e4c4b92f75bb881",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "a31ad4887b6de3a25977de2bb3cbe68f9c6488339077d71bd9398cd500dff65d",
+    "artifacts/articulated-jump-2026-10-10/qr-resident-columns-experiment/qr-resident-columns.wgsl": "8fc98940b35141b7fa122ac21e721c914426301cbc13c23d99a6a554da9a4f24"
+  }
+}

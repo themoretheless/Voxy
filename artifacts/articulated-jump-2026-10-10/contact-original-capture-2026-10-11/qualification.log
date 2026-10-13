@@ -1,0 +1,58 @@
+
+running 1 test
+REPLAY MERIT captured=2.9367614931589525e-8 rebuilt=2.936761492558713e-8 rods=469 meshes=1
+HAIR CONTACT APPROACH MODEL iteration=0 added_rows=63 descent_found=true
+HAIR NONLINEAR MERIT iteration=1 before=2.936761492558713e-8 full=4.7766575239909786e-9 accepted=4.7766575239909786e-9 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=1 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-5.289096237754506e-5)
+HAIR CONTACT APPROACH MODEL iteration=2 added_rows=68 descent_found=true
+HAIR NONLINEAR MERIT iteration=3 before=4.7766575239909786e-9 full=4.245929085200998e-8 accepted=4.143924609122484e-9 scale=1.1503207189814678e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=3 tangent_complete=false strand_admitted=false unresolved=true worst_gap_m=Some(-4.510658272216049e-5)
+HAIR CONTACT APPROACH MODEL iteration=4 added_rows=51 descent_found=true
+HAIR NONLINEAR MERIT iteration=5 before=4.143924609122484e-9 full=1.0857341625884735e-11 accepted=1.0857341625884735e-11 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=5 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-3.2245838502987876e-6)
+HAIR CONTACT APPROACH MODEL iteration=6 added_rows=36 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=7 added_rows=9 descent_found=true
+HAIR NONLINEAR MERIT iteration=8 before=1.0857341625884735e-11 full=9.619861964724967e-15 accepted=9.619861964724967e-15 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=8 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-8.334329695842647e-8)
+HAIR CONTACT APPROACH MODEL iteration=9 added_rows=8 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=10 added_rows=16 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=11 added_rows=7 descent_found=true
+HAIR NONLINEAR MERIT iteration=12 before=9.619861964724967e-15 full=4.8647226379863954e-14 accepted=6.759037945884292e-15 scale=1.653670970442981e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=12 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-6.982567035150651e-8)
+HAIR CONTACT APPROACH MODEL iteration=13 added_rows=9 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=14 added_rows=18 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=15 added_rows=9 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=16 added_rows=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=17 before=6.759037945884292e-15 full=1.5132499966706599e-16 accepted=1.5132499966706599e-16 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=17 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-7.605623203489138e-9)
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry has been running for over 60 seconds
+HAIR CONTACT APPROACH MODEL iteration=18 added_rows=8 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=19 added_rows=26 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=20 added_rows=9 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=21 added_rows=1 descent_found=true
+HAIR NONLINEAR MERIT iteration=22 before=1.5132499966706599e-16 full=5.502828440453736e-18 accepted=5.502828440453736e-18 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=22 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-1.8998022389133916e-9)
+HAIR CONTACT APPROACH MODEL iteration=23 added_rows=9 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=24 added_rows=25 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=25 added_rows=12 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=26 added_rows=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=27 before=5.502828440453736e-18 full=2.1113177764888963e-19 accepted=2.1113177764888963e-19 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=27 tangent_complete=true strand_admitted=true unresolved=true worst_gap_m=Some(-4.748494073135323e-10)
+HAIR CONTACT APPROACH MODEL iteration=28 added_rows=10 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=29 added_rows=25 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=30 added_rows=18 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=31 added_rows=3 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=32 added_rows=2 descent_found=true
+HAIR NONLINEAR MERIT iteration=33 before=2.1113177764888963e-19 full=2.465564896061505e-19 accepted=5.2606441666942653e-20 scale=4.7017435459807194e-1 tangent_complete=false
+HAIR NONLINEAR ADMISSION iteration=33 tangent_complete=false strand_admitted=true unresolved=true worst_gap_m=Some(-2.7780615644596985e-10)
+HAIR CONTACT APPROACH MODEL iteration=34 added_rows=9 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=35 added_rows=28 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=36 added_rows=15 descent_found=true
+HAIR CONTACT APPROACH MODEL iteration=37 added_rows=3 descent_found=true
+HAIR NONLINEAR MERIT iteration=38 before=5.2606441666942653e-20 full=0e0 accepted=0e0 scale=1e0 tangent_complete=true
+HAIR NONLINEAR ADMISSION iteration=38 tangent_complete=true strand_admitted=true unresolved=false worst_gap_m=Some(-5.102241172206647e-11)
+REPLAY RESULT Ok(())
+test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 424 filtered out; finished in 188.99s
+

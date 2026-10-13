@@ -1,0 +1,12 @@
+{
+  "change": "WGSL quaternion rotation uses same arithmetic expression as installed glam neon Quat::mul_vec3a",
+  "reference": "glam 0.33.12 src/f32/neon/quat.rs mul_vec3a",
+  "tick": 1,
+  "full_differing_channels_before": 38,
+  "full_differing_channels_after": 36,
+  "position_only_differing_channels_before": 12,
+  "position_only_differing_channels_after": 7,
+  "full_max_u8_error_before": 4,
+  "full_max_u8_error_after": 4,
+  "status": "improves differing channel count; strict full image qualification still fails"
+}

@@ -1,0 +1,7 @@
+
+running 1 test
+LARGE WORKSPACE eviction_retired_bytes=4194304 current_payload_preserved=true budget_refusal_preserved_cache=true impossible_admission_preserved_cache=true explicit_retirement=true
+test gpu_hair_solver::joint::tests::gpu_large_completed_workspace_keeps_retired_storage_charged ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 372 filtered out; finished in 0.22s
+

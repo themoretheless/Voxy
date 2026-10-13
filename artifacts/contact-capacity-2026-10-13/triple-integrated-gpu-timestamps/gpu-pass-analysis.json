@@ -1,0 +1,45 @@
+{
+  "scope": "elapsed GPU pass boundaries under concurrent GPU activity; mixed independent captures; not isolated benchmark or rendered FPS",
+  "logs": [
+    {
+      "log": "voxy-triple-integrated-timestamps-app.log",
+      "passes": 13,
+      "min_ms": 0.054583,
+      "median_ms": 0.096333,
+      "max_ms": 0.201666,
+      "total_ms": 1.427787
+    },
+    {
+      "log": "voxy-triple-integrated-timestamps-islands.log",
+      "passes": 100,
+      "min_ms": 0.0185,
+      "median_ms": 0.025521000000000002,
+      "max_ms": 15.251333,
+      "total_ms": 414.3519579999999
+    },
+    {
+      "log": "voxy-triple-integrated-timestamps-physical100.log",
+      "passes": 10,
+      "min_ms": 3.045833,
+      "median_ms": 9.9933545,
+      "max_ms": 71.879875,
+      "total_ms": 268.744876
+    },
+    {
+      "log": "voxy-triple-integrated-timestamps-physical55.log",
+      "passes": 5,
+      "min_ms": 5.544416,
+      "median_ms": 30.633208,
+      "max_ms": 1030.398917,
+      "total_ms": 1859.6102489999998
+    },
+    {
+      "log": "voxy-triple-integrated-timestamps-physical91.log",
+      "passes": 14,
+      "min_ms": 2.785833,
+      "median_ms": 4.3263750000000005,
+      "max_ms": 70.208541,
+      "total_ms": 317.952582
+    }
+  ]
+}

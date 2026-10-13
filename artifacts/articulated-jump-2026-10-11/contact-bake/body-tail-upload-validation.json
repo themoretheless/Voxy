@@ -1,0 +1,27 @@
+{
+  "optimization": "skip CPU draw vertex/normal prefix writes before GPU base overwrite",
+  "base_vertices": 78278,
+  "avoided_vertex_bytes_per_update": 2818008,
+  "avoided_normal_bytes_when_normals_change": 939336,
+  "full_image_max_u8_errors": [
+    1,
+    1
+  ],
+  "cpu_restore_normals_vertices": 171495,
+  "cpu_restore": "bitwise verified after partial update",
+  "invalid_prefix": "rejected before writes",
+  "release_example_build": "passed",
+  "full_groom_image_regression": "passed",
+  "fps": null,
+  "limits": [
+    "CPU source and reference preparation retained",
+    "transfer savings do not establish FPS",
+    "native screen still locked at last check"
+  ],
+  "sha256": {
+    "crates/voxy_render/src/scene.rs": "776cbf155f94eef747b43f1665ec4f6120aafd3ec7c71e6c6a580d04825537e2",
+    "crates/voxy_app/src/scene_app.rs": "630aef5bcf535a91770d32aef706af68504ddfd01daa6423d713720ce6eec99a",
+    "crates/voxy_app/src/resident_body.rs": "b0edb3cec22088eb14a86c026131c60d3e530846880de14cdbaaed2a43dd94cb",
+    "crates/voxy_app/src/female_groom_gpu_tests.rs": "3e5dc4a9fa3e527891cddbf9e15ee5a453093755b25485b6e5382b1c6c646fe4"
+  }
+}

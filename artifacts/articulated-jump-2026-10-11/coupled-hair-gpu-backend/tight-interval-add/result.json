@@ -1,0 +1,7 @@
+{
+  "checked_finite_input_pairs": 40000,
+  "incorrect_enclosures": 0,
+  "exact_singletons": 25017,
+  "reference": "Exact rational sum of binary64 inputs (Python Fraction)",
+  "limits": "Addition only; no polynomial/trajectory or performance qualification; candidate not yet integrated"
+}

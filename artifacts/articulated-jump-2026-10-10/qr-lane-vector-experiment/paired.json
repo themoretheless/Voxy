@@ -1,0 +1,99 @@
+{
+  "absolute_equality_tolerance": 1e-14,
+  "capture_budget_bytes": 2097152,
+  "comparison": "production QR versus selected QR; alternating timed pairs, identical equality shader; unprofiled production storage reference",
+  "concurrent_system_load_controlled": false,
+  "exact_unprofiled_full_storage": true,
+  "full_trajectory_qualified": false,
+  "original_coordinate_width": 1764,
+  "period_ns": 1.0,
+  "qr_repetitions_per_sample": 39,
+  "rank_and_underflow_checks": true,
+  "rendered_fps_measured": false,
+  "samples": [
+    {
+      "baseline_equality_ns": 310375.0,
+      "baseline_qr_ns": 5570083.0,
+      "candidate_equality_ns": 310916.0,
+      "candidate_first": false,
+      "candidate_qr_ns": 6310625.0,
+      "sample": 0
+    },
+    {
+      "baseline_equality_ns": 309500.0,
+      "baseline_qr_ns": 5566167.0,
+      "candidate_equality_ns": 310916.0,
+      "candidate_first": true,
+      "candidate_qr_ns": 6314583.0,
+      "sample": 1
+    },
+    {
+      "baseline_equality_ns": 310041.0,
+      "baseline_qr_ns": 5562958.0,
+      "candidate_equality_ns": 309416.0,
+      "candidate_first": false,
+      "candidate_qr_ns": 6306250.0,
+      "sample": 2
+    },
+    {
+      "baseline_equality_ns": 309084.0,
+      "baseline_qr_ns": 5563625.0,
+      "candidate_equality_ns": 306459.0,
+      "candidate_first": true,
+      "candidate_qr_ns": 6318125.0,
+      "sample": 3
+    },
+    {
+      "baseline_equality_ns": 307292.0,
+      "baseline_qr_ns": 5562500.0,
+      "candidate_equality_ns": 308583.0,
+      "candidate_first": false,
+      "candidate_qr_ns": 6341959.0,
+      "sample": 4
+    },
+    {
+      "baseline_equality_ns": 310292.0,
+      "baseline_qr_ns": 5918500.0,
+      "candidate_equality_ns": 310750.0,
+      "candidate_first": true,
+      "candidate_qr_ns": 6331959.0,
+      "sample": 5
+    },
+    {
+      "baseline_equality_ns": 309333.0,
+      "baseline_qr_ns": 5947292.0,
+      "candidate_equality_ns": 325417.0,
+      "candidate_first": false,
+      "candidate_qr_ns": 6693917.0,
+      "sample": 6
+    },
+    {
+      "baseline_equality_ns": 326875.0,
+      "baseline_qr_ns": 5880000.0,
+      "candidate_equality_ns": 308250.0,
+      "candidate_first": true,
+      "candidate_qr_ns": 6656958.0,
+      "sample": 7
+    },
+    {
+      "baseline_equality_ns": 325667.0,
+      "baseline_qr_ns": 5949459.0,
+      "candidate_equality_ns": 325208.0,
+      "candidate_first": false,
+      "candidate_qr_ns": 6606167.0,
+      "sample": 8
+    }
+  ],
+  "schema": "voxy-original-equality-gpu-pass-v2",
+  "scope": "largest captured serial active equality within 2 MiB budget; initial fresh QR/equality passes only; excludes subsequent residual/active-set iterations, transfer, CPU work and rendering",
+  "selected_equality_rows": 39,
+  "staging_quarantine": 0,
+  "supported": true,
+  "timing_diagnostic_submissions": 37,
+  "uncollapsed_boundary_widths_checked": [
+    1919,
+    1920,
+    1921,
+    4096
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "status": "intentionally_stopped_diagnostic",
+  "exit_code": 101,
+  "attempts_observed": 57,
+  "admitted": 0,
+  "reason": "late corrections decrease physical merit by many orders and retain objective descent but four corrections do not reach unchanged zero-merit admission; investigate bounded continuation of correction",
+  "full_jump_qualified": false,
+  "production_enabled": false,
+  "child_termination": "SIGTERM signal 15; deliberately stopped by diagnostic owner"
+}

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "passed": 304,
+  "ignored": 69,
+  "failed": 0,
+  "elapsed_s": 517.87,
+  "binary_sha256": "41836c0b0a57602d5d9e199fddb3b32150898301a0ffffb3d5faee6e5477591c",
+  "scope": "ordinary application tests; ignored GPU/full-cycle qualifications not included"
+}

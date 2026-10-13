@@ -1,0 +1,13 @@
+{
+  "accepted_steps": 13,
+  "last_accepted": {
+    "iteration": "167",
+    "before": "0e0",
+    "full": "1.715111553435234e-20",
+    "accepted": "0e0",
+    "scale": "3.0517578125e-5",
+    "tangent_complete": "false"
+  },
+  "zero_excess_at_every_accepted_step": true,
+  "scope": "Live residual replay; accepted merit is not nonlinear stationarity or full-frame proof"
+}

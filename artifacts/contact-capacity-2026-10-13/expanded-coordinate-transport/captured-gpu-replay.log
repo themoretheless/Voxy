@@ -1,0 +1,7 @@
+
+running 1 test
+TRIPLE EXPANDED REPLAY snapshots=8 expanded_coordinate_gate_passes=8 rounded_coordinate_gate_failures=4 all_coordinate_and_reaction_bits_preserved=true scales_preserved=true full_and_compact_equal=true scope=transport_not_original_physical_admission
+test joint_contact_dot::triple::active_codec::tests::triple_expanded_candidate_replays_opaque_gpu_captures ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 313 filtered out; finished in 0.17s
+

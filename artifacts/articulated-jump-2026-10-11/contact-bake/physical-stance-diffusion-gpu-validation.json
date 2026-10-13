@@ -1,0 +1,72 @@
+{
+  "scenarios_passed": 4,
+  "active_vertices": 60814,
+  "original_body_vertices": 60866,
+  "excluded_vertices": "52 outside triangle surface equation, retained source values by CPU path",
+  "reports": [
+    {
+      "sample": 0,
+      "encode_submit_wait_readback_and_audit_wall_ms": 62.621125,
+      "gpu_compute_ms": null,
+      "iterations": 512,
+      "max_absolute_error": 8.328908633481458e-05,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.19999340176582336,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 3.1616497705701233e-12
+    },
+    {
+      "sample": 1,
+      "encode_submit_wait_readback_and_audit_wall_ms": 55.246875,
+      "gpu_compute_ms": null,
+      "iterations": 512,
+      "max_absolute_error": 8.525626834954281e-05,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.1999932825565338,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 3.180800879706143e-12
+    },
+    {
+      "sample": 2,
+      "encode_submit_wait_readback_and_audit_wall_ms": 64.219667,
+      "gpu_compute_ms": 27.916084,
+      "iterations": 512,
+      "max_absolute_error": 8.513683031641239e-05,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.1999933272600174,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 3.204633157593264e-12
+    },
+    {
+      "sample": 3,
+      "encode_submit_wait_readback_and_audit_wall_ms": 72.91520799999999,
+      "gpu_compute_ms": null,
+      "iterations": 512,
+      "max_absolute_error": 8.233541154656354e-05,
+      "method": "Chebyshev",
+      "minimum_irradiance": 0.1999932825565338,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 3.1918879050619455e-12
+    }
+  ],
+  "sha256": {
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-0-gpu-diffusion.json": "6918636f3f02c8335500ee3590b7d95ba42cb688f40b665c55578121519138dc",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-0-gpu-diffusion.log": "ad78e080d9ce1447f2fba190edeb0b8ed278cd0637d2a176f2aec698c5108e95",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-fixtures/stance-0.json": "f9d007588fb548b791ab0f09ab4e88b53d46437f0462b83e46b5c817bfadd5b8",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-1-gpu-diffusion.json": "ebcfeb914c6ce5e53f8b25214bd867d91a463a333aff379719943c824f1a54a5",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-1-gpu-diffusion.log": "d459ddc2136b774d7d8d14b03e1a02bdacb5f67e0da1bf612ff28fd5828d8baa",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-fixtures/stance-1.json": "916c69fb9d76459f12e30381b2f5449c13f54ea68a1980e54717383421704484",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-2-gpu-diffusion.json": "f6d1e4f6066245a68b90d7dc942d0cf8f04e2edcb6981b92c0ee0a5b10ecc09f",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-2-gpu-diffusion.log": "e552c7938bc31ae0e276faecfddfa2cc96403871fe84291068a5f33ef9b77222",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-fixtures/stance-2.json": "dcd3ca3822eb9564939608c951a8f50eb5f0479a9c580261a92e78dc874c976b",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-3-gpu-diffusion.json": "2587e1a21d037e74a200c713490507887dd250859c688e9be5d2e5c80dc3aba7",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-3-gpu-diffusion.log": "ebf1b19aa86900e67668988aca05a3e2b34806f3ac443f36a36638e99b422910",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-fixtures/stance-3.json": "078eca3d480b7775236e1b1b8a3f1088aa77bcb64b2e69076875b926584b9703",
+    "crates/voxy_app/src/female_demo.rs": "452ed67633556f405486264831a9ce6bd2534c4a561addc77258ff684547a2c9",
+    "crates/voxy_app/src/skin_light_diffusion.rs": "66acb88f017edb814ef2bef946eedf749a8197bd2659ace6a6d68e346a3bb604",
+    "crates/voxy_render/examples/surface_light_diffusion.rs": "0569c3b7771cffc9e8148cb54b7036607f5963b68157011890974d2e9be153ba"
+  },
+  "native_renderer_integrated": false,
+  "target_160fps_achieved": false,
+  "scope": "Independent cold-start GPU equation/parity audit on four accepted runtime physical stance surfaces; wall time includes readback and CPU audit; most GPU timestamps unavailable"
+}

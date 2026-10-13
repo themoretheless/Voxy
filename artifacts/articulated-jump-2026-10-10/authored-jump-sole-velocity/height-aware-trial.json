@@ -1,0 +1,74 @@
+{
+  "trial_tests_passed": true,
+  "sole_checks_preserved": true,
+  "velocity_samples": [
+    {
+      "event_s": 0.0,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.07529338415675507,
+      "joint": 8.0
+    },
+    {
+      "event_s": 0.18,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.003959998264956645,
+      "joint": 10.0
+    },
+    {
+      "event_s": 0.56,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 2.2179151659922773,
+      "joint": 14.0
+    },
+    {
+      "event_s": 0.66,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.2198939472548174,
+      "joint": 14.0
+    },
+    {
+      "event_s": 0.96,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.19673559330288637,
+      "joint": 7.0
+    },
+    {
+      "event_s": 1.06,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 10.513136465808483,
+      "joint": 8.0
+    },
+    {
+      "event_s": 1.5,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.006184781439884877,
+      "joint": 4.0
+    },
+    {
+      "event_s": 1.65,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.0008470353994808914,
+      "joint": 14.0
+    },
+    {
+      "event_s": 2.0,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.07529338415675507,
+      "joint": 8.0
+    },
+    {
+      "event_s": 4.0,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.0,
+      "joint": 45.0
+    },
+    {
+      "event_s": 6.0,
+      "step_s": 0.0001,
+      "maximum_local_angular_velocity_jump_rad_s": 0.07529338415675507,
+      "joint": 8.0
+    }
+  ],
+  "retained_in_runtime": false,
+  "reason": "Landing angular velocity mismatch remains 10.513 rad/s versus baseline 10.606; this candidate does not resolve the required velocity transition"
+}

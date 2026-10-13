@@ -1,0 +1,20 @@
+{
+  "status": "physics_suite_and_native_replay_passed",
+  "source_sha256": "4f0fcacffc856d1837c4d40f91bbde54c4e0eae911f7fbd314168fefe5b98c39",
+  "scoped_128_calls_ms": [
+    27.9105,
+    28.587833
+  ],
+  "reused_128_calls_ms": [
+    15.4485,
+    9.493834
+  ],
+  "scope": "one captured native solve plus unit suite; no whole trajectory or FPS proof",
+  "physics_tests_passed": 420,
+  "physics_tests_ignored": 64,
+  "native_replay_session": 18752,
+  "native_replay_log": "/tmp/voxy-reusable-query-native-replay.log",
+  "binary_sha256": "74d3dd5b1f3db1cf4858ea4bf759804f0fc1df1f2cb977d67955ed47843b9848",
+  "native_final_state_sha256": "9455ab3485bb7e1ffcabbe3d5c5af08cdddbd37934a2786cdbbdca7d508346d2",
+  "native_original_comparison": "bitwise_identical"
+}

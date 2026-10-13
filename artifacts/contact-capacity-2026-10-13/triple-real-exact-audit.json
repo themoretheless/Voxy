@@ -1,0 +1,11 @@
+{
+  "counts": {
+    "cases": 17261,
+    "sum_decode_mismatch": 58,
+    "product_decode_mismatch": 86,
+    "sum_exact_rounded_mismatch": 0,
+    "product_exact_rounded_mismatch": 0
+  },
+  "examples": [],
+  "scope": "arithmetic output audit only; not physical admission"
+}

@@ -1,0 +1,23 @@
+{
+  "change": "Reuse local end-position scratch across checked component backtracking candidates; overwrite every coordinate; identical arithmetic/order/query",
+  "source_sha256": "1adbdb74d8950cdd41c410cdbb26eec813c0eda11d1a7a18a33adeb16a8338b9",
+  "test_session": 21074,
+  "test_log": "physics-tests.log",
+  "status": "ordinary physics gate passed",
+  "limits": "No measured performance claim or current-source runtime qualification. Live native/GPU jobs use prior mapped physics.",
+  "tests": {
+    "passed": 398,
+    "failed": 0,
+    "ignored": 54
+  },
+  "current_source_native_contact_check": {
+    "session": 8162,
+    "status": "passed",
+    "binary_sha256": "0c6edd76f11053cca8a0723076ccfbfe55dacf1e6be1cdd10b2c2013c13c674c",
+    "source_sha256": "1adbdb74d8950cdd41c410cdbb26eec813c0eda11d1a7a18a33adeb16a8338b9",
+    "input_sha256": "df70919f5a11097053ced2718e2a63f1e7d3d96efbbe38d8313afbe6fdd5bf38",
+    "log": "native-restoration-result.log",
+    "scope": "Same immutable second-frame entry; restoration and ordinary native continuation; no FPS inference",
+    "elapsed_seconds": 342.04
+  }
+}

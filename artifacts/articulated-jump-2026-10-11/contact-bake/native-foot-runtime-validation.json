@@ -1,0 +1,14 @@
+{
+  "scope": "Shared FootRuntime native skeleton binding and transactional fixed stance correction; existing imported model resolver preserved",
+  "passed": 192,
+  "failed": 0,
+  "ignored": 17,
+  "female_demo_connected": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "b97e00dd778063a05af7883b6ecd41fe4d90abdd58e5e2c1111a15d8c9289b32",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "061c7b12bcecb164501994884512a6e5a363cb8ef969c8f99e11a34278bc80fe",
+    "crates/voxy_editor/src/lib.rs": "f11870a25927ca4beecca89a37ce46acbe7f93a65a78f7c721d9bd939fb138b4",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/native-foot-runtime-final-tests.log": "70c2ee53afbcd8d1e12cc04c703091a7e6cf91d502c763a236cacacbbe0c6e56"
+  }
+}

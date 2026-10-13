@@ -1,0 +1,46 @@
+{
+  "schema": "voxy-joint-host-stage-summary-v1",
+  "scope": "equality_tasks_host_wall_times_not_gpu_timestamps_or_rendered_fps",
+  "logs": [
+    "/tmp/voxy-resident-shape-profile-20261012/profile-with-fixture.log"
+  ],
+  "profiled_calls": 7,
+  "owner_instances_not_unique_operators": 10,
+  "counters": {
+    "dispatches": 4,
+    "submissions": 4,
+    "workspace_creations": 4,
+    "workspace_reuses": 0,
+    "errors": 2
+  },
+  "staging_payload_bytes_not_bus_traffic": 10377088,
+  "packed_operator_shape_instances": [
+    {
+      "rows": 1,
+      "coordinates": 1,
+      "instances": 2
+    },
+    {
+      "rows": 174,
+      "coordinates": 1764,
+      "instances": 2
+    }
+  ],
+  "wall_ms": {
+    "prepare_wall_ms": 11.882956999999998,
+    "encode_wall_ms": 0.925334,
+    "submit_map_wall_ms": 0.354916,
+    "wait_wall_ms": 402.85854100000006,
+    "decode_refine_wall_ms": 3.8132500000000005,
+    "total_wall_ms": 419.83771
+  },
+  "stage_percent_of_total": {
+    "prepare_wall_ms": 2.8303691443057835,
+    "encode_wall_ms": 0.22040278373279043,
+    "submit_map_wall_ms": 0.0845364748202347,
+    "wait_wall_ms": 95.95577800764968,
+    "decode_refine_wall_ms": 0.9082676256022835
+  },
+  "unattributed_wall_ms": 0.0027119999999740685,
+  "limits": "Concurrent host wall times, including queue wait and callbacks; exclude profile log output, shader compilation, physical owner assembly/admission and rendering. Task errors can be recovered by active-set retry; they are not native fallback counts. This report does not qualify trajectory accuracy, GPU execution time or rendered FPS."
+}

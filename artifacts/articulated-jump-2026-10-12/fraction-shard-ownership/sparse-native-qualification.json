@@ -1,0 +1,13 @@
+{
+  "source_sha256": "9699c33b2752ae2abdf8eefd3036211e0401eddc2ec50520d0d821a639129c5f",
+  "binary_sha256": "dcb86f1ed32197ddc63a36a4f52d873cab543c95122c11f2155b4235d3b5cd0d",
+  "ordinary_physics_passed": 418,
+  "ignored": 63,
+  "targeted_passed": 3,
+  "native_frame2_replay_passed": true,
+  "final_state_sha256": "ecbfe551b8930b1637421614f24425d00983aeb01dde3c29fcfc5baa3dfaea56",
+  "bitwise_equal_to_original_baseline": true,
+  "app_rebuild_status": "running",
+  "speedup_qualified": false,
+  "full_cycle_qualified": false
+}

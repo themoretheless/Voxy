@@ -1,0 +1,29 @@
+{
+  "pid": 2066,
+  "status": "launched_not_qualified",
+  "binary": "/tmp/voxy-triple-cache-hints-full-cycle-20261013-app-tests",
+  "binary_sha256": "3705e7ff19da4658dec45a049648d8a407501bc332eb17622e9830f36438a91d",
+  "env_overrides": {
+    "VOXY_HAIR_TRIPLE_ACTIVE_SET": "1",
+    "VOXY_HAIR_TRIPLE_PARALLEL": "1",
+    "VOXY_HAIR_TRIPLE_WARM_START": "1",
+    "VOXY_HAIR_TRIPLE_CACHE_HINTS": "1",
+    "VOXY_HAIR_TRIPLE_OPERATOR_REUSE": "1",
+    "VOXY_HAIR_TRIPLE_BATCH_DEDUP": "1",
+    "VOXY_HAIR_JOINT_STAGE_PROFILE": "1",
+    "VOXY_HAIR_STRAND_FRACTION_REUSE": "1",
+    "VOXY_HAIR_GUARDED_RESTORATION_PROFILE": "1",
+    "VOXY_AUTHORED_JUMP_GPU_HAIR": "1",
+    "VOXY_AUTHORED_JUMP_CONTINUOUS_CONTACTS": "1",
+    "VOXY_AUTHORED_JUMP_QUALIFICATION_DIR": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-cache-hints-full-cycle",
+    "VOXY_HAIR_FAILED_ISLAND_CONTEXT": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-cache-hints-full-cycle/failed-islands",
+    "VOXY_HAIR_SWEEP_FAILURE_STATE_DIR": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/contact-capacity-2026-10-13/triple-cache-hints-full-cycle/swept-failures"
+  },
+  "launched_unix": 1791854773.908854,
+  "scope": "720 original-density physics steps,256lane warmed QR,exact prefix cache hints,cold retry; opt-in exhausted swept failure native rod snapshots; prior runs preserved; no FPS claim",
+  "source_hashes": {
+    "crates/voxy_app/src/gpu_hair_joint.rs": "5c565a48c5425ecc15ca9cbe56ba98bb8700c54b18920eb4cd79b2fd5b46e7da",
+    "crates/physics/src/hair/contact_safe_motion.rs": "a06800bee7acd87c9c449aa9fa6d02d631792fc9fee43e3fe75eaefe191e7e92",
+    "crates/voxy_render/src/joint_contact_triple_parallel.wgsl": "7d754c01e273bafc485483d3d62148ad6df7eccec8fbf8764d9b5c73ca19d9bd"
+  }
+}

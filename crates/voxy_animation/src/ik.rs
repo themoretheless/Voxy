@@ -67,7 +67,7 @@ fn globals(pose: &Pose) -> Result<Vec<DMat4>, AnimationError> {
     Ok(result)
 }
 // An orthogonal signed scale maps rotations through a proper pseudovector basis.
-fn sign_basis(scale: Vec3) -> DQuat {
+pub(super) fn sign_basis(scale: Vec3) -> DQuat {
     let signs = scale.signum().as_dvec3();
     DQuat::from_mat3(&DMat3::from_diagonal(signs * signs.x * signs.y * signs.z)).normalize()
 }
@@ -132,6 +132,18 @@ fn rotate(pose: &mut Pose, joint: usize, delta: DQuat) -> Result<(), AnimationEr
         Quat::from_array(rotation.to_array().map(|v| v as f32)).normalize(),
     )
 }
+// ozz-animation's SoftenTarget motivates a separate extension zone. Use an
+// exact exponential here rather than its rational approximation: value and
+// derivative match exact IK at the zone boundary. exp_m1 avoids cancellation.
+fn soft_distance(distance: f64, length: f64, ratio: f64) -> f64 {
+    let start = length * ratio;
+    let zone = length - start;
+    if zone > 0. && distance > start {
+        start - zone * (-(distance - start) / zone).exp_m1()
+    } else {
+        distance
+    }
+}
 impl Pose {
     /// Solves a two-link chain without changing any local translations or scales.
     /// Pole degeneracy uses the existing knee plane, then a deterministic axis.
@@ -142,6 +154,33 @@ impl Pose {
         &self,
         chain: &TwoBoneChain,
         target: TwoBoneTarget,
+    ) -> Result<(Self, TwoBoneResult), AnimationError> {
+        self.solve_two_bone_impl(chain, target, 1.)
+    }
+
+    /// Softens extension beyond `soften * chain_length` with a C1 exponential.
+    /// `soften == 1` preserves exact IK. Use exact IK for planted contacts:
+    /// softening intentionally moves the endpoint away from its target.
+    /// The result's `reach_clamped` still reports geometric reach, not softening.
+    /// # Errors
+    /// Rejects a nonfinite ratio or one outside [0,1], plus exact IK errors.
+    pub fn solve_two_bone_softened(
+        &self,
+        chain: &TwoBoneChain,
+        target: TwoBoneTarget,
+        soften: f32,
+    ) -> Result<(Self, TwoBoneResult), AnimationError> {
+        if !soften.is_finite() || !(0. ..=1.).contains(&soften) {
+            return Err(AnimationError::InvalidIkTarget);
+        }
+        self.solve_two_bone_impl(chain, target, f64::from(soften))
+    }
+
+    fn solve_two_bone_impl(
+        &self,
+        chain: &TwoBoneChain,
+        target: TwoBoneTarget,
+        soften: f64,
     ) -> Result<(Self, TwoBoneResult), AnimationError> {
         if !rigs_match(&self.rig, &chain.rig) {
             return Err(AnimationError::SkeletonMismatch);
@@ -190,7 +229,8 @@ impl Pose {
         let size = first.max(second);
         let (a, b) = (first / size, second / size);
         let requested = distance / size;
-        let d = requested.clamp((a - b).abs(), a + b);
+        let geometric = requested.clamp((a - b).abs(), a + b);
+        let d = soft_distance(requested, a + b, soften).clamp((a - b).abs(), a + b);
         let x = if d == 0. {
             0.
         } else {
@@ -249,23 +289,170 @@ impl Pose {
             solved,
             TwoBoneResult {
                 tip_position: position,
-                reach_clamped: requested != d,
+                reach_clamped: requested != geometric,
             },
         ))
     }
 }
+/// Result of a shared pelvis correction followed by two independent exact IK jobs.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct PlantedLegsResult {
+    /// Actual root translation change, in model coordinates.
+    pub pelvis_offset: Vec3,
+    pub legs: [TwoBoneResult; 2],
+}
+
+// Intersect the pelvis offset domain with a leg's reachable spherical shell.
+// The inner radius matters for unequal links; clamping only maximum extension
+// can otherwise select a pelvis position from which a foot cannot be reached.
+fn restrict_reach(
+    intervals: &[(f64, f64)], hip: DVec3, target: DVec3,
+    upper: f64, lower: f64, up: DVec3, extension_margin: f64,
+) -> Vec<(f64, f64)> {
+    let delta = hip - target;
+    let axial = delta.dot(up);
+    let lateral = (delta - up * axial).length_squared();
+    let outer = upper + lower - extension_margin;
+    if lateral > outer * outer { return Vec::new(); }
+    let outer_radius = (outer * outer - lateral).max(0.).sqrt();
+    let lo = -axial - outer_radius;
+    let hi = -axial + outer_radius;
+    let inner = (upper - lower).abs();
+    let hole = if lateral < inner * inner {
+        let radius = (inner * inner - lateral).sqrt();
+        Some((-axial - radius, -axial + radius))
+    } else { None };
+    let mut result = Vec::new();
+    for &(a, b) in intervals {
+        let (a, b) = (a.max(lo), b.min(hi));
+        if a > b { continue; }
+        if let Some((hlo, hhi)) = hole {
+            if a <= hlo { result.push((a, b.min(hlo))); }
+            if b >= hhi { result.push((a.max(hhi), b)); }
+        } else { result.push((a, b)); }
+    }
+    result
+}
+
+impl Pose {
+    /// Finds the smallest shared pelvis displacement along `up` that makes both
+    /// planted ankle targets geometrically reachable, then solves both legs.
+    /// Joint 0 must be their common scene root. Legs must be independent and
+    /// targets must have weight 1. Contact acquisition and pelvis smoothing
+    /// remain with the locomotion owner; smoothing can invalidate reachability.
+    /// # Errors
+    /// Rejects invalid/foreign chains, unsupported scales, invalid targets and
+    /// a missing common reachable offset within `max_offset` model units.
+    /// Pose publication remains atomic; this source pose is immutable.
+    pub fn solve_planted_legs(
+        &self, chains: &[TwoBoneChain; 2], targets: [TwoBoneTarget; 2],
+        up: Vec3, max_offset: f32,
+    ) -> Result<(Self, PlantedLegsResult), AnimationError> {
+        self.solve_planted_legs_with_extension_margin(chains, targets, up, max_offset, 0.)
+    }
+
+    /// Keeps planted targets exact while reserving length before full knee
+    /// extension by moving the shared pelvis. Unlike endpoint softening, the
+    /// contact target is never shortened. Margin is in model distance units.
+    /// # Errors
+    /// Rejects invalid margins, an empty reachable shell or insufficient pelvis
+    /// travel, in addition to the checks of `solve_planted_legs`.
+    pub fn solve_planted_legs_with_extension_margin(
+        &self, chains: &[TwoBoneChain; 2], targets: [TwoBoneTarget; 2],
+        up: Vec3, max_offset: f32, extension_margin: f32,
+    ) -> Result<(Self, PlantedLegsResult), AnimationError> {
+        if !extension_margin.is_finite() || extension_margin < 0. {
+            return Err(AnimationError::InvalidIkTarget);
+        }
+        if !up.is_finite() || !up.is_normalized() || !max_offset.is_finite() || max_offset < 0. {
+            return Err(AnimationError::InvalidIkTarget);
+        }
+        for (index, chain) in chains.iter().enumerate() {
+            if !rigs_match(&self.rig, &chain.rig) { return Err(AnimationError::SkeletonMismatch); }
+            if chain.joints.contains(&0) { return Err(AnimationError::InvalidIkChain); }
+            let mut cursor = Some(chain.joints[0]);
+            let mut rooted = false;
+            while let Some(joint) = cursor {
+                if chains[1-index].joints.contains(&joint) { return Err(AnimationError::InvalidIkChain); }
+                rooted |= joint == 0;
+                cursor = self.rig[joint].parent.map(usize::from);
+            }
+            if !rooted { return Err(AnimationError::InvalidIkChain); }
+            parent_basis(self, chain.joints[2])?;
+        }
+        let rig = Skeleton { joints: self.rig.clone() };
+        self.skin_matrices(&rig)?;
+        let world = globals(self)?;
+        let up = up.as_dvec3().normalize();
+        let mut intervals = vec![(-f64::from(max_offset), f64::from(max_offset))];
+        for (chain, target) in chains.iter().zip(targets) {
+            if !target.position.is_finite() || !target.pole.is_finite() || target.weight != 1.
+                || target.rotation.is_some_and(|q| !q.is_finite() || !q.is_normalized()) {
+                return Err(AnimationError::InvalidIkTarget);
+            }
+            let [hip, knee, ankle] = chain.joints.map(|i|world[i].w_axis.truncate());
+            let (a, b) = (hip.distance(knee), knee.distance(ankle));
+            if !a.is_finite() || !b.is_finite() || a == 0. || b == 0. {
+                return Err(AnimationError::DegenerateIkChain);
+            }
+            if f64::from(extension_margin) >= 2. * a.min(b) {
+                return Err(AnimationError::InvalidIkTarget);
+            }
+            intervals = restrict_reach(&intervals, hip, target.position.as_dvec3(), a, b, up, f64::from(extension_margin));
+        }
+        let offset = intervals.iter().map(|&(lo, hi)|0f64.clamp(lo, hi))
+            .min_by(|a,b|a.abs().total_cmp(&b.abs()))
+            .ok_or(AnimationError::UnreachableFootPlant)?;
+        let mut pose = self.clone();
+        let before = pose.local[0].translation;
+        pose.set_joint_translation(0, before + (up * offset).as_vec3())?;
+        let actual_offset = pose.local[0].translation - before;
+        let (pose, first) = pose.solve_two_bone(&chains[0], targets[0])?;
+        let (pose, second) = pose.solve_two_bone(&chains[1], targets[1])?;
+        Ok((pose, PlantedLegsResult { pelvis_offset: actual_offset, legs: [first, second] }))
+    }
+}
 impl AnimatorFrame {
+    /// Applies a shared pelvis correction and both planted-leg jobs, then
+    /// rebuilds the palette without adding the correction to extracted motion.
+    /// # Errors
+    /// Rejects foreign rigs and all planted-leg validation/reach failures.
+    pub fn with_planted_legs(
+        mut self, skeleton: &Skeleton, chains: &[TwoBoneChain; 2],
+        targets: [TwoBoneTarget; 2], up: Vec3, max_offset: f32,
+    ) -> Result<(Self, PlantedLegsResult), AnimationError> {
+        self.pose.skin_matrices(skeleton)?;
+        let (pose, report) = self.pose.solve_planted_legs(chains, targets, up, max_offset)?;
+        let palette = pose.skin_matrices(skeleton)?;
+        self.pose = pose;
+        self.skin_matrices = palette;
+        Ok((self, report))
+    }
     /// Rebuilds the palette after IK, preserving extracted motion and clock metadata.
     /// # Errors
     /// Rejects foreign skeletons and all pose/IK validation failures before returning a frame.
     pub fn with_two_bone_ik(
-        mut self,
+        self,
         skeleton: &Skeleton,
         chain: &TwoBoneChain,
         target: TwoBoneTarget,
     ) -> Result<(Self, TwoBoneResult), AnimationError> {
+        self.with_softened_two_bone_ik(skeleton, chain, target, 1.)
+    }
+
+    /// Rebuilds the frame palette with opt-in extension softening.
+    /// Root motion and transition metadata are preserved. Use ratio 1 for contacts.
+    /// # Errors
+    /// Rejects foreign rigs, invalid softening/targets and palette failures.
+    pub fn with_softened_two_bone_ik(
+        mut self,
+        skeleton: &Skeleton,
+        chain: &TwoBoneChain,
+        target: TwoBoneTarget,
+        soften: f32,
+    ) -> Result<(Self, TwoBoneResult), AnimationError> {
         self.pose.skin_matrices(skeleton)?;
-        let (pose, report) = self.pose.solve_two_bone(chain, target)?;
+        let (pose, report) = self.pose.solve_two_bone_softened(chain, target, soften)?;
         let palette = pose.skin_matrices(skeleton)?;
         self.pose = pose;
         self.skin_matrices = palette;

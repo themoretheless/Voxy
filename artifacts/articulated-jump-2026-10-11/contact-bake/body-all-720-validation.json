@@ -1,0 +1,2971 @@
+{
+  "poses_completed": 720,
+  "gate": 1,
+  "max_error": 25,
+  "failed_poses": [
+    {
+      "tick": 44,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 47,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 51,
+      "max_u8_error": 5
+    },
+    {
+      "tick": 107,
+      "max_u8_error": 10
+    },
+    {
+      "tick": 127,
+      "max_u8_error": 23
+    },
+    {
+      "tick": 132,
+      "max_u8_error": 6
+    },
+    {
+      "tick": 215,
+      "max_u8_error": 16
+    },
+    {
+      "tick": 221,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 264,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 313,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 353,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 358,
+      "max_u8_error": 6
+    },
+    {
+      "tick": 406,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 437,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 438,
+      "max_u8_error": 25
+    },
+    {
+      "tick": 448,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 470,
+      "max_u8_error": 11
+    },
+    {
+      "tick": 642,
+      "max_u8_error": 25
+    },
+    {
+      "tick": 689,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 691,
+      "max_u8_error": 2
+    }
+  ],
+  "status": "failed; experimental mode not production qualified",
+  "scope": "full model physical stance, MSAA4; actual face details; no dynamic hair simulation qualification",
+  "all_pose_results": [
+    {
+      "tick": 1,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 2,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 3,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 4,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 5,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 6,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 7,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 8,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 9,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 10,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 11,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 12,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 13,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 14,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 15,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 16,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 17,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 18,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 19,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 20,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 21,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 22,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 23,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 24,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 25,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 26,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 27,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 28,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 29,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 30,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 31,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 32,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 33,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 34,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 35,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 36,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 37,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 38,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 39,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 40,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 41,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 42,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 43,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 44,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 45,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 46,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 47,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 48,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 49,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 50,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 51,
+      "max_u8_error": 5
+    },
+    {
+      "tick": 52,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 53,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 54,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 55,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 56,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 57,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 58,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 59,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 60,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 61,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 62,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 63,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 64,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 65,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 66,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 67,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 68,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 69,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 70,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 71,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 72,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 73,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 74,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 75,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 76,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 77,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 78,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 79,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 80,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 81,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 82,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 83,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 84,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 85,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 86,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 87,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 88,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 89,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 90,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 91,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 92,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 93,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 94,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 95,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 96,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 97,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 98,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 99,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 100,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 101,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 102,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 103,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 104,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 105,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 106,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 107,
+      "max_u8_error": 10
+    },
+    {
+      "tick": 108,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 109,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 110,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 111,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 112,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 113,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 114,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 115,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 116,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 117,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 118,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 119,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 120,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 121,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 122,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 123,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 124,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 125,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 126,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 127,
+      "max_u8_error": 23
+    },
+    {
+      "tick": 128,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 129,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 130,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 131,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 132,
+      "max_u8_error": 6
+    },
+    {
+      "tick": 133,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 134,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 135,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 136,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 137,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 138,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 139,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 140,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 141,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 142,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 143,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 144,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 145,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 146,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 147,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 148,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 149,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 150,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 151,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 152,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 153,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 154,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 155,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 156,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 157,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 158,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 159,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 160,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 161,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 162,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 163,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 164,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 165,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 166,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 167,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 168,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 169,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 170,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 171,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 172,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 173,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 174,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 175,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 176,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 177,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 178,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 179,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 180,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 181,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 182,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 183,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 184,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 185,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 186,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 187,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 188,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 189,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 190,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 191,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 192,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 193,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 194,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 195,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 196,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 197,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 198,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 199,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 200,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 201,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 202,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 203,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 204,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 205,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 206,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 207,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 208,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 209,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 210,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 211,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 212,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 213,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 214,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 215,
+      "max_u8_error": 16
+    },
+    {
+      "tick": 216,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 217,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 218,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 219,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 220,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 221,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 222,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 223,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 224,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 225,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 226,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 227,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 228,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 229,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 230,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 231,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 232,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 233,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 234,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 235,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 236,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 237,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 238,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 239,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 240,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 241,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 242,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 243,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 244,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 245,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 246,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 247,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 248,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 249,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 250,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 251,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 252,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 253,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 254,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 255,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 256,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 257,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 258,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 259,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 260,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 261,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 262,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 263,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 264,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 265,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 266,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 267,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 268,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 269,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 270,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 271,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 272,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 273,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 274,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 275,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 276,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 277,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 278,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 279,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 280,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 281,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 282,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 283,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 284,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 285,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 286,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 287,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 288,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 289,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 290,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 291,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 292,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 293,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 294,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 295,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 296,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 297,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 298,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 299,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 300,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 301,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 302,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 303,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 304,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 305,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 306,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 307,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 308,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 309,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 310,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 311,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 312,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 313,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 314,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 315,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 316,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 317,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 318,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 319,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 320,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 321,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 322,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 323,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 324,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 325,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 326,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 327,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 328,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 329,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 330,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 331,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 332,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 333,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 334,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 335,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 336,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 337,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 338,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 339,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 340,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 341,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 342,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 343,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 344,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 345,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 346,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 347,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 348,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 349,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 350,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 351,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 352,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 353,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 354,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 355,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 356,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 357,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 358,
+      "max_u8_error": 6
+    },
+    {
+      "tick": 359,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 360,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 361,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 362,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 363,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 364,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 365,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 366,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 367,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 368,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 369,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 370,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 371,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 372,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 373,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 374,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 375,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 376,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 377,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 378,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 379,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 380,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 381,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 382,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 383,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 384,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 385,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 386,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 387,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 388,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 389,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 390,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 391,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 392,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 393,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 394,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 395,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 396,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 397,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 398,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 399,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 400,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 401,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 402,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 403,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 404,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 405,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 406,
+      "max_u8_error": 15
+    },
+    {
+      "tick": 407,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 408,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 409,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 410,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 411,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 412,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 413,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 414,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 415,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 416,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 417,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 418,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 419,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 420,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 421,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 422,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 423,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 424,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 425,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 426,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 427,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 428,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 429,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 430,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 431,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 432,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 433,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 434,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 435,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 436,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 437,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 438,
+      "max_u8_error": 25
+    },
+    {
+      "tick": 439,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 440,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 441,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 442,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 443,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 444,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 445,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 446,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 447,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 448,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 449,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 450,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 451,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 452,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 453,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 454,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 455,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 456,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 457,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 458,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 459,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 460,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 461,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 462,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 463,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 464,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 465,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 466,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 467,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 468,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 469,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 470,
+      "max_u8_error": 11
+    },
+    {
+      "tick": 471,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 472,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 473,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 474,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 475,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 476,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 477,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 478,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 479,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 480,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 481,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 482,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 483,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 484,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 485,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 486,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 487,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 488,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 489,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 490,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 491,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 492,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 493,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 494,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 495,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 496,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 497,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 498,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 499,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 500,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 501,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 502,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 503,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 504,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 505,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 506,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 507,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 508,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 509,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 510,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 511,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 512,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 513,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 514,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 515,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 516,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 517,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 518,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 519,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 520,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 521,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 522,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 523,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 524,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 525,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 526,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 527,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 528,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 529,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 530,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 531,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 532,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 533,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 534,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 535,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 536,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 537,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 538,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 539,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 540,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 541,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 542,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 543,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 544,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 545,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 546,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 547,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 548,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 549,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 550,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 551,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 552,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 553,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 554,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 555,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 556,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 557,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 558,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 559,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 560,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 561,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 562,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 563,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 564,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 565,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 566,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 567,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 568,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 569,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 570,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 571,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 572,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 573,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 574,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 575,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 576,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 577,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 578,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 579,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 580,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 581,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 582,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 583,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 584,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 585,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 586,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 587,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 588,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 589,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 590,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 591,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 592,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 593,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 594,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 595,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 596,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 597,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 598,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 599,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 600,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 601,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 602,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 603,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 604,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 605,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 606,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 607,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 608,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 609,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 610,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 611,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 612,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 613,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 614,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 615,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 616,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 617,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 618,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 619,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 620,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 621,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 622,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 623,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 624,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 625,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 626,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 627,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 628,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 629,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 630,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 631,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 632,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 633,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 634,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 635,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 636,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 637,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 638,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 639,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 640,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 641,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 642,
+      "max_u8_error": 25
+    },
+    {
+      "tick": 643,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 644,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 645,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 646,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 647,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 648,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 649,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 650,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 651,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 652,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 653,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 654,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 655,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 656,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 657,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 658,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 659,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 660,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 661,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 662,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 663,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 664,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 665,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 666,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 667,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 668,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 669,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 670,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 671,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 672,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 673,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 674,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 675,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 676,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 677,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 678,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 679,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 680,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 681,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 682,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 683,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 684,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 685,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 686,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 687,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 688,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 689,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 690,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 691,
+      "max_u8_error": 2
+    },
+    {
+      "tick": 692,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 693,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 694,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 695,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 696,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 697,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 698,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 699,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 700,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 701,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 702,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 703,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 704,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 705,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 706,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 707,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 708,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 709,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 710,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 711,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 712,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 713,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 714,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 715,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 716,
+      "max_u8_error": 0
+    },
+    {
+      "tick": 717,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 718,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 719,
+      "max_u8_error": 1
+    },
+    {
+      "tick": 720,
+      "max_u8_error": 1
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "change": "Enable release-only and early-release directions in opt-in coupled GPU backend; original final physical admission unchanged",
+  "native_release_gate": "passed",
+  "gpu_seeded_release_dependent_retry": "passed",
+  "production_check": "passed",
+  "diff_check": "passed",
+  "full_groom_first_frame": {
+    "result": "passed",
+    "guides": 469,
+    "segments_per_guide": 20,
+    "continuous_contacts": true,
+    "coordinate_calls": 9815,
+    "equality_dispatches": 28296,
+    "queue_submissions": 8743,
+    "early_release_directions": 5113,
+    "admitted": 9815,
+    "native_fallbacks": 0,
+    "diagnostic_elapsed_s": 32.363035125
+  },
+  "source_sha256": {
+    "crates/voxy_app/src/gpu_hair_solver.rs": "4570ebdb848052a4e0a9036a485ea0c134b713e9f30e82d501257ac620c35331",
+    "crates/voxy_app/src/female_demo.rs": "e4eac3b4e314a4906d55f097ea2bfcfd2e0703b9d16512f5facceddd8a19493e",
+    "crates/voxy_app/src/gpu_hair_joint.rs": "b0186c5543334aea73cf7e7c3e72be8e799c554612a8df61f99209e2b99e3400"
+  },
+  "limits": "Single frame only. Concurrent timing is not controlled speedup or rendered FPS. Running full-cycle jobs predate these flags and do not qualify this source version."
+}

@@ -1,0 +1,25 @@
+{
+  "status": "launched_not_qualified",
+  "pid": 86718,
+  "binary": "/tmp/voxy-warm-row-order-app-tests",
+  "binary_sha256": "f758334b251bc5c1f2799b9babe1ae932439d2657a83c9aa7d2edcde6ff9192d",
+  "env_overrides": {
+    "VOXY_HAIR_RESIDENT_COMPACT_READBACK": "1",
+    "VOXY_HAIR_RESIDENT_PREFER_LARGE_WORKSPACE": "1",
+    "VOXY_HAIR_JOINT_RESIDENT_ACTIVE_SET": "1",
+    "VOXY_HAIR_RESIDENT_OPERATOR_REUSE": "1",
+    "VOXY_HAIR_RESIDENT_WORKSPACE_REUSE": "1",
+    "VOXY_HAIR_STRAND_FRACTION_REUSE": "1",
+    "VOXY_HAIR_JOINT_STAGE_PROFILE": "1",
+    "VOXY_HAIR_RESIDENT_WORKGROUP_LANES": "1024",
+    "VOXY_HAIR_RESIDENT_ACTIVE_SHADER_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-12/gpu-source-audit/active-lanes-1024-seeded.wgsl",
+    "VOXY_HAIR_RESIDENT_WARM_START": "1",
+    "VOXY_HAIR_RESIDENT_SEEDED_SHADER_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-12/gpu-source-audit/active-lanes-1024-seeded.wgsl",
+    "VOXY_AUTHORED_JUMP_QUALIFICATION_DIR": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-12/gpu-source-audit/warm-full-cycle-20261013",
+    "VOXY_AUTHORED_JUMP_CONTINUOUS_CONTACTS": "1",
+    "VOXY_AUTHORED_JUMP_GPU_HAIR": "1"
+  },
+  "log": "/tmp/voxy-warm-start-full-cycle.log",
+  "scope": "required720framecycle; correctness qualification, no rendered FPS claim",
+  "initial_launch_status": "terminal_missing_required_directory_corrected"
+}

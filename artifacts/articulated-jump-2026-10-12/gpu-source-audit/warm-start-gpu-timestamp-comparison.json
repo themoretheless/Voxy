@@ -1,0 +1,23 @@
+{
+  "all_timed_candidates_original_physics_admitted": true,
+  "cold_candidate_equality_verified": true,
+  "coordinates": 1764,
+  "gpu_pass_ms": [
+    63.806458,
+    62.286458,
+    68.539
+  ],
+  "rows": 174,
+  "scope": "complete single-operator GPU pass; excludes host preparation, queue wait, readback, physical reconstruction and rendering",
+  "warm_gpu_pass_ms": [
+    63.806458,
+    5.334291,
+    6.542
+  ],
+  "cold_median_ms": 63.806458,
+  "warm_median_ms": 6.542,
+  "status": "original_physical_operator_passed",
+  "timing_status": "unqualified_fresh_query_run_rejected_nonpositive_timestamp_interval",
+  "physical_status": "all_candidates_original_physics_passed",
+  "speedup_claim_supported": false
+}

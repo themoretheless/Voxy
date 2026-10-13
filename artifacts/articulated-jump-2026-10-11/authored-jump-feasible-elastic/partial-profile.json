@@ -1,0 +1,50 @@
+{
+  "sample_scope": "One2-second wall-clock sampling window of live CPU full-cycle qualification; thread sample counts are not wall-clock percentages or FPS",
+  "leaf_samples": [
+    {
+      "function": "contact equality QR solve",
+      "top_of_stack_samples": 347
+    },
+    {
+      "function": "segment closest points",
+      "top_of_stack_samples": 253
+    },
+    {
+      "function": "interval midpoint subdivision",
+      "top_of_stack_samples": 180
+    },
+    {
+      "function": "continuous line certificate",
+      "top_of_stack_samples": 166
+    },
+    {
+      "function": "power to Bernstein bounds",
+      "top_of_stack_samples": 130
+    },
+    {
+      "function": "continuous pair distance",
+      "top_of_stack_samples": 105
+    },
+    {
+      "function": "continuous motion bounds",
+      "top_of_stack_samples": 88
+    }
+  ],
+  "swept_solve_samples": 203,
+  "elapsed_ms": {
+    "median": 615.103667,
+    "max": 2101.588
+  },
+  "initial_projection_ms": {
+    "median": 32.839833,
+    "max": 170.240333
+  },
+  "initial_admission_ms": {
+    "median": 79.237208,
+    "max": 204.59562499999998
+  },
+  "refinements": {
+    "median": 8.0,
+    "max": 10.0
+  }
+}

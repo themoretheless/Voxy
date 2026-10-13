@@ -1,0 +1,17 @@
+{
+  "focused_tests_passed": 1,
+  "filtered_out": 344,
+  "scope": "actual target mesh dominant-foot-weight geometry inspection",
+  "records": [
+    "FOOT_SURFACE side=left bone=9 vertices=4441 lower_band_vertices=422 ankle_local_min=DVec3(-0.006684161722660065, -0.08004283159971237, -0.08909322321414948) ankle_local_max=DVec3(0.09938337653875351, 0.012302286922931671, 0.14599837362766266) heel_candidate=DVec3(0.07435455173254013, -0.07530694454908371, 0.030146600678563118) toe_candidate=DVec3(0.039070986211299896, -0.07543819397687912, 0.13814574480056763)",
+    "FOOT_SURFACE side=right bone=15 vertices=4441 lower_band_vertices=429 ankle_local_min=DVec3(-0.09928419440984726, -0.07995813339948654, -0.08835600316524506) ankle_local_max=DVec3(0.006558991968631744, 0.012299962341785431, 0.14522354304790497) heel_candidate=DVec3(-0.07429339736700058, -0.07535939663648605, 0.030135227367281914) toe_candidate=DVec3(-0.03904511779546738, -0.07507985085248947, 0.1379416584968567)"
+  ],
+  "lower_band_m": 0.005,
+  "anatomical_heel_verified": false,
+  "physical_pivots_admitted": false,
+  "sha256": {
+    "crates/voxy_app/src/female_rig.rs": "dbdac56d0f27d846b17eee306e192e1ef47f9df2bb49d8b44788ef7db977d86a",
+    "assets/characters/blender-female/prepared/body-forehead-refined.obj": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/target-foot-surface-tests.log": "02eecf237d2ac051900a1ea5973fa097abc6d0a165390f30a783d03fa1b1c834"
+  }
+}

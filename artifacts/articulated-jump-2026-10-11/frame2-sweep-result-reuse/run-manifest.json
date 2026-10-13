@@ -1,0 +1,11 @@
+{
+  "binary": "/tmp/voxy-sweep-result-reuse.bin",
+  "binary_sha256": "eafc2b71dccf875b9c9506d24cb225c65e1c06605aa9265bcf30585d051e8ce3",
+  "fixture": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/authored-jump-feasible-elastic/failed-contact.vhr",
+  "fixture_sha256": "52c6c2d90137b73a467f1923877f125a73994e9320238c4e7951793fcf0a7077",
+  "source_sha256": {
+    "contact_triangle_sweep.rs": "0a8cb46bd8b26287e3c6cb59079b76c8dafa53e5c846d5d4003bea684945db18",
+    "contact_trajectory.rs": "88b01ae0e8a852402948461f72245ab16e63ffc18eb9e58815a5601db6d580f8"
+  },
+  "scope": "same469-guide frame2 regression, no performance comparison under concurrent load"
+}

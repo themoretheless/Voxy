@@ -1,0 +1,15 @@
+{
+  "completed_frames": 3,
+  "failed_frame": 4,
+  "error": "swept contact refinement budget exhausted",
+  "last_five_clock_ratios": [
+    0.591839463071283,
+    0.5918394603663756,
+    0.591839458765505,
+    0.5918394578180333,
+    0.5918394572572854
+  ],
+  "observation": "late clock shrinks geometrically while each activation adds one witness and refreshes many retained clocks",
+  "not_proven": "sole cause or feasibility of bounded full nonlinear motion",
+  "next_requirement": "solve contact and trust restrictions consistently without a proposal-dependent scaled-row fixed point; preserve prescribed-root whole-path admission"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "integrated_physics_gate_passed",
+  "tests": {
+    "passed": 376,
+    "failed": 0,
+    "ignored": 41
+  },
+  "source_sha256": {
+    "crates/physics/src/hair/velocity_contacts.rs": "c41f19879918f7ee93a0708b68aa1ffc1a2f583f9cc21324e915a77c2a3d1021",
+    "crates/physics/src/hair/contact_response_batches.rs": "6ef67297cd781f6ca24ce4a70567a64065742f819c0b1f35bab182dac5e6cd92"
+  },
+  "scope": "constraint assembly and response membership; not full jump or FPS qualification",
+  "full_jump_binary_includes_this_change": false,
+  "physical_response_regression": "native and batched loads 1e-20 and 1e-155; normalized original H*x=b residual admission; linear/angular proportionality within 1e-8"
+}

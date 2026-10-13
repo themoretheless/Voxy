@@ -1,0 +1,8 @@
+{
+  "maximum_component_difference_m": 2.7755575615628914e-17,
+  "reason": "Use exact native source point coordinates rather than offline JSON decoder rounding",
+  "hull_vertex_counts": [
+    629,
+    650
+  ]
+}

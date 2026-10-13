@@ -10,28 +10,32 @@ mod inputs;
 mod locations;
 mod manifest;
 
+mod streaming;
+pub use streaming::{
+    AsyncAssetStreamer, LodStreamingPolicy, StreamingPriority, StreamingRequest,
+};
+
 // === OPTIMIZATION #31-40: Asset caching system ===
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 /// Global asset cache with reference counting
+#[derive(Debug, Default)]
 pub struct AssetCache {
     /// In-memory cached assets (strong refs)
-    strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
-    /// Weak references to prevent premature collection
-    weak_refs: HashMap<String, usize>,
+    strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any + Send + Sync>>>,
 }
 
 impl AssetCache {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             strong_cache: Mutex::new(HashMap::new()),
-            weak_refs: HashMap::new(),
         }
     }
     
     /// Cache-lookup-then-load pattern for repeated assets
-    pub fn load_or_cache<T: 'static + Clone>(&self, path: &str, loader: impl FnOnce() -> Result<T, String>) -> Result<T, String> {
+    pub fn load_or_cache<T: 'static + Clone + Send + Sync>(&self, path: &str, loader: impl FnOnce() -> Result<T, String>) -> Result<T, String> {
         let mut cache = self.strong_cache.lock().unwrap();
         if let Some(cached) = cache.get(path) {
             // Return cloned copy

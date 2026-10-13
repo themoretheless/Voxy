@@ -1,0 +1,11 @@
+
+running 1 test
+TRIPLE PHYSICAL rows=100 width=882 systems=7 accelerated=true submissions=2 elapsed_ms=160.532334 error=None scope=one_original_physical_operator_not_trajectory_or_FPS
+TRIPLE WARM PHYSICAL rows=100 width=882 original_admission=true elapsed_ms=32.200041999999996 scope=same_operator_hint_not_changed_trajectory_or_FPS
+TRIPLE FACTORS original_physical_admission=true changed_bounds=true reused=2 scope=original_operator_replay_not_trajectory_or_FPS
+TRIPLE ACTIVE BASIS appended_inactive_original_load=true original_physical_admission=true reused=2
+TRIPLE CACHE HINT PHYSICAL changed_bounds=true original_admission=true elapsed_ms=120.7615 scope=changed_bounds_same_columns_not_trajectory_or_FPS
+test gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 378 filtered out; finished in 0.37s
+

@@ -1,0 +1,2005 @@
+{
+  "records": [
+    {
+      "actual_skin_low_y": -0.7864512801170349,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005871710708868093,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7864513291073773,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7939702868461609,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013059915221381693,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7939702302579337,
+      "skin_below_proxy_m": 5.658822721521517e-08
+    },
+    {
+      "actual_skin_low_y": -0.7860592007637024,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0058693987522912975,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7860592424017903,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7936469912528992,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013182125263397902,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7936469705729725,
+      "skin_below_proxy_m": 2.0679926659994408e-08
+    },
+    {
+      "actual_skin_low_y": -0.7848864197731018,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005848390034432194,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7848864428342475,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.792698323726654,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013510614551278369,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7926984262917043,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7831855416297913,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005831363057161735,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7831854946615677,
+      "skin_below_proxy_m": 4.696822353267294e-08
+    },
+    {
+      "actual_skin_low_y": -0.7912893891334534,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013947572552509979,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7912893157710184,
+      "skin_below_proxy_m": 7.336243501576689e-08
+    },
+    {
+      "actual_skin_low_y": -0.7813538312911987,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005835279845795956,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7813538458950549,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7897642254829407,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014376780463882091,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7897643743792241,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7798596024513245,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.00585246433694502,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7798595685749073,
+      "skin_below_proxy_m": 3.387641711594114e-08
+    },
+    {
+      "actual_skin_low_y": -0.7885160446166992,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014709517484923988,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.78851603527576,
+      "skin_below_proxy_m": 9.34093924431778e-09
+    },
+    {
+      "actual_skin_low_y": -0.7791009545326233,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005862820766179821,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7791009702629237,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7879217267036438,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014878338691475323,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7879218412887194,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7794573307037354,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0058524249418535745,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7794573469210692,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7883144021034241,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014821032825780187,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7883144974063553,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7806367874145508,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005834255029715618,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.780636810795844,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7894352674484253,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014589174103221912,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7894352902726848,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7823208570480347,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.00583044642869443,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7823208682140481,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7909592390060425,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01423699567273865,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7909591873658229,
+      "skin_below_proxy_m": 5.164021954495723e-08
+    },
+    {
+      "actual_skin_low_y": -0.7840515971183777,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005858814866812917,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7840515949426556,
+      "skin_below_proxy_m": 2.175722046970918e-09
+    },
+    {
+      "actual_skin_low_y": -0.7925037145614624,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013840871056088881,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7925036474853615,
+      "skin_below_proxy_m": 6.707610089584648e-08
+    },
+    {
+      "actual_skin_low_y": -0.7854924201965332,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005913263808110932,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7854925214059404,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7937451004981995,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013484581364088472,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7937450756845131,
+      "skin_below_proxy_m": 2.4813686327895823e-08
+    },
+    {
+      "actual_skin_low_y": -0.7862613201141357,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005959943691491274,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7862612652151277,
+      "skin_below_proxy_m": 5.4899008006259464e-08
+    },
+    {
+      "actual_skin_low_y": -0.7943882346153259,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013281989018316372,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7943883245648262,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7860483527183533,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005960755449185959,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.786048351497924,
+      "skin_below_proxy_m": 1.2204293131645727e-09
+    },
+    {
+      "actual_skin_low_y": -0.7941920161247253,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013346039044198255,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7941918904370929,
+      "skin_below_proxy_m": 1.2568763241294079e-07
+    },
+    {
+      "actual_skin_low_y": -0.7850123643875122,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005928450451930502,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.785012360707576,
+      "skin_below_proxy_m": 3.6799362446160444e-09
+    },
+    {
+      "actual_skin_low_y": -0.7932865619659424,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01362408434754887,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7932865012725153,
+      "skin_below_proxy_m": 6.069342706194192e-08
+    },
+    {
+      "actual_skin_low_y": -0.7833792567253113,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005891046488985981,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7833791795310507,
+      "skin_below_proxy_m": 7.7194260539315e-08
+    },
+    {
+      "actual_skin_low_y": -0.7918552756309509,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014018178817017295,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7918553345141583,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7815648913383484,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005873176457463292,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7815648274955317,
+      "skin_below_proxy_m": 6.384281669991054e-08
+    },
+    {
+      "actual_skin_low_y": -0.7902290225028992,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014415472716449659,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7902290231939411,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7800278663635254,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005870584503057902,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7800277979108338,
+      "skin_below_proxy_m": 6.845269162614187e-08
+    },
+    {
+      "actual_skin_low_y": -0.7888145446777344,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014720827708009006,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7888144457439323,
+      "skin_below_proxy_m": 9.893380203962465e-08
+    },
+    {
+      "actual_skin_low_y": -0.7791472673416138,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005865341228914241,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7791472289179552,
+      "skin_below_proxy_m": 3.842365858819363e-08
+    },
+    {
+      "actual_skin_low_y": -0.7879727482795715,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014873467382885149,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7879727494728687,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7793570756912231,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005840111809591525,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7793570855489866,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7880947589874268,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014803623267947808,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7880947218793362,
+      "skin_below_proxy_m": 3.710809060031295e-08
+    },
+    {
+      "actual_skin_low_y": -0.7804660201072693,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005804276840327807,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7804659546336296,
+      "skin_below_proxy_m": 6.54736397320832e-08
+    },
+    {
+      "actual_skin_low_y": -0.7890179753303528,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014548005382967324,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.78901799513424,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7821183204650879,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005779203073605099,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7821183591111668,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7904059290885925,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014168532033694432,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.790405884502742,
+      "skin_below_proxy_m": 4.4585850567102625e-08
+    },
+    {
+      "actual_skin_low_y": -0.7838951945304871,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005785008576416536,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7838952701535767,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7918938994407654,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013737256242998824,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.791893857284127,
+      "skin_below_proxy_m": 4.21566384023464e-08
+    },
+    {
+      "actual_skin_low_y": -0.7854153513908386,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005821342322366583,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7854153104636787,
+      "skin_below_proxy_m": 4.0927159883352715e-08
+    },
+    {
+      "actual_skin_low_y": -0.7931476831436157,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013341091759348084,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7931476842984494,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7863525152206421,
+      "clip": "Idle",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005863826481726839,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7863524807496557,
+      "skin_below_proxy_m": 3.4470986398638104e-08
+    },
+    {
+      "actual_skin_low_y": -0.7938927412033081,
+      "clip": "Idle",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013086526030204213,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7938927019314739,
+      "skin_below_proxy_m": 3.927183422902658e-08
+    },
+    {
+      "actual_skin_low_y": -0.7882295250892639,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006359931382754621,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7882294913852635,
+      "skin_below_proxy_m": 3.370400036839527e-08
+    },
+    {
+      "actual_skin_low_y": -0.8100900053977966,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.00112737968652082,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8100900203306587,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7826077342033386,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.008708080955830299,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.782607729548252,
+      "skin_below_proxy_m": 4.65508664948544e-09
+    },
+    {
+      "actual_skin_low_y": -0.8000852465629578,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0009143428177960285,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.800085143161565,
+      "skin_below_proxy_m": 1.0340139278142146e-07
+    },
+    {
+      "actual_skin_low_y": -0.777365505695343,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005450107161379065,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.777365449897701,
+      "skin_below_proxy_m": 5.57976420623163e-08
+    },
+    {
+      "actual_skin_low_y": -0.7943491339683533,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.003914412247546456,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7943490537110637,
+      "skin_below_proxy_m": 8.025728959193401e-08
+    },
+    {
+      "actual_skin_low_y": -0.7886221408843994,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0035246232554487656,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7886221634273141,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7889055609703064,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005249961658228991,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7889054643065265,
+      "skin_below_proxy_m": 9.666377986938812e-08
+    },
+    {
+      "actual_skin_low_y": -0.8012562394142151,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.004729111255786618,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.801256262853921,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7761486172676086,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0013201934927157826,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7761487176728492,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.8124809265136719,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.004750540418309536,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.81248074791978,
+      "skin_below_proxy_m": 1.7859389189744945e-07
+    },
+    {
+      "actual_skin_low_y": -0.7536284923553467,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.008780233265776597,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7536284694949937,
+      "skin_below_proxy_m": 2.2860352943965268e-08
+    },
+    {
+      "actual_skin_low_y": -0.8203560709953308,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.003549187254240307,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8203561016284906,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7374497056007385,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.015159412378983262,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7374496020220049,
+      "skin_below_proxy_m": 1.0357873359012615e-07
+    },
+    {
+      "actual_skin_low_y": -0.8276982307434082,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0026994195857642034,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.827698111817157,
+      "skin_below_proxy_m": 1.1892625118026245e-07
+    },
+    {
+      "actual_skin_low_y": -0.7477761507034302,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014806121492847654,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7477760970972598,
+      "skin_below_proxy_m": 5.360617039151805e-08
+    },
+    {
+      "actual_skin_low_y": -0.8313022255897522,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0025990007981000715,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.831302025737691,
+      "skin_below_proxy_m": 1.998520612334076e-07
+    },
+    {
+      "actual_skin_low_y": -0.7529173493385315,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0089003267509656,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7529173009848962,
+      "skin_below_proxy_m": 4.835363531796588e-08
+    },
+    {
+      "actual_skin_low_y": -0.8304633498191833,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0024530234132431987,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8304631954947492,
+      "skin_below_proxy_m": 1.5432443412066732e-07
+    },
+    {
+      "actual_skin_low_y": -0.7382132411003113,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.001647053051231999,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7382132693501151,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.8267896175384521,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0020147097590077208,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8267895896837899,
+      "skin_below_proxy_m": 2.785466224342059e-08
+    },
+    {
+      "actual_skin_low_y": -0.7396994829177856,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005203531793735046,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7396994718182246,
+      "skin_below_proxy_m": 1.1099561048055762e-08
+    },
+    {
+      "actual_skin_low_y": -0.8210119009017944,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0016539412303766866,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8210118837855485,
+      "skin_below_proxy_m": 1.7116245976112054e-08
+    },
+    {
+      "actual_skin_low_y": -0.7768053412437439,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.006457341027037139,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7768053270715672,
+      "skin_below_proxy_m": 1.417217665444781e-08
+    },
+    {
+      "actual_skin_low_y": -0.8139915466308594,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.001586507241570987,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8139915491315011,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.78793865442276,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005587172756915623,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7879386353484019,
+      "skin_below_proxy_m": 1.9074358093007504e-08
+    },
+    {
+      "actual_skin_low_y": -0.8102421760559082,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0017164890612756433,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8102421612306643,
+      "skin_below_proxy_m": 1.4825243921379183e-08
+    },
+    {
+      "actual_skin_low_y": -0.7825481295585632,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.008754529677187716,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7825481829798229,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.8047424554824829,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0010771834600907444,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8047424685384392,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7773464322090149,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005720059485904342,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.777346367451041,
+      "skin_below_proxy_m": 6.475797387217597e-08
+    },
+    {
+      "actual_skin_low_y": -0.7922671437263489,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.002730148274552403,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7922671290293909,
+      "skin_below_proxy_m": 1.4696957983950654e-08
+    },
+    {
+      "actual_skin_low_y": -0.7888090014457703,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.003971674974758681,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7888090436749391,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.770147979259491,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.008951764271375994,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7701480434545678,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.8017348051071167,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005301803392659472,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8017348158757852,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7447954416275024,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.014957882443676502,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7447953042197618,
+      "skin_below_proxy_m": 1.374077406302021e-07
+    },
+    {
+      "actual_skin_low_y": -0.8130716681480408,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005345278829899844,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8130716268810866,
+      "skin_below_proxy_m": 4.126695418715798e-08
+    },
+    {
+      "actual_skin_low_y": -0.7282981872558594,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.020728758368590925,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7282982333073557,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.8204174637794495,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.003907690094571936,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8204174136692035,
+      "skin_below_proxy_m": 5.0110245952694754e-08
+    },
+    {
+      "actual_skin_low_y": -0.7427303791046143,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.01944045061903162,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.742730283014281,
+      "skin_below_proxy_m": 9.609033324586846e-08
+    },
+    {
+      "actual_skin_low_y": -0.8273935914039612,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0026689264928099637,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8273936040022893,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7512896656990051,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.011107493629249957,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7512896303748096,
+      "skin_below_proxy_m": 3.53241955686201e-08
+    },
+    {
+      "actual_skin_low_y": -0.8311129808425903,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.002523485599799956,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.831112854430655,
+      "skin_below_proxy_m": 1.264119353638904e-07
+    },
+    {
+      "actual_skin_low_y": -0.7340700030326843,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0015751072276835281,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7340699672653752,
+      "skin_below_proxy_m": 3.576730911447612e-08
+    },
+    {
+      "actual_skin_low_y": -0.8301045298576355,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.00240414457125611,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8301045408885596,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7378776669502258,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006108510863252537,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7378776390343486,
+      "skin_below_proxy_m": 2.7915877276463164e-08
+    },
+    {
+      "actual_skin_low_y": -0.8260626196861267,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.001806924237797459,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8260625166604123,
+      "skin_below_proxy_m": 1.0302571440412578e-07
+    },
+    {
+      "actual_skin_low_y": -0.7763174772262573,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.007279138512121706,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7763175531728453,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.8195978999137878,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0012433705828262212,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8195978710541846,
+      "skin_below_proxy_m": 2.8859603262709754e-08
+    },
+    {
+      "actual_skin_low_y": -0.7882295250892639,
+      "clip": "Walk",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006359931382754621,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7882294913852635,
+      "skin_below_proxy_m": 3.370400036839527e-08
+    },
+    {
+      "actual_skin_low_y": -0.8100900053977966,
+      "clip": "Walk",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.00112737968652082,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8100900203306587,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6985756754875183,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.004641062844860743,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6985755402887639,
+      "skin_below_proxy_m": 1.3519875441403428e-07
+    },
+    {
+      "actual_skin_low_y": -0.5261346101760864,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.008443463685658752,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5261344991888979,
+      "skin_below_proxy_m": 1.1098718855073741e-07
+    },
+    {
+      "actual_skin_low_y": -0.6743656396865845,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0023369333312628572,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.674365618053151,
+      "skin_below_proxy_m": 2.163343348904334e-08
+    },
+    {
+      "actual_skin_low_y": -0.5210710167884827,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.002980009636220419,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5210711537782086,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6750731468200684,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.009529292085891036,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6750731132767417,
+      "skin_below_proxy_m": 3.354332667182547e-08
+    },
+    {
+      "actual_skin_low_y": -0.548125147819519,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.001948093973418621,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5481252265020369,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7049985527992249,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.01379098434730606,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7049984357500657,
+      "skin_below_proxy_m": 1.1704915914290126e-07
+    },
+    {
+      "actual_skin_low_y": -0.5828371047973633,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005898819436349816,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.582837165078099,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7571486234664917,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.01058575945198255,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7571485641113895,
+      "skin_below_proxy_m": 5.935510216659168e-08
+    },
+    {
+      "actual_skin_low_y": -0.5958245396614075,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005808677327854909,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5958245612185238,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7300630807876587,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0028625181285110986,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7300630409115696,
+      "skin_below_proxy_m": 3.987608909739038e-08
+    },
+    {
+      "actual_skin_low_y": -0.5832128524780273,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.00510331229450942,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5832128277699364,
+      "skin_below_proxy_m": 2.4708090906599978e-08
+    },
+    {
+      "actual_skin_low_y": -0.7059935331344604,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.014377767128740095,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7059935289918428,
+      "skin_below_proxy_m": 4.14261769332569e-09
+    },
+    {
+      "actual_skin_low_y": -0.5641731023788452,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0046568688133310585,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5641730388501184,
+      "skin_below_proxy_m": 6.352872683468291e-08
+    },
+    {
+      "actual_skin_low_y": -0.6980564594268799,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.016856975436978474,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.698056394057166,
+      "skin_below_proxy_m": 6.536971386417179e-08
+    },
+    {
+      "actual_skin_low_y": -0.577004611492157,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005351086056312994,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5770045276418718,
+      "skin_below_proxy_m": 8.385028515967008e-08
+    },
+    {
+      "actual_skin_low_y": -0.6858404874801636,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.016111249164889364,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6858404253121231,
+      "skin_below_proxy_m": 6.216804049330449e-08
+    },
+    {
+      "actual_skin_low_y": -0.5939421057701111,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0069994844309826006,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.593942092668024,
+      "skin_below_proxy_m": 1.3102087081939828e-08
+    },
+    {
+      "actual_skin_low_y": -0.6559383273124695,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.015222464436901617,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6559382820497884,
+      "skin_below_proxy_m": 4.5262681047653075e-08
+    },
+    {
+      "actual_skin_low_y": -0.6236715912818909,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.007273107950169302,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6236715204870062,
+      "skin_below_proxy_m": 7.079488462125028e-08
+    },
+    {
+      "actual_skin_low_y": -0.6108769178390503,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.013879934041298617,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6108769941072442,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6624495983123779,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005716672876582301,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6624497035144226,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.5607681274414062,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.011211888565353219,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5607681110798732,
+      "skin_below_proxy_m": 1.6361533017317242e-08
+    },
+    {
+      "actual_skin_low_y": -0.6900964379310608,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005324368897457206,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6900963295435875,
+      "skin_below_proxy_m": 1.0838747332986287e-07
+    },
+    {
+      "actual_skin_low_y": -0.5446494221687317,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006499449935927325,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5446493797503626,
+      "skin_below_proxy_m": 4.2418369039509685e-08
+    },
+    {
+      "actual_skin_low_y": -0.6957286596298218,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.005304116802346712,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6957284542252904,
+      "skin_below_proxy_m": 2.0540453138373493e-07
+    },
+    {
+      "actual_skin_low_y": -0.5776523947715759,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.004871496964636155,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5776522372417746,
+      "skin_below_proxy_m": 1.5752980131455985e-07
+    },
+    {
+      "actual_skin_low_y": -0.6830286383628845,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.003526433637023527,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6830285671654704,
+      "skin_below_proxy_m": 7.119741407546343e-08
+    },
+    {
+      "actual_skin_low_y": -0.5739405155181885,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.008903106101726474,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5739405241069847,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6895644068717957,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.010953169889697793,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6895642623787481,
+      "skin_below_proxy_m": 1.4449304752695014e-07
+    },
+    {
+      "actual_skin_low_y": -0.5671604871749878,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.011932471319518885,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5671604672540027,
+      "skin_below_proxy_m": 1.9920985083743403e-08
+    },
+    {
+      "actual_skin_low_y": -0.7305205464363098,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01276184224014361,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7305204936698877,
+      "skin_below_proxy_m": 5.276642212059812e-08
+    },
+    {
+      "actual_skin_low_y": -0.5745465755462646,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.010282527079255374,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5745465752112119,
+      "skin_below_proxy_m": 3.35052763311694e-10
+    },
+    {
+      "actual_skin_low_y": -0.7497669458389282,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.006334315467788676,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7497669415130763,
+      "skin_below_proxy_m": 4.325851898911992e-09
+    },
+    {
+      "actual_skin_low_y": -0.5719985365867615,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006053304728482649,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5719985220278401,
+      "skin_below_proxy_m": 1.4558921401786051e-08
+    },
+    {
+      "actual_skin_low_y": -0.7140469551086426,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.006833465535296584,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7140467918519615,
+      "skin_below_proxy_m": 1.6325668106276225e-07
+    },
+    {
+      "actual_skin_low_y": -0.5608195066452026,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0024029753723423955,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5608195715772872,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6998374462127686,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.016731517147195365,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.699837538520895,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.583311140537262,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005343896637090375,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.583311145152833,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.693244457244873,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01664204316685261,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6932444661958471,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6037811040878296,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.007274887737632224,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6037810537052675,
+      "skin_below_proxy_m": 5.038256212230863e-08
+    },
+    {
+      "actual_skin_low_y": -0.6781188249588013,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.015605706735173997,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.678118810078721,
+      "skin_below_proxy_m": 1.4880080279056074e-08
+    },
+    {
+      "actual_skin_low_y": -0.6383183598518372,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006716982860947586,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6383183758758131,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6435511112213135,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014682926742641295,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6435509511776188,
+      "skin_below_proxy_m": 1.6004369463029633e-07
+    },
+    {
+      "actual_skin_low_y": -0.6781731843948364,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.003598189398310485,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6781731685165691,
+      "skin_below_proxy_m": 1.5878267367597232e-08
+    },
+    {
+      "actual_skin_low_y": -0.5950719118118286,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013087240934208773,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5950719683371591,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6970382332801819,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.004107837105668941,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6970381668550554,
+      "skin_below_proxy_m": 6.642512651033883e-08
+    },
+    {
+      "actual_skin_low_y": -0.5456538200378418,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0101054405398749,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5456537564235397,
+      "skin_below_proxy_m": 6.36143020482649e-08
+    },
+    {
+      "actual_skin_low_y": -0.6985756754875183,
+      "clip": "Jog",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.004641062844860743,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6985755402887639,
+      "skin_below_proxy_m": 1.3519875441403428e-07
+    },
+    {
+      "actual_skin_low_y": -0.5261346101760864,
+      "clip": "Jog",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.008443463685658752,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5261344991888979,
+      "skin_below_proxy_m": 1.1098718855073741e-07
+    },
+    {
+      "actual_skin_low_y": -0.7612779140472412,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.003601359996786626,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.761277883002554,
+      "skin_below_proxy_m": 3.1044687265335824e-08
+    },
+    {
+      "actual_skin_low_y": -0.6454557776451111,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013164069761111721,
+      "phase": 0.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6454556579820809,
+      "skin_below_proxy_m": 1.1966303015142898e-07
+    },
+    {
+      "actual_skin_low_y": -0.7307497262954712,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0034195467087025336,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7307497487822342,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6278182864189148,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.011168416989806206,
+      "phase": 0.041666666666666664,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6278182251678575,
+      "skin_below_proxy_m": 6.125105733723046e-08
+    },
+    {
+      "actual_skin_low_y": -0.7482328414916992,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0011092897162716965,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7482328762522524,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6162031888961792,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.010799886486902504,
+      "phase": 0.08333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6162031586988062,
+      "skin_below_proxy_m": 3.019737304654768e-08
+    },
+    {
+      "actual_skin_low_y": -0.7470029592514038,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.007943960219801191,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7470030230839765,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6057232618331909,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.012100469276423423,
+      "phase": 0.125,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6057231482830716,
+      "skin_below_proxy_m": 1.1355011930724856e-07
+    },
+    {
+      "actual_skin_low_y": -0.8059954047203064,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.004151174886330287,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8059953028430631,
+      "skin_below_proxy_m": 1.0187724330812387e-07
+    },
+    {
+      "actual_skin_low_y": -0.6266183853149414,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013903439752580312,
+      "phase": 0.16666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6266184471463543,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7924136519432068,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0032546406358980595,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7924135923877553,
+      "skin_below_proxy_m": 5.95554514593033e-08
+    },
+    {
+      "actual_skin_low_y": -0.6428454518318176,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.014776829253667575,
+      "phase": 0.20833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6428456040681261,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.769627571105957,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.014248448969085219,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7696274954599397,
+      "skin_below_proxy_m": 7.564601733900389e-08
+    },
+    {
+      "actual_skin_low_y": -0.6421471238136292,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.015107955874968382,
+      "phase": 0.25,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6421470920339879,
+      "skin_below_proxy_m": 3.1779641251894475e-08
+    },
+    {
+      "actual_skin_low_y": -0.7194061279296875,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.013124099946545181,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7194060882680503,
+      "skin_below_proxy_m": 3.9661637196708455e-08
+    },
+    {
+      "actual_skin_low_y": -0.6437696218490601,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.012262042660171786,
+      "phase": 0.2916666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.643769752815728,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6651409864425659,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.011703799658771852,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.665140915559603,
+      "skin_below_proxy_m": 7.088296294366359e-08
+    },
+    {
+      "actual_skin_low_y": -0.625731885433197,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.009431743675529326,
+      "phase": 0.3333333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6257319429681252,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6286391019821167,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.009986989628827873,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6286390446426151,
+      "skin_below_proxy_m": 5.733950159125811e-08
+    },
+    {
+      "actual_skin_low_y": -0.6308660507202148,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.006136424730689633,
+      "phase": 0.375,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6308660767151631,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6038785576820374,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.00780609304049171,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.603878482181857,
+      "skin_below_proxy_m": 7.550018032986827e-08
+    },
+    {
+      "actual_skin_low_y": -0.6770844459533691,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0023445280750729568,
+      "phase": 0.4166666666666667,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6770843726997158,
+      "skin_below_proxy_m": 7.325365336541267e-08
+    },
+    {
+      "actual_skin_low_y": -0.5790185928344727,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.005182811588333505,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5790185580249558,
+      "skin_below_proxy_m": 3.4809516824552134e-08
+    },
+    {
+      "actual_skin_low_y": -0.7127299308776855,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0027102848779778145,
+      "phase": 0.4583333333333333,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7127298641010689,
+      "skin_below_proxy_m": 6.677661668064161e-08
+    },
+    {
+      "actual_skin_low_y": -0.5521214008331299,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0021522938522228973,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5521214225781756,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.74325031042099,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.009110631387571748,
+      "phase": 0.5,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7432501691132585,
+      "skin_below_proxy_m": 1.4130773151599385e-07
+    },
+    {
+      "actual_skin_low_y": -0.5357033014297485,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.00043305115214049643,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.535703355752479,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7156312465667725,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.00761108284609286,
+      "phase": 0.5416666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.71563124671064,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.5408320426940918,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0018883186335479627,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5408319523295702,
+      "skin_below_proxy_m": 9.036452164323805e-08
+    },
+    {
+      "actual_skin_low_y": -0.6837639808654785,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0021731657179287532,
+      "phase": 0.5833333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6837639463970426,
+      "skin_below_proxy_m": 3.446843588328363e-08
+    },
+    {
+      "actual_skin_low_y": -0.5475776195526123,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006329686882089344,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5475775999104804,
+      "skin_below_proxy_m": 1.9642131920960537e-08
+    },
+    {
+      "actual_skin_low_y": -0.722499668598175,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01011824216523505,
+      "phase": 0.625,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7224995727163563,
+      "skin_below_proxy_m": 9.588181870689994e-08
+    },
+    {
+      "actual_skin_low_y": -0.5956324338912964,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.01037201912372822,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.5956324565911649,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7736602425575256,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.0024319902895880317,
+      "phase": 0.6666666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7736603193162155,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6183006167411804,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.011871275633786283,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6183005180995736,
+      "skin_below_proxy_m": 9.864160677164335e-08
+    },
+    {
+      "actual_skin_low_y": -0.8179599642753601,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.001363299756992815,
+      "phase": 0.7083333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.8179600118227494,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6183138489723206,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.01110913888319991,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6183138203547054,
+      "skin_below_proxy_m": 2.861761516648187e-08
+    },
+    {
+      "actual_skin_low_y": -0.7691673636436462,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.001253296817794622,
+      "phase": 0.75,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7691674222183156,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6217756271362305,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.007962430913542208,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6217756250105279,
+      "skin_below_proxy_m": 2.1257026139309687e-09
+    },
+    {
+      "actual_skin_low_y": -0.7605620622634888,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.004952997136589858,
+      "phase": 0.7916666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.760562107789653,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.6565000414848328,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006286826177061842,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6564999737898362,
+      "skin_below_proxy_m": 6.769499660830292e-08
+    },
+    {
+      "actual_skin_low_y": -0.7358686923980713,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.010476246057692476,
+      "phase": 0.8333333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7358687794165699,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.692911684513092,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.006134408973998419,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6929116323731501,
+      "skin_below_proxy_m": 5.213994191954896e-08
+    },
+    {
+      "actual_skin_low_y": -0.6830735802650452,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01531815485547485,
+      "phase": 0.875,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6830736695461818,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7289107441902161,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.003967992963917286,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.728910494827781,
+      "skin_below_proxy_m": 2.4936243503415056e-07
+    },
+    {
+      "actual_skin_low_y": -0.6738040447235107,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01656195110841897,
+      "phase": 0.9166666666666666,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6738040653119644,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7499766945838928,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.0029396887554635916,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.7499766136868088,
+      "skin_below_proxy_m": 8.089708403158369e-08
+    },
+    {
+      "actual_skin_low_y": -0.6621884107589722,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.01584427394790619,
+      "phase": 0.9583333333333334,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6621885555157239,
+      "skin_below_proxy_m": 0.0
+    },
+    {
+      "actual_skin_low_y": -0.7612779140472412,
+      "clip": "Sprint",
+      "foot": "left_foot",
+      "max_ankle_local_drift_m": 0.003601359996786626,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.761277883002554,
+      "skin_below_proxy_m": 3.1044687265335824e-08
+    },
+    {
+      "actual_skin_low_y": -0.6454557776451111,
+      "clip": "Sprint",
+      "foot": "right_foot",
+      "max_ankle_local_drift_m": 0.013164069761111721,
+      "phase": 1.0,
+      "physical_contact_inferred": false,
+      "rigid_reference_low_y": -0.6454556579820809,
+      "skin_below_proxy_m": 1.1966303015142898e-07
+    }
+  ],
+  "physical_stance_labels_verified": false
+}

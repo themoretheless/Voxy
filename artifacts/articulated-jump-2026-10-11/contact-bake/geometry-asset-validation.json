@@ -1,0 +1,19 @@
+{
+  "tests": {
+    "passed": 192,
+    "failed": 0,
+    "ignored": 17
+  },
+  "scope": "Support geometry settings round trip and automatic runtime compilation; physical automatic pivot test loads serialized settings",
+  "real_character_asset_bound": false,
+  "fps_measured": false,
+  "sha256": {
+    "crates/voxy_editor/src/foot_placement.rs": "45619c4862e6e982cc514b92a4c82821da1a9f92c1ecc87dd16105dad1808cbc",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "d306aa4f93b00e4e775ad6ff0a8257965c2c716b55645993b00f09673d9f86f2",
+    "crates/voxy_editor/src/lib.rs": "fb4acefe6092916c5fc9d64f62ea4f2d5adac3e1b6f6a22a766345f57a4810d1",
+    "crates/voxy_editor/src/animation_runtime/tests.rs": "fad2f714f18f53c23f3b7b97d46c57e426ebb78c5d49884b8237e09b2f5e5039",
+    "crates/voxy_editor/src/animated_models/tests.rs": "b9e0980420e2879446f429dda89a2bc15c5500594e24b95195869d5ce25f09c7",
+    "crates/voxy_editor/src/animation_smoke.rs": "488081edcf4daaca228a971333562bb7def8ec02c69dbb7c43c4db6c5fc72015",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/geometry-asset-tests.log": "cf610d6b590fd5c8c3da6ab0c31fd2d7ff6d0268ba30f9e18e17677c37096527"
+  }
+}

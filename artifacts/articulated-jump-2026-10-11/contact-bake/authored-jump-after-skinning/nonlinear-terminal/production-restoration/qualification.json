@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "scope": "production restoration proposal plus ordinary native reconciliation on one captured full-density failure; no full jump or FPS claim",
+  "guides": 469,
+  "segments_per_guide": 20,
+  "fixture_sha256": "4ecf1f958be9b181ac6ef9df10ab4096dbdddd3e9d4524b621fe0ffafaca98c6",
+  "elapsed_seconds": 17.17,
+  "test": "captured_production_restoration_resumes_native_solver",
+  "independent_gates": [
+    "endpoint merit zero",
+    "original input energy change negative",
+    "strain <= 0.05",
+    "whole strand trajectory",
+    "whole mesh trajectory",
+    "prescribed roots exact"
+  ],
+  "runtime_retry_wrapper": "full-cycle verification pending",
+  "physics_regression": {
+    "passed": 396,
+    "failed": 0,
+    "ignored": 49
+  },
+  "backend_regression": {
+    "passed": 2,
+    "elapsed_seconds": 37.44,
+    "scope": "full captured fixture, native proposal and intentionally NaN accelerator rejected through native physical admission; not real GPU/CUDA performance"
+  },
+  "production_sources_sha256": {
+    "crates/physics/src/hair/contact_feasibility_restoration.rs": "348420bd41b7aefedd23d5419c47fec74b71923389150a26e7d0c1be3237317d",
+    "crates/physics/src/hair/mod.rs": "1eecb325c98956c994c26e07d57ee93bf9b41a8a3f58b8e5a58b18cee51003d5",
+    "crates/physics/src/hair/contact_second_order_tests.rs": "5b88b94b8f6c940306f21f526568e16c85d4447f91af960cdba90a8cec7f9b53"
+  },
+  "full_cycle": {
+    "session_id": 69068,
+    "pid": 15573,
+    "output_directory": "/tmp/voxy-authored-jump-production-recovery-20261011-a",
+    "log": "/tmp/voxy-authored-jump-production-recovery.log",
+    "status": "failed",
+    "scope": "launched before additional post-retry original-energy/path gates and backend dispatch; CPU run uses no accelerated backend; full qualification remains open",
+    "observation": "first recovery admitted and native completed at197; subsequent same-frame contact solve exhausted native and both recovery phases with residual6.399984572622499e-9; full jump unqualified",
+    "exit_code": 101,
+    "elapsed_seconds": 2736.15,
+    "completed_frames": 1,
+    "failed_frame": 2,
+    "required_frames": 720,
+    "published_time_skin_guide_frames_preserved": true
+  }
+}

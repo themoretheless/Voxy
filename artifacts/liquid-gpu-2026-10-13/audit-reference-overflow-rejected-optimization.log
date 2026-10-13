@@ -1,0 +1,89 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^
+  |
+  = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:18:127
+   |
+18 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:72:19
+   |
+65 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+72 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `advance_contacts` is never used
+   --> crates/physics/src/hair/contact_safe_motion.rs:734:24
+    |
+734 | pub(in crate::hair) fn advance_contacts(
+    |                        ^^^^^^^^^^^^^^^^
+
+warning: function `activate` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:145:15
+    |
+145 | pub(super) fn activate(
+    |               ^^^^^^^^
+
+warning: function `activate_with_workers` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:158:15
+    |
+158 | pub(super) fn activate_with_workers(
+    |               ^^^^^^^^^^^^^^^^^^^^^
+
+warning: field `owner` is never read
+  --> crates/physics/src/hair/contact_fraction_cache.rs:70:5
+   |
+69 | pub(super) struct FractionShard<'a> {
+   |                   ------------- field in this struct
+70 |     owner:&'a FractionCache,
+   |     ^^^^^
+
+warning: `physics` (lib) generated 8 warnings (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 1.06s
+     Running tests/liquid_density_operator.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_density_operator-691521427a5d9b59)
+
+running 1 test
+test supported_pipeline_rejects_nonfinite_native_reference_with_loose_candidate_density ... FAILED
+
+failures:
+
+---- supported_pipeline_rejects_nonfinite_native_reference_with_loose_candidate_density stdout ----
+
+thread 'supported_pipeline_rejects_nonfinite_native_reference_with_loose_candidate_density' (79827735) panicked at crates/physics/tests/liquid_density_operator.rs:311:5:
+a finite candidate cannot repair a nonfinite original reference
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    supported_pipeline_rejects_nonfinite_native_reference_with_loose_candidate_density
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test liquid_density_operator`

@@ -1,0 +1,64 @@
+{
+  "scope": "one original physical operator; alternating wall-clock measurements; not full trajectory or FPS",
+  "runs": [
+    {
+      "index": 0,
+      "sparse_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 121.604666,
+      "log": "triple-sparse_gap-comparison-0.log"
+    },
+    {
+      "index": 1,
+      "sparse_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 120.30575,
+      "log": "triple-sparse_gap-comparison-1.log"
+    },
+    {
+      "index": 2,
+      "sparse_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 120.47375000000001,
+      "log": "triple-sparse_gap-comparison-2.log"
+    },
+    {
+      "index": 3,
+      "sparse_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 115.500042,
+      "log": "triple-sparse_gap-comparison-3.log"
+    },
+    {
+      "index": 4,
+      "sparse_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 117.815875,
+      "log": "triple-sparse_gap-comparison-4.log"
+    },
+    {
+      "index": 5,
+      "sparse_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 113.26870799999999,
+      "log": "triple-sparse_gap-comparison-5.log"
+    },
+    {
+      "index": 6,
+      "sparse_gap_reuse": true,
+      "exit_code": 0,
+      "elapsed_ms": 113.394958,
+      "log": "triple-sparse_gap-comparison-6.log"
+    },
+    {
+      "index": 7,
+      "sparse_gap_reuse": false,
+      "exit_code": 0,
+      "elapsed_ms": 119.920583,
+      "log": "triple-sparse_gap-comparison-7.log"
+    }
+  ],
+  "before_median_ms": 118.868229,
+  "after_median_ms": 116.85035400000001,
+  "speedup": 1.0172688822149396
+}

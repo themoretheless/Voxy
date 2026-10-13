@@ -1,0 +1,13 @@
+
+running 1 test
+test hair::contact::velocity_contacts::second_order_tests::captured_second_order_feasibility_candidate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 439 filtered out; finished in 0.91s
+
+SECOND ORDER ORIGINAL CANDIDATE swept_fraction=1 trial_scale=1
+SECOND ORDER OPERATOR frozen=false
+SECOND ORDER CANDIDATE correction=0 merit=8.423545862892212e-8 work_j=4.305095338637243e-9 strain=1.876561431302104e-4 strand_path=true mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=1 merit=5.413618286039014e-7 work_j=1.1371011468895764e-7 strain=5.876748800353049e-4 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=2 merit=4.850390918591149e-7 work_j=1.429733232360399e-7 strain=5.927335178701476e-4 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=3 merit=4.2716750049443803e-7 work_j=8.27867079026239e-8 strain=5.928193587594333e-4 strand_path=false mesh_path=false candidate_admitted=false
+SECOND ORDER CANDIDATE correction=4 merit=1.8074342676916908e-7 work_j=1.224750120535868e-7 strain=5.911143899410831e-4 strand_path=false mesh_path=false candidate_admitted=false

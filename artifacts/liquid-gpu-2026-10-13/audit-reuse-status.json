@@ -1,0 +1,17 @@
+{
+  "native_tests": 164,
+  "native_suites": 16,
+  "render_tests": 233,
+  "render_ignored": 47,
+  "gpu_regressions": 5,
+  "native_reference_reduction": "reverted; overflow regression demonstrates unsafe acceptance",
+  "force_snapshot_audit": "single typed immutable snapshot proof, shared by consumers",
+  "median_end_to_end_before_ms": 215.1334795,
+  "median_end_to_end_after_ms": 175.309313,
+  "median_decode_before_ms": 28.288374,
+  "median_decode_after_ms": 12.701125,
+  "alternating_pairs": 6,
+  "wins": 6,
+  "scope": "256 particles, 10 steps; concurrent host activity; no rendered FPS",
+  "fps_verified": false
+}

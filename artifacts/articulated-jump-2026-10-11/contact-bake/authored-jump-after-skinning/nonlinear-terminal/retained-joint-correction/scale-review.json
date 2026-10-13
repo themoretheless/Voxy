@@ -1,0 +1,42 @@
+{
+  "runtime_adopted": false,
+  "full_jump_qualified": false,
+  "trials": [
+    {
+      "scale": 1.0,
+      "asserted_admission_passed": false,
+      "final_candidate": "SECOND ORDER CANDIDATE correction=4 merit=9.254036934386915e-6 work_j=9.573876784834253e-1 strain=1.3412960560561413e0 strand_path=false mesh_path=false candidate_admitted=false",
+      "capacity_failure": true
+    },
+    {
+      "scale": 0.125,
+      "asserted_admission_passed": false,
+      "final_candidate": "SECOND ORDER CANDIDATE correction=16 merit=0e0 work_j=3.5233350933395346e-4 strain=5.1514900556534515e-2 strand_path=true mesh_path=true candidate_admitted=false",
+      "capacity_failure": false
+    },
+    {
+      "scale": 0.03125,
+      "asserted_admission_passed": true,
+      "final_candidate": "SECOND ORDER CANDIDATE correction=10 merit=0e0 work_j=-4.7667518578430837e-11 strain=4.3151891284232136e-5 strand_path=true mesh_path=true candidate_admitted=true",
+      "capacity_failure": false
+    },
+    {
+      "scale": 0.01,
+      "asserted_admission_passed": true,
+      "final_candidate": "SECOND ORDER CANDIDATE correction=10 merit=0e0 work_j=-3.3658597593713254e-11 strain=4.3151891284232136e-5 strand_path=true mesh_path=true candidate_admitted=true",
+      "capacity_failure": false
+    },
+    {
+      "scale": 0.001,
+      "asserted_admission_passed": true,
+      "final_candidate": "SECOND ORDER CANDIDATE correction=5 merit=0e0 work_j=-7.271752891254453e-12 strain=4.3151891284232136e-5 strand_path=true mesh_path=true candidate_admitted=true",
+      "capacity_failure": false
+    },
+    {
+      "scale": 1e-05,
+      "asserted_admission_passed": true,
+      "final_candidate": "SECOND ORDER CANDIDATE correction=3 merit=0e0 work_j=-1.3407076382581688e-13 strain=4.3151891284232136e-5 strand_path=true mesh_path=true candidate_admitted=true",
+      "capacity_failure": false
+    }
+  ]
+}

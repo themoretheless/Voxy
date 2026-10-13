@@ -1,0 +1,19 @@
+{
+  "status": "correctness qualified; full wrapper running",
+  "change": "Prepare immutable dyadic radius, relative coordinates and slopes once per moving feature certificate query; exact interval inequalities unchanged.",
+  "source_sha256": {
+    "crates/physics/src/hair/contact_triangle_dyadic.rs": "d9ee1f10d6d680364521feadffcf2424995abeb755b83b579f6504d892dc92e6"
+  },
+  "targeted_passed": 25,
+  "ordinary_passed": 405,
+  "ordinary_ignored": 59,
+  "non_test_release_check": "passed with existing warnings",
+  "benchmark": {
+    "general_median_ms": 286.154375,
+    "feature_median_ms": 63.392583,
+    "ratio": 4.514004027884461,
+    "scope": "complete captured primitive; loaded machine; no measured speedup over previous feature version"
+  },
+  "full_wrapper_receipt": "cubic-prepared-frame4-replay-launch.json",
+  "limits": "No full cycle convergence or FPS qualification"
+}

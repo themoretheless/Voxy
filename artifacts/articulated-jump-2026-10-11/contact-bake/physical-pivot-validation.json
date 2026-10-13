@@ -1,0 +1,11 @@
+{
+  "gameplay_tests_passed": 175,
+  "failed": 0,
+  "scope": "combined physical box-support and geometric toe-pivot regression",
+  "full_character_verified": false,
+  "editor_integration": false,
+  "sha256": {
+    "crates/voxy_gameplay/src/foot_contact/tests.rs": "40f137fbd765de66f9be68332491c652b7750783546938fad20d1d1dc93fcc98",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/physical-pivot-full-tests.log": "3742492afa0598417015433c64bf60af3d3609ab4e1296219b34a042d9a9b204"
+  }
+}

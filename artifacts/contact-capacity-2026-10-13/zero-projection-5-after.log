@@ -1,0 +1,16 @@
+
+running 1 test
+RESIDENT ACTIVE CANDIDATE rows=2 width=2 elapsed_ms=4.989166 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT ACTIVE CANDIDATE rows=2 width=2 elapsed_ms=0.302125 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT ACTIVE CANDIDATE rows=2 width=2 elapsed_ms=0.20049999999999998 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT ACTIVE CANDIDATE rows=2 width=2 elapsed_ms=0.200292 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT ACTIVE CANDIDATE rows=2 width=2 elapsed_ms=0.237708 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT ACTIVE CANDIDATE rows=3 width=2 elapsed_ms=0.232417 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT ACTIVE CANDIDATE rows=1024 width=1 elapsed_ms=2.747375 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT ACTIVE CANDIDATE rows=16 width=1008 elapsed_ms=4.082042 submissions=1 tolerance=0.000000000001 original_coordinate_gaps_admitted=true scope=one_coordinate_operator_not_full_physical_system_or_FPS
+RESIDENT COMPACT READBACK full_bytes=8724464 compact_bytes=171136 exact_candidate_match=true
+RESIDENT CONCURRENT BATCH operators=8 submissions=1 dispatches=1 elapsed_ms=6.829333 identical_to_individually_admitted_operators=true
+test joint_contact_dot::active::tests::gpu_resident_active_set_candidate_preserves_original_coordinate_kkt ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 281 filtered out; finished in 0.05s
+

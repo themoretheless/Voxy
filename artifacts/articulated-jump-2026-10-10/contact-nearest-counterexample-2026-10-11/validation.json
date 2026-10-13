@@ -1,0 +1,17 @@
+{
+  "physics_tests": {
+    "passed": 382,
+    "failed": 0,
+    "ignored": 43
+  },
+  "full_469_guide_replay": {
+    "status": "terminal",
+    "exit_code": 101,
+    "elapsed_seconds": 104.60117483139038,
+    "failure_iteration": 16,
+    "reason": "joint hair contact direction has no descending geometry step",
+    "before_merit": 0,
+    "full_merit": 1.4534032455191752e-20
+  },
+  "qualification": "Full jump/FPS unproven"
+}

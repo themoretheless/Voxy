@@ -1,0 +1,64 @@
+{
+  "attempted_frame": 3,
+  "authored_jump": true,
+  "completed_frames": 3,
+  "continuous_contacts": true,
+  "error": null,
+  "gpu_hair_backend": true,
+  "guide_count": 469,
+  "required_frames": 720,
+  "scope": "actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim",
+  "segments_per_guide": 20,
+  "simulated_seconds": 0.025,
+  "status": "running",
+  "steps": [
+    {
+      "elapsed_ms": 49467.559375,
+      "frame": 1,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 9815,
+        "joint_coordinate_calls": 9815,
+        "joint_equality_dispatches": 30222,
+        "joint_equality_submissions": 9959,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0
+      },
+      "hair_ms": 49459.833084000005,
+      "skin_ms": 97.480375,
+      "time_s": 0.008333333333333333
+    },
+    {
+      "elapsed_ms": 3065157.781541,
+      "frame": 2,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 202951,
+        "joint_coordinate_calls": 202951,
+        "joint_equality_dispatches": 665247,
+        "joint_equality_submissions": 231796,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0
+      },
+      "hair_ms": 3065142.9263750003,
+      "skin_ms": 34.106459,
+      "time_s": 0.016666666666666666
+    },
+    {
+      "elapsed_ms": 1188345.5631249999,
+      "frame": 3,
+      "gpu_counts": {
+        "coordinate_batches": true,
+        "joint_admitted": 361711,
+        "joint_coordinate_calls": 361711,
+        "joint_equality_dispatches": 999215,
+        "joint_equality_submissions": 304930,
+        "native_contact_fallbacks": 0,
+        "structural_calls": 0
+      },
+      "hair_ms": 1188331.999709,
+      "skin_ms": 184.799291,
+      "time_s": 0.025
+    }
+  ]
+}

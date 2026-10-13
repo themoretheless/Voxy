@@ -1,0 +1,17 @@
+{
+  "pose_tick": 1,
+  "resolution": [
+    512,
+    512
+  ],
+  "material": "female_material.wgsl",
+  "full_max_u8_error": 4,
+  "full_differing_channels": 38,
+  "normal_only_max_u8_error": 1,
+  "normal_only_differing_channels": 2,
+  "position_only_max_u8_error": 2,
+  "position_only_differing_channels": 12,
+  "gate_max_u8_error": 1,
+  "status": "failed; native activation not admitted",
+  "limits": "one pose; hybrid pairs isolate inputs; maxima are not additive"
+}

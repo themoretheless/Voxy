@@ -1,0 +1,17 @@
+{
+  "status": "running, not qualified",
+  "process_id": 46864,
+  "exec_session": 32918,
+  "qualification_directory": "/tmp/voxy-authored-jump-after-skinning-20261011-a",
+  "log": "/tmp/voxy-authored-jump-after-skinning.log",
+  "required_steps": 720,
+  "completed_steps_at_snapshot": 1,
+  "first_step_ms": 16834.591,
+  "first_step_hair_ms": 16831.078,
+  "full_guides": 469,
+  "segments_per_guide": 20,
+  "continuous_contacts": true,
+  "profile_observation": "safe_motion/strand_limits_cached and SweptPairCache::query visible in live sample; no exclusive timing attribution",
+  "native_UI": "Mac locked; present FPS not measured",
+  "binary_sha256": "2b3f0f9ea6147429217184f89d9961845f3cb2233c1522fe021296a5ecdff5f9"
+}

@@ -1,0 +1,17 @@
+{
+  "scope": "actual original physical constraint bounds: zero correction cannot satisfy positive bound",
+  "operators": [
+    {
+      "file": "artifacts/articulated-jump-2026-10-11/zero-merit-origin-constraint-owners/islands/native-00.metadata.json",
+      "rows": 1,
+      "positive_bounds_above_1e_10m": 0,
+      "max_bound_m": 9.630327850721348e-11
+    },
+    {
+      "file": "artifacts/articulated-jump-2026-10-11/zero-merit-origin-constraint-owners/islands/native-01.metadata.json",
+      "rows": 39,
+      "positive_bounds_above_1e_10m": 4,
+      "max_bound_m": 1.6420209616400255e-06
+    }
+  ]
+}

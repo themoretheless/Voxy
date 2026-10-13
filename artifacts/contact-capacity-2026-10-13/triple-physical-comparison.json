@@ -1,0 +1,36 @@
+{
+  "scope": "same captured original physical operator; wall time; not whole trajectory or FPS",
+  "runs": [
+    {
+      "index": 0,
+      "parallel": false,
+      "exit_code": 0,
+      "elapsed_ms": 14779.644875,
+      "log": "triple-physical-comparison-0.log"
+    },
+    {
+      "index": 1,
+      "parallel": true,
+      "exit_code": 0,
+      "elapsed_ms": 348.97979200000003,
+      "log": "triple-physical-comparison-1.log"
+    },
+    {
+      "index": 2,
+      "parallel": true,
+      "exit_code": 0,
+      "elapsed_ms": 347.057542,
+      "log": "triple-physical-comparison-2.log"
+    },
+    {
+      "index": 3,
+      "parallel": false,
+      "exit_code": 0,
+      "elapsed_ms": 14801.442500000001,
+      "log": "triple-physical-comparison-3.log"
+    }
+  ],
+  "serial_median_ms": 14790.543687500001,
+  "parallel_median_ms": 348.01866700000005,
+  "speedup": 42.49928262468748
+}

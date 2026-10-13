@@ -1,0 +1,10 @@
+{
+  "observed_unix": 1791698801.577989,
+  "last_attempt": 233,
+  "tangent_complete": false,
+  "strand_admitted": true,
+  "unresolved": false,
+  "worst_gap_trace": "Some(-1.055074890472011e-11)",
+  "completed_frames": 1,
+  "scope": "Live observation; full step not admitted or complete"
+}

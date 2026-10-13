@@ -1,0 +1,21 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "input_scope": "Analytic RGB solve with an exactly zero channel, zero-radius channel and isolated zero-mass vertex",
+  "native_character_integrated": false,
+  "reports": [
+    {
+      "encode_submit_wait_readback_and_audit_wall_ms": 8.653125,
+      "gpu_compute_ms": null,
+      "iterations": 8,
+      "max_absolute_error": 2.384185793236071e-8,
+      "method": "Jacobi PCG",
+      "minimum_irradiance": 0.0,
+      "qualified": true,
+      "squared_l2_equation_residual_ratio": 1.6556335595666367e-15
+    }
+  ],
+  "scope": "Supplied surface equation against CPU f64 reference; wall times include CPU encoding, readback and equation audit. GPU timestamps are reported separately when supported.",
+  "target_120fps_achieved": false,
+  "undirected_edges": 3,
+  "vertices": 4
+}

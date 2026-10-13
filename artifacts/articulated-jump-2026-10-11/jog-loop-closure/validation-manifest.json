@@ -1,0 +1,45 @@
+{
+  "scope": "Explicit first-frame append on the pinned Jog clip, matching endpoint poses and preserving original authored samples",
+  "tests": {
+    "animation_core_passed": 255,
+    "app_unique_passed": 7,
+    "app_ignored": 1
+  },
+  "original_left_ankle_endpoint_gap_m": 0.024500310224795725,
+  "prepared_left_ankle_endpoint_gap_m": 0.0,
+  "original_samples_checked": 241,
+  "prepared_duration_s": 0.9583333730697632,
+  "source_files_match_upstream_hashes": true,
+  "native_ui": [
+    "Previous owned preview quit",
+    "New copied executable launched",
+    "Jog selected by key 3",
+    "Rendered actual character running pose inspected"
+  ],
+  "open": [
+    "seam derivative continuity",
+    "authored stance timing",
+    "native physical foot contacts on the full character",
+    "nonlinear full hair/tissue cycle",
+    "GPU/CUDA hair",
+    "FPS qualification"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "15133c5a9409b0293bccc16c18a4584c51f94c65096b92833b0a006ccde5ad19",
+    "crates/voxy_animation/src/loop_closure.rs": "9b6a79ce3e3ead886ec1165f6c4bccb5cf4745e2351e3accfc779e174ea0f491",
+    "crates/voxy_app/src/humanoid_locomotion.rs": "52791581688b0ed516d1d4a3afbd81ec5cf98312451de3bbfaf8c7d578368d0f",
+    "crates/voxy_app/src/humanoid_locomotion_tests.rs": "91d53134be46f84e0b3563fc8e9e8b7fb211ac9c4d148cc4432eef73b14767b1",
+    "crates/voxy_app/src/female_demo.rs": "55095e0a416916599495ef606a8b1012b285fd1b082c0c413cae2932adac9501",
+    "assets/animation/quaternius-universal/GAIT_PREPARATION.json": "07646fd74d13aa7dcb6d0f2c74f0b7cde31f226024da2256e96f704d1883651f",
+    "assets/animation/quaternius-universal/ATTRIBUTION.md": "15864ee963bc0ba60d717b86998c0f9ab338983f24809655aa99fc334f4b8d42",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure-animation-final-suite.log": "b153c8347e570cd757e9af9817cc3e45660cb51a44ae93fdce802ee68b9859e0",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure-app-validated-tests.log": "2b6972020f3412eb3b04cda27dfaaee3be8265d0be0a769814621986170f25a2",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure-humanoid-regression.log": "3b7fbe095e6006d9a78a07d53b5b5a8ea060037207ed0cd82d616183fee61d38",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure-replacement-regression.log": "ec1f0c7242309bfc71a6f8206f48058694ba59d6614b9fb07189618bbe7b3358",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure-jump-regression.log": "f76271573b0a40cb91dc749f619abdd9a47161efc879849bf629161ad27bf359",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure-preview-build.log": "0450d1cd8081c9d46001f33bafb4a0d65a6ffad4b386fe91309f5622c34f2ae1",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure/core-tests.bin": "41790dac95e03b12cd954cffaa54a8ed0c5c6fe8b6f26320ddc29c41bb034742",
+    "artifacts/articulated-jump-2026-10-11/jog-loop-closure/app-tests.bin": "f5912d5175808a8e91659f2fd919f2bac93ae363a60430d0dbb05846ffe91acc",
+    "artifacts/articulated-jump-2026-10-11/Voxy Closed Jog.app/Contents/MacOS/female_locomotion": "022c9135d4a3dcb47e2e5020d9202efd7e620c0b63db844c7e39c26c90b5a783"
+  }
+}

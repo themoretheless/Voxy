@@ -1,0 +1,46 @@
+
+running 1 test
+HAIR PHYSICAL RESIDUAL row=2 gap=-4.928296951293596e-14 coordinate_gap=1.1312678970273375e-14 tolerance=1e-14 reaction=9.707215300171613e-3 previous_effective_bits=13779758058063154688 next_effective_bits=13779758058062036896 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-7.089465368048236e-14 coordinate_gap=-3.79376537843983e-14 tolerance=1e-14 reaction=9.707215300171643e-3 previous_effective_bits=13779758058062036896 next_effective_bits=13779758058061428947 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=6.977853777892001e-14 coordinate_gap=2.104801859674974e-14 tolerance=1e-14 reaction=9.707215300171643e-3 previous_effective_bits=13779758058061428947 next_effective_bits=13779758058062327866 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+TRIPLE PHYSICAL rows=100 width=882 systems=7 accelerated=true submissions=4 elapsed_ms=161.592875 error=None scope=one_original_physical_operator_not_trajectory_or_FPS
+HAIR PHYSICAL RESIDUAL row=2 gap=-4.928296951293596e-14 coordinate_gap=1.1312678970273375e-14 tolerance=1e-14 reaction=9.707215300171613e-3 previous_effective_bits=13779758058063154688 next_effective_bits=13779758058062036896 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-7.089465368048236e-14 coordinate_gap=-3.79376537843983e-14 tolerance=1e-14 reaction=9.707215300171643e-3 previous_effective_bits=13779758058062036896 next_effective_bits=13779758058061428947 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=6.977853777892001e-14 coordinate_gap=2.104801859674974e-14 tolerance=1e-14 reaction=9.707215300171643e-3 previous_effective_bits=13779758058061428947 next_effective_bits=13779758058062327866 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+TRIPLE WARM PHYSICAL rows=100 width=882 original_admission=true elapsed_ms=48.066417 scope=same_operator_hint_not_changed_trajectory_or_FPS
+HAIR PHYSICAL RESIDUAL row=2 gap=-5.2764271663643835e-14 coordinate_gap=-1.517076503984166e-14 tolerance=1e-14 reaction=9.707225007386912e-3 previous_effective_bits=13779758065813552252 next_effective_bits=13779758065812858774 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=4.813352761268303e-14 coordinate_gap=-6.203747807862806e-15 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065812858774 next_effective_bits=13779758065813861120 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=3.218280271953129e-14 coordinate_gap=3.5885803703604016e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813861120 next_effective_bits=13779758065813792812 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-1.876265711764907e-14 coordinate_gap=-1.7361115869191175e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813792812 next_effective_bits=13779758065813766958 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=3.218280271953129e-14 coordinate_gap=2.6869441573564015e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813766958 next_effective_bits=13779758065813864972 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-3.1432837453139966e-14 coordinate_gap=4.990710375890124e-15 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813864972 next_effective_bits=13779758065813193076 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=2.7147584148378453e-14 coordinate_gap=7.502395394897588e-15 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813193076 next_effective_bits=13779758065813555466 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=3.218280271953129e-14 coordinate_gap=2.0455120380168813e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813555466 next_effective_bits=13779758065813771804 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-7.61030783917899e-14 coordinate_gap=1.5361248562151267e-15 tolerance=1e-14 reaction=9.707225007386916e-3 previous_effective_bits=13779758065813552252 next_effective_bits=13779758065812120061 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=8.375479968814577e-14 coordinate_gap=9.615250643779342e-15 tolerance=1e-14 reaction=9.707225007386947e-3 previous_effective_bits=13779758065812120061 next_effective_bits=13779758065813487694 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-9.047432525705414e-14 coordinate_gap=-5.923745988106517e-15 tolerance=1e-14 reaction=9.707225007386945e-3 previous_effective_bits=13779758065813487694 next_effective_bits=13779758065811928011 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-5.2764271663643835e-14 coordinate_gap=-1.517076503984166e-14 tolerance=1e-14 reaction=9.707225007386912e-3 previous_effective_bits=13779758065813552252 next_effective_bits=13779758065812858774 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=4.813352761268303e-14 coordinate_gap=-6.203747807862806e-15 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065812858774 next_effective_bits=13779758065813861120 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=3.218280271953129e-14 coordinate_gap=3.5885803703604016e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813861120 next_effective_bits=13779758065813792812 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-1.876265711764907e-14 coordinate_gap=-1.7361115869191175e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813792812 next_effective_bits=13779758065813766958 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=3.218280271953129e-14 coordinate_gap=2.6869441573564015e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813766958 next_effective_bits=13779758065813864972 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-3.1432837453139966e-14 coordinate_gap=4.990710375890124e-15 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813864972 next_effective_bits=13779758065813193076 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=2.7147584148378453e-14 coordinate_gap=7.502395394897588e-15 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813193076 next_effective_bits=13779758065813555466 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=3.218280271953129e-14 coordinate_gap=2.0455120380168813e-14 tolerance=1e-14 reaction=9.707225007386942e-3 previous_effective_bits=13779758065813555466 next_effective_bits=13779758065813771804 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-7.61030783917899e-14 coordinate_gap=1.5361248562151267e-15 tolerance=1e-14 reaction=9.707225007386916e-3 previous_effective_bits=13779758065813552252 next_effective_bits=13779758065812120061 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=8.375479968814577e-14 coordinate_gap=9.615250643779342e-15 tolerance=1e-14 reaction=9.707225007386947e-3 previous_effective_bits=13779758065812120061 next_effective_bits=13779758065813487694 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+HAIR PHYSICAL RESIDUAL row=2 gap=-9.047432525705414e-14 coordinate_gap=-5.923745988106517e-15 tolerance=1e-14 reaction=9.707225007386945e-3 previous_effective_bits=13779758065813487694 next_effective_bits=13779758065811928011 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+TRIPLE FACTOR FAILURE reused_error=Some("joint square-root active contacts did not converge") freshly_factored_original_physical_error=Some("joint square-root active contacts did not converge")
+
+thread 'gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics' (91919428) panicked at crates/voxy_app/src/gpu_hair_joint.rs:1577:52:
+called `Result::unwrap()` on an `Err` value: "joint square-root active contacts did not converge"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics ... FAILED
+
+failures:
+
+failures:
+    gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 377 filtered out; finished in 0.40s
+

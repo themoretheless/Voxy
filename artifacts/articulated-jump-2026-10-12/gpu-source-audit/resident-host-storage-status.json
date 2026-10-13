@@ -1,0 +1,8 @@
+{
+  "status": "codec_and_gpu_checks_passed",
+  "source_sha256": "0268109452d2ed389ff012529c2e8cd2a0838788e447badae963c1990f52446c",
+  "original_fixture_retained_input_words_bytes_before": 5188396,
+  "original_fixture_retained_input_words_bytes_after": 2456904,
+  "removed_duplicate_scratch_bytes": 2731492,
+  "scope": "deterministic retained vector payload sizes; excludes allocator overhead, peak process memory and FPS; batch GPU layout unchanged"
+}

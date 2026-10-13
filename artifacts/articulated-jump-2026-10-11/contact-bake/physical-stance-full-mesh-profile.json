@@ -1,0 +1,17 @@
+{
+  "samples": 4,
+  "vertices": 2535255,
+  "stage_mean_ms": {
+    "deformation": 19.349666666666668,
+    "normals": 5.391333333333333,
+    "diffusion": 101.31533333333333,
+    "vertex_lighting": 0.9143333333333333,
+    "face_features": 25.452666666666666,
+    "hair_and_shapes": 29.263333333333335,
+    "film_and_probe": 1.2113333333333334,
+    "transmission": 0.0013333333333333333,
+    "mesh_validation": 42.067
+  },
+  "scope": "Headless full-resolution mesh construction, excludes rendering and GPU upload; first sample excluded from means",
+  "fps_qualified": false
+}

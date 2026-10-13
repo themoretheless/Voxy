@@ -1,0 +1,29 @@
+{
+  "scope": "test-only experimental retention; production default unchanged",
+  "retention_limit_bytes": 8388608,
+  "policy": "new completed buffer may evict only smaller cached jobs when necessary; larger cached jobs remain",
+  "device_memory_charge": "unchanged; evicted jobs retire through existing owner and require explicit retirement confirmation",
+  "source_sha256": "b0a1be945b7bad760b2e7b64532a776061db93cc866f77460758f4531b70cea2",
+  "build_log": "/tmp/voxy-large-workspace-build.log",
+  "build_status": "passed",
+  "gpu_regression_status": "passed explicit retirement, preserved current payload and refusal preserves cached jobs",
+  "counterfactual_on_frozen_profile": {
+    "creations": 335,
+    "reuses": 2516,
+    "records": 2851,
+    "scope": "allocation policy simulation only; no retirement or GPU timing proof"
+  },
+  "binary_sha256": "4ee600061e8726bdabdd5a220592f6ac989d729c3364fd353233264d8b5a2c35",
+  "coupled_frame_status": "passed",
+  "coupled_frame_log": "/tmp/voxy-large-workspace-20261012/coupled-frame.log",
+  "allocation_comparison": {
+    "status": "first_frame_passed",
+    "records": 559,
+    "ordered_workload_shapes_and_payloads_equal": true,
+    "baseline_creations": 188,
+    "candidate_creations": 11,
+    "baseline_reuses": 371,
+    "candidate_reuses": 548,
+    "scope": "first strict coupled frame and allocation counts; not controlled timing or whole-cycle/FPS proof"
+  }
+}

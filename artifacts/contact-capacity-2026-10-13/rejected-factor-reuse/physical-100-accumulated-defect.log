@@ -1,0 +1,12 @@
+
+running 1 test
+HAIR PHYSICAL RESIDUAL row=2 gap=-4.928296951293596e-14 coordinate_gap=1.1312678970273375e-14 tolerance=1e-14 reaction=9.707215300171613e-3 previous_effective_bits=13779758058063154688 next_effective_bits=13779758058062245578 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+TRIPLE PHYSICAL rows=100 width=882 systems=7 accelerated=true submissions=2 elapsed_ms=75.57145899999999 error=None scope=one_original_physical_operator_not_trajectory_or_FPS
+HAIR PHYSICAL RESIDUAL row=2 gap=-4.928296951293596e-14 coordinate_gap=1.1312678970273375e-14 tolerance=1e-14 reaction=9.707215300171613e-3 previous_effective_bits=13779758058063154688 next_effective_bits=13779758058062245578 original_bound_bits=13779758058063154688 scope=unadmitted_trial
+TRIPLE WARM PHYSICAL rows=100 width=882 original_admission=true elapsed_ms=19.264792 scope=same_operator_hint_not_changed_trajectory_or_FPS
+HAIR PHYSICAL RESIDUAL row=2 gap=-5.2764271663643835e-14 coordinate_gap=-1.517076503984166e-14 tolerance=1e-14 reaction=9.707225007386912e-3 previous_effective_bits=13779758065813552252 next_effective_bits=13779758065812578923 original_bound_bits=13779758065813552252 scope=unadmitted_trial
+TRIPLE FACTORS original_physical_admission=true changed_bounds=true reused=2 scope=original_operator_replay_not_trajectory_or_FPS
+test gpu_hair_solver::joint::tests::gpu_triple_active_admits_captured_original_physics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 377 filtered out; finished in 0.13s
+

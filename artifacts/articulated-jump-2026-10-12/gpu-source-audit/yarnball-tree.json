@@ -1,0 +1,28 @@
+{
+  "repo": "https://github.com/jerry060599/YarnBall",
+  "commit": "b178c2b15cdb05c2b572f9ef9d326262da533df9",
+  "cuda_files": [
+    "KittenEngine/KittenEngine/opt/svd.cuh",
+    "KittenEngine/YarnBall/YarnBall.cu",
+    "KittenEngine/YarnBall/sim/collision.cu",
+    "KittenEngine/YarnBall/sim/cosserat.cu",
+    "KittenEngine/YarnBall/sim/iteration.cu"
+  ],
+  "inspected_sources": [
+    {
+      "path": "KittenEngine/YarnBall/YarnBall.cu",
+      "url": "https://raw.githubusercontent.com/jerry060599/YarnBall/b178c2b15cdb05c2b572f9ef9d326262da533df9/KittenEngine/YarnBall/YarnBall.cu",
+      "sha256": "73026e289894620fb8804ade1f0d855b989cd56b6646d2cdd38663b24a8521b4"
+    },
+    {
+      "path": "KittenEngine/YarnBall/sim/iteration.cu",
+      "url": "https://raw.githubusercontent.com/jerry060599/YarnBall/b178c2b15cdb05c2b572f9ef9d326262da533df9/KittenEngine/YarnBall/sim/iteration.cu",
+      "sha256": "c3715f5386d1cc6839af6efc50ea5e7f2001649809f8660ceb7753520962e8ea"
+    },
+    {
+      "path": "KittenEngine/YarnBall/sim/collision.cu",
+      "url": "https://raw.githubusercontent.com/jerry060599/YarnBall/b178c2b15cdb05c2b572f9ef9d326262da533df9/KittenEngine/YarnBall/sim/collision.cu",
+      "sha256": "a78450034bf9c103925fee195d07e358fdf465bc6f4038cabc0d273547e44abe"
+    }
+  ]
+}

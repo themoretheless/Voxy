@@ -1,0 +1,7 @@
+{
+  "status": "deliberately_interrupted",
+  "reason": "initial test flag also changed recovery initial safe step; not an isolated native-continuation comparison; replaced with thread-local scoped diagnostic",
+  "pid": 38029,
+  "exit_code": 143,
+  "qualification_pass_inferred": false
+}

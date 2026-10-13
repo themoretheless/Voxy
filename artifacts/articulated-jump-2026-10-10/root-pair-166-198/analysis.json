@@ -1,0 +1,187 @@
+{
+  "fixture": "artifacts/articulated-jump-2026-10-10/flat-face-manifold-batched-full-capture/root-motion.vjr",
+  "sha256": "9adc82669ff951ac8fbe6cf9b017dbbfb924f3eefdf781a01a7bc10d3b46fdf1",
+  "rod_pair": [
+    166,
+    198
+  ],
+  "contact_diameter_m": 8e-05,
+  "sampled_geometry": [
+    {
+      "correction_scale": 0.0,
+      "time": 0.0,
+      "distance_m": 8.009271855391044e-05,
+      "gap_m": 9.271855391043574e-08,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.5490832216660669,
+        0.3249254584123665
+      ]
+    },
+    {
+      "correction_scale": 0.0,
+      "time": 0.10145739859385224,
+      "distance_m": 8.000149419709261e-05,
+      "gap_m": 1.4941970926068797e-09,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.550675493770341,
+        0.3265556259537955
+      ]
+    },
+    {
+      "correction_scale": 0.0,
+      "time": 0.125,
+      "distance_m": 7.998041815779979e-05,
+      "gap_m": -1.9581842200221415e-08,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.5510433654517636,
+        0.3269322527582655
+      ]
+    },
+    {
+      "correction_scale": 0.0,
+      "time": 0.25,
+      "distance_m": 7.986909015387195e-05,
+      "gap_m": -1.309098461280589e-07,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.5529865444930786,
+        0.3289216778136885
+      ]
+    },
+    {
+      "correction_scale": 0.0,
+      "time": 0.5,
+      "distance_m": 7.964930124188781e-05,
+      "gap_m": -3.5069875811219865e-07,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.5568228815918651,
+        0.3328493141666821
+      ]
+    },
+    {
+      "correction_scale": 0.0,
+      "time": 1.0,
+      "distance_m": 7.922085306921583e-05,
+      "gap_m": -7.791469307841768e-07,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.564301378406715,
+        0.34050577950791316
+      ]
+    },
+    {
+      "correction_scale": 1.0,
+      "time": 0.0,
+      "distance_m": 8.009271855391044e-05,
+      "gap_m": 9.271855391043574e-08,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.5490832216660669,
+        0.3249254584123665
+      ]
+    },
+    {
+      "correction_scale": 1.0,
+      "time": 0.10145739859385224,
+      "distance_m": 8.000667750037376e-05,
+      "gap_m": 6.677500373754547e-09,
+      "segments": [
+        3,
+        4
+      ],
+      "local_fractions": [
+        0.3433258481056939,
+        0.6088336825989057
+      ]
+    },
+    {
+      "correction_scale": 1.0,
+      "time": 0.125,
+      "distance_m": 8.00352085466324e-05,
+      "gap_m": 3.520854663239181e-08,
+      "segments": [
+        3,
+        4
+      ],
+      "local_fractions": [
+        0.3503055585446146,
+        0.614448108148548
+      ]
+    },
+    {
+      "correction_scale": 1.0,
+      "time": 0.25,
+      "distance_m": 8.008401889992338e-05,
+      "gap_m": 8.401889992336884e-08,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.5383346083154668,
+        0.3164753881665566
+      ]
+    },
+    {
+      "correction_scale": 1.0,
+      "time": 0.5,
+      "distance_m": 8.006544688553314e-05,
+      "gap_m": 6.544688553312928e-08,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.527838993356567,
+        0.308219388549264
+      ]
+    },
+    {
+      "correction_scale": 1.0,
+      "time": 1.0,
+      "distance_m": 8.000001551072226e-05,
+      "gap_m": 1.5510722250317542e-11,
+      "segments": [
+        0,
+        2
+      ],
+      "local_fractions": [
+        0.507572680670842,
+        0.29226346090398225
+      ]
+    }
+  ],
+  "scope": "diagnostic sampled distances; independent full continuous guard remains authoritative; zero correction includes all captured staged motion, not only prescribed roots",
+  "root_displacements_m": {
+    "166": 0.0001991391216681451,
+    "198": 0.00019913912167902548
+  },
+  "public_continuous_query_scope": "raw sweep_capsules queries; IterationLimit is unknown, not a proven collision; production pair_fraction additionally uses outward-rounded line and interval-plane certificates",
+  "zero_correction_sampled_penetration_proven": true,
+  "full_correction_sampled_clearance_does_not_prove_trajectory": true
+}

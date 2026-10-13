@@ -1,0 +1,19 @@
+{
+  "tests_passed": 176,
+  "failed": 0,
+  "scope": "admitted contact conversion to existing IK target",
+  "checks": [
+    "projection included",
+    "translated and rotated actor coordinates",
+    "proper ankle orientation",
+    "full-strength target",
+    "invalid input preserves candidate"
+  ],
+  "actual_ik_solve_in_this_fixture": false,
+  "editor_gait_integration": false,
+  "sha256": {
+    "crates/voxy_gameplay/src/foot_contact.rs": "655d782c7f2b8cf71a4cda9fd915545ed1e461cec7fec67b328fd1f4b0441716",
+    "crates/voxy_gameplay/src/foot_contact/tests.rs": "4c82343a884bc3c23e4106327fd68d3352a4a9f880759b585d037d55c3cb6706",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/pivot-ik-target-tests.log": "9160bd37c783372596c14dd073bf5a47b64fc0d8ac9a1b88859a29b1c3985a43"
+  }
+}

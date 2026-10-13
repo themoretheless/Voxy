@@ -1,0 +1,336 @@
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+  |
+  = note: no expected values for `feature`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:16:127
+   |
+16 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:70:19
+   |
+63 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+70 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `advance_contacts` is never used
+   --> crates/physics/src/hair/contact_safe_motion.rs:579:24
+    |
+579 | pub(in crate::hair) fn advance_contacts(
+    |                        ^^^^^^^^^^^^^^^^
+
+warning: function `activate` is never used
+  --> crates/physics/src/hair/contact_swept_constraints.rs:71:15
+   |
+71 | pub(super) fn activate(
+   |               ^^^^^^^^
+
+warning: function `activate_with_workers` is never used
+  --> crates/physics/src/hair/contact_swept_constraints.rs:84:15
+   |
+84 | pub(super) fn activate_with_workers(
+   |               ^^^^^^^^^^^^^^^^^^^^^
+
+warning: `physics` (lib) generated 7 warnings (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: field `weak_refs` is never read
+  --> crates/voxy_assets/src/lib.rs:22:5
+   |
+18 | pub struct AssetCache {
+   |            ---------- field in this struct
+...
+22 |     weak_refs: HashMap<String, usize>,
+   |     ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/voxy_assets/src/lib.rs:18:1
+   |
+18 | / pub struct AssetCache {
+19 | |     /// In-memory cached assets (strong refs)
+20 | |     strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any>>>,
+21 | |     /// Weak references to prevent premature collection
+22 | |     weak_refs: HashMap<String, usize>,
+23 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `voxy_assets` (lib) generated 2 warnings
+warning: function `admit_motion` is never used
+   --> crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:888:15
+    |
+888 | pub(super) fn admit_motion(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:299:15
+    |
+299 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:372:15
+    |
+372 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:489:15
+    |
+489 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:734:9
+    |
+728 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+734 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+735 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+736 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+warning: method `prepare_targets` is never used
+   --> crates/voxy_editor/src/fog_draw.rs:156:12
+    |
+ 43 | impl FogDraw {
+    | ------------ method in this implementation
+...
+156 |     pub fn prepare_targets(
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `prepare` is never used
+  --> crates/voxy_editor/src/frame_styles.rs:17:12
+   |
+16 | impl FrameStyles {
+   | ---------------- associated function in this implementation
+17 |     pub fn prepare(
+   |            ^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:205:19
+    |
+202 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+205 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+235 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+251 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+286 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+308 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+336 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+644 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+767 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+997 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+
+warning: associated items `new` and `request_pivot_transfer` are never used
+   --> crates/voxy_editor/src/foot_placement.rs:289:19
+    |
+282 | impl FootRuntime {
+    | ---------------- associated items in this implementation
+...
+289 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+...
+343 |     pub(super) fn request_pivot_transfer(&mut self, foot: usize, pivot: DVec3, max_projection: f64) -> Result<(), String> {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 6 warnings
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: function `start_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:21:15
+   |
+21 | pub(crate) fn start_refinement_diagnostics() {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `take_refinement_diagnostics` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:24:15
+   |
+24 | pub(crate) fn take_refinement_diagnostics() -> BTreeMap<(&'static str, usize), u64> {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `body_volumes_m3` is never used
+   --> crates/voxy_app/src/tissue_demo.rs:535:19
+    |
+268 | impl TissueDemo {
+    | --------------- method in this implementation
+...
+535 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets`, `advance_hair`, `set_strain_fixture`, and `orbit` are never used
+    --> crates/voxy_app/src/female_demo.rs:212:19
+     |
+ 208 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 212 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+ 831 |     fn advance_hair(&mut self, h: f64, time: f64, head: glam::Mat4) -> Result<(), &'static str> {
+     |        ^^^^^^^^^^^^
+...
+1107 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1228 |     pub(crate) fn orbit(&mut self, x: f32, y: f32) {
+     |                   ^^^^^
+
+warning: method `append_lod` is never used
+   --> crates/voxy_app/src/female_hair.rs:412:12
+    |
+ 26 | impl FemaleHair {
+    | --------------- method in this implementation
+...
+412 |     pub fn append_lod(
+    |            ^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib test) generated 6 warnings
+    Finished `release` profile [optimized] target(s) in 28.44s
+     Running unittests src/lib.rs (target/release/deps/voxy_app-1c1560a10812259f)
+
+running 1 test
+FOOT_SURFACE side=left bone=9 vertices=4441 lower_band_vertices=422 ankle_local_min=DVec3(-0.006684161722660065, -0.08004283159971237, -0.08909322321414948) ankle_local_max=DVec3(0.09938337653875351, 0.012302286922931671, 0.14599837362766266) heel_candidate=DVec3(0.07435455173254013, -0.07530694454908371, 0.030146600678563118) toe_candidate=DVec3(0.039070986211299896, -0.07543819397687912, 0.13814574480056763)
+FOOT_ROLL {"angle_rad":-0.6000000000000001,"flat_pivot_penetration_m":0.07730327614641483,"minimum_clearance_m":0.0,"reference_local_pivot":[0.020369194447994232,-0.0640326663851738,-0.08115886151790619],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.55,"flat_pivot_penetration_m":0.07019804475492457,"minimum_clearance_m":0.0,"reference_local_pivot":[0.02089514583349228,-0.06566333025693893,-0.07860603928565979],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.5,"flat_pivot_penetration_m":0.06301968060668643,"minimum_clearance_m":0.0,"reference_local_pivot":[0.02405395358800888,-0.06587647646665573,-0.07822993397712708],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.45,"flat_pivot_penetration_m":0.05569867314788228,"minimum_clearance_m":0.0,"reference_local_pivot":[0.02405395358800888,-0.06587647646665573,-0.07822993397712708],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.4,"flat_pivot_penetration_m":0.048321804138143576,"minimum_clearance_m":0.0,"reference_local_pivot":[0.024625442922115326,-0.06722622364759445,-0.07525153458118439],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.35000000000000003,"flat_pivot_penetration_m":0.04090428092963644,"minimum_clearance_m":0.0,"reference_local_pivot":[0.024625442922115326,-0.06722622364759445,-0.07525153458118439],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.30000000000000004,"flat_pivot_penetration_m":0.03354323304349659,"minimum_clearance_m":0.0,"reference_local_pivot":[0.025433681905269623,-0.06844865530729294,-0.07183681428432465],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.25,"flat_pivot_penetration_m":0.026217526755779583,"minimum_clearance_m":0.0,"reference_local_pivot":[0.02373018115758896,-0.06944774836301804,-0.06831450760364532],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.2,"flat_pivot_penetration_m":0.01891273305102989,"minimum_clearance_m":0.0,"reference_local_pivot":[0.02373018115758896,-0.06944774836301804,-0.06831450760364532],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.15000000000000002,"flat_pivot_penetration_m":0.011795625812087665,"minimum_clearance_m":0.0,"reference_local_pivot":[0.023914240300655365,-0.07096850126981735,-0.059824585914611816],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.1,"flat_pivot_penetration_m":0.004892460988142486,"minimum_clearance_m":0.0,"reference_local_pivot":[0.02547623962163925,-0.07148580998182297,-0.05514131486415863],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":-0.05,"flat_pivot_penetration_m":0.0,"minimum_clearance_m":0.0,"reference_local_pivot":[0.03193988651037216,-0.08004283159971237,0.07914972305297852],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.0,"flat_pivot_penetration_m":0.0,"minimum_clearance_m":0.0,"reference_local_pivot":[0.03193988651037216,-0.08004283159971237,0.07914972305297852],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.05,"flat_pivot_penetration_m":0.00092922106648273,"minimum_clearance_m":0.0,"reference_local_pivot":[0.03779413551092148,-0.07854174822568893,0.12773853540420532],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.1,"flat_pivot_penetration_m":0.0033572029382516605,"minimum_clearance_m":0.0,"reference_local_pivot":[0.03779413551092148,-0.07854174822568893,0.12773853540420532],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.15000000000000002,"flat_pivot_penetration_m":0.005776793551072454,"minimum_clearance_m":0.0,"reference_local_pivot":[0.03779413551092148,-0.07854174822568893,0.12773853540420532],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.2,"flat_pivot_penetration_m":0.008227586344722676,"minimum_clearance_m":0.0,"reference_local_pivot":[0.039083145558834076,-0.07789545506238937,0.1311565339565277],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.25,"flat_pivot_penetration_m":0.010786071124637114,"minimum_clearance_m":0.0,"reference_local_pivot":[0.039083145558834076,-0.07789545506238937,0.1311565339565277],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.30000000000000004,"flat_pivot_penetration_m":0.013382217837581215,"minimum_clearance_m":0.0,"reference_local_pivot":[0.037796758115291595,-0.0767025277018547,0.135231614112854],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.35000000000000003,"flat_pivot_penetration_m":0.01609256714812156,"minimum_clearance_m":0.0,"reference_local_pivot":[0.037796758115291595,-0.0767025277018547,0.135231614112854],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.4,"flat_pivot_penetration_m":0.01876269342163854,"minimum_clearance_m":0.0,"reference_local_pivot":[0.037796758115291595,-0.0767025277018547,0.135231614112854],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.45,"flat_pivot_penetration_m":0.021515003505013522,"minimum_clearance_m":0.0,"reference_local_pivot":[0.039070986211299896,-0.07543819397687912,0.13814574480056763],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.5,"flat_pivot_penetration_m":0.02424324982022036,"minimum_clearance_m":0.0,"reference_local_pivot":[0.039070986211299896,-0.07543819397687912,0.13814574480056763],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.55,"flat_pivot_penetration_m":0.026910900636517104,"minimum_clearance_m":0.0,"reference_local_pivot":[0.039070986211299896,-0.07543819397687912,0.13814574480056763],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_ROLL {"angle_rad":0.6000000000000001,"flat_pivot_penetration_m":0.029595515880624007,"minimum_clearance_m":0.0,"reference_local_pivot":[0.03801729530096054,-0.07354652136564255,0.1410599648952484],"rigid_reference_proxy_only":true,"side":"left"}
+FOOT_SURFACE side=right bone=15 vertices=4441 lower_band_vertices=429 ankle_local_min=DVec3(-0.09928419440984726, -0.07995813339948654, -0.08835600316524506) ankle_local_max=DVec3(0.006558991968631744, 0.012299962341785431, 0.14522354304790497) heel_candidate=DVec3(-0.07429339736700058, -0.07535939663648605, 0.030135227367281914) toe_candidate=DVec3(-0.03904511779546738, -0.07507985085248947, 0.1379416584968567)
+FOOT_ROLL {"angle_rad":-0.6000000000000001,"flat_pivot_penetration_m":0.07688086883979404,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.02363099902868271,-0.0638958141207695,-0.08048621565103531],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.55,"flat_pivot_penetration_m":0.06974655427663937,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.02363099902868271,-0.0638958141207695,-0.08048621565103531],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.5,"flat_pivot_penetration_m":0.06255966540613284,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.02087261527776718,-0.06519751995801926,-0.07835742086172104],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.45,"flat_pivot_penetration_m":0.05524462419238888,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.02160169929265976,-0.06663846224546432,-0.07543250918388367],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.4,"flat_pivot_penetration_m":0.047929231721372687,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.02160169929265976,-0.06663846224546432,-0.07543250918388367],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.35000000000000003,"flat_pivot_penetration_m":0.040569710843273564,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.02254786342382431,-0.06796067208051682,-0.07203097641468048],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.30000000000000004,"flat_pivot_penetration_m":0.0332258610788376,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.025371573865413666,-0.06806813925504684,-0.07171838730573654],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.25,"flat_pivot_penetration_m":0.02590584448690554,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.023682259023189545,-0.06906425207853317,-0.06822410225868225],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.2,"flat_pivot_penetration_m":0.018702844074218586,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.02496042102575302,-0.0699949786067009,-0.06413985043764114],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.15000000000000002,"flat_pivot_penetration_m":0.011603687163197443,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.026369713246822357,-0.07069509476423264,-0.05978800728917122],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.1,"flat_pivot_penetration_m":0.004732198724019074,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.025424741208553314,-0.07124113291501999,-0.05512968823313713],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":-0.05,"flat_pivot_penetration_m":0.00007721321128655034,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.06356479972600937,-0.0793614313006401,0.06568150222301483],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.0,"flat_pivot_penetration_m":0.0,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03187742084264755,-0.07995813339948654,0.07915050536394119],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.05,"flat_pivot_penetration_m":0.0007477275023417967,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03774907439947128,-0.07827698439359665,0.12770624458789825],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.1,"flat_pivot_penetration_m":0.003174735081226593,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03774907439947128,-0.07827698439359665,0.12770624458789825],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.15000000000000002,"flat_pivot_penetration_m":0.005593807475778367,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03774907439947128,-0.07827698439359665,0.12770624458789825],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.2,"flat_pivot_penetration_m":0.008055834547903332,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03902997821569443,-0.07764732092618942,0.13109906017780304],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.25,"flat_pivot_penetration_m":0.010613303228878546,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03902997821569443,-0.07764732092618942,0.13109906017780304],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.30000000000000004,"flat_pivot_penetration_m":0.013144244179083053,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03902997821569443,-0.07764732092618942,0.13109906017780304],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.35000000000000003,"flat_pivot_penetration_m":0.015794242889949017,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.04026665538549423,-0.07662611454725266,0.13433969020843506],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.4,"flat_pivot_penetration_m":0.018422688279433594,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.04026665538549423,-0.07662611454725266,0.13433969020843506],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.45,"flat_pivot_penetration_m":0.021179489939572582,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03904511779546738,-0.07507985085248947,0.1379416584968567],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.5,"flat_pivot_penetration_m":0.023904884560691397,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03904511779546738,-0.07507985085248947,0.1379416584968567],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.55,"flat_pivot_penetration_m":0.026570529419831762,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.03904511779546738,-0.07507985085248947,0.1379416584968567],"rigid_reference_proxy_only":true,"side":"right"}
+FOOT_ROLL {"angle_rad":0.6000000000000001,"flat_pivot_penetration_m":0.0292774964823823,"minimum_clearance_m":0.0,"reference_local_pivot":[-0.04012169688940048,-0.07354574650526047,0.14037485420703888],"rigid_reference_proxy_only":true,"side":"right"}
+test female_rig::thumb_tip_contact_tests::actual_body_foot_surface_candidates_use_dominant_skin_weights ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 344 filtered out; finished in 0.09s
+

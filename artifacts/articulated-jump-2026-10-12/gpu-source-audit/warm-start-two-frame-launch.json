@@ -1,0 +1,31 @@
+{
+  "status": "two_bounded_frames_passed",
+  "pid": 76043,
+  "binary": "/tmp/voxy-warm-start-mixed-app-tests",
+  "binary_sha256": "8fb3d6d5c1f8f09921c32ad821dbf0aec1f1c9edba756f93e65ff794a4536f9e",
+  "log": "/tmp/voxy-warm-start-two-frame.log",
+  "env_overrides": {
+    "VOXY_HAIR_RESIDENT_COMPACT_READBACK": "1",
+    "VOXY_HAIR_RESIDENT_PREFER_LARGE_WORKSPACE": "1",
+    "VOXY_HAIR_JOINT_RESIDENT_ACTIVE_SET": "1",
+    "VOXY_HAIR_RESIDENT_OPERATOR_REUSE": "1",
+    "VOXY_HAIR_RESIDENT_WORKSPACE_REUSE": "1",
+    "VOXY_HAIR_STRAND_FRACTION_REUSE": "1",
+    "VOXY_HAIR_JOINT_STAGE_PROFILE": "1",
+    "VOXY_HAIR_RESIDENT_WORKGROUP_LANES": "1024",
+    "VOXY_HAIR_RESIDENT_ACTIVE_SHADER_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-12/gpu-source-audit/active-lanes-1024-seeded.wgsl",
+    "VOXY_HAIR_RESIDENT_WARM_START": "1",
+    "VOXY_HAIR_RESIDENT_SEEDED_SHADER_FIXTURE": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-12/gpu-source-audit/active-lanes-1024-seeded.wgsl"
+  },
+  "scope": "two bounded coupled frames; no full cycle or FPS proof",
+  "passed_frames": 2,
+  "required_full_cycle": 720,
+  "first_frame_elapsed_s": 29.954380792,
+  "second_frame_elapsed_s": 798.1327885,
+  "cumulative_admitted": 193227,
+  "cumulative_submissions": 9676,
+  "second_frame_admitted": 183519,
+  "second_frame_submissions": 9124,
+  "native_fallbacks": 0,
+  "test_elapsed_s": 834.28
+}

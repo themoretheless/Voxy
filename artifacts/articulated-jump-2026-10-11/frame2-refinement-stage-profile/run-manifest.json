@@ -1,0 +1,8 @@
+{
+  "binary": "/tmp/voxy-refinement-stage-profile.bin",
+  "binary_sha256": "8bfc2d91dd2d031fa761774a55644c93bbd74a9d922e82e9fac696ac9d1a3457",
+  "fixture": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/authored-jump-feasible-elastic/failed-contact.vhr",
+  "fixture_sha256": "52c6c2d90137b73a467f1923877f125a73994e9320238c4e7951793fcf0a7077",
+  "safe_motion_sha256": "3a1396c5c488f8ae55ad5bbf6f0c210a7f7b375559426f11f4e5dceeb2a15f6c",
+  "scope": "full469-guide saved-pose per-stage wall timing under concurrent load; not isolated benchmark or full cycle"
+}

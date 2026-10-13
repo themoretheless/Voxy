@@ -1,0 +1,1 @@
+The extra proposal change that froze already-admitted rows did not resolve the original 100-row sequence failure at step 1. It is not retained. Source and failed log are preserved here. The original physical gate and eight-trial budget were unchanged.

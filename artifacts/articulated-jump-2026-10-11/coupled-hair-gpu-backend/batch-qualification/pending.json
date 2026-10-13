@@ -1,0 +1,12 @@
+{
+  "change": "Existing coupled GPU factory enables independent coordinate batching; canonical physical operator and tolerances unchanged",
+  "island_test_session": 69382,
+  "full_first_frame_gpu_test": "not started, awaiting island regression",
+  "live_cpu_full_cycle": {
+    "pid": 97262,
+    "completed_frames_at_checkpoint": 3,
+    "required_frames": 720,
+    "binary": "earlier production SOC build, without latest phase-transition or GPU injection changes"
+  },
+  "timing_limit": "Concurrent diagnostic work; no FPS claim"
+}

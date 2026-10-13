@@ -5,6 +5,8 @@ use super::{
 use crate::exact_quaternion as exact_basis;
 use glam::Quat;
 use std::sync::Arc;
+mod model_rotations;
+pub use model_rotations::ModelRotationRetarget;
 
 /// Axis corrections are authored, never inferred from bone names or lengths.
 #[derive(Clone, Debug)]
@@ -34,6 +36,7 @@ struct BoundJoint {
 pub struct RetargetBinding {
     source: Arc<[Joint]>,
     target: Arc<[Joint]>,
+    target_reference: Arc<[Transform]>,
     joints: Vec<BoundJoint>,
 }
 /// Original-source to target-parent root frame. Applying this similarity to
@@ -121,8 +124,35 @@ impl RetargetBinding {
         Ok(Self {
             source: source.joints.clone(),
             target: target.joints.clone(),
+            target_reference: target.joints.iter().map(|joint|joint.bind_local).collect(),
             joints,
         })
+    }
+    /// Calibrates mapped rotation channels to an explicitly authored target pose.
+    /// The original skeleton, inverse binds and unmapped joints stay canonical.
+    /// Reference translations/scales must equal bind values: this is silhouette
+    /// calibration, not a replacement rig or a proportion editor.
+    /// Root similarity eligibility is recomputed from the calibrated rotation;
+    /// an incoherent rotation/translation basis cannot retain a stale certificate.
+    /// # Errors
+    /// Rejects foreign/invalid poses and edited translations or scales.
+    pub fn with_target_reference_pose(mut self, pose: &Pose) -> Result<Self, AnimationError> {
+        if !rigs_match(&pose.rig, &self.target) { return Err(AnimationError::SkeletonMismatch); }
+        pose.skin_matrices(&Skeleton { joints: self.target.clone() })?;
+        if pose.local.iter().zip(self.target.iter()).any(|(local, joint)|
+            local.translation != joint.bind_local.translation || local.scale != joint.bind_local.scale) {
+            return Err(AnimationError::InvalidRetargetBinding);
+        }
+        self.target_reference = pose.local.clone().into();
+        for joint in &mut self.joints {
+            joint.root_basis_nonzero = exact_basis::coherent(
+                self.target_reference[joint.target].rotation,
+                joint.rotation_basis,
+                self.source[joint.source].bind_local.rotation,
+                joint.translation_basis,
+            ).then(||exact_basis::rotation_nonzero(joint.translation_basis));
+        }
+        Ok(self)
     }
     /// Builds a target-bound candidate without modifying either rig or source pose.
     /// Relative scale channels preserve target bind proportions and signed scales.
@@ -141,7 +171,7 @@ impl RetargetBinding {
         for joint in &self.joints {
             let animated = pose.local[joint.source];
             let source = self.source[joint.source].bind_local;
-            let target = self.target[joint.target].bind_local;
+            let target = self.target_reference[joint.target];
             let delta = source.rotation.inverse() * animated.rotation;
             local[joint.target] = Transform {
                 translation: (target.translation.as_dvec3()
@@ -230,7 +260,7 @@ impl RetargetBinding {
         use crate::{RootRigidEnclosure, RootRigidTransform};
         let joint = self.mapped_joint(source_joint)?;
         let source = self.source[joint.source].bind_local;
-        let target = self.target[joint.target].bind_local;
+        let target = self.target_reference[joint.target];
         let rotation = |q: Quat| {
             RootRigidEnclosure::from_transform(RootRigidTransform {
                 rotation: q.as_dquat(),
@@ -304,7 +334,7 @@ impl RetargetBinding {
             position,
             source_error,
             self.source[joint.source].bind_local.translation.as_dvec3(),
-            self.target[joint.target].bind_local.translation.as_dvec3(),
+            self.target_reference[joint.target].translation.as_dvec3(),
             joint.translation_basis.as_dquat(),
             f64::from(joint.translation_scale),
         )?;
@@ -327,7 +357,7 @@ impl RetargetBinding {
     ) -> Result<(u16, [f64; 4]), AnimationError> {
         let joint = self.mapped_joint(source_joint)?;
         let error = crate::RootRigidEnclosure::retarget_rotation_evaluation_error(
-            self.target[joint.target].bind_local.rotation.to_array(),
+            self.target_reference[joint.target].rotation.to_array(),
             joint.rotation_basis.to_array(),
             self.source[joint.source].bind_local.rotation.to_array(),
             source_error,
@@ -397,15 +427,15 @@ impl RetargetBinding {
         self.source_root_motion_axes(source_joint, axes)?;
         let (joint, basis) = self.rigid_motion_joint(source_joint)?;
         let source = self.source[joint.source].bind_local;
-        let target = self.target[joint.target].bind_local;
+        let target = self.target_reference[joint.target];
         let scale = f64::from(joint.translation_scale);
         let basis = basis.as_dquat().normalize();
         let offset =
             target.translation.as_dvec3() - scale * (basis * source.translation.as_dvec3());
         path.transformed(basis, scale, offset)
     }
-    /// Encloses the common similarity from original bind values before any
-    /// quaternion normalization, offset calculation or matrix rounding.
+    /// Encloses the common similarity from source bind and compiled target
+    /// reference values before quaternion normalization or matrix rounding.
     /// # Errors
     /// Requires coherent rigid channels, a representable mask and nonzero scale.
     pub fn root_similarity_enclosure(
@@ -421,7 +451,7 @@ impl RetargetBinding {
         }
         let scale = RootUniformScaleEnclosure::from_scale(f64::from(joint.translation_scale))?;
         let outer = RootRigidEnclosure::from_transform(RootRigidTransform {
-            translation: self.target[joint.target].bind_local.translation.as_dvec3(),
+            translation: self.target_reference[joint.target].translation.as_dvec3(),
             rotation: basis.as_dquat(),
         })?;
         let source_origin = RootRigidEnclosure::from_transform(RootRigidTransform {
@@ -1949,5 +1979,65 @@ mod tests {
                 .is_err()
         );
         assert!(binding.source_root_motion_axes(1, [true; 3]).is_err());
+    }
+}
+
+#[cfg(test)]
+mod reference_pose_tests {
+    use super::*;
+    use glam::{Mat4, Vec3};
+    fn rig(name: &str) -> Skeleton {
+        Skeleton::new(vec![
+            Joint { name: name.into(), parent: None, bind_local: Transform::IDENTITY, inverse_bind: Mat4::IDENTITY },
+            Joint { name: "unmapped".into(), parent: Some(0), bind_local: Transform {translation: Vec3::Y, ..Transform::IDENTITY}, inverse_bind: Mat4::from_translation(-Vec3::Y) },
+        ]).unwrap()
+    }
+    fn binding(source: &Skeleton, target: &Skeleton) -> RetargetBinding {
+        RetargetBinding::new(source, target, &[RetargetJoint {
+            source: "source".into(), target: "target".into(), rotation_basis: Quat::IDENTITY,
+            translation_basis: Quat::IDENTITY, translation_scale: 1.,
+        }]).unwrap()
+    }
+    #[test]
+    fn calibration_preserves_rig_ownership_and_recomputes_root_eligibility() {
+        let source = rig("source"); let target = rig("target");
+        let original = binding(&source, &target);
+        assert!(original.root_similarity_enclosure(0, [true; 3]).is_ok());
+        let mut reference = target.bind_pose();
+        reference.set_joint_rotation(0, Quat::from_rotation_z(0.7)).unwrap();
+        reference.set_joint_rotation(1, Quat::from_rotation_x(0.2)).unwrap();
+        let calibrated = original.clone().with_target_reference_pose(&reference).unwrap();
+        assert!(calibrated.root_similarity_enclosure(0, [true; 3]).is_err(), "calibration must invalidate an incoherent rigid basis");
+        let mut input = source.bind_pose();
+        input.set_joint_rotation(0, Quat::from_rotation_x(0.4)).unwrap();
+        let output = calibrated.apply_pose(&input).unwrap();
+        let expected = reference.local()[0].rotation * input.local()[0].rotation;
+        assert!(output.local()[0].rotation.abs_diff_eq(expected, 1e-6));
+        let (_, enclosure) = calibrated.joint_rigid_pose_enclosure(&input, 0).unwrap();
+        let ideal = reference.local()[0].rotation.as_dquat().normalize()
+            * input.local()[0].rotation.as_dquat().normalize();
+        for (component, bounds) in ideal.to_array().into_iter().zip(enclosure.rotation_bounds()) {
+            assert!(bounds[0] <= component && component <= bounds[1], "calibrated pose enclosure missed {component}: {bounds:?}");
+        }
+        assert_eq!(output.local()[1], target.bind_pose().local()[1], "unmapped joints retain canonical bind values");
+        output.skin_matrices(&target).unwrap();
+        assert_eq!(target.joints()[0].bind_local, Transform::IDENTITY);
+        assert!(original.root_similarity_enclosure(0, [true; 3]).is_ok(), "original immutable binding changed");
+        let disabled = original.clone().with_target_reference_pose(&target.bind_pose()).unwrap();
+        assert_eq!(original.apply_pose(&input).unwrap(), disabled.apply_pose(&input).unwrap());
+        assert!(disabled.root_similarity_enclosure(0, [true; 3]).is_ok());
+    }
+    #[test]
+    fn reference_pose_rejects_foreign_rigs_and_proportion_edits() {
+        let source = rig("source"); let target = rig("target");
+        let original = binding(&source, &target);
+        assert!(original.clone().with_target_reference_pose(&source.bind_pose()).is_err());
+        let mut translated = target.bind_pose();
+        translated.set_joint_translation(0, Vec3::X).unwrap();
+        assert!(original.clone().with_target_reference_pose(&translated).is_err());
+        let mut scaled = target.bind_pose();
+        scaled.local[0].scale = Vec3::splat(2.);
+        assert!(original.clone().with_target_reference_pose(&scaled).is_err());
+        assert_eq!(original.apply_pose(&source.bind_pose()).unwrap(), target.bind_pose());
     }
 }

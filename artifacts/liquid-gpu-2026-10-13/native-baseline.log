@@ -1,0 +1,127 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unexpected `cfg` condition value: `nightly`
+ --> crates/physics/src/biomechanics/mod.rs:5:7
+  |
+5 | #[cfg(feature = "nightly")]
+  |       ^^^^^^^^^^^^^^^^^^^
+  |
+  = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+  = help: consider adding `nightly` as a feature in `Cargo.toml`
+  = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+  = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `nightly`
+   --> crates/physics/src/biomechanics/mod.rs:910:7
+    |
+910 | #[cfg(feature = "nightly")]
+    |       ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: expected values for `feature` are: `default`, `experimental-reusable-query-workers`, and `experimental-strand-fraction-reuse`
+    = help: consider adding `nightly` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: unused import: `reconcile_swept_contact_owners`
+  --> crates/physics/src/hair/contact.rs:18:127
+   |
+18 | ...tact_positions_with_solver,advance_swept_strands,reconcile_swept_contact_owners,reconcile_swept_contact_owners_with_pairs,strand_...
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `restore_replay_motion` is never used
+  --> crates/physics/src/hair/contact.rs:72:19
+   |
+65 | impl TriangleMesh {
+   | ----------------- method in this implementation
+...
+72 |     pub(super) fn restore_replay_motion(&mut self,previous:&[V],velocity:&[V]) {
+   |                   ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `advance_contacts` is never used
+   --> crates/physics/src/hair/contact_safe_motion.rs:734:24
+    |
+734 | pub(in crate::hair) fn advance_contacts(
+    |                        ^^^^^^^^^^^^^^^^
+
+warning: function `activate` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:145:15
+    |
+145 | pub(super) fn activate(
+    |               ^^^^^^^^
+
+warning: function `activate_with_workers` is never used
+   --> crates/physics/src/hair/contact_swept_constraints.rs:158:15
+    |
+158 | pub(super) fn activate_with_workers(
+    |               ^^^^^^^^^^^^^^^^^^^^^
+
+warning: field `owner` is never read
+  --> crates/physics/src/hair/contact_fraction_cache.rs:70:5
+   |
+69 | pub(super) struct FractionShard<'a> {
+   |                   ------------- field in this struct
+70 |     owner:&'a FractionCache,
+   |     ^^^^^
+
+warning: `physics` (lib) generated 8 warnings (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 1m 04s
+     Running tests/liquid.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid-270ee4d826237447)
+
+running 17 tests
+test failures_are_atomic_including_after_a_completed_substep ... ok
+test different_materials_keep_individual_mass_and_exchange_momentum ... ok
+test interface_penalty_force_matches_potential_gradient_and_separates_materials ... ok
+test interface_penalty_is_symmetric_local_and_configuration_is_atomic ... ok
+test isolated_free_fall_converges_as_time_step_is_refined ... ok
+test surface_tension_pulls_a_pair_together_and_preserves_unequal_mass_momentum ... ok
+test surface_forces_do_not_attract_different_materials ... ok
+test volume_formulation_preserves_density_jump_for_equal_reference_volumes ... ok
+test asymmetric_surface_forces_preserve_angular_momentum ... ok
+test viscosity_damps_relative_motion_without_losing_momentum ... ok
+test volume_formulation_symmetric_pressure_preserves_momenta_with_unequal_masses ... ok
+test unequal_mass_pressure_pair_preserves_momentum ... ok
+test oblique_interfaces_preserve_linear_and_angular_momentum_over_time ... ok
+test volume_pressure_is_compression_energy_gradient_for_unequal_reference_volumes ... ok
+test gravity_and_walls_bound_particles_without_mass_loss ... ok
+test dam_break_remains_finite_with_exact_mass_and_wall_bounds ... ok
+test stretched_drop_rounds_and_stays_more_compact_than_control ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/liquid_film_rebound.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_film_rebound-3e0ba13ce52f158f)
+
+running 4 tests
+test oblique_rebound_closes_momentum_and_kinetic_energy_ledgers ... ok
+test underside_and_miss_work_and_invalid_controls_roll_back ... ok
+test zero_restitution_contact_remains_detectable_under_gravity ... ok
+test elastic_and_stopping_limits_preserve_mass_and_composition ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_forcing.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_forcing-123d976815ddf1d6)
+
+running 3 tests
+test forcing_work_matches_kinetic_change_and_impulse_matches_momentum_change ... ok
+test wrong_counts_nonfinite_and_overflow_are_atomic ... ok
+test braking_has_negative_work_and_force_duration_scales_impulse ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_impact_events.rs (/tmp/voxy-face-refit-20261011/release/deps/liquid_impact_events-2973d1bf003a9338)
+
+running 10 tests
+test invalid_onset_rolls_back_liquid_and_film ... ok
+test parent_rebounds_twice_then_deposits_within_the_same_interval ... ok
+test chronological_index_changes_preserve_distinct_parent_composition_and_temperature ... ok
+test fragment_velocity_advances_only_after_birth_for_remaining_time ... ok
+test tangential_speed_does_not_trigger_normal_splash_onset ... ok
+test daughter_and_granddaughter_impacts_keep_inventory_and_energy_balances ... ok
+test unequal_fragment_cascade_deposits_all_mass_and_species ... ok
+test viscous_material_suppresses_splash_for_identical_impact_and_energy_budget ... ok
+test onset_gate_changes_fragmentation_without_losing_mass_or_energy ... ok
+test late_event_lineage_and_particle_budgets_restore_both_complete_states ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

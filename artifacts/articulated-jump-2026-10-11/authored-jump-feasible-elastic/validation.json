@@ -1,0 +1,13 @@
+{
+  "terminal": {
+    "exit_code": 101,
+    "elapsed_seconds": 739.6667819023132
+  },
+  "completed_frames": 1,
+  "required_frames": 720,
+  "failed_frame": 2,
+  "error": "joint hair contact position linearization did not converge",
+  "published_pose_preserved": true,
+  "last_worst_gap_m": -8.27603850035989e-10,
+  "scope": "Full-density coupled CPU qualification failed; saved standalone contact replays passing is not full jump completion"
+}

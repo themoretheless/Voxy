@@ -1,0 +1,38 @@
+{
+  "scope": "Explicit double stance on the real retargeted rig; not automatic gait contacts or physical actor movement",
+  "poses": 484,
+  "max_ankle_error_m": 1.8064793039229698e-07,
+  "tests": {
+    "real_gait_plants_passed": 1,
+    "grounded_regression_passed": 3
+  },
+  "metadata_audit": {
+    "Idle_Loop": {
+      "extras_present": false,
+      "extensions_present": false
+    },
+    "Walk_Loop": {
+      "extras_present": false,
+      "extensions_present": false
+    },
+    "Jog_Fwd_Loop": {
+      "extras_present": false,
+      "extensions_present": false
+    },
+    "Sprint_Loop": {
+      "extras_present": false,
+      "extensions_present": false
+    }
+  },
+  "sha256": {
+    "crates/voxy_app/src/humanoid_locomotion_tests.rs": "0a9299821912b5e126fcb426be5d4c2f66b80ffd1f2412b8a7d2758e19d7b140",
+    "crates/voxy_animation/src/ik.rs": "c4460f976a6be0dc88c12933b8530e559996368ef183d35dfee4511ec08dd498",
+    "crates/voxy_animation/src/foot_plant.rs": "33db48511a07e98d38ab498c7a57012b396ec50c26328fd4ad4a3ba86f067197",
+    "assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.gltf": "0ff075c7ad6855c5c2c37a171592ee8f0d6ab2f58259e2be77a9b63dd8027765",
+    "assets/animation/quaternius-universal/glTF/AnimationLibrary_Godot_Standard.bin": "6e65377d81558333c4093dbb144a48fd19019343d82b1a3a7992a98ec0e0543c",
+    "target/release/deps/voxy_app-1c1560a10812259f": "8df5b6eb063ffb421fbf77942f5d59918e1908751949acf7e76e7c05ddf60598",
+    "artifacts/articulated-jump-2026-10-11/real-gait-plants-final-tests.log": "8902a87c4e01fab60c487f56b1562d937b31ea5670b4915cce510652fe97e28d",
+    "artifacts/articulated-jump-2026-10-11/real-gait-plants-grounded-regression.log": "a5eb68f1d932f6166083c93b9bc707b5810e91273fe90ebf66c58f3eec5d6fed"
+  },
+  "oss_reference": "https://github.com/guillaumeblanc/ozz-animation/blob/744eb9d99f606eda849acb0b1204f7a3dc20bca1/samples/foot_ik/sample_foot_ik.cc"
+}

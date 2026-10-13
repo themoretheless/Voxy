@@ -1,0 +1,35 @@
+{
+  "focused_tests_passed": 1,
+  "filtered_out": 345,
+  "pose_samples": 100,
+  "foot_records": 200,
+  "jog_loop_prepared": true,
+  "scope": "actual target skinning with imported gait poses and dominant-foot reference proxy",
+  "summary": {
+    "Idle": {
+      "max_envelope_difference_m": 1.4889628341396843e-07,
+      "max_local_deformation_m": 0.014878338691475323
+    },
+    "Walk": {
+      "max_envelope_difference_m": 1.998520612334076e-07,
+      "max_local_deformation_m": 0.020728758368590925
+    },
+    "Jog": {
+      "max_envelope_difference_m": 2.0540453138373493e-07,
+      "max_local_deformation_m": 0.016856975436978474
+    },
+    "Sprint": {
+      "max_envelope_difference_m": 2.4936243503415056e-07,
+      "max_local_deformation_m": 0.01656195110841897
+    }
+  },
+  "continuous_collision_verified": false,
+  "physical_stance_labels_verified": false,
+  "full_foot_mesh_verified": false,
+  "sha256": {
+    "crates/voxy_app/src/female_rig.rs": "cbfc3a0cf73498c13798c3d6f134a6d78041ffe2f5a62e4ab85719b3b7629e5b",
+    "assets/characters/blender-female/prepared/body-forehead-refined.obj": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/gait-foot-skin-tests.log": "9dcdef2f461813545ada26279b16da64892293eb9a11a06d0ecea7d7cb92ee1d",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/gait-foot-skin.json": "cd6d9f674a0092b79d5e8012c32ce845ce055c79fcda61c6897a627c0dfec6db"
+  }
+}

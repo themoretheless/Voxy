@@ -1,0 +1,19 @@
+{
+  "format": "VQC1",
+  "rows": 141,
+  "coordinates": 1008,
+  "systems": 8,
+  "refinement": 1,
+  "tolerance": 1e-14,
+  "bounds_range": [
+    -0.0010758807593756392,
+    0.0010995170549098622
+  ],
+  "effective_bounds_range": [
+    -0.00107588075937567,
+    0.0010995170549099038
+  ],
+  "bytes": 2357100,
+  "sha256": "7f133fb9d00f2e97c6700d767fad4b68f9f5bb654abb0131be27d701087d36cb",
+  "scope": "structural and finite-value audit only; no feasibility or convergence proof"
+}

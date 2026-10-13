@@ -1,0 +1,69 @@
+{
+  "rows": [
+    {
+      "pair": 0,
+      "reuse": false,
+      "elapsed_ms": 1.268708
+    },
+    {
+      "pair": 0,
+      "reuse": true,
+      "elapsed_ms": 0.818666
+    },
+    {
+      "pair": 1,
+      "reuse": true,
+      "elapsed_ms": 0.736917
+    },
+    {
+      "pair": 1,
+      "reuse": false,
+      "elapsed_ms": 0.881625
+    },
+    {
+      "pair": 2,
+      "reuse": false,
+      "elapsed_ms": 1.226375
+    },
+    {
+      "pair": 2,
+      "reuse": true,
+      "elapsed_ms": 0.8514170000000001
+    },
+    {
+      "pair": 3,
+      "reuse": true,
+      "elapsed_ms": 0.663333
+    },
+    {
+      "pair": 3,
+      "reuse": false,
+      "elapsed_ms": 1.354333
+    },
+    {
+      "pair": 4,
+      "reuse": false,
+      "elapsed_ms": 0.9998749999999998
+    },
+    {
+      "pair": 4,
+      "reuse": true,
+      "elapsed_ms": 0.720334
+    },
+    {
+      "pair": 5,
+      "reuse": true,
+      "elapsed_ms": 0.704333
+    },
+    {
+      "pair": 5,
+      "reuse": false,
+      "elapsed_ms": 1.1674579999999999
+    }
+  ],
+  "baseline_median_ms": 1.1969165,
+  "dedup_median_ms": 0.7286255,
+  "wins": 6,
+  "pairs": 6,
+  "scope": "16 identical operators, each 8 rows x 128 coordinates; exact output match; alternating host timings under concurrent full-cycle load; no full-model or FPS claim"
+}

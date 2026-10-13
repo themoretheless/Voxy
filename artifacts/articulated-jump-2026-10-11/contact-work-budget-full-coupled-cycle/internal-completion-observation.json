@@ -1,0 +1,33 @@
+{
+  "completed_internal_contact_transactions_by_frame": {
+    "1": [
+      4,
+      5,
+      4,
+      4,
+      4,
+      4,
+      4,
+      6,
+      6,
+      7,
+      6,
+      6,
+      5
+    ],
+    "2": [
+      21,
+      24,
+      24,
+      24,
+      24,
+      24,
+      310,
+      207,
+      95,
+      231
+    ]
+  },
+  "completed_frames": 1,
+  "scope": "Internal contact transactions only; not nonlinear stationarity or published-frame completion"
+}

@@ -1,0 +1,12 @@
+{
+  "build": "passed",
+  "integration_test": "authored_jump_initialization_preserves_rest_and_advances_coupled_skin_hair",
+  "integration_passed": true,
+  "default_contact_coupled_steps": 8,
+  "integration_elapsed_s": 16.55,
+  "continuous_cycle": "separate live 720-frame run; not yet qualified",
+  "captured_wrapper_passed": true,
+  "captured_wrapper_elapsed_s": 343.76,
+  "fps_proven": false,
+  "observed_unix_s": 1791766825.7358642
+}

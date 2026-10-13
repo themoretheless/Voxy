@@ -1,0 +1,68 @@
+{
+  "scope": "observed refinement trace only; no physical feasibility or full-cycle proof",
+  "log_sha256": "b0d55cd287a60acc1d0b8f6003ee1a5355cedb770bc5046feca0257a9b297289",
+  "transactions": [],
+  "completed_profile_count": 0,
+  "profile_stage_totals_ms": {
+    "elapsed_ms": 0,
+    "initial_projection_ms": 0,
+    "initial_admission_ms": 0,
+    "refinement_and_final_check_ms": 0
+  },
+  "slowest_completed_profile": null,
+  "temporal_retries": [
+    {
+      "line": 253,
+      "from": 2,
+      "to": 4,
+      "dt": 0.008333333333333333
+    },
+    {
+      "line": 254,
+      "from": 4,
+      "to": 8,
+      "dt": 0.008333333333333333
+    },
+    {
+      "line": 255,
+      "from": 8,
+      "to": 16,
+      "dt": 0.008333333333333333
+    },
+    {
+      "line": 256,
+      "from": 16,
+      "to": 32,
+      "dt": 0.008333333333333333
+    },
+    {
+      "line": 257,
+      "from": 2,
+      "to": 4,
+      "dt": 0.008333333333333333
+    },
+    {
+      "line": 258,
+      "from": 4,
+      "to": 8,
+      "dt": 0.008333333333333333
+    },
+    {
+      "line": 259,
+      "from": 8,
+      "to": 16,
+      "dt": 0.008333333333333333
+    },
+    {
+      "line": 260,
+      "from": 16,
+      "to": 32,
+      "dt": 0.008333333333333333
+    }
+  ],
+  "temporal_admissions": [],
+  "refinement_events": 0,
+  "unpaired_cut_update": null,
+  "clock_only_events": 0,
+  "minimum_observed_trust_scale": null
+}

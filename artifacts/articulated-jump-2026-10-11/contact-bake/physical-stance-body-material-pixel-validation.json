@@ -1,0 +1,32 @@
+{
+  "scope": "Six actual posed body surfaces rendered with current female skin shader and 4x MSAA. CPU f64 reference versus admitted resident GPU illumination. No native full-character frame loop, dynamic groom, CUDA or FPS qualification.",
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "result": "passed",
+  "maximum_channel_error_u8": 1,
+  "method": "Same viewport coordinates in sequential GPU render passes; saved images composed side by side after readback.",
+  "retained_failure": "Neighbouring viewports initially produced maximum channel error 13, eliminated by identical raster coordinates without changing shader or error threshold.",
+  "files": {
+    "crates/voxy_render/examples/surface_light_material.rs": "0746e98d331c1637759f41b75b89d3411e63cc6a31a87d8839a2f741938358ee",
+    "crates/voxy_render/src/surface_light_transfer.rs": "17099952560bb4069edc22826f4ae27102b8530c24cee739456bf8b4e8671a66",
+    "crates/voxy_render/src/surface_light_transfer.wgsl": "c7d1de37b60df9b853f986c94ca7edc6e757a1573aa2c9f082ac15b2e3c2a957",
+    "crates/voxy_render/src/surface_light_admission.rs": "2c038a476cc5f448e1f2d3d37cfb9d211a3b424cb1ae3ff68b32465369383548",
+    "crates/voxy_render/src/surface_light_admission.wgsl": "ec5f90bbde38e2c4346707a912e2b5a2a7e377095aad4cce6ede26141df7cacc",
+    "crates/voxy_app/src/female_material.wgsl": "072bbd52e1270ffeba2769a36813d3022a2cb5cd2898d9df543fd3f569ebb036",
+    "target/release/examples/surface_light_material": "14b5675b389aa11fcf3ecfd8e674572b182e23d8d96abbf230ed9b3becd9344f",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.json": "e9ec3cd4f2be6227d9ffd33453ec02e9abeb218e53b12341ebdb6a34850d9cfa",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.log": "0c4e0f90cda088a68837f05a43b265b014dd0192b51b281edc798616ef894beb",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-offset-view-failure.log": "60ee7b6ff0e0cbd2968b9b8607c4c9180244eb209d0e762204971b36d7c37a37",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.0.png": "77616861ef3b1c7da1364d833d47a5a329f6c43fa35bcdf645ae23373a53b3a8",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.1.png": "98a4cc914d693a33e5aa9c69e0e7fecbfeea5b26936fdd9ecacb970911d99b36",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.2.png": "97ba97643b922d34746b97430bb9686b0ce294fc5460e45afef2a07e52abfc93",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.3.png": "8120dd796e883a8da9d2743795ea264f0d5eb73f9774c1112d4dda1e62ff5e51",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.4.png": "af29412429673c46d0e27a808bce2a5e0caaad5e2d8d325f48317703ac100f8d",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/body-material-pixels.5.png": "192978435abef4c49925b72d2b6c194a0c8a8e8c09f7031ea523282872394d0d",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-0.json": "064c2a03f5f8e659e32544b8df67bcb1011e0d76a7d6f28b67eb9e056d6f1739",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-1.json": "b957de86583c03eb40c419203f7ebc19e93fe4242da88f899727a1e00a4b4816",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-2.json": "0a37dd39c3490eaf5d7636d199c7b6a323662e62b285632f75d34d428a275405",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-3.json": "5fce2700645a4cc3ef9e5ec8bad774d3a4eadad17423ef643832021da7da7e74",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-4.json": "6c59f5fd59e792c8b772c3da5422323a7d07f615b4fae4971fd956f303ca0e62",
+    "artifacts/articulated-jump-2026-10-11/contact-bake/stance-diffusion-geometry-fixtures/stance-5.json": "7be8ed82196ccb7b6d184502ee2a586618342bb66fe8f53290b2f5ed1dcd063f"
+  }
+}
