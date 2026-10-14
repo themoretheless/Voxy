@@ -45,9 +45,15 @@ impl CollisionWorld for Boxes {
 }
 
 fn liquid(velocity: [f64; 3]) -> Liquid {
+    liquid_at_with([-0.5, 0.0, 0.0], velocity)
+}
+fn liquid_at(position: [f64; 3]) -> Liquid {
+    liquid_at_with(position, [0.0; 3])
+}
+fn liquid_at_with(position: [f64; 3], velocity: [f64; 3]) -> Liquid {
     Liquid::new(
         vec![Particle {
-            position: [-0.5, 0.0, 0.0],
+            position,
             velocity,
             mass: 1.0,
             material: 0,
@@ -102,6 +108,50 @@ fn bounce_uses_remaining_time_and_friction_changes_only_tangent_speed() {
         )
         .unwrap();
     assert!((friction.particles()[0].velocity[1] - 5.0).abs() < 1e-12);
+}
+#[test]
+fn overlap_escape_takes_the_shortest_axis_push_and_then_sweeps_normally() {
+    // Particle centre at x=-0.5 (radius 0.05) inside a slab x∈[-0.62,-0.4]: the
+    // nearest free side is +x (gap 0.15 from the centre to the face plus radius).
+    let mut liquid = liquid([0.0, 2.0, 0.0]);
+    let slab = Boxes(vec![([-0.62, -1.0, -1.0], [-0.4, 1.0, 1.0])]);
+    let contact = ContactConfig {
+        overlap_escape: 0.5,
+        ..ContactConfig::default()
+    };
+    liquid.step_with_world(0.01, None, &slab, contact).unwrap();
+    let p = liquid.particles()[0];
+    assert!(p.position[0] >= -0.4 + 0.05, "{}", p.position[0]);
+    assert!(p.position[0] - (-0.4 + 0.05) < 1e-9, "{}", p.position[0]);
+    // The ordinary sweep then advanced the free tangential motion.
+    assert!((p.position[1] - 0.02).abs() < 1e-12);
+    assert_eq!(p.velocity, [0.0, 2.0, 0.0]);
+    // A second step finds no overlap and leaves x alone.
+    let x = p.position[0];
+    liquid.step_with_world(0.01, None, &slab, contact).unwrap();
+    assert_eq!(liquid.particles()[0].position[0], x);
+    // Probes that still overlap (slab wider than the probe) keep the error.
+    let mut buried = liquid_at([-0.5, 0.0, 0.0]);
+    let wide = Boxes(vec![([-2.0, -2.0, -2.0], [2.0, 2.0, 2.0])]);
+    let before = buried.clone();
+    assert_eq!(
+        buried.step_with_world(0.01, None, &wide, contact),
+        Err(Error::InitialOverlap)
+    );
+    assert_eq!(buried, before);
+    assert_eq!(
+        buried.step_with_world(
+            0.01,
+            None,
+            &slab,
+            ContactConfig {
+                overlap_escape: -1.0,
+                ..ContactConfig::default()
+            }
+        ),
+        Err(Error::InvalidCollision)
+    );
+    assert_eq!(buried, before);
 }
 #[test]
 fn overlap_and_candidate_failures_preserve_state() {
