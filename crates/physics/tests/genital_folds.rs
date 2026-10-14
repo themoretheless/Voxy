@@ -233,3 +233,122 @@ fn majora_volumetric_cores_compress_with_fixed_bases_and_refine_volume() {
         assert!(pad.body.positions()[pad.apex_node][2] > depressed);
     }
 }
+
+#[test]
+fn labia_majora_gait_contact_simulation_responds_to_walk_and_run_and_preserves_cleft_gap() {
+    use physics::biomechanics::{LabiaMajoraGeometry, Material, PelvisGaitKinematics};
+    let geometry = LabiaMajoraGeometry {
+        length_m: 0.05,
+        width_m: 0.018,
+        height_m: 0.008,
+        separation_m: 0.022,
+        sectors: 8,
+        latitude_rings: 2,
+    };
+    let mat = Material::from_young_poisson(3000., 0.45).unwrap();
+    let walk = PelvisGaitKinematics {
+        stride_frequency_hz: 1.0,
+        vertical_amplitude_m: 0.001,
+        lateral_amplitude_m: 0.0005,
+        sagittal_amplitude_m: 0.0005,
+        phase_rad: 0.0,
+    };
+    let run = PelvisGaitKinematics {
+        stride_frequency_hz: 1.8,
+        vertical_amplitude_m: 0.0025,
+        lateral_amplitude_m: 0.001,
+        sagittal_amplitude_m: 0.0012,
+        phase_rad: 0.0,
+    };
+    let mut peak_kinetic = [0.0_f64; 2];
+    for (idx, gait) in [walk, run].iter().enumerate() {
+        let mut sim = geometry
+            .build_gait_contact_simulation(
+                [mat.clone(), mat.clone()],
+                [1000.; 2],
+                0.0001,
+                0.0015,
+                1.0,
+            )
+            .unwrap();
+        for _ in 0..6 {
+            let report = sim.step_gait(gait, 5e-5, 1e-4).unwrap();
+            assert!(report.energy_defect_j.is_finite() && report.energy_defect_j.abs() <= 1e-4);
+            let diag = sim.assembly.body.diagnostics().unwrap();
+            peak_kinetic[idx] = peak_kinetic[idx].max(diag.kinetic_j);
+        }
+        assert!(sim.min_contact_gap_m() > 0.0001);
+        assert!(sim.time_s() > 0.);
+    }
+    assert!(
+        peak_kinetic[1] > peak_kinetic[0],
+        "running must induce higher labia majora kinetic energy than walking: {peak_kinetic:?}"
+    );
+}
+
+#[test]
+fn labia_minora_gait_and_surface_film_smearing_conserve_mass_and_invert_no_elements() {
+    use physics::biomechanics::PelvisGaitKinematics;
+    use physics::friction;
+    use physics::surface_film::{Material as FilmMaterial, SmearContact, SmearRegime};
+
+    let mut sim = labia().build_gait_simulation(material()).unwrap();
+    let gait = PelvisGaitKinematics {
+        stride_frequency_hz: 1.4,
+        vertical_amplitude_m: 0.0015,
+        lateral_amplitude_m: 0.0008,
+        sagittal_amplitude_m: 0.0008,
+        phase_rad: 0.0,
+    };
+    for _ in 0..4 {
+        let reports = sim
+            .step_gait(
+                &gait,
+                0.001,
+                [0., -9.81, 0.],
+                &ContactScene::default(),
+                SolverConfig::default(),
+            )
+            .unwrap();
+        for r in reports {
+            assert!(r.min_area_ratio > 0.9);
+            assert!(r.energy.is_finite());
+        }
+    }
+    assert!(sim.time_s() > 0.);
+
+    let mut films = sim
+        .build_surface_films(FilmMaterial {
+            density: 1000.,
+            viscosity: 0.05,
+            wetting: 1e-5,
+            surface_tension: 0.05,
+        })
+        .unwrap();
+    for film in &mut films {
+        let cells = film.triangles().len();
+        film.deposit(0, 1e-8).unwrap();
+        film.deposit(cells / 2, 1e-8).unwrap();
+        let mass_before = film.total_mass();
+        let friction_mat = friction::Material::new(1e6, 1e6, 0.4).unwrap();
+        let mut states = vec![friction::State::default(); cells];
+        let pressures = vec![500.0; cells];
+        let report = film
+            .advance_smear(
+                0.002,
+                SmearContact {
+                    normal: [0., 0., 1.],
+                    body_velocity_m_s: [0., 0.02, 0.],
+                },
+                &pressures,
+                &friction_mat,
+                &mut states,
+                [0., -9.81, 0.],
+                0.001,
+            )
+            .unwrap();
+        assert!(report.regimes.contains(&SmearRegime::Lubricated));
+        assert!(report.slip_work_j > 0.);
+        assert!((film.total_mass() - mass_before).abs() < 1e-14);
+    }
+}

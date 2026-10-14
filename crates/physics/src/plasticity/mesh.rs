@@ -16,7 +16,8 @@ pub use quadratic::{QuadraticSurfaceContact, QuadraticSurfaceContactEvaluation};
 pub use quadratic::{QuadraticSweep, QuadraticSweepLimits};
 mod surface;
 pub use quadratic::{
-    ConsistentInertia, QuadraticBody, QuadraticDynamics, QuadraticEnergy, QuadraticFace,
+    ConsistentInertia, MAX_QUADRATIC_NODES, QuadraticBody, QuadraticDynamics, QuadraticEnergy,
+    QuadraticFace, QuadratureSample,
 };
 pub use quadratic::{
     FiniteElasticEvaluation, FiniteQuadraticDynamics, QuadraticAdvance, QuadraticAdvanceLimits,
@@ -68,10 +69,10 @@ struct Evaluation {
 }
 impl Body {
     /// # Errors
-    /// Rejects invalid or degenerate meshes, unused vertices, and >512 vertices.
+    /// Rejects invalid or degenerate meshes, unused vertices, and >2048 vertices.
     pub fn new(rest: Vec<Vec3>, cells: Vec<([usize; 4], Material)>) -> Result<Self, &'static str> {
         if rest.is_empty()
-            || rest.len() > 512
+            || rest.len() > MAX_QUADRATIC_NODES
             || cells.is_empty()
             || cells.len() > 8192
             || rest.iter().flatten().any(|v| !v.is_finite())

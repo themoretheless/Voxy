@@ -57,11 +57,28 @@ struct Evaluation {
     states: Vec<[State; 4]>,
     interfaces: Vec<QuadraticCohesiveFace>,
 }
+/// Maximum vertex count for a quadratic tetrahedral body.
+pub const MAX_QUADRATIC_NODES: usize = 2048;
+
+/// Reference and deformed position plus constitutive stress/plasticity state at
+/// one of the four Gauss integration points of a ten-node tetrahedron.
+#[derive(Clone, Copy, Debug)]
+pub struct QuadratureSample {
+    pub cell: usize,
+    pub point: usize,
+    pub reference_position_m: Vec3,
+    pub deformed_position_m: Vec3,
+    pub response: super::Response,
+    pub cauchy_pa: Matrix,
+    pub von_mises_pa: f64,
+    pub equivalent_plastic_strain: f64,
+}
+
 impl QuadraticBody {
     /// Elevate a conforming linear tetrahedral mesh, preserving original corner
     /// indices and sharing one newly inserted midpoint per source edge.
     /// # Errors
-    /// Invalid source mesh or expanded geometry exceeding the 512-node limit.
+    /// Invalid source mesh or expanded geometry exceeding the 2048-node limit.
     pub fn from_linear(
         mut rest: Vec<Vec3>,
         cells: Vec<([usize; 4], Material)>,
@@ -77,7 +94,7 @@ impl QuadraticBody {
                 let midpoint = if let Some(&index) = edges.get(&key) {
                     index
                 } else {
-                    if rest.len() >= 512 {
+                    if rest.len() >= MAX_QUADRATIC_NODES {
                         return Err("elevated quadratic mesh exceeds vertex limit");
                     }
                     let index = rest.len();
@@ -114,7 +131,7 @@ impl QuadraticBody {
     /// Invalid indices/geometry, unused nodes, incompatible edge topology or limits.
     pub fn new(rest: Vec<Vec3>, cells: Vec<([usize; 10], Material)>) -> Result<Self, &'static str> {
         if rest.is_empty()
-            || rest.len() > 512
+            || rest.len() > MAX_QUADRATIC_NODES
             || cells.is_empty()
             || cells.len() > 8192
             || rest.iter().flatten().any(|v| !v.is_finite())
@@ -262,6 +279,68 @@ impl QuadraticBody {
                     responses.push(cell.material.response(&cell.states[point], strain)?.1);
                 }
                 responses
+                    .try_into()
+                    .map_err(|_| "invalid quadratic response count")
+            })
+            .collect()
+    }
+    /// Evaluates all 4 Gauss points per cell at the body's current `positions`,
+    /// returning their reference/deformed coordinates and Cauchy/von Mises stresses.
+    ///
+    /// # Errors
+    /// Propagates inverted integration point or constitutive evaluation errors.
+    pub fn quadrature_samples(&self) -> Result<Vec<[QuadratureSample; 4]>, &'static str> {
+        self.quadrature_samples_at(&self.positions)
+    }
+    /// Evaluates all 4 Gauss points per cell at arbitrary nodal `positions`
+    /// without committing plasticity history.
+    ///
+    /// # Errors
+    /// Rejects invalid position counts, nonfinite coordinates, or inverted Gauss points.
+    pub fn quadrature_samples_at(
+        &self,
+        positions: &[Vec3],
+    ) -> Result<Vec<[QuadratureSample; 4]>, &'static str> {
+        if positions.len() != self.rest.len() || positions.iter().flatten().any(|v| !v.is_finite())
+        {
+            return Err("invalid quadratic response positions");
+        }
+        let high = (5. + 3. * 5_f64.sqrt()) / 20.;
+        let low = (5. - 5_f64.sqrt()) / 20.;
+        self.cells
+            .iter()
+            .enumerate()
+            .map(|(cell_idx, cell)| {
+                let mut samples = Vec::with_capacity(4);
+                for (point, g) in cell.gradients.iter().enumerate() {
+                    let l: [f64; 4] = std::array::from_fn(|i| if i == point { high } else { low });
+                    let mut n = [0.; 10];
+                    for i in 0..4 {
+                        n[i] = l[i] * (2. * l[i] - 1.);
+                    }
+                    for (edge, &(a, b)) in EDGES.iter().enumerate() {
+                        n[4 + edge] = 4. * l[a] * l[b];
+                    }
+                    let reference_position_m: Vec3 = std::array::from_fn(|axis| {
+                        (0..10).map(|a| n[a] * self.rest[cell.nodes[a]][axis]).sum()
+                    });
+                    let deformed_position_m: Vec3 = std::array::from_fn(|axis| {
+                        (0..10).map(|a| n[a] * positions[cell.nodes[a]][axis]).sum()
+                    });
+                    let strain = strain_at(cell, g, positions, &self.rest)?;
+                    let (state, response) = cell.material.response(&cell.states[point], strain)?;
+                    samples.push(QuadratureSample {
+                        cell: cell_idx,
+                        point,
+                        reference_position_m,
+                        deformed_position_m,
+                        response,
+                        cauchy_pa: response.stress.cauchy_pa,
+                        von_mises_pa: response.stress.von_mises_pa,
+                        equivalent_plastic_strain: state.equivalent_plastic_strain(),
+                    });
+                }
+                samples
                     .try_into()
                     .map_err(|_| "invalid quadratic response count")
             })

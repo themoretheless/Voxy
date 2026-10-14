@@ -63,8 +63,13 @@ pub use gpu_layout::{
     cpu_reference_palette, nlerp,
 };
 mod gait;
+mod property_track;
 mod ragdoll;
 pub use compressed::{CompressedClip, CompressionReport, CompressionSettings};
+pub use property_track::{
+    MAX_PROPERTY_KEYS, MAX_PROPERTY_TRACKS, PropertyClip, PropertyKey, PropertySet, PropertyTrack,
+    PropertyValue,
+};
 pub use ragdoll::{
     ContactManifold, MotorSettings, PlaneEnvironment, Ragdoll, RagdollBody, RagdollDesc,
     RagdollEnvironment, RagdollJoint, RagdollState, powered_blend,
@@ -72,8 +77,9 @@ pub use ragdoll::{
 mod state_machine;
 pub use blend_space2d::{BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D};
 pub use gait::{
-    FlatGround, GaitController, GaitFeet, GaitFrame, GaitSettings, GaitSpace, GroundProbe,
-    ankle_positions,
+    FlatGround, GaitController, GaitFeet, GaitFrame, GaitRegime, GaitSettings, GaitSpace,
+    GroundProbe, StrideScaleReport, ankle_positions, measure_authored_stride_speed,
+    scale_clip_stride_to_speed,
 };
 pub use state_machine::{
     Condition, FadeCurve, MachineStatus, PhaseSync, StateId, StateMachine, StateMachineDesc,

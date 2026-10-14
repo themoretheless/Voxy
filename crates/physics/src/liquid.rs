@@ -82,6 +82,18 @@ impl Material {
         sound_speed: 20.0,
         viscosity: 0.1,
     };
+    /// Dense, high-viscosity Newtonian liquid (glycerin at 20 °C).
+    pub const GLYCERIN: Self = Self {
+        rest_density: 1260.0,
+        sound_speed: 20.0,
+        viscosity: 1.412,
+    };
+    /// Dense saline brine solution (~26% NaCl by mass).
+    pub const BRINE: Self = Self {
+        rest_density: 1200.0,
+        sound_speed: 20.0,
+        viscosity: 0.002,
+    };
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

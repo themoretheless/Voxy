@@ -260,6 +260,198 @@ impl TesticularGeometry {
         }
         Ok(bodies)
     }
+
+    /// Build a coupled nonlinear FEM + inter-testicular surface contact assembly
+    /// driven by 3D pelvis gait oscillations (walk/jog/run).
+    pub fn build_gait_contact_simulation(
+        &self,
+        materials: [Material; 2],
+        density_kg_m3: [f64; 2],
+        support_vertices: [&[usize]; 2],
+        minimum_distance_m: f64,
+        activation_gap_m: f64,
+        pair_stiffness_n_m: f64,
+    ) -> Result<TesticularGaitSimulation, &'static str> {
+        if support_vertices[0].is_empty() || support_vertices[1].is_empty() {
+            return Err("gait simulation requires at least one support vertex per side");
+        }
+        let mut assembly = self.build_contact_assembly(
+            materials,
+            density_kg_m3,
+            support_vertices,
+            minimum_distance_m,
+            activation_gap_m,
+            pair_stiffness_n_m,
+        )?;
+        assembly.body.set_uniform_acceleration([0., -9.81, 0.])?;
+        let mut support_nodes = Vec::new();
+        for (side, &locals) in support_vertices.iter().enumerate() {
+            let mut seen = std::collections::BTreeSet::new();
+            for &local in locals {
+                if !seen.insert(local) {
+                    return Err("duplicate testicular gait support vertex");
+                }
+                let node = assembly.node_ranges[side].start + local;
+                let rest_pos = assembly.body.body().positions()[node];
+                support_nodes.push((node, rest_pos));
+            }
+        }
+        let min_contact_gap_m = assembly
+            .body
+            .body()
+            .minimum_surface_contact_distance()?
+            .unwrap_or(f64::INFINITY);
+        Ok(TesticularGaitSimulation {
+            assembly,
+            support_nodes,
+            time_s: 0.,
+            min_contact_gap_m,
+        })
+    }
+}
+
+/// 3D harmonic pelvis kinematics across walk, jog, and run gait regimes.
+/// Vertical bounce and anteroposterior surge oscillate at step frequency (`2 * f_stride`),
+/// while mediolateral sway oscillates at stride frequency (`f_stride`).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct PelvisGaitKinematics {
+    pub stride_frequency_hz: f64,
+    pub vertical_amplitude_m: f64,
+    pub lateral_amplitude_m: f64,
+    pub sagittal_amplitude_m: f64,
+    pub phase_rad: f64,
+}
+
+impl PelvisGaitKinematics {
+    /// Typical human walking pelvis oscillation (~1.0 Hz stride / 2.0 Hz step cadence).
+    #[must_use]
+    pub const fn walk() -> Self {
+        Self {
+            stride_frequency_hz: 1.0,
+            vertical_amplitude_m: 0.018,
+            lateral_amplitude_m: 0.015,
+            sagittal_amplitude_m: 0.008,
+            phase_rad: 0.0,
+        }
+    }
+
+    /// Typical jogging pelvis oscillation (~1.4 Hz stride / 2.8 Hz step cadence).
+    #[must_use]
+    pub const fn jog() -> Self {
+        Self {
+            stride_frequency_hz: 1.4,
+            vertical_amplitude_m: 0.038,
+            lateral_amplitude_m: 0.012,
+            sagittal_amplitude_m: 0.014,
+            phase_rad: 0.0,
+        }
+    }
+
+    /// Typical running pelvis oscillation (~1.8 Hz stride / 3.6 Hz step cadence).
+    #[must_use]
+    pub const fn run() -> Self {
+        Self {
+            stride_frequency_hz: 1.8,
+            vertical_amplitude_m: 0.055,
+            lateral_amplitude_m: 0.010,
+            sagittal_amplitude_m: 0.020,
+            phase_rad: 0.0,
+        }
+    }
+
+    pub fn validate(&self) -> Result<(), &'static str> {
+        if !self.stride_frequency_hz.is_finite()
+            || self.stride_frequency_hz <= 0.
+            || !self.vertical_amplitude_m.is_finite()
+            || self.vertical_amplitude_m < 0.
+            || !self.lateral_amplitude_m.is_finite()
+            || self.lateral_amplitude_m < 0.
+            || !self.sagittal_amplitude_m.is_finite()
+            || self.sagittal_amplitude_m < 0.
+            || !self.phase_rad.is_finite()
+        {
+            return Err("invalid pelvis gait kinematics");
+        }
+        Ok(())
+    }
+
+    /// Evaluates pelvis displacement relative to reference at `time_s` (zero at `time_s = 0` when `phase_rad = 0`).
+    pub fn displacement_at(&self, time_s: f64) -> Result<Vec3, &'static str> {
+        self.validate()?;
+        if !time_s.is_finite() || time_s < 0. {
+            return Err("invalid gait evaluation time");
+        }
+        let omega = 2.0 * std::f64::consts::PI * self.stride_frequency_hz;
+        let phi = omega * time_s + self.phase_rad;
+        let phi2 = 2.0 * omega * time_s + self.phase_rad;
+        Ok([
+            self.lateral_amplitude_m * (phi.sin() - self.phase_rad.sin()),
+            self.vertical_amplitude_m * (self.phase_rad.cos() - phi2.cos()),
+            self.sagittal_amplitude_m * (phi2.sin() - self.phase_rad.sin()),
+        ])
+    }
+}
+
+/// Coupled paired testicular FEM + surface contact simulation driven by pelvis gait motion.
+#[derive(Clone, Debug)]
+pub struct TesticularGaitSimulation {
+    pub assembly: super::InertialAssembly,
+    support_nodes: Vec<(usize, Vec3)>,
+    time_s: f64,
+    min_contact_gap_m: f64,
+}
+
+impl TesticularGaitSimulation {
+    #[must_use]
+    pub fn time_s(&self) -> f64 {
+        self.time_s
+    }
+
+    #[must_use]
+    pub fn min_contact_gap_m(&self) -> f64 {
+        self.min_contact_gap_m
+    }
+
+    /// Advances the paired suspended testicular solids by one timestep `dt_s` under `kinematics`.
+    pub fn step_gait(
+        &mut self,
+        kinematics: &PelvisGaitKinematics,
+        dt_s: f64,
+        tolerance_j: f64,
+    ) -> Result<super::DrivenSupportStep, &'static str> {
+        kinematics.validate()?;
+        if !dt_s.is_finite() || dt_s <= 0. {
+            return Err("invalid gait timestep");
+        }
+        let next_time = self.time_s + dt_s;
+        let offset = kinematics.displacement_at(next_time)?;
+        let targets: Vec<_> = self
+            .support_nodes
+            .iter()
+            .map(|&(node, base)| super::SupportTarget {
+                node,
+                position_m: [
+                    base[0] + offset[0],
+                    base[1] + offset[1],
+                    base[2] + offset[2],
+                ],
+            })
+            .collect();
+        let report = self
+            .assembly
+            .body
+            .step_with_support_targets(&targets, dt_s, tolerance_j)?;
+        if let Some(gap) = self
+            .assembly
+            .body
+            .body()
+            .minimum_surface_contact_distance()?
+        {
+            self.min_contact_gap_m = self.min_contact_gap_m.min(gap);
+        }
+        self.time_s = next_time;
+        Ok(report)
+    }
 }
 
 #[cfg(test)]
@@ -979,5 +1171,85 @@ mod testicular_tests {
         let mut bad = geometry;
         bad.rings = 0;
         assert!(bad.build([material.clone(), material]).is_err());
+    }
+
+    #[test]
+    fn walk_and_run_pelvis_gait_drives_pendular_oscillation_and_preserves_contact_gap() {
+        let geometry = TesticularGeometry {
+            centers_m: [[-0.011, 0., 0.], [0.011, 0., 0.]],
+            radii_m: [[0.01, 0.015, 0.02]; 2],
+            sectors: 8,
+            rings: 3,
+        };
+        let material = Material {
+            shear_pa: 1000.,
+            bulk_pa: 100_000.,
+            fibers: vec![],
+        };
+        assert_eq!(
+            PelvisGaitKinematics::walk().displacement_at(0.).unwrap(),
+            [0., 0., 0.]
+        );
+        assert_eq!(
+            PelvisGaitKinematics::jog().displacement_at(0.).unwrap(),
+            [0., 0., 0.]
+        );
+        assert_eq!(
+            PelvisGaitKinematics::run().displacement_at(0.).unwrap(),
+            [0., 0., 0.]
+        );
+        assert!(
+            geometry
+                .build_gait_contact_simulation(
+                    [material.clone(), material.clone()],
+                    [1000.; 2],
+                    [&[], &[0]],
+                    0.0001,
+                    0.002,
+                    1.0,
+                )
+                .is_err()
+        );
+
+        let walk_gait = PelvisGaitKinematics {
+            stride_frequency_hz: 1.0,
+            vertical_amplitude_m: 0.002,
+            lateral_amplitude_m: 0.001,
+            sagittal_amplitude_m: 0.001,
+            phase_rad: 0.0,
+        };
+        let run_gait = PelvisGaitKinematics {
+            stride_frequency_hz: 1.8,
+            vertical_amplitude_m: 0.005,
+            lateral_amplitude_m: 0.0015,
+            sagittal_amplitude_m: 0.0025,
+            phase_rad: 0.0,
+        };
+
+        let mut peak_kinetic = [0.0_f64; 2];
+        for (idx, gait) in [walk_gait, run_gait].iter().enumerate() {
+            let mut sim = geometry
+                .build_gait_contact_simulation(
+                    [material.clone(), material.clone()],
+                    [1000.; 2],
+                    [&[0], &[0]],
+                    0.0001,
+                    0.002,
+                    1.0,
+                )
+                .unwrap();
+            for _ in 0..8 {
+                let report = sim.step_gait(gait, 5e-5, 1e-5).unwrap();
+                assert!(report.energy_defect_j.is_finite() && report.energy_defect_j.abs() <= 1e-5);
+                let diag = sim.assembly.body.diagnostics().unwrap();
+                peak_kinetic[idx] = peak_kinetic[idx].max(diag.kinetic_j);
+            }
+            assert!(sim.min_contact_gap_m() > 0.0001);
+            assert!(sim.time_s() > 0.);
+        }
+        assert!(
+            peak_kinetic[1] > peak_kinetic[0],
+            "running gait must induce stronger pendular kinetic energy than walking: {peak_kinetic:?}"
+        );
     }
 }

@@ -218,3 +218,79 @@ fn stacked_cubes_rest_on_each_other_and_head_on_cubes_conserve_momentum() {
     assert!(pair[1].position_m[0] - pair[0].position_m[0] >= 1. - 1e-3);
     assert!(ledger.dissipated_j > 0.9, "{}", ledger.dissipated_j);
 }
+
+#[test]
+fn box_obstacle_stops_falling_debris_and_impact_crumbling_conserves_mass_and_momentum() {
+    let gravity = [0., -9.81, 0.];
+    let pedestal = DebrisBoxObstacle {
+        min_m: [-1.0, 0.0, -1.0],
+        max_m: [1.0, 1.0, 1.0],
+        friction: 0.6,
+    };
+    let mut bodies = vec![DebrisBody::new(cube([0., 2.2, 0.], [0.2, 0., 0.], [0.; 3])).unwrap()];
+    let mut ledger = DebrisStepReport::default();
+    let initial = bodies[0].kinetic_j() + 9.81 * 2.2;
+    for _ in 0..800 {
+        step_debris_with_obstacles(
+            &mut bodies,
+            1e-3,
+            gravity,
+            &ground(0.6),
+            &[pedestal],
+            &mut ledger,
+        )
+        .unwrap();
+        let total = audit(&ledger);
+        assert!(
+            (total - initial).abs() < 1e-9 * initial,
+            "ledger drift {}",
+            total - initial
+        );
+    }
+    // Cube of height 1 rests on top of pedestal y_max = 1.0 -> centre at y ≈ 1.5.
+    assert!(
+        (bodies[0].position_m[1] - 1.5).abs() < 5e-3,
+        "y={}",
+        bodies[0].position_m[1]
+    );
+    assert!(ledger.dissipated_j > 5.0);
+
+    // Secondary comminution (crumbling) triggered by the impact energy:
+    let initial_mass = bodies[0].piece.mass_kg;
+    let initial_momentum = scale(bodies[0].velocity_m_s, initial_mass);
+    let report = crumble_debris_on_impact(
+        &mut bodies,
+        ledger.dissipated_j,
+        CrumbleSettings {
+            min_impact_energy_j: 2.0,
+            min_piece_mass_kg: 0.1,
+            density_kg_m3: 2400.0,
+            surface_energy_j_m2: 1.0,
+            dust_energy_fraction: 0.25,
+            grain_radius_m: 1e-4,
+            max_dust_mass_fraction: 0.1,
+        },
+    )
+    .unwrap();
+    assert_eq!(report.crumbled_pieces, 1);
+    assert_eq!(bodies.len(), 2);
+    assert!(report.dust_mass_kg > 0.0);
+    assert!(!report.particles.is_empty());
+
+    let child_mass: f64 = bodies.iter().map(|b| b.piece.mass_kg).sum();
+    let particle_mass: f64 = report
+        .particles
+        .iter()
+        .map(crate::suspension::Particle::mass_kg)
+        .sum();
+    assert!((child_mass + particle_mass - initial_mass).abs() < 1e-9);
+
+    let mut post_momentum = [0.0; 3];
+    for b in &bodies {
+        post_momentum = add(post_momentum, scale(b.velocity_m_s, b.piece.mass_kg));
+    }
+    for p in &report.particles {
+        post_momentum = add(post_momentum, scale(p.velocity_m_s(), p.mass_kg()));
+    }
+    assert!(norm(sub(post_momentum, initial_momentum)) < 1e-9);
+}

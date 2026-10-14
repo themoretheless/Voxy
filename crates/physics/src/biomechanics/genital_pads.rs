@@ -98,4 +98,173 @@ impl LabiaMajoraGeometry {
         };
         Ok([build(-1.)?, build(1.)?])
     }
+
+    /// Construct dynamic nonlinear FEM bodies for left and right labia majora pads
+    /// with basal disk nodes configured as prescribed supports.
+    pub fn build_dynamic(
+        self,
+        materials: [Material; 2],
+        density_kg_m3: [f64; 2],
+    ) -> Result<([super::InertialBody; 2], [Vec<usize>; 2], [usize; 2]), &'static str> {
+        if density_kg_m3.iter().any(|d| !d.is_finite() || *d <= 0.) {
+            return Err("invalid labia majora density");
+        }
+        let [left_pad, right_pad] = [
+            self.build(materials[0].clone())?[0].clone(),
+            self.build(materials[1].clone())?[1].clone(),
+        ];
+        let make_dynamic =
+            |pad: LabialPad,
+             density: f64|
+             -> Result<(super::InertialBody, Vec<usize>, usize), &'static str> {
+                let densities = vec![density; pad.body.elements.len()];
+                let velocities = vec![[0.; 3]; pad.body.positions.len()];
+                let dynamic =
+                    super::InertialBody::new_with_fixed_supports(pad.body, &densities, velocities)?;
+                Ok((dynamic, pad.base_nodes, pad.apex_node))
+            };
+        let (left_dyn, left_base, left_apex) = make_dynamic(left_pad, density_kg_m3[0])?;
+        let (right_dyn, right_base, right_apex) = make_dynamic(right_pad, density_kg_m3[1])?;
+        Ok((
+            [left_dyn, right_dyn],
+            [left_base, right_base],
+            [left_apex, right_apex],
+        ))
+    }
+
+    /// Assemble left and right labia majora pads into a single inertial owner
+    /// with non-penetrating inter-labial surface contact.
+    pub fn build_contact_assembly(
+        self,
+        materials: [Material; 2],
+        density_kg_m3: [f64; 2],
+        minimum_distance_m: f64,
+        activation_gap_m: f64,
+        pair_stiffness_n_m: f64,
+    ) -> Result<(super::InertialAssembly, [Vec<usize>; 2], [usize; 2]), &'static str> {
+        let (parts, bases, apices) = self.build_dynamic(materials, density_kg_m3)?;
+        let mut assembly = super::InertialBody::assemble_tissues(&parts)?;
+        let faces = assembly.body.body().surface();
+        assembly
+            .body
+            .set_surface_contacts(vec![super::TissueSurfaceContact {
+                faces,
+                minimum_distance_m,
+                activation_gap_m,
+                pair_stiffness_n_m,
+            }])?;
+        Ok((assembly, bases, apices))
+    }
+
+    /// Build a coupled labia majora nonlinear FEM + inter-labial contact simulation
+    /// driven by 3D pelvis gait kinematics (walk, jog, run).
+    pub fn build_gait_contact_simulation(
+        self,
+        materials: [Material; 2],
+        density_kg_m3: [f64; 2],
+        minimum_distance_m: f64,
+        activation_gap_m: f64,
+        pair_stiffness_n_m: f64,
+    ) -> Result<LabiaGaitSimulation, &'static str> {
+        let (mut assembly, bases, local_apices) = self.build_contact_assembly(
+            materials,
+            density_kg_m3,
+            minimum_distance_m,
+            activation_gap_m,
+            pair_stiffness_n_m,
+        )?;
+        assembly.body.set_uniform_acceleration([0., -9.81, 0.])?;
+        let mut support_nodes = Vec::new();
+        for (side, locals) in bases.iter().enumerate() {
+            for &local in locals {
+                let node = assembly.node_ranges[side].start + local;
+                let rest_pos = assembly.body.body().positions()[node];
+                support_nodes.push((node, rest_pos));
+            }
+        }
+        let apex_nodes = [
+            assembly.node_ranges[0].start + local_apices[0],
+            assembly.node_ranges[1].start + local_apices[1],
+        ];
+        let min_contact_gap_m = assembly
+            .body
+            .body()
+            .minimum_surface_contact_distance()?
+            .unwrap_or(f64::INFINITY);
+        Ok(LabiaGaitSimulation {
+            assembly,
+            support_nodes,
+            apex_nodes,
+            time_s: 0.,
+            min_contact_gap_m,
+        })
+    }
+}
+
+/// Coupled left/right labia majora FEM + inter-labial contact simulation under pelvis gait motion.
+#[derive(Clone, Debug)]
+pub struct LabiaGaitSimulation {
+    pub assembly: super::InertialAssembly,
+    support_nodes: Vec<(usize, super::Vec3)>,
+    apex_nodes: [usize; 2],
+    time_s: f64,
+    min_contact_gap_m: f64,
+}
+
+impl LabiaGaitSimulation {
+    #[must_use]
+    pub fn time_s(&self) -> f64 {
+        self.time_s
+    }
+
+    #[must_use]
+    pub fn min_contact_gap_m(&self) -> f64 {
+        self.min_contact_gap_m
+    }
+
+    #[must_use]
+    pub fn apex_nodes(&self) -> [usize; 2] {
+        self.apex_nodes
+    }
+
+    /// Advances both labia majora pads by `dt_s` under 3D harmonic pelvis gait motion.
+    pub fn step_gait(
+        &mut self,
+        kinematics: &super::PelvisGaitKinematics,
+        dt_s: f64,
+        tolerance_j: f64,
+    ) -> Result<super::DrivenSupportStep, &'static str> {
+        kinematics.validate()?;
+        if !dt_s.is_finite() || dt_s <= 0. {
+            return Err("invalid labia gait timestep");
+        }
+        let next_time = self.time_s + dt_s;
+        let offset = kinematics.displacement_at(next_time)?;
+        let targets: Vec<_> = self
+            .support_nodes
+            .iter()
+            .map(|&(node, base)| super::SupportTarget {
+                node,
+                position_m: [
+                    base[0] + offset[0],
+                    base[1] + offset[1],
+                    base[2] + offset[2],
+                ],
+            })
+            .collect();
+        let report = self
+            .assembly
+            .body
+            .step_with_support_targets(&targets, dt_s, tolerance_j)?;
+        if let Some(gap) = self
+            .assembly
+            .body
+            .body()
+            .minimum_surface_contact_distance()?
+        {
+            self.min_contact_gap_m = self.min_contact_gap_m.min(gap);
+        }
+        self.time_s = next_time;
+        Ok(report)
+    }
 }

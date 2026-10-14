@@ -471,4 +471,71 @@ impl ParticipatingMedium {
             cell,
         }))
     }
+
+    /// Atomically transfers airborne spray droplets from `liquid` whose volume-equivalent
+    /// sphere radius is `<= max_droplet_radius_m` and whose position lies inside the
+    /// medium's gas grid into `species` (e.g. `MediumSpecies::Mist`).
+    /// When `liquid.droplet_population()` is configured, only particles marked as airborne
+    /// droplets are eligible; otherwise all particles within the radius cutoff are eligible.
+    /// # Errors
+    /// Invalid species index, non-positive/non-finite radius cutoff, or liquid exchange error.
+    pub fn absorb_spray_droplets(
+        &mut self,
+        species: usize,
+        liquid: &mut crate::liquid::Liquid,
+        max_droplet_radius_m: f64,
+    ) -> Result<SprayMistAbsorptionReport, Error> {
+        if species >= self.species.len()
+            || !max_droplet_radius_m.is_finite()
+            || max_droplet_radius_m <= 0.
+        {
+            return Err(Error::InvalidConfig);
+        }
+        let radii = liquid.equivalent_sphere_radii()?;
+        let flags = liquid.droplet_population();
+        let mut remove = Vec::new();
+        let mut deposits = Vec::new();
+        for (index, (particle, &radius)) in liquid.particles().iter().zip(&radii).enumerate() {
+            let is_droplet = flags.is_none_or(|f| f[index]);
+            if !is_droplet || radius > max_droplet_radius_m {
+                continue;
+            }
+            if let Some(cell) = self.gas.cell_index(particle.position)? {
+                remove.push(index);
+                deposits.push((cell, particle.mass));
+            }
+        }
+        if remove.is_empty() {
+            let exchange = liquid.exchange_particles(&[], &[])?;
+            return Ok(SprayMistAbsorptionReport {
+                absorbed_count: 0,
+                absorbed_mass_kg: 0.,
+                exchange,
+            });
+        }
+        let mut candidate_medium = self.clone();
+        let mut absorbed_mass_kg = 0.;
+        for &(cell, mass) in &deposits {
+            candidate_medium.mass[species][cell] += mass;
+            absorbed_mass_kg += mass;
+        }
+        if !absorbed_mass_kg.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        let exchange = liquid.exchange_particles(&remove, &[])?;
+        *self = candidate_medium;
+        Ok(SprayMistAbsorptionReport {
+            absorbed_count: remove.len(),
+            absorbed_mass_kg,
+            exchange,
+        })
+    }
+}
+
+/// Conservation report for [`ParticipatingMedium::absorb_spray_droplets`].
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SprayMistAbsorptionReport {
+    pub absorbed_count: usize,
+    pub absorbed_mass_kg: f64,
+    pub exchange: crate::liquid::ParticleExchange,
 }
