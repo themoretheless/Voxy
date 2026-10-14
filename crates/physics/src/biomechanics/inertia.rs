@@ -521,6 +521,39 @@ impl InertialBody {
             .advance_supports(dt, energy_tolerance_j, None)?
             .energy_defect_j)
     }
+
+    /// Applies discrete velocity impulses `(node, delta_v_m_s)` to unconstrained nodes
+    /// and returns the exact compensated kinetic energy change in joules.
+    ///
+    /// # Errors
+    /// Rejects out-of-range or pinned nodes, nonfinite velocity increments, or diagnostic overflow,
+    /// leaving all nodal velocities unchanged on failure.
+    pub fn apply_free_nodal_velocity_impulses(
+        &mut self,
+        impulses: &[(usize, Vec3)],
+    ) -> Result<f64, &'static str> {
+        let mut next_velocities = self.velocities.clone();
+        for &(node, dv) in impulses {
+            if node >= next_velocities.len()
+                || self.body.pinned[node]
+                || dv.iter().any(|v| !v.is_finite())
+            {
+                return Err("invalid nodal velocity impulse");
+            }
+            for axis in 0..3 {
+                next_velocities[node][axis] += dv[axis];
+                if !next_velocities[node][axis].is_finite() {
+                    return Err("nodal velocity impulse overflow");
+                }
+            }
+        }
+        let delta_kinetic_j = self.free_kinetic_change(&next_velocities);
+        if !delta_kinetic_j.is_finite() {
+            return Err("nodal impulse kinetic energy overflow");
+        }
+        self.velocities = next_velocities;
+        Ok(delta_kinetic_j)
+    }
 }
 
 /// Work balance of a held-activation rate-dependent muscle step.

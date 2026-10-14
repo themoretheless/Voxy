@@ -294,3 +294,100 @@ fn box_obstacle_stops_falling_debris_and_impact_crumbling_conserves_mass_and_mom
     }
     assert!(norm(sub(post_momentum, initial_momentum)) < 1e-9);
 }
+
+#[test]
+fn multi_fragment_crumbling_and_hull_abrasion_conserve_mass_and_momentum() {
+    let mut bodies = vec![DebrisBody::new(cube([0., 1.0, 0.], [0.8, -0.3, 0.4], [0.; 3])).unwrap()];
+    let initial_mass = bodies[0].piece.mass_kg;
+    let initial_momentum = scale(bodies[0].velocity_m_s, initial_mass);
+
+    // High-energy impact triggers 8-fragment Rosin-Rammler comminution + airborne dust
+    let crumble = crumble_debris_multi_fragment(
+        &mut bodies,
+        12.0,
+        CrumbleSettings {
+            min_impact_energy_j: 2.0,
+            min_piece_mass_kg: 0.05,
+            density_kg_m3: 2400.0,
+            surface_energy_j_m2: 1.0,
+            dust_energy_fraction: 0.2,
+            grain_radius_m: 1e-4,
+            max_dust_mass_fraction: 0.1,
+        },
+    )
+    .unwrap();
+    assert_eq!(crumble.crumbled_pieces, 1);
+    assert_eq!(bodies.len(), 8);
+    assert!(crumble.dust_mass_kg > 0.0);
+
+    let frag_mass: f64 = bodies.iter().map(|b| b.piece.mass_kg).sum();
+    let dust_mass: f64 = crumble
+        .particles
+        .iter()
+        .map(crate::suspension::Particle::mass_kg)
+        .sum();
+    assert!((frag_mass + dust_mass - initial_mass).abs() < 1e-12);
+
+    let mut total_momentum = [0.0; 3];
+    for b in &bodies {
+        total_momentum = add(total_momentum, scale(b.velocity_m_s, b.piece.mass_kg));
+    }
+    for p in &crumble.particles {
+        total_momentum = add(total_momentum, scale(p.velocity_m_s(), p.mass_kg()));
+    }
+    assert!(norm(sub(total_momentum, initial_momentum)) < 1e-12);
+
+    // Verify non-uniform Rosin-Rammler fragment mass distribution
+    let min_m = bodies
+        .iter()
+        .map(|b| b.piece.mass_kg)
+        .fold(f64::INFINITY, f64::min);
+    let max_m = bodies
+        .iter()
+        .map(|b| b.piece.mass_kg)
+        .fold(f64::NEG_INFINITY, f64::max);
+    assert!(max_m > min_m * 1.15);
+
+    // Geometric Archard hull abrasion on the first fragment
+    let mut single = vec![bodies[0].clone()];
+    let before_mass = single[0].piece.mass_kg;
+    let before_min_y = single[0]
+        .piece
+        .hull
+        .iter()
+        .map(|p| p[1])
+        .fold(f64::INFINITY, f64::min);
+    let abrasion = abrade_debris_hull(
+        &mut single,
+        &ground(0.6),
+        500.0,
+        0.4,
+        DebrisAbrasionSettings {
+            hardness_pa: 5e7,
+            archard_coefficient: 1e-2,
+            density_kg_m3: 2400.0,
+            grain_radius_m: 1e-4,
+            max_mass_fraction_per_step: 0.25,
+        },
+    )
+    .unwrap();
+    assert_eq!(abrasion.abraded_bodies, 1);
+    assert!(abrasion.removed_mass_kg > 0.0);
+    assert!(abrasion.max_recession_depth_m > 0.0);
+    let after_min_y = single[0]
+        .piece
+        .hull
+        .iter()
+        .map(|p| p[1])
+        .fold(f64::INFINITY, f64::min);
+    assert!(
+        after_min_y > before_min_y,
+        "bottom hull plane must recede upward under Archard wear"
+    );
+    let abraded_particle_mass: f64 = abrasion
+        .particles
+        .iter()
+        .map(crate::suspension::Particle::mass_kg)
+        .sum();
+    assert!((single[0].piece.mass_kg + abraded_particle_mass - before_mass).abs() < 1e-12);
+}

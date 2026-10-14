@@ -259,6 +259,40 @@ impl QuadraticBody {
         }
         Ok(mass)
     }
+    /// Computes consistent nodal load vectors (N) induced by per-cell isotropic
+    /// thermo-hygroscopic linear expansion strain $\varepsilon_0 = \alpha_T \Delta T + \beta_w \Delta w$.
+    /// Applying these loads in [`Self::equilibrate`] drives exact free volumetric expansion
+    /// $\varepsilon_{xx} = \varepsilon_{yy} = \varepsilon_{zz} = \varepsilon_0$ or thermal/moisture
+    /// restraint stresses under boundary constraints.
+    ///
+    /// # Errors
+    /// Rejects mismatched cell slice length, nonfinite strains, or force assembly overflow.
+    pub fn thermo_hygroscopic_nodal_loads(
+        &self,
+        cell_linear_expansion: &[f64],
+    ) -> Result<Vec<Vec3>, &'static str> {
+        if cell_linear_expansion.len() != self.cells.len()
+            || cell_linear_expansion.iter().any(|e| !e.is_finite())
+        {
+            return Err("invalid thermo-hygroscopic cell expansion strain");
+        }
+        let mut loads = vec![[0.; 3]; self.rest.len()];
+        for (cell, &eps0) in self.cells.iter().zip(cell_linear_expansion) {
+            let hydrostatic_pa = 3.0 * cell.material.bulk_pa() * eps0;
+            let weight = cell.volume / 4.0;
+            for g in &cell.gradients {
+                for (a, &node) in cell.nodes.iter().enumerate() {
+                    for axis in 0..3 {
+                        loads[node][axis] += weight * hydrostatic_pa * g[a][axis];
+                    }
+                }
+            }
+        }
+        if loads.iter().flatten().any(|f| !f.is_finite()) {
+            return Err("thermo-hygroscopic nodal load overflow");
+        }
+        Ok(loads)
+    }
     /// Four quadrature responses per cell, evaluated without committing history.
     /// # Errors
     /// Invalid position count, nonfinite geometry or inverted integration points.

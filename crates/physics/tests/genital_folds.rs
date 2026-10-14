@@ -352,3 +352,75 @@ fn labia_minora_gait_and_surface_film_smearing_conserve_mass_and_invert_no_eleme
         assert!((film.total_mass() - mass_before).abs() < 1e-14);
     }
 }
+
+#[test]
+fn tube_insertion_parts_labia_minora_and_majora_laterally_without_element_inversion() {
+    use physics::biomechanics::{LabiaMajoraGeometry, Material};
+
+    let mut minora_sim = labia().build_gait_simulation(material()).unwrap();
+    let initial_minora_sep = minora_sim.mean_crest_separation_m();
+
+    let tube = LabiaTubeInsertion {
+        radius_m: 0.0035,
+        length_m: 0.028,
+        axis_xy_m: [0.0, 0.0],
+        start_tip_z_m: 0.010,
+        max_depth_m: 0.014,
+        frequency_hz: 4.0,
+    };
+
+    let mut peak_minora_sep = initial_minora_sep;
+    for _ in 0..10 {
+        let reports = minora_sim
+            .step_tube_insertion(
+                &tube,
+                0.002,
+                [0.0, 0.0, -9.81],
+                6,
+                0.0015,
+                2500.0,
+                0.0012,
+                SolverConfig::default(),
+            )
+            .unwrap();
+        for r in reports {
+            assert!(r.min_area_ratio > 0.85);
+            assert!(r.energy.is_finite());
+        }
+        peak_minora_sep = peak_minora_sep.max(minora_sim.mean_crest_separation_m());
+    }
+    assert!(
+        peak_minora_sep > initial_minora_sep + 1e-6,
+        "tube insertion must part labia minora crests laterally: initial={initial_minora_sep} peak={peak_minora_sep}"
+    );
+
+    let majora_geom = LabiaMajoraGeometry {
+        length_m: 0.05,
+        width_m: 0.018,
+        height_m: 0.008,
+        separation_m: 0.022,
+        sectors: 8,
+        latitude_rings: 2,
+    };
+    let mat = Material::from_young_poisson(3000., 0.45).unwrap();
+    let mut majora_sim = majora_geom
+        .build_gait_contact_simulation(
+            [mat.clone(), mat],
+            [1000.; 2],
+            0.0001,
+            0.0015,
+            1.0,
+        )
+        .unwrap();
+    let initial_majora_sep = majora_sim.apex_separation_m();
+    for _ in 0..4 {
+        majora_sim
+            .step_tube_insertion(0.85, -0.04, 0.025, 5e-5, 1e-4)
+            .unwrap();
+    }
+    assert!(
+        majora_sim.apex_separation_m() > initial_majora_sep,
+        "tube insertion must part labia majora apices laterally"
+    );
+}
+

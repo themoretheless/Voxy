@@ -48,4 +48,5 @@ path = "examples/pinball/main.rs"
 test = true
 
 [dev-dependencies]
+bytemuck = { version = "1.25.2", features = ["derive"] }
 image = { version = "0.25.10", default-features = false, features = ["png"] }

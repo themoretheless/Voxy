@@ -77,9 +77,9 @@ pub use ragdoll::{
 mod state_machine;
 pub use blend_space2d::{BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D};
 pub use gait::{
-    FlatGround, GaitController, GaitFeet, GaitFrame, GaitRegime, GaitSettings, GaitSpace,
-    GroundProbe, StrideScaleReport, ankle_positions, measure_authored_stride_speed,
-    scale_clip_stride_to_speed,
+    CoupledPelvisThighFrame, FlatGround, GaitController, GaitFeet, GaitFrame, GaitRegime,
+    GaitSettings, GaitSpace, GroundProbe, StrideScaleReport, ThighCapsuleState, ankle_positions,
+    extract_pelvis_thigh_frame, measure_authored_stride_speed, scale_clip_stride_to_speed,
 };
 pub use state_machine::{
     Condition, FadeCurve, MachineStatus, PhaseSync, StateId, StateMachine, StateMachineDesc,

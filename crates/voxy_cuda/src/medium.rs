@@ -192,6 +192,114 @@ fn validate(words: &[u32], max_bytes: usize) -> Result<(), CudaError> {
     Ok(())
 }
 
+/// Executes the packed `medium_substep` word ABI on the host CPU to verify exact
+/// ping-pong parity and mass conservation (remaining + settled) against the CUDA/WGSL kernel layout.
+/// # Errors
+/// Rejects malformed word buffers.
+pub fn simulate_medium_job_cpu(words: &[u32]) -> Result<Vec<u32>, CudaError> {
+    validate(words, usize::MAX)?;
+    let mut data = words.to_vec();
+    let cells = data[0] as usize;
+    let shape = [data[1] as usize, data[2] as usize, data[3] as usize];
+    let substeps = data[4] as usize;
+    let h = f32::from_bits(data[5]);
+    let spacing = [
+        f32::from_bits(data[6]),
+        f32::from_bits(data[7]),
+        f32::from_bits(data[8]),
+    ];
+    let up = [
+        f32::from_bits(data[9]),
+        f32::from_bits(data[10]),
+        f32::from_bits(data[11]),
+    ];
+    let settling = f32::from_bits(data[12]);
+    let diffusivity = f32::from_bits(data[13]);
+    let volume = f32::from_bits(data[14]);
+    let vel_base = MEDIUM_HEADER_WORDS;
+    let mass_base = vel_base + cells * 3;
+    let settled_base = mass_base + cells * 2;
+
+    let stride_of = |axis: usize| -> usize {
+        match axis {
+            0 => 1,
+            1 => shape[0],
+            _ => shape[0] * shape[1],
+        }
+    };
+
+    for step in 0..substeps {
+        let parity = step % 2;
+        data[15] = parity as u32;
+        let src_offset = mass_base + parity * cells;
+        let dst_offset = mass_base + (1 - parity) * cells;
+
+        let face_flux = |d: &[u32], lower: usize, upper: usize, axis: usize| -> f32 {
+            let sp = spacing[axis];
+            let face_area = volume / sp;
+            let v_low = f32::from_bits(d[vel_base + lower * 3 + axis]);
+            let v_up = f32::from_bits(d[vel_base + upper * 3 + axis]);
+            let m_low = f32::from_bits(d[src_offset + lower]);
+            let m_up = f32::from_bits(d[src_offset + upper]);
+            let face_v = 0.5 * (v_low + v_up) - settling * up[axis];
+            let mut flux = if face_v >= 0.0 {
+                face_v * m_low / volume
+            } else {
+                face_v * m_up / volume
+            };
+            flux *= face_area * h;
+            if diffusivity > 0.0 {
+                let diff = diffusivity * (m_up - m_low) / volume / sp * face_area * h;
+                flux -= diff;
+            }
+            flux
+        };
+
+        for cell in 0..cells {
+            let ijk = [
+                cell % shape[0],
+                (cell / shape[0]) % shape[1],
+                cell / (shape[0] * shape[1]),
+            ];
+            let mut next = f32::from_bits(data[src_offset + cell]);
+            let mut out_settled = 0.0f32;
+            for axis in 0..3 {
+                let n = shape[axis];
+                if n < 2 && settling == 0.0 {
+                    continue;
+                }
+                let index = ijk[axis];
+                let stride = stride_of(axis);
+                if index + 1 < n {
+                    next -= face_flux(&data, cell, cell + stride, axis);
+                }
+                if index > 0 {
+                    next += face_flux(&data, cell - stride, cell, axis);
+                }
+                if settling > 0.0 && up[axis] != 0.0 {
+                    let outflow_face = if up[axis] > 0.0 {
+                        index == 0
+                    } else {
+                        index + 1 == n
+                    };
+                    if outflow_face {
+                        let face_area = volume / spacing[axis];
+                        let m_cell = f32::from_bits(data[src_offset + cell]);
+                        let o = settling * up[axis].abs() * m_cell / volume * face_area * h;
+                        next -= o;
+                        out_settled += o;
+                    }
+                }
+            }
+            data[dst_offset + cell] = next.max(0.0).to_bits();
+            let prev_settled = f32::from_bits(data[settled_base + cell]);
+            data[settled_base + cell] = (prev_settled + out_settled).to_bits();
+        }
+    }
+    data[15] = (substeps % 2) as u32;
+    Ok(data)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -254,5 +362,34 @@ mod tests {
         assert!(
             pack_medium_job([0, 1, 1], [0.5; 3], [0., 1., 0.], 4, 0.2, 0., 0., &[], &[]).is_err()
         );
+    }
+
+    #[test]
+    fn cpu_reference_medium_job_conserves_remaining_plus_settled_mass() {
+        let shape = [2usize, 3, 2];
+        let cells = 12;
+        let velocity = vec![[0.0f32, 0.0, 0.0]; cells];
+        let mut mass = vec![0.0f32; cells];
+        mass[5] = 2.0;
+        mass[9] = 1.5;
+        let initial_total: f32 = mass.iter().sum();
+
+        let words = pack_medium_job(
+            shape,
+            [1.0; 3],
+            [0.0, 1.0, 0.0],
+            5,
+            0.05,
+            0.25,
+            0.02,
+            &velocity,
+            &mass,
+        )
+        .unwrap();
+        let finished = simulate_medium_job_cpu(&words).unwrap();
+        let (final_mass, settled) = unpack_medium_result(&finished).unwrap();
+        let remaining: f32 = final_mass.iter().sum();
+        assert!(settled > 0.0);
+        assert!(((remaining + settled) - initial_total).abs() < 1e-5);
     }
 }

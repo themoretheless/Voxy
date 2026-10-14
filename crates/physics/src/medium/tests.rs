@@ -610,3 +610,67 @@ fn multi_liquid_jets_splash_into_mist_wet_smear_and_dry_conserving_mass() {
     // High-viscosity glycerin (1.412 Pa*s) requires more lubricated shear work than water (0.001 Pa*s).
     assert!(smear_works[1] > smear_works[0] * 100.0, "{smear_works:?}");
 }
+
+#[test]
+fn mixture_density_fog_condensation_and_wet_scavenging_conserve_mass() {
+    let h = 0.5;
+    let mut medium = ParticipatingMedium::new(
+        gas([2, 2, 1], h, [0.0; 3]),
+        vec![
+            species(MediumSpecies::Smoke),
+            species(MediumSpecies::Fog),
+            MediumSpeciesProperties {
+                settling_velocity_m_s: 0.4,
+                ..species(MediumSpecies::Dust)
+            },
+            MediumSpeciesProperties::water_mist(2e-5, 2.0, 1000.0),
+        ],
+    )
+    .unwrap();
+
+    // Deposit Smoke (0), Dust (2), and Mist (3) in cell 0 ([0.25, 0.25, 0.25])
+    let p0 = [0.25, 0.25, 0.25];
+    medium.deposit(0, p0, 0.02).unwrap();
+    medium.deposit(2, p0, 0.15).unwrap();
+    medium.deposit(3, p0, 0.10).unwrap();
+
+    let densities = medium.mixture_density_kg_m3();
+    assert!(densities[0] > densities[1]);
+
+    // Richardson-Zaki hindered settling reduces settling velocity in dense dust cell 0 relative to dilute cell 1
+    let hindered = medium
+        .hindered_settling_velocities_m_s(2, 2400.0, 4.65)
+        .unwrap();
+    assert!(hindered[0] < hindered[1]);
+
+    // Vapor-to-fog condensation in cool supersaturated gas
+    let cond = medium
+        .condense_or_evaporate_fog(
+            0.2,
+            FogCondensationConfig {
+                fog_species: 1,
+                saturation_density_at_ref_kg_m3: 0.5,
+                reference_temperature_k: 300.0,
+                clausius_clapeyron_exponent: 12.0,
+                relaxation_rate_s_inv: 2.0,
+                min_gas_fraction_floor: 0.2,
+            },
+        )
+        .unwrap();
+    assert!(cond.net_condensed_fog_mass_kg > 0.0);
+    assert!(medium.total_mass_kg(1) > 0.0);
+    assert!(
+        (cond.total_gas_plus_fog_before_kg - cond.total_gas_plus_fog_after_kg).abs() < 1e-12
+    );
+
+    // Wet scavenging of Smoke (0) and Dust (2) by water Mist (3)
+    let total_suspended_before: f64 = (0..4).map(|s| medium.total_mass_kg(s)).sum();
+    let scavenge = medium
+        .scavenge_dust_and_smoke_by_mist(3, &[0, 2], 1.5, 0.25)
+        .unwrap();
+    assert!(scavenge.total_scavenged_mass_kg > 0.0);
+    assert!(scavenge.scavenged_mass_per_species_kg[0] > 0.0);
+    assert!(scavenge.scavenged_mass_per_species_kg[2] > 0.0);
+    let total_suspended_after: f64 = (0..4).map(|s| medium.total_mass_kg(s)).sum();
+    assert!((total_suspended_before - total_suspended_after).abs() < 1e-12);
+}

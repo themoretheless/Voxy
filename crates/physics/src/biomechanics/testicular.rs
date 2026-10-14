@@ -308,6 +308,208 @@ impl TesticularGeometry {
             min_contact_gap_m,
         })
     }
+
+    /// Anatomically asymmetric reference geometry: left testis hangs ~8 mm lower
+    /// and ~3 mm anterior relative to the right testis so pendular trajectories
+    /// slide past one another under medial thigh compression during gait.
+    #[must_use]
+    pub const fn anatomical_asymmetric() -> Self {
+        Self {
+            centers_m: [[-0.016, -0.008, 0.003], [0.016, 0.0, 0.0]],
+            radii_m: [[0.013, 0.021, 0.015]; 2],
+            sectors: 8,
+            rings: 3,
+        }
+    }
+}
+
+/// Moving medial thigh capsule collider for soft-tissue gait interaction.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ThighCapsuleCollider {
+    pub proximal_m: Vec3,
+    pub distal_m: Vec3,
+    pub radius_m: f64,
+    pub linear_velocity_m_s: Vec3,
+    pub contact_stiffness_n_m: f64,
+    pub activation_gap_m: f64,
+    pub lubricated_friction: f64,
+}
+
+impl ThighCapsuleCollider {
+    pub fn validate(&self) -> Result<(), &'static str> {
+        if self.proximal_m.iter().any(|x| !x.is_finite())
+            || self.distal_m.iter().any(|x| !x.is_finite())
+            || self.linear_velocity_m_s.iter().any(|x| !x.is_finite())
+            || !self.radius_m.is_finite()
+            || self.radius_m <= 0.
+            || !self.contact_stiffness_n_m.is_finite()
+            || self.contact_stiffness_n_m < 0.
+            || !self.activation_gap_m.is_finite()
+            || self.activation_gap_m <= 0.
+            || !self.lubricated_friction.is_finite()
+            || !(0.0..=1.0).contains(&self.lubricated_friction)
+        {
+            return Err("invalid thigh capsule collider");
+        }
+        Ok(())
+    }
+
+    /// Returns `(closest_axis_point_m, outward_unit_normal, signed_surface_gap_m)`.
+    pub fn closest_point_and_gap(&self, point_m: Vec3) -> Result<(Vec3, Vec3, f64), &'static str> {
+        self.validate()?;
+        if point_m.iter().any(|x| !x.is_finite()) {
+            return Err("non-finite query point for thigh capsule");
+        }
+        let seg = [
+            self.distal_m[0] - self.proximal_m[0],
+            self.distal_m[1] - self.proximal_m[1],
+            self.distal_m[2] - self.proximal_m[2],
+        ];
+        let seg_len_sq = super::dot(seg, seg);
+        let t = if seg_len_sq > 1e-16 {
+            let rel = [
+                point_m[0] - self.proximal_m[0],
+                point_m[1] - self.proximal_m[1],
+                point_m[2] - self.proximal_m[2],
+            ];
+            (super::dot(rel, seg) / seg_len_sq).clamp(0.0, 1.0)
+        } else {
+            0.0
+        };
+        let axis_pt = [
+            self.proximal_m[0] + t * seg[0],
+            self.proximal_m[1] + t * seg[1],
+            self.proximal_m[2] + t * seg[2],
+        ];
+        let diff = [
+            point_m[0] - axis_pt[0],
+            point_m[1] - axis_pt[1],
+            point_m[2] - axis_pt[2],
+        ];
+        let dist = super::dot(diff, diff).sqrt();
+        let normal = if dist > 1e-12 {
+            [diff[0] / dist, diff[1] / dist, diff[2] / dist]
+        } else {
+            [1.0, 0.0, 0.0]
+        };
+        Ok((axis_pt, normal, dist - self.radius_m))
+    }
+}
+
+/// Thermomechanical cremasteric and dartos reflex configuration.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CremasterReflexConfig {
+    pub reference_temperature_c: f64,
+    pub ambient_temperature_c: f64,
+    pub cold_threshold_span_c: f64,
+    pub max_elevation_m: f64,
+    pub exertion_gain: f64,
+}
+
+impl CremasterReflexConfig {
+    #[must_use]
+    pub const fn thermoneutral() -> Self {
+        Self {
+            reference_temperature_c: 34.0,
+            ambient_temperature_c: 34.0,
+            cold_threshold_span_c: 12.0,
+            max_elevation_m: 0.012,
+            exertion_gain: 0.35,
+        }
+    }
+
+    pub fn validate(&self) -> Result<(), &'static str> {
+        if !self.reference_temperature_c.is_finite()
+            || !self.ambient_temperature_c.is_finite()
+            || !self.cold_threshold_span_c.is_finite()
+            || self.cold_threshold_span_c <= 0.
+            || !self.max_elevation_m.is_finite()
+            || self.max_elevation_m < 0.
+            || !self.exertion_gain.is_finite()
+            || !(0.0..=1.0).contains(&self.exertion_gain)
+        {
+            return Err("invalid cremaster reflex config");
+        }
+        Ok(())
+    }
+
+    /// Computes upward cord retraction elevation (in metres) from cold exposure and gait exertion.
+    pub fn elevation_offset_m(&self, gait_speed_norm: f64) -> Result<f64, &'static str> {
+        self.validate()?;
+        if !gait_speed_norm.is_finite() || !(0.0..=1.0).contains(&gait_speed_norm) {
+            return Err("invalid gait speed norm for cremaster reflex");
+        }
+        let cold_deficit = (self.reference_temperature_c - self.ambient_temperature_c).max(0.0);
+        let thermal_drive = (cold_deficit / self.cold_threshold_span_c).clamp(0.0, 1.0);
+        let exertion_drive = self.exertion_gain * gait_speed_norm;
+        let combined = (thermal_drive + exertion_drive * (1.0 - thermal_drive)).clamp(0.0, 1.0);
+        Ok(self.max_elevation_m * combined)
+    }
+}
+
+/// 6-DOF skeletal pelvis + dual medial thigh capsule frame driving testicular biomechanics.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CoupledSkeletalGaitFrame {
+    pub pelvis_translation_offset_m: Vec3,
+    pub pelvis_rotation_quat_xyzw: [f64; 4],
+    pub gait_speed_norm: f64,
+    pub cremaster_reflex: CremasterReflexConfig,
+    pub thigh_capsules: [ThighCapsuleCollider; 2],
+}
+
+impl CoupledSkeletalGaitFrame {
+    pub fn validate(&self) -> Result<(), &'static str> {
+        if self
+            .pelvis_translation_offset_m
+            .iter()
+            .any(|x| !x.is_finite())
+            || self
+                .pelvis_rotation_quat_xyzw
+                .iter()
+                .any(|x| !x.is_finite())
+        {
+            return Err("non-finite skeletal pelvis transform");
+        }
+        let q = self.pelvis_rotation_quat_xyzw;
+        let norm_sq = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
+        if (norm_sq - 1.0).abs() > 1e-3 {
+            return Err("unnormalized pelvis rotation quaternion");
+        }
+        self.cremaster_reflex.elevation_offset_m(self.gait_speed_norm)?;
+        self.thigh_capsules[0].validate()?;
+        self.thigh_capsules[1].validate()?;
+        Ok(())
+    }
+}
+
+/// Diagnostics returned by a coupled 6-DOF skeletal + thigh-contact gait step.
+#[derive(Clone, Copy, Debug)]
+pub struct CoupledGaitStepReport {
+    pub support_step: super::DrivenSupportStep,
+    pub thigh_contact_impulse_n_s: [Vec3; 2],
+    pub thigh_kinetic_change_j: f64,
+    pub cremaster_elevation_m: f64,
+    pub active_thigh_contact_nodes: usize,
+}
+
+fn rotate_vec3_by_quat_xyzw(q: [f64; 4], v: Vec3) -> Vec3 {
+    let norm = (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]).sqrt();
+    let [qx, qy, qz, qw] = [q[0] / norm, q[1] / norm, q[2] / norm, q[3] / norm];
+    let uv = [
+        qy * v[2] - qz * v[1],
+        qz * v[0] - qx * v[2],
+        qx * v[1] - qy * v[0],
+    ];
+    let uuv = [
+        qy * uv[2] - qz * uv[1],
+        qz * uv[0] - qx * uv[2],
+        qx * uv[1] - qy * uv[0],
+    ];
+    [
+        v[0] + 2.0 * (qw * uv[0] + uuv[0]),
+        v[1] + 2.0 * (qw * uv[1] + uuv[1]),
+        v[2] + 2.0 * (qw * uv[2] + uuv[2]),
+    ]
 }
 
 /// 3D harmonic pelvis kinematics across walk, jog, and run gait regimes.
@@ -451,6 +653,155 @@ impl TesticularGaitSimulation {
         }
         self.time_s = next_time;
         Ok(report)
+    }
+
+    /// Advances the paired suspended testicular solids under a full 6-DOF skeletal
+    /// pelvis transform, thermomechanical cremaster/dartos cord elevation, and
+    /// dynamic medial thigh capsule barrier + lubricated contact.
+    pub fn step_coupled_skeletal_frame(
+        &mut self,
+        frame: &CoupledSkeletalGaitFrame,
+        dt_s: f64,
+        tolerance_j: f64,
+    ) -> Result<CoupledGaitStepReport, &'static str> {
+        frame.validate()?;
+        if !dt_s.is_finite() || dt_s <= 0. {
+            return Err("invalid gait timestep");
+        }
+        let cremaster_elevation_m = frame
+            .cremaster_reflex
+            .elevation_offset_m(frame.gait_speed_norm)?;
+        let count = self.support_nodes.len() as f64;
+        let pivot = self
+            .support_nodes
+            .iter()
+            .fold([0.0; 3], |acc, &(_, p)| {
+                [acc[0] + p[0] / count, acc[1] + p[1] / count, acc[2] + p[2] / count]
+            });
+        let targets: Vec<_> = self
+            .support_nodes
+            .iter()
+            .map(|&(node, base)| {
+                let rel = [base[0] - pivot[0], base[1] - pivot[1], base[2] - pivot[2]];
+                let rot = rotate_vec3_by_quat_xyzw(frame.pelvis_rotation_quat_xyzw, rel);
+                super::SupportTarget {
+                    node,
+                    position_m: [
+                        pivot[0] + rot[0] + frame.pelvis_translation_offset_m[0],
+                        pivot[1]
+                            + rot[1]
+                            + frame.pelvis_translation_offset_m[1]
+                            + cremaster_elevation_m,
+                        pivot[2] + rot[2] + frame.pelvis_translation_offset_m[2],
+                    ],
+                }
+            })
+            .collect();
+
+        let support_step = self
+            .assembly
+            .body
+            .step_with_support_targets(&targets, dt_s, tolerance_j)?;
+
+        let mut velocity_deltas: Vec<(usize, Vec3)> = Vec::new();
+        let mut thigh_contact_impulse_n_s = [[0.0; 3]; 2];
+        let mut active_thigh_contact_nodes = 0usize;
+
+        {
+            let positions = self.assembly.body.body().positions();
+            let pinned = &self.assembly.body.body().pinned;
+            let velocities = self.assembly.body.velocities();
+            let masses = self.assembly.body.masses();
+
+            for (node, ((&pos, &vel), &mass)) in positions
+                .iter()
+                .zip(velocities.iter())
+                .zip(masses.iter())
+                .enumerate()
+            {
+                if pinned[node] {
+                    continue;
+                }
+                let mut node_touched = false;
+                let mut node_dv = [0.0; 3];
+                for (thigh_idx, capsule) in frame.thigh_capsules.iter().enumerate() {
+                    let (_, normal, gap_m) = capsule.closest_point_and_gap(pos)?;
+                    if gap_m < capsule.activation_gap_m {
+                        let penetration = capsule.activation_gap_m - gap_m;
+                        let normal_force_n = capsule.contact_stiffness_n_m * penetration;
+                        let rel_vel = [
+                            vel[0] - capsule.linear_velocity_m_s[0],
+                            vel[1] - capsule.linear_velocity_m_s[1],
+                            vel[2] - capsule.linear_velocity_m_s[2],
+                        ];
+                        let vn = super::dot(rel_vel, normal);
+                        let approach_damping_n = if vn < 0.0 {
+                            -vn * (mass / dt_s) * 0.5
+                        } else {
+                            0.0
+                        };
+                        let j_normal = (normal_force_n * dt_s + approach_damping_n * dt_s).max(0.0);
+                        let vt = [
+                            rel_vel[0] - vn * normal[0],
+                            rel_vel[1] - vn * normal[1],
+                            rel_vel[2] - vn * normal[2],
+                        ];
+                        let vt_mag = super::dot(vt, vt).sqrt();
+                        let j_tangent = if vt_mag > 1e-12 {
+                            let max_t = (capsule.lubricated_friction * j_normal)
+                                .min(mass * vt_mag * 0.5);
+                            [
+                                -max_t * vt[0] / vt_mag,
+                                -max_t * vt[1] / vt_mag,
+                                -max_t * vt[2] / vt_mag,
+                            ]
+                        } else {
+                            [0.0; 3]
+                        };
+                        let impulse = [
+                            j_normal * normal[0] + j_tangent[0],
+                            j_normal * normal[1] + j_tangent[1],
+                            j_normal * normal[2] + j_tangent[2],
+                        ];
+                        for axis in 0..3 {
+                            node_dv[axis] += impulse[axis] / mass;
+                            // Action-reaction: equal and opposite impulse on the thigh capsule
+                            thigh_contact_impulse_n_s[thigh_idx][axis] -= impulse[axis];
+                        }
+                        node_touched = true;
+                    }
+                }
+                if node_touched {
+                    active_thigh_contact_nodes += 1;
+                    velocity_deltas.push((node, node_dv));
+                }
+            }
+        }
+
+        let thigh_kinetic_change_j = if active_thigh_contact_nodes > 0 {
+            self.assembly
+                .body
+                .apply_free_nodal_velocity_impulses(&velocity_deltas)?
+        } else {
+            0.0
+        };
+
+        if let Some(gap) = self
+            .assembly
+            .body
+            .body()
+            .minimum_surface_contact_distance()?
+        {
+            self.min_contact_gap_m = self.min_contact_gap_m.min(gap);
+        }
+        self.time_s += dt_s;
+        Ok(CoupledGaitStepReport {
+            support_step,
+            thigh_contact_impulse_n_s,
+            thigh_kinetic_change_j,
+            cremaster_elevation_m,
+            active_thigh_contact_nodes,
+        })
     }
 }
 
@@ -1251,5 +1602,82 @@ mod testicular_tests {
             peak_kinetic[1] > peak_kinetic[0],
             "running gait must induce stronger pendular kinetic energy than walking: {peak_kinetic:?}"
         );
+    }
+
+    #[test]
+    fn coupled_skeletal_frame_applies_cremaster_elevation_and_thigh_capsule_impulses() {
+        let geometry = TesticularGeometry::anatomical_asymmetric();
+        assert!(
+            geometry.centers_m[0][1] < geometry.centers_m[1][1]
+                && geometry.centers_m[0][2] > geometry.centers_m[1][2],
+            "anatomical asymmetry places left testis slightly lower and anterior"
+        );
+        let material = Material {
+            shear_pa: 1200.,
+            bulk_pa: 120_000.,
+            fibers: vec![],
+        };
+        let mut sim = geometry
+            .build_gait_contact_simulation(
+                [material.clone(), material],
+                [1040.; 2],
+                [&[0], &[0]],
+                0.0001,
+                0.002,
+                1.0,
+            )
+            .unwrap();
+
+        let warm_reflex = CremasterReflexConfig {
+            reference_temperature_c: 34.0,
+            ambient_temperature_c: 34.0,
+            cold_threshold_span_c: 12.0,
+            max_elevation_m: 0.00015,
+            exertion_gain: 0.35,
+        };
+        let cold_reflex = CremasterReflexConfig {
+            ambient_temperature_c: 22.0,
+            ..warm_reflex
+        };
+        assert!(
+            cold_reflex.elevation_offset_m(0.8).unwrap()
+                > warm_reflex.elevation_offset_m(0.1).unwrap()
+        );
+
+        let left_thigh = ThighCapsuleCollider {
+            proximal_m: [-0.045, 0.02, 0.0],
+            distal_m: [-0.045, -0.05, 0.0],
+            radius_m: 0.015,
+            linear_velocity_m_s: [0.15, 0.0, 0.05],
+            contact_stiffness_n_m: 25.0,
+            activation_gap_m: 0.010,
+            lubricated_friction: 0.08,
+        };
+        let right_thigh = ThighCapsuleCollider {
+            proximal_m: [0.045, 0.02, 0.0],
+            distal_m: [0.045, -0.05, 0.0],
+            radius_m: 0.015,
+            linear_velocity_m_s: [-0.15, 0.0, -0.05],
+            contact_stiffness_n_m: 25.0,
+            activation_gap_m: 0.010,
+            lubricated_friction: 0.08,
+        };
+        let frame = CoupledSkeletalGaitFrame {
+            pelvis_translation_offset_m: [0.00005, -0.00005, 0.00005],
+            pelvis_rotation_quat_xyzw: [0.0, 0.0, 0.0, 1.0],
+            gait_speed_norm: 0.75,
+            cremaster_reflex: cold_reflex,
+            thigh_capsules: [left_thigh, right_thigh],
+        };
+
+        let report = sim.step_coupled_skeletal_frame(&frame, 5e-5, 1e-4).unwrap();
+        assert!(report.cremaster_elevation_m > 0.0);
+        assert!(report.active_thigh_contact_nodes > 0);
+        assert!(report.thigh_kinetic_change_j.is_finite());
+        // Left thigh pushes tissue toward +X, so reaction impulse on left thigh is -X.
+        assert!(report.thigh_contact_impulse_n_s[0][0] < 0.0);
+        // Right thigh pushes tissue toward -X, so reaction impulse on right thigh is +X.
+        assert!(report.thigh_contact_impulse_n_s[1][0] > 0.0);
+        assert!(sim.min_contact_gap_m() > 0.0001);
     }
 }
