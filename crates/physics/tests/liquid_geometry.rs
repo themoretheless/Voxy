@@ -1,8 +1,17 @@
 use physics::liquid::{
-    Config, ContactConfig, GeometryHit, Liquid, LiquidGeometry, Material, Particle,
+    Config, ContactConfig, Error, GeometryHit, GeometryPenetration, Liquid, LiquidGeometry,
+    Material, Particle,
 };
 struct Wall {
     malformed: bool,
+}
+const N: [f64; 3] = [
+    std::f64::consts::FRAC_1_SQRT_2,
+    std::f64::consts::FRAC_1_SQRT_2,
+    0.,
+];
+fn wall_gap(center: [f64; 3], radius: f64) -> f64 {
+    -(center[0] + center[1]) * N[0] - radius * 2. * N[0]
 }
 impl LiquidGeometry for Wall {
     type Error = ();
@@ -13,12 +22,8 @@ impl LiquidGeometry for Wall {
         displacement: [f64; 3],
         _: usize,
     ) -> Result<GeometryHit, ()> {
-        let n = [
-            std::f64::consts::FRAC_1_SQRT_2,
-            std::f64::consts::FRAC_1_SQRT_2,
-            0.,
-        ];
-        let gap = -(center[0] + center[1]) * n[0] - radius * 2. * n[0];
+        let n = N;
+        let gap = wall_gap(center, radius);
         let speed = (displacement[0] + displacement[1]) * n[0];
         if gap < -1e-12 {
             return Ok(GeometryHit::Overlap);
@@ -35,12 +40,77 @@ impl LiquidGeometry for Wall {
             },
         })
     }
+    fn penetration(
+        &self,
+        center: [f64; 3],
+        radius: f64,
+        _: usize,
+    ) -> Result<Option<GeometryPenetration>, ()> {
+        let gap = wall_gap(center, radius);
+        if gap >= 0. {
+            return Ok(None);
+        }
+        Ok(Some(GeometryPenetration {
+            depth: -gap,
+            normal: if self.malformed {
+                [2., 0., 0.]
+            } else {
+                N.map(|v| -v)
+            },
+        }))
+    }
+}
+#[test]
+fn oblique_overlap_is_pushed_out_along_the_geometry_normal_then_swept() {
+    let radius = Config::default().particle_radius;
+    // Centre 0.03 m past the plane along +n: the box penetrates 0.03 m plus its support.
+    let mut liquid = fluid_at([0.03 * N[0], 0.03 * N[1], 0.], [1., -1., 0.]);
+    let before = liquid.clone();
+    assert_eq!(
+        liquid.step_with_geometry(
+            0.01,
+            None,
+            &Wall { malformed: false },
+            ContactConfig::default()
+        ),
+        Err(Error::InitialOverlap)
+    );
+    assert_eq!(liquid, before);
+    let contact = ContactConfig {
+        overlap_escape: 1.,
+        ..ContactConfig::default()
+    };
+    liquid
+        .step_with_geometry(0.01, None, &Wall { malformed: false }, contact)
+        .unwrap();
+    let p = liquid.particles()[0];
+    // Freed to the plane, then advanced tangentially for the full step.
+    let gap = wall_gap(p.position, radius);
+    assert!(gap >= 0. && gap < 1e-9, "{gap}");
+    assert!((p.position[0] - p.position[1] - 0.02).abs() < 1e-12);
+    assert_eq!(p.velocity, [1., -1., 0.]);
+    // Too deep for the budget, or a malformed normal, is rejected atomically.
+    let mut deep = fluid_at([2., 2., 0.], [1., -1., 0.]);
+    let before = deep.clone();
+    assert_eq!(
+        deep.step_with_geometry(0.01, None, &Wall { malformed: false }, contact),
+        Err(Error::InitialOverlap)
+    );
+    assert_eq!(deep, before);
+    assert_eq!(
+        deep.step_with_geometry(0.01, None, &Wall { malformed: true }, contact),
+        Err(Error::InvalidCollision)
+    );
+    assert_eq!(deep, before);
 }
 fn fluid() -> Liquid {
+    fluid_at([-0.1, 0., 0.], [2., 0., 0.])
+}
+fn fluid_at(position: [f64; 3], velocity: [f64; 3]) -> Liquid {
     Liquid::new(
         vec![Particle {
-            position: [-0.1, 0., 0.],
-            velocity: [2., 0., 0.],
+            position,
+            velocity,
             mass: 1.,
             material: 0,
         }],

@@ -1478,7 +1478,7 @@ mod droplet_population;
 
 #[path = "liquid/geometry.rs"]
 mod geometry;
-pub use geometry::{GeometryHit, LiquidGeometry};
+pub use geometry::{GeometryHit, GeometryPenetration, LiquidGeometry};
 
 pub use dynamic_world::{DynamicEnvironmentReport, DynamicLiquidEnvironment};
 
