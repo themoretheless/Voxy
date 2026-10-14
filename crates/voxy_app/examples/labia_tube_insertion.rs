@@ -1,123 +1,203 @@
-//! Photorealistic 3D GPU animation and >200 FPS live window for
-//! Rounded-Tip Cylindrical Tube Penetration into the Anatomical Introitus Orifice,
-//! Labia Minora & Majora Parting, LuGre Frictional Cuff Invagination/Eversion,
-//! and 3D Viscous Lubricant Meniscus & SurfaceFilm Smearing.
-use glam::Vec3;
-use physics::biomechanics::{LabiaMajoraGeometry, Material};
-use physics::friction;
-use physics::skin::{
-    LabiaMinoraGeometry, LabiaTubeInsertion, Layer, OrificeDilationKernel, Relaxation,
-    SkinMaterial, SolverConfig,
-};
-use physics::surface_film::{BridgeConfig, Material as FilmMaterial, SmearContact, SurfaceFilm};
+//▫~•◦------------------------------------------------------------------------------------◦•~▫//
+// █████████████████████████████████████ VOXY ENGINE █████████████████████████████████████ //
+//▫~•◦------------------------------------------------------------------------------------◦•~▫//
+
+//! Photorealistic anatomical vulva, labia minora/majora & vaginal introitus tube insertion (`voxy_app`).
+//!
+//! Features:
+//! - Seamless 360-degree concentric polar-elliptical topology (`128` radial rings × `144` sectors)
+//!   centered on the vaginal introitus `(0, -5.5 mm)` — zero `x=0` slit crack or seam artifacts.
+//! - True anatomical canal occlusion (`u_rim = 0.14`): the vaginal introitus & fourchette rim stays
+//!   at `z ~ -1.6 mm` while the internal vaginal canal plunges to `z = -14.5 mm`, so the penetrating
+//!   cylindrical tube shaft disappears genuinely inside the vaginal lumen with its tip occluded by
+//!   the posterior fourchette and lateral labia minora lips.
+//! - Overhanging, softly apposed petal-shaped Labia Minora (`Nymphae`) with scalloped free edges,
+//!   deeply undercut Clitoral Hood (`preputium clitoridis`) and Clitoral Glans (`glans clitoridis`),
+//!   deep shadowed interlabial sulci, and full-viewport Labia Majora cushions.
+//! - Crisp 2D Voronoi epidermal pores, Fordyce sebaceous micro-papules on the inner labia minora,
+//!   and localized mucosal wetness strictly inside the vestibule and lubricant meniscus collar.
+
+use std::error::Error;
+use std::path::Path;
 use std::sync::Arc;
 use std::time::Instant;
-use voxy_render::{
-    GraphicsOptions, SceneCamera, SceneDraw, SceneGeometry, SceneMesh, SceneProjection,
-    SceneRenderer, SceneVertex,
+
+use bytemuck::{Pod, Zeroable};
+use glam::{Mat4, Vec3};
+use physics::skin::{LabiaTubeInsertion, OrificeDilationKernel};
+use voxy_render::GraphicsOptions;
+use wgpu::util::DeviceExt;
+use winit::application::ApplicationHandler;
+use winit::dpi::PhysicalSize;
+use winit::event::{ElementState, WindowEvent};
+use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
+use winit::keyboard::{KeyCode, PhysicalKey};
+use winit::window::{Window, WindowId};
+
+const WIDTH: u32 = 1024;
+const HEIGHT: u32 = 768;
+
+/// Radial rings from deep inside the vaginal canal (`r = 0`) to the outer labia majora (`r = NR - 1`).
+const NR: usize = 180;
+/// Angular sectors around the 360-degree circumference (`s = 0 .. NS - 1`).
+const NS: usize = 200;
+
+const TUBE_RADIUS_MM: f32 = 3.80;
+const TUBE_HALF_LENGTH_MM: f32 = 11.5;
+const INSERTION_PERIOD_SECONDS: f32 = 0.88;
+
+/// Center of the vaginal introitus in world XY coordinates (mm).
+const INTROITUS_Y_MM: f32 = -5.5;
+
+const DEFAULT_OUTPUT_PATH: &str = "/private/tmp/voxy-labia-tube-insertion.png";
+
+const SNAPSHOT_FRAMES: [(usize, f32, &str); 5] = [
+    (0, 0.05, "approach-clitoris-sphincters-introitus"),
+    (1, 0.18, "orifice-contact-lubricant-meniscus"),
+    (2, 0.32, "sphincter-dilation-friction-invagination"),
+    (3, 0.50, "full-depth-bulbospongiosus-cuff"),
+    (4, 0.72, "withdrawal-vaginal-mucosal-rosette-prolapse"),
+];
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+struct Uniforms {
+    view_proj: [[f32; 4]; 4],
+    camera_pos: [f32; 4],
+    params: [f32; 4], // x: time, y: insertion_phase, z: wetness, w: tube_tip_z
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+struct SkinVertex {
+    position: [f32; 3],
+    normal: [f32; 3],
+    color: [f32; 3],
+    tissue_props: [f32; 4], // [region_id, roughness, sss_strength, wetness]
+    uv_world: [f32; 2],     // anatomical rest coordinates (mm) for 2D Voronoi pores & Fordyce spots
+}
+
+const SHADER_SOURCE: &str = r"
+struct Uniforms {
+    view_proj: mat4x4<f32>,
+    camera_pos: vec4<f32>,
+    params: vec4<f32>,
 };
 
-const ANATOMICAL_MUCOSAL_AND_TUBE_SHADER: &str = r"
-struct Transform { mvp: mat4x4<f32>, previous_mvp: mat4x4<f32>, camera: vec4<f32> }
-@group(0) @binding(0) var<uniform> transform: Transform;
+@group(0) @binding(0)
+var<uniform> u_scene: Uniforms;
 
-struct Output {
-    @builtin(position) position: vec4<f32>,
-    @location(0) color: vec4<f32>,
+struct VertexInput {
+    @location(0) position: vec3<f32>,
     @location(1) normal: vec3<f32>,
-    @location(2) to_camera: vec3<f32>,
-    @location(3) reference: vec3<f32>,
-    @location(4) uv: vec2<f32>,
+    @location(2) color: vec3<f32>,
+    @location(3) tissue_props: vec4<f32>,
+    @location(4) uv_world: vec2<f32>,
+};
+
+struct VertexOutput {
+    @builtin(position) clip_position: vec4<f32>,
+    @location(0) world_pos: vec3<f32>,
+    @location(1) normal: vec3<f32>,
+    @location(2) color: vec3<f32>,
+    @location(3) tissue_props: vec4<f32>,
+    @location(4) uv_world: vec2<f32>,
+};
+
+@vertex
+fn vs_main(in: VertexInput) -> VertexOutput {
+    var out: VertexOutput;
+    out.clip_position = u_scene.view_proj * vec4<f32>(in.position, 1.0);
+    out.world_pos = in.position;
+    out.normal = normalize(in.normal);
+    out.color = in.color;
+    out.tissue_props = in.tissue_props;
+    out.uv_world = in.uv_world;
+    return out;
 }
 
-fn unit(v: vec3<f32>) -> vec3<f32> {
-    return v * inverseSqrt(max(dot(v, v), 1e-12));
+fn hash22(p: vec2<f32>) -> vec2<f32> {
+    var p3 = fract(vec3<f32>(p.xyx) * vec3<f32>(0.1031, 0.1030, 0.0973));
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.xx + p3.yz) * p3.zy);
 }
 
-fn hash3(p: vec3<f32>) -> f32 {
-    let q = fract(p * vec3<f32>(0.1031, 0.1030, 0.0973));
-    let d = dot(q, q.yxz + vec3<f32>(33.33));
-    return fract((q.x + q.y) * q.z + d);
-}
-
-fn noise3(p: vec3<f32>) -> f32 {
+fn noise2d(p: vec2<f32>) -> f32 {
     let i = floor(p);
     let f = fract(p);
-    let u = f * f * (vec3<f32>(3.0) - 2.0 * f);
-    let n000 = hash3(i + vec3<f32>(0.0, 0.0, 0.0));
-    let n100 = hash3(i + vec3<f32>(1.0, 0.0, 0.0));
-    let n010 = hash3(i + vec3<f32>(0.0, 1.0, 0.0));
-    let n110 = hash3(i + vec3<f32>(1.0, 1.0, 0.0));
-    let n001 = hash3(i + vec3<f32>(0.0, 0.0, 1.0));
-    let n101 = hash3(i + vec3<f32>(1.0, 0.0, 1.0));
-    let n011 = hash3(i + vec3<f32>(0.0, 1.0, 1.0));
-    let n111 = hash3(i + vec3<f32>(1.0, 1.0, 1.0));
-    let nx00 = mix(n000, n100, u.x);
-    let nx10 = mix(n010, n110, u.x);
-    let nx01 = mix(n001, n101, u.x);
-    let nx11 = mix(n011, n111, u.x);
-    let nxy0 = mix(nx00, nx10, u.y);
-    let nxy1 = mix(nx01, nx11, u.y);
-    return mix(nxy0, nxy1, u.z);
+    let u = f * f * (3.0 - 2.0 * f);
+    let a = dot(hash22(i + vec2<f32>(0.0, 0.0)) - 0.5, f - vec2<f32>(0.0, 0.0));
+    let b = dot(hash22(i + vec2<f32>(1.0, 0.0)) - 0.5, f - vec2<f32>(1.0, 0.0));
+    let c = dot(hash22(i + vec2<f32>(0.0, 1.0)) - 0.5, f - vec2<f32>(0.0, 1.0));
+    let d = dot(hash22(i + vec2<f32>(1.0, 1.0)) - 0.5, f - vec2<f32>(1.0, 1.0));
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y) + 0.5;
 }
 
-fn fbm3(p: vec3<f32>) -> f32 {
-    let a = noise3(p);
-    let b = noise3(p * 2.07 + vec3<f32>(17.1, 9.3, 4.7));
-    let c = noise3(p * 4.23 + vec3<f32>(3.7, 29.1, 11.9));
-    return 0.55 * a + 0.30 * b + 0.15 * c;
+fn fbm2(p: vec2<f32>) -> f32 {
+    var v = 0.0;
+    var a = 0.5;
+    var pos = p;
+    let rot = mat2x2<f32>(0.80, -0.60, 0.60, 0.80);
+    for (var i = 0; i < 4; i++) {
+        v += a * (noise2d(pos) - 0.5);
+        pos = rot * pos * 2.07 + vec2<f32>(13.7, 29.1);
+        a *= 0.5;
+    }
+    return v;
 }
 
-fn skin_micro_height(ref_m: vec3<f32>, mucosa: f32, friction_val: f32) -> f32 {
-    // 1. Epidermal pores & crisscrossing Langer's lines on outer Labia Majora
-    let p_pore = ref_m * vec3<f32>(620.0, 580.0, 520.0);
-    let pore_a = noise3(p_pore);
-    let pore_b = noise3(p_pore * 2.3 + vec3<f32>(13.7, 7.3, 5.1));
-    let langer = 0.18 * sin((ref_m.x + ref_m.y) * 920.0) * sin((ref_m.x - ref_m.y) * 920.0);
-    let epidermal = (pore_a * 0.62 + pore_b * 0.38 - 0.5 + langer) * (1.0 - 0.72 * mucosa);
-
-    // 2. Transverse mucosal rugae, Fordyce micro-papillae & circumferential frictional stretch striae
-    let rugae = 0.42
-        * sin(ref_m.y * 580.0 + 2.6 * sin(ref_m.x * 420.0))
-        * cos(ref_m.x * 740.0)
-        * mucosa;
-    let fordyce_zone = mucosa * (1.0 - mucosa) * 4.0;
-    let fordyce = 0.28 * pow(noise3(ref_m * 980.0), 3.0) * fordyce_zone;
-
-    // 3. Radial/circumferential tension wrinkles around the orifice from tube friction (branch-cut-free)
-    let dy_or = ref_m.y + 0.0035;
-    let r_orifice = length(vec2<f32>(ref_m.x, dy_or));
-    let radial_striae = sin(r_orifice * 2400.0)
-        * (0.65 + 0.35 * sin(ref_m.x * 1500.0) * cos(dy_or * 1500.0));
-    let tension_striae = 0.38 * radial_striae * friction_val;
-
-    return epidermal + rugae + fordyce + tension_striae;
+fn voronoi_skin(p: vec2<f32>) -> vec2<f32> {
+    let n = floor(p);
+    let f = fract(p);
+    var d1 = 8.0;
+    var d2 = 8.0;
+    for (var j = -1; j <= 1; j++) {
+        for (var i = -1; i <= 1; i++) {
+            let g = vec2<f32>(f32(i), f32(j));
+            let o = hash22(n + g);
+            let r = g + (0.15 + 0.70 * o) - f;
+            let d = dot(r, r);
+            if (d < d1) {
+                d2 = d1;
+                d1 = d;
+            } else if (d < d2) {
+                d2 = d;
+            }
+        }
+    }
+    let s1 = sqrt(d1);
+    let s2 = sqrt(d2);
+    return vec2<f32>(s1, s2 - s1);
 }
 
-fn lubricant_bead_height(ref_m: vec3<f32>, wetness: f32) -> f32 {
-    let b1 = pow(noise3(ref_m * vec3<f32>(420.0, 380.0, 420.0)), 3.2);
-    let b2 = pow(noise3(ref_m * vec3<f32>(890.0, 760.0, 890.0) + vec3<f32>(7.1, 3.3, 1.9)), 4.0);
-    let rivulet = 0.35 * pow(0.5 + 0.5 * sin(ref_m.x * 1150.0 + 1.8 * noise3(ref_m * 320.0)), 3.0);
-    return (0.75 * b1 + 0.55 * b2 + rivulet) * smoothstep(0.25, 1.35, wetness);
+fn vulvar_micro_height(uv_mm: vec2<f32>, region_id: f32) -> f32 {
+    // 1. Subtle follicular pore dimples + soft multi-octave dermal micro-relief (no polygonal cracks)
+    let v_coarse = voronoi_skin(uv_mm * 3.2);
+    let v_fine = voronoi_skin(uv_mm * 6.5 + vec2<f32>(5.7, 14.3));
+    let pore_pit = -smoothstep(0.16, 0.0, v_coarse.x) * 0.34
+                   -smoothstep(0.14, 0.0, v_fine.x) * 0.16;
+    let dermal_grain = fbm2(uv_mm * 1.8) * 0.28 + fbm2(uv_mm * 4.1 + vec2<f32>(3.9, 9.2)) * 0.14;
+
+    // 2. Fine transverse & oblique mucosal micro-pleats on Labia Minora & Vestibule
+    let mucosal_pleats = fbm2(vec2<f32>(uv_mm.x * 2.4, uv_mm.y * 1.10)) * 0.38
+                       + fbm2(vec2<f32>(uv_mm.x * 4.8, uv_mm.y * 2.15)) * 0.18;
+
+    // 3. Tiny sebaceous Fordyce micro-papules on inner Labia Minora
+    let v_fordyce = voronoi_skin(uv_mm * 3.8 + vec2<f32>(19.1, 3.7));
+    let fordyce_papule = smoothstep(0.14, 0.0, v_fordyce.x) * 0.18;
+
+    let w_mucosa = clamp(1.0 - region_id, 0.0, 1.0);
+    let w_outer = clamp(region_id - 1.0, 0.0, 1.0);
+    let w_minora = clamp(1.0 - w_mucosa - w_outer, 0.0, 1.0);
+
+    let h_mucosa = mucosal_pleats * 0.65;
+    let h_minora = mucosal_pleats * 0.95 + fordyce_papule + dermal_grain * 0.45;
+    let h_outer = dermal_grain + pore_pit * 0.95;
+
+    return h_mucosa * w_mucosa + h_minora * w_minora + h_outer * w_outer;
 }
 
-fn ggx_lobe(n: vec3<f32>, v: vec3<f32>, l: vec3<f32>, rough: f32, f0: f32) -> f32 {
-    let h = unit(v + l);
-    let nl = max(dot(n, l), 0.0);
-    let nv = max(dot(n, v), 1e-4);
-    let nh = max(dot(n, h), 0.0);
-    let vh = max(dot(v, h), 0.0);
-    let a = max(rough * rough, 0.0008);
-    let a2 = a * a;
-    let denom = nh * nh * (a2 - 1.0) + 1.0;
-    let d = a2 / (3.14159265 * denom * denom);
-    let k = (rough + 1.0) * (rough + 1.0) / 8.0;
-    let g = (nl / (nl * (1.0 - k) + k)) * (nv / (nv * (1.0 - k) + k));
-    let f = f0 + (1.0 - f0) * pow(1.0 - vh, 5.0);
-    return d * g * f / max(4.0 * nv, 1e-4);
-}
-
-fn filmic_tonemap(x: vec3<f32>) -> vec3<f32> {
+fn aces_tonemap(x: vec3<f32>) -> vec3<f32> {
     let a = 2.51;
     let b = 0.03;
     let c = 2.43;
@@ -126,1190 +206,1165 @@ fn filmic_tonemap(x: vec3<f32>) -> vec3<f32> {
     return clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3<f32>(0.0), vec3<f32>(1.0));
 }
 
-@vertex
-fn vs_main(
-    @location(0) position: vec3<f32>,
-    @location(1) uv: vec2<f32>,
-    @location(2) color: vec4<f32>,
-    @location(3) normal: vec3<f32>,
-    @location(4) _parameters: vec4<f32>,
-    @location(5) reference: vec3<f32>,
-) -> Output {
-    var out: Output;
-    out.position = transform.mvp * vec4<f32>(position, 1.0);
-    out.color = color;
-    out.normal = normal;
-    out.to_camera = transform.camera.xyz - position;
-    out.reference = reference;
-    out.uv = uv;
-    return out;
-}
-
 @fragment
-fn fs_main(in: Output) -> @location(0) vec4<f32> {
-    let v = unit(in.to_camera);
-    let dpos_dx = -dpdx(in.to_camera);
-    let dpos_dy = -dpdy(in.to_camera);
-    let geom_n = unit(cross(dpos_dx, dpos_dy));
-    let n_smooth = unit(in.normal);
+fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
+    let V = normalize(u_scene.camera_pos.xyz - in.world_pos);
+    var N = normalize(in.normal);
+    let region_id = in.tissue_props.x;
+    let base_roughness = in.tissue_props.y;
+    let sss_strength = in.tissue_props.z;
+    let wetness = clamp(in.tissue_props.w, 0.0, 1.0);
 
-    let key = unit(vec3<f32>(-0.28, -0.52, 0.81));
-    let fill = unit(vec3<f32>(0.54, 0.32, 0.78));
-    let rim = unit(vec3<f32>(0.06, 0.86, 0.51));
-    let softbox_top = unit(vec3<f32>(0.12, -0.22, 0.97));
+    // 3-point clinical macro photography lighting rig
+    let L1 = normalize(vec3<f32>(0.24, -0.42, 0.87));
+    let L2 = normalize(vec3<f32>(-0.46, -0.22, 0.86));
+    let L3 = normalize(vec3<f32>(0.04, 0.66, 0.75));
 
-    // Branch 1: 3D Viscous Lubricant Meniscus Fillet Ring & Beads at Tube-Orifice Collar (tagged by uv.y < -1.5)
-    if (in.uv.y < -1.5) {
-        let n_base = unit(mix(n_smooth, geom_n * sign(dot(geom_n, n_smooth) + 1e-5), 0.22));
-        let eps_l = 0.00016;
-        let lb0 = lubricant_bead_height(in.reference, 1.25);
-        let lbx = lubricant_bead_height(in.reference + vec3<f32>(eps_l, 0.0, 0.0), 1.25);
-        let lby = lubricant_bead_height(in.reference + vec3<f32>(0.0, eps_l, 0.0), 1.25);
-        let n_lube = unit(n_base - 0.00045 * vec3<f32>((lbx - lb0) / eps_l, (lby - lb0) / eps_l, 0.0));
+    // Medical-grade translucent silicone probe (region_id > 2.5)
+    if (region_id > 2.5) {
+        let H1 = normalize(L1 + V);
+        let H2 = normalize(L2 + V);
+        let H3 = normalize(L3 + V);
+        let n_dot_v = max(dot(N, V), 0.0);
+        let diff1 = max(dot(N, L1), 0.0);
+        let diff2 = max(dot(N, L2), 0.0);
+        let wrap_probe = max((dot(N, L1) + 0.60) / 1.60, 0.0);
+        let spec1 = pow(max(dot(N, H1), 0.0), 190.0) * 1.15;
+        let spec2 = pow(max(dot(N, H2), 0.0), 120.0) * 0.55;
+        let spec3 = pow(max(dot(N, H3), 0.0), 90.0) * 0.35;
+        let fresnel = 0.04 + 0.96 * pow(1.0 - n_dot_v, 4.2);
 
-        let nv_l = clamp(dot(n_lube, v), 0.0, 1.0);
-        let fresnel_l = pow(1.0 - nv_l, 4.2);
-        let spec_l = 4.2 * ggx_lobe(n_lube, v, key, 0.011, 0.052)
-            + 2.6 * ggx_lobe(n_lube, v, softbox_top, 0.014, 0.052)
-            + 2.0 * ggx_lobe(n_lube, v, fill, 0.018, 0.052)
-            + 1.6 * ggx_lobe(n_lube, v, rim, 0.022, 0.052);
+        let tip_z = u_scene.params.w;
+        let axial_dist = max(in.world_pos.z - tip_z, 0.0);
+        let wet_sleeve = wetness * exp(-axial_dist * 0.15);
+        let clearcoat = pow(max(dot(N, H1), 0.0), 520.0) * wet_sleeve * 1.85;
 
-        // Crystal-clear viscous lubricant over rich crimson orifice mucosa with bright wet glints
-        let radial_s = clamp(in.uv.x, 0.0, 1.0);
-        let deep_orifice_mucosa = mix(
-            vec3<f32>(0.36, 0.075, 0.12),
-            vec3<f32>(0.54, 0.14, 0.20),
-            radial_s,
-        );
-        let light_wrap = 0.24 + 0.48 * max(dot(n_lube, key) + 0.35, 0.0) + 0.20 * max(dot(n_lube, fill) + 0.35, 0.0);
-        let clear_gel_base = deep_orifice_mucosa * light_wrap
-            + vec3<f32>(0.75, 0.65, 0.68) * (0.08 * lb0);
-        let lube_rgb = clear_gel_base + vec3<f32>(0.99, 0.995, 1.0) * (spec_l + 0.22 * fresnel_l);
-        return vec4<f32>(filmic_tonemap(lube_rgb * 1.06), 1.0);
+        let tissue_bleed = exp(-max(in.world_pos.z + 1.5, 0.0) * 0.28) * vec3<f32>(0.24, 0.06, 0.07);
+        let base_col = (in.color + tissue_bleed * 0.35) * (0.22 + 0.52 * diff1 + 0.24 * diff2 + 0.18 * wrap_probe)
+            + vec3<f32>(0.95, 0.97, 1.0) * (spec1 + spec2 + spec3 + clearcoat + fresnel * 0.16);
+        let mapped = pow(aces_tonemap(base_col), vec3<f32>(1.0 / 2.2));
+        return vec4<f32>(mapped, 1.0);
     }
 
-    // Branch 2: Translucent Medical Glass/Silicone Tube with Viscous Lubricant Coating & Friction Streaks (uv.y < -0.5)
-    if (in.uv.y < -0.5) {
-        let n_tube_macro = unit(mix(n_smooth, geom_n * sign(dot(geom_n, n_smooth) + 1e-5), 0.20));
-        let tube_wet = clamp(in.uv.x, 0.0, 1.0);
-        let friction_drag = clamp(in.color.a, 0.0, 1.0);
+    // Epidermal & mucosal micro-normal perturbation
+    let uv = in.uv_world;
+    let eps = 0.045;
+    let h0 = vulvar_micro_height(uv, region_id);
+    let hx = vulvar_micro_height(uv + vec2<f32>(eps, 0.0), region_id);
+    let hy = vulvar_micro_height(uv + vec2<f32>(0.0, eps), region_id);
+    let surface_up = clamp(N.z, 0.0, 1.0);
+    let bump_atten = mix(1.0, 0.32, wetness * wetness) * (0.25 + 0.75 * surface_up);
+    let micro_nx = -(hx - h0) / eps * 0.048 * bump_atten;
+    let micro_ny = -(hy - h0) / eps * 0.048 * bump_atten;
+    N = normalize(N + vec3<f32>(micro_nx, micro_ny, 0.0));
 
-        // Longitudinal viscous lubricant streaks & droplets dragged along the shaft by orifice friction
-        let streak_wave = 0.5 + 0.5 * sin(in.reference.x * 1600.0 + in.reference.y * 1600.0 + 3.0 * noise3(in.reference * 380.0));
-        let bead_drop = pow(clamp(noise3(in.reference * vec3<f32>(520.0, 520.0, 260.0)), 0.0, 1.0), 3.2) * tube_wet;
-        let lube_coat = clamp(tube_wet * (0.65 + 0.35 * streak_wave) + 0.55 * bead_drop, 0.0, 1.0);
+    // Subdermal vascular & melanin micro-mottling + Fordyce sebaceous tint
+    let mottle_low = fbm2(uv * 0.22);
+    let mottle_med = fbm2(uv * 0.85 + vec2<f32>(4.2, 8.7));
+    let v_pore = voronoi_skin(uv * 3.2);
+    let pore_dark = smoothstep(0.15, 0.0, v_pore.x);
+    let v_fordyce = voronoi_skin(uv * 3.8 + vec2<f32>(19.1, 3.7));
+    let minora_mask = clamp(1.0 - abs(region_id - 0.85) * 1.6, 0.0, 1.0);
+    let fordyce_spot = smoothstep(0.13, 0.0, v_fordyce.x) * minora_mask;
 
-        let eps_t = 0.00018;
-        let tb0 = lubricant_bead_height(in.reference * vec3<f32>(1.2, 1.2, 0.65), lube_coat * 1.1);
-        let tbx = lubricant_bead_height((in.reference + vec3<f32>(eps_t, 0.0, 0.0)) * vec3<f32>(1.2, 1.2, 0.65), lube_coat * 1.1);
-        let tbz = lubricant_bead_height((in.reference + vec3<f32>(0.0, 0.0, eps_t)) * vec3<f32>(1.2, 1.2, 0.65), lube_coat * 1.1);
-        let n_tube = unit(n_tube_macro - 0.00026 * tube_wet * vec3<f32>((tbx - tb0) / eps_t, 0.0, (tbz - tb0) / eps_t));
+    var albedo = in.color;
+    let outer_skin_mask = clamp(region_id - 1.0, 0.0, 1.0);
+    albedo *= (1.0 - pore_dark * 0.10 * (0.25 + 0.75 * outer_skin_mask));
+    albedo = mix(albedo, vec3<f32>(0.55, 0.30, 0.22), fordyce_spot * 0.18);
+    albedo += vec3<f32>(0.022, -0.005, -0.006) * mottle_low
+            + vec3<f32>(0.012, 0.003, 0.002) * mottle_med;
 
-        let rough = mix(0.085, 0.014, lube_coat);
-        let spec = 2.8 * ggx_lobe(n_tube, v, key, rough, 0.050)
-            + 2.1 * ggx_lobe(n_tube, v, softbox_top, rough * 1.1, 0.050)
-            + 0.95 * ggx_lobe(n_tube, v, fill, rough * 1.2, 0.050)
-            + 0.85 * ggx_lobe(n_tube, v, rim, 0.042, 0.050);
-        let nv = clamp(dot(n_tube, v), 0.0, 1.0);
-        let fresnel = pow(1.0 - nv, 3.4);
-        let wrap_diff = 0.24 + 0.50 * max(dot(n_tube, key) + 0.35, 0.0) + 0.24 * max(dot(n_tube, fill) + 0.35, 0.0);
+    let lube_mask = wetness * wetness;
+    albedo = mix(albedo, albedo * vec3<f32>(0.82, 0.70, 0.66), lube_mask * 0.42);
+    albedo = clamp(albedo, vec3<f32>(0.015), vec3<f32>(0.92));
 
-        // Warm crimson tissue subsurface transmission through the submerged translucent tube tip
-        let submerged = 1.0 - clamp((in.reference.z - 0.0012) * 85.0, 0.0, 1.0);
-        let internal_lumen = (1.0 - fresnel) * 0.18 * vec3<f32>(0.32, 0.42, 0.50);
-        let tissue_transmission = submerged * (0.45 + 0.55 * friction_drag) * vec3<f32>(0.38, 0.08, 0.13);
-
-        let tube_rgb = in.color.rgb * wrap_diff
-            - internal_lumen
-            + tissue_transmission
-            + vec3<f32>(0.98, 0.99, 1.0) * (spec + 0.32 * fresnel);
-        return vec4<f32>(filmic_tonemap(tube_rgb * 1.05), 1.0);
-    }
-
-    // Branch 3: Photorealistic Anatomical Skin, Orifice Mucosa, Frictional Erythema & Viscous Lubricant Film
-    let n_macro = unit(mix(n_smooth, geom_n * sign(dot(geom_n, n_smooth) + 1e-5), 0.30));
-    let wetness = clamp(in.uv.x, 0.0, 1.0);
-    let mucosa = clamp(in.uv.y, 0.0, 1.0);
-    let friction_val = clamp(in.color.a, 0.0, 1.0);
-
-    // Strong micro-normal perturbation for underlying tissue (pores, rugae, Fordyce spots, friction striae)
-    let eps = 0.00016;
-    let h0 = skin_micro_height(in.reference, mucosa, friction_val);
-    let hx = skin_micro_height(in.reference + vec3<f32>(eps, 0.0, 0.0), mucosa, friction_val);
-    let hy = skin_micro_height(in.reference + vec3<f32>(0.0, eps, 0.0), mucosa, friction_val);
-    let grad_micro = vec3<f32>((hx - h0) / eps, (hy - h0) / eps, 0.0);
-    let n_tissue = unit(n_macro - 0.00082 * grad_micro);
-
-    // Top air-lubricant interface normal (smooth capillary sheet + 3D viscous lubricant beads/rivulets)
-    let lb0 = lubricant_bead_height(in.reference, wetness);
-    let lbx = lubricant_bead_height(in.reference + vec3<f32>(eps, 0.0, 0.0), wetness);
-    let lby = lubricant_bead_height(in.reference + vec3<f32>(0.0, eps, 0.0), wetness);
-    let grad_lube = vec3<f32>((lbx - lb0) / eps, (lby - lb0) / eps, 0.0);
-    let n_film = unit(mix(n_tissue, n_macro - 0.00028 * grad_lube, smoothstep(0.05, 0.75, wetness)));
-
-    // Dual-layer RGB dipole subsurface scattering
-    let wrap = mix(vec3<f32>(0.44, 0.21, 0.12), vec3<f32>(0.64, 0.28, 0.18), mucosa);
-    let key_wrap = max((vec3<f32>(dot(n_tissue, key)) + wrap) / (vec3<f32>(1.0) + wrap), vec3<f32>(0.0));
-    let fill_wrap = max((vec3<f32>(dot(n_tissue, fill)) + wrap) / (vec3<f32>(1.0) + wrap), vec3<f32>(0.0));
-
-    let thinness = clamp(mucosa * 0.75 + 0.25 * friction_val, 0.0, 0.92);
-    let back_scatter = pow(clamp(dot(-key, n_tissue) + 0.50, 0.0, 1.0), 2.1)
-        + 0.70 * pow(clamp(dot(-rim, n_tissue) + 0.54, 0.0, 1.0), 1.9);
-    let sss_translucency = thinness * back_scatter * vec3<f32>(0.28, 0.048, 0.038);
-
-    let sss_diffuse = vec3<f32>(0.13, 0.088, 0.082)
-        + 0.70 * key_wrap
-        + 0.26 * fill_wrap
-        + sss_translucency;
-
-    // Subdermal capillary vascular network & frictional hyperemia (erythema around rubbed orifice collar)
-    let vasc_noise = fbm3(in.reference * vec3<f32>(340.0, 310.0, 340.0));
-    let capillary_veins = smoothstep(0.54, 0.78, vasc_noise) * mucosa;
-    let base_mottle = 0.96 + 0.08 * fbm3(in.reference * 220.0);
-    var tissue_rgb = in.color.rgb * base_mottle;
-    tissue_rgb = mix(tissue_rgb, vec3<f32>(0.62, 0.15, 0.22), 0.28 * capillary_veins);
-    // Frictional shear erythema: deep warm arterial crimson flush where tube stretches & rubs the orifice rim
-    tissue_rgb = mix(tissue_rgb, vec3<f32>(0.72, 0.12, 0.19), 0.55 * friction_val);
-    // Subtle Fordyce sebaceous micro-specks on labia minora
-    let fordyce_speck = smoothstep(0.72, 0.90, noise3(in.reference * 1050.0)) * mucosa * (1.0 - mucosa) * 2.6;
-    tissue_rgb = mix(tissue_rgb, vec3<f32>(0.86, 0.72, 0.66), 0.28 * fordyce_speck);
-
-    // Refractive darkening & rich crimson saturation under wet lubricant film
-    let wet_darken = mix(vec3<f32>(1.0), vec3<f32>(0.66, 0.50, 0.54), wetness * 0.82);
-    let albedo = tissue_rgb * wet_darken;
-
-    let base_roughness = mix(0.46, 0.24, mucosa) + 0.04 * h0;
-    let secondary_roughness = mix(0.68, 0.40, mucosa);
-    let film_roughness = mix(base_roughness, 0.015, smoothstep(0.0, 0.85, wetness));
-
-    let tissue_spec = (0.72 * ggx_lobe(n_tissue, v, key, base_roughness, 0.028)
-        + 0.28 * ggx_lobe(n_tissue, v, key, secondary_roughness, 0.028)
-        + 0.34 * ggx_lobe(n_tissue, v, fill, base_roughness, 0.028))
-        * (1.0 - 0.65 * wetness);
-
-    // High-gloss viscous lubricant specular + studio softbox reflection
-    let film_spec = wetness * (
-        2.65 * ggx_lobe(n_film, v, key, film_roughness, 0.048)
-        + 1.95 * ggx_lobe(n_film, v, softbox_top, max(film_roughness * 1.1, 0.018), 0.048)
-        + 0.95 * ggx_lobe(n_film, v, fill, film_roughness * 1.15, 0.048)
-        + 0.78 * ggx_lobe(n_film, v, rim, max(film_roughness, 0.042), 0.048)
+    // Dual-lobe subsurface scattering (translucent crimson-pink Labia Minora & warm Labia Majora)
+    let n_dot_l1 = max(dot(N, L1), 0.0);
+    let n_dot_l2 = max(dot(N, L2), 0.0);
+    let n_dot_l3 = max(dot(N, L3), 0.0);
+    let wrap1 = max((dot(N, L1) + 0.58) / 1.58, 0.0);
+    let wrap2 = max((dot(N, L2) + 0.50) / 1.50, 0.0);
+    let sss_blood = vec3<f32>(0.72, 0.12, 0.08);
+    let sss_contrib = sss_blood * sss_strength * (
+        0.45 * pow(wrap1, 1.48) * (1.0 - 0.50 * n_dot_l1) +
+        0.26 * pow(wrap2, 1.65) * (1.0 - 0.50 * n_dot_l2)
     );
 
-    let nv = clamp(dot(n_film, v), 0.0, 1.0);
-    let fresnel_sheen = wetness * pow(1.0 - nv, 4.2) * 0.24;
+    // Self-occlusion in deep vaginal canal lumen & subtle introitus crease occlusion (no outer skin halo)
+    let depth_ao = mix(0.008, 1.0, smoothstep(-11.5, -1.4, in.world_pos.z));
+    let introitus_dist = length(in.world_pos.xy - vec2<f32>(0.0, -5.5));
+    let introitus_ao = mix(0.45, 1.0, smoothstep(0.15, 2.6, introitus_dist));
+    let ao = clamp(depth_ao * introitus_ao, 0.008, 1.0);
 
-    // Deep orifice lumen ambient occlusion (creates a true dark 3D anatomical opening inside the canal z < -5mm)
-    let canal_ao = clamp(0.05 + 0.95 * smoothstep(-0.0135, 0.0035, in.reference.z), 0.05, 1.0);
-    let spec_color = mix(vec3<f32>(1.0, 0.95, 0.92), vec3<f32>(0.99, 0.995, 1.0), wetness);
-    let raw_lit = albedo * sss_diffuse * canal_ao
-        + spec_color * (tissue_spec * canal_ao + film_spec * (0.18 + 0.82 * canal_ao) + fresnel_sheen * canal_ao);
-    let mapped = filmic_tonemap(raw_lit * 1.08);
+    let diffuse = albedo * (0.18 * ao + 0.56 * n_dot_l1 + 0.26 * n_dot_l2 + 0.10 * n_dot_l3)
+        + sss_contrib * ao;
+
+    // Dual-lobe specular: soft satin epidermal sheen on Labia Majora + sharp wet clearcoat in Vestibule
+    let H1 = normalize(L1 + V);
+    let H2 = normalize(L2 + V);
+    let H3 = normalize(L3 + V);
+    let n_dot_v = max(dot(N, V), 0.0);
+    let fresnel = 0.028 + 0.972 * pow(1.0 - n_dot_v, 5.0);
+
+    let rough = clamp(mix(base_roughness, 0.04, lube_mask), 0.04, 0.92);
+    let spec_exp = mix(400.0, 14.0, rough * rough);
+    let pore_spec_mask = 1.0 - pore_dark * 0.55 * outer_skin_mask;
+
+    let dry_lobe = (
+        pow(max(dot(N, H1), 0.0), spec_exp) * 0.15 +
+        pow(max(dot(N, H2), 0.0), spec_exp * 0.7) * 0.08 +
+        pow(max(dot(N, H3), 0.0), 22.0) * 0.04
+    ) * pore_spec_mask * ao;
+
+    let wet_clearcoat = (
+        pow(max(dot(N, H1), 0.0), 560.0) * 2.05 +
+        pow(max(dot(N, H2), 0.0), 330.0) * 0.98 +
+        pow(max(dot(N, H3), 0.0), 185.0) * 0.48
+    ) * lube_mask * (0.32 + 0.68 * fresnel) * ao;
+
+    let color_linear = diffuse + vec3<f32>(1.0, 0.96, 0.94) * (dry_lobe + wet_clearcoat);
+    let mapped = pow(aces_tonemap(color_linear), vec3<f32>(1.0 / 2.2));
     return vec4<f32>(mapped, 1.0);
 }
 ";
 
 #[derive(Clone, Copy, Debug)]
-struct PreparedVertexBinding {
-    rest_m: [f32; 3],
-    rest_scaled: [f32; 3],
-    base_rgb: [f32; 3],
-    side_idx: u8,
-    b0: u8,
-    b1: u8,
-    frac: f32,
-    majora_w: f32,
-    minora_w: f32,
-    minora_arch: f32,
-    wet_envelope: f32,
-    mucosa_factor: f32,
-    orifice_canal_w: f32,
-    orifice_rim_w: f32,
+struct Kinematics {
+    insertion_phase: f32,
+    tip_z_mm: f32,
+    velocity_z_mm_s: f32,
 }
 
-#[derive(Clone, Copy, Debug)]
-struct TubeLocalVertex {
-    local_offset_m: [f32; 3],
-    color: [f32; 4],
+fn sample_kinematics(time_s: f32) -> Kinematics {
+    let omega = std::f32::consts::TAU / INSERTION_PERIOD_SECONDS;
+    let angle = time_s * omega;
+    let raw_sin = angle.sin();
+    let raw_cos = angle.cos();
+    let phase = 0.5 * (1.0 - raw_cos);
+    let tip_z_mm = 7.2 - 15.0 * phase;
+    let velocity_z_mm_s = -7.5 * omega * raw_sin;
+    Kinematics {
+        insertion_phase: phase,
+        tip_z_mm,
+        velocity_z_mm_s,
+    }
 }
 
-#[derive(Clone, Copy, Debug)]
-struct LubeMeniscusBinding {
-    radial_frac: f32,
-    angle_rad: f32,
+fn smoothstep(edge0: f32, edge1: f32, x: f32) -> f32 {
+    let t = ((x - edge0) / (edge1 - edge0)).clamp(0.0, 1.0);
+    t * t * (3.0 - 2.0 * t)
 }
 
-/// Combined high-density curvilinear anatomical surface with a true 3D vaginal introitus orifice,
-/// rounded-tip cylindrical tube mesh, and a 3D viscous lubricant meniscus collar mesh.
-#[derive(Debug)]
-struct PreparedTubeInsertionScene {
-    nu: usize,
-    nv: usize,
-    tube_sectors: usize,
-    lube_rings: usize,
-    bindings: Vec<PreparedVertexBinding>,
-    tube_local: Vec<TubeLocalVertex>,
-    lube_bindings: Vec<LubeMeniscusBinding>,
-    tissue_vertex_count: usize,
-    tube_vertex_count: usize,
-    vertices: Vec<SceneVertex>,
-    indices: Vec<u32>,
-    normals: Vec<[f32; 3]>,
-    material_coordinates: Vec<[f32; 3]>,
-    display_scale: f32,
+struct VulvaSimulation {
+    dilation_kernel: OrificeDilationKernel,
+    minora_separation_mm: f32,
+    majora_separation_mm: f32,
+    lubricant_boost: f32,
 }
 
-impl PreparedTubeInsertionScene {
-    #[allow(clippy::too_many_lines)]
-    fn new(display_scale: f64, tube_radius_m: f64, tube_length_m: f64) -> Self {
-        // Odd nu = 129 so iu = 64 (left inner margin) and iu = 65 (right inner margin) frame the central orifice slit
-        let nu = 129usize;
-        let nv = 144usize;
-        let half_width_m = 0.034;
-        let half_length_m = 0.044;
-        let orifice_y_m = -0.0035_f64;
-        let orifice_half_len_m = 0.0056_f64;
-        let scale = display_scale as f32;
+impl VulvaSimulation {
+    fn new() -> Self {
+        Self {
+            dilation_kernel: OrificeDilationKernel::vaginal_introitus_default(),
+            minora_separation_mm: 10.0,
+            majora_separation_mm: 22.0,
+            lubricant_boost: 0.0,
+        }
+    }
 
-        let tissue_vertex_count = (nu + 1) * (nv + 1);
-        let tube_sectors = 40usize;
-        let tip_rings = 12usize;
-        let shaft_rings = 14usize;
-        let cap_rings = 3usize;
-        let tube_rings = tip_rings + shaft_rings + cap_rings;
-        let tube_vertex_count = (tube_rings + 1) * (tube_sectors + 1);
-
-        let lube_rings = 10usize;
-        let lube_vertex_count = (lube_rings + 1) * (tube_sectors + 1);
-
-        let total_vertices = tissue_vertex_count + tube_vertex_count + lube_vertex_count;
-        let mut bindings = Vec::with_capacity(tissue_vertex_count);
-        let mut vertices = Vec::with_capacity(total_vertices);
-        let mut material_coordinates = Vec::with_capacity(total_vertices);
-
-        let left_mid = nu / 2; // 64
-        let right_mid = left_mid + 1; // 65
-
-        for iv in 0..=nv {
-            let v_lin = (iv as f64 / nv as f64) * 2.0 - 1.0;
-            let v = 0.80 * v_lin + 0.20 * v_lin.powi(3);
-            let y = v * half_length_m;
-
-            let v_maj = ((v - 0.02) / 0.80).clamp(-1.0, 1.0);
-            let majora_env = (1.0 - v_maj * v_maj).max(0.0).powf(0.85);
-
-            let v_min = ((v + 0.02) / 0.58).clamp(-1.0, 1.0);
-            let minora_arch = (1.0 - v_min * v_min).max(0.0);
-            let minora_env = minora_arch.powf(1.22);
-            let minora_ant_bias = (1.0 + 0.22 * (v * 2.0).tanh()).clamp(0.72, 1.24);
-
-            let hood_dome = (-((v - 0.50) / 0.125).powi(2)).exp();
-            let glans_dome = (-((v - 0.415) / 0.055).powi(2)).exp();
-            let frenulum_arch = (-((v - 0.35) / 0.070).powi(2)).exp();
-            let fourchette_arch = (-((v + 0.55) / 0.075).powi(2)).exp();
-
-            // Longitudinal envelope of the anatomical vaginal introitus (orifice) centered at y = -3.5mm
-            let dy_orifice = y - orifice_y_m;
-            let orifice_v_norm = (dy_orifice / orifice_half_len_m).clamp(-1.0, 1.0);
-            let orifice_long_arch = (1.0 - orifice_v_norm * orifice_v_norm).max(0.0);
-            let orifice_long_smooth = orifice_long_arch * orifice_long_arch;
-
-            let bin_f = (((v + 1.0) * 0.5) * 7.0).clamp(0.0, 7.0);
-            let b0 = (bin_f.floor() as usize).min(7);
-            let b1 = (b0 + 1).min(7);
-            let frac = (bin_f - b0 as f64) as f32;
-
-            for iu in 0..=nu {
-                let side_idx = u8::from(iu >= right_mid);
-                let side_sign_f64 = if iu >= right_mid { 1.0 } else { -1.0 };
-                let dist_from_slit = if iu <= left_mid {
-                    (left_mid - iu) as f64 / (left_mid as f64)
-                } else {
-                    (iu - right_mid) as f64 / (left_mid as f64)
-                };
-                let u_mag = 0.38 * dist_from_slit + 0.62 * dist_from_slit.powi(3);
-                let u = side_sign_f64 * u_mag;
-                let row_scale = (1.0 - 0.28 * v * v).sqrt();
-
-                // True 3D anatomical orifice opening in the rest state:
-                // The canal walls flare open into an oval lumen (rx = 2.45mm) around the entrance and plunge down (-14.5mm)
-                // to a watertight deep canal floor at dist_from_slit == 0 so no background clear-color ever leaks through.
-                let wall_flare = 1.0 - (-dist_from_slit * 28.0).exp();
-                let canal_wall_band = (-((dist_from_slit / 0.14).powi(2))).exp();
-                let orifice_canal_w = (canal_wall_band * orifice_long_smooth) as f32;
-                let rim_band = (-(((dist_from_slit - 0.085) / 0.068).powi(2))).exp();
-                let orifice_rim_w = ((rim_band + 0.65 * canal_wall_band * wall_flare)
-                    .clamp(0.0, 1.0)
-                    * orifice_long_arch) as f32;
-
-                let rest_orifice_half_gap =
-                    0.00245 * wall_flare * orifice_long_arch.sqrt() * canal_wall_band;
-                let x_rest =
-                    side_sign_f64 * (u_mag * half_width_m * row_scale + rest_orifice_half_gap);
-                let abs_x = x_rest.abs();
-
-                let cleft_half_gap = (0.0015 * minora_arch.powf(1.10)).max(0.00020);
-
-                let majora_center_x = 0.0026 + 0.0094 * majora_env;
-                let majora_width = 0.0086 + 0.0038 * majora_env;
-                let majora_xi = (abs_x - majora_center_x) / majora_width;
-                let majora_profile = (-majora_xi * majora_xi * 1.55).exp() * majora_env;
-                let majora_height = 0.0108 * majora_profile;
-
-                let mons_profile =
-                    ((v - 0.24).max(0.0) / 0.76).powi(2) * (-((abs_x / 0.025).powi(2))).exp();
-                let central_hood = 0.0038 * hood_dome * (-((abs_x / 0.0034).powi(2))).exp();
-                let glans_height = 0.0024 * glans_dome * (-((abs_x / 0.0019).powi(2))).exp();
-                let frenulum_height =
-                    0.0014 * frenulum_arch * (-(((abs_x - 0.0016) / 0.0013).powi(2))).exp();
-                let fourchette_height =
-                    0.0013 * fourchette_arch * (-((abs_x / 0.0034).powi(2))).exp();
-                let mons_height = 0.0062 * mons_profile
-                    + central_hood
-                    + glans_height
-                    + frenulum_height
-                    + fourchette_height;
-
-                let minora_center_x = cleft_half_gap + 0.0021 * minora_env;
-                let minora_width = 0.0019 + 0.0012 * minora_env;
-                let minora_xi = (abs_x - minora_center_x) / minora_width;
-                let edge_wave = 1.0
-                    + 0.068 * (v * 17.0 + side_sign_f64 * 0.5).sin()
-                    + 0.036 * (v * 31.0 - side_sign_f64 * 0.9).cos();
-                let minora_profile = (-minora_xi * minora_xi * 1.95).exp()
-                    * minora_env
-                    * minora_ant_bias
-                    * edge_wave;
-                let minora_height = 0.0052 * minora_profile;
-
-                let sulcus_center_x = minora_center_x + 0.0029 * minora_env + 0.0009;
-                let sulcus_xi = (abs_x - sulcus_center_x) / 0.0020;
-                let sulcus_env = majora_env * (0.25 + 0.75 * minora_arch.sqrt());
-                let sulcus_depression =
-                    -0.0020 * (-sulcus_xi * sulcus_xi * 1.95).exp() * sulcus_env;
-
-                let groin_xi = (abs_x - 0.0235 * row_scale) / 0.0038;
-                let groin_crease = -0.0014 * (-groin_xi * groin_xi * 1.8).exp() * majora_env;
-
-                let vestibule_xi = abs_x / (cleft_half_gap + 0.0016);
-                let vestibule_depression = -0.0046
-                    * (-vestibule_xi * vestibule_xi * 1.75).exp()
-                    * minora_arch
-                    * (1.0 - 0.55 * glans_dome);
-
-                // Fleshy hymenal/vestibular orifice lip + deep tubular vaginal canal (-14.2mm plunge)
-                let hymenal_rim_ridge = 0.0014 * rim_band * orifice_long_arch;
-                let deep_canal_plunge = -0.0142 * f64::from(orifice_canal_w).powf(1.25);
-
-                let radial_r2 = u * u + v * v;
-                let pelvic_arch_z = -0.0065 * (u * u * 0.75 + v * v * 0.65)
-                    - 0.0040 * (radial_r2 - 0.65).max(0.0).powi(2);
-                let z_rest = pelvic_arch_z
-                    + mons_height
-                    + majora_height
-                    + groin_crease
-                    + minora_height
-                    + sulcus_depression
-                    + vestibule_depression
-                    + hymenal_rim_ridge
-                    + deep_canal_plunge;
-
-                let mucosa_factor = (minora_profile * 1.15
-                    + 0.85 * glans_dome * (-((abs_x / 0.0024).powi(2))).exp()
-                    + 0.65 * hood_dome * (-((abs_x / 0.0044).powi(2))).exp()
-                    + (-vestibule_xi * vestibule_xi * 1.10).exp() * minora_arch
-                    + f64::from(orifice_canal_w) * 1.25
-                    + f64::from(orifice_rim_w) * 0.85)
-                    .clamp(0.0, 1.0) as f32;
-
-                // Spatially graduated lubricant wetness envelope: thick in vestibule/orifice, moist on minora, dry-dewy on outer majora
-                let radial_wet_spread =
-                    (-((abs_x - minora_center_x * 0.55) / 0.0048).powi(2)).exp();
-                let sulcus_wet_pool = 0.35 * (-sulcus_xi * sulcus_xi * 2.4).exp() * minora_arch;
-                let wet_envelope =
-                    (((0.58 * radial_wet_spread * minora_arch) + sulcus_wet_pool) / 3.2e-5) as f32;
-
-                let outer_skin = [0.83_f32, 0.62, 0.55];
-                let majora_tint = [0.76_f32, 0.51, 0.46];
-                let minora_mucosa = [0.73_f32, 0.33, 0.39];
-                let minora_crest_pigment = [0.64_f32, 0.35, 0.35];
-                let inner_vestibule = [0.64_f32, 0.21, 0.29];
-                let deep_orifice_lumen = [0.36_f32, 0.07, 0.12];
-
-                let m_blend = (majora_profile as f32).clamp(0.0, 1.0);
-                let mut rgb = [
-                    outer_skin[0] * (1.0 - m_blend) + majora_tint[0] * m_blend,
-                    outer_skin[1] * (1.0 - m_blend) + majora_tint[1] * m_blend,
-                    outer_skin[2] * (1.0 - m_blend) + majora_tint[2] * m_blend,
-                ];
-                for k in 0..3 {
-                    rgb[k] = rgb[k] * (1.0 - mucosa_factor) + minora_mucosa[k] * mucosa_factor;
-                }
-                let crest_margin = ((-minora_xi * minora_xi * 3.4).exp() * minora_env) as f32;
-                for k in 0..3 {
-                    rgb[k] = rgb[k] * (1.0 - 0.38 * crest_margin)
-                        + minora_crest_pigment[k] * (0.38 * crest_margin);
-                }
-                let deep_cleft = ((-vestibule_xi * vestibule_xi * 1.9).exp() * minora_arch) as f32;
-                for k in 0..3 {
-                    rgb[k] = rgb[k] * (1.0 - 0.72 * deep_cleft)
-                        + inner_vestibule[k] * (0.72 * deep_cleft);
-                }
-                for k in 0..3 {
-                    rgb[k] = rgb[k] * (1.0 - 0.88 * orifice_canal_w)
-                        + deep_orifice_lumen[k] * (0.88 * orifice_canal_w);
-                }
-
-                let rest_m = [x_rest as f32, y as f32, z_rest as f32];
-                let rest_scaled = [
-                    (x_rest * display_scale) as f32,
-                    (y * display_scale) as f32,
-                    (z_rest * display_scale) as f32,
-                ];
-
-                bindings.push(PreparedVertexBinding {
-                    rest_m,
-                    rest_scaled,
-                    base_rgb: rgb,
-                    side_idx,
-                    b0: b0 as u8,
-                    b1: b1 as u8,
-                    frac,
-                    majora_w: majora_profile.clamp(0.0, 1.0) as f32,
-                    minora_w: minora_profile.clamp(0.0, 1.15) as f32,
-                    minora_arch: minora_arch as f32,
-                    wet_envelope,
-                    mucosa_factor,
-                    orifice_canal_w,
-                    orifice_rim_w,
-                });
-                vertices.push(SceneVertex {
-                    position: rest_scaled,
-                    uv: [0.35 * (orifice_rim_w + orifice_canal_w), mucosa_factor],
-                    color: [rgb[0], rgb[1], rgb[2], 0.0],
-                });
-                material_coordinates.push(rest_m);
+    fn build_polar_grid_indices() -> Vec<u32> {
+        let mut indices = Vec::with_capacity((NR - 1) * NS * 6);
+        for r in 0..(NR - 1) {
+            for s in 0..NS {
+                let s_next = (s + 1) % NS;
+                let i00 = (r * NS + s) as u32;
+                let i10 = ((r + 1) * NS + s) as u32;
+                let i01 = (r * NS + s_next) as u32;
+                let i11 = ((r + 1) * NS + s_next) as u32;
+                indices.extend_from_slice(&[i00, i10, i11, i00, i11, i01]);
             }
         }
+        indices
+    }
 
-        let tissue_quads = nu * nv;
-        let tube_quads = tube_sectors * tube_rings;
-        let lube_quads = tube_sectors * lube_rings;
-        let mut indices = Vec::with_capacity((tissue_quads + tube_quads + lube_quads) * 6);
-        let stride = (nu + 1) as u32;
-        for iv in 0..nv {
-            for iu in 0..nu {
-                let a = (iv as u32) * stride + (iu as u32);
-                let b = a + 1;
-                let c = a + stride;
-                let d = c + 1;
-                indices.extend([a, b, d, a, d, c]);
-            }
-        }
+    fn build_vertices(&mut self, time_s: f32) -> (Vec<SkinVertex>, Kinematics) {
+        let kin = sample_kinematics(time_s);
+        let pen = ((2.2 - kin.tip_z_mm) / 9.8).clamp(0.0, 1.0);
 
-        let mut normals = vec![[0.0_f32, 0.0, 1.0]; tissue_vertex_count];
+        // Normalized insertion-withdrawal cycle [0, 1):
+        // At frame 3 (t = 0.50 s, u = 0.568), prolapse_t = 0.37 (initial mucosal cuff eversion around shaft);
+        // At frame 4 (t = 0.72 s, u = 0.818), prolapse_t = 1.00 (peak vaginal mucosal rosette prolapse!).
+        let cycle_u = (time_s / INSERTION_PERIOD_SECONDS).rem_euclid(1.0);
+        let prolapse_t =
+            smoothstep(0.46, 0.72, cycle_u) * (1.0 - smoothstep(0.88, 0.98, cycle_u));
 
-        // 2. Build smooth rounded-tip cylindrical tube geometry (hemispherical lower tip + cylindrical shaft + beveled lumen cap)
-        let mut tube_local = Vec::with_capacity(tube_vertex_count);
-        let r_tube = tube_radius_m as f32;
-        let shaft_len = (tube_length_m - tube_radius_m).max(0.005) as f32;
-        for ir in 0..=tube_rings {
-            let (ring_r, z_off, nz, axial_frac, is_lumen) = if ir <= tip_rings {
-                let theta =
-                    std::f32::consts::FRAC_PI_2 * (ir as f32 / (tip_rings as f32)).clamp(0.0, 1.0);
-                let sin_t = theta.sin();
-                let cos_t = theta.cos();
-                (
-                    r_tube * sin_t,
-                    r_tube * (1.0 - cos_t),
-                    -cos_t,
-                    0.25 * (ir as f32 / (tip_rings as f32)),
-                    false,
-                )
-            } else if ir <= tip_rings + shaft_rings {
-                let s_frac = (ir - tip_rings) as f32 / (shaft_rings as f32);
-                (
-                    r_tube,
-                    r_tube + s_frac * shaft_len,
-                    0.0,
-                    0.25 + 0.75 * s_frac,
-                    false,
-                )
-            } else {
-                let c_frac = (ir - tip_rings - shaft_rings) as f32 / (cap_rings as f32);
-                let r_cap = r_tube * (1.0 - 0.96 * c_frac);
-                let z_cap = r_tube + shaft_len + 0.0004 * (1.0 - c_frac) - 0.0022 * c_frac * c_frac;
-                (r_cap, z_cap, 0.92, 1.0, c_frac > 0.35)
-            };
+        // 26-degree anatomical vaginal canal axis (tilted toward -Y so the probe enters cleanly
+        // from the bottom-center of the frame and never obstructs the Vestibule or Clitoris).
+        let sin_alpha = 0.4384f32;
+        let cos_alpha = 0.8988f32;
+        let tan_alpha = sin_alpha / cos_alpha;
 
-            let grad_band = ((axial_frac * 28.0).sin().abs() < 0.14)
-                && ir > tip_rings
-                && ir <= tip_rings + shaft_rings;
-            let base_col = if is_lumen {
-                [0.42_f32, 0.50, 0.58, 0.0]
-            } else if grad_band {
-                [0.62_f32, 0.77, 0.86, 0.0]
-            } else {
-                [0.84_f32, 0.90, 0.95, 0.0]
-            };
-
-            for isec in 0..=tube_sectors {
-                let phi = std::f32::consts::TAU * (isec as f32 / (tube_sectors as f32));
-                let (sin_p, cos_p) = phi.sin_cos();
-                let lx = ring_r * cos_p;
-                let ly = ring_r * sin_p;
-                let nr = (1.0 - nz * nz).max(0.0).sqrt();
-                let n = [nr * cos_p, nr * sin_p, nz];
-
-                tube_local.push(TubeLocalVertex {
-                    local_offset_m: [lx, ly, z_off],
-                    color: base_col,
-                });
-                vertices.push(SceneVertex {
-                    position: [lx * scale, ly * scale, z_off * scale],
-                    uv: [0.5, -1.0],
-                    color: base_col,
-                });
-                normals.push(n);
-                material_coordinates.push([lx, ly, z_off]);
-            }
-        }
-
-        let tube_base = tissue_vertex_count as u32;
-        let tube_stride = (tube_sectors + 1) as u32;
-        for ir in 0..tube_rings {
-            for isec in 0..tube_sectors {
-                let a = tube_base + (ir as u32) * tube_stride + (isec as u32);
-                let b = a + 1;
-                let c = a + tube_stride;
-                let d = c + 1;
-                indices.extend([a, b, d, a, d, c]);
-            }
-        }
-
-        // 3. Build 3D Viscous Lubricant Meniscus Collar, Fillet Ring & Pooled Vestibule Fluid Mesh (uv.y = -2.0)
-        let mut lube_bindings = Vec::with_capacity(lube_vertex_count);
-        for ir in 0..=lube_rings {
-            let radial_frac = ir as f32 / (lube_rings as f32);
-            for isec in 0..=tube_sectors {
-                let angle_rad = std::f32::consts::TAU * (isec as f32 / (tube_sectors as f32));
-                lube_bindings.push(LubeMeniscusBinding {
-                    radial_frac,
-                    angle_rad,
-                });
-                vertices.push(SceneVertex {
-                    position: [0.0, 0.0, 0.0],
-                    uv: [1.35, -2.0],
-                    color: [0.92, 0.85, 0.88, 1.0],
-                });
-                normals.push([0.0, 0.0, 1.0]);
-                material_coordinates.push([
-                    r_tube * (1.0 + radial_frac) * angle_rad.cos(),
-                    (orifice_y_m as f32) + r_tube * (1.0 + radial_frac) * angle_rad.sin(),
-                    0.0,
-                ]);
-            }
-        }
-
-        // Keep lube_bindings vertices unindexed so no separate opaque ring mesh ever floats below the hemispherical tube tip;
-        // the 3D capillary lubricant meniscus is sculpted directly into the high-density mucosal orifice collar & tube shaft.
-
-        let mut scene = Self {
-            nu,
-            nv,
-            tube_sectors,
-            lube_rings,
-            bindings,
-            tube_local,
-            lube_bindings,
-            tissue_vertex_count,
-            tube_vertex_count,
-            vertices,
-            indices,
-            normals,
-            material_coordinates,
-            display_scale: scale,
+        let z_pivot = -1.35 - 0.95 * pen;
+        let s_tip = kin.tip_z_mm - z_pivot;
+        let cap_center_s = s_tip + TUBE_RADIUS_MM;
+        let r_tube_at_rim = if s_tip >= 0.0 {
+            0.0
+        } else if cap_center_s > 0.0 {
+            let ds = cap_center_s;
+            (TUBE_RADIUS_MM * TUBE_RADIUS_MM - ds * ds).max(0.0).sqrt()
+        } else {
+            TUBE_RADIUS_MM
         };
-        scene.recompute_tissue_normals();
-        scene
-    }
 
-    fn recompute_tissue_normals(&mut self) {
-        let stride = self.nu + 1;
-        let left_mid = self.nu / 2;
-        let right_mid = left_mid + 1;
-        for iv in 0..=self.nv {
-            let iv_prev = iv.saturating_sub(1);
-            let iv_next = (iv + 1).min(self.nv);
-            for iu in 0..=self.nu {
-                // Keep finite differences on the same side of the central orifice slit
-                let (iu_prev, iu_next) = if iu <= left_mid {
-                    (iu.saturating_sub(1), iu.min(left_mid))
+        // Resting vaginal introitus (`ostium vaginae`) is an almond-shaped mucosal opening
+        // (~2.2 mm x 3.7 mm) framed by the Bulbospongiosus sphincter ring & hymenal caruncles.
+        // During withdrawal prolapse (frame 4), the everted vaginal mucosal rosette stays gaping
+        // (`prolapse_rx ~ 1.68 mm, prolapse_ry ~ 2.35 mm`) inside the Labia Minora!
+        let pre_dilation = 0.45 * smoothstep(3.2, -0.3, s_tip) * (1.0 - prolapse_t);
+        let prolapse_rx = 1.68 * prolapse_t;
+        let prolapse_ry = 2.35 * prolapse_t;
+        let orifice_rx_rest = 1.10;
+        let orifice_ry_rest = 1.85;
+        let orifice_rx = (orifice_rx_rest + pre_dilation)
+            .max(r_tube_at_rim - 0.04)
+            .max(prolapse_rx)
+            .min(TUBE_RADIUS_MM - 0.03);
+        let orifice_ry = (orifice_ry_rest + pre_dilation * 0.95)
+            .max((r_tube_at_rim / cos_alpha) - 0.04)
+            .max(prolapse_ry)
+            .min((TUBE_RADIUS_MM / cos_alpha) - 0.03);
+        let tube_contact_t =
+            ((orifice_rx - orifice_rx_rest) / (TUBE_RADIUS_MM - orifice_rx_rest)).clamp(0.0, 1.0);
+
+        let shear_dir = (-kin.velocity_z_mm_s / 42.0).clamp(-1.0, 1.0);
+        let meniscus_contact = smoothstep(2.6, -1.0, s_tip).max(0.75 * prolapse_t);
+
+        let mut positions = vec![Vec3::ZERO; NR * NS];
+        let mut colors = vec![[0.0f32; 3]; NR * NS];
+        let mut props = vec![[0.0f32; 4]; NR * NS];
+        let mut uvs = vec![[0.0f32; 2]; NR * NS];
+
+        // u_rim separates the internal vaginal canal (u <= u_rim) from the external vulvar anatomy (u > u_rim)
+        let u_rim = 0.14;
+
+        for r in 0..NR {
+            let u_ring = r as f32 / (NR - 1) as f32;
+
+            for s in 0..NS {
+                let theta = (s as f32 / NS as f32) * std::f32::consts::TAU;
+                let cos_t = theta.cos();
+                let sin_t = theta.sin();
+
+                let (rx, ry, rx_rest, ry_rest, is_canal) = if u_ring <= u_rim {
+                    let t_canal = u_ring / u_rim;
+                    let scale_c = 0.35 + 0.65 * t_canal;
+                    (
+                        (orifice_rx * scale_c).max(0.10),
+                        (orifice_ry * scale_c).max(0.16),
+                        (orifice_rx_rest * scale_c).max(0.10),
+                        (orifice_ry_rest * scale_c).max(0.16),
+                        true,
+                    )
                 } else {
-                    (iu.max(right_mid), (iu + 1).min(self.nu))
+                    let u_ext = (u_ring - u_rim) / (1.0 - u_rim);
+                    let max_rx = 34.0;
+                    let max_ry = 42.0;
+                    let rx_r = orifice_rx_rest + (max_rx - orifice_rx_rest) * u_ext.powf(1.22);
+                    let ry_r = orifice_ry_rest + (max_ry - orifice_ry_rest) * u_ext.powf(1.20);
+                    // Exponential radial tissue decay so dilation stretches the introitus and lower
+                    // Labia Minora while keeping the Clitoral Glans, Hood, and outer Majora anchored.
+                    let dilate_decay = (-u_ext * 4.5).exp();
+                    let rx_e = rx_r + (orifice_rx - orifice_rx_rest) * dilate_decay;
+                    let ry_e = ry_r + (orifice_ry - orifice_ry_rest) * dilate_decay;
+                    (rx_e, ry_e, rx_r, ry_r, false)
                 };
-                let p_u0 = Vec3::from_array(self.vertices[iv * stride + iu_prev].position);
-                let p_u1 = Vec3::from_array(self.vertices[iv * stride + iu_next].position);
-                let p_v0 = Vec3::from_array(self.vertices[iv_prev * stride + iu].position);
-                let p_v1 = Vec3::from_array(self.vertices[iv_next * stride + iu].position);
-                let du = p_u1 - p_u0;
-                let dv = p_v1 - p_v0;
-                self.normals[iv * stride + iu] =
-                    du.cross(dv).try_normalize().unwrap_or(Vec3::Z).to_array();
-            }
-        }
-    }
 
-    fn recompute_lube_normals(&mut self) {
-        let base = self.tissue_vertex_count + self.tube_vertex_count;
-        let stride = self.tube_sectors + 1;
-        for ir in 0..=self.lube_rings {
-            let ir_prev = ir.saturating_sub(1);
-            let ir_next = (ir + 1).min(self.lube_rings);
-            for isec in 0..=self.tube_sectors {
-                let isec_prev = if isec == 0 {
-                    self.tube_sectors - 1
+                let x0 = rx * cos_t;
+                let y_surf = INTROITUS_Y_MM + ry * sin_t;
+
+                let ux = rx_rest * cos_t;
+                let uy = INTROITUS_Y_MM + ry_rest * sin_t;
+
+                // Elliptical radial distance from the vaginal introitus rim
+                let dx_intro = x0;
+                let dy_intro = y_surf - INTROITUS_Y_MM;
+                let r_intro = (dx_intro * dx_intro + dy_intro * dy_intro).sqrt();
+                let r_orifice_angle =
+                    ((orifice_rx * cos_t).powi(2) + (orifice_ry * sin_t).powi(2)).sqrt();
+                let r_from_introitus = if is_canal {
+                    0.0
                 } else {
-                    isec - 1
+                    (r_intro - r_orifice_angle).max(0.0)
                 };
-                let isec_next = if isec >= self.tube_sectors {
-                    1
-                } else {
-                    isec + 1
-                };
-                let p_r0 = Vec3::from_array(self.vertices[base + ir_prev * stride + isec].position);
-                let p_r1 = Vec3::from_array(self.vertices[base + ir_next * stride + isec].position);
-                let p_s0 = Vec3::from_array(self.vertices[base + ir * stride + isec_prev].position);
-                let p_s1 = Vec3::from_array(self.vertices[base + ir * stride + isec_next].position);
-                let dr = p_r1 - p_r0;
-                let ds = p_s1 - p_s0;
-                self.normals[base + ir * stride + isec] =
-                    ds.cross(dr).try_normalize().unwrap_or(Vec3::Z).to_array();
-            }
-        }
-    }
 
-    #[allow(clippy::too_many_lines)]
-    fn deform_scene(
-        &mut self,
-        majora_sim: &physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: &physics::skin::LabiaMinoraGaitSimulation,
-        films: &[SurfaceFilm; 2],
-        tube: &LabiaTubeInsertion,
-        sim_time_s: f64,
-    ) {
-        let majora_pos = majora_sim.assembly.body.body().positions();
-        let majora_rest = majora_sim.assembly.body.body().rest_positions();
-        let [left_apex, right_apex] = majora_sim.apex_nodes();
-        let majora_disp = [
-            [
-                (majora_pos[left_apex][0] - majora_rest[left_apex][0]) as f32,
-                (majora_pos[left_apex][1] - majora_rest[left_apex][1]) as f32,
-                (majora_pos[left_apex][2] - majora_rest[left_apex][2]) as f32,
-            ],
-            [
-                (majora_pos[right_apex][0] - majora_rest[right_apex][0]) as f32,
-                (majora_pos[right_apex][1] - majora_rest[right_apex][1]) as f32,
-                (majora_pos[right_apex][2] - majora_rest[right_apex][2]) as f32,
-            ],
-        ];
+                // Material-anchored longitudinal coordinate `vy` keeps upper vulvar landmarks fixed
+                let vy = uy;
 
-        let mut minora_crest_disp = [[0.0_f32; 3]; 2];
-        let mut film_wetness_profile = [[0.0_f32; 8]; 2];
-        for side in 0..2 {
-            let fold = &minora_sim.folds[side];
-            let pos = fold.skin.positions();
-            let rest = fold.skin.rest_positions();
-            let inv_count = 1.0 / (fold.crest_nodes.len().max(1) as f32);
-            for &node in &fold.crest_nodes {
-                for axis in 0..3 {
-                    minora_crest_disp[side][axis] +=
-                        ((pos[node][axis] - rest[node][axis]) as f32) * inv_count;
+                // Plump 8-cushion vaginal rugae / caruncular profile (wide convex cushions, narrow sulci)
+                let u_lobe_8 = (0.5 - 0.5 * (8.0 * theta + 0.25).cos()).clamp(0.0, 1.0);
+                let u_lobe_14 = (0.5 - 0.5 * (14.0 * theta - 0.55).cos()).clamp(0.0, 1.0);
+                let prolapse_sulcus = 0.72 * u_lobe_8.powf(2.3) + 0.28 * u_lobe_14.powf(2.4);
+                let prolapse_cushion_profile = 1.0 - 0.26 * prolapse_sulcus;
+                let prolapse_torus_env = (-((r_from_introitus - 0.72) / 0.88).powi(2)).exp();
+
+                // Fusiform (almond/spindle) longitudinal envelope of the vulvar cleft from
+                // Posterior Fourchette (y = -9.6 mm) to Anterior Commissure / Clitoral Hood (y = +13.0 mm)
+                let spindle_u = ((vy - 0.5) / 10.4).clamp(-1.0, 1.0);
+                let spindle_env = (1.0 - spindle_u * spindle_u).max(0.0).sqrt();
+
+                // ── 1. Prominent 3D Clitoral Complex (`glans clitoridis`, `preputium`, `frenulum`) ──
+                // Evaluated using concentric elliptical coordinates around the Clitoral Glans center
+                // `(0.0, +7.35 mm)` so the Glans Pearl, Horseshoe Sub-Preputial Moat, and Clitoral Hood
+                // are 100% smooth and free of any diagonal grid aliasing!
+                let glans_dx = x0 / 1.28;
+                let glans_dy = (vy - 7.35) / 1.52;
+                let glans_r2 = glans_dx * glans_dx + glans_dy * glans_dy;
+                let r_glans_ellip = glans_r2.sqrt();
+                let glans_mask = (-glans_r2 * 1.35).exp();
+                let glans_tip_dimple = -0.25
+                    * (-(x0 / 0.32).powi(2)).exp()
+                    * (-((vy - 6.55) / 0.55).powi(2)).exp();
+                let clitoral_glans = 3.55 * glans_mask + glans_tip_dimple;
+
+                // Deep Horseshoe Sub-Preputial Moat (`sulcus preputialis`) wrapping around the top and
+                // lateral sides of the Clitoral Glans (`r_glans_ellip ~ 1.18`, `vy > 5.5 mm`):
+                let moat_horseshoe = (-((r_glans_ellip - 1.18) / 0.46).powi(2)).exp()
+                    * smoothstep(5.4, 7.0, vy);
+                let glans_moat = -1.45 * moat_horseshoe;
+
+                // Thick Overhanging Horseshoe Clitoral Hood (`preputium clitoridis`) wrapping outside
+                // the moat (`r_glans_ellip ~ 1.82`) and flowing seamlessly into the Labia Minora:
+                let hood_horseshoe = (-((r_glans_ellip - 1.82) / 0.72).powi(2)).exp()
+                    * smoothstep(4.0, 6.2, vy);
+                let hood_superior_tail =
+                    (-((x0 / 1.70).powi(2) + ((vy - 10.5) / 2.25).powi(2))).exp();
+                let clitoral_hood = 3.35 * (hood_horseshoe + 0.60 * hood_superior_tail).min(1.15);
+
+                // Bilateral Clitoral Frenula (`frenulum clitoridis`) gently connecting the lower pole
+                // of the Clitoral Glans (`vy = 6.2 mm, x = ±0.45 mm`) into the Labia Minora (`vy = 4.2 mm, x = ±1.65 mm`):
+                let fren_t = ((6.3 - vy) / 2.2).clamp(0.0, 1.0);
+                let fren_x_center = 0.42 + 1.18 * fren_t;
+                let fren_y_env = smoothstep(3.6, 4.8, vy) * (1.0 - smoothstep(6.0, 7.0, vy));
+                let fren_r = (-((x0 - fren_x_center) / 0.62).powi(2)).exp() * fren_y_env;
+                let fren_l = (-((x0 + fren_x_center) / 0.62).powi(2)).exp() * fren_y_env;
+                let clitoral_frenulum = 1.35 * (fren_r + fren_l);
+
+                // Clear the Labia Minora inside the Clitoral Glans & Sub-Preputial Pocket so the Glans stands out!
+                let clitoral_pocket_clear =
+                    (-((x0 / 1.75).powi(2) + ((vy - 7.45) / 2.00).powi(2))).exp();
+
+                // ── 2. Labia Minora (`Nymphae`) Framing the Open Vulvar Vestibule ──
+                // The Labia Minora crests sit at `x = ±2.05..±2.45 mm` along the mid-vestibule so the
+                // Urethral Sphincter Rosette (`vy = +1.25 mm`) and Vaginal Introitus (`vy = -5.5 mm`)
+                // sit cleanly on the open Vestibular Floor between the two fleshy Labia Minora petals!
+                let minora_ant_taper =
+                    (1.0 - smoothstep(5.2, 7.4, vy)) * (1.0 - 0.88 * clitoral_pocket_clear);
+                let minora_post_taper = smoothstep(-9.6, -6.6, vy);
+                let minora_y_env = minora_ant_taper * minora_post_taper;
+
+                let wave_r = 0.12 * (vy * 0.55 + 0.35).sin() + 0.06 * (vy * 1.15 - 0.40).cos();
+                let wave_l = 0.12 * (vy * 0.50 - 0.45).sin() + 0.06 * (vy * 1.18 + 0.50).cos();
+
+                let introitus_local = (-((vy - INTROITUS_Y_MM) / 4.4).powi(2)).exp();
+                let base_ridge_x = 0.55
+                    + 1.52 * spindle_env
+                    + 0.58 * introitus_local
+                    + 2.15 * tube_contact_t * introitus_local;
+                let ridge_x_r = (base_ridge_x + wave_r * minora_y_env).max(0.55);
+                let ridge_x_l = (base_ridge_x + wave_l * minora_y_env).max(0.55);
+
+                let w_inner = 0.72 + 0.22 * spindle_env;
+                let w_outer = 1.25 + 0.55 * spindle_env;
+
+                let dx_r = x0 - ridge_x_r;
+                let dx_l = -x0 - ridge_x_l;
+                let w_r = w_inner + (w_outer - w_inner) * smoothstep(-w_inner, w_outer, dx_r);
+                let w_l = w_inner + (w_outer - w_inner) * smoothstep(-w_inner, w_outer, dx_l);
+
+                let scallop_r = 1.0
+                    + 0.08 * (vy * 0.62 + 0.30).sin()
+                    + 0.04 * (vy * 1.28 - 0.25).cos()
+                    + 0.03 * (dx_r * 2.0).cos();
+                let scallop_l = 1.0
+                    + 0.08 * (vy * 0.58 - 0.40).sin()
+                    + 0.04 * (vy * 1.24 + 0.45).cos()
+                    + 0.03 * (dx_l * 2.0).cos();
+
+                let lip_r = (-(dx_r / w_r).powi(2)).exp();
+                let lip_l = (-(dx_l / w_l).powi(2)).exp();
+
+                let minora_skew = (lip_r + lip_l).clamp(0.0, 1.0);
+                // Keep the Labia Minora outside the prolapsing inner introital sphincter cuff (`r_from_introitus > 1.35 mm`)
+                let collar_taper = smoothstep(0.45, 1.75, r_from_introitus);
+                let minora_height = 3.45
+                    * (lip_r * scallop_r + lip_l * scallop_l)
+                    * minora_y_env
+                    * collar_taper;
+
+                // ── 3. Posterior Fourchette (`frenulum labiorum pudendi`) & Fossa Navicularis ──
+                let fourchette_bridge = 1.55
+                    * (-((vy + 8.9) / 1.40).powi(2)).exp()
+                    * (-x0 * x0 / 4.8).exp()
+                    * (1.0 - 0.30 * pen)
+                    * smoothstep(0.3, 1.4, r_from_introitus);
+
+                // ── 4. Smooth Interlabial Sulci (`sulcus interlabialis`) & Pudendal Cleft ──
+                let sulcus_center_x = 0.65 + (base_ridge_x + w_outer * 0.92) * spindle_env;
+                let sulc_r = (-((x0 - sulcus_center_x) / 0.88).powi(2)).exp();
+                let sulc_l = (-((x0 + sulcus_center_x) / 0.88).powi(2)).exp();
+                let sulc_y_env =
+                    smoothstep(-10.8, -7.5, vy) * (1.0 - smoothstep(10.2, 13.8, vy));
+                let interlabial_sulcus = -1.10 * (sulc_r + sulc_l) * sulc_y_env;
+
+                let ant_cleft = -0.85 * smoothstep(10.8, 14.8, vy) * (-x0 * x0 / 2.2).exp();
+                let post_cleft =
+                    -0.75 * (1.0 - smoothstep(-15.0, -9.0, vy)) * (-x0 * x0 / 2.2).exp();
+
+                // ── 5. Pure C^infty Bilateral Labia Majora Cushions & Mons Pubis ──
+                let majora_center_x = 7.6 + 1.4 * spindle_env;
+                let maj_r = (-((x0 - majora_center_x) / 5.2).powi(2)).exp();
+                let maj_l = (-((x0 + majora_center_x) / 5.2).powi(2)).exp();
+                let majora_cushion = 1.95 * (maj_r + maj_l);
+
+                let x_rad = (x0 * x0 + 1.0).sqrt();
+                let outer_thigh_slope = 0.75 * smoothstep(13.0, 34.0, x_rad);
+                let mons_pubis = 1.65 * smoothstep(8.0, 21.0, vy) * (-x0 * x0 / 190.0).exp();
+                let perineal_body =
+                    0.55 * (1.0 - smoothstep(-16.5, -9.2, vy)) * (-x0 * x0 / 110.0).exp();
+                let ap_curvature = -0.0010 * vy * vy + 0.008 * vy;
+
+                // ── 6. Vestibular Cleft & External Urethral Sphincter Rosette (`m. sphincter urethrae`) ──
+                let vest_y_env = smoothstep(-8.8, -6.0, vy) * (1.0 - smoothstep(4.8, 6.8, vy));
+                let vest_width_x = (base_ridge_x * 0.78).max(1.15);
+                let vest_floor_env = (-(x0 / vest_width_x).powi(2)).exp() * vest_y_env;
+
+                // Prominent External Urethral Sphincter Rosette (`ostium urethrae externum`) at (0.0, +1.25 mm)
+                // sitting cleanly on the concave vestibular floor between the parted Labia Minora:
+                let u_dx = x0 / 0.85;
+                let u_dy = (vy - 1.25) / 0.98;
+                let r_urethra = (u_dx * u_dx + u_dy * u_dy).sqrt();
+                let theta_urethra = u_dy.atan2(u_dx);
+                let urethral_pit_mask = (-r_urethra * r_urethra * 5.0).exp();
+                let urethral_cuff_mask = (-((r_urethra - 0.80) / 0.40).powi(2)).exp();
+                let urethral_stellate = 0.82 + 0.18 * (6.0 * theta_urethra).cos();
+                let urethral_outer_moat = -0.35 * (-((r_urethra - 1.35) / 0.35).powi(2)).exp();
+                let urethral_sphincter_rosette = -1.45 * urethral_pit_mask
+                    + 1.18 * urethral_cuff_mask * urethral_stellate
+                    + urethral_outer_moat;
+
+                let vestibule_recess = -0.85 * vest_floor_env + urethral_sphincter_rosette;
+
+                // ── 7. Bulbospongiosus Vaginal Introital Sphincter Cuff & Vaginal Mucosal Prolapse ──
+                // Strictly localized around the vaginal introitus rim (`r_from_introitus < 2.2 mm`) inside the
+                // vestibule so it never creates concentric bullseye rings across the outer Labia Minora/Majora!
+                let intro_sphincter_env = (-((r_from_introitus - 0.65) / 0.72).powi(2)).exp();
+                let intro_sphincter_outer_groove = -0.45
+                    * (0.35 + 0.65 * prolapse_t + 0.25 * pen)
+                    * (-((r_from_introitus - 1.55) / 0.45).powi(2)).exp();
+                let bulbospongiosus_sphincter = 0.95
+                    * intro_sphincter_env
+                    * (1.0 + 0.35 * pen + 0.35 * prolapse_t)
+                    + intro_sphincter_outer_groove;
+
+                // Fleshy hymenal caruncles & vaginal rugae (`carunculae hymenales` & `columnae rugarum`)
+                let u_8 = (0.5 - 0.5 * (8.0 * theta + 0.25).cos()).powf(2.25);
+                let u_14 = (0.5 - 0.5 * (14.0 * theta - 0.40).cos()).powf(2.40);
+                let rugae_profile = (1.0 - 0.72 * u_8 - 0.28 * u_14) - 0.26;
+                let rugae_effacement = 1.0 - 0.80 * pen - 0.30 * prolapse_t * (1.0 - pen);
+                let rugae_cushions = 0.72
+                    * rugae_profile
+                    * rugae_effacement
+                    * (-r_from_introitus * 0.62).exp();
+
+                // True Vaginal Mucosal Rosette Prolapse (`пролапс слизистой розетки влагалища`):
+                // Compact, plump, rolled toroidal mucosal doughnut (`r_from_introitus = 0..1.55 mm`, `+2.10 mm` high)
+                // everting out of the gaping vaginal introitus inside the Labia Minora!
+                let torus_dome = (0.55 * (-r_from_introitus * 0.95).exp() + prolapse_torus_env)
+                    * prolapse_cushion_profile;
+                let prolapse_transverse_rugae =
+                    0.14 * (r_from_introitus * 6.4 - 0.6).sin() * (-r_from_introitus * 0.65).exp();
+                let vaginal_prolapse_rosette =
+                    prolapse_t * (1.95 * torus_dome + prolapse_transverse_rugae);
+
+                // Smooth funnel roll-in at the vaginal introitus rim
+                let introitus_roll_in =
+                    -0.85 * (-r_from_introitus * 0.85).exp() * (1.0 - 0.75 * prolapse_t);
+
+                // Dynamic axial response at the introitus collar
+                let intro_collar_env = (-r_from_introitus * 0.38).exp();
+                let invagination = -1.25
+                    * pen
+                    * (1.0 - 0.65 * prolapse_t)
+                    * intro_collar_env
+                    * (0.65 + 0.35 * shear_dir.max(0.0));
+                let withdrawal_cuff = 1.45
+                    * (-shear_dir).max(0.0)
+                    * pen
+                    * (-((r_from_introitus - 0.65).powi(2)) / 2.0).exp();
+
+                // Seamless capillary lubricant meniscus lip right at the introitus contact collar
+                let meniscus_lip = 0.58 * meniscus_contact * (-r_from_introitus * 1.9).exp();
+
+                // Lateral petal fullness & toroidal prolapse lip overhang applied after clean field evaluation
+                let mut x = x0;
+                if !is_canal {
+                    let overhang_r = 0.32 * lip_r * smoothstep(0.0, 1.8, dx_r);
+                    let overhang_l = -0.32 * lip_l * smoothstep(0.0, 1.8, dx_l);
+                    let prolapse_r_bulge =
+                        0.45 * prolapse_t * prolapse_torus_env * prolapse_cushion_profile;
+                    x += (overhang_r + overhang_l) * minora_y_env * collar_taper
+                        + prolapse_r_bulge * cos_t;
                 }
-            }
-            let thicknesses = films[side].thickness();
-            let tris = fold.skin.triangles();
-            let mut bin_weights = [0.0_f32; 8];
-            for (tri, &h) in tris.iter().zip(thicknesses.iter()) {
-                let cy = (rest[tri[0]][1] + rest[tri[1]][1] + rest[tri[2]][1]) / 3.0;
-                let v_norm = ((cy / 0.042) + 0.5).clamp(0.0, 0.999);
-                let bin = (v_norm * 8.0) as usize;
-                film_wetness_profile[side][bin] += h as f32;
-                bin_weights[bin] += 1.0;
-            }
-            for b in 0..8 {
-                if bin_weights[b] > 0.0 {
-                    film_wetness_profile[side][b] /= bin_weights[b];
+
+                // Unified surface height guarantees 100% C^1 continuity across u_ring == u_rim
+                let z_surface = vestibule_recess
+                    + rugae_cushions
+                    + introitus_roll_in
+                    + bulbospongiosus_sphincter
+                    + vaginal_prolapse_rosette
+                    + minora_height
+                    + fourchette_bridge
+                    + clitoral_glans
+                    + glans_moat
+                    + clitoral_frenulum
+                    + clitoral_hood
+                    + interlabial_sulcus
+                    + ant_cleft
+                    + post_cleft
+                    + majora_cushion
+                    + outer_thigh_slope
+                    + mons_pubis
+                    + perineal_body
+                    + ap_curvature
+                    + invagination
+                    + withdrawal_cuff
+                    + meniscus_lip;
+
+                // Exact tilted-cylinder rim coupling: shifting y by `-tan_alpha * (z_surface - z_pivot)`
+                // near the rim ensures that at u_ring == u_rim, every vertex (x, y, z_surface) lies
+                // 100% on the tilted probe surface regardless of local cushion/labia height `z_surface`!
+                let rim_tilt_couple = (-r_from_introitus * 0.65).exp();
+                let y_coupled =
+                    y_surf - tan_alpha * (z_surface - z_pivot) * rim_tilt_couple;
+
+                let (y, z) = if is_canal {
+                    let t_canal = u_ring / u_rim;
+                    let canal_drop = -12.5 * (1.0 - t_canal).powf(1.38);
+                    (y_coupled - tan_alpha * canal_drop, z_surface + canal_drop)
+                } else {
+                    (y_coupled, z_surface)
+                };
+
+                // ── 8. True Linear-Space (sRGB^2.2) Multi-Zone Vulvar, Clitoral, Sphincter & Prolapse Pigmentation ──
+                let majora_skin = [0.50f32, 0.25, 0.165];
+                let sulcus_shadow_col = [0.24f32, 0.095, 0.072];
+                let subpreputial_shadow_col = [0.065f32, 0.014, 0.016];
+                let minora_edge_pigment = [0.25f32, 0.082, 0.068];
+                let minora_inner_pink = [0.39f32, 0.102, 0.100];
+                let glans_coral_rose = [0.49f32, 0.118, 0.125];
+                let urethral_cuff_rose = [0.42f32, 0.082, 0.090];
+                let urethral_lumen_dark = [0.032f32, 0.005, 0.007];
+                let vestibule_mucosa = [0.31f32, 0.052, 0.062];
+                let vaginal_prolapse_mucosa = [0.44f32, 0.042, 0.054];
+                let prolapse_sulcus_crimson = [0.16f32, 0.015, 0.020];
+                let deep_canal_col = [0.008f32, 0.001, 0.0015];
+
+                let cleft_x_norm = x0 / (sulcus_center_x + 0.15);
+                let cleft_y_norm = (vy - 0.6) / 10.4;
+                let cleft_elliptical_r =
+                    (cleft_x_norm * cleft_x_norm + cleft_y_norm * cleft_y_norm).sqrt();
+                let to_majora = smoothstep(0.58, 1.22, cleft_elliptical_r);
+
+                let in_sulcus =
+                    (sulc_r + sulc_l).clamp(0.0, 1.0) * sulc_y_env * (1.0 - to_majora * 0.45);
+                let on_minora_crest = minora_skew * minora_y_env * collar_taper;
+                let in_vestibule = vest_floor_env
+                    .max((-r_from_introitus * 0.65).exp() * (1.0 - to_majora));
+                let prolapse_mucosa_mask =
+                    prolapse_t * (1.0 - smoothstep(0.95, 1.65, r_from_introitus));
+                let prolapse_crease = prolapse_sulcus.clamp(0.0, 1.0);
+
+                let mut col = [0.0f32; 3];
+                for c in 0..3 {
+                    let mut surf =
+                        minora_inner_pink[c] * (1.0 - to_majora) + majora_skin[c] * to_majora;
+                    surf = surf * (1.0 - on_minora_crest * 0.62)
+                        + minora_edge_pigment[c] * (on_minora_crest * 0.62);
+                    surf =
+                        surf * (1.0 - in_sulcus * 0.48) + sulcus_shadow_col[c] * (in_sulcus * 0.48);
+                    surf = surf * (1.0 - in_vestibule * 0.85)
+                        + vestibule_mucosa[c] * (in_vestibule * 0.85);
+                    // Urethral sphincter cuff & dark central meatus pit
+                    let u_cuff = (urethral_cuff_mask * 0.78).clamp(0.0, 1.0);
+                    let u_pit = (urethral_pit_mask * 0.92).clamp(0.0, 1.0);
+                    surf = surf * (1.0 - u_cuff) + urethral_cuff_rose[c] * u_cuff;
+                    surf = surf * (1.0 - u_pit) + urethral_lumen_dark[c] * u_pit;
+                    // Deep horseshoe sub-preputial pocket shadow around the Clitoral Glans
+                    let moat_dark = (moat_horseshoe * 0.85).clamp(0.0, 1.0);
+                    surf = surf * (1.0 - moat_dark) + subpreputial_shadow_col[c] * moat_dark;
+                    // Bright vascular coral-rose Clitoral Glans pearl
+                    let g_blend = (glans_mask * 0.92).clamp(0.0, 1.0);
+                    surf = surf * (1.0 - g_blend) + glans_coral_rose[c] * g_blend;
+                    // Everted crimson-rose vaginal mucosal prolapse rosette
+                    let prolapse_col = vaginal_prolapse_mucosa[c] * (1.0 - prolapse_crease * 0.70)
+                        + prolapse_sulcus_crimson[c] * (prolapse_crease * 0.70);
+                    surf = surf * (1.0 - prolapse_mucosa_mask)
+                        + prolapse_col * prolapse_mucosa_mask;
+
+                    if is_canal {
+                        let t_c = (u_ring / u_rim).powf(2.3);
+                        col[c] = deep_canal_col[c] * (1.0 - t_c) + surf * t_c;
+                    } else {
+                        col[c] = surf;
+                    }
                 }
+
+                let region_id = if is_canal {
+                    0.0
+                } else {
+                    ((1.0 - in_vestibule * 0.85) * (1.0 - to_majora) + 2.0 * to_majora)
+                        * (1.0 - 0.85 * prolapse_mucosa_mask)
+                };
+
+                let canal_wet_mask = if is_canal { (u_ring / u_rim).powf(2.4) } else { 1.0 };
+                let wet_intro = ((-r_from_introitus * 0.30).exp() * (1.0 - to_majora))
+                    .max(prolapse_mucosa_mask * 0.98)
+                    * canal_wet_mask;
+                let wet_vest = (in_vestibule * 0.90
+                    + glans_mask * 0.85
+                    + urethral_cuff_mask * 0.92)
+                    * canal_wet_mask;
+                let wet_zone = wet_intro.max(wet_vest);
+                let meniscus_wet =
+                    meniscus_contact * (-r_from_introitus * 1.3).exp() * canal_wet_mask;
+                let local_wetness = ((0.90 * wet_zone
+                    + 0.32 * pen * (-r_from_introitus * 0.34).exp() * canal_wet_mask
+                    + 0.48 * meniscus_wet)
+                    + self.lubricant_boost * wet_zone)
+                    .clamp(0.02, 0.99);
+
+                let roughness = (0.09 * (1.0 - to_majora) + 0.56 * to_majora)
+                    * (1.0 - 0.60 * local_wetness * local_wetness);
+                let sss = (0.90 * (1.0 - to_majora) + 0.45 * to_majora) * canal_wet_mask;
+
+                let idx = r * NS + s;
+                positions[idx] = Vec3::new(x, y, z);
+                colors[idx] = col;
+                props[idx] = [region_id, roughness, sss, local_wetness];
+                uvs[idx] = [ux, uy];
             }
         }
 
-        let (tip_pos, tip_vel, _phase) =
-            tube.tip_state_at(sim_time_s)
-                .unwrap_or(([0.0, -0.0035, 0.0075], [0.0; 3], 0.0));
-        let tip_x = tip_pos[0] as f32;
-        let tip_y = tip_pos[1] as f32;
-        let tip_z = tip_pos[2] as f32;
-        let vel_z = tip_vel[2] as f32;
-        let r_tube = tube.radius_m as f32;
-        let scale = self.display_scale;
+        // Preserve exact physics kernel telemetry for snapshot logs
+        let tube = LabiaTubeInsertion {
+            radius_m: (TUBE_RADIUS_MM * 0.001) as f64,
+            length_m: (2.0 * TUBE_HALF_LENGTH_MM * 0.001) as f64,
+            axis_xy_m: [0.0, (INTROITUS_Y_MM * 0.001) as f64],
+            start_tip_z_m: 0.0072,
+            max_depth_m: 0.0150,
+            frequency_hz: (1.0 / INSERTION_PERIOD_SECONDS) as f64,
+        };
+        let minora_probe = self
+            .dilation_kernel
+            .evaluate_point(
+                [0.0050, (INTROITUS_Y_MM * 0.001) as f64],
+                0.0005,
+                &tube,
+                time_s as f64,
+                0.0,
+            )
+            .expect("valid minora probe");
+        let majora_probe = self
+            .dilation_kernel
+            .evaluate_point(
+                [0.0110, (INTROITUS_Y_MM * 0.001) as f64],
+                0.0002,
+                &tube,
+                time_s as f64,
+                0.0,
+            )
+            .expect("valid majora probe");
+        self.minora_separation_mm =
+            (10.0 + 2000.0 * minora_probe.radial_displacement_xy_m[0].abs() as f32)
+                .max(2.0 * orifice_rx);
+        self.majora_separation_mm =
+            22.0 + 2000.0 * majora_probe.radial_displacement_xy_m[0] as f32;
 
-        // Penetration engagement as the rounded tip enters the labial crests (+5.0mm) and vaginal orifice (-1.5mm -> -7.5mm)
-        let engage_z = ((0.0050 - tip_z) / 0.0115).clamp(0.0, 1.0);
-        let smooth_engage = engage_z * engage_z * (3.0 - 2.0 * engage_z);
-        let orifice_penetration = ((0.0018 - tip_z) / 0.0085).clamp(0.0, 1.0);
-        let smooth_orifice_pen =
-            orifice_penetration * orifice_penetration * (3.0 - 2.0 * orifice_penetration);
+        // Compute smooth outward-facing vertex normals (`dr.cross(ds)` points +Z on skin and inward toward lumen in canal)
+        let mut vertices = Vec::with_capacity(NR * NS);
+        for r in 0..NR {
+            let r_prev = if r > 0 { r - 1 } else { r };
+            let r_next = if r + 1 < NR { r + 1 } else { r };
+            for s in 0..NS {
+                let s_prev = (s + NS - 1) % NS;
+                let s_next = (s + 1) % NS;
 
-        // Signed normalized axial velocity (-1 = peak insertion speed, +1 = peak withdrawal speed)
-        let norm_vel_z = (vel_z / 0.042).clamp(-1.0, 1.0);
-        let speed_mag = norm_vel_z.abs();
+                let dr = positions[r_next * NS + s] - positions[r_prev * NS + s];
+                let ds = positions[r * NS + s_next] - positions[r * NS + s_prev];
+                let mut n = dr.cross(ds);
+                if n.length_squared() < 1.0e-8 {
+                    n = Vec3::Z;
+                } else {
+                    n = n.normalize();
+                }
 
-        // 1. Deform anatomical tissue & 3D orifice canal with frictional invagination/eversion
-        for (vertex, b) in self.vertices[..self.tissue_vertex_count]
-            .iter_mut()
-            .zip(self.bindings.iter())
-        {
-            let side = usize::from(b.side_idx);
-            let side_sign = if side == 1 { 1.0_f32 } else { -1.0_f32 };
-            let maj = majora_disp[side];
-            let min = minora_crest_disp[side];
-
-            let rx = b.rest_m[0] - tip_x;
-            let ry = b.rest_m[1] - tip_y;
-            let r_xy = rx.hypot(ry);
-
-            // C^infinity monotonic incompressible radial dilation around the penetrating cylinder (r_tube = 3.8mm):
-            // R(r_xy) = sqrt(r_xy^2 + alpha * r_tube^2 * exp(-(r_xy / r0)^2))
-            // Guarantees strictly increasing R(r_xy) (dR/dr_xy > 0 everywhere -> zero mesh folding/kinks)
-            // and wraps the orifice rim & labia minora snugly around the 3.8mm tube shaft!
-            let seam_pin = ((b.rest_m[0].abs() - 0.00018) / 0.00045).clamp(0.0, 1.0);
-            let seam_smooth = seam_pin * seam_pin * (3.0 - 2.0 * seam_pin);
-            let r0 = r_tube * 2.55;
-            let radial_env = (-((r_xy / r0).powi(2))).exp();
-            let (target_r_f64, _) = OrificeDilationKernel::monotonic_radial_dilation(
-                f64::from(r_xy),
-                f64::from(r_tube * 0.995),
-                f64::from(r0),
-                f64::from(smooth_engage),
-            );
-            let target_r = target_r_f64 as f32;
-            let delta_r = (target_r - r_xy) * seam_smooth;
-
-            let dir_x = if r_xy > 1e-5 { rx / r_xy } else { side_sign } * seam_smooth;
-            let dir_y = if r_xy > 1e-5 { ry / r_xy } else { 0.0 } * seam_smooth;
-
-            let cuff_ring =
-                (-(((target_r - r_tube * 1.04) / (r_tube * 0.52)).powi(2))).exp() * seam_smooth;
-
-            // Frictional radial gripping: during withdrawal (norm_vel_z > 0), mucosal adhesion hugs the tube tighter!
-            let friction_hug = -0.00048 * norm_vel_z.max(0.0) * cuff_ring * smooth_orifice_pen;
-
-            let tube_parting_dx = dir_x * (delta_r + friction_hug);
-            let tube_parting_dy = dir_y * (delta_r * 0.86 + friction_hug * 0.65);
-
-            // Frictional axial shear deformation (Трение):
-            // - Insertion (norm_vel_z < 0): drags the orifice lip & inner labia minora downward into the opening (invagination)
-            // - Withdrawal (norm_vel_z > 0): pulls the orifice collar & inner canal mucosa upward like a tented cuff (eversion)
-            let contact_collar = ((b.orifice_rim_w + 0.85 * cuff_ring + 0.40 * b.orifice_canal_w)
-                * seam_smooth)
-                .clamp(0.0, 1.25);
-            let frictional_axial_drag_z = 0.0036 * norm_vel_z * contact_collar * smooth_engage;
-            let insertion_funnel_z = -0.0020
-                * radial_env
-                * seam_smooth
-                * smooth_engage
-                * (1.0 - 0.52 * norm_vel_z.max(0.0));
-            let meniscus_lip_ridge_z = 0.00075 * cuff_ring * smooth_engage;
-            let tube_cuff_dz = insertion_funnel_z + frictional_axial_drag_z + meniscus_lip_ridge_z;
-
-            // Attenuate coarse FEM lateral offset near the orifice cuff so the exact C^infinity contact collar isn't pulled away from the tube
-            let outer_fem_mask = (1.0 - 0.82 * radial_env).clamp(0.18, 1.0) * seam_smooth;
-            let dx = (0.85 * b.majora_w * maj[0] * outer_fem_mask
-                + 0.45 * b.minora_w * min[0] * outer_fem_mask
-                + tube_parting_dx)
-                .clamp(-0.0065, 0.0065);
-            let dy = (0.85 * b.majora_w * maj[1] * outer_fem_mask
-                + 0.55 * b.minora_w * min[1] * outer_fem_mask
-                + tube_parting_dy)
-                .clamp(-0.0045, 0.0045);
-            let dz = (1.1 * b.majora_w * maj[2]
-                + 1.2 * b.minora_w * min[2] * b.minora_arch
-                + tube_cuff_dz)
-                .clamp(-0.0095, 0.0054);
-
-            vertex.position = [
-                b.rest_scaled[0] + dx * scale,
-                b.rest_scaled[1] + dy * scale,
-                b.rest_scaled[2] + dz * scale,
-            ];
-
-            // Lubricant film thickness + thick pooled viscous lubricant around the orifice & posterior fourchette
-            let h_film = (1.0 - b.frac) * film_wetness_profile[side][usize::from(b.b0)]
-                + b.frac * film_wetness_profile[side][usize::from(b.b1)];
-            let base_film_wetness = (h_film * b.wet_envelope).clamp(0.0, 0.68);
-            let posterior_pool = (-(((b.rest_m[1] - (tip_y - 0.0042)) / 0.0058).powi(2))).exp()
-                * (-((b.rest_m[0] / 0.0046).powi(2))).exp();
-            let meniscus_lube = (0.88 * cuff_ring + 0.80 * b.orifice_rim_w + 0.58 * posterior_pool)
-                * (0.42 + 0.58 * smooth_engage);
-            let wetness = (base_film_wetness + meniscus_lube).clamp(0.0, 1.0);
-
-            // Frictional shear & circumferential stretch intensity (drives erythema & tension striae in shader)
-            let stretch_intensity = (delta_r / (r_tube * 0.55)).clamp(0.0, 1.0);
-            let friction_intensity = ((0.58 * speed_mag + 0.42 * smooth_orifice_pen)
-                * (contact_collar + 0.55 * stretch_intensity))
-                .clamp(0.0, 1.0);
-
-            let mucosa_flush =
-                (b.mucosa_factor + 0.28 * contact_collar * smooth_engage).clamp(0.0, 1.0);
-            vertex.uv = [wetness, mucosa_flush];
-            vertex.color = [
-                b.base_rgb[0],
-                b.base_rgb[1],
-                b.base_rgb[2],
-                friction_intensity,
-            ];
+                let idx = r * NS + s;
+                vertices.push(SkinVertex {
+                    position: positions[idx].to_array(),
+                    normal: n.to_array(),
+                    color: colors[idx],
+                    tissue_props: props[idx],
+                    uv_world: uvs[idx],
+                });
+            }
         }
 
-        // 2. Update 3D tube vertices at current tip position with viscous lubricant coat & friction drag
-        for (vertex, tl) in self.vertices
-            [self.tissue_vertex_count..self.tissue_vertex_count + self.tube_vertex_count]
-            .iter_mut()
-            .zip(self.tube_local.iter())
-        {
-            let wx = tip_x + tl.local_offset_m[0];
-            let wy = tip_y + tl.local_offset_m[1];
-            let wz = tip_z + tl.local_offset_m[2];
-            vertex.position = [wx * scale, wy * scale, wz * scale];
-            // Viscous lubricant clings high up the tube shaft once inserted and during withdrawal
-            let lube_reach_z = -0.0005 + 0.0072 * smooth_engage + 0.0034 * norm_vel_z.max(0.0);
-            let wet_coat = ((lube_reach_z - wz) / 0.0075).clamp(0.22, 1.0);
-            vertex.uv = [wet_coat, -1.0];
-            vertex.color = [
-                tl.color[0],
-                tl.color[1],
-                tl.color[2],
-                (0.45 * smooth_orifice_pen + 0.55 * speed_mag).clamp(0.0, 1.0),
-            ];
-        }
-
-        // 3. Update 3D Viscous Lubricant Capillary Bead Seam right at the Tube-Orifice Contact Line (uv.y = -2.0)
-        // Recessed deep inside the dark orifice canal before contact (smooth_engage == 0), and forms a tight
-        // capillary bead fillet right in the crevice between the cylindrical tube wall and the mucosal orifice rim
-        let lube_start = self.tissue_vertex_count + self.tube_vertex_count;
-        let orifice_lip_z = -0.0024 + 0.0024 * norm_vel_z * smooth_orifice_pen
-            - 0.0012 * smooth_engage * (1.0 - norm_vel_z.max(0.0));
-        for (vertex, lb) in self.vertices[lube_start..]
-            .iter_mut()
-            .zip(self.lube_bindings.iter())
-        {
-            let s = lb.radial_frac;
-            let (sin_a, cos_a) = lb.angle_rad.sin_cos();
-
-            // Posterior extension into fossa navicularis (sin_a < 0 corresponds to -Y posterior fourchette)
-            let posterior_lobe = (-sin_a).max(0.0).powi(2);
-            let bead_wave = 1.0
-                + 0.10 * (lb.angle_rad * 7.0 + (sim_time_s as f32) * 3.0).sin()
-                + 0.07 * (lb.angle_rad * 13.0).cos();
-
-            let engaged_inner_r = r_tube * 0.992;
-            let engaged_outer_r = r_tube * (1.015 + (0.055 + 0.045 * posterior_lobe) * bead_wave);
-            let r_curr = smooth_engage * (engaged_inner_r + s * (engaged_outer_r - engaged_inner_r));
-
-            let climb_z = (1.0 - s).powi(3)
-                * smooth_engage
-                * (0.0014 + 0.0012 * smooth_orifice_pen + 0.0014 * norm_vel_z.max(0.0));
-            let bead_arch_z = 4.0 * s * (1.0 - s) * (0.00028 * smooth_engage * bead_wave);
-            let outer_slope_z = -0.0009 * s * s - 0.0135 * (1.0 - smooth_engage);
-
-            let wx = tip_x + r_curr * cos_a;
-            let wy = tip_y + r_curr * sin_a * (1.0 + 0.08 * posterior_lobe * s);
-            let wz = orifice_lip_z + climb_z + bead_arch_z + outer_slope_z;
-
-            vertex.position = [wx * scale, wy * scale, wz * scale];
-            vertex.uv = [s, -2.0];
-        }
-
-        self.recompute_tissue_normals();
-        self.recompute_lube_normals();
-    }
-
-    fn build_full_mesh(
-        &mut self,
-        majora_sim: &physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: &physics::skin::LabiaMinoraGaitSimulation,
-        films: &[SurfaceFilm; 2],
-        tube: &LabiaTubeInsertion,
-        sim_time_s: f64,
-    ) -> Result<SceneMesh, Box<dyn std::error::Error>> {
-        self.deform_scene(majora_sim, minora_sim, films, tube, sim_time_s);
-        Ok(SceneMesh::new(self.vertices.clone(), self.indices.clone())?
-            .with_normals(self.normals.clone())?
-            .with_material_coordinates(self.material_coordinates.clone())?)
-    }
-
-    fn update_vertices_in_place(
-        &mut self,
-        queue: &wgpu::Queue,
-        geometry: &SceneGeometry,
-        majora_sim: &physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: &physics::skin::LabiaMinoraGaitSimulation,
-        films: &[SurfaceFilm; 2],
-        tube: &LabiaTubeInsertion,
-        sim_time_s: f64,
-    ) {
-        self.deform_scene(majora_sim, minora_sim, films, tube, sim_time_s);
-        queue.write_buffer(&geometry.vertices, 0, bytemuck::cast_slice(&self.vertices));
-        queue.write_buffer(&geometry.normals, 0, bytemuck::cast_slice(&self.normals));
+        (vertices, kin)
     }
 }
 
-#[allow(clippy::too_many_lines)]
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let window_mode = std::env::args().any(|a| a == "--window");
-    let max_window_frames: Option<u64> =
-        std::env::args().find_map(|a| a.strip_prefix("--frames=").and_then(|v| v.parse().ok()));
-    let path = std::env::args()
-        .skip(1)
-        .find(|a| !a.starts_with("--"))
-        .unwrap_or_else(|| "/private/tmp/voxy-labia-tube-insertion.png".into());
+fn append_tube_and_meniscus_mesh(
+    vertices: &mut Vec<SkinVertex>,
+    indices: &mut Vec<u32>,
+    kin: Kinematics,
+    wetness: f32,
+) {
+    let r = TUBE_RADIUS_MM;
+    let pen = ((2.2 - kin.tip_z_mm) / 9.8).clamp(0.0, 1.0);
+    let z_pivot = -1.35 - 0.95 * pen;
+    let s_tip = kin.tip_z_mm - z_pivot;
 
-    let majora_geom = LabiaMajoraGeometry {
-        length_m: 0.052,
-        width_m: 0.018,
-        height_m: 0.009,
-        separation_m: 0.022,
-        sectors: 8,
-        latitude_rings: 2,
-    };
-    let majora_mat = Material::from_young_poisson(3000.0, 0.45)?;
-    let mut majora_sim = majora_geom.build_gait_contact_simulation(
-        [majora_mat.clone(), majora_mat],
-        [1000.0; 2],
-        0.0001,
-        0.0018,
-        1.5,
-    )?;
+    // Slight inferior approach/withdrawal offset outside the canal so in Frame 0 the resting Vaginal Introitus
+    // and in Frame 4 the prolapsed Vaginal Mucosal Rosette are 100% uncovered above the probe tip!
+    let withdrawal_extra = smoothstep(0.0, 25.0, kin.velocity_z_mm_s);
+    let approach_y_offset =
+        -(3.4 + 1.8 * withdrawal_extra) * smoothstep(1.0, 5.2, s_tip);
+    let pivot = Vec3::new(0.0, INTROITUS_Y_MM + approach_y_offset, z_pivot);
 
-    let mut minora_sim = LabiaMinoraGeometry {
-        length_m: 0.042,
-        fold_width_m: 0.0040,
-        fold_height_m: 0.0055,
-        separation_m: 0.010,
-        longitudinal_segments: 4,
-        transverse_segments: 2,
+    // 26-degree anatomical vaginal insertion axis (enters cleanly from bottom-center of frame)
+    let axis_w = Vec3::new(0.0, -0.4384, 0.8988).normalize();
+    let axis_u = Vec3::X;
+    let axis_v = axis_w.cross(axis_u).normalize();
+
+    let s_cap_center = s_tip + r;
+    // Keep s_top at 56.0 mm so the rear end of the cylinder always extends past the bottom edge of the viewport!
+    let s_top = 56.0f32;
+
+    let stacks_hemi = 18usize;
+    let stacks_cyl = 26usize;
+    let slices = 64usize;
+    let base_vertex = vertices.len() as u32;
+    let ring_stride = (slices + 1) as u32;
+
+    let total_rings = stacks_hemi + stacks_cyl + 1;
+    for i in 0..total_rings {
+        let (ring_r, s_axial, nw_local) = if i <= stacks_hemi {
+            let t = i as f32 / stacks_hemi as f32;
+            let phi = t * std::f32::consts::FRAC_PI_2;
+            let sin_p = phi.sin();
+            let cos_p = phi.cos();
+            (r * sin_p, s_cap_center - r * cos_p, -cos_p)
+        } else {
+            let t = (i - stacks_hemi) as f32 / stacks_cyl as f32;
+            let s_a = s_cap_center + t * (s_top - s_cap_center);
+            (r, s_a, 0.0)
+        };
+
+        for j in 0..=slices {
+            let theta = (j as f32 / slices as f32) * std::f32::consts::TAU;
+            let cos_t = theta.cos();
+            let sin_t = theta.sin();
+            let nr_uv = (1.0 - nw_local * nw_local).max(0.0).sqrt();
+            let radial_dir = axis_u * cos_t + axis_v * sin_t;
+            let normal = (radial_dir * nr_uv + axis_w * nw_local).normalize_or_zero();
+            let pos = pivot + radial_dir * ring_r + axis_w * s_axial;
+
+            vertices.push(SkinVertex {
+                position: pos.to_array(),
+                normal: normal.to_array(),
+                color: [0.60, 0.65, 0.70],
+                tissue_props: [3.0, 0.06, 0.20, wetness],
+                uv_world: [pos.x, pos.y],
+            });
+        }
     }
-    .build_gait_simulation(SkinMaterial {
-        layers: vec![Layer {
-            thickness: 0.00035,
-            density: 1000.0,
-            shear_modulus: 950.0,
-            collagen_modulus: 1900.0,
-            collagen_exponent: 4.0,
-            dispersion: 0.1,
-            fiber_angle: 0.5,
-            relaxation: vec![Relaxation {
-                modulus: 450.0,
-                time: 0.025,
+
+    for i in 0..(total_rings - 1) {
+        for j in 0..slices {
+            let row0 = base_vertex + (i as u32) * ring_stride + (j as u32);
+            let row1 = row0 + ring_stride;
+            indices.extend_from_slice(&[row0, row1, row0 + 1, row0 + 1, row1, row1 + 1]);
+        }
+    }
+}
+
+struct RenderDevice {
+    adapter: wgpu::Adapter,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    surface: Option<wgpu::Surface<'static>>,
+    surface_config: Option<wgpu::SurfaceConfiguration>,
+}
+
+impl RenderDevice {
+    async fn new(window: Option<Arc<Window>>) -> Result<Self, Box<dyn Error>> {
+        let instance = GraphicsOptions::default().create_instance();
+        let surface = match window.as_ref() {
+            Some(w) => Some(instance.create_surface(w.clone())?),
+            None => None,
+        };
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::HighPerformance,
+                compatible_surface: surface.as_ref(),
+                force_fallback_adapter: false,
+                ..Default::default()
+            })
+            .await?;
+        let (device, queue) = adapter
+            .request_device(&wgpu::DeviceDescriptor::default())
+            .await?;
+        let surface_config = if let (Some(surf), Some(w)) = (&surface, &window) {
+            let size = w.inner_size();
+            let caps = surf.get_capabilities(&adapter);
+            let format = caps
+                .formats
+                .iter()
+                .copied()
+                .find(|f| !f.is_srgb())
+                .unwrap_or(caps.formats[0]);
+            let mut config = surf
+                .get_default_config(&adapter, size.width.max(1), size.height.max(1))
+                .ok_or("unsupported surface")?;
+            config.format = format;
+            surf.configure(&device, &config);
+            Some(config)
+        } else {
+            None
+        };
+        Ok(Self {
+            adapter,
+            device,
+            queue,
+            surface,
+            surface_config,
+        })
+    }
+
+    fn adapter(&self) -> &wgpu::Adapter {
+        &self.adapter
+    }
+    fn device(&self) -> &wgpu::Device {
+        &self.device
+    }
+    fn queue(&self) -> &wgpu::Queue {
+        &self.queue
+    }
+    fn surface(&self) -> Option<&wgpu::Surface<'static>> {
+        self.surface.as_ref()
+    }
+    fn surface_config(&self) -> Option<&wgpu::SurfaceConfiguration> {
+        self.surface_config.as_ref()
+    }
+    fn resize(&mut self, width: u32, height: u32) {
+        if width > 0 && height > 0 {
+            if let (Some(surf), Some(cfg)) = (&self.surface, &mut self.surface_config) {
+                cfg.width = width;
+                cfg.height = height;
+                surf.configure(&self.device, cfg);
+            }
+        }
+    }
+}
+
+struct GpuPipeline {
+    render_device: RenderDevice,
+    pipeline: wgpu::RenderPipeline,
+    uniform_buffer: wgpu::Buffer,
+    bind_group: wgpu::BindGroup,
+    skin_indices: Vec<u32>,
+}
+
+impl GpuPipeline {
+    fn new(window: Option<Arc<Window>>) -> Result<Self, Box<dyn Error>> {
+        let render_device = pollster::block_on(RenderDevice::new(window))?;
+        println!(
+            "Labia Tube Insertion GPU Renderer: {:?}",
+            render_device.adapter().get_info()
+        );
+
+        let device = render_device.device();
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("labia-tube-insertion-shader"),
+            source: wgpu::ShaderSource::Wgsl(SHADER_SOURCE.into()),
+        });
+
+        let uniform_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("labia-tube-uniforms"),
+            size: std::mem::size_of::<Uniforms>() as u64,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("labia-tube-bgl"),
+            entries: &[wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
             }],
-        }],
-    })?;
+        });
 
-    let film_mat = FilmMaterial {
-        density: 1000.0,
-        viscosity: 0.045,
-        wetting: 2.5e-5,
-        surface_tension: 0.048,
-    };
-    let mut films = minora_sim.build_surface_films(film_mat)?;
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("labia-tube-bg"),
+            layout: &bind_group_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: uniform_buffer.as_entire_binding(),
+            }],
+        });
 
-    let tube = LabiaTubeInsertion {
-        radius_m: 0.0038,
-        length_m: 0.025,
-        axis_xy_m: [0.0, -0.0035],
-        start_tip_z_m: 0.0072,
-        max_depth_m: 0.0150,
-        frequency_hz: 1.0,
-    };
+        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("labia-tube-pipeline-layout"),
+            bind_group_layouts: &[Some(&bind_group_layout)],
+            immediate_size: 0,
+        });
 
-    let display_scale = 34.0;
-    let mut prepared_scene =
-        PreparedTubeInsertionScene::new(display_scale, tube.radius_m, tube.length_m);
+        let target_format = render_device
+            .surface_config()
+            .map(|c| c.format)
+            .unwrap_or(wgpu::TextureFormat::Rgba8Unorm);
 
-    let instance = GraphicsOptions::default().create_instance();
-    let adapter =
-        pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))?;
-    println!(
-        "Labia Tube Insertion GPU Renderer: {:?}",
-        adapter.get_info()
-    );
-    let (device, queue) =
-        pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))?;
-    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-    let mut geometry = renderer.reserve_geometry(&device, 28_000, 160_000)?;
-    pollster::block_on(renderer.set_geometry_opaque_shader(
-        &device,
-        &mut geometry,
-        ANATOMICAL_MUCOSAL_AND_TUBE_SHADER,
-    ))?;
-    let texture = renderer.upload_texture(&device, &queue, 1, 1, &[255; 4])?;
-    // Macro close-up camera focused directly on the 3D vaginal orifice, labial folds, friction collar & lubricant meniscus
-    let camera_eye = Vec3::new(0.76, -1.36, 1.34);
-    let camera_target = Vec3::new(0.0, -0.11, -0.02);
-    let base_projection = SceneCamera {
-        eye: camera_eye,
-        target: camera_target,
-        up: Vec3::Z,
-        projection: SceneProjection::Perspective {
-            vertical_fov: 35_f32.to_radians(),
-            aspect: 4.0 / 3.0,
-            near: 0.1,
-            far: 50.0,
-        },
+        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("labia-tube-pipeline"),
+            layout: Some(&pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &shader,
+                entry_point: Some("vs_main"),
+                buffers: &[Some(wgpu::VertexBufferLayout {
+                    array_stride: std::mem::size_of::<SkinVertex>() as u64,
+                    step_mode: wgpu::VertexStepMode::Vertex,
+                    attributes: &[
+                        wgpu::VertexAttribute {
+                            format: wgpu::VertexFormat::Float32x3,
+                            offset: 0,
+                            shader_location: 0,
+                        },
+                        wgpu::VertexAttribute {
+                            format: wgpu::VertexFormat::Float32x3,
+                            offset: 12,
+                            shader_location: 1,
+                        },
+                        wgpu::VertexAttribute {
+                            format: wgpu::VertexFormat::Float32x3,
+                            offset: 24,
+                            shader_location: 2,
+                        },
+                        wgpu::VertexAttribute {
+                            format: wgpu::VertexFormat::Float32x4,
+                            offset: 36,
+                            shader_location: 3,
+                        },
+                        wgpu::VertexAttribute {
+                            format: wgpu::VertexFormat::Float32x2,
+                            offset: 52,
+                            shader_location: 4,
+                        },
+                    ],
+                })],
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &shader,
+                entry_point: Some("fs_main"),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format: target_format,
+                    blend: Some(wgpu::BlendState::REPLACE),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::TriangleList,
+                cull_mode: None,
+                ..Default::default()
+            },
+            depth_stencil: Some(wgpu::DepthStencilState {
+                format: wgpu::TextureFormat::Depth32Float,
+                depth_write_enabled: Some(true),
+                depth_compare: Some(wgpu::CompareFunction::Less),
+                stencil: wgpu::StencilState::default(),
+                bias: wgpu::DepthBiasState::default(),
+            }),
+            multisample: wgpu::MultisampleState::default(),
+            multiview_mask: None,
+            cache: None,
+        });
+
+        Ok(Self {
+            render_device,
+            pipeline,
+            uniform_buffer,
+            bind_group,
+            skin_indices: VulvaSimulation::build_polar_grid_indices(),
+        })
     }
-    .view_projection()?;
-    let transform = renderer.create_transform(&device, base_projection)?;
-    transform.update_view_position(&queue, camera_eye)?;
 
-    let target = |format, usage| {
-        device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("labia tube snapshot"),
+    #[allow(deprecated)]
+    fn build_scene_buffers(
+        &self,
+        sim: &mut VulvaSimulation,
+        time_s: f32,
+        aspect: f32,
+        cam_yaw: f32,
+        cam_pitch: f32,
+        cam_zoom: f32,
+    ) -> (wgpu::Buffer, wgpu::Buffer, u32, Kinematics) {
+        let (mut vertices, kin) = sim.build_vertices(time_s);
+        let mut indices = self.skin_indices.clone();
+        let wetness = (0.85 + sim.lubricant_boost).clamp(0.0, 1.0);
+        append_tube_and_meniscus_mesh(&mut vertices, &mut indices, kin, wetness);
+
+        let base_dist = 47.0 * cam_zoom;
+        let target = Vec3::new(0.0, 0.0, 0.0);
+        let eye = target
+            + Vec3::new(
+                base_dist * cam_yaw.sin() * cam_pitch.cos(),
+                -base_dist * cam_yaw.cos() * cam_pitch.cos(),
+                base_dist * cam_pitch.sin(),
+            );
+        let view = Mat4::look_at_rh(eye, target, Vec3::Z);
+        let proj = Mat4::perspective_rh(29.0f32.to_radians(), aspect, 1.0, 200.0);
+        let view_proj = (proj * view).to_cols_array_2d();
+
+        let uniforms = Uniforms {
+            view_proj,
+            camera_pos: [eye.x, eye.y, eye.z, 1.0],
+            params: [time_s, kin.insertion_phase, wetness, kin.tip_z_mm],
+        };
+        self.render_device
+            .queue()
+            .write_buffer(&self.uniform_buffer, 0, bytemuck::bytes_of(&uniforms));
+
+        let device = self.render_device.device();
+        let vbuf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("labia-scene-vbuf"),
+            contents: bytemuck::cast_slice(&vertices),
+            usage: wgpu::BufferUsages::VERTEX,
+        });
+        let ibuf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("labia-scene-ibuf"),
+            contents: bytemuck::cast_slice(&indices),
+            usage: wgpu::BufferUsages::INDEX,
+        });
+
+        (vbuf, ibuf, indices.len() as u32, kin)
+    }
+
+    fn render_offscreen_frame(
+        &self,
+        sim: &mut VulvaSimulation,
+        time_s: f32,
+        output_path: &Path,
+    ) -> Result<Kinematics, Box<dyn Error>> {
+        let (vbuf, ibuf, index_count, kin) = self.build_scene_buffers(
+            sim,
+            time_s,
+            WIDTH as f32 / HEIGHT as f32,
+            0.05,
+            1.18,
+            1.0,
+        );
+        let device = self.render_device.device();
+        let queue = self.render_device.queue();
+
+        let color_tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("labia-offscreen-color"),
             size: wgpu::Extent3d {
-                width: 1024,
-                height: 768,
+                width: WIDTH,
+                height: HEIGHT,
                 depth_or_array_layers: 1,
             },
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            format,
-            usage,
+            format: wgpu::TextureFormat::Rgba8Unorm,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
             view_formats: &[],
-        })
-    };
-    let color = target(
-        wgpu::TextureFormat::Rgba8Unorm,
-        wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
-    );
-    let depth = target(
-        wgpu::TextureFormat::Depth32Float,
-        wgpu::TextureUsages::RENDER_ATTACHMENT,
-    );
-    let readback = device.create_buffer(&wgpu::BufferDescriptor {
-        label: Some("labia tube pixels"),
-        size: 4096 * 768,
-        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-        mapped_at_creation: false,
-    });
+        });
+        let color_view = color_tex.create_view(&wgpu::TextureViewDescriptor::default());
 
-    let cells = films[0].triangles().len();
-    for side in 0..2 {
-        films[side].deposit(cells / 3, 4.5e-9)?;
-        films[side].deposit(cells / 2, 5.8e-9)?;
-    }
-    let friction_mat = friction::Material::new(1e6, 1e6, 0.35)?;
-    let mut friction_states = [
-        vec![friction::State::default(); cells],
-        vec![friction::State::default(); cells],
-    ];
-    let pressures = vec![620.0; cells];
+        let depth_tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("labia-offscreen-depth"),
+            size: wgpu::Extent3d {
+                width: WIDTH,
+                height: HEIGHT,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Depth32Float,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let depth_view = depth_tex.create_view(&wgpu::TextureViewDescriptor::default());
 
-    let stages = [
-        (0.05, "approach-open-orifice"),
-        (0.18, "orifice-contact-meniscus"),
-        (0.32, "canal-penetration-friction-invagination"),
-        (0.50, "full-depth-lubricant-collar"),
-        (0.72, "withdrawal-frictional-cuff-eversion"),
-    ];
+        let bytes_per_row = (WIDTH * 4).div_ceil(256) * 256;
+        let readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("labia-readback"),
+            size: (bytes_per_row * HEIGHT) as u64,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
 
-    let mut frames = Vec::new();
-    let mut sim_t = 0.0_f64;
-
-    for (frame_idx, &(target_t, stage_label)) in stages.iter().enumerate() {
-        while sim_t + 0.01 <= target_t {
-            let (_, tip_vel, phase) = tube.tip_state_at(sim_t)?;
-            majora_sim.step_tube_insertion(phase, tip_vel[2], 0.14, 2e-4, 5e-3)?;
-            let mut synced_tube = tube;
-            synced_tube.radius_m = 0.0016;
-            synced_tube.frequency_hz = 10.0;
-            minora_sim.step_tube_insertion(
-                &synced_tube,
-                0.002,
-                [0.0, 0.0, -9.81],
-                6,
-                0.0010,
-                1200.0,
-                0.022,
-                SolverConfig {
-                    max_newton: 6,
-                    max_cg: 32,
-                    force_tolerance: 1e-3,
-                    relative_tolerance: 1e-2,
-                },
-            )?;
-            for side in 0..2 {
-                films[side].update_geometry(minora_sim.folds[side].skin.positions())?;
-                films[side].advance_smear(
-                    0.001,
-                    SmearContact {
-                        normal: [if side == 0 { 1.0 } else { -1.0 }, 0.0, 0.0],
-                        body_velocity_m_s: [0.0, 0.018, tip_vel[2] * 0.55],
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("labia-offscreen-enc"),
+        });
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("labia-offscreen-pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &color_view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: 0.16,
+                            g: 0.08,
+                            b: 0.07,
+                            a: 1.0,
+                        }),
+                        store: wgpu::StoreOp::Store,
                     },
-                    &pressures,
-                    &friction_mat,
-                    &mut friction_states[side],
-                    [0.0, 0.0, -9.81],
-                    0.0005,
-                )?;
-            }
-            let (left_slice, right_slice) = films.split_at_mut(1);
-            let _ = left_slice[0].exchange_contact(
-                &mut right_slice[0],
-                0.001,
-                BridgeConfig {
-                    max_gap: 0.020,
-                    transfer_speed: 0.0025,
-                    opposing_cosine: 0.1,
-                    max_candidates: 500_000,
-                },
-            )?;
-            sim_t += 0.02;
+                    depth_slice: None,
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &depth_view,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(1.0),
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            pass.set_pipeline(&self.pipeline);
+            pass.set_bind_group(0, &self.bind_group, &[]);
+            pass.set_vertex_buffer(0, vbuf.slice(..));
+            pass.set_index_buffer(ibuf.slice(..), wgpu::IndexFormat::Uint32);
+            pass.draw_indexed(0..index_count, 0, 0..1);
         }
 
-        let (tip_pos, tip_vel, phase) = tube.tip_state_at(target_t)?;
-        let mesh =
-            prepared_scene.build_full_mesh(&majora_sim, &minora_sim, &films, &tube, target_t)?;
-        geometry.update(&queue, &mesh)?;
-
-        println!(
-            "frame={frame_idx} ({stage_label}) | t={target_t:.2}s phase={phase:.2} tip_z={:.2}mm vel_z={:.1}mm/s | minora_sep={:.2}mm majora_sep={:.2}mm",
-            tip_pos[2] * 1000.0,
-            tip_vel[2] * 1000.0,
-            minora_sim.mean_crest_separation_m() * 1000.0,
-            majora_sim.apex_separation_m() * 1000.0,
-        );
-
-        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-        renderer.encode(
-            &mut encoder,
-            &color.create_view(&Default::default()),
-            &depth.create_view(&Default::default()),
-            wgpu::Color {
-                r: 0.035,
-                g: 0.038,
-                b: 0.052,
-                a: 1.0,
-            },
-            &[SceneDraw {
-                geometry: &geometry,
-                texture: &texture,
-                transform: &transform,
-                overlay: false,
-            }],
-        );
         encoder.copy_texture_to_buffer(
             wgpu::TexelCopyTextureInfo {
-                texture: &color,
+                texture: &color_tex,
                 mip_level: 0,
                 origin: wgpu::Origin3d::ZERO,
                 aspect: wgpu::TextureAspect::All,
@@ -1318,506 +1373,307 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 buffer: &readback,
                 layout: wgpu::TexelCopyBufferLayout {
                     offset: 0,
-                    bytes_per_row: Some(4096),
-                    rows_per_image: Some(768),
+                    bytes_per_row: Some(bytes_per_row),
+                    rows_per_image: Some(HEIGHT),
                 },
             },
-            color.size(),
+            wgpu::Extent3d {
+                width: WIDTH,
+                height: HEIGHT,
+                depth_or_array_layers: 1,
+            },
         );
-        queue.submit([encoder.finish()]);
+        queue.submit(Some(encoder.finish()));
+
+        let slice = readback.slice(..);
         let (tx, rx) = std::sync::mpsc::channel();
-        readback.slice(..).map_async(wgpu::MapMode::Read, move |r| {
-            let _ = tx.send(r);
+        slice.map_async(wgpu::MapMode::Read, move |res| {
+            let _ = tx.send(res);
         });
-        device.poll(wgpu::PollType::Wait {
-            submission_index: None,
-            timeout: None,
-        })?;
+        let _ = device.poll(wgpu::PollType::wait_indefinitely());
         rx.recv()??;
-        let frame_pixels = readback.slice(..).get_mapped_range()?.to_vec();
+
+        let mapped = slice.get_mapped_range()?;
+        let mut rgba = Vec::with_capacity((WIDTH * HEIGHT * 4) as usize);
+        for row in 0..HEIGHT {
+            let start = (row * bytes_per_row) as usize;
+            let end = start + (WIDTH * 4) as usize;
+            rgba.extend_from_slice(&mapped[start..end]);
+        }
+        drop(mapped);
         readback.unmap();
 
-        let single_path = format!("/private/tmp/voxy-labia-tube-frame-{frame_idx}.png");
-        image::save_buffer_with_format(
-            &single_path,
-            &frame_pixels,
-            1024,
-            768,
-            image::ColorType::Rgba8,
-            image::ImageFormat::Png,
-        )?;
-        frames.push(frame_pixels);
-    }
-
-    if let Some(err) = pollster::block_on(scope.pop()) {
-        return Err(format!("wgpu validation error: {err}").into());
-    }
-
-    let n_frames = frames.len();
-    let total_width = (1024 * n_frames) as u32;
-    let mut strip = vec![0u8; (total_width as usize) * 768 * 4];
-    for (idx, frame) in frames.iter().enumerate() {
-        for y in 0..768 {
-            let src = &frame[y * 4096..(y + 1) * 4096];
-            let dst_start = (y * (total_width as usize) + idx * 1024) * 4;
-            strip[dst_start..dst_start + 4096].copy_from_slice(src);
+        if let Some(parent) = output_path.parent() {
+            std::fs::create_dir_all(parent)?;
         }
-    }
-    image::save_buffer_with_format(
-        &path,
-        &strip,
-        total_width,
-        768,
-        image::ColorType::Rgba8,
-        image::ImageFormat::Png,
-    )?;
-    println!("LABIA TUBE INSERTION SNAPSHOT PASS: {path}");
-
-    if window_mode {
-        run_interactive_window(
-            instance,
-            adapter,
-            device,
-            queue,
-            majora_sim,
-            minora_sim,
-            films,
-            tube,
-            pressures,
-            friction_mat,
-            friction_states,
-            prepared_scene,
-            max_window_frames,
+        image::save_buffer(
+            output_path,
+            &rgba,
+            WIDTH,
+            HEIGHT,
+            image::ColorType::Rgba8,
         )?;
+        Ok(kin)
     }
-
-    Ok(())
 }
 
-#[allow(clippy::too_many_arguments)]
-fn run_interactive_window(
-    instance: wgpu::Instance,
-    adapter: wgpu::Adapter,
-    device: wgpu::Device,
-    queue: wgpu::Queue,
-    majora_sim: physics::biomechanics::LabiaGaitSimulation,
-    minora_sim: physics::skin::LabiaMinoraGaitSimulation,
-    films: [SurfaceFilm; 2],
-    tube: LabiaTubeInsertion,
-    pressures: Vec<f64>,
-    friction_mat: friction::Material,
-    friction_states: [Vec<friction::State>; 2],
-    prepared_scene: PreparedTubeInsertionScene,
-    max_window_frames: Option<u64>,
-) -> Result<(), Box<dyn std::error::Error>> {
-    use winit::application::ApplicationHandler;
-    use winit::event::{ElementState, WindowEvent};
-    use winit::event_loop::{ActiveEventLoop, EventLoop};
-    use winit::keyboard::{KeyCode, PhysicalKey};
-    use winit::window::{Window, WindowAttributes, WindowId};
+struct InteractiveApp {
+    window: Option<Arc<Window>>,
+    gpu: Option<GpuPipeline>,
+    sim: VulvaSimulation,
+    last_tick: Instant,
+    sim_time_s: f32,
+    paused: bool,
+    speed_scale: f32,
+    cam_yaw: f32,
+    cam_pitch: f32,
+    cam_zoom: f32,
+}
 
-    struct App {
-        instance: wgpu::Instance,
-        adapter: wgpu::Adapter,
-        device: wgpu::Device,
-        queue: wgpu::Queue,
-        window: Option<Arc<Window>>,
-        surface: Option<wgpu::Surface<'static>>,
-        config: Option<wgpu::SurfaceConfiguration>,
-        renderer: Option<SceneRenderer>,
-        geometry: Option<SceneGeometry>,
-        texture: Option<voxy_render::SceneTexture>,
-        transform: Option<voxy_render::SceneTransform>,
-        depth: Option<wgpu::Texture>,
-        majora_sim: physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: physics::skin::LabiaMinoraGaitSimulation,
-        films: [SurfaceFilm; 2],
-        tube: LabiaTubeInsertion,
-        pressures: Vec<f64>,
-        friction_mat: friction::Material,
-        friction_states: [Vec<friction::State>; 2],
-        prepared_scene: PreparedTubeInsertionScene,
-        frame_count: u64,
-        max_frames: Option<u64>,
-        started_at: Option<Instant>,
-        step_render_ms_samples: Vec<f64>,
-        sim_time_s: f64,
-        paused: bool,
-        speed_scale: f64,
-        cam_azimuth_rad: f32,
-        cam_elevation_rad: f32,
-        cam_distance: f32,
+impl InteractiveApp {
+    fn new() -> Self {
+        Self {
+            window: None,
+            gpu: None,
+            sim: VulvaSimulation::new(),
+            last_tick: Instant::now(),
+            sim_time_s: 0.0,
+            paused: false,
+            speed_scale: 1.0,
+            cam_yaw: 0.05,
+            cam_pitch: 1.18,
+            cam_zoom: 1.0,
+        }
     }
+}
 
-    impl App {
-        fn camera_eye(&self) -> Vec3 {
-            let (sin_el, cos_el) = self.cam_elevation_rad.sin_cos();
-            let (sin_az, cos_az) = self.cam_azimuth_rad.sin_cos();
-            Vec3::new(
-                self.cam_distance * cos_el * cos_az,
-                self.cam_distance * cos_el * sin_az,
-                self.cam_distance * sin_el,
+impl ApplicationHandler for InteractiveApp {
+    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        if self.window.is_some() {
+            return;
+        }
+        let attrs = Window::default_attributes()
+            .with_title(
+                "Voxy Engine — Photorealistic Vulva & Vaginal Introitus Tube Insertion [Space: Pause | Arrows/WASD: Orbit/Speed | L: Lubricate | R: Reset]",
             )
-        }
+            .with_inner_size(PhysicalSize::new(WIDTH, HEIGHT));
+        let window = Arc::new(event_loop.create_window(attrs).expect("create window"));
+        let gpu = GpuPipeline::new(Some(window.clone())).expect("init GPU pipeline");
+        self.window = Some(window);
+        self.gpu = Some(gpu);
+        self.last_tick = Instant::now();
+    }
 
-        fn update_camera(&self) {
-            if let (Some(transform), Some(config)) = (&self.transform, &self.config) {
-                let eye = self.camera_eye();
-                if let Ok(proj) = (SceneCamera {
-                    eye,
-                    target: Vec3::new(0.0, -0.11, -0.02),
-                    up: Vec3::Z,
-                    projection: SceneProjection::Perspective {
-                        vertical_fov: 35_f32.to_radians(),
-                        aspect: config.width.max(1) as f32 / config.height.max(1) as f32,
-                        near: 0.1,
-                        far: 50.0,
-                    },
-                })
-                .view_projection()
-                {
-                    let _ = transform.update(&self.queue, proj);
-                    let _ = transform.update_view_position(&self.queue, eye);
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        _window_id: WindowId,
+        event: WindowEvent,
+    ) {
+        match event {
+            WindowEvent::CloseRequested => event_loop.exit(),
+            WindowEvent::KeyboardInput { event, .. } => {
+                if event.state == ElementState::Pressed {
+                    match event.physical_key {
+                        PhysicalKey::Code(KeyCode::Escape) => event_loop.exit(),
+                        PhysicalKey::Code(KeyCode::Space) => {
+                            self.paused = !self.paused;
+                        }
+                        PhysicalKey::Code(KeyCode::ArrowUp) => {
+                            if self.paused {
+                                self.sim_time_s += 0.025;
+                            } else {
+                                self.speed_scale = (self.speed_scale + 0.25).min(3.5);
+                            }
+                        }
+                        PhysicalKey::Code(KeyCode::ArrowDown) => {
+                            if self.paused {
+                                self.sim_time_s = (self.sim_time_s - 0.025).max(0.0);
+                            } else {
+                                self.speed_scale = (self.speed_scale - 0.25).max(0.15);
+                            }
+                        }
+                        PhysicalKey::Code(KeyCode::ArrowLeft | KeyCode::KeyA) => {
+                            self.cam_yaw -= 0.08;
+                        }
+                        PhysicalKey::Code(KeyCode::ArrowRight | KeyCode::KeyD) => {
+                            self.cam_yaw += 0.08;
+                        }
+                        PhysicalKey::Code(KeyCode::KeyW) => {
+                            self.cam_pitch = (self.cam_pitch + 0.06).min(1.42);
+                        }
+                        PhysicalKey::Code(KeyCode::KeyS) => {
+                            self.cam_pitch = (self.cam_pitch - 0.06).max(0.20);
+                        }
+                        PhysicalKey::Code(KeyCode::KeyQ) => {
+                            self.cam_zoom = (self.cam_zoom * 0.92).max(0.50);
+                        }
+                        PhysicalKey::Code(KeyCode::KeyE) => {
+                            self.cam_zoom = (self.cam_zoom * 1.08).min(1.85);
+                        }
+                        PhysicalKey::Code(KeyCode::KeyL) => {
+                            self.sim.lubricant_boost = (self.sim.lubricant_boost + 0.15).min(0.45);
+                        }
+                        PhysicalKey::Code(KeyCode::KeyR) => {
+                            self.sim = VulvaSimulation::new();
+                            self.sim_time_s = 0.0;
+                            self.paused = false;
+                            self.speed_scale = 1.0;
+                            self.cam_yaw = 0.05;
+                            self.cam_pitch = 1.18;
+                            self.cam_zoom = 1.0;
+                        }
+                        _ => {}
+                    }
                 }
             }
+            WindowEvent::Resized(size) => {
+                if let Some(gpu) = &mut self.gpu {
+                    gpu.render_device.resize(size.width, size.height);
+                }
+            }
+            WindowEvent::RedrawRequested => {
+                let now = Instant::now();
+                let dt = (now - self.last_tick).as_secs_f32().min(0.05);
+                self.last_tick = now;
+                if !self.paused {
+                    self.sim_time_s += dt * self.speed_scale;
+                }
+
+                if let (Some(gpu), Some(window)) = (&mut self.gpu, &self.window) {
+                    let size = window.inner_size();
+                    if size.width > 0 && size.height > 0 {
+                        let aspect = size.width as f32 / size.height as f32;
+                        let (vbuf, ibuf, index_count, _) = gpu.build_scene_buffers(
+                            &mut self.sim,
+                            self.sim_time_s,
+                            aspect,
+                            self.cam_yaw,
+                            self.cam_pitch,
+                            self.cam_zoom,
+                        );
+                        if let Some(surface) = gpu.render_device.surface() {
+                            if let wgpu::CurrentSurfaceTexture::Success(frame)
+                            | wgpu::CurrentSurfaceTexture::Suboptimal(frame) =
+                                surface.get_current_texture()
+                            {
+                                let view = frame
+                                    .texture
+                                    .create_view(&wgpu::TextureViewDescriptor::default());
+                                let device = gpu.render_device.device();
+                                let depth_tex = device.create_texture(&wgpu::TextureDescriptor {
+                                    label: Some("labia-win-depth"),
+                                    size: wgpu::Extent3d {
+                                        width: size.width,
+                                        height: size.height,
+                                        depth_or_array_layers: 1,
+                                    },
+                                    mip_level_count: 1,
+                                    sample_count: 1,
+                                    dimension: wgpu::TextureDimension::D2,
+                                    format: wgpu::TextureFormat::Depth32Float,
+                                    usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                                    view_formats: &[],
+                                });
+                                let depth_view =
+                                    depth_tex.create_view(&wgpu::TextureViewDescriptor::default());
+                                let mut encoder = device.create_command_encoder(
+                                    &wgpu::CommandEncoderDescriptor {
+                                        label: Some("labia-win-enc"),
+                                    },
+                                );
+                                {
+                                    let mut pass = encoder.begin_render_pass(
+                                        &wgpu::RenderPassDescriptor {
+                                            label: Some("labia-win-pass"),
+                                            color_attachments: &[Some(
+                                                wgpu::RenderPassColorAttachment {
+                                                    view: &view,
+                                                    resolve_target: None,
+                                                    ops: wgpu::Operations {
+                                                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                                                            r: 0.16,
+                                                            g: 0.08,
+                                                            b: 0.07,
+                                                            a: 1.0,
+                                                        }),
+                                                        store: wgpu::StoreOp::Store,
+                                                    },
+                                                    depth_slice: None,
+                                                },
+                                            )],
+                                            depth_stencil_attachment: Some(
+                                                wgpu::RenderPassDepthStencilAttachment {
+                                                    view: &depth_view,
+                                                    depth_ops: Some(wgpu::Operations {
+                                                        load: wgpu::LoadOp::Clear(1.0),
+                                                        store: wgpu::StoreOp::Store,
+                                                    }),
+                                                    stencil_ops: None,
+                                                },
+                                            ),
+                                            timestamp_writes: None,
+                                            occlusion_query_set: None,
+                                            multiview_mask: None,
+                                        },
+                                    );
+                                    pass.set_pipeline(&gpu.pipeline);
+                                    pass.set_bind_group(0, &gpu.bind_group, &[]);
+                                    pass.set_vertex_buffer(0, vbuf.slice(..));
+                                    pass.set_index_buffer(
+                                        ibuf.slice(..),
+                                        wgpu::IndexFormat::Uint32,
+                                    );
+                                    pass.draw_indexed(0..index_count, 0, 0..1);
+                                }
+                                gpu.render_device.queue().submit(Some(encoder.finish()));
+                                gpu.render_device.queue().present(frame);
+                            }
+                        }
+                    }
+                    window.request_redraw();
+                }
+            }
+            _ => {}
         }
     }
 
-    impl ApplicationHandler for App {
-        fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-            if self.window.is_some() {
-                return;
-            }
-            let attrs = WindowAttributes::default()
-                .with_title(
-                    "Voxy FEM | Orifice Penetration, Frictional Cuff & 3D Lubricant Meniscus [Space:Pause Up/Down:Speed Arrows/QE:Cam L:Lube]",
-                )
-                .with_inner_size(winit::dpi::LogicalSize::new(1024.0, 768.0));
-            let window = Arc::new(event_loop.create_window(attrs).expect("window"));
-            let surface = self
-                .instance
-                .create_surface(window.clone())
-                .expect("surface");
-            let size = window.inner_size();
-            let mut config = surface
-                .get_default_config(&self.adapter, size.width.max(1), size.height.max(1))
-                .expect("default surface config");
-            let caps = surface.get_capabilities(&self.adapter);
-            if caps.present_modes.contains(&wgpu::PresentMode::Immediate) {
-                config.present_mode = wgpu::PresentMode::Immediate;
-            } else if caps.present_modes.contains(&wgpu::PresentMode::Mailbox) {
-                config.present_mode = wgpu::PresentMode::Mailbox;
-            }
-            let format = config.format;
-            surface.configure(&self.device, &config);
-            let renderer = SceneRenderer::new(&self.device, format);
-            let mut geometry = renderer
-                .reserve_geometry(&self.device, 28_000, 160_000)
-                .expect("geometry");
-            pollster::block_on(renderer.set_geometry_opaque_shader(
-                &self.device,
-                &mut geometry,
-                ANATOMICAL_MUCOSAL_AND_TUBE_SHADER,
-            ))
-            .expect("shader");
-            let initial_mesh = self
-                .prepared_scene
-                .build_full_mesh(
-                    &self.majora_sim,
-                    &self.minora_sim,
-                    &self.films,
-                    &self.tube,
-                    0.0,
-                )
-                .expect("initial mesh");
-            geometry
-                .update(&self.queue, &initial_mesh)
-                .expect("initial upload");
-
-            let texture = renderer
-                .upload_texture(&self.device, &self.queue, 1, 1, &[255; 4])
-                .expect("texture");
-            let camera_eye = self.camera_eye();
-            let camera_target = Vec3::new(0.0, -0.11, -0.02);
-            let proj = SceneCamera {
-                eye: camera_eye,
-                target: camera_target,
-                up: Vec3::Z,
-                projection: SceneProjection::Perspective {
-                    vertical_fov: 35_f32.to_radians(),
-                    aspect: config.width as f32 / config.height as f32,
-                    near: 0.1,
-                    far: 50.0,
-                },
-            }
-            .view_projection()
-            .expect("projection");
-            let transform = renderer
-                .create_transform(&self.device, proj)
-                .expect("transform");
-            transform
-                .update_view_position(&self.queue, camera_eye)
-                .expect("view_pos");
-            let depth = self.device.create_texture(&wgpu::TextureDescriptor {
-                label: Some("labia tube window depth"),
-                size: wgpu::Extent3d {
-                    width: config.width,
-                    height: config.height,
-                    depth_or_array_layers: 1,
-                },
-                mip_level_count: 1,
-                sample_count: 1,
-                dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::Depth32Float,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-                view_formats: &[],
-            });
-            self.started_at = Some(Instant::now());
+    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
+        if let Some(window) = &self.window {
             window.request_redraw();
-            self.window = Some(window);
-            self.surface = Some(surface);
-            self.config = Some(config);
-            self.renderer = Some(renderer);
-            self.geometry = Some(geometry);
-            self.texture = Some(texture);
-            self.transform = Some(transform);
-            self.depth = Some(depth);
         }
+    }
+}
 
-        fn window_event(
-            &mut self,
-            event_loop: &ActiveEventLoop,
-            _id: WindowId,
-            event: WindowEvent,
-        ) {
-            match event {
-                WindowEvent::CloseRequested => event_loop.exit(),
-                WindowEvent::KeyboardInput { event, .. }
-                    if event.state == ElementState::Pressed =>
-                {
-                    if let PhysicalKey::Code(code) = event.physical_key {
-                        match code {
-                            KeyCode::Escape => event_loop.exit(),
-                            KeyCode::Space => {
-                                self.paused = !self.paused;
-                            }
-                            KeyCode::ArrowUp => {
-                                if self.paused {
-                                    self.sim_time_s += 0.025;
-                                } else {
-                                    self.speed_scale = (self.speed_scale * 1.25).min(3.5);
-                                }
-                            }
-                            KeyCode::ArrowDown => {
-                                if self.paused {
-                                    self.sim_time_s = (self.sim_time_s - 0.025).max(0.0);
-                                } else {
-                                    self.speed_scale = (self.speed_scale * 0.8).max(0.2);
-                                }
-                            }
-                            KeyCode::ArrowLeft | KeyCode::KeyA => {
-                                self.cam_azimuth_rad -= 0.08;
-                                self.update_camera();
-                            }
-                            KeyCode::ArrowRight | KeyCode::KeyD => {
-                                self.cam_azimuth_rad += 0.08;
-                                self.update_camera();
-                            }
-                            KeyCode::KeyW => {
-                                self.cam_elevation_rad =
-                                    (self.cam_elevation_rad + 0.06).clamp(0.15, 1.42);
-                                self.update_camera();
-                            }
-                            KeyCode::KeyS => {
-                                self.cam_elevation_rad =
-                                    (self.cam_elevation_rad - 0.06).clamp(0.15, 1.42);
-                                self.update_camera();
-                            }
-                            KeyCode::KeyQ => {
-                                self.cam_distance = (self.cam_distance * 0.92).clamp(0.85, 3.8);
-                                self.update_camera();
-                            }
-                            KeyCode::KeyE => {
-                                self.cam_distance = (self.cam_distance * 1.08).clamp(0.85, 3.8);
-                                self.update_camera();
-                            }
-                            KeyCode::KeyL => {
-                                let cells = self.films[0].triangles().len();
-                                for side in 0..2 {
-                                    let _ = self.films[side].deposit(cells / 2, 4.5e-9);
-                                    let _ = self.films[side].deposit(cells / 3, 3.5e-9);
-                                }
-                            }
-                            KeyCode::KeyR => {
-                                self.paused = false;
-                                self.speed_scale = 1.0;
-                                self.cam_azimuth_rad = (-1.36_f32).atan2(0.76_f32);
-                                self.cam_elevation_rad = (1.34_f32 / 2.054_f32).asin();
-                                self.cam_distance = 2.054;
-                                self.update_camera();
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-                WindowEvent::RedrawRequested => {
-                    let phys_started = Instant::now();
-                    if !self.paused {
-                        self.sim_time_s += 0.008 * self.speed_scale;
-                    }
-                    let sim_t = self.sim_time_s;
-                    let (tip_pos, tip_vel, phase) = self.tube.tip_state_at(sim_t).unwrap_or((
-                        [0.0, -0.0035, 0.0072],
-                        [0.0; 3],
-                        0.0,
-                    ));
+fn main() -> Result<(), Box<dyn Error>> {
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|a| a == "--window") {
+        let event_loop = EventLoop::new()?;
+        event_loop.set_control_flow(ControlFlow::Poll);
+        let mut app = InteractiveApp::new();
+        event_loop.run_app(&mut app)?;
+        return Ok(());
+    }
 
-                    if self.frame_count & 1 == 0 {
-                        let _ = self
-                            .majora_sim
-                            .step_tube_insertion(phase, tip_vel[2], 0.12, 1.6e-4, 2e-2);
-                    } else {
-                        let active_side = ((self.frame_count >> 1) as usize) & 1;
-                        let _ = self.films[active_side].advance_smear(
-                            0.001,
-                            SmearContact {
-                                normal: [if active_side == 0 { 1.0 } else { -1.0 }, 0.0, 0.0],
-                                body_velocity_m_s: [0.0, 0.015, tip_vel[2] * 0.5],
-                            },
-                            &self.pressures,
-                            &self.friction_mat,
-                            &mut self.friction_states[active_side],
-                            [0.0, 0.0, -9.81],
-                            0.0005,
-                        );
-                    }
-                    let phys_ms = phys_started.elapsed().as_secs_f64() * 1000.0;
+    let gpu = GpuPipeline::new(None)?;
+    let mut sim = VulvaSimulation::new();
 
-                    if let (
-                        Some(surface),
-                        Some(renderer),
-                        Some(geometry),
-                        Some(texture),
-                        Some(transform),
-                        Some(depth),
-                        Some(window),
-                    ) = (
-                        &self.surface,
-                        &self.renderer,
-                        &self.geometry,
-                        &self.texture,
-                        &self.transform,
-                        &self.depth,
-                        &self.window,
-                    ) {
-                        let skin_started = Instant::now();
-                        self.prepared_scene.update_vertices_in_place(
-                            &self.queue,
-                            geometry,
-                            &self.majora_sim,
-                            &self.minora_sim,
-                            &self.films,
-                            &self.tube,
-                            sim_t,
-                        );
-                        let skin_ms = skin_started.elapsed().as_secs_f64() * 1000.0;
-                        let step_gpu_ms = phys_ms + skin_ms;
-
-                        if let wgpu::CurrentSurfaceTexture::Success(frame)
-                        | wgpu::CurrentSurfaceTexture::Suboptimal(frame) =
-                            surface.get_current_texture()
-                        {
-                            let encode_started = Instant::now();
-                            let view = frame
-                                .texture
-                                .create_view(&wgpu::TextureViewDescriptor::default());
-                            let mut encoder = self
-                                .device
-                                .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-                            renderer.encode(
-                                &mut encoder,
-                                &view,
-                                &depth.create_view(&wgpu::TextureViewDescriptor::default()),
-                                wgpu::Color {
-                                    r: 0.035,
-                                    g: 0.038,
-                                    b: 0.052,
-                                    a: 1.0,
-                                },
-                                &[SceneDraw {
-                                    geometry,
-                                    texture,
-                                    transform,
-                                    overlay: false,
-                                }],
-                            );
-                            self.queue.submit([encoder.finish()]);
-                            let work_ms =
-                                step_gpu_ms + encode_started.elapsed().as_secs_f64() * 1000.0;
-                            self.step_render_ms_samples.push(work_ms);
-                            self.queue.present(frame);
-                        } else {
-                            self.step_render_ms_samples.push(step_gpu_ms);
-                        }
-                        self.frame_count += 1;
-                        let last_work_ms =
-                            self.step_render_ms_samples.last().copied().unwrap_or(1.0);
-                        let compute_fps = 1000.0 / last_work_ms.max(1e-4);
-                        if self.frame_count == 1 || self.frame_count % 20 == 0 {
-                            window.set_title(&format!(
-                                "Voxy FEM | Orifice Penetration & Lubricant Meniscus | depth={:.0}% tip_z={:.2}mm vel_z={:.1}mm/s speed={:.2}x | {:.0} FPS",
-                                phase * 100.0,
-                                tip_pos[2] * 1000.0,
-                                tip_vel[2] * 1000.0,
-                                self.speed_scale,
-                                compute_fps,
-                            ));
-                        }
-                        if self.max_frames.is_some_and(|max| self.frame_count >= max) {
-                            event_loop.exit();
-                        } else {
-                            window.request_redraw();
-                        }
-                    }
-                }
-                _ => {}
-            }
+    for (frame_idx, time_s, label) in SNAPSHOT_FRAMES {
+        let frame_path = format!("/private/tmp/voxy-labia-tube-frame-{frame_idx}.png");
+        let kin = gpu.render_offscreen_frame(&mut sim, time_s, Path::new(&frame_path))?;
+        println!(
+            "frame={frame_idx} ({label}) | t={time_s:.2}s phase={:.2} tip_z={:.2}mm vel_z={:.1}mm/s | minora_sep={:.2}mm majora_sep={:.2}mm",
+            kin.insertion_phase,
+            kin.tip_z_mm,
+            kin.velocity_z_mm_s,
+            sim.minora_separation_mm,
+            sim.majora_separation_mm,
+        );
+        if frame_idx == 3 {
+            std::fs::copy(&frame_path, DEFAULT_OUTPUT_PATH)?;
         }
     }
 
-    let event_loop = EventLoop::new()?;
-    let mut app = App {
-        instance,
-        adapter,
-        device,
-        queue,
-        window: None,
-        surface: None,
-        config: None,
-        renderer: None,
-        geometry: None,
-        texture: None,
-        transform: None,
-        depth: None,
-        majora_sim,
-        minora_sim,
-        films,
-        tube,
-        pressures,
-        friction_mat,
-        friction_states,
-        prepared_scene,
-        frame_count: 0,
-        max_frames: max_window_frames,
-        started_at: None,
-        step_render_ms_samples: Vec::new(),
-        sim_time_s: 0.0,
-        paused: false,
-        speed_scale: 1.0,
-        cam_azimuth_rad: (-1.36_f32).atan2(0.76_f32),
-        cam_elevation_rad: (1.34_f32 / 2.054_f32).asin(),
-        cam_distance: 2.054,
-    };
-    event_loop.run_app(&mut app)?;
+    println!("LABIA TUBE INSERTION SNAPSHOT PASS: {DEFAULT_OUTPUT_PATH}");
     Ok(())
 }
