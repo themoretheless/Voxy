@@ -6,7 +6,8 @@ use glam::Vec3;
 use physics::biomechanics::{LabiaMajoraGeometry, Material};
 use physics::friction;
 use physics::skin::{
-    LabiaMinoraGeometry, LabiaTubeInsertion, Layer, Relaxation, SkinMaterial, SolverConfig,
+    LabiaMinoraGeometry, LabiaTubeInsertion, Layer, OrificeDilationKernel, Relaxation,
+    SkinMaterial, SolverConfig,
 };
 use physics::surface_film::{BridgeConfig, Material as FilmMaterial, SmearContact, SurfaceFilm};
 use std::sync::Arc;
@@ -415,17 +416,20 @@ impl PreparedAnalInsertionScene {
                 let canal_band = (-((dist_from_slit / 0.13).powi(2))).exp();
                 let canal_w = (canal_band * orifice_long_env) as f32;
 
-                // Preliminary x to compute polar angle around the anal orifice
+                // Preliminary x to compute branch-cut-free Chebyshev harmonics around the anal orifice
                 let x_prelim = side_sign_f64 * u_mag * half_width_m * row_scale;
-                let theta = y.atan2(x_prelim);
+                let r_prelim = x_prelim.hypot(y).max(1e-6);
+                let cos_t = x_prelim / r_prelim;
+                let sin_t = y / r_prelim;
+                let (cos_14, _) = OrificeDilationKernel::chebyshev_radial_harmonic(cos_t, sin_t, 14);
+                let (_, sin_8) = OrificeDilationKernel::chebyshev_radial_harmonic(cos_t, sin_t, 8);
+                let (cos_20, _) = OrificeDilationKernel::chebyshev_radial_harmonic(cos_t, sin_t, 20);
 
                 // 14 radiating mucocutaneous folds (plicae radiatae / corrugator cutis ani)
-                let stellate_wave = 0.68 * (14.0 * theta).cos()
-                    + 0.22 * (7.0 * theta + 0.8).sin()
-                    + 0.10 * (21.0 * theta).cos();
+                let stellate_wave = 0.72 * cos_14 + 0.18 * sin_8 + 0.10 * cos_20;
 
-                // Star-shaped resting anal orifice gap (r_rest ~ 1.65mm modulated by stellate plicae),
-                // sealed at dist_from_slit == 0 (deep anal canal floor at z = -15.5mm)
+                // Star-shaped resting anal orifice gap (r_rest ~ 1.75mm modulated by stellate plicae),
+                // sealed at dist_from_slit == 0 (deep anal canal floor at z = -15.0mm)
                 let stellate_lumen_mod = (1.0 + 0.26 * stellate_wave).clamp(0.70, 1.30);
                 let rest_orifice_half_gap = 0.00175
                     * wall_flare
@@ -835,8 +839,13 @@ impl PreparedAnalInsertionScene {
             let seam_smooth = seam_pin * seam_pin * (3.0 - 2.0 * seam_pin);
             let r0 = r_tube * 2.40;
             let radial_env = (-((r_xy / r0).powi(2))).exp();
-            let target_r =
-                (r_xy * r_xy + smooth_engage * (r_tube * 1.005).powi(2) * radial_env).sqrt();
+            let (target_r_f64, _) = OrificeDilationKernel::monotonic_radial_dilation(
+                f64::from(r_xy),
+                f64::from(r_tube * 1.005),
+                f64::from(r0),
+                f64::from(smooth_engage),
+            );
+            let target_r = target_r_f64 as f32;
             let delta_r = (target_r - r_xy) * seam_smooth;
 
             let dir_x = if r_xy > 1e-5 { rx / r_xy } else { side_sign } * seam_smooth;
@@ -1353,8 +1362,9 @@ fn run_interactive_window(
     max_window_frames: Option<u64>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     use winit::application::ApplicationHandler;
-    use winit::event::WindowEvent;
+    use winit::event::{ElementState, WindowEvent};
     use winit::event_loop::{ActiveEventLoop, EventLoop};
+    use winit::keyboard::{KeyCode, PhysicalKey};
     use winit::window::{Window, WindowAttributes, WindowId};
 
     struct App {
@@ -1382,6 +1392,46 @@ fn run_interactive_window(
         max_frames: Option<u64>,
         started_at: Option<Instant>,
         step_render_ms_samples: Vec<f64>,
+        sim_time_s: f64,
+        paused: bool,
+        speed_scale: f64,
+        cam_azimuth_rad: f32,
+        cam_elevation_rad: f32,
+        cam_distance: f32,
+    }
+
+    impl App {
+        fn camera_eye(&self) -> Vec3 {
+            let (sin_el, cos_el) = self.cam_elevation_rad.sin_cos();
+            let (sin_az, cos_az) = self.cam_azimuth_rad.sin_cos();
+            Vec3::new(
+                self.cam_distance * cos_el * cos_az,
+                self.cam_distance * cos_el * sin_az,
+                self.cam_distance * sin_el,
+            )
+        }
+
+        fn update_camera(&self) {
+            if let (Some(transform), Some(config)) = (&self.transform, &self.config) {
+                let eye = self.camera_eye();
+                if let Ok(proj) = (SceneCamera {
+                    eye,
+                    target: Vec3::new(0.0, -0.02, -0.02),
+                    up: Vec3::Z,
+                    projection: SceneProjection::Perspective {
+                        vertical_fov: 35_f32.to_radians(),
+                        aspect: config.width.max(1) as f32 / config.height.max(1) as f32,
+                        near: 0.1,
+                        far: 50.0,
+                    },
+                })
+                .view_projection()
+                {
+                    let _ = transform.update(&self.queue, proj);
+                    let _ = transform.update_view_position(&self.queue, eye);
+                }
+            }
+        }
     }
 
     impl ApplicationHandler for App {
@@ -1391,7 +1441,7 @@ fn run_interactive_window(
             }
             let attrs = WindowAttributes::default()
                 .with_title(
-                    "Voxy FEM | Anal Sphincter Penetration, Anoderm Rugae & 3D Lubricant Meniscus",
+                    "Voxy FEM | Anal Sphincter Penetration, Anoderm Rugae & 3D Lubricant Meniscus [Space:Pause Up/Down:Speed Arrows/QE:Cam L:Lube]",
                 )
                 .with_inner_size(winit::dpi::LogicalSize::new(1024.0, 768.0));
             let window = Arc::new(event_loop.create_window(attrs).expect("window"));
@@ -1433,7 +1483,7 @@ fn run_interactive_window(
             let texture = renderer
                 .upload_texture(&self.device, &self.queue, 1, 1, &[255; 4])
                 .expect("texture");
-            let camera_eye = Vec3::new(0.74, -1.28, 1.32);
+            let camera_eye = self.camera_eye();
             let camera_target = Vec3::new(0.0, -0.02, -0.02);
             let proj = SceneCamera {
                 eye: camera_eye,
@@ -1486,9 +1536,80 @@ fn run_interactive_window(
         ) {
             match event {
                 WindowEvent::CloseRequested => event_loop.exit(),
+                WindowEvent::KeyboardInput { event, .. }
+                    if event.state == ElementState::Pressed =>
+                {
+                    if let PhysicalKey::Code(code) = event.physical_key {
+                        match code {
+                            KeyCode::Escape => event_loop.exit(),
+                            KeyCode::Space => {
+                                self.paused = !self.paused;
+                            }
+                            KeyCode::ArrowUp => {
+                                if self.paused {
+                                    self.sim_time_s += 0.025;
+                                } else {
+                                    self.speed_scale = (self.speed_scale * 1.25).min(3.5);
+                                }
+                            }
+                            KeyCode::ArrowDown => {
+                                if self.paused {
+                                    self.sim_time_s = (self.sim_time_s - 0.025).max(0.0);
+                                } else {
+                                    self.speed_scale = (self.speed_scale * 0.8).max(0.2);
+                                }
+                            }
+                            KeyCode::ArrowLeft | KeyCode::KeyA => {
+                                self.cam_azimuth_rad -= 0.08;
+                                self.update_camera();
+                            }
+                            KeyCode::ArrowRight | KeyCode::KeyD => {
+                                self.cam_azimuth_rad += 0.08;
+                                self.update_camera();
+                            }
+                            KeyCode::KeyW => {
+                                self.cam_elevation_rad =
+                                    (self.cam_elevation_rad + 0.06).clamp(0.15, 1.42);
+                                self.update_camera();
+                            }
+                            KeyCode::KeyS => {
+                                self.cam_elevation_rad =
+                                    (self.cam_elevation_rad - 0.06).clamp(0.15, 1.42);
+                                self.update_camera();
+                            }
+                            KeyCode::KeyQ => {
+                                self.cam_distance = (self.cam_distance * 0.92).clamp(0.85, 3.8);
+                                self.update_camera();
+                            }
+                            KeyCode::KeyE => {
+                                self.cam_distance = (self.cam_distance * 1.08).clamp(0.85, 3.8);
+                                self.update_camera();
+                            }
+                            KeyCode::KeyL => {
+                                let cells = self.films[0].triangles().len();
+                                for side in 0..2 {
+                                    let _ = self.films[side].deposit(cells / 2, 4.5e-9);
+                                    let _ = self.films[side].deposit(cells / 3, 3.5e-9);
+                                }
+                            }
+                            KeyCode::KeyR => {
+                                self.paused = false;
+                                self.speed_scale = 1.0;
+                                self.cam_azimuth_rad = (-1.28_f32).atan2(0.74_f32);
+                                self.cam_elevation_rad = (1.32_f32 / 1.982_f32).asin();
+                                self.cam_distance = 1.982;
+                                self.update_camera();
+                            }
+                            _ => {}
+                        }
+                    }
+                }
                 WindowEvent::RedrawRequested => {
                     let phys_started = Instant::now();
-                    let sim_t = (self.frame_count as f64) * 0.008;
+                    if !self.paused {
+                        self.sim_time_s += 0.008 * self.speed_scale;
+                    }
+                    let sim_t = self.sim_time_s;
                     let (tip_pos, tip_vel, phase) = self
                         .tube
                         .tip_state_at(sim_t)
@@ -1587,10 +1708,11 @@ fn run_interactive_window(
                         let compute_fps = 1000.0 / last_work_ms.max(1e-4);
                         if self.frame_count == 1 || self.frame_count % 20 == 0 {
                             window.set_title(&format!(
-                                "Voxy FEM | Anal Sphincter Penetration & Lubricant Meniscus | depth={:.0}% tip_z={:.2}mm vel_z={:.1}mm/s | {:.0} FPS",
+                                "Voxy FEM | Anal Sphincter Penetration | depth={:.0}% tip_z={:.2}mm vel_z={:.1}mm/s speed={:.2}x | {:.0} FPS",
                                 phase * 100.0,
                                 tip_pos[2] * 1000.0,
                                 tip_vel[2] * 1000.0,
+                                self.speed_scale,
                                 compute_fps,
                             ));
                         }
@@ -1632,6 +1754,12 @@ fn run_interactive_window(
         max_frames: max_window_frames,
         started_at: None,
         step_render_ms_samples: Vec::new(),
+        sim_time_s: 0.0,
+        paused: false,
+        speed_scale: 1.0,
+        cam_azimuth_rad: (-1.28_f32).atan2(0.74_f32),
+        cam_elevation_rad: (1.32_f32 / 1.982_f32).asin(),
+        cam_distance: 1.982,
     };
     event_loop.run_app(&mut app)?;
     Ok(())
