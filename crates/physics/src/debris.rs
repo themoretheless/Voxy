@@ -232,6 +232,236 @@ pub fn step_debris(
             ledger.correction_j += body.piece.mass_kg * depth * -dot(gravity, normal);
         }
     }
+    let pair_contacts_before = ledger.contacts;
+    ledger.contacts = 0;
+    resolve_pairs(bodies, gravity, ground.friction, ledger);
+    contacts += ledger.contacts;
+    ledger.contacts = pair_contacts_before;
+    let mut kinetic = 0.;
+    let mut potential = 0.;
+    for body in bodies.iter() {
+        kinetic += body.kinetic_j();
+        potential += body.piece.mass_kg * -dot(gravity, body.position_m);
+    }
+    if !kinetic.is_finite() || !potential.is_finite() || !ledger.dissipated_j.is_finite() {
+        return Err("debris step overflow");
+    }
+    // Whatever the step did not book explicitly is the integration residual.
+    let booked =
+        (ledger.dissipated_j - dissipated_before) - (ledger.correction_j - correction_before);
+    ledger.integration_j += (kinetic + potential + booked) - start;
+    let _ = initial;
+    ledger.kinetic_j = kinetic;
+    ledger.potential_j = potential;
+    ledger.contacts = contacts;
+    Ok(())
+}
+
+/// Voxel/world contact settings for [`step_debris_in_world`].
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DebrisWorldContact {
+    pub friction: f64,
+    /// Sweep candidate budget passed to the collision backend.
+    pub max_candidates: usize,
+    /// Contacts resolved per body per step before the remainder is dropped.
+    pub max_contacts: usize,
+}
+
+impl Default for DebrisWorldContact {
+    fn default() -> Self {
+        Self {
+            friction: 0.6,
+            max_candidates: 16_384,
+            max_contacts: 4,
+        }
+    }
+}
+
+/// Advances every body against a voxel [`CollisionWorld`](crate::CollisionWorld):
+/// the hull's axis-aligned bounds are swept by the step displacement, each hit
+/// stops the normal motion with an inelastic impulse (Coulomb friction on the
+/// support patch), and the remaining displacement slides along the surface.
+/// Piece–piece contacts are resolved afterwards as in [`step_debris`].
+/// Units follow the collision world (voxel units for `physics_voxel`).
+/// # Errors
+/// Invalid step, a body initially overlapping the world, or backend failures.
+pub fn step_debris_in_world(
+    bodies: &mut [DebrisBody],
+    dt: f64,
+    gravity: Vec3,
+    contact: DebrisWorldContact,
+    world: &impl crate::CollisionWorld,
+    ledger: &mut DebrisStepReport,
+) -> Result<(), &'static str> {
+    if !dt.is_finite()
+        || dt < 0.
+        || gravity.iter().any(|g| !g.is_finite())
+        || !contact.friction.is_finite()
+        || contact.friction < 0.
+        || contact.max_candidates == 0
+        || contact.max_contacts == 0
+    {
+        return Err("invalid debris world step");
+    }
+    let mechanical = |bodies: &[DebrisBody]| {
+        bodies
+            .iter()
+            .map(|b| b.kinetic_j() + b.piece.mass_kg * -dot(gravity, b.position_m))
+            .sum::<f64>()
+    };
+    let start = mechanical(bodies);
+    ledger.initial_j.get_or_insert(start);
+    let (dissipated_before, correction_before) = (ledger.dissipated_j, ledger.correction_j);
+    let mut contacts = 0;
+    for body in bodies.iter_mut() {
+        let old_velocity = body.velocity_m_s;
+        let old_spin = body.angular_velocity_rad_s;
+        body.velocity_m_s = add(body.velocity_m_s, scale(gravity, dt));
+        // Free flight uses the trapezoidal (exact) displacement.
+        let mut displacement = scale(add(old_velocity, body.velocity_m_s), 0.5 * dt);
+        let mut spin = scale(add(old_spin, body.angular_velocity_rad_s), 0.5);
+        for _ in 0..contact.max_contacts {
+            let hull = body.world_hull();
+            let (min, max) = hull.iter().fold(
+                ([f64::INFINITY; 3], [f64::NEG_INFINITY; 3]),
+                |(lo, hi), p| {
+                    (
+                        [lo[0].min(p[0]), lo[1].min(p[1]), lo[2].min(p[2])],
+                        [hi[0].max(p[0]), hi[1].max(p[1]), hi[2].max(p[2])],
+                    )
+                },
+            );
+            let hit = world
+                .sweep_aabb(
+                    crate::AnchoredAabb {
+                        anchor: crate::Origin::default(),
+                        min,
+                        max,
+                    },
+                    displacement,
+                    contact.max_candidates,
+                )
+                .map_err(|_| "debris collision backend failure")?;
+            if !hit.fraction.is_finite() || !(0. ..=1.).contains(&hit.fraction) {
+                return Err("invalid debris sweep result");
+            }
+            let axis_count = hit.normal.iter().filter(|n| **n != 0).count();
+            if axis_count == 0 {
+                if hit.obstacle.is_some() {
+                    return Err("debris initially overlaps the world");
+                }
+                body.position_m = add(body.position_m, displacement);
+                break;
+            }
+            // Advance to the contact, then resolve the impulse on the support patch.
+            body.position_m = add(body.position_m, scale(displacement, hit.fraction));
+            contacts += 1;
+            let normal = [
+                f64::from(hit.normal[0]),
+                f64::from(hit.normal[1]),
+                f64::from(hit.normal[2]),
+            ];
+            let hull = body.world_hull();
+            let lowest = hull
+                .iter()
+                .map(|p| dot(*p, normal))
+                .fold(f64::INFINITY, f64::min);
+            let mut sum = [0.; 3];
+            let mut count: f64 = 0.;
+            for p in &hull {
+                if dot(*p, normal) <= lowest + 1e-9 * (1. + lowest.abs()) {
+                    sum = add(sum, *p);
+                    count += 1.;
+                }
+            }
+            let point = scale(sum, 1. / count.max(1.));
+            let patch = count >= 3.;
+            let before = body.kinetic_j();
+            if patch {
+                let spin_n = dot(body.angular_velocity_rad_s, normal);
+                body.angular_velocity_rad_s = scale(normal, spin_n);
+            }
+            let r = sub(point, body.position_m);
+            let inverse_inertia = body.inverse_inertia_world();
+            let velocity = add(body.velocity_m_s, cross(body.angular_velocity_rad_s, r));
+            let vn = dot(velocity, normal);
+            let generalized = |direction: Vec3| {
+                if patch {
+                    return 1. / body.piece.mass_kg;
+                }
+                let rn = cross(r, direction);
+                1. / body.piece.mass_kg + dot(rn, mat_vec(inverse_inertia, rn))
+            };
+            let mut impulse = [0.; 3];
+            let mut normal_impulse = 0.;
+            if vn < 0. {
+                normal_impulse = -vn / generalized(normal);
+                impulse = scale(normal, normal_impulse);
+            }
+            let tangential = sub(velocity, scale(normal, vn));
+            let speed = norm(tangential);
+            if speed > 0. {
+                let direction = scale(tangential, 1. / speed);
+                let stopping = speed / generalized(direction);
+                impulse = sub(
+                    impulse,
+                    scale(direction, stopping.min(contact.friction * normal_impulse)),
+                );
+            }
+            body.velocity_m_s = add(body.velocity_m_s, scale(impulse, 1. / body.piece.mass_kg));
+            if !patch {
+                body.angular_velocity_rad_s = add(
+                    body.angular_velocity_rad_s,
+                    mat_vec(inverse_inertia, cross(r, impulse)),
+                );
+            }
+            ledger.dissipated_j += before - body.kinetic_j();
+            // The remainder of the step slides along the surface at the new velocity.
+            let remaining = 1. - hit.fraction;
+            displacement = scale(body.velocity_m_s, remaining * dt);
+            let dn = dot(displacement, normal);
+            if dn < 0. {
+                displacement = sub(displacement, scale(normal, dn));
+            }
+            spin = body.angular_velocity_rad_s;
+            if norm(displacement) == 0. {
+                break;
+            }
+        }
+        body.rotation = rotate(body.rotation, scale(spin, dt));
+    }
+    // Piece–piece contacts reuse the ground-free path with the world friction.
+    let mut pair_ledger = DebrisStepReport::default();
+    resolve_pairs(bodies, gravity, contact.friction, &mut pair_ledger);
+    ledger.dissipated_j += pair_ledger.dissipated_j;
+    ledger.correction_j += pair_ledger.correction_j;
+    contacts += pair_ledger.contacts;
+    let mut kinetic = 0.;
+    let mut potential = 0.;
+    for body in bodies.iter() {
+        kinetic += body.kinetic_j();
+        potential += body.piece.mass_kg * -dot(gravity, body.position_m);
+    }
+    if !kinetic.is_finite() || !potential.is_finite() || !ledger.dissipated_j.is_finite() {
+        return Err("debris world step overflow");
+    }
+    let booked =
+        (ledger.dissipated_j - dissipated_before) - (ledger.correction_j - correction_before);
+    ledger.integration_j += (kinetic + potential + booked) - start;
+    ledger.kinetic_j = kinetic;
+    ledger.potential_j = potential;
+    ledger.contacts = contacts;
+    Ok(())
+}
+
+/// Piece–piece contacts (see [`step_debris`]); increments `ledger.contacts`
+/// and books dissipation and push-out potential into the ledger.
+fn resolve_pairs(
+    bodies: &mut [DebrisBody],
+    gravity: Vec3,
+    friction: f64,
+    ledger: &mut DebrisStepReport,
+) {
     // Piece-piece contact: the deepest hull vertex of one piece inside the
     // other's hull is resolved with a shared inelastic normal impulse, Coulomb
     // friction and a mass-split positional push-out.
@@ -249,7 +479,7 @@ pub fn step_debris(
                 continue;
             };
             let (penetrating, penetrated) = (i, j);
-            contacts += 1;
+            ledger.contacts += 1;
             let (first, second) = bodies.split_at_mut(penetrated.max(penetrating));
             let (a, b) = if penetrating < penetrated {
                 (&mut first[penetrating], &mut second[0])
@@ -287,7 +517,7 @@ pub fn step_debris(
                 let stopping = speed / generalized(direction);
                 impulse = sub(
                     impulse,
-                    scale(direction, stopping.min(ground.friction * normal_impulse)),
+                    scale(direction, stopping.min(friction * normal_impulse)),
                 );
             }
             a.velocity_m_s = add(a.velocity_m_s, scale(impulse, 1. / a.piece.mass_kg));
@@ -308,24 +538,6 @@ pub fn step_debris(
                 a.piece.mass_kg * -dot(gravity, move_a) + b.piece.mass_kg * -dot(gravity, move_b);
         }
     }
-    let mut kinetic = 0.;
-    let mut potential = 0.;
-    for body in bodies.iter() {
-        kinetic += body.kinetic_j();
-        potential += body.piece.mass_kg * -dot(gravity, body.position_m);
-    }
-    if !kinetic.is_finite() || !potential.is_finite() || !ledger.dissipated_j.is_finite() {
-        return Err("debris step overflow");
-    }
-    // Whatever the step did not book explicitly is the integration residual.
-    let booked =
-        (ledger.dissipated_j - dissipated_before) - (ledger.correction_j - correction_before);
-    ledger.integration_j += (kinetic + potential + booked) - start;
-    let _ = initial;
-    ledger.kinetic_j = kinetic;
-    ledger.potential_j = potential;
-    ledger.contacts = contacts;
-    Ok(())
 }
 
 /// Separating-axis contact between two convex hulls over their face normals
