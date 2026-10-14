@@ -516,6 +516,114 @@ impl ThermalFilmMixture {
             sensible_energy_j: transferred,
         })
     }
+
+    /// Evaporates volatile solvent species (`solvent_index`) across all film cells down to
+    /// exact zero solvent mass (`высыхание`) when the evaporative demand over `dt_s`
+    /// (`evaporation_rate_kg_m2_s[cell] * area_m2 * dt_s`) meets or exceeds remaining solvent,
+    /// leaving behind nonvolatile solute residue (`dry_residue_mass_kg`) and crediting
+    /// evaporated mass to `vapor_mass_kg`.
+    pub fn dry_solvent_to_completion(
+        &mut self,
+        solvent_index: usize,
+        evaporation_rate_kg_m2_s: &[f64],
+        dt_s: f64,
+        vapor_mass_kg: &mut f64,
+    ) -> Result<CompleteDryingReport, &'static str> {
+        let cells = self.energy.len();
+        let species_count = self.capacities.len();
+        if solvent_index >= species_count
+            || evaporation_rate_kg_m2_s.len() != cells
+            || !dt_s.is_finite()
+            || dt_s <= 0.
+            || !vapor_mass_kg.is_finite()
+            || *vapor_mass_kg < 0.
+            || evaporation_rate_kg_m2_s
+                .iter()
+                .any(|r| !r.is_finite() || *r < 0.)
+        {
+            return Err("invalid complete drying parameters");
+        }
+
+        let temperatures = self.temperatures()?;
+        let mut candidate = self.clone();
+        let areas = candidate.mixture.film().area.clone();
+        let mut requests = Vec::new();
+        let mut evaporated_solvent_mass_kg = 0.0;
+        let mut sensible_energy_removed_j = 0.0;
+        let mut dried_to_zero_solvent_cells = 0usize;
+
+        for (cell, &rate) in evaporation_rate_kg_m2_s.iter().enumerate() {
+            let current_solvent = candidate.mixture.component_masses_kg()[cell][solvent_index];
+            if current_solvent == 0.0 || rate == 0.0 {
+                continue;
+            }
+            let demand = rate * areas[cell] * dt_s;
+            let removed_solvent = demand.min(current_solvent);
+            if removed_solvent <= 0.0 {
+                continue;
+            }
+            let mut row_req = vec![0.0; species_count];
+            row_req[solvent_index] = removed_solvent;
+            requests.push((cell, row_req));
+        }
+
+        if !requests.is_empty() {
+            candidate
+                .mixture
+                .withdraw_component_masses_batch(&requests)?;
+            for (cell, row_req) in &requests {
+                let removed = row_req[solvent_index];
+                let temp = temperatures[*cell].ok_or("dry cell during complete drying")?;
+                let after_row = &candidate.mixture.component_masses_kg()[*cell];
+                let remaining_cap = candidate.capacity(after_row)?;
+                let next_energy = if remaining_cap == 0.0 {
+                    0.0
+                } else {
+                    remaining_cap * temp
+                };
+                sensible_energy_removed_j += candidate.energy[*cell] - next_energy;
+                candidate.energy[*cell] = next_energy;
+                evaporated_solvent_mass_kg += removed;
+                if after_row[solvent_index] == 0.0 {
+                    dried_to_zero_solvent_cells += 1;
+                }
+            }
+        }
+
+        let next_vapor = *vapor_mass_kg + evaporated_solvent_mass_kg;
+        if !next_vapor.is_finite() || !sensible_energy_removed_j.is_finite() {
+            return Err("complete drying mass or energy overflow");
+        }
+        candidate.temperatures()?;
+
+        let mut dry_residue_mass_kg = vec![0.0; cells];
+        for (cell, row) in candidate.mixture.component_masses_kg().iter().enumerate() {
+            dry_residue_mass_kg[cell] = row
+                .iter()
+                .enumerate()
+                .filter(|&(k, _)| k != solvent_index)
+                .map(|(_, &m)| m)
+                .sum();
+        }
+
+        *self = candidate;
+        *vapor_mass_kg = next_vapor;
+        Ok(CompleteDryingReport {
+            evaporated_solvent_mass_kg,
+            sensible_energy_removed_j,
+            dry_residue_mass_kg,
+            dried_to_zero_solvent_cells,
+        })
+    }
+}
+
+/// Summary of evaporating volatile solvent down to zero mass while leaving nonvolatile solute residue.
+#[derive(Clone, Debug, PartialEq)]
+pub struct CompleteDryingReport {
+    pub evaporated_solvent_mass_kg: f64,
+    pub sensible_energy_removed_j: f64,
+    pub dry_residue_mass_kg: Vec<f64>,
+    pub dried_to_zero_solvent_cells: usize,
 }
 
 #[path = "surface_film_thermal_vapor.rs"]

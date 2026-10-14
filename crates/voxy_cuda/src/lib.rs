@@ -17,6 +17,7 @@ pub enum CudaError {
     InvalidWaterInput,
     InvalidMediumInput,
     InvalidTissueSearchInput,
+    InvalidPoseEvalInput,
     SingularPair,
     NumericalOverflow,
     RenderViewOutOfRange,
@@ -96,6 +97,8 @@ pub struct CudaCompute {
     medium: std::sync::Mutex<Option<cudarc::driver::CudaFunction>>,
     #[cfg(feature = "cuda")]
     tissue_search: std::sync::Mutex<Option<[cudarc::driver::CudaFunction; 2]>>,
+    #[cfg(feature = "cuda")]
+    pose_eval: std::sync::Mutex<Option<cudarc::driver::CudaFunction>>,
 }
 impl CudaCompute {
     /// Current bytes reserved by private device buffers and external imports.
@@ -290,6 +293,7 @@ impl CudaCompute {
                 water: std::sync::Mutex::new(None),
                 medium: std::sync::Mutex::new(None),
                 tissue_search: std::sync::Mutex::new(None),
+                pose_eval: std::sync::Mutex::new(None),
             })
         }
         #[cfg(not(feature = "cuda"))]
@@ -607,10 +611,19 @@ pub use box_sweep::{CudaBoxContact, CudaBoxSweep};
 
 mod medium;
 mod water;
-pub use medium::{MEDIUM_HEADER_WORDS, MEDIUM_MAX_CELLS, pack_medium_job, unpack_medium_result};
+pub use medium::{
+    MEDIUM_HEADER_WORDS, MEDIUM_MAX_CELLS, pack_medium_job, simulate_medium_job_cpu,
+    unpack_medium_result,
+};
 
 #[cfg(any(feature = "cuda", test))]
 mod budget;
 
 mod tissue_search;
 pub use tissue_search::is_tissue_search_backend_failure;
+
+mod pose_eval;
+pub use pose_eval::{
+    POSE_EVAL_HEADER_WORDS, POSE_EVAL_MAX_CLIPS, POSE_EVAL_MAX_JOBS, POSE_EVAL_MAX_JOINTS,
+    POSE_EVAL_NO_PARENT, cpu_pose_eval_words, pack_pose_eval_job, unpack_pose_eval_palettes,
+};

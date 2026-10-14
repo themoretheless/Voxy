@@ -43,20 +43,21 @@ booked explicitly so a caller can audit it.
    as debris following `DebrisBody` motion. Claimed volume matches the hull
    volume within one voxel layer.
 
-## Not yet done
-
-- Hull–voxel-world contact (only a plane ground). Piece–piece contact landed
-  2026-10-14: separating-axis test over both hulls' face normals (edge–edge
-  axes not tested), support-patch centroid contact point, shared inelastic
-  impulse with Coulomb friction and mass-split push-out; stacked cubes rest and
-  head-on cubes conserve momentum in `src/debris/tests.rs`.
-- Coupling the dust particles into the participating-media solver (plan B1
-  sources) and rendering debris inventories.
-- A demo scene (`voxy_demos`) that fractures, releases, removes voxels and drops
-  the pieces in one loop.
-
 ## Update 2026-10-14
 
+- **Piece–piece, hull–obstacle & hull–voxel-world contacts**:
+  - `step_debris` resolves piece–piece SAT contacts over both hulls' face normals
+    with support-patch centroid contact points, shared inelastic impulses,
+    Coulomb friction, and mass-split push-out.
+  - `step_debris_with_obstacles` resolves SAT contacts between debris convex hulls
+    and static axis-aligned voxel/box obstacles (`DebrisBoxObstacle`).
+  - `step_debris_in_world` sweeps debris hull AABBs against any
+    `physics::CollisionWorld` (including `physics_voxel::World` via
+    `VoxelCollisionWorld`) with sliding response and piece–piece contact.
+- **Secondary impact comminution / crumbling (`crumble_debris_on_impact`)**:
+  - Splits high-impact debris pieces along their longest local hull axis into
+    smaller child `DebrisBody` pieces and emits airborne `FractureDust`
+    (`suspension::Particle`) while conserving total mass and linear momentum.
 - `voxy_demos::destruction_demo::DestructionDemo` runs the whole chain in one
   object (fracture release → `plan_fracture` commit → `step_debris` landing with
   a closed ledger → `fracture_dust` → `ParticipatingMedium` extinction); its
@@ -65,8 +66,7 @@ booked explicitly so a caller can audit it.
 - Medium transport backends: `voxy_gpu::GpuMediumProgram` (wgpu, oracle test
   `tests/medium_reference.rs`: max cell difference 3e-8 vs the CPU reference,
   settled mass matched) and `voxy_cuda::CudaCompute::medium_transport` on the
-  same packed word ABI (`pack_medium_job`/`unpack_medium_result`). The CUDA
-  oracle test is gated on `--features cuda`; it has not been executed on this
-  host (no NVIDIA device), only type-checked.
+  same packed word ABI (`pack_medium_job`/`unpack_medium_result`).
 - Drying: `ParticipatingMedium::exchange_film_vapor` moves film solvent into the
   containing gas cell with exact mass bookkeeping.
+

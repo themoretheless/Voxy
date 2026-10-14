@@ -104,10 +104,119 @@ impl SceneSystemAccess<'_> {
         }
     }
 }
+
+/// Immutable capability token for a scheduled system invocation in parallel or serial batches.
+#[derive(Clone, Copy, Debug)]
+pub struct ScopedSystemAccess<'a> {
+    grants: &'a BTreeMap<String, bool>,
+}
+
+impl<'a> ScopedSystemAccess<'a> {
+    /// Checks a domain read declaration; write grants also satisfy read checks.
+    /// # Errors
+    /// Rejects an undeclared resource read.
+    pub fn require_read(&self, resource: &str) -> Result<(), ResourceAccessDenied> {
+        if self.grants.contains_key(resource) {
+            Ok(())
+        } else {
+            Err(ResourceAccessDenied {
+                resource: resource.into(),
+                write: false,
+            })
+        }
+    }
+
+    /// Checks a domain write declaration.
+    /// # Errors
+    /// Rejects absent or read-only declarations.
+    pub fn require_write(&self, resource: &str) -> Result<(), ResourceAccessDenied> {
+        if self.grants.get(resource) == Some(&true) {
+            Ok(())
+        } else {
+            Err(ResourceAccessDenied {
+                resource: resource.into(),
+                write: true,
+            })
+        }
+    }
+
+    #[must_use]
+    pub fn can_read(&self, resource: &str) -> bool {
+        self.grants.contains_key(resource)
+    }
+
+    #[must_use]
+    pub fn can_write(&self, resource: &str) -> bool {
+        self.grants.get(resource) == Some(&true)
+    }
+
+    /// Iterates over all declared `(resource, write)` grants for this system.
+    pub fn declared_resources(&self) -> impl Iterator<Item = (&'a str, bool)> + '_ {
+        self.grants.iter().map(|(k, &v)| (k.as_str(), v))
+    }
+}
+
+/// Parallel-safe scene capability: provides shared read access to [`crate::SceneGraph`]
+/// (when `"scene"` is declared) and an isolated per-system [`crate::SceneCommands`] buffer
+/// that is committed in deterministic batch order at the end of the batch barrier.
+#[derive(Debug)]
+pub struct ParallelSceneSystemAccess<'a> {
+    scene: &'a crate::SceneGraph,
+    grants: &'a BTreeMap<String, bool>,
+    commands: crate::SceneCommands,
+}
+
+impl ParallelSceneSystemAccess<'_> {
+    /// # Errors
+    /// Rejects an undeclared resource read.
+    pub fn require_read(&self, resource: &str) -> Result<(), ResourceAccessDenied> {
+        if self.grants.contains_key(resource) {
+            Ok(())
+        } else {
+            Err(ResourceAccessDenied {
+                resource: resource.into(),
+                write: false,
+            })
+        }
+    }
+
+    /// # Errors
+    /// Rejects absent or read-only declarations.
+    pub fn require_write(&self, resource: &str) -> Result<(), ResourceAccessDenied> {
+        if self.grants.get(resource) == Some(&true) {
+            Ok(())
+        } else {
+            Err(ResourceAccessDenied {
+                resource: resource.into(),
+                write: true,
+            })
+        }
+    }
+
+    /// # Errors
+    /// Rejects reads when the system declares no `"scene"` access.
+    pub fn read(&self) -> Result<&crate::SceneGraph, SceneAccessDenied> {
+        self.require_read("scene")
+            .map_err(|_| SceneAccessDenied)
+            .map(|()| self.scene)
+    }
+
+    /// Queues deferred structural/component commands to be applied at the end of the current batch
+    /// barrier. Requires declared `"scene"` write or `"commands"` write access.
+    /// # Errors
+    /// Rejects command queueing when neither `"scene"` write nor `"commands"` write is declared.
+    pub fn commands(&mut self) -> Result<&mut crate::SceneCommands, SceneAccessDenied> {
+        if self.grants.get("scene") == Some(&true) || self.grants.get("commands") == Some(&true) {
+            Ok(&mut self.commands)
+        } else {
+            Err(SceneAccessDenied)
+        }
+    }
+}
+
 /// Systems in a batch are dependency-independent and have no declared write
 /// conflicts. Batches are ordered barriers; lower phases always finish first.
-/// Scene declarations grant capabilities only through `run_scene`. Other resource
-/// declarations and the legacy run methods do not enforce borrowing.
+/// Scene declarations grant capabilities only through `run_scene` or `run_scene_parallel`.
 #[derive(Clone, Debug)]
 pub struct SchedulePlan {
     batches: Vec<Vec<String>>,
@@ -319,6 +428,14 @@ impl SchedulePlan {
                 reason: failure.error,
             })
     }
+    /// Returns the scoped resource grant for a registered system name.
+    #[must_use]
+    pub fn grant_for(&self, system: &str) -> Option<ScopedSystemAccess<'_>> {
+        self.resource_grants
+            .get(system)
+            .map(|grants| ScopedSystemAccess { grants })
+    }
+
     /// Executes the validated plan serially, preserving the original error type.
     /// # Errors
     /// Stops at the first failed system; previous effects remain committed.
@@ -335,6 +452,156 @@ impl SchedulePlan {
             }
         }
         Ok(())
+    }
+
+    /// Executes conflict-free topological batches concurrently using up to `max_workers`
+    /// scoped worker threads per batch (`max_workers == 0` is treated as `1`).
+    /// Batch boundaries remain strict barriers, and returned `(system, output)` pairs
+    /// preserve the deterministic batch/insertion order regardless of thread completion order.
+    /// # Errors
+    /// If any system in a batch fails, returns the first failure in deterministic batch order
+    /// and does not execute subsequent batches.
+    pub fn run_parallel<T, E>(
+        &self,
+        max_workers: usize,
+        execute: impl Fn(&str, ScopedSystemAccess<'_>) -> Result<T, E> + Sync,
+    ) -> Result<Vec<(String, T)>, SystemFailure<E>>
+    where
+        T: Send,
+        E: Send,
+    {
+        let workers = max_workers.max(1);
+        let mut total_systems = 0;
+        for batch in &self.batches {
+            total_systems += batch.len();
+        }
+        let mut outputs = Vec::with_capacity(total_systems);
+        for batch in &self.batches {
+            if batch.len() <= 1 || workers == 1 {
+                for system in batch {
+                    let access = ScopedSystemAccess {
+                        grants: &self.resource_grants[system],
+                    };
+                    let value = execute(system, access).map_err(|error| SystemFailure {
+                        system: system.clone(),
+                        error,
+                    })?;
+                    outputs.push((system.clone(), value));
+                }
+            } else {
+                for chunk in batch.chunks(workers) {
+                    let chunk_results: Vec<Result<T, E>> = std::thread::scope(|scope| {
+                        let handles: Vec<_> = chunk
+                            .iter()
+                            .map(|system| {
+                                let grants = &self.resource_grants[system];
+                                let exec = &execute;
+                                scope.spawn(move || {
+                                    exec(system.as_str(), ScopedSystemAccess { grants })
+                                })
+                            })
+                            .collect();
+                        handles
+                            .into_iter()
+                            .map(|h| h.join().expect("scheduled system thread panicked"))
+                            .collect()
+                    });
+                    for (system, res) in chunk.iter().zip(chunk_results) {
+                        let value = res.map_err(|error| SystemFailure {
+                            system: system.clone(),
+                            error,
+                        })?;
+                        outputs.push((system.clone(), value));
+                    }
+                }
+            }
+        }
+        Ok(outputs)
+    }
+
+    /// Executes batches in parallel with shared read access to `scene` and per-system
+    /// [`crate::SceneCommands`] queues that are applied to `scene` in deterministic
+    /// system order at the end of each batch barrier.
+    /// # Errors
+    /// Stops at the first failed system barrier and returns its typed failure.
+    pub fn run_scene_parallel<E>(
+        &self,
+        scene: &mut crate::SceneGraph,
+        max_workers: usize,
+        command_capacity_per_system: usize,
+        execute: impl Fn(&str, &mut ParallelSceneSystemAccess<'_>) -> Result<(), E> + Sync,
+    ) -> Result<Vec<(String, Vec<Result<(), crate::SceneGraphError>>)>, SystemFailure<E>>
+    where
+        E: Send,
+    {
+        let workers = max_workers.max(1);
+        let mut applied_results = Vec::new();
+        for batch in &self.batches {
+            let mut batch_commands = Vec::with_capacity(batch.len());
+            {
+                let shared_scene: &crate::SceneGraph = &*scene;
+                if batch.len() <= 1 || workers == 1 {
+                    for system in batch {
+                        let mut access = ParallelSceneSystemAccess {
+                            scene: shared_scene,
+                            grants: &self.resource_grants[system],
+                            commands: crate::SceneCommands::new(
+                                shared_scene,
+                                command_capacity_per_system,
+                            ),
+                        };
+                        execute(system, &mut access).map_err(|error| SystemFailure {
+                            system: system.clone(),
+                            error,
+                        })?;
+                        batch_commands.push((system.clone(), access.commands));
+                    }
+                } else {
+                    for chunk in batch.chunks(workers) {
+                        let chunk_results: Vec<Result<crate::SceneCommands, E>> =
+                            std::thread::scope(|scope| {
+                                let handles: Vec<_> = chunk
+                                    .iter()
+                                    .map(|system| {
+                                        let grants = &self.resource_grants[system];
+                                        let exec = &execute;
+                                        scope.spawn(move || {
+                                            let mut access = ParallelSceneSystemAccess {
+                                                scene: shared_scene,
+                                                grants,
+                                                commands: crate::SceneCommands::new(
+                                                    shared_scene,
+                                                    command_capacity_per_system,
+                                                ),
+                                            };
+                                            exec(system.as_str(), &mut access)?;
+                                            Ok(access.commands)
+                                        })
+                                    })
+                                    .collect();
+                                handles
+                                    .into_iter()
+                                    .map(|h| h.join().expect("scheduled system thread panicked"))
+                                    .collect()
+                            });
+                        for (system, res) in chunk.iter().zip(chunk_results) {
+                            let cmds = res.map_err(|error| SystemFailure {
+                                system: system.clone(),
+                                error,
+                            })?;
+                            batch_commands.push((system.clone(), cmds));
+                        }
+                    }
+                }
+            }
+            for (system, mut commands) in batch_commands {
+                let results = commands
+                    .apply(scene)
+                    .expect("commands created from scene must match scene identity");
+                applied_results.push((system, results));
+            }
+        }
+        Ok(applied_results)
     }
 }
 #[cfg(test)]
@@ -473,5 +740,115 @@ mod extended_access_tests {
             )
             .is_err()
         );
+    }
+
+    #[test]
+    fn parallel_batches_enforce_grants_and_commit_commands_deterministically() {
+        let plan = SchedulePlan::build(
+            &[
+                SystemSpec {
+                    name: "spawn_alpha".into(),
+                    phase: 0,
+                    after: vec![],
+                    access: vec![
+                        SystemAccess {
+                            resource: "scene".into(),
+                            write: false,
+                        },
+                        SystemAccess {
+                            resource: "commands".into(),
+                            write: false,
+                        },
+                        SystemAccess {
+                            resource: "alpha_state".into(),
+                            write: true,
+                        },
+                    ],
+                },
+                SystemSpec {
+                    name: "spawn_beta".into(),
+                    phase: 0,
+                    after: vec![],
+                    access: vec![
+                        SystemAccess {
+                            resource: "scene".into(),
+                            write: false,
+                        },
+                        SystemAccess {
+                            resource: "commands".into(),
+                            write: false,
+                        },
+                        SystemAccess {
+                            resource: "beta_state".into(),
+                            write: true,
+                        },
+                    ],
+                },
+                SystemSpec {
+                    name: "verify_scene".into(),
+                    phase: 1,
+                    after: vec!["spawn_alpha".into(), "spawn_beta".into()],
+                    access: vec![SystemAccess {
+                        resource: "scene".into(),
+                        write: false,
+                    }],
+                },
+            ],
+            4,
+        )
+        .unwrap();
+        // Both phase-0 systems only read `scene` and `commands`, and write disjoint resources,
+        // so they share the first batch.
+        assert_eq!(plan.batches()[0], vec!["spawn_alpha", "spawn_beta"]);
+
+        let results = plan
+            .run_parallel(4, |name, access| -> Result<String, ResourceAccessDenied> {
+                access.require_read("scene")?;
+                if name == "spawn_alpha" {
+                    access.require_write("alpha_state")?;
+                    assert!(access.require_write("beta_state").is_err());
+                } else if name == "spawn_beta" {
+                    access.require_write("beta_state")?;
+                    assert!(access.require_write("alpha_state").is_err());
+                }
+                Ok(format!("done:{name}"))
+            })
+            .unwrap();
+        assert_eq!(
+            results,
+            vec![
+                ("spawn_alpha".into(), "done:spawn_alpha".into()),
+                ("spawn_beta".into(), "done:spawn_beta".into()),
+                ("verify_scene".into(), "done:verify_scene".into()),
+            ]
+        );
+
+        let plan_with_cmds = plan
+            .with_resource_access(
+                "spawn_alpha",
+                SystemAccess {
+                    resource: "commands".into(),
+                    write: true,
+                },
+            )
+            .unwrap();
+        let mut scene = crate::SceneGraph::new(8);
+        let cmd_outcomes = plan_with_cmds
+            .run_scene_parallel(&mut scene, 4, 4, |name, access| -> Result<(), String> {
+                let graph = access.read().map_err(|e| e.to_string())?;
+                if name == "spawn_alpha" {
+                    assert_eq!(graph.len(), 0);
+                    let cmds = access.commands().map_err(|e| e.to_string())?;
+                    cmds.push(crate::SceneCommand::Spawn(None, crate::Transform::default()))
+                        .map_err(|e| format!("{e:?}"))?;
+                } else if name == "verify_scene" {
+                    assert_eq!(graph.len(), 1);
+                }
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(cmd_outcomes[0].0, "spawn_alpha");
+        assert_eq!(cmd_outcomes[0].1.len(), 1);
+        assert_eq!(scene.len(), 1);
     }
 }

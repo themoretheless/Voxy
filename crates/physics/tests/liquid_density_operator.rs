@@ -567,9 +567,6 @@ fn supported_density_normal_pipeline_preserves_wall_images_and_atomic_failure() 
         Formulation::RestVolumeWendland,
     ] {
         for reflected in [false, true] {
-            if reflected && formulation == Formulation::MassDensity {
-                continue;
-            }
             let particles = (0..3)
                 .map(|i| Particle {
                     position: [0.12 + i as f64 * 0.04, 0.15, 0.2],

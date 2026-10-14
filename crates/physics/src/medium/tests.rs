@@ -353,3 +353,324 @@ fn film_drying_moves_solvent_mass_into_the_containing_gas_cell() {
         untouched.mixture().component_masses().unwrap()
     );
 }
+
+#[test]
+fn multi_liquid_jets_splash_into_mist_wet_smear_and_dry_conserving_mass() {
+    use crate::friction;
+    use crate::liquid::{
+        Config, DepositingImpact, DropletCoalescenceControl, DropletFlight, DropletLifecycle,
+        EmissionPulse, FilmImpactControl, FilmRebound, ImpactSpray, Liquid, LiquidField, Material,
+        Particle, ParticleInput, PulsedEmitter, SaturationCurve, SolutionVaporInterface,
+        TransportMaterial, VaporExchangeAccuracy, VaporInterface,
+    };
+    use crate::surface_film::{
+        FilmMixture, Material as FilmMaterial, SmearContact, SmearRegime, SurfaceFilm,
+        ThermalFilmMixture,
+    };
+
+    let mut smear_works = Vec::new();
+    for fluid_mat in [Material::WATER, Material::GLYCERIN] {
+        let mut liquid = Liquid::new(
+            vec![],
+            vec![fluid_mat],
+            Config {
+                smoothing_radius: 0.16,
+                particle_radius: 0.005,
+                ..Config::default()
+            },
+        )
+        .unwrap();
+        liquid
+            .configure_transport(
+                vec![],
+                vec![TransportMaterial {
+                    specific_heat: 728.0,
+                    conductivity: 0.0,
+                    diffusivity: 0.0,
+                    ..TransportMaterial::default()
+                }],
+            )
+            .unwrap();
+        liquid
+            .configure_species(vec!["solvent".into()], vec![])
+            .unwrap();
+        liquid.configure_droplet_population(Some(vec![])).unwrap();
+
+        let mut emitter = PulsedEmitter::new(
+            vec![EmissionPulse {
+                start: 0.0,
+                duration: 0.05,
+                volume: 0.001,
+                speed: 4.5,
+            }],
+            ParticleInput {
+                particle: Particle {
+                    position: [0.5, 0.22, 0.5],
+                    velocity: [0.0; 3],
+                    mass: 1.0,
+                    material: 0,
+                },
+                field: Some(LiquidField {
+                    temperature: 300.0,
+                    concentration: 0.0,
+                }),
+                phase_fraction: None,
+            },
+        )
+        .unwrap();
+        emitter.direction = [0.0, -1.0, 0.0];
+        emitter.nozzle_radius = 0.03;
+        emitter.particle_volume = 0.0001;
+        emitter.density = fluid_mat.rest_density;
+
+        let points = vec![
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+        ];
+        let triangles = vec![[0, 1, 2], [0, 2, 3]];
+        let surface = SurfaceFilm::new(
+            &points,
+            triangles.clone(),
+            FilmMaterial {
+                density: fluid_mat.rest_density,
+                viscosity: fluid_mat.viscosity,
+                wetting: 1e-5,
+                surface_tension: 0.072,
+            },
+        )
+        .unwrap();
+        let mixture =
+            FilmMixture::new(surface, vec!["solvent".into()], vec![vec![1.0]; 2]).unwrap();
+        let mut thermal_film = ThermalFilmMixture::new(mixture, vec![728.0], &[300.0; 2]).unwrap();
+
+        let gas_grid = FiniteDropletGasGrid::new(
+            [0.0, -0.1, 0.0],
+            [1.0, 0.6, 1.0],
+            [1, 1, 1],
+            vec![VaporCell {
+                mass: 1e-6,
+                volume: 0.6,
+                temperature: 300.0,
+                velocity: [0.0; 3],
+                specific_heat_cv: 718.0,
+            }],
+        )
+        .unwrap();
+        let mut medium = ParticipatingMedium::new(
+            gas_grid,
+            vec![MediumSpeciesProperties::water_mist(
+                0.01,
+                2.0,
+                fluid_mat.rest_density,
+            )],
+        )
+        .unwrap();
+        let initial_gas_mass: f64 = medium.gas().cells().iter().map(|c| c.mass).sum();
+
+        let dt = 1.0 / 120.0;
+        let mut emitted_mass = 0.0;
+        let mut total_captured = 0;
+        let mut total_fragments = 0;
+        for _ in 0..12 {
+            let ex = emitter
+                .advance_with_species(&mut liquid, dt, &[1.0])
+                .unwrap();
+            emitted_mass += ex.added.mass;
+            let initial_velocities: Vec<_> =
+                liquid.particles().iter().map(|p| p.velocity).collect();
+            let previous: Vec<_> = liquid.particles().iter().map(|p| p.position).collect();
+            liquid.step_carrier_and_droplets(dt, None).unwrap();
+            let radii = liquid.equivalent_sphere_radii().unwrap();
+            let report = liquid
+                .depositing_impact_spheres_thermal_surface_mixture_lifecycle(
+                    &previous,
+                    &mut thermal_film,
+                    DepositingImpact {
+                        capture_speed: 3.0,
+                        spray: ImpactSpray {
+                            rebound: FilmRebound {
+                                restitution: 0.45,
+                                friction: 0.1,
+                            },
+                            children: 2,
+                            position_radius: 0.01,
+                            surface_tension: 0.072,
+                            fragmentation_fraction: 0.25,
+                        },
+                    },
+                    &radii,
+                    FilmImpactControl {
+                        dt,
+                        max_contacts_per_lineage: 16,
+                        max_events: 1024,
+                    },
+                    &DropletLifecycle {
+                        mass_fractions: Some(vec![0.3, 0.7]),
+                        splash_onset: None,
+                        capture_growth_contact: true,
+                        free_surface_side: Some(1.0),
+                        capture_film_immersion: true,
+                        flight: Some(DropletFlight {
+                            initial_velocities,
+                            acceleration: [0.0, -9.81, 0.0],
+                            max_feature_checks: 4096,
+                        }),
+                        coalescence: Some(DropletCoalescenceControl {
+                            dt,
+                            surface_tension: 0.072,
+                            maximum_normal_speed: 0.5,
+                            max_events: 1024,
+                        }),
+                    },
+                )
+                .unwrap();
+            total_captured += report.impact.deposition.capture.particles;
+            total_fragments += report.impact.spray.fragments_created;
+        }
+        assert!(total_captured > 0 && total_fragments > 0);
+
+        // Absorb airborne spray droplets into the participating medium's Mist species.
+        let absorbed = medium.absorb_spray_droplets(0, &mut liquid, 0.05).unwrap();
+        assert!(absorbed.absorbed_count > 0);
+        assert!((absorbed.absorbed_mass_kg - absorbed.exchange.removed.mass).abs() < 1e-14);
+        assert!((medium.total_mass_kg(0) - absorbed.absorbed_mass_kg).abs() < 1e-14);
+
+        // Smear the wetted film with a sliding contact and record Couette work.
+        let mut smear_film = thermal_film.mixture().film().clone();
+        let friction_mat = friction::Material::new(1e7, 1e7, 0.5).unwrap();
+        let mut friction_states = vec![friction::State::default(); 2];
+        let smear_report = smear_film
+            .advance_smear(
+                0.01,
+                SmearContact {
+                    normal: [0.0, 1.0, 0.0],
+                    body_velocity_m_s: [0.05, 0.0, 0.0],
+                },
+                &[50_000.0, 50_000.0],
+                &friction_mat,
+                &mut friction_states,
+                [0.0, -9.81, 0.0],
+                0.001,
+            )
+            .unwrap();
+        assert!(smear_report.regimes.contains(&SmearRegime::Lubricated));
+        assert!(smear_report.slip_work_j > 0.0);
+        smear_works.push(smear_report.slip_work_j);
+
+        // Dry the wetted film into the participating medium's gas grid.
+        let vapor_model = SolutionVaporInterface {
+            interface: VaporInterface {
+                curve: SaturationCurve {
+                    reference_temperature: 300.0,
+                    reference_pressure: 100.0,
+                    latent_heat: 1000.0,
+                    vapor_gas_constant: 10.0,
+                    min_temperature: 200.0,
+                    max_temperature: 400.0,
+                },
+                area: 0.05,
+                accommodation: 1e-4,
+            },
+            solvent: 0,
+            molar_masses: vec![1.0],
+        };
+        let wet_cell = thermal_film
+            .mixture()
+            .film()
+            .thickness()
+            .iter()
+            .position(|&h| h > 0.0)
+            .unwrap();
+        let mut cell_vel = [0.0; 3];
+        let drying = medium
+            .exchange_film_vapor(
+                &mut thermal_film,
+                wet_cell,
+                &mut cell_vel,
+                [0.5, 0.05, 0.5],
+                &vapor_model,
+                0.01,
+                VaporExchangeAccuracy::default(),
+            )
+            .unwrap()
+            .unwrap();
+        assert!(drying.transferred_kg > 0.0);
+
+        let total_accounted = liquid.mass()
+            + thermal_film.mixture().film().total_mass()
+            + medium.total_mass_kg(0)
+            + (medium.gas().cells().iter().map(|c| c.mass).sum::<f64>() - initial_gas_mass);
+        assert!(
+            (total_accounted - emitted_mass).abs() < 1e-11,
+            "total_accounted={total_accounted} vs emitted_mass={emitted_mass}"
+        );
+    }
+    // High-viscosity glycerin (1.412 Pa*s) requires more lubricated shear work than water (0.001 Pa*s).
+    assert!(smear_works[1] > smear_works[0] * 100.0, "{smear_works:?}");
+}
+
+#[test]
+fn mixture_density_fog_condensation_and_wet_scavenging_conserve_mass() {
+    let h = 0.5;
+    let mut medium = ParticipatingMedium::new(
+        gas([2, 2, 1], h, [0.0; 3]),
+        vec![
+            species(MediumSpecies::Smoke),
+            species(MediumSpecies::Fog),
+            MediumSpeciesProperties {
+                settling_velocity_m_s: 0.4,
+                ..species(MediumSpecies::Dust)
+            },
+            MediumSpeciesProperties::water_mist(2e-5, 2.0, 1000.0),
+        ],
+    )
+    .unwrap();
+
+    // Deposit Smoke (0), Dust (2), and Mist (3) in cell 0 ([0.25, 0.25, 0.25])
+    let p0 = [0.25, 0.25, 0.25];
+    medium.deposit(0, p0, 0.02).unwrap();
+    medium.deposit(2, p0, 0.15).unwrap();
+    medium.deposit(3, p0, 0.10).unwrap();
+
+    let densities = medium.mixture_density_kg_m3();
+    assert!(densities[0] > densities[1]);
+
+    // Richardson-Zaki hindered settling reduces settling velocity in dense dust cell 0 relative to dilute cell 1
+    let hindered = medium
+        .hindered_settling_velocities_m_s(2, 2400.0, 4.65)
+        .unwrap();
+    assert!(hindered[0] < hindered[1]);
+
+    // Vapor-to-fog condensation in cool supersaturated gas
+    let cond = medium
+        .condense_or_evaporate_fog(
+            0.2,
+            FogCondensationConfig {
+                fog_species: 1,
+                saturation_density_at_ref_kg_m3: 0.5,
+                reference_temperature_k: 300.0,
+                clausius_clapeyron_exponent: 12.0,
+                relaxation_rate_s_inv: 2.0,
+                min_gas_fraction_floor: 0.2,
+            },
+        )
+        .unwrap();
+    assert!(cond.net_condensed_fog_mass_kg > 0.0);
+    assert!(medium.total_mass_kg(1) > 0.0);
+    assert!(
+        (cond.total_gas_plus_fog_before_kg - cond.total_gas_plus_fog_after_kg).abs() < 1e-12
+    );
+
+    // Wet scavenging of Smoke (0) and Dust (2) by water Mist (3)
+    let total_suspended_before: f64 = (0..4).map(|s| medium.total_mass_kg(s)).sum();
+    let scavenge = medium
+        .scavenge_dust_and_smoke_by_mist(3, &[0, 2], 1.5, 0.25)
+        .unwrap();
+    assert!(scavenge.total_scavenged_mass_kg > 0.0);
+    assert!(scavenge.scavenged_mass_per_species_kg[0] > 0.0);
+    assert!(scavenge.scavenged_mass_per_species_kg[2] > 0.0);
+    let total_suspended_after: f64 = (0..4).map(|s| medium.total_mass_kg(s)).sum();
+    assert!((total_suspended_before - total_suspended_after).abs() < 1e-12);
+}

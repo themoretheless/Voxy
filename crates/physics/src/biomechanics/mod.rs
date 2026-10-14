@@ -73,9 +73,12 @@ pub use tissue_bonds::{TissueAssembly, TissueBond};
 mod urogenital;
 pub use urogenital::{ClitoralComplex, ClitoralGeometry, UrogenitalWallGeometry};
 mod testicular;
-pub use testicular::TesticularGeometry;
+pub use testicular::{
+    CoupledGaitStepReport, CoupledSkeletalGaitFrame, CremasterReflexConfig, PelvisGaitKinematics,
+    TesticularGaitSimulation, TesticularGeometry, ThighCapsuleCollider,
+};
 mod genital_pads;
-pub use genital_pads::{LabiaMajoraGeometry, LabialPad};
+pub use genital_pads::{LabiaGaitSimulation, LabiaMajoraGeometry, LabialPad};
 mod specimens;
 mod stress;
 pub use myocardium::{ExponentialTerm, Myocardium};
