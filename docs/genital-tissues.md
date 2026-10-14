@@ -1412,16 +1412,23 @@ Complete dt=0.05/0.025 comparison verifies all 46 matching times and the unchang
 
 ### Orifice tube insertion, frictional invagination/eversion and 3D lubricant meniscus (`labia_tube_insertion` & `anal_tube_insertion`)
 
-Added `skin::LabiaTubeInsertion`, `skin::LabiaMinoraGaitSimulation::step_tube_insertion`, and `biomechanics::LabiaGaitSimulation::step_tube_insertion` together with two runnable GPU rendering and interactive window examples in `crates/voxy_app/examples/`:
+Added `skin::LabiaTubeInsertion`, `skin::OrificeDilationKernel`, `skin::OrificePointResponse`, `skin::LabiaMinoraGaitSimulation::step_tube_insertion`, and `biomechanics::LabiaGaitSimulation::step_tube_insertion` together with unit tests (`orifice_tests`) and two runnable GPU rendering and interactive window examples in `crates/voxy_app/examples/`:
 
 1. `cargo run --release -p voxy_app --example labia_tube_insertion` (and `-- --window` for $>200\text{ FPS}$ real-time window):
-   - Constructs a $129 \times 144$ curvilinear anatomical mesh of the labia majora, interlabial sulci, labia minora, clitoral hood/glans, and a watertight 3D vaginal introitus canal (`orifice_y_m = -0.0035 m`, plunging to `-15.5 mm`).
+   - Constructs a $129 \times 144$ curvilinear anatomical mesh of the labia majora, interlabial sulci, labia minora, clitoral hood/glans, and a watertight 3D vaginal introitus canal (`orifice_y_m = -0.0035 m`, plunging to `-14.2 mm`).
    - Couples volumetric `LabiaMajoraGeometry` FEM, layered viscoelastic `LabiaMinoraGeometry` shells, two-sided `SurfaceFilm` viscous lubricant smearing (`advance_smear` + `exchange_contact`), and LuGre bristle friction (`physics::friction`).
-   - Enforces a $C^\infty$ monotonic incompressible radial dilation mapping $R(r_{xy}) = \sqrt{r_{xy}^2 + \alpha(t) r_{\text{tube}}^2 e^{-(r_{xy}/r_0)^2}}$ around the penetrating rounded-tip cylindrical tube ($r_{\text{tube}} = 3.8\text{ mm}$), preventing mesh folding while wrapping the mucosal orifice lip tightly ($360^\circ$) around the shaft.
+   - Enforces the shared `OrificeDilationKernel::monotonic_radial_dilation` $C^\infty$ incompressible radial dilation mapping $R(r_{xy}) = \sqrt{r_{xy}^2 + \alpha(t) r_{\text{tube}}^2 e^{-(r_{xy}/r_0)^2}}$ around the penetrating rounded-tip cylindrical tube ($r_{\text{tube}} = 3.8\text{ mm}$), guaranteeing $\frac{dR}{dr_{xy}} > 0$ everywhere and wrapping the mucosal orifice lip tightly ($360^\circ$) around the shaft.
    - Models bidirectional axial frictional shear (`трение`): inward/downward mucosal rolling (`invagination`) and arterial frictional hyperemia during insertion ($v_z < 0$), and upward tented mucosal collar adhesion (`eversion`) during withdrawal ($v_z > 0$).
-   - Renders a 3D capillary viscous lubricant meniscus collar (`uv.y = -2.0`) at the tube-orifice interface and dual-lobe GGX specular lubricant film (`roughness = 0.014..0.015`) over dipole RGB subsurface scattering skin/mucosa.
+   - Renders a capillary viscous lubricant meniscus ridge at the tube-orifice interface and dual-lobe GGX specular lubricant film (`roughness = 0.014..0.015`) over dipole RGB subsurface scattering skin/mucosa.
 
 2. `cargo run --release -p voxy_app --example anal_tube_insertion` (and `-- --window` for $>200\text{ FPS}$ real-time window):
-   - Constructs a $129 \times 144$ curvilinear anatomical mesh of the gluteal cleft, median perineal/anococcygeal raphe, concentric external anal sphincter (`verge_band`), $14$ radially converging mucocutaneous folds (`plicae radiatae` / `corrugator cutis ani` using branch-cut-free Chebyshev harmonics), and a deep 3D anal canal lumen.
-   - Models concentric sphincter dilation from its puckered stellate rest state ($r_{\text{rest}} \approx 1.75\text{ mm}$) around the $3.8\text{ mm}$ cylindrical tube, circumferential hoop-stretch effacement of the radiating anoderm rugae during full insertion, inward frictional invagination of the anal verge on entry, active sphincter grip and upward anoderm cuff eversion on withdrawal, and a 3D viscous lubricant meniscus ring.
+   - Constructs a $129 \times 144$ curvilinear anatomical mesh of the gluteal cleft, median perineal/anococcygeal raphe, concentric external anal sphincter (`verge_band`), $14$ radially converging mucocutaneous folds (`plicae radiatae` / `corrugator cutis ani` using `OrificeDilationKernel::chebyshev_radial_harmonic`), and a deep 3D anal canal lumen (`-15.0 mm`).
+   - Models concentric sphincter dilation from its puckered stellate rest state ($r_{\text{rest}} \approx 1.75\text{ mm}$) around the $3.8\text{ mm}$ cylindrical tube, circumferential hoop-stretch effacement of the radiating anoderm rugae during full insertion, inward frictional invagination of the anal verge on entry, active sphincter grip and upward anoderm cuff eversion on withdrawal, and a glistening viscous lubricant meniscus collar.
+
+3. Interactive `--window` controls (both examples):
+   - `Space`: pause / resume automatic insertion-withdrawal cycle.
+   - `Up` / `Down`: adjust cycle speed multiplier (`0.20x .. 3.50x`), or step insertion depth manually when paused.
+   - `Left` / `Right` (`A` / `D`), `W` / `S`, `Q` / `E`: orbit camera azimuth, elevation, and zoom distance in real time.
+   - `L`: deposit a fresh pulse of viscous lubricant into the two-sided `SurfaceFilm`.
+   - `R`: reset camera and simulation speed.
 
