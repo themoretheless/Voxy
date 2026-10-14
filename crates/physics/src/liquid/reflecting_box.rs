@@ -70,13 +70,16 @@ impl Liquid {
     /// Configures conservative pressure reflections, including edge and corner images.
     /// This is a stationary pressure boundary, not collision geometry. Use a matching
     /// Container to prevent crossing. Optional odd velocity images provide viscous wall coupling; heat transport uses real pairs.
+    /// Volume formulations differentiate the barotropic energy through the image; liquid
+    /// `MassDensity` keeps its symmetric spiky operator with the image owner's pressure, so it
+    /// conserves momentum against the fixture but is not an energy gradient, as elsewhere in
+    /// that formulation.
     /// # Errors
-    /// Requires a volume formulation or gas `MassDensity`, no sampled walls/body coupling/extrapolation,
-    /// finite ordered bounds, support smaller than each box width, and particles inside.
+    /// Requires no sampled walls/body coupling/extrapolation, finite ordered bounds, support
+    /// smaller than each box width, and particles inside.
     pub fn set_reflecting_box(&mut self, bounds: Option<ReflectingBox>) -> Result<(), Error> {
         if let Some(b) = bounds
-            && ((self.formulation == Formulation::MassDensity && !self.gas_active())
-                || !self.boundaries.is_empty()
+            && (!self.boundaries.is_empty()
                 || self.static_pressure_extrapolation
                 || self.boundary_coupling.is_some()
                 || !finite(b.min)
@@ -197,9 +200,6 @@ impl Liquid {
         let Some(bounds) = self.reflecting_box else {
             return Ok(Vec::new());
         };
-        if self.formulation == Formulation::MassDensity && !self.gas_active() {
-            return Err(Error::InvalidBoundary);
-        }
         let h = self.config.smoothing_radius;
         let mut images = Vec::new();
         let mut grid = BTreeMap::<[i64; 3], Vec<usize>>::new();
@@ -370,18 +370,32 @@ impl Liquid {
             let delta = sub(particles[i].position, pair.image.position);
             let pressure =
                 self.material_pressure(particles[i].material, properties[i], density[i])?;
-            let ratio = if self.formulation == Formulation::MassDensity {
-                1.0
-            } else {
-                properties[i].rest_density / properties[j].rest_density
-            };
-            let magnitude = particles[i].mass * particles[j].mass * ratio * pressure
-                / density[i].powi(2)
-                * density_kernel_gradient(
-                    self.formulation,
+            let magnitude = if self.formulation == Formulation::MassDensity && !self.gas_active() {
+                // The image carries its owner's state: the usual symmetric spiky operator.
+                let owner =
+                    self.material_pressure(particles[j].material, properties[j], density[j])?;
+                super::pressure_magnitude(
+                    [particles[i].mass, particles[j].mass],
+                    [density[i], density[j]],
+                    [pressure, owner],
+                    [properties[i].rest_density, properties[j].rest_density],
                     self.config.smoothing_radius,
                     pair.radius,
-                );
+                    self.formulation,
+                )
+            } else {
+                let ratio = if self.formulation == Formulation::MassDensity {
+                    1.0
+                } else {
+                    properties[i].rest_density / properties[j].rest_density
+                };
+                particles[i].mass * particles[j].mass * ratio * pressure / density[i].powi(2)
+                    * density_kernel_gradient(
+                        self.formulation,
+                        self.config.smoothing_radius,
+                        pair.radius,
+                    )
+            };
             for (a, d) in delta.into_iter().enumerate() {
                 let force = magnitude * d / pair.radius;
                 // The image follows its owner's position: differentiate both endpoints.
