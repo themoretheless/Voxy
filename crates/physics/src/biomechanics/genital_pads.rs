@@ -267,4 +267,86 @@ impl LabiaGaitSimulation {
         self.time_s = next_time;
         Ok(report)
     }
+
+    /// Lateral distance (m) between the right (`+X`) and left (`-X`) labia majora apex nodes.
+    #[must_use]
+    pub fn apex_separation_m(&self) -> f64 {
+        let pos = self.assembly.body.body().positions();
+        pos[self.apex_nodes[1]][0] - pos[self.apex_nodes[0]][0]
+    }
+
+    /// Advances both labia majora pads by `dt_s` during axial tube insertion/withdrawal,
+    /// applying radial parting velocity impulses and axial mucosal drag to free medial nodes
+    /// while maintaining the inter-labial surface contact barrier.
+    pub fn step_tube_insertion(
+        &mut self,
+        insertion_phase: f64,
+        axial_velocity_m_s: f64,
+        radial_spreading_speed_m_s: f64,
+        dt_s: f64,
+        tolerance_j: f64,
+    ) -> Result<super::DrivenSupportStep, &'static str> {
+        if !insertion_phase.is_finite()
+            || !(0.0..=1.0).contains(&insertion_phase)
+            || !axial_velocity_m_s.is_finite()
+            || !radial_spreading_speed_m_s.is_finite()
+            || radial_spreading_speed_m_s < 0.0
+            || !dt_s.is_finite()
+            || dt_s <= 0.0
+        {
+            return Err("invalid labia majora tube insertion step parameters");
+        }
+        let next_time = self.time_s + dt_s;
+        let gain = (dt_s * 240.0).clamp(0.02, 0.45);
+        let impulses = [
+            (
+                self.apex_nodes[0],
+                [
+                    -radial_spreading_speed_m_s * insertion_phase * gain,
+                    0.0,
+                    0.25 * axial_velocity_m_s * insertion_phase * gain,
+                ],
+            ),
+            (
+                self.apex_nodes[1],
+                [
+                    radial_spreading_speed_m_s * insertion_phase * gain,
+                    0.0,
+                    0.25 * axial_velocity_m_s * insertion_phase * gain,
+                ],
+            ),
+        ];
+        self.assembly
+            .body
+            .apply_free_nodal_velocity_impulses(&impulses)?;
+
+        let lateral_support_shift = 0.018 * radial_spreading_speed_m_s * insertion_phase;
+        let targets: Vec<_> = self
+            .support_nodes
+            .iter()
+            .map(|&(node, base)| {
+                let sign = if base[0] < 0.0 { -1.0 } else { 1.0 };
+                super::SupportTarget {
+                    node,
+                    position_m: [base[0] + sign * lateral_support_shift, base[1], base[2]],
+                }
+            })
+            .collect();
+        let report = self
+            .assembly
+            .body
+            .step_with_support_targets(&targets, dt_s, tolerance_j)?;
+
+        if let Some(gap) = self
+            .assembly
+            .body
+            .body()
+            .minimum_surface_contact_distance()?
+        {
+            self.min_contact_gap_m = self.min_contact_gap_m.min(gap);
+        }
+        self.time_s = next_time;
+        Ok(report)
+    }
 }
+

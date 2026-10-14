@@ -1378,4 +1378,6 @@ pub use free_surface::FilmFreeSurface;
 mod thermal;
 use crate::math::dot;
 use crate::math::sub;
-pub use thermal::{FilmSubstrateHeat, ThermalFilmMixture, ThermalFilmWithdrawal};
+pub use thermal::{
+    CompleteDryingReport, FilmSubstrateHeat, ThermalFilmMixture, ThermalFilmWithdrawal,
+};

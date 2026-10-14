@@ -611,7 +611,10 @@ pub use box_sweep::{CudaBoxContact, CudaBoxSweep};
 
 mod medium;
 mod water;
-pub use medium::{MEDIUM_HEADER_WORDS, MEDIUM_MAX_CELLS, pack_medium_job, unpack_medium_result};
+pub use medium::{
+    MEDIUM_HEADER_WORDS, MEDIUM_MAX_CELLS, pack_medium_job, simulate_medium_job_cpu,
+    unpack_medium_result,
+};
 
 #[cfg(any(feature = "cuda", test))]
 mod budget;

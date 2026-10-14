@@ -288,4 +288,31 @@ fn stride_scaling_retimes_clip_and_foot_excursion_to_requested_walk_and_run_spee
         gait.stride_and_cadence_scale(),
         (report.stride_scale, report.cadence_scale)
     );
+
+    let flat = FlatGround {
+        up: Vec3::Y,
+        height: 0.0,
+    };
+    let frame0 = gait
+        .advance(&rig, Vec2::new(0.0, 3.2), Vec3::new(0.0, 0.0, -0.05), 1.0 / 60.0, &flat)
+        .unwrap();
+    let frame1 = gait
+        .advance(&rig, Vec2::new(0.0, 3.2), Vec3::new(0.0, 0.0, -0.05), 1.0 / 60.0, &flat)
+        .unwrap();
+    let coupled = crate::extract_pelvis_thigh_frame(
+        &rig,
+        gait_feet(&gait),
+        &frame0.pose,
+        &frame1.pose,
+        0,
+        [0.0; 3],
+        0.065,
+        1.0 / 60.0,
+        gait.phase(),
+        gait.regime(),
+    )
+    .unwrap();
+    assert_eq!(coupled.regime, GaitRegime::Jog);
+    assert!(coupled.pelvis_position_m.iter().all(|v| v.is_finite()));
+    assert!(coupled.thighs[0].knee_velocity_m_s.iter().any(|v| v.abs() > 0.0));
 }

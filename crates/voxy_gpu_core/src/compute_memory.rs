@@ -449,6 +449,76 @@ impl Drop for PendingComputeRetirement {
     }
 }
 
+/// Frame-boundary retirement coordinator that tracks in-flight [`PendingComputeRetirement`]
+/// tickets across frames, polling completed submissions and scheduling newly retired
+/// buffers/textures after queue submission without stalling the CPU.
+#[derive(Debug)]
+pub struct FrameRetirementQueue {
+    budget: ComputeMemoryBudget,
+    in_flight: Vec<PendingComputeRetirement>,
+}
+
+impl FrameRetirementQueue {
+    /// Creates a frame-scoped retirement coordinator bound to `budget`.
+    #[must_use]
+    pub fn new(budget: ComputeMemoryBudget) -> Self {
+        Self {
+            budget,
+            in_flight: Vec::new(),
+        }
+    }
+
+    /// Underlying shared [`ComputeMemoryBudget`].
+    #[must_use]
+    pub fn budget(&self) -> &ComputeMemoryBudget {
+        &self.budget
+    }
+
+    /// Number of in-flight retirement batches awaiting GPU queue completion.
+    #[must_use]
+    pub fn in_flight_count(&self) -> usize {
+        self.in_flight.len()
+    }
+
+    /// Polls all in-flight retirement tickets, removing completed ones and returning
+    /// how many batches released their memory charges.
+    /// # Errors
+    /// Propagates disconnected callback errors while keeping unfinished tickets intact.
+    pub fn poll_completed(&mut self) -> Result<usize, ComputeError> {
+        let mut completed = 0usize;
+        let mut idx = 0usize;
+        while idx < self.in_flight.len() {
+            if self.in_flight[idx].try_finish()? {
+                let _ = self.in_flight.swap_remove(idx);
+                completed += 1;
+            } else {
+                idx += 1;
+            }
+        }
+        Ok(completed)
+    }
+
+    /// Executes frame-end retirement maintenance:
+    /// 1. Polls all previously scheduled in-flight retirement tickets.
+    /// 2. If any buffers or textures were dropped during the frame, schedules a new
+    ///    non-blocking [`ComputeMemoryBudget::begin_retirement`] on `queue`.
+    /// # Errors
+    /// Propagates callback disconnection errors without losing charges.
+    pub fn end_frame(&mut self, queue: &wgpu::Queue) -> Result<usize, ComputeError> {
+        let mut completed = self.poll_completed()?;
+        let stats = self.budget.stats();
+        if stats.retired_buffers > 0 || stats.retired_textures > 0 {
+            let mut ticket = self.budget.begin_retirement(queue);
+            if ticket.try_finish()? {
+                completed += 1;
+            } else {
+                self.in_flight.push(ticket);
+            }
+        }
+        Ok(completed)
+    }
+}
+
 /// Resident storage ownership. Configured budgets retain dropped buffers until
 /// explicit retirement; unconfigured owners use ordinary wgpu lifetime handling.
 #[derive(Debug)]
@@ -775,6 +845,25 @@ mod tests {
             ComputeMemoryBudget::for_device(&b).stats().allocated_bytes,
             0
         );
+        assert_eq!(budget.stats().allocated_bytes, 0);
+    }
+    #[test]
+    fn frame_retirement_queue_schedules_and_restores_on_drop() {
+        let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let budget = ComputeMemoryBudget::configure(&device, 8).unwrap();
+        let mut frame_queue = FrameRetirementQueue::new(budget.clone());
+        assert_eq!(frame_queue.end_frame(&queue).unwrap(), 0);
+        assert_eq!(frame_queue.in_flight_count(), 0);
+
+        let buf = budget.allocate_storage("frame_buf", &[0; 4]).unwrap();
+        drop(buf);
+        assert_eq!(budget.stats().retired_buffers, 1);
+
+        let completed = frame_queue.end_frame(&queue).unwrap();
+        // Either noop queue completes immediately or keeps ticket in flight
+        assert_eq!(completed + frame_queue.in_flight_count(), 1);
+        drop(frame_queue);
+        budget.discard_retired().unwrap();
         assert_eq!(budget.stats().allocated_bytes, 0);
     }
 }

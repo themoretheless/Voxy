@@ -540,6 +540,116 @@ pub fn scale_clip_stride_to_speed(
 #[cfg(test)]
 mod tests;
 
+/// Model/world-space kinematic state of one proximal thigh segment (`hip -> knee`)
+/// used to drive medial-thigh soft-tissue and scrotal/testicular contact during gait.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ThighCapsuleState {
+    pub hip_position_m: [f64; 3],
+    pub knee_position_m: [f64; 3],
+    pub hip_velocity_m_s: [f64; 3],
+    pub knee_velocity_m_s: [f64; 3],
+    pub radius_m: f64,
+}
+
+/// Coupled 6-DOF pelvis and bilateral thigh kinematic frame extracted from two consecutive
+/// skeletal locomotion poses (`previous_pose` -> `current_pose` over `dt_s`).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CoupledPelvisThighFrame {
+    pub pelvis_position_m: [f64; 3],
+    pub pelvis_rotation_xyzw: [f64; 4],
+    pub pelvis_velocity_m_s: [f64; 3],
+    pub pelvis_acceleration_m_s2: [f64; 3],
+    pub thighs: [ThighCapsuleState; 2],
+    pub phase: f64,
+    pub regime: GaitRegime,
+}
+
+/// Extracts a [`CoupledPelvisThighFrame`] from `previous_pose` and `current_pose` separated by `dt_s`.
+///
+/// # Errors
+/// Rejects out-of-range `pelvis_joint`, nonfinite/nonpositive `dt_s` or `thigh_radius_m`,
+/// nonfinite `previous_pelvis_velocity_m_s`, or invalid pose evaluation.
+#[allow(clippy::too_many_arguments)]
+pub fn extract_pelvis_thigh_frame(
+    skeleton: &Skeleton,
+    feet: &GaitFeet,
+    previous_pose: &Pose,
+    current_pose: &Pose,
+    pelvis_joint: usize,
+    previous_pelvis_velocity_m_s: [f64; 3],
+    thigh_radius_m: f64,
+    dt_s: f64,
+    phase: f64,
+    regime: GaitRegime,
+) -> Result<CoupledPelvisThighFrame, AnimationError> {
+    if pelvis_joint >= skeleton.joints().len()
+        || !thigh_radius_m.is_finite()
+        || thigh_radius_m <= 0.0
+        || !dt_s.is_finite()
+        || dt_s <= 0.0
+        || !phase.is_finite()
+        || previous_pelvis_velocity_m_s.iter().any(|v| !v.is_finite())
+    {
+        return Err(AnimationError::InvalidIkTarget);
+    }
+    let mut prev_global = Vec::new();
+    let mut prev_skin = Vec::new();
+    previous_pose.skin_matrices_into(skeleton, &mut prev_global, &mut prev_skin)?;
+
+    let mut curr_global = Vec::new();
+    let mut curr_skin = Vec::new();
+    current_pose.skin_matrices_into(skeleton, &mut curr_global, &mut curr_skin)?;
+
+    let to_f64_3 = |v: Vec3| [f64::from(v.x), f64::from(v.y), f64::from(v.z)];
+    let prev_pelvis_pos = to_f64_3(prev_global[pelvis_joint].w_axis.truncate());
+    let curr_pelvis_pos = to_f64_3(curr_global[pelvis_joint].w_axis.truncate());
+    let pelvis_velocity_m_s =
+        std::array::from_fn(|k| (curr_pelvis_pos[k] - prev_pelvis_pos[k]) / dt_s);
+    let pelvis_acceleration_m_s2 = std::array::from_fn(|k| {
+        (pelvis_velocity_m_s[k] - previous_pelvis_velocity_m_s[k]) / dt_s
+    });
+    let (_, rot, _) = curr_global[pelvis_joint].to_scale_rotation_translation();
+    let rot = rot.normalize();
+    let pelvis_rotation_xyzw = [
+        f64::from(rot.x),
+        f64::from(rot.y),
+        f64::from(rot.z),
+        f64::from(rot.w),
+    ];
+
+    let mut thighs = [ThighCapsuleState {
+        hip_position_m: [0.0; 3],
+        knee_position_m: [0.0; 3],
+        hip_velocity_m_s: [0.0; 3],
+        knee_velocity_m_s: [0.0; 3],
+        radius_m: thigh_radius_m,
+    }; 2];
+    for side in 0..2 {
+        let [hip, knee, _] = feet.chains[side].joint_indices();
+        let prev_hip = to_f64_3(prev_global[hip].w_axis.truncate());
+        let curr_hip = to_f64_3(curr_global[hip].w_axis.truncate());
+        let prev_knee = to_f64_3(prev_global[knee].w_axis.truncate());
+        let curr_knee = to_f64_3(curr_global[knee].w_axis.truncate());
+        thighs[side] = ThighCapsuleState {
+            hip_position_m: curr_hip,
+            knee_position_m: curr_knee,
+            hip_velocity_m_s: std::array::from_fn(|k| (curr_hip[k] - prev_hip[k]) / dt_s),
+            knee_velocity_m_s: std::array::from_fn(|k| (curr_knee[k] - prev_knee[k]) / dt_s),
+            radius_m: thigh_radius_m,
+        };
+    }
+
+    Ok(CoupledPelvisThighFrame {
+        pelvis_position_m: curr_pelvis_pos,
+        pelvis_rotation_xyzw,
+        pelvis_velocity_m_s,
+        pelvis_acceleration_m_s2,
+        thighs,
+        phase,
+        regime,
+    })
+}
+
 /// Model-space ankle positions of both chains, for diagnostics and tests.
 ///
 /// # Errors

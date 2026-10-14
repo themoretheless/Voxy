@@ -594,3 +594,33 @@ fn simply_supported_square_plate_under_uniform_pressure_converges_to_kirchhoff_m
 
     check_convergence("square plate", run_plate(4), run_plate(6), reference, 0.08);
 }
+
+#[test]
+fn thermo_hygroscopic_expansion_reproduces_exact_isotropic_swelling() {
+    let mut bar = QuadBar::new(4);
+    let cell_count = bar.body.quadrature_samples().unwrap().len();
+    let eps0 = 1.2e-4; // e.g. alpha_T * dT + beta_w * dw
+    let loads = bar
+        .body
+        .thermo_hygroscopic_nodal_loads(&vec![eps0; cell_count])
+        .unwrap();
+    // Minimal 6-DOF isostatic constraint at x = 0 corner to prevent rigid motion while allowing free expansion
+    let prescribed = bar.prescribed(|p| {
+        if near(p[0], 0.) && near(p[1], 0.) && near(p[2], 0.) {
+            [Some(0.), Some(0.), Some(0.)]
+        } else if near(p[0], 0.) && near(p[1], A) && near(p[2], 0.) {
+            [Some(0.), None, Some(0.)]
+        } else if near(p[0], 0.) && near(p[1], 0.) && near(p[2], A) {
+            [Some(0.), Some(0.), None]
+        } else {
+            [None; 3]
+        }
+    });
+    bar.solve(&loads, &prescribed);
+    for (node, &r) in bar.rest.iter().enumerate() {
+        let u = bar.displacement(node);
+        assert!((u[0] - eps0 * r[0]).abs() < 1e-12, "ux={}", u[0]);
+        assert!((u[1] - eps0 * r[1]).abs() < 1e-12, "uy={}", u[1]);
+        assert!((u[2] - eps0 * r[2]).abs() < 1e-12, "uz={}", u[2]);
+    }
+}

@@ -14,5 +14,6 @@ pub use embedding::{SkinEmbedding, SurfaceBinding};
 
 mod genital_folds;
 pub use genital_folds::{
-    LabiaMinoraGaitSimulation, LabiaMinoraGeometry, PrepuceGeometry, TissueFold,
+    LabiaMinoraGaitSimulation, LabiaMinoraGeometry, LabiaTubeInsertion, PrepuceGeometry,
+    TissueFold,
 };

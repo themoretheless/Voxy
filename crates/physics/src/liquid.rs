@@ -1504,3 +1504,10 @@ mod droplet_optics;
 use crate::math::norm;
 use crate::math::sub;
 pub use droplet_optics::{DirectionalScatteringLight, DropletExtinctionGrid};
+
+#[path = "liquid/jet.rs"]
+pub mod jet;
+pub use jet::{
+    JetEmissionStep, JetFluidPreset, JetSurfaceImpactReport, LiquidJetNozzle,
+    resolve_jet_surface_impact,
+};
