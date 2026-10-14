@@ -1340,8 +1340,12 @@ collision-стенки с нулевым restitution могут удалять �
 collision-геометрия (`Container`). Выход частицы за область, включая источники,
 атомарно отвергается; поля и движение откатываются. Расход проверок образов
 ограничен `max_neighbor_checks`, число взаимодействий вместе с реальными
-парами — `max_pairs`. Выбор `MassDensity` при включённой коробке не поддерживается:
-её надо отключить перед переключением.
+парами — `max_pairs`. Для жидкостного `MassDensity` образ несёт состояние владельца
+и входит в обычный симметричный spiky-оператор `m_i*m_j*(p_i/rho_i²+p_j/rho_j²)`;
+сила владельцу по-прежнему `-S^T*F`, поэтому импульс и момент против неподвижной
+коробки сохраняются, но, как и везде в `MassDensity`, это не градиент энергии.
+Проверено: баланс импульса и момента с реакциями граней, совпадение self-образа
+с зеркальным соседом удвоенного расстояния, нулевые реакции вдали от стенок.
 
 По умолчанию вязкость и перенос используют только реальные пары. Опциональный
 вязкий трафарет описан ниже; отражённого теплопереноса пока нет. Нет
@@ -2534,7 +2538,7 @@ The advected dissolved scalar remains a generic mass fraction, not smoke chemist
 
 The gas path currently requires MassDensity formulation. Sampled boundaries and sampled-body coupling are rejected because their
 pressure extrapolation has not been adapted to this EOS. Stationary reflecting
-image boxes are now supported for gas MassDensity as described below. Collision-world motion
+image boxes are supported for gas and liquid MassDensity as described below. Collision-world motion
 and thermal links retain their existing discretization assumptions. A material
 cannot simultaneously use this pure-gas EOS and the single latent transition:
 partial liquid/vapor mixtures need a separate thermodynamic closure. This does

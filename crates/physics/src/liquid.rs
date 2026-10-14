@@ -1223,7 +1223,8 @@ pub enum Formulation {
 impl Liquid {
     /// Selects density/pressure operators without changing mass, velocities or fields.
     /// Switching in a running simulation can change pressure abruptly.
-    /// Disable a reflecting box before selecting `MassDensity`; stepping otherwise fails.
+    /// A reflecting box stays valid across formulations; `MassDensity` images use the
+    /// symmetric spiky operator with the owner's pressure.
     pub fn set_formulation(&mut self, formulation: Formulation) {
         self.formulation = formulation;
     }
