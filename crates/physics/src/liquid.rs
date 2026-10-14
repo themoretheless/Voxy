@@ -82,6 +82,18 @@ impl Material {
         sound_speed: 20.0,
         viscosity: 0.1,
     };
+    /// Dense, high-viscosity Newtonian liquid (glycerin at 20 °C).
+    pub const GLYCERIN: Self = Self {
+        rest_density: 1260.0,
+        sound_speed: 20.0,
+        viscosity: 1.412,
+    };
+    /// Dense saline brine solution (~26% NaCl by mass).
+    pub const BRINE: Self = Self {
+        rest_density: 1200.0,
+        sound_speed: 20.0,
+        viscosity: 0.002,
+    };
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -879,6 +891,10 @@ pub struct ContactConfig {
     pub friction: f64,
     pub max_contacts: usize,
     pub max_candidates: usize,
+    /// Probe distance, m, for resolving an initial overlap in `step_with_world`
+    /// by the shortest axis push found with reverse sweeps; zero keeps
+    /// `InitialOverlap` as an error. Must be finite and non-negative.
+    pub overlap_escape: f64,
 }
 impl Default for ContactConfig {
     fn default() -> Self {
@@ -887,6 +903,7 @@ impl Default for ContactConfig {
             friction: 0.0,
             max_contacts: 8,
             max_candidates: 4096,
+            overlap_escape: 0.0,
         }
     }
 }
@@ -896,11 +913,61 @@ impl ContactConfig {
             || !(0.0..=1.0).contains(&self.friction)
             || self.max_contacts == 0
             || self.max_candidates == 0
+            || !self.overlap_escape.is_finite()
+            || self.overlap_escape < 0.0
         {
             return Err(Error::InvalidCollision);
         }
         Ok(())
     }
+}
+/// Shortest axis-aligned push that frees an overlapping particle, found with the
+/// sweep contract alone: each of the six probe positions `overlap_escape` away is
+/// checked to be clear, then swept back toward the particle; the first hit marks
+/// the obstacle surface and the leftover travel is the escape distance.
+fn escape_overlap(
+    particle: &Particle,
+    radius: f64,
+    world: &impl crate::CollisionWorld,
+    contact: ContactConfig,
+) -> Result<Option<[f64; 3]>, Error> {
+    let mut best: Option<(f64, [f64; 3])> = None;
+    for axis in 0..3 {
+        for sign in [-1.0, 1.0] {
+            let mut probe = particle.position;
+            probe[axis] += sign * contact.overlap_escape;
+            let body = crate::AnchoredAabb {
+                anchor: crate::Origin::default(),
+                min: probe.map(|x| x - radius),
+                max: probe.map(|x| x + radius),
+            };
+            let clear = world
+                .sweep_aabb(body, [0.0; 3], contact.max_candidates)
+                .map_err(|_| Error::CollisionBackend)?;
+            if clear.obstacle.is_some() {
+                continue;
+            }
+            let mut back = [0.0; 3];
+            back[axis] = -sign * contact.overlap_escape;
+            let hit = world
+                .sweep_aabb(body, back, contact.max_candidates)
+                .map_err(|_| Error::CollisionBackend)?;
+            if hit.obstacle.is_none()
+                || !hit.fraction.is_finite()
+                || !(0.0..1.0).contains(&hit.fraction)
+            {
+                continue;
+            }
+            let distance = contact.overlap_escape * (1.0 - hit.fraction);
+            if best.is_none_or(|(d, _)| distance < d) {
+                let mut target = probe;
+                target[axis] += back[axis] * hit.fraction
+                    + sign * 64.0 * f64::EPSILON * probe[axis].abs().max(radius).max(1.0);
+                best = Some((distance, target));
+            }
+        }
+    }
+    Ok(best.map(|(_, target)| target))
 }
 fn move_with_world(
     particle: &mut Particle,
@@ -929,6 +996,12 @@ fn move_with_world(
         let normal_count = hit.normal.iter().filter(|&&n| n != 0).count();
         if normal_count == 0 {
             if hit.obstacle.is_some() {
+                if collision == 0 && contact.overlap_escape > 0.0 {
+                    if let Some(target) = escape_overlap(particle, radius, world, contact)? {
+                        particle.position = target;
+                        continue;
+                    }
+                }
                 return Err(Error::InitialOverlap);
             }
             if hit.fraction < 1.0 {
@@ -1002,6 +1075,9 @@ pub use surface_volume::{SurfaceVolumeControl, VolumeMatchedSurface};
 #[path = "liquid/adhesion.rs"]
 mod adhesion;
 pub use adhesion::WallAdhesion;
+#[path = "liquid/contact_angle.rs"]
+mod contact_angle;
+pub use contact_angle::{ContactAngleEstimate, WallFace};
 
 #[path = "liquid/phase.rs"]
 mod phase;
@@ -1211,7 +1287,8 @@ pub enum Formulation {
 impl Liquid {
     /// Selects density/pressure operators without changing mass, velocities or fields.
     /// Switching in a running simulation can change pressure abruptly.
-    /// Disable a reflecting box before selecting `MassDensity`; stepping otherwise fails.
+    /// A reflecting box stays valid across formulations; `MassDensity` images use the
+    /// symmetric spiky operator with the owner's pressure.
     pub fn set_formulation(&mut self, formulation: Formulation) {
         self.formulation = formulation;
     }
@@ -1427,3 +1504,10 @@ mod droplet_optics;
 use crate::math::norm;
 use crate::math::sub;
 pub use droplet_optics::{DirectionalScatteringLight, DropletExtinctionGrid};
+
+#[path = "liquid/jet.rs"]
+pub mod jet;
+pub use jet::{
+    JetEmissionStep, JetFluidPreset, JetSurfaceImpactReport, LiquidJetNozzle,
+    resolve_jet_surface_impact,
+};

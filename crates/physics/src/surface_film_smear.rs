@@ -24,6 +24,8 @@ pub enum SmearRegime {
     Lubricated,
     /// Dry: the Coulomb limit from the friction law was the smaller limit.
     Coulomb,
+    /// Viscoplastic plug/yield regime (`HerschelBulkley` / Bingham yield stress $\tau_0$).
+    ViscoplasticYield,
 }
 
 #[derive(Clone, Debug)]
@@ -54,11 +56,41 @@ impl SurfaceFilm {
         gravity: [f64; 3],
         max_substep: f64,
     ) -> Result<SmearReport, &'static str> {
+        self.advance_viscoplastic_smear(
+            dt,
+            contact,
+            pressure_pa,
+            material,
+            states,
+            0.0,
+            gravity,
+            max_substep,
+        )
+    }
+
+    /// Advances a Newtonian or viscoplastic (`yield_stress_pa >= 0`) thin film under a
+    /// sliding body for `dt`. When `yield_stress_pa > 0` (e.g. mud, paint, blood, gel),
+    /// only the plastic excess shear $(\tau - \tau_0)_+$ drives film transport while sub-yield
+    /// cells remain pinned in [`SmearRegime::ViscoplasticYield`].
+    #[allow(clippy::too_many_arguments)]
+    pub fn advance_viscoplastic_smear(
+        &mut self,
+        dt: f64,
+        contact: SmearContact,
+        pressure_pa: &[f64],
+        material: &friction::Material,
+        states: &mut [friction::State],
+        yield_stress_pa: f64,
+        gravity: [f64; 3],
+        max_substep: f64,
+    ) -> Result<SmearReport, &'static str> {
         let cells = self.volume.len();
         if !dt.is_finite()
             || dt <= 0.
             || !max_substep.is_finite()
             || max_substep <= 0.
+            || !yield_stress_pa.is_finite()
+            || yield_stress_pa < 0.
             || pressure_pa.len() != cells
             || states.len() != cells
             || pressure_pa.iter().any(|p| !p.is_finite() || *p < 0.)
@@ -95,14 +127,27 @@ impl SurfaceFilm {
             .sqrt();
             // Lubrication limit; an empty cell has no film to shear.
             let couette = if thickness[cell] > 0. {
-                viscosity * speed / thickness[cell]
+                yield_stress_pa + viscosity * speed / thickness[cell]
             } else {
                 f64::INFINITY
             };
-            let (magnitude, regime) = if couette <= coulomb {
-                (couette, SmearRegime::Lubricated)
+            let (magnitude, regime) = if yield_stress_pa > 0. && coulomb <= yield_stress_pa {
+                (0.0, SmearRegime::ViscoplasticYield)
+            } else if couette <= coulomb {
+                let eff = (couette - yield_stress_pa).max(0.0);
+                (
+                    eff,
+                    if yield_stress_pa > 0. {
+                        SmearRegime::ViscoplasticYield
+                    } else {
+                        SmearRegime::Lubricated
+                    },
+                )
             } else {
-                (coulomb, SmearRegime::Coulomb)
+                (
+                    (coulomb - yield_stress_pa).max(0.0),
+                    SmearRegime::Coulomb,
+                )
             };
             if !magnitude.is_finite() {
                 return Err("smear traction overflow");
@@ -135,5 +180,71 @@ impl SurfaceFilm {
             coulomb_dissipated_j,
             substeps: (dt / max_substep).ceil() as usize,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::surface_film::{FilmMixture, Material, ThermalFilmMixture};
+
+    #[test]
+    fn viscoplastic_smearing_and_complete_drying_leave_solute_residue() {
+        let points = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0]];
+        let triangles = vec![[0, 1, 2], [1, 3, 2]];
+        let mut film = SurfaceFilm::new(&points, triangles, Material::default()).unwrap();
+        film.deposit_batch(&[(0, 1e-4), (1, 2e-5)]).unwrap();
+        let initial_mass = film.total_mass();
+
+        let friction_mat = friction::Material::new(1e6, 1e6, 0.5).unwrap();
+        let mut states = vec![friction::State::default(); 2];
+        let contact = SmearContact {
+            normal: [0.0, 0.0, 1.0],
+            body_velocity_m_s: [0.4, 0.0, 0.0],
+        };
+        let report = film
+            .advance_viscoplastic_smear(
+                0.01,
+                contact,
+                &[200.0, 200.0],
+                &friction_mat,
+                &mut states,
+                35.0,
+                [0.0; 3],
+                0.001,
+            )
+            .unwrap();
+        assert!((film.total_mass() - initial_mass).abs() < 1e-12);
+        assert!(
+            report
+                .regimes
+                .contains(&SmearRegime::ViscoplasticYield)
+                || report.regimes.contains(&SmearRegime::Coulomb)
+        );
+
+        // Build a 2-component (water + mud_solids) thermal film mixture and dry water to 0.0 kg
+        let mix = FilmMixture::new(
+            film,
+            vec!["water".to_string(), "mud_solids".to_string()],
+            vec![vec![0.75, 0.25], vec![0.75, 0.25]],
+        )
+        .unwrap();
+        let initial_water = mix.component_masses().unwrap()[0];
+        let initial_solids = mix.component_masses().unwrap()[1];
+        let mut thermal =
+            ThermalFilmMixture::new(mix, vec![4184.0, 900.0], &[300.0, 300.0]).unwrap();
+        let mut vapor_mass_kg = 0.0;
+
+        let dry_report = thermal
+            .dry_solvent_to_completion(0, &[10.0, 10.0], 1.0, &mut vapor_mass_kg)
+            .unwrap();
+        assert_eq!(dry_report.dried_to_zero_solvent_cells, 2);
+        assert!((dry_report.evaporated_solvent_mass_kg - initial_water).abs() < 1e-12);
+        assert!((vapor_mass_kg - initial_water).abs() < 1e-12);
+        let post_masses = thermal.mixture().component_masses().unwrap();
+        assert_eq!(post_masses[0], 0.0);
+        assert!((post_masses[1] - initial_solids).abs() < 1e-12);
+        let residue_sum: f64 = dry_report.dry_residue_mass_kg.iter().sum();
+        assert!((residue_sum - initial_solids).abs() < 1e-12);
     }
 }

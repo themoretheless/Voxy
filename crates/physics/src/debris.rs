@@ -3,7 +3,9 @@
 //! tracked explicitly so callers can audit each step.
 
 use crate::math::{add, cross, dot, norm, scale, sub};
-use crate::plasticity::mesh::DebrisPiece;
+use crate::plasticity::mesh::{DebrisPiece, DebrisRelease, convex_hull};
+use crate::suspension::Particle;
+use crate::wear::{FractureDustSettings, fracture_dust};
 
 type Vec3 = [f64; 3];
 type Mat3 = [[f64; 3]; 3];
@@ -14,6 +16,88 @@ pub struct DebrisGround {
     pub normal: Vec3,
     pub offset_m: f64,
     pub friction: f64,
+}
+
+/// Static axis-aligned box obstacle (e.g. a solid voxel or merged voxel column)
+/// against which debris convex hulls collide with inelastic impulses and friction.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DebrisBoxObstacle {
+    pub min_m: Vec3,
+    pub max_m: Vec3,
+    pub friction: f64,
+}
+
+impl DebrisBoxObstacle {
+    fn is_valid(&self) -> bool {
+        self.min_m.iter().all(|v| v.is_finite())
+            && self.max_m.iter().all(|v| v.is_finite())
+            && (0..3).all(|a| self.min_m[a] < self.max_m[a])
+            && self.friction.is_finite()
+            && self.friction >= 0.
+    }
+
+    fn vertices(&self) -> [Vec3; 8] {
+        let [x0, y0, z0] = self.min_m;
+        let [x1, y1, z1] = self.max_m;
+        [
+            [x0, y0, z0],
+            [x1, y0, z0],
+            [x1, y1, z0],
+            [x0, y1, z0],
+            [x0, y0, z1],
+            [x1, y0, z1],
+            [x1, y1, z1],
+            [x0, y1, z1],
+        ]
+    }
+}
+
+const BOX_FACES: [[usize; 3]; 12] = [
+    [0, 2, 1],
+    [0, 3, 2],
+    [4, 5, 6],
+    [4, 6, 7],
+    [0, 1, 5],
+    [0, 5, 4],
+    [2, 3, 7],
+    [2, 7, 6],
+    [0, 4, 7],
+    [0, 7, 3],
+    [1, 2, 6],
+    [1, 6, 5],
+];
+
+/// Settings for secondary impact comminution (crumbling of a debris body into
+/// smaller sub-pieces and airborne dust upon a hard impact).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CrumbleSettings {
+    /// Minimum dissipated impact energy (J) required to trigger crumbling.
+    pub min_impact_energy_j: f64,
+    /// Minimum mass (kg) of each resulting child fragment.
+    pub min_piece_mass_kg: f64,
+    /// Material density (kg/m³) of emitted dust grains.
+    pub density_kg_m3: f64,
+    /// Fresh fracture surface energy (J/m²).
+    pub surface_energy_j_m2: f64,
+    /// Fraction of impact energy spent creating fine dust grains in `[0, 1]`.
+    pub dust_energy_fraction: f64,
+    /// Nominal radius (m) of emitted dust grains.
+    pub grain_radius_m: f64,
+    /// Maximum fraction of parent piece mass converted to dust in `[0, 0.5]`.
+    pub max_dust_mass_fraction: f64,
+}
+
+/// Outcome of a secondary crumbling pass over a debris collection.
+#[derive(Clone, Debug, Default)]
+pub struct CrumbleReport {
+    /// Number of parent pieces that split into smaller sub-pieces.
+    pub crumbled_pieces: usize,
+    /// Airborne dust particles shed during crumbling.
+    pub particles: Vec<Particle>,
+    /// Total mass (kg) transferred from rigid pieces into `particles`.
+    pub dust_mass_kg: f64,
+    /// Total fracture surface energy (J) consumed creating `particles`.
+    pub surface_energy_j: f64,
 }
 
 /// Rigid state of one piece in the world frame.
@@ -113,8 +197,27 @@ pub fn step_debris(
     ground: &DebrisGround,
     ledger: &mut DebrisStepReport,
 ) -> Result<(), &'static str> {
+    step_debris_with_obstacles(bodies, dt, gravity, ground, &[], ledger)
+}
+
+/// Advances every body by `dt` under `gravity` against `ground`, static voxel/box
+/// `obstacles`, and all other debris hulls.
+///
+/// # Errors
+/// Nonfinite or negative `dt`, invalid ground/obstacle bounds, or numerical overflow.
+pub fn step_debris_with_obstacles(
+    bodies: &mut [DebrisBody],
+    dt: f64,
+    gravity: Vec3,
+    ground: &DebrisGround,
+    obstacles: &[DebrisBoxObstacle],
+    ledger: &mut DebrisStepReport,
+) -> Result<(), &'static str> {
     if !dt.is_finite() || dt < 0. || gravity.iter().any(|g| !g.is_finite()) {
         return Err("invalid debris step");
+    }
+    if obstacles.iter().any(|o| !o.is_valid()) {
+        return Err("invalid debris obstacle");
     }
     let n = norm(ground.normal);
     if !n.is_finite()
@@ -231,6 +334,53 @@ pub fn step_debris(
             body.position_m = add(body.position_m, scale(normal, depth));
             ledger.correction_j += body.piece.mass_kg * depth * -dot(gravity, normal);
         }
+
+        // Static voxel/box obstacles: resolve SAT overlap between the debris
+        // hull and each axis-aligned box obstacle.
+        for obs in obstacles {
+            let hull = body.world_hull();
+            let box_verts = obs.vertices();
+            let Some((point, obs_depth, obs_normal)) =
+                sat_contact(&hull, &body.piece.hull_faces, &box_verts, &BOX_FACES)
+            else {
+                continue;
+            };
+            contacts += 1;
+            let before = body.kinetic_j();
+            let r = sub(point, body.position_m);
+            let inv_i = body.inverse_inertia_world();
+            let generalized = |direction: Vec3| {
+                let rn = cross(r, direction);
+                1. / body.piece.mass_kg + dot(rn, mat_vec(inv_i, rn))
+            };
+            let vel = add(body.velocity_m_s, cross(body.angular_velocity_rad_s, r));
+            let vn = dot(vel, obs_normal);
+            let mut impulse = [0.; 3];
+            let mut normal_impulse = 0.;
+            if vn < 0. {
+                normal_impulse = -vn / generalized(obs_normal);
+                impulse = scale(obs_normal, normal_impulse);
+            }
+            let tangential = sub(vel, scale(obs_normal, vn));
+            let speed = norm(tangential);
+            if speed > 0. && normal_impulse > 0. {
+                let direction = scale(tangential, 1. / speed);
+                let stopping = speed / generalized(direction);
+                impulse = sub(
+                    impulse,
+                    scale(direction, stopping.min(obs.friction * normal_impulse)),
+                );
+            }
+            body.velocity_m_s = add(body.velocity_m_s, scale(impulse, 1. / body.piece.mass_kg));
+            body.angular_velocity_rad_s = add(
+                body.angular_velocity_rad_s,
+                mat_vec(inv_i, cross(r, impulse)),
+            );
+            ledger.dissipated_j += before - body.kinetic_j();
+            let push = scale(obs_normal, obs_depth);
+            body.position_m = add(body.position_m, push);
+            ledger.correction_j += body.piece.mass_kg * -dot(gravity, push);
+        }
     }
     let pair_contacts_before = ledger.contacts;
     ledger.contacts = 0;
@@ -255,6 +405,554 @@ pub fn step_debris(
     ledger.potential_j = potential;
     ledger.contacts = contacts;
     Ok(())
+}
+
+/// Secondary comminution (crumbling): splits eligible `DebrisBody` pieces into
+/// smaller sub-pieces along their longest local axis and converts a fraction of
+/// `impact_energy_j` into airborne dust grains (`Particle`), conserving total
+/// mass and linear momentum.
+///
+/// # Errors
+/// Rejects invalid [`CrumbleSettings`] or nonfinite `impact_energy_j`.
+pub fn crumble_debris_on_impact(
+    bodies: &mut Vec<DebrisBody>,
+    impact_energy_j: f64,
+    settings: CrumbleSettings,
+) -> Result<CrumbleReport, &'static str> {
+    if !impact_energy_j.is_finite()
+        || impact_energy_j < 0.
+        || !settings.min_impact_energy_j.is_finite()
+        || settings.min_impact_energy_j <= 0.
+        || !settings.min_piece_mass_kg.is_finite()
+        || settings.min_piece_mass_kg <= 0.
+        || !settings.density_kg_m3.is_finite()
+        || settings.density_kg_m3 <= 0.
+        || !settings.surface_energy_j_m2.is_finite()
+        || settings.surface_energy_j_m2 <= 0.
+        || !settings.dust_energy_fraction.is_finite()
+        || !(0. ..=1.).contains(&settings.dust_energy_fraction)
+        || !settings.grain_radius_m.is_finite()
+        || settings.grain_radius_m <= 0.
+        || !settings.max_dust_mass_fraction.is_finite()
+        || !(0. ..=0.5).contains(&settings.max_dust_mass_fraction)
+    {
+        return Err("invalid crumble settings");
+    }
+    if impact_energy_j < settings.min_impact_energy_j || bodies.is_empty() {
+        return Ok(CrumbleReport::default());
+    }
+
+    let mut report = CrumbleReport::default();
+    let mut next_bodies = Vec::with_capacity(bodies.len() * 2);
+    let per_body_energy = impact_energy_j / bodies.len() as f64;
+
+    for body in bodies.drain(..) {
+        if body.piece.mass_kg < 2.0 * settings.min_piece_mass_kg || body.piece.hull.len() < 4 {
+            next_bodies.push(body);
+            continue;
+        }
+        let world_hull = body.world_hull();
+        let mut world_piece = body.piece.clone();
+        world_piece.hull = world_hull.clone();
+        world_piece.center_m = body.position_m;
+        world_piece.velocity_m_s = body.velocity_m_s;
+        let single_release = DebrisRelease {
+            pieces: vec![world_piece],
+            retained_nodes: Vec::new(),
+            kinetic_j: body.kinetic_j(),
+            deformation_kinetic_j: 0.,
+            surface_created_m2: 0.,
+        };
+        let dust = fracture_dust(
+            &single_release,
+            FractureDustSettings {
+                density_kg_m3: settings.density_kg_m3,
+                surface_energy_j_m2: settings.surface_energy_j_m2,
+                energy_fraction: 0.,
+                extra_energy_j: settings.dust_energy_fraction * per_body_energy,
+                grain_radius_m: settings.grain_radius_m,
+                max_mass_fraction: settings.max_dust_mass_fraction,
+            },
+        )?;
+
+        let remaining_mass = body.piece.mass_kg - dust.mass_kg;
+        if remaining_mass < 2.0 * settings.min_piece_mass_kg {
+            next_bodies.push(body);
+            continue;
+        }
+
+        let mut lo = [f64::INFINITY; 3];
+        let mut hi = [f64::NEG_INFINITY; 3];
+        for &p in &world_hull {
+            for a in 0..3 {
+                lo[a] = lo[a].min(p[a]);
+                hi[a] = hi[a].max(p[a]);
+            }
+        }
+        let extents = [hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]];
+        let split_axis = if extents[0] >= extents[1] && extents[0] >= extents[2] {
+            0
+        } else if extents[1] >= extents[2] {
+            1
+        } else {
+            2
+        };
+        let mid = 0.5 * (lo[split_axis] + hi[split_axis]);
+        let child_mass = 0.5 * remaining_mass;
+        let child_inertia = body
+            .piece
+            .inertia_kg_m2
+            .map(|row| row.map(|v| 0.25 * v * (remaining_mass / body.piece.mass_kg)));
+
+        let build_half = |upper: bool| -> Result<DebrisBody, &'static str> {
+            let mut h_lo = lo;
+            let mut h_hi = hi;
+            if upper {
+                h_lo[split_axis] = mid;
+            } else {
+                h_hi[split_axis] = mid;
+            }
+            let center = [
+                0.5 * (h_lo[0] + h_hi[0]),
+                0.5 * (h_lo[1] + h_hi[1]),
+                0.5 * (h_lo[2] + h_hi[2]),
+            ];
+            let mut pts = Vec::with_capacity(8);
+            for &x in &[h_lo[0], h_hi[0]] {
+                for &y in &[h_lo[1], h_hi[1]] {
+                    for &z in &[h_lo[2], h_hi[2]] {
+                        pts.push([x, y, z]);
+                    }
+                }
+            }
+            let (hull, hull_faces) = convex_hull(&pts)?;
+            let mut vel = body.velocity_m_s;
+            let sign = if upper { 1.0 } else { -1.0 };
+            vel[split_axis] += sign * 0.05;
+            let piece = DebrisPiece {
+                nodes: Vec::new(),
+                hull,
+                hull_faces,
+                mass_kg: child_mass,
+                inertia_kg_m2: child_inertia,
+                center_m: center,
+                velocity_m_s: vel,
+                angular_velocity_rad_s: body.angular_velocity_rad_s,
+                kinetic_j: 0.5 * child_mass * dot(vel, vel),
+                deformation_kinetic_j: 0.,
+            };
+            DebrisBody::new(piece)
+        };
+
+        let left = build_half(false)?;
+        let right = build_half(true)?;
+        next_bodies.push(left);
+        next_bodies.push(right);
+        report.crumbled_pieces += 1;
+        report.dust_mass_kg += dust.mass_kg;
+        report.surface_energy_j += dust.surface_energy_j;
+        report.particles.extend(dust.particles);
+    }
+
+    *bodies = next_bodies;
+    Ok(report)
+}
+
+/// Multi-fragment stress-cone / Rosin-Rammler comminution (`крошение`):
+/// Subdivides eligible `DebrisBody` pieces into 2, 4, or 8 polyhedral fragments
+/// according to impact energy ratio (`impact_energy_j / min_impact_energy_j`),
+/// assigning Weibull / Rosin-Rammler fragment mass weights while strictly conserving
+/// total mass (fragments + airborne `Particle` dust) and linear momentum.
+///
+/// # Errors
+/// Rejects invalid [`CrumbleSettings`] or nonfinite `impact_energy_j`.
+pub fn crumble_debris_multi_fragment(
+    bodies: &mut Vec<DebrisBody>,
+    impact_energy_j: f64,
+    settings: CrumbleSettings,
+) -> Result<CrumbleReport, &'static str> {
+    if !impact_energy_j.is_finite()
+        || impact_energy_j < 0.
+        || !settings.min_impact_energy_j.is_finite()
+        || settings.min_impact_energy_j <= 0.
+        || !settings.min_piece_mass_kg.is_finite()
+        || settings.min_piece_mass_kg <= 0.
+        || !settings.density_kg_m3.is_finite()
+        || settings.density_kg_m3 <= 0.
+        || !settings.surface_energy_j_m2.is_finite()
+        || settings.surface_energy_j_m2 <= 0.
+        || !settings.dust_energy_fraction.is_finite()
+        || !(0. ..=1.).contains(&settings.dust_energy_fraction)
+        || !settings.grain_radius_m.is_finite()
+        || settings.grain_radius_m <= 0.
+        || !settings.max_dust_mass_fraction.is_finite()
+        || !(0. ..=0.5).contains(&settings.max_dust_mass_fraction)
+    {
+        return Err("invalid crumble settings");
+    }
+    if impact_energy_j < settings.min_impact_energy_j || bodies.is_empty() {
+        return Ok(CrumbleReport::default());
+    }
+
+    let mut report = CrumbleReport::default();
+    let mut next_bodies = Vec::with_capacity(bodies.len() * 4);
+    let per_body_energy = impact_energy_j / bodies.len() as f64;
+    let energy_ratio = per_body_energy / settings.min_impact_energy_j;
+
+    for body in bodies.drain(..) {
+        if body.piece.mass_kg < 2.0 * settings.min_piece_mass_kg || body.piece.hull.len() < 4 {
+            next_bodies.push(body);
+            continue;
+        }
+        let world_hull = body.world_hull();
+        let mut world_piece = body.piece.clone();
+        world_piece.hull = world_hull.clone();
+        world_piece.center_m = body.position_m;
+        world_piece.velocity_m_s = body.velocity_m_s;
+        let single_release = DebrisRelease {
+            pieces: vec![world_piece],
+            retained_nodes: Vec::new(),
+            kinetic_j: body.kinetic_j(),
+            deformation_kinetic_j: 0.,
+            surface_created_m2: 0.,
+        };
+        let dust = fracture_dust(
+            &single_release,
+            FractureDustSettings {
+                density_kg_m3: settings.density_kg_m3,
+                surface_energy_j_m2: settings.surface_energy_j_m2,
+                energy_fraction: 0.,
+                extra_energy_j: settings.dust_energy_fraction * per_body_energy,
+                grain_radius_m: settings.grain_radius_m,
+                max_mass_fraction: settings.max_dust_mass_fraction,
+            },
+        )?;
+
+        let remaining_mass = body.piece.mass_kg - dust.mass_kg;
+        if remaining_mass < 2.0 * settings.min_piece_mass_kg {
+            next_bodies.push(body);
+            continue;
+        }
+
+        // Choose subdivision grid (1x1x2 = 2, 2x1x2 = 4, or 2x2x2 = 8) limited by min_piece_mass_kg
+        let max_children_by_mass = (remaining_mass / settings.min_piece_mass_kg).floor() as usize;
+        let target_children = if energy_ratio >= 4.0 && max_children_by_mass >= 8 {
+            8
+        } else if energy_ratio >= 2.0 && max_children_by_mass >= 4 {
+            4
+        } else {
+            2
+        };
+
+        let mut lo = [f64::INFINITY; 3];
+        let mut hi = [f64::NEG_INFINITY; 3];
+        for &p in &world_hull {
+            for a in 0..3 {
+                lo[a] = lo[a].min(p[a]);
+                hi[a] = hi[a].max(p[a]);
+            }
+        }
+        let extents = [hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]];
+        let mut axes = [0usize, 1, 2];
+        axes.sort_by(|&a, &b| extents[b].total_cmp(&extents[a]));
+
+        let (nx, ny, nz) = match target_children {
+            8 => (2usize, 2usize, 2usize),
+            4 => {
+                let mut counts = [1usize; 3];
+                counts[axes[0]] = 2;
+                counts[axes[1]] = 2;
+                (counts[0], counts[1], counts[2])
+            }
+            _ => {
+                let mut counts = [1usize; 3];
+                counts[axes[0]] = 2;
+                (counts[0], counts[1], counts[2])
+            }
+        };
+
+        // Rosin-Rammler / Weibull mass weights w_k = (-ln(1 - u_k))^(1/m_weibull)
+        let weibull_m = 2.2_f64;
+        let mut raw_weights = Vec::with_capacity(target_children);
+        for k in 0..target_children {
+            let u = ((k as f64) + 0.5) / (target_children as f64 + 0.5);
+            let w = (-(1.0 - u).ln()).powf(1.0 / weibull_m).max(0.35);
+            raw_weights.push(w);
+        }
+        let weight_sum: f64 = raw_weights.iter().sum();
+        let floor_total = (target_children as f64) * settings.min_piece_mass_kg;
+        let distributable = (remaining_mass - floor_total).max(0.0);
+        let child_masses: Vec<f64> = raw_weights
+            .iter()
+            .map(|&w| settings.min_piece_mass_kg + distributable * (w / weight_sum))
+            .collect();
+
+        let parent_center = [
+            0.5 * (lo[0] + hi[0]),
+            0.5 * (lo[1] + hi[1]),
+            0.5 * (lo[2] + hi[2]),
+        ];
+        let mut child_centers = Vec::with_capacity(target_children);
+        let mut child_boxes = Vec::with_capacity(target_children);
+        for ix in 0..nx {
+            for iy in 0..ny {
+                for iz in 0..nz {
+                    let fx0 = ix as f64 / nx as f64;
+                    let fx1 = (ix + 1) as f64 / nx as f64;
+                    let fy0 = iy as f64 / ny as f64;
+                    let fy1 = (iy + 1) as f64 / ny as f64;
+                    let fz0 = iz as f64 / nz as f64;
+                    let fz1 = (iz + 1) as f64 / nz as f64;
+                    let c_lo = [
+                        lo[0] + fx0 * extents[0],
+                        lo[1] + fy0 * extents[1],
+                        lo[2] + fz0 * extents[2],
+                    ];
+                    let c_hi = [
+                        lo[0] + fx1 * extents[0],
+                        lo[1] + fy1 * extents[1],
+                        lo[2] + fz1 * extents[2],
+                    ];
+                    let center = [
+                        0.5 * (c_lo[0] + c_hi[0]),
+                        0.5 * (c_lo[1] + c_hi[1]),
+                        0.5 * (c_lo[2] + c_hi[2]),
+                    ];
+                    child_centers.push(center);
+                    child_boxes.push((c_lo, c_hi));
+                }
+            }
+        }
+
+        // Compute outward stress-cone radial velocity offsets and subtract mass-weighted mean
+        // so sum(m_k * dv_k) == 0 to machine precision.
+        let mut dv_list = Vec::with_capacity(target_children);
+        let mut weighted_dv = [0.0; 3];
+        for (center, &m_k) in child_centers.iter().zip(&child_masses) {
+            let dir = sub(*center, parent_center);
+            let d_norm = norm(dir);
+            let dv = if d_norm > 1e-12 {
+                scale(dir, 0.06 / d_norm)
+            } else {
+                [0.0; 3]
+            };
+            weighted_dv = add(weighted_dv, scale(dv, m_k));
+            dv_list.push(dv);
+        }
+        let dv_correction = scale(weighted_dv, 1.0 / remaining_mass);
+
+        for ((c_lo, c_hi), (center, (&child_mass, dv_raw))) in child_boxes
+            .into_iter()
+            .zip(child_centers.into_iter().zip(child_masses.iter().zip(dv_list)))
+        {
+            let mut pts = Vec::with_capacity(8);
+            for &x in &[c_lo[0], c_hi[0]] {
+                for &y in &[c_lo[1], c_hi[1]] {
+                    for &z in &[c_lo[2], c_hi[2]] {
+                        pts.push([x, y, z]);
+                    }
+                }
+            }
+            let (hull, hull_faces) = convex_hull(&pts)?;
+            let dv = sub(dv_raw, dv_correction);
+            let vel = add(body.velocity_m_s, dv);
+            let mass_fraction = child_mass / body.piece.mass_kg;
+            let child_inertia = body
+                .piece
+                .inertia_kg_m2
+                .map(|row| row.map(|v| 0.5 * v * mass_fraction));
+            let piece = DebrisPiece {
+                nodes: Vec::new(),
+                hull,
+                hull_faces,
+                mass_kg: child_mass,
+                inertia_kg_m2: child_inertia,
+                center_m: center,
+                velocity_m_s: vel,
+                angular_velocity_rad_s: body.angular_velocity_rad_s,
+                kinetic_j: 0.5 * child_mass * dot(vel, vel),
+                deformation_kinetic_j: 0.,
+            };
+            next_bodies.push(DebrisBody::new(piece)?);
+        }
+
+        report.crumbled_pieces += 1;
+        report.dust_mass_kg += dust.mass_kg;
+        report.surface_energy_j += dust.surface_energy_j;
+        report.particles.extend(dust.particles);
+    }
+
+    *bodies = next_bodies;
+    Ok(report)
+}
+
+/// Settings for geometric Archard abrasive wear (`стираемость`) of rigid debris hulls.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DebrisAbrasionSettings {
+    /// Indentation hardness $H$ (Pa).
+    pub hardness_pa: f64,
+    /// Dimensionless Archard wear coefficient $k$.
+    pub archard_coefficient: f64,
+    /// Solid material density $\rho$ (kg/m³).
+    pub density_kg_m3: f64,
+    /// Radius (m) of emitted abrasive dust particles.
+    pub grain_radius_m: f64,
+    /// Maximum fraction of body mass that can be abraded in a single step in `(0, 0.5]`.
+    pub max_mass_fraction_per_step: f64,
+}
+
+/// Outcome of geometric Archard hull abrasion over a debris collection.
+#[derive(Clone, Debug, Default)]
+pub struct DebrisAbrasionReport {
+    pub abraded_bodies: usize,
+    pub removed_volume_m3: f64,
+    pub removed_mass_kg: f64,
+    pub max_recession_depth_m: f64,
+    pub particles: Vec<Particle>,
+}
+
+/// Applies Archard abrasive wear ($dV = k F_n \Delta s / H$) to `bodies` sliding against
+/// `ground`, receding the contacting convex hull vertices inward along the contact normal,
+/// reducing `piece.mass_kg` and `piece.inertia_kg_m2`, and emitting airborne [`Particle`]
+/// dust grains that conserve total mass (`remaining_body_mass + dust_mass == initial_mass`)
+/// and linear momentum.
+///
+/// # Errors
+/// Rejects invalid settings, negative load/sliding distance, or degenerate hull geometry.
+pub fn abrade_debris_hull(
+    bodies: &mut [DebrisBody],
+    ground: &DebrisGround,
+    normal_load_n: f64,
+    sliding_distance_m: f64,
+    settings: DebrisAbrasionSettings,
+) -> Result<DebrisAbrasionReport, &'static str> {
+    if !normal_load_n.is_finite()
+        || normal_load_n < 0.
+        || !sliding_distance_m.is_finite()
+        || sliding_distance_m < 0.
+        || !settings.hardness_pa.is_finite()
+        || settings.hardness_pa <= 0.
+        || !settings.archard_coefficient.is_finite()
+        || settings.archard_coefficient < 0.
+        || !settings.density_kg_m3.is_finite()
+        || settings.density_kg_m3 <= 0.
+        || !settings.grain_radius_m.is_finite()
+        || settings.grain_radius_m <= 0.
+        || !settings.max_mass_fraction_per_step.is_finite()
+        || !(0.0..=0.5).contains(&settings.max_mass_fraction_per_step)
+    {
+        return Err("invalid debris abrasion settings or load");
+    }
+    let n_len = norm(ground.normal);
+    if !n_len.is_finite() || n_len == 0. || !ground.offset_m.is_finite() {
+        return Err("invalid debris ground for abrasion");
+    }
+    if normal_load_n == 0.
+        || sliding_distance_m == 0.
+        || settings.archard_coefficient == 0.
+        || bodies.is_empty()
+    {
+        return Ok(DebrisAbrasionReport::default());
+    }
+
+    let world_normal = scale(ground.normal, 1.0 / n_len);
+    let grain_mass = (4.0 / 3.0)
+        * std::f64::consts::PI
+        * settings.grain_radius_m.powi(3)
+        * settings.density_kg_m3;
+    if !grain_mass.is_finite() || grain_mass <= 0. {
+        return Err("unrepresentable abrasion dust grain mass");
+    }
+
+    let mut report = DebrisAbrasionReport::default();
+    for body in bodies.iter_mut() {
+        let local_normal = mat_vec(transpose(body.rotation), world_normal);
+        let mut min_proj = f64::INFINITY;
+        let mut max_proj = f64::NEG_INFINITY;
+        for &v in &body.piece.hull {
+            let proj = dot(v, local_normal);
+            min_proj = min_proj.min(proj);
+            max_proj = max_proj.max(proj);
+        }
+        let span = max_proj - min_proj;
+        if !span.is_finite() || span <= 1e-9 {
+            continue;
+        }
+
+        let raw_volume =
+            settings.archard_coefficient * (normal_load_n / settings.hardness_pa) * sliding_distance_m;
+        let max_mass = body.piece.mass_kg * settings.max_mass_fraction_per_step;
+        let raw_mass = (raw_volume * settings.density_kg_m3).min(max_mass);
+        let grain_count = (raw_mass / grain_mass).floor() as usize;
+        if grain_count == 0 {
+            continue;
+        }
+        let removed_mass = (grain_count as f64) * grain_mass;
+        let removed_volume = removed_mass / settings.density_kg_m3;
+        let mass_fraction = removed_mass / body.piece.mass_kg;
+        let recession_depth = (span * mass_fraction).min(0.4 * span);
+
+        // Recede vertices near the bottom contact patch inward along local_normal
+        let contact_band = min_proj + 0.25 * span;
+        let mut new_pts = body.piece.hull.clone();
+        let mut contact_centroid_local = [0.0; 3];
+        let mut touched_count = 0.0;
+        for pt in &mut new_pts {
+            let proj = dot(*pt, local_normal);
+            if proj <= contact_band {
+                contact_centroid_local = add(contact_centroid_local, *pt);
+                touched_count += 1.0;
+                *pt = add(*pt, scale(local_normal, recession_depth));
+            }
+        }
+        if touched_count == 0.0 {
+            continue;
+        }
+        contact_centroid_local = scale(contact_centroid_local, 1.0 / touched_count);
+        let contact_world = body.world_point(contact_centroid_local);
+
+        let (new_hull, new_faces) = convex_hull(&new_pts)?;
+        let remaining_ratio = (1.0 - mass_fraction).max(0.5);
+        let new_inertia = body
+            .piece
+            .inertia_kg_m2
+            .map(|row| row.map(|v| v * remaining_ratio));
+        let Some(new_inv_inertia) = invert(new_inertia) else {
+            continue;
+        };
+
+        body.piece.hull = new_hull;
+        body.piece.hull_faces = new_faces;
+        body.piece.mass_kg -= removed_mass;
+        body.piece.inertia_kg_m2 = new_inertia;
+        body.inverse_inertia_body = new_inv_inertia;
+
+        // Emit up to 64 representative dust particles (or exact grain_count when small)
+        // when grain_count <= 64, each particle has grain_radius_m; when larger, scale radius so
+        // total particle mass equals removed_mass exactly.
+        let emit_count = grain_count.min(64);
+        let eff_mass_per_particle = removed_mass / (emit_count as f64);
+        let eff_radius = ((3.0 * eff_mass_per_particle)
+            / (4.0 * std::f64::consts::PI * settings.density_kg_m3))
+            .cbrt();
+        for idx in 0..emit_count {
+            let offset = (idx as f64 - 0.5 * (emit_count as f64)) * 1e-4;
+            let pos = [
+                contact_world[0] + offset,
+                contact_world[1],
+                contact_world[2],
+            ];
+            let p = Particle::new(eff_radius, settings.density_kg_m3, pos, body.velocity_m_s)?;
+            report.particles.push(p);
+        }
+
+        report.abraded_bodies += 1;
+        report.removed_volume_m3 += removed_volume;
+        report.removed_mass_kg += removed_mass;
+        report.max_recession_depth_m = report.max_recession_depth_m.max(recession_depth);
+    }
+
+    Ok(report)
 }
 
 /// Voxel/world contact settings for [`step_debris_in_world`].

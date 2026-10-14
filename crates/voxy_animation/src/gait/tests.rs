@@ -241,3 +241,78 @@ fn invalid_input_leaves_state_unchanged_and_settings_are_validated() {
     );
     assert!(GaitController::new(GaitSpace::planar(any_space), feet, bad).is_err());
 }
+
+#[test]
+fn stride_scaling_retimes_clip_and_foot_excursion_to_requested_walk_and_run_speeds() {
+    let rig = biped();
+    let mut gait = controller(&rig, GaitSettings::default());
+    let base_walk = cycle(&rig, 1.0, 0.45);
+    let forward = Vec3::new(0.0, 0.0, -1.0);
+    let authored_speed =
+        measure_authored_stride_speed(&base_walk, &rig, gait_feet(&gait), forward, 32).unwrap();
+    assert!(authored_speed > 0.2, "authored_speed={authored_speed}");
+
+    let target_run_speed = authored_speed * 2.4;
+    let (scaled_clip, report) = scale_clip_stride_to_speed(
+        &base_walk,
+        &rig,
+        gait_feet(&gait),
+        forward,
+        target_run_speed,
+        1.6,
+        32,
+    )
+    .unwrap();
+    assert!((report.target_speed_m_s - target_run_speed).abs() < 1e-5);
+    assert!(report.stride_scale > 1.0);
+    assert!(report.cadence_scale > 1.0);
+    assert!(
+        (report.stride_scale * report.cadence_scale - 2.4).abs() < 1e-4,
+        "report={report:?}"
+    );
+    let achieved_speed =
+        measure_authored_stride_speed(&scaled_clip, &rig, gait_feet(&gait), forward, 32).unwrap();
+    assert!(
+        (achieved_speed - target_run_speed).abs() / target_run_speed < 0.15,
+        "achieved_speed={achieved_speed}, target={target_run_speed}"
+    );
+
+    assert_eq!(GaitRegime::from_speed(0.01), GaitRegime::Idle);
+    assert_eq!(GaitRegime::from_speed(1.2), GaitRegime::Walk);
+    assert_eq!(GaitRegime::from_speed(2.8), GaitRegime::Jog);
+    assert_eq!(GaitRegime::from_speed(5.2), GaitRegime::Run);
+
+    gait.set_stride_and_cadence_scale(report.stride_scale, report.cadence_scale)
+        .unwrap();
+    assert_eq!(
+        gait.stride_and_cadence_scale(),
+        (report.stride_scale, report.cadence_scale)
+    );
+
+    let flat = FlatGround {
+        up: Vec3::Y,
+        height: 0.0,
+    };
+    let frame0 = gait
+        .advance(&rig, Vec2::new(0.0, 3.2), Vec3::new(0.0, 0.0, -0.05), 1.0 / 60.0, &flat)
+        .unwrap();
+    let frame1 = gait
+        .advance(&rig, Vec2::new(0.0, 3.2), Vec3::new(0.0, 0.0, -0.05), 1.0 / 60.0, &flat)
+        .unwrap();
+    let coupled = crate::extract_pelvis_thigh_frame(
+        &rig,
+        gait_feet(&gait),
+        &frame0.pose,
+        &frame1.pose,
+        0,
+        [0.0; 3],
+        0.065,
+        1.0 / 60.0,
+        gait.phase(),
+        gait.regime(),
+    )
+    .unwrap();
+    assert_eq!(coupled.regime, GaitRegime::Jog);
+    assert!(coupled.pelvis_position_m.iter().all(|v| v.is_finite()));
+    assert!(coupled.thighs[0].knee_velocity_m_s.iter().any(|v| v.abs() > 0.0));
+}

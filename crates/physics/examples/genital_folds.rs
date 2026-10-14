@@ -126,5 +126,138 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
+
+    use physics::biomechanics::PelvisGaitKinematics;
+    use physics::friction;
+    use physics::surface_film::{Material as FilmMaterial, SmearContact};
+
+    println!("\n--- Labia Majora 3D Gait + Inter-Labial Contact (Walk vs Run) ---");
+    println!("regime,step,time_s,kinetic_j,potential_j,min_cleft_gap_m,energy_defect_j");
+    let majora_geom = LabiaMajoraGeometry {
+        length_m: 0.05,
+        width_m: 0.018,
+        height_m: 0.008,
+        separation_m: 0.022,
+        sectors: 8,
+        latitude_rings: 2,
+    };
+    let majora_mat = Material::from_young_poisson(3000., 0.45)?;
+    for (regime_name, gait) in [
+        (
+            "walk",
+            PelvisGaitKinematics {
+                stride_frequency_hz: 1.0,
+                vertical_amplitude_m: 0.001,
+                lateral_amplitude_m: 0.0005,
+                sagittal_amplitude_m: 0.0005,
+                phase_rad: 0.0,
+            },
+        ),
+        (
+            "run",
+            PelvisGaitKinematics {
+                stride_frequency_hz: 1.8,
+                vertical_amplitude_m: 0.0025,
+                lateral_amplitude_m: 0.001,
+                sagittal_amplitude_m: 0.0012,
+                phase_rad: 0.0,
+            },
+        ),
+    ] {
+        let mut sim = majora_geom.build_gait_contact_simulation(
+            [majora_mat.clone(), majora_mat.clone()],
+            [1000.; 2],
+            0.0001,
+            0.0015,
+            1.0,
+        )?;
+        for step in 1..=6 {
+            let report = sim.step_gait(&gait, 5e-5, 1e-4)?;
+            let diag = sim.assembly.body.diagnostics()?;
+            println!(
+                "{regime_name},{step},{:.6},{:.6e},{:.6e},{:.6e},{:.6e}",
+                sim.time_s(),
+                diag.kinetic_j,
+                diag.potential_j,
+                sim.min_contact_gap_m(),
+                report.energy_defect_j
+            );
+        }
+    }
+
+    println!("\n--- Labia Minora Viscoelastic Gait + SurfaceFilm Smearing ---");
+    println!("step,time_s,left_energy_j,right_energy_j,min_area_ratio,film_mass_kg,smear_work_j");
+    let mut minora_sim = LabiaMinoraGeometry {
+        length_m: 0.04,
+        fold_width_m: 0.008,
+        fold_height_m: 0.004,
+        separation_m: 0.014,
+        longitudinal_segments: 6,
+        transverse_segments: 4,
+    }
+    .build_gait_simulation(SkinMaterial {
+        layers: vec![Layer {
+            thickness: 0.0003,
+            density: 1000.,
+            shear_modulus: 1000.,
+            collagen_modulus: 2000.,
+            collagen_exponent: 4.,
+            dispersion: 0.1,
+            fiber_angle: 0.5,
+            relaxation: vec![Relaxation {
+                modulus: 500.,
+                time: 0.02,
+            }],
+        }],
+    })?;
+    let jog_gait = PelvisGaitKinematics {
+        stride_frequency_hz: 1.4,
+        vertical_amplitude_m: 0.0015,
+        lateral_amplitude_m: 0.0008,
+        sagittal_amplitude_m: 0.0008,
+        phase_rad: 0.0,
+    };
+    for step in 1..=4 {
+        let [left_rep, right_rep] = minora_sim.step_gait(
+            &jog_gait,
+            0.001,
+            [0., -9.81, 0.],
+            &ContactScene::default(),
+            SolverConfig::default(),
+        )?;
+        let mut films = minora_sim.build_surface_films(FilmMaterial {
+            density: 1000.,
+            viscosity: 0.05,
+            wetting: 1e-5,
+            surface_tension: 0.05,
+        })?;
+        let cells = films[0].triangles().len();
+        films[0].deposit(0, 1e-8)?;
+        films[0].deposit(cells / 2, 1e-8)?;
+        let friction_mat = friction::Material::new(1e6, 1e6, 0.4)?;
+        let mut states = vec![friction::State::default(); cells];
+        let pressures = vec![500.0; cells];
+        let smear = films[0].advance_smear(
+            0.002,
+            SmearContact {
+                normal: [0., 0., 1.],
+                body_velocity_m_s: [0., 0.02, 0.],
+            },
+            &pressures,
+            &friction_mat,
+            &mut states,
+            [0., -9.81, 0.],
+            0.001,
+        )?;
+        println!(
+            "{step},{:.6},{:.6e},{:.6e},{:.6},{:.6e},{:.6e}",
+            minora_sim.time_s(),
+            left_rep.energy,
+            right_rep.energy,
+            left_rep.min_area_ratio.min(right_rep.min_area_ratio),
+            films[0].total_mass(),
+            smear.slip_work_j
+        );
+    }
     Ok(())
 }

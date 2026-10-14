@@ -25,8 +25,8 @@ pub use events::{EventChannel, EventCursor, EventError, EventRead};
 
 mod schedule;
 pub use schedule::{
-    ResourceAccessDenied, SceneAccessDenied, SceneSystemAccess, ScheduleError, SchedulePlan,
-    SystemAccess, SystemFailure, SystemSpec,
+    ParallelSceneSystemAccess, ResourceAccessDenied, SceneAccessDenied, SceneSystemAccess,
+    ScheduleError, SchedulePlan, ScopedSystemAccess, SystemAccess, SystemFailure, SystemSpec,
 };
 
 mod transaction;

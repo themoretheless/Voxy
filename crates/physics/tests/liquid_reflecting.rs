@@ -119,27 +119,87 @@ fn reflected_corner_forces_and_face_reactions_are_energy_gradients() {
 }
 #[test]
 fn pressure_impulses_and_torque_balance_the_stationary_fixture() {
-    let mut liquid = make(particles(), bounds(), Formulation::RestVolumeWendland);
-    let walls = liquid.reflecting_diagnostics().unwrap();
-    let dt = 1e-5;
-    assert_eq!(liquid.step(dt, None).unwrap().substeps, 1);
-    for axis in 0..3 {
-        let momentum: f64 = liquid
-            .particles()
-            .iter()
-            .map(|p| p.mass * p.velocity[axis])
-            .sum();
-        let reaction: f64 = walls.reaction_forces.iter().map(|f| f[axis]).sum();
-        assert!((momentum + dt * reaction).abs() < 1e-12);
-        let b = (axis + 1) % 3;
-        let c = (axis + 2) % 3;
-        let angular: f64 = liquid
-            .particles()
-            .iter()
-            .map(|p| p.mass * (p.position[b] * p.velocity[c] - p.position[c] * p.velocity[b]))
-            .sum();
-        assert!((angular + dt * walls.reaction_torque_about_origin[axis]).abs() < 1e-12);
+    for formulation in [
+        Formulation::RestVolumeWendland,
+        Formulation::RestVolume,
+        Formulation::MassDensity,
+    ] {
+        let mut liquid = make(particles(), bounds(), formulation);
+        let walls = liquid.reflecting_diagnostics().unwrap();
+        assert!(walls.reaction_forces.iter().flatten().any(|f| *f != 0.0));
+        let dt = 1e-5;
+        assert_eq!(liquid.step(dt, None).unwrap().substeps, 1);
+        for axis in 0..3 {
+            let momentum: f64 = liquid
+                .particles()
+                .iter()
+                .map(|p| p.mass * p.velocity[axis])
+                .sum();
+            let reaction: f64 = walls.reaction_forces.iter().map(|f| f[axis]).sum();
+            assert!((momentum + dt * reaction).abs() < 1e-12);
+            let b = (axis + 1) % 3;
+            let c = (axis + 2) % 3;
+            let angular: f64 = liquid
+                .particles()
+                .iter()
+                .map(|p| p.mass * (p.position[b] * p.velocity[c] - p.position[c] * p.velocity[b]))
+                .sum();
+            assert!((angular + dt * walls.reaction_torque_about_origin[axis]).abs() < 1e-12);
+        }
     }
+}
+#[test]
+fn mass_density_self_image_matches_mirrored_neighbor_at_doubled_distance() {
+    // One particle near the lower x face: its only image is its own reflection.
+    let gap = 0.3;
+    let p = Particle {
+        position: [gap, 1.5, 1.5],
+        velocity: [0.0; 3],
+        mass: 1.3,
+        material: 0,
+    };
+    let liquid = make(vec![p], bounds(), Formulation::MassDensity);
+    let walls = liquid.reflecting_diagnostics().unwrap();
+    let rho = liquid.diagnostics().unwrap().densities[0];
+    let m = materials()[0];
+    let r = 2.0 * gap;
+    let h = config().smoothing_radius;
+    let pressure = m.sound_speed.powi(2) * (rho - m.rest_density).max(0.0);
+    assert!(pressure > 0.0);
+    // The image is a second particle in the same state; both endpoints move with the owner.
+    let pair_force = p.mass * p.mass * 2.0 * pressure / rho.powi(2) * 45.0
+        / (std::f64::consts::PI * h.powi(6))
+        * (h - r).powi(2);
+    let expected = 2.0 * pair_force / p.mass;
+    let actual = walls.pressure_accelerations[0];
+    assert!((actual[0] - expected).abs() < 1e-12 * expected.abs());
+    assert_eq!(actual[1], 0.0);
+    assert_eq!(actual[2], 0.0);
+    assert!((walls.reaction_forces[0][0] + p.mass * expected).abs() < 1e-12);
+    for face in 1..6 {
+        assert_eq!(walls.reaction_forces[face], [0.0; 3]);
+    }
+}
+#[test]
+fn mass_density_far_from_walls_has_no_images_and_matches_an_unbounded_fluid() {
+    let interior: Vec<Particle> = particles()
+        .into_iter()
+        .map(|mut p| {
+            p.position = p.position.map(|x| 1.2 + 0.2 * x);
+            p
+        })
+        .collect();
+    let mut bounded = make(interior.clone(), bounds(), Formulation::MassDensity);
+    let mut free = Liquid::new(interior, materials(), config()).unwrap();
+    free.set_formulation(Formulation::MassDensity);
+    let walls = bounded.reflecting_diagnostics().unwrap();
+    assert_eq!(walls.reaction_forces, [[0.0; 3]; 6]);
+    assert!(walls.pressure_accelerations.iter().all(|a| *a == [0.0; 3]));
+    for _ in 0..20 {
+        bounded.step(1e-3, None).unwrap();
+        free.step(1e-3, None).unwrap();
+    }
+    assert_eq!(bounded.particles(), free.particles());
 }
 #[test]
 fn mechanical_energy_error_decreases_with_time_step() {

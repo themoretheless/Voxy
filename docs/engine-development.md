@@ -252,9 +252,20 @@ API. Module/function/buffer lifetimes extend through synchronized readback.
 PTX targets sm_52 with ISA 6.0; a compatible driver/GPU must actually accept it.
 The PTX source follows [NVIDIA's ISA specification](https://docs.nvidia.com/cuda/parallel-thread-execution/).
 
-This supplies context/memory ownership, transfers and fixed-kernel dispatch code;
-asynchronous jobs, generic kernel ABI, renderer synchronization and NVIDIA hardware
-acceptance remain required work. NVIDIA driver execution is unverified locally.
+This section describes the first ownership boundary. The later CUDA sections record
+what was built on it: asynchronous gravity jobs (`create_gravity_job`, the
+`voxy_gpu_core::GravitySolver` contract shared with wgpu), the external allocation
+boundary and Vulkan/DX12 render-view publication, compiler options matched to the
+selected device, and NVRTC kernels on packed u32 word ABIs shared with the wgpu
+kernels: terrain, projectile, voxel regions, box sweep, voxel water, participating
+medium (`pack_medium_job` / `medium_transport`), tissue search and pose
+evaluation (`pack_pose_eval_job` / `pose_eval`), each behind an allocation budget.
+Kernel logic is verified without a device where the kernel has no shared memory,
+atomics or barriers: `voxy_cuda/tests/medium_host_emulation.rs` compiles `medium.cu`
+with the host C++ compiler behind a CUDA shim and matches the CPU reference to 8e-8;
+the ABI pack/unpack paths are tested on every host. What still requires an NVIDIA
+device is the driver path itself (module load, transfers, launches) and its oracle
+tests under `--features cuda`; NVIDIA driver execution is unverified locally.
 The compiler verification described below now assembles this PTX with NVIDIA PTXAS.
 
 Run on a machine with an appropriate NVIDIA driver/device:

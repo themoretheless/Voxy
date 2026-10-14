@@ -471,4 +471,275 @@ impl ParticipatingMedium {
             cell,
         }))
     }
+
+    /// Atomically transfers airborne spray droplets from `liquid` whose volume-equivalent
+    /// sphere radius is `<= max_droplet_radius_m` and whose position lies inside the
+    /// medium's gas grid into `species` (e.g. `MediumSpecies::Mist`).
+    /// When `liquid.droplet_population()` is configured, only particles marked as airborne
+    /// droplets are eligible; otherwise all particles within the radius cutoff are eligible.
+    /// # Errors
+    /// Invalid species index, non-positive/non-finite radius cutoff, or liquid exchange error.
+    pub fn absorb_spray_droplets(
+        &mut self,
+        species: usize,
+        liquid: &mut crate::liquid::Liquid,
+        max_droplet_radius_m: f64,
+    ) -> Result<SprayMistAbsorptionReport, Error> {
+        if species >= self.species.len()
+            || !max_droplet_radius_m.is_finite()
+            || max_droplet_radius_m <= 0.
+        {
+            return Err(Error::InvalidConfig);
+        }
+        let radii = liquid.equivalent_sphere_radii()?;
+        let flags = liquid.droplet_population();
+        let mut remove = Vec::new();
+        let mut deposits = Vec::new();
+        for (index, (particle, &radius)) in liquid.particles().iter().zip(&radii).enumerate() {
+            let is_droplet = flags.is_none_or(|f| f[index]);
+            if !is_droplet || radius > max_droplet_radius_m {
+                continue;
+            }
+            if let Some(cell) = self.gas.cell_index(particle.position)? {
+                remove.push(index);
+                deposits.push((cell, particle.mass));
+            }
+        }
+        if remove.is_empty() {
+            let exchange = liquid.exchange_particles(&[], &[])?;
+            return Ok(SprayMistAbsorptionReport {
+                absorbed_count: 0,
+                absorbed_mass_kg: 0.,
+                exchange,
+            });
+        }
+        let mut candidate_medium = self.clone();
+        let mut absorbed_mass_kg = 0.;
+        for &(cell, mass) in &deposits {
+            candidate_medium.mass[species][cell] += mass;
+            absorbed_mass_kg += mass;
+        }
+        if !absorbed_mass_kg.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        let exchange = liquid.exchange_particles(&remove, &[])?;
+        *self = candidate_medium;
+        Ok(SprayMistAbsorptionReport {
+            absorbed_count: remove.len(),
+            absorbed_mass_kg,
+            exchange,
+        })
+    }
+
+    /// Total multiphase mixture density $\rho_{\text{mix}} = (m_{\text{gas}} + \sum_s m_s) / V_{\text{cell}}$
+    /// in kg/m³ per grid cell (`плотность`).
+    #[must_use]
+    pub fn mixture_density_kg_m3(&self) -> Vec<f64> {
+        let volume = self.cell_volume();
+        self.gas
+            .cells()
+            .iter()
+            .enumerate()
+            .map(|(cell, g)| {
+                let suspended: f64 = self.mass.iter().map(|s| s[cell]).sum();
+                (g.mass + suspended) / volume
+            })
+            .collect()
+    }
+
+    /// Evaluates per-cell Richardson–Zaki hindered settling velocity
+    /// $v_s(\phi) = v_{s,0} (1 - \phi)^n$ where $\phi = \text{clamp}(c_s / \rho_{\text{p}}, 0, 0.65)$
+    /// is the local particulate volume fraction.
+    pub fn hindered_settling_velocities_m_s(
+        &self,
+        species: usize,
+        particle_density_kg_m3: f64,
+        exponent_n: f64,
+    ) -> Result<Vec<f64>, Error> {
+        if species >= self.species.len()
+            || !particle_density_kg_m3.is_finite()
+            || particle_density_kg_m3 <= 0.
+            || !exponent_n.is_finite()
+            || !(2.0..=6.0).contains(&exponent_n)
+        {
+            return Err(Error::InvalidConfig);
+        }
+        let v0 = self.species[species].settling_velocity_m_s;
+        let volume = self.cell_volume();
+        Ok(self.mass[species]
+            .iter()
+            .map(|&m| {
+                let conc = m / volume;
+                let phi = (conc / particle_density_kg_m3).clamp(0.0, 0.65);
+                v0 * (1.0 - phi).powf(exponent_n)
+            })
+            .collect())
+    }
+
+    /// Reversible Clausius–Clapeyron phase relaxation between carrier gas vapor and
+    /// suspended `Fog` droplets (`туман`). Supersaturated cells condense excess gas
+    /// mass into `config.fog_species`, while subsaturated cells evaporate fog droplets
+    /// back into the gas cell, strictly conserving `gas_mass + fog_mass`.
+    pub fn condense_or_evaporate_fog(
+        &mut self,
+        dt_s: f64,
+        config: FogCondensationConfig,
+    ) -> Result<FogCondensationReport, Error> {
+        config.validate(self.species.len())?;
+        if !dt_s.is_finite() || dt_s <= 0. {
+            return Err(Error::InvalidTimeStep);
+        }
+        let fog_idx = config.fog_species;
+        let volume = self.cell_volume();
+        let before_gas: f64 = self.gas.cells().iter().map(|c| c.mass).sum();
+        let before_fog: f64 = self.total_mass_kg(fog_idx);
+        let total_before = before_gas + before_fog;
+
+        let mut candidate = self.clone();
+        let factor = 1.0 - (-config.relaxation_rate_s_inv * dt_s).exp();
+        let mut net_condensed_fog_mass_kg = 0.0;
+
+        for (cell_idx, gas_cell) in candidate.gas.cells_mut().iter_mut().enumerate() {
+            let t = gas_cell.temperature;
+            let t0 = config.reference_temperature_k;
+            let rho_sat = config.saturation_density_at_ref_kg_m3
+                * (t0 / t)
+                * (config.clausius_clapeyron_exponent * (1.0 - t0 / t)).exp();
+            if !rho_sat.is_finite() || rho_sat <= 0. {
+                return Err(Error::NumericalFailure);
+            }
+            let m_sat = rho_sat * volume;
+            let excess = gas_cell.mass - m_sat;
+            let delta_fog = if excess > 0.0 {
+                let max_removable =
+                    (gas_cell.mass * (1.0 - config.min_gas_fraction_floor)).max(0.0);
+                (excess * factor).min(max_removable)
+            } else {
+                let available_fog = candidate.mass[fog_idx][cell_idx];
+                (excess * factor).max(-available_fog)
+            };
+            gas_cell.mass -= delta_fog;
+            candidate.mass[fog_idx][cell_idx] =
+                (candidate.mass[fog_idx][cell_idx] + delta_fog).max(0.0);
+            net_condensed_fog_mass_kg += delta_fog;
+        }
+
+        let after_gas: f64 = candidate.gas.cells().iter().map(|c| c.mass).sum();
+        let after_fog: f64 = candidate.total_mass_kg(fog_idx);
+        let total_after = after_gas + after_fog;
+
+        *self = candidate;
+        Ok(FogCondensationReport {
+            net_condensed_fog_mass_kg,
+            total_gas_plus_fog_before_kg: total_before,
+            total_gas_plus_fog_after_kg: total_after,
+        })
+    }
+
+    /// Wet scavenging / washout (`водная взвесь` capturing `пыль` and `дым`):
+    /// Airborne water mist/spray (`mist_species`) coagulates with and scrubs
+    /// `target_species` (e.g. `Dust` and `Smoke`) at collection rate
+    /// $E_c c_{\text{mist}}$, transferring captured particulate mass into
+    /// `mist_species` so it settles rapidly while strictly conserving total suspended mass.
+    pub fn scavenge_dust_and_smoke_by_mist(
+        &mut self,
+        mist_species: usize,
+        target_species: &[usize],
+        collection_efficiency_m3_kg_s: f64,
+        dt_s: f64,
+    ) -> Result<WetScavengingReport, Error> {
+        if mist_species >= self.species.len()
+            || target_species
+                .iter()
+                .any(|&s| s >= self.species.len() || s == mist_species)
+            || !collection_efficiency_m3_kg_s.is_finite()
+            || collection_efficiency_m3_kg_s < 0.
+            || !dt_s.is_finite()
+            || dt_s <= 0.
+        {
+            return Err(Error::InvalidConfig);
+        }
+        let volume = self.cell_volume();
+        let cells = self.gas.cells().len();
+        let mut candidate = self.clone();
+        let mut scavenged_per_species = vec![0.0; self.species.len()];
+        let mut total_scavenged_mass_kg = 0.0;
+
+        for cell in 0..cells {
+            let mist_conc = candidate.mass[mist_species][cell] / volume;
+            if mist_conc <= 0.0 {
+                continue;
+            }
+            let scrub_fraction = 1.0 - (-collection_efficiency_m3_kg_s * mist_conc * dt_s).exp();
+            for &target in target_species {
+                let captured = candidate.mass[target][cell] * scrub_fraction;
+                if captured > 0.0 {
+                    candidate.mass[target][cell] -= captured;
+                    candidate.mass[mist_species][cell] += captured;
+                    scavenged_per_species[target] += captured;
+                    total_scavenged_mass_kg += captured;
+                }
+            }
+        }
+
+        *self = candidate;
+        Ok(WetScavengingReport {
+            scavenged_mass_per_species_kg: scavenged_per_species,
+            total_scavenged_mass_kg,
+        })
+    }
+}
+
+/// Conservation report for [`ParticipatingMedium::absorb_spray_droplets`].
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SprayMistAbsorptionReport {
+    pub absorbed_count: usize,
+    pub absorbed_mass_kg: f64,
+    pub exchange: crate::liquid::ParticleExchange,
+}
+
+/// Clausius–Clapeyron phase condensation/evaporation parameters for `Fog` (`туман`).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct FogCondensationConfig {
+    pub fog_species: usize,
+    pub saturation_density_at_ref_kg_m3: f64,
+    pub reference_temperature_k: f64,
+    pub clausius_clapeyron_exponent: f64,
+    pub relaxation_rate_s_inv: f64,
+    pub min_gas_fraction_floor: f64,
+}
+
+impl FogCondensationConfig {
+    fn validate(&self, species_len: usize) -> Result<(), Error> {
+        if self.fog_species >= species_len
+            || !self.saturation_density_at_ref_kg_m3.is_finite()
+            || self.saturation_density_at_ref_kg_m3 <= 0.
+            || !self.reference_temperature_k.is_finite()
+            || self.reference_temperature_k <= 0.
+            || !self.clausius_clapeyron_exponent.is_finite()
+            || self.clausius_clapeyron_exponent <= 0.
+            || !self.relaxation_rate_s_inv.is_finite()
+            || self.relaxation_rate_s_inv <= 0.
+            || !self.min_gas_fraction_floor.is_finite()
+            || !(0.05..=0.95).contains(&self.min_gas_fraction_floor)
+        {
+            return Err(Error::InvalidConfig);
+        }
+        Ok(())
+    }
+}
+
+/// Mass conservation audit for [`ParticipatingMedium::condense_or_evaporate_fog`].
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct FogCondensationReport {
+    pub net_condensed_fog_mass_kg: f64,
+    pub total_gas_plus_fog_before_kg: f64,
+    pub total_gas_plus_fog_after_kg: f64,
+}
+
+/// Mass conservation audit for [`ParticipatingMedium::scavenge_dust_and_smoke_by_mist`].
+#[derive(Clone, Debug, PartialEq)]
+pub struct WetScavengingReport {
+    pub scavenged_mass_per_species_kg: Vec<f64>,
+    pub total_scavenged_mass_kg: f64,
 }

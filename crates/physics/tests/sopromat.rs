@@ -390,3 +390,237 @@ fn square_shaft_torsion_converges_to_the_saint_venant_twist() {
     };
     check_convergence("torsion", run(1), run(2), reference, 0.1);
 }
+
+#[test]
+fn cantilever_quadrature_stress_field_matches_navier_bending_formula() {
+    let p = 0.01;
+    let inertia = A.powi(4) / 12.;
+    let mut bar = QuadBar::new(8);
+    let prescribed = bar.prescribed(clamp_at_root);
+    let loads = bar.face_load(|x| near(x[0], L), [0., 0., -p]);
+    bar.solve(&loads, &prescribed);
+
+    let samples = bar.body.quadrature_samples().unwrap();
+    let mut num = 0.;
+    let mut den = 0.;
+    let mut checked = 0usize;
+    for cell_samples in &samples {
+        for q in cell_samples {
+            let [x, _y, z] = q.reference_position_m;
+            // Sample the Saint-Venant interior away from clamp (x=0) and tip (x=L).
+            if (0.25 * L..=0.75 * L).contains(&x) {
+                let z_rel = z - A / 2.;
+                let navier_sigma_xx = p * (L - x) * z_rel / inertia;
+                let actual_sigma_xx = q.cauchy_pa[0][0];
+                num += actual_sigma_xx * navier_sigma_xx;
+                den += navier_sigma_xx * navier_sigma_xx;
+                checked += 1;
+            }
+        }
+    }
+    assert!(checked >= 40, "checked={checked}");
+    let slope = num / den;
+    println!("navier bending stress regression slope: {slope:.6} (checked {checked} Gauss points)");
+    assert!(
+        (slope - 1.0).abs() < 0.03,
+        "Navier bending stress slope {slope} deviated from 1.0"
+    );
+}
+
+#[test]
+fn combined_axial_tension_and_bending_obeys_stress_and_deflection_superposition() {
+    let n_axial = 0.02;
+    let p_transverse = 0.01;
+    let inertia = A.powi(4) / 12.;
+
+    let solve_case = |force: [f64; 3]| {
+        let mut bar = QuadBar::new(8);
+        let prescribed = bar.prescribed(clamp_at_root);
+        let loads = bar.face_load(|x| near(x[0], L), force);
+        bar.solve(&loads, &prescribed);
+        let tip = bar.mean_displacement(|x| near(x[0], L));
+        let samples = bar.body.quadrature_samples().unwrap();
+        (tip, samples)
+    };
+
+    let (tip_axial, samples_axial) = solve_case([n_axial, 0., 0.]);
+    let (tip_bend, samples_bend) = solve_case([0., 0., -p_transverse]);
+    let (tip_comb, samples_comb) = solve_case([n_axial, 0., -p_transverse]);
+
+    for axis in [0, 2] {
+        let superposed = tip_axial[axis] + tip_bend[axis];
+        assert!(
+            relative_error(tip_comb[axis], superposed) < 1e-6,
+            "axis {axis}: combined {} vs superposed {}",
+            tip_comb[axis],
+            superposed
+        );
+    }
+
+    let mut interior_sum_sigma = 0.;
+    let mut interior_sum_expected = 0.;
+    let mut num = 0.;
+    let mut den = 0.;
+    let mut interior_checked = 0usize;
+    for ((ca, cb), cc) in samples_axial.iter().zip(&samples_bend).zip(&samples_comb) {
+        for ((qa, qb), qc) in ca.iter().zip(cb).zip(cc) {
+            let superposed_sigma_xx = qa.cauchy_pa[0][0] + qb.cauchy_pa[0][0];
+            assert!(
+                (qc.cauchy_pa[0][0] - superposed_sigma_xx).abs() < 1e-6,
+                "Gauss point superposition mismatch: {} vs {}",
+                qc.cauchy_pa[0][0],
+                superposed_sigma_xx
+            );
+            let [x, _y, z] = qc.reference_position_m;
+            if (0.25 * L..=0.75 * L).contains(&x) {
+                let expected = n_axial / (A * A) + p_transverse * (L - x) * (z - A / 2.) / inertia;
+                interior_sum_sigma += qc.cauchy_pa[0][0];
+                interior_sum_expected += expected;
+                num += qc.cauchy_pa[0][0] * expected;
+                den += expected * expected;
+                interior_checked += 1;
+            }
+        }
+    }
+    assert!(interior_checked >= 40);
+    let mean_sigma = interior_sum_sigma / interior_checked as f64;
+    let mean_expected = interior_sum_expected / interior_checked as f64;
+    let slope = num / den;
+    println!(
+        "combined loading: mean axial {:e} vs {:e}, regression slope {slope:.6}",
+        mean_sigma, mean_expected
+    );
+    assert!(relative_error(mean_sigma, mean_expected) < 0.02);
+    assert!((slope - 1.0).abs() < 0.02);
+}
+
+#[test]
+fn simply_supported_square_plate_under_uniform_pressure_converges_to_kirchhoff_mindlin() {
+    let side = 1.0_f64;
+    let h = 0.1_f64;
+    let q0 = 100.0_f64; // Pa uniform downward pressure
+    let flexural_rigidity = E * h.powi(3) / (12.0 * (1.0 - NU * NU));
+    let shear_stiffness = (5.0 / 6.0) * shear_modulus() * h;
+    // Navier double-sine series fundamental + Reissner-Mindlin transverse shear deflection
+    let reference = 0.004062 * q0 * side.powi(4) / flexural_rigidity
+        + 0.07367 * q0 * side.powi(2) / shear_stiffness;
+
+    let run_plate = |n: u32| -> f64 {
+        let width = usize::try_from(n + 1).unwrap();
+        let id = |i: u32, j: u32, k: u32| {
+            (usize::try_from(i).unwrap() * width + usize::try_from(j).unwrap()) * 2
+                + usize::try_from(k).unwrap()
+        };
+        let mut positions = Vec::new();
+        for i in 0..=n {
+            for j in 0..=n {
+                for k in 0..=1 {
+                    positions.push([
+                        side * f64::from(i) / f64::from(n),
+                        side * f64::from(j) / f64::from(n),
+                        h * f64::from(k),
+                    ]);
+                }
+            }
+        }
+        let mut cells = Vec::new();
+        for i in 0..n {
+            for j in 0..n {
+                let v = [
+                    id(i, j, 0),
+                    id(i + 1, j, 0),
+                    id(i, j + 1, 0),
+                    id(i + 1, j + 1, 0),
+                    id(i, j, 1),
+                    id(i + 1, j, 1),
+                    id(i, j + 1, 1),
+                    id(i + 1, j + 1, 1),
+                ];
+                for t in [
+                    [0, 1, 3, 7],
+                    [0, 3, 2, 7],
+                    [0, 2, 6, 7],
+                    [0, 6, 4, 7],
+                    [0, 4, 5, 7],
+                    [0, 5, 1, 7],
+                ] {
+                    cells.push((t.map(|a| v[a]), elastic()));
+                }
+            }
+        }
+        let mut body = QuadraticBody::from_linear(positions, cells).unwrap();
+        let rest = body.positions().to_vec();
+        let prescribed: Vec<[Option<f64>; 3]> = rest
+            .iter()
+            .map(|&p| {
+                let on_rim =
+                    near(p[0], 0.) || near(p[0], side) || near(p[1], 0.) || near(p[1], side);
+                if near(p[2], 0.) && near(p[0], 0.) && near(p[1], 0.) {
+                    [Some(0.), Some(0.), Some(0.)]
+                } else if near(p[2], 0.) && near(p[0], side) && near(p[1], 0.) {
+                    [None, Some(0.), Some(0.)]
+                } else if near(p[2], 0.) && on_rim {
+                    [None, None, Some(0.)]
+                } else {
+                    [None; 3]
+                }
+            })
+            .collect();
+        let faces = body.exposed_faces_at(&rest).unwrap();
+        let top_faces: Vec<_> = faces
+            .into_iter()
+            .filter(|f| f.nodes.iter().all(|&node| near(rest[node][2], h)))
+            .collect();
+        let total_force = -q0 * side * side;
+        let total_area: f64 = top_faces.iter().map(|f| f.reference_area_m2).sum();
+        let mut loads = vec![[0.; 3]; rest.len()];
+        for face in top_faces {
+            for &node in &face.nodes[3..] {
+                loads[node][2] += total_force * face.reference_area_m2 / (3.0 * total_area);
+            }
+        }
+        let eq = body.equilibrate(&loads, &prescribed, 30, 1e-8).unwrap();
+        assert!(eq.converged);
+        let center_nodes: Vec<usize> = (0..rest.len())
+            .filter(|&node| near(rest[node][0], side / 2.0) && near(rest[node][1], side / 2.0))
+            .collect();
+        let mean_w: f64 = center_nodes
+            .iter()
+            .map(|&node| -(body.positions()[node][2] - rest[node][2]))
+            .sum::<f64>()
+            / center_nodes.len() as f64;
+        mean_w
+    };
+
+    check_convergence("square plate", run_plate(4), run_plate(6), reference, 0.08);
+}
+
+#[test]
+fn thermo_hygroscopic_expansion_reproduces_exact_isotropic_swelling() {
+    let mut bar = QuadBar::new(4);
+    let cell_count = bar.body.quadrature_samples().unwrap().len();
+    let eps0 = 1.2e-4; // e.g. alpha_T * dT + beta_w * dw
+    let loads = bar
+        .body
+        .thermo_hygroscopic_nodal_loads(&vec![eps0; cell_count])
+        .unwrap();
+    // Minimal 6-DOF isostatic constraint at x = 0 corner to prevent rigid motion while allowing free expansion
+    let prescribed = bar.prescribed(|p| {
+        if near(p[0], 0.) && near(p[1], 0.) && near(p[2], 0.) {
+            [Some(0.), Some(0.), Some(0.)]
+        } else if near(p[0], 0.) && near(p[1], A) && near(p[2], 0.) {
+            [Some(0.), None, Some(0.)]
+        } else if near(p[0], 0.) && near(p[1], 0.) && near(p[2], A) {
+            [Some(0.), Some(0.), None]
+        } else {
+            [None; 3]
+        }
+    });
+    bar.solve(&loads, &prescribed);
+    for (node, &r) in bar.rest.iter().enumerate() {
+        let u = bar.displacement(node);
+        assert!((u[0] - eps0 * r[0]).abs() < 1e-12, "ux={}", u[0]);
+        assert!((u[1] - eps0 * r[1]).abs() < 1e-12, "uy={}", u[1]);
+        assert!((u[2] - eps0 * r[2]).abs() < 1e-12, "uz={}", u[2]);
+    }
+}

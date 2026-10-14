@@ -127,6 +127,14 @@ impl Material {
         }
         Ok(material)
     }
+    #[must_use]
+    pub const fn bulk_pa(&self) -> f64 {
+        self.bulk_pa
+    }
+    #[must_use]
+    pub const fn shear_pa(&self) -> f64 {
+        self.shear_pa
+    }
     /// Backward-Euler radial return for a prescribed total strain tensor.
     /// Off-diagonal components are tensorial strains (engineering shear / 2).
     /// Returns a candidate state; callers must commit it only after global

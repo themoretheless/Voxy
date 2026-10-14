@@ -134,6 +134,42 @@ pub struct GaitController {
     locked: [Option<(Vec3, Vec3)>; 2],
     previous_velocity: Option<Vec2>,
     lean: Vec2,
+    stride_scale: f32,
+    cadence_scale: f32,
+}
+
+/// Locomotion gait regime classified from planar speed (m/s).
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum GaitRegime {
+    Idle,
+    Walk,
+    Jog,
+    Run,
+}
+
+impl GaitRegime {
+    /// Classifies planar speed (m/s) into `Idle`, `Walk`, `Jog`, or `Run`.
+    #[must_use]
+    pub fn from_speed(speed_m_s: f32) -> Self {
+        if !speed_m_s.is_finite() || speed_m_s < 0.15 {
+            Self::Idle
+        } else if speed_m_s < 2.2 {
+            Self::Walk
+        } else if speed_m_s < 4.2 {
+            Self::Jog
+        } else {
+            Self::Run
+        }
+    }
+}
+
+/// Summary of scaling an in-place locomotion clip to match a requested ground speed.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct StrideScaleReport {
+    pub authored_speed_m_s: f32,
+    pub target_speed_m_s: f32,
+    pub stride_scale: f32,
+    pub cadence_scale: f32,
 }
 
 impl GaitController {
@@ -168,7 +204,42 @@ impl GaitController {
             locked: [None, None],
             previous_velocity: None,
             lean: Vec2::ZERO,
+            stride_scale: 1.0,
+            cadence_scale: 1.0,
         })
+    }
+
+    /// Configures dynamic hip-swing stride scaling and playback cadence scaling.
+    ///
+    /// # Errors
+    /// Rejects nonfinite or nonpositive scale factors.
+    pub fn set_stride_and_cadence_scale(
+        &mut self,
+        stride_scale: f32,
+        cadence_scale: f32,
+    ) -> Result<(), AnimationError> {
+        if !stride_scale.is_finite()
+            || stride_scale <= 0.0
+            || !cadence_scale.is_finite()
+            || cadence_scale <= 0.0
+        {
+            return Err(AnimationError::InvalidBlendWeight);
+        }
+        self.stride_scale = stride_scale;
+        self.cadence_scale = cadence_scale;
+        Ok(())
+    }
+
+    #[must_use]
+    pub fn stride_and_cadence_scale(&self) -> (f32, f32) {
+        (self.stride_scale, self.cadence_scale)
+    }
+
+    /// Current gait regime (`Idle`, `Walk`, `Jog`, `Run`) from the latest planar velocity.
+    #[must_use]
+    pub fn regime(&self) -> GaitRegime {
+        self.previous_velocity
+            .map_or(GaitRegime::Idle, |v| GaitRegime::from_speed(v.length()))
     }
 
     #[must_use]
@@ -218,8 +289,11 @@ impl GaitController {
         dt: f32,
         ground: &dyn GroundProbe,
     ) -> Result<GaitFrame, AnimationError> {
-        self.player.advance(velocity, dt)?;
+        self.player.advance(velocity, dt * self.cadence_scale)?;
         let mut pose = self.player.pose(skeleton)?;
+        if (self.stride_scale - 1.0).abs() > 1e-6 {
+            scale_pose_leg_swing(&mut pose, skeleton, &self.feet, self.stride_scale)?;
+        }
         let up = self.feet.up;
 
         // Lean: smoothed planar acceleration tilts the torso about up × accel.
@@ -324,8 +398,257 @@ impl GaitController {
     }
 }
 
+fn scale_pose_leg_swing(
+    pose: &mut Pose,
+    skeleton: &Skeleton,
+    feet: &GaitFeet,
+    stride_scale: f32,
+) -> Result<(), AnimationError> {
+    if !stride_scale.is_finite() || stride_scale <= 0.0 {
+        return Err(AnimationError::InvalidBlendWeight);
+    }
+    let joints = skeleton.joints();
+    for chain in &feet.chains {
+        let [hip, _, _] = chain.joint_indices();
+        let bind_rot = joints[hip].bind_local.rotation;
+        let current_rot = pose.local()[hip].rotation;
+        let delta = bind_rot.inverse() * current_rot;
+        let (axis, angle) = delta.to_axis_angle();
+        let scaled_angle = (angle * stride_scale).clamp(-1.4, 1.4);
+        let scaled = if axis.is_finite() && axis.length_squared() > 1e-12 {
+            (bind_rot * glam::Quat::from_axis_angle(axis.normalize(), scaled_angle)).normalize()
+        } else {
+            bind_rot
+        };
+        pose.set_joint_rotation(hip, scaled)?;
+    }
+    Ok(())
+}
+
+/// Measures the natural ground speed (m/s) of an in-place locomotion clip by integrating
+/// the backward travel of whichever ankle is lower (in stance) along `-forward`.
+///
+/// # Errors
+/// Rejects nonfinite/unnormalized `forward`, `samples < 4`, or pose evaluation errors.
+pub fn measure_authored_stride_speed(
+    clip: &crate::AnimationClip,
+    skeleton: &Skeleton,
+    feet: &GaitFeet,
+    forward: Vec3,
+    samples: usize,
+) -> Result<f32, AnimationError> {
+    if !forward.is_finite() || !forward.is_normalized() || samples < 4 {
+        return Err(AnimationError::InvalidIkTarget);
+    }
+    let duration = clip.duration();
+    let mut travel = 0.0f32;
+    let mut previous: Option<[Vec3; 2]> = None;
+    for s in 0..=samples {
+        let t = duration * (s as f32 / samples as f32);
+        let pose = clip.try_sample(skeleton, t)?;
+        let ankles = ankle_positions(&pose, skeleton, feet)?;
+        if let Some(prev) = previous {
+            let lower = if ankles[0].dot(feet.up) < ankles[1].dot(feet.up) {
+                0
+            } else {
+                1
+            };
+            let delta = prev[lower] - ankles[lower];
+            travel += delta.dot(forward).max(0.0);
+        }
+        previous = Some(ankles);
+    }
+    Ok(travel / duration)
+}
+
+/// Scales an in-place locomotion clip's hip stride excursion and cycle duration so its
+/// natural stance-ankle ground speed matches `target_speed_m_s`.
+///
+/// # Errors
+/// Rejects nonpositive `target_speed_m_s`, `max_stride_scale < 1.0`, or clips with zero authored speed.
+pub fn scale_clip_stride_to_speed(
+    clip: &crate::AnimationClip,
+    skeleton: &Skeleton,
+    feet: &GaitFeet,
+    forward: Vec3,
+    target_speed_m_s: f32,
+    max_stride_scale: f32,
+    samples: usize,
+) -> Result<(crate::AnimationClip, StrideScaleReport), AnimationError> {
+    use crate::{JointTrack, QuatKey, Vec3Key};
+
+    if !target_speed_m_s.is_finite()
+        || target_speed_m_s <= 0.0
+        || !max_stride_scale.is_finite()
+        || max_stride_scale < 1.0
+        || samples < 4
+    {
+        return Err(AnimationError::InvalidIkTarget);
+    }
+    let authored_speed_m_s = measure_authored_stride_speed(clip, skeleton, feet, forward, samples)?;
+    if !authored_speed_m_s.is_finite() || authored_speed_m_s <= 1e-4 {
+        return Err(AnimationError::InvalidClipHeader);
+    }
+    let ratio = target_speed_m_s / authored_speed_m_s;
+    let stride_scale = ratio.sqrt().clamp(1.0 / max_stride_scale, max_stride_scale);
+    let cadence_scale = ratio / stride_scale;
+    let new_duration = clip.duration() / cadence_scale;
+    if !new_duration.is_finite() || new_duration <= 1e-4 {
+        return Err(AnimationError::InvalidClipHeader);
+    }
+
+    let mut tracks = vec![JointTrack::default(); skeleton.joints().len()];
+    for s in 0..=samples {
+        let alpha = s as f32 / samples as f32;
+        let src_time = alpha * clip.duration();
+        let dst_time = alpha * new_duration;
+        let mut pose = clip.try_sample(skeleton, src_time)?;
+        scale_pose_leg_swing(&mut pose, skeleton, feet, stride_scale)?;
+        for (track, local) in tracks.iter_mut().zip(pose.local()) {
+            track.translations.push(Vec3Key {
+                time: dst_time,
+                value: local.translation,
+            });
+            track.rotations.push(QuatKey {
+                time: dst_time,
+                value: local.rotation,
+            });
+            track.scales.push(Vec3Key {
+                time: dst_time,
+                value: local.scale,
+            });
+        }
+    }
+    let scaled_clip = crate::AnimationClip::new(
+        format!("{}_scaled", clip.name()),
+        new_duration,
+        clip.playback,
+        tracks,
+        skeleton,
+    )?;
+    Ok((
+        scaled_clip,
+        StrideScaleReport {
+            authored_speed_m_s,
+            target_speed_m_s,
+            stride_scale,
+            cadence_scale,
+        },
+    ))
+}
+
 #[cfg(test)]
 mod tests;
+
+/// Model/world-space kinematic state of one proximal thigh segment (`hip -> knee`)
+/// used to drive medial-thigh soft-tissue and scrotal/testicular contact during gait.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ThighCapsuleState {
+    pub hip_position_m: [f64; 3],
+    pub knee_position_m: [f64; 3],
+    pub hip_velocity_m_s: [f64; 3],
+    pub knee_velocity_m_s: [f64; 3],
+    pub radius_m: f64,
+}
+
+/// Coupled 6-DOF pelvis and bilateral thigh kinematic frame extracted from two consecutive
+/// skeletal locomotion poses (`previous_pose` -> `current_pose` over `dt_s`).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CoupledPelvisThighFrame {
+    pub pelvis_position_m: [f64; 3],
+    pub pelvis_rotation_xyzw: [f64; 4],
+    pub pelvis_velocity_m_s: [f64; 3],
+    pub pelvis_acceleration_m_s2: [f64; 3],
+    pub thighs: [ThighCapsuleState; 2],
+    pub phase: f64,
+    pub regime: GaitRegime,
+}
+
+/// Extracts a [`CoupledPelvisThighFrame`] from `previous_pose` and `current_pose` separated by `dt_s`.
+///
+/// # Errors
+/// Rejects out-of-range `pelvis_joint`, nonfinite/nonpositive `dt_s` or `thigh_radius_m`,
+/// nonfinite `previous_pelvis_velocity_m_s`, or invalid pose evaluation.
+#[allow(clippy::too_many_arguments)]
+pub fn extract_pelvis_thigh_frame(
+    skeleton: &Skeleton,
+    feet: &GaitFeet,
+    previous_pose: &Pose,
+    current_pose: &Pose,
+    pelvis_joint: usize,
+    previous_pelvis_velocity_m_s: [f64; 3],
+    thigh_radius_m: f64,
+    dt_s: f64,
+    phase: f64,
+    regime: GaitRegime,
+) -> Result<CoupledPelvisThighFrame, AnimationError> {
+    if pelvis_joint >= skeleton.joints().len()
+        || !thigh_radius_m.is_finite()
+        || thigh_radius_m <= 0.0
+        || !dt_s.is_finite()
+        || dt_s <= 0.0
+        || !phase.is_finite()
+        || previous_pelvis_velocity_m_s.iter().any(|v| !v.is_finite())
+    {
+        return Err(AnimationError::InvalidIkTarget);
+    }
+    let mut prev_global = Vec::new();
+    let mut prev_skin = Vec::new();
+    previous_pose.skin_matrices_into(skeleton, &mut prev_global, &mut prev_skin)?;
+
+    let mut curr_global = Vec::new();
+    let mut curr_skin = Vec::new();
+    current_pose.skin_matrices_into(skeleton, &mut curr_global, &mut curr_skin)?;
+
+    let to_f64_3 = |v: Vec3| [f64::from(v.x), f64::from(v.y), f64::from(v.z)];
+    let prev_pelvis_pos = to_f64_3(prev_global[pelvis_joint].w_axis.truncate());
+    let curr_pelvis_pos = to_f64_3(curr_global[pelvis_joint].w_axis.truncate());
+    let pelvis_velocity_m_s =
+        std::array::from_fn(|k| (curr_pelvis_pos[k] - prev_pelvis_pos[k]) / dt_s);
+    let pelvis_acceleration_m_s2 = std::array::from_fn(|k| {
+        (pelvis_velocity_m_s[k] - previous_pelvis_velocity_m_s[k]) / dt_s
+    });
+    let (_, rot, _) = curr_global[pelvis_joint].to_scale_rotation_translation();
+    let rot = rot.normalize();
+    let pelvis_rotation_xyzw = [
+        f64::from(rot.x),
+        f64::from(rot.y),
+        f64::from(rot.z),
+        f64::from(rot.w),
+    ];
+
+    let mut thighs = [ThighCapsuleState {
+        hip_position_m: [0.0; 3],
+        knee_position_m: [0.0; 3],
+        hip_velocity_m_s: [0.0; 3],
+        knee_velocity_m_s: [0.0; 3],
+        radius_m: thigh_radius_m,
+    }; 2];
+    for side in 0..2 {
+        let [hip, knee, _] = feet.chains[side].joint_indices();
+        let prev_hip = to_f64_3(prev_global[hip].w_axis.truncate());
+        let curr_hip = to_f64_3(curr_global[hip].w_axis.truncate());
+        let prev_knee = to_f64_3(prev_global[knee].w_axis.truncate());
+        let curr_knee = to_f64_3(curr_global[knee].w_axis.truncate());
+        thighs[side] = ThighCapsuleState {
+            hip_position_m: curr_hip,
+            knee_position_m: curr_knee,
+            hip_velocity_m_s: std::array::from_fn(|k| (curr_hip[k] - prev_hip[k]) / dt_s),
+            knee_velocity_m_s: std::array::from_fn(|k| (curr_knee[k] - prev_knee[k]) / dt_s),
+            radius_m: thigh_radius_m,
+        };
+    }
+
+    Ok(CoupledPelvisThighFrame {
+        pelvis_position_m: curr_pelvis_pos,
+        pelvis_rotation_xyzw,
+        pelvis_velocity_m_s,
+        pelvis_acceleration_m_s2,
+        thighs,
+        phase,
+        regime,
+    })
+}
 
 /// Model-space ankle positions of both chains, for diagnostics and tests.
 ///
