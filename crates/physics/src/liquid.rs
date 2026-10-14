@@ -1014,6 +1014,9 @@ pub use surface_volume::{SurfaceVolumeControl, VolumeMatchedSurface};
 #[path = "liquid/adhesion.rs"]
 mod adhesion;
 pub use adhesion::WallAdhesion;
+#[path = "liquid/contact_angle.rs"]
+mod contact_angle;
+pub use contact_angle::{ContactAngleEstimate, WallFace};
 
 #[path = "liquid/phase.rs"]
 mod phase;
