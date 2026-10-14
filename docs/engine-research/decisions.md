@@ -287,3 +287,20 @@ or establish a whole-engine architecture review.
 ## Stride animation and skeleton publication
 
 The [pinned animation source review](mechanisms/stride-animation/review.md) examines render-hook clip advancement, instance evaluation scratch, mutable hierarchical world updates, and mesh-specific blend-matrix publication. Adapt explicit ordering and scratch ownership; retain Voxy fixed physical time, immutable checked rig identity, and one staged source pose for skin/contact/supports. These source paths do not establish physics/render clock equality, callback failure rollback, or GPU publication atomicity. Three source files plus MIT license are pinned and digest-verified; no code or secondary evaluator was imported.
+
+## Architectural synthesis: rig animation, GPU/CUDA parity, sopromat, destruction & coupled media
+
+Building on the 500-repository corpus (`corpus.tsv`, `taxonomy.md`, `report.md`) and the UE5/Stride3D/Unity3D/Godot capability audit (`../unity-godot-coverage.md`), Voxy adopts the following domain boundaries without importing OOP scene-graph coupling or black-box middleware state:
+
+1. **Production Rig Animation (`voxy_animation`)**:
+   - Arbitrary non-bone curves (morph weights, shader parameters, IK weights) are evaluated through `PropertyClip` and `PropertyTrackSet` (`property_track.rs`) alongside skeletal poses without polluting `Skeleton` joint arrays or mutating scene nodes during sampling.
+   - Locomotion speed adaptation separates cadence scaling from geometric stride-length scaling (`GaitRegime`, `scale_clip_stride_to_speed`, `GaitController::set_stride_and_cadence_scale` in `gait.rs`), keeping foot-locking IK analytically consistent across walk, jog, and run regimes.
+2. **Hardware Compute Parity (`voxy_gpu` & `voxy_cuda`)**:
+   - Every GPU-accelerated simulation and animation stage (`GpuPoseEvalProgram` / `CudaPoseEvaluator`, `GpuMediumProgram` / `CudaMediumSolver`, `GpuLiquidDensityProgram` / `CudaLiquidSolver`) shares an explicit, flat, column-compatible buffer ABI and is verified against the deterministic CPU reference oracle.
+3. **Continuum Sopromat (`physics::plasticity`)**:
+   - Isoparametric 10-node quadratic tetrahedra (`Tet10`, `QuadraticBody`, up to 2048 nodes) expose Gauss-point stress/strain quadrature (`quadrature_samples`) and satisfy analytical benchmarks for axial tension, Saint-Venant torsion, Euler–Bernoulli/Timoshenko cantilever bending, Navier linear bending stress fields, combined axial + bending superposition, L2 mesh refinement, Kirchhoff/Reissner–Mindlin square plate deflection, and von Mises return mapping (`../sopromat.md`).
+4. **Destruction, Crumbling & Multi-Phase Fluids (`physics::debris`, `physics::medium`, `physics::liquid`, `physics::surface_film`, `physics::biomechanics`)**:
+   - Rigid convex-hull debris (`step_debris_with_obstacles`) resolves ground, pairwise piece–piece, and axis-aligned voxel/box obstacle contacts (`DebrisBoxObstacle`), and impact crumbling (`crumble_debris_on_impact`) splits high-impulse pieces into sub-chunks and airborne dust while conserving exact mass and momentum (`../destruction.md`).
+   - Multi-liquid jets (`Material::WATER`, `OIL`, `GLYCERIN`, `BRINE`), impact spray (`ImpactSpray`), airborne mist absorption (`ParticipatingMedium::absorb_spray_droplets`), surface wetting (`SurfaceFilm`), sliding smearing (`advance_smear`), and film drying (`exchange_film_vapor`) operate with strict mass/momentum/energy conservation ledgers.
+   - Paired suspended testicular nonlinear FEM assemblies (`TesticularGaitSimulation`, `PelvisGaitKinematics`) couple 3D harmonic pelvis gait oscillations (walk/jog/run) with non-penetrating inter-testicular surface contact.
+

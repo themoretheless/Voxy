@@ -169,4 +169,110 @@ impl LabiaMinoraGeometry {
         };
         Ok([build(-1.)?, build(1.)?])
     }
+
+    /// Construct a coupled left/right labia minora viscoelastic fold simulation
+    /// whose basal perimeter roots are driven by 3D pelvis gait kinematics.
+    pub fn build_gait_simulation(
+        self,
+        material: SkinMaterial,
+    ) -> Result<LabiaMinoraGaitSimulation, &'static str> {
+        let folds = self.build(material)?;
+        let rest_roots = [
+            folds[0]
+                .root_nodes
+                .iter()
+                .map(|&i| (i, folds[0].skin.rest_positions()[i]))
+                .collect(),
+            folds[1]
+                .root_nodes
+                .iter()
+                .map(|&i| (i, folds[1].skin.rest_positions()[i]))
+                .collect(),
+        ];
+        Ok(LabiaMinoraGaitSimulation {
+            folds,
+            rest_roots,
+            time_s: 0.,
+        })
+    }
+}
+
+/// Coupled left and right labia minora viscoelastic collagenous folds driven by 3D pelvis gait motion,
+/// with optional triangle-cell [`crate::surface_film::SurfaceFilm`] wetting and lubrication.
+#[derive(Clone, Debug)]
+pub struct LabiaMinoraGaitSimulation {
+    pub folds: [TissueFold; 2],
+    rest_roots: [Vec<(usize, Point)>; 2],
+    time_s: f64,
+}
+
+impl LabiaMinoraGaitSimulation {
+    #[must_use]
+    pub fn time_s(&self) -> f64 {
+        self.time_s
+    }
+
+    /// Advances both left and right labia minora folds by `dt_s` under `kinematics`,
+    /// gravity, and barrier `contacts` (atomic on error).
+    pub fn step_gait(
+        &mut self,
+        kinematics: &crate::biomechanics::PelvisGaitKinematics,
+        dt_s: f64,
+        gravity: Point,
+        contacts: &super::ContactScene,
+        config: super::SolverConfig,
+    ) -> Result<[super::StepReport; 2], &'static str> {
+        kinematics.validate()?;
+        if !dt_s.is_finite() || dt_s <= 0. {
+            return Err("invalid labia minora gait timestep");
+        }
+        let next_time = self.time_s + dt_s;
+        let offset = kinematics.displacement_at(next_time)?;
+        let mut candidate = self.clone();
+        let mut reports = [super::StepReport::default(); 2];
+        for side in 0..2 {
+            for &(node, base) in &candidate.rest_roots[side] {
+                candidate.folds[side].skin.set_pin_target(
+                    node,
+                    [
+                        base[0] + offset[0],
+                        base[1] + offset[1],
+                        base[2] + offset[2],
+                    ],
+                )?;
+            }
+            let forces = vec![[0.; 3]; candidate.folds[side].skin.positions().len()];
+            reports[side] = candidate.folds[side].skin.step_with_contacts(
+                dt_s,
+                gravity,
+                &forces,
+                &[],
+                contacts,
+                config,
+            )?;
+        }
+        candidate.time_s = next_time;
+        *self = candidate;
+        Ok(reports)
+    }
+
+    /// Builds a triangle-cell [`crate::surface_film::SurfaceFilm`] on each deformed labia minora fold
+    /// for wetting, capillary flow, and sliding contact smearing (`advance_smear`).
+    pub fn build_surface_films(
+        &self,
+        material: crate::surface_film::Material,
+    ) -> Result<[crate::surface_film::SurfaceFilm; 2], &'static str> {
+        Ok([
+            crate::surface_film::SurfaceFilm::new(
+                self.folds[0].skin.positions(),
+                self.folds[0].skin.triangles().to_vec(),
+                material,
+            )?,
+            crate::surface_film::SurfaceFilm::new(
+                self.folds[1].skin.positions(),
+                self.folds[1].skin.triangles().to_vec(),
+                material,
+            )?,
+        ])
+    }
 }

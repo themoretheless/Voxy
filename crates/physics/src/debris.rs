@@ -3,7 +3,9 @@
 //! tracked explicitly so callers can audit each step.
 
 use crate::math::{add, cross, dot, norm, scale, sub};
-use crate::plasticity::mesh::DebrisPiece;
+use crate::plasticity::mesh::{DebrisPiece, DebrisRelease, convex_hull};
+use crate::suspension::Particle;
+use crate::wear::{FractureDustSettings, fracture_dust};
 
 type Vec3 = [f64; 3];
 type Mat3 = [[f64; 3]; 3];
@@ -14,6 +16,88 @@ pub struct DebrisGround {
     pub normal: Vec3,
     pub offset_m: f64,
     pub friction: f64,
+}
+
+/// Static axis-aligned box obstacle (e.g. a solid voxel or merged voxel column)
+/// against which debris convex hulls collide with inelastic impulses and friction.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DebrisBoxObstacle {
+    pub min_m: Vec3,
+    pub max_m: Vec3,
+    pub friction: f64,
+}
+
+impl DebrisBoxObstacle {
+    fn is_valid(&self) -> bool {
+        self.min_m.iter().all(|v| v.is_finite())
+            && self.max_m.iter().all(|v| v.is_finite())
+            && (0..3).all(|a| self.min_m[a] < self.max_m[a])
+            && self.friction.is_finite()
+            && self.friction >= 0.
+    }
+
+    fn vertices(&self) -> [Vec3; 8] {
+        let [x0, y0, z0] = self.min_m;
+        let [x1, y1, z1] = self.max_m;
+        [
+            [x0, y0, z0],
+            [x1, y0, z0],
+            [x1, y1, z0],
+            [x0, y1, z0],
+            [x0, y0, z1],
+            [x1, y0, z1],
+            [x1, y1, z1],
+            [x0, y1, z1],
+        ]
+    }
+}
+
+const BOX_FACES: [[usize; 3]; 12] = [
+    [0, 2, 1],
+    [0, 3, 2],
+    [4, 5, 6],
+    [4, 6, 7],
+    [0, 1, 5],
+    [0, 5, 4],
+    [2, 3, 7],
+    [2, 7, 6],
+    [0, 4, 7],
+    [0, 7, 3],
+    [1, 2, 6],
+    [1, 6, 5],
+];
+
+/// Settings for secondary impact comminution (crumbling of a debris body into
+/// smaller sub-pieces and airborne dust upon a hard impact).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CrumbleSettings {
+    /// Minimum dissipated impact energy (J) required to trigger crumbling.
+    pub min_impact_energy_j: f64,
+    /// Minimum mass (kg) of each resulting child fragment.
+    pub min_piece_mass_kg: f64,
+    /// Material density (kg/m³) of emitted dust grains.
+    pub density_kg_m3: f64,
+    /// Fresh fracture surface energy (J/m²).
+    pub surface_energy_j_m2: f64,
+    /// Fraction of impact energy spent creating fine dust grains in `[0, 1]`.
+    pub dust_energy_fraction: f64,
+    /// Nominal radius (m) of emitted dust grains.
+    pub grain_radius_m: f64,
+    /// Maximum fraction of parent piece mass converted to dust in `[0, 0.5]`.
+    pub max_dust_mass_fraction: f64,
+}
+
+/// Outcome of a secondary crumbling pass over a debris collection.
+#[derive(Clone, Debug, Default)]
+pub struct CrumbleReport {
+    /// Number of parent pieces that split into smaller sub-pieces.
+    pub crumbled_pieces: usize,
+    /// Airborne dust particles shed during crumbling.
+    pub particles: Vec<Particle>,
+    /// Total mass (kg) transferred from rigid pieces into `particles`.
+    pub dust_mass_kg: f64,
+    /// Total fracture surface energy (J) consumed creating `particles`.
+    pub surface_energy_j: f64,
 }
 
 /// Rigid state of one piece in the world frame.
@@ -113,8 +197,27 @@ pub fn step_debris(
     ground: &DebrisGround,
     ledger: &mut DebrisStepReport,
 ) -> Result<(), &'static str> {
+    step_debris_with_obstacles(bodies, dt, gravity, ground, &[], ledger)
+}
+
+/// Advances every body by `dt` under `gravity` against `ground`, static voxel/box
+/// `obstacles`, and all other debris hulls.
+///
+/// # Errors
+/// Nonfinite or negative `dt`, invalid ground/obstacle bounds, or numerical overflow.
+pub fn step_debris_with_obstacles(
+    bodies: &mut [DebrisBody],
+    dt: f64,
+    gravity: Vec3,
+    ground: &DebrisGround,
+    obstacles: &[DebrisBoxObstacle],
+    ledger: &mut DebrisStepReport,
+) -> Result<(), &'static str> {
     if !dt.is_finite() || dt < 0. || gravity.iter().any(|g| !g.is_finite()) {
         return Err("invalid debris step");
+    }
+    if obstacles.iter().any(|o| !o.is_valid()) {
+        return Err("invalid debris obstacle");
     }
     let n = norm(ground.normal);
     if !n.is_finite()
@@ -231,6 +334,53 @@ pub fn step_debris(
             body.position_m = add(body.position_m, scale(normal, depth));
             ledger.correction_j += body.piece.mass_kg * depth * -dot(gravity, normal);
         }
+
+        // Static voxel/box obstacles: resolve SAT overlap between the debris
+        // hull and each axis-aligned box obstacle.
+        for obs in obstacles {
+            let hull = body.world_hull();
+            let box_verts = obs.vertices();
+            let Some((point, obs_depth, obs_normal)) =
+                sat_contact(&hull, &body.piece.hull_faces, &box_verts, &BOX_FACES)
+            else {
+                continue;
+            };
+            contacts += 1;
+            let before = body.kinetic_j();
+            let r = sub(point, body.position_m);
+            let inv_i = body.inverse_inertia_world();
+            let generalized = |direction: Vec3| {
+                let rn = cross(r, direction);
+                1. / body.piece.mass_kg + dot(rn, mat_vec(inv_i, rn))
+            };
+            let vel = add(body.velocity_m_s, cross(body.angular_velocity_rad_s, r));
+            let vn = dot(vel, obs_normal);
+            let mut impulse = [0.; 3];
+            let mut normal_impulse = 0.;
+            if vn < 0. {
+                normal_impulse = -vn / generalized(obs_normal);
+                impulse = scale(obs_normal, normal_impulse);
+            }
+            let tangential = sub(vel, scale(obs_normal, vn));
+            let speed = norm(tangential);
+            if speed > 0. && normal_impulse > 0. {
+                let direction = scale(tangential, 1. / speed);
+                let stopping = speed / generalized(direction);
+                impulse = sub(
+                    impulse,
+                    scale(direction, stopping.min(obs.friction * normal_impulse)),
+                );
+            }
+            body.velocity_m_s = add(body.velocity_m_s, scale(impulse, 1. / body.piece.mass_kg));
+            body.angular_velocity_rad_s = add(
+                body.angular_velocity_rad_s,
+                mat_vec(inv_i, cross(r, impulse)),
+            );
+            ledger.dissipated_j += before - body.kinetic_j();
+            let push = scale(obs_normal, obs_depth);
+            body.position_m = add(body.position_m, push);
+            ledger.correction_j += body.piece.mass_kg * -dot(gravity, push);
+        }
     }
     let pair_contacts_before = ledger.contacts;
     ledger.contacts = 0;
@@ -255,6 +405,157 @@ pub fn step_debris(
     ledger.potential_j = potential;
     ledger.contacts = contacts;
     Ok(())
+}
+
+/// Secondary comminution (crumbling): splits eligible `DebrisBody` pieces into
+/// smaller sub-pieces along their longest local axis and converts a fraction of
+/// `impact_energy_j` into airborne dust grains (`Particle`), conserving total
+/// mass and linear momentum.
+///
+/// # Errors
+/// Rejects invalid [`CrumbleSettings`] or nonfinite `impact_energy_j`.
+pub fn crumble_debris_on_impact(
+    bodies: &mut Vec<DebrisBody>,
+    impact_energy_j: f64,
+    settings: CrumbleSettings,
+) -> Result<CrumbleReport, &'static str> {
+    if !impact_energy_j.is_finite()
+        || impact_energy_j < 0.
+        || !settings.min_impact_energy_j.is_finite()
+        || settings.min_impact_energy_j <= 0.
+        || !settings.min_piece_mass_kg.is_finite()
+        || settings.min_piece_mass_kg <= 0.
+        || !settings.density_kg_m3.is_finite()
+        || settings.density_kg_m3 <= 0.
+        || !settings.surface_energy_j_m2.is_finite()
+        || settings.surface_energy_j_m2 <= 0.
+        || !settings.dust_energy_fraction.is_finite()
+        || !(0. ..=1.).contains(&settings.dust_energy_fraction)
+        || !settings.grain_radius_m.is_finite()
+        || settings.grain_radius_m <= 0.
+        || !settings.max_dust_mass_fraction.is_finite()
+        || !(0. ..=0.5).contains(&settings.max_dust_mass_fraction)
+    {
+        return Err("invalid crumble settings");
+    }
+    if impact_energy_j < settings.min_impact_energy_j || bodies.is_empty() {
+        return Ok(CrumbleReport::default());
+    }
+
+    let mut report = CrumbleReport::default();
+    let mut next_bodies = Vec::with_capacity(bodies.len() * 2);
+    let per_body_energy = impact_energy_j / bodies.len() as f64;
+
+    for body in bodies.drain(..) {
+        if body.piece.mass_kg < 2.0 * settings.min_piece_mass_kg || body.piece.hull.len() < 4 {
+            next_bodies.push(body);
+            continue;
+        }
+        let world_hull = body.world_hull();
+        let mut world_piece = body.piece.clone();
+        world_piece.hull = world_hull.clone();
+        world_piece.center_m = body.position_m;
+        world_piece.velocity_m_s = body.velocity_m_s;
+        let single_release = DebrisRelease {
+            pieces: vec![world_piece],
+            retained_nodes: Vec::new(),
+            kinetic_j: body.kinetic_j(),
+            deformation_kinetic_j: 0.,
+            surface_created_m2: 0.,
+        };
+        let dust = fracture_dust(
+            &single_release,
+            FractureDustSettings {
+                density_kg_m3: settings.density_kg_m3,
+                surface_energy_j_m2: settings.surface_energy_j_m2,
+                energy_fraction: 0.,
+                extra_energy_j: settings.dust_energy_fraction * per_body_energy,
+                grain_radius_m: settings.grain_radius_m,
+                max_mass_fraction: settings.max_dust_mass_fraction,
+            },
+        )?;
+
+        let remaining_mass = body.piece.mass_kg - dust.mass_kg;
+        if remaining_mass < 2.0 * settings.min_piece_mass_kg {
+            next_bodies.push(body);
+            continue;
+        }
+
+        let mut lo = [f64::INFINITY; 3];
+        let mut hi = [f64::NEG_INFINITY; 3];
+        for &p in &world_hull {
+            for a in 0..3 {
+                lo[a] = lo[a].min(p[a]);
+                hi[a] = hi[a].max(p[a]);
+            }
+        }
+        let extents = [hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]];
+        let split_axis = if extents[0] >= extents[1] && extents[0] >= extents[2] {
+            0
+        } else if extents[1] >= extents[2] {
+            1
+        } else {
+            2
+        };
+        let mid = 0.5 * (lo[split_axis] + hi[split_axis]);
+        let child_mass = 0.5 * remaining_mass;
+        let child_inertia = body
+            .piece
+            .inertia_kg_m2
+            .map(|row| row.map(|v| 0.25 * v * (remaining_mass / body.piece.mass_kg)));
+
+        let build_half = |upper: bool| -> Result<DebrisBody, &'static str> {
+            let mut h_lo = lo;
+            let mut h_hi = hi;
+            if upper {
+                h_lo[split_axis] = mid;
+            } else {
+                h_hi[split_axis] = mid;
+            }
+            let center = [
+                0.5 * (h_lo[0] + h_hi[0]),
+                0.5 * (h_lo[1] + h_hi[1]),
+                0.5 * (h_lo[2] + h_hi[2]),
+            ];
+            let mut pts = Vec::with_capacity(8);
+            for &x in &[h_lo[0], h_hi[0]] {
+                for &y in &[h_lo[1], h_hi[1]] {
+                    for &z in &[h_lo[2], h_hi[2]] {
+                        pts.push([x, y, z]);
+                    }
+                }
+            }
+            let (hull, hull_faces) = convex_hull(&pts)?;
+            let mut vel = body.velocity_m_s;
+            let sign = if upper { 1.0 } else { -1.0 };
+            vel[split_axis] += sign * 0.05;
+            let piece = DebrisPiece {
+                nodes: Vec::new(),
+                hull,
+                hull_faces,
+                mass_kg: child_mass,
+                inertia_kg_m2: child_inertia,
+                center_m: center,
+                velocity_m_s: vel,
+                angular_velocity_rad_s: body.angular_velocity_rad_s,
+                kinetic_j: 0.5 * child_mass * dot(vel, vel),
+                deformation_kinetic_j: 0.,
+            };
+            DebrisBody::new(piece)
+        };
+
+        let left = build_half(false)?;
+        let right = build_half(true)?;
+        next_bodies.push(left);
+        next_bodies.push(right);
+        report.crumbled_pieces += 1;
+        report.dust_mass_kg += dust.mass_kg;
+        report.surface_energy_j += dust.surface_energy_j;
+        report.particles.extend(dust.particles);
+    }
+
+    *bodies = next_bodies;
+    Ok(report)
 }
 
 /// Voxel/world contact settings for [`step_debris_in_world`].
