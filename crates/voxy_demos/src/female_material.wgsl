@@ -298,6 +298,59 @@ fn filtered_microheight(uv:vec2<f32>,dx:vec2<f32>,dy:vec2<f32>)->f32 {
         let diffuse=0.2+0.6*max(dot(normal,light),0.0)+0.2*max(dot(normal,fill),0.0);
         return vec4<f32>(in.color.rgb*diffuse+vec3<f32>(oral_area_highlight(normal,view,light,0.38)*visibility),1.0);
     }
+    if in.uv.x <= -1.035 && in.uv.x >= -1.145 {
+        let u_param=clamp((-in.uv.x-1.04)*10.0,0.0,1.0);
+        let patch_blend=smoothstep(0.0,0.085,u_param);
+        let wetness=clamp((u_param-0.08)/0.92,0.0,1.0);
+        let roughness=clamp(in.uv.y,0.13,0.65);
+        // Sub-millimetre mucosal/epidermal micro-relief filtered by pixel footprint.
+        let footprint=max(length(point_dx),length(point_dy));
+        let micro_resolved=(1.0-smoothstep(0.0004,0.0018,footprint))*patch_blend;
+        if micro_resolved>0.0 {
+            let dir_a=normalize(vec3<f32>(0.78,0.22,0.58));
+            let dir_b=normalize(vec3<f32>(-0.54,0.31,0.78));
+            let freq=3200.0;
+            let slope=0.000014*freq*micro_resolved*(
+                cos(dot(in.point,dir_a)*freq+1.1)*dir_a
+                +0.7*cos(dot(in.point,dir_b)*(freq*1.4)+2.3)*dir_b
+            );
+            let r1=cross(point_dy,normal);
+            let r2=cross(normal,point_dx);
+            let det=dot(point_dx,r1);
+            let inv_det=sign(det)/max(abs(det),1e-12);
+            normal=normalize(normal-(dot(slope,point_dx)*r1+dot(slope,point_dy)*r2)*inv_det);
+        }
+        let light=normalize(vec3<f32>(-0.5,0.7,1.0));
+        let fill=normalize(vec3<f32>(0.8,0.2,0.5));
+        let skin_orig=0.2+0.6*max(dot(normal,light),0.0)+0.2*max(dot(normal,fill),0.0);
+        let skin_wrap=vec3<f32>(0.35,0.18,0.08);
+        let skin_kd=max((vec3<f32>(dot(normal,light))+skin_wrap)/(vec3<f32>(1.0)+skin_wrap),vec3<f32>(0.0))/(vec3<f32>(1.0)+skin_wrap);
+        let skin_fd=max((vec3<f32>(dot(normal,fill))+skin_wrap)/(vec3<f32>(1.0)+skin_wrap),vec3<f32>(0.0))/(vec3<f32>(1.0)+skin_wrap);
+        let skin_diff=vec3<f32>(0.2)+0.6*skin_kd+0.2*skin_fd;
+        let skin_spec=0.8*ggx(normal,view,light,0.48)+0.25*ggx(normal,view,fill,0.48);
+        let base_skin_shaded=in.color.rgb*max(skin_diff/max(skin_orig,0.2),vec3<f32>(1.10,1.05,1.02))+vec3<f32>(1.0,0.96,0.92)*skin_spec;
+
+        // Directional perineal key & rim lights to accentuate 3D folds, corona, sphincters, and rugae:
+        let key_perineal=normalize(vec3<f32>(0.28,-0.78,0.56));
+        let rim_perineal=normalize(vec3<f32>(-0.32,-0.72,-0.62));
+        let wrap=mix(vec3<f32>(0.28,0.14,0.07),vec3<f32>(0.46,0.20,0.11),wetness);
+        let kp_d=max((vec3<f32>(dot(normal,key_perineal))+wrap)/(vec3<f32>(1.0)+wrap),vec3<f32>(0.0))/(vec3<f32>(1.0)+wrap);
+        let rp_d=max((vec3<f32>(dot(normal,rim_perineal))+wrap)/(vec3<f32>(1.0)+wrap),vec3<f32>(0.0))/(vec3<f32>(1.0)+wrap);
+        let lateral_contrast=0.82+0.28*max(dot(normal,key_perineal),0.0)+0.18*max(dot(normal,rim_perineal),0.0);
+        let irradiance=(vec3<f32>(0.18)+0.46*skin_kd+0.18*skin_fd+0.34*kp_d+0.24*rp_d)*lateral_contrast;
+        let sss_glow=vec3<f32>(0.13,0.020,0.030)*wetness*pow(clamp(1.0-abs(dot(normal,view)),0.0,1.0),1.8);
+        let f0=mix(0.028,0.046,wetness);
+        let wet_rough=max(0.095,roughness*0.45);
+        let view_light=normalize(view+vec3<f32>(0.14,0.18,0.16));
+        let spec_primary=0.65*ggx_f0(normal,view,light,roughness,f0)
+            +0.55*ggx_f0(normal,view,key_perineal,roughness,f0)
+            +0.40*ggx_f0(normal,view,rim_perineal,roughness,f0);
+        let spec_mucus=wetness*(0.52*ggx_f0(normal,view,key_perineal,wet_rough,0.046)
+            +0.38*ggx_f0(normal,view,rim_perineal,wet_rough,0.046)
+            +0.38*ggx_f0(normal,view,view_light,wet_rough,0.046));
+        let pelvic_shaded=in.color.rgb*irradiance+sss_glow+vec3<f32>(1.0,0.95,0.93)*(spec_primary+spec_mucus);
+        return vec4<f32>(mix(base_skin_shaded,pelvic_shaded,patch_blend),1.0);
+    }
     if in.uv.x < -0.5 {
         let light=normalize(vec3<f32>(-0.5,0.7,1.0));
         let roughness=clamp(in.uv.y,0.15,0.9);

@@ -32,6 +32,7 @@ pub mod female_face;
 pub mod female_features;
 pub mod female_hair;
 pub mod female_lids;
+pub mod female_pelvic;
 pub mod female_rig;
 pub mod female_transmission;
 pub mod film_settings;

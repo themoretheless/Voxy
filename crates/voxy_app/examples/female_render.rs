@@ -247,6 +247,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "inner" => Vec3::new(-0.08, 0.01, 0.025),
         _ => return Err("--foot-view must be top, sole, outer or inner".into()),
     };
+    let pelvic_detail = arguments.iter().any(|a| a == "--pelvic-detail");
+    let pelvic_view = option_path("--pelvic-view")?;
+    if pelvic_view.is_some() && !pelvic_detail {
+        return Err("--pelvic-view requires --pelvic-detail".into());
+    }
     let feet = foot_detail || arguments.iter().any(|a| a == "--feet");
     if hands && feet {
         return Err("choose either --hands or --feet".into());
@@ -827,6 +832,86 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             transform.update(&queue, hand_camera.view_projection()?)?;
             transform.update_view_position(&queue, hand_camera.eye)?;
+        } else if pelvic_detail {
+            let pelvic_verts: Vec<Vec3> = mesh
+                .vertices()
+                .iter()
+                .filter(|v| (-1.145..=-1.035).contains(&v.uv[0]))
+                .map(|v| Vec3::from_array(v.position))
+                .collect();
+            if pelvic_verts.is_empty() {
+                return Err("no pelvic anatomy vertices found on model".into());
+            }
+            let row_stride = 129usize;
+            let region_center = |iv_range: std::ops::RangeInclusive<usize>| -> Vec3 {
+                let mut sum = Vec3::ZERO;
+                let mut count = 0usize;
+                for iv in iv_range {
+                    for iu in 40..=88 {
+                        if let Some(&p) = pelvic_verts.get(iv * row_stride + iu) {
+                            sum += p;
+                            count += 1;
+                        }
+                    }
+                }
+                if count > 0 {
+                    sum / count as f32
+                } else {
+                    pelvic_verts.iter().copied().sum::<Vec3>() / pelvic_verts.len() as f32
+                }
+            };
+            let perineum_center = region_center(20..=176);
+            let vulva_center = region_center(94..=168);
+            let anal_center = region_center(14..=56);
+            let (eye, target, up, fov_deg) = match pelvic_view.unwrap_or("perineum") {
+                "perineum" => (
+                    perineum_center + Vec3::new(0.002, -0.096, 0.002),
+                    perineum_center,
+                    Vec3::Z,
+                    48_f32,
+                ),
+                "vulva" => (
+                    vulva_center + Vec3::new(0.002, -0.064, 0.002),
+                    vulva_center,
+                    Vec3::Z,
+                    42_f32,
+                ),
+                "anal" => (
+                    anal_center + Vec3::new(0.002, -0.052, -0.004),
+                    anal_center,
+                    Vec3::Z,
+                    38_f32,
+                ),
+                "jump-low" => (
+                    perineum_center + Vec3::new(0.16, -0.28, 0.30),
+                    perineum_center + Vec3::new(0.0, -0.02, 0.0),
+                    Vec3::Y,
+                    46_f32,
+                ),
+                _ => {
+                    return Err(
+                        "--pelvic-view must be perineum, vulva, anal, or jump-low".into(),
+                    );
+                }
+            };
+            let pelvic_camera = SceneCamera {
+                eye,
+                target,
+                up,
+                projection: SceneProjection::Perspective {
+                    vertical_fov: fov_deg.to_radians(),
+                    aspect: 0.75,
+                    near: 0.003,
+                    far: 10.,
+                },
+            };
+            println!(
+                "PELVIC CAMERA ({}): {} vertices, target {target:?}, eye {eye:?}",
+                pelvic_view.unwrap_or("perineum"),
+                pelvic_verts.len(),
+            );
+            transform.update(&queue, pelvic_camera.view_projection()?)?;
+            transform.update_view_position(&queue, pelvic_camera.eye)?;
         }
         let mesh = if opaque_scene.is_some() {
             if let Some((opaque, wet)) =
