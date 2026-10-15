@@ -3,6 +3,7 @@
 mod controls;
 mod aa_validation;
 mod day_cycle;
+mod panel;
 mod original;
 mod materials;
 mod scene;
@@ -71,6 +72,8 @@ struct App {
     weather: voxy_render::weather::Weather,
     weather_start: Instant,
     day_cycle: Option<day_cycle::DayCycle>,
+    panel: Option<panel::Panel>,
+    daylight_ev: Option<f32>,
     sun_elevation: Option<f32>,
     wetness: Option<f32>,
     pitch: Option<f32>,
@@ -126,6 +129,8 @@ impl App {
             },
             weather_start: Instant::now(),
             day_cycle: None,
+            panel: None,
+            daylight_ev: None,
             sun_elevation: value("--sun-elevation").and_then(|v| v.parse().ok()),
             wetness: value("--wetness").and_then(|v| v.parse().ok()),
             pitch: value("--pitch").and_then(|v| v.parse().ok()),
@@ -415,6 +420,10 @@ impl App {
         } else {
             None
         };
+        if self.benchmark == 0. && self.snapshot.is_none() && self.aa_validation.is_none() {
+            self.panel = Some(panel::Panel::new(&window, &device, config.format));
+        }
+        self.daylight_ev = Some(renderer.exposure_ev100());
         self.gpu = Some(Gpu {
             surface,
             adapter,
@@ -574,6 +583,14 @@ impl App {
             .as_ref()
             .map_or_else(|| gpu.offscreen.as_ref().unwrap(), |f| &f.texture);
         if self.aa_validation.is_some() && self.frames==128 {gpu.renderer.reset_temporal_history();}
+        if let Some(wet) = self.wetness {
+            gpu.renderer.set_surface_wetness(Some(wet.clamp(0., 1.)))?;
+        } else if self.day_cycle.is_none() {
+            gpu.renderer.set_surface_wetness(None)?;
+        }
+        if self.day_cycle.is_none() && self.daylight_ev.is_some_and(|ev| (gpu.renderer.exposure_ev100() - ev).abs() > 0.01) {
+            gpu.renderer.set_exposure_ev100(self.daylight_ev.unwrap())?;
+        }
         if let Some(cycle) = &mut self.day_cycle {
             let frozen = self.aa_validation.is_some() || self.benchmark > 0. || self.snapshot.is_some();
             cycle.update(&mut gpu.renderer, &mut self.weather, elapsed, frozen, self.wetness.is_some())?;
@@ -652,6 +669,14 @@ impl App {
                 eprintln!("STREET snapshot {}", path.display());
             }
         }
+        if let (Some(panel), Some(window)) = (self.panel.as_mut(), self.window.as_ref()) {
+            panel.draw(window, &gpu.device, &gpu.queue, &output_view, [gpu.config.width, gpu.config.height], panel::Settings {
+                cycle: &mut self.day_cycle,
+                weather: &mut self.weather,
+                wetness: &mut self.wetness,
+                seed: self.original_seed,
+            });
+        }
         if let Some(frame) = frame {
             gpu.queue.present(frame);
         }
@@ -706,7 +731,7 @@ impl App {
             let mut times = self.durations.clone();
             times.sort_by(f64::total_cmp);
             let n = times.len();
-            let report = serde_json::json!({"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":self.offscreen_benchmark||self.skipped_acquires==0,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
+            let report = serde_json::json!({"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":self.offscreen_benchmark||self.skipped_acquires==0,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
             std::fs::write(
                 "/tmp/voxy-street-benchmark.json",
                 serde_json::to_vec_pretty(&report)?,
@@ -866,6 +891,21 @@ impl ApplicationHandler for App {
                 WindowEvent::KeyboardInput { event, .. } if event.physical_key == PhysicalKey::Code(KeyCode::Escape) => { el.exit(); return; }
                 WindowEvent::KeyboardInput { .. } | WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. } => return,
                 _ => {}
+            }
+        }
+        if let WindowEvent::KeyboardInput { event: key, .. } = &event {
+            if key.physical_key == PhysicalKey::Code(KeyCode::F1) && key.state == ElementState::Pressed && !key.repeat {
+                if let Some(panel) = self.panel.as_mut() {panel.visible = !panel.visible;}
+                return;
+            }
+        }
+        if !self.captured {
+            if let (Some(panel), Some(window)) = (self.panel.as_mut(), self.window.as_ref()) {
+                let consumed = panel.on_event(window, &event);
+                let over = panel.wants_pointer() && matches!(event, WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. });
+                if consumed || over {
+                    return;
+                }
             }
         }
         match event {

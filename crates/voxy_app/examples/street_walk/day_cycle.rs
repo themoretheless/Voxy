@@ -22,6 +22,23 @@ pub struct DayCycle {
     reported: f64,
 }
 impl DayCycle {
+    pub fn new(seed: u64) -> Self {
+        Self {
+            calendar: Calendar::new(Season::Summer.middle_day(), 9.),
+            time_scale: 1. / 30.,
+            paused: false,
+            auto_weather: true,
+            schedule: WeatherSchedule { seed },
+            wetness: 0.,
+            base_ev: None,
+            applied: None,
+            reported: f64::NEG_INFINITY,
+        }
+    }
+    /// Base daylight exposure, restored when the cycle is switched off.
+    pub fn base_ev(&self) -> Option<f32> {
+        self.base_ev
+    }
     pub fn from_args(value: impl Fn(&str) -> Option<String>, seed: u64, weather_given: bool) -> Option<Self> {
         let number = |name: &str| value(name).and_then(|v| v.parse::<f64>().ok()).filter(|v| v.is_finite());
         let season = value("--season").and_then(|s| match s.as_str() {

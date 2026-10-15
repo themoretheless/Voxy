@@ -100,7 +100,10 @@ impl Builder {
         self.mesh(material, vertices, indices)
     }
     fn bevel_cube(&mut self, material: usize) -> usize {
-        let e = 0.42;
+        self.bevel_cube_e(material, 0.42)
+    }
+    /// Bevelled unit cube; a smaller `e` gives a rounder, more worn edge.
+    fn bevel_cube_e(&mut self, material: usize, e: f32) -> usize {
         let axes = [Vec3::X, Vec3::Y, Vec3::Z];
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
@@ -941,7 +944,6 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
         rng: seed,
         lights: Vec::new(),
     };
-    let stone_m = b.material([0.32, 0.29, 0.24], 0.82, 0., 1., 0., 0.);
     let curb_m = b.material([0.34, 0.33, 0.30], 0.76, 0., 1., 0., 0.);
     let dark_m = b.material([0.035, 0.045, 0.052], 0.35, 0.85, 5., 0., 0.);
     let wood_m = b.material([0.19, 0.075, 0.025], 0.65, 0., 4., 0., 0.);
@@ -950,7 +952,6 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let glass_m = b.material([0.9, 0.97, 1.], 0.08, 0., 0., 0., 0.92);
     let warm_m = b.material([1., 0.57, 0.2], 0.4, 0., 0., 4200., 0.);
     let leaf_m = b.material([0.045, 0.125, 0.018], 0.72, 0., 6., 0., 0.);
-    let stone = b.bevel_cube(stone_m);
     let curb = b.bevel_cube(curb_m);
     let metal = b.cube(dark_m);
     let timber = b.cube(wood_m);
@@ -1061,33 +1062,172 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
         books,
     };
     // The individual paving stones and kerbs are actual geometry and collision faces.
-    b.block(stone, [0., -0.065, 27.], [28., 0.2, 112.]);
+    // A century of traffic: stones differ in tone and wear, wheel tracks are polished
+    // and rounded, some stones have sunk, cracked or gone, and a few patches were
+    // relaid with newer, paler and sharper setts.
+    let grout_m = b.material([0.12, 0.11, 0.095], 0.95, 0., 1., 0., 0.);
+    let grout = b.cube(grout_m);
+    b.block(grout, [0., -0.065, 27.], [28., 0.2, 112.]);
+    let stone_tones = [
+        [0.32, 0.29, 0.24],
+        [0.27, 0.26, 0.25],
+        [0.36, 0.32, 0.26],
+        [0.23, 0.21, 0.19],
+        [0.34, 0.27, 0.23],
+        [0.29, 0.28, 0.27],
+        [0.4, 0.37, 0.32],
+    ];
+    // [tone][wear]: wear 0 is crisp, 2 is rounded and polished by wheels.
+    let old_stones: Vec<[usize; 3]> = stone_tones
+        .iter()
+        .map(|&c| {
+            std::array::from_fn(|wear| {
+                let rough = [0.86, 0.78, 0.62][wear];
+                let m = b.material(c, rough, 0., 1., 0., 0.);
+                b.bevel_cube_e(m, [0.42, 0.36, 0.3][wear])
+            })
+        })
+        .collect();
+    let new_stones: Vec<usize> = [[0.46, 0.44, 0.41], [0.43, 0.42, 0.4], [0.5, 0.47, 0.43]]
+        .into_iter()
+        .map(|c| {
+            let m = b.material(c, 0.88, 0., 1., 0., 0.);
+            b.bevel_cube_e(m, 0.45)
+        })
+        .collect();
+    let patch_hash = |a: i32, c: i32| {
+        let mut h = (a as u32).wrapping_mul(0x9e37_79b1) ^ (c as u32).wrapping_mul(0x85eb_ca6b);
+        h ^= h >> 15;
+        h = h.wrapping_mul(0x2c1b_3c6d);
+        h ^= h >> 12;
+        (h & 0xffff) as f32 / 65536.
+    };
     for row in 0..360 {
         let z = -27. + row as f32 * 0.3;
         for col in 0..30 {
             let x = -4.35 + col as f32 * 0.3 + if row % 2 == 0 { 0.07 } else { 0. };
-            let height = 0.075 + b.random() * 0.009;
-            let jitter_x = (b.random() - 0.5) * 0.003;
-            let jitter_z = (b.random() - 0.5) * 0.003;
-            let yaw = (b.random() - 0.5) * 0.025;
-            let width = 0.281 + b.random() * 0.008;
-            let length = 0.278 + b.random() * 0.009;
-            b.put(
-                stone,
-                Vec3::new(x + jitter_x, height * 0.5 - 0.03, z + jitter_z),
-                Vec3::new(width, height, length),
-                Quat::from_rotation_y(yaw),
-            );
+            let relaid = patch_hash(row / 9, col / 5) < 0.09;
+            // Wheel tracks sit about 1.4 m either side of the crown.
+            let track = (1. - ((x.abs() - 1.4).abs() / 0.55)).clamp(0., 1.);
+            let roll = b.random();
+            if !relaid && roll < 0.018 {
+                continue; // a stone that has gone, leaving a pit in the bedding
+            }
+            let mesh = if relaid {
+                new_stones[(b.random() * new_stones.len() as f32) as usize]
+            } else {
+                let tone = (b.random() * stone_tones.len() as f32) as usize;
+                let wear = if b.random() < track * 0.9 { 2 } else if b.random() < 0.45 { 1 } else { 0 };
+                old_stones[tone][wear]
+            };
+            let disorder = if relaid { 0.3 } else { 1. };
+            let sunk = if !relaid && roll < 0.08 { 0.008 + b.random() * 0.016 } else { 0. };
+            let height = 0.075 + b.random() * 0.012 * disorder - sunk;
+            let jitter_x = (b.random() - 0.5) * 0.008 * disorder;
+            let jitter_z = (b.random() - 0.5) * 0.008 * disorder;
+            let yaw = (b.random() - 0.5) * 0.06 * disorder;
+            let tilt = if sunk > 0. { 0.05 } else { 0.018 } * disorder;
+            let pitch = (b.random() - 0.5) * tilt;
+            let bank = (b.random() - 0.5) * tilt;
+            let width = 0.262 + b.random() * 0.022;
+            let length = 0.258 + b.random() * 0.024;
+            let rotation = Quat::from_euler(glam::EulerRot::YXZ, yaw, pitch, bank);
+            let centre = Vec3::new(x + jitter_x, height * 0.5 - 0.03, z + jitter_z);
+            if !relaid && roll > 0.955 {
+                // Cracked through: two pieces, one settled lower than the other.
+                let along_x = b.random() < 0.5;
+                let cut = 0.35 + b.random() * 0.3;
+                for (part, f) in [(0, cut), (1, 1. - cut)] {
+                    let span = if along_x { width } else { length };
+                    let piece = span * f - 0.006;
+                    let offset = if part == 0 { -span * 0.5 + piece * 0.5 } else { span * 0.5 - piece * 0.5 };
+                    let drop = if part == 1 { 0.004 + b.random() * 0.01 } else { 0. };
+                    let local = if along_x { Vec3::new(offset, -drop * 0.5, 0.) } else { Vec3::new(0., -drop * 0.5, offset) };
+                    let size = if along_x {
+                        Vec3::new(piece, height - drop, length)
+                    } else {
+                        Vec3::new(width, height - drop, piece)
+                    };
+                    let crack_tilt = Quat::from_rotation_z((b.random() - 0.5) * 0.04);
+                    b.put(mesh, centre + rotation * local, size, rotation * crack_tilt);
+                }
+                continue;
+            }
+            b.put(mesh, centre, Vec3::new(width, height, length), rotation);
         }
     }
+    let kerb_tones: Vec<[usize; 2]> = [[0.7, 0.66, 0.54], [0.58, 0.56, 0.5], [0.64, 0.6, 0.52], [0.5, 0.48, 0.44]]
+        .into_iter()
+        .map(|c| {
+            let m = b.material(c, 0.74, 0., 1., 0., 0.);
+            [b.bevel_cube_e(m, 0.42), b.bevel_cube_e(m, 0.34)]
+        })
+        .collect();
+    // Sidewalk ageing: tar repairs, stains and cracks lie proud of the slab by a few
+    // millimetres so no face is coplanar with it.
+    let tar_m = b.material([0.045, 0.045, 0.048], 0.6, 0., 1., 0., 0.);
+    let tar = b.cube(tar_m);
+    let stain_ms: Vec<usize> = [[0.24, 0.23, 0.21], [0.29, 0.28, 0.25], [0.38, 0.37, 0.34]]
+        .into_iter()
+        .map(|c| {
+            let m = b.material(c, 0.85, 0., 1., 0., 0.);
+            b.cube(m)
+        })
+        .collect();
+    let crack_m = b.material([0.06, 0.055, 0.05], 0.95, 0., 0., 0., 0.);
+    let crack = b.cube(crack_m);
     for side in [-1., 1.] {
         b.block(curb, [side * 6.68, 0.07, 27.], [4.36, 0.2, 112.]);
         for i in 0..180 {
-            b.block(
-                trim,
-                [side * 4.55, 0.12, -27. + i as f32 * 0.62],
-                [0.22, 0.25, 0.6],
+            let kz = -27. + i as f32 * 0.62;
+            let tone = &kerb_tones[(b.random() * kerb_tones.len() as f32) as usize];
+            let chipped = b.random() < 0.3;
+            let mesh = tone[chipped as usize];
+            let drop = if b.random() < 0.12 { 0.01 + b.random() * 0.025 } else { b.random() * 0.006 };
+            let len = 0.575 + b.random() * 0.02;
+            let lean = Quat::from_euler(
+                glam::EulerRot::YXZ,
+                (b.random() - 0.5) * 0.02,
+                (b.random() - 0.5) * 0.02,
+                side * b.random() * 0.03,
             );
+            b.put(
+                mesh,
+                Vec3::new(side * 4.55, 0.12 - drop * 0.5, kz),
+                Vec3::new(0.22, 0.25 - drop, len),
+                lean,
+            );
+        }
+        for _ in 0..34 {
+            let z = -26. + b.random() * 108.;
+            let x = side * (4.95 + b.random() * 1.9);
+            let w = (0.25 + b.random() * 1.1).min(0.9);
+            let l = 0.25 + b.random() * 1.6;
+            let mesh = if b.random() < 0.35 { tar } else { stain_ms[(b.random() * stain_ms.len() as f32) as usize] };
+            let yaw = Quat::from_rotation_y((b.random() - 0.5) * 0.5);
+            let lift = 0.003 + b.random() * 0.003;
+            b.put(mesh, Vec3::new(x, 0.165 + lift * 0.5, z), Vec3::new(w, 0.01 + lift, l), yaw);
+        }
+        for _ in 0..60 {
+            // Meandering cracks built from short, slightly turning segments.
+            let mut p = Vec3::new(side * (4.8 + b.random() * 2.3), 0.174, -26. + b.random() * 108.);
+            let mut heading = b.random() * std::f32::consts::TAU;
+            for _ in 0..3 + (b.random() * 6.) as usize {
+                heading += (b.random() - 0.5) * 1.1;
+                let seg = 0.08 + b.random() * 0.22;
+                let dir = Vec3::new(heading.cos(), 0., heading.sin());
+                let next = p + dir * seg;
+                if next.x.abs() < 4.72 || next.x.abs() > 7.2 {
+                    break;
+                }
+                b.put(
+                    crack,
+                    (p + next) * 0.5,
+                    Vec3::new(0.006 + b.random() * 0.006, 0.006, seg + 0.006),
+                    Quat::from_rotation_y(dir.x.atan2(dir.z)),
+                );
+                p = next;
+            }
         }
         let mut frontage = -25.;
         for house in 0..12 {
@@ -1118,6 +1258,9 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             let house_material =
                 b.material(colour.map(|v| v * tint), 0.88, 0., facade_pattern, 0., 0.);
             let wall = b.cube(house_material);
+            let grime_material =
+                b.material(colour.map(|v| v * tint * 0.58), 0.93, 0., facade_pattern, 0., 0.);
+            let grime = b.cube(grime_material);
             b.block(wall, [side * 14.45, height * 0.5, z], [0.2, height, 7.85]);
             for dz in [-3.925, 3.925] {
                 b.block(wall, [side * 11., height * 0.5, z + dz], [7., height, 0.2]);
@@ -1151,6 +1294,15 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                         b.block(wall, [side * 7.42, f + 0.45, wz], [0.28, 0.9, opening]);
                     }
                     b.block(wall, [side * 7.42, f + 2.475, wz], [0.28, 0.35, opening]);
+                    // Rain washes dirt off the sill into darker streaks below it.
+                    if level > 0 || house % 3 == 0 || window != door_bay {
+                        for _ in 0..1 + (b.random() * 3.) as usize {
+                            let run = 0.25 + b.random() * 0.65;
+                            let sz = wz + (b.random() - 0.5) * opening * 0.9;
+                            let sw = 0.03 + b.random() * 0.09;
+                            b.block(grime, [side * 7.277, f + 0.9 - run * 0.5, sz], [0.006, run, sw]);
+                        }
+                    }
                 }
             }
             if height > top {

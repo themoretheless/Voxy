@@ -85,8 +85,14 @@ pub struct BodycamRig {
     pub footstep_rot_spring: SpringDamper3D,
     /// High-frequency loose plastic mount clip chatter spring (radians).
     pub mount_rattle_spring: SpringDamper3D,
-    /// Accumulated stride phase in radians `[0, 2*PI)`.
+    /// Accumulated stride phase in radians `[0, 2*PI)`; one step per `PI`,
+    /// heel strikes at `0` and `PI`.
     pub stride_phase: f32,
+    /// Smoothed gait envelope `0..=1`: ramps in when walking starts and lets the
+    /// sway settle over a few steps after stopping instead of freezing.
+    pub gait_amount: f32,
+    /// Smoothed ground speed driving gait amplitudes (m/s).
+    pub gait_speed: f32,
     /// Accumulated breathing phase in radians.
     pub breath_phase: f32,
     /// Elapsed time in seconds.
@@ -154,6 +160,8 @@ impl Default for BodycamRig {
             footstep_rot_spring: SpringDamper3D::default(),
             mount_rattle_spring: SpringDamper3D::default(),
             stride_phase: 0.0,
+            gait_amount: 0.0,
+            gait_speed: 0.0,
             breath_phase: 0.0,
             elapsed_seconds: 0.0,
             step_parity: false,
@@ -294,28 +302,37 @@ impl BodycamRig {
         } else {
             0.0
         };
-        if speed > 0.15 {
-            let cadence_hz = 1.65 + 0.22 * speed;
+        // Gait envelope and smoothed speed: people do not start or stop swaying instantly.
+        let moving = speed > 0.15;
+        let envelope_rate = if moving { 3.5 } else { 2.2 };
+        self.gait_amount += (f32::from(u8::from(moving)) - self.gait_amount)
+            * (1.0 - (-envelope_rate * dt).exp());
+        if moving {
+            self.gait_speed += (speed - self.gait_speed) * (1.0 - (-4.0 * dt).exp());
+        }
+        if self.gait_amount > 0.01 {
             let prev_phase = self.stride_phase;
-            self.stride_phase = (self.stride_phase + cadence_hz * PI * dt) % (2.0 * PI);
-            if (prev_phase < PI && self.stride_phase >= PI) || self.stride_phase < prev_phase {
+            let cadence = step_cadence_hz(self.gait_speed);
+            self.stride_phase = (self.stride_phase + cadence * PI * dt) % (2.0 * PI);
+            let heel_strike =
+                (prev_phase < PI && self.stride_phase >= PI) || self.stride_phase < prev_phase;
+            if heel_strike && moving {
                 self.step_parity = !self.step_parity;
                 let side = if self.step_parity { 1.0 } else { -1.0 };
-                let intensity = (speed / 5.5).clamp(0.25, 1.6);
+                // The continuous gait curve carries the bob; the impulse only adds
+                // the short heel-strike shock transmitted through the skeleton.
+                let intensity = (speed / 5.5).clamp(0.25, 1.6) * 0.35;
 
-                // Downward + lateral hip/sternum shock on heel strike
                 self.footstep_pos_spring.add_impulse(Vec3::new(
                     side * 0.045 * intensity,
                     -0.19 * intensity,
                     0.05 * intensity,
                 ));
-                // Angular pitch nod + contra-lateral roll tilt
                 self.footstep_rot_spring.add_impulse(Vec3::new(
                     -1.6_f32.to_radians() * intensity,
                     side * 0.9_f32.to_radians() * intensity,
                     side * 2.4_f32.to_radians() * intensity,
                 ));
-                // High-frequency plastic mount clip chatter on vest plate
                 self.mount_rattle_spring.add_impulse(Vec3::new(
                     2.8_f32.to_radians() * intensity,
                     -side * 1.9_f32.to_radians() * intensity,
@@ -389,6 +406,48 @@ impl BodycamRig {
         self.camcorder_zoom_vel = (self.camcorder_zoom_vel - zoom_c2 * zoom_omega * dt) * zoom_exp;
     }
 
+    /// Continuous gait sway of the upper torso: `(translation (right, up, forward)
+    /// in metres, rotation (pitch, yaw, roll) in radians)`.
+    ///
+    /// Follows the inverted-pendulum walk: the body is lowest at each heel strike
+    /// and highest at mid-stance (one vertical cycle per step), shifts and leans over
+    /// the stance leg (one lateral cycle per stride), and the shoulders counter-rotate
+    /// against the pelvis. Running raises the bob and narrows the lateral shift.
+    #[must_use]
+    pub fn gait_offsets(&self) -> (Vec3, Vec3) {
+        let amount = self.gait_amount.clamp(0.0, 1.0);
+        if amount <= 1e-4 {
+            return (Vec3::ZERO, Vec3::ZERO);
+        }
+        let v = self.gait_speed.clamp(0.0, 8.0);
+        let phase = self.stride_phase;
+        let step_wave = (2.0 * phase).cos(); // +1 at heel strike, -1 at mid-stance
+        let stride_wave = phase.sin(); // +1 over the right stance, -1 over the left
+
+        let bob = (0.012 + 0.006 * v).min(0.045);
+        let lateral = 0.028 / (1.0 + 0.15 * v);
+        let surge = 0.004 * (v / 1.4).min(2.0);
+        let nod = (0.45 + 0.12 * v).min(1.4).to_radians();
+        let twist = (1.4 + 0.25 * v).min(3.2).to_radians();
+        let lean = (1.1 + 0.08 * v).min(1.8).to_radians();
+
+        // A chest mount follows the torso fully; hands absorb some of it, and an
+        // eye-level camera is stabilised by the head and neck.
+        let (translate, rotate) = match self.lens_profile {
+            PhotorealLensProfile::Bodycam => (1.0, 1.0),
+            PhotorealLensProfile::Camcorder => (0.75, 0.8),
+            PhotorealLensProfile::CleanCam => (0.55, 0.4),
+        };
+        let position = Vec3::new(
+            lateral * stride_wave,
+            -bob * step_wave,
+            surge * (2.0 * phase).sin(),
+        ) * (amount * translate);
+        let rotation = Vec3::new(-nod * step_wave, twist * stride_wave, lean * stride_wave)
+            * (amount * rotate);
+        (position, rotation)
+    }
+
     /// Compute the 6-DOF chest-mounted [`CameraView`] and tactical flashlight `(origin, direction)`
     /// for a character standing at `actor_feet_pos`.
     #[must_use]
@@ -413,25 +472,40 @@ impl BodycamRig {
                 + 0.0008 * (t * 10.3).cos());
         let sway_roll = hand_amp * (0.0035 * (t * 2.9).sin() + 0.0012 * (t * 7.1).cos());
 
+        let (gait_pos, gait_rot) = self.gait_offsets();
+
         let yaw = self.torso_spring.position.x
+            + gait_rot.y
             + self.footstep_rot_spring.position.y
             + self.mount_rattle_spring.position.y * 0.45
             + sway_yaw;
         let pitch = (self.torso_spring.position.y
+            + gait_rot.x
             + self.footstep_rot_spring.position.x
             + self.mount_rattle_spring.position.x * 0.45
             + 0.0065 * breath_wave
             + sway_pitch)
             .clamp(-82_f32.to_radians(), 82_f32.to_radians());
         let roll = self.torso_spring.position.z
+            + gait_rot.z
             + self.footstep_rot_spring.position.z
             + self.mount_rattle_spring.position.z * 0.65
             + sway_roll;
 
+        let body_forward = Vec3::new(
+            self.torso_spring.position.x.sin(),
+            0.0,
+            self.torso_spring.position.x.cos(),
+        );
+        let body_right = body_forward.cross(Vec3::Y);
+
         // Spine upper-thoracic pivot (1.38m above feet)
         let spine_pivot = actor_feet_pos
             + Vec3::new(0.0, 1.38 + 0.005 * breath_wave, 0.0)
-            + self.footstep_pos_spring.position;
+            + self.footstep_pos_spring.position
+            + body_right * gait_pos.x
+            + Vec3::Y * gait_pos.y
+            + body_forward * gait_pos.z;
 
         // Rotate chest-mount lever arm by torso orientation -> creates authentic 3D arc parallax!
         let chest_rot = Quat::from_euler(glam::EulerRot::YXZ, yaw, -pitch, roll);
@@ -486,6 +560,12 @@ impl BodycamRig {
         };
         (camera, flashlight_origin, flashlight_dir)
     }
+}
+
+/// Steps per second for a ground speed in m/s: ~1.9 at a 1.4 m/s walk,
+/// ~2.9 at a 5.5 m/s run.
+fn step_cadence_hz(speed: f32) -> f32 {
+    (1.55 + 0.25 * speed.max(0.0)).min(3.1)
 }
 
 /// GPU Uniform layout matching `BodycamPostUniforms` in `bodycam_post.wgsl`.
@@ -856,6 +936,44 @@ fn create_post_bind_group(
             },
         ],
     })
+}
+
+#[cfg(test)]
+mod gait_tests {
+    use super::*;
+
+    fn walk(rig: &mut BodycamRig, speed: f32, seconds: f32) -> (f32, f32) {
+        let (mut low, mut high) = (f32::MAX, f32::MIN);
+        let mut lateral = 0.0_f32;
+        for _ in 0..(seconds * 120.0) as usize {
+            rig.step(1.0 / 120.0, speed, true, false, 0.18);
+            let (p, _) = rig.gait_offsets();
+            low = low.min(p.y);
+            high = high.max(p.y);
+            lateral = lateral.max(p.x.abs());
+        }
+        (high - low, lateral)
+    }
+
+    #[test]
+    fn walking_bob_and_lateral_sway_are_human_scale() {
+        let mut rig = BodycamRig::default();
+        let (bob, lateral) = walk(&mut rig, 1.4, 4.0);
+        assert!((0.03..0.06).contains(&bob), "walk bob {bob}");
+        assert!((0.015..0.03).contains(&lateral), "walk lateral {lateral}");
+        let mut runner = BodycamRig::default();
+        let (run_bob, run_lateral) = walk(&mut runner, 5.5, 4.0);
+        assert!(run_bob > bob && run_lateral < lateral);
+    }
+
+    #[test]
+    fn sway_settles_after_stopping() {
+        let mut rig = BodycamRig::default();
+        walk(&mut rig, 2.2, 3.0);
+        assert!(rig.gait_offsets().0.length() > 0.0);
+        walk(&mut rig, 0.0, 3.0);
+        assert!(rig.gait_offsets().0.length() < 0.001);
+    }
 }
 
 #[cfg(test)]
