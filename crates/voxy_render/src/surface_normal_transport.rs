@@ -7,7 +7,6 @@ struct Triangle {
     ids: [u32; 4],
     u: [f32; 4],
     v: [f32; 4],
-    n: [f32; 4],
     angles: [f32; 4],
 }
 #[derive(Debug)]
@@ -23,10 +22,22 @@ impl SurfaceNormalTransport {
         mesh: &SceneMesh,
         geometry: &SceneGeometry,
     ) -> Result<Self, SceneError> {
+        Self::new_with_limit(device, mesh, geometry, mesh.vertices().len())
+    }
+    pub(crate) fn new_with_limit(
+        device: &wgpu::Device,
+        mesh: &SceneMesh,
+        geometry: &SceneGeometry,
+        vertex_limit: usize,
+    ) -> Result<Self, SceneError> {
         use voxy_gpu_core::ManagedBufferDescriptor;
+        let vertex_limit = vertex_limit.clamp(1, mesh.vertices().len());
         let mut triangles = Vec::new();
-        let mut adjacency = vec![Vec::new(); mesh.vertices().len()];
+        let mut adjacency = vec![Vec::new(); vertex_limit];
         for ids in mesh.indices().chunks_exact(3) {
+            if ids.iter().any(|&id| id as usize >= vertex_limit) {
+                continue;
+            }
             let p: [Vec3; 3] = std::array::from_fn(|k| {
                 Vec3::from_array(mesh.vertices()[ids[k] as usize].position)
             });
@@ -43,10 +54,9 @@ impl SurfaceNormalTransport {
             let index = triangles.len() as u32;
             triangles.push(Triangle {
                 ids: [ids[0], ids[1], ids[2], 0],
-                u: u.extend(0.).to_array(),
-                v: v.extend(0.).to_array(),
-                n: n.extend(0.).to_array(),
-                angles: [angles[0], angles[1], angles[2], 0.],
+                u: u.extend(n.x).to_array(),
+                v: v.extend(n.y).to_array(),
+                angles: [angles[0], angles[1], angles[2], n.z],
             });
             for k in 0..3 {
                 adjacency[ids[k] as usize].push([index, k as u32]);
@@ -67,10 +77,10 @@ impl SurfaceNormalTransport {
         use bytemuck::Zeroable;
         let generated;
         let authored = if let Some(normals) = mesh.authored_normals() {
-            normals
+            &normals[..vertex_limit]
         } else {
             generated = crate::scene::smooth_normals(mesh);
-            &generated
+            &generated[..vertex_limit]
         };
         let data = [
             bytemuck::cast_slice(authored),
@@ -135,7 +145,7 @@ impl SurfaceNormalTransport {
             pipeline,
             group,
             _inputs: inputs,
-            count: mesh.vertices().len() as u32,
+            count: vertex_limit as u32,
         })
     }
     pub(crate) fn set_prefix(&mut self, count: u32) {

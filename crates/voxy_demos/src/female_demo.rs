@@ -100,6 +100,8 @@ pub struct FemaleDemo {
     pub body_parameters: crate::body_parameters::BodyParameters,
     cold_response: Option<crate::body_parameters::ColdResponse>,
     pub secondary_only: bool,
+    pub gpu_secondary_fast: bool,
+    last_pelvic_vertex_range: std::cell::Cell<[usize; 2]>,
     pub rig_pose_only: bool,
     pub animation_only: bool,
     grounded_playback: Option<crate::humanoid_locomotion::GroundedPlayback>,
@@ -641,6 +643,8 @@ impl FemaleDemo {
             face_parameter_file: None,
             face_parameter_revision: None,
             secondary_only: false,
+            gpu_secondary_fast: false,
+            last_pelvic_vertex_range: std::cell::Cell::new([0, 0]),
             rig_pose_only: false,
             animation_only: false,
             grounded_playback: None,
@@ -790,6 +794,7 @@ impl FemaleDemo {
             let same_source = parameters.body_model == self.body_parameters.body_model;
             replacement.animation_only = self.animation_only;
             replacement.secondary_only = self.secondary_only;
+            replacement.gpu_secondary_fast = self.gpu_secondary_fast;
             replacement.rig_pose_only = self.rig_pose_only;
             if same_source {
                 // Force a rebase even when resetting to source defaults at a nonzero pose time.
@@ -839,6 +844,7 @@ impl FemaleDemo {
             replacement.resident_surface_light = self.resident_surface_light;
             replacement.animation_only = self.animation_only;
             replacement.secondary_only = self.secondary_only;
+            replacement.gpu_secondary_fast = self.gpu_secondary_fast;
             replacement.rig_pose_only = self.rig_pose_only;
             replacement.yaw = self.yaw;
             replacement.pitch = self.pitch;
@@ -1727,6 +1733,20 @@ impl FemaleDemo {
                     .fold(self.max_displacement, |maximum, region| {
                         maximum.max(region.maximum_local_displacement(bob))
                     });
+                if self.gpu_secondary_fast && self.film.is_none() {
+                    let mut next_lashes = next_lashes;
+                    self.features.exchange_lashes(&mut next_lashes);
+                    self.secondary = next_secondary;
+                    self.regions = next_regions;
+                    self.cold_response = next_cold_response;
+                    self.time = time;
+                    self.animation_time = time;
+                    self.steps += 1;
+                    self.accumulator -= h;
+                    self.max_displacement = next_max_displacement;
+                    count += 1;
+                    continue;
+                }
                 // Retain the elastic skin solver in the inertial demo instead of freezing its state.
                 let posed_shell = self
                     .skin_rig
@@ -1998,6 +2018,17 @@ impl FemaleDemo {
         }
         Ok(())
     }
+    pub fn can_use_gpu_secondary(&self) -> bool {
+        self.secondary_only
+            && !self.rig_pose_only
+            && !self.animation_only
+            && self.film.is_none()
+            && self.cold_response.is_none()
+            && self.parameter_file.is_none()
+            && self.face_parameter_file.is_none()
+            && self.body_parameters == Default::default()
+            && self.time == 0.
+    }
     #[allow(clippy::cast_possible_truncation)]
     pub fn gpu_secondary_binding(
         &self,
@@ -2042,13 +2073,23 @@ impl FemaleDemo {
         for (i, region) in self.regions.iter().enumerate() {
             region.gpu_displacement_weights(5 + i as u32 * 7, &mut rows);
         }
+        let base_controls = 5 + self.regions.len() as u32 * 7;
+        let [pelvic_start, _pelvic_end] = self.last_pelvic_vertex_range.get();
+        if pelvic_start > 0 && !self.pelvic.is_empty() {
+            self.pelvic.append_gpu_secondary_weights(
+                pelvic_start,
+                base_controls,
+                base_controls + 1,
+                &mut rows,
+            );
+        }
         let mut offsets = vec![0];
         let mut weights = Vec::new();
         for row in rows {
             weights.extend(row);
             offsets.push(weights.len() as u32);
         }
-        Ok((offsets, weights, 5 + self.regions.len() as u32 * 7))
+        Ok((offsets, weights, base_controls + 2))
     }
     pub fn can_use_resident_surface_light(&self, fraction: f32) -> bool {
         !self.show_skin
@@ -2070,6 +2111,24 @@ impl FemaleDemo {
     }
     pub fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
         self.rig.gpu_jump_weights()
+    }
+    pub fn gpu_secondary_jump_weights(&self, total_vertices: usize) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
+        let mut weights = self.rig.gpu_jump_weights();
+        let [pelvic_start, pelvic_end] = self.last_pelvic_vertex_range.get();
+        if pelvic_start >= weights.len()
+            && pelvic_end > pelvic_start
+            && pelvic_end <= total_vertices
+            && !self.pelvic.is_empty()
+        {
+            let head_weight = voxy_render::SurfaceRigidSkinWeight {
+                joints: [3, 0, 0, 0],
+                weights: [1.0, 0.0, 0.0, 0.0],
+            };
+            weights.resize(pelvic_start, head_weight);
+            let base_weights = self.rig.gpu_jump_weights();
+            self.pelvic.append_gpu_jump_weights(&base_weights, &mut weights);
+        }
+        weights
     }
     pub fn gpu_jump_palette(&self) -> Vec<glam::Mat4> {
         if let Some(stance) = &self.physical_stance {
@@ -2094,6 +2153,17 @@ impl FemaleDemo {
         for region in &self.regions {
             controls.extend(region.gpu_displacements(bob));
         }
+        let motion = self.pelvic_motion_state();
+        let pulse_delta = if self.time == 0.0 && self.steps == 0 {
+            0.0
+        } else {
+            0.5 * (motion.time * 2.6).sin() * 0.30
+                + 0.35 * motion.prolapse_pulse.clamp(-1.0, 1.0)
+                + 0.25 * motion.sphincter_tone.clamp(-1.0, 1.0)
+        };
+        let squeeze_delta = motion.gluteal_compression.clamp(-1.0, 1.0);
+        controls.push([0.0, -pulse_delta, 0.0, 0.0]);
+        controls.push([0.0, -squeeze_delta, 0.0, 0.0]);
         controls
     }
     pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
@@ -2546,15 +2616,19 @@ impl FemaleDemo {
         );
         mark("face_features");
         let face_end = vertices.len();
-        self.pelvic.append(
+        let pelvic_index_start = indices.len();
+        let mut pelvic_normals = Vec::new();
+        self.pelvic.append_with_normals(
             &normal_geometry[..self.body_vertices],
             &normals[..self.body_vertices],
             &mut vertices,
             &mut indices,
+            Some(&mut pelvic_normals),
             self.pelvic_motion_state(),
         );
+        self.last_pelvic_vertex_range.set([face_end, vertices.len()]);
         let hair_start = vertices.len();
-        let hair_index_start = indices.len();
+        let _hair_index_start = indices.len();
         let mut hair_normals = Vec::new();
         if include_hair {
             self.hair
@@ -2677,16 +2751,15 @@ impl FemaleDemo {
                 *coordinate = [0., 0., pupil_radius];
             }
         }
-        // Hair radial normals come directly from the solved Cosserat frame.
-        // Weld only the much smaller non-hair surfaces. Film retains its existing
-        // complete geometric normal path because it can add overlapping layers.
-        // Face morphs also retain it until their Jacobian transports strand normals.
+        // Hair radial normals come directly from the solved Cosserat frame, and
+        // pelvic manifold normals come directly from the 129x193 grid evaluation.
+        // Weld only the much smaller non-hair, non-pelvic surfaces.
         let authored_normals = if self.film.is_none()
             && self.face_parameters == crate::face_parameters::FaceParameters::default()
         {
             let prefix = SceneMesh::new(
-                vertices[..hair_start].to_vec(),
-                indices[..hair_index_start].to_vec(),
+                vertices[..face_end].to_vec(),
+                indices[..pelvic_index_start].to_vec(),
             )?
             .with_prepared_upload_streams();
             let suffix_indices = indices[hair_index_end..]
@@ -2704,6 +2777,7 @@ impl FemaleDemo {
             for (output, normal) in combined.iter_mut().zip(&normals) {
                 *output = normal.to_array();
             }
+            combined.append(&mut pelvic_normals);
             combined.append(&mut hair_normals);
             combined.extend_from_slice(suffix.authored_normals().unwrap());
             Some(combined)
