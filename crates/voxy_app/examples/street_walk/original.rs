@@ -938,24 +938,26 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             }
             // Benches and outdoor tables are built from separate timber and steel parts.
             if house % 2 == 0 {
+                // Place the bench in the half of the frontage away from the door.
+                let bc = if door_z > z { z - 2.2 } else { z + 2.2 };
                 for n in 0..4 {
                     b.block(
                         timber,
-                        [side * (5.58 + n as f32 * 0.14), 0.60, z - 0.5],
+                        [side * (5.58 + n as f32 * 0.14), 0.60, bc],
                         [0.115, 0.055, 1.65],
                     );
                 }
-                for dz in [-1.12, 0.12] {
+                for dz in [-0.62, 0.62] {
                     for x in [5.60, 5.98] {
-                        b.block(metal, [side * x, 0.37, z + dz], [0.055, 0.42, 0.055]);
+                        b.block(metal, [side * x, 0.37, bc + dz], [0.055, 0.42, 0.055]);
                     }
-                    b.block(metal, [side * 5.79, 0.55, z + dz], [0.52, 0.06, 0.06]);
-                    b.block(metal, [side * 6.01, 0.84, z + dz], [0.055, 0.92, 0.055]);
+                    b.block(metal, [side * 5.79, 0.55, bc + dz], [0.52, 0.06, 0.06]);
+                    b.block(metal, [side * 6.01, 0.84, bc + dz], [0.055, 0.92, 0.055]);
                 }
                 for n in 0..3 {
                     b.block(
                         timber,
-                        [side * 6.00, 0.82 + n as f32 * 0.16, z - 0.5],
+                        [side * 6.00, 0.82 + n as f32 * 0.16, bc],
                         [0.055, 0.125, 1.65],
                     );
                 }
