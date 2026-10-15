@@ -256,12 +256,14 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let mirror=select((1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
   if mirror>0. {let reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.);radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
   let bounce=screen_gi(f.clip.xy,f.world,normal);
-  let indirect=mix(irradiance,bounce.rgb,bounce.a);
+  let probe=probe_irradiance(f.world,normal);
+  let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
   colour+=diffuse*(1.-transmission)*indirect*multibounce_ao(ao,diffuse)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,roughness);
  } else {
   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.));
   let bounce=screen_gi(f.clip.xy,f.world,normal);
-  colour+=diffuse*(1.-transmission)*mix(sky*camera.viewport.w/3.14159265,bounce.rgb,bounce.a)*ao;
+  let probe=probe_irradiance(f.world,normal);
+  colour+=diffuse*(1.-transmission)*mix(mix(sky*camera.viewport.w/3.14159265,probe.rgb,probe.a),bounce.rgb,bounce.a)*ao;
   let reflected=reflect(-view,normal);let fresnel=f0+(1.-f0)*fifth(1.-nv);
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*roughness);
   let mirror=(1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,max(max(fresnel.r,fresnel.g),fresnel.b));
