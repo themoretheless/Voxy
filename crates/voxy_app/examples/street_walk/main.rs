@@ -1,8 +1,8 @@
 //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
 #[path = "../../src/controls.rs"]
 mod controls;
-mod original;
 mod materials;
+mod original;
 mod scene;
 use controls::{InputState, WalkCamera};
 use glam::{DVec3, Vec2, Vec3};
@@ -53,6 +53,9 @@ struct App {
     root: PathBuf,
     original: bool,
     original_seed: u64,
+    weather: voxy_render::weather::Weather,
+    weather_start: Instant,
+    sun_elevation: Option<f32>,
 }
 impl App {
     fn new() -> Self {
@@ -63,7 +66,15 @@ impl App {
                 .and_then(|i| args.get(i + 1))
                 .cloned()
         };
-        Self {
+        let mut app = Self {
+            weather: match value("--weather").as_deref() {
+                Some("cloudy") => voxy_render::weather::Weather::CLOUDY,
+                Some("rain") => voxy_render::weather::Weather::STORM,
+                Some("snow") => voxy_render::weather::Weather::SNOW,
+                _ => voxy_render::weather::Weather::CLEAR,
+            },
+            weather_start: Instant::now(),
+            sun_elevation: value("--sun-elevation").and_then(|v| v.parse().ok()),
             window: None,
             gpu: None,
             collision: None,
@@ -103,7 +114,29 @@ impl App {
                 PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                     .join("../../assets/environments/bistro/cache")
             }),
+        };
+        if value("--wind-speed").is_some() || value("--wind-direction").is_some() {
+            let [x, z] = app.weather.wind;
+            let speed = value("--wind-speed")
+                .and_then(|v| v.parse::<f32>().ok())
+                .unwrap_or(x.hypot(z));
+            let angle = value("--wind-direction")
+                .and_then(|v| v.parse::<f32>().ok())
+                .unwrap_or(z.atan2(x).to_degrees())
+                .to_radians();
+            if speed.is_finite() && angle.is_finite() {
+                app.weather.wind = [
+                    angle.cos() * speed.clamp(0., 100.),
+                    angle.sin() * speed.clamp(0., 100.),
+                ];
+            }
         }
+        if let Some(gust) = value("--wind-gust").and_then(|v| v.parse::<f32>().ok()) {
+            if gust.is_finite() {
+                app.weather.wind_gust = gust.clamp(0., 1.);
+            }
+        }
+        app
     }
     fn init(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         let window = Arc::new(
@@ -128,8 +161,14 @@ impl App {
         } else {
             scene::load(&self.root)?
         };
-        let environment = if self.original { Some(materials::sky()?) } else { None };
-        if let Some(panorama) = &environment { scene.sun = materials::sun_direction(panorama); }
+        let environment = if self.original {
+            Some(materials::sky()?)
+        } else {
+            None
+        };
+        if let Some(panorama) = &environment {
+            scene.sun = materials::sun_direction(panorama);
+        }
         self.camera = WalkCamera::new(scene.direction);
         self.feet = scene.eye.as_dvec3() - DVec3::Y * 1.65;
         let initial = self.feet;
@@ -175,7 +214,11 @@ impl App {
             apply_limit_buckets: false,
         }))?;
         let features = wgpu::Features::TEXTURE_COMPRESSION_BC
-            | if self.original { wgpu::Features::FLOAT32_FILTERABLE } else { wgpu::Features::empty() }
+            | if self.original {
+                wgpu::Features::FLOAT32_FILTERABLE
+            } else {
+                wgpu::Features::empty()
+            }
             | if std::env::var_os("VOXY_STREET_GPU_TIMING").is_some() {
                 adapter.features() & wgpu::Features::TIMESTAMP_QUERY
             } else {
@@ -257,6 +300,13 @@ impl App {
             scene.bounds,
             environment,
         )?;
+        if let Some(degrees) = self.sun_elevation {
+            let angle = degrees.clamp(-10., 90.).to_radians();
+            renderer.set_sun(
+                Vec3::new(-angle.cos(), angle.sin(), 0.3 * angle.cos()),
+                [1., 0.95, 0.85, 100000.],
+            )?;
+        }
         renderer.set_display_headroom(hdr_headroom.unwrap_or(1.).max(1.))?;
         let offscreen = if self.offscreen_benchmark {
             Some(device.create_texture(&wgpu::TextureDescriptor {
@@ -405,10 +455,17 @@ impl App {
         let output = frame
             .as_ref()
             .map_or_else(|| gpu.offscreen.as_ref().unwrap(), |f| &f.texture);
-        let submission = gpu.renderer
-            .draw(&output.create_view(&Default::default()), eye, direction);
+        gpu.renderer.set_weather(self.weather)?;
+        gpu.renderer
+            .set_weather_time(self.weather_start.elapsed().as_secs_f32());
+        let submission =
+            gpu.renderer
+                .draw(&output.create_view(&Default::default()), eye, direction);
         if self.offscreen_benchmark {
-            gpu.device.poll(wgpu::PollType::Wait { submission_index: Some(submission), timeout: None })?;
+            gpu.device.poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: None,
+            })?;
         }
         let render_time = render_start.elapsed().as_secs_f64();
         self.frames += 1;
@@ -639,6 +696,48 @@ impl ApplicationHandler for App {
                 if let PhysicalKey::Code(key) = event.physical_key {
                     if key == KeyCode::Escape && event.state == ElementState::Pressed {
                         self.capture(false);
+                    } else if event.state == ElementState::Pressed
+                        && !event.repeat
+                        && matches!(
+                            key,
+                            KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3 | KeyCode::Digit4
+                        )
+                    {
+                        let wind = self.weather.wind;
+                        let gust = self.weather.wind_gust;
+                        self.weather = match key {
+                            KeyCode::Digit2 => voxy_render::weather::Weather::CLOUDY,
+                            KeyCode::Digit3 => voxy_render::weather::Weather::STORM,
+                            KeyCode::Digit4 => voxy_render::weather::Weather::SNOW,
+                            _ => voxy_render::weather::Weather::CLEAR,
+                        };
+                        self.weather.wind = wind;
+                        self.weather.wind_gust = gust;
+                    } else if event.state == ElementState::Pressed
+                        && !event.repeat
+                        && matches!(key, KeyCode::F5 | KeyCode::F6 | KeyCode::F7 | KeyCode::F8)
+                    {
+                        let [x, z] = self.weather.wind;
+                        let speed = x.hypot(z);
+                        let angle = z.atan2(x)
+                            + if key == KeyCode::F6 {
+                                std::f32::consts::FRAC_PI_4
+                            } else {
+                                0.
+                            };
+                        let speed = match key {
+                            KeyCode::F5 => {
+                                if speed > 0. {
+                                    0.
+                                } else {
+                                    8.
+                                }
+                            }
+                            KeyCode::F7 => (speed - 2.).max(0.),
+                            KeyCode::F8 => (speed + 2.).min(100.),
+                            _ => speed,
+                        };
+                        self.weather.wind = [angle.cos() * speed, angle.sin() * speed];
                     } else if key == KeyCode::KeyV
                         && event.state == ElementState::Pressed
                         && !event.repeat

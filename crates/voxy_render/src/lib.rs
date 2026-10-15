@@ -424,3 +424,5 @@ pub mod archive_scene;
 
 mod native_vegetation;
 pub use native_vegetation::NativeVegetation;
+
+pub mod weather;

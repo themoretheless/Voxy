@@ -180,6 +180,9 @@ struct Camera {
     sun: [f32; 4],
     sun_colour: [f32; 4],
     viewport: [f32; 4],
+    weather: [f32; 4],
+    atmosphere: [f32; 4],
+    wind: [f32; 4],
 }
 #[derive(Debug)]
 struct Material {
@@ -242,6 +245,9 @@ pub struct ArchiveSceneRenderer {
     depth: wgpu::Texture,
     shadow: wgpu::Texture,
     shadow_matrix: Mat4,
+    weather: crate::weather::Weather,
+    weather_time: f32,
+    shadow_bounds: (Vec3, Vec3),
     sun: Vec3,
     sun_colour: [f32; 4],
     width: u32,
@@ -922,12 +928,39 @@ impl ArchiveSceneRenderer {
             depth: depth_texture,
             shadow,
             shadow_matrix,
+            weather: Default::default(),
+            weather_time: 0.,
+            shadow_bounds: bounds,
             sun,
             sun_colour,
             width,
             height,
             shadow_ready: false,
         })
+    }
+    /// Update atmosphere without rebuilding geometry or allocating particles.
+    pub fn set_weather(&mut self, weather: crate::weather::Weather) -> Result<(), crate::ComputeError> {
+        if !weather.is_valid() {return Err(crate::ComputeError::Validation("invalid weather".into()));}
+        self.weather = weather;
+        Ok(())
+    }
+    pub fn set_weather_time(&mut self, seconds: f32) {
+        if seconds.is_finite() { self.weather_time = seconds.rem_euclid(4096.); }
+    }
+    /// Direction points toward the sun. Rebuild the matching directional shadow map.
+    pub fn set_sun(&mut self, direction: Vec3, colour: [f32; 4]) -> Result<(), crate::ComputeError> {
+        if !direction.is_finite() || direction.length_squared() < 1e-8 || colour.iter().any(|v| !v.is_finite() || *v < 0.) {
+            return Err(crate::ComputeError::Validation("invalid sun".into()));
+        }
+        self.sun = direction.normalize();
+        self.sun_colour = colour;
+        let centre = (self.shadow_bounds.0 + self.shadow_bounds.1) * 0.5;
+        let extent = ((self.shadow_bounds.1 - self.shadow_bounds.0).length() * 0.5).max(1.);
+        let up = if self.sun.dot(Vec3::Y).abs() > 0.99 {Vec3::Z} else {Vec3::Y};
+        self.shadow_matrix = Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+            * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+        self.shadow_ready = false;
+        Ok(())
     }
     /// Linear extended-sRGB output uses 1.0 as SDR reference white. No invented nits.
     pub fn set_display_headroom(&mut self, headroom: f32) -> Result<(), crate::ComputeError> {
@@ -1028,7 +1061,10 @@ impl ArchiveSceneRenderer {
                 inverse_vp: vp.inverse().to_cols_array_2d(),
                 eye: [eye.x, eye.y, eye.z, f32::from(self.environment_enabled)],
                 sun: [self.sun.x, self.sun.y, self.sun.z, 0.],
-                sun_colour: self.sun_colour,
+                sun_colour: { let mut c = self.sun_colour; c[3] *= 1. - self.weather.coverage * 0.75; c },
+                weather: [self.weather.coverage, self.weather.density, self.weather.rain, self.weather.snow],
+                atmosphere: [self.weather_time, self.weather.cloud_base, self.weather.cloud_thickness, 0.],
+                wind: [self.weather.wind[0], self.weather.wind[1], self.weather.wind_gust, 0.],
                 viewport: [
                     self.width as f32,
                     self.height as f32,
