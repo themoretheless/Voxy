@@ -148,8 +148,20 @@ impl SurfaceDeformation {
             layout: &pipeline.get_bind_group_layout(0),
             entries: &entries,
         });
-        let normals =
-            crate::surface_normal_transport::SurfaceNormalTransport::new(device, mesh, &geometry)?;
+        let deforming_limit = if mesh.vertices().len() > 100_000 {
+            offsets
+                .windows(2)
+                .rposition(|row| row[1] - row[0] > 1)
+                .map_or(mesh.vertices().len().min(100_000), |last| last + 1)
+        } else {
+            mesh.vertices().len()
+        };
+        let normals = crate::surface_normal_transport::SurfaceNormalTransport::new_with_limit(
+            device,
+            mesh,
+            &geometry,
+            deforming_limit,
+        )?;
         let maximum_row_weight = offsets
             .windows(2)
             .map(|row| {

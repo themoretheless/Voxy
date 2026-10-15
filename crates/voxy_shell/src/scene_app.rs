@@ -632,12 +632,41 @@ impl SceneApp {
         Ok(())
     }
 
+    fn use_gpu_secondary(&self) -> bool {
+        if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+            return true;
+        }
+        !self.smoke
+            && std::env::var_os("VOXY_DISABLE_GPU_SECONDARY").is_none()
+            && std::env::var_os("VOXY_CPU_SECONDARY").is_none()
+            && std::env::var_os("VOXY_ASYNC_FULL").is_none()
+            && std::env::var_os("VOXY_GPU_BODY").is_none()
+            && std::env::var_os("VOXY_GPU_SURFACE_LIGHT").is_none()
+            && std::env::var_os("VOXY_GPU_HAIR_PHYSICS").is_none()
+            && std::env::var_os("VOXY_RESIDENT_HAIR").is_none()
+            && self
+                .female
+                .as_ref()
+                .is_some_and(|female| female.can_use_gpu_secondary())
+    }
+
     fn initialize(
         &mut self,
         event_loop: &ActiveEventLoop,
     ) -> Result<(), Box<dyn std::error::Error>> {
         if self.resources.is_some() {
             return Ok(());
+        }
+        let use_gpu_secondary = self.use_gpu_secondary();
+        if use_gpu_secondary
+            && let Some(female) = &mut self.female
+        {
+            if std::env::var_os("VOXY_GPU_SECONDARY").is_none() {
+                female.simulate_hair = false;
+            }
+            if !female.simulate_hair {
+                female.gpu_secondary_fast = true;
+            }
         }
         let window = if let Some(window) = &self.window {
             Arc::clone(window)
@@ -647,7 +676,7 @@ impl SceneApp {
                     Window::default_attributes()
                         .with_title("Voxy 2D/3D | Space: pause | Esc: exit")
                         .with_visible(false)
-                        .with_inner_size(if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+                        .with_inner_size(if use_gpu_secondary {
                             winit::dpi::Size::Physical(winit::dpi::PhysicalSize::new(1280, 900))
                         } else {
                             winit::dpi::Size::Logical(winit::dpi::LogicalSize::new(900., 650.))
@@ -665,9 +694,7 @@ impl SceneApp {
             options,
             instance,
         ))?;
-        if std::env::var_os("VOXY_GPU_SECONDARY").is_some()
-            || std::env::var_os("VOXY_ASYNC_FULL").is_some()
-        {
+        if use_gpu_secondary || std::env::var_os("VOXY_ASYNC_FULL").is_some() {
             match host.enable_unthrottled_presentation() {
                 Ok(mode) => eprintln!("GPU SECONDARY presentation={mode:?}"),
                 Err(error) => eprintln!(
@@ -679,12 +706,11 @@ impl SceneApp {
             pollster::block_on(host.enable_motion_vectors())?;
         }
         if self.female.is_some()
-            && (std::env::var_os("VOXY_GPU_SECONDARY").is_none()
-                || std::env::var_os("VOXY_GPU_SECONDARY_MSAA").is_some())
+            && (!use_gpu_secondary || std::env::var_os("VOXY_GPU_SECONDARY_MSAA").is_some())
         {
             host.enable_msaa4()?;
         }
-        if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+        if use_gpu_secondary {
             eprintln!(
                 "GPU SECONDARY resolution={}x{} MSAA4={}",
                 size.width,
@@ -712,7 +738,7 @@ impl SceneApp {
         if use_gpu_body
             && (self.female.is_none()
                 || std::env::var_os("VOXY_ASYNC_FULL").is_some()
-                || std::env::var_os("VOXY_GPU_SECONDARY").is_some()
+                || use_gpu_secondary
                 || std::env::var_os("VOXY_GPU_SURFACE_LIGHT").is_some())
         {
             return Err(
@@ -725,8 +751,7 @@ impl SceneApp {
             return Err("GPU surface lighting requires a character model".into());
         }
         if use_gpu_surface_light
-            && (std::env::var_os("VOXY_ASYNC_FULL").is_some()
-                || std::env::var_os("VOXY_GPU_SECONDARY").is_some())
+            && (std::env::var_os("VOXY_ASYNC_FULL").is_some() || use_gpu_secondary)
         {
             return Err("authored light-normal frame ownership for async/GPU-secondary combinations is not qualified yet".into());
         }
@@ -856,7 +881,7 @@ impl SceneApp {
             ))?;
             hair_geometry = Some(hair_owner);
             body_owner
-        } else if std::env::var_os("VOXY_GPU_SECONDARY").is_some() {
+        } else if use_gpu_secondary {
             scene.upload_mesh(host.device(), &SceneMesh::quad([1.; 4]))?
         } else if self.liquids.is_some() || self.wear.is_some() || self.fem.is_some() {
             let mut geometry = scene.reserve_geometry(host.device(), 60_024, 60_024)?;
@@ -889,9 +914,7 @@ impl SceneApp {
         } else {
             None
         };
-        let (gpu_secondary, gpu_secondary_reference) = if std::env::var_os("VOXY_GPU_SECONDARY")
-            .is_some()
-        {
+        let (gpu_secondary, gpu_secondary_reference) = if use_gpu_secondary {
             let female = self
                 .female
                 .as_ref()
@@ -914,7 +937,7 @@ impl SceneApp {
                 host.device(),
                 mesh.authored_normals()
                     .ok_or("jump GPU source lacks normals")?,
-                &female.gpu_jump_weights(),
+                &female.gpu_secondary_jump_weights(mesh.vertices().len()),
                 palette.len() as u32,
                 Some(3),
             )?;
