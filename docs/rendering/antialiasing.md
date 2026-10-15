@@ -19,7 +19,9 @@ instead of being repeatedly resampled with jitter. MetalFX receives guides in it
 jittered input grid and handles reconstruction internally.
 
 History uses four bilinear taps, rejecting each tap independently by previous
-surface depth. A current 3x3 RGB box clips stale colours; luminance disagreement
+surface depth while the camera moves. With an exactly unchanged camera and
+immutable geometry, changing subpixel silhouette coverage is accumulated instead
+of being mistaken for disocclusion. This static path uses a 0.95 history weight. A current 3x3 RGB box clips stale colours; luminance disagreement
 reduces history weight. First frames, mode switches, explicit camera cuts and large
 camera jumps reject history. `reset_temporal_history` also restarts jitter. New
 renderer dimensions create new targets and invalid history. No history is reused
@@ -45,13 +47,15 @@ resource lifetime and command-buffer completion. Scene, native MetalFX and displ
 command buffers are submitted together, in order, on the same queue; native and
 wgpu recording APIs are never mixed on one encoder. A preceding compute pass registers
 the native resources with wgpu tracking and initializes the destination; it skips
-TAA accumulation in MetalFX mode. All temporary targets use the GPU memory budget.
+TAA accumulation in MetalFX mode. All renderer-owned temporary targets use the GPU memory budget; MetalFX internal
+allocations are owned by the SDK and are outside that accounting.
 
 ## Full-scene validation
 
 Run `cargo test -p voxy_render --test archive_antialiasing` on a real Metal adapter.
 Tests cover shader validation, SDR/HDR compilation, rendered silhouettes through
-all four modes, and static-camera motion remaining zero despite changing jitter.
+all four modes, static-camera motion remaining zero despite changing jitter,
+static silhouette stability, and exact memory admission for guide formats.
 
 The window-independent qualification renders the complete source geometry once
 loaded, runs all three modes, and saves HDR PFM data plus SDR PNG previews:
@@ -95,8 +99,31 @@ for the full imported scene instead. No scene geometry is simplified for this ch
 The archive path owns immutable geometry. Depth-derived guides correctly describe
 camera motion on static meshes; animated/deforming objects need previous object
 transforms or skinning positions before this implementation can be reused for them.
-Transparent surfaces currently use underlying opaque depth for reprojection and
+Animated shading/weather also needs reactive handling; the static-camera
+confidence path is qualified on frozen scene radiance. Transparent surfaces
+currently use underlying opaque depth for reprojection and
 have no dedicated reactive mask. The RGB clipping/luminance rejection reduces
 trails but does not prove correct translucent motion. Spatial AA can soften detail;
 temporal methods can still exhibit ghosting/disocclusion artefacts. Image-quality
 claims must be bounded by the captured scenes and routes.
+
+## Spatial coverage for temporal AA
+
+`street_walk` now defaults to `VOXY_STREET_RENDER_SCALE=2`: a 1920×1080
+output renders at 3840×2160, runs the selected TAA/MetalFX there, then averages
+2×2 spatial samples in scene-linear HDR before the final display transform.
+This also filters silhouettes immediately after a history reset. It costs four
+times the scene pixels and larger depth/history buffers. Set the scale to `1`
+for the previous native-resolution cost; `3` and `4` are optional expensive
+quality settings, subject to device limits and memory budget.
+
+The renderer API is `SupersampleResolve::new(device, output_width, output_height,
+scale, output_format)` followed by creating `ArchiveSceneRenderer` at
+`resolve.render_size()` and calling `draw_supersampled`. This covers the whole
+polygon image rather than blurring an already aliased display image. It reduces
+aliasing; finite spatial sampling does not guarantee removal of every subpixel
+highlight, alpha-tested detail, or temporal artefact.
+
+The windowless `polygon_aa_validation` accepts the same scale variable and writes
+both internal and output dimensions in its reports. Use the same built executable
+and seed for comparisons; the procedural scene is under active development.

@@ -210,7 +210,8 @@ struct Camera {
     wind: [f32; 4],
     /// Jittered view-projection of the frame whose opaque radiance is in `background`.
     previous_vp: [[f32; 4]; 4],
-    /// [surface wetness, puddle coverage, history valid, 0].
+    previous_inverse_vp: [[f32; 4]; 4],
+    /// [surface wetness, puddle coverage, history valid, vertical pixel angular size].
     surface: [f32; 4],
 }
 #[derive(Debug)]
@@ -223,6 +224,10 @@ struct Material {
 }
 #[derive(Debug)]
 struct Mesh {
+    culling: Option<crate::ArchiveInstanceCulling>,
+    frustum: crate::archive_frustum::ArchiveFrustumGroups,
+    scratch_ids: Vec<usize>,
+    scratch_instances: Vec<ArchiveInstance>,
     vertices: ComputeStorage,
     indices: ComputeStorage,
     instances: ComputeStorage,
@@ -271,13 +276,18 @@ pub struct ArchiveSceneRenderer {
     post_bind: wgpu::BindGroup,
     display_parameters: ComputeStorage,
     hdr_output: bool,
+    linear_output: bool,
+    vertical_fov: f32,
+    camera_up: Vec3,
     tone_mapper: ArchiveToneMapper,
+    camera_lens: crate::archive_temporal::ArchiveCameraLens,
     display_headroom: f32,
     spatial_antialiasing: bool,
     frame_bind: wgpu::BindGroup,
     hdr: Arc<voxy_gpu_core::ManagedTexture>,
     background: Arc<voxy_gpu_core::ManagedTexture>,
     depth: wgpu::Texture,
+    history_depth: Arc<voxy_gpu_core::ManagedTexture>,
     shadow: wgpu::Texture,
     shadow_matrix: Mat4,
     weather: crate::weather::Weather,
@@ -343,7 +353,7 @@ fn depth(device: &wgpu::Device, w: u32, h: u32) -> wgpu::Texture {
         sample_count: 1,
         dimension: wgpu::TextureDimension::D2,
         format: wgpu::TextureFormat::Depth32Float,
-        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_SRC,
         view_formats: &[],
     })
 }
@@ -496,6 +506,7 @@ impl ArchiveSceneRenderer {
                 texture_entry(0, false),
                 texture_entry(1, true),
                 texture_entry(3, true),
+                texture_entry(4, true),
                 wgpu::BindGroupLayoutEntry {
                     binding: 2,
                     visibility: wgpu::ShaderStages::FRAGMENT,
@@ -518,7 +529,7 @@ impl ArchiveSceneRenderer {
         });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive PBR"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("archive_environment.wgsl"), include_str!("archive_scene.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("bsdf.wgsl"), include_str!("archive_environment.wgsl"), include_str!("soft_shadow.wgsl"), include_str!("archive_history.wgsl"), include_str!("archive_scene.wgsl")).into()),
         });
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("archive scene layout"),
@@ -820,7 +831,7 @@ impl ArchiveSceneRenderer {
                 }
                 let centre = (low + high) * 0.5;
                 let radius = (high - low).length() * 0.5;
-                let spheres = s
+                let spheres: Vec<(Vec3,f32)> = s
                     .instances
                     .iter()
                     .map(|instance| {
@@ -839,7 +850,16 @@ impl ArchiveSceneRenderer {
                         )
                     })
                     .collect();
+                let instances = buffer(device,"scene instances",bytemuck::cast_slice(&s.instances),wgpu::BufferUsages::VERTEX|wgpu::BufferUsages::STORAGE)?;
+                let visible_instances = buffer(device,"visible authored instances",bytemuck::cast_slice(&s.instances),wgpu::BufferUsages::VERTEX|wgpu::BufferUsages::STORAGE|wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::COPY_SRC)?;
+                let culling = if std::env::var_os("VOXY_STREET_GPU_CULLING").is_some() && s.instances.len()>=1024 && !materials[s.material].transparent {
+                    Some(crate::ArchiveInstanceCulling::new(device,&instances,&visible_instances,&spheres,s.indices.len() as u32)?)
+                } else {None};
                 Ok(Mesh {
+                    culling,
+                    frustum: crate::archive_frustum::ArchiveFrustumGroups::new(&spheres),
+                    scratch_ids: Vec::with_capacity(s.instances.len()),
+                    scratch_instances: Vec::new(),
                     vertices: buffer(
                         device,
                         "authored vertices",
@@ -852,18 +872,8 @@ impl ArchiveSceneRenderer {
                         bytemuck::cast_slice(&s.indices),
                         wgpu::BufferUsages::INDEX,
                     )?,
-                    instances: buffer(
-                        device,
-                        "scene instances",
-                        bytemuck::cast_slice(&s.instances),
-                        wgpu::BufferUsages::VERTEX,
-                    )?,
-                    visible_instances: buffer(
-                        device,
-                        "visible authored instances",
-                        bytemuck::cast_slice(&s.instances),
-                        wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-                    )?,
+                    instances,
+                    visible_instances,
                     visible_ids: (0..s.instances.len()).collect(),
                     visible_count: s.instances.len() as u32,
                     source_instances: s.instances.clone(),
@@ -883,6 +893,11 @@ impl ArchiveSceneRenderer {
         let hdr = target(device, width, height)?;
         let background = target(device, width, height)?;
         let depth_texture = depth(device, width, height);
+        let history_depth=ComputeMemoryBudget::for_device(device).allocate_texture(&wgpu::TextureDescriptor {
+            label:Some("opaque radiance history depth"),size:wgpu::Extent3d {width,height,depth_or_array_layers:1},
+            mip_level_count:1,sample_count:1,dimension:wgpu::TextureDimension::D2,format:wgpu::TextureFormat::Depth32Float,
+            usage:wgpu::TextureUsages::TEXTURE_BINDING|wgpu::TextureUsages::COPY_DST,view_formats:&[],
+        })?;
         let shadow = depth(device, 8192, 8192);
         let comparison = device.create_sampler(&wgpu::SamplerDescriptor {
             compare: Some(wgpu::CompareFunction::LessEqual),
@@ -911,6 +926,7 @@ impl ArchiveSceneRenderer {
                     resource: wgpu::BindingResource::Sampler(&comparison),
                 },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&depth_texture.create_view(&Default::default())) },
+                wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&history_depth.create_view(&Default::default())) },
             ],
         });
         let hdr_output = format == wgpu::TextureFormat::Rgba16Float;
@@ -978,13 +994,18 @@ impl ArchiveSceneRenderer {
             post_bind,
             display_parameters,
             hdr_output,
+            linear_output: false,
+            vertical_fov: 65_f32.to_radians(),
+            camera_up: Vec3::Y,
             tone_mapper: ArchiveToneMapper::default(),
+            camera_lens: Default::default(),
             display_headroom: 1.,
             spatial_antialiasing: true,
             frame_bind,
             hdr,
             background,
             depth: depth_texture,
+            history_depth,
             shadow,
             shadow_matrix,
             weather: Default::default(),
@@ -1044,6 +1065,25 @@ impl ArchiveSceneRenderer {
         Ok(())
     }
     /// Linear extended-sRGB output uses 1.0 as SDR reference white. No invented nits.
+    /// Write scene-linear HDR into an `Rgba16Float` target instead of the
+    /// display transform, for an external camera post-process such as
+    /// [`crate::BodycamPostProcess`].
+    pub fn set_linear_output(&mut self, linear: bool) {
+        if self.linear_output != linear {
+            self.linear_output = linear;
+            self.write_display_parameters();
+        }
+    }
+    /// Vertical field of view and camera up vector (roll) used by [`Self::draw`].
+    pub fn set_camera_projection(&mut self, vertical_fov_radians: f32, up: Vec3) {
+        if vertical_fov_radians.is_finite() && vertical_fov_radians > 0. && up.is_finite() {
+            self.vertical_fov = vertical_fov_radians.clamp(1_f32.to_radians(), 170_f32.to_radians());
+            self.camera_up = up.normalize_or(Vec3::Y);
+        }
+    }
+    fn output_mode(&self) -> f32 {
+        if self.linear_output { 3. } else { display_mode(self.hdr_output, self.tone_mapper) }
+    }
     pub fn set_display_headroom(&mut self, headroom: f32) -> Result<(), crate::ComputeError> {
         if !headroom.is_finite() || headroom < 1. {
             return Err(crate::ComputeError::Validation(
@@ -1052,6 +1092,35 @@ impl ArchiveSceneRenderer {
         }
         self.display_headroom = headroom;
         self.write_display_parameters();
+        Ok(())
+    }
+    /// Photometric exposure from EV100 (Lagarde & de Rousiers 2014):
+    /// exposure = 1 / (1.2 * 2^EV100). Lights are in lux / candela.
+    pub fn set_exposure_ev100(&mut self, ev100: f32) -> Result<(), crate::ComputeError> {
+        if !ev100.is_finite() {
+            return Err(crate::ComputeError::Validation("invalid EV100".into()));
+        }
+        self.exposure = exposure_from_ev100(ev100);
+        self.reset_temporal_history();
+        Ok(())
+    }
+    /// Physical camera: f-number, shutter time in seconds and ISO sensitivity.
+    pub fn set_camera_exposure(&mut self, aperture: f32, shutter_s: f32, iso: f32) -> Result<(), crate::ComputeError> {
+        if !(aperture > 0. && shutter_s > 0. && iso > 0.) {
+            return Err(crate::ComputeError::Validation("invalid camera exposure".into()));
+        }
+        self.set_exposure_ev100(ev100_from_camera(aperture, shutter_s, iso))
+    }
+    pub fn exposure_ev100(&self) -> f32 {(1. / (1.2 * self.exposure)).log2()}
+    /// Thin-lens depth of field and shutter motion blur, applied in the
+    /// temporal display pass (Temporal/MetalFx antialiasing only).
+    pub fn set_camera_lens(&mut self, lens: crate::archive_temporal::ArchiveCameraLens) -> Result<(), crate::ComputeError> {
+        let values = [lens.focal_length_m, lens.f_number, lens.focus_distance_m, lens.shutter_fraction, lens.sensor_width_m];
+        if values.iter().any(|v| !v.is_finite() || *v < 0.) {
+            return Err(crate::ComputeError::Validation("invalid camera lens".into()));
+        }
+        self.camera_lens = lens;
+        if let Some(temporal) = &mut self.temporal {temporal.lens = lens;}
         Ok(())
     }
     /// SDR display transform. HDR output keeps its hue-preserving highlight knee.
@@ -1075,7 +1144,7 @@ impl ArchiveSceneRenderer {
         let temporal = if matches!(mode, crate::ArchiveAntialiasing::Temporal | crate::ArchiveAntialiasing::MetalFx) {
             Some(crate::archive_temporal::ArchiveTemporal::new(&self.device,self.width,self.height,self.output_format,mode)?)
         } else {None};
-        self.temporal = temporal;
+        self.temporal = temporal.map(|mut t| {t.lens = self.camera_lens; t});
         self.antialiasing = mode;
         self.spatial_antialiasing = mode == crate::ArchiveAntialiasing::Spatial;
         self.write_display_parameters();
@@ -1097,12 +1166,37 @@ impl ArchiveSceneRenderer {
             &self.display_parameters,
             0,
             bytemuck::cast_slice(&[
-                display_mode(self.hdr_output, self.tone_mapper),
+                self.output_mode(),
                 self.display_headroom,
                 f32::from(self.spatial_antialiasing),
                 f32::from(self.temporal.is_some()),
             ]),
         );
+    }
+    /// Spatially supersampled temporal AA. The renderer dimensions must match
+    /// the resolve's render size. Invalid targets leave scene/history untouched.
+    pub fn draw_supersampled(
+        &mut self,
+        resolve: &crate::SupersampleResolve,
+        output: &wgpu::TextureView,
+        eye: Vec3,
+        direction: Vec3,
+    ) -> Result<wgpu::SubmissionIndex, crate::ComputeError> {
+        resolve.validate(output)?;
+        if self.device != resolve.device || (self.width, self.height) != resolve.render_size() {
+            return Err(crate::ComputeError::InvalidBuffer);
+        }
+        let linear = self.linear_output;
+        self.set_linear_output(true);
+        self.draw(&resolve.view, eye, direction);
+        self.set_linear_output(linear);
+        let mut encoder = self.device.create_command_encoder(&Default::default());
+        resolve.encode(
+            &self.queue, &mut encoder, output,
+            if linear { 3. } else { display_mode(output.texture().format() == wgpu::TextureFormat::Rgba16Float, self.tone_mapper) },
+            self.display_headroom,
+        );
+        Ok(self.queue.submit([encoder.finish()]))
     }
     pub fn draw(
         &mut self,
@@ -1117,11 +1211,11 @@ impl ArchiveSceneRenderer {
         }
         let time_this_frame = self.timing.as_ref().is_some_and(|t| !t.pending);
         let vp = Mat4::perspective_rh(
-            65_f32.to_radians(),
+            self.vertical_fov,
             self.width as f32 / self.height as f32,
             0.05,
             1000.,
-        ) * Mat4::look_at_rh(eye, eye + direction, Vec3::Y);
+        ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
         let rows = vp.transpose().to_cols_array_2d().map(Vec4::from_array);
         // Keep the entire temporal-jitter footprint inside the conservative
         // culling volume; otherwise edge leaves may disappear between AA samples.
@@ -1136,19 +1230,12 @@ impl ArchiveSceneRenderer {
             rows[2],
             rows[3] - rows[2],
         ];
+        let raw_planes=planes;
         let planes = planes.map(|p| (p, p.truncate().length()));
         for mesh in &mut self.meshes {
-            let mut ids: Vec<usize> = mesh
-                .spheres
-                .iter()
-                .enumerate()
-                .filter_map(|(i, (c, r))| {
-                    planes
-                        .iter()
-                        .all(|(p, length)| p.truncate().dot(*c) + p.w >= -r * length)
-                        .then_some(i)
-                })
-                .collect();
+            if let Some(culling)=&mesh.culling {culling.prepare(&self.queue,raw_planes);mesh.visible_count=mesh.copies;continue;}
+            mesh.frustum.collect(&planes,&mut mesh.scratch_ids);
+            let ids=&mut mesh.scratch_ids;
             if self.materials[mesh.material].transparent {
                 ids.sort_by(|&a, &b| {
                     mesh.spheres[b]
@@ -1157,25 +1244,27 @@ impl ArchiveSceneRenderer {
                         .total_cmp(&mesh.spheres[a].0.distance_squared(eye))
                 });
             }
-            if ids != mesh.visible_ids {
+            if *ids != mesh.visible_ids {
                 if !ids.is_empty() {
-                    let instances: Vec<_> = ids.iter().map(|&i| mesh.source_instances[i]).collect();
+                    mesh.scratch_instances.clear();
+                    mesh.scratch_instances.extend(ids.iter().map(|&i|mesh.source_instances[i]));
                     self.queue.write_buffer(
                         &mesh.visible_instances,
                         0,
-                        bytemuck::cast_slice(&instances),
+                        bytemuck::cast_slice(&mesh.scratch_instances),
                     );
                 }
                 mesh.visible_count = ids.len() as u32;
-                mesh.visible_ids = ids;
+                std::mem::swap(&mut mesh.visible_ids,&mut mesh.scratch_ids);
             }
         }
         let mut jittered_vp = vp;
+        let output_mode = self.output_mode();
         if let Some(temporal) = &mut self.temporal {
             let jitter = temporal.jitter();
             let offset = glam::Vec2::new(2. * jitter.x / self.width as f32, -2. * jitter.y / self.height as f32);
             jittered_vp = Mat4::from_translation(Vec3::new(offset.x, offset.y, 0.)) * vp;
-            temporal.prepare(&self.queue, vp, jittered_vp, eye, direction, display_mode(self.hdr_output, self.tone_mapper), self.display_headroom);
+            temporal.prepare(&self.queue, vp, jittered_vp, eye, direction, output_mode, self.display_headroom);
         }
         self.queue.write_buffer(
             &self.camera,
@@ -1186,17 +1275,18 @@ impl ArchiveSceneRenderer {
                 inverse_vp: jittered_vp.inverse().to_cols_array_2d(),
                 eye: [eye.x, eye.y, eye.z, f32::from(self.environment_enabled)],
                 sun: [self.sun.x, self.sun.y, self.sun.z, 0.],
-                sun_colour: { let mut c = self.sun_colour; c[3] *= 1. - self.weather.coverage * 0.75; c },
+                sun_colour: { let mut c = self.sun_colour; c[3] *= (1. - self.weather.coverage * 0.75) * (1. - 0.9 * self.weather.rain); c },
                 weather: [self.weather.coverage, self.weather.density, self.weather.rain, self.weather.snow],
                 atmosphere: [self.weather_time, self.weather.cloud_base, self.weather.cloud_thickness, 0.],
                 wind: [self.weather.wind[0], self.weather.wind[1], self.weather.wind_gust, 0.],
                 previous_vp: self.previous_vp.unwrap_or(jittered_vp).to_cols_array_2d(),
-                surface: [self.surface_wetness(), self.puddle_coverage, f32::from(u8::from(self.previous_vp.is_some())), 0.],
+                previous_inverse_vp: self.previous_vp.unwrap_or(jittered_vp).inverse().to_cols_array_2d(),
+                surface: [self.surface_wetness(), self.puddle_coverage, f32::from(u8::from(self.previous_vp.is_some())), 2.*(self.vertical_fov*0.5).tan()/self.height as f32],
                 viewport: [
                     self.width as f32,
                     self.height as f32,
                     self.exposure,
-                    self.sky_strength,
+                    self.sky_strength * twilight_sky(self.sun.y),
                 ],
             }),
         );
@@ -1204,6 +1294,7 @@ impl ArchiveSceneRenderer {
         // the next frame's opaque reflections reproject into it.
         self.previous_vp = Some(jittered_vp);
         let mut encoder = self.device.create_command_encoder(&Default::default());
+        for mesh in &self.meshes {if let Some(culling)=&mesh.culling {culling.encode(&mut encoder);}}
         if !self.shadow_ready {
             let shadow_view = self.shadow.create_view(&Default::default());
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -1276,7 +1367,7 @@ impl ArchiveSceneRenderer {
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
                 pass.set_vertex_buffer(1, mesh.visible_instances.slice(..));
                 pass.set_index_buffer(mesh.indices.slice(..), wgpu::IndexFormat::Uint32);
-                pass.draw_indexed(0..mesh.count, 0, 0..mesh.visible_count);
+                if let Some(culling)=&mesh.culling {pass.draw_indexed_indirect(culling.indirect(),0);}else{pass.draw_indexed(0..mesh.count, 0, 0..mesh.visible_count);}
             }
         }
         for transparent in [false, true] {
@@ -1365,7 +1456,7 @@ impl ArchiveSceneRenderer {
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
                 pass.set_vertex_buffer(1, mesh.visible_instances.slice(..));
                 pass.set_index_buffer(mesh.indices.slice(..), wgpu::IndexFormat::Uint32);
-                pass.draw_indexed(0..mesh.count, 0, 0..mesh.visible_count);
+                if let Some(culling)=&mesh.culling {pass.draw_indexed_indirect(culling.indirect(),0);}else{pass.draw_indexed(0..mesh.count, 0, 0..mesh.visible_count);}
             }
         }
         let temporal_view = self.temporal.as_ref().map(|t| t.current.create_view(&Default::default()));
@@ -1394,7 +1485,7 @@ impl ArchiveSceneRenderer {
                 })],
                 ..Default::default()
             });
-            pass.set_pipeline(if self.temporal.is_some() {&self.post_linear} else {&self.post});
+            pass.set_pipeline(if self.temporal.is_some() || self.linear_output {&self.post_linear} else {&self.post});
             pass.set_bind_group(0, &self.post_bind, &[]);
             pass.set_bind_group(1, &self.environment_bindings.group, &[]);
             pass.draw(0..3, 0..1);
@@ -1420,6 +1511,12 @@ impl ArchiveSceneRenderer {
             encoder.resolve_query_set(&timing.set, 0..2, &timing.resolve, 0);
             encoder.copy_buffer_to_buffer(&timing.resolve, 0, &timing.readback, 0, 16);
         }
+        // Save depth only after all old-radiance reads. Both histories then
+        // describe the same opaque frame and use the same previous camera.
+        encoder.copy_texture_to_texture(
+            wgpu::TexelCopyTextureInfo {texture:&self.depth,mip_level:0,origin:wgpu::Origin3d::ZERO,aspect:wgpu::TextureAspect::All},
+            wgpu::TexelCopyTextureInfo {texture:&self.history_depth,mip_level:0,origin:wgpu::Origin3d::ZERO,aspect:wgpu::TextureAspect::All},
+            wgpu::Extent3d {width:self.width,height:self.height,depth_or_array_layers:1});
         preceding_commands.push(encoder.finish());
         let submission = self.queue.submit(preceding_commands);
         if time_this_frame {
@@ -1503,7 +1600,7 @@ pub enum ArchiveToneMapper {
     Agx,
 }
 
-/// Mode selector read by `display_colour` in archive_post.wgsl.
+/// Mode selector read by `display_transform` in display_transform.wgsl.
 fn display_mode(hdr_output: bool, tone_mapper: ArchiveToneMapper) -> f32 {
     match (hdr_output, tone_mapper) {
         (true, _) => 1.,
@@ -1516,7 +1613,7 @@ mod tests {
     use super::*;
     #[test]
     fn scene_shader_validates() {
-        let source = concat!(include_str!("archive_environment.wgsl"), include_str!("archive_scene.wgsl"));
+        let source = concat!(include_str!("bsdf.wgsl"), include_str!("archive_environment.wgsl"), include_str!("soft_shadow.wgsl"), include_str!("archive_scene.wgsl"));
         let module = naga::front::wgsl::parse_str(source).unwrap();
         naga::valid::Validator::new(naga::valid::ValidationFlags::all(), naga::valid::Capabilities::all())
             .validate(&module)
@@ -1532,5 +1629,47 @@ mod tests {
         assert_eq!(ArchiveMaterial::MIRROR.surface[2], 0.);
         assert!(ArchiveMaterial::GLASS.surface[2] > 0.);
         assert_eq!(ArchiveMaterial::GLASS.surface[3], -2.);
+    }
+}
+
+/// Analytic-sky ambient relative to daylight: 1 with the sun 3 degrees up or
+/// higher, falling log-linearly to 1e-4 at the end of nautical twilight.
+fn twilight_sky(sun_y: f32) -> f32 {
+    let elevation = sun_y.clamp(-1., 1.).asin().to_degrees();
+    10_f32.powf(-4. * ((3. - elevation) / 15.).clamp(0., 1.))
+}
+/// Saturation-based exposure: maximum luminance 1.2 * 2^EV100 maps to 1.
+pub fn exposure_from_ev100(ev100: f32) -> f32 {
+    1. / (1.2 * 2_f32.powf(ev100))
+}
+
+/// EV100 = log2(N^2 / t * 100 / S).
+pub fn ev100_from_camera(aperture: f32, shutter_s: f32, iso: f32) -> f32 {
+    (aperture * aperture / shutter_s * 100. / iso).log2()
+}
+
+#[cfg(test)]
+mod exposure_tests {
+    use super::*;
+
+    #[test]
+    fn sunny_sixteen_is_about_ev15() {
+        let ev = ev100_from_camera(16., 1. / 100., 100.);
+        assert!((ev - 14.64).abs() < 0.01, "{ev}");
+    }
+
+    #[test]
+    fn ev100_round_trips_exposure() {
+        for ev in [-2., 0., 8.97, 15.] {
+            let e = exposure_from_ev100(ev);
+            assert!(((1. / (1.2 * e)).log2() - ev).abs() < 1e-4);
+        }
+    }
+
+    #[test]
+    fn display_mode_selects_transform() {
+        assert_eq!(display_mode(true, ArchiveToneMapper::Agx), 1.);
+        assert_eq!(display_mode(false, ArchiveToneMapper::Aces), 0.);
+        assert_eq!(display_mode(false, ArchiveToneMapper::Agx), 2.);
     }
 }

@@ -44,6 +44,8 @@ def main():
         assert np.isfinite(timing).all() and (timing > 0).all()
         results[mode] = {
             "mode": report["antialiasing"],
+            "render_scale": report.get("render_scale", 1),
+            "internal_resolution": report.get("internal_resolution", report["resolution"]),
             "collision_triangles": report["collision_triangles"],
             "frames": report["frames"],
             "captures": len(frames),
@@ -53,6 +55,9 @@ def main():
         }
         images[mode] = {i: frames[i] for i in (32, 64, 96, 97, 129, 160)}
     assert len({results[m]["collision_triangles"] for m in results}) == 1
+    assert len({results[m]["render_scale"] for m in results}) == 1
+    for result in results.values():
+        assert result["internal_resolution"] == [1920*result["render_scale"], 1080*result["render_scale"]]
     assert results["temporal"]["static_frame_mean_absolute_delta_8bit"] < 1.0, "TAA static grid must stabilize"
     for mode in ("temporal", "metalfx"):
         differences = {
@@ -66,7 +71,7 @@ def main():
         assert differences["129"] < 8, f"stale/incorrect explicit-reset output in {mode}"
     output = {
         "passed": True,
-        "scope": "native-resolution immutable polygon scene; static, rotation, translation, cut, reset",
+        "scope": "immutable polygon scene; reported spatial scale; static, rotation, translation, cut, reset",
         "limits": "single-run timing; pixel differences are not quality scores; no animated-object/reactive-mask certification",
         "results": results,
     }

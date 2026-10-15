@@ -1,3 +1,5 @@
+#[path="../../crates/voxy_render/src/archive_frustum.rs"]
+mod frustum_qualification;
 #[path = "../../crates/voxy_app/examples/street_walk/materials.rs"]
 mod materials;
 #[path = "../../crates/voxy_app/examples/street_walk/scene.rs"]
@@ -9,7 +11,7 @@ fn main() {
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
     assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
     let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
-        required_features: wgpu::Features::FLOAT32_FILTERABLE,
+        required_features: wgpu::Features::FLOAT32_FILTERABLE | (adapter.features() & wgpu::Features::SUBGROUP),
         ..Default::default()
     }))
     .unwrap();
@@ -170,6 +172,9 @@ fn main() {
     drop(data);
     hdr_readback.unmap();
     qualify_packed_sampling(&device, &queue);
+    qualify_stable_culling(&device, &queue);
+    qualify_cpu_frustum();
+    qualify_history_rejection(&device,&queue);
 }
 
 fn qualify_packed_sampling(device: &wgpu::Device, queue: &wgpu::Queue) {
@@ -305,4 +310,145 @@ fn qualify_packed_sampling(device: &wgpu::Device, queue: &wgpu::Queue) {
     println!(
         "GPU_PACKED_MATERIAL filtered_samples=4096 retained_channels_bit_exact=true mismatches={failures}"
     );
+}
+
+fn qualify_stable_culling(device: &wgpu::Device, queue: &wgpu::Queue) {
+    use glam::{Mat4, Vec3, Vec4};
+    use voxy_render::archive_scene::ArchiveInstance;
+    let instances: Vec<_> = (0..769)
+        .map(|i| {
+            let mut instance = ArchiveInstance::new(Mat4::from_translation(Vec3::new(
+                (i % 7) as f32 - 3.,
+                0.,
+                0.,
+            )));
+            instance.world[0][1] = -0.0;
+            instance.normal[2][3] = f32::from_bits(0x3e123457 + i);
+            instance
+        })
+        .collect();
+    let spheres: Vec<_> = instances
+        .iter()
+        .map(|i| (Vec3::new(i.world[3][0], 0., 0.), 0.05))
+        .collect();
+    let bytes = bytemuck::cast_slice(&instances);
+    let input = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some("exact instance input"),
+        contents: bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::VERTEX,
+    });
+    let output = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("exact compacted instances"),
+        size: bytes.len() as u64,
+        usage: wgpu::BufferUsages::STORAGE
+            | wgpu::BufferUsages::VERTEX
+            | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let culling =
+        voxy_render::ArchiveInstanceCulling::new(device, &input, &output, &spheres, 36).unwrap();
+    let readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 20 + bytes.len() as u64,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    for phase in 0..3 {
+        let extent = match phase {
+            0 => 1.,
+            1 => -10.,
+            _ => 100.,
+        };
+        let planes = [
+            Vec4::new(1., 0., 0., extent),
+            Vec4::new(-1., 0., 0., extent),
+            Vec4::new(0., 1., 0., extent),
+            Vec4::new(0., -1., 0., extent),
+            Vec4::new(0., 0., 1., extent),
+            Vec4::new(0., 0., -1., extent),
+        ];
+        let expected: Vec<_> = instances
+            .iter()
+            .enumerate()
+            .filter_map(|(i, instance)| match phase {
+                0 => (instance.world[3][0].abs() <= 1.05).then_some(i),
+                1 => None,
+                _ => Some(i),
+            })
+            .collect();
+        culling.prepare(queue, planes);
+        let mut encoder = device.create_command_encoder(&Default::default());
+        culling.encode(&mut encoder);
+        encoder.copy_buffer_to_buffer(culling.indirect(), 0, &readback, 0, 20);
+        encoder.copy_buffer_to_buffer(&output, 0, &readback, 20, bytes.len() as u64);
+        let submission = queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        readback
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+        device
+            .poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: None,
+            })
+            .unwrap();
+        rx.recv().unwrap().unwrap();
+        let data = readback.slice(..).get_mapped_range().unwrap();
+        assert_eq!(u32::from_le_bytes(data[0..4].try_into().unwrap()), 36);
+        assert_eq!(
+            u32::from_le_bytes(data[4..8].try_into().unwrap()) as usize,
+            expected.len()
+        );
+        for (destination, &original) in expected.iter().enumerate() {
+            assert_eq!(
+                &data[20 + destination * 112..20 + (destination + 1) * 112],
+                bytemuck::bytes_of(&instances[original]),
+                "instance ordering or original float32 bits changed"
+            );
+        }
+        drop(data);
+        readback.unmap();
+    }
+    println!(
+        "GPU_INSTANCE_CULLING instances=769 phases=partial_empty_full stable_order=true payload_bits_exact=true stale_instances=false"
+    );
+}
+
+fn qualify_cpu_frustum() {
+    use glam::{Vec3,Vec4};
+    let sets=[
+        [Vec4::new(1.,0.,0.,1.),Vec4::new(-1.,0.,0.,1.),Vec4::new(0.,1.,0.,1.),Vec4::new(0.,-1.,0.,1.),Vec4::new(0.,0.,1.,1.),Vec4::new(0.,0.,-1.,1.)],
+        [Vec4::new(0.31,-0.21,0.77,1.3),Vec4::new(-0.7,0.2,0.31,1.1),Vec4::new(0.2,0.99,0.13,0.7),Vec4::new(-0.1,-0.83,0.15,1.6),Vec4::new(0.03,0.01,0.99,0.1),Vec4::new(-0.01,0.02,-0.9,4.)]
+    ];
+    let mut spheres:Vec<_>=(0..10003).map(|i|(Vec3::new(((i*977)%65536) as f32/16000.-2.,((i*919)%65536) as f32/16000.-2.,((i*853)%65536) as f32/16000.-2.),(i%37) as f32/127.)).collect();
+    for x in [1.,-1.,f32::from_bits(1_f32.to_bits()+1),f32::from_bits(1_f32.to_bits()-1),f32::NAN] {spheres.push((Vec3::new(x,0.,0.),0.));}
+    let groups=frustum_qualification::ArchiveFrustumGroups::new(&spheres);let mut actual=Vec::new();
+    for values in sets {
+        let planes=values.map(|p|(p,p.truncate().length()));
+        let expected:Vec<_>=spheres.iter().enumerate().filter_map(|(i,(c,r))|planes.iter().all(|(p,len)|p.truncate().dot(*c)+p.w>=-r*len).then_some(i)).collect();
+        groups.collect(&planes,&mut actual);assert_eq!(actual,expected,"SIMD changed scalar visibility or ordering");
+    }
+    println!("CPU_SIMD_FRUSTUM samples={} plane_sets=2 selection_and_order_exact=true",spheres.len());
+}
+
+fn qualify_history_rejection(device:&wgpu::Device,queue:&wgpu::Queue) {
+    let shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:Some("actual history-surface gate"),source:wgpu::ShaderSource::Wgsl(concat!(include_str!("../../crates/voxy_render/src/archive_history.wgsl"),r#"
+@group(0) @binding(0) var<storage,read_write> result:array<u32,8>;
+@compute @workgroup_size(8) fn main(@builtin(global_invocation_id) id:vec3<u32>) {
+ var recovered=vec3<f32>(0.);var w=1.;var angular=0.001;
+ switch id.x {case 1u:{recovered.z=1.;}case 2u:{recovered.z=0.01;}case 3u:{w=-1.;}case 4u:{w=100.;recovered.z=0.20;}case 5u:{w=100.;recovered.z=0.30;}case 6u:{recovered.x=bitcast<f32>(0x7fc00000u);}case 7u:{w=0.;}default:{}}
+ result[id.x]=select(0u,1u,archive_history_surface_matches(vec3<f32>(0.),recovered,w,angular));
+}
+"#).into())});
+    let pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:None,layout:None,module:&shader,entry_point:Some("main"),compilation_options:Default::default(),cache:None});
+    let data=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:32,usage:wgpu::BufferUsages::STORAGE|wgpu::BufferUsages::COPY_SRC,mapped_at_creation:false});
+    let readback=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:32,usage:wgpu::BufferUsages::MAP_READ|wgpu::BufferUsages::COPY_DST,mapped_at_creation:false});
+    let bind=device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&pipeline.get_bind_group_layout(0),entries:&[wgpu::BindGroupEntry {binding:0,resource:data.as_entire_binding()}]});
+    let mut encoder=device.create_command_encoder(&Default::default());
+    {let mut pass=encoder.begin_compute_pass(&Default::default());pass.set_pipeline(&pipeline);pass.set_bind_group(0,&bind,&[]);pass.dispatch_workgroups(1,1,1);}
+    encoder.copy_buffer_to_buffer(&data,0,&readback,0,32);let submission=queue.submit([encoder.finish()]);let(tx,rx)=std::sync::mpsc::channel();
+    readback.slice(..).map_async(wgpu::MapMode::Read,move|r|tx.send(r).unwrap());device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();rx.recv().unwrap().unwrap();
+    let bytes=readback.slice(..).get_mapped_range().unwrap();let values:Vec<_>=bytes.chunks_exact(4).map(|c|u32::from_le_bytes(c.try_into().unwrap())).collect();
+    assert_eq!(values,vec![1,0,1,0,1,0,0,0]);
+    println!("GPU_HISTORY_SURFACE cases=8 coherent_surfaces_kept=true disoccluded_and_invalid_rejected=true");
 }

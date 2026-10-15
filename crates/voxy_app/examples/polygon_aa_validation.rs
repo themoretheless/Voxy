@@ -152,12 +152,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ..Default::default()
     }))?;
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let scale: u32 = std::env::var("VOXY_STREET_RENDER_SCALE").unwrap_or_else(|_| "1".into()).parse()?;
+    let resolve = voxy_render::SupersampleResolve::new(&device, WIDTH, HEIGHT, scale, wgpu::TextureFormat::Rgba16Float)?;
+    let (render_width, render_height) = resolve.render_size();
     let mut renderer = ArchiveSceneRenderer::new_with_environment(
         &device,
         &queue,
         wgpu::TextureFormat::Rgba16Float,
-        WIDTH,
-        HEIGHT,
+        render_width,
+        render_height,
         scene.images,
         scene.materials,
         scene.geometry,
@@ -200,7 +203,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             let (eye, direction) = route.camera(frame);
             let start = Instant::now();
-            let submission = renderer.draw(&view, eye, direction);
+            let submission = renderer.draw_supersampled(&resolve, &view, eye, direction)?;
             device.poll(wgpu::PollType::Wait {
                 submission_index: Some(submission),
                 timeout: None,
@@ -215,7 +218,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 )?;
             }
         }
-        let report = serde_json::json!({"scene":"Original Street","antialiasing":format!("{mode:?}"),"adapter":format!("{:?}",adapter.get_info()),"resolution":[WIDTH,HEIGHT],"format":"Rgba16Float","render_headroom":2.,"collision_triangles":count,"rendered_triangles":rendered,"source_simplified":false,"frames":160,"route":"static 1-32; rotation 33-64; translation 65-96; cut 97; explicit reset without moving camera 129","completed_frame_timings":true,"frame_ms":route.frame_ms,"windowless":true});
+        let report = serde_json::json!({"scene":"Original Street","antialiasing":format!("{mode:?}"),"adapter":format!("{:?}",adapter.get_info()),"resolution":[WIDTH,HEIGHT],"render_scale":scale,"internal_resolution":[render_width,render_height],"format":"Rgba16Float","render_headroom":2.,"collision_triangles":count,"rendered_triangles":rendered,"source_simplified":false,"frames":160,"route":"static 1-32; rotation 33-64; translation 65-96; cut 97; explicit reset without moving camera 129","completed_frame_timings":true,"frame_ms":route.frame_ms,"windowless":true});
         std::fs::write(
             route.directory.join("report.json"),
             serde_json::to_vec_pretty(&report)?,

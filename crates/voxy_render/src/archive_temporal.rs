@@ -21,6 +21,21 @@ struct Frame {
     eye: [f32; 4],
     jitter: [f32; 4],
     settings: [f32; 4],
+    // aperture diameter m, focus distance m, focal length m, motion blur shutter fraction
+    lens: [f32; 4],
+    // sensor width m, max circle of confusion px, unused, unused
+    sensor: [f32; 4],
+}
+/// Physical thin-lens camera for depth of field and shutter motion blur.
+/// All zero disables both effects.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct ArchiveCameraLens {
+    pub focal_length_m: f32,
+    pub f_number: f32,
+    pub focus_distance_m: f32,
+    /// Fraction of the frame interval the shutter is open (0.5 = 180 degrees).
+    pub shutter_fraction: f32,
+    pub sensor_width_m: f32,
 }
 #[derive(Debug)]
 pub(crate) struct ArchiveTemporal {
@@ -33,6 +48,8 @@ pub(crate) struct ArchiveTemporal {
     guides: wgpu::RenderPipeline,
     resolve: wgpu::ComputePipeline,
     display: wgpu::RenderPipeline,
+    display_linear: wgpu::RenderPipeline,
+    linear_output: bool,
     previous: Mat4,
     previous_eye: Vec3,
     previous_direction: Vec3,
@@ -41,6 +58,8 @@ pub(crate) struct ArchiveTemporal {
     frames: u32,
     reset: bool,
     native: bool,
+    pub lens: ArchiveCameraLens,
+    bloom: crate::bloom::Bloom,
     #[cfg(target_os = "macos")]
     metalfx: Option<crate::metalfx::MetalFxTemporal>,
 }
@@ -93,7 +112,13 @@ impl ArchiveTemporal {
         }
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("polygon TAA"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("display_transform.wgsl"), include_str!("archive_temporal.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(
+                concat!(
+                    include_str!("display_transform.wgsl"),
+                    include_str!("archive_temporal.wgsl")
+                )
+                .into(),
+            ),
         });
         let render = |entry: &str, targets: &[Option<wgpu::ColorTargetState>]| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -133,6 +158,7 @@ impl ArchiveTemporal {
             ],
         );
         let display = render("fs_display", &[target(format)]);
+        let display_linear = render("fs_display", &[target(wgpu::TextureFormat::Rgba16Float)]);
         let resolve = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("polygon TAA resolve"),
             layout: None,
@@ -165,6 +191,8 @@ impl ArchiveTemporal {
             guides,
             resolve,
             display,
+            display_linear,
+            linear_output: false,
             previous: Mat4::IDENTITY,
             previous_eye: Vec3::ZERO,
             previous_direction: Vec3::NEG_Z,
@@ -173,6 +201,8 @@ impl ArchiveTemporal {
             frames: 0,
             reset: true,
             native: mode == ArchiveAntialiasing::MetalFx,
+            lens: ArchiveCameraLens::default(),
+            bloom: crate::bloom::Bloom::new(device, w, h)?,
             #[cfg(target_os = "macos")]
             metalfx,
         })
@@ -197,8 +227,10 @@ impl ArchiveTemporal {
         display_mode: f32,
         headroom: f32,
     ) {
+        self.linear_output = display_mode > 2.5;
         self.reset |= eye.distance(self.previous_eye) > 2.
             || direction.normalize().dot(self.previous_direction) < 0.5;
+        let static_camera = !self.reset && vp == self.previous;
         let jitter =
             self.jitter() / Vec2::new(self.current.width() as f32, self.current.height() as f32);
         queue.write_buffer(
@@ -208,7 +240,7 @@ impl ArchiveTemporal {
                 inverse_vp: jittered.inverse().to_cols_array_2d(),
                 previous_vp: if self.reset { vp } else { self.previous }.to_cols_array_2d(),
                 current_vp: vp.to_cols_array_2d(),
-                eye: [eye.x, eye.y, eye.z, 1.],
+                eye: [eye.x, eye.y, eye.z, f32::from(static_camera)],
                 jitter: [
                     jitter.x,
                     jitter.y,
@@ -221,6 +253,13 @@ impl ArchiveTemporal {
                     display_mode,
                     headroom,
                 ],
+                lens: [
+                    if self.lens.f_number > 0. { self.lens.focal_length_m / self.lens.f_number } else { 0. },
+                    self.lens.focus_distance_m,
+                    self.lens.focal_length_m,
+                    self.lens.shutter_fraction,
+                ],
+                sensor: [self.lens.sensor_width_m, 24., 0., 0.],
             }),
         );
         self.previous = vp;
@@ -340,11 +379,16 @@ impl ArchiveTemporal {
         output: &wgpu::TextureView,
         timestamp_writes: Option<wgpu::RenderPassTimestampWrites<'_>>,
     ) {
+        let pipeline = if self.linear_output { &self.display_linear } else { &self.display };
         let write = 1 - self.read;
         let view = self.color[write].create_view(&Default::default());
+        let expected = self.expected.create_view(&Default::default());
+        let motion = self.motion.create_view(&Default::default());
+        self.bloom.encode(device, encoder, &view);
+        let bloom = self.bloom.output();
         let display_frame = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("polygon temporal display settings"),
-            layout: &self.display.get_bind_group_layout(0),
+            layout: &pipeline.get_bind_group_layout(0),
             entries: &[wgpu::BindGroupEntry {
                 binding: 1,
                 resource: self.uniform.as_entire_binding(),
@@ -352,15 +396,33 @@ impl ArchiveTemporal {
         });
         let display_color = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("polygon temporal display color"),
-            layout: &self.display.get_bind_group_layout(2),
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: wgpu::BindingResource::TextureView(&view),
-            }],
+            layout: &pipeline.get_bind_group_layout(2),
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::TextureView(&view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::TextureView(&expected),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: wgpu::BindingResource::TextureView(&motion),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 3,
+                    resource: wgpu::BindingResource::TextureView(&bloom),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 4,
+                    resource: wgpu::BindingResource::Sampler(self.bloom.sampler()),
+                },
+            ],
         });
         let empty = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: None,
-            layout: &self.display.get_bind_group_layout(1),
+            layout: &pipeline.get_bind_group_layout(1),
             entries: &[],
         });
         {
@@ -378,7 +440,7 @@ impl ArchiveTemporal {
                 })],
                 ..Default::default()
             });
-            pass.set_pipeline(&self.display);
+            pass.set_pipeline(pipeline);
             pass.set_bind_group(0, &display_frame, &[]);
             pass.set_bind_group(1, &empty, &[]);
             pass.set_bind_group(2, &display_color, &[]);

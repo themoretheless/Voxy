@@ -578,7 +578,8 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
         let grain=coat_grain;
         let mottling=value_noise_3d(p*430.0);
         base_albedo = input.coat.rgb*(0.91+0.12*mottling+0.035*grain);
-        base_roughness = clamp(input.coat.a+grain*0.035,0.04,1.0);
+        // coat.a in [1.02, 2) marks skin: roughness is stored offset by one.
+        base_roughness = clamp(select(select(input.coat.a,input.coat.a-1.0,is_skin(input.coat.a)),0.35,is_eye(input.coat.a))+grain*0.035,0.04,1.0);
         wetness = 0.0;
     }
 
@@ -618,10 +619,8 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
         let tangent = geom_n;
         let light = normalize(vec3<f32>(0.42,0.82,0.38));
         let view = normalize(camera.camera_eye.xyz-input.world_pos);
-        let half_vector = normalize(light+view);
-        let diffuse = sqrt(max(0.0,1.0-pow(dot(tangent,light),2.0)));
-        let longitudinal = pow(sqrt(max(0.0,1.0-pow(dot(tangent,half_vector),2.0))),36.0);
-        let fibre = input.coat.rgb*(0.50+0.9*diffuse)+vec3<f32>(0.025)*longitudinal;
+        let fibre = hair_shading(tangent,light,view,input.coat.rgb,0.35)*vec3<f32>(2.95,2.76,2.48)
+            + input.coat.rgb*vec3<f32>(0.55,0.62,0.72)*0.5;
         return vec4<f32>(fibre,1.0);
     }
 
@@ -700,7 +699,15 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
         * v_smith_ggx_correlated(n_dot_v, max(n_dot_l, 1e-4), roughness)
         * f_schlick(max(dot(view_dir, h_sun), 0.0), f0)
         * n_dot_l;
-    let sun_direct = (albedo / PI * n_dot_l + sun_spec) * sun_radiance;
+    var diffuse_response = vec3<f32>(n_dot_l);
+    if input.coat.a >= 0.0 && is_skin(input.coat.a) {
+        let curvature = length(fwidth(geom_n)) / max(length(fwidth(input.world_pos)), 1e-5);
+        diffuse_response = skin_diffuse(dot(n, sun_dir), curvature);
+    }
+    var sun_direct = (albedo / PI * diffuse_response + sun_spec) * sun_radiance;
+    if input.coat.a >= 0.0 && is_eye(input.coat.a) {
+        sun_direct = cornea_coat(n, view_dir, sun_dir, albedo / PI * n_dot_l) * sun_radiance;
+    }
 
     // Warm sodium-vapor / tungsten block-light emission from voxel light volume (`light_sample.y`)
     let block_light = pow(clamp(light_sample.y, 0.0, 1.0), 1.45) * vec3<f32>(3.35, 2.15, 1.08);
@@ -745,3 +752,8 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
     let alpha = select(tex_sample.a, 0.85, input.material == 4u);
     return vec4<f32>(max(hdr_color, vec3<f32>(0.0)), alpha);
 }
+
+// Packed coat.a ranges: [0,1] coat roughness, [1.02,1.5) skin (roughness+1),
+// [1.5,2) eye (wet cornea), >= 2 hair fibre.
+fn is_skin(coat:f32)->bool {return coat>=1.02 && coat<1.5;}
+fn is_eye(coat:f32)->bool {return coat>=1.5 && coat<2.0;}
