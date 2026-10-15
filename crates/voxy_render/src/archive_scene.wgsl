@@ -86,7 +86,9 @@ fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
 // retains the HDR environment; no screen-space result replaces hidden geometry.
 // With `history`, the opaque pass reads the previous frame's opaque radiance:
 // the hit point is reprojected through that frame's matrix.
-fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool)->vec4<f32>{
+// `reach` bounds the march (metres), `growth` scales the step with distance
+// and `refines` sets the binary-search depth after a crossing.
+fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32,growth:f32,refines:u32)->vec4<f32>{
  if history&&camera.surface.z<0.5 {return vec4<f32>(0.);}
  var t=0.08;var previous=0.;
  for(var step=0u;step<80u;step++) {
@@ -97,7 +99,7 @@ fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool)->vec4<f3
   let depth=textureLoad(scene_depth,vec2<i32>(uv*camera.viewport.xy),0);
   if depth<1.&&q.z/q.w>=depth {
    var lo=previous;var hi=t;
-   for(var refine=0u;refine<8u;refine++) {
+   for(var refine=0u;refine<refines;refine++) {
     let mid=(lo+hi)*0.5;let clip=camera.vp*vec4<f32>(origin+direction*mid,1.);
     let pixel=clamp(vec2<i32>((clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
     let z=textureLoad(scene_depth,pixel,0);
@@ -126,13 +128,13 @@ fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool)->vec4<f3
      if recovered.w==0. || !archive_history_surface_matches(hit_world,recovered.xyz/recovered.w,old.w,camera.surface.w) {return vec4<f32>(0.);}
 
     }
-    let fade=smoothstep(0.,0.04,edge)*(1.-smoothstep(0.75,1.,hi/60.));
+    let fade=smoothstep(0.,0.04,edge)*(1.-smoothstep(0.75,1.,hi/reach));
     return vec4<f32>(textureLoad(background,source,0).rgb/camera.viewport.z,fade);
    }
    return vec4<f32>(0.);
   }
-  previous=t;t+=0.04+0.06*t;
-  if t>60. {break;}
+  previous=t;t+=growth*(0.04+0.06*t);
+  if t>reach {break;}
  }
  return vec4<f32>(0.);
 }
@@ -147,7 +149,8 @@ fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
  let t=normalize(select(cross(n,vec3<f32>(0.,1.,0.)),cross(n,vec3<f32>(1.,0.,0.)),abs(n.y)>0.9));
  let b=cross(n,t);
  let direction=normalize(t*r*cos(phi)+b*r*sin(phi)+n*sqrt(max(1.-seed,0.)));
- return screen_reflection(p+n*0.05,direction,true);
+ // Short coarse march: the baked probes carry the far-field bounce.
+ return screen_reflection(p+n*0.05,direction,true,3.,4.,3u);
 }
 // Rain wetting: porous darkening and lower roughness everywhere exposed, plus
 // flat low-roughness puddles in noise basins on upward-facing surfaces.
@@ -254,7 +257,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   // Skip tracing where Fresnel makes the scene term invisible (steep dielectric views).
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
   let mirror=select((1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
-  if mirror>0. {let reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.);radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
+  if mirror>0. {let reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u);radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
   let bounce=screen_gi(f.clip.xy,f.world,normal);
   let probe=probe_irradiance(f.world,normal);
   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
@@ -267,7 +270,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let reflected=reflect(-view,normal);let fresnel=f0+(1.-f0)*fifth(1.-nv);
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*roughness);
   let mirror=(1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,max(max(fresnel.r,fresnel.g),fresnel.b));
-  if mirror>0. {let reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.);incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
+  if mirror>0. {let reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u);incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
   colour+=incoming*fresnel*ao;
  }
  if splash>0. {

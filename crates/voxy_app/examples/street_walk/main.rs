@@ -349,7 +349,7 @@ impl App {
         );
         surface.configure(&device, &config);
         let render_scale: u32 = std::env::var("VOXY_STREET_RENDER_SCALE")
-            .unwrap_or_else(|_| "2".into()).parse()?;
+            .unwrap_or_else(|_| "1".into()).parse()?;
         let supersample = voxy_render::SupersampleResolve::new(&device, size.width, size.height, render_scale, config.format)?;
         let (render_width, render_height) = supersample.render_size();
         let mut renderer = ArchiveSceneRenderer::new_with_environment(
