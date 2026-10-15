@@ -1,8 +1,0 @@
-{
-  "pid": 46070,
-  "command": "/tmp/voxy-face-refit-20261011/release/deps/voxy_app-f1bdfa6ab8314848 authored_jump_full_coupled_cycle_qualification --ignored --nocapture",
-  "reason": "replace older CPU/GPU consumer with qualified parallel-mesh snapshot after native eight-step integration and Metal factor parity pass",
-  "requested_unix_s": 1791768068.309309,
-  "status": "cancelled_superseded",
-  "exit_code": 143
-}

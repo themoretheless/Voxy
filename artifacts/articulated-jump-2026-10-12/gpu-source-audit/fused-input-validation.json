@@ -1,9 +1,0 @@
-{
-  "status": "reverted_after_all_eight_paired_benchmarks_regressed",
-  "differential_cases": 3993,
-  "ordinary_render_passed": 221,
-  "render_ignored": 36,
-  "before_sha256": "924877957499cf56162b16f8683d207038149c9274d14709b2e8423649c904fb",
-  "after_sha256": "cc09c32ed6123dda03c74fc6197315059ab3bf37ed485e0c5f5dbd45d663c6a2",
-  "scope": "numeric equivalence passed; implementation reverted due to measured host preparation regression"
-}

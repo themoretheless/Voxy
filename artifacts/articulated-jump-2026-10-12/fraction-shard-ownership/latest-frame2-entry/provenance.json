@@ -1,9 +1,0 @@
-{
-  "source": "/tmp/voxy-resident-exact-reuse-1791776609606700000/terminal.recovery-entry.vhr",
-  "live_pid": 30850,
-  "captured_at": 1791779245.120181,
-  "stable_double_read": true,
-  "input_sha256": "fd9a8d6d7cf19ae9472eaad9dcbc23cde2ea37fd665620d3ce8dc72a22652e52",
-  "scope": "later in-progress second-frame contact entry, distinct from previously qualified 09052a capture",
-  "qualified": false
-}

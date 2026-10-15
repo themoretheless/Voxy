@@ -1,7 +1,0 @@
-
-running 1 test
-RESIDENT WORKSPACE current_operator_admitted=true creations=2 reuses=6 changed_shape_and_failure_recovery=true
-test gpu_hair_solver::joint::tests::gpu_resident_workspace_reuse_preserves_current_operator ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 373 filtered out; finished in 0.36s
-

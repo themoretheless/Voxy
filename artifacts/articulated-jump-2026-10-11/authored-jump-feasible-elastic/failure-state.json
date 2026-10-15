@@ -1,8 +1,0 @@
-{
-  "error": "joint hair contact position linearization did not converge",
-  "frame": 2,
-  "published_steps": 1,
-  "published_time_s": 0.008333333333333333,
-  "scope": "displayed pose state, not every internal cache",
-  "time_skin_guide_frames_preserved": true
-}

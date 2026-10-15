@@ -1,8 +1,0 @@
-{
-  "status": "first_coupled_frame_passed",
-  "matching_ordered_operator_profiles": 559,
-  "baseline_staging_payload_bytes": 1426142032,
-  "compact_staging_payload_bytes": 704514688,
-  "scope": "sum of staged bytes for identical first-frame workloads, not peak memory, bus traffic or FPS",
-  "binary_sha256": "e290cef42df78752c6100ce98260e2f526d0bb9039b96395ac59e497806744eb"
-}

@@ -1,6 +1,0 @@
-{
-  "crates/voxy_render/src/joint_contact_triple_active_codec.rs": "3410757fee7d612c351e256096f3573c540e0065fb6d5fb9e1028282a2f02e33",
-  "crates/voxy_render/src/joint_contact_triple_parallel.wgsl": "320969a5e07536f44ba8f0a3a493e4c9c801ba816b74ae192d8be05977708b91",
-  "crates/voxy_app/src/gpu_hair_joint.rs": "e2f7f6b8aee3aec17a6dc631a038687a2ab42f81bb673bdda1659f19a6c0c4e2",
-  "crates/voxy_app/src/gpu_hair_solver.rs": "fda357158c0a7dc67b09364d54f59330cabe262ab7a405267c83ee717c6b8f6d"
-}

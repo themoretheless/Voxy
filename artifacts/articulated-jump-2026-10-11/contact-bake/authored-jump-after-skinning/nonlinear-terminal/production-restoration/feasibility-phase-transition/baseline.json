@@ -1,8 +1,0 @@
-{
-  "fixture": "../production-soc/current-cycle-contact-checkpoint/entry.vhr",
-  "before_change_captured_restoration_then_native": "passed",
-  "before_change_test_elapsed_s": 64.98,
-  "timing_limit": "Concurrent full-cycle load, no FPS or controlled speedup claim",
-  "change": "Reuse existing nine-pose contact-merit progress criterion to transition elastic recovery to geometry-only recovery; native continuation remains mandatory",
-  "qualification": "pending new build and captured state tests"
-}

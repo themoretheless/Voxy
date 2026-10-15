@@ -1,7 +1,0 @@
-
-running 1 test
-APPLICATION LIQUID BACKEND steps=3 memory_rejection=native_exact recovery=admitted stats=GpuLiquidStats { submissions: 5, decoded: 5, failures: 1, empty_pair_skips: 0, workspace_reuses: 2, workspace_creations: 3, topology_creations: 2, topology_reuses: 4 }
-test gpu_liquid::tests::gpu_application_liquid_backend_steps_and_recovers_from_budget_rejection ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 373 filtered out; finished in 0.04s
-

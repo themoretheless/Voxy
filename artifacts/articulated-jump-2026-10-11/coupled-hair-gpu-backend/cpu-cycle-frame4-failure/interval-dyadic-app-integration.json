@@ -1,9 +1,0 @@
-{
-  "status": "passed",
-  "binary": "/tmp/voxy-interval-dyadic-app-1791769290172999000/app-tests",
-  "binary_sha256": "68050f1e04caeaa19aa1106c91f91c8ae07b9b50e31c98a5c989dc7c7246ebd7",
-  "build": "release voxy_app lib test executable; 12 existing warnings",
-  "integration": "authored_jump_initialization_preserves_rest_and_advances_coupled_skin_hair",
-  "integration_seconds": 17.58,
-  "scope": "eight default-contact authored steps, not 720 continuous-contact frames, rendered fidelity or FPS"
-}

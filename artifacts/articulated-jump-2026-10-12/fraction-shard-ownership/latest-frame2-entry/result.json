@@ -1,9 +1,0 @@
-{
-  "native_replay_passed": true,
-  "wrapper_elapsed_s": 3331.5,
-  "final_state_sha256": "1049b785a079c946708aa950b3763e83ec1d27d87c5836b2cc6996543ad40f0a",
-  "full_cycle_qualified": false,
-  "original_baseline_comparison": "passed_bitwise_identical",
-  "speedup_qualified": false,
-  "original_wrapper_elapsed_s": 252.68
-}

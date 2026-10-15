@@ -1,7 +1,0 @@
-# Host equality-stage attribution
-
-Two separate actual Metal/M4 Max fixture invocations replay the same full native-407 operator (174 rows, 14 systems, 1764 coordinates, tolerance 1e-14). Both pass original CPU comparison and physical GPU admission without fallback. Baseline uses production QR; candidate uses resident ordered columns with one dispatch. These are cold diagnostic runs under uncontrolled concurrent load, not paired throughput measurements.
-
-Summary includes only stage records before the first JOINT BACKEND ORIGINAL marker, not the later cache-disabled replay. Each first projection contains 66 equality batches and 119 equality-task dispatches/submissions, with 31079740 staging payload bytes (about 31.1 MB). Baseline attributed stages total 586.908043 ms, of which 496.603509 ms (84.61%) is device.poll wait. Candidate stages total 698.492332 ms, wait 631.235161 ms (90.37%). Do not interpret this cold-run difference as relative performance; use the warmed alternating complete-projection comparison instead.
-
-Wait includes GPU kernel work, queue contention and completion/readback; these host timings do not distinguish those causes. They justify investigating GPU-resident active-set/refinement scheduling, but do not prove that CPU active-set selection or transfer bandwidth dominates. Stage totals exclude the host active-set work between equality callbacks and are not complete projection/frame/render timings. No FPS inference. Source-controlled profiler already existed; this artifact adds actual original-operator measurements.

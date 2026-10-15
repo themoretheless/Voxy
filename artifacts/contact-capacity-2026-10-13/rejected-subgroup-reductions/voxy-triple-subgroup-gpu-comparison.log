@@ -1,8 +1,0 @@
-
-running 1 test
-TRIPLE SUBGROUP COMPARISON {"baseline_gpu_pass_ms":[32.993166,30.384583,32.245041,30.504708],"complete_payload_bit_equal":true,"coordinates":882,"operators":3,"original_coordinate_gate":true,"rows":91,"scope":"alternating GPU elapsed pass samples under concurrent activity; no original physical admission or FPS claim","seeded":false,"subgroup_gpu_pass_ms":[31.0005,32.442583,30.495583,31.042541]}
-TRIPLE SUBGROUP COMPARISON {"baseline_gpu_pass_ms":[12.805375,6.078542,6.668,5.775958],"complete_payload_bit_equal":true,"coordinates":882,"operators":3,"original_coordinate_gate":true,"rows":91,"scope":"alternating GPU elapsed pass samples under concurrent activity; no original physical admission or FPS claim","seeded":true,"subgroup_gpu_pass_ms":[6.043833,6.091709,5.75875,14.853208]}
-test joint_contact_dot::triple::qr_tests::gpu_triple_subgroup_reductions_match_original ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 310 filtered out; finished in 1.39s
-

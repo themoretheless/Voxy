@@ -1,3 +1,0 @@
-gradient=1e-20 result=Ok(None)
-gradient=1e-200 result=Ok(None)
-gradient=0e0 result=Ok(None)

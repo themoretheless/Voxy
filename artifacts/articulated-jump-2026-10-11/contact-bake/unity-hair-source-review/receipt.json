@@ -1,8 +1,0 @@
-{
-  "repository": "Unity-Technologies/com.unity.demoteam.hair",
-  "commit": "75a7f446209896bc1bce0da2682cfdbdf30ce447",
-  "files": {
-    "LICENSE.md": "c5e101700525c5f388f1793e15c31e0039b6d57e28627bb4f15c35dc65266db4",
-    "Runtime/HairSim.cs": "1ddb3fcc42abd465cc13c3ad0c52532fd47b3eed80a9c45369a36095c016e313"
-  }
-}

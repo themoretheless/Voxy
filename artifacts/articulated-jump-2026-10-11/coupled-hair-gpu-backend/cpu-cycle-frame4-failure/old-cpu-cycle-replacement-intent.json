@@ -1,8 +1,0 @@
-{
-  "pid": 12695,
-  "command": "/tmp/voxy-face-refit-20261011/release/deps/voxy_app-f1bdfa6ab8314848 authored_jump_full_coupled_cycle_qualification --ignored --nocapture",
-  "reason": "replace pre-fix authored-cycle binary after latest captured wrapper passed and latest consumer rebuilt",
-  "requested_unix_s": 1791766777.923498,
-  "status": "cancelled_superseded",
-  "exit_code": 143
-}

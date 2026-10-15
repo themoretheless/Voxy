@@ -1,7 +1,0 @@
-{
-  "process_present": true,
-  "process": "PID ELAPSED  %CPU\n 6543   06:56  15.6",
-  "log_sha256": "c4aa4301bd551bfda9c1fd473b616123f72b1242c0c7d87275a1c080d6c7247b",
-  "terminal_exists": false,
-  "scope": "partial historical frame2 regression; no completion claim"
-}

@@ -1,9 +1,0 @@
-{
-  "observed_unix": 1791870648.950094,
-  "pid": 55834,
-  "live": true,
-  "status": "running",
-  "completed_frames": 3,
-  "attempted_frame": 4,
-  "scope": "older frozen binary, not verification of expanded transport"
-}

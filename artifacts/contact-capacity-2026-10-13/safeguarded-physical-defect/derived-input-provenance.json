@@ -1,7 +1,0 @@
-{
-  "parent": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/hair-contact-divergence-diagnostics-2026-10-09/admitted-stop-next-input.bin",
-  "parent_sha256": "572839b6217cfa8c3889460ce5b806c0e111853bd9bf1e31e3e1e79fc87df118",
-  "derived_sha256": "ae170ec19d524449d0a446835aed8f5cdbeee386a0b04fd57de640780e4f61ca",
-  "changes": "both bound arrays replaced with exact step-1 failure bits; refinement header reset to zero; matrices, rhs, original loads and columns preserved",
-  "scope": "derived exact physical-input reproducer, not a direct capture of GPU QR workspace"
-}

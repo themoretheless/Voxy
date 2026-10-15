@@ -1,8 +1,0 @@
-{
-  "pid": 93481,
-  "command": "/tmp/voxy-authored-jump-origin-tangent-1791766791511513000/voxy-app-tests authored_jump_full_coupled_cycle_qualification --ignored --nocapture",
-  "reason": "replace older CPU/GPU consumer with qualified parallel-mesh snapshot after native eight-step integration and Metal factor parity pass",
-  "requested_unix_s": 1791768068.305182,
-  "status": "cancelled_superseded",
-  "exit_code": -15
-}

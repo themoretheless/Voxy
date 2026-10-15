@@ -1,7 +1,0 @@
-{
-  "loaded_coordinates": 195,
-  "primal_status": 0,
-  "primal_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
-  "dual_status": 2,
-  "scope": "floating point LP diagnostic, not exact infeasibility certificate"
-}

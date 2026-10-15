@@ -1,7 +1,0 @@
-{
-  "status": "passed",
-  "synthetic_rows": 513,
-  "historical_rows": 60,
-  "scope": "exact native physical-operator replay infrastructure, not frame4 fix",
-  "source_sha256": "a0485cda9724499e980b5facd644b7a5debc4c5645580072140ad1538e103096"
-}

@@ -1,8 +1,0 @@
-
-running 1 test
-EXACT GEOMETRY BENCHMARK reference_ms=[186.405875, 186.15366699999998, 177.0375, 192.341042, 331.86370900000003] prepared_ms=[172.647833, 165.98850000000002, 164.427625, 535.702041, 515.0359169999999] reference_median_ms=186.405875 prepared_median_ms=172.647833 ratio=1.0796884719659354 scope=33_exact_axis_queries_not_certificate_or_frame_or_FPS
-NATIVE EXACT CERTIFICATE intervals=17 elapsed_s=0.418115208 scope=single_primitive_no_runtime_or_FPS_claim
-test hair::contact::triangle_sweep::exact_reference::discovery::captured_native_exact_axis_discovery_certifies_and_rejects_penetration ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 466 filtered out; finished in 4.18s
-

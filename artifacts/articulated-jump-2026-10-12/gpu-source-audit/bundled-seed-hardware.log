@@ -1,6 +1,0 @@
-
-running 1 test
-test joint_contact_dot::active::tests::gpu_seeded_resident_candidate_uses_current_columns_and_releases_hints ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 256 filtered out; finished in 0.14s
-

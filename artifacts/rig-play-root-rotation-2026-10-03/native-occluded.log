@@ -1,3 +1,0 @@
-MODEL PUBLISHED frames=0 first_x=0.6 asset=root-pivot-turn.glb
-MODEL PUBLISHED frames=0 first_x=0.6 asset=root-pivot-turn.glb
-Error: "native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)"

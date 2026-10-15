@@ -1,9 +1,0 @@
-
-running 1 test
-LIQUID COMPLETE ARITHMETIC CHAIN particles=70 pairs=2415 support=140 formulation=MassDensity jobs=4 kernels=5 submissions=1 staging_leases=1 intermediate_cpu_reads=0 original_physical_admission=true integration=not_exercised
-LIQUID COMPLETE ARITHMETIC CHAIN particles=70 pairs=2415 support=140 formulation=RestVolume jobs=4 kernels=5 submissions=1 staging_leases=1 intermediate_cpu_reads=0 original_physical_admission=true integration=not_exercised
-LIQUID COMPLETE ARITHMETIC CHAIN particles=70 pairs=2415 support=140 formulation=RestVolumeWendland jobs=4 kernels=5 submissions=1 staging_leases=1 intermediate_cpu_reads=0 original_physical_admission=true integration=not_exercised
-test liquid_pipeline::tests::gpu_liquid_chain_admits_real_density_pressure_force_and_accumulation ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 277 filtered out; finished in 0.05s
-

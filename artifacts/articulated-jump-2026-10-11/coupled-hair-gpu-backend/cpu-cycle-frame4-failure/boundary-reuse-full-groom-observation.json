@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "elapsed_s": 115.53,
-  "final_state_sha256": "06d6ad9cb820fa9aa7e759c8c2754359292c16440d483b4221013c8f4144ad81",
-  "state_identical": true,
-  "reference_elapsed_s": 131.48,
-  "timing_limit": "different background load, not controlled speedup or FPS"
-}

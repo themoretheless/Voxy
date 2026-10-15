@@ -1,7 +1,0 @@
-{
-  "source_sha256": "e0daf8e50384a803b78b8e0c42b23c5445062e2495ad922d64fda9243c2b667c",
-  "mixed_batch_order_passed": true,
-  "invalid_batch_rejected_before_submission": true,
-  "physical_rejection_clears_cache": true,
-  "full_cycle_qualified": false
-}

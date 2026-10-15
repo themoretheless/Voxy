@@ -1,7 +1,0 @@
-{
-  "binary": "/tmp/voxy-contact-local-descent-physics.bin",
-  "binary_sha256": "b2bb700fc2e25ec7f9a97024518e53ebd8bc5c76ef046566df7b36eac36e5d64",
-  "source_sha256": "77c9ecd7dc18f6d5e060f8cef590c66067264f8f02d731fd6e7b19541beab1d4",
-  "fixture_sha256": "a0ab9270ad674a849c58c4d38877950df523f21897b7879216c0011707116844",
-  "scope": "full469-guide nonlinear frozen replay; actual original constitutive/clearance/strain gates; not full authored cycle"
-}

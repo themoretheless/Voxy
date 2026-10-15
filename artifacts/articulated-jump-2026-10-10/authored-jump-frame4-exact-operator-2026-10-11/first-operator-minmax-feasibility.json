@@ -1,8 +1,0 @@
-{
-  "status": 0,
-  "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
-  "scope": "numerical minimum max-coordinate candidate; translational/angular units mixed; no physical admission",
-  "max_coordinate": 40.98071140925433,
-  "exact_minimum_gap": 9.994016542230284e-11,
-  "exact_all_inequalities_satisfied": true
-}

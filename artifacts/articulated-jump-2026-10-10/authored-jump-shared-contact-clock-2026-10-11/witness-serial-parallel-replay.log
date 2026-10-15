@@ -1,7 +1,0 @@
-
-running 1 test
-full-groom witness original/current-serial/current-parallel seconds=[(0.0344125, 0.020440084, 0.00987275), (0.065881125, 0.055198875, 0.01371775), (0.143911958, 0.036042833, 0.00995425)]
-test hair::contact::velocity_contacts::safe_motion::tests::captured_witness_sampling_matches_before_change_reference ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 416 filtered out; finished in 0.39s
-

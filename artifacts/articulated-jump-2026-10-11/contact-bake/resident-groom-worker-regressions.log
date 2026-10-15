@@ -1,8 +1,0 @@
-
-running 3 tests
-test full_model_worker::tests::preparation_failure_emits_no_replacement_pose_and_reports_once ... ok
-test full_model_worker::tests::invalid_pose_metadata_is_rejected_before_publication ... ok
-test full_model_worker::tests::disconnected_worker_reports_once_and_keeps_diagnostic ... ok
-
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 354 filtered out; finished in 0.00s
-

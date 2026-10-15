@@ -1,9 +1,0 @@
-
-running 1 test
-TRIPLE BATCH DEDUP original_order=true exact_payload_required=true failed_batch_withholds_aliases=true
-TRIPLE EXACT CACHE changed_coefficient_misses=true changed_bound_misses=true changed_tolerance_misses=true mixed_order=true invalid_preflight_preserves_cache=true failed_decode_no_prefix_commit=true physical_rejection_clears=true
-TRIPLE BATCH later_NaN_preflight=true aggregate_capacity_preflight=true valid_order=true one_submission_two_operators=true rejected_later_output_withholds_whole_batch=true scope=transport_not_physical_admission
-test gpu_hair_solver::joint::tests::gpu_triple_batch_preflight_and_complete_decode ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 376 filtered out; finished in 0.04s
-

@@ -1,3 +1,0 @@
-error: no test target named `moisture_large` in `physics` package
-
-help: a target with a similar name exists: `moisture_sparse`

@@ -1,7 +1,0 @@
-{
-  "scope": "observed cache-lifetime diagnostics only; not admissions, frame count, or FPS",
-  "events": 0,
-  "hits": 0,
-  "misses": 0,
-  "partial": false
-}

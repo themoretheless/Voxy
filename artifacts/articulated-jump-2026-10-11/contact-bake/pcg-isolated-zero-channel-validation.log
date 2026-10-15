@@ -1,2 +1,0 @@
-FULL BODY GPU DIFFUSION {"encode_submit_wait_readback_and_audit_wall_ms":8.653125,"gpu_compute_ms":null,"iterations":8,"max_absolute_error":2.384185793236071e-8,"method":"Jacobi PCG","minimum_irradiance":0.0,"qualified":true,"squared_l2_equation_residual_ratio":1.6556335595666367e-15}
-FULL BODY GATE qualification=true

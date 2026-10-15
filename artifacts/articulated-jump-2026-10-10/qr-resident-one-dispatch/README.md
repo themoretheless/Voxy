@@ -1,5 +1,0 @@
-# Single-dispatch ordered QR experiment
-
-Actual Metal/M4 Max, original full physical operator 174 rows, 14 systems, 1764 coordinates, unchanged 1e-14 tolerance, zero native fallback. The candidate fixture requires both VOXY_HAIR_JOINT_QR_RESIDENT_COLUMNS and VOXY_HAIR_JOINT_QR_SHADER_FIXTURE. Normal production cannot enable this path through environment variables and retains the original shader/dispatch contract. Separate per-column passes reject the resident-column contract.
-
-Selected 39-row active equality: baseline 39 QR dispatches versus candidate one. Nine alternating paired GPU intervals preserved the entire original production GPU buffer bitwise. Boundary widths 1919/1920/1921/4096 and tiny positive pivot/exact rank-dependence gates passed with each program using its own dispatch contract. Baseline median initial QR 9.673875 ms; candidate 8.570459 ms (1.12875x). Concurrent load uncontrolled. GPU timestamps exclude all subsequent active-set/residual work, host transfer and rendering. No complete physical projection acceleration, full trajectory or FPS proof.

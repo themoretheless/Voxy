@@ -1,9 +1,0 @@
-{
-  "status": "rejected",
-  "exit_code": 101,
-  "elapsed_seconds": 15.874187792,
-  "reason": "full-path-preserving backtracking alone stalls before restoring mesh feasibility",
-  "production_enabled": false,
-  "full_jump_qualified": false,
-  "next_experiment": "retain canonical proposed-trajectory cuts at each frozen pose before reprojecting original free load"
-}

@@ -1,8 +1,0 @@
-
-running 1 test
-FULL JOINT REPLAY systems=1 rows=513 coordinates=18 tolerance=0.00000000000001
-FULL JOINT REPLAY elapsed_s=0.0003215 error=None
-test hair::contact_response_system::square_root_fixture_tests::captured_full_joint_operator_preserves_physical_admission ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 412 filtered out; finished in 0.00s
-

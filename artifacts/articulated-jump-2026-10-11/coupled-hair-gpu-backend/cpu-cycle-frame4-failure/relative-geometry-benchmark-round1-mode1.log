@@ -1,9 +1,0 @@
-
-running 1 test
-test hair::contact::triangle_sweep::exact_reference::dyadic::captured_dyadic_verifier_matches_rational_and_rejects_larger_radius ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 466 filtered out; finished in 2.34s
-
-EXACT FEATURE AXES status=certified intervals=17 elapsed_s=0.182956459 scope=test_only_not_full_groom_or_FPS
-FEATURE AXIS PAIRED BENCHMARK general_ms=[284.277125, 273.358584, 282.518125, 330.679083, 280.25375] feature_ms=[69.251958, 74.462834, 54.522915999999995, 50.391333, 47.996917] general_median_ms=282.518125 feature_median_ms=54.522915999999995 ratio=5.181640046544833 scope=one_complete_primitive_certificate_not_frame_or_FPS
-DYADIC EXACT VERIFIER intervals=17 rational_oracle_equal=true larger_radius_rejected=true scope=single_primitive_no_full_runtime_or_FPS_claim

@@ -1,8 +1,0 @@
-{
-  "last_attempt": 1,
-  "accepted_updates": 2,
-  "model_refinements": 0,
-  "zero_merit_accepted_updates": 0,
-  "zero_merit_half_steps": 0,
-  "scope": "Last observed nonlinear transaction only; partial live trace, not stationarity or frame completion"
-}

@@ -1,8 +1,0 @@
-{
-  "error": "joint square-root active contacts did not converge",
-  "frame": 4,
-  "published_steps": 3,
-  "published_time_s": 0.025,
-  "scope": "displayed pose state, not every internal cache",
-  "time_skin_guide_frames_preserved": true
-}

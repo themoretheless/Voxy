@@ -1,9 +1,0 @@
-
-running 3 tests
-test joint_contact_dot::triple::tests::triple_input_preserves_original_binary_coefficients ... ok
-test joint_contact_dot::triple::tests::triple_input_rejects_lost_small_terms_and_invalid_shapes ... ok
-TRIPLE ORIGINAL INPUT rows=91 width=882 bit_exact=true scope=input_only_no_GPU_arithmetic_or_physical_admission
-test joint_contact_dot::triple::tests::triple_input_preserves_captured_original_operator ... ok
-
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 282 filtered out; finished in 0.00s
-

@@ -1,9 +1,0 @@
-{
-  "observed_unix": 1791863470.166965,
-  "pid": 55834,
-  "live": true,
-  "status": "running",
-  "completed_frames": 1,
-  "attempted_frame": 2,
-  "scope": "older frozen binary; not validation of completed basis cache"
-}

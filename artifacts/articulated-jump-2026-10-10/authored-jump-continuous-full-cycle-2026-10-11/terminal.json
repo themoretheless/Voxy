@@ -1,9 +1,0 @@
-{
-  "status": "interrupted_for_updated_solver",
-  "cargo_exit_code": 101,
-  "test_signal": 2,
-  "completed_frames": 1,
-  "required_frames": 720,
-  "full_trajectory_qualified": false,
-  "reason": "validated solver changes now available; old frozen run superseded; original summary retained"
-}

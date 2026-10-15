@@ -1,9 +1,0 @@
-SURFACE LIGHT PUBLICATION {"admission_gpu_ms":0.119708,"admitted":false,"assembly_gpu_ms":0.156541,"cpu_max_error":0.43538964015109394,"generation":0,"has_accepted":0,"iterations":1,"max_error_estimate":326.48089599609375,"sample":0,"solve_gpu_ms":0.276,"squared_relative_residual":0.000026834264645003714,"time_seconds":0.5166666666666673}
-SURFACE LIGHT PUBLICATION {"admission_gpu_ms":0.119708,"admitted":false,"assembly_gpu_ms":0.149334,"cpu_max_error":0.0007971751418631712,"generation":0,"has_accepted":0,"iterations":40,"max_error_estimate":0.10501647740602493,"sample":0,"solve_gpu_ms":5.78925,"squared_relative_residual":1.20884986049008e-12,"time_seconds":0.5166666666666673}
-SURFACE LIGHT PUBLICATION {"admission_gpu_ms":0.119167,"admitted":false,"assembly_gpu_ms":0.150375,"cpu_max_error":4.632694561412798e-6,"generation":0,"has_accepted":0,"iterations":64,"max_error_estimate":0.0014193637762218714,"sample":0,"solve_gpu_ms":9.153083,"squared_relative_residual":2.480304746039618e-14,"time_seconds":0.5166666666666673}
-SURFACE LIGHT PUBLICATION {"admission_gpu_ms":0.096833,"admitted":false,"assembly_gpu_ms":0.0625,"cpu_max_error":8.184672003197502e-7,"generation":0,"has_accepted":0,"iterations":128,"max_error_estimate":0.002381819998845458,"sample":0,"solve_gpu_ms":6.503625,"squared_relative_residual":2.481787392510492e-14,"time_seconds":0.5166666666666673}
-SURFACE LIGHT PUBLICATION {"admission_gpu_ms":0.043583,"admitted":false,"assembly_gpu_ms":0.053709,"cpu_max_error":8.184672003197502e-7,"generation":0,"has_accepted":0,"iterations":256,"max_error_estimate":0.002381819998845458,"sample":0,"solve_gpu_ms":10.526292,"squared_relative_residual":2.481787392510492e-14,"time_seconds":0.5166666666666673}
-
-thread 'main' (7150732) panicked at crates/voxy_render/examples/surface_light_admission.rs:256:9:
-no candidate met publication gate
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

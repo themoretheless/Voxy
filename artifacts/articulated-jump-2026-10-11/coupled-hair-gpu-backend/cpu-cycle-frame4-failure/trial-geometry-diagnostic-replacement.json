@@ -1,5 +1,0 @@
-{
-  "pid": 53115,
-  "reason": "Replace immutable executable with prefix rejection-gate tracing to identify the failing physical admission gate. Same policy, no timeout-triggered restart; preserve log; baseline prefix process stays live.",
-  "requested_unix_s": 1791764359.286259
-}

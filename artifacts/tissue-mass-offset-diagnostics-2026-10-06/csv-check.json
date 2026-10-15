@@ -1,6 +1,0 @@
-{
-  "rows": 4,
-  "all_finite": true,
-  "metric": "Mass-weighted displacement relative to regional rigid references",
-  "palette": "Imported f64 contact-pose provider"
-}

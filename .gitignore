@@ -13,3 +13,10 @@ __pycache__/
 .DS_Store
 
 /assets/environments/bistro/cache/
+
+# Run outputs and local tooling state
+/artifacts/*
+!/artifacts/rig-constant-parents-2026-10-03/
+!/artifacts/character-bind-pose-2026-10-07/
+/rag.duckdb
+/rag.pid

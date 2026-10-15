@@ -1,7 +1,0 @@
-{
-  "status": "running_not_qualified",
-  "pid": 64836,
-  "binary_sha256": "9d33a28757f419468dbfb8f711a8940bcd2091d637bbea05b8867249e68fb9c1",
-  "log": "/tmp/voxy-seed-inventory-frame.log",
-  "scope": "inventory of incoming hints, not actual warm-start consumption or FPS"
-}

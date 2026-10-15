@@ -1,7 +1,0 @@
-{
-  "binary": "/tmp/voxy-zero-merit-elastic-progress.bin",
-  "binary_sha256": "03a991988cd0dcbb1103777772a2fc9fdd365692efe3fcf91bd28eb2115e04c0",
-  "fixture": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/articulated-jump-2026-10-11/authored-jump-feasible-elastic/failed-contact.vhr",
-  "fixture_sha256": "52c6c2d90137b73a467f1923877f125a73994e9320238c4e7951793fcf0a7077",
-  "scope": "historical full469-guide pose regression; not full cycle/FPS"
-}

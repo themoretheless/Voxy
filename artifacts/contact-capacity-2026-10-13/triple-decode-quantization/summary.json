@@ -1,9 +1,0 @@
-{
-  "snapshots": 8,
-  "expanded_coordinate_gate_passes": 8,
-  "decoded_coordinate_gate_failures": 4,
-  "coordinate_rounding_mismatches": 0,
-  "reaction_rounding_mismatches": 0,
-  "all_source_coefficients_and_bounds_exact": true,
-  "scope": "exact coordinate-space audit, not original physical admission or proof that retaining tails alone fixes case100"
-}

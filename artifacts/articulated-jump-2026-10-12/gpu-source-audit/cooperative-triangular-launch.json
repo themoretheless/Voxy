@@ -1,5 +1,0 @@
-{
-  "baseline_shader_sha256": "326d249c507b6175cdd13e3b6bb66896945cff71d6f0bb27e3d42ff0c05a004a",
-  "candidate_shader_sha256": "c0f6cd2dcc06f81b786da1aecc518977ea3c5aed10a9b3b1b0b7de8f4a4e6448",
-  "scope": "experimental shader fixture; same sequential sums, paired products and physical gates; extra per-row synchronization; no performance claim"
-}

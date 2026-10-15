@@ -1,7 +1,0 @@
-
-running 1 test
-POLYNOMIAL ARENA reference/contiguous seconds=[(0.053430916, 0.028088416), (0.10286825, 0.040377667), (0.065900208, 0.049228208), (0.153718583, 0.02942725), (0.072019208, 0.054831708), (0.057023, 0.023616), (0.022898333, 0.080739542)]
-test hair::contact::velocity_contacts::safe_motion::captured_polynomial_arena_paired_time ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 452 filtered out; finished in 1.52s
-

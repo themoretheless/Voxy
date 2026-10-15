@@ -1,9 +1,0 @@
-
-running 1 test
-INITIAL TOUCH CERTIFICATE budget=1024 result=InitialContact { gap_m: 2.559394753423594e-17 } elapsed_s=0.005417958 scope=single_primitive_not_full_mesh_or_step
-INITIAL TOUCH CERTIFICATE budget=4096 result=InitialContact { gap_m: 2.559394753423594e-17 } elapsed_s=0.01114925 scope=single_primitive_not_full_mesh_or_step
-INITIAL TOUCH CERTIFICATE budget=16384 result=InitialContact { gap_m: 2.559394753423594e-17 } elapsed_s=0.005472542 scope=single_primitive_not_full_mesh_or_step
-test hair::contact::triangle_sweep::captured_frame4_initial_touch_certificate_budget ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 454 filtered out; finished in 0.02s
-

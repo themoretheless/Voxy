@@ -1,9 +1,0 @@
-{
-  "observed_unix": 1791865663.75666,
-  "pid": 55834,
-  "live": true,
-  "status": "running",
-  "completed_frames": 1,
-  "attempted_frame": 2,
-  "scope": "older frozen executable, not qualification of safeguard"
-}

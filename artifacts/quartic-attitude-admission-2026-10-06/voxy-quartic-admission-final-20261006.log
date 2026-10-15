@@ -1,3 +1,0 @@
-error: no test target named `astrophysics_spin` in `physics` package
-
-help: a target with a similar name exists: `astrophysics_star`

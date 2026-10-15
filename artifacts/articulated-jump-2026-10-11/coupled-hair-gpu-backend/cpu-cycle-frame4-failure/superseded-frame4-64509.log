@@ -1,4 +1,0 @@
-
-running 1 test
-REPLAY MERIT captured=0e0 rebuilt=0e0 rods=469 meshes=1
-test hair::contact_replay::tests::captured_contact_reaches_feasible_geometry has been running for over 60 seconds

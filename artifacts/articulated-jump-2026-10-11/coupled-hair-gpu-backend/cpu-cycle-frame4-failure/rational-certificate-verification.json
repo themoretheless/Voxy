@@ -1,7 +1,0 @@
-{
-  "status": "independent Bernstein verifier passed",
-  "certified_intervals": 17,
-  "original_radius_accepted": true,
-  "radius_plus_1nm_rejected": true,
-  "scope": "Exact rational certificate for one captured primitive; independent Bernstein products/elevation, no sampling or power-basis builder code reused. Not engine or full-frame qualification."
-}

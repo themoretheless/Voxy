@@ -1,8 +1,0 @@
-bitwise equal 2639 interval splits including edge bounds
-paired baseline_ms=7473.900791 candidate_ms=8003.84
-paired baseline_ms=8719.344667 candidate_ms=9078.43325
-paired baseline_ms=7039.016416 candidate_ms=7524.356666
-paired baseline_ms=7859.0668749999995 candidate_ms=8412.087708
-paired baseline_ms=7356.328875 candidate_ms=8235.5865
-paired baseline_ms=6372.843833 candidate_ms=7707.611667
-paired baseline_ms=6667.608375000001 candidate_ms=6081.751041

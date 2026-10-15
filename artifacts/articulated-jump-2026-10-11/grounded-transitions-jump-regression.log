@@ -1,7 +1,0 @@
-
-running 2 tests
-test female_rig::jump_rig_tests::gpu_jump_matches_actual_body_and_rigid_trailing_hair ... ignored, requires an actual GPU; complete body DQ skinning and displacement readback
-test female_rig::jump_rig_tests::jump_legs_plant_feet_bend_knees_and_keep_bone_lengths ... ok
-
-test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 340 filtered out; finished in 0.08s
-

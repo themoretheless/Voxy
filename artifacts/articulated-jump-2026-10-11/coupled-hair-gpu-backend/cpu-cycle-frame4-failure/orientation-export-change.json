@@ -1,9 +1,0 @@
-{
-  "change": "Rejected-direction opt-in JSON includes before/full quaternion orientations alongside positions, enabling reproduction of bending/twisting and rotational inertia energy",
-  "source_sha256": "8a97b2eebc02aa5d0301299ea6ec446ef52311c11723994138d8a50bdc7089ea",
-  "check_session": 67451,
-  "check_log": "orientation-export-check.log",
-  "status": "non-test physics release check passed",
-  "limits": "Diagnostic export only; no physical acceptance changes. Existing direction artifact predates these additional fields; capture regeneration remains pending.",
-  "elapsed_seconds": 16.41
-}

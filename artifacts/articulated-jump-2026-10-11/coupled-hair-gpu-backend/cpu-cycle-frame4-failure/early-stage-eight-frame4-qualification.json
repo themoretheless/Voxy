@@ -1,8 +1,0 @@
-{
-  "status": "passed",
-  "first_stage_limit": 8,
-  "elapsed_seconds": 50.4,
-  "final_state_sha256": "06d6ad9cb820fa9aa7e759c8c2754359292c16440d483b4221013c8f4144ad81",
-  "same_final_state_as_default_policy": true,
-  "scope": "test-only first-stage budget; one captured recovery, no production policy change or FPS claim"
-}

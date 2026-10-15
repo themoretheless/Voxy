@@ -1,8 +1,0 @@
-{
-  "session": 50119,
-  "status": "confirmed running; pending",
-  "log": "/tmp/voxy-rational-axis-certificate.log",
-  "source_sha256": "4155869815091a2892c0e6aac5edd2b1da400b379c28203981006750eb50ae5e",
-  "scope": "Adaptive exact-rational supporting-axis reference; original affine input motion restricted exactly; serialized witnesses must independently recheck and cover [0,1] without gaps",
-  "limits": "No current certificate yet. Reference computation is not production code or engine frame qualification; no sampling is used for acceptance."
-}

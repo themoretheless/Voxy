@@ -1,7 +1,0 @@
-
-running 1 test
-MIDPOINT reference/positive-singleton seconds=[(0.041648417, 0.0342815), (0.324605625, 0.034314625), (0.037613416, 0.034295333), (0.224909333, 0.409569209), (0.237814791, 0.213972125), (0.224468, 0.224519416)]
-test hair::contact::polynomial::midpoint_tests::midpoint_subdivision_benchmark ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 426 filtered out; finished in 2.04s
-

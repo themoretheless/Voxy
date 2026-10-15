@@ -1,7 +1,0 @@
-# Full physical-projection comparison of resident QR
-
-Actual Metal/M4 Max; same complete captured native-407 physical operator, 174 constraints, 14 original systems, 1764 coordinates, tolerance 1e-14. Both programs compiled and warmed before seven alternating pairs. Baseline uses original per-column dispatches; candidate uses experimental resident columns with one dispatch. Both use full readback, grouped compute passes, exact-zero support compaction, and host active-set selection. Result cache is cleared for every measured projection. Every projection passes original physical validation; response/reaction values and bits match in every pair. Equality task count remains identical.
-
-Median baseline 0.813243375 s, candidate 0.813444792 s, 0.99975x; candidate faster in 4/7 pairs. Concurrent system load uncontrolled. Timer covers complete physical projection including backend waiting and original admission, but excludes device/fixture creation, rendering and the extra post-timing validation. These timings do not qualify a full model/frame, complete trajectory, all hardware or FPS. Production defaults and shader unchanged.
-
-Decision: do not adopt from the microbenchmark result. The complete projection medians are effectively equal and only 4/7 pairs favor the candidate. This loaded measurement does not establish a net benefit. Any reconsideration needs representative controlled complete-projection evidence, not only the initial QR interval.

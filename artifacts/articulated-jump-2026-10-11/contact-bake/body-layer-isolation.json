@@ -1,8 +1,0 @@
-{
-  "skeletal_publication_only": "all 14 previously failing pose maxima unchanged",
-  "zero_actor_offset_tick_642_maximum_u8_error": 25,
-  "zero_actor_offset_tick_642_maximum_world_error_m": 1.2377834115800373e-07,
-  "zero_actor_offset_exact_base_positions": 69144,
-  "base_positions": 78278,
-  "limits": "Diagnostics modify only publication after accepted physical advancement and restore state before next advance. They do not qualify production output or dynamic jumps."
-}

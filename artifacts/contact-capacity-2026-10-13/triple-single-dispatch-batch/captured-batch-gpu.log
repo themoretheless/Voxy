@@ -1,8 +1,0 @@
-
-running 1 test
-TRIPLE BATCHED CAPTURE rows=91 coordinates=882 duplicate_outputs_equal=true cold_and_seeded_original_gaps=true scope=coordinate_transport_not_original_physical_admission
-TRIPLE BATCHED GPU one_dispatch_three_workgroups=true heterogeneous_shapes=true independent_headers=true seeded_operator=true inactive_operator=true late_failure_withholds_prefix=true scope=coordinate_transport_not_original_physical_admission
-test joint_contact_dot::triple::qr_tests::gpu_triple_batched_independent_operators ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 307 filtered out; finished in 0.14s
-

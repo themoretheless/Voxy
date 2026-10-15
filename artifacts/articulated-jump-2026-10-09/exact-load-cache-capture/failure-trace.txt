@@ -1,4 +1,0 @@
-error: joint square-root active contacts did not converge
-phases: []
-projections: []
-friction: []
