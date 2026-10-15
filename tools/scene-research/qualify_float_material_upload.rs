@@ -1,10 +1,17 @@
-//! Actual GPU readback of low bits and HDR values in scanned-material transport.
+#[path="../../crates/voxy_render/src/archive_frustum.rs"]
+mod frustum_qualification;
+#[path = "../../crates/voxy_app/examples/street_walk/materials.rs"]
+mod materials;
+#[path = "../../crates/voxy_app/examples/street_walk/scene.rs"]
+mod scene;
+use wgpu::util::DeviceExt;
+// Actual GPU readback of low bits and HDR values in scanned-material transport.
 fn main() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
     assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
     let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
-        required_features: wgpu::Features::FLOAT32_FILTERABLE,
+        required_features: wgpu::Features::FLOAT32_FILTERABLE | (adapter.features() & wgpu::Features::SUBGROUP),
         ..Default::default()
     }))
     .unwrap();
@@ -77,4 +84,412 @@ fn main() {
         "GPU_FLOAT_MATERIAL adapter={} original_float32_bits_exact=true complete_mip_chain=true",
         adapter.get_info().name
     );
+    drop(mapped);
+    buffer.unmap();
+    let panorama = voxy_render::HdrImageAsset::from_rgb(
+        2,
+        1,
+        vec![131072., 0.125, 2., 131072., 0.125, 2.],
+        voxy_render::ImageLimits::default(),
+    )
+    .unwrap();
+    assert!(
+        voxy_render::ImportedEnvironment::from_panorama(
+            &device,
+            &queue,
+            &panorama,
+            2,
+            voxy_render::ImageLimits::default()
+        )
+        .is_err()
+    );
+    let environment = voxy_render::ImportedEnvironment::from_panorama_full_precision(
+        &device,
+        &queue,
+        &panorama,
+        2,
+        voxy_render::ImageLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        environment.specular().output().format(),
+        wgpu::TextureFormat::Rgba32Float
+    );
+    assert_eq!(
+        environment.diffuse().output().format(),
+        wgpu::TextureFormat::Rgba32Float
+    );
+    let hdr_readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("HDR beyond half range"),
+        size: 512,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let mut encoder = device.create_command_encoder(&Default::default());
+    environment.encode(&mut encoder);
+    encoder.copy_texture_to_buffer(
+        wgpu::TexelCopyTextureInfo {
+            texture: environment.specular().output(),
+            mip_level: 0,
+            origin: wgpu::Origin3d::ZERO,
+            aspect: wgpu::TextureAspect::All,
+        },
+        wgpu::TexelCopyBufferInfo {
+            buffer: &hdr_readback,
+            layout: wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(256),
+                rows_per_image: Some(2),
+            },
+        },
+        wgpu::Extent3d {
+            width: 2,
+            height: 2,
+            depth_or_array_layers: 1,
+        },
+    );
+    let submission = queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    hdr_readback
+        .slice(..)
+        .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: None,
+        })
+        .unwrap();
+    rx.recv().unwrap().unwrap();
+    let data = hdr_readback.slice(..).get_mapped_range().unwrap();
+    for row in 0..2 {
+        for pixel in 0..2 {
+            let start = row * 256 + pixel * 16;
+            let red = f32::from_le_bytes(data[start..start + 4].try_into().unwrap());
+            assert_eq!(red.to_bits(), 131072_f32.to_bits());
+        }
+    }
+    println!("GPU_HDR_ENVIRONMENT source_peak=131072 retained_exact=true source_clipping=false");
+    drop(data);
+    hdr_readback.unmap();
+    qualify_packed_sampling(&device, &queue);
+    qualify_stable_culling(&device, &queue);
+    qualify_cpu_frustum();
+    qualify_history_rejection(&device,&queue);
+    qualify_depth_hierarchy(&device,&queue);
+}
+
+fn qualify_packed_sampling(device: &wgpu::Device, queue: &wgpu::Queue) {
+    use voxy_render::archive_scene::ArchiveImageSource;
+    let (w, h) = (32, 16);
+    let pixels = |offset: u32| {
+        (0..w * h)
+            .flat_map(|i| {
+                [
+                    ((i * 977 + offset) % 65536) as f32 / 65535.,
+                    ((i * 919 + offset) % 65536) as f32 / 65535.,
+                    ((i * 853 + offset) % 65536) as f32 / 65535.,
+                    1.,
+                ]
+            })
+            .collect::<Vec<_>>()
+    };
+    let originals = [pixels(1), pixels(2), pixels(3)];
+    let [c, a, n] = originals.clone().map(|pixels| ArchiveImageSource::Float {
+        width: w,
+        height: h,
+        pixels,
+    });
+    let packed = materials::pack_set(c, a, n).unwrap();
+    let mut textures = Vec::new();
+    for pixels in originals {
+        textures.push(
+            ArchiveImageSource::Float {
+                width: w,
+                height: h,
+                pixels,
+            }
+            .upload(device, queue)
+            .unwrap(),
+        );
+    }
+    for image in packed {
+        textures.push(image.upload(device, queue).unwrap());
+    }
+    let views: Vec<_> = textures
+        .iter()
+        .map(|t| t.create_view(&Default::default()))
+        .collect();
+    let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+        min_filter: wgpu::FilterMode::Linear,
+        mag_filter: wgpu::FilterMode::Linear,
+        mipmap_filter: wgpu::MipmapFilterMode::Linear,
+        anisotropy_clamp: 16,
+        address_mode_u: wgpu::AddressMode::Repeat,
+        address_mode_v: wgpu::AddressMode::Repeat,
+        ..Default::default()
+    });
+    let result = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some("packing mismatch count"),
+        contents: &[0; 4],
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+    });
+    let shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:Some("full precision packed sampler comparison"),source:wgpu::ShaderSource::Wgsl(r#"
+@group(0) @binding(0) var colour:texture_2d<f32>;
+@group(0) @binding(1) var arm:texture_2d<f32>;
+@group(0) @binding(2) var normal:texture_2d<f32>;
+@group(0) @binding(3) var packed_colour:texture_2d<f32>;
+@group(0) @binding(4) var packed_normal:texture_2d<f32>;
+@group(0) @binding(5) var filtering:sampler;
+@group(0) @binding(6) var<storage,read_write> mismatch:atomic<u32>;
+@compute @workgroup_size(64) fn main(@builtin(global_invocation_id) id:vec3<u32>) {
+ let uv=vec2<f32>(f32(id.x%41u)/17.-0.3,f32(id.x%37u)/19.-0.2);
+ let lod=f32(id.x%61u)/12.;
+ let c=textureSampleLevel(colour,filtering,uv,lod);let a=textureSampleLevel(arm,filtering,uv,lod);let n=textureSampleLevel(normal,filtering,uv,lod);
+ let pc=textureSampleLevel(packed_colour,filtering,uv,lod);let pn=textureSampleLevel(packed_normal,filtering,uv,lod);
+ if any(bitcast<vec3<u32>>(c.rgb)!=bitcast<vec3<u32>>(pc.rgb))||any(bitcast<vec3<u32>>(n.rgb)!=bitcast<vec3<u32>>(pn.rgb))
+   ||bitcast<u32>(a.r)!=bitcast<u32>(pc.a)||bitcast<u32>(a.g)!=bitcast<u32>(pn.a) {atomicAdd(&mismatch,1u);}
+}
+"#.into())});
+    let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: Some("packed float sampling"),
+        layout: None,
+        module: &shader,
+        entry_point: Some("main"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+    let mut entries: Vec<_> = views
+        .iter()
+        .enumerate()
+        .map(|(i, v)| wgpu::BindGroupEntry {
+            binding: i as u32,
+            resource: wgpu::BindingResource::TextureView(v),
+        })
+        .collect();
+    entries.push(wgpu::BindGroupEntry {
+        binding: 5,
+        resource: wgpu::BindingResource::Sampler(&sampler),
+    });
+    entries.push(wgpu::BindGroupEntry {
+        binding: 6,
+        resource: result.as_entire_binding(),
+    });
+    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &pipeline.get_bind_group_layout(0),
+        entries: &entries,
+    });
+    let readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 4,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let mut encoder = device.create_command_encoder(&Default::default());
+    {
+        let mut pass = encoder.begin_compute_pass(&Default::default());
+        pass.set_pipeline(&pipeline);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(64, 1, 1);
+    }
+    encoder.copy_buffer_to_buffer(&result, 0, &readback, 0, 4);
+    let submission = queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    readback
+        .slice(..)
+        .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: None,
+        })
+        .unwrap();
+    rx.recv().unwrap().unwrap();
+    let data = readback.slice(..).get_mapped_range().unwrap();
+    let failures = u32::from_le_bytes(data[..4].try_into().unwrap());
+    assert_eq!(failures, 0, "packed material sampling changed float32 bits");
+    println!(
+        "GPU_PACKED_MATERIAL filtered_samples=4096 retained_channels_bit_exact=true mismatches={failures}"
+    );
+}
+
+fn qualify_stable_culling(device: &wgpu::Device, queue: &wgpu::Queue) {
+    use glam::{Mat4, Vec3, Vec4};
+    use voxy_render::archive_scene::ArchiveInstance;
+    let instances: Vec<_> = (0..769)
+        .map(|i| {
+            let mut instance = ArchiveInstance::new(Mat4::from_translation(Vec3::new(
+                (i % 7) as f32 - 3.,
+                0.,
+                0.,
+            )));
+            instance.world[0][1] = -0.0;
+            instance.normal[2][3] = f32::from_bits(0x3e123457 + i);
+            instance
+        })
+        .collect();
+    let spheres: Vec<_> = instances
+        .iter()
+        .map(|i| (Vec3::new(i.world[3][0], 0., 0.), 0.05))
+        .collect();
+    let bytes = bytemuck::cast_slice(&instances);
+    let input = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some("exact instance input"),
+        contents: bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::VERTEX,
+    });
+    let output = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("exact compacted instances"),
+        size: bytes.len() as u64,
+        usage: wgpu::BufferUsages::STORAGE
+            | wgpu::BufferUsages::VERTEX
+            | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let culling =
+        voxy_render::ArchiveInstanceCulling::new(device, &input, &output, &spheres, 36).unwrap();
+    let readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 20 + bytes.len() as u64,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    for phase in 0..3 {
+        let extent = match phase {
+            0 => 1.,
+            1 => -10.,
+            _ => 100.,
+        };
+        let planes = [
+            Vec4::new(1., 0., 0., extent),
+            Vec4::new(-1., 0., 0., extent),
+            Vec4::new(0., 1., 0., extent),
+            Vec4::new(0., -1., 0., extent),
+            Vec4::new(0., 0., 1., extent),
+            Vec4::new(0., 0., -1., extent),
+        ];
+        let expected: Vec<_> = instances
+            .iter()
+            .enumerate()
+            .filter_map(|(i, instance)| match phase {
+                0 => (instance.world[3][0].abs() <= 1.05).then_some(i),
+                1 => None,
+                _ => Some(i),
+            })
+            .collect();
+        culling.prepare(queue, planes);
+        let mut encoder = device.create_command_encoder(&Default::default());
+        culling.encode(&mut encoder);
+        encoder.copy_buffer_to_buffer(culling.indirect(), 0, &readback, 0, 20);
+        encoder.copy_buffer_to_buffer(&output, 0, &readback, 20, bytes.len() as u64);
+        let submission = queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        readback
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+        device
+            .poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: None,
+            })
+            .unwrap();
+        rx.recv().unwrap().unwrap();
+        let data = readback.slice(..).get_mapped_range().unwrap();
+        assert_eq!(u32::from_le_bytes(data[0..4].try_into().unwrap()), 36);
+        assert_eq!(
+            u32::from_le_bytes(data[4..8].try_into().unwrap()) as usize,
+            expected.len()
+        );
+        for (destination, &original) in expected.iter().enumerate() {
+            assert_eq!(
+                &data[20 + destination * 112..20 + (destination + 1) * 112],
+                bytemuck::bytes_of(&instances[original]),
+                "instance ordering or original float32 bits changed"
+            );
+        }
+        drop(data);
+        readback.unmap();
+    }
+    println!(
+        "GPU_INSTANCE_CULLING instances=769 phases=partial_empty_full stable_order=true payload_bits_exact=true stale_instances=false"
+    );
+}
+
+fn qualify_cpu_frustum() {
+    use glam::{Vec3,Vec4};
+    let sets=[
+        [Vec4::new(1.,0.,0.,1.),Vec4::new(-1.,0.,0.,1.),Vec4::new(0.,1.,0.,1.),Vec4::new(0.,-1.,0.,1.),Vec4::new(0.,0.,1.,1.),Vec4::new(0.,0.,-1.,1.)],
+        [Vec4::new(0.31,-0.21,0.77,1.3),Vec4::new(-0.7,0.2,0.31,1.1),Vec4::new(0.2,0.99,0.13,0.7),Vec4::new(-0.1,-0.83,0.15,1.6),Vec4::new(0.03,0.01,0.99,0.1),Vec4::new(-0.01,0.02,-0.9,4.)]
+    ];
+    let mut spheres:Vec<_>=(0..10003).map(|i|(Vec3::new(((i*977)%65536) as f32/16000.-2.,((i*919)%65536) as f32/16000.-2.,((i*853)%65536) as f32/16000.-2.),(i%37) as f32/127.)).collect();
+    for x in [1.,-1.,f32::from_bits(1_f32.to_bits()+1),f32::from_bits(1_f32.to_bits()-1),f32::NAN] {spheres.push((Vec3::new(x,0.,0.),0.));}
+    let groups=frustum_qualification::ArchiveFrustumGroups::new(&spheres);let mut actual=Vec::new();
+    for values in sets {
+        let planes=values.map(|p|(p,p.truncate().length()));
+        let expected:Vec<_>=spheres.iter().enumerate().filter_map(|(i,(c,r))|planes.iter().all(|(p,len)|p.truncate().dot(*c)+p.w>=-r*len).then_some(i)).collect();
+        groups.collect(&planes,&mut actual);assert_eq!(actual,expected,"SIMD changed scalar visibility or ordering");
+    }
+    println!("CPU_SIMD_FRUSTUM samples={} plane_sets=2 selection_and_order_exact=true",spheres.len());
+}
+
+fn qualify_history_rejection(device:&wgpu::Device,queue:&wgpu::Queue) {
+    let shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:Some("actual history-surface gate"),source:wgpu::ShaderSource::Wgsl(concat!(include_str!("../../crates/voxy_render/src/archive_history.wgsl"),r#"
+@group(0) @binding(0) var<storage,read_write> result:array<u32,8>;
+@compute @workgroup_size(8) fn main(@builtin(global_invocation_id) id:vec3<u32>) {
+ var recovered=vec3<f32>(0.);var w=1.;var angular=0.001;
+ switch id.x {case 1u:{recovered.z=1.;}case 2u:{recovered.z=0.01;}case 3u:{w=-1.;}case 4u:{w=100.;recovered.z=0.20;}case 5u:{w=100.;recovered.z=0.30;}case 6u:{recovered.x=bitcast<f32>(0x7fc00000u);}case 7u:{w=0.;}default:{}}
+ result[id.x]=select(0u,1u,archive_history_surface_matches(vec3<f32>(0.),recovered,w,angular));
+}
+"#).into())});
+    let pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:None,layout:None,module:&shader,entry_point:Some("main"),compilation_options:Default::default(),cache:None});
+    let data=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:32,usage:wgpu::BufferUsages::STORAGE|wgpu::BufferUsages::COPY_SRC,mapped_at_creation:false});
+    let readback=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:32,usage:wgpu::BufferUsages::MAP_READ|wgpu::BufferUsages::COPY_DST,mapped_at_creation:false});
+    let bind=device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&pipeline.get_bind_group_layout(0),entries:&[wgpu::BindGroupEntry {binding:0,resource:data.as_entire_binding()}]});
+    let mut encoder=device.create_command_encoder(&Default::default());
+    {let mut pass=encoder.begin_compute_pass(&Default::default());pass.set_pipeline(&pipeline);pass.set_bind_group(0,&bind,&[]);pass.dispatch_workgroups(1,1,1);}
+    encoder.copy_buffer_to_buffer(&data,0,&readback,0,32);let submission=queue.submit([encoder.finish()]);let(tx,rx)=std::sync::mpsc::channel();
+    readback.slice(..).map_async(wgpu::MapMode::Read,move|r|tx.send(r).unwrap());device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();rx.recv().unwrap().unwrap();
+    let bytes=readback.slice(..).get_mapped_range().unwrap();let values:Vec<_>=bytes.chunks_exact(4).map(|c|u32::from_le_bytes(c.try_into().unwrap())).collect();
+    assert_eq!(values,vec![1,0,1,0,1,0,0,0]);
+    println!("GPU_HISTORY_SURFACE cases=8 coherent_surfaces_kept=true disoccluded_and_invalid_rejected=true");
+}
+
+
+// Exercise the actual reduction shader through every level, including odd
+// extents and a one-ULP foreground depth in the final border texel.
+fn qualify_depth_hierarchy(device:&wgpu::Device,queue:&wgpu::Queue) {
+ let shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:Some("exact depth reduction"),source:wgpu::ShaderSource::Wgsl(include_str!("../../crates/voxy_render/src/archive_depth_reduce.wgsl").into())});
+ let layout=device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {label:None,entries:&[
+  wgpu::BindGroupLayoutEntry {binding:0,visibility:wgpu::ShaderStages::COMPUTE,ty:wgpu::BindingType::Texture {sample_type:wgpu::TextureSampleType::Float {filterable:false},view_dimension:wgpu::TextureViewDimension::D2,multisampled:false},count:None},
+  wgpu::BindGroupLayoutEntry {binding:1,visibility:wgpu::ShaderStages::COMPUTE,ty:wgpu::BindingType::StorageTexture {access:wgpu::StorageTextureAccess::WriteOnly,format:wgpu::TextureFormat::R32Float,view_dimension:wgpu::TextureViewDimension::D2},count:None}
+ ]});
+ let pipeline_layout=device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {label:None,bind_group_layouts:&[Some(&layout)],immediate_size:0});
+ let pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:None,layout:Some(&pipeline_layout),module:&shader,entry_point:Some("reduce_depth"),compilation_options:Default::default(),cache:None});
+ let mut levels=0;
+ for (mut width,mut height) in [(1u32,1u32),(3,5),(17,9),(64,32)] {
+  let texture=|w,h|device.create_texture(&wgpu::TextureDescriptor {label:Some("depth hierarchy fixture"),size:wgpu::Extent3d {width:w,height:h,depth_or_array_layers:1},mip_level_count:1,sample_count:1,dimension:wgpu::TextureDimension::D2,format:wgpu::TextureFormat::R32Float,usage:wgpu::TextureUsages::TEXTURE_BINDING|wgpu::TextureUsages::STORAGE_BINDING|wgpu::TextureUsages::COPY_SRC|wgpu::TextureUsages::COPY_DST,view_formats:&[]});
+  let mut expected:Vec<f32>=(0..width*height).map(|i|0.2+((i*97)%701) as f32/1000.).collect();
+  *expected.last_mut().unwrap()=f32::from_bits(0.2f32.to_bits()-1);
+  let mut source=texture(width,height);
+  queue.write_texture(source.as_image_copy(),bytemuck::cast_slice(&expected),wgpu::TexelCopyBufferLayout {offset:0,bytes_per_row:Some(width*4),rows_per_image:Some(height)},source.size());
+  loop {
+   let w=width.div_ceil(2);let h=height.div_ceil(2);
+   let mut next=Vec::new();
+   for y in 0..h {for x in 0..w {let mut value=1f32;for dy in 0..2 {for dx in 0..2 {value=value.min(expected[((y*2+dy).min(height-1)*width+(x*2+dx).min(width-1)) as usize]);}}next.push(value);}}
+   let target=texture(w,h);let source_view=source.create_view(&Default::default());let target_view=target.create_view(&Default::default());
+   let bind=device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&layout,entries:&[wgpu::BindGroupEntry {binding:0,resource:wgpu::BindingResource::TextureView(&source_view)},wgpu::BindGroupEntry {binding:1,resource:wgpu::BindingResource::TextureView(&target_view)}]});
+   let stride=(w*4).div_ceil(256)*256;
+   let readback=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:u64::from(stride*h),usage:wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::MAP_READ,mapped_at_creation:false});
+   let mut encoder=device.create_command_encoder(&Default::default());
+   {let mut pass=encoder.begin_compute_pass(&Default::default());pass.set_pipeline(&pipeline);pass.set_bind_group(0,&bind,&[]);pass.dispatch_workgroups(w.div_ceil(8),h.div_ceil(8),1);}
+   encoder.copy_texture_to_buffer(target.as_image_copy(),wgpu::TexelCopyBufferInfo {buffer:&readback,layout:wgpu::TexelCopyBufferLayout {offset:0,bytes_per_row:Some(stride),rows_per_image:Some(h)}},target.size());
+   let submission=queue.submit([encoder.finish()]);let(tx,rx)=std::sync::mpsc::channel();readback.slice(..).map_async(wgpu::MapMode::Read,move|r|tx.send(r).unwrap());device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();rx.recv().unwrap().unwrap();
+   let bytes=readback.slice(..).get_mapped_range().unwrap();
+   for y in 0..h {for x in 0..w {let offset=(y*stride+x*4) as usize;let actual=u32::from_le_bytes(bytes[offset..offset+4].try_into().unwrap());assert_eq!(actual,next[(y*w+x) as usize].to_bits(),"depth hierarchy changed bits at {width}x{height} => {w}x{h}");}}
+   drop(bytes);readback.unmap();levels+=1;
+   if w==1&&h==1 {break;}
+   source=target;expected=next;width=w;height=h;
+  }
+ }
+ println!("GPU_DEPTH_HIERARCHY extents=4 levels={levels} every_texel_bit_exact=true odd_borders_preserved=true");
 }

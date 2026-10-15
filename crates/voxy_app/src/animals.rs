@@ -1,7 +1,9 @@
 //! Authored companion surfaces, native quadruped rigging and inertial fur guides.
+#[path = "animals/breed_asset.rs"]
 mod asset;
 mod collision;
 mod fur;
+mod gait;
 use glam::{Mat4, Quat, Vec3};
 use physics_voxel::{AnchoredAabb, CharacterConfig, CharacterInput, CharacterState};
 use std::sync::Arc;
@@ -17,16 +19,22 @@ pub struct Companion {
     speed: f32,
     pub travelled_distance: f32,
     coat: fur::CoatDynamics,
+    gait: gait::Gait,
 }
 impl Companion {
     pub fn spawn(spawn: VoxelPos, cat: bool) -> Self {
-        let radius = if cat { 0.42 } else { 0.85 };
+        let a = asset::profile(cat);
+        let radius = f64::from(a.trunk_length * 0.5 + a.neck_length * 0.48 + a.head_length);
         Self {
             state: CharacterState {
                 body: AnchoredAabb {
                     anchor: spawn,
                     min: [-radius, 0.0, -radius],
-                    max: [radius, if cat { 0.76 } else { 0.94 }, radius],
+                    max: [
+                        radius,
+                        f64::from(a.shoulder_height + a.neck_length + a.head_length * 0.5),
+                        radius,
+                    ],
                 },
                 velocity: [0.0; 3],
                 grounded: false,
@@ -37,6 +45,7 @@ impl Companion {
             speed: 0.0,
             travelled_distance: 0.0,
             coat: fur::CoatDynamics::new(),
+            gait: gait::Gait::new(),
         }
     }
     pub fn position(&self) -> Vec3 {
@@ -45,20 +54,16 @@ impl Companion {
     pub fn shadow_spheres(&self) -> [[f32; 4]; 6] {
         let pose = self.bones();
         let mut spheres = [[0.0; 4]; 6];
+        let a = asset::profile(self.cat);
         let torso =
-            pose[0].transform_point3(Vec3::new(0.0, if self.cat { 0.29 } else { 0.46 }, 0.0));
-        spheres[0] = [
-            torso.x,
-            torso.y,
-            torso.z,
-            if self.cat { 0.11 } else { 0.20 },
-        ];
+            pose[0].transform_point3(Vec3::new(0.0, a.shoulder_height - a.rib_depth * 0.44, 0.0));
+        spheres[0] = [torso.x, torso.y, torso.z, a.rib_half_width * 0.90];
         let head = pose[0].transform_point3(Vec3::new(
             0.0,
-            if self.cat { 0.40 } else { 0.75 },
-            if self.cat { 0.27 } else { 0.49 },
+            a.shoulder_height + a.neck_length * 0.55,
+            a.trunk_length * 0.36 + a.neck_length * 0.48 + a.head_length * 0.35,
         ));
-        spheres[1] = [head.x, head.y, head.z, if self.cat { 0.07 } else { 0.10 }];
+        spheres[1] = [head.x, head.y, head.z, a.skull_width * 0.5];
         for (leg, hip) in leg_pivots(self.cat).into_iter().enumerate() {
             let foot = pose[leg + 5].transform_point3(Vec3::new(
                 hip.x,
@@ -68,6 +73,24 @@ impl Companion {
             spheres[leg + 2] = [foot.x, foot.y, foot.z, if self.cat { 0.022 } else { 0.034 }];
         }
         spheres
+    }
+    pub fn breed_id(&self) -> &'static str {
+        asset::breed(self.cat).id()
+    }
+    pub fn fur_tip_displacement(&self) -> Result<f32, String> {
+        let groom = fur::groom(self.cat)?;
+        let pose = self.bones();
+        Ok(self
+            .coat
+            .strands
+            .iter()
+            .zip(&groom.roots)
+            .map(|(strand, root)| {
+                let rest =
+                    pose[root.bone].transform_point3(root.position + root.direction * root.length);
+                Vec3::from_array(strand.positions()[2].map(|x| x as f32)).distance(rest)
+            })
+            .fold(0.0, f32::max))
     }
     pub fn forward(&self) -> Vec3 {
         Quat::from_rotation_y(self.yaw) * Vec3::Z
@@ -164,39 +187,44 @@ impl Companion {
             self.phase = (self.phase + travelled.length() * if self.cat { 13.0 } else { 9.0 })
                 % std::f32::consts::TAU;
         }
+        let root = Mat4::from_rotation_translation(
+            Quat::from_rotation_y(self.yaw),
+            self.position()
+                - Vec3::Y
+                    * asset::profile(self.cat).shoulder_height
+                    * 0.04
+                    * (self.speed / 1.2).min(1.0)
+                    * if self.state.grounded { 1.0 } else { 0.0 },
+        );
+        self.gait.update(
+            world,
+            self.cat,
+            root,
+            self.phase,
+            self.speed,
+            self.state.grounded,
+        )?;
         let groom = fur::groom(self.cat)?;
         let pose = self.bones();
         self.coat.step(&groom, &pose, dt)?;
         Ok(())
     }
     fn bones(&self) -> [Mat4; fur::BONES] {
-        let root =
-            Mat4::from_rotation_translation(Quat::from_rotation_y(self.yaw), self.position());
-        let mut result = [root; fur::BONES];
+        let root = Mat4::from_rotation_translation(
+            Quat::from_rotation_y(self.yaw),
+            self.position()
+                - Vec3::Y
+                    * asset::profile(self.cat).shoulder_height
+                    * 0.04
+                    * (self.speed / 1.2).min(1.0)
+                    * if self.state.grounded { 1.0 } else { 0.0 },
+        );
+        let mut result = self.gait.matrices(self.cat, root);
         let amplitude = (self.speed / 1.2).min(1.0) * if self.state.grounded { 1.0 } else { 0.15 };
-        for (leg, hip) in leg_pivots(self.cat).into_iter().enumerate() {
-            let phase = self.phase
-                + if leg == 0 || leg == 3 {
-                    0.0
-                } else {
-                    std::f32::consts::PI
-                };
-            let swing = phase.sin() * 0.38 * amplitude;
-            let bend = phase.cos().max(0.0) * 0.65 * amplitude;
-            result[leg + 1] = root
-                * Mat4::from_translation(hip)
-                * Mat4::from_rotation_x(swing)
-                * Mat4::from_translation(-hip);
-            let knee = Vec3::new(hip.x, hip.y * 0.52, hip.z);
-            result[leg + 5] = result[leg + 1]
-                * Mat4::from_translation(knee)
-                * Mat4::from_rotation_x(-bend)
-                * Mat4::from_translation(-knee);
-        }
         let pivot = Vec3::new(
             0.0,
-            if self.cat { 0.34 } else { 0.48 },
-            if self.cat { -0.25 } else { -0.5 },
+            asset::profile(self.cat).rump_height - asset::profile(self.cat).rib_depth * 0.22,
+            -asset::profile(self.cat).trunk_length * 0.43,
         );
         result[9] = root
             * Mat4::from_translation(pivot)
@@ -215,11 +243,13 @@ impl Companion {
     }
 }
 fn leg_pivots(cat: bool) -> [Vec3; 4] {
-    let (x, y, front, back) = if cat {
-        (0.072, 0.29, 0.205, -0.205)
-    } else {
-        (0.125, 0.49, 0.36, -0.31)
-    };
+    let anatomy = asset::profile(cat);
+    let (x, y, front, back) = (
+        anatomy.rib_half_width * 0.68,
+        anatomy.shoulder_height - anatomy.rib_depth * 0.38,
+        anatomy.trunk_length * 0.36,
+        -anatomy.trunk_length * 0.36,
+    );
     [
         Vec3::new(-x, y, front),
         Vec3::new(x, y, front),
@@ -233,6 +263,7 @@ pub fn append_mesh(
     cat: bool,
     base: u16,
 ) -> Result<(), String> {
+    asset::validate_selection()?;
     let surface = asset::surface(cat)?;
     let groom: Arc<fur::Groom> = fur::groom(cat)?;
     for (v, i) in [
