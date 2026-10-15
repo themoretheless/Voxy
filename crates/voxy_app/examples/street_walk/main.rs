@@ -390,7 +390,7 @@ impl App {
         } else {
             None
         };
-        if self.benchmark == 0. && self.snapshot.is_none() && self.aa_validation.is_none() {
+        if (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1") || self.benchmark == 0.) && self.snapshot.is_none() && self.aa_validation.is_none() {
             self.panel = Some(panel::Panel::new(&window, &device, config.format));
         }
         self.daylight_ev = Some(renderer.exposure_ev100());
@@ -653,7 +653,7 @@ impl App {
             gpu.renderer.set_exposure_ev100(self.daylight_ev.unwrap())?;
         }
         if let Some(cycle) = &mut self.day_cycle {
-            let frozen = self.aa_validation.is_some() || self.benchmark > 0. || self.snapshot.is_some();
+            let frozen = self.aa_validation.is_some() || self.benchmark > 0. && std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() != Ok("1") || self.snapshot.is_some();
             cycle.update(&mut gpu.renderer, &mut self.weather, elapsed, frozen, self.wetness.is_some())?;
         }
         gpu.renderer.set_weather(self.weather)?;
@@ -799,7 +799,8 @@ impl App {
             let n = times.len();
             let report = serde_json::json!({"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":self.offscreen_benchmark||self.skipped_acquires==0,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
             std::fs::write(
-                "/tmp/voxy-street-benchmark.json",
+                std::env::var_os("VOXY_STREET_BENCHMARK_REPORT").map(PathBuf::from)
+                    .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-benchmark.json")),
                 serde_json::to_vec_pretty(&report)?,
             )?;
             eprintln!("STREET BENCHMARK {report}");
