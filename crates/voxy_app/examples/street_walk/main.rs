@@ -523,22 +523,31 @@ impl App {
                 eye = target + (eye - target) * hit.fraction as f32;
             }
         }
+        // The rig runs in every view so the gait phase stays continuous when
+        // switching cameras.
+        let dt = (elapsed as f32).max(1e-4);
+        let moved = (self.feet - start_feet).as_vec3();
+        let planar_speed = Vec2::new(moved.x, moved.z).length() / dt;
+        // Keep the rig aimed where the walk camera looks; the rig adds the
+        // torso deadzone, footsteps and hand-held sway on top.
+        let aim = Vec2::new(direction.x.atan2(direction.z), direction.y.clamp(-1., 1.).asin());
+        let mut delta = self.rig.aim_angles - aim;
+        delta.x = (delta.x + std::f32::consts::PI).rem_euclid(std::f32::consts::TAU) - std::f32::consts::PI;
+        self.rig.apply_look(delta);
+        self.rig.step(dt, planar_speed, self.grounded, was_grounded != self.grounded, 0.18);
         let lens = if matches!(self.view, StreetView::Bodycam | StreetView::Camcorder) {
-            let dt = (elapsed as f32).max(1e-4);
-            let moved = (self.feet - start_feet).as_vec3();
-            let planar_speed = Vec2::new(moved.x, moved.z).length() / dt;
-            // Keep the rig aimed where the walk camera looks; the rig adds the
-            // torso deadzone, footsteps and hand-held sway on top.
-            let aim = Vec2::new(direction.x.atan2(direction.z), direction.y.clamp(-1., 1.).asin());
-            let mut delta = self.rig.aim_angles - aim;
-            delta.x = (delta.x + std::f32::consts::PI).rem_euclid(std::f32::consts::TAU) - std::f32::consts::PI;
-            self.rig.apply_look(delta);
-            self.rig.step(dt, planar_speed, self.grounded, was_grounded != self.grounded, 0.18);
             let (view, _, _) = self.rig.camera_and_flashlight(actor);
             eye = view.eye;
             direction = (view.target - view.eye).normalize_or(direction);
             Some((view.vertical_fov_radians, view.up))
         } else {
+            if self.view == StreetView::FirstPerson {
+                // Eyes ride the same gait, but the neck and vestibulo-ocular reflex
+                // cancel most of it: keep a damped bob and sway, no rotation.
+                let (gait, _) = self.rig.gait_offsets();
+                let (forward, right) = self.camera.planar_basis();
+                eye += right * gait.x * 0.3 + Vec3::Y * gait.y * 0.45 + forward * gait.z * 0.3;
+            }
             None
         };
         if let Some(validation) = &self.aa_validation {
