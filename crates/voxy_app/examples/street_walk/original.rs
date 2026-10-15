@@ -8,6 +8,8 @@ struct Builder {
     meshes: Vec<ArchiveMeshSource>,
     triangles: Vec<[[f64; 3]; 3]>,
     rng: u64,
+    /// Separate stream for ageing details, so changing them leaves houses alone.
+    age_rng: u64,
     lights: Vec<ArchiveLight>,
 }
 impl Builder {
@@ -17,6 +19,13 @@ impl Builder {
             .wrapping_mul(6364136223846793005)
             .wrapping_add(1442695040888963407);
         ((self.rng >> 40) as f32) / 16777216.
+    }
+    fn aged(&mut self) -> f32 {
+        self.age_rng = self
+            .age_rng
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        ((self.age_rng >> 40) as f32) / 16777216.
     }
     fn material(
         &mut self,
@@ -931,17 +940,36 @@ fn furnish(b: &mut Builder, k: &Kit, zn: &Zone, kind: Kind, w: f32, door: Option
         }
     }
 }
-pub fn generate(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
-    let mut scene = geometry(seed)?;
+/// How worn the street looks. 1 is the authored default, 0 is pristine.
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub struct Ageing {
+    /// Missing, sunk, cracked and tilted stones and chipped kerbs.
+    pub damage: f32,
+    /// Spread of stone and kerb tones.
+    pub colour: f32,
+    /// Share of the carriageway relaid with newer setts.
+    pub relaid: f32,
+    /// Sidewalk stains, tar repairs, cracks and facade streaks.
+    pub dirt: f32,
+}
+impl Default for Ageing {
+    fn default() -> Self {
+        Self { damage: 1., colour: 1., relaid: 1., dirt: 1. }
+    }
+}
+pub fn generate(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error::Error>> {
+    let mut scene = geometry(seed, ageing)?;
     super::materials::apply(&mut scene)?;
     Ok(scene)
 }
-fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
+fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error::Error>> {
+    let Ageing { damage, colour: tone_spread, relaid: relaid_share, dirt } = ageing;
     let mut b = Builder {
         materials: Vec::new(),
         meshes: Vec::new(),
         triangles: Vec::new(),
         rng: seed,
+        age_rng: seed ^ 0x4147_4549_4e47_5f31,
         lights: Vec::new(),
     };
     let curb_m = b.material([0.34, 0.33, 0.30], 0.76, 0., 1., 0., 0.);
@@ -1078,9 +1106,12 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
         [0.4, 0.37, 0.32],
     ];
     // [tone][wear]: wear 0 is crisp, 2 is rounded and polished by wheels.
+    let mean = [0.316, 0.286, 0.251];
+    let spread = |c: [f32; 3], mean: [f32; 3]| std::array::from_fn(|i| mean[i] + (c[i] - mean[i]) * tone_spread);
     let old_stones: Vec<[usize; 3]> = stone_tones
         .iter()
         .map(|&c| {
+            let c = spread(c, mean);
             std::array::from_fn(|wear| {
                 let rough = [0.86, 0.78, 0.62][wear];
                 let m = b.material(c, rough, 0., 1., 0., 0.);
@@ -1106,49 +1137,49 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
         let z = -27. + row as f32 * 0.3;
         for col in 0..30 {
             let x = -4.35 + col as f32 * 0.3 + if row % 2 == 0 { 0.07 } else { 0. };
-            let relaid = patch_hash(row / 9, col / 5) < 0.09;
+            let relaid = patch_hash(row / 9, col / 5) < 0.09 * relaid_share;
             // Wheel tracks sit about 1.4 m either side of the crown.
             let track = (1. - ((x.abs() - 1.4).abs() / 0.55)).clamp(0., 1.);
-            let roll = b.random();
-            if !relaid && roll < 0.018 {
+            let roll = b.aged();
+            if !relaid && roll < 0.018 * damage {
                 continue; // a stone that has gone, leaving a pit in the bedding
             }
             let mesh = if relaid {
-                new_stones[(b.random() * new_stones.len() as f32) as usize]
+                new_stones[(b.aged() * new_stones.len() as f32) as usize]
             } else {
-                let tone = (b.random() * stone_tones.len() as f32) as usize;
-                let wear = if b.random() < track * 0.9 { 2 } else if b.random() < 0.45 { 1 } else { 0 };
+                let tone = (b.aged() * stone_tones.len() as f32) as usize;
+                let wear = if b.aged() < track * 0.9 * damage.min(1.) { 2 } else if b.aged() < 0.45 * damage.min(1.) { 1 } else { 0 };
                 old_stones[tone][wear]
             };
-            let disorder = if relaid { 0.3 } else { 1. };
-            let sunk = if !relaid && roll < 0.08 { 0.008 + b.random() * 0.016 } else { 0. };
-            let height = 0.075 + b.random() * 0.012 * disorder - sunk;
-            let jitter_x = (b.random() - 0.5) * 0.008 * disorder;
-            let jitter_z = (b.random() - 0.5) * 0.008 * disorder;
-            let yaw = (b.random() - 0.5) * 0.06 * disorder;
+            let disorder = if relaid { 0.3 } else { 0.25 + 0.75 * damage };
+            let sunk = if !relaid && roll < 0.08 * damage { 0.008 + b.aged() * 0.016 } else { 0. };
+            let height = 0.075 + b.aged() * 0.012 * disorder - sunk;
+            let jitter_x = (b.aged() - 0.5) * 0.008 * disorder;
+            let jitter_z = (b.aged() - 0.5) * 0.008 * disorder;
+            let yaw = (b.aged() - 0.5) * 0.06 * disorder;
             let tilt = if sunk > 0. { 0.05 } else { 0.018 } * disorder;
-            let pitch = (b.random() - 0.5) * tilt;
-            let bank = (b.random() - 0.5) * tilt;
-            let width = 0.262 + b.random() * 0.022;
-            let length = 0.258 + b.random() * 0.024;
+            let pitch = (b.aged() - 0.5) * tilt;
+            let bank = (b.aged() - 0.5) * tilt;
+            let width = 0.262 + b.aged() * 0.022;
+            let length = 0.258 + b.aged() * 0.024;
             let rotation = Quat::from_euler(glam::EulerRot::YXZ, yaw, pitch, bank);
             let centre = Vec3::new(x + jitter_x, height * 0.5 - 0.03, z + jitter_z);
-            if !relaid && roll > 0.955 {
+            if !relaid && roll > 1. - 0.045 * damage {
                 // Cracked through: two pieces, one settled lower than the other.
-                let along_x = b.random() < 0.5;
-                let cut = 0.35 + b.random() * 0.3;
+                let along_x = b.aged() < 0.5;
+                let cut = 0.35 + b.aged() * 0.3;
                 for (part, f) in [(0, cut), (1, 1. - cut)] {
                     let span = if along_x { width } else { length };
                     let piece = span * f - 0.006;
                     let offset = if part == 0 { -span * 0.5 + piece * 0.5 } else { span * 0.5 - piece * 0.5 };
-                    let drop = if part == 1 { 0.004 + b.random() * 0.01 } else { 0. };
+                    let drop = if part == 1 { 0.004 + b.aged() * 0.01 } else { 0. };
                     let local = if along_x { Vec3::new(offset, -drop * 0.5, 0.) } else { Vec3::new(0., -drop * 0.5, offset) };
                     let size = if along_x {
                         Vec3::new(piece, height - drop, length)
                     } else {
                         Vec3::new(width, height - drop, piece)
                     };
-                    let crack_tilt = Quat::from_rotation_z((b.random() - 0.5) * 0.04);
+                    let crack_tilt = Quat::from_rotation_z((b.aged() - 0.5) * 0.04);
                     b.put(mesh, centre + rotation * local, size, rotation * crack_tilt);
                 }
                 continue;
@@ -1159,6 +1190,7 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let kerb_tones: Vec<[usize; 2]> = [[0.7, 0.66, 0.54], [0.58, 0.56, 0.5], [0.64, 0.6, 0.52], [0.5, 0.48, 0.44]]
         .into_iter()
         .map(|c| {
+            let c = spread(c, [0.6, 0.575, 0.5]);
             let m = b.material(c, 0.74, 0., 1., 0., 0.);
             [b.bevel_cube_e(m, 0.42), b.bevel_cube_e(m, 0.34)]
         })
@@ -1180,16 +1212,16 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
         b.block(curb, [side * 6.68, 0.07, 27.], [4.36, 0.2, 112.]);
         for i in 0..180 {
             let kz = -27. + i as f32 * 0.62;
-            let tone = &kerb_tones[(b.random() * kerb_tones.len() as f32) as usize];
-            let chipped = b.random() < 0.3;
+            let tone = &kerb_tones[(b.aged() * kerb_tones.len() as f32) as usize];
+            let chipped = b.aged() < 0.3 * damage;
             let mesh = tone[chipped as usize];
-            let drop = if b.random() < 0.12 { 0.01 + b.random() * 0.025 } else { b.random() * 0.006 };
-            let len = 0.575 + b.random() * 0.02;
+            let drop = (if b.aged() < 0.12 * damage { 0.01 + b.aged() * 0.025 } else { b.aged() * 0.006 }) * damage.min(1.5);
+            let len = 0.575 + b.aged() * 0.02;
             let lean = Quat::from_euler(
                 glam::EulerRot::YXZ,
-                (b.random() - 0.5) * 0.02,
-                (b.random() - 0.5) * 0.02,
-                side * b.random() * 0.03,
+                (b.aged() - 0.5) * 0.02 * damage,
+                (b.aged() - 0.5) * 0.02 * damage,
+                side * b.aged() * 0.03 * damage,
             );
             b.put(
                 mesh,
@@ -1198,32 +1230,33 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                 lean,
             );
         }
-        for _ in 0..34 {
-            let z = -26. + b.random() * 108.;
-            let x = side * (4.95 + b.random() * 1.9);
-            let w = (0.25 + b.random() * 1.1).min(0.9);
-            let l = 0.25 + b.random() * 1.6;
-            let mesh = if b.random() < 0.35 { tar } else { stain_ms[(b.random() * stain_ms.len() as f32) as usize] };
-            let yaw = Quat::from_rotation_y((b.random() - 0.5) * 0.5);
-            let lift = 0.003 + b.random() * 0.003;
+        for _ in 0..(34. * dirt) as usize {
+            let z = -26. + b.aged() * 108.;
+            let x = side * (4.95 + b.aged() * 1.9);
+            let w = (0.25 + b.aged() * 1.1).min(0.9);
+            let l = 0.25 + b.aged() * 1.6;
+            let mesh = if b.aged() < 0.35 { tar } else { stain_ms[(b.aged() * stain_ms.len() as f32) as usize] };
+            let yaw = Quat::from_rotation_y((b.aged() - 0.5) * 0.5);
+            let lift = 0.003 + b.aged() * 0.003;
             b.put(mesh, Vec3::new(x, 0.165 + lift * 0.5, z), Vec3::new(w, 0.01 + lift, l), yaw);
         }
-        for _ in 0..60 {
+        for _ in 0..(60. * dirt) as usize {
             // Meandering cracks built from short, slightly turning segments.
-            let mut p = Vec3::new(side * (4.8 + b.random() * 2.3), 0.174, -26. + b.random() * 108.);
-            let mut heading = b.random() * std::f32::consts::TAU;
-            for _ in 0..3 + (b.random() * 6.) as usize {
-                heading += (b.random() - 0.5) * 1.1;
-                let seg = 0.08 + b.random() * 0.22;
+            let mut p = Vec3::new(side * (4.8 + b.aged() * 2.3), 0.174, -26. + b.aged() * 108.);
+            let mut heading = b.aged() * std::f32::consts::TAU;
+            for _ in 0..3 + (b.aged() * 6.) as usize {
+                heading += (b.aged() - 0.5) * 1.1;
+                let seg = 0.08 + b.aged() * 0.22;
                 let dir = Vec3::new(heading.cos(), 0., heading.sin());
                 let next = p + dir * seg;
                 if next.x.abs() < 4.72 || next.x.abs() > 7.2 {
                     break;
                 }
+                let crack_w = 0.006 + b.aged() * 0.006;
                 b.put(
                     crack,
                     (p + next) * 0.5,
-                    Vec3::new(0.006 + b.random() * 0.006, 0.006, seg + 0.006),
+                    Vec3::new(crack_w, 0.006, seg + 0.006),
                     Quat::from_rotation_y(dir.x.atan2(dir.z)),
                 );
                 p = next;
@@ -1296,10 +1329,10 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                     b.block(wall, [side * 7.42, f + 2.475, wz], [0.28, 0.35, opening]);
                     // Rain washes dirt off the sill into darker streaks below it.
                     if level > 0 || house % 3 == 0 || window != door_bay {
-                        for _ in 0..1 + (b.random() * 3.) as usize {
-                            let run = 0.25 + b.random() * 0.65;
-                            let sz = wz + (b.random() - 0.5) * opening * 0.9;
-                            let sw = 0.03 + b.random() * 0.09;
+                        for _ in 0..((0.5 + b.aged() * 3.) * dirt) as usize {
+                            let run = 0.25 + b.aged() * 0.65;
+                            let sz = wz + (b.aged() - 0.5) * opening * 0.9;
+                            let sw = 0.03 + b.aged() * 0.09;
                             b.block(grime, [side * 7.277, f + 0.9 - run * 0.5, sz], [0.006, run, sw]);
                         }
                     }

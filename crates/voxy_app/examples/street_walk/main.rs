@@ -69,6 +69,8 @@ struct App {
     root: PathBuf,
     original: bool,
     original_seed: u64,
+    ageing: original::Ageing,
+    rebuild_scene: bool,
     weather: voxy_render::weather::Weather,
     weather_start: Instant,
     day_cycle: Option<day_cycle::DayCycle>,
@@ -165,6 +167,8 @@ impl App {
             failure: None,
             finished: false,
             original: !args.iter().any(|a| a == "--bistro"),
+            ageing: original::Ageing::default(),
+            rebuild_scene: false,
             original_seed: value("--seed")
                 .and_then(|v| {
                     if let Some(v) = v.strip_prefix("0x") {
@@ -212,7 +216,7 @@ impl App {
             eprintln!("STREET loading full authored scene {}", self.root.display());
         }
         let mut scene = if self.original {
-            original::generate(self.original_seed)?
+            original::generate(self.original_seed, self.ageing)?
         } else {
             scene::load(&self.root)?
         };
@@ -363,43 +367,8 @@ impl App {
             scene.bounds,
             environment,
         )?;
-        if let Some(degrees) = self.sun_elevation {
-            let angle = degrees.clamp(-10., 90.).to_radians();
-            renderer.set_sun(Vec3::new(-angle.cos(), angle.sin(), 0.3 * angle.cos()), [1., 0.95, 0.85, 100000.])?;
-        }
-        renderer.set_surface_wetness(self.wetness.map(|w| w.clamp(0., 1.)))?;
         let validation_headroom = self.aa_validation.as_ref().map(|_| 2.);
-        renderer.set_display_headroom(validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.)).max(1.))?;
-        let mode = match std::env::var("VOXY_STREET_AA").as_deref().unwrap_or("temporal") {
-            "off" => voxy_render::ArchiveAntialiasing::Off,
-            "spatial" => voxy_render::ArchiveAntialiasing::Spatial,
-            "temporal" => voxy_render::ArchiveAntialiasing::Temporal,
-            "metalfx" => voxy_render::ArchiveAntialiasing::MetalFx,
-            value => return Err(format!("unknown VOXY_STREET_AA: {value}").into()),
-        };
-        renderer.set_antialiasing(mode)?;
-        // Off by default (a fixed-focus lens fights a first-person walk). Example:
-        // VOXY_STREET_DOF="5.6,auto,0.5" = 50 mm f/5.6, centre autofocus, 180-degree shutter.
-        let lens = std::env::var("VOXY_STREET_DOF").unwrap_or_else(|_| "off".into());
-        if lens != "off" {
-            let value = lens;
-            let parts: Vec<f32> = value.split(',').filter_map(|v| match v.trim() {"auto" => Some(0.), v => v.parse().ok()}).collect();
-            if parts.len() < 2 {
-                return Err(format!("invalid VOXY_STREET_DOF: {value}").into());
-            }
-            renderer.set_camera_lens(voxy_render::ArchiveCameraLens {
-                focal_length_m: 0.05,
-                f_number: parts[0],
-                focus_distance_m: parts[1],
-                shutter_fraction: parts.get(2).copied().unwrap_or(0.),
-                sensor_width_m: 0.036,
-            })?;
-        }
-        renderer.set_tone_mapper(match std::env::var("VOXY_STREET_TONEMAP").as_deref().unwrap_or("agx") {
-            "aces" => voxy_render::archive_scene::ArchiveToneMapper::Aces,
-            "agx" => voxy_render::archive_scene::ArchiveToneMapper::Agx,
-            value => return Err(format!("unknown VOXY_STREET_TONEMAP: {value}").into()),
-        });
+        let mode = self.configure_renderer(&mut renderer, validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.)), None)?;
         if self.original {bake_street_probes(&mut renderer, scene.bounds)?;}
         eprintln!("STREET antialiasing={mode:?} render={}x{} output={}x{}", render_width, render_height, size.width, size.height);
 
@@ -442,6 +411,88 @@ impl App {
         self.last = Instant::now();
         if !self.offscreen_benchmark {window.set_visible(true);window.focus_window();}
         self.capture(false);
+        Ok(())
+    }
+    /// Per-run renderer settings, shared by start-up and scene rebuilds.
+    fn configure_renderer(
+        &self,
+        renderer: &mut ArchiveSceneRenderer,
+        headroom: f32,
+        keep_mode: Option<voxy_render::ArchiveAntialiasing>,
+    ) -> Result<voxy_render::ArchiveAntialiasing, Box<dyn std::error::Error>> {
+        if let Some(degrees) = self.sun_elevation {
+            let angle = degrees.clamp(-10., 90.).to_radians();
+            renderer.set_sun(Vec3::new(-angle.cos(), angle.sin(), 0.3 * angle.cos()), [1., 0.95, 0.85, 100000.])?;
+        }
+        renderer.set_surface_wetness(self.wetness.map(|w| w.clamp(0., 1.)))?;
+        renderer.set_display_headroom(headroom.max(1.))?;
+        let mode = if let Some(mode) = keep_mode { mode } else { match std::env::var("VOXY_STREET_AA").as_deref().unwrap_or("temporal") {
+            "off" => voxy_render::ArchiveAntialiasing::Off,
+            "spatial" => voxy_render::ArchiveAntialiasing::Spatial,
+            "temporal" => voxy_render::ArchiveAntialiasing::Temporal,
+            "metalfx" => voxy_render::ArchiveAntialiasing::MetalFx,
+            value => return Err(format!("unknown VOXY_STREET_AA: {value}").into()),
+        } };
+        renderer.set_antialiasing(mode)?;
+        // Off by default (a fixed-focus lens fights a first-person walk). Example:
+        // VOXY_STREET_DOF="5.6,auto,0.5" = 50 mm f/5.6, centre autofocus, 180-degree shutter.
+        let lens = std::env::var("VOXY_STREET_DOF").unwrap_or_else(|_| "off".into());
+        if lens != "off" {
+            let value = lens;
+            let parts: Vec<f32> = value.split(',').filter_map(|v| match v.trim() {"auto" => Some(0.), v => v.parse().ok()}).collect();
+            if parts.len() < 2 {
+                return Err(format!("invalid VOXY_STREET_DOF: {value}").into());
+            }
+            renderer.set_camera_lens(voxy_render::ArchiveCameraLens {
+                focal_length_m: 0.05,
+                f_number: parts[0],
+                focus_distance_m: parts[1],
+                shutter_fraction: parts.get(2).copied().unwrap_or(0.),
+                sensor_width_m: 0.036,
+            })?;
+        }
+        renderer.set_tone_mapper(match std::env::var("VOXY_STREET_TONEMAP").as_deref().unwrap_or("agx") {
+            "aces" => voxy_render::archive_scene::ArchiveToneMapper::Aces,
+            "agx" => voxy_render::archive_scene::ArchiveToneMapper::Agx,
+            value => return Err(format!("unknown VOXY_STREET_TONEMAP: {value}").into()),
+        });
+        Ok(mode)
+    }
+    /// Regenerates the original street with the current ageing settings and swaps
+    /// in a fresh renderer and collision world.
+    fn rebuild_original(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        let started = Instant::now();
+        let mut scene = original::generate(self.original_seed, self.ageing)?;
+        let (environment, sun, sun_colour) = materials::daylight()?;
+        scene.sun = sun;
+        scene.sun_colour = sun_colour;
+        let environment = (std::env::var("VOXY_STREET_SKY").as_deref() == Ok("hdri")).then_some(environment);
+        let gpu = self.gpu.as_ref().ok_or("missing gpu")?;
+        let (width, height) = gpu.supersample.render_size();
+        let mut renderer = ArchiveSceneRenderer::new_with_environment(
+            &gpu.device,
+            &gpu.queue,
+            gpu.config.format,
+            width,
+            height,
+            scene.images,
+            scene.materials,
+            scene.geometry,
+            &scene.lights,
+            scene.sun,
+            scene.sun_colour,
+            scene.bounds,
+            environment,
+        )?;
+        let headroom = gpu.validation_headroom.unwrap_or(gpu.hdr_headroom.unwrap_or(1.));
+        let mode = gpu.renderer.antialiasing();
+        self.configure_renderer(&mut renderer, headroom, Some(mode))?;
+        if self.original {bake_street_probes(&mut renderer, scene.bounds)?;}
+        let gpu = self.gpu.as_mut().ok_or("missing gpu")?;
+        gpu.renderer = renderer;
+        gpu.bodycam = None;
+        self.collision = Some(scene.collision);
+        eprintln!("STREET rebuilt with {:?} in {:.2}s", self.ageing, started.elapsed().as_secs_f64());
         Ok(())
     }
     fn capture(&mut self, captured: bool) {
@@ -685,10 +736,15 @@ impl App {
                 weather: &mut self.weather,
                 wetness: &mut self.wetness,
                 seed: self.original_seed,
+                ageing: self.original.then_some(&mut self.ageing),
+                rebuild: &mut self.rebuild_scene,
             });
         }
         if let Some(frame) = frame {
             gpu.queue.present(frame);
+        }
+        if std::mem::take(&mut self.rebuild_scene) {
+            return self.rebuild_original();
         }
         if capture_now && gpu.config.usage.contains(wgpu::TextureUsages::COPY_SRC) {
             gpu.config.usage.remove(wgpu::TextureUsages::COPY_SRC);

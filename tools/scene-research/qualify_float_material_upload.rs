@@ -175,6 +175,7 @@ fn main() {
     qualify_stable_culling(&device, &queue);
     qualify_cpu_frustum();
     qualify_history_rejection(&device,&queue);
+    qualify_depth_hierarchy(&device,&queue);
 }
 
 fn qualify_packed_sampling(device: &wgpu::Device, queue: &wgpu::Queue) {
@@ -451,4 +452,44 @@ fn qualify_history_rejection(device:&wgpu::Device,queue:&wgpu::Queue) {
     let bytes=readback.slice(..).get_mapped_range().unwrap();let values:Vec<_>=bytes.chunks_exact(4).map(|c|u32::from_le_bytes(c.try_into().unwrap())).collect();
     assert_eq!(values,vec![1,0,1,0,1,0,0,0]);
     println!("GPU_HISTORY_SURFACE cases=8 coherent_surfaces_kept=true disoccluded_and_invalid_rejected=true");
+}
+
+
+// Exercise the actual reduction shader through every level, including odd
+// extents and a one-ULP foreground depth in the final border texel.
+fn qualify_depth_hierarchy(device:&wgpu::Device,queue:&wgpu::Queue) {
+ let shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:Some("exact depth reduction"),source:wgpu::ShaderSource::Wgsl(include_str!("../../crates/voxy_render/src/archive_depth_reduce.wgsl").into())});
+ let layout=device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {label:None,entries:&[
+  wgpu::BindGroupLayoutEntry {binding:0,visibility:wgpu::ShaderStages::COMPUTE,ty:wgpu::BindingType::Texture {sample_type:wgpu::TextureSampleType::Float {filterable:false},view_dimension:wgpu::TextureViewDimension::D2,multisampled:false},count:None},
+  wgpu::BindGroupLayoutEntry {binding:1,visibility:wgpu::ShaderStages::COMPUTE,ty:wgpu::BindingType::StorageTexture {access:wgpu::StorageTextureAccess::WriteOnly,format:wgpu::TextureFormat::R32Float,view_dimension:wgpu::TextureViewDimension::D2},count:None}
+ ]});
+ let pipeline_layout=device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {label:None,bind_group_layouts:&[&layout],immediate_size:0});
+ let pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:None,layout:Some(&pipeline_layout),module:&shader,entry_point:Some("reduce_depth"),compilation_options:Default::default(),cache:None});
+ let mut levels=0;
+ for (mut width,mut height) in [(1u32,1u32),(3,5),(17,9),(64,32)] {
+  let texture=|w,h|device.create_texture(&wgpu::TextureDescriptor {label:Some("depth hierarchy fixture"),size:wgpu::Extent3d {width:w,height:h,depth_or_array_layers:1},mip_level_count:1,sample_count:1,dimension:wgpu::TextureDimension::D2,format:wgpu::TextureFormat::R32Float,usage:wgpu::TextureUsages::TEXTURE_BINDING|wgpu::TextureUsages::STORAGE_BINDING|wgpu::TextureUsages::COPY_SRC|wgpu::TextureUsages::COPY_DST,view_formats:&[]});
+  let mut expected:Vec<f32>=(0..width*height).map(|i|0.2+((i*97)%701) as f32/1000.).collect();
+  *expected.last_mut().unwrap()=f32::from_bits(0.2f32.to_bits()-1);
+  let mut source=texture(width,height);
+  queue.write_texture(source.as_image_copy(),bytemuck::cast_slice(&expected),wgpu::TexelCopyBufferLayout {offset:0,bytes_per_row:Some(width*4),rows_per_image:Some(height)},source.size());
+  loop {
+   let w=width.div_ceil(2);let h=height.div_ceil(2);
+   let mut next=Vec::new();
+   for y in 0..h {for x in 0..w {let mut value=1f32;for dy in 0..2 {for dx in 0..2 {value=value.min(expected[((y*2+dy).min(height-1)*width+(x*2+dx).min(width-1)) as usize]);}}next.push(value);}}
+   let target=texture(w,h);let source_view=source.create_view(&Default::default());let target_view=target.create_view(&Default::default());
+   let bind=device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&layout,entries:&[wgpu::BindGroupEntry {binding:0,resource:wgpu::BindingResource::TextureView(&source_view)},wgpu::BindGroupEntry {binding:1,resource:wgpu::BindingResource::TextureView(&target_view)}]});
+   let stride=(w*4).div_ceil(256)*256;
+   let readback=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:u64::from(stride*h),usage:wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::MAP_READ,mapped_at_creation:false});
+   let mut encoder=device.create_command_encoder(&Default::default());
+   {let mut pass=encoder.begin_compute_pass(&Default::default());pass.set_pipeline(&pipeline);pass.set_bind_group(0,&bind,&[]);pass.dispatch_workgroups(w.div_ceil(8),h.div_ceil(8),1);}
+   encoder.copy_texture_to_buffer(target.as_image_copy(),wgpu::TexelCopyBufferInfo {buffer:&readback,layout:wgpu::TexelCopyBufferLayout {offset:0,bytes_per_row:Some(stride),rows_per_image:Some(h)}},target.size());
+   let submission=queue.submit([encoder.finish()]);let(tx,rx)=std::sync::mpsc::channel();readback.slice(..).map_async(wgpu::MapMode::Read,move|r|tx.send(r).unwrap());device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();rx.recv().unwrap().unwrap();
+   let bytes=readback.slice(..).get_mapped_range().unwrap();
+   for y in 0..h {for x in 0..w {let offset=(y*stride+x*4) as usize;let actual=u32::from_le_bytes(bytes[offset..offset+4].try_into().unwrap());assert_eq!(actual,next[(y*w+x) as usize].to_bits(),"depth hierarchy changed bits at {width}x{height} => {w}x{h}");}}
+   drop(bytes);readback.unmap();levels+=1;
+   if w==1&&h==1 {break;}
+   source=target;expected=next;width=w;height=h;
+  }
+ }
+ println!("GPU_DEPTH_HIERARCHY extents=4 levels={levels} every_texel_bit_exact=true odd_borders_preserved=true");
 }

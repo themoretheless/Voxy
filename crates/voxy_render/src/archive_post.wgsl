@@ -165,6 +165,41 @@ fn luminance(c:vec3<f32>)->f32 { return dot(c,vec3<f32>(0.299,0.587,0.114)); }
     return vec4<f32>(with_precipitation(antialiased(q),q),1.);
 }
 // Precipitation is composited once, after FXAA, instead of in every FXAA tap.
+fn world_at(q:vec2<i32>)->vec3<f32> {
+    let p=clamp(q,vec2<i32>(0),vec2<i32>(textureDimensions(scene_depth))-vec2<i32>(1));
+    let uv=(vec2<f32>(p)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.);
+    let h=camera.inverse_vp*vec4<f32>(uv,textureLoad(scene_depth,p,0),1.);
+    return h.xyz/h.w;
+}
+// Raindrop impacts on upward-facing surfaces: per world cell, a drop lands at a
+// hashed spot and time, leaving a short expanding ring and a brief bright crown.
+fn splash_opacity(p:vec3<f32>,q:vec2<i32>,distance:f32)->f32 {
+    // Normal from depth neighbours; only roughly horizontal ground gets splashes.
+    let n=normalize(cross(world_at(q+vec2<i32>(0,1))-p,world_at(q+vec2<i32>(1,0))-p));
+    let up=smoothstep(0.75,0.95,abs(n.y));
+    if up<=0. { return 0.; }
+    let t=camera.atmosphere.x;var cover=0.;
+    for(var layer=0;layer<3;layer++) {
+        let o=f32(layer)*vec2<f32>(0.37,0.71);
+        let g=p.xz*3.+o;let cell=floor(g);
+        let h=vec3<f32>(cell,f32(layer));
+        if weather_hash(h+vec3<f32>(0.,0.,7.))>camera.weather.z*0.8 { continue; }
+        let period=0.45+0.35*weather_hash(h+vec3<f32>(3.,0.,0.));
+        let age=fract(t/period+weather_hash(h))*period;
+        let life=0.22;
+        if age>life { continue; }
+        let k=age/life;
+        let centre=cell+vec2<f32>(0.25)+0.5*vec2<f32>(weather_hash(h+vec3<f32>(1.,0.,0.)),weather_hash(h+vec3<f32>(0.,1.,0.)));
+        let r=length(g-centre)/3.;
+        let radius=0.015+0.07*sqrt(k);
+        // Ring width grows with distance so far splashes stay at least ~a pixel wide.
+        let width=max(0.006,distance*0.0012);
+        let ring=(1.-smoothstep(0.,width,abs(r-radius)))*(1.-k);
+        let crown=(1.-smoothstep(0.,0.012+width,r))*(1.-smoothstep(0.,0.25,k));
+        cover=max(cover,max(ring*0.55,crown*0.8));
+    }
+    return cover*up*(1.-smoothstep(15.,30.,distance));
+}
 fn with_precipitation(c:vec3<f32>,q:vec2<i32>)->vec3<f32> {
     if camera.weather.z+camera.weather.w<=0. { return c; }
     let uv=(vec2<f32>(q)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.);
@@ -173,7 +208,10 @@ fn with_precipitation(c:vec3<f32>,q:vec2<i32>)->vec3<f32> {
     let d=textureLoad(scene_depth,q,0);
     let hit=camera.inverse_vp*vec4<f32>(uv,d,1.);
     let distance=select(length(hit.xyz/hit.w-camera.eye.xyz),12000.,d>=1.);
-    let a=precipitation_opacity(ray,distance,q);
+    var a=precipitation_opacity(ray,distance,q);
+    if camera.weather.z>0. && d<1. && distance<30. {
+        a=1.-(1.-a)*(1.-splash_opacity(hit.xyz/hit.w,q,distance));
+    }
     return mix(c,display_colour(vec3<f32>(350.,400.,450.)*camera.viewport.z),a);
 }
 fn antialiased(q:vec2<i32>)->vec3<f32> {
