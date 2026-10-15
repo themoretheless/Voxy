@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?;
         let offset = images.len();
         images.extend(
-            voxy_model::ModelAsset::decode_embedded_images(&bytes, Default::default(), 4)?
+            voxy_model::ModelAsset::decode_embedded_images(&bytes, Default::default(), 6)?
                 .into_iter()
                 .map(ArchiveImageSource::Rgba),
         );
@@ -65,10 +65,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     diffuse: [1.; 4],
                     specular_gloss: [1.; 4],
                     emissive_normal: [0., 0., 0., if id == 0 { 0.8 } else { 0.35 }],
-                    surface: [0., if id == 0 { 0.94 } else { 0.48 }, 0., -1.],
+                    surface: [0., 1., 0., -1.],
                     workflow: [1., 1., 0., 0.],
                 },
-                images: [Some(offset + id * 2), None, Some(offset + id * 2 + 1), None],
+                images: [
+                    Some(offset + id * 2),
+                    Some(offset + 4 + id),
+                    Some(offset + id * 2 + 1),
+                    None,
+                ],
                 double_sided: id == 1,
             });
             println!(

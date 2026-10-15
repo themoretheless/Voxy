@@ -37,8 +37,8 @@ impl NativePlants {
         let mut geometry = Vec::new();
         for variant in 0..4 {
             let tree = variant < 2;
-            let bytes =
-                voxy_model::plants::generate_world_plant_glb(voxy_model::plants::PlantOptions {
+            let asset =
+                voxy_model::plants::generate_world_plant_asset(voxy_model::plants::PlantOptions {
                     kind: if tree {
                         voxy_model::plants::PlantKind::Tree
                     } else {
@@ -47,56 +47,48 @@ impl NativePlants {
                     seed: seed.wrapping_add(variant as u64),
                     height: if tree { 5. } else { 1.6 },
                 })?;
-            let glb = gltf_decode(&bytes)?;
             let image_offset = images.len();
-            images.extend(
-                voxy_model::ModelAsset::decode_embedded_images(&bytes, Default::default(), 4)?
-                    .into_iter()
-                    .map(ArchiveImageSource::Rgba),
-            );
-            for (id, p) in glb.meshes[0].iter().enumerate() {
-                let normals = p.normals.as_ref().ok_or("missing plant normals")?;
-                let tangents = match &p.tangents {
-                    Some(voxy_model::SceneArchiveTangents::Finite(v)) => v,
-                    _ => return Err("missing plant tangents".into()),
-                };
-                let uv = &p
-                    .texcoords
-                    .iter()
-                    .find(|(i, _)| *i == 0)
-                    .ok_or("missing plant UV")?
-                    .1;
-                let vertices = (0..p.positions.len())
-                    .map(|i| ArchiveVertex {
-                        position: p.positions[i],
-                        normal: normals[i],
-                        tangent: tangents[i],
-                        uv: uv[i],
-                    })
-                    .collect();
-                geometry.push(ArchiveMeshSource {
-                    vertices,
-                    indices: p.indices.clone(),
-                    instances: instances[variant * 2 + id].clone(),
-                    material: materials.len(),
-                    center: Vec3::ZERO,
+            let material_offset = materials.len();
+            images.extend(asset.images.into_iter().map(ArchiveImageSource::Rgba));
+            for mut material in asset.materials {
+                for image in material.images.iter_mut().flatten() {
+                    *image += image_offset;
+                }
+                materials.push(material);
+            }
+            for (id, mut mesh) in asset.geometry.into_iter().enumerate() {
+                mesh.instances = instances[variant * 3 + id].clone();
+                mesh.material += material_offset;
+                geometry.push(mesh);
+            }
+        }
+        // Derive shadow bounds from actual generated crowns, including transformed corners.
+        let mut low = low;
+        let mut high = high;
+        for mesh in &geometry {
+            let min = mesh
+                .vertices
+                .iter()
+                .fold(Vec3::splat(f32::INFINITY), |a, v| {
+                    a.min(Vec3::from_array(v.position))
                 });
-                materials.push(ArchiveMaterialSource {
-                    parameters: ArchiveMaterial {
-                        diffuse: [1.; 4],
-                        specular_gloss: [1.; 4],
-                        emissive_normal: [0., 0., 0., if id == 0 { 0.8 } else { 0.35 }],
-                        surface: [0., if id == 0 { 0.94 } else { 0.48 }, 0., -1.],
-                        workflow: [1., 1., 0., if id == 1 { 0.6 } else { 0. }],
-                    },
-                    images: [
-                        Some(image_offset + id * 2),
-                        None,
-                        Some(image_offset + id * 2 + 1),
-                        None,
-                    ],
-                    double_sided: id == 1,
+            let max = mesh
+                .vertices
+                .iter()
+                .fold(Vec3::splat(f32::NEG_INFINITY), |a, v| {
+                    a.max(Vec3::from_array(v.position))
                 });
+            for instance in &mesh.instances {
+                let world = Mat4::from_cols_array_2d(&instance.world);
+                for x in [min.x, max.x] {
+                    for y in [min.y, max.y] {
+                        for z in [min.z, max.z] {
+                            let p = world.transform_point3(Vec3::new(x, y, z));
+                            low = low.min(p);
+                            high = high.max(p);
+                        }
+                    }
+                }
             }
         }
         let gpu = voxy_render::NativeVegetation::new(
@@ -237,17 +229,18 @@ impl NativePlants {
             )
         });
         voxy_render::CameraView {
-            eye: centre + Vec3::new(12., 8., 15.),
+            eye: centre + Vec3::new(8., 4.5, 10.),
             target: centre + Vec3::Y * 2.,
             ..Default::default()
         }
     }
     fn instances(&self) -> Vec<Vec<ArchiveInstance>> {
-        let mut groups = vec![Vec::new(); self.groups * 2];
+        let mut groups = vec![Vec::new(); self.groups * 3];
         for plant in &self.placements {
             if plant.active {
-                groups[plant.variant * 2].push(plant.transform);
-                groups[plant.variant * 2 + 1].push(plant.transform);
+                for primitive in 0..3 {
+                    groups[plant.variant * 3 + primitive].push(plant.transform);
+                }
             }
         }
         groups
@@ -292,26 +285,6 @@ impl NativePlants {
         }
         Ok(receipt)
     }
-}
-fn gltf_decode(bytes: &[u8]) -> Result<voxy_model::SceneArchive, Box<dyn std::error::Error>> {
-    // GLB views are decoded by the archive owner; the app never rewrites authored attributes.
-    let json_len = u32::from_le_bytes(bytes.get(12..16).ok_or("GLB header")?.try_into()?) as usize;
-    let json = bytes.get(20..20 + json_len).ok_or("GLB JSON")?;
-    let bin_header = 20 + json_len;
-    let bin_len = u32::from_le_bytes(
-        bytes
-            .get(bin_header..bin_header + 4)
-            .ok_or("GLB binary header")?
-            .try_into()?,
-    ) as usize;
-    let bin = bytes
-        .get(bin_header + 8..bin_header + 8 + bin_len)
-        .ok_or("GLB binary")?;
-    Ok(voxy_model::SceneArchive::decode(
-        json,
-        vec![std::sync::Arc::from(bin)],
-        Default::default(),
-    )?)
 }
 
 #[cfg(test)]

@@ -16,6 +16,42 @@ struct Camera {
     sun: [f32; 4],
     flags: [f32; 4],
 }
+#[repr(C)]
+#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+struct PlantMaterial {
+    base: crate::archive_scene::ArchiveMaterial,
+    canopy: [f32; 4],
+    extent_density: [f32; 4],
+}
+fn canopy_metadata(geometry: &[ArchiveMeshSource], material: usize) -> ([f32; 4], [f32; 4]) {
+    let mut low = Vec3::splat(f32::INFINITY);
+    let mut high = Vec3::splat(f32::NEG_INFINITY);
+    let mut area = 0.;
+    for mesh in geometry.iter().filter(|m| m.material == material) {
+        for v in &mesh.vertices {
+            let p = Vec3::from_array(v.position);
+            low = low.min(p);
+            high = high.max(p);
+        }
+        for ids in mesh.indices.chunks_exact(3) {
+            let p = |i: u32| Vec3::from_array(mesh.vertices[i as usize].position);
+            area += (p(ids[1]) - p(ids[0]))
+                .cross(p(ids[2]) - p(ids[0]))
+                .length()
+                * 0.5;
+        }
+    }
+    if !low.is_finite() {
+        return ([0.; 4], [1., 1., 1., 0.]);
+    }
+    let centre = (low + high) * 0.5;
+    let extent = ((high - low) * 0.5).max(Vec3::splat(0.01));
+    let volume = 4. / 3. * std::f32::consts::PI * extent.x * extent.y * extent.z;
+    (
+        centre.extend(0.).to_array(),
+        extent.extend(area / volume).to_array(),
+    )
+}
 struct Mesh {
     vertices: ComputeStorage,
     indices: ComputeStorage,
@@ -69,6 +105,14 @@ fn buffer(
         },
     ])?;
     Ok(b)
+}
+fn voxy_render_identity_mr(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+) -> Result<Arc<voxy_gpu_core::ManagedTexture>, ComputeError> {
+    let image = crate::ImageAsset::from_rgba(1, 1, vec![255, 255, 0, 255], Default::default())
+        .map_err(|e| ComputeError::Validation(e.to_string()))?;
+    ArchiveImageSource::Rgba(image).upload(device, queue)
 }
 fn uniform(binding: u32, visibility: wgpu::ShaderStages) -> wgpu::BindGroupLayoutEntry {
     wgpu::BindGroupLayoutEntry {
@@ -125,6 +169,38 @@ impl NativeVegetation {
         if !bounds.0.is_finite() || !bounds.1.is_finite() || !bounds.0.cmple(bounds.1).all() {
             return Err(ComputeError::Validation("invalid vegetation bounds".into()));
         }
+        for mesh in &geometry {
+            if mesh.material >= sources.len()
+                || mesh.indices.len() % 3 != 0
+                || mesh
+                    .indices
+                    .iter()
+                    .any(|i| *i as usize >= mesh.vertices.len())
+                || mesh
+                    .vertices
+                    .iter()
+                    .any(|v| v.position.iter().any(|v| !v.is_finite()))
+            {
+                return Err(ComputeError::Validation(
+                    "invalid canopy source geometry".into(),
+                ));
+            }
+        }
+        let canopies: Vec<_> = (0..sources.len())
+            .map(|i| {
+                let leaf = if sources[i].parameters.workflow[3] > 0. {
+                    i
+                } else if sources
+                    .get(i + 1)
+                    .is_some_and(|m| m.parameters.workflow[3] > 0.)
+                {
+                    i + 1
+                } else {
+                    i
+                };
+                canopy_metadata(&geometry, leaf)
+            })
+            .collect();
         let camera_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("native vegetation camera"),
             entries: &[uniform(0, wgpu::ShaderStages::VERTEX_FRAGMENT)],
@@ -136,6 +212,7 @@ impl NativeVegetation {
                 texture(1, false),
                 texture(2, false),
                 sampler(3, false),
+                texture(4, false),
             ],
         });
         let shadow_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -202,6 +279,7 @@ impl NativeVegetation {
         for image in images {
             textures.push(image.upload(device, queue)?);
         }
+        let default_mr = voxy_render_identity_mr(device, queue)?;
         let colour_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             address_mode_u: wgpu::AddressMode::Repeat,
             address_mode_v: wgpu::AddressMode::Repeat,
@@ -211,7 +289,7 @@ impl NativeVegetation {
             ..Default::default()
         });
         let mut materials = Vec::new();
-        for source in sources {
+        for (material_id, source) in sources.into_iter().enumerate() {
             if bytemuck::cast_slice::<crate::archive_scene::ArchiveMaterial, f32>(
                 std::slice::from_ref(&source.parameters),
             )
@@ -228,10 +306,26 @@ impl NativeVegetation {
             let normal = source.images[2]
                 .and_then(|i| textures.get(i))
                 .ok_or_else(|| ComputeError::Validation("missing botanical normal map".into()))?;
+            let mr = match source.images[1] {
+                Some(i) => textures.get(i).ok_or_else(|| {
+                    ComputeError::Validation("invalid plant roughness map".into())
+                })?,
+                None => &default_mr,
+            };
+            let mr = mr.create_view(&wgpu::TextureViewDescriptor {
+                format: Some(mr.format().remove_srgb_suffix()),
+                ..Default::default()
+            });
+            let (canopy, extent_density) = canopies[material_id];
+            let parameters = PlantMaterial {
+                base: source.parameters,
+                canopy,
+                extent_density,
+            };
             let data = buffer(
                 device,
                 "native plant PBR material",
-                bytemuck::bytes_of(&source.parameters),
+                bytemuck::bytes_of(&parameters),
                 wgpu::BufferUsages::UNIFORM,
             )?;
             let colour = colour.create_view(&wgpu::TextureViewDescriptor {
@@ -262,6 +356,10 @@ impl NativeVegetation {
                         binding: 3,
                         resource: wgpu::BindingResource::Sampler(&colour_sampler),
                     },
+                    wgpu::BindGroupEntry {
+                        binding: 4,
+                        resource: wgpu::BindingResource::TextureView(&mr),
+                    },
                 ],
             });
             materials.push(Material {
@@ -269,6 +367,7 @@ impl NativeVegetation {
                 _uniform: data,
             });
         }
+        textures.push(default_mr);
         let mut meshes = Vec::new();
         for mesh in geometry {
             if mesh.instances.iter().any(|i| {
@@ -453,7 +552,7 @@ impl NativeVegetation {
         let hdr_receiver = receiver_make(wgpu::TextureFormat::Rgba16Float);
         let centre = (bounds.0 + bounds.1) * 0.5;
         let extent = (bounds.1 - bounds.0).length().max(1.);
-        let sun = Vec3::new(-0.6, 0.8, 0.4).normalize();
+        let sun = Vec3::new(0.42, 0.82, 0.38).normalize();
         let shadow_vp = orthographic(
             -extent * 0.5,
             extent * 0.5,
@@ -528,7 +627,10 @@ impl NativeVegetation {
             inverse_vp: vp.inverse().to_cols_array_2d(),
             shadow: self.shadow_vp.to_cols_array_2d(),
             eye: eye.extend(1.).to_array(),
-            sun: Vec3::new(-0.6, 0.8, 0.4).normalize().extend(0.).to_array(),
+            sun: Vec3::new(0.42, 0.82, 0.38)
+                .normalize()
+                .extend(0.)
+                .to_array(),
             flags: [f32::from(hdr), 0., 0., 0.],
         };
         queue.write_buffer(&self.camera, 0, bytemuck::bytes_of(&camera));
