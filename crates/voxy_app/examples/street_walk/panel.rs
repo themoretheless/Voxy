@@ -5,6 +5,9 @@ use voxy_render::climate::Season;
 use voxy_render::weather::Weather;
 use winit::window::Window;
 
+/// Logical width of the left settings column; the scene renders beside it.
+pub const WIDTH: f32 = 260.;
+
 pub struct Panel {
     ctx: egui::Context,
     state: egui_winit::State,
@@ -62,7 +65,7 @@ impl Panel {
         let output = self.ctx.run_ui(input, |ui| {
             egui::Panel::left("street settings")
                 .resizable(false)
-                .exact_size(260.)
+                .exact_size(WIDTH)
                 .show(ui, |ui| contents(ui, &mut settings));
         });
         self.state.handle_platform_output(window, output.platform_output);
