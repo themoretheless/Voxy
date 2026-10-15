@@ -1015,6 +1015,16 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let ceramic_m = b.material([0.9, 0.9, 0.87], 0.3, 0., 0., 0., 0.);
     let ceramic = b.cube(ceramic_m);
     let foliage = b.cube(leaf_m);
+    let plinth_m = b.material([0.27, 0.26, 0.24], 0.85, 0., 1., 0., 0.);
+    let plinth = b.bevel_cube(plinth_m);
+    let bloom_ids: Vec<usize> = [[0.75, 0.08, 0.1], [0.95, 0.75, 0.15], [0.85, 0.4, 0.6], [0.95, 0.95, 0.9]]
+        .into_iter()
+        .map(|c| {
+            let m = b.material(c, 0.7, 0., 0., 0., 0.);
+            b.cube(m)
+        })
+        .collect();
+    let bin = b.round(dark_m, false);
     let ceiling_m = b.material([0.9, 0.89, 0.86], 0.95, 0., 1., 0., 0.);
     let tile_m = b.material([0.82, 0.86, 0.87], 0.22, 0., 0., 0., 0.);
     let tile_accent_m = b.material([0.27, 0.43, 0.52], 0.25, 0., 0., 0., 0.);
@@ -1127,20 +1137,50 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             }
             // Separate masonry courses and rainwater hardware give the close street
             // section real silhouette and contact shadows, with full collision geometry.
-            if house < 3 {
-                let pipe_z = z + 3.55;
+            // Every house drains its gutter through a downpipe beside the corner
+            // pilaster, clear of balconies (which reach at most z + 3.63).
+            let pipe_z = z + 3.68;
+            b.block(metal, [side * 7.04, (height + 0.24) * 0.5, pipe_z], [0.085, height + 0.24, 0.085]);
+            b.block(metal, [side * 6.97, 0.24, pipe_z], [0.22, 0.08, 0.085]);
+            for bracket in 0..(height / 2.4) as usize + 1 {
                 b.block(
                     metal,
-                    [side * 7.04, height * 0.5, pipe_z],
-                    [0.085, height, 0.085],
+                    [side * 7.16, 0.6 + bracket as f32 * 2.4, pipe_z],
+                    [0.24, 0.035, 0.13],
                 );
-                for bracket in 0..5 {
-                    b.block(
-                        metal,
-                        [side * 7.12, 0.6 + bracket as f32 * 2.4, pipe_z],
-                        [0.24, 0.035, 0.15],
-                    );
-                }
+            }
+            b.block(metal, [side * 7.08, height + 0.24, z], [0.14, 0.12, 8.0]);
+            // Paving from the sidewalk edge (world x 8.86) up to this facade, flush
+            // with the sidewalk top and abutting it rather than overlapping.
+            let apron_start = 8.86 - setback;
+            if apron_start < 7.28 {
+                b.block(
+                    curb,
+                    [side * (apron_start + 7.28) * 0.5, 0.07, z],
+                    [7.28 - apron_start, 0.2, 7.85],
+                );
+            }
+            // Stone plinth course, interrupted at the entrance.
+            let gap = if house % 3 != 0 { door_w * 0.5 + 0.21 } else { 0. };
+            let spans: Vec<(f32, f32)> = if gap > 0. {
+                vec![(z - 3.775, door_z - gap), (door_z + gap, z + 3.775)]
+            } else {
+                vec![(z - 3.775, z + 3.775)]
+            };
+            for (lo, hi) in spans {
+                b.block(plinth, [side * 7.2, 0.3, (lo + hi) * 0.5], [0.16, 0.6, hi - lo]);
+            }
+            // Entrance hardware: house number, letter box, bell and a wall lantern.
+            if house % 3 != 0 {
+                let edge = door_w * 0.5 + 0.35;
+                b.block(trim, [side * 7.265, 2.0, door_z + edge], [0.03, 0.2, 0.26]);
+                b.block(metal, [side * 7.245, 2.0, door_z + edge], [0.02, 0.1, 0.14]);
+                b.block(metal, [side * 7.2, 1.15, door_z + edge], [0.16, 0.32, 0.26]);
+                b.block(trim, [side * 7.115, 1.22, door_z + edge], [0.01, 0.02, 0.18]);
+                b.block(metal, [side * 7.18, 1.3, door_z + door_w * 0.5 + 0.1], [0.02, 0.08, 0.05]);
+                b.block(metal, [side * 7.16, 2.2, door_z - edge], [0.24, 0.03, 0.03]);
+                b.block(metal, [side * 7.04, 2.24, door_z - edge], [0.16, 0.03, 0.16]);
+                b.block(glow, [side * 7.04, 2.11, door_z - edge], [0.12, 0.22, 0.12]);
             }
             // Cornices, deep reveals and casement frames define facade depth.
             for level in 0..floors {
@@ -1205,6 +1245,30 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                         [side * 7.26, y1 + 0.08, wz],
                         [0.08, 0.18, opening + 0.2],
                     );
+                    let balcony = level > 0 && house % 3 != 1 && (window + house) % 2 == 0;
+                    if !balcony && (house + window + level) % 3 == 0 {
+                        // Flower box hung on the wall just below the stone sill.
+                        let len = opening - 0.1;
+                        b.block(timber, [side * 7.18, y0 - 0.17, wz], [0.2, 0.18, len]);
+                        for e in [-0.35, 0.35] {
+                            b.block(metal, [side * 7.2, y0 - 0.275, wz + e * len], [0.16, 0.03, 0.03]);
+                        }
+                        let plants = (len / 0.11) as usize;
+                        for n in 0..plants {
+                            let pz = wz - len * 0.5 + (n as f32 + 0.5) * len / plants as f32;
+                            let t = n as f32 * 2.4;
+                            b.put(
+                                foliage,
+                                Vec3::new(side * (7.15 + (n % 2) as f32 * 0.05), y0 + 0.02 + (n % 3) as f32 * 0.03, pz),
+                                Vec3::new(0.05, 0.2, 0.11),
+                                Quat::from_rotation_y(t) * Quat::from_rotation_x(0.3),
+                            );
+                            if n % 2 == 0 {
+                                let bloom = bloom_ids[(house + window + level + n) % bloom_ids.len()];
+                                b.block(bloom, [side * 7.12, y0 + 0.1 + (n % 3) as f32 * 0.02, pz], [0.06, 0.05, 0.06]);
+                            }
+                        }
+                    }
                     if house < 3 && level > 0 && (house + window) % 2 == 0 {
                         for shutter_side in [-1.0, 1.0] {
                             let sz = wz + shutter_side * (opening * 0.5 + 0.3);
@@ -1243,6 +1307,22 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                         for dy in [0.06, 0.88] {
                             b.block(metal, [side * 6.72, y0 + dy, wz], [0.045, 0.045, rail]);
                         }
+                        // Potted plants at both ends of the balcony.
+                        for e in [-1., 1.] {
+                            let pz = wz + e * (rail * 0.5 - 0.22);
+                            b.block(timber, [side * 6.88, y0 + 0.15, pz], [0.22, 0.3, 0.22]);
+                            for n in 0..6 {
+                                let t = n as f32 * 1.05;
+                                b.put(
+                                    foliage,
+                                    Vec3::new(side * (6.88 + t.cos() * 0.06), y0 + 0.42 + (n % 2) as f32 * 0.08, pz + t.sin() * 0.06),
+                                    Vec3::new(0.07, 0.32, 0.16),
+                                    Quat::from_rotation_y(t) * Quat::from_rotation_x(0.35),
+                                );
+                            }
+                            let bloom = bloom_ids[(house + window + level) % bloom_ids.len()];
+                            b.block(bloom, [side * 6.85, y0 + 0.62, pz], [0.07, 0.06, 0.07]);
+                        }
                     }
                 }
             }
@@ -1278,6 +1358,10 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             }
             b.block(roof, [side * 11., height + 1.2, z], [0.2, 0.2, 8.2]);
             b.block(wall, [side * 12., height + 1.6, z + 2.3], [0.8, 1.8, 0.9]);
+            b.block(trim, [side * 12., height + 2.55, z + 2.3], [0.95, 0.1, 1.05]);
+            for dz in [-0.2, 0.2] {
+                b.block(metal, [side * 12., height + 2.72, z + 2.3 + dz], [0.14, 0.24, 0.14]);
+            }
             if house % 3 == 0 {
                 b.put(
                     cloth,
@@ -1341,6 +1425,23 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                 position_kind: [x - side * 0.65, 5.25, z, 20.],
                 colour_intensity: [1., 0.63, 0.33, 95.],
             });
+            // Litter bin beside the lamp base and a gully grate at the kerb
+            // halfway to the next lamp.
+            b.put(bin, Vec3::new(side * 5.05, 0.57, z + 1.0), Vec3::new(0.42, 0.8, 0.42), Quat::IDENTITY);
+            b.block(metal, [side * 5.05, 0.99, z + 1.0], [0.46, 0.04, 0.46]);
+            b.block(trim, [side * 5.05, 0.6, z + 1.0], [0.44, 0.06, 0.44]);
+            b.block(metal, [side * 4.3, 0.054, z + 6.5], [0.26, 0.012, 0.62]);
+            for n in 0..5 {
+                b.block(trim, [side * 4.3, 0.062, z + 6.26 + n as f32 * 0.12], [0.22, 0.006, 0.03]);
+            }
+            if side > 0. {
+                // Manhole cover on the carriageway centre line with a raised ring.
+                let mz = z + 9.;
+                b.block(metal, [0., 0.054, mz], [0.68, 0.012, 0.68]);
+                for (dx, dz, sx, sz) in [(-0.33, 0., 0.04, 0.7), (0.33, 0., 0.04, 0.7), (0., -0.33, 0.62, 0.04), (0., 0.33, 0.62, 0.04)] {
+                    b.block(trim, [dx, 0.062, mz + dz], [sx, 0.008, sz]);
+                }
+            }
             let tx = side * (5.65 + b.random() * 0.45);
             let tz = z + 4. + b.random() * 2.;
             let tree_height = 4.5 + b.random() * 2.3;
