@@ -525,19 +525,9 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
               + 0.32 * (value_noise_3d((input.world_pos + vec3<f32>(0.0, 0.0, eps * 0.25)) * 26.0) - detail_micro);
     var fbm_grad = vec3<f32>(df_dx, df_dy, df_dz) / eps;
 
-    // Subtle 1m architectural formwork/masonry seam + sparse tie-rod divot holes on concrete panels
-    let tile_uv = fract(input.uv);
-    let seam_dist = min(min(tile_uv.x, 1.0 - tile_uv.x), min(tile_uv.y, 1.0 - tile_uv.y));
-    var mortar_groove = mix(0.84, 1.0, smoothstep(0.006, 0.042, seam_dist + detail_fine * 0.018));
-
-    // Formwork tie-rod pinholes on every 2nd vertical concrete slab (subtle architectural detail)
-    let slab_id = floor(input.world_pos + vec3<f32>(0.01));
-    let has_tie_rod = (i32(slab_id.x + slab_id.z) & 1) == 0 && (i32(slab_id.y) & 1) == 0;
-    if (input.material == 1u && abs(geom_n.y) < 0.25 && has_tie_rod) {
-        let hole_d = length(tile_uv - vec2<f32>(0.50, 0.50));
-        let tie_rod_ao = smoothstep(0.012, 0.032, hole_d);
-        mortar_groove *= mix(0.72, 1.0, tie_rod_ao);
-    }
+    // Terrain IDs 1–3 are rock, grass and soil. Their continuous world-space
+    // detail must not acquire artificial one-metre masonry seams.
+    let mortar_groove = 1.0;
 
     // Material-specific physical palette & roughness calibration
     let tex_luma = dot(tex_sample.rgb, vec3<f32>(0.299, 0.587, 0.114));
@@ -549,23 +539,14 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
     var wetness = clamp(camera.flashlight_dir.w, 0.0, 1.0);
 
     if (input.material == 1u) {
-        // Weathered brutalist concrete with warm/cool aggregate, spalling pores & vertical rainwater streaks
-        let concrete_cold = vec3<f32>(0.24, 0.26, 0.28);
-        let concrete_warm = vec3<f32>(0.43, 0.39, 0.35);
-        let concrete_rust = vec3<f32>(0.35, 0.25, 0.18);
-        var tint = mix(concrete_cold, concrete_warm, detail_macro);
-        // Vertical damp rainwater run-off streaks along walls
-        let vertical_streak = fbm3(input.world_pos * vec3<f32>(2.4, 0.45, 2.4));
-        let efflorescence = smoothstep(0.66, 0.88, vertical_streak) * (1.0 - abs(geom_n.y));
-        tint = mix(tint, concrete_rust, smoothstep(0.60, 0.86, detail_stain) * 0.48);
-        tint = mix(tint, tint * 0.68, efflorescence * 0.45);
-        let micro_speckle = 0.88 + 0.24 * detail_micro;
-        base_albedo = tint * tex_mod * (0.76 + 0.42 * detail_fine) * micro_speckle * mortar_groove;
-        base_roughness = clamp(
-            0.84 - 0.24 * detail_fine - 0.18 * efflorescence + (1.0 - mortar_groove) * 0.12,
-            0.28,
-            0.95
-        );
+        // Weathered rock: mineral mottling and rough aggregate, without panel seams.
+        let rock_cold = vec3<f32>(0.20, 0.22, 0.21);
+        let rock_warm = vec3<f32>(0.37, 0.32, 0.25);
+        let minerals = smoothstep(0.62, 0.86, detail_stain);
+        let tint = mix(rock_cold, rock_warm, detail_macro);
+        base_albedo = tint * (0.77 + 0.38 * detail_fine) * (0.90 + 0.18 * detail_micro);
+        base_albedo = mix(base_albedo, vec3<f32>(0.35, 0.34, 0.29), minerals * 0.18);
+        base_roughness = clamp(0.82 + detail_micro * 0.12 - minerals * 0.08, 0.70, 0.97);
     } else if (input.material == 2u) {
         // Natural damp moss / lichen / olive tactical foliage
         let moss_dark = vec3<f32>(0.09, 0.15, 0.07);
@@ -573,15 +554,12 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
         base_albedo = mix(moss_dark, moss_olive, detail_macro) * tex_mod * (0.72 + 0.48 * detail_fine);
         base_roughness = clamp(0.86 - 0.15 * detail_fine, 0.45, 0.96);
     } else if (input.material == 3u) {
-        // Weathered red-brown industrial brick / rusted rebar / damp earth
-        let brick_dark = vec3<f32>(0.21, 0.12, 0.08);
-        let brick_terracotta = vec3<f32>(0.45, 0.24, 0.15);
-        base_albedo = mix(brick_dark, brick_terracotta, detail_macro)
-            * tex_mod
-            * (0.74 + 0.46 * detail_fine)
-            * (0.88 + 0.24 * detail_micro)
-            * mortar_groove;
-        base_roughness = clamp(0.75 - 0.22 * detail_fine, 0.30, 0.92);
+        // Soil: organic clumps and grain rather than terracotta masonry.
+        let soil_dark = vec3<f32>(0.07, 0.045, 0.025);
+        let soil_light = vec3<f32>(0.23, 0.16, 0.085);
+        base_albedo = mix(soil_dark, soil_light, detail_macro)
+            * (0.72 + 0.48 * detail_fine) * (0.85 + 0.30 * detail_micro);
+        base_roughness = clamp(0.88 + 0.10 * detail_fine, 0.85, 0.99);
     } else if (input.material == 4u) {
         // Standing rainwater puddle / wet mud mirror
         base_albedo = vec3<f32>(0.05, 0.07, 0.08) * (0.85 + 0.3 * detail_fine);

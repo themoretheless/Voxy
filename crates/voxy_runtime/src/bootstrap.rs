@@ -501,7 +501,11 @@ fn registry_with_mesh_plants(mesh_plants: bool) -> Result<BlockRegistry, Registr
         } else {
             RenderKind::Opaque
         },
-        Occlusion::FullCube,
+        if mesh_plants {
+            Occlusion::None
+        } else {
+            Occlusion::FullCube
+        },
         CollisionShape::FullCube,
         3,
     )?);
@@ -699,6 +703,10 @@ mod tests {
         assert_eq!(
             mesh.world.registry().get(wood).unwrap().collision,
             CollisionShape::FullCube
+        );
+        assert_eq!(
+            mesh.world.registry().get(wood).unwrap().occlusion,
+            Occlusion::None
         );
         assert_eq!(
             mesh.world.registry().get(leaves).unwrap().collision,

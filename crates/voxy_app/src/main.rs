@@ -533,8 +533,10 @@ impl ApplicationHandler for VoxyApp {
                         }
                     }
                     match renderer.render() {
-                        Ok(outcome @ RenderOutcome::Presented) => {
-                            self.presented_frames = self.presented_frames.saturating_add(1);
+                        Ok(outcome) if outcome == RenderOutcome::Presented || (outcome == RenderOutcome::SkippedOccluded && std::env::args().any(|a| a == "--vegetation-check")) => {
+                            if outcome == RenderOutcome::Presented {
+                                self.presented_frames = self.presented_frames.saturating_add(1);
+                            }
                             if std::env::args().any(|a| a == "--vegetation-check") {
                                 self.vegetation_check_frames = self.vegetation_check_frames.saturating_add(1);
                                 if self.vegetation_check_frames == 3 {
@@ -548,7 +550,7 @@ impl ApplicationHandler for VoxyApp {
                                         std::fs::create_dir_all(output)?;
                                         image::save_buffer(format!("{output}/with-plants.png"), &with, w,h,image::ColorType::Rgba8)?;
                                         image::save_buffer(format!("{output}/without-plants.png"), &without, w,h,image::ColorType::Rgba8)?;
-                                        let report = serde_json::json!({"passed": trees>0 && shrubs>0 && changed_pixels>1000,"plants":plants,"trees":trees,"shrubs":shrubs,"hdr":self.bodycam_mode,"changed_pixels":changed_pixels,"presented_frames":self.presented_frames,"width":w,"height":h});
+                                        let report = serde_json::json!({"passed": trees>0 && shrubs>0 && changed_pixels>1000,"plants":plants,"trees":trees,"shrubs":shrubs,"hdr":self.bodycam_mode,"capture":"offscreen_gpu","changed_pixels":changed_pixels,"presented_frames":self.presented_frames,"width":w,"height":h});
                                         std::fs::write(format!("{output}/report.json"),serde_json::to_vec_pretty(&report)?)?;
                                         println!("Native vegetation world check: {report}");
                                         if trees==0 || shrubs==0 || changed_pixels<=1000 { return Err("native vegetation was not visible in the world frame".into()); }
@@ -579,7 +581,7 @@ impl ApplicationHandler for VoxyApp {
                                 }
                             }
 
-                            if !self.presented_once {
+                            if !self.presented_once && outcome == RenderOutcome::Presented {
                                 println!("Voxy first voxel frame presented ({outcome:?})");
                                 self.presented_once = true;
                             }
@@ -1024,7 +1026,8 @@ impl VoxyApp {
                 let (cam_view, flash_pos, flash_dir) = renderer
                     .bodycam_rig()
                     .camera_and_flashlight(self.actor_position);
-                renderer.set_bodycam_flashlight_and_wetness(flash_pos, flash_dir, 0.68);
+                renderer.set_bodycam_flashlight_and_wetness(flash_pos, flash_dir,
+                    if self.clean_cam_mode && self.native_plants.is_some() {0.06} else {0.68});
                 if let Err(error) = renderer.update_camera(cam_view) {
                     eprintln!("Voxy bodycam camera update failed: {error}");
                     event_loop.exit();
