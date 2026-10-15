@@ -5,6 +5,9 @@ mod square_root_diagnostics;
 #[cfg(test)]
 #[path = "contact_square_root_fixture_tests.rs"]
 mod square_root_fixture_tests;
+#[cfg(test)]
+#[path = "contact_five_roundtrip_fixture_tests.rs"]
+mod five_roundtrip_fixture_tests;
 #[path = "contact_square_root_qr.rs"]
 mod square_root_qr;
 
@@ -37,6 +40,53 @@ mod tests {
         loads[2][14] = 0.7e-7;
         HairResponseSystem { system, loads }
     }
+    #[test]
+    fn expanded_partial_candidates_preserve_sibling_physical_admission() {
+        use crate::hair::{HairExpandedCoordinateRequest, HairResponseCoefficient as C};
+        struct Backend { rejected: usize, mode: usize }
+        impl HairLinearSolver for Backend {
+            fn solve(&mut self, _: &[HairLinearSystem]) -> Result<Vec<Vec<f64>>, &'static str> { panic!("unexpected structural backend") }
+            fn joint_contact_expanded_enabled(&self) -> bool { true }
+            fn solve_joint_expanded_candidates(&mut self, requests: &[HairExpandedCoordinateRequest<'_>]) -> Option<Vec<Option<(Vec<C>, Vec<f64>)>>> {
+                assert_eq!(requests.len(), 3);
+                if self.mode == 3 { return Some(Vec::new()); }
+                Some(requests.iter().enumerate().map(|(i, r)| {
+                    if i == self.rejected && self.mode == 0 { return None; }
+                    let mut x = vec![C::from_f64(0.).unwrap(); 18];
+                    x[6] = C::from_f64(r.bounds[0]).unwrap();
+                    let mut reactions = vec![r.bounds[0]];
+                    if i == self.rejected && self.mode == 1 { x.pop(); }
+                    if i == self.rejected && self.mode == 2 { reactions[0] = -1.; }
+                    Some((x, reactions))
+                }).collect())
+            }
+        }
+        let mut request = fixture();
+        request.system.matrix.fill(0.);
+        for i in 0..18 { request.system.matrix[i * direct::BAND] = 1.; }
+        request.loads = vec![vec![0.; 18]];
+        request.loads[0][6] = 1.;
+        let requests = [request];
+        let bounds = [[1.], [2.], [3.]];
+        let joints = bounds.iter().map(|b| PreparedNativeJoint::new(&requests, b, 1e-14).unwrap()).collect::<Vec<_>>();
+        let refs = joints.iter().collect::<Vec<_>>();
+        let loads = bounds.iter().map(|b| b.as_slice()).collect::<Vec<_>>();
+        for rejected in 0..3 {
+            for mode in 0..3 {
+                let mut backend = Backend { rejected, mode };
+                let mut seeds = vec![vec![]; 3];
+                let result = PreparedNativeJoint::solve_accelerated_batch(&refs, &loads, 1e-14, &mut seeds, &mut backend).unwrap();
+                for (i, (response, reactions, accelerated)) in result.iter().enumerate() {
+                    assert_eq!(*accelerated, i != rejected, "operator={i} rejected={rejected} mode={mode}");
+                    HairResponseSystem::validate_joint_solution(&requests, &bounds[i], response, reactions, 1e-14).unwrap();
+                    assert_eq!((response.clone(), reactions.clone()), joints[i].solve(&bounds[i], 1e-14).unwrap());
+                }
+            }
+        }
+        let mut seeds = vec![vec![]; 3];
+        assert_eq!(PreparedNativeJoint::solve_accelerated_batch(&refs, &loads, 1e-14, &mut seeds, &mut Backend { rejected: 0, mode: 3 }).unwrap_err(), "joint coordinate batch result count mismatch");
+    }
+
     #[test]
     fn same_input_audit_preserves_outputs_and_exports_complete_original_operator() {
         let mut request = fixture();
@@ -749,6 +799,14 @@ impl HairResponseSystem {
         let prepared = PreparedNativeJoint::new(requests, bounds, absolute_tolerance)?;
         prepared.solve_accelerated(bounds, absolute_tolerance, accelerator)
     }
+    /// Explicit expanded GPU route with the unchanged original physical owner.
+    pub fn solve_joint_load_inequalities_expanded(requests: &[Self], bounds: &[f64], tolerance: f64, backend:&mut dyn super::HairLinearSolver) -> Result<(Vec<Vec<f64>>,Vec<f64>,bool), &'static str> {
+        if !backend.joint_contact_expanded_enabled() {return Err("expanded contact backend disabled");}
+        let prepared=PreparedNativeJoint::new(requests,bounds,tolerance)?;
+        let mut seeds=vec![Vec::new()];
+        let mut result=PreparedNativeJoint::solve_accelerated_batch(&[&prepared],&[bounds],tolerance,&mut seeds,backend)?;
+        result.pop().ok_or("missing expanded contact physical result")
+    }
     /// Admit a complete joint accelerator candidate against ORIGINAL physical
     /// loads and bounds. Backend precision never changes admission tolerance.
     pub fn validate_joint_solution(
@@ -926,6 +984,7 @@ impl HairResponseSystem {
                 factors,
                 columns,
                 &coordinates,
+                None,
                 &reactions,
                 &mut effective_bounds,
                 &mut defect_history,
@@ -966,6 +1025,7 @@ impl HairResponseSystem {
         factors: &[Vec<f64>],
         columns: &[Vec<f64>],
         coordinates: &[f64],
+        expanded_coordinates: Option<&[super::HairResponseCoefficient]>,
         reactions: &[f64],
         effective_bounds: &mut [f64],
         defect_history: &mut [Option<(f64, f64)>],
@@ -974,8 +1034,15 @@ impl HairResponseSystem {
         let mut offset = 0;
         for (request, factor) in requests.iter().zip(factors) {
             let end = offset + request.system.rhs.len();
-            let mut response = coordinates[offset..end].to_vec();
-            direct::solve_upper_factored(factor, &mut response, request.system.active.clone());
+            let response = if let Some(expanded) = expanded_coordinates {
+                let mut response=expanded[offset..end].to_vec();
+                super::contact_expanded::upper(factor,&mut response,request.system.active.clone())?;
+                response.into_iter().map(|v| {let [hi,lo]=v.parts(); hi+lo}).collect::<Vec<_>>()
+            } else {
+                let mut response=coordinates[offset..end].to_vec();
+                direct::solve_upper_factored(factor,&mut response,request.system.active.clone());
+                response
+            };
             let mut force = vec![0.; response.len()];
             for (load, &reaction) in request.loads.iter().zip(reactions) {
                 for (value, &axis) in force.iter_mut().zip(load) {
@@ -1163,6 +1230,18 @@ impl HairResponseSystem {
                 Ok(values)
             })
             .collect()
+    }
+    /// Apply the canonical physical inverse transform while retaining both components.
+    pub fn backtransform_expanded(&self, coordinates: &[super::HairResponseCoefficient]) -> Result<Vec<super::HairResponseCoefficient>, &'static str> {
+        self.validate()?;
+        if coordinates.len()!=self.system.rhs.len() {return Err("expanded hair coordinate shape mismatch");}
+        for i in (0..self.system.active.start).chain(self.system.active.end..coordinates.len()) {
+            if coordinates[i].parts().iter().any(|v|*v!=0.) {return Err("expanded hair coordinate acts on fixed DOFs");}
+        }
+        let factor=self.factor_native()?;
+        let mut response=coordinates.to_vec();
+        super::contact_expanded::upper(&factor,&mut response,self.system.active.clone())?;
+        Ok(response)
     }
     /// Square-root compliance columns L^-1*load for H=L*L^T. Retaining
     /// these columns lets a contact QR solve avoid squaring its condition
@@ -1361,6 +1440,21 @@ impl<'a> PreparedNativeJoint<'a> {
         }) {
             return Err("invalid joint square-root coordinate map");
         }
+        let expanded_columns=if backend.joint_contact_expanded_enabled() {
+            let mut owners=Vec::with_capacity(joints.len());
+            for joint in joints {
+                let mut columns=vec![Vec::new();joint.columns.len()];
+                for (request,factor) in joint.requests.iter().zip(&joint.factors) {
+                    for (row,load) in request.loads.iter().enumerate() {
+                        let mut values=load.iter().map(|&v|super::HairResponseCoefficient::from_f64(v)).collect::<Result<Vec<_>,_>>()?;
+                        super::contact_expanded::lower(factor,&mut values,request.system.active.clone())?;
+                        columns[row].extend(values);
+                    }
+                }
+                owners.push(columns);
+            }
+            Some(owners)
+        } else {None};
         let mut effective: Vec<_> = bounds.iter().map(|b| b.to_vec()).collect();
         let mut defect_history: Vec<_> =
             if std::env::var("VOXY_HAIR_SAFEGUARDED_PHYSICAL_DEFECT").as_deref() == Ok("1") {
@@ -1412,7 +1506,15 @@ impl<'a> PreparedNativeJoint<'a> {
                     );
                 }
             }
-            let proposals = backend.solve_joint_coordinates_batch(&requests);
+            let proposals=if let Some(columns)=&expanded_columns {
+                let expanded_requests=ready.iter().map(|&i|super::HairExpandedCoordinateRequest {columns:&columns[i],bounds:&effective[i],tolerance}).collect::<Vec<_>>();
+                backend.solve_joint_expanded_candidates(&expanded_requests).map(|proposals|proposals.into_iter().map(|candidate| candidate.map(|(coordinates,reactions)| {
+                    let preview=coordinates.iter().map(|v| {let [hi,lo]=v.parts(); hi+lo}).collect();
+                    (preview,reactions,Some(coordinates))
+                })).collect::<Vec<_>>())
+            } else {
+                backend.solve_joint_coordinates_batch(&requests).map(|p|p.into_iter().map(|(c,r)|Some((c,r,None))).collect::<Vec<_>>())
+            };
             if let Some(started) = started {
                 eprintln!(
                     "HAIR JOINT PHYSICAL BATCH PROFILE operators={} refinement={refinement} elapsed_ms={}",
@@ -1425,12 +1527,12 @@ impl<'a> PreparedNativeJoint<'a> {
                     if proposals.len() != ready.len() {
                         return Err("joint coordinate batch result count mismatch");
                     }
-                    proposals.into_iter().map(Some).collect::<Vec<_>>()
+                    proposals
                 }
                 None => (0..ready.len()).map(|_| None).collect(),
             };
             for (i, proposal) in ready.into_iter().zip(proposals) {
-                let Some((coordinates, reactions)) = proposal else {
+                let Some((coordinates, reactions, expanded_coordinates)) = proposal else {
                     square_root_diagnostics::export_input(
                         joints[i].requests,
                         &joints[i].columns,
@@ -1468,6 +1570,7 @@ impl<'a> PreparedNativeJoint<'a> {
                     &joints[i].factors,
                     &joints[i].columns,
                     &coordinates,
+                    expanded_coordinates.as_deref(),
                     &reactions,
                     &mut effective[i],
                     if defect_history.is_empty() {

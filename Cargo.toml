@@ -1,5 +1,6 @@
 [workspace]
 resolver = "3"
+exclude = ["vendor/bevy_mikktspace"]
 members = [
     "crates/voxy_core",
     "crates/voxy_assets",

@@ -673,7 +673,34 @@ struct ViewPass<'a> {
 }
 
 #[derive(Debug)]
+struct PreparedScenePipelines {
+    world: wgpu::RenderPipeline,
+    overlay: wgpu::RenderPipeline,
+    transparent: wgpu::RenderPipeline,
+    msaa: Option<(
+        wgpu::RenderPipeline,
+        wgpu::RenderPipeline,
+        wgpu::RenderPipeline,
+    )>,
+}
+/// Prepared bindings and validated pipelines; creation never mutates a scene.
+/// Commit rejects another scene, a changed lighting/shader state, or changed MSAA.
+#[derive(Debug)]
+pub struct PreparedSceneEnvironment {
+    owner: std::sync::Arc<()>,
+    base_shader_revision: u64,
+    base_shader_source: String,
+    base_lighting_revision: u64,
+    msaa_enabled: bool,
+    environment: crate::environment_lighting::EnvironmentBindings,
+    pipelines: Option<PreparedScenePipelines>,
+    source: String,
+    dfg: wgpu::Texture,
+}
+#[derive(Debug)]
 pub struct SceneRenderer {
+    identity: std::sync::Arc<()>,
+    lighting_revision: u64,
     device: wgpu::Device,
     compute_memory_budget: crate::ComputeMemoryBudget,
     world_pipeline: wgpu::RenderPipeline,
@@ -835,6 +862,8 @@ impl SceneRenderer {
                 None,
             );
         Self {
+            identity: std::sync::Arc::new(()),
+            lighting_revision: 0,
             device: device.clone(),
             compute_memory_budget: crate::ComputeMemoryBudget::for_device(device),
             world_pipeline,
@@ -863,19 +892,28 @@ impl SceneRenderer {
     ) -> Result<(), SceneShaderError> {
         self.resource_device(device)
             .map_err(|e| SceneShaderError(e.to_string()))?;
-        let candidate = crate::shadow_visibility::ShadowBindings::new(device, map, settings)
-            .map_err(|e| SceneShaderError(e.to_string()))?;
-        let previous = self.shadow.replace(candidate);
-        if let Err(error) = self
-            .reload_shader(
-                device,
-                &crate::environment_lighting::shader_with_environment(self.environment.as_ref()),
-            )
-            .await
-        {
-            self.shadow = previous;
-            return Err(error);
+        if self.lighting_revision == u64::MAX {
+            return Err(SceneShaderError("lighting revision exhausted".into()));
         }
+        let device = &self.device;
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let candidate = crate::shadow_visibility::ShadowBindings::new(device, map, settings);
+        if let Some(error) = scope.pop().await {
+            return Err(SceneShaderError(error.to_string()));
+        }
+        let candidate = candidate.map_err(|e| SceneShaderError(e.to_string()))?;
+        let source =
+            crate::environment_lighting::shader_with_environment(self.environment.as_ref());
+        let pipelines = self
+            .prepare_scene_pipelines(
+                &source,
+                Some(&candidate.layout),
+                self.environment.as_ref().map(|e| &e.layout),
+            )
+            .await?;
+        self.shadow = Some(candidate);
+        self.install_scene_pipelines(source, pipelines);
+        self.lighting_revision += 1;
         Ok(())
     }
     /// Attach initialized GGX environment and DFG resources for single-scattering specular IBL.
@@ -888,7 +926,7 @@ impl SceneRenderer {
         environment: &crate::GgxEnvironmentPrefilter,
         dfg: &crate::GgxDfgLut,
     ) -> Result<(), SceneShaderError> {
-        let source = crate::environment_lighting::shader(self.shadow.is_some());
+        let source = crate::environment_lighting::shader_for_dfg(self.shadow.is_some(), false, dfg);
         self.enable_environment_source(device, environment, dfg, None, &source)
             .await
     }
@@ -902,7 +940,7 @@ impl SceneRenderer {
         dfg: &crate::GgxDfgLut,
         diffuse: &crate::DiffuseEnvironmentConvolution,
     ) -> Result<(), SceneShaderError> {
-        let source = crate::environment_lighting::shader_combined(self.shadow.is_some(), true);
+        let source = crate::environment_lighting::shader_for_dfg(self.shadow.is_some(), true, dfg);
         self.enable_environment_source(device, environment, dfg, Some(diffuse), &source)
             .await
     }
@@ -914,23 +952,139 @@ impl SceneRenderer {
         diffuse: Option<&crate::DiffuseEnvironmentConvolution>,
         source: &str,
     ) -> Result<(), SceneShaderError> {
+        let prepared = self
+            .prepare_environment_source(device, environment, dfg, diffuse, source)
+            .await?;
+        self.commit_prepared_environment(prepared)
+    }
+    /// Prepare off to the side. Existing lighting, pipelines and intensity remain live.
+    pub async fn prepare_environment_lighting(
+        &self,
+        device: &wgpu::Device,
+        environment: &crate::GgxEnvironmentPrefilter,
+        dfg: &crate::GgxDfgLut,
+        diffuse: Option<&crate::DiffuseEnvironmentConvolution>,
+    ) -> Result<PreparedSceneEnvironment, SceneShaderError> {
+        let source = crate::environment_lighting::shader_for_dfg(
+            self.shadow.is_some(),
+            diffuse.is_some(),
+            dfg,
+        );
+        self.prepare_environment_source(device, environment, dfg, diffuse, &source)
+            .await
+    }
+    pub(crate) async fn prepare_environment_source(
+        &self,
+        device: &wgpu::Device,
+        environment: &crate::GgxEnvironmentPrefilter,
+        dfg: &crate::GgxDfgLut,
+        diffuse: Option<&crate::DiffuseEnvironmentConvolution>,
+        source: &str,
+    ) -> Result<PreparedSceneEnvironment, SceneShaderError> {
         self.resource_device(device)
             .map_err(|e| SceneShaderError(e.to_string()))?;
+        let device = &self.device;
         let intensity = self.environment.as_ref().map_or(1.0, |e| e.intensity);
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
         let candidate = crate::environment_lighting::EnvironmentBindings::new(
             device,
             environment,
             dfg,
             diffuse,
             intensity,
-        )
-        .map_err(|e| SceneShaderError(e.to_string()))?;
-        let previous = self.environment.replace(candidate);
-        if let Err(error) = self.reload_shader(device, source).await {
-            self.environment = previous;
-            return Err(error);
+            self.environment.as_ref().map(|e| &e.intensity_buffer),
+        );
+        if let Some(error) = scope.pop().await {
+            return Err(SceneShaderError(error.to_string()));
+        }
+        let candidate = candidate.map_err(|e| SceneShaderError(e.to_string()))?;
+        let pipelines = self
+            .prepare_scene_pipelines(
+                source,
+                self.shadow.as_ref().map(|s| &s.layout),
+                Some(&candidate.layout),
+            )
+            .await?;
+        Ok(PreparedSceneEnvironment {
+            owner: self.identity.clone(),
+            base_shader_revision: self.shader_revision,
+            base_shader_source: self.shader_source.clone(),
+            base_lighting_revision: self.lighting_revision,
+            msaa_enabled: self.msaa_pipelines.is_some(),
+            environment: candidate,
+            pipelines,
+            source: source.to_owned(),
+            dfg: dfg.output().clone(),
+        })
+    }
+    fn validate_environment_candidate(
+        &self,
+        prepared: &PreparedSceneEnvironment,
+    ) -> Result<(), SceneShaderError> {
+        if !std::sync::Arc::ptr_eq(&self.identity, &prepared.owner) {
+            return Err(SceneShaderError(
+                "prepared environment belongs to another scene".into(),
+            ));
+        }
+        if self.shader_revision != prepared.base_shader_revision
+            || self.shader_source != prepared.base_shader_source
+            || self.lighting_revision != prepared.base_lighting_revision
+            || self.msaa_pipelines.is_some() != prepared.msaa_enabled
+        {
+            return Err(SceneShaderError("stale prepared scene environment".into()));
+        }
+        if self.lighting_revision == u64::MAX {
+            return Err(SceneShaderError("lighting revision exhausted".into()));
         }
         Ok(())
+    }
+    fn install_environment_candidate(&mut self, mut prepared: PreparedSceneEnvironment) {
+        if let Some(current) = &self.environment {
+            prepared.environment.intensity = current.intensity;
+        }
+        self.install_scene_pipelines(prepared.source, prepared.pipelines);
+        self.environment = Some(prepared.environment);
+        self.lighting_revision += 1;
+    }
+    /// Validate completely before changing any scene state. No await occurs in commit.
+    pub fn commit_prepared_environment(
+        &mut self,
+        prepared: PreparedSceneEnvironment,
+    ) -> Result<(), SceneShaderError> {
+        self.validate_environment_candidate(&prepared)?;
+        self.install_environment_candidate(prepared);
+        Ok(())
+    }
+    /// Commit one upload-complete atlas and every supplied scene together. All
+    /// scene revisions, exact DFG handles and the requested generation are checked
+    /// before replacing either the owner or any binding/pipeline set.
+    pub fn commit_environment_atlas_batch(
+        targets: Vec<(&mut SceneRenderer, PreparedSceneEnvironment)>,
+        slot: &mut crate::GgxEnergyAtlasSlot,
+        ready: crate::ReadyGgxEnergyAtlas,
+    ) -> Result<crate::GgxDfgLut, SceneShaderError> {
+        if targets.is_empty() {
+            return Err(SceneShaderError("empty atlas scene transaction".into()));
+        }
+        for (scene, prepared) in &targets {
+            scene.validate_environment_candidate(prepared)?;
+            if &prepared.dfg != ready.atlas().output() {
+                return Err(SceneShaderError(
+                    "prepared environment uses a different DFG resource".into(),
+                ));
+            }
+        }
+        let previous = slot
+            .try_install(ready)
+            .map_err(|e| SceneShaderError(e.to_string()))?;
+        for (scene, prepared) in targets {
+            scene.install_environment_candidate(prepared);
+        }
+        Ok(previous)
+    }
+    #[must_use]
+    pub fn lighting_revision(&self) -> u64 {
+        self.lighting_revision
     }
 
     /// Scale diffuse and specular IBL without recomputing environment textures.
@@ -987,16 +1141,33 @@ impl SceneRenderer {
         source: &str,
     ) -> Result<bool, SceneShaderError> {
         if device != &self.device {
-            return Err(SceneShaderError("shader reload device mismatch".to_owned()));
+            return Err(SceneShaderError("shader reload device mismatch".into()));
         }
-        if source == self.shader_source {
+        let pipelines = self
+            .prepare_scene_pipelines(
+                source,
+                self.shadow.as_ref().map(|s| &s.layout),
+                self.environment.as_ref().map(|e| &e.layout),
+            )
+            .await?;
+        let Some(pipelines) = pipelines else {
             return Ok(false);
+        };
+        Ok(self.install_scene_pipelines(source.to_owned(), Some(pipelines)))
+    }
+    async fn prepare_scene_pipelines(
+        &self,
+        source: &str,
+        shadow_layout: Option<&wgpu::BindGroupLayout>,
+        environment_layout: Option<&wgpu::BindGroupLayout>,
+    ) -> Result<Option<PreparedScenePipelines>, SceneShaderError> {
+        if source == self.shader_source {
+            return Ok(None);
         }
-        // Allocate on the retained owner even if separate instances reuse device IDs.
         let device = &self.device;
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("custom scene shader"),
+            label: Some("prepared scene shader"),
             source: wgpu::ShaderSource::Wgsl(source.into()),
         });
         if let Some(error) = scope.pop().await {
@@ -1010,10 +1181,8 @@ impl SceneRenderer {
             &self.texture_layout,
             &shader,
             1,
-            self.shadow.as_ref().map(|shadow| &shadow.layout),
-            self.environment
-                .as_ref()
-                .map(|environment| &environment.layout),
+            shadow_layout,
+            environment_layout,
         );
         let msaa = self.msaa_pipelines.as_ref().map(|_| {
             Self::create_shader_pipelines(
@@ -1023,22 +1192,35 @@ impl SceneRenderer {
                 &self.texture_layout,
                 &shader,
                 4,
-                self.shadow.as_ref().map(|shadow| &shadow.layout),
-                self.environment
-                    .as_ref()
-                    .map(|environment| &environment.layout),
+                shadow_layout,
+                environment_layout,
             )
         });
         if let Some(error) = scope.pop().await {
             return Err(SceneShaderError(error.to_string()));
         }
-        self.msaa_pipelines = msaa;
-        self.world_pipeline = world;
-        self.overlay_pipeline = overlay;
-        self.transparent_pipeline = transparent;
-        source.clone_into(&mut self.shader_source);
+        Ok(Some(PreparedScenePipelines {
+            world,
+            overlay,
+            transparent,
+            msaa,
+        }))
+    }
+    fn install_scene_pipelines(
+        &mut self,
+        source: String,
+        pipelines: Option<PreparedScenePipelines>,
+    ) -> bool {
+        let Some(p) = pipelines else {
+            return false;
+        };
+        self.world_pipeline = p.world;
+        self.overlay_pipeline = p.overlay;
+        self.transparent_pipeline = p.transparent;
+        self.msaa_pipelines = p.msaa;
+        self.shader_source = source;
         self.shader_revision = self.shader_revision.saturating_add(1);
-        Ok(true)
+        true
     }
 
     #[must_use]
@@ -2231,7 +2413,7 @@ impl SceneRenderer {
         encoder: &mut wgpu::CommandEncoder,
         color: &wgpu::TextureView,
         depth: &wgpu::TextureView,
-        draws: &[SceneDraw<'_'>],
+        draws: &[SceneDraw<'_>],
     ) {
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("scene over existing HDR color"),
@@ -2865,3 +3047,11 @@ mod background_upload_regression;
 
 #[cfg(test)]
 mod opaque_partition_regression;
+
+#[cfg(test)]
+#[path = "scene/environment_transaction_tests.rs"]
+mod environment_transaction_tests;
+
+#[cfg(test)]
+#[path="scene/environment_pixel_tests.rs"]
+mod environment_pixel_tests;

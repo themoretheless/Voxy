@@ -38,10 +38,13 @@ struct VertexOutput {
     let h = (l + v) / max(length(l + v), 0.0001);
     // Roundoff can put normalized dot products above one; pow needs a nonnegative base.
     let nl = clamp(dot(n, l), 0.0, 1.0);
-    let nv = clamp(dot(n, v), 0.0001, 1.0);
+    let material_nv = clamp(dot(n, v), 0.0, 1.0);
+    let nv = max(material_nv, 0.0001);
     let nh = clamp(dot(n, h), 0.0, 1.0);
     let vh = clamp(dot(v, h), 0.0, 1.0);
-    let roughness = max(select(0.35, in.material.x, in.material.z > 0.5), 0.04);
+    let material_roughness = select(0.35, in.material.x, in.material.z > 0.5);
+    // The direct point-light guard must not change environment lookup coordinates.
+    let roughness = max(material_roughness, 0.04);
     let metallic = select(0.5, in.material.y, in.material.z > 0.5);
     let a = roughness * roughness; let a2 = a * a;
     let d = a2 / (3.14159265 * pow(nh * nh * (a2 - 1.0) + 1.0, 2.0));

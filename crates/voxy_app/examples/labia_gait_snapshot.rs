@@ -312,15 +312,18 @@ impl PreparedAnatomicalSurface {
                 let edge_wave = 1.0
                     + 0.065 * (v * 17.0 + f64::from(side_sign) * 0.5).sin()
                     + 0.035 * (v * 31.0 - f64::from(side_sign) * 0.9).cos();
-                let minora_profile =
-                    (-minora_xi * minora_xi * 1.95).exp() * minora_env * minora_ant_bias * edge_wave;
+                let minora_profile = (-minora_xi * minora_xi * 1.95).exp()
+                    * minora_env
+                    * minora_ant_bias
+                    * edge_wave;
                 let minora_height = 0.0048 * minora_profile;
 
                 // Interlabial sulcus (strictly bounded by majora_env * minora_arch so it fades cleanly at ends)
                 let sulcus_center_x = minora_center_x + 0.0029 * minora_env + 0.0009;
                 let sulcus_xi = (abs_x - sulcus_center_x) / 0.0020;
                 let sulcus_env = majora_env * (0.25 + 0.75 * minora_arch.sqrt());
-                let sulcus_depression = -0.0019 * (-sulcus_xi * sulcus_xi * 1.95).exp() * sulcus_env;
+                let sulcus_depression =
+                    -0.0019 * (-sulcus_xi * sulcus_xi * 1.95).exp() * sulcus_env;
 
                 // Lateral genitocrural fold transition
                 let groin_xi = (abs_x - 0.0235 * row_scale) / 0.0038;
@@ -956,7 +959,10 @@ fn run_interactive_window(
                 .with_title("Voxy FEM | Photorealistic Labia Majora + Minora Gait & SurfaceFilm")
                 .with_inner_size(winit::dpi::LogicalSize::new(1024.0, 768.0));
             let window = Arc::new(event_loop.create_window(attrs).expect("window"));
-            let surface = self.instance.create_surface(window.clone()).expect("surface");
+            let surface = self
+                .instance
+                .create_surface(window.clone())
+                .expect("surface");
             let size = window.inner_size();
             let mut config = surface
                 .get_default_config(&self.adapter, size.width.max(1), size.height.max(1))
@@ -983,7 +989,9 @@ fn run_interactive_window(
                 .prepared_surface
                 .build_full_mesh(&self.majora_sim, &self.minora_sim, &self.films)
                 .expect("initial mesh");
-            geometry.update(&self.queue, &initial_mesh).expect("initial upload");
+            geometry
+                .update(&self.queue, &initial_mesh)
+                .expect("initial upload");
 
             let texture = renderer
                 .upload_texture(&self.device, &self.queue, 1, 1, &[255; 4])
@@ -1002,7 +1010,9 @@ fn run_interactive_window(
             }
             .view_projection()
             .expect("projection");
-            let transform = renderer.create_transform(&self.device, proj).expect("transform");
+            let transform = renderer
+                .create_transform(&self.device, proj)
+                .expect("transform");
             transform
                 .update_view_position(&self.queue, camera_eye)
                 .expect("view_pos");

@@ -154,29 +154,36 @@ impl<'a> EqualityQr<'a> {
                     }
                 }
             }
-            let scale = v.iter().map(|x| x.abs()).fold(0., f64::max);
+            // The sparse path already needs this support for subsequent
+            // projections. Reuse it for normalization: positive-scale division
+            // preserves signed zeros, and omitting zero square terms preserves
+            // the ordered sum of all nonzero terms (including subnormals).
+            let mut support: Vec<usize> = if self.sparse_basis {
+                v.iter().enumerate().filter_map(|(i, &x)| (x != 0.).then_some(i)).collect()
+            } else { Vec::new() };
+            let scale = if self.sparse_basis {
+                support.iter().map(|&i| v[i].abs()).fold(0., f64::max)
+            } else { v.iter().map(|x| x.abs()).fold(0., f64::max) };
             if scale == 0. || !scale.is_finite() {
                 return None;
             }
-            let norm = scale
-                * v.iter()
-                    .map(|x| (x / scale) * (x / scale))
-                    .sum::<f64>()
-                    .sqrt();
+            let squared = if self.sparse_basis {
+                support.iter().map(|&i| (v[i] / scale) * (v[i] / scale)).sum::<f64>()
+            } else {
+                v.iter().map(|x| (x / scale) * (x / scale)).sum::<f64>()
+            };
+            let norm = scale * squared.sqrt();
             if norm == 0. || !norm.is_finite() {
                 return None;
             }
             r[k] = norm;
-            for value in &mut v {
-                *value /= norm;
-            }
             if self.sparse_basis {
-                self.q_supports.push(
-                    v.iter()
-                        .enumerate()
-                        .filter_map(|(i, &x)| (x != 0.).then_some(i))
-                        .collect(),
-                );
+                for &i in &support { v[i] /= norm; }
+                // Normalization may underflow a previously nonzero coefficient.
+                support.retain(|&i| v[i] != 0.);
+                self.q_supports.push(support);
+            } else {
+                for value in &mut v { *value /= norm; }
             }
             self.q.push(v);
             self.r.push(r);

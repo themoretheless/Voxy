@@ -15,7 +15,7 @@ pub struct MoveIntent {
 
 #[derive(Debug, Default)]
 pub struct InputState {
-    held: u8,
+    held: u16,
     jump_queued: bool,
     fire_queued: bool,
     look_delta: Vec2,
@@ -48,11 +48,16 @@ impl InputState {
             return;
         }
         let mask = match key {
-            KeyCode::KeyW | KeyCode::ArrowUp => 1,
-            KeyCode::KeyS | KeyCode::ArrowDown => 2,
-            KeyCode::KeyA | KeyCode::ArrowLeft => 4,
-            KeyCode::KeyD | KeyCode::ArrowRight => 8,
-            KeyCode::ShiftLeft | KeyCode::ShiftRight => 16,
+            KeyCode::KeyW => 1,
+            KeyCode::ArrowUp => 64,
+            KeyCode::KeyS => 2,
+            KeyCode::ArrowDown => 128,
+            KeyCode::KeyA => 4,
+            KeyCode::ArrowLeft => 256,
+            KeyCode::KeyD => 8,
+            KeyCode::ArrowRight => 512,
+            KeyCode::ShiftLeft => 16,
+            KeyCode::ShiftRight => 32,
             _ => return,
         };
         if pressed {
@@ -139,8 +144,8 @@ impl InputState {
 
     pub fn take_move(&mut self) -> MoveIntent {
         let keyboard = Vec2::new(
-            f32::from(i8::from(self.held & 8 != 0) - i8::from(self.held & 4 != 0)),
-            f32::from(i8::from(self.held & 1 != 0) - i8::from(self.held & 2 != 0)),
+            f32::from(i8::from(self.held & (8 | 512) != 0) - i8::from(self.held & (4 | 256) != 0)),
+            f32::from(i8::from(self.held & (1 | 64) != 0) - i8::from(self.held & (2 | 128) != 0)),
         );
         let mut local = keyboard + Vec2::new(self.touch_move.x, -self.touch_move.y);
         if local.length_squared() > 1.0 {
@@ -149,12 +154,17 @@ impl InputState {
         MoveIntent {
             local,
             jump_pressed: std::mem::take(&mut self.jump_queued),
-            sprint: self.held & 16 != 0,
+            sprint: self.held & (16 | 32) != 0,
         }
     }
 
     pub fn take_look(&mut self) -> Vec2 {
         std::mem::take(&mut self.look_delta)
+    }
+
+    /// Cancel every pending action when the window loses focus.
+    pub fn cancel_all(&mut self) {
+        *self = Self::default();
     }
 
     pub fn clear_keyboard(&mut self) {
@@ -225,6 +235,43 @@ mod tests {
     }
 
     #[test]
+    fn focus_loss_cancels_pending_actions_and_touch_ownership() {
+        let mut input = InputState::default();
+        input.key(KeyCode::KeyW, ElementState::Pressed, false);
+        input.key(KeyCode::Space, ElementState::Pressed, false);
+        input.mouse_motion((10.0, 20.0));
+        input.queue_fire();
+        input.touch_event(1, TouchPhase::Started, Vec2::new(100.0, 200.0), 1000.0);
+        input.touch_event(1, TouchPhase::Moved, Vec2::new(150.0, 250.0), 1000.0);
+        input.cancel_all();
+        assert_eq!(input.take_move(), MoveIntent::default());
+        assert_eq!(input.take_look(), Vec2::ZERO);
+        assert!(!input.take_fire());
+        assert!(input.move_touch.is_none() && input.look_touch.is_none());
+    }
+
+    #[test]
+    fn releasing_one_direction_binding_keeps_its_other_binding_held() {
+        let mut input = InputState::default();
+        input.key(KeyCode::KeyW, ElementState::Pressed, false);
+        input.key(KeyCode::ArrowUp, ElementState::Pressed, false);
+        input.key(KeyCode::KeyW, ElementState::Released, false);
+        assert_eq!(input.take_move().local, Vec2::Y);
+        input.key(KeyCode::ArrowUp, ElementState::Released, false);
+        assert_eq!(input.take_move().local, Vec2::ZERO);
+    }
+    #[test]
+    fn releasing_one_shift_keeps_the_other_shift_sprinting() {
+        let mut input = InputState::default();
+        input.key(KeyCode::ShiftLeft, ElementState::Pressed, false);
+        input.key(KeyCode::ShiftRight, ElementState::Pressed, false);
+        input.key(KeyCode::ShiftLeft, ElementState::Released, false);
+        assert!(input.take_move().sprint);
+        input.key(KeyCode::ShiftRight, ElementState::Released, false);
+        assert!(!input.take_move().sprint);
+    }
+
+    #[test]
     fn pitch_is_clamped_away_from_camera_poles() {
         let mut camera = CameraRig::default();
         camera.apply_look(Vec2::new(0.0, 1000.0));
@@ -256,5 +303,106 @@ mod tests {
         input.touch_event(2, TouchPhase::Ended, Vec2::new(850.0, 220.0), 1000.0);
         assert!(!input.take_move().jump_pressed);
         assert_ne!(input.take_look(), Vec2::ZERO);
+    }
+}
+
+/// Mouse targets are in radians, independent of render rate. Simulation positions
+/// are interpolated by the caller; this rig smooths view angles without changing input.
+#[derive(Clone, Copy, Debug)]
+pub struct WalkCamera {
+    pub yaw: f32,
+    pub pitch: f32,
+    target_yaw: f32,
+    target_pitch: f32,
+    pub distance: f32,
+    target_distance: f32,
+}
+impl WalkCamera {
+    pub fn new(direction: Vec3) -> Self {
+        let yaw = direction.x.atan2(direction.z);
+        let pitch = direction.y.clamp(-1., 1.).asin();
+        Self {
+            yaw,
+            pitch,
+            target_yaw: yaw,
+            target_pitch: pitch,
+            distance: 0.,
+            target_distance: 0.,
+        }
+    }
+    pub fn desired_distance(self) -> f32 {
+        self.target_distance
+    }
+    pub fn set_distance(&mut self, distance: f32) {
+        if distance.is_finite() {
+            self.target_distance = distance.clamp(0., 8.);
+        }
+    }
+    pub fn zoom(&mut self, lines: f32) {
+        if lines.is_finite() {
+            self.set_distance(self.target_distance - lines * 0.25);
+        }
+    }
+    pub fn apply_look(&mut self, delta: Vec2) {
+        if delta.is_finite() {
+            self.target_yaw -= delta.x;
+            self.target_pitch = (self.target_pitch - delta.y).clamp(-1.50, 1.50);
+        }
+    }
+    pub fn step(&mut self, dt: f32) {
+        if dt.is_finite() && dt > 0. {
+            let alpha = -(-40. * dt).exp_m1();
+            self.yaw += (self.target_yaw - self.yaw) * alpha;
+            self.pitch += (self.target_pitch - self.pitch) * alpha;
+            self.distance += (self.target_distance - self.distance) * alpha;
+        }
+    }
+    pub fn direction(self) -> Vec3 {
+        Vec3::new(
+            self.yaw.sin() * self.pitch.cos(),
+            self.pitch.sin(),
+            self.yaw.cos() * self.pitch.cos(),
+        )
+    }
+    pub fn planar_basis(self) -> (Vec3, Vec3) {
+        let forward = Vec3::new(self.yaw.sin(), 0., self.yaw.cos());
+        (forward, Vec3::new(-forward.z, 0., forward.x))
+    }
+}
+#[cfg(test)]
+mod walk_camera_tests {
+    use super::*;
+    #[test]
+    fn smoothing_is_independent_of_frame_subdivision() {
+        let mut a = WalkCamera::new(Vec3::NEG_Z);
+        a.apply_look(Vec2::new(1., 0.5));
+        let mut b = a;
+        a.step(0.1);
+        for _ in 0..20 {
+            b.step(0.005);
+        }
+        assert!(a.direction().distance(b.direction()) < 1e-6);
+    }
+    #[test]
+    fn zoom_is_smooth_bounded_and_independent_of_frame_rate() {
+        let mut a = WalkCamera::new(Vec3::NEG_Z);
+        a.zoom(-100.);
+        let mut b = a;
+        assert_eq!(a.desired_distance(), 8.);
+        assert_eq!(a.distance, 0.);
+        a.step(0.1);
+        for _ in 0..20 {
+            b.step(0.005);
+        }
+        assert!((a.distance - b.distance).abs() < 1e-6);
+        assert!(a.distance > 0. && a.distance < 8.);
+    }
+    #[test]
+    fn invalid_look_and_time_do_not_poison_camera() {
+        let mut camera = WalkCamera::new(Vec3::NEG_Z);
+        camera.apply_look(Vec2::splat(f32::NAN));
+        camera.step(f32::INFINITY);
+        assert!(camera.direction().is_finite());
+        assert!(camera.direction().distance(Vec3::NEG_Z) < 1e-6);
     }
 }

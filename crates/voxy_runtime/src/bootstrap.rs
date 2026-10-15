@@ -58,11 +58,25 @@ pub fn build_generated_scene(
         BlockStateId,
     ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
 ) -> Result<BootstrapScene, BootstrapError> {
-    build_scene_using_generator(seed, radius, true, factory)
+    build_scene_using_generator(seed, radius, true, false, factory)
+}
+
+/// Keeps seeded plant blocks as gameplay markers while rendering them through native meshes.
+/// # Errors
+/// Returns the same bounded bootstrap failures as `build_generated_scene`.
+pub fn build_generated_scene_with_mesh_plants(
+    seed: u64,
+    radius: i32,
+    factory: impl FnOnce(
+        TerrainPalette,
+        BlockStateId,
+    ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
+) -> Result<BootstrapScene, BootstrapError> {
+    build_scene_using_generator(seed, radius, true, true, factory)
 }
 
 fn build_scene(seed: u64, radius: i32, procedural: bool) -> Result<BootstrapScene, BootstrapError> {
-    build_scene_using_generator(seed, radius, procedural, |palette, water| {
+    build_scene_using_generator(seed, radius, procedural, false, |palette, water| {
         Ok(if procedural {
             Box::new(ProceduralTerrainGenerator::new(palette, water)) as Box<dyn ChunkGenerator>
         } else {
@@ -76,6 +90,7 @@ fn build_scene_using_generator(
     seed: u64,
     radius: i32,
     procedural: bool,
+    mesh_plants: bool,
     factory: impl FnOnce(
         TerrainPalette,
         BlockStateId,
@@ -84,7 +99,7 @@ fn build_scene_using_generator(
     if !(0..=8).contains(&radius) {
         return Err(BootstrapError::InvalidRadius(radius));
     }
-    let registry = Arc::new(default_registry()?);
+    let registry = Arc::new(registry_with_mesh_plants(mesh_plants)?);
     let palette = TerrainPalette {
         air: registry
             .find(&ResourceKey::parse("voxy:air")?)
@@ -103,7 +118,24 @@ fn build_scene_using_generator(
     let water = registry
         .find(&ResourceKey::parse("voxy:water_8")?)
         .ok_or(BootstrapError::MissingBuiltin)?;
-    let generator = factory(palette, water)?;
+    let base = factory(palette, water)?;
+    let generator: Box<dyn ChunkGenerator> = if procedural {
+        Box::new(voxy_world::VegetationGenerator::new(
+            base,
+            ProceduralTerrainGenerator::new(palette, water),
+            voxy_world::VegetationPalette {
+                air: palette.air,
+                wood: registry
+                    .find(&ResourceKey::parse("voxy:wood")?)
+                    .ok_or(BootstrapError::MissingBuiltin)?,
+                leaves: registry
+                    .find(&ResourceKey::parse("voxy:leaves")?)
+                    .ok_or(BootstrapError::MissingBuiltin)?,
+            },
+        ))
+    } else {
+        base
+    };
     let grass = registry
         .find(&ResourceKey::parse("voxy:grass")?)
         .ok_or(BootstrapError::MissingBuiltin)?;
@@ -419,7 +451,7 @@ pub fn invalidated_derived_chunks(receipt: &CommitReceipt) -> BTreeSet<ChunkPos>
     dirty
 }
 
-fn default_registry() -> Result<BlockRegistry, RegistryError> {
+fn registry_with_mesh_plants(mesh_plants: bool) -> Result<BlockRegistry, RegistryError> {
     let mut definitions = vec![
         definition(
             "air",
@@ -462,6 +494,32 @@ fn default_registry() -> Result<BlockRegistry, RegistryError> {
             blast_resistance: 0,
         });
     }
+    definitions.push(definition(
+        "wood",
+        if mesh_plants {
+            RenderKind::Invisible
+        } else {
+            RenderKind::Opaque
+        },
+        Occlusion::FullCube,
+        CollisionShape::FullCube,
+        3,
+    )?);
+    definitions.push(definition(
+        "leaves",
+        if mesh_plants {
+            RenderKind::Invisible
+        } else {
+            RenderKind::Opaque
+        },
+        if mesh_plants {
+            Occlusion::None
+        } else {
+            Occlusion::FullCube
+        },
+        CollisionShape::Empty,
+        2,
+    )?);
     BlockRegistry::new(definitions)
 }
 
@@ -579,6 +637,30 @@ mod tests {
         let second = build_procedural_scene(0x56_4f_58_59, 1).unwrap();
         assert_eq!(first.chunks, second.chunks);
         assert_eq!(first.chunks.len(), 9);
+        for name in ["voxy:wood", "voxy:leaves"] {
+            let block = first
+                .world
+                .registry()
+                .find(&ResourceKey::parse(name).unwrap())
+                .unwrap();
+            assert!(
+                first.chunks.iter().any(|chunk| {
+                    let snapshot = first.world.chunk(chunk.pos).unwrap();
+                    (0..32).any(|x| {
+                        (0..32).any(|z| {
+                            (0..32).any(|y| {
+                                snapshot
+                                    .data
+                                    .blocks
+                                    .get(LocalPos::new(x, y, z).unwrap().index())
+                                    == block
+                            })
+                        })
+                    })
+                }),
+                "startup scene is missing {name}"
+            );
+        }
         assert!(
             first
                 .chunks
@@ -590,6 +672,54 @@ mod tests {
                 .chunks
                 .iter()
                 .all(|chunk| !chunk.mesh.opaque.is_empty())
+        );
+    }
+
+    #[test]
+    fn mesh_plants_keep_authoritative_blocks_without_duplicate_voxel_surfaces() {
+        let block = build_procedural_scene(0x56_4f_58_59, 1).unwrap();
+        let mesh = build_generated_scene_with_mesh_plants(0x56_4f_58_59, 1, |p, w| {
+            Ok(Box::new(ProceduralTerrainGenerator::new(p, w)))
+        })
+        .unwrap();
+        let wood = mesh
+            .world
+            .registry()
+            .find(&ResourceKey::parse("voxy:wood").unwrap())
+            .unwrap();
+        let leaves = mesh
+            .world
+            .registry()
+            .find(&ResourceKey::parse("voxy:leaves").unwrap())
+            .unwrap();
+        assert_eq!(
+            mesh.world.registry().get(wood).unwrap().render,
+            RenderKind::Invisible
+        );
+        assert_eq!(
+            mesh.world.registry().get(wood).unwrap().collision,
+            CollisionShape::FullCube
+        );
+        assert_eq!(
+            mesh.world.registry().get(leaves).unwrap().collision,
+            CollisionShape::Empty
+        );
+        for chunk in &mesh.chunks {
+            assert_eq!(
+                mesh.world.chunk(chunk.pos).unwrap().data,
+                block.world.chunk(chunk.pos).unwrap().data
+            );
+        }
+        assert!(
+            mesh.chunks
+                .iter()
+                .map(|c| c.mesh.quad_count())
+                .sum::<usize>()
+                < block
+                    .chunks
+                    .iter()
+                    .map(|c| c.mesh.quad_count())
+                    .sum::<usize>()
         );
     }
 

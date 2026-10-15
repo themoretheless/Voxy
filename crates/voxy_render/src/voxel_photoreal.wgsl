@@ -27,6 +27,7 @@ struct PhotorealCamera {
     camera_eye: vec4<f32>,        // xyz: eye position, w: elapsed_seconds
     flashlight_pos: vec4<f32>,    // xyz: flashlight world pos, w: enabled (1.0 or 0.0)
     flashlight_dir: vec4<f32>,    // xyz: flashlight unit dir, w: wetness (0.0 .. 1.0)
+    subject_spheres: array<vec4<f32>,12>,
 };
 
 struct ChunkMeta {
@@ -87,6 +88,8 @@ struct PhotorealVertexOutput {
     @location(4) light: vec2<f32>,
     @location(5) world_pos: vec3<f32>,
     @location(6) @interpolate(flat) chunk_slot: u32,
+    @location(7) coat: vec4<f32>,
+    @location(8) bind_position: vec3<f32>,
 };
 
 fn sample_light_cell(slot: u32, local_air: vec3<i32>) -> vec2<f32> {
@@ -225,7 +228,9 @@ fn vs_voxel(input: VoxelQuadInput) -> PhotorealVertexOutput {
     output.ao = ao;
     output.light = sample_light_cell(input.chunk_slot.x, corner_cell);
     output.world_pos = local;
+    output.bind_position=local;
     output.chunk_slot = input.chunk_slot.x;
+    output.coat = vec4<f32>(0.0,0.0,0.0,-1.0);
     return output;
 }
 
@@ -239,7 +244,9 @@ fn vs_indirect(input: IndirectVoxelInput) -> PhotorealVertexOutput {
     output.ao = clamp(f32(input.ao) / 3.0, 0.0, 1.0);
     output.light = vec2<f32>(0.85, 0.0);
     output.world_pos = input.position;
+    output.bind_position=input.position;
     output.chunk_slot = 0xffffffffu;
+    output.coat = vec4<f32>(0.0,0.0,0.0,-1.0);
     return output;
 }
 
@@ -275,7 +282,14 @@ fn vs_skinned(input: SkinnedInput) -> PhotorealVertexOutput {
     output.ao = 0.88;
     output.light = vec2<f32>(0.92, 0.0);
     output.world_pos = world_pos;
+    output.bind_position=input.position;
     output.chunk_slot = 0xffffffffu;
+    output.coat = vec4<f32>(0.0,0.0,0.0,-1.0);
+    if input.uv.y <= -10000.0 {
+        let rgb = u32(input.uv.x);
+        output.coat = vec4<f32>(vec3<f32>(f32(rgb & 255u),f32((rgb >> 8u) & 255u),f32((rgb >> 16u) & 255u))/255.0, -input.uv.y-10000.0);
+        output.uv = vec2<f32>(0.0);
+    }
     return output;
 }
 
@@ -578,6 +592,18 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
         base_roughness = 0.72;
     }
 
+    let p=input.bind_position;
+    let grain_phase=p.x*5400.0+p.y*3700.0+sin(p.z*220.0)*1.8;
+    let grain_filter=exp(-min(fwidth(grain_phase),16.0));
+    let coat_grain=sin(grain_phase)*grain_filter;
+    if input.coat.a >= 0.0 {
+        let grain=coat_grain;
+        let mottling=value_noise_3d(p*430.0);
+        base_albedo = input.coat.rgb*(0.91+0.12*mottling+0.035*grain);
+        base_roughness = clamp(input.coat.a+grain*0.035,0.04,1.0);
+        wetness = 0.0;
+    }
+
     // Upward-facing horizontal surfaces accumulate rain puddles in low macro-noise pockets
     let up_facing = clamp(geom_n.y, 0.0, 1.0);
     let puddle_mask = up_facing * smoothstep(0.40, 0.64, 1.0 - detail_macro) * wetness;
@@ -599,7 +625,7 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
     // Project 3D FBM gradient onto the tangent plane of geom_n (flattened over puddles)
     let tangent_grad = fbm_grad - geom_n * dot(fbm_grad, geom_n);
     let relief_scale = (1.0 - puddle_mask * 0.88) * 0.105;
-    let n = normalize(geom_n - tangent_grad * relief_scale);
+    let n = normalize(geom_n - tangent_grad * relief_scale * select(1.0,0.0,input.coat.a>=0.0));
 
     // Porous dielectric darkening when wet (internal total reflection in water film)
     let porous_albedo = pow(max(base_albedo, vec3<f32>(0.001)), vec3<f32>(1.38)) * 0.54;
@@ -646,7 +672,24 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
     let sky_exposure = clamp(light_sample.x, 0.05, 1.0);
     // Soften vertex AO curve so corners have realistic contact shadows without black grid stripes
     let smooth_vertex_ao = mix(0.20, 1.0, pow(clamp(input.ao, 0.0, 1.0), 0.78));
-    let raw_ao = clamp(smooth_vertex_ao * (0.84 + 0.16 * detail_fine) * mortar_groove, 0.07, 1.0);
+    var subject_visibility=1.0;
+    if input.coat.a<0.0 {
+        for(var i=0u;i<12u;i++) {
+            let sphere=camera.subject_spheres[i];
+            if sphere.w>0.0 {
+                let delta=sphere.xyz-input.world_pos;
+                let distance2=max(dot(delta,delta),0.00001);
+                let direction=delta*inverseSqrt(distance2);
+                let coverage=clamp(sphere.w*sphere.w/distance2,0.0,0.90)*max(dot(n,direction),0.0);
+                subject_visibility*=1.0-coverage*0.85;
+                let along=dot(delta,sun_dir);
+                let side2=max(distance2-along*along,0.0);
+                let spread=sphere.w+max(along,0.0)*0.04;
+                if along>0.0 {ray_shadow*=mix(0.30,1.0,smoothstep(sphere.w*0.50,spread,sqrt(side2)));}
+            }
+        }
+    }
+    let raw_ao = clamp(subject_visibility*smooth_vertex_ao * (0.84 + 0.16 * detail_fine) * mortar_groove, 0.07, 1.0);
     let multibounce_ao = gtao_multibounce(raw_ao, albedo);
 
     // CIE Overcast Sky evaluated along the 3D Bent Normal direction (window/skylight light-shaft directionality!)

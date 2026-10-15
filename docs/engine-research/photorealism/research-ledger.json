@@ -1,0 +1,354 @@
+{
+  "schema": "voxy-photorealism-research-ledger-v1",
+  "date": "2026-10-14",
+  "status": "initial_research_and_source_audit_not_feature_completion",
+  "objective_scope": "Photorealism plus original independent engine, 500-engine research, production rigs, hardware backends and full physical phenomena; not reduced to static rendering",
+  "existing_corpus": {
+    "queue": "docs/engine-research/review-queue.md",
+    "unique_candidate_urls_verified": 1428,
+    "classified_engine_records": {
+      "engine": 315,
+      "specialized_engine": 133,
+      "derived_engine": 52
+    },
+    "deep_architectural_review": "not proven complete; metadata classification is not source or runtime verification",
+    "rag_page_id": "65a434fa-abf3-4925-9b1f-4b76d005dcaa",
+    "rag_slug": "voxy-face-source-study-500",
+    "rag_scope": "500 repository source-sample bundles; wiki reports seven partial function reviews and zero completed whole-repository deep reviews; raw bundle integrity not reaudited this turn"
+  },
+  "sources": [
+    {
+      "id": "pbrt-radiometry",
+      "kind": "book",
+      "url": "https://www.pbr-book.org/4ed/Radiometry%2C_Spectra%2C_and_Color",
+      "relevance": "radiometry, spectral transport and color transforms",
+      "review_status": "catalog_and_chapter_summary_read"
+    },
+    {
+      "id": "disney-brdf",
+      "kind": "paper",
+      "url": "https://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_slides_v2.pdf",
+      "relevance": "measured material reasoning and principled parameterization",
+      "review_status": "search_metadata_only_full_pdf_review_pending"
+    },
+    {
+      "id": "disney-bsdf-sss",
+      "kind": "paper",
+      "url": "https://blog.selfshadow.com/publications/s2015-shading-course/burley/s2015_pbs_disney_bsdf_notes.pdf",
+      "relevance": "surface and subsurface transport must be accounted together",
+      "review_status": "search_metadata_only_full_pdf_review_pending"
+    },
+    {
+      "id": "filament-pbr",
+      "kind": "implementation_documentation",
+      "url": "https://google.github.io/filament/Filament.md",
+      "relevance": "units, microfacet shading, DFG, material-light separation",
+      "review_status": "documentation_excerpt_read_full_source_review_pending"
+    },
+    {
+      "id": "filament-energy-discussion",
+      "kind": "repository_issue",
+      "url": "https://github.com/google/filament/issues/10140",
+      "relevance": "direct diffuse/specular energy partition and consistency with IBL",
+      "review_status": "issue_body_read_proposal_not_accepted_algorithm"
+    },
+    {
+      "id": "restir-gris",
+      "kind": "paper",
+      "url": "https://research.nvidia.com/labs/rtr/publication/lin2022generalized/",
+      "relevance": "sample reuse validity and weighting assumptions",
+      "review_status": "publication_page_read_full_paper_pending"
+    },
+    {
+      "id": "restir-pt-implementation",
+      "kind": "implementation_documentation",
+      "url": "https://github.com/NVIDIA-RTX/RTXDI/blob/main/Doc/RestirPT.md",
+      "relevance": "path resampling integration",
+      "review_status": "search_metadata_only_source_review_pending"
+    },
+    {
+      "id": "frostbite-hair",
+      "kind": "technical_presentation",
+      "url": "https://advances.realtimerendering.com/s2019/hair_presentation_final.pdf",
+      "relevance": "single-fiber optics and transport through many fibers",
+      "review_status": "search_metadata_only_full_presentation_pending"
+    },
+    {
+      "id": "disney-hair",
+      "kind": "paper",
+      "url": "https://www.disneyanimation.com/publications/a-practical-and-controllable-hair-and-fur-model-for-production-path-tracing/",
+      "relevance": "energy-conserving fiber scattering and parameterization",
+      "review_status": "publication_abstract_read_full_paper_pending"
+    },
+    {
+      "id": "three-color-workflow",
+      "kind": "developer_forum",
+      "url": "https://discourse.threejs.org/t/updates-to-color-management-in-three-js-r152/50791",
+      "relevance": "linear working space and correctly tagged inputs",
+      "review_status": "developer_discussion_read_version_specific"
+    },
+    {
+      "id": "three-blender-match",
+      "kind": "developer_forum",
+      "url": "https://discourse.threejs.org/t/matching-blender-with-threejs-colors/60716",
+      "relevance": "matching camera, lighting, transforms across renderers",
+      "review_status": "search_metadata_only_not_evidence_of_correctness"
+    },
+    {
+      "id": "pbrt-layered",
+      "kind": "book_and_source",
+      "url": "https://pbr-book.org/4ed/Light_Transport_II_Volume_Rendering/Scattering_from_Layered_Materials",
+      "review_status": "chapter_text_and_implementation_excerpts_read_figures_not_visually_reviewed",
+      "relevance": "Reference layered transport; assumes colocated entry/exit and homogeneous medium, so it is not a complete skin BSSRDF."
+    },
+    {
+      "id": "fdez-aguera-ibl-ms",
+      "kind": "paper",
+      "url": "https://www.jcgt.org/published/0008/01/03/paper.pdf",
+      "review_status": "sections_1_to_4_and_listings_read_visual_figure_review_pending",
+      "relevance": "Derives IBL multiscattering from scale/bias DFG terms; uniform-environment model is not a direct point-light correction."
+    },
+    {
+      "id": "imageworks-2017",
+      "kind": "technical_presentation",
+      "url": "https://blog.selfshadow.com/publications/s2017-shading-course/imageworks/s2017_pbs_imageworks_slides.pdf",
+      "review_status": "PDF_downloaded_relevant_energy_and_diffuse_pages_read_and_visually_reviewed_original_Fresnel_formula_known_erroneous",
+      "relevance": "Multiple-scattering and layered microfacet energy accounting."
+    },
+    {
+      "id": "hill-2018-correction",
+      "kind": "author_analysis_and_erratum",
+      "url": "https://blog.selfshadow.com/2018/06/04/multi-faceted-part-2/",
+      "review_status": "derivation_and_erratum_read",
+      "relevance": "Original Imageworks Fresnel expression was corrected; added lobe must not count single scattering twice."
+    },
+    {
+      "id": "heitz-smith-ms",
+      "kind": "paper_author_page_and_reference_implementation",
+      "url": "https://eheitzresearch.wordpress.com/240-2/",
+      "review_status": "author_page_read_full_reference_implementation_pending",
+      "relevance": "Stochastic Smith multiple scattering is the physical reference; compensated analytic lobes must be compared against it."
+    },
+    {
+      "id": "openpbr-1.1.1",
+      "kind": "material_specification",
+      "url": "https://academysoftwarefoundation.github.io/OpenPBR/",
+      "review_status": "structure_and_physical_model_sections_read",
+      "relevance": "Specify physical layering and mixing separately from implementation; high-end hair, skin and volumes need further specialized models."
+    },
+    {
+      "id": "ggx-cap-vndf-2023",
+      "kind": "paper",
+      "url": "https://arxiv.org/abs/2306.05044",
+      "review_status": "derivation_and_sampler_sections_read",
+      "relevance": "Exact visible-normal sampling via spherical caps; finite integration quality must still be measured."
+    }
+  ],
+  "priorities": [
+    {
+      "rank": 1,
+      "area": "color_camera_units",
+      "requirements": [
+        "linear lighting and blending",
+        "correct sRGB versus data-texture import",
+        "physical light and camera units",
+        "explicit exposure and output transform"
+      ],
+      "gate": "matched exposure/color charts, HDR ramps, no double transfer functions; verify actual character and scene paths",
+      "sources": [
+        "pbrt-radiometry",
+        "three-color-workflow",
+        "filament-pbr"
+      ]
+    },
+    {
+      "rank": 2,
+      "area": "material_energy",
+      "requirements": [
+        "reciprocity and hemispherical reflectance bounds",
+        "consistent direct and environment lighting",
+        "declared roughness convention",
+        "layer energy partition including transmission"
+      ],
+      "gate": "GPU white-furnace sweeps, roughness/angle grids, diffuse/specular split and offline reference comparisons",
+      "sources": [
+        "filament-pbr",
+        "filament-energy-discussion",
+        "disney-brdf"
+      ]
+    },
+    {
+      "rank": 3,
+      "area": "illumination_and_visibility",
+      "requirements": [
+        "indirect diffuse and glossy transport",
+        "area emitters and contact shadows",
+        "robust bias and thin geometry",
+        "importance sampling and correct reservoir weights"
+      ],
+      "gate": "matched reference scenes, static convergence and moving-camera/occluder/light sequences",
+      "sources": [
+        "pbrt-radiometry",
+        "restir-gris",
+        "restir-pt-implementation"
+      ]
+    },
+    {
+      "rank": 4,
+      "area": "digital_humans",
+      "requirements": [
+        "skin reflectance and thickness-aware scattering",
+        "cornea/iris/tear layer and oral geometry",
+        "fiber scattering and hair self-shadowing",
+        "pose correctives and physically coupled deformation"
+      ],
+      "gate": "neutral calibrated lighting, closeups, silhouettes and moving/jumping sequences; no generated-image substitute",
+      "sources": [
+        "disney-bsdf-sss",
+        "disney-hair",
+        "frostbite-hair"
+      ]
+    },
+    {
+      "rank": 5,
+      "area": "dynamic_media_and_temporal_quality",
+      "requirements": [
+        "absorption/scattering for liquids and participating media",
+        "thin wet coatings and roughness changes",
+        "stable reconstruction with deformation/disocclusion",
+        "preserve geometry and simulation scope while optimizing"
+      ],
+      "gate": "reference transmission/volume scenes plus animated wetting, drying, sprays, smoke and fog; CPU/GPU timings and image errors reported separately",
+      "sources": [
+        "pbrt-radiometry",
+        "restir-gris"
+      ]
+    }
+  ],
+  "source_witness": {
+    "path": "crates/voxy_render/src/surface_lighting.wgsl",
+    "sha256": "d893663f6fd75854c0d55b2ac6b8aee331abba38a8373f5ed0cbdbdd8019bd1d",
+    "configuration": {
+      "roughness": 1,
+      "NoV": 1,
+      "diffuse": 1,
+      "F0": 0.04
+    },
+    "values": [
+      {
+        "quadrature_samples": 1024,
+        "hemispherical_reflectance": 1.0123063837748563
+      },
+      {
+        "quadrature_samples": 8192,
+        "hemispherical_reflectance": 1.0123063825204497
+      }
+    ],
+    "scope": "Independent CPU quadrature of the additive Lambert/GGX formula for this specific ray-query surface-lighting path. GPU execution and main-scene/character integration are not verified by this witness.",
+    "next_gate": "Read authoritative layered BSDF implementations, implement GPU white-furnace measurement, then select a physically justified correction; do not copy a forum proposal as established truth.",
+    "gpu_artifact": "artifacts/photorealism-2026-10-14/surface-white-furnace/verification.json",
+    "gpu_reproduced": true,
+    "corrected": false
+  },
+  "architecture_constraints": [
+    "one authoritative material/BSDF contract rather than duplicated shading semantics",
+    "scene, simulation and presentation ownership remain independent",
+    "backend capabilities explicit; availability does not prove end-to-end hardware acceleration",
+    "validate performance and quality at declared resolution, hardware, scene and percentiles; generated frames do not count as native simulation/render throughput",
+    "keep original hair density, contact gates and expanded precision; do not substitute a simpler scene to claim completion"
+  ],
+  "remaining_work": [
+    "full paper and implementation review beyond excerpts",
+    "500-engine source-level architectural review and mechanism deduplication",
+    "runtime rendering and visual comparison on actual models",
+    "implementation and full movement/physics qualification"
+  ],
+  "dfg_contract_audit": {
+    "coordinates": [
+      "NdotV",
+      "perceptual_roughness"
+    ],
+    "channels": [
+      "A",
+      "B"
+    ],
+    "single_scattering_directional_albedo": "F0*A+B",
+    "unit_Fresnel_directional_albedo": "A+B",
+    "source_contract_already_documented": true,
+    "warning": "Filament channel convention differs; do not use native B alone as unit-Fresnel directional albedo."
+  },
+  "updated_date": "2026-10-15",
+  "layered_energy_candidate": {
+    "artifact": "artifacts/photorealism-2026-10-15/layered-energy-prototype/verification.json",
+    "production_integrated": false,
+    "current_production_energy_bug_fixed": false,
+    "note": "GPU prototype includes explicit loss moments and corrected Fresnel factor; normal-view maximum-roughness validation only."
+  },
+  "ggx_moment_candidate": {
+    "artifact": "artifacts/photorealism-2026-10-15/ggx-stable-all-moments/verification.json",
+    "production_integrated": false,
+    "loss_accumulated_directly": true,
+    "accuracy_qualified": false,
+    "status": "expanded_34_case_all_moments_passed",
+    "accuracy_rejection_artifact": "artifacts/photorealism-2026-10-15/ggx-energy-moments/accuracy-rejection.json",
+    "exact_lower_bound_violations": 0,
+    "previous_rejected_artifact": "artifacts/photorealism-2026-10-15/ggx-energy-moments/accuracy-rejection.json",
+    "directional_reference": {
+      "artifact": "artifacts/photorealism-2026-10-15/ggx-directional-reference/launch.json",
+      "status": "running_with_accuracy_failure",
+      "accuracy_qualified": false,
+      "confirmed_failures": 1,
+      "first_failure": {
+        "nv": 0.05000000074505806,
+        "roughness": 0.004999999888241291,
+        "samples": 65536,
+        "gpu_loss": 1.1525374787879628e-07,
+        "reference": {
+          "loss": 1.253971749601594e-07,
+          "null_mass": 6.296867219514337e-08,
+          "masking_loss": 6.242850276501603e-08
+        },
+        "azimuth_refinement_difference": 0.0,
+        "relative_loss_error": 0.08089039553391732
+      }
+    },
+    "storage_audit": "artifacts/photorealism-2026-10-15/ggx-energy-moments-mis/storage-format-audit.json",
+    "gpu_storage_roundtrip": {
+      "artifact": "artifacts/photorealism-2026-10-15/ggx-texture-roundtrip/verification.json",
+      "rgba32float_bitwise_preserved": 4,
+      "rgba16float_erased_nonzero": 2,
+      "production_integrated": false
+    },
+    "manual_interpolation": {
+      "artifact": "artifacts/photorealism-2026-10-15/ggx-texture-interpolation/verification.json",
+      "status": "gpu_manual_bilinear_lookup_passed",
+      "production_integrated": false
+    },
+    "unit_loss_selected_grid_passed": true,
+    "remaining_accuracy": "Whole parameter domain, angular averages, actual table interpolation and full layered closure not qualified",
+    "selected_grid_fresnel_passed": true,
+    "expanded_grid_cases": 34,
+    "expanded_grid_failures": 0,
+    "expanded_grid_all_moments_passed": true,
+    "owner_integration": {
+      "artifact": "artifacts/photorealism-2026-10-15/dfg-region-and-interpolation/verification.json",
+      "owner_api_integrated": true,
+      "default_application_active": false,
+      "full_layered_closure_integrated": false,
+      "bounded_generation_verified": true,
+      "interpolation_qualified": false
+    },
+    "interpolation_candidate": {
+      "artifact": "artifacts/photorealism-2026-10-15/dfg-cubic-candidate/verification.json",
+      "interior_passed": true,
+      "whole_domain_qualified": false,
+      "production_selected": false
+    },
+    "grazing_boundary": {
+      "artifact": "artifacts/photorealism-2026-10-15/ggx-grazing-gpu/verification.json",
+      "gpu_implemented": true,
+      "grazing_cases_passed": 76,
+      "table_endpoint_layout_implemented": false
+    }
+  }
+}

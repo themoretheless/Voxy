@@ -43,6 +43,43 @@ fn pack_exact(value: f64) -> Result<[u32; 3], JointDotError> {
     Ok([hi.to_bits(), lo.to_bits(), tail.to_bits()])
 }
 impl ExperimentalTripleContactInput {
+    /// Pack both native components before rounding to the shader's three-f32
+    /// arithmetic. Never collapse the source to a single f64 first.
+    pub fn new_expanded(columns: &[Vec<[f64; 2]>], bounds: &[f64], tolerance: f64) -> Result<Self, JointDotError> {
+        let mut canonical=Vec::with_capacity(columns.len());
+        for column in columns {
+            let mut values=Vec::with_capacity(column.len());
+            for &[hi,lo] in column {
+                if !hi.is_finite() || !lo.is_finite() || hi+lo!=hi {return Err(JointDotError::NumericRange);}
+                values.push(hi);
+            }
+            canonical.push(values);
+        }
+        let mut input=Self::new(&canonical,bounds,tolerance)?;
+        for _ in 0..=32 {
+            let mut packed=Vec::with_capacity(input.columns.len());
+            for &[hi,lo] in columns.iter().flatten() {
+                let mut high=hi/input.column_scale; let mut low=lo/input.column_scale;
+                if !high.is_finite() || high.abs()>2f64.powi(48) || !low.is_finite()
+                    || (lo!=0. && (low==0. || low*input.column_scale!=lo)) {break;}
+                let mut words=[0;3]; let mut valid=true;
+                for word in &mut words {
+                    let component=high as f32;
+                    if !component.is_finite() || component.is_subnormal() {valid=false;break;}
+                    *word=component.to_bits();
+                    let residual=high-f64::from(component); let next=residual+low;
+                    let virtual_low=next-residual;
+                    low=(residual-(next-virtual_low))+(low-virtual_low); high=next;
+                }
+                if !valid || !(high+low).is_finite() || (high+low).abs()>(hi/input.column_scale).abs()*2f64.powi(-68) {break;}
+                packed.push(words);
+            }
+            if packed.len()==input.columns.len() {input.columns=packed;return Ok(input);}
+            input.column_scale*=0.5;
+            if input.column_scale==0. {break;}
+        }
+        Err(JointDotError::NumericRange)
+    }
     pub fn new(
         columns: &[Vec<f64>],
         bounds: &[f64],
@@ -132,6 +169,16 @@ mod tests {
     fn decode(words: [u32; 3]) -> f64 {
         let [a, b, c] = words.map(|v| f32::from_bits(v) as f64);
         (a + b) + c
+    }
+    #[test]
+    fn triple_expanded_input_keeps_sub_f64_ulp_source() {
+        let low=2f64.powi(-60);
+        let expanded=ExperimentalTripleContactInput::new_expanded(&[vec![[1.,low]]],&[1.],1e-14).unwrap();
+        let legacy=ExperimentalTripleContactInput::new(&[vec![1.]],&[1.],1e-14).unwrap();
+        assert_ne!(expanded.columns,legacy.columns);
+        let words=expanded.columns[0].map(|v|f64::from(f32::from_bits(v)));
+        assert_eq!(words[0],1.); assert_eq!(words[1]+words[2],low);
+        assert!(ExperimentalTripleContactInput::new_expanded(&[vec![[1.,f64::NAN]]],&[1.],1e-14).is_err());
     }
     #[test]
     fn triple_input_preserves_original_binary_coefficients() {

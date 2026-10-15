@@ -300,10 +300,7 @@ impl LiquidJetNozzle {
                     scale(r_dir, 0.5 * self.orifice_diameter_m),
                 );
                 // Symmetric opposing pairs cancel lateral momentum exactly so axial momentum is conserved
-                let vel = add(
-                    scale(dir, self.exit_speed_m_s),
-                    scale(r_dir, lateral_speed),
-                );
+                let vel = add(scale(dir, self.exit_speed_m_s), scale(r_dir, lateral_speed));
                 let droplet = crate::suspension::Particle::new(droplet_radius, rho, pos, vel)
                     .map_err(|_| Error::InvalidParticle)?;
                 spray_droplets.push(droplet);
@@ -519,11 +516,11 @@ mod tests {
             preset: JetFluidPreset::GLYCERIN,
             ..water_nozzle
         };
-        assert!(glycerin_nozzle.ohnesorge_number().unwrap() > water_nozzle.ohnesorge_number().unwrap());
         assert!(
-            glycerin_nozzle
-                .rayleigh_plateau_breakup_length_m()
-                .unwrap()
+            glycerin_nozzle.ohnesorge_number().unwrap() > water_nozzle.ohnesorge_number().unwrap()
+        );
+        assert!(
+            glycerin_nozzle.rayleigh_plateau_breakup_length_m().unwrap()
                 > water_nozzle.rayleigh_plateau_breakup_length_m().unwrap()
         );
     }

@@ -48,6 +48,8 @@ pub fn qualification_device_descriptor(adapter: &wgpu::Adapter) -> wgpu::DeviceD
     }
     descriptor
 }
+#[path = "gpu_hair_five.rs"]
+mod five;
 #[path = "gpu_hair_joint.rs"]
 mod joint;
 #[path = "gpu_hair_response_dispatch.rs"]
@@ -85,6 +87,11 @@ pub struct GpuHairLinearSolver {
     pub(super) joint_resident_batch_dedup: bool,
     #[cfg(test)]
     pub(super) joint_resident_candidates: joint::ResidentCandidateCache,
+    joint_five_programs: Option<five::FivePrograms>,
+    joint_expanded_program: Option<ComputeProgram>,
+    joint_expanded_factors: Vec<voxy_render::ExperimentalTripleActiveFactors>,
+    joint_expanded_candidates: joint::ExpandedCandidateCache,
+    pub joint_expanded_factor_reuses: usize,
     joint_programs: Option<(ComputeProgram, ComputeProgram)>,
     joint_result_cache: Option<joint::JointResultCache>,
     joint_workspaces: joint::EqualityWorkspacePool,
@@ -391,6 +398,11 @@ impl GpuHairLinearSolver {
             queue: queue.clone(),
             program,
             resident: None,
+            joint_five_programs: None,
+            joint_expanded_program: None,
+            joint_expanded_factors: Vec::new(),
+            joint_expanded_candidates: Default::default(),
+            joint_expanded_factor_reuses: 0,
             joint_contact_qr: false,
             joint_coordinate_batches: false,
             joint_support_compaction: true,
@@ -965,8 +977,53 @@ impl HairLinearSolver for GpuHairLinearSolver {
         self.joint_contact_qr
     }
     fn joint_contact_coordinate_batches_enabled(&self) -> bool {
-        self.joint_contact_qr && self.joint_coordinate_batches
+        self.joint_contact_qr && (self.joint_coordinate_batches || self.joint_contact_expanded_enabled())
     }
+    fn joint_contact_expanded_enabled(&self) -> bool {
+        self.joint_contact_qr && (std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref()==Ok("1") || std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref()==Ok("1"))
+    }
+    fn solve_joint_expanded_batch(&mut self, requests:&[physics::hair::HairExpandedCoordinateRequest<'_>]) -> Option<Vec<(Vec<physics::hair::HairResponseCoefficient>,Vec<f64>)>> {
+        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref()==Ok("1") {
+            return self.solve_joint_expanded_candidates(requests)?.into_iter().collect();
+        }
+        self.joint_coordinate_calls+=requests.len();
+        match self.solve_joint_expanded_checked(requests) {
+            Ok(result)=> {self.last_error=None;Some(result)},
+            Err(error)=> {self.last_error=Some(error.to_string());None}
+        }
+    }
+    fn solve_joint_expanded_candidates(&mut self, requests: &[physics::hair::HairExpandedCoordinateRequest<'_>]) -> Option<Vec<Option<(Vec<physics::hair::HairResponseCoefficient>, Vec<f64>)>>> {
+        self.joint_coordinate_calls += requests.len();
+        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref()==Ok("1") {
+            if self.joint_five_programs.is_none() {
+                match pollster::block_on(five::FivePrograms::new(&self.device)) {
+                    Ok(programs)=>self.joint_five_programs=Some(programs),
+                    Err(error)=>{self.last_error=Some(error.to_string());return Some(requests.iter().map(|_|None).collect());}
+                }
+            }
+            let programs=self.joint_five_programs.as_mut().unwrap();let mut failures=Vec::new();
+            let previous=(programs.qr_submissions,programs.qr_dispatches);
+            let results=requests.iter().enumerate().map(|(i,request)|match programs.solve(&self.device,&self.queue,request){
+                Ok(value)=>Some(value),Err(error)=>{failures.push(format!("five operator {i}: {error}"));None}
+            }).collect();
+            self.joint_equality_submissions+=programs.qr_submissions-previous.0;
+            self.joint_equality_dispatches+=programs.qr_dispatches-previous.1;
+            self.last_error=if failures.is_empty(){None}else{Some(failures.join("; "))};
+            return Some(results);
+        }
+        let mut failures = Vec::new();
+        let values = joint::isolate_failed_batch(0..requests.len(), &mut |range| {
+            self.solve_joint_expanded_partial_checked(&requests[range])
+        }, &mut failures);
+        let values = values.into_iter().enumerate().map(|(i, value)| match value {
+            Some(Ok(candidate)) => Some(candidate),
+            Some(Err(error)) => { failures.push(format!("operator {i}: {error}")); None },
+            None => None,
+        }).collect();
+        self.last_error = if failures.is_empty() { None } else { Some(failures.join("; ")) };
+        Some(values)
+    }
+
     fn joint_contact_hints_enabled(&self) -> bool {
         self.joint_dual_hints
     }
@@ -1026,6 +1083,8 @@ impl HairLinearSolver for GpuHairLinearSolver {
                 self.joint_resident_candidates = Default::default();
                 self.joint_triple_factors.clear();
             }
+            self.joint_expanded_factors.clear();
+            self.joint_expanded_candidates = Default::default();
             self.joint_native_fallbacks += 1;
             if self.last_error.is_none() {
                 self.last_error =

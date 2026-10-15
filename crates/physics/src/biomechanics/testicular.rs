@@ -475,7 +475,8 @@ impl CoupledSkeletalGaitFrame {
         if (norm_sq - 1.0).abs() > 1e-3 {
             return Err("unnormalized pelvis rotation quaternion");
         }
-        self.cremaster_reflex.elevation_offset_m(self.gait_speed_norm)?;
+        self.cremaster_reflex
+            .elevation_offset_m(self.gait_speed_norm)?;
         self.thigh_capsules[0].validate()?;
         self.thigh_capsules[1].validate()?;
         Ok(())
@@ -672,12 +673,13 @@ impl TesticularGaitSimulation {
             .cremaster_reflex
             .elevation_offset_m(frame.gait_speed_norm)?;
         let count = self.support_nodes.len() as f64;
-        let pivot = self
-            .support_nodes
-            .iter()
-            .fold([0.0; 3], |acc, &(_, p)| {
-                [acc[0] + p[0] / count, acc[1] + p[1] / count, acc[2] + p[2] / count]
-            });
+        let pivot = self.support_nodes.iter().fold([0.0; 3], |acc, &(_, p)| {
+            [
+                acc[0] + p[0] / count,
+                acc[1] + p[1] / count,
+                acc[2] + p[2] / count,
+            ]
+        });
         let targets: Vec<_> = self
             .support_nodes
             .iter()
@@ -698,10 +700,10 @@ impl TesticularGaitSimulation {
             })
             .collect();
 
-        let support_step = self
-            .assembly
-            .body
-            .step_with_support_targets(&targets, dt_s, tolerance_j)?;
+        let support_step =
+            self.assembly
+                .body
+                .step_with_support_targets(&targets, dt_s, tolerance_j)?;
 
         let mut velocity_deltas: Vec<(usize, Vec3)> = Vec::new();
         let mut thigh_contact_impulse_n_s = [[0.0; 3]; 2];
@@ -748,8 +750,8 @@ impl TesticularGaitSimulation {
                         ];
                         let vt_mag = super::dot(vt, vt).sqrt();
                         let j_tangent = if vt_mag > 1e-12 {
-                            let max_t = (capsule.lubricated_friction * j_normal)
-                                .min(mass * vt_mag * 0.5);
+                            let max_t =
+                                (capsule.lubricated_friction * j_normal).min(mass * vt_mag * 0.5);
                             [
                                 -max_t * vt[0] / vt_mag,
                                 -max_t * vt[1] / vt_mag,

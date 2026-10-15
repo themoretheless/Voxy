@@ -249,3 +249,5 @@ mod tests {
         assert_eq!(queue.len(), 3);
     }
 }
+
+pub use bootstrap::build_generated_scene_with_mesh_plants;

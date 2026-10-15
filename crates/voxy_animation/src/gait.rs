@@ -605,9 +605,8 @@ pub fn extract_pelvis_thigh_frame(
     let curr_pelvis_pos = to_f64_3(curr_global[pelvis_joint].w_axis.truncate());
     let pelvis_velocity_m_s =
         std::array::from_fn(|k| (curr_pelvis_pos[k] - prev_pelvis_pos[k]) / dt_s);
-    let pelvis_acceleration_m_s2 = std::array::from_fn(|k| {
-        (pelvis_velocity_m_s[k] - previous_pelvis_velocity_m_s[k]) / dt_s
-    });
+    let pelvis_acceleration_m_s2 =
+        std::array::from_fn(|k| (pelvis_velocity_m_s[k] - previous_pelvis_velocity_m_s[k]) / dt_s);
     let (_, rot, _) = curr_global[pelvis_joint].to_scale_rotation_translation();
     let rot = rot.normalize();
     let pelvis_rotation_xyzw = [

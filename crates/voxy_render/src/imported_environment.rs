@@ -10,6 +10,7 @@ pub enum ImportedEnvironmentError {
     Renderer(RendererError),
     /// `RGBA16Float` cannot store radiance above 65504 without infinity.
     HalfFloatRange,
+    FloatFilteringUnsupported,
 }
 impl From<HdrImageError> for ImportedEnvironmentError {
     fn from(e: HdrImageError) -> Self {
@@ -41,9 +42,37 @@ impl ImportedEnvironment {
         size: u32,
         limits: ImageLimits,
     ) -> Result<Self, ImportedEnvironmentError> {
+        Self::build(device, queue, panorama, size, limits, false)
+    }
+    /// Retain source radiance and convolution in RGBA32F, including values above
+    /// half-float range. No source clipping or exposure rescaling is applied.
+    pub fn from_panorama_full_precision(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        panorama: &HdrImageAsset,
+        size: u32,
+        limits: ImageLimits,
+    ) -> Result<Self, ImportedEnvironmentError> {
+        if !device
+            .features()
+            .contains(wgpu::Features::FLOAT32_FILTERABLE)
+        {
+            return Err(ImportedEnvironmentError::FloatFilteringUnsupported);
+        }
+        Self::build(device, queue, panorama, size, limits, true)
+    }
+    fn build(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        panorama: &HdrImageAsset,
+        size: u32,
+        limits: ImageLimits,
+        full_precision: bool,
+    ) -> Result<Self, ImportedEnvironmentError> {
+        let stride = if full_precision { 16 } else { 8 };
         let packed_bytes = u64::from(size)
             .checked_mul(u64::from(size))
-            .and_then(|n| n.checked_mul(6 * 8))
+            .and_then(|n| n.checked_mul(6 * stride))
             .ok_or(HdrImageError::LimitExceeded)?;
         let face_limits = ImageLimits {
             pixel_bytes: limits
@@ -53,20 +82,30 @@ impl ImportedEnvironment {
             ..limits
         };
         let faces = panorama.cube_faces(size, face_limits)?;
-        if faces.iter().flatten().any(|v| *v > 65504.) {
+        if !full_precision && faces.iter().flatten().any(|v| *v > 65504.) {
             return Err(ImportedEnvironmentError::HalfFloatRange);
         }
         let packed: [Vec<u8>; 6] = faces.map(|face| {
-            face.chunks_exact(3)
-                .flat_map(|rgb| {
-                    [rgb[0], rgb[1], rgb[2], 1.]
-                        .into_iter()
-                        .flat_map(|v| half::f16::from_f32(v).to_bits().to_le_bytes())
-                })
-                .collect()
+            let mut bytes = Vec::with_capacity(face.len() / 3 * stride as usize);
+            for rgb in face.chunks_exact(3) {
+                for v in [rgb[0], rgb[1], rgb[2], 1.] {
+                    if full_precision {
+                        bytes.extend_from_slice(&v.to_le_bytes());
+                    } else {
+                        bytes.extend_from_slice(&half::f16::from_f32(v).to_bits().to_le_bytes());
+                    }
+                }
+            }
+            bytes
         });
-        let specular = GgxEnvironmentPrefilter::new(device, size)?;
-        let diffuse = DiffuseEnvironmentConvolution::new(device, size)?;
+        let format = if full_precision {
+            wgpu::TextureFormat::Rgba32Float
+        } else {
+            wgpu::TextureFormat::Rgba16Float
+        };
+        let specular = GgxEnvironmentPrefilter::with_samples_format(device, size, 64, format)?;
+        let diffuse =
+            DiffuseEnvironmentConvolution::with_samples_format(device, size, 256, format)?;
         let dfg = GgxDfgLut::new(device, 64)?;
         for destination in [specular.input(), diffuse.input()] {
             for (face, pixels) in packed.iter().enumerate() {
@@ -84,7 +123,7 @@ impl ImportedEnvironment {
                     pixels,
                     wgpu::TexelCopyBufferLayout {
                         offset: 0,
-                        bytes_per_row: Some(size * 8),
+                        bytes_per_row: Some(size * stride as u32),
                         rows_per_image: Some(size),
                     },
                     wgpu::Extent3d {

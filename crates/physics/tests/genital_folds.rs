@@ -404,13 +404,7 @@ fn tube_insertion_parts_labia_minora_and_majora_laterally_without_element_invers
     };
     let mat = Material::from_young_poisson(3000., 0.45).unwrap();
     let mut majora_sim = majora_geom
-        .build_gait_contact_simulation(
-            [mat.clone(), mat],
-            [1000.; 2],
-            0.0001,
-            0.0015,
-            1.0,
-        )
+        .build_gait_contact_simulation([mat.clone(), mat], [1000.; 2], 0.0001, 0.0015, 1.0)
         .unwrap();
     let initial_majora_sep = majora_sim.apex_separation_m();
     for _ in 0..4 {
@@ -423,4 +417,3 @@ fn tube_insertion_parts_labia_minora_and_majora_laterally_without_element_invers
         "tube insertion must part labia majora apices laterally"
     );
 }
-

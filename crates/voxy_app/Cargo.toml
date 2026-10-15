@@ -12,6 +12,7 @@ experimental-reusable-query-workers = ["physics/experimental-reusable-query-work
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda", "voxy_demos/cuda"]
 
 [dependencies]
+image = { version = "0.25.10", default-features = false, features = ["png"] }
 voxy_model = { path = "../voxy_model" }
 voxy_shell = { path = "../voxy_shell" }
 voxy_demos = { path = "../voxy_demos" }
@@ -47,6 +48,33 @@ name = "pinball"
 path = "examples/pinball/main.rs"
 test = true
 
+[[example]]
+name = "bodycam"
+path = "examples/bodycam.rs"
+test = true
+
+[[example]]
+name = "cam"
+path = "examples/cam.rs"
+test = true
+
+[[example]]
+name = "camcorder"
+path = "examples/camcorder.rs"
+test = true
+
 [dev-dependencies]
 bytemuck = { version = "1.25.2", features = ["derive"] }
-image = { version = "0.25.10", default-features = false, features = ["png"] }
+
+[[example]]
+name = "street_walk"
+path = "examples/street_walk/main.rs"
+test = true
+
+[[example]]
+name = "qualify_bc7_upload"
+path = "../../tools/scene-research/qualify_bc7_upload.rs"
+
+[[example]]
+name = "qualify_float_material_upload"
+path = "../../tools/scene-research/qualify_float_material_upload.rs"

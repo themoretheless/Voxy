@@ -26,6 +26,7 @@ struct VertexOutput {
     @location(0) uv: vec2<f32>,
     @location(1) normal: vec3<f32>,
     @location(2) world_position: vec3<f32>,
+    @location(3) coat: vec4<f32>,
 };
 
 // Inverse transpose of the complete blended world deformation. Scaling the
@@ -58,6 +59,13 @@ fn vs_main(input: VertexInput) -> VertexOutput {
     output.world_position = (world * vec4<f32>(input.position, 1.0)).xyz;
     output.normal = transported_normal(world, input.normal);
     output.uv = input.uv;
+    output.coat = vec4<f32>(0.0,0.0,0.0,-1.0);
+    // Explicit packed-linear-color mode: UV.y is reserved below -10000.
+    if input.uv.y <= -10000.0 {
+        let rgb = u32(input.uv.x);
+        output.coat = vec4<f32>(vec3<f32>(f32(rgb & 255u),f32((rgb >> 8u) & 255u),f32((rgb >> 16u) & 255u))/255.0, -input.uv.y-10000.0);
+        output.uv = vec2<f32>(0.0);
+    }
     return output;
 }
 
@@ -76,6 +84,12 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     // Scaling first also keeps tiny posed triangles from losing flat lighting.
     if magnitude > 0. { normal = normalize(normal / magnitude); }
     let light = 0.18 + 0.82 * max(dot(normal, sun), 0.0);
+    if input.coat.a >= 0.0 {
+        let wrap = 0.30 + 0.70 * max(dot(normal, sun), 0.0);
+        let rim = pow(1.0-abs(normal.z),4.0)*0.06;
+        let linear = input.coat.rgb*wrap + vec3<f32>(rim);
+        return vec4<f32>(pow(linear,vec3<f32>(1.0/2.2)),1.0);
+    }
     let source = dot(albedo.rgb, vec3<f32>(0.299, 0.587, 0.114)) * light;
     let level = floor(clamp(source, 0.0, 0.999) * 32.0) / 31.0;
     let lcd_paper = vec3<f32>(0.78, 0.78, 0.76);
