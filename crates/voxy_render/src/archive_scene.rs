@@ -262,6 +262,8 @@ pub struct ArchiveSceneRenderer {
     depth_double: wgpu::RenderPipeline,
     timing: Option<Timing>,
     pub gpu_times_ms: Vec<f64>,
+    /// [opaque shading, transparent shading] GPU intervals, excluding presentation.
+    pub gpu_shading_times_ms: Vec<[f64; 2]>,
     exposure: f32,
     sky_strength: f32,
     _environment: crate::ImportedEnvironment,
@@ -976,6 +978,7 @@ impl ArchiveSceneRenderer {
             depth_double,
             timing,
             gpu_times_ms: Vec::new(),
+            gpu_shading_times_ms: Vec::new(),
             exposure: std::env::var("VOXY_STREET_EXPOSURE")
                 .ok()
                 .and_then(|v| v.parse::<f32>().ok())
@@ -1206,7 +1209,8 @@ impl ArchiveSceneRenderer {
     ) -> wgpu::SubmissionIndex {
         if let Some(timing) = &mut self.timing {
             if let Some(ms) = timing.collect(self.queue.get_timestamp_period()) {
-                self.gpu_times_ms.push(ms);
+                self.gpu_times_ms.push(ms[0]);
+                self.gpu_shading_times_ms.push([ms[1],ms[2]]);
             }
         }
         let time_this_frame = self.timing.as_ref().is_some_and(|t| !t.pending);
@@ -1398,6 +1402,11 @@ impl ArchiveSceneRenderer {
                 } else {
                     "authored opaque surfaces"
                 }),
+                timestamp_writes: if time_this_frame { self.timing.as_ref().map(|t| wgpu::RenderPassTimestampWrites {
+                    query_set: &t.set,
+                    beginning_of_pass_write_index: Some(if transparent {3} else {1}),
+                    end_of_pass_write_index: Some(if transparent {4} else {2}),
+                }) } else {None},
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &hdr_view,
                     depth_slice: None,
@@ -1469,7 +1478,7 @@ impl ArchiveSceneRenderer {
                         .map(|t| wgpu::RenderPassTimestampWrites {
                             query_set: &t.set,
                             beginning_of_pass_write_index: None,
-                            end_of_pass_write_index: Some(1),
+                            end_of_pass_write_index: Some(5),
                         })
                 } else {
                     None
@@ -1493,7 +1502,7 @@ impl ArchiveSceneRenderer {
         let mut preceding_commands = Vec::new();
         if let Some(temporal) = &mut self.temporal {
             let timestamps = if time_this_frame {self.timing.as_ref().map(|t| wgpu::RenderPassTimestampWrites {
-                query_set: &t.set, beginning_of_pass_write_index: None, end_of_pass_write_index: Some(1),
+                query_set: &t.set, beginning_of_pass_write_index: None, end_of_pass_write_index: Some(5),
             })} else {None};
             temporal.encode_guides(&self.device, &mut encoder, &self.depth);
             #[cfg(target_os="macos")]
@@ -1508,8 +1517,8 @@ impl ArchiveSceneRenderer {
         }
         if time_this_frame {
             let timing = self.timing.as_ref().unwrap();
-            encoder.resolve_query_set(&timing.set, 0..2, &timing.resolve, 0);
-            encoder.copy_buffer_to_buffer(&timing.resolve, 0, &timing.readback, 0, 16);
+            encoder.resolve_query_set(&timing.set, 0..6, &timing.resolve, 0);
+            encoder.copy_buffer_to_buffer(&timing.resolve, 0, &timing.readback, 0, 48);
         }
         // Save depth only after all old-radiance reads. Both histories then
         // describe the same opaque frame and use the same previous camera.
@@ -1559,7 +1568,7 @@ impl Timing {
             },
             voxy_gpu_core::ManagedBufferDescriptor {
                 label: "street timestamp readback",
-                size: 16,
+                size: 48,
                 contents: None,
                 usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             },
@@ -1568,7 +1577,7 @@ impl Timing {
             set: device.create_query_set(&wgpu::QuerySetDescriptor {
                 label: Some("street GPU frame timing"),
                 ty: wgpu::QueryType::Timestamp,
-                count: 2,
+                count: 6,
             }),
             resolve,
             readback,
@@ -1576,17 +1585,18 @@ impl Timing {
             pending: false,
         }))
     }
-    fn collect(&mut self, period: f32) -> Option<f64> {
+    fn collect(&mut self, period: f32) -> Option<[f64;3]> {
         if self.ready.swap(0, std::sync::atomic::Ordering::AcqRel) != 1 {
             return None;
         }
         let bytes = self.readback.slice(..).get_mapped_range().ok()?;
-        let start = u64::from_le_bytes(bytes[0..8].try_into().unwrap());
-        let end = u64::from_le_bytes(bytes[8..16].try_into().unwrap());
+        let ticks: Vec<u64> = bytes.chunks_exact(8).map(|chunk|u64::from_le_bytes(chunk.try_into().unwrap())).collect();
         drop(bytes);
         self.readback.unmap();
         self.pending = false;
-        Some(end.saturating_sub(start) as f64 * f64::from(period) / 1e6)
+        // Unsupported/invalid timestamp results must not look like a zero-cost frame.
+        if ticks.len()!=6 || !period.is_finite() || period<=0. || ticks.windows(2).any(|w|w[1]<w[0]) || ticks[5]==ticks[0] {return None;}
+        Some([ticks[5]-ticks[0],ticks[2]-ticks[1],ticks[4]-ticks[3]].map(|ticks|ticks as f64 * f64::from(period) / 1e6))
     }
 }
 
