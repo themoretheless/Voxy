@@ -502,7 +502,7 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
         }
     }
     for side in [-1., 1.] {
-        b.block(curb, [side * 5.8, 0.07, 27.], [2.6, 0.2, 112.]);
+        b.block(curb, [side * 6.68, 0.07, 27.], [4.36, 0.2, 112.]);
         for i in 0..180 {
             b.block(
                 trim,
@@ -515,7 +515,7 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             let width = 6.3 + b.random() * 3.6;
             let z = frontage + width * 0.5;
             frontage += width;
-            let setback = b.random() * 0.75;
+            let setback = 1.6 + b.random() * 0.75;
             let starts: Vec<_> = b.meshes.iter().map(|m| m.instances.len()).collect();
             let triangle_start = b.triangles.len();
             let floors = 3 + (b.random() * 3.) as usize;
