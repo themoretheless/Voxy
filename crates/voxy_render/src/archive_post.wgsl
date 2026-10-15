@@ -9,6 +9,14 @@ struct Camera { vp:mat4x4<f32>, shadow:mat4x4<f32>, inverse_vp:mat4x4<f32>, eye:
 @group(1) @binding(4) var<uniform> environment_intensity:vec4<f32>;
 @group(0) @binding(4) var sky_panorama:texture_2d<f32>;
 @group(0) @binding(5) var sky_sampler:sampler;
+@group(0) @binding(6) var bloom_chain:texture_2d<f32>;
+// Energy-conserving bloom from the dual Kawase chain (bloom.rs, six levels).
+// Only for direct display; temporal and linear output bloom elsewhere.
+fn with_bloom(x:vec3<f32>,q:vec2<i32>)->vec3<f32>{
+    if display.w>0.5 || display.x>2.5 {return x;}
+    let uv=(vec2<f32>(q)+0.5)/vec2<f32>(textureDimensions(hdr));
+    return mix(x,textureSampleLevel(bloom_chain,sky_sampler,uv,0.).rgb/6.,0.04);
+}
 struct Out { @builtin(position) position:vec4<f32> }
 @vertex fn vs_main(@builtin(vertex_index) i:u32)->Out {
     var o:Out;
@@ -141,7 +149,7 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
         let distance=select(length(hit.xyz/hit.w-camera.eye.xyz),12000.,d>=1.);
         x=atmosphere_colour(x,ray,distance,q);
     }
-    return display_colour(x);
+    return display_colour(with_bloom(x,q));
 }
 // Filter after the display transform, before the attachment's sRGB encoding.
 // Reconstruct sky at every tap so silhouette edges participate in AA too.

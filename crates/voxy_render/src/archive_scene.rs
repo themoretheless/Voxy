@@ -276,6 +276,7 @@ pub struct ArchiveSceneRenderer {
     antialiasing: crate::ArchiveAntialiasing,
     temporal: Option<crate::archive_temporal::ArchiveTemporal>,
     post_bind: wgpu::BindGroup,
+    bloom: crate::bloom::Bloom,
     display_parameters: ComputeStorage,
     hdr_output: bool,
     linear_output: bool,
@@ -286,6 +287,8 @@ pub struct ArchiveSceneRenderer {
     display_headroom: f32,
     spatial_antialiasing: bool,
     frame_bind: wgpu::BindGroup,
+    probe_sh: ComputeStorage,
+    probe_grid: ComputeStorage,
     hdr: Arc<voxy_gpu_core::ManagedTexture>,
     background: Arc<voxy_gpu_core::ManagedTexture>,
     depth: wgpu::Texture,
@@ -510,6 +513,26 @@ impl ArchiveSceneRenderer {
                 texture_entry(3, true),
                 texture_entry(4, true),
                 wgpu::BindGroupLayoutEntry {
+                    binding: 5,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 6,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
                     binding: 2,
                     visibility: wgpu::ShaderStages::FRAGMENT,
                     ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison),
@@ -527,11 +550,12 @@ impl ArchiveSceneRenderer {
                 texture_entry(4, false),
                 wgpu::BindGroupLayoutEntry { binding: 5, visibility: wgpu::ShaderStages::FRAGMENT,
                     ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+                texture_entry(6, false),
             ],
         });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive PBR"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("bsdf.wgsl"), include_str!("archive_environment.wgsl"), include_str!("soft_shadow.wgsl"), include_str!("archive_history.wgsl"), include_str!("archive_scene.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("bsdf.wgsl"), include_str!("archive_environment.wgsl"), include_str!("soft_shadow.wgsl"), include_str!("probe_sampling.wgsl"), include_str!("archive_history.wgsl"), include_str!("archive_scene.wgsl")).into()),
         });
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("archive scene layout"),
@@ -907,6 +931,19 @@ impl ArchiveSceneRenderer {
             min_filter: wgpu::FilterMode::Linear,
             ..Default::default()
         });
+        // Irradiance probes start disabled (origin.w = 0) until baked.
+        let probe_sh = buffer(
+            device,
+            "irradiance probe SH",
+            &vec![0; crate::probe_gi::MAX_PROBES * crate::probe_gi::PROBE_BYTES as usize],
+            wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        )?;
+        let probe_grid = buffer(
+            device,
+            "irradiance probe grid",
+            &[0; std::mem::size_of::<crate::probe_gi::ProbeGrid>()],
+            wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        )?;
         let frame_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: None,
             layout: &frame_layout,
@@ -929,6 +966,8 @@ impl ArchiveSceneRenderer {
                 },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&depth_texture.create_view(&Default::default())) },
                 wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&history_depth.create_view(&Default::default())) },
+                wgpu::BindGroupEntry { binding: 5, resource: probe_sh.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 6, resource: probe_grid.as_entire_binding() },
             ],
         });
         let hdr_output = format == wgpu::TextureFormat::Rgba16Float;
@@ -938,6 +977,7 @@ impl ArchiveSceneRenderer {
             bytemuck::cast_slice(&[display_mode(hdr_output, ArchiveToneMapper::default()), 1., 1., 0.]),
             wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         )?;
+        let bloom = crate::bloom::Bloom::new(device, width, height)?;
         let post_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: None,
             layout: &post_layout,
@@ -956,6 +996,7 @@ impl ArchiveSceneRenderer {
                 wgpu::BindGroupEntry { binding: 3, resource: camera.as_entire_binding() },
                 wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&sky.create_view(&Default::default())) },
                 wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::Sampler(&sky_sampler) },
+                wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(&bloom.output()) },
             ],
         });
         Ok(Self {
@@ -995,6 +1036,7 @@ impl ArchiveSceneRenderer {
             antialiasing: crate::ArchiveAntialiasing::Spatial,
             temporal: None,
             post_bind,
+            bloom,
             display_parameters,
             hdr_output,
             linear_output: false,
@@ -1005,6 +1047,8 @@ impl ArchiveSceneRenderer {
             display_headroom: 1.,
             spatial_antialiasing: true,
             frame_bind,
+            probe_sh,
+            probe_grid,
             hdr,
             background,
             depth: depth_texture,
@@ -1125,6 +1169,56 @@ impl ArchiveSceneRenderer {
         self.camera_lens = lens;
         if let Some(temporal) = &mut self.temporal {temporal.lens = lens;}
         Ok(())
+    }
+    /// Bake order-1 SH irradiance probes over `min..=max` by rendering the
+    /// scene into six 90-degree faces per probe and projecting them on the
+    /// GPU. Probes then replace the distant environment's diffuse term inside
+    /// the grid (screen-space GI still refines on-screen bounces). Static
+    /// scenes need one bake; rebake after lighting changes. Returns the count.
+    pub fn bake_irradiance_probes(&mut self, min: Vec3, max: Vec3, spacing: f32) -> Result<usize, crate::ComputeError> {
+        let (grid, points) = crate::probe_gi::grid(min, max, spacing)
+            .ok_or_else(|| crate::ComputeError::Validation("invalid probe grid".into()))?;
+        let face = ComputeMemoryBudget::for_device(&self.device).allocate_texture(&wgpu::TextureDescriptor {
+            label: Some("irradiance probe face"),
+            size: wgpu::Extent3d { width: self.width, height: self.height, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba16Float,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        })?;
+        let view = face.create_view(&Default::default());
+        let projector = crate::probe_gi::ProbeProjector::new(&self.device);
+        let saved = (self.antialiasing, self.linear_output, self.vertical_fov, self.camera_up);
+        // Probes see the scene without themselves, history or temporal AA.
+        self.queue.write_buffer(&self.probe_grid, 0, &[0; std::mem::size_of::<crate::probe_gi::ProbeGrid>()]);
+        self.set_antialiasing(crate::ArchiveAntialiasing::Off)?;
+        self.set_linear_output(true);
+        let faces = [
+            (Vec3::X, Vec3::Y), (Vec3::NEG_X, Vec3::Y),
+            (Vec3::Z, Vec3::Y), (Vec3::NEG_Z, Vec3::Y),
+            (Vec3::Y, Vec3::NEG_Z), (Vec3::NEG_Y, Vec3::Z),
+        ];
+        for (index, &point) in points.iter().enumerate() {
+            for (face_index, &(forward, up)) in faces.iter().enumerate() {
+                self.set_camera_projection(90_f32.to_radians(), up);
+                self.previous_vp = None;
+                self.draw(&view, point, forward);
+                let right = forward.cross(up).normalize();
+                projector.project(
+                    &self.device, &self.queue, &view, (self.width, self.height), &self.probe_sh,
+                    index, face_index, [forward, right, up], 1. / self.exposure,
+                );
+            }
+        }
+        self.queue.write_buffer(&self.probe_grid, 0, bytemuck::bytes_of(&grid));
+        self.set_linear_output(saved.1);
+        self.set_camera_projection(saved.2, saved.3);
+        self.set_antialiasing(saved.0)?;
+        self.previous_vp = None;
+        self.reset_temporal_history();
+        Ok(points.len())
     }
     /// SDR display transform. HDR output keeps its hue-preserving highlight knee.
     pub fn set_tone_mapper(&mut self, tone_mapper: ArchiveToneMapper) {
@@ -1469,6 +1563,11 @@ impl ArchiveSceneRenderer {
             }
         }
         let temporal_view = self.temporal.as_ref().map(|t| t.current.create_view(&Default::default()));
+        // Without temporal AA the display pass applies bloom itself; the
+        // temporal display pass has its own chain over the resolved image.
+        if self.temporal.is_none() && !self.linear_output {
+            self.bloom.encode(&self.device, &mut encoder, &self.hdr.create_view(&Default::default()));
+        }
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("street HDR display"),
@@ -1623,7 +1722,7 @@ mod tests {
     use super::*;
     #[test]
     fn scene_shader_validates() {
-        let source = concat!(include_str!("bsdf.wgsl"), include_str!("archive_environment.wgsl"), include_str!("soft_shadow.wgsl"), include_str!("archive_scene.wgsl"));
+        let source = concat!(include_str!("bsdf.wgsl"), include_str!("archive_environment.wgsl"), include_str!("soft_shadow.wgsl"), include_str!("probe_sampling.wgsl"), include_str!("archive_history.wgsl"), include_str!("archive_scene.wgsl"));
         let module = naga::front::wgsl::parse_str(source).unwrap();
         naga::valid::Validator::new(naga::valid::ValidationFlags::all(), naga::valid::Capabilities::all())
             .validate(&module)
@@ -1631,8 +1730,8 @@ mod tests {
     }
     #[test]
     fn camera_layout_matches_shader() {
-        // 4 matrices and 8 vectors, as declared by archive_scene.wgsl.
-        assert_eq!(std::mem::size_of::<Camera>(), 4 * 64 + 8 * 16);
+        // 5 matrices and 8 vectors, as declared by archive_scene.wgsl.
+        assert_eq!(std::mem::size_of::<Camera>(), 5 * 64 + 8 * 16);
     }
     #[test]
     fn reflective_presets_route_to_expected_passes() {

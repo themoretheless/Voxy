@@ -423,6 +423,7 @@ pub use compressed_image::Bc7ImageAsset;
 pub mod archive_scene;
 pub mod character_material;
 mod bloom;
+mod probe_gi;
 
 mod native_vegetation;
 pub use native_vegetation::NativeVegetation;

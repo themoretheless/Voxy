@@ -400,6 +400,7 @@ impl App {
             "agx" => voxy_render::archive_scene::ArchiveToneMapper::Agx,
             value => return Err(format!("unknown VOXY_STREET_TONEMAP: {value}").into()),
         });
+        if self.original {bake_street_probes(&mut renderer, scene.bounds)?;}
         eprintln!("STREET antialiasing={mode:?} render={}x{} output={}x{}", render_width, render_height, size.width, size.height);
 
         let offscreen = if self.offscreen_benchmark {
@@ -1005,5 +1006,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(e) = app.failure {
         return Err(e.into());
     }
+    Ok(())
+}
+
+/// Irradiance probes along the street corridor between the facades, so
+/// shaded walls and pavement receive light bounced off the street rather than
+/// only the open sky. VOXY_STREET_PROBES=off skips, or sets the spacing in m.
+fn bake_street_probes(
+    renderer: &mut ArchiveSceneRenderer,
+    bounds: (Vec3, Vec3),
+) -> Result<(), Box<dyn std::error::Error>> {
+    let setting = std::env::var("VOXY_STREET_PROBES").unwrap_or_else(|_| "6".into());
+    if setting == "off" {
+        return Ok(());
+    }
+    let spacing: f32 = setting.parse().map_err(|_| format!("invalid VOXY_STREET_PROBES: {setting}"))?;
+    let start = std::time::Instant::now();
+    let min = Vec3::new(-7., 0.6, bounds.0.z + 4.);
+    let max = Vec3::new(7., 12., bounds.1.z - 4.);
+    let count = renderer.bake_irradiance_probes(min, max, spacing)?;
+    eprintln!("STREET probes={count} spacing={spacing} m baked in {:.1} s", start.elapsed().as_secs_f32());
     Ok(())
 }
