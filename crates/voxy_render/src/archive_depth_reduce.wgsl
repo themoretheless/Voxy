@@ -6,8 +6,8 @@
 @group(0) @binding(1) var reduced_depth:texture_storage_2d<r32float,write>;
 @compute @workgroup_size(8,8)
 fn reduce_depth(@builtin(global_invocation_id) invocation:vec3<u32>) {
- let target=textureDimensions(reduced_depth);
- if any(invocation.xy>=target) {return;}
+ let output_size=textureDimensions(reduced_depth);
+ if any(invocation.xy>=output_size) {return;}
  let last=vec2<i32>(textureDimensions(source_depth))-1;
  let p=vec2<i32>(invocation.xy*2u);
  let a=textureLoad(source_depth,min(p,last),0).x;
