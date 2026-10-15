@@ -30,6 +30,10 @@ struct Gpu {
     renderer: ArchiveSceneRenderer,
     supersample: voxy_render::SupersampleResolve,
     offscreen: Option<wgpu::Texture>,
+    /// Scene image when the settings panel takes a strip on the left; the
+    /// frame copies it in at `panel_px`.
+    scene_target: Option<wgpu::Texture>,
+    panel_px: u32,
     bodycam: Option<voxy_render::BodycamPostProcess>,
 }
 /// Camera cycled with V: eye, orbit, chest bodycam, hand-held camcorder.
@@ -196,6 +200,9 @@ impl App {
         app
     }
     fn init(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
+        let interactive = (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1") || self.benchmark == 0.) && self.snapshot.is_none() && self.aa_validation.is_none();
+        let scale = el.primary_monitor().map_or(1., |m| m.scale_factor());
+        let panel_px = if interactive {(panel::WIDTH as f64 * scale).round() as u32} else {0};
         let window = Arc::new(
             el.create_window(
                 Window::default_attributes()
@@ -206,7 +213,7 @@ impl App {
                         "Voxy — Bistro: WASD · Shift · Space · мышь · Esc"
                     })
                     .with_window_level(if self.benchmark > 0. { winit::window::WindowLevel::AlwaysOnTop } else { winit::window::WindowLevel::Normal })
-                    .with_inner_size(winit::dpi::PhysicalSize::new(1920, 1080))
+                    .with_inner_size(winit::dpi::PhysicalSize::new(1920 + panel_px, 1080))
                     .with_resizable(false),
             )?,
         );
@@ -340,6 +347,11 @@ impl App {
         if self.snapshot.is_some() || self.aa_validation.is_some() {
             config.usage |= wgpu::TextureUsages::COPY_SRC;
         }
+        let panel_px = panel_px.min(size.width / 2);
+        if panel_px > 0 {
+            config.usage |= wgpu::TextureUsages::COPY_DST;
+        }
+        let scene_width = size.width - panel_px;
         eprintln!(
             "STREET GPU {:?}; {}x{} {:?}; full scene geometry; original mip chains when images are present",
             adapter.get_info(),
@@ -350,7 +362,7 @@ impl App {
         surface.configure(&device, &config);
         let render_scale: u32 = std::env::var("VOXY_STREET_RENDER_SCALE")
             .unwrap_or_else(|_| "1".into()).parse()?;
-        let supersample = voxy_render::SupersampleResolve::new(&device, size.width, size.height, render_scale, config.format)?;
+        let supersample = voxy_render::SupersampleResolve::new(&device, scene_width, size.height, render_scale, config.format)?;
         let (render_width, render_height) = supersample.render_size();
         let mut renderer = ArchiveSceneRenderer::new_with_environment(
             &device,
@@ -390,7 +402,17 @@ impl App {
         } else {
             None
         };
-        if (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1") || self.benchmark == 0.) && self.snapshot.is_none() && self.aa_validation.is_none() {
+        let scene_target = (panel_px > 0).then(|| device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("street scene beside panel"),
+            size: wgpu::Extent3d { width: scene_width, height: size.height, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: config.format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+            view_formats: &[],
+        }));
+        if interactive {
             self.panel = Some(panel::Panel::new(&window, &device, config.format));
         }
         self.daylight_ev = Some(renderer.exposure_ev100());
@@ -406,6 +428,8 @@ impl App {
             renderer,
             supersample,
             offscreen,
+            scene_target,
+            panel_px,
             bodycam: None,
         });
         self.last = Instant::now();
@@ -659,6 +683,8 @@ impl App {
         gpu.renderer.set_weather(self.weather)?;
         gpu.renderer.set_weather_time(if self.aa_validation.is_some() {0.} else {self.weather_start.elapsed().as_secs_f32()});
         let output_view = output.create_view(&Default::default());
+        let scene_view = gpu.scene_target.as_ref().map(|t| t.create_view(&Default::default()));
+        let target_view = scene_view.as_ref().unwrap_or(&output_view);
         let submission = if let Some((fov, up)) = lens.filter(|_| self.aa_validation.is_none()) {
             let (width, height) = gpu.supersample.render_size();
             let post = gpu.bodycam.get_or_insert_with(|| {
@@ -672,13 +698,40 @@ impl App {
             let mut encoder = gpu.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("street bodycam lens"),
             });
-            post.encode(&mut encoder, &output_view);
+            post.encode(&mut encoder, target_view);
             gpu.queue.submit([encoder.finish()])
         } else {
             gpu.renderer.set_camera_projection(65_f32.to_radians(), Vec3::Y);
             gpu.renderer.set_linear_output(false);
-            gpu.renderer.draw_supersampled(&gpu.supersample, &output_view, eye, direction)?
+            gpu.renderer.draw_supersampled(&gpu.supersample, target_view, eye, direction)?
         };
+        let submission = if let Some(scene) = &gpu.scene_target {
+            let mut encoder = gpu.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("street scene beside panel"),
+            });
+            // Clear the panel strip (it stays dark while the panel is hidden).
+            encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("street panel strip"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &output_view,
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::BLACK), store: wgpu::StoreOp::Store },
+                })],
+                ..Default::default()
+            });
+            encoder.copy_texture_to_texture(
+                scene.as_image_copy(),
+                wgpu::TexelCopyTextureInfo {
+                    texture: output,
+                    mip_level: 0,
+                    origin: wgpu::Origin3d { x: gpu.panel_px, y: 0, z: 0 },
+                    aspect: wgpu::TextureAspect::All,
+                },
+                scene.size(),
+            );
+            gpu.queue.submit([encoder.finish()])
+        } else {submission};
         if self.offscreen_benchmark {
             gpu.device.poll(wgpu::PollType::Wait { submission_index: Some(submission), timeout: None })?;
         }
