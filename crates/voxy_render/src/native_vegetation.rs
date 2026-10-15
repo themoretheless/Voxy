@@ -67,6 +67,8 @@ struct Material {
 }
 /// Geometry and PBR images retain native GPU ownership; terrain and actors keep their own owners.
 pub struct NativeVegetation {
+    /// Clock for wind animation in the vertex shader.
+    started: std::time::Instant,
     meshes: Vec<Mesh>,
     materials: Vec<Material>,
     _images: Vec<Arc<voxy_gpu_core::ManagedTexture>>,
@@ -208,7 +210,7 @@ impl NativeVegetation {
         let material_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("native vegetation materials"),
             entries: &[
-                uniform(0, wgpu::ShaderStages::FRAGMENT),
+                uniform(0, wgpu::ShaderStages::VERTEX_FRAGMENT),
                 texture(1, false),
                 texture(2, false),
                 sampler(3, false),
@@ -442,7 +444,7 @@ impl NativeVegetation {
         });
         let depth_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
-            bind_group_layouts: &[Some(&camera_layout)],
+            bind_group_layouts: &[Some(&camera_layout), Some(&material_layout)],
             immediate_size: 0,
         });
         let receive_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -482,7 +484,12 @@ impl NativeVegetation {
                     buffers: &buffers,
                 },
                 fragment: if depth_only {
-                    None
+                    Some(wgpu::FragmentState {
+                        module: &shader,
+                        entry_point: Some("fs_shadow"),
+                        compilation_options: Default::default(),
+                        targets: &[],
+                    })
                 } else {
                     Some(wgpu::FragmentState {
                         module: &shader,
@@ -574,6 +581,7 @@ impl NativeVegetation {
             pipeline,
             hdr_pipeline,
             shadow_pipeline,
+            started: std::time::Instant::now(),
             receiver,
             hdr_receiver,
             shadow_vp,
@@ -631,7 +639,7 @@ impl NativeVegetation {
                 .normalize()
                 .extend(0.)
                 .to_array(),
-            flags: [f32::from(hdr), 0., 0., 0.],
+            flags: [f32::from(hdr), self.started.elapsed().as_secs_f32() % 3600., 0., 0.],
         };
         queue.write_buffer(&self.camera, 0, bytemuck::bytes_of(&camera));
         let shadow_view = self.shadow.create_view(&Default::default());
@@ -655,6 +663,7 @@ impl NativeVegetation {
                 if mesh.instance_count == 0 {
                     continue;
                 }
+                pass.set_bind_group(1, &self.materials[mesh.material].bind, &[]);
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
                 pass.set_vertex_buffer(1, mesh.instances.slice(..));
                 pass.set_index_buffer(mesh.indices.slice(..), wgpu::IndexFormat::Uint32);
@@ -745,3 +754,17 @@ impl NativeVegetation {
     }
 }
 use bytemuck::Zeroable;
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn plant_shader_with_wind_and_alpha_shadows_validates() {
+        let module = naga::front::wgsl::parse_str(include_str!("native_vegetation.wgsl")).unwrap();
+        naga::valid::Validator::new(naga::valid::ValidationFlags::all(), naga::valid::Capabilities::empty())
+            .validate(&module)
+            .unwrap();
+        for entry in ["vs_main", "vs_shadow", "fs_main", "fs_shadow"] {
+            assert!(module.entry_points.iter().any(|e| e.name == entry), "{entry}");
+        }
+    }
+}
