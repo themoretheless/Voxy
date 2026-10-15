@@ -106,7 +106,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .ok_or("pass a capture root directory")?;
     let root = Path::new(&root);
     std::fs::create_dir_all(root)?;
-    let mut scene = original::generate(0x564f5859)?;
+    let mut scene = original::generate(0x564f5859, original::Ageing::default())?;
     let count = scene.collision.triangle_count();
     let rendered: usize = scene
         .geometry
