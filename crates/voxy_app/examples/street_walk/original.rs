@@ -38,7 +38,12 @@ impl Builder {
                     colour[2] * emission,
                     1.,
                 ],
-                surface: [metal, rough, transmission, if transmission > 0. { -2. } else { -1. }],
+                surface: [
+                    metal,
+                    rough,
+                    transmission,
+                    if transmission > 0. { -2. } else { -1. },
+                ],
                 workflow: [1., 0., pattern, 0.],
             },
             images: [None; 4],
@@ -338,6 +343,46 @@ impl Builder {
         );
     }
 }
+/// A room's local frame: `p[0]` is depth from the facade's inner face, `p[1]`
+/// height above the finished floor, `p[2]` offset along the street from the
+/// house centre.
+struct Room {
+    side: f32,
+    z: f32,
+    base: f32,
+    paint: usize,
+    wood: usize,
+    fabric: usize,
+    accent: usize,
+}
+impl Room {
+    fn put(&self, b: &mut Builder, id: usize, p: [f32; 3], s: [f32; 3]) {
+        b.block(id, [self.side * (7.56 + p[0]), self.base + p[1], self.z + p[2]], s);
+    }
+}
+fn bookcase(b: &mut Builder, r: &Room, u: f32, books: &[usize], wood: usize) {
+    for du in [-0.6, 0.6] {
+        r.put(b, wood, [6.55, 0.95, u + du], [0.36, 1.9, 0.04]);
+    }
+    r.put(b, wood, [6.72, 0.95, u], [0.02, 1.9, 1.2]);
+    for shelf in 0..5 {
+        let sy = 0.02 + shelf as f32 * 0.46;
+        r.put(b, wood, [6.55, sy, u], [0.36, 0.03, 1.16]);
+        if shelf == 4 {
+            continue;
+        }
+        let mut bu = u - 0.55;
+        let end = u + 0.5 - b.random() * 0.4;
+        while bu < end {
+            let w = 0.025 + b.random() * 0.05;
+            let h = 0.22 + b.random() * 0.17;
+            let id = books[(b.random() * books.len() as f32) as usize];
+            let inset = b.random() * 0.04;
+            r.put(b, id, [6.6 - inset, sy + 0.015 + h * 0.5, bu + w * 0.5], [0.2, h, w]);
+            bu += w + 0.004;
+        }
+    }
+}
 pub fn generate(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let mut scene = geometry(seed)?;
     super::materials::apply(&mut scene)?;
@@ -383,6 +428,59 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
     ];
     let cloth_m = b.material([0.04, 0.18, 0.23], 0.9, 0., 4., 0., 0.);
     let cloth = b.cube(cloth_m);
+    let plaster_m = b.material([0.82, 0.79, 0.72], 0.92, 0., 1., 0., 0.);
+    let plaster = b.cube(plaster_m);
+    let floor_m = b.material([0.36, 0.22, 0.12], 0.6, 0., 4., 0., 0.);
+    let floor = b.cube(floor_m);
+    let rug_m = b.material([0.32, 0.08, 0.06], 0.95, 0., 4., 0., 0.);
+    let rug = b.cube(rug_m);
+    let _ = (plaster, floor, rug);
+    let paints: Vec<usize> = [
+        [0.86, 0.83, 0.76],
+        [0.72, 0.8, 0.78],
+        [0.88, 0.76, 0.62],
+        [0.62, 0.68, 0.76],
+        [0.78, 0.66, 0.66],
+        [0.55, 0.62, 0.5],
+    ]
+    .into_iter()
+    .map(|c| {
+        let m = b.material(c, 0.9, 0., 1., 0., 0.);
+        b.cube(m)
+    })
+    .collect();
+    let woods: Vec<usize> = [[0.42, 0.27, 0.14], [0.2, 0.1, 0.05], [0.58, 0.45, 0.3], [0.82, 0.8, 0.76]]
+        .into_iter()
+        .map(|c| {
+            let m = b.material(c, 0.55, 0., 4., 0., 0.);
+            b.cube(m)
+        })
+        .collect();
+    let fabrics: Vec<usize> = [
+        [0.32, 0.08, 0.06],
+        [0.12, 0.2, 0.34],
+        [0.5, 0.42, 0.3],
+        [0.18, 0.3, 0.2],
+        [0.55, 0.36, 0.12],
+        [0.25, 0.25, 0.27],
+        [0.6, 0.55, 0.5],
+    ]
+    .into_iter()
+    .map(|c| {
+        let m = b.material(c, 0.95, 0., 4., 0., 0.);
+        b.cube(m)
+    })
+    .collect();
+    let books: Vec<usize> = [[0.5, 0.1, 0.08], [0.1, 0.25, 0.4], [0.75, 0.6, 0.2], [0.15, 0.35, 0.2], [0.85, 0.82, 0.75]]
+        .into_iter()
+        .map(|c| {
+            let m = b.material(c, 0.7, 0., 0., 0., 0.);
+            b.cube(m)
+        })
+        .collect();
+    let ceramic_m = b.material([0.9, 0.9, 0.87], 0.3, 0., 0., 0., 0.);
+    let ceramic = b.cube(ceramic_m);
+    let foliage = b.cube(leaf_m);
     // The individual paving stones and kerbs are actual geometry and collision faces.
     b.block(stone, [0., -0.065, 27.], [28., 0.2, 112.]);
     for row in 0..360 {
@@ -425,6 +523,8 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             let windows = 2 + (b.random() * 3.) as usize;
             let spacing = 7.5 / windows as f32;
             let opening = spacing * (0.48 + b.random() * 0.13);
+            let door_bay = windows / 2;
+            let door_z = z - 3.75 + spacing * (door_bay as f32 + 0.5);
             let facade_pattern = if house % 4 == 1 { 7. } else { 2. };
             let colour = palette[(b.random() * palette.len() as f32) as usize];
             let tint = 0.78 + b.random() * 0.34;
@@ -435,8 +535,10 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             for dz in [-3.925, 3.925] {
                 b.block(wall, [side * 11., height * 0.5, z + dz], [7., height, 0.2]);
             }
-            // Piers follow this building's opening count and width; no facade
-            // covers a window with a solid backing wall.
+            // Openings are cut cleanly from the facade: piers between bays, a full
+            // spandrel below every sill and above every head, so nothing behind the
+            // glass is a backing slab and no slit opens between band and trim.
+            let top = floors as f32 * 2.65;
             for pier in 0..=windows {
                 let edge = pier == 0 || pier == windows;
                 let width = if edge {
@@ -453,20 +555,27 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                     } else {
                         0.
                     };
-                b.block(
-                    wall,
-                    [side * 7.42, height * 0.5, z + dz],
-                    [0.28, height, width],
-                );
+                b.block(wall, [side * 7.42, top * 0.5, z + dz], [0.28, top, width]);
             }
-            for level in 0..=floors {
-                b.block(
-                    wall,
-                    [side * 7.42, 0.325 + level as f32 * 2.65, z],
-                    [0.28, 0.65, 7.85],
-                );
+            for level in 0..floors {
+                let f = level as f32 * 2.65;
+                if level == 0 && house % 3 != 0 {
+                    // Keep the entrance clear down to the pavement.
+                    for (lo, hi) in [
+                        (z - 3.925, door_z - opening * 0.5),
+                        (door_z + opening * 0.5, z + 3.925),
+                    ] {
+                        b.block(
+                            wall,
+                            [side * 7.42, 0.45, (lo + hi) * 0.5],
+                            [0.28, 0.9, hi - lo],
+                        );
+                    }
+                } else {
+                    b.block(wall, [side * 7.42, f + 0.45, z], [0.28, 0.9, 7.85]);
+                }
+                b.block(wall, [side * 7.42, f + 2.475, z], [0.28, 0.35, 7.85]);
             }
-            let top = floors as f32 * 2.65 + 0.65;
             if height > top {
                 b.block(
                     wall,
@@ -477,17 +586,6 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             // Separate masonry courses and rainwater hardware give the close street
             // section real silhouette and contact shadows, with full collision geometry.
             if house < 3 {
-                for course in 0..8 {
-                    let cy = 0.18 + course as f32 * 0.32;
-                    for joint in 0..16 {
-                        let jz = z - 3.7
-                            + joint as f32 * 0.48
-                            + if course % 2 == 0 { 0.0 } else { 0.24 };
-                        if jz < z + 3.9 {
-                            b.block(trim, [side * 7.25, cy, jz], [0.07, 0.025, 0.44]);
-                        }
-                    }
-                }
                 let pipe_z = z + 3.55;
                 b.block(
                     metal,
@@ -502,58 +600,313 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                     );
                 }
             }
-            // Projecting cornices, facade pilasters and recessed windows define depth.
+            // Cornices, deep reveals and casement frames define facade depth.
             for level in 0..floors {
-                let y = 1.7 + level as f32 * 2.65;
-                b.block(trim, [side * 7.42, y - 1.23, z], [0.25, 0.17, 7.9]);
+                let f = level as f32 * 2.65;
+                let (y0, y1) = (f + 0.9, f + 2.3);
+                let (y, h) = ((y0 + y1) * 0.5, y1 - y0);
+                if level > 0 {
+                    b.block(trim, [side * 7.24, f + 0.02, z], [0.12, 0.17, 7.9]);
+                }
                 for window in 0..windows {
                     let wz = z - 3.75 + spacing * (window as f32 + 0.5);
-                    b.block(metal, [side * 8.05, y, wz], [0.10, 1.98, opening + 0.1]);
-                    b.block(glass, [side * 7.42, y, wz], [0.035, 1.75, opening - 0.12]);
-                    for dz in [-opening * 0.5, opening * 0.5] {
-                        b.block(trim, [side * 7.15, y, wz + dz], [0.28, 2.15, 0.14]);
-                    }
-                    for dy in [-1.05, 1.05] {
+                    if level == 0 && house % 3 != 0 && window == door_bay {
+                        let door_width = opening - 0.16;
+                        b.block(timber, [side * 7.44, 1.15, wz], [0.07, 2.3, door_width]);
+                        for dz in [-1., 1.] {
+                            b.block(
+                                timber,
+                                [side * 7.44, 1.15, wz + dz * (opening - 0.08) * 0.5],
+                                [0.12, 2.3, 0.08],
+                            );
+                            b.block(
+                                trim,
+                                [side * 7.24, 1.2, wz + dz * (opening * 0.5 + 0.07)],
+                                [0.1, 2.4, 0.14],
+                            );
+                        }
+                        b.block(trim, [side * 7.24, 2.39, wz], [0.12, 0.18, opening + 0.32]);
+                        for py in [0.6, 1.5] {
+                            b.block(
+                                timber,
+                                [side * 7.39, py, wz],
+                                [0.04, 0.7, door_width - 0.24],
+                            );
+                        }
                         b.block(
-                            trim,
-                            [side * 7.12, y + dy, wz],
-                            [0.34, 0.15, opening + 0.25],
+                            metal,
+                            [side * 7.36, 1.05, wz + door_width * 0.36],
+                            [0.07, 0.12, 0.05],
+                        );
+                        b.block(trim, [side * 7.2, 0.06, wz], [0.5, 0.12, opening + 0.2]);
+                        continue;
+                    }
+                    // Casement frame sits 0.19 m back from the facade face.
+                    let fx = side * 7.47;
+                    for dz in [-1., 1.] {
+                        b.block(
+                            timber,
+                            [fx, y, wz + dz * (opening * 0.5 - 0.037)],
+                            [0.09, h - 0.004, 0.07],
                         );
                     }
-                    b.block(timber, [side * 7.20, y, wz], [0.09, 1.85, 0.07]);
-                    b.block(timber, [side * 7.20, y, wz], [0.09, 0.08, opening - 0.08]);
+                    for dy in [-1., 1.] {
+                        b.block(
+                            timber,
+                            [fx, y + dy * (h * 0.5 - 0.037), wz],
+                            [0.086, 0.07, opening - 0.004],
+                        );
+                    }
+                    b.block(timber, [fx, y, wz], [0.07, h - 0.1, 0.05]);
+                    b.block(timber, [fx, y1 - 0.45, wz], [0.07, 0.05, opening - 0.1]);
+                    b.block(glass, [fx, y, wz], [0.015, h - 0.1, opening - 0.1]);
+                    // Projecting stone sill and lintel.
+                    b.block(
+                        trim,
+                        [side * 7.27, y0 - 0.028, wz],
+                        [0.31, 0.08, opening + 0.16],
+                    );
+                    b.block(
+                        trim,
+                        [side * 7.26, y1 + 0.08, wz],
+                        [0.08, 0.18, opening + 0.2],
+                    );
                     if house < 3 && level > 0 && (house + window) % 2 == 0 {
                         for shutter_side in [-1.0, 1.0] {
-                            let sz = wz + shutter_side * (opening * 0.5 + 0.32);
-                            for slat in 0..15 {
+                            let sz = wz + shutter_side * (opening * 0.5 + 0.3);
+                            for slat in 0..12 {
                                 b.put(
                                     timber,
-                                    Vec3::new(side * 7.08, y - 0.83 + slat as f32 * 0.119, sz),
-                                    Vec3::new(0.075, 0.095, 0.43),
+                                    Vec3::new(side * 7.2, y0 + 0.1 + slat as f32 * 0.11, sz),
+                                    Vec3::new(0.05, 0.09, 0.44),
                                     Quat::from_rotation_z(side * 0.28),
                                 );
                             }
                             for edge in [-0.25, 0.25] {
-                                b.block(timber, [side * 7.08, y, sz + edge], [0.09, 1.88, 0.06]);
+                                b.block(timber, [side * 7.2, y, sz + edge], [0.07, h, 0.06]);
                             }
                         }
                     }
-                    if (house + window + level) % 4 == 0 {
-                        b.block(glow, [side * 7.97, y, wz], [0.02, 1.63, 1.15]);
-                    }
                     if level > 0 && house % 3 != 1 && (window + house) % 2 == 0 {
-                        b.block(trim, [side * 6.93, y - 1., wz], [0.8, 0.12, 1.95]);
-                        for n in 0..9 {
+                        b.block(
+                            trim,
+                            [side * 6.98, y0 - 0.06, wz],
+                            [0.6, 0.12, opening + 0.5],
+                        );
+                        let rail = opening + 0.4;
+                        let posts = (rail / 0.2) as usize;
+                        for n in 0..=posts {
                             b.block(
                                 metal,
-                                [side * 6.53, y - 0.55, wz - 0.88 + n as f32 * 0.22],
-                                [0.035, 0.88, 0.035],
+                                [
+                                    side * 6.72,
+                                    y0 + 0.44,
+                                    wz - rail * 0.5 + n as f32 * rail / posts as f32,
+                                ],
+                                [0.03, 0.88, 0.03],
                             );
                         }
-                        for dy in [-0.15, -0.93] {
-                            b.block(metal, [side * 6.53, y + dy, wz], [0.045, 0.045, 1.85]);
+                        for dy in [0.06, 0.88] {
+                            b.block(metal, [side * 6.72, y0 + dy, wz], [0.045, 0.045, rail]);
                         }
                     }
+                }
+            }
+            // Furnished rooms behind every floor. Each room picks a type (living,
+            // kitchen, bedroom, study), a wall paint, a wood and a fabric, so the
+            // street reads as many different households. All parts are collidable.
+            let ix = |d: f32| side * (7.56 + d);
+            for level in 0..=floors {
+                let f = level as f32 * 2.65;
+                let floor_id = woods[(b.random() * woods.len() as f32) as usize];
+                if level == 0 {
+                    b.block(floor_id, [ix(3.395), 0.03, z], [6.79, 0.06, 7.65]);
+                } else {
+                    b.block(floor_id, [ix(3.395), f - 0.04, z], [6.79, 0.2, 7.65]);
+                }
+                if level == floors {
+                    continue;
+                }
+                let base = if level == 0 { 0.06 } else { f + 0.06 };
+                let r = Room {
+                    side,
+                    z,
+                    base,
+                    paint: paints[(b.random() * paints.len() as f32) as usize],
+                    wood: woods[(b.random() * woods.len() as f32) as usize],
+                    fabric: fabrics[(b.random() * fabrics.len() as f32) as usize],
+                    accent: fabrics[(b.random() * fabrics.len() as f32) as usize],
+                };
+                r.put(&mut b, r.paint, [6.76, 1.25, 0.], [0.04, 2.5, 7.6]);
+                for dz in [-1., 1.] {
+                    r.put(&mut b, r.paint, [3.39, 1.25, dz * 3.8], [6.74, 2.5, 0.04]);
+                    r.put(&mut b, trim, [3.38, 0.05, dz * 3.768], [6.7, 0.1, 0.02]);
+                    r.put(&mut b, trim, [3.38, 2.47, dz * 3.765], [6.7, 0.06, 0.03]);
+                }
+                r.put(&mut b, trim, [6.725, 0.05, 0.], [0.025, 0.1, 7.5]);
+                r.put(&mut b, trim, [6.722, 2.47, 0.], [0.03, 0.06, 7.5]);
+                // Curtains just inside the facade at every window of this floor.
+                for window in 0..windows {
+                    let wu = -3.75 + spacing * (window as f32 + 0.5);
+                    if level == 0 && house % 3 != 0 && window == door_bay {
+                        continue;
+                    }
+                    let open = b.random();
+                    r.put(&mut b, metal, [0.12, 2.3, wu], [0.02, 0.02, opening + 0.6]);
+                    for cs in [-1., 1.] {
+                        let w = 0.2 + open * (opening * 0.45);
+                        let u = wu + cs * (opening * 0.5 + 0.3 - w * 0.5);
+                        for fold in 0..4 {
+                            let fw = w / 4.;
+                            r.put(
+                                &mut b,
+                                r.accent,
+                                [0.1 + (fold % 2) as f32 * 0.03, 1.2, u - w * 0.5 + fw * (fold as f32 + 0.5)],
+                                [0.02, 2.2, fw * 0.98],
+                            );
+                        }
+                    }
+                }
+                let kind = (b.random() * 4.) as usize;
+                let flip = if b.random() < 0.5 { -1. } else { 1. };
+                match kind {
+                    // Living room: sofa, armchair, coffee table, media unit, rug.
+                    0 => {
+                        let su = flip * 2.6;
+                        r.put(&mut b, r.accent, [3.4, 0.006, flip * 1.4], [2.6, 0.012, 2.0]);
+                        r.put(&mut b, r.fabric, [3.4, 0.22, su], [2.1, 0.32, 0.9]);
+                        r.put(&mut b, r.fabric, [3.4, 0.62, su + flip * 0.33], [2.1, 0.5, 0.22]);
+                        for a in [-1., 1.] {
+                            r.put(&mut b, r.fabric, [3.4 + a * 1.0, 0.48, su], [0.2, 0.3, 0.9]);
+                        }
+                        for c in [-0.45, 0.45] {
+                            r.put(&mut b, r.fabric, [3.4 + c, 0.43, su - flip * 0.05], [0.84, 0.1, 0.62]);
+                        }
+                        r.put(&mut b, r.accent, [3.0, 0.62, su + flip * 0.12], [0.4, 0.34, 0.12]);
+                        r.put(&mut b, r.wood, [3.4, 0.4, flip * 1.4], [1.1, 0.05, 0.6]);
+                        for (dx, du) in [(-0.5, -0.25), (-0.5, 0.25), (0.5, -0.25), (0.5, 0.25)] {
+                            r.put(&mut b, metal, [3.4 + dx, 0.19, flip * 1.4 + du], [0.03, 0.38, 0.03]);
+                        }
+                        r.put(&mut b, ceramic, [3.3, 0.48, flip * 1.4], [0.12, 0.12, 0.12]);
+                        // Media unit on the opposite wall with a screen above it.
+                        r.put(&mut b, r.wood, [3.4, 0.25, -flip * 3.55], [1.8, 0.5, 0.4]);
+                        r.put(&mut b, metal, [3.4, 1.15, -flip * 3.74], [1.2, 0.7, 0.04]);
+                        // Armchair near the window.
+                        r.put(&mut b, r.accent, [1.3, 0.24, flip * 0.6], [0.8, 0.36, 0.8]);
+                        r.put(&mut b, r.accent, [1.66, 0.62, flip * 0.6], [0.14, 0.5, 0.8]);
+                        // Floor lamp.
+                        r.put(&mut b, metal, [1.2, 0.01, flip * 1.3], [0.28, 0.02, 0.28]);
+                        r.put(&mut b, metal, [1.2, 0.8, flip * 1.3], [0.025, 1.6, 0.025]);
+                        let shade = if b.random() < 0.6 { glow } else { ceramic };
+                        r.put(&mut b, shade, [1.2, 1.66, flip * 1.3], [0.34, 0.24, 0.34]);
+                    }
+                    // Kitchen: base and wall cabinets, sink, stove, fridge, dining set.
+                    1 => {
+                        let wu = flip * 3.47;
+                        r.put(&mut b, r.wood, [4.2, 0.43, wu], [4.0, 0.86, 0.6]);
+                        r.put(&mut b, ceramic, [4.2, 0.885, wu], [4.04, 0.05, 0.64]);
+                        for door in 0..7 {
+                            let d = 2.43 + door as f32 * 0.59;
+                            r.put(&mut b, metal, [d, 0.7, wu - flip * 0.302], [0.12, 0.02, 0.006]);
+                            r.put(&mut b, r.wood, [d, 1.85, flip * 3.6], [0.56, 0.7, 0.34]);
+                        }
+                        r.put(&mut b, r.accent, [4.2, 1.2, flip * 3.775], [4.0, 0.6, 0.006]);
+                        r.put(&mut b, metal, [3.0, 0.9, wu], [0.5, 0.03, 0.4]);
+                        r.put(&mut b, metal, [3.0, 1.05, wu + flip * 0.2], [0.03, 0.3, 0.03]);
+                        r.put(&mut b, metal, [5.2, 0.92, wu], [0.6, 0.02, 0.55]);
+                        r.put(&mut b, ceramic, [6.45, 0.95, wu], [0.6, 1.9, 0.62]);
+                        r.put(&mut b, metal, [6.12, 1.2, wu - flip * 0.15], [0.04, 0.5, 0.03]);
+                        let tu = -flip * 1.4;
+                        r.put(&mut b, r.wood, [3.6, 0.75, tu], [1.6, 0.05, 0.9]);
+                        for (dx, du) in [(-0.7, -0.38), (-0.7, 0.38), (0.7, -0.38), (0.7, 0.38)] {
+                            r.put(&mut b, r.wood, [3.6 + dx, 0.36, tu + du], [0.05, 0.72, 0.05]);
+                        }
+                        for (cx, cu) in [(3.15, -0.62), (4.05, -0.62), (3.15, 0.62), (4.05, 0.62)] {
+                            let back = if cu < 0. { -1. } else { 1. };
+                            for (dx, du) in [(-0.17, -0.17), (-0.17, 0.17), (0.17, -0.17), (0.17, 0.17)] {
+                                r.put(&mut b, r.wood, [cx + dx, 0.22, tu + cu + du], [0.035, 0.44, 0.035]);
+                            }
+                            r.put(&mut b, r.wood, [cx, 0.46, tu + cu], [0.4, 0.04, 0.4]);
+                            r.put(&mut b, r.wood, [cx, 0.72, tu + cu + back * 0.18], [0.4, 0.48, 0.035]);
+                        }
+                        r.put(&mut b, ceramic, [3.4, 0.8, tu], [0.26, 0.04, 0.26]);
+                        r.put(&mut b, ceramic, [3.8, 0.8, tu + 0.2], [0.26, 0.04, 0.26]);
+                    }
+                    // Bedroom: bed with bedding, nightstands, wardrobe, rug.
+                    2 => {
+                        let bu = flip * 1.6;
+                        r.put(&mut b, r.wood, [5.6, 0.2, bu], [2.1, 0.3, 1.6]);
+                        r.put(&mut b, r.wood, [6.68, 0.55, bu], [0.06, 1.0, 1.7]);
+                        r.put(&mut b, ceramic, [5.6, 0.45, bu], [2.0, 0.2, 1.5]);
+                        r.put(&mut b, r.fabric, [5.2, 0.57, bu], [1.4, 0.06, 1.56]);
+                        for pu in [-0.38, 0.38] {
+                            r.put(&mut b, ceramic, [6.38, 0.6, bu + pu], [0.36, 0.12, 0.6]);
+                        }
+                        for nu in [-1.08, 1.08] {
+                            r.put(&mut b, r.wood, [6.45, 0.27, bu + nu], [0.42, 0.54, 0.45]);
+                            r.put(&mut b, metal, [6.45, 0.62, bu + nu], [0.05, 0.16, 0.05]);
+                            let shade = if b.random() < 0.5 { glow } else { ceramic };
+                            r.put(&mut b, shade, [6.45, 0.76, bu + nu], [0.2, 0.14, 0.2]);
+                        }
+                        r.put(&mut b, r.accent, [4.4, 0.006, bu], [1.2, 0.012, 2.4]);
+                        r.put(&mut b, r.wood, [5.2, 1.0, -flip * 3.48], [1.6, 2.0, 0.58]);
+                        r.put(&mut b, metal, [5.2, 1.1, -flip * 3.186], [0.02, 0.4, 0.02]);
+                    }
+                    // Study: desk with monitor, office chair, bookcases, armchair.
+                    _ => {
+                        let du = flip * 3.4;
+                        r.put(&mut b, r.wood, [2.2, 0.74, du], [1.4, 0.04, 0.7]);
+                        for dx in [-0.66, 0.66] {
+                            r.put(&mut b, r.wood, [2.2 + dx, 0.36, du], [0.04, 0.72, 0.66]);
+                        }
+                        r.put(&mut b, metal, [2.2, 1.0, du + flip * 0.2], [0.6, 0.36, 0.03]);
+                        r.put(&mut b, metal, [2.2, 0.8, du + flip * 0.22], [0.06, 0.08, 0.06]);
+                        r.put(&mut b, metal, [2.2, 0.765, du - flip * 0.08], [0.45, 0.012, 0.15]);
+                        r.put(&mut b, glow, [2.7, 0.9, du + flip * 0.15], [0.12, 0.06, 0.12]);
+                        r.put(&mut b, metal, [2.2, 0.2, du - flip * 0.65], [0.06, 0.4, 0.06]);
+                        r.put(&mut b, r.fabric, [2.2, 0.45, du - flip * 0.65], [0.48, 0.08, 0.48]);
+                        r.put(&mut b, r.fabric, [2.2, 0.78, du - flip * 0.88], [0.46, 0.55, 0.06]);
+                        for spoke in 0..5 {
+                            let a = spoke as f32 * std::f32::consts::TAU / 5.;
+                            r.put(&mut b, metal, [2.2 + a.cos() * 0.18, 0.03, du - flip * 0.65 + a.sin() * 0.18], [0.05, 0.04, 0.05]);
+                        }
+                        for bu in [-1.4, 0.0] {
+                            bookcase(&mut b, &r, flip * bu, &books, r.wood);
+                        }
+                        r.put(&mut b, r.accent, [4.0, 0.24, -flip * 2.6], [0.8, 0.36, 0.8]);
+                        r.put(&mut b, r.accent, [4.0, 0.62, -flip * 2.96], [0.8, 0.5, 0.14]);
+                    }
+                }
+                // Shared touches: framed pictures, a plant, a ceiling light.
+                let pictures = 1 + (b.random() * 3.) as usize;
+                for n in 0..pictures {
+                    let pu = (n as f32 - (pictures - 1) as f32 * 0.5) * 0.75 - flip * 0.6;
+                    let (pw, ph) = (0.4 + b.random() * 0.3, 0.3 + b.random() * 0.35);
+                    r.put(&mut b, r.wood, [6.725, 1.6, pu], [0.02, ph + 0.06, pw + 0.06]);
+                    let canvas = books[(b.random() * books.len() as f32) as usize];
+                    r.put(&mut b, canvas, [6.712, 1.6, pu], [0.01, ph, pw]);
+                }
+                if b.random() < 0.7 {
+                    let pu = flip * (2.8 + b.random() * 0.7) * if kind == 1 { -1. } else { 1. };
+                    let pd = 0.6 + b.random() * 0.4;
+                    r.put(&mut b, ceramic, [pd, 0.17, pu], [0.3, 0.34, 0.3]);
+                    for leaf_n in 0..7 {
+                        let a = leaf_n as f32 * 0.9;
+                        b.put(
+                            foliage,
+                            Vec3::new(ix(pd + a.cos() * 0.12), base + 0.55 + (leaf_n % 3) as f32 * 0.15, z + pu + a.sin() * 0.12),
+                            Vec3::new(0.08, 0.4, 0.22),
+                            Quat::from_rotation_y(a) * Quat::from_rotation_x(0.35),
+                        );
+                    }
+                }
+                let ceiling = 2.65 - 0.2;
+                let lit = b.random() < 0.55;
+                if b.random() < 0.5 {
+                    r.put(&mut b, metal, [3.4, ceiling - 0.25, 0.], [0.012, 0.5, 0.012]);
+                    r.put(&mut b, if lit { glow } else { metal }, [3.4, ceiling - 0.56, 0.], [0.36, 0.14, 0.36]);
+                } else {
+                    r.put(&mut b, if lit { glow } else { ceramic }, [3.4, ceiling - 0.02, 0.], [0.5, 0.04, 0.5]);
                 }
             }
             for wz in [-3.9, 3.9] {
@@ -582,31 +935,30 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                     Quat::from_rotation_z(side * 0.16),
                 );
                 b.block(cloth, [side * 6.02, 2.49, z], [0.1, 0.32, 5.8]);
-            } else {
-                b.block(timber, [side * 7.10, 1.15, z], [0.13, 2.2, 1.05]);
-                for panel in 0..3 {
-                    b.block(
-                        timber,
-                        [side * 7.00, 0.45 + panel as f32 * 0.65, z],
-                        [0.08, 0.48, 0.81],
-                    );
-                }
-                b.block(metal, [side * 6.93, 1.15, z + 0.32], [0.08, 0.12, 0.055]);
-                b.block(trim, [side * 6.95, 0.17, z], [0.75, 0.16, 1.4]);
             }
             // Benches and outdoor tables are built from separate timber and steel parts.
             if house % 2 == 0 {
-                for n in 0..5 {
+                for n in 0..4 {
                     b.block(
                         timber,
-                        [side * 5.8, 0.59, z - 1. + n as f32 * 0.20],
-                        [0.48, 0.065, 0.17],
+                        [side * (5.58 + n as f32 * 0.14), 0.60, z - 0.5],
+                        [0.115, 0.055, 1.65],
                     );
                 }
-                for dz in [-1.05, 0.05] {
-                    b.block(metal, [side * 5.8, 0.32, z + dz], [0.09, 0.6, 0.09]);
+                for dz in [-1.12, 0.12] {
+                    for x in [5.60, 5.98] {
+                        b.block(metal, [side * x, 0.37, z + dz], [0.055, 0.42, 0.055]);
+                    }
+                    b.block(metal, [side * 5.79, 0.55, z + dz], [0.52, 0.06, 0.06]);
+                    b.block(metal, [side * 6.01, 0.84, z + dz], [0.055, 0.92, 0.055]);
                 }
-                b.block(timber, [side * 6.02, 0.94, z - 0.5], [0.09, 0.6, 1.25]);
+                for n in 0..3 {
+                    b.block(
+                        timber,
+                        [side * 6.00, 0.82 + n as f32 * 0.16, z - 0.5],
+                        [0.055, 0.125, 1.65],
+                    );
+                }
             }
             let transform = Mat4::from_translation(Vec3::new(side * setback, 0., z))
                 * Mat4::from_scale(Vec3::new(1., 1., width / 8.))
