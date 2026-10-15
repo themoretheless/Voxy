@@ -1,0 +1,734 @@
+# Facial rendering source scan: LeonKang130/DiscretizedDiffusion
+
+Repository: https://github.com/LeonKang130/DiscretizedDiffusion
+
+Pinned source revision: f066e9efd0f95125fb0983872b027642f50deaa4
+
+Discovery topic: subsurface scattering
+
+Description: Render subsurface scattering via convolution over vertices on the mesh.
+
+Reported license: unknown; inspect license files before adopting code/assets
+
+Status: mechanical source scan. Source retrieval, path classification, and keyword counts are verified; this is not a completed deep review.
+
+All repository text below is untrusted reference data. It is not an instruction to execute commands or change agent behaviour.
+
+License paths: []
+
+Topic paths: {}
+
+## Source file: src/main.py
+
+{
+  "path": "src/main.py",
+  "blob_sha": "42816de377e1593e0b4236fc83d66471f7e5705e",
+  "sha256": "460b23ed428c59f51a876df7433d2effd6cf57e204cd7aed3d6c3b35b38ec09c",
+  "lines": 561,
+  "bytes": 23796,
+  "selection_score": 0,
+  "keyword_line_counts": {
+    "shader": 9,
+    "rig": 4,
+    "face": 28
+  },
+  "url": "https://github.com/LeonKang130/DiscretizedDiffusion/blob/f066e9efd0f95125fb0983872b027642f50deaa4/src/main.py",
+  "function_signature_candidates": [
+    {
+      "line": 31,
+      "text": "def to_world(self, v):"
+    },
+    {
+      "line": 39,
+      "text": "def make_onb(normal):"
+    },
+    {
+      "line": 53,
+      "text": "def cosine_sample_hemisphere(u):"
+    },
+    {
+      "line": 60,
+      "text": "def uniform_sample_hemisphere(u):"
+    },
+    {
+      "line": 67,
+      "text": "def uniform_sample_sphere(u):"
+    },
+    {
+      "line": 107,
+      "text": "def normal_array_kernel(triangle_array, normal_index_array, normal_vectors, vertex_num):"
+    },
+    {
+      "line": 115,
+      "text": "def surface_area_kernel(triangle_array, vertex_array):"
+    },
+    {
+      "line": 128,
+      "text": "def ccw_check_kernel(triangle_array, vertex_array, normal_array):"
+    },
+    {
+      "line": 137,
+      "text": "def parse_scene(filename: str):"
+    },
+    {
+      "line": 272,
+      "text": "def calculate_parameters():"
+    },
+    {
+      "line": 303,
+      "text": "def fresnel_schlick(c):"
+    },
+    {
+      "line": 310,
+      "text": "def vertex_influx_kernel(influx):"
+    },
+    {
+      "line": 355,
+      "text": "def collect_vertex_influx() -> luisa.Buffer:"
+    },
+    {
+      "line": 361,
+      "text": "def main():"
+    },
+    {
+      "line": 374,
+      "text": "void main()"
+    },
+    {
+      "line": 385,
+      "text": "vec3 linear_to_srgb(vec3 color)"
+    },
+    {
+      "line": 392,
+      "text": "void main()"
+    },
+    {
+      "line": 430,
+      "text": "void main()"
+    },
+    {
+      "line": 483,
+      "text": "void main()"
+    }
+  ]
+}
+
+```text
+
+from __future__ import annotations
+
+import json
+import math
+import sys
+import time
+from enum import Enum
+from typing import NamedTuple
+
+import luisa
+import moderngl
+import numba
+import numpy as np
+import tinyobjloader
+from OpenGL import GL as gl
+from luisa import RandomSampler
+from luisa.accel import offset_ray_origin
+from luisa.mathtypes import *
+from matplotlib import pyplot as plt
+from pyrr import Vector3
+
+from camera import Camera
+
+DeviceDirectionLight = luisa.StructType(direction=float3, emission=float3)
+DevicePointLight = luisa.StructType(position=float3, emission=float3)
+DeviceSurfaceLight = luisa.StructType(emission=float3)
+Onb = luisa.StructType(tangent=float3, binormal=float3, normal=float3)
+
+
+@luisa.func
+def to_world(self, v):
+    return v.x * self.tangent + v.y * self.binormal + v.z * self.normal
+
+
+Onb.add_method(to_world, "to_world")
+
+
+@luisa.func
+def make_onb(normal):
+    binormal = normalize(select(
+        make_float3(0.0, -normal.z, normal.y),
+        make_float3(-normal.y, normal.x, 0.0),
+        abs(normal.x) > abs(normal.z)))
+    tangent = normalize(cross(binormal, normal))
+    result = Onb()
+    result.tangent = tangent
+    result.binormal = binormal
+    result.normal = normal
+    return result
+
+
+@luisa.func
+def cosine_sample_hemisphere(u):
+    r = sqrt(u.x)
+    phi = 2.0 * 3.1415926 * u.y
+    return make_float3(r * cos(phi), r * sin(phi), sqrt(1.0 - u.x))
+
+
+@luisa.func
+def uniform_sample_hemisphere(u):
+    r = sqrt(1.0 - u.x * u.x)
+    phi = 2.0 * 3.1415926 * u.y
+    return make_float3(r * cos(phi), r * sin(phi), u.x)
+
+
+@luisa.func
+def uniform_sample_sphere(u):
+    cos_theta = 1.0 - 2.0 * u.x
+    sin_theta = sqrt(1.0 - cos_theta * cos_theta)
+    phi = 2.0 * 3.1415926 * u.y
+    return make_float3(sin_theta * cos(phi), sin_theta * sin(phi), cos_theta)
+
+
+luisa.init()
+model_vertex_count: int = 0
+vertex_buffer: luisa.Buffer = None
+normal_buffer: luisa.Buffer = None
+surface_light_buffer: luisa.Buffer = None
+point_light_buffer: luisa.Buffer = None
+direction_light_buffer: luisa.Buffer = None
+surface_light_count: int = 0
+point_light_count: int = 0
+direction_light_count: int = 0
+ctx = moderngl.create_standalone_context(430)
+heap = luisa.BindlessArray()
+accel: luisa.Accel = luisa.Accel()
+vbo: moderngl.Buffer = None
+nbo: moderngl.Buffer = None
+ibo: moderngl.Buffer = None
+sigma_a: float3 = make_float3(1.0)
+sigma_s: float3 = make_float3(1.0)
+eta: float = 1.0
+g: float = 0.0
+spp: int = 2400
+
+
+class Equation(Enum):
+    Normalized = "normalized"
+    Dipole = "dipole"
+    Undefined = "undefined"
+
+
+equation: Equation = Equation.Undefined
+
+
+@numba.jit
+def normal_array_kernel(triangle_array, normal_index_array, normal_vectors, vertex_num):
+    normal_array = np.empty((vertex_num, 3), dtype=np.float32)
+    for normal_index, vertex_index in zip(normal_index_array, triangle_array):
+        normal_array[vertex_index] = normal_vectors[normal_index]
+    return normal_array
+
+
+@numba.jit
+def surface_area_kernel(triangle_array, vertex_array):
+    surface_areas = np.zeros(vertex_array.shape[0], dtype=np.float32)
+    for i in range(0, len(triangle_array), 3):
+        i0, i1, i2 = triangle_array[i:i + 3]
+        p0, p1, p2 = vertex_array[i0], vertex_array[i1], vertex_array[i2]
+        local_surface_area = np.linalg.norm(np.cross(p1 - p0, p2 - p0)) * 0.5
+        surface_areas[i0] += local_surface_area / 3
+        surface_areas[i1] += local_surface_area / 3
+        surface_areas[i2] += local_surface_area / 3
+    return surface_areas
+
+
+@numba.jit
+def ccw_check_kernel(triangle_array, vertex_array, normal_array):
+    for i in range(0, len(triangle_array), 3):
+        i0, i1, i2 = triangle_array[i:i + 3]
+        p0, p1, p2 = vertex_array[i0], vertex_array[i1], vertex_array[i2]
+        n = np.cross(p1 - p0, p2 - p0)
+        if np.dot(n, normal_array[i0]) < 0:
+            triangle_array[i], triangle_array[i + 1] = i1, i0
+
+
+def parse_scene(filename: str):
+    with open(filename, 'r') as file:
+        scene_data = json.load(file)
+        vertex_arrays = []
+        normal_arrays = []
+        triangle_arrays = []
+        reader = tinyobjloader.ObjReader()
+        # parse the model to be rendered, add model data to array lists
+        offset = 0
+        if not reader.ParseFromFile(scene_data["render_model"]):
+            print("Failed to parse model")
+            exit(0)
+        else:
+            print("Received model data...")
+        attrib = reader.GetAttrib()
+        global model_vertex_count
+        vertex_array = np.array(attrib.vertices, dtype=np.float32).reshape(-1, 3)
+        model_vertex_count = vertex_array.shape[0]
+        normal_vectors = np.array(attrib.normals, dtype=np.float32).reshape(-1, 3)
+        normal_index_array = np.array([
+            index.normal_index for shape in reader.GetShapes() for index in shape.mesh.indices
+        ], dtype=np.int32)
+        triangle_array = np.array([
+            index.vertex_index for shape in reader.GetShapes() for index in shape.mesh.indices
+        ])
+        normal_array = normal_array_kernel(triangle_array, normal_index_array, normal_vectors, vertex_array.shape[0])
+        normal_array /= np.linalg.norm(normal_array, axis=1).reshape((-1, 1))
+        vertex_arrays.append(vertex_array)
+        normal_arrays.append(normal_array)
+        # calculate total surface area of the model
+        # also the wrongly wired triangles are re-sorted in this part to support face culling
+        surface_areas = surface_area_kernel(triangle_array, vertex_array).reshape(-1, 1)
+        ccw_check_kernel(triangle_array, vertex_array, normal_array)
+        triangle_arrays.append(triangle_array)
+        print("#Vertices: %d" % model_vertex_count)
+        print("Model data parsing done...")
+        # upload vertex array and normal array to GL
+        global vbo, ibo, nbo
+        vbo = ctx.buffer(np.hstack((vertex_array, surface_areas)))
+        ibo = ctx.buffer(triangle_array.astype(np.int32))
+        nbo = ctx.buffer(np.hstack((normal_array, np.zeros((normal_array.shape[0], 1), dtype=np.float32))))
+        # parse and upload light information
+        # add surface light data to array lists
+        offset += vertex_arrays[-1].shape[0]
+        global surface_light_buffer, direction_light_buffer, point_light_buffer
+        global surface_light_count, direction_light_count, point_light_count
+        surface_lights = []
+        for light in scene_data["surface_lights"]:
+            print("Surface light with emission: ", light["emission"])
+            surface_lights.append(DeviceSurfaceLight(emission=make_float3(*light["emission"])))
+            reader.ParseFromFile(light["model"])
+            attrib = reader.GetAttrib()
+            vertex_array = np.array(attrib.vertices, dtype=np.float32).reshape(-1, 3)
+            normal_vectors = np.array(attrib.normals, dtype=np.float32).reshape(-1, 3)
+            normal_vectors /= np.linalg.norm(normal_vectors, axis=1).reshape(-1, 1)
+            normal_array = np.empty_like(vertex_array, dtype=np.float32)
+            for shape in reader.GetShapes():
+                for index in shape.mesh.indices:
+                    normal_array[index.vertex_index] = normal_vectors[index.normal_index]
+            vertex_arrays.append(vertex_array)
+            normal_arrays.append(normal_array)
+            triangle_array = np.array([
+                index.vertex_index for shape in reader.GetShapes() for index in shape.mesh.indices
+            ]) + offset
+            triangle_arrays.append(triangle_array)
+            offset += vertex_arrays[-1].shape[0]
+        surface_light_buffer = luisa.Buffer.empty(max(len(surface_lights), 1), dtype=DeviceSurfaceLight)
+        if surface_lights:
+            surface_light_buffer.copy_from_list(surface_lights)
+            surface_light_count = len(surface_lights)
+        direction_lights = \
+            [DeviceDirectionLight(
+                direction=make_float3(*light["direction"]),
+                emission=make_float3(*light["emission"])
+            ) for light in scene_data["direction_lights"]]
+        direction_light_buffer = luisa.Buffer.empty(max(len(direction_lights), 1), dtype=DeviceDirectionLight)
+        if direction_lights:
+            direction_light_buffer.copy_from_list(direction_lights)
+            direction_light_count = len(direction_lights)
+        point_lights = \
+            [DevicePointLight(
+                position=make_float3(*light["position"]),
+                emission=make_float3(*light["emission"])
+            ) for light in scene_data["point_lights"]]
+        point_light_buffer = luisa.Buffer.empty(max(len(point_lights), 1), dtype=DevicePointLight)
+        if point_lights:
+            point_light_buffer.copy_from_list(point_lights)
+            point_light_count = len(point_lights)
+        # combine and upload vertex && normal array lists
+        global vertex_buffer, normal_buffer
+        vertices = np.concatenate(vertex_arrays)
+        normals = np.concatenate(normal_arrays)
+        vertex_buffer = luisa.Buffer.empty(len(vertices), float3)
+        normal_buffer = luisa.Buffer.empty(len(normals), float3)
+        vertex_buffer.copy_from_array(np.hstack((vertices, np.zeros((vertices.shape[0], 1), dtype=np.float32))))
+        normal_buffer.copy_from_array(np.hstack((normals, np.zeros((normals.shape[0], 1), dtype=np.float32))))
+        # upload array lists to heap
+        global heap, accel
+        mesh_cnt = len(triangle_arrays)
+        for i in range(mesh_cnt):
+            triangle_array = triangle_arrays[i].astype(np.int32)
+            triangle_buffer = luisa.Buffer(len(triangle_array), dtype=int)
+            triangle_buffer.copy_from_array(triangle_array)
+            heap.emplace(i, triangle_buffer)
+            mesh = luisa.Mesh(vertex_buffer, triangle_buffer)
+            accel.add(mesh)
+        accel.update()
+        heap.update()
+        # parse render equation
+        global equation
+        if str.lower(scene_data["equation"]) == "dipole":
+            equation = Equation.Dipole
+        elif str.lower(scene_data["equation"]) == "normalized":
+            equation = Equation.Normalized
+        else:
+            equation = Equation.Undefined
+        # parse parameters
+        global sigma_a, sigma_s, eta, g
+        sigma_a = make_float3(*scene_data["sigma_a"])
+        sigma_s = make_float3(*scene_data["sigma_s"])
+        eta = scene_data["eta"]
+        g = scene_data["g"]
+        global spp
+        spp = scene_data["spp"]
+
+
+class Parameters(NamedTuple):
+    sigma_tr: float3
+    dmfp: float3
+    albedo: float3
+    zr: float3
+    zv: float3
+    transmittance: float
+
+
+def calculate_parameters():
+    sigma_s_prime = sigma_s * (1.0 - g)
+    sigma_t_prime = sigma_s_prime + sigma_a
+    alpha_prime = sigma_s_prime / sigma_t_prime
+    fresnel = -1.440 / eta / eta + 0.710 / eta + 0.668 + 0.0636 * eta
+    a = (1.0 + fresnel) / (1.0 - fresnel)
+    albedo = 0.5 * alpha_prime * (1.0 + make_float3(
+        math.exp(-4.0 / 3.0 * a * math.sqrt(3.0 * (1.0 - alpha_prime.x))),
+        math.exp(-4.0 / 3.0 * a * math.sqrt(3.0 * (1.0 - alpha_prime.y))),
+        math.exp(-4.0 / 3.0 * a * math.sqrt(3.0 * (1.0 - alpha_prime.z)))
+    )) / (1.0 + make_float3(
+        math.sqrt(3.0 * (1.0 - alpha_prime.x)),
+        math.sqrt(3.0 * (1.0 - alpha_prime.y)),
+        math.sqrt(3.0 * (1.0 - alpha_prime.z)))
+          )
+    sigma_tr = make_float3(
+        math.sqrt(3.0 * (1.0 - alpha_prime.x)),
+        math.sqrt(3.0 * (1.0 - alpha_prime.y)),
+        math.sqrt(3.0 * (1.0 - alpha_prime.z))
+    ) * sigma_t_prime
+    s = albedo - 0.33
+    s *= s
+    s = 3.5 + 100 * s * s
+    dmfp = 1.0 / (s * sigma_tr)
+    zr = 1.0 / sigma_t_prime
+    zv = (1.0 + 4.0 / 3.0 * a) / sigma_t_prime
+    reflectance = (1.0 - eta) / (1.0 + eta)
+    return Parameters(sigma_tr, dmfp, albedo, zr, zv, 1.0 - reflectance * reflectance)
+
+
+@luisa.func
+def fresnel_schlick(c):
+    f0 = (eta - 1.) / (eta + 1.)
+    f0 *= f0
+    return 1. - lerp(f0, 1., pow(max(0., 1. - c), 5.))
+
+
+@luisa.func
+def vertex_influx_kernel(influx):
+    acc = make_float3(0.0)
+    idx = dispatch_id().x
+    vertex = vertex_buffer.read(idx).xyz
+    normal = normal_buffer.read(idx).xyz
+    onb = make_onb(normal)
+    for i in range(point_light_count):
+        point_light = point_light_buffer.read(i)
+        direction = point_light.position - vertex
+        probe_ray = make_ray(offset_ray_origin(vertex, normal), normalize(direction), 1e-2, length(direction))
+        if not accel.trace_any(probe_ray):
+            acc += point_light.emission * max(dot(normal, normalize(direction)), 0.0) * fresnel_schlick(
+                max(0., dot(normal, probe_ray.get_dir())))
+    for i in range(direction_light_count):
+        direction_light = direction_light_buffer.read(i)
+        direction = normalize(direction_light.direction)
+        probe_ray = make_ray(offset_ray_origin(vertex, normal), direction, 1e-2, 1e10)
+        if not accel.trace_any(probe_ray):
+            acc += direction_light.emission * max(dot(normal, direction), 0.0) * fresnel_schlick(
+                max(0., dot(normal, direction)))
+    sampler = RandomSampler(make_int3(idx))
+    for i in range(spp):
+        # TODO add light importance sampling to accelerate convergence
+        direction = onb.to_world(cosine_sample_hemisphere(make_float2(sampler.next(), sampler.next())))
+        if dot(direction, normal) < 1e-3:
+            continue
+        ray = make_ray(offset_ray_origin(vertex, normal), direction, 1e-2, 1e10)
+        hit = accel.trace_closest(ray)
+        if hit.miss() or hit.inst == 0:
+            continue
+        else:
+            surface_light = surface_light_buffer.read(hit.inst - 1)
+            i0 = heap.buffer_read(int, hit.inst, hit.prim * 3)
+            i1 = heap.buffer_read(int, hit.inst, hit.prim * 3 + 1)
+            i2 = heap.buffer_read(int, hit.inst, hit.prim * 3 + 2)
+            n0 = normal_buffer.read(i0)
+            n1 = normal_buffer.read(i1)
+            n2 = normal_buffer.read(i2)
+            n = normalize(hit.interpolate(n0, n1, n2))
+            cos_light = abs(dot(n, ray.get_dir()))
+            acc += surface_light.emission * fresnel_schlick(
+                max(0., dot(normal, ray.get_dir()))) * cos_light / float(spp)
+    influx.write(idx, acc)
+
+
+def collect_vertex_influx() -> luisa.Buffer:
+    vertex_influx_buffer = luisa.Buffer.empty(model_vertex_count, float3)
+    vertex_influx_kernel(vertex_influx_buffer, dispatch_size=model_vertex_count)
+    return vertex_influx_buffer
+
+
+def main():
+    res = (1000, 1000)
+    camera = Camera(Vector3([0.0, 1.0, -10.0]), Vector3([0.0, 0.5, 0.0]), res, 20.0)
+    print("Starting to parse scene data...")
+    parse_scene(sys.argv[1])
+    shader = ctx.program(
+        vertex_shader=
+        """
+            #version 330
+            uniform mat4 mvp;
+            in vec4 v_position;
+            in vec4 v_efflux;
+            out vec4 f_efflux;
+            void main()
+            {
+                gl_Position = mvp * vec4(v_position.xyz, 1.0);
+                f_efflux = v_efflux;
+            }
+        """,
+        fragment_shader=
+        """
+            #version 330
+            in vec4 f_efflux;
+            out vec4 f_color;
+            vec3 linear_to_srgb(vec3 color)
+            {
+                vec3 a = 1.055 * pow(color, vec3(1.0 / 2.4)) - 0.055;
+                vec3 b = 12.92 * color;
+                vec3 cut_off = vec3(lessThan(color, vec3(0.00031308)));
+                return clamp(mix(a, b, cut_off), 0.0, 1.0);
+            }
+            void main()
+            {
+                f_color = vec4(linear_to_srgb(f_efflux.rgb), 1.0);
+            }
+        """
+    )
+    start = time.time()
+    influx = collect_vertex_influx()
+    print(f"Collecting influx took: {(time.time() - start) * 1000} msec")
+    start = time.time()
+    influx_buffer_object = ctx.buffer(
+        np.array([
+            [flux.x, flux.y, flux.z, 0.0] for flux in influx.to_list()
+        ]).astype(np.float32)
+    )
+    print(f"Transferring data took: {(time.time() - start) * 1000} msec")
+    efflux_buffer_object = ctx.buffer(reserve=influx_buffer_object.size)
+    parameters = calculate_parameters()
+    if equation == Equation.Normalized:
+        print("Rendering using Normalized BSSRDF")
+        compute_shader = ctx.compute_shader(
+            """
+                #version 430 core
+                shared vec4 vertex_buffer[256];
+                shared vec4 influx_buffer[256];
+                layout(local_size_x = 256) in;
+                layout(std430, binding=0) buffer flux_in
+                {
+                    vec4 influx[];
+                };
+                layout(std430, binding=1) buffer vertex_in
+                {
+                    vec4 vertex[];
+                };
+                layout(std430, binding=2) buffer flux_out
+                {
+                    vec4 efflux[];
+                };
+                void main()
+                {
+                    for (int offset = 0; offset < vertex_count; offset += int(gl_NumWorkGroups.x * gl_WorkGroupSize.x)) {
+                        int vertex_index = int(gl_GlobalInvocationID) + offset;
+                        vec3 vertex_position;
+                        if (vertex_index < vertex_count) vertex_position = vertex[vertex_index].xyz;
+                        vec3 acc = vec3(0.0);
+                        for (int i = 0; i < vertex_count; i += 256)
+                        {
+                            if (gl_LocalInvocationID.x + i < vertex_count) {
+                                vertex_buffer[gl_LocalInvocationID.x] = vertex[gl_LocalInvocationID.x + i];
+                                influx_buffer[gl_LocalInvocationID.x] = influx[gl_LocalInvocationID.x + i];
+                            }
+                            barrier();
+                            for (int j = 0; j < min(vertex_count - i, 256); j++) {
+                                float r = length(vertex_position - vertex_buffer[j].xyz);
+                                r = max(0.02, r);
+                                vec3 a = exp(-r / (3.0 * dmfp));
+                                a = (a + a * a * a) / (8.0 * 3.1415926 * dmfp * r);
+                                acc += influx_buffer[j].rgb * a * vertex_buffer[j].w;
+                            }
+                        }
+                        acc *= albedo * transmittance;
+                        if (vertex_index < vertex_count) efflux[vertex_index] = vec4(acc, 1.0);
+                    }
+                }
+            """
+            .replace("vertex_count", f"{model_vertex_count}")
+            .replace("dmfp", f"vec3({parameters.dmfp.x}, {parameters.dmfp.y}, {parameters.dmfp.z})")
+            .replace("albedo", f"vec3({parameters.albedo.x}, {parameters.albedo.y}, {parameters.albedo.z})")
+            .replace("transmittance", f"{parameters.transmittance}")
+        )
+    elif equation == Equation.Dipole:
+        print("Rendering using Dipole")
+        albedo = sigma_s / (sigma_a + sigma_s)
+        compute_shader = ctx.compute_shader(
+            """
+                #version 430 core
+                shared vec4 vertex_buffer[256];
+                shared vec4 influx_buffer[256];
+                layout(local_size_x = 256) in;
+                layout(std430, binding=0) buffer flux_in
+                {
+                    vec4 influx[];
+                };
+                layout(std430, binding=1) buffer vertex_in
+                {
+                    vec4 vertex[];
+                };
+                layout(std430, binding=2) buffer flux_out
+                {
+                    vec4 efflux[];
+                };
+                void main()
+                {
+                    for (int offset = 0; offset < vertex_count; offset += int(gl_NumWorkGroups.x * gl_WorkGroupSize.x)) {
+                        int vertex_index = int(gl_GlobalInvocationID.x) + offset;
+                        vec3 vertex_position, acc;
+                        if (vertex_index < vertex_count) {
+                            vertex_position = vertex[vertex_index].xyz;
+                            acc = influx[vertex_index].xyz * albedo / (8.0 * 3.1415926);
+                        }
+                        for (int i = 0; i < vertex_count; i += 256)
+                        {
+                            if (gl_LocalInvocationID.x + i < vertex_count) {
+                                vertex_buffer[gl_LocalInvocationID.x] = vertex[gl_LocalInvocationID.x + i];
+                                influx_buffer[gl_LocalInvocationID.x] = influx[gl_LocalInvocationID.x + i];
+                            }
+                            barrier();
+                            for (int j = 0; j < min(vertex_count - i, 256); j++) {
+                                float r = length(vertex_position - vertex_buffer[j].xyz);
+                                vec3 dr = sqrt(r * r + zr * zr);
+                                vec3 dv = sqrt(r * r + zv * zv);
+                                vec3 weight =
+                                    1.0 / (4.0 * 3.1415926) * (
+                                        zr * (sigma_tr * dr + 1.0) * exp(-sigma_tr * dr) / (dr * dr * dr) +
+                                        zv * (sigma_tr * dv + 1.0) * exp(-sigma_tr * dv) / (dv * dv * dv)
+                                    );
+                                weight = any(isnan(weight)) ? vec3(0.0) : weight;
+                                acc += influx_buffer[j].rgb * weight * vertex_buffer[j].w;
+                            }
+                        }
+                        acc *= transmittance;
+                        if (vertex_index < vertex_count) efflux[vertex_index] = vec4(acc, 1.0);
+                    }
+                }
+            """
+            .replace("vertex_count", f"{model_vertex_count}")
+            .replace("sigma_tr", f"vec3({parameters.sigma_tr.x}, {parameters.sigma_tr.y}, {parameters.sigma_tr.z})")
+            .replace("zr", f"vec3({parameters.zr.x}, {parameters.zr.y}, {parameters.zr.z})")
+            .replace("zv", f"vec3({parameters.zv.x}, {parameters.zv.y}, {parameters.zv.z})")
+            .replace("albedo", f"vec3({albedo.x}, {albedo.y}, {albedo.z})")
+            .replace("transmittance", f"{parameters.transmittance}")
+        )
+    else:
+        print("Undefined diffusion equation")
+        exit(0)
+    influx_buffer_object.bind_to_storage_buffer(0)
+    vbo.bind_to_storage_buffer(1)
+    efflux_buffer_object.bind_to_storage_buffer(2)
+    query = ctx.query(time=True)
+    with query:
+        compute_shader.run(min((model_vertex_count + 255) // 256, 2048))
+    print("Compute shader took %d msec" % (query.elapsed / 1000000))
+    vao = ctx.vertex_array(
+        shader,
+        [
+            (vbo, '4f', 'v_position'),
+            (efflux_buffer_object, '4f', 'v_efflux'),
+        ],
+        index_buffer=ibo
+    )
+    shader['mvp'].write(camera.mvp)
+    render_target_msaa = ctx.texture(res, 4, samples=4, dtype='f4')
+    fbo_msaa = ctx.framebuffer(color_attachments=[render_target_msaa],
+                               depth_attachment=ctx.depth_renderbuffer(res, samples=4))
+    with ctx.scope(fbo_msaa, moderngl.DEPTH_TEST | moderngl.CULL_FACE):
+        fbo_msaa.clear(alpha=1.0)
+        vao.render()
+    render_target = ctx.texture(res, 4, dtype='f4')
+    fbo = ctx.framebuffer(color_attachments=[render_target])
+    gl.glBindFramebuffer(gl.GL_READ_FRAMEBUFFER, fbo_msaa.glo)
+    gl.glBindFramebuffer(gl.GL_DRAW_FRAMEBUFFER, fbo.glo)
+    gl.glBlitFramebuffer(0, 0, res[0], res[1], 0, 0, res[0], res[1], gl.GL_COLOR_BUFFER_BIT, gl.GL_LINEAR)
+    buffer = bytearray(res[0] * res[1] * 4 * 4)
+    render_target.read_into(buffer)
+    postfix = sys.argv[1].split('/')[-1].split('\\')[-1].split('.')[0] + '-' + str(equation).lower().split('.')[-1]
+    plt.imsave(f"result-{postfix}.png", np.frombuffer(buffer, dtype=np.float32).reshape(res + (-1,))[::-1, ::-1])
+
+
+if __name__ == "__main__":
+    main()
+
+
+```
+
+## Source file: src/camera.py
+
+{
+  "path": "src/camera.py",
+  "blob_sha": "3ca076306e4f845ec588b559d9019b2d8009b8d0",
+  "sha256": "92737e0ac0f700d8cbd3bb7c6b5a93ee1548cc35d0271a5aa02f10c774c229ba",
+  "lines": 22,
+  "bytes": 953,
+  "selection_score": 0,
+  "keyword_line_counts": {
+    "rig": 6
+  },
+  "url": "https://github.com/LeonKang130/DiscretizedDiffusion/blob/f066e9efd0f95125fb0983872b027642f50deaa4/src/camera.py",
+  "function_signature_candidates": [
+    {
+      "line": 7,
+      "text": "def __init__(self, origin: Vector3, look_at: Vector3, resolution: Tuple[int, int], fov: float) -> None:"
+    },
+    {
+      "line": 19,
+      "text": "def mvp(self):"
+    }
+  ]
+}
+
+```text
+
+from typing import Tuple
+
+from pyrr import Vector3, Matrix44
+
+
+class Camera(object):
+    def __init__(self, origin: Vector3, look_at: Vector3, resolution: Tuple[int, int], fov: float) -> None:
+        self.origin: Vector3 = origin
+        self.look_at: Vector3 = look_at
+        self.resolution = resolution
+        self.fov: float = fov
+        self.forward: Vector3 = Vector3(look_at - origin).normalised
+        self.right = self.forward.cross(Vector3([0.0, 1.0, 0.0])).normalised
+        self.up = self.right.cross(self.forward)
+        self.near = 0.01
+        self.far = 100.0
+
+    @property
+    def mvp(self):
+        return (Matrix44.perspective_projection(self.fov, self.resolution[0] / self.resolution[1], self.near,
+                                                self.far) * Matrix44.look_at(self.origin, self.look_at,
+                                                                             self.up)).astype('f4')
+
+
+```

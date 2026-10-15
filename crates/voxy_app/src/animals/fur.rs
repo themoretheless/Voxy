@@ -9,6 +9,7 @@ pub const PALETTE: usize = BONES + GUIDES * 2;
 pub struct Root {
     pub position: Vec3,
     pub normal: Vec3,
+    pub direction: Vec3,
     pub bone: usize,
     pub length: f32,
 }
@@ -48,7 +49,7 @@ fn build(cat: bool) -> Result<Groom, String> {
     }
     let mut seed = if cat { 7641 } else { 5239 };
     let mut samples = Vec::new();
-    for _ in 0..30000 {
+    for _ in 0..85000 {
         let sample = random(&mut seed) * total;
         let index = cdf
             .partition_point(|(sum, _)| *sum < sample)
@@ -74,25 +75,41 @@ fn build(cat: bool) -> Result<Groom, String> {
         }
         let (j, w) = asset::skin(p, cat);
         let dominant = (0..4).max_by_key(|&k| w[k]).unwrap();
-        let face = if cat {
-            p.z > 0.24 && p.y > 0.34
-        } else {
-            p.z > 0.44 && p.y > 0.62
-        };
-        let limb = p.y < if cat { 0.16 } else { 0.24 };
+        let a = asset::profile(cat);
+        let face = p.z > a.trunk_length * 0.36 && p.y > a.shoulder_height * 0.80;
+        let limb = p.y < a.shoulder_height * 0.48;
+        let long = matches!(a.breed, voxy_model::animals::Breed::MaineCoon);
+        let plush = matches!(
+            a.breed,
+            voxy_model::animals::Breed::SiberianHusky
+                | voxy_model::animals::Breed::GermanShepherd
+                | voxy_model::animals::Breed::BritishShorthair
+        );
+        let guard = random(&mut seed) > 0.68;
         let length = if face {
-            0.0020
+            0.0015
         } else if limb {
-            0.0030
-        } else if cat {
-            0.008
+            0.0028
+        } else if long {
+            if guard { 0.040 } else { 0.018 }
+        } else if plush {
+            if guard { 0.015 } else { 0.007 }
         } else {
-            0.009
+            if guard { 0.006 } else { 0.0025 }
         } * (0.7 + random(&mut seed) * 0.6);
+        let normal = n.normalize();
+        let flow = if face {
+            Vec3::new(0.0, -0.12, 0.7)
+        } else {
+            Vec3::new(0.0, -0.35, -0.6)
+        };
+        let comb = (flow - normal * normal.dot(flow)).normalize_or_zero();
+        let direction = (normal * 0.53 + comb * 0.85).normalize();
         samples.push((
             Root {
                 position: p,
-                normal: n.normalize(),
+                normal,
+                direction,
                 bone: j[dominant] as usize,
                 length,
             },
@@ -146,16 +163,12 @@ fn build(cat: bool) -> Result<Groom, String> {
                 Vec3::Y
             })
             .normalize();
-        // Groom with the coat, from spine toward the belly and hindquarters.
-        let comb = (Vec3::new(0.0, -0.35, -0.6)
-            - root.normal * root.normal.dot(Vec3::new(0.0, -0.35, -0.6)))
-        .normalize_or_zero();
-        let direction = (root.normal * 0.40 + comb * 0.92).normalize();
+        let direction = root.direction;
         let start = result.vertices.len() as u32;
         for segment in 0..=2 {
             let t = segment as f32 * 0.5;
             let center = root.position + direction * root.length * t;
-            let width = 0.00020 * (1.0 - t * 0.9);
+            let width = 0.000065 * (1.0 - t * 0.94);
             let joint = if segment == 0 {
                 root.bone
             } else {
@@ -164,8 +177,12 @@ fn build(cat: bool) -> Result<Groom, String> {
             for side in [-1.0, 1.0] {
                 let mut vertex = super::super::actor_vertex(
                     (center + tangent * width * side).to_array(),
-                    root.normal.to_array(),
-                    asset::encoded_color(color * (0.72 + t * 0.35), 0.86),
+                    direction.to_array(),
+                    {
+                        let mut uv = asset::encoded_color(color * (0.72 + t * 0.35), 0.86);
+                        uv[1] -= 2000.0;
+                        uv
+                    },
                     joint as u16,
                 );
                 if segment > 0 {
@@ -236,14 +253,14 @@ impl CoatDynamics {
                                 matrix
                                     .transform_point3(
                                         root.position
-                                            + root.normal * root.length * (i as f32 / 2.0),
+                                            + root.direction * root.length * (i as f32 / 2.0),
                                     )
                                     .as_dvec3()
                                     .to_array()
                             })
                             .collect(),
                         StrandConfig {
-                            stiffness: 900.0,
+                            stiffness: 650.0,
                             damping: 0.0001,
                             iterations: 8,
                             radius: 0.0003,
@@ -283,7 +300,7 @@ impl CoatDynamics {
             let bone = pose[root.bone];
             for segment in 1..=2 {
                 let rest = bone.transform_point3(
-                    root.position + root.normal * root.length * (segment as f32 / 2.0),
+                    root.position + root.direction * root.length * (segment as f32 / 2.0),
                 );
                 let delta = self.strands.get(index).map_or(Vec3::ZERO, |s| {
                     Vec3::from_array(s.positions()[segment].map(|v| v as f32)) - rest

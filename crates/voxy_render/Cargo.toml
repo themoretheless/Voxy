@@ -46,3 +46,8 @@ workspace = true
 # MSAA coverage even when world-space errors are below a micrometre.
 [target.'cfg(target_vendor = "apple")'.dependencies]
 wgpu-hal = { version = "30.0.1", default-features = false, features = ["metal-safe-compute"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6.4"
+objc2-metal = { version = "0.3.2", default-features = false, features = ["std", "MTLPixelFormat"] }
+objc2-metal-fx = { version = "0.3.2", default-features = false, features = ["std", "MTLFXTemporalScaler"] }

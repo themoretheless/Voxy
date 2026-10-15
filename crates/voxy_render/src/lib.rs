@@ -421,8 +421,25 @@ mod compressed_image;
 pub use compressed_image::Bc7ImageAsset;
 
 pub mod archive_scene;
+pub mod character_material;
+mod bloom;
+mod probe_gi;
 
 mod native_vegetation;
 pub use native_vegetation::NativeVegetation;
 
+mod archive_temporal;
+pub use archive_temporal::{ArchiveAntialiasing, ArchiveCameraLens, halton_jitter};
+#[cfg(target_os = "macos")]
+mod metalfx;
+
 pub mod weather;
+pub mod climate;
+
+mod archive_culling;
+pub use archive_culling::ArchiveInstanceCulling;
+
+mod archive_frustum;
+
+mod supersampling;
+pub use supersampling::SupersampleResolve;

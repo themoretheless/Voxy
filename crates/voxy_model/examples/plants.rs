@@ -1,6 +1,6 @@
 //! Generate metric botanical GLBs and inspect them through the native PBR/shadow renderer.
 use glam::{Mat4, Vec3};
-use voxy_model::plants::{PlantKind, PlantOptions, generate_plant_glb};
+use voxy_model::plants::{PlantKind, PlantOptions, generate_plant_glb, generate_world_plant_asset};
 use voxy_render::archive_scene::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::env::args()
@@ -13,74 +13,42 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut low = Vec3::ZERO;
     let mut high = Vec3::ZERO;
     for (kind, height, x) in [(PlantKind::Tree, 6., -1.6), (PlantKind::Shrub, 1.6, 2.6)] {
-        let bytes = generate_plant_glb(PlantOptions {
+        let options = PlantOptions {
             kind,
             seed: 42,
             height,
-        })?;
-        std::fs::write(format!("{output}/{kind:?}-42.glb"), &bytes)?;
-        let glb = gltf::binary::Glb::from_slice(&bytes)?;
-        let mut archive = voxy_model::SceneArchive::decode(
-            &glb.json,
-            vec![glb.bin.ok_or("missing binary")?.into_owned().into()],
-            Default::default(),
+        };
+        std::fs::write(
+            format!("{output}/{kind:?}-42.glb"),
+            generate_plant_glb(options)?,
         )?;
-        let offset = images.len();
-        images.extend(
-            voxy_model::ModelAsset::decode_embedded_images(&bytes, Default::default(), 6)?
-                .into_iter()
-                .map(ArchiveImageSource::Rgba),
-        );
-        for (id, p) in archive.meshes[0].iter_mut().enumerate() {
-            p.repair_tangents(0)?;
-            let normals = p.normals.as_ref().ok_or("normals")?;
-            let tangents = match p.tangents.as_ref() {
-                Some(voxy_model::SceneArchiveTangents::Finite(v)) => v,
-                _ => return Err("missing tangents".into()),
-            };
-            let uv = &p.texcoords.iter().find(|(id, _)| *id == 0).ok_or("UV")?.1;
-            let world = Mat4::from_translation(Vec3::new(x, 0., 0.));
-            for position in &p.positions {
-                let p = world.transform_point3(Vec3::from_array(*position));
+        // Preview the same native asset the app instances, not a GLB round trip.
+        let asset = generate_world_plant_asset(options)?;
+        let image_offset = images.len();
+        let material_offset = materials.len();
+        images.extend(asset.images.into_iter().map(ArchiveImageSource::Rgba));
+        for mut material in asset.materials {
+            for image in material.images.iter_mut().flatten() {
+                *image += image_offset;
+            }
+            materials.push(material);
+        }
+        let world = Mat4::from_translation(Vec3::new(x, 0., 0.));
+        for (id, mut mesh) in asset.geometry.into_iter().enumerate() {
+            for v in &mesh.vertices {
+                let p = world.transform_point3(Vec3::from_array(v.position));
                 low = low.min(p);
                 high = high.max(p);
             }
-            let vertices = (0..p.positions.len())
-                .map(|i| ArchiveVertex {
-                    position: p.positions[i],
-                    normal: normals[i],
-                    tangent: tangents[i],
-                    uv: uv[i],
-                })
-                .collect();
-            geometry.push(ArchiveMeshSource {
-                vertices,
-                indices: p.indices.clone(),
-                instances: vec![ArchiveInstance::new(world)],
-                material: materials.len(),
-                center: Vec3::new(x, height * 0.5, 0.),
-            });
-            materials.push(ArchiveMaterialSource {
-                parameters: ArchiveMaterial {
-                    diffuse: [1.; 4],
-                    specular_gloss: [1.; 4],
-                    emissive_normal: [0., 0., 0., if id == 0 { 0.8 } else { 0.35 }],
-                    surface: [0., 1., 0., -1.],
-                    workflow: [1., 1., 0., 0.],
-                },
-                images: [
-                    Some(offset + id * 2),
-                    Some(offset + 4 + id),
-                    Some(offset + id * 2 + 1),
-                    None,
-                ],
-                double_sided: id == 1,
-            });
             println!(
-                "{kind:?} material {id}: {} vertices, {} triangles",
-                p.positions.len(),
-                p.indices.len() / 3
+                "{kind:?} surface {id}: {} vertices, {} triangles",
+                mesh.vertices.len(),
+                mesh.indices.len() / 3
             );
+            mesh.instances = vec![ArchiveInstance::new(world)];
+            mesh.material += material_offset;
+            mesh.center = Vec3::new(x, height * 0.5, 0.);
+            geometry.push(mesh);
         }
     }
     // Real geometry receives plant shadows; no painted shadow decals.

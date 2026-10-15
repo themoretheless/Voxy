@@ -1783,7 +1783,7 @@ fn create_photoreal_pipelines(
 ) {
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Voxy photoreal HDR PBR shader"),
-        source: wgpu::ShaderSource::Wgsl(include_str!("voxel_photoreal.wgsl").into()),
+        source: wgpu::ShaderSource::Wgsl(concat!(include_str!("skin_hair.wgsl"), include_str!("voxel_photoreal.wgsl")).into()),
     });
     let voxel_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: Some("Voxy photoreal voxel pipeline layout"),
