@@ -1,10 +1,14 @@
 struct Frame {
     inverse_vp:mat4x4<f32>, previous_vp:mat4x4<f32>,
     current_vp:mat4x4<f32>, eye:vec4<f32>,
-    // current jitter UV, previous jitter UV (history is jittered raster space).
+    // current jitter UV, previous jitter UV (history uses the stable output grid).
     jitter:vec4<f32>,
     // reset, history weight, display transform mode, display headroom
     settings:vec4<f32>,
+    // aperture diameter m, focus distance m, focal length m, shutter fraction
+    lens:vec4<f32>,
+    // sensor width m, max circle of confusion px
+    sensor:vec4<f32>,
 }
 @group(0) @binding(0) var depth:texture_depth_2d;
 @group(0) @binding(1) var<uniform> frame:Frame;
@@ -98,7 +102,9 @@ fn current_stable(p:vec2<i32>,size:vec2<u32>)->vec3<f32> {
             let old_z=textureLoad(history_depth,q,0).x;
             let sky=wanted>=1. && old_z>=1.;
             let surface=wanted<1. && old_z<1. && abs(wanted-old_z)<max(0.00005,(1.-wanted)*0.02);
-            if sky || surface {
+            // On immutable geometry with an unchanged camera, coverage changes
+            // are jitter samples of the same silhouette, not disocclusion.
+            if sky || surface || frame.eye.w>0.5 {
                 let weight=select(1.-f.x,f.x,x==1)*select(1.-f.y,f.y,y==1);
                 let old=textureLoad(history,q,0).rgb;
                 if finite(old) {accumulated+=old*weight;total+=weight;}
@@ -114,7 +120,7 @@ fn current_stable(p:vec2<i32>,size:vec2<u32>)->vec3<f32> {
             // Luminance disagreement reduces history on changing/translucent surfaces.
             let luma=vec3<f32>(0.2126,0.7152,0.0722);
             let disagreement=abs(dot(old-color,luma))/max(max(dot(old,luma),dot(color,luma)),0.01);
-            let weight=frame.settings.y*(1.-0.8*disagreement);
+            let weight=select(frame.settings.y*(1.-0.8*disagreement),0.95,frame.eye.w>0.5);
             color=mix(color,old,weight);
         }
     }
@@ -122,8 +128,79 @@ fn current_stable(p:vec2<i32>,size:vec2<u32>)->vec3<f32> {
     textureStore(saved_depth,p,vec4<f32>(z));
 }
 @group(2) @binding(0) var final_colour:texture_2d<f32>;
+@group(2) @binding(1) var display_depth:texture_2d<f32>;
+@group(2) @binding(2) var display_motion:texture_2d<f32>;
+@group(2) @binding(3) var bloom_chain:texture_2d<f32>;
+@group(2) @binding(4) var bloom_sampler:sampler;
+const BLOOM_STRENGTH:f32=0.04;
+fn view_distance(q:vec2<i32>,size:vec2<i32>)->f32{
+ let z=textureLoad(display_depth,clamp(q,vec2<i32>(0),size-1),0).x;
+ if z<0. || z>=1. {return 1e5;}
+ let uv=(vec2<f32>(q)+0.5)/vec2<f32>(size)*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.);
+ let h=frame.inverse_vp*vec4<f32>(uv,z,1.);
+ return distance(h.xyz/h.w,frame.eye.xyz);
+}
+// Thin-lens circle of confusion diameter in pixels.
+// Focus distance 0 = autofocus on the nearest of five central depth taps,
+// like a centre-weighted camera AF point.
+fn focus_distance()->f32{
+ if frame.lens.y>0. {return frame.lens.y;}
+ let size=vec2<i32>(textureDimensions(final_colour));let c=size/2;let r=size.y/40;
+ var nearest=view_distance(c,size);
+ nearest=min(nearest,view_distance(c+vec2<i32>(r,0),size));
+ nearest=min(nearest,view_distance(c-vec2<i32>(r,0),size));
+ nearest=min(nearest,view_distance(c+vec2<i32>(0,r),size));
+ nearest=min(nearest,view_distance(c-vec2<i32>(0,r),size));
+ return clamp(nearest,0.3,1e4);
+}
+fn coc_pixels(distance:f32,width:f32)->f32{
+ let a=frame.lens.x;let focus=focus_distance();let f=frame.lens.z;
+ if a<=0. || frame.sensor.x<=0. {return 0.;}
+ let coc=a*f*abs(distance-focus)/(distance*max(focus-f,1e-4));
+ return min(coc/frame.sensor.x*width,frame.sensor.y);
+}
+fn depth_of_field(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
+ let size=vec2<i32>(textureDimensions(final_colour));
+ let width=f32(size.x);
+ let own=coc_pixels(view_distance(p,size),width);
+ if frame.lens.x<=0. {return centre;}
+ let radius=max(own,frame.sensor.y*0.5)*0.5;
+ var sum=centre;var total=1.;
+ for(var i=0;i<32;i++){
+  // Golden-angle spiral: uniform disk coverage without a visible tap pattern.
+  let r=sqrt((f32(i)+0.5)/32.);let a=f32(i)*2.3999632;
+  let offset=vec2<f32>(cos(a),sin(a))*r*radius;
+  let q=clamp(p+vec2<i32>(offset),vec2<i32>(0),size-1);
+  // Gather-as-scatter: a tap contributes when its own blur reaches this pixel.
+  let reach=coc_pixels(view_distance(q,size),width)*0.5;
+  let w=clamp(reach-length(offset)+1.,0.,1.);
+  sum+=max(textureLoad(final_colour,q,0).rgb,vec3<f32>(0.))*w;total+=w;
+ }
+ return sum/total;
+}
+// Shutter-time integration along the per-pixel camera motion vector.
+fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
+ if frame.lens.w<=0. {return centre;}
+ let size=vec2<i32>(textureDimensions(final_colour));
+ let velocity=textureLoad(display_motion,p,0).xy*vec2<f32>(size)*frame.lens.w;
+ if dot(velocity,velocity)<0.25 {return centre;}
+ var sum=vec3<f32>(0.);
+ for(var i=0;i<8;i++){
+  let t=(f32(i)+0.5)/8.-0.5;
+  let q=clamp(p+vec2<i32>(velocity*t),vec2<i32>(0),size-1);
+  sum+=max(textureLoad(final_colour,q,0).rgb,vec3<f32>(0.));
+ }
+ return sum/8.;
+}
 @fragment fn fs_display(@builtin(position) p:vec4<f32>)->@location(0) vec4<f32> {
     var x=max(textureLoad(final_colour,vec2<i32>(p.xy),0).rgb,vec3<f32>(0.));
+    x=depth_of_field(vec2<i32>(p.xy),x);
+    x=motion_blur(vec2<i32>(p.xy),x);
+    // Energy-conserving bloom: a small fraction of the radiance is replaced by
+    // the mean of the dual Kawase chain (bloom.rs sums its six levels).
+    let uv=(p.xy)/vec2<f32>(textureDimensions(final_colour));
+    let bloom=textureSampleLevel(bloom_chain,bloom_sampler,uv,0.).rgb/6.;
+    x=mix(x,bloom,BLOOM_STRENGTH);
     x=display_transform(x,frame.settings.z,frame.settings.w);
     return vec4<f32>(x,1.);
 }

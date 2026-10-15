@@ -224,6 +224,17 @@ impl Builder {
             let c = 1 + (e + 1) % 8;
             indices.extend([a, a + 9, c, c, a + 9, c + 9]);
         }
+        // Smooth area-weighted normals follow the existing curved membrane.
+        // The complete original positions, triangles and collision remain unchanged.
+        let mut normals=vec![Vec3::ZERO;vertices.len()];
+        for triangle in indices.chunks_exact(3) {
+            let p: [Vec3;3]=std::array::from_fn(|i|Vec3::from_array(vertices[triangle[i] as usize].position));
+            let normal=(p[1]-p[0]).cross(p[2]-p[0]);
+            for &i in triangle {normals[i as usize]+=normal;}
+        }
+        for (vertex,normal) in vertices.iter_mut().zip(normals) {
+            if normal.length_squared()>0. {vertex.normal=normal.normalize().to_array();}
+        }
         self.mesh(material, vertices, indices)
     }
     fn round(&mut self, material: usize, sphere: bool) -> usize {
@@ -945,6 +956,12 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let timber = b.cube(wood_m);
     let roof = b.cube(roof_m);
     let trim = b.bevel_cube(trim_m);
+    // Shared finish batches keep independent frontage choices instanced.
+    let mut frame_finishes = vec![timber];
+    for colour in [[0.035, 0.065, 0.055], [0.64, 0.61, 0.52], [0.075, 0.09, 0.11]] {
+        let material = b.material(colour, 0.65, 0., 4., 0., 0.);
+        frame_finishes.push(b.cube(material));
+    }
     let glass = b.cube(glass_m);
     let glow = b.cube(warm_m);
     let pole = b.round(dark_m, false);
@@ -1085,6 +1102,14 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             let windows = 2 + (b.random() * 3.) as usize;
             let spacing = 7.5 / windows as f32;
             let opening = spacing * (0.48 + b.random() * 0.13);
+            // A house has a consistent joinery design, independently chosen on
+            // each side of the street instead of repeating a house-index motif.
+            let geometry_rng = b.rng;
+            b.rng ^= 0x4652_414d_4553_5459;
+            let frame = frame_finishes[(b.random() * frame_finishes.len() as f32) as usize];
+            let transom_drop = 0.30 + b.random() * 0.48;
+            let mullion_offset = (b.random() - 0.5) * opening * 0.22;
+            b.rng = geometry_rng;
             let door_bay = windows / 2;
             let door_z = z - 3.75 + spacing * (door_bay as f32 + 0.5);
             let facade_pattern = if house % 4 == 1 { 7. } else { 2. };
@@ -1219,20 +1244,20 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                     let fx = side * 7.47;
                     for dz in [-1., 1.] {
                         b.block(
-                            timber,
+                            frame,
                             [fx, y, wz + dz * (opening * 0.5 - 0.037)],
                             [0.09, h - 0.004, 0.07],
                         );
                     }
                     for dy in [-1., 1.] {
                         b.block(
-                            timber,
+                            frame,
                             [fx, y + dy * (h * 0.5 - 0.037), wz],
                             [0.086, 0.07, opening - 0.004],
                         );
                     }
-                    b.block(timber, [fx, y, wz], [0.07, h - 0.1, 0.05]);
-                    b.block(timber, [fx, y1 - 0.45, wz], [0.07, 0.05, opening - 0.1]);
+                    b.block(frame, [fx, y, wz + mullion_offset], [0.07, h - 0.1, 0.05]);
+                    b.block(frame, [fx, y1 - transom_drop, wz], [0.07, 0.05, opening - 0.1]);
                     b.block(glass, [fx, y, wz], [0.015, h - 0.1, opening - 0.1]);
                     // Projecting stone sill and lintel.
                     b.block(
@@ -1446,6 +1471,16 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
             let tz = z + 4. + b.random() * 2.;
             let tree_height = 4.5 + b.random() * 2.3;
             let crown_radius = 1.05 + b.random() * 0.65;
+            let geometry_rng = b.rng;
+            b.rng ^= 0x4352_4f57_4e53_5459;
+            let crown_orientation = b.random() * std::f32::consts::TAU;
+            let crown_aspect = 0.65 + b.random() * 0.7;
+            let crown_lean = Vec3::new((b.random() - 0.5) * 0.65, 0., (b.random() - 0.5) * 0.65);
+            b.rng = geometry_rng;
+            let crown_rotation = Quat::from_rotation_y(crown_orientation);
+            let crown_direction = |angle: f32| {
+                crown_rotation * Vec3::new(angle.cos() * crown_aspect, 0., angle.sin() / crown_aspect)
+            };
             b.block(timber, [tx, 0.2, tz], [0.9, 0.4, 0.9]);
             let root = Vec3::new(tx, 0.2, tz);
             let fork = Vec3::new(
@@ -1460,29 +1495,31 @@ fn geometry(seed: u64) -> Result<StreetScene, Box<dyn std::error::Error>> {
                 let a = branch as f32 * 2.399963 + b.random() * 0.8;
                 let elevation = b.random();
                 let radial = crown_radius * (0.65 + b.random() * 0.35);
+                let direction = crown_direction(a);
                 let origin = fork + Vec3::Y * (elevation - 0.3) * 0.8;
                 let elbow = origin
                     + Vec3::new(
-                        a.cos() * radial * 0.50,
+                        direction.x * radial * 0.50,
                         0.45 + elevation * 0.6,
-                        a.sin() * radial * 0.50,
+                        direction.z * radial * 0.50,
                     );
                 let tip = Vec3::new(
-                    tx + a.cos() * radial,
+                    tx + direction.x * radial + crown_lean.x,
                     tree_height * (0.72 + 0.25 * elevation),
-                    tz + a.sin() * radial,
+                    tz + direction.z * radial + crown_lean.z,
                 );
                 b.beam(trunk, origin, elbow, 0.085);
                 b.beam(trunk, elbow, tip, 0.050);
                 for twig in 0..8 {
                     let theta = a + twig as f32 * 2.399963;
                     let t = 0.20 + twig as f32 * 0.10;
+                    let twig_direction = crown_direction(theta);
                     let start = elbow.lerp(tip, t);
                     let end = start
                         + Vec3::new(
-                            theta.cos() * 0.55,
+                            twig_direction.x * 0.55,
                             0.12 + b.random() * 0.38,
-                            theta.sin() * 0.55,
+                            twig_direction.z * 0.55,
                         );
                     b.beam(trunk, start, end, 0.018);
                     for _ in 0..45 {

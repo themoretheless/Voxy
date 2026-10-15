@@ -119,7 +119,9 @@ pub fn apply(scene: &mut StreetScene) -> Result<(), Box<dyn std::error::Error>> 
         };
         if let Some(set) = set {
             let ids = sets[set];
-            if material.parameters.workflow[0] != 1. || material.parameters.surface[2] != 0. || material.parameters.surface[0] != 0.
+            if material.parameters.workflow[0] != 1.
+                || material.parameters.surface[2] != 0.
+                || material.parameters.surface[0] != 0.
                 || material.parameters.diffuse[3] != 1.
                 || material.parameters.emissive_normal[..3]
                     .iter()

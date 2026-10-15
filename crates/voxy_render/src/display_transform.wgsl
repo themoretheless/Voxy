@@ -1,5 +1,6 @@
 // Shared display transforms for the archive post and temporal resolve passes.
-// mode: 0 = ACES fit (SDR), 1 = hue-preserving EDR knee (HDR), 2 = AgX (SDR).
+// mode: 0 = ACES fit (SDR), 1 = hue-preserving EDR knee (HDR), 2 = AgX (SDR),
+// 3 = scene-linear passthrough for an external camera post-process.
 // SDR results are linear; the sRGB target applies the only transfer function.
 // AgX base (Sobotka), sigmoid polynomial fit. Returns linear sRGB so the
 // sRGB render target applies the only transfer function.
@@ -16,6 +17,7 @@ fn agx(x:vec3<f32>)->vec3<f32> {
     return pow(max(outset*v,vec3<f32>(0.)),vec3<f32>(2.2));
 }
 fn display_transform(x:vec3<f32>,mode:f32,headroom:f32)->vec3<f32> {
+    if mode>2.5 {return x;}
     if mode>1.5 {return agx(x);}
     if mode<0.5 {
         return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),vec3<f32>(0.),vec3<f32>(1.));

@@ -2,6 +2,7 @@
 #[path = "../../src/controls.rs"]
 mod controls;
 mod aa_validation;
+mod day_cycle;
 mod original;
 mod materials;
 mod scene;
@@ -26,7 +27,17 @@ struct Gpu {
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
     renderer: ArchiveSceneRenderer,
+    supersample: voxy_render::SupersampleResolve,
     offscreen: Option<wgpu::Texture>,
+    bodycam: Option<voxy_render::BodycamPostProcess>,
+}
+/// Camera cycled with V: eye, orbit, chest bodycam, hand-held camcorder.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum StreetView {
+    FirstPerson,
+    ThirdPerson,
+    Bodycam,
+    Camcorder,
 }
 struct App {
     window: Option<Arc<Window>>,
@@ -59,12 +70,45 @@ struct App {
     original_seed: u64,
     weather: voxy_render::weather::Weather,
     weather_start: Instant,
+    day_cycle: Option<day_cycle::DayCycle>,
     sun_elevation: Option<f32>,
     wetness: Option<f32>,
     pitch: Option<f32>,
     aa_validation: Option<aa_validation::AaValidation>,
+    view: StreetView,
+    rig: voxy_render::BodycamRig,
 }
 impl App {
+    fn cycle_view(&mut self) {
+        self.view = match self.view {
+            StreetView::FirstPerson => StreetView::ThirdPerson,
+            StreetView::ThirdPerson => StreetView::Bodycam,
+            StreetView::Bodycam => StreetView::Camcorder,
+            StreetView::Camcorder => StreetView::FirstPerson,
+        };
+        self.camera.set_distance(if self.view == StreetView::ThirdPerson { 3. } else { 0. });
+        let profile = match self.view {
+            StreetView::Camcorder => voxy_render::PhotorealLensProfile::Camcorder,
+            _ => voxy_render::PhotorealLensProfile::Bodycam,
+        };
+        let look = self.camera.direction();
+        let aim = Vec2::new(look.x.atan2(look.z), look.y.clamp(-1., 1.).asin());
+        self.rig = voxy_render::BodycamRig::default();
+        self.rig.flashlight_enabled = false;
+        self.rig.aim_angles = aim;
+        self.rig.chest_goal_angles = aim;
+        self.rig.torso_spring.position = Vec3::new(aim.x, aim.y, 0.);
+        self.rig.set_lens_profile(profile);
+        if let Some(gpu) = &mut self.gpu {
+            gpu.renderer.reset_temporal_history();
+        }
+        eprintln!("STREET view {}", match self.view {
+            StreetView::FirstPerson => "first person",
+            StreetView::ThirdPerson => "third person",
+            StreetView::Bodycam => "bodycam",
+            StreetView::Camcorder => "camcorder",
+        });
+    }
     fn new() -> Self {
         let args: Vec<String> = std::env::args().collect();
         let value = |name: &str| {
@@ -81,10 +125,13 @@ impl App {
                 _ => voxy_render::weather::Weather::CLEAR,
             },
             weather_start: Instant::now(),
+            day_cycle: None,
             sun_elevation: value("--sun-elevation").and_then(|v| v.parse().ok()),
             wetness: value("--wetness").and_then(|v| v.parse().ok()),
             pitch: value("--pitch").and_then(|v| v.parse().ok()),
             aa_validation: aa_validation::AaValidation::from_environment(),
+            view: StreetView::FirstPerson,
+            rig: voxy_render::BodycamRig::default(),
             window: None,
             gpu: None,
             collision: None,
@@ -136,12 +183,14 @@ impl App {
         if let Some(gust) = value("--wind-gust").and_then(|v| v.parse::<f32>().ok()) {
             if gust.is_finite() {app.weather.wind_gust = gust.clamp(0., 1.);}
         }
+        app.day_cycle = day_cycle::DayCycle::from_args(&value, app.original_seed, value("--weather").is_some());
         app
     }
     fn init(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         let window = Arc::new(
             el.create_window(
                 Window::default_attributes()
+                    .with_visible(false)
                     .with_title(if self.original {
                         "Voxy — Original Street: WASD · Shift · Space · мышь · Esc"
                     } else {
@@ -166,7 +215,9 @@ impl App {
             let (environment, sun, sun_colour) = materials::daylight()?;
             scene.sun = sun;
             scene.sun_colour = sun_colour;
-            Some(environment)
+            // The analytic atmosphere is the default sky; VOXY_STREET_SKY=hdri
+            // restores the captured panorama.
+            if std::env::var("VOXY_STREET_SKY").as_deref() == Ok("hdri") {Some(environment)} else {None}
         } else { None };
         let mut direction = scene.direction;
         if let Some(degrees) = self.pitch {
@@ -211,11 +262,7 @@ impl App {
             validation.direction = scene.direction;
         }
         self.collision = Some(scene.collision);
-        let instance = voxy_render::GraphicsOptions {
-            backend: voxy_render::GraphicsBackend::Metal,
-            ..Default::default()
-        }
-        .create_instance();
+        let instance = voxy_render::GraphicsOptions {backend:voxy_render::GraphicsBackend::Metal,..Default::default()}.create_instance();
         let surface = instance.create_surface(window.clone())?;
         let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
             compatible_surface: Some(&surface),
@@ -224,6 +271,7 @@ impl App {
             apply_limit_buckets: false,
         }))?;
         let features = wgpu::Features::TEXTURE_COMPRESSION_BC
+            | if std::env::var_os("VOXY_STREET_SUBGROUP_CULLING").is_some() {adapter.features() & wgpu::Features::SUBGROUP}else{wgpu::Features::empty()}
             | if self.original { wgpu::Features::FLOAT32_FILTERABLE } else { wgpu::Features::empty() }
             | if std::env::var_os("VOXY_STREET_GPU_TIMING").is_some() {
                 adapter.features() & wgpu::Features::TIMESTAMP_QUERY
@@ -291,12 +339,16 @@ impl App {
             config.present_mode
         );
         surface.configure(&device, &config);
+        let render_scale: u32 = std::env::var("VOXY_STREET_RENDER_SCALE")
+            .unwrap_or_else(|_| "2".into()).parse()?;
+        let supersample = voxy_render::SupersampleResolve::new(&device, size.width, size.height, render_scale, config.format)?;
+        let (render_width, render_height) = supersample.render_size();
         let mut renderer = ArchiveSceneRenderer::new_with_environment(
             &device,
             &queue,
             config.format,
-            size.width,
-            size.height,
+            render_width,
+            render_height,
             scene.images,
             scene.materials,
             scene.geometry,
@@ -321,12 +373,29 @@ impl App {
             value => return Err(format!("unknown VOXY_STREET_AA: {value}").into()),
         };
         renderer.set_antialiasing(mode)?;
+        // Off by default (a fixed-focus lens fights a first-person walk). Example:
+        // VOXY_STREET_DOF="5.6,auto,0.5" = 50 mm f/5.6, centre autofocus, 180-degree shutter.
+        let lens = std::env::var("VOXY_STREET_DOF").unwrap_or_else(|_| "off".into());
+        if lens != "off" {
+            let value = lens;
+            let parts: Vec<f32> = value.split(',').filter_map(|v| match v.trim() {"auto" => Some(0.), v => v.parse().ok()}).collect();
+            if parts.len() < 2 {
+                return Err(format!("invalid VOXY_STREET_DOF: {value}").into());
+            }
+            renderer.set_camera_lens(voxy_render::ArchiveCameraLens {
+                focal_length_m: 0.05,
+                f_number: parts[0],
+                focus_distance_m: parts[1],
+                shutter_fraction: parts.get(2).copied().unwrap_or(0.),
+                sensor_width_m: 0.036,
+            })?;
+        }
         renderer.set_tone_mapper(match std::env::var("VOXY_STREET_TONEMAP").as_deref().unwrap_or("agx") {
             "aces" => voxy_render::archive_scene::ArchiveToneMapper::Aces,
             "agx" => voxy_render::archive_scene::ArchiveToneMapper::Agx,
             value => return Err(format!("unknown VOXY_STREET_TONEMAP: {value}").into()),
         });
-        eprintln!("STREET antialiasing={mode:?} native_resolution={}x{}", size.width, size.height);
+        eprintln!("STREET antialiasing={mode:?} render={}x{} output={}x{}", render_width, render_height, size.width, size.height);
 
         let offscreen = if self.offscreen_benchmark {
             Some(device.create_texture(&wgpu::TextureDescriptor {
@@ -356,10 +425,12 @@ impl App {
             queue,
             config,
             renderer,
+            supersample,
             offscreen,
+            bodycam: None,
         });
         self.last = Instant::now();
-        window.focus_window();
+        if !self.offscreen_benchmark {window.set_visible(true);window.focus_window();}
         self.capture(false);
         Ok(())
     }
@@ -393,6 +464,8 @@ impl App {
         self.accumulator += elapsed.min(0.25);
         const DT: f64 = 1. / 120.;
         let collision = self.collision.as_ref().ok_or("missing collision")?;
+        let was_grounded = self.grounded;
+        let start_feet = self.feet;
         while self.accumulator >= DT {
             self.simulation_time += DT;
             let mut movement = self.input.take_move();
@@ -441,6 +514,24 @@ impl App {
                 eye = target + (eye - target) * hit.fraction as f32;
             }
         }
+        let lens = if matches!(self.view, StreetView::Bodycam | StreetView::Camcorder) {
+            let dt = (elapsed as f32).max(1e-4);
+            let moved = (self.feet - start_feet).as_vec3();
+            let planar_speed = Vec2::new(moved.x, moved.z).length() / dt;
+            // Keep the rig aimed where the walk camera looks; the rig adds the
+            // torso deadzone, footsteps and hand-held sway on top.
+            let aim = Vec2::new(direction.x.atan2(direction.z), direction.y.clamp(-1., 1.).asin());
+            let mut delta = self.rig.aim_angles - aim;
+            delta.x = (delta.x + std::f32::consts::PI).rem_euclid(std::f32::consts::TAU) - std::f32::consts::PI;
+            self.rig.apply_look(delta);
+            self.rig.step(dt, planar_speed, self.grounded, was_grounded != self.grounded, 0.18);
+            let (view, _, _) = self.rig.camera_and_flashlight(actor);
+            eye = view.eye;
+            direction = (view.target - view.eye).normalize_or(direction);
+            Some((view.vertical_fov_radians, view.up))
+        } else {
+            None
+        };
         if let Some(validation) = &self.aa_validation {
             (eye,direction) = validation.camera(self.frames as u64);
         }
@@ -483,10 +574,33 @@ impl App {
             .as_ref()
             .map_or_else(|| gpu.offscreen.as_ref().unwrap(), |f| &f.texture);
         if self.aa_validation.is_some() && self.frames==128 {gpu.renderer.reset_temporal_history();}
+        if let Some(cycle) = &mut self.day_cycle {
+            let frozen = self.aa_validation.is_some() || self.benchmark > 0. || self.snapshot.is_some();
+            cycle.update(&mut gpu.renderer, &mut self.weather, elapsed, frozen, self.wetness.is_some())?;
+        }
         gpu.renderer.set_weather(self.weather)?;
         gpu.renderer.set_weather_time(if self.aa_validation.is_some() {0.} else {self.weather_start.elapsed().as_secs_f32()});
-        let submission = gpu.renderer
-            .draw(&output.create_view(&Default::default()), eye, direction);
+        let output_view = output.create_view(&Default::default());
+        let submission = if let Some((fov, up)) = lens.filter(|_| self.aa_validation.is_none()) {
+            let (width, height) = gpu.supersample.render_size();
+            let post = gpu.bodycam.get_or_insert_with(|| {
+                voxy_render::BodycamPostProcess::new(&gpu.device, gpu.config.format, width, height)
+            });
+            post.resize(&gpu.device, &gpu.queue, width, height);
+            post.update_from_rig(&gpu.queue, &self.rig, self.frames);
+            gpu.renderer.set_camera_projection(fov, up);
+            gpu.renderer.set_linear_output(true);
+            gpu.renderer.draw(post.hdr_view(), eye, direction);
+            let mut encoder = gpu.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("street bodycam lens"),
+            });
+            post.encode(&mut encoder, &output_view);
+            gpu.queue.submit([encoder.finish()])
+        } else {
+            gpu.renderer.set_camera_projection(65_f32.to_radians(), Vec3::Y);
+            gpu.renderer.set_linear_output(false);
+            gpu.renderer.draw_supersampled(&gpu.supersample, &output_view, eye, direction)?
+        };
         if self.offscreen_benchmark {
             gpu.device.poll(wgpu::PollType::Wait { submission_index: Some(submission), timeout: None })?;
         }
@@ -502,7 +616,7 @@ impl App {
                     "scene":if self.original {"Original Street"} else {"Bistro"},
                     "antialiasing":format!("{:?}",gpu.renderer.antialiasing()),
                     "adapter":format!("{:?}",gpu.adapter.get_info()),
-                    "resolution":[gpu.config.width,gpu.config.height],
+                    "resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],
                     "format":format!("{:?}",gpu.config.format),
                     "render_headroom":gpu.validation_headroom.unwrap_or(gpu.hdr_headroom.unwrap_or(1.)),
                     "collision_triangles":collision.triangle_count(),
@@ -592,7 +706,7 @@ impl App {
             let mut times = self.durations.clone();
             times.sort_by(f64::total_cmp);
             let n = times.len();
-            let report = serde_json::json!({"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":self.offscreen_benchmark||self.skipped_acquires==0,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
+            let report = serde_json::json!({"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":self.offscreen_benchmark||self.skipped_acquires==0,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
             std::fs::write(
                 "/tmp/voxy-street-benchmark.json",
                 serde_json::to_vec_pretty(&report)?,
@@ -767,6 +881,8 @@ impl ApplicationHandler for App {
                     if key == KeyCode::Escape && event.state == ElementState::Pressed {
                         self.capture(false);
                     } else if event.state == ElementState::Pressed && !event.repeat
+                        && self.day_cycle.as_mut().is_some_and(|c| c.key(key)) {
+                    } else if event.state == ElementState::Pressed && !event.repeat
                         && matches!(key, KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3 | KeyCode::Digit4) {
                         let wind = self.weather.wind;
                         let gust = self.weather.wind_gust;
@@ -794,12 +910,7 @@ impl ApplicationHandler for App {
                         && event.state == ElementState::Pressed
                         && !event.repeat
                     {
-                        self.camera
-                            .set_distance(if self.camera.desired_distance() == 0. {
-                                3.
-                            } else {
-                                0.
-                            });
+                        self.cycle_view();
                     } else {
                         self.input.key(key, event.state, event.repeat);
                     }
@@ -810,7 +921,11 @@ impl ApplicationHandler for App {
                     MouseScrollDelta::LineDelta(_, y) => y,
                     MouseScrollDelta::PixelDelta(p) => p.y as f32 / 40.,
                 };
-                self.camera.zoom(lines);
+                if self.view == StreetView::Camcorder {
+                    self.rig.apply_servo_zoom(lines);
+                } else {
+                    self.camera.zoom(lines);
+                }
             }
             WindowEvent::RedrawRequested => {}
             _ => {}
