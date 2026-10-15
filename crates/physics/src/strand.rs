@@ -69,6 +69,25 @@ impl Strand {
             config,
         })
     }
+    /// Creates world-space particles whose rest offsets are expressed in `frame`.
+    /// # Errors
+    /// Rejects invalid strands and frames.
+    pub fn new_oriented(
+        points: Vec<[f64; 3]>,
+        config: StrandConfig,
+        frame: [[f64; 3]; 3],
+    ) -> Result<Self, &'static str> {
+        let mut strand = Self::new(points, config)?;
+        // Reuse the step admission without publishing the scratch step.
+        let mut scratch = strand.clone();
+        scratch.step_oriented(1.0 / 120.0, strand.positions[0], [0.0; 3], &[], frame)?;
+        for offset in &mut strand.rest {
+            *offset = std::array::from_fn(|i| {
+                frame[i].into_iter().zip(*offset).map(|(a, b)| a * b).sum()
+            });
+        }
+        Ok(strand)
+    }
     #[must_use]
     pub fn positions(&self) -> &[[f64; 3]] {
         &self.positions
@@ -84,6 +103,34 @@ impl Strand {
         acceleration: [f64; 3],
         colliders: &[SphereCollider],
     ) -> Result<(), &'static str> {
+        self.step_oriented(
+            dt,
+            root,
+            acceleration,
+            colliders,
+            [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+        )
+    }
+
+    /// Advances a moving groom with an orthonormal world-space rest frame.
+    /// The frame is column-major. Roots remain pinned; free particles retain inertia.
+    /// # Errors
+    /// Rejects non-orthonormal frames and invalid inputs without changing state.
+    pub fn step_oriented(
+        &mut self,
+        dt: f64,
+        root: [f64; 3],
+        acceleration: [f64; 3],
+        colliders: &[SphereCollider],
+        frame: [[f64; 3]; 3],
+    ) -> Result<(), &'static str> {
+        let dot = |a: [f64; 3], b: [f64; 3]| a.into_iter().zip(b).map(|(x, y)| x * y).sum::<f64>();
+        if !frame.iter().copied().all(finite)
+            || (0..3).any(|i| (dot(frame[i], frame[i]) - 1.0).abs() > 1e-8)
+            || (0..3).any(|i| (i + 1..3).any(|j| dot(frame[i], frame[j]).abs() > 1e-8))
+        {
+            return Err("invalid strand rest frame");
+        }
         if !dt.is_finite()
             || dt <= 0.0
             || dt > 1.0 / 30.0
@@ -99,7 +146,9 @@ impl Strand {
         next[0] = root;
         let damping = self.config.damping.powf(dt);
         for (i, p) in next.iter_mut().enumerate().skip(1) {
-            let spring = scale(sub(add(root, self.rest[i]), *p), self.config.stiffness);
+            let rest =
+                std::array::from_fn(|axis| (0..3).map(|j| frame[j][axis] * self.rest[i][j]).sum());
+            let spring = scale(sub(add(root, rest), *p), self.config.stiffness);
             *p = add(
                 add(*p, scale(sub(*p, self.previous[i]), damping)),
                 scale(add(acceleration, spring), dt * dt),
@@ -112,8 +161,11 @@ impl Strand {
                 let direction = if distance > 1e-12 {
                     scale(delta, 1.0 / distance)
                 } else {
+                    let rest_delta = sub(self.rest[i], self.rest[i - 1]);
                     scale(
-                        sub(self.rest[i], self.rest[i - 1]),
+                        std::array::from_fn(|axis| {
+                            (0..3).map(|j| frame[j][axis] * rest_delta[j]).sum()
+                        }),
                         1.0 / self.lengths[i - 1],
                     )
                 };
@@ -147,5 +199,42 @@ impl Strand {
         self.previous.clone_from(&self.positions);
         self.positions = next;
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod oriented_tests {
+    use super::*;
+    #[test]
+    fn rotated_groom_preserves_authored_rest_direction() {
+        let frame = [[0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 1.0]];
+        let mut strand = Strand::new_oriented(
+            vec![[2.0, 3.0, 0.0], [2.0, 3.02, 0.0], [2.0, 3.04, 0.0]],
+            StrandConfig {
+                stiffness: 900.0,
+                ..StrandConfig::default()
+            },
+            frame,
+        )
+        .unwrap();
+        for _ in 0..60 {
+            strand
+                .step_oriented(1.0 / 120.0, [2.0, 3.0, 0.0], [0.0; 3], &[], frame)
+                .unwrap();
+        }
+        assert!((strand.positions()[2][1] - 3.04).abs() < 1e-10);
+        assert!((strand.positions()[2][0] - 2.0).abs() < 1e-10);
+    }
+    #[test]
+    fn invalid_groom_frame_is_atomic() {
+        let mut strand =
+            Strand::new(vec![[0.0; 3], [0.0, 0.02, 0.0]], StrandConfig::default()).unwrap();
+        let before = strand.positions().to_vec();
+        assert!(
+            strand
+                .step_oriented(1.0 / 60.0, [1.0, 0.0, 0.0], [0.0; 3], &[], [[0.0; 3]; 3])
+                .is_err()
+        );
+        assert_eq!(strand.positions(), before);
     }
 }

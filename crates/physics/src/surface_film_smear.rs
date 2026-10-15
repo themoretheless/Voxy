@@ -144,10 +144,7 @@ impl SurfaceFilm {
                     },
                 )
             } else {
-                (
-                    (coulomb - yield_stress_pa).max(0.0),
-                    SmearRegime::Coulomb,
-                )
+                ((coulomb - yield_stress_pa).max(0.0), SmearRegime::Coulomb)
             };
             if !magnitude.is_finite() {
                 return Err("smear traction overflow");
@@ -190,7 +187,12 @@ mod tests {
 
     #[test]
     fn viscoplastic_smearing_and_complete_drying_leave_solute_residue() {
-        let points = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0]];
+        let points = [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [1.0, 1.0, 0.0],
+        ];
         let triangles = vec![[0, 1, 2], [1, 3, 2]];
         let mut film = SurfaceFilm::new(&points, triangles, Material::default()).unwrap();
         film.deposit_batch(&[(0, 1e-4), (1, 2e-5)]).unwrap();
@@ -216,9 +218,7 @@ mod tests {
             .unwrap();
         assert!((film.total_mass() - initial_mass).abs() < 1e-12);
         assert!(
-            report
-                .regimes
-                .contains(&SmearRegime::ViscoplasticYield)
+            report.regimes.contains(&SmearRegime::ViscoplasticYield)
                 || report.regimes.contains(&SmearRegime::Coulomb)
         );
 

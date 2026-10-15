@@ -387,6 +387,15 @@ pub trait HairLinearSolver {
     ) -> Option<(Vec<f64>, Vec<f64>)> {
         None
     }
+    /// Explicit precision-preserving coordinate route; never approximated via legacy callbacks.
+    fn joint_contact_expanded_enabled(&self) -> bool { false }
+    fn solve_joint_expanded_batch(&mut self, _requests: &[HairExpandedCoordinateRequest<'_>]) -> Option<Vec<(Vec<HairResponseCoefficient>,Vec<f64>)>> { None }
+    /// Independent candidates retain input order. A rejected operator must not
+    /// discard a valid sibling; every candidate still needs physical admission.
+    fn solve_joint_expanded_candidates(&mut self, requests: &[HairExpandedCoordinateRequest<'_>]) -> Option<Vec<Option<(Vec<HairResponseCoefficient>, Vec<f64>)>>> {
+        self.solve_joint_expanded_batch(requests).map(|values| values.into_iter().map(Some).collect())
+    }
+
     fn joint_contact_hints_enabled(&self) -> bool {
         false
     }
@@ -3049,3 +3058,11 @@ mod substep_clock_tests;
 
 mod contact_expanded;
 pub use contact_expanded::HairResponseCoefficient;
+
+/// Both native coefficient components remain owned by the immutable physical operator.
+#[derive(Debug)]
+pub struct HairExpandedCoordinateRequest<'a> {
+    pub columns: &'a [Vec<HairResponseCoefficient>],
+    pub bounds: &'a [f64],
+    pub tolerance: f64,
+}

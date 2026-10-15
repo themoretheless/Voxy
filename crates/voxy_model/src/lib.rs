@@ -1632,3 +1632,10 @@ mod joint_budget {
         assert_eq!(voxy_render::MAX_SKIN_JOINTS, voxy_animation::MAX_JOINTS);
     }
 }
+
+mod scene_archive;
+pub use scene_archive::{SceneArchive,SceneArchiveNode,SceneArchivePrimitive,SceneArchiveTangents,SceneImportLimits};
+
+mod scene_tangents;
+
+pub mod plants;

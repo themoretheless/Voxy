@@ -9,9 +9,25 @@ Four independent noise fields describe continental elevation (128 blocks), mount
 
 `build_procedural_scene(seed, radius)` generates and meshes this terrain. The desktop application's default scene uses it. `build_bootstrap_scene` retains the original fixtures used by gameplay tests. The actor starts above the maximum terrain height.
 
-Run `cargo run -p voxy_app`. The current desktop scene uses a fixed seed and a 3 by 3 chunk area; biome regions extend beyond that area. Trees, caves, ores, climate biomes, and infinite streaming are future work.
+Run `cargo run -p voxy_app`. The current desktop scene uses a fixed seed and a 3 by 3 chunk area; biome regions extend beyond that area. Caves, ores, climate biomes, and infinite streaming are future work.
 
 Validation: world sampling across positive and negative chunks, request-order independence, seed variation, biome coverage, height bounds, neighbor continuity, water layering, cancellation, coordinate overflow, and deterministic runtime meshing.
+
+## Trees and shrubs
+
+Desktop procedural scenes decorate terrain with `VegetationGenerator` on every
+terrain backend. Vegetation placement runs on the CPU after terrain generation.
+A seed determines candidates in 4 by 4 voxel cells: broadleaf trees have trunks
+4–6 voxels tall and rounded crowns; shrubs have low woody stems and smaller
+crowns. Plants grow on plains above sea level and only replace air. Wood is solid;
+foliage has no collision. The current block materials use brown wood and green leaves.
+
+Candidates outside each chunk are sampled too, so crowns continue across horizontal
+and vertical boundaries independently of generation order. The wrapper has its own
+versioned descriptor including the base generator, terrain profile and vegetation
+palette. Library callers can keep bare terrain or supply their own vegetation block
+IDs through `VegetationPalette`. Custom base generators passed to
+`build_generated_scene` must retain the canonical procedural height profile.
 
 ## Accelerated generation
 
@@ -106,3 +122,55 @@ CPU comparisons, including i64 extremes and seed bits. This verifies the softwar
 OpenGL path; physical GPU execution on other drivers remains unverified.
 `sh tools/linux/opengl-smoke.sh` includes this check with the scene/shader/physics
 probes and retains per-probe logs in `target/linux-docker`.
+
+## Botanical mesh generation
+
+The voxel decorator above remains the gameplay terrain representation. For detailed
+plants use the separate native `voxy_model::plants` generator: tapered, curved
+branch hierarchies, flared tree roots, displaced bark, and thousands of individual
+curved pointed leaves. Trees and multi-stem shrubs use metres and a reproducible
+64-bit seed. Heights are bounded to 0.25–30 metres; geometry complexity is fixed.
+
+```sh
+cargo run -p voxy_app --bin voxy_app -- --vegetation tree --seed 42 --height 7
+cargo run -p voxy_app --bin voxy_app -- --vegetation shrub --seed 42 --height 1.6
+cargo run -p voxy_app --bin voxy_app -- --vegetation tree --output tree.glb --export-only
+cargo run -p voxy_model --example plants
+```
+
+The GLB embeds bark/leaf colour and normal PNG maps, UVs, normals, separate
+metallic/roughness materials, and double-sided foliage. No external image assets
+or downloads are needed. The model editor opens a separate `.preview.glb` with normal-map bindings removed
+while retaining the full exported asset; it does not display the full normal-map/PBR
+material. The `plants` example renders a native GPU preview through the scene PBR renderer
+with GGX, normal maps, hemisphere lighting, shadow maps and tone mapping, and writes
+`artifacts/vegetation/preview.png` plus tree/shrub GLBs.
+
+This is detailed procedural vegetation, not a qualified photorealistic renderer.
+The preview still lacks indirect occlusion, measured leaf transmission, and wind. Desktop startup now places mesh plants automatically from the seeded world markers.
+The resident renderer uses shared instanced meshes, depth-correct PBR surfaces,
+self-shadowing and shadow reception on terrain/actors in both normal and Bodycam
+paths. Four shared world-detail variants keep geometry bounded. Gameplay retains
+conservative voxel trunk collision; leaf and branch shapes have no fine collision.
+Removing a root marker or its supporting ground retires that plant instance.
+`--voxel-plants` selects the original block rendering. `--vegetation-check` captures
+the same world/camera with and without the plant layer and writes evidence to
+`artifacts/vegetation-world`. Bark and leaf
+textures are synthetic, not scanned botanical materials.
+
+
+Native world inspection:
+
+```sh
+cargo run -p voxy_app --bin voxy_app
+cargo run -p voxy_app --bin voxy_app -- --vegetation-check
+cargo run -p voxy_app --bin voxy_app -- --voxel-plants
+```
+
+World instances currently have fixed detail, no wind, and no new-plant authoring.
+The bounded startup world owns placement; streamed-world plant admission/eviction
+is not implemented. Root removal also clears the remaining conservative trunk
+markers, so retired models do not leave invisible trunk collision behind.
+
+Vegetated-terrain descriptor v2 increases candidate density and gives wood priority
+over every overlapping crown, preserving contiguous trunk markers at cell borders.

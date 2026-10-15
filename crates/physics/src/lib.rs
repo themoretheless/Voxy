@@ -189,3 +189,5 @@ mod spatial_bounds;
 mod positive_transport;
 
 pub mod math;
+
+pub mod static_triangle_world;

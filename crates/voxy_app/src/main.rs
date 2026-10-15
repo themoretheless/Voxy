@@ -1,3 +1,5 @@
+mod animals;
+mod native_plants;
 mod controls;
 mod graphics_options;
 mod pet;
@@ -24,9 +26,11 @@ use voxy_animation::{
 };
 use voxy_render::{CameraView, RenderOutcome, Renderer, RendererError, SkinnedMesh, SkinnedVertex};
 use voxy_runtime::{
-    BootstrapChunk, BootstrapScene, build_procedural_scene, invalidated_derived_chunks,
+    BootstrapChunk, BootstrapScene, invalidated_derived_chunks,
     rebuild_bootstrap_chunks,
 };
+#[cfg(test)]
+use voxy_runtime::build_procedural_scene;
 use voxy_world::{ChunkPos, EditSource, ResourceKey, VoxelPos, World};
 use winit::application::ApplicationHandler;
 use winit::event::{
@@ -52,6 +56,7 @@ struct VoxyApp {
     presented_frames: u64,
     last_startup_outcome: Option<RenderOutcome>,
     actor: Option<AnimatedActor>,
+    pending_actor_pose: Option<(Vec<Mat4>, Mat4)>,
     last_update: Option<Instant>,
     accumulator: f32,
     input: InputState,
@@ -60,6 +65,8 @@ struct VoxyApp {
     actor_yaw: f32,
     character: Option<CharacterState>,
     world: Option<World>,
+    native_plants: Option<native_plants::NativePlants>,
+    vegetation_check_frames: u8,
     cursor_captured: bool,
     projectiles: Vec<ProjectileState>,
     resident_positions: Vec<ChunkPos>,
@@ -100,18 +107,22 @@ struct VoxyApp {
     peak_vehicle_speed: f64,
     animation_frames: u64,
     autopilot_result: Option<bool>,
+    animal_check: bool,
+    animal_check_tick: u64,
+    animal_check_captures: u64,
+    companions: Vec<animals::Companion>,
     pet: PetState,
     pet_ui_elapsed: f32,
     load_time_seconds: f32,
+    bodycam_mode: bool,
+    clean_cam_mode: bool,
+    camcorder_mode: bool,
+    was_grounded: bool,
 }
 
 #[derive(Debug)]
 struct PendingGameWater {
     plan: voxy_gpu::PendingWaterPlan,
-    bodycam_mode: bool,
-    clean_cam_mode: bool,
-    camcorder_mode: bool,
-    was_grounded: bool,
     active: Vec<VoxelPos>,
     started: Instant,
 }
@@ -159,7 +170,7 @@ impl ApplicationHandler for VoxyApp {
             Ok(mut renderer) => {
                 window.set_title(&loading_title(35, "WORLD"));
                 let scene_result = build_startup_scene(self.graphics);
-                let scene = match scene_result {
+                let mut scene = match scene_result {
                     Ok(scene) => scene,
                     Err(error) => {
                         eprintln!("Voxy world bootstrap failed: {error}");
@@ -169,6 +180,11 @@ impl ApplicationHandler for VoxyApp {
                         return;
                     }
                 };
+                if self.animal_check {
+                    if let Err(error)=animals::prepare_check_scene(&mut scene) {
+                        self.startup_failure=Some(format!("Animal inspection terrain failed: {error}"));event_loop.exit();return;
+                    }
+                }
                 let uploads = scene
                     .chunks
                     .iter()
@@ -189,7 +205,7 @@ impl ApplicationHandler for VoxyApp {
                         return;
                     }
                 };
-                let bind_matrices = match actor.skeleton.bind_pose().skin_matrices(&actor.skeleton)
+                let mut bind_matrices = match actor.skeleton.bind_pose().skin_matrices(&actor.skeleton)
                 {
                     Ok(matrices) => matrices,
                     Err(error) => {
@@ -198,6 +214,9 @@ impl ApplicationHandler for VoxyApp {
                         return;
                     }
                 };
+                for x in [2.0, -2.0] {
+                    bind_matrices.extend([Mat4::from_translation(Vec3::new(x, 4.0, 0.0)); animals::JOINTS / 2]);
+                }
                 if let Err(error) = renderer.upload_skinned_mesh(
                     &actor_mesh,
                     &bind_matrices,
@@ -254,14 +273,6 @@ impl ApplicationHandler for VoxyApp {
                         info.backend
                     );
                 }
-                self.renderer = Some(renderer);
-                self.actor = Some(actor);
-                match self.initialize_gameplay(&scene) {
-                    Ok(()) => {}
-                    Err(error) => {
-                        eprintln!("Voxy water bootstrap failed: {error}");
-                        event_loop.exit();
-                        return;
                 renderer.set_bodycam_enabled(self.bodycam_mode);
                 if self.camcorder_mode {
                     renderer
@@ -284,6 +295,23 @@ impl ApplicationHandler for VoxyApp {
                         "Voxy Photorealistic Mode active ({profile_name}) (B: bodycam, V: clean cam, N: camcorder, F: light)"
                     );
                 }
+                if !self.animal_check && !std::env::args().any(|arg| arg == "--voxel-plants") {
+                    let validation = renderer.device().push_error_scope(wgpu::ErrorFilter::Validation);
+                    let result = native_plants::NativePlants::build(&renderer, &scene.world, &scene.chunks, 0x56_4f_58_59);
+                    if let Some(error) = pollster::block_on(validation.pop()) { self.startup_failure = Some(format!("Native vegetation GPU validation: {error}")); event_loop.exit(); return; }
+                    match result {
+                        Ok((plants, gpu)) => { renderer.set_native_vegetation(Some(gpu)); self.native_plants = Some(plants); }
+                        Err(error) => { self.startup_failure = Some(format!("Native vegetation startup failed: {error}")); event_loop.exit(); return; }
+                    }
+                }
+                self.renderer = Some(renderer);
+                self.actor = Some(actor);
+                match self.initialize_gameplay(&scene) {
+                    Ok(()) => {}
+                    Err(error) => {
+                        eprintln!("Voxy water bootstrap failed: {error}");
+                        event_loop.exit();
+                        return;
                     }
                 }
                 self.autopilot_tick = (std::env::args().any(|argument| argument == "--autopilot")
@@ -339,7 +367,8 @@ impl ApplicationHandler for VoxyApp {
                 event_loop.exit();
             }
             WindowEvent::Focused(false) => {
-                self.input.clear_keyboard();
+                self.input.cancel_all();
+                self.pending_character_intent = None;
                 self.set_cursor_captured(false);
             }
             WindowEvent::KeyboardInput { event, .. } => {
@@ -351,15 +380,6 @@ impl ApplicationHandler for VoxyApp {
                         && !event.repeat
                     {
                         self.toggle_driving();
-                    } else if event.state == ElementState::Pressed
-                        && !event.repeat
-                        && self.handle_pet_key(code)
-                    {
-                    } else {
-                        self.input.key(code, event.state, event.repeat);
-                    }
-                }
-            }
                     } else if code == KeyCode::KeyB
                         && event.state == ElementState::Pressed
                         && !event.repeat
@@ -445,6 +465,15 @@ impl ApplicationHandler for VoxyApp {
                                 if rig.flashlight_enabled { "ON" } else { "OFF" }
                             );
                         }
+                    } else if event.state == ElementState::Pressed
+                        && !event.repeat
+                        && self.handle_pet_key(code)
+                    {
+                    } else {
+                        self.input.key(code, event.state, event.repeat);
+                    }
+                }
+            }
             WindowEvent::MouseInput {
                 state: ElementState::Pressed,
                 button: MouseButton::Left,
@@ -491,10 +520,65 @@ impl ApplicationHandler for VoxyApp {
                 }
                 self.advance_animation(event_loop);
                 self.poll_rebuild(event_loop);
+                let mut vegetation_edited = false;
                 if let Some(renderer) = &mut self.renderer {
+                    if let (Some(plants), Some(world)) = (&mut self.native_plants, &mut self.world) {
+                        match plants.sync(world, renderer) {
+                            Ok(Some(receipt)) => { self.dirty_chunks.extend(invalidated_derived_chunks(&receipt)); vegetation_edited = true; },
+                            Ok(None) => {},
+                            Err(error) => { self.startup_failure = Some(error.to_string()); event_loop.exit(); return; }
+                        }
+                        if std::env::args().any(|a| a == "--vegetation-check") {
+                            if let Err(error) = renderer.update_camera(plants.inspection_camera()) { self.startup_failure = Some(error.to_string()); event_loop.exit(); return; }
+                        }
+                    }
                     match renderer.render() {
                         Ok(outcome @ RenderOutcome::Presented) => {
                             self.presented_frames = self.presented_frames.saturating_add(1);
+                            if std::env::args().any(|a| a == "--vegetation-check") {
+                                self.vegetation_check_frames = self.vegetation_check_frames.saturating_add(1);
+                                if self.vegetation_check_frames == 3 {
+                                    let result = (|| -> Result<(), Box<dyn std::error::Error>> {
+                                        let (w,h,with) = renderer.capture_world_rgba8(self.presented_frames)?;
+                                        let (_,_,without) = renderer.capture_world_without_vegetation_rgba8(self.presented_frames)?;
+                                        let changed_pixels = with.chunks_exact(4).zip(without.chunks_exact(4)).filter(|(a,b)| a[..3].iter().zip(&b[..3]).any(|(a,b)| a.abs_diff(*b)>3)).count();
+                                        let plants = self.native_plants.as_ref().map_or(0, |p| p.active_count());
+                                        let (trees,shrubs) = self.native_plants.as_ref().map_or((0,0),|p|p.kind_counts());
+                                        let output = if self.bodycam_mode { "artifacts/vegetation-world/hdr" } else { "artifacts/vegetation-world" };
+                                        std::fs::create_dir_all(output)?;
+                                        image::save_buffer(format!("{output}/with-plants.png"), &with, w,h,image::ColorType::Rgba8)?;
+                                        image::save_buffer(format!("{output}/without-plants.png"), &without, w,h,image::ColorType::Rgba8)?;
+                                        let report = serde_json::json!({"passed": trees>0 && shrubs>0 && changed_pixels>1000,"plants":plants,"trees":trees,"shrubs":shrubs,"hdr":self.bodycam_mode,"changed_pixels":changed_pixels,"presented_frames":self.presented_frames,"width":w,"height":h});
+                                        std::fs::write(format!("{output}/report.json"),serde_json::to_vec_pretty(&report)?)?;
+                                        println!("Native vegetation world check: {report}");
+                                        if trees==0 || shrubs==0 || changed_pixels<=1000 { return Err("native vegetation was not visible in the world frame".into()); }
+                                        Ok(())
+                                    })();
+                                    if let Err(error)=result { self.startup_failure=Some(error.to_string()); }
+                                    event_loop.exit();
+                                }
+                            }
+
+                            if self.animal_check && self.animal_check_captures < 3 && self.animal_check_tick >= (self.animal_check_captures+1)*180 {
+                                let result = (|| -> Result<(), String> {
+                                    let (width,height,rgba)=renderer.capture_bodycam_rgba8(self.presented_frames).map_err(|e|e.to_string())?;
+                                    std::fs::create_dir_all("artifacts/animals-native").map_err(|e|e.to_string())?;
+                                    image::save_buffer(format!("artifacts/animals-native/frame-{}.png",self.animal_check_tick),&rgba,width,height,image::ColorType::Rgba8).map_err(|e|e.to_string())?;
+                                    let report=serde_json::json!({"passed":self.companions.iter().all(|animal|animal.grounded() && animal.fur_particles()==144 && animal.travelled_distance>0.5),"tick":self.animal_check_tick,"presented_frames":self.presented_frames,"animals":self.companions.iter().map(|animal|serde_json::json!({"position":animal.position().to_array(),"grounded":animal.grounded(),"fur_particles":animal.fur_particles(),"travelled_distance":animal.travelled_distance})).collect::<Vec<_>>()});
+                                    std::fs::write("artifacts/animals-native/report.json",serde_json::to_vec_pretty(&report).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
+                                    println!("Voxy animals capture: {report}");
+                                    Ok(())
+                                })();
+                                if let Err(error)=result {self.startup_failure=Some(error);event_loop.exit();}
+                                self.animal_check_captures+=1;
+                                if self.animal_check_captures==3 {
+                                    if !self.companions.iter().all(|animal|animal.grounded() && animal.fur_particles()==144 && animal.travelled_distance>0.5) {
+                                        self.startup_failure=Some("Animal window check failed: grounding, movement or fur attachment".into());
+                                    } else {println!("Voxy animals window check passed: 3 captures, 2 grounded moving animals, 288 simulated fur particles");}
+                                    if !animals::hold_check_window() { event_loop.exit(); }
+                                }
+                            }
+
                             if !self.presented_once {
                                 println!("Voxy first voxel frame presented ({outcome:?})");
                                 self.presented_once = true;
@@ -504,21 +588,6 @@ impl ApplicationHandler for VoxyApp {
                             eprintln!("Voxy startup frame deferred: {outcome:?}");
                             self.last_startup_outcome = Some(outcome);
                         }
-                            if self.animal_check && self.animal_check_tick >= (self.animal_check_captures+1)*180 {
-                                let result = (|| -> Result<(), String> {
-                                    let (width,height,rgba)=renderer.capture_bodycam_rgba8(self.presented_frames).map_err(|e|e.to_string())?;
-                                    std::fs::create_dir_all("artifacts/animals-native").map_err(|e|e.to_string())?;
-                                    image::save_buffer(format!("artifacts/animals-native/frame-{}.png",self.animal_check_tick),&rgba,width,height,image::ColorType::Rgba8).map_err(|e|e.to_string())?;
-                                    let report=serde_json::json!({"tick":self.animal_check_tick,"presented_frames":self.presented_frames,"animals":self.companions.iter().map(|animal|serde_json::json!({"position":animal.position().to_array(),"grounded":animal.grounded(),"fur_particles":animal.fur_particles()})).collect::<Vec<_>>()});
-                                    std::fs::write("artifacts/animals-native/report.json",serde_json::to_vec_pretty(&report).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
-                                    println!("Voxy animals capture: {report}");
-                                    Ok(())
-                                })();
-                                if let Err(error)=result {self.startup_failure=Some(error);event_loop.exit();}
-                                self.animal_check_captures+=1;
-                                if self.animal_check_captures==3 {event_loop.exit();}
-                            }
-
                         Err(error) => {
                             eprintln!("Voxy render failed: {error}");
                             if matches!(
@@ -532,6 +601,7 @@ impl ApplicationHandler for VoxyApp {
                         _ => {}
                     }
                 }
+                if vegetation_edited { self.refresh_world_geometry(event_loop); }
             }
             _ => {}
         }
@@ -589,6 +659,7 @@ impl VoxyApp {
             f32::from(i16::try_from(spawn.y).map_err(|error| error.to_string())?),
             16.0,
         );
+        self.companions = [false, true].into_iter().map(|cat| animals::Companion::spawn(VoxelPos { x: spawn.x + if cat { -2 } else { 2 }, y: spawn.y + 4, ..spawn }, cat)).collect();
         self.character = Some(CharacterState {
             body: AnchoredAabb {
                 anchor: spawn,
@@ -884,16 +955,6 @@ impl VoxyApp {
                     return;
                 }
                 self.actor_position = character_position(character);
-            }
-            self.pet
-                .tick(FIXED_DT, movement.length_squared() > f32::EPSILON);
-            self.pet_ui_elapsed += FIXED_DT;
-            if self.pet_ui_elapsed >= 0.5 {
-                self.pet_ui_elapsed = 0.0;
-                self.update_pet_title();
-            }
-            self.advance_projectiles(FIXED_DT, event_loop);
-            self.advance_water(event_loop);
                 let grounded = character.grounded;
                 let just_jumped_or_landed = grounded != self.was_grounded;
                 self.was_grounded = grounded;
@@ -908,6 +969,16 @@ impl VoxyApp {
                         0.28,
                     );
                 }
+            }
+            self.pet
+                .tick(FIXED_DT, movement.length_squared() > f32::EPSILON);
+            self.pet_ui_elapsed += FIXED_DT;
+            if self.pet_ui_elapsed >= 0.5 {
+                self.pet_ui_elapsed = 0.0;
+                self.update_pet_title();
+            }
+            self.advance_projectiles(FIXED_DT, event_loop);
+            self.advance_water(event_loop);
             if !self.advance_actor_animation(
                 movement.length_squared() > f32::EPSILON,
                 intent.sprint,
@@ -918,16 +989,30 @@ impl VoxyApp {
             }
             self.accumulator -= FIXED_DT;
         }
+        if let (Some(renderer), Some((palette,model))) = (&mut self.renderer,self.pending_actor_pose.take()) {
+            if let Err(error)=renderer.update_skinned_pose(&palette,model) {
+                self.startup_failure=Some(format!("Animal/actor pose publication failed: {error}"));
+                event_loop.exit();return;
+            }
+        }
+        if let Some(renderer)=&mut self.renderer {
+            let spheres:Vec<_>=self.companions.iter().flat_map(animals::Companion::shadow_spheres).collect();
+            if let Err(error)=renderer.set_subject_shadow_spheres(&spheres) {self.startup_failure=Some(error.to_string());event_loop.exit();return;}
+        }
         if self.animal_check && self.companions.len() == 2 {
-            let center = if self.animal_check_tick < 240 {
+            let group = self.animal_check_captures == 0;
+            let selected=usize::from(self.animal_check_captures >= 2);
+            let center = if group {
                 (self.companions[0].position()+self.companions[1].position())*0.5+Vec3::Y*0.35
             } else {
-                self.companions[usize::from(self.animal_check_tick >= 420)].position()+Vec3::Y*0.35
+                self.companions[selected].position()+Vec3::Y*if selected==0 {0.45}else{0.35}
             };
-            let distance = if self.animal_check_tick < 240 { 1.8 } else { 0.85 };
+            let distance = if group { 1.8 } else if selected==0 {0.85}else{0.55};
+            let forward=if group {Vec3::Z}else{self.companions[selected].forward()};
+            let right=Vec3::new(forward.z,0.0,-forward.x);
             if let Some(renderer) = &mut self.renderer {
                 if let Err(error) = renderer.update_camera(CameraView {
-                    eye: center + Vec3::new(1.6,0.8,2.2)*distance,
+                    eye: center + (right*1.6+Vec3::Y*0.8+forward*2.2)*distance,
                     target: center,
                     vertical_fov_radians: 42_f32.to_radians(),
                     ..CameraView::default()
@@ -1015,16 +1100,36 @@ impl VoxyApp {
                 return false;
             }
         };
-        if let Some(renderer) = &mut self.renderer {
+        if let Some(world) = &self.world {
+            self.animal_check_tick += 1;
+            let mut companion_bodies: Vec<_> = self.companions.iter().map(animals::Companion::body).collect();
+            for (index, animal) in self.companions.iter_mut().enumerate() {
+                let target = if self.animal_check && (self.animal_check_tick < 180 || self.animal_check_tick >= 520 || (340..=365).contains(&self.animal_check_tick)) {
+                    animal.position()
+                } else if self.animal_check {
+                    let t = self.animal_check_tick as f32 * dt;
+                    self.actor_position + Vec3::new(if index == 0 { 3.0 } else { -3.0 }, 0.0, 4.0 + (t * 0.8).sin() * 3.0)
+                } else {
+                    self.actor_position + Vec3::X * if index == 0 { 1.2 } else { -1.2 }
+                };
+                let mut obstacles:Vec<_> = companion_bodies.iter().enumerate().filter(|(other,_)|*other!=index).map(|(_,body)|*body).collect();
+                if let Some(character)=&self.character {obstacles.push(character.body);}
+                if let Err(error) = animal.tick_with_bodies(world, target, dt, &obstacles) {
+                    self.startup_failure = Some(format!("Animal physics failed: {error}"));
+                    event_loop.exit();
+                    return false;
+                }
+                companion_bodies[index] = animal.body();
+            }
+        }
+        if self.renderer.is_some() {
             let model = Mat4::from_rotation_translation(
                 Quat::from_rotation_y(self.actor_yaw),
                 self.actor_position,
             );
-            if let Err(error) = renderer.update_skinned_pose(&frame.skin_matrices, model) {
-                eprintln!("Voxy animated actor update failed: {error}");
-                event_loop.exit();
-                return false;
-            }
+            let mut palette = frame.skin_matrices.to_vec();
+            for animal in &self.companions { palette.extend(match animal.palette(model.inverse()) { Ok(palette) => palette, Err(error) => { self.startup_failure=Some(error);event_loop.exit();return false; } }); }
+            self.pending_actor_pose = Some((palette, model));
         }
         self.animation_frames = self.animation_frames.saturating_add(1);
         true
@@ -2067,7 +2172,10 @@ fn bootstrap_actor() -> Result<(AnimatedActor, SkinnedMesh), Box<dyn std::error:
         [0.82, 2.4, 0.2],
         4,
     );
-    let mesh = SkinnedMesh::new(vertices, indices, 5)?;
+    if animals::check_requested() { vertices.clear(); indices.clear(); }
+    animals::append_mesh(&mut vertices, &mut indices, false, 5)?;
+    animals::append_mesh(&mut vertices, &mut indices, true, 5 + (animals::JOINTS / 2) as u16)?;
+    let mesh = SkinnedMesh::new(vertices, indices, 5 + animals::JOINTS as u16)?;
     Ok((
         AnimatedActor {
             skeleton,
@@ -2150,7 +2258,91 @@ fn loading_title(percent: u8, stage: &str) -> String {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    if animals::check_requested() { std::env::set_current_dir(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))?; }
     let arguments: Vec<_> = std::env::args().skip(1).collect();
+    if arguments.first().is_some_and(|arg| arg == "--vegetation") {
+        let kind = match arguments.get(1).map(String::as_str) {
+            None | Some("tree") => voxy_model::plants::PlantKind::Tree,
+            Some("shrub") => voxy_model::plants::PlantKind::Shrub,
+            _ => return Err("--vegetation expects tree or shrub".into()),
+        };
+        let seed = arguments
+            .iter()
+            .position(|a| a == "--seed")
+            .map(|i| {
+                arguments
+                    .get(i + 1)
+                    .ok_or("--seed requires a value")?
+                    .parse::<u64>()
+                    .map_err(|_| "invalid seed")
+            })
+            .transpose()?
+            .unwrap_or(42);
+        let height = arguments
+            .iter()
+            .position(|a| a == "--height")
+            .map(|i| {
+                arguments
+                    .get(i + 1)
+                    .ok_or("--height requires a value")?
+                    .parse::<f32>()
+                    .map_err(|_| "invalid height")
+            })
+            .transpose()?
+            .unwrap_or(if kind == voxy_model::plants::PlantKind::Tree {
+                7.0
+            } else {
+                1.6
+            });
+        let bytes = voxy_model::plants::generate_plant_glb(voxy_model::plants::PlantOptions {
+            kind,
+            seed,
+            height,
+        })?;
+        let output = arguments
+            .iter()
+            .position(|a| a == "--output")
+            .map(|i| {
+                arguments
+                    .get(i + 1)
+                    .map(std::path::PathBuf::from)
+                    .ok_or("--output requires a path")
+            })
+            .transpose()?
+            .unwrap_or_else(|| {
+                std::path::PathBuf::from(format!("artifacts/vegetation/{kind:?}-{seed}.glb"))
+            });
+        if let Some(parent) = output.parent().filter(|p| !p.as_os_str().is_empty()) {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(&output, bytes)?;
+        println!("Generated plant: {}", output.display());
+        if arguments.iter().any(|a| a == "--export-only") {
+            return Ok(());
+        }
+        let preview = output.with_extension("preview.glb");
+        std::fs::write(
+            &preview,
+            voxy_model::plants::generate_plant_editor_glb(voxy_model::plants::PlantOptions {
+                kind,
+                seed,
+                height,
+            })?,
+        )?;
+        println!(
+            "Editor opens a simplified material preview; full PBR asset retained at {}",
+            output.display()
+        );
+        return voxy_editor::run_model_viewport(
+            &voxy_editor::ModelSource::File(preview),
+            if arguments.iter().any(|a| a == "--smoke") {
+                voxy_editor::ViewportMode::Smoke
+            } else {
+                voxy_editor::ViewportMode::Interactive
+            },
+        );
+    }
+
     if arguments.first().is_some_and(|arg| arg == "--game-package") {
         let path = arguments.get(1).ok_or("--game-package requires a path")?;
         let mode = match arguments.get(2).map(String::as_str) {
@@ -2256,7 +2448,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     let event_loop = EventLoop::new()?;
     event_loop.set_control_flow(ControlFlow::Wait);
+    let camcorder_mode = std::env::args()
+        .any(|arg| matches!(arg.as_str(), "--camcorder" | "--videocam" | "--video"))
+        || std::env::var("VOXY_CAMCORDER").is_ok_and(|value| value == "1");
+    let clean_cam_mode = !camcorder_mode
+        && (animals::check_requested() || std::env::args().any(|arg| matches!(arg.as_str(), "--cam" | "--clean-cam"))
+            || std::env::var("VOXY_CAM").is_ok_and(|value| value == "1"));
+    let bodycam_mode = camcorder_mode
+        || clean_cam_mode
+        || std::env::args().any(|arg| matches!(arg.as_str(), "--bodycam" | "--photoreal"))
+        || std::env::var("VOXY_BODYCAM").is_ok_and(|value| value == "1");
     let mut app = VoxyApp {
+        animal_check: animals::check_requested(),
         graphics,
         motion_compute,
         cuda_water,
@@ -2264,6 +2467,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         cuda_character_motion: std::env::args().any(|arg| arg == "--cuda-character-motion"),
         cuda_collisions: std::env::args().any(|arg| arg == "--cuda-collisions"),
         cuda_vehicle_motion: std::env::args().any(|arg| arg == "--cuda-vehicle-motion"),
+        bodycam_mode,
+        clean_cam_mode,
+        camcorder_mode,
         ..VoxyApp::default()
     };
     event_loop.run_app(&mut app)?;
@@ -2287,28 +2493,15 @@ fn build_startup_scene(
             eprintln!("Terrain selection failed: {error}");
             voxy_world::GenerationError::BackendFailure
         })?;
-    let camcorder_mode = std::env::args()
-        .any(|arg| matches!(arg.as_str(), "--camcorder" | "--videocam" | "--video"))
-        || std::env::var("VOXY_CAMCORDER").is_ok_and(|value| value == "1");
-    let clean_cam_mode = !camcorder_mode
-        && (std::env::args().any(|arg| arg == "--animals-check") || std::env::args().any(|arg| matches!(arg.as_str(), "--cam" | "--clean-cam"))
-            || std::env::var("VOXY_CAM").is_ok_and(|value| value == "1"));
-    let bodycam_mode = camcorder_mode
-        || clean_cam_mode
-        || std::env::args().any(|arg| matches!(arg.as_str(), "--bodycam" | "--photoreal"))
-        || std::env::var("VOXY_BODYCAM").is_ok_and(|value| value == "1");
-    if backend == terrain_options::TerrainBackend::Cpu {
-        return build_procedural_scene(0x56_4f_58_59, 1);
-    }
-    voxy_runtime::build_generated_scene(0x56_4f_58_59, 1, |palette, water| {
+    let factory = |palette, water| -> Result<Box<dyn voxy_world::ChunkGenerator>, voxy_world::GenerationError> {
+        if backend == terrain_options::TerrainBackend::Cpu {
+            return Ok(Box::new(voxy_world::ProceduralTerrainGenerator::new(palette, water)));
+        }
         if let terrain_options::TerrainBackend::Cuda { ordinal } = backend {
             let generator =
                 voxy_gpu::CudaTerrainGenerator::new(ordinal, palette, water).map_err(|error| {
                     eprintln!("CUDA terrain initialization failed: {error}");
                     voxy_world::GenerationError::BackendFailure
-        bodycam_mode,
-        clean_cam_mode,
-        camcorder_mode,
                 })?;
             eprintln!("CUDA terrain: {:?}", generator.capabilities());
             Ok(Box::new(generator))
@@ -2322,7 +2515,12 @@ fn build_startup_scene(
             eprintln!("GPU terrain: {:?}", generator.capabilities().adapter);
             Ok(Box::new(generator))
         }
-    })
+    };
+    if std::env::args().any(|arg| arg == "--voxel-plants") {
+        voxy_runtime::build_generated_scene(0x56_4f_58_59, 1, factory)
+    } else {
+        voxy_runtime::build_generated_scene_with_mesh_plants(0x56_4f_58_59, 1, factory)
+    }
 }
 
 #[cfg(test)]

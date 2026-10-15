@@ -42,6 +42,7 @@ struct PhotorealCameraUniform {
     camera_eye: [f32; 4],
     flashlight_pos: [f32; 4],
     flashlight_dir: [f32; 4],
+    subject_spheres: [[f32; 4]; 12],
 }
 
 #[repr(C)]
@@ -186,10 +187,12 @@ pub struct Renderer {
     resident_camera_anchor: ChunkPos,
     depth_texture: wgpu::Texture,
     depth_view: wgpu::TextureView,
+    native_vegetation: Option<crate::NativeVegetation>,
     bodycam_enabled: bool,
     bodycam_rig: BodycamRig,
     bodycam_flashlight_pos: Vec3,
     bodycam_flashlight_dir: Vec3,
+    bodycam_subject_spheres: [[f32; 4]; 12],
     bodycam_wetness: f32,
     photoreal_camera_layout: wgpu::BindGroupLayout,
     photoreal_camera_buffer: wgpu::Buffer,
@@ -452,10 +455,12 @@ impl Renderer {
             resident_camera_anchor: ChunkPos { x: 0, y: 0, z: 0 },
             depth_texture,
             depth_view,
+            native_vegetation: None,
             bodycam_enabled: false,
             bodycam_rig,
             bodycam_flashlight_pos,
             bodycam_flashlight_dir,
+            bodycam_subject_spheres: [[0.0; 4]; 12],
             bodycam_wetness,
             photoreal_camera_layout,
             photoreal_camera_buffer,
@@ -1049,10 +1054,30 @@ impl Renderer {
         if self.bodycam_enabled {
             self.encode_bodycam_passes(&mut encoder, &view, frame_id);
         } else {
+            self.encode_resident_voxels(&mut encoder, &view);
+        }
+        encode_motion_layers(&mut encoder, motion_pass.as_ref(), base_motion.as_ref())?;
+        self.queue.submit([encoder.finish()]);
+        self.queue.present(frame);
+        self.resident_presented_frames = frame_id;
+        self.skinned_motion_metadata = motion_pass.as_ref().map(|_| (frame_id, reset_motion));
+        self.skinned_motion_output = motion_pass;
+        self.scene_depth_motion = base_motion;
+        self.commit_skinned_temporal_history();
+        if suboptimal {
+            self.surface.configure(&self.device, &self.config);
+            Ok(RenderOutcome::Reconfigured)
+        } else {
+            Ok(RenderOutcome::Presented)
+        }
+    }
+
+    fn encode_resident_voxels(&self, encoder: &mut wgpu::CommandEncoder, view: &wgpu::TextureView) {
+        {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Voxy voxel pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &view,
+                    view,
                     depth_slice: None,
                     resolve_target: None,
                     ops: wgpu::Operations {
@@ -1102,19 +1127,17 @@ impl Renderer {
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
             }
         }
-        encode_motion_layers(&mut encoder, motion_pass.as_ref(), base_motion.as_ref())?;
-        self.queue.submit([encoder.finish()]);
-        self.queue.present(frame);
-        self.resident_presented_frames = frame_id;
-        self.skinned_motion_metadata = motion_pass.as_ref().map(|_| (frame_id, reset_motion));
-        self.skinned_motion_output = motion_pass;
-        self.scene_depth_motion = base_motion;
-        self.commit_skinned_temporal_history();
-        if suboptimal {
-            self.surface.configure(&self.device, &self.config);
-            Ok(RenderOutcome::Reconfigured)
-        } else {
-            Ok(RenderOutcome::Presented)
+        if let Some(plants) = &self.native_vegetation {
+            plants.encode(
+                &self.device,
+                &self.queue,
+                encoder,
+                view,
+                &self.depth_view,
+                camera_view_projection(self.config.width, self.config.height, self.camera),
+                self.camera.eye,
+                false,
+            );
         }
     }
 
@@ -1136,18 +1159,20 @@ impl Renderer {
     ) {
         self.bodycam_post
             .update_from_rig(&self.queue, &self.bodycam_rig, frame_id);
+        let mut uniform = photoreal_camera_uniform(
+            self.config.width,
+            self.config.height,
+            self.camera,
+            &self.bodycam_rig,
+            self.bodycam_flashlight_pos,
+            self.bodycam_flashlight_dir,
+            self.bodycam_wetness,
+        );
+        uniform.subject_spheres = self.bodycam_subject_spheres;
         self.queue.write_buffer(
             &self.photoreal_camera_buffer,
             0,
-            bytemuck::bytes_of(&photoreal_camera_uniform(
-                self.config.width,
-                self.config.height,
-                self.camera,
-                &self.bodycam_rig,
-                self.bodycam_flashlight_pos,
-                self.bodycam_flashlight_dir,
-                self.bodycam_wetness,
-            )),
+            bytemuck::bytes_of(&uniform),
         );
         {
             // CIE Overcast Sky linear HDR zenith/horizon skybox clear color
@@ -1213,6 +1238,22 @@ impl Renderer {
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
             }
         }
+        if let Some(plants) = &self.native_vegetation {
+            plants.encode(
+                &self.device,
+                &self.queue,
+                encoder,
+                self.bodycam_post.hdr_view(),
+                &self.depth_view,
+                perspective_camera_view_projection(
+                    self.config.width,
+                    self.config.height,
+                    self.camera,
+                ),
+                self.camera.eye,
+                true,
+            );
+        }
         if let Some((scene, draws)) = scene_overlay {
             scene.encode_over(
                 encoder,
@@ -1248,6 +1289,26 @@ impl Renderer {
     }
 
     /// Updates the tactical flashlight world pose and surface wetness (`0.0..=1.0`).
+    /// Analytic sphere proxies used for soft contact occlusion on voxel surfaces.
+    /// # Errors
+    /// Rejects invalid centers/radii before changing the active proxy set.
+    pub fn set_subject_shadow_spheres(
+        &mut self,
+        spheres: &[[f32; 4]],
+    ) -> Result<(), RendererError> {
+        if spheres.len() > 12
+            || spheres
+                .iter()
+                .any(|s| s.iter().any(|x| !x.is_finite()) || s[3] < 0.0)
+        {
+            return Err(RendererError::Skinned(SkinnedUploadError::NonFiniteMatrix));
+        }
+        let mut next = [[0.0; 4]; 12];
+        next[..spheres.len()].copy_from_slice(spheres);
+        self.bodycam_subject_spheres = next;
+        Ok(())
+    }
+
     pub fn set_bodycam_flashlight_and_wetness(
         &mut self,
         origin: Vec3,
@@ -1307,6 +1368,35 @@ impl Renderer {
         frame_id: u64,
         scene_overlay: Option<(&crate::SceneRenderer, &[crate::SceneDraw<'_>])>,
     ) -> Result<(u32, u32, Vec<u8>), RendererError> {
+        self.capture_world_snapshot(frame_id, scene_overlay, true)
+    }
+    /// Read back the current world, including vegetation, through its active projection/render mode.
+    /// # Errors
+    /// Returns GPU or readback failures.
+    pub fn capture_world_rgba8(
+        &mut self,
+        frame_id: u64,
+    ) -> Result<(u32, u32, Vec<u8>), RendererError> {
+        self.capture_world_snapshot(frame_id, None, self.bodycam_enabled)
+    }
+    /// Validation capture with the same world/camera and the native vegetation layer temporarily omitted.
+    /// # Errors
+    /// Returns GPU/readback failures, restoring the vegetation owner on either result.
+    pub fn capture_world_without_vegetation_rgba8(
+        &mut self,
+        frame_id: u64,
+    ) -> Result<(u32, u32, Vec<u8>), RendererError> {
+        let plants = self.native_vegetation.take();
+        let result = self.capture_world_rgba8(frame_id);
+        self.native_vegetation = plants;
+        result
+    }
+    fn capture_world_snapshot(
+        &mut self,
+        frame_id: u64,
+        scene_overlay: Option<(&crate::SceneRenderer, &[crate::SceneDraw<'_>])>,
+        bodycam: bool,
+    ) -> Result<(u32, u32, Vec<u8>), RendererError> {
         self.check_device()?;
         let width = self.config.width.max(1);
         let height = self.config.height.max(1);
@@ -1327,9 +1417,9 @@ impl Renderer {
         });
         let view = offscreen.create_view(&wgpu::TextureViewDescriptor::default());
         let unpadded_bytes_per_row = width * 4;
-        let padded_bytes_per_row =
-            unpadded_bytes_per_row.div_ceil(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT)
-                * wgpu::COPY_BYTES_PER_ROW_ALIGNMENT;
+        let padded_bytes_per_row = unpadded_bytes_per_row
+            .div_ceil(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT)
+            * wgpu::COPY_BYTES_PER_ROW_ALIGNMENT;
         let readback = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Voxy bodycam snapshot readback"),
             size: u64::from(padded_bytes_per_row) * u64::from(height),
@@ -1341,7 +1431,11 @@ impl Renderer {
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("Voxy bodycam snapshot encoder"),
             });
-        self.encode_bodycam_passes_with_scene(&mut encoder, &view, frame_id, scene_overlay);
+        if bodycam {
+            self.encode_bodycam_passes_with_scene(&mut encoder, &view, frame_id, scene_overlay);
+        } else {
+            self.encode_resident_voxels(&mut encoder, &view);
+        }
         encoder.copy_texture_to_buffer(
             wgpu::TexelCopyTextureInfo {
                 texture: &offscreen,
@@ -1432,12 +1526,7 @@ impl Renderer {
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("Voxy bodycam + scene frame encoder"),
             });
-        self.encode_bodycam_passes_with_scene(
-            &mut encoder,
-            &view,
-            frame_id,
-            Some((scene, draws)),
-        );
+        self.encode_bodycam_passes_with_scene(&mut encoder, &view, frame_id, Some((scene, draws)));
         self.queue.submit([encoder.finish()]);
         self.queue.present(frame);
         self.resident_presented_frames = frame_id;
@@ -1540,6 +1629,20 @@ impl Renderer {
         self.state
     }
 
+    pub fn set_native_vegetation(&mut self, plants: Option<crate::NativeVegetation>) {
+        self.native_vegetation = plants;
+    }
+    /// # Errors
+    /// Rejects changed instance counts beyond the initially reserved world capacity.
+    pub fn update_native_vegetation_instances(
+        &mut self,
+        instances: &[Vec<crate::archive_scene::ArchiveInstance>],
+    ) -> Result<(), crate::ComputeError> {
+        if let Some(plants) = &mut self.native_vegetation {
+            plants.update_instances(&self.queue, instances)?;
+        }
+        Ok(())
+    }
     #[must_use]
     pub fn adapter_info(&self) -> wgpu::AdapterInfo {
         self.adapter.get_info()
@@ -2078,6 +2181,7 @@ fn photoreal_camera_uniform(
     wetness: f32,
 ) -> PhotorealCameraUniform {
     PhotorealCameraUniform {
+        subject_spheres: [[0.0; 4]; 12],
         view_proj: perspective_camera_view_projection(width, height, camera).to_cols_array_2d(),
         camera_eye: [
             camera.eye.x,

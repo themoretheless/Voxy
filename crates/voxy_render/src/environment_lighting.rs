@@ -1,3 +1,4 @@
+use crate::dfg::DfgSampling;
 use crate::{GgxDfgLut, GgxEnvironmentPrefilter, SceneError};
 use wgpu::util::DeviceExt;
 #[derive(Debug)]
@@ -5,6 +6,7 @@ pub(crate) struct EnvironmentBindings {
     pub(crate) layout: wgpu::BindGroupLayout,
     pub(crate) group: wgpu::BindGroup,
     pub(crate) diffuse: bool,
+    pub(crate) sampling: DfgSampling,
     pub(crate) intensity: f32,
     pub(crate) intensity_buffer: wgpu::Buffer,
 }
@@ -15,6 +17,7 @@ impl EnvironmentBindings {
         dfg: &GgxDfgLut,
         diffuse: Option<&crate::DiffuseEnvironmentConvolution>,
         intensity: f32,
+        retained_intensity: Option<&wgpu::Buffer>,
     ) -> Result<Self, SceneError> {
         if !environment.belongs_to(device)
             || !dfg.belongs_to(device)
@@ -26,7 +29,9 @@ impl EnvironmentBindings {
             binding,
             visibility: wgpu::ShaderStages::FRAGMENT,
             ty: wgpu::BindingType::Texture {
-                sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                sample_type: wgpu::TextureSampleType::Float {
+                    filterable: binding != 1 || !dfg.has_energy_moments(),
+                },
                 view_dimension: dimension,
                 multisampled: false,
             },
@@ -62,10 +67,12 @@ impl EnvironmentBindings {
             mipmap_filter: wgpu::MipmapFilterMode::Linear,
             ..Default::default()
         });
-        let intensity_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("environment intensity"),
-            contents: bytemuck::cast_slice(&[intensity, 0.0, 0.0, 0.0]),
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        let intensity_buffer = retained_intensity.cloned().unwrap_or_else(|| {
+            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("environment intensity"),
+                contents: bytemuck::cast_slice(&[intensity, 0.0, 0.0, 0.0]),
+                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            })
         });
         let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("retained scene IBL"),
@@ -100,6 +107,7 @@ impl EnvironmentBindings {
             layout,
             group,
             diffuse: diffuse.is_some(),
+            sampling: dfg.sampling(),
             intensity,
             intensity_buffer,
         })
@@ -107,13 +115,14 @@ impl EnvironmentBindings {
 }
 pub(crate) fn shader_with_environment(environment: Option<&EnvironmentBindings>) -> String {
     environment.map_or_else(crate::shadow_visibility::shader, |e| {
-        shader_combined(true, e.diffuse)
+        shader_combined_profile(true, e.diffuse, e.sampling)
     })
 }
-pub(crate) fn shader(shadows: bool) -> String {
-    shader_combined(shadows, false)
+pub(crate) fn shader_for_dfg(shadows: bool, diffuse: bool, dfg: &GgxDfgLut) -> String {
+    shader_combined_profile(shadows, diffuse, dfg.sampling())
 }
-pub(crate) fn shader_combined(shadows: bool, diffuse: bool) -> String {
+
+fn shader_combined_profile(shadows: bool, diffuse: bool, mode: DfgSampling) -> String {
     let source = if shadows {
         crate::shadow_visibility::shader()
     } else {
@@ -121,14 +130,34 @@ pub(crate) fn shader_combined(shadows: bool, diffuse: bool) -> String {
     };
     let source = source.replace(
         "+ base * 0.02, texel.a)",
-        "+ base * 0.02 + environment_specular(n, v, nv, roughness, f0), texel.a)",
+        "+ base * 0.02 + environment_specular(n, v, material_nv, material_roughness, f0), texel.a)",
     );
     let source = if diffuse {
-        source.replace("environment_specular(n, v, nv, roughness, f0)", "environment_specular(n, v, nv, roughness, f0) + environment_diffuse(n, nv, f0, base, metallic)")
+        source.replace("environment_specular(n, v, material_nv, material_roughness, f0)", "environment_specular(n, v, material_nv, material_roughness, f0) + environment_diffuse(n, material_nv, f0, base, metallic)")
     } else {
         source
     };
-    format!("{source}\n{IBL}\n{DIFFUSE}")
+    let lookup = if mode == DfgSampling::EnergyPatches {
+        format!(
+            "{}\n{}",
+            include_str!("material_energy_patch.wgsl"),
+            include_str!("material_energy_atlas.wgsl")
+        )
+    } else {
+        include_str!("material_energy_lookup.wgsl").to_owned()
+    };
+    let sampling = match mode {
+        DfgSampling::EnergyPatches => {
+            "fn sample_environment_dfg(uv:vec2<f32>)->vec2<f32>{return lookup_ggx_energy_atlas(environment_dfg,uv).rg;}"
+        }
+        DfgSampling::EnergyGrid => {
+            "fn sample_environment_dfg(uv:vec2<f32>)->vec2<f32>{return lookup_ggx_energy(environment_dfg,uv).rg;}"
+        }
+        DfgSampling::Legacy => {
+            "fn sample_environment_dfg(uv:vec2<f32>)->vec2<f32>{return textureSampleLevel(environment_dfg,environment_sampler,uv,0.0).rg;}"
+        }
+    };
+    format!("{source}\n{IBL}\n{DIFFUSE}\n{lookup}\n{sampling}")
 }
 const IBL: &str = r"
 @group(3) @binding(0) var environment_cube: texture_cube<f32>;
@@ -139,7 +168,7 @@ fn environment_specular(n: vec3<f32>, v: vec3<f32>, nv: f32, roughness: f32, f0:
     let r = reflect(-v,n);
     let radiance = textureSampleLevel(environment_cube, environment_sampler, r,
         roughness*f32(textureNumLevels(environment_cube)-1u)).rgb;
-    let ab = textureSampleLevel(environment_dfg, environment_sampler, vec2(nv,roughness),0.).rg;
+    let ab = sample_environment_dfg(vec2(nv,roughness));
     return radiance*(f0*ab.x+vec3(ab.y))*environment_settings.x;
 }
 ";

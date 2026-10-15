@@ -21,3 +21,6 @@ pub use world::{
     ChunkDelta, CommitError, CommitId, CommitReceipt, DirtyBounds, DurabilityTicket, EditSource,
     EditTxn, InverseEdit, Sample, UnavailableReason, VoxelView, VoxelWrite, World, WorldLimits,
 };
+
+mod vegetation;
+pub use vegetation::{VegetationGenerator, VegetationPalette};

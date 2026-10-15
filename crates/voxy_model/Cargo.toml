@@ -7,6 +7,7 @@ publish = false
 description = "glTF model import into renderer meshes and animation rigs"
 
 [dependencies]
+bevy_mikktspace = { path = "../../vendor/bevy_mikktspace" }
 voxy_render = { path = "../voxy_render" }
 voxy_animation = { path = "../voxy_animation" }
 glam = { version = "0.33.6", features = ["bytemuck"] }

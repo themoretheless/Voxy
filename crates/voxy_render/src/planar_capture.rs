@@ -78,7 +78,9 @@ impl PlanarReflectionCapture {
                 environment,
                 dfg,
                 None,
-                &clip_pbr_source(&crate::environment_lighting::shader(false)),
+                &clip_pbr_source(&crate::environment_lighting::shader_for_dfg(
+                    false, false, dfg,
+                )),
             )
             .await
     }
@@ -98,9 +100,46 @@ impl PlanarReflectionCapture {
                 environment,
                 dfg,
                 Some(diffuse),
-                &clip_pbr_source(&crate::environment_lighting::shader_combined(false, true)),
+                &clip_pbr_source(&crate::environment_lighting::shader_for_dfg(
+                    false, true, dfg,
+                )),
             )
             .await
+    }
+
+    /// Prepare clipped capture lighting without mutating current bindings.
+    pub async fn prepare_environment_lighting(
+        &self,
+        environment: &crate::GgxEnvironmentPrefilter,
+        dfg: &crate::GgxDfgLut,
+        diffuse: Option<&crate::DiffuseEnvironmentConvolution>,
+    ) -> Result<crate::PreparedSceneEnvironment, crate::SceneShaderError> {
+        let source = clip_pbr_source(&crate::environment_lighting::shader_for_dfg(
+            false,
+            diffuse.is_some(),
+            dfg,
+        ));
+        self.renderer
+            .prepare_environment_source(&self.device, environment, dfg, diffuse, &source)
+            .await
+    }
+    /// Install main-view and reflection bindings in the same validated atlas transaction.
+    pub fn commit_environment_atlas_with_scene(
+        &mut self,
+        scene: &mut SceneRenderer,
+        scene_prepared: crate::PreparedSceneEnvironment,
+        capture_prepared: crate::PreparedSceneEnvironment,
+        slot: &mut crate::GgxEnergyAtlasSlot,
+        ready: crate::ReadyGgxEnergyAtlas,
+    ) -> Result<crate::GgxDfgLut, crate::SceneShaderError> {
+        SceneRenderer::commit_environment_atlas_batch(
+            vec![
+                (scene, scene_prepared),
+                (&mut self.renderer, capture_prepared),
+            ],
+            slot,
+            ready,
+        )
     }
 
     /// The capture renderer creates compatible geometry, textures and transforms.

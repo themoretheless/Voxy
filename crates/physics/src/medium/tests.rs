@@ -659,9 +659,7 @@ fn mixture_density_fog_condensation_and_wet_scavenging_conserve_mass() {
         .unwrap();
     assert!(cond.net_condensed_fog_mass_kg > 0.0);
     assert!(medium.total_mass_kg(1) > 0.0);
-    assert!(
-        (cond.total_gas_plus_fog_before_kg - cond.total_gas_plus_fog_after_kg).abs() < 1e-12
-    );
+    assert!((cond.total_gas_plus_fog_before_kg - cond.total_gas_plus_fog_after_kg).abs() < 1e-12);
 
     // Wet scavenging of Smoke (0) and Dust (2) by water Mist (3)
     let total_suspended_before: f64 = (0..4).map(|s| medium.total_mass_kg(s)).sum();

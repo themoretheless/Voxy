@@ -349,4 +349,3 @@ impl LabiaGaitSimulation {
         Ok(report)
     }
 }
-

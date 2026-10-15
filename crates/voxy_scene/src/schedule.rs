@@ -839,8 +839,11 @@ mod extended_access_tests {
                 if name == "spawn_alpha" {
                     assert_eq!(graph.len(), 0);
                     let cmds = access.commands().map_err(|e| e.to_string())?;
-                    cmds.push(crate::SceneCommand::Spawn(None, crate::Transform::default()))
-                        .map_err(|e| format!("{e:?}"))?;
+                    cmds.push(crate::SceneCommand::Spawn(
+                        None,
+                        crate::Transform::default(),
+                    ))
+                    .map_err(|e| format!("{e:?}"))?;
                 } else if name == "verify_scene" {
                     assert_eq!(graph.len(), 1);
                 }

@@ -741,10 +741,11 @@ pub fn crumble_debris_multi_fragment(
         }
         let dv_correction = scale(weighted_dv, 1.0 / remaining_mass);
 
-        for ((c_lo, c_hi), (center, (&child_mass, dv_raw))) in child_boxes
-            .into_iter()
-            .zip(child_centers.into_iter().zip(child_masses.iter().zip(dv_list)))
-        {
+        for ((c_lo, c_hi), (center, (&child_mass, dv_raw))) in child_boxes.into_iter().zip(
+            child_centers
+                .into_iter()
+                .zip(child_masses.iter().zip(dv_list)),
+        ) {
             let mut pts = Vec::with_capacity(8);
             for &x in &[c_lo[0], c_hi[0]] {
                 for &y in &[c_lo[1], c_hi[1]] {
@@ -879,8 +880,9 @@ pub fn abrade_debris_hull(
             continue;
         }
 
-        let raw_volume =
-            settings.archard_coefficient * (normal_load_n / settings.hardness_pa) * sliding_distance_m;
+        let raw_volume = settings.archard_coefficient
+            * (normal_load_n / settings.hardness_pa)
+            * sliding_distance_m;
         let max_mass = body.piece.mass_kg * settings.max_mass_fraction_per_step;
         let raw_mass = (raw_volume * settings.density_kg_m3).min(max_mass);
         let grain_count = (raw_mass / grain_mass).floor() as usize;

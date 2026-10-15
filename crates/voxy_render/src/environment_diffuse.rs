@@ -29,6 +29,15 @@ impl DiffuseEnvironmentConvolution {
         size: u32,
         samples: u32,
     ) -> Result<Self, RendererError> {
+        Self::with_samples_format(device, size, samples, wgpu::TextureFormat::Rgba16Float)
+    }
+    /// Internal full-precision import path; caller validates format/filter support.
+    pub(crate) fn with_samples_format(
+        device: &wgpu::Device,
+        size: u32,
+        samples: u32,
+        format: wgpu::TextureFormat,
+    ) -> Result<Self, RendererError> {
         if !(1..=4096).contains(&samples) {
             return Err(RendererError::InvalidPrefilterSamples(samples));
         }
@@ -52,7 +61,7 @@ impl DiffuseEnvironmentConvolution {
                 mip_level_count,
                 sample_count: 1,
                 dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::Rgba16Float,
+                format,
                 usage: wgpu::TextureUsages::TEXTURE_BINDING
                     | wgpu::TextureUsages::RENDER_ATTACHMENT
                     | wgpu::TextureUsages::COPY_SRC
@@ -176,7 +185,7 @@ impl DiffuseEnvironmentConvolution {
                 entry_point: Some("fs_main"),
                 compilation_options: Default::default(),
                 targets: &[Some(wgpu::ColorTargetState {
-                    format: wgpu::TextureFormat::Rgba16Float,
+                    format,
                     blend: None,
                     write_mask: wgpu::ColorWrites::ALL,
                 })],

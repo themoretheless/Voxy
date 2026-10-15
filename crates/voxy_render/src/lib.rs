@@ -53,7 +53,20 @@ mod hdr_mips;
 mod hdr_resolve;
 pub use hdr_mips::HdrMipPyramid;
 mod dfg;
-pub use dfg::GgxDfgLut;
+pub use dfg::{
+    GgxEnergyAtlasBuild, GgxEnergyAtlasSlot, GgxEnergyBuildBudget, GgxEnergyBuildError,
+    GgxEnergyBuildPhase, GgxEnergyBuildProgress, GgxEnergyOracleSample, ReadyGgxEnergyAtlas,
+};
+pub use dfg::{
+    EncodedGgxEnergyBatch, GGX_ENERGY_GPU_BATCH_LIMIT, GgxEnergyBatchKey,
+    GgxEnergyBatchOutput, GgxEnergyBatchStage, GgxEnergyGpuPrecompute, PendingGgxEnergyBatch,
+};
+pub use dfg::{
+    GgxDfgLut, GgxEnergyPatchData, GgxEnergyPatchError,
+    GgxEnergyRefinementAssessment, GgxEnergyRefinementDecision, GgxEnergyRefinementError,
+    GgxEnergyRefinementObservation, GgxEnergyRefinementPlan, GgxEnergyRefinementPolicy,
+    GgxEnergyRefinementProbe,
+};
 mod environment_diffuse;
 mod environment_lighting;
 pub use environment_diffuse::DiffuseEnvironmentConvolution;
@@ -132,7 +145,7 @@ pub use skinned_lod_gpu::{SkinnedLodGpuError, SkinnedLodResidency};
 pub use skinned_motion::{PreparedSkinnedFrame, SkinnedMotionFrame, SkinnedMotionHistory};
 
 pub use scene::{
-    DEFAULT_SCENE_SHADER, SceneDepthMode, SceneDraw, SceneError, SceneGeometry, SceneLodGeometry,
+    DEFAULT_SCENE_SHADER, PreparedSceneEnvironment, SceneDepthMode, SceneDraw, SceneError, SceneGeometry, SceneLodGeometry,
     SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError, SceneSkinError, SceneSkinInstance,
     SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner, SceneTexture, SceneTransform,
     SceneVertex, SceneView, SceneViewTargets,
@@ -382,3 +395,32 @@ pub mod test_support {
     pub use crate::skinned::{GpuSkinnedMesh, create_skin_layout, upload_skinned};
     pub use crate::skinned_lod::test_source as skinned_lod_source;
 }
+
+mod contact_exact_five;
+pub use contact_exact_five::ExperimentalExactFiveContactInput;
+
+#[cfg(test)]
+mod contact_five_product_tests;
+
+mod contact_five_qr;
+pub use contact_five_qr::{ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue};
+
+#[cfg(test)]
+mod contact_five_qr_tests;
+
+mod contact_five_gaps;
+pub use contact_five_gaps::{ExperimentalFiveGapInput,ExperimentalFiveGapDecision};
+
+mod contact_five_select;
+pub use contact_five_select::{ExperimentalFiveSelection,ExperimentalFiveSelectionInput};
+
+mod contact_five_release;
+pub use contact_five_release::{ExperimentalFiveRelease,ExperimentalFiveReleaseInput};
+
+mod compressed_image;
+pub use compressed_image::Bc7ImageAsset;
+
+pub mod archive_scene;
+
+mod native_vegetation;
+pub use native_vegetation::NativeVegetation;
