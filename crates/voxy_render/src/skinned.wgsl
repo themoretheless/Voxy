@@ -63,7 +63,7 @@ fn vs_main(input: VertexInput) -> VertexOutput {
     // Explicit packed-linear-color mode: UV.y is reserved below -10000.
     if input.uv.y <= -10000.0 {
         let rgb = u32(input.uv.x);
-        output.coat = vec4<f32>(vec3<f32>(f32(rgb & 255u),f32((rgb >> 8u) & 255u),f32((rgb >> 16u) & 255u))/255.0, -input.uv.y-10000.0);
+        output.coat = vec4<f32>(vec3<f32>(f32(rgb & 255u),f32((rgb >> 8u) & 255u),f32((rgb >> 16u) & 255u))/255.0, (-input.uv.y-10000.0)*0.001);
         output.uv = vec2<f32>(0.0);
     }
     return output;
@@ -84,11 +84,16 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     // Scaling first also keeps tiny posed triangles from losing flat lighting.
     if magnitude > 0. { normal = normalize(normal / magnitude); }
     let light = 0.18 + 0.82 * max(dot(normal, sun), 0.0);
+    if input.coat.a >= 2.0 {
+        let diffuse=sqrt(max(0.0,1.0-pow(dot(normal,sun),2.0)));
+        return vec4<f32>(input.coat.rgb*(0.25+0.75*diffuse),1.0);
+    }
     if input.coat.a >= 0.0 {
         let wrap = 0.30 + 0.70 * max(dot(normal, sun), 0.0);
         let rim = pow(1.0-abs(normal.z),4.0)*0.06;
         let linear = input.coat.rgb*wrap + vec3<f32>(rim);
-        return vec4<f32>(pow(linear,vec3<f32>(1.0/2.2)),1.0);
+        // Targets are *Srgb formats; the hardware applies the only transfer.
+        return vec4<f32>(linear,1.0);
     }
     let source = dot(albedo.rgb, vec3<f32>(0.299, 0.587, 0.114)) * light;
     let level = floor(clamp(source, 0.0, 0.999) * 32.0) / 31.0;

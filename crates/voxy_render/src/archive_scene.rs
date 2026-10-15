@@ -3,6 +3,13 @@ use crate::{Bc7ImageAsset, ComputeMemoryBudget, ComputeStorage};
 use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3, Vec4};
 use std::sync::Arc;
+/// Original display panorama and separately prepared indirect-light panorama.
+#[derive(Debug)]
+pub struct ArchiveEnvironmentSource {
+    pub lighting: crate::HdrImageAsset,
+    pub background: crate::HdrImageAsset,
+    pub intensity: f32,
+}
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct ArchiveVertex {
@@ -40,6 +47,24 @@ pub struct ArchiveMaterial {
     pub surface: [f32; 4],
     /// 0 specular/glossiness, 1 metallic/roughness; reserved
     pub workflow: [f32; 4],
+}
+impl ArchiveMaterial {
+    /// Metal/roughness parameters with no scanned maps or procedural surface.
+    pub const fn metallic_roughness(colour: [f32; 4], metallic: f32, roughness: f32, transmission: f32, cutoff: f32) -> Self {
+        Self {
+            diffuse: colour,
+            specular_gloss: [1.; 4],
+            emissive_normal: [0., 0., 0., 1.],
+            surface: [metallic, roughness, transmission, cutoff],
+            workflow: [1., 0., 0., 0.],
+        }
+    }
+    /// Silvered mirror: screen-traced near-ideal metal reflection.
+    pub const MIRROR: Self = Self::metallic_roughness([0.97, 0.97, 0.96, 1.], 1., 0.02, 0., -1.);
+    /// Clear window glass (F0 0.04): reflects the scene and refracts what is behind it.
+    pub const GLASS: Self = Self::metallic_roughness([0.92, 0.96, 0.95, 0.1], 0., 0.02, 0.92, -2.);
+    /// Dark standing-water sheet using the default dielectric F0.
+    pub const WATER: Self = Self::metallic_roughness([0.25, 0.3, 0.3, 1.], 0., 0.03, 0., -1.);
 }
 /// Source pixels for an archive material; colour transfer is selected by the shader role.
 #[derive(Debug)]
@@ -180,6 +205,13 @@ struct Camera {
     sun: [f32; 4],
     sun_colour: [f32; 4],
     viewport: [f32; 4],
+    weather: [f32; 4],
+    atmosphere: [f32; 4],
+    wind: [f32; 4],
+    /// Jittered view-projection of the frame whose opaque radiance is in `background`.
+    previous_vp: [[f32; 4]; 4],
+    /// [surface wetness, puddle coverage, history valid, 0].
+    surface: [f32; 4],
 }
 #[derive(Debug)]
 struct Material {
@@ -230,10 +262,16 @@ pub struct ArchiveSceneRenderer {
     _environment: crate::ImportedEnvironment,
     environment_bindings: crate::environment_lighting::EnvironmentBindings,
     environment_enabled: bool,
+    _sky: Arc<voxy_gpu_core::ManagedTexture>,
     post: wgpu::RenderPipeline,
+    post_linear: wgpu::RenderPipeline,
+    output_format: wgpu::TextureFormat,
+    antialiasing: crate::ArchiveAntialiasing,
+    temporal: Option<crate::archive_temporal::ArchiveTemporal>,
     post_bind: wgpu::BindGroup,
     display_parameters: ComputeStorage,
     hdr_output: bool,
+    tone_mapper: ArchiveToneMapper,
     display_headroom: f32,
     spatial_antialiasing: bool,
     frame_bind: wgpu::BindGroup,
@@ -242,6 +280,12 @@ pub struct ArchiveSceneRenderer {
     depth: wgpu::Texture,
     shadow: wgpu::Texture,
     shadow_matrix: Mat4,
+    weather: crate::weather::Weather,
+    weather_time: f32,
+    surface_wetness: Option<f32>,
+    puddle_coverage: f32,
+    previous_vp: Option<Mat4>,
+    shadow_bounds: (Vec3, Vec3),
     sun: Vec3,
     sun_colour: [f32; 4],
     width: u32,
@@ -391,19 +435,27 @@ impl ArchiveSceneRenderer {
         sun: Vec3,
         sun_colour: [f32; 4],
         bounds: (Vec3, Vec3),
-        environment: Option<crate::HdrImageAsset>,
+        environment: Option<ArchiveEnvironmentSource>,
     ) -> Result<Self, crate::ComputeError> {
         let environment_enabled = environment.is_some();
-        let panorama = match environment {
-            Some(p) => p,
-            None => crate::HdrImageAsset::from_rgb(2, 1, vec![0.;6], crate::ImageLimits::default())
-                .map_err(|e| crate::ComputeError::Validation(e.to_string()))?,
+        let (panorama, background_panorama, intensity) = match environment {
+            Some(source) => (source.lighting, Some(source.background), source.intensity),
+            None => (crate::HdrImageAsset::from_rgb(2, 1, vec![0.;6], crate::ImageLimits::default())
+                .map_err(|e| crate::ComputeError::Validation(e.to_string()))?, None, 1.),
         };
+        if !intensity.is_finite() || intensity <= 0. { return Err(crate::ComputeError::Validation("invalid environment intensity".into())); }
+        let sky = if let Some(panorama) = background_panorama {
+            ArchiveImageSource::Float { width: panorama.width(), height: panorama.height(),
+                pixels: panorama.rgb().chunks_exact(3).flat_map(|p| [p[0],p[1],p[2],1.]).collect() }.upload(device,queue)?
+        } else { ArchiveImageSource::Rgba(crate::ImageAsset::from_rgba(1,1,vec![0,0,0,255],crate::ImageLimits::default())
+            .map_err(|e|crate::ComputeError::Validation(e.to_string()))?).upload(device,queue)? };
+        let sky_sampler = device.create_sampler(&wgpu::SamplerDescriptor { address_mode_u: wgpu::AddressMode::Repeat,
+            min_filter: wgpu::FilterMode::Linear, mag_filter: wgpu::FilterMode::Linear, ..Default::default() });
         let environment = if environment_enabled { crate::ImportedEnvironment::from_panorama_full_precision(device, queue, &panorama,
             1024, crate::ImageLimits { pixel_bytes: 512 * 1024 * 1024, ..Default::default() }) } else { crate::ImportedEnvironment::from_panorama(device, queue, &panorama, 1, crate::ImageLimits::default()) }
             .map_err(|e| crate::ComputeError::Validation(e.to_string()))?;
         let environment_bindings = crate::environment_lighting::EnvironmentBindings::new(device,
-            environment.specular(), environment.dfg(), Some(environment.diffuse()), 500., None)
+            environment.specular(), environment.dfg(), Some(environment.diffuse()), intensity, None)
             .map_err(|e| crate::ComputeError::Validation(e.to_string()))?;
         let mut preparation = device.create_command_encoder(&Default::default());
         environment.encode(&mut preparation);
@@ -459,6 +511,9 @@ impl ArchiveSceneRenderer {
                 uniform_entry(1, wgpu::ShaderStages::FRAGMENT),
                 texture_entry(2, true),
                 uniform_entry(3, wgpu::ShaderStages::FRAGMENT),
+                texture_entry(4, false),
+                wgpu::BindGroupLayoutEntry { binding: 5, visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
             ],
         });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -570,14 +625,14 @@ impl ArchiveSceneRenderer {
         let timing = Timing::new(device)?;
         let post_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive display transform"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("archive_environment.wgsl"), include_str!("archive_post.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("display_transform.wgsl"), include_str!("archive_environment.wgsl"), include_str!("archive_post.wgsl")).into()),
         });
         let post_pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[Some(&post_layout), Some(&environment_bindings.layout)],
             immediate_size: 0,
         });
-        let post = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        let create_post = |format| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("archive HDR display pass"),
             layout: Some(&post_pl),
             vertex: wgpu::VertexState {
@@ -602,6 +657,8 @@ impl ArchiveSceneRenderer {
             multiview_mask: None,
             cache: None,
         });
+        let post = create_post(format);
+        let post_linear = create_post(wgpu::TextureFormat::Rgba16Float);
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("authored scene anisotropic sampler"),
             address_mode_u: wgpu::AddressMode::Repeat,
@@ -860,7 +917,7 @@ impl ArchiveSceneRenderer {
         let display_parameters = buffer(
             device,
             "street HDR display parameters",
-            bytemuck::cast_slice(&[f32::from(hdr_output), 1., 1., 0.]),
+            bytemuck::cast_slice(&[display_mode(hdr_output, ArchiveToneMapper::default()), 1., 1., 0.]),
             wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         )?;
         let post_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -879,6 +936,8 @@ impl ArchiveSceneRenderer {
                 },
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::TextureView(&depth_texture.create_view(&Default::default())) },
                 wgpu::BindGroupEntry { binding: 3, resource: camera.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&sky.create_view(&Default::default())) },
+                wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::Sampler(&sky_sampler) },
             ],
         });
         Ok(Self {
@@ -905,15 +964,21 @@ impl ArchiveSceneRenderer {
                 .ok()
                 .and_then(|v| v.parse::<f32>().ok())
                 .filter(|v| v.is_finite() && *v > 0.)
-                .unwrap_or(1. / 1200.),
+                .unwrap_or(if environment_enabled { 1. / 600. } else { 1. / 1200. }),
             sky_strength: 4.,
             _environment: environment,
             environment_bindings,
             environment_enabled,
+            _sky: sky,
             post,
+            post_linear,
+            output_format: format,
+            antialiasing: crate::ArchiveAntialiasing::Spatial,
+            temporal: None,
             post_bind,
             display_parameters,
             hdr_output,
+            tone_mapper: ArchiveToneMapper::default(),
             display_headroom: 1.,
             spatial_antialiasing: true,
             frame_bind,
@@ -922,12 +987,61 @@ impl ArchiveSceneRenderer {
             depth: depth_texture,
             shadow,
             shadow_matrix,
+            weather: Default::default(),
+            weather_time: 0.,
+            surface_wetness: None,
+            puddle_coverage: 0.45,
+            previous_vp: None,
+            shadow_bounds: bounds,
             sun,
             sun_colour,
             width,
             height,
             shadow_ready: false,
         })
+    }
+    /// Update atmosphere without rebuilding geometry or allocating particles.
+    pub fn set_weather(&mut self, weather: crate::weather::Weather) -> Result<(), crate::ComputeError> {
+        if !weather.is_valid() {return Err(crate::ComputeError::Validation("invalid weather".into()));}
+        if self.weather != weather { self.reset_temporal_history(); }
+        self.weather = weather;
+        Ok(())
+    }
+    /// Override ground wetness in [0, 1]; `None` follows `Weather::rain`.
+    pub fn set_surface_wetness(&mut self, wetness: Option<f32>) -> Result<(), crate::ComputeError> {
+        if wetness.is_some_and(|w| !w.is_finite() || !(0. ..=1.).contains(&w)) {
+            return Err(crate::ComputeError::Validation("invalid surface wetness".into()));
+        }
+        self.surface_wetness = wetness;
+        Ok(())
+    }
+    /// Fraction of fully wet upward-facing ground that pools into flat puddles.
+    pub fn set_puddle_coverage(&mut self, coverage: f32) -> Result<(), crate::ComputeError> {
+        if !coverage.is_finite() || !(0. ..=1.).contains(&coverage) {
+            return Err(crate::ComputeError::Validation("invalid puddle coverage".into()));
+        }
+        self.puddle_coverage = coverage;
+        Ok(())
+    }
+    pub fn surface_wetness(&self) -> f32 {self.surface_wetness.unwrap_or(self.weather.rain)}
+    pub fn set_weather_time(&mut self, seconds: f32) {
+        if seconds.is_finite() { self.weather_time = seconds.rem_euclid(4096.); }
+    }
+    /// Direction points toward the sun. Rebuild the matching directional shadow map.
+    pub fn set_sun(&mut self, direction: Vec3, colour: [f32; 4]) -> Result<(), crate::ComputeError> {
+        if !direction.is_finite() || direction.length_squared() < 1e-8 || colour.iter().any(|v| !v.is_finite() || *v < 0.) {
+            return Err(crate::ComputeError::Validation("invalid sun".into()));
+        }
+        self.sun = direction.normalize();
+        self.sun_colour = colour;
+        let centre = (self.shadow_bounds.0 + self.shadow_bounds.1) * 0.5;
+        let extent = ((self.shadow_bounds.1 - self.shadow_bounds.0).length() * 0.5).max(1.);
+        let up = if self.sun.dot(Vec3::Y).abs() > 0.99 {Vec3::Z} else {Vec3::Y};
+        self.shadow_matrix = Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+            * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+        self.shadow_ready = false;
+        self.reset_temporal_history();
+        Ok(())
     }
     /// Linear extended-sRGB output uses 1.0 as SDR reference white. No invented nits.
     pub fn set_display_headroom(&mut self, headroom: f32) -> Result<(), crate::ComputeError> {
@@ -940,21 +1054,53 @@ impl ArchiveSceneRenderer {
         self.write_display_parameters();
         Ok(())
     }
+    /// SDR display transform. HDR output keeps its hue-preserving highlight knee.
+    pub fn set_tone_mapper(&mut self, tone_mapper: ArchiveToneMapper) {
+        self.tone_mapper = tone_mapper;
+        self.write_display_parameters();
+    }
+    pub fn tone_mapper(&self) -> ArchiveToneMapper {self.tone_mapper}
     /// Directional spatial AA, enabled by default on all backends including Metal.
     /// Disable for native-pixel comparisons or when applying an external AA pass.
     pub fn set_spatial_antialiasing(&mut self, enabled: bool) {
+        self.temporal = None;
+        self.antialiasing = if enabled {crate::ArchiveAntialiasing::Spatial} else {crate::ArchiveAntialiasing::Off};
         self.spatial_antialiasing = enabled;
         self.write_display_parameters();
+    }
+    /// Select temporal AA explicitly. Unsupported MetalFX returns an error and
+    /// preserves the current mode; it never silently falls back to spatial AA.
+    pub fn set_antialiasing(&mut self, mode: crate::ArchiveAntialiasing) -> Result<(), crate::ComputeError> {
+        if mode == self.antialiasing {return Ok(());}
+        let temporal = if matches!(mode, crate::ArchiveAntialiasing::Temporal | crate::ArchiveAntialiasing::MetalFx) {
+            Some(crate::archive_temporal::ArchiveTemporal::new(&self.device,self.width,self.height,self.output_format,mode)?)
+        } else {None};
+        self.temporal = temporal;
+        self.antialiasing = mode;
+        self.spatial_antialiasing = mode == crate::ArchiveAntialiasing::Spatial;
+        self.write_display_parameters();
+        Ok(())
+    }
+    /// Diagnostic previous-UV minus current-UV camera motion, excluding jitter.
+    /// Valid only after drawing a temporal frame; immutable polygon meshes only.
+    pub fn temporal_motion_texture(&self) -> Option<&wgpu::Texture> {
+        self.temporal.as_ref().map(|t| t.motion_texture())
+    }
+    pub fn antialiasing(&self) -> crate::ArchiveAntialiasing {self.antialiasing}
+    /// Call on camera cuts or changes to scene lighting/materials/exposure.
+    pub fn reset_temporal_history(&mut self) {
+        if let Some(temporal) = &mut self.temporal {temporal.reset();}
+        self.previous_vp = None;
     }
     fn write_display_parameters(&self) {
         self.queue.write_buffer(
             &self.display_parameters,
             0,
             bytemuck::cast_slice(&[
-                f32::from(self.hdr_output),
+                display_mode(self.hdr_output, self.tone_mapper),
                 self.display_headroom,
                 f32::from(self.spatial_antialiasing),
-                0.,
+                f32::from(self.temporal.is_some()),
             ]),
         );
     }
@@ -977,11 +1123,16 @@ impl ArchiveSceneRenderer {
             1000.,
         ) * Mat4::look_at_rh(eye, eye + direction, Vec3::Y);
         let rows = vp.transpose().to_cols_array_2d().map(Vec4::from_array);
+        // Keep the entire temporal-jitter footprint inside the conservative
+        // culling volume; otherwise edge leaves may disappear between AA samples.
+        let margin = if self.temporal.is_some() { 2. } else { 0. };
+        let horizontal = rows[3] * (1. + margin / self.width as f32);
+        let vertical = rows[3] * (1. + margin / self.height as f32);
         let planes = [
-            rows[3] + rows[0],
-            rows[3] - rows[0],
-            rows[3] + rows[1],
-            rows[3] - rows[1],
+            horizontal + rows[0],
+            horizontal - rows[0],
+            vertical + rows[1],
+            vertical - rows[1],
             rows[2],
             rows[3] - rows[2],
         ];
@@ -1019,16 +1170,28 @@ impl ArchiveSceneRenderer {
                 mesh.visible_ids = ids;
             }
         }
+        let mut jittered_vp = vp;
+        if let Some(temporal) = &mut self.temporal {
+            let jitter = temporal.jitter();
+            let offset = glam::Vec2::new(2. * jitter.x / self.width as f32, -2. * jitter.y / self.height as f32);
+            jittered_vp = Mat4::from_translation(Vec3::new(offset.x, offset.y, 0.)) * vp;
+            temporal.prepare(&self.queue, vp, jittered_vp, eye, direction, display_mode(self.hdr_output, self.tone_mapper), self.display_headroom);
+        }
         self.queue.write_buffer(
             &self.camera,
             0,
             bytemuck::bytes_of(&Camera {
-                vp: vp.to_cols_array_2d(),
+                vp: jittered_vp.to_cols_array_2d(),
                 shadow: self.shadow_matrix.to_cols_array_2d(),
-                inverse_vp: vp.inverse().to_cols_array_2d(),
+                inverse_vp: jittered_vp.inverse().to_cols_array_2d(),
                 eye: [eye.x, eye.y, eye.z, f32::from(self.environment_enabled)],
                 sun: [self.sun.x, self.sun.y, self.sun.z, 0.],
-                sun_colour: self.sun_colour,
+                sun_colour: { let mut c = self.sun_colour; c[3] *= 1. - self.weather.coverage * 0.75; c },
+                weather: [self.weather.coverage, self.weather.density, self.weather.rain, self.weather.snow],
+                atmosphere: [self.weather_time, self.weather.cloud_base, self.weather.cloud_thickness, 0.],
+                wind: [self.weather.wind[0], self.weather.wind[1], self.weather.wind_gust, 0.],
+                previous_vp: self.previous_vp.unwrap_or(jittered_vp).to_cols_array_2d(),
+                surface: [self.surface_wetness(), self.puddle_coverage, f32::from(u8::from(self.previous_vp.is_some())), 0.],
                 viewport: [
                     self.width as f32,
                     self.height as f32,
@@ -1037,6 +1200,9 @@ impl ArchiveSceneRenderer {
                 ],
             }),
         );
+        // `background` receives this frame's opaque radiance before transparents;
+        // the next frame's opaque reflections reproject into it.
+        self.previous_vp = Some(jittered_vp);
         let mut encoder = self.device.create_command_encoder(&Default::default());
         if !self.shadow_ready {
             let shadow_view = self.shadow.create_view(&Default::default());
@@ -1202,10 +1368,11 @@ impl ArchiveSceneRenderer {
                 pass.draw_indexed(0..mesh.count, 0, 0..mesh.visible_count);
             }
         }
+        let temporal_view = self.temporal.as_ref().map(|t| t.current.create_view(&Default::default()));
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("street HDR display"),
-                timestamp_writes: if time_this_frame {
+                timestamp_writes: if time_this_frame && self.temporal.is_none() {
                     self.timing
                         .as_ref()
                         .map(|t| wgpu::RenderPassTimestampWrites {
@@ -1217,7 +1384,7 @@ impl ArchiveSceneRenderer {
                     None
                 },
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: output,
+                    view: temporal_view.as_ref().unwrap_or(output),
                     depth_slice: None,
                     resolve_target: None,
                     ops: wgpu::Operations {
@@ -1227,17 +1394,34 @@ impl ArchiveSceneRenderer {
                 })],
                 ..Default::default()
             });
-            pass.set_pipeline(&self.post);
+            pass.set_pipeline(if self.temporal.is_some() {&self.post_linear} else {&self.post});
             pass.set_bind_group(0, &self.post_bind, &[]);
             pass.set_bind_group(1, &self.environment_bindings.group, &[]);
             pass.draw(0..3, 0..1);
+        }
+        let mut preceding_commands = Vec::new();
+        if let Some(temporal) = &mut self.temporal {
+            let timestamps = if time_this_frame {self.timing.as_ref().map(|t| wgpu::RenderPassTimestampWrites {
+                query_set: &t.set, beginning_of_pass_write_index: None, end_of_pass_write_index: Some(1),
+            })} else {None};
+            temporal.encode_guides(&self.device, &mut encoder, &self.depth);
+            #[cfg(target_os="macos")]
+            if temporal.native() {
+                preceding_commands.push(encoder.finish());
+                let mut native = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {label:Some("native MetalFX only")});
+                temporal.encode_native(&mut native, &self.depth);
+                preceding_commands.push(native.finish());
+                encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {label:Some("MetalFX final HDR display")});
+            }
+            temporal.encode_display(&self.device, &mut encoder, output, timestamps);
         }
         if time_this_frame {
             let timing = self.timing.as_ref().unwrap();
             encoder.resolve_query_set(&timing.set, 0..2, &timing.resolve, 0);
             encoder.copy_buffer_to_buffer(&timing.resolve, 0, &timing.readback, 0, 16);
         }
-        let submission = self.queue.submit([encoder.finish()]);
+        preceding_commands.push(encoder.finish());
+        let submission = self.queue.submit(preceding_commands);
         if time_this_frame {
             let timing = self.timing.as_mut().unwrap();
             timing.pending = true;
@@ -1306,5 +1490,47 @@ impl Timing {
         self.readback.unmap();
         self.pending = false;
         Some(end.saturating_sub(start) as f64 * f64::from(period) / 1e6)
+    }
+}
+
+/// SDR tone mapping curve applied by the archive display pass.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum ArchiveToneMapper {
+    /// Narkowicz ACES fit: punchy contrast, skews saturated highlights.
+    Aces,
+    /// AgX base: desaturates toward white in highlights like film.
+    #[default]
+    Agx,
+}
+
+/// Mode selector read by `display_colour` in archive_post.wgsl.
+fn display_mode(hdr_output: bool, tone_mapper: ArchiveToneMapper) -> f32 {
+    match (hdr_output, tone_mapper) {
+        (true, _) => 1.,
+        (false, ArchiveToneMapper::Aces) => 0.,
+        (false, ArchiveToneMapper::Agx) => 2.,
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn scene_shader_validates() {
+        let source = concat!(include_str!("archive_environment.wgsl"), include_str!("archive_scene.wgsl"));
+        let module = naga::front::wgsl::parse_str(source).unwrap();
+        naga::valid::Validator::new(naga::valid::ValidationFlags::all(), naga::valid::Capabilities::all())
+            .validate(&module)
+            .unwrap();
+    }
+    #[test]
+    fn camera_layout_matches_shader() {
+        // 4 matrices and 8 vectors, as declared by archive_scene.wgsl.
+        assert_eq!(std::mem::size_of::<Camera>(), 4 * 64 + 8 * 16);
+    }
+    #[test]
+    fn reflective_presets_route_to_expected_passes() {
+        assert_eq!(ArchiveMaterial::MIRROR.surface[2], 0.);
+        assert!(ArchiveMaterial::GLASS.surface[2] > 0.);
+        assert_eq!(ArchiveMaterial::GLASS.surface[3], -2.);
     }
 }

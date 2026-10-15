@@ -20,3 +20,6 @@ __pycache__/
 !/artifacts/character-bind-pose-2026-10-07/
 /rag.duckdb
 /rag.pid
+
+# Large local environment textures and meshes (not tracked).
+assets/environments/

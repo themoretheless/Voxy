@@ -8,35 +8,44 @@ cargo run --release -p voxy_app --bin voxy_app
 
 All anatomy, geometry, rigging, coat patterns and grooming are original Rust
 implementations. No downloaded animal models, textures or animation clips are
-used. `src/animals/asset.rs` builds continuous implicit surfaces with a welded
-marching-tetrahedra mesh: ribcage, pelvis, neck, skull, muzzle, cheeks, articulated
-digitigrade legs, separate toes, ears and curved tapered tails. Eyes, pupils,
-corneal highlights, nose, inner ears and tapered whiskers are separate geometry.
-The cat has a tabby coat and the dog has a brown short coat.
+used. `voxy_model::animals` authors six section-based anatomy profiles; its
+rounded section-volume union produces a welded marching-tetrahedra surface.
+`src/animals/breed_asset.rs` skins it and adds almond eyes, irises, nostrils,
+lip contours, digits and whiskers. The rejected `asset.rs` remains preserved
+but is no longer the active geometry path.
+
+Choose a pair with `--dog-breed labrador|german-shepherd|husky` and
+`--cat-breed domestic-shorthair|british-shorthair|maine-coon`.
+Domestic shorthair is a population type rather than a pedigree breed.
 The initial visual result was rejected as cartoon-like; the current anatomical
 revision is under visual review and is not a claimed photorealistic asset release.
 
 Each quadruped uses ten body bones: root, four upper legs, four lower legs and
 tail. Continuous skin weights join the shoulders and knees. Actual travelled
-distance drives the diagonal gait; turns have a bounded angular speed. Native
+distance drives walk/trot phase; turns have a bounded angular speed. Small sole
+sweeps locate ground, stance targets remain planted, and analytic two-link IK
+places the lower limbs. Moving animals lower their body slightly for leg reach. Native
 swept body physics supplies gravity, grounding, sliding and limited steps.
 Companion sweeps also include the other companion and the player body.
 Body collision is a conservative upright AABB; it is not articulated ragdoll
 collision. The player controller itself continues to use its terrain backend.
 
-Each coat has 30,000 fine tapered, two-segment rendered fibers and 48 physical guide
+Each coat has 85,000 fine tapered, two-segment rendered fibers and 48 physical guide
 strands with three particles each. Area-weighted surface sampling and farthest
 point guide selection cover the skin. The Rust Verlet solver pins roots to the
 posed body, rotates the authored rest directions, retains particle inertia and
 applies gravity, damping and length constraints. Local skin colliders prevent
 inward guide penetration. Rendered fibers follow the two simulated guide nodes
-through the GPU skin palette. Followers share guide motion; they are not 30,000
+through the GPU skin palette. Followers share guide motion; they are not 85,000
 independent physical strands. There is no full strand self-collision or fur
-collision with arbitrary terrain/other animals. Fine paw IK, path planning and
-persistent animal authoring remain separate work.
+collision with arbitrary terrain/other animals. Full articulated joint/foot rigid-body contacts, path planning and persistent
+animal authoring remain separate work. IK is a visual contact constraint, not
+a physical articulated-body solver.
 
 The native skinned shaders support an explicit packed-linear-color mode: UV.x
-stores a 24-bit RGB integer, UV.y stores `-10000 - roughness`. Colors are decoded
+stores a 24-bit RGB integer, UV.y stores `-10000 - 1000*roughness` for skin and
+`-12000 - 1000*roughness` for fibres. Fibre normals encode the strand tangent
+for a longitudinal lighting lobe; skin normals retain the ordinary PBR path. Colors are decoded
 before raster interpolation. This convention is reserved for native generated
 meshes; imported texture coordinates retain the ordinary texture path. CleanCam
 uses the existing linear HDR PBR renderer with coat colors and roughness,
@@ -63,3 +72,24 @@ window remains open on a stationary close-up after collecting its captures. Resu
 Focused regressions cover valid skinning, dense groom geometry, grounding,
 following, rejection of invalid ticks, attachment and bounded guide lengths,
 continuous body collisions and oriented strand rest poses.
+
+Latest visual review: native window and physics checks pass, but the models still
+look stylized. The requested realistic visual quality is NOT achieved. In particular,
+head anatomy, surface detail, coat appearance and shading still require replacement
+or substantial authoring work. Passing runtime tests does not close that requirement.
+
+
+## Breed revision verification, 2026-10-15
+
+Release build succeeded. Seven animal runtime regressions and three model tests
+passed, including a feature-winding regression for the initially inverted
+nose/toe faces. All six breeds ran in the actual Metal game window, in three
+pairs, with final reports requiring movement, grounding and 144 guide particles
+per animal. Evidence lives under `artifacts/animals-native/breed-checks-final/`.
+
+The visual review still fails the requested realism threshold: the cranial and
+chest forms remain simplified, ear interiors and muzzle anatomy need sculpting,
+and the long coat reads as sparse procedural fibres rather than a finished groom.
+The simulation is bounded body collision plus guide dynamics and foot IK; it
+is not full articulated animal physics or full fur collision. These limitations
+remain open despite successful runtime checks.

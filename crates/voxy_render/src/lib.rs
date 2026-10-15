@@ -424,3 +424,10 @@ pub mod archive_scene;
 
 mod native_vegetation;
 pub use native_vegetation::NativeVegetation;
+
+mod archive_temporal;
+pub use archive_temporal::{ArchiveAntialiasing, halton_jitter};
+#[cfg(target_os = "macos")]
+mod metalfx;
+
+pub mod weather;
