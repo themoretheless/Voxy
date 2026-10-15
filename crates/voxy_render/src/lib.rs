@@ -21,6 +21,10 @@ pub use banded_solve::{
 };
 pub use banded_transfer::BandedTransferProgram;
 mod blit;
+mod bodycam;
+pub use bodycam::{
+    BodycamPostProcess, BodycamPostUniforms, BodycamRig, PhotorealLensProfile, SpringDamper3D,
+};
 mod camera;
 mod planar_capture;
 pub use planar_capture::{

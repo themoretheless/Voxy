@@ -2223,6 +2223,49 @@ impl SceneRenderer {
         );
     }
 
+    /// Records opaque, transparent, X-ray and overlay layers over an existing color attachment
+    /// (such as a pre-rendered HDR voxel pass) without clearing `color`, while clearing `depth`
+    /// to `1.0` so the scene draws have full self-occlusion.
+    pub fn encode_over(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        color: &wgpu::TextureView,
+        depth: &wgpu::TextureView,
+        draws: &[SceneDraw<'_'>],
+    ) {
+        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("scene over existing HDR color"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: color,
+                depth_slice: None,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Load,
+                    store: wgpu::StoreOp::Store,
+                },
+            })],
+            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                view: depth,
+                depth_ops: Some(wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(1.0),
+                    store: wgpu::StoreOp::Store,
+                }),
+                stencil_ops: None,
+            }),
+            timestamp_writes: None,
+            ..Default::default()
+        });
+        self.encode_draws(
+            &mut pass,
+            draws,
+            (
+                &self.world_pipeline,
+                &self.overlay_pipeline,
+                &self.transparent_pipeline,
+            ),
+        );
+    }
+
     /// Timestamp the ordinary single-sample scene pass. Query indices/type and
     /// device must satisfy wgpu validation. Does not measure presentation or
     /// other shadow/composition passes. Rejects unavailable timing before encoding.

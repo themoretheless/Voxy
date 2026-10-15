@@ -2,7 +2,10 @@ use std::fmt;
 use std::sync::Arc;
 
 use bytemuck::{Pod, Zeroable};
-use glam::camera::rh::{proj::directx::orthographic, view::look_at_mat4};
+use glam::camera::rh::{
+    proj::directx::{orthographic, perspective},
+    view::look_at_mat4,
+};
 use glam::{Mat4, Vec3, Vec4};
 use voxy_core::{CHUNK_EDGE, ChunkPos};
 use voxy_lighting::LightVolume;
@@ -10,7 +13,7 @@ use voxy_mesher::{ChunkMesh, FaceDir, Quad, QuadDiagonal, RenderLayer};
 use wgpu::util::DeviceExt;
 
 use crate::skinned::{GpuSkinnedMesh, create_skin_layout, create_skinned_pipeline, upload_skinned};
-use crate::{MaterialLayer, MaterialPack, MaterialSet};
+use crate::{BodycamPostProcess, BodycamRig, MaterialLayer, MaterialPack, MaterialSet};
 use crate::{SkinnedMesh, SkinnedUploadError};
 mod skinned_lod;
 
@@ -30,6 +33,15 @@ pub use voxy_gpu_core::GpuIndirectMesh;
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 struct CameraUniform {
     view_proj: [[f32; 4]; 4],
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+struct PhotorealCameraUniform {
+    view_proj: [[f32; 4]; 4],
+    camera_eye: [f32; 4],
+    flashlight_pos: [f32; 4],
+    flashlight_dir: [f32; 4],
 }
 
 #[repr(C)]
@@ -174,6 +186,18 @@ pub struct Renderer {
     resident_camera_anchor: ChunkPos,
     depth_texture: wgpu::Texture,
     depth_view: wgpu::TextureView,
+    bodycam_enabled: bool,
+    bodycam_rig: BodycamRig,
+    bodycam_flashlight_pos: Vec3,
+    bodycam_flashlight_dir: Vec3,
+    bodycam_wetness: f32,
+    photoreal_camera_layout: wgpu::BindGroupLayout,
+    photoreal_camera_buffer: wgpu::Buffer,
+    photoreal_camera_bind_group: wgpu::BindGroup,
+    photoreal_pipeline: wgpu::RenderPipeline,
+    photoreal_indirect_pipeline: wgpu::RenderPipeline,
+    photoreal_skinned_pipeline: wgpu::RenderPipeline,
+    bodycam_post: BodycamPostProcess,
 }
 
 impl Renderer {
@@ -307,12 +331,42 @@ impl Renderer {
             &material_layout,
             &skin_layout,
         );
+        let photoreal_camera_layout = create_photoreal_camera_layout(&device);
+        let (photoreal_pipeline, photoreal_indirect_pipeline, photoreal_skinned_pipeline) =
+            create_photoreal_pipelines(
+                &device,
+                wgpu::TextureFormat::Rgba16Float,
+                &photoreal_camera_layout,
+                &material_layout,
+                &skin_layout,
+            );
+        let bodycam_post =
+            BodycamPostProcess::new(&device, config.format, config.width, config.height);
+        let bodycam_rig = BodycamRig::default();
+        let bodycam_flashlight_pos = Vec3::new(52.0, 38.0, 52.0);
+        let bodycam_flashlight_dir =
+            (Vec3::new(16.0, 5.0, 16.0) - bodycam_flashlight_pos).normalize_or_zero();
+        let bodycam_wetness = 0.65;
         let camera = CameraView::default();
         let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Voxy camera uniform"),
             contents: bytemuck::bytes_of(&camera_uniform(config.width, config.height, camera)),
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
+        let photoreal_camera_buffer =
+            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("Voxy photoreal camera uniform"),
+                contents: bytemuck::bytes_of(&photoreal_camera_uniform(
+                    config.width,
+                    config.height,
+                    camera,
+                    &bodycam_rig,
+                    bodycam_flashlight_pos,
+                    bodycam_flashlight_dir,
+                    bodycam_wetness,
+                )),
+                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            });
         let chunk_meta_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Voxy initial chunk metadata"),
             contents: bytemuck::bytes_of(&ChunkMeta::zeroed()),
@@ -327,6 +381,13 @@ impl Renderer {
             &device,
             &camera_layout,
             &camera_buffer,
+            &chunk_meta_buffer,
+            &light_buffer,
+        );
+        let photoreal_camera_bind_group = create_camera_bind_group(
+            &device,
+            &photoreal_camera_layout,
+            &photoreal_camera_buffer,
             &chunk_meta_buffer,
             &light_buffer,
         );
@@ -391,6 +452,18 @@ impl Renderer {
             resident_camera_anchor: ChunkPos { x: 0, y: 0, z: 0 },
             depth_texture,
             depth_view,
+            bodycam_enabled: false,
+            bodycam_rig,
+            bodycam_flashlight_pos,
+            bodycam_flashlight_dir,
+            bodycam_wetness,
+            photoreal_camera_layout,
+            photoreal_camera_buffer,
+            photoreal_camera_bind_group,
+            photoreal_pipeline,
+            photoreal_indirect_pipeline,
+            photoreal_skinned_pipeline,
+            bodycam_post,
         })
     }
 
@@ -411,6 +484,21 @@ impl Renderer {
             0,
             bytemuck::bytes_of(&camera_uniform(width, height, self.camera)),
         );
+        self.queue.write_buffer(
+            &self.photoreal_camera_buffer,
+            0,
+            bytemuck::bytes_of(&photoreal_camera_uniform(
+                width,
+                height,
+                self.camera,
+                &self.bodycam_rig,
+                self.bodycam_flashlight_pos,
+                self.bodycam_flashlight_dir,
+                self.bodycam_wetness,
+            )),
+        );
+        self.bodycam_post
+            .resize(&self.device, &self.queue, width, height);
         (self.depth_texture, self.depth_view) = create_depth(&self.device, width, height);
         self.state = SurfaceState::Active;
     }
@@ -547,9 +635,17 @@ impl Renderer {
             &metadata_buffer,
             &light_buffer,
         );
+        let photoreal_camera_bind_group = create_camera_bind_group(
+            &self.device,
+            &self.photoreal_camera_layout,
+            &self.photoreal_camera_buffer,
+            &metadata_buffer,
+            &light_buffer,
+        );
         self.chunk_meta_buffer = metadata_buffer;
         self.light_buffer = light_buffer;
         self.camera_bind_group = camera_bind_group;
+        self.photoreal_camera_bind_group = photoreal_camera_bind_group;
         if let Some(buffer) = quad_buffer {
             self.quad_buffer = buffer;
         }
@@ -600,6 +696,19 @@ impl Renderer {
                 self.config.width,
                 self.config.height,
                 camera,
+            )),
+        );
+        self.queue.write_buffer(
+            &self.photoreal_camera_buffer,
+            0,
+            bytemuck::bytes_of(&photoreal_camera_uniform(
+                self.config.width,
+                self.config.height,
+                camera,
+                &self.bodycam_rig,
+                self.bodycam_flashlight_pos,
+                self.bodycam_flashlight_dir,
+                self.bodycam_wetness,
             )),
         );
         Ok(())
@@ -937,7 +1046,9 @@ impl Renderer {
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("Voxy frame encoder"),
             });
-        {
+        if self.bodycam_enabled {
+            self.encode_bodycam_passes(&mut encoder, &view, frame_id);
+        } else {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Voxy voxel pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -1007,6 +1118,337 @@ impl Renderer {
         }
     }
 
+    fn encode_bodycam_passes(
+        &mut self,
+        encoder: &mut wgpu::CommandEncoder,
+        output_view: &wgpu::TextureView,
+        frame_id: u64,
+    ) {
+        self.encode_bodycam_passes_with_scene(encoder, output_view, frame_id, None);
+    }
+
+    fn encode_bodycam_passes_with_scene(
+        &mut self,
+        encoder: &mut wgpu::CommandEncoder,
+        output_view: &wgpu::TextureView,
+        frame_id: u64,
+        scene_overlay: Option<(&crate::SceneRenderer, &[crate::SceneDraw<'_>])>,
+    ) {
+        self.bodycam_post
+            .update_from_rig(&self.queue, &self.bodycam_rig, frame_id);
+        self.queue.write_buffer(
+            &self.photoreal_camera_buffer,
+            0,
+            bytemuck::bytes_of(&photoreal_camera_uniform(
+                self.config.width,
+                self.config.height,
+                self.camera,
+                &self.bodycam_rig,
+                self.bodycam_flashlight_pos,
+                self.bodycam_flashlight_dir,
+                self.bodycam_wetness,
+            )),
+        );
+        {
+            // CIE Overcast Sky linear HDR zenith/horizon skybox clear color
+            let hdr_sky_clear = wgpu::Color {
+                r: 1.32,
+                g: 1.44,
+                b: 1.62,
+                a: 1.0,
+            };
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("Voxy photoreal HDR voxel pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: self.bodycam_post.hdr_view(),
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(hdr_sky_clear),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.depth_view,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(0.0),
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            if self.quad_count != 0 {
+                pass.set_pipeline(&self.photoreal_pipeline);
+                pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                pass.set_bind_group(1, &self.material_bind_group, &[]);
+                pass.set_vertex_buffer(0, self.quad_buffer.slice(..));
+                let view_projection = perspective_camera_view_projection(
+                    self.config.width,
+                    self.config.height,
+                    self.camera,
+                );
+                for (origin, instances) in &self.chunk_draws {
+                    if chunk_intersects_frustum(view_projection, *origin) {
+                        pass.draw(0..6, instances.clone());
+                    }
+                }
+            }
+            if let Some(skinned) = &self.skinned {
+                pass.set_pipeline(&self.photoreal_skinned_pipeline);
+                pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                pass.set_bind_group(1, &self.material_bind_group, &[]);
+                pass.set_bind_group(2, &skinned.bind_group, &[]);
+                pass.set_vertex_buffer(0, skinned.vertex.slice(..));
+                pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
+                pass.draw_indexed(0..skinned.index_count, 0, 0..1);
+            }
+            if let Some(indirect) = &self.indirect_mesh {
+                pass.set_pipeline(&self.photoreal_indirect_pipeline);
+                pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                pass.set_bind_group(1, &self.material_bind_group, &[]);
+                pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
+                pass.draw_indirect(&indirect.indirect_buffer, 0);
+            }
+        }
+        if let Some((scene, draws)) = scene_overlay {
+            scene.encode_over(
+                encoder,
+                self.bodycam_post.hdr_view(),
+                &self.depth_view,
+                draws,
+            );
+        }
+        self.bodycam_post.encode(encoder, output_view);
+    }
+
+    /// Enable or disable the photorealistic *Bodycam* / *Unrecord* rendering mode
+    /// (Perspective HDR PBR + CIE Overcast GI + GTAO Multi-Bounce + Physical Lens/CMOS/ISP).
+    pub fn set_bodycam_enabled(&mut self, enabled: bool) {
+        if self.bodycam_enabled != enabled {
+            self.bodycam_enabled = enabled;
+            self.reset_skinned_motion();
+        }
+    }
+
+    #[must_use]
+    pub const fn bodycam_enabled(&self) -> bool {
+        self.bodycam_enabled
+    }
+
+    #[must_use]
+    pub const fn bodycam_rig(&self) -> &BodycamRig {
+        &self.bodycam_rig
+    }
+
+    pub fn bodycam_rig_mut(&mut self) -> &mut BodycamRig {
+        &mut self.bodycam_rig
+    }
+
+    /// Updates the tactical flashlight world pose and surface wetness (`0.0..=1.0`).
+    pub fn set_bodycam_flashlight_and_wetness(
+        &mut self,
+        origin: Vec3,
+        direction: Vec3,
+        wetness: f32,
+    ) {
+        if origin.is_finite() {
+            self.bodycam_flashlight_pos = origin;
+        }
+        if direction.is_finite() && direction.length_squared() > f32::EPSILON {
+            self.bodycam_flashlight_dir = direction.normalize();
+        }
+        if wetness.is_finite() {
+            self.bodycam_wetness = wetness.clamp(0.0, 1.0);
+        }
+    }
+
+    /// Encodes the full linear HDR PBR + Bodycam Optical/CMOS/ISP post-process frame
+    /// into an arbitrary target texture view (matching `surface_format()`), enabling
+    /// deterministic headless or offscreen PNG snapshot capture.
+    pub fn encode_bodycam_frame_to_view(
+        &mut self,
+        encoder: &mut wgpu::CommandEncoder,
+        output_view: &wgpu::TextureView,
+        frame_id: u64,
+    ) {
+        self.encode_bodycam_passes(encoder, output_view, frame_id);
+    }
+
+    #[must_use]
+    pub const fn surface_format(&self) -> wgpu::TextureFormat {
+        self.config.format
+    }
+
+    /// Renders a photorealistic Bodycam HDR PBR + Optical/CMOS/ISP frame into an
+    /// offscreen texture and reads back the RGBA8 sRGB bytes `(width, height, rgba8)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`RendererError::DeviceLost`] if the GPU buffer mapping fails.
+    pub fn capture_bodycam_rgba8(
+        &mut self,
+        frame_id: u64,
+    ) -> Result<(u32, u32, Vec<u8>), RendererError> {
+        self.capture_bodycam_with_scene_rgba8(frame_id, None)
+    }
+
+    /// Renders a photorealistic Bodycam HDR PBR voxel pass plus optional 3D `SceneRenderer`
+    /// draws (such as the anatomical female character) into the linear HDR target, applies
+    /// the physical Lens/CMOS/ISP post-process pass, and reads back RGBA8 sRGB bytes.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`RendererError::DeviceLost`] if the GPU buffer mapping fails.
+    pub fn capture_bodycam_with_scene_rgba8(
+        &mut self,
+        frame_id: u64,
+        scene_overlay: Option<(&crate::SceneRenderer, &[crate::SceneDraw<'_>])>,
+    ) -> Result<(u32, u32, Vec<u8>), RendererError> {
+        self.check_device()?;
+        let width = self.config.width.max(1);
+        let height = self.config.height.max(1);
+        let format = self.config.format;
+        let offscreen = self.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("Voxy bodycam snapshot target"),
+            size: wgpu::Extent3d {
+                width,
+                height,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+            view_formats: &[],
+        });
+        let view = offscreen.create_view(&wgpu::TextureViewDescriptor::default());
+        let unpadded_bytes_per_row = width * 4;
+        let padded_bytes_per_row =
+            unpadded_bytes_per_row.div_ceil(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT)
+                * wgpu::COPY_BYTES_PER_ROW_ALIGNMENT;
+        let readback = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("Voxy bodycam snapshot readback"),
+            size: u64::from(padded_bytes_per_row) * u64::from(height),
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Voxy bodycam snapshot encoder"),
+            });
+        self.encode_bodycam_passes_with_scene(&mut encoder, &view, frame_id, scene_overlay);
+        encoder.copy_texture_to_buffer(
+            wgpu::TexelCopyTextureInfo {
+                texture: &offscreen,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            wgpu::TexelCopyBufferInfo {
+                buffer: &readback,
+                layout: wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(padded_bytes_per_row),
+                    rows_per_image: Some(height),
+                },
+            },
+            wgpu::Extent3d {
+                width,
+                height,
+                depth_or_array_layers: 1,
+            },
+        );
+        self.queue.submit([encoder.finish()]);
+        let slice = readback.slice(..);
+        slice.map_async(wgpu::MapMode::Read, |_| {});
+        let _ = self.device.poll(wgpu::PollType::wait_indefinitely());
+        let mapped = slice
+            .get_mapped_range()
+            .map_err(|err| RendererError::DeviceLost(err.to_string()))?;
+        let is_bgra = matches!(
+            format,
+            wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb
+        );
+        let mut rgba = Vec::with_capacity((width * height * 4) as usize);
+        for row in 0..height as usize {
+            let start = row * padded_bytes_per_row as usize;
+            let row_bytes = &mapped[start..start + unpadded_bytes_per_row as usize];
+            if is_bgra {
+                for px in row_bytes.chunks_exact(4) {
+                    rgba.extend_from_slice(&[px[2], px[1], px[0], px[3]]);
+                }
+            } else {
+                rgba.extend_from_slice(row_bytes);
+            }
+        }
+        drop(mapped);
+        readback.unmap();
+        Ok((width, height, rgba))
+    }
+
+    /// Presents a photorealistic Bodycam HDR PBR voxel pass plus optional 3D `SceneRenderer`
+    /// draws into the active window surface.
+    ///
+    /// # Errors
+    ///
+    /// Returns surface or device-loss errors if presentation fails.
+    pub fn render_bodycam_with_scene(
+        &mut self,
+        scene: &crate::SceneRenderer,
+        draws: &[crate::SceneDraw<'_>],
+    ) -> Result<RenderOutcome, RendererError> {
+        self.check_device()?;
+        if self.state == SurfaceState::Suspended {
+            return Ok(RenderOutcome::Suspended);
+        }
+        let frame_id = self
+            .resident_presented_frames
+            .checked_add(1)
+            .ok_or(RendererError::FrameIdExhausted)?;
+        let (frame, suboptimal) = match self.surface.get_current_texture() {
+            wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
+            wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
+            wgpu::CurrentSurfaceTexture::Outdated => {
+                self.surface.configure(&self.device, &self.config);
+                return Ok(RenderOutcome::Reconfigured);
+            }
+            wgpu::CurrentSurfaceTexture::Lost => return Err(RendererError::SurfaceLost),
+            wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
+            wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
+            wgpu::CurrentSurfaceTexture::Validation => {
+                return Ok(RenderOutcome::SkippedValidation);
+            }
+        };
+        let view = frame
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Voxy bodycam + scene frame encoder"),
+            });
+        self.encode_bodycam_passes_with_scene(
+            &mut encoder,
+            &view,
+            frame_id,
+            Some((scene, draws)),
+        );
+        self.queue.submit([encoder.finish()]);
+        self.queue.present(frame);
+        self.resident_presented_frames = frame_id;
+        if suboptimal {
+            self.surface.configure(&self.device, &self.config);
+            Ok(RenderOutcome::Reconfigured)
+        } else {
+            Ok(RenderOutcome::Presented)
+        }
+    }
+
     fn commit_skinned_temporal_history(&mut self) {
         let pose_valid = self
             .skinned_motion
@@ -1030,6 +1472,13 @@ impl Renderer {
     #[must_use]
     pub fn create_scene_renderer(&self) -> crate::SceneRenderer {
         crate::SceneRenderer::new(&self.device, self.config.format)
+    }
+
+    /// Creates a `SceneRenderer` targeting the linear `Rgba16Float` HDR buffer used by
+    /// the photorealistic Bodycam / CleanCam / Camcorder pipeline.
+    #[must_use]
+    pub fn create_hdr_scene_renderer(&self) -> crate::SceneRenderer {
+        crate::SceneRenderer::new(&self.device, wgpu::TextureFormat::Rgba16Float)
     }
 
     /// Presents a general scene using this renderer's surface lifecycle.
@@ -1178,6 +1627,214 @@ fn create_camera_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
             },
         ],
     })
+}
+
+fn create_photoreal_camera_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+    device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: Some("Voxy photoreal camera layout"),
+        entries: &[
+            wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Storage { read_only: true },
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 2,
+                visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Storage { read_only: true },
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+        ],
+    })
+}
+
+fn create_photoreal_pipelines(
+    device: &wgpu::Device,
+    hdr_format: wgpu::TextureFormat,
+    camera_layout: &wgpu::BindGroupLayout,
+    material_layout: &wgpu::BindGroupLayout,
+    skin_layout: &wgpu::BindGroupLayout,
+) -> (
+    wgpu::RenderPipeline,
+    wgpu::RenderPipeline,
+    wgpu::RenderPipeline,
+) {
+    let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: Some("Voxy photoreal HDR PBR shader"),
+        source: wgpu::ShaderSource::Wgsl(include_str!("voxel_photoreal.wgsl").into()),
+    });
+    let voxel_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: Some("Voxy photoreal voxel pipeline layout"),
+        bind_group_layouts: &[Some(camera_layout), Some(material_layout)],
+        immediate_size: 0,
+    });
+    let skinned_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: Some("Voxy photoreal skinned pipeline layout"),
+        bind_group_layouts: &[
+            Some(camera_layout),
+            Some(material_layout),
+            Some(skin_layout),
+        ],
+        immediate_size: 0,
+    });
+
+    let quad_attrs = wgpu::vertex_attr_array![
+        0 => Uint8x4,
+        1 => Uint8x4,
+        2 => Uint16x2,
+        3 => Uint8x4,
+        4 => Uint16x2
+    ];
+    let quad_buffer_layout = wgpu::VertexBufferLayout {
+        array_stride: size_of::<GpuQuad>() as wgpu::BufferAddress,
+        step_mode: wgpu::VertexStepMode::Instance,
+        attributes: &quad_attrs,
+    };
+
+    let indirect_attrs = wgpu::vertex_attr_array![
+        0 => Float32x3,
+        1 => Uint32,
+        2 => Uint32,
+        3 => Uint32,
+        4 => Float32x2
+    ];
+    let indirect_buffer_layout = wgpu::VertexBufferLayout {
+        array_stride: 32,
+        step_mode: wgpu::VertexStepMode::Vertex,
+        attributes: &indirect_attrs,
+    };
+
+    let skin_attrs = wgpu::vertex_attr_array![
+        0 => Float32x3,
+        1 => Float32x3,
+        2 => Float32x2,
+        3 => Uint16x4,
+        4 => Unorm16x4
+    ];
+    let skin_buffer_layout = wgpu::VertexBufferLayout {
+        array_stride: size_of::<crate::SkinnedVertex>() as wgpu::BufferAddress,
+        step_mode: wgpu::VertexStepMode::Vertex,
+        attributes: &skin_attrs,
+    };
+
+    let depth_stencil = Some(wgpu::DepthStencilState {
+        format: wgpu::TextureFormat::Depth32Float,
+        depth_write_enabled: Some(true),
+        depth_compare: Some(wgpu::CompareFunction::GreaterEqual),
+        stencil: wgpu::StencilState::default(),
+        bias: wgpu::DepthBiasState::default(),
+    });
+
+    let voxel_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("Voxy photoreal voxel pipeline"),
+        layout: Some(&voxel_layout),
+        vertex: wgpu::VertexState {
+            module: &shader,
+            entry_point: Some("vs_voxel"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            buffers: &[Some(quad_buffer_layout)],
+        },
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            cull_mode: None,
+            ..Default::default()
+        },
+        depth_stencil: depth_stencil.clone(),
+        multisample: wgpu::MultisampleState::default(),
+        fragment: Some(wgpu::FragmentState {
+            module: &shader,
+            entry_point: Some("fs_main"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format: hdr_format,
+                blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        multiview_mask: None,
+        cache: None,
+    });
+
+    let indirect_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("Voxy photoreal indirect voxel pipeline"),
+        layout: Some(&voxel_layout),
+        vertex: wgpu::VertexState {
+            module: &shader,
+            entry_point: Some("vs_indirect"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            buffers: &[Some(indirect_buffer_layout)],
+        },
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            cull_mode: None,
+            ..Default::default()
+        },
+        depth_stencil: depth_stencil.clone(),
+        multisample: wgpu::MultisampleState::default(),
+        fragment: Some(wgpu::FragmentState {
+            module: &shader,
+            entry_point: Some("fs_main"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format: hdr_format,
+                blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        multiview_mask: None,
+        cache: None,
+    });
+
+    let skinned_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("Voxy photoreal skinned pipeline"),
+        layout: Some(&skinned_layout),
+        vertex: wgpu::VertexState {
+            module: &shader,
+            entry_point: Some("vs_skinned"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            buffers: &[Some(skin_buffer_layout)],
+        },
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            cull_mode: Some(wgpu::Face::Back),
+            ..Default::default()
+        },
+        depth_stencil,
+        multisample: wgpu::MultisampleState::default(),
+        fragment: Some(wgpu::FragmentState {
+            module: &shader,
+            entry_point: Some("fs_main"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format: hdr_format,
+                blend: Some(wgpu::BlendState::REPLACE),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        multiview_mask: None,
+        cache: None,
+    });
+
+    (voxel_pipeline, indirect_pipeline, skinned_pipeline)
 }
 
 fn create_camera_bind_group(
@@ -1408,6 +2065,50 @@ fn camera_uniform(width: u32, height: u32, camera: CameraView) -> CameraUniform 
     CameraUniform {
         view_proj: camera_view_projection(width, height, camera).to_cols_array_2d(),
     }
+}
+
+#[allow(clippy::cast_precision_loss)]
+fn photoreal_camera_uniform(
+    width: u32,
+    height: u32,
+    camera: CameraView,
+    rig: &BodycamRig,
+    flashlight_pos: Vec3,
+    flashlight_dir: Vec3,
+    wetness: f32,
+) -> PhotorealCameraUniform {
+    PhotorealCameraUniform {
+        view_proj: perspective_camera_view_projection(width, height, camera).to_cols_array_2d(),
+        camera_eye: [
+            camera.eye.x,
+            camera.eye.y,
+            camera.eye.z,
+            rig.elapsed_seconds,
+        ],
+        flashlight_pos: [
+            flashlight_pos.x,
+            flashlight_pos.y,
+            flashlight_pos.z,
+            if rig.flashlight_enabled { 1.0 } else { 0.0 },
+        ],
+        flashlight_dir: [
+            flashlight_dir.x,
+            flashlight_dir.y,
+            flashlight_dir.z,
+            wetness,
+        ],
+    }
+}
+
+#[allow(clippy::cast_precision_loss)]
+fn perspective_camera_view_projection(width: u32, height: u32, camera: CameraView) -> Mat4 {
+    let aspect = width.max(1) as f32 / height.max(1) as f32;
+    let fov = camera.vertical_fov_radians.clamp(0.15, 2.65);
+    let near = camera.near_plane.clamp(0.02, 10.0);
+    // Reverse-Z perspective projection: near maps to z=1, far (512.0) maps to z=0.
+    let projection = perspective(fov, aspect, 512.0, near);
+    let view = look_at_mat4(camera.eye, camera.target, camera.up);
+    projection * view
 }
 
 #[allow(clippy::cast_precision_loss)]
@@ -1894,6 +2595,187 @@ mod tests {
             pass.set_vertex_buffer(0, vertex_buffer.slice(..));
             pass.draw(0..3, 0..1);
         }
+        queue.submit([encoder.finish()]);
+        let validation_error = pollster::block_on(error_scope.pop());
+        assert!(validation_error.is_none(), "{validation_error:?}");
+    }
+
+    #[test]
+    fn noop_backend_validates_photoreal_bodycam_pipelines_and_draw() {
+        let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
+            label: Some("Voxy validation device photoreal"),
+            ..Default::default()
+        });
+        let error_scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let photoreal_camera_layout = create_photoreal_camera_layout(&device);
+        let material_layout = create_material_layout(&device);
+        let skin_layout = create_skin_layout(&device);
+        let (photoreal_pipeline, photoreal_indirect, photoreal_skinned) =
+            create_photoreal_pipelines(
+                &device,
+                wgpu::TextureFormat::Rgba16Float,
+                &photoreal_camera_layout,
+                &material_layout,
+                &skin_layout,
+            );
+        let rig = BodycamRig::default();
+        let cam_uniform = photoreal_camera_uniform(
+            320,
+            180,
+            CameraView::default(),
+            &rig,
+            Vec3::new(10.0, 4.0, 10.0),
+            Vec3::new(0.0, 0.0, -1.0),
+            0.7,
+        );
+        let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test photoreal camera"),
+            contents: bytemuck::bytes_of(&cam_uniform),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+        let chunk_meta = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test chunk metadata"),
+            contents: bytemuck::bytes_of(&ChunkMeta::zeroed()),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+        let light_data = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test light data"),
+            contents: bytemuck::bytes_of(&u32::from_le_bytes([0xf0; 4])),
+            usage: wgpu::BufferUsages::STORAGE,
+        });
+        let camera_bind = create_camera_bind_group(
+            &device,
+            &photoreal_camera_layout,
+            &camera_buffer,
+            &chunk_meta,
+            &light_data,
+        );
+        let pack = default_material_pack();
+        let materials = MaterialSet::upload(&device, &queue, &pack);
+        let material_bind = create_material_bind_group(&device, &material_layout, &materials);
+        let (_depth, depth_view) = create_depth(&device, 320, 180);
+        let mut post =
+            BodycamPostProcess::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb, 320, 180);
+        post.update_from_rig(&queue, &rig, 1);
+
+        let quad = GpuQuad {
+            origin: [0, 0, 0, 0],
+            extent_face: [1, 1, 3, 0],
+            material_layer: [1, 0],
+            ao_diagonal: [3; 4],
+            chunk_slot: [0, 0],
+        };
+        let quads = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test quad"),
+            contents: bytemuck::bytes_of(&quad),
+            usage: wgpu::BufferUsages::VERTEX,
+        });
+        let indirect_verts = [0u8; 32 * 3];
+        let indirect_vb = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("test indirect vb"),
+            contents: &indirect_verts,
+            usage: wgpu::BufferUsages::VERTEX,
+        });
+        let skinned_mesh = SkinnedMesh::new(
+            vec![
+                crate::SkinnedVertex {
+                    position: [0.0, 0.0, 0.0],
+                    normal: [0.0, 1.0, 0.0],
+                    uv: [0.0, 0.0],
+                    joints: [0; 4],
+                    weights: [u16::MAX, 0, 0, 0],
+                },
+                crate::SkinnedVertex {
+                    position: [1.0, 0.0, 0.0],
+                    normal: [0.0, 1.0, 0.0],
+                    uv: [1.0, 0.0],
+                    joints: [0; 4],
+                    weights: [u16::MAX, 0, 0, 0],
+                },
+                crate::SkinnedVertex {
+                    position: [0.0, 1.0, 0.0],
+                    normal: [0.0, 1.0, 0.0],
+                    uv: [0.0, 1.0],
+                    joints: [0; 4],
+                    weights: [u16::MAX, 0, 0, 0],
+                },
+            ],
+            vec![0, 1, 2],
+            1,
+        )
+        .unwrap();
+        let skinned = upload_skinned(
+            &device,
+            &skin_layout,
+            &skinned_mesh,
+            &[Mat4::IDENTITY],
+            Mat4::IDENTITY,
+            1,
+        )
+        .unwrap();
+
+        let out_tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("test srgb out"),
+            size: wgpu::Extent3d {
+                width: 320,
+                height: 180,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let out_view = out_tex.create_view(&wgpu::TextureViewDescriptor::default());
+
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("test photoreal hdr pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: post.hdr_view(),
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &depth_view,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(0.0),
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            pass.set_pipeline(&photoreal_pipeline);
+            pass.set_bind_group(0, &camera_bind, &[]);
+            pass.set_bind_group(1, &material_bind, &[]);
+            pass.set_vertex_buffer(0, quads.slice(..));
+            pass.draw(0..6, 0..1);
+
+            pass.set_pipeline(&photoreal_indirect);
+            pass.set_bind_group(0, &camera_bind, &[]);
+            pass.set_bind_group(1, &material_bind, &[]);
+            pass.set_vertex_buffer(0, indirect_vb.slice(..));
+            pass.draw(0..3, 0..1);
+
+            pass.set_pipeline(&photoreal_skinned);
+            pass.set_bind_group(0, &camera_bind, &[]);
+            pass.set_bind_group(1, &material_bind, &[]);
+            pass.set_bind_group(2, &skinned.bind_group, &[]);
+            pass.set_vertex_buffer(0, skinned.vertex.slice(..));
+            pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
+            pass.draw_indexed(0..skinned.index_count, 0, 0..1);
+        }
+        post.encode(&mut encoder, &out_view);
         queue.submit([encoder.finish()]);
         let validation_error = pollster::block_on(error_scope.pop());
         assert!(validation_error.is_none(), "{validation_error:?}");
