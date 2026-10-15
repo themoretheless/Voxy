@@ -45,6 +45,7 @@ pub struct FemaleDemo {
     grasp_normals: Vec<Vec3>,
     pub hand_focus: bool,
     features: crate::female_features::FaceFeatures,
+    pub pelvic: crate::female_pelvic::PelvicAnatomy,
     lid_contour: Option<crate::female_face::LidContour>,
     hair: crate::female_hair::FemaleHair,
     pub film: Option<crate::surface_film_preview::FilmPreview>,
@@ -572,6 +573,8 @@ impl FemaleDemo {
         let regions = crate::volume_regions::Region::build(&vertices[..body_vertices])?;
         let features =
             crate::female_features::FaceFeatures::new(&vertices[..body_vertices], &indices);
+        let pelvic =
+            crate::female_pelvic::PelvicAnatomy::new(&vertices[..body_vertices], &indices);
         let lid_contour = (std::env::var("VOXY_EXPERIMENTAL_LID_CONTOUR").as_deref() != Ok("0"))
             .then(|| crate::female_face::LidContour::new(&vertices[..body_vertices], &indices));
         let lip_triangles = crate::female_features::open_mouth_surface(&vertices, &mut indices);
@@ -585,6 +588,7 @@ impl FemaleDemo {
             hand_focus: false,
             rig,
             features,
+            pelvic,
             lid_contour,
             hair,
             film: None,
@@ -2240,6 +2244,31 @@ impl FemaleDemo {
             )
         }
     }
+    fn pelvic_motion_state(&self) -> crate::female_pelvic::PelvicMotionState {
+        let gluteal_compression = if self.animation_only || self.rig_pose_only {
+            0.0
+        } else {
+            ((-0.5 * (self.secondary[2].offset()[1] + self.secondary[3].offset()[1])) as f32 * 45.0)
+                .clamp(-0.35, 1.0)
+        };
+        let t = self.time as f32;
+        let prolapse_pulse = if self.time == 0.0 && self.steps == 0 {
+            0.0
+        } else {
+            0.65 * (t * 2.8).sin() + 0.35 * (t * 5.6 + 0.7).cos()
+        };
+        let sphincter_tone = if self.time == 0.0 && self.steps == 0 {
+            0.0
+        } else {
+            0.60 * (t * 3.2 + 0.4).cos() + 0.40 * gluteal_compression
+        };
+        crate::female_pelvic::PelvicMotionState {
+            time: t,
+            gluteal_compression,
+            prolapse_pulse,
+            sphincter_tone,
+        }
+    }
     fn finish_surface_vertices(
         &self,
         vertices: &mut [SceneVertex],
@@ -2516,6 +2545,14 @@ impl FemaleDemo {
             inherited_colors,
         );
         mark("face_features");
+        let face_end = vertices.len();
+        self.pelvic.append(
+            &normal_geometry[..self.body_vertices],
+            &normals[..self.body_vertices],
+            &mut vertices,
+            &mut indices,
+            self.pelvic_motion_state(),
+        );
         let hair_start = vertices.len();
         let hair_index_start = indices.len();
         let mut hair_normals = Vec::new();
@@ -2539,7 +2576,9 @@ impl FemaleDemo {
                     .to_array();
             }
         }
-        self.finish_surface_vertices(&mut vertices, &displacement, hair_start);
+        self.finish_surface_vertices(&mut vertices, &displacement, face_end);
+        self.pelvic
+            .recess_covered_body_vertices(&normals[..self.body_vertices], &mut vertices);
 
         mark("hair_and_shapes");
         if let Some(film) = &self.film {
