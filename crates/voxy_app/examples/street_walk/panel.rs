@@ -17,6 +17,9 @@ pub struct Settings<'a> {
     pub weather: &'a mut Weather,
     pub wetness: &'a mut Option<f32>,
     pub seed: u64,
+    pub ageing: Option<&'a mut crate::original::Ageing>,
+    /// Set when an ageing change should regenerate the street.
+    pub rebuild: &'a mut bool,
 }
 
 impl Panel {
@@ -69,7 +72,9 @@ impl Panel {
             pixels_per_point: output.pixels_per_point,
         };
         for (id, delta) in &output.textures_delta.set {
-            self.renderer.update_texture(device, queue, *id, delta);
+            for delta in delta {
+                self.renderer.update_texture(device, queue, *id, delta);
+            }
         }
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("street settings panel"),
@@ -194,6 +199,35 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     if let Some(wet) = s.wetness.as_mut() {
         ui.add(egui::Slider::new(wet, 0.0..=1.).text("влажность"));
     }
+    if let Some(a) = s.ageing.as_deref_mut() {
+        ageing(ui, a, s.rebuild);
+    }
+}
+
+fn ageing(ui: &mut egui::Ui, a: &mut crate::original::Ageing, rebuild: &mut bool) {
+    ui.separator();
+    ui.label("Старение улицы");
+    let mut slider = |ui: &mut egui::Ui, value: &mut f32, text: &str| {
+        let r = ui.add(egui::Slider::new(value, 0.0..=2.).text(text));
+        // Regenerating takes a moment, so wait for the drag to end.
+        if r.drag_stopped() || (r.changed() && !r.dragged()) {
+            *rebuild = true;
+        }
+    };
+    slider(ui, &mut a.damage, "повреждения");
+    slider(ui, &mut a.colour, "разброс цвета");
+    slider(ui, &mut a.relaid, "перемощено");
+    slider(ui, &mut a.dirt, "грязь и трещины");
+    ui.horizontal(|ui| {
+        if ui.button("Новая").clicked() {
+            *a = crate::original::Ageing { damage: 0., colour: 0., relaid: 0., dirt: 0. };
+            *rebuild = true;
+        }
+        if ui.button("По умолчанию").clicked() {
+            *a = Default::default();
+            *rebuild = true;
+        }
+    });
 }
 
 fn season_name(season: Season) -> &'static str {
