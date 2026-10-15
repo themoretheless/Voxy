@@ -64,6 +64,7 @@ path = "examples/camcorder.rs"
 test = true
 
 [dev-dependencies]
+half = "2.7.1"
 bytemuck = { version = "1.25.2", features = ["derive"] }
 
 [[example]]

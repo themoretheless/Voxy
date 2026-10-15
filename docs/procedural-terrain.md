@@ -138,24 +138,24 @@ cargo run -p voxy_app --bin voxy_app -- --vegetation tree --output tree.glb --ex
 cargo run -p voxy_model --example plants
 ```
 
-The GLB embeds bark/leaf colour and normal PNG maps, UVs, normals, separate
-metallic/roughness materials, and double-sided foliage. No external image assets
-or downloads are needed. The model editor opens a separate `.preview.glb` with normal-map bindings removed
+The GLB embeds six PNG maps: bark/leaf colour, normal and metallic/roughness.
+It includes UVs, normals, separate PBR materials, and double-sided foliage. No external image assets
+or downloads are needed. The model editor opens a separate `.preview.glb` with normal and roughness-map bindings removed
 while retaining the full exported asset; it does not display the full normal-map/PBR
 material. The `plants` example renders a native GPU preview through the scene PBR renderer
 with GGX, normal maps, hemisphere lighting, shadow maps and tone mapping, and writes
 `artifacts/vegetation/preview.png` plus tree/shrub GLBs.
 
 This is detailed procedural vegetation, not a qualified photorealistic renderer.
-The preview still lacks indirect occlusion, measured leaf transmission, and wind. Desktop startup now places mesh plants automatically from the seeded world markers.
+Leaf backlighting and crown-density sky occlusion are approximations; measured leaf transmission, full indirect lighting and wind remain absent. Desktop startup now places mesh plants automatically from the seeded world markers.
 The resident renderer uses shared instanced meshes, depth-correct PBR surfaces,
 self-shadowing and shadow reception on terrain/actors in both normal and Bodycam
-paths. Four shared world-detail variants keep geometry bounded. Gameplay retains
+paths. Four shared world-detail variants keep geometry bounded. World startup builds raw meshes and six surface maps directly, avoiding a GLB encode/decode round trip. Root flares and a third grass primitive dress the ground around each plant. The HDR terrain shader treats IDs 1–3 as natural rock, grass and soil, without masonry seams. Gameplay retains
 conservative voxel trunk collision; leaf and branch shapes have no fine collision.
 Removing a root marker or its supporting ground retires that plant instance.
 `--voxel-plants` selects the original block rendering. `--vegetation-check` captures
 the same world/camera with and without the plant layer and writes evidence to
-`artifacts/vegetation-world`. Bark and leaf
+`artifacts/vegetation-world`. Captures use the offscreen GPU path; the report records actual presented frames separately, including when the window is occluded. Bark and leaf
 textures are synthetic, not scanned botanical materials.
 
 

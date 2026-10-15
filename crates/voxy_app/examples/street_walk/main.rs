@@ -1,6 +1,7 @@
 //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
 #[path = "../../src/controls.rs"]
 mod controls;
+mod aa_validation;
 mod original;
 mod materials;
 mod scene;
@@ -20,6 +21,7 @@ struct Gpu {
     adapter: wgpu::Adapter,
     hdr_last_check: Instant,
     hdr_headroom: Option<f32>,
+    validation_headroom: Option<f32>,
     device: wgpu::Device,
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
@@ -39,9 +41,11 @@ struct App {
     captured: bool,
     last: Instant,
     accumulator: f64,
+    simulation_time: f64,
     frames: u64,
     measure_start: Option<Instant>,
     durations: Vec<f64>,
+    skipped_acquires: u64,
     physics_seconds: Vec<f64>,
     render_seconds: Vec<f64>,
     acquire_seconds: Vec<f64>,
@@ -53,6 +57,12 @@ struct App {
     root: PathBuf,
     original: bool,
     original_seed: u64,
+    weather: voxy_render::weather::Weather,
+    weather_start: Instant,
+    sun_elevation: Option<f32>,
+    wetness: Option<f32>,
+    pitch: Option<f32>,
+    aa_validation: Option<aa_validation::AaValidation>,
 }
 impl App {
     fn new() -> Self {
@@ -63,7 +73,18 @@ impl App {
                 .and_then(|i| args.get(i + 1))
                 .cloned()
         };
-        Self {
+        let mut app = Self {
+            weather: match value("--weather").as_deref() {
+                Some("cloudy") => voxy_render::weather::Weather::CLOUDY,
+                Some("rain") => voxy_render::weather::Weather::STORM,
+                Some("snow") => voxy_render::weather::Weather::SNOW,
+                _ => voxy_render::weather::Weather::CLEAR,
+            },
+            weather_start: Instant::now(),
+            sun_elevation: value("--sun-elevation").and_then(|v| v.parse().ok()),
+            wetness: value("--wetness").and_then(|v| v.parse().ok()),
+            pitch: value("--pitch").and_then(|v| v.parse().ok()),
+            aa_validation: aa_validation::AaValidation::from_environment(),
             window: None,
             gpu: None,
             collision: None,
@@ -76,9 +97,11 @@ impl App {
             captured: false,
             last: Instant::now(),
             accumulator: 0.,
+            simulation_time: 0.,
             frames: 0,
             measure_start: None,
             durations: Vec::new(),
+            skipped_acquires: 0,
             physics_seconds: Vec::new(),
             render_seconds: Vec::new(),
             acquire_seconds: Vec::new(),
@@ -103,7 +126,17 @@ impl App {
                 PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                     .join("../../assets/environments/bistro/cache")
             }),
+        };
+        if value("--wind-speed").is_some() || value("--wind-direction").is_some() {
+            let [x, z] = app.weather.wind;
+            let speed = value("--wind-speed").and_then(|v| v.parse::<f32>().ok()).unwrap_or(x.hypot(z));
+            let angle = value("--wind-direction").and_then(|v| v.parse::<f32>().ok()).unwrap_or(z.atan2(x).to_degrees()).to_radians();
+            if speed.is_finite() && angle.is_finite() {app.weather.wind = [angle.cos() * speed.clamp(0., 100.), angle.sin() * speed.clamp(0., 100.)];}
         }
+        if let Some(gust) = value("--wind-gust").and_then(|v| v.parse::<f32>().ok()) {
+            if gust.is_finite() {app.weather.wind_gust = gust.clamp(0., 1.);}
+        }
+        app
     }
     fn init(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         let window = Arc::new(
@@ -114,6 +147,7 @@ impl App {
                     } else {
                         "Voxy — Bistro: WASD · Shift · Space · мышь · Esc"
                     })
+                    .with_window_level(if self.benchmark > 0. { winit::window::WindowLevel::AlwaysOnTop } else { winit::window::WindowLevel::Normal })
                     .with_inner_size(winit::dpi::PhysicalSize::new(1920, 1080))
                     .with_resizable(false),
             )?,
@@ -128,9 +162,19 @@ impl App {
         } else {
             scene::load(&self.root)?
         };
-        let environment = if self.original { Some(materials::sky()?) } else { None };
-        if let Some(panorama) = &environment { scene.sun = materials::sun_direction(panorama); }
-        self.camera = WalkCamera::new(scene.direction);
+        let environment = if self.original {
+            let (environment, sun, sun_colour) = materials::daylight()?;
+            scene.sun = sun;
+            scene.sun_colour = sun_colour;
+            Some(environment)
+        } else { None };
+        let mut direction = scene.direction;
+        if let Some(degrees) = self.pitch {
+            let pitch = degrees.clamp(-80., 80.).to_radians();
+            let planar = Vec3::new(direction.x, 0., direction.z).normalize();
+            direction = planar * pitch.cos() + Vec3::Y * pitch.sin();
+        }
+        self.camera = WalkCamera::new(direction);
         self.feet = scene.eye.as_dvec3() - DVec3::Y * 1.65;
         let initial = self.feet;
         let planar = Vec3::new(scene.direction.x, 0., scene.direction.z)
@@ -161,6 +205,11 @@ impl App {
             self.feet
         );
         self.previous = self.feet;
+        if let Some(validation) = &mut self.aa_validation {
+            std::fs::create_dir_all(&validation.directory)?;
+            validation.eye = self.feet.as_vec3()+Vec3::Y*1.65;
+            validation.direction = scene.direction;
+        }
         self.collision = Some(scene.collision);
         let instance = voxy_render::GraphicsOptions {
             backend: voxy_render::GraphicsBackend::Metal,
@@ -231,7 +280,7 @@ impl App {
             wgpu::PresentMode::AutoNoVsync
         };
         config.desired_maximum_frame_latency = 2;
-        if self.snapshot.is_some() {
+        if self.snapshot.is_some() || self.aa_validation.is_some() {
             config.usage |= wgpu::TextureUsages::COPY_SRC;
         }
         eprintln!(
@@ -257,7 +306,28 @@ impl App {
             scene.bounds,
             environment,
         )?;
-        renderer.set_display_headroom(hdr_headroom.unwrap_or(1.).max(1.))?;
+        if let Some(degrees) = self.sun_elevation {
+            let angle = degrees.clamp(-10., 90.).to_radians();
+            renderer.set_sun(Vec3::new(-angle.cos(), angle.sin(), 0.3 * angle.cos()), [1., 0.95, 0.85, 100000.])?;
+        }
+        renderer.set_surface_wetness(self.wetness.map(|w| w.clamp(0., 1.)))?;
+        let validation_headroom = self.aa_validation.as_ref().map(|_| 2.);
+        renderer.set_display_headroom(validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.)).max(1.))?;
+        let mode = match std::env::var("VOXY_STREET_AA").as_deref().unwrap_or("temporal") {
+            "off" => voxy_render::ArchiveAntialiasing::Off,
+            "spatial" => voxy_render::ArchiveAntialiasing::Spatial,
+            "temporal" => voxy_render::ArchiveAntialiasing::Temporal,
+            "metalfx" => voxy_render::ArchiveAntialiasing::MetalFx,
+            value => return Err(format!("unknown VOXY_STREET_AA: {value}").into()),
+        };
+        renderer.set_antialiasing(mode)?;
+        renderer.set_tone_mapper(match std::env::var("VOXY_STREET_TONEMAP").as_deref().unwrap_or("agx") {
+            "aces" => voxy_render::archive_scene::ArchiveToneMapper::Aces,
+            "agx" => voxy_render::archive_scene::ArchiveToneMapper::Agx,
+            value => return Err(format!("unknown VOXY_STREET_TONEMAP: {value}").into()),
+        });
+        eprintln!("STREET antialiasing={mode:?} native_resolution={}x{}", size.width, size.height);
+
         let offscreen = if self.offscreen_benchmark {
             Some(device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("full resolution completed-frame benchmark"),
@@ -281,6 +351,7 @@ impl App {
             adapter,
             hdr_last_check: Instant::now(),
             hdr_headroom,
+            validation_headroom,
             device,
             queue,
             config,
@@ -316,15 +387,17 @@ impl App {
         let now = Instant::now();
         let elapsed = now.duration_since(self.last).as_secs_f64();
         self.last = now;
+        if self.benchmark > 0. { self.input.cancel_all(); }
         self.camera.apply_look(self.input.take_look());
         self.camera.step(elapsed as f32);
         self.accumulator += elapsed.min(0.25);
         const DT: f64 = 1. / 120.;
         let collision = self.collision.as_ref().ok_or("missing collision")?;
         while self.accumulator >= DT {
+            self.simulation_time += DT;
             let mut movement = self.input.take_move();
             if self.benchmark > 0. {
-                movement.local = Vec2::new(0., if self.frames % 2400 < 1200 { 1. } else { -1. });
+                movement.local = Vec2::new(0., if self.simulation_time % 20. < 10. { 1. } else { -1. });
             }
             let (forward, right) = self.camera.planar_basis();
             let planar = right * movement.local.x + forward * movement.local.y;
@@ -356,7 +429,7 @@ impl App {
             .lerp(self.feet, self.accumulator / DT)
             .as_vec3();
         let target = actor + Vec3::Y * 1.65;
-        let direction = self.camera.direction();
+        let mut direction = self.camera.direction();
         let mut eye = target - direction * self.camera.distance;
         if self.camera.distance > 0. {
             if let Some(hit) = collision.sweep_capsule(
@@ -367,6 +440,9 @@ impl App {
             )? {
                 eye = target + (eye - target) * hit.fraction as f32;
             }
+        }
+        if let Some(validation) = &self.aa_validation {
+            (eye,direction) = validation.camera(self.frames as u64);
         }
         let physics_time = now.elapsed().as_secs_f64();
         let acquire_start = Instant::now();
@@ -379,7 +455,7 @@ impl App {
             }
             gpu.hdr_headroom = headroom;
             gpu.renderer
-                .set_display_headroom(headroom.unwrap_or(1.).max(1.))?;
+                .set_display_headroom(gpu.validation_headroom.unwrap_or(headroom.unwrap_or(1.)).max(1.))?;
             gpu.hdr_last_check = Instant::now();
         }
         let frame = if gpu.offscreen.is_some() {
@@ -393,6 +469,7 @@ impl App {
                     return Ok(());
                 }
                 wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => {
+                    self.skipped_acquires += 1;
                     return Ok(());
                 }
                 wgpu::CurrentSurfaceTexture::Validation => {
@@ -405,6 +482,9 @@ impl App {
         let output = frame
             .as_ref()
             .map_or_else(|| gpu.offscreen.as_ref().unwrap(), |f| &f.texture);
+        if self.aa_validation.is_some() && self.frames==128 {gpu.renderer.reset_temporal_history();}
+        gpu.renderer.set_weather(self.weather)?;
+        gpu.renderer.set_weather_time(if self.aa_validation.is_some() {0.} else {self.weather_start.elapsed().as_secs_f32()});
         let submission = gpu.renderer
             .draw(&output.create_view(&Default::default()), eye, direction);
         if self.offscreen_benchmark {
@@ -412,6 +492,45 @@ impl App {
         }
         let render_time = render_start.elapsed().as_secs_f64();
         self.frames += 1;
+        if let Some(validation) = &mut self.aa_validation {
+            validation.frame_ms.push(render_time*1000.);
+            if aa_validation::AaValidation::capture(self.frames as u64) {
+                snapshot(gpu,output,&validation.directory.join(format!("frame-{:03}.png",self.frames)))?;
+            }
+            if self.frames == 160 {
+                let report = serde_json::json!({
+                    "scene":if self.original {"Original Street"} else {"Bistro"},
+                    "antialiasing":format!("{:?}",gpu.renderer.antialiasing()),
+                    "adapter":format!("{:?}",gpu.adapter.get_info()),
+                    "resolution":[gpu.config.width,gpu.config.height],
+                    "format":format!("{:?}",gpu.config.format),
+                    "render_headroom":gpu.validation_headroom.unwrap_or(gpu.hdr_headroom.unwrap_or(1.)),
+                    "collision_triangles":collision.triangle_count(),
+                    "source_simplified":false,
+                    "frames":self.frames,
+                    "route":"static 1-32; rotation 33-64; translation 65-96; cut 97; explicit reset 129",
+                    "completed_frame_timings":self.offscreen_benchmark,
+                    "frame_ms":validation.frame_ms,
+                });
+                std::fs::write(validation.directory.join("report.json"),serde_json::to_vec_pretty(&report)?)?;
+                eprintln!("STREET AA VALIDATION completed {:?}",validation.directory);
+                if validation.cycle_metalfx && gpu.renderer.antialiasing()!=voxy_render::ArchiveAntialiasing::MetalFx {
+                    let next = if gpu.renderer.antialiasing()==voxy_render::ArchiveAntialiasing::Off {voxy_render::ArchiveAntialiasing::Temporal} else {voxy_render::ArchiveAntialiasing::MetalFx};
+                    validation.cycle_metalfx=next!=voxy_render::ArchiveAntialiasing::MetalFx;
+                    validation.directory=validation.directory.parent().ok_or("capture directory has no parent")?.join(if next==voxy_render::ArchiveAntialiasing::Temporal {"temporal"} else {"metalfx"});
+                    std::fs::create_dir_all(&validation.directory)?;
+                    validation.frame_ms.clear();
+                    gpu.renderer.set_antialiasing(next)?;
+                    self.frames=0;
+                    self.measure_start=None;
+                    self.durations.clear();
+                    eprintln!("STREET AA VALIDATION continuing with {next:?} on the same loaded scene");
+                } else {
+                    self.finished=true;
+                    el.exit();
+                }
+            }
+        }
         let capture_now = self.frames >= 120 && self.snapshot.is_some();
         if capture_now {
             if let Some(path) = self.snapshot.take() {
@@ -428,6 +547,7 @@ impl App {
         }
         let _ = gpu.device.poll(wgpu::PollType::Poll);
         if self.frames == 180 {
+            self.skipped_acquires = 0;
             self.measure_start = Some(Instant::now());
             self.durations.clear();
         } else if self.frames > 180 {
@@ -472,7 +592,7 @@ impl App {
             let mut times = self.durations.clone();
             times.sort_by(f64::total_cmp);
             let n = times.len();
-            let report = serde_json::json!({"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
+            let report = serde_json::json!({"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":self.offscreen_benchmark||self.skipped_acquires==0,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
             std::fs::write(
                 "/tmp/voxy-street-benchmark.json",
                 serde_json::to_vec_pretty(&report)?,
@@ -580,7 +700,7 @@ fn snapshot(
             .iter()
             .filter(|p| p.iter().any(|v| *v > 1.))
             .count();
-        let report = serde_json::json!({"surface_format":format!("{:?}",gpu.config.format),"colour_space":format!("{:?}",gpu.config.color_space),"live_headroom":gpu.hdr_headroom,"peak_relative_sdr_white":peak,"pixels_above_sdr_white":above,"pixels":w as usize*h as usize,"finite":true,"native_hdr_capture":raw_path,"png_is_sdr_preview":true});
+        let report = serde_json::json!({"surface_format":format!("{:?}",gpu.config.format),"colour_space":format!("{:?}",gpu.config.color_space),"live_headroom":gpu.hdr_headroom,"render_headroom":gpu.validation_headroom.unwrap_or(gpu.hdr_headroom.unwrap_or(1.)),"peak_relative_sdr_white":peak,"pixels_above_sdr_white":above,"pixels":w as usize*h as usize,"finite":true,"native_hdr_capture":raw_path,"png_is_sdr_preview":true});
         std::fs::write(
             path.with_extension("hdr.json"),
             serde_json::to_vec_pretty(&report)?,
@@ -627,6 +747,13 @@ impl ApplicationHandler for App {
         }
     }
     fn window_event(&mut self, el: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        if self.benchmark > 0. {
+            match &event {
+                WindowEvent::KeyboardInput { event, .. } if event.physical_key == PhysicalKey::Code(KeyCode::Escape) => { el.exit(); return; }
+                WindowEvent::KeyboardInput { .. } | WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. } => return,
+                _ => {}
+            }
+        }
         match event {
             WindowEvent::CloseRequested => el.exit(),
             WindowEvent::Focused(false) => self.capture(false),
@@ -639,6 +766,30 @@ impl ApplicationHandler for App {
                 if let PhysicalKey::Code(key) = event.physical_key {
                     if key == KeyCode::Escape && event.state == ElementState::Pressed {
                         self.capture(false);
+                    } else if event.state == ElementState::Pressed && !event.repeat
+                        && matches!(key, KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3 | KeyCode::Digit4) {
+                        let wind = self.weather.wind;
+                        let gust = self.weather.wind_gust;
+                        self.weather = match key {
+                            KeyCode::Digit2 => voxy_render::weather::Weather::CLOUDY,
+                            KeyCode::Digit3 => voxy_render::weather::Weather::STORM,
+                            KeyCode::Digit4 => voxy_render::weather::Weather::SNOW,
+                            _ => voxy_render::weather::Weather::CLEAR,
+                        };
+                        self.weather.wind = wind;
+                        self.weather.wind_gust = gust;
+                    } else if event.state == ElementState::Pressed && !event.repeat
+                        && matches!(key, KeyCode::F5 | KeyCode::F6 | KeyCode::F7 | KeyCode::F8) {
+                        let [x, z] = self.weather.wind;
+                        let speed = x.hypot(z);
+                        let angle = z.atan2(x) + if key == KeyCode::F6 {std::f32::consts::FRAC_PI_4} else {0.};
+                        let speed = match key {
+                            KeyCode::F5 => if speed > 0. {0.} else {8.},
+                            KeyCode::F7 => (speed - 2.).max(0.),
+                            KeyCode::F8 => (speed + 2.).min(100.),
+                            _ => speed,
+                        };
+                        self.weather.wind = [angle.cos()*speed, angle.sin()*speed];
                     } else if key == KeyCode::KeyV
                         && event.state == ElementState::Pressed
                         && !event.repeat
@@ -666,7 +817,7 @@ impl ApplicationHandler for App {
         }
     }
     fn device_event(&mut self, _: &ActiveEventLoop, _: winit::event::DeviceId, event: DeviceEvent) {
-        if self.captured {
+        if self.captured && self.benchmark <= 0. {
             if let DeviceEvent::MouseMotion { delta } = event {
                 self.input.mouse_motion(delta);
             }

@@ -1,5 +1,6 @@
 //! Explicit-buffer glTF import into renderer meshes and animation rigs: the one crate that
 //! knows both `voxy_render` and `voxy_animation`. No filesystem or network access is performed.
+pub mod animals;
 use std::sync::Arc;
 
 use glam::{DMat4, DVec3, Mat4, Quat, Vec3};

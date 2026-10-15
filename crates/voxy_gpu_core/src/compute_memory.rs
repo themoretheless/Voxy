@@ -580,7 +580,9 @@ fn colour_texture_bytes(
         | wgpu::TextureFormat::Rgba8UnormSrgb
         | wgpu::TextureFormat::Bgra8Unorm
         | wgpu::TextureFormat::Bgra8UnormSrgb
-        | wgpu::TextureFormat::Depth32Float => (1,1,4_u64),
+        | wgpu::TextureFormat::Depth32Float
+        | wgpu::TextureFormat::R32Float
+        | wgpu::TextureFormat::Rg16Float => (1,1,4_u64),
         wgpu::TextureFormat::Rgba16Float => (1,1,8),
         wgpu::TextureFormat::Rgba32Float => (1,1,16),
         wgpu::TextureFormat::Bc7RgbaUnorm | wgpu::TextureFormat::Bc7RgbaUnormSrgb => (4,4,16),
@@ -663,6 +665,10 @@ mod tests {
         assert_eq!(colour_texture_bytes(&rgba, &limits).unwrap(), 44);
         let hdr = texture_descriptor(3, 2, 2, wgpu::TextureFormat::Rgba16Float);
         assert_eq!(colour_texture_bytes(&hdr, &limits).unwrap(), 56);
+        for format in [wgpu::TextureFormat::R32Float, wgpu::TextureFormat::Rg16Float] {
+            let guide = texture_descriptor(4, 2, 3, format);
+            assert_eq!(colour_texture_bytes(&guide, &limits).unwrap(), 44);
+        }
         let budget = ComputeMemoryBudget::configure(&device, 40).unwrap();
         assert!(matches!(
             budget.allocate_texture(&rgba),
