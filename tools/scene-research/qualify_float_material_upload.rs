@@ -463,7 +463,7 @@ fn qualify_depth_hierarchy(device:&wgpu::Device,queue:&wgpu::Queue) {
   wgpu::BindGroupLayoutEntry {binding:0,visibility:wgpu::ShaderStages::COMPUTE,ty:wgpu::BindingType::Texture {sample_type:wgpu::TextureSampleType::Float {filterable:false},view_dimension:wgpu::TextureViewDimension::D2,multisampled:false},count:None},
   wgpu::BindGroupLayoutEntry {binding:1,visibility:wgpu::ShaderStages::COMPUTE,ty:wgpu::BindingType::StorageTexture {access:wgpu::StorageTextureAccess::WriteOnly,format:wgpu::TextureFormat::R32Float,view_dimension:wgpu::TextureViewDimension::D2},count:None}
  ]});
- let pipeline_layout=device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {label:None,bind_group_layouts:&[&layout],immediate_size:0});
+ let pipeline_layout=device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {label:None,bind_group_layouts:&[Some(&layout)],immediate_size:0});
  let pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:None,layout:Some(&pipeline_layout),module:&shader,entry_point:Some("reduce_depth"),compilation_options:Default::default(),cache:None});
  let mut levels=0;
  for (mut width,mut height) in [(1u32,1u32),(3,5),(17,9),(64,32)] {
