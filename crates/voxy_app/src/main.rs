@@ -108,6 +108,10 @@ struct VoxyApp {
 #[derive(Debug)]
 struct PendingGameWater {
     plan: voxy_gpu::PendingWaterPlan,
+    bodycam_mode: bool,
+    clean_cam_mode: bool,
+    camcorder_mode: bool,
+    was_grounded: bool,
     active: Vec<VoxelPos>,
     started: Instant,
 }
@@ -258,6 +262,28 @@ impl ApplicationHandler for VoxyApp {
                         eprintln!("Voxy water bootstrap failed: {error}");
                         event_loop.exit();
                         return;
+                renderer.set_bodycam_enabled(self.bodycam_mode);
+                if self.camcorder_mode {
+                    renderer
+                        .bodycam_rig_mut()
+                        .set_lens_profile(voxy_render::PhotorealLensProfile::Camcorder);
+                } else if self.clean_cam_mode {
+                    renderer
+                        .bodycam_rig_mut()
+                        .set_lens_profile(voxy_render::PhotorealLensProfile::CleanCam);
+                }
+                if self.bodycam_mode {
+                    let profile_name = if self.camcorder_mode {
+                        "Camcorder"
+                    } else if self.clean_cam_mode {
+                        "Clean Cam"
+                    } else {
+                        "Bodycam"
+                    };
+                    println!(
+                        "Voxy Photorealistic Mode active ({profile_name}) (B: bodycam, V: clean cam, N: camcorder, F: light)"
+                    );
+                }
                     }
                 }
                 self.autopilot_tick = (std::env::args().any(|argument| argument == "--autopilot")
@@ -334,6 +360,91 @@ impl ApplicationHandler for VoxyApp {
                     }
                 }
             }
+                    } else if code == KeyCode::KeyB
+                        && event.state == ElementState::Pressed
+                        && !event.repeat
+                    {
+                        if self.bodycam_mode && !self.clean_cam_mode && !self.camcorder_mode {
+                            self.bodycam_mode = false;
+                        } else {
+                            self.bodycam_mode = true;
+                            self.clean_cam_mode = false;
+                            self.camcorder_mode = false;
+                        }
+                        if let Some(renderer) = &mut self.renderer {
+                            renderer
+                                .bodycam_rig_mut()
+                                .set_lens_profile(voxy_render::PhotorealLensProfile::Bodycam);
+                            renderer.set_bodycam_enabled(self.bodycam_mode);
+                        }
+                        println!(
+                            "Voxy Bodycam Photorealistic Mode: {}",
+                            if self.bodycam_mode { "ON" } else { "OFF" }
+                        );
+                    } else if code == KeyCode::KeyV
+                        && event.state == ElementState::Pressed
+                        && !event.repeat
+                    {
+                        if self.bodycam_mode && self.clean_cam_mode {
+                            self.bodycam_mode = false;
+                            self.clean_cam_mode = false;
+                        } else {
+                            self.bodycam_mode = true;
+                            self.clean_cam_mode = true;
+                            self.camcorder_mode = false;
+                        }
+                        if let Some(renderer) = &mut self.renderer {
+                            renderer
+                                .bodycam_rig_mut()
+                                .set_lens_profile(voxy_render::PhotorealLensProfile::CleanCam);
+                            renderer.set_bodycam_enabled(self.bodycam_mode);
+                        }
+                        println!(
+                            "Voxy Clean Photorealistic Camera (Cam): {}",
+                            if self.bodycam_mode && self.clean_cam_mode {
+                                "ON"
+                            } else {
+                                "OFF"
+                            }
+                        );
+                    } else if code == KeyCode::KeyN
+                        && event.state == ElementState::Pressed
+                        && !event.repeat
+                    {
+                        if self.bodycam_mode && self.camcorder_mode {
+                            self.bodycam_mode = false;
+                            self.camcorder_mode = false;
+                        } else {
+                            self.bodycam_mode = true;
+                            self.clean_cam_mode = false;
+                            self.camcorder_mode = true;
+                        }
+                        if let Some(renderer) = &mut self.renderer {
+                            renderer
+                                .bodycam_rig_mut()
+                                .set_lens_profile(voxy_render::PhotorealLensProfile::Camcorder);
+                            renderer.set_bodycam_enabled(self.bodycam_mode);
+                        }
+                        println!(
+                            "Voxy Hand-Held Video Camcorder Mode: {}",
+                            if self.bodycam_mode && self.camcorder_mode {
+                                "ON (Use Mouse Wheel for 1x-12x Servo Zoom)"
+                            } else {
+                                "OFF"
+                            }
+                        );
+                    } else if code == KeyCode::KeyF
+                        && event.state == ElementState::Pressed
+                        && !event.repeat
+                    {
+                        if let Some(renderer) = &mut self.renderer {
+                            let rig = renderer.bodycam_rig_mut();
+                            rig.flashlight_enabled = !rig.flashlight_enabled;
+                            println!(
+                                "Voxy Tactical Flashlight: {}",
+                                if rig.flashlight_enabled { "ON" } else { "OFF" }
+                            );
+                        }
             WindowEvent::MouseInput {
                 state: ElementState::Pressed,
                 button: MouseButton::Left,
@@ -359,7 +470,13 @@ impl ApplicationHandler for VoxyApp {
                     MouseScrollDelta::LineDelta(_, y) => y,
                     MouseScrollDelta::PixelDelta(position) => position.y as f32 / 40.0,
                 };
-                self.camera.zoom(lines);
+                if self.bodycam_mode && self.camcorder_mode {
+                    if let Some(renderer) = &mut self.renderer {
+                        renderer.bodycam_rig_mut().apply_servo_zoom(lines);
+                    }
+                } else {
+                    self.camera.zoom(lines);
+                }
             }
             WindowEvent::Resized(size) => {
                 if let Some(renderer) = &mut self.renderer {
@@ -387,6 +504,21 @@ impl ApplicationHandler for VoxyApp {
                             eprintln!("Voxy startup frame deferred: {outcome:?}");
                             self.last_startup_outcome = Some(outcome);
                         }
+                            if self.animal_check && self.animal_check_tick >= (self.animal_check_captures+1)*180 {
+                                let result = (|| -> Result<(), String> {
+                                    let (width,height,rgba)=renderer.capture_bodycam_rgba8(self.presented_frames).map_err(|e|e.to_string())?;
+                                    std::fs::create_dir_all("artifacts/animals-native").map_err(|e|e.to_string())?;
+                                    image::save_buffer(format!("artifacts/animals-native/frame-{}.png",self.animal_check_tick),&rgba,width,height,image::ColorType::Rgba8).map_err(|e|e.to_string())?;
+                                    let report=serde_json::json!({"tick":self.animal_check_tick,"presented_frames":self.presented_frames,"animals":self.companions.iter().map(|animal|serde_json::json!({"position":animal.position().to_array(),"grounded":animal.grounded(),"fur_particles":animal.fur_particles()})).collect::<Vec<_>>()});
+                                    std::fs::write("artifacts/animals-native/report.json",serde_json::to_vec_pretty(&report).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
+                                    println!("Voxy animals capture: {report}");
+                                    Ok(())
+                                })();
+                                if let Err(error)=result {self.startup_failure=Some(error);event_loop.exit();}
+                                self.animal_check_captures+=1;
+                                if self.animal_check_captures==3 {event_loop.exit();}
+                            }
+
                         Err(error) => {
                             eprintln!("Voxy render failed: {error}");
                             if matches!(
@@ -560,7 +692,11 @@ impl VoxyApp {
             .replace(now)
             .map_or(0.0, |last| now.duration_since(last).as_secs_f32().min(0.25));
         self.accumulator = (self.accumulator + elapsed).min(0.25);
-        self.camera.apply_look(self.input.take_look());
+        let look_delta = self.input.take_look();
+        self.camera.apply_look(look_delta);
+        if let Some(renderer) = &mut self.renderer {
+            renderer.bodycam_rig_mut().apply_look(look_delta);
+        }
         if self.input.take_fire()
             && let Err(error) = self.spawn_shot()
         {
@@ -758,6 +894,20 @@ impl VoxyApp {
             }
             self.advance_projectiles(FIXED_DT, event_loop);
             self.advance_water(event_loop);
+                let grounded = character.grounded;
+                let just_jumped_or_landed = grounded != self.was_grounded;
+                self.was_grounded = grounded;
+                let planar_speed =
+                    (character.velocity[0].hypot(character.velocity[2])) as f32;
+                if let Some(renderer) = &mut self.renderer {
+                    renderer.bodycam_rig_mut().step(
+                        FIXED_DT,
+                        planar_speed,
+                        grounded,
+                        just_jumped_or_landed,
+                        0.28,
+                    );
+                }
             if !self.advance_actor_animation(
                 movement.length_squared() > f32::EPSILON,
                 intent.sprint,
@@ -768,24 +918,65 @@ impl VoxyApp {
             }
             self.accumulator -= FIXED_DT;
         }
-        let (desired_eye, target) = self.camera.eye_and_target(self.actor_position);
-        let eye = self.world.as_ref().map_or(desired_eye, |world| {
-            camera_collision(world, target, desired_eye)
-        });
-        if let Some(renderer) = &mut self.renderer
-            && let Err(error) = renderer.update_camera(CameraView {
-                eye,
-                target,
-                ..CameraView::default()
-            })
-        {
-            eprintln!("Voxy camera update failed: {error}");
-            event_loop.exit();
+        if self.animal_check && self.companions.len() == 2 {
+            let center = if self.animal_check_tick < 240 {
+                (self.companions[0].position()+self.companions[1].position())*0.5+Vec3::Y*0.35
+            } else {
+                self.companions[usize::from(self.animal_check_tick >= 420)].position()+Vec3::Y*0.35
+            };
+            let distance = if self.animal_check_tick < 240 { 1.8 } else { 0.85 };
+            if let Some(renderer) = &mut self.renderer {
+                if let Err(error) = renderer.update_camera(CameraView {
+                    eye: center + Vec3::new(1.6,0.8,2.2)*distance,
+                    target: center,
+                    vertical_fov_radians: 42_f32.to_radians(),
+                    ..CameraView::default()
+                }) { self.startup_failure=Some(error.to_string());event_loop.exit(); }
+                renderer.set_bodycam_flashlight_and_wetness(center+Vec3::new(0.0,2.0,2.0),Vec3::NEG_Z,0.0);
+            }
+        } else if self.bodycam_mode {
+            if let Some(renderer) = &mut self.renderer {
+                let (cam_view, flash_pos, flash_dir) = renderer
+                    .bodycam_rig()
+                    .camera_and_flashlight(self.actor_position);
+                renderer.set_bodycam_flashlight_and_wetness(flash_pos, flash_dir, 0.68);
+                if let Err(error) = renderer.update_camera(cam_view) {
+                    eprintln!("Voxy bodycam camera update failed: {error}");
+                    event_loop.exit();
+                }
+            }
+        } else {
+            let (desired_eye, target) = self.camera.eye_and_target(self.actor_position);
+            let eye = self.world.as_ref().map_or(desired_eye, |world| {
+                camera_collision(world, target, desired_eye)
+            });
+            if let Some(renderer) = &mut self.renderer
+                && let Err(error) = renderer.update_camera(CameraView {
+                    eye,
+                    target,
+                    ..CameraView::default()
+                })
+            {
+                eprintln!("Voxy camera update failed: {error}");
+                event_loop.exit();
+            }
         }
     }
 
     fn spawn_shot(&mut self) -> Result<(), physics_voxel::ProjectileError> {
-        let (eye, target) = self.camera.eye_and_target(self.actor_position);
+        let (eye, target) = if self.bodycam_mode
+            && let Some(renderer) = &mut self.renderer
+        {
+            renderer
+                .bodycam_rig_mut()
+                .add_recoil_impulse(-3.2_f32.to_radians(), 0.8_f32.to_radians(), 1.9_f32.to_radians());
+            let (cam, flash_pos, flash_dir) = renderer
+                .bodycam_rig()
+                .camera_and_flashlight(self.actor_position);
+            (flash_pos, flash_pos + flash_dir * 4.0 + (cam.target - cam.eye) * 0.05)
+        } else {
+            self.camera.eye_and_target(self.actor_position)
+        };
         let direction = (target - eye).normalize_or_zero();
         let muzzle = target + direction;
         self.projectiles.push(spawn_projectile(
@@ -2096,6 +2287,16 @@ fn build_startup_scene(
             eprintln!("Terrain selection failed: {error}");
             voxy_world::GenerationError::BackendFailure
         })?;
+    let camcorder_mode = std::env::args()
+        .any(|arg| matches!(arg.as_str(), "--camcorder" | "--videocam" | "--video"))
+        || std::env::var("VOXY_CAMCORDER").is_ok_and(|value| value == "1");
+    let clean_cam_mode = !camcorder_mode
+        && (std::env::args().any(|arg| arg == "--animals-check") || std::env::args().any(|arg| matches!(arg.as_str(), "--cam" | "--clean-cam"))
+            || std::env::var("VOXY_CAM").is_ok_and(|value| value == "1"));
+    let bodycam_mode = camcorder_mode
+        || clean_cam_mode
+        || std::env::args().any(|arg| matches!(arg.as_str(), "--bodycam" | "--photoreal"))
+        || std::env::var("VOXY_BODYCAM").is_ok_and(|value| value == "1");
     if backend == terrain_options::TerrainBackend::Cpu {
         return build_procedural_scene(0x56_4f_58_59, 1);
     }
@@ -2105,6 +2306,9 @@ fn build_startup_scene(
                 voxy_gpu::CudaTerrainGenerator::new(ordinal, palette, water).map_err(|error| {
                     eprintln!("CUDA terrain initialization failed: {error}");
                     voxy_world::GenerationError::BackendFailure
+        bodycam_mode,
+        clean_cam_mode,
+        camcorder_mode,
                 })?;
             eprintln!("CUDA terrain: {:?}", generator.capabilities());
             Ok(Box::new(generator))
